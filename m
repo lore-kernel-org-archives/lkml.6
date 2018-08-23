@@ -2,220 +2,308 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F83EC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 13:00:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D73AC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 13:07:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF6F62089D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 13:00:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A45CF2075E
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 13:07:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Li5VfmEO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF6F62089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LGbrMYn+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A45CF2075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731784AbeHWQ37 (ORCPT
+        id S1729548AbeHWQhK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 12:29:59 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:44930 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728465AbeHWQ36 (ORCPT
+        Thu, 23 Aug 2018 12:37:10 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:44446 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727655AbeHWQhK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 12:29:58 -0400
-Received: by mail-wr1-f66.google.com with SMTP id v16-v6so4559060wro.11
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 06:00:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:subject:to:cc:references:openpgp:autocrypt:message-id:date
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ro0hnSFxwtJXPSSPYVqMvxxcW4O0TqJQDoUTJ8wP8IE=;
-        b=Li5VfmEOG58SaZR/tr/HibFARthkL2WLYEu3kLn9m1n/A28bR4kZHqN1UGqhtUJCOb
-         PRYJS6ttwfA3zP+TmsAjwjRrwwuym8eJ3N6TffJoy33dIk5ouhumndZagn//z1+/L8g3
-         SUJBDf/9dGVQmoNnvElY0mYWADuO8KBTw6mE8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:openpgp:autocrypt
-         :message-id:date:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ro0hnSFxwtJXPSSPYVqMvxxcW4O0TqJQDoUTJ8wP8IE=;
-        b=V4Mzod1vS8t9yHe4z4UV3g8RVpEfORqr84Xc6Mp25GK6qtkA7FCV3invcNQlvdipcO
-         Le9d8hJnWqyvR2+EcFsRfatgqss1+YWU/ElaRiay9fNmGDB5mjkRtZO4RGtX/FFVV+bN
-         FSsH+NVPFgPruXxVgJpmlF1AZcToh8InkvcxhvD8luNznTD0Ny+23nmujiLWzV2B1FJn
-         qyDr/qsYU8Zg4CjeCd0xqNAZf3TPbpVCSebfmt9ZdWa8BSotdvZbbTQ5YBvy35sHd7SD
-         qzAZAutxnNi7HymMGvn/wE/VI2BMTrECMsXXYXeeYF8ePUUt9s9w7ViBQkzUCSZoNCss
-         idNg==
-X-Gm-Message-State: APzg51Bo3bcCJ549JsNsT9siWWx5pehA8DWgJfRbu45APHZsm2k8Rpta
-        Jui08fki9S8MT72BlXUvUOCkhMQetkw=
-X-Google-Smtp-Source: ANB0VdZ0VaolVevQEqQNX4u1oSIyqQHiGm9dgToCuqDcW2CV9pwEjZDo2iI7QlzjkrwSiupFL2xBJQ==
-X-Received: by 2002:adf:9227:: with SMTP id 36-v6mr17223886wrj.275.1535029219575;
-        Thu, 23 Aug 2018 06:00:19 -0700 (PDT)
-Received: from [10.44.66.8] ([212.45.67.2])
-        by smtp.googlemail.com with ESMTPSA id g133-v6sm4770967wmf.44.2018.08.23.06.00.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 Aug 2018 06:00:19 -0700 (PDT)
-From:   Georgi Djakov <georgi.djakov@linaro.org>
-Subject: Re: [PATCH v3 2/2] PM / devfreq: Add devfreq driver for interconnect
- bandwidth voting
-To:     Saravana Kannan <skannan@codeaurora.org>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        vincent.guittot@linaro.org, daidavid1@codeaurora.org,
-        bjorn.andersson@linaro.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1533171465-25508-2-git-send-email-skannan@codeaurora.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
- xsFNBFjTuRcBEACyAOVzghvyN19Sa/Nit4LPBWkICi5W20p6bwiZvdjhtuh50H5q4ktyxJtp
- 1+s8dMSa/j58hAWhrc2SNL3fttOCo+MM1bQWwe8uMBQJP4swgXf5ZUYkSssQlXxGKqBSbWLB
- uFHOOBTzaQBaNgsdXo+mQ1h8UCgM0zQOmbs2ort8aHnH2i65oLs5/Xgv/Qivde/FcFtvEFaL
- 0TZ7odM67u+M32VetH5nBVPESmnEDjRBPw/DOPhFBPXtal53ZFiiRr6Bm1qKVu3dOEYXHHDt
- nF13gB+vBZ6x5pjl02NUEucSHQiuCc2Aaavo6xnuBc3lnd4z/xk6GLBqFP3P/eJ56eJv4d0B
- 0LLgQ7c1T3fU4/5NDRRCnyk6HJ5+HSxD4KVuluj0jnXW4CKzFkKaTxOp7jE6ZD/9Sh74DM8v
- etN8uwDjtYsM07I3Szlh/I+iThxe/4zVtUQsvgXjwuoOOBWWc4m4KKg+W4zm8bSCqrd1DUgL
- f67WiEZgvN7tPXEzi84zT1PiUOM98dOnmREIamSpKOKFereIrKX2IcnZn8jyycE12zMkk+Sc
- ASMfXhfywB0tXRNmzsywdxQFcJ6jblPNxscnGMh2VlY2rezmqJdcK4G4Lprkc0jOHotV/6oJ
- mj9h95Ouvbq5TDHx+ERn8uytPygDBR67kNHs18LkvrEex/Z1cQARAQABzShHZW9yZ2kgRGph
- a292IDxnZW9yZ2kuZGpha292QGxpbmFyby5vcmc+wsF+BBMBAgAoBQJY07kXAhsDBQkHhM4A
- BgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRCyi/eZcnWWUuvsD/4miikUeAO6fU2Xy3fT
- l7RUCeb2Uuh1/nxYoE1vtXcow6SyAvIVTD32kHXucJJfYy2zFzptWpvD6Sa0Sc58qe4iLY4j
- M54ugOYK7XeRKkQHFqqR2T3g/toVG1BOLS2atooXEU+8OFbpLkBXbIdItqJ1M1SEw8YgKmmr
- JlLAaKMq3hMb5bDQx9erq7PqEKOB/Va0nNu17IL58q+Q5Om7S1x54Oj6LiG/9kNOxQTklOQZ
- t61oW1Ewjbl325fW0/Lk0QzmfLCrmGXXiedFEMRLCJbVImXVKdIt/Ubk6SAAUrA5dFVNBzm2
- L8r+HxJcfDeEpdOZJzuwRyFnH96u1Xz+7X2V26zMU6Wl2+lhvr2Tj7spxjppR+nuFiybQq7k
- MIwyEF0mb75RLhW33sdGStCZ/nBsXIGAUS7OBj+a5fm47vQKv6ekg60oRTHWysFSJm1mlRyq
- exhI6GwUo5GM/vE36rIPSJFRRgkt6nynoba/1c4VXxfhok2rkP0x3CApJ5RimbvITTnINY0o
- CU6f1ng1I0A1UTi2YcLjFq/gmCdOHExT4huywfu1DDf0p1xDyPA1FJaii/gJ32bBP3zK53hM
- dj5S7miqN7F6ZpvGSGXgahQzkGyYpBR5pda0m0k8drV2IQn+0W8Qwh4XZ6/YdfI81+xyFlXc
- CJjljqsMCJW6PdgEH87BTQRY07kXARAAvupGd4Jdd8zRRiF+jMpv6ZGz8L55Di1fl1YRth6m
- lIxYTLwGf0/p0oDLIRldKswena3fbWh5bbTMkJmRiOQ/hffhPSNSyyh+WQeLY2kzl6geiHxD
- zbw37e2hd3rWAEfVFEXOLnmenaUeJFyhA3Wd8OLdRMuoV+RaLhNfeHctiEn1YGy2gLCq4VNb
- 4Wj5hEzABGO7+LZ14hdw3hJIEGKtQC65Jh/vTayGD+qdwedhINnIqslk9tCQ33a+jPrCjXLW
- X29rcgqigzsLHH7iVHWA9R5Aq7pCy5hSFsl4NBn1uV6UHlyOBUuiHBDVwTIAUnZ4S8EQiwgv
- WQxEkXEWLM850V+G6R593yZndTr3yydPgYv0xEDACd6GcNLR/x8mawmHKzNmnRJoOh6Rkfw2
- fSiVGesGo83+iYq0NZASrXHAjWgtZXO1YwjW9gCQ2jYu9RGuQM8zIPY1VDpQ6wJtjO/KaOLm
- NehSR2R6tgBJK7XD9it79LdbPKDKoFSqxaAvXwWgXBj0Oz+Y0BqfClnAbxx3kYlSwfPHDFYc
- R/ppSgnbR5j0Rjz/N6Lua3S42MDhQGoTlVkgAi1btbdV3qpFE6jglJsJUDlqnEnwf03EgjdJ
- 6KEh0z57lyVcy5F/EUKfTAMZweBnkPo+BF2LBYn3Qd+CS6haZAWaG7vzVJu4W/mPQzsAEQEA
- AcLBZQQYAQIADwUCWNO5FwIbDAUJB4TOAAAKCRCyi/eZcnWWUhlHD/0VE/2x6lKh2FGP+QHH
- UTKmiiwtMurYKJsSJlQx0T+j/1f+zYkY3MDX+gXa0d0xb4eFv8WNlEjkcpSPFr+pQ7CiAI33
- 99kAVMQEip/MwoTYvM9NXSMTpyRJ/asnLeqa0WU6l6Z9mQ41lLzPFBAJ21/ddT4xeBDv0dxM
- GqaH2C6bSnJkhSfSja9OxBe+F6LIAZgCFzlogbmSWmUdLBg+sh3K6aiBDAdZPUMvGHzHK3fj
- gHK4GqGCFK76bFrHQYgiBOrcR4GDklj4Gk9osIfdXIAkBvRGw8zg1zzUYwMYk+A6v40gBn00
- OOB13qJe9zyKpReWMAhg7BYPBKIm/qSr82aIQc4+FlDX2Ot6T/4tGUDr9MAHaBKFtVyIqXBO
- xOf0vQEokkUGRKWBE0uA3zFVRfLiT6NUjDQ0vdphTnsdA7h01MliZLQ2lLL2Mt5lsqU+6sup
- Tfql1omgEpjnFsPsyFebzcKGbdEr6vySGa3Cof+miX06hQXKe99a5+eHNhtZJcMAIO89wZmj
- 7ayYJIXFqjl/X0KBcCbiAl4vbdBw1bqFnO4zd1lMXKVoa29UHqby4MPbQhjWNVv9kqp8A39+
- E9xw890l1xdERkjVKX6IEJu2hf7X3MMl9tOjBK6MvdOUxvh1bNNmXh7OlBL1MpJYY/ydIm3B
- KEmKjLDvB0pePJkdTw==
-Message-ID: <4fcac639-cba9-1a71-9b78-326ebb9242da@linaro.org>
-Date:   Thu, 23 Aug 2018 16:00:18 +0300
+        Thu, 23 Aug 2018 12:37:10 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w7ND78og039346;
+        Thu, 23 Aug 2018 08:07:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1535029628;
+        bh=RVgELN6UWU8yeoE+0Dbn7KKQWqnLimMcmmLCXqqMwkw=;
+        h=From:To:CC:Subject:Date;
+        b=LGbrMYn+viOiGVaOjElJzbd6a/f715gdpok25ppvpv39QLjY9uiZM+wsdTZW784sg
+         HtnomnD31wjpULwQSgAm9X7p7fiZN/iMM8fxatNYBpFYnC3uBfNQyI9UVVvqgo+O35
+         g2LOHFREWEyv0LCmlTuHtSGDvn+o3yTGfKFvHu4Q=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7ND78eB013295;
+        Thu, 23 Aug 2018 08:07:08 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 23
+ Aug 2018 08:07:08 -0500
+Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Thu, 23 Aug 2018 08:07:08 -0500
+Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7ND75GJ029083;
+        Thu, 23 Aug 2018 08:07:06 -0500
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+To:     <dan.j.williams@intel.com>, <vkoul@kernel.org>
+CC:     <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <lars@metafoo.de>, <radheys@xilinx.com>
+Subject: [PATCH] dmaengine: Add metadata_ops for dma_async_tx_descriptor
+Date:   Thu, 23 Aug 2018 16:07:28 +0300
+Message-ID: <20180823130728.20506-1-peter.ujfalusi@ti.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-In-Reply-To: <1533171465-25508-2-git-send-email-skannan@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Saravana,
+The metadata is best described as side band data or parameters traveling
+alongside the data DMAd by the DMA engine. It is data
+which is understood by the peripheral and the peripheral driver only, the
+DMA engine see it only as data block and it is not interpreting it in any
+way.
 
-On 08/02/2018 03:57 AM, Saravana Kannan wrote:
-> This driver registers itself as a devfreq device that allows devfreq
-> governors to make bandwidth votes for an interconnect path. This allows
-> applying various policies for different interconnect paths using devfreq
-> governors.
-> 
-> Example uses:
-> * Use the devfreq performance governor to set the CPU to DDR interconnect
->   path for maximum performance.
-> * Use the devfreq performance governor to set the GPU to DDR interconnect
->   path for maximum performance.
-> * Use the CPU frequency to device frequency mapping governor to scale the
->   DDR frequency based on the needs of the CPUs' current frequency.
+The metadata can be different per descriptor as it is a parameter for the
+data being transferred.
 
-Usually CPUs and GPUs have dedicated cpufreq/devfreq drivers and i was
-wondering if the interconnect support could be put into these drivers
-directly?
+If the DMA supports per descriptor metadata it can implement the attach,
+get_ptr/set_len callbacks.
 
-> 
-> Signed-off-by: Saravana Kannan <skannan@codeaurora.org>
-> ---
->  Documentation/devicetree/bindings/devfreq/icbw.txt |  21 ++++
->  drivers/devfreq/Kconfig                            |  13 +++
->  drivers/devfreq/Makefile                           |   1 +
->  drivers/devfreq/devfreq_icbw.c                     | 116 +++++++++++++++++++++
->  4 files changed, 151 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/devfreq/icbw.txt
->  create mode 100644 drivers/devfreq/devfreq_icbw.c
-> 
-> diff --git a/Documentation/devicetree/bindings/devfreq/icbw.txt b/Documentation/devicetree/bindings/devfreq/icbw.txt
-> new file mode 100644
-> index 0000000..36cf045
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/devfreq/icbw.txt
-> @@ -0,0 +1,21 @@
-> +Interconnect bandwidth device
-> +
-> +icbw is a device that represents an interconnect path that connects two
-> +devices. This device is typically used to vote for BW requirements between
-> +two devices. Eg: CPU to DDR, GPU to DDR, etc
-> +
-> +Required properties:
-> +- compatible:		Must be "devfreq-icbw"
-> +- interconnects:	Pairs of phandles and interconnect provider specifier
-> +			to denote the edge source and destination ports of
-> +			the interconnect path. See also:
-> +		Documentation/devicetree/bindings/interconnect/interconnect.txt
-> +- interconnect-names:	Must have one entry with the name "path".
-> +
-> +Example:
-> +
-> +	qcom,cpubw {
-> +		compatible = "devfreq-icbw";
-> +		interconnects = <&snoc MASTER_APSS_1 &bimc SLAVE_EBI_CH0>;
-> +		interconnect-names = "path";
+Client drivers must only use either attach or get_ptr/set_len to avoid
+miss configuration.
 
-interconnect-names is optional when there is only a single path.
+Client driver can check if a given metadata mode is supported by the
+channel during probe time with
+dmaengine_is_metadata_mode_supported(chan, DESC_METADATA_CLIENT);
+dmaengine_is_metadata_mode_supported(chan, DESC_METADATA_ENGINE);
 
-> +	};
-> diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
-> index 3d9ae68..590370e 100644
-> --- a/drivers/devfreq/Kconfig
-> +++ b/drivers/devfreq/Kconfig
-> @@ -121,6 +121,19 @@ config ARM_RK3399_DMC_DEVFREQ
->            It sets the frequency for the memory controller and reads the usage counts
->            from hardware.
->  
-> +config DEVFREQ_ICBW
-> +	bool "DEVFREQ device for making bandwidth votes on interconnect paths"
+and based on this information can use either mode.
 
-Can this be a module?
+Wrappers are also added for the metadata_ops.
 
-> +	select DEVFREQ_GOV_PERFORMANCE
-> +	select DEVFREQ_GOV_POWERSAVE
-> +	select DEVFREQ_GOV_USERSPACE
-> +	default n
+To be used in DESC_METADATA_CLIENT mode:
+dmaengine_desc_attach_metadata()
 
-There's no need to specify this default. It is 'n' by default anyway.
-Also maybe you want to add something like:
-	depends on INTERCONNECT=y
+To be used in DESC_METADATA_ENGINE mode:
+dmaengine_desc_get_metadata_ptr()
+dmaengine_desc_set_metadata_len()
 
-Thanks,
-Georgi
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+---
+Hi,
 
-> +	help
-> +	  Different devfreq governors use this devfreq device to make
-> +	  bandwidth votes for interconnect paths between different devices
-> +	  (Eg: CPU to DDR, GPU to DDR, etc). This driver provides a generic
-> +	  interface so that the devfreq governors can be shared across SoCs
-> +	  and architectures.
-> +
->  source "drivers/devfreq/event/Kconfig"
+Changes since rfc:
+- DESC_METADATA_EMBEDDED renamed to DESC_METADATA_ENGINE
+- Use flow is added for both CLIENT and ENGINE metadata modes
+
+Regards,
+Peter
+
+ include/linux/dmaengine.h | 144 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 144 insertions(+)
+
+diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
+index 3db833a8c542..f809635cfeaa 100644
+--- a/include/linux/dmaengine.h
++++ b/include/linux/dmaengine.h
+@@ -231,6 +231,57 @@ typedef struct { DECLARE_BITMAP(bits, DMA_TX_TYPE_END); } dma_cap_mask_t;
+  * @bytes_transferred: byte counter
+  */
+ 
++/**
++ * enum dma_desc_metadata_mode - per descriptor metadata mode types supported
++ * @DESC_METADATA_CLIENT - the metadata buffer is allocated/provided by the
++ *  client driver and it is attached (via the dmaengine_desc_attach_metadata()
++ *  helper) to the descriptor.
++ *
++ * Client drivers interested to use this mode can follow:
++ * - DMA_MEM_TO_DEV:
++ *   1. prepare the descriptor (dmaengine_prep_*)
++ *	construct the metadata in the clinet's buffer
++ *   2. use dmaengine_desc_attach_metadata() to attach the buffer to the
++ *	descriptor
++ *   3. submit the transfer
++ * - DMA_DEV_TO_MEM:
++ *   1. prepare the descriptor (dmaengine_prep_*)
++ *   2. use dmaengine_desc_attach_metadata() to attach the buffer to the
++ *	descriptor
++ *   3. submit the transfer
++ *   4. when the transfer is completed, the metadata should be available in the
++ *	attached buffer
++ *
++ * @DESC_METADATA_ENGINE - the metadata buffer is allocated/managed by the DMA
++ *  driver. The client driver can ask for the pointer, maximum size and the
++ *  currently used size of the metadata and can directly update or read it.
++ *  dmaengine_desc_get_metadata_ptr() and dmaengine_desc_set_metadata_len() is
++ *  provided as helper functions.
++ *
++ * Client drivers interested to use this mode can follow:
++ * - DMA_MEM_TO_DEV:
++ *   1. prepare the descriptor (dmaengine_prep_*)
++ *   2. use dmaengine_desc_get_metadata_ptr() to get the pointer to the engine's
++ *	metadata area
++ *   3. update the metadata at the pointer
++ *   4. use dmaengine_desc_set_metadata_len()  to tell the DMA engine the amount
++ *	of data the client has placed into the metadata buffer
++ *   5. submit the transfer
++ * - DMA_DEV_TO_MEM:
++ *   1. prepare the descriptor (dmaengine_prep_*)
++ *   2. submit the transfer
++ *   3. on transfer completion, use dmaengine_desc_get_metadata_ptr() to get the
++ *	pointer to the engine's metadata are
++ *   4. Read out the metadate from the pointer
++ *
++ * Note: the two mode is not compatible and clients must use one mode for a
++ * descriptor.
++ */
++enum dma_desc_metadata_mode {
++	DESC_METADATA_CLIENT = (1 << 0),
++	DESC_METADATA_ENGINE = (1 << 1),
++};
++
+ struct dma_chan_percpu {
+ 	/* stats */
+ 	unsigned long memcpy_count;
+@@ -494,6 +545,18 @@ struct dmaengine_unmap_data {
+ 	dma_addr_t addr[0];
+ };
+ 
++struct dma_async_tx_descriptor;
++
++struct dma_descriptor_metadata_ops {
++	int (*attach)(struct dma_async_tx_descriptor *desc, void *data,
++		      size_t len);
++
++	void *(*get_ptr)(struct dma_async_tx_descriptor *desc,
++			 size_t *payload_len, size_t *max_len);
++	int (*set_len)(struct dma_async_tx_descriptor *desc,
++		       size_t payload_len);
++};
++
+ /**
+  * struct dma_async_tx_descriptor - async transaction descriptor
+  * ---dma generic offload fields---
+@@ -523,6 +586,8 @@ struct dma_async_tx_descriptor {
+ 	dma_async_tx_callback_result callback_result;
+ 	void *callback_param;
+ 	struct dmaengine_unmap_data *unmap;
++	enum dma_desc_metadata_mode desc_metadata_mode;
++	struct dma_descriptor_metadata_ops *metadata_ops;
+ #ifdef CONFIG_ASYNC_TX_ENABLE_CHANNEL_SWITCH
+ 	struct dma_async_tx_descriptor *next;
+ 	struct dma_async_tx_descriptor *parent;
+@@ -685,6 +750,7 @@ struct dma_filter {
+  * @global_node: list_head for global dma_device_list
+  * @filter: information for device/slave to filter function/param mapping
+  * @cap_mask: one or more dma_capability flags
++ * @desc_metadata_modes: supported metadata modes by the DMA device
+  * @max_xor: maximum number of xor sources, 0 if no capability
+  * @max_pq: maximum number of PQ sources and PQ-continue capability
+  * @copy_align: alignment shift for memcpy operations
+@@ -749,6 +815,7 @@ struct dma_device {
+ 	struct list_head global_node;
+ 	struct dma_filter filter;
+ 	dma_cap_mask_t  cap_mask;
++	enum dma_desc_metadata_mode desc_metadata_modes;
+ 	unsigned short max_xor;
+ 	unsigned short max_pq;
+ 	enum dmaengine_alignment copy_align;
+@@ -935,6 +1002,83 @@ static inline struct dma_async_tx_descriptor *dmaengine_prep_dma_memcpy(
+ 						    len, flags);
+ }
+ 
++static inline bool dmaengine_is_metadata_mode_supported(struct dma_chan *chan,
++		enum dma_desc_metadata_mode mode)
++{
++	return !!(chan->device->desc_metadata_modes & mode);
++}
++
++static inline int _desc_check_and_set_metadata_mode(
++	struct dma_async_tx_descriptor *desc, enum dma_desc_metadata_mode mode)
++{
++	/* Make sure that the metadata mode is not mixed */
++	if (!desc->desc_metadata_mode) {
++		if (dmaengine_is_metadata_mode_supported(desc->chan, mode))
++			desc->desc_metadata_mode = mode;
++		else
++			return -ENOTSUPP;
++	} else if (desc->desc_metadata_mode != mode) {
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++static inline int dmaengine_desc_attach_metadata(
++		struct dma_async_tx_descriptor *desc, void *data, size_t len)
++{
++	int ret;
++
++	if (!desc)
++		return -EINVAL;
++
++	ret = _desc_check_and_set_metadata_mode(desc, DESC_METADATA_CLIENT);
++	if (ret)
++		return ret;
++
++	if (!desc->metadata_ops || !desc->metadata_ops->attach)
++		return -ENOTSUPP;
++
++	return desc->metadata_ops->attach(desc, data, len);
++}
++
++static inline void *dmaengine_desc_get_metadata_ptr(
++		struct dma_async_tx_descriptor *desc, size_t *payload_len,
++		size_t *max_len)
++{
++	int ret;
++
++	if (!desc)
++		return ERR_PTR(-EINVAL);
++
++	ret = _desc_check_and_set_metadata_mode(desc, DESC_METADATA_ENGINE);
++	if (ret)
++		return ERR_PTR(ret);
++
++	if (!desc->metadata_ops || !desc->metadata_ops->get_ptr)
++		return ERR_PTR(-ENOTSUPP);
++
++	return desc->metadata_ops->get_ptr(desc, payload_len, max_len);
++}
++
++static inline int dmaengine_desc_set_metadata_len(
++		struct dma_async_tx_descriptor *desc, size_t payload_len)
++{
++	int ret;
++
++	if (!desc)
++		return -EINVAL;
++
++	ret = _desc_check_and_set_metadata_mode(desc, DESC_METADATA_ENGINE);
++	if (ret)
++		return ret;
++
++	if (!desc->metadata_ops || !desc->metadata_ops->set_len)
++		return -ENOTSUPP;
++
++	return desc->metadata_ops->set_len(desc, payload_len);
++}
++
+ /**
+  * dmaengine_terminate_all() - Terminate all active DMA transfers
+  * @chan: The channel for which to terminate the transfers
+-- 
+Peter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+
