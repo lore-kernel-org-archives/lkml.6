@@ -6,37 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 773C1C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:22:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAA6CC43615
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:22:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38619208D6
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:22:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38619208D6
+	by mail.kernel.org (Postfix) with ESMTP id 9B5F7208D6
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:22:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B5F7208D6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730582AbeHWLu2 (ORCPT
+        id S1730608AbeHWLue (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:50:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46876 "EHLO
+        Thu, 23 Aug 2018 07:50:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46898 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728096AbeHWLu2 (ORCPT
+        with ESMTP id S1728096AbeHWLue (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:50:28 -0400
+        Thu, 23 Aug 2018 07:50:34 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EF8008B1;
-        Thu, 23 Aug 2018 08:21:57 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6ABF18B1;
+        Thu, 23 Aug 2018 08:22:04 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gevorg Sahakyan <sahakyan@synopsys.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        William Wu <william.wu@rock-chips.com>,
+        stable@vger.kernel.org, Stefan Wahren <stefan.wahren@i2se.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Minas Harutyunyan <hminas@synopsys.com>,
+        Grigor Tovmasyan <tovmasya@synopsys.com>,
         Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 045/217] usb: dwc2: fix isoc split in transfer with no data
-Date:   Thu, 23 Aug 2018 09:52:38 +0200
-Message-Id: <20180823075507.558012358@linuxfoundation.org>
+Subject: [PATCH 4.14 047/217] usb: gadget: dwc2: fix memory leak in gadget_init()
+Date:   Thu, 23 Aug 2018 09:52:40 +0200
+Message-Id: <20180823075507.654816657@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -53,59 +54,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: William Wu <william.wu@rock-chips.com>
+From: Grigor Tovmasyan <Grigor.Tovmasyan@synopsys.com>
 
-[ Upstream commit 70c3c8cb83856758025c2a211dd022bc0478922a ]
+[ Upstream commit 9bb073a053f0464ea74a4d4c331fdb7da58568d6 ]
 
-If isoc split in transfer with no data (the length of DATA0
-packet is zero), we can't simply return immediately. Because
-the DATA0 can be the first transaction or the second transaction
-for the isoc split in transaction. If the DATA0 packet with no
-data is in the first transaction, we can return immediately.
-But if the DATA0 packet with no data is in the second transaction
-of isoc split in transaction sequence, we need to increase the
-qtd->isoc_frame_index and giveback urb to device driver if needed,
-otherwise, the MDATA packet will be lost.
+Freed allocated request for ep0 to prevent memory leak in case when
+dwc2_driver_probe() failed.
 
-A typical test case is that connect the dwc2 controller with an
-usb hs Hub (GL852G-12), and plug an usb fs audio device (Plantronics
-headset) into the downstream port of Hub. Then use the usb mic
-to record, we can find noise when playback.
-
-In the case, the isoc split in transaction sequence like this:
-
-- SSPLIT IN transaction
-- CSPLIT IN transaction
-  - MDATA packet (176 bytes)
-- CSPLIT IN transaction
-  - DATA0 packet (0 byte)
-
-This patch use both the length of DATA0 and qtd->isoc_split_offset
-to check if the DATA0 is in the second transaction.
-
-Tested-by: Gevorg Sahakyan <sahakyan@synopsys.com>
-Tested-by: Heiko Stuebner <heiko@sntech.de>
-Acked-by: Minas Harutyunyan hminas@synopsys.com>
-Signed-off-by: William Wu <william.wu@rock-chips.com>
+Cc: Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Tested-by: Stefan Wahren <stefan.wahren@i2se.com>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Acked-by: Minas Harutyunyan <hminas@synopsys.com>
+Signed-off-by: Grigor Tovmasyan <tovmasya@synopsys.com>
 Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/dwc2/hcd_intr.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/usb/dwc2/gadget.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/dwc2/hcd_intr.c
-+++ b/drivers/usb/dwc2/hcd_intr.c
-@@ -923,9 +923,8 @@ static int dwc2_xfercomp_isoc_split_in(s
- 	frame_desc = &qtd->urb->iso_descs[qtd->isoc_frame_index];
- 	len = dwc2_get_actual_xfer_length(hsotg, chan, chnum, qtd,
- 					  DWC2_HC_XFER_COMPLETE, NULL);
--	if (!len) {
-+	if (!len && !qtd->isoc_split_offset) {
- 		qtd->complete_split = 0;
--		qtd->isoc_split_offset = 0;
- 		return 0;
+--- a/drivers/usb/dwc2/gadget.c
++++ b/drivers/usb/dwc2/gadget.c
+@@ -4717,9 +4717,11 @@ int dwc2_gadget_init(struct dwc2_hsotg *
  	}
  
+ 	ret = usb_add_gadget_udc(dev, &hsotg->gadget);
+-	if (ret)
++	if (ret) {
++		dwc2_hsotg_ep_free_request(&hsotg->eps_out[0]->ep,
++					   hsotg->ctrl_req);
+ 		return ret;
+-
++	}
+ 	dwc2_hsotg_dump(hsotg);
+ 
+ 	return 0;
+@@ -4732,6 +4734,7 @@ int dwc2_gadget_init(struct dwc2_hsotg *
+ int dwc2_hsotg_remove(struct dwc2_hsotg *hsotg)
+ {
+ 	usb_del_gadget_udc(&hsotg->gadget);
++	dwc2_hsotg_ep_free_request(&hsotg->eps_out[0]->ep, hsotg->ctrl_req);
+ 
+ 	return 0;
+ }
 
 
