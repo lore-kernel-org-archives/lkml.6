@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B079FC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:59:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2089C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:59:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 743602098B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:59:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 743602098B
+	by mail.kernel.org (Postfix) with ESMTP id 93CA02098B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:59:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93CA02098B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728554AbeHWL2G (ORCPT
+        id S1728573AbeHWL2K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:28:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42074 "EHLO
+        Thu, 23 Aug 2018 07:28:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42082 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726836AbeHWL2F (ORCPT
+        with ESMTP id S1726836AbeHWL2J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:28:05 -0400
+        Thu, 23 Aug 2018 07:28:09 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 34B199D2;
-        Thu, 23 Aug 2018 07:59:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A22EC9D2;
+        Thu, 23 Aug 2018 07:59:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 57/79] qlogic: check kstrtoul() for errors
-Date:   Thu, 23 Aug 2018 09:53:33 +0200
-Message-Id: <20180823074922.853914601@linuxfoundation.org>
+Subject: [PATCH 4.4 34/79] drm/exynos: gsc: Fix support for NV16/61, YUV420/YVU420 and YUV422 modes
+Date:   Thu, 23 Aug 2018 09:53:10 +0200
+Message-Id: <20180823074920.926159195@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074918.641878835@linuxfoundation.org>
 References: <20180823074918.641878835@linuxfoundation.org>
@@ -51,31 +52,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-[ Upstream commit 5fc853cc01c68f84984ecc2d5fd777ecad78240f ]
+[ Upstream commit dd209ef809080ced903e7747ee3ef640c923a1d2 ]
 
-We accidentally left out the error handling for kstrtoul().
+Fix following issues related to planar YUV pixel format configuration:
+- NV16/61 modes were incorrectly programmed as NV12/21,
+- YVU420 was programmed as YUV420 on source,
+- YVU420 and YUV422 were programmed as YUV420 on output.
 
-Fixes: a520030e326a ("qlcnic: Implement flash sysfs callback for 83xx adapter")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Inki Dae <inki.dae@samsung.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/qlogic/qlcnic/qlcnic_sysfs.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/exynos/exynos_drm_gsc.c |   29 ++++++++++++++++++++---------
+ drivers/gpu/drm/exynos/regs-gsc.h       |    1 +
+ 2 files changed, 21 insertions(+), 9 deletions(-)
 
---- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sysfs.c
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sysfs.c
-@@ -1128,6 +1128,8 @@ static ssize_t qlcnic_83xx_sysfs_flash_w
- 	struct qlcnic_adapter *adapter = dev_get_drvdata(dev);
- 
- 	ret = kstrtoul(buf, 16, &data);
-+	if (ret)
-+		return ret;
- 
- 	switch (data) {
- 	case QLC_83XX_FLASH_SECTOR_ERASE_CMD:
+--- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+@@ -526,21 +526,25 @@ static int gsc_src_set_fmt(struct device
+ 			GSC_IN_CHROMA_ORDER_CRCB);
+ 		break;
+ 	case DRM_FORMAT_NV21:
++		cfg |= (GSC_IN_CHROMA_ORDER_CRCB | GSC_IN_YUV420_2P);
++		break;
+ 	case DRM_FORMAT_NV61:
+-		cfg |= (GSC_IN_CHROMA_ORDER_CRCB |
+-			GSC_IN_YUV420_2P);
++		cfg |= (GSC_IN_CHROMA_ORDER_CRCB | GSC_IN_YUV422_2P);
+ 		break;
+ 	case DRM_FORMAT_YUV422:
+ 		cfg |= GSC_IN_YUV422_3P;
+ 		break;
+ 	case DRM_FORMAT_YUV420:
++		cfg |= (GSC_IN_CHROMA_ORDER_CBCR | GSC_IN_YUV420_3P);
++		break;
+ 	case DRM_FORMAT_YVU420:
+-		cfg |= GSC_IN_YUV420_3P;
++		cfg |= (GSC_IN_CHROMA_ORDER_CRCB | GSC_IN_YUV420_3P);
+ 		break;
+ 	case DRM_FORMAT_NV12:
++		cfg |= (GSC_IN_CHROMA_ORDER_CBCR | GSC_IN_YUV420_2P);
++		break;
+ 	case DRM_FORMAT_NV16:
+-		cfg |= (GSC_IN_CHROMA_ORDER_CBCR |
+-			GSC_IN_YUV420_2P);
++		cfg |= (GSC_IN_CHROMA_ORDER_CBCR | GSC_IN_YUV422_2P);
+ 		break;
+ 	default:
+ 		dev_err(ippdrv->dev, "invalid target yuv order 0x%x.\n", fmt);
+@@ -800,18 +804,25 @@ static int gsc_dst_set_fmt(struct device
+ 			GSC_OUT_CHROMA_ORDER_CRCB);
+ 		break;
+ 	case DRM_FORMAT_NV21:
+-	case DRM_FORMAT_NV61:
+ 		cfg |= (GSC_OUT_CHROMA_ORDER_CRCB | GSC_OUT_YUV420_2P);
+ 		break;
++	case DRM_FORMAT_NV61:
++		cfg |= (GSC_OUT_CHROMA_ORDER_CRCB | GSC_OUT_YUV422_2P);
++		break;
+ 	case DRM_FORMAT_YUV422:
++		cfg |= GSC_OUT_YUV422_3P;
++		break;
+ 	case DRM_FORMAT_YUV420:
++		cfg |= (GSC_OUT_CHROMA_ORDER_CBCR | GSC_OUT_YUV420_3P);
++		break;
+ 	case DRM_FORMAT_YVU420:
+-		cfg |= GSC_OUT_YUV420_3P;
++		cfg |= (GSC_OUT_CHROMA_ORDER_CRCB | GSC_OUT_YUV420_3P);
+ 		break;
+ 	case DRM_FORMAT_NV12:
++		cfg |= (GSC_OUT_CHROMA_ORDER_CBCR | GSC_OUT_YUV420_2P);
++		break;
+ 	case DRM_FORMAT_NV16:
+-		cfg |= (GSC_OUT_CHROMA_ORDER_CBCR |
+-			GSC_OUT_YUV420_2P);
++		cfg |= (GSC_OUT_CHROMA_ORDER_CBCR | GSC_OUT_YUV422_2P);
+ 		break;
+ 	default:
+ 		dev_err(ippdrv->dev, "invalid target yuv order 0x%x.\n", fmt);
+--- a/drivers/gpu/drm/exynos/regs-gsc.h
++++ b/drivers/gpu/drm/exynos/regs-gsc.h
+@@ -138,6 +138,7 @@
+ #define GSC_OUT_YUV420_3P		(3 << 4)
+ #define GSC_OUT_YUV422_1P		(4 << 4)
+ #define GSC_OUT_YUV422_2P		(5 << 4)
++#define GSC_OUT_YUV422_3P		(6 << 4)
+ #define GSC_OUT_YUV444			(7 << 4)
+ #define GSC_OUT_TILE_TYPE_MASK		(1 << 2)
+ #define GSC_OUT_TILE_C_16x8		(0 << 2)
 
 
