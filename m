@@ -2,126 +2,114 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A29DBC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 18:21:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7726C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 18:25:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C6C52147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 18:21:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C6C52147A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 6C3C92147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 18:25:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=maine.edu header.i=@maine.edu header.b="VVkDKmCq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C3C92147A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=maine.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727409AbeHWVwk (ORCPT
+        id S1727398AbeHWV4F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 17:52:40 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:36657 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726573AbeHWVwk (ORCPT
+        Thu, 23 Aug 2018 17:56:05 -0400
+Received: from mail-qk0-f171.google.com ([209.85.220.171]:41594 "EHLO
+        mail-qk0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726573AbeHWV4F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 17:52:40 -0400
-Received: from static-50-53-48-205.bvtn.or.frontiernet.net ([50.53.48.205] helo=[192.168.192.153])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1fsuEq-0006X5-GM; Thu, 23 Aug 2018 18:21:44 +0000
-Subject: Re: [PATCH] apparmor: remove unused label
-To:     Arnd Bergmann <arnd@arndb.de>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     Seth Arnold <seth.arnold@canonical.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180823140917.3060915-1-arnd@arndb.de>
-From:   John Johansen <john.johansen@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Canonical
-Message-ID: <090d76e5-25ef-349c-3160-3f74c9196b38@canonical.com>
-Date:   Thu, 23 Aug 2018 11:21:41 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 23 Aug 2018 17:56:05 -0400
+Received: by mail-qk0-f171.google.com with SMTP id h138-v6so4254564qke.8
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 11:25:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=maine.edu; s=google;
+        h=from:date:to:cc:subject:message-id:user-agent:mime-version;
+        bh=HKRjZCtEzlifLpJKhAO9ULHGt9CycvAjl4PA2sGorVs=;
+        b=VVkDKmCqM/yDCEndXo8brNVElx1aZVUCrQjOfdVoc/B7vs4A/waTOkQLZrFVM7DBA4
+         YPuot/3Y/Ns0kEI4lYHCUIku5rSH2KlUwsm1B6M4rB7v99sVFViTevcaqi48YyZFSyy1
+         4fder52OL0RAqPS5AFdG7jhT+sYJa/Lu0CD2c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:user-agent
+         :mime-version;
+        bh=HKRjZCtEzlifLpJKhAO9ULHGt9CycvAjl4PA2sGorVs=;
+        b=IaTK0McX/CHm8iG5OsdONYu4EdM4G9MrLl54PhsJrc3Wz64m0aijyWtvLCDRdC+90q
+         iPh6N/KuGApq2q3DHqMsT8eaPfnwxnXt3MNZOcdeZ6LqTONMV8n2FYfBLpk9nxQ4xBiK
+         W4SmiPTXSWUVUSz0m5MuQ2oOIKju0YjAAWxZ5qt5zKnJsxpfeB7FwP6rfTGuXjokWYxb
+         mWev2stj8cUl0cG1mfAMVSXFR/T+Da2NmqeliVynX08NzeZ8C+hGHLiPpqDdjbsx2QeM
+         vxAsjJHpaFbeaPodUY+eZCz9uOP30MlF7NikDCAqOonGNbxYwQztU0MLqr+CI7AOoXSe
+         nyiQ==
+X-Gm-Message-State: AOUpUlGq/4ecoklAS8Hs5KWTBXyBIhJC/R1rSiaVtkw9sl6bIylkFPPS
+        gOII8GDSFp1Aqbq8cmqE/+EegTIyv7k=
+X-Google-Smtp-Source: AA+uWPz96qsneYaGvqMmvZbRBV3zMNdjjRCJ3GV4P4s/K2IWhOykh1cUUppH0SOiNNikqV7ABXg2NQ==
+X-Received: by 2002:a37:4453:: with SMTP id r80-v6mr56953200qka.79.1535048709234;
+        Thu, 23 Aug 2018 11:25:09 -0700 (PDT)
+Received: from macbook-air (weaver.eece.maine.edu. [130.111.218.23])
+        by smtp.gmail.com with ESMTPSA id a17-v6sm3010243qkb.62.2018.08.23.11.25.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 23 Aug 2018 11:25:08 -0700 (PDT)
+From:   Vince Weaver <vincent.weaver@maine.edu>
+X-Google-Original-From: Vince Weaver <vince@maine.edu>
+Date:   Thu, 23 Aug 2018 14:25:06 -0400 (EDT)
+X-X-Sender: vince@macbook-air
+To:     Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org
+cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [perf] perf_event.h ABI visibility question
+Message-ID: <alpine.DEB.2.21.1808231401440.28868@macbook-air>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20180823140917.3060915-1-arnd@arndb.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/23/2018 07:09 AM, Arnd Bergmann wrote:
 
-thank you for the patch, but a fix for this issue was pushed to apparmor-next yesterday
+I notice that Linux 4.18 has the following changeset which changes the
+user visible perf_event.h file
+
+	commit 6cbc304f2f360f25cc8607817239d6f4a2fd3dc5
+	Author: Peter Zijlstra <peterz@infradead.org>
+	Date:   Thu May 10 15:48:41 2018 +0200
+
+    perf/x86/intel: Fix unwind errors from PEBS entries (mk-II)
+
+which contains
+
+--- a/include/uapi/linux/perf_event.h
++++ b/include/uapi/linux/perf_event.h
+@@ -143,6 +143,8 @@ enum perf_event_sample_format {
+        PERF_SAMPLE_PHYS_ADDR                   = 1U << 19,
+ 
+        PERF_SAMPLE_MAX = 1U << 20,             /* non-ABI */
++
++       __PERF_SAMPLE_CALLCHAIN_EARLY           = 1ULL << 63,
+ };
 
 
-> After the corresponding 'goto' was removed, we get a warning
-> for the 'fail' label:
-> 
-> security/apparmor/policy_unpack.c: In function 'unpack_dfa':
-> security/apparmor/policy_unpack.c:426:1: error: label 'fail' defined but not used [-Werror=unused-label]
-> 
-> Fixes: fb5841091f28 ("apparmor: remove no-op permission check in policy_unpack")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  security/apparmor/policy_unpack.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
-> index 3647b5834ace..96d8cf68ce65 100644
-> --- a/security/apparmor/policy_unpack.c
-> +++ b/security/apparmor/policy_unpack.c
-> @@ -423,7 +423,6 @@ static struct aa_dfa *unpack_dfa(struct aa_ext *e)
->  
->  	return dfa;
->  
-> -fail:
->  	aa_put_dfa(dfa);
->  	return ERR_PTR(-EPROTO);
->  }
-> 
+Is this supposed to be a user-visible interface?
+
+I realize that if the user tries to set anything above PERF_SAMPLE_MAX
+it will be caught and flagged as EINVAL.
+
+However even with the double-underscore hint in 
+__PERF_SAMPLE_CALLCHAIN_EARLY the value is still in the user-visible 
+header so it's now part of the ABI and I guess the manpage has to document it.
+
+Vince
 
