@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33162C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:11:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7697C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:11:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC22120C0C
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:11:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC22120C0C
+	by mail.kernel.org (Postfix) with ESMTP id 957C121473
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:11:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 957C121473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729839AbeHWLjv (ORCPT
+        id S1729853AbeHWLjy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:39:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45762 "EHLO
+        Thu, 23 Aug 2018 07:39:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45770 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727420AbeHWLju (ORCPT
+        with ESMTP id S1727420AbeHWLjy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:39:50 -0400
+        Thu, 23 Aug 2018 07:39:54 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 75776BB6;
-        Thu, 23 Aug 2018 08:11:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AD533BB6;
+        Thu, 23 Aug 2018 08:11:26 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        stable@vger.kernel.org, Yuchung Cheng <ycheng@google.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Neal Cardwell <ncardwell@google.com>,
+        Lawrence Brakmo <brakmo@fb.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 105/130] qlogic: check kstrtoul() for errors
-Date:   Thu, 23 Aug 2018 09:53:41 +0200
-Message-Id: <20180823074933.885552047@linuxfoundation.org>
+Subject: [PATCH 4.9 106/130] tcp: remove DELAYED ACK events in DCTCP
+Date:   Thu, 23 Aug 2018 09:53:42 +0200
+Message-Id: <20180823074933.941335980@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
 References: <20180823074927.161454870@linuxfoundation.org>
@@ -51,31 +54,111 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Yuchung Cheng <ycheng@google.com>
 
-[ Upstream commit 5fc853cc01c68f84984ecc2d5fd777ecad78240f ]
+[ Upstream commit a69258f7aa2623e0930212f09c586fd06674ad79 ]
 
-We accidentally left out the error handling for kstrtoul().
+After fixing the way DCTCP tracking delayed ACKs, the delayed-ACK
+related callbacks are no longer needed
 
-Fixes: a520030e326a ("qlcnic: Implement flash sysfs callback for 83xx adapter")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Yuchung Cheng <ycheng@google.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Acked-by: Neal Cardwell <ncardwell@google.com>
+Acked-by: Lawrence Brakmo <brakmo@fb.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/qlogic/qlcnic/qlcnic_sysfs.c |    2 ++
- 1 file changed, 2 insertions(+)
+ include/net/tcp.h     |    2 --
+ net/ipv4/tcp_dctcp.c  |   25 -------------------------
+ net/ipv4/tcp_output.c |    4 ----
+ 3 files changed, 31 deletions(-)
 
---- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sysfs.c
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sysfs.c
-@@ -1128,6 +1128,8 @@ static ssize_t qlcnic_83xx_sysfs_flash_w
- 	struct qlcnic_adapter *adapter = dev_get_drvdata(dev);
+--- a/include/net/tcp.h
++++ b/include/net/tcp.h
+@@ -850,8 +850,6 @@ enum tcp_ca_event {
+ 	CA_EVENT_LOSS,		/* loss timeout */
+ 	CA_EVENT_ECN_NO_CE,	/* ECT set, but not CE marked */
+ 	CA_EVENT_ECN_IS_CE,	/* received CE marked IP packet */
+-	CA_EVENT_DELAYED_ACK,	/* Delayed ack is sent */
+-	CA_EVENT_NON_DELAYED_ACK,
+ };
  
- 	ret = kstrtoul(buf, 16, &data);
-+	if (ret)
-+		return ret;
+ /* Information about inbound ACK, passed to cong_ops->in_ack_event() */
+--- a/net/ipv4/tcp_dctcp.c
++++ b/net/ipv4/tcp_dctcp.c
+@@ -55,7 +55,6 @@ struct dctcp {
+ 	u32 dctcp_alpha;
+ 	u32 next_seq;
+ 	u32 ce_state;
+-	u32 delayed_ack_reserved;
+ 	u32 loss_cwnd;
+ };
  
- 	switch (data) {
- 	case QLC_83XX_FLASH_SECTOR_ERASE_CMD:
+@@ -96,7 +95,6 @@ static void dctcp_init(struct sock *sk)
+ 
+ 		ca->dctcp_alpha = min(dctcp_alpha_on_init, DCTCP_MAX_ALPHA);
+ 
+-		ca->delayed_ack_reserved = 0;
+ 		ca->loss_cwnd = 0;
+ 		ca->ce_state = 0;
+ 
+@@ -230,25 +228,6 @@ static void dctcp_state(struct sock *sk,
+ 	}
+ }
+ 
+-static void dctcp_update_ack_reserved(struct sock *sk, enum tcp_ca_event ev)
+-{
+-	struct dctcp *ca = inet_csk_ca(sk);
+-
+-	switch (ev) {
+-	case CA_EVENT_DELAYED_ACK:
+-		if (!ca->delayed_ack_reserved)
+-			ca->delayed_ack_reserved = 1;
+-		break;
+-	case CA_EVENT_NON_DELAYED_ACK:
+-		if (ca->delayed_ack_reserved)
+-			ca->delayed_ack_reserved = 0;
+-		break;
+-	default:
+-		/* Don't care for the rest. */
+-		break;
+-	}
+-}
+-
+ static void dctcp_cwnd_event(struct sock *sk, enum tcp_ca_event ev)
+ {
+ 	switch (ev) {
+@@ -258,10 +237,6 @@ static void dctcp_cwnd_event(struct sock
+ 	case CA_EVENT_ECN_NO_CE:
+ 		dctcp_ce_state_1_to_0(sk);
+ 		break;
+-	case CA_EVENT_DELAYED_ACK:
+-	case CA_EVENT_NON_DELAYED_ACK:
+-		dctcp_update_ack_reserved(sk, ev);
+-		break;
+ 	default:
+ 		/* Don't care for the rest. */
+ 		break;
+--- a/net/ipv4/tcp_output.c
++++ b/net/ipv4/tcp_output.c
+@@ -3444,8 +3444,6 @@ void tcp_send_delayed_ack(struct sock *s
+ 	int ato = icsk->icsk_ack.ato;
+ 	unsigned long timeout;
+ 
+-	tcp_ca_event(sk, CA_EVENT_DELAYED_ACK);
+-
+ 	if (ato > TCP_DELACK_MIN) {
+ 		const struct tcp_sock *tp = tcp_sk(sk);
+ 		int max_ato = HZ / 2;
+@@ -3502,8 +3500,6 @@ void __tcp_send_ack(struct sock *sk, u32
+ 	if (sk->sk_state == TCP_CLOSE)
+ 		return;
+ 
+-	tcp_ca_event(sk, CA_EVENT_NON_DELAYED_ACK);
+-
+ 	/* We are not putting this on the write queue, so
+ 	 * tcp_transmit_skb() will set the ownership to this
+ 	 * sock.
 
 
