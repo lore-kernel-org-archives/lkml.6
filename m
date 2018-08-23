@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6A39C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:02:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74783C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:02:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78E14208CC
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:02:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78E14208CC
+	by mail.kernel.org (Postfix) with ESMTP id 386F6208CC
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:02:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 386F6208CC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388583AbeHWMbd (ORCPT
+        id S2388596AbeHWMbg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:31:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55868 "EHLO
+        Thu, 23 Aug 2018 08:31:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55882 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388551AbeHWMbc (ORCPT
+        with ESMTP id S1729739AbeHWMbg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:31:32 -0400
+        Thu, 23 Aug 2018 08:31:36 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 89B32BBF;
-        Thu, 23 Aug 2018 09:02:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B6EE0BBF;
+        Thu, 23 Aug 2018 09:02:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
+        stable@vger.kernel.org, Alan Tull <atull@kernel.org>,
+        Frank Rowand <frank.rowand@sony.com>,
+        Rob Herring <robh@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 267/324] drm/nouveau/gem: off by one bugs in nouveau_gem_pushbuf_reloc_apply()
-Date:   Thu, 23 Aug 2018 09:55:33 +0200
-Message-Id: <20180823075009.328842514@linuxfoundation.org>
+Subject: [PATCH 4.17 268/324] of: overlay: update phandle cache on overlay apply and remove
+Date:   Thu, 23 Aug 2018 09:55:34 +0200
+Message-Id: <20180823075009.376639539@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -51,41 +52,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Frank Rowand <frank.rowand@sony.com>
 
-[ Upstream commit 7f073d011f93e92d4d225526b9ab6b8b0bbd6613 ]
+[ Upstream commit b9952b5218added5577e4a3443969bc20884cea9 ]
 
-The bo array has req->nr_buffers elements so the > should be >= so we
-don't read beyond the end of the array.
+A comment in the review of the patch adding the phandle cache said that
+the cache would have to be updated when modules are applied and removed.
+This patch implements the cache updates.
 
-Fixes: a1606a9596e5 ("drm/nouveau: new gem pushbuf interface, bump to 0.0.16")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+Fixes: 0b3ce78e90fc ("of: cache phandle nodes to reduce cost of of_find_node_by_phandle()")
+Reported-by: Alan Tull <atull@kernel.org>
+Suggested-by: Alan Tull <atull@kernel.org>
+Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+Signed-off-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/nouveau/nouveau_gem.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/of/base.c       |    6 +++---
+ drivers/of/of_private.h |    2 ++
+ drivers/of/overlay.c    |   11 +++++++++++
+ 3 files changed, 16 insertions(+), 3 deletions(-)
 
---- a/drivers/gpu/drm/nouveau/nouveau_gem.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_gem.c
-@@ -617,7 +617,7 @@ nouveau_gem_pushbuf_reloc_apply(struct n
- 		struct nouveau_bo *nvbo;
- 		uint32_t data;
+--- a/drivers/of/base.c
++++ b/drivers/of/base.c
+@@ -102,7 +102,7 @@ static u32 phandle_cache_mask;
+  *   - the phandle lookup overhead reduction provided by the cache
+  *     will likely be less
+  */
+-static void of_populate_phandle_cache(void)
++void of_populate_phandle_cache(void)
+ {
+ 	unsigned long flags;
+ 	u32 cache_entries;
+@@ -134,8 +134,7 @@ out:
+ 	raw_spin_unlock_irqrestore(&devtree_lock, flags);
+ }
  
--		if (unlikely(r->bo_index > req->nr_buffers)) {
-+		if (unlikely(r->bo_index >= req->nr_buffers)) {
- 			NV_PRINTK(err, cli, "reloc bo index invalid\n");
- 			ret = -EINVAL;
- 			break;
-@@ -627,7 +627,7 @@ nouveau_gem_pushbuf_reloc_apply(struct n
- 		if (b->presumed.valid)
- 			continue;
+-#ifndef CONFIG_MODULES
+-static int __init of_free_phandle_cache(void)
++int of_free_phandle_cache(void)
+ {
+ 	unsigned long flags;
  
--		if (unlikely(r->reloc_bo_index > req->nr_buffers)) {
-+		if (unlikely(r->reloc_bo_index >= req->nr_buffers)) {
- 			NV_PRINTK(err, cli, "reloc container bo index invalid\n");
- 			ret = -EINVAL;
- 			break;
+@@ -148,6 +147,7 @@ static int __init of_free_phandle_cache(
+ 
+ 	return 0;
+ }
++#if !defined(CONFIG_MODULES)
+ late_initcall_sync(of_free_phandle_cache);
+ #endif
+ 
+--- a/drivers/of/of_private.h
++++ b/drivers/of/of_private.h
+@@ -79,6 +79,8 @@ int of_resolve_phandles(struct device_no
+ #if defined(CONFIG_OF_OVERLAY)
+ void of_overlay_mutex_lock(void);
+ void of_overlay_mutex_unlock(void);
++int of_free_phandle_cache(void);
++void of_populate_phandle_cache(void);
+ #else
+ static inline void of_overlay_mutex_lock(void) {};
+ static inline void of_overlay_mutex_unlock(void) {};
+--- a/drivers/of/overlay.c
++++ b/drivers/of/overlay.c
+@@ -804,6 +804,8 @@ static int of_overlay_apply(const void *
+ 		goto err_free_overlay_changeset;
+ 	}
+ 
++	of_populate_phandle_cache();
++
+ 	ret = __of_changeset_apply_notify(&ovcs->cset);
+ 	if (ret)
+ 		pr_err("overlay changeset entry notify error %d\n", ret);
+@@ -1046,8 +1048,17 @@ int of_overlay_remove(int *ovcs_id)
+ 
+ 	list_del(&ovcs->ovcs_list);
+ 
++	/*
++	 * Disable phandle cache.  Avoids race condition that would arise
++	 * from removing cache entry when the associated node is deleted.
++	 */
++	of_free_phandle_cache();
++
+ 	ret_apply = 0;
+ 	ret = __of_changeset_revert_entries(&ovcs->cset, &ret_apply);
++
++	of_populate_phandle_cache();
++
+ 	if (ret) {
+ 		if (ret_apply)
+ 			devicetree_state_flags |= DTSF_REVERT_FAIL;
 
 
