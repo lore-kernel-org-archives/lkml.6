@@ -3,111 +3,234 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57EFDC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 12:35:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B12EDC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 12:36:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 045D620684
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 12:35:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 045D620684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6B91D214FF
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 12:36:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B91D214FF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728696AbeHWQEp (ORCPT
+        id S1729503AbeHWQFo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 12:04:45 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45820 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726675AbeHWQEp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 12:04:45 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7271DED1;
-        Thu, 23 Aug 2018 05:35:13 -0700 (PDT)
-Received: from [10.4.12.81] (melchizedek.emea.arm.com [10.4.12.81])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1CB963F5BC;
-        Thu, 23 Aug 2018 05:35:09 -0700 (PDT)
-Subject: Re: [PATCH v4 1/5] arm64: export memblock_reserve()d regions via
- /proc/iomem
-To:     John Stultz <john.stultz@linaro.org>
-Cc:     AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Thu, 23 Aug 2018 12:05:44 -0400
+Received: from mail-out.m-online.net ([212.18.0.9]:45647 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726332AbeHWQFo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 12:05:44 -0400
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 41x3mm6VgJz1qyL9;
+        Thu, 23 Aug 2018 14:36:08 +0200 (CEST)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 41x3mm5Vjfz1qr24;
+        Thu, 23 Aug 2018 14:36:08 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id L3dSJPySrUVJ; Thu, 23 Aug 2018 14:36:07 +0200 (CEST)
+X-Auth-Info: GlNNlTi729EKxEd4MiBMp9ExsIyA4XBuYet35k7lEjg=
+Received: from jawa (85-222-111-42.dynamic.chello.pl [85.222.111.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Thu, 23 Aug 2018 14:36:07 +0200 (CEST)
+Date:   Thu, 23 Aug 2018 14:36:00 +0200
+From:   Lukasz Majewski <lukma@denx.de>
+To:     Michal =?UTF-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        G Gregory <graeme.gregory@linaro.org>, al.stone@linaro.org,
-        bhsharma@redhat.com, tbaicar@codeaurora.org,
-        kexec@lists.infradead.org, lkml <linux-kernel@vger.kernel.org>,
-        hanjun.guo@linaro.org, Sudeep Holla <sudeep.holla@arm.com>,
-        dyoung@redhat.com,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-References: <20180723015732.24252-1-takahiro.akashi@linaro.org>
- <20180723015732.24252-2-takahiro.akashi@linaro.org>
- <CALAqxLU3+tu09M5=D-6xCqweKenfXtZuBGy6tqEP2DoGAs-LNA@mail.gmail.com>
- <38e0224a-46f8-85c3-abe2-5e89d16810ea@arm.com>
- <CALAqxLX=BBcjR3kbK8nhddzdtv7tMiDs2OcvMA-e9QNw6Lv3hg@mail.gmail.com>
-From:   James Morse <james.morse@arm.com>
-Message-ID: <dc5a9115-7536-6d72-18fd-60b5322c870c@arm.com>
-Date:   Thu, 23 Aug 2018 13:35:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        devicetree@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Lothar =?UTF-8?B?V2HDn21hbm4=?= <LW@karo-electronics.de>
+Subject: Re: [RFC PATCH 1/2] dt-bindings: pwm: imx: Allow switching PWM
+ output between PWM and GPIO
+Message-ID: <20180823143600.3e417542@jawa>
+In-Reply-To: <0691e93d-c2e2-21e5-374f-c29e7765de93@ysoft.com>
+References: <1534862333-27950-1-git-send-email-michal.vokac@ysoft.com>
+        <1534862333-27950-2-git-send-email-michal.vokac@ysoft.com>
+        <20180823123759.68b78e9f@jawa>
+        <0691e93d-c2e2-21e5-374f-c29e7765de93@ysoft.com>
+Organization: denx.de
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <CALAqxLX=BBcjR3kbK8nhddzdtv7tMiDs2OcvMA-e9QNw6Lv3hg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/bSzWo+0iYXRf0ckL35a+C5W"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi John,
+--Sig_/bSzWo+0iYXRf0ckL35a+C5W
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On 21/08/18 20:38, John Stultz wrote:
-> On Tue, Aug 21, 2018 at 3:22 AM, James Morse <james.morse@arm.com> wrote:
->> On 08/21/2018 05:39 AM, John Stultz wrote:
->>>
->>> Since this patch landed, on the HiKey board at bootup I'm seeing:
->>>
->>> [    0.451884] WARNING: CPU: 1 PID: 1 at arch/arm64/kernel/setup.c:271
->>> reserve_memblock_reserved_regions+0xd4/0x13c
-> ...
->>>  From skimming the patch, it seems this is maybe expected? Or should
->>> this warning raise eyebrows? I can't quite figure it out.
->>
+Hi Michal,
 
->>> /proc/iomem now has:
->>> ...
->>> 07410000-21efffff : System RAM
->>>    11000000-1113cfff : reserved
->>
->>
->>> 21f00000-21ffffff : reserved
->>
->>
->> ^ This entry is what triggered the warning.
->>
->> It expects that meblock_reserved() memory is also described as memory.
->> (memblock keeps them as separate lists, so its possible to reserve
->> memory that doesn't exist... which it looks like your system is doing)
-> 
-> So yea, I suspect the hikey dts isn't quite right here then.
+> On 23.8.2018 12:40, Lukasz Majewski wrote:
+>=20
+> Hi Lukasz, thanks for the reply!
+> > Hi Michal,
+> >  =20
+> >> Output of the PWM block of i.MX SoCs is always zero volts when the
+> >> block is disabled. This can caue issues when inverted PWM polarity
+> >> is needed. With inverted polarity a duty cycle =3D 0% corresponds to
+> >> solid high level on the output. If the PWM is dissabled its output
+> >> instantly goes to solid zero which corresponds to duty cycle =3D
+> >> 100%.
+> >>
+> >> To have a trully inverted PWM output configure the PWM pad as a
+> >> GPIO with pull-up. Then switch the pad to PWM output whenever
+> >> non-zero duty cycle is needed. =20
+> >=20
+> > Just to ask - Is your display equipped with power supply
+> > enable/disable pin? =20
+>=20
+> No it is not. The backlight on my display is just a bunch of serial-
+> parallel connected LEDs with separate GND and VCC pins on a separate
+> flex cable. And the display itself also does not have a reset or
+> enable signal. It is a PITA=C2=A0to use it I must say..
 
-The DT mem-reserve code goes and memblock_removes() some regions, instead of
-marking them nomap.
+Yes, it seems so. I must have had more luck than you with the HW....
 
-Given memblock has a for_each_resv_unavail_range() that explicitly walks
-reserved && !memory, it looks like this is expected, and its just me thinking
-this is strange.
+>  =20
+> > As fair as I remember the trick to avoid flickering the display
+> > was to disable the display (enable-gpio property) and set the PWM
+> > PIN as GPIO to high in u-boot. =20
+>=20
+> Yes, I know about that. I can not use this as the PWM output is the
+> only signal I have to control the backlight. I mentioned that
+> somewhere in the previous discussion with Lothar.
 
-I will come up with a version of this patch that walks the 'System RAM'
-resources that were created during boot, and adds the memblock_reserved()
-regions to them, which should stop this happening.
+Yes, I've read it. I also find the PWM pinctrl as "default" state more
+natural.
+
+One more idea - though.
+
+In iMX6Q it was possible to specify the pinctrl PIN setup as 0x80000000
+- this means that it goes untouched to the IP block (configured by
+  bootloader).
+
+Maybe it would work to:
+
+1. Setup the PWM output as GPIO in u-boot (high)
+
+2. In PWM IMX probe configure PWM to be 100% duty cycle. And switch
+iomux to PWM function of the pin
+
+3. Then latter in the code PWM gets configured and we can control it in
+"normal" way ?
+
+Or am I missing some important point?
+
+>=20
+> I also think this could be useful not only for backlight. Any circuit
+> that requires truly inverted PWM signal can use it. I see it as an
+> enhancement to what you with Lothar have already done ;)
+>  =20
+> >>
+> >> Signed-off-by: Michal Vok=C3=A1=C4=8D <michal.vokac@ysoft.com>
+> >> ---
+> >>   Documentation/devicetree/bindings/pwm/imx-pwm.txt | 44
+> >> +++++++++++++++++++++++ 1 file changed, 44 insertions(+)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/pwm/imx-pwm.txt
+> >> b/Documentation/devicetree/bindings/pwm/imx-pwm.txt index
+> >> c61bdf8..3b1bc4c 100644 ---
+> >> a/Documentation/devicetree/bindings/pwm/imx-pwm.txt +++
+> >> b/Documentation/devicetree/bindings/pwm/imx-pwm.txt @@ -14,6 +14,12
+> >> @@ See the clock consumer binding,
+> >> Documentation/devicetree/bindings/clock/clock-bindings.txt
+> >>   - interrupts: The interrupt for the pwm controller
+> >>  =20
+> >> +Optional properties:
+> >> +- pinctrl: For i.MX27 and newer SoCs. Add extra pinctrl to
+> >> configure the PWM
+> >> +  pin to gpio function.  It allows control over the pin output
+> >> level when the
+> >> +  PWM block is disabled. This is meant to be used if inverted
+> >> polarity of the
+> >> +  PWM signal is required. See "Inverted PWM output" section
+> >> bellow. +
+> >>   Example:
+> >>  =20
+> >>   pwm1: pwm@53fb4000 {
+> >> @@ -25,3 +31,41 @@ pwm1: pwm@53fb4000 {
+> >>   	clock-names =3D "ipg", "per";
+> >>   	interrupts =3D <61>;
+> >>   };
+> >> +
+> >> +Inverted PWM output
+> >> +-------------------
+> >> +
+> >> +The i.MX SoC has such limitation that whenever a pad is configured
+> >> as a PWM +output, the output level is always zero volts when the
+> >> PWM block is disabled. +The zero output level is actively driven
+> >> by the output stage of the PWM block +and can not be overridden by
+> >> pull-up. It also does not matter what PWM polarity +a PWM client
+> >> (e.g. backlight) requested. +
+> >> +To gain control of the PWM output level in disabled state two
+> >> pinctrl states +can be used. The "default" state and the "pwm"
+> >> state. In the default state the +PWM output is configured as a
+> >> GPIO with pull-up. In the "pwm" state the output +is configured as
+> >> a PWM output. This setup assures that the PWM output is at +the
+> >> required level that corresponds to duty cycle =3D 0 when PWM is
+> >> disabled. +E.g. at boot. +
+> >> +Example:
+> >> +
+> >> +&pwm1 {
+> >> +	pinctrl-names =3D "default", "pwm";
+> >> +	pinctrl-0 =3D <&pinctrl_backlight_gpio>;
+> >> +	pinctrl-1 =3D <&pinctrl_backlight_pwm>;
+> >> +}
+> >> +
+> >> +pinctrl_backlight_gpio: pwm1grp-gpio {
+> >> +	fsl,pins =3D <
+> >> +		/* GPIO with 22kOhm pull-up */
+> >> +		MX6QDL_PAD_GPIO_9__GPIO1_IO09	0xF008
+> >> +	>;
+> >> +};
+> >> +
+> >> +pinctrl_backlight_pwm: pwm1grp-pwm {
+> >> +	fsl,pins =3D <
+> >> +		/* PWM output */
+> >> +		MX6QDL_PAD_GPIO_9__PWM1_OUT	0x8
+> >> +	>;
+> >> +}; =20
 
 
-Thanks,
 
-James
+
+Best regards,
+
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-10 Fax: (+49)-8142-66989-80 Email: wd@denx.de
+
+--Sig_/bSzWo+0iYXRf0ckL35a+C5W
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAlt+qjAACgkQAR8vZIA0
+zr2jVgf/cT9BMXZrWumniSwKM1BMNZQUsUM5wnxP8jaTMvl0JRS74z7CRbTe3j5J
+FexaDCLnIf6eE62XjGikn/j3pjMJ43/G7n6sTn/6B2JU1FDVrL+pfXseSLNXuRt3
+STW+nAU45T9OO4Q/yM7MY8IziOY7leS+FWdXeP4LN9aoWFAEC08YRKbUrGisiLzt
+CbJpZ9qGZaMk6rSEjOR792kkmlIqKahpSVqe39VqYJv9/lDkDV2PPc3U5Pi8xR0p
+0CSDKBeZnk9opqJC42vqAO6nc9V1xZWxOUGlGK62rZjdwyFHI6gKqJNxGAOLwqlz
+MDADTr1fgZjQTSnmr73SpoeCdylmyg==
+=TSWt
+-----END PGP SIGNATURE-----
+
+--Sig_/bSzWo+0iYXRf0ckL35a+C5W--
