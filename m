@@ -2,123 +2,89 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4777C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 04:25:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03D21C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 04:33:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FCD8208EC
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 04:25:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EA13208FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 04:33:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="PPGCWpG/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FCD8208EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="hNgJiM14"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EA13208FC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728317AbeHWHx3 (ORCPT
+        id S1728368AbeHWIAz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 03:53:29 -0400
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:32392 "EHLO
-        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726870AbeHWHx3 (ORCPT
+        Thu, 23 Aug 2018 04:00:55 -0400
+Received: from mail-pl0-f51.google.com ([209.85.160.51]:37752 "EHLO
+        mail-pl0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728121AbeHWIAz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 03:53:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1534998346; x=1566534346;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=KF7QyF6hqWf5lZJXqD5PIKFJaq5UV+tubKsVcz9gZWA=;
-  b=PPGCWpG/JExqmf2mybp7N/jqcfIIcGNZQdgj/rxDHVvGEDpCMz9/7WhR
-   bDTVCk5eHtnYkkTL2E71WQDRxegRWf4andqGOWt+FR1lEMvt3VwcCHTqG
-   wkFawvGtdcM2uI5c4yQBT42xMuFQ6Dvgcs1j1XA3XhZW/rsM2+u/G7tVM
-   f7UAYGQss/9QwBTFWKYuTRhPMGq8D9W+mkQ6NnzUcU/nQfZ7ysMb92S3V
-   xcEQO47ddBqSU1FAAutKvSw6zZGW8wnbFQsol7WmQBTECIeWT8iWW2HRR
-   RIWLwvcBVEu0uUmf6Dru61yhburrur3YlLVufMpXkYyDaxbSNV64pJirB
-   A==;
-X-IronPort-AV: E=Sophos;i="5.53,276,1531756800"; 
-   d="scan'208";a="89121464"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 23 Aug 2018 12:25:46 +0800
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP; 22 Aug 2018 21:12:57 -0700
-Received: from usa003209.ad.shared (HELO [10.86.60.90]) ([10.86.60.90])
-  by uls-op-cesaip01.wdc.com with ESMTP; 22 Aug 2018 21:25:46 -0700
-Subject: Re: [RFC PATCH 3/5] RISC-V: Add cpu_operatios structure
-To:     Anup Patel <anup@brainfault.org>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        "palmer@sifive.com" <palmer@sifive.com>,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <1534377377-70108-1-git-send-email-atish.patra@wdc.com>
- <1534377377-70108-4-git-send-email-atish.patra@wdc.com>
- <CAAhSdy2TeNfjdzWPHtCwrorBu8c9v-u9Ro-eGMbzSwzapfwdjw@mail.gmail.com>
- <ce39a215-3bb1-d866-0d84-76642acb70bc@wdc.com>
- <CAAhSdy30Fz0Ki5zMws6hspgn=xwcFLj3VVixH88UWGU+oehBQg@mail.gmail.com>
- <20180821074826.GA28079@infradead.org>
- <CAAhSdy2NP4raXXPVvEJyAO127=J9jR3NNEHLF=vigBz=v-Qqkw@mail.gmail.com>
- <20180822060353.GA27106@infradead.org>
- <CAAhSdy1jdn7OS1AxwXYZqejUw-qto-5Afbb6o034ahH26E+vyw@mail.gmail.com>
-From:   Atish Patra <atish.patra@wdc.com>
-Message-ID: <2b317c0a-aa06-002a-a3f3-148a25e897ae@wdc.com>
-Date:   Thu, 23 Aug 2018 09:55:45 +0530
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <CAAhSdy1jdn7OS1AxwXYZqejUw-qto-5Afbb6o034ahH26E+vyw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 23 Aug 2018 04:00:55 -0400
+Received: by mail-pl0-f51.google.com with SMTP id c6-v6so1823166pls.4
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 21:33:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=XdYtr6eLvwK/1kG57Yrs+I/W2nzB5QJMcn2suQPEt4Q=;
+        b=hNgJiM14FGM5H82bGBJNDmaaXhLLD9OqnfSREeFphH3yr3rWgfSTUarS7YTqtmUiBt
+         TYy313lSI7jvtnZ5JmoIkJUII7NuYR/2xI60322NpiD6+sZC1t6jiwJZtQb3o/5VnoMm
+         3kQi35AgOE93BMaoN89yu7HFJfGLFuHSMgJ8aOLyZWFd4zcne4FmKMSwD7R3Nhcw+HQA
+         JtBbkNUJAigtGhdSkVK5llbrq8fO+PH222dlbwQ3l7EUdBDjW6EUOBtu7Z2arEe3+N8E
+         6SfRENv5F5j/BSgP8ynAoxUwe9YX/6hNUwpIPcun+l64MdRVGwLoob8CkN9HN2qQvwbB
+         +mnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=XdYtr6eLvwK/1kG57Yrs+I/W2nzB5QJMcn2suQPEt4Q=;
+        b=cMC4e2G7KBgqY/AEz6bqkc7SqlN2ScCZ+TVge7pF/TUL+GGUc7Fcja/rfPKIeadzCJ
+         OTuXcwAEA7I2JTCeD8C9O4Qm7EL08n4vxhEHrvfufpw/oOfkb4Kv3xe5goRde7/f7Gq2
+         AwPGHh2pcbOwa0Bbo+lvCNNBgGpqFVA7g6b19eq50BjRX5D0OJ/zN/EQ4FKKo/WrmeJl
+         uQU1fxlNyw1v8JpiPPhTPSD7eCp+TE5SMVtDfGnlzofGgKDzFb54+1IQsl21cHoDebc4
+         xTgdkgEbXVDwBHk3K4Rt6XtyjKn5SzjvM3UyYzy0e6ZkT12rTRV4kVSoQ8wJXfkMzSvx
+         QwXA==
+X-Gm-Message-State: AOUpUlF8RKL8pe2+ihejb0pajQYYLsjOGWWGuMKOp8Gs2UJIBpmxcSlo
+        xy/MeN76R3rZ6DPz7dzPBsD1f6h3ffibdQ==
+X-Google-Smtp-Source: AA+uWPwNyyXkwkeUs6uitv62P9MBZNU8kVVcO7hzBl2fD9SIBPf4ZFLCeCTsh4be8rcSDzyVpk7xFA==
+X-Received: by 2002:a17:902:a502:: with SMTP id s2-v6mr17780607plq.311.1534998791322;
+        Wed, 22 Aug 2018 21:33:11 -0700 (PDT)
+Received: from localhost.localdomain (99-152-116-91.lightspeed.sntcca.sbcglobal.net. [99.152.116.91])
+        by smtp.gmail.com with ESMTPSA id 70-v6sm4859947pfz.27.2018.08.22.21.33.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 22 Aug 2018 21:33:09 -0700 (PDT)
+From:   Olof Johansson <olof@lixom.net>
+To:     torvalds@linux-foundation.org
+Cc:     arm@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [GIT PULL 0/4] ARM: SoC/platform updates
+Date:   Wed, 22 Aug 2018 21:32:53 -0700
+Message-Id: <20180823043257.18582-1-olof@lixom.net>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/22/18 8:54 PM, Anup Patel wrote:
-> On Wed, Aug 22, 2018 at 11:33 AM, Christoph Hellwig <hch@infradead.org> wrote:
->> On Tue, Aug 21, 2018 at 10:34:38PM +0530, Anup Patel wrote:
->>> The cpu_operations is certainly required because SOC vendors will add
->>> vendor-specific mechanism to selectively bringing-up CPUs/HARTs instead
->>> of all CPUs entering Linux kernel simultaneously. In fact, we might also end-up
->>> having CPU ON/OFF operations in SBI.
->>
->> Your forgot an essential part in your analysis:  Right now we only have
->> one single way to deal with cpu on/offlining, and that is the dummy WFI
->> kind.  Once other ways show up we can build proper infrastructure, but
->> until then this is just a white elephant as we have no idea how these
->> abstractions will look like.
->>
->> And my hope is that we'll just see new SBI calls, in which case we'll
->> just need SBI and dummy version and can avoid all the indirect calls.
-> 
-> IMHO, rather than waiting for new CPU ON/OFF methods to come-up we
-> can keep the cpu_operations ready. Also, we are not re-inventing anything
-> here which we might have to discard later because cpu_operations are
-> already tried and hardened for Linux ARM64.
-> 
-> I agree with you that in long-term SBI-based CPU ON/OFF will be widely
-> used. Most likely we will have at-least two CPU ON/OFF methods:
-> 1. Existing lottery based spinning
-> 2. New SBI calls
-> 
-> Regards,
-> Anup
-> 
+Hi Linus,
 
-I am fine with either keeping the cpu_ops infrastructure for now or 
-reintroducing again along with better smp enablement methods.
+Another medium-sized batch of ARM updates this release cycle. Not a
+large number of new platforms in this release, but there are a few --
+from Renesas and TI in particular.
 
-Anyways, there were concerns about all existing booting method (all cpu 
-thrown to Linux at the same time). I was thinking to adopt spin table 
-boot method for RISC-V as well. I can drop this patch now and 
-reintroduce with spin table boot method.
+790 patches this time around, 173 authors. 26531 lines added and 13363
+removed -- very close to the size of last release.
 
-Any thoughts ?
+A bit more detail in each pull request, but this is overall a "business
+as usual" release this time around.
 
-Regards,
-Atish
+Please merge!
+
+
+Thanks,
+
+-Olof
+
