@@ -2,87 +2,184 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2310C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 16:33:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD13AC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 16:33:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 932A920A8B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 16:33:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 932A920A8B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.com
+	by mail.kernel.org (Postfix) with ESMTP id 752D32147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 16:33:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 752D32147A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726282AbeHWUET (ORCPT
+        id S1726461AbeHWUE1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 16:04:19 -0400
-Received: from mout.gmx.net ([212.227.17.21]:58603 "EHLO mout.gmx.net"
+        Thu, 23 Aug 2018 16:04:27 -0400
+Received: from mga05.intel.com ([192.55.52.43]:7947 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725909AbeHWUET (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 16:04:19 -0400
-Received: from localhost.localdomain ([196.52.84.82]) by mail.gmx.com
- (mrgmx102 [212.227.17.174]) with ESMTPSA (Nemesis) id
- 0Mh6lB-1fX6Pi265J-00MMa4 for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018
- 18:33:47 +0200
-From:   "Artem S. Tashkinov" <aros@gmx.com>
-Subject: Disabling CPU vulnerabilities workarounds
-To:     linux-kernel@vger.kernel.org
-Message-ID: <3ef48582-3a0a-e41c-4aee-54b5a38056c6@gmx.com>
-Date:   Thu, 23 Aug 2018 21:33:46 +0500
+        id S1725909AbeHWUE1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 16:04:27 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Aug 2018 09:33:56 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,278,1531810800"; 
+   d="scan'208";a="67330976"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga007.jf.intel.com with ESMTP; 23 Aug 2018 09:33:56 -0700
+Received: from [10.252.7.112] (abudanko-mobl.ccr.corp.intel.com [10.252.7.112])
+        by linux.intel.com (Postfix) with ESMTP id 72DA35803E2;
+        Thu, 23 Aug 2018 09:33:53 -0700 (PDT)
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Subject: [PATCH v2 0/2]: perf: reduce data loss when profiling highly parallel
+ CPU bound workloads
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-perf-users@vger.kernel.org
+Organization: Intel Corp.
+Message-ID: <e92805d0-3338-2ce5-5e88-369d406fe0a7@linux.intel.com>
+Date:   Thu, 23 Aug 2018 19:33:52 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:5fuYoS4VQ9V8wu+8685JlaBKlEh6vVXi/OBlVgSEQnduMB1VH2s
- zHLwdlS/nvKmdZmLhhBT0JeJPd+02Al+wvkz4dxJaiD9JlQzFF7h/kXSzupUwK33rOJcGLV
- D97bTyR4e9o7tQK3A758uweM6KIU7D2gzv8n7L8gSlz4GtmiuAKA4aRQj/A6O+wf84o8lSE
- 1eNo3T3iQSE6pN76I4Z9Q==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:Yaw3JeVYAFM=:COw99ufY6+1WVYpaRVPNHi
- JPuPXjdPrbQ+TttEEHIRTpAyduC6sWAXKL5vL6aQMcWvHN6FQJQSmN0fM5zeI++pgCbP6h5JR
- ObkCanlZZ7WHBf4QS1GZ2M+Z0gOsRUUAvdjlrUWEqj0ZCCd1E8FAM97lDrBhbY9wgHBfkBmLW
- 6lHJ6To8KLwhYnio7V5OjLV1JzfNZ9vrn0VetMfRplmsoLRCcxdkV8cTDALPOXcFtsWCo6B/v
- neHOdrBJOWYv+At983kjx7pEykJAJGdX50tUjdwnDUc7v1we4OyYXsvA9PPm5nxPQoSQxLAX+
- UpofN+fYgYMi16XGlO8vpbK2bCtc0EcAchOrkHzYBGqiDwLmWyUlnO2Yc1fAY3hHr69kXSliS
- rUMNTtsw3dQdDa46zEVH5QsP3aUixhUsOU0PlNU1f0J/w7T0eRtqY914j6fuXKulRKEDCzzCL
- C9CSDcDZJs8MEdUytAfMKSlZx0nYpZXMZEnw8p6n7OJjRmHaThbWQmSPB+V7u/HOUHtuwRgBq
- suLQigB801qO29KxQTliza5m731GuZM+tirdcjvrOp2v7O5UTti7DaDab0n7gp30DRd1bcV6s
- 15d2OrEYp+Mn0seW953PTkR1LK0I+9spqOVejylFxUVzIwwMVY5K4zUDO0fTG1TY7NjFFExYw
- qx29iERz6t8wz41TYnftSLznQWmoN9VlH77NvGTxhGj+sZX8zWuqEPliYZ/DFjrP6cfnIYIMV
- Owg0qdaBBrvHjNGrIk0AWGc8g9VuloQrQZeVmGY95BJ0apraEmmqx+rmEmdTLI0+TooQH/3NC
- MsAe+jn
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello LKML,
+Currently in record mode the tool implements trace writing serially. 
+The algorithm loops over mapped per-cpu data buffers and stores ready 
+data chunks into a trace file using write() system call.
 
-As time goes by more and more fixes of Intel/AMD/ARM CPUs 
-vulnerabilities are added to the Linux kernel without a simple way to 
-disable them all in one fell swoop.
+At some circumstances the kernel may lack free space in a buffer 
+because the other buffer's half is not yet written to disk due to 
+some other buffer's data writing by the tool at the moment.
 
-Disabling is a good option for strictly confined environments where no 
-3d party untrusted code is ever to be run, e.g. a rendering farm, a 
-supercomputer, or even a home server which runs Samba/SSH server and 
-nothing else.
+Thus serial trace writing implementation may cause the kernel 
+to loose profiling data and that is what observed when profiling 
+highly parallel CPU bound workloads on machines with big number 
+of cores.
 
-I wonder if someone could wrote a patch which implemented the following 
-two options for the kernel:
+Experiment with profiling matrix multiplication code executing 128 
+threads on Intel Xeon Phi (KNM) with 272 cores, like below,
+demonstrates data loss metrics value of 98%:
 
-* A boot option option which allows to disable most runtime 
-protections/workarounds/fixes (as far as I understand some of them can't 
-be reverted since they are compiled in or use certain GCC flags), e.g. 
-let's call it "insecure" or "insecurecpumode".
+/usr/bin/time perf record -o /tmp/perf-ser.data -a -N -B -T -R -g \
+    --call-graph dwarf,1024 --user-regs=IP,SP,BP \
+    --switch-events -e cycles,instructions,ref-cycles,software/period=1,name=cs,config=0x3/Duk -- \
+    matrix.gcc
 
-* A compile-time CONFIG_ option which disables all these fixes 
-_permanently_ without a way to turn them later back on during runtime.
+Data loss metrics is the ratio lost_time/elapsed_time where 
+lost_time is the sum of time intervals containing PERF_RECORD_LOST 
+records and elapsed_time is the elapsed application run time 
+under profiling.
 
-Right now linux/Documentation/admin-guide/kernel-parameters.txt is a 
-mess of various things which take ages to sift through and there's zero 
-understanding whether you've found everything and correctly disabled it.
+Applying asynchronous trace streaming thru Posix AIO API
+http://man7.org/linux/man-pages/man7/aio.7.html lowers data loss 
+metrics value providing ~25% improvement in average.
+
+Sanity testing:
+
+tools/perf/perf test
+ 1: vmlinux symtab matches kallsyms                       : Ok
+ 2: Detect openat syscall event                           : Ok
+ 3: Detect openat syscall event on all cpus               : Ok
+ 4: Read samples using the mmap interface                 : Ok
+ 5: Test data source output                               : Ok
+ 6: Parse event definition strings                        : Ok
+ 7: Simple expression parser                              : Ok
+ 8: PERF_RECORD_* events & perf_sample fields             : Ok
+ 9: Parse perf pmu format                                 : Ok
+10: DSO data read                                         : Ok
+11: DSO data cache                                        : Ok
+12: DSO data reopen                                       : Ok
+13: Roundtrip evsel->name                                 : Ok
+14: Parse sched tracepoints fields                        : Ok
+15: syscalls:sys_enter_openat event fields                : Ok
+16: Setup struct perf_event_attr                          : Skip
+17: Match and link multiple hists                         : Ok
+18: 'import perf' in python                               : FAILED!
+19: Breakpoint overflow signal handler                    : Ok
+20: Breakpoint overflow sampling                          : Ok
+21: Breakpoint accounting                                 : Ok
+22: Number of exit events of a simple workload            : Ok
+23: Software clock events period values                   : Ok
+24: Object code reading                                   : Ok
+25: Sample parsing                                        : Ok
+26: Use a dummy software event to keep tracking           : Ok
+27: Parse with no sample_id_all bit set                   : Ok
+28: Filter hist entries                                   : Ok
+29: Lookup mmap thread                                    : Ok
+30: Share thread mg                                       : Ok
+31: Sort output of hist entries                           : Ok
+32: Cumulate child hist entries                           : Ok
+33: Track with sched_switch                               : Ok
+34: Filter fds with revents mask in a fdarray             : Ok
+35: Add fd to a fdarray, making it autogrow               : Ok
+36: kmod_path__parse                                      : Ok
+37: Thread map                                            : Ok
+38: LLVM search and compile                               :
+38.1: Basic BPF llvm compile                              : Skip
+38.2: kbuild searching                                    : Skip
+38.3: Compile source for BPF prologue generation          : Skip
+38.4: Compile source for BPF relocation                   : Skip
+39: Session topology                                      : Ok
+40: BPF filter                                            :
+40.1: Basic BPF filtering                                 : Skip
+40.2: BPF pinning                                         : Skip
+40.3: BPF prologue generation                             : Skip
+40.4: BPF relocation checker                              : Skip
+41: Synthesize thread map                                 : Ok
+42: Remove thread map                                     : Ok
+43: Synthesize cpu map                                    : Ok
+44: Synthesize stat config                                : Ok
+45: Synthesize stat                                       : Ok
+46: Synthesize stat round                                 : Ok
+47: Synthesize attr update                                : Ok
+48: Event times                                           : Ok
+49: Read backward ring buffer                             : Ok
+50: Print cpu map                                         : Ok
+51: Probe SDT events                                      : Ok
+52: is_printable_array                                    : Ok
+53: Print bitmap                                          : Ok
+54: perf hooks                                            : Ok
+55: builtin clang support                                 : Skip (not compiled in)
+56: unit_number__scnprintf                                : Ok
+57: mem2node                                              : Ok
+58: x86 rdpmc                                             : Ok
+59: Convert perf time to TSC                              : Ok
+60: DWARF unwind                                          : Ok
+61: x86 instruction decoder - new instructions            : Ok
+62: Use vfs_getname probe to get syscall args filenames   : Skip
+63: Add vfs_getname probe to get syscall args filenames   : Skip
+64: Check open filename arg using perf trace + vfs_getname: Skip
+65: probe libc's inet_pton & backtrace it with ping       : FAILED!
+
+---
+ Alexey Budankov (2):
+        perf util: map data buffer for preserving collected data
+	perf record: enable asynchronous trace writing
+
+ tools/perf/builtin-record.c | 113 +++++++++++++++++++++++++++++++++++++++++---
+ tools/perf/util/evlist.c    |   7 +++
+ tools/perf/util/evlist.h    |   2 +
+ tools/perf/util/mmap.c      |  35 +++++++++-----
+ tools/perf/util/mmap.h      |   5 +-
+ 5 files changed, 142 insertions(+), 20 deletions(-)
 
 
-Best regards,
-Artem
+
+
