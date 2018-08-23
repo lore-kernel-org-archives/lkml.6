@@ -6,200 +6,142 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DF9FC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 16:55:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CE3AC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 16:55:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FDB82087E
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 16:55:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FDB82087E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 581FA208F7
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 16:55:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 581FA208F7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726478AbeHWUZy (ORCPT
+        id S1726601AbeHWU0M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 16:25:54 -0400
-Received: from mga05.intel.com ([192.55.52.43]:10031 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726185AbeHWUZx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 16:25:53 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Aug 2018 09:55:13 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,278,1531810800"; 
-   d="scan'208";a="257468852"
-Received: from djiang5-desk3.ch.intel.com ([143.182.136.93])
-  by fmsmga006.fm.intel.com with ESMTP; 23 Aug 2018 09:55:12 -0700
-Subject: Re: [lkp-robot] [mm] 15d36fecd0:
- WARNING:at_kernel/memremap.c:#devm_memremap_pages
-To:     kernel test robot <rong.a.chen@intel.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Robert Elliott <elliott@hpe.com>,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, lkp@01.org
-References: <20180823030558.GE13343@shao2-debian>
-From:   Dave Jiang <dave.jiang@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.jiang@intel.com; prefer-encrypt=mutual; keydata=
- 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
- o6nmKbYpUAltQObU2w==
-Message-ID: <e358a00a-5981-97e3-2cec-4beab9064267@intel.com>
-Date:   Thu, 23 Aug 2018 09:55:12 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180823030558.GE13343@shao2-debian>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 23 Aug 2018 16:26:12 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55164 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726185AbeHWU0M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 16:26:12 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 18EF47A7EC;
+        Thu, 23 Aug 2018 16:55:34 +0000 (UTC)
+Received: from haswell-e.nc.xsintricity.com (ovpn-120-201.rdu2.redhat.com [10.10.120.201])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 860AB2157F49;
+        Thu, 23 Aug 2018 16:55:33 +0000 (UTC)
+Message-ID: <1256f66271b31955f6e77c59335f4f75801eacf2.camel@redhat.com>
+Subject: Re: [RDMA bug] KASAN: use-after-free Read in __list_del_entry_valid
+ (4)
+From:   Doug Ledford <dledford@redhat.com>
+To:     Parav Pandit <parav@mellanox.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Eric Biggers <ebiggers@kernel.org>
+Cc:     "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "dasaratharaman.chandramouli@intel.com" 
+        <dasaratharaman.chandramouli@intel.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mark Bloch <markb@mellanox.com>,
+        Moni Shoua <monis@mellanox.com>,
+        "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>,
+        syzbot <syzbot+29ee8f76017ce6cf03da@syzkaller.appspotmail.com>
+Date:   Thu, 23 Aug 2018 12:55:32 -0400
+In-Reply-To: <VI1PR0501MB22714BE9A34FA333671A0623D1370@VI1PR0501MB2271.eurprd05.prod.outlook.com>
+References: <001a1141551246502d056845782e@google.com>
+         <001a1140f6ac1677460568489287@google.com>
+         <20180823061630.GB736@sol.localdomain> <20180823145458.GC9366@ziepe.ca>
+         <VI1PR0501MB22714BE9A34FA333671A0623D1370@VI1PR0501MB2271.eurprd05.prod.outlook.com>
+Organization: Red Hat, Inc.
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-1hOCxhPfAMC4OoIn6a/M"
+Mime-Version: 1.0
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 23 Aug 2018 16:55:34 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 23 Aug 2018 16:55:34 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dledford@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I am not able to reproduce when I booted my test system with "mem=8G
-memmap=4G!8G". I ended up with a single pmem:
-[   57.750556] nd_pmem namespace0.0: unable to guarantee persistence of
-writes
-[   57.881573] pmem0: detected capacity change from 0 to 4294967296
 
-However in the reported kmsg, it appears that memmap is splitting into 2
-namespaces rather than providing a single one, and the first region
-ended up ending in the same section as start of the second region and
-thus triggered the warning and having the second namespace rejected.
+--=-1hOCxhPfAMC4OoIn6a/M
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-kern  :warn  : [   76.646531] nd_pmem namespace0.0: unable to guarantee
-persistence of writes
-kern  :info  : [   76.661660] pmem0: detected capacity change from 0 to
-534773760
-kern  :warn  : [   76.670129] nd_pmem namespace1.0: unable to guarantee
-persistence of writes
-kern  :warn  : [   76.670290] ------------[ cut here ]------------
-kern  :warn  : [   76.670372] nd_pmem namespace1.0: Conflicting mapping
-in same section
+On Thu, 2018-08-23 at 16:39 +0000, Parav Pandit wrote:
+> > -----Original Message-----
+> > From: Jason Gunthorpe <jgg@ziepe.ca>
+> > Sent: Thursday, August 23, 2018 9:55 AM
+> > To: Eric Biggers <ebiggers@kernel.org>
+> > Cc: Doug Ledford <dledford@redhat.com>; linux-rdma@vger.kernel.org;
+> > dasaratharaman.chandramouli@intel.com; Leon Romanovsky
+> > <leonro@mellanox.com>; linux-kernel@vger.kernel.org; Mark Bloch
+> > <markb@mellanox.com>; Moni Shoua <monis@mellanox.com>; Parav Pandit
+> > <parav@mellanox.com>; syzkaller-bugs@googlegroups.com; syzbot
+> > <syzbot+29ee8f76017ce6cf03da@syzkaller.appspotmail.com>
+> > Subject: Re: [RDMA bug] KASAN: use-after-free Read in __list_del_entry_=
+valid
+> > (4)
+> >=20
+> > On Wed, Aug 22, 2018 at 11:16:31PM -0700, Eric Biggers wrote:
+> > > Hello RDMA / InfiniBand maintainers,
+> > >=20
+> > > This is an RDMA bug and it still occurs on Linus' tree as of today
+> > > (commit 815f0ddb346c1960).
+> > >=20
+> > > I've also simplified the reproducer for it; see below after the origi=
+nal report.
+> > > Apparently it involves a race between RDMA_USER_CM_CMD_RESOLVE_IP
+> >=20
+> > and
+> > > RDMA_USER_CM_CMD_LISTEN.
+> >=20
+> > That is an amazing reproducer!
+> >=20
+> > I have a feeling this is the same cause as all the other syzkaller bugs=
+ in this code:
+> > lack of any sane locking at all :\
+> >=20
+> > We've talked about chucking a big lock around this whole thing, but nob=
+ody has
+> > done it yet.. It isn't so simple.
+> >=20
+>=20
+> I had some code in which reduces three locks (handler_lock, qp_mutex, id_=
+lock) to single mutex to protect the cm_id and protects every exported symb=
+ol of rdmacm which works on cm_id.
+> But not ready enough to post it as patch yet. Lot of tests required befor=
+e I get there and some refactor too before that.
 
+Does it finally address the fact that the rdmacm code was written so
+that it was always synchronous but RoCE src gid (I think that's what it
+was, I'm typing this from long ago memory) lookup broke that assumption?
 
-On 08/22/2018 08:05 PM, kernel test robot wrote:
-> FYI, we noticed the following commit (built with gcc-7):
-> 
-> commit: 15d36fecd0bdc7510b70a0e5ec6671140b3fce0c ("mm: disallow mappings that conflict for devm_memremap_pages()")
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
-> 
-> in testcase: ndctl
-> with following parameters:
-> 
-> 
-> 
-> 
-> on test machine: 4 threads Intel(R) Core(TM) i3-3220 CPU @ 3.30GHz with 8G memory
-> 
-> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
-> 
-> 
-> +----------------+------------+------------+
-> |                | 03758dbbe2 | 15d36fecd0 |
-> +----------------+------------+------------+
-> | boot_successes | 4          | 4          |
-> +----------------+------------+------------+
-> 
-> 
-> 
-> kern  :warn  : [   76.670496] WARNING: CPU: 2 PID: 213 at kernel/memremap.c:188 devm_memremap_pages+0x9f/0x470
-> kern  :warn  : [   76.670665] Modules linked in: nd_pmem(O+) dax_pmem(O) device_dax(O) nd_btt(O) x86_pkg_temp_thermal intel_powerclamp coretemp snd_hda_codec_idt kvm_intel snd_hda_codec_generic kvm irqbypass crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel cryptd nd_e820(O) pcspkr libnvdimm(O) ahci libahci nfit_test_iomap(O) libata snd_hda_intel i915 snd_hda_codec snd_hda_core snd_hwdep snd_pcm drm_kms_helper snd_timer syscopyarea sysfillrect sysimgblt fb_sys_fops snd soundcore drm video pcc_cpufreq ip_tables
-> kern  :warn  : [   76.671408] CPU: 2 PID: 213 Comm: systemd-udevd Tainted: G           O      4.18.0-rc6-00155-g15d36fe #1
-> kern  :warn  : [   76.671564] Hardware name: Hewlett-Packard p6-1451cx/2ADA, BIOS 8.15 02/05/2013
-> kern  :warn  : [   76.671690] RIP: 0010:devm_memremap_pages+0x9f/0x470
-> kern  :warn  : [   76.671774] Code: c6 74 78 49 8b 5f 50 48 85 db 75 04 49 8b 5f 10 4c 89 ff e8 13 77 42 00 48 89 da 48 89 c6 48 c7 c7 a8 62 0e 82 e8 51 8c eb ff <0f> 0b 49 8b be 80 00 00 00 65 ff 05 f1 59 e4 7e 48 8b 47 08 a8 03 
-> kern  :warn  : [   76.672107] RSP: 0018:ffffc9000125fad8 EFLAGS: 00010282
-> kern  :warn  : [   76.672197] RAX: 0000000000000000 RBX: ffff8801a969e310 RCX: 0000000000000006
-> kern  :warn  : [   76.672316] RDX: 0000000000000007 RSI: 0000000000000086 RDI: ffff8801ffd16950
-> kern  :warn  : [   76.672434] RBP: ffff8801a98030a0 R08: 000000000000036e R09: 000000000000000a
-> kern  :warn  : [   76.672555] R10: 0000000000000000 R11: ffffffff82d6434d R12: 00000002ffffffff
-> kern  :warn  : [   76.672673] R13: 0000000000000000 R14: ffff8801a98024a0 R15: ffff8801aae09808
-> kern  :warn  : [   76.672793] FS:  00007fae9129e8c0(0000) GS:ffff8801ffd00000(0000) knlGS:0000000000000000
-> kern  :warn  : [   76.672929] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> kern  :warn  : [   76.673026] CR2: 00007fae9127ec28 CR3: 00000001aafe8003 CR4: 00000000001606e0
-> kern  :warn  : [   76.673145] Call Trace:
-> kern  :warn  : [   76.673199]  ? devres_add+0x2f/0x40
-> kern  :warn  : [   76.673266]  pmem_attach_disk+0x542/0x6a0 [nd_pmem]
-> kern  :warn  : [   76.673354]  ? kobject_release+0x69/0x1a0
-> kern  :warn  : [   76.673431]  ? nd_dax_probe+0xfc/0x120 [libnvdimm]
-> kern  :warn  : [   76.673520]  nvdimm_bus_probe+0x69/0x150 [libnvdimm]
-> kern  :warn  : [   76.673608]  driver_probe_device+0x2fa/0x470
-> kern  :warn  : [   76.673685]  __driver_attach+0xdc/0x100
-> kern  :warn  : [   76.673753]  ? driver_probe_device+0x470/0x470
-> kern  :warn  : [   76.673831]  bus_for_each_dev+0x76/0xc0
-> kern  :warn  : [   76.673900]  ? klist_add_tail+0x3b/0x70
-> kern  :warn  : [   76.673968]  bus_add_driver+0x161/0x260
-> kern  :warn  : [   76.674035]  ? 0xffffffffa0504000
-> kern  :warn  : [   76.674096]  driver_register+0x5b/0xe0
-> kern  :warn  : [   76.674162]  ? 0xffffffffa0504000
-> kern  :warn  : [   76.674223]  do_one_initcall+0x46/0x1e4
-> kern  :warn  : [   76.674293]  ? preempt_schedule_common+0x15/0x30
-> kern  :warn  : [   76.674373]  ? _cond_resched+0x22/0x30
-> kern  :warn  : [   76.674442]  ? kmem_cache_alloc_trace+0x3e/0x1e0
-> kern  :warn  : [   76.674525]  do_init_module+0x5b/0x203
-> kern  :warn  : [   76.674593]  load_module+0x1489/0x1b80
-> kern  :warn  : [   76.674662]  ? ima_post_read_file+0x102/0x110
-> kern  :warn  : [   76.674741]  ? __do_sys_finit_module+0xe9/0x110
-> kern  :warn  : [   76.674820]  __do_sys_finit_module+0xe9/0x110
-> kern  :warn  : [   76.674901]  do_syscall_64+0x5b/0x180
-> kern  :warn  : [   76.674967]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> kern  :warn  : [   76.675055] RIP: 0033:0x7fae9011b229
-> kern  :warn  : [   76.675116] Code: 00 f3 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 3f 4c 2b 00 f7 d8 64 89 01 48 
-> kern  :warn  : [   76.675449] RSP: 002b:00007ffeb0452908 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
-> kern  :warn  : [   76.675576] RAX: ffffffffffffffda RBX: 0000557dd7cccdf0 RCX: 00007fae9011b229
-> kern  :warn  : [   76.675696] RDX: 0000000000000000 RSI: 00007fae90a34265 RDI: 000000000000000f
-> kern  :warn  : [   76.675814] RBP: 00007fae90a34265 R08: 0000000000000000 R09: 00007ffeb0452e80
-> kern  :warn  : [   76.675934] R10: 000000000000000f R11: 0000000000000246 R12: 0000000000000000
-> kern  :warn  : [   76.676053] R13: 0000557dd7cde3c0 R14: 0000000000020000 R15: 0000557dd5d7dcbc
-> kern  :warn  : [   76.676175] ---[ end trace 72888cbe8943c229 ]---
-> 
-> 
-> To reproduce:
-> 
->         git clone https://github.com/intel/lkp-tests.git
->         cd lkp-tests
->         bin/lkp install job.yaml  # job file is attached in this email
->         bin/lkp run     job.yaml
-> 
-> 
-> 
-> Thanks,
-> lkp
-> 
+--=20
+Doug Ledford <dledford@redhat.com>
+    GPG KeyID: B826A3330E572FDD
+    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+--=-1hOCxhPfAMC4OoIn6a/M
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlt+5wUACgkQuCajMw5X
+L92zTA//cxfwkrUPFruDslfZ1i8fasSqTzifYuRkh7wikJ/4wI+0+WYv550sgV77
+0m/LdIx45d8kCNNfvWJbg/hcZCiskga9/89HPCwhv/imm9UDeQnU4JhULtVXhB5d
+RLR8O3ObzaE3Vtotn7iX23/5tpe7+dlijq+pKfkCWyGMxX2ZPIyy6n2kpT7TB38O
+9X5gFQ5jfcMAYRh8KzEguPL9Pv5p3X/dQ0Ugl1jSww+ylMcXGV5zU++79Jm19ZdZ
+J9YVzhiB7uneMkCkAJu2YdbGMFqoA+3QU8Mimop9qWfSGhwOsIba6CBlsNoDrW3B
+HCfUBLA8P5zWalLHOmWOECw3dZxe1o5KKrp5IoR0iR79VLuHhpoV+YanLlLfl+4U
+/r6Vo/bNNtxVv3E/1X+uUz/YHmmhw12h2jaqtf8R9WOrgj9mdz2eIHv7ULSgovcy
+2aIErmKwi2af2iWVrmFKsbQEWl8leA6P9yr44+v1GhALMulc3HLmiP12wpF/rSl9
+V2/oCVxJXJdykrFctxQp1lxzsvEKYqSTEC4CgBY8Yftb2Eh7gGIheTYqFeRr0qI2
+NervDVSU9tkvp4L7alNoMDeXwgD1ULkPFjfGDekzP0EuXFYIB6jMEghxQOeBbEOp
+wSeqItmVIfIfskyf5eHSa5r1ycVaufTvElkto3ltzG2kBXM3HmI=
+=1U3/
+-----END PGP SIGNATURE-----
+
+--=-1hOCxhPfAMC4OoIn6a/M--
+
