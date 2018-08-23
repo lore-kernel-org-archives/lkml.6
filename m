@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A406CC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:01:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56BC9C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:01:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B1E6208CC
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:01:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B1E6208CC
+	by mail.kernel.org (Postfix) with ESMTP id 1BD90208CC
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:01:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BD90208CC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388386AbeHWM34 (ORCPT
+        id S2388398AbeHWM37 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:29:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55608 "EHLO
+        Thu, 23 Aug 2018 08:29:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55612 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726277AbeHWM3z (ORCPT
+        with ESMTP id S1726277AbeHWM37 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:29:55 -0400
+        Thu, 23 Aug 2018 08:29:59 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EC440CA0;
-        Thu, 23 Aug 2018 09:01:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 21E06CA5;
+        Thu, 23 Aug 2018 09:01:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Nishanth Menon <nm@ti.com>,
+        Tony Lindgren <tony@atomide.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 246/324] sfp: fix module initialisation with netdev already up
-Date:   Thu, 23 Aug 2018 09:55:12 +0200
-Message-Id: <20180823075008.384354832@linuxfoundation.org>
+Subject: [PATCH 4.17 247/324] ARM: DRA7/OMAP5: Enable ACTLR[0] (Enable invalidates of BTB) for secondary cores
+Date:   Thu, 23 Aug 2018 09:55:13 +0200
+Message-Id: <20180823075008.431936006@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -51,60 +51,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+From: Nishanth Menon <nm@ti.com>
 
-[ Upstream commit 576cd32082351620a4e76b8babc4d5ae9b4bbb98 ]
+[ Upstream commit 2f8b5b21830aea95989a6e67d8a971297272a086 ]
 
-It was been observed that with a particular order of initialisation,
-the netdev can be up, but the SFP module still has its TX_DISABLE
-signal asserted.  This occurs when the network device brought up before
-the SFP kernel module has been inserted by userspace.
+Call secure services to enable ACTLR[0] (Enable invalidates of BTB with
+ICIALLU) when branch hardening is enabled for kernel.
 
-This occurs because sfp-bus layer does not hear about the change in
-network device state, and so assumes that it is still down.  Set
-netdev->sfp when the upstream is registered to work around this problem.
+On GP devices OMAP5/DRA7, there is no possibility to update secure
+side since "secure world" is ROM and there are no override mechanisms
+possible. On HS devices, appropriate PPA should do the workarounds as
+well.
 
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+However, the configuration is only done for secondary core, since it is
+expected that firmware/bootloader will have enabled the required
+configuration for the primary boot core (note: bootloaders typically
+will NOT enable secondary processors, since it has no need to do so).
+
+Signed-off-by: Nishanth Menon <nm@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/sfp-bus.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/mach-omap2/omap-smp.c |   41 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
---- a/drivers/net/phy/sfp-bus.c
-+++ b/drivers/net/phy/sfp-bus.c
-@@ -349,7 +349,6 @@ static int sfp_register_bus(struct sfp_b
- 	}
- 	if (bus->started)
- 		bus->socket_ops->start(bus->sfp);
--	bus->netdev->sfp_bus = bus;
- 	bus->registered = true;
- 	return 0;
- }
-@@ -364,7 +363,6 @@ static void sfp_unregister_bus(struct sf
- 		if (bus->phydev && ops && ops->disconnect_phy)
- 			ops->disconnect_phy(bus->upstream);
- 	}
--	bus->netdev->sfp_bus = NULL;
- 	bus->registered = false;
- }
+--- a/arch/arm/mach-omap2/omap-smp.c
++++ b/arch/arm/mach-omap2/omap-smp.c
+@@ -109,6 +109,45 @@ void omap5_erratum_workaround_801819(voi
+ static inline void omap5_erratum_workaround_801819(void) { }
+ #endif
  
-@@ -440,6 +438,7 @@ static void sfp_upstream_clear(struct sf
++#ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
++/*
++ * Configure ACR and enable ACTLR[0] (Enable invalidates of BTB with
++ * ICIALLU) to activate the workaround for secondary Core.
++ * NOTE: it is assumed that the primary core's configuration is done
++ * by the boot loader (kernel will detect a misconfiguration and complain
++ * if this is not done).
++ *
++ * In General Purpose(GP) devices, ACR bit settings can only be done
++ * by ROM code in "secure world" using the smc call and there is no
++ * option to update the "firmware" on such devices. This also works for
++ * High security(HS) devices, as a backup option in case the
++ * "update" is not done in the "security firmware".
++ */
++static void omap5_secondary_harden_predictor(void)
++{
++	u32 acr, acr_mask;
++
++	asm volatile ("mrc p15, 0, %0, c1, c0, 1" : "=r" (acr));
++
++	/*
++	 * ACTLR[0] (Enable invalidates of BTB with ICIALLU)
++	 */
++	acr_mask = BIT(0);
++
++	/* Do we already have it done.. if yes, skip expensive smc */
++	if ((acr & acr_mask) == acr_mask)
++		return;
++
++	acr |= acr_mask;
++	omap_smc1(OMAP5_DRA7_MON_SET_ACR_INDEX, acr);
++
++	pr_debug("%s: ARM ACR setup for CVE_2017_5715 applied on CPU%d\n",
++		 __func__, smp_processor_id());
++}
++#else
++static inline void omap5_secondary_harden_predictor(void) { }
++#endif
++
+ static void omap4_secondary_init(unsigned int cpu)
  {
- 	bus->upstream_ops = NULL;
- 	bus->upstream = NULL;
-+	bus->netdev->sfp_bus = NULL;
- 	bus->netdev = NULL;
- }
+ 	/*
+@@ -131,6 +170,8 @@ static void omap4_secondary_init(unsigne
+ 		set_cntfreq();
+ 		/* Configure ACR to disable streaming WA for 801819 */
+ 		omap5_erratum_workaround_801819();
++		/* Enable ACR to allow for ICUALLU workaround */
++		omap5_secondary_harden_predictor();
+ 	}
  
-@@ -468,6 +467,7 @@ struct sfp_bus *sfp_register_upstream(st
- 		bus->upstream_ops = ops;
- 		bus->upstream = upstream;
- 		bus->netdev = ndev;
-+		ndev->sfp_bus = bus;
- 
- 		if (bus->sfp) {
- 			ret = sfp_register_bus(bus);
+ 	/*
 
 
