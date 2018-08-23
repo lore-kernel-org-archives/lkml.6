@@ -2,158 +2,106 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E1E6C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 18:07:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B7CC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 18:09:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B4662147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 18:07:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B4662147A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id AF04021568
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 18:09:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vi3KsMD5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF04021568
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727072AbeHWVh7 (ORCPT
+        id S1727234AbeHWVj5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 17:37:59 -0400
-Received: from gateway30.websitewelcome.com ([192.185.192.34]:17275 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726819AbeHWVh7 (ORCPT
+        Thu, 23 Aug 2018 17:39:57 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:37889 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726573AbeHWVj5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 17:37:59 -0400
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id 4F82E1DC78
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 12:42:53 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id stcrfcbvMPvAdstd4fb2L8; Thu, 23 Aug 2018 12:42:52 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.40.214] (port=57188 helo=[192.168.1.71])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fstcq-003IQW-Sa; Thu, 23 Aug 2018 12:42:29 -0500
-Subject: Re: [PATCH] usb: iowarrior: replace kmalloc with kmalloc_array
+        Thu, 23 Aug 2018 17:39:57 -0400
+Received: by mail-wm0-f66.google.com with SMTP id t25-v6so6717071wmi.3;
+        Thu, 23 Aug 2018 11:09:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=OFcUxlDpNdZFO3OSqQIlCjKidM2M3HO/0OZvcjNRLTg=;
+        b=Vi3KsMD5Bxq1gnfQnXttGVejKfFoKiD//iP/BZDp8J+5clL0LXweooA9of0ezEeLwX
+         +Qa+q+jKnpLQd36JQTuj8cn5DVVNzbIH07QQPZDcT0tZT51AfZvA6Xp4+MWrSBFyFgye
+         C/KM111//8tMksnbRa200PNbgGclxVZDfPXg/9EzSlw/9A/aUsgrSW2EHkhz/IWvBlOe
+         Wn3FQXG7v7NWmyeefswBeoft1HG9yGFvoR/7eInZYo54Bpz2sGUVlQLoeLXX4DAkHjMU
+         VAZJsU6/TL3L3PgtYXHjMtgkhBJ2ChLV2N+5kT2QzjvgzmTiIS5VGTHfLPHUCxBHXt0E
+         bw8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=OFcUxlDpNdZFO3OSqQIlCjKidM2M3HO/0OZvcjNRLTg=;
+        b=d6yU3RLyAsi2wDFtXCK+Enrx2DYr3qek7h8miur4EQbhQMmWJcdFFRmHMvMo0AQ+lo
+         PW4GTG/svlBq/u2KUfDWwnj9pGmt9pOfX6Wit7gVY82PYDFtbda5CL4mdNbnKxn8MPyy
+         07XzivS/gbOsJ4mfCGq3UASxJUlA+/QTepM8Jdu/eZomZ/sCbr2bCQHavHZF21fWfcpj
+         OI5ednodxcVNjceoWHDyQW/Yy3bcPlhkZGnNHhXG3E0eNXmuxhoN6mt/3+8Uusu43b02
+         nRYvABOkAk5M5AYqXjgczxoIxatC6w5iUN3AtYaAickRKwzf9XI+/6IJnR1d0QgKNiOB
+         VpSw==
+X-Gm-Message-State: APzg51Aua2Ng+NXDYBCza/rSVH1NsMR+sb3rmHPACWJ0LHuS+F+//Wb2
+        f5SO4u/Q+xKiOSXVd4v0jFk=
+X-Google-Smtp-Source: ANB0VdbtaaiyHIvqwzszQWQebiFu4GcCxgKaUrDvB7AybDBKcaRQO/s+VGqZ0n4ps9h2dyRWLqyxNA==
+X-Received: by 2002:a1c:f0a:: with SMTP id 10-v6mr350084wmp.58.1535047743592;
+        Thu, 23 Aug 2018 11:09:03 -0700 (PDT)
+Received: from flashbox ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id 34-v6sm6910901wra.20.2018.08.23.11.09.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 23 Aug 2018 11:09:02 -0700 (PDT)
+Date:   Thu, 23 Aug 2018 11:09:01 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>
-References: <20180823173125.GA24762@embeddedor.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <34b8a5c3-d71a-3aba-c2ae-2b0a2798361c@embeddedor.com>
-Date:   Thu, 23 Aug 2018 12:42:27 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 4.9 000/130] 4.9.124-stable review
+Message-ID: <20180823180901.GA18262@flashbox>
+References: <20180823074927.161454870@linuxfoundation.org>
 MIME-Version: 1.0
-In-Reply-To: <20180823173125.GA24762@embeddedor.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.40.214
-X-Source-L: No
-X-Exim-ID: 1fstcq-003IQW-Sa
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.71]) [189.250.40.214]:57188
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 7
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, Aug 23, 2018 at 09:51:56AM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.124 release.
+> There are 130 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat Aug 25 07:48:45 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.124-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+>
 
-Please, drop this.
+Merged, compiled with -Werror, and installed onto my OnePlus 6.
 
-I'll align GFP_KERNEL and send v2.
+No initial issues noticed in dmesg or general usage.
 
-Thanks
---
-Gustavo
-
-On 8/23/18 12:31 PM, Gustavo A. R. Silva wrote:
-> A common flaw in the kernel is integer overflow during memory allocation
-> size calculations. In an effort to reduce the frequency of these bugs,
-> kmalloc_array was implemented, which allocates memory for an array,
-> while at the same time detects integer overflow.
-> 
-> This patch replaces cases of:
-> 
-> kmalloc(a * b, gfp)
-> 
-> with:
-> 	kmalloc_array(a * b, gfp)
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/usb/misc/iowarrior.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/misc/iowarrior.c b/drivers/usb/misc/iowarrior.c
-> index c2991b8..7a22400 100644
-> --- a/drivers/usb/misc/iowarrior.c
-> +++ b/drivers/usb/misc/iowarrior.c
-> @@ -808,7 +808,7 @@ static int iowarrior_probe(struct usb_interface *interface,
->  			 dev->int_in_endpoint->bInterval);
->  	/* create an internal buffer for interrupt data from the device */
->  	dev->read_queue =
-> -	    kmalloc(((dev->report_size + 1) * MAX_INTERRUPT_BUFFER),
-> +	    kmalloc_array(dev->report_size + 1, MAX_INTERRUPT_BUFFER,
->  		    GFP_KERNEL);
->  	if (!dev->read_queue)
->  		goto error;
-> 
+Thanks!
+Nathan
