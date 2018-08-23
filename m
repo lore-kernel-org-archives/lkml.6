@@ -6,35 +6,42 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B0DFC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:08:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8349FC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:08:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 404462064E
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:08:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 404462064E
+	by mail.kernel.org (Postfix) with ESMTP id 4A490206B2
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:08:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A490206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728922AbeHWLgs (ORCPT
+        id S1728949AbeHWLgv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:36:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44934 "EHLO
+        Thu, 23 Aug 2018 07:36:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44958 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727562AbeHWLgs (ORCPT
+        with ESMTP id S1727557AbeHWLgv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:36:48 -0400
+        Thu, 23 Aug 2018 07:36:51 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AE9A6C7B;
-        Thu, 23 Aug 2018 08:08:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ACEAFC7B;
+        Thu, 23 Aug 2018 08:08:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
+        stable@vger.kernel.org,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 033/130] KVM: arm/arm64: Drop resource size check for GICV window
-Date:   Thu, 23 Aug 2018 09:52:29 +0200
-Message-Id: <20180823074929.355534821@linuxfoundation.org>
+Subject: [PATCH 4.9 034/130] locking/lockdep: Do not record IRQ state within lockdep code
+Date:   Thu, 23 Aug 2018 09:52:30 +0200
+Message-Id: <20180823074929.413867209@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
 References: <20180823074927.161454870@linuxfoundation.org>
@@ -51,52 +58,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-[ Upstream commit ba56bc3a0786992755e6804fbcbdc60ef6cfc24c ]
+[ Upstream commit fcc784be837714a9173b372ff9fb9b514590dad9 ]
 
-When booting a 64 KB pages kernel on a ACPI GICv3 system that
-implements support for v2 emulation, the following warning is
-produced
+While debugging where things were going wrong with mapping
+enabling/disabling interrupts with the lockdep state and actual real
+enabling and disabling interrupts, I had to silent the IRQ
+disabling/enabling in debug_check_no_locks_freed() because it was
+always showing up as it was called before the splat was.
 
-  GICV size 0x2000 not a multiple of page size 0x10000
+Use raw_local_irq_save/restore() for not only debug_check_no_locks_freed()
+but for all internal lockdep functions, as they hide useful information
+about where interrupts were used incorrectly last.
 
-and support for v2 emulation is disabled, preventing GICv2 VMs
-from being able to run on such hosts.
-
-The reason is that vgic_v3_probe() performs a sanity check on the
-size of the window (it should be a multiple of the page size),
-while the ACPI MADT parsing code hardcodes the size of the window
-to 8 KB. This makes sense, considering that ACPI does not bother
-to describe the size in the first place, under the assumption that
-platforms implementing ACPI will follow the architecture and not
-put anything else in the same 64 KB window.
-
-So let's just drop the sanity check altogether, and assume that
-the window is at least 64 KB in size.
-
-Fixes: 909777324588 ("KVM: arm/arm64: vgic-new: vgic_init: implement kvm_vgic_hyp_init")
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Link: https://lkml.kernel.org/lkml/20180404140630.3f4f4c7a@gandalf.local.home
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- virt/kvm/arm/vgic/vgic-v3.c |    5 -----
- 1 file changed, 5 deletions(-)
+ kernel/locking/lockdep.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
---- a/virt/kvm/arm/vgic/vgic-v3.c
-+++ b/virt/kvm/arm/vgic/vgic-v3.c
-@@ -337,11 +337,6 @@ int vgic_v3_probe(const struct gic_kvm_i
- 		pr_warn("GICV physical address 0x%llx not page aligned\n",
- 			(unsigned long long)info->vcpu.start);
- 		kvm_vgic_global_state.vcpu_base = 0;
--	} else if (!PAGE_ALIGNED(resource_size(&info->vcpu))) {
--		pr_warn("GICV size 0x%llx not a multiple of page size 0x%lx\n",
--			(unsigned long long)resource_size(&info->vcpu),
--			PAGE_SIZE);
--		kvm_vgic_global_state.vcpu_base = 0;
- 	} else {
- 		kvm_vgic_global_state.vcpu_base = info->vcpu.start;
- 		kvm_vgic_global_state.can_emulate_gicv2 = true;
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -1240,11 +1240,11 @@ unsigned long lockdep_count_forward_deps
+ 	this.parent = NULL;
+ 	this.class = class;
+ 
+-	local_irq_save(flags);
++	raw_local_irq_save(flags);
+ 	arch_spin_lock(&lockdep_lock);
+ 	ret = __lockdep_count_forward_deps(&this);
+ 	arch_spin_unlock(&lockdep_lock);
+-	local_irq_restore(flags);
++	raw_local_irq_restore(flags);
+ 
+ 	return ret;
+ }
+@@ -1267,11 +1267,11 @@ unsigned long lockdep_count_backward_dep
+ 	this.parent = NULL;
+ 	this.class = class;
+ 
+-	local_irq_save(flags);
++	raw_local_irq_save(flags);
+ 	arch_spin_lock(&lockdep_lock);
+ 	ret = __lockdep_count_backward_deps(&this);
+ 	arch_spin_unlock(&lockdep_lock);
+-	local_irq_restore(flags);
++	raw_local_irq_restore(flags);
+ 
+ 	return ret;
+ }
+@@ -4273,7 +4273,7 @@ void debug_check_no_locks_freed(const vo
+ 	if (unlikely(!debug_locks))
+ 		return;
+ 
+-	local_irq_save(flags);
++	raw_local_irq_save(flags);
+ 	for (i = 0; i < curr->lockdep_depth; i++) {
+ 		hlock = curr->held_locks + i;
+ 
+@@ -4284,7 +4284,7 @@ void debug_check_no_locks_freed(const vo
+ 		print_freed_lock_bug(curr, mem_from, mem_from + mem_len, hlock);
+ 		break;
+ 	}
+-	local_irq_restore(flags);
++	raw_local_irq_restore(flags);
+ }
+ EXPORT_SYMBOL_GPL(debug_check_no_locks_freed);
+ 
 
 
