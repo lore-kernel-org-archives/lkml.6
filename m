@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 244CFC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:02:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A37CC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:02:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF3EC208EC
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:02:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF3EC208EC
+	by mail.kernel.org (Postfix) with ESMTP id 5E4B9208CC
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:02:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E4B9208CC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388494AbeHWMbH (ORCPT
+        id S2388507AbeHWMbK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:31:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55756 "EHLO
+        Thu, 23 Aug 2018 08:31:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55774 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726277AbeHWMbG (ORCPT
+        with ESMTP id S1726277AbeHWMbK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:31:06 -0400
+        Thu, 23 Aug 2018 08:31:10 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C31A9C83;
-        Thu, 23 Aug 2018 09:02:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0398DC83;
+        Thu, 23 Aug 2018 09:02:26 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        Stefan Schmidt <stefan@datenfreihafen.org>,
+        stable@vger.kernel.org, Laura Abbott <labbott@redhat.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 220/324] net: ieee802154: adf7242: Fix erroneous RX enable
-Date:   Thu, 23 Aug 2018 09:54:46 +0200
-Message-Id: <20180823075007.180828636@linuxfoundation.org>
+Subject: [PATCH 4.17 252/324] tools: build: Fixup host c flags
+Date:   Thu, 23 Aug 2018 09:55:18 +0200
+Message-Id: <20180823075008.656134332@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -53,34 +52,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Hennerich <michael.hennerich@analog.com>
+From: Laura Abbott <labbott@redhat.com>
 
-[ Upstream commit 36d26d6b6208399070a9d7993534fef9fc26b1ba ]
+[ Upstream commit 6fdbd824fd7a3876aac43d32fdf1f30b9ef72ce4 ]
 
-Only enable RX mode if the netdev is opened.
+Commit 0c3b7e42616f ("tools build: Add support for host programs format")
+introduced host_c_flags which referenced CHOSTFLAGS. The actual name of the
+variable is HOSTCFLAGS. Fix this up.
 
-Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Signed-off-by: Stefan Schmidt <stefan@datenfreihafen.org>
+Fixes: 0c3b7e42616f ("tools build: Add support for host programs format")
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ieee802154/adf7242.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ tools/build/Build.include   |    2 +-
+ tools/perf/pmu-events/Build |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ieee802154/adf7242.c
-+++ b/drivers/net/ieee802154/adf7242.c
-@@ -719,7 +719,10 @@ static int adf7242_channel(struct ieee80
- 	adf7242_write_reg(lp, REG_CH_FREQ1, freq >> 8);
- 	adf7242_write_reg(lp, REG_CH_FREQ2, freq >> 16);
+--- a/tools/build/Build.include
++++ b/tools/build/Build.include
+@@ -98,4 +98,4 @@ cxx_flags = -Wp,-MD,$(depfile) -Wp,-MT,$
+ ###
+ ## HOSTCC C flags
  
--	return adf7242_cmd(lp, CMD_RC_RX);
-+	if (test_bit(FLAG_START, &lp->flags))
-+		return adf7242_cmd_rx(lp);
-+	else
-+		return adf7242_cmd(lp, CMD_RC_PHY_RDY);
- }
+-host_c_flags = -Wp,-MD,$(depfile) -Wp,-MT,$@ $(CHOSTFLAGS) -D"BUILD_STR(s)=\#s" $(CHOSTFLAGS_$(basetarget).o) $(CHOSTFLAGS_$(obj))
++host_c_flags = -Wp,-MD,$(depfile) -Wp,-MT,$@ $(HOSTCFLAGS) -D"BUILD_STR(s)=\#s" $(HOSTCFLAGS_$(basetarget).o) $(HOSTCFLAGS_$(obj))
+--- a/tools/perf/pmu-events/Build
++++ b/tools/perf/pmu-events/Build
+@@ -1,7 +1,7 @@
+ hostprogs := jevents
  
- static int adf7242_set_hw_addr_filt(struct ieee802154_hw *hw,
+ jevents-y	+= json.o jsmn.o jevents.o
+-CHOSTFLAGS_jevents.o	= -I$(srctree)/tools/include
++HOSTCFLAGS_jevents.o	= -I$(srctree)/tools/include
+ pmu-events-y	+= pmu-events.o
+ JDIR		=  pmu-events/arch/$(SRCARCH)
+ JSON		=  $(shell [ -d $(JDIR) ] &&				\
 
 
