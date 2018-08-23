@@ -6,44 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A2DC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:49:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7861C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:49:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57D012086D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:49:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57D012086D
+	by mail.kernel.org (Postfix) with ESMTP id AAECE2077B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:49:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAECE2077B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733255AbeHWMSL (ORCPT
+        id S1733261AbeHWMSR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:18:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51058 "EHLO
+        Thu, 23 Aug 2018 08:18:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51080 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732488AbeHWMSL (ORCPT
+        with ESMTP id S1732248AbeHWMSR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:18:11 -0400
+        Thu, 23 Aug 2018 08:18:17 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 166D0C74;
-        Thu, 23 Aug 2018 08:49:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D39AFC83;
+        Thu, 23 Aug 2018 08:49:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kim Phillips <kim.phillips@arm.com>,
-        Jiri Olsa <jolsa@kernel.org>,
+        stable@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         David Ahern <dsahern@gmail.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Thomas Richter <tmricht@linux.ibm.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 116/324] perf tests: Add event parsing error handling to parse events test
-Date:   Thu, 23 Aug 2018 09:53:02 +0200
-Message-Id: <20180823075001.710148493@linuxfoundation.org>
+Subject: [PATCH 4.17 118/324] perf bench: Fix numa report output code
+Date:   Thu, 23 Aug 2018 09:53:04 +0200
+Message-Id: <20180823075001.818837834@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -62,85 +57,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jiri Olsa <jolsa@kernel.org>
 
-[ Upstream commit 933ccf2002aaef1037cb676622a694f5390c3d59 ]
+[ Upstream commit 983107072be1a39cbde67d45cb0059138190e015 ]
 
-Add missing error handling for parse_events calls in test_event function
-that led to following segfault on s390:
+Currently we can hit following assert when running numa bench:
 
-  running test 52 'intel_pt//u'
-  perf: Segmentation fault
-  ...
-  /lib64/libc.so.6(vasprintf+0xe6) [0x3fffca3f106]
-  /lib64/libc.so.6(asprintf+0x46) [0x3fffca1aa96]
-  ./perf(parse_events_add_pmu+0xb8) [0x80132088]
-  ./perf(parse_events_parse+0xc62) [0x8019529a]
-  ./perf(parse_events+0x98) [0x801341c0]
-  ./perf(test__parse_events+0x48) [0x800cd140]
-  ./perf(cmd_test+0x26a) [0x800bd44a]
-  test child interrupted
+  $ perf bench numa mem -p 3 -t 1 -P 512 -s 100 -zZ0cm --thp 1
+  perf: bench/numa.c:1577: __bench_numa: Assertion `!(!(((wait_stat) & 0x7f) == 0))' failed.
 
-Adding the struct parse_events_error argument to parse_events call. Also
-adding parse_events_print_error to get more details on the parsing
-failures, like:
+The assertion is correct, because we hit the SIGFPE in following line:
 
-  # perf test 6 -v
-  running test 52 'intel_pt//u'failed to parse event 'intel_pt//u', err 1, str 'Cannot find PMU `intel_pt'. Missing kernel support?'
-  event syntax error: 'intel_pt//u'
-                       \___ Cannot find PMU `intel_pt'. Missing kernel support?
+  Thread 2.2 "thread 0/0" received signal SIGFPE, Arithmetic exception.
+  [Switching to Thread 0x7fffd28c6700 (LWP 11750)]
+  0x000.. in worker_thread (__tdata=0x7.. ) at bench/numa.c:1257
+  1257 td->speed_gbs = bytes_done / (td->runtime_ns / NSEC_PER_SEC) / 1e9;
 
-Committer note:
+We don't check if the runtime is actually bigger than 1 second,
+and thus this might end up with zero division within FPU.
 
-Use named initializers in the struct parse_events_error variable to
-avoid breaking the build on centos5, 6 and others with a similar gcc:
+Adding the check to prevent this.
 
-  cc1: warnings being treated as errors
-  tests/parse-events.c: In function 'test_event':
-  tests/parse-events.c:1696: error: missing initializer
-  tests/parse-events.c:1696: error: (near initialization for 'err.str')
-
-Reported-by: Kim Phillips <kim.phillips@arm.com>
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Kim Phillips <kim.phillips@arm.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: David Ahern <dsahern@gmail.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Richter <tmricht@linux.ibm.com>
-Link: http://lkml.kernel.org/r/20180611093422.1005-1-jolsa@kernel.org
+Link: http://lkml.kernel.org/r/20180620094036.17278-1-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/tests/parse-events.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ tools/perf/bench/numa.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/tools/perf/tests/parse-events.c
-+++ b/tools/perf/tests/parse-events.c
-@@ -1672,6 +1672,7 @@ static struct terms_test test__terms[] =
+--- a/tools/perf/bench/numa.c
++++ b/tools/perf/bench/numa.c
+@@ -1098,7 +1098,7 @@ static void *worker_thread(void *__tdata
+ 	u8 *global_data;
+ 	u8 *process_data;
+ 	u8 *thread_data;
+-	u64 bytes_done;
++	u64 bytes_done, secs;
+ 	long work_done;
+ 	u32 l;
+ 	struct rusage rusage;
+@@ -1254,7 +1254,8 @@ static void *worker_thread(void *__tdata
+ 	timersub(&stop, &start0, &diff);
+ 	td->runtime_ns = diff.tv_sec * NSEC_PER_SEC;
+ 	td->runtime_ns += diff.tv_usec * NSEC_PER_USEC;
+-	td->speed_gbs = bytes_done / (td->runtime_ns / NSEC_PER_SEC) / 1e9;
++	secs = td->runtime_ns / NSEC_PER_SEC;
++	td->speed_gbs = secs ? bytes_done / secs / 1e9 : 0;
  
- static int test_event(struct evlist_test *e)
- {
-+	struct parse_events_error err = { .idx = 0, };
- 	struct perf_evlist *evlist;
- 	int ret;
- 
-@@ -1679,10 +1680,11 @@ static int test_event(struct evlist_test
- 	if (evlist == NULL)
- 		return -ENOMEM;
- 
--	ret = parse_events(evlist, e->name, NULL);
-+	ret = parse_events(evlist, e->name, &err);
- 	if (ret) {
--		pr_debug("failed to parse event '%s', err %d\n",
--			 e->name, ret);
-+		pr_debug("failed to parse event '%s', err %d, str '%s'\n",
-+			 e->name, ret, err.str);
-+		parse_events_print_error(&err, e->name);
- 	} else {
- 		ret = e->check(evlist);
- 	}
+ 	getrusage(RUSAGE_THREAD, &rusage);
+ 	td->system_time_ns = rusage.ru_stime.tv_sec * NSEC_PER_SEC;
 
 
