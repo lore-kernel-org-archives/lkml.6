@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76BFFC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:20:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED8ABC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:20:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D28D208DC
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:20:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D28D208DC
+	by mail.kernel.org (Postfix) with ESMTP id AECFC208DC
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:20:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AECFC208DC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730378AbeHWLtH (ORCPT
+        id S1730389AbeHWLtK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:49:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46676 "EHLO
+        Thu, 23 Aug 2018 07:49:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46684 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727953AbeHWLtG (ORCPT
+        with ESMTP id S1727953AbeHWLtJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:49:06 -0400
+        Thu, 23 Aug 2018 07:49:09 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 96C0EC93;
-        Thu, 23 Aug 2018 08:20:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C3074C83;
+        Thu, 23 Aug 2018 08:20:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -35,9 +35,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Michal Kalderon <Michal.Kalderon@cavium.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 056/217] qed: Add sanity check for SIMD fastpath handler.
-Date:   Thu, 23 Aug 2018 09:52:49 +0200
-Message-Id: <20180823075508.061010130@linuxfoundation.org>
+Subject: [PATCH 4.14 057/217] qed: Do not advertise DCBX_LLD_MANAGED capability.
+Date:   Thu, 23 Aug 2018 09:52:50 +0200
+Message-Id: <20180823075508.111581652@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -56,13 +56,15 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
 
-[ Upstream commit 3935a70968820c3994db4de7e6e1c7e814bff875 ]
+[ Upstream commit ff54d5cd9ec15546abc870452dd0b66eef4b4606 ]
 
-Avoid calling a SIMD fastpath handler if it is NULL. The check is needed
-to handle an unlikely scenario where unsolicited interrupt is destined to
-a PF in INTa mode.
+Do not advertise DCBX_LLD_MANAGED capability i.e., do not allow
+external agent to manage the dcbx/lldp negotiation. MFW acts as lldp agent
+for qed* devices, and no other lldp agent is allowed to coexist with mfw.
 
-Fixes: fe56b9e6a ("qed: Add module with basic common support")
+Also updated a debug print, to not to display the redundant info.
+
+Fixes: a1d8d8a51 ("qed: Add dcbnl support.")
 Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
 Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
 Signed-off-by: Michal Kalderon <Michal.Kalderon@cavium.com>
@@ -70,29 +72,42 @@ Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_main.c |   12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/qlogic/qed/qed_dcbx.c |   11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
---- a/drivers/net/ethernet/qlogic/qed/qed_main.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_main.c
-@@ -565,8 +565,16 @@ static irqreturn_t qed_single_int(int ir
- 		/* Fastpath interrupts */
- 		for (j = 0; j < 64; j++) {
- 			if ((0x2ULL << j) & status) {
--				hwfn->simd_proto_handler[j].func(
--					hwfn->simd_proto_handler[j].token);
-+				struct qed_simd_fp_handler *p_handler =
-+					&hwfn->simd_proto_handler[j];
-+
-+				if (p_handler->func)
-+					p_handler->func(p_handler->token);
-+				else
-+					DP_NOTICE(hwfn,
-+						  "Not calling fastpath handler as it is NULL [handler #%d, status 0x%llx]\n",
-+						  j, status);
-+
- 				status &= ~(0x2ULL << j);
- 				rc = IRQ_HANDLED;
- 			}
+--- a/drivers/net/ethernet/qlogic/qed/qed_dcbx.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_dcbx.c
+@@ -255,9 +255,8 @@ qed_dcbx_get_app_protocol_type(struct qe
+ 		*type = DCBX_PROTOCOL_ROCE_V2;
+ 	} else {
+ 		*type = DCBX_MAX_PROTOCOL_TYPE;
+-		DP_ERR(p_hwfn,
+-		       "No action required, App TLV id = 0x%x app_prio_bitmap = 0x%x\n",
+-		       id, app_prio_bitmap);
++		DP_ERR(p_hwfn, "No action required, App TLV entry = 0x%x\n",
++		       app_prio_bitmap);
+ 		return false;
+ 	}
+ 
+@@ -1472,8 +1471,8 @@ static u8 qed_dcbnl_getcap(struct qed_de
+ 		*cap = 0x80;
+ 		break;
+ 	case DCB_CAP_ATTR_DCBX:
+-		*cap = (DCB_CAP_DCBX_LLD_MANAGED | DCB_CAP_DCBX_VER_CEE |
+-			DCB_CAP_DCBX_VER_IEEE | DCB_CAP_DCBX_STATIC);
++		*cap = (DCB_CAP_DCBX_VER_CEE | DCB_CAP_DCBX_VER_IEEE |
++			DCB_CAP_DCBX_STATIC);
+ 		break;
+ 	default:
+ 		*cap = false;
+@@ -1541,8 +1540,6 @@ static u8 qed_dcbnl_getdcbx(struct qed_d
+ 	if (!dcbx_info)
+ 		return 0;
+ 
+-	if (dcbx_info->operational.enabled)
+-		mode |= DCB_CAP_DCBX_LLD_MANAGED;
+ 	if (dcbx_info->operational.ieee)
+ 		mode |= DCB_CAP_DCBX_VER_IEEE;
+ 	if (dcbx_info->operational.cee)
 
 
