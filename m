@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16E0CC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:29:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA898C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:29:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC1082147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:29:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC1082147A
+	by mail.kernel.org (Postfix) with ESMTP id 8CB8C2147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:29:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CB8C2147A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731047AbeHWL6Y (ORCPT
+        id S1731064AbeHWL61 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:58:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47688 "EHLO
+        Thu, 23 Aug 2018 07:58:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47702 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728804AbeHWL6Y (ORCPT
+        with ESMTP id S1728804AbeHWL61 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:58:24 -0400
+        Thu, 23 Aug 2018 07:58:27 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 29518C74;
-        Thu, 23 Aug 2018 08:29:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 58B86C93;
+        Thu, 23 Aug 2018 08:29:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mauricio Vasquez B <mauricio.vasquez@polito.it>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 133/217] bpf: hash map: decrement counter on error
-Date:   Thu, 23 Aug 2018 09:54:06 +0200
-Message-Id: <20180823075511.596053812@linuxfoundation.org>
+Subject: [PATCH 4.14 142/217] netfilter: x_tables: set module owner for icmp(6) matches
+Date:   Thu, 23 Aug 2018 09:54:15 +0200
+Message-Id: <20180823075511.989499319@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -53,64 +51,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mauricio Vasquez B <mauricio.vasquez@polito.it>
+From: Florian Westphal <fw@strlen.de>
 
-[ Upstream commit ed2b82c03dc187018307c7c6bf9299705f3db383 ]
+[ Upstream commit d376bef9c29b3c65aeee4e785fffcd97ef0a9a81 ]
 
-Decrement the number of elements in the map in case the allocation
-of a new node fails.
+nft_compat relies on xt_request_find_match to increment
+refcount of the module that provides the match/target.
 
-Fixes: 6c9059817432 ("bpf: pre-allocate hash map elements")
-Signed-off-by: Mauricio Vasquez B <mauricio.vasquez@polito.it>
-Acked-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+The (builtin) icmp matches did't set the module owner so it
+was possible to rmmod ip(6)tables while icmp extensions were still in use.
+
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/bpf/hashtab.c |   16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+ net/ipv4/netfilter/ip_tables.c  |    1 +
+ net/ipv6/netfilter/ip6_tables.c |    1 +
+ 2 files changed, 2 insertions(+)
 
---- a/kernel/bpf/hashtab.c
-+++ b/kernel/bpf/hashtab.c
-@@ -730,13 +730,15 @@ static struct htab_elem *alloc_htab_elem
- 				 * old element will be freed immediately.
- 				 * Otherwise return an error
- 				 */
--				atomic_dec(&htab->count);
--				return ERR_PTR(-E2BIG);
-+				l_new = ERR_PTR(-E2BIG);
-+				goto dec_count;
- 			}
- 		l_new = kmalloc_node(htab->elem_size, GFP_ATOMIC | __GFP_NOWARN,
- 				     htab->map.numa_node);
--		if (!l_new)
--			return ERR_PTR(-ENOMEM);
-+		if (!l_new) {
-+			l_new = ERR_PTR(-ENOMEM);
-+			goto dec_count;
-+		}
- 	}
+--- a/net/ipv4/netfilter/ip_tables.c
++++ b/net/ipv4/netfilter/ip_tables.c
+@@ -1894,6 +1894,7 @@ static struct xt_match ipt_builtin_mt[]
+ 		.checkentry = icmp_checkentry,
+ 		.proto      = IPPROTO_ICMP,
+ 		.family     = NFPROTO_IPV4,
++		.me	    = THIS_MODULE,
+ 	},
+ };
  
- 	memcpy(l_new->key, key, key_size);
-@@ -749,7 +751,8 @@ static struct htab_elem *alloc_htab_elem
- 						  GFP_ATOMIC | __GFP_NOWARN);
- 			if (!pptr) {
- 				kfree(l_new);
--				return ERR_PTR(-ENOMEM);
-+				l_new = ERR_PTR(-ENOMEM);
-+				goto dec_count;
- 			}
- 		}
+--- a/net/ipv6/netfilter/ip6_tables.c
++++ b/net/ipv6/netfilter/ip6_tables.c
+@@ -1907,6 +1907,7 @@ static struct xt_match ip6t_builtin_mt[]
+ 		.checkentry = icmp6_checkentry,
+ 		.proto      = IPPROTO_ICMPV6,
+ 		.family     = NFPROTO_IPV6,
++		.me	    = THIS_MODULE,
+ 	},
+ };
  
-@@ -763,6 +766,9 @@ static struct htab_elem *alloc_htab_elem
- 
- 	l_new->hash = hash;
- 	return l_new;
-+dec_count:
-+	atomic_dec(&htab->count);
-+	return l_new;
- }
- 
- static int check_flags(struct bpf_htab *htab, struct htab_elem *l_old,
 
 
