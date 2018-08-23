@@ -3,39 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20ABEC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:09:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA350C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:09:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D16672064E
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:09:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D16672064E
+	by mail.kernel.org (Postfix) with ESMTP id 8030A206B2
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:09:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8030A206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729437AbeHWLiS (ORCPT
+        id S1729450AbeHWLiV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:38:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45274 "EHLO
+        Thu, 23 Aug 2018 07:38:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45286 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727150AbeHWLiR (ORCPT
+        with ESMTP id S1728364AbeHWLiU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:38:17 -0400
+        Thu, 23 Aug 2018 07:38:20 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E5FEBC74;
-        Thu, 23 Aug 2018 08:09:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 18118C7B;
+        Thu, 23 Aug 2018 08:09:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taeung Song <treeze.taeung@gmail.com>,
+        stable@vger.kernel.org, David Laight <David.Laight@ACULAB.COM>,
+        Taeung Song <treeze.taeung@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 076/130] samples/bpf: add missing <linux/if_vlan.h>
-Date:   Thu, 23 Aug 2018 09:53:12 +0200
-Message-Id: <20180823074932.240527479@linuxfoundation.org>
+Subject: [PATCH 4.9 077/130] samples/bpf: Check the error of write() and read()
+Date:   Thu, 23 Aug 2018 09:53:13 +0200
+Message-Id: <20180823074932.287448332@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
 References: <20180823074927.161454870@linuxfoundation.org>
@@ -54,48 +55,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Taeung Song <treeze.taeung@gmail.com>
 
-[ Upstream commit 4d5d33a085335ef469c9a87792bcaaaa8e64d8c4 ]
+[ Upstream commit 02a2f000a3629274bfad60bfc4de9edec49e63e7 ]
 
-This fixes build error regarding redefinition:
+test_task_rename() and test_urandom_read()
+can be failed during write() and read(),
+So check the result of them.
 
-    CLANG-bpf  samples/bpf/parse_varlen.o
-  samples/bpf/parse_varlen.c:111:8: error: redefinition of 'vlan_hdr'
-  struct vlan_hdr {
-         ^
-  ./include/linux/if_vlan.h:38:8: note: previous definition is here
-
-So remove duplicate 'struct vlan_hdr' in sample code and include if_vlan.h
-
+Reviewed-by: David Laight <David.Laight@ACULAB.COM>
 Signed-off-by: Taeung Song <treeze.taeung@gmail.com>
 Acked-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- samples/bpf/parse_varlen.c |    6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ samples/bpf/test_overhead_user.c |   19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
 
---- a/samples/bpf/parse_varlen.c
-+++ b/samples/bpf/parse_varlen.c
+--- a/samples/bpf/test_overhead_user.c
++++ b/samples/bpf/test_overhead_user.c
 @@ -6,6 +6,7 @@
   */
- #define KBUILD_MODNAME "foo"
- #include <linux/if_ether.h>
-+#include <linux/if_vlan.h>
- #include <linux/ip.h>
- #include <linux/ipv6.h>
- #include <linux/in.h>
-@@ -108,11 +109,6 @@ static int parse_ipv6(void *data, uint64
- 	return 0;
- }
- 
--struct vlan_hdr {
--	uint16_t h_vlan_TCI;
--	uint16_t h_vlan_encapsulated_proto;
--};
--
- SEC("varlen")
- int handle_ingress(struct __sk_buff *skb)
- {
+ #define _GNU_SOURCE
+ #include <sched.h>
++#include <errno.h>
+ #include <stdio.h>
+ #include <sys/types.h>
+ #include <asm/unistd.h>
+@@ -44,8 +45,13 @@ static void test_task_rename(int cpu)
+ 		exit(1);
+ 	}
+ 	start_time = time_get_ns();
+-	for (i = 0; i < MAX_CNT; i++)
+-		write(fd, buf, sizeof(buf));
++	for (i = 0; i < MAX_CNT; i++) {
++		if (write(fd, buf, sizeof(buf)) < 0) {
++			printf("task rename failed: %s\n", strerror(errno));
++			close(fd);
++			return;
++		}
++	}
+ 	printf("task_rename:%d: %lld events per sec\n",
+ 	       cpu, MAX_CNT * 1000000000ll / (time_get_ns() - start_time));
+ 	close(fd);
+@@ -63,8 +69,13 @@ static void test_urandom_read(int cpu)
+ 		exit(1);
+ 	}
+ 	start_time = time_get_ns();
+-	for (i = 0; i < MAX_CNT; i++)
+-		read(fd, buf, sizeof(buf));
++	for (i = 0; i < MAX_CNT; i++) {
++		if (read(fd, buf, sizeof(buf)) < 0) {
++			printf("failed to read from /dev/urandom: %s\n", strerror(errno));
++			close(fd);
++			return;
++		}
++	}
+ 	printf("urandom_read:%d: %lld events per sec\n",
+ 	       cpu, MAX_CNT * 1000000000ll / (time_get_ns() - start_time));
+ 	close(fd);
 
 
