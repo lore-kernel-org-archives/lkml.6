@@ -2,152 +2,107 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17395C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 03:31:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6040C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 03:31:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4417208D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 03:31:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fTgNjadp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4417208D4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A6473208E9
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 03:31:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6473208E9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728135AbeHWG6s (ORCPT
+        id S1728220AbeHWG7O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 02:58:48 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:45022 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726150AbeHWG6r (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 02:58:47 -0400
-Received: by mail-pl0-f68.google.com with SMTP id ba4-v6so1744758plb.11
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 20:31:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=/1BsvEUo1b++R1hETUWaJYtB0D2SA2Etepv0PD46TFs=;
-        b=fTgNjadpfW94/FUlrlfvUAVCCKwSHLWrT3seLMtW9L7bIOk5cN7HxKLiDKfQrsBRs6
-         clMrQxVS5548oj+DovaC7jkVYZDkKzIGEFwv0TOgrf77Q0SRdXnEIbj2KwOMW0wfWmbS
-         rTOH/ZGJXBewbbnUkJkd9yHBcUhdGjpvv2EredknzHbV0tpk/azsXPrC5akUOzso0sCE
-         g91EDWxxWzU5pcm6FTe6JvXUqdCcUaAdh0TdMeDgPYBQvuFMzO4QXMqcno5QpuydRLQ3
-         UrTB122UXzS9gt7M0h5K5N/dKBsBupAqtiFBd6cxweqWEggt8VHHZNnoshwWGVEvhSNo
-         yKnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=/1BsvEUo1b++R1hETUWaJYtB0D2SA2Etepv0PD46TFs=;
-        b=ARpKf5/KDJiCGPMLipBIuiAh7eFyNx0HfS+YpqYTkTfcDUT68F/b7GupzOkG5PxXbG
-         Y+XxaKV9+TALA3IhnnyY+acQLJNE/6PkP2Zy3E8qcgh89TvdErWnPhkTtiKsuMvNPTy1
-         fmowx7J1OXvtdofAdskSmMURbG0gMiqe5ctUhQGkdoSDryNLf8pcSCv801XLdp23gJDN
-         o4PdTjaZ5mKfdcBKMPuSup5JBVjrr4TJGqCWh57uGX5BjrgrG20v9bMRMeV+BaZl90MZ
-         BN+dXTAu1pMPQrgjKVW4A8SK9Tk+Up00SVoJb3XULgo4F5OVqzU1ZZ7PsWZY2xyocm08
-         P+NA==
-X-Gm-Message-State: APzg51D0RmF10i65yNDbBinpC040vqkDvTnRQUPLw4IcuZsU7icVRs4q
-        qs6u7Qkq3KoakyASu8g3OjwOIppI
-X-Google-Smtp-Source: ANB0VdbZ7/jtoi8UVfCEmhwEIb/e+L5x51bPXt5VAV/WjjiRSm/B7lc8BEJuTP+0FwzCrmd/DAbVHw==
-X-Received: by 2002:a17:902:8bcc:: with SMTP id r12-v6mr4296560plo.113.1534995074533;
-        Wed, 22 Aug 2018 20:31:14 -0700 (PDT)
-Received: from roar.ozlabs.ibm.com ([122.99.82.10])
-        by smtp.gmail.com with ESMTPSA id g20-v6sm4363684pfo.94.2018.08.22.20.31.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 22 Aug 2018 20:31:13 -0700 (PDT)
-Date:   Thu, 23 Aug 2018 13:31:03 +1000
-From:   Nicholas Piggin <npiggin@gmail.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     torvalds@linux-foundation.org, luto@kernel.org, x86@kernel.org,
-        bp@alien8.de, will.deacon@arm.com, riel@surriel.com,
-        jannh@google.com, ascannell@google.com, dave.hansen@intel.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        David Miller <davem@davemloft.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: [PATCH 2/4] mm/tlb: Remove tlb_remove_table() non-concurrent
- condition
-Message-ID: <20180823133103.30d6a16b@roar.ozlabs.ibm.com>
-In-Reply-To: <20180822154046.772017055@infradead.org>
-References: <20180822153012.173508681@infradead.org>
-        <20180822154046.772017055@infradead.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 23 Aug 2018 02:59:14 -0400
+Received: from ozlabs.org ([203.11.71.1]:35641 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726150AbeHWG7O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 02:59:14 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41wqhW1yLSz9ryt;
+        Thu, 23 Aug 2018 13:31:39 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org
+Cc:     linuxppc-dev@lists.ozlabs.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linux-kernel@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH 1/2] macintosh: therm_windtunnel: drop using attach_adapter
+In-Reply-To: <20180821150240.19964-2-wsa@the-dreams.de>
+References: <20180821150240.19964-1-wsa@the-dreams.de> <20180821150240.19964-2-wsa@the-dreams.de>
+Date:   Thu, 23 Aug 2018 13:31:39 +1000
+Message-ID: <87ftz5lpwk.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 22 Aug 2018 17:30:14 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+Wolfram Sang <wsa@the-dreams.de> writes:
 
-> Will noted that only checking mm_users is incorrect; we should also
-> check mm_count in order to cover CPUs that have a lazy reference to
-> this mm (and could do speculative TLB operations).
-
-Why is that incorrect?
-
-This shortcut has nothing to do with no TLBs -- not sure about x86, but
-other CPUs can certainly have remaining TLBs here, speculative
-operations or not (even if they don't have an mm_count ref they can
-have TLBs here).
-
-So that leaves speculative operations. I don't see where the problem is
-with those either -- this shortcut needs to ensure there are no other
-*non speculative* operations. mm_users is correct for that.
-
-If there is a speculation security problem here it should be carefully
-documented otherwise it's going to be re-introduced...
-
-I actually have a patch to extend this optimisation further that I'm
-going to send out again today. It's nice to avoid the double handling
-of the pages.
-
-Thanks,
-Nick
-
-> 
-> If removing this turns out to be a performance issue, we can
-> re-instate a more complete check, but in tlb_table_flush() eliding the
-> call_rcu_sched().
-> 
-> Cc: stable@kernel.org
-> Cc: Nicholas Piggin <npiggin@gmail.com>
-> Cc: David Miller <davem@davemloft.net>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Fixes: 267239116987 ("mm, powerpc: move the RCU page-table freeing into generic code")
-> Reported-by: Will Deacon <will.deacon@arm.com>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> As we now have deferred probing, we can use a custom mechanism and
+> finally get rid of the legacy interface from the i2c core.
+>
+> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 > ---
->  mm/memory.c |    9 ---------
->  1 file changed, 9 deletions(-)
-> 
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -375,15 +375,6 @@ void tlb_remove_table(struct mmu_gather
->  {
->  	struct mmu_table_batch **batch = &tlb->batch;
->  
-> -	/*
-> -	 * When there's less then two users of this mm there cannot be a
-> -	 * concurrent page-table walk.
-> -	 */
-> -	if (atomic_read(&tlb->mm->mm_users) < 2) {
-> -		__tlb_remove_table(table);
-> -		return;
-> -	}
-> -
->  	if (*batch == NULL) {
->  		*batch = (struct mmu_table_batch *)__get_free_page(GFP_NOWAIT | __GFP_NOWARN);
->  		if (*batch == NULL) {
-> 
-> 
+>  drivers/macintosh/therm_windtunnel.c | 25 +++++++++++++++++++++++--
+>  1 file changed, 23 insertions(+), 2 deletions(-)
 
+I don't have a G4 to test this on, so merge it and if it breaks we can
+fix it up later.
+
+Acked-by: Michael Ellerman <mpe@ellerman.id.au>
+
+cheers
+
+> diff --git a/drivers/macintosh/therm_windtunnel.c b/drivers/macintosh/therm_windtunnel.c
+> index 68dcbcb4fc5b..8c744578122a 100644
+> --- a/drivers/macintosh/therm_windtunnel.c
+> +++ b/drivers/macintosh/therm_windtunnel.c
+> @@ -432,7 +432,6 @@ static struct i2c_driver g4fan_driver = {
+>  	.driver = {
+>  		.name	= "therm_windtunnel",
+>  	},
+> -	.attach_adapter = do_attach,
+>  	.probe		= do_probe,
+>  	.remove		= do_remove,
+>  	.id_table	= therm_windtunnel_id,
+> @@ -445,7 +444,29 @@ static struct i2c_driver g4fan_driver = {
+>  
+>  static int therm_of_probe(struct platform_device *dev)
+>  {
+> -	return i2c_add_driver( &g4fan_driver );
+> +	struct i2c_adapter *adap;
+> +	int ret, i = 0;
+> +
+> +	adap = i2c_get_adapter(0);
+> +	if (!adap)
+> +		return -EPROBE_DEFER;
+> +
+> +	ret = i2c_add_driver(&g4fan_driver);
+> +	if (ret) {
+> +		i2c_put_adapter(adap);
+> +		return ret;
+> +	}
+> +
+> +	/* We assume Macs have consecutive I2C bus numbers starting at 0 */
+> +	while (adap) {
+> +		do_attach(adap);
+> +		if (x.running)
+> +			return 0;
+> +		i2c_put_adapter(adap);
+> +		adap = i2c_get_adapter(++i);
+> +	}
+> +
+> +	return -ENODEV;
+>  }
+>  
+>  static int
+> -- 
+> 2.11.0
