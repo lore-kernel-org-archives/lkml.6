@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CC05C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:09:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFA52C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:09:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDC83208EC
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:09:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDC83208EC
+	by mail.kernel.org (Postfix) with ESMTP id 75172208C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:09:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75172208C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388764AbeHWMi1 (ORCPT
+        id S2388795AbeHWMia (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:38:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56464 "EHLO
+        Thu, 23 Aug 2018 08:38:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56474 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729658AbeHWMi0 (ORCPT
+        with ESMTP id S1729658AbeHWMi3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:38:26 -0400
+        Thu, 23 Aug 2018 08:38:29 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 76D0FCA8;
-        Thu, 23 Aug 2018 09:09:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AA2FBCA6;
+        Thu, 23 Aug 2018 09:09:43 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -35,9 +35,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Bjorn Helgaas <bhelgaas@google.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 286/324] PCI: mediatek: Fix I/O space page leak
-Date:   Thu, 23 Aug 2018 09:55:52 +0200
-Message-Id: <20180823075010.347055986@linuxfoundation.org>
+Subject: [PATCH 4.17 287/324] PCI: v3-semi: Fix I/O space page leak
+Date:   Thu, 23 Aug 2018 09:55:53 +0200
+Message-Id: <20180823075010.396125309@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -56,7 +56,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-[ Upstream commit 438477b9a089e45ea7c8fb549553e52833117ed8 ]
+[ Upstream commit 270ed733e68955049b693bea8f4a1efb293a96ae ]
 
 When testing the R-Car PCIe driver on the Condor board, if the PCIe PHY
 driver was left disabled, the kernel crashed with this BUG:
@@ -108,15 +108,14 @@ driver was left disabled, the kernel crashed with this BUG:
 
 It turned out that pci_remap_iospace() wasn't undone when the driver's
 probe failed, and since devm_phy_optional_get() returned -EPROBE_DEFER,
-the probe was retried, finally causing the BUG due to trying to remap
+the probe was retried,  finally causing the BUG due to trying to remap
 already remapped pages.
 
-The MediaTek PCIe driver has the same issue.
+The V3 Semiconductor PCI driver has the same issue.
+Replace devm_pci_remap_iospace() with its devm_ managed version to fix
+the bug.
 
-Replace devm_pci_remap_iospace() with its devm_ managed counterpart
-to fix the bug.
-
-Fixes: 637cfacae96f ("PCI: mediatek: Add MediaTek PCIe host controller support")
+Fixes: 68a15eb7bd0c ("PCI: v3-semi: Add V3 Semiconductor PCI host driver")
 Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 [lorenzo.pieralisi@arm.com: updated the commit log]
 Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
@@ -125,19 +124,19 @@ Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pci/host/pcie-mediatek.c |    2 +-
+ drivers/pci/host/pci-v3-semi.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/pci/host/pcie-mediatek.c
-+++ b/drivers/pci/host/pcie-mediatek.c
-@@ -1063,7 +1063,7 @@ static int mtk_pcie_request_resources(st
- 	if (err < 0)
- 		return err;
- 
--	pci_remap_iospace(&pcie->pio, pcie->io.start);
-+	devm_pci_remap_iospace(dev, &pcie->pio, pcie->io.start);
- 
- 	return 0;
- }
+--- a/drivers/pci/host/pci-v3-semi.c
++++ b/drivers/pci/host/pci-v3-semi.c
+@@ -535,7 +535,7 @@ static int v3_pci_setup_resource(struct
+ 		v3->io_bus_addr = io->start - win->offset;
+ 		dev_dbg(dev, "I/O window %pR, bus addr %pap\n",
+ 			io, &v3->io_bus_addr);
+-		ret = pci_remap_iospace(io, io_base);
++		ret = devm_pci_remap_iospace(dev, io, io_base);
+ 		if (ret) {
+ 			dev_warn(dev,
+ 				 "error %d: failed to map resource %pR\n",
 
 
