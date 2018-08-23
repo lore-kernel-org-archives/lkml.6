@@ -6,36 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2DB0C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:10:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8467EC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:10:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73E10206B2
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:10:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73E10206B2
+	by mail.kernel.org (Postfix) with ESMTP id 44D6A206B2
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:10:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44D6A206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729462AbeHWLiY (ORCPT
+        id S1729479AbeHWLi2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:38:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45300 "EHLO
+        Thu, 23 Aug 2018 07:38:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45316 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726132AbeHWLiX (ORCPT
+        with ESMTP id S1726476AbeHWLi1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:38:23 -0400
+        Thu, 23 Aug 2018 07:38:27 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3BEFCC93;
-        Thu, 23 Aug 2018 08:09:57 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 65D99C9A;
+        Thu, 23 Aug 2018 08:10:00 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
-        Alexander Aring <aring@mojatatu.com>,
-        Stefan Schmidt <stefan@datenfreihafen.org>,
+        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 078/130] ieee802154: 6lowpan: set IFLA_LINK
-Date:   Thu, 23 Aug 2018 09:53:14 +0200
-Message-Id: <20180823074932.343517843@linuxfoundation.org>
+Subject: [PATCH 4.9 052/130] selftests/x86/sigreturn/64: Fix spurious failures on AMD CPUs
+Date:   Thu, 23 Aug 2018 09:52:48 +0200
+Message-Id: <20180823074930.577165162@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
 References: <20180823074927.161454870@linuxfoundation.org>
@@ -52,42 +55,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lubomir Rintel <lkundrak@v3.sk>
+From: Andy Lutomirski <luto@kernel.org>
 
-[ Upstream commit b30c122c0bbb0a1dc413085e177ea09467e65fdb ]
+[ Upstream commit ec348020566009d3da9b99f07c05814d13969c78 ]
 
-Otherwise NetworkManager (and iproute alike) is not able to identify the
-parent IEEE 802.15.4 interface of a 6LoWPAN link.
+When I wrote the sigreturn test, I didn't realize that AMD's busted
+IRET behavior was different from Intel's busted IRET behavior:
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Acked-by: Alexander Aring <aring@mojatatu.com>
-Signed-off-by: Stefan Schmidt <stefan@datenfreihafen.org>
+On AMD CPUs, the CPU leaks the high 32 bits of the kernel stack pointer
+to certain userspace contexts.  Gee, thanks.  There's very little
+the kernel can do about it.  Modify the test so it passes.
+
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/86e7fd3564497f657de30a36da4505799eebef01.1530076529.git.luto@kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ieee802154/6lowpan/core.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ tools/testing/selftests/x86/sigreturn.c |   46 ++++++++++++++++++++------------
+ 1 file changed, 29 insertions(+), 17 deletions(-)
 
---- a/net/ieee802154/6lowpan/core.c
-+++ b/net/ieee802154/6lowpan/core.c
-@@ -90,12 +90,18 @@ static int lowpan_neigh_construct(struct
- 	return 0;
- }
+--- a/tools/testing/selftests/x86/sigreturn.c
++++ b/tools/testing/selftests/x86/sigreturn.c
+@@ -612,19 +612,38 @@ static int test_valid_sigreturn(int cs_b
+ 		greg_t req = requested_regs[i], res = resulting_regs[i];
+ 		if (i == REG_TRAPNO || i == REG_IP)
+ 			continue;	/* don't care */
+-		if (i == REG_SP) {
+-			printf("\tSP: %llx -> %llx\n", (unsigned long long)req,
+-			       (unsigned long long)res);
  
-+static int lowpan_get_iflink(const struct net_device *dev)
-+{
-+	return lowpan_802154_dev(dev)->wdev->ifindex;
-+}
++		if (i == REG_SP) {
+ 			/*
+-			 * In many circumstances, the high 32 bits of rsp
+-			 * are zeroed.  For example, we could be a real
+-			 * 32-bit program, or we could hit any of a number
+-			 * of poorly-documented IRET or segmented ESP
+-			 * oddities.  If this happens, it's okay.
++			 * If we were using a 16-bit stack segment, then
++			 * the kernel is a bit stuck: IRET only restores
++			 * the low 16 bits of ESP/RSP if SS is 16-bit.
++			 * The kernel uses a hack to restore bits 31:16,
++			 * but that hack doesn't help with bits 63:32.
++			 * On Intel CPUs, bits 63:32 end up zeroed, and, on
++			 * AMD CPUs, they leak the high bits of the kernel
++			 * espfix64 stack pointer.  There's very little that
++			 * the kernel can do about it.
++			 *
++			 * Similarly, if we are returning to a 32-bit context,
++			 * the CPU will often lose the high 32 bits of RSP.
+ 			 */
+-			if (res == (req & 0xFFFFFFFF))
+-				continue;  /* OK; not expected to work */
 +
- static const struct net_device_ops lowpan_netdev_ops = {
- 	.ndo_init		= lowpan_dev_init,
- 	.ndo_start_xmit		= lowpan_xmit,
- 	.ndo_open		= lowpan_open,
- 	.ndo_stop		= lowpan_stop,
- 	.ndo_neigh_construct    = lowpan_neigh_construct,
-+	.ndo_get_iflink         = lowpan_get_iflink,
- };
++			if (res == req)
++				continue;
++
++			if (cs_bits != 64 && ((res ^ req) & 0xFFFFFFFF) == 0) {
++				printf("[NOTE]\tSP: %llx -> %llx\n",
++				       (unsigned long long)req,
++				       (unsigned long long)res);
++				continue;
++			}
++
++			printf("[FAIL]\tSP mismatch: requested 0x%llx; got 0x%llx\n",
++			       (unsigned long long)requested_regs[i],
++			       (unsigned long long)resulting_regs[i]);
++			nerrs++;
++			continue;
+ 		}
  
- static void lowpan_setup(struct net_device *ldev)
+ 		bool ignore_reg = false;
+@@ -663,13 +682,6 @@ static int test_valid_sigreturn(int cs_b
+ 		}
+ 
+ 		if (requested_regs[i] != resulting_regs[i] && !ignore_reg) {
+-			/*
+-			 * SP is particularly interesting here.  The
+-			 * usual cause of failures is that we hit the
+-			 * nasty IRET case of returning to a 16-bit SS,
+-			 * in which case bits 16:31 of the *kernel*
+-			 * stack pointer persist in ESP.
+-			 */
+ 			printf("[FAIL]\tReg %d mismatch: requested 0x%llx; got 0x%llx\n",
+ 			       i, (unsigned long long)requested_regs[i],
+ 			       (unsigned long long)resulting_regs[i]);
 
 
