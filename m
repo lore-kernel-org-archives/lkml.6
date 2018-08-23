@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF3AAC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:03:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C6BAC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:03:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 977C9208CC
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:03:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 977C9208CC
+	by mail.kernel.org (Postfix) with ESMTP id E449D208CC
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:03:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E449D208CC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388770AbeHWMcT (ORCPT
+        id S2388780AbeHWMc0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:32:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56026 "EHLO
+        Thu, 23 Aug 2018 08:32:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56056 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732985AbeHWMcT (ORCPT
+        with ESMTP id S1729766AbeHWMcZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:32:19 -0400
+        Thu, 23 Aug 2018 08:32:25 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6CA81CA0;
-        Thu, 23 Aug 2018 09:03:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D219ACA6;
+        Thu, 23 Aug 2018 09:03:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -35,9 +35,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Bjorn Helgaas <bhelgaas@google.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 280/324] PCI: OF: Fix I/O space page leak
-Date:   Thu, 23 Aug 2018 09:55:46 +0200
-Message-Id: <20180823075010.041581828@linuxfoundation.org>
+Subject: [PATCH 4.17 281/324] PCI: xgene: Fix I/O space page leak
+Date:   Thu, 23 Aug 2018 09:55:47 +0200
+Message-Id: <20180823075010.124104528@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -56,7 +56,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-[ Upstream commit a5fb9fb023a1435f2b42bccd7f547560f3a21dc3 ]
+[ Upstream commit 925652d03589084850023d8924b376b7ee3c1b1b ]
 
 When testing the R-Car PCIe driver on the Condor board, if the PCIe PHY
 driver was left disabled, the kernel crashed with this BUG:
@@ -111,91 +111,32 @@ probe failed, and since devm_phy_optional_get() returned -EPROBE_DEFER,
 the probe was retried, finally causing the BUG due to trying to remap
 already remapped pages.
 
-Introduce the devm_pci_remap_iospace() managed API and replace the
-pci_remap_iospace() call with it to fix the bug.
+The X-Gene PCI controller driver has the same issue.
+Replace pci_remap_iospace() with the devm_ managed version so that the
+pages get unmapped automagically on any probe failure.
 
-Fixes: dbf9826d5797 ("PCI: generic: Convert to DT resource parsing API")
+Fixes: 5f6b6ccdbe1c ("PCI: xgene: Add APM X-Gene PCIe driver")
 Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-[lorenzo.pieralisi@arm.com: split commit/updated the commit log]
+[lorenzo.pieralisi@arm.com: updated the commit log]
 Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pci/of.c    |    2 +-
- drivers/pci/pci.c   |   38 ++++++++++++++++++++++++++++++++++++++
- include/linux/pci.h |    2 ++
- 3 files changed, 41 insertions(+), 1 deletion(-)
+ drivers/pci/host/pci-xgene.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/pci/of.c
-+++ b/drivers/pci/of.c
-@@ -617,7 +617,7 @@ int pci_parse_request_of_pci_ranges(stru
- 
- 		switch (resource_type(res)) {
+--- a/drivers/pci/host/pci-xgene.c
++++ b/drivers/pci/host/pci-xgene.c
+@@ -421,7 +421,7 @@ static int xgene_pcie_map_ranges(struct
  		case IORESOURCE_IO:
--			err = pci_remap_iospace(res, iobase);
-+			err = devm_pci_remap_iospace(dev, res, iobase);
- 			if (err) {
- 				dev_warn(dev, "error %d: failed to map resource %pR\n",
- 					 err, res);
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -3573,6 +3573,44 @@ void pci_unmap_iospace(struct resource *
- }
- EXPORT_SYMBOL(pci_unmap_iospace);
- 
-+static void devm_pci_unmap_iospace(struct device *dev, void *ptr)
-+{
-+	struct resource **res = ptr;
-+
-+	pci_unmap_iospace(*res);
-+}
-+
-+/**
-+ * devm_pci_remap_iospace - Managed pci_remap_iospace()
-+ * @dev: Generic device to remap IO address for
-+ * @res: Resource describing the I/O space
-+ * @phys_addr: physical address of range to be mapped
-+ *
-+ * Managed pci_remap_iospace().  Map is automatically unmapped on driver
-+ * detach.
-+ */
-+int devm_pci_remap_iospace(struct device *dev, const struct resource *res,
-+			   phys_addr_t phys_addr)
-+{
-+	const struct resource **ptr;
-+	int error;
-+
-+	ptr = devres_alloc(devm_pci_unmap_iospace, sizeof(*ptr), GFP_KERNEL);
-+	if (!ptr)
-+		return -ENOMEM;
-+
-+	error = pci_remap_iospace(res, phys_addr);
-+	if (error) {
-+		devres_free(ptr);
-+	} else	{
-+		*ptr = res;
-+		devres_add(dev, ptr);
-+	}
-+
-+	return error;
-+}
-+EXPORT_SYMBOL(devm_pci_remap_iospace);
-+
- /**
-  * devm_pci_remap_cfgspace - Managed pci_remap_cfgspace()
-  * @dev: Generic device to remap IO address for
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -1236,6 +1236,8 @@ int pci_register_io_range(struct fwnode_
- unsigned long pci_address_to_pio(phys_addr_t addr);
- phys_addr_t pci_pio_to_address(unsigned long pio);
- int pci_remap_iospace(const struct resource *res, phys_addr_t phys_addr);
-+int devm_pci_remap_iospace(struct device *dev, const struct resource *res,
-+			   phys_addr_t phys_addr);
- void pci_unmap_iospace(struct resource *res);
- void __iomem *devm_pci_remap_cfgspace(struct device *dev,
- 				      resource_size_t offset,
+ 			xgene_pcie_setup_ob_reg(port, res, OMR3BARL, io_base,
+ 						res->start - window->offset);
+-			ret = pci_remap_iospace(res, io_base);
++			ret = devm_pci_remap_iospace(dev, res, io_base);
+ 			if (ret < 0)
+ 				return ret;
+ 			break;
 
 
