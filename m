@@ -6,38 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3970C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:49:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A017C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:49:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AB0A2077B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:49:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AB0A2077B
+	by mail.kernel.org (Postfix) with ESMTP id E428D2077B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:49:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E428D2077B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733135AbeHWMRg (ORCPT
+        id S1733149AbeHWMRj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:17:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50924 "EHLO
+        Thu, 23 Aug 2018 08:17:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50936 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732308AbeHWMRf (ORCPT
+        with ESMTP id S1732308AbeHWMRj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:17:35 -0400
+        Thu, 23 Aug 2018 08:17:39 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9763D941;
-        Thu, 23 Aug 2018 08:48:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CA7ABBC1;
+        Thu, 23 Aug 2018 08:48:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Song Liu <songliubraving@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org, Dongjiu Geng <gengdongjiu@huawei.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 107/324] nfp: bpf: dont stop offload if replace failed
-Date:   Thu, 23 Aug 2018 09:52:53 +0200
-Message-Id: <20180823075001.182966381@linuxfoundation.org>
+Subject: [PATCH 4.17 108/324] usb: xhci: remove the code build warning
+Date:   Thu, 23 Aug 2018 09:52:54 +0200
+Message-Id: <20180823075001.230896709@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -54,70 +53,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jakub Kicinski <jakub.kicinski@netronome.com>
+From: Dongjiu Geng <gengdongjiu@huawei.com>
 
-[ Upstream commit 68d676a089625daed9d61df56ac63b5cd7189efe ]
+[ Upstream commit 36eb93509c45d0bdbd8d09a01ab9d857972f5963 ]
 
-Stopping offload completely if replace of program failed dates
-back to days of transparent offload.  Back then we wanted to
-silently fall back to the in-driver processing.  Today we mark
-programs for offload when they are loaded into the kernel, so
-the transparent offload is no longer a reality.
+Initialize the 'err' variate to remove the build warning,
+the warning is shown as below:
 
-Flags check in the driver will only allow replace of a driver
-program with another driver program or an offload program with
-another offload program.
+drivers/usb/host/xhci-tegra.c: In function 'tegra_xusb_mbox_thread':
+drivers/usb/host/xhci-tegra.c:552:6: warning: 'err' may be used uninitialized in this function [-Wuninitialized]
+drivers/usb/host/xhci-tegra.c:482:6: note: 'err' was declared here
 
-When driver program is replaced stopping offload is a no-op,
-because driver program isn't offloaded.  When replacing
-offloaded program if the offload fails the entire operation
-will fail all the way back to user space and we should continue
-using the old program.  IOW when replacing a driver program
-stopping offload is unnecessary and when replacing offloaded
-program - it's a bug, old program should continue to run.
-
-In practice this bug would mean that if offload operation was to
-fail (either due to FW communication error, kernel OOM or new
-program being offloaded but for a different netdev) driver
-would continue reporting that previous XDP program is offloaded
-but in fact no program will be loaded in hardware.  The failure
-is fairly unlikely (found by inspection, when working on the code)
-but it's unpleasant.
-
-Backport note: even though the bug was introduced in commit
-cafa92ac2553 ("nfp: bpf: add support for XDP_FLAGS_HW_MODE"),
-this fix depends on commit 441a33031fe5 ("net: xdp: don't allow
-device-bound programs in driver mode"), so this fix is sufficient
-only in v4.15 or newer.  Kernels v4.13.x and v4.14.x do need to
-stop offload if it was transparent/opportunistic, i.e. if
-XDP_FLAGS_HW_MODE was not set on running program.
-
-Fixes: cafa92ac2553 ("nfp: bpf: add support for XDP_FLAGS_HW_MODE")
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Reviewed-by: Quentin Monnet <quentin.monnet@netronome.com>
-Acked-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Fixes: e84fce0f8837 ("usb: xhci: Add NVIDIA Tegra XUSB controller driver")
+Signed-off-by: Dongjiu Geng <gengdongjiu@huawei.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/netronome/nfp/bpf/main.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/usb/host/xhci-tegra.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/netronome/nfp/bpf/main.c
-+++ b/drivers/net/ethernet/netronome/nfp/bpf/main.c
-@@ -73,10 +73,10 @@ nfp_bpf_xdp_offload(struct nfp_app *app,
+--- a/drivers/usb/host/xhci-tegra.c
++++ b/drivers/usb/host/xhci-tegra.c
+@@ -479,7 +479,7 @@ static void tegra_xusb_mbox_handle(struc
+ 	unsigned long mask;
+ 	unsigned int port;
+ 	bool idle, enable;
+-	int err;
++	int err = 0;
  
- 	ret = nfp_net_bpf_offload(nn, prog, running, extack);
- 	/* Stop offload if replace not possible */
--	if (ret && prog)
--		nfp_bpf_xdp_offload(app, nn, NULL, extack);
-+	if (ret)
-+		return ret;
- 
--	nn->dp.bpf_offload_xdp = prog && !ret;
-+	nn->dp.bpf_offload_xdp = !!prog;
- 	return ret;
- }
+ 	memset(&rsp, 0, sizeof(rsp));
  
 
 
