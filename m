@@ -6,38 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7697C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:11:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F86CC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:11:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 957C121473
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:11:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 957C121473
+	by mail.kernel.org (Postfix) with ESMTP id 6419521473
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:11:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6419521473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729853AbeHWLjy (ORCPT
+        id S1729870AbeHWLj5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:39:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45770 "EHLO
+        Thu, 23 Aug 2018 07:39:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45786 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727420AbeHWLjy (ORCPT
+        with ESMTP id S1728834AbeHWLj5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:39:54 -0400
+        Thu, 23 Aug 2018 07:39:57 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AD533BB6;
-        Thu, 23 Aug 2018 08:11:26 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D96E3C7B;
+        Thu, 23 Aug 2018 08:11:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yuchung Cheng <ycheng@google.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Neal Cardwell <ncardwell@google.com>,
-        Lawrence Brakmo <brakmo@fb.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Stefan Schmidt <stefan@datenfreihafen.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 106/130] tcp: remove DELAYED ACK events in DCTCP
-Date:   Thu, 23 Aug 2018 09:53:42 +0200
-Message-Id: <20180823074933.941335980@linuxfoundation.org>
+Subject: [PATCH 4.9 089/130] ieee802154: at86rf230: use __func__ macro for debug messages
+Date:   Thu, 23 Aug 2018 09:53:25 +0200
+Message-Id: <20180823074932.960899583@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
 References: <20180823074927.161454870@linuxfoundation.org>
@@ -54,111 +50,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yuchung Cheng <ycheng@google.com>
+From: Stefan Schmidt <stefan@datenfreihafen.org>
 
-[ Upstream commit a69258f7aa2623e0930212f09c586fd06674ad79 ]
+[ Upstream commit 8a81388ec27c4c0adbdecd20e67bb5f411ab46b2 ]
 
-After fixing the way DCTCP tracking delayed ACKs, the delayed-ACK
-related callbacks are no longer needed
+Instead of having the function name hard-coded (it might change and we
+forgot to update them in the debug output) we can use __func__ instead
+and also shorter the line so we do not need to break it. Also fix an
+extra blank line while being here.
+Found by checkpatch.
 
-Signed-off-by: Yuchung Cheng <ycheng@google.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Acked-by: Neal Cardwell <ncardwell@google.com>
-Acked-by: Lawrence Brakmo <brakmo@fb.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Stefan Schmidt <stefan@datenfreihafen.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/tcp.h     |    2 --
- net/ipv4/tcp_dctcp.c  |   25 -------------------------
- net/ipv4/tcp_output.c |    4 ----
- 3 files changed, 31 deletions(-)
+ drivers/net/ieee802154/at86rf230.c |   13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
---- a/include/net/tcp.h
-+++ b/include/net/tcp.h
-@@ -850,8 +850,6 @@ enum tcp_ca_event {
- 	CA_EVENT_LOSS,		/* loss timeout */
- 	CA_EVENT_ECN_NO_CE,	/* ECT set, but not CE marked */
- 	CA_EVENT_ECN_IS_CE,	/* received CE marked IP packet */
--	CA_EVENT_DELAYED_ACK,	/* Delayed ack is sent */
--	CA_EVENT_NON_DELAYED_ACK,
- };
+--- a/drivers/net/ieee802154/at86rf230.c
++++ b/drivers/net/ieee802154/at86rf230.c
+@@ -1117,8 +1117,7 @@ at86rf230_set_hw_addr_filt(struct ieee80
+ 	if (changed & IEEE802154_AFILT_SADDR_CHANGED) {
+ 		u16 addr = le16_to_cpu(filt->short_addr);
  
- /* Information about inbound ACK, passed to cong_ops->in_ack_event() */
---- a/net/ipv4/tcp_dctcp.c
-+++ b/net/ipv4/tcp_dctcp.c
-@@ -55,7 +55,6 @@ struct dctcp {
- 	u32 dctcp_alpha;
- 	u32 next_seq;
- 	u32 ce_state;
--	u32 delayed_ack_reserved;
- 	u32 loss_cwnd;
- };
- 
-@@ -96,7 +95,6 @@ static void dctcp_init(struct sock *sk)
- 
- 		ca->dctcp_alpha = min(dctcp_alpha_on_init, DCTCP_MAX_ALPHA);
- 
--		ca->delayed_ack_reserved = 0;
- 		ca->loss_cwnd = 0;
- 		ca->ce_state = 0;
- 
-@@ -230,25 +228,6 @@ static void dctcp_state(struct sock *sk,
+-		dev_vdbg(&lp->spi->dev,
+-			 "at86rf230_set_hw_addr_filt called for saddr\n");
++		dev_vdbg(&lp->spi->dev, "%s called for saddr\n", __func__);
+ 		__at86rf230_write(lp, RG_SHORT_ADDR_0, addr);
+ 		__at86rf230_write(lp, RG_SHORT_ADDR_1, addr >> 8);
  	}
+@@ -1126,8 +1125,7 @@ at86rf230_set_hw_addr_filt(struct ieee80
+ 	if (changed & IEEE802154_AFILT_PANID_CHANGED) {
+ 		u16 pan = le16_to_cpu(filt->pan_id);
+ 
+-		dev_vdbg(&lp->spi->dev,
+-			 "at86rf230_set_hw_addr_filt called for pan id\n");
++		dev_vdbg(&lp->spi->dev, "%s called for pan id\n", __func__);
+ 		__at86rf230_write(lp, RG_PAN_ID_0, pan);
+ 		__at86rf230_write(lp, RG_PAN_ID_1, pan >> 8);
+ 	}
+@@ -1136,15 +1134,13 @@ at86rf230_set_hw_addr_filt(struct ieee80
+ 		u8 i, addr[8];
+ 
+ 		memcpy(addr, &filt->ieee_addr, 8);
+-		dev_vdbg(&lp->spi->dev,
+-			 "at86rf230_set_hw_addr_filt called for IEEE addr\n");
++		dev_vdbg(&lp->spi->dev, "%s called for IEEE addr\n", __func__);
+ 		for (i = 0; i < 8; i++)
+ 			__at86rf230_write(lp, RG_IEEE_ADDR_0 + i, addr[i]);
+ 	}
+ 
+ 	if (changed & IEEE802154_AFILT_PANC_CHANGED) {
+-		dev_vdbg(&lp->spi->dev,
+-			 "at86rf230_set_hw_addr_filt called for panc change\n");
++		dev_vdbg(&lp->spi->dev, "%s called for panc change\n", __func__);
+ 		if (filt->pan_coord)
+ 			at86rf230_write_subreg(lp, SR_AACK_I_AM_COORD, 1);
+ 		else
+@@ -1248,7 +1244,6 @@ at86rf230_set_cca_mode(struct ieee802154
+ 	return at86rf230_write_subreg(lp, SR_CCA_MODE, val);
  }
  
--static void dctcp_update_ack_reserved(struct sock *sk, enum tcp_ca_event ev)
--{
--	struct dctcp *ca = inet_csk_ca(sk);
 -
--	switch (ev) {
--	case CA_EVENT_DELAYED_ACK:
--		if (!ca->delayed_ack_reserved)
--			ca->delayed_ack_reserved = 1;
--		break;
--	case CA_EVENT_NON_DELAYED_ACK:
--		if (ca->delayed_ack_reserved)
--			ca->delayed_ack_reserved = 0;
--		break;
--	default:
--		/* Don't care for the rest. */
--		break;
--	}
--}
--
- static void dctcp_cwnd_event(struct sock *sk, enum tcp_ca_event ev)
+ static int
+ at86rf230_set_cca_ed_level(struct ieee802154_hw *hw, s32 mbm)
  {
- 	switch (ev) {
-@@ -258,10 +237,6 @@ static void dctcp_cwnd_event(struct sock
- 	case CA_EVENT_ECN_NO_CE:
- 		dctcp_ce_state_1_to_0(sk);
- 		break;
--	case CA_EVENT_DELAYED_ACK:
--	case CA_EVENT_NON_DELAYED_ACK:
--		dctcp_update_ack_reserved(sk, ev);
--		break;
- 	default:
- 		/* Don't care for the rest. */
- 		break;
---- a/net/ipv4/tcp_output.c
-+++ b/net/ipv4/tcp_output.c
-@@ -3444,8 +3444,6 @@ void tcp_send_delayed_ack(struct sock *s
- 	int ato = icsk->icsk_ack.ato;
- 	unsigned long timeout;
- 
--	tcp_ca_event(sk, CA_EVENT_DELAYED_ACK);
--
- 	if (ato > TCP_DELACK_MIN) {
- 		const struct tcp_sock *tp = tcp_sk(sk);
- 		int max_ato = HZ / 2;
-@@ -3502,8 +3500,6 @@ void __tcp_send_ack(struct sock *sk, u32
- 	if (sk->sk_state == TCP_CLOSE)
- 		return;
- 
--	tcp_ca_event(sk, CA_EVENT_NON_DELAYED_ACK);
--
- 	/* We are not putting this on the write queue, so
- 	 * tcp_transmit_skb() will set the ownership to this
- 	 * sock.
 
 
