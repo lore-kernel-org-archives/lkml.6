@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BE71C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:52:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82046C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:52:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C57C6208DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:52:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C57C6208DA
+	by mail.kernel.org (Postfix) with ESMTP id 45B4420839
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:52:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45B4420839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387872AbeHWMVC (ORCPT
+        id S2387885AbeHWMVF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:21:02 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51728 "EHLO
+        Thu, 23 Aug 2018 08:21:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51734 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733155AbeHWMVB (ORCPT
+        with ESMTP id S1733155AbeHWMVF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:21:01 -0400
+        Thu, 23 Aug 2018 08:21:05 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2FBD9C5C;
-        Thu, 23 Aug 2018 08:52:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 61810C5C;
+        Thu, 23 Aug 2018 08:52:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>,
+        stable@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
         Neil Armstrong <narmstrong@baylibre.com>,
         Kevin Hilman <khilman@baylibre.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 134/324] ARM64: dts: meson-axg: fix ethernet stability issue
-Date:   Thu, 23 Aug 2018 09:53:20 +0200
-Message-Id: <20180823075002.676024933@linuxfoundation.org>
+Subject: [PATCH 4.17 135/324] ARM64: dts: meson-gxl: fix Mali GPU compatible string
+Date:   Thu, 23 Aug 2018 09:53:21 +0200
+Message-Id: <20180823075002.723475498@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -52,56 +53,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jerome Brunet <jbrunet@baylibre.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-[ Upstream commit 6d28d577510f1a51f7ffbe830fdbf42077e0058b ]
+[ Upstream commit 1c38f4afd5d40234b67635b3c608a4093be04b96 ]
 
-Like the odroid-c2 and wetek, the s400 uses the RTL8211F and seems to
-suffer from the kind of stability issue.
+meson-gxl-mali.dtsi is only used on GXL SoCs. Thus it should use the GXL
+specific compatible string instead of the GXBB one.
+For now this is purely cosmetic since the (out-of-tree) lima driver for
+this GPU currently uses the "arm,mali-450" match instead of the SoC
+specific one. However, update the .dts to match the documentation since
+this driver behavior might change in the future.
 
-Doing an iperf3 download test, we can see a significant number of LPI
-interrupts on the tx path. After a short while (5 to 15 seconds), the
-network connection dies. If using rootfs over NFS, the connection may
-also break during the boot sequence.
-
-We still don't have a real explanation for this problem so let's disable
-EEE once again.
-
-Fixes: f6f6ac914b82 ("ARM64: dts: meson-axg: enable ethernet for A113D S400 board")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
 Signed-off-by: Kevin Hilman <khilman@baylibre.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/boot/dts/amlogic/meson-axg-s400.dts |   15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/amlogic/meson-gxl-mali.dtsi |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
-@@ -19,9 +19,22 @@
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-mali.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-mali.dtsi
+@@ -6,7 +6,7 @@
  
- &ethmac {
- 	status = "okay";
--	phy-mode = "rgmii";
- 	pinctrl-0 = <&eth_rgmii_y_pins>;
- 	pinctrl-names = "default";
-+	phy-handle = <&eth_phy0>;
-+	phy-mode = "rgmii";
-+
-+	mdio {
-+		compatible = "snps,dwmac-mdio";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		eth_phy0: ethernet-phy@0 {
-+			/* Realtek RTL8211F (0x001cc916) */
-+			reg = <0>;
-+			eee-broken-1000t;
-+		};
-+	};
- };
- 
- &uart_A {
+ &apb {
+ 	mali: gpu@c0000 {
+-		compatible = "amlogic,meson-gxbb-mali", "arm,mali-450";
++		compatible = "amlogic,meson-gxl-mali", "arm,mali-450";
+ 		reg = <0x0 0xc0000 0x0 0x40000>;
+ 		interrupts = <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>,
 
 
