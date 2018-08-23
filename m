@@ -6,37 +6,41 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 618E0C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D38C0C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20FFF20839
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20FFF20839
+	by mail.kernel.org (Postfix) with ESMTP id 9A0DE208DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A0DE208DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388043AbeHWMVz (ORCPT
+        id S2388054AbeHWMWB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:21:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51948 "EHLO
+        Thu, 23 Aug 2018 08:22:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51968 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728574AbeHWMVy (ORCPT
+        with ESMTP id S1728574AbeHWMWA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:21:54 -0400
+        Thu, 23 Aug 2018 08:22:00 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 29998C5C;
-        Thu, 23 Aug 2018 08:53:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 54215C83;
+        Thu, 23 Aug 2018 08:53:20 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mauricio Vasquez B <mauricio.vasquez@polito.it>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org, Zhen Lei <thunder.leizhen@huawei.com>,
+        Dmitriy Vyukov <dvyukov@google.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Hanjun Guo <guohanjun@huawei.com>,
+        Libin <huawei.libin@huawei.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 178/324] bpf: hash map: decrement counter on error
-Date:   Thu, 23 Aug 2018 09:54:04 +0200
-Message-Id: <20180823075005.116295573@linuxfoundation.org>
+Subject: [PATCH 4.17 180/324] kasan: fix shadow_size calculation error in kasan_module_alloc
+Date:   Thu, 23 Aug 2018 09:54:06 +0200
+Message-Id: <20180823075005.215242923@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -53,64 +57,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mauricio Vasquez B <mauricio.vasquez@polito.it>
+From: Zhen Lei <thunder.leizhen@huawei.com>
 
-[ Upstream commit ed2b82c03dc187018307c7c6bf9299705f3db383 ]
+[ Upstream commit 1e8e18f694a52d703665012ca486826f64bac29d ]
 
-Decrement the number of elements in the map in case the allocation
-of a new node fails.
+There is a special case that the size is "(N << KASAN_SHADOW_SCALE_SHIFT)
+Pages plus X", the value of X is [1, KASAN_SHADOW_SCALE_SIZE-1].  The
+operation "size >> KASAN_SHADOW_SCALE_SHIFT" will drop X, and the
+roundup operation can not retrieve the missed one page.  For example:
+size=0x28006, PAGE_SIZE=0x1000, KASAN_SHADOW_SCALE_SHIFT=3, we will get
+shadow_size=0x5000, but actually we need 6 pages.
 
-Fixes: 6c9059817432 ("bpf: pre-allocate hash map elements")
-Signed-off-by: Mauricio Vasquez B <mauricio.vasquez@polito.it>
-Acked-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+  shadow_size = round_up(size >> KASAN_SHADOW_SCALE_SHIFT, PAGE_SIZE);
+
+This can lead to a kernel crash when kasan is enabled and the value of
+mod->core_layout.size or mod->init_layout.size is like above.  Because
+the shadow memory of X has not been allocated and mapped.
+
+move_module:
+  ptr = module_alloc(mod->core_layout.size);
+  ...
+  memset(ptr, 0, mod->core_layout.size);		//crashed
+
+  Unable to handle kernel paging request at virtual address ffff0fffff97b000
+  ......
+  Call trace:
+    __asan_storeN+0x174/0x1a8
+    memset+0x24/0x48
+    layout_and_allocate+0xcd8/0x1800
+    load_module+0x190/0x23e8
+    SyS_finit_module+0x148/0x180
+
+Link: http://lkml.kernel.org/r/1529659626-12660-1-git-send-email-thunder.leizhen@huawei.com
+Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+Reviewed-by: Dmitriy Vyukov <dvyukov@google.com>
+Acked-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Alexander Potapenko <glider@google.com>
+Cc: Hanjun Guo <guohanjun@huawei.com>
+Cc: Libin <huawei.libin@huawei.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/bpf/hashtab.c |   16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+ mm/kasan/kasan.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/kernel/bpf/hashtab.c
-+++ b/kernel/bpf/hashtab.c
-@@ -743,13 +743,15 @@ static struct htab_elem *alloc_htab_elem
- 				 * old element will be freed immediately.
- 				 * Otherwise return an error
- 				 */
--				atomic_dec(&htab->count);
--				return ERR_PTR(-E2BIG);
-+				l_new = ERR_PTR(-E2BIG);
-+				goto dec_count;
- 			}
- 		l_new = kmalloc_node(htab->elem_size, GFP_ATOMIC | __GFP_NOWARN,
- 				     htab->map.numa_node);
--		if (!l_new)
--			return ERR_PTR(-ENOMEM);
-+		if (!l_new) {
-+			l_new = ERR_PTR(-ENOMEM);
-+			goto dec_count;
-+		}
- 	}
+--- a/mm/kasan/kasan.c
++++ b/mm/kasan/kasan.c
+@@ -619,12 +619,13 @@ void kasan_kfree_large(void *ptr, unsign
+ int kasan_module_alloc(void *addr, size_t size)
+ {
+ 	void *ret;
++	size_t scaled_size;
+ 	size_t shadow_size;
+ 	unsigned long shadow_start;
  
- 	memcpy(l_new->key, key, key_size);
-@@ -762,7 +764,8 @@ static struct htab_elem *alloc_htab_elem
- 						  GFP_ATOMIC | __GFP_NOWARN);
- 			if (!pptr) {
- 				kfree(l_new);
--				return ERR_PTR(-ENOMEM);
-+				l_new = ERR_PTR(-ENOMEM);
-+				goto dec_count;
- 			}
- 		}
+ 	shadow_start = (unsigned long)kasan_mem_to_shadow(addr);
+-	shadow_size = round_up(size >> KASAN_SHADOW_SCALE_SHIFT,
+-			PAGE_SIZE);
++	scaled_size = (size + KASAN_SHADOW_MASK) >> KASAN_SHADOW_SCALE_SHIFT;
++	shadow_size = round_up(scaled_size, PAGE_SIZE);
  
-@@ -776,6 +779,9 @@ static struct htab_elem *alloc_htab_elem
- 
- 	l_new->hash = hash;
- 	return l_new;
-+dec_count:
-+	atomic_dec(&htab->count);
-+	return l_new;
- }
- 
- static int check_flags(struct bpf_htab *htab, struct htab_elem *l_old,
+ 	if (WARN_ON(!PAGE_ALIGNED(shadow_start)))
+ 		return -EINVAL;
 
 
