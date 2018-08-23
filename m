@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDBE4C04E85
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:32:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37AB6C04E86
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:32:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8228D2147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:32:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8228D2147A
+	by mail.kernel.org (Postfix) with ESMTP id EE4092147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:32:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE4092147A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731649AbeHWMA5 (ORCPT
+        id S1731660AbeHWMBA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:00:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48136 "EHLO
+        Thu, 23 Aug 2018 08:01:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48142 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728041AbeHWMA4 (ORCPT
+        with ESMTP id S1728041AbeHWMBA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:00:56 -0400
+        Thu, 23 Aug 2018 08:01:00 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 445338B1;
-        Thu, 23 Aug 2018 08:32:23 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 788D28B1;
+        Thu, 23 Aug 2018 08:32:26 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vikas Gupta <vikas.gupta@broadcom.com>,
-        Michael Chan <michael.chan@broadcom.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Ray Jui <ray.jui@broadcom.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 164/217] bnxt_en: Fix for system hang if request_irq fails
-Date:   Thu, 23 Aug 2018 09:54:37 +0200
-Message-Id: <20180823075512.949975234@linuxfoundation.org>
+Subject: [PATCH 4.14 182/217] pinctrl: nsp: off by ones in nsp_pinmux_enable()
+Date:   Thu, 23 Aug 2018 09:54:55 +0200
+Message-Id: <20180823075513.805887855@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -52,43 +52,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vikas Gupta <vikas.gupta@broadcom.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit c58387ab1614f6d7fb9e244f214b61e7631421fc ]
+[ Upstream commit f90a21c898db58eaea14b8ad7e9af3b9e15e5f8a ]
 
-Fix bug in the error code path when bnxt_request_irq() returns failure.
-bnxt_disable_napi() should not be called in this error path because
-NAPI has not been enabled yet.
+The > comparisons should be >= or else we read beyond the end of the
+pinctrl->functions[] array.
 
-Fixes: c0c050c58d84 ("bnxt_en: New Broadcom ethernet driver.")
-Signed-off-by: Vikas Gupta <vikas.gupta@broadcom.com>
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: cc4fa83f66e9 ("pinctrl: nsp: add pinmux driver support for Broadcom NSP SoC")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/pinctrl/bcm/pinctrl-nsp-mux.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -6348,7 +6348,7 @@ static int __bnxt_open_nic(struct bnxt *
- 		rc = bnxt_request_irq(bp);
- 		if (rc) {
- 			netdev_err(bp->dev, "bnxt_request_irq err: %x\n", rc);
--			goto open_err;
-+			goto open_err_irq;
- 		}
- 	}
+--- a/drivers/pinctrl/bcm/pinctrl-nsp-mux.c
++++ b/drivers/pinctrl/bcm/pinctrl-nsp-mux.c
+@@ -460,8 +460,8 @@ static int nsp_pinmux_enable(struct pinc
+ 	const struct nsp_pin_function *func;
+ 	const struct nsp_pin_group *grp;
  
-@@ -6386,6 +6386,8 @@ static int __bnxt_open_nic(struct bnxt *
+-	if (grp_select > pinctrl->num_groups ||
+-		func_select > pinctrl->num_functions)
++	if (grp_select >= pinctrl->num_groups ||
++	    func_select >= pinctrl->num_functions)
+ 		return -EINVAL;
  
- open_err:
- 	bnxt_disable_napi(bp);
-+
-+open_err_irq:
- 	bnxt_del_napi(bp);
- 
- open_err_free_mem:
+ 	func = &pinctrl->functions[func_select];
 
 
