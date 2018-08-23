@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80FD7C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:11:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F25BC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:11:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46FD8208CC
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:11:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46FD8208CC
+	by mail.kernel.org (Postfix) with ESMTP id 125C820C0C
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:11:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 125C820C0C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729813AbeHWLjo (ORCPT
+        id S1729828AbeHWLjr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:39:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45742 "EHLO
+        Thu, 23 Aug 2018 07:39:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45750 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728548AbeHWLjn (ORCPT
+        with ESMTP id S1728548AbeHWLjq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:39:43 -0400
+        Thu, 23 Aug 2018 07:39:46 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0EBD8C83;
-        Thu, 23 Aug 2018 08:11:15 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AF59EBB6;
+        Thu, 23 Aug 2018 08:11:19 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Laura Abbott <labbott@redhat.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        stable@vger.kernel.org, Willem de Bruijn <willemb@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 103/130] tools: build: Use HOSTLDFLAGS with fixdep
-Date:   Thu, 23 Aug 2018 09:53:39 +0200
-Message-Id: <20180823074933.765513848@linuxfoundation.org>
+Subject: [PATCH 4.9 104/130] packet: reset network header if packet shorter than ll reserved space
+Date:   Thu, 23 Aug 2018 09:53:40 +0200
+Message-Id: <20180823074933.826287939@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
 References: <20180823074927.161454870@linuxfoundation.org>
@@ -52,32 +51,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Laura Abbott <labbott@redhat.com>
+From: Willem de Bruijn <willemb@google.com>
 
-[ Upstream commit 8b247a92ebd0cda7dec49a6f771d9c4950f3d3ad ]
+[ Upstream commit 993675a3100b16a4c80dfd70cbcde8ea7127b31d ]
 
-The final link of fixdep uses LDFLAGS but not the existing HOSTLDFLAGS.
-Fix this.
+If variable length link layer headers result in a packet shorter
+than dev->hard_header_len, reset the network header offset. Else
+skb->mac_len may exceed skb->len after skb_mac_reset_len.
 
-Signed-off-by: Laura Abbott <labbott@redhat.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+packet_sendmsg_spkt already has similar logic.
+
+Fixes: b84bbaf7a6c8 ("packet: in packet_snd start writing at link layer allocation")
+Signed-off-by: Willem de Bruijn <willemb@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/build/Makefile |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/packet/af_packet.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/tools/build/Makefile
-+++ b/tools/build/Makefile
-@@ -42,7 +42,7 @@ $(OUTPUT)fixdep-in.o: FORCE
- 	$(Q)$(MAKE) $(build)=fixdep
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -2917,6 +2917,8 @@ static int packet_snd(struct socket *soc
+ 			goto out_free;
+ 	} else if (reserve) {
+ 		skb_reserve(skb, -reserve);
++		if (len < reserve)
++			skb_reset_network_header(skb);
+ 	}
  
- $(OUTPUT)fixdep: $(OUTPUT)fixdep-in.o
--	$(QUIET_LINK)$(HOSTCC) $(LDFLAGS) -o $@ $<
-+	$(QUIET_LINK)$(HOSTCC) $(HOSTLDFLAGS) -o $@ $<
- 
- FORCE:
- 
+ 	/* Returns -EFAULT on error */
 
 
