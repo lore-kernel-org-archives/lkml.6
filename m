@@ -5,49 +5,49 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82816C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 19:16:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DBACC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 19:18:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B0AE2089D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 19:16:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B0AE2089D
+	by mail.kernel.org (Postfix) with ESMTP id C5C712089D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 19:18:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5C712089D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726802AbeHWWry (ORCPT
+        id S1726881AbeHWWtE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 18:47:54 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:57903 "EHLO
+        Thu, 23 Aug 2018 18:49:04 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:57944 "EHLO
         mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726081AbeHWWry (ORCPT
+        with ESMTP id S1726081AbeHWWtE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 18:47:54 -0400
+        Thu, 23 Aug 2018 18:49:04 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by mailout.easymail.ca (Postfix) with ESMTP id 2F3C9216CF;
-        Thu, 23 Aug 2018 19:16:48 +0000 (UTC)
+        by mailout.easymail.ca (Postfix) with ESMTP id F1DC2217B9;
+        Thu, 23 Aug 2018 19:17:57 +0000 (UTC)
 Received: from mailout.easymail.ca ([127.0.0.1])
         by localhost (emo02-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id eMYixmJ_htVZ; Thu, 23 Aug 2018 19:16:48 +0000 (UTC)
+        with ESMTP id wS5e9l_kZVFk; Thu, 23 Aug 2018 19:17:57 +0000 (UTC)
 Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mailout.easymail.ca (Postfix) with ESMTPSA id A82CB21660;
-        Thu, 23 Aug 2018 19:16:33 +0000 (UTC)
-Subject: Re: [PATCH 4.17 000/324] 4.17.19-stable review
+        by mailout.easymail.ca (Postfix) with ESMTPSA id 9402021606;
+        Thu, 23 Aug 2018 19:17:43 +0000 (UTC)
+Subject: Re: [PATCH 4.14 000/217] 4.14.67-stable review
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
 Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
         linux@roeck-us.net, patches@kernelci.org,
         ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
         stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>
-References: <20180823074955.885811006@linuxfoundation.org>
+References: <20180823075505.090246914@linuxfoundation.org>
 From:   Shuah Khan <shuah@kernel.org>
-Message-ID: <3127d6a7-7a45-5890-2442-558b8b733be1@kernel.org>
-Date:   Thu, 23 Aug 2018 13:16:32 -0600
+Message-ID: <3b1f7f1b-1699-6b4e-e415-f6f0287be107@kernel.org>
+Date:   Thu, 23 Aug 2018 13:17:42 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
+In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -57,22 +57,18 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 08/23/2018 01:51 AM, Greg Kroah-Hartman wrote:
-> NOTE, this is going to be the LAST 4.17.y kernel release.  Please move
-> to the 4.18.y tree at this point in time if you have not already.  After
-> this release, 4.17.y will be end-of-life.
-> 
-> This is the start of the stable review cycle for the 4.17.19 release.
-> There are 324 patches in this series, all will be posted as a response
+> This is the start of the stable review cycle for the 4.14.67 release.
+> There are 217 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
 > 
-> Responses should be made by Sat Aug 25 07:48:40 UTC 2018.
+> Responses should be made by Sat Aug 25 07:54:25 UTC 2018.
 > Anything received after that time might be too late.
 > 
 > The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.17.19-rc1.gz
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.67-rc1.gz
 > or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.17.y
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
 > and the diffstat can be found below.
 > 
 > thanks,
