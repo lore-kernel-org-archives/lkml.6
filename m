@@ -2,39 +2,40 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C0D9C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:18:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC72EC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:19:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 648CE20A8B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:18:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 648CE20A8B
+	by mail.kernel.org (Postfix) with ESMTP id B247E20A8B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:19:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B247E20A8B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729960AbeHWLrZ (ORCPT
+        id S1729988AbeHWLr2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:47:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46370 "EHLO
+        Thu, 23 Aug 2018 07:47:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46378 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727760AbeHWLrZ (ORCPT
+        with ESMTP id S1727760AbeHWLr2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:47:25 -0400
+        Thu, 23 Aug 2018 07:47:28 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7FA1EC7B;
-        Thu, 23 Aug 2018 08:18:55 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A2E32C74;
+        Thu, 23 Aug 2018 08:18:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Brodkin <abrodkin@synopsys.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
+        stable@vger.kernel.org,
+        Paul Menzel <pmenzel+linux-hwmon@molgen.mpg.de>,
+        Guenter Roeck <linux@roeck-us.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 012/217] ARC: Explicitly add -mmedium-calls to CFLAGS
-Date:   Thu, 23 Aug 2018 09:52:05 +0200
-Message-Id: <20180823075506.099066308@linuxfoundation.org>
+Subject: [PATCH 4.14 013/217] hwmon: (nct6775) Fix loop limit
+Date:   Thu, 23 Aug 2018 09:52:06 +0200
+Message-Id: <20180823075506.152846666@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -51,79 +52,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexey Brodkin <abrodkin@synopsys.com>
+From: Guenter Roeck <linux@roeck-us.net>
 
-[ Upstream commit 74c11e300c103af47db5b658fdcf28002421e250 ]
+[ Upstream commit 91bb8f45f73f19a0150c233c0f11cdeb6d71d1e9 ]
 
-GCC built for arc*-*-linux has "-mmedium-calls" implicitly enabled by default
-thus we don't see any problems during Linux kernel compilation.
------------------------------>8------------------------
-arc-linux-gcc -mcpu=arc700 -Q --help=target | grep calls
-  -mlong-calls                          [disabled]
-  -mmedium-calls                        [enabled]
------------------------------>8------------------------
+Commit cc66b3038254 ("hwmon: (nct6775) Rework temperature source and label
+handling") changed a loop limit from "data->temp_label_num - 1" to "32",
+as part of moving from a string array to a bit mask. This results in the
+following error, reported by UBSAN.
 
-But if we try to use so-called Elf32 toolchain with GCC configured for
-arc*-*-elf* then we'd see the following failure:
------------------------------>8------------------------
-init/do_mounts.o: In function 'init_rootfs':
-do_mounts.c:(.init.text+0x108): relocation truncated to fit: R_ARC_S21W_PCREL
-against symbol 'unregister_filesystem' defined in .text section in fs/filesystems.o
+UBSAN: Undefined behaviour in drivers/hwmon/nct6775.c:4179:27
+shift exponent 32 is too large for 32-bit type 'long unsigned int'
 
-arc-elf32-ld: final link failed: Symbol needs debug section which does not exist
-make: *** [vmlinux] Error 1
------------------------------>8------------------------
+Similar to the original loop, the limit has to be one less than the
+number of bits.
 
-That happens because neither "-mmedium-calls" nor "-mlong-calls" are enabled in
-Elf32 GCC:
------------------------------>8------------------------
-arc-elf32-gcc -mcpu=arc700 -Q --help=target | grep calls
-  -mlong-calls                          [disabled]
-  -mmedium-calls                        [disabled]
------------------------------>8------------------------
-
-Now to make it possible to use Elf32 toolchain for building Linux kernel
-we're explicitly add "-mmedium-calls" to CFLAGS.
-
-And since we add "-mmedium-calls" to the global CFLAGS there's no point in
-having per-file copies thus removing them.
-
-Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
-
+Fixes: cc66b3038254 ("hwmon: (nct6775) Rework temperature source and label handling")
+Reported-by: Paul Menzel <pmenzel+linux-hwmon@molgen.mpg.de>
+Cc: Paul Menzel <pmenzel+linux-hwmon@molgen.mpg.de>
+Tested-by: Paul Menzel <pmenzel+linux-hwmon@molgen.mpg.de>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arc/Makefile |   15 +--------------
- 1 file changed, 1 insertion(+), 14 deletions(-)
+ drivers/hwmon/nct6775.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arc/Makefile
-+++ b/arch/arc/Makefile
-@@ -16,7 +16,7 @@ endif
- 
- KBUILD_DEFCONFIG := nsim_700_defconfig
- 
--cflags-y	+= -fno-common -pipe -fno-builtin -D__linux__
-+cflags-y	+= -fno-common -pipe -fno-builtin -mmedium-calls -D__linux__
- cflags-$(CONFIG_ISA_ARCOMPACT)	+= -mA7
- cflags-$(CONFIG_ISA_ARCV2)	+= -mcpu=archs
- 
-@@ -140,16 +140,3 @@ dtbs: scripts
- 
- archclean:
- 	$(Q)$(MAKE) $(clean)=$(boot)
--
--# Hacks to enable final link due to absence of link-time branch relexation
--# and gcc choosing optimal(shorter) branches at -O3
--#
--# vineetg Feb 2010: -mlong-calls switched off for overall kernel build
--# However lib/decompress_inflate.o (.init.text) calls
--# zlib_inflate_workspacesize (.text) causing relocation errors.
--# Thus forcing all exten calls in this file to be long calls
--export CFLAGS_decompress_inflate.o = -mmedium-calls
--export CFLAGS_initramfs.o = -mmedium-calls
--ifdef CONFIG_SMP
--export CFLAGS_core.o = -mmedium-calls
--endif
+--- a/drivers/hwmon/nct6775.c
++++ b/drivers/hwmon/nct6775.c
+@@ -4107,7 +4107,7 @@ static int nct6775_probe(struct platform
+ 	 * The temperature is already monitored if the respective bit in <mask>
+ 	 * is set.
+ 	 */
+-	for (i = 0; i < 32; i++) {
++	for (i = 0; i < 31; i++) {
+ 		if (!(data->temp_mask & BIT(i + 1)))
+ 			continue;
+ 		if (!reg_temp_alternate[i])
 
 
