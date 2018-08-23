@@ -2,110 +2,366 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3845CC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:13:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1982C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:15:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4E04208F7
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:13:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4841F206B6
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:15:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pEbPM/lS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4E04208F7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="IgD3xUIn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4841F206B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=poorly.run
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731909AbeHWRn0 (ORCPT
+        id S1731937AbeHWRpf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 13:43:26 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:39325 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731010AbeHWRn0 (ORCPT
+        Thu, 23 Aug 2018 13:45:35 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:46057 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730505AbeHWRpf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 13:43:26 -0400
-Received: by mail-pf1-f194.google.com with SMTP id j8-v6so2762349pff.6
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 07:13:34 -0700 (PDT)
+        Thu, 23 Aug 2018 13:45:35 -0400
+Received: by mail-yw1-f67.google.com with SMTP id p206-v6so1997396ywg.12
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 07:15:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=0En98EPHnxDavJP7goy5xVci8SHW2VvgixPwGRuwHxY=;
-        b=pEbPM/lS1vc8vMwsJ1x7yYKOj3a06iQmUX+gyViu35zIUGd08yua0BvGYJdL4kcGj9
-         9DPcRRcCOYWzmCt3ynbDNGE1lUsYeKwxAmAwxQ83gbsyFmZnjQ490AujLFUKJurAhN2f
-         CpmwtL4x06oJW57/BpueMfKpDPKc/d8mnSTjIrH5Q4u/fERwD/DgdVK4qijsG/W6zs28
-         90oGhuRrQ8B8qx6DejXuegmXE5nG9s1wELONDNeOAwXxlIaqjZ6LpAjFdxLDzmU6Wdtg
-         g2zeLLvi7WfSXvqZJFs3hH4D7nRDPSAfSjDRZVIAq2mt3CDeshEcJMLd1SrndnL2uN9W
-         Tdkw==
+        d=poorly.run; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=88W29AI72il+FA/iFNRnKUVkuihe2MLLK77eUw+823o=;
+        b=IgD3xUInochWJo5QDneIfCUCDLjgWWCvzNLgCwMjHFM7icjPMtT9sLY4+54MJkAnsT
+         qK2spXk5v574udnGSIq/12tMj3yS2RTdLxMJoNkfbjCRH89Y4TDGrp6QhlPwX6CjyFh6
+         t6sqBamLaYtaSyLiVDLKDt4KK1XzyJEMwvKDIYQFqMhLiYkMYdJT1/4xLt7VYkwRwYTI
+         J4Yd+NWwVm/KY6vXaBXBMx1EBtHgm9QKwT+mBjfMvkOB5Tu7rTbtMh8o2KTwxdjy47Pq
+         IkTafdVWbx/hWRpSX5C3QPsztLLvZtR4AiIFH6zUmlEXPdMLIS3+cv5sc++KWQhlKbuB
+         Q+zA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=0En98EPHnxDavJP7goy5xVci8SHW2VvgixPwGRuwHxY=;
-        b=rxeHCVNYnDlfOV5YHr57kFIMwCou/16izN1UlLdU17gI5IJA1EMhHmz7xvoBN8JsPP
-         r77QaGts8PAVsrh99VSOIr0CAxlLZkm9rhGGSiuGWQlIyej1zqWxRB7GhXAcdURoQDFy
-         lvByYJ6LWIO/3bdUrLcJWwe2uYm4d5+MYoCnblyHwpO+aS06vSOLAjHWyU+MKEkGNfDi
-         cUgjcVZv8AU+0hybbEWMiw81B+ufthSOVtaXqpMU3rSDOy0VQc3+cO7uFi44KeQitzMV
-         fn7NZg3SeoohwWJ5LZKB31LI29uljahIsfOajgih8Ck7RVd/AeeShpRHkpitLq1klXWC
-         uZRw==
-X-Gm-Message-State: APzg51B7CtJJPW3AimqMhjnd8eg3T7tf80uys7vZO7p3VIO/UNXxFVwZ
-        wLmvBl9ATs0xcz9uw9rASGWaAtYMnr65+GVkVi+JWg==
-X-Google-Smtp-Source: ANB0VdYetAtij09BqwX85xGIVC+4J5rIEs5alvz5q5XXBkJVWmUbONO0oGtZtoygRqf/1Yk3n6djG6cNkPhFqQDEIow=
-X-Received: by 2002:a62:2bc2:: with SMTP id r185-v6mr8310540pfr.154.1535033613691;
- Thu, 23 Aug 2018 07:13:33 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=88W29AI72il+FA/iFNRnKUVkuihe2MLLK77eUw+823o=;
+        b=cnXgg669Zz4AQ2gm+3ONiBqsIkdWCyhC7jIWjtiX5dOm1PUO61efLmFZIrynnfhqRS
+         B2/cNRmBDIBGNbuB+AVnH/BayeTRuuTv3BbJdkbMKdtIfQUOsmgaKvdCZcKJyLvMj7na
+         vm36VtpUxbGV1pWkBcygMCpuo1VIyBg2flor99jmZBhW5r25aVTGhi6nB0wiG6+/Wl+C
+         NbA1T/qvcHl1z3tGntaN+Fa7rusLWT3ht5Df+3bm4R3vyCxVBTblKg1EszVf7Ms03m+K
+         ssOj0b+Q8lsMtjiuZ88sW06OIriV6JjryEn0/YxzjnGOILEFEXuzooSb6ggfky2OOuO8
+         CoHA==
+X-Gm-Message-State: APzg51CuYxcefK7gcTy8Ai/kiB1ukzbM8z1OU7qOye4fkPi4Af10fWxO
+        exvVP4Rgj3K7EAlLZlSqp5u0ew==
+X-Google-Smtp-Source: ANB0Vdb2cIbFZHh+aJW9oDY/z8/GA5kGqXHHhO5FVIBkxqZJhScRfezc/eVqBOGg5kBO/LQoQwrcMg==
+X-Received: by 2002:a81:9a03:: with SMTP id r3-v6mr2833687ywg.87.1535033741826;
+        Thu, 23 Aug 2018 07:15:41 -0700 (PDT)
+Received: from localhost ([2620:0:1013:11:ad55:b1db:adfe:3b9f])
+        by smtp.gmail.com with ESMTPSA id e126-v6sm1922472ywf.72.2018.08.23.07.15.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 23 Aug 2018 07:15:41 -0700 (PDT)
+Date:   Thu, 23 Aug 2018 10:15:40 -0400
+From:   Sean Paul <sean@poorly.run>
+To:     Lowry Li <lowry.li@arm.com>
+Cc:     liviu.dudau@arm.com, airlied@linux.ie,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        emil.l.velikov@gmail.com, seanpaul@chromium.org,
+        malidp@foss.arm.com, daniel.vetter@intel.com, nd@arm.com
+Subject: Re: [PATCH v5 1/2] drm: Add per-plane pixel blend mode property
+Message-ID: <20180823141540.GA45089@art_vandelay>
+References: <1535013020-23737-1-git-send-email-lowry.li@arm.com>
+ <1535013020-23737-2-git-send-email-lowry.li@arm.com>
 MIME-Version: 1.0
-Received: by 2002:a17:90a:8e82:0:0:0:0 with HTTP; Thu, 23 Aug 2018 07:13:13
- -0700 (PDT)
-In-Reply-To: <20180510102331.02ee1346@gandalf.local.home>
-References: <0000000000003723710569916833@google.com> <CACT4Y+Yz-zRdEKTJeSdK5QTqPtgsSqwoJ4WU8bcX+8RwXUAiSA@mail.gmail.com>
- <20180510102331.02ee1346@gandalf.local.home>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Thu, 23 Aug 2018 07:13:13 -0700
-Message-ID: <CACT4Y+bSBgbSntkdEXFD+_aJZOrtMfm_WB0K7-psYVSVCg8vTg@mail.gmail.com>
-Subject: Re: KASAN: slab-out-of-bounds Write in process_preds
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     syzbot <syzbot+5702a7e6d4a13b3accd5@syzkaller.appspotmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1535013020-23737-2-git-send-email-lowry.li@arm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 10, 2018 at 7:23 AM, Steven Rostedt <rostedt@goodmis.org> wrote:
-> On Thu, 10 May 2018 07:14:26 +0200
-> Dmitry Vyukov <dvyukov@google.com> wrote:
->
->> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
->> > Reported-by: syzbot+5702a7e6d4a13b3accd5@syzkaller.appspotmail.com
->> > It will help syzbot understand when the bug is fixed. See footer for
->> > details.
->> > If you forward the report, please keep this part and the footer.
->>
->>
->> This was bisected to:
->>
->> commit 80765597bc587feae8dbc8ce97a0f32e12a6e625
->> Author: Steven Rostedt (VMware) <rostedt@goodmis.org>
->> Date:   Fri Mar 9 13:19:28 2018 -0500
->>
->>     tracing: Rewrite filter logic to be simpler and faster
->
-> I could have told you that without the bisect ;-)
->
-> I'll try to get some time to look into this.
+On Thu, Aug 23, 2018 at 04:30:19PM +0800, Lowry Li wrote:
+> Pixel blend modes represent the alpha blending equation
+> selection, describing how the pixels from the current
+> plane are composited with the background.
+> 
+> Adds a pixel_blend_mode to drm_plane_state and a
+> blend_mode_property to drm_plane, and related support
+> functions.
+> 
+> Defines three blend modes in drm_blend.h.
+> 
+> Changes since v1:
+>  - Moves the blending equation into the DOC comment
+>  - Refines the comments of drm_plane_create_blend_mode_property to not
+>    enumerate the #defines, but instead the string values
+>  - Uses fg.* instead of pixel.* and plane_alpha instead of plane.alpha
+> Changes since v2:
+>  - Refines the comments of drm_plane_create_blend_mode_property:
+>       1) Puts the descriptions (after the ":") on a new line
+>       2) Adds explaining why @supported_modes need PREMUL as default
+> Changes since v3:
+>  - Refines drm_plane_create_blend_mode_property(). drm_property_add_enum()
+>    can calculate the index itself just fine, so no point in having the
+>    caller pass it in.
+>  - Since the current DRM assumption is that alpha is premultiplied
+>    as default, define DRM_MODE_BLEND_PREMULTI as 0 will be better.
+>  - Refines some comments.
+> Changes since v4:
+>  - Adds comments in drm_blend.h.
+>  - Removes setting default value in drm_plane_create_blend_mode_property()
+>    as it is already in __drm_atomic_helper_plane_reset().
+>  - Fixes to use state->pixel_blend_mode instead of using
+>    plane->state->pixel_blend_mode in reset function.
+>  - Rebases on drm-misc-next.
+> 
+> Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
 
+Reviewed-by: Sean Paul <seanpaul@chromium.org>
 
-It seems this was lost on kernel mailing lists, then re-reported after 2 months:
-https://bugzilla.kernel.org/show_bug.cgi?id=200019
-and then fixed.
+I've also Reviewed the userspace component in drm_hwc here:
+https://gitlab.freedesktop.org/drm-hwcomposer/drm-hwcomposer/merge_requests/16#note_24690
 
-Since the fixing commit does not contain syzbot tag, need to tell it
-about the fix manually:
+Thanks,
 
-#syz fix: tracing: Check for no filter when processing event filters
+Sean
+
+> Signed-off-by: Lowry Li <lowry.li@arm.com>
+> ---
+>  drivers/gpu/drm/drm_atomic.c        |   4 ++
+>  drivers/gpu/drm/drm_atomic_helper.c |   1 +
+>  drivers/gpu/drm/drm_blend.c         | 123 ++++++++++++++++++++++++++++++++++++
+>  include/drm/drm_blend.h             |   6 ++
+>  include/drm/drm_plane.h             |   9 +++
+>  5 files changed, 143 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
+> index 3eb061e..d0478ab 100644
+> --- a/drivers/gpu/drm/drm_atomic.c
+> +++ b/drivers/gpu/drm/drm_atomic.c
+> @@ -895,6 +895,8 @@ static int drm_atomic_plane_set_property(struct drm_plane *plane,
+>  		state->src_h = val;
+>  	} else if (property == plane->alpha_property) {
+>  		state->alpha = val;
+> +	} else if (property == plane->blend_mode_property) {
+> +		state->pixel_blend_mode = val;
+>  	} else if (property == plane->rotation_property) {
+>  		if (!is_power_of_2(val & DRM_MODE_ROTATE_MASK)) {
+>  			DRM_DEBUG_ATOMIC("[PLANE:%d:%s] bad rotation bitmask: 0x%llx\n",
+> @@ -968,6 +970,8 @@ static int drm_atomic_plane_set_property(struct drm_plane *plane,
+>  		*val = state->src_h;
+>  	} else if (property == plane->alpha_property) {
+>  		*val = state->alpha;
+> +	} else if (property == plane->blend_mode_property) {
+> +		*val = state->pixel_blend_mode;
+>  	} else if (property == plane->rotation_property) {
+>  		*val = state->rotation;
+>  	} else if (property == plane->zpos_property) {
+> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+> index 6dd5036..284a5d2 100644
+> --- a/drivers/gpu/drm/drm_atomic_helper.c
+> +++ b/drivers/gpu/drm/drm_atomic_helper.c
+> @@ -3569,6 +3569,7 @@ void __drm_atomic_helper_plane_reset(struct drm_plane *plane,
+>  	/* Reset the alpha value to fully opaque if it matters */
+>  	if (plane->alpha_property)
+>  		state->alpha = plane->alpha_property->values[1];
+> +	state->pixel_blend_mode = DRM_MODE_BLEND_PREMULTI;
+>  
+>  	plane->state = state;
+>  }
+> diff --git a/drivers/gpu/drm/drm_blend.c b/drivers/gpu/drm/drm_blend.c
+> index a16a74d..402b62d 100644
+> --- a/drivers/gpu/drm/drm_blend.c
+> +++ b/drivers/gpu/drm/drm_blend.c
+> @@ -107,6 +107,52 @@
+>   *	planes. Without this property the primary plane is always below the cursor
+>   *	plane, and ordering between all other planes is undefined.
+>   *
+> + * pixel blend mode:
+> + *	Pixel blend mode is set up with drm_plane_create_blend_mode_property().
+> + *	It adds a blend mode for alpha blending equation selection, describing
+> + *	how the pixels from the current plane are composited with the
+> + *	background.
+> + *
+> + *	 Three alpha blending equations are defined:
+> + *
+> + *	 "None":
+> + *		 Blend formula that ignores the pixel alpha::
+> + *
+> + *			 out.rgb = plane_alpha * fg.rgb +
+> + *				 (1 - plane_alpha) * bg.rgb
+> + *
+> + *	 "Pre-multiplied":
+> + *		 Blend formula that assumes the pixel color values
+> + *		 have been already pre-multiplied with the alpha
+> + *		 channel values::
+> + *
+> + *			 out.rgb = plane_alpha * fg.rgb +
+> + *				 (1 - (plane_alpha * fg.alpha)) * bg.rgb
+> + *
+> + *	 "Coverage":
+> + *		 Blend formula that assumes the pixel color values have not
+> + *		 been pre-multiplied and will do so when blending them to the
+> + *		 background color values::
+> + *
+> + *			 out.rgb = plane_alpha * fg.alpha * fg.rgb +
+> + *				 (1 - (plane_alpha * fg.alpha)) * bg.rgb
+> + *
+> + *	 Using the following symbols:
+> + *
+> + *	 "fg.rgb":
+> + *		 Each of the RGB component values from the plane's pixel
+> + *	 "fg.alpha":
+> + *		 Alpha component value from the plane's pixel. If the plane's
+> + *		 pixel format has no alpha component, then this is assumed to be
+> + *		 1.0. In these cases, this property has no effect, as all three
+> + *		 equations become equivalent.
+> + *	 "bg.rgb":
+> + *		 Each of the RGB component values from the background
+> + *	 "plane_alpha":
+> + *		 Plane alpha value set by the plane "alpha" property. If the
+> + *		 plane does not expose the "alpha" property, then this is
+> + *		 assumed to be 1.0
+> + *
+>   * Note that all the property extensions described here apply either to the
+>   * plane or the CRTC (e.g. for the background color, which currently is not
+>   * exposed and assumed to be black).
+> @@ -448,3 +494,80 @@ int drm_atomic_normalize_zpos(struct drm_device *dev,
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL(drm_atomic_normalize_zpos);
+> +
+> +/**
+> + * drm_plane_create_blend_mode_property - create a new blend mode property
+> + * @plane: drm plane
+> + * @supported_modes: bitmask of supported modes, must include
+> + *		     BIT(DRM_MODE_BLEND_PREMULTI). Current DRM assumption is
+> + *		     that alpha is premultiplied, and old userspace can break if
+> + *		     the property defaults to anything else.
+> + *
+> + * This creates a new property describing the blend mode.
+> + *
+> + * The property exposed to userspace is an enumeration property (see
+> + * drm_property_create_enum()) called "pixel blend mode" and has the
+> + * following enumeration values:
+> + *
+> + * "None":
+> + *	Blend formula that ignores the pixel alpha.
+> + *
+> + * "Pre-multiplied":
+> + *	Blend formula that assumes the pixel color values have been already
+> + *	pre-multiplied with the alpha channel values.
+> + *
+> + * "Coverage":
+> + *	Blend formula that assumes the pixel color values have not been
+> + *	pre-multiplied and will do so when blending them to the background color
+> + *	values.
+> + *
+> + * RETURNS:
+> + * Zero for success or -errno
+> + */
+> +int drm_plane_create_blend_mode_property(struct drm_plane *plane,
+> +					 unsigned int supported_modes)
+> +{
+> +	struct drm_device *dev = plane->dev;
+> +	struct drm_property *prop;
+> +	static const struct drm_prop_enum_list props[] = {
+> +		{ DRM_MODE_BLEND_PIXEL_NONE, "None" },
+> +		{ DRM_MODE_BLEND_PREMULTI, "Pre-multiplied" },
+> +		{ DRM_MODE_BLEND_COVERAGE, "Coverage" },
+> +	};
+> +	unsigned int valid_mode_mask = BIT(DRM_MODE_BLEND_PIXEL_NONE) |
+> +				       BIT(DRM_MODE_BLEND_PREMULTI)   |
+> +				       BIT(DRM_MODE_BLEND_COVERAGE);
+> +	int i;
+> +
+> +	if (WARN_ON((supported_modes & ~valid_mode_mask) ||
+> +		    ((supported_modes & BIT(DRM_MODE_BLEND_PREMULTI)) == 0)))
+> +		return -EINVAL;
+> +
+> +	prop = drm_property_create(dev, DRM_MODE_PROP_ENUM,
+> +				   "pixel blend mode",
+> +				   hweight32(supported_modes));
+> +	if (!prop)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(props); i++) {
+> +		int ret;
+> +
+> +		if (!(BIT(props[i].type) & supported_modes))
+> +			continue;
+> +
+> +		ret = drm_property_add_enum(prop, props[i].type,
+> +					    props[i].name);
+> +
+> +		if (ret) {
+> +			drm_property_destroy(dev, prop);
+> +
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	drm_object_attach_property(&plane->base, prop, DRM_MODE_BLEND_PREMULTI);
+> +	plane->blend_mode_property = prop;
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL(drm_plane_create_blend_mode_property);
+> diff --git a/include/drm/drm_blend.h b/include/drm/drm_blend.h
+> index 330c561..88bdfec 100644
+> --- a/include/drm/drm_blend.h
+> +++ b/include/drm/drm_blend.h
+> @@ -27,6 +27,10 @@
+>  #include <linux/ctype.h>
+>  #include <drm/drm_mode.h>
+>  
+> +#define DRM_MODE_BLEND_PREMULTI		0
+> +#define DRM_MODE_BLEND_COVERAGE		1
+> +#define DRM_MODE_BLEND_PIXEL_NONE	2
+> +
+>  struct drm_device;
+>  struct drm_atomic_state;
+>  struct drm_plane;
+> @@ -52,4 +56,6 @@ int drm_plane_create_zpos_immutable_property(struct drm_plane *plane,
+>  					     unsigned int zpos);
+>  int drm_atomic_normalize_zpos(struct drm_device *dev,
+>  			      struct drm_atomic_state *state);
+> +int drm_plane_create_blend_mode_property(struct drm_plane *plane,
+> +					 unsigned int supported_modes);
+>  #endif
+> diff --git a/include/drm/drm_plane.h b/include/drm/drm_plane.h
+> index 8a152dc..35ef64a 100644
+> --- a/include/drm/drm_plane.h
+> +++ b/include/drm/drm_plane.h
+> @@ -117,6 +117,7 @@ struct drm_plane_state {
+>  	 * details.
+>  	 */
+>  	u16 alpha;
+> +	uint16_t pixel_blend_mode;
+>  
+>  	/**
+>  	 * @rotation:
+> @@ -659,6 +660,14 @@ struct drm_plane {
+>  	 * drm_plane_create_rotation_property().
+>  	 */
+>  	struct drm_property *rotation_property;
+> +	/**
+> +	 * @blend_mode_property:
+> +	 * Optional "pixel blend mode" enum property for this plane.
+> +	 * Blend mode property represents the alpha blending equation selection,
+> +	 * describing how the pixels from the current plane are composited with
+> +	 * the background.
+> +	 */
+> +	struct drm_property *blend_mode_property;
+>  
+>  	/**
+>  	 * @color_encoding_property:
+> -- 
+> 1.9.1
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+-- 
+Sean Paul, Software Engineer, Google / Chromium OS
