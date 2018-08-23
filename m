@@ -2,173 +2,274 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5CAAC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:08:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EAC8C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:10:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E49421537
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:08:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="j3zuQkQ3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E49421537
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
+	by mail.kernel.org (Postfix) with ESMTP id 9A24C2077B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:10:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A24C2077B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730995AbeHWOhV (ORCPT
+        id S1731008AbeHWOj1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 10:37:21 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:41062 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729044AbeHWOhU (ORCPT
+        Thu, 23 Aug 2018 10:39:27 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38070 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726194AbeHWOj0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 10:37:20 -0400
-Received: by mail-lj1-f194.google.com with SMTP id y17-v6so3819450ljy.8
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 04:08:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=TiqdqkGM5XpZpHvGKXN3QNi+DQ7PdrpRq0kWc+NC2WI=;
-        b=j3zuQkQ3TJ0lVX8KdKd//Vs5uXyvQmBu9B45bpb8CrJzmbD6KgO6h4WxevUbSzncNG
-         cJvIYFCs4mclO840YDVdbbTVVR0XJxWQ97P3u85jYrWaayVmcpC23IjjtBVXpeJgAAY7
-         dMyQ/h1y9bksNC74JSyQD984nbic577S4k0X5nWFG1+OX7ibt3ulzXeElZXLS+C/0Zxt
-         4Srnjt8HiZUXOJYGvnvJZiAckGSz026NdIQl+f/Wz5ONBc8LzVkBwIuwt9lTgZdxWD1Q
-         P3LhqdChHxanmznIXvuNH3QFJuJ5bkAb3H619H1+51slR1X+oIamT6yN9Ej896smkkjM
-         2ndw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=TiqdqkGM5XpZpHvGKXN3QNi+DQ7PdrpRq0kWc+NC2WI=;
-        b=cx+hHjt3eXvgI7b71qJ8kZZlvhoroQ+FCupuCW6oQpc3K+opE6o8l7ViLo8+JPpakg
-         6cjKAw9eidqBHUDw6HyrNb3zZjdNlj2yQ1Hukjb7KGj2MQJsxK+b46PrkjBkzdpfEH8d
-         Y0JovEElBFNOfTfnYg3wfgizNCna7NdPfcmGIx8AJrUoAD2v/i2PJESzoBOPHySrKI7J
-         51OOEbNtuU9R6ukfa1NbmEbsM/r6vXeGYhJDMc0OdJ2Yil0ey4FfIkS2ovEg0f4kUDD1
-         4vUMn+LTPfT4TwfJvbvyF+kfPsoBBM9wyemovsZMGx12vpYcQi3WIO0UdG5Zm2GdZq9Z
-         c1fw==
-X-Gm-Message-State: AOUpUlEQ4eJTrG/Bs/UzgJv+zc+dRRZYgGcx+WCJpfF0u070MxPmE22v
-        OaCqNRAMoGNC752Vj+R4cPkO1w==
-X-Google-Smtp-Source: AA+uWPxPcmE0DgytKUlnb953uHlLNDiV/ZWCqTAd8jLuU7e4mwvv5JdTnvJLasQ6NyEOkOu5m2jrTg==
-X-Received: by 2002:a2e:869a:: with SMTP id l26-v6mr23811878lji.48.1535022487431;
-        Thu, 23 Aug 2018 04:08:07 -0700 (PDT)
-Received: from wasted.cogentembedded.com ([31.173.81.66])
-        by smtp.gmail.com with ESMTPSA id y65-v6sm781740lfa.97.2018.08.23.04.08.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 Aug 2018 04:08:06 -0700 (PDT)
-Subject: Re: [PATCH 4.9 124/130] PCI: OF: Fix I/O space page leak
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     stable@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-References: <20180823074927.161454870@linuxfoundation.org>
- <20180823074934.995162393@linuxfoundation.org>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <bde26016-9381-0df1-ec4b-b6f6fc5b9f51@cogentembedded.com>
-Date:   Thu, 23 Aug 2018 14:08:04 +0300
+        Thu, 23 Aug 2018 10:39:26 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7NB9c7E107121
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 07:10:14 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m1svfvx8x-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 07:10:13 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Thu, 23 Aug 2018 12:10:11 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 23 Aug 2018 12:10:06 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7NBA5ih32243908
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 23 Aug 2018 11:10:05 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 54AEC4C04A;
+        Thu, 23 Aug 2018 14:10:06 +0100 (BST)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 73AD44C040;
+        Thu, 23 Aug 2018 14:10:05 +0100 (BST)
+Received: from [9.152.224.92] (unknown [9.152.224.92])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 23 Aug 2018 14:10:05 +0100 (BST)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v9 21/22] KVM: s390: CPU model support for AP
+ virtualization
+To:     David Hildenbrand <david@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Tony Krowiak <akrowiak@linux.ibm.com>,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1534196899-16987-22-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <2c2c4859-ed3e-a492-dd59-78529c7768b2@redhat.com>
+ <95e6ee74-69aa-9805-3233-b9ec81fce516@redhat.com>
+ <7e7a35f5-d1eb-7719-c5e8-57d6f19db675@linux.ibm.com>
+ <f5ec13ae-75b4-918e-aaf1-ed97944ff16e@redhat.com>
+ <fec90446-7f94-da28-d958-427a0446854e@linux.ibm.com>
+ <ef6082b7-da96-3a0b-77a0-f41d113d058a@redhat.com>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+Date:   Thu, 23 Aug 2018 13:10:03 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180823074934.995162393@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <ef6082b7-da96-3a0b-77a0-f41d113d058a@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18082311-0008-0000-0000-00000265A77D
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082311-0009-0000-0000-000021CDEE26
+Message-Id: <8d6ae58f-967b-5e4e-0e54-8fb4962cb843@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-23_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808230120
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/23/2018 10:54 AM, Greg Kroah-Hartman wrote:
+On 23/08/2018 12:28, David Hildenbrand wrote:
+> On 23.08.2018 12:00, Halil Pasic wrote:
+>>
+>>
+>> On 08/23/2018 09:44 AM, David Hildenbrand wrote:
+>>> On 22.08.2018 22:16, Tony Krowiak wrote:
+>>>> On 08/22/2018 07:24 AM, David Hildenbrand wrote:
+>>>>> On 22.08.2018 13:19, David Hildenbrand wrote:
+>>>>>> On 13.08.2018 23:48, Tony Krowiak wrote:
+>>>>>>> From: Tony Krowiak <akrowiak@linux.ibm.com>
+>>>>>>>
+>>>>>>> Introduces a new CPU model feature and two CPU model
+>>>>>>> facilities to support AP virtualization for KVM guests.
+>>>>>>>
+>>>>>>> CPU model feature:
+>>>>>>>
+>>>>>>> The KVM_S390_VM_CPU_FEAT_AP feature indicates that
+>>>>>>> AP instructions are available on the guest. This
+>>>>>>> feature will be enabled by the kernel only if the AP
+>>>>>>> instructions are installed on the linux host. This feature
+>>>>>>> must be specifically turned on for the KVM guest from
+>>>>>>> userspace to use the VFIO AP device driver for guest
+>>>>>>> access to AP devices.
+>>>>>>>
+>>>>>>> CPU model facilities:
+>>>>>>>
+>>>>>>> 1. AP Query Configuration Information (QCI) facility is installed.
+>>>>>>>
+>>>>>>>       This is indicated by setting facilities bit 12 for
+>>>>>>>       the guest. The kernel will not enable this facility
+>>>>>>>       for the guest if it is not set on the host.
+>>>>>>>
+>>>>>>>       If this facility is not set for the KVM guest, then only
+>>>>>>>       APQNs with an APQI less than 16 will be used by a Linux
+>>>>>>>       guest regardless of the matrix configuration for the virtual
+>>>>>>>       machine. This is a limitation of the Linux AP bus.
+>>>>>>>
+>>>>>>> 2. AP Facilities Test facility (APFT) is installed.
+>>>>>>>
+>>>>>>>       This is indicated by setting facilities bit 15 for
+>>>>>>>       the guest. The kernel will not enable this facility for
+>>>>>>>       the guest if it is not set on the host.
+>>>>>>>
+>>>>>>>       If this facility is not set for the KVM guest, then no
+>>>>>>>       AP devices will be available to the guest regardless of
+>>>>>>>       the guest's matrix configuration for the virtual
+>>>>>>>       machine. This is a limitation of the Linux AP bus.
+>>>>>>>
+>>>>>>> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+>>>>>>> Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
+>>>>>>> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+>>>>>>> Tested-by: Michael Mueller <mimu@linux.ibm.com>
+>>>>>>> Tested-by: Farhan Ali <alifm@linux.ibm.com>
+>>>>>>> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+>>>>>>> ---
+>>>>>>>     arch/s390/kvm/kvm-s390.c         |    5 +++++
+>>>>>>>     arch/s390/tools/gen_facilities.c |    2 ++
+>>>>>>>     2 files changed, 7 insertions(+), 0 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+>>>>>>> index 1e8cb67..d5e04d2 100644
+>>>>>>> --- a/arch/s390/kvm/kvm-s390.c
+>>>>>>> +++ b/arch/s390/kvm/kvm-s390.c
+>>>>>>> @@ -367,6 +367,11 @@ static void kvm_s390_cpu_feat_init(void)
+>>>>>>>     
+>>>>>>>     	if (MACHINE_HAS_ESOP)
+>>>>>>>     		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_ESOP);
+>>>>>>> +
+>>>>>>> +	/* Check if AP instructions installed on host */
+>>>>>>> +	if (ap_instructions_available())
+>>>>>>> +		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_AP);
+>>>>>>> +
+>>>>>>>     	/*
+>>>>>>>     	 * We need SIE support, ESOP (PROT_READ protection for gmap_shadow),
+>>>>>>>     	 * 64bit SCAO (SCA passthrough) and IDTE (for gmap_shadow unshadowing).
+>>>>>>> diff --git a/arch/s390/tools/gen_facilities.c b/arch/s390/tools/gen_facilities.c
+>>>>>>> index 90a8c9e..a52290b 100644
+>>>>>>> --- a/arch/s390/tools/gen_facilities.c
+>>>>>>> +++ b/arch/s390/tools/gen_facilities.c
+>>>>>>> @@ -106,6 +106,8 @@ struct facility_def {
+>>>>>>>     
+>>>>>>>     		.name = "FACILITIES_KVM_CPUMODEL",
+>>>>>>>     		.bits = (int[]){
+>>>>>>> +			12, /* AP Query Configuration Information */
+>>>>>>> +			15, /* AP Facilities Test */
+>>>>>>>     			-1  /* END */
+>>>>>>>     		}
+>>>>>>>     	},
+>>>>>>>
+>>>>>> I really wonder if we should also export the APXA facility.
+>>>>>>
+>>>>>> We can probe and allow that CPU feature. However, we cannot disable it
+>>>>>> (as of now).
+>>>>>>
+>>>>>> We have other CPU features where it is the same case (basically all
+>>>>>> subfunctions). See kvm_s390_get_processor_subfunc(). We probe them and
+>>>>>> export them, but support to disable them has never been implemented.
+>>>>>>
+>>>>>> On a high level, we could then e.g. deny to start a QEMU guest if APXA
+>>>>>> is available but has been disabled. (until we know that disabling it
+>>>>>> actually works - if ever).
+>>>>>>
+>>>>>> This helps to catch nasty migration bugs (e.g. APXA suddenly
+>>>>>> disappearing). Although unlikely, definitely possible.
+>>>>>>
+>>>>>>
+>>>>>> Are there any other AP related facilities that the guest can from now on
+>>>>>> probe that should also become part of the CPU model?
+>>>>>>
+>>>>> To be more precise, shouldn't PQAP(QCI) be handled just like other
+>>>>> subfunctions? (I remember it should)
+>>>>
+>>>> When you suggest PQAP(QCI) be handled like other subfunctions, are you
+>>>> suggesting that there should be a field in struct kvm_s390_vm_cpu_subfunc
+>>>> with a bit indicating the QCI subfunction is available? The availability
+>>>> of the QCI subfunction of the PQAP instruction is determined by facilities
+>>>> bit 12. Is it not enough to export facilities bit 12?
+>>>
+>>> The feature block (128 bit) from PQAP(QCI) should be passed through a
+>>> subfunction block to QEMU.
+>>>
+>>
+>> I'm confused, which 128 bit?
+> 
+> 
+> Me too :) , I was assuming this block to be 128bit, but the qci block
+> has 128 bytes....
+> 
+> And looking at arch/s390/include/asm/ap.h, there is a lot of information
+> contained that is definitely not of interest for CPU models...
+> 
+> I wonder if there is somewhere defined which bits are reserved for
+> future features/facilities, compared to ap masks and such.
+> 
+> This is really hard to understand/plan without access to documentation.
+> 
+> You (Halil, Tony, Pier, ...) should have a look if what I described
+> related to PQAP(QCI) containing features that should get part of the CPU
+> model makes sense or not. For now I was thinking that there is some part
+> inside of QCI that is strictly reserved for facilities/features that we
+> can use.
+> 
 
-> 4.9-stable review patch.  If anyone has any objections, please let me know.
-> 
-> ------------------
-> 
-> From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> 
-> commit a5fb9fb023a1435f2b42bccd7f547560f3a21dc3 upstream.
-> 
-> When testing the R-Car PCIe driver on the Condor board, if the PCIe PHY
-> driver was left disabled, the kernel crashed with this BUG:
-> 
->   kernel BUG at lib/ioremap.c:72!
->   Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
->   Modules linked in:
->   CPU: 0 PID: 39 Comm: kworker/0:1 Not tainted 4.17.0-dirty #1092
->   Hardware name: Renesas Condor board based on r8a77980 (DT)
->   Workqueue: events deferred_probe_work_func
->   pstate: 80000005 (Nzcv daif -PAN -UAO)
->   pc : ioremap_page_range+0x370/0x3c8
->   lr : ioremap_page_range+0x40/0x3c8
->   sp : ffff000008da39e0
->   x29: ffff000008da39e0 x28: 00e8000000000f07
->   x27: ffff7dfffee00000 x26: 0140000000000000
->   x25: ffff7dfffef00000 x24: 00000000000fe100
->   x23: ffff80007b906000 x22: ffff000008ab8000
->   x21: ffff000008bb1d58 x20: ffff7dfffef00000
->   x19: ffff800009c30fb8 x18: 0000000000000001
->   x17: 00000000000152d0 x16: 00000000014012d0
->   x15: 0000000000000000 x14: 0720072007200720
->   x13: 0720072007200720 x12: 0720072007200720
->   x11: 0720072007300730 x10: 00000000000000ae
->   x9 : 0000000000000000 x8 : ffff7dffff000000
->   x7 : 0000000000000000 x6 : 0000000000000100
->   x5 : 0000000000000000 x4 : 000000007b906000
->   x3 : ffff80007c61a880 x2 : ffff7dfffeefffff
->   x1 : 0000000040000000 x0 : 00e80000fe100f07
->   Process kworker/0:1 (pid: 39, stack limit = 0x        (ptrval))
->   Call trace:
->    ioremap_page_range+0x370/0x3c8
->    pci_remap_iospace+0x7c/0xac
->    pci_parse_request_of_pci_ranges+0x13c/0x190
->    rcar_pcie_probe+0x4c/0xb04
->    platform_drv_probe+0x50/0xbc
->    driver_probe_device+0x21c/0x308
->    __device_attach_driver+0x98/0xc8
->    bus_for_each_drv+0x54/0x94
->    __device_attach+0xc4/0x12c
->    device_initial_probe+0x10/0x18
->    bus_probe_device+0x90/0x98
->    deferred_probe_work_func+0xb0/0x150
->    process_one_work+0x12c/0x29c
->    worker_thread+0x200/0x3fc
->    kthread+0x108/0x134
->    ret_from_fork+0x10/0x18
->   Code: f9004ba2 54000080 aa0003fb 17ffff48 (d4210000)
-> 
-> It turned out that pci_remap_iospace() wasn't undone when the driver's
-> probe failed, and since devm_phy_optional_get() returned -EPROBE_DEFER,
-> the probe was retried, finally causing the BUG due to trying to remap
-> already remapped pages.
-> 
-> Introduce the devm_pci_remap_iospace() managed API and replace the
-> pci_remap_iospace() call with it to fix the bug.
-> 
-> Fixes: dbf9826d5797 ("PCI: generic: Convert to DT resource parsing API")
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> [lorenzo.pieralisi@arm.com: split commit/updated the commit log]
-> Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> [Backport just for the new api which other patches need - gregkh]
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> 
-> ---
->  drivers/pci/pci.c   |   38 ++++++++++++++++++++++++++++++++++++++
->  include/linux/pci.h |    2 ++
->  2 files changed, 40 insertions(+)
+David,
+I already answered to you on this subject.
 
-   Again, you missed a change to drivers/pci/host/pci-host-common.c (and 
-also drivers/pci/host/pcie-rcar.c which wasn't using the generic code back
-then)...
+First,
+Are you sure you do not mistake QCI for TAPQ which has the t bit
+instruction interception bit as all the instructions you use as
+subfunctions?
 
-[...]
+Second,
+The TAPQ interception bit is exposed through the facility bit 15
+and is documented as being installed when the APXA facility is installed.
 
-MBR, Sergei
+If we have the APFT, we have the APXA, problem seems solved to me.
+
+Regards,
+Pierre
+
+
+
+
+
+
+
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
+
