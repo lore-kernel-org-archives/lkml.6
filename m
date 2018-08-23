@@ -2,176 +2,127 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FBA7C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:54:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34672C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:57:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB45120BF2
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:54:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB45120BF2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id D6B12208FE
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:57:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6B12208FE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727045AbeHWLWg (ORCPT
+        id S1726943AbeHWLZZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:22:36 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40350 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726451AbeHWLWg (ORCPT
+        Thu, 23 Aug 2018 07:25:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41512 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726451AbeHWLZZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:22:36 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7N7pQFa045464
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 03:54:14 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2m1r06jc5r-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 03:54:13 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Thu, 23 Aug 2018 08:54:12 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 23 Aug 2018 08:54:09 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7N7s7iG36110572
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 23 Aug 2018 07:54:07 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E5E534C04E;
-        Thu, 23 Aug 2018 10:54:08 +0100 (BST)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8207D4C040;
-        Thu, 23 Aug 2018 10:54:08 +0100 (BST)
-Received: from [9.152.224.92] (unknown [9.152.224.92])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 23 Aug 2018 10:54:08 +0100 (BST)
-Reply-To: pmorel@linux.ibm.com
-Subject: Re: [PATCH v2 3/5] KVM: s390: vsie: Allow support for a host without
- AP
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, cohuck@redhat.com,
-        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        frankja@linux.ibm.com, akrowiak@linux.ibm.com,
-        borntraeger@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com
-References: <1534956717-14087-1-git-send-email-pmorel@linux.ibm.com>
- <1534956717-14087-4-git-send-email-pmorel@linux.ibm.com>
- <beb38451-8ec9-59c7-2e51-f9a065b769bf@redhat.com>
- <b95f7004-b2b8-73f8-50d7-f091769e0f24@linux.ibm.com>
- <b58bbff7-c28f-9111-d804-d2107b351876@redhat.com>
-From:   Pierre Morel <pmorel@linux.ibm.com>
-Date:   Thu, 23 Aug 2018 09:54:06 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 23 Aug 2018 07:25:25 -0400
+Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 079ABACC;
+        Thu, 23 Aug 2018 07:57:01 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Alexey Brodkin <abrodkin@synopsys.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 01/79] ARC: Explicitly add -mmedium-calls to CFLAGS
+Date:   Thu, 23 Aug 2018 09:52:37 +0200
+Message-Id: <20180823074918.728499037@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180823074918.641878835@linuxfoundation.org>
+References: <20180823074918.641878835@linuxfoundation.org>
+User-Agent: quilt/0.65
 MIME-Version: 1.0
-In-Reply-To: <b58bbff7-c28f-9111-d804-d2107b351876@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18082307-4275-0000-0000-000002AE0891
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082307-4276-0000-0000-000037B71056
-Message-Id: <bca510c3-ca38-4c2b-9c25-2eca8e03d16a@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-23_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808230083
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/08/2018 09:15, David Hildenbrand wrote:
-> On 23.08.2018 08:44, Pierre Morel wrote:
->> On 22/08/2018 19:06, David Hildenbrand wrote:
->>> On 22.08.2018 18:51, Pierre Morel wrote:
->>>> Currently the CRYCB format used in the host for the
->>>> shadowed CRYCB is FORMAT2 while no check is done if
->>>> AP instructions are supported in the host.
->>>>
->>>> We better use the format the host calculated for the
->>>> guest 1 as the host already tested it against its
->>>> facility set.
->>>>
->>>> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
->>>> ---
->>>>    arch/s390/kvm/vsie.c | 5 +++--
->>>>    1 file changed, 3 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
->>>> index 56a9d47..0b12916 100644
->>>> --- a/arch/s390/kvm/vsie.c
->>>> +++ b/arch/s390/kvm/vsie.c
->>>> @@ -154,6 +154,7 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
->>>>    	const u32 crycb_addr = crycbd_o & 0x7ffffff8U;
->>>>    	unsigned long *b1, *b2;
->>>>    	u8 ecb3_flags;
->>>> +	unsigned long g1_fmt;
->>>>    
->>>>    	scb_s->crycbd = 0;
->>>>    	if (!(crycbd_o == CRYCB_FORMAT1))
->>>> @@ -180,8 +181,8 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
->>>>    		return set_validity_icpt(scb_s, 0x0035U);
->>>>    
->>>>    	scb_s->ecb3 |= ecb3_flags;
->>>> -	scb_s->crycbd = ((__u32)(__u64) &vsie_page->crycb) | CRYCB_FORMAT1 |
->>>> -			CRYCB_FORMAT2;
->>>> +	g1_fmt = vcpu->arch.sie_block->crycbd & 0x03;
->>>> +	scb_s->crycbd = ((__u32)(__u64) &vsie_page->crycb) | g1_fmt;
->>>>    
->>>>    	/* xor both blocks in one run */
->>>>    	b1 = (unsigned long *) vsie_page->crycb.dea_wrapping_key_mask;
->>>>
->>>
->>> This is wrong. I remember that with APXA, if FORMAT2 is available, we
->>> should always use FORMAT2. That's why we explicitly convert it here.
->>>
->>
->> You are right if FORMAT2 is available we should use FORMAT2
->> but the intention here is to use what KVM crypto init function did,
->> assuming it did the right thing.
->>
->> Eventually we are running on a host without AP and we should use FORMAT1.
->>
->> Isn't it correct?
-> 
-> 
-> Yes and no :)
-> 
-> No APXA -> FORMAT2 bit is ignored (and that is one of the reasons why I
-> am being so strict about simulating HW behavior correctly in nested code
-> :) )
-> 
-> This only holds as long as we are not using AP. Because from a MSA3
-> perspective, FORMAT1==FORMAT2 (apart from the length/alignment, which is
-> fine for us).
-> 
-> Once we support AP (via ECA.28), we'll properly have to create either a
-> Format0/Format1/Format2. Then, there is actually a semantically
-> difference ("different fields used").
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-OK
-I would have expect something more explicit in the documentation
-like for firmware versions older than xxx bit 30 is ignored
-instead of if APXA is not installed.
-Still must learn the IBM language! :)
+------------------
 
-regards,
-Pierre
+From: Alexey Brodkin <abrodkin@synopsys.com>
 
+[ Upstream commit 74c11e300c103af47db5b658fdcf28002421e250 ]
 
+GCC built for arc*-*-linux has "-mmedium-calls" implicitly enabled by default
+thus we don't see any problems during Linux kernel compilation.
+----------------------------->8------------------------
+arc-linux-gcc -mcpu=arc700 -Q --help=target | grep calls
+  -mlong-calls                          [disabled]
+  -mmedium-calls                        [enabled]
+----------------------------->8------------------------
 
+But if we try to use so-called Elf32 toolchain with GCC configured for
+arc*-*-elf* then we'd see the following failure:
+----------------------------->8------------------------
+init/do_mounts.o: In function 'init_rootfs':
+do_mounts.c:(.init.text+0x108): relocation truncated to fit: R_ARC_S21W_PCREL
+against symbol 'unregister_filesystem' defined in .text section in fs/filesystems.o
 
--- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
+arc-elf32-ld: final link failed: Symbol needs debug section which does not exist
+make: *** [vmlinux] Error 1
+----------------------------->8------------------------
+
+That happens because neither "-mmedium-calls" nor "-mlong-calls" are enabled in
+Elf32 GCC:
+----------------------------->8------------------------
+arc-elf32-gcc -mcpu=arc700 -Q --help=target | grep calls
+  -mlong-calls                          [disabled]
+  -mmedium-calls                        [disabled]
+----------------------------->8------------------------
+
+Now to make it possible to use Elf32 toolchain for building Linux kernel
+we're explicitly add "-mmedium-calls" to CFLAGS.
+
+And since we add "-mmedium-calls" to the global CFLAGS there's no point in
+having per-file copies thus removing them.
+
+Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ arch/arc/Makefile |   15 +--------------
+ 1 file changed, 1 insertion(+), 14 deletions(-)
+
+--- a/arch/arc/Makefile
++++ b/arch/arc/Makefile
+@@ -14,7 +14,7 @@ endif
+ 
+ KBUILD_DEFCONFIG := nsim_700_defconfig
+ 
+-cflags-y	+= -fno-common -pipe -fno-builtin -D__linux__
++cflags-y	+= -fno-common -pipe -fno-builtin -mmedium-calls -D__linux__
+ cflags-$(CONFIG_ISA_ARCOMPACT)	+= -mA7
+ cflags-$(CONFIG_ISA_ARCV2)	+= -mcpu=archs
+ 
+@@ -137,16 +137,3 @@ dtbs: scripts
+ 
+ archclean:
+ 	$(Q)$(MAKE) $(clean)=$(boot)
+-
+-# Hacks to enable final link due to absence of link-time branch relexation
+-# and gcc choosing optimal(shorter) branches at -O3
+-#
+-# vineetg Feb 2010: -mlong-calls switched off for overall kernel build
+-# However lib/decompress_inflate.o (.init.text) calls
+-# zlib_inflate_workspacesize (.text) causing relocation errors.
+-# Thus forcing all exten calls in this file to be long calls
+-export CFLAGS_decompress_inflate.o = -mmedium-calls
+-export CFLAGS_initramfs.o = -mmedium-calls
+-ifdef CONFIG_SMP
+-export CFLAGS_core.o = -mmedium-calls
+-endif
+
 
