@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CE7EC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:30:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F892C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:30:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 503662147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:30:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 503662147A
+	by mail.kernel.org (Postfix) with ESMTP id 29D352147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:30:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29D352147A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731189AbeHWL67 (ORCPT
+        id S1731199AbeHWL7G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:58:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47800 "EHLO
+        Thu, 23 Aug 2018 07:59:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47826 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729317AbeHWL67 (ORCPT
+        with ESMTP id S1729317AbeHWL7F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:58:59 -0400
+        Thu, 23 Aug 2018 07:59:05 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 13298C74;
-        Thu, 23 Aug 2018 08:30:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 973E6C9A;
+        Thu, 23 Aug 2018 08:30:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        stable@vger.kernel.org, Stefan Schmidt <stefan@datenfreihafen.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 151/217] nvmem: Dont let a NULL cell_id for nvmem_cell_get() crash us
-Date:   Thu, 23 Aug 2018 09:54:24 +0200
-Message-Id: <20180823075512.404209999@linuxfoundation.org>
+Subject: [PATCH 4.14 152/217] ieee802154: at86rf230: switch from BUG_ON() to WARN_ON() on problem
+Date:   Thu, 23 Aug 2018 09:54:25 +0200
+Message-Id: <20180823075512.447270473@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -51,75 +50,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Douglas Anderson <dianders@chromium.org>
+From: Stefan Schmidt <stefan@datenfreihafen.org>
 
-[ Upstream commit 87ed1405ef09d29a14df43295f7b6a93b63bfe6e ]
+[ Upstream commit 20f330452ad8814f2289a589baf65e21270879a7 ]
 
-In commit ca04d9d3e1b1 ("phy: qcom-qusb2: New driver for QUSB2 PHY on
-Qcom chips") you can see a call like:
+The check is valid but it does not warrant to crash the kernel. A
+WARN_ON() is good enough here.
+Found by checkpatch.
 
-  devm_nvmem_cell_get(dev, NULL);
-
-Note that the cell ID passed to the function is NULL.  This is because
-the qcom-qusb2 driver is expected to work only on systems where the
-PHY node is hooked up via device-tree and is nameless.
-
-This works OK for the most part.  The first thing nvmem_cell_get()
-does is to call of_nvmem_cell_get() and there it's documented that a
-NULL name is fine.  The problem happens when the call to
-of_nvmem_cell_get() returns -EINVAL.  In such a case we'll fall back
-to nvmem_cell_get_from_list() and eventually might (if nvmem_cells
-isn't an empty list) crash with something that looks like:
-
- strcmp
- nvmem_find_cell
- __nvmem_device_get
- nvmem_cell_get_from_list
- nvmem_cell_get
- devm_nvmem_cell_get
- qusb2_phy_probe
-
-There are several different ways we could fix this problem:
-
-One could argue that perhaps the qcom-qusb2 driver should be changed
-to use of_nvmem_cell_get() which is allowed to have a NULL name.  In
-that case, we'd need to add a patche to introduce
-devm_of_nvmem_cell_get() since the qcom-qusb2 driver is using devm
-managed resources.
-
-One could also argue that perhaps we could just add a name to
-qcom-qusb2.  That would be OK but I believe it effectively changes the
-device tree bindings, so maybe it's a no-go.
-
-In this patch I have chosen to fix the problem by simply not crashing
-when a NULL cell_id is passed to nvmem_cell_get().
-
-NOTE: that for the qcom-qusb2 driver the "nvmem-cells" property is
-defined to be optional and thus it's expected to be a common case that
-we would hit this crash and this is more than just a theoretical fix.
-
-Fixes: ca04d9d3e1b1 ("phy: qcom-qusb2: New driver for QUSB2 PHY on Qcom chips")
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Stefan Schmidt <stefan@datenfreihafen.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/nvmem/core.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/ieee802154/at86rf230.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -865,6 +865,10 @@ struct nvmem_cell *nvmem_cell_get(struct
- 			return cell;
- 	}
- 
-+	/* NULL cell_id only allowed for device tree; invalid otherwise */
-+	if (!cell_id)
-+		return ERR_PTR(-EINVAL);
-+
- 	return nvmem_cell_get_from_list(cell_id);
+--- a/drivers/net/ieee802154/at86rf230.c
++++ b/drivers/net/ieee802154/at86rf230.c
+@@ -940,7 +940,7 @@ at86rf230_xmit(struct ieee802154_hw *hw,
+ static int
+ at86rf230_ed(struct ieee802154_hw *hw, u8 *level)
+ {
+-	BUG_ON(!level);
++	WARN_ON(!level);
+ 	*level = 0xbe;
+ 	return 0;
  }
- EXPORT_SYMBOL_GPL(nvmem_cell_get);
 
 
