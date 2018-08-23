@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79EADC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:20:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02947C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:20:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B4CC208B2
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:20:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B4CC208B2
+	by mail.kernel.org (Postfix) with ESMTP id BB5A62089F
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:20:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB5A62089F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730315AbeHWLss (ORCPT
+        id S1730325AbeHWLsv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:48:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46612 "EHLO
+        Thu, 23 Aug 2018 07:48:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46624 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728360AbeHWLsr (ORCPT
+        with ESMTP id S1728232AbeHWLsu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:48:47 -0400
+        Thu, 23 Aug 2018 07:48:50 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 88D66C74;
-        Thu, 23 Aug 2018 08:20:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B3AF3C74;
+        Thu, 23 Aug 2018 08:20:20 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, John Garry <john.garry@huawei.com>,
+        Tejun Heo <tj@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 020/217] netfilter: ipv6: nf_defrag: reduce struct net memory waste
-Date:   Thu, 23 Aug 2018 09:52:13 +0200
-Message-Id: <20180823075506.465678868@linuxfoundation.org>
+Subject: [PATCH 4.14 043/217] libahci: Fix possible Spectre-v1 pmp indexing in ahci_led_store()
+Date:   Thu, 23 Aug 2018 09:52:36 +0200
+Message-Id: <20180823075507.463449517@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -51,72 +51,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: John Garry <john.garry@huawei.com>
 
-[ Upstream commit 9ce7bc036ae4cfe3393232c86e9e1fea2153c237 ]
+[ Upstream commit fae2a63737e5973f1426bc139935a0f42e232844 ]
 
-It is a waste of memory to use a full "struct netns_sysctl_ipv6"
-while only one pointer is really used, considering netns_sysctl_ipv6
-keeps growing.
+Currently smatch warns of possible Spectre-V1 issue in ahci_led_store():
+drivers/ata/libahci.c:1150 ahci_led_store() warn: potential spectre issue 'pp->em_priv' (local cap)
 
-Also, since "struct netns_frags" has cache line alignment,
-it is better to move the frags_hdr pointer outside, otherwise
-we spend a full cache line for this pointer.
+Userspace controls @pmp from following callchain:
+em_message->store()
+->ata_scsi_em_message_store()
+-->ap->ops->em_store()
+--->ahci_led_store()
 
-This saves 192 bytes of memory per netns.
+After the mask+shift @pmp is effectively an 8b value, which is used to
+index into an array of length 8, so sanitize the array index.
 
-Fixes: c038a767cd69 ("ipv6: add a new namespace for nf_conntrack_reasm")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: John Garry <john.garry@huawei.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/net_namespace.h             |    1 +
- include/net/netns/ipv6.h                |    1 -
- net/ipv6/netfilter/nf_conntrack_reasm.c |    6 +++---
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/ata/libahci.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/include/net/net_namespace.h
-+++ b/include/net/net_namespace.h
-@@ -120,6 +120,7 @@ struct net {
- #endif
- #if IS_ENABLED(CONFIG_NF_DEFRAG_IPV6)
- 	struct netns_nf_frag	nf_frag;
-+	struct ctl_table_header *nf_frag_frags_hdr;
- #endif
- 	struct sock		*nfnl;
- 	struct sock		*nfnl_stash;
---- a/include/net/netns/ipv6.h
-+++ b/include/net/netns/ipv6.h
-@@ -94,7 +94,6 @@ struct netns_ipv6 {
+--- a/drivers/ata/libahci.c
++++ b/drivers/ata/libahci.c
+@@ -35,6 +35,7 @@
+ #include <linux/kernel.h>
+ #include <linux/gfp.h>
+ #include <linux/module.h>
++#include <linux/nospec.h>
+ #include <linux/blkdev.h>
+ #include <linux/delay.h>
+ #include <linux/interrupt.h>
+@@ -1135,10 +1136,12 @@ static ssize_t ahci_led_store(struct ata
  
- #if IS_ENABLED(CONFIG_NF_DEFRAG_IPV6)
- struct netns_nf_frag {
--	struct netns_sysctl_ipv6 sysctl;
- 	struct netns_frags	frags;
- };
- #endif
---- a/net/ipv6/netfilter/nf_conntrack_reasm.c
-+++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
-@@ -117,7 +117,7 @@ static int nf_ct_frag6_sysctl_register(s
- 	if (hdr == NULL)
- 		goto err_reg;
+ 	/* get the slot number from the message */
+ 	pmp = (state & EM_MSG_LED_PMP_SLOT) >> 8;
+-	if (pmp < EM_MAX_SLOTS)
++	if (pmp < EM_MAX_SLOTS) {
++		pmp = array_index_nospec(pmp, EM_MAX_SLOTS);
+ 		emp = &pp->em_priv[pmp];
+-	else
++	} else {
+ 		return -EINVAL;
++	}
  
--	net->nf_frag.sysctl.frags_hdr = hdr;
-+	net->nf_frag_frags_hdr = hdr;
- 	return 0;
- 
- err_reg:
-@@ -131,8 +131,8 @@ static void __net_exit nf_ct_frags6_sysc
- {
- 	struct ctl_table *table;
- 
--	table = net->nf_frag.sysctl.frags_hdr->ctl_table_arg;
--	unregister_net_sysctl_table(net->nf_frag.sysctl.frags_hdr);
-+	table = net->nf_frag_frags_hdr->ctl_table_arg;
-+	unregister_net_sysctl_table(net->nf_frag_frags_hdr);
- 	if (!net_eq(net, &init_net))
- 		kfree(table);
- }
+ 	/* mask off the activity bits if we are in sw_activity
+ 	 * mode, user should turn off sw_activity before setting
 
 
