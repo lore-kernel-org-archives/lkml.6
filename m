@@ -6,38 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CBD1C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:50:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE058C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:50:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3F7C208DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:50:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3F7C208DA
+	by mail.kernel.org (Postfix) with ESMTP id 8B1E1208DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:50:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B1E1208DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387496AbeHWMTB (ORCPT
+        id S2387508AbeHWMTF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:19:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51372 "EHLO
+        Thu, 23 Aug 2018 08:19:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51386 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728517AbeHWMTA (ORCPT
+        with ESMTP id S1728517AbeHWMTE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:19:00 -0400
+        Thu, 23 Aug 2018 08:19:04 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4B4DBC5C;
-        Thu, 23 Aug 2018 08:50:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 82152C5C;
+        Thu, 23 Aug 2018 08:50:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Haiyue Wang <haiyue.wang@linux.intel.com>,
+        Corey Minyard <cminyard@mvista.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 103/324] brcmfmac: stop watchdog before detach and free everything
-Date:   Thu, 23 Aug 2018 09:52:49 +0200
-Message-Id: <20180823075000.993617625@linuxfoundation.org>
+Subject: [PATCH 4.17 104/324] ipmi: kcs_bmc: fix IRQ exception if the channel is not open
+Date:   Thu, 23 Aug 2018 09:52:50 +0200
+Message-Id: <20180823075001.035909989@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -54,76 +51,115 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Trimarchi <michael@amarulasolutions.com>
+From: Haiyue Wang <haiyue.wang@linux.intel.com>
 
-[ Upstream commit 373c83a801f15b1e3d02d855fad89112bd4ccbe0 ]
+[ Upstream commit dc0f0a026d33819bb82d5c26ab2fca838e2004be ]
 
-Using built-in in kernel image without a firmware in filesystem
-or in the kernel image can lead to a kernel NULL pointer deference.
-Watchdog need to be stopped in brcmf_sdio_remove
+When kcs_bmc_handle_event calls kcs_force_abort function to handle the
+not open (no user running) KCS channel transaction, the returned status
+value -ENODEV causes the low level IRQ handler indicating that the irq
+was not for him by returning IRQ_NONE. After some time, this IRQ will
+be treated to be spurious one, and the exception dump happens.
 
-The system is going down NOW!
-[ 1348.110759] Unable to handle kernel NULL pointer dereference at virtual address 000002f8
-Sent SIGTERM to all processes
-[ 1348.121412] Mem abort info:
-[ 1348.126962]   ESR = 0x96000004
-[ 1348.130023]   Exception class = DABT (current EL), IL = 32 bits
-[ 1348.135948]   SET = 0, FnV = 0
-[ 1348.138997]   EA = 0, S1PTW = 0
-[ 1348.142154] Data abort info:
-[ 1348.145045]   ISV = 0, ISS = 0x00000004
-[ 1348.148884]   CM = 0, WnR = 0
-[ 1348.151861] user pgtable: 4k pages, 48-bit VAs, pgdp = (____ptrval____)
-[ 1348.158475] [00000000000002f8] pgd=0000000000000000
-[ 1348.163364] Internal error: Oops: 96000004 [#1] PREEMPT SMP
-[ 1348.168927] Modules linked in: ipv6
-[ 1348.172421] CPU: 3 PID: 1421 Comm: brcmf_wdog/mmc0 Not tainted 4.17.0-rc5-next-20180517 #18
-[ 1348.180757] Hardware name: Amarula A64-Relic (DT)
-[ 1348.185455] pstate: 60000005 (nZCv daif -PAN -UAO)
-[ 1348.190251] pc : brcmf_sdiod_freezer_count+0x0/0x20
-[ 1348.195124] lr : brcmf_sdio_watchdog_thread+0x64/0x290
-[ 1348.200253] sp : ffff00000b85be30
-[ 1348.203561] x29: ffff00000b85be30 x28: 0000000000000000
-[ 1348.208868] x27: ffff00000b6cb918 x26: ffff80003b990638
-[ 1348.214176] x25: ffff0000087b1a20 x24: ffff80003b94f800
-[ 1348.219483] x23: ffff000008e620c8 x22: ffff000008f0b660
-[ 1348.224790] x21: ffff000008c6a858 x20: 00000000fffffe00
-[ 1348.230097] x19: ffff80003b94f800 x18: 0000000000000001
-[ 1348.235404] x17: 0000ffffab2e8a74 x16: ffff0000080d7de8
-[ 1348.240711] x15: 0000000000000000 x14: 0000000000000400
-[ 1348.246018] x13: 0000000000000400 x12: 0000000000000001
-[ 1348.251324] x11: 00000000000002c4 x10: 0000000000000a10
-[ 1348.256631] x9 : ffff00000b85bc40 x8 : ffff80003be11870
-[ 1348.261937] x7 : ffff80003dfc7308 x6 : 000000078ff08b55
-[ 1348.267243] x5 : 00000139e1058400 x4 : 0000000000000000
-[ 1348.272550] x3 : dead000000000100 x2 : 958f2788d6618100
-[ 1348.277856] x1 : 00000000fffffe00 x0 : 0000000000000000
+   irq 30: nobody cared (try booting with the "irqpoll" option)
+   CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.10.15-npcm750 #1
+   Hardware name: NPCMX50 Chip family
+   [<c010b264>] (unwind_backtrace) from [<c0106930>] (show_stack+0x20/0x24)
+   [<c0106930>] (show_stack) from [<c03dad38>] (dump_stack+0x8c/0xa0)
+   [<c03dad38>] (dump_stack) from [<c0168810>] (__report_bad_irq+0x3c/0xdc)
+   [<c0168810>] (__report_bad_irq) from [<c0168c34>] (note_interrupt+0x29c/0x2ec)
+   [<c0168c34>] (note_interrupt) from [<c0165c80>] (handle_irq_event_percpu+0x5c/0x68)
+   [<c0165c80>] (handle_irq_event_percpu) from [<c0165cd4>] (handle_irq_event+0x48/0x6c)
+   [<c0165cd4>] (handle_irq_event) from [<c0169664>] (handle_fasteoi_irq+0xc8/0x198)
+   [<c0169664>] (handle_fasteoi_irq) from [<c016529c>] (__handle_domain_irq+0x90/0xe8)
+   [<c016529c>] (__handle_domain_irq) from [<c01014bc>] (gic_handle_irq+0x58/0x9c)
+   [<c01014bc>] (gic_handle_irq) from [<c010752c>] (__irq_svc+0x6c/0x90)
+   Exception stack(0xc0a01de8 to 0xc0a01e30)
+   1de0:                   00002080 c0a6fbc0 00000000 00000000 00000000 c096d294
+   1e00: 00000000 00000001 dc406400 f03ff100 00000082 c0a01e94 c0a6fbc0 c0a01e38
+   1e20: 00200102 c01015bc 60000113 ffffffff
+   [<c010752c>] (__irq_svc) from [<c01015bc>] (__do_softirq+0xbc/0x358)
+   [<c01015bc>] (__do_softirq) from [<c011c798>] (irq_exit+0xb8/0xec)
+   [<c011c798>] (irq_exit) from [<c01652a0>] (__handle_domain_irq+0x94/0xe8)
+   [<c01652a0>] (__handle_domain_irq) from [<c01014bc>] (gic_handle_irq+0x58/0x9c)
+   [<c01014bc>] (gic_handle_irq) from [<c010752c>] (__irq_svc+0x6c/0x90)
+   Exception stack(0xc0a01ef8 to 0xc0a01f40)
+   1ee0:                                                       00000000 000003ae
+   1f00: dcc0f338 c0111060 c0a00000 c0a0cc44 c0a0cbe4 c0a1c22b c07bc218 00000001
+   1f20: dcffca40 c0a01f54 c0a01f58 c0a01f48 c0103524 c0103528 60000013 ffffffff
+   [<c010752c>] (__irq_svc) from [<c0103528>] (arch_cpu_idle+0x48/0x4c)
+   [<c0103528>] (arch_cpu_idle) from [<c0681390>] (default_idle_call+0x30/0x3c)
+   [<c0681390>] (default_idle_call) from [<c0156f24>] (do_idle+0xc8/0x134)
+   [<c0156f24>] (do_idle) from [<c015722c>] (cpu_startup_entry+0x28/0x2c)
+   [<c015722c>] (cpu_startup_entry) from [<c067ad74>] (rest_init+0x84/0x88)
+   [<c067ad74>] (rest_init) from [<c0900d44>] (start_kernel+0x388/0x394)
+   [<c0900d44>] (start_kernel) from [<0000807c>] (0x807c)
+   handlers:
+   [<c041c5dc>] npcm7xx_kcs_irq
+   Disabling IRQ #30
 
-Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
-Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-Tested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+It needs to change the returned status from -ENODEV to 0. The -ENODEV
+was originally used to tell the low level IRQ handler that no user was
+running, but not consider the IRQ handling desgin.
+
+And multiple KCS channels share one IRQ handler, it needs to check the
+IBF flag before doing force abort. If the IBF is set, after handling,
+return 0 to low level IRQ handler to indicate that the IRQ is handled.
+
+Signed-off-by: Haiyue Wang <haiyue.wang@linux.intel.com>
+Signed-off-by: Corey Minyard <cminyard@mvista.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/char/ipmi/kcs_bmc.c |   31 ++++++++++---------------------
+ 1 file changed, 10 insertions(+), 21 deletions(-)
 
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
-@@ -4294,6 +4294,13 @@ void brcmf_sdio_remove(struct brcmf_sdio
- 	brcmf_dbg(TRACE, "Enter\n");
+--- a/drivers/char/ipmi/kcs_bmc.c
++++ b/drivers/char/ipmi/kcs_bmc.c
+@@ -210,34 +210,23 @@ static void kcs_bmc_handle_cmd(struct kc
+ int kcs_bmc_handle_event(struct kcs_bmc *kcs_bmc)
+ {
+ 	unsigned long flags;
+-	int ret = 0;
++	int ret = -ENODATA;
+ 	u8 status;
  
- 	if (bus) {
-+		/* Stop watchdog task */
-+		if (bus->watchdog_tsk) {
-+			send_sig(SIGTERM, bus->watchdog_tsk, 1);
-+			kthread_stop(bus->watchdog_tsk);
-+			bus->watchdog_tsk = NULL;
-+		}
-+
- 		/* De-register interrupt handler */
- 		brcmf_sdiod_intr_unregister(bus->sdiodev);
+ 	spin_lock_irqsave(&kcs_bmc->lock, flags);
  
+-	if (!kcs_bmc->running) {
+-		kcs_force_abort(kcs_bmc);
+-		ret = -ENODEV;
+-		goto out_unlock;
+-	}
+-
+-	status = read_status(kcs_bmc) & (KCS_STATUS_IBF | KCS_STATUS_CMD_DAT);
+-
+-	switch (status) {
+-	case KCS_STATUS_IBF | KCS_STATUS_CMD_DAT:
+-		kcs_bmc_handle_cmd(kcs_bmc);
+-		break;
+-
+-	case KCS_STATUS_IBF:
+-		kcs_bmc_handle_data(kcs_bmc);
+-		break;
++	status = read_status(kcs_bmc);
++	if (status & KCS_STATUS_IBF) {
++		if (!kcs_bmc->running)
++			kcs_force_abort(kcs_bmc);
++		else if (status & KCS_STATUS_CMD_DAT)
++			kcs_bmc_handle_cmd(kcs_bmc);
++		else
++			kcs_bmc_handle_data(kcs_bmc);
+ 
+-	default:
+-		ret = -ENODATA;
+-		break;
++		ret = 0;
+ 	}
+ 
+-out_unlock:
+ 	spin_unlock_irqrestore(&kcs_bmc->lock, flags);
+ 
+ 	return ret;
 
 
