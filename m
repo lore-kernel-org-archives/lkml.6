@@ -2,235 +2,245 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FROM_EXCESS_BASE64,HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B12EDC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 12:36:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1B22C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 12:38:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B91D214FF
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 12:36:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B91D214FF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+	by mail.kernel.org (Postfix) with ESMTP id 6453A2152D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 12:38:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b="cy4xGECK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6453A2152D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=ysoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729503AbeHWQFo (ORCPT
+        id S1729980AbeHWQIU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 12:05:44 -0400
-Received: from mail-out.m-online.net ([212.18.0.9]:45647 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726332AbeHWQFo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 12:05:44 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 41x3mm6VgJz1qyL9;
-        Thu, 23 Aug 2018 14:36:08 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 41x3mm5Vjfz1qr24;
-        Thu, 23 Aug 2018 14:36:08 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id L3dSJPySrUVJ; Thu, 23 Aug 2018 14:36:07 +0200 (CEST)
-X-Auth-Info: GlNNlTi729EKxEd4MiBMp9ExsIyA4XBuYet35k7lEjg=
-Received: from jawa (85-222-111-42.dynamic.chello.pl [85.222.111.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Thu, 23 Aug 2018 14:36:07 +0200 (CEST)
-Date:   Thu, 23 Aug 2018 14:36:00 +0200
-From:   Lukasz Majewski <lukma@denx.de>
-To:     Michal =?UTF-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>
+        Thu, 23 Aug 2018 12:08:20 -0400
+Received: from mail-eopbgr30048.outbound.protection.outlook.com ([40.107.3.48]:54440
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729511AbeHWQIT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 12:08:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Wm9FH6YuWjNng3rHFwQVWdL836q3nEfNN69Tki/WwrU=;
+ b=cy4xGECKnlAfMWs+d83yGHjSlI4m8+GwFuPjkrSgor30GbFhRYNzD7Pf13iV1FkWmSrSkyJVWJ5wIZ/IWw062lgtoYKKd5/HUWpz8SpjoXRaMbVPB3OHyNNwWrWciSmJn+AhnVdEcsSK/fLhnl4OmYAdK+FFYI3mzOn0SBFXMJA=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Michal.Vokac@ysoft.com; 
+Received: from [10.1.8.111] (89.24.100.190) by
+ AM6PR04MB4661.eurprd04.prod.outlook.com (2603:10a6:20b:1b::20) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1059.21; Thu, 23 Aug 2018 12:38:25 +0000
+Subject: Re: [RFC PATCH 1/2] dt-bindings: pwm: imx: Allow switching PWM output
+ between PWM and GPIO
+To:     =?UTF-8?Q?Lothar_Wa=c3=9fmann?= <LW@KARO-electronics.de>
 Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         devicetree@vger.kernel.org, linux-pwm@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Lothar =?UTF-8?B?V2HDn21hbm4=?= <LW@karo-electronics.de>
-Subject: Re: [RFC PATCH 1/2] dt-bindings: pwm: imx: Allow switching PWM
- output between PWM and GPIO
-Message-ID: <20180823143600.3e417542@jawa>
-In-Reply-To: <0691e93d-c2e2-21e5-374f-c29e7765de93@ysoft.com>
+        Lukasz Majewski <l.majewski@majess.pl>,
+        Fabio Estevam <fabio.estevam@nxp.com>
 References: <1534862333-27950-1-git-send-email-michal.vokac@ysoft.com>
-        <1534862333-27950-2-git-send-email-michal.vokac@ysoft.com>
-        <20180823123759.68b78e9f@jawa>
-        <0691e93d-c2e2-21e5-374f-c29e7765de93@ysoft.com>
-Organization: denx.de
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+ <1534862333-27950-2-git-send-email-michal.vokac@ysoft.com>
+ <20180822081436.13d8f55b@ipc1.ka-ro>
+ <175003bc-eae7-1b30-ebfe-b56ffc58705e@ysoft.com>
+ <20180822131758.162d5351@ipc1.ka-ro>
+ <18b4a847-bc59-4450-331a-0b17f27c97a8@ysoft.com>
+ <20180822161036.4d69bdc1@ipc1.ka-ro>
+ <5b13d21c-f83f-49b0-eedd-9a4995dbd469@ysoft.com>
+ <20180823131816.741c09cc@ipc1.ka-ro>
+From:   =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>
+Message-ID: <5a5c419a-b08f-f913-01ad-715e28164731@ysoft.com>
+Date:   Thu, 23 Aug 2018 14:38:22 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/bSzWo+0iYXRf0ckL35a+C5W"; protocol="application/pgp-signature"
+In-Reply-To: <20180823131816.741c09cc@ipc1.ka-ro>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [89.24.100.190]
+X-ClientProxiedBy: AM6PR0502CA0072.eurprd05.prod.outlook.com
+ (2603:10a6:20b:56::49) To AM6PR04MB4661.eurprd04.prod.outlook.com
+ (2603:10a6:20b:1b::20)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: a582cf57-962b-4e8a-d382-08d608f55270
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB4661;
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR04MB4661;3:hEIPI4rtAS5g0SPXYZMrfbm5QOmPp9gOsNSz8DmJLpsh96/vqk0xTLgqM9p0fP8pMj6vTET/K395pP4iCa5/PwQslnyU7NJ5UeIn8VuuTWO1LoOXqymSZXFlNN+jWF+eZZviUkPWsQSsrJMHfSdboIuRLIpxqueh67k/oEQWWtfc6rc0XYbpAp4VAFXzpHLQaQBfc6Y48XfNH4BrrGA8Sw19coMGg+yryRSZp+im2Rmqok2nw+gqNv/h4v2JC0Im;25:Xl+lpqdV5/b8JDXeLlOqZj8YokBec2Gq/UfFNtcTEkEFIn5IkkhuPE/T0G25BbB+hPYFCEWSU8zSUJNYty0Oh8XpodWrmBR9Qb4mbnIVylu3G91JJgts9+CDoC1UMDSBtqR2Re7Y6lw6nouFP3GbL0b2ZOBxg82AOOVIjtfZP30I6pQxa4OO91xZKsd6gUsgJNXnc90Z44GXCYdCMtaTCEuwmgxlJaLmLn0IolsXD+m6STttPANhqGdZbBwhETW+745DUSxfpPCeosfUuFjbi1aZWOFkgcN9mvm+9T2OAaXLcYuM7YqBrUavEJb6iFTXGQk5hom/ieIuvTHXUm4H1w==;31:1TpBoqZbbJoBWgkda1rqY5Y/N9Hx7jIg09gBO1gaVtnj/NbVPl63Kj63h5ueZubF0XcJc211tEhenoXaXjXL6bKz3IV/njWf/X5+XlEUK5h89tQnmG2KKXBt41yFd85eRoSKYbjgMfg3szteTsGkKzks6TnMZqEZtO5LNuRFYPBd4xkj9AuKE/xMbaC0eDANyS1pDyV+pmsKDIcnVSPTq8zEPmm+e8NZweYm+O5lT0w=
+X-MS-TrafficTypeDiagnostic: AM6PR04MB4661:
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR04MB4661;20:RdPYY3binj8m8sbdmkvWRy9Py27Xk5EwfBSJqvac3oqtQoCoirI8UYJ3fCQgzf2rgkktE3YVjtxQNdzaFh49g0WgF3CM6Fn9ynR60wHgOuzmjhCWgZqLAVFLmOMhVdK2NWcMnWC+m01zJr4xAJl60tzEOOgpEhI+LJLq4MNctxnK1/+TIM0qyA0ihst0H0gVHp276DfRRawypdiPS5IrbGSz/yJK3I2uzDzgoEWk/3Eyti1uHtZyBB65Ln22qt6p;4:Xnl8AhnCZIkq2ebMjV4xCELP8uC/6nrhNk4IL1SVJGrdxBP78ZQy0etuuFXzOnRUWEZHNtGJmeTBQDIsqvfKrp7rVHGs5HVtQ42TxQSAJPXnbV3IeFxAGY49ZkG9z3HG9CDWv04BEsy0EMYFKJlhJhCFs68c6qx5gAad+Yz1VJQyotZPKbp8T/RUlrqJhq+wP/WMW6VB52bpDpetC/q5x8JltnVwcO24CwpIQF2GfwROqMagZdw/WNm8hn27hVg1N9dRsHR/UuSakYLgrzeGdA==
+X-Microsoft-Antispam-PRVS: <AM6PR04MB46617AE3991F3F4B48C1FEB99E370@AM6PR04MB4661.eurprd04.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231311)(944501410)(52105095)(10201501046)(3002001)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699016);SRVR:AM6PR04MB4661;BCL:0;PCL:0;RULEID:;SRVR:AM6PR04MB4661;
+X-Forefront-PRVS: 0773BB46AC
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(39850400004)(376002)(366004)(346002)(136003)(396003)(51744003)(57704003)(51444003)(189003)(199004)(85182001)(345774005)(16576012)(86362001)(316002)(6246003)(31686004)(2870700001)(39060400002)(52146003)(6916009)(23676004)(76176011)(52116002)(4326008)(67846002)(7736002)(2486003)(25786009)(2906002)(50466002)(106356001)(305945005)(31696002)(77096007)(6666003)(105586002)(54906003)(72206003)(58126008)(8676002)(47776003)(36756003)(217873002)(81166006)(2616005)(65806001)(68736007)(8936002)(476003)(5024004)(81156014)(486006)(53936002)(6116002)(66066001)(93886005)(6486002)(65956001)(478600001)(26005)(14444005)(53546011)(956004)(97736004)(229853002)(386003)(446003)(64126003)(65826007)(3846002)(5660300001)(11346002)(16526019)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB4661;H:[10.1.8.111];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: ysoft.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtBTTZQUjA0TUI0NjYxOzIzOlUzZTloZHdPOTNVUnE0bEtKVXlxaDQzbFlL?=
+ =?utf-8?B?QnkzTHdDM1A2V3h5UXJTRThIcStyQ2xRcW1jY05OL0VpTTR3K3lFVWgrVEwy?=
+ =?utf-8?B?OWlPNVZDbUE5NHEwZjFVWll2Sjd3M3c2dFlkZDBTeXJDRGtMZEFiVmpQUWJD?=
+ =?utf-8?B?dGw1MERZQ25qMVpNTXErejJ4Z2Y5QnFVQzcxYUlMZzRYcVowVzZiRXcyRkdj?=
+ =?utf-8?B?VkVjWkdRYjhzUE9VRWxXSFlxZFpUYXF1UkU0MnZCNUNvc0Z6UFRPVEZLMU4y?=
+ =?utf-8?B?M3ZNbmhiUlBuTWkwS1NRSFlrdjNiaFBIUlRlMUVWaUNEUGFNWHNFOFRZa09B?=
+ =?utf-8?B?NjViWDV6MC9zK0g0UW5YV2dTVWdDYkhJNFpGKyt0TVZXRXB4L1FyUGFaRUp0?=
+ =?utf-8?B?V2xLb2Q5d0hmV0dMcWhOekI1Y1JYMlZZOTJhRUp2cTlEQWJLSGRJeVk2REtZ?=
+ =?utf-8?B?Ym1lWVpvVGVGVnFYdjlCR2RSdGV6eEZyV2IvYmd1RkRRYUg4MkZ4OUxkODNp?=
+ =?utf-8?B?aEZHenlkSnlRUTU2eThEQ0VQemROVmxDckk3RmZ4anVhSU9kOVJPemtPaWpZ?=
+ =?utf-8?B?Y215Yjl6TlJjdEJNbVRDY3ZYNExSM3dmOWIrNUh5b1B0VUQvd0kyRFd5YXFa?=
+ =?utf-8?B?TmlvaEhob3hVTi8ycHFrY1BibHhCYkM5NlB1bEQ2N2cySGkrUTFwWWpLRjdI?=
+ =?utf-8?B?cXNHNEJNb1lleGZJcklUZzlYUUFvdGY2VGV6dEFyaG05Q2Q5RVQ4RnlKOE9w?=
+ =?utf-8?B?aXNOU2RjYUppY1l1VnpKWCtDMU5IMUt4M3NicmlmWDV3VW9OSGFpbDg0T01F?=
+ =?utf-8?B?YWFaaW54Zm5Ra3RRekxHTm1vY1hsN3Q5a2FSNks4Z2xtWkJ6KzdpbExEd05O?=
+ =?utf-8?B?MTNRd1dpcHBoQUNiTnRRWldHSDMzRkMvUFRJbWlwUW5rWlhKUjBicFhDWkRx?=
+ =?utf-8?B?UjZrakV0Z2NyMVI0UkEreWMzSkQwbWl4U3M0Mkl5dndYYVJObGtyWmVEMGZq?=
+ =?utf-8?B?T1c5eFQvZk5Jam0vQnFVaGlxNnhxa0tGd0RlRnh6SzU1NUlIQnBuNVVKcUN3?=
+ =?utf-8?B?eEJ5eGU4cHNqVnJzUlVCWEI0cS9XVFcwZHdhdGNIcDd5SHYzblVrcENZdkdx?=
+ =?utf-8?B?c0cyMzZ0cTRHeEJsQkRYbkp4VmZjek4yVEVsaDVFZmwyWjZXaXBVZmRteHNn?=
+ =?utf-8?B?VXF6Q2tDd3Z0Z0oxYmc2VVkwSkJ4VlZNYnJ5UzFUZEZMUC9Lc2x3Z1NrK1k4?=
+ =?utf-8?B?cHVWUmtwQi9URjU4VWR1V3BCV1RZZGp5V21mNG91Tm03MDZLRzJzSVA1RlJR?=
+ =?utf-8?B?d0F3UzF5UFdvZkRDQjZwN0ZseEVmc2JWS1Z2TjN5VkR4SmdON2lCcTNqWlVD?=
+ =?utf-8?B?a0dHVmdrYms5eU11TVZBQ2xGUXorbmxqaFJjQkFpanlSOGxNMHNYWGFCV0ZF?=
+ =?utf-8?B?eHBDQ2N2RnBndlhPNjVnZWRCbG9kZXVjSnZzNXA5bWJyT1o3c3BCU01ZWTFr?=
+ =?utf-8?B?Mjh2N20weUJqb0VOYnZrUklxa3ZWdmtoUlAxTXY4dFV2QVAyWnpMMDA5VWRs?=
+ =?utf-8?B?a0k5R0ZmMUtWOHVRSEF2SzNaOU9ENzFydlM2akFJaWhQZE1wVmlFNHJVeEJy?=
+ =?utf-8?B?R2U3bGtSdGJmdnhCWm81QkFWVVU5YjAwaG9Ycy9lWGwyeGtGaVlVdXd3VWxB?=
+ =?utf-8?B?djlJakFBaEJsTlczZFIvTzhCcVA1Z1JRblUxMndJVFFpU0F6L3l2ajF6YjlD?=
+ =?utf-8?B?ZHV6dmFqUVpHaXNKbGRlTmZtRy82aE1ZdFJEMmkvZnJnRCtTQitUQk4wL3Ns?=
+ =?utf-8?B?UGpRYk5lRXd1Q3YxQ2Z1RFNvM1FLb2lmVVgwMXY1SVptdmNmSDFaakRyNGYx?=
+ =?utf-8?B?U3ZNcmVWSTl2TlVsMzYxQk02ckI0WGpNTWVrMnNuZGx0cjhwSi8zc1RDOHg0?=
+ =?utf-8?B?SjRhdDdyaGEyNXp4QXVIMzg5UURqa00vdE5mNzlodGlFMGZXN2tuK3hDNUJE?=
+ =?utf-8?B?QUcyb3hxQk9UUXVRdUYydEc4cno0eEx4bWhnbTIralZGZGE0eDczOVEyOGZU?=
+ =?utf-8?B?UnhPcVYzTVA2TDUzSFZkZ3dkcnh1dXRhbEZsUFNOOTRWTUpueWlwVzVPdVd4?=
+ =?utf-8?B?YkNtby9yS3BlZEVENTVCMmFoUC81K3pmVGkyZTZhY0NwMythMXZOMFRqYTVM?=
+ =?utf-8?B?YklRZXIrQzA4dWw3cm9ReitNVStWRUJsTmNzV3JOTGJPMy9FKys0K20yS2xu?=
+ =?utf-8?B?VmNRUk5XRExYaXNIV0lBQ01RNlVLYVcxSUJ6RDNCNW9DRCtIQWtqZz09?=
+X-Microsoft-Antispam-Message-Info: DuCPJ2moKTzOxKdMF1LHEiVU/L0vktsDDxprMy9iimoXckGTvyktXAOaYKA0cpnQc14Z5cDUwbfBRKpIOKPWWnH/HoHi13+XSlWw2gTyPkVYTDpcyz4FcIgYI8f57gVYn8/4qxkdh8oKb8+TUn5i51LYpmr1BycF9BlsD5W+68SwWicpsuY5W44MiTVnDYFzXRFIVbabkjpWPTi68svv8NzZVPFzL/IjqLFCXpRn5dCVCuoxfnjqFPVP6nvVklbEu5jV8q8YR9OUi6eYaBqv/53OIusnM2iPEtXfN4qMJ7FciAHRy+XhRk82qr8M1eN9ZbDGW3smxJ2IfJI5G9LprFaZifrBGQ2ex6nLXN3qz28=
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR04MB4661;6:BbJymdqz08csb1FshNWBy0+rY7zCmqXKtyBv2UW6PL+Ral/g60bkQzwCtC1EfE0B7LJMkHW1oSEg0xeMp9xiR0AZiYUD0dTZA7ebSTOwTOjKmpiaZUteP8pDIIkSukfbaT7fmmYf+2T7l5G/3HvHIuRYvxLS6mlNUcngL4ietKR9PNVAuhRtKZTYi9ByJ7JnbE18Sysam866JREKw6SaeGEW0aGImQz6145y8QG5i4KB2lkCunUBoHjyguyEy40fyALfM1s6/qVyStRKtNh1PJy4Gs5IoJIJvRxZYOjFnfMtrMXrxNCkK1ym0444VEoj/tRBWf/IhBC0IIU+J8sG7pyLvlw9gl9pFeQVTTjSh66WknfZW0a1DGem0B1HxTc4XU1IGiKRpOh6r7Cb0fYJdAiWQQKUC/D1g4w6off+QARyNCUqIvl5e+bnp9w+jNobdt6jZ1Zi0RHOVrjM/7lnRQ==;5:RVhTSkjHseXOiucn1BBKy+iAvxcUME4kqthXPRUyou/2cC53tZCMEzw0kf4VQWM560Kae8UDBeRD14DCQuJtwGKcIAwereuB2Up/gkCUhOhiDgJsFGTjiuDYT576pIcFImuyo/HVIkZ0BnUyQaUn5DaV7rqXuUrKXtdNPPrY+5k=;7:x8tKiFcvXfpMN3z6nqAbligdYJVM3SRUS0Mk+EG1QmwYE5saVMboR51CQCpfWvfDcf1MzlL8Grra/24F3lxtLTjgSNVT4cB7L9+/iZ4tFRQR9J6rpY/FGF0aFrCIecUuvJtY+NBfqpUti/LsRCivMGkzSwuc+GXV4pqszjqISggHR769BN1V4HKFIKwxjj27OAkLsjGpNl5VrbvqCG92hjoQIfH501comFAjC3hDY14zGf+CoKC6wmhOPRMaapVy
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: ysoft.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2018 12:38:25.9237 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a582cf57-962b-4e8a-d382-08d608f55270
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: b5839965-430f-4be2-b282-d7a3149f2b37
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB4661
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/bSzWo+0iYXRf0ckL35a+C5W
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+On 23.8.2018 13:18, Lothar Waßmann wrote:
+> Michal Vokáč <michal.vokac@ysoft.com> wrote:
+>> On 22.8.2018 16:10, Lothar Waßmann wrote:
+>>> My use case is attaching different displays to the same baseboard,
+>>> where some displays have the brightness control pin inverted with
+>>> respect to the others. It's easy to change the compatible string for
+>>> the simple-panel driver and the PWM polarity setting for the
+>>> pwm-backlight driver from U-Boot according to the display model, but
+>>> it's not so easy, to edit the pinctrl settings from pull-up to
+>>> pull-down or vice versa.
+>>
+>> OK, I got it. Though that is something different than having two clients,
+>> right?
+>>
+>> You do not actually need to change the pinctrl pull-up/down configuration
+>> in bootloader. You define the two pinctrl groups as I suggested in the
+>> example. Or more precisely, you add a new pinctrl group where the PWM
+>> output pad is configured as a GPIO with pull-up. You add this group to
+>> all your common device trees. This does no harm as the group is not used
+>> yet.
+>>
+>> In bootloader you detect the type of the panel. Normal PWM polarity? OK,
+>> do nothing and boot. Inverted PWM polarity? Set the pinctrl-names property
+>> to "default", "pwm". Set the pinctrl-0 property to point to the GPIO group
+>> and set pinctrl-1 property to point to the old PWM group.
+>>
+>> E.g. something like:
+>>
+>> => fdt set /soc/aips-bus@2000000/pwm@2080000 pinctrl-names default pwm
+>> => fdt get value gpio-phandle /soc/aips-bus@2000000/iomuxc@20e0000/pwm1grp-gpio phandle
+>> => fdt get value pwm-phandle /soc/aips-bus@2000000/iomuxc@20e0000/pwm1grp-pwm phandle
+>> => fdt set /soc/aips-bus@2000000/pwm@2080000 pinctrl-0 ${gpio-phandle}
+>> => fdt set /soc/aips-bus@2000000/pwm@2080000 pinctrl-1 ${pwm-phandle}
+>>
+>> Will this work for you?
+>>
+> This would probably work, but it's quite ugly.
+> I'd still prefer to set the pin output state to the desired level
+> rather than relying on the chip internal pullup/pulldown facility.
 
-Hi Michal,
+You mean like actively setting the pin HIGH or LOW using
+gpiod_set_value_cansleep()? I also used that in my very first prototype.
+But even for that you still need to define the second GPIO pinctrl group
+and select it before you can set the GPIO value. I think because this is
+all meant to be used only with inverted PWM output you naturally configure
+the GPIO with pull-up. So you do not need to actively drive the pin.
+Is your concern that the 22k pull-up may not be strong enough for any
+connected circuit? IMO the whole point of totally disabling the PWM is to
+save some power. So I will go with just the pull-up.
 
-> On 23.8.2018 12:40, Lukasz Majewski wrote:
->=20
-> Hi Lukasz, thanks for the reply!
-> > Hi Michal,
-> >  =20
-> >> Output of the PWM block of i.MX SoCs is always zero volts when the
-> >> block is disabled. This can caue issues when inverted PWM polarity
-> >> is needed. With inverted polarity a duty cycle =3D 0% corresponds to
-> >> solid high level on the output. If the PWM is dissabled its output
-> >> instantly goes to solid zero which corresponds to duty cycle =3D
-> >> 100%.
-> >>
-> >> To have a trully inverted PWM output configure the PWM pad as a
-> >> GPIO with pull-up. Then switch the pad to PWM output whenever
-> >> non-zero duty cycle is needed. =20
-> >=20
-> > Just to ask - Is your display equipped with power supply
-> > enable/disable pin? =20
->=20
-> No it is not. The backlight on my display is just a bunch of serial-
-> parallel connected LEDs with separate GND and VCC pins on a separate
-> flex cable. And the display itself also does not have a reset or
-> enable signal. It is a PITA=C2=A0to use it I must say..
+In your case you also need additional xxxx-gpios property that describes
+the GPIO. Actually here you have one more option to invert the logic as
+you can specify the GPIO as GPIO_ACTIVE_LOW or GPIO_ACTIVE_HIGH.
+For inverted PWM output you should use GPIO_ACIVE_LOW. In your case you
+will need to tweak that in the bootloader also.
 
-Yes, it seems so. I must have had more luck than you with the HW....
+The final DT fow inverted PWM for backlight will look like this:
 
->  =20
-> > As fair as I remember the trick to avoid flickering the display
-> > was to disable the display (enable-gpio property) and set the PWM
-> > PIN as GPIO to high in u-boot. =20
->=20
-> Yes, I know about that. I can not use this as the PWM output is the
-> only signal I have to control the backlight. I mentioned that
-> somewhere in the previous discussion with Lothar.
+         backlight {
+                 compatible = "pwm-backlight";
+                 pwms = <&pwm1 0 500000 PWM_POLARITY_INVERTED>;
+                 brightness-levels = <0 32 64 128 255>;
+                 default-brightness-level = <32>;
+                 num-interpolated-steps = <8>;
+                 power-supply = <&sw2_reg>;
+                 status = "okay";
+         };
 
-Yes, I've read it. I also find the PWM pinctrl as "default" state more
-natural.
+	&pwm1 {
+		#pwm-cells = <3>;
+		pinctrl-names = "default", "pwm";
+		pinctrl-0 = <&pinctrl_backlight_gpio>;
+		pinctrl-1 = <&pinctrl_backlight_pwm>;
+		pwm-gpios = <&gpio1 9 GPIO_ACTIVE_LOW>;
+		status = "disabled";
+	};
 
-One more idea - though.
+	&iomuxc {
+		pinctrl_backlight_gpio: pwm1grp-gpio {
+			fsl,pins = <
+				MX6QDL_PAD_GPIO_9__GPIO1_IO09   0x8
+			>;
+		};
 
-In iMX6Q it was possible to specify the pinctrl PIN setup as 0x80000000
-- this means that it goes untouched to the IP block (configured by
-  bootloader).
+		pinctrl_backlight_pwm: pwm1grp-pwm {
+			fsl,pins = <
+				MX6QDL_PAD_GPIO_9__PWM1_OUT     0x8
+			>;
+		};
+	};
 
-Maybe it would work to:
+I think that for further effective discussion we need to wait for some
+comments from PWM maintainers.
 
-1. Setup the PWM output as GPIO in u-boot (high)
+The main questions still remain:
 
-2. In PWM IMX probe configure PWM to be 100% duty cycle. And switch
-iomux to PWM function of the pin
+- Is it acceptable to use pinctrl from the PWM driver in the first place?
+- If so, is it acceptable to allow to use the approach where GPIO is used
+   as the default state and we switch to "pwm" when needed? This produces
+   the cleanest inverted PWM signal.
+- If not, we will use the "gpio" state as the second optional one and use
+   it when clients disable PWM.
+- In both cases, can we rely on internal the pull-up facility or do we
+   need to actively drive the pin?
 
-3. Then latter in the code PWM gets configured and we can control it in
-"normal" way ?
-
-Or am I missing some important point?
-
->=20
-> I also think this could be useful not only for backlight. Any circuit
-> that requires truly inverted PWM signal can use it. I see it as an
-> enhancement to what you with Lothar have already done ;)
->  =20
-> >>
-> >> Signed-off-by: Michal Vok=C3=A1=C4=8D <michal.vokac@ysoft.com>
-> >> ---
-> >>   Documentation/devicetree/bindings/pwm/imx-pwm.txt | 44
-> >> +++++++++++++++++++++++ 1 file changed, 44 insertions(+)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/pwm/imx-pwm.txt
-> >> b/Documentation/devicetree/bindings/pwm/imx-pwm.txt index
-> >> c61bdf8..3b1bc4c 100644 ---
-> >> a/Documentation/devicetree/bindings/pwm/imx-pwm.txt +++
-> >> b/Documentation/devicetree/bindings/pwm/imx-pwm.txt @@ -14,6 +14,12
-> >> @@ See the clock consumer binding,
-> >> Documentation/devicetree/bindings/clock/clock-bindings.txt
-> >>   - interrupts: The interrupt for the pwm controller
-> >>  =20
-> >> +Optional properties:
-> >> +- pinctrl: For i.MX27 and newer SoCs. Add extra pinctrl to
-> >> configure the PWM
-> >> +  pin to gpio function.  It allows control over the pin output
-> >> level when the
-> >> +  PWM block is disabled. This is meant to be used if inverted
-> >> polarity of the
-> >> +  PWM signal is required. See "Inverted PWM output" section
-> >> bellow. +
-> >>   Example:
-> >>  =20
-> >>   pwm1: pwm@53fb4000 {
-> >> @@ -25,3 +31,41 @@ pwm1: pwm@53fb4000 {
-> >>   	clock-names =3D "ipg", "per";
-> >>   	interrupts =3D <61>;
-> >>   };
-> >> +
-> >> +Inverted PWM output
-> >> +-------------------
-> >> +
-> >> +The i.MX SoC has such limitation that whenever a pad is configured
-> >> as a PWM +output, the output level is always zero volts when the
-> >> PWM block is disabled. +The zero output level is actively driven
-> >> by the output stage of the PWM block +and can not be overridden by
-> >> pull-up. It also does not matter what PWM polarity +a PWM client
-> >> (e.g. backlight) requested. +
-> >> +To gain control of the PWM output level in disabled state two
-> >> pinctrl states +can be used. The "default" state and the "pwm"
-> >> state. In the default state the +PWM output is configured as a
-> >> GPIO with pull-up. In the "pwm" state the output +is configured as
-> >> a PWM output. This setup assures that the PWM output is at +the
-> >> required level that corresponds to duty cycle =3D 0 when PWM is
-> >> disabled. +E.g. at boot. +
-> >> +Example:
-> >> +
-> >> +&pwm1 {
-> >> +	pinctrl-names =3D "default", "pwm";
-> >> +	pinctrl-0 =3D <&pinctrl_backlight_gpio>;
-> >> +	pinctrl-1 =3D <&pinctrl_backlight_pwm>;
-> >> +}
-> >> +
-> >> +pinctrl_backlight_gpio: pwm1grp-gpio {
-> >> +	fsl,pins =3D <
-> >> +		/* GPIO with 22kOhm pull-up */
-> >> +		MX6QDL_PAD_GPIO_9__GPIO1_IO09	0xF008
-> >> +	>;
-> >> +};
-> >> +
-> >> +pinctrl_backlight_pwm: pwm1grp-pwm {
-> >> +	fsl,pins =3D <
-> >> +		/* PWM output */
-> >> +		MX6QDL_PAD_GPIO_9__PWM1_OUT	0x8
-> >> +	>;
-> >> +}; =20
-
-
-
-
-Best regards,
-
-Lukasz Majewski
-
---
-
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: (+49)-8142-66989-10 Fax: (+49)-8142-66989-80 Email: wd@denx.de
-
---Sig_/bSzWo+0iYXRf0ckL35a+C5W
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAlt+qjAACgkQAR8vZIA0
-zr2jVgf/cT9BMXZrWumniSwKM1BMNZQUsUM5wnxP8jaTMvl0JRS74z7CRbTe3j5J
-FexaDCLnIf6eE62XjGikn/j3pjMJ43/G7n6sTn/6B2JU1FDVrL+pfXseSLNXuRt3
-STW+nAU45T9OO4Q/yM7MY8IziOY7leS+FWdXeP4LN9aoWFAEC08YRKbUrGisiLzt
-CbJpZ9qGZaMk6rSEjOR792kkmlIqKahpSVqe39VqYJv9/lDkDV2PPc3U5Pi8xR0p
-0CSDKBeZnk9opqJC42vqAO6nc9V1xZWxOUGlGK62rZjdwyFHI6gKqJNxGAOLwqlz
-MDADTr1fgZjQTSnmr73SpoeCdylmyg==
-=TSWt
------END PGP SIGNATURE-----
-
---Sig_/bSzWo+0iYXRf0ckL35a+C5W--
+Thank you for your time!
+Michal
