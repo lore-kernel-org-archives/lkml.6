@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0E06C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:59:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E43DC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:59:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEE93208D6
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:59:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEE93208D6
+	by mail.kernel.org (Postfix) with ESMTP id D073A208D6
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:59:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D073A208D6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388008AbeHWM2W (ORCPT
+        id S2388023AbeHWM20 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:28:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53164 "EHLO
+        Thu, 23 Aug 2018 08:28:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53172 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727374AbeHWM2W (ORCPT
+        with ESMTP id S1733015AbeHWM2Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:28:22 -0400
+        Thu, 23 Aug 2018 08:28:25 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 284E1CA0;
-        Thu, 23 Aug 2018 08:59:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 62878C83;
+        Thu, 23 Aug 2018 08:59:43 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
+        stable@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
         Thierry Reding <treding@nvidia.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 218/324] gpu: host1x: Check whether size of unpin isnt 0
-Date:   Thu, 23 Aug 2018 09:54:44 +0200
-Message-Id: <20180823075007.078571703@linuxfoundation.org>
+Subject: [PATCH 4.17 219/324] drm/tegra: Fix comparison operator for buffer size
+Date:   Thu, 23 Aug 2018 09:54:45 +0200
+Message-Id: <20180823075007.133208037@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -51,33 +52,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry Osipenko <digetx@gmail.com>
+From: Mikko Perttunen <mperttunen@nvidia.com>
 
-[ Upstream commit ec58923215dbbeef59ee82923ee94d745f73db58 ]
+[ Upstream commit 5265f0338bc0feec6c0d544dfe005dec1a93cb93 ]
 
-Only gather pins are mapped by the Host1x driver, regular BO relocations
-are not. Check whether size of unpin isn't 0, otherwise IOVA allocation at
-0x0 could be erroneously released.
+Here we are checking for the buffer length, not an offset for writing
+to, so using > is correct. The current code incorrectly rejects a
+command buffer ending at the memory buffer's end.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/host1x/job.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/tegra/drm.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/host1x/job.c
-+++ b/drivers/gpu/host1x/job.c
-@@ -686,7 +686,8 @@ void host1x_job_unpin(struct host1x_job
- 	for (i = 0; i < job->num_unpins; i++) {
- 		struct host1x_job_unpin_data *unpin = &job->unpins[i];
- 
--		if (!IS_ENABLED(CONFIG_TEGRA_HOST1X_FIREWALL) && host->domain) {
-+		if (!IS_ENABLED(CONFIG_TEGRA_HOST1X_FIREWALL) &&
-+		    unpin->size && host->domain) {
- 			iommu_unmap(host->domain, job->addr_phys[i],
- 				    unpin->size);
- 			free_iova(&host->iova,
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -436,7 +436,7 @@ int tegra_drm_submit(struct tegra_drm_co
+ 		 * unaligned offset is malformed and cause commands stream
+ 		 * corruption on the buffer address relocation.
+ 		 */
+-		if (offset & 3 || offset >= obj->gem.size) {
++		if (offset & 3 || offset > obj->gem.size) {
+ 			err = -EINVAL;
+ 			goto fail;
+ 		}
 
 
