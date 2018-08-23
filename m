@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45100C43615
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:21:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD53FC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:21:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AF2D208D6
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:21:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AF2D208D6
+	by mail.kernel.org (Postfix) with ESMTP id 92C67208D6
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:21:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92C67208D6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730513AbeHWLuJ (ORCPT
+        id S1730523AbeHWLuM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:50:09 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46786 "EHLO
+        Thu, 23 Aug 2018 07:50:12 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46796 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728096AbeHWLuJ (ORCPT
+        with ESMTP id S1728096AbeHWLuM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:50:09 -0400
+        Thu, 23 Aug 2018 07:50:12 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C4B95C83;
-        Thu, 23 Aug 2018 08:21:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 082B1C83;
+        Thu, 23 Aug 2018 08:21:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Neil Horman <nhorman@redhat.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 066/217] net: davinci_emac: match the mdio device against its compatible if possible
-Date:   Thu, 23 Aug 2018 09:52:59 +0200
-Message-Id: <20180823075508.494028325@linuxfoundation.org>
+Subject: [PATCH 4.14 067/217] sctp: fix erroneous inc of snmp SctpFragUsrMsgs
+Date:   Thu, 23 Aug 2018 09:53:00 +0200
+Message-Id: <20180823075508.536277821@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -52,34 +53,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
 
-[ Upstream commit ea0820bb771175c7d4192fc6f5b5c56b3c6d5239 ]
+[ Upstream commit fedb1bd3d274b33c432cb83c80c6b3cf54d509c8 ]
 
-Device tree based systems without of_dev_auxdata will have the mdio
-device named differently than "davinci_mdio(.0)". In this case use the
-device's parent's compatible string for matching
+Currently it is incrementing SctpFragUsrMsgs when the user message size
+is of the exactly same size as the maximum fragment size, which is wrong.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+The fix is to increment it only when user message is bigger than the
+maximum fragment size.
+
+Fixes: bfd2e4b8734d ("sctp: refactor sctp_datamsg_from_user")
+Signed-off-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Acked-by: Neil Horman <nhorman@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/ti/davinci_emac.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ net/sctp/chunk.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/ti/davinci_emac.c
-+++ b/drivers/net/ethernet/ti/davinci_emac.c
-@@ -1387,6 +1387,10 @@ static int emac_devioctl(struct net_devi
- 
- static int match_first_device(struct device *dev, void *data)
- {
-+	if (dev->parent && dev->parent->of_node)
-+		return of_device_is_compatible(dev->parent->of_node,
-+					       "ti,davinci_mdio");
-+
- 	return !strncmp(dev_name(dev), "davinci_mdio", 12);
- }
- 
+--- a/net/sctp/chunk.c
++++ b/net/sctp/chunk.c
+@@ -230,7 +230,9 @@ struct sctp_datamsg *sctp_datamsg_from_u
+ 	/* Account for a different sized first fragment */
+ 	if (msg_len >= first_len) {
+ 		msg->can_delay = 0;
+-		SCTP_INC_STATS(sock_net(asoc->base.sk), SCTP_MIB_FRAGUSRMSGS);
++		if (msg_len > first_len)
++			SCTP_INC_STATS(sock_net(asoc->base.sk),
++				       SCTP_MIB_FRAGUSRMSGS);
+ 	} else {
+ 		/* Which may be the only one... */
+ 		first_len = msg_len;
 
 
