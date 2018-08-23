@@ -2,172 +2,225 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1F8CC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 10:41:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CCA8C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 10:42:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BFF020C07
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 10:41:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BFF020C07
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id F395720C07
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 10:42:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bHN5uHyC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F395720C07
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729009AbeHWOK1 (ORCPT
+        id S1729113AbeHWOLV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 10:10:27 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58506 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727162AbeHWOK1 (ORCPT
+        Thu, 23 Aug 2018 10:11:21 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:55042 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728582AbeHWOLV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 10:10:27 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7NAd4B5073965
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 06:41:20 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m1suf45w2-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 06:41:20 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Thu, 23 Aug 2018 11:41:18 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 23 Aug 2018 11:41:14 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7NAfCmu41091074
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 23 Aug 2018 10:41:12 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F39EA4C04E;
-        Thu, 23 Aug 2018 13:41:13 +0100 (BST)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 28E404C046;
-        Thu, 23 Aug 2018 13:41:13 +0100 (BST)
-Received: from [9.152.224.92] (unknown [9.152.224.92])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 23 Aug 2018 13:41:13 +0100 (BST)
-Reply-To: pmorel@linux.ibm.com
-Subject: Re: [PATCH v9 12/22] s390: vfio-ap: sysfs interfaces to configure
- control domains
-To:     Halil Pasic <pasic@linux.ibm.com>,
-        Tony Krowiak <akrowiak@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>
-Cc:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1534196899-16987-13-git-send-email-akrowiak@linux.vnet.ibm.com>
- <20180820162317.08bd7d23.cohuck@redhat.com>
- <660de00a-c403-28c1-4df4-82a973ab3ad5@linux.ibm.com>
- <20180821172548.57a6c758.cohuck@redhat.com>
- <82a391ee-85b1-cdc7-0f9b-d37fd8ba8e47@linux.ibm.com>
- <a43ef10f-aa91-cb4c-a8aa-cd3ce9cfebf2@linux.ibm.com>
- <20180822114250.59a250aa.cohuck@redhat.com>
- <8bc5f207-f913-825c-f9fc-0a2c7fd280aa@linux.ibm.com>
- <e36abc22-9daf-e0f4-c6b3-7adbb28db4c3@de.ibm.com>
- <f84dbcc0-f627-be02-9933-3baa953adc09@linux.ibm.com>
- <219b352b-d5a2-189c-e205-82e7f9ae3d64@de.ibm.com>
- <dbb74c9c-93ab-ed05-fad4-ea2aa5f2b71e@linux.ibm.com>
- <9ef5fcb9-02e0-88e3-007c-eedb14e6db80@linux.ibm.com>
- <ae3c635b-5ddd-4382-d676-09cf1a685f06@linux.ibm.com>
-From:   Pierre Morel <pmorel@linux.ibm.com>
-Date:   Thu, 23 Aug 2018 12:41:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 23 Aug 2018 10:11:21 -0400
+Received: by mail-it0-f67.google.com with SMTP id s7-v6so6882679itb.4
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 03:42:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=lJD4TWPyWhtu5Wb9c9lyHTXwBjF+RR9GLfOZnOuhWrQ=;
+        b=bHN5uHyCbJV77hijonOkIo/oqzW/d+SenL858UKpnulf+mfUIz5Zjk6qxFnoi87fyK
+         MikC+AWnwmYd8N1OHvO3QteEZamQd+PR+NVdC184wlvMiirinFonsMUEWty2Yt0Ed4nG
+         XeyYEw140TIByVo/mVMy4OXZ6TjGBR6r398KQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=lJD4TWPyWhtu5Wb9c9lyHTXwBjF+RR9GLfOZnOuhWrQ=;
+        b=rLuyI4o2XvUqXI+gvggme48sqRAoynhhdYvadfg9wWPaB4HJ/8A16e8kq2uyHxVI2a
+         tARI41w22ZZLDPnZ5Y5HD/hRLhpC8+xb/7PwS2s4mwmdzbigj5tueWP9T1PlpCa7hHS2
+         y8sMbW/4blMJNn6AqoKn/KeONZ4/V1K8nYCHU3pUA+SB/Gg00lDIy/yl0AswCsB6gqoF
+         p7XtoETztmQE+UQwFyqFIMWZK7vO9gghAuBVjNUgNZZ1DtJgvwcValgD8ZA5gqWnBhtz
+         N2Et5C23eIXrpmPyWTeXL2NViPBqNjLzHuTZoQRVfC2ytUKUurfzBd8TgI+v+M82Jj/x
+         GuAw==
+X-Gm-Message-State: APzg51CvXpi6ej4m9xzgHl8h0jzePnJwVMhNGcJ0oF0ubjWuFvlDmHwR
+        Mt4vHwa4RchlcDkEEF3E8cXnUj2SjAIDl7tkirUlsQ==
+X-Google-Smtp-Source: ANB0VdaI8cjEZ2rx78bFP4ugQM1OO/5FSl9F+9kmZBZhRfKN6EBRbsBjkc2NqjaB7W/9fkiAn11LlJcts88dxxD3gtg=
+X-Received: by 2002:a24:3fc6:: with SMTP id d189-v6mr6025418ita.64.1535020935019;
+ Thu, 23 Aug 2018 03:42:15 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <ae3c635b-5ddd-4382-d676-09cf1a685f06@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18082310-0028-0000-0000-000002EEA602
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082310-0029-0000-0000-000023A7EBDC
-Message-Id: <56ce7a29-c7ce-1bad-c26b-945b2d8dae4b@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-23_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=435 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808230114
+Received: by 2002:a02:2b03:0:0:0:0:0 with HTTP; Thu, 23 Aug 2018 03:42:14
+ -0700 (PDT)
+In-Reply-To: <20180823084704.GA28696@ulmo>
+References: <1533924522-1037-1-git-send-email-avienamo@nvidia.com> <20180823084704.GA28696@ulmo>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 23 Aug 2018 12:42:14 +0200
+Message-ID: <CAPDyKFq=Ox+BfU+-D-T6pd81x+_WG_P_VztNRTJ97sAEe8sNDQ@mail.gmail.com>
+Subject: Re: [PATCH v2 00/40] Tegra SDHCI add support for HS200 and UHS signaling
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Aapo Vienamo <avienamo@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Stefan Agner <stefan@agner.ch>,
+        DTML <devicetree@vger.kernel.org>, linux-tegra@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/08/2018 11:26, Halil Pasic wrote:
-> 
-> 
-> On 08/22/2018 09:16 PM, Tony Krowiak wrote:
->> On 08/22/2018 01:11 PM, Halil Pasic wrote:
->>>
->>>
->>> On 08/22/2018 05:48 PM, Christian Borntraeger wrote:
->>>> On 08/22/2018 05:34 PM, Pierre Morel wrote:
->>>>> On 22/08/2018 17:11, Christian Borntraeger wrote:
->>>>>>
->>>>>>
->>>>>> On 08/22/2018 01:03 PM, Pierre Morel wrote:
->>>>>>>> That's interesting.
->>>>>>>>
-...
->>>>
->>>> So you have changed the code to not automatically make a usage domain a
->>>> control domain in the bitfield (and you could still use it as a usage
->>>> domain). Correct?
+On 23 August 2018 at 10:47, Thierry Reding <thierry.reding@gmail.com> wrote:
+> On Fri, Aug 10, 2018 at 09:08:02PM +0300, Aapo Vienamo wrote:
+>> Hi all,
+>>
+>> This series implements support for faster signaling modes on Tegra
+>> SDHCI controllers. This series consist of several parts: changes
+>> requried for 1.8 V signaling and pad control, pad calibration, and
+>> tuning. Following earlies patch sets have been merged into this
+>> larger set: "Tegra PMC pinctrl pad configuration", "Tegra SDHCI enable
+>> 1.8 V signaling on Tegar210 and Tegra186", "Tegra SDHCI update the
+>> padautocal procedure". Also the patches for enabling SDHCI tuning
+>> are added.
+>>
+>> Changelog:
+>> v2:
+>>       - Fix grammar in PMC device tree bindings docs
+>>       - Remove a stray line from tegra sdhci bindings
+>>       - Cosmetic changes to PMC pinctrl driver
+>>       - Fix a typo in "soc/tegra: pmc: Implement
+>>         tegra_io_pad_is_powered()" commit message
+>>       - Declare mask and value on the same line in
+>>         tegra_io_pad_is_powered()
+>>       - Move the call to tegra_sdhci_is_pad_and_regulator_valid() to
+>>         inside the if condition in tegra_sdhci_reset()
+>>       - Use usleep_range() in tegra_sdhci_configure_cal_pad()
+>>       - Move sdhci_writel() out of the enable if-else body in
+>>         tegra_sdhci_configure_cal_pad()
+>>       - Add a delay before starting polling in
+>>         tegra_sdhci_pad_autocalib()
+>>       - Use usleep_range() in tegra_sdhci_set_tap()
+>>       - Rename orig_enabled to status in
+>>         tegra_sdhci_configure_card_clk()
+>>       - Fix if condition wrapping alignment in tegra_sdhci_set_tap()
+>>
+>> v1:
+>>       - Probe the regulator voltage capabilities to determine whether pinctrl
+>>         is needed in tegra_sdhci_r eset
+>>       - Don't remove tegra_sdhci_voltage_switch()
+>>       - Use dev_warn() in tegra_sdhci_init_pinctrl_info()
+>>       - Don't change start_signal_voltage_switch callback if pinctrl info
+>>         invalid
+>>       - Only call udelay(1) on enable in tegra_sdhci_configure_cal_pad()
+>>       - Add nvidia, prefix to pad autocal offset dt props in the example
+>>
+>> See the original patch sets for earlier changelogs.
+>>
+>> Aapo Vienamo (40):
+>>   dt-bindings: Add Tegra PMC pad configuration bindings
+>>   dt-bindings: mmc: tegra: Add pad voltage control properties
+>>   dt-bindings: Add Tegra SDHCI pad pdpu offset bindings
+>>   dt-bindings: mmc: Add Tegra SDHCI sampling trimmer values
+>>   soc/tegra: pmc: Fix pad voltage configuration for Tegra186
+>>   soc/tegra: pmc: Factor out DPD register bit calculation
+>>   soc/tegra: pmc: Implement tegra_io_pad_is_powered()
+>>   soc/tegra: pmc: Use X macro to generate IO pad tables
+>>   soc/tegra: pmc: Remove public pad voltage APIs
+>>   soc/tegra: pmc: Implement pad configuration via pinctrl
+>>   mmc: sdhci: Add a quirk to skip clearing the transfer mode register on
+>>     tuning
+>>   mmc: tegra: Reconfigure pad voltages during voltage switching
+>>   mmc: tegra: Poll for calibration completion
+>>   mmc: tegra: Set calibration pad voltage reference
+>>   mmc: tegra: Power on the calibration pad
+>>   mmc: tegra: Disable card clock during pad calibration
+>>   mmc: tegra: Program pad autocal offsets from dt
+>>   mmc: tegra: Perform pad calibration after voltage switch
+>>   mmc: tegra: Enable pad calibration on Tegra210 and Tegra186
+>>   mmc: tegra: Add a workaround for tap value change glitch
+>>   mmc: tegra: Parse default trim and tap from dt
+>>   mmc: tegra: Configure default tap values
+>>   mmc: tegra: Configure default trim value on reset
+>>   mmc: tegra: Use standard SDHCI tuning on Tegra210 and Tegra186
+>>   mmc: sdhci: Add a quirk to disable card clock during tuning
+>>   mmc: tegra: Enable workaround for tuning transfer mode bug
+>>   mmc: tegra: Set SDHCI_QUIRK2_TUNE_DIS_CARD_CLK on Tegra210
+>>   mmc: tegra: Enable UHS and HS200 modes for Tegra210
+>>   mmc: tegra: Enable UHS and HS200 modes for Tegra186
+>>   arm64: dts: Add Tegra210 sdmmc pinctrl voltage states
+>>   arm64: dts: Add Tegra186 sdmmc pinctrl voltage states
+>>   arm64: dts: tegra210-p2180: Allow ldo2 to go down to 1.8 V
+>>   arm64: dts: tegra210-p2180: Correct sdmmc4 vqmmc-supply
+>>   arm64: dts: tegra210-p2597: Remove no-1-8-v from sdmmc1
+>>   arm64: dts: tegra186: Add sdmmc pad auto calibration offsets
+>>   arm64: dts: tegra210: Add sdmmc pad auto calibration offsets
+>>   arm64: dts: tegra210: Add SDHCI tap and trim values
+>>   arm64: dts: tegra186: Add SDHCI tap and trim values
+>>   arm64: dts: tegra186: Assign clocks for sdmmc1 and sdmmc4
+>>   arm64: dts: tegra210: Assign clocks for sdmmc1 and sdmmc4
+>>
+>>  .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     |  93 ++++
+>>  .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 103 ++++
+>>  .../bindings/mmc/nvidia,tegra20-sdhci.txt          |  68 +++
+>>  arch/arm64/boot/dts/nvidia/tegra186.dtsi           |  74 +++
+>>  arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi     |  12 +-
+>>  arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     |   1 -
+>>  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  55 ++
+>>  drivers/mmc/host/sdhci-tegra.c                     | 556 +++++++++++++++++++--
+>>  drivers/mmc/host/sdhci.c                           |  21 +
+>>  drivers/mmc/host/sdhci.h                           |   4 +
+>>  drivers/soc/tegra/pmc.c                            | 511 ++++++++++++++-----
+>>  include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h |  18 +
+>>  include/soc/tegra/pmc.h                            |  20 +-
+>>  13 files changed, 1324 insertions(+), 212 deletions(-)
+>>  create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
+>
+> Hi Ulf, Adrian,
+>
+> I've been running some tests on this on various Tegra boards and this
+> all seems to work fine. I'm also pretty happy with how this turned out,
+> so the whole series is:
+>
+> Acked-by: Thierry Reding <treding@nvidia.com>
+>
+> In order to get this merged, I think it'd be best for you guys to pick
+> up the MMC patches, since they are all independent of the rest. There is
+> a runtime dependency on the PMC bits for the faster modes, but things
+> will fallback to the status quo if those bits are not enabled. The only
+> dependency here is between the PMC and DTS changes, which I usually pick
+> up into the Tegra tree anyway, so I can sort that out there.
 
-Yes.
+Great, thanks for clarifying the dependency.
 
->>>
->>> I tested basically the same yesterday, with the same results.
->>>
->>>> I think this is probably expected. the "usage implies control" seems to
->>>> be a convention implemented by HMC (lpar) and z/VM but millicode offers
->>>> the bits to have usage-only domains. As LPAR and z/VM will always 
->>>> enable
->>>> any usage-domain to also be a control domain we should do the same.
+>
+> Since I've already gone through the process of splitting up the series,
+> I can offer to rebase the MMC patches on top of v4.19-rc1 when it's out
+> and send a pull request for the MMC patches.
 
-I think it is the reasonable thing to do.
+That sounds convenient for me. Please also include the corresponding
+dt doc changes for mmc, as I am normally queuing these via my mmc
+tree.
 
->>>
->>> I'm fine either way, but slightly prefer higher level management 
->>> software
->>> and not the kernel accommodating this convention.
+Although, I think it's better to wait until Adrian has given his ack
+for the series.
 
-Please, we do not need this in a first version just make it easy
-stick with what HMC does.
+> Alternatively I can further
+> split that branch up into two parts, one with the two patches that touch
+> the core and another with the remainder, if that's what you prefer. Or
+> you can of course feel free to apply all of the MMC patches yourselves
+> with my above Acked-by if you want to.
+>
+> Any thought on the above?
 
->>> with read access to, let's say a regular file. For me, all options 
->>> (rw, r, and w)
->>> do make sense, and if I had to pick the one that makes the least 
->>> sense I would
->>> pick write only. The convention is in these terms making read-only 
->>> illegal. But
->>> should 'usage only domains' ever get identified as something somebody 
->>> wants to do
->>> we can just add an attribute for that. So I'm fine either way.
+Let's see how it goes, if there are any struggles, I don't have a
+problem to cherry-pick the mmc parts of the series.
 
-We do not need to introduce new features now.
-
-regards,
-Pierre
-
-
--- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
-
+Kind regards
+Uffe
