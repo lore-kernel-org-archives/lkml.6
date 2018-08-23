@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEF20C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:08:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFE8FC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:08:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B28BE208D6
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:08:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B28BE208D6
+	by mail.kernel.org (Postfix) with ESMTP id 909BB208C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:08:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 909BB208C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730885AbeHWMhZ (ORCPT
+        id S2387926AbeHWMh3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:37:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56216 "EHLO
+        Thu, 23 Aug 2018 08:37:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56230 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729679AbeHWMhY (ORCPT
+        with ESMTP id S1732542AbeHWMh2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:37:24 -0400
+        Thu, 23 Aug 2018 08:37:28 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F0780CA0;
-        Thu, 23 Aug 2018 09:08:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 286BBBBF;
+        Thu, 23 Aug 2018 09:08:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Roland Dreier <roland@purestorage.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
+        stable@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 297/324] nvme: fix handling of metadata_len for NVME_IOCTL_IO_CMD
-Date:   Thu, 23 Aug 2018 09:56:03 +0200
-Message-Id: <20180823075010.927381785@linuxfoundation.org>
+Subject: [PATCH 4.17 298/324] mm: use helper functions for allocating and freeing vm_area structs
+Date:   Thu, 23 Aug 2018 09:56:04 +0200
+Message-Id: <20180823075010.983423970@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -52,34 +51,325 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Roland Dreier <roland@purestorage.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-[ Upstream commit 9b382768135ee3ff282f828c906574a8478e036b ]
+[ Upstream commit 3928d4f5ee37cdc523894f6e549e6aae521d8980 ]
 
-The old code in nvme_user_cmd() passed the userspace virtual address
-from nvme_passthru_cmd.metadata as the length of the metadata buffer
-as well as the address to nvme_submit_user_cmd().
+The vm_area_struct is one of the most fundamental memory management
+objects, but the management of it is entirely open-coded evertwhere,
+ranging from allocation and freeing (using kmem_cache_[z]alloc and
+kmem_cache_free) to initializing all the fields.
 
-Fixes: 63263d60 ("nvme: Use metadata for passthrough commands")
-Signed-off-by: Roland Dreier <roland@purestorage.com>
-Reviewed-by: Keith Busch <keith.busch@intel.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+We want to unify this in order to end up having some unified
+initialization of the vmas, and the first step to this is to at least
+have basic allocation functions.
+
+Right now those functions are literally just wrappers around the
+kmem_cache_*() calls.  This is a purely mechanical conversion:
+
+    # new vma:
+    kmem_cache_zalloc(vm_area_cachep, GFP_KERNEL) -> vm_area_alloc()
+
+    # copy old vma
+    kmem_cache_alloc(vm_area_cachep, GFP_KERNEL) -> vm_area_dup(old)
+
+    # free vma
+    kmem_cache_free(vm_area_cachep, vma) -> vm_area_free(vma)
+
+to the point where the old vma passed in to the vm_area_dup() function
+isn't even used yet (because I've left all the old manual initialization
+alone).
+
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/nvme/host/core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/ia64/kernel/perfmon.c |    4 ++--
+ arch/ia64/mm/init.c        |    8 ++++----
+ fs/exec.c                  |    4 ++--
+ include/linux/mm.h         |    4 +++-
+ kernel/fork.c              |   21 ++++++++++++++++++---
+ mm/mmap.c                  |   22 +++++++++++-----------
+ mm/nommu.c                 |    8 ++++----
+ 7 files changed, 44 insertions(+), 27 deletions(-)
 
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -1209,7 +1209,7 @@ static int nvme_user_cmd(struct nvme_ctr
- 	effects = nvme_passthru_start(ctrl, ns, cmd.opcode);
- 	status = nvme_submit_user_cmd(ns ? ns->queue : ctrl->admin_q, &c,
- 			(void __user *)(uintptr_t)cmd.addr, cmd.data_len,
--			(void __user *)(uintptr_t)cmd.metadata, cmd.metadata,
-+			(void __user *)(uintptr_t)cmd.metadata, cmd.metadata_len,
- 			0, &cmd.result, timeout);
- 	nvme_passthru_end(ctrl, effects);
+--- a/arch/ia64/kernel/perfmon.c
++++ b/arch/ia64/kernel/perfmon.c
+@@ -2278,7 +2278,7 @@ pfm_smpl_buffer_alloc(struct task_struct
+ 	DPRINT(("smpl_buf @%p\n", smpl_buf));
  
+ 	/* allocate vma */
+-	vma = kmem_cache_zalloc(vm_area_cachep, GFP_KERNEL);
++	vma = vm_area_alloc();
+ 	if (!vma) {
+ 		DPRINT(("Cannot allocate vma\n"));
+ 		goto error_kmem;
+@@ -2346,7 +2346,7 @@ pfm_smpl_buffer_alloc(struct task_struct
+ 	return 0;
+ 
+ error:
+-	kmem_cache_free(vm_area_cachep, vma);
++	vm_area_free(vma);
+ error_kmem:
+ 	pfm_rvfree(smpl_buf, size);
+ 
+--- a/arch/ia64/mm/init.c
++++ b/arch/ia64/mm/init.c
+@@ -114,7 +114,7 @@ ia64_init_addr_space (void)
+ 	 * the problem.  When the process attempts to write to the register backing store
+ 	 * for the first time, it will get a SEGFAULT in this case.
+ 	 */
+-	vma = kmem_cache_zalloc(vm_area_cachep, GFP_KERNEL);
++	vma = vm_area_alloc();
+ 	if (vma) {
+ 		INIT_LIST_HEAD(&vma->anon_vma_chain);
+ 		vma->vm_mm = current->mm;
+@@ -125,7 +125,7 @@ ia64_init_addr_space (void)
+ 		down_write(&current->mm->mmap_sem);
+ 		if (insert_vm_struct(current->mm, vma)) {
+ 			up_write(&current->mm->mmap_sem);
+-			kmem_cache_free(vm_area_cachep, vma);
++			vm_area_free(vma);
+ 			return;
+ 		}
+ 		up_write(&current->mm->mmap_sem);
+@@ -133,7 +133,7 @@ ia64_init_addr_space (void)
+ 
+ 	/* map NaT-page at address zero to speed up speculative dereferencing of NULL: */
+ 	if (!(current->personality & MMAP_PAGE_ZERO)) {
+-		vma = kmem_cache_zalloc(vm_area_cachep, GFP_KERNEL);
++		vma = vm_area_alloc();
+ 		if (vma) {
+ 			INIT_LIST_HEAD(&vma->anon_vma_chain);
+ 			vma->vm_mm = current->mm;
+@@ -144,7 +144,7 @@ ia64_init_addr_space (void)
+ 			down_write(&current->mm->mmap_sem);
+ 			if (insert_vm_struct(current->mm, vma)) {
+ 				up_write(&current->mm->mmap_sem);
+-				kmem_cache_free(vm_area_cachep, vma);
++				vm_area_free(vma);
+ 				return;
+ 			}
+ 			up_write(&current->mm->mmap_sem);
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -290,7 +290,7 @@ static int __bprm_mm_init(struct linux_b
+ 	struct vm_area_struct *vma = NULL;
+ 	struct mm_struct *mm = bprm->mm;
+ 
+-	bprm->vma = vma = kmem_cache_zalloc(vm_area_cachep, GFP_KERNEL);
++	bprm->vma = vma = vm_area_alloc();
+ 	if (!vma)
+ 		return -ENOMEM;
+ 
+@@ -326,7 +326,7 @@ err:
+ 	up_write(&mm->mmap_sem);
+ err_free:
+ 	bprm->vma = NULL;
+-	kmem_cache_free(vm_area_cachep, vma);
++	vm_area_free(vma);
+ 	return err;
+ }
+ 
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -154,7 +154,9 @@ extern int overcommit_kbytes_handler(str
+  * mmap() functions).
+  */
+ 
+-extern struct kmem_cache *vm_area_cachep;
++struct vm_area_struct *vm_area_alloc(void);
++struct vm_area_struct *vm_area_dup(struct vm_area_struct *);
++void vm_area_free(struct vm_area_struct *);
+ 
+ #ifndef CONFIG_MMU
+ extern struct rb_root nommu_region_tree;
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -303,11 +303,26 @@ struct kmem_cache *files_cachep;
+ struct kmem_cache *fs_cachep;
+ 
+ /* SLAB cache for vm_area_struct structures */
+-struct kmem_cache *vm_area_cachep;
++static struct kmem_cache *vm_area_cachep;
+ 
+ /* SLAB cache for mm_struct structures (tsk->mm) */
+ static struct kmem_cache *mm_cachep;
+ 
++struct vm_area_struct *vm_area_alloc(void)
++{
++	return kmem_cache_zalloc(vm_area_cachep, GFP_KERNEL);
++}
++
++struct vm_area_struct *vm_area_dup(struct vm_area_struct *orig)
++{
++	return kmem_cache_alloc(vm_area_cachep, GFP_KERNEL);
++}
++
++void vm_area_free(struct vm_area_struct *vma)
++{
++	kmem_cache_free(vm_area_cachep, vma);
++}
++
+ static void account_kernel_stack(struct task_struct *tsk, int account)
+ {
+ 	void *stack = task_stack_page(tsk);
+@@ -455,7 +470,7 @@ static __latent_entropy int dup_mmap(str
+ 				goto fail_nomem;
+ 			charge = len;
+ 		}
+-		tmp = kmem_cache_alloc(vm_area_cachep, GFP_KERNEL);
++		tmp = vm_area_dup(mpnt);
+ 		if (!tmp)
+ 			goto fail_nomem;
+ 		*tmp = *mpnt;
+@@ -539,7 +554,7 @@ fail_uprobe_end:
+ fail_nomem_anon_vma_fork:
+ 	mpol_put(vma_policy(tmp));
+ fail_nomem_policy:
+-	kmem_cache_free(vm_area_cachep, tmp);
++	vm_area_free(tmp);
+ fail_nomem:
+ 	retval = -ENOMEM;
+ 	vm_unacct_memory(charge);
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -182,7 +182,7 @@ static struct vm_area_struct *remove_vma
+ 	if (vma->vm_file)
+ 		fput(vma->vm_file);
+ 	mpol_put(vma_policy(vma));
+-	kmem_cache_free(vm_area_cachep, vma);
++	vm_area_free(vma);
+ 	return next;
+ }
+ 
+@@ -911,7 +911,7 @@ again:
+ 			anon_vma_merge(vma, next);
+ 		mm->map_count--;
+ 		mpol_put(vma_policy(next));
+-		kmem_cache_free(vm_area_cachep, next);
++		vm_area_free(next);
+ 		/*
+ 		 * In mprotect's case 6 (see comments on vma_merge),
+ 		 * we must remove another next too. It would clutter
+@@ -1729,7 +1729,7 @@ unsigned long mmap_region(struct file *f
+ 	 * specific mapper. the address has already been validated, but
+ 	 * not unmapped, but the maps are removed from the list.
+ 	 */
+-	vma = kmem_cache_zalloc(vm_area_cachep, GFP_KERNEL);
++	vma = vm_area_alloc();
+ 	if (!vma) {
+ 		error = -ENOMEM;
+ 		goto unacct_error;
+@@ -1832,7 +1832,7 @@ allow_write_and_free_vma:
+ 	if (vm_flags & VM_DENYWRITE)
+ 		allow_write_access(file);
+ free_vma:
+-	kmem_cache_free(vm_area_cachep, vma);
++	vm_area_free(vma);
+ unacct_error:
+ 	if (charged)
+ 		vm_unacct_memory(charged);
+@@ -2620,7 +2620,7 @@ int __split_vma(struct mm_struct *mm, st
+ 			return err;
+ 	}
+ 
+-	new = kmem_cache_alloc(vm_area_cachep, GFP_KERNEL);
++	new = vm_area_dup(vma);
+ 	if (!new)
+ 		return -ENOMEM;
+ 
+@@ -2669,7 +2669,7 @@ int __split_vma(struct mm_struct *mm, st
+  out_free_mpol:
+ 	mpol_put(vma_policy(new));
+  out_free_vma:
+-	kmem_cache_free(vm_area_cachep, new);
++	vm_area_free(new);
+ 	return err;
+ }
+ 
+@@ -2984,7 +2984,7 @@ static int do_brk_flags(unsigned long ad
+ 	/*
+ 	 * create a vma struct for an anonymous mapping
+ 	 */
+-	vma = kmem_cache_zalloc(vm_area_cachep, GFP_KERNEL);
++	vma = vm_area_alloc();
+ 	if (!vma) {
+ 		vm_unacct_memory(len >> PAGE_SHIFT);
+ 		return -ENOMEM;
+@@ -3202,7 +3202,7 @@ struct vm_area_struct *copy_vma(struct v
+ 		}
+ 		*need_rmap_locks = (new_vma->vm_pgoff <= vma->vm_pgoff);
+ 	} else {
+-		new_vma = kmem_cache_alloc(vm_area_cachep, GFP_KERNEL);
++		new_vma = vm_area_dup(vma);
+ 		if (!new_vma)
+ 			goto out;
+ 		*new_vma = *vma;
+@@ -3226,7 +3226,7 @@ struct vm_area_struct *copy_vma(struct v
+ out_free_mempol:
+ 	mpol_put(vma_policy(new_vma));
+ out_free_vma:
+-	kmem_cache_free(vm_area_cachep, new_vma);
++	vm_area_free(new_vma);
+ out:
+ 	return NULL;
+ }
+@@ -3350,7 +3350,7 @@ static struct vm_area_struct *__install_
+ 	int ret;
+ 	struct vm_area_struct *vma;
+ 
+-	vma = kmem_cache_zalloc(vm_area_cachep, GFP_KERNEL);
++	vma = vm_area_alloc();
+ 	if (unlikely(vma == NULL))
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -3376,7 +3376,7 @@ static struct vm_area_struct *__install_
+ 	return vma;
+ 
+ out:
+-	kmem_cache_free(vm_area_cachep, vma);
++	vm_area_free(vma);
+ 	return ERR_PTR(ret);
+ }
+ 
+--- a/mm/nommu.c
++++ b/mm/nommu.c
+@@ -769,7 +769,7 @@ static void delete_vma(struct mm_struct
+ 	if (vma->vm_file)
+ 		fput(vma->vm_file);
+ 	put_nommu_region(vma->vm_region);
+-	kmem_cache_free(vm_area_cachep, vma);
++	vm_area_free(vma);
+ }
+ 
+ /*
+@@ -1204,7 +1204,7 @@ unsigned long do_mmap(struct file *file,
+ 	if (!region)
+ 		goto error_getting_region;
+ 
+-	vma = kmem_cache_zalloc(vm_area_cachep, GFP_KERNEL);
++	vma = vm_area_alloc();
+ 	if (!vma)
+ 		goto error_getting_vma;
+ 
+@@ -1368,7 +1368,7 @@ error:
+ 	kmem_cache_free(vm_region_jar, region);
+ 	if (vma->vm_file)
+ 		fput(vma->vm_file);
+-	kmem_cache_free(vm_area_cachep, vma);
++	vm_area_free(vma);
+ 	return ret;
+ 
+ sharing_violation:
+@@ -1469,7 +1469,7 @@ int split_vma(struct mm_struct *mm, stru
+ 	if (!region)
+ 		return -ENOMEM;
+ 
+-	new = kmem_cache_alloc(vm_area_cachep, GFP_KERNEL);
++	new = vm_area_dup(vma);
+ 	if (!new) {
+ 		kmem_cache_free(vm_region_jar, region);
+ 		return -ENOMEM;
 
 
