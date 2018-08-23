@@ -5,56 +5,33 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EAC8C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:10:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B47AC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:13:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A24C2077B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:10:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A24C2077B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id B1690208DB
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:13:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1690208DB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731008AbeHWOj1 (ORCPT
+        id S1731094AbeHWOmP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 10:39:27 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38070 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726194AbeHWOj0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 10:39:26 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7NB9c7E107121
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 07:10:14 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m1svfvx8x-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 07:10:13 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Thu, 23 Aug 2018 12:10:11 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 23 Aug 2018 12:10:06 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7NBA5ih32243908
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 23 Aug 2018 11:10:05 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 54AEC4C04A;
-        Thu, 23 Aug 2018 14:10:06 +0100 (BST)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 73AD44C040;
-        Thu, 23 Aug 2018 14:10:05 +0100 (BST)
-Received: from [9.152.224.92] (unknown [9.152.224.92])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 23 Aug 2018 14:10:05 +0100 (BST)
-Reply-To: pmorel@linux.ibm.com
+        Thu, 23 Aug 2018 10:42:15 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39624 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726360AbeHWOmP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 10:42:15 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6D60187A70;
+        Thu, 23 Aug 2018 11:13:00 +0000 (UTC)
+Received: from [10.36.117.65] (ovpn-117-65.ams2.redhat.com [10.36.117.65])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C07B52026DE4;
+        Thu, 23 Aug 2018 11:12:54 +0000 (UTC)
 Subject: Re: [PATCH v9 21/22] KVM: s390: CPU model support for AP
  virtualization
-To:     David Hildenbrand <david@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
+To:     pmorel@linux.ibm.com, Halil Pasic <pasic@linux.ibm.com>,
         Tony Krowiak <akrowiak@linux.ibm.com>,
         Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
         linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -77,199 +54,242 @@ References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
  <f5ec13ae-75b4-918e-aaf1-ed97944ff16e@redhat.com>
  <fec90446-7f94-da28-d958-427a0446854e@linux.ibm.com>
  <ef6082b7-da96-3a0b-77a0-f41d113d058a@redhat.com>
-From:   Pierre Morel <pmorel@linux.ibm.com>
-Date:   Thu, 23 Aug 2018 13:10:03 +0200
+ <8d6ae58f-967b-5e4e-0e54-8fb4962cb843@linux.ibm.com>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <be13d8fa-1ff7-6800-36b9-7f8320724cbf@redhat.com>
+Date:   Thu, 23 Aug 2018 13:12:54 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <ef6082b7-da96-3a0b-77a0-f41d113d058a@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <8d6ae58f-967b-5e4e-0e54-8fb4962cb843@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18082311-0008-0000-0000-00000265A77D
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082311-0009-0000-0000-000021CDEE26
-Message-Id: <8d6ae58f-967b-5e4e-0e54-8fb4962cb843@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-23_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808230120
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 23 Aug 2018 11:13:00 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 23 Aug 2018 11:13:00 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/08/2018 12:28, David Hildenbrand wrote:
-> On 23.08.2018 12:00, Halil Pasic wrote:
->>
->>
->> On 08/23/2018 09:44 AM, David Hildenbrand wrote:
->>> On 22.08.2018 22:16, Tony Krowiak wrote:
->>>> On 08/22/2018 07:24 AM, David Hildenbrand wrote:
->>>>> On 22.08.2018 13:19, David Hildenbrand wrote:
->>>>>> On 13.08.2018 23:48, Tony Krowiak wrote:
->>>>>>> From: Tony Krowiak <akrowiak@linux.ibm.com>
+On 23.08.2018 13:10, Pierre Morel wrote:
+> On 23/08/2018 12:28, David Hildenbrand wrote:
+>> On 23.08.2018 12:00, Halil Pasic wrote:
+>>>
+>>>
+>>> On 08/23/2018 09:44 AM, David Hildenbrand wrote:
+>>>> On 22.08.2018 22:16, Tony Krowiak wrote:
+>>>>> On 08/22/2018 07:24 AM, David Hildenbrand wrote:
+>>>>>> On 22.08.2018 13:19, David Hildenbrand wrote:
+>>>>>>> On 13.08.2018 23:48, Tony Krowiak wrote:
+>>>>>>>> From: Tony Krowiak <akrowiak@linux.ibm.com>
+>>>>>>>>
+>>>>>>>> Introduces a new CPU model feature and two CPU model
+>>>>>>>> facilities to support AP virtualization for KVM guests.
+>>>>>>>>
+>>>>>>>> CPU model feature:
+>>>>>>>>
+>>>>>>>> The KVM_S390_VM_CPU_FEAT_AP feature indicates that
+>>>>>>>> AP instructions are available on the guest. This
+>>>>>>>> feature will be enabled by the kernel only if the AP
+>>>>>>>> instructions are installed on the linux host. This feature
+>>>>>>>> must be specifically turned on for the KVM guest from
+>>>>>>>> userspace to use the VFIO AP device driver for guest
+>>>>>>>> access to AP devices.
+>>>>>>>>
+>>>>>>>> CPU model facilities:
+>>>>>>>>
+>>>>>>>> 1. AP Query Configuration Information (QCI) facility is installed.
+>>>>>>>>
+>>>>>>>>       This is indicated by setting facilities bit 12 for
+>>>>>>>>       the guest. The kernel will not enable this facility
+>>>>>>>>       for the guest if it is not set on the host.
+>>>>>>>>
+>>>>>>>>       If this facility is not set for the KVM guest, then only
+>>>>>>>>       APQNs with an APQI less than 16 will be used by a Linux
+>>>>>>>>       guest regardless of the matrix configuration for the virtual
+>>>>>>>>       machine. This is a limitation of the Linux AP bus.
+>>>>>>>>
+>>>>>>>> 2. AP Facilities Test facility (APFT) is installed.
+>>>>>>>>
+>>>>>>>>       This is indicated by setting facilities bit 15 for
+>>>>>>>>       the guest. The kernel will not enable this facility for
+>>>>>>>>       the guest if it is not set on the host.
+>>>>>>>>
+>>>>>>>>       If this facility is not set for the KVM guest, then no
+>>>>>>>>       AP devices will be available to the guest regardless of
+>>>>>>>>       the guest's matrix configuration for the virtual
+>>>>>>>>       machine. This is a limitation of the Linux AP bus.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+>>>>>>>> Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
+>>>>>>>> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+>>>>>>>> Tested-by: Michael Mueller <mimu@linux.ibm.com>
+>>>>>>>> Tested-by: Farhan Ali <alifm@linux.ibm.com>
+>>>>>>>> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+>>>>>>>> ---
+>>>>>>>>     arch/s390/kvm/kvm-s390.c         |    5 +++++
+>>>>>>>>     arch/s390/tools/gen_facilities.c |    2 ++
+>>>>>>>>     2 files changed, 7 insertions(+), 0 deletions(-)
+>>>>>>>>
+>>>>>>>> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+>>>>>>>> index 1e8cb67..d5e04d2 100644
+>>>>>>>> --- a/arch/s390/kvm/kvm-s390.c
+>>>>>>>> +++ b/arch/s390/kvm/kvm-s390.c
+>>>>>>>> @@ -367,6 +367,11 @@ static void kvm_s390_cpu_feat_init(void)
+>>>>>>>>     
+>>>>>>>>     	if (MACHINE_HAS_ESOP)
+>>>>>>>>     		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_ESOP);
+>>>>>>>> +
+>>>>>>>> +	/* Check if AP instructions installed on host */
+>>>>>>>> +	if (ap_instructions_available())
+>>>>>>>> +		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_AP);
+>>>>>>>> +
+>>>>>>>>     	/*
+>>>>>>>>     	 * We need SIE support, ESOP (PROT_READ protection for gmap_shadow),
+>>>>>>>>     	 * 64bit SCAO (SCA passthrough) and IDTE (for gmap_shadow unshadowing).
+>>>>>>>> diff --git a/arch/s390/tools/gen_facilities.c b/arch/s390/tools/gen_facilities.c
+>>>>>>>> index 90a8c9e..a52290b 100644
+>>>>>>>> --- a/arch/s390/tools/gen_facilities.c
+>>>>>>>> +++ b/arch/s390/tools/gen_facilities.c
+>>>>>>>> @@ -106,6 +106,8 @@ struct facility_def {
+>>>>>>>>     
+>>>>>>>>     		.name = "FACILITIES_KVM_CPUMODEL",
+>>>>>>>>     		.bits = (int[]){
+>>>>>>>> +			12, /* AP Query Configuration Information */
+>>>>>>>> +			15, /* AP Facilities Test */
+>>>>>>>>     			-1  /* END */
+>>>>>>>>     		}
+>>>>>>>>     	},
+>>>>>>>>
+>>>>>>> I really wonder if we should also export the APXA facility.
 >>>>>>>
->>>>>>> Introduces a new CPU model feature and two CPU model
->>>>>>> facilities to support AP virtualization for KVM guests.
+>>>>>>> We can probe and allow that CPU feature. However, we cannot disable it
+>>>>>>> (as of now).
 >>>>>>>
->>>>>>> CPU model feature:
+>>>>>>> We have other CPU features where it is the same case (basically all
+>>>>>>> subfunctions). See kvm_s390_get_processor_subfunc(). We probe them and
+>>>>>>> export them, but support to disable them has never been implemented.
 >>>>>>>
->>>>>>> The KVM_S390_VM_CPU_FEAT_AP feature indicates that
->>>>>>> AP instructions are available on the guest. This
->>>>>>> feature will be enabled by the kernel only if the AP
->>>>>>> instructions are installed on the linux host. This feature
->>>>>>> must be specifically turned on for the KVM guest from
->>>>>>> userspace to use the VFIO AP device driver for guest
->>>>>>> access to AP devices.
+>>>>>>> On a high level, we could then e.g. deny to start a QEMU guest if APXA
+>>>>>>> is available but has been disabled. (until we know that disabling it
+>>>>>>> actually works - if ever).
 >>>>>>>
->>>>>>> CPU model facilities:
+>>>>>>> This helps to catch nasty migration bugs (e.g. APXA suddenly
+>>>>>>> disappearing). Although unlikely, definitely possible.
 >>>>>>>
->>>>>>> 1. AP Query Configuration Information (QCI) facility is installed.
 >>>>>>>
->>>>>>>       This is indicated by setting facilities bit 12 for
->>>>>>>       the guest. The kernel will not enable this facility
->>>>>>>       for the guest if it is not set on the host.
+>>>>>>> Are there any other AP related facilities that the guest can from now on
+>>>>>>> probe that should also become part of the CPU model?
 >>>>>>>
->>>>>>>       If this facility is not set for the KVM guest, then only
->>>>>>>       APQNs with an APQI less than 16 will be used by a Linux
->>>>>>>       guest regardless of the matrix configuration for the virtual
->>>>>>>       machine. This is a limitation of the Linux AP bus.
->>>>>>>
->>>>>>> 2. AP Facilities Test facility (APFT) is installed.
->>>>>>>
->>>>>>>       This is indicated by setting facilities bit 15 for
->>>>>>>       the guest. The kernel will not enable this facility for
->>>>>>>       the guest if it is not set on the host.
->>>>>>>
->>>>>>>       If this facility is not set for the KVM guest, then no
->>>>>>>       AP devices will be available to the guest regardless of
->>>>>>>       the guest's matrix configuration for the virtual
->>>>>>>       machine. This is a limitation of the Linux AP bus.
->>>>>>>
->>>>>>> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
->>>>>>> Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
->>>>>>> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
->>>>>>> Tested-by: Michael Mueller <mimu@linux.ibm.com>
->>>>>>> Tested-by: Farhan Ali <alifm@linux.ibm.com>
->>>>>>> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
->>>>>>> ---
->>>>>>>     arch/s390/kvm/kvm-s390.c         |    5 +++++
->>>>>>>     arch/s390/tools/gen_facilities.c |    2 ++
->>>>>>>     2 files changed, 7 insertions(+), 0 deletions(-)
->>>>>>>
->>>>>>> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
->>>>>>> index 1e8cb67..d5e04d2 100644
->>>>>>> --- a/arch/s390/kvm/kvm-s390.c
->>>>>>> +++ b/arch/s390/kvm/kvm-s390.c
->>>>>>> @@ -367,6 +367,11 @@ static void kvm_s390_cpu_feat_init(void)
->>>>>>>     
->>>>>>>     	if (MACHINE_HAS_ESOP)
->>>>>>>     		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_ESOP);
->>>>>>> +
->>>>>>> +	/* Check if AP instructions installed on host */
->>>>>>> +	if (ap_instructions_available())
->>>>>>> +		allow_cpu_feat(KVM_S390_VM_CPU_FEAT_AP);
->>>>>>> +
->>>>>>>     	/*
->>>>>>>     	 * We need SIE support, ESOP (PROT_READ protection for gmap_shadow),
->>>>>>>     	 * 64bit SCAO (SCA passthrough) and IDTE (for gmap_shadow unshadowing).
->>>>>>> diff --git a/arch/s390/tools/gen_facilities.c b/arch/s390/tools/gen_facilities.c
->>>>>>> index 90a8c9e..a52290b 100644
->>>>>>> --- a/arch/s390/tools/gen_facilities.c
->>>>>>> +++ b/arch/s390/tools/gen_facilities.c
->>>>>>> @@ -106,6 +106,8 @@ struct facility_def {
->>>>>>>     
->>>>>>>     		.name = "FACILITIES_KVM_CPUMODEL",
->>>>>>>     		.bits = (int[]){
->>>>>>> +			12, /* AP Query Configuration Information */
->>>>>>> +			15, /* AP Facilities Test */
->>>>>>>     			-1  /* END */
->>>>>>>     		}
->>>>>>>     	},
->>>>>>>
->>>>>> I really wonder if we should also export the APXA facility.
->>>>>>
->>>>>> We can probe and allow that CPU feature. However, we cannot disable it
->>>>>> (as of now).
->>>>>>
->>>>>> We have other CPU features where it is the same case (basically all
->>>>>> subfunctions). See kvm_s390_get_processor_subfunc(). We probe them and
->>>>>> export them, but support to disable them has never been implemented.
->>>>>>
->>>>>> On a high level, we could then e.g. deny to start a QEMU guest if APXA
->>>>>> is available but has been disabled. (until we know that disabling it
->>>>>> actually works - if ever).
->>>>>>
->>>>>> This helps to catch nasty migration bugs (e.g. APXA suddenly
->>>>>> disappearing). Although unlikely, definitely possible.
->>>>>>
->>>>>>
->>>>>> Are there any other AP related facilities that the guest can from now on
->>>>>> probe that should also become part of the CPU model?
->>>>>>
->>>>> To be more precise, shouldn't PQAP(QCI) be handled just like other
->>>>> subfunctions? (I remember it should)
+>>>>>> To be more precise, shouldn't PQAP(QCI) be handled just like other
+>>>>>> subfunctions? (I remember it should)
+>>>>>
+>>>>> When you suggest PQAP(QCI) be handled like other subfunctions, are you
+>>>>> suggesting that there should be a field in struct kvm_s390_vm_cpu_subfunc
+>>>>> with a bit indicating the QCI subfunction is available? The availability
+>>>>> of the QCI subfunction of the PQAP instruction is determined by facilities
+>>>>> bit 12. Is it not enough to export facilities bit 12?
 >>>>
->>>> When you suggest PQAP(QCI) be handled like other subfunctions, are you
->>>> suggesting that there should be a field in struct kvm_s390_vm_cpu_subfunc
->>>> with a bit indicating the QCI subfunction is available? The availability
->>>> of the QCI subfunction of the PQAP instruction is determined by facilities
->>>> bit 12. Is it not enough to export facilities bit 12?
+>>>> The feature block (128 bit) from PQAP(QCI) should be passed through a
+>>>> subfunction block to QEMU.
+>>>>
 >>>
->>> The feature block (128 bit) from PQAP(QCI) should be passed through a
->>> subfunction block to QEMU.
->>>
+>>> I'm confused, which 128 bit?
 >>
->> I'm confused, which 128 bit?
+>>
+>> Me too :) , I was assuming this block to be 128bit, but the qci block
+>> has 128 bytes....
+>>
+>> And looking at arch/s390/include/asm/ap.h, there is a lot of information
+>> contained that is definitely not of interest for CPU models...
+>>
+>> I wonder if there is somewhere defined which bits are reserved for
+>> future features/facilities, compared to ap masks and such.
+>>
+>> This is really hard to understand/plan without access to documentation.
+>>
+>> You (Halil, Tony, Pier, ...) should have a look if what I described
+>> related to PQAP(QCI) containing features that should get part of the CPU
+>> model makes sense or not. For now I was thinking that there is some part
+>> inside of QCI that is strictly reserved for facilities/features that we
+>> can use.
+>>
 > 
+> David,
+> I already answered to you on this subject.
 > 
-> Me too :) , I was assuming this block to be 128bit, but the qci block
-> has 128 bytes....
+> First,
+> Are you sure you do not mistake QCI for TAPQ which has the t bit
+> instruction interception bit as all the instructions you use as
+> subfunctions?
+
+Yes, I am pretty sure it is PQAP(QCI), please check with Christian /
+architecture documentations.
+
 > 
-> And looking at arch/s390/include/asm/ap.h, there is a lot of information
-> contained that is definitely not of interest for CPU models...
+> Second,
+> The TAPQ interception bit is exposed through the facility bit 15
+> and is documented as being installed when the APXA facility is installed.
 > 
-> I wonder if there is somewhere defined which bits are reserved for
-> future features/facilities, compared to ap masks and such.
+> If we have the APFT, we have the APXA, problem seems solved to me.
+
+What is apsc, qact, rc8a in the qci blocks? are the facility bits?
+
 > 
-> This is really hard to understand/plan without access to documentation.
+> Regards,
+> Pierre
 > 
-> You (Halil, Tony, Pier, ...) should have a look if what I described
-> related to PQAP(QCI) containing features that should get part of the CPU
-> model makes sense or not. For now I was thinking that there is some part
-> inside of QCI that is strictly reserved for facilities/features that we
-> can use.
-> 
-
-David,
-I already answered to you on this subject.
-
-First,
-Are you sure you do not mistake QCI for TAPQ which has the t bit
-instruction interception bit as all the instructions you use as
-subfunctions?
-
-Second,
-The TAPQ interception bit is exposed through the facility bit 15
-and is documented as being installed when the APXA facility is installed.
-
-If we have the APFT, we have the APXA, problem seems solved to me.
-
-Regards,
-Pierre
-
-
-
-
-
 
 
 -- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
 
+Thanks,
+
+David / dhildenb
