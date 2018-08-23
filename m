@@ -7,66 +7,66 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACA89C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 18:31:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB7AAC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 18:31:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E10821564
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 18:31:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69E9F21564
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 18:31:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CUP0hycl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E10821564
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RGjaQ5tL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69E9F21564
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727569AbeHWWCc (ORCPT
+        id S1727590AbeHWWCk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 18:02:32 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:34807 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727412AbeHWWCc (ORCPT
+        Thu, 23 Aug 2018 18:02:40 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:42444 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726985AbeHWWCk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 18:02:32 -0400
-Received: by mail-pg1-f193.google.com with SMTP id u10-v6so1331176pgr.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 11:31:35 -0700 (PDT)
+        Thu, 23 Aug 2018 18:02:40 -0400
+Received: by mail-pf1-f193.google.com with SMTP id l9-v6so3224376pff.9
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 11:31:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=/3CjhislnGGqU2g8MmW8SwCvogvUhECLJdE3KndpOdQ=;
-        b=CUP0hyclBxjARnYZIqgC1rZExSxHVaRJ6nBohdn0WryRFx2dOKG4+LEUy+BorSCeWS
-         wWlwOeE043TYImeCxzPcvt91AOUviZJA0IhMwIakRH/hYxA9eqo5dceu5NwsaTLNAggt
-         clhjlutkPz95ooj0QXlPuYiwK+UM6XJyKODIo=
+        bh=CJQ6YBPrl6gFzj3eIjWskmozE9vOcWXWtBqmjfcrGkQ=;
+        b=RGjaQ5tLfnGsUPEwJrlWAQkGwTNt3A9J/X0xjQchjRoro5cTXEpg/Mo91DW6h+oAaS
+         cQ9/ORH0yKcO+SOPsPlTG3Bkq1ff2Z9NwjOS84vllSacRlXDBdUtL7VEbJExjFb+wkAg
+         aWTq/hfEqmxyu3Y1KsbVDFq6eku8mJVJ57/CI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=/3CjhislnGGqU2g8MmW8SwCvogvUhECLJdE3KndpOdQ=;
-        b=MtT7UC6LsUVxfF15jL2ZwNfJYpjqLlkKFOY+H0by2m2F27sdE6M0fT7NqDCeUuM3Ax
-         35mjH4WVjsVSp0F/0hk5Sl2nWw1a2ISdT5FbqJwKXFj0nqPPy8aHyD3IptYNSUQ6InYk
-         2OOwK7vO2jJNxxe2PJtKYoO9v+ggAZD6Jwvn1Htb9mN1Kl3qF97FGF4rFdP+HxnMkx2Y
-         XioCDcOk7cDQRrAA9aWzARGMv//J/XDOt4DwH8jbDfdIjau+OjeFnSkvSDuQ7H04bGV2
-         SBXrEl9jDAecBmQ0D5tKPFyhOEU0EQTMJC4D9t2P7jAlFoAz9Z8P1jm1S8h8HUPSsWeW
-         C/lA==
-X-Gm-Message-State: APzg51BYAm7i0hTJzlYNwpYIIMEWi9NKHLD/ildAcV3Z4bYZxRq5iOmQ
-        ey10hfpLn8j+UosrMXXGfeIgAQ==
-X-Google-Smtp-Source: ANB0VdZHj3KxyeDaWF/JYIT1EXJYxyf6nl7xIC92Uw6WS9AEZxQdlX6W45BI+cKoEDajQY/5s4wOLA==
-X-Received: by 2002:a62:cc83:: with SMTP id j3-v6mr1231705pfk.255.1535049095292;
-        Thu, 23 Aug 2018 11:31:35 -0700 (PDT)
+        bh=CJQ6YBPrl6gFzj3eIjWskmozE9vOcWXWtBqmjfcrGkQ=;
+        b=VRbG3jaMBPq0fU0SM6hRctAraYF+ivsH+hwJF/RSYSlfaH1/1hlK8re6iJ06mf7DC8
+         iFcENCXDlNm/w/NI7PXkj2ctTEnAxKyzXlX4BpCdpWGQvgg4M60EKZv6GXwSK3DyefBk
+         Vo+YyRqm+f9W6aac4MEsf8k/48lRfMcVh6nmuiEHZJdpylm16Jca9hk9qq/n3RwuETIk
+         vQ38f0mzOtN9z8kTgIumXlU8Vkzc12/T4HJSM7glogPJ+v89vO/vhY/azizJDJ5ugUpO
+         4d0QunYnMyEjH4/1xmfz+B5DY3whWFPc9vijhbRv/LgjFu32mGC3ti/IL31tVOJgZje1
+         OuBw==
+X-Gm-Message-State: AOUpUlEF/kJMIhWOfJqcejJ5HgwsRub60SRjVd2T14bO+ZuVVuQHmfSx
+        7GUQdYsGczrFPdRZQtcLxD72rA==
+X-Google-Smtp-Source: AA+uWPx9ijcMfS+e12cI5pn3/hhJoWw+m1hPY00RFGYKm05aVzPiXmGps/eWVee6oH0hHgKWhxmgRg==
+X-Received: by 2002:a63:5143:: with SMTP id r3-v6mr57569888pgl.11.1535049102962;
+        Thu, 23 Aug 2018 11:31:42 -0700 (PDT)
 Received: from kolhar.mtv.corp.google.com ([2620:15c:202:201:356a:9de2:526a:5bc])
-        by smtp.gmail.com with ESMTPSA id p11-v6sm9054225pfj.72.2018.08.23.11.31.34
+        by smtp.gmail.com with ESMTPSA id p11-v6sm9054225pfj.72.2018.08.23.11.31.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 Aug 2018 11:31:34 -0700 (PDT)
+        Thu, 23 Aug 2018 11:31:42 -0700 (PDT)
 From:   Harry Cutts <hcutts@chromium.org>
 To:     linux-input <linux-input@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
 Cc:     Jiri Kosina <jiri.kosina@suse.cz>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Harry Cutts <hcutts@chromium.org>, linux-doc@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 1/3] Add the `REL_WHEEL_HI_RES` event code
-Date:   Thu, 23 Aug 2018 11:30:55 -0700
-Message-Id: <20180823183057.247630-2-hcutts@chromium.org>
+        Harry Cutts <hcutts@chromium.org>,
+        Jiri Kosina <jikos@kernel.org>
+Subject: [PATCH 2/3] Create a utility class for counting scroll events
+Date:   Thu, 23 Aug 2018 11:30:56 -0700
+Message-Id: <20180823183057.247630-3-hcutts@chromium.org>
 X-Mailer: git-send-email 2.18.0.1017.ga543ac7ca45-goog
 In-Reply-To: <20180823183057.247630-1-hcutts@chromium.org>
 References: <20180823183057.247630-1-hcutts@chromium.org>
@@ -77,53 +77,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This event code represents scroll reports from high-resolution wheels,
-and will be used by future patches in this series. See the linux-input
-"Reporting high-resolution scroll events" thread [0] for more details.
-
-[0]: https://www.spinics.net/lists/linux-input/msg57380.html
+To avoid code duplication, this class counts high-resolution scroll
+movements and emits the legacy low-resolution events when appropriate.
+Drivers should create one instance for each scroll wheel that they
+need to handle.
 
 Signed-off-by: Harry Cutts <hcutts@chromium.org>
 ---
 
- Documentation/input/event-codes.rst    | 11 ++++++++++-
- include/uapi/linux/input-event-codes.h |  1 +
- 2 files changed, 11 insertions(+), 1 deletion(-)
+ drivers/hid/hid-input.c | 44 +++++++++++++++++++++++++++++++++++++++++
+ include/linux/hid.h     | 28 ++++++++++++++++++++++++++
+ 2 files changed, 72 insertions(+)
 
-diff --git a/Documentation/input/event-codes.rst b/Documentation/input/event-codes.rst
-index a8c0873beb95..df024cb82829 100644
---- a/Documentation/input/event-codes.rst
-+++ b/Documentation/input/event-codes.rst
-@@ -190,7 +190,16 @@ A few EV_REL codes have special meanings:
- * REL_WHEEL, REL_HWHEEL:
+diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
+index 4e94ea3e280a..4ee23b297472 100644
+--- a/drivers/hid/hid-input.c
++++ b/drivers/hid/hid-input.c
+@@ -1826,3 +1826,47 @@ void hidinput_disconnect(struct hid_device *hid)
+ }
+ EXPORT_SYMBOL_GPL(hidinput_disconnect);
  
-   - These codes are used for vertical and horizontal scroll wheels,
--    respectively.
-+    respectively. The value is the number of "notches" moved on the wheel, the
-+    physical size of which varies by device. For high-resolution wheels (which
-+    report multiple events for each notch of movement, or do not have notches)
-+    this may be an approximation based on the high-resolution scroll events.
++/**
++ * hid_scroll_counter_handle_scroll() - Send high- and low-resolution scroll
++ *                                      events given a high-resolution wheel
++ *                                      movement.
++ * @counter: a hid_scroll_counter struct describing the wheel.
++ * @hi_res_value: the movement of the wheel, in the mouse's high-resolution
++ *                units.
++ *
++ * Given a high-resolution movement, this function converts the movement into
++ * 256ths of a millimeter and emits high-resolution scroll events for the input
++ * device. It also uses the multiplier from &struct hid_scroll_counter to emit
++ * low-resolution scroll events when appropriate for backwards-compatibility
++ * with userspace input libraries.
++ */
++void hid_scroll_counter_handle_scroll(struct hid_scroll_counter *counter,
++				      int hi_res_value)
++{
++	int low_res_scroll_amount;
++	/* Some wheels often rest 7/8ths of a notch from the previous notch
++	 * after slow movement, so we want the threshold for low-res events in
++	 * between the notches (e.g. after 4/8ths) as opposed to on the notches
++	 * themselves (8/8ths).
++	 */
++	int threshold = counter->resolution_multiplier / 2;
 +
-+* REL_WHEEL_HI_RES:
++	input_report_rel(counter->dev, REL_WHEEL_HI_RES,
++			 hi_res_value * counter->mm256_per_hi_res_unit);
 +
-+  - If a vertical scroll wheel supports high-resolution scrolling, this code
-+    will be emitted in addition to REL_WHEEL. The value is the (approximate)
-+    distance travelled by the user's finger, in 256ths of a millimeter.
++	counter->remainder += hi_res_value;
++	if (abs(counter->remainder) >= threshold) {
++		/* Add (or subtract) 1 because we want to trigger when half-way
++		 * to the next notch (i.e. scroll 1 notch after a 1/2 notch
++		 * movement, 2 notches after a 1 1/2 notch movement, etc.).
++		 */
++		low_res_scroll_amount =
++			counter->remainder / counter->resolution_multiplier
++			+ (hi_res_value > 0 ? 1 : -1);
++		input_report_rel(counter->dev, REL_WHEEL,
++				 low_res_scroll_amount);
++		counter->remainder -=
++			low_res_scroll_amount * counter->resolution_multiplier;
++	}
++}
++EXPORT_SYMBOL_GPL(hid_scroll_counter_handle_scroll);
+diff --git a/include/linux/hid.h b/include/linux/hid.h
+index 834e6461a690..b7bc0b2faf4f 100644
+--- a/include/linux/hid.h
++++ b/include/linux/hid.h
+@@ -1138,6 +1138,34 @@ static inline u32 hid_report_len(struct hid_report *report)
+ int hid_report_raw_event(struct hid_device *hid, int type, u8 *data, u32 size,
+ 		int interrupt);
  
- EV_ABS
- ------
-diff --git a/include/uapi/linux/input-event-codes.h b/include/uapi/linux/input-event-codes.h
-index 53fbae27b280..dad8d3890a3a 100644
---- a/include/uapi/linux/input-event-codes.h
-+++ b/include/uapi/linux/input-event-codes.h
-@@ -708,6 +708,7 @@
- #define REL_DIAL		0x07
- #define REL_WHEEL		0x08
- #define REL_MISC		0x09
-+#define REL_WHEEL_HI_RES	0x0a
- #define REL_MAX			0x0f
- #define REL_CNT			(REL_MAX+1)
- 
++
++/**
++ * struct hid_scroll_counter - Utility class for processing high-resolution
++ *                             scroll events.
++ * @dev: the input device for which events should be reported.
++ * @mm256_per_hi_res_unit: the amount moved by the user's finger for each
++ *                         high-resolution unit reported by the mouse, in 256ths
++ *                         of a millimetre.
++ * @resolution_multiplier: the wheel's resolution in high-resolution mode as a
++ *                         multiple of its lower resolution. For example, if
++ *                         moving the wheel by one "notch" would result in a
++ *                         value of 1 in low-resolution mode but 8 in
++ *                         high-resolution, the multiplier is 8.
++ * @remainder: counts the number of high-resolution units moved since the last
++ *             low-resolution event (REL_WHEEL or REL_HWHEEL) was sent. Should
++ *             only be used by class methods.
++ */
++struct hid_scroll_counter {
++	struct input_dev *dev;
++	int mm256_per_hi_res_unit;
++	int resolution_multiplier;
++
++	int remainder;
++};
++
++void hid_scroll_counter_handle_scroll(struct hid_scroll_counter *counter,
++				      int hi_res_value);
++
+ /* HID quirks API */
+ unsigned long hid_lookup_quirk(const struct hid_device *hdev);
+ int hid_quirks_init(char **quirks_param, __u16 bus, int count);
 -- 
 2.18.0.1017.ga543ac7ca45-goog
 
