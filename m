@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53783C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:07:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 771A4C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:07:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CA0D2064E
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:07:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CA0D2064E
+	by mail.kernel.org (Postfix) with ESMTP id 3C0A32064E
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:07:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C0A32064E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728086AbeHWLfx (ORCPT
+        id S1728204AbeHWLf4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:35:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44740 "EHLO
+        Thu, 23 Aug 2018 07:35:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44754 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727027AbeHWLfw (ORCPT
+        with ESMTP id S1726511AbeHWLfz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:35:52 -0400
+        Thu, 23 Aug 2018 07:35:55 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 69C77C74;
-        Thu, 23 Aug 2018 08:07:26 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DC37DBB6;
+        Thu, 23 Aug 2018 08:07:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gevorg Sahakyan <sahakyan@synopsys.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        William Wu <william.wu@rock-chips.com>,
+        stable@vger.kernel.org, Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Jay Hsu <shih-chieh.hsu@mediatek.com>,
         Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 018/130] usb: dwc2: fix isoc split in transfer with no data
-Date:   Thu, 23 Aug 2018 09:52:14 +0200
-Message-Id: <20180823074928.530604627@linuxfoundation.org>
+Subject: [PATCH 4.9 019/130] usb: gadget: composite: fix delayed_status race condition when set_interface
+Date:   Thu, 23 Aug 2018 09:52:15 +0200
+Message-Id: <20180823074928.588577420@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
 References: <20180823074927.161454870@linuxfoundation.org>
@@ -53,59 +52,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: William Wu <william.wu@rock-chips.com>
+From: Chunfeng Yun <chunfeng.yun@mediatek.com>
 
-[ Upstream commit 70c3c8cb83856758025c2a211dd022bc0478922a ]
+[ Upstream commit 980900d6318066b9f8314bfb87329a20fd0d1ca4 ]
 
-If isoc split in transfer with no data (the length of DATA0
-packet is zero), we can't simply return immediately. Because
-the DATA0 can be the first transaction or the second transaction
-for the isoc split in transaction. If the DATA0 packet with no
-data is in the first transaction, we can return immediately.
-But if the DATA0 packet with no data is in the second transaction
-of isoc split in transaction sequence, we need to increase the
-qtd->isoc_frame_index and giveback urb to device driver if needed,
-otherwise, the MDATA packet will be lost.
+It happens when enable debug log, if set_alt() returns
+USB_GADGET_DELAYED_STATUS and usb_composite_setup_continue()
+is called before increasing count of @delayed_status,
+so fix it by using spinlock of @cdev->lock.
 
-A typical test case is that connect the dwc2 controller with an
-usb hs Hub (GL852G-12), and plug an usb fs audio device (Plantronics
-headset) into the downstream port of Hub. Then use the usb mic
-to record, we can find noise when playback.
-
-In the case, the isoc split in transaction sequence like this:
-
-- SSPLIT IN transaction
-- CSPLIT IN transaction
-  - MDATA packet (176 bytes)
-- CSPLIT IN transaction
-  - DATA0 packet (0 byte)
-
-This patch use both the length of DATA0 and qtd->isoc_split_offset
-to check if the DATA0 is in the second transaction.
-
-Tested-by: Gevorg Sahakyan <sahakyan@synopsys.com>
-Tested-by: Heiko Stuebner <heiko@sntech.de>
-Acked-by: Minas Harutyunyan hminas@synopsys.com>
-Signed-off-by: William Wu <william.wu@rock-chips.com>
+Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Tested-by: Jay Hsu <shih-chieh.hsu@mediatek.com>
 Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/dwc2/hcd_intr.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/usb/gadget/composite.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/usb/dwc2/hcd_intr.c
-+++ b/drivers/usb/dwc2/hcd_intr.c
-@@ -922,9 +922,8 @@ static int dwc2_xfercomp_isoc_split_in(s
- 	frame_desc = &qtd->urb->iso_descs[qtd->isoc_frame_index];
- 	len = dwc2_get_actual_xfer_length(hsotg, chan, chnum, qtd,
- 					  DWC2_HC_XFER_COMPLETE, NULL);
--	if (!len) {
-+	if (!len && !qtd->isoc_split_offset) {
- 		qtd->complete_split = 0;
--		qtd->isoc_split_offset = 0;
- 		return 0;
- 	}
- 
+--- a/drivers/usb/gadget/composite.c
++++ b/drivers/usb/gadget/composite.c
+@@ -1712,6 +1712,8 @@ composite_setup(struct usb_gadget *gadge
+ 		 */
+ 		if (w_value && !f->get_alt)
+ 			break;
++
++		spin_lock(&cdev->lock);
+ 		value = f->set_alt(f, w_index, w_value);
+ 		if (value == USB_GADGET_DELAYED_STATUS) {
+ 			DBG(cdev,
+@@ -1721,6 +1723,7 @@ composite_setup(struct usb_gadget *gadge
+ 			DBG(cdev, "delayed_status count %d\n",
+ 					cdev->delayed_status);
+ 		}
++		spin_unlock(&cdev->lock);
+ 		break;
+ 	case USB_REQ_GET_INTERFACE:
+ 		if (ctrl->bRequestType != (USB_DIR_IN|USB_RECIP_INTERFACE))
 
 
