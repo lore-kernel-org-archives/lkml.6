@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE058C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:50:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13713C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:50:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B1E1208DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:50:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B1E1208DA
+	by mail.kernel.org (Postfix) with ESMTP id CCAA920839
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:50:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCAA920839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387508AbeHWMTF (ORCPT
+        id S2387523AbeHWMTH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:19:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51386 "EHLO
+        Thu, 23 Aug 2018 08:19:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51398 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728517AbeHWMTE (ORCPT
+        with ESMTP id S1728517AbeHWMTH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:19:04 -0400
+        Thu, 23 Aug 2018 08:19:07 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 82152C5C;
-        Thu, 23 Aug 2018 08:50:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AC0DCC5C;
+        Thu, 23 Aug 2018 08:50:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Haiyue Wang <haiyue.wang@linux.intel.com>,
-        Corey Minyard <cminyard@mvista.com>,
+        stable@vger.kernel.org, Andreas Ziegler <dev@andreas-ziegler.de>,
+        Sven Eckelmann <sven@narfation.org>,
+        Marek Lindner <mareklindner@neomailbox.ch>,
+        Simon Wunderlich <sw@simonwunderlich.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 104/324] ipmi: kcs_bmc: fix IRQ exception if the channel is not open
-Date:   Thu, 23 Aug 2018 09:52:50 +0200
-Message-Id: <20180823075001.035909989@linuxfoundation.org>
+Subject: [PATCH 4.17 095/324] batman-adv: Fix bat_ogm_iv best gw refcnt after netlink dump
+Date:   Thu, 23 Aug 2018 09:52:41 +0200
+Message-Id: <20180823075000.596122448@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -51,115 +53,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Haiyue Wang <haiyue.wang@linux.intel.com>
+From: Sven Eckelmann <sven@narfation.org>
 
-[ Upstream commit dc0f0a026d33819bb82d5c26ab2fca838e2004be ]
+[ Upstream commit b5685d2687d6612adf5eac519eb7008f74dfd1ec ]
 
-When kcs_bmc_handle_event calls kcs_force_abort function to handle the
-not open (no user running) KCS channel transaction, the returned status
-value -ENODEV causes the low level IRQ handler indicating that the irq
-was not for him by returning IRQ_NONE. After some time, this IRQ will
-be treated to be spurious one, and the exception dump happens.
+A reference for the best gateway is taken when the list of gateways in the
+mesh is sent via netlink. This is necessary to check whether the currently
+dumped entry is the currently selected gateway or not. This information is
+then transferred as flag BATADV_ATTR_FLAG_BEST.
 
-   irq 30: nobody cared (try booting with the "irqpoll" option)
-   CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.10.15-npcm750 #1
-   Hardware name: NPCMX50 Chip family
-   [<c010b264>] (unwind_backtrace) from [<c0106930>] (show_stack+0x20/0x24)
-   [<c0106930>] (show_stack) from [<c03dad38>] (dump_stack+0x8c/0xa0)
-   [<c03dad38>] (dump_stack) from [<c0168810>] (__report_bad_irq+0x3c/0xdc)
-   [<c0168810>] (__report_bad_irq) from [<c0168c34>] (note_interrupt+0x29c/0x2ec)
-   [<c0168c34>] (note_interrupt) from [<c0165c80>] (handle_irq_event_percpu+0x5c/0x68)
-   [<c0165c80>] (handle_irq_event_percpu) from [<c0165cd4>] (handle_irq_event+0x48/0x6c)
-   [<c0165cd4>] (handle_irq_event) from [<c0169664>] (handle_fasteoi_irq+0xc8/0x198)
-   [<c0169664>] (handle_fasteoi_irq) from [<c016529c>] (__handle_domain_irq+0x90/0xe8)
-   [<c016529c>] (__handle_domain_irq) from [<c01014bc>] (gic_handle_irq+0x58/0x9c)
-   [<c01014bc>] (gic_handle_irq) from [<c010752c>] (__irq_svc+0x6c/0x90)
-   Exception stack(0xc0a01de8 to 0xc0a01e30)
-   1de0:                   00002080 c0a6fbc0 00000000 00000000 00000000 c096d294
-   1e00: 00000000 00000001 dc406400 f03ff100 00000082 c0a01e94 c0a6fbc0 c0a01e38
-   1e20: 00200102 c01015bc 60000113 ffffffff
-   [<c010752c>] (__irq_svc) from [<c01015bc>] (__do_softirq+0xbc/0x358)
-   [<c01015bc>] (__do_softirq) from [<c011c798>] (irq_exit+0xb8/0xec)
-   [<c011c798>] (irq_exit) from [<c01652a0>] (__handle_domain_irq+0x94/0xe8)
-   [<c01652a0>] (__handle_domain_irq) from [<c01014bc>] (gic_handle_irq+0x58/0x9c)
-   [<c01014bc>] (gic_handle_irq) from [<c010752c>] (__irq_svc+0x6c/0x90)
-   Exception stack(0xc0a01ef8 to 0xc0a01f40)
-   1ee0:                                                       00000000 000003ae
-   1f00: dcc0f338 c0111060 c0a00000 c0a0cc44 c0a0cbe4 c0a1c22b c07bc218 00000001
-   1f20: dcffca40 c0a01f54 c0a01f58 c0a01f48 c0103524 c0103528 60000013 ffffffff
-   [<c010752c>] (__irq_svc) from [<c0103528>] (arch_cpu_idle+0x48/0x4c)
-   [<c0103528>] (arch_cpu_idle) from [<c0681390>] (default_idle_call+0x30/0x3c)
-   [<c0681390>] (default_idle_call) from [<c0156f24>] (do_idle+0xc8/0x134)
-   [<c0156f24>] (do_idle) from [<c015722c>] (cpu_startup_entry+0x28/0x2c)
-   [<c015722c>] (cpu_startup_entry) from [<c067ad74>] (rest_init+0x84/0x88)
-   [<c067ad74>] (rest_init) from [<c0900d44>] (start_kernel+0x388/0x394)
-   [<c0900d44>] (start_kernel) from [<0000807c>] (0x807c)
-   handlers:
-   [<c041c5dc>] npcm7xx_kcs_irq
-   Disabling IRQ #30
+After the comparison of the current entry is done,
+batadv_iv_gw_dump_entry() has to decrease the reference counter again.
+Otherwise the reference will be held and thus prevents a proper shutdown of
+the batman-adv interfaces (and some of the interfaces enslaved in it).
 
-It needs to change the returned status from -ENODEV to 0. The -ENODEV
-was originally used to tell the low level IRQ handler that no user was
-running, but not consider the IRQ handling desgin.
-
-And multiple KCS channels share one IRQ handler, it needs to check the
-IBF flag before doing force abort. If the IBF is set, after handling,
-return 0 to low level IRQ handler to indicate that the IRQ is handled.
-
-Signed-off-by: Haiyue Wang <haiyue.wang@linux.intel.com>
-Signed-off-by: Corey Minyard <cminyard@mvista.com>
+Fixes: efb766af06e3 ("batman-adv: add B.A.T.M.A.N. IV bat_gw_dump implementations")
+Reported-by: Andreas Ziegler <dev@andreas-ziegler.de>
+Tested-by: Andreas Ziegler <dev@andreas-ziegler.de>
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Acked-by: Marek Lindner <mareklindner@neomailbox.ch>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/char/ipmi/kcs_bmc.c |   31 ++++++++++---------------------
- 1 file changed, 10 insertions(+), 21 deletions(-)
+ net/batman-adv/bat_iv_ogm.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/char/ipmi/kcs_bmc.c
-+++ b/drivers/char/ipmi/kcs_bmc.c
-@@ -210,34 +210,23 @@ static void kcs_bmc_handle_cmd(struct kc
- int kcs_bmc_handle_event(struct kcs_bmc *kcs_bmc)
+--- a/net/batman-adv/bat_iv_ogm.c
++++ b/net/batman-adv/bat_iv_ogm.c
+@@ -2732,7 +2732,7 @@ static int batadv_iv_gw_dump_entry(struc
  {
- 	unsigned long flags;
--	int ret = 0;
-+	int ret = -ENODATA;
- 	u8 status;
+ 	struct batadv_neigh_ifinfo *router_ifinfo = NULL;
+ 	struct batadv_neigh_node *router;
+-	struct batadv_gw_node *curr_gw;
++	struct batadv_gw_node *curr_gw = NULL;
+ 	int ret = 0;
+ 	void *hdr;
  
- 	spin_lock_irqsave(&kcs_bmc->lock, flags);
+@@ -2780,6 +2780,8 @@ static int batadv_iv_gw_dump_entry(struc
+ 	ret = 0;
  
--	if (!kcs_bmc->running) {
--		kcs_force_abort(kcs_bmc);
--		ret = -ENODEV;
--		goto out_unlock;
--	}
--
--	status = read_status(kcs_bmc) & (KCS_STATUS_IBF | KCS_STATUS_CMD_DAT);
--
--	switch (status) {
--	case KCS_STATUS_IBF | KCS_STATUS_CMD_DAT:
--		kcs_bmc_handle_cmd(kcs_bmc);
--		break;
--
--	case KCS_STATUS_IBF:
--		kcs_bmc_handle_data(kcs_bmc);
--		break;
-+	status = read_status(kcs_bmc);
-+	if (status & KCS_STATUS_IBF) {
-+		if (!kcs_bmc->running)
-+			kcs_force_abort(kcs_bmc);
-+		else if (status & KCS_STATUS_CMD_DAT)
-+			kcs_bmc_handle_cmd(kcs_bmc);
-+		else
-+			kcs_bmc_handle_data(kcs_bmc);
- 
--	default:
--		ret = -ENODATA;
--		break;
-+		ret = 0;
- 	}
- 
--out_unlock:
- 	spin_unlock_irqrestore(&kcs_bmc->lock, flags);
- 
- 	return ret;
+ out:
++	if (curr_gw)
++		batadv_gw_node_put(curr_gw);
+ 	if (router_ifinfo)
+ 		batadv_neigh_ifinfo_put(router_ifinfo);
+ 	if (router)
 
 
