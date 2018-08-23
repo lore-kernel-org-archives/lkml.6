@@ -2,97 +2,143 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 434DCC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:51:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4E5BC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:57:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4533214FF
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:51:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="UGYfwAfT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4533214FF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7C4FE208F7
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:57:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C4FE208F7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729961AbeHWNUS (ORCPT
+        id S1729597AbeHWN0i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 09:20:18 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42700 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726325AbeHWNUR (ORCPT
+        Thu, 23 Aug 2018 09:26:38 -0400
+Received: from cmccmta1.chinamobile.com ([221.176.66.79]:12360 "EHLO
+        cmccmta1.chinamobile.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725909AbeHWN0i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 09:20:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=P3N3DBK3VNoIGYhW3QfC7L5w0EWAO81rS0MW1fX/+e8=; b=UGYfwAfTu3XfaMfpYMuNjYx+L
-        cw2XSmwOMkLageq9GqCoGDqKZZJ/iNC/XWc+x5wReP5It1V5+8n1hS66MK++ts+ama5KqjeXnLTHQ
-        4rt92I7tuPAYU8hx1uLMCfLRdHBrCnCLEOGCvRoSLxsXhzVu/MXJBeFDKSf/PxlP7yBIY=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fsmGi-0007G7-2t; Thu, 23 Aug 2018 09:51:08 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 906491124604; Thu, 23 Aug 2018 10:51:07 +0100 (BST)
-Date:   Thu, 23 Aug 2018 10:51:07 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     ryans.lee@maximintegrated.com, Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        lkml <linux-kernel@vger.kernel.org>, ryan.lee.maxim@gmail.com
-Subject: Re: [PATCH] ASoC: max98373: Added 10ms delay after amp software reset
-Message-ID: <20180823095107.GA5207@sirena.org.uk>
-References: <20180823001519.20056-1-ryans.lee@maximintegrated.com>
- <CAKdAkRT-71tL7U1t_WMenh5kquppsZpiL=0bEyL4RLjj622zqw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="PNTmBPCT7hxwcZjr"
-Content-Disposition: inline
-In-Reply-To: <CAKdAkRT-71tL7U1t_WMenh5kquppsZpiL=0bEyL4RLjj622zqw@mail.gmail.com>
-X-Cookie: Truth is free, but information costs.
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Thu, 23 Aug 2018 09:26:38 -0400
+Received: from spf.mail.chinamobile.com (unknown[172.16.121.19]) by rmmx-syy-dmz-app04-12004 (RichMail) with SMTP id 2ee45b7e8511571-c1255; Thu, 23 Aug 2018 17:57:37 +0800 (CST)
+X-RM-TRANSID: 2ee45b7e8511571-c1255
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG: 00000000
+Received: from bclinux72.localdomain (unknown[223.105.0.243])
+        by rmsmtp-syy-appsvr10-12010 (RichMail) with SMTP id 2eea5b7e8510c48-2318a;
+        Thu, 23 Aug 2018 17:57:37 +0800 (CST)
+X-RM-TRANSID: 2eea5b7e8510c48-2318a
+From:   Ding Xiang <dingxiang@cmss.chinamobile.com>
+To:     john.garry@huawei.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: hisi_sas: Switch from msleep to usleep_range per timers-howto.txt
+Date:   Thu, 23 Aug 2018 07:08:59 -0400
+Message-Id: <1535022539-10634-1-git-send-email-dingxiang@cmss.chinamobile.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+use usleep_range to sleep for 10us - 20ms
 
---PNTmBPCT7hxwcZjr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
+---
+ drivers/scsi/hisi_sas/hisi_sas_v1_hw.c | 8 ++++----
+ drivers/scsi/hisi_sas/hisi_sas_v2_hw.c | 6 +++---
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 2 +-
+ 3 files changed, 8 insertions(+), 8 deletions(-)
 
-On Wed, Aug 22, 2018 at 05:31:04PM -0700, Dmitry Torokhov wrote:
-> On Wed, Aug 22, 2018 at 5:21 PM Ryan Lee <ryans.lee@maximintegrated.com> wrote:
-> > +       mdelay(10);
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
+index 8f60f0e..0584f711 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
+@@ -579,7 +579,7 @@ static int reset_hw_v1_hw(struct hisi_hba *hisi_hba)
+ 		phy_ctrl |= PHY_CTRL_RESET_MSK;
+ 		hisi_sas_phy_write32(hisi_hba, i, PHY_CTRL, phy_ctrl);
+ 	}
+-	msleep(1); /* It is safe to wait for 50us */
++	usleep_range(1000, 1100); /* It is safe to wait for 50us */
+ 
+ 	/* Ensure DMA tx & rx idle */
+ 	for (i = 0; i < hisi_hba->n_phy; i++) {
+@@ -632,7 +632,7 @@ static int reset_hw_v1_hw(struct hisi_hba *hisi_hba)
+ 			     RESET_VALUE);
+ 		regmap_write(hisi_hba->ctrl, hisi_hba->ctrl_clock_ena_reg + 4,
+ 			     RESET_VALUE);
+-		msleep(1);
++		usleep_range(1000, 1100);
+ 		regmap_read(hisi_hba->ctrl, hisi_hba->ctrl_reset_sts_reg, &val);
+ 		if (RESET_VALUE != (val & RESET_VALUE)) {
+ 			dev_err(dev, "Reset failed\n");
+@@ -645,7 +645,7 @@ static int reset_hw_v1_hw(struct hisi_hba *hisi_hba)
+ 			     RESET_VALUE);
+ 		regmap_write(hisi_hba->ctrl, hisi_hba->ctrl_clock_ena_reg,
+ 			     RESET_VALUE);
+-		msleep(1);
++		usleep_range(1000, 1100);
+ 		regmap_read(hisi_hba->ctrl, hisi_hba->ctrl_reset_sts_reg, &val);
+ 		if (val & RESET_VALUE) {
+ 			dev_err(dev, "De-reset failed\n");
+@@ -841,7 +841,7 @@ static void sl_notify_v1_hw(struct hisi_hba *hisi_hba, int phy_no)
+ 	sl_control = hisi_sas_phy_read32(hisi_hba, phy_no, SL_CONTROL);
+ 	sl_control |= SL_CONTROL_NOTIFY_EN_MSK;
+ 	hisi_sas_phy_write32(hisi_hba, phy_no, SL_CONTROL, sl_control);
+-	msleep(1);
++	usleep_range(1000, 1100);
+ 	sl_control = hisi_sas_phy_read32(hisi_hba, phy_no, SL_CONTROL);
+ 	sl_control &= ~SL_CONTROL_NOTIFY_EN_MSK;
+ 	hisi_sas_phy_write32(hisi_hba, phy_no, SL_CONTROL, sl_control);
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
+index 9c5c5a6..4ca5f77 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
+@@ -1081,7 +1081,7 @@ static int reset_hw_v2_hw(struct hisi_hba *hisi_hba)
+ 				reset_val);
+ 		regmap_write(hisi_hba->ctrl, hisi_hba->ctrl_clock_ena_reg + 4,
+ 				reset_val);
+-		msleep(1);
++		usleep_range(1000, 1100);
+ 		regmap_read(hisi_hba->ctrl, hisi_hba->ctrl_reset_sts_reg, &val);
+ 		if (reset_val != (val & reset_val)) {
+ 			dev_err(dev, "SAS reset fail.\n");
+@@ -1093,7 +1093,7 @@ static int reset_hw_v2_hw(struct hisi_hba *hisi_hba)
+ 				reset_val);
+ 		regmap_write(hisi_hba->ctrl, hisi_hba->ctrl_clock_ena_reg,
+ 				reset_val);
+-		msleep(1);
++		usleep_range(1000, 1100);
+ 		regmap_read(hisi_hba->ctrl, hisi_hba->ctrl_reset_sts_reg,
+ 				&val);
+ 		if (val & reset_val) {
+@@ -1591,7 +1591,7 @@ static void sl_notify_v2_hw(struct hisi_hba *hisi_hba, int phy_no)
+ 	sl_control = hisi_sas_phy_read32(hisi_hba, phy_no, SL_CONTROL);
+ 	sl_control |= SL_CONTROL_NOTIFY_EN_MSK;
+ 	hisi_sas_phy_write32(hisi_hba, phy_no, SL_CONTROL, sl_control);
+-	msleep(1);
++	usleep_range(1000, 1100);
+ 	sl_control = hisi_sas_phy_read32(hisi_hba, phy_no, SL_CONTROL);
+ 	sl_control &= ~SL_CONTROL_NOTIFY_EN_MSK;
+ 	hisi_sas_phy_write32(hisi_hba, phy_no, SL_CONTROL, sl_control);
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+index 08b503e2..8f57737 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+@@ -834,7 +834,7 @@ static void sl_notify_v3_hw(struct hisi_hba *hisi_hba, int phy_no)
+ 	sl_control = hisi_sas_phy_read32(hisi_hba, phy_no, SL_CONTROL);
+ 	sl_control |= SL_CONTROL_NOTIFY_EN_MSK;
+ 	hisi_sas_phy_write32(hisi_hba, phy_no, SL_CONTROL, sl_control);
+-	msleep(1);
++	usleep_range(1000, 1100);
+ 	sl_control = hisi_sas_phy_read32(hisi_hba, phy_no, SL_CONTROL);
+ 	sl_control &= ~SL_CONTROL_NOTIFY_EN_MSK;
+ 	hisi_sas_phy_write32(hisi_hba, phy_no, SL_CONTROL, sl_control);
+-- 
+1.8.3.1
 
-> Is it really necessary for the CPU to spin for 10msec here?
-> usleep_range() would be better solution.
 
-Or msleep() for that matter, it's not going ot be the end of the world
-if we delay a bit too long.
 
---PNTmBPCT7hxwcZjr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlt+g4oACgkQJNaLcl1U
-h9BrhQf/Zim+9StJ1iLMas05ZDR6IOmI8Vk166JzDc5Cl04crEzXRGtkjTjIPszh
-nO5s0JhVanRN0I2RXQvD1nXHDeXIAOt88susgnBH86u7HFLGO471NnvZW/R7W8JD
-hMUNwL3RfbRAMbkGA11dlvU/pQ/Q7nAE4NPmMIBS5Z3W3ZIb3yIXeEAO7osAtAbU
-5ggStp5ly2w8A2kPEsDVuaYTDKPloD2DP+9QWl8b3c1N9PD5+kAFjGEgNR+7o3A8
-cCw9zFfpkQekbYQHqsVw8iV2tWJClPqNvtwl2qbq35/MeMbfnaePaFVWDe/jBE93
-LiB34dB+w7sqy1wv9Ahq+zUra29Lfg==
-=Jim1
------END PGP SIGNATURE-----
-
---PNTmBPCT7hxwcZjr--
