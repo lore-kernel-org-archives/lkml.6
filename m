@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8384AC43615
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:32:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDBE4C04E85
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:32:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46D102147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:32:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46D102147A
+	by mail.kernel.org (Postfix) with ESMTP id 8228D2147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:32:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8228D2147A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731635AbeHWMAy (ORCPT
+        id S1731649AbeHWMA5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:00:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48126 "EHLO
+        Thu, 23 Aug 2018 08:00:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48136 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728041AbeHWMAx (ORCPT
+        with ESMTP id S1728041AbeHWMA4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:00:53 -0400
+        Thu, 23 Aug 2018 08:00:56 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 10910C74;
-        Thu, 23 Aug 2018 08:32:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 445338B1;
+        Thu, 23 Aug 2018 08:32:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Vikas Gupta <vikas.gupta@broadcom.com>,
+        Michael Chan <michael.chan@broadcom.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 181/217] pinctrl: ingenic: Fix inverted direction for < JZ4770
-Date:   Thu, 23 Aug 2018 09:54:54 +0200
-Message-Id: <20180823075513.763707538@linuxfoundation.org>
+Subject: [PATCH 4.14 164/217] bnxt_en: Fix for system hang if request_irq fails
+Date:   Thu, 23 Aug 2018 09:54:37 +0200
+Message-Id: <20180823075512.949975234@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -51,31 +52,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paul Cercueil <paul@crapouillou.net>
+From: Vikas Gupta <vikas.gupta@broadcom.com>
 
-[ Upstream commit 0084a786ca8c84b443f67c4a697b4f2552761650 ]
+[ Upstream commit c58387ab1614f6d7fb9e244f214b61e7631421fc ]
 
-The .gpio_set_direction() callback was setting inverted direction
-for SoCs older than the JZ4770, this restores the correct behaviour.
+Fix bug in the error code path when bnxt_request_irq() returns failure.
+bnxt_disable_napi() should not be called in this error path because
+NAPI has not been enabled yet.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Fixes: c0c050c58d84 ("bnxt_en: New Broadcom ethernet driver.")
+Signed-off-by: Vikas Gupta <vikas.gupta@broadcom.com>
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pinctrl/pinctrl-ingenic.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/pinctrl/pinctrl-ingenic.c
-+++ b/drivers/pinctrl/pinctrl-ingenic.c
-@@ -536,7 +536,7 @@ static int ingenic_pinmux_gpio_set_direc
- 		ingenic_config_pin(jzpc, pin, JZ4770_GPIO_PAT1, input);
- 	} else {
- 		ingenic_config_pin(jzpc, pin, JZ4740_GPIO_SELECT, false);
--		ingenic_config_pin(jzpc, pin, JZ4740_GPIO_DIR, input);
-+		ingenic_config_pin(jzpc, pin, JZ4740_GPIO_DIR, !input);
- 		ingenic_config_pin(jzpc, pin, JZ4740_GPIO_FUNC, false);
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -6348,7 +6348,7 @@ static int __bnxt_open_nic(struct bnxt *
+ 		rc = bnxt_request_irq(bp);
+ 		if (rc) {
+ 			netdev_err(bp->dev, "bnxt_request_irq err: %x\n", rc);
+-			goto open_err;
++			goto open_err_irq;
+ 		}
  	}
  
+@@ -6386,6 +6386,8 @@ static int __bnxt_open_nic(struct bnxt *
+ 
+ open_err:
+ 	bnxt_disable_napi(bp);
++
++open_err_irq:
+ 	bnxt_del_napi(bp);
+ 
+ open_err_free_mem:
 
 
