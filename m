@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A655C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:42:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 122AFC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:42:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D22FC2083A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:42:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D22FC2083A
+	by mail.kernel.org (Postfix) with ESMTP id CB9C52083A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:42:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB9C52083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732772AbeHWMLa (ORCPT
+        id S1732325AbeHWMLc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:11:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50112 "EHLO
+        Thu, 23 Aug 2018 08:11:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50122 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731953AbeHWML3 (ORCPT
+        with ESMTP id S1727597AbeHWMLc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:11:29 -0400
+        Thu, 23 Aug 2018 08:11:32 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 265A0941;
-        Thu, 23 Aug 2018 08:42:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 659027F6;
+        Thu, 23 Aug 2018 08:42:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ray Jui <ray.jui@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
+        stable@vger.kernel.org,
+        Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>,
+        Ariel Elior <ariel.elior@cavium.com>,
+        Michal Kalderon <Michal.Kalderon@cavium.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 037/324] ARM: dts: Cygnus: Fix I2C controller interrupt type
-Date:   Thu, 23 Aug 2018 09:51:43 +0200
-Message-Id: <20180823074957.688378747@linuxfoundation.org>
+Subject: [PATCH 4.17 066/324] qed: Add sanity check for SIMD fastpath handler.
+Date:   Thu, 23 Aug 2018 09:52:12 +0200
+Message-Id: <20180823074959.213012025@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -51,41 +54,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ray Jui <ray.jui@broadcom.com>
+From: Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
 
-[ Upstream commit 71ca3409703b62b6a092d0d9d13f366c121bc5d3 ]
+[ Upstream commit 3935a70968820c3994db4de7e6e1c7e814bff875 ]
 
-Fix I2C controller interrupt to use IRQ_TYPE_LEVEL_HIGH for Broadcom
-Cygnus SoC.
+Avoid calling a SIMD fastpath handler if it is NULL. The check is needed
+to handle an unlikely scenario where unsolicited interrupt is destined to
+a PF in INTa mode.
 
-Fixes: b51c05a331ff ("ARM: dts: add I2C device nodes for Broadcom Cygnus")
-Signed-off-by: Ray Jui <ray.jui@broadcom.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Fixes: fe56b9e6a ("qed: Add module with basic common support")
+Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
+Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
+Signed-off-by: Michal Kalderon <Michal.Kalderon@cavium.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/bcm-cygnus.dtsi |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/qlogic/qed/qed_main.c |   12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
---- a/arch/arm/boot/dts/bcm-cygnus.dtsi
-+++ b/arch/arm/boot/dts/bcm-cygnus.dtsi
-@@ -216,7 +216,7 @@
- 			reg = <0x18008000 0x100>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			interrupts = <GIC_SPI 85 IRQ_TYPE_NONE>;
-+			interrupts = <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
- 			clock-frequency = <100000>;
- 			status = "disabled";
- 		};
-@@ -245,7 +245,7 @@
- 			reg = <0x1800b000 0x100>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			interrupts = <GIC_SPI 86 IRQ_TYPE_NONE>;
-+			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
- 			clock-frequency = <100000>;
- 			status = "disabled";
- 		};
+--- a/drivers/net/ethernet/qlogic/qed/qed_main.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_main.c
+@@ -566,8 +566,16 @@ static irqreturn_t qed_single_int(int ir
+ 		/* Fastpath interrupts */
+ 		for (j = 0; j < 64; j++) {
+ 			if ((0x2ULL << j) & status) {
+-				hwfn->simd_proto_handler[j].func(
+-					hwfn->simd_proto_handler[j].token);
++				struct qed_simd_fp_handler *p_handler =
++					&hwfn->simd_proto_handler[j];
++
++				if (p_handler->func)
++					p_handler->func(p_handler->token);
++				else
++					DP_NOTICE(hwfn,
++						  "Not calling fastpath handler as it is NULL [handler #%d, status 0x%llx]\n",
++						  j, status);
++
+ 				status &= ~(0x2ULL << j);
+ 				rc = IRQ_HANDLED;
+ 			}
 
 
