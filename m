@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2406EC43615
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:39:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00950C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:39:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9F5B214AB
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:39:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9F5B214AB
+	by mail.kernel.org (Postfix) with ESMTP id AC2A72147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:39:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC2A72147A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732020AbeHWMIV (ORCPT
+        id S1732029AbeHWMIZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:08:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49426 "EHLO
+        Thu, 23 Aug 2018 08:08:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49434 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730481AbeHWMIU (ORCPT
+        with ESMTP id S1729534AbeHWMIY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:08:20 -0400
+        Thu, 23 Aug 2018 08:08:24 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A3363941;
-        Thu, 23 Aug 2018 08:39:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 730208B1;
+        Thu, 23 Aug 2018 08:39:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 022/324] usb: dwc3: of-simple: fix use-after-free on remove
-Date:   Thu, 23 Aug 2018 09:51:28 +0200
-Message-Id: <20180823074957.006593162@linuxfoundation.org>
+Subject: [PATCH 4.17 023/324] ACPI / EC: Use ec_no_wakeup on Thinkpad X1 Carbon 6th
+Date:   Thu, 23 Aug 2018 09:51:29 +0200
+Message-Id: <20180823074957.047580671@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -51,35 +52,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-[ Upstream commit 896e518883f18e601335908192e33426c1f599a4 ]
+[ Upstream commit 8195a655e5ce09550aff81b2573d9b015d520cb9 ]
 
-The clocks have already been explicitly disabled and put as part of
-remove() so the runtime suspend callback must not be run when balancing
-the runtime PM usage count before returning.
+On this system EC interrupt triggers constantly kicking devices out of
+low power states and thus blocking power management. The system also has
+a PCIe root port hosting Alpine Ridge Thunderbolt controller and it
+never gets a chance to go to D3cold because of this.
 
-Fixes: 16adc674d0d6 ("usb: dwc3: add generic OF glue layer")
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Since the power button works the same regardless if EC interrupt is
+enabled or not during s2idle, add a quirk for this machine that sets
+ec_no_wakeup=true preventing spurious wakeups.
+
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/dwc3/dwc3-of-simple.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/acpi/ec.c |   20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
---- a/drivers/usb/dwc3/dwc3-of-simple.c
-+++ b/drivers/usb/dwc3/dwc3-of-simple.c
-@@ -165,8 +165,9 @@ static int dwc3_of_simple_remove(struct
- 
- 	reset_control_put(simple->resets);
- 
--	pm_runtime_put_sync(dev);
- 	pm_runtime_disable(dev);
-+	pm_runtime_put_noidle(dev);
-+	pm_runtime_set_suspended(dev);
- 
- 	return 0;
+--- a/drivers/acpi/ec.c
++++ b/drivers/acpi/ec.c
+@@ -2031,6 +2031,17 @@ static inline void acpi_ec_query_exit(vo
+ 	}
  }
+ 
++static const struct dmi_system_id acpi_ec_no_wakeup[] = {
++	{
++		.ident = "Thinkpad X1 Carbon 6th",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "20KGS3JF01"),
++		},
++	},
++	{ },
++};
++
+ int __init acpi_ec_init(void)
+ {
+ 	int result;
+@@ -2041,6 +2052,15 @@ int __init acpi_ec_init(void)
+ 	if (result)
+ 		return result;
+ 
++	/*
++	 * Disable EC wakeup on following systems to prevent periodic
++	 * wakeup from EC GPE.
++	 */
++	if (dmi_check_system(acpi_ec_no_wakeup)) {
++		ec_no_wakeup = true;
++		pr_debug("Disabling EC wakeup on suspend-to-idle\n");
++	}
++
+ 	/* Drivers must be started after acpi_ec_query_init() */
+ 	dsdt_fail = acpi_bus_register_driver(&acpi_ec_driver);
+ 	/*
 
 
