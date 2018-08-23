@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA26C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:59:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19685C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:59:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 538DF2098B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:59:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 538DF2098B
+	by mail.kernel.org (Postfix) with ESMTP id D57E02098B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:59:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D57E02098B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728609AbeHWL2Q (ORCPT
+        id S1728624AbeHWL2T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:28:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42100 "EHLO
+        Thu, 23 Aug 2018 07:28:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42110 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726836AbeHWL2P (ORCPT
+        with ESMTP id S1726836AbeHWL2S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:28:15 -0400
+        Thu, 23 Aug 2018 07:28:18 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F404B9D2;
-        Thu, 23 Aug 2018 07:59:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 222A89D2;
+        Thu, 23 Aug 2018 07:59:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
+        Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>,
+        Ariel Elior <ariel.elior@cavium.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 36/79] drm/exynos: decon5433: Fix WINCONx reset value
-Date:   Thu, 23 Aug 2018 09:53:12 +0200
-Message-Id: <20180823074921.149034660@linuxfoundation.org>
+Subject: [PATCH 4.4 37/79] bnx2x: Fix receiving tx-timeout in error or recovery state.
+Date:   Thu, 23 Aug 2018 09:53:13 +0200
+Message-Id: <20180823074921.381339038@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074918.641878835@linuxfoundation.org>
 References: <20180823074918.641878835@linuxfoundation.org>
@@ -52,32 +53,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
 
-[ Upstream commit 7b7aa62c05eac9789c208b946f515983a9255d8d ]
+[ Upstream commit 484c016d9392786ce5c74017c206c706f29f823d ]
 
-The only bits that should be preserved in decon_win_set_fmt() is
-WINCONx_ENWIN_F. All other bits depends on the selected pixel formats and
-are set by the mentioned function.
+Driver performs the internal reload when it receives tx-timeout event from
+the OS. Internal reload might fail in some scenarios e.g., fatal HW issues.
+In such cases OS still see the link, which would result in undesirable
+functionalities such as re-generation of tx-timeouts.
+The patch addresses this issue by indicating the link-down to OS when
+tx-timeout is detected, and keeping the link in down state till the
+internal reload is successful.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Inki Dae <inki.dae@samsung.com>
+Please consider applying it to 'net' branch.
+
+Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
+Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x.h      |    1 +
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c  |    6 ++++++
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c |    6 ++++++
+ 3 files changed, 13 insertions(+)
 
---- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-@@ -190,7 +190,7 @@ static void decon_win_set_pixfmt(struct
- 	unsigned long val;
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h
+@@ -1634,6 +1634,7 @@ struct bnx2x {
+ 	struct link_vars	link_vars;
+ 	u32			link_cnt;
+ 	struct bnx2x_link_report_data last_reported_link;
++	bool			force_link_down;
  
- 	val = readl(ctx->addr + DECON_WINCONx(win));
--	val &= ~WINCONx_BPPMODE_MASK;
-+	val &= WINCONx_ENWIN_F;
+ 	struct mdio_if_info	mdio;
  
- 	switch (fb->pixel_format) {
- 	case DRM_FORMAT_XRGB1555:
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
+@@ -1277,6 +1277,11 @@ void __bnx2x_link_report(struct bnx2x *b
+ {
+ 	struct bnx2x_link_report_data cur_data;
+ 
++	if (bp->force_link_down) {
++		bp->link_vars.link_up = 0;
++		return;
++	}
++
+ 	/* reread mf_cfg */
+ 	if (IS_PF(bp) && !CHIP_IS_E1(bp))
+ 		bnx2x_read_mf_cfg(bp);
+@@ -2840,6 +2845,7 @@ int bnx2x_nic_load(struct bnx2x *bp, int
+ 		bp->pending_max = 0;
+ 	}
+ 
++	bp->force_link_down = false;
+ 	if (bp->port.pmf) {
+ 		rc = bnx2x_initial_phy_init(bp, load_mode);
+ 		if (rc)
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
+@@ -10222,6 +10222,12 @@ static void bnx2x_sp_rtnl_task(struct wo
+ 		bp->sp_rtnl_state = 0;
+ 		smp_mb();
+ 
++		/* Immediately indicate link as down */
++		bp->link_vars.link_up = 0;
++		bp->force_link_down = true;
++		netif_carrier_off(bp->dev);
++		BNX2X_ERR("Indicating link is down due to Tx-timeout\n");
++
+ 		bnx2x_nic_unload(bp, UNLOAD_NORMAL, true);
+ 		bnx2x_nic_load(bp, LOAD_NORMAL);
+ 
 
 
