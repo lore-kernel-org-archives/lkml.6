@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D057CC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:01:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B1D4C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:01:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93E292098B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:01:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93E292098B
+	by mail.kernel.org (Postfix) with ESMTP id 1E8EA2098B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:01:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E8EA2098B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728985AbeHWL36 (ORCPT
+        id S1729001AbeHWLaB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:29:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44452 "EHLO
+        Thu, 23 Aug 2018 07:30:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44464 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728460AbeHWL35 (ORCPT
+        with ESMTP id S1727789AbeHWLaA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:29:57 -0400
+        Thu, 23 Aug 2018 07:30:00 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 14462C18;
-        Thu, 23 Aug 2018 08:01:32 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 45903C18;
+        Thu, 23 Aug 2018 08:01:36 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ray Jui <ray.jui@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
+        stable@vger.kernel.org, Alexey Brodkin <abrodkin@synopsys.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 012/130] ARM: dts: Cygnus: Fix I2C controller interrupt type
-Date:   Thu, 23 Aug 2018 09:52:08 +0200
-Message-Id: <20180823074928.155755737@linuxfoundation.org>
+Subject: [PATCH 4.9 002/130] ARC: Explicitly add -mmedium-calls to CFLAGS
+Date:   Thu, 23 Aug 2018 09:51:58 +0200
+Message-Id: <20180823074927.322799149@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
 References: <20180823074927.161454870@linuxfoundation.org>
@@ -51,41 +51,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ray Jui <ray.jui@broadcom.com>
+From: Alexey Brodkin <abrodkin@synopsys.com>
 
-[ Upstream commit 71ca3409703b62b6a092d0d9d13f366c121bc5d3 ]
+[ Upstream commit 74c11e300c103af47db5b658fdcf28002421e250 ]
 
-Fix I2C controller interrupt to use IRQ_TYPE_LEVEL_HIGH for Broadcom
-Cygnus SoC.
+GCC built for arc*-*-linux has "-mmedium-calls" implicitly enabled by default
+thus we don't see any problems during Linux kernel compilation.
+----------------------------->8------------------------
+arc-linux-gcc -mcpu=arc700 -Q --help=target | grep calls
+  -mlong-calls                          [disabled]
+  -mmedium-calls                        [enabled]
+----------------------------->8------------------------
 
-Fixes: b51c05a331ff ("ARM: dts: add I2C device nodes for Broadcom Cygnus")
-Signed-off-by: Ray Jui <ray.jui@broadcom.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+But if we try to use so-called Elf32 toolchain with GCC configured for
+arc*-*-elf* then we'd see the following failure:
+----------------------------->8------------------------
+init/do_mounts.o: In function 'init_rootfs':
+do_mounts.c:(.init.text+0x108): relocation truncated to fit: R_ARC_S21W_PCREL
+against symbol 'unregister_filesystem' defined in .text section in fs/filesystems.o
+
+arc-elf32-ld: final link failed: Symbol needs debug section which does not exist
+make: *** [vmlinux] Error 1
+----------------------------->8------------------------
+
+That happens because neither "-mmedium-calls" nor "-mlong-calls" are enabled in
+Elf32 GCC:
+----------------------------->8------------------------
+arc-elf32-gcc -mcpu=arc700 -Q --help=target | grep calls
+  -mlong-calls                          [disabled]
+  -mmedium-calls                        [disabled]
+----------------------------->8------------------------
+
+Now to make it possible to use Elf32 toolchain for building Linux kernel
+we're explicitly add "-mmedium-calls" to CFLAGS.
+
+And since we add "-mmedium-calls" to the global CFLAGS there's no point in
+having per-file copies thus removing them.
+
+Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/bcm-cygnus.dtsi |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arc/Makefile |   15 +--------------
+ 1 file changed, 1 insertion(+), 14 deletions(-)
 
---- a/arch/arm/boot/dts/bcm-cygnus.dtsi
-+++ b/arch/arm/boot/dts/bcm-cygnus.dtsi
-@@ -128,7 +128,7 @@
- 			reg = <0x18008000 0x100>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			interrupts = <GIC_SPI 85 IRQ_TYPE_NONE>;
-+			interrupts = <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
- 			clock-frequency = <100000>;
- 			status = "disabled";
- 		};
-@@ -157,7 +157,7 @@
- 			reg = <0x1800b000 0x100>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			interrupts = <GIC_SPI 86 IRQ_TYPE_NONE>;
-+			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
- 			clock-frequency = <100000>;
- 			status = "disabled";
- 		};
+--- a/arch/arc/Makefile
++++ b/arch/arc/Makefile
+@@ -18,7 +18,7 @@ endif
+ 
+ KBUILD_DEFCONFIG := nsim_700_defconfig
+ 
+-cflags-y	+= -fno-common -pipe -fno-builtin -D__linux__
++cflags-y	+= -fno-common -pipe -fno-builtin -mmedium-calls -D__linux__
+ cflags-$(CONFIG_ISA_ARCOMPACT)	+= -mA7
+ cflags-$(CONFIG_ISA_ARCV2)	+= -mcpu=archs
+ 
+@@ -141,16 +141,3 @@ dtbs: scripts
+ 
+ archclean:
+ 	$(Q)$(MAKE) $(clean)=$(boot)
+-
+-# Hacks to enable final link due to absence of link-time branch relexation
+-# and gcc choosing optimal(shorter) branches at -O3
+-#
+-# vineetg Feb 2010: -mlong-calls switched off for overall kernel build
+-# However lib/decompress_inflate.o (.init.text) calls
+-# zlib_inflate_workspacesize (.text) causing relocation errors.
+-# Thus forcing all exten calls in this file to be long calls
+-export CFLAGS_decompress_inflate.o = -mmedium-calls
+-export CFLAGS_initramfs.o = -mmedium-calls
+-ifdef CONFIG_SMP
+-export CFLAGS_core.o = -mmedium-calls
+-endif
 
 
