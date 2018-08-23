@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1CF7C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D70AC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8658A20839
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8658A20839
+	by mail.kernel.org (Postfix) with ESMTP id 42F5A208DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42F5A208DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387664AbeHWMW2 (ORCPT
+        id S2388175AbeHWMWb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:22:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52048 "EHLO
+        Thu, 23 Aug 2018 08:22:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52064 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387539AbeHWMW1 (ORCPT
+        with ESMTP id S2387539AbeHWMWa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:22:27 -0400
+        Thu, 23 Aug 2018 08:22:30 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0281E49B;
-        Thu, 23 Aug 2018 08:53:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 37EC3C5C;
+        Thu, 23 Aug 2018 08:53:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taeung Song <treeze.taeung@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
+        Eric Biggers <ebiggers@google.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 187/324] samples/bpf: add missing <linux/if_vlan.h>
-Date:   Thu, 23 Aug 2018 09:54:13 +0200
-Message-Id: <20180823075005.535955578@linuxfoundation.org>
+Subject: [PATCH 4.17 161/324] crypto: arm/speck - fix building in Thumb2 mode
+Date:   Thu, 23 Aug 2018 09:53:47 +0200
+Message-Id: <20180823075004.121721516@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -52,50 +53,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Taeung Song <treeze.taeung@gmail.com>
+From: Eric Biggers <ebiggers@google.com>
 
-[ Upstream commit 4d5d33a085335ef469c9a87792bcaaaa8e64d8c4 ]
+[ Upstream commit a068b94d74ddb7776ca707b6d39d1ac0d2d057e6 ]
 
-This fixes build error regarding redefinition:
+Building the kernel with CONFIG_THUMB2_KERNEL=y and
+CONFIG_CRYPTO_SPECK_NEON set fails with the following errors:
 
-    CLANG-bpf  samples/bpf/parse_varlen.o
-  samples/bpf/parse_varlen.c:111:8: error: redefinition of 'vlan_hdr'
-  struct vlan_hdr {
-         ^
-  ./include/linux/if_vlan.h:38:8: note: previous definition is here
+    arch/arm/crypto/speck-neon-core.S: Assembler messages:
 
-So remove duplicate 'struct vlan_hdr' in sample code and include if_vlan.h
+    arch/arm/crypto/speck-neon-core.S:419: Error: r13 not allowed here -- `bic sp,#0xf'
+    arch/arm/crypto/speck-neon-core.S:423: Error: r13 not allowed here -- `bic sp,#0xf'
+    arch/arm/crypto/speck-neon-core.S:427: Error: r13 not allowed here -- `bic sp,#0xf'
+    arch/arm/crypto/speck-neon-core.S:431: Error: r13 not allowed here -- `bic sp,#0xf'
 
-Signed-off-by: Taeung Song <treeze.taeung@gmail.com>
-Acked-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+The problem is that the 'bic' instruction can't operate on the 'sp'
+register in Thumb2 mode.  Fix it by using a temporary register.  This
+isn't in the main loop, so the performance difference is negligible.
+This also matches what aes-neonbs-core.S does.
+
+Reported-by: Stefan Agner <stefan@agner.ch>
+Fixes: ede9622162fa ("crypto: arm/speck - add NEON-accelerated implementation of Speck-XTS")
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Reviewed-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- samples/bpf/parse_varlen.c |    6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ arch/arm/crypto/speck-neon-core.S |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/samples/bpf/parse_varlen.c
-+++ b/samples/bpf/parse_varlen.c
-@@ -6,6 +6,7 @@
-  */
- #define KBUILD_MODNAME "foo"
- #include <linux/if_ether.h>
-+#include <linux/if_vlan.h>
- #include <linux/ip.h>
- #include <linux/ipv6.h>
- #include <linux/in.h>
-@@ -108,11 +109,6 @@ static int parse_ipv6(void *data, uint64
- 	return 0;
- }
+--- a/arch/arm/crypto/speck-neon-core.S
++++ b/arch/arm/crypto/speck-neon-core.S
+@@ -272,9 +272,11 @@
+ 	 * Allocate stack space to store 128 bytes worth of tweaks.  For
+ 	 * performance, this space is aligned to a 16-byte boundary so that we
+ 	 * can use the load/store instructions that declare 16-byte alignment.
++	 * For Thumb2 compatibility, don't do the 'bic' directly on 'sp'.
+ 	 */
+-	sub		sp, #128
+-	bic		sp, #0xf
++	sub		r12, sp, #128
++	bic		r12, #0xf
++	mov		sp, r12
  
--struct vlan_hdr {
--	uint16_t h_vlan_TCI;
--	uint16_t h_vlan_encapsulated_proto;
--};
--
- SEC("varlen")
- int handle_ingress(struct __sk_buff *skb)
- {
+ .if \n == 64
+ 	// Load first tweak
 
 
