@@ -6,40 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F016C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:18:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08B92C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:18:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05DA220A8B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:18:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05DA220A8B
+	by mail.kernel.org (Postfix) with ESMTP id C33862148E
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:18:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C33862148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729568AbeHWLqa (ORCPT
+        id S1729593AbeHWLqe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:46:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46182 "EHLO
+        Thu, 23 Aug 2018 07:46:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46194 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726246AbeHWLq3 (ORCPT
+        with ESMTP id S1726246AbeHWLqd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:46:29 -0400
+        Thu, 23 Aug 2018 07:46:33 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E8873C93;
-        Thu, 23 Aug 2018 08:18:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 209A0C74;
+        Thu, 23 Aug 2018 08:18:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Greg Kroah-Hartman <greg@kroah.com>
-Subject: [PATCH 4.9 125/130] PCI: hotplug: Dont leak pci_slot on registration failure
-Date:   Thu, 23 Aug 2018 09:54:01 +0200
-Message-Id: <20180823074935.037730187@linuxfoundation.org>
+        stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jeremy Cline <jcline@redhat.com>, Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.14 001/217] ext4: fix spectre gadget in ext4_mb_regular_allocator()
+Date:   Thu, 23 Aug 2018 09:51:54 +0200
+Message-Id: <20180823075505.267713197@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
-References: <20180823074927.161454870@linuxfoundation.org>
+In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
+References: <20180823075505.090246914@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -47,52 +45,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Lukas Wunner <lukas@wunner.de>
+From: Jeremy Cline <jcline@redhat.com>
 
-commit 4ce6435820d1f1cc2c2788e232735eb244bcc8a3 upstream.
+commit 1a5d5e5d51e75a5bca67dadbcea8c841934b7b85 upstream.
 
-If addition of sysfs files fails on registration of a hotplug slot, the
-struct pci_slot as well as the entry in the slot_list is leaked.  The
-issue has been present since the hotplug core was introduced in 2002:
-https://git.kernel.org/tglx/history/c/a8a2069f432c
+'ac->ac_g_ex.fe_len' is a user-controlled value which is used in the
+derivation of 'ac->ac_2order'. 'ac->ac_2order', in turn, is used to
+index arrays which makes it a potential spectre gadget. Fix this by
+sanitizing the value assigned to 'ac->ac2_order'.  This covers the
+following accesses found with the help of smatch:
 
-Perhaps the idea was that even though sysfs addition fails, the slot
-should still be usable.  But that's not how drivers use the interface,
-they abort probe if a non-zero value is returned.
+* fs/ext4/mballoc.c:1896 ext4_mb_simple_scan_group() warn: potential
+  spectre issue 'grp->bb_counters' [w] (local cap)
 
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Cc: stable@vger.kernel.org # v2.4.15+
-Cc: Greg Kroah-Hartman <greg@kroah.com>
+* fs/ext4/mballoc.c:445 mb_find_buddy() warn: potential spectre issue
+  'EXT4_SB(e4b->bd_sb)->s_mb_offsets' [r] (local cap)
+
+* fs/ext4/mballoc.c:446 mb_find_buddy() warn: potential spectre issue
+  'EXT4_SB(e4b->bd_sb)->s_mb_maxs' [r] (local cap)
+
+Suggested-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Jeremy Cline <jcline@redhat.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/hotplug/pci_hotplug_core.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ fs/ext4/mballoc.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/pci/hotplug/pci_hotplug_core.c
-+++ b/drivers/pci/hotplug/pci_hotplug_core.c
-@@ -455,8 +455,17 @@ int __pci_hp_register(struct hotplug_slo
- 	list_add(&slot->slot_list, &pci_hotplug_slot_list);
+--- a/fs/ext4/mballoc.c
++++ b/fs/ext4/mballoc.c
+@@ -26,6 +26,7 @@
+ #include <linux/log2.h>
+ #include <linux/module.h>
+ #include <linux/slab.h>
++#include <linux/nospec.h>
+ #include <linux/backing-dev.h>
+ #include <trace/events/ext4.h>
  
- 	result = fs_add_slot(pci_slot);
-+	if (result)
-+		goto err_list_del;
-+
- 	kobject_uevent(&pci_slot->kobj, KOBJ_ADD);
- 	dbg("Added slot %s to the list\n", name);
-+	goto out;
-+
-+err_list_del:
-+	list_del(&slot->slot_list);
-+	pci_slot->hotplug = NULL;
-+	pci_destroy_slot(pci_slot);
- out:
- 	mutex_unlock(&pci_hp_mutex);
- 	return result;
+@@ -2152,7 +2153,8 @@ ext4_mb_regular_allocator(struct ext4_al
+ 		 * This should tell if fe_len is exactly power of 2
+ 		 */
+ 		if ((ac->ac_g_ex.fe_len & (~(1 << (i - 1)))) == 0)
+-			ac->ac_2order = i - 1;
++			ac->ac_2order = array_index_nospec(i - 1,
++							   sb->s_blocksize_bits + 2);
+ 	}
+ 
+ 	/* if stream allocation is enabled, use global goal */
 
 
