@@ -2,106 +2,107 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B7CC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 18:09:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BE20C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 18:14:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF04021568
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 18:09:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28FFF21566
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 18:14:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vi3KsMD5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF04021568
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IQWL65TV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28FFF21566
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727234AbeHWVj5 (ORCPT
+        id S1727257AbeHWVoy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 17:39:57 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:37889 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726573AbeHWVj5 (ORCPT
+        Thu, 23 Aug 2018 17:44:54 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55028 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726917AbeHWVoy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 17:39:57 -0400
-Received: by mail-wm0-f66.google.com with SMTP id t25-v6so6717071wmi.3;
-        Thu, 23 Aug 2018 11:09:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=OFcUxlDpNdZFO3OSqQIlCjKidM2M3HO/0OZvcjNRLTg=;
-        b=Vi3KsMD5Bxq1gnfQnXttGVejKfFoKiD//iP/BZDp8J+5clL0LXweooA9of0ezEeLwX
-         +Qa+q+jKnpLQd36JQTuj8cn5DVVNzbIH07QQPZDcT0tZT51AfZvA6Xp4+MWrSBFyFgye
-         C/KM111//8tMksnbRa200PNbgGclxVZDfPXg/9EzSlw/9A/aUsgrSW2EHkhz/IWvBlOe
-         Wn3FQXG7v7NWmyeefswBeoft1HG9yGFvoR/7eInZYo54Bpz2sGUVlQLoeLXX4DAkHjMU
-         VAZJsU6/TL3L3PgtYXHjMtgkhBJ2ChLV2N+5kT2QzjvgzmTiIS5VGTHfLPHUCxBHXt0E
-         bw8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OFcUxlDpNdZFO3OSqQIlCjKidM2M3HO/0OZvcjNRLTg=;
-        b=d6yU3RLyAsi2wDFtXCK+Enrx2DYr3qek7h8miur4EQbhQMmWJcdFFRmHMvMo0AQ+lo
-         PW4GTG/svlBq/u2KUfDWwnj9pGmt9pOfX6Wit7gVY82PYDFtbda5CL4mdNbnKxn8MPyy
-         07XzivS/gbOsJ4mfCGq3UASxJUlA+/QTepM8Jdu/eZomZ/sCbr2bCQHavHZF21fWfcpj
-         OI5ednodxcVNjceoWHDyQW/Yy3bcPlhkZGnNHhXG3E0eNXmuxhoN6mt/3+8Uusu43b02
-         nRYvABOkAk5M5AYqXjgczxoIxatC6w5iUN3AtYaAickRKwzf9XI+/6IJnR1d0QgKNiOB
-         VpSw==
-X-Gm-Message-State: APzg51Aua2Ng+NXDYBCza/rSVH1NsMR+sb3rmHPACWJ0LHuS+F+//Wb2
-        f5SO4u/Q+xKiOSXVd4v0jFk=
-X-Google-Smtp-Source: ANB0VdbtaaiyHIvqwzszQWQebiFu4GcCxgKaUrDvB7AybDBKcaRQO/s+VGqZ0n4ps9h2dyRWLqyxNA==
-X-Received: by 2002:a1c:f0a:: with SMTP id 10-v6mr350084wmp.58.1535047743592;
-        Thu, 23 Aug 2018 11:09:03 -0700 (PDT)
-Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id 34-v6sm6910901wra.20.2018.08.23.11.09.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 23 Aug 2018 11:09:02 -0700 (PDT)
-Date:   Thu, 23 Aug 2018 11:09:01 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 4.9 000/130] 4.9.124-stable review
-Message-ID: <20180823180901.GA18262@flashbox>
-References: <20180823074927.161454870@linuxfoundation.org>
+        Thu, 23 Aug 2018 17:44:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=H8yrnYW3IXgnmy0c5LJcQAxczCJoIO7+FQgJh0VZRlM=; b=IQWL65TVXHC3AMO96xiFqSsHh
+        z6IUD5LZNZV0ra0ProqWNLvGbqZh+baVW0Wya7vpY1tvJUBwRNpmVq1jzB5hIE8qaOkniGsGODlw2
+        jHA+AIKVHb/RHMkxSsQThE+QbKxFotChJVCXHcaJEu+5jUB6IatO12zS0VmtSzGdn2mqBHu7RAFPJ
+        KkunfGA3HFHVsL++HWqAR/mRe9aHaS3wfMW/lS2/jDk5tbGAJCdb0rz6sJ4meEQV1VyC3laPgkGjR
+        fyI3X/P91OzXTa0qoCq1cFNgF1YYrrTNECmhPop0PaglWkHgGe9FJihLRp7wLacFHRs+2GSjPV5S7
+        CGVh1lZug==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fsu7K-00033W-51; Thu, 23 Aug 2018 18:13:58 +0000
+To:     linux-kbuild <linux-kbuild@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     stable <stable@vger.kernel.org>,
+        Lucas De Marchi <lucas.demarchi@profusion.mobi>,
+        Lucas De Marchi <lucas.de.marchi@gmail.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Jessica Yu <jeyu@kernel.org>,
+        Chih-Wei Huang <cwhuang@linux.org.tw>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH v3] modules_install: make missing $DEPMOD a warning instead of
+ an error
+Message-ID: <4449cd91-fae5-caf1-a917-82e0c5f0aba8@infradead.org>
+Date:   Thu, 23 Aug 2018 11:13:57 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 23, 2018 at 09:51:56AM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.124 release.
-> There are 130 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat Aug 25 07:48:45 UTC 2018.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.124-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
->
+From: Randy Dunlap <rdunlap@infradead.org>
 
-Merged, compiled with -Werror, and installed onto my OnePlus 6.
+When $DEPMOD is not found, only print a warning instead of exiting
+with an error message and error status.
 
-No initial issues noticed in dmesg or general usage.
+Warning: 'make modules_install' requires /sbin/depmod. Please install it.
+This is probably in the kmod package.
 
-Thanks!
-Nathan
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Fixes: 934193a654c1 ("kbuild: verify that $DEPMOD is installed")
+Cc: stable@vger.kernel.org
+Cc: Lucas De Marchi <lucas.demarchi@profusion.mobi>
+Cc: Lucas De Marchi <lucas.de.marchi@gmail.com>
+Cc: Michal Marek <michal.lkml@markovi.net>
+Cc: Jessica Yu <jeyu@kernel.org>
+Cc: Chih-Wei Huang <cwhuang@linux.org.tw>
+Cc: H. Nikolaus Schaller <hns@goldelico.com>
+---
+v2: add missing "exit 0" and update the commit message (no Error).
+v3: add Fixes: and Cc: stable
+
+ scripts/depmod.sh |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- lnx-418.orig/scripts/depmod.sh
++++ lnx-418/scripts/depmod.sh
+@@ -15,9 +15,9 @@ if ! test -r System.map ; then
+ fi
+ 
+ if [ -z $(command -v $DEPMOD) ]; then
+-	echo "'make modules_install' requires $DEPMOD. Please install it." >&2
++	echo "Warning: 'make modules_install' requires $DEPMOD. Please install it." >&2
+ 	echo "This is probably in the kmod package." >&2
+-	exit 1
++	exit 0
+ fi
+ 
+ # older versions of depmod require the version string to start with three
+
