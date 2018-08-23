@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2275C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:30:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53F53C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:30:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61FF52147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:30:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61FF52147A
+	by mail.kernel.org (Postfix) with ESMTP id 173502147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:30:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 173502147A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731263AbeHWL7X (ORCPT
+        id S1731276AbeHWL70 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:59:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47866 "EHLO
+        Thu, 23 Aug 2018 07:59:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47878 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729644AbeHWL7X (ORCPT
+        with ESMTP id S1729644AbeHWL70 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:59:23 -0400
+        Thu, 23 Aug 2018 07:59:26 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 01003C74;
-        Thu, 23 Aug 2018 08:30:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 21E91C93;
+        Thu, 23 Aug 2018 08:30:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 157/217] drm/armada: fix colorkey mode property
-Date:   Thu, 23 Aug 2018 09:54:30 +0200
-Message-Id: <20180823075512.655348632@linuxfoundation.org>
+Subject: [PATCH 4.14 158/217] drm/armada: fix irq handling
+Date:   Thu, 23 Aug 2018 09:54:31 +0200
+Message-Id: <20180823075512.695813088@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -52,89 +52,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Russell King <rmk+kernel@armlinux.org.uk>
 
-[ Upstream commit d378859a667edc99e3473704847698cae97ca2b1 ]
+[ Upstream commit 92298c1cd8e8a6b56322b602ad72b54e6237631d ]
 
-The colorkey mode property was not correctly disabling the colorkeying
-when "disabled" mode was selected.  Arrange for this to work as one
-would expect.
+Add the missing locks to the IRQ enable/disable paths, and fix a comment
+in the interrupt handler: reading the ISR clears down the status bits,
+but does not reset the interrupt so it can signal again.  That seems to
+require a write.
 
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/armada/armada_hw.h      |    1 +
- drivers/gpu/drm/armada/armada_overlay.c |   30 ++++++++++++++++++++++--------
- 2 files changed, 23 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/armada/armada_crtc.c |   12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/armada/armada_hw.h
-+++ b/drivers/gpu/drm/armada/armada_hw.h
-@@ -160,6 +160,7 @@ enum {
- 	CFG_ALPHAM_GRA		= 0x1 << 16,
- 	CFG_ALPHAM_CFG		= 0x2 << 16,
- 	CFG_ALPHA_MASK		= 0xff << 8,
-+#define CFG_ALPHA(x)		((x) << 8)
- 	CFG_PIXCMD_MASK		= 0xff,
- };
+--- a/drivers/gpu/drm/armada/armada_crtc.c
++++ b/drivers/gpu/drm/armada/armada_crtc.c
+@@ -483,8 +483,9 @@ static irqreturn_t armada_drm_irq(int ir
+ 	u32 v, stat = readl_relaxed(dcrtc->base + LCD_SPU_IRQ_ISR);
  
---- a/drivers/gpu/drm/armada/armada_overlay.c
-+++ b/drivers/gpu/drm/armada/armada_overlay.c
-@@ -28,6 +28,7 @@ struct armada_ovl_plane_properties {
- 	uint16_t contrast;
- 	uint16_t saturation;
- 	uint32_t colorkey_mode;
-+	uint32_t colorkey_enable;
- };
+ 	/*
+-	 * This is rediculous - rather than writing bits to clear, we
+-	 * have to set the actual status register value.  This is racy.
++	 * Reading the ISR appears to clear bits provided CLEAN_SPU_IRQ_ISR
++	 * is set.  Writing has some other effect to acknowledge the IRQ -
++	 * without this, we only get a single IRQ.
+ 	 */
+ 	writel_relaxed(0, dcrtc->base + LCD_SPU_IRQ_ISR);
  
- struct armada_ovl_plane {
-@@ -59,11 +60,13 @@ armada_ovl_update_attr(struct armada_ovl
- 	writel_relaxed(0x00002000, dcrtc->base + LCD_SPU_CBSH_HUE);
+@@ -1104,16 +1105,22 @@ armada_drm_crtc_set_property(struct drm_
+ static int armada_drm_crtc_enable_vblank(struct drm_crtc *crtc)
+ {
+ 	struct armada_crtc *dcrtc = drm_to_armada_crtc(crtc);
++	unsigned long flags;
  
- 	spin_lock_irq(&dcrtc->irq_lock);
--	armada_updatel(prop->colorkey_mode | CFG_ALPHAM_GRA,
--		     CFG_CKMODE_MASK | CFG_ALPHAM_MASK | CFG_ALPHA_MASK,
--		     dcrtc->base + LCD_SPU_DMA_CTRL1);
--
--	armada_updatel(ADV_GRACOLORKEY, 0, dcrtc->base + LCD_SPU_ADV_REG);
-+	armada_updatel(prop->colorkey_mode,
-+		       CFG_CKMODE_MASK | CFG_ALPHAM_MASK | CFG_ALPHA_MASK,
-+		       dcrtc->base + LCD_SPU_DMA_CTRL1);
-+	if (dcrtc->variant->has_spu_adv_reg)
-+		armada_updatel(prop->colorkey_enable,
-+			       ADV_GRACOLORKEY | ADV_VIDCOLORKEY,
-+			       dcrtc->base + LCD_SPU_ADV_REG);
- 	spin_unlock_irq(&dcrtc->irq_lock);
++	spin_lock_irqsave(&dcrtc->irq_lock, flags);
+ 	armada_drm_crtc_enable_irq(dcrtc, VSYNC_IRQ_ENA);
++	spin_unlock_irqrestore(&dcrtc->irq_lock, flags);
+ 	return 0;
  }
  
-@@ -339,8 +342,17 @@ static int armada_ovl_plane_set_property
- 		dplane->prop.colorkey_vb |= K2B(val);
- 		update_attr = true;
- 	} else if (property == priv->colorkey_mode_prop) {
--		dplane->prop.colorkey_mode &= ~CFG_CKMODE_MASK;
--		dplane->prop.colorkey_mode |= CFG_CKMODE(val);
-+		if (val == CKMODE_DISABLE) {
-+			dplane->prop.colorkey_mode =
-+				CFG_CKMODE(CKMODE_DISABLE) |
-+				CFG_ALPHAM_CFG | CFG_ALPHA(255);
-+			dplane->prop.colorkey_enable = 0;
-+		} else {
-+			dplane->prop.colorkey_mode =
-+				CFG_CKMODE(val) |
-+				CFG_ALPHAM_GRA | CFG_ALPHA(0);
-+			dplane->prop.colorkey_enable = ADV_GRACOLORKEY;
-+		}
- 		update_attr = true;
- 	} else if (property == priv->brightness_prop) {
- 		dplane->prop.brightness = val - 256;
-@@ -470,7 +482,9 @@ int armada_overlay_plane_create(struct d
- 	dplane->prop.colorkey_yr = 0xfefefe00;
- 	dplane->prop.colorkey_ug = 0x01010100;
- 	dplane->prop.colorkey_vb = 0x01010100;
--	dplane->prop.colorkey_mode = CFG_CKMODE(CKMODE_RGB);
-+	dplane->prop.colorkey_mode = CFG_CKMODE(CKMODE_RGB) |
-+				     CFG_ALPHAM_GRA | CFG_ALPHA(0);
-+	dplane->prop.colorkey_enable = ADV_GRACOLORKEY;
- 	dplane->prop.brightness = 0;
- 	dplane->prop.contrast = 0x4000;
- 	dplane->prop.saturation = 0x4000;
+ static void armada_drm_crtc_disable_vblank(struct drm_crtc *crtc)
+ {
+ 	struct armada_crtc *dcrtc = drm_to_armada_crtc(crtc);
++	unsigned long flags;
+ 
++	spin_lock_irqsave(&dcrtc->irq_lock, flags);
+ 	armada_drm_crtc_disable_irq(dcrtc, VSYNC_IRQ_ENA);
++	spin_unlock_irqrestore(&dcrtc->irq_lock, flags);
+ }
+ 
+ static const struct drm_crtc_funcs armada_crtc_funcs = {
+@@ -1221,6 +1228,7 @@ static int armada_drm_crtc_create(struct
+ 		       CFG_PDWN64x66, dcrtc->base + LCD_SPU_SRAM_PARA1);
+ 	writel_relaxed(0x2032ff81, dcrtc->base + LCD_SPU_DMA_CTRL1);
+ 	writel_relaxed(dcrtc->irq_ena, dcrtc->base + LCD_SPU_IRQ_ENA);
++	readl_relaxed(dcrtc->base + LCD_SPU_IRQ_ISR);
+ 	writel_relaxed(0, dcrtc->base + LCD_SPU_IRQ_ISR);
+ 
+ 	ret = devm_request_irq(dev, irq, armada_drm_irq, 0, "armada_drm_crtc",
 
 
