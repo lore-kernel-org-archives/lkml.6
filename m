@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A63CC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A47BC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C415920839
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C415920839
+	by mail.kernel.org (Postfix) with ESMTP id E11B320839
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E11B320839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388079AbeHWMWI (ORCPT
+        id S2388092AbeHWMWM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:22:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51996 "EHLO
+        Thu, 23 Aug 2018 08:22:12 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52008 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728574AbeHWMWI (ORCPT
+        with ESMTP id S1728574AbeHWMWL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:22:08 -0400
+        Thu, 23 Aug 2018 08:22:11 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B0F86C83;
-        Thu, 23 Aug 2018 08:53:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0DC67C74;
+        Thu, 23 Aug 2018 08:53:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yuiko Oshino <yuiko.oshino@microchip.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Maciej Purski <m.purski@samsung.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 182/324] smsc75xx: Add workaround for gigabit link up hardware errata.
-Date:   Thu, 23 Aug 2018 09:54:08 +0200
-Message-Id: <20180823075005.319101801@linuxfoundation.org>
+Subject: [PATCH 4.17 183/324] drm/bridge/sii8620: Fix display of packed pixel modes
+Date:   Thu, 23 Aug 2018 09:54:09 +0200
+Message-Id: <20180823075005.362970716@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -51,105 +51,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yuiko Oshino <yuiko.oshino@microchip.com>
+From: Maciej Purski <m.purski@samsung.com>
 
-[ Upstream commit d461e3da905332189aad546b2ad9adbe6071c7cc ]
+[ Upstream commit fdddc65ab35d575b42aab411b2dc687601eab680 ]
 
-In certain conditions, the device may not be able to link in gigabit mode. This software workaround ensures that the device will not enter the failure state.
+Current implementation does not guarantee packed pixel modes working
+with every dongle. There are some dongles, which require selecting
+the output mode explicitly.
 
-Fixes: d0cad871703b898a442e4049c532ec39168e5b57 ("SMSC75XX USB 2.0 Gigabit Ethernet Devices")
-Signed-off-by: Yuiko Oshino <yuiko.oshino@microchip.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Write proper values to registers in packed_pixel mode, based on how it
+is done in vendor's code. Select output color space: RGB
+(no packed pixel) or YCBCR422 (packed pixel).
+
+This reverts commit e8b92efa629dac0e70ea4145c5e70616de5f89c8
+("drm/bridge/sii8620: fix display of packed pixel modes in MHL2").
+
+Signed-off-by: Maciej Purski <m.purski@samsung.com>
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/1530204243-6370-3-git-send-email-m.purski@samsung.com
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/usb/smsc75xx.c |   62 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
+ drivers/gpu/drm/bridge/sil-sii8620.c |   17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
---- a/drivers/net/usb/smsc75xx.c
-+++ b/drivers/net/usb/smsc75xx.c
-@@ -82,6 +82,9 @@ static bool turbo_mode = true;
- module_param(turbo_mode, bool, 0644);
- MODULE_PARM_DESC(turbo_mode, "Enable multiple frames per Rx transaction");
+--- a/drivers/gpu/drm/bridge/sil-sii8620.c
++++ b/drivers/gpu/drm/bridge/sil-sii8620.c
+@@ -1060,21 +1060,36 @@ static void sii8620_stop_video(struct si
  
-+static int smsc75xx_link_ok_nopm(struct usbnet *dev);
-+static int smsc75xx_phy_gig_workaround(struct usbnet *dev);
-+
- static int __must_check __smsc75xx_read_reg(struct usbnet *dev, u32 index,
- 					    u32 *data, int in_pm)
+ static void sii8620_set_format(struct sii8620 *ctx)
  {
-@@ -852,6 +855,9 @@ static int smsc75xx_phy_initialize(struc
- 		return -EIO;
++	u8 out_fmt;
++
+ 	if (sii8620_is_mhl3(ctx)) {
+ 		sii8620_setbits(ctx, REG_M3_P0CTRL,
+ 				BIT_M3_P0CTRL_MHL3_P0_PIXEL_MODE_PACKED,
+ 				ctx->use_packed_pixel ? ~0 : 0);
+ 	} else {
++		if (ctx->use_packed_pixel) {
++			sii8620_write_seq_static(ctx,
++				REG_VID_MODE, BIT_VID_MODE_M1080P,
++				REG_MHL_TOP_CTL, BIT_MHL_TOP_CTL_MHL_PP_SEL | 1,
++				REG_MHLTX_CTL6, 0x60
++			);
++		} else {
+ 			sii8620_write_seq_static(ctx,
+ 				REG_VID_MODE, 0,
+ 				REG_MHL_TOP_CTL, 1,
+ 				REG_MHLTX_CTL6, 0xa0
+ 			);
++		}
  	}
  
-+	/* phy workaround for gig link */
-+	smsc75xx_phy_gig_workaround(dev);
++	if (ctx->use_packed_pixel)
++		out_fmt = VAL_TPI_FORMAT(YCBCR422, FULL);
++	else
++		out_fmt = VAL_TPI_FORMAT(RGB, FULL);
 +
- 	smsc75xx_mdio_write(dev->net, dev->mii.phy_id, MII_ADVERTISE,
- 		ADVERTISE_ALL | ADVERTISE_CSMA | ADVERTISE_PAUSE_CAP |
- 		ADVERTISE_PAUSE_ASYM);
-@@ -987,6 +993,62 @@ static int smsc75xx_wait_ready(struct us
- 	return -EIO;
+ 	sii8620_write_seq(ctx,
+ 		REG_TPI_INPUT, VAL_TPI_FORMAT(RGB, FULL),
+-		REG_TPI_OUTPUT, VAL_TPI_FORMAT(RGB, FULL),
++		REG_TPI_OUTPUT, out_fmt,
+ 	);
  }
  
-+static int smsc75xx_phy_gig_workaround(struct usbnet *dev)
-+{
-+	struct mii_if_info *mii = &dev->mii;
-+	int ret = 0, timeout = 0;
-+	u32 buf, link_up = 0;
-+
-+	/* Set the phy in Gig loopback */
-+	smsc75xx_mdio_write(dev->net, mii->phy_id, MII_BMCR, 0x4040);
-+
-+	/* Wait for the link up */
-+	do {
-+		link_up = smsc75xx_link_ok_nopm(dev);
-+		usleep_range(10000, 20000);
-+		timeout++;
-+	} while ((!link_up) && (timeout < 1000));
-+
-+	if (timeout >= 1000) {
-+		netdev_warn(dev->net, "Timeout waiting for PHY link up\n");
-+		return -EIO;
-+	}
-+
-+	/* phy reset */
-+	ret = smsc75xx_read_reg(dev, PMT_CTL, &buf);
-+	if (ret < 0) {
-+		netdev_warn(dev->net, "Failed to read PMT_CTL: %d\n", ret);
-+		return ret;
-+	}
-+
-+	buf |= PMT_CTL_PHY_RST;
-+
-+	ret = smsc75xx_write_reg(dev, PMT_CTL, buf);
-+	if (ret < 0) {
-+		netdev_warn(dev->net, "Failed to write PMT_CTL: %d\n", ret);
-+		return ret;
-+	}
-+
-+	timeout = 0;
-+	do {
-+		usleep_range(10000, 20000);
-+		ret = smsc75xx_read_reg(dev, PMT_CTL, &buf);
-+		if (ret < 0) {
-+			netdev_warn(dev->net, "Failed to read PMT_CTL: %d\n",
-+				    ret);
-+			return ret;
-+		}
-+		timeout++;
-+	} while ((buf & PMT_CTL_PHY_RST) && (timeout < 100));
-+
-+	if (timeout >= 100) {
-+		netdev_warn(dev->net, "timeout waiting for PHY Reset\n");
-+		return -EIO;
-+	}
-+
-+	return 0;
-+}
-+
- static int smsc75xx_reset(struct usbnet *dev)
- {
- 	struct smsc75xx_priv *pdata = (struct smsc75xx_priv *)(dev->data[0]);
 
 
