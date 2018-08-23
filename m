@@ -6,39 +6,40 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 204C7C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:52:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8815BC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:52:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD5D020839
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:52:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD5D020839
+	by mail.kernel.org (Postfix) with ESMTP id 4C7CF20839
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:52:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C7CF20839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387952AbeHWMV3 (ORCPT
+        id S2387965AbeHWMVc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:21:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51832 "EHLO
+        Thu, 23 Aug 2018 08:21:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51862 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733155AbeHWMV2 (ORCPT
+        with ESMTP id S1733155AbeHWMVb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:21:28 -0400
+        Thu, 23 Aug 2018 08:21:31 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0C072C83;
-        Thu, 23 Aug 2018 08:52:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 09E0AC93;
+        Thu, 23 Aug 2018 08:52:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gaurav Kohli <gkohli@codeaurora.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        stable@vger.kernel.org, Zhenzhong Duan <zhenzhong.duan@oracle.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 171/324] kthread, sched/core: Fix kthread_parkme() (again...)
-Date:   Thu, 23 Aug 2018 09:53:57 +0200
-Message-Id: <20180823075004.748161001@linuxfoundation.org>
+Subject: [PATCH 4.17 172/324] x86/mm/32: Initialize the CR4 shadow before __flush_tlb_all()
+Date:   Thu, 23 Aug 2018 09:53:58 +0200
+Message-Id: <20180823075004.792150446@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -55,212 +56,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Zhenzhong Duan <zhenzhong.duan@oracle.com>
 
-[ Upstream commit 1cef1150ef40ec52f507436a14230cbc2623299c ]
+[ Upstream commit 4fb5f58e8d191f7c81637ad81284e4848afb4244 ]
 
-Gaurav reports that commit:
+On 32-bit kernels, __flush_tlb_all() may have read the CR4 shadow before the
+initialization of CR4 shadow in cpu_init().
 
-  85f1abe0019f ("kthread, sched/wait: Fix kthread_parkme() completion issue")
+Fix it by adding an explicit cr4_init_shadow() call into start_secondary()
+which is the first function called on non-boot SMP CPUs - ahead of the
+__flush_tlb_all() call.
 
-isn't working for him. Because of the following race:
+( This is somewhat of a layering violation, but start_secondary() does
+  CR4 bootstrap in the PCID case anyway. )
 
-> controller Thread                               CPUHP Thread
-> takedown_cpu
-> kthread_park
-> kthread_parkme
-> Set KTHREAD_SHOULD_PARK
->                                                 smpboot_thread_fn
->                                                 set Task interruptible
->
->
-> wake_up_process
->  if (!(p->state & state))
->                 goto out;
->
->                                                 Kthread_parkme
->                                                 SET TASK_PARKED
->                                                 schedule
->                                                 raw_spin_lock(&rq->lock)
-> ttwu_remote
-> waiting for __task_rq_lock
->                                                 context_switch
->
->                                                 finish_lock_switch
->
->
->
->                                                 Case TASK_PARKED
->                                                 kthread_park_complete
->
->
-> SET Running
-
-Furthermore, Oleg noticed that the whole scheduler TASK_PARKED
-handling is buggered because the TASK_DEAD thing is done with
-preemption disabled, the current code can still complete early on
-preemption :/
-
-So basically revert that earlier fix and go with a variant of the
-alternative mentioned in the commit. Promote TASK_PARKED to special
-state to avoid the store-store issue on task->state leading to the
-WARN in kthread_unpark() -> __kthread_bind().
-
-But in addition, add wait_task_inactive() to kthread_park() to ensure
-the task really is PARKED when we return from kthread_park(). This
-avoids the whole kthread still gets migrated nonsense -- although it
-would be really good to get this done differently.
-
-Reported-by: Gaurav Kohli <gkohli@codeaurora.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Oleg Nesterov <oleg@redhat.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: 85f1abe0019f ("kthread, sched/wait: Fix kthread_parkme() completion issue")
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Link: http://lkml.kernel.org/r/b07b6ae9-4b57-4b40-b9bc-50c2c67f1d91@default
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/kthread.h |    1 -
- include/linux/sched.h   |    2 +-
- kernel/kthread.c        |   30 ++++++++++++++++++++++++------
- kernel/sched/core.c     |   31 +++++++++++--------------------
- 4 files changed, 36 insertions(+), 28 deletions(-)
+ arch/x86/kernel/smpboot.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/include/linux/kthread.h
-+++ b/include/linux/kthread.h
-@@ -62,7 +62,6 @@ void *kthread_probe_data(struct task_str
- int kthread_park(struct task_struct *k);
- void kthread_unpark(struct task_struct *k);
- void kthread_parkme(void);
--void kthread_park_complete(struct task_struct *k);
- 
- int kthreadd(void *unused);
- extern struct task_struct *kthreadd_task;
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -117,7 +117,7 @@ struct task_group;
-  * the comment with set_special_state().
-  */
- #define is_special_task_state(state)				\
--	((state) & (__TASK_STOPPED | __TASK_TRACED | TASK_DEAD))
-+	((state) & (__TASK_STOPPED | __TASK_TRACED | TASK_PARKED | TASK_DEAD))
- 
- #define __set_current_state(state_value)			\
- 	do {							\
---- a/kernel/kthread.c
-+++ b/kernel/kthread.c
-@@ -177,9 +177,20 @@ void *kthread_probe_data(struct task_str
- static void __kthread_parkme(struct kthread *self)
- {
- 	for (;;) {
--		set_current_state(TASK_PARKED);
-+		/*
-+		 * TASK_PARKED is a special state; we must serialize against
-+		 * possible pending wakeups to avoid store-store collisions on
-+		 * task->state.
-+		 *
-+		 * Such a collision might possibly result in the task state
-+		 * changin from TASK_PARKED and us failing the
-+		 * wait_task_inactive() in kthread_park().
-+		 */
-+		set_special_state(TASK_PARKED);
- 		if (!test_bit(KTHREAD_SHOULD_PARK, &self->flags))
- 			break;
-+
-+		complete_all(&self->parked);
- 		schedule();
- 	}
- 	__set_current_state(TASK_RUNNING);
-@@ -191,11 +202,6 @@ void kthread_parkme(void)
- }
- EXPORT_SYMBOL_GPL(kthread_parkme);
- 
--void kthread_park_complete(struct task_struct *k)
--{
--	complete_all(&to_kthread(k)->parked);
--}
--
- static int kthread(void *_create)
- {
- 	/* Copy data: it's on kthread's stack */
-@@ -467,6 +473,9 @@ void kthread_unpark(struct task_struct *
- 
- 	reinit_completion(&kthread->parked);
- 	clear_bit(KTHREAD_SHOULD_PARK, &kthread->flags);
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -222,6 +222,11 @@ static void notrace start_secondary(void
+ #ifdef CONFIG_X86_32
+ 	/* switch away from the initial page table */
+ 	load_cr3(swapper_pg_dir);
 +	/*
-+	 * __kthread_parkme() will either see !SHOULD_PARK or get the wakeup.
++	 * Initialize the CR4 shadow before doing anything that could
++	 * try to read it.
 +	 */
- 	wake_up_state(k, TASK_PARKED);
- }
- EXPORT_SYMBOL_GPL(kthread_unpark);
-@@ -493,7 +502,16 @@ int kthread_park(struct task_struct *k)
- 	set_bit(KTHREAD_SHOULD_PARK, &kthread->flags);
- 	if (k != current) {
- 		wake_up_process(k);
-+		/*
-+		 * Wait for __kthread_parkme() to complete(), this means we
-+		 * _will_ have TASK_PARKED and are about to call schedule().
-+		 */
- 		wait_for_completion(&kthread->parked);
-+		/*
-+		 * Now wait for that schedule() to complete and the task to
-+		 * get scheduled out.
-+		 */
-+		WARN_ON_ONCE(!wait_task_inactive(k, TASK_PARKED));
- 	}
- 
- 	return 0;
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -7,7 +7,6 @@
-  */
- #include "sched.h"
- 
--#include <linux/kthread.h>
- #include <linux/nospec.h>
- 
- #include <asm/switch_to.h>
-@@ -2738,28 +2737,20 @@ static struct rq *finish_task_switch(str
- 		membarrier_mm_sync_core_before_usermode(mm);
- 		mmdrop(mm);
- 	}
--	if (unlikely(prev_state & (TASK_DEAD|TASK_PARKED))) {
--		switch (prev_state) {
--		case TASK_DEAD:
--			if (prev->sched_class->task_dead)
--				prev->sched_class->task_dead(prev);
--
--			/*
--			 * Remove function-return probe instances associated with this
--			 * task and put them back on the free list.
--			 */
--			kprobe_flush_task(prev);
-+	if (unlikely(prev_state == TASK_DEAD)) {
-+		if (prev->sched_class->task_dead)
-+			prev->sched_class->task_dead(prev);
- 
--			/* Task is done with its stack. */
--			put_task_stack(prev);
-+		/*
-+		 * Remove function-return probe instances associated with this
-+		 * task and put them back on the free list.
-+		 */
-+		kprobe_flush_task(prev);
- 
--			put_task_struct(prev);
--			break;
-+		/* Task is done with its stack. */
-+		put_task_stack(prev);
- 
--		case TASK_PARKED:
--			kthread_park_complete(prev);
--			break;
--		}
-+		put_task_struct(prev);
- 	}
- 
- 	tick_nohz_task_switch();
++	cr4_init_shadow();
+ 	__flush_tlb_all();
+ #endif
+ 	load_current_idt();
 
 
