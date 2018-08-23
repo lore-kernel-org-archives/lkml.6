@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2F7CC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:39:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2406EC43615
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:39:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9A4121486
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:39:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9A4121486
+	by mail.kernel.org (Postfix) with ESMTP id D9F5B214AB
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:39:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9F5B214AB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732011AbeHWMIS (ORCPT
+        id S1732020AbeHWMIV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:08:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49412 "EHLO
+        Thu, 23 Aug 2018 08:08:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49426 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730481AbeHWMIR (ORCPT
+        with ESMTP id S1730481AbeHWMIU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:08:17 -0400
+        Thu, 23 Aug 2018 08:08:20 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 747AFBC1;
-        Thu, 23 Aug 2018 08:39:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A3363941;
+        Thu, 23 Aug 2018 08:39:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zeng Tao <prime.zeng@hisilicon.com>,
-        Minas Harutyunyan <hminas@synopsys.com>,
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
         Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 021/324] usb: dwc2: gadget: Fix issue in dwc2_gadget_start_isoc()
-Date:   Thu, 23 Aug 2018 09:51:27 +0200
-Message-Id: <20180823074956.963358653@linuxfoundation.org>
+Subject: [PATCH 4.17 022/324] usb: dwc3: of-simple: fix use-after-free on remove
+Date:   Thu, 23 Aug 2018 09:51:28 +0200
+Message-Id: <20180823074957.006593162@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -52,34 +51,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>
+From: Johan Hovold <johan@kernel.org>
 
-[ Upstream commit 1ffba9058737af2ddeebc813faa8ea9b16bc892a ]
+[ Upstream commit 896e518883f18e601335908192e33426c1f599a4 ]
 
-In case of requests queue is empty reset EP target_frame to
-initial value.
+The clocks have already been explicitly disabled and put as part of
+remove() so the runtime suspend callback must not be run when balancing
+the runtime PM usage count before returning.
 
-This allow restarting ISOC traffic in case when function
-driver queued requests with interruptions.
-
-Tested-by: Zeng Tao <prime.zeng@hisilicon.com>
-Signed-off-by: Minas Harutyunyan <hminas@synopsys.com>
+Fixes: 16adc674d0d6 ("usb: dwc3: add generic OF glue layer")
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/dwc2/gadget.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/dwc3/dwc3-of-simple.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/dwc2/gadget.c
-+++ b/drivers/usb/dwc2/gadget.c
-@@ -892,6 +892,7 @@ static void dwc2_gadget_start_isoc_ddma(
- 	u32 ctrl;
+--- a/drivers/usb/dwc3/dwc3-of-simple.c
++++ b/drivers/usb/dwc3/dwc3-of-simple.c
+@@ -165,8 +165,9 @@ static int dwc3_of_simple_remove(struct
  
- 	if (list_empty(&hs_ep->queue)) {
-+		hs_ep->target_frame = TARGET_FRAME_INITIAL;
- 		dev_dbg(hsotg->dev, "%s: No requests in queue\n", __func__);
- 		return;
- 	}
+ 	reset_control_put(simple->resets);
+ 
+-	pm_runtime_put_sync(dev);
+ 	pm_runtime_disable(dev);
++	pm_runtime_put_noidle(dev);
++	pm_runtime_set_suspended(dev);
+ 
+ 	return 0;
+ }
 
 
