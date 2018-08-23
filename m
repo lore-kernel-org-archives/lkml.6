@@ -5,175 +5,110 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E723AC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:31:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 176C0C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:31:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 964A52087E
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:31:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 964A52087E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C85582087E
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:31:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C85582087E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731645AbeHWPAu (ORCPT
+        id S1731689AbeHWPBC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 11:00:50 -0400
-Received: from mga18.intel.com ([134.134.136.126]:4613 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726246AbeHWPAu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 11:00:50 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Aug 2018 04:31:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,278,1531810800"; 
-   d="scan'208";a="256605377"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.137]) ([10.237.72.137])
-  by fmsmga005.fm.intel.com with ESMTP; 23 Aug 2018 04:31:31 -0700
-Subject: Re: [PATCH v4 2/3] mmc: sdhci: introduce adma_write_desc() hook to
- struct sdhci_ops
-To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20180823180549.78e508db@xhacker.debian>
- <20180823180822.7e904f73@xhacker.debian>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <239c59fc-9081-15fc-295c-345818d01f99@intel.com>
-Date:   Thu, 23 Aug 2018 14:29:49 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 23 Aug 2018 11:01:02 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51640 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726246AbeHWPBB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 11:01:01 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 42F9B40216F7;
+        Thu, 23 Aug 2018 11:31:43 +0000 (UTC)
+Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 23265A9EED;
+        Thu, 23 Aug 2018 11:31:37 +0000 (UTC)
+Date:   Thu, 23 Aug 2018 13:31:34 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Pierre Morel <pmorel@linux.ibm.com>
+Cc:     Tony Krowiak <akrowiak@linux.ibm.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+Subject: Re: [PATCH v9 12/22] s390: vfio-ap: sysfs interfaces to configure
+ control domains
+Message-ID: <20180823133134.32e1d2f8.cohuck@redhat.com>
+In-Reply-To: <25a44526-a2d6-c632-6a6d-8ca385925731@linux.ibm.com>
+References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <1534196899-16987-13-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <20180820162317.08bd7d23.cohuck@redhat.com>
+        <660de00a-c403-28c1-4df4-82a973ab3ad5@linux.ibm.com>
+        <20180821172548.57a6c758.cohuck@redhat.com>
+        <82a391ee-85b1-cdc7-0f9b-d37fd8ba8e47@linux.ibm.com>
+        <a43ef10f-aa91-cb4c-a8aa-cd3ce9cfebf2@linux.ibm.com>
+        <20180822114250.59a250aa.cohuck@redhat.com>
+        <8bc5f207-f913-825c-f9fc-0a2c7fd280aa@linux.ibm.com>
+        <e36abc22-9daf-e0f4-c6b3-7adbb28db4c3@de.ibm.com>
+        <f84dbcc0-f627-be02-9933-3baa953adc09@linux.ibm.com>
+        <219b352b-d5a2-189c-e205-82e7f9ae3d64@de.ibm.com>
+        <dbb74c9c-93ab-ed05-fad4-ea2aa5f2b71e@linux.ibm.com>
+        <9ef5fcb9-02e0-88e3-007c-eedb14e6db80@linux.ibm.com>
+        <20180823122525.02fc4af3.cohuck@redhat.com>
+        <25a44526-a2d6-c632-6a6d-8ca385925731@linux.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-In-Reply-To: <20180823180822.7e904f73@xhacker.debian>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 23 Aug 2018 11:31:43 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 23 Aug 2018 11:31:43 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/08/18 13:08, Jisheng Zhang wrote:
-> Add this hook so that it can be overridden with driver specific
-> implementations. We also let the original sdhci_adma_write_desc()
-> accept &desc so that the function can set its new value. Then export
-> the function so that it could be reused by driver's specific
-> implementations.
-> 
-> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+On Thu, 23 Aug 2018 12:43:42 +0200
+Pierre Morel <pmorel@linux.ibm.com> wrote:
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-
-> ---
->  drivers/mmc/host/sdhci.c | 37 +++++++++++++++++++++++--------------
->  drivers/mmc/host/sdhci.h |  4 ++++
->  2 files changed, 27 insertions(+), 14 deletions(-)
+> On 23/08/2018 12:25, Cornelia Huck wrote:
+> > On Wed, 22 Aug 2018 15:16:19 -0400
+> > Tony Krowiak <akrowiak@linux.ibm.com> wrote:
+> >   
+> >> One of the things I suggested in a private conversation with Christian
+> >> earlier
+> >> today was to provide an additional rw sysfs attribute - a boolean - that
+> >> indicates
+> >> whether all usage domains should also be control domains. The default
+> >> could be
+> >> true. This would allow one to configure guests with usage-only domains
+> >> as well
+> >> as satisfy the convention.  
+> > 
+> > Would this additional attribute then control "add usage domains to the
+> > list of control domains automatically", or "don't allow to add a usage
+> > domain if it has not already been added as a control domain"?
+> > 
+> > One thing I'm still unsure about is how libvirt comes into the picture
+> > here. Will it consume the setting, or actively manipulate it?
+> > 
+> > [In general, I'm not very clear about how libvirt will interact with the
+> > whole infrastructure...]
+> >   
 > 
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index 52ccf4644384..eb21d2db7f05 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -554,10 +554,10 @@ static void sdhci_kunmap_atomic(void *buffer, unsigned long *flags)
->  	local_irq_restore(*flags);
->  }
->  
-> -static void sdhci_adma_write_desc(struct sdhci_host *host, void *desc,
-> -				  dma_addr_t addr, int len, unsigned cmd)
-> +void sdhci_adma_write_desc(struct sdhci_host *host, void **desc,
-> +			   dma_addr_t addr, int len, unsigned int cmd)
->  {
-> -	struct sdhci_adma2_64_desc *dma_desc = desc;
-> +	struct sdhci_adma2_64_desc *dma_desc = *desc;
->  
->  	/* 32-bit and 64-bit descriptors have these members in same position */
->  	dma_desc->cmd = cpu_to_le16(cmd);
-> @@ -566,6 +566,19 @@ static void sdhci_adma_write_desc(struct sdhci_host *host, void *desc,
->  
->  	if (host->flags & SDHCI_USE_64_BIT_DMA)
->  		dma_desc->addr_hi = cpu_to_le32((u64)addr >> 32);
-> +
-> +	*desc += host->desc_sz;
-> +}
-> +EXPORT_SYMBOL_GPL(sdhci_adma_write_desc);
-> +
-> +static inline void __sdhci_adma_write_desc(struct sdhci_host *host,
-> +					   void **desc, dma_addr_t addr,
-> +					   int len, unsigned int cmd)
-> +{
-> +	if (host->ops->adma_write_desc)
-> +		host->ops->adma_write_desc(host, desc, addr, len, cmd);
-> +
-> +	sdhci_adma_write_desc(host, desc, addr, len, cmd);
->  }
->  
->  static void sdhci_adma_mark_end(void *desc)
-> @@ -618,28 +631,24 @@ static void sdhci_adma_table_pre(struct sdhci_host *host,
->  			}
->  
->  			/* tran, valid */
-> -			sdhci_adma_write_desc(host, desc, align_addr, offset,
-> -					      ADMA2_TRAN_VALID);
-> +			__sdhci_adma_write_desc(host, &desc, align_addr,
-> +						offset, ADMA2_TRAN_VALID);
->  
->  			BUG_ON(offset > 65536);
->  
->  			align += SDHCI_ADMA2_ALIGN;
->  			align_addr += SDHCI_ADMA2_ALIGN;
->  
-> -			desc += host->desc_sz;
-> -
->  			addr += offset;
->  			len -= offset;
->  		}
->  
->  		BUG_ON(len > 65536);
->  
-> -		if (len) {
-> -			/* tran, valid */
-> -			sdhci_adma_write_desc(host, desc, addr, len,
-> -					      ADMA2_TRAN_VALID);
-> -			desc += host->desc_sz;
-> -		}
-> +		/* tran, valid */
-> +		if (len)
-> +			__sdhci_adma_write_desc(host, &desc, addr, len,
-> +						ADMA2_TRAN_VALID);
->  
->  		/*
->  		 * If this triggers then we have a calculation bug
-> @@ -656,7 +665,7 @@ static void sdhci_adma_table_pre(struct sdhci_host *host,
->  		}
->  	} else {
->  		/* Add a terminating entry - nop, end, valid */
-> -		sdhci_adma_write_desc(host, desc, 0, 0, ADMA2_NOP_END_VALID);
-> +		__sdhci_adma_write_desc(host, &desc, 0, 0, ADMA2_NOP_END_VALID);
->  	}
->  }
->  
-> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-> index 25bddd21de31..2115416f973a 100644
-> --- a/drivers/mmc/host/sdhci.h
-> +++ b/drivers/mmc/host/sdhci.h
-> @@ -606,6 +606,8 @@ struct sdhci_ops {
->  	void    (*adma_workaround)(struct sdhci_host *host, u32 intmask);
->  	void    (*card_event)(struct sdhci_host *host);
->  	void	(*voltage_switch)(struct sdhci_host *host);
-> +	void	(*adma_write_desc)(struct sdhci_host *host, void **desc,
-> +				   dma_addr_t addr, int len, unsigned int cmd);
->  };
->  
->  #ifdef CONFIG_MMC_SDHCI_IO_ACCESSORS
-> @@ -736,6 +738,8 @@ void sdhci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios);
->  int sdhci_start_signal_voltage_switch(struct mmc_host *mmc,
->  				      struct mmc_ios *ios);
->  void sdhci_enable_sdio_irq(struct mmc_host *mmc, int enable);
-> +void sdhci_adma_write_desc(struct sdhci_host *host, void **desc,
-> +			   dma_addr_t addr, int len, unsigned int cmd);
->  
->  #ifdef CONFIG_PM
->  int sdhci_suspend_host(struct sdhci_host *host);
-> 
+> When I read you it convince me that it is not wise to change anything
+> that has been already discuss and could impact the Libvirt.
 
+My main point basically was that we should get feedback from a libvirt
+POV :) The new attribute may make sense, or not; but I'm really feeling
+a bit in the dark with regard to libvirt.
