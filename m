@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00950C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:39:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D762C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:39:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC2A72147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:39:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC2A72147A
+	by mail.kernel.org (Postfix) with ESMTP id 1218E2147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:39:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1218E2147A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732029AbeHWMIZ (ORCPT
+        id S1732043AbeHWMI2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:08:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49434 "EHLO
+        Thu, 23 Aug 2018 08:08:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49444 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729534AbeHWMIY (ORCPT
+        with ESMTP id S1729534AbeHWMI1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:08:24 -0400
+        Thu, 23 Aug 2018 08:08:27 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 730208B1;
-        Thu, 23 Aug 2018 08:39:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9DA918B1;
+        Thu, 23 Aug 2018 08:39:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 023/324] ACPI / EC: Use ec_no_wakeup on Thinkpad X1 Carbon 6th
-Date:   Thu, 23 Aug 2018 09:51:29 +0200
-Message-Id: <20180823074957.047580671@linuxfoundation.org>
+Subject: [PATCH 4.17 024/324] netfilter: ipv6: nf_defrag: reduce struct net memory waste
+Date:   Thu, 23 Aug 2018 09:51:30 +0200
+Message-Id: <20180823074957.094685715@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -52,62 +51,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 8195a655e5ce09550aff81b2573d9b015d520cb9 ]
+[ Upstream commit 9ce7bc036ae4cfe3393232c86e9e1fea2153c237 ]
 
-On this system EC interrupt triggers constantly kicking devices out of
-low power states and thus blocking power management. The system also has
-a PCIe root port hosting Alpine Ridge Thunderbolt controller and it
-never gets a chance to go to D3cold because of this.
+It is a waste of memory to use a full "struct netns_sysctl_ipv6"
+while only one pointer is really used, considering netns_sysctl_ipv6
+keeps growing.
 
-Since the power button works the same regardless if EC interrupt is
-enabled or not during s2idle, add a quirk for this machine that sets
-ec_no_wakeup=true preventing spurious wakeups.
+Also, since "struct netns_frags" has cache line alignment,
+it is better to move the frags_hdr pointer outside, otherwise
+we spend a full cache line for this pointer.
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+This saves 192 bytes of memory per netns.
+
+Fixes: c038a767cd69 ("ipv6: add a new namespace for nf_conntrack_reasm")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/acpi/ec.c |   20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ include/net/net_namespace.h             |    1 +
+ include/net/netns/ipv6.h                |    1 -
+ net/ipv6/netfilter/nf_conntrack_reasm.c |    6 +++---
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/acpi/ec.c
-+++ b/drivers/acpi/ec.c
-@@ -2031,6 +2031,17 @@ static inline void acpi_ec_query_exit(vo
- 	}
- }
+--- a/include/net/net_namespace.h
++++ b/include/net/net_namespace.h
+@@ -128,6 +128,7 @@ struct net {
+ #endif
+ #if IS_ENABLED(CONFIG_NF_DEFRAG_IPV6)
+ 	struct netns_nf_frag	nf_frag;
++	struct ctl_table_header *nf_frag_frags_hdr;
+ #endif
+ 	struct sock		*nfnl;
+ 	struct sock		*nfnl_stash;
+--- a/include/net/netns/ipv6.h
++++ b/include/net/netns/ipv6.h
+@@ -107,7 +107,6 @@ struct netns_ipv6 {
  
-+static const struct dmi_system_id acpi_ec_no_wakeup[] = {
-+	{
-+		.ident = "Thinkpad X1 Carbon 6th",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "20KGS3JF01"),
-+		},
-+	},
-+	{ },
-+};
-+
- int __init acpi_ec_init(void)
+ #if IS_ENABLED(CONFIG_NF_DEFRAG_IPV6)
+ struct netns_nf_frag {
+-	struct netns_sysctl_ipv6 sysctl;
+ 	struct netns_frags	frags;
+ };
+ #endif
+--- a/net/ipv6/netfilter/nf_conntrack_reasm.c
++++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
+@@ -107,7 +107,7 @@ static int nf_ct_frag6_sysctl_register(s
+ 	if (hdr == NULL)
+ 		goto err_reg;
+ 
+-	net->nf_frag.sysctl.frags_hdr = hdr;
++	net->nf_frag_frags_hdr = hdr;
+ 	return 0;
+ 
+ err_reg:
+@@ -121,8 +121,8 @@ static void __net_exit nf_ct_frags6_sysc
  {
- 	int result;
-@@ -2041,6 +2052,15 @@ int __init acpi_ec_init(void)
- 	if (result)
- 		return result;
+ 	struct ctl_table *table;
  
-+	/*
-+	 * Disable EC wakeup on following systems to prevent periodic
-+	 * wakeup from EC GPE.
-+	 */
-+	if (dmi_check_system(acpi_ec_no_wakeup)) {
-+		ec_no_wakeup = true;
-+		pr_debug("Disabling EC wakeup on suspend-to-idle\n");
-+	}
-+
- 	/* Drivers must be started after acpi_ec_query_init() */
- 	dsdt_fail = acpi_bus_register_driver(&acpi_ec_driver);
- 	/*
+-	table = net->nf_frag.sysctl.frags_hdr->ctl_table_arg;
+-	unregister_net_sysctl_table(net->nf_frag.sysctl.frags_hdr);
++	table = net->nf_frag_frags_hdr->ctl_table_arg;
++	unregister_net_sysctl_table(net->nf_frag_frags_hdr);
+ 	if (!net_eq(net, &init_net))
+ 		kfree(table);
+ }
 
 
