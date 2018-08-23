@@ -3,48 +3,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AF27C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 21:24:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA0B3C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 21:27:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3AC92150F
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 21:24:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3AC92150F
+	by mail.kernel.org (Postfix) with ESMTP id 73D712150F
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 21:27:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73D712150F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728131AbeHXA4M (ORCPT
+        id S1728150AbeHXA7S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 20:56:12 -0400
-Received: from albert.telenet-ops.be ([195.130.137.90]:53168 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727580AbeHXA4M (ORCPT
+        Thu, 23 Aug 2018 20:59:18 -0400
+Received: from laurent.telenet-ops.be ([195.130.137.89]:45984 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727829AbeHXA7S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 20:56:12 -0400
+        Thu, 23 Aug 2018 20:59:18 -0400
 Received: from ramsan.of.borg ([84.194.111.163])
-        by albert.telenet-ops.be with bizsmtp
-        id SlQd1y0013XaVaC06lQdPb; Thu, 23 Aug 2018 23:24:37 +0200
+        by laurent.telenet-ops.be with bizsmtp
+        id SlTf1y00N3XaVaC01lTf2a; Thu, 23 Aug 2018 23:27:42 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.86_2)
         (envelope-from <geert@linux-m68k.org>)
-        id 1fsx5p-0005i0-0E; Thu, 23 Aug 2018 23:24:37 +0200
+        id 1fsx8l-0005ig-Im; Thu, 23 Aug 2018 23:27:39 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1fsx5o-0004Xu-Um; Thu, 23 Aug 2018 23:24:36 +0200
+        id 1fsx8l-0004o2-Gx; Thu, 23 Aug 2018 23:27:39 +0200
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-To:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Mathieu Othacehe <m.othacehe@gmail.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+To:     Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Stanislaw Gruszka <sgruszka@redhat.com>,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH] iio: light: isl29501: Simplify code to kill compiler warning
-Date:   Thu, 23 Aug 2018 23:24:35 +0200
-Message-Id: <20180823212436.17423-1-geert@linux-m68k.org>
+Subject: [PATCH] mt76: Fix comparisons with invalid hardware key index
+Date:   Thu, 23 Aug 2018 23:27:38 +0200
+Message-Id: <20180823212738.18431-1-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -56,57 +57,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 With gcc 4.1.2:
 
-    drivers/iio/proximity/isl29501.c: In function ‘isl29501_register_write’:
-    drivers/iio/proximity/isl29501.c:235: warning: ‘msb’ may be used uninitialized in this function
+    drivers/net/wireless/mediatek/mt76/mt76x0/tx.c: In function ‘mt76x0_tx’:
+    drivers/net/wireless/mediatek/mt76/mt76x0/tx.c:169: warning: comparison is always true due to limited range of data type
+    drivers/net/wireless/mediatek/mt76/mt76x2_tx_common.c: In function ‘mt76x2_tx’:
+    drivers/net/wireless/mediatek/mt76/mt76x2_tx_common.c:35: warning: comparison is always true due to limited range of data type
 
-While this is a false positive, it can easily be avoided by removing the
-"msb" intermediate variable.
-Remove the "lsb" intermediate variable for consistency.
+While assigning -1 to a u8 works fine, comparing with -1 does not work
+as expected.
+
+Fix this by comparing with 0xff, like is already done in some other
+places.
 
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
 Compile-tested only.
 ---
- drivers/iio/proximity/isl29501.c | 12 ++----------
- 1 file changed, 2 insertions(+), 10 deletions(-)
+ drivers/net/wireless/mediatek/mt76/mt76x0/tx.c        | 2 +-
+ drivers/net/wireless/mediatek/mt76/mt76x2_tx_common.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iio/proximity/isl29501.c b/drivers/iio/proximity/isl29501.c
-index e5e94540f404dd2c..5ae549075b27c50d 100644
---- a/drivers/iio/proximity/isl29501.c
-+++ b/drivers/iio/proximity/isl29501.c
-@@ -232,7 +232,6 @@ static u32 isl29501_register_write(struct isl29501_private *isl29501,
- 				   u32 value)
- {
- 	const struct isl29501_register_desc *reg = &isl29501_registers[name];
--	u8 msb, lsb;
- 	int ret;
+diff --git a/drivers/net/wireless/mediatek/mt76/mt76x0/tx.c b/drivers/net/wireless/mediatek/mt76/mt76x0/tx.c
+index 751b49c28ae53f0f..c45d05d5aab1d207 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt76x0/tx.c
++++ b/drivers/net/wireless/mediatek/mt76/mt76x0/tx.c
+@@ -166,7 +166,7 @@ void mt76x0_tx(struct ieee80211_hw *hw, struct ieee80211_tx_control *control,
+ 	if (sta) {
+ 		msta = (struct mt76_sta *) sta->drv_priv;
+ 		wcid = &msta->wcid;
+-	} else if (vif && (!info->control.hw_key && wcid->hw_key_idx != -1)) {
++	} else if (vif && (!info->control.hw_key && wcid->hw_key_idx != 0xff)) {
+ 		struct mt76_vif *mvif = (struct mt76_vif *)vif->drv_priv;
  
- 	if (!reg->msb && value > U8_MAX)
-@@ -241,22 +240,15 @@ static u32 isl29501_register_write(struct isl29501_private *isl29501,
- 	if (value > U16_MAX)
- 		return -ERANGE;
- 
--	if (!reg->msb) {
--		lsb = value & 0xFF;
--	} else {
--		msb = (value >> 8) & 0xFF;
--		lsb = value & 0xFF;
--	}
--
- 	mutex_lock(&isl29501->lock);
- 	if (reg->msb) {
- 		ret = i2c_smbus_write_byte_data(isl29501->client,
--						reg->msb, msb);
-+						reg->msb, value >> 8);
- 		if (ret < 0)
- 			goto err;
+ 		wcid = &mvif->group_wcid;
+diff --git a/drivers/net/wireless/mediatek/mt76/mt76x2_tx_common.c b/drivers/net/wireless/mediatek/mt76/mt76x2_tx_common.c
+index 36afb166fa3ffd29..c0ca0df84ed8b86a 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt76x2_tx_common.c
++++ b/drivers/net/wireless/mediatek/mt76/mt76x2_tx_common.c
+@@ -32,7 +32,7 @@ void mt76x2_tx(struct ieee80211_hw *hw, struct ieee80211_tx_control *control,
+ 		msta = (struct mt76x2_sta *)control->sta->drv_priv;
+ 		wcid = &msta->wcid;
+ 		/* sw encrypted frames */
+-		if (!info->control.hw_key && wcid->hw_key_idx != -1)
++		if (!info->control.hw_key && wcid->hw_key_idx != 0xff)
+ 			control->sta = NULL;
  	}
  
--	ret = i2c_smbus_write_byte_data(isl29501->client, reg->lsb, lsb);
-+	ret = i2c_smbus_write_byte_data(isl29501->client, reg->lsb, value);
- 
- err:
- 	mutex_unlock(&isl29501->lock);
 -- 
 2.17.1
 
