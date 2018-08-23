@@ -2,106 +2,107 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C678FC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:12:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B191DC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:12:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A1052147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:12:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AE68208F7
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:12:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KVZcd6sJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A1052147A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fw1YuDvu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AE68208F7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731713AbeHWRmN (ORCPT
+        id S1731838AbeHWRmZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 13:42:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50480 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726861AbeHWRmN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 13:42:13 -0400
-Received: from jouet.infradead.org (unknown [190.15.121.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9BDCE2147A;
-        Thu, 23 Aug 2018 14:12:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535033541;
-        bh=M1VWXvsP066sEGfChnDjqrQQfSNJptl4hkfGQyd7KdA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KVZcd6sJ3HKzzu+ppWS9rymlb9WWYCdG3INgrgd5YlpMMvHmPx6IUvDXu8UrVqRmN
-         mdzKvZlPqy9MilGzbPaakhgTAhU4yrRO0PlmhoBCKaLQpgLzCBI6yMIr/GRzuaMKt/
-         PN62259bfAzKmDblNba5bZhhbFFcr7O1teAwz6z0=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id A0BD0141C3F; Thu, 23 Aug 2018 11:12:19 -0300 (-03)
-Date:   Thu, 23 Aug 2018 11:12:19 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Martin =?utf-8?B?TGnFoWth?= <mliska@suse.cz>
-Cc:     linux-perf-users@vger.kernel.org,
-        lkml <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@redhat.com>
-Subject: Re: [PATCH] Properly interpret indirect call in perf annotate.
-Message-ID: <20180823141219.GA4766@kernel.org>
-References: <bd1f3932-be2b-85f9-7582-111ee0a43b07@suse.cz>
+        Thu, 23 Aug 2018 13:42:25 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:52335 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731770AbeHWRmZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 13:42:25 -0400
+Received: by mail-it0-f66.google.com with SMTP id g18-v6so2433387itg.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 07:12:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=eMDySztM5izmmLvYLP3Rg2VOoWkNHVUHpv4GzYZldEQ=;
+        b=Fw1YuDvuvp869TmvQNT97eMRwZEAWeavzhML817mAlIM75vvrKwXxRosvk1xImqeZk
+         eABLJaw4jMNfXRE8nuR9CopzNzIjx4/pbPR23n3RftUomaU28FbkPWlgz+18UiER5xNJ
+         a2IBjmbjTbquSee3m2oyhbAU1iXsRQ6io9iHA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=eMDySztM5izmmLvYLP3Rg2VOoWkNHVUHpv4GzYZldEQ=;
+        b=oT5HIo6eiewNfNup8U8qeprYpJS9zJT2cb3fdCsKpQhK5k5gXV8Kf74CFk+9IPCWQO
+         Gc1mnkV/lyN81LFZiQHCS5HOiWhhM/IRpNel7qcQ04CIvrT0KiLmHUG4OqtgKdhGjBaJ
+         OufcL+oPV4FuXm9whmNO16KhffwVcomEJX/0KqXbJnXY9Ge8sl4aR1lriBBFbZHz0TD2
+         CfnrKkWXnF4Cdgdv0KzY6PMG3zwcowo8n/eyFt54b3b5PF+yIXqRral7IBWorQ5Cfbvn
+         QKuNxu68V513SJIUjs9ZpHy53b5NS/cfzSXEgiPwBlkIAAfSjt/RCNsHrX37WOYJgVxr
+         LeQQ==
+X-Gm-Message-State: APzg51BJ3lnK/k0n18VDRShZjAARzNna5GiHx8EfjG65CPfaWx/ODbjm
+        YtOAzFmvTqyqz13NAe8UqRfzeh+DHR0I9z4CG8+ZDW2/yBk=
+X-Google-Smtp-Source: ANB0VdacTLB0zBc/gp5BDcP5jud4geaIwTTg4aVFEvksrXoAhP23R3OQ1MofYEx71C5Lz8dHnA/qg4/lR1RvhwxtdKo=
+X-Received: by 2002:a24:33c1:: with SMTP id k184-v6mr6873118itk.76.1535033552976;
+ Thu, 23 Aug 2018 07:12:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <bd1f3932-be2b-85f9-7582-111ee0a43b07@suse.cz>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Received: by 2002:a02:3541:0:0:0:0:0 with HTTP; Thu, 23 Aug 2018 07:12:32
+ -0700 (PDT)
+In-Reply-To: <CAL_Jsq+ppQP9icJVhpUYGj_JCyxudi0Z4=+mKiBueMKZftrQ7A@mail.gmail.com>
+References: <1534843809-4137-1-git-send-email-yamada.masahiro@socionext.com>
+ <1534843809-4137-2-git-send-email-yamada.masahiro@socionext.com>
+ <CAK7LNASr=rf_foQ7PDTNS440rx3TLuY_TBagfQ-gCHxXpFB2vw@mail.gmail.com>
+ <CAJe_ZhdZbUa2njAvSazGzv+7UgG+QHCTS+-Y-Ckqze+pMf9KQA@mail.gmail.com>
+ <CAK7LNAT3MufLZhFB8HDnch09WUdEcLyDCU05dTYroOwWYcx=pQ@mail.gmail.com>
+ <CAJe_ZheNp9t0DNQjmiQKMyZsbHBjMxqV87mE_3nQ1N_RS9znYQ@mail.gmail.com> <CAL_Jsq+ppQP9icJVhpUYGj_JCyxudi0Z4=+mKiBueMKZftrQ7A@mail.gmail.com>
+From:   Jassi Brar <jaswinder.singh@linaro.org>
+Date:   Thu, 23 Aug 2018 19:42:32 +0530
+Message-ID: <CAJe_Zhee-qQtAt7+k_LZ+CGabLBr3v3t2MYvbVYG9N1nHZcL=g@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: dmaengine: add DT binding for UniPhier
+ MIO DMAC
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Vinod <vkoul@kernel.org>,
+        "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" 
+        <dmaengine@vger.kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Aug 23, 2018 at 02:29:34PM +0200, Martin Liška escreveu:
-> The patch changes interpretation of:
-> callq  *0x8(%rbx)
-> 
-> from:
->   0.26 │     → callq  *8
-> to:
->   0.26 │     → callq  *0x8(%rbx)
-> 
-> in this can an address is followed by a register, thus
-> one can't parse only address.
+On 23 August 2018 at 18:51, Rob Herring <robh+dt@kernel.org> wrote:
+> On Thu, Aug 23, 2018 at 12:38 AM Jassi Brar <jaswinder.singh@linaro.org> wrote:
+>> On 23 August 2018 at 10:48, Masahiro Yamada
 
-Please mention one or two functions where such sequence appears, so that
-others can reproduce your before/after more quickly,
+>> >
+>> > If desired, I will export of_irq_count()
+>> > and use it from my driver.
+>> >
+>> If you don't want to leave too much footprint, you could do
+>>
+>>   count = 0;
+>>   while (of_irq_parse_one(dev, count, &irq) == 0) count++
+>>
+>> of_irq_parse_one() is already exported.
+>
+> Yes, but we really don't more users and drivers shouldn't be using it.
+> Grepping DT functions and when the only users are pretty much powerpc,
+> that's a good indication not to use the function.
+>
+> And you don't want to use of_irq_count either. platform_irq_count is
+> what should be used here. It's already exported.
+>
+Thanks, platform_irq_count() is definitely better.
 
-- Arnaldo
- 
-> Signed-off-by: Martin Liška <mliska@suse.cz>
-> ---
->  tools/perf/util/annotate.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
-> 
-> 
-
-> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-> index e4268b948e0e..e32ead4744bd 100644
-> --- a/tools/perf/util/annotate.c
-> +++ b/tools/perf/util/annotate.c
-> @@ -246,8 +246,14 @@ static int call__parse(struct arch *arch, struct ins_operands *ops, struct map_s
->  
->  indirect_call:
->  	tok = strchr(endptr, '*');
-> -	if (tok != NULL)
-> -		ops->target.addr = strtoull(tok + 1, NULL, 16);
-> +	if (tok != NULL) {
-> +		endptr++;
-> +
-> +		/* Indirect call can use a non-rip register and offset: callq  *0x8(%rbx).
-> +		 * Do not parse such instruction.  */
-> +		if (strstr(endptr, "(%r") == NULL)
-> +			ops->target.addr = strtoull(endptr, NULL, 16);
-> +	}
->  	goto find_target;
->  }
->  
-> 
-
+Yamada-san, for example, gpio-tegra.c infers the number of banks from
+platform_irq_count() rather than the 'gpio-banks' property.
