@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CD5CC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:58:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBDD8C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:58:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B0BF2084A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:58:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B0BF2084A
+	by mail.kernel.org (Postfix) with ESMTP id 814AA2084A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:58:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 814AA2084A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729740AbeHWM1I (ORCPT
+        id S1731678AbeHWM1L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:27:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52924 "EHLO
+        Thu, 23 Aug 2018 08:27:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52940 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726081AbeHWM1H (ORCPT
+        with ESMTP id S1729760AbeHWM1K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:27:07 -0400
+        Thu, 23 Aug 2018 08:27:10 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1B7A4C83;
-        Thu, 23 Aug 2018 08:58:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6ABC2CA0;
+        Thu, 23 Aug 2018 08:58:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Laight <David.Laight@ACULAB.COM>,
-        Taeung Song <treeze.taeung@gmail.com>,
+        stable@vger.kernel.org,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         "David S. Miller" <davem@davemloft.net>,
-        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 189/324] samples/bpf: Check the error of write() and read()
-Date:   Thu, 23 Aug 2018 09:54:15 +0200
-Message-Id: <20180823075005.620304410@linuxfoundation.org>
+Subject: [PATCH 4.17 198/324] sh_eth: fix invalid context bug while changing link options by ethtool
+Date:   Thu, 23 Aug 2018 09:54:24 +0200
+Message-Id: <20180823075006.061936446@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -53,65 +53,122 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Taeung Song <treeze.taeung@gmail.com>
+From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 
-[ Upstream commit 02a2f000a3629274bfad60bfc4de9edec49e63e7 ]
+[ Upstream commit 5cb3f52a11e18628fc4bee76dd14b1f0b76349de ]
 
-test_task_rename() and test_urandom_read()
-can be failed during write() and read(),
-So check the result of them.
+The change fixes sleep in atomic context bug, which is encountered
+every time when link settings are changed by ethtool.
 
-Reviewed-by: David Laight <David.Laight@ACULAB.COM>
-Signed-off-by: Taeung Song <treeze.taeung@gmail.com>
-Acked-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Since commit 35b5f6b1a82b ("PHYLIB: Locking fixes for PHY I/O
+potentially sleeping") phy_start_aneg() function utilizes a mutex
+to serialize changes to phy state, however that helper function is
+called in atomic context under a grabbed spinlock, because
+phy_start_aneg() is called by phy_ethtool_ksettings_set() and by
+replaced phy_ethtool_sset() helpers from phylib.
+
+Now duplex mode setting is enforced in sh_eth_adjust_link() only,
+also now RX/TX is disabled when link is put down or modifications
+to E-MAC registers ECMR and GECMR are expected for both cases of
+checked and ignored link status pin state from E-MAC interrupt handler.
+
+For reference the change is a partial rework of commit 1e1b812bbe10
+("sh_eth: fix handling of no LINK signal").
+
+Fixes: dc19e4e5e02f ("sh: sh_eth: Add support ethtool")
+Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- samples/bpf/test_overhead_user.c |   19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/renesas/sh_eth.c |   49 ++++++++++------------------------
+ 1 file changed, 15 insertions(+), 34 deletions(-)
 
---- a/samples/bpf/test_overhead_user.c
-+++ b/samples/bpf/test_overhead_user.c
-@@ -6,6 +6,7 @@
-  */
- #define _GNU_SOURCE
- #include <sched.h>
-+#include <errno.h>
- #include <stdio.h>
- #include <sys/types.h>
- #include <asm/unistd.h>
-@@ -44,8 +45,13 @@ static void test_task_rename(int cpu)
- 		exit(1);
+--- a/drivers/net/ethernet/renesas/sh_eth.c
++++ b/drivers/net/ethernet/renesas/sh_eth.c
+@@ -1855,8 +1855,15 @@ static void sh_eth_adjust_link(struct ne
+ {
+ 	struct sh_eth_private *mdp = netdev_priv(ndev);
+ 	struct phy_device *phydev = ndev->phydev;
++	unsigned long flags;
+ 	int new_state = 0;
+ 
++	spin_lock_irqsave(&mdp->lock, flags);
++
++	/* Disable TX and RX right over here, if E-MAC change is ignored */
++	if (mdp->cd->no_psr || mdp->no_ether_link)
++		sh_eth_rcv_snd_disable(ndev);
++
+ 	if (phydev->link) {
+ 		if (phydev->duplex != mdp->duplex) {
+ 			new_state = 1;
+@@ -1875,18 +1882,21 @@ static void sh_eth_adjust_link(struct ne
+ 			sh_eth_modify(ndev, ECMR, ECMR_TXF, 0);
+ 			new_state = 1;
+ 			mdp->link = phydev->link;
+-			if (mdp->cd->no_psr || mdp->no_ether_link)
+-				sh_eth_rcv_snd_enable(ndev);
+ 		}
+ 	} else if (mdp->link) {
+ 		new_state = 1;
+ 		mdp->link = 0;
+ 		mdp->speed = 0;
+ 		mdp->duplex = -1;
+-		if (mdp->cd->no_psr || mdp->no_ether_link)
+-			sh_eth_rcv_snd_disable(ndev);
  	}
- 	start_time = time_get_ns();
--	for (i = 0; i < MAX_CNT; i++)
--		write(fd, buf, sizeof(buf));
-+	for (i = 0; i < MAX_CNT; i++) {
-+		if (write(fd, buf, sizeof(buf)) < 0) {
-+			printf("task rename failed: %s\n", strerror(errno));
-+			close(fd);
-+			return;
-+		}
-+	}
- 	printf("task_rename:%d: %lld events per sec\n",
- 	       cpu, MAX_CNT * 1000000000ll / (time_get_ns() - start_time));
- 	close(fd);
-@@ -63,8 +69,13 @@ static void test_urandom_read(int cpu)
- 		exit(1);
- 	}
- 	start_time = time_get_ns();
--	for (i = 0; i < MAX_CNT; i++)
--		read(fd, buf, sizeof(buf));
-+	for (i = 0; i < MAX_CNT; i++) {
-+		if (read(fd, buf, sizeof(buf)) < 0) {
-+			printf("failed to read from /dev/urandom: %s\n", strerror(errno));
-+			close(fd);
-+			return;
-+		}
-+	}
- 	printf("urandom_read:%d: %lld events per sec\n",
- 	       cpu, MAX_CNT * 1000000000ll / (time_get_ns() - start_time));
- 	close(fd);
+ 
++	/* Enable TX and RX right over here, if E-MAC change is ignored */
++	if ((mdp->cd->no_psr || mdp->no_ether_link) && phydev->link)
++		sh_eth_rcv_snd_enable(ndev);
++
++	mmiowb();
++	spin_unlock_irqrestore(&mdp->lock, flags);
++
+ 	if (new_state && netif_msg_link(mdp))
+ 		phy_print_status(phydev);
+ }
+@@ -1977,39 +1987,10 @@ static int sh_eth_get_link_ksettings(str
+ static int sh_eth_set_link_ksettings(struct net_device *ndev,
+ 				     const struct ethtool_link_ksettings *cmd)
+ {
+-	struct sh_eth_private *mdp = netdev_priv(ndev);
+-	unsigned long flags;
+-	int ret;
+-
+ 	if (!ndev->phydev)
+ 		return -ENODEV;
+ 
+-	spin_lock_irqsave(&mdp->lock, flags);
+-
+-	/* disable tx and rx */
+-	sh_eth_rcv_snd_disable(ndev);
+-
+-	ret = phy_ethtool_ksettings_set(ndev->phydev, cmd);
+-	if (ret)
+-		goto error_exit;
+-
+-	if (cmd->base.duplex == DUPLEX_FULL)
+-		mdp->duplex = 1;
+-	else
+-		mdp->duplex = 0;
+-
+-	if (mdp->cd->set_duplex)
+-		mdp->cd->set_duplex(ndev);
+-
+-error_exit:
+-	mdelay(1);
+-
+-	/* enable tx and rx */
+-	sh_eth_rcv_snd_enable(ndev);
+-
+-	spin_unlock_irqrestore(&mdp->lock, flags);
+-
+-	return ret;
++	return phy_ethtool_ksettings_set(ndev->phydev, cmd);
+ }
+ 
+ /* If it is ever necessary to increase SH_ETH_REG_DUMP_MAX_REGS, the
 
 
