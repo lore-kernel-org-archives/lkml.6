@@ -2,204 +2,117 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE6F8C43615
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:45:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACE54C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:45:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78641206B5
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:45:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78641206B5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 67B6B2077B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:45:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67B6B2077B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732677AbeHWMN4 (ORCPT
+        id S1732614AbeHWMKu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:13:56 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:38239 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727384AbeHWMNx (ORCPT
+        Thu, 23 Aug 2018 08:10:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49992 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727530AbeHWMKu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:13:53 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7N8hrrE3189397
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 23 Aug 2018 01:43:53 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7N8hraL3189394;
-        Thu, 23 Aug 2018 01:43:53 -0700
-Date:   Thu, 23 Aug 2018 01:43:53 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-8b42b7e5e8b5692bc5e57342bf00c40d64978407@git.kernel.org>
-Cc:     namhyung@kernel.org, alexander.shishkin@linux.intel.com,
-        peterz@infradead.org, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, hpa@zytor.com, jolsa@kernel.org,
-        tglx@linutronix.de, acme@redhat.com, dsahern@gmail.com,
-        mpetlan@redhat.com
-Reply-To: tglx@linutronix.de, acme@redhat.com, mpetlan@redhat.com,
-          dsahern@gmail.com, hpa@zytor.com, mingo@kernel.org,
-          linux-kernel@vger.kernel.org, jolsa@kernel.org,
-          alexander.shishkin@linux.intel.com, peterz@infradead.org,
-          namhyung@kernel.org
-In-Reply-To: <20180817094813.15086-11-jolsa@kernel.org>
-References: <20180817094813.15086-11-jolsa@kernel.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf tools: Add is_compressed callback to
- compressions array
-Git-Commit-ID: 8b42b7e5e8b5692bc5e57342bf00c40d64978407
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 23 Aug 2018 08:10:50 -0400
+Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 695647F6;
+        Thu, 23 Aug 2018 08:42:13 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.17 060/324] pNFS: Always free the session slot on error in nfs4_layoutget_handle_exception
+Date:   Thu, 23 Aug 2018 09:52:06 +0200
+Message-Id: <20180823074958.846237857@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
+References: <20180823074955.885811006@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  8b42b7e5e8b5692bc5e57342bf00c40d64978407
-Gitweb:     https://git.kernel.org/tip/8b42b7e5e8b5692bc5e57342bf00c40d64978407
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Fri, 17 Aug 2018 11:48:10 +0200
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 20 Aug 2018 08:54:59 -0300
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
-perf tools: Add is_compressed callback to compressions array
+------------------
 
-Add is_compressed callback to the compressions array, that returns 0 if
-the file is compressed or != 0 if not.
+From: Trond Myklebust <trond.myklebust@hammerspace.com>
 
-The new callback is used to recognize the situation when we have a
-'compressed' object, like:
+[ Upstream commit 2dbf8dffbf35fd8f611083b9d9fe74fdccf912a3 ]
 
-  /lib/modules/.../drivers/net/ethernet/intel/igb/igb.ko.xz
+Right now, we can call nfs_commit_inode() while holding the session slot,
+which could lead to NFSv4 deadlocks. Ensure we only keep the slot if
+the server returned a layout that we have to process.
 
-but we need to read its debug data from debuginfo files, which might not
-be compressed, like:
-
-  /root/.debug/.build-id/d6/...c4b301f/debug
-
-So even for a 'compressed' object we read debug data from a plain
-uncompressed object. To keep this transparent, we detect this in
-decompress_kmodule() and return the file descriptor to the uncompressed
-file.
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Michael Petlan <mpetlan@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180817094813.15086-11-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/util/compress.h |  2 ++
- tools/perf/util/dso.c      | 23 ++++++++++++++++++++---
- tools/perf/util/lzma.c     |  5 +++++
- tools/perf/util/zlib.c     |  6 ++++++
- 4 files changed, 33 insertions(+), 3 deletions(-)
+ fs/nfs/nfs4proc.c |   17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
-diff --git a/tools/perf/util/compress.h b/tools/perf/util/compress.h
-index ecca688a25fb..892e92e7e7fc 100644
---- a/tools/perf/util/compress.h
-+++ b/tools/perf/util/compress.h
-@@ -4,10 +4,12 @@
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -8620,6 +8620,8 @@ nfs4_layoutget_handle_exception(struct r
  
- #ifdef HAVE_ZLIB_SUPPORT
- int gzip_decompress_to_file(const char *input, int output_fd);
-+bool gzip_is_compressed(const char *input);
- #endif
+ 	dprintk("--> %s tk_status => %d\n", __func__, -task->tk_status);
  
- #ifdef HAVE_LZMA_SUPPORT
- int lzma_decompress_to_file(const char *input, int output_fd);
-+bool lzma_is_compressed(const char *input);
- #endif
- 
- #endif /* PERF_COMPRESS_H */
-diff --git a/tools/perf/util/dso.c b/tools/perf/util/dso.c
-index cbeecf683333..8b9243f13b88 100644
---- a/tools/perf/util/dso.c
-+++ b/tools/perf/util/dso.c
-@@ -196,15 +196,16 @@ enum {
- static const struct {
- 	const char *fmt;
- 	int (*decompress)(const char *input, int output);
-+	bool (*is_compressed)(const char *input);
- } compressions[] = {
- 	[COMP_ID__NONE] = { .fmt = NULL, },
- #ifdef HAVE_ZLIB_SUPPORT
--	{ "gz", gzip_decompress_to_file },
-+	{ "gz", gzip_decompress_to_file, gzip_is_compressed },
- #endif
- #ifdef HAVE_LZMA_SUPPORT
--	{ "xz", lzma_decompress_to_file },
-+	{ "xz", lzma_decompress_to_file, lzma_is_compressed },
- #endif
--	{ NULL, NULL },
-+	{ NULL, NULL, NULL },
- };
- 
- static int is_supported_compression(const char *ext)
-@@ -262,6 +263,22 @@ static int decompress_kmodule(struct dso *dso, const char *name,
- 	if (dso->comp == COMP_ID__NONE)
- 		return -1;
- 
-+	/*
-+	 * We have proper compression id for DSO and yet the file
-+	 * behind the 'name' can still be plain uncompressed object.
-+	 *
-+	 * The reason is behind the logic we open the DSO object files,
-+	 * when we try all possible 'debug' objects until we find the
-+	 * data. So even if the DSO is represented by 'krava.xz' module,
-+	 * we can end up here opening ~/.debug/....23432432/debug' file
-+	 * which is not compressed.
-+	 *
-+	 * To keep this transparent, we detect this and return the file
-+	 * descriptor to the uncompressed file.
-+	 */
-+	if (!compressions[dso->comp].is_compressed(name))
-+		return open(name, O_RDONLY);
++	nfs4_sequence_free_slot(&lgp->res.seq_res);
 +
- 	fd = mkstemp(tmpbuf);
- 	if (fd < 0) {
- 		dso->load_errno = errno;
-diff --git a/tools/perf/util/lzma.c b/tools/perf/util/lzma.c
-index 07498eaddc08..7032caaf75eb 100644
---- a/tools/perf/util/lzma.c
-+++ b/tools/perf/util/lzma.c
-@@ -99,3 +99,8 @@ err_fclose:
- 	fclose(infile);
- 	return err;
- }
-+
-+bool lzma_is_compressed(const char *input __maybe_unused)
-+{
-+	return true;
-+}
-diff --git a/tools/perf/util/zlib.c b/tools/perf/util/zlib.c
-index a725b958cf31..e68317214679 100644
---- a/tools/perf/util/zlib.c
-+++ b/tools/perf/util/zlib.c
-@@ -5,6 +5,7 @@
- #include <sys/stat.h>
- #include <sys/mman.h>
- #include <zlib.h>
-+#include <linux/compiler.h>
+ 	switch (nfs4err) {
+ 	case 0:
+ 		goto out;
+@@ -8684,7 +8686,6 @@ nfs4_layoutget_handle_exception(struct r
+ 		goto out;
+ 	}
  
- #include "util/compress.h"
- #include "util/util.h"
-@@ -79,3 +80,8 @@ out_close:
- 
- 	return ret == Z_STREAM_END ? 0 : -1;
- }
+-	nfs4_sequence_free_slot(&lgp->res.seq_res);
+ 	err = nfs4_handle_exception(server, nfs4err, exception);
+ 	if (!status) {
+ 		if (exception->retry)
+@@ -8810,20 +8811,22 @@ nfs4_proc_layoutget(struct nfs4_layoutge
+ 	if (IS_ERR(task))
+ 		return ERR_CAST(task);
+ 	status = rpc_wait_for_completion_task(task);
+-	if (status == 0) {
++	if (status != 0)
++		goto out;
 +
-+bool gzip_is_compressed(const char *input __maybe_unused)
-+{
-+	return true;
-+}
++	/* if layoutp->len is 0, nfs4_layoutget_prepare called rpc_exit */
++	if (task->tk_status < 0 || lgp->res.layoutp->len == 0) {
+ 		status = nfs4_layoutget_handle_exception(task, lgp, &exception);
+ 		*timeout = exception.timeout;
+-	}
+-
++	} else
++		lseg = pnfs_layout_process(lgp);
++out:
+ 	trace_nfs4_layoutget(lgp->args.ctx,
+ 			&lgp->args.range,
+ 			&lgp->res.range,
+ 			&lgp->res.stateid,
+ 			status);
+ 
+-	/* if layoutp->len is 0, nfs4_layoutget_prepare called rpc_exit */
+-	if (status == 0 && lgp->res.layoutp->len)
+-		lseg = pnfs_layout_process(lgp);
+ 	rpc_put_task(task);
+ 	dprintk("<-- %s status=%d\n", __func__, status);
+ 	if (status)
+
+
