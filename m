@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 774CAC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 01:22:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B369C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 01:22:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 306B9208FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 01:22:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 306B9208FC
+	by mail.kernel.org (Postfix) with ESMTP id 4D78120936
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 01:22:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D78120936
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727622AbeHWEtW (ORCPT
+        id S1727832AbeHWEtg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 00:49:22 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39238 "EHLO mx1.redhat.com"
+        Thu, 23 Aug 2018 00:49:36 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39232 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726080AbeHWEtV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 00:49:21 -0400
+        id S1726985AbeHWEtT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 00:49:19 -0400
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EF6D540241C3;
-        Thu, 23 Aug 2018 01:22:09 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4DEB840241C3;
+        Thu, 23 Aug 2018 01:22:08 +0000 (UTC)
 Received: from whitewolf.lyude.net.com (ovpn-124-163.rdu2.redhat.com [10.10.124.163])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 357AC2026D74;
-        Thu, 23 Aug 2018 01:22:09 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D92152026D74;
+        Thu, 23 Aug 2018 01:22:07 +0000 (UTC)
 From:   Lyude Paul <lyude@redhat.com>
 To:     nouveau@lists.freedesktop.org
 Cc:     Jeffery Miller <jmiller@neverware.com>,
@@ -37,229 +37,79 @@ Cc:     Jeffery Miller <jmiller@neverware.com>,
         Ben Skeggs <bskeggs@redhat.com>,
         David Airlie <airlied@linux.ie>,
         dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] drm/nouveau: Refactor nvXX_backlight_init()
-Date:   Wed, 22 Aug 2018 21:21:50 -0400
-Message-Id: <20180823012151.20099-6-lyude@redhat.com>
+Subject: [PATCH 3/5] drm/nouveau: s/nouveau_backlight_exit/nouveau_backlight_fini/
+Date:   Wed, 22 Aug 2018 21:21:48 -0400
+Message-Id: <20180823012151.20099-4-lyude@redhat.com>
 In-Reply-To: <20180823012151.20099-1-lyude@redhat.com>
 References: <20180823012151.20099-1-lyude@redhat.com>
 X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 23 Aug 2018 01:22:10 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 23 Aug 2018 01:22:10 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 23 Aug 2018 01:22:08 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 23 Aug 2018 01:22:08 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There's literally no difference between any of the backlight init
-functions besides the backlight properties they set and the backlight
-callbacks that they set, so move all of the duplicated backlight init
-code out of there and into nouveau_backlight_init().
-
-This gets rid of a lot of copy pasta!
+More consistent with the rest of the codebase, no functional changes
+here.
 
 Signed-off-by: Lyude Paul <lyude@redhat.com>
 Cc: Jeffery Miller <jmiller@neverware.com>
 Cc: Karol Herbst <kherbst@redhat.com>
 ---
- drivers/gpu/drm/nouveau/nouveau_backlight.c | 131 +++++++++-----------
- 1 file changed, 57 insertions(+), 74 deletions(-)
+ drivers/gpu/drm/nouveau/nouveau_backlight.c | 2 +-
+ drivers/gpu/drm/nouveau/nouveau_connector.c | 2 +-
+ drivers/gpu/drm/nouveau/nouveau_connector.h | 4 ++--
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/gpu/drm/nouveau/nouveau_backlight.c b/drivers/gpu/drm/nouveau/nouveau_backlight.c
-index 7ad90e7610a1..0712b2688e18 100644
+index 3e4874f405ab..017d5b7924bb 100644
 --- a/drivers/gpu/drm/nouveau/nouveau_backlight.c
 +++ b/drivers/gpu/drm/nouveau/nouveau_backlight.c
-@@ -94,48 +94,20 @@ static const struct backlight_ops nv40_bl_ops = {
- };
- 
- static int
--nv40_backlight_init(struct drm_connector *connector)
-+nv40_backlight_init(struct drm_connector *connector,
-+		    struct backlight_properties *props,
-+		    const struct backlight_ops **ops)
- {
- 	struct nouveau_drm *drm = nouveau_drm(connector->dev);
--	struct nouveau_backlight *bl;
- 	struct nvif_object *device = &drm->client.device.object;
--	struct backlight_properties props;
--	char backlight_name[BL_NAME_SIZE];
--	int ret = 0;
- 
- 	if (!(nvif_rd32(device, NV40_PMC_BACKLIGHT) & NV40_PMC_BACKLIGHT_MASK))
--		return 0;
--
--	bl = kzalloc(sizeof(*bl), GFP_KERNEL);
--	if (!bl)
--		return -ENOMEM;
--
--	memset(&props, 0, sizeof(struct backlight_properties));
--	props.type = BACKLIGHT_RAW;
--	props.max_brightness = 31;
--	if (!nouveau_get_backlight_name(backlight_name, bl)) {
--		NV_ERROR(drm, "Failed to retrieve a unique name for the backlight interface\n");
--		goto fail_alloc;
--	}
--
--	bl->dev = backlight_device_register(backlight_name, connector->kdev,
--					    drm, &nv40_bl_ops, &props);
--	if (IS_ERR(bl->dev)) {
--		if (bl->id >= 0)
--			ida_simple_remove(&bl_ida, bl->id);
--
--		ret = PTR_ERR(bl->dev);
--		goto fail_alloc;
--	}
--
--	nouveau_connector(connector)->backlight = bl;
--	bl->dev->props.brightness = nv40_get_intensity(bl->dev);
--	backlight_update_status(bl->dev);
-+		return -ENODEV;
- 
-+	props->type = BACKLIGHT_RAW;
-+	props->max_brightness = 31;
-+	*ops = &nv40_bl_ops;
- 	return 0;
--fail_alloc:
--	kfree(bl);
--	return ret;
- }
- 
- static int
-@@ -221,16 +193,13 @@ static const struct backlight_ops nva3_bl_ops = {
- };
- 
- static int
--nv50_backlight_init(struct drm_connector *connector)
-+nv50_backlight_init(struct drm_connector *connector,
-+		    struct backlight_properties *props,
-+		    const struct backlight_ops **ops)
- {
- 	struct nouveau_drm *drm = nouveau_drm(connector->dev);
- 	struct nvif_object *device = &drm->client.device.object;
- 	struct nouveau_encoder *nv_encoder;
--	struct nouveau_backlight *bl;
--	struct backlight_properties props;
--	const struct backlight_ops *ops;
--	char backlight_name[BL_NAME_SIZE];
--	int ret = 0;
- 
- 	nv_encoder = find_encoder(connector, DCB_OUTPUT_LVDS);
- 	if (!nv_encoder) {
-@@ -240,52 +209,31 @@ nv50_backlight_init(struct drm_connector *connector)
- 	}
- 
- 	if (!nvif_rd32(device, NV50_PDISP_SOR_PWM_CTL(ffs(nv_encoder->dcb->or) - 1)))
--		return 0;
--
--	bl = kzalloc(sizeof(*bl), GFP_KERNEL);
--	if (!bl)
--		return -ENOMEM;
-+		return -ENODEV;
- 
- 	if (drm->client.device.info.chipset <= 0xa0 ||
- 	    drm->client.device.info.chipset == 0xaa ||
- 	    drm->client.device.info.chipset == 0xac)
--		ops = &nv50_bl_ops;
-+		*ops = &nv50_bl_ops;
- 	else
--		ops = &nva3_bl_ops;
-+		*ops = &nva3_bl_ops;
- 
--	memset(&props, 0, sizeof(struct backlight_properties));
--	props.type = BACKLIGHT_RAW;
--	props.max_brightness = 100;
--	if (!nouveau_get_backlight_name(backlight_name, bl)) {
--		NV_ERROR(drm, "Failed to retrieve a unique name for the backlight interface\n");
--		goto fail_alloc;
--	}
--
--	bl->dev = backlight_device_register(backlight_name, connector->kdev,
--					    nv_encoder, ops, &props);
--	if (IS_ERR(bl->dev)) {
--		if (bl->id >= 0)
--			ida_simple_remove(&bl_ida, bl->id);
-+	props->type = BACKLIGHT_RAW;
-+	props->max_brightness = 100;
- 
--		ret = PTR_ERR(bl->dev);
--		goto fail_alloc;
--	}
--
--	nouveau_connector(connector)->backlight = bl;
--	bl->dev->props.brightness = bl->dev->ops->get_brightness(bl->dev);
--	backlight_update_status(bl->dev);
- 	return 0;
--
--fail_alloc:
--	kfree(bl);
--	return ret;
- }
- 
- int
- nouveau_backlight_init(struct drm_connector *connector)
- {
- 	struct nouveau_drm *drm = nouveau_drm(connector->dev);
-+	struct nouveau_backlight *bl;
- 	struct nvif_device *device = &drm->client.device;
-+	char backlight_name[BL_NAME_SIZE];
-+	struct backlight_properties props = {0};
-+	const struct backlight_ops *ops;
-+	int ret;
- 
- 	if (apple_gmux_present()) {
- 		NV_INFO(drm, "Apple GMUX detected: not registering Nouveau backlight interface\n");
-@@ -298,15 +246,50 @@ nouveau_backlight_init(struct drm_connector *connector)
- 
- 	switch (device->info.family) {
- 	case NV_DEVICE_INFO_V0_CURIE:
--		return nv40_backlight_init(connector);
-+		ret = nv40_backlight_init(connector, &props, &ops);
-+		break;
- 	case NV_DEVICE_INFO_V0_TESLA:
- 	case NV_DEVICE_INFO_V0_FERMI:
- 	case NV_DEVICE_INFO_V0_KEPLER:
- 	case NV_DEVICE_INFO_V0_MAXWELL:
--		return nv50_backlight_init(connector);
-+		ret = nv50_backlight_init(connector, &props, &ops);
-+		break;
- 	default:
- 		return 0;
- 	}
-+
-+	if (ret == -ENODEV)
-+		return 0;
-+	else if (ret)
-+		return ret;
-+
-+	bl = kzalloc(sizeof(*bl), GFP_KERNEL);
-+	if (!bl)
-+		return -ENOMEM;
-+
-+	if (!nouveau_get_backlight_name(backlight_name, bl)) {
-+		NV_ERROR(drm, "Failed to retrieve a unique name for the backlight interface\n");
-+		goto fail_alloc;
-+	}
-+
-+	bl->dev = backlight_device_register(backlight_name, connector->kdev,
-+					    drm, ops, &props);
-+	if (IS_ERR(bl->dev)) {
-+		if (bl->id >= 0)
-+			ida_simple_remove(&bl_ida, bl->id);
-+		ret = PTR_ERR(bl->dev);
-+		goto fail_alloc;
-+	}
-+
-+	nouveau_connector(connector)->backlight = bl;
-+	bl->dev->props.brightness = bl->dev->ops->get_brightness(bl->dev);
-+	backlight_update_status(bl->dev);
-+
-+	return 0;
-+
-+fail_alloc:
-+	kfree(bl);
-+	return ret;
+@@ -309,7 +309,7 @@ nouveau_backlight_init(struct drm_connector *connector)
  }
  
  void
+-nouveau_backlight_exit(struct drm_connector *connector)
++nouveau_backlight_fini(struct drm_connector *connector)
+ {
+ 	struct nouveau_connector *nv_conn = nouveau_connector(connector);
+ 	struct nouveau_backlight *bl = nv_conn->backlight;
+diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.c b/drivers/gpu/drm/nouveau/nouveau_connector.c
+index 767e892de9c4..3b288be9c3f7 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_connector.c
++++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
+@@ -911,7 +911,7 @@ nouveau_connector_late_register(struct drm_connector *connector)
+ static void
+ nouveau_connector_early_unregister(struct drm_connector *connector)
+ {
+-	nouveau_backlight_exit(connector);
++	nouveau_backlight_fini(connector);
+ }
+ 
+ static int
+diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.h b/drivers/gpu/drm/nouveau/nouveau_connector.h
+index 5465ae82fb9f..76e79717e451 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_connector.h
++++ b/drivers/gpu/drm/nouveau/nouveau_connector.h
+@@ -190,7 +190,7 @@ struct drm_display_mode *nouveau_conn_native_mode(struct drm_connector *);
+ 
+ #ifdef CONFIG_DRM_NOUVEAU_BACKLIGHT
+ extern int nouveau_backlight_init(struct drm_connector *);
+-extern void nouveau_backlight_exit(struct drm_connector *);
++extern void nouveau_backlight_fini(struct drm_connector *);
+ extern void nouveau_backlight_ctor(void);
+ extern void nouveau_backlight_dtor(void);
+ #else
+@@ -201,7 +201,7 @@ nouveau_backlight_init(struct drm_connector *connector)
+ }
+ 
+ static inline void
+-nouveau_backlight_exit(struct drm_connector *connector) {
++nouveau_backlight_fini(struct drm_connector *connector) {
+ }
+ 
+ static inline void
 -- 
 2.17.1
 
