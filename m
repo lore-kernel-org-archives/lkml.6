@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4107BC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:11:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 271A3C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:11:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05FA420C0C
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:11:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05FA420C0C
+	by mail.kernel.org (Postfix) with ESMTP id E1D1820C0D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:11:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1D1820C0D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729929AbeHWLkL (ORCPT
+        id S1729945AbeHWLkO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:40:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45828 "EHLO
+        Thu, 23 Aug 2018 07:40:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45846 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728918AbeHWLkK (ORCPT
+        with ESMTP id S1728918AbeHWLkN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:40:10 -0400
+        Thu, 23 Aug 2018 07:40:13 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EFF1EC7B;
-        Thu, 23 Aug 2018 08:11:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 26C36C83;
+        Thu, 23 Aug 2018 08:11:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Madalin Bucur <madalin.bucur@nxp.com>, netdev@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org,
+        stable@vger.kernel.org, David Lechner <david@lechnology.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 110/130] net/ethernet/freescale/fman: fix cross-build error
-Date:   Thu, 23 Aug 2018 09:53:46 +0200
-Message-Id: <20180823074934.193429161@linuxfoundation.org>
+Subject: [PATCH 4.9 111/130] net: usb: rtl8150: demote allmulti message to dev_dbg()
+Date:   Thu, 23 Aug 2018 09:53:47 +0200
+Message-Id: <20180823074934.264807120@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
 References: <20180823074927.161454870@linuxfoundation.org>
@@ -53,37 +51,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: David Lechner <david@lechnology.com>
 
-[ Upstream commit c133459765fae249ba482f62e12f987aec4376f0 ]
+[ Upstream commit 3a9b0455062ffb9d2f6cd4473a76e3456f318c9f ]
 
-  CC [M]  drivers/net/ethernet/freescale/fman/fman.o
-In file included from ../drivers/net/ethernet/freescale/fman/fman.c:35:
-../include/linux/fsl/guts.h: In function 'guts_set_dmacr':
-../include/linux/fsl/guts.h:165:2: error: implicit declaration of function 'clrsetbits_be32' [-Werror=implicit-function-declaration]
-  clrsetbits_be32(&guts->dmacr, 3 << shift, device << shift);
-  ^~~~~~~~~~~~~~~
+This driver can spam the kernel log with multiple messages of:
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Madalin Bucur <madalin.bucur@nxp.com>
-Cc: netdev@vger.kernel.org
-Cc: linuxppc-dev@lists.ozlabs.org
+    net eth0: eth0: allmulti set
+
+Usually 4 or 8 at a time (probably because of using ConnMan).
+
+This message doesn't seem useful, so let's demote it from dev_info()
+to dev_dbg().
+
+Signed-off-by: David Lechner <david@lechnology.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/fsl/guts.h |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/usb/rtl8150.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/include/linux/fsl/guts.h
-+++ b/include/linux/fsl/guts.h
-@@ -16,6 +16,7 @@
- #define __FSL_GUTS_H__
- 
- #include <linux/types.h>
-+#include <linux/io.h>
- 
- /**
-  * Global Utility Registers.
+--- a/drivers/net/usb/rtl8150.c
++++ b/drivers/net/usb/rtl8150.c
+@@ -681,7 +681,7 @@ static void rtl8150_set_multicast(struct
+ 		   (netdev->flags & IFF_ALLMULTI)) {
+ 		rx_creg &= 0xfffe;
+ 		rx_creg |= 0x0002;
+-		dev_info(&netdev->dev, "%s: allmulti set\n", netdev->name);
++		dev_dbg(&netdev->dev, "%s: allmulti set\n", netdev->name);
+ 	} else {
+ 		/* ~RX_MULTICAST, ~RX_PROMISCUOUS */
+ 		rx_creg &= 0x00fc;
 
 
