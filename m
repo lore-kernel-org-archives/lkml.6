@@ -6,41 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1DBDC43615
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:52:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8B62C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:52:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8ACE020839
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:52:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ACE020839
+	by mail.kernel.org (Postfix) with ESMTP id 9E4D420A8B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:52:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E4D420A8B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387933AbeHWMVT (ORCPT
+        id S2387946AbeHWMVW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:21:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51782 "EHLO
+        Thu, 23 Aug 2018 08:21:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51798 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733210AbeHWMVS (ORCPT
+        with ESMTP id S1733155AbeHWMVW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:21:18 -0400
+        Thu, 23 Aug 2018 08:21:22 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 54D4FC74;
-        Thu, 23 Aug 2018 08:52:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A9E1DC5C;
+        Thu, 23 Aug 2018 08:52:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jacek Tomaka <jacekt@dug.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Frederic Weisbecker <frederic@kernel.org>,
+        stable@vger.kernel.org, Xunlei Pang <xlpang@linux.alibaba.com>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ben Segall <bsegall@google.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 168/324] sched/nohz: Skip remote tick on idle task entirely
-Date:   Thu, 23 Aug 2018 09:53:54 +0200
-Message-Id: <20180823075004.577143309@linuxfoundation.org>
+Subject: [PATCH 4.17 169/324] sched/fair: Fix bandwidth timer clock drift condition
+Date:   Thu, 23 Aug 2018 09:53:55 +0200
+Message-Id: <20180823075004.638353859@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -57,120 +55,133 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Frederic Weisbecker <frederic@kernel.org>
+From: Xunlei Pang <xlpang@linux.alibaba.com>
 
-[ Upstream commit d9c0ffcabd6aae7ff1e34e8078354c13bb9f1183 ]
+[ Upstream commit 512ac999d2755d2b7109e996a76b6fb8b888631d ]
 
-Some people have reported that the warning in sched_tick_remote()
-occasionally triggers, especially in favour of some RCU-Torture
-pressure:
+I noticed that cgroup task groups constantly get throttled even
+if they have low CPU usage, this causes some jitters on the response
+time to some of our business containers when enabling CPU quotas.
 
-	WARNING: CPU: 11 PID: 906 at kernel/sched/core.c:3138 sched_tick_remote+0xb6/0xc0
-	Modules linked in:
-	CPU: 11 PID: 906 Comm: kworker/u32:3 Not tainted 4.18.0-rc2+ #1
-	Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-	Workqueue: events_unbound sched_tick_remote
-	RIP: 0010:sched_tick_remote+0xb6/0xc0
-	Code: e8 0f 06 b8 00 c6 03 00 fb eb 9d 8b 43 04 85 c0 75 8d 48 8b 83 e0 0a 00 00 48 85 c0 75 81 eb 88 48 89 df e8 bc fe ff ff eb aa <0f> 0b eb
-	+c5 66 0f 1f 44 00 00 bf 17 00 00 00 e8 b6 2e fe ff 0f b6
-	Call Trace:
-	 process_one_work+0x1df/0x3b0
-	 worker_thread+0x44/0x3d0
-	 kthread+0xf3/0x130
-	 ? set_worker_desc+0xb0/0xb0
-	 ? kthread_create_worker_on_cpu+0x70/0x70
-	 ret_from_fork+0x35/0x40
+It's very simple to reproduce:
 
-This happens when the remote tick applies on an idle task. Usually the
-idle_cpu() check avoids that, but it is performed before we lock the
-runqueue and it is therefore racy. It was intended to be that way in
-order to prevent from useless runqueue locks since idle task tick
-callback is a no-op.
+  mkdir /sys/fs/cgroup/cpu/test
+  cd /sys/fs/cgroup/cpu/test
+  echo 100000 > cpu.cfs_quota_us
+  echo $$ > tasks
 
-Now if the racy check slips out of our hands and we end up remotely
-ticking an idle task, the empty task_tick_idle() is harmless. Still
-it won't pass the WARN_ON_ONCE() test that ensures rq_clock_task() is
-not too far from curr->se.exec_start because update_curr_idle() doesn't
-update the exec_start value like other scheduler policies. Hence the
-reported false positive.
+then repeat:
 
-So let's have another check, while the rq is locked, to make sure we
-don't remote tick on an idle task. The lockless idle_cpu() still applies
-to avoid unecessary rq lock contention.
+  cat cpu.stat | grep nr_throttled  # nr_throttled will increase steadily
 
-Reported-by: Jacek Tomaka <jacekt@dug.com>
-Reported-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Reported-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+After some analysis, we found that cfs_rq::runtime_remaining will
+be cleared by expire_cfs_rq_runtime() due to two equal but stale
+"cfs_{b|q}->runtime_expires" after period timer is re-armed.
+
+The current condition to judge clock drift in expire_cfs_rq_runtime()
+is wrong, the two runtime_expires are actually the same when clock
+drift happens, so this condtion can never hit. The orginal design was
+correctly done by this commit:
+
+  a9cf55b28610 ("sched: Expire invalid runtime")
+
+... but was changed to be the current implementation due to its locking bug.
+
+This patch introduces another way, it adds a new field in both structures
+cfs_rq and cfs_bandwidth to record the expiration update sequence, and
+uses them to figure out if clock drift happens (true if they are equal).
+
+Signed-off-by: Xunlei Pang <xlpang@linux.alibaba.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Ben Segall <bsegall@google.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/1530203381-31234-1-git-send-email-frederic@kernel.org
+Fixes: 51f2176d74ac ("sched/fair: Fix unlocked reads of some cfs_b->quota/period")
+Link: http://lkml.kernel.org/r/20180620101834.24455-1-xlpang@linux.alibaba.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/sched/core.c |   40 +++++++++++++++++++++++-----------------
- 1 file changed, 23 insertions(+), 17 deletions(-)
+ kernel/sched/fair.c  |   14 ++++++++------
+ kernel/sched/sched.h |    6 ++++--
+ 2 files changed, 12 insertions(+), 8 deletions(-)
 
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -3127,7 +3127,9 @@ static void sched_tick_remote(struct wor
- 	struct tick_work *twork = container_of(dwork, struct tick_work, work);
- 	int cpu = twork->cpu;
- 	struct rq *rq = cpu_rq(cpu);
-+	struct task_struct *curr;
- 	struct rq_flags rf;
-+	u64 delta;
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -4549,6 +4549,7 @@ void __refill_cfs_bandwidth_runtime(stru
+ 	now = sched_clock_cpu(smp_processor_id());
+ 	cfs_b->runtime = cfs_b->quota;
+ 	cfs_b->runtime_expires = now + ktime_to_ns(cfs_b->period);
++	cfs_b->expires_seq++;
+ }
  
- 	/*
- 	 * Handle the tick only if it appears the remote CPU is running in full
-@@ -3136,24 +3138,28 @@ static void sched_tick_remote(struct wor
- 	 * statistics and checks timeslices in a time-independent way, regardless
- 	 * of when exactly it is running.
+ static inline struct cfs_bandwidth *tg_cfs_bandwidth(struct task_group *tg)
+@@ -4571,6 +4572,7 @@ static int assign_cfs_rq_runtime(struct
+ 	struct task_group *tg = cfs_rq->tg;
+ 	struct cfs_bandwidth *cfs_b = tg_cfs_bandwidth(tg);
+ 	u64 amount = 0, min_amount, expires;
++	int expires_seq;
+ 
+ 	/* note: this is a positive sum as runtime_remaining <= 0 */
+ 	min_amount = sched_cfs_bandwidth_slice() - cfs_rq->runtime_remaining;
+@@ -4587,6 +4589,7 @@ static int assign_cfs_rq_runtime(struct
+ 			cfs_b->idle = 0;
+ 		}
+ 	}
++	expires_seq = cfs_b->expires_seq;
+ 	expires = cfs_b->runtime_expires;
+ 	raw_spin_unlock(&cfs_b->lock);
+ 
+@@ -4596,8 +4599,10 @@ static int assign_cfs_rq_runtime(struct
+ 	 * spread between our sched_clock and the one on which runtime was
+ 	 * issued.
  	 */
--	if (!idle_cpu(cpu) && tick_nohz_tick_stopped_cpu(cpu)) {
--		struct task_struct *curr;
--		u64 delta;
--
--		rq_lock_irq(rq, &rf);
--		update_rq_clock(rq);
--		curr = rq->curr;
--		delta = rq_clock_task(rq) - curr->se.exec_start;
--
--		/*
--		 * Make sure the next tick runs within a reasonable
--		 * amount of time.
--		 */
--		WARN_ON_ONCE(delta > (u64)NSEC_PER_SEC * 3);
--		curr->sched_class->task_tick(rq, curr, 0);
--		rq_unlock_irq(rq, &rf);
--	}
-+	if (idle_cpu(cpu) || !tick_nohz_tick_stopped_cpu(cpu))
-+		goto out_requeue;
+-	if ((s64)(expires - cfs_rq->runtime_expires) > 0)
++	if (cfs_rq->expires_seq != expires_seq) {
++		cfs_rq->expires_seq = expires_seq;
+ 		cfs_rq->runtime_expires = expires;
++	}
  
-+	rq_lock_irq(rq, &rf);
-+	curr = rq->curr;
-+	if (is_idle_task(curr))
-+		goto out_unlock;
-+
-+	update_rq_clock(rq);
-+	delta = rq_clock_task(rq) - curr->se.exec_start;
-+
-+	/*
-+	 * Make sure the next tick runs within a reasonable
-+	 * amount of time.
-+	 */
-+	WARN_ON_ONCE(delta > (u64)NSEC_PER_SEC * 3);
-+	curr->sched_class->task_tick(rq, curr, 0);
-+
-+out_unlock:
-+	rq_unlock_irq(rq, &rf);
-+
-+out_requeue:
- 	/*
- 	 * Run the remote tick once per second (1Hz). This arbitrary
- 	 * frequency is large enough to avoid overload but short enough
+ 	return cfs_rq->runtime_remaining > 0;
+ }
+@@ -4623,12 +4628,9 @@ static void expire_cfs_rq_runtime(struct
+ 	 * has not truly expired.
+ 	 *
+ 	 * Fortunately we can check determine whether this the case by checking
+-	 * whether the global deadline has advanced. It is valid to compare
+-	 * cfs_b->runtime_expires without any locks since we only care about
+-	 * exact equality, so a partial write will still work.
++	 * whether the global deadline(cfs_b->expires_seq) has advanced.
+ 	 */
+-
+-	if (cfs_rq->runtime_expires != cfs_b->runtime_expires) {
++	if (cfs_rq->expires_seq == cfs_b->expires_seq) {
+ 		/* extend local deadline, drift is bounded above by 2 ticks */
+ 		cfs_rq->runtime_expires += TICK_NSEC;
+ 	} else {
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -334,9 +334,10 @@ struct cfs_bandwidth {
+ 	u64			runtime;
+ 	s64			hierarchical_quota;
+ 	u64			runtime_expires;
++	int			expires_seq;
+ 
+-	int			idle;
+-	int			period_active;
++	short			idle;
++	short			period_active;
+ 	struct hrtimer		period_timer;
+ 	struct hrtimer		slack_timer;
+ 	struct list_head	throttled_cfs_rq;
+@@ -551,6 +552,7 @@ struct cfs_rq {
+ 
+ #ifdef CONFIG_CFS_BANDWIDTH
+ 	int			runtime_enabled;
++	int			expires_seq;
+ 	u64			runtime_expires;
+ 	s64			runtime_remaining;
+ 
 
 
