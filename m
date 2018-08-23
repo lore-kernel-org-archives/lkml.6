@@ -3,254 +3,128 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9F29C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 16:16:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FE4AC04E85
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 16:16:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C59F208FA
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 16:16:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C59F208FA
+	by mail.kernel.org (Postfix) with ESMTP id C47A72147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 16:16:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C47A72147A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726995AbeHWTrK (ORCPT
+        id S1727292AbeHWTrP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 15:47:10 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50580 "EHLO mx1.redhat.com"
+        Thu, 23 Aug 2018 15:47:15 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48290 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726562AbeHWTrK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 15:47:10 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        id S1726068AbeHWTrP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 15:47:15 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AE2E987A7F;
-        Thu, 23 Aug 2018 16:16:45 +0000 (UTC)
-Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id CE32BB278A;
-        Thu, 23 Aug 2018 16:16:43 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Roman Kagan <rkagan@virtuozzo.com>
-Cc:     kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
-        Wanpeng Li <wanpeng.li@hotmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 RESEND 5/5] KVM: x86: hyperv: implement PV IPI send hypercalls
-References: <20180822101832.31763-1-vkuznets@redhat.com>
-        <20180822101832.31763-6-vkuznets@redhat.com>
-        <20180823155623.GA5065@rkaganb.sw.ru>
-Date:   Thu, 23 Aug 2018 18:16:42 +0200
-In-Reply-To: <20180823155623.GA5065@rkaganb.sw.ru> (Roman Kagan's message of
-        "Thu, 23 Aug 2018 18:56:23 +0300")
-Message-ID: <87lg8x2h3p.fsf@vitty.brq.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8647640006EC;
+        Thu, 23 Aug 2018 16:16:51 +0000 (UTC)
+Received: from [10.36.112.33] (ovpn-112-33.ams2.redhat.com [10.36.112.33])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7EE1D2026DE4;
+        Thu, 23 Aug 2018 16:16:48 +0000 (UTC)
+Subject: Re: SEV guest regression in 4.18
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Brijesh Singh <brijesh.singh@amd.com>,
+        Borislav Petkov <bp@suse.de>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <20ad6cd5-394c-d3ae-d99c-b656d7ef8293@amd.com>
+ <20180821083911.GF24940@nazgul.tnic>
+ <3d46f44c-dd78-8fa9-02ac-8206676ffde9@amd.com>
+ <20180821151938.GA31212@nazgul.tnic>
+ <92e2b80c-0dcc-94be-8d3a-5e11e5cf2370@amd.com>
+ <20180822081417.GB4069@nazgul.tnic> <20180822150033.GA14200@linux.intel.com>
+ <4d6ee892-a34f-28b3-18b7-1c663eb281c6@amd.com>
+ <9635ebf0-7c99-6edf-1240-8dec28036a70@redhat.com>
+ <20180823152907.GA1488@linux.intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <60acb594-abe3-912f-9702-2f34961e575d@redhat.com>
+Date:   Thu, 23 Aug 2018 18:16:46 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 23 Aug 2018 16:16:45 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 23 Aug 2018 16:16:45 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
+In-Reply-To: <20180823152907.GA1488@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 23 Aug 2018 16:16:51 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 23 Aug 2018 16:16:51 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Roman Kagan <rkagan@virtuozzo.com> writes:
+On 23/08/2018 17:29, Sean Christopherson wrote:
+> On Thu, Aug 23, 2018 at 01:26:55PM +0200, Paolo Bonzini wrote:
+>> On 22/08/2018 22:11, Brijesh Singh wrote:
+>>>
+>>> Yes, this is one of approach I have in mind. It will avoid splitting
+>>> the larger pages; I am thinking that early in boot code we can lookup
+>>> for this special section and decrypt it in-place and probably maps with
+>>> C=0. Only downside, it will increase data section footprint a bit
+>>> because we need to align this section to PM_SIZE.
+>>
+>> If you can ensure it doesn't span a PMD, maybe it does not need to be
+>> aligned; you could establish a C=0 mapping of the whole 2M around it.
+> 
+> Wouldn't that result in exposing/leaking whatever code/data happened
+> to reside on the same 2M page (or corrupting it if the entire page
+> isn't decrypted)?  Or are you suggesting that we'd also leave the
+> encrypted mapping intact?
 
-> On Wed, Aug 22, 2018 at 12:18:32PM +0200, Vitaly Kuznetsov wrote:
->> Using hypercall for sending IPIs is faster because this allows to specify
->> any number of vCPUs (even > 64 with sparse CPU set), the whole procedure
->> will take only one VMEXIT.
->> 
->> Current Hyper-V TLFS (v5.0b) claims that HvCallSendSyntheticClusterIpi
->> hypercall can't be 'fast' (passing parameters through registers) but
->> apparently this is not true, Windows always uses it as 'fast' so we need
->> to support that.
->> 
->> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
->> ---
->>  Documentation/virtual/kvm/api.txt |   8 +++
->>  arch/x86/kvm/hyperv.c             | 109 ++++++++++++++++++++++++++++++++++++++
->>  arch/x86/kvm/trace.h              |  42 +++++++++++++++
->>  arch/x86/kvm/x86.c                |   1 +
->>  include/uapi/linux/kvm.h          |   1 +
->>  5 files changed, 161 insertions(+)
->
-> Looks like I forgot to respond to this one, sorry.
->
->> diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
->> index 7b83b176c662..832ea72d43c1 100644
->> --- a/Documentation/virtual/kvm/api.txt
->> +++ b/Documentation/virtual/kvm/api.txt
->> @@ -4690,3 +4690,11 @@ This capability indicates that KVM supports paravirtualized Hyper-V TLB Flush
->>  hypercalls:
->>  HvFlushVirtualAddressSpace, HvFlushVirtualAddressSpaceEx,
->>  HvFlushVirtualAddressList, HvFlushVirtualAddressListEx.
->> +
->> +8.19 KVM_CAP_HYPERV_SEND_IPI
->> +
->> +Architectures: x86
->> +
->> +This capability indicates that KVM supports paravirtualized Hyper-V IPI send
->> +hypercalls:
->> +HvCallSendSyntheticClusterIpi, HvCallSendSyntheticClusterIpiEx.
->> diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
->> index d1a911132b59..3183cf9bcb63 100644
->> --- a/arch/x86/kvm/hyperv.c
->> +++ b/arch/x86/kvm/hyperv.c
->> @@ -1360,6 +1360,101 @@ static u64 kvm_hv_flush_tlb(struct kvm_vcpu *current_vcpu, u64 ingpa,
->>  		((u64)rep_cnt << HV_HYPERCALL_REP_COMP_OFFSET);
->>  }
->>  
->> +static u64 kvm_hv_send_ipi(struct kvm_vcpu *current_vcpu, u64 ingpa, u64 outgpa,
->> +			   bool ex, bool fast)
->> +{
->> +	struct kvm *kvm = current_vcpu->kvm;
->> +	struct hv_send_ipi_ex send_ipi_ex;
->> +	struct hv_send_ipi send_ipi;
->> +	struct kvm_vcpu *vcpu;
->> +	unsigned long valid_bank_mask;
->> +	u64 sparse_banks[64];
->> +	int sparse_banks_len, bank, i;
->> +	struct kvm_lapic_irq irq = {.delivery_mode = APIC_DM_FIXED};
->> +	bool all_cpus;
->> +
->> +	if (!ex) {
->> +		if (!fast) {
->> +			if (unlikely(kvm_read_guest(kvm, ingpa, &send_ipi,
->> +						    sizeof(send_ipi))))
->> +				return HV_STATUS_INVALID_HYPERCALL_INPUT;
->> +			sparse_banks[0] = send_ipi.cpu_mask;
->> +			irq.vector = send_ipi.vector;
->> +		} else {
->> +			/* 'reserved' part of hv_send_ipi should be 0 */
->> +			if (unlikely(ingpa >> 32 != 0))
->> +				return HV_STATUS_INVALID_HYPERCALL_INPUT;
->> +			sparse_banks[0] = outgpa;
->> +			irq.vector = (u32)ingpa;
->> +		}
->> +		all_cpus = false;
->> +		valid_bank_mask = BIT_ULL(0);
->> +
->> +		trace_kvm_hv_send_ipi(irq.vector, sparse_banks[0]);
->> +	} else {
->> +		if (unlikely(kvm_read_guest(kvm, ingpa, &send_ipi_ex,
->> +					    sizeof(send_ipi_ex))))
->> +			return HV_STATUS_INVALID_HYPERCALL_INPUT;
->> +
->> +		trace_kvm_hv_send_ipi_ex(send_ipi_ex.vector,
->> +					 send_ipi_ex.vp_set.format,
->> +					 send_ipi_ex.vp_set.valid_bank_mask);
->> +
->> +		irq.vector = send_ipi_ex.vector;
->> +		valid_bank_mask = send_ipi_ex.vp_set.valid_bank_mask;
->> +		sparse_banks_len = bitmap_weight(&valid_bank_mask, 64) *
->> +			sizeof(sparse_banks[0]);
->> +
->> +		all_cpus = send_ipi_ex.vp_set.format == HV_GENERIC_SET_ALL;
->> +
->> +		if (!sparse_banks_len)
->> +			goto ret_success;
->> +
->> +		if (!all_cpus &&
->> +		    kvm_read_guest(kvm,
->> +				   ingpa + offsetof(struct hv_send_ipi_ex,
->> +						    vp_set.bank_contents),
->> +				   sparse_banks,
->> +				   sparse_banks_len))
->> +			return HV_STATUS_INVALID_HYPERCALL_INPUT;
->> +	}
->> +
->> +	if ((irq.vector < HV_IPI_LOW_VECTOR) ||
->> +	    (irq.vector > HV_IPI_HIGH_VECTOR))
->> +		return HV_STATUS_INVALID_HYPERCALL_INPUT;
->> +
->> +	if (all_cpus) {
->> +		kvm_for_each_vcpu(i, vcpu, kvm) {
->> +			/* We fail only when APIC is disabled */
->> +			if (!kvm_apic_set_irq(vcpu, &irq, NULL))
->> +				return HV_STATUS_INVALID_HYPERCALL_INPUT;
->> +		}
->> +		goto ret_success;
->> +	}
->> +
->> +	for_each_set_bit(bank, (unsigned long *)&valid_bank_mask,
->> +			 BITS_PER_LONG) {
->
-> I think you need exactly 64 rather than BITS_PER_LONG
->
->> +
->> +		for_each_set_bit(i, (unsigned long *)&sparse_banks[bank],
->> +				 BITS_PER_LONG) {
->
-> ditto
->
+Yes, exactly the latter, because...
 
-Sure, will do.
+> Does hardware include the C-bit in the cache tag?
 
->> +			u32 vp_index = bank * 64 + i;
->> +			struct kvm_vcpu *vcpu =
->> +				get_vcpu_by_vpidx(kvm, vp_index);
->> +
->> +			/* Unknown vCPU specified */
->> +			if (!vcpu)
->> +				return HV_STATUS_INVALID_HYPERCALL_INPUT;
->
-> You may have already fired some IPIs, so returning error here without
-> attempting the remaining vcpus in the request looks inconsistent to me.
->
-> I don't see a specified way to report partial success from this
-> hypercall.
->
-> I'd rather continue here.
->
+... the C-bit is effectively part of the physical address and hence of
+the cache tag.  The kernel is already relying on this to properly
+encrypt/decrypt pages, if I remember correctly.
 
-Basically, we have three choices:
-- Just bail (what we do now)
-- Ignore and continue returning success
-- Ignore and continue returning failure.
-
-but all of them are not perfect.
-
-We could've pre-validated the set but this is kind of expensive and no
-sane OS should be using invalid VP indexes.
-
->> +
->> +			/* We fail only when APIC is disabled */
->> +			if (!kvm_apic_set_irq(vcpu, &irq, NULL))
->> +				return HV_STATUS_INVALID_HYPERCALL_INPUT;
->
-> Same here.
->
-
-This is even worse as this can't be pre-validated reliably without
-pausing all vCPUs first.
-
-OK, let's switch to 'ignore and continue returning success'.
-
->> +		}
->> +	}
->> +
->> +ret_success:
->> +	return HV_STATUS_SUCCESS;
->> +}
->
-> To my personal taste, this would have been easier to read if the -ex and
-> non-ex versions were separate functions preparing the arguments (vector
-> and mask) and calling into a common helper function to send the ipis.
-
-I would agree but I think it was Radim's suggestion to unify ex- and
-non-ex versions of kvm_hv_flush_tlb() and sending IPIs is not any
-different.
-
-Radim, please let me know if you think we should split them again, I'll
-do it for both functions (either in this series or as a follow-up).
-
-Thanks,
-
--- 
-  Vitaly
+Paolo
