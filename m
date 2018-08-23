@@ -2,95 +2,69 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E40DC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 18:54:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11F62C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 18:57:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77D0E21557
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 18:54:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77D0E21557
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=angband.pl
+	by mail.kernel.org (Postfix) with ESMTP id AC2CA21557
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 18:57:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="E8nTP8xG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC2CA21557
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727456AbeHWWZ0 (ORCPT
+        id S1727440AbeHWW2Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 18:25:26 -0400
-Received: from tartarus.angband.pl ([89.206.35.136]:42810 "EHLO
-        tartarus.angband.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727058AbeHWWZ0 (ORCPT
+        Thu, 23 Aug 2018 18:28:24 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59764 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727058AbeHWW2Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 18:25:26 -0400
-Received: from kilobyte by tartarus.angband.pl with local (Exim 4.89)
-        (envelope-from <kilobyte@angband.pl>)
-        id 1fsukM-0001yn-1X; Thu, 23 Aug 2018 20:54:18 +0200
-Date:   Thu, 23 Aug 2018 20:54:17 +0200
-From:   Adam Borowski <kilobyte@angband.pl>
-To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc:     nicolas.pitre@linaro.org, josh@joshtriplett.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: Kernel-only deployments?
-Message-ID: <20180823185417.y3ung3b553f2d24a@angband.pl>
-References: <20180823174359.GA13033@linux.vnet.ibm.com>
+        Thu, 23 Aug 2018 18:28:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ufRSi3ui1X0UDUEaPQ/Cas/w6NU4n4AllTvL1i0R1Pw=; b=E8nTP8xGuLt0XcZ4Q/hsiloxR
+        ljTE8Vohz6NbyGkT5RDvLLiJKIDtWHQHjPmkuk+U7UKQb5QMTVLVkgsMANOL6Q0UeiD/WZJXIIIfB
+        dNsI/Vf39Q3LrFGqQNDhjCdywsPCM9n7oXIUu2sAt6AkgXbXm5WI2QTawZW18nqUphWNQdtfUmxw6
+        vG8DK5HbOZt+yjrIsr45aHXaTKkRdmTEQxz3yHzpUnOSNIt8A1dLrYiJJ5LcNs2nfIYnv+K8t8Omw
+        YkJSJJlE/LOtqsfl5+CyOwe5tmWZNpoDbTP54sePJj21R44pDV/iZegA6Z0GSfR2EWTQkmX2UaOlC
+        rOSgGCm+Q==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fsunK-0002Zu-Jq; Thu, 23 Aug 2018 18:57:22 +0000
+Date:   Thu, 23 Aug 2018 11:57:22 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Harry Cutts <hcutts@chromium.org>
+Cc:     linux-input <linux-input@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jiri Kosina <jiri.kosina@suse.cz>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH 1/3] Add the `REL_WHEEL_HI_RES` event code
+Message-ID: <20180823185722.GA24777@bombadil.infradead.org>
+References: <20180823183057.247630-1-hcutts@chromium.org>
+ <20180823183057.247630-2-hcutts@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180823174359.GA13033@linux.vnet.ibm.com>
-X-Junkbait: aaron@angband.pl, zzyx@angband.pl
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: kilobyte@angband.pl
-X-SA-Exim-Scanned: No (on tartarus.angband.pl); SAEximRunCond expanded to false
+In-Reply-To: <20180823183057.247630-2-hcutts@chromium.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 23, 2018 at 10:43:59AM -0700, Paul E. McKenney wrote:
-> The mkinitramfs approach results in about 40MB of initrd, and dracut
-> about 10MB.  Most of this is completely useless for rcutorture, which
-> isn't interested in mounting filesystems, opening devices, and almost
-> all of the other interesting things that mkinitramfs and dracut enable.
-> 
-> Those who know me will not be at all surprised to learn that I went
-> overboard making the resulting initrd as small as possible.  I started
-> by throwing out everything not absolutely needed by the dash and sleep
-> binaries, which got me down to about 2.5MB, 1.8MB of which was libc.
-> This situation of course prompted me to create an initrd containing
-> a statically linked binary named "init" and absolutely nothing else
-> (not even /dev or /tmp directories), which weighs in at not quite 800KB.
-> This is a great improvement over 10MB, to say nothing of 40MB, but 800KB
-> for a C-language "for" loop containing nothing more than a single call to
-> sleep()?
+On Thu, Aug 23, 2018 at 11:30:55AM -0700, Harry Cutts wrote:
+> +  - If a vertical scroll wheel supports high-resolution scrolling, this code
+> +    will be emitted in addition to REL_WHEEL. The value is the (approximate)
+> +    distance travelled by the user's finger, in 256ths of a millimeter.
 
-.globl _start
-.data
-req:    .8byte 999999999, 999999999
-.text
-_start:
-        mov     $35, %rax       # syscall: nanosleep
-        mov     $req, %rdi
-        xor     %rsi, %rsi
-        syscall
-        jmp     _start
-
-
-as sl.s -o sl.o
-ld sl.o -o init
-
-'Ere you go, no libc needed.  If your arch is not amd64, just say so.
-
-If you want to do anything more complex, though -- you really want musl
-or another lightweight libc instead.  Glibc is utterly unfit for static
-linking.
-
-
-Meow!
--- 
-⢀⣴⠾⠻⢶⣦⠀ .globl _start↵.data↵rc: .ascii "/etc/init.d/rcS\0"↵.text↵_start
-⣾⠁⢰⠒⠀⣿⡁ mov $57,%rax↵syscall↵cmp $0,%rax↵jne child↵parent:↵mov $61,%rax
-⢿⡄⠘⠷⠚⠋⠀ mov $-1,%rdi↵xor %rsi,%rsi↵xor %rdx,%rdx↵syscall↵jmp parent↵child:
-⠈⠳⣄⠀⠀⠀⠀ mov $59,%rax↵mov $rc,%rdi↵xor %rsi,%rsi↵xor %rdx,%rdx↵syscall
+Is it too late to change this to an actual unit like micrometres?
