@@ -2,93 +2,173 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 192CDC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 10:57:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 936C3C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 10:57:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA05E21537
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 10:57:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44B1A21532
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 10:57:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U3JQs8iz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA05E21537
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="Ln7zISwP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44B1A21532
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730780AbeHWO0Z (ORCPT
+        id S1730832AbeHWO0t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 10:26:25 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:44074 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726556AbeHWO0Z (ORCPT
+        Thu, 23 Aug 2018 10:26:49 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:37495 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726891AbeHWO0s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 10:26:25 -0400
-Received: by mail-pl0-f66.google.com with SMTP id ba4-v6so2236818plb.11
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 03:57:16 -0700 (PDT)
+        Thu, 23 Aug 2018 10:26:48 -0400
+Received: by mail-lj1-f194.google.com with SMTP id v9-v6so3805660ljk.4
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 03:57:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=XlJEj42KrUyGPchHDOTMg7xyST9hcpr7Ghv2shVlbl0=;
-        b=U3JQs8izoFjujv63SO69C1Xuh/D8S0qnM0mLcl+w5CgQH9rn8Sq27C8g2vyyCEj8IH
-         iSU+Ho3uvuNKsfusGx1EOYWw7ndez5o3SkH+3wpXaRdWbSr3aG21WR/JfOycer3l87iY
-         qsTHG+l8tOeYC+Gc5ST/ajcAf+ZGkt6iijZQDobUBVQ+aFWFwLwd0GhlIIzmT79WI9lo
-         A74byKr7x2PPmW/PHVYR6TbDHqfzFR3axjksPbiV/OwbbuMgF87XxI60y3kMvPwSW/Iv
-         YhZqh+xTOCin+JbudQ+ptaraeXSJBwCOpXH8rnbSn905zgk7/iTYoL2I6Ne0k8tWS2ax
-         KUXA==
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=j48KhPXm0c3RZfrmX0ycX4U6QMlXC5ksuqN14JLUUTI=;
+        b=Ln7zISwPiXuPE1KX4aHeNm/6ifz8MtXSm5ytZunihl/bMpqlfjmmrm15U4j6cZP/jH
+         ATy6+mtWYEc9YDt+jmNwWoIDaL4mp3t7q1rx53ciWuZkVGYr6ahu9uQiJ6A9XTvRyqP9
+         PgXviJ6pwWq++znWdWjLAQbKzOaQNjQl/IMS7fu2raUVqyF2DyyJ82Jeppqz6F/lNw2B
+         HLRkf+b9OYEMPtLu7EBLDg0uPKTtbjYc99SmJ2O674G69dn7hPGiX3NM3xdM21QSTtMF
+         tqm/V+mcrh5sMrzvSfdzllal6BhyvwiRGcXKylG83+6R3Nu1sSkZ7FNwecg90vCwgMl/
+         m1rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=XlJEj42KrUyGPchHDOTMg7xyST9hcpr7Ghv2shVlbl0=;
-        b=djuT7FLwstLnSl7OdHdf8IRmPCI8hp4gqYlbbKmbsUB9AFbB/KkkDC5LF7jqKNzWHo
-         d/6dZWLR/NuOfnM0fQxhjci2Of3xNZ6wiQSix4WZitw03Vfa3kX9nTJOU/x7WB6iwkV1
-         ltJI3BQOvXo23AnOmO7XR1SmMimHz19krxXcFY5Od5QgOnxntT59L9hj/d3zkqRQODRm
-         8uttaFfKBpD8gBv3KUDeouRI/hmrzgb/TkRwmvC3DQ1GnXJgChNeb0KvLXqPonF7KQa/
-         BZfWoUCZ7IYZTbX1t2WC9zc8LSixaEHGd3lUk5MBr3ex8I9/juEcdGZctvr+1NYCVr0w
-         kdPw==
-X-Gm-Message-State: AOUpUlEBc7tTcr+P0N3FV+9g5uylMTdlXSPhEzNUflVUaBP+bKq8S+OI
-        Q5d0cEkGL/EA9CkcQOknwoU=
-X-Google-Smtp-Source: AA+uWPwVs5Cvjsyyor7xVtw2cCtAgjyWyEjHwYTaS5GsYCmljW6/YnPhbKEYLIRGCCSGKGvVc5Janw==
-X-Received: by 2002:a17:902:261:: with SMTP id 88-v6mr58132302plc.331.1535021835959;
-        Thu, 23 Aug 2018 03:57:15 -0700 (PDT)
-Received: from localhost.localdomain ([104.192.108.9])
-        by smtp.gmail.com with ESMTPSA id f13-v6sm4384048pgs.92.2018.08.23.03.57.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 23 Aug 2018 03:57:15 -0700 (PDT)
-From:   Weikang Shi <swkhack@gmail.com>
-To:     dhowells@redhat.com
-Cc:     linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
-        swkhack@qq.com, Weikang Shi <swkhack@gmail.com>
-Subject: [PATCH] fs: Eliminate redundant assignments
-Date:   Thu, 23 Aug 2018 03:57:08 -0700
-Message-Id: <1535021828-130439-1-git-send-email-swkhack@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=j48KhPXm0c3RZfrmX0ycX4U6QMlXC5ksuqN14JLUUTI=;
+        b=sMCbOX48uRtyQTY1YTr4S+mnXdc7OxM/QYYePZec3pADTHbUWZYHFmnFixYVRb5vfJ
+         8NIVPFxfN+eCU3gbwI7enSmKjoGryyOrYF5F6u5eG2MhDmbD0kro6VBVF/16dvkCDoH8
+         ogHADM1bYjW4igmjlfLmGlH918GNEShhthZH9zri1wZd4MO0JdaJjd8BvfsWF3ufS4XQ
+         mcbi+FXEuxAPhnAPATeBO5Cy8Rznolvnv5Qo0740pguXX6heysI9bFw39ZUnpt7vbXUi
+         D8nyo7+tG5Lns2CQFKO3WUiD+MFrEZ3lU/qTxLsrgUSxRMfc1Yhze7uUiZZ0ee0QovFC
+         yqVg==
+X-Gm-Message-State: AOUpUlGK4odZx0vuZ0VWF8BfrYCVGHq2g1c53II1whPFTp0RwxFx7X/n
+        Qr1Wd9SmUD+ta8P6U+v0AEHNTw==
+X-Google-Smtp-Source: ANB0VdbtbUt7u1Y2SWYuPeJoOxOS2qrToMTHPRmvUjXtfo2oHn4NfndvetQrB/c+34FOyHux0NUazQ==
+X-Received: by 2002:a2e:9004:: with SMTP id h4-v6mr9564083ljg.44.1535021857250;
+        Thu, 23 Aug 2018 03:57:37 -0700 (PDT)
+Received: from wasted.cogentembedded.com ([31.173.81.66])
+        by smtp.gmail.com with ESMTPSA id k4-v6sm278728ljc.6.2018.08.23.03.57.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 Aug 2018 03:57:36 -0700 (PDT)
+Subject: Re: [PATCH 4.14 210/217] PCI: OF: Fix I/O space page leak
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     stable@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+References: <20180823075505.090246914@linuxfoundation.org>
+ <20180823075515.152259931@linuxfoundation.org>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <fa1a9728-8deb-867d-04b1-a9959ab48d24@cogentembedded.com>
+Date:   Thu, 23 Aug 2018 13:57:35 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
+MIME-Version: 1.0
+In-Reply-To: <20180823075515.152259931@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-after the assignments statement ,all return statement do not use ret variable,so delete the assignments.
+On 08/23/2018 10:55 AM, Greg Kroah-Hartman wrote:
 
-Signed-off-by: Weikang Shi <swkhack@gmail.com>
----
- fs/afs/dir.c | 1 -
- 1 file changed, 1 deletion(-)
+> 4.14-stable review patch.  If anyone has any objections, please let me know.
+> 
+> ------------------
+> 
+> From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> commit a5fb9fb023a1435f2b42bccd7f547560f3a21dc3 upstream.
+> 
+> When testing the R-Car PCIe driver on the Condor board, if the PCIe PHY
+> driver was left disabled, the kernel crashed with this BUG:
+> 
+>   kernel BUG at lib/ioremap.c:72!
+>   Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
+>   Modules linked in:
+>   CPU: 0 PID: 39 Comm: kworker/0:1 Not tainted 4.17.0-dirty #1092
+>   Hardware name: Renesas Condor board based on r8a77980 (DT)
+>   Workqueue: events deferred_probe_work_func
+>   pstate: 80000005 (Nzcv daif -PAN -UAO)
+>   pc : ioremap_page_range+0x370/0x3c8
+>   lr : ioremap_page_range+0x40/0x3c8
+>   sp : ffff000008da39e0
+>   x29: ffff000008da39e0 x28: 00e8000000000f07
+>   x27: ffff7dfffee00000 x26: 0140000000000000
+>   x25: ffff7dfffef00000 x24: 00000000000fe100
+>   x23: ffff80007b906000 x22: ffff000008ab8000
+>   x21: ffff000008bb1d58 x20: ffff7dfffef00000
+>   x19: ffff800009c30fb8 x18: 0000000000000001
+>   x17: 00000000000152d0 x16: 00000000014012d0
+>   x15: 0000000000000000 x14: 0720072007200720
+>   x13: 0720072007200720 x12: 0720072007200720
+>   x11: 0720072007300730 x10: 00000000000000ae
+>   x9 : 0000000000000000 x8 : ffff7dffff000000
+>   x7 : 0000000000000000 x6 : 0000000000000100
+>   x5 : 0000000000000000 x4 : 000000007b906000
+>   x3 : ffff80007c61a880 x2 : ffff7dfffeefffff
+>   x1 : 0000000040000000 x0 : 00e80000fe100f07
+>   Process kworker/0:1 (pid: 39, stack limit = 0x        (ptrval))
+>   Call trace:
+>    ioremap_page_range+0x370/0x3c8
+>    pci_remap_iospace+0x7c/0xac
+>    pci_parse_request_of_pci_ranges+0x13c/0x190
+>    rcar_pcie_probe+0x4c/0xb04
+>    platform_drv_probe+0x50/0xbc
+>    driver_probe_device+0x21c/0x308
+>    __device_attach_driver+0x98/0xc8
+>    bus_for_each_drv+0x54/0x94
+>    __device_attach+0xc4/0x12c
+>    device_initial_probe+0x10/0x18
+>    bus_probe_device+0x90/0x98
+>    deferred_probe_work_func+0xb0/0x150
+>    process_one_work+0x12c/0x29c
+>    worker_thread+0x200/0x3fc
+>    kthread+0x108/0x134
+>    ret_from_fork+0x10/0x18
+>   Code: f9004ba2 54000080 aa0003fb 17ffff48 (d4210000)
+> 
+> It turned out that pci_remap_iospace() wasn't undone when the driver's
+> probe failed, and since devm_phy_optional_get() returned -EPROBE_DEFER,
+> the probe was retried, finally causing the BUG due to trying to remap
+> already remapped pages.
+> 
+> Introduce the devm_pci_remap_iospace() managed API and replace the
+> pci_remap_iospace() call with it to fix the bug.
+> 
+> Fixes: dbf9826d5797 ("PCI: generic: Convert to DT resource parsing API")
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> [lorenzo.pieralisi@arm.com: split commit/updated the commit log]
+> Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> [Backport just for the new api which other patches need - gregkh]
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> ---
+>  drivers/pci/pci.c   |   38 ++++++++++++++++++++++++++++++++++++++
+>  include/linux/pci.h |    2 ++
+>  2 files changed, 40 insertions(+)
 
-diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-index 855bf2b..5a3770a 100644
---- a/fs/afs/dir.c
-+++ b/fs/afs/dir.c
-@@ -541,7 +541,6 @@ static int afs_do_lookup_one(struct inode *dir, struct dentry *dentry,
- 		return ret;
- 	}
- 
--	ret = -ENOENT;
- 	if (!cookie.found) {
- 		_leave(" = -ENOENT [not found]");
- 		return -ENOENT;
--- 
-2.7.4
+  You missed a chnage to drivers/pci/host/pci-host-common.c (and 
+also drivers/pci/host/pcie-rcar.c which wasn't using the generic mode back
+then)...
 
+[...]
+
+MBR, Sergei
