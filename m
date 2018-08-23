@@ -6,37 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9322CC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:43:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88FDAC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:43:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57B4B2083A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:43:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57B4B2083A
+	by mail.kernel.org (Postfix) with ESMTP id 4FF312083A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:43:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FF312083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732904AbeHWMMF (ORCPT
+        id S1732912AbeHWMMJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:12:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50230 "EHLO
+        Thu, 23 Aug 2018 08:12:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50240 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727597AbeHWMMF (ORCPT
+        with ESMTP id S1727597AbeHWMMI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:12:05 -0400
+        Thu, 23 Aug 2018 08:12:08 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 117F17F6;
-        Thu, 23 Aug 2018 08:43:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3E9277F6;
+        Thu, 23 Aug 2018 08:43:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Keith Busch <keith.busch@linux.intel.com>,
-        Jianchao Wang <jianchao.w.wang@oracle.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
+        stable@vger.kernel.org,
+        Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>,
+        Ariel Elior <ariel.elior@cavium.com>,
+        Michal Kalderon <Michal.Kalderon@cavium.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 084/324] nvme-pci: move nvme_kill_queues to nvme_remove_dead_ctrl
-Date:   Thu, 23 Aug 2018 09:52:30 +0200
-Message-Id: <20180823075000.083251173@linuxfoundation.org>
+Subject: [PATCH 4.17 067/324] qed: Do not advertise DCBX_LLD_MANAGED capability.
+Date:   Thu, 23 Aug 2018 09:52:13 +0200
+Message-Id: <20180823074959.265285133@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -53,58 +54,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jianchao Wang <jianchao.w.wang@oracle.com>
+From: Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
 
-[ Upstream commit 9f9cafc14016f23f982d3ce18f9057923bd3037a ]
+[ Upstream commit ff54d5cd9ec15546abc870452dd0b66eef4b4606 ]
 
-There is race between nvme_remove and nvme_reset_work that can
-lead to io hang.
+Do not advertise DCBX_LLD_MANAGED capability i.e., do not allow
+external agent to manage the dcbx/lldp negotiation. MFW acts as lldp agent
+for qed* devices, and no other lldp agent is allowed to coexist with mfw.
 
-nvme_remove                    nvme_reset_work
-                               -> nvme_remove_dead_ctrl
-                                 -> nvme_dev_disable
-                                   -> quiesce request_queue
-                                 -> queue remove_work
--> cancel_work_sync reset_work
--> nvme_remove_namespaces
-  -> splice ctrl->namespaces
-                               nvme_remove_dead_ctrl_work
-                               -> nvme_kill_queues
-  -> nvme_ns_remove               do nothing
-    -> blk_cleanup_queue
-      -> blk_freeze_queue
+Also updated a debug print, to not to display the redundant info.
 
-Finally, the request_queue is quiesced state when wait freeze,
-we will get io hang here. To fix it, move the nvme_kill_queues
-from nvme_remove_dead_ctrl_work to nvme_remove_dead_ctrl.
-
-Suggested-by: Keith Busch <keith.busch@linux.intel.com>
-Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
-Reviewed-by: Keith Busch <keith.busch@intel.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+Fixes: a1d8d8a51 ("qed: Add dcbnl support.")
+Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
+Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
+Signed-off-by: Michal Kalderon <Michal.Kalderon@cavium.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/nvme/host/pci.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/qlogic/qed/qed_dcbx.c |   11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -2291,6 +2291,7 @@ static void nvme_remove_dead_ctrl(struct
+--- a/drivers/net/ethernet/qlogic/qed/qed_dcbx.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_dcbx.c
+@@ -255,9 +255,8 @@ qed_dcbx_get_app_protocol_type(struct qe
+ 		*type = DCBX_PROTOCOL_ROCE_V2;
+ 	} else {
+ 		*type = DCBX_MAX_PROTOCOL_TYPE;
+-		DP_ERR(p_hwfn,
+-		       "No action required, App TLV id = 0x%x app_prio_bitmap = 0x%x\n",
+-		       id, app_prio_bitmap);
++		DP_ERR(p_hwfn, "No action required, App TLV entry = 0x%x\n",
++		       app_prio_bitmap);
+ 		return false;
+ 	}
  
- 	nvme_get_ctrl(&dev->ctrl);
- 	nvme_dev_disable(dev, false);
-+	nvme_kill_queues(&dev->ctrl);
- 	if (!queue_work(nvme_wq, &dev->remove_work))
- 		nvme_put_ctrl(&dev->ctrl);
- }
-@@ -2407,7 +2408,6 @@ static void nvme_remove_dead_ctrl_work(s
- 	struct nvme_dev *dev = container_of(work, struct nvme_dev, remove_work);
- 	struct pci_dev *pdev = to_pci_dev(dev->dev);
+@@ -1469,8 +1468,8 @@ static u8 qed_dcbnl_getcap(struct qed_de
+ 		*cap = 0x80;
+ 		break;
+ 	case DCB_CAP_ATTR_DCBX:
+-		*cap = (DCB_CAP_DCBX_LLD_MANAGED | DCB_CAP_DCBX_VER_CEE |
+-			DCB_CAP_DCBX_VER_IEEE | DCB_CAP_DCBX_STATIC);
++		*cap = (DCB_CAP_DCBX_VER_CEE | DCB_CAP_DCBX_VER_IEEE |
++			DCB_CAP_DCBX_STATIC);
+ 		break;
+ 	default:
+ 		*cap = false;
+@@ -1538,8 +1537,6 @@ static u8 qed_dcbnl_getdcbx(struct qed_d
+ 	if (!dcbx_info)
+ 		return 0;
  
--	nvme_kill_queues(&dev->ctrl);
- 	if (pci_get_drvdata(pdev))
- 		device_release_driver(&pdev->dev);
- 	nvme_put_ctrl(&dev->ctrl);
+-	if (dcbx_info->operational.enabled)
+-		mode |= DCB_CAP_DCBX_LLD_MANAGED;
+ 	if (dcbx_info->operational.ieee)
+ 		mode |= DCB_CAP_DCBX_VER_IEEE;
+ 	if (dcbx_info->operational.cee)
 
 
