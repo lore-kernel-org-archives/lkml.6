@@ -2,104 +2,112 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC5E5C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:41:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD99AC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:41:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 901772083A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:41:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 901772083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 71BE72083A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:41:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71BE72083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732464AbeHWMKA (ORCPT
+        id S1732468AbeHWMKN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:10:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49860 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729381AbeHWMJ7 (ORCPT
+        Thu, 23 Aug 2018 08:10:13 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:59651 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729381AbeHWMKM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:09:59 -0400
-Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0F6D88B1;
-        Thu, 23 Aug 2018 08:41:22 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Garry <john.garry@huawei.com>,
-        Tejun Heo <tj@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 050/324] libahci: Fix possible Spectre-v1 pmp indexing in ahci_led_store()
-Date:   Thu, 23 Aug 2018 09:51:56 +0200
-Message-Id: <20180823074958.298177876@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
-References: <20180823074955.885811006@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Thu, 23 Aug 2018 08:10:12 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7N8fGY23188727
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 23 Aug 2018 01:41:16 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7N8fGco3188724;
+        Thu, 23 Aug 2018 01:41:16 -0700
+Date:   Thu, 23 Aug 2018 01:41:16 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-e1e139463db363a253296b431e61519d8809e386@git.kernel.org>
+Cc:     dsahern@gmail.com, jolsa@kernel.org, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, mpetlan@redhat.com, acme@redhat.com,
+        mingo@kernel.org, peterz@infradead.org, namhyung@kernel.org,
+        alexander.shishkin@linux.intel.com, hpa@zytor.com
+Reply-To: dsahern@gmail.com, linux-kernel@vger.kernel.org,
+          jolsa@kernel.org, tglx@linutronix.de, acme@redhat.com,
+          mpetlan@redhat.com, alexander.shishkin@linux.intel.com,
+          namhyung@kernel.org, peterz@infradead.org, mingo@kernel.org,
+          hpa@zytor.com
+In-Reply-To: <20180817094813.15086-6-jolsa@kernel.org>
+References: <20180817094813.15086-6-jolsa@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf tools: Make is_supported_compression()
+ static
+Git-Commit-ID: e1e139463db363a253296b431e61519d8809e386
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+Commit-ID:  e1e139463db363a253296b431e61519d8809e386
+Gitweb:     https://git.kernel.org/tip/e1e139463db363a253296b431e61519d8809e386
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Fri, 17 Aug 2018 11:48:05 +0200
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 20 Aug 2018 08:54:59 -0300
 
-------------------
+perf tools: Make is_supported_compression() static
 
-From: John Garry <john.garry@huawei.com>
+There's no outside user of it.
 
-[ Upstream commit fae2a63737e5973f1426bc139935a0f42e232844 ]
-
-Currently smatch warns of possible Spectre-V1 issue in ahci_led_store():
-drivers/ata/libahci.c:1150 ahci_led_store() warn: potential spectre issue 'pp->em_priv' (local cap)
-
-Userspace controls @pmp from following callchain:
-em_message->store()
-->ata_scsi_em_message_store()
--->ap->ops->em_store()
---->ahci_led_store()
-
-After the mask+shift @pmp is effectively an 8b value, which is used to
-index into an array of length 8, so sanitize the array index.
-
-Signed-off-by: John Garry <john.garry@huawei.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
-
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Michael Petlan <mpetlan@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180817094813.15086-6-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- drivers/ata/libahci.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ tools/perf/util/dso.c | 2 +-
+ tools/perf/util/dso.h | 1 -
+ 2 files changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/ata/libahci.c
-+++ b/drivers/ata/libahci.c
-@@ -35,6 +35,7 @@
- #include <linux/kernel.h>
- #include <linux/gfp.h>
- #include <linux/module.h>
-+#include <linux/nospec.h>
- #include <linux/blkdev.h>
- #include <linux/delay.h>
- #include <linux/interrupt.h>
-@@ -1146,10 +1147,12 @@ static ssize_t ahci_led_store(struct ata
+diff --git a/tools/perf/util/dso.c b/tools/perf/util/dso.c
+index 9f4b72d8f50f..b8b5fdb1a15b 100644
+--- a/tools/perf/util/dso.c
++++ b/tools/perf/util/dso.c
+@@ -202,7 +202,7 @@ static const struct {
+ 	{ NULL, NULL },
+ };
  
- 	/* get the slot number from the message */
- 	pmp = (state & EM_MSG_LED_PMP_SLOT) >> 8;
--	if (pmp < EM_MAX_SLOTS)
-+	if (pmp < EM_MAX_SLOTS) {
-+		pmp = array_index_nospec(pmp, EM_MAX_SLOTS);
- 		emp = &pp->em_priv[pmp];
--	else
-+	} else {
- 		return -EINVAL;
-+	}
+-bool is_supported_compression(const char *ext)
++static bool is_supported_compression(const char *ext)
+ {
+ 	unsigned i;
  
- 	/* mask off the activity bits if we are in sw_activity
- 	 * mode, user should turn off sw_activity before setting
-
-
+diff --git a/tools/perf/util/dso.h b/tools/perf/util/dso.h
+index e1adadd1fe1e..870346b333ee 100644
+--- a/tools/perf/util/dso.h
++++ b/tools/perf/util/dso.h
+@@ -250,7 +250,6 @@ int dso__kernel_module_get_build_id(struct dso *dso, const char *root_dir);
+ char dso__symtab_origin(const struct dso *dso);
+ int dso__read_binary_type_filename(const struct dso *dso, enum dso_binary_type type,
+ 				   char *root_dir, char *filename, size_t size);
+-bool is_supported_compression(const char *ext);
+ bool is_kernel_module(const char *pathname, int cpumode);
+ bool dso__needs_decompress(struct dso *dso);
+ int dso__decompress_kmodule_fd(struct dso *dso, const char *name);
