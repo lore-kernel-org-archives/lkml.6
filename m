@@ -2,128 +2,138 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8E79C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:16:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F9F9C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:17:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6297620C07
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:16:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0DC620A8B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:17:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yc778qXN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6297620C07
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="gPVEK+ZW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0DC620A8B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726911AbeHWUrR (ORCPT
+        id S1726947AbeHWUsP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 16:47:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59986 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726285AbeHWUrR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 16:47:17 -0400
-Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C6F7020A8B;
-        Thu, 23 Aug 2018 17:16:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535044595;
-        bh=rTs8O1xoW5SfoMf7NAtlxY57wUJVokIZBlOtfISk77E=;
-        h=From:To:Cc:Subject:Date:From;
-        b=yc778qXNQISqjgfutOeC8Dj7SodbOCZhsv1y454nAIwTzk0uQHydZISsCNmjQYX1b
-         kzhmWtFMFT1g47dpgo/Q138jEBmKyNTZwzd4MhDTsaUImwl2mK7toNMkNq/7attQiK
-         /jNMbt9xwVvNb7vHzlurC9JjdMYoe6N93RvDWlHI=
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Ingo Molnar <mingo@redhat.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Michael Rodin <michael@rodin.online>,
-        linux-kernel@vger.kernel.org
-Subject: [BUGFIX PATCH -tip] kprobes/x86: Fix to copy RIP relative instruction correctly
-Date:   Fri, 24 Aug 2018 02:16:12 +0900
-Message-Id: <153504457253.22602.1314289671019919596.stgit@devbox>
-X-Mailer: git-send-email 2.13.6
-User-Agent: StGit/0.17.1-dirty
+        Thu, 23 Aug 2018 16:48:15 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:34890 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726285AbeHWUsP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 16:48:15 -0400
+Received: by mail-pg1-f193.google.com with SMTP id z4-v6so2945496pgv.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 10:17:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=EtLmjXIU95NEZbmVTgKB0qj1a78YNuoWwPP9N2CEyZU=;
+        b=gPVEK+ZWjMDfjqZGnwyOd8HPpcFxphDMq/pwCI3EAXr1DCsmpU4KQwWEiBZQUV08At
+         pRQ6H+WUrtJ9uJTCJKNlaODecsGfc5Vws53Vwk+iqQKTRHEaeXy4gefFfVVFDO8oIOh/
+         fhX2XJU7oI+LcWBBFhAXdq4WgLQzrk73sdVILoS/6K9Z50SD8GGsxVhNPg2EIxsO1K7N
+         9eFtoWBvRXNTcM26/1rGorZ8JJLRJPlSFNrnw7NYboFSqBpnlgIAIB/vVg5wpqv0j8Fj
+         ogk5BPb3TWCaBBB52YGyFSqOEmy8eaW9Y7N+1HTKulRK5oC1him0ZMo7zauOsyi1ypH/
+         lZSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=EtLmjXIU95NEZbmVTgKB0qj1a78YNuoWwPP9N2CEyZU=;
+        b=LCp96HuzQpl2xh6EK/JncTfpKfwKPZiC5ak6VmAYWOBHIeid/AO8Nu7uCD5ZhtNxbf
+         sy6QosaFBCmBAslQHYBZiLYhhiUmN8kA4yOVSiCmzhveFbZMxTt0sBkInrETE+Oez+rA
+         uTXCKljNLWp5dU0LCOYb8IB8V94ffDuZ/a4amqy483DZjenNDC1a3KdJdpgQE+GkE66r
+         ixajv1wC/F/nLB6VMBlkAlXMenyZ/+uV+MOjhrnCz4euETg07BJvvtz57y4NLCggsv8C
+         JHk1f8roiyXFu1TdNhGaFIyOeiL5gAf2DIfMOTQLB2DQ1HWtte821vQuLGBlvIaCBiLD
+         wZbw==
+X-Gm-Message-State: AOUpUlEU6N21oKH8My/3T9xDYhPnsPgs/nay50jKjb2Mu+WLS/WBzaKV
+        1UccqMtKKFxZKr2ZJFBXbsNpoA==
+X-Google-Smtp-Source: AA+uWPwLJNOEBy3dol9yyGQFK9p2FAA/sL4hT8nLq7l+/ckIYsAvzHKmezqpL2D+FzlZ2QQhMKhHHg==
+X-Received: by 2002:aa7:88d3:: with SMTP id p19-v6mr57278647pfo.160.1535044653960;
+        Thu, 23 Aug 2018 10:17:33 -0700 (PDT)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id x4-v6sm6244801pfm.119.2018.08.23.10.17.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 23 Aug 2018 10:17:33 -0700 (PDT)
+Received: from jgg by mlx with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1fstEi-0003xb-Pr; Thu, 23 Aug 2018 11:17:32 -0600
+Date:   Thu, 23 Aug 2018 11:17:32 -0600
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Parav Pandit <parav@mellanox.com>
+Cc:     Eric Biggers <ebiggers@kernel.org>,
+        Doug Ledford <dledford@redhat.com>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "dasaratharaman.chandramouli@intel.com" 
+        <dasaratharaman.chandramouli@intel.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mark Bloch <markb@mellanox.com>,
+        Moni Shoua <monis@mellanox.com>,
+        "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>,
+        syzbot <syzbot+29ee8f76017ce6cf03da@syzkaller.appspotmail.com>
+Subject: Re: [RDMA bug] KASAN: use-after-free Read in __list_del_entry_valid
+ (4)
+Message-ID: <20180823171732.GC14664@ziepe.ca>
+References: <001a1141551246502d056845782e@google.com>
+ <001a1140f6ac1677460568489287@google.com>
+ <20180823061630.GB736@sol.localdomain>
+ <20180823145458.GC9366@ziepe.ca>
+ <VI1PR0501MB22714BE9A34FA333671A0623D1370@VI1PR0501MB2271.eurprd05.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <VI1PR0501MB22714BE9A34FA333671A0623D1370@VI1PR0501MB2271.eurprd05.prod.outlook.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since copy_optimized_instructions() misses to update real RIP
-address while copying several instructions to working buffer,
-it adjusts RIP-relative instruction with wrong RIP address for
-the 2nd and subsequent instructions.
+On Thu, Aug 23, 2018 at 04:39:29PM +0000, Parav Pandit wrote:
+> 
+> 
+> > From: Jason Gunthorpe <jgg@ziepe.ca>
+> > Sent: Thursday, August 23, 2018 9:55 AM
+> > To: Eric Biggers <ebiggers@kernel.org>
+> > Cc: Doug Ledford <dledford@redhat.com>; linux-rdma@vger.kernel.org;
+> > dasaratharaman.chandramouli@intel.com; Leon Romanovsky
+> > <leonro@mellanox.com>; linux-kernel@vger.kernel.org; Mark Bloch
+> > <markb@mellanox.com>; Moni Shoua <monis@mellanox.com>; Parav Pandit
+> > <parav@mellanox.com>; syzkaller-bugs@googlegroups.com; syzbot
+> > <syzbot+29ee8f76017ce6cf03da@syzkaller.appspotmail.com>
+> > Subject: Re: [RDMA bug] KASAN: use-after-free Read in __list_del_entry_valid
+> > (4)
+> > 
+> > On Wed, Aug 22, 2018 at 11:16:31PM -0700, Eric Biggers wrote:
+> > > Hello RDMA / InfiniBand maintainers,
+> > >
+> > > This is an RDMA bug and it still occurs on Linus' tree as of today
+> > > (commit 815f0ddb346c1960).
+> > >
+> > > I've also simplified the reproducer for it; see below after the original report.
+> > > Apparently it involves a race between RDMA_USER_CM_CMD_RESOLVE_IP
+> > and
+> > > RDMA_USER_CM_CMD_LISTEN.
+> > 
+> > That is an amazing reproducer!
+> > 
+> > I have a feeling this is the same cause as all the other syzkaller bugs in this code:
+> > lack of any sane locking at all :\
+> > 
+> > We've talked about chucking a big lock around this whole thing, but nobody has
+> > done it yet.. It isn't so simple.
+> >
+>
+> I had some code in which reduces three locks (handler_lock,
+> qp_mutex, id_lock) to single mutex to protect the cm_id and protects
+> every exported symbol of rdmacm which works on cm_id.  But not ready
+> enough to post it as patch yet. Lot of tests required before I get
+> there and some refactor too before that.
 
-This may break the kernel (like kernel freeze) because
-probed instruction can refer a wrong data. For example,
-putting kprobes on cpumask_next hit this bug.
+That does sound promising..
 
-cpumask_next is normally like below if CONFIG_CPUMASK_OFFSTACK=y
-(in this case nr_cpumask_bits is an alias of nr_cpu_ids)
-
- <cpumask_next>:
-       48 89 f0                mov    %rsi,%rax
-       8b 35 7b fb e2 00       mov    0xe2fb7b(%rip),%esi
-        # ffffffff82db9e64 <nr_cpu_ids>
-       55                      push   %rbp
-...
-
-If we put a kprobe on it and optimized with jump, it becomes
-like this.
-
-	e9 95 7d 07 1e	jmpq   0xffffffffa000207a
-	7b fb	jnp    0xffffffff81f8a2e2 <cpumask_next+2>
-	e2 00	loop   0xffffffff81f8a2e9 <cpumask_next+9>
-	55	push   %rbp
-
-This shows first 2 "mov" instructions are copied to trampoline
-buffer at 0xffffffffa000207a. Here is the disassembled result.
-(skipped optprobe template instructions)
-
-Dump of assembler code from 0xffffffffa000207a to 0xffffffffa00020ea:
-	54	push   %rsp
-...
-	48 83 c4 08	add    $0x8,%rsp
-	9d	popfq
-	48 89 f0	mov    %rsi,%rax
-	8b 35 82 7d db e2	mov    -0x1d24827e(%rip),%esi
-        # 0xffffffff82db9e67 <nr_cpu_ids+3>
-
-As it shows, the 2nd mov accesses *(nr_cpu_ids+3) instead of
-*nr_cpu_ids. This leads a kernel freeze because cpumask_next()
-always returns 0 and for_each_cpu() never ended.
-
-Fixing this by adding len correctly to real RIP address while
-copying.
-
-Fixes: 63fef14fc98a ("kprobes/x86: Make insn buffer always ROX and use text_poke()")
-Reported-by: Michael Rodin <michael@rodin.online>
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: stable@vger.kernel.org
----
- arch/x86/kernel/kprobes/opt.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/kprobes/opt.c b/arch/x86/kernel/kprobes/opt.c
-index eaf02f2e7300..e92672b8b490 100644
---- a/arch/x86/kernel/kprobes/opt.c
-+++ b/arch/x86/kernel/kprobes/opt.c
-@@ -189,7 +189,8 @@ static int copy_optimized_instructions(u8 *dest, u8 *src, u8 *real)
- 	int len = 0, ret;
- 
- 	while (len < RELATIVEJUMP_SIZE) {
--		ret = __copy_instruction(dest + len, src + len, real, &insn);
-+		ret = __copy_instruction(dest + len, src + len, real + len,
-+			&insn);
- 		if (!ret || !can_boost(&insn, src + len))
- 			return -EINVAL;
- 		len += ret;
-
+Jason
