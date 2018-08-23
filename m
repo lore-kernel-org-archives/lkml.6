@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18FC3C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:50:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E38EC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:50:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D333F208DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:50:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D333F208DA
+	by mail.kernel.org (Postfix) with ESMTP id D6A2E20839
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:50:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6A2E20839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387534AbeHWMTL (ORCPT
+        id S2387547AbeHWMTO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:19:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51408 "EHLO
+        Thu, 23 Aug 2018 08:19:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51422 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728517AbeHWMTK (ORCPT
+        with ESMTP id S1728517AbeHWMTN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:19:10 -0400
+        Thu, 23 Aug 2018 08:19:13 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DBD81C83;
-        Thu, 23 Aug 2018 08:50:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1D613C5C;
+        Thu, 23 Aug 2018 08:50:33 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        Sowmini Varadhan <sowmini.varadhan@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Vinod Koul <vkoul@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 127/324] rds: clean up loopback rds_connections on netns deletion
-Date:   Thu, 23 Aug 2018 09:53:13 +0200
-Message-Id: <20180823075002.256801890@linuxfoundation.org>
+Subject: [PATCH 4.17 136/324] dmaengine: pl330: report BURST residue granularity
+Date:   Thu, 23 Aug 2018 09:53:22 +0200
+Message-Id: <20180823075002.770939391@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -53,166 +52,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sowmini Varadhan <sowmini.varadhan@oracle.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-[ Upstream commit c809195f5523dd4d09403bbb1c9732d548aa0d1e ]
+[ Upstream commit e3f329c600033f011a978a8bc4ddb1e2e94c4f4d ]
 
-The RDS core module creates rds_connections based on callbacks
-from rds_loop_transport when sending/receiving packets to local
-addresses.
+The reported residue is already calculated in BURST unit granularity, so
+advertise this capability properly to other devices in the system.
 
-These connections will need to be cleaned up when they are
-created from a netns that is not init_net, and that netns is deleted.
-
-Add the changes aligned with the changes from
-commit ebeeb1ad9b8a ("rds: tcp: use rds_destroy_pending() to synchronize
-netns/module teardown and rds connection/workq management") for
-rds_loop_transport
-
-Reported-and-tested-by: syzbot+4c20b3866171ce8441d2@syzkaller.appspotmail.com
-Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Signed-off-by: Sowmini Varadhan <sowmini.varadhan@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: aee4d1fac887 ("dmaengine: pl330: improve pl330_tx_status() function")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/rds/connection.c |   11 +++++++++-
- net/rds/loop.c       |   56 +++++++++++++++++++++++++++++++++++++++++++++++++++
- net/rds/loop.h       |    2 +
- 3 files changed, 68 insertions(+), 1 deletion(-)
+ drivers/dma/pl330.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/rds/connection.c
-+++ b/net/rds/connection.c
-@@ -659,11 +659,19 @@ static void rds_conn_info(struct socket
+--- a/drivers/dma/pl330.c
++++ b/drivers/dma/pl330.c
+@@ -2924,7 +2924,7 @@ pl330_probe(struct amba_device *adev, co
+ 	pd->src_addr_widths = PL330_DMA_BUSWIDTHS;
+ 	pd->dst_addr_widths = PL330_DMA_BUSWIDTHS;
+ 	pd->directions = BIT(DMA_DEV_TO_MEM) | BIT(DMA_MEM_TO_DEV);
+-	pd->residue_granularity = DMA_RESIDUE_GRANULARITY_SEGMENT;
++	pd->residue_granularity = DMA_RESIDUE_GRANULARITY_BURST;
+ 	pd->max_burst = ((pl330->quirks & PL330_QUIRK_BROKEN_NO_FLUSHP) ?
+ 			 1 : PL330_MAX_BURST);
  
- int rds_conn_init(void)
- {
-+	int ret;
-+
-+	ret = rds_loop_net_init(); /* register pernet callback */
-+	if (ret)
-+		return ret;
-+
- 	rds_conn_slab = kmem_cache_create("rds_connection",
- 					  sizeof(struct rds_connection),
- 					  0, 0, NULL);
--	if (!rds_conn_slab)
-+	if (!rds_conn_slab) {
-+		rds_loop_net_exit();
- 		return -ENOMEM;
-+	}
- 
- 	rds_info_register_func(RDS_INFO_CONNECTIONS, rds_conn_info);
- 	rds_info_register_func(RDS_INFO_SEND_MESSAGES,
-@@ -676,6 +684,7 @@ int rds_conn_init(void)
- 
- void rds_conn_exit(void)
- {
-+	rds_loop_net_exit(); /* unregister pernet callback */
- 	rds_loop_exit();
- 
- 	WARN_ON(!hlist_empty(rds_conn_hash));
---- a/net/rds/loop.c
-+++ b/net/rds/loop.c
-@@ -33,6 +33,8 @@
- #include <linux/kernel.h>
- #include <linux/slab.h>
- #include <linux/in.h>
-+#include <net/net_namespace.h>
-+#include <net/netns/generic.h>
- 
- #include "rds_single_path.h"
- #include "rds.h"
-@@ -40,6 +42,17 @@
- 
- static DEFINE_SPINLOCK(loop_conns_lock);
- static LIST_HEAD(loop_conns);
-+static atomic_t rds_loop_unloading = ATOMIC_INIT(0);
-+
-+static void rds_loop_set_unloading(void)
-+{
-+	atomic_set(&rds_loop_unloading, 1);
-+}
-+
-+static bool rds_loop_is_unloading(struct rds_connection *conn)
-+{
-+	return atomic_read(&rds_loop_unloading) != 0;
-+}
- 
- /*
-  * This 'loopback' transport is a special case for flows that originate
-@@ -165,6 +178,8 @@ void rds_loop_exit(void)
- 	struct rds_loop_connection *lc, *_lc;
- 	LIST_HEAD(tmp_list);
- 
-+	rds_loop_set_unloading();
-+	synchronize_rcu();
- 	/* avoid calling conn_destroy with irqs off */
- 	spin_lock_irq(&loop_conns_lock);
- 	list_splice(&loop_conns, &tmp_list);
-@@ -177,6 +192,46 @@ void rds_loop_exit(void)
- 	}
- }
- 
-+static void rds_loop_kill_conns(struct net *net)
-+{
-+	struct rds_loop_connection *lc, *_lc;
-+	LIST_HEAD(tmp_list);
-+
-+	spin_lock_irq(&loop_conns_lock);
-+	list_for_each_entry_safe(lc, _lc, &loop_conns, loop_node)  {
-+		struct net *c_net = read_pnet(&lc->conn->c_net);
-+
-+		if (net != c_net)
-+			continue;
-+		list_move_tail(&lc->loop_node, &tmp_list);
-+	}
-+	spin_unlock_irq(&loop_conns_lock);
-+
-+	list_for_each_entry_safe(lc, _lc, &tmp_list, loop_node) {
-+		WARN_ON(lc->conn->c_passive);
-+		rds_conn_destroy(lc->conn);
-+	}
-+}
-+
-+static void __net_exit rds_loop_exit_net(struct net *net)
-+{
-+	rds_loop_kill_conns(net);
-+}
-+
-+static struct pernet_operations rds_loop_net_ops = {
-+	.exit = rds_loop_exit_net,
-+};
-+
-+int rds_loop_net_init(void)
-+{
-+	return register_pernet_device(&rds_loop_net_ops);
-+}
-+
-+void rds_loop_net_exit(void)
-+{
-+	unregister_pernet_device(&rds_loop_net_ops);
-+}
-+
- /*
-  * This is missing .xmit_* because loop doesn't go through generic
-  * rds_send_xmit() and doesn't call rds_recv_incoming().  .listen_stop and
-@@ -194,4 +249,5 @@ struct rds_transport rds_loop_transport
- 	.inc_free		= rds_loop_inc_free,
- 	.t_name			= "loopback",
- 	.t_type			= RDS_TRANS_LOOP,
-+	.t_unloading		= rds_loop_is_unloading,
- };
---- a/net/rds/loop.h
-+++ b/net/rds/loop.h
-@@ -5,6 +5,8 @@
- /* loop.c */
- extern struct rds_transport rds_loop_transport;
- 
-+int rds_loop_net_init(void);
-+void rds_loop_net_exit(void);
- void rds_loop_exit(void);
- 
- #endif
 
 
