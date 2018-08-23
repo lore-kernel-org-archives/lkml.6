@@ -5,40 +5,40 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D50EC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:19:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DF7EC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:21:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B63921532
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:19:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B63921532
+	by mail.kernel.org (Postfix) with ESMTP id 27D4A21532
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:21:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27D4A21532
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731454AbeHWOtK (ORCPT
+        id S1729412AbeHWOuY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 10:49:10 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38934 "EHLO mx1.redhat.com"
+        Thu, 23 Aug 2018 10:50:24 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38990 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729370AbeHWOtJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 10:49:09 -0400
+        id S1726118AbeHWOuY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 10:50:24 -0400
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EFD1140006EC;
-        Thu, 23 Aug 2018 11:19:53 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7C83A40006EC;
+        Thu, 23 Aug 2018 11:21:08 +0000 (UTC)
 Received: from [10.36.117.65] (ovpn-117-65.ams2.redhat.com [10.36.117.65])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4C3B1A9F05;
-        Thu, 23 Aug 2018 11:19:52 +0000 (UTC)
-Subject: Re: [PATCH v3 1/3] KVM: s390: vsie: copy wrapping keys to right place
-To:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CF6CEA9E67;
+        Thu, 23 Aug 2018 11:21:06 +0000 (UTC)
+Subject: Re: [PATCH v3 3/3] KVM: s390: vsie: Make use of CRYCB FORMAT2 clear
+To:     Janosch Frank <frankja@linux.ibm.com>,
         Pierre Morel <pmorel@linux.ibm.com>
 Cc:     linux-kernel@vger.kernel.org, cohuck@redhat.com,
         linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        frankja@linux.ibm.com, akrowiak@linux.ibm.com,
+        akrowiak@linux.ibm.com, borntraeger@de.ibm.com,
         schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com
 References: <1535019956-23539-1-git-send-email-pmorel@linux.ibm.com>
- <1535019956-23539-2-git-send-email-pmorel@linux.ibm.com>
- <853c73ab-3221-e0ee-af30-8e11fefbebd7@de.ibm.com>
+ <1535019956-23539-4-git-send-email-pmorel@linux.ibm.com>
+ <912d013c-c925-fb3e-ed1d-2d778a60c189@linux.ibm.com>
 From:   David Hildenbrand <david@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
@@ -85,38 +85,75 @@ Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
  +8Umfre0Xt4713VxMygW0PnQt5aSQdMD58jHFxTk092mU+yIHj5LeYgvwSgZN4airXk5yRXl
  SE+xAvmumFBY
 Organization: Red Hat GmbH
-Message-ID: <d2e4bed0-666d-24b4-cc57-84a4c9f1f93b@redhat.com>
-Date:   Thu, 23 Aug 2018 13:19:51 +0200
+Message-ID: <f4c9634d-f442-447a-9eed-7d0f4e72c34f@redhat.com>
+Date:   Thu, 23 Aug 2018 13:21:06 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <853c73ab-3221-e0ee-af30-8e11fefbebd7@de.ibm.com>
+In-Reply-To: <912d013c-c925-fb3e-ed1d-2d778a60c189@linux.ibm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 23 Aug 2018 11:19:54 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 23 Aug 2018 11:19:54 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 23 Aug 2018 11:21:08 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 23 Aug 2018 11:21:08 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23.08.2018 13:07, Christian Borntraeger wrote:
+On 23.08.2018 13:05, Janosch Frank wrote:
+> On 8/23/18 12:25 PM, Pierre Morel wrote:
+>> The comment preceding the shadow_crycb function is
+>> misleading, we effectively accept FORMAT2 CRYCB in the
+>> guest.
 > 
+> I beg to differ:
 > 
-> On 08/23/2018 12:25 PM, Pierre Morel wrote:
->> Copy the key mask to the right offset inside the shadow CRYCB
+> if (!(crycbd_o & vcpu->arch.sie_block->crycbd & CRYCB_FORMAT1))
+> 		return 0;
+
+FORMAT2 includes bit FORMAT1 (backwards compatible)
+
+> 
+>>
+>> When using FORMAT2 in the host we do not need to or with
+>> FORMAT1.
 >>
 >> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
->> Reviewed-by: David Hildenbrand <david@redhat.com>
->> Reviewed-by: Cornelia Huck <cohuck@redhat.com>
->> Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
+>> ---
+>>  arch/s390/kvm/vsie.c | 6 +++---
+>>  1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
+>> index 38ea5da..e0e6fbf 100644
+>> --- a/arch/s390/kvm/vsie.c
+>> +++ b/arch/s390/kvm/vsie.c
+>> @@ -140,7 +140,8 @@ static int prepare_cpuflags(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
+>>   * Create a shadow copy of the crycb block and setup key wrapping, if
+>>   * requested for guest 3 and enabled for guest 2.
+>>   *
+>> - * We only accept format-1 (no AP in g2), but convert it into format-2
+>> + * We accept format-1 or format-2, but we treat it as a format-1 (no AP in g2),
+>> + * and we convert it into format-2 in the shadow CRYCB.
+>>   * There is nothing to do for format-0.
+>>   *
+>>   * Returns: - 0 if shadowed or nothing to do
+>> @@ -179,8 +180,7 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
+>>  		return set_validity_icpt(scb_s, 0x0035U);
+>>  
+>>  	scb_s->ecb3 |= ecb3_flags;
+>> -	scb_s->crycbd = ((__u32)(__u64) &vsie_page->crycb) | CRYCB_FORMAT1 |
+>> -			CRYCB_FORMAT2;
+>> +	scb_s->crycbd = ((__u32)(__u64) &vsie_page->crycb) | CRYCB_FORMAT2;
 > 
-> This should be cc stable I guess?
+> That's purely cosmetic but valid.
 > 
+>>  
+>>  	/* xor both blocks in one run */
+>>  	b1 = (unsigned long *) vsie_page->crycb.dea_wrapping_key_mask;
 
-Yes, g3 guests will be run with same wrapping keys.
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
 -- 
 
