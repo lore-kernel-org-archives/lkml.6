@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A94BC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:07:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C1FC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:07:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30A312064E
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:07:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30A312064E
+	by mail.kernel.org (Postfix) with ESMTP id 6FA132064E
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:07:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FA132064E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726972AbeHWLfq (ORCPT
+        id S1727765AbeHWLfu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:35:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44716 "EHLO
+        Thu, 23 Aug 2018 07:35:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44726 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725960AbeHWLfp (ORCPT
+        with ESMTP id S1727027AbeHWLft (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:35:45 -0400
+        Thu, 23 Aug 2018 07:35:49 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 08D23C7B;
-        Thu, 23 Aug 2018 08:07:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3CB3FBB6;
+        Thu, 23 Aug 2018 08:07:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vijay Immanuel <vijayi@attalasystems.com>,
-        Yonatan Cohen <yonatanc@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, John Garry <john.garry@huawei.com>,
+        Tejun Heo <tj@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 016/130] IB/rxe: Fix missing completion for mem_reg work requests
-Date:   Thu, 23 Aug 2018 09:52:12 +0200
-Message-Id: <20180823074928.416818178@linuxfoundation.org>
+Subject: [PATCH 4.9 017/130] libahci: Fix possible Spectre-v1 pmp indexing in ahci_led_store()
+Date:   Thu, 23 Aug 2018 09:52:13 +0200
+Message-Id: <20180823074928.471574521@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
 References: <20180823074927.161454870@linuxfoundation.org>
@@ -52,35 +51,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vijay Immanuel <vijayi@attalasystems.com>
+From: John Garry <john.garry@huawei.com>
 
-[ Upstream commit 375dc53d032fc11e98036b5f228ad13f7c5933f5 ]
+[ Upstream commit fae2a63737e5973f1426bc139935a0f42e232844 ]
 
-Run the completer task to post a work completion after processing
-a memory registration or invalidate work request. This covers the
-case where the memory registration or invalidate was the last work
-request posted to the qp.
+Currently smatch warns of possible Spectre-V1 issue in ahci_led_store():
+drivers/ata/libahci.c:1150 ahci_led_store() warn: potential spectre issue 'pp->em_priv' (local cap)
 
-Signed-off-by: Vijay Immanuel <vijayi@attalasystems.com>
-Reviewed-by: Yonatan Cohen <yonatanc@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Userspace controls @pmp from following callchain:
+em_message->store()
+->ata_scsi_em_message_store()
+-->ap->ops->em_store()
+--->ahci_led_store()
+
+After the mask+shift @pmp is effectively an 8b value, which is used to
+index into an array of length 8, so sanitize the array index.
+
+Signed-off-by: John Garry <john.garry@huawei.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/sw/rxe/rxe_req.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/ata/libahci.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/infiniband/sw/rxe/rxe_req.c
-+++ b/drivers/infiniband/sw/rxe/rxe_req.c
-@@ -648,6 +648,9 @@ next_wqe:
- 		} else {
- 			goto exit;
- 		}
-+		if ((wqe->wr.send_flags & IB_SEND_SIGNALED) ||
-+		    qp->sq_sig_type == IB_SIGNAL_ALL_WR)
-+			rxe_run_task(&qp->comp.task, 1);
- 		qp->req.wqe_index = next_index(qp->sq.queue,
- 						qp->req.wqe_index);
- 		goto next_wqe;
+--- a/drivers/ata/libahci.c
++++ b/drivers/ata/libahci.c
+@@ -35,6 +35,7 @@
+ #include <linux/kernel.h>
+ #include <linux/gfp.h>
+ #include <linux/module.h>
++#include <linux/nospec.h>
+ #include <linux/blkdev.h>
+ #include <linux/delay.h>
+ #include <linux/interrupt.h>
+@@ -1124,10 +1125,12 @@ static ssize_t ahci_led_store(struct ata
+ 
+ 	/* get the slot number from the message */
+ 	pmp = (state & EM_MSG_LED_PMP_SLOT) >> 8;
+-	if (pmp < EM_MAX_SLOTS)
++	if (pmp < EM_MAX_SLOTS) {
++		pmp = array_index_nospec(pmp, EM_MAX_SLOTS);
+ 		emp = &pp->em_priv[pmp];
+-	else
++	} else {
+ 		return -EINVAL;
++	}
+ 
+ 	/* mask off the activity bits if we are in sw_activity
+ 	 * mode, user should turn off sw_activity before setting
 
 
