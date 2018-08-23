@@ -2,177 +2,125 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B55C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:17:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFD23C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:18:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E59A2154C
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:17:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E59A2154C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id A17B92152D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:18:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="V9929M0M";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="V37/rfFp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A17B92152D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731302AbeHWOrJ (ORCPT
+        id S1731371AbeHWOra (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 10:47:09 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49550 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728620AbeHWOrJ (ORCPT
+        Thu, 23 Aug 2018 10:47:30 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39234 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728762AbeHWOr3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 10:47:09 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7NBE9JS170432
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 07:17:54 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2m1uf118vh-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 07:17:54 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
-        Thu, 23 Aug 2018 12:17:52 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 23 Aug 2018 12:17:49 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7NBHmxR34734118
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 23 Aug 2018 11:17:48 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8ADCE52052;
-        Thu, 23 Aug 2018 14:17:47 +0100 (BST)
-Received: from oc7330422307.ibm.com (unknown [9.152.224.87])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 2960D5204F;
-        Thu, 23 Aug 2018 14:17:47 +0100 (BST)
-Subject: Re: [PATCH v3 2/3] KVM: s390: vsie: Do the CRYCB validation first
-To:     Pierre Morel <pmorel@linux.ibm.com>, david@redhat.com
-Cc:     linux-kernel@vger.kernel.org, cohuck@redhat.com,
-        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        frankja@linux.ibm.com, akrowiak@linux.ibm.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com
-References: <1535019956-23539-1-git-send-email-pmorel@linux.ibm.com>
- <1535019956-23539-3-git-send-email-pmorel@linux.ibm.com>
-From:   Christian Borntraeger <borntraeger@de.ibm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
- 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
- syiRa+UVlsKmx1hsEg==
-Date:   Thu, 23 Aug 2018 13:17:47 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 23 Aug 2018 10:47:29 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 3BBCC60271; Thu, 23 Aug 2018 11:18:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535023095;
+        bh=oAOXxVeDOwsgab2i/jmTjU2k+y6WxenBRQWDy+O3E14=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=V9929M0MDp1/wI4oFxeamV+lxABbCdl8T5/lNog9T6r9UmewpjIRP8fvVV/dEjG2G
+         PfpVVq3oVN4y+z3DR0Q/n4aSm2a4SSpTzUKvGeSE8+oA9mU78uK7E5d6gGc35oAnN/
+         20U+g7lBMolK6Tp1LLT9SsTT4Y5BFXljaTdcyhRc=
+Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1E879601B4;
+        Thu, 23 Aug 2018 11:18:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535023094;
+        bh=oAOXxVeDOwsgab2i/jmTjU2k+y6WxenBRQWDy+O3E14=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=V37/rfFpQjumfwP4qPbkQz1UocMR2rFzz/ANrr6qAseDZBZfShNIES0yS/uXOSkq2
+         Yhv8TZcF4w3q5PPwLiflFY2zI36JoUEgvlhJcQIQygvcb7giW+zyGiH1or2ZR0+Lq5
+         2F1fVuAQrnSC3YtKkpo3i4ewXX44V4uBH40WYNoA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1E879601B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc:     Felix Fietkau <nbd@nbd.name>, ath9k-devel@qca.qualcomm.com,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ath9k: turn on btcoex_enable as default
+References: <20180208052801.15670-1-kai.heng.feng@canonical.com>
+        <56d650e6-d26f-087c-4e86-2e5d4e859414@nbd.name>
+        <A5972CE9-8325-404A-A63D-ED29E44FB67B@canonical.com>
+        <87k1vmeip8.fsf@kamboji.qca.qualcomm.com>
+        <E500FA42-23F1-433F-9BFB-78A2FD1946AF@canonical.com>
+        <7170e2d5-a59d-8260-fa8e-f02f583b773f@nbd.name>
+        <6A0F65EF-A7C4-469F-8FAF-CBE314676237@canonical.com>
+        <9AF82E83-2EBE-4076-BAFA-EEA44B1DB423@canonical.com>
+Date:   Thu, 23 Aug 2018 14:18:10 +0300
+In-Reply-To: <9AF82E83-2EBE-4076-BAFA-EEA44B1DB423@canonical.com> (Kai-Heng
+        Feng's message of "Thu, 23 Aug 2018 09:33:56 +0800")
+Message-ID: <87in41nxfx.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <1535019956-23539-3-git-send-email-pmorel@linux.ibm.com>
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18082311-4275-0000-0000-000002AE1F0D
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082311-4276-0000-0000-000037B727CF
-Message-Id: <b7c0b0eb-c750-caeb-41b5-d6593791a6ef@de.ibm.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-23_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808230121
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Kai-Heng Feng <kai.heng.feng@canonical.com> writes:
 
+> at 12:15, Kai Heng Feng <kai.heng.feng@canonical.com> wrote:
+>
+>>
+>>
+>>> On 10 Feb 2018, at 10:05 PM, Felix Fietkau <nbd@nbd.name> wrote:
+>>>
+>>> On 2018-02-10 14:56, Kai Heng Feng wrote:
+>>>>> On 9 Feb 2018, at 3:16 PM, Kalle Valo <kvalo@codeaurora.org> wrote:
+>>>>> Sure, but we have to make sure that we don't create regressions on
+>>>>> existing systems. For example, did you test this with any system which
+>>>>> don't support btcoex? (just asking, haven't tested this myself)
+>>>>
+>>>> No not really, but I will definitely test it.
+>>>> The only module I have that uses ath9k is Dell=E2=80=99s DW1707.
+>>>> How do I check if it support btcoex or not?
+>>> I just reviewed the code again, and I am sure that we cannot merge this
+>>> patch. Enabling the btcoex parameter makes the driver enable a whole
+>>> bunch of code starting timers, listening to some GPIOs, etc.
+>>>
+>>> On non-btcoex systems, some of those GPIOs might be floating or even
+>>> connected to different things, which could cause a lot of undefined
+>>> behavior.
+>>>
+>>> This is simply too big a risk, so there absolutely needs to be a
+>>> whitelist for systems that need this, otherwise it has to remain
+>>> disabled by default.
+>>
+>> So what information can we use to whitelist btcoex chips?
+>> Can we get btcoex support status at ath9k probing?
+>
+> Sorry for bringing this up again.
+>
+> Is DMI based match an acceptable approach for ath9k?
 
-On 08/23/2018 12:25 PM, Pierre Morel wrote:
-> When entering the SIE the CRYCB validation better
-> be done independently of the instruction's
-> availability.
+I don't know what Felix thinkgs, but to me using DMI sounds like a good
+idea to try, assuming the matches are unique enough and there's no risk
+of enabling bt coex on wrong platforms. Should the PCI bus number etc
+checked as well in case the user adds more ath9k devices to the
+platform?
 
-Maybe something like
+But of course I need to see the patch to comment more.
 
-We need to handle the validity checks for the crycb, no matter what the
-settings for the keywrappings are. So lets move the keywrapping checks
-after we have done the validy checks.
-
-?
-
-> 
-> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
-> ---
->  arch/s390/kvm/vsie.c | 11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
-> index 12b9707..38ea5da 100644
-> --- a/arch/s390/kvm/vsie.c
-> +++ b/arch/s390/kvm/vsie.c
-> @@ -161,17 +161,18 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
->  	/* format-1 is supported with message-security-assist extension 3 */
->  	if (!test_kvm_facility(vcpu->kvm, 76))
->  		return 0;
-> -	/* we may only allow it if enabled for guest 2 */
-> -	ecb3_flags = scb_o->ecb3 & vcpu->arch.sie_block->ecb3 &
-> -		     (ECB3_AES | ECB3_DEA);
-> -	if (!ecb3_flags)
-> -		return 0;
-> 
->  	if ((crycb_addr & PAGE_MASK) != ((crycb_addr + 128) & PAGE_MASK))
->  		return set_validity_icpt(scb_s, 0x003CU);
->  	else if (!crycb_addr)
->  		return set_validity_icpt(scb_s, 0x0039U);
-> 
-> +	/* we may only allow it if enabled for guest 2 */
-> +	ecb3_flags = scb_o->ecb3 & vcpu->arch.sie_block->ecb3 &
-> +		     (ECB3_AES | ECB3_DEA);
-> +	if (!ecb3_flags)
-> +		return 0;
-> +
->  	/* copy only the wrapping keys */
->  	if (read_guest_real(vcpu, crycb_addr + 72,
->  			    vsie_page->crycb.dea_wrapping_key_mask, 56))
-> 
-
+--=20
+Kalle Valo
