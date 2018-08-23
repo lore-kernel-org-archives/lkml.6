@@ -2,113 +2,123 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D45C5C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:21:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD02BC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:22:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8825C20A8B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:21:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72010214AB
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:22:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XXEL41+E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8825C20A8B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cRRBZG/C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72010214AB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726851AbeHWUwI (ORCPT
+        id S1726972AbeHWUxO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 16:52:08 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:45895 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726285AbeHWUwI (ORCPT
+        Thu, 23 Aug 2018 16:53:14 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:37700 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726285AbeHWUxO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 16:52:08 -0400
-Received: by mail-pg1-f195.google.com with SMTP id m4-v6so2420523pgv.12;
-        Thu, 23 Aug 2018 10:21:26 -0700 (PDT)
+        Thu, 23 Aug 2018 16:53:14 -0400
+Received: by mail-pg1-f196.google.com with SMTP id h8-v6so2948852pgs.4
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 10:22:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
          :user-agent;
-        bh=Exnm/mgyXnvKwa75uKWSNjWjdmGXQ1D0OUs3V9uHhuY=;
-        b=XXEL41+EzPPmqXkonPP6r/ZHdrtGm82w+HbOcFO2MEzUqOtiXwjgVRfFkes8CQGUPe
-         9xo+hcH22lgSHgA8WiXxAKhWA/Zuq1SH4SNx2k6iVIKl17Cin5X/rTCrQVL4FZ6f33h1
-         4dSg7fny7+eb66bZMsBjucNOapfBHMq0SPxqnt7UiarLAmMrjaui5iH1/0G6PbyTZCLd
-         WRMPu2cN6pSQ8lOXXisgShASFGVRZwlX7c6J6WTJ3ehEduqrFP5SB5OGM4eQ332CQdkj
-         cn7FIilo34F0eFYG9xDpuy2HxGSobYMQQJy6XhD2tHizlSMvN2wE9YidPWXlYuxFkVAQ
-         KqyA==
+        bh=z9oAEefnzF1bKBuUn5mb5tUX5zpIbvhD5qZYSFSs6+w=;
+        b=cRRBZG/CXwz9eQYDuez9TzRu672iagblqww95SLIC9gfPskfyRAAKkscQ2CYhLNzXZ
+         XK0EufXb6xgBS0Tjv2a7uXr6jxWiWNXp7xFor58V8XU9QZQT7aUsSjtqiUGsCGwe4W/i
+         kK5KLH7s0zfoQVRdIDSu8zMdarTkCCtb4hrPSJaszVeqlWj/jI5gEFTcK4euEw/RWd33
+         03o9VHhfYnmnGZB3UeKi6GgLBXUxH1soESGZfcY+lTFj8dWgIn4e2G99VcG46p2bb6ea
+         sXqCk/mh/2RQizYpyR4B+gWf32qy/kICqVX80VjXbssTt/jXil33Q6aYKQCIEtRF9iK6
+         KxQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=Exnm/mgyXnvKwa75uKWSNjWjdmGXQ1D0OUs3V9uHhuY=;
-        b=onUJ+VoLGB5GDz6ouKSLDK3Uaam4+LAfmSbAyqsebq0p/yub8GtgjzNqwQuUuKa5ls
-         gv5cyKhr723wcbBMXgu9pDgph7YN+vj4inlXpYFRfp16tfGHr9vSIV/uTsvaYa+u7JW3
-         xfOo7onkoVcudA2RYNoAN/glIquOZ4ABhwnuUg93M+6NNya5+FHC6FpU96vTjNKBw5Gq
-         OWu1El6FZRiAMfH7ACMQ2fA1BD2boolntlk+OP5+Jz3k3k5cl7fgVvOo+291tU0qnjyQ
-         PIa+nk/Q0W+ZWAYnk5sypDuMsS87letzuREajOeYGN+sYifoiI7KIE/wJbV02E5Q668t
-         WrCA==
-X-Gm-Message-State: AOUpUlHNyr/ABVzw5wbQDNtVOU+uIGFI9LyQ58TbZbQ9VzhrO9B/P+88
-        4RhtUJnsLvQ/H3NMwTomlpTbOKhK
-X-Google-Smtp-Source: AA+uWPzMP5knqPToJo2+i8aeKMZ2eOw+0+EcpI5ci8MaFvGVHDOHUGFGHOeVNZ9wSaZieCKtVR2+IQ==
-X-Received: by 2002:a17:902:ba82:: with SMTP id k2-v6mr22244567pls.251.1535044885802;
-        Thu, 23 Aug 2018 10:21:25 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id e131-v6sm6854178pfg.152.2018.08.23.10.21.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 Aug 2018 10:21:25 -0700 (PDT)
-Date:   Thu, 23 Aug 2018 10:21:24 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=z9oAEefnzF1bKBuUn5mb5tUX5zpIbvhD5qZYSFSs6+w=;
+        b=enENFELv6n0fHgv5JeCErrKMcL6gppwhMPgIq9M69PVJBYLrI/7i8eurh8jV22G0kM
+         owYuUh6hThAwHNDmY43bWulaX6oiSBxnhBJsbdBYUl+hQxGC/uPkuQUMZdaeofnutzfU
+         pDiKerMVgSGmw9iKqilrB1dsm+5AZND4TJiDAKizITGyhPLWuIq61okNrzLeIkVAJY9w
+         LkJJVbxRfrnqurbtgAQsOU+58QoV1vE/W6N2eH9HYI492HpyjChZW0GfH0rXJmMBmfQb
+         pudq8HxCcYqflgFWXcGgseEEMqkU4RP80R0GWdMaZ/gbQlF7YUoxMW+3//qp+sDpojQi
+         nubA==
+X-Gm-Message-State: AOUpUlGDzLZ4E8zsjUYcQacHZnBwtebxc5ZuH1OyuGa0/bFS+gi8YH9a
+        cP5Upm8+OnQ2tH3TeU75nOo=
+X-Google-Smtp-Source: AA+uWPxS9VoUPZNk/wr7peUxBYuv4WK7zjM2Lnv0pCO15BXNst6PdPJJqFGf0y/U0D6ovyvOCfhmyQ==
+X-Received: by 2002:a63:66c7:: with SMTP id a190-v6mr56707585pgc.411.1535044951261;
+        Thu, 23 Aug 2018 10:22:31 -0700 (PDT)
+Received: from nishad ([106.51.27.228])
+        by smtp.gmail.com with ESMTPSA id k64-v6sm8087409pfg.141.2018.08.23.10.22.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 23 Aug 2018 10:22:30 -0700 (PDT)
+Date:   Thu, 23 Aug 2018 22:52:24 +0530
+From:   Nishad Kamdar <nishadkamdar@gmail.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.4 00/79] 4.4.152-stable review
-Message-ID: <20180823172124.GB8669@roeck-us.net>
-References: <20180823074918.641878835@linuxfoundation.org>
- <20180823163021.GA8669@roeck-us.net>
- <20180823165621.GA24633@kroah.com>
+Cc:     Joe Perches <joe@perches.com>, NeilBrown <neil@brown.name>,
+        devel@driverdev.osuosl.org,
+        Christian =?utf-8?Q?L=C3=BCtke-Stetzkamp?= <christian@lkamp.de>,
+        linux-kernel@vger.kernel.org, John Crispin <blogic@openwrt.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH v5 0/4] staging: mt7621-mmc: Fix debug macros and their usages
+Message-ID: <cover.1535038494.git.nishadkamdar@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180823165621.GA24633@kroah.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 23, 2018 at 06:56:21PM +0200, Greg Kroah-Hartman wrote:
-> On Thu, Aug 23, 2018 at 09:30:21AM -0700, Guenter Roeck wrote:
-> > On Thu, Aug 23, 2018 at 09:52:36AM +0200, Greg Kroah-Hartman wrote:
-> > > This is the start of the stable review cycle for the 4.4.152 release.
-> > > There are 79 patches in this series, all will be posted as a response
-> > > to this one.  If anyone has any issues with these being applied, please
-> > > let me know.
-> > > 
-> > > Responses should be made by Sat Aug 25 07:48:51 UTC 2018.
-> > > Anything received after that time might be too late.
-> > > 
-> > 
-> > Early feedback:
-> > 
-> > Building i386:tools/perf ... failed
-> > Building x86_64:tools/perf ... failed
-> > --------------
-> > Error log:
-> >   PERF_VERSION = 4.4.151.g6d0c34
-> > tests/parse-events.c: In function ‘test_event’:
-> > tests/parse-events.c:1629:3: error: implicit declaration of function ‘parse_events_print_error’
-> 
-> oops, forgot to drop that broken perf patch from 4.4 as well, now done,
-> sorry about that.
-> 
+The patchset fixes the four debug macros N_MSG, ERR_MSG, INIT_MSG and
+IRQ_MSG. Each patch fixes one particular macro and its usages.
 
-NP. Note that 3.18.y still has the cavium build error.
+For N_MSG, removes the commented code in dbg.h.
 
-Guenter
+For ERR_MSG and IRQ_MSG, replaces printk with dev_<level> without __func__ or
+__LINE__ or current->comm and current->pid. Removes the do {} while(0) loop
+for the single statement macro. Further drops the macros and replaces their
+usages with dev_<level>. Deletes the commented usages.
+
+Removes the INIT_MSG macro and its usages.
+
+Changes in v5:
+  - Remove commented code for N_MSG().
+  - Remove commented ERR_MSG() usages.
+ 
+Changes in v4:
+  - Create multiple patches, one for each type of macro being
+    deleted/changed.
+
+Changes in v3:
+  - Replace usages of ERR_MSG and IRQ_MSG with dev_err() in code itself.
+  - Remove all INIT_MSG usages.
+  - Drop ERR_MSG, INIT_MSG and IRQ_MSG from dbg.h.
+
+Changes in v2:
+  - Replace printk with dev_<level>.
+  - Remove __func__, __LINE__, current->comm, current->pid from arguments.
+  - Remove the do {} while(0) loop from these macros.
+  - Modify commit message to include other changes.
+
+Nishad Kamdar (4):
+  staging: mt7621-mmc: Remove commented code for N_MSG
+  staging: mt7621-mmc: Fix debug macro ERR_MSG and its usages
+  staging: mt7621-mmc: Remove macro INIT_MSG and its usages
+  staging: mt7621-mmc: Fix debug macro IRQ_MSG and its usages
+
+ drivers/staging/mt7621-mmc/dbg.h |  33 ------
+ drivers/staging/mt7621-mmc/sd.c  | 172 +++++++++++++++++++------------
+ 2 files changed, 108 insertions(+), 97 deletions(-)
+
+-- 
+2.17.1
+
