@@ -3,38 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24590C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:22:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0FADC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:22:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE22B208D6
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:22:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE22B208D6
+	by mail.kernel.org (Postfix) with ESMTP id 8E1E4208D6
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:22:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E1E4208D6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730647AbeHWLup (ORCPT
+        id S1730661AbeHWLus (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:50:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46930 "EHLO
+        Thu, 23 Aug 2018 07:50:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46938 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728096AbeHWLuo (ORCPT
+        with ESMTP id S1728096AbeHWLur (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:50:44 -0400
+        Thu, 23 Aug 2018 07:50:47 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EF4D68B1;
-        Thu, 23 Aug 2018 08:22:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2FDE68B1;
+        Thu, 23 Aug 2018 08:22:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        stable@vger.kernel.org, Zhouyang Jia <jiazhouyang09@gmail.com>,
+        Juergen Gross <jgross@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 050/217] pNFS: Always free the session slot on error in nfs4_layoutget_handle_exception
-Date:   Thu, 23 Aug 2018 09:52:43 +0200
-Message-Id: <20180823075507.794433857@linuxfoundation.org>
+Subject: [PATCH 4.14 051/217] scsi: xen-scsifront: add error handling for xenbus_printf
+Date:   Thu, 23 Aug 2018 09:52:44 +0200
+Message-Id: <20180823075507.840241084@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -51,68 +51,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Trond Myklebust <trond.myklebust@hammerspace.com>
+From: Zhouyang Jia <jiazhouyang09@gmail.com>
 
-[ Upstream commit 2dbf8dffbf35fd8f611083b9d9fe74fdccf912a3 ]
+[ Upstream commit 93efbd39870474cc536b9caf4a6efeb03b0bc56f ]
 
-Right now, we can call nfs_commit_inode() while holding the session slot,
-which could lead to NFSv4 deadlocks. Ensure we only keep the slot if
-the server returned a layout that we have to process.
+When xenbus_printf fails, the lack of error-handling code may
+cause unexpected results.
 
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+This patch adds error-handling code after calling xenbus_printf.
+
+Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/nfs/nfs4proc.c |   17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+ drivers/scsi/xen-scsifront.c |   33 ++++++++++++++++++++++++++-------
+ 1 file changed, 26 insertions(+), 7 deletions(-)
 
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -8429,6 +8429,8 @@ nfs4_layoutget_handle_exception(struct r
+--- a/drivers/scsi/xen-scsifront.c
++++ b/drivers/scsi/xen-scsifront.c
+@@ -654,10 +654,17 @@ static int scsifront_dev_reset_handler(s
+ static int scsifront_sdev_configure(struct scsi_device *sdev)
+ {
+ 	struct vscsifrnt_info *info = shost_priv(sdev->host);
++	int err;
  
- 	dprintk("--> %s tk_status => %d\n", __func__, -task->tk_status);
+-	if (info && current == info->curr)
+-		xenbus_printf(XBT_NIL, info->dev->nodename,
++	if (info && current == info->curr) {
++		err = xenbus_printf(XBT_NIL, info->dev->nodename,
+ 			      info->dev_state_path, "%d", XenbusStateConnected);
++		if (err) {
++			xenbus_dev_error(info->dev, err,
++				"%s: writing dev_state_path", __func__);
++			return err;
++		}
++	}
  
-+	nfs4_sequence_free_slot(&lgp->res.seq_res);
-+
- 	switch (nfs4err) {
- 	case 0:
- 		goto out;
-@@ -8493,7 +8495,6 @@ nfs4_layoutget_handle_exception(struct r
- 		goto out;
- 	}
+ 	return 0;
+ }
+@@ -665,10 +672,15 @@ static int scsifront_sdev_configure(stru
+ static void scsifront_sdev_destroy(struct scsi_device *sdev)
+ {
+ 	struct vscsifrnt_info *info = shost_priv(sdev->host);
++	int err;
  
--	nfs4_sequence_free_slot(&lgp->res.seq_res);
- 	err = nfs4_handle_exception(server, nfs4err, exception);
- 	if (!status) {
- 		if (exception->retry)
-@@ -8619,20 +8620,22 @@ nfs4_proc_layoutget(struct nfs4_layoutge
- 	if (IS_ERR(task))
- 		return ERR_CAST(task);
- 	status = rpc_wait_for_completion_task(task);
--	if (status == 0) {
-+	if (status != 0)
-+		goto out;
-+
-+	/* if layoutp->len is 0, nfs4_layoutget_prepare called rpc_exit */
-+	if (task->tk_status < 0 || lgp->res.layoutp->len == 0) {
- 		status = nfs4_layoutget_handle_exception(task, lgp, &exception);
- 		*timeout = exception.timeout;
--	}
--
-+	} else
-+		lseg = pnfs_layout_process(lgp);
-+out:
- 	trace_nfs4_layoutget(lgp->args.ctx,
- 			&lgp->args.range,
- 			&lgp->res.range,
- 			&lgp->res.stateid,
- 			status);
+-	if (info && current == info->curr)
+-		xenbus_printf(XBT_NIL, info->dev->nodename,
++	if (info && current == info->curr) {
++		err = xenbus_printf(XBT_NIL, info->dev->nodename,
+ 			      info->dev_state_path, "%d", XenbusStateClosed);
++		if (err)
++			xenbus_dev_error(info->dev, err,
++				"%s: writing dev_state_path", __func__);
++	}
+ }
  
--	/* if layoutp->len is 0, nfs4_layoutget_prepare called rpc_exit */
--	if (status == 0 && lgp->res.layoutp->len)
--		lseg = pnfs_layout_process(lgp);
- 	rpc_put_task(task);
- 	dprintk("<-- %s status=%d\n", __func__, status);
- 	if (status)
+ static struct scsi_host_template scsifront_sht = {
+@@ -1003,9 +1015,12 @@ static void scsifront_do_lun_hotplug(str
+ 
+ 			if (scsi_add_device(info->host, chn, tgt, lun)) {
+ 				dev_err(&dev->dev, "scsi_add_device\n");
+-				xenbus_printf(XBT_NIL, dev->nodename,
++				err = xenbus_printf(XBT_NIL, dev->nodename,
+ 					      info->dev_state_path,
+ 					      "%d", XenbusStateClosed);
++				if (err)
++					xenbus_dev_error(dev, err,
++						"%s: writing dev_state_path", __func__);
+ 			}
+ 			break;
+ 		case VSCSIFRONT_OP_DEL_LUN:
+@@ -1019,10 +1034,14 @@ static void scsifront_do_lun_hotplug(str
+ 			}
+ 			break;
+ 		case VSCSIFRONT_OP_READD_LUN:
+-			if (device_state == XenbusStateConnected)
+-				xenbus_printf(XBT_NIL, dev->nodename,
++			if (device_state == XenbusStateConnected) {
++				err = xenbus_printf(XBT_NIL, dev->nodename,
+ 					      info->dev_state_path,
+ 					      "%d", XenbusStateConnected);
++				if (err)
++					xenbus_dev_error(dev, err,
++						"%s: writing dev_state_path", __func__);
++			}
+ 			break;
+ 		default:
+ 			break;
 
 
