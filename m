@@ -6,39 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 228A5C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:12:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87D0FC04E85
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:12:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9590208C2
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:12:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9590208C2
+	by mail.kernel.org (Postfix) with ESMTP id 5066D208EB
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:12:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5066D208EB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389056AbeHWMlb (ORCPT
+        id S2389076AbeHWMlc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:41:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57232 "EHLO
+        Thu, 23 Aug 2018 08:41:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57244 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730015AbeHWMl3 (ORCPT
+        with ESMTP id S1730015AbeHWMlc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:41:29 -0400
+        Thu, 23 Aug 2018 08:41:32 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 33799AF3;
-        Thu, 23 Aug 2018 09:12:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5B06EBC8;
+        Thu, 23 Aug 2018 09:12:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <james.morris@microsoft.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 101/217] selftests/x86/sigreturn/64: Fix spurious failures on AMD CPUs
-Date:   Thu, 23 Aug 2018 09:53:34 +0200
-Message-Id: <20180823075510.046538704@linuxfoundation.org>
+Subject: [PATCH 4.14 075/217] Smack: Mark inode instant in smack_task_to_inode
+Date:   Thu, 23 Aug 2018 09:53:08 +0200
+Message-Id: <20180823075508.877166245@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -55,94 +51,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andy Lutomirski <luto@kernel.org>
+From: Casey Schaufler <casey@schaufler-ca.com>
 
-[ Upstream commit ec348020566009d3da9b99f07c05814d13969c78 ]
+[ Upstream commit 7b4e88434c4e7982fb053c49657e1c8bbb8692d9 ]
 
-When I wrote the sigreturn test, I didn't realize that AMD's busted
-IRET behavior was different from Intel's busted IRET behavior:
+Smack: Mark inode instant in smack_task_to_inode
 
-On AMD CPUs, the CPU leaks the high 32 bits of the kernel stack pointer
-to certain userspace contexts.  Gee, thanks.  There's very little
-the kernel can do about it.  Modify the test so it passes.
+/proc clean-up in commit 1bbc55131e59bd099fdc568d3aa0b42634dbd188
+resulted in smack_task_to_inode() being called before smack_d_instantiate.
+This resulted in the smk_inode value being ignored, even while present
+for files in /proc/self. Marking the inode as instant here fixes that.
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/86e7fd3564497f657de30a36da4505799eebef01.1530076529.git.luto@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+Signed-off-by: James Morris <james.morris@microsoft.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/x86/sigreturn.c |   46 ++++++++++++++++++++------------
- 1 file changed, 29 insertions(+), 17 deletions(-)
+ security/smack/smack_lsm.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/tools/testing/selftests/x86/sigreturn.c
-+++ b/tools/testing/selftests/x86/sigreturn.c
-@@ -612,19 +612,38 @@ static int test_valid_sigreturn(int cs_b
- 		greg_t req = requested_regs[i], res = resulting_regs[i];
- 		if (i == REG_TRAPNO || i == REG_IP)
- 			continue;	/* don't care */
--		if (i == REG_SP) {
--			printf("\tSP: %llx -> %llx\n", (unsigned long long)req,
--			       (unsigned long long)res);
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -2281,6 +2281,7 @@ static void smack_task_to_inode(struct t
+ 	struct smack_known *skp = smk_of_task_struct(p);
  
-+		if (i == REG_SP) {
- 			/*
--			 * In many circumstances, the high 32 bits of rsp
--			 * are zeroed.  For example, we could be a real
--			 * 32-bit program, or we could hit any of a number
--			 * of poorly-documented IRET or segmented ESP
--			 * oddities.  If this happens, it's okay.
-+			 * If we were using a 16-bit stack segment, then
-+			 * the kernel is a bit stuck: IRET only restores
-+			 * the low 16 bits of ESP/RSP if SS is 16-bit.
-+			 * The kernel uses a hack to restore bits 31:16,
-+			 * but that hack doesn't help with bits 63:32.
-+			 * On Intel CPUs, bits 63:32 end up zeroed, and, on
-+			 * AMD CPUs, they leak the high bits of the kernel
-+			 * espfix64 stack pointer.  There's very little that
-+			 * the kernel can do about it.
-+			 *
-+			 * Similarly, if we are returning to a 32-bit context,
-+			 * the CPU will often lose the high 32 bits of RSP.
- 			 */
--			if (res == (req & 0xFFFFFFFF))
--				continue;  /* OK; not expected to work */
-+
-+			if (res == req)
-+				continue;
-+
-+			if (cs_bits != 64 && ((res ^ req) & 0xFFFFFFFF) == 0) {
-+				printf("[NOTE]\tSP: %llx -> %llx\n",
-+				       (unsigned long long)req,
-+				       (unsigned long long)res);
-+				continue;
-+			}
-+
-+			printf("[FAIL]\tSP mismatch: requested 0x%llx; got 0x%llx\n",
-+			       (unsigned long long)requested_regs[i],
-+			       (unsigned long long)resulting_regs[i]);
-+			nerrs++;
-+			continue;
- 		}
+ 	isp->smk_inode = skp;
++	isp->smk_flags |= SMK_INODE_INSTANT;
+ }
  
- 		bool ignore_reg = false;
-@@ -663,13 +682,6 @@ static int test_valid_sigreturn(int cs_b
- 		}
- 
- 		if (requested_regs[i] != resulting_regs[i] && !ignore_reg) {
--			/*
--			 * SP is particularly interesting here.  The
--			 * usual cause of failures is that we hit the
--			 * nasty IRET case of returning to a 16-bit SS,
--			 * in which case bits 16:31 of the *kernel*
--			 * stack pointer persist in ESP.
--			 */
- 			printf("[FAIL]\tReg %d mismatch: requested 0x%llx; got 0x%llx\n",
- 			       i, (unsigned long long)requested_regs[i],
- 			       (unsigned long long)resulting_regs[i]);
+ /*
 
 
