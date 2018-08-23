@@ -2,122 +2,98 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0232DC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:04:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D9ABC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:07:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9BE1208CC
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:04:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CAD8208D6
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:07:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="cG6Qqx+i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9BE1208CC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BparjLy7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CAD8208D6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388898AbeHWMdA (ORCPT
+        id S1729593AbeHWMfn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:33:00 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:45604 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728841AbeHWMc7 (ORCPT
+        Thu, 23 Aug 2018 08:35:43 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:42919 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727540AbeHWM2D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:32:59 -0400
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id w7N940Cx029694;
-        Thu, 23 Aug 2018 18:04:01 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w7N940Cx029694
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1535015041;
-        bh=FeQSIbNiDZqBY3Zeo4RoUbPMtc42oPWta3o3qLUBog4=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=cG6Qqx+i2tIz3YXT7hfy3+XD3/+0kyeiI2CAcBPqRSLq7g67yS7N0IgICN5U34LN1
-         EQLpbborARuQxYAPUi4jLtH1dudn7v8z72f4y5MZWozRrw+hNC7AVoIN6SeEN3gF0Z
-         oAciTVhA4ybPN3hM4fBW2gE+/0l8lGYFhDZnVw/0AVegTlPSWkO9qz8A0hpWN49oUP
-         m7WhalDM8oCsvnAqnEkWSMC5T26HH7HwoPP8AnFkm+mZDWz5g2lvccbXu3s/OXd3w1
-         NFgtJ7VAL51X3IXOYaICC+DOHPLsAt/bJa4eRLoW/FeN5VK+RwAK+3jUWOExMvW9Pt
-         u6VMf+kmSIFlg==
-X-Nifty-SrcIP: [209.85.222.52]
-Received: by mail-ua1-f52.google.com with SMTP id f4-v6so2774143uao.10;
-        Thu, 23 Aug 2018 02:04:01 -0700 (PDT)
-X-Gm-Message-State: AOUpUlEjeOLu1ybttLH6lWwv2VWZs4/bnw/2hdU/0MBf/wNbUmLIpf9Y
-        V/FhImjok8phgL+LEzscbCTR6I5jOODwpiiL3Kw=
-X-Google-Smtp-Source: AA+uWPzvRlgIcEF56Mnuv6Qj6gatJPKNQ5YPCfzLt7EaWh73tA1ehH6jkmANXGmJQKS6mi5OF4ABosSc+UJVYE5Vb3g=
-X-Received: by 2002:ab0:14b3:: with SMTP id d48-v6mr40004964uae.88.1535015040449;
- Thu, 23 Aug 2018 02:04:00 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ab0:2642:0:0:0:0:0 with HTTP; Thu, 23 Aug 2018 02:03:19
- -0700 (PDT)
-In-Reply-To: <20180823083552.6fd372af@canb.auug.org.au>
-References: <20180823083552.6fd372af@canb.auug.org.au>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 23 Aug 2018 18:03:19 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAShQCMvwo-s2hDy4AkJs4=gvpa7hR22s2hC969dRkaV-w@mail.gmail.com>
-Message-ID: <CAK7LNAShQCMvwo-s2hDy4AkJs4=gvpa7hR22s2hC969dRkaV-w@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the kbuild tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 23 Aug 2018 08:28:03 -0400
+Received: by mail-pg1-f194.google.com with SMTP id y4-v6so2243084pgp.9
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 01:59:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=G8wSzdtoRNiMaLVb7pD3PeExnyV73Q1lSCHz09KWTwk=;
+        b=BparjLy7qejScg0Va8lnp/643phch+Wa51fVT+z6f6jjWRN7Z5gyIt/e5fM1oqklvx
+         wDRGVMfRTzPvW3lpZaTuWdRqVoskAjHGs2p5wC3f0kNpPRlhm4N84mo0Uufro0vcqGXa
+         pivmLqGgY6olEGlPAQWYNTjWPTXsxfEKJxW7KLfYkEmw5ZgjJPnMqRDn8h6u0I0zBOd6
+         2cJJCCLnYP1gDoNR4wevJF/KFztrhIUHlGS5iCGkmLfWVlsMQ4Yg5d3XM18Jxi6vRhv1
+         vcPWe2r5oCKnzs/ZH29C8/UApbuPE1KluCBD88bTXhBgRzodf/ADjwpI2tVrcGNlm9Ez
+         cP8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=G8wSzdtoRNiMaLVb7pD3PeExnyV73Q1lSCHz09KWTwk=;
+        b=hRAlghEHrq+7znf4cvsFPSaarivnt2qRgWtWqIcSkuhR5FnYeieH78xdQ9Yp+XZQBS
+         FyGFQ5WkkVQrIA0I0kGVos0LAYVm6qOfWVf9tHQg3piXibIt24xob8hxQ8B3WEoz0uf4
+         J9vLzOu2YiIT5k5NrWI2ZvwWeNMy+xJHGNKZeel2hHrrUnS70wEtx8ZCxHxnkESxH4CR
+         QujpoHMvLvaqQwDsnrH1JM7CSKzUfQ7nLyhvfk2sUxZIdKs1HBgQuOrhHlR+g9obcGwj
+         lX4z54pwkaeX2EEQv3kg1FoUB/2ZH7AaFH/QVW/2NOhXaqaeUY9RfNM7+UyMPMjcEI8L
+         OzcA==
+X-Gm-Message-State: AOUpUlFdm0yuIr6WFDlIrZs+Cg7UqSNzCJ3zY/WQ8FEr2cymOgdwFT1Q
+        jScz/h+P7YnOwEFtD8UlQJ4=
+X-Google-Smtp-Source: AA+uWPw7ccpsHEYVwkRGgK1Nn8ePO1O1VK5keLXiuCcN3FCILpkynmDdsbF9yvNzNPSVFc8ZpTMZCA==
+X-Received: by 2002:a63:2744:: with SMTP id n65-v6mr25237644pgn.29.1535014762031;
+        Thu, 23 Aug 2018 01:59:22 -0700 (PDT)
+Received: from localhost.localdomain ([104.192.108.9])
+        by smtp.gmail.com with ESMTPSA id t86-v6sm808643pfe.109.2018.08.23.01.59.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 23 Aug 2018 01:59:21 -0700 (PDT)
+From:   Weikang Shi <swkhack@gmail.com>
+To:     akpm@linux-foundation.org
+Cc:     alexander.h.duyck@intel.com, mhocko@suse.com, vbabka@suse.cz,
+        mgorman@suse.de, l.stach@pengutronix.de, vdavydov.dev@gmail.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        my_email@gmail.com, Weikang Shi <swkhack@gmail.com>
+Subject: [PATCH] fs: fix local var type
+Date:   Thu, 23 Aug 2018 01:59:14 -0700
+Message-Id: <1535014754-31918-1-git-send-email-swkhack@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
+In the seq_hex_dump function,the remaining variable is int, but it receive a type of size_t argument.
+So I change the type of remaining
 
-2018-08-23 7:35 GMT+09:00 Stephen Rothwell <sfr@canb.auug.org.au>:
-> Hi Masahiro,
->
-> After merging the kbuild tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
->
-> ld: failed to merge target specific data of file drivers/input/mouse/alps.o
-> ld: drivers/input/mouse/byd.o: compiled for a big endian system and target is little endian
-> ld: failed to merge target specific data of file drivers/input/mouse/byd.o
->
-> and many, many more like this.
->
-> Sorry, I can't easily tell what caused this.
->
-> I have used the kbuild tree from next-20180822 for today.
+Signed-off-by: Weikang Shi <swkhack@gmail.com>
+---
+ fs/seq_file.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-
-
-Sorry, will fix.
-
-I missed to change link-vmlinux.sh
-
-
-
-
-diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
-index 4bf811c..c8cf453 100755
---- a/scripts/link-vmlinux.sh
-+++ b/scripts/link-vmlinux.sh
-@@ -75,7 +75,7 @@ modpost_link()
-                ${KBUILD_VMLINUX_LIBS}                          \
-                --end-group"
-
--       ${LD} ${LDFLAGS} -r -o ${1} ${objects}
-+       ${LD} ${KBUILD_LDFLAGS} -r -o ${1} ${objects}
- }
-
- # Link of vmlinux
-@@ -95,7 +95,7 @@ vmlinux_link()
-                        --end-group                             \
-                        ${1}"
-
--               ${LD} ${LDFLAGS} ${LDFLAGS_vmlinux} -o ${2}     \
-+               ${LD} ${KBUILD_LDFLAGS} ${LDFLAGS_vmlinux} -o ${2}      \
-                        -T ${lds} ${objects}
-        else
-                objects="-Wl,--whole-archive                    \
-
-
-
+diff --git a/fs/seq_file.c b/fs/seq_file.c
+index 1dea7a8..d0e8bec 100644
+--- a/fs/seq_file.c
++++ b/fs/seq_file.c
+@@ -847,7 +847,8 @@ void seq_hex_dump(struct seq_file *m, const char *prefix_str, int prefix_type,
+ 		  bool ascii)
+ {
+ 	const u8 *ptr = buf;
+-	int i, linelen, remaining = len;
++	int i, linelen;
++	size_t remaining = len;
+ 	char *buffer;
+ 	size_t size;
+ 	int ret;
 -- 
-Best Regards
-Masahiro Yamada
+2.7.4
+
