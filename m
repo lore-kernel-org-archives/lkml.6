@@ -3,39 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31A05C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:51:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F551C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:51:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E27E920839
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:51:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E27E920839
+	by mail.kernel.org (Postfix) with ESMTP id 24D4320839
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:51:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24D4320839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387654AbeHWMTr (ORCPT
+        id S2387669AbeHWMTu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:19:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51514 "EHLO
+        Thu, 23 Aug 2018 08:19:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51522 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732216AbeHWMTr (ORCPT
+        with ESMTP id S1732216AbeHWMTt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:19:47 -0400
+        Thu, 23 Aug 2018 08:19:49 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 66544BE0;
-        Thu, 23 Aug 2018 08:51:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 89F9EBE0;
+        Thu, 23 Aug 2018 08:51:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
+        stable@vger.kernel.org, Chengguang Xu <cgxu519@gmx.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 145/324] drm/exynos: gsc: Fix support for NV16/61, YUV420/YVU420 and YUV422 modes
-Date:   Thu, 23 Aug 2018 09:53:31 +0200
-Message-Id: <20180823075003.183030709@linuxfoundation.org>
+Subject: [PATCH 4.17 128/324] nfp: cast sizeof() to int when comparing with error code
+Date:   Thu, 23 Aug 2018 09:53:14 +0200
+Message-Id: <20180823075002.316882450@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -52,96 +52,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Chengguang Xu <cgxu519@gmx.com>
 
-[ Upstream commit dd209ef809080ced903e7747ee3ef640c923a1d2 ]
+[ Upstream commit 2d2595719a97c876f35b1e60e5768e58753b268c ]
 
-Fix following issues related to planar YUV pixel format configuration:
-- NV16/61 modes were incorrectly programmed as NV12/21,
-- YVU420 was programmed as YUV420 on source,
-- YVU420 and YUV422 were programmed as YUV420 on output.
+sizeof() will return unsigned value so in the error check
+negative error code will be always larger than sizeof().
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Inki Dae <inki.dae@samsung.com>
+Fixes: a0d8e02c35ff ("nfp: add support for reading nffw info")
+
+Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
+Acked-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/exynos/exynos_drm_gsc.c |   29 ++++++++++++++++++++---------
- drivers/gpu/drm/exynos/regs-gsc.h       |    1 +
- 2 files changed, 21 insertions(+), 9 deletions(-)
+ drivers/net/ethernet/netronome/nfp/nfpcore/nfp_nffw.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-@@ -532,21 +532,25 @@ static int gsc_src_set_fmt(struct device
- 			GSC_IN_CHROMA_ORDER_CRCB);
- 		break;
- 	case DRM_FORMAT_NV21:
-+		cfg |= (GSC_IN_CHROMA_ORDER_CRCB | GSC_IN_YUV420_2P);
-+		break;
- 	case DRM_FORMAT_NV61:
--		cfg |= (GSC_IN_CHROMA_ORDER_CRCB |
--			GSC_IN_YUV420_2P);
-+		cfg |= (GSC_IN_CHROMA_ORDER_CRCB | GSC_IN_YUV422_2P);
- 		break;
- 	case DRM_FORMAT_YUV422:
- 		cfg |= GSC_IN_YUV422_3P;
- 		break;
- 	case DRM_FORMAT_YUV420:
-+		cfg |= (GSC_IN_CHROMA_ORDER_CBCR | GSC_IN_YUV420_3P);
-+		break;
- 	case DRM_FORMAT_YVU420:
--		cfg |= GSC_IN_YUV420_3P;
-+		cfg |= (GSC_IN_CHROMA_ORDER_CRCB | GSC_IN_YUV420_3P);
- 		break;
- 	case DRM_FORMAT_NV12:
-+		cfg |= (GSC_IN_CHROMA_ORDER_CBCR | GSC_IN_YUV420_2P);
-+		break;
- 	case DRM_FORMAT_NV16:
--		cfg |= (GSC_IN_CHROMA_ORDER_CBCR |
--			GSC_IN_YUV420_2P);
-+		cfg |= (GSC_IN_CHROMA_ORDER_CBCR | GSC_IN_YUV422_2P);
- 		break;
- 	default:
- 		dev_err(ippdrv->dev, "invalid target yuv order 0x%x.\n", fmt);
-@@ -806,18 +810,25 @@ static int gsc_dst_set_fmt(struct device
- 			GSC_OUT_CHROMA_ORDER_CRCB);
- 		break;
- 	case DRM_FORMAT_NV21:
--	case DRM_FORMAT_NV61:
- 		cfg |= (GSC_OUT_CHROMA_ORDER_CRCB | GSC_OUT_YUV420_2P);
- 		break;
-+	case DRM_FORMAT_NV61:
-+		cfg |= (GSC_OUT_CHROMA_ORDER_CRCB | GSC_OUT_YUV422_2P);
-+		break;
- 	case DRM_FORMAT_YUV422:
-+		cfg |= GSC_OUT_YUV422_3P;
-+		break;
- 	case DRM_FORMAT_YUV420:
-+		cfg |= (GSC_OUT_CHROMA_ORDER_CBCR | GSC_OUT_YUV420_3P);
-+		break;
- 	case DRM_FORMAT_YVU420:
--		cfg |= GSC_OUT_YUV420_3P;
-+		cfg |= (GSC_OUT_CHROMA_ORDER_CRCB | GSC_OUT_YUV420_3P);
- 		break;
- 	case DRM_FORMAT_NV12:
-+		cfg |= (GSC_OUT_CHROMA_ORDER_CBCR | GSC_OUT_YUV420_2P);
-+		break;
- 	case DRM_FORMAT_NV16:
--		cfg |= (GSC_OUT_CHROMA_ORDER_CBCR |
--			GSC_OUT_YUV420_2P);
-+		cfg |= (GSC_OUT_CHROMA_ORDER_CBCR | GSC_OUT_YUV422_2P);
- 		break;
- 	default:
- 		dev_err(ippdrv->dev, "invalid target yuv order 0x%x.\n", fmt);
---- a/drivers/gpu/drm/exynos/regs-gsc.h
-+++ b/drivers/gpu/drm/exynos/regs-gsc.h
-@@ -138,6 +138,7 @@
- #define GSC_OUT_YUV420_3P		(3 << 4)
- #define GSC_OUT_YUV422_1P		(4 << 4)
- #define GSC_OUT_YUV422_2P		(5 << 4)
-+#define GSC_OUT_YUV422_3P		(6 << 4)
- #define GSC_OUT_YUV444			(7 << 4)
- #define GSC_OUT_TILE_TYPE_MASK		(1 << 2)
- #define GSC_OUT_TILE_C_16x8		(0 << 2)
+--- a/drivers/net/ethernet/netronome/nfp/nfpcore/nfp_nffw.c
++++ b/drivers/net/ethernet/netronome/nfp/nfpcore/nfp_nffw.c
+@@ -232,7 +232,7 @@ struct nfp_nffw_info *nfp_nffw_info_open
+ 	err = nfp_cpp_read(cpp, nfp_resource_cpp_id(state->res),
+ 			   nfp_resource_address(state->res),
+ 			   fwinf, sizeof(*fwinf));
+-	if (err < sizeof(*fwinf))
++	if (err < (int)sizeof(*fwinf))
+ 		goto err_release;
+ 
+ 	if (!nffw_res_flg_init_get(fwinf))
 
 
