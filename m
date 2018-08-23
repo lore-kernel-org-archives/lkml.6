@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41CC1C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:07:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CC92C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:07:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 009882064E
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:07:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 009882064E
+	by mail.kernel.org (Postfix) with ESMTP id F29762064E
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:07:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F29762064E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728289AbeHWLgA (ORCPT
+        id S1728395AbeHWLgD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:36:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44766 "EHLO
+        Thu, 23 Aug 2018 07:36:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44778 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728107AbeHWLf7 (ORCPT
+        with ESMTP id S1728080AbeHWLgC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:35:59 -0400
+        Thu, 23 Aug 2018 07:36:02 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 18B01BB6;
-        Thu, 23 Aug 2018 08:07:32 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D2E04BB6;
+        Thu, 23 Aug 2018 08:07:36 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Wahren <stefan.wahren@i2se.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Minas Harutyunyan <hminas@synopsys.com>,
-        Grigor Tovmasyan <tovmasya@synopsys.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, Zhouyang Jia <jiazhouyang09@gmail.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 020/130] usb: gadget: dwc2: fix memory leak in gadget_init()
-Date:   Thu, 23 Aug 2018 09:52:16 +0200
-Message-Id: <20180823074928.646346377@linuxfoundation.org>
+Subject: [PATCH 4.9 021/130] xen: add error handling for xenbus_printf
+Date:   Thu, 23 Aug 2018 09:52:17 +0200
+Message-Id: <20180823074928.710598783@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
 References: <20180823074927.161454870@linuxfoundation.org>
@@ -54,49 +52,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Grigor Tovmasyan <Grigor.Tovmasyan@synopsys.com>
+From: Zhouyang Jia <jiazhouyang09@gmail.com>
 
-[ Upstream commit 9bb073a053f0464ea74a4d4c331fdb7da58568d6 ]
+[ Upstream commit 84c029a73327cef571eaa61c7d6e67e8031b52ec ]
 
-Freed allocated request for ep0 to prevent memory leak in case when
-dwc2_driver_probe() failed.
+When xenbus_printf fails, the lack of error-handling code may
+cause unexpected results.
 
-Cc: Stefan Wahren <stefan.wahren@i2se.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Tested-by: Stefan Wahren <stefan.wahren@i2se.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Acked-by: Minas Harutyunyan <hminas@synopsys.com>
-Signed-off-by: Grigor Tovmasyan <tovmasya@synopsys.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+This patch adds error-handling code after calling xenbus_printf.
+
+Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/dwc2/gadget.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/xen/manage.c |   18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
---- a/drivers/usb/dwc2/gadget.c
-+++ b/drivers/usb/dwc2/gadget.c
-@@ -3948,9 +3948,11 @@ int dwc2_gadget_init(struct dwc2_hsotg *
+--- a/drivers/xen/manage.c
++++ b/drivers/xen/manage.c
+@@ -291,8 +291,15 @@ static void sysrq_handler(struct xenbus_
+ 		return;
  	}
  
- 	ret = usb_add_gadget_udc(dev, &hsotg->gadget);
--	if (ret)
-+	if (ret) {
-+		dwc2_hsotg_ep_free_request(&hsotg->eps_out[0]->ep,
-+					   hsotg->ctrl_req);
- 		return ret;
--
+-	if (sysrq_key != '\0')
+-		xenbus_printf(xbt, "control", "sysrq", "%c", '\0');
++	if (sysrq_key != '\0') {
++		err = xenbus_printf(xbt, "control", "sysrq", "%c", '\0');
++		if (err) {
++			pr_err("%s: Error %d writing sysrq in control/sysrq\n",
++			       __func__, err);
++			xenbus_transaction_end(xbt, 1);
++			return;
++		}
 +	}
- 	dwc2_hsotg_dump(hsotg);
+ 
+ 	err = xenbus_transaction_end(xbt, 0);
+ 	if (err == -EAGAIN)
+@@ -344,7 +351,12 @@ static int setup_shutdown_watcher(void)
+ 			continue;
+ 		snprintf(node, FEATURE_PATH_SIZE, "feature-%s",
+ 			 shutdown_handlers[idx].command);
+-		xenbus_printf(XBT_NIL, "control", node, "%u", 1);
++		err = xenbus_printf(XBT_NIL, "control", node, "%u", 1);
++		if (err) {
++			pr_err("%s: Error %d writing %s\n", __func__,
++				err, node);
++			return err;
++		}
+ 	}
  
  	return 0;
-@@ -3963,6 +3965,7 @@ int dwc2_gadget_init(struct dwc2_hsotg *
- int dwc2_hsotg_remove(struct dwc2_hsotg *hsotg)
- {
- 	usb_del_gadget_udc(&hsotg->gadget);
-+	dwc2_hsotg_ep_free_request(&hsotg->eps_out[0]->ep, hsotg->ctrl_req);
- 
- 	return 0;
- }
 
 
