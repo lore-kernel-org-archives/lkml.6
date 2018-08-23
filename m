@@ -7,59 +7,59 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3788C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:31:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8025AC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:33:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78E732152D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:31:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12CF42154E
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:33:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="flF1tTNp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78E732152D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ESE5RKxX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12CF42154E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727026AbeHWVCD (ORCPT
+        id S1727044AbeHWVEB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 17:02:03 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:42052 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726429AbeHWVCD (ORCPT
+        Thu, 23 Aug 2018 17:04:01 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:43387 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726556AbeHWVEB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 17:02:03 -0400
-Received: by mail-pf1-f193.google.com with SMTP id l9-v6so3125911pff.9
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 10:31:18 -0700 (PDT)
+        Thu, 23 Aug 2018 17:04:01 -0400
+Received: by mail-pg1-f193.google.com with SMTP id v66-v6so2954390pgb.10
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 10:33:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=VF+275AGBcfncz08rauD54L/NRg1kgWG3YJqjxLIhog=;
-        b=flF1tTNpWNWDobUGJNQandnHEzAzCn1vqqWON2W1Y2pdrt/lFkVf/Zi66ij4laDwkC
-         l8A37plhL+E9VsyYaNa4KNwHVEmu/+ANzgXekHKRQlj8Rqr6u10pZ1gsidorBheucEzd
-         oF1ouFxYUsLp5ovBL5EVRdY4GnatVOEg0F+QjNYhUOF/UYUfWEp56/OXz3sGP/pXjXJI
-         vhnNwR/Xy0Zf3S29t2Dfp+42qodnFqFV2Nn5FmZJ2ZQNtxASzXxbtKF4O/fUd4HLhhrr
-         7JoTgF7ftM2fd56u4j48uaLv1EwpYFGihG1TuyPj6APL6OdY4UT9VirTORuRsKOnDdxu
-         1KeQ==
+        bh=GdfS3vnRQh4S+/6b/eNX1ma2PFxYjRiTLwMJEeBAl/I=;
+        b=ESE5RKxXe+ec56Zp9/kX10J/yJIqeLSCnVYjyRvFeBTbPccCtrx8rv/ZgI2zW2/u66
+         xxw7OXATX3AxmQ6UiTMznzQmIbpyscsGwklmemG42YqSenR9Os7xLs1CShs1ZpXv99bF
+         4nzuCU6U0r0pOnfnyPBop9S95Ff3dO2wClUNjllFqN5IWSZqW9i3wARYE4ertcNzKJ94
+         9wCGChbiJUlectIyWFoWxvJlTdFclx7smDyI7rvGj81Q7lTDl67IjzY3mJccv0LUPHZC
+         y6ezq9ntpyVkqp3jViTqPqbtmmMvtai4DICFBdGXwRt8ZhAwJQ6wqP1VBE3wlscZIM7k
+         +o/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VF+275AGBcfncz08rauD54L/NRg1kgWG3YJqjxLIhog=;
-        b=O8LO+nREsjDR7hul6C8cFMIFdaZdYKenFKaGtWkOS2FeAUE2W6nxtM7aGUw9gawXXY
-         W8/ChWPfOUQF2MDgGFC0mAFENpkQA80sKa8a1vTSMMh06yihgnjP/QMqmrWb3SIuqycW
-         IwDgWzqO7K9wg3s8BViaSasjLOVKujFU52baF826DQGkoGI8Z4Hw1FCAugr99MFoz0tF
-         buYusYoqJ2lRoGbJVOSBXngyhFlWo0LhHwRoUj3ye1JlYVLDNtYVV+pkNaqCg45J85gY
-         1dC0kNTJ4IWp1Vn+yeiIAV65kyMg3G+PgzuMBb31uXuSwuCKzoxInbf9m4xvGu4sXju9
-         wJ/w==
-X-Gm-Message-State: APzg51DePiib6/s/tGxYD9zGA2UN2tPkepVyyqVV1XNBDjiChnN/Zwzs
-        OalsPmIUZY4nhKY+pkbjVrg=
-X-Google-Smtp-Source: ANB0VdYwKNcEA7musqDJnAeYmUBUbbDfQaEqictzqOlobE7eUZsP1dcAOhU59X9NAxs9Sblx1eOGvA==
-X-Received: by 2002:a62:46c8:: with SMTP id o69-v6mr7996625pfi.21.1535045478313;
-        Thu, 23 Aug 2018 10:31:18 -0700 (PDT)
+        bh=GdfS3vnRQh4S+/6b/eNX1ma2PFxYjRiTLwMJEeBAl/I=;
+        b=LtLe7JHGRv+sCh+8vlqfSeR55SzWG9kjxB4pS8qElIookpvz5kJoNMeYFPRId6PTfp
+         3r63ih0PYfKJr8+Kneu5vCbp1SqLsvcDRijDEfPUmaVNcVrsTrsO51iya/kPz/5343y3
+         SQmMJWKyEjEvlFZKoun5RowTnXXo2+naY8lojmk3ZUUErf1VDSriFhgZUuW1g50W4nWY
+         g48Jm1aLOyU1VVQZBDkFPkCrVHv19uP4CAUjxFDvBbQ1p+6gTwAk+x4E0+vfdq9vM+NW
+         DbIDAEgXPP2zinTRyRsJktdT6DWgxuoKoxliMnfxyrTzIp1+wMrTfy9fnlPZuNi7AMpk
+         Ne1w==
+X-Gm-Message-State: AOUpUlFIRXPe1drEVBCQWhZIVW8TrnG3cWnpl3KHTnsjnMHIxkGrfVaO
+        m6VjLMIJVpLIlDyZP+l5ZG4=
+X-Google-Smtp-Source: AA+uWPxejj3I6G7YuMbj25Il0mJvvS8I4XEFz6J9BFWpusqMzTFp2msSODzTgZfW9i4+cxF9BA8JIA==
+X-Received: by 2002:a17:902:4d45:: with SMTP id o5-v6mr26054587plh.78.1535045596080;
+        Thu, 23 Aug 2018 10:33:16 -0700 (PDT)
 Received: from nishad ([106.51.27.228])
-        by smtp.gmail.com with ESMTPSA id b1-v6sm6999670pgi.91.2018.08.23.10.31.14
+        by smtp.gmail.com with ESMTPSA id m15-v6sm11100176pfk.149.2018.08.23.10.33.13
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 23 Aug 2018 10:31:17 -0700 (PDT)
-Date:   Thu, 23 Aug 2018 23:01:11 +0530
+        Thu, 23 Aug 2018 10:33:15 -0700 (PDT)
+Date:   Thu, 23 Aug 2018 23:03:09 +0530
 From:   Nishad Kamdar <nishadkamdar@gmail.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Joe Perches <joe@perches.com>, NeilBrown <neil@brown.name>,
@@ -67,9 +67,9 @@ Cc:     Joe Perches <joe@perches.com>, NeilBrown <neil@brown.name>,
         Christian =?utf-8?Q?L=C3=BCtke-Stetzkamp?= <christian@lkamp.de>,
         linux-kernel@vger.kernel.org, John Crispin <blogic@openwrt.org>,
         Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH v5 3/4] staging: mt7621-mmc: Remove macro INIT_MSG and its
+Subject: [PATCH v5 4/4] staging: mt7621-mmc: Fix debug macro IRQ_MSG and its
  usages
-Message-ID: <2d6ea5195fcf1071f1ca0f7bea08dd02e9c411ff.1535038495.git.nishadkamdar@gmail.com>
+Message-ID: <892aecbcfc0a302e4509e540416ead2320d6a94e.1535038495.git.nishadkamdar@gmail.com>
 References: <cover.1535038494.git.nishadkamdar@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -81,110 +81,124 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Removed all usages of INIT_MSG and dropped it from dbg.h.
+Replace all usages of IRQ_MSG with with dev_<level> without __func__
+or __LINE__ or current->comm and current->pid. Remove the do {}
+while(0) loop for the single statement macro. Drop IRQ_MSG from dbg.h.
+Issue found by checkpatch.
 
 Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
 ---
 Changes in v5:
   - No change
 ---
- drivers/staging/mt7621-mmc/dbg.h |  7 -------
- drivers/staging/mt7621-mmc/sd.c  | 16 ----------------
- 2 files changed, 23 deletions(-)
+ drivers/staging/mt7621-mmc/dbg.h | 12 -----------
+ drivers/staging/mt7621-mmc/sd.c  | 36 ++++++++++++++++++++++++--------
+ 2 files changed, 27 insertions(+), 21 deletions(-)
 
 diff --git a/drivers/staging/mt7621-mmc/dbg.h b/drivers/staging/mt7621-mmc/dbg.h
-index 28c0cf76664f..a5fdafe80d3d 100644
+index a5fdafe80d3d..256979424309 100644
 --- a/drivers/staging/mt7621-mmc/dbg.h
 +++ b/drivers/staging/mt7621-mmc/dbg.h
-@@ -106,15 +106,8 @@ do { \
+@@ -104,18 +104,6 @@ do { \
  
- #if 1
- //defined CONFIG_MTK_MMC_CD_POLL
--#define INIT_MSG(fmt, args...)
- #define IRQ_MSG(fmt, args...)
- #else
--#define INIT_MSG(fmt, args...) \
+ #define N_MSG(evt, fmt, args...)
+ 
+-#if 1
+-//defined CONFIG_MTK_MMC_CD_POLL
+-#define IRQ_MSG(fmt, args...)
+-#else
+-/* PID in ISR in not corrent */
+-#define IRQ_MSG(fmt, args...) \
 -do { \
--	printk(KERN_ERR TAG"%d -> "fmt" <- %s() : L<%d> PID<%s><0x%x>\n", \
--	       host->id,  ##args, __FUNCTION__, __LINE__, current->comm, current->pid); \
+-	printk(KERN_ERR TAG"%d -> "fmt" <- %s() : L<%d>\n",	\
+-	       host->id,  ##args, __FUNCTION__, __LINE__);	\
 -} while (0);
+-#endif
 -
- /* PID in ISR in not corrent */
- #define IRQ_MSG(fmt, args...) \
- do { \
+ void msdc_debug_proc_init(void);
+ 
+ #if 0 /* --- chhung */
 diff --git a/drivers/staging/mt7621-mmc/sd.c b/drivers/staging/mt7621-mmc/sd.c
-index dcd036914467..fd02bf819c6c 100644
+index fd02bf819c6c..e5bd3273cc04 100644
 --- a/drivers/staging/mt7621-mmc/sd.c
 +++ b/drivers/staging/mt7621-mmc/sd.c
-@@ -187,12 +187,10 @@ static u32 hclks[] = {50000000}; /* +/- by chhung */
- //============================================
- #define msdc_vcore_on(host) \
- 	do {								\
--		INIT_MSG("[+]VMC ref. count<%d>", ++host->pwr_ref);	\
- 		(void)hwPowerOn(MT65XX_POWER_LDO_VMC, VOL_3300, "SD");	\
- 	} while (0)
- #define msdc_vcore_off(host) \
- 	do {								\
--		INIT_MSG("[-]VMC ref. count<%d>", --host->pwr_ref);	\
- 		(void)hwPowerDown(MT65XX_POWER_LDO_VMC, "SD");		\
- 	} while (0)
+@@ -420,7 +420,9 @@ static void msdc_tasklet_card(struct work_struct *work)
+ 		mmc_detect_change(host->mmc, msecs_to_jiffies(20));
+ 	}
  
-@@ -439,7 +437,6 @@ static void msdc_select_clksrc(struct msdc_host *host, unsigned char clksrc)
- 	u32 val;
- 
- 	BUG_ON(clksrc > 3);
--	INIT_MSG("set clock source to <%d>", clksrc);
- 
- 	val = readl(host->base + MSDC_CLKSRC_REG);
- 	if (readl(host->base + MSDC_ECO_VER) >= 4) {
-@@ -508,10 +505,6 @@ static void msdc_set_mclk(struct msdc_host *host, int ddr, unsigned int hz)
- 	host->mclk = hz;
- 	msdc_set_timeout(host, host->timeout_ns, host->timeout_clks); // need?
- 
--	INIT_MSG("================");
--	INIT_MSG("!!! Set<%dKHz> Source<%dKHz> -> sclk<%dKHz>", hz / 1000, hclk / 1000, sclk / 1000);
--	INIT_MSG("================");
--
- 	msdc_irq_restore(flags);
- }
- 
-@@ -669,12 +662,6 @@ static void msdc_pm(pm_message_t state, void *data)
- 	struct msdc_host *host = (struct msdc_host *)data;
- 	int evt = state.event;
- 
--	if (evt == PM_EVENT_USER_RESUME || evt == PM_EVENT_USER_SUSPEND) {
--		INIT_MSG("USR_%s: suspend<%d> power<%d>",
--			evt == PM_EVENT_USER_RESUME ? "EVENT_USER_RESUME" : "EVENT_USER_SUSPEND",
--			host->suspend, host->power_mode);
--	}
--
- 	if (evt == PM_EVENT_SUSPEND || evt == PM_EVENT_USER_SUSPEND) {
- 		if (host->suspend) /* already suspend */  /* default 0*/
- 			return;
-@@ -1752,7 +1739,6 @@ static void msdc_ops_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
- 	if (host->mclk != ios->clock) {
- 		if (ios->clock > 25000000) {
- 			//if (!(host->hw->flags & MSDC_REMOVABLE)) {
--			INIT_MSG("SD data latch edge<%d>", MSDC_SMPL_FALLING);
- 			sdr_set_field(host->base + MSDC_IOCON, MSDC_IOCON_RSPL,
- 				      MSDC_SMPL_FALLING);
- 			sdr_set_field(host->base + MSDC_IOCON, MSDC_IOCON_DSPL,
-@@ -1805,7 +1791,6 @@ static int msdc_ops_get_cd(struct mmc_host *mmc)
- 		return 1;
- #else
- 		host->card_inserted = (host->pm_state.event == PM_EVENT_USER_RESUME) ? 1 : 0;
--		INIT_MSG("sdio ops_get_cd<%d>", host->card_inserted);
- 		return host->card_inserted;
+-	IRQ_MSG("card found<%s>", inserted ? "inserted" : "removed");
++	dev_err(mmc_dev(host->mmc),
++		"%d -> card found<%s>\n",
++		host->id, inserted ? "inserted" : "removed");
  #endif
- 	}
-@@ -1829,7 +1814,6 @@ static int msdc_ops_get_cd(struct mmc_host *mmc)
- 		present = 0; /* TODO? Check DAT3 pins for card detection */
+ 
+ 	spin_unlock(&host->lock);
+@@ -1848,14 +1850,17 @@ static irqreturn_t msdc_irq(int irq, void *dev_id)
+ 	if (intsts & MSDC_INT_CDSC) {
+ 		if (host->mmc->caps & MMC_CAP_NEEDS_POLL)
+ 			return IRQ_HANDLED;
+-		IRQ_MSG("MSDC_INT_CDSC irq<0x%.8x>", intsts);
++		dev_err(mmc_dev(host->mmc),
++			"%d -> MSDC_INT_CDSC irq<0x%.8x>\n", host->id, intsts);
+ 		schedule_delayed_work(&host->card_delaywork, HZ);
+ 		/* tuning when plug card ? */
  	}
  
--	INIT_MSG("ops_get_cd return<%d>", present);
- 	return present;
- }
+ 	/* sdio interrupt */
+ 	if (intsts & MSDC_INT_SDIOIRQ) {
+-		IRQ_MSG("XXX MSDC_INT_SDIOIRQ");  /* seems not sdio irq */
++		dev_err(mmc_dev(host->mmc),
++			"%d -> XXX MSDC_INT_SDIOIRQ\n",
++			host->id); /* seems not sdio irq */
+ 		//mmc_signal_sdio_irq(host->mmc);
+ 	}
  
+@@ -1873,10 +1878,15 @@ static irqreturn_t msdc_irq(int irq, void *dev_id)
+ 			msdc_clr_int();
+ 
+ 			if (intsts & MSDC_INT_DATTMO) {
+-				IRQ_MSG("XXX CMD<%d> MSDC_INT_DATTMO", host->mrq->cmd->opcode);
++				dev_err(mmc_dev(host->mmc),
++					"%d -> XXX CMD<%d> MSDC_INT_DATTMO\n",
++					host->id, host->mrq->cmd->opcode);
+ 				data->error = -ETIMEDOUT;
+ 			} else if (intsts & MSDC_INT_DATCRCERR) {
+-				IRQ_MSG("XXX CMD<%d> MSDC_INT_DATCRCERR, SDC_DCRC_STS<0x%x>", host->mrq->cmd->opcode, readl(host->base + SDC_DCRC_STS));
++				dev_err(mmc_dev(host->mmc),
++					"%d -> XXX CMD<%d> MSDC_INT_DATCRCERR, SDC_DCRC_STS<0x%x>\n",
++					host->id, host->mrq->cmd->opcode,
++					readl(host->base + SDC_DCRC_STS);
+ 				data->error = -EIO;
+ 			}
+ 
+@@ -1909,15 +1919,23 @@ static irqreturn_t msdc_irq(int irq, void *dev_id)
+ 			}
+ 		} else if ((intsts & MSDC_INT_RSPCRCERR) || (intsts & MSDC_INT_ACMDCRCERR)) {
+ 			if (intsts & MSDC_INT_ACMDCRCERR)
+-				IRQ_MSG("XXX CMD<%d> MSDC_INT_ACMDCRCERR", cmd->opcode);
++				dev_err(mmc_dev(host->mmc),
++					"%d -> XXX CMD<%d> MSDC_INT_ACMDCRCERR\n",
++					host->id, cmd->opcode);
+ 			else
+-				IRQ_MSG("XXX CMD<%d> MSDC_INT_RSPCRCERR", cmd->opcode);
++				dev_err(mmc_dev(host->mmc),
++					"%d -> XXX CMD<%d> MSDC_INT_RSPCRCERR\n",
++					host->id, cmd->opcode);
+ 			cmd->error = -EIO;
+ 		} else if ((intsts & MSDC_INT_CMDTMO) || (intsts & MSDC_INT_ACMDTMO)) {
+ 			if (intsts & MSDC_INT_ACMDTMO)
+-				IRQ_MSG("XXX CMD<%d> MSDC_INT_ACMDTMO", cmd->opcode);
++				dev_err(mmc_dev(host->mmc),
++					"%d -> XXX CMD<%d> MSDC_INT_ACMDTMO\n",
++					host->id, cmd->opcode);
+ 			else
+-				IRQ_MSG("XXX CMD<%d> MSDC_INT_CMDTMO", cmd->opcode);
++				dev_err(mmc_dev(host->mmc),
++					"%d -> XXX CMD<%d> MSDC_INT_CMDTMO\n",
++					host->id, cmd->opcode);
+ 			cmd->error = -ETIMEDOUT;
+ 			msdc_reset_hw(host);
+ 			msdc_clr_fifo(host);
 -- 
 2.17.1
 
