@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73C49C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B771C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B3E520839
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B3E520839
+	by mail.kernel.org (Postfix) with ESMTP id 0BF8B208DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BF8B208DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388005AbeHWMVp (ORCPT
+        id S2388018AbeHWMVs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:21:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51912 "EHLO
+        Thu, 23 Aug 2018 08:21:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51922 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728574AbeHWMVo (ORCPT
+        with ESMTP id S1728574AbeHWMVr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:21:44 -0400
+        Thu, 23 Aug 2018 08:21:47 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 766C4C74;
-        Thu, 23 Aug 2018 08:53:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A6684C74;
+        Thu, 23 Aug 2018 08:53:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Watson <davejwatson@fb.com>,
-        Doron Roberts-Kedes <doronrk@fb.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Vishal Verma <vishal.l.verma@intel.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 176/324] tls: fix skb_to_sgvec returning unhandled error.
-Date:   Thu, 23 Aug 2018 09:54:02 +0200
-Message-Id: <20180823075005.016382914@linuxfoundation.org>
+Subject: [PATCH 4.17 159/324] tools/testing/nvdimm: advertise a write cache for nfit_test
+Date:   Thu, 23 Aug 2018 09:53:45 +0200
+Message-Id: <20180823075004.001173976@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -52,47 +52,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Doron Roberts-Kedes <doronrk@fb.com>
+From: Vishal Verma <vishal.l.verma@intel.com>
 
-[ Upstream commit 52ee6ef36ee10dd493cf2067311e56ca8015eb8d ]
+[ Upstream commit 1273c253c32b9a073a4d8921ed079177ccc7c8af ]
 
-The current code does not inspect the return value of skb_to_sgvec. This
-can cause a nullptr kernel panic when the malformed sgvec is passed into
-the crypto request.
+Commit 546eb0317cfa "libnvdimm, pmem: Do not flush power-fail protected CPU caches"
+fixed the write_cache detection to correctly show the lack of a write
+cache based on the platform capabilities described in the ACPI NFIT. The
+nfit_test unit tests expected a write cache to be present, so change the
+nfit test namespaces to only advertise a persistence domain limited to
+the memory controller. This allows the kernel to show a write_cache
+attribute, and the test behaviour remains unchanged.
 
-Checking the return value of skb_to_sgvec and skipping decryption if it
-is negative fixes this problem.
-
-Fixes: c46234ebb4d1 ("tls: RX path for ktls")
-Acked-by: Dave Watson <davejwatson@fb.com>
-Signed-off-by: Doron Roberts-Kedes <doronrk@fb.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Vishal Verma <vishal.l.verma@intel.com>
+Reviewed-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/tls/tls_sw.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ tools/testing/nvdimm/test/nfit.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/net/tls/tls_sw.c
-+++ b/net/tls/tls_sw.c
-@@ -705,6 +705,10 @@ static int decrypt_skb(struct sock *sk,
- 	nsg = skb_to_sgvec(skb, &sgin[1],
- 			   rxm->offset + tls_ctx->rx.prepend_size,
- 			   rxm->full_len - tls_ctx->rx.prepend_size);
-+	if (nsg < 0) {
-+		ret = nsg;
-+		goto out;
-+	}
+--- a/tools/testing/nvdimm/test/nfit.c
++++ b/tools/testing/nvdimm/test/nfit.c
+@@ -1989,8 +1989,7 @@ static void nfit_test0_setup(struct nfit
+ 	pcap->header.type = ACPI_NFIT_TYPE_CAPABILITIES;
+ 	pcap->header.length = sizeof(*pcap);
+ 	pcap->highest_capability = 1;
+-	pcap->capabilities = ACPI_NFIT_CAPABILITY_CACHE_FLUSH |
+-		ACPI_NFIT_CAPABILITY_MEM_FLUSH;
++	pcap->capabilities = ACPI_NFIT_CAPABILITY_MEM_FLUSH;
+ 	offset += pcap->header.length;
  
- 	tls_make_aad(ctx->rx_aad_ciphertext,
- 		     rxm->full_len - tls_ctx->rx.overhead_size,
-@@ -716,6 +720,7 @@ static int decrypt_skb(struct sock *sk,
- 				rxm->full_len - tls_ctx->rx.overhead_size,
- 				skb, sk->sk_allocation);
- 
-+out:
- 	if (sgin != &sgin_arr[0])
- 		kfree(sgin);
- 
+ 	if (t->setup_hotplug) {
 
 
