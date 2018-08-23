@@ -2,87 +2,106 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA0C0C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:09:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C678FC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:12:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E15F21480
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:09:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E15F21480
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 5A1052147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:12:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KVZcd6sJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A1052147A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731352AbeHWRjP (ORCPT
+        id S1731713AbeHWRmN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 13:39:15 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:47033 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728707AbeHWRjP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 13:39:15 -0400
-Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
- (mreue003 [212.227.15.129]) with ESMTPA (Nemesis) id
- 0MNQ45-1fmXpx1VVZ-006vWg; Thu, 23 Aug 2018 16:09:20 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Seth Arnold <seth.arnold@canonical.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] apparmor: remove unused label
-Date:   Thu, 23 Aug 2018 16:09:02 +0200
-Message-Id: <20180823140917.3060915-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:grJHwwJTlK0rHz1G6OtWa7dTqG4vghsaujpdwcJpZn2z+yg/OfB
- U6XF1K03gwB5EApMxlnJhsCc3e86uIB4p0cwCnvguGW94gnvn2jOXwledMKrZqoiNSPnNci
- xDbRQDGNJaqqLGqoe5wFjLFEWPjBtymUdiXrlRlWvf9b6G5ypOcEwnEeTeNbcKVIZb1msTh
- P9Cr1l5r5yjrb0bOGrQZw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:fHQrGI7movw=:qYT0u/CFnx96h5Ae9EES1h
- 5xes1BjBYGCWrSGVppGs8/2G32NiW5K1E8Vc2GD6CLMPYZA6l+0wok0U7+bRPeczoJ+tW1UTg
- c2c6Jaa4eIkISc/WltTLu5CeHlyIrLti4GCmRpgQJ5s0oKwtAL56PPBDRzM41UuND2DBt4dI3
- H+7xtG69EsFDJy0t2M4nrd0CtMXyqYkjeJKKj+vshXBTU2gHEosCoW+YD+f8B1pTqU8MNOPd7
- Vzf2z5blFuF9T77Xbco05ssjj3Fe/aJ1aPXEcvm+veN29jMsOJeohZAxPVIANOf8u0gjaXnVr
- YdKLufeHHx2TacJ7OZ81h5joXtIkLk9ECfpKgD2c0g3CnblZFQ7kGxsfdqLhZI7MNbosVO2xF
- Rafs5xg+6GIQjz1D7rw+t0WMa2r6vsEJ+n3dL1xMOq8tBMOuXMPyoIK3kPQO4KfPFkJz0pPg9
- RIm+aUzN+EWd75+sjdyO9mLQOZGHtWmyscnnd30hiPiha+imtLKyupvkHGEdsUdhCfCpHkShU
- 657CjXYx/kuvDddQmbZv8piic2lIgB8svWKQ640UsJwShAxgYMCeTULggO0Zb1PuKXAhQxojd
- 1Cv90D2wNKStSp0o2jxc5ER32nprrN14kOONbspJAh0j0QB/O8dTnn4sbzUeakjro94pnp8sb
- 385KrojIk4jd9qKTDJZFZXOYMPx6CzAM+HaYmL0oeeTZUBMpSKgrynGfqX6xQNvHcoqM=
+        Thu, 23 Aug 2018 13:42:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50480 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726861AbeHWRmN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 13:42:13 -0400
+Received: from jouet.infradead.org (unknown [190.15.121.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BDCE2147A;
+        Thu, 23 Aug 2018 14:12:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535033541;
+        bh=M1VWXvsP066sEGfChnDjqrQQfSNJptl4hkfGQyd7KdA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KVZcd6sJ3HKzzu+ppWS9rymlb9WWYCdG3INgrgd5YlpMMvHmPx6IUvDXu8UrVqRmN
+         mdzKvZlPqy9MilGzbPaakhgTAhU4yrRO0PlmhoBCKaLQpgLzCBI6yMIr/GRzuaMKt/
+         PN62259bfAzKmDblNba5bZhhbFFcr7O1teAwz6z0=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id A0BD0141C3F; Thu, 23 Aug 2018 11:12:19 -0300 (-03)
+Date:   Thu, 23 Aug 2018 11:12:19 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Martin =?utf-8?B?TGnFoWth?= <mliska@suse.cz>
+Cc:     linux-perf-users@vger.kernel.org,
+        lkml <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@redhat.com>
+Subject: Re: [PATCH] Properly interpret indirect call in perf annotate.
+Message-ID: <20180823141219.GA4766@kernel.org>
+References: <bd1f3932-be2b-85f9-7582-111ee0a43b07@suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <bd1f3932-be2b-85f9-7582-111ee0a43b07@suse.cz>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After the corresponding 'goto' was removed, we get a warning
-for the 'fail' label:
+Em Thu, Aug 23, 2018 at 02:29:34PM +0200, Martin Liška escreveu:
+> The patch changes interpretation of:
+> callq  *0x8(%rbx)
+> 
+> from:
+>   0.26 │     → callq  *8
+> to:
+>   0.26 │     → callq  *0x8(%rbx)
+> 
+> in this can an address is followed by a register, thus
+> one can't parse only address.
 
-security/apparmor/policy_unpack.c: In function 'unpack_dfa':
-security/apparmor/policy_unpack.c:426:1: error: label 'fail' defined but not used [-Werror=unused-label]
+Please mention one or two functions where such sequence appears, so that
+others can reproduce your before/after more quickly,
 
-Fixes: fb5841091f28 ("apparmor: remove no-op permission check in policy_unpack")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- security/apparmor/policy_unpack.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
-index 3647b5834ace..96d8cf68ce65 100644
---- a/security/apparmor/policy_unpack.c
-+++ b/security/apparmor/policy_unpack.c
-@@ -423,7 +423,6 @@ static struct aa_dfa *unpack_dfa(struct aa_ext *e)
+- Arnaldo
  
- 	return dfa;
- 
--fail:
- 	aa_put_dfa(dfa);
- 	return ERR_PTR(-EPROTO);
- }
--- 
-2.18.0
+> Signed-off-by: Martin Liška <mliska@suse.cz>
+> ---
+>  tools/perf/util/annotate.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+> 
+> 
+
+> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+> index e4268b948e0e..e32ead4744bd 100644
+> --- a/tools/perf/util/annotate.c
+> +++ b/tools/perf/util/annotate.c
+> @@ -246,8 +246,14 @@ static int call__parse(struct arch *arch, struct ins_operands *ops, struct map_s
+>  
+>  indirect_call:
+>  	tok = strchr(endptr, '*');
+> -	if (tok != NULL)
+> -		ops->target.addr = strtoull(tok + 1, NULL, 16);
+> +	if (tok != NULL) {
+> +		endptr++;
+> +
+> +		/* Indirect call can use a non-rip register and offset: callq  *0x8(%rbx).
+> +		 * Do not parse such instruction.  */
+> +		if (strstr(endptr, "(%r") == NULL)
+> +			ops->target.addr = strtoull(endptr, NULL, 16);
+> +	}
+>  	goto find_target;
+>  }
+>  
+> 
 
