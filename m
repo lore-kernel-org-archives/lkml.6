@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80A14C43615
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:38:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D777C04E85
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:38:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 457212147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:38:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 457212147A
+	by mail.kernel.org (Postfix) with ESMTP id 108AB2147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:38:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 108AB2147A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731230AbeHWMGd (ORCPT
+        id S1731279AbeHWMGg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:06:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49022 "EHLO
+        Thu, 23 Aug 2018 08:06:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49044 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726677AbeHWMGc (ORCPT
+        with ESMTP id S1731204AbeHWMGf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:06:32 -0400
+        Thu, 23 Aug 2018 08:06:35 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D1F4E8B1;
-        Thu, 23 Aug 2018 08:37:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0D812C74;
+        Thu, 23 Aug 2018 08:37:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
-        Willem de Bruijn <willemb@google.com>,
+        stable@vger.kernel.org, Ursula Braun <ubraun@linux.ibm.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 207/217] packet: refine ring v3 block size test to hold one frame
-Date:   Thu, 23 Aug 2018 09:55:20 +0200
-Message-Id: <20180823075515.004334787@linuxfoundation.org>
+Subject: [PATCH 4.14 208/217] net/smc: no shutdown in state SMC_LISTEN
+Date:   Thu, 23 Aug 2018 09:55:21 +0200
+Message-Id: <20180823075515.060713209@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -51,66 +50,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Willem de Bruijn <willemb@google.com>
+From: Ursula Braun <ubraun@linux.ibm.com>
 
-commit 4576cd469d980317c4edd9173f8b694aa71ea3a3 upstream.
+commit caa21e19e08d7a1445116a93f7ab4e187ebbbadb upstream.
 
-TPACKET_V3 stores variable length frames in fixed length blocks.
-Blocks must be able to store a block header, optional private space
-and at least one minimum sized frame.
+Invoking shutdown for a socket in state SMC_LISTEN does not make
+sense. Nevertheless programs like syzbot fuzzing the kernel may
+try to do this. For SMC this means a socket refcounting problem.
+This patch makes sure a shutdown call for an SMC socket in state
+SMC_LISTEN simply returns with -ENOTCONN.
 
-Frames, even for a zero snaplen packet, store metadata headers and
-optional reserved space.
-
-In the block size bounds check, ensure that the frame of the
-chosen configuration fits. This includes sockaddr_ll and optional
-tp_reserve.
-
-Syzbot was able to construct a ring with insuffient room for the
-sockaddr_ll in the header of a zero-length frame, triggering an
-out-of-bounds write in dev_parse_header.
-
-Convert the comparison to less than, as zero is a valid snap len.
-This matches the test for minimum tp_frame_size immediately below.
-
-Fixes: f6fb8f100b80 ("af-packet: TPACKET_V3 flexible buffer implementation.")
-Fixes: eb73190f4fbe ("net/packet: refine check for priv area size")
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: Willem de Bruijn <willemb@google.com>
+Signed-off-by: Ursula Braun <ubraun@linux.ibm.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/packet/af_packet.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ net/smc/af_smc.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -4269,6 +4269,8 @@ static int packet_set_ring(struct sock *
- 	}
+--- a/net/smc/af_smc.c
++++ b/net/smc/af_smc.c
+@@ -1180,8 +1180,7 @@ static int smc_shutdown(struct socket *s
+ 	lock_sock(sk);
  
- 	if (req->tp_block_nr) {
-+		unsigned int min_frame_size;
-+
- 		/* Sanity tests and some calculations */
- 		err = -EBUSY;
- 		if (unlikely(rb->pg_vec))
-@@ -4291,12 +4293,12 @@ static int packet_set_ring(struct sock *
- 			goto out;
- 		if (unlikely(!PAGE_ALIGNED(req->tp_block_size)))
- 			goto out;
-+		min_frame_size = po->tp_hdrlen + po->tp_reserve;
- 		if (po->tp_version >= TPACKET_V3 &&
--		    req->tp_block_size <=
--		    BLK_PLUS_PRIV((u64)req_u->req3.tp_sizeof_priv) + sizeof(struct tpacket3_hdr))
-+		    req->tp_block_size <
-+		    BLK_PLUS_PRIV((u64)req_u->req3.tp_sizeof_priv) + min_frame_size)
- 			goto out;
--		if (unlikely(req->tp_frame_size < po->tp_hdrlen +
--					po->tp_reserve))
-+		if (unlikely(req->tp_frame_size < min_frame_size))
- 			goto out;
- 		if (unlikely(req->tp_frame_size & (TPACKET_ALIGNMENT - 1)))
- 			goto out;
+ 	rc = -ENOTCONN;
+-	if ((sk->sk_state != SMC_LISTEN) &&
+-	    (sk->sk_state != SMC_ACTIVE) &&
++	if ((sk->sk_state != SMC_ACTIVE) &&
+ 	    (sk->sk_state != SMC_PEERCLOSEWAIT1) &&
+ 	    (sk->sk_state != SMC_PEERCLOSEWAIT2) &&
+ 	    (sk->sk_state != SMC_APPCLOSEWAIT1) &&
 
 
