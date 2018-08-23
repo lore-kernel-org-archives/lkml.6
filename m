@@ -2,244 +2,102 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4910C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 20:12:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA8EC43615
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 20:12:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D73420684
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 20:12:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85E8D2154F
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 20:12:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="G8eO0gYa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D73420684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eEdFVSWM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85E8D2154F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727405AbeHWXnQ (ORCPT
+        id S1727443AbeHWXnU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 19:43:16 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:40985 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726955AbeHWXnP (ORCPT
+        Thu, 23 Aug 2018 19:43:20 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:38997 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726955AbeHWXnT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 19:43:15 -0400
-Received: by mail-lf1-f66.google.com with SMTP id l26-v6so5013181lfc.8
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 13:11:57 -0700 (PDT)
+        Thu, 23 Aug 2018 19:43:19 -0400
+Received: by mail-pg1-f196.google.com with SMTP id m3-v6so2274831pgp.6;
+        Thu, 23 Aug 2018 13:12:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=from:subject:to:cc:references:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ZV2QMqEYiG/Uc5/B2Y3YzgA2xse1LGW6ra0SBxDQgNU=;
-        b=G8eO0gYasJtIVPv+nTliVJdJqAW0eM60aCCeMO0/rP1TFPHf6ZP5kejAMZMn/APsuB
-         Wi6ZyHPimojieToNwvc1KpXasO12jmoYdnY6v575MwO69T3OufgEb1lhb8XeMxpO42Tm
-         1OxBlq/IeiiVH0REL8upXw2S73V0mpW+VYddqkgKkHfjLjuWan/e48gseF4rVcZF6lk8
-         W2KvsuQ49nCMe9cXdos2UdpeZ/RZL7F9o10rb1Amf8KYd5ZFdsRL46EI+FBPs/HnK9t3
-         2ZxcSgtwkYeuiuWwxy3G7J5tXxsqDb6GtVfJX7zu+cG5uEH1bxF7PbXejeXcnZHiM2ce
-         idlA==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=5kT3spSwqmYLVYB5TheYN2yaXwJEMKeMjO+tWECvw7k=;
+        b=eEdFVSWMArtxTZyAfmaFvJhzJUDInl9Ow7/pDkW0Ibs4NY5NHurrAmB8CJJJQ2Vtd7
+         zcVkvnZQBebwiFnPMmm0zpcBu4GUHdEnGRPPnills+tpj3MozCK2doVJxIzES45wAmrQ
+         3YLNseUwsqkCL+oBHEmKSKJQQmdSP1hB3VtZ1OanRDpQXLnmxmXP0d8RGimdh4C2y35K
+         K7Z8cBAsCZn7wNys7NHEYfMutBxgpKOLXa8icxX5PHnk7W8j8Lr5z52Z9I/NfVlbhQCY
+         HFnFRq08uCZ3IMOP5p6bf22cBRcMZi4YWddV/CmJ83/XlqKVjyAL4G4IqiyWKd/tYRBQ
+         bbag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=ZV2QMqEYiG/Uc5/B2Y3YzgA2xse1LGW6ra0SBxDQgNU=;
-        b=pioChcBwSBUpdBrImZGfNGk8F0L7cZSdjxpjfGje/6Ur0HifIQOR2WiNCftKIdjlzI
-         QLE8+wgFPKWMQLag24embiOXDW65T8q4+cDVqIyFFqUFwa5KSVFAqTZi9zuiG8QlyAu+
-         ncgwRvjSNfTOU/avbQUJ/8SpMTBNXsJ0QGDvbUcQXSDknbC9eyqo3INIGk76dW+Mkz/4
-         rxqzAtVtgv9lSSTevVxpj4WHlg5o+za8Dp/G+ZWUc+HJ1enIBjynotBo6WhhZ1yruPkO
-         zgWhQ2oSaf2Z08MT/d/xTiqueZqwsE67nhZ2qYSXQoHh3QUNnRTzIjtJLIJunbV7cY1M
-         RTCQ==
-X-Gm-Message-State: AOUpUlHuRc1VJ/7lHatnERcPXzF+mBiJL1OCBS9eAZ4DOFGqLAdaLWdf
-        vTuu/PV8cDNIk2h/xT1QBX86W3mAvj0=
-X-Google-Smtp-Source: AA+uWPxZGdNFH8P9aTVld7AjW2k+qsC2w2QW6OgWyKCwH3YWBbaQGmw8D3BGilHKXHi9CEZK6kiJdA==
-X-Received: by 2002:ac2:420c:: with SMTP id y12-v6mr38628783lfh.123.1535055116289;
-        Thu, 23 Aug 2018 13:11:56 -0700 (PDT)
-Received: from wasted.cogentembedded.com ([31.173.84.155])
-        by smtp.gmail.com with ESMTPSA id q15-v6sm879891ljh.34.2018.08.23.13.11.54
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5kT3spSwqmYLVYB5TheYN2yaXwJEMKeMjO+tWECvw7k=;
+        b=KexNNpFKcHAPfPjcAP7/01zxBD9Kh2BjKrfwbd07xP1Qq7j1DR++O8+s/uhCx4hQMB
+         hK1aBD/mCNh/oyfuQob3vPzwKp5UPcEaDJPtxHJ3bZMWN+NEXJf89dzHfTV2NXNUnJVE
+         DA/yUZ+NQPCQQ7zapCKXLNlzaZrFZXQ0ZR77/UDVYppf+cO2Ze00KbQN4sK66E6Dv9A9
+         iQCG8zlc7SFEDTvUuGL7qmMNaopGIyWhuDe1o9zi25GHHvThlAJttyGz1ukIVH6TFiOr
+         yz3DvtmrkDGs0b1zLPqcxszZEiGgS/1e8eiUHedaVjAqHkAvv4A099T9sqxbQZsRZyHM
+         KatA==
+X-Gm-Message-State: APzg51B+qmAsi/e45Pqk0k/IrMvchOhoA5FQDyrxHF/Ru9JQqesQ/xO/
+        Ske3t7MX2SBwnPdsZKRH1X0=
+X-Google-Smtp-Source: ANB0VdZQS0ZfxoleHMCis9yO93cmBzIRKzYCbxvy4NXlj41OJR7J/zMPSYfoFGW8QvgAn9UWVEjwVQ==
+X-Received: by 2002:a63:c702:: with SMTP id n2-v6mr5052974pgg.108.1535055121262;
+        Thu, 23 Aug 2018 13:12:01 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id t12-v6sm6710510pgg.72.2018.08.23.13.12.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 Aug 2018 13:11:55 -0700 (PDT)
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v2 4.9.y] PCI: OF: Fix I/O space page leak
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thu, 23 Aug 2018 13:12:00 -0700 (PDT)
+Date:   Thu, 23 Aug 2018 13:11:59 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
         stable@vger.kernel.org
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-kernel@vger.kernel.org
-References: <3e862a05-084a-d732-3060-6e2b234e9718@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <f990c627-32f5-af84-0409-088ea0f4399d@cogentembedded.com>
-Date:   Thu, 23 Aug 2018 23:11:54 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+Subject: Re: [PATCH 4.17 000/324] 4.17.19-stable review
+Message-ID: <20180823201159.GE9368@roeck-us.net>
+References: <20180823074955.885811006@linuxfoundation.org>
 MIME-Version: 1.0
-In-Reply-To: <3e862a05-084a-d732-3060-6e2b234e9718@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit a5fb9fb023a1435f2b42bccd7f547560f3a21dc3 upstream.
+On Thu, Aug 23, 2018 at 09:51:06AM +0200, Greg Kroah-Hartman wrote:
+> NOTE, this is going to be the LAST 4.17.y kernel release.  Please move
+> to the 4.18.y tree at this point in time if you have not already.  After
+> this release, 4.17.y will be end-of-life.
+> 
+> This is the start of the stable review cycle for the 4.17.19 release.
+> There are 324 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat Aug 25 07:48:40 UTC 2018.
+> Anything received after that time might be too late.
+> 
 
-When testing the R-Car PCIe driver on the Condor board, if the PCIe PHY
-driver was left disabled, the kernel crashed with this BUG:
+Build results:
+	total: 134 pass: 134 fail: 0
+Qemu test results:
+	total: 302 pass: 302 fail: 0
 
-  kernel BUG at lib/ioremap.c:72!
-  Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
-  Modules linked in:
-  CPU: 0 PID: 39 Comm: kworker/0:1 Not tainted 4.17.0-dirty #1092
-  Hardware name: Renesas Condor board based on r8a77980 (DT)
-  Workqueue: events deferred_probe_work_func
-  pstate: 80000005 (Nzcv daif -PAN -UAO)
-  pc : ioremap_page_range+0x370/0x3c8
-  lr : ioremap_page_range+0x40/0x3c8
-  sp : ffff000008da39e0
-  x29: ffff000008da39e0 x28: 00e8000000000f07
-  x27: ffff7dfffee00000 x26: 0140000000000000
-  x25: ffff7dfffef00000 x24: 00000000000fe100
-  x23: ffff80007b906000 x22: ffff000008ab8000
-  x21: ffff000008bb1d58 x20: ffff7dfffef00000
-  x19: ffff800009c30fb8 x18: 0000000000000001
-  x17: 00000000000152d0 x16: 00000000014012d0
-  x15: 0000000000000000 x14: 0720072007200720
-  x13: 0720072007200720 x12: 0720072007200720
-  x11: 0720072007300730 x10: 00000000000000ae
-  x9 : 0000000000000000 x8 : ffff7dffff000000
-  x7 : 0000000000000000 x6 : 0000000000000100
-  x5 : 0000000000000000 x4 : 000000007b906000
-  x3 : ffff80007c61a880 x2 : ffff7dfffeefffff
-  x1 : 0000000040000000 x0 : 00e80000fe100f07
-  Process kworker/0:1 (pid: 39, stack limit = 0x        (ptrval))
-  Call trace:
-   ioremap_page_range+0x370/0x3c8
-   pci_remap_iospace+0x7c/0xac
-   pci_parse_request_of_pci_ranges+0x13c/0x190
-   rcar_pcie_probe+0x4c/0xb04
-   platform_drv_probe+0x50/0xbc
-   driver_probe_device+0x21c/0x308
-   __device_attach_driver+0x98/0xc8
-   bus_for_each_drv+0x54/0x94
-   __device_attach+0xc4/0x12c
-   device_initial_probe+0x10/0x18
-   bus_probe_device+0x90/0x98
-   deferred_probe_work_func+0xb0/0x150
-   process_one_work+0x12c/0x29c
-   worker_thread+0x200/0x3fc
-   kthread+0x108/0x134
-   ret_from_fork+0x10/0x18
-  Code: f9004ba2 54000080 aa0003fb 17ffff48 (d4210000)
+Details are available at http://kerneltests.org/builders.
 
-It turned out that pci_remap_iospace() wasn't undone when the driver's
-probe failed, and since devm_phy_optional_get() returned -EPROBE_DEFER,
-the probe was retried, finally causing the BUG due to trying to remap
-already remapped pages.
-
-Introduce the devm_pci_remap_iospace() managed API and replace the
-pci_remap_iospace() call with it to fix the bug.
-
-Fixes: dbf9826d5797 ("PCI: generic: Convert to DT resource parsing API")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-[lorenzo.pieralisi@arm.com: split commit/updated the commit log]
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
----
- drivers/pci/host/pci-host-common.c |    2 -
- drivers/pci/host/pcie-rcar.c       |    2 -
- drivers/pci/pci.c                  |   38 +++++++++++++++++++++++++++++++++++++
- include/linux/pci.h                |    2 +
- 4 files changed, 42 insertions(+), 2 deletions(-)
-
-Index: linux-stable/drivers/pci/host/pci-host-common.c
-===================================================================
---- linux-stable.orig/drivers/pci/host/pci-host-common.c
-+++ linux-stable/drivers/pci/host/pci-host-common.c
-@@ -45,7 +45,7 @@ static int gen_pci_parse_request_of_pci_
- 
- 		switch (resource_type(res)) {
- 		case IORESOURCE_IO:
--			err = pci_remap_iospace(res, iobase);
-+			err = devm_pci_remap_iospace(dev, res, iobase);
- 			if (err) {
- 				dev_warn(dev, "error %d: failed to map resource %pR\n",
- 					 err, res);
-Index: linux-stable/drivers/pci/host/pcie-rcar.c
-===================================================================
---- linux-stable.orig/drivers/pci/host/pcie-rcar.c
-+++ linux-stable/drivers/pci/host/pcie-rcar.c
-@@ -1102,7 +1102,7 @@ static int rcar_pcie_parse_request_of_pc
- 		struct resource *res = win->res;
- 
- 		if (resource_type(res) == IORESOURCE_IO) {
--			err = pci_remap_iospace(res, iobase);
-+			err = devm_pci_remap_iospace(dev, res, iobase);
- 			if (err) {
- 				dev_warn(dev, "error %d: failed to map resource %pR\n",
- 					 err, res);
-Index: linux-stable/drivers/pci/pci.c
-===================================================================
---- linux-stable.orig/drivers/pci/pci.c
-+++ linux-stable/drivers/pci/pci.c
-@@ -3407,6 +3407,44 @@ void pci_unmap_iospace(struct resource *
- #endif
- }
- 
-+static void devm_pci_unmap_iospace(struct device *dev, void *ptr)
-+{
-+	struct resource **res = ptr;
-+
-+	pci_unmap_iospace(*res);
-+}
-+
-+/**
-+ * devm_pci_remap_iospace - Managed pci_remap_iospace()
-+ * @dev: Generic device to remap IO address for
-+ * @res: Resource describing the I/O space
-+ * @phys_addr: physical address of range to be mapped
-+ *
-+ * Managed pci_remap_iospace().  Map is automatically unmapped on driver
-+ * detach.
-+ */
-+int devm_pci_remap_iospace(struct device *dev, const struct resource *res,
-+			   phys_addr_t phys_addr)
-+{
-+	const struct resource **ptr;
-+	int error;
-+
-+	ptr = devres_alloc(devm_pci_unmap_iospace, sizeof(*ptr), GFP_KERNEL);
-+	if (!ptr)
-+		return -ENOMEM;
-+
-+	error = pci_remap_iospace(res, phys_addr);
-+	if (error) {
-+		devres_free(ptr);
-+	} else	{
-+		*ptr = res;
-+		devres_add(dev, ptr);
-+	}
-+
-+	return error;
-+}
-+EXPORT_SYMBOL(devm_pci_remap_iospace);
-+
- static void __pci_set_master(struct pci_dev *dev, bool enable)
- {
- 	u16 old_cmd, cmd;
-Index: linux-stable/include/linux/pci.h
-===================================================================
---- linux-stable.orig/include/linux/pci.h
-+++ linux-stable/include/linux/pci.h
-@@ -1190,6 +1190,8 @@ int pci_register_io_range(phys_addr_t ad
- unsigned long pci_address_to_pio(phys_addr_t addr);
- phys_addr_t pci_pio_to_address(unsigned long pio);
- int pci_remap_iospace(const struct resource *res, phys_addr_t phys_addr);
-+int devm_pci_remap_iospace(struct device *dev, const struct resource *res,
-+			   phys_addr_t phys_addr);
- void pci_unmap_iospace(struct resource *res);
- 
- static inline pci_bus_addr_t pci_bus_address(struct pci_dev *pdev, int bar)
+Guenter
