@@ -2,118 +2,166 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FA91C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:51:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5CFDC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:51:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27CC12152D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:51:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="JC5+Veg+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27CC12152D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	by mail.kernel.org (Postfix) with ESMTP id 83EBC2152D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:51:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83EBC2152D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727072AbeHWVWT (ORCPT
+        id S1727181AbeHWVWZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 17:22:19 -0400
-Received: from mail-cys01nam02on0052.outbound.protection.outlook.com ([104.47.37.52]:23056
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726673AbeHWVWT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 17:22:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KCF25gJfMjtdQ2rslxWpjF8oI3wRyeAXEBfGGInnV9I=;
- b=JC5+Veg+z5U5Wm4sX5Ns7d9+EfGcRFGB1ckwwFQ5E0gIP0y0H3wNubscj/uREbwehH/Y69aKqwSg/0q+rcHsi3G+4nSPSJmoMoLeAFlkkGeFTk5TqBUgMdEfioHfFKecLQtRSS0xuxxIrENvJqxsaiImD6gdNcR0KKxkFQT6HMU=
-Received: from BN7PR12MB2593.namprd12.prod.outlook.com (20.176.176.31) by
- BN7PR12MB2610.namprd12.prod.outlook.com (20.176.176.76) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1080.14; Thu, 23 Aug 2018 17:51:25 +0000
-Received: from BN7PR12MB2593.namprd12.prod.outlook.com
- ([fe80::60a7:5c31:8fd7:825d]) by BN7PR12MB2593.namprd12.prod.outlook.com
- ([fe80::60a7:5c31:8fd7:825d%4]) with mapi id 15.20.1059.023; Thu, 23 Aug 2018
- 17:51:25 +0000
-From:   "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
-To:     Michael Jin <mikhail.jin@gmail.com>, Borislav Petkov <bp@suse.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-CC:     "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH v3] EDAC, amd64: Add Family 17h Model 10h support.
-Thread-Topic: [PATCH v3] EDAC, amd64: Add Family 17h Model 10h support.
-Thread-Index: AQHUNZdhp8+dIOBXj0S9UogVExIizqTNqIhA
-Date:   Thu, 23 Aug 2018 17:51:25 +0000
-Message-ID: <BN7PR12MB2593EA63572DBF05D75CC5CFF8370@BN7PR12MB2593.namprd12.prod.outlook.com>
-References: <20180816192840.31166-1-mikhail.jin@gmail.com>
-In-Reply-To: <20180816192840.31166-1-mikhail.jin@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Yazen.Ghannam@amd.com; 
-x-originating-ip: [2601:3c2:8280:2327:3414:3059:320b:d027]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN7PR12MB2610;20:Cq343d282pu6scUga19kjdaXDh1QVoaTh9pc0arl/r0X1riNW66gWS0pxQBarNkG6oBtEB/aC8XK9QD+nb5tJ1spnVZUSMAO4l8TltJhJqE5OVQpVriLo3oFoZ1UDDjuUCE6LfcN5sfvukyBO6WDEo/EdQa0/CoGl5k5wVRaBFS0oU8/7YGDYtKzFhGUkClt0XL8OXjr6H7BMl3oRIA98F//0t9MsiO4UH0rAMfURuHvPSKVypL7HIZHtL8Xf3qr
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: bbca8022-86d2-4237-2a7f-08d609210bc0
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BN7PR12MB2610;
-x-ms-traffictypediagnostic: BN7PR12MB2610:
-x-microsoft-antispam-prvs: <BN7PR12MB2610CB5EC9D8E5AF4017A672F8370@BN7PR12MB2610.namprd12.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(85827821059158)(767451399110)(42068640409301);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231311)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(201708071742011)(7699016);SRVR:BN7PR12MB2610;BCL:0;PCL:0;RULEID:;SRVR:BN7PR12MB2610;
-x-forefront-prvs: 0773BB46AC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(39860400002)(376002)(366004)(396003)(136003)(199004)(189003)(13464003)(81156014)(81166006)(2900100001)(8936002)(25786009)(53936002)(72206003)(6436002)(478600001)(305945005)(316002)(14454004)(7736002)(5250100002)(8676002)(55016002)(6306002)(74316002)(9686003)(4326008)(6246003)(39060400002)(105586002)(966005)(86362001)(33656002)(106356001)(6116002)(186003)(2906002)(14444005)(5660300001)(6506007)(54906003)(46003)(68736007)(476003)(446003)(11346002)(229853002)(97736004)(99286004)(110136005)(53546011)(486006)(76176011)(7696005)(102836004)(256004);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR12MB2610;H:BN7PR12MB2593.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: wVQBDjquI957RZenF7KSDmvIkEiaVUQqHjcLSN+qDcURP+G7VM5pcsuvx9ux/pgSXrkSyRMCXL4xpmbOkCjriqbDw0bl1sMVKR6Qt0uw6ggPjln7dZH005HaKnPwjYRxzarsR4WyN2HWaC+H7ByJkNXM49nqfeuk+nNsB+7axfsiT07+NO67pJxyiLscCC5R2liW4bz64fslREcCF+LfbhZIy4cOHIfTs8S7V2gnb7GCwUHirHSzJyHkSCqKmEBEmznwchjHggCyRzCaWisLdDk7cWXENbNtN+R+zapYkbozBqtmnj7pGCAO60c6aU8Ia85EGfpR1MlsGymdz7XIFdH/7YaBtPJX6z67jSvK1Sw=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 23 Aug 2018 17:22:25 -0400
+Received: from gateway24.websitewelcome.com ([192.185.51.122]:34481 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727085AbeHWVWY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 17:22:24 -0400
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id C475ECAF45
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 12:51:34 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id stlIfd3ZlPvAdstlVfbTyk; Thu, 23 Aug 2018 12:51:34 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.40.214] (port=57308 helo=[192.168.1.71])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fstlI-003OJo-8N; Thu, 23 Aug 2018 12:51:12 -0500
+Subject: Re: [PATCH] usb: iowarrior: replace kmalloc with kmalloc_array
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <20180823173125.GA24762@embeddedor.com>
+ <CAGXu5jJY71FoVrQBXZ=Vx1O90bL3BoyAVBwugfh4XJL84=my0Q@mail.gmail.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <8bb74251-7dcd-cafc-0811-4cc55c2b1ce1@embeddedor.com>
+Date:   Thu, 23 Aug 2018 12:51:11 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bbca8022-86d2-4237-2a7f-08d609210bc0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Aug 2018 17:51:25.3499
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR12MB2610
+In-Reply-To: <CAGXu5jJY71FoVrQBXZ=Vx1O90bL3BoyAVBwugfh4XJL84=my0Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.40.214
+X-Source-L: No
+X-Exim-ID: 1fstlI-003OJo-8N
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.71]) [189.250.40.214]:57308
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 16
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Michael Jin <mikhail.jin@gmail.com>
-> Sent: Thursday, August 16, 2018 2:29 PM
-> To: Borislav Petkov <bp@suse.de>; Ghannam, Yazen
-> <Yazen.Ghannam@amd.com>; Mauro Carvalho Chehab
-> <mchehab@kernel.org>
-> Cc: linux-edac@vger.kernel.org; linux-kernel@vger.kernel.org; Michael Jin
-> <mikhail.jin@gmail.com>; stable@vger.kernel.org
-> Subject: [PATCH v3] EDAC, amd64: Add Family 17h Model 10h support.
->=20
-> Add new device IDs for family 17h models 10h-2fh.
->=20
-> This is required by amd64_edac_mod in order to properly detect PCI
-> device functions 0 and 6.
->=20
-> Link: https://lkml.kernel.org/r/20180815114107.29797-1-
-> mikhail.jin@gmail.com
-> Cc: <stable@vger.kernel.org> # 4.10.x
-> Signed-off-by: Michael Jin <mikhail.jin@gmail.com>
 
-Looks good to me.
 
-Reviewed-by: Yazen Ghannam <yazen.ghannam@amd.com>
+On 8/23/18 12:43 PM, Kees Cook wrote:
+> On Thu, Aug 23, 2018 at 10:31 AM, Gustavo A. R. Silva
+> <gustavo@embeddedor.com> wrote:
+>> A common flaw in the kernel is integer overflow during memory allocation
+>> size calculations. In an effort to reduce the frequency of these bugs,
+>> kmalloc_array was implemented, which allocates memory for an array,
+>> while at the same time detects integer overflow.
+>>
+>> This patch replaces cases of:
+>>
+>> kmalloc(a * b, gfp)
+>>
+>> with:
+>>         kmalloc_array(a * b, gfp)
+> 
+> nit: this should be "kmalloc_array(a, b, gfp)" (This was a typo from
+> my treewide commit message... :P)
+> 
 
-Thanks,
-Yazen
+Oops... OK. V3 is on the way. :P
+
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>>  drivers/usb/misc/iowarrior.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/usb/misc/iowarrior.c b/drivers/usb/misc/iowarrior.c
+>> index c2991b8..7a22400 100644
+>> --- a/drivers/usb/misc/iowarrior.c
+>> +++ b/drivers/usb/misc/iowarrior.c
+>> @@ -808,7 +808,7 @@ static int iowarrior_probe(struct usb_interface *interface,
+>>                          dev->int_in_endpoint->bInterval);
+>>         /* create an internal buffer for interrupt data from the device */
+>>         dev->read_queue =
+>> -           kmalloc(((dev->report_size + 1) * MAX_INTERRUPT_BUFFER),
+>> +           kmalloc_array(dev->report_size + 1, MAX_INTERRUPT_BUFFER,
+>>                     GFP_KERNEL);
+> 
+> For this patch with the commit log updated:
+> 
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> 
+
+Thanks!
+--
+Gustavo
