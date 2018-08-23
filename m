@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D659BC43615
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:31:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0D6DC04E85
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:31:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9ABFB2147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:31:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ABFB2147A
+	by mail.kernel.org (Postfix) with ESMTP id 982D621486
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:31:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 982D621486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731495AbeHWMAP (ORCPT
+        id S1731509AbeHWMAS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:00:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47992 "EHLO
+        Thu, 23 Aug 2018 08:00:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48004 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728915AbeHWMAO (ORCPT
+        with ESMTP id S1728915AbeHWMAR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:00:14 -0400
+        Thu, 23 Aug 2018 08:00:17 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E1B3FC74;
-        Thu, 23 Aug 2018 08:31:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 163AFC9A;
+        Thu, 23 Aug 2018 08:31:43 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
-        Alexander Aring <aring@mojatatu.com>,
-        Stefan Schmidt <stefan@datenfreihafen.org>,
+        stable@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 141/217] ieee802154: 6lowpan: set IFLA_LINK
-Date:   Thu, 23 Aug 2018 09:54:14 +0200
-Message-Id: <20180823075511.948467114@linuxfoundation.org>
+Subject: [PATCH 4.14 132/217] ARM: imx_v4_v5_defconfig: Select ULPI support
+Date:   Thu, 23 Aug 2018 09:54:05 +0200
+Message-Id: <20180823075511.553301950@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -52,42 +51,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lubomir Rintel <lkundrak@v3.sk>
+From: Fabio Estevam <fabio.estevam@nxp.com>
 
-[ Upstream commit b30c122c0bbb0a1dc413085e177ea09467e65fdb ]
+[ Upstream commit 2ceb2780b790b74bc408a949f6aedbad8afa693e ]
 
-Otherwise NetworkManager (and iproute alike) is not able to identify the
-parent IEEE 802.15.4 interface of a 6LoWPAN link.
+Select CONFIG_USB_CHIPIDEA_ULPI and CONFIG_USB_ULPI_BUS so that
+USB ULPI can be functional on some boards like that use ULPI
+interface.
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Acked-by: Alexander Aring <aring@mojatatu.com>
-Signed-off-by: Stefan Schmidt <stefan@datenfreihafen.org>
+Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ieee802154/6lowpan/core.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm/configs/imx_v4_v5_defconfig |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/net/ieee802154/6lowpan/core.c
-+++ b/net/ieee802154/6lowpan/core.c
-@@ -90,12 +90,18 @@ static int lowpan_neigh_construct(struct
- 	return 0;
- }
- 
-+static int lowpan_get_iflink(const struct net_device *dev)
-+{
-+	return lowpan_802154_dev(dev)->wdev->ifindex;
-+}
-+
- static const struct net_device_ops lowpan_netdev_ops = {
- 	.ndo_init		= lowpan_dev_init,
- 	.ndo_start_xmit		= lowpan_xmit,
- 	.ndo_open		= lowpan_open,
- 	.ndo_stop		= lowpan_stop,
- 	.ndo_neigh_construct    = lowpan_neigh_construct,
-+	.ndo_get_iflink         = lowpan_get_iflink,
- };
- 
- static void lowpan_setup(struct net_device *ldev)
+--- a/arch/arm/configs/imx_v4_v5_defconfig
++++ b/arch/arm/configs/imx_v4_v5_defconfig
+@@ -144,9 +144,11 @@ CONFIG_USB_STORAGE=y
+ CONFIG_USB_CHIPIDEA=y
+ CONFIG_USB_CHIPIDEA_UDC=y
+ CONFIG_USB_CHIPIDEA_HOST=y
++CONFIG_USB_CHIPIDEA_ULPI=y
+ CONFIG_NOP_USB_XCEIV=y
+ CONFIG_USB_GADGET=y
+ CONFIG_USB_ETH=m
++CONFIG_USB_ULPI_BUS=y
+ CONFIG_MMC=y
+ CONFIG_MMC_SDHCI=y
+ CONFIG_MMC_SDHCI_PLTFM=y
 
 
