@@ -6,44 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CCF1C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:58:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7053BC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:58:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C46C32147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:58:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C46C32147A
+	by mail.kernel.org (Postfix) with ESMTP id 33BBF2147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:58:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33BBF2147A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727882AbeHWL0d (ORCPT
+        id S1727959AbeHWL0g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:26:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41750 "EHLO
+        Thu, 23 Aug 2018 07:26:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41760 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726995AbeHWL0c (ORCPT
+        with ESMTP id S1726995AbeHWL0f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:26:32 -0400
+        Thu, 23 Aug 2018 07:26:35 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 211BA9D2;
-        Thu, 23 Aug 2018 07:58:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6AF0BACC;
+        Thu, 23 Aug 2018 07:58:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kim Phillips <kim.phillips@arm.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        David Ahern <dsahern@gmail.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
+        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Thomas Richter <tmricht@linux.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 29/79] perf tests: Add event parsing error handling to parse events test
-Date:   Thu, 23 Aug 2018 09:53:05 +0200
-Message-Id: <20180823074920.631063060@linuxfoundation.org>
+Subject: [PATCH 4.4 30/79] selftests/x86/sigreturn/64: Fix spurious failures on AMD CPUs
+Date:   Thu, 23 Aug 2018 09:53:06 +0200
+Message-Id: <20180823074920.685984965@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074918.641878835@linuxfoundation.org>
 References: <20180823074918.641878835@linuxfoundation.org>
@@ -60,87 +55,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: Andy Lutomirski <luto@kernel.org>
 
-[ Upstream commit 933ccf2002aaef1037cb676622a694f5390c3d59 ]
+[ Upstream commit ec348020566009d3da9b99f07c05814d13969c78 ]
 
-Add missing error handling for parse_events calls in test_event function
-that led to following segfault on s390:
+When I wrote the sigreturn test, I didn't realize that AMD's busted
+IRET behavior was different from Intel's busted IRET behavior:
 
-  running test 52 'intel_pt//u'
-  perf: Segmentation fault
-  ...
-  /lib64/libc.so.6(vasprintf+0xe6) [0x3fffca3f106]
-  /lib64/libc.so.6(asprintf+0x46) [0x3fffca1aa96]
-  ./perf(parse_events_add_pmu+0xb8) [0x80132088]
-  ./perf(parse_events_parse+0xc62) [0x8019529a]
-  ./perf(parse_events+0x98) [0x801341c0]
-  ./perf(test__parse_events+0x48) [0x800cd140]
-  ./perf(cmd_test+0x26a) [0x800bd44a]
-  test child interrupted
+On AMD CPUs, the CPU leaks the high 32 bits of the kernel stack pointer
+to certain userspace contexts.  Gee, thanks.  There's very little
+the kernel can do about it.  Modify the test so it passes.
 
-Adding the struct parse_events_error argument to parse_events call. Also
-adding parse_events_print_error to get more details on the parsing
-failures, like:
-
-  # perf test 6 -v
-  running test 52 'intel_pt//u'failed to parse event 'intel_pt//u', err 1, str 'Cannot find PMU `intel_pt'. Missing kernel support?'
-  event syntax error: 'intel_pt//u'
-                       \___ Cannot find PMU `intel_pt'. Missing kernel support?
-
-Committer note:
-
-Use named initializers in the struct parse_events_error variable to
-avoid breaking the build on centos5, 6 and others with a similar gcc:
-
-  cc1: warnings being treated as errors
-  tests/parse-events.c: In function 'test_event':
-  tests/parse-events.c:1696: error: missing initializer
-  tests/parse-events.c:1696: error: (near initialization for 'err.str')
-
-Reported-by: Kim Phillips <kim.phillips@arm.com>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Kim Phillips <kim.phillips@arm.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Richter <tmricht@linux.ibm.com>
-Link: http://lkml.kernel.org/r/20180611093422.1005-1-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/86e7fd3564497f657de30a36da4505799eebef01.1530076529.git.luto@kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/tests/parse-events.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ tools/testing/selftests/x86/sigreturn.c |   46 ++++++++++++++++++++------------
+ 1 file changed, 29 insertions(+), 17 deletions(-)
 
---- a/tools/perf/tests/parse-events.c
-+++ b/tools/perf/tests/parse-events.c
-@@ -1614,6 +1614,7 @@ static struct terms_test test__terms[] =
+--- a/tools/testing/selftests/x86/sigreturn.c
++++ b/tools/testing/selftests/x86/sigreturn.c
+@@ -456,19 +456,38 @@ static int test_valid_sigreturn(int cs_b
+ 		greg_t req = requested_regs[i], res = resulting_regs[i];
+ 		if (i == REG_TRAPNO || i == REG_IP)
+ 			continue;	/* don't care */
+-		if (i == REG_SP) {
+-			printf("\tSP: %llx -> %llx\n", (unsigned long long)req,
+-			       (unsigned long long)res);
  
- static int test_event(struct evlist_test *e)
- {
-+	struct parse_events_error err = { .idx = 0, };
- 	struct perf_evlist *evlist;
- 	int ret;
++		if (i == REG_SP) {
+ 			/*
+-			 * In many circumstances, the high 32 bits of rsp
+-			 * are zeroed.  For example, we could be a real
+-			 * 32-bit program, or we could hit any of a number
+-			 * of poorly-documented IRET or segmented ESP
+-			 * oddities.  If this happens, it's okay.
++			 * If we were using a 16-bit stack segment, then
++			 * the kernel is a bit stuck: IRET only restores
++			 * the low 16 bits of ESP/RSP if SS is 16-bit.
++			 * The kernel uses a hack to restore bits 31:16,
++			 * but that hack doesn't help with bits 63:32.
++			 * On Intel CPUs, bits 63:32 end up zeroed, and, on
++			 * AMD CPUs, they leak the high bits of the kernel
++			 * espfix64 stack pointer.  There's very little that
++			 * the kernel can do about it.
++			 *
++			 * Similarly, if we are returning to a 32-bit context,
++			 * the CPU will often lose the high 32 bits of RSP.
+ 			 */
+-			if (res == (req & 0xFFFFFFFF))
+-				continue;  /* OK; not expected to work */
++
++			if (res == req)
++				continue;
++
++			if (cs_bits != 64 && ((res ^ req) & 0xFFFFFFFF) == 0) {
++				printf("[NOTE]\tSP: %llx -> %llx\n",
++				       (unsigned long long)req,
++				       (unsigned long long)res);
++				continue;
++			}
++
++			printf("[FAIL]\tSP mismatch: requested 0x%llx; got 0x%llx\n",
++			       (unsigned long long)requested_regs[i],
++			       (unsigned long long)resulting_regs[i]);
++			nerrs++;
++			continue;
+ 		}
  
-@@ -1621,10 +1622,11 @@ static int test_event(struct evlist_test
- 	if (evlist == NULL)
- 		return -ENOMEM;
+ 		bool ignore_reg = false;
+@@ -507,13 +526,6 @@ static int test_valid_sigreturn(int cs_b
+ 		}
  
--	ret = parse_events(evlist, e->name, NULL);
-+	ret = parse_events(evlist, e->name, &err);
- 	if (ret) {
--		pr_debug("failed to parse event '%s', err %d\n",
--			 e->name, ret);
-+		pr_debug("failed to parse event '%s', err %d, str '%s'\n",
-+			 e->name, ret, err.str);
-+		parse_events_print_error(&err, e->name);
- 	} else {
- 		ret = e->check(evlist);
- 	}
+ 		if (requested_regs[i] != resulting_regs[i] && !ignore_reg) {
+-			/*
+-			 * SP is particularly interesting here.  The
+-			 * usual cause of failures is that we hit the
+-			 * nasty IRET case of returning to a 16-bit SS,
+-			 * in which case bits 16:31 of the *kernel*
+-			 * stack pointer persist in ESP.
+-			 */
+ 			printf("[FAIL]\tReg %d mismatch: requested 0x%llx; got 0x%llx\n",
+ 			       i, (unsigned long long)requested_regs[i],
+ 			       (unsigned long long)resulting_regs[i]);
 
 
