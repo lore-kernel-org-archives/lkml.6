@@ -2,165 +2,132 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1BFAC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:01:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 816B3C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:02:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EF292077B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:01:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EF292077B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 385702077B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:02:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="SayXUW/u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 385702077B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726507AbeHWUcF (ORCPT
+        id S1726647AbeHWUdA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 16:32:05 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:36815 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726064AbeHWUcF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 16:32:05 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 128922193AFC6;
-        Fri, 24 Aug 2018 01:01:23 +0800 (CST)
-Received: from [127.0.0.1] (10.210.171.241) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.399.0; Fri, 24 Aug 2018
- 01:01:16 +0800
-Subject: Re: [PATCH] scsi: hisi_sas: Switch from msleep to usleep_range per
- timers-howto.txt
-To:     Ding Xiang <dingxiang@cmss.chinamobile.com>,
-        <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
-        <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Linuxarm <linuxarm@huawei.com>,
-        chenxiang <chenxiang66@hisilicon.com>
-References: <1535022539-10634-1-git-send-email-dingxiang@cmss.chinamobile.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <a89bf6bd-9789-5e6e-40ba-7e82780422d2@huawei.com>
-Date:   Thu, 23 Aug 2018 18:01:10 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        Thu, 23 Aug 2018 16:33:00 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:46714 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726064AbeHWUdA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 16:33:00 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7NGwod8169079;
+        Thu, 23 Aug 2018 17:02:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=+vfOacba25ewEB/Hv6P+3QqgxyH0xomkmTfF8xQf3Qo=;
+ b=SayXUW/uYxwF3lIiQkSYK8dJtjN9G2drVFgJ2d/XCQFBXs7Ji4jPqPAszBZ+iLBQeNNP
+ WobMsTpdHu4k7mpP8/JbgG++MTaGJN910Qa8HTsgYNoD432wz5Zp84epfqbXmriDnLK/
+ /WJw/mLFZ6b4Wlh2/JuFzsrxXpt3ElDVjc7N2+BQpmMHcRfcpg77PT0FCcOtYlWJXtHd
+ xigGiet5craYekRrSC9IqTd6ZH7ZsgksaNIkbZuZvMlP+5QkYE4gJFWlPMTZry4hjN5a
+ obg0TnMpTBaSuQisEjZWWDtSWzF3UQGpJ30CAP4rw5twC/tT6mIFcAnOgfAjE9VirsW9 zg== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2120.oracle.com with ESMTP id 2kxbdqapt5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 23 Aug 2018 17:02:04 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7NH1wPA016060
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 23 Aug 2018 17:01:59 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w7NH1vJJ016809;
+        Thu, 23 Aug 2018 17:01:57 GMT
+Received: from [192.168.1.164] (/50.38.38.67)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 23 Aug 2018 10:01:57 -0700
+Subject: Re: [PATCH v3 1/2] mm: migration: fix migration of huge PMD shared
+ pages
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org
+References: <20180821205902.21223-2-mike.kravetz@oracle.com>
+ <201808220831.eM0je51n%fengguang.wu@intel.com>
+ <975b740d-26a6-eb3f-c8ca-1a9995d0d343@oracle.com>
+ <20180823124855.GI29735@dhcp22.suse.cz>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <12ea5339-f2b1-62b4-6d37-57d737fac34a@oracle.com>
+Date:   Thu, 23 Aug 2018 10:01:55 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1535022539-10634-1-git-send-email-dingxiang@cmss.chinamobile.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+In-Reply-To: <20180823124855.GI29735@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.210.171.241]
-X-CFilter-Loop: Reflected
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8994 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808230176
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/08/2018 12:08, Ding Xiang wrote:
-> use usleep_range to sleep for 10us - 20ms
->
+On 08/23/2018 05:48 AM, Michal Hocko wrote:
+> On Tue 21-08-18 18:10:42, Mike Kravetz wrote:
+> [...]
+> 
+> OK, after burning myself when trying to be clever here it seems like
+> your proposed solution is indeed simpler.
+> 
+>> +bool huge_pmd_sharing_possible(struct vm_area_struct *vma,
+>> +				unsigned long *start, unsigned long *end)
+>> +{
+>> +	unsigned long check_addr = *start;
+>> +	bool ret = false;
+>> +
+>> +	if (!(vma->vm_flags & VM_MAYSHARE))
+>> +		return ret;
+>> +
+>> +	for (check_addr = *start; check_addr < *end; check_addr += PUD_SIZE) {
+>> +		unsigned long a_start = check_addr & PUD_MASK;
+>> +		unsigned long a_end = a_start + PUD_SIZE;
+> 
+> I guess this should be rather in HPAGE_SIZE * PTRS_PER_PTE units as
+> huge_pmd_unshare does.
 
-Hi,
+Sure, I can do that.
 
-Thanks for the patch.
+However, I consider the statement making that calculation in huge_pmd_unshare
+to be VERY ugly and confusing code.
 
-According to the document, msleep(1) will be ~20ms. As such, some driver 
-behaviour may depend on this now.
+	*addr = ALIGN(*addr, HPAGE_SIZE * PTRS_PER_PTE) - HPAGE_SIZE;
 
-At this stage, the drivers have been extensively tested (v2+v3), so I 
-would rather not introduce possible instability. In addition, v1 is all 
-but dead, so I can't test. Finally, none of the sleeps are in the 
-fastpath, so the extra sleep does not cause much harm.
+Note that it is adjusting the value of passed argument 'unsigned long *addr'.
+This argument/value is part of a loop condition in all current callers of
+huge_pmd_unshare.  For instance:
 
-John
+	for (; address < end; address += huge_page_size(h)) {
 
-> Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
-> ---
->  drivers/scsi/hisi_sas/hisi_sas_v1_hw.c | 8 ++++----
->  drivers/scsi/hisi_sas/hisi_sas_v2_hw.c | 6 +++---
->  drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 2 +-
->  3 files changed, 8 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-> index 8f60f0e..0584f711 100644
-> --- a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-> +++ b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-> @@ -579,7 +579,7 @@ static int reset_hw_v1_hw(struct hisi_hba *hisi_hba)
->  		phy_ctrl |= PHY_CTRL_RESET_MSK;
->  		hisi_sas_phy_write32(hisi_hba, i, PHY_CTRL, phy_ctrl);
->  	}
-> -	msleep(1); /* It is safe to wait for 50us */
-> +	usleep_range(1000, 1100); /* It is safe to wait for 50us */
->
->  	/* Ensure DMA tx & rx idle */
->  	for (i = 0; i < hisi_hba->n_phy; i++) {
-> @@ -632,7 +632,7 @@ static int reset_hw_v1_hw(struct hisi_hba *hisi_hba)
->  			     RESET_VALUE);
->  		regmap_write(hisi_hba->ctrl, hisi_hba->ctrl_clock_ena_reg + 4,
->  			     RESET_VALUE);
-> -		msleep(1);
-> +		usleep_range(1000, 1100);
->  		regmap_read(hisi_hba->ctrl, hisi_hba->ctrl_reset_sts_reg, &val);
->  		if (RESET_VALUE != (val & RESET_VALUE)) {
->  			dev_err(dev, "Reset failed\n");
-> @@ -645,7 +645,7 @@ static int reset_hw_v1_hw(struct hisi_hba *hisi_hba)
->  			     RESET_VALUE);
->  		regmap_write(hisi_hba->ctrl, hisi_hba->ctrl_clock_ena_reg,
->  			     RESET_VALUE);
-> -		msleep(1);
-> +		usleep_range(1000, 1100);
->  		regmap_read(hisi_hba->ctrl, hisi_hba->ctrl_reset_sts_reg, &val);
->  		if (val & RESET_VALUE) {
->  			dev_err(dev, "De-reset failed\n");
-> @@ -841,7 +841,7 @@ static void sl_notify_v1_hw(struct hisi_hba *hisi_hba, int phy_no)
->  	sl_control = hisi_sas_phy_read32(hisi_hba, phy_no, SL_CONTROL);
->  	sl_control |= SL_CONTROL_NOTIFY_EN_MSK;
->  	hisi_sas_phy_write32(hisi_hba, phy_no, SL_CONTROL, sl_control);
-> -	msleep(1);
-> +	usleep_range(1000, 1100);
->  	sl_control = hisi_sas_phy_read32(hisi_hba, phy_no, SL_CONTROL);
->  	sl_control &= ~SL_CONTROL_NOTIFY_EN_MSK;
->  	hisi_sas_phy_write32(hisi_hba, phy_no, SL_CONTROL, sl_control);
-> diff --git a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-> index 9c5c5a6..4ca5f77 100644
-> --- a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-> +++ b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-> @@ -1081,7 +1081,7 @@ static int reset_hw_v2_hw(struct hisi_hba *hisi_hba)
->  				reset_val);
->  		regmap_write(hisi_hba->ctrl, hisi_hba->ctrl_clock_ena_reg + 4,
->  				reset_val);
-> -		msleep(1);
-> +		usleep_range(1000, 1100);
->  		regmap_read(hisi_hba->ctrl, hisi_hba->ctrl_reset_sts_reg, &val);
->  		if (reset_val != (val & reset_val)) {
->  			dev_err(dev, "SAS reset fail.\n");
-> @@ -1093,7 +1093,7 @@ static int reset_hw_v2_hw(struct hisi_hba *hisi_hba)
->  				reset_val);
->  		regmap_write(hisi_hba->ctrl, hisi_hba->ctrl_clock_ena_reg,
->  				reset_val);
-> -		msleep(1);
-> +		usleep_range(1000, 1100);
->  		regmap_read(hisi_hba->ctrl, hisi_hba->ctrl_reset_sts_reg,
->  				&val);
->  		if (val & reset_val) {
-> @@ -1591,7 +1591,7 @@ static void sl_notify_v2_hw(struct hisi_hba *hisi_hba, int phy_no)
->  	sl_control = hisi_sas_phy_read32(hisi_hba, phy_no, SL_CONTROL);
->  	sl_control |= SL_CONTROL_NOTIFY_EN_MSK;
->  	hisi_sas_phy_write32(hisi_hba, phy_no, SL_CONTROL, sl_control);
-> -	msleep(1);
-> +	usleep_range(1000, 1100);
->  	sl_control = hisi_sas_phy_read32(hisi_hba, phy_no, SL_CONTROL);
->  	sl_control &= ~SL_CONTROL_NOTIFY_EN_MSK;
->  	hisi_sas_phy_write32(hisi_hba, phy_no, SL_CONTROL, sl_control);
-> diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-> index 08b503e2..8f57737 100644
-> --- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-> +++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-> @@ -834,7 +834,7 @@ static void sl_notify_v3_hw(struct hisi_hba *hisi_hba, int phy_no)
->  	sl_control = hisi_sas_phy_read32(hisi_hba, phy_no, SL_CONTROL);
->  	sl_control |= SL_CONTROL_NOTIFY_EN_MSK;
->  	hisi_sas_phy_write32(hisi_hba, phy_no, SL_CONTROL, sl_control);
-> -	msleep(1);
-> +	usleep_range(1000, 1100);
->  	sl_control = hisi_sas_phy_read32(hisi_hba, phy_no, SL_CONTROL);
->  	sl_control &= ~SL_CONTROL_NOTIFY_EN_MSK;
->  	hisi_sas_phy_write32(hisi_hba, phy_no, SL_CONTROL, sl_control);
->
+So, that calculation in huge_pmd_unshare gets the calling loop back to
+the starting address of the unmapped range.  It even takes the loop increment
+'huge_page_size(h)' into account.  That is why that ' - HPAGE_SIZE' is at
+the end of the calculation.
 
-
+ugly and confusing!  And on my list of things to clean up.
+-- 
+Mike Kravetz
