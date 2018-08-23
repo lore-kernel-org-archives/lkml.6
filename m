@@ -2,159 +2,173 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54F14C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:07:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5CAAC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:08:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFCE82152D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:07:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFCE82152D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7E49421537
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:08:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="j3zuQkQ3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E49421537
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730930AbeHWOgu (ORCPT
+        id S1730995AbeHWOhV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 10:36:50 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46238 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728188AbeHWOgu (ORCPT
+        Thu, 23 Aug 2018 10:37:21 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:41062 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729044AbeHWOhU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 10:36:50 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7NB4PUG006096
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 07:07:39 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m1suf56up-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 07:07:38 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
-        Thu, 23 Aug 2018 12:07:37 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 23 Aug 2018 12:07:34 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7NB7Xi345678618
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 23 Aug 2018 11:07:33 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 802605204E;
-        Thu, 23 Aug 2018 14:07:32 +0100 (BST)
-Received: from oc7330422307.ibm.com (unknown [9.152.224.87])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 2A84152051;
-        Thu, 23 Aug 2018 14:07:32 +0100 (BST)
-Subject: Re: [PATCH v3 1/3] KVM: s390: vsie: copy wrapping keys to right place
-To:     Pierre Morel <pmorel@linux.ibm.com>, david@redhat.com
-Cc:     linux-kernel@vger.kernel.org, cohuck@redhat.com,
-        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        frankja@linux.ibm.com, akrowiak@linux.ibm.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com
-References: <1535019956-23539-1-git-send-email-pmorel@linux.ibm.com>
- <1535019956-23539-2-git-send-email-pmorel@linux.ibm.com>
-From:   Christian Borntraeger <borntraeger@de.ibm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
- 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
- syiRa+UVlsKmx1hsEg==
-Date:   Thu, 23 Aug 2018 13:07:32 +0200
+        Thu, 23 Aug 2018 10:37:20 -0400
+Received: by mail-lj1-f194.google.com with SMTP id y17-v6so3819450ljy.8
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 04:08:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=TiqdqkGM5XpZpHvGKXN3QNi+DQ7PdrpRq0kWc+NC2WI=;
+        b=j3zuQkQ3TJ0lVX8KdKd//Vs5uXyvQmBu9B45bpb8CrJzmbD6KgO6h4WxevUbSzncNG
+         cJvIYFCs4mclO840YDVdbbTVVR0XJxWQ97P3u85jYrWaayVmcpC23IjjtBVXpeJgAAY7
+         dMyQ/h1y9bksNC74JSyQD984nbic577S4k0X5nWFG1+OX7ibt3ulzXeElZXLS+C/0Zxt
+         4Srnjt8HiZUXOJYGvnvJZiAckGSz026NdIQl+f/Wz5ONBc8LzVkBwIuwt9lTgZdxWD1Q
+         P3LhqdChHxanmznIXvuNH3QFJuJ5bkAb3H619H1+51slR1X+oIamT6yN9Ej896smkkjM
+         2ndw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=TiqdqkGM5XpZpHvGKXN3QNi+DQ7PdrpRq0kWc+NC2WI=;
+        b=cx+hHjt3eXvgI7b71qJ8kZZlvhoroQ+FCupuCW6oQpc3K+opE6o8l7ViLo8+JPpakg
+         6cjKAw9eidqBHUDw6HyrNb3zZjdNlj2yQ1Hukjb7KGj2MQJsxK+b46PrkjBkzdpfEH8d
+         Y0JovEElBFNOfTfnYg3wfgizNCna7NdPfcmGIx8AJrUoAD2v/i2PJESzoBOPHySrKI7J
+         51OOEbNtuU9R6ukfa1NbmEbsM/r6vXeGYhJDMc0OdJ2Yil0ey4FfIkS2ovEg0f4kUDD1
+         4vUMn+LTPfT4TwfJvbvyF+kfPsoBBM9wyemovsZMGx12vpYcQi3WIO0UdG5Zm2GdZq9Z
+         c1fw==
+X-Gm-Message-State: AOUpUlEQ4eJTrG/Bs/UzgJv+zc+dRRZYgGcx+WCJpfF0u070MxPmE22v
+        OaCqNRAMoGNC752Vj+R4cPkO1w==
+X-Google-Smtp-Source: AA+uWPxPcmE0DgytKUlnb953uHlLNDiV/ZWCqTAd8jLuU7e4mwvv5JdTnvJLasQ6NyEOkOu5m2jrTg==
+X-Received: by 2002:a2e:869a:: with SMTP id l26-v6mr23811878lji.48.1535022487431;
+        Thu, 23 Aug 2018 04:08:07 -0700 (PDT)
+Received: from wasted.cogentembedded.com ([31.173.81.66])
+        by smtp.gmail.com with ESMTPSA id y65-v6sm781740lfa.97.2018.08.23.04.08.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 Aug 2018 04:08:06 -0700 (PDT)
+Subject: Re: [PATCH 4.9 124/130] PCI: OF: Fix I/O space page leak
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     stable@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+References: <20180823074927.161454870@linuxfoundation.org>
+ <20180823074934.995162393@linuxfoundation.org>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <bde26016-9381-0df1-ec4b-b6f6fc5b9f51@cogentembedded.com>
+Date:   Thu, 23 Aug 2018 14:08:04 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <1535019956-23539-2-git-send-email-pmorel@linux.ibm.com>
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18082311-0012-0000-0000-0000029DA490
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082311-0013-0000-0000-000020D0EC0F
-Message-Id: <853c73ab-3221-e0ee-af30-8e11fefbebd7@de.ibm.com>
+In-Reply-To: <20180823074934.995162393@linuxfoundation.org>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-23_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808230119
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 08/23/2018 10:54 AM, Greg Kroah-Hartman wrote:
 
-
-On 08/23/2018 12:25 PM, Pierre Morel wrote:
-> Copy the key mask to the right offset inside the shadow CRYCB
+> 4.9-stable review patch.  If anyone has any objections, please let me know.
 > 
-> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
-> Reviewed-by: David Hildenbrand <david@redhat.com>
-> Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-> Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
-
-This should be cc stable I guess?
-
-
+> ------------------
+> 
+> From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> commit a5fb9fb023a1435f2b42bccd7f547560f3a21dc3 upstream.
+> 
+> When testing the R-Car PCIe driver on the Condor board, if the PCIe PHY
+> driver was left disabled, the kernel crashed with this BUG:
+> 
+>   kernel BUG at lib/ioremap.c:72!
+>   Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
+>   Modules linked in:
+>   CPU: 0 PID: 39 Comm: kworker/0:1 Not tainted 4.17.0-dirty #1092
+>   Hardware name: Renesas Condor board based on r8a77980 (DT)
+>   Workqueue: events deferred_probe_work_func
+>   pstate: 80000005 (Nzcv daif -PAN -UAO)
+>   pc : ioremap_page_range+0x370/0x3c8
+>   lr : ioremap_page_range+0x40/0x3c8
+>   sp : ffff000008da39e0
+>   x29: ffff000008da39e0 x28: 00e8000000000f07
+>   x27: ffff7dfffee00000 x26: 0140000000000000
+>   x25: ffff7dfffef00000 x24: 00000000000fe100
+>   x23: ffff80007b906000 x22: ffff000008ab8000
+>   x21: ffff000008bb1d58 x20: ffff7dfffef00000
+>   x19: ffff800009c30fb8 x18: 0000000000000001
+>   x17: 00000000000152d0 x16: 00000000014012d0
+>   x15: 0000000000000000 x14: 0720072007200720
+>   x13: 0720072007200720 x12: 0720072007200720
+>   x11: 0720072007300730 x10: 00000000000000ae
+>   x9 : 0000000000000000 x8 : ffff7dffff000000
+>   x7 : 0000000000000000 x6 : 0000000000000100
+>   x5 : 0000000000000000 x4 : 000000007b906000
+>   x3 : ffff80007c61a880 x2 : ffff7dfffeefffff
+>   x1 : 0000000040000000 x0 : 00e80000fe100f07
+>   Process kworker/0:1 (pid: 39, stack limit = 0x        (ptrval))
+>   Call trace:
+>    ioremap_page_range+0x370/0x3c8
+>    pci_remap_iospace+0x7c/0xac
+>    pci_parse_request_of_pci_ranges+0x13c/0x190
+>    rcar_pcie_probe+0x4c/0xb04
+>    platform_drv_probe+0x50/0xbc
+>    driver_probe_device+0x21c/0x308
+>    __device_attach_driver+0x98/0xc8
+>    bus_for_each_drv+0x54/0x94
+>    __device_attach+0xc4/0x12c
+>    device_initial_probe+0x10/0x18
+>    bus_probe_device+0x90/0x98
+>    deferred_probe_work_func+0xb0/0x150
+>    process_one_work+0x12c/0x29c
+>    worker_thread+0x200/0x3fc
+>    kthread+0x108/0x134
+>    ret_from_fork+0x10/0x18
+>   Code: f9004ba2 54000080 aa0003fb 17ffff48 (d4210000)
+> 
+> It turned out that pci_remap_iospace() wasn't undone when the driver's
+> probe failed, and since devm_phy_optional_get() returned -EPROBE_DEFER,
+> the probe was retried, finally causing the BUG due to trying to remap
+> already remapped pages.
+> 
+> Introduce the devm_pci_remap_iospace() managed API and replace the
+> pci_remap_iospace() call with it to fix the bug.
+> 
+> Fixes: dbf9826d5797 ("PCI: generic: Convert to DT resource parsing API")
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> [lorenzo.pieralisi@arm.com: split commit/updated the commit log]
+> Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> [Backport just for the new api which other patches need - gregkh]
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
 > ---
->  arch/s390/kvm/vsie.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
-> index 9175518..12b9707 100644
-> --- a/arch/s390/kvm/vsie.c
-> +++ b/arch/s390/kvm/vsie.c
-> @@ -173,7 +173,8 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
->  		return set_validity_icpt(scb_s, 0x0039U);
->  
->  	/* copy only the wrapping keys */
-> -	if (read_guest_real(vcpu, crycb_addr + 72, &vsie_page->crycb, 56))
-> +	if (read_guest_real(vcpu, crycb_addr + 72,
-> +			    vsie_page->crycb.dea_wrapping_key_mask, 56))
->  		return set_validity_icpt(scb_s, 0x0035U);
->  
->  	scb_s->ecb3 |= ecb3_flags;
-> 
+>  drivers/pci/pci.c   |   38 ++++++++++++++++++++++++++++++++++++++
+>  include/linux/pci.h |    2 ++
+>  2 files changed, 40 insertions(+)
 
+   Again, you missed a change to drivers/pci/host/pci-host-common.c (and 
+also drivers/pci/host/pcie-rcar.c which wasn't using the generic code back
+then)...
+
+[...]
+
+MBR, Sergei
