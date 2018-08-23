@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A473BC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:32:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0BAFC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:32:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 674702147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:32:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 674702147A
+	by mail.kernel.org (Postfix) with ESMTP id 64E982147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:32:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64E982147A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731766AbeHWMBX (ORCPT
+        id S1731775AbeHWMB1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:01:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48222 "EHLO
+        Thu, 23 Aug 2018 08:01:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48234 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730989AbeHWMBX (ORCPT
+        with ESMTP id S1729390AbeHWMBZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:01:23 -0400
+        Thu, 23 Aug 2018 08:01:25 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4C88DC74;
-        Thu, 23 Aug 2018 08:32:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 850B1C74;
+        Thu, 23 Aug 2018 08:32:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexander Sverdlin <alexander.sverdlin@nokia.com>,
+        stable@vger.kernel.org, David Lechner <david@lechnology.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 189/217] octeon_mgmt: Fix MIX registers configuration on MTU setup
-Date:   Thu, 23 Aug 2018 09:55:02 +0200
-Message-Id: <20180823075514.142463547@linuxfoundation.org>
+Subject: [PATCH 4.14 190/217] net: usb: rtl8150: demote allmulti message to dev_dbg()
+Date:   Thu, 23 Aug 2018 09:55:03 +0200
+Message-Id: <20180823075514.194278176@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -52,63 +51,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Sverdlin <alexander.sverdlin@nsn.com>
+From: David Lechner <david@lechnology.com>
 
-[ Upstream commit 4aac0b43474d18f6160302a3caa147d77fa3baa1 ]
+[ Upstream commit 3a9b0455062ffb9d2f6cd4473a76e3456f318c9f ]
 
-octeon_mgmt driver doesn't drop RX frames that are 1-4 bytes bigger than
-MTU set for the corresponding interface. The problem is in the
-AGL_GMX_RX0/1_FRM_MAX register setting, which should not account for VLAN
-tagging.
+This driver can spam the kernel log with multiple messages of:
 
-According to Octeon HW manual:
-"For tagged frames, MAX increases by four bytes for each VLAN found up to a
-maximum of two VLANs, or MAX + 8 bytes."
+    net eth0: eth0: allmulti set
 
-OCTEON_FRAME_HEADER_LEN "define" is fine for ring buffer management, but
-should not be used for AGL_GMX_RX0/1_FRM_MAX.
+Usually 4 or 8 at a time (probably because of using ConnMan).
 
-The problem could be easily reproduced using "ping" command. If affected
-system has default MTU 1500, other host (having MTU >= 1504) can
-successfully "ping" the affected system with payload size 1473-1476,
-resulting in IP packets of size 1501-1504 accepted by the mgmt driver.
-Fixed system still accepts IP packets of 1500 bytes even with VLAN tagging,
-because the limits are lifted in HW as expected, for every VLAN tag.
+This message doesn't seem useful, so let's demote it from dev_info()
+to dev_dbg().
 
-Signed-off-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+Signed-off-by: David Lechner <david@lechnology.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/cavium/octeon/octeon_mgmt.c |   14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ drivers/net/usb/rtl8150.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/cavium/octeon/octeon_mgmt.c
-+++ b/drivers/net/ethernet/cavium/octeon/octeon_mgmt.c
-@@ -643,13 +643,21 @@ static int octeon_mgmt_set_mac_address(s
- static int octeon_mgmt_change_mtu(struct net_device *netdev, int new_mtu)
- {
- 	struct octeon_mgmt *p = netdev_priv(netdev);
--	int size_without_fcs = new_mtu + OCTEON_MGMT_RX_HEADROOM;
-+	int max_packet = new_mtu + ETH_HLEN + ETH_FCS_LEN;
- 
- 	netdev->mtu = new_mtu;
- 
--	cvmx_write_csr(p->agl + AGL_GMX_RX_FRM_MAX, size_without_fcs);
-+	/* HW lifts the limit if the frame is VLAN tagged
-+	 * (+4 bytes per each tag, up to two tags)
-+	 */
-+	cvmx_write_csr(p->agl + AGL_GMX_RX_FRM_MAX, max_packet);
-+	/* Set the hardware to truncate packets larger than the MTU. The jabber
-+	 * register must be set to a multiple of 8 bytes, so round up. JABBER is
-+	 * an unconditional limit, so we need to account for two possible VLAN
-+	 * tags.
-+	 */
- 	cvmx_write_csr(p->agl + AGL_GMX_RX_JABBER,
--		       (size_without_fcs + 7) & 0xfff8);
-+		       (max_packet + 7 + VLAN_HLEN * 2) & 0xfff8);
- 
- 	return 0;
- }
+--- a/drivers/net/usb/rtl8150.c
++++ b/drivers/net/usb/rtl8150.c
+@@ -681,7 +681,7 @@ static void rtl8150_set_multicast(struct
+ 		   (netdev->flags & IFF_ALLMULTI)) {
+ 		rx_creg &= 0xfffe;
+ 		rx_creg |= 0x0002;
+-		dev_info(&netdev->dev, "%s: allmulti set\n", netdev->name);
++		dev_dbg(&netdev->dev, "%s: allmulti set\n", netdev->name);
+ 	} else {
+ 		/* ~RX_MULTICAST, ~RX_PROMISCUOUS */
+ 		rx_creg &= 0x00fc;
 
 
