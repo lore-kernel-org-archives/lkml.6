@@ -6,44 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA797C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:29:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88B36C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:29:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80102208DC
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:29:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80102208DC
+	by mail.kernel.org (Postfix) with ESMTP id 477FF208D6
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:29:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 477FF208D6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730843AbeHWL5k (ORCPT
+        id S1730871AbeHWL5n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:57:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47522 "EHLO
+        Thu, 23 Aug 2018 07:57:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47528 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727947AbeHWL5j (ORCPT
+        with ESMTP id S1727947AbeHWL5m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:57:39 -0400
+        Thu, 23 Aug 2018 07:57:42 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2965CC7B;
-        Thu, 23 Aug 2018 08:29:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8630EC83;
+        Thu, 23 Aug 2018 08:29:09 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Allan Xavier <allan.x.xavier@oracle.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Brian Gerst <brgerst@gmail.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Jianlin Shi <jishi@redhat.com>,
+        Stefano Brivio <sbrivio@redhat.com>,
+        Sabrina Dubroca <sd@queasysnail.net>,
+        Hangbin Liu <liuhangbin@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 126/217] objtool: Support GCC 8 -fnoreorder-functions
-Date:   Thu, 23 Aug 2018 09:53:59 +0200
-Message-Id: <20180823075511.208684865@linuxfoundation.org>
+Subject: [PATCH 4.14 127/217] ipvlan: call dev_change_flags when ipvlan mode is reset
+Date:   Thu, 23 Aug 2018 09:54:00 +0200
+Message-Id: <20180823075511.265653437@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -60,102 +54,121 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+From: Hangbin Liu <liuhangbin@gmail.com>
 
-[ Upstream commit 08b393d01c88aff27347ed2b1b354eb4db2f1532 ]
+[ Upstream commit 5dc2d3996a8b221c20dd0900bdad45031a572530 ]
 
-Since the following commit:
+After we change the ipvlan mode from l3 to l2, or vice versa, we only
+reset IFF_NOARP flag, but don't flush the ARP table cache, which will
+cause eth->h_dest to be equal to eth->h_source in ipvlan_xmit_mode_l2().
+Then the message will not come out of host.
 
-  cd77849a69cf ("objtool: Fix GCC 8 cold subfunction detection for aliased functions")
+Here is the reproducer on local host:
 
-... if the kernel is built with EXTRA_CFLAGS='-fno-reorder-functions',
-objtool can get stuck in an infinite loop.
+ip link set eth1 up
+ip addr add 192.168.1.1/24 dev eth1
+ip link add link eth1 ipvlan1 type ipvlan mode l3
 
-That flag causes the new GCC 8 cold subfunctions to be placed in .text
-instead of .text.unlikely.  But it also has an unfortunate quirk: in the
-symbol table, the subfunction (e.g., nmi_panic.cold.7) is nested inside
-the parent (nmi_panic).
+ip netns add net1
+ip link set ipvlan1 netns net1
+ip netns exec net1 ip link set ipvlan1 up
+ip netns exec net1 ip addr add 192.168.2.1/24 dev ipvlan1
 
-That function overlap confuses objtool, and causes it to get into an
-infinite loop in next_insn_same_func().  Here's Allan's description of
-the loop:
+ip route add 192.168.2.0/24 via 192.168.1.2
+ping 192.168.2.2 -c 2
 
-  "Objtool iterates through the instructions in nmi_panic using
-  next_insn_same_func. Once it reaches the end of nmi_panic at 0x534 it
-  jumps to 0x528 as that's the start of nmi_panic.cold.7. However, since
-  the instructions starting at 0x528 are still associated with nmi_panic
-  objtool will get stuck in a loop, continually jumping back to 0x528
-  after reaching 0x534."
+ip netns exec net1 ip link set ipvlan1 type ipvlan mode l2
+ping 192.168.2.2 -c 2
 
-Fix it by shortening the length of the parent function so that the
-functions no longer overlap.
+Add the same configuration on remote host. After we set the mode to l2,
+we could find that the src/dst MAC addresses are the same on eth1:
 
-Reported-and-analyzed-by: Allan Xavier <allan.x.xavier@oracle.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Allan Xavier <allan.x.xavier@oracle.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/9e704c52bee651129b036be14feda317ae5606ae.1530136978.git.jpoimboe@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+21:26:06.648565 00:b7:13:ad:d3:05 > 00:b7:13:ad:d3:05, ethertype IPv4 (0x0800), length 98: (tos 0x0, ttl 64, id 58356, offset 0, flags [DF], proto ICMP (1), length 84)
+    192.168.2.1 > 192.168.2.2: ICMP echo request, id 22686, seq 1, length 64
+
+Fix this by calling dev_change_flags(), which will call netdevice notifier
+with flag change info.
+
+v2:
+a) As pointed out by Wang Cong, check return value for dev_change_flags() when
+change dev flags.
+b) As suggested by Stefano and Sabrina, move flags setting before l3mdev_ops.
+So we don't need to redo ipvlan_{, un}register_nf_hook() again in err path.
+
+Reported-by: Jianlin Shi <jishi@redhat.com>
+Reviewed-by: Stefano Brivio <sbrivio@redhat.com>
+Reviewed-by: Sabrina Dubroca <sd@queasysnail.net>
+Fixes: 2ad7bf3638411 ("ipvlan: Initial check-in of the IPVLAN driver.")
+Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/objtool/elf.c |   37 ++++++++++++++++++++++++++-----------
- 1 file changed, 26 insertions(+), 11 deletions(-)
+ drivers/net/ipvlan/ipvlan_main.c |   36 ++++++++++++++++++++++++++++--------
+ 1 file changed, 28 insertions(+), 8 deletions(-)
 
---- a/tools/objtool/elf.c
-+++ b/tools/objtool/elf.c
-@@ -302,19 +302,34 @@ static int read_symbols(struct elf *elf)
- 				continue;
- 			sym->pfunc = sym->cfunc = sym;
- 			coldstr = strstr(sym->name, ".cold.");
--			if (coldstr) {
--				coldstr[0] = '\0';
--				pfunc = find_symbol_by_name(elf, sym->name);
--				coldstr[0] = '.';
-+			if (!coldstr)
-+				continue;
-+
-+			coldstr[0] = '\0';
-+			pfunc = find_symbol_by_name(elf, sym->name);
-+			coldstr[0] = '.';
-+
-+			if (!pfunc) {
-+				WARN("%s(): can't find parent function",
-+				     sym->name);
-+				goto err;
+--- a/drivers/net/ipvlan/ipvlan_main.c
++++ b/drivers/net/ipvlan/ipvlan_main.c
+@@ -73,10 +73,23 @@ static int ipvlan_set_port_mode(struct i
+ {
+ 	struct ipvl_dev *ipvlan;
+ 	struct net_device *mdev = port->dev;
+-	int err = 0;
++	unsigned int flags;
++	int err;
+ 
+ 	ASSERT_RTNL();
+ 	if (port->mode != nval) {
++		list_for_each_entry(ipvlan, &port->ipvlans, pnode) {
++			flags = ipvlan->dev->flags;
++			if (nval == IPVLAN_MODE_L3 || nval == IPVLAN_MODE_L3S) {
++				err = dev_change_flags(ipvlan->dev,
++						       flags | IFF_NOARP);
++			} else {
++				err = dev_change_flags(ipvlan->dev,
++						       flags & ~IFF_NOARP);
 +			}
- 
--				if (!pfunc) {
--					WARN("%s(): can't find parent function",
--					     sym->name);
--					goto err;
--				}
-+			sym->pfunc = pfunc;
-+			pfunc->cfunc = sym;
- 
--				sym->pfunc = pfunc;
--				pfunc->cfunc = sym;
-+			/*
-+			 * Unfortunately, -fnoreorder-functions puts the child
-+			 * inside the parent.  Remove the overlap so we can
-+			 * have sane assumptions.
-+			 *
-+			 * Note that pfunc->len now no longer matches
-+			 * pfunc->sym.st_size.
-+			 */
-+			if (sym->sec == pfunc->sec &&
-+			    sym->offset >= pfunc->offset &&
-+			    sym->offset + sym->len == pfunc->offset + pfunc->len) {
-+				pfunc->len -= sym->len;
- 			}
++			if (unlikely(err))
++				goto fail;
++		}
+ 		if (nval == IPVLAN_MODE_L3S) {
+ 			/* New mode is L3S */
+ 			err = ipvlan_register_nf_hook(read_pnet(&port->pnet));
+@@ -84,21 +97,28 @@ static int ipvlan_set_port_mode(struct i
+ 				mdev->l3mdev_ops = &ipvl_l3mdev_ops;
+ 				mdev->priv_flags |= IFF_L3MDEV_MASTER;
+ 			} else
+-				return err;
++				goto fail;
+ 		} else if (port->mode == IPVLAN_MODE_L3S) {
+ 			/* Old mode was L3S */
+ 			mdev->priv_flags &= ~IFF_L3MDEV_MASTER;
+ 			ipvlan_unregister_nf_hook(read_pnet(&port->pnet));
+ 			mdev->l3mdev_ops = NULL;
  		}
+-		list_for_each_entry(ipvlan, &port->ipvlans, pnode) {
+-			if (nval == IPVLAN_MODE_L3 || nval == IPVLAN_MODE_L3S)
+-				ipvlan->dev->flags |= IFF_NOARP;
+-			else
+-				ipvlan->dev->flags &= ~IFF_NOARP;
+-		}
+ 		port->mode = nval;
  	}
++	return 0;
++
++fail:
++	/* Undo the flags changes that have been done so far. */
++	list_for_each_entry_continue_reverse(ipvlan, &port->ipvlans, pnode) {
++		flags = ipvlan->dev->flags;
++		if (port->mode == IPVLAN_MODE_L3 ||
++		    port->mode == IPVLAN_MODE_L3S)
++			dev_change_flags(ipvlan->dev, flags | IFF_NOARP);
++		else
++			dev_change_flags(ipvlan->dev, flags & ~IFF_NOARP);
++	}
++
+ 	return err;
+ }
+ 
 
 
