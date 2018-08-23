@@ -2,135 +2,177 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED2A8C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:17:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B55C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:17:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A587B2152D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:17:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A587B2152D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 8E59A2154C
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:17:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E59A2154C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731279AbeHWOqp (ORCPT
+        id S1731302AbeHWOrJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 10:46:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36224 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731225AbeHWOqp (ORCPT
+        Thu, 23 Aug 2018 10:47:09 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49550 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728620AbeHWOrJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 10:46:45 -0400
-Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2A5D5BAE;
-        Thu, 23 Aug 2018 11:17:30 +0000 (UTC)
-Date:   Thu, 23 Aug 2018 13:17:28 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 4.14 210/217] PCI: OF: Fix I/O space page leak
-Message-ID: <20180823111728.GA2945@kroah.com>
-References: <20180823075505.090246914@linuxfoundation.org>
- <20180823075515.152259931@linuxfoundation.org>
- <fa1a9728-8deb-867d-04b1-a9959ab48d24@cogentembedded.com>
+        Thu, 23 Aug 2018 10:47:09 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7NBE9JS170432
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 07:17:54 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2m1uf118vh-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 07:17:54 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
+        Thu, 23 Aug 2018 12:17:52 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 23 Aug 2018 12:17:49 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7NBHmxR34734118
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 23 Aug 2018 11:17:48 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8ADCE52052;
+        Thu, 23 Aug 2018 14:17:47 +0100 (BST)
+Received: from oc7330422307.ibm.com (unknown [9.152.224.87])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 2960D5204F;
+        Thu, 23 Aug 2018 14:17:47 +0100 (BST)
+Subject: Re: [PATCH v3 2/3] KVM: s390: vsie: Do the CRYCB validation first
+To:     Pierre Morel <pmorel@linux.ibm.com>, david@redhat.com
+Cc:     linux-kernel@vger.kernel.org, cohuck@redhat.com,
+        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+        frankja@linux.ibm.com, akrowiak@linux.ibm.com,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com
+References: <1535019956-23539-1-git-send-email-pmorel@linux.ibm.com>
+ <1535019956-23539-3-git-send-email-pmorel@linux.ibm.com>
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+ syiRa+UVlsKmx1hsEg==
+Date:   Thu, 23 Aug 2018 13:17:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fa1a9728-8deb-867d-04b1-a9959ab48d24@cogentembedded.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1535019956-23539-3-git-send-email-pmorel@linux.ibm.com>
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18082311-4275-0000-0000-000002AE1F0D
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082311-4276-0000-0000-000037B727CF
+Message-Id: <b7c0b0eb-c750-caeb-41b5-d6593791a6ef@de.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-23_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808230121
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 23, 2018 at 01:57:35PM +0300, Sergei Shtylyov wrote:
-> On 08/23/2018 10:55 AM, Greg Kroah-Hartman wrote:
-> 
-> > 4.14-stable review patch.  If anyone has any objections, please let me know.
-> > 
-> > ------------------
-> > 
-> > From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> > 
-> > commit a5fb9fb023a1435f2b42bccd7f547560f3a21dc3 upstream.
-> > 
-> > When testing the R-Car PCIe driver on the Condor board, if the PCIe PHY
-> > driver was left disabled, the kernel crashed with this BUG:
-> > 
-> >   kernel BUG at lib/ioremap.c:72!
-> >   Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
-> >   Modules linked in:
-> >   CPU: 0 PID: 39 Comm: kworker/0:1 Not tainted 4.17.0-dirty #1092
-> >   Hardware name: Renesas Condor board based on r8a77980 (DT)
-> >   Workqueue: events deferred_probe_work_func
-> >   pstate: 80000005 (Nzcv daif -PAN -UAO)
-> >   pc : ioremap_page_range+0x370/0x3c8
-> >   lr : ioremap_page_range+0x40/0x3c8
-> >   sp : ffff000008da39e0
-> >   x29: ffff000008da39e0 x28: 00e8000000000f07
-> >   x27: ffff7dfffee00000 x26: 0140000000000000
-> >   x25: ffff7dfffef00000 x24: 00000000000fe100
-> >   x23: ffff80007b906000 x22: ffff000008ab8000
-> >   x21: ffff000008bb1d58 x20: ffff7dfffef00000
-> >   x19: ffff800009c30fb8 x18: 0000000000000001
-> >   x17: 00000000000152d0 x16: 00000000014012d0
-> >   x15: 0000000000000000 x14: 0720072007200720
-> >   x13: 0720072007200720 x12: 0720072007200720
-> >   x11: 0720072007300730 x10: 00000000000000ae
-> >   x9 : 0000000000000000 x8 : ffff7dffff000000
-> >   x7 : 0000000000000000 x6 : 0000000000000100
-> >   x5 : 0000000000000000 x4 : 000000007b906000
-> >   x3 : ffff80007c61a880 x2 : ffff7dfffeefffff
-> >   x1 : 0000000040000000 x0 : 00e80000fe100f07
-> >   Process kworker/0:1 (pid: 39, stack limit = 0x        (ptrval))
-> >   Call trace:
-> >    ioremap_page_range+0x370/0x3c8
-> >    pci_remap_iospace+0x7c/0xac
-> >    pci_parse_request_of_pci_ranges+0x13c/0x190
-> >    rcar_pcie_probe+0x4c/0xb04
-> >    platform_drv_probe+0x50/0xbc
-> >    driver_probe_device+0x21c/0x308
-> >    __device_attach_driver+0x98/0xc8
-> >    bus_for_each_drv+0x54/0x94
-> >    __device_attach+0xc4/0x12c
-> >    device_initial_probe+0x10/0x18
-> >    bus_probe_device+0x90/0x98
-> >    deferred_probe_work_func+0xb0/0x150
-> >    process_one_work+0x12c/0x29c
-> >    worker_thread+0x200/0x3fc
-> >    kthread+0x108/0x134
-> >    ret_from_fork+0x10/0x18
-> >   Code: f9004ba2 54000080 aa0003fb 17ffff48 (d4210000)
-> > 
-> > It turned out that pci_remap_iospace() wasn't undone when the driver's
-> > probe failed, and since devm_phy_optional_get() returned -EPROBE_DEFER,
-> > the probe was retried, finally causing the BUG due to trying to remap
-> > already remapped pages.
-> > 
-> > Introduce the devm_pci_remap_iospace() managed API and replace the
-> > pci_remap_iospace() call with it to fix the bug.
-> > 
-> > Fixes: dbf9826d5797 ("PCI: generic: Convert to DT resource parsing API")
-> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> > [lorenzo.pieralisi@arm.com: split commit/updated the commit log]
-> > Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> > [Backport just for the new api which other patches need - gregkh]
-> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > 
-> > ---
-> >  drivers/pci/pci.c   |   38 ++++++++++++++++++++++++++++++++++++++
-> >  include/linux/pci.h |    2 ++
-> >  2 files changed, 40 insertions(+)
-> 
->   You missed a chnage to drivers/pci/host/pci-host-common.c (and 
-> also drivers/pci/host/pcie-rcar.c which wasn't using the generic mode back
-> then)...
 
-Yes I totally messed this up, let me fix it...
+
+On 08/23/2018 12:25 PM, Pierre Morel wrote:
+> When entering the SIE the CRYCB validation better
+> be done independently of the instruction's
+> availability.
+
+Maybe something like
+
+We need to handle the validity checks for the crycb, no matter what the
+settings for the keywrappings are. So lets move the keywrapping checks
+after we have done the validy checks.
+
+?
+
+> 
+> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+> ---
+>  arch/s390/kvm/vsie.c | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
+> index 12b9707..38ea5da 100644
+> --- a/arch/s390/kvm/vsie.c
+> +++ b/arch/s390/kvm/vsie.c
+> @@ -161,17 +161,18 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
+>  	/* format-1 is supported with message-security-assist extension 3 */
+>  	if (!test_kvm_facility(vcpu->kvm, 76))
+>  		return 0;
+> -	/* we may only allow it if enabled for guest 2 */
+> -	ecb3_flags = scb_o->ecb3 & vcpu->arch.sie_block->ecb3 &
+> -		     (ECB3_AES | ECB3_DEA);
+> -	if (!ecb3_flags)
+> -		return 0;
+> 
+>  	if ((crycb_addr & PAGE_MASK) != ((crycb_addr + 128) & PAGE_MASK))
+>  		return set_validity_icpt(scb_s, 0x003CU);
+>  	else if (!crycb_addr)
+>  		return set_validity_icpt(scb_s, 0x0039U);
+> 
+> +	/* we may only allow it if enabled for guest 2 */
+> +	ecb3_flags = scb_o->ecb3 & vcpu->arch.sie_block->ecb3 &
+> +		     (ECB3_AES | ECB3_DEA);
+> +	if (!ecb3_flags)
+> +		return 0;
+> +
+>  	/* copy only the wrapping keys */
+>  	if (read_guest_real(vcpu, crycb_addr + 72,
+>  			    vsie_page->crycb.dea_wrapping_key_mask, 56))
+> 
+
