@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23EAEC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:10:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7D08C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:10:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEF42208EB
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:10:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEF42208EB
+	by mail.kernel.org (Postfix) with ESMTP id 9B048208C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:10:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B048208C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388949AbeHWMjD (ORCPT
+        id S2388964AbeHWMjH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:39:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56592 "EHLO
+        Thu, 23 Aug 2018 08:39:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56612 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728107AbeHWMjD (ORCPT
+        with ESMTP id S1728107AbeHWMjH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:39:03 -0400
+        Thu, 23 Aug 2018 08:39:07 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 52DC5CAC;
-        Thu, 23 Aug 2018 09:10:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BB29D93C;
+        Thu, 23 Aug 2018 09:10:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
+        stable@vger.kernel.org, Myron Stowe <myron.stowe@redhat.com>,
         Bjorn Helgaas <bhelgaas@google.com>,
-        Greg Kroah-Hartman <greg@kroah.com>
-Subject: [PATCH 4.17 318/324] PCI: hotplug: Dont leak pci_slot on registration failure
-Date:   Thu, 23 Aug 2018 09:56:24 +0200
-Message-Id: <20180823075012.011558946@linuxfoundation.org>
+        Keith Busch <keith.busch@intel.com>,
+        Sinan Kaya <okaya@kernel.org>,
+        Dongdong Liu <liudongdong3@huawei.com>,
+        Jon Mason <jdmason@kudzu.us>
+Subject: [PATCH 4.17 319/324] PCI: Skip MPS logic for Virtual Functions (VFs)
+Date:   Thu, 23 Aug 2018 09:56:25 +0200
+Message-Id: <20180823075012.064462672@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -51,48 +54,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lukas Wunner <lukas@wunner.de>
+From: Myron Stowe <myron.stowe@redhat.com>
 
-commit 4ce6435820d1f1cc2c2788e232735eb244bcc8a3 upstream.
+commit 3dbe97efe8bf450b183d6dee2305cbc032e6b8a4 upstream.
 
-If addition of sysfs files fails on registration of a hotplug slot, the
-struct pci_slot as well as the entry in the slot_list is leaked.  The
-issue has been present since the hotplug core was introduced in 2002:
-https://git.kernel.org/tglx/history/c/a8a2069f432c
+PCIe r4.0, sec 9.3.5.4, "Device Control Register", shows both
+Max_Payload_Size (MPS) and Max_Read_request_Size (MRRS) to be 'RsvdP' for
+VFs.  Just prior to the table it states:
 
-Perhaps the idea was that even though sysfs addition fails, the slot
-should still be usable.  But that's not how drivers use the interface,
-they abort probe if a non-zero value is returned.
+  "PF and VF functionality is defined in Section 7.5.3.4 except where
+   noted in Table 9-16.  For VF fields marked 'RsvdP', the PF setting
+   applies to the VF."
 
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
+All of which implies that with respect to Max_Payload_Size Supported
+(MPSS), MPS, and MRRS values, we should not be paying any attention to the
+VF's fields, but rather only to the PF's.  Only looking at the PF's fields
+also logically makes sense as it's the sole physical interface to the PCIe
+bus.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=200527
+Fixes: 27d868b5e6cf ("PCI: Set MPS to match upstream bridge")
+Signed-off-by: Myron Stowe <myron.stowe@redhat.com>
 Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Cc: stable@vger.kernel.org # v2.4.15+
-Cc: Greg Kroah-Hartman <greg@kroah.com>
+Cc: stable@vger.kernel.org # 4.3+
+Cc: Keith Busch <keith.busch@intel.com>
+Cc: Sinan Kaya <okaya@kernel.org>
+Cc: Dongdong Liu <liudongdong3@huawei.com>
+Cc: Jon Mason <jdmason@kudzu.us>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/hotplug/pci_hotplug_core.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/pci/probe.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/pci/hotplug/pci_hotplug_core.c
-+++ b/drivers/pci/hotplug/pci_hotplug_core.c
-@@ -438,8 +438,17 @@ int __pci_hp_register(struct hotplug_slo
- 	list_add(&slot->slot_list, &pci_hotplug_slot_list);
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -1677,6 +1677,10 @@ static void pci_configure_mps(struct pci
+ 	if (!pci_is_pcie(dev) || !bridge || !pci_is_pcie(bridge))
+ 		return;
  
- 	result = fs_add_slot(pci_slot);
-+	if (result)
-+		goto err_list_del;
++	/* MPS and MRRS fields are of type 'RsvdP' for VFs, short-circuit out */
++	if (dev->is_virtfn)
++		return;
 +
- 	kobject_uevent(&pci_slot->kobj, KOBJ_ADD);
- 	dbg("Added slot %s to the list\n", name);
-+	goto out;
-+
-+err_list_del:
-+	list_del(&slot->slot_list);
-+	pci_slot->hotplug = NULL;
-+	pci_destroy_slot(pci_slot);
- out:
- 	mutex_unlock(&pci_hp_mutex);
- 	return result;
+ 	mps = pcie_get_mps(dev);
+ 	p_mps = pcie_get_mps(bridge);
+ 
 
 
