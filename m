@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D7D2C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:09:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E56B2C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:09:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5244E208C2
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:09:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5244E208C2
+	by mail.kernel.org (Postfix) with ESMTP id A9611208C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:09:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9611208C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388667AbeHWMiD (ORCPT
+        id S2388695AbeHWMiH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:38:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56390 "EHLO
+        Thu, 23 Aug 2018 08:38:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56396 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729769AbeHWMiD (ORCPT
+        with ESMTP id S2387642AbeHWMiG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:38:03 -0400
+        Thu, 23 Aug 2018 08:38:06 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 17524CA6;
-        Thu, 23 Aug 2018 09:09:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 428DFCA8;
+        Thu, 23 Aug 2018 09:09:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Zhenyu Wang <zhenyuw@linux.intel.com>
-Subject: [PATCH 4.17 308/324] drm/i915/kvmgt: Fix potential Spectre v1
-Date:   Thu, 23 Aug 2018 09:56:14 +0200
-Message-Id: <20180823075011.483937161@linuxfoundation.org>
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.17 309/324] drm/amdgpu/pm: Fix potential Spectre v1
+Date:   Thu, 23 Aug 2018 09:56:15 +0200
+Message-Id: <20180823075011.530409552@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -53,18 +53,17 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit de5372da605d3bca46e3102bab51b7e1c0e0a6f6 upstream.
+commit ddf74e79a54070f277ae520722d3bab7f7a6c67a upstream.
 
-info.index can be indirectly controlled by user-space, hence leading
-to a potential exploitation of the Spectre variant 1 vulnerability.
+idx can be indirectly controlled by user-space, hence leading to a
+potential exploitation of the Spectre variant 1 vulnerability.
 
 This issue was detected with the help of Smatch:
 
-drivers/gpu/drm/i915/gvt/kvmgt.c:1232 intel_vgpu_ioctl() warn:
-potential spectre issue 'vgpu->vdev.region' [r]
+drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c:408 amdgpu_set_pp_force_state()
+warn: potential spectre issue 'data.states'
 
-Fix this by sanitizing info.index before indirectly using it to index
-vgpu->vdev.region
+Fix this by sanitizing idx before using it to index data.states
 
 Notice that given that speculation windows are large, the policy is
 to kill the speculation on the first load and not worry if it can be
@@ -74,44 +73,31 @@ completed with a dependent load/store [1].
 
 Cc: stable@vger.kernel.org
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Zhenyu Wang <zhenyuw@linux.intel.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/gvt/kvmgt.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/i915/gvt/kvmgt.c
-+++ b/drivers/gpu/drm/i915/gvt/kvmgt.c
-@@ -43,6 +43,8 @@
- #include <linux/mdev.h>
- #include <linux/debugfs.h>
- 
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c
+@@ -31,7 +31,7 @@
+ #include <linux/power_supply.h>
+ #include <linux/hwmon.h>
+ #include <linux/hwmon-sysfs.h>
+-
 +#include <linux/nospec.h>
-+
- #include "i915_drv.h"
- #include "gvt.h"
  
-@@ -1064,7 +1066,8 @@ static long intel_vgpu_ioctl(struct mdev
- 	} else if (cmd == VFIO_DEVICE_GET_REGION_INFO) {
- 		struct vfio_region_info info;
- 		struct vfio_info_cap caps = { .buf = NULL, .size = 0 };
--		int i, ret;
-+		unsigned int i;
-+		int ret;
- 		struct vfio_region_info_cap_sparse_mmap *sparse = NULL;
- 		size_t size;
- 		int nr_areas = 1;
-@@ -1149,6 +1152,10 @@ static long intel_vgpu_ioctl(struct mdev
- 				if (info.index >= VFIO_PCI_NUM_REGIONS +
- 						vgpu->vdev.num_regions)
- 					return -EINVAL;
-+				info.index =
-+					array_index_nospec(info.index,
-+							VFIO_PCI_NUM_REGIONS +
-+							vgpu->vdev.num_regions);
+ static int amdgpu_debugfs_pm_init(struct amdgpu_device *adev);
  
- 				i = info.index - VFIO_PCI_NUM_REGIONS;
+@@ -309,6 +309,7 @@ static ssize_t amdgpu_set_pp_force_state
+ 			count = -EINVAL;
+ 			goto fail;
+ 		}
++		idx = array_index_nospec(idx, ARRAY_SIZE(data.states));
  
+ 		amdgpu_dpm_get_pp_num_states(adev, &data);
+ 		state = data.states[idx];
 
 
