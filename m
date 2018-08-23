@@ -6,38 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F924C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:41:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A86AC43615
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:41:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D8022083A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:41:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D8022083A
+	by mail.kernel.org (Postfix) with ESMTP id 5E8142083A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:41:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E8142083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732513AbeHWMKZ (ORCPT
+        id S1732525AbeHWMK2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:10:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49896 "EHLO
+        Thu, 23 Aug 2018 08:10:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49914 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729381AbeHWMKY (ORCPT
+        with ESMTP id S1729381AbeHWMK1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:10:24 -0400
+        Thu, 23 Aug 2018 08:10:27 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A9D528B1;
-        Thu, 23 Aug 2018 08:41:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DE2AEBC1;
+        Thu, 23 Aug 2018 08:41:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Gevorg Sahakyan <sahakyan@synopsys.com>,
         Heiko Stuebner <heiko@sntech.de>,
         William Wu <william.wu@rock-chips.com>,
-        Douglas Anderson <dianders@chromium.org>,
         Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 053/324] usb: dwc2: alloc dma aligned buffer for isoc split in
-Date:   Thu, 23 Aug 2018 09:51:59 +0200
-Message-Id: <20180823074958.457101444@linuxfoundation.org>
+Subject: [PATCH 4.17 054/324] usb: dwc2: fix isoc split in transfer with no data
+Date:   Thu, 23 Aug 2018 09:52:00 +0200
+Message-Id: <20180823074958.523498208@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -56,280 +55,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: William Wu <william.wu@rock-chips.com>
 
-[ Upstream commit af424a410749ed7e0c2bffd3cedbc7c274d0ff6f ]
+[ Upstream commit 70c3c8cb83856758025c2a211dd022bc0478922a ]
 
-The commit 3bc04e28a030 ("usb: dwc2: host: Get aligned DMA in
-a more supported way") rips out a lot of code to simply the
-allocation of aligned DMA. However, it also introduces a new
-issue when use isoc split in transfer.
+If isoc split in transfer with no data (the length of DATA0
+packet is zero), we can't simply return immediately. Because
+the DATA0 can be the first transaction or the second transaction
+for the isoc split in transaction. If the DATA0 packet with no
+data is in the first transaction, we can return immediately.
+But if the DATA0 packet with no data is in the second transaction
+of isoc split in transaction sequence, we need to increase the
+qtd->isoc_frame_index and giveback urb to device driver if needed,
+otherwise, the MDATA packet will be lost.
 
-In my test case, I connect the dwc2 controller with an usb hs
-Hub (GL852G-12), and plug an usb fs audio device (Plantronics
+A typical test case is that connect the dwc2 controller with an
+usb hs Hub (GL852G-12), and plug an usb fs audio device (Plantronics
 headset) into the downstream port of Hub. Then use the usb mic
 to record, we can find noise when playback.
 
-It's because that the usb Hub uses an MDATA for the first
-transaction and a DATA0 for the second transaction for the isoc
-split in transaction. An typical isoc split in transaction sequence
-like this:
+In the case, the isoc split in transaction sequence like this:
 
 - SSPLIT IN transaction
 - CSPLIT IN transaction
-  - MDATA packet
+  - MDATA packet (176 bytes)
 - CSPLIT IN transaction
-  - DATA0 packet
+  - DATA0 packet (0 byte)
 
-The DMA address of MDATA (urb->dma) is always DWORD-aligned, but
-the DMA address of DATA0 (urb->dma + qtd->isoc_split_offset) may
-not be DWORD-aligned, it depends on the qtd->isoc_split_offset (the
-length of MDATA). In my test case, the length of MDATA is usually
-unaligned, this cause DATA0 packet transmission error.
-
-This patch use kmem_cache to allocate aligned DMA buf for isoc
-split in transaction. Note that according to usb 2.0 spec, the
-maximum data payload size is 1023 bytes for each fs isoc ep,
-and the maximum allowable interrupt data payload size is 64 bytes
-or less for fs interrupt ep. So we set the size of object to be
-1024 bytes in the kmem cache.
+This patch use both the length of DATA0 and qtd->isoc_split_offset
+to check if the DATA0 is in the second transaction.
 
 Tested-by: Gevorg Sahakyan <sahakyan@synopsys.com>
 Tested-by: Heiko Stuebner <heiko@sntech.de>
 Acked-by: Minas Harutyunyan hminas@synopsys.com>
 Signed-off-by: William Wu <william.wu@rock-chips.com>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
 Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/dwc2/core.h      |    3 +
- drivers/usb/dwc2/hcd.c       |   89 ++++++++++++++++++++++++++++++++++++++++---
- drivers/usb/dwc2/hcd.h       |    8 +++
- drivers/usb/dwc2/hcd_intr.c  |    8 +++
- drivers/usb/dwc2/hcd_queue.c |    3 +
- 5 files changed, 106 insertions(+), 5 deletions(-)
+ drivers/usb/dwc2/hcd_intr.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/usb/dwc2/core.h
-+++ b/drivers/usb/dwc2/core.h
-@@ -915,6 +915,7 @@ struct dwc2_hregs_backup {
-  * @frame_list_sz:      Frame list size
-  * @desc_gen_cache:     Kmem cache for generic descriptors
-  * @desc_hsisoc_cache:  Kmem cache for hs isochronous descriptors
-+ * @unaligned_cache:    Kmem cache for DMA mode to handle non-aligned buf
-  *
-  * These are for peripheral mode:
-  *
-@@ -1061,6 +1062,8 @@ struct dwc2_hsotg {
- 	u32 frame_list_sz;
- 	struct kmem_cache *desc_gen_cache;
- 	struct kmem_cache *desc_hsisoc_cache;
-+	struct kmem_cache *unaligned_cache;
-+#define DWC2_KMEM_UNALIGNED_BUF_SIZE 1024
- 
- #endif /* CONFIG_USB_DWC2_HOST || CONFIG_USB_DWC2_DUAL_ROLE */
- 
---- a/drivers/usb/dwc2/hcd.c
-+++ b/drivers/usb/dwc2/hcd.c
-@@ -1567,11 +1567,20 @@ static void dwc2_hc_start_transfer(struc
- 	}
- 
- 	if (hsotg->params.host_dma) {
--		dwc2_writel((u32)chan->xfer_dma,
--			    hsotg->regs + HCDMA(chan->hc_num));
-+		dma_addr_t dma_addr;
-+
-+		if (chan->align_buf) {
-+			if (dbg_hc(chan))
-+				dev_vdbg(hsotg->dev, "align_buf\n");
-+			dma_addr = chan->align_buf;
-+		} else {
-+			dma_addr = chan->xfer_dma;
-+		}
-+		dwc2_writel((u32)dma_addr, hsotg->regs + HCDMA(chan->hc_num));
-+
- 		if (dbg_hc(chan))
- 			dev_vdbg(hsotg->dev, "Wrote %08lx to HCDMA(%d)\n",
--				 (unsigned long)chan->xfer_dma, chan->hc_num);
-+				 (unsigned long)dma_addr, chan->hc_num);
- 	}
- 
- 	/* Start the split */
-@@ -2625,6 +2634,35 @@ static void dwc2_hc_init_xfer(struct dwc
- 	}
- }
- 
-+static int dwc2_alloc_split_dma_aligned_buf(struct dwc2_hsotg *hsotg,
-+					    struct dwc2_qh *qh,
-+					    struct dwc2_host_chan *chan)
-+{
-+	if (!hsotg->unaligned_cache ||
-+	    chan->max_packet > DWC2_KMEM_UNALIGNED_BUF_SIZE)
-+		return -ENOMEM;
-+
-+	if (!qh->dw_align_buf) {
-+		qh->dw_align_buf = kmem_cache_alloc(hsotg->unaligned_cache,
-+						    GFP_ATOMIC | GFP_DMA);
-+		if (!qh->dw_align_buf)
-+			return -ENOMEM;
-+	}
-+
-+	qh->dw_align_buf_dma = dma_map_single(hsotg->dev, qh->dw_align_buf,
-+					      DWC2_KMEM_UNALIGNED_BUF_SIZE,
-+					      DMA_FROM_DEVICE);
-+
-+	if (dma_mapping_error(hsotg->dev, qh->dw_align_buf_dma)) {
-+		dev_err(hsotg->dev, "can't map align_buf\n");
-+		chan->align_buf = 0;
-+		return -EINVAL;
-+	}
-+
-+	chan->align_buf = qh->dw_align_buf_dma;
-+	return 0;
-+}
-+
- #define DWC2_USB_DMA_ALIGN 4
- 
- static void dwc2_free_dma_aligned_buffer(struct urb *urb)
-@@ -2804,6 +2842,32 @@ static int dwc2_assign_and_init_hc(struc
- 	/* Set the transfer attributes */
- 	dwc2_hc_init_xfer(hsotg, chan, qtd);
- 
-+	/* For non-dword aligned buffers */
-+	if (hsotg->params.host_dma && qh->do_split &&
-+	    chan->ep_is_in && (chan->xfer_dma & 0x3)) {
-+		dev_vdbg(hsotg->dev, "Non-aligned buffer\n");
-+		if (dwc2_alloc_split_dma_aligned_buf(hsotg, qh, chan)) {
-+			dev_err(hsotg->dev,
-+				"Failed to allocate memory to handle non-aligned buffer\n");
-+			/* Add channel back to free list */
-+			chan->align_buf = 0;
-+			chan->multi_count = 0;
-+			list_add_tail(&chan->hc_list_entry,
-+				      &hsotg->free_hc_list);
-+			qtd->in_process = 0;
-+			qh->channel = NULL;
-+			return -ENOMEM;
-+		}
-+	} else {
-+		/*
-+		 * We assume that DMA is always aligned in non-split
-+		 * case or split out case. Warn if not.
-+		 */
-+		WARN_ON_ONCE(hsotg->params.host_dma &&
-+			     (chan->xfer_dma & 0x3));
-+		chan->align_buf = 0;
-+	}
-+
- 	if (chan->ep_type == USB_ENDPOINT_XFER_INT ||
- 	    chan->ep_type == USB_ENDPOINT_XFER_ISOC)
- 		/*
-@@ -5248,6 +5312,19 @@ int dwc2_hcd_init(struct dwc2_hsotg *hso
- 		}
- 	}
- 
-+	if (hsotg->params.host_dma) {
-+		/*
-+		 * Create kmem caches to handle non-aligned buffer
-+		 * in Buffer DMA mode.
-+		 */
-+		hsotg->unaligned_cache = kmem_cache_create("dwc2-unaligned-dma",
-+						DWC2_KMEM_UNALIGNED_BUF_SIZE, 4,
-+						SLAB_CACHE_DMA, NULL);
-+		if (!hsotg->unaligned_cache)
-+			dev_err(hsotg->dev,
-+				"unable to create dwc2 unaligned cache\n");
-+	}
-+
- 	hsotg->otg_port = 1;
- 	hsotg->frame_list = NULL;
- 	hsotg->frame_list_dma = 0;
-@@ -5282,8 +5359,9 @@ int dwc2_hcd_init(struct dwc2_hsotg *hso
- 	return 0;
- 
- error4:
--	kmem_cache_destroy(hsotg->desc_gen_cache);
-+	kmem_cache_destroy(hsotg->unaligned_cache);
- 	kmem_cache_destroy(hsotg->desc_hsisoc_cache);
-+	kmem_cache_destroy(hsotg->desc_gen_cache);
- error3:
- 	dwc2_hcd_release(hsotg);
- error2:
-@@ -5324,8 +5402,9 @@ void dwc2_hcd_remove(struct dwc2_hsotg *
- 	usb_remove_hcd(hcd);
- 	hsotg->priv = NULL;
- 
--	kmem_cache_destroy(hsotg->desc_gen_cache);
-+	kmem_cache_destroy(hsotg->unaligned_cache);
- 	kmem_cache_destroy(hsotg->desc_hsisoc_cache);
-+	kmem_cache_destroy(hsotg->desc_gen_cache);
- 
- 	dwc2_hcd_release(hsotg);
- 	usb_put_hcd(hcd);
---- a/drivers/usb/dwc2/hcd.h
-+++ b/drivers/usb/dwc2/hcd.h
-@@ -76,6 +76,8 @@ struct dwc2_qh;
-  *                      (micro)frame
-  * @xfer_buf:           Pointer to current transfer buffer position
-  * @xfer_dma:           DMA address of xfer_buf
-+ * @align_buf:          In Buffer DMA mode this will be used if xfer_buf is not
-+ *                      DWORD aligned
-  * @xfer_len:           Total number of bytes to transfer
-  * @xfer_count:         Number of bytes transferred so far
-  * @start_pkt_count:    Packet count at start of transfer
-@@ -133,6 +135,7 @@ struct dwc2_host_chan {
- 
- 	u8 *xfer_buf;
- 	dma_addr_t xfer_dma;
-+	dma_addr_t align_buf;
- 	u32 xfer_len;
- 	u32 xfer_count;
- 	u16 start_pkt_count;
-@@ -303,6 +306,9 @@ struct dwc2_hs_transfer_time {
-  *                           is tightly packed.
-  * @ls_duration_us:     Duration on the low speed bus schedule.
-  * @ntd:                Actual number of transfer descriptors in a list
-+ * @dw_align_buf:       Used instead of original buffer if its physical address
-+ *                      is not dword-aligned
-+ * @dw_align_buf_dma:   DMA address for dw_align_buf
-  * @qtd_list:           List of QTDs for this QH
-  * @channel:            Host channel currently processing transfers for this QH
-  * @qh_list_entry:      Entry for QH in either the periodic or non-periodic
-@@ -350,6 +356,8 @@ struct dwc2_qh {
- 	struct dwc2_hs_transfer_time hs_transfers[DWC2_HS_SCHEDULE_UFRAMES];
- 	u32 ls_start_schedule_slice;
- 	u16 ntd;
-+	u8 *dw_align_buf;
-+	dma_addr_t dw_align_buf_dma;
- 	struct list_head qtd_list;
- 	struct dwc2_host_chan *channel;
- 	struct list_head qh_list_entry;
 --- a/drivers/usb/dwc2/hcd_intr.c
 +++ b/drivers/usb/dwc2/hcd_intr.c
-@@ -938,6 +938,14 @@ static int dwc2_xfercomp_isoc_split_in(s
- 
- 	frame_desc->actual_length += len;
- 
-+	if (chan->align_buf) {
-+		dev_vdbg(hsotg->dev, "non-aligned buffer\n");
-+		dma_unmap_single(hsotg->dev, chan->qh->dw_align_buf_dma,
-+				 DWC2_KMEM_UNALIGNED_BUF_SIZE, DMA_FROM_DEVICE);
-+		memcpy(qtd->urb->buf + (chan->xfer_dma - qtd->urb->dma),
-+		       chan->qh->dw_align_buf, len);
-+	}
-+
- 	qtd->isoc_split_offset += len;
- 
- 	hctsiz = dwc2_readl(hsotg->regs + HCTSIZ(chnum));
---- a/drivers/usb/dwc2/hcd_queue.c
-+++ b/drivers/usb/dwc2/hcd_queue.c
-@@ -1695,6 +1695,9 @@ void dwc2_hcd_qh_free(struct dwc2_hsotg
- 
- 	if (qh->desc_list)
- 		dwc2_hcd_qh_free_ddma(hsotg, qh);
-+	else if (hsotg->unaligned_cache && qh->dw_align_buf)
-+		kmem_cache_free(hsotg->unaligned_cache, qh->dw_align_buf);
-+
- 	kfree(qh);
- }
+@@ -930,9 +930,8 @@ static int dwc2_xfercomp_isoc_split_in(s
+ 	frame_desc = &qtd->urb->iso_descs[qtd->isoc_frame_index];
+ 	len = dwc2_get_actual_xfer_length(hsotg, chan, chnum, qtd,
+ 					  DWC2_HC_XFER_COMPLETE, NULL);
+-	if (!len) {
++	if (!len && !qtd->isoc_split_offset) {
+ 		qtd->complete_split = 0;
+-		qtd->isoc_split_offset = 0;
+ 		return 0;
+ 	}
  
 
 
