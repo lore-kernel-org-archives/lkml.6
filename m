@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6A60C43615
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:41:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C8CAC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:41:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AADB62083A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:41:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AADB62083A
+	by mail.kernel.org (Postfix) with ESMTP id 50D2A2083A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:41:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50D2A2083A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732405AbeHWMJr (ORCPT
+        id S1732422AbeHWMJu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:09:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49822 "EHLO
+        Thu, 23 Aug 2018 08:09:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49834 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729381AbeHWMJq (ORCPT
+        with ESMTP id S1729381AbeHWMJu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:09:46 -0400
+        Thu, 23 Aug 2018 08:09:50 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 646388B1;
-        Thu, 23 Aug 2018 08:41:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8FC1E8B1;
+        Thu, 23 Aug 2018 08:41:13 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ray Jui <ray.jui@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
+        stable@vger.kernel.org, Brian Starkey <brian.starkey@arm.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Ayan Kumar halder <ayan.halder@arm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 038/324] ARM: dts: Cygnus: Fix PCIe controller interrupt type
-Date:   Thu, 23 Aug 2018 09:51:44 +0200
-Message-Id: <20180823074957.736522995@linuxfoundation.org>
+Subject: [PATCH 4.17 047/324] drm/arm/malidp: Preserve LAYER_FORMAT contents when setting format
+Date:   Thu, 23 Aug 2018 09:51:53 +0200
+Message-Id: <20180823074958.151831824@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -51,72 +52,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ray Jui <ray.jui@broadcom.com>
+From: Ayan Kumar Halder <ayan.halder@arm.com>
 
-[ Upstream commit 6cb1628ad3506b315cdddd7676db0ff2af378d28 ]
+[ Upstream commit ad7fda2e378f4356df621a39655f7c200b495d81 ]
 
-Fix PCIe controller interrupt to use IRQ_TYPE_LEVEL_HIGH for Broadcom
-Cygnus SoC
+On some Mali-DP processors, the LAYER_FORMAT register contains fields
+other than the format. These bits were unconditionally cleared when
+setting the pixel format, whereas they should be preserved at their
+reset values.
 
-Fixes: cd590b50a936 ("ARM: dts: enable PCIe support for Cygnus")
-Fixes: f6b889358a82 ("ARM: dts: Enable MSI support for Broadcom Cygnus")
-Signed-off-by: Ray Jui <ray.jui@broadcom.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Reported-by: Brian Starkey <brian.starkey@arm.com>
+Reported-by: Liviu Dudau <liviu.dudau@arm.com>
+Signed-off-by: Ayan Kumar halder <ayan.halder@arm.com>
+Acked-by: Liviu Dudau <liviu.dudau@arm.com>
+Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/bcm-cygnus.dtsi |   20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ drivers/gpu/drm/arm/malidp_planes.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/bcm-cygnus.dtsi
-+++ b/arch/arm/boot/dts/bcm-cygnus.dtsi
-@@ -256,7 +256,7 @@
+--- a/drivers/gpu/drm/arm/malidp_planes.c
++++ b/drivers/gpu/drm/arm/malidp_planes.c
+@@ -23,6 +23,7 @@
  
- 			#interrupt-cells = <1>;
- 			interrupt-map-mask = <0 0 0 0>;
--			interrupt-map = <0 0 0 0 &gic GIC_SPI 100 IRQ_TYPE_NONE>;
-+			interrupt-map = <0 0 0 0 &gic GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
+ /* Layer specific register offsets */
+ #define MALIDP_LAYER_FORMAT		0x000
++#define   LAYER_FORMAT_MASK		0x3f
+ #define MALIDP_LAYER_CONTROL		0x004
+ #define   LAYER_ENABLE			(1 << 0)
+ #define   LAYER_FLOWCFG_MASK		7
+@@ -337,7 +338,9 @@ static void malidp_de_plane_update(struc
+ 	dest_w = plane->state->crtc_w;
+ 	dest_h = plane->state->crtc_h;
  
- 			linux,pci-domain = <0>;
+-	malidp_hw_write(mp->hwdev, ms->format, mp->layer->base);
++	val = malidp_hw_read(mp->hwdev, mp->layer->base);
++	val = (val & ~LAYER_FORMAT_MASK) | ms->format;
++	malidp_hw_write(mp->hwdev, val, mp->layer->base);
  
-@@ -278,10 +278,10 @@
- 				compatible = "brcm,iproc-msi";
- 				msi-controller;
- 				interrupt-parent = <&gic>;
--				interrupts = <GIC_SPI 96 IRQ_TYPE_NONE>,
--					     <GIC_SPI 97 IRQ_TYPE_NONE>,
--					     <GIC_SPI 98 IRQ_TYPE_NONE>,
--					     <GIC_SPI 99 IRQ_TYPE_NONE>;
-+				interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
-+					     <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
-+					     <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
-+					     <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>;
- 			};
- 		};
- 
-@@ -291,7 +291,7 @@
- 
- 			#interrupt-cells = <1>;
- 			interrupt-map-mask = <0 0 0 0>;
--			interrupt-map = <0 0 0 0 &gic GIC_SPI 106 IRQ_TYPE_NONE>;
-+			interrupt-map = <0 0 0 0 &gic GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
- 
- 			linux,pci-domain = <1>;
- 
-@@ -313,10 +313,10 @@
- 				compatible = "brcm,iproc-msi";
- 				msi-controller;
- 				interrupt-parent = <&gic>;
--				interrupts = <GIC_SPI 102 IRQ_TYPE_NONE>,
--					     <GIC_SPI 103 IRQ_TYPE_NONE>,
--					     <GIC_SPI 104 IRQ_TYPE_NONE>,
--					     <GIC_SPI 105 IRQ_TYPE_NONE>;
-+				interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
-+					     <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-+					     <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
-+					     <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
- 			};
- 		};
- 
+ 	for (i = 0; i < ms->n_planes; i++) {
+ 		/* calculate the offset for the layer's plane registers */
 
 
