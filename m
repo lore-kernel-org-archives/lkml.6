@@ -2,70 +2,453 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3234C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:03:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC6EFC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:04:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A03032098B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:03:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A03032098B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+	by mail.kernel.org (Postfix) with ESMTP id 6321C2098B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:04:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6321C2098B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728115AbeHWLcH (ORCPT
+        id S1728512AbeHWLcZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:32:07 -0400
-Received: from cmccmta3.chinamobile.com ([221.176.66.81]:10418 "EHLO
-        cmccmta3.chinamobile.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726045AbeHWLcG (ORCPT
+        Thu, 23 Aug 2018 07:32:25 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:53455 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725960AbeHWLcZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:32:06 -0400
-Received: from spf.mail.chinamobile.com (unknown[172.16.121.19]) by rmmx-syy-dmz-app12-12012 (RichMail) with SMTP id 2eec5b7e6a5847f-bc0e0; Thu, 23 Aug 2018 16:03:36 +0800 (CST)
-X-RM-TRANSID: 2eec5b7e6a5847f-bc0e0
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG: 00000000
-Received: from bclinux72.localdomain (unknown[223.105.0.243])
-        by rmsmtp-syy-appsvr10-12010 (RichMail) with SMTP id 2eea5b7e6a57c3c-19678;
-        Thu, 23 Aug 2018 16:03:36 +0800 (CST)
-X-RM-TRANSID: 2eea5b7e6a57c3c-19678
-From:   Ding Xiang <dingxiang@cmss.chinamobile.com>
-To:     james.smart@broadcom.com, dick.kennedy@broadcom.com,
-        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] scsi: lpfc: use GFP_ATOMIC inside spin lock
-Date:   Thu, 23 Aug 2018 05:14:58 -0400
-Message-Id: <1535015698-17948-1-git-send-email-dingxiang@cmss.chinamobile.com>
-X-Mailer: git-send-email 1.8.3.1
+        Thu, 23 Aug 2018 07:32:25 -0400
+Received: from mail-pl0-f71.google.com ([209.85.160.71])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1fskb0-0002Zb-JN
+        for linux-kernel@vger.kernel.org; Thu, 23 Aug 2018 08:03:58 +0000
+Received: by mail-pl0-f71.google.com with SMTP id h4-v6so2179379pls.16
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 01:03:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=tcxSPAewSyIVr+RqyXbDOL+ezmDz3zyIb9nsWOEYMWY=;
+        b=iUNluY2njlIj6p+q0zU1iitLXKe+aNB1d80VXAKuTu15H73hehTHiZRLcbPvWCzzEG
+         u2gMn+9duSgZGpnvweGLgPn/abTwNLneNArMBCEexW5SPS8yoRWDCFvFtaLuJxNyg+qC
+         GKdd/VY1nnCS9MtF48zBYQPM/k4U/OSxluRuWn+pQ888qOyZMbkIZ4hyv3GQTNax3RLJ
+         Pou53eM9+kwjf+lSj7JgPp0R2qSaoxKzlTw+UrrxQwz0kCsROagNgzgd2esKW73k38Cu
+         Bii9MUEQmn3Ww3q1Shq6M0AtKGe72r3qSImF/KADX++bgFlslZCYCL0Z9xBiMGk4R4ml
+         teUg==
+X-Gm-Message-State: APzg51CLvINkEjMbs73KETcUy4wGvIB/ma8o7kK4dqvtZDIcgui96h8W
+        6nIZXhCLiDadtchvlO/5Y9rOd3QuR6DFIMcTa/hWfej+OKQE1EIJl2VfoC3cVYL7NuQMx3LUo1R
+        w3e5gE66kTKpH8UCnIR2cffqJVRAdjshkZUy02t8Jbw==
+X-Received: by 2002:a63:c807:: with SMTP id z7-v6mr3334284pgg.77.1535011437165;
+        Thu, 23 Aug 2018 01:03:57 -0700 (PDT)
+X-Google-Smtp-Source: ANB0VdYTnT4FVgRtZawAbVHb2gStNWZaCSi8lpQ/jdQB4U9HE0QcTUpN+qgX9SNByA0DBBVrzoV3RQ==
+X-Received: by 2002:a63:c807:: with SMTP id z7-v6mr3334262pgg.77.1535011436852;
+        Thu, 23 Aug 2018 01:03:56 -0700 (PDT)
+Received: from [192.168.1.206] (220-133-187-190.HINET-IP.hinet.net. [220.133.187.190])
+        by smtp.gmail.com with ESMTPSA id s85-v6sm5129081pfa.116.2018.08.23.01.03.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 Aug 2018 01:03:56 -0700 (PDT)
+Content-Type: text/plain;
+        charset=us-ascii;
+        delsp=yes;
+        format=flowed
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Subject: Re: [PATCH 4/5] memstick: rtsx_usb_ms: Support runtime power
+ management
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <CAPDyKFqv5apJp=zbyoZi-UE8+omu7JauJ5_7+ymY9B2BSS48bA@mail.gmail.com>
+Date:   Thu, 23 Aug 2018 16:03:51 +0800
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        "Bauer.Chen" <bauer.chen@realtek.com>, ricky_wu@realtek.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux USB List <linux-usb@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+Message-Id: <E133AFB3-27F6-4DD3-BB85-A85EDB51EE57@canonical.com>
+References: <20180731061721.15831-1-kai.heng.feng@canonical.com>
+ <20180731061721.15831-5-kai.heng.feng@canonical.com>
+ <CAPDyKFqv5apJp=zbyoZi-UE8+omu7JauJ5_7+ymY9B2BSS48bA@mail.gmail.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+X-Mailer: Apple Mail (2.3445.9.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GFP_KERNEL may sleep,so can not use it in spin lock,use GFP_ATOMIC instead.
+Hi Ulf,
 
-Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
----
- drivers/scsi/lpfc/lpfc_scsi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Sorry for the late reply.
 
-diff --git a/drivers/scsi/lpfc/lpfc_scsi.c b/drivers/scsi/lpfc/lpfc_scsi.c
-index 5c7858e..3813f84 100644
---- a/drivers/scsi/lpfc/lpfc_scsi.c
-+++ b/drivers/scsi/lpfc/lpfc_scsi.c
-@@ -5928,7 +5928,7 @@ struct lpfc_device_data*
- 
- 	/* Create an lun info structure and add to list of luns */
- 	lun_info = lpfc_create_device_data(phba, vport_wwpn, target_wwpn, lun,
--					   pri, false);
-+					   pri, true);
- 	if (lun_info) {
- 		lun_info->oas_enabled = true;
- 		lun_info->priority = pri;
--- 
-1.8.3.1
+at 21:14, Ulf Hansson <ulf.hansson@linaro.org> wrote:
 
+> On 31 July 2018 at 08:17, Kai-Heng Feng <kai.heng.feng@canonical.com>  
+> wrote:
+>> In order to let host's parent device, rtsx_usb, to use USB remote wake
+>> up signaling to do card detection, it needs to be suspended. Hence it's
+>> necessary to add runtime PM support for the memstick host.
+>>
+>> To keep memstick host stays suspended when it's not in use, convert the
+>> card detection function from kthread to delayed_work, which can be
+>> scheduled when the host is resumed and can be canceled when the host is
+>> suspended.
+>>
+>> Use an idle function check if there's no card and the power mode is
+>> MEMSTICK_POWER_OFF. If both criteria are met, put the device to suspend.
+>>
+>> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+>> ---
+>>  drivers/memstick/host/rtsx_usb_ms.c | 138 ++++++++++++++--------------
+>>  1 file changed, 71 insertions(+), 67 deletions(-)
+>>
+>> diff --git a/drivers/memstick/host/rtsx_usb_ms.c  
+>> b/drivers/memstick/host/rtsx_usb_ms.c
+>> index cd12f3d1c088..126eb310980a 100644
+>> --- a/drivers/memstick/host/rtsx_usb_ms.c
+>> +++ b/drivers/memstick/host/rtsx_usb_ms.c
+>> @@ -40,15 +40,14 @@ struct rtsx_usb_ms {
+>>
+>>         struct mutex            host_mutex;
+>>         struct work_struct      handle_req;
+>> -
+>> -       struct task_struct      *detect_ms;
+>> -       struct completion       detect_ms_exit;
+>> +       struct delayed_work     poll_card;
+>>
+>>         u8                      ssc_depth;
+>>         unsigned int            clock;
+>>         int                     power_mode;
+>>         unsigned char           ifmode;
+>>         bool                    eject;
+>> +       bool                    suspend;
+>>  };
+>>
+>>  static inline struct device *ms_dev(struct rtsx_usb_ms *host)
+>> @@ -524,7 +523,7 @@ static void rtsx_usb_ms_handle_req(struct  
+>> work_struct *work)
+>>         int rc;
+>>
+>>         if (!host->req) {
+>> -               pm_runtime_get_sync(ms_dev(host));
+>> +               pm_runtime_get_noresume(ms_dev(host));
+>
+> I don't think this is safe.
+>
+> The memstick core doesn't manage runtime PM, hence there are no
+> guarantee that the device is runtime resumed at this point, or is
+> there?
+
+No guarantees there.
+Right now this only gets call when the host is powered on.
+
+>
+>>                do {
+>>                         rc = memstick_next_req(msh, &host->req);
+>>                         dev_dbg(ms_dev(host), "next req %d\n", rc);
+>> @@ -545,7 +544,7 @@ static void rtsx_usb_ms_handle_req(struct  
+>> work_struct *work)
+>>                                                 host->req->error);
+>>                         }
+>>                 } while (!rc);
+>> -               pm_runtime_put(ms_dev(host));
+>> +               pm_runtime_put_noidle(ms_dev(host));
+>
+> According to the above, I think this should stay as is. Or perhaps you
+> want to use pm_runtime_put_sync() instead, as to avoid the device from
+> being unnecessary resumed and hence also its parent.
+
+The tricky part is that pm_runtime_put_sync() calls rtsx_usb_ms_set_param()  
+which calls pm_runtime_* helpers again
+
+So maybe add runtime PM support to memstick core is the only way to support  
+it properly?
+
+>
+>>        }
+>>
+>>  }
+>> @@ -572,7 +571,7 @@ static int rtsx_usb_ms_set_param(struct  
+>> memstick_host *msh,
+>>         dev_dbg(ms_dev(host), "%s: param = %d, value = %d\n",
+>>                         __func__, param, value);
+>>
+>> -       pm_runtime_get_sync(ms_dev(host));
+>> +       pm_runtime_get_noresume(ms_dev(host));
+>
+> Ditto.
+>
+>>        mutex_lock(&ucr->dev_mutex);
+>>
+>>         err = rtsx_usb_card_exclusive_check(ucr, RTSX_USB_MS_CARD);
+>> @@ -585,14 +584,14 @@ static int rtsx_usb_ms_set_param(struct  
+>> memstick_host *msh,
+>>                         break;
+>>
+>>                 if (value == MEMSTICK_POWER_ON) {
+>> -                       pm_runtime_get_sync(ms_dev(host));
+>> +                       pm_runtime_get_noresume(ms_dev(host));
+>
+> Ditto.
+>
+>>                        err = ms_power_on(host);
+>> +                       if (err)
+>> +                               pm_runtime_put_noidle(ms_dev(host));
+>>                 } else if (value == MEMSTICK_POWER_OFF) {
+>>                         err = ms_power_off(host);
+>> -                       if (host->msh->card)
+>> +                       if (!err)
+>>                                 pm_runtime_put_noidle(ms_dev(host));
+>> -                       else
+>> -                               pm_runtime_put(ms_dev(host));
+>
+> Ditto.
+>
+>>                } else
+>>                         err = -EINVAL;
+>>                 if (!err)
+>> @@ -638,7 +637,7 @@ static int rtsx_usb_ms_set_param(struct  
+>> memstick_host *msh,
+>>         }
+>>  out:
+>>         mutex_unlock(&ucr->dev_mutex);
+>> -       pm_runtime_put(ms_dev(host));
+>> +       pm_runtime_put_noidle(ms_dev(host));
+>
+> Ditto.
+>
+>>         /* power-on delay */
+>>         if (param == MEMSTICK_POWER && value == MEMSTICK_POWER_ON)
+>> @@ -648,75 +647,86 @@ static int rtsx_usb_ms_set_param(struct  
+>> memstick_host *msh,
+>>         return err;
+>>  }
+>>
+>> -#ifdef CONFIG_PM_SLEEP
+>> -static int rtsx_usb_ms_suspend(struct device *dev)
+>> +#ifdef CONFIG_PM
+>> +static int rtsx_usb_ms_runtime_suspend(struct device *dev)
+>>  {
+>>         struct rtsx_usb_ms *host = dev_get_drvdata(dev);
+>>         struct memstick_host *msh = host->msh;
+>>
+>> -       dev_dbg(ms_dev(host), "--> %s\n", __func__);
+>> -
+>> +       host->suspend = true;
+>>         memstick_suspend_host(msh);
+>> +
+>>         return 0;
+>>  }
+>>
+>> -static int rtsx_usb_ms_resume(struct device *dev)
+>> +static int rtsx_usb_ms_runtime_resume(struct device *dev)
+>>  {
+>>         struct rtsx_usb_ms *host = dev_get_drvdata(dev);
+>>         struct memstick_host *msh = host->msh;
+>>
+>> -       dev_dbg(ms_dev(host), "--> %s\n", __func__);
+>> -
+>>         memstick_resume_host(msh);
+>> +       host->suspend = false;
+>> +       schedule_delayed_work(&host->poll_card, 100);
+>> +
+>>         return 0;
+>>  }
+>> -#endif /* CONFIG_PM_SLEEP */
+>>
+>> -/*
+>> - * Thread function of ms card slot detection. The thread starts right  
+>> after
+>> - * successful host addition. It stops while the driver removal function  
+>> sets
+>> - * host->eject true.
+>> - */
+>> -static int rtsx_usb_detect_ms_card(void *__host)
+>> +static int rtsx_usb_ms_runtime_idle(struct device *dev)
+>> +{
+>> +       struct rtsx_usb_ms *host = dev_get_drvdata(dev);
+>> +
+>> +       if (!host->msh->card && host->power_mode == MEMSTICK_POWER_OFF) {
+>> +               pm_schedule_suspend(dev, 0);
+>> +               return 0;
+>> +       }
+>> +
+>> +       return -EAGAIN;
+>> +}
+>> +
+>> +static UNIVERSAL_DEV_PM_OPS(rtsx_usb_ms_pm_ops,
+>> +               rtsx_usb_ms_runtime_suspend, rtsx_usb_ms_runtime_resume,
+>> +               rtsx_usb_ms_runtime_idle);
+>> +#endif /* CONFIG_PM */
+>> +
+>> +static void rtsx_usb_ms_poll_card(struct work_struct *work)
+>>  {
+>> -       struct rtsx_usb_ms *host = (struct rtsx_usb_ms *)__host;
+>> +       struct rtsx_usb_ms *host = container_of(work, struct rtsx_usb_ms,
+>> +                       poll_card.work);
+>>         struct rtsx_ucr *ucr = host->ucr;
+>> -       u8 val = 0;
+>>         int err;
+>> +       u8 val;
+>>
+>> -       for (;;) {
+>> -               pm_runtime_get_sync(ms_dev(host));
+>> -               mutex_lock(&ucr->dev_mutex);
+>> +       if (host->eject || host->suspend)
+>
+> The runtime PM state of the device could potentially be changed by
+> user space, via sysfs, as well.
+>
+> It seems like what you really should be checking is whether
+> host->power_mode is MEMSTICK_POWER_OFF and then act accordingly.
+
+Makes sense.
+
+>
+> I also think you be able to implement this without a ->runtime_idle()
+> callback, as it just makes this a bit unnecessary complicated.
+
+You are right. Will update it with runtime_suspend() version.
+
+>
+>> +               return;
+>>
+>> -               /* Check pending MS card changes */
+>> -               err = rtsx_usb_read_register(ucr, CARD_INT_PEND, &val);
+>> -               if (err) {
+>> -                       mutex_unlock(&ucr->dev_mutex);
+>> -                       goto poll_again;
+>> -               }
+>> -
+>> -               /* Clear the pending */
+>> -               rtsx_usb_write_register(ucr, CARD_INT_PEND,
+>> -                               XD_INT | MS_INT | SD_INT,
+>> -                               XD_INT | MS_INT | SD_INT);
+>> +       pm_runtime_get_noresume(ms_dev(host));
+>> +       mutex_lock(&ucr->dev_mutex);
+>>
+>> +       /* Check pending MS card changes */
+>> +       err = rtsx_usb_read_register(ucr, CARD_INT_PEND, &val);
+>> +       if (err) {
+>>                 mutex_unlock(&ucr->dev_mutex);
+>> +               goto poll_again;
+>> +       }
+>>
+>> -               if (val & MS_INT) {
+>> -                       dev_dbg(ms_dev(host), "MS slot change  
+>> detected\n");
+>> -                       memstick_detect_change(host->msh);
+>> -               }
+>> +       /* Clear the pending */
+>> +       rtsx_usb_write_register(ucr, CARD_INT_PEND,
+>> +                       XD_INT | MS_INT | SD_INT,
+>> +                       XD_INT | MS_INT | SD_INT);
+>>
+>> -poll_again:
+>> -               pm_runtime_put(ms_dev(host));
+>> -               if (host->eject)
+>> -                       break;
+>> +       mutex_unlock(&ucr->dev_mutex);
+>> +       pm_runtime_put_noidle(ms_dev(host));
+>>
+>> -               schedule_timeout_idle(HZ);
+>> +       if (val & MS_INT) {
+>> +               dev_dbg(ms_dev(host), "MS slot change detected\n");
+>> +               memstick_detect_change(host->msh);
+>>         }
+>>
+>> -       complete(&host->detect_ms_exit);
+>> -       return 0;
+>> +       pm_runtime_idle(ms_dev(host));
+>> +
+>> +poll_again:
+>> +       if (!host->eject && !host->suspend)
+>> +               schedule_delayed_work(&host->poll_card, 100);
+>>  }
+>>
+>>  static int rtsx_usb_ms_drv_probe(struct platform_device *pdev)
+>> @@ -747,26 +757,21 @@ static int rtsx_usb_ms_drv_probe(struct  
+>> platform_device *pdev)
+>>         mutex_init(&host->host_mutex);
+>>         INIT_WORK(&host->handle_req, rtsx_usb_ms_handle_req);
+>>
+>> -       init_completion(&host->detect_ms_exit);
+>> -       host->detect_ms = kthread_create(rtsx_usb_detect_ms_card, host,
+>> -                       "rtsx_usb_ms_%d", pdev->id);
+>> -       if (IS_ERR(host->detect_ms)) {
+>> -               dev_dbg(&(pdev->dev),
+>> -                               "Unable to create polling thread.\n");
+>> -               err = PTR_ERR(host->detect_ms);
+>> -               goto err_out;
+>> -       }
+>> +       INIT_DELAYED_WORK(&host->poll_card, rtsx_usb_ms_poll_card);
+>>
+>>         msh->request = rtsx_usb_ms_request;
+>>         msh->set_param = rtsx_usb_ms_set_param;
+>>         msh->caps = MEMSTICK_CAP_PAR4;
+>>
+>> -       pm_runtime_enable(&pdev->dev);
+>> +       pm_runtime_set_active(ms_dev(host));
+>> +       pm_runtime_enable(ms_dev(host));
+>> +
+>>         err = memstick_add_host(msh);
+>>         if (err)
+>>                 goto err_out;
+>>
+>> -       wake_up_process(host->detect_ms);
+>> +       schedule_delayed_work(&host->poll_card, 100);
+>> +
+>>         return 0;
+>>  err_out:
+>>         memstick_free_host(msh);
+>> @@ -782,6 +787,7 @@ static int rtsx_usb_ms_drv_remove(struct  
+>> platform_device *pdev)
+>>         msh = host->msh;
+>>         host->eject = true;
+>>         cancel_work_sync(&host->handle_req);
+>> +       cancel_delayed_work_sync(&host->poll_card);
+>>
+>>         mutex_lock(&host->host_mutex);
+>>         if (host->req) {
+>> @@ -797,7 +803,6 @@ static int rtsx_usb_ms_drv_remove(struct  
+>> platform_device *pdev)
+>>         }
+>>         mutex_unlock(&host->host_mutex);
+>>
+>> -       wait_for_completion(&host->detect_ms_exit);
+>>         memstick_remove_host(msh);
+>>         memstick_free_host(msh);
+>>
+>> @@ -816,9 +821,6 @@ static int rtsx_usb_ms_drv_remove(struct  
+>> platform_device *pdev)
+>>         return 0;
+>>  }
+>>
+>> -static SIMPLE_DEV_PM_OPS(rtsx_usb_ms_pm_ops,
+>> -               rtsx_usb_ms_suspend, rtsx_usb_ms_resume);
+>> -
+>>  static struct platform_device_id rtsx_usb_ms_ids[] = {
+>>         {
+>>                 .name = "rtsx_usb_ms",
+>> @@ -834,7 +836,9 @@ static struct platform_driver rtsx_usb_ms_driver = {
+>>         .id_table       = rtsx_usb_ms_ids,
+>>         .driver         = {
+>>                 .name   = "rtsx_usb_ms",
+>> +#ifdef CONFIG_PM
+>>                 .pm     = &rtsx_usb_ms_pm_ops,
+>> +#endif
+>>         },
+>>  };
+>>  module_platform_driver(rtsx_usb_ms_driver);
+>> --
+>> 2.17.1
+>
+> Kind regards
+> Uffe
 
 
