@@ -2,129 +2,103 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C858CC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 21:57:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DE8CC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 22:00:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61CE8208DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 21:57:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE930208DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 22:00:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cdJo4I4V"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61CE8208DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="A8FaLeGD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE930208DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728337AbeHXB2m (ORCPT
+        id S1728352AbeHXBcI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 21:28:42 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:38919 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727125AbeHXB2m (ORCPT
+        Thu, 23 Aug 2018 21:32:08 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:37983 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727125AbeHXBcI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 21:28:42 -0400
-Received: by mail-yw1-f67.google.com with SMTP id m62-v6so880768ywd.6
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 14:57:01 -0700 (PDT)
+        Thu, 23 Aug 2018 21:32:08 -0400
+Received: by mail-pf1-f196.google.com with SMTP id x17-v6so3504176pfh.5
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 15:00:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=JLt6e8uIHCPQDr5itD+po6AEXwjf5aLrYfa32sgjtPU=;
-        b=cdJo4I4VFditEmEwwkS93oQwdcpR/RdHqhHHcSM3M/dpkTIvtpuTIPDO6TW/N/66aR
-         wJv0KHn1Fz/tR8B9WXpA0vILqCVt7AaV1q+gPhPpUR14zCq2kdL5fdqXrQqdaEtTJj+K
-         SLxpmMEh5pcj6qx0GsdNDiYtUt0Jtebpx82bM=
+        bh=b+h27LPcprQocjCXzwyehDLIiBbICE6D4+EJSkkbqYI=;
+        b=A8FaLeGD7Ilpv0znAMTpGbu9k4120VJWcthSvn7G45K0T95Ae9JWS3LgQ+Ly2MSEaU
+         h5kvr1c1WhwVDeDRoJe3IXLbTlusPkP7q9smcbL5Fq+97T6eJ/wpL0eHR3ab/gJpDKYB
+         uZ/E4KLzY4NzAQzqracuCDI6R7NeJwniNYxT2emrW8GXwyUI5T3sRp8IZKQEHXfs/iWo
+         /V67toxPBEQpJtZtUKsnNyfXGOOI8Una81JlQEyZYYrHb51gz+IDErR6pdAwKkR+11Sm
+         IJU4vweq+UTxfOxd5gSBH6umjHZ151hkiaRDV/RZ9BrwtMLjP+09yrFLnl7zWMrXfyaK
+         lTcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=JLt6e8uIHCPQDr5itD+po6AEXwjf5aLrYfa32sgjtPU=;
-        b=pbaJRuSPFGeAh1Us3uPkIRk4poW7LvQjrDqlykty3+/uHvNqQXV0YJpABhYXMF8t2f
-         k3NBBfPieVuLIS43YLnv+l7DqgrqqWsKQeq/a5YSKjasjTWSEOri73YIDGDek2SUqX67
-         2VDGC4J2j6F6hlG+7Twxk9sA64NMrZMvl2tsiIQGqkCf29hOk5CRbmhxLG+DrziP8Wxs
-         1FAk0WDVdXsyGpRIRMepX733Ut45YB1XnShNkenYyPWCQsMrJH6r81TwJWd13fJADezq
-         B6Y4axUrudPKU4nFK3A2IJL68Ib7Hqi3nco6qFHVXWtSPZRpzOeDmMPc+U7+jiZA1J3K
-         VXaw==
-X-Gm-Message-State: APzg51AaNt+ZDR10Z8raK+fxRiZvIzDzH8wazhHWkjjhv+D1KBLSnnOs
-        iWAyyqzInlvawqF+cLLzIxltD/f+KBo=
-X-Google-Smtp-Source: ANB0VdaoiegqZe6zSu5jDg1nLDXNwS6Yc454+bYqBQpG115ZuhLEEleE9BjJrgYPclsmfJn5IzRtZQ==
-X-Received: by 2002:a81:35d0:: with SMTP id c199-v6mr3930600ywa.182.1535061421083;
-        Thu, 23 Aug 2018 14:57:01 -0700 (PDT)
-Received: from mail-yw1-f48.google.com (mail-yw1-f48.google.com. [209.85.161.48])
-        by smtp.gmail.com with ESMTPSA id h68-v6sm2370951ywc.7.2018.08.23.14.56.59
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 Aug 2018 14:56:59 -0700 (PDT)
-Received: by mail-yw1-f48.google.com with SMTP id l189-v6so2371482ywb.10
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 14:56:59 -0700 (PDT)
-X-Received: by 2002:a81:98d7:: with SMTP id p206-v6mr3906472ywg.353.1535061418527;
- Thu, 23 Aug 2018 14:56:58 -0700 (PDT)
+        bh=b+h27LPcprQocjCXzwyehDLIiBbICE6D4+EJSkkbqYI=;
+        b=g8Ytdb5TTm2t4GzBlWNXdrq1MK22JEfKcnbSUeMtQqSCfNIKGzc3voD91uyjYHN8pU
+         5MK3zH/0so8IJddVzfuUuJ+xK72PgcMoF0n2EydZaxuPg3+DU7/LQ/SBTKBP1oWd6GX2
+         4SNK0cDxlBAmhNQBYi8w18eX72d3Yd3I2ZxbfejC6uFnJU5Wp4LXBnsc0SDTKuw/tCU6
+         wQXnfau+OMki7rtmJij9sEFgzjNnrJcjFELT6xr5Q+BBhQAKim+Vf/1rqaaY52tAv/uB
+         A2VkaHhiKAypRRSiJ8vMo5NN9LDdUCHBTyBsjkyGoC/1mHSg6G3+0nziQGe34+3vZ2JT
+         SynQ==
+X-Gm-Message-State: APzg51DHOVM/jDKopvcC7GvycxnVFyqCjWe0so/tDk68Pa8CJHxgcB4r
+        HbI1Q5qwiSs0QZ4qR1rc0co3ZLLJNNnitI7Id/rt3Q==
+X-Google-Smtp-Source: ANB0VdbBBrcPU92m0/2YFJP9IZVM79GoT+En0U2vHWphYka12obobzno6e6iMmrxdIHoP85PeHbg3zQyo7GCVzwunQw=
+X-Received: by 2002:a62:4b14:: with SMTP id y20-v6mr12042075pfa.93.1535061626767;
+ Thu, 23 Aug 2018 15:00:26 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a25:2c11:0:0:0:0:0 with HTTP; Thu, 23 Aug 2018 14:56:57
- -0700 (PDT)
-In-Reply-To: <20180823185140.GA29028@embeddedor.com>
-References: <20180823185140.GA29028@embeddedor.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Thu, 23 Aug 2018 14:56:57 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jLOg-uB3wsyRNJd2rFEoT9_u2Q0YQXVWv38Z946S_t6xw@mail.gmail.com>
-Message-ID: <CAGXu5jLOg-uB3wsyRNJd2rFEoT9_u2Q0YQXVWv38Z946S_t6xw@mail.gmail.com>
-Subject: Re: [PATCH] rtc: sun6i: Use struct_size() in kzalloc()
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-rtc@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <da5620dc7a2b9d33f2a0dd7f4dc3afdab5a66f26.1534795606.git.joe@perches.com>
+ <CAMuHMdXPFgp5sLR5-UExEvxNbKSR5H--dk7KMit_XFSFN+1uHw@mail.gmail.com>
+In-Reply-To: <CAMuHMdXPFgp5sLR5-UExEvxNbKSR5H--dk7KMit_XFSFN+1uHw@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Thu, 23 Aug 2018 15:00:15 -0700
+Message-ID: <CAKwvOdnNRfK+HiyjSv+OaK-wo5ExcFBc=nK-PMSEXiD0bu_11g@mail.gmail.com>
+Subject: Re: [PATCH] Raise the minimum required gcc version to 4.6
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     joe@perches.com, Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        dave.hansen@intel.com, efault@gmx.de,
+        Guenter Roeck <linux@roeck-us.net>,
+        Rik van Riel <riel@surriel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 23, 2018 at 11:51 AM, Gustavo A. R. Silva
-<gustavo@embeddedor.com> wrote:
-> One of the more common cases of allocation size calculations is finding
-> the size of a structure that has a zero-sized array at the end, along
-> with memory for some number of elements for that array. For example:
+On Thu, Aug 23, 2018 at 2:52 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> Thanks for your patch!
 >
-> struct foo {
->         int stuff;
->         void *entry[];
-> };
+> I'm willing to upgrade. But there's one thing that's holding me back.
 >
-> instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
->
-> Instead of leaving these open-coded and prone to type mistakes, we can
-> now use the new struct_size() helper:
->
-> instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
->
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/rtc/rtc-sun6i.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/rtc/rtc-sun6i.c b/drivers/rtc/rtc-sun6i.c
-> index 2cd5a7b..fe07310 100644
-> --- a/drivers/rtc/rtc-sun6i.c
-> +++ b/drivers/rtc/rtc-sun6i.c
-> @@ -199,8 +199,7 @@ static void __init sun6i_rtc_clk_init(struct device_node *node)
->         if (!rtc)
->                 return;
->
-> -       clk_data = kzalloc(sizeof(*clk_data) + (sizeof(*clk_data->hws) * 2),
-> -                          GFP_KERNEL);
-> +       clk_data = kzalloc(struct_size(clk_data, hws, 2), GFP_KERNEL);
->         if (!clk_data) {
->                 kfree(rtc);
->                 return;
+> Does gcc 8.x gives again the same warnings as my venerable old gcc 4.1.2,
+> that no one else seems to see? Or will the real bugs I detect this way stay
+> unfixed? Polyculture is a good thing, also in compilers.
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
-
--Kees
+Hi Geert,
+Just for folks who may be missing context on this thread, like myself,
+can you provide links to more information?  If I understand your
+question correctly, it seems that warnings were removed from gcc since
+4.1.2?  And that bugs have been caught by testing with gcc 4.1.2 (can
+you provide commit sha's)?  I assume you've already discussed such an
+issue with the gcc maintainers (can you provide links to those
+discussions)?  Sorry, if this has already been discussed already on
+LKML, but even a post that had all this information would be immensely
+helpful in understanding your plight.
 
 -- 
-Kees Cook
-Pixel Security
+Thanks,
+~Nick Desaulniers
