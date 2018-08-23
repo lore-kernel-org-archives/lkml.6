@@ -2,87 +2,93 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B2E0C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 10:55:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 192CDC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 10:57:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EF7421532
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 10:55:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA05E21537
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 10:57:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IxChfuza"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EF7421532
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U3JQs8iz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA05E21537
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729878AbeHWOYz (ORCPT
+        id S1730780AbeHWO0Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 10:24:55 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:35545 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726556AbeHWOYz (ORCPT
+        Thu, 23 Aug 2018 10:26:25 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:44074 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726556AbeHWO0Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 10:24:55 -0400
-Received: by mail-it0-f66.google.com with SMTP id 139-v6so7005956itf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 03:55:46 -0700 (PDT)
+        Thu, 23 Aug 2018 10:26:25 -0400
+Received: by mail-pl0-f66.google.com with SMTP id ba4-v6so2236818plb.11
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 03:57:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bZ391DwX32XAw9D2daFZnzUsC+7XIXLi0z21PFX1Ywc=;
-        b=IxChfuzahKLgxOVUDQ7MoabOB0k4bOYvbVTupr2878ykxI9miu8xgCcm0j0D4kF9xW
-         qup1eOCQnSfVfk2hRxrXQ9I6heyhbI7YiM9SU0jwW9Hu3FsyrBzljMHR+PMyRpodr2at
-         Lsrf0V/6yFg4krAD/l4oSshmfM9z2wna26so8=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=XlJEj42KrUyGPchHDOTMg7xyST9hcpr7Ghv2shVlbl0=;
+        b=U3JQs8izoFjujv63SO69C1Xuh/D8S0qnM0mLcl+w5CgQH9rn8Sq27C8g2vyyCEj8IH
+         iSU+Ho3uvuNKsfusGx1EOYWw7ndez5o3SkH+3wpXaRdWbSr3aG21WR/JfOycer3l87iY
+         qsTHG+l8tOeYC+Gc5ST/ajcAf+ZGkt6iijZQDobUBVQ+aFWFwLwd0GhlIIzmT79WI9lo
+         A74byKr7x2PPmW/PHVYR6TbDHqfzFR3axjksPbiV/OwbbuMgF87XxI60y3kMvPwSW/Iv
+         YhZqh+xTOCin+JbudQ+ptaraeXSJBwCOpXH8rnbSn905zgk7/iTYoL2I6Ne0k8tWS2ax
+         KUXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bZ391DwX32XAw9D2daFZnzUsC+7XIXLi0z21PFX1Ywc=;
-        b=sWvGo1pXOO1Muxf1yOSbch7XhoaY/sUtQmy8mDyDX6i+9e4z5lPqQJtI3H0WzEGdBz
-         PSsw0wnBCKdOdgVNUIvaxm+BwJyGV24J2XPmktQgnx5R/delFdTY2xheWGF2bsQ76Cau
-         vlAcKPlWy5L8tLHFttqhqWh5nzw7bkbaD6Th+4i2/nj9PCDa4z3tfaRFYwjB0bPRBDVu
-         zT6lO3+jwwfSBzszalf2ni1gz+lwYvF1m5ekwCrxdaNiEY4HnCRcWQQ04W0DpG5CIZ4D
-         ubK5tBzk6Pn3W0lBeyWAxf0+VZjnvt09GCB8llCU9WUYq4X+Ivc+gN2QZvT3EJyRP+C6
-         6lyQ==
-X-Gm-Message-State: AOUpUlFImBvCkM/TnRSgmPyUhAycX30UVikxQHJGYP35EsCrgr2v0HG3
-        gDKWoPqmGeQKqBD6DNbiDtlchpckLWaCnMtZf7A3TA==
-X-Google-Smtp-Source: AA+uWPz1mBMgtVhroWoT1DKLhk+ZWI01k934WgqzPWyPQfM8TFx+icNGLAZlPjujYW9yRqfUqDWWsyh5rqG9PntyZFY=
-X-Received: by 2002:a02:5916:: with SMTP id p22-v6mr49505964jab.113.1535021746055;
- Thu, 23 Aug 2018 03:55:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180821105407.2318-1-colin.king@canonical.com>
-In-Reply-To: <20180821105407.2318-1-colin.king@canonical.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 23 Aug 2018 12:55:34 +0200
-Message-ID: <CACRpkdZDpfPDOgXy8+58qSmMu=bMsMrtruoDeLzPe+t1eYpqCA@mail.gmail.com>
-Subject: Re: [PATCH] drm/pl111: add in missing sentinel to a of_device_id array
-To:     Colin King <colin.king@canonical.com>
-Cc:     Eric Anholt <eric@anholt.net>, Dave Airlie <airlied@linux.ie>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        kernel-janitors@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=XlJEj42KrUyGPchHDOTMg7xyST9hcpr7Ghv2shVlbl0=;
+        b=djuT7FLwstLnSl7OdHdf8IRmPCI8hp4gqYlbbKmbsUB9AFbB/KkkDC5LF7jqKNzWHo
+         d/6dZWLR/NuOfnM0fQxhjci2Of3xNZ6wiQSix4WZitw03Vfa3kX9nTJOU/x7WB6iwkV1
+         ltJI3BQOvXo23AnOmO7XR1SmMimHz19krxXcFY5Od5QgOnxntT59L9hj/d3zkqRQODRm
+         8uttaFfKBpD8gBv3KUDeouRI/hmrzgb/TkRwmvC3DQ1GnXJgChNeb0KvLXqPonF7KQa/
+         BZfWoUCZ7IYZTbX1t2WC9zc8LSixaEHGd3lUk5MBr3ex8I9/juEcdGZctvr+1NYCVr0w
+         kdPw==
+X-Gm-Message-State: AOUpUlEBc7tTcr+P0N3FV+9g5uylMTdlXSPhEzNUflVUaBP+bKq8S+OI
+        Q5d0cEkGL/EA9CkcQOknwoU=
+X-Google-Smtp-Source: AA+uWPwVs5Cvjsyyor7xVtw2cCtAgjyWyEjHwYTaS5GsYCmljW6/YnPhbKEYLIRGCCSGKGvVc5Janw==
+X-Received: by 2002:a17:902:261:: with SMTP id 88-v6mr58132302plc.331.1535021835959;
+        Thu, 23 Aug 2018 03:57:15 -0700 (PDT)
+Received: from localhost.localdomain ([104.192.108.9])
+        by smtp.gmail.com with ESMTPSA id f13-v6sm4384048pgs.92.2018.08.23.03.57.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 23 Aug 2018 03:57:15 -0700 (PDT)
+From:   Weikang Shi <swkhack@gmail.com>
+To:     dhowells@redhat.com
+Cc:     linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
+        swkhack@qq.com, Weikang Shi <swkhack@gmail.com>
+Subject: [PATCH] fs: Eliminate redundant assignments
+Date:   Thu, 23 Aug 2018 03:57:08 -0700
+Message-Id: <1535021828-130439-1-git-send-email-swkhack@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 21, 2018 at 12:54 PM Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Array vexpress_muxfpga_match is missing an end of array sentinel,
-> add it.
->
-> Detected by Coccinelle: ("vexpress_muxfpga_match is not NULL
-> terminated at line")
->
-> Fixes: ca454bd42dc2 ("drm/pl111: Support the Versatile Express")
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+after the assignments statement ,all return statement do not use ret variable,so delete the assignments.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Weikang Shi <swkhack@gmail.com>
+---
+ fs/afs/dir.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Yours,
-Linus Walleij
+diff --git a/fs/afs/dir.c b/fs/afs/dir.c
+index 855bf2b..5a3770a 100644
+--- a/fs/afs/dir.c
++++ b/fs/afs/dir.c
+@@ -541,7 +541,6 @@ static int afs_do_lookup_one(struct inode *dir, struct dentry *dentry,
+ 		return ret;
+ 	}
+ 
+-	ret = -ENOENT;
+ 	if (!cookie.found) {
+ 		_leave(" = -ENOENT [not found]");
+ 		return -ENOENT;
+-- 
+2.7.4
+
