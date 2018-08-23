@@ -2,101 +2,98 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0A64C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 19:36:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 172F9C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 19:38:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 465952147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 19:36:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 465952147A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id AD0D72150F
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 19:38:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FCVrQ7d7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD0D72150F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726522AbeHWXHQ (ORCPT
+        id S1726582AbeHWXJV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 19:07:16 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60508 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725979AbeHWXHQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 19:07:16 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2C0F7ADA9;
-        Thu, 23 Aug 2018 19:36:04 +0000 (UTC)
-Date:   Thu, 23 Aug 2018 21:36:00 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Mike Kravetz <mike.kravetz@oracle.com>
-Cc:     kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] mm: migration: fix migration of huge PMD shared
- pages
-Message-ID: <20180823193600.GV29735@dhcp22.suse.cz>
-References: <20180821205902.21223-2-mike.kravetz@oracle.com>
- <201808220831.eM0je51n%fengguang.wu@intel.com>
- <975b740d-26a6-eb3f-c8ca-1a9995d0d343@oracle.com>
- <20180823124855.GI29735@dhcp22.suse.cz>
- <12ea5339-f2b1-62b4-6d37-57d737fac34a@oracle.com>
- <df05e2e0-be29-1651-40e7-82dc686919c2@oracle.com>
+        Thu, 23 Aug 2018 19:09:21 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:34749 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725979AbeHWXJV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 19:09:21 -0400
+Received: by mail-io0-f196.google.com with SMTP id c22-v6so5264170iob.1;
+        Thu, 23 Aug 2018 12:38:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8b/yzaXiUCdXSeLQDWlOGszjJPac257AS+z8MSzWMdI=;
+        b=FCVrQ7d7KKWB2YZa0sbeNedhXr91AQfRbEPAaEUP/0ggBKR0CTc4/hJuYfuOiPlcEy
+         UCu4ydmAIsdFA27YC1QqxaDsidslEMldkJzCl8uT3wMXFHUgUHduq+/jnSxTSr9pq2Md
+         g4Seq3pFYwrAPusbcLwxsjGBslfR4WVQvAxzE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8b/yzaXiUCdXSeLQDWlOGszjJPac257AS+z8MSzWMdI=;
+        b=Ojxhrc1pnYzdh/hL5so8Kkn7tChbhAaPSR4RcSGMhFnGgceTqifzHY90hSlZ8USsi7
+         wg1N1wv64ozVpPbYTNB/27chvlI3f0YAcQu6tN2h/ffQta2HiEmU9VenPVQk6uSuul3u
+         3dvRpBeiu47VbT0WdcTJLtjEYIEC5r75UpcC7Bt0+OJTDJ8R59SphoWnGQYc+DuPdmgz
+         2rZYWynC4ZJUhaGMC8AUza5Ebe5p6DeUXrgDJK7LnkNPRfU5R/5K5k2BHepwBi4fxel8
+         jBqEdyS82wowlc0Nao/E8zLme1LdUKKHKYkZ+b4gZM2viz2IIxgJezXbmVjNIuEm5hdc
+         Ui7w==
+X-Gm-Message-State: APzg51CE3Hfnado8EBrWWBssQuAHEzRxY+E6UN02RXC/hs8C4xRNxgJh
+        EIGeaVz4IFMQBwf3ZwhMzdaijg9v6p2Doj061K8=
+X-Google-Smtp-Source: ANB0VdYYYtcQ7e4norjeCYN0RiLb+4/xe7+AYmnf1Tr7r8icavzU03NkqUqSW5UZAIxp/lz3gkhSsecFKsLYa60u7PM=
+X-Received: by 2002:a6b:7a49:: with SMTP id k9-v6mr9316045iop.238.1535053090083;
+ Thu, 23 Aug 2018 12:38:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <df05e2e0-be29-1651-40e7-82dc686919c2@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20180823084709.19717-1-npiggin@gmail.com> <CA+55aFxaiv3SMvFUSEnd_p6nuGttUnv2_O3v_G2zCnnc0pV2pA@mail.gmail.com>
+In-Reply-To: <CA+55aFxaiv3SMvFUSEnd_p6nuGttUnv2_O3v_G2zCnnc0pV2pA@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 23 Aug 2018 12:37:58 -0700
+Message-ID: <CA+55aFwEZftzAd9k-kjiaXonP2XeTDYshjY56jmd1CFBaXmGHA@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/2] minor mmu_gather patches
+To:     Nick Piggin <npiggin@gmail.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Rik van Riel <riel@surriel.com>,
+        Jann Horn <jannh@google.com>,
+        Adin Scannell <ascannell@google.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        David Miller <davem@davemloft.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-arch <linux-arch@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 23-08-18 10:56:30, Mike Kravetz wrote:
-> On 08/23/2018 10:01 AM, Mike Kravetz wrote:
-> > On 08/23/2018 05:48 AM, Michal Hocko wrote:
-> >> On Tue 21-08-18 18:10:42, Mike Kravetz wrote:
-> >> [...]
-> >>
-> >> OK, after burning myself when trying to be clever here it seems like
-> >> your proposed solution is indeed simpler.
-> >>
-> >>> +bool huge_pmd_sharing_possible(struct vm_area_struct *vma,
-> >>> +				unsigned long *start, unsigned long *end)
-> >>> +{
-> >>> +	unsigned long check_addr = *start;
-> >>> +	bool ret = false;
-> >>> +
-> >>> +	if (!(vma->vm_flags & VM_MAYSHARE))
-> >>> +		return ret;
-> >>> +
-> >>> +	for (check_addr = *start; check_addr < *end; check_addr += PUD_SIZE) {
-> >>> +		unsigned long a_start = check_addr & PUD_MASK;
-> >>> +		unsigned long a_end = a_start + PUD_SIZE;
-> >>
-> >> I guess this should be rather in HPAGE_SIZE * PTRS_PER_PTE units as
-> >> huge_pmd_unshare does.
-> > 
-> > Sure, I can do that.
-> 
-> On second thought, this is more similar to vma_shareable() which uses
-> PUD_MASK and PUD_SIZE.  In fact Kirill asked me to put in a common helper
-> for this and vma_shareable.  So, I would prefer to leave it as PUD* unless
-> you feel strongly.
+On Thu, Aug 23, 2018 at 12:15 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> So right now my "tlb-fixes" branch looks like this:
+> [..]
+>
+> I'll do a few more test builds and boots, but I think I'm going to
+> merge it in this cleaned-up and re-ordered form.
 
-I don't
- 
-> IMO, it would make more sense to change this in huge_pmd_unshare as PMD
-> sharing is pretty explicitly tied to PUD_SIZE.  But, that is a future cleanup.
+In the meantime, I decided to push out that branch in case anybody
+wants to look at it.
 
-Fair enough. I didn't realize we are PUD explicit elsewhere. So if you
-plan to update huge_pmd_unshare to be in sync then no objections from me
-at all. I merely wanted to be in sync with this because it is a central
-point to look at wrt pmd sharing.
--- 
-Michal Hocko
-SUSE Labs
+I may rebase it if I - or anybody else - find anything bad there, so
+consider it non-stable, but I think it's in its final shape modulo
+issues.
+
+              Linus
