@@ -2,145 +2,134 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02150C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 13:31:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3073C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 13:32:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 940A7208CD
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 13:31:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E9smjCF2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 940A7208CD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 63A5B208E8
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 13:32:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63A5B208E8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=au1.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729504AbeHWRBY (ORCPT
+        id S1730125AbeHWRCM convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 13:01:24 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36262 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727392AbeHWRBY (ORCPT
+        Thu, 23 Aug 2018 13:02:12 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41330 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727392AbeHWRCM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 13:01:24 -0400
-Received: by mail-wr1-f65.google.com with SMTP id m27-v6so4668538wrf.3;
-        Thu, 23 Aug 2018 06:31:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=gLpKDEKW7vx2GEQc+W4lWlhd9BeZCdwR1Y5rTs3StPU=;
-        b=E9smjCF2BvAHyLOELxVPwgs0GOwh1Olh0ET5V8c+JckYO77My6GlnTcp4LYhYfk9Xg
-         5V9X5L+x6JId28BGcKp6WQkufiqdUe7FPld+Yh6Bymu28ruwhUR91JCDezXOPiY/AgAI
-         hh5pV1V5HEb7QyMiQsiEsBUyGfhUwn7CanVvHYrs/8v8IJMfXOo8GzIQ6n0qD+ifw7Ze
-         ybWMfBfjuxZX2B3aEKnss/HwWHRKIhobEPtCMD+Pf4fjjiIj0SH3Eqdo014SFoJ4LQBG
-         0eIeeipmffYBBG/SoVJtWYGCtbLdnqpcDMbCvHDBoUX82IrYl6td/T12WN4aAaEUAHEH
-         06kA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=gLpKDEKW7vx2GEQc+W4lWlhd9BeZCdwR1Y5rTs3StPU=;
-        b=GylU5pgaLoj22emuIlUUPwPmF5/nHMJWVkhUnkkd98v4NMHmYGfbGPsDBZLZ/XLRCE
-         tUElzr26o+QKMxxgZKAMmlatjb8gmlDaNl3NqaawywWzjiU1jXJGDAziRMgfZ+Mz3vc/
-         V9ck7bAeYiaUrBNZyJQm968ZxxZobGZSasSHuN7i8WqYikknk9x182tE3w3X3l5eScau
-         PykwTLMJksI7VEoSVF+U1pZD3viWmbDr3lt3zLeGBUPkj/14MK023I0aVd+V4cipttIi
-         koHzZbXRi2GVMOJrJ+TyC43AkXF7ZVhO+CZtA3wOjEqthLQN4KA70HKDBE5ua2ulfH+i
-         7M3A==
-X-Gm-Message-State: APzg51CLwGk080zmMt8PJViV1ry9GO7ilTK87+eSfd4Pon88Bwd5zK3d
-        IcDCs0EW+uQgFKiFy2WkioXjmFnZ
-X-Google-Smtp-Source: ANB0Vdb/HDiXPUN2dwjolbjHsF68GkZWYwkJhmfqARTGxoNx4dfp/5T6bjvIyaTFl5u3UOzPlzw0jA==
-X-Received: by 2002:adf:ea92:: with SMTP id s18-v6mr7013103wrm.284.1535031099212;
-        Thu, 23 Aug 2018 06:31:39 -0700 (PDT)
-Received: from localhost (pD9E51C80.dip0.t-ipconnect.de. [217.229.28.128])
-        by smtp.gmail.com with ESMTPSA id s10-v6sm7979526wmd.22.2018.08.23.06.31.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 23 Aug 2018 06:31:38 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] pwm: Changes for v4.19-rc1
-Date:   Thu, 23 Aug 2018 15:31:37 +0200
-Message-Id: <20180823133137.32199-1-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.18.0
+        Thu, 23 Aug 2018 13:02:12 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7NDTf74130907
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 09:32:28 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2m1vnwbfah-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 09:32:27 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <andrew.donnellan@au1.ibm.com>;
+        Thu, 23 Aug 2018 14:32:26 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 23 Aug 2018 14:32:21 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7NDWKof42205358
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 23 Aug 2018 13:32:20 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A83F3AE04D;
+        Thu, 23 Aug 2018 16:31:57 +0100 (BST)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 53F46AE045;
+        Thu, 23 Aug 2018 16:31:57 +0100 (BST)
+Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 23 Aug 2018 16:31:57 +0100 (BST)
+Received: from [9.81.213.45] (unknown [9.81.213.45])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 7659AA020A;
+        Thu, 23 Aug 2018 23:32:16 +1000 (AEST)
+Subject: Re: [PATCH v2 3/4] powerpc/mm: fix a warning when a cache is common
+ to PGD and hugepages
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Russell Currey <ruscur@russell.cc>
+Cc:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        aneesh.kumar@linux.vnet.ibm.com, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org,
+        Christophe LEROY <christophe.leroy@c-s.fr>,
+        Segher Boessenkool <segher@kernel.crashing.org>
+References: <2f96bf1a8df1091c642de099ed07c34b5ab9b90a.1534258290.git.christophe.leroy@c-s.fr>
+ <4aaca2d27429e6bdadc340fd3b96e7c350c4b2f4.1534258290.git.christophe.leroy@c-s.fr>
+ <6dea8d0c-c4ab-49aa-da26-a729c18fa818@linux.ibm.com>
+ <006e5f33-b816-7508-faac-da26a860659c@c-s.fr>
+ <3e6412ac-c645-908f-a3bb-c9a2a72f4b68@linux.ibm.com>
+ <cb121f38-ac89-4971-fd84-5473e7e9ced5@c-s.fr>
+ <20180823103625.GR24439@gate.crashing.org>
+ <8ada20e9-3bc1-fdaf-d78f-2f5a317e8216@c-s.fr>
+ <87a7pdl2jy.fsf@concordia.ellerman.id.au>
+From:   Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+Date:   Thu, 23 Aug 2018 23:32:16 +1000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+In-Reply-To: <87a7pdl2jy.fsf@concordia.ellerman.id.au>
+Content-Language: en-AU
+X-TM-AS-GCONF: 00
+x-cbid: 18082313-0016-0000-0000-000001FABA86
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082313-0017-0000-0000-0000325115F4
+Message-Id: <d561e11b-b85e-6f6c-0936-4a93cf309915@au1.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-23_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=744 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808230144
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On 23/08/18 21:56, Michael Ellerman wrote:
+> Christophe LEROY <christophe.leroy@c-s.fr> writes:
+> 
+>> Le 23/08/2018 à 12:36, Segher Boessenkool a écrit :
+>>> On Thu, Aug 23, 2018 at 11:40:22AM +0200, Christophe LEROY wrote:
+>>>> The only small problème I have is that some version of GCC seems to
+>>>> complain about big memset() (132k and 256k ones). Is there a way to tell
+>>>> GCC we really want to do it ?
+>>>
+>>> I'm not sure what you mean.  Complain, is that a warning, is that an error?
+>>> What does it say?  Do you have some example code to reproduce it?  Etc.
+>>
+>> I saw the warnings in the checks at
+>> https://patchwork.ozlabs.org/patch/957566/
+>> Unfortunatly the link is now broken.
+> 
+> ruscur/ajd any idea what happened to the snowpatch links here?
 
-The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
+I think they've disappeared because our log rotation is too fast - I've 
+now upped it to 30 days. I guess over time we'll figure out what we need 
+in this regard, ideally we'd keep logs indefinitely but they're several 
+megs per build.
 
-  Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
+I've kicked off another build for this series and the links in Patchwork 
+should update to point to the new job when it's done (probably in the 
+next couple of hours).
 
-are available in the Git repository at:
+-- 
+Andrew Donnellan              OzLabs, ADL Canberra
+andrew.donnellan@au1.ibm.com  IBM Australia Limited
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git tags/pwm/for-4.19-rc1
-
-for you to fetch changes up to 8cdc43afbb2cb58692c49fab0b13e2d9439c0642:
-
-  pwm: mediatek: Add MT7628 support (2018-08-20 11:36:07 +0200)
-
-Thanks,
-Thierry
-
-----------------------------------------------------------------
-pwm: Changes for v4.19-rc1
-
-This contains mostly minor bug fixes as well as some new chip support
-for existing drivers.
-
-----------------------------------------------------------------
-David Rivshin (1):
-      pwm: omap-dmtimer: Return -EPROBE_DEFER if no dmtimer platform data
-
-Enric Balletbo i Serra (1):
-      pwm: cros-ec: Switch to SPDX identifier
-
-Fabio Estevam (2):
-      pwm: imx: Switch to SPDX identifier
-      pwm: mxs: Switch to SPDX identifier
-
-Fabrice Gasnier (1):
-      pwm: stm32-lp: Remove useless loop in stm32_pwm_lp_remove()
-
-Jerome Brunet (1):
-      pwm: meson: Fix mux clock names
-
-John Crispin (2):
-      dt-bindings: pwm: Add MT7628 information
-      pwm: mediatek: Add MT7628 support
-
-Thomas Hebb (1):
-      pwm: berlin: Don't use broken prescaler values
-
-Vignesh R (2):
-      pwm: tiehrpwm: Don't use emulation mode bits to control PWM output
-      pwm: tiehrpwm: Fix disabling of output of PWMs
-
-Yoshihiro Shimoda (1):
-      dt-bindings: pwm: rcar: Add bindings for R-Car E3 support
-
-shenwei.wang@nxp.com (4):
-      pwm: fsl-ftm: Added a dedicated IP interface clock
-      pwm: fsl-ftm: Added the support of per-compatible data
-      pwm: fsl-ftm: Enable support for the new SoC i.MX8QM
-      dt-bindings: pwm: fsl-ftm: Add compatible string for i.MX8QM
-
- .../devicetree/bindings/pwm/pwm-fsl-ftm.txt        |  5 +-
- .../devicetree/bindings/pwm/pwm-mediatek.txt       |  4 +-
- .../devicetree/bindings/pwm/renesas,pwm-rcar.txt   |  1 +
- drivers/pwm/Kconfig                                |  2 +-
- drivers/pwm/pwm-berlin.c                           | 45 +++++++++--------
- drivers/pwm/pwm-cros-ec.c                          |  9 ++--
- drivers/pwm/pwm-fsl-ftm.c                          | 57 +++++++++++++++++++---
- drivers/pwm/pwm-imx.c                              |  5 +-
- drivers/pwm/pwm-mediatek.c                         | 19 +++++++-
- drivers/pwm/pwm-meson.c                            |  3 +-
- drivers/pwm/pwm-mxs.c                              |  8 +--
- drivers/pwm/pwm-omap-dmtimer.c                     |  5 +-
- drivers/pwm/pwm-stm32-lp.c                         |  4 +-
- drivers/pwm/pwm-tiehrpwm.c                         | 14 ++----
- 14 files changed, 115 insertions(+), 66 deletions(-)
