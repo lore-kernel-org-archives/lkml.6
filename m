@@ -2,109 +2,147 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5688AC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:34:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13692C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:35:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFC2B206B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:34:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EGb8rmqq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFC2B206B6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id B619A206B6
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:35:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B619A206B6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732424AbeHWSEs (ORCPT
+        id S1732621AbeHWSFB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 14:04:48 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40854 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729381AbeHWSEs (ORCPT
+        Thu, 23 Aug 2018 14:05:01 -0400
+Received: from mail-io0-f199.google.com ([209.85.223.199]:38248 "EHLO
+        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730053AbeHWSFB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 14:04:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=PR+wcPJskNfR1EAymPGP5LsKDIP//2yxf1uFMHMFqSs=; b=EGb8rmqqdYKZ2yz73rp6DjCHH
-        4Bv1NaQQIcxs0bDV6N57kcBooQ2vmuIBz18K7G5+VlVgO7p2FwLPevtuVR1WbBqsdV1cE0jr2sihf
-        21Y+MlXcQGKeAFj0rx/U6lKUO9P5LcTFoxWbwkea058Z1PCEkgdfsTu/g/ZbpxZJhbnngTBdKE/N6
-        +rrwxDatzQeVm7fEa+XfS9i8yx6qbsHYkOGcblvhpxl1FIy9yxSXS8jCoGV7dhkQweJ0bzJaF7siE
-        7zsO3BM4e//zvWF/sic4LHPDyUdX8RlI67CtoNj5KxRZHeSMaKbSN0hPZaCfjB3ELDMdpVCkey8bL
-        3V85zVFKw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fsqhB-0007SU-LH; Thu, 23 Aug 2018 14:34:45 +0000
-Date:   Thu, 23 Aug 2018 07:34:45 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Brian Starkey <brian.starkey@arm.com>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Eric Engestrom <eric.engestrom@intel.com>,
-        Alexandru-Cosmin Gheorghe <alexandru-cosmin.gheorghe@arm.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Dave Airlie <airlied@linux.ie>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Ayan Kumar Halder <ayan.halder@arm.com>
-Subject: Re: [PATCH] drm/fourcc: Add DOC: overview comment
-Message-ID: <20180823143445.GA26109@bombadil.infradead.org>
-References: <20180821161611.10424-1-brian.starkey@arm.com>
- <20180821162639.GA21697@bombadil.infradead.org>
- <20180821164416.GA11553@e107564-lin.cambridge.arm.com>
- <20180822145924.GA13763@intel.com>
- <CAKMK7uHxPDfxJaA+1esSW8L2HAjMD6xgF0cMH-nkTjA=6S5+CA@mail.gmail.com>
- <20180822155732.GA39066@e107564-lin.cambridge.arm.com>
+        Thu, 23 Aug 2018 14:05:01 -0400
+Received: by mail-io0-f199.google.com with SMTP id n17-v6so4475095ioa.5
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 07:35:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=NOJiCCbcX4ZBNxYsZlEhg43Px94Bigmdsh0gMySenjc=;
+        b=Y+4+xw5qEOMwRo5ZTde07qS2XlL7L+ijd0SS57m4DzWZwEY5isElnB0V/SJ5mirW3d
+         xTIXTJTap079Fjd9e7CGYREu5rW8tfHecnaX+7k3v56Ms2KAZf3CRprQtBNvUSaIcnTQ
+         pQV6pPWZvEmJwQ4hhTs26E/vmoeO176N7trBaI8mC6OKmEUrCYpPnEmWkaZq/jSjCM24
+         3AMwUdF2kwkUUSTfZjELFW/1ZNBqyFq+D3GTaqYv4IWDn4TNnuBzvihGIqLaoGK0a5Zs
+         trTnnc2okeZDCtsDZzSy5Xsb/vxXahcSwQDnZrdB0ElJYyZAoYTRFHcjuOAzmCp3i2Z6
+         EGPw==
+X-Gm-Message-State: APzg51Dx69QFJzBE0Aq10DDOhf0fIipgfN14JXzzk2qu4KAn0yJGZIM4
+        fAfEyb7FhLq9I/fBZ5d01Y4gzwytZrLMfzFLg/an6orxeLu3
+X-Google-Smtp-Source: ANB0VdZrHWY/X0Tyy6Z4uKNW8oRVZNlnsP9IJv3spzwD5vbuQjh/ik30maYM2R9xRHvL0qkLHHwTEli7uKTSYyiL1T0f2ip3weC+
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180822155732.GA39066@e107564-lin.cambridge.arm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-Received: by 2002:a6b:7319:: with SMTP id e25-v6mr4553063ioh.98.1535034903496;
+ Thu, 23 Aug 2018 07:35:03 -0700 (PDT)
+Date:   Thu, 23 Aug 2018 07:35:03 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002414d905741b2a38@google.com>
+Subject: INFO: rcu detected stall in mousedev_write
+From:   syzbot <syzbot+9436b02171ac0894d33e@syzkaller.appspotmail.com>
+To:     dmitry.torokhov@gmail.com, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 22, 2018 at 04:57:33PM +0100, Brian Starkey wrote:
-> On Wed, Aug 22, 2018 at 05:11:55PM +0200, Daniel Vetter wrote:
-> > On Wed, Aug 22, 2018 at 4:59 PM, Eric Engestrom
-> > <eric.engestrom@intel.com> wrote:
-> > > On Tuesday, 2018-08-21 17:44:17 +0100, Brian Starkey wrote:
-> > > > On Tue, Aug 21, 2018 at 09:26:39AM -0700, Matthew Wilcox wrote:
-> > > > > Can you turn them into enums?  This seems to work ok:
-> 
-> I'm not sure that swapping out explicit 32-bit unsigned integers for
-> enums (unspecified width, signed integers) is necessarily a good idea,
-> it seems like Bad Things could happen.
-> 
-> The C spec says:
-> 
->   "the value of an enumeration constant shall be an integer constant
->   expression that has a value representable as an int"
-> 
-> Which likely gives us 4 bytes to play with on all machines
-> that run Linux, but if drm_fourcc.h is ever going to be some kind of
-> standard reference, making it non-portable seems like a fail.
->
-> And even if you do have 4 bytes in an enum, signed integers act
-> differently from unsigned ones, and compilers do love to invoke the UB
-> clause...
+Hello,
 
-I think you're exaggerating how much latitude C compilers have here.
-Further down in 6.7.2.2, it says:
+syzbot found the following crash on:
 
-  Each enumerated type shall be compatible with char, a signed
-  integer type, or an unsigned integer type.  The choice of type is
-  implementation-defined, but shall be capable of representing the values
-  of all the members of the enumeration.
+HEAD commit:    899fbc33fd77 Merge tag 'platform-drivers-x86-v4.19-1' of g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11a98c0a400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e408e8a7bf8306cb
+dashboard link: https://syzkaller.appspot.com/bug?extid=9436b02171ac0894d33e
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-So if we include an integer which isn't representable in a plain int,
-then the compiler _must_ choose a larger type.  It could choose a
-signed-64-bit type rather than an unsigned-32-bit type, but I can't
-imagine any compiler being quite so insane.
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+9436b02171ac0894d33e@syzkaller.appspotmail.com
+
+rcu: INFO: rcu_sched self-detected stall on CPU
+rcu: 	1-....: (104999 ticks this GP) idle=19e/1/0x4000000000000002  
+softirq=112269/112269 fqs=19579
+rcu: 	 (t=105000 jiffies g=225813 q=1973)
+NMI backtrace for cpu 1
+CPU: 1 PID: 21558 Comm: syz-executor5 Not tainted 4.18.0+ #203
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  <IRQ>
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  nmi_cpu_backtrace.cold.3+0x48/0x88 lib/nmi_backtrace.c:101
+  nmi_trigger_cpumask_backtrace+0x151/0x192 lib/nmi_backtrace.c:62
+  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+  trigger_single_cpu_backtrace include/linux/nmi.h:162 [inline]
+  rcu_dump_cpu_stacks+0x175/0x1c2 kernel/rcu/tree.c:1340
+  print_cpu_stall.cold.78+0x2fb/0x59c kernel/rcu/tree.c:1478
+  check_cpu_stall kernel/rcu/tree.c:1550 [inline]
+  __rcu_pending kernel/rcu/tree.c:3276 [inline]
+  rcu_pending kernel/rcu/tree.c:3319 [inline]
+  rcu_check_callbacks+0xd4a/0x15a0 kernel/rcu/tree.c:2665
+  update_process_times+0x2d/0x70 kernel/time/timer.c:1636
+  tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:164
+  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1274
+  __run_hrtimer kernel/time/hrtimer.c:1398 [inline]
+  __hrtimer_run_queues+0x3eb/0xff0 kernel/time/hrtimer.c:1460
+  hrtimer_interrupt+0x2f3/0x750 kernel/time/hrtimer.c:1518
+  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1029 [inline]
+  smp_apic_timer_interrupt+0x16d/0x6a0 arch/x86/kernel/apic/apic.c:1054
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:864
+  </IRQ>
+RIP: 0010:arch_local_irq_enable arch/x86/include/asm/paravirt.h:793 [inline]
+RIP: 0010:__raw_spin_unlock_irq include/linux/spinlock_api_smp.h:168  
+[inline]
+RIP: 0010:_raw_spin_unlock_irq+0x56/0x70 kernel/locking/spinlock.c:192
+Code: f1 87 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00  
+75 1d 48 83 3d db 98 3d 01 00 74 11 fb 66 0f 1f 44 00 00 <65> ff 0d a3 c9  
+4d 79 5b 5d c3 0f 0b e8 09 8f 07 fb eb dc 0f 1f 80
+RSP: 0018:ffff88018eb8faf8 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff13
+RAX: dffffc0000000000 RBX: ffff8801bff42be8 RCX: 0000000000000000
+RDX: 1ffffffff0fe379f RSI: 0000000000000001 RDI: ffffffff87f1bcf8
+RBP: ffff88018eb8fb00 R08: ffff88018d902000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000c6c5ef
+R13: dffffc0000000000 R14: 0000000000c6c5ef R15: ffff8801bff42be8
+  spin_unlock_irq include/linux/spinlock.h:379 [inline]
+  mousedev_write+0x19d/0x840 drivers/input/mousedev.c:709
+  __vfs_write+0x117/0x9d0 fs/read_write.c:485
+  vfs_write+0x1fc/0x560 fs/read_write.c:549
+  ksys_write+0x101/0x260 fs/read_write.c:598
+  __do_sys_write fs/read_write.c:610 [inline]
+  __se_sys_write fs/read_write.c:607 [inline]
+  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457089
+Code: fd b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f0d92208c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007f0d922096d4 RCX: 0000000000457089
+RDX: 00000000ffffffd1 RSI: 00000000200001c0 RDI: 0000000000000005
+RBP: 00000000009300a0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000004d7088 R14: 00000000004ca379 R15: 0000000000000000
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
