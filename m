@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89B4AC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:01:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 279F1C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:01:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E4592098B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:01:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E4592098B
+	by mail.kernel.org (Postfix) with ESMTP id E145E2098B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:01:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E145E2098B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729053AbeHWLaO (ORCPT
+        id S1729055AbeHWLaR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:30:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44508 "EHLO
+        Thu, 23 Aug 2018 07:30:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44516 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727577AbeHWLaN (ORCPT
+        with ESMTP id S1727775AbeHWLaQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:30:13 -0400
+        Thu, 23 Aug 2018 07:30:16 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6E146C18;
-        Thu, 23 Aug 2018 08:01:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A1F06C18;
+        Thu, 23 Aug 2018 08:01:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 006/130] selftests: static_keys: return Kselftest Skip code for skipped tests
-Date:   Thu, 23 Aug 2018 09:52:02 +0200
-Message-Id: <20180823074927.693280757@linuxfoundation.org>
+Subject: [PATCH 4.9 007/130] selftests: user: return Kselftest Skip code for skipped tests
+Date:   Thu, 23 Aug 2018 09:52:03 +0200
+Message-Id: <20180823074927.779377920@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
 References: <20180823074927.161454870@linuxfoundation.org>
@@ -53,19 +53,16 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
 
-[ Upstream commit 8781578087b8fb8829558bac96c3c24e5ba26f82 ]
+[ Upstream commit d7d5311d4aa9611fe1a5a851e6f75733237a668a ]
 
-When static_keys test is skipped because of unmet dependencies and/or
-unsupported configuration, it exits with error which is treated as a fail
-by the Kselftest framework. This leads to false negative result even when
-the test could not be run.
+When user test is skipped because of unmet dependencies and/or
+unsupported configuration, it exits with error which is treated as
+a fail by the Kselftest framework. This leads to false negative result
+even when the test could not be run.
 
-Change it to return kselftest skip code when a test gets skipped to clearly
-report that the test could not be run.
-
-Added an explicit searches for test_static_key_base and test_static_keys
-modules and return skip code if they aren't found to differentiate between
-the failure to load the module condition and module not found condition.
+Change it to return kselftest skip code when a test gets skipped to
+clearly report that the test could not be run. Add an explicit check
+for module presence and return skip code if module isn't present.
 
 Kselftest framework SKIP code is 4 and the framework prints appropriate
 messages to indicate that the test is skipped.
@@ -74,30 +71,24 @@ Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/static_keys/test_static_keys.sh |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ tools/testing/selftests/user/test_user_copy.sh |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/tools/testing/selftests/static_keys/test_static_keys.sh
-+++ b/tools/testing/selftests/static_keys/test_static_keys.sh
-@@ -1,6 +1,19 @@
+--- a/tools/testing/selftests/user/test_user_copy.sh
++++ b/tools/testing/selftests/user/test_user_copy.sh
+@@ -1,6 +1,13 @@
  #!/bin/sh
- # Runs static keys kernel module tests
+ # Runs copy_to/from_user infrastructure using test_user_copy kernel module
  
 +# Kselftest framework requirement - SKIP code is 4.
 +ksft_skip=4
 +
-+if ! /sbin/modprobe -q -n test_static_key_base; then
-+	echo "static_key: module test_static_key_base is not found [SKIP]"
++if ! /sbin/modprobe -q -n test_user_copy; then
++	echo "user: module test_user_copy is not found [SKIP]"
 +	exit $ksft_skip
 +fi
-+
-+if ! /sbin/modprobe -q -n test_static_keys; then
-+	echo "static_key: module test_static_keys is not found [SKIP]"
-+	exit $ksft_skip
-+fi
-+
- if /sbin/modprobe -q test_static_key_base; then
- 	if /sbin/modprobe -q test_static_keys; then
- 		echo "static_key: ok"
+ if /sbin/modprobe -q test_user_copy; then
+ 	/sbin/modprobe -q -r test_user_copy
+ 	echo "user_copy: ok"
 
 
