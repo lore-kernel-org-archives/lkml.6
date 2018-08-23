@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A93EC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:00:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA7BC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:00:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 470B821473
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:00:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 470B821473
+	by mail.kernel.org (Postfix) with ESMTP id D957C2098B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:00:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D957C2098B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728704AbeHWL2z (ORCPT
+        id S1728737AbeHWL26 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:28:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43566 "EHLO
+        Thu, 23 Aug 2018 07:28:58 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43644 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726473AbeHWL2y (ORCPT
+        with ESMTP id S1728706AbeHWL25 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:28:54 -0400
+        Thu, 23 Aug 2018 07:28:57 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A8364C74;
-        Thu, 23 Aug 2018 08:00:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D1939C5C;
+        Thu, 23 Aug 2018 08:00:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+6f18401420df260e37ed@syzkaller.appspotmail.com,
-        Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.4 71/79] netfilter: conntrack: dccp: treat SYNC/SYNCACK as invalid if no prior state
-Date:   Thu, 23 Aug 2018 09:53:47 +0200
-Message-Id: <20180823074923.817061817@linuxfoundation.org>
+        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
+        Willem de Bruijn <willemb@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 72/79] packet: refine ring v3 block size test to hold one frame
+Date:   Thu, 23 Aug 2018 09:53:48 +0200
+Message-Id: <20180823074923.877356466@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074918.641878835@linuxfoundation.org>
 References: <20180823074918.641878835@linuxfoundation.org>
@@ -52,61 +51,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Willem de Bruijn <willemb@google.com>
 
-commit 6613b6173dee098997229caf1f3b961c49da75e6 upstream.
+commit 4576cd469d980317c4edd9173f8b694aa71ea3a3 upstream.
 
-When first DCCP packet is SYNC or SYNCACK, we insert a new conntrack
-that has an un-initialized timeout value, i.e. such entry could be
-reaped at any time.
+TPACKET_V3 stores variable length frames in fixed length blocks.
+Blocks must be able to store a block header, optional private space
+and at least one minimum sized frame.
 
-Mark them as INVALID and only ignore SYNC/SYNCACK when connection had
-an old state.
+Frames, even for a zero snaplen packet, store metadata headers and
+optional reserved space.
 
-Reported-by: syzbot+6f18401420df260e37ed@syzkaller.appspotmail.com
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+In the block size bounds check, ensure that the frame of the
+chosen configuration fits. This includes sockaddr_ll and optional
+tp_reserve.
+
+Syzbot was able to construct a ring with insuffient room for the
+sockaddr_ll in the header of a zero-length frame, triggering an
+out-of-bounds write in dev_parse_header.
+
+Convert the comparison to less than, as zero is a valid snap len.
+This matches the test for minimum tp_frame_size immediately below.
+
+Fixes: f6fb8f100b80 ("af-packet: TPACKET_V3 flexible buffer implementation.")
+Fixes: eb73190f4fbe ("net/packet: refine check for priv area size")
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Willem de Bruijn <willemb@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/nf_conntrack_proto_dccp.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ net/packet/af_packet.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/net/netfilter/nf_conntrack_proto_dccp.c
-+++ b/net/netfilter/nf_conntrack_proto_dccp.c
-@@ -244,14 +244,14 @@ dccp_state_table[CT_DCCP_ROLE_MAX + 1][D
- 		 * We currently ignore Sync packets
- 		 *
- 		 *	sNO, sRQ, sRS, sPO, sOP, sCR, sCG, sTW */
--			sIG, sIG, sIG, sIG, sIG, sIG, sIG, sIG,
-+			sIV, sIG, sIG, sIG, sIG, sIG, sIG, sIG,
- 		},
- 		[DCCP_PKT_SYNCACK] = {
- 		/*
- 		 * We currently ignore SyncAck packets
- 		 *
- 		 *	sNO, sRQ, sRS, sPO, sOP, sCR, sCG, sTW */
--			sIG, sIG, sIG, sIG, sIG, sIG, sIG, sIG,
-+			sIV, sIG, sIG, sIG, sIG, sIG, sIG, sIG,
- 		},
- 	},
- 	[CT_DCCP_ROLE_SERVER] = {
-@@ -372,14 +372,14 @@ dccp_state_table[CT_DCCP_ROLE_MAX + 1][D
- 		 * We currently ignore Sync packets
- 		 *
- 		 *	sNO, sRQ, sRS, sPO, sOP, sCR, sCG, sTW */
--			sIG, sIG, sIG, sIG, sIG, sIG, sIG, sIG,
-+			sIV, sIG, sIG, sIG, sIG, sIG, sIG, sIG,
- 		},
- 		[DCCP_PKT_SYNCACK] = {
- 		/*
- 		 * We currently ignore SyncAck packets
- 		 *
- 		 *	sNO, sRQ, sRS, sPO, sOP, sCR, sCG, sTW */
--			sIG, sIG, sIG, sIG, sIG, sIG, sIG, sIG,
-+			sIV, sIG, sIG, sIG, sIG, sIG, sIG, sIG,
- 		},
- 	},
- };
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -4176,6 +4176,8 @@ static int packet_set_ring(struct sock *
+ 	}
+ 
+ 	if (req->tp_block_nr) {
++		unsigned int min_frame_size;
++
+ 		/* Sanity tests and some calculations */
+ 		err = -EBUSY;
+ 		if (unlikely(rb->pg_vec))
+@@ -4198,12 +4200,12 @@ static int packet_set_ring(struct sock *
+ 			goto out;
+ 		if (unlikely(!PAGE_ALIGNED(req->tp_block_size)))
+ 			goto out;
++		min_frame_size = po->tp_hdrlen + po->tp_reserve;
+ 		if (po->tp_version >= TPACKET_V3 &&
+-		    req->tp_block_size <=
+-		    BLK_PLUS_PRIV((u64)req_u->req3.tp_sizeof_priv) + sizeof(struct tpacket3_hdr))
++		    req->tp_block_size <
++		    BLK_PLUS_PRIV((u64)req_u->req3.tp_sizeof_priv) + min_frame_size)
+ 			goto out;
+-		if (unlikely(req->tp_frame_size < po->tp_hdrlen +
+-					po->tp_reserve))
++		if (unlikely(req->tp_frame_size < min_frame_size))
+ 			goto out;
+ 		if (unlikely(req->tp_frame_size & (TPACKET_ALIGNMENT - 1)))
+ 			goto out;
 
 
