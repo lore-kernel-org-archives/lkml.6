@@ -6,38 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F31DC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:59:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95E6DC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:59:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C926C21473
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:59:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C926C21473
+	by mail.kernel.org (Postfix) with ESMTP id 5A8DD2098B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:59:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A8DD2098B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728516AbeHWL2A (ORCPT
+        id S1728532AbeHWL2C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:28:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42050 "EHLO
+        Thu, 23 Aug 2018 07:28:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42064 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726836AbeHWL17 (ORCPT
+        with ESMTP id S1726836AbeHWL2C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:27:59 -0400
+        Thu, 23 Aug 2018 07:28:02 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D0B489D2;
-        Thu, 23 Aug 2018 07:59:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0A99F9D2;
+        Thu, 23 Aug 2018 07:59:38 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexander Duyck <alexander.h.duyck@intel.com>,
-        Shannon Nelson <shannon.nelson@oracle.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Willem de Bruijn <willemb@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 55/79] ixgbe: Be more careful when modifying MAC filters
-Date:   Thu, 23 Aug 2018 09:53:31 +0200
-Message-Id: <20180823074922.739954065@linuxfoundation.org>
+Subject: [PATCH 4.4 56/79] packet: reset network header if packet shorter than ll reserved space
+Date:   Thu, 23 Aug 2018 09:53:32 +0200
+Message-Id: <20180823074922.785896638@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074918.641878835@linuxfoundation.org>
 References: <20180823074918.641878835@linuxfoundation.org>
@@ -54,56 +51,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Duyck <alexander.h.duyck@intel.com>
+From: Willem de Bruijn <willemb@google.com>
 
-[ Upstream commit d14c780c11fbc10f66c43e7b64eefe87ca442bd3 ]
+[ Upstream commit 993675a3100b16a4c80dfd70cbcde8ea7127b31d ]
 
-This change makes it so that we are much more explicit about the ordering
-of updates to the receive address register (RAR) table. Prior to this patch
-I believe we may have been updating the table while entries were still
-active, or possibly allowing for reordering of things since we weren't
-explicitly flushing writes to either the lower or upper portion of the
-register prior to accessing the other half.
+If variable length link layer headers result in a packet shorter
+than dev->hard_header_len, reset the network header offset. Else
+skb->mac_len may exceed skb->len after skb_mac_reset_len.
 
-Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
-Reviewed-by: Shannon Nelson <shannon.nelson@oracle.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+packet_sendmsg_spkt already has similar logic.
+
+Fixes: b84bbaf7a6c8 ("packet: in packet_snd start writing at link layer allocation")
+Signed-off-by: Willem de Bruijn <willemb@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/intel/ixgbe/ixgbe_common.c |   12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ net/packet/af_packet.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_common.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_common.c
-@@ -1814,7 +1814,12 @@ s32 ixgbe_set_rar_generic(struct ixgbe_h
- 	if (enable_addr != 0)
- 		rar_high |= IXGBE_RAH_AV;
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -2780,6 +2780,8 @@ static int packet_snd(struct socket *soc
+ 			goto out_free;
+ 	} else if (reserve) {
+ 		skb_reserve(skb, -reserve);
++		if (len < reserve)
++			skb_reset_network_header(skb);
+ 	}
  
-+	/* Record lower 32 bits of MAC address and then make
-+	 * sure that write is flushed to hardware before writing
-+	 * the upper 16 bits and setting the valid bit.
-+	 */
- 	IXGBE_WRITE_REG(hw, IXGBE_RAL(index), rar_low);
-+	IXGBE_WRITE_FLUSH(hw);
- 	IXGBE_WRITE_REG(hw, IXGBE_RAH(index), rar_high);
- 
- 	return 0;
-@@ -1846,8 +1851,13 @@ s32 ixgbe_clear_rar_generic(struct ixgbe
- 	rar_high = IXGBE_READ_REG(hw, IXGBE_RAH(index));
- 	rar_high &= ~(0x0000FFFF | IXGBE_RAH_AV);
- 
--	IXGBE_WRITE_REG(hw, IXGBE_RAL(index), 0);
-+	/* Clear the address valid bit and upper 16 bits of the address
-+	 * before clearing the lower bits. This way we aren't updating
-+	 * a live filter.
-+	 */
- 	IXGBE_WRITE_REG(hw, IXGBE_RAH(index), rar_high);
-+	IXGBE_WRITE_FLUSH(hw);
-+	IXGBE_WRITE_REG(hw, IXGBE_RAL(index), 0);
- 
- 	/* clear VMDq pool/queue selection for this RAR */
- 	hw->mac.ops.clear_vmdq(hw, index, IXGBE_CLEAR_VMDQ_ALL);
+ 	/* Returns -EFAULT on error */
 
 
