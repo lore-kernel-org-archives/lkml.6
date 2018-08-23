@@ -6,35 +6,43 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E065C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:39:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7FDEC04E85
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:39:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 020042147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:39:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 020042147A
+	by mail.kernel.org (Postfix) with ESMTP id 8C8F22147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:39:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C8F22147A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731799AbeHWMHl (ORCPT
+        id S1731821AbeHWMHp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:07:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49272 "EHLO
+        Thu, 23 Aug 2018 08:07:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49290 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730680AbeHWMHl (ORCPT
+        with ESMTP id S1730654AbeHWMHp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:07:41 -0400
+        Thu, 23 Aug 2018 08:07:45 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E5EC8941;
-        Thu, 23 Aug 2018 08:39:05 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E3C178B1;
+        Thu, 23 Aug 2018 08:39:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>,
+        stable@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <andi@firstfloor.org>,
+        David Ahern <dsahern@gmail.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Milian Wolff <milian.wolff@kdab.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Stephane Eranian <eranian@google.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 002/324] vfio: ccw: fix error return in vfio_ccw_sch_event
-Date:   Thu, 23 Aug 2018 09:51:08 +0200
-Message-Id: <20180823074956.023039639@linuxfoundation.org>
+Subject: [PATCH 4.17 003/324] perf tools: Fix error index for pmu event parser
+Date:   Thu, 23 Aug 2018 09:51:09 +0200
+Message-Id: <20180823074956.078847661@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -51,54 +59,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
+From: Jiri Olsa <jolsa@kernel.org>
 
-[ Upstream commit 2c861d89ccda2fbcea9358eff9cc5f8fae548be5 ]
+[ Upstream commit f7fa827f5f432a0b1f34e10fc49da93aeef9f817 ]
 
-If the device has not been registered, or there is work pending,
-we should reschedule a sch_event call again.
+For events we provide specific error message we need to set error column
+index, PMU parser is missing that, adding it.
 
-Signed-off-by: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
-Message-Id: <20180502072559.50691-1-bjsdjshi@linux.vnet.ibm.com>
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-Signed-off-by: Cornelia Huck <cohuck@redhat.com>
+Before:
+
+  $ perf stat -e cycles,krava/cycles/ kill
+  event syntax error: 'cycles,krava/cycles/'
+                       \___ Cannot find PMU `krava'. Missing kernel support?
+
+After:
+
+  $ perf stat -e cycles,krava/cycles/ kill
+  event syntax error: 'cycles,krava/cycles/'
+                              \___ Cannot find PMU `krava'. Missing kernel support?
+
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <andi@firstfloor.org>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Frederic Weisbecker <frederic@kernel.org>
+Cc: Milian Wolff <milian.wolff@kdab.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Link: http://lkml.kernel.org/r/20180606221513.11302-3-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/s390/cio/vfio_ccw_drv.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ tools/perf/util/parse-events.y |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/s390/cio/vfio_ccw_drv.c
-+++ b/drivers/s390/cio/vfio_ccw_drv.c
-@@ -177,6 +177,7 @@ static int vfio_ccw_sch_event(struct sub
+--- a/tools/perf/util/parse-events.y
++++ b/tools/perf/util/parse-events.y
+@@ -227,11 +227,16 @@ event_def: event_pmu |
+ event_pmu:
+ PE_NAME opt_pmu_config
  {
- 	struct vfio_ccw_private *private = dev_get_drvdata(&sch->dev);
- 	unsigned long flags;
-+	int rc = -EAGAIN;
++	struct parse_events_state *parse_state = _parse_state;
++	struct parse_events_error *error = parse_state->error;
+ 	struct list_head *list, *orig_terms, *terms;
  
- 	spin_lock_irqsave(sch->lock, flags);
- 	if (!device_is_registered(&sch->dev))
-@@ -187,6 +188,7 @@ static int vfio_ccw_sch_event(struct sub
+ 	if (parse_events_copy_term_list($2, &orig_terms))
+ 		YYABORT;
  
- 	if (cio_update_schib(sch)) {
- 		vfio_ccw_fsm_event(private, VFIO_CCW_EVENT_NOT_OPER);
-+		rc = 0;
- 		goto out_unlock;
- 	}
- 
-@@ -195,11 +197,12 @@ static int vfio_ccw_sch_event(struct sub
- 		private->state = private->mdev ? VFIO_CCW_STATE_IDLE :
- 				 VFIO_CCW_STATE_STANDBY;
- 	}
-+	rc = 0;
- 
- out_unlock:
- 	spin_unlock_irqrestore(sch->lock, flags);
- 
--	return 0;
-+	return rc;
- }
- 
- static struct css_device_id vfio_ccw_sch_ids[] = {
++	if (error)
++		error->idx = @1.first_column;
++
+ 	ALLOC_LIST(list);
+ 	if (parse_events_add_pmu(_parse_state, list, $1, $2, false, false)) {
+ 		struct perf_pmu *pmu = NULL;
 
 
