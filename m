@@ -6,37 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47AECC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:12:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90CBBC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:12:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 037D121480
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:12:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 037D121480
+	by mail.kernel.org (Postfix) with ESMTP id 5770921480
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:12:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5770921480
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730086AbeHWLlC (ORCPT
+        id S1730100AbeHWLlF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:41:02 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46000 "EHLO
+        Thu, 23 Aug 2018 07:41:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46014 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729537AbeHWLlB (ORCPT
+        with ESMTP id S1729304AbeHWLlE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:41:01 -0400
+        Thu, 23 Aug 2018 07:41:04 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9FE3AC74;
-        Thu, 23 Aug 2018 08:12:33 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DADEAC7B;
+        Thu, 23 Aug 2018 08:12:36 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.9 124/130] PCI: OF: Fix I/O space page leak
-Date:   Thu, 23 Aug 2018 09:54:00 +0200
-Message-Id: <20180823074934.995162393@linuxfoundation.org>
+        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 091/130] drm/armada: fix colorkey mode property
+Date:   Thu, 23 Aug 2018 09:53:27 +0200
+Message-Id: <20180823074933.075232826@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
 References: <20180823074927.161454870@linuxfoundation.org>
@@ -53,137 +50,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
-commit a5fb9fb023a1435f2b42bccd7f547560f3a21dc3 upstream.
+[ Upstream commit d378859a667edc99e3473704847698cae97ca2b1 ]
 
-When testing the R-Car PCIe driver on the Condor board, if the PCIe PHY
-driver was left disabled, the kernel crashed with this BUG:
+The colorkey mode property was not correctly disabling the colorkeying
+when "disabled" mode was selected.  Arrange for this to work as one
+would expect.
 
-  kernel BUG at lib/ioremap.c:72!
-  Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
-  Modules linked in:
-  CPU: 0 PID: 39 Comm: kworker/0:1 Not tainted 4.17.0-dirty #1092
-  Hardware name: Renesas Condor board based on r8a77980 (DT)
-  Workqueue: events deferred_probe_work_func
-  pstate: 80000005 (Nzcv daif -PAN -UAO)
-  pc : ioremap_page_range+0x370/0x3c8
-  lr : ioremap_page_range+0x40/0x3c8
-  sp : ffff000008da39e0
-  x29: ffff000008da39e0 x28: 00e8000000000f07
-  x27: ffff7dfffee00000 x26: 0140000000000000
-  x25: ffff7dfffef00000 x24: 00000000000fe100
-  x23: ffff80007b906000 x22: ffff000008ab8000
-  x21: ffff000008bb1d58 x20: ffff7dfffef00000
-  x19: ffff800009c30fb8 x18: 0000000000000001
-  x17: 00000000000152d0 x16: 00000000014012d0
-  x15: 0000000000000000 x14: 0720072007200720
-  x13: 0720072007200720 x12: 0720072007200720
-  x11: 0720072007300730 x10: 00000000000000ae
-  x9 : 0000000000000000 x8 : ffff7dffff000000
-  x7 : 0000000000000000 x6 : 0000000000000100
-  x5 : 0000000000000000 x4 : 000000007b906000
-  x3 : ffff80007c61a880 x2 : ffff7dfffeefffff
-  x1 : 0000000040000000 x0 : 00e80000fe100f07
-  Process kworker/0:1 (pid: 39, stack limit = 0x        (ptrval))
-  Call trace:
-   ioremap_page_range+0x370/0x3c8
-   pci_remap_iospace+0x7c/0xac
-   pci_parse_request_of_pci_ranges+0x13c/0x190
-   rcar_pcie_probe+0x4c/0xb04
-   platform_drv_probe+0x50/0xbc
-   driver_probe_device+0x21c/0x308
-   __device_attach_driver+0x98/0xc8
-   bus_for_each_drv+0x54/0x94
-   __device_attach+0xc4/0x12c
-   device_initial_probe+0x10/0x18
-   bus_probe_device+0x90/0x98
-   deferred_probe_work_func+0xb0/0x150
-   process_one_work+0x12c/0x29c
-   worker_thread+0x200/0x3fc
-   kthread+0x108/0x134
-   ret_from_fork+0x10/0x18
-  Code: f9004ba2 54000080 aa0003fb 17ffff48 (d4210000)
-
-It turned out that pci_remap_iospace() wasn't undone when the driver's
-probe failed, and since devm_phy_optional_get() returned -EPROBE_DEFER,
-the probe was retried, finally causing the BUG due to trying to remap
-already remapped pages.
-
-Introduce the devm_pci_remap_iospace() managed API and replace the
-pci_remap_iospace() call with it to fix the bug.
-
-Fixes: dbf9826d5797 ("PCI: generic: Convert to DT resource parsing API")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-[lorenzo.pieralisi@arm.com: split commit/updated the commit log]
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-[Backport just for the new api which other patches need - gregkh]
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/pci/pci.c   |   38 ++++++++++++++++++++++++++++++++++++++
- include/linux/pci.h |    2 ++
- 2 files changed, 40 insertions(+)
+ drivers/gpu/drm/armada/armada_hw.h      |    1 +
+ drivers/gpu/drm/armada/armada_overlay.c |   30 ++++++++++++++++++++++--------
+ 2 files changed, 23 insertions(+), 8 deletions(-)
 
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -3436,6 +3436,44 @@ char * __weak __init pcibios_setup(char
- 	return str;
+--- a/drivers/gpu/drm/armada/armada_hw.h
++++ b/drivers/gpu/drm/armada/armada_hw.h
+@@ -160,6 +160,7 @@ enum {
+ 	CFG_ALPHAM_GRA		= 0x1 << 16,
+ 	CFG_ALPHAM_CFG		= 0x2 << 16,
+ 	CFG_ALPHA_MASK		= 0xff << 8,
++#define CFG_ALPHA(x)		((x) << 8)
+ 	CFG_PIXCMD_MASK		= 0xff,
+ };
+ 
+--- a/drivers/gpu/drm/armada/armada_overlay.c
++++ b/drivers/gpu/drm/armada/armada_overlay.c
+@@ -27,6 +27,7 @@ struct armada_ovl_plane_properties {
+ 	uint16_t contrast;
+ 	uint16_t saturation;
+ 	uint32_t colorkey_mode;
++	uint32_t colorkey_enable;
+ };
+ 
+ struct armada_ovl_plane {
+@@ -62,11 +63,13 @@ armada_ovl_update_attr(struct armada_ovl
+ 	writel_relaxed(0x00002000, dcrtc->base + LCD_SPU_CBSH_HUE);
+ 
+ 	spin_lock_irq(&dcrtc->irq_lock);
+-	armada_updatel(prop->colorkey_mode | CFG_ALPHAM_GRA,
+-		     CFG_CKMODE_MASK | CFG_ALPHAM_MASK | CFG_ALPHA_MASK,
+-		     dcrtc->base + LCD_SPU_DMA_CTRL1);
+-
+-	armada_updatel(ADV_GRACOLORKEY, 0, dcrtc->base + LCD_SPU_ADV_REG);
++	armada_updatel(prop->colorkey_mode,
++		       CFG_CKMODE_MASK | CFG_ALPHAM_MASK | CFG_ALPHA_MASK,
++		       dcrtc->base + LCD_SPU_DMA_CTRL1);
++	if (dcrtc->variant->has_spu_adv_reg)
++		armada_updatel(prop->colorkey_enable,
++			       ADV_GRACOLORKEY | ADV_VIDCOLORKEY,
++			       dcrtc->base + LCD_SPU_ADV_REG);
+ 	spin_unlock_irq(&dcrtc->irq_lock);
  }
  
-+static void devm_pci_unmap_iospace(struct device *dev, void *ptr)
-+{
-+	struct resource **res = ptr;
-+
-+	pci_unmap_iospace(*res);
-+}
-+
-+/**
-+ * devm_pci_remap_iospace - Managed pci_remap_iospace()
-+ * @dev: Generic device to remap IO address for
-+ * @res: Resource describing the I/O space
-+ * @phys_addr: physical address of range to be mapped
-+ *
-+ * Managed pci_remap_iospace().  Map is automatically unmapped on driver
-+ * detach.
-+ */
-+int devm_pci_remap_iospace(struct device *dev, const struct resource *res,
-+			   phys_addr_t phys_addr)
-+{
-+	const struct resource **ptr;
-+	int error;
-+
-+	ptr = devres_alloc(devm_pci_unmap_iospace, sizeof(*ptr), GFP_KERNEL);
-+	if (!ptr)
-+		return -ENOMEM;
-+
-+	error = pci_remap_iospace(res, phys_addr);
-+	if (error) {
-+		devres_free(ptr);
-+	} else	{
-+		*ptr = res;
-+		devres_add(dev, ptr);
-+	}
-+
-+	return error;
-+}
-+EXPORT_SYMBOL(devm_pci_remap_iospace);
-+
- /**
-  * pcibios_set_master - enable PCI bus-mastering for device dev
-  * @dev: the PCI device to enable
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -1190,6 +1190,8 @@ int pci_register_io_range(phys_addr_t ad
- unsigned long pci_address_to_pio(phys_addr_t addr);
- phys_addr_t pci_pio_to_address(unsigned long pio);
- int pci_remap_iospace(const struct resource *res, phys_addr_t phys_addr);
-+int devm_pci_remap_iospace(struct device *dev, const struct resource *res,
-+			   phys_addr_t phys_addr);
- void pci_unmap_iospace(struct resource *res);
- 
- static inline pci_bus_addr_t pci_bus_address(struct pci_dev *pdev, int bar)
+@@ -340,8 +343,17 @@ static int armada_ovl_plane_set_property
+ 		dplane->prop.colorkey_vb |= K2B(val);
+ 		update_attr = true;
+ 	} else if (property == priv->colorkey_mode_prop) {
+-		dplane->prop.colorkey_mode &= ~CFG_CKMODE_MASK;
+-		dplane->prop.colorkey_mode |= CFG_CKMODE(val);
++		if (val == CKMODE_DISABLE) {
++			dplane->prop.colorkey_mode =
++				CFG_CKMODE(CKMODE_DISABLE) |
++				CFG_ALPHAM_CFG | CFG_ALPHA(255);
++			dplane->prop.colorkey_enable = 0;
++		} else {
++			dplane->prop.colorkey_mode =
++				CFG_CKMODE(val) |
++				CFG_ALPHAM_GRA | CFG_ALPHA(0);
++			dplane->prop.colorkey_enable = ADV_GRACOLORKEY;
++		}
+ 		update_attr = true;
+ 	} else if (property == priv->brightness_prop) {
+ 		dplane->prop.brightness = val - 256;
+@@ -470,7 +482,9 @@ int armada_overlay_plane_create(struct d
+ 	dplane->prop.colorkey_yr = 0xfefefe00;
+ 	dplane->prop.colorkey_ug = 0x01010100;
+ 	dplane->prop.colorkey_vb = 0x01010100;
+-	dplane->prop.colorkey_mode = CFG_CKMODE(CKMODE_RGB);
++	dplane->prop.colorkey_mode = CFG_CKMODE(CKMODE_RGB) |
++				     CFG_ALPHAM_GRA | CFG_ALPHA(0);
++	dplane->prop.colorkey_enable = ADV_GRACOLORKEY;
+ 	dplane->prop.brightness = 0;
+ 	dplane->prop.contrast = 0x4000;
+ 	dplane->prop.saturation = 0x4000;
 
 
