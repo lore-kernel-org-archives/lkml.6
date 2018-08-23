@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2AD2C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:50:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2952EC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:50:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7794520839
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:50:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7794520839
+	by mail.kernel.org (Postfix) with ESMTP id E24A620839
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:50:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E24A620839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387556AbeHWMTT (ORCPT
+        id S1733088AbeHWMT2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:19:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51432 "EHLO
+        Thu, 23 Aug 2018 08:19:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51454 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728517AbeHWMTS (ORCPT
+        with ESMTP id S1728517AbeHWMT1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:19:18 -0400
+        Thu, 23 Aug 2018 08:19:27 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 294E0BE0;
-        Thu, 23 Aug 2018 08:50:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1AC70BE0;
+        Thu, 23 Aug 2018 08:50:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Vinod Koul <vkoul@kernel.org>,
+        stable@vger.kernel.org, Evan Quan <evan.quan@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 137/324] dmaengine: k3dma: Off by one in k3_of_dma_simple_xlate()
-Date:   Thu, 23 Aug 2018 09:53:23 +0200
-Message-Id: <20180823075002.813174843@linuxfoundation.org>
+Subject: [PATCH 4.17 139/324] drm/amd/powerplay: correct vega12 thermal support as true
+Date:   Thu, 23 Aug 2018 09:53:25 +0200
+Message-Id: <20180823075002.898914087@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -51,32 +51,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Evan Quan <evan.quan@amd.com>
 
-[ Upstream commit c4c2b7644cc9a41f17a8cc8904efe3f66ae4c7ed ]
+[ Upstream commit 363a3d3fb7d478d7dd49b8c6294436b8ba5984cc ]
 
-The d->chans[] array has d->dma_requests elements so the > should be
->= here.
+Thermal support is enabled on vega12.
 
-Fixes: 8e6152bc660e ("dmaengine: Add hisilicon k3 DMA engine driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Evan Quan <evan.quan@amd.com>
+Acked-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/dma/k3dma.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/amd/powerplay/hwmgr/vega12_hwmgr.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/dma/k3dma.c
-+++ b/drivers/dma/k3dma.c
-@@ -794,7 +794,7 @@ static struct dma_chan *k3_of_dma_simple
- 	struct k3_dma_dev *d = ofdma->of_dma_data;
- 	unsigned int request = dma_spec->args[0];
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/vega12_hwmgr.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/vega12_hwmgr.c
+@@ -82,6 +82,7 @@ static void vega12_set_default_registry_
  
--	if (request > d->dma_requests)
-+	if (request >= d->dma_requests)
- 		return NULL;
+ 	data->registry_data.disallowed_features = 0x0;
+ 	data->registry_data.od_state_in_dc_support = 0;
++	data->registry_data.thermal_support = 1;
+ 	data->registry_data.skip_baco_hardware = 0;
  
- 	return dma_get_slave_channel(&(d->chans[request].vc.chan));
+ 	data->registry_data.log_avfs_param = 0;
 
 
