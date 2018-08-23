@@ -2,106 +2,97 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA0B3C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 21:27:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5243C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 21:27:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73D712150F
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 21:27:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73D712150F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 837BA21557
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 21:27:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 837BA21557
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728150AbeHXA7S (ORCPT
+        id S1728206AbeHXA70 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 20:59:18 -0400
-Received: from laurent.telenet-ops.be ([195.130.137.89]:45984 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727829AbeHXA7S (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 20:59:18 -0400
-Received: from ramsan.of.borg ([84.194.111.163])
-        by laurent.telenet-ops.be with bizsmtp
-        id SlTf1y00N3XaVaC01lTf2a; Thu, 23 Aug 2018 23:27:42 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtp (Exim 4.86_2)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1fsx8l-0005ig-Im; Thu, 23 Aug 2018 23:27:39 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1fsx8l-0004o2-Gx; Thu, 23 Aug 2018 23:27:39 +0200
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-To:     Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Stanislaw Gruszka <sgruszka@redhat.com>,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH] mt76: Fix comparisons with invalid hardware key index
-Date:   Thu, 23 Aug 2018 23:27:38 +0200
-Message-Id: <20180823212738.18431-1-geert@linux-m68k.org>
-X-Mailer: git-send-email 2.17.1
+        Thu, 23 Aug 2018 20:59:26 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:50640 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727829AbeHXA7Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 20:59:25 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 1C2B920750; Thu, 23 Aug 2018 23:27:49 +0200 (CEST)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id C18B3204AE;
+        Thu, 23 Aug 2018 23:27:48 +0200 (CEST)
+Date:   Thu, 23 Aug 2018 23:27:47 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Harvey Hunt <harveyhuntnexus@gmail.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH] mtd: rawnand: jz4780: use struct_size() in
+ devm_kzalloc()
+Message-ID: <20180823232747.072af43d@bbrezillon>
+In-Reply-To: <20180823193332.GA31602@embeddedor.com>
+References: <20180823193332.GA31602@embeddedor.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With gcc 4.1.2:
+On Thu, 23 Aug 2018 14:33:32 -0500
+"Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
 
-    drivers/net/wireless/mediatek/mt76/mt76x0/tx.c: In function ‘mt76x0_tx’:
-    drivers/net/wireless/mediatek/mt76/mt76x0/tx.c:169: warning: comparison is always true due to limited range of data type
-    drivers/net/wireless/mediatek/mt76/mt76x2_tx_common.c: In function ‘mt76x2_tx’:
-    drivers/net/wireless/mediatek/mt76/mt76x2_tx_common.c:35: warning: comparison is always true due to limited range of data type
+> One of the more common cases of allocation size calculations is finding
+> the size of a structure that has a zero-sized array at the end, along
+> with memory for some number of elements for that array. For example:
+> 
+> struct foo {
+> 	int stuff;
+>         void *entry[];
+> };
+> 
+> instance = devm_kzalloc(dev, sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
+> 
+> Instead of leaving these open-coded and prone to type mistakes, we can
+> now use the new struct_size() helper:
+> 
+> instance = devm_kzalloc(dev, struct_size(instance, entry, count), GFP_KERNEL);
 
-While assigning -1 to a u8 works fine, comparing with -1 does not work
-as expected.
+Oh, I didn't know about that one. That's nice!
 
-Fix this by comparing with 0xff, like is already done in some other
-places.
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
----
-Compile-tested only.
----
- drivers/net/wireless/mediatek/mt76/mt76x0/tx.c        | 2 +-
- drivers/net/wireless/mediatek/mt76/mt76x2_tx_common.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt76x0/tx.c b/drivers/net/wireless/mediatek/mt76/mt76x0/tx.c
-index 751b49c28ae53f0f..c45d05d5aab1d207 100644
---- a/drivers/net/wireless/mediatek/mt76/mt76x0/tx.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt76x0/tx.c
-@@ -166,7 +166,7 @@ void mt76x0_tx(struct ieee80211_hw *hw, struct ieee80211_tx_control *control,
- 	if (sta) {
- 		msta = (struct mt76_sta *) sta->drv_priv;
- 		wcid = &msta->wcid;
--	} else if (vif && (!info->control.hw_key && wcid->hw_key_idx != -1)) {
-+	} else if (vif && (!info->control.hw_key && wcid->hw_key_idx != 0xff)) {
- 		struct mt76_vif *mvif = (struct mt76_vif *)vif->drv_priv;
- 
- 		wcid = &mvif->group_wcid;
-diff --git a/drivers/net/wireless/mediatek/mt76/mt76x2_tx_common.c b/drivers/net/wireless/mediatek/mt76/mt76x2_tx_common.c
-index 36afb166fa3ffd29..c0ca0df84ed8b86a 100644
---- a/drivers/net/wireless/mediatek/mt76/mt76x2_tx_common.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt76x2_tx_common.c
-@@ -32,7 +32,7 @@ void mt76x2_tx(struct ieee80211_hw *hw, struct ieee80211_tx_control *control,
- 		msta = (struct mt76x2_sta *)control->sta->drv_priv;
- 		wcid = &msta->wcid;
- 		/* sw encrypted frames */
--		if (!info->control.hw_key && wcid->hw_key_idx != -1)
-+		if (!info->control.hw_key && wcid->hw_key_idx != 0xff)
- 			control->sta = NULL;
- 	}
- 
--- 
-2.17.1
+> ---
+>  drivers/mtd/nand/raw/jz4780_nand.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mtd/nand/raw/jz4780_nand.c b/drivers/mtd/nand/raw/jz4780_nand.c
+> index db4fa60..ac62395 100644
+> --- a/drivers/mtd/nand/raw/jz4780_nand.c
+> +++ b/drivers/mtd/nand/raw/jz4780_nand.c
+> @@ -352,7 +352,7 @@ static int jz4780_nand_probe(struct platform_device *pdev)
+>  		return -ENODEV;
+>  	}
+>  
+> -	nfc = devm_kzalloc(dev, sizeof(*nfc) + (sizeof(nfc->cs[0]) * num_banks), GFP_KERNEL);
+> +	nfc = devm_kzalloc(dev, struct_size(nfc, cs, num_banks), GFP_KERNEL);
+>  	if (!nfc)
+>  		return -ENOMEM;
+>  
 
