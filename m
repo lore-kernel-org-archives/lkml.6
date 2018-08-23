@@ -6,42 +6,49 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03187C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 21:23:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AF27C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 21:24:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B36892150F
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 21:23:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B36892150F
+	by mail.kernel.org (Postfix) with ESMTP id E3AC92150F
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 21:24:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3AC92150F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728116AbeHXAyn (ORCPT
+        id S1728131AbeHXA4M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 20:54:43 -0400
-Received: from michel.telenet-ops.be ([195.130.137.88]:43704 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727153AbeHXAym (ORCPT
+        Thu, 23 Aug 2018 20:56:12 -0400
+Received: from albert.telenet-ops.be ([195.130.137.90]:53168 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727580AbeHXA4M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 20:54:42 -0400
+        Thu, 23 Aug 2018 20:56:12 -0400
 Received: from ramsan.of.borg ([84.194.111.163])
-        by michel.telenet-ops.be with bizsmtp
-        id SlP71y00P3XaVaC06lP7gF; Thu, 23 Aug 2018 23:23:07 +0200
+        by albert.telenet-ops.be with bizsmtp
+        id SlQd1y0013XaVaC06lQdPb; Thu, 23 Aug 2018 23:24:37 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.86_2)
         (envelope-from <geert@linux-m68k.org>)
-        id 1fsx4N-0005hi-8g; Thu, 23 Aug 2018 23:23:07 +0200
+        id 1fsx5p-0005i0-0E; Thu, 23 Aug 2018 23:24:37 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1fsx4N-0004T9-6y; Thu, 23 Aug 2018 23:23:07 +0200
+        id 1fsx5o-0004Xu-Um; Thu, 23 Aug 2018 23:24:36 +0200
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-To:     Tejun Heo <tj@kernel.org>, Jason Yan <yanaijie@huawei.com>,
-        "Signed-off-by : Martin K . Petersen" <martin.petersen@oracle.com>
-Cc:     linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Mathieu Othacehe <m.othacehe@gmail.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH] libata: Add missing newline at end of file
-Date:   Thu, 23 Aug 2018 23:23:06 +0200
-Message-Id: <20180823212306.17134-1-geert@linux-m68k.org>
+Subject: [PATCH] iio: light: isl29501: Simplify code to kill compiler warning
+Date:   Thu, 23 Aug 2018 23:24:35 +0200
+Message-Id: <20180823212436.17423-1-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -49,25 +56,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 With gcc 4.1.2:
 
-    drivers/ata/libata-core.c:7396:33: warning: no newline at end of file
+    drivers/iio/proximity/isl29501.c: In function ‘isl29501_register_write’:
+    drivers/iio/proximity/isl29501.c:235: warning: ‘msb’ may be used uninitialized in this function
 
-Fixes: 2fa4a32613c9182b ("scsi: libsas: dynamically allocate and free ata host")
+While this is a false positive, it can easily be avoided by removing the
+"msb" intermediate variable.
+Remove the "lsb" intermediate variable for consistency.
+
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
- drivers/ata/libata-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Compile-tested only.
+---
+ drivers/iio/proximity/isl29501.c | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
-index 984b37647b2f025c..c26dba0ee3ce598f 100644
---- a/drivers/ata/libata-core.c
-+++ b/drivers/ata/libata-core.c
-@@ -7393,4 +7393,4 @@ EXPORT_SYMBOL_GPL(ata_cable_unknown);
- EXPORT_SYMBOL_GPL(ata_cable_ignore);
- EXPORT_SYMBOL_GPL(ata_cable_sata);
- EXPORT_SYMBOL_GPL(ata_host_get);
--EXPORT_SYMBOL_GPL(ata_host_put);
-\ No newline at end of file
-+EXPORT_SYMBOL_GPL(ata_host_put);
+diff --git a/drivers/iio/proximity/isl29501.c b/drivers/iio/proximity/isl29501.c
+index e5e94540f404dd2c..5ae549075b27c50d 100644
+--- a/drivers/iio/proximity/isl29501.c
++++ b/drivers/iio/proximity/isl29501.c
+@@ -232,7 +232,6 @@ static u32 isl29501_register_write(struct isl29501_private *isl29501,
+ 				   u32 value)
+ {
+ 	const struct isl29501_register_desc *reg = &isl29501_registers[name];
+-	u8 msb, lsb;
+ 	int ret;
+ 
+ 	if (!reg->msb && value > U8_MAX)
+@@ -241,22 +240,15 @@ static u32 isl29501_register_write(struct isl29501_private *isl29501,
+ 	if (value > U16_MAX)
+ 		return -ERANGE;
+ 
+-	if (!reg->msb) {
+-		lsb = value & 0xFF;
+-	} else {
+-		msb = (value >> 8) & 0xFF;
+-		lsb = value & 0xFF;
+-	}
+-
+ 	mutex_lock(&isl29501->lock);
+ 	if (reg->msb) {
+ 		ret = i2c_smbus_write_byte_data(isl29501->client,
+-						reg->msb, msb);
++						reg->msb, value >> 8);
+ 		if (ret < 0)
+ 			goto err;
+ 	}
+ 
+-	ret = i2c_smbus_write_byte_data(isl29501->client, reg->lsb, lsb);
++	ret = i2c_smbus_write_byte_data(isl29501->client, reg->lsb, value);
+ 
+ err:
+ 	mutex_unlock(&isl29501->lock);
 -- 
 2.17.1
 
