@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26D65C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:57:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FE2EC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:57:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E02A521473
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:57:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E02A521473
+	by mail.kernel.org (Postfix) with ESMTP id 561D321473
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:57:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 561D321473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727636AbeHWL0J (ORCPT
+        id S1727673AbeHWL0N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:26:09 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41650 "EHLO
+        Thu, 23 Aug 2018 07:26:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41658 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726995AbeHWL0J (ORCPT
+        with ESMTP id S1726995AbeHWL0M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:26:09 -0400
+        Thu, 23 Aug 2018 07:26:12 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 96C5B9D2;
-        Thu, 23 Aug 2018 07:57:46 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C1AF89D2;
+        Thu, 23 Aug 2018 07:57:49 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <james.morris@microsoft.com>,
+        stable@vger.kernel.org, AMG Zollner Robert <robert@cloudmedia.eu>,
+        David Ahern <dsa@cumulusnetworks.com>,
+        Casey Leedom <leedom@chelsio.com>,
+        Ganesh Goudar <ganeshgr@chelsio.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 22/79] Smack: Mark inode instant in smack_task_to_inode
-Date:   Thu, 23 Aug 2018 09:52:58 +0200
-Message-Id: <20180823074920.150267602@linuxfoundation.org>
+Subject: [PATCH 4.4 23/79] cxgb4: when disabling dcb set txq dcb priority to 0
+Date:   Thu, 23 Aug 2018 09:52:59 +0200
+Message-Id: <20180823074920.206148789@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074918.641878835@linuxfoundation.org>
 References: <20180823074918.641878835@linuxfoundation.org>
@@ -51,34 +54,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Casey Schaufler <casey@schaufler-ca.com>
+From: Ganesh Goudar <ganeshgr@chelsio.com>
 
-[ Upstream commit 7b4e88434c4e7982fb053c49657e1c8bbb8692d9 ]
+[ Upstream commit 5ce36338a30f9814fc4824f9fe6c20cd83d872c7 ]
 
-Smack: Mark inode instant in smack_task_to_inode
+When we are disabling DCB, store "0" in txq->dcb_prio
+since that's used for future TX Work Request "OVLAN_IDX"
+values. Setting non zero priority upon disabling DCB
+would halt the traffic.
 
-/proc clean-up in commit 1bbc55131e59bd099fdc568d3aa0b42634dbd188
-resulted in smack_task_to_inode() being called before smack_d_instantiate.
-This resulted in the smk_inode value being ignored, even while present
-for files in /proc/self. Marking the inode as instant here fixes that.
-
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-Signed-off-by: James Morris <james.morris@microsoft.com>
+Reported-by: AMG Zollner Robert <robert@cloudmedia.eu>
+CC: David Ahern <dsa@cumulusnetworks.com>
+Signed-off-by: Casey Leedom <leedom@chelsio.com>
+Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- security/smack/smack_lsm.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -2260,6 +2260,7 @@ static void smack_task_to_inode(struct t
- 	struct smack_known *skp = smk_of_task_struct(p);
- 
- 	isp->smk_inode = skp;
-+	isp->smk_flags |= SMK_INODE_INSTANT;
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
+@@ -338,7 +338,7 @@ static void dcb_tx_queue_prio_enable(str
+ 				"Can't %s DCB Priority on port %d, TX Queue %d: err=%d\n",
+ 				enable ? "set" : "unset", pi->port_id, i, -err);
+ 		else
+-			txq->dcb_prio = value;
++			txq->dcb_prio = enable ? value : 0;
+ 	}
  }
- 
- /*
+ #endif /* CONFIG_CHELSIO_T4_DCB */
 
 
