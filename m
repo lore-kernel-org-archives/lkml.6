@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90CBBC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:12:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14374C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:12:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5770921480
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:12:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5770921480
+	by mail.kernel.org (Postfix) with ESMTP id C9B3A21480
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:12:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9B3A21480
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730100AbeHWLlF (ORCPT
+        id S1730110AbeHWLlI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:41:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46014 "EHLO
+        Thu, 23 Aug 2018 07:41:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46022 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729304AbeHWLlE (ORCPT
+        with ESMTP id S1729304AbeHWLlI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:41:04 -0400
+        Thu, 23 Aug 2018 07:41:08 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DADEAC7B;
-        Thu, 23 Aug 2018 08:12:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9B2DEC74;
+        Thu, 23 Aug 2018 08:12:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
+        stable@vger.kernel.org, Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 091/130] drm/armada: fix colorkey mode property
-Date:   Thu, 23 Aug 2018 09:53:27 +0200
-Message-Id: <20180823074933.075232826@linuxfoundation.org>
+Subject: [PATCH 4.9 092/130] netfilter: nf_conntrack: Fix possible possible crash on module loading.
+Date:   Thu, 23 Aug 2018 09:53:28 +0200
+Message-Id: <20180823074933.141143488@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
 References: <20180823074927.161454870@linuxfoundation.org>
@@ -50,91 +51,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+From: Andrey Ryabinin <aryabinin@virtuozzo.com>
 
-[ Upstream commit d378859a667edc99e3473704847698cae97ca2b1 ]
+[ Upstream commit 2045cdfa1b40d66f126f3fd05604fc7c754f0022 ]
 
-The colorkey mode property was not correctly disabling the colorkeying
-when "disabled" mode was selected.  Arrange for this to work as one
-would expect.
+Loading the nf_conntrack module with doubled hashsize parameter, i.e.
+	  modprobe nf_conntrack hashsize=12345 hashsize=12345
+causes NULL-ptr deref.
 
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+If 'hashsize' specified twice, the nf_conntrack_set_hashsize() function
+will be called also twice.
+The first nf_conntrack_set_hashsize() call will set the
+'nf_conntrack_htable_size' variable:
+
+	nf_conntrack_set_hashsize()
+		...
+		/* On boot, we can set this without any fancy locking. */
+		if (!nf_conntrack_htable_size)
+			return param_set_uint(val, kp);
+
+But on the second invocation, the nf_conntrack_htable_size is already set,
+so the nf_conntrack_set_hashsize() will take a different path and call
+the nf_conntrack_hash_resize() function. Which will crash on the attempt
+to dereference 'nf_conntrack_hash' pointer:
+
+	BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+	RIP: 0010:nf_conntrack_hash_resize+0x255/0x490 [nf_conntrack]
+	Call Trace:
+	 nf_conntrack_set_hashsize+0xcd/0x100 [nf_conntrack]
+	 parse_args+0x1f9/0x5a0
+	 load_module+0x1281/0x1a50
+	 __se_sys_finit_module+0xbe/0xf0
+	 do_syscall_64+0x7c/0x390
+	 entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Fix this, by checking !nf_conntrack_hash instead of
+!nf_conntrack_htable_size. nf_conntrack_hash will be initialized only
+after the module loaded, so the second invocation of the
+nf_conntrack_set_hashsize() won't crash, it will just reinitialize
+nf_conntrack_htable_size again.
+
+Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/armada/armada_hw.h      |    1 +
- drivers/gpu/drm/armada/armada_overlay.c |   30 ++++++++++++++++++++++--------
- 2 files changed, 23 insertions(+), 8 deletions(-)
+ net/netfilter/nf_conntrack_core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/armada/armada_hw.h
-+++ b/drivers/gpu/drm/armada/armada_hw.h
-@@ -160,6 +160,7 @@ enum {
- 	CFG_ALPHAM_GRA		= 0x1 << 16,
- 	CFG_ALPHAM_CFG		= 0x2 << 16,
- 	CFG_ALPHA_MASK		= 0xff << 8,
-+#define CFG_ALPHA(x)		((x) << 8)
- 	CFG_PIXCMD_MASK		= 0xff,
- };
+--- a/net/netfilter/nf_conntrack_core.c
++++ b/net/netfilter/nf_conntrack_core.c
+@@ -1822,7 +1822,7 @@ int nf_conntrack_set_hashsize(const char
+ 		return -EOPNOTSUPP;
  
---- a/drivers/gpu/drm/armada/armada_overlay.c
-+++ b/drivers/gpu/drm/armada/armada_overlay.c
-@@ -27,6 +27,7 @@ struct armada_ovl_plane_properties {
- 	uint16_t contrast;
- 	uint16_t saturation;
- 	uint32_t colorkey_mode;
-+	uint32_t colorkey_enable;
- };
+ 	/* On boot, we can set this without any fancy locking. */
+-	if (!nf_conntrack_htable_size)
++	if (!nf_conntrack_hash)
+ 		return param_set_uint(val, kp);
  
- struct armada_ovl_plane {
-@@ -62,11 +63,13 @@ armada_ovl_update_attr(struct armada_ovl
- 	writel_relaxed(0x00002000, dcrtc->base + LCD_SPU_CBSH_HUE);
- 
- 	spin_lock_irq(&dcrtc->irq_lock);
--	armada_updatel(prop->colorkey_mode | CFG_ALPHAM_GRA,
--		     CFG_CKMODE_MASK | CFG_ALPHAM_MASK | CFG_ALPHA_MASK,
--		     dcrtc->base + LCD_SPU_DMA_CTRL1);
--
--	armada_updatel(ADV_GRACOLORKEY, 0, dcrtc->base + LCD_SPU_ADV_REG);
-+	armada_updatel(prop->colorkey_mode,
-+		       CFG_CKMODE_MASK | CFG_ALPHAM_MASK | CFG_ALPHA_MASK,
-+		       dcrtc->base + LCD_SPU_DMA_CTRL1);
-+	if (dcrtc->variant->has_spu_adv_reg)
-+		armada_updatel(prop->colorkey_enable,
-+			       ADV_GRACOLORKEY | ADV_VIDCOLORKEY,
-+			       dcrtc->base + LCD_SPU_ADV_REG);
- 	spin_unlock_irq(&dcrtc->irq_lock);
- }
- 
-@@ -340,8 +343,17 @@ static int armada_ovl_plane_set_property
- 		dplane->prop.colorkey_vb |= K2B(val);
- 		update_attr = true;
- 	} else if (property == priv->colorkey_mode_prop) {
--		dplane->prop.colorkey_mode &= ~CFG_CKMODE_MASK;
--		dplane->prop.colorkey_mode |= CFG_CKMODE(val);
-+		if (val == CKMODE_DISABLE) {
-+			dplane->prop.colorkey_mode =
-+				CFG_CKMODE(CKMODE_DISABLE) |
-+				CFG_ALPHAM_CFG | CFG_ALPHA(255);
-+			dplane->prop.colorkey_enable = 0;
-+		} else {
-+			dplane->prop.colorkey_mode =
-+				CFG_CKMODE(val) |
-+				CFG_ALPHAM_GRA | CFG_ALPHA(0);
-+			dplane->prop.colorkey_enable = ADV_GRACOLORKEY;
-+		}
- 		update_attr = true;
- 	} else if (property == priv->brightness_prop) {
- 		dplane->prop.brightness = val - 256;
-@@ -470,7 +482,9 @@ int armada_overlay_plane_create(struct d
- 	dplane->prop.colorkey_yr = 0xfefefe00;
- 	dplane->prop.colorkey_ug = 0x01010100;
- 	dplane->prop.colorkey_vb = 0x01010100;
--	dplane->prop.colorkey_mode = CFG_CKMODE(CKMODE_RGB);
-+	dplane->prop.colorkey_mode = CFG_CKMODE(CKMODE_RGB) |
-+				     CFG_ALPHAM_GRA | CFG_ALPHA(0);
-+	dplane->prop.colorkey_enable = ADV_GRACOLORKEY;
- 	dplane->prop.brightness = 0;
- 	dplane->prop.contrast = 0x4000;
- 	dplane->prop.saturation = 0x4000;
+ 	rc = kstrtouint(val, 0, &hashsize);
 
 
