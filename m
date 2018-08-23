@@ -2,160 +2,176 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2996C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:51:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FBA7C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:54:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C667208FE
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:51:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gag7AeaW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C667208FE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id CB45120BF2
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:54:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB45120BF2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727055AbeHWLTX (ORCPT
+        id S1727045AbeHWLWg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:19:23 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:45774 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726451AbeHWLTW (ORCPT
+        Thu, 23 Aug 2018 07:22:36 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40350 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726451AbeHWLWg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:19:22 -0400
-Received: by mail-lf1-f66.google.com with SMTP id r4-v6so3345507lff.12;
-        Thu, 23 Aug 2018 00:51:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=q1blHs6xvSfPEQnIkNyNzZe+1jThaz+g4aVgetf+Vjc=;
-        b=gag7AeaW8aXJU0XibmPYE/i+/uu1cNq2WUrGC9ysnJpoqrefdvbAjDYxamQXqmlO8S
-         UCJv6BXH1Lw8RCqatSkeg6wNrL5TST3a3pb17sXLPRxUO04yhLUYGlRvNoVnpXMv2w2W
-         cnV6qtCEnf2g//X2ukEJEXdZHjc/4O/XeAKCcRvsquSdgtm5/DZYkw/wCYhbaTcaG7PU
-         oLxyz30MoKa48x7y0RmEb3EWLB/yb3rDNFCzZqOENLm05BnUI5t36FigQDZj8Aoev+sz
-         C1h6elqezg1N242NiSKfIgfGpnKn4Txd7e+PSIqBavUj9FXNa60WdbhGuAyg8KvnYWU/
-         pB3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=q1blHs6xvSfPEQnIkNyNzZe+1jThaz+g4aVgetf+Vjc=;
-        b=lpNY2GfiMQoq9fMumZIU3gD1RinaR96F1Nc/XJDONQK4EZm8rPIGVpMs9qfV4E2dwb
-         HtoRrawBxkWTH1S3XqIeMwEr/3XRy7yXcid0qyMwtqaCqaKv40j9ddyUMAQH/uYPQhXg
-         v8iPuWUVG9B2g2lEOzE17zOTXs3U1c/93BljbqU6X2NfNaxMHaK0hfYXs2cIi6Nhqphi
-         FkDJ3MBX9ulkbi0e0hRvCbARAb3ENOD4Zwme20FjbWx2lhERSM4SUlRCL2VI1r12dQN5
-         4rHMv7hwl/Pq9F5bHwKI+uU0qSXxeRFJSxAUCeqNVcLZWYXmLfhc+oEenxdN1WXPUR8e
-         Ju5g==
-X-Gm-Message-State: AOUpUlGgqzGoHi5jC7nqaqCU4vWZnXAxCV46BV0IIqHt6Z0ZNJn4XKs0
-        x0kFevO+GnT8R7mb8jEPcbo=
-X-Google-Smtp-Source: AA+uWPydz6DcRelq6B74wlKpCj/DUMNP6MVfRRgR4W3IqUMihLhePr94owI9z5Hoyd5MeJV5Y+jjRA==
-X-Received: by 2002:a19:870b:: with SMTP id j11-v6mr13417676lfd.4.1535010660242;
-        Thu, 23 Aug 2018 00:51:00 -0700 (PDT)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id w75-v6sm714580lfk.68.2018.08.23.00.50.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 Aug 2018 00:50:59 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1fskOQ-0007FM-Rt; Thu, 23 Aug 2018 09:50:58 +0200
-Date:   Thu, 23 Aug 2018 09:50:58 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Dave Gerlach <d-gerlach@ti.com>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Nishanth Menon <nm@ti.com>, linux-pm@vger.kernel.org,
-        Tony Lindgren <tony@atomide.com>, Keerthy J <j-keerthy@ti.com>,
-        linux-kernel@vger.kernel.org, Tero Kristo <t-kristo@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] cpufreq: ti-cpufreq: Only register platform_device when
- supported
-Message-ID: <20180823075058.GR14967@localhost>
-References: <20180823024432.7000-1-d-gerlach@ti.com>
+        Thu, 23 Aug 2018 07:22:36 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7N7pQFa045464
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 03:54:14 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2m1r06jc5r-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 03:54:13 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Thu, 23 Aug 2018 08:54:12 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 23 Aug 2018 08:54:09 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7N7s7iG36110572
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 23 Aug 2018 07:54:07 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E5E534C04E;
+        Thu, 23 Aug 2018 10:54:08 +0100 (BST)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8207D4C040;
+        Thu, 23 Aug 2018 10:54:08 +0100 (BST)
+Received: from [9.152.224.92] (unknown [9.152.224.92])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 23 Aug 2018 10:54:08 +0100 (BST)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v2 3/5] KVM: s390: vsie: Allow support for a host without
+ AP
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, cohuck@redhat.com,
+        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+        frankja@linux.ibm.com, akrowiak@linux.ibm.com,
+        borntraeger@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com
+References: <1534956717-14087-1-git-send-email-pmorel@linux.ibm.com>
+ <1534956717-14087-4-git-send-email-pmorel@linux.ibm.com>
+ <beb38451-8ec9-59c7-2e51-f9a065b769bf@redhat.com>
+ <b95f7004-b2b8-73f8-50d7-f091769e0f24@linux.ibm.com>
+ <b58bbff7-c28f-9111-d804-d2107b351876@redhat.com>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+Date:   Thu, 23 Aug 2018 09:54:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180823024432.7000-1-d-gerlach@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <b58bbff7-c28f-9111-d804-d2107b351876@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18082307-4275-0000-0000-000002AE0891
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082307-4276-0000-0000-000037B71056
+Message-Id: <bca510c3-ca38-4c2b-9c25-2eca8e03d16a@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-23_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808230083
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 22, 2018 at 09:44:32PM -0500, Dave Gerlach wrote:
-> Currently the ti-cpufreq driver blindly registers a 'ti-cpufreq' to force
-> the driver to probe on any platforms where the driver is built in.
-> However, this should only happen on platforms that actually can make use
-> of the driver. There is already functionality in place to match the
-> SoC compatible so let's factor this out into a separate call and
-> make sure we find a match before creating the ti-cpufreq driver device.
+On 23/08/2018 09:15, David Hildenbrand wrote:
+> On 23.08.2018 08:44, Pierre Morel wrote:
+>> On 22/08/2018 19:06, David Hildenbrand wrote:
+>>> On 22.08.2018 18:51, Pierre Morel wrote:
+>>>> Currently the CRYCB format used in the host for the
+>>>> shadowed CRYCB is FORMAT2 while no check is done if
+>>>> AP instructions are supported in the host.
+>>>>
+>>>> We better use the format the host calculated for the
+>>>> guest 1 as the host already tested it against its
+>>>> facility set.
+>>>>
+>>>> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+>>>> ---
+>>>>    arch/s390/kvm/vsie.c | 5 +++--
+>>>>    1 file changed, 3 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
+>>>> index 56a9d47..0b12916 100644
+>>>> --- a/arch/s390/kvm/vsie.c
+>>>> +++ b/arch/s390/kvm/vsie.c
+>>>> @@ -154,6 +154,7 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
+>>>>    	const u32 crycb_addr = crycbd_o & 0x7ffffff8U;
+>>>>    	unsigned long *b1, *b2;
+>>>>    	u8 ecb3_flags;
+>>>> +	unsigned long g1_fmt;
+>>>>    
+>>>>    	scb_s->crycbd = 0;
+>>>>    	if (!(crycbd_o == CRYCB_FORMAT1))
+>>>> @@ -180,8 +181,8 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
+>>>>    		return set_validity_icpt(scb_s, 0x0035U);
+>>>>    
+>>>>    	scb_s->ecb3 |= ecb3_flags;
+>>>> -	scb_s->crycbd = ((__u32)(__u64) &vsie_page->crycb) | CRYCB_FORMAT1 |
+>>>> -			CRYCB_FORMAT2;
+>>>> +	g1_fmt = vcpu->arch.sie_block->crycbd & 0x03;
+>>>> +	scb_s->crycbd = ((__u32)(__u64) &vsie_page->crycb) | g1_fmt;
+>>>>    
+>>>>    	/* xor both blocks in one run */
+>>>>    	b1 = (unsigned long *) vsie_page->crycb.dea_wrapping_key_mask;
+>>>>
+>>>
+>>> This is wrong. I remember that with APXA, if FORMAT2 is available, we
+>>> should always use FORMAT2. That's why we explicitly convert it here.
+>>>
+>>
+>> You are right if FORMAT2 is available we should use FORMAT2
+>> but the intention here is to use what KVM crypto init function did,
+>> assuming it did the right thing.
+>>
+>> Eventually we are running on a host without AP and we should use FORMAT1.
+>>
+>> Isn't it correct?
 > 
-> Signed-off-by: Dave Gerlach <d-gerlach@ti.com>
-> ---
->  drivers/cpufreq/ti-cpufreq.c | 25 ++++++++++++++++++++-----
->  1 file changed, 20 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/cpufreq/ti-cpufreq.c b/drivers/cpufreq/ti-cpufreq.c
-> index 3f0e2a14895a..541fdcf17b57 100644
-> --- a/drivers/cpufreq/ti-cpufreq.c
-> +++ b/drivers/cpufreq/ti-cpufreq.c
-> @@ -201,19 +201,31 @@ static const struct of_device_id ti_cpufreq_of_match[] = {
->  	{},
->  };
->  
-> +static const struct of_device_id *ti_cpufreq_match_node(void)
-> +{
-> +	struct device_node *np;
-> +	const struct of_device_id *match;
-> +
-> +	np = of_find_node_by_path("/");
-> +	match = of_match_node(ti_cpufreq_of_match, np);
-> +	of_node_put(np);
-> +
-> +	if (!match)
-> +		return NULL;
-> +	else
-> +		return match;
+> Yes and no :)
+> 
+> No APXA -> FORMAT2 bit is ignored (and that is one of the reasons why I
+> am being so strict about simulating HW behavior correctly in nested code
+> :) )
+> 
+> This only holds as long as we are not using AP. Because from a MSA3
+> perspective, FORMAT1==FORMAT2 (apart from the length/alignment, which is
+> fine for us).
+> 
+> Once we support AP (via ECA.28), we'll properly have to create either a
+> Format0/Format1/Format2. Then, there is actually a semantically
+> difference ("different fields used").
 
-Shouldn't this just be "return match"?
+OK
+I would have expect something more explicit in the documentation
+like for firmware versions older than xxx bit 30 is ignored
+instead of if APXA is not installed.
+Still must learn the IBM language! :)
 
-> +}
-> +
->  static int ti_cpufreq_probe(struct platform_device *pdev)
->  {
->  	u32 version[VERSION_COUNT];
-> -	struct device_node *np;
->  	const struct of_device_id *match;
->  	struct opp_table *ti_opp_table;
->  	struct ti_cpufreq_data *opp_data;
->  	const char * const reg_names[] = {"vdd", "vbb"};
->  	int ret;
->  
-> -	np = of_find_node_by_path("/");
-> -	match = of_match_node(ti_cpufreq_of_match, np);
-> -	of_node_put(np);
-> +	match = ti_cpufreq_match_node();
->  	if (!match)
->  		return -ENODEV;
->  
-> @@ -290,7 +302,10 @@ static int ti_cpufreq_probe(struct platform_device *pdev)
->  
->  static int ti_cpufreq_init(void)
->  {
-> -	platform_device_register_simple("ti-cpufreq", -1, NULL, 0);
-> +	/* Check to ensure we are on a compatible platform */
-> +	if (ti_cpufreq_match_node())
-> +		platform_device_register_simple("ti-cpufreq", -1, NULL, 0);
-> +
->  	return 0;
->  }
->  module_init(ti_cpufreq_init);
+regards,
+Pierre
 
-With that fixed, feel free to add:
 
-Reviewed-by: Johan Hovold <johan@kernel.org>
 
-Johan
+
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
+
