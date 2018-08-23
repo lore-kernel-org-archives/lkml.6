@@ -2,91 +2,124 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8014C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:19:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D50EC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:19:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 899D52152D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:19:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 899D52152D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=KARO-electronics.de
+	by mail.kernel.org (Postfix) with ESMTP id 1B63921532
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:19:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B63921532
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731417AbeHWOsx convert rfc822-to-8bit (ORCPT
+        id S1731454AbeHWOtK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 10:48:53 -0400
-Received: from smtprelay07.ispgateway.de ([134.119.228.104]:20987 "EHLO
-        smtprelay07.ispgateway.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729260AbeHWOsx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 10:48:53 -0400
-Received: from [89.1.81.74] (helo=ipc1.ka-ro)
-        by smtprelay07.ispgateway.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <LW@KARO-electronics.de>)
-        id 1fsneK-000539-I7; Thu, 23 Aug 2018 13:19:36 +0200
-Date:   Thu, 23 Aug 2018 13:19:35 +0200
-From:   Lothar =?UTF-8?B?V2HDn21hbm4=?= <LW@KARO-electronics.de>
-To:     Lukasz Majewski <lukma@denx.de>
-Cc:     Michal =?UTF-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>
-Subject: Re: [RFC PATCH 1/2] dt-bindings: pwm: imx: Allow switching PWM
- output between PWM and GPIO
-Message-ID: <20180823131935.1eae184f@ipc1.ka-ro>
-In-Reply-To: <20180823123759.68b78e9f@jawa>
-References: <1534862333-27950-1-git-send-email-michal.vokac@ysoft.com>
-        <1534862333-27950-2-git-send-email-michal.vokac@ysoft.com>
-        <20180823123759.68b78e9f@jawa>
-Organization: Ka-Ro electronics GmbH
+        Thu, 23 Aug 2018 10:49:10 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38934 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729370AbeHWOtJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 10:49:09 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id EFD1140006EC;
+        Thu, 23 Aug 2018 11:19:53 +0000 (UTC)
+Received: from [10.36.117.65] (ovpn-117-65.ams2.redhat.com [10.36.117.65])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4C3B1A9F05;
+        Thu, 23 Aug 2018 11:19:52 +0000 (UTC)
+Subject: Re: [PATCH v3 1/3] KVM: s390: vsie: copy wrapping keys to right place
+To:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        Pierre Morel <pmorel@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, cohuck@redhat.com,
+        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+        frankja@linux.ibm.com, akrowiak@linux.ibm.com,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com
+References: <1535019956-23539-1-git-send-email-pmorel@linux.ibm.com>
+ <1535019956-23539-2-git-send-email-pmorel@linux.ibm.com>
+ <853c73ab-3221-e0ee-af30-8e11fefbebd7@de.ibm.com>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <d2e4bed0-666d-24b4-cc57-84a4c9f1f93b@redhat.com>
+Date:   Thu, 23 Aug 2018 13:19:51 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-Df-Sender: bHdAa2Fyby1lbGVjdHJvbmljcy5kZQ==
+In-Reply-To: <853c73ab-3221-e0ee-af30-8e11fefbebd7@de.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 23 Aug 2018 11:19:54 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 23 Aug 2018 11:19:54 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Lukasz Majewski <lukma@denx.de> wrote:
+On 23.08.2018 13:07, Christian Borntraeger wrote:
+> 
+> 
+> On 08/23/2018 12:25 PM, Pierre Morel wrote:
+>> Copy the key mask to the right offset inside the shadow CRYCB
+>>
+>> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+>> Reviewed-by: David Hildenbrand <david@redhat.com>
+>> Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+>> Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
+> 
+> This should be cc stable I guess?
+> 
 
-> Hi Michal,
-> 
-> > Output of the PWM block of i.MX SoCs is always zero volts when the
-> > block is disabled. This can caue issues when inverted PWM polarity is
-> > needed. With inverted polarity a duty cycle = 0% corresponds to solid
-> > high level on the output. If the PWM is dissabled its output
-> > instantly goes to solid zero which corresponds to duty cycle = 100%.
-> > 
-> > To have a trully inverted PWM output configure the PWM pad as a GPIO
-> > with pull-up. Then switch the pad to PWM output whenever non-zero
-> > duty cycle is needed.  
-> 
-> Just to ask - Is your display equipped with power supply enable/disable
-> pin?
-> 
-> As fair as I remember the trick to avoid flickering the display
-> was to disable the display (enable-gpio property) and set the PWM PIN
-> as GPIO to high in u-boot.
-> 
-Unfortunately there are both types of displays. Some with an ENABLE
-pin, some without.
+Yes, g3 guests will be run with same wrapping keys.
 
-
-Lothar Waßmann
 -- 
-___________________________________________________________
 
-Ka-Ro electronics GmbH | Pascalstraße 22 | D - 52076 Aachen
-Phone: +49 2408 1402-0 | Fax: +49 2408 1402-10
-Geschäftsführer: Matthias Kaussen
-Handelsregistereintrag: Amtsgericht Aachen, HRB 4996
+Thanks,
 
-www.karo-electronics.de | info@karo-electronics.de
-___________________________________________________________
+David / dhildenb
