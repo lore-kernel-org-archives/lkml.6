@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85A11C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:11:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDEE2C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:11:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EA85208C2
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:11:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EA85208C2
+	by mail.kernel.org (Postfix) with ESMTP id 93460208C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:11:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93460208C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389127AbeHWMju (ORCPT
+        id S2389139AbeHWMjx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:39:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56914 "EHLO
+        Thu, 23 Aug 2018 08:39:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56926 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728136AbeHWMjt (ORCPT
+        with ESMTP id S1727875AbeHWMjx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:39:49 -0400
+        Thu, 23 Aug 2018 08:39:53 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 37BCA93C;
-        Thu, 23 Aug 2018 09:11:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 72BA993C;
+        Thu, 23 Aug 2018 09:11:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zachary Zhang <zhangzg@marvell.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: [PATCH 4.18 16/22] PCI: aardvark: Size bridges before resources allocation
-Date:   Thu, 23 Aug 2018 09:56:42 +0200
-Message-Id: <20180823074800.223437041@linuxfoundation.org>
+        stable@vger.kernel.org, Myron Stowe <myron.stowe@redhat.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Sinan Kaya <okaya@kernel.org>,
+        Dongdong Liu <liudongdong3@huawei.com>,
+        Jon Mason <jdmason@kudzu.us>
+Subject: [PATCH 4.18 17/22] PCI: Skip MPS logic for Virtual Functions (VFs)
+Date:   Thu, 23 Aug 2018 09:56:43 +0200
+Message-Id: <20180823074800.286554566@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074759.234685844@linuxfoundation.org>
 References: <20180823074759.234685844@linuxfoundation.org>
@@ -51,46 +54,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zachary Zhang <zhangzg@marvell.com>
+From: Myron Stowe <myron.stowe@redhat.com>
 
-commit 91a2968e245d6ba616db37001fa1a043078b1a65 upstream.
+commit 3dbe97efe8bf450b183d6dee2305cbc032e6b8a4 upstream.
 
-The PCIE I/O and MEM resource allocation mechanism is that root bus
-goes through the following steps:
+PCIe r4.0, sec 9.3.5.4, "Device Control Register", shows both
+Max_Payload_Size (MPS) and Max_Read_request_Size (MRRS) to be 'RsvdP' for
+VFs.  Just prior to the table it states:
 
-1. Check PCI bridges' range and computes I/O and Mem base/limits.
+  "PF and VF functionality is defined in Section 7.5.3.4 except where
+   noted in Table 9-16.  For VF fields marked 'RsvdP', the PF setting
+   applies to the VF."
 
-2. Sort all subordinate devices I/O and MEM resource requirements and
-   allocate the resources and writes/updates subordinate devices'
-   requirements to PCI bridges I/O and Mem MEM/limits registers.
+All of which implies that with respect to Max_Payload_Size Supported
+(MPSS), MPS, and MRRS values, we should not be paying any attention to the
+VF's fields, but rather only to the PF's.  Only looking at the PF's fields
+also logically makes sense as it's the sole physical interface to the PCIe
+bus.
 
-Currently, PCI Aardvark driver only handles the second step and lacks
-the first step, so there is an I/O and MEM resource allocation failure
-when using a PCI switch. This commit fixes that by sizing bridges
-before doing the resource allocation.
-
-Fixes: 8c39d710363c1 ("PCI: aardvark: Add Aardvark PCI host controller
-driver")
-Signed-off-by: Zachary Zhang <zhangzg@marvell.com>
-[Thomas: edit commit log.]
-Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: <stable@vger.kernel.org>
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=200527
+Fixes: 27d868b5e6cf ("PCI: Set MPS to match upstream bridge")
+Signed-off-by: Myron Stowe <myron.stowe@redhat.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Cc: stable@vger.kernel.org # 4.3+
+Cc: Keith Busch <keith.busch@intel.com>
+Cc: Sinan Kaya <okaya@kernel.org>
+Cc: Dongdong Liu <liudongdong3@huawei.com>
+Cc: Jon Mason <jdmason@kudzu.us>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/controller/pci-aardvark.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/pci/probe.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/pci/controller/pci-aardvark.c
-+++ b/drivers/pci/controller/pci-aardvark.c
-@@ -952,6 +952,7 @@ static int advk_pcie_probe(struct platfo
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -1730,6 +1730,10 @@ static void pci_configure_mps(struct pci
+ 	if (!pci_is_pcie(dev) || !bridge || !pci_is_pcie(bridge))
+ 		return;
  
- 	bus = bridge->bus;
++	/* MPS and MRRS fields are of type 'RsvdP' for VFs, short-circuit out */
++	if (dev->is_virtfn)
++		return;
++
+ 	mps = pcie_get_mps(dev);
+ 	p_mps = pcie_get_mps(bridge);
  
-+	pci_bus_size_bridges(bus);
- 	pci_bus_assign_resources(bus);
- 
- 	list_for_each_entry(child, &bus->children, node)
 
 
