@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9318AC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:03:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7668C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:03:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5852A208CC
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:03:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5852A208CC
+	by mail.kernel.org (Postfix) with ESMTP id 7D4FF214AB
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:03:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D4FF214AB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388624AbeHWMbm (ORCPT
+        id S2388633AbeHWMbr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:31:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55906 "EHLO
+        Thu, 23 Aug 2018 08:31:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55916 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729739AbeHWMbm (ORCPT
+        with ESMTP id S1729739AbeHWMbq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:31:42 -0400
+        Thu, 23 Aug 2018 08:31:46 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 15325BBF;
-        Thu, 23 Aug 2018 09:02:58 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4F349BBF;
+        Thu, 23 Aug 2018 09:03:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Laura Abbott <labbott@redhat.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 270/324] hv/netvsc: fix handling of fallback to single queue mode
-Date:   Thu, 23 Aug 2018 09:55:36 +0200
-Message-Id: <20180823075009.474043266@linuxfoundation.org>
+Subject: [PATCH 4.17 253/324] tools: build: Use HOSTLDFLAGS with fixdep
+Date:   Thu, 23 Aug 2018 09:55:19 +0200
+Message-Id: <20180823075008.702427353@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -52,34 +52,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stephen Hemminger <stephen@networkplumber.org>
+From: Laura Abbott <labbott@redhat.com>
 
-[ Upstream commit 916c5e1413be058d1c1f6e502db350df890730ce ]
+[ Upstream commit 8b247a92ebd0cda7dec49a6f771d9c4950f3d3ad ]
 
-The netvsc device may need to fallback to running in single queue
-mode if host side only wants to support single queue.
+The final link of fixdep uses LDFLAGS but not the existing HOSTLDFLAGS.
+Fix this.
 
-Recent change for handling mtu broke this in setup logic.
-
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Fixes: 3ffe64f1a641 ("hv_netvsc: split sub-channel setup into async and sync")
-Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/hyperv/rndis_filter.c |    1 +
- 1 file changed, 1 insertion(+)
+ tools/build/Makefile |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/hyperv/rndis_filter.c
-+++ b/drivers/net/hyperv/rndis_filter.c
-@@ -1307,6 +1307,7 @@ out:
- 	/* setting up multiple channels failed */
- 	net_device->max_chn = 1;
- 	net_device->num_chn = 1;
-+	return 0;
+--- a/tools/build/Makefile
++++ b/tools/build/Makefile
+@@ -43,7 +43,7 @@ $(OUTPUT)fixdep-in.o: FORCE
+ 	$(Q)$(MAKE) $(build)=fixdep
  
- err_dev_remv:
- 	rndis_filter_device_remove(dev, net_device);
+ $(OUTPUT)fixdep: $(OUTPUT)fixdep-in.o
+-	$(QUIET_LINK)$(HOSTCC) $(LDFLAGS) -o $@ $<
++	$(QUIET_LINK)$(HOSTCC) $(HOSTLDFLAGS) -o $@ $<
+ 
+ FORCE:
+ 
 
 
