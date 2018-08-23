@@ -6,68 +6,68 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58ED5C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:19:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EB9EC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:20:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E73EE20A8B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:19:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E41F206B8
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:20:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Z97+KXh/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E73EE20A8B
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VHT6i1SH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E41F206B8
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727323AbeHWUue (ORCPT
+        id S1727355AbeHWUu5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 16:50:34 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:41230 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726670AbeHWUue (ORCPT
+        Thu, 23 Aug 2018 16:50:57 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:41531 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726459AbeHWUu5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 16:50:34 -0400
-Received: by mail-lj1-f193.google.com with SMTP id y17-v6so4749058ljy.8
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 10:19:51 -0700 (PDT)
+        Thu, 23 Aug 2018 16:50:57 -0400
+Received: by mail-lf1-f66.google.com with SMTP id l26-v6so4642379lfc.8
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 10:20:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=LArb4wWEhYYayDbIbmrNGSJr8IVBc/t6rm9+PCajr8U=;
-        b=Z97+KXh/b5KPF0gPPp/tV8KF37QH6QnpMqP/VYpW988WmL5ncf2X1yMLy+gwdguv+d
-         ZcoKm7OKEwFCtEWfRDaYrDyxWldFdp2pl041YhNbpzkiXO9PLBDUWsHAHGa+O1FGASGU
-         fHdg4WCCLu0bK+ELQmTkxe4fEntOKEp2jbQZE=
+        bh=dooI38sPsPsjqySmhGBxBY1ZRz86VlQBLoH5xj6H1xc=;
+        b=VHT6i1SHsjbLN6VO7r33A3c2z+2oLglUHQvFfmgKg6rJZEfmcHMTYeJ3TDY1dosokg
+         FzNb6CM1ivV0YBahqCmmIe1xhABWb/RxzvfX8bbJhadAOA5YDy7UfkoC4ybYPEg7zWd1
+         ND/scEjrL4a9PG8XbBd6S3s/l1ns7qCPXngj0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=LArb4wWEhYYayDbIbmrNGSJr8IVBc/t6rm9+PCajr8U=;
-        b=iP1zOnL1DBFWhf8SqQxRp0B1wuTUvzdVYzBlbFMfj7pNckwYjW6+P2cBsJthVots2r
-         OZY4icORAH/t0yImu12uZDyxxcDdEYRzlittx1Kh7kPQ+JhdHnrdGknbK+tnzX6mf+Cf
-         515EaOnmjATC1w5Hhvl5ORaLBJ2kc10G0ugbY5J29SXmuNNDE4Wk3yllLX6w2iVoOWHI
-         1ryMGixbhMgBVb4PaFakZfhxt1DeXKfYQlBUHFFpnLphKl4jbj/OzAcVzOH2Eu7z1sNK
-         DBehPe7eE8tZDRa4jpWcnWObM0OiiEIWFY9Z9NcAzkOhu350haHrcwZqU+a6LQr3tAlX
-         2YYw==
-X-Gm-Message-State: AOUpUlGLBrjKqbaZWQIk0dH9hY/0KjqPvCxjJ2omPXLcJDUTMjsetieX
-        hgbDEYDs8utUm7Ogcd73d9H2Zr5byFY=
-X-Google-Smtp-Source: AA+uWPwuNhJTsqAc78RLTkcbJfuozNjCDkX6dVggDX5hQ3oaD9nSnJvWFiblF0tYtP1AxJZPsizUuw==
-X-Received: by 2002:a2e:2282:: with SMTP id i124-v6mr42674352lji.11.1535044790961;
-        Thu, 23 Aug 2018 10:19:50 -0700 (PDT)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id y65-v6sm922794lfa.97.2018.08.23.10.19.48
+        bh=dooI38sPsPsjqySmhGBxBY1ZRz86VlQBLoH5xj6H1xc=;
+        b=Gz0XP/WFSUtYqAvLnrabHjpU8djcVGykrVtTRkt/LGpzImUF0kTybA+soRKsFuizT0
+         mTj4s3jyiEr+If08fzFs0TrNl6qUcXVH3ZCkNPGy597Cldi1YrY7M0qK9i3mhoz3+8EI
+         KUERBsblj3mMmiIHUbZ2Q1p88RDziWn2r8yYD4iR5IKxFNI5E3otbpZdDvFiG+uZYh1I
+         J9YoMeNe8UZeY047UIm3yKKaRwLzpUOIeO0VTO7XFZJrWqx1uOdewtnK6ViJOrMbXGGn
+         47YDiCaYYGFUJtKL90BuLUT7N/1+uKSvtTJuOzAzisBrROZw28SfIjXYKQA28QyyxUjL
+         GpSA==
+X-Gm-Message-State: APzg51DxnZfTnWi1o6LQJV0t7EPKiYf/LwVGHYf9t4a2XQJO9vsan/6a
+        O7DyuUmdU2fxJQMOy3X06VWFUM+ei/A=
+X-Google-Smtp-Source: ANB0VdYivTXmE9wKL9T38mq2BbS53Pf8oUIWgefeS8yO23Q53BGyUD61JGo8c5T1rywp9qitvN1UUQ==
+X-Received: by 2002:a19:18d8:: with SMTP id 85-v6mr4057245lfy.133.1535044813267;
+        Thu, 23 Aug 2018 10:20:13 -0700 (PDT)
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
+        by smtp.gmail.com with ESMTPSA id i83-v6sm929483lfl.41.2018.08.23.10.20.11
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 Aug 2018 10:19:49 -0700 (PDT)
-Received: by mail-lj1-f171.google.com with SMTP id u83-v6so4733574lje.12
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 10:19:48 -0700 (PDT)
-X-Received: by 2002:a2e:9941:: with SMTP id r1-v6mr39240782ljj.53.1535044788083;
- Thu, 23 Aug 2018 10:19:48 -0700 (PDT)
+        Thu, 23 Aug 2018 10:20:11 -0700 (PDT)
+Received: by mail-lf1-f48.google.com with SMTP id z11-v6so4627138lff.9
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 10:20:11 -0700 (PDT)
+X-Received: by 2002:a19:2a91:: with SMTP id q17-v6mr15991216lfq.74.1535044811324;
+ Thu, 23 Aug 2018 10:20:11 -0700 (PDT)
 MIME-Version: 1.0
-References: <1534846649-2456-1-git-send-email-sayalil@codeaurora.org> <1534846649-2456-2-git-send-email-sayalil@codeaurora.org>
-In-Reply-To: <1534846649-2456-2-git-send-email-sayalil@codeaurora.org>
+References: <1534846649-2456-1-git-send-email-sayalil@codeaurora.org> <1534846649-2456-3-git-send-email-sayalil@codeaurora.org>
+In-Reply-To: <1534846649-2456-3-git-send-email-sayalil@codeaurora.org>
 From:   Evan Green <evgreen@chromium.org>
-Date:   Thu, 23 Aug 2018 10:19:11 -0700
-X-Gmail-Original-Message-ID: <CAE=gft6tA=B008oS-TP2e-aJ80ZQT_tF3Ngf6Ly5f5r=QqpBng@mail.gmail.com>
-Message-ID: <CAE=gft6tA=B008oS-TP2e-aJ80ZQT_tF3Ngf6Ly5f5r=QqpBng@mail.gmail.com>
-Subject: Re: [PATCH V9 1/2] scsi: ufs: set the device reference clock setting
+Date:   Thu, 23 Aug 2018 10:19:34 -0700
+X-Gmail-Original-Message-ID: <CAE=gft4kjaJV9+W1haH6j=8GmTKS4P-YA=2iAdzmF_hm6Us07g@mail.gmail.com>
+Message-ID: <CAE=gft4kjaJV9+W1haH6j=8GmTKS4P-YA=2iAdzmF_hm6Us07g@mail.gmail.com>
+Subject: Re: [PATCH V9 2/2] scsi: ufs: Add configfs support for UFS provisioning
 To:     sayalil@codeaurora.org
 Cc:     subhashj@codeaurora.org, cang@codeaurora.org,
         vivek.gautam@codeaurora.org,
@@ -83,190 +83,342 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 21, 2018 at 3:18 AM Sayali Lokhande <sayalil@codeaurora.org> wrote:
+On Tue, Aug 21, 2018 at 3:19 AM Sayali Lokhande <sayalil@codeaurora.org> wrote:
 >
-> From: Subhash Jadavani <subhashj@codeaurora.org>
+> This patch adds configfs support to provision UFS device at
+> runtime. This feature can be primarily useful in factory or
+> assembly line as some devices may be required to be configured
+> multiple times during initial system development phase.
+> Configuration Descriptors can be written multiple times until
+> bConfigDescrLock attribute is zero.
 >
-> UFS host supplies the reference clock to UFS device and UFS device
-> specification allows host to provide one of the 4 frequencies (19.2 MHz,
-> 26 MHz, 38.4 MHz, 52 MHz) for reference clock. Host should set the
-> device reference clock frequency setting in the device based on what
-> frequency it is supplying to UFS device.
+> Configuration descriptor buffer consists of Device and Unit
+> descriptor configurable parameters which are parsed from vendor
+> specific provisioning file and then passed via configfs node at
+> runtime to provision ufs device.
+> CONFIG_CONFIGFS_FS needs to be enabled for using this feature.
 >
-> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
-> Signed-off-by: Can Guo <cang@codeaurora.org>
+> Usage:
+> 1) To read current configuration descriptor :
+>    cat /config/XXXX.ufshc/ufs_provision
+> 2) To provision ufs device:
+>    echo <config_desc_buf> > /config/XXXX.ufshc/ufs_provision
+>
 > Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
 > ---
->  drivers/scsi/ufs/ufs.h    | 14 ++++++++
->  drivers/scsi/ufs/ufshcd.c | 92 +++++++++++++++++++++++++++++++++++++++++++++++
->  drivers/scsi/ufs/ufshcd.h |  2 ++
->  3 files changed, 108 insertions(+)
+>  Documentation/ABI/testing/configfs-driver-ufs |  18 +++
+>  drivers/scsi/ufs/Kconfig                      |  10 ++
+>  drivers/scsi/ufs/Makefile                     |   1 +
+>  drivers/scsi/ufs/ufs-configfs.c               | 157 ++++++++++++++++++++++++++
+>  drivers/scsi/ufs/ufshcd.c                     |   3 +-
+>  drivers/scsi/ufs/ufshcd.h                     |  18 +++
+>  6 files changed, 206 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/ABI/testing/configfs-driver-ufs
+>  create mode 100644 drivers/scsi/ufs/ufs-configfs.c
 >
-> diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
-> index 14e5bf7..a2e76b1 100644
-> --- a/drivers/scsi/ufs/ufs.h
-> +++ b/drivers/scsi/ufs/ufs.h
-> @@ -378,6 +378,20 @@ enum query_opcode {
->         UPIU_QUERY_OPCODE_TOGGLE_FLAG   = 0x8,
->  };
+> diff --git a/Documentation/ABI/testing/configfs-driver-ufs b/Documentation/ABI/testing/configfs-driver-ufs
+> new file mode 100644
+> index 0000000..eeee499c
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/configfs-driver-ufs
+> @@ -0,0 +1,18 @@
+> +What:          /config/ufshcd/ufs_provision
+> +Date:          Jun 2018
+> +KernelVersion: 4.14
+> +Description:
+> +               This file shows the current ufs configuration descriptor set in device.
+> +               This can be used to provision ufs device if bConfigDescrLock is 0.
+> +               For more details, refer 14.1.6.3 Configuration Descriptor and
+> +               Table 14-12 - Unit Descriptor configurable parameters from specs for
+> +               description of each configuration descriptor parameter.
+> +               Configuration descriptor buffer needs to be passed in space separated
+> +               format specificied as below:
+> +               echo <bLength> <bDescriptorIDN> <bConfDescContinue> <bBootEnable>
+> +               <bDescrAccessEn> <bInitPowerMode> <bHighPriorityLUN>
+> +               <bSecureRemovalType> <bInitActiveICCLevel> <wPeriodicRTCUpdate>
+> +               <0Bh:0Fh_ReservedAs_0> <bLUEnable> <bBootLunID> <bLUWriteProtect>
+> +               <bMemoryType> <dNumAllocUnits> <bDataReliability> <bLogicalBlockSize>
+> +               <bProvisioningType> <wContextCapabilities> <0Dh:0Fh_ReservedAs_0>
+> +               > /config/XXXX.ufshc/ufs_provision
+> diff --git a/drivers/scsi/ufs/Kconfig b/drivers/scsi/ufs/Kconfig
+> index e27b4d4..a9a0a58 100644
+> --- a/drivers/scsi/ufs/Kconfig
+> +++ b/drivers/scsi/ufs/Kconfig
+> @@ -100,3 +100,13 @@ config SCSI_UFS_QCOM
 >
-> +/* bRefClkFreq attribute values */
-> +enum ufs_ref_clk_freq {
-> +       REF_CLK_FREQ_19_2_MHZ   = 0,
-> +       REF_CLK_FREQ_26_MHZ     = 1,
-> +       REF_CLK_FREQ_38_4_MHZ   = 2,
-> +       REF_CLK_FREQ_52_MHZ     = 3,
-> +       REF_CLK_FREQ_INVAL      = -1,
-> +};
+>           Select this if you have UFS controller on QCOM chipset.
+>           If unsure, say N.
 > +
-> +struct ufs_ref_clk {
-> +       u32 freq_hz;
-> +       enum ufs_ref_clk_freq val;
-> +};
+> +config UFS_PROVISION
+> +       tristate "Runtime UFS Provisioning support"
+> +       depends on SCSI_UFSHCD && CONFIGFS_FS
+> +       help
+> +         This enables runtime UFS provisioning support. This can be used
+> +         primarily during assembly line as some devices may be required to
+> +         be configured multiple times during initial development phase.
 > +
->  /* Query response result code */
->  enum {
->         QUERY_RESULT_SUCCESS                    = 0x00,
-> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-> index c5b1bf1..e946844 100644
-> --- a/drivers/scsi/ufs/ufshcd.c
-> +++ b/drivers/scsi/ufs/ufshcd.c
-> @@ -6296,6 +6296,91 @@ static void ufshcd_def_desc_sizes(struct ufs_hba *hba)
->         hba->desc_size.hlth_desc = QUERY_DESC_HEALTH_DEF_SIZE;
->  }
->
-> +static struct ufs_ref_clk ufs_ref_clk_freqs[] = {
-> +       {19200000, REF_CLK_FREQ_19_2_MHZ},
-> +       {26000000, REF_CLK_FREQ_26_MHZ},
-> +       {38400000, REF_CLK_FREQ_38_4_MHZ},
-> +       {52000000, REF_CLK_FREQ_52_MHZ},
-> +       {0, REF_CLK_FREQ_INVAL},
-> +};
+> +         If unsure, say N.
+> diff --git a/drivers/scsi/ufs/Makefile b/drivers/scsi/ufs/Makefile
+> index 918f579..00110ea 100644
+> --- a/drivers/scsi/ufs/Makefile
+> +++ b/drivers/scsi/ufs/Makefile
+> @@ -5,5 +5,6 @@ obj-$(CONFIG_SCSI_UFS_DWC_TC_PLATFORM) += tc-dwc-g210-pltfrm.o ufshcd-dwc.o tc-d
+>  obj-$(CONFIG_SCSI_UFS_QCOM) += ufs-qcom.o
+>  obj-$(CONFIG_SCSI_UFSHCD) += ufshcd-core.o
+>  ufshcd-core-objs := ufshcd.o ufs-sysfs.o
+> +obj-$(CONFIG_UFS_PROVISION) += ufs-configfs.o
+>  obj-$(CONFIG_SCSI_UFSHCD_PCI) += ufshcd-pci.o
+>  obj-$(CONFIG_SCSI_UFSHCD_PLATFORM) += ufshcd-pltfrm.o
+> diff --git a/drivers/scsi/ufs/ufs-configfs.c b/drivers/scsi/ufs/ufs-configfs.c
+> new file mode 100644
+> index 0000000..09607e5
+> --- /dev/null
+> +++ b/drivers/scsi/ufs/ufs-configfs.c
+> @@ -0,0 +1,157 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +// Copyright (c) 2018, Linux Foundation.
 > +
-> +static inline enum ufs_ref_clk_freq
-> +ufs_get_bref_clk_for_ref_clk_freq_hz(u32 freq)
-
-This name is a little hairy. Maybe ufs_get_bref_clk_from_hz, or
-ufs_hz_to_bref_clk?
-
+> +#include <linux/configfs.h>
+> +#include <linux/err.h>
+> +#include <linux/string.h>
+> +
+> +#include "ufs.h"
+> +#include "ufshcd.h"
+> +
+> +static inline struct ufs_hba *config_item_to_hba(struct config_item *item)
 > +{
-> +       int i = 0;
+> +       struct config_group *group = to_config_group(item);
+> +       struct configfs_subsystem *subsys = to_configfs_subsystem(group);
+> +       struct ufs_hba *hba = container_of(subsys, struct ufs_hba, subsys);
 > +
-> +       while (ufs_ref_clk_freqs[i].freq_hz != freq) {
-> +               if (!ufs_ref_clk_freqs[i].freq_hz)
-> +                       return REF_CLK_FREQ_INVAL;
-> +               i++;
-> +       }
-> +
-> +       return ufs_ref_clk_freqs[i].val;
+> +       return subsys ? hba : NULL;
 > +}
 > +
-> +void ufshcd_parse_dev_ref_clk_freq(struct ufs_hba *hba)
+> +static ssize_t ufs_provision_show(struct config_item *item, char *buf)
 > +{
-> +       struct device *dev = hba->dev;
-> +       struct device_node *np = dev->of_node;
-> +       struct clk *refclk = NULL;
-> +       u32 freq = 0;
-> +
-> +       if (!np)
-> +               return;
-> +
-> +       hba->dev_ref_clk_freq = REF_CLK_FREQ_INVAL;
-> +
-> +       refclk = of_clk_get_by_name(np, "ref_clk");
-> +       if (!refclk)
-> +               return;
-> +
-> +       freq = clk_get_rate(refclk);
-> +       if (freq > REF_CLK_FREQ_52_MHZ) {
+> +       u8 desc_buf[QUERY_DESC_CONFIGURATION_DEF_SIZE] = {0};
+> +       int buff_len = QUERY_DESC_CONFIGURATION_DEF_SIZE;
 
-freq is in Hertz, but the enum value will be something like 3. I think
-you should just call your function below, and then check the return
-value of it for the error case you're trying to do here.
+This is a nit, but buff_len is really desc_buf_len. It's confusing
+because you also do have a buffer named buf, which this variable is
+not the length of.
 
-> +               dev_err(hba->dev,
-> +               "%s: invalid ref_clk setting = %d\n",
-> +               __func__, freq);
-> +               return;
-> +       }
+> +       int i, ret, curr_len = 0;
+> +       struct ufs_hba *hba = config_item_to_hba(item);
 > +
-> +       hba->dev_ref_clk_freq =
-> +               ufs_get_bref_clk_for_ref_clk_freq_hz(freq);
+> +       ret = ufshcd_query_descriptor_retry(hba, UPIU_QUERY_OPCODE_READ_DESC,
+> +               QUERY_DESC_IDN_CONFIGURATION, 0, 0, desc_buf, &buff_len);
+> +
+> +       if (ret)
+> +               return ret;
+> +
+> +       for (i = 0; i < buff_len; i++)
+> +               curr_len += snprintf((buf + curr_len), (PAGE_SIZE - curr_len),
+> +                               "0x%x ", desc_buf[i]);
+> +
+> +       return curr_len;
 > +}
 > +
-> +static int ufshcd_set_dev_ref_clk(struct ufs_hba *hba)
+> +ssize_t ufshcd_desc_configfs_store(struct ufs_hba *hba,
+> +               const char *buf, size_t count)
 > +{
-> +       int err = 0;
+> +       char *strbuf;
+> +       char *strbuf_copy;
+> +       u8 desc_buf[QUERY_DESC_CONFIGURATION_DEF_SIZE] = {0};
+> +       int buff_len = QUERY_DESC_CONFIGURATION_DEF_SIZE;
 
-You don't need to initialize this since you immediately assign it below.
+Same thing here, I suppose.
 
-> +       int ref_clk = -1;
-> +       u32 freq = (u32)hba->dev_ref_clk_freq;
-
-Is the cast necessary?
-
+> +       char *token;
+> +       int i, ret, value;
+> +       u32 config_desc_lock = 0;
 > +
-> +       err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_READ_ATTR,
-> +                       QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0, &ref_clk);
+> +       /* reserve one byte for null termination */
+> +       strbuf = kmalloc(count + 1, GFP_KERNEL);
+> +       if (!strbuf)
+> +               return -ENOMEM;
 > +
-> +       if (err) {
-> +               dev_err(hba->dev, "%s: failed reading bRefClkFreq. err = %d\n",
-> +                        __func__, err);
+> +       strbuf_copy = strbuf;
+> +       strlcpy(strbuf, buf, count + 1);
+> +
+> +       /* Just return if bConfigDescrLock is already set */
+> +       ret = ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_READ_ATTR,
+> +               QUERY_ATTR_IDN_CONF_DESC_LOCK, 0, 0, &config_desc_lock);
+> +       if (ret)
+> +               goto out;
+> +
+> +       if (config_desc_lock) {
+> +               dev_err(hba->dev, "%s: bConfigDescrLock already set to %u, cannot re-provision device!\n",
+> +               __func__, config_desc_lock);
+> +               ret = -EINVAL;
 > +               goto out;
 > +       }
 > +
-> +       if (ref_clk == hba->dev_ref_clk_freq)
-> +               goto out; /* nothing to update */
-> +
-> +       err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
-> +                       QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0, &freq);
-> +
-> +       if (err)
-> +               dev_err(hba->dev, "%s: bRefClkFreq setting to %u Hz failed\n",
-> +               __func__, ufs_ref_clk_freqs[freq].freq_hz);
-> +       /*
-> +        * It is good to print this out here to debug any later failures
-> +        * related to gear switch.
-> +        */
-> +       dev_dbg(hba->dev, "%s: bRefClkFreq setting to %u Hz succeeded\n",
-> +               __func__, ufs_ref_clk_freqs[freq].freq_hz);
+> +       for (i = 0; i < QUERY_DESC_CONFIGURATION_DEF_SIZE; i++) {
+> +               token = strsep(&strbuf, " ");
+> +               if (!token && i)
+> +                       break;
 
-In the error case you print out both the failed message and the success message?
+What happens if you pass an empty buffer (eg !token && !i)?
+I just tried it. kstrtoint seems to fail gracefully, and I get the
+print below. Fine.
+
+> +
+> +               ret = kstrtoint(token, 0, &value);
+> +               if (ret) {
+> +                       dev_err(hba->dev, "%s: kstrtoint failed %d %s\n",
+> +                               __func__, ret, token);
+> +                       ret = -EINVAL;
+> +                       goto out;
+> +               }
+> +               desc_buf[i] = (u8)value;
+> +       }
+> +
+> +       /* Write configuration descriptor to provision ufs */
+> +       ret = ufshcd_query_descriptor_retry(hba, UPIU_QUERY_OPCODE_WRITE_DESC,
+> +               QUERY_DESC_IDN_CONFIGURATION, 0, 0, desc_buf, &buff_len);
+> +
+> +       if (!ret)
+> +               dev_err(hba->dev, "%s: UFS Provisioning done, reboot now!\n",
+> +               __func__);
+
+I wonder if this should maybe just be an info or debug message. It's
+really not an error, it's a celebration!
 
 > +
 > +out:
-> +       return err;
+> +       kfree(strbuf_copy);
+> +       if (ret)
+> +               return ret;
+> +       return count;
 > +}
 > +
->  /**
->   * ufshcd_probe_hba - probe hba to detect device and initialize
->   * @hba: per-adapter instance
-> @@ -6361,6 +6446,12 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
->                         "%s: Failed getting max supported power mode\n",
->                         __func__);
->         } else {
-> +               /*
-> +                * Set the right value to bRefClkFreq before attempting to
-> +                * switch to HS gears.
-> +                */
-> +               if (hba->dev_ref_clk_freq != REF_CLK_FREQ_INVAL)
-> +                       ufshcd_set_dev_ref_clk(hba);
->                 ret = ufshcd_config_pwr_mode(hba, &hba->max_pwr_info.info);
->                 if (ret) {
->                         dev_err(hba->dev, "%s: Failed setting power mode, err = %d\n",
-> @@ -7693,6 +7784,7 @@ int ufshcd_alloc_host(struct device *dev, struct ufs_hba **hba_handle)
+> +static ssize_t ufs_provision_store(struct config_item *item,
+> +               const char *buf, size_t count)
+> +{
+> +       struct ufs_hba *hba = config_item_to_hba(item);
+> +
+> +       return ufshcd_desc_configfs_store(hba, buf, count);
+> +}
+> +
+> +static struct configfs_attribute ufshcd_attr_provision = {
+> +       .ca_name        = "ufs_provision",
+> +       .ca_mode        = 0644,
+> +       .ca_owner       = THIS_MODULE,
+> +       .show           = ufs_provision_show,
+> +       .store          = ufs_provision_store,
+> +};
+> +
+> +static struct configfs_attribute *ufshcd_attrs[] = {
+> +       &ufshcd_attr_provision,
+> +       NULL,
+> +};
+> +
+> +static struct config_item_type ufscfg_type = {
+> +       .ct_attrs       = ufshcd_attrs,
+> +       .ct_owner       = THIS_MODULE,
+> +};
+> +
+> +static struct configfs_subsystem ufscfg_subsys = {
+> +       .su_group = {
+> +               .cg_item = {
+> +                       .ci_type = &ufscfg_type,
+> +               },
+> +       },
+> +};
+> +
+> +int ufshcd_configfs_init(struct ufs_hba *hba, const char *name)
+> +{
+> +       int ret;
+> +       struct configfs_subsystem *subsys = &hba->subsys;
+> +
+> +       strncpy(ufscfg_subsys.su_group.cg_item.ci_namebuf, name, strlen(name));
+> +       subsys->su_group = ufscfg_subsys.su_group;
+> +       config_group_init(&subsys->su_group);
+> +       mutex_init(&subsys->su_mutex);
+> +       ret = configfs_register_subsystem(subsys);
+> +       if (ret)
+> +               pr_err("Error %d while registering subsystem %s\n",
+> +                      ret,
+> +                      subsys->su_group.cg_item.ci_namebuf);
+> +
+> +       return ret;
+> +}
+> +
+> +void ufshcd_configfs_exit(void)
+> +{
+> +       configfs_unregister_subsystem(&ufscfg_subsys);
+> +}
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> index e946844..11b28bf 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -7713,6 +7713,7 @@ int ufshcd_shutdown(struct ufs_hba *hba)
+>  void ufshcd_remove(struct ufs_hba *hba)
+>  {
+>         ufs_sysfs_remove_nodes(hba->dev);
+> +       ufshcd_configfs_exit();
+>         scsi_remove_host(hba->host);
+>         /* disable interrupts */
+>         ufshcd_disable_intr(hba, hba->intr_mask);
+> @@ -7967,7 +7968,7 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
 >
->         INIT_LIST_HEAD(&hba->clk_list_head);
+>         async_schedule(ufshcd_async_scan, hba);
+>         ufs_sysfs_add_nodes(hba->dev);
+> -
+> +       ufshcd_configfs_init(hba, dev_name(hba->dev));
+
+You init function has a return int, but you never check it. Either
+remove the return type if you consider configfs initialization errors
+non-fatal, or check the error here.
+
+>         return 0;
 >
-> +       ufshcd_parse_dev_ref_clk_freq(hba);
-
-I get an uncomfortable feeling about calling this function from
-alloc_host, given that everybody else calls their parse functions from
-ufshcd_pltfrm_init. I wonder if you should just initialize the new
-member here in alloc_host to the invalid value, and then move the call
-to the parse function where you had it before in ufshcd_pltfrm_init.
-That way you don't have the problems in the previous series with
-leaving the value uninitialized, but you're also not calling of_
-functions from alloc_host, which seems like an abuse of alloc_host.
-
--Evan
+>  out_remove_scsi_host:
+> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+> index 45013b6..c5956b2 100644
+> --- a/drivers/scsi/ufs/ufshcd.h
+> +++ b/drivers/scsi/ufs/ufshcd.h
+> @@ -37,6 +37,7 @@
+>  #ifndef _UFSHCD_H
+>  #define _UFSHCD_H
+>
+> +#include <linux/configfs.h>
+>  #include <linux/module.h>
+>  #include <linux/kernel.h>
+>  #include <linux/init.h>
+> @@ -515,6 +516,9 @@ struct ufs_hba {
+>
+>         struct Scsi_Host *host;
+>         struct device *dev;
+> +#ifdef CONFIG_UFS_PROVISION
+> +       struct configfs_subsystem subsys;
+> +#endif
+>         /*
+>          * This field is to keep a reference to "scsi_device" corresponding to
+>          * "UFS device" W-LU.
+> @@ -868,6 +872,20 @@ int ufshcd_read_string_desc(struct ufs_hba *hba, int desc_index,
+>  int ufshcd_hold(struct ufs_hba *hba, bool async);
+>  void ufshcd_release(struct ufs_hba *hba);
+>
+> +/* Expose UFS configfs API's */
+> +#ifndef CONFIG_UFS_PROVISION
+> +static inline int ufshcd_configfs_init(struct ufs_hba *hba, const char *name)
+> +{
+> +       return 0;
+> +}
+> +static inline void ufshcd_configfs_exit(void)
+> +{
+> +}
+> +#else
+> +int ufshcd_configfs_init(struct ufs_hba *hba, const char *name);
+> +void ufshcd_configfs_exit(void);
+> +#endif
+> +
+>  int ufshcd_map_desc_id_to_length(struct ufs_hba *hba, enum desc_idn desc_id,
+>         int *desc_length);
+>
+> --
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+>
