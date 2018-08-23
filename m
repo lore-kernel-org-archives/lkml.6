@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60A3DC43615
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:42:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9B3AC04E85
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:42:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1ED5D2083A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:42:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ED5D2083A
+	by mail.kernel.org (Postfix) with ESMTP id 7CC7320851
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:42:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CC7320851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732629AbeHWMKv (ORCPT
+        id S1732642AbeHWMKx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:10:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:49980 "EHLO
+        Thu, 23 Aug 2018 08:10:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50000 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732104AbeHWMKq (ORCPT
+        with ESMTP id S1732104AbeHWMKx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:10:46 -0400
+        Thu, 23 Aug 2018 08:10:53 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3B0537F6;
-        Thu, 23 Aug 2018 08:42:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 901B17F6;
+        Thu, 23 Aug 2018 08:42:16 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Zhouyang Jia <jiazhouyang09@gmail.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
         Juergen Gross <jgross@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 059/324] xen: add error handling for xenbus_printf
-Date:   Thu, 23 Aug 2018 09:52:05 +0200
-Message-Id: <20180823074958.794786497@linuxfoundation.org>
+Subject: [PATCH 4.17 061/324] scsi: xen-scsifront: add error handling for xenbus_printf
+Date:   Thu, 23 Aug 2018 09:52:07 +0200
+Message-Id: <20180823074958.918112004@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -54,7 +53,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Zhouyang Jia <jiazhouyang09@gmail.com>
 
-[ Upstream commit 84c029a73327cef571eaa61c7d6e67e8031b52ec ]
+[ Upstream commit 93efbd39870474cc536b9caf4a6efeb03b0bc56f ]
 
 When xenbus_printf fails, the lack of error-handling code may
 cause unexpected results.
@@ -62,47 +61,84 @@ cause unexpected results.
 This patch adds error-handling code after calling xenbus_printf.
 
 Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/xen/manage.c |   18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+ drivers/scsi/xen-scsifront.c |   33 ++++++++++++++++++++++++++-------
+ 1 file changed, 26 insertions(+), 7 deletions(-)
 
---- a/drivers/xen/manage.c
-+++ b/drivers/xen/manage.c
-@@ -289,8 +289,15 @@ static void sysrq_handler(struct xenbus_
- 		return;
- 	}
+--- a/drivers/scsi/xen-scsifront.c
++++ b/drivers/scsi/xen-scsifront.c
+@@ -654,10 +654,17 @@ static int scsifront_dev_reset_handler(s
+ static int scsifront_sdev_configure(struct scsi_device *sdev)
+ {
+ 	struct vscsifrnt_info *info = shost_priv(sdev->host);
++	int err;
  
--	if (sysrq_key != '\0')
--		xenbus_printf(xbt, "control", "sysrq", "%c", '\0');
-+	if (sysrq_key != '\0') {
-+		err = xenbus_printf(xbt, "control", "sysrq", "%c", '\0');
+-	if (info && current == info->curr)
+-		xenbus_printf(XBT_NIL, info->dev->nodename,
++	if (info && current == info->curr) {
++		err = xenbus_printf(XBT_NIL, info->dev->nodename,
+ 			      info->dev_state_path, "%d", XenbusStateConnected);
 +		if (err) {
-+			pr_err("%s: Error %d writing sysrq in control/sysrq\n",
-+			       __func__, err);
-+			xenbus_transaction_end(xbt, 1);
-+			return;
++			xenbus_dev_error(info->dev, err,
++				"%s: writing dev_state_path", __func__);
++			return err;
 +		}
 +	}
  
- 	err = xenbus_transaction_end(xbt, 0);
- 	if (err == -EAGAIN)
-@@ -342,7 +349,12 @@ static int setup_shutdown_watcher(void)
- 			continue;
- 		snprintf(node, FEATURE_PATH_SIZE, "feature-%s",
- 			 shutdown_handlers[idx].command);
--		xenbus_printf(XBT_NIL, "control", node, "%u", 1);
-+		err = xenbus_printf(XBT_NIL, "control", node, "%u", 1);
-+		if (err) {
-+			pr_err("%s: Error %d writing %s\n", __func__,
-+				err, node);
-+			return err;
-+		}
- 	}
- 
  	return 0;
+ }
+@@ -665,10 +672,15 @@ static int scsifront_sdev_configure(stru
+ static void scsifront_sdev_destroy(struct scsi_device *sdev)
+ {
+ 	struct vscsifrnt_info *info = shost_priv(sdev->host);
++	int err;
+ 
+-	if (info && current == info->curr)
+-		xenbus_printf(XBT_NIL, info->dev->nodename,
++	if (info && current == info->curr) {
++		err = xenbus_printf(XBT_NIL, info->dev->nodename,
+ 			      info->dev_state_path, "%d", XenbusStateClosed);
++		if (err)
++			xenbus_dev_error(info->dev, err,
++				"%s: writing dev_state_path", __func__);
++	}
+ }
+ 
+ static struct scsi_host_template scsifront_sht = {
+@@ -1003,9 +1015,12 @@ static void scsifront_do_lun_hotplug(str
+ 
+ 			if (scsi_add_device(info->host, chn, tgt, lun)) {
+ 				dev_err(&dev->dev, "scsi_add_device\n");
+-				xenbus_printf(XBT_NIL, dev->nodename,
++				err = xenbus_printf(XBT_NIL, dev->nodename,
+ 					      info->dev_state_path,
+ 					      "%d", XenbusStateClosed);
++				if (err)
++					xenbus_dev_error(dev, err,
++						"%s: writing dev_state_path", __func__);
+ 			}
+ 			break;
+ 		case VSCSIFRONT_OP_DEL_LUN:
+@@ -1019,10 +1034,14 @@ static void scsifront_do_lun_hotplug(str
+ 			}
+ 			break;
+ 		case VSCSIFRONT_OP_READD_LUN:
+-			if (device_state == XenbusStateConnected)
+-				xenbus_printf(XBT_NIL, dev->nodename,
++			if (device_state == XenbusStateConnected) {
++				err = xenbus_printf(XBT_NIL, dev->nodename,
+ 					      info->dev_state_path,
+ 					      "%d", XenbusStateConnected);
++				if (err)
++					xenbus_dev_error(dev, err,
++						"%s: writing dev_state_path", __func__);
++			}
+ 			break;
+ 		default:
+ 			break;
 
 
