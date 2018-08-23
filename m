@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4320C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:08:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40635C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:08:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81D512064E
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:08:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81D512064E
+	by mail.kernel.org (Postfix) with ESMTP id 053742064E
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:08:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 053742064E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728970AbeHWLgz (ORCPT
+        id S1727977AbeHWLg6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:36:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44968 "EHLO
+        Thu, 23 Aug 2018 07:36:58 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44976 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727497AbeHWLgy (ORCPT
+        with ESMTP id S1727497AbeHWLg6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:36:54 -0400
+        Thu, 23 Aug 2018 07:36:58 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1DDBFC83;
-        Thu, 23 Aug 2018 08:08:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 032A5C83;
+        Thu, 23 Aug 2018 08:08:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hangbin Liu <liuhangbin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <james.morris@microsoft.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 035/130] ipv6: mcast: fix unsolicited report interval after receiving querys
-Date:   Thu, 23 Aug 2018 09:52:31 +0200
-Message-Id: <20180823074929.497481727@linuxfoundation.org>
+Subject: [PATCH 4.9 036/130] Smack: Mark inode instant in smack_task_to_inode
+Date:   Thu, 23 Aug 2018 09:52:32 +0200
+Message-Id: <20180823074929.556297263@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
 References: <20180823074927.161454870@linuxfoundation.org>
@@ -51,58 +51,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hangbin Liu <liuhangbin@gmail.com>
+From: Casey Schaufler <casey@schaufler-ca.com>
 
-[ Upstream commit 6c6da92808442908287fae8ebb0ca041a52469f4 ]
+[ Upstream commit 7b4e88434c4e7982fb053c49657e1c8bbb8692d9 ]
 
-After recieving MLD querys, we update idev->mc_maxdelay with max_delay
-from query header. This make the later unsolicited reports have the same
-interval with mc_maxdelay, which means we may send unsolicited reports with
-long interval time instead of default configured interval time.
+Smack: Mark inode instant in smack_task_to_inode
 
-Also as we will not call ipv6_mc_reset() after device up. This issue will
-be there even after leave the group and join other groups.
+/proc clean-up in commit 1bbc55131e59bd099fdc568d3aa0b42634dbd188
+resulted in smack_task_to_inode() being called before smack_d_instantiate.
+This resulted in the smk_inode value being ignored, even while present
+for files in /proc/self. Marking the inode as instant here fixes that.
 
-Fixes: fc4eba58b4c14 ("ipv6: make unsolicited report intervals configurable for mld")
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+Signed-off-by: James Morris <james.morris@microsoft.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/mcast.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ security/smack/smack_lsm.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/ipv6/mcast.c
-+++ b/net/ipv6/mcast.c
-@@ -2084,7 +2084,8 @@ void ipv6_mc_dad_complete(struct inet6_d
- 		mld_send_initial_cr(idev);
- 		idev->mc_dad_count--;
- 		if (idev->mc_dad_count)
--			mld_dad_start_timer(idev, idev->mc_maxdelay);
-+			mld_dad_start_timer(idev,
-+					    unsolicited_report_interval(idev));
- 	}
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -2307,6 +2307,7 @@ static void smack_task_to_inode(struct t
+ 	struct smack_known *skp = smk_of_task_struct(p);
+ 
+ 	isp->smk_inode = skp;
++	isp->smk_flags |= SMK_INODE_INSTANT;
  }
  
-@@ -2096,7 +2097,8 @@ static void mld_dad_timer_expire(unsigne
- 	if (idev->mc_dad_count) {
- 		idev->mc_dad_count--;
- 		if (idev->mc_dad_count)
--			mld_dad_start_timer(idev, idev->mc_maxdelay);
-+			mld_dad_start_timer(idev,
-+					    unsolicited_report_interval(idev));
- 	}
- 	in6_dev_put(idev);
- }
-@@ -2454,7 +2456,8 @@ static void mld_ifc_timer_expire(unsigne
- 	if (idev->mc_ifc_count) {
- 		idev->mc_ifc_count--;
- 		if (idev->mc_ifc_count)
--			mld_ifc_start_timer(idev, idev->mc_maxdelay);
-+			mld_ifc_start_timer(idev,
-+					    unsolicited_report_interval(idev));
- 	}
- 	in6_dev_put(idev);
- }
+ /*
 
 
