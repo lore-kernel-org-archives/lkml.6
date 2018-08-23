@@ -6,38 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BFE7C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:01:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A1A5C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:01:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4D1821480
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:00:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4D1821480
+	by mail.kernel.org (Postfix) with ESMTP id 0DE742098B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:01:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DE742098B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728778AbeHWL3U (ORCPT
+        id S1728801AbeHWL3Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:29:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44158 "EHLO
+        Thu, 23 Aug 2018 07:29:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44280 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727623AbeHWL3U (ORCPT
+        with ESMTP id S1728276AbeHWL3Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:29:20 -0400
+        Thu, 23 Aug 2018 07:29:24 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9C888C49;
-        Thu, 23 Aug 2018 08:00:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1787DCAC;
+        Thu, 23 Aug 2018 08:00:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Myron Stowe <myron.stowe@redhat.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Sinan Kaya <okaya@kernel.org>,
-        Dongdong Liu <liudongdong3@huawei.com>,
-        Jon Mason <jdmason@kudzu.us>
-Subject: [PATCH 4.4 76/79] PCI: Skip MPS logic for Virtual Functions (VFs)
-Date:   Thu, 23 Aug 2018 09:53:52 +0200
-Message-Id: <20180823074924.155579322@linuxfoundation.org>
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Madalin Bucur <madalin.bucur@nxp.com>, netdev@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.4 60/79] net/ethernet/freescale/fman: fix cross-build error
+Date:   Thu, 23 Aug 2018 09:53:36 +0200
+Message-Id: <20180823074923.061576969@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074918.641878835@linuxfoundation.org>
 References: <20180823074918.641878835@linuxfoundation.org>
@@ -54,51 +53,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Myron Stowe <myron.stowe@redhat.com>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-commit 3dbe97efe8bf450b183d6dee2305cbc032e6b8a4 upstream.
+[ Upstream commit c133459765fae249ba482f62e12f987aec4376f0 ]
 
-PCIe r4.0, sec 9.3.5.4, "Device Control Register", shows both
-Max_Payload_Size (MPS) and Max_Read_request_Size (MRRS) to be 'RsvdP' for
-VFs.  Just prior to the table it states:
+  CC [M]  drivers/net/ethernet/freescale/fman/fman.o
+In file included from ../drivers/net/ethernet/freescale/fman/fman.c:35:
+../include/linux/fsl/guts.h: In function 'guts_set_dmacr':
+../include/linux/fsl/guts.h:165:2: error: implicit declaration of function 'clrsetbits_be32' [-Werror=implicit-function-declaration]
+  clrsetbits_be32(&guts->dmacr, 3 << shift, device << shift);
+  ^~~~~~~~~~~~~~~
 
-  "PF and VF functionality is defined in Section 7.5.3.4 except where
-   noted in Table 9-16.  For VF fields marked 'RsvdP', the PF setting
-   applies to the VF."
-
-All of which implies that with respect to Max_Payload_Size Supported
-(MPSS), MPS, and MRRS values, we should not be paying any attention to the
-VF's fields, but rather only to the PF's.  Only looking at the PF's fields
-also logically makes sense as it's the sole physical interface to the PCIe
-bus.
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=200527
-Fixes: 27d868b5e6cf ("PCI: Set MPS to match upstream bridge")
-Signed-off-by: Myron Stowe <myron.stowe@redhat.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Cc: stable@vger.kernel.org # 4.3+
-Cc: Keith Busch <keith.busch@intel.com>
-Cc: Sinan Kaya <okaya@kernel.org>
-Cc: Dongdong Liu <liudongdong3@huawei.com>
-Cc: Jon Mason <jdmason@kudzu.us>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Madalin Bucur <madalin.bucur@nxp.com>
+Cc: netdev@vger.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/pci/probe.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ include/linux/fsl/guts.h |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -1338,6 +1338,10 @@ static void pci_configure_mps(struct pci
- 	if (!pci_is_pcie(dev) || !bridge || !pci_is_pcie(bridge))
- 		return;
+--- a/include/linux/fsl/guts.h
++++ b/include/linux/fsl/guts.h
+@@ -16,6 +16,7 @@
+ #define __FSL_GUTS_H__
  
-+	/* MPS and MRRS fields are of type 'RsvdP' for VFs, short-circuit out */
-+	if (dev->is_virtfn)
-+		return;
-+
- 	mps = pcie_get_mps(dev);
- 	p_mps = pcie_get_mps(bridge);
+ #include <linux/types.h>
++#include <linux/io.h>
  
+ /**
+  * Global Utility Registers.
 
 
