@@ -2,99 +2,317 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA48EC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 10:45:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38666C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 10:47:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80D5521525
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 10:45:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C77FA21525
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 10:47:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WVNqPjvQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80D5521525
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="K/rnKg/4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C77FA21525
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730770AbeHWOOl (ORCPT
+        id S1730815AbeHWOQR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 10:14:41 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:53222 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728680AbeHWOOl (ORCPT
+        Thu, 23 Aug 2018 10:16:17 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:33714 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727162AbeHWOQQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 10:14:41 -0400
-Received: by mail-it0-f68.google.com with SMTP id g18-v6so1623276itg.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 03:45:35 -0700 (PDT)
+        Thu, 23 Aug 2018 10:16:16 -0400
+Received: by mail-it0-f65.google.com with SMTP id j198-v6so1620703ita.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 03:47:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=1dfwHG6Mr8oyCmdcmP/mEIoezgxbKGdHCiXGrBk82bc=;
-        b=WVNqPjvQvhvd3VdhwlArH3xN4hbgqWDmTE+ExW8oGNdhq0j/0s2p5TQZO1UnIe/46c
-         eQKDMo92sBD29+E5OmtETwZQJokmGEbrZIKwNjDT8ktQIfh3cK64+fwPmP/svyqSn2VL
-         LsHF59k4OnAdtL0CC9gzfwrfdY2oXQxhIkS9g=
+        bh=3fhCBvMue621Ph8Y8vS6p2pj5kdopVtntR5YRiE5l9E=;
+        b=K/rnKg/43Hj/+gFWWYCWwQ/ytEZ4SfGnpwq685zurqz0GaWLDOo8+eZAU2sn+HIYRl
+         uPXwb33X+6qI2yJSzMakpWho4fuvAENMGsS/5LkVZNk4d2iu8VOrmYcR3+r1Bot7a0u1
+         BYHCjSwC09FKfvX2dvQH0e66VXSHjvG0/1n2TZhttSm+IoqruJaJF7Jmhdg1aTy6Sadk
+         GK9oRwx2f7f4QrNSrvHTQMGyZe/FIONmTquuNC3Dcu5JdnVlQUv1q+WWsreMCauJJHm7
+         tDX2yNWTXgJ+t5Xx0J/Qp4Ya9d8Luum8U0TtedTmkUyzSxMdquzLFQrRF1/mUOcvXllE
+         X0Ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=1dfwHG6Mr8oyCmdcmP/mEIoezgxbKGdHCiXGrBk82bc=;
-        b=W35fV9Bbcm5SKoXDQblv9tBMYwCdFHmjCT0Uqk1DXG067auSJ07734FF3g3yrq3gD3
-         84/7xcboAJdtlEO+/koqzWE0PlPDuH+1WK0gHqeLMaz4rZ2rf0FDA571h8i4H2OslxJM
-         g7QIbQXqAK4nTLEtIT3bQYj+2BjLIOcScYV8FLuaNHOLCmhG4gBNeTfP3rib8UFYRoPf
-         eq8GXu+0Ouduia8ihHXMoEsgCHZMcqmtAh5umHoW7Lbu+AmPIvyK/n38CfqvbPn+VWVp
-         Y1PTK7nQiF7WB5k7xcyI3wn14Hg8C7rADm86Qi0R/tlA4941cNkzOAsew1/VL6ydlZCo
-         uiAA==
-X-Gm-Message-State: AOUpUlG2zAmbO7Ho/1lj1o31w2qab0Jr5EAnlKM5rFNimGK/HVDehgKq
-        QtXtKvjIfyVi/91N4NhWHknO7UAmtetLED3zNw6t9Q==
-X-Google-Smtp-Source: AA+uWPxiaDHdAXRxz65WE8Y+HDXmKDqnk+HKJHTMIfPnu1WxfCTqt8Z80wgIynFbgLrrw2z9duEc4IDK2KcFJdTrcCk=
-X-Received: by 2002:a02:2505:: with SMTP id g5-v6mr51344060jag.112.1535021134712;
- Thu, 23 Aug 2018 03:45:34 -0700 (PDT)
+        bh=3fhCBvMue621Ph8Y8vS6p2pj5kdopVtntR5YRiE5l9E=;
+        b=Sa9a/Sfe8npycHGV+sx+Af6f6SzZ+yKT46E1/5wHnKvuzkxRVmaAK+U9PCRAEjTKLZ
+         BS+saf6UNFhJRjYNRYMKmnaeeAbzbXq5jYQ9dzs0uvfE4EO65Quv3GZ4nYf/cxYwM3RO
+         NC5d/WMjqNw3tOdPlB1m5qWNSynjIJjHDdaevQ6Zokb5kXorjGw1Fmxjx50xqoxeUKc7
+         tFIGVlgaAF1GmBjm4a8Yu78yeD58w1a2+JuJtJ4GL7sF3nvTUGeHQBDXxvfkXA0wpLAg
+         oNiZvFJUp0AACNv4KcT1a2a6/A1KS6xi7t4vaZUIHPda3D7ITTi//619a9+kDFIlM8UP
+         dD9w==
+X-Gm-Message-State: AOUpUlE8q8ajMF6ZCb3JcTo0U8caEFjMBBGZbvLXxMlE47vRXR4Tt6Cv
+        ITM0u4gPZhZoEF1qLZlWXgg6np0hphUMW0qkITSOCQ==
+X-Google-Smtp-Source: AA+uWPw5zW6bVuB6C3H5nl8VdhPjIsNGP15UXB1vLRfAOg1CfV/uV/u7EL3oXO27hX313/MVHNvtbdpFEv0UMk+l794=
+X-Received: by 2002:a02:8952:: with SMTP id u18-v6mr51827845jaj.13.1535021228538;
+ Thu, 23 Aug 2018 03:47:08 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180820181333.2527-1-jmkrzyszt@gmail.com> <20180820181333.2527-4-jmkrzyszt@gmail.com>
-In-Reply-To: <20180820181333.2527-4-jmkrzyszt@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 23 Aug 2018 12:45:22 +0200
-Message-ID: <CACRpkdb5B14Z-hnqxtkE_KaAAAT0EWwC_1ogZBBzHHtBfck-jg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] ARM: OMAP1: ams-delta: register MODEM device earlier
-To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc:     ext Tony Lindgren <tony@atomide.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        linux-serial@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Received: by 2002:a4f:7383:0:0:0:0:0 with HTTP; Thu, 23 Aug 2018 03:46:28
+ -0700 (PDT)
+In-Reply-To: <36bd086d-8d26-5162-ae24-95b259571221@gmail.com>
+References: <ac30d4e6-6411-09e6-1205-96e3e8e29f6f@gmail.com>
+ <20180820184438.GA154536@bhelgaas-glaptop.roam.corp.google.com>
+ <9d7d960a-6c55-dc4b-7969-f5cf46bff0ce@gmail.com> <20180821.123108.89921430801253333.davem@davemloft.net>
+ <da97e198-7683-e0ff-92a9-3b1b22da3757@gmail.com> <alpine.DEB.2.21.1808221222260.2514@nanos.tec.linutronix.de>
+ <36bd086d-8d26-5162-ae24-95b259571221@gmail.com>
+From:   Jian-Hong Pan <jian-hong@endlessm.com>
+Date:   Thu, 23 Aug 2018 18:46:28 +0800
+Message-ID: <CAPpJ_edz3H81EqRSg5jeOXoULt7AKwcTpNFL6Ntt8rhQBPFBFQ@mail.gmail.com>
+Subject: Re: [PATCH] r8169: don't use MSI-X on RTL8106e
+To:     Heiner Kallweit <hkallweit1@gmail.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        David Miller <davem@davemloft.net>, helgaas@kernel.org,
+        Realtek linux nic maintainers <nic_swsd@realtek.com>,
+        netdev@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>,
+        linux-pci@vger.kernel.org, marc.zyngier@arm.com, hch@lst.de
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 20, 2018 at 8:12 PM Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
-
-> Amstrad Delta MODEM device used to be initialized at arch_initcall
-> before it was once moved to late_initcall by commit f7519d8c8290 ("ARM:
-> OMAP1: ams-delta: register latch dependent devices later"). The purpose
-> of that change was to postpone initialization of devices which depended
-> on latch2 pins until latch2 converted to GPIO device was ready.
+2018-08-23 3:49 GMT+08:00 Heiner Kallweit <hkallweit1@gmail.com>:
+> On 22.08.2018 13:44, Thomas Gleixner wrote:
+>> On Tue, 21 Aug 2018, Heiner Kallweit wrote:
+>>> On 21.08.2018 21:31, David Miller wrote:
+>>>> From: Heiner Kallweit <hkallweit1@gmail.com>
+>>>> Date: Mon, 20 Aug 2018 22:46:48 +0200
+>>>>
+>>>>> I'm in contact with Realtek and according to them few chip versions
+>>>>> seem to clear MSI-X table entries on resume from suspend. Checking
+>>>>> with them how this could be fixed / worked around.
+>>>>> Worst case we may have to disable MSI-X in general.
+>>>>
+>>>> I worry that if the chip does this, and somehow MSI-X is enabled and
+>>>> an interrupt is generated, the chip will write to the cleared out
+>>>> MSI-X address.  This will either write garbage into memory or cause
+>>>> a bus error and require PCI error recovery.
+>>>>
+>>>> It also looks like your test patch doesn't fix things for people who
+>>>> have tested it.
+>>>>
+>>> The test patch was based on the first info from Realtek which made me
+>>> think that the base address of the MSI-X table is cleared, what
+>>> obviously is not the case.
+>>>
+>>> After some further tests it seems that the solution isn't as simple
+>>> as storing the MSI-X table entries on suspend and restore them on
+>>> resume. On my system (where MSI-X works fine) MSI-X table entries
+>>> on resume are partially different from the ones on suspend.
+>>
+>> Which is not a surprise. Please don't try to fiddle with that at the driver
+>> level. The irq and PCI core code are the ones in charge and if you'd
+>> restore at the wrong point then hell breaks lose.
+>>
+> Instead of spending a lot of effort on a workaround which may not be
+> acceptable, it may be better to fall back to MSI on all affected chip
+> versions. For two chip versions which were reported to have this issues
+> we're doing this already. I asked Realtek whether they have an overview
+> which chip versions are affected, let's see ..
 >
-> After recent fixes to GPIO handling, it was possible to moove
-> registration of most of those device back to where they were before.
-> The same can be safely done with the MODEM device as initialization
-> of GPIO pins it depends on was moved to machine_init by preceding
-> patch.
+> The Realtek chips provide an alternative, register-based way to access
+> the MSI-X table, and their Windows driver seems to use it. See here:
+> https://patchwork.kernel.org/patch/4149171/
 >
-> Move registration of the MODEM device to arch_initcall_sync, not to
-> arch_initcall, so it is never exposed to potential conflictinh
-> registration order hazard against OMAP serial ports.
+> But as we handle all MSI-X basics in the PCI core, this isn't an option.
 >
-> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+>
+>> Can you please do the following:
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Tested on ASUS X441AUR equipped with RTL8106e.
+This is the laptop whose ethernet does not come back after resume, if
+it does not fallback to MSI.
 
-Yours,
-Linus Walleij
+Here is the full dmesg:
+https://gist.github.com/starnight/e65a97c9bf2d558926895ab76974687e
+
+>>  1) Store the PCI config space at suspend time
+
+Before suspend:
+
+dev@endless:~$ sudo lspci -xnnvvs 02:00.0
+02:00.0 Ethernet controller [0200]: Realtek Semiconductor Co., Ltd.
+RTL8101/2/6E PCI Express Fast/Gigabit Ethernet controller [10ec:8136]
+(rev 07)
+Subsystem: ASUSTeK Computer Inc. RTL810xE PCI Express Fast Ethernet
+controller [1043:200f]
+Control: I/O+ Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr-
+Stepping- SERR- FastB2B- DisINTx+
+Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort-
+<TAbort- <MAbort- >SERR- <PERR- INTx-
+Latency: 0, Cache Line Size: 64 bytes
+Interrupt: pin A routed to IRQ 16
+Region 0: I/O ports at e000 [size=256]
+Region 2: Memory at ef100000 (64-bit, non-prefetchable) [size=4K]
+Region 4: Memory at e0000000 (64-bit, prefetchable) [size=16K]
+Capabilities: [40] Power Management version 3
+Flags: PMEClk- DSI- D1+ D2+ AuxCurrent=375mA PME(D0+,D1+,D2+,D3hot+,D3cold+)
+Status: D0 NoSoftRst+ PME-Enable- DSel=0 DScale=0 PME-
+Capabilities: [50] MSI: Enable- Count=1/1 Maskable- 64bit+
+Address: 0000000000000000  Data: 0000
+Capabilities: [70] Express (v2) Endpoint, MSI 01
+DevCap: MaxPayload 128 bytes, PhantFunc 0, Latency L0s unlimited, L1 <64us
+ExtTag- AttnBtn- AttnInd- PwrInd- RBE+ FLReset- SlotPowerLimit 10.000W
+DevCtl: Report errors: Correctable- Non-Fatal- Fatal- Unsupported-
+RlxdOrd+ ExtTag- PhantFunc- AuxPwr- NoSnoop-
+MaxPayload 128 bytes, MaxReadReq 512 bytes
+DevSta: CorrErr- UncorrErr- FatalErr- UnsuppReq- AuxPwr+ TransPend-
+LnkCap: Port #0, Speed 2.5GT/s, Width x1, ASPM L0s L1, Exit Latency
+L0s unlimited, L1 <64us
+ClockPM+ Surprise- LLActRep- BwNot- ASPMOptComp+
+LnkCtl: ASPM L1 Enabled; RCB 64 bytes Disabled- CommClk+
+ExtSynch- ClockPM+ AutWidDis- BWInt- AutBWInt-
+LnkSta: Speed 2.5GT/s, Width x1, TrErr- Train- SlotClk+ DLActive-
+BWMgmt- ABWMgmt-
+DevCap2: Completion Timeout: Range ABCD, TimeoutDis+, LTR+, OBFF Via
+message/WAKE#
+DevCtl2: Completion Timeout: 50us to 50ms, TimeoutDis-, LTR+, OBFF Disabled
+LnkCtl2: Target Link Speed: 2.5GT/s, EnterCompliance- SpeedDis-
+Transmit Margin: Normal Operating Range, EnterModifiedCompliance- ComplianceSOS-
+Compliance De-emphasis: -6dB
+LnkSta2: Current De-emphasis Level: -6dB, EqualizationComplete-,
+EqualizationPhase1-
+EqualizationPhase2-, EqualizationPhase3-, LinkEqualizationRequest-
+Capabilities: [b0] MSI-X: Enable+ Count=4 Masked-
+Vector table: BAR=4 offset=00000000
+PBA: BAR=4 offset=00000800
+Capabilities: [d0] Vital Product Data
+pcilib: sysfs_read_vpd: read failed: Input/output error
+Not readable
+Capabilities: [100 v1] Advanced Error Reporting
+UESta: DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF-
+MalfTLP- ECRC- UnsupReq- ACSViol-
+UEMsk: DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF-
+MalfTLP- ECRC- UnsupReq- ACSViol-
+UESvrt: DLP+ SDES+ TLP- FCP+ CmpltTO- CmpltAbrt- UnxCmplt- RxOF+
+MalfTLP+ ECRC- UnsupReq- ACSViol-
+CESta: RxErr- BadTLP- BadDLLP- Rollover- Timeout- NonFatalErr-
+CEMsk: RxErr- BadTLP- BadDLLP- Rollover- Timeout- NonFatalErr+
+AERCap: First Error Pointer: 00, GenCap+ CGenEn- ChkCap+ ChkEn-
+Capabilities: [140 v1] Virtual Channel
+Caps: LPEVC=0 RefClk=100ns PATEntryBits=1
+Arb: Fixed- WRR32- WRR64- WRR128-
+Ctrl: ArbSelect=Fixed
+Status: InProgress-
+VC0: Caps: PATOffset=00 MaxTimeSlots=1 RejSnoopTrans-
+Arb: Fixed- WRR32- WRR64- WRR128- TWRR128- WRR256-
+Ctrl: Enable+ ID=0 ArbSelect=Fixed TC/VC=ff
+Status: NegoPending- InProgress-
+Capabilities: [160 v1] Device Serial Number 01-00-00-00-36-4c-e0-00
+Capabilities: [170 v1] Latency Tolerance Reporting
+Max snoop latency: 3145728ns
+Max no snoop latency: 3145728ns
+Kernel driver in use: r8169
+Kernel modules: r8169
+00: ec 10 36 81 07 04 10 00 07 00 00 02 10 00 00 00
+10: 01 e0 00 00 00 00 00 00 04 00 10 ef 00 00 00 00
+20: 0c 00 00 e0 00 00 00 00 00 00 00 00 43 10 0f 20
+30: 00 00 00 00 40 00 00 00 00 00 00 00 ff 01 00 00
+
+>>  2) Compare the PCI config space at resume time and print the difference
+
+After resume:
+
+dev@endless:~$ sudo lspci -xnnvvs 02:00.0
+02:00.0 Ethernet controller [0200]: Realtek Semiconductor Co., Ltd.
+RTL8101/2/6E PCI Express Fast/Gigabit Ethernet controller [10ec:8136]
+(rev 07)
+Subsystem: ASUSTeK Computer Inc. RTL810xE PCI Express Fast Ethernet
+controller [1043:200f]
+Control: I/O+ Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr-
+Stepping- SERR- FastB2B- DisINTx+
+Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort-
+<TAbort- <MAbort- >SERR- <PERR- INTx-
+Latency: 0, Cache Line Size: 64 bytes
+Interrupt: pin A routed to IRQ 16
+Region 0: I/O ports at e000 [size=256]
+Region 2: Memory at ef100000 (64-bit, non-prefetchable) [size=4K]
+Region 4: Memory at e0000000 (64-bit, prefetchable) [size=16K]
+Capabilities: [40] Power Management version 3
+Flags: PMEClk- DSI- D1+ D2+ AuxCurrent=375mA PME(D0+,D1+,D2+,D3hot+,D3cold+)
+Status: D0 NoSoftRst+ PME-Enable- DSel=0 DScale=0 PME-
+Capabilities: [50] MSI: Enable- Count=1/1 Maskable- 64bit+
+Address: 0000000000000000  Data: 0000
+Capabilities: [70] Express (v2) Endpoint, MSI 01
+DevCap: MaxPayload 128 bytes, PhantFunc 0, Latency L0s unlimited, L1 <64us
+ExtTag- AttnBtn- AttnInd- PwrInd- RBE+ FLReset- SlotPowerLimit 10.000W
+DevCtl: Report errors: Correctable- Non-Fatal- Fatal- Unsupported-
+RlxdOrd+ ExtTag- PhantFunc- AuxPwr- NoSnoop-
+MaxPayload 128 bytes, MaxReadReq 512 bytes
+DevSta: CorrErr- UncorrErr- FatalErr- UnsuppReq- AuxPwr+ TransPend-
+LnkCap: Port #0, Speed 2.5GT/s, Width x1, ASPM L0s L1, Exit Latency
+L0s unlimited, L1 <64us
+ClockPM+ Surprise- LLActRep- BwNot- ASPMOptComp+
+LnkCtl: ASPM L1 Enabled; RCB 64 bytes Disabled- CommClk+
+ExtSynch- ClockPM+ AutWidDis- BWInt- AutBWInt-
+LnkSta: Speed 2.5GT/s, Width x1, TrErr- Train- SlotClk+ DLActive-
+BWMgmt- ABWMgmt-
+DevCap2: Completion Timeout: Range ABCD, TimeoutDis+, LTR+, OBFF Via
+message/WAKE#
+DevCtl2: Completion Timeout: 50us to 50ms, TimeoutDis-, LTR+, OBFF Disabled
+LnkCtl2: Target Link Speed: 2.5GT/s, EnterCompliance- SpeedDis-
+Transmit Margin: Normal Operating Range, EnterModifiedCompliance- ComplianceSOS-
+Compliance De-emphasis: -6dB
+LnkSta2: Current De-emphasis Level: -6dB, EqualizationComplete-,
+EqualizationPhase1-
+EqualizationPhase2-, EqualizationPhase3-, LinkEqualizationRequest-
+Capabilities: [b0] MSI-X: Enable+ Count=4 Masked-
+Vector table: BAR=4 offset=00000000
+PBA: BAR=4 offset=00000800
+Capabilities: [d0] Vital Product Data
+pcilib: sysfs_read_vpd: read failed: Input/output error
+Not readable
+Capabilities: [100 v1] Advanced Error Reporting
+UESta: DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF-
+MalfTLP- ECRC- UnsupReq- ACSViol-
+UEMsk: DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF-
+MalfTLP- ECRC- UnsupReq- ACSViol-
+UESvrt: DLP+ SDES+ TLP- FCP+ CmpltTO- CmpltAbrt- UnxCmplt- RxOF+
+MalfTLP+ ECRC- UnsupReq- ACSViol-
+CESta: RxErr- BadTLP- BadDLLP- Rollover- Timeout- NonFatalErr-
+CEMsk: RxErr- BadTLP- BadDLLP- Rollover- Timeout- NonFatalErr+
+AERCap: First Error Pointer: 00, GenCap+ CGenEn- ChkCap+ ChkEn-
+Capabilities: [140 v1] Virtual Channel
+Caps: LPEVC=0 RefClk=100ns PATEntryBits=1
+Arb: Fixed- WRR32- WRR64- WRR128-
+Ctrl: ArbSelect=Fixed
+Status: InProgress-
+VC0: Caps: PATOffset=00 MaxTimeSlots=1 RejSnoopTrans-
+Arb: Fixed- WRR32- WRR64- WRR128- TWRR128- WRR256-
+Ctrl: Enable+ ID=0 ArbSelect=Fixed TC/VC=ff
+Status: NegoPending- InProgress-
+Capabilities: [160 v1] Device Serial Number 01-00-00-00-36-4c-e0-00
+Capabilities: [170 v1] Latency Tolerance Reporting
+Max snoop latency: 3145728ns
+Max no snoop latency: 3145728ns
+Kernel driver in use: r8169
+Kernel modules: r8169
+00: ec 10 36 81 07 04 10 00 07 00 00 02 10 00 00 00
+10: 01 e0 00 00 00 00 00 00 04 00 10 ef 00 00 00 00
+20: 0c 00 00 e0 00 00 00 00 00 00 00 00 43 10 0f 20
+30: 00 00 00 00 40 00 00 00 00 00 00 00 ff 01 00 00
+
+After comparing, there is no difference between before suspend and after resume.
+
+Regards,
+Jian-Hong Pan
+
+>> Do that on a working and a non-working version of Realtek NICs.
+>>
+>> Thanks,
+>>
+>>       tglx
+>>
+>>
+>>
+>
