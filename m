@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A09F4C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:58:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16C66C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:58:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64E9921473
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:58:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64E9921473
+	by mail.kernel.org (Postfix) with ESMTP id D10E021473
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:58:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D10E021473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728067AbeHWL0s (ORCPT
+        id S1728104AbeHWL0v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:26:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41802 "EHLO
+        Thu, 23 Aug 2018 07:26:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41810 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726898AbeHWL0s (ORCPT
+        with ESMTP id S1726898AbeHWL0u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:26:48 -0400
+        Thu, 23 Aug 2018 07:26:50 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2D4D89D2;
-        Thu, 23 Aug 2018 07:58:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4EB7EBB6;
+        Thu, 23 Aug 2018 07:58:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Li RongQing <lirongqing@baidu.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Alexey Brodkin <abrodkin@synopsys.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 17/79] net: propagate dev_get_valid_name return code
-Date:   Thu, 23 Aug 2018 09:52:53 +0200
-Message-Id: <20180823074919.845164048@linuxfoundation.org>
+Subject: [PATCH 4.4 18/79] ARC: Enable machine_desc->init_per_cpu for !CONFIG_SMP
+Date:   Thu, 23 Aug 2018 09:52:54 +0200
+Message-Id: <20180823074919.909220617@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074918.641878835@linuxfoundation.org>
 References: <20180823074918.641878835@linuxfoundation.org>
@@ -51,42 +51,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Li RongQing <lirongqing@baidu.com>
+From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
 
-[ Upstream commit 7892bd081045222b9e4027fec279a28d6fe7aa66 ]
+[ Upstream commit 2f24ef7413a4d91657ef04e77c27ce0b313e6c95 ]
 
-if dev_get_valid_name failed, propagate its return code
+machine_desc->init_per_cpu() hook is supposed to be per cpu
+initialization and would seem to apply  equally to UP and/or SMP.
+Infact the comment in header file seems to suggest it works for
+UP too, which was not the case and this patch.
 
-and remove the setting err to ENODEV, it will be set to
-0 again before dev_change_net_namespace exits.
+This enables !CONFIG_SMP build for platforms such as hsdk.
 
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+[vgupta: trimmeed changelog]
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/dev.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arc/include/asm/mach_desc.h |    2 --
+ arch/arc/kernel/irq.c            |    2 +-
+ 2 files changed, 1 insertion(+), 3 deletions(-)
 
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -7420,7 +7420,8 @@ int dev_change_net_namespace(struct net_
- 		/* We get here if we can't use the current device name */
- 		if (!pat)
- 			goto out;
--		if (dev_get_valid_name(net, dev, pat) < 0)
-+		err = dev_get_valid_name(net, dev, pat);
-+		if (err < 0)
- 			goto out;
- 	}
+--- a/arch/arc/include/asm/mach_desc.h
++++ b/arch/arc/include/asm/mach_desc.h
+@@ -34,9 +34,7 @@ struct machine_desc {
+ 	const char		*name;
+ 	const char		**dt_compat;
+ 	void			(*init_early)(void);
+-#ifdef CONFIG_SMP
+ 	void			(*init_per_cpu)(unsigned int);
+-#endif
+ 	void			(*init_machine)(void);
+ 	void			(*init_late)(void);
  
-@@ -7432,7 +7433,6 @@ int dev_change_net_namespace(struct net_
- 	dev_close(dev);
+--- a/arch/arc/kernel/irq.c
++++ b/arch/arc/kernel/irq.c
+@@ -31,10 +31,10 @@ void __init init_IRQ(void)
+ 	/* a SMP H/w block could do IPI IRQ request here */
+ 	if (plat_smp_ops.init_per_cpu)
+ 		plat_smp_ops.init_per_cpu(smp_processor_id());
++#endif
  
- 	/* And unlink it from device chain */
--	err = -ENODEV;
- 	unlist_netdevice(dev);
+ 	if (machine_desc->init_per_cpu)
+ 		machine_desc->init_per_cpu(smp_processor_id());
+-#endif
+ }
  
- 	synchronize_net();
+ /*
 
 
