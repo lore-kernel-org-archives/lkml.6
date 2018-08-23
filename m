@@ -2,194 +2,90 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30E56C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:43:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0120C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:45:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB79C20836
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:43:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB79C20836
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 20AD4208F7
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 14:45:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20AD4208F7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732353AbeHWSNg (ORCPT
+        id S1732521AbeHWSO7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 14:13:36 -0400
-Received: from gateway21.websitewelcome.com ([192.185.45.140]:13379 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731795AbeHWSNf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 14:13:35 -0400
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id 6AA244014B5E6
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 09:43:35 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id sqpjfExVhkBj6sqpjfTrQj; Thu, 23 Aug 2018 09:43:35 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.40.214] (port=53226 helo=[192.168.1.71])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fsqpi-001OKT-TN; Thu, 23 Aug 2018 09:43:35 -0500
-To:     Thomas Hellstrom <thellstrom@vmware.com>,
-        Deepak Singh Rawat <drawat@vmware.com>,
-        linux-graphics-maintainer <linux-graphics-maintainer@vmware.com>,
-        Sinclair Yeh <syeh@vmware.com>, David Airlie <airlied@linux.ie>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-References: <20180816193015.GA12093@embeddedor.com>
- <BYAPR05MB41817986B00F59780A68D63CBA320@BYAPR05MB4181.namprd05.prod.outlook.com>
- <68b1a4bc-87d8-a93a-edd1-5794ca9e93f6@vmware.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Subject: Re: [Linux-graphics-maintainer] [PATCH] drm/vmwgfx: Fix potential
- Spectre v1
-Message-ID: <0d9c46fd-40a0-4d9b-bd9a-9e0f36da763d@embeddedor.com>
-Date:   Thu, 23 Aug 2018 09:43:33 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <68b1a4bc-87d8-a93a-edd1-5794ca9e93f6@vmware.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+        Thu, 23 Aug 2018 14:14:59 -0400
+Received: from gate.crashing.org ([63.228.1.57]:42816 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732373AbeHWSO7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 14:14:59 -0400
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w7NEfLRi023954;
+        Thu, 23 Aug 2018 09:41:22 -0500
+Received: (from segher@localhost)
+        by gate.crashing.org (8.14.1/8.14.1/Submit) id w7NEfImD023951;
+        Thu, 23 Aug 2018 09:41:18 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date:   Thu, 23 Aug 2018 09:41:18 -0500
+From:   Segher Boessenkool <segher@kernel.crashing.org>
+To:     Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Russell Currey <ruscur@russell.cc>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        aneesh.kumar@linux.vnet.ibm.com, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org,
+        Christophe LEROY <christophe.leroy@c-s.fr>
+Subject: Re: [PATCH v2 3/4] powerpc/mm: fix a warning when a cache is common to PGD and hugepages
+Message-ID: <20180823144118.GU24439@gate.crashing.org>
+References: <2f96bf1a8df1091c642de099ed07c34b5ab9b90a.1534258290.git.christophe.leroy@c-s.fr> <4aaca2d27429e6bdadc340fd3b96e7c350c4b2f4.1534258290.git.christophe.leroy@c-s.fr> <6dea8d0c-c4ab-49aa-da26-a729c18fa818@linux.ibm.com> <006e5f33-b816-7508-faac-da26a860659c@c-s.fr> <3e6412ac-c645-908f-a3bb-c9a2a72f4b68@linux.ibm.com> <cb121f38-ac89-4971-fd84-5473e7e9ced5@c-s.fr> <20180823103625.GR24439@gate.crashing.org> <8ada20e9-3bc1-fdaf-d78f-2f5a317e8216@c-s.fr> <87a7pdl2jy.fsf@concordia.ellerman.id.au> <d561e11b-b85e-6f6c-0936-4a93cf309915@au1.ibm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.40.214
-X-Source-L: No
-X-Exim-ID: 1fsqpi-001OKT-TN
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.71]) [189.250.40.214]:53226
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <d561e11b-b85e-6f6c-0936-4a93cf309915@au1.ibm.com>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
-
-On 8/21/18 3:19 AM, Thomas Hellstrom wrote:
-
->>>   #include "vmwgfx_drv.h"
->>>   #include "vmwgfx_reg.h"
->>> @@ -4520,8 +4521,10 @@ int vmw_execbuf_ioctl(struct drm_device *dev,
->>> unsigned long data,
->>>           return -EINVAL;
->>>       }
->>>
->>> -    if (arg.version > 1 &&
->>> -        copy_from_user(&arg.context_handle,
->>> +    if (arg.version >= ARRAY_SIZE(copy_offset))
->>> +        return -EFAULT;
+On Thu, Aug 23, 2018 at 11:32:16PM +1000, Andrew Donnellan wrote:
+> On 23/08/18 21:56, Michael Ellerman wrote:
+> >Christophe LEROY <christophe.leroy@c-s.fr> writes:
+> >
+> >>Le 23/08/2018 � 12:36, Segher Boessenkool a �crit�:
+> >>>On Thu, Aug 23, 2018 at 11:40:22AM +0200, Christophe LEROY wrote:
+> >>>>The only small probl�me I have is that some version of GCC seems to
+> >>>>complain about big memset() (132k and 256k ones). Is there a way to tell
+> >>>>GCC we really want to do it ?
+> >>>
+> >>>I'm not sure what you mean.  Complain, is that a warning, is that an 
+> >>>error?
+> >>>What does it say?  Do you have some example code to reproduce it?  Etc.
+> >>
+> >>I saw the warnings in the checks at
+> >>https://patchwork.ozlabs.org/patch/957566/
+> >>Unfortunatly the link is now broken.
+> >
+> >ruscur/ajd any idea what happened to the snowpatch links here?
 > 
-> I must admit my understanding of spectre workings in this case is limited, but why do you need to compare
-> arg.version against ARRAY_SIZE here, when it is already checked against DRM_VMW_EXECBUF_VERSION earlier?
+> I think they've disappeared because our log rotation is too fast - I've 
+> now upped it to 30 days. I guess over time we'll figure out what we need 
+> in this regard, ideally we'd keep logs indefinitely but they're several 
+> megs per build.
 > 
-Oh, I wasn't aware of the value in DRM_VMW_EXECBUF_VERSION. But as arg.version is used to index copy_offset,
-it is safer to compare its value against the actual size of copy_offset.
+> I've kicked off another build for this series and the links in Patchwork 
+> should update to point to the new job when it's done (probably in the 
+> next couple of hours).
 
-So, what do you think if I replace DRM_VMW_EXECBUF_VERSION with ARRAY_SIZE instead of adding a new check
-against ARRAY_SIZE?
+It's back, thanks Andrew!
 
-Something like:
-
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-index 1f13457..3ef9f7b 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c
-@@ -25,6 +25,7 @@
-  *
-  **************************************************************************/
- #include <linux/sync_file.h>
-+#include <linux/nospec.h>
-
- #include "vmwgfx_drv.h"
- #include "vmwgfx_reg.h"
-@@ -4514,11 +4515,12 @@ int vmw_execbuf_ioctl(struct drm_device *dev, unsigned long data,
-         * arg.version.
-         */
-
--       if (unlikely(arg.version > DRM_VMW_EXECBUF_VERSION ||
-+       if (unlikely(arg.version > ARRAY_SIZE(copy_offset) ||
-                     arg.version == 0)) {
-                DRM_ERROR("Incorrect execbuf version.\n");
-                return -EINVAL;
-        }
-+       arg.version = array_index_nospec(arg.version, ARRAY_SIZE(copy_offset));
-
-        if (arg.version > 1 &&
-            copy_from_user(&arg.context_handle,
+The warnings are not from GCC at all: the warnings are from sparse.
 
 
-> 
-> 
->>> +    arg.version = array_index_nospec(arg.version,
->>> ARRAY_SIZE(copy_offset));
->>> +    if (copy_from_user(&arg.context_handle,
->>>                  (void __user *) (data + copy_offset[0]),
->>>                  copy_offset[arg.version - 1] -
->>>                  copy_offset[0]) != 0)
-> 
-> Similarly, we want to perform this copy iff arg.version > 1. Why did you remove that check?
-> 
-
-Yeah, this check must remain in place. I will add it back and send v2.
-
-Thanks for the feedback!
---
-Gustavo
+Segher
