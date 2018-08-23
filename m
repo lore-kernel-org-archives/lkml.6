@@ -6,43 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B361C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:17:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69660C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:17:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C39562148E
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:17:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C39562148E
+	by mail.kernel.org (Postfix) with ESMTP id 1C3A620A8B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:17:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C3A620A8B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728989AbeHWLqH (ORCPT
+        id S1729258AbeHWLqL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:46:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46098 "EHLO
+        Thu, 23 Aug 2018 07:46:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46114 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726246AbeHWLqH (ORCPT
+        with ESMTP id S1726246AbeHWLqL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:46:07 -0400
+        Thu, 23 Aug 2018 07:46:11 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1AA3AC74;
-        Thu, 23 Aug 2018 08:17:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4D0B7C7B;
+        Thu, 23 Aug 2018 08:17:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kim Phillips <kim.phillips@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sandipan Das <sandipan@linux.vnet.ibm.com>,
-        Thomas Richter <tmricht@linux.vnet.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 096/130] perf llvm-utils: Remove bashism from kernel include fetch script
-Date:   Thu, 23 Aug 2018 09:53:32 +0200
-Message-Id: <20180823074933.358343130@linuxfoundation.org>
+Subject: [PATCH 4.9 087/130] net/sched: act_tunnel_key: fix NULL dereference when goto chain is used
+Date:   Thu, 23 Aug 2018 09:53:23 +0200
+Message-Id: <20180823074932.807500017@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
 References: <20180823074927.161454870@linuxfoundation.org>
@@ -59,62 +51,150 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kim Phillips <kim.phillips@arm.com>
+From: Davide Caratti <dcaratti@redhat.com>
 
-[ Upstream commit f6432b9f65001651412dbc3589d251534822d4ab ]
+[ Upstream commit 38230a3e0e0933bbcf5df6fa469ba0667f667568 ]
 
-Like system(), popen() calls /bin/sh, which may/may not be bash.
+the control action in the common member of struct tcf_tunnel_key must be a
+valid value, as it can contain the chain index when 'goto chain' is used.
+Ensure that the control action can be read as x->tcfa_action, when x is a
+pointer to struct tc_action and x->ops->type is TCA_ACT_TUNNEL_KEY, to
+prevent the following command:
 
-Script when run on dash and encounters the line, yields:
+ # tc filter add dev $h2 ingress protocol ip pref 1 handle 101 flower \
+ > $tcflags dst_mac $h2mac action tunnel_key unset goto chain 1
 
- exit: Illegal number: -1
+from causing a NULL dereference when a matching packet is received:
 
-checkbashisms report on script content:
+ BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+ PGD 80000001097ac067 P4D 80000001097ac067 PUD 103b0a067 PMD 0
+ Oops: 0000 [#1] SMP PTI
+ CPU: 0 PID: 3491 Comm: mausezahn Tainted: G            E     4.18.0-rc2.auguri+ #421
+ Hardware name: Hewlett-Packard HP Z220 CMT Workstation/1790, BIOS K51 v01.58 02/07/2013
+ RIP: 0010:tcf_action_exec+0xb8/0x100
+ Code: 00 00 00 20 74 1d 83 f8 03 75 09 49 83 c4 08 4d 39 ec 75 bc 48 83 c4 10 5b 5d 41 5c 41 5d 41 5e 41 5f c3 49 8b 97 a8 00 00 00 <48> 8b 12 48 89 55 00 48 83 c4 10 5b 5d 41 5c 41 5d 41 5e 41 5f c3
+ RSP: 0018:ffff95145ea03c40 EFLAGS: 00010246
+ RAX: 0000000020000001 RBX: ffff9514499e5800 RCX: 0000000000000001
+ RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000000
+ RBP: ffff95145ea03e60 R08: 0000000000000000 R09: ffff95145ea03c9c
+ R10: ffff95145ea03c78 R11: 0000000000000008 R12: ffff951456a69800
+ R13: ffff951456a69808 R14: 0000000000000001 R15: ffff95144965ee40
+ FS:  00007fd67ee11740(0000) GS:ffff95145ea00000(0000) knlGS:0000000000000000
+ CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ CR2: 0000000000000000 CR3: 00000001038a2006 CR4: 00000000001606f0
+ Call Trace:
+  <IRQ>
+  fl_classify+0x1ad/0x1c0 [cls_flower]
+  ? __update_load_avg_se.isra.47+0x1ca/0x1d0
+  ? __update_load_avg_se.isra.47+0x1ca/0x1d0
+  ? update_load_avg+0x665/0x690
+  ? update_load_avg+0x665/0x690
+  ? kmem_cache_alloc+0x38/0x1c0
+  tcf_classify+0x89/0x140
+  __netif_receive_skb_core+0x5ea/0xb70
+  ? enqueue_entity+0xd0/0x270
+  ? process_backlog+0x97/0x150
+  process_backlog+0x97/0x150
+  net_rx_action+0x14b/0x3e0
+  __do_softirq+0xde/0x2b4
+  do_softirq_own_stack+0x2a/0x40
+  </IRQ>
+  do_softirq.part.18+0x49/0x50
+  __local_bh_enable_ip+0x49/0x50
+  __dev_queue_xmit+0x4ab/0x8a0
+  ? wait_woken+0x80/0x80
+  ? packet_sendmsg+0x38f/0x810
+  ? __dev_queue_xmit+0x8a0/0x8a0
+  packet_sendmsg+0x38f/0x810
+  sock_sendmsg+0x36/0x40
+  __sys_sendto+0x10e/0x140
+  ? do_vfs_ioctl+0xa4/0x630
+  ? syscall_trace_enter+0x1df/0x2e0
+  ? __audit_syscall_exit+0x22a/0x290
+  __x64_sys_sendto+0x24/0x30
+  do_syscall_64+0x5b/0x180
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+ RIP: 0033:0x7fd67e18dc93
+ Code: 48 8b 0d 18 83 20 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 83 3d 59 c7 20 00 00 75 13 49 89 ca b8 2c 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 34 c3 48 83 ec 08 e8 2b f7 ff ff 48 89 04 24
+ RSP: 002b:00007ffe0189b748 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
+ RAX: ffffffffffffffda RBX: 00000000020ca010 RCX: 00007fd67e18dc93
+ RDX: 0000000000000062 RSI: 00000000020ca322 RDI: 0000000000000003
+ RBP: 00007ffe0189b780 R08: 00007ffe0189b760 R09: 0000000000000014
+ R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000062
+ R13: 00000000020ca322 R14: 00007ffe0189b760 R15: 0000000000000003
+ Modules linked in: act_tunnel_key act_gact cls_flower sch_ingress vrf veth act_csum(E) xt_CHECKSUM iptable_mangle ipt_MASQUERADE iptable_nat nf_nat_ipv4 nf_nat nf_conntrack_ipv4 nf_defrag_ipv4 xt_conntrack nf_conntrack ipt_REJECT nf_reject_ipv4 tun bridge stp llc ebtable_filter ebtables ip6table_filter ip6_tables iptable_filter intel_rapl snd_hda_codec_hdmi x86_pkg_temp_thermal intel_powerclamp snd_hda_codec_realtek coretemp snd_hda_codec_generic kvm_intel kvm irqbypass snd_hda_intel crct10dif_pclmul crc32_pclmul hp_wmi ghash_clmulni_intel pcbc snd_hda_codec aesni_intel sparse_keymap rfkill snd_hda_core snd_hwdep snd_seq crypto_simd iTCO_wdt gpio_ich iTCO_vendor_support wmi_bmof cryptd mei_wdt glue_helper snd_seq_device snd_pcm pcspkr snd_timer snd i2c_i801 lpc_ich sg soundcore wmi mei_me
+  mei ie31200_edac nfsd auth_rpcgss nfs_acl lockd grace sunrpc ip_tables xfs libcrc32c sd_mod sr_mod cdrom i915 video i2c_algo_bit drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops ahci crc32c_intel libahci serio_raw sfc libata mtd drm ixgbe mdio i2c_core e1000e dca
+ CR2: 0000000000000000
+ ---[ end trace 1ab8b5b5d4639dfc ]---
+ RIP: 0010:tcf_action_exec+0xb8/0x100
+ Code: 00 00 00 20 74 1d 83 f8 03 75 09 49 83 c4 08 4d 39 ec 75 bc 48 83 c4 10 5b 5d 41 5c 41 5d 41 5e 41 5f c3 49 8b 97 a8 00 00 00 <48> 8b 12 48 89 55 00 48 83 c4 10 5b 5d 41 5c 41 5d 41 5e 41 5f c3
+ RSP: 0018:ffff95145ea03c40 EFLAGS: 00010246
+ RAX: 0000000020000001 RBX: ffff9514499e5800 RCX: 0000000000000001
+ RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000000
+ RBP: ffff95145ea03e60 R08: 0000000000000000 R09: ffff95145ea03c9c
+ R10: ffff95145ea03c78 R11: 0000000000000008 R12: ffff951456a69800
+ R13: ffff951456a69808 R14: 0000000000000001 R15: ffff95144965ee40
+ FS:  00007fd67ee11740(0000) GS:ffff95145ea00000(0000) knlGS:0000000000000000
+ CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ CR2: 0000000000000000 CR3: 00000001038a2006 CR4: 00000000001606f0
+ Kernel panic - not syncing: Fatal exception in interrupt
+ Kernel Offset: 0x11400000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+ ---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
 
- possible bashism (exit|return with negative status code):
- exit -1
-
-Remove the bashism and use the more portable non-zero failure
-status code 1.
-
-Signed-off-by: Kim Phillips <kim.phillips@arm.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Michael Petlan <mpetlan@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Sandipan Das <sandipan@linux.vnet.ibm.com>
-Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
-Link: http://lkml.kernel.org/r/20180629124652.8d0af7e2281fd3fd8262cacc@arm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: d0f6dd8a914f ("net/sched: Introduce act_tunnel_key")
+Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/util/llvm-utils.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ include/net/tc_act/tc_tunnel_key.h |    1 -
+ net/sched/act_tunnel_key.c         |    6 +++---
+ 2 files changed, 3 insertions(+), 4 deletions(-)
 
---- a/tools/perf/util/llvm-utils.c
-+++ b/tools/perf/util/llvm-utils.c
-@@ -260,16 +260,16 @@ static const char *kinc_fetch_script =
- "#!/usr/bin/env sh\n"
- "if ! test -d \"$KBUILD_DIR\"\n"
- "then\n"
--"	exit -1\n"
-+"	exit 1\n"
- "fi\n"
- "if ! test -f \"$KBUILD_DIR/include/generated/autoconf.h\"\n"
- "then\n"
--"	exit -1\n"
-+"	exit 1\n"
- "fi\n"
- "TMPDIR=`mktemp -d`\n"
- "if test -z \"$TMPDIR\"\n"
- "then\n"
--"    exit -1\n"
-+"    exit 1\n"
- "fi\n"
- "cat << EOF > $TMPDIR/Makefile\n"
- "obj-y := dummy.o\n"
+--- a/include/net/tc_act/tc_tunnel_key.h
++++ b/include/net/tc_act/tc_tunnel_key.h
+@@ -16,7 +16,6 @@
+ struct tcf_tunnel_key_params {
+ 	struct rcu_head		rcu;
+ 	int			tcft_action;
+-	int			action;
+ 	struct metadata_dst     *tcft_enc_metadata;
+ };
+ 
+--- a/net/sched/act_tunnel_key.c
++++ b/net/sched/act_tunnel_key.c
+@@ -39,7 +39,7 @@ static int tunnel_key_act(struct sk_buff
+ 
+ 	tcf_lastuse_update(&t->tcf_tm);
+ 	bstats_cpu_update(this_cpu_ptr(t->common.cpu_bstats), skb);
+-	action = params->action;
++	action = READ_ONCE(t->tcf_action);
+ 
+ 	switch (params->tcft_action) {
+ 	case TCA_TUNNEL_KEY_ACT_RELEASE:
+@@ -170,7 +170,7 @@ static int tunnel_key_init(struct net *n
+ 
+ 	params_old = rtnl_dereference(t->params);
+ 
+-	params_new->action = parm->action;
++	t->tcf_action = parm->action;
+ 	params_new->tcft_action = parm->t_action;
+ 	params_new->tcft_enc_metadata = metadata;
+ 
+@@ -242,13 +242,13 @@ static int tunnel_key_dump(struct sk_buf
+ 		.index    = t->tcf_index,
+ 		.refcnt   = t->tcf_refcnt - ref,
+ 		.bindcnt  = t->tcf_bindcnt - bind,
++		.action   = t->tcf_action,
+ 	};
+ 	struct tcf_t tm;
+ 
+ 	params = rtnl_dereference(t->params);
+ 
+ 	opt.t_action = params->tcft_action;
+-	opt.action = params->action;
+ 
+ 	if (nla_put(skb, TCA_TUNNEL_KEY_PARMS, sizeof(opt), &opt))
+ 		goto nla_put_failure;
 
 
