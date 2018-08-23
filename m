@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02947C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:20:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43680C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:20:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB5A62089F
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:20:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB5A62089F
+	by mail.kernel.org (Postfix) with ESMTP id 07B5D208D6
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:20:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07B5D208D6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730325AbeHWLsv (ORCPT
+        id S1730337AbeHWLsy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:48:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46624 "EHLO
+        Thu, 23 Aug 2018 07:48:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46632 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728232AbeHWLsu (ORCPT
+        with ESMTP id S1728232AbeHWLsx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:48:50 -0400
+        Thu, 23 Aug 2018 07:48:53 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B3AF3C74;
-        Thu, 23 Aug 2018 08:20:20 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E4AC8C74;
+        Thu, 23 Aug 2018 08:20:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Garry <john.garry@huawei.com>,
-        Tejun Heo <tj@kernel.org>,
+        stable@vger.kernel.org, Zhouyang Jia <jiazhouyang09@gmail.com>,
+        Juergen Gross <jgross@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 043/217] libahci: Fix possible Spectre-v1 pmp indexing in ahci_led_store()
-Date:   Thu, 23 Aug 2018 09:52:36 +0200
-Message-Id: <20180823075507.463449517@linuxfoundation.org>
+Subject: [PATCH 4.14 052/217] xen/scsiback: add error handling for xenbus_printf
+Date:   Thu, 23 Aug 2018 09:52:45 +0200
+Message-Id: <20180823075507.886759642@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -51,55 +51,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: John Garry <john.garry@huawei.com>
+From: Zhouyang Jia <jiazhouyang09@gmail.com>
 
-[ Upstream commit fae2a63737e5973f1426bc139935a0f42e232844 ]
+[ Upstream commit 7c63ca24c878e0051c91904b72174029320ef4bd ]
 
-Currently smatch warns of possible Spectre-V1 issue in ahci_led_store():
-drivers/ata/libahci.c:1150 ahci_led_store() warn: potential spectre issue 'pp->em_priv' (local cap)
+When xenbus_printf fails, the lack of error-handling code may
+cause unexpected results.
 
-Userspace controls @pmp from following callchain:
-em_message->store()
-->ata_scsi_em_message_store()
--->ap->ops->em_store()
---->ahci_led_store()
+This patch adds error-handling code after calling xenbus_printf.
 
-After the mask+shift @pmp is effectively an 8b value, which is used to
-index into an array of length 8, so sanitize the array index.
-
-Signed-off-by: John Garry <john.garry@huawei.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
-
+Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/ata/libahci.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/xen/xen-scsiback.c |   16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
---- a/drivers/ata/libahci.c
-+++ b/drivers/ata/libahci.c
-@@ -35,6 +35,7 @@
- #include <linux/kernel.h>
- #include <linux/gfp.h>
- #include <linux/module.h>
-+#include <linux/nospec.h>
- #include <linux/blkdev.h>
- #include <linux/delay.h>
- #include <linux/interrupt.h>
-@@ -1135,10 +1136,12 @@ static ssize_t ahci_led_store(struct ata
+--- a/drivers/xen/xen-scsiback.c
++++ b/drivers/xen/xen-scsiback.c
+@@ -1012,6 +1012,7 @@ static void scsiback_do_add_lun(struct v
+ {
+ 	struct v2p_entry *entry;
+ 	unsigned long flags;
++	int err;
  
- 	/* get the slot number from the message */
- 	pmp = (state & EM_MSG_LED_PMP_SLOT) >> 8;
--	if (pmp < EM_MAX_SLOTS)
-+	if (pmp < EM_MAX_SLOTS) {
-+		pmp = array_index_nospec(pmp, EM_MAX_SLOTS);
- 		emp = &pp->em_priv[pmp];
--	else
-+	} else {
- 		return -EINVAL;
-+	}
+ 	if (try) {
+ 		spin_lock_irqsave(&info->v2p_lock, flags);
+@@ -1027,8 +1028,11 @@ static void scsiback_do_add_lun(struct v
+ 			scsiback_del_translation_entry(info, vir);
+ 		}
+ 	} else if (!try) {
+-		xenbus_printf(XBT_NIL, info->dev->nodename, state,
++		err = xenbus_printf(XBT_NIL, info->dev->nodename, state,
+ 			      "%d", XenbusStateClosed);
++		if (err)
++			xenbus_dev_error(info->dev, err,
++				"%s: writing %s", __func__, state);
+ 	}
+ }
  
- 	/* mask off the activity bits if we are in sw_activity
- 	 * mode, user should turn off sw_activity before setting
+@@ -1067,8 +1071,11 @@ static void scsiback_do_1lun_hotplug(str
+ 	snprintf(str, sizeof(str), "vscsi-devs/%s/p-dev", ent);
+ 	val = xenbus_read(XBT_NIL, dev->nodename, str, NULL);
+ 	if (IS_ERR(val)) {
+-		xenbus_printf(XBT_NIL, dev->nodename, state,
++		err = xenbus_printf(XBT_NIL, dev->nodename, state,
+ 			      "%d", XenbusStateClosed);
++		if (err)
++			xenbus_dev_error(info->dev, err,
++				"%s: writing %s", __func__, state);
+ 		return;
+ 	}
+ 	strlcpy(phy, val, VSCSI_NAMELEN);
+@@ -1079,8 +1086,11 @@ static void scsiback_do_1lun_hotplug(str
+ 	err = xenbus_scanf(XBT_NIL, dev->nodename, str, "%u:%u:%u:%u",
+ 			   &vir.hst, &vir.chn, &vir.tgt, &vir.lun);
+ 	if (XENBUS_EXIST_ERR(err)) {
+-		xenbus_printf(XBT_NIL, dev->nodename, state,
++		err = xenbus_printf(XBT_NIL, dev->nodename, state,
+ 			      "%d", XenbusStateClosed);
++		if (err)
++			xenbus_dev_error(info->dev, err,
++				"%s: writing %s", __func__, state);
+ 		return;
+ 	}
+ 
 
 
