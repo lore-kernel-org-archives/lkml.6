@@ -2,145 +2,192 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 179AEC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:43:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A328C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:43:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D073A2083A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:43:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D073A2083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 607882083A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:43:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 607882083A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732825AbeHWMLr (ORCPT
+        id S1732839AbeHWMLu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:11:47 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:35611 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727597AbeHWMLr (ORCPT
+        Thu, 23 Aug 2018 08:11:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50174 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727597AbeHWMLt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:11:47 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7N8goOV3189269
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 23 Aug 2018 01:42:50 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7N8go8x3189265;
-        Thu, 23 Aug 2018 01:42:50 -0700
-Date:   Thu, 23 Aug 2018 01:42:50 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-dde755a90e98a1c57f6a92d1a79bc5554024065c@git.kernel.org>
-Cc:     hpa@zytor.com, dsahern@gmail.com, tglx@linutronix.de,
-        mpetlan@redhat.com, peterz@infradead.org, jolsa@kernel.org,
-        alexander.shishkin@linux.intel.com, acme@redhat.com,
-        linux-kernel@vger.kernel.org, namhyung@kernel.org, mingo@kernel.org
-Reply-To: alexander.shishkin@linux.intel.com, acme@redhat.com,
-          jolsa@kernel.org, peterz@infradead.org, mpetlan@redhat.com,
-          tglx@linutronix.de, dsahern@gmail.com, hpa@zytor.com,
-          mingo@kernel.org, namhyung@kernel.org,
-          linux-kernel@vger.kernel.org
-In-Reply-To: <20180817094813.15086-9-jolsa@kernel.org>
-References: <20180817094813.15086-9-jolsa@kernel.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf tools: Use compression id in
- decompress_kmodule()
-Git-Commit-ID: dde755a90e98a1c57f6a92d1a79bc5554024065c
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 23 Aug 2018 08:11:49 -0400
+Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0914D7F6;
+        Thu, 23 Aug 2018 08:43:11 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
+        Doron Roberts-Kedes <doronrk@fb.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.17 079/324] nbd: Add the nbd NBD_DISCONNECT_ON_CLOSE config flag.
+Date:   Thu, 23 Aug 2018 09:52:25 +0200
+Message-Id: <20180823074959.856027397@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
+References: <20180823074955.885811006@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  dde755a90e98a1c57f6a92d1a79bc5554024065c
-Gitweb:     https://git.kernel.org/tip/dde755a90e98a1c57f6a92d1a79bc5554024065c
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Fri, 17 Aug 2018 11:48:08 +0200
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 20 Aug 2018 08:54:59 -0300
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
-perf tools: Use compression id in decompress_kmodule()
+------------------
 
-Once we parsed out the compression ID, we dont need to iterate all
-available compressions and we can call it directly.
+From: Doron Roberts-Kedes <doronrk@fb.com>
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Michael Petlan <mpetlan@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180817094813.15086-9-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+[ Upstream commit 08ba91ee6e2c1c08d3f0648f978cbb5dbf3491d8 ]
+
+If NBD_DISCONNECT_ON_CLOSE is set on a device, then the driver will
+issue a disconnect from nbd_release if the device has no remaining
+bdev->bd_openers.
+
+Fix ret val so reconfigure with only setting the flag succeeds.
+
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+Signed-off-by: Doron Roberts-Kedes <doronrk@fb.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/util/dso.c | 24 +++---------------------
- 1 file changed, 3 insertions(+), 21 deletions(-)
+ drivers/block/nbd.c      |   40 +++++++++++++++++++++++++++++++++-------
+ include/uapi/linux/nbd.h |    3 +++
+ 2 files changed, 36 insertions(+), 7 deletions(-)
 
-diff --git a/tools/perf/util/dso.c b/tools/perf/util/dso.c
-index d875e6956a3e..54bfe1f4762f 100644
---- a/tools/perf/util/dso.c
-+++ b/tools/perf/util/dso.c
-@@ -244,18 +244,6 @@ bool is_kernel_module(const char *pathname, int cpumode)
- 	return m.kmod;
+--- a/drivers/block/nbd.c
++++ b/drivers/block/nbd.c
+@@ -76,6 +76,7 @@ struct link_dead_args {
+ #define NBD_HAS_CONFIG_REF		4
+ #define NBD_BOUND			5
+ #define NBD_DESTROY_ON_DISCONNECT	6
++#define NBD_DISCONNECT_ON_CLOSE 	7
+ 
+ struct nbd_config {
+ 	u32 flags;
+@@ -138,6 +139,7 @@ static void nbd_config_put(struct nbd_de
+ static void nbd_connect_reply(struct genl_info *info, int index);
+ static int nbd_genl_status(struct sk_buff *skb, struct genl_info *info);
+ static void nbd_dead_link_work(struct work_struct *work);
++static void nbd_disconnect_and_put(struct nbd_device *nbd);
+ 
+ static inline struct device *nbd_to_dev(struct nbd_device *nbd)
+ {
+@@ -1291,6 +1293,12 @@ out:
+ static void nbd_release(struct gendisk *disk, fmode_t mode)
+ {
+ 	struct nbd_device *nbd = disk->private_data;
++	struct block_device *bdev = bdget_disk(disk, 0);
++
++	if (test_bit(NBD_DISCONNECT_ON_CLOSE, &nbd->config->runtime_flags) &&
++			bdev->bd_openers == 0)
++		nbd_disconnect_and_put(nbd);
++
+ 	nbd_config_put(nbd);
+ 	nbd_put(nbd);
  }
- 
--static bool decompress_to_file(const char *ext, const char *filename, int output_fd)
--{
--	unsigned i;
--
--	for (i = 0; compressions[i].fmt; i++) {
--		if (!strcmp(ext, compressions[i].fmt))
--			return !compressions[i].decompress(filename,
--							   output_fd);
--	}
--	return false;
--}
--
- bool dso__needs_decompress(struct dso *dso)
- {
- 	return dso->symtab_type == DSO_BINARY_TYPE__SYSTEM_PATH_KMODULE_COMP ||
-@@ -265,31 +253,25 @@ bool dso__needs_decompress(struct dso *dso)
- static int decompress_kmodule(struct dso *dso, const char *name, char *tmpbuf)
- {
- 	int fd = -1;
--	struct kmod_path m;
- 
- 	if (!dso__needs_decompress(dso))
- 		return -1;
- 
--	if (kmod_path__parse_ext(&m, dso->long_name))
-+	if (dso->comp == COMP_ID__NONE)
- 		return -1;
- 
--	if (!m.comp)
--		goto out;
--
- 	fd = mkstemp(tmpbuf);
- 	if (fd < 0) {
- 		dso->load_errno = errno;
--		goto out;
-+		return -1;
+@@ -1690,6 +1698,10 @@ again:
+ 				&config->runtime_flags);
+ 			put_dev = true;
+ 		}
++		if (flags & NBD_CFLAG_DISCONNECT_ON_CLOSE) {
++			set_bit(NBD_DISCONNECT_ON_CLOSE,
++				&config->runtime_flags);
++		}
  	}
  
--	if (!decompress_to_file(m.ext, name, fd)) {
-+	if (compressions[dso->comp].decompress(name, fd)) {
- 		dso->load_errno = DSO_LOAD_ERRNO__DECOMPRESSION_FAILURE;
- 		close(fd);
- 		fd = -1;
- 	}
- 
--out:
--	free(m.ext);
- 	return fd;
+ 	if (info->attrs[NBD_ATTR_SOCKETS]) {
+@@ -1734,6 +1746,16 @@ out:
+ 	return ret;
  }
  
++static void nbd_disconnect_and_put(struct nbd_device *nbd)
++{
++	mutex_lock(&nbd->config_lock);
++	nbd_disconnect(nbd);
++	mutex_unlock(&nbd->config_lock);
++	if (test_and_clear_bit(NBD_HAS_CONFIG_REF,
++			       &nbd->config->runtime_flags))
++		nbd_config_put(nbd);
++}
++
+ static int nbd_genl_disconnect(struct sk_buff *skb, struct genl_info *info)
+ {
+ 	struct nbd_device *nbd;
+@@ -1766,12 +1788,7 @@ static int nbd_genl_disconnect(struct sk
+ 		nbd_put(nbd);
+ 		return 0;
+ 	}
+-	mutex_lock(&nbd->config_lock);
+-	nbd_disconnect(nbd);
+-	mutex_unlock(&nbd->config_lock);
+-	if (test_and_clear_bit(NBD_HAS_CONFIG_REF,
+-			       &nbd->config->runtime_flags))
+-		nbd_config_put(nbd);
++	nbd_disconnect_and_put(nbd);
+ 	nbd_config_put(nbd);
+ 	nbd_put(nbd);
+ 	return 0;
+@@ -1782,7 +1799,7 @@ static int nbd_genl_reconfigure(struct s
+ 	struct nbd_device *nbd = NULL;
+ 	struct nbd_config *config;
+ 	int index;
+-	int ret = -EINVAL;
++	int ret = 0;
+ 	bool put_dev = false;
+ 
+ 	if (!netlink_capable(skb, CAP_SYS_ADMIN))
+@@ -1822,6 +1839,7 @@ static int nbd_genl_reconfigure(struct s
+ 	    !nbd->task_recv) {
+ 		dev_err(nbd_to_dev(nbd),
+ 			"not configured, cannot reconfigure\n");
++		ret = -EINVAL;
+ 		goto out;
+ 	}
+ 
+@@ -1846,6 +1864,14 @@ static int nbd_genl_reconfigure(struct s
+ 					       &config->runtime_flags))
+ 				refcount_inc(&nbd->refs);
+ 		}
++
++		if (flags & NBD_CFLAG_DISCONNECT_ON_CLOSE) {
++			set_bit(NBD_DISCONNECT_ON_CLOSE,
++					&config->runtime_flags);
++		} else {
++			clear_bit(NBD_DISCONNECT_ON_CLOSE,
++					&config->runtime_flags);
++		}
+ 	}
+ 
+ 	if (info->attrs[NBD_ATTR_SOCKETS]) {
+--- a/include/uapi/linux/nbd.h
++++ b/include/uapi/linux/nbd.h
+@@ -53,6 +53,9 @@ enum {
+ /* These are client behavior specific flags. */
+ #define NBD_CFLAG_DESTROY_ON_DISCONNECT	(1 << 0) /* delete the nbd device on
+ 						    disconnect. */
++#define NBD_CFLAG_DISCONNECT_ON_CLOSE (1 << 1) /* disconnect the nbd device on
++						*  close by last opener.
++						*/
+ 
+ /* userspace doesn't need the nbd_device structure */
+ 
+
+
