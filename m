@@ -2,124 +2,86 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75F26C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:31:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E7DAC43615
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:31:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 395FB21486
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:31:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 395FB21486
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id E295B21486
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:31:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E295B21486
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=datenfreihafen.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731394AbeHWL7l (ORCPT
+        id S1731413AbeHWL7m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:59:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47914 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731339AbeHWL7k (ORCPT
+        Thu, 23 Aug 2018 07:59:42 -0400
+Received: from proxima.lasnet.de ([78.47.171.185]:55772 "EHLO
+        proxima.lasnet.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730897AbeHWL7l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:59:40 -0400
-Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 980CFC74;
-        Thu, 23 Aug 2018 08:31:06 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhen Lei <thunder.leizhen@huawei.com>,
-        Dmitriy Vyukov <dvyukov@google.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Libin <huawei.libin@huawei.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 135/217] kasan: fix shadow_size calculation error in kasan_module_alloc
-Date:   Thu, 23 Aug 2018 09:54:08 +0200
-Message-Id: <20180823075511.688069602@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
-References: <20180823075505.090246914@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Thu, 23 Aug 2018 07:59:41 -0400
+Received: from [172.18.213.110] (unknown [46.183.103.8])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: stefan@datenfreihafen.org)
+        by proxima.lasnet.de (Postfix) with ESMTPSA id 526E5C86D0;
+        Thu, 23 Aug 2018 10:31:07 +0200 (CEST)
+Subject: Re: [PATCH net-next] ieee802154: Use kmemdup instead of duplicating
+ it in ca8210_test_int_driver_write
+To:     YueHaibing <yuehaibing@huawei.com>, davem@davemloft.net,
+        h.morris@cascoda.com, alex.aring@gmail.com
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-wpan@vger.kernel.org
+References: <20180809064429.13348-1-yuehaibing@huawei.com>
+From:   Stefan Schmidt <stefan@datenfreihafen.org>
+Message-ID: <dad727d7-93b2-626a-fd4d-c0ff69f84f34@datenfreihafen.org>
+Date:   Thu, 23 Aug 2018 10:31:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20180809064429.13348-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+Hello.
 
-------------------
-
-From: Zhen Lei <thunder.leizhen@huawei.com>
-
-[ Upstream commit 1e8e18f694a52d703665012ca486826f64bac29d ]
-
-There is a special case that the size is "(N << KASAN_SHADOW_SCALE_SHIFT)
-Pages plus X", the value of X is [1, KASAN_SHADOW_SCALE_SIZE-1].  The
-operation "size >> KASAN_SHADOW_SCALE_SHIFT" will drop X, and the
-roundup operation can not retrieve the missed one page.  For example:
-size=0x28006, PAGE_SIZE=0x1000, KASAN_SHADOW_SCALE_SHIFT=3, we will get
-shadow_size=0x5000, but actually we need 6 pages.
-
-  shadow_size = round_up(size >> KASAN_SHADOW_SCALE_SHIFT, PAGE_SIZE);
-
-This can lead to a kernel crash when kasan is enabled and the value of
-mod->core_layout.size or mod->init_layout.size is like above.  Because
-the shadow memory of X has not been allocated and mapped.
-
-move_module:
-  ptr = module_alloc(mod->core_layout.size);
-  ...
-  memset(ptr, 0, mod->core_layout.size);		//crashed
-
-  Unable to handle kernel paging request at virtual address ffff0fffff97b000
-  ......
-  Call trace:
-    __asan_storeN+0x174/0x1a8
-    memset+0x24/0x48
-    layout_and_allocate+0xcd8/0x1800
-    load_module+0x190/0x23e8
-    SyS_finit_module+0x148/0x180
-
-Link: http://lkml.kernel.org/r/1529659626-12660-1-git-send-email-thunder.leizhen@huawei.com
-Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
-Reviewed-by: Dmitriy Vyukov <dvyukov@google.com>
-Acked-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Hanjun Guo <guohanjun@huawei.com>
-Cc: Libin <huawei.libin@huawei.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- mm/kasan/kasan.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
---- a/mm/kasan/kasan.c
-+++ b/mm/kasan/kasan.c
-@@ -613,12 +613,13 @@ void kasan_kfree_large(const void *ptr)
- int kasan_module_alloc(void *addr, size_t size)
- {
- 	void *ret;
-+	size_t scaled_size;
- 	size_t shadow_size;
- 	unsigned long shadow_start;
- 
- 	shadow_start = (unsigned long)kasan_mem_to_shadow(addr);
--	shadow_size = round_up(size >> KASAN_SHADOW_SCALE_SHIFT,
--			PAGE_SIZE);
-+	scaled_size = (size + KASAN_SHADOW_MASK) >> KASAN_SHADOW_SCALE_SHIFT;
-+	shadow_size = round_up(scaled_size, PAGE_SIZE);
- 
- 	if (WARN_ON(!PAGE_ALIGNED(shadow_start)))
- 		return -EINVAL;
+On 08/09/2018 08:44 AM, YueHaibing wrote:
+> Replace calls to kmalloc followed by a memcpy with a direct call to
+> kmemdup.
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  drivers/net/ieee802154/ca8210.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/ieee802154/ca8210.c b/drivers/net/ieee802154/ca8210.c
+> index 58299fb..e21279d 100644
+> --- a/drivers/net/ieee802154/ca8210.c
+> +++ b/drivers/net/ieee802154/ca8210.c
+> @@ -634,10 +634,9 @@ static int ca8210_test_int_driver_write(
+>  	for (i = 0; i < len; i++)
+>  		dev_dbg(&priv->spi->dev, "%#03x\n", buf[i]);
+>  
+> -	fifo_buffer = kmalloc(len, GFP_KERNEL);
+> +	fifo_buffer = kmemdup(buf, len, GFP_KERNEL);
+>  	if (!fifo_buffer)
+>  		return -ENOMEM;
+> -	memcpy(fifo_buffer, buf, len);
+>  	kfifo_in(&test->up_fifo, &fifo_buffer, 4);
+>  	wake_up_interruptible(&priv->test.readq);
+>  
 
 
+This patch has been applied to the wpan tree and will be
+part of the next pull request to net. Thanks!
+
+regards
+Stefan Schmidt
