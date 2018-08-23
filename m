@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE209C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:22:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0BE9C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:22:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EC27208D6
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:22:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EC27208D6
+	by mail.kernel.org (Postfix) with ESMTP id 9435B208D6
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:22:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9435B208D6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730621AbeHWLuh (ORCPT
+        id S1730635AbeHWLul (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:50:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46910 "EHLO
+        Thu, 23 Aug 2018 07:50:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46918 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728096AbeHWLuh (ORCPT
+        with ESMTP id S1728096AbeHWLul (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:50:37 -0400
+        Thu, 23 Aug 2018 07:50:41 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8C7258B1;
-        Thu, 23 Aug 2018 08:22:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BCF808B1;
+        Thu, 23 Aug 2018 08:22:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Minas Harutyunyan <hminas@synopsys.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, Zhouyang Jia <jiazhouyang09@gmail.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 048/217] dwc2: gadget: Fix ISOC IN DDMA PID bitfield value calculation
-Date:   Thu, 23 Aug 2018 09:52:41 +0200
-Message-Id: <20180823075507.700600073@linuxfoundation.org>
+Subject: [PATCH 4.14 049/217] xen: add error handling for xenbus_printf
+Date:   Thu, 23 Aug 2018 09:52:42 +0200
+Message-Id: <20180823075507.747587678@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -51,44 +52,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>
+From: Zhouyang Jia <jiazhouyang09@gmail.com>
 
-[ Upstream commit 1d8e5c00275825fc42aaa5597dab1d0b5b26bb64 ]
+[ Upstream commit 84c029a73327cef571eaa61c7d6e67e8031b52ec ]
 
-PID bitfield in descriptor should be set based on particular request
-length, not based on EP's mc value. PID value can't be set to 0 even
-request length is 0.
+When xenbus_printf fails, the lack of error-handling code may
+cause unexpected results.
 
-Signed-off-by: Minas Harutyunyan <hminas@synopsys.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+This patch adds error-handling code after calling xenbus_printf.
+
+Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/dwc2/gadget.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/xen/manage.c |   18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
---- a/drivers/usb/dwc2/gadget.c
-+++ b/drivers/usb/dwc2/gadget.c
-@@ -848,6 +848,7 @@ static int dwc2_gadget_fill_isoc_desc(st
- 	u32 index;
- 	u32 maxsize = 0;
- 	u32 mask = 0;
-+	u8 pid = 0;
+--- a/drivers/xen/manage.c
++++ b/drivers/xen/manage.c
+@@ -292,8 +292,15 @@ static void sysrq_handler(struct xenbus_
+ 		return;
+ 	}
  
- 	maxsize = dwc2_gadget_get_desc_params(hs_ep, &mask);
- 	if (len > maxsize) {
-@@ -893,7 +894,11 @@ static int dwc2_gadget_fill_isoc_desc(st
- 			 ((len << DEV_DMA_NBYTES_SHIFT) & mask));
+-	if (sysrq_key != '\0')
+-		xenbus_printf(xbt, "control", "sysrq", "%c", '\0');
++	if (sysrq_key != '\0') {
++		err = xenbus_printf(xbt, "control", "sysrq", "%c", '\0');
++		if (err) {
++			pr_err("%s: Error %d writing sysrq in control/sysrq\n",
++			       __func__, err);
++			xenbus_transaction_end(xbt, 1);
++			return;
++		}
++	}
  
- 	if (hs_ep->dir_in) {
--		desc->status |= ((hs_ep->mc << DEV_DMA_ISOC_PID_SHIFT) &
-+		if (len)
-+			pid = DIV_ROUND_UP(len, hs_ep->ep.maxpacket);
-+		else
-+			pid = 1;
-+		desc->status |= ((pid << DEV_DMA_ISOC_PID_SHIFT) &
- 				 DEV_DMA_ISOC_PID_MASK) |
- 				((len % hs_ep->ep.maxpacket) ?
- 				 DEV_DMA_SHORT : 0) |
+ 	err = xenbus_transaction_end(xbt, 0);
+ 	if (err == -EAGAIN)
+@@ -345,7 +352,12 @@ static int setup_shutdown_watcher(void)
+ 			continue;
+ 		snprintf(node, FEATURE_PATH_SIZE, "feature-%s",
+ 			 shutdown_handlers[idx].command);
+-		xenbus_printf(XBT_NIL, "control", node, "%u", 1);
++		err = xenbus_printf(XBT_NIL, "control", node, "%u", 1);
++		if (err) {
++			pr_err("%s: Error %d writing %s\n", __func__,
++				err, node);
++			return err;
++		}
+ 	}
+ 
+ 	return 0;
 
 
