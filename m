@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30100C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:23:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEAE7C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:23:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E86B4208D6
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:23:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E86B4208D6
+	by mail.kernel.org (Postfix) with ESMTP id 74C58214AB
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:23:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74C58214AB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730850AbeHWLvt (ORCPT
+        id S1730861AbeHWLvw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:51:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47160 "EHLO
+        Thu, 23 Aug 2018 07:51:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47172 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728267AbeHWLvs (ORCPT
+        with ESMTP id S1727406AbeHWLvv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:51:48 -0400
+        Thu, 23 Aug 2018 07:51:51 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 294D8C7B;
-        Thu, 23 Aug 2018 08:23:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 521E1C7B;
+        Thu, 23 Aug 2018 08:23:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, "Yan, Zheng" <zyan@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 097/217] netfilter: nf_log: fix uninit read in nf_log_proc_dostring
-Date:   Thu, 23 Aug 2018 09:53:30 +0200
-Message-Id: <20180823075509.878182176@linuxfoundation.org>
+Subject: [PATCH 4.14 098/217] ceph: fix dentry leak in splice_dentry()
+Date:   Thu, 23 Aug 2018 09:53:31 +0200
+Message-Id: <20180823075509.918634625@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -51,35 +52,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: "Yan, Zheng" <zyan@redhat.com>
 
-[ Upstream commit dffd22aed2aa1e804bccf19b30a421e89ee2ae61 ]
+[ Upstream commit 8b8f53af1ed9df88a4c0fbfdf3db58f62060edf3 ]
 
-When proc_dostring() is called with a non-zero offset in strict mode, it
-doesn't just write to the ->data buffer, it also reads. Make sure it
-doesn't read uninitialized data.
+In any case, d_splice_alias() does not drop reference of original
+dentry.
 
-Fixes: c6ac37d8d884 ("netfilter: nf_log: fix error on write NONE to [...]")
-Signed-off-by: Jann Horn <jannh@google.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
+Reviewed-by: Jeff Layton <jlayton@redhat.com>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/netfilter/nf_log.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ fs/ceph/inode.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/netfilter/nf_log.c
-+++ b/net/netfilter/nf_log.c
-@@ -440,6 +440,10 @@ static int nf_log_proc_dostring(struct c
- 	if (write) {
- 		struct ctl_table tmp = *table;
- 
-+		/* proc_dostring() can append to existing strings, so we need to
-+		 * initialize it as an empty string.
-+		 */
-+		buf[0] = '\0';
- 		tmp.data = buf;
- 		r = proc_dostring(&tmp, write, buffer, lenp, ppos);
- 		if (r)
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -1087,6 +1087,7 @@ static struct dentry *splice_dentry(stru
+ 	if (IS_ERR(realdn)) {
+ 		pr_err("splice_dentry error %ld %p inode %p ino %llx.%llx\n",
+ 		       PTR_ERR(realdn), dn, in, ceph_vinop(in));
++		dput(dn);
+ 		dn = realdn; /* note realdn contains the error */
+ 		goto out;
+ 	} else if (realdn) {
 
 
