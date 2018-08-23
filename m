@@ -5,146 +5,94 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C86C4C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 06:53:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5EA0C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 06:53:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7518E208F7
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 06:53:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7518E208F7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7821B208F7
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 06:53:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7821B208F7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726493AbeHWKVQ (ORCPT
+        id S1726589AbeHWKVe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 06:21:16 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59874 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726285AbeHWKVP (ORCPT
+        Thu, 23 Aug 2018 06:21:34 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:36057 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726068AbeHWKVe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 06:21:15 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7N6ms7k057086
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 02:53:05 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m1p1cvbcd-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 02:53:05 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Thu, 23 Aug 2018 07:53:02 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 23 Aug 2018 07:52:59 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7N6qwQn21102744
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 23 Aug 2018 06:52:58 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7162242042;
-        Thu, 23 Aug 2018 09:52:59 +0100 (BST)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 21D4842041;
-        Thu, 23 Aug 2018 09:52:59 +0100 (BST)
-Received: from [9.152.224.92] (unknown [9.152.224.92])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 23 Aug 2018 09:52:59 +0100 (BST)
-From:   Pierre Morel <pmorel@linux.ibm.com>
-Subject: Re: [PATCH v2 3/5] KVM: s390: vsie: Allow support for a host without
- AP
-Reply-To: pmorel@linux.ibm.com
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, cohuck@redhat.com,
-        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        frankja@linux.ibm.com, akrowiak@linux.ibm.com,
-        borntraeger@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com
-References: <1534956717-14087-1-git-send-email-pmorel@linux.ibm.com>
- <1534956717-14087-4-git-send-email-pmorel@linux.ibm.com>
- <beb38451-8ec9-59c7-2e51-f9a065b769bf@redhat.com>
-Date:   Thu, 23 Aug 2018 08:52:57 +0200
+        Thu, 23 Aug 2018 06:21:34 -0400
+Received: from [192.168.178.69] ([109.104.46.209]) by mrelayeu.kundenserver.de
+ (mreue102 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 0MFtVW-1fduKD2BwE-00Ewjf; Thu, 23 Aug 2018 08:52:59 +0200
+Subject: Re: [PATCH] ARM: dts: imx6ull: correct machine model name
+To:     Anson Huang <Anson.Huang@nxp.com>, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de,
+        fabio.estevam@nxp.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+References: <1535005849-14046-1-git-send-email-Anson.Huang@nxp.com>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+Message-ID: <69b53468-ce73-9eeb-e11a-b6fa012a7ea6@i2se.com>
+Date:   Thu, 23 Aug 2018 08:52:58 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <beb38451-8ec9-59c7-2e51-f9a065b769bf@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <1535005849-14046-1-git-send-email-Anson.Huang@nxp.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18082306-0012-0000-0000-0000029D86C8
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082306-0013-0000-0000-000020D0CCF2
-Message-Id: <8d506740-9228-a5f7-30ad-4bd181d4385a@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-23_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808230072
+X-Provags-ID: V03:K1:xEYaJgbQIZNhVvzY5n9+dRFrsnJ2NcS5qIOcYFW6s4zqqudnp1y
+ UMEqP/aR0azW2Jzb7j2WRs6tlrOUAEptoTrZBFV5rB2h/DW7Y4dA0QKcMqT/VxPI0DGyjw7
+ PzPHSDXv3qcHS3/vmqG75FHtKqrDgEluVDWO0HSYkZzmyZ7xSNvM16DSLEcH/8ow6p5hcHs
+ k15o4liWMVnhjlq4caBzg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:avIY74tb4A8=:PVWfNU0GC3BnorOp8v4gUX
+ LggT6pjHxUEdHZDsbqnEAm/6/4lcwMkiogWK6gj8mqcK+TWgIJ+b/1+An8QC4YovawfzPIlxz
+ PSHIjgsbMPFVTWktMXroa8nJGKjGp01hUslZMoTJZSXjwqUFyj4w2l6fDFgf3KuwvysKmnUgz
+ Y8ou0/qcx3EYdaPOKNYMaL8IhD18XE0C/F+aZY+fpLazoRaJb3aQsUIZWHseHQljm/dtKrmId
+ uSgOIBc6Ja9E86/9irGMcdRhsZnfMxlcDodeRO4scH7pCEc2NcSd6O2ls98BQDDnSQbr+HLA+
+ 2H/ZlvNtbSyoW5JMkrnV6gOOgbuUkRS3GUXJW6f4OdhEgkLFqqJltcZjHQhnhmwTOj02fpZCC
+ yY7Qk/t0027dILV95YPGBJK1w30pXi2y9POdhlcldUO2jxSOwkG3PBy8+Jti8GadYNf32HfDm
+ ecJnmeFVgSdT36zArGze6dWYLg1FOZ4ghCUgN22jx4V4Lxr1WwePbOg9xqXR0ZLEfOM60C5dr
+ TXB/4AkMlq6V1Xcw6DAAARWRaYNGrCWXMT0k/Qtokf3UDNDaBESUX6k1cUgP1/OQKLXZvCB3L
+ Nm0xkVRnl05Z6MsFxDiMK3yV+LaEoIEA2ZGQxJKrwo5d/1K15QHPTgAIhfAfJs2/tdBA+q6Zm
+ ZT1e7xbq4b6x3NfSvWsVYPAgSWBrOCf4TRMcQgRM368hKirFbULN/WBuAr5IMYthYTvom++Fh
+ pTeJJGdGk1DRBUbh
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/08/2018 19:06, David Hildenbrand wrote:
-> On 22.08.2018 18:51, Pierre Morel wrote:
->> Currently the CRYCB format used in the host for the
->> shadowed CRYCB is FORMAT2 while no check is done if
->> AP instructions are supported in the host.
->>
->> We better use the format the host calculated for the
->> guest 1 as the host already tested it against its
->> facility set.
->>
->> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
->> ---
->>   arch/s390/kvm/vsie.c | 5 +++--
->>   1 file changed, 3 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
->> index 56a9d47..0b12916 100644
->> --- a/arch/s390/kvm/vsie.c
->> +++ b/arch/s390/kvm/vsie.c
->> @@ -154,6 +154,7 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
->>   	const u32 crycb_addr = crycbd_o & 0x7ffffff8U;
->>   	unsigned long *b1, *b2;
->>   	u8 ecb3_flags;
->> +	unsigned long g1_fmt;
->>   
->>   	scb_s->crycbd = 0;
->>   	if (!(crycbd_o == CRYCB_FORMAT1))
->> @@ -180,8 +181,8 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
->>   		return set_validity_icpt(scb_s, 0x0035U);
->>   
->>   	scb_s->ecb3 |= ecb3_flags;
->> -	scb_s->crycbd = ((__u32)(__u64) &vsie_page->crycb) | CRYCB_FORMAT1 |
->> -			CRYCB_FORMAT2;
->> +	g1_fmt = vcpu->arch.sie_block->crycbd & 0x03;
->> +	scb_s->crycbd = ((__u32)(__u64) &vsie_page->crycb) | g1_fmt;
->>   
->>   	/* xor both blocks in one run */
->>   	b1 = (unsigned long *) vsie_page->crycb.dea_wrapping_key_mask;
->>
-> 
-> This is wrong. I remember that with APXA, if FORMAT2 is available, we
-> should always use FORMAT2. That's why we explicitly convert it here.
-> 
-
-You are right if FORMAT2 is available we should use FORMAT2
-but the intention here is to use what KVM crypto init function did,
-assuming it did the right thing.
-
-Eventually we are running on a host without AP and we should use FORMAT1.
-
-Isn't it correct?
-
-Regards,
-Pierre
+Hi Anson,
 
 
--- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
+Am 23.08.2018 um 08:30 schrieb Anson Huang:
+> i.MX6ULL is a lite version of i.MX6UL, its full name
+> is i.MX6 UltraLiteLite, NOT UlltraLite.
+>
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
+>  arch/arm/boot/dts/imx6ull-14x14-evk.dts | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/arm/boot/dts/imx6ull-14x14-evk.dts b/arch/arm/boot/dts/imx6ull-14x14-evk.dts
+> index 30ef603..0ba6454 100644
+> --- a/arch/arm/boot/dts/imx6ull-14x14-evk.dts
+> +++ b/arch/arm/boot/dts/imx6ull-14x14-evk.dts
+> @@ -45,7 +45,7 @@
+>  #include "imx6ul-14x14-evk.dtsi"
+>  
+>  / {
+> -	model = "Freescale i.MX6 UlltraLite 14x14 EVK Board";
+> +	model = "Freescale i.MX6 UltraLiteLite 14x14 EVK Board";
+>  	compatible = "fsl,imx6ull-14x14-evk", "fsl,imx6ull";
+>  };
+>  
+
+looks good, but this compatible should be documented in
+Documentation/devicetree/bindings/arm/fsl.txt (should be a separate patch).
+
+Regards
+Stefan
 
