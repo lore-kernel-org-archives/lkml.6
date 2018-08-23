@@ -2,171 +2,157 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A00D1C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:47:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88FD9C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:51:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35870208DC
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:47:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35870208DC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 260AB20C09
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 11:51:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="sqZboHvC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 260AB20C09
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732206AbeHWPQt (ORCPT
+        id S1730767AbeHWPUZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 11:16:49 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45374 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730163AbeHWPQm (ORCPT
+        Thu, 23 Aug 2018 11:20:25 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:35265 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728510AbeHWPUZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 11:16:42 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7NBiIl5072066
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 07:47:21 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m1svfxaam-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 07:47:20 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Thu, 23 Aug 2018 12:47:17 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 23 Aug 2018 12:47:14 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7NBlCQL42926200
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 23 Aug 2018 11:47:12 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D9E644C046;
-        Thu, 23 Aug 2018 14:47:13 +0100 (BST)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 71CE44C04E;
-        Thu, 23 Aug 2018 14:47:13 +0100 (BST)
-Received: from [9.152.224.92] (unknown [9.152.224.92])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 23 Aug 2018 14:47:13 +0100 (BST)
-Reply-To: pmorel@linux.ibm.com
-Subject: Re: [PATCH v3 3/3] KVM: s390: vsie: Make use of CRYCB FORMAT2 clear
-To:     Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, cohuck@redhat.com,
-        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        akrowiak@linux.ibm.com, borntraeger@de.ibm.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com
-References: <1535019956-23539-1-git-send-email-pmorel@linux.ibm.com>
- <1535019956-23539-4-git-send-email-pmorel@linux.ibm.com>
- <912d013c-c925-fb3e-ed1d-2d778a60c189@linux.ibm.com>
- <f4c9634d-f442-447a-9eed-7d0f4e72c34f@redhat.com>
- <58427761-072c-e420-a881-4decbe9088bb@linux.ibm.com>
-From:   Pierre Morel <pmorel@linux.ibm.com>
-Date:   Thu, 23 Aug 2018 13:47:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 23 Aug 2018 11:20:25 -0400
+Received: by mail-lf1-f67.google.com with SMTP id q13-v6so3850055lfc.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 04:51:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KUMMtffLyvwHe3IkcXJpzy9Y6JflRHWIpERcQRpeHfI=;
+        b=sqZboHvCdzkJs1XDbwB9TVzMETEKei42jD0RfvG0YPMsbmjtDj/zRxXgXc5fKOUWFA
+         1EHcvFzGECbwp9TW0KbKm0EWV00ki5ydJNGSe76EzxBqZw+jPJxCiI0Ib8xcya9tFcaC
+         Lz975g+mS/xxN11RTAf3NEYO1x5Q2XOCAJdZM/DjkU48Oplt66L3GBaYUdYyv57TiYo4
+         CW924w2XMHtv6OiaQseDkuY2G8juHSXrBqVvw8n4V/mf/AjeS1yfrAPXzi+lQ1N8VnAK
+         aVLmCQHgxKNegW5A1ISLTaNawtZTmCG+eWaOkQilp/TMQ/wUfitWKE3jwk05bp2phAql
+         kuXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KUMMtffLyvwHe3IkcXJpzy9Y6JflRHWIpERcQRpeHfI=;
+        b=lbO9Df6YcdEDjFbYJtLqxA91EoeuxwqB+Imh9KhL/lJeP+Anlq43XgysciEG8wAA/c
+         DufpSTsqfCGPSd6g79vNmDUpA5c4trXRqH+7+KpQOxP+13YgqDopAyEBXvDCLRpDTLCQ
+         EHx7swJHoE4K3lOhN9kTN4RqcFf1rR/X+iaynPaBwU5kPV54VGm7mtPIULk3KjkgbHrG
+         eDx9LvqaJfaubBop0j2qvpIRhsT6MzLw5q+3rQ1GAzoVMHMc+FBNnkdEFDf0ZiFb7MPA
+         hE1nZgkhtRPykjuOELB4j0hLDOEV8L1ZX5xJA3hZgKNfmHvpJFqnBfB02ehxtlRX0H4N
+         nXhA==
+X-Gm-Message-State: APzg51AZr16VzHwUGzqjVYpt3Q1PiyYORbw/amDLg0mfR3fZKPf/j6rB
+        xOfEbAHKTuqt0gDKEEJPjJycnShREbjykFGwJov3
+X-Google-Smtp-Source: ANB0VdZmGDV2DjhmKbIGc7CrXuTFBp6dHC3C4mx+YYo67J8FJYOn1KPWquMSNpusNxaedY8Ow6ZxLxdlvAVBFxbOlBs=
+X-Received: by 2002:a19:14e6:: with SMTP id 99-v6mr7348145lfu.26.1535025061019;
+ Thu, 23 Aug 2018 04:51:01 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <58427761-072c-e420-a881-4decbe9088bb@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18082311-0008-0000-0000-00000265AB5E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082311-0009-0000-0000-000021CDF235
-Message-Id: <e0b80820-b4cd-5f51-bd57-ea6e2e638a40@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-23_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808230126
+References: <20180820123818.27547-1-omosnace@redhat.com> <alpine.DEB.2.21.1808201721350.1551@nanos.tec.linutronix.de>
+ <20180821072114.GC23069@localhost> <CAHC9VhQCB5kB9Vy-TWwu-Z62p2XcPpKwsFLB647=usVM2EE=LA@mail.gmail.com>
+ <CAFqZXNuS9JeKnLJkcNYmep4by_pAC=63rPeYXkKM3eagaDEBWg@mail.gmail.com>
+In-Reply-To: <CAFqZXNuS9JeKnLJkcNYmep4by_pAC=63rPeYXkKM3eagaDEBWg@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 23 Aug 2018 07:50:49 -0400
+Message-ID: <CAHC9VhTCx101boUJn8d9NxhXaV+R75dueR4Xjp-gQmqKi30uMg@mail.gmail.com>
+Subject: Re: [RFC PATCH ghak10 v4 0/2] audit: Log modifying adjtimex(2) calls
+To:     omosnace@redhat.com
+Cc:     mlichvar@redhat.com, tglx@linutronix.de, linux-audit@redhat.com,
+        rgb@redhat.com, sgrubb@redhat.com, john.stultz@linaro.org,
+        sboyd@kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/08/2018 13:33, Janosch Frank wrote:
-> On 8/23/18 1:21 PM, David Hildenbrand wrote:
->> On 23.08.2018 13:05, Janosch Frank wrote:
->>> On 8/23/18 12:25 PM, Pierre Morel wrote:
->>>> The comment preceding the shadow_crycb function is
->>>> misleading, we effectively accept FORMAT2 CRYCB in the
->>>> guest.
->>>
->>> I beg to differ:
->>>
->>> if (!(crycbd_o & vcpu->arch.sie_block->crycbd & CRYCB_FORMAT1))
->>> 		return 0;
->>
->> FORMAT2 includes bit FORMAT1 (backwards compatible)
-> 
-> Right, this check is very misleading because of the constant, we
-> effectively test against Format 0 and Format 2.
-> 
-> Can we make this clearer by explicitly ANDing 0x01 or adding a comment?
+On Thu, Aug 23, 2018 at 5:14 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> On Wed, Aug 22, 2018 at 11:27 PM Paul Moore <paul@paul-moore.com> wrote:
+> > On Tue, Aug 21, 2018 at 3:21 AM Miroslav Lichvar <mlichvar@redhat.com> wrote:
+> > > > On Mon, 20 Aug 2018, Ondrej Mosnacek wrote:
+> > > > > @John or other timekeeping/NTP folks: We had a discussion on the audit
+> > > > > ML on which of the internal timekeeping/NTP variables we should actually
+> > > > > log changes for. We are only interested in variables that can (directly
+> > > > > or indirectly) cause noticeable changes to the system clock, but since we
+> > > > > have only limited understanding of the NTP code, we would like to ask
+> > > > > you for advice on which variables are security relevant.
+> > >
+> > > I guess that mostly depends on whether you consider setting the clock
+> > > to run faster or slower than real time to be an important event for
+> > > the audit.
+> > >
+> > > > >   - NTP value adjustments:
+> > > > >     - time_offset (probably important)
+> > >
+> > > This can adjust the clock by up to 0.5 seconds per call and also speed
+> > > it up or slow down by up to about 0.05% (43 seconds per day).
+> >
+> > This seems worthwhile.
+> >
+> > > > >     - time_freq (maybe not important?)
+> > >
+> > > This can speed up or slow down by up to about 0.05%.
+> >
+> > This too.
+> >
+> > > > >     - time_status (likely important, can cause leap second injection)
+> > >
+> > > Yes, it can insert/delete leap seconds and it also enables/disables
+> > > synchronization of the hardware real-time clock.
+> >
+> > This one as well.
+> >
+> > > > >     - time_maxerror (maybe not important?)
+> > > > >     - time_esterror (maybe not important?)
+> > >
+> > > These two change the error estimates that are reported to applications
+> > > using ntp_gettime()/adjtimex(). If an application was periodically
+> > > checking that the clock is synchronized with some specified accuracy
+> > > and setting the maxerror to a larger value would cause the application
+> > > to abort, would it be an important event in the audit?
+> >
+> > Since these don't really affect the time, just the expected error, I'm
+> > not sure this is important.
+> >
+> > > > >     - time_constant (???)
+> > >
+> > > This controls the speed of the clock adjustments that are made when
+> > > time_offset is set. Probably not important for the audit.
+> >
+> > Agreed.  I think we can skip this.
+> >
+> > > > >     - time_adjust (sounds important)
+> > >
+> > > This is similar to time_freq. It can temporarily speed up or slow down
+> > > the clock by up to 0.05%.
+> >
+> > Like time_freq, we should probably log this too.
+> >
+> > > > >     - tick_usec (???)
+> > >
+> > > This is a more extreme version of time_freq. It can speed up or slow
+> > > down the clock by up to 10%.
+> >
+> > Let's audit this one too.
+>
+> I agree with Paul on all counts. I will go ahead and prepare a
+> patchset that logs everything except maxerror, esterror, and constant.
 
-yes, done, I modified the comment in front of the function.
+Please make sure you include explanations similar to the above in the
+patch descriptions; not just the cover letter, the goal is to have
+this information captured in the git log.
 
-> 
-> Code makes sense:
-> Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
+> Thank you, Miroslav, for the explanations!
 
-Thanks,
-
-regards,
-Pierre
-
-> 
->>
->>>
->>>>
->>>> When using FORMAT2 in the host we do not need to or with
->>>> FORMAT1.
->>>>
->>>> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
->>>> ---
->>>>   arch/s390/kvm/vsie.c | 6 +++---
->>>>   1 file changed, 3 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
->>>> index 38ea5da..e0e6fbf 100644
->>>> --- a/arch/s390/kvm/vsie.c
->>>> +++ b/arch/s390/kvm/vsie.c
->>>> @@ -140,7 +140,8 @@ static int prepare_cpuflags(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
->>>>    * Create a shadow copy of the crycb block and setup key wrapping, if
->>>>    * requested for guest 3 and enabled for guest 2.
->>>>    *
->>>> - * We only accept format-1 (no AP in g2), but convert it into format-2
->>>> + * We accept format-1 or format-2, but we treat it as a format-1 (no AP in g2),
->>>> + * and we convert it into format-2 in the shadow CRYCB.
->>>>    * There is nothing to do for format-0.
->>>>    *
->>>>    * Returns: - 0 if shadowed or nothing to do
->>>> @@ -179,8 +180,7 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
->>>>   		return set_validity_icpt(scb_s, 0x0035U);
->>>>   
->>>>   	scb_s->ecb3 |= ecb3_flags;
->>>> -	scb_s->crycbd = ((__u32)(__u64) &vsie_page->crycb) | CRYCB_FORMAT1 |
->>>> -			CRYCB_FORMAT2;
->>>> +	scb_s->crycbd = ((__u32)(__u64) &vsie_page->crycb) | CRYCB_FORMAT2;
->>>
->>> That's purely cosmetic but valid.
->>>
->>>>   
->>>>   	/* xor both blocks in one run */
->>>>   	b1 = (unsigned long *) vsie_page->crycb.dea_wrapping_key_mask;
->>
->> Reviewed-by: David Hildenbrand <david@redhat.com>
->>
-> 
-> 
-
+Yes, those explanations were helpful.
 
 -- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
-
+paul moore
+www.paul-moore.com
