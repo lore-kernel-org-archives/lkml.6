@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBB3BC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:59:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47E54C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:59:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AED5620847
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:59:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AED5620847
+	by mail.kernel.org (Postfix) with ESMTP id 0056520847
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:59:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0056520847
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387853AbeHWM2A (ORCPT
+        id S2387877AbeHWM2D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:28:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53096 "EHLO
+        Thu, 23 Aug 2018 08:28:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53110 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727293AbeHWM17 (ORCPT
+        with ESMTP id S1727293AbeHWM2D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:27:59 -0400
+        Thu, 23 Aug 2018 08:28:03 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 895A1C83;
-        Thu, 23 Aug 2018 08:59:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C297BC83;
+        Thu, 23 Aug 2018 08:59:20 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 212/324] ipfrag: really prevent allocation on netns exit
-Date:   Thu, 23 Aug 2018 09:54:38 +0200
-Message-Id: <20180823075006.761735843@linuxfoundation.org>
+Subject: [PATCH 4.17 213/324] drm/sun4i: link in front-end code if needed
+Date:   Thu, 23 Aug 2018 09:54:39 +0200
+Message-Id: <20180823075006.802938974@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -51,37 +51,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paolo Abeni <pabeni@redhat.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit f6f2a4a2eb92bc73671204198bb2f8ab53ff59fb ]
+[ Upstream commit 3156b53c2e2fadafa1a16412a8791b38f94b5bdc ]
 
-Setting the low threshold to 0 has no effect on frags allocation,
-we need to clear high_thresh instead.
+When the base sun4i DRM driver is built-in but the back-end is
+a loadable module, we run into a link error:
 
-The code was pre-existent to commit 648700f76b03 ("inet: frags:
-use rhashtables for reassembly units"), but before the above,
-such assignment had a different role: prevent concurrent eviction
-from the worker and the netns cleanup helper.
+drivers/gpu/drm/sun4i/sun4i_drv.o: In function `sun4i_drv_probe':
+sun4i_drv.c:(.text+0x60c): undefined reference to `sun4i_frontend_of_table'
 
-Fixes: 648700f76b03 ("inet: frags: use rhashtables for reassembly units")
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+The dependency is a bit tricky, the best workaround I have come up
+with is to use a Makefile hack to to interpret both
+CONFIG_DRM_SUN4I_BACKEND=m and CONFIG_DRM_SUN4I_BACKEND=y
+as a directive to build the front-end the same way as the main module.
+
+Fixes: dd0421f47505 ("drm/sun4i: Add a driver for the display frontend")
+Link: https://lore.kernel.org/lkml/20180301091908.zcptz3ezqr2c6ly5@flea/
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180706142847.2032381-1-arnd@arndb.de
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/inet_fragment.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/sun4i/Makefile |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/net/ipv4/inet_fragment.c
-+++ b/net/ipv4/inet_fragment.c
-@@ -90,7 +90,7 @@ static void inet_frags_free_cb(void *ptr
+--- a/drivers/gpu/drm/sun4i/Makefile
++++ b/drivers/gpu/drm/sun4i/Makefile
+@@ -29,7 +29,10 @@ obj-$(CONFIG_DRM_SUN4I)		+= sun4i-tcon.o
+ obj-$(CONFIG_DRM_SUN4I)		+= sun4i_tv.o
+ obj-$(CONFIG_DRM_SUN4I)		+= sun6i_drc.o
  
- void inet_frags_exit_net(struct netns_frags *nf)
- {
--	nf->low_thresh = 0; /* prevent creation of new frags */
-+	nf->high_thresh = 0; /* prevent creation of new frags */
- 
- 	rhashtable_free_and_destroy(&nf->rhashtable, inet_frags_free_cb, NULL);
- }
+-obj-$(CONFIG_DRM_SUN4I_BACKEND)	+= sun4i-backend.o sun4i-frontend.o
++obj-$(CONFIG_DRM_SUN4I_BACKEND)	+= sun4i-backend.o
++ifdef CONFIG_DRM_SUN4I_BACKEND
++obj-$(CONFIG_DRM_SUN4I)		+= sun4i-frontend.o
++endif
+ obj-$(CONFIG_DRM_SUN4I_HDMI)	+= sun4i-drm-hdmi.o
+ obj-$(CONFIG_DRM_SUN8I_DW_HDMI)	+= sun8i-drm-hdmi.o
+ obj-$(CONFIG_DRM_SUN8I_MIXER)	+= sun8i-mixer.o
 
 
