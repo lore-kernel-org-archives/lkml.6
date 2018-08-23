@@ -6,37 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25C96C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:20:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81638C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:20:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0974208D6
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:20:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0974208D6
+	by mail.kernel.org (Postfix) with ESMTP id 41AAB208D6
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:20:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41AAB208D6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730357AbeHWLtA (ORCPT
+        id S1730368AbeHWLtE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:49:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46654 "EHLO
+        Thu, 23 Aug 2018 07:49:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46662 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728139AbeHWLs7 (ORCPT
+        with ESMTP id S1727953AbeHWLtD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:48:59 -0400
+        Thu, 23 Aug 2018 07:49:03 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3DF78C83;
-        Thu, 23 Aug 2018 08:20:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6DD4EC83;
+        Thu, 23 Aug 2018 08:20:33 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Zhizhou Zhang <zhizhouzhang@asrmicro.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
+        stable@vger.kernel.org,
+        Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>,
+        Ariel Elior <ariel.elior@cavium.com>,
+        Michal Kalderon <Michal.Kalderon@cavium.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 054/217] arm64: make secondary_start_kernel() notrace
-Date:   Thu, 23 Aug 2018 09:52:47 +0200
-Message-Id: <20180823075507.974388794@linuxfoundation.org>
+Subject: [PATCH 4.14 055/217] qed: Fix possible memory leak in Rx error path handling.
+Date:   Thu, 23 Aug 2018 09:52:48 +0200
+Message-Id: <20180823075508.018988469@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -53,40 +54,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zhizhou Zhang <zhizhouzhang@asrmicro.com>
+From: Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
 
-[ Upstream commit b154886f7892499d0d3054026e19dfb9a731df61 ]
+[ Upstream commit 4f9de4df901fb84709fe3a864dfa4eaf35700f68 ]
 
-We can't call function trace hook before setup percpu offset.
-When entering secondary_start_kernel(), percpu offset has not
-been initialized.  So this lead hotplug malfunction.
-Here is the flow to reproduce this bug:
+Memory for packet buffers need to be freed in the error paths as there is
+no consumer (e.g., upper layer) for such packets and that memory will never
+get freed.
+The issue was uncovered when port was attacked with flood of isatap
+packets, these are multicast packets hence were directed at all the PFs.
+For foce PF, this meant they were routed to the ll2 module which in turn
+drops such packets.
 
-echo 0 > /sys/devices/system/cpu/cpu1/online
-echo function > /sys/kernel/debug/tracing/current_tracer
-echo 1 > /sys/kernel/debug/tracing/tracing_on
-echo 1 > /sys/devices/system/cpu/cpu1/online
-
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-Tested-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Zhizhou Zhang <zhizhouzhang@asrmicro.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Fixes: 0a7fb11c ("qed: Add Light L2 support")
+Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
+Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
+Signed-off-by: Michal Kalderon <Michal.Kalderon@cavium.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/kernel/smp.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/qlogic/qed/qed_ll2.c |   11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
---- a/arch/arm64/kernel/smp.c
-+++ b/arch/arm64/kernel/smp.c
-@@ -214,7 +214,7 @@ int __cpu_up(unsigned int cpu, struct ta
-  * This is the secondary CPU boot entry.  We're using this CPUs
-  * idle thread stack, but a set of temporary page tables.
-  */
--asmlinkage void secondary_start_kernel(void)
-+asmlinkage notrace void secondary_start_kernel(void)
- {
- 	struct mm_struct *mm = &init_mm;
- 	unsigned int cpu;
+--- a/drivers/net/ethernet/qlogic/qed/qed_ll2.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
+@@ -201,8 +201,9 @@ void qed_ll2b_complete_rx_packet(void *c
+ 
+ 	skb = build_skb(buffer->data, 0);
+ 	if (!skb) {
+-		rc = -ENOMEM;
+-		goto out_post;
++		DP_INFO(cdev, "Failed to build SKB\n");
++		kfree(buffer->data);
++		goto out_post1;
+ 	}
+ 
+ 	data->u.placement_offset += NET_SKB_PAD;
+@@ -224,8 +225,14 @@ void qed_ll2b_complete_rx_packet(void *c
+ 		cdev->ll2->cbs->rx_cb(cdev->ll2->cb_cookie, skb,
+ 				      data->opaque_data_0,
+ 				      data->opaque_data_1);
++	} else {
++		DP_VERBOSE(p_hwfn, (NETIF_MSG_RX_STATUS | NETIF_MSG_PKTDATA |
++				    QED_MSG_LL2 | QED_MSG_STORAGE),
++			   "Dropping the packet\n");
++		kfree(buffer->data);
+ 	}
+ 
++out_post1:
+ 	/* Update Buffer information and update FW producer */
+ 	buffer->data = new_data;
+ 	buffer->phys_addr = new_phys_addr;
 
 
