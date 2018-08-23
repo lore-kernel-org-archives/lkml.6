@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47E54C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:59:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36D7BC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:59:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0056520847
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:59:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0056520847
+	by mail.kernel.org (Postfix) with ESMTP id F0FC320847
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:59:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0FC320847
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387877AbeHWM2D (ORCPT
+        id S2387899AbeHWM2H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:28:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53110 "EHLO
+        Thu, 23 Aug 2018 08:28:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53116 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727293AbeHWM2D (ORCPT
+        with ESMTP id S1727293AbeHWM2G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:28:03 -0400
+        Thu, 23 Aug 2018 08:28:06 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C297BC83;
-        Thu, 23 Aug 2018 08:59:20 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1C824C83;
+        Thu, 23 Aug 2018 08:59:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
+        stable@vger.kernel.org, Stefan Schmidt <stefan@datenfreihafen.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 213/324] drm/sun4i: link in front-end code if needed
-Date:   Thu, 23 Aug 2018 09:54:39 +0200
-Message-Id: <20180823075006.802938974@linuxfoundation.org>
+Subject: [PATCH 4.17 214/324] ieee802154: at86rf230: switch from BUG_ON() to WARN_ON() on problem
+Date:   Thu, 23 Aug 2018 09:54:40 +0200
+Message-Id: <20180823075006.858026863@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -51,45 +50,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Stefan Schmidt <stefan@datenfreihafen.org>
 
-[ Upstream commit 3156b53c2e2fadafa1a16412a8791b38f94b5bdc ]
+[ Upstream commit 20f330452ad8814f2289a589baf65e21270879a7 ]
 
-When the base sun4i DRM driver is built-in but the back-end is
-a loadable module, we run into a link error:
+The check is valid but it does not warrant to crash the kernel. A
+WARN_ON() is good enough here.
+Found by checkpatch.
 
-drivers/gpu/drm/sun4i/sun4i_drv.o: In function `sun4i_drv_probe':
-sun4i_drv.c:(.text+0x60c): undefined reference to `sun4i_frontend_of_table'
-
-The dependency is a bit tricky, the best workaround I have come up
-with is to use a Makefile hack to to interpret both
-CONFIG_DRM_SUN4I_BACKEND=m and CONFIG_DRM_SUN4I_BACKEND=y
-as a directive to build the front-end the same way as the main module.
-
-Fixes: dd0421f47505 ("drm/sun4i: Add a driver for the display frontend")
-Link: https://lore.kernel.org/lkml/20180301091908.zcptz3ezqr2c6ly5@flea/
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180706142847.2032381-1-arnd@arndb.de
+Signed-off-by: Stefan Schmidt <stefan@datenfreihafen.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/sun4i/Makefile |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/net/ieee802154/at86rf230.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/sun4i/Makefile
-+++ b/drivers/gpu/drm/sun4i/Makefile
-@@ -29,7 +29,10 @@ obj-$(CONFIG_DRM_SUN4I)		+= sun4i-tcon.o
- obj-$(CONFIG_DRM_SUN4I)		+= sun4i_tv.o
- obj-$(CONFIG_DRM_SUN4I)		+= sun6i_drc.o
- 
--obj-$(CONFIG_DRM_SUN4I_BACKEND)	+= sun4i-backend.o sun4i-frontend.o
-+obj-$(CONFIG_DRM_SUN4I_BACKEND)	+= sun4i-backend.o
-+ifdef CONFIG_DRM_SUN4I_BACKEND
-+obj-$(CONFIG_DRM_SUN4I)		+= sun4i-frontend.o
-+endif
- obj-$(CONFIG_DRM_SUN4I_HDMI)	+= sun4i-drm-hdmi.o
- obj-$(CONFIG_DRM_SUN8I_DW_HDMI)	+= sun8i-drm-hdmi.o
- obj-$(CONFIG_DRM_SUN8I_MIXER)	+= sun8i-mixer.o
+--- a/drivers/net/ieee802154/at86rf230.c
++++ b/drivers/net/ieee802154/at86rf230.c
+@@ -940,7 +940,7 @@ at86rf230_xmit(struct ieee802154_hw *hw,
+ static int
+ at86rf230_ed(struct ieee802154_hw *hw, u8 *level)
+ {
+-	BUG_ON(!level);
++	WARN_ON(!level);
+ 	*level = 0xbe;
+ 	return 0;
+ }
 
 
