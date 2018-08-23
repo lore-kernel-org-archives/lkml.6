@@ -6,36 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8003C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:09:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CC05C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:09:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC06A208C2
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:09:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC06A208C2
+	by mail.kernel.org (Postfix) with ESMTP id DDC83208EC
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:09:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDC83208EC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388747AbeHWMiX (ORCPT
+        id S2388764AbeHWMi1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:38:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56454 "EHLO
+        Thu, 23 Aug 2018 08:38:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56464 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730041AbeHWMiW (ORCPT
+        with ESMTP id S1729658AbeHWMi0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:38:22 -0400
+        Thu, 23 Aug 2018 08:38:26 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4D06FCA6;
-        Thu, 23 Aug 2018 09:09:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 76D0FCA8;
+        Thu, 23 Aug 2018 09:09:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+6f18401420df260e37ed@syzkaller.appspotmail.com,
-        Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.17 313/324] netfilter: conntrack: dccp: treat SYNC/SYNCACK as invalid if no prior state
-Date:   Thu, 23 Aug 2018 09:56:19 +0200
-Message-Id: <20180823075011.741436818@linuxfoundation.org>
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.17 286/324] PCI: mediatek: Fix I/O space page leak
+Date:   Thu, 23 Aug 2018 09:55:52 +0200
+Message-Id: <20180823075010.347055986@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -52,61 +54,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-commit 6613b6173dee098997229caf1f3b961c49da75e6 upstream.
+[ Upstream commit 438477b9a089e45ea7c8fb549553e52833117ed8 ]
 
-When first DCCP packet is SYNC or SYNCACK, we insert a new conntrack
-that has an un-initialized timeout value, i.e. such entry could be
-reaped at any time.
+When testing the R-Car PCIe driver on the Condor board, if the PCIe PHY
+driver was left disabled, the kernel crashed with this BUG:
 
-Mark them as INVALID and only ignore SYNC/SYNCACK when connection had
-an old state.
+  kernel BUG at lib/ioremap.c:72!
+  Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
+  Modules linked in:
+  CPU: 0 PID: 39 Comm: kworker/0:1 Not tainted 4.17.0-dirty #1092
+  Hardware name: Renesas Condor board based on r8a77980 (DT)
+  Workqueue: events deferred_probe_work_func
+  pstate: 80000005 (Nzcv daif -PAN -UAO)
+  pc : ioremap_page_range+0x370/0x3c8
+  lr : ioremap_page_range+0x40/0x3c8
+  sp : ffff000008da39e0
+  x29: ffff000008da39e0 x28: 00e8000000000f07
+  x27: ffff7dfffee00000 x26: 0140000000000000
+  x25: ffff7dfffef00000 x24: 00000000000fe100
+  x23: ffff80007b906000 x22: ffff000008ab8000
+  x21: ffff000008bb1d58 x20: ffff7dfffef00000
+  x19: ffff800009c30fb8 x18: 0000000000000001
+  x17: 00000000000152d0 x16: 00000000014012d0
+  x15: 0000000000000000 x14: 0720072007200720
+  x13: 0720072007200720 x12: 0720072007200720
+  x11: 0720072007300730 x10: 00000000000000ae
+  x9 : 0000000000000000 x8 : ffff7dffff000000
+  x7 : 0000000000000000 x6 : 0000000000000100
+  x5 : 0000000000000000 x4 : 000000007b906000
+  x3 : ffff80007c61a880 x2 : ffff7dfffeefffff
+  x1 : 0000000040000000 x0 : 00e80000fe100f07
+  Process kworker/0:1 (pid: 39, stack limit = 0x        (ptrval))
+  Call trace:
+   ioremap_page_range+0x370/0x3c8
+   pci_remap_iospace+0x7c/0xac
+   pci_parse_request_of_pci_ranges+0x13c/0x190
+   rcar_pcie_probe+0x4c/0xb04
+   platform_drv_probe+0x50/0xbc
+   driver_probe_device+0x21c/0x308
+   __device_attach_driver+0x98/0xc8
+   bus_for_each_drv+0x54/0x94
+   __device_attach+0xc4/0x12c
+   device_initial_probe+0x10/0x18
+   bus_probe_device+0x90/0x98
+   deferred_probe_work_func+0xb0/0x150
+   process_one_work+0x12c/0x29c
+   worker_thread+0x200/0x3fc
+   kthread+0x108/0x134
+   ret_from_fork+0x10/0x18
+  Code: f9004ba2 54000080 aa0003fb 17ffff48 (d4210000)
 
-Reported-by: syzbot+6f18401420df260e37ed@syzkaller.appspotmail.com
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+It turned out that pci_remap_iospace() wasn't undone when the driver's
+probe failed, and since devm_phy_optional_get() returned -EPROBE_DEFER,
+the probe was retried, finally causing the BUG due to trying to remap
+already remapped pages.
+
+The MediaTek PCIe driver has the same issue.
+
+Replace devm_pci_remap_iospace() with its devm_ managed counterpart
+to fix the bug.
+
+Fixes: 637cfacae96f ("PCI: mediatek: Add MediaTek PCIe host controller support")
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+[lorenzo.pieralisi@arm.com: updated the commit log]
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- net/netfilter/nf_conntrack_proto_dccp.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/pci/host/pcie-mediatek.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/netfilter/nf_conntrack_proto_dccp.c
-+++ b/net/netfilter/nf_conntrack_proto_dccp.c
-@@ -243,14 +243,14 @@ dccp_state_table[CT_DCCP_ROLE_MAX + 1][D
- 		 * We currently ignore Sync packets
- 		 *
- 		 *	sNO, sRQ, sRS, sPO, sOP, sCR, sCG, sTW */
--			sIG, sIG, sIG, sIG, sIG, sIG, sIG, sIG,
-+			sIV, sIG, sIG, sIG, sIG, sIG, sIG, sIG,
- 		},
- 		[DCCP_PKT_SYNCACK] = {
- 		/*
- 		 * We currently ignore SyncAck packets
- 		 *
- 		 *	sNO, sRQ, sRS, sPO, sOP, sCR, sCG, sTW */
--			sIG, sIG, sIG, sIG, sIG, sIG, sIG, sIG,
-+			sIV, sIG, sIG, sIG, sIG, sIG, sIG, sIG,
- 		},
- 	},
- 	[CT_DCCP_ROLE_SERVER] = {
-@@ -371,14 +371,14 @@ dccp_state_table[CT_DCCP_ROLE_MAX + 1][D
- 		 * We currently ignore Sync packets
- 		 *
- 		 *	sNO, sRQ, sRS, sPO, sOP, sCR, sCG, sTW */
--			sIG, sIG, sIG, sIG, sIG, sIG, sIG, sIG,
-+			sIV, sIG, sIG, sIG, sIG, sIG, sIG, sIG,
- 		},
- 		[DCCP_PKT_SYNCACK] = {
- 		/*
- 		 * We currently ignore SyncAck packets
- 		 *
- 		 *	sNO, sRQ, sRS, sPO, sOP, sCR, sCG, sTW */
--			sIG, sIG, sIG, sIG, sIG, sIG, sIG, sIG,
-+			sIV, sIG, sIG, sIG, sIG, sIG, sIG, sIG,
- 		},
- 	},
- };
+--- a/drivers/pci/host/pcie-mediatek.c
++++ b/drivers/pci/host/pcie-mediatek.c
+@@ -1063,7 +1063,7 @@ static int mtk_pcie_request_resources(st
+ 	if (err < 0)
+ 		return err;
+ 
+-	pci_remap_iospace(&pcie->pio, pcie->io.start);
++	devm_pci_remap_iospace(dev, &pcie->pio, pcie->io.start);
+ 
+ 	return 0;
+ }
 
 
