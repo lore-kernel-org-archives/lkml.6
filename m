@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8878CC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:11:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3B21C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:11:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E28E208C2
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:11:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E28E208C2
+	by mail.kernel.org (Postfix) with ESMTP id 90A1C208C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:11:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90A1C208C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389178AbeHWMkC (ORCPT
+        id S2389192AbeHWMkG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:40:02 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56958 "EHLO
+        Thu, 23 Aug 2018 08:40:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56970 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727875AbeHWMkC (ORCPT
+        with ESMTP id S1727875AbeHWMkG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:40:02 -0400
+        Thu, 23 Aug 2018 08:40:06 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EF4D7BBF;
-        Thu, 23 Aug 2018 09:11:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2F1AC93C;
+        Thu, 23 Aug 2018 09:11:20 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Matthijs van Duin <matthijsvanduin@gmail.com>,
-        Aleksa Sarai <asarai@suse.de>
-Subject: [PATCH 4.18 02/22] pty: fix O_CLOEXEC for TIOCGPTPEER
-Date:   Thu, 23 Aug 2018 09:56:28 +0200
-Message-Id: <20180823074759.356816641@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH 4.18 20/22] i2c: core: ACPI: Properly set status byte to 0 for multi-byte writes
+Date:   Thu, 23 Aug 2018 09:56:46 +0200
+Message-Id: <20180823074800.444283304@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074759.234685844@linuxfoundation.org>
 References: <20180823074759.234685844@linuxfoundation.org>
@@ -51,32 +51,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Matthijs van Duin <matthijsvanduin@gmail.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 36ecc1481dc8d8c52d43ba18c6b642c1d2fde789 upstream.
+commit c463a158cb6c5d9a85b7d894cd4f8116e8bd6be0 upstream.
 
-It was being ignored because the flags were not passed to fd allocation.
+acpi_gsb_i2c_write_bytes() returns i2c_transfer()'s return value, which
+is the number of transfers executed on success, so 1.
 
-Fixes: 54ebbfb16034 ("tty: add TIOCGPTPEER ioctl")
-Signed-off-by: Matthijs van Duin <matthijsvanduin@gmail.com>
-Acked-by: Aleksa Sarai <asarai@suse.de>
-Cc: stable <stable@vger.kernel.org>
+The ACPI code expects us to store 0 in gsb->status for success, not 1.
+
+Specifically this breaks the following code in the Thinkpad 8 DSDT:
+
+            ECWR = I2CW = ECWR /* \_SB_.I2C1.BAT0.ECWR */
+            If ((ECST == Zero))
+            {
+                ECRD = I2CR /* \_SB_.I2C1.I2CR */
+            }
+
+Before this commit we set ECST to 1, causing the read to never happen
+breaking battery monitoring on the Thinkpad 8.
+
+This commit makes acpi_gsb_i2c_write_bytes() return 0 when i2c_transfer()
+returns 1, so the single write transfer completed successfully, and
+makes it return -EIO on for other (unexpected) return values >= 0.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/pty.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/i2c/i2c-core-acpi.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/drivers/tty/pty.c
-+++ b/drivers/tty/pty.c
-@@ -625,7 +625,7 @@ int ptm_open_peer(struct file *master, s
- 	if (tty->driver != ptm_driver)
- 		return -EIO;
+--- a/drivers/i2c/i2c-core-acpi.c
++++ b/drivers/i2c/i2c-core-acpi.c
+@@ -482,11 +482,16 @@ static int acpi_gsb_i2c_write_bytes(stru
+ 	msgs[0].buf = buffer;
  
--	fd = get_unused_fd_flags(0);
-+	fd = get_unused_fd_flags(flags);
- 	if (fd < 0) {
- 		retval = fd;
- 		goto err;
+ 	ret = i2c_transfer(client->adapter, msgs, ARRAY_SIZE(msgs));
+-	if (ret < 0)
+-		dev_err(&client->adapter->dev, "i2c write failed\n");
+ 
+ 	kfree(buffer);
+-	return ret;
++
++	if (ret < 0) {
++		dev_err(&client->adapter->dev, "i2c write failed: %d\n", ret);
++		return ret;
++	}
++
++	/* 1 transfer must have completed successfully */
++	return (ret == 1) ? 0 : -EIO;
+ }
+ 
+ static acpi_status
 
 
