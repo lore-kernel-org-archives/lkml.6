@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AFF5C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:28:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 984EBC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:28:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25819208D6
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:28:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25819208D6
+	by mail.kernel.org (Postfix) with ESMTP id 5E3B0208D6
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:28:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E3B0208D6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730586AbeHWL5A (ORCPT
+        id S1730605AbeHWL5C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:57:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47372 "EHLO
+        Thu, 23 Aug 2018 07:57:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47390 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728754AbeHWL47 (ORCPT
+        with ESMTP id S1728754AbeHWL5C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:56:59 -0400
+        Thu, 23 Aug 2018 07:57:02 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BCAE88B1;
-        Thu, 23 Aug 2018 08:28:26 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E57CB8B1;
+        Thu, 23 Aug 2018 08:28:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Philipp Reisner <philipp.reisner@linbit.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Alexei Starovoitov <ast@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 115/217] drbd: Fix drbd_request_prepare() discard handling
-Date:   Thu, 23 Aug 2018 09:53:48 +0200
-Message-Id: <20180823075510.640115950@linuxfoundation.org>
+Subject: [PATCH 4.14 116/217] bpf, s390: fix potential memleak when later bpf_jit_prog fails
+Date:   Thu, 23 Aug 2018 09:53:49 +0200
+Message-Id: <20180823075510.681856038@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -54,37 +52,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bart Van Assche <bart.vanassche@wdc.com>
+From: Daniel Borkmann <daniel@iogearbox.net>
 
-[ Upstream commit fad2d4ef636654e926d374ef038f4cd4286661f6 ]
+[ Upstream commit f605ce5eb26ac934fb8106d75d46a2c875a2bf23 ]
 
-Fix the test that verifies whether bio_op(bio) represents a discard
-or write zeroes operation. Compile-tested only.
+If we would ever fail in the bpf_jit_prog() pass that writes the
+actual insns to the image after we got header via bpf_jit_binary_alloc()
+then we also need to make sure to free it through bpf_jit_binary_free()
+again when bailing out. Given we had prior bpf_jit_prog() passes to
+initially probe for clobbered registers, program size and to fill in
+addrs arrray for jump targets, this is more of a theoretical one,
+but at least make sure this doesn't break with future changes.
 
-Cc: Philipp Reisner <philipp.reisner@linbit.com>
-Cc: Lars Ellenberg <lars.ellenberg@linbit.com>
-Fixes: 7435e9018f91 ("drbd: zero-out partial unaligned discards on local backend")
-Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: 054623105728 ("s390/bpf: Add s390x eBPF JIT compiler backend")
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Acked-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/block/drbd/drbd_req.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/s390/net/bpf_jit_comp.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/block/drbd/drbd_req.c
-+++ b/drivers/block/drbd/drbd_req.c
-@@ -1244,8 +1244,8 @@ drbd_request_prepare(struct drbd_device
- 	_drbd_start_io_acct(device, req);
- 
- 	/* process discards always from our submitter thread */
--	if ((bio_op(bio) & REQ_OP_WRITE_ZEROES) ||
--	    (bio_op(bio) & REQ_OP_DISCARD))
-+	if (bio_op(bio) == REQ_OP_WRITE_ZEROES ||
-+	    bio_op(bio) == REQ_OP_DISCARD)
- 		goto queue_for_submitter_thread;
- 
- 	if (rw == WRITE && req->private_bio && req->i.size
+--- a/arch/s390/net/bpf_jit_comp.c
++++ b/arch/s390/net/bpf_jit_comp.c
+@@ -1403,6 +1403,7 @@ struct bpf_prog *bpf_int_jit_compile(str
+ 		goto free_addrs;
+ 	}
+ 	if (bpf_jit_prog(&jit, fp)) {
++		bpf_jit_binary_free(header);
+ 		fp = orig_fp;
+ 		goto free_addrs;
+ 	}
 
 
