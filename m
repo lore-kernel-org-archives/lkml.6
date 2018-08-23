@@ -2,116 +2,105 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39B4AC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:47:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB6CCC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:47:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0BDF2086A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:47:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0BDF2086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id A6E042077B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:47:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mEGTrO3f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6E042077B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732820AbeHWMPv (ORCPT
+        id S1732849AbeHWMQA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:15:51 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:57801 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727122AbeHWMPu (ORCPT
+        Thu, 23 Aug 2018 08:16:00 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:32852 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727122AbeHWMQA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:15:50 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7N8kxoe3191346
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 23 Aug 2018 01:46:59 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7N8kwDe3191342;
-        Thu, 23 Aug 2018 01:46:58 -0700
-Date:   Thu, 23 Aug 2018 01:46:58 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-bvs8wgd5wp4lz9f0xf1iug5r@git.kernel.org>
-Cc:     hpa@zytor.com, mingo@kernel.org, linux-kernel@vger.kernel.org,
-        dsahern@gmail.com, tglx@linutronix.de, acme@redhat.com,
-        sai.praneeth.prakhya@intel.com, pfeiner@google.com,
-        adrian.hunter@intel.com, namhyung@kernel.org, wangnan0@huawei.com,
-        jolsa@kernel.org
-Reply-To: wangnan0@huawei.com, jolsa@kernel.org, namhyung@kernel.org,
-          adrian.hunter@intel.com, pfeiner@google.com,
-          sai.praneeth.prakhya@intel.com, acme@redhat.com,
-          dsahern@gmail.com, tglx@linutronix.de, mingo@kernel.org,
-          linux-kernel@vger.kernel.org, hpa@zytor.com
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] tools arch x86: Update tools's copy of
- cpufeatures.h
-Git-Commit-ID: 252df177113575a66fc505169a29221d7232eb1e
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Thu, 23 Aug 2018 08:16:00 -0400
+Received: by mail-pf1-f195.google.com with SMTP id d4-v6so2369907pfn.0;
+        Thu, 23 Aug 2018 01:47:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=6k6nVoIr0ditQr3HJek6gsje6fl12edfRlaXmMdkuO0=;
+        b=mEGTrO3fv5nnllbAG9dKZ1cud4fgKhuCkRtcpcF2zB3lazkm7qxQY5d5NpOo+seIbC
+         n2vpHHuvRpjHM9xq9/Fob80I4WRUojXvQfvz7f6MTCk96XuHx2ssVKIma+BIJLN/EhjZ
+         fMpN+5XxJNZaIyLv40A+d1LT+RTMBFnOmqRdzY2+7vVH5htXT2j/mKYqLCTBRV1TKaLi
+         1VnZVJX/JVhJk7Lze1kicRZLJU8/LREkTfpurYjTIGjHUjW96oe+qdbwMC9ckk6fVAUA
+         po4zevVC4rUzvhFCXJzrctenEb7wpmDnd47qZ/ZouC1PMUboqQuWm7p02eSCYPur27fu
+         sEwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=6k6nVoIr0ditQr3HJek6gsje6fl12edfRlaXmMdkuO0=;
+        b=a5irenllqNlzG5H38ufS2/A/iyeTQTj0jEtQ58NpDgrgDM21u/R8VvF4xMASibLO2E
+         3wKT+VqcZ/VzMYe53YGtUzHXOeJ8Jh4EU3WtpSvlBqqwxSTF5f1AcydScRMXQerr7QwE
+         0TrHG76Zt7ppO/wdzs+o7oh9vB2GRjzqpWXxhlzXNpZqlO2CjuPQYz39Q3EtD/gcjH8a
+         VBZbVQUyMShoySeV6N1fzjICm2+3l+rRbE+t/J9Eqo+qacxMs6KOBbkfBjvbe1JCwZ4P
+         4aalODAD8yW0EvsEvdNsATKJJolkeUfLpwKVr4G4c+UzJVOvyr+uMQ0lHgI5MwuryJFI
+         7y2A==
+X-Gm-Message-State: AOUpUlHZFzoSulKCaVOWSlIXj9R87cJdnjV8aRKx4/BSwcSUVPfW6Qli
+        w5KWHtjWWaZ4DcA3pTxfuvQ=
+X-Google-Smtp-Source: AA+uWPz9tg60W7s0lbt18az1ksmM78D2c1+qgOiyraDn8hmTJ61Gup0OThzvaVEsv3MMGdj9f5ccWw==
+X-Received: by 2002:a62:6f87:: with SMTP id k129-v6mr61423320pfc.26.1535014042292;
+        Thu, 23 Aug 2018 01:47:22 -0700 (PDT)
+Received: from roar.ozlabs.ibm.com. ([122.99.82.10])
+        by smtp.gmail.com with ESMTPSA id w5-v6sm5170503pfn.44.2018.08.23.01.47.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 Aug 2018 01:47:21 -0700 (PDT)
+From:   Nicholas Piggin <npiggin@gmail.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Nicholas Piggin <npiggin@gmail.com>, torvalds@linux-foundation.org,
+        luto@kernel.org, x86@kernel.org, bp@alien8.de, will.deacon@arm.com,
+        riel@surriel.com, jannh@google.com, ascannell@google.com,
+        dave.hansen@intel.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, David Miller <davem@davemloft.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-arch@vger.kernel.org
+Subject: [RFC PATCH 0/2] minor mmu_gather patches
+Date:   Thu, 23 Aug 2018 18:47:07 +1000
+Message-Id: <20180823084709.19717-1-npiggin@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  252df177113575a66fc505169a29221d7232eb1e
-Gitweb:     https://git.kernel.org/tip/252df177113575a66fc505169a29221d7232eb1e
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Mon, 20 Aug 2018 10:13:13 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 20 Aug 2018 10:13:13 -0300
+These are split from some patches I posted a while back, I was going
+to take a look and revive the series again after your fixes go in,
+but having another look, it may be that your "[PATCH 3/4] mm/tlb,
+x86/mm: Support invalidating TLB caches for RCU_TABLE_FREE" becomes
+easier after my patch 1.
 
-tools arch x86: Update tools's copy of cpufeatures.h
+And I'm not convinced patch 2 is not a real bug at least for ARM64,
+so it may be possible to squeeze it in if it's reviewed very
+carefully (I need to actually reproduce and trace it).
 
-To get the changes in the following csets:
+So not signed off by yet, but if you think it might be worth doing
+these with your changes, it could be a slightly cleaner end result?
 
-  301d328a6f8b ("x86/cpufeatures: Add EPT_AD feature bit")
-  706d51681d63 ("x86/speculation: Support Enhanced IBRS on future CPUs")
+Thanks,
+Nick
 
-No tools were affected, copy it to silence this perf tool build warning:
 
-  Warning: Kernel ABI header at 'tools/arch/x86/include/asm/cpufeatures.h' differs from latest version at 'arch/x86/include/asm/cpufeatures.h'
-  diff -u tools/arch/x86/include/asm/cpufeatures.h arch/x86/include/asm/cpufeatures.h
+Nicholas Piggin (2):
+  mm: move tlb_table_flush to tlb_flush_mmu_free
+  mm: mmu_notifier fix for tlb_end_vma
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Feiner <pfeiner@google.com>
-Cc: Sai Praneeth <sai.praneeth.prakhya@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-bvs8wgd5wp4lz9f0xf1iug5r@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/arch/x86/include/asm/cpufeatures.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ include/asm-generic/tlb.h | 17 +++++++++++++----
+ mm/memory.c               | 14 ++------------
+ 2 files changed, 15 insertions(+), 16 deletions(-)
 
-diff --git a/tools/arch/x86/include/asm/cpufeatures.h b/tools/arch/x86/include/asm/cpufeatures.h
-index 5701f5cecd31..b5c60faf8429 100644
---- a/tools/arch/x86/include/asm/cpufeatures.h
-+++ b/tools/arch/x86/include/asm/cpufeatures.h
-@@ -219,6 +219,7 @@
- #define X86_FEATURE_IBPB		( 7*32+26) /* Indirect Branch Prediction Barrier */
- #define X86_FEATURE_STIBP		( 7*32+27) /* Single Thread Indirect Branch Predictors */
- #define X86_FEATURE_ZEN			( 7*32+28) /* "" CPU is AMD family 0x17 (Zen) */
-+#define X86_FEATURE_IBRS_ENHANCED	( 7*32+29) /* Enhanced IBRS */
- 
- /* Virtualization flags: Linux defined, word 8 */
- #define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
-@@ -229,7 +230,7 @@
- 
- #define X86_FEATURE_VMMCALL		( 8*32+15) /* Prefer VMMCALL to VMCALL */
- #define X86_FEATURE_XENPV		( 8*32+16) /* "" Xen paravirtual guest */
--
-+#define X86_FEATURE_EPT_AD		( 8*32+17) /* Intel Extended Page Table access-dirty bit */
- 
- /* Intel-defined CPU features, CPUID level 0x00000007:0 (EBX), word 9 */
- #define X86_FEATURE_FSGSBASE		( 9*32+ 0) /* RDFSBASE, WRFSBASE, RDGSBASE, WRGSBASE instructions*/
+-- 
+2.17.0
+
