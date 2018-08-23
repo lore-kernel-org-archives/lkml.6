@@ -6,41 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39831C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:11:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64C30C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:11:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0924208EB
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:11:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0924208EB
+	by mail.kernel.org (Postfix) with ESMTP id 2481C208C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:11:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2481C208C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389293AbeHWMki (ORCPT
+        id S2389307AbeHWMkm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:40:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57120 "EHLO
+        Thu, 23 Aug 2018 08:40:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57134 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727875AbeHWMki (ORCPT
+        with ESMTP id S1727875AbeHWMkl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:40:38 -0400
+        Thu, 23 Aug 2018 08:40:41 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 06399CAE;
-        Thu, 23 Aug 2018 09:11:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 389B1CB1;
+        Thu, 23 Aug 2018 09:11:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Jeff Mahoney <jeffm@suse.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.18 22/22] reiserfs: fix broken xattr handling (heap corruption, bad retval)
-Date:   Thu, 23 Aug 2018 09:56:48 +0200
-Message-Id: <20180823074800.554501655@linuxfoundation.org>
+        stable@vger.kernel.org, Li RongQing <lirongqing@baidu.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 028/130] net: propagate dev_get_valid_name return code
+Date:   Thu, 23 Aug 2018 09:52:24 +0200
+Message-Id: <20180823074929.073344768@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180823074759.234685844@linuxfoundation.org>
-References: <20180823074759.234685844@linuxfoundation.org>
+In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
+References: <20180823074927.161454870@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -50,63 +47,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.18-stable review patch.  If anyone has any objections, please let me know.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Li RongQing <lirongqing@baidu.com>
 
-commit a13f085d111e90469faf2d9965eb39b11c114d7e upstream.
+[ Upstream commit 7892bd081045222b9e4027fec279a28d6fe7aa66 ]
 
-This fixes the following issues:
+if dev_get_valid_name failed, propagate its return code
 
-- When a buffer size is supplied to reiserfs_listxattr() such that each
-  individual name fits, but the concatenation of all names doesn't fit,
-  reiserfs_listxattr() overflows the supplied buffer.  This leads to a
-  kernel heap overflow (verified using KASAN) followed by an out-of-bounds
-  usercopy and is therefore a security bug.
+and remove the setting err to ENODEV, it will be set to
+0 again before dev_change_net_namespace exits.
 
-- When a buffer size is supplied to reiserfs_listxattr() such that a
-  name doesn't fit, -ERANGE should be returned.  But reiserfs instead just
-  truncates the list of names; I have verified that if the only xattr on a
-  file has a longer name than the supplied buffer length, listxattr()
-  incorrectly returns zero.
-
-With my patch applied, -ERANGE is returned in both cases and the memory
-corruption doesn't happen anymore.
-
-Credit for making me clean this code up a bit goes to Al Viro, who pointed
-out that the ->actor calling convention is suboptimal and should be
-changed.
-
-Link: http://lkml.kernel.org/r/20180802151539.5373-1-jannh@google.com
-Fixes: 48b32a3553a5 ("reiserfs: use generic xattr handlers")
-Signed-off-by: Jann Horn <jannh@google.com>
-Acked-by: Jeff Mahoney <jeffm@suse.com>
-Cc: Eric Biggers <ebiggers@google.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/reiserfs/xattr.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ net/core/dev.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/fs/reiserfs/xattr.c
-+++ b/fs/reiserfs/xattr.c
-@@ -792,8 +792,10 @@ static int listxattr_filler(struct dir_c
- 			return 0;
- 		size = namelen + 1;
- 		if (b->buf) {
--			if (size > b->size)
-+			if (b->pos + size > b->size) {
-+				b->pos = -ERANGE;
- 				return -ERANGE;
-+			}
- 			memcpy(b->buf + b->pos, name, namelen);
- 			b->buf[b->pos + namelen] = 0;
- 		}
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -7945,7 +7945,8 @@ int dev_change_net_namespace(struct net_
+ 		/* We get here if we can't use the current device name */
+ 		if (!pat)
+ 			goto out;
+-		if (dev_get_valid_name(net, dev, pat) < 0)
++		err = dev_get_valid_name(net, dev, pat);
++		if (err < 0)
+ 			goto out;
+ 	}
+ 
+@@ -7957,7 +7958,6 @@ int dev_change_net_namespace(struct net_
+ 	dev_close(dev);
+ 
+ 	/* And unlink it from device chain */
+-	err = -ENODEV;
+ 	unlist_netdevice(dev);
+ 
+ 	synchronize_net();
 
 
