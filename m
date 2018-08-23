@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD51AC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:58:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAB47C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:58:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 824362084A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:58:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 824362084A
+	by mail.kernel.org (Postfix) with ESMTP id 5F1412084A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:58:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F1412084A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729140AbeHWM1B (ORCPT
+        id S1729493AbeHWM1E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:27:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52904 "EHLO
+        Thu, 23 Aug 2018 08:27:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52916 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728512AbeHWM1A (ORCPT
+        with ESMTP id S1726081AbeHWM1D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:27:00 -0400
+        Thu, 23 Aug 2018 08:27:03 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9F2DEC83;
-        Thu, 23 Aug 2018 08:58:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D203AC83;
+        Thu, 23 Aug 2018 08:58:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Junwei Zhang <Jerry.Zhang@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 166/324] drm/amdgpu: fix swapped emit_ib_size in vce3
-Date:   Thu, 23 Aug 2018 09:53:52 +0200
-Message-Id: <20180823075004.386617885@linuxfoundation.org>
+Subject: [PATCH 4.17 157/324] s390/qeth: consistently re-enable device features
+Date:   Thu, 23 Aug 2018 09:53:43 +0200
+Message-Id: <20180823075003.893331994@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -51,39 +51,122 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alex Deucher <alexander.deucher@amd.com>
+From: Julian Wiedmann <jwi@linux.ibm.com>
 
-[ Upstream commit 0859df22ab7cfb3ad2df2caed76cadce6ac33a80 ]
+[ Upstream commit d025da9eb1e48d3e5f2a2ff13ac5ac536ba4be43 ]
 
-The phys and vm versions had the values swapped.
+commit e830baa9c3f0 ("qeth: restore device features after recovery") and
+commit ce3443564145 ("s390/qeth: rely on kernel for feature recovery")
+made sure that the HW functions for device features get re-programmed
+after recovery.
 
-Reviewed-by: Junwei Zhang <Jerry.Zhang@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+But we missed that the same handling is also required when a card is
+first set offline (destroying all HW context), and then online again.
+Fix this by moving the re-enable action out of the recovery-only path.
+
+Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/amd/amdgpu/vce_v3_0.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/s390/net/qeth_core.h      |    2 +-
+ drivers/s390/net/qeth_core_main.c |   23 +++++++++++------------
+ drivers/s390/net/qeth_l2_main.c   |    5 ++---
+ drivers/s390/net/qeth_l3_main.c   |    3 ++-
+ 4 files changed, 16 insertions(+), 17 deletions(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/vce_v3_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/vce_v3_0.c
-@@ -899,7 +899,7 @@ static const struct amdgpu_ring_funcs vc
- 	.emit_frame_size =
- 		4 + /* vce_v3_0_emit_pipeline_sync */
- 		6, /* amdgpu_vce_ring_emit_fence x1 no user fence */
--	.emit_ib_size = 5, /* vce_v3_0_ring_emit_ib */
-+	.emit_ib_size = 4, /* amdgpu_vce_ring_emit_ib */
- 	.emit_ib = amdgpu_vce_ring_emit_ib,
- 	.emit_fence = amdgpu_vce_ring_emit_fence,
- 	.test_ring = amdgpu_vce_ring_test_ring,
-@@ -923,7 +923,7 @@ static const struct amdgpu_ring_funcs vc
- 		6 + /* vce_v3_0_emit_vm_flush */
- 		4 + /* vce_v3_0_emit_pipeline_sync */
- 		6 + 6, /* amdgpu_vce_ring_emit_fence x2 vm fence */
--	.emit_ib_size = 4, /* amdgpu_vce_ring_emit_ib */
-+	.emit_ib_size = 5, /* vce_v3_0_ring_emit_ib */
- 	.emit_ib = vce_v3_0_ring_emit_ib,
- 	.emit_vm_flush = vce_v3_0_emit_vm_flush,
- 	.emit_pipeline_sync = vce_v3_0_emit_pipeline_sync,
+--- a/drivers/s390/net/qeth_core.h
++++ b/drivers/s390/net/qeth_core.h
+@@ -1003,7 +1003,7 @@ struct qeth_cmd_buffer *qeth_get_setassp
+ 						 __u16, __u16,
+ 						 enum qeth_prot_versions);
+ int qeth_set_features(struct net_device *, netdev_features_t);
+-void qeth_recover_features(struct net_device *dev);
++void qeth_enable_hw_features(struct net_device *dev);
+ netdev_features_t qeth_fix_features(struct net_device *, netdev_features_t);
+ netdev_features_t qeth_features_check(struct sk_buff *skb,
+ 				      struct net_device *dev,
+--- a/drivers/s390/net/qeth_core_main.c
++++ b/drivers/s390/net/qeth_core_main.c
+@@ -6432,28 +6432,27 @@ static int qeth_set_ipa_tso(struct qeth_
+ #define QETH_HW_FEATURES (NETIF_F_RXCSUM | NETIF_F_IP_CSUM | NETIF_F_TSO)
+ 
+ /**
+- * qeth_recover_features() - Restore device features after recovery
+- * @dev:	the recovering net_device
+- *
+- * Caller must hold rtnl lock.
++ * qeth_enable_hw_features() - (Re-)Enable HW functions for device features
++ * @dev:	a net_device
+  */
+-void qeth_recover_features(struct net_device *dev)
++void qeth_enable_hw_features(struct net_device *dev)
+ {
+-	netdev_features_t features = dev->features;
+ 	struct qeth_card *card = dev->ml_priv;
++	netdev_features_t features;
+ 
++	rtnl_lock();
++	features = dev->features;
+ 	/* force-off any feature that needs an IPA sequence.
+ 	 * netdev_update_features() will restart them.
+ 	 */
+ 	dev->features &= ~QETH_HW_FEATURES;
+ 	netdev_update_features(dev);
+-
+-	if (features == dev->features)
+-		return;
+-	dev_warn(&card->gdev->dev,
+-		 "Device recovery failed to restore all offload features\n");
++	if (features != dev->features)
++		dev_warn(&card->gdev->dev,
++			 "Device recovery failed to restore all offload features\n");
++	rtnl_unlock();
+ }
+-EXPORT_SYMBOL_GPL(qeth_recover_features);
++EXPORT_SYMBOL_GPL(qeth_enable_hw_features);
+ 
+ int qeth_set_features(struct net_device *dev, netdev_features_t features)
+ {
+--- a/drivers/s390/net/qeth_l2_main.c
++++ b/drivers/s390/net/qeth_l2_main.c
+@@ -1130,6 +1130,8 @@ static int __qeth_l2_set_online(struct c
+ 		netif_carrier_off(card->dev);
+ 
+ 	qeth_set_allowed_threads(card, 0xffffffff, 0);
++
++	qeth_enable_hw_features(card->dev);
+ 	if (recover_flag == CARD_STATE_RECOVER) {
+ 		if (recovery_mode &&
+ 		    card->info.type != QETH_CARD_TYPE_OSN) {
+@@ -1141,9 +1143,6 @@ static int __qeth_l2_set_online(struct c
+ 		}
+ 		/* this also sets saved unicast addresses */
+ 		qeth_l2_set_rx_mode(card->dev);
+-		rtnl_lock();
+-		qeth_recover_features(card->dev);
+-		rtnl_unlock();
+ 	}
+ 	/* let user_space know that device is online */
+ 	kobject_uevent(&gdev->dev.kobj, KOBJ_CHANGE);
+--- a/drivers/s390/net/qeth_l3_main.c
++++ b/drivers/s390/net/qeth_l3_main.c
+@@ -2792,6 +2792,8 @@ static int __qeth_l3_set_online(struct c
+ 		netif_carrier_on(card->dev);
+ 	else
+ 		netif_carrier_off(card->dev);
++
++	qeth_enable_hw_features(card->dev);
+ 	if (recover_flag == CARD_STATE_RECOVER) {
+ 		rtnl_lock();
+ 		if (recovery_mode)
+@@ -2799,7 +2801,6 @@ static int __qeth_l3_set_online(struct c
+ 		else
+ 			dev_open(card->dev);
+ 		qeth_l3_set_rx_mode(card->dev);
+-		qeth_recover_features(card->dev);
+ 		rtnl_unlock();
+ 	}
+ 	qeth_trace_features(card);
 
 
