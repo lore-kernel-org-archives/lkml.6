@@ -6,44 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0089C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:13:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7535C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:13:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92560208C2
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:13:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92560208C2
+	by mail.kernel.org (Postfix) with ESMTP id A6086208C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:13:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6086208C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389361AbeHWMlx (ORCPT
+        id S2389375AbeHWMlz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:41:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57328 "EHLO
+        Thu, 23 Aug 2018 08:41:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57342 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729142AbeHWMlw (ORCPT
+        with ESMTP id S1729142AbeHWMly (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:41:52 -0400
+        Thu, 23 Aug 2018 08:41:54 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B3247C50;
-        Thu, 23 Aug 2018 09:13:05 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1B116BE1;
+        Thu, 23 Aug 2018 09:13:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Allan Xavier <allan.x.xavier@oracle.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Brian Gerst <brgerst@gmail.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, "Robin H. Johnson" <robbat2@gentoo.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 163/324] objtool: Support GCC 8 -fnoreorder-functions
-Date:   Thu, 23 Aug 2018 09:53:49 +0200
-Message-Id: <20180823075004.221525510@linuxfoundation.org>
+Subject: [PATCH 4.17 294/324] ACPI / EC: Use ec_no_wakeup on more Thinkpad X1 Carbon 6th systems
+Date:   Thu, 23 Aug 2018 09:56:00 +0200
+Message-Id: <20180823075010.759946428@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -60,102 +51,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+From: "Robin H. Johnson" <robbat2@gentoo.org>
 
-[ Upstream commit 08b393d01c88aff27347ed2b1b354eb4db2f1532 ]
+[ Upstream commit 2c4d6baf1bc4f7729773ffcee9ba2a9781578633 ]
 
-Since the following commit:
+The ec_no_wakeup matcher added for Thinkpad X1 Carbon 6th gen systems
+beyond matched only a single DMI model (20KGS3JF01), that didn't cover
+my laptop (20KH002JUS). Change to match based on DMI product family to
+cover all X1 6th gen systems.
 
-  cd77849a69cf ("objtool: Fix GCC 8 cold subfunction detection for aliased functions")
-
-... if the kernel is built with EXTRA_CFLAGS='-fno-reorder-functions',
-objtool can get stuck in an infinite loop.
-
-That flag causes the new GCC 8 cold subfunctions to be placed in .text
-instead of .text.unlikely.  But it also has an unfortunate quirk: in the
-symbol table, the subfunction (e.g., nmi_panic.cold.7) is nested inside
-the parent (nmi_panic).
-
-That function overlap confuses objtool, and causes it to get into an
-infinite loop in next_insn_same_func().  Here's Allan's description of
-the loop:
-
-  "Objtool iterates through the instructions in nmi_panic using
-  next_insn_same_func. Once it reaches the end of nmi_panic at 0x534 it
-  jumps to 0x528 as that's the start of nmi_panic.cold.7. However, since
-  the instructions starting at 0x528 are still associated with nmi_panic
-  objtool will get stuck in a loop, continually jumping back to 0x528
-  after reaching 0x534."
-
-Fix it by shortening the length of the parent function so that the
-functions no longer overlap.
-
-Reported-and-analyzed-by: Allan Xavier <allan.x.xavier@oracle.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Allan Xavier <allan.x.xavier@oracle.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/9e704c52bee651129b036be14feda317ae5606ae.1530136978.git.jpoimboe@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Robin H. Johnson <robbat2@gentoo.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/objtool/elf.c |   37 ++++++++++++++++++++++++++-----------
- 1 file changed, 26 insertions(+), 11 deletions(-)
+ drivers/acpi/ec.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/objtool/elf.c
-+++ b/tools/objtool/elf.c
-@@ -302,19 +302,34 @@ static int read_symbols(struct elf *elf)
- 				continue;
- 			sym->pfunc = sym->cfunc = sym;
- 			coldstr = strstr(sym->name, ".cold.");
--			if (coldstr) {
--				coldstr[0] = '\0';
--				pfunc = find_symbol_by_name(elf, sym->name);
--				coldstr[0] = '.';
-+			if (!coldstr)
-+				continue;
-+
-+			coldstr[0] = '\0';
-+			pfunc = find_symbol_by_name(elf, sym->name);
-+			coldstr[0] = '.';
-+
-+			if (!pfunc) {
-+				WARN("%s(): can't find parent function",
-+				     sym->name);
-+				goto err;
-+			}
- 
--				if (!pfunc) {
--					WARN("%s(): can't find parent function",
--					     sym->name);
--					goto err;
--				}
-+			sym->pfunc = pfunc;
-+			pfunc->cfunc = sym;
- 
--				sym->pfunc = pfunc;
--				pfunc->cfunc = sym;
-+			/*
-+			 * Unfortunately, -fnoreorder-functions puts the child
-+			 * inside the parent.  Remove the overlap so we can
-+			 * have sane assumptions.
-+			 *
-+			 * Note that pfunc->len now no longer matches
-+			 * pfunc->sym.st_size.
-+			 */
-+			if (sym->sec == pfunc->sec &&
-+			    sym->offset >= pfunc->offset &&
-+			    sym->offset + sym->len == pfunc->offset + pfunc->len) {
-+				pfunc->len -= sym->len;
- 			}
- 		}
- 	}
+--- a/drivers/acpi/ec.c
++++ b/drivers/acpi/ec.c
+@@ -2036,7 +2036,7 @@ static const struct dmi_system_id acpi_e
+ 		.ident = "Thinkpad X1 Carbon 6th",
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
+-			DMI_MATCH(DMI_PRODUCT_NAME, "20KGS3JF01"),
++			DMI_MATCH(DMI_PRODUCT_FAMILY, "Thinkpad X1 Carbon 6th"),
+ 		},
+ 	},
+ 	{ },
 
 
