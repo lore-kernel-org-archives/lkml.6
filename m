@@ -2,145 +2,119 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AD5CC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 10:43:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AF42C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 10:44:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3C1520C07
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 10:43:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3C1520C07
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id EBACE20C07
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 10:44:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gfcuGE0P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBACE20C07
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730674AbeHWOM7 (ORCPT
+        id S1730754AbeHWON0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 10:12:59 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53572 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727785AbeHWOM6 (ORCPT
+        Thu, 23 Aug 2018 10:13:26 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:51941 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727742AbeHWONZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 10:12:58 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7NAd2xg093183
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 06:43:51 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2m1teutfkv-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 06:43:51 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Thu, 23 Aug 2018 11:43:49 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 23 Aug 2018 11:43:45 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7NAhibr40828980
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 23 Aug 2018 10:43:44 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A1A154C04E;
-        Thu, 23 Aug 2018 13:43:45 +0100 (BST)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 663934C046;
-        Thu, 23 Aug 2018 13:43:44 +0100 (BST)
-Received: from [9.152.224.92] (unknown [9.152.224.92])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 23 Aug 2018 13:43:44 +0100 (BST)
-Reply-To: pmorel@linux.ibm.com
-Subject: Re: [PATCH v9 12/22] s390: vfio-ap: sysfs interfaces to configure
- control domains
-To:     Cornelia Huck <cohuck@redhat.com>,
-        Tony Krowiak <akrowiak@linux.ibm.com>
-Cc:     Halil Pasic <pasic@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1534196899-16987-13-git-send-email-akrowiak@linux.vnet.ibm.com>
- <20180820162317.08bd7d23.cohuck@redhat.com>
- <660de00a-c403-28c1-4df4-82a973ab3ad5@linux.ibm.com>
- <20180821172548.57a6c758.cohuck@redhat.com>
- <82a391ee-85b1-cdc7-0f9b-d37fd8ba8e47@linux.ibm.com>
- <a43ef10f-aa91-cb4c-a8aa-cd3ce9cfebf2@linux.ibm.com>
- <20180822114250.59a250aa.cohuck@redhat.com>
- <8bc5f207-f913-825c-f9fc-0a2c7fd280aa@linux.ibm.com>
- <e36abc22-9daf-e0f4-c6b3-7adbb28db4c3@de.ibm.com>
- <f84dbcc0-f627-be02-9933-3baa953adc09@linux.ibm.com>
- <219b352b-d5a2-189c-e205-82e7f9ae3d64@de.ibm.com>
- <dbb74c9c-93ab-ed05-fad4-ea2aa5f2b71e@linux.ibm.com>
- <9ef5fcb9-02e0-88e3-007c-eedb14e6db80@linux.ibm.com>
- <20180823122525.02fc4af3.cohuck@redhat.com>
-From:   Pierre Morel <pmorel@linux.ibm.com>
-Date:   Thu, 23 Aug 2018 12:43:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 23 Aug 2018 10:13:25 -0400
+Received: by mail-it0-f65.google.com with SMTP id e14-v6so6921715itf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 03:44:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pDsa1D0GHWImQiPClgu6fgdXGYxc9qb+28eAca3UEqw=;
+        b=gfcuGE0Pr5fGtlkDQGCTMDzmze5NxV8uJIiHUWlkliiJ+6YBq7ZhkpSvt1W9NoZuLc
+         2DmxJhRctb1/jgE/LntwsuAaW9CwrIxtRdUrGE0uEaw6icbmNRGB8uJ8+gCG/1Eza25o
+         ct74tlfYD1RhCJZ1T3wvUx/i3/6EYfKlkw23w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pDsa1D0GHWImQiPClgu6fgdXGYxc9qb+28eAca3UEqw=;
+        b=f5RKlnz6p/Kvpm5H9DuSBfxnpCPWb2YJ6QjQKxIxDdeuQqPITci6zvf7aaeh6qa3mt
+         nTqiH/7A0Vhth7frXR25SIDZlw+K40wsqcPBkWa+Mv4KqOalSCrPl7NmN++jJABi0nFU
+         teDF5o1AIy3PFdpXu/eRxqFCsGyFsVWEhn7Ozb4x9QK3CAzlPekaN+Kxp+9wLlM/Mpr2
+         O9+bYoxok+yt0thCUkIWsL13uFNkQ70EazpxLIBDgEhr/HSlEcZ8YHQhAw9iidDNzzu2
+         F+C2AKpWyNAAsbfQ/5ohZEGmDRTFT0LJ5lCBGuIwqUKUN/AGudFkJicdQYU9ys6M7QB5
+         oAYQ==
+X-Gm-Message-State: AOUpUlGgrunVR73uQj+KrpW8ib119zS26dQ2v6k7df579lJnDkzCt9FH
+        VlnjGA8/8Go/4s2i5fBMWjTsXuwB0swq11qvcjboiQ==
+X-Google-Smtp-Source: AA+uWPwKjp42MLammhehSmnhp8CxXGMRfmGZ2UJZk3jZGTifjeoa6Nh5DUroXd+Bzr2qCxCV99Kb3EauIXe3cjgg3j0=
+X-Received: by 2002:a02:6c45:: with SMTP id w66-v6mr52171230jab.87.1535021058900;
+ Thu, 23 Aug 2018 03:44:18 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180823122525.02fc4af3.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18082310-0020-0000-0000-000002BAA5EE
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082310-0021-0000-0000-00002108013E
-Message-Id: <25a44526-a2d6-c632-6a6d-8ca385925731@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-23_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808230114
+References: <20180820181333.2527-1-jmkrzyszt@gmail.com> <20180820181333.2527-3-jmkrzyszt@gmail.com>
+In-Reply-To: <20180820181333.2527-3-jmkrzyszt@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 23 Aug 2018 12:44:06 +0200
+Message-ID: <CACRpkdaEahLO=z4TxyNfUNOqnTvQWsTzvd-HEciZWX57tQ5-mQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] ARM: OMAP1: ams-delta: initialize latch2 pins to safe values
+To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc:     ext Tony Lindgren <tony@atomide.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        linux-serial@vger.kernel.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/08/2018 12:25, Cornelia Huck wrote:
-> On Wed, 22 Aug 2018 15:16:19 -0400
-> Tony Krowiak <akrowiak@linux.ibm.com> wrote:
-> 
->> One of the things I suggested in a private conversation with Christian
->> earlier
->> today was to provide an additional rw sysfs attribute - a boolean - that
->> indicates
->> whether all usage domains should also be control domains. The default
->> could be
->> true. This would allow one to configure guests with usage-only domains
->> as well
->> as satisfy the convention.
-> 
-> Would this additional attribute then control "add usage domains to the
-> list of control domains automatically", or "don't allow to add a usage
-> domain if it has not already been added as a control domain"?
-> 
-> One thing I'm still unsure about is how libvirt comes into the picture
-> here. Will it consume the setting, or actively manipulate it?
-> 
-> [In general, I'm not very clear about how libvirt will interact with the
-> whole infrastructure...]
-> 
+On Mon, Aug 20, 2018 at 8:12 PM Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
 
-When I read you it convince me that it is not wise to change anything
-that has been already discuss and could impact the Libvirt.
+> Latch2 pins control a number of on-board devices, namely LCD, NAND,
+> MODEM and CODEC.  Those pins used to be initialized with safe values
+> from init_machine before that operation was:
+> 1) moved to late_initcall in preparation for conversion of latch2 to
+> GPIO device - see commit f7519d8c8290 ("ARM: OMAP1: ams-delta: register
+> latch dependent devices later"),
+> 2) replaced with non-atomic initialization performed by means of
+> gpio_request_array() - see commit 937eb4bb0058 ("ARM: OMAP1: ams-delta:
+> convert latches to basic_mmio_gpio"),
+> 3) made completely asynchronous by delegation of GPIO request
+> operations performed on subsets of pins to respective device drivers in
+> subsequent commits.
+>
+> One visible negative result of that disintegration was corrupt keyboard
+> data reported by serio driver, recently fixed by commit 41f8fee385a0
+> ("ARM: OMAP1: ams-delta: Hog "keybrd_dataout" GPIO pin").
+>
+> Moreover, initialization of LATCH2_PIN_MODEM_CODEC still performed with
+> ams_delta_latch2_write() wrapper from late_init() is now done on not
+> requested GPIO pin.
+>
+> Reintroduce atomic initialization of latch2 pins at machine_init to
+> prevent from random values potentially corrupting NAND data or maybe
+> even destroing other hardware.  Also take care of MODEM/CODEC related
+> pins so MODEM device probe succeeds even if latch2 GPIO device or
+> dependent regulator is not ready and CODEC can be reached over the
+> MODEM even if audio driver doesn't take control over
+> LATCH2_PIN_MODEM_CODEC.
+>
+> Once done, remove the no longer needed GPIO based implementation of
+> ams_delta_latch_write() and its frontend macro.
+>
+> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 
-Regards,
-Pierre
+This should turn into a nice pin control driver some day.
 
--- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
+But until then, this looks way better after than before the patch,
+so:
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
+Yours,
+Linus Walleij
