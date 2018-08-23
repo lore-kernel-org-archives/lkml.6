@@ -2,40 +2,39 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E685C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:49:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DBF6C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:49:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FF7E2077B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:49:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FF7E2077B
+	by mail.kernel.org (Postfix) with ESMTP id D4A6E2077B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:49:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4A6E2077B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733180AbeHWMRt (ORCPT
+        id S1733191AbeHWMRx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:17:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50970 "EHLO
+        Thu, 23 Aug 2018 08:17:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50982 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732242AbeHWMRt (ORCPT
+        with ESMTP id S1732242AbeHWMRw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:17:49 -0400
+        Thu, 23 Aug 2018 08:17:52 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 059B3BC1;
-        Thu, 23 Aug 2018 08:49:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6F43EBE0;
+        Thu, 23 Aug 2018 08:49:13 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Guenter Roeck <linux@roeck-us.net>,
+        stable@vger.kernel.org, Dirk Gouders <dirk@gouders.net>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 111/324] typec: tcpm: Fix a msecs vs jiffies bug
-Date:   Thu, 23 Aug 2018 09:52:57 +0200
-Message-Id: <20180823075001.362630888@linuxfoundation.org>
+Subject: [PATCH 4.17 112/324] kconfig: fix line numbers for if-entries in menu tree
+Date:   Thu, 23 Aug 2018 09:52:58 +0200
+Message-Id: <20180823075001.426445394@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -52,34 +51,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Dirk Gouders <dirk@gouders.net>
 
-[ Upstream commit 9578bcd0bb487b8ecef4b7eee799aafb678aa441 ]
+[ Upstream commit b2d00d7c61c84edd150310af3f556f8a3c6e2e67 ]
 
-The tcpm_set_state() function take msecs not jiffies.
+The line numers for if-entries in the menu tree are off by one or more
+lines which is confusing when debugging for correctness of unrelated changes.
 
-Fixes: f0690a25a140 ("staging: typec: USB Type-C Port Manager (tcpm)")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+According to the git log, commit a02f0570ae201c49 (kconfig: improve
+error handling in the parser) was the last one that changed that part
+of the parser and replaced
+
+	"if_entry: T_IF expr T_EOL"
+by
+	"if_entry: T_IF expr nl"
+
+but the commit message does not state why this has been done.
+
+When reverting that part of the commit, only the line numers are
+corrected (checked with cdebug = DEBUG_PARSE in zconf.y), otherwise
+the menu tree remains unchanged (checked with zconfdump() enabled in
+conf.c).
+
+An example for the corrected line numbers:
+
+drivers/soc/Kconfig:15:source drivers/soc/tegra/Kconfig
+drivers/soc/tegra/Kconfig:4:if
+drivers/soc/tegra/Kconfig:6:if
+
+changes to:
+
+drivers/soc/Kconfig:15:source drivers/soc/tegra/Kconfig
+drivers/soc/tegra/Kconfig:1:if
+drivers/soc/tegra/Kconfig:4:if
+
+Signed-off-by: Dirk Gouders <dirk@gouders.net>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/typec/tcpm.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ scripts/kconfig/zconf.y |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/typec/tcpm.c
-+++ b/drivers/usb/typec/tcpm.c
-@@ -2543,7 +2543,8 @@ static void run_state_machine(struct tcp
- 		    tcpm_port_is_sink(port) &&
- 		    time_is_after_jiffies(port->delayed_runtime)) {
- 			tcpm_set_state(port, SNK_DISCOVERY,
--				       port->delayed_runtime - jiffies);
-+				       jiffies_to_msecs(port->delayed_runtime -
-+							jiffies));
- 			break;
- 		}
- 		tcpm_set_state(port, unattached_state(port), 0);
+--- a/scripts/kconfig/zconf.y
++++ b/scripts/kconfig/zconf.y
+@@ -31,7 +31,7 @@ struct symbol *symbol_hash[SYMBOL_HASHSI
+ static struct menu *current_menu, *current_entry;
+ 
+ %}
+-%expect 32
++%expect 31
+ 
+ %union
+ {
+@@ -345,7 +345,7 @@ choice_block:
+ 
+ /* if entry */
+ 
+-if_entry: T_IF expr nl
++if_entry: T_IF expr T_EOL
+ {
+ 	printd(DEBUG_PARSE, "%s:%d:if\n", zconf_curname(), zconf_lineno());
+ 	menu_add_entry(NULL);
 
 
