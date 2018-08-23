@@ -6,36 +6,43 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71240C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:18:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C73BEC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:18:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34AAF2148E
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:18:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34AAF2148E
+	by mail.kernel.org (Postfix) with ESMTP id 8C00D20A8B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:18:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C00D20A8B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729810AbeHWLrG (ORCPT
+        id S1729833AbeHWLrJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:47:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46300 "EHLO
+        Thu, 23 Aug 2018 07:47:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46314 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727760AbeHWLrF (ORCPT
+        with ESMTP id S1727760AbeHWLrJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:47:05 -0400
+        Thu, 23 Aug 2018 07:47:09 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5C093C7B;
-        Thu, 23 Aug 2018 08:18:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 61FC0C7B;
+        Thu, 23 Aug 2018 08:18:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <andi@firstfloor.org>,
+        David Ahern <dsahern@gmail.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Milian Wolff <milian.wolff@kdab.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Stephane Eranian <eranian@google.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 019/217] ACPI / EC: Use ec_no_wakeup on Thinkpad X1 Carbon 6th
-Date:   Thu, 23 Aug 2018 09:52:12 +0200
-Message-Id: <20180823075506.414091305@linuxfoundation.org>
+Subject: [PATCH 4.14 007/217] perf tools: Fix error index for pmu event parser
+Date:   Thu, 23 Aug 2018 09:52:00 +0200
+Message-Id: <20180823075505.698241857@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -52,62 +59,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Jiri Olsa <jolsa@kernel.org>
 
-[ Upstream commit 8195a655e5ce09550aff81b2573d9b015d520cb9 ]
+[ Upstream commit f7fa827f5f432a0b1f34e10fc49da93aeef9f817 ]
 
-On this system EC interrupt triggers constantly kicking devices out of
-low power states and thus blocking power management. The system also has
-a PCIe root port hosting Alpine Ridge Thunderbolt controller and it
-never gets a chance to go to D3cold because of this.
+For events we provide specific error message we need to set error column
+index, PMU parser is missing that, adding it.
 
-Since the power button works the same regardless if EC interrupt is
-enabled or not during s2idle, add a quirk for this machine that sets
-ec_no_wakeup=true preventing spurious wakeups.
+Before:
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+  $ perf stat -e cycles,krava/cycles/ kill
+  event syntax error: 'cycles,krava/cycles/'
+                       \___ Cannot find PMU `krava'. Missing kernel support?
+
+After:
+
+  $ perf stat -e cycles,krava/cycles/ kill
+  event syntax error: 'cycles,krava/cycles/'
+                              \___ Cannot find PMU `krava'. Missing kernel support?
+
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <andi@firstfloor.org>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Frederic Weisbecker <frederic@kernel.org>
+Cc: Milian Wolff <milian.wolff@kdab.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Link: http://lkml.kernel.org/r/20180606221513.11302-3-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/acpi/ec.c |   20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ tools/perf/util/parse-events.y |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/acpi/ec.c
-+++ b/drivers/acpi/ec.c
-@@ -2029,6 +2029,17 @@ static inline void acpi_ec_query_exit(vo
- 	}
- }
- 
-+static const struct dmi_system_id acpi_ec_no_wakeup[] = {
-+	{
-+		.ident = "Thinkpad X1 Carbon 6th",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "20KGS3JF01"),
-+		},
-+	},
-+	{ },
-+};
-+
- int __init acpi_ec_init(void)
+--- a/tools/perf/util/parse-events.y
++++ b/tools/perf/util/parse-events.y
+@@ -226,11 +226,16 @@ event_def: event_pmu |
+ event_pmu:
+ PE_NAME opt_pmu_config
  {
- 	int result;
-@@ -2039,6 +2050,15 @@ int __init acpi_ec_init(void)
- 	if (result)
- 		return result;
++	struct parse_events_state *parse_state = _parse_state;
++	struct parse_events_error *error = parse_state->error;
+ 	struct list_head *list, *orig_terms, *terms;
  
-+	/*
-+	 * Disable EC wakeup on following systems to prevent periodic
-+	 * wakeup from EC GPE.
-+	 */
-+	if (dmi_check_system(acpi_ec_no_wakeup)) {
-+		ec_no_wakeup = true;
-+		pr_debug("Disabling EC wakeup on suspend-to-idle\n");
-+	}
+ 	if (parse_events_copy_term_list($2, &orig_terms))
+ 		YYABORT;
+ 
++	if (error)
++		error->idx = @1.first_column;
 +
- 	/* Drivers must be started after acpi_ec_query_init() */
- 	dsdt_fail = acpi_bus_register_driver(&acpi_ec_driver);
- 	/*
+ 	ALLOC_LIST(list);
+ 	if (parse_events_add_pmu(_parse_state, list, $1, $2)) {
+ 		struct perf_pmu *pmu = NULL;
 
 
