@@ -6,36 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 952B3C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:50:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD1EEC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:50:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58FEB2077B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:50:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58FEB2077B
+	by mail.kernel.org (Postfix) with ESMTP id 86B4F20657
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:50:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86B4F20657
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387445AbeHWMSp (ORCPT
+        id S2387455AbeHWMSy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:18:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51306 "EHLO
+        Thu, 23 Aug 2018 08:18:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51344 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728517AbeHWMSo (ORCPT
+        with ESMTP id S1728517AbeHWMSy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:18:44 -0400
+        Thu, 23 Aug 2018 08:18:54 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3110ABE0;
-        Thu, 23 Aug 2018 08:50:05 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CA179CA0;
+        Thu, 23 Aug 2018 08:50:14 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Yan, Zheng" <zyan@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
+        stable@vger.kernel.org, AMG Zollner Robert <robert@cloudmedia.eu>,
+        David Ahern <dsa@cumulusnetworks.com>,
+        Casey Leedom <leedom@chelsio.com>,
+        Ganesh Goudar <ganeshgr@chelsio.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 125/324] ceph: fix dentry leak in splice_dentry()
-Date:   Thu, 23 Aug 2018 09:53:11 +0200
-Message-Id: <20180823075002.147366525@linuxfoundation.org>
+Subject: [PATCH 4.17 101/324] cxgb4: when disabling dcb set txq dcb priority to 0
+Date:   Thu, 23 Aug 2018 09:52:47 +0200
+Message-Id: <20180823075000.906131078@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -52,31 +54,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Yan, Zheng" <zyan@redhat.com>
+From: Ganesh Goudar <ganeshgr@chelsio.com>
 
-[ Upstream commit 8b8f53af1ed9df88a4c0fbfdf3db58f62060edf3 ]
+[ Upstream commit 5ce36338a30f9814fc4824f9fe6c20cd83d872c7 ]
 
-In any case, d_splice_alias() does not drop reference of original
-dentry.
+When we are disabling DCB, store "0" in txq->dcb_prio
+since that's used for future TX Work Request "OVLAN_IDX"
+values. Setting non zero priority upon disabling DCB
+would halt the traffic.
 
-Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
-Reviewed-by: Jeff Layton <jlayton@redhat.com>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Reported-by: AMG Zollner Robert <robert@cloudmedia.eu>
+CC: David Ahern <dsa@cumulusnetworks.com>
+Signed-off-by: Casey Leedom <leedom@chelsio.com>
+Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/ceph/inode.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -1123,6 +1123,7 @@ static struct dentry *splice_dentry(stru
- 	if (IS_ERR(realdn)) {
- 		pr_err("splice_dentry error %ld %p inode %p ino %llx.%llx\n",
- 		       PTR_ERR(realdn), dn, in, ceph_vinop(in));
-+		dput(dn);
- 		dn = realdn; /* note realdn contains the error */
- 		goto out;
- 	} else if (realdn) {
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c
+@@ -263,7 +263,7 @@ static void dcb_tx_queue_prio_enable(str
+ 				"Can't %s DCB Priority on port %d, TX Queue %d: err=%d\n",
+ 				enable ? "set" : "unset", pi->port_id, i, -err);
+ 		else
+-			txq->dcb_prio = value;
++			txq->dcb_prio = enable ? value : 0;
+ 	}
+ }
+ 
 
 
