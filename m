@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D366C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:18:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC93DC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:18:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 205E820A8B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:18:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 205E820A8B
+	by mail.kernel.org (Postfix) with ESMTP id B322C20A8B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:18:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B322C20A8B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729902AbeHWLrT (ORCPT
+        id S1729936AbeHWLrW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:47:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46352 "EHLO
+        Thu, 23 Aug 2018 07:47:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46362 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727760AbeHWLrS (ORCPT
+        with ESMTP id S1727760AbeHWLrV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:47:18 -0400
+        Thu, 23 Aug 2018 07:47:21 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2F112C83;
-        Thu, 23 Aug 2018 08:18:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5745CC74;
+        Thu, 23 Aug 2018 08:18:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
         Maciej Purski <m.purski@samsung.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 010/217] drm/bridge/sii8620: fix loops in EDID fetch logic
-Date:   Thu, 23 Aug 2018 09:52:03 +0200
-Message-Id: <20180823075505.966042647@linuxfoundation.org>
+Subject: [PATCH 4.14 011/217] drm/bridge/sii8620: fix potential buffer overflow
+Date:   Thu, 23 Aug 2018 09:52:04 +0200
+Message-Id: <20180823075506.043095283@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -52,75 +52,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andrzej Hajda <a.hajda@samsung.com>
+From: Maciej Purski <m.purski@samsung.com>
 
-[ Upstream commit 8e627a1b1ce8feb3e1da4428b71b9b4905f04888 ]
+[ Upstream commit 9378cecb1ce5d618b8aff4d65113ddcf72fc1011 ]
 
-Function should constantly check if cable is connected and finish
-in finite time.
+Buffer overflow error should not occur, as mode_fixup() callback
+filters pixel clock value and it should never exceed 600000. However,
+current implementation is not obviously safe and relies on
+implementation of mode_fixup().
 
+Make 'i' variable never reach unsafe value in order to avoid buffer
+overflow error.
+
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: bf1722ca ("drm/bridge/sii8620: rewrite hdmi start sequence")
+Signed-off-by: Maciej Purski <m.purski@samsung.com>
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Maciej Purski <m.purski@samsung.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180115173357.31067-4-a.hajda@samsung.com
+Link: https://patchwork.freedesktop.org/patch/msgid/1511341718-6974-1-git-send-email-m.purski@samsung.com
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/bridge/sil-sii8620.c |   31 ++++++++++++++++++++-----------
- 1 file changed, 20 insertions(+), 11 deletions(-)
+ drivers/gpu/drm/bridge/sil-sii8620.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 --- a/drivers/gpu/drm/bridge/sil-sii8620.c
 +++ b/drivers/gpu/drm/bridge/sil-sii8620.c
-@@ -788,6 +788,7 @@ static void sii8620_burst_rx_all(struct
- static void sii8620_fetch_edid(struct sii8620 *ctx)
- {
- 	u8 lm_ddc, ddc_cmd, int3, cbus;
-+	unsigned long timeout;
- 	int fetched, i;
- 	int edid_len = EDID_LENGTH;
- 	u8 *edid;
-@@ -837,23 +838,31 @@ static void sii8620_fetch_edid(struct si
- 			REG_DDC_CMD, ddc_cmd | VAL_DDC_CMD_ENH_DDC_READ_NO_ACK
- 		);
+@@ -1196,7 +1196,7 @@ static void sii8620_start_hdmi(struct si
+ 		int clk = ctx->pixel_clock * (ctx->use_packed_pixel ? 2 : 3);
+ 		int i;
  
--		do {
--			int3 = sii8620_readb(ctx, REG_INTR3);
-+		int3 = 0;
-+		timeout = jiffies + msecs_to_jiffies(200);
-+		for (;;) {
- 			cbus = sii8620_readb(ctx, REG_CBUS_STATUS);
--
--			if (int3 & BIT_DDC_CMD_DONE)
--				break;
--
--			if (!(cbus & BIT_CBUS_STATUS_CBUS_CONNECTED)) {
-+			if (~cbus & BIT_CBUS_STATUS_CBUS_CONNECTED) {
-+				kfree(edid);
-+				edid = NULL;
-+				goto end;
-+			}
-+			if (int3 & BIT_DDC_CMD_DONE) {
-+				if (sii8620_readb(ctx, REG_DDC_DOUT_CNT)
-+				    >= FETCH_SIZE)
-+					break;
-+			} else {
-+				int3 = sii8620_readb(ctx, REG_INTR3);
-+			}
-+			if (time_is_before_jiffies(timeout)) {
-+				ctx->error = -ETIMEDOUT;
-+				dev_err(ctx->dev, "timeout during EDID read\n");
- 				kfree(edid);
- 				edid = NULL;
- 				goto end;
- 			}
--		} while (1);
--
--		sii8620_readb(ctx, REG_DDC_STATUS);
--		while (sii8620_readb(ctx, REG_DDC_DOUT_CNT) < FETCH_SIZE)
- 			usleep_range(10, 20);
-+		}
+-		for (i = 0; i < ARRAY_SIZE(clk_spec); ++i)
++		for (i = 0; i < ARRAY_SIZE(clk_spec) - 1; ++i)
+ 			if (clk < clk_spec[i].max_clk)
+ 				break;
  
- 		sii8620_read_buf(ctx, REG_DDC_DATA, edid + fetched, FETCH_SIZE);
- 		if (fetched + FETCH_SIZE == EDID_LENGTH) {
 
 
