@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EC75C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:23:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A519C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:23:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64CDC208DC
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:23:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64CDC208DC
+	by mail.kernel.org (Postfix) with ESMTP id D4EC3208D6
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:23:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4EC3208D6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730815AbeHWLv3 (ORCPT
+        id S1730492AbeHWLvd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:51:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47078 "EHLO
+        Thu, 23 Aug 2018 07:51:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47090 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730804AbeHWLv3 (ORCPT
+        with ESMTP id S1730365AbeHWLvc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:51:29 -0400
+        Thu, 23 Aug 2018 07:51:32 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CECEEC9D;
-        Thu, 23 Aug 2018 08:22:58 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2FE3BC9D;
+        Thu, 23 Aug 2018 08:23:02 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hangbin Liu <liuhangbin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 074/217] ipv6: mcast: fix unsolicited report interval after receiving querys
-Date:   Thu, 23 Aug 2018 09:53:07 +0200
-Message-Id: <20180823075508.837510180@linuxfoundation.org>
+Subject: [PATCH 4.14 092/217] perf test session topology: Fix test on s390
+Date:   Thu, 23 Aug 2018 09:53:25 +0200
+Message-Id: <20180823075509.659350678@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -51,58 +54,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hangbin Liu <liuhangbin@gmail.com>
+From: Thomas Richter <tmricht@linux.ibm.com>
 
-[ Upstream commit 6c6da92808442908287fae8ebb0ca041a52469f4 ]
+[ Upstream commit b930e62ecd362843002bdf84c2940439822af321 ]
 
-After recieving MLD querys, we update idev->mc_maxdelay with max_delay
-from query header. This make the later unsolicited reports have the same
-interval with mc_maxdelay, which means we may send unsolicited reports with
-long interval time instead of default configured interval time.
+On s390 this test case fails because the socket identifiction numbers
+assigned to the CPU are higher than the CPU identification numbers.
 
-Also as we will not call ipv6_mc_reset() after device up. This issue will
-be there even after leave the group and join other groups.
+F/ix this by adding the platform architecture into the perf data header
+flag information. This helps identifiing the test platform and handles
+s390 specifics in process_cpu_topology().
 
-Fixes: fc4eba58b4c14 ("ipv6: make unsolicited report intervals configurable for mld")
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Before:
+
+  [root@p23lp27 perf]# perf test -vvvvv -F 39
+  39: Session topology                                      :
+  --- start ---
+  templ file: /tmp/perf-test-iUv755
+  socket_id number is too big.You may need to upgrade the perf tool.
+  ---- end ----
+  Session topology: Skip
+  [root@p23lp27 perf]#
+
+After:
+
+  [root@p23lp27 perf]# perf test -vvvvv -F 39
+  39: Session topology                                      :
+  --- start ---
+  templ file: /tmp/perf-test-8X8VTs
+  CPU 0, core 0, socket 6
+  CPU 1, core 1, socket 3
+  ---- end ----
+  Session topology: Ok
+  [root@p23lp27 perf]#
+
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Fixes: c84974ed9fb6 ("perf test: Add entry to test cpu topology")
+Link: http://lkml.kernel.org/r/20180611073153.15592-2-tmricht@linux.ibm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/mcast.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ tools/perf/tests/topology.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/ipv6/mcast.c
-+++ b/net/ipv6/mcast.c
-@@ -2083,7 +2083,8 @@ void ipv6_mc_dad_complete(struct inet6_d
- 		mld_send_initial_cr(idev);
- 		idev->mc_dad_count--;
- 		if (idev->mc_dad_count)
--			mld_dad_start_timer(idev, idev->mc_maxdelay);
-+			mld_dad_start_timer(idev,
-+					    unsolicited_report_interval(idev));
- 	}
- }
+--- a/tools/perf/tests/topology.c
++++ b/tools/perf/tests/topology.c
+@@ -43,6 +43,7 @@ static int session_write_header(char *pa
  
-@@ -2095,7 +2096,8 @@ static void mld_dad_timer_expire(unsigne
- 	if (idev->mc_dad_count) {
- 		idev->mc_dad_count--;
- 		if (idev->mc_dad_count)
--			mld_dad_start_timer(idev, idev->mc_maxdelay);
-+			mld_dad_start_timer(idev,
-+					    unsolicited_report_interval(idev));
- 	}
- 	in6_dev_put(idev);
- }
-@@ -2453,7 +2455,8 @@ static void mld_ifc_timer_expire(unsigne
- 	if (idev->mc_ifc_count) {
- 		idev->mc_ifc_count--;
- 		if (idev->mc_ifc_count)
--			mld_ifc_start_timer(idev, idev->mc_maxdelay);
-+			mld_ifc_start_timer(idev,
-+					    unsolicited_report_interval(idev));
- 	}
- 	in6_dev_put(idev);
- }
+ 	perf_header__set_feat(&session->header, HEADER_CPU_TOPOLOGY);
+ 	perf_header__set_feat(&session->header, HEADER_NRCPUS);
++	perf_header__set_feat(&session->header, HEADER_ARCH);
+ 
+ 	session->header.data_size += DATA_SIZE;
+ 
 
 
