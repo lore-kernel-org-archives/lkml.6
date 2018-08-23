@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 279F1C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:01:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C5AFC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:02:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E145E2098B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:01:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E145E2098B
+	by mail.kernel.org (Postfix) with ESMTP id C35A52147C
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:01:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C35A52147C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729055AbeHWLaR (ORCPT
+        id S1729063AbeHWLaU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:30:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44516 "EHLO
+        Thu, 23 Aug 2018 07:30:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44526 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727775AbeHWLaQ (ORCPT
+        with ESMTP id S1727443AbeHWLaU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:30:16 -0400
+        Thu, 23 Aug 2018 07:30:20 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A1F06C18;
-        Thu, 23 Aug 2018 08:01:52 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D5618C18;
+        Thu, 23 Aug 2018 08:01:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 007/130] selftests: user: return Kselftest Skip code for skipped tests
-Date:   Thu, 23 Aug 2018 09:52:03 +0200
-Message-Id: <20180823074927.779377920@linuxfoundation.org>
+Subject: [PATCH 4.9 008/130] selftests: zram: return Kselftest Skip code for skipped tests
+Date:   Thu, 23 Aug 2018 09:52:04 +0200
+Message-Id: <20180823074927.866949017@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
 References: <20180823074927.161454870@linuxfoundation.org>
@@ -53,16 +53,15 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
 
-[ Upstream commit d7d5311d4aa9611fe1a5a851e6f75733237a668a ]
+[ Upstream commit 685814466bf8398192cf855415a0bb2cefc1930e ]
 
-When user test is skipped because of unmet dependencies and/or
+When zram test is skipped because of unmet dependencies and/or
 unsupported configuration, it exits with error which is treated as
 a fail by the Kselftest framework. This leads to false negative result
 even when the test could not be run.
 
 Change it to return kselftest skip code when a test gets skipped to
-clearly report that the test could not be run. Add an explicit check
-for module presence and return skip code if module isn't present.
+clearly report that the test could not be run.
 
 Kselftest framework SKIP code is 4 and the framework prints appropriate
 messages to indicate that the test is skipped.
@@ -71,24 +70,49 @@ Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/user/test_user_copy.sh |    7 +++++++
- 1 file changed, 7 insertions(+)
+ tools/testing/selftests/zram/zram.sh     |    5 ++++-
+ tools/testing/selftests/zram/zram_lib.sh |    5 ++++-
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
---- a/tools/testing/selftests/user/test_user_copy.sh
-+++ b/tools/testing/selftests/user/test_user_copy.sh
-@@ -1,6 +1,13 @@
- #!/bin/sh
- # Runs copy_to/from_user infrastructure using test_user_copy kernel module
+--- a/tools/testing/selftests/zram/zram.sh
++++ b/tools/testing/selftests/zram/zram.sh
+@@ -1,6 +1,9 @@
+ #!/bin/bash
+ TCID="zram.sh"
  
 +# Kselftest framework requirement - SKIP code is 4.
 +ksft_skip=4
 +
-+if ! /sbin/modprobe -q -n test_user_copy; then
-+	echo "user: module test_user_copy is not found [SKIP]"
+ . ./zram_lib.sh
+ 
+ run_zram () {
+@@ -23,5 +26,5 @@ elif [ -b /dev/zram0 ]; then
+ else
+ 	echo "$TCID : No zram.ko module or /dev/zram0 device file not found"
+ 	echo "$TCID : CONFIG_ZRAM is not set"
+-	exit 1
 +	exit $ksft_skip
-+fi
- if /sbin/modprobe -q test_user_copy; then
- 	/sbin/modprobe -q -r test_user_copy
- 	echo "user_copy: ok"
+ fi
+--- a/tools/testing/selftests/zram/zram_lib.sh
++++ b/tools/testing/selftests/zram/zram_lib.sh
+@@ -18,6 +18,9 @@ MODULE=0
+ dev_makeswap=-1
+ dev_mounted=-1
+ 
++# Kselftest framework requirement - SKIP code is 4.
++ksft_skip=4
++
+ trap INT
+ 
+ check_prereqs()
+@@ -27,7 +30,7 @@ check_prereqs()
+ 
+ 	if [ $uid -ne 0 ]; then
+ 		echo $msg must be run as root >&2
+-		exit 0
++		exit $ksft_skip
+ 	fi
+ }
+ 
 
 
