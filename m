@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0E2DC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:31:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D659BC43615
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:31:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 992C62147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:31:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 992C62147A
+	by mail.kernel.org (Postfix) with ESMTP id 9ABFB2147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:31:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ABFB2147A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731482AbeHWMAM (ORCPT
+        id S1731495AbeHWMAP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:00:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47980 "EHLO
+        Thu, 23 Aug 2018 08:00:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47992 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728915AbeHWMAL (ORCPT
+        with ESMTP id S1728915AbeHWMAO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:00:11 -0400
+        Thu, 23 Aug 2018 08:00:14 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BA649C93;
-        Thu, 23 Aug 2018 08:31:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E1B3FC74;
+        Thu, 23 Aug 2018 08:31:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Laight <David.Laight@ACULAB.COM>,
-        Taeung Song <treeze.taeung@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
+        Alexander Aring <aring@mojatatu.com>,
+        Stefan Schmidt <stefan@datenfreihafen.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 140/217] samples/bpf: Check the error of write() and read()
-Date:   Thu, 23 Aug 2018 09:54:13 +0200
-Message-Id: <20180823075511.906404070@linuxfoundation.org>
+Subject: [PATCH 4.14 141/217] ieee802154: 6lowpan: set IFLA_LINK
+Date:   Thu, 23 Aug 2018 09:54:14 +0200
+Message-Id: <20180823075511.948467114@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -53,65 +52,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Taeung Song <treeze.taeung@gmail.com>
+From: Lubomir Rintel <lkundrak@v3.sk>
 
-[ Upstream commit 02a2f000a3629274bfad60bfc4de9edec49e63e7 ]
+[ Upstream commit b30c122c0bbb0a1dc413085e177ea09467e65fdb ]
 
-test_task_rename() and test_urandom_read()
-can be failed during write() and read(),
-So check the result of them.
+Otherwise NetworkManager (and iproute alike) is not able to identify the
+parent IEEE 802.15.4 interface of a 6LoWPAN link.
 
-Reviewed-by: David Laight <David.Laight@ACULAB.COM>
-Signed-off-by: Taeung Song <treeze.taeung@gmail.com>
-Acked-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Acked-by: Alexander Aring <aring@mojatatu.com>
+Signed-off-by: Stefan Schmidt <stefan@datenfreihafen.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- samples/bpf/test_overhead_user.c |   19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
+ net/ieee802154/6lowpan/core.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/samples/bpf/test_overhead_user.c
-+++ b/samples/bpf/test_overhead_user.c
-@@ -6,6 +6,7 @@
-  */
- #define _GNU_SOURCE
- #include <sched.h>
-+#include <errno.h>
- #include <stdio.h>
- #include <sys/types.h>
- #include <asm/unistd.h>
-@@ -44,8 +45,13 @@ static void test_task_rename(int cpu)
- 		exit(1);
- 	}
- 	start_time = time_get_ns();
--	for (i = 0; i < MAX_CNT; i++)
--		write(fd, buf, sizeof(buf));
-+	for (i = 0; i < MAX_CNT; i++) {
-+		if (write(fd, buf, sizeof(buf)) < 0) {
-+			printf("task rename failed: %s\n", strerror(errno));
-+			close(fd);
-+			return;
-+		}
-+	}
- 	printf("task_rename:%d: %lld events per sec\n",
- 	       cpu, MAX_CNT * 1000000000ll / (time_get_ns() - start_time));
- 	close(fd);
-@@ -63,8 +69,13 @@ static void test_urandom_read(int cpu)
- 		exit(1);
- 	}
- 	start_time = time_get_ns();
--	for (i = 0; i < MAX_CNT; i++)
--		read(fd, buf, sizeof(buf));
-+	for (i = 0; i < MAX_CNT; i++) {
-+		if (read(fd, buf, sizeof(buf)) < 0) {
-+			printf("failed to read from /dev/urandom: %s\n", strerror(errno));
-+			close(fd);
-+			return;
-+		}
-+	}
- 	printf("urandom_read:%d: %lld events per sec\n",
- 	       cpu, MAX_CNT * 1000000000ll / (time_get_ns() - start_time));
- 	close(fd);
+--- a/net/ieee802154/6lowpan/core.c
++++ b/net/ieee802154/6lowpan/core.c
+@@ -90,12 +90,18 @@ static int lowpan_neigh_construct(struct
+ 	return 0;
+ }
+ 
++static int lowpan_get_iflink(const struct net_device *dev)
++{
++	return lowpan_802154_dev(dev)->wdev->ifindex;
++}
++
+ static const struct net_device_ops lowpan_netdev_ops = {
+ 	.ndo_init		= lowpan_dev_init,
+ 	.ndo_start_xmit		= lowpan_xmit,
+ 	.ndo_open		= lowpan_open,
+ 	.ndo_stop		= lowpan_stop,
+ 	.ndo_neigh_construct    = lowpan_neigh_construct,
++	.ndo_get_iflink         = lowpan_get_iflink,
+ };
+ 
+ static void lowpan_setup(struct net_device *ldev)
 
 
