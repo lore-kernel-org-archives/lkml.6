@@ -6,65 +6,65 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4086EC04E85
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B19B4C04E86
 	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 04:33:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D932E20936
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 04:33:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69E032098B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 04:33:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="O5h/ROqq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D932E20936
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="YgnfKgKs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69E032098B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728399AbeHWIBA (ORCPT
+        id S1728450AbeHWIBF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 04:01:00 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:40993 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728073AbeHWIBA (ORCPT
+        Thu, 23 Aug 2018 04:01:05 -0400
+Received: from mail-pf1-f177.google.com ([209.85.210.177]:46306 "EHLO
+        mail-pf1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728073AbeHWIBF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 04:01:00 -0400
-Received: by mail-pf1-f194.google.com with SMTP id h79-v6so1159328pfk.8
-        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 21:33:14 -0700 (PDT)
+        Thu, 23 Aug 2018 04:01:05 -0400
+Received: by mail-pf1-f177.google.com with SMTP id u24-v6so2021602pfn.13
+        for <linux-kernel@vger.kernel.org>; Wed, 22 Aug 2018 21:33:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lixom-net.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=HRmUMV30LRpW+v7lb+IE5vny/Ri4GwpVJLt12tPTCUI=;
-        b=O5h/ROqqEpABHHUgetGWunJYh6gMcd3UwKXBdDOXK1r3ShouC3NtYZvl3aMy+QHNxd
-         bbS7rPjCzQi6qMq6isOsASlfMi03q0lKzfwRmAr+Iet3kzjkZ0TBvY2E3wsUHyIWY1IP
-         ayJxDSjMamkjuQFRGPkoAfgNHGmsks/UBEIsCin2mdSkLTcRo4ljTU1XWtViSIqAqCSQ
-         QXblGdHV7UMObD8prLSqOi5VGCeVbEMrdKbU6+4n/g9wYLiGJOxxxuWkmxbexn+Zb5AL
-         Godma6/Nj3hZecrusjYYsNhlQn0/8eCPkg1im70drjH8ep4b/sK66XKwUsk3YWM+O6G4
-         8pVQ==
+        bh=ZN+u7mC9EluaGdk8PcwKQWkPrPeLK3CEGSPJLLYhzQc=;
+        b=YgnfKgKsx4CggBnVF9moP+CZM8iEh5v52cWit3YIXcYCC6OVSa86yiMGP7IvJqXPlN
+         n7Vw1vb0C/J1XiRmVdBkF6Af+m/woKOjeIjOx0+RPW6MKDv3myCnJ8fQqeP7VHim7HkI
+         BZOFuopfluwOqr+FjnBsy86JQ/pN4j/7Qs/CX9g1K2XTkaPVyqiQ1Y/ICRtpYPeIlKjT
+         DxXP4s08GgpUGquAMZxK+eYfCvd8sA2rTm50hbNjRdefSTiL1EsQzErtD+ldK9PplNU+
+         SVlbutKdRwGtJR3f3V/9KmMtUDsSruGWZa7ugmtPmgJRbfwAfcNIAApaVQYCta0SnADi
+         WYlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=HRmUMV30LRpW+v7lb+IE5vny/Ri4GwpVJLt12tPTCUI=;
-        b=QK3FuIxq5lFwy7/WflpDsAprHOc/1LMIYLeVxKOgyWgpoEfA6jt1miAX6dldGpTm/T
-         c6ZvkIXOoVlA4vHhde6c/xihNYu1zyZ3PUvclLCRfvG/0pXb6pstCkIyJpUygf9CTz2T
-         WnQxR2zEtv3O/4KKNC762HB3uFM4VFyQI+7nZTc820EqDVUmKc74N99fVqCjgl7o4FRN
-         MM60SYKWLNA0R1oZ/boT/lpEP/Sg2VRfd7VVzESfdHg4ed79GwG3RyH7FE6Tc9z645Bn
-         31a10cCM8dJpB3VujRkITJ4Ok045Aua9ELnjhJydxV4gLfbV6LDCUkRmSWRkhenfMLLe
-         LOVQ==
-X-Gm-Message-State: AOUpUlGz7wZyRIEPeraj9LGcp2x0nQzH/TNzignZaQF2Twt92C15YCpm
-        K58bylLwiGTfwsAx9j5Bw1X8ow==
-X-Google-Smtp-Source: AA+uWPxGP3Ozohl/RzTWncAhEITVg3N4VfZEyhQ0h8qc8ZKF/pF0nLgBT70y7N+TcgpjEPO4vgIKgw==
-X-Received: by 2002:a62:4255:: with SMTP id p82-v6mr61166083pfa.238.1534998794274;
-        Wed, 22 Aug 2018 21:33:14 -0700 (PDT)
+        bh=ZN+u7mC9EluaGdk8PcwKQWkPrPeLK3CEGSPJLLYhzQc=;
+        b=pVymlZBeoZyPZMWKoQF2INBeTKWMCp0QRkpv77f9AbmLw0qmEJlqTZT6Zd/v/3RBbG
+         pSu4Ei2hIZ9IZBC3yDwRjtn2ViIV0TttD1N9SSgF4Bc2HY18f6iiar7yQUrfKIUFdB3l
+         ybLL8RMCE7fk/pEJTCS04lWZhudhk6Mi3CbyBp3M73h0iVQ4KT2ihhgcDZK35u1PUCCT
+         sdwcwLdF77KWh8KtFKggtki+zSt/hYkPj7YQMEMPAIBVMSSHlNWxyPuDYpAdk66lWsMf
+         eR83/UsR0qJBsBDUVBvYlb01B4jKj1sX+5zFGpOSwS09TM1jjBcAH1MK/iW3g+YR2mhy
+         zJwg==
+X-Gm-Message-State: AOUpUlGpjU+9BNna6BbRpLhIdEn4RrvvOwUk7wyPiNp1x+6b9+bZ+ych
+        zjDJjyo7whfdyGV3w5rl6a0PEQ==
+X-Google-Smtp-Source: AA+uWPz5UFH/C4rs3DJ1WAfslSxLGVSC/HfzCfwc/Utk8lwgVwmkea69vtU6O1Zs7gX0v4erbDxwsw==
+X-Received: by 2002:a65:614a:: with SMTP id o10-v6mr53706543pgv.387.1534998800242;
+        Wed, 22 Aug 2018 21:33:20 -0700 (PDT)
 Received: from localhost.localdomain (99-152-116-91.lightspeed.sntcca.sbcglobal.net. [99.152.116.91])
-        by smtp.gmail.com with ESMTPSA id 70-v6sm4859947pfz.27.2018.08.22.21.33.11
+        by smtp.gmail.com with ESMTPSA id 70-v6sm4859947pfz.27.2018.08.22.21.33.17
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 22 Aug 2018 21:33:11 -0700 (PDT)
+        Wed, 22 Aug 2018 21:33:17 -0700 (PDT)
 From:   Olof Johansson <olof@lixom.net>
 To:     torvalds@linux-foundation.org
 Cc:     arm@kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>
-Subject: [GIT PULL 1/4] ARM: 32-bit SoC platform updates
-Date:   Wed, 22 Aug 2018 21:32:54 -0700
-Message-Id: <20180823043257.18582-2-olof@lixom.net>
+Subject: [GIT PULL 3/4] ARM: SoC defconfig updates
+Date:   Wed, 22 Aug 2018 21:32:56 -0700
+Message-Id: <20180823043257.18582-4-olof@lixom.net>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180823043257.18582-1-olof@lixom.net>
 References: <20180823043257.18582-1-olof@lixom.net>
@@ -76,366 +76,149 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Most of the SoC updates in this cycle are cleanups and moves to more
-modern infrastructure:
+We keep these separate since some files are shared and conflict-prone,
+but there isn't really much to write about here.
 
-- Davinci was moved to common clock framework
-- OMAP1-based Amstrad E3 "Superphone" saw a bunch of cleanups to the
-keyboard interface (bitbanged AT keyboard via GPIO).
-- Removal of some stale code for Renesas platforms
-- Power management improvements for i.MX6LL
+Some of the churnier pieces is for the Aspeed platforms, which did an
+overdue refresh of the defconfig, and enabled USB gadget and some
+drivers from there. Most of the rest are minor additions here and there
+to turn on drivers that are needed or useful on the various platforms.
 
 ----------------------------------------------------------------
 
-The following changes since commit 815f0ddb346c196018d4d8f8f55c12b83da1de3f:
+The following changes since commit 4344bb3ec602d8b613a2f6c71f84eb631468a432:
 
-  include/linux/compiler*.h: make compiler-*.h mutually exclusive
+  Merge tag 'armsoc-drivers' into HEAD
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git tags/armsoc-soc
+  git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git tags/armsoc-defconfig
 
-for you to fetch changes up to f0fc40aff6fee100ffbed8328a0df88f8aa75fce:
+for you to fetch changes up to 07d268f541dee9e58ded056fb6782942faa89a91:
 
-  ARM: uniphier: select RESET_CONTROLLER
+  Merge tag 'v4.19-rockchip-defconfig64-1' of git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip into next/defconfig
 
 ----------------------------------------------------------------
 
-Andy Shevchenko (1):
-      ARM: OMAP2+: reuse DEFINE_SHOW_ATTRIBUTE() macro
+Abhishek Sahu (2):
+      ARM: qcom_defconfig: Enable QCOM NAND related configs
+      arm64: defconfig: Enable CONFIG_MTD_NAND_QCOM for IPQ8074
 
-Anson Huang (6):
-      ARM: imx: add standby mode suspend for i.MX6SLL
-      ARM: imx: add mem mode suspend for i.MX6SLL
-      ARM: imx: add L2 page power control for GPC
-      ARM: imx: add cpu idle support for i.MX6SLL
-      ARM: imx: remove i.MX6SLL support in i.MX6SL cpu idle driver
-      ARM: imx: enable bus auto clock gating function for i.mx6sll
+Adam Ford (1):
+      ARM: davinci_all_defconfig: set CONFIG_BACKLIGHT_PWM=m
 
-Arnd Bergmann (4):
-      ARM: imx: fix i.MX6SLL build
-      ARM: imx: call imx6sx_cpuidle_init() conditionally for 6sll
-      soc: r9a06g032: don't build SMP files for non-SMP config
-      ARM: shmobile: r8a7779: hide unused r8a7779_platform_cpu_kill
+Amelie Delaunay (1):
+      ARM: multi_v7_defconfig: enable STM32 RTC
 
-Arvind Yadav (1):
-      ARM: OMAP1: constify gpio_led
+Baruch Siach (2):
+      ARM: mvebu_v7_defconfig: sync defconfig
+      ARM: mvebu_v7_defconfig: enable SFP support
 
-Bartosz Golaszewski (13):
-      clk: davinci: psc-da850: remove the 'davinci_nand.0" lookup
-      clk: davinci: psc-dm365: use two lookup entries for the aemif clock
-      clk: davinci: psc-dm644x: use two lookup entries for the aemif clock
-      clk: davinci: psc-dm646x: use two lookup entries for the aemif clock
-      clk: davinci: psc-da830: add a lookup entry for aemif clock
-      ARM: davinci: omapl138-hawk: add aemif & nand support
-      ARM: davinci: da850-evm: use aemif platform driver in legacy mode
-      ARM: davinci: dm365-evm: use the ti-aemif soc driver
-      ARM: davinci: dm644x-evm: use aemif platform driver
-      ARM: davinci: da830-evm: use aemif platform driver
-      ARM: davinci: dm646x-evm: use aemif platform driver
-      ARM: davinci: mityomapl138: use aemif platform driver
-      ARM: davinci: unduplicate aemif support
+Benjamin Herrenschmidt (2):
+      arm: configs: Add USB gadget to Aspeed G4 defconfig
+      arm: configs: Add USB gadget to Aspeed G5 defconfig
 
-Boris Brezillon (1):
-      MAINTAINERS: Remove the AT91 clk driver entry
+David Lechner (2):
+      ARM: davinci_all_defconfig: remove CONFIG_DAVINCI_RESET_CLOCKS
+      ARM: davinci_all_defconfig: Enable Bluetooth
 
-Claudiu Beznea (3):
-      ARM: at91: pm: Use ULP0 naming instead of slow clock
-      ARM: at91: pm: add PMC fast startup registers defines
-      ARM: at91: pm: configure wakeup sources for ULP1 mode
+Dien Pham (1):
+      arm64: defconfig: Enable BD9571MWV regulator
 
-Clément Peron (3):
-      ARM: imx: remove inexistant EPIT timer init
-      ARM: debug: Add iProc UART3 debug addresses
-      ARM: debug: fix BCM2836 order entry
+Enric Balletbo i Serra (1):
+      arm64: defconfig: Enable more peripherals for Samsung Chromebook Plus.
 
-Dave Gerlach (2):
-      ARM: hwmod: RTC: Don't assume lock/unlock will be called with irq enabled
-      ARM: OMAP2+: sleep33/43xx: Make sleep actions configurable
+Florian Fainelli (2):
+      Merge tag 'bcm2835-defconfig-next-2018-07-03' into defconfig/next
+      Merge tag 'bcm2835-defconfig-64-next-2018-07-03' into defconfig-arm64/next
 
-David Lechner (21):
-      ARM: davinci: pass clock as parameter to davinci_timer_init()
-      ARM: davinci: da830: add new clock init using common clock framework
-      ARM: davinci: da850: add new clock init using common clock framework
-      ARM: davinci: dm355: add new clock init using common clock framework
-      ARM: davinci: dm365: add new clock init using common clock framework
-      ARM: davinci: dm644x: add new clock init using common clock framework
-      ARM: davinci: dm646x: add new clock init using common clock framework
-      ARM: davinci: da8xx: add new USB PHY clock init using common clock framework
-      ARM: davinci: da8xx: add new sata_refclk init using common clock framework
-      ARM: davinci: remove CONFIG_DAVINCI_RESET_CLOCKS
-      ARM: davinci: switch to common clock framework
-      ARM: davinci: da830: Remove legacy clock init
-      ARM: davinci: da850: Remove legacy clock init
-      ARM: davinci: dm355: Remove legacy clock init
-      ARM: davinci: dm365: Remove legacy clock init
-      ARM: davinci: dm644x: Remove legacy clock init
-      ARM: davinci: dm646x: Remove legacy clock init
-      ARM: davinci: da8xx: Remove legacy USB and SATA clock init
-      ARM: davinci: remove legacy clocks
-      ARM: davinci: add device tree support to timer
-      ARM: davinci: da8xx-dt: switch to device tree clocks
+Geert Uytterhoeven (5):
+      ARM: shmobile: defconfig: Drop NET_VENDOR_<FOO>=n
+      ARM: shmobile: defconfig: Enable reset controller support
+      ARM: shmobile: defconfig: Enable support for RZN1D-DB
+      ARM: shmobile: defconfig: Disable /sbin/hotplug fork-bomb
+      ARM: multi_v7_defconfig: Enable support for RZN1D-DB
 
-Denis Efremov (1):
-      ARM: s3c24xx: Fix typo in guard macro of s3c2412.h
+Gregory CLEMENT (1):
+      ARM: multi_v7_defconfig: Add Marvell NAND controller support
 
-Ethan Tuttle (1):
-      ARM: mvebu: declare asm symbols as character arrays in pmsu.c
+Hugues Fruchet (1):
+      ARM: multi_v7_defconfig: enable STM32 DCMI media support
 
-Fabio Estevam (2):
-      ARM: imx51: Configure M4IF to avoid visual artifacts
-      ARM: mx5: Set the DBGEN bit in ARM_GPC register
+Joel Stanley (4):
+      ARM: config: aspeed: Update defconfig
+      ARM: config: multi_v5: Refresh configuration
+      ARM: config: multi_v5: Enable ASPEED drivers
+      ARM: config: aspeed: Enable new FSI drivers
 
-Geert Uytterhoeven (16):
-      ARM: shmobile: r8a7790: Remove legacy SMP fallback code
-      ARM: shmobile: r8a7790: Use common R-Car Gen2 machine definition
-      ARM: shmobile: r8a7791: Remove legacy SMP fallback code
-      ARM: shmobile: r8a7791: Use common R-Car Gen2 machine definition
-      ARM: shmobile: Remove unused shmobile_smp_init_fallback_ops()
-      ARM: shmobile: apmu: Move cpu_leave_lowpower() to SUSPEND section
-      ARM: shmobile: apmu: Remove obsolete shmobile_smp_apmu_prepare_cpus()
-      ARM: shmobile: apmu: Remove platsmp-apmu.h
-      ARM: shmobile: rcar-gen2: Remove explicit SYSC config and init
-      ARM: shmobile: r8a7779: Stop powering down secondary CPUs during early boot
-      soc: renesas: rcar-sysc: Provide helpers to power up/down CPUs
-      ARM: shmobile: r8a7779: Use rcar_sysc_power_{down,up}_cpu()
-      ARM: shmobile: r8a7779: Remove explicit SYSC config and init
-      soc: renesas: rcar-sysc: Drop legacy handling
-      ARM: shmobile: rcar-gen2: Stop compiling headsmp-apmu on !SMP
-      ARM: shmobile: Always enable ARCH_TIMER on SoCs with A7 and/or A15
+Kishon Vijay Abraham I (1):
+      ARM: configs: keystone: Enable CONFIG_MMC_SDHCI_OMAP
 
-Janusz Krzysztofik (13):
-      ARM: OMAP1: ams-delta: refactor late_init()
-      ARM: OMAP1: ams-delta: assign LED GPIO numbers from descriptors
-      ARM: OMAP1: ams-delta: drop GPIO lookup table for serio device
-      Input: ams_delta_serio: convert to platform driver
-      Input: ams_delta_serio: use private structure
-      Input: ams_delta_serio: Replace power GPIO with regulator
-      ARM: OMAP1: ams-delta: Hog "keybrd_dataout" GPIO pin
-      ARM: OMAP1: ams-delta FIQ: don't use static GPIO numbers
-      ARM: OMAP1: ams-delta FIQ: Keep serio input GPIOs requested
-      ARM: OMAP1: Get rid of <mach/ams-delta-fiq.h>
-      Input: ams_delta_serio: use IRQ resource
-      Input: ams_delta_serio: Get FIQ buffer from platform_data
-      ARM: OMAP1: ams-delta: move late devices back to init_machine
+Kunihiko Hayashi (1):
+      ARM: multi_v7_defconfig: add CONFIG_UNIPHIER_THERMAL and CONFIG_SNI_AVE
 
-Keerthy (1):
-      ARM: OMAP2+: sleep33/43xx: Add RTC-Mode support
+Leonard Crestez (1):
+      ARM: imx_v6_v7_defconfig: Enable imx6qdl-sabreauto sensors
 
-Krzysztof Kozlowski (2):
-      ARM: exynos: Remove outdated maintainer information
-      ARM: exynos: Clear global variable on init error path
+Murali Karicheri (1):
+      ARM: keystone: k2g: enable micrel and dp83867 phys
 
-Lucas Stach (1):
-      ARM: mvebu: convert secondary CPU clock sync to hotplug state
+Olof Johansson (15):
+      Merge tag 'keystone_config_for_4.19' of git://git.kernel.org/.../ssantosh/linux-keystone into next/defconfig
+      Merge tag 'arm-soc/for-4.19/defconfig' of https://github.com/Broadcom/stblinux into next/defconfig
+      Merge tag 'arm-soc/for-4.19/defconfig-arm64' of https://github.com/Broadcom/stblinux into next/defconfig
+      Merge tag 'davinci-for-v4.19/defconfig' of git://git.kernel.org/.../nsekhar/linux-davinci into next/defconfig
+      Merge tag 'samsung-defconfig-4.19' of https://git.kernel.org/.../krzk/linux into next/defconfig
+      Merge tag 'stm32-defconfig-for-v4.19-1' of git://git.kernel.org/.../atorgue/stm32 into next/defconfig
+      Merge tag 'mvebu-defconfig-4.19-1' of git://git.infradead.org/linux-mvebu into next/defconfig
+      Merge tag 'hisi-defconfig-for-4.19' of git://github.com/hisilicon/linux-hisi into next/defconfig
+      Merge tag 'imx-defconfig-4.19' of git://git.kernel.org/.../shawnguo/linux into next/defconfig
+      Merge tag 'renesas-arm64-defconfig-for-v4.19' of https://git.kernel.org/.../horms/renesas into next/defconfig
+      Merge tag 'qcom-arm64-defconfig-for-4.19' of git://git.kernel.org/.../agross/linux into next/defconfig
+      Merge tag 'qcom-defconfig-for-4.19' of git://git.kernel.org/.../agross/linux into next/defconfig
+      Merge tag 'renesas-arm-defconfig-for-v4.19' of https://git.kernel.org/.../horms/renesas into next/defconfig
+      Merge tag 'aspeed-4.19-defconfig' of git://git.kernel.org/.../joel/aspeed into next/defconfig
+      Merge tag 'v4.19-rockchip-defconfig64-1' of git://git.kernel.org/.../mmind/linux-rockchip into next/defconfig
 
-Masahiro Yamada (3):
-      ARM: uniphier: remove empty Makefile
-      arm64: uniphier: select RESET_CONTROLLER
-      ARM: uniphier: select RESET_CONTROLLER
+Paweł Chmiel (3):
+      ARM: s5pv210_defconfig: Run make savedefconfig
+      ARM: s5pv210_defconfig: Enable drivers for Samsung Aries based phones
+      ARM: s5pv210_defconfig: Enable options needed to boot typical Linux distro
 
-Michel Pollet (1):
-      ARM: shmobile: Add the R9A06G032 SMP enabler driver
+Pierre-Yves MORDRET (1):
+      ARM: multi_v7_defconfig: enable STM32 DMAv2, DMAMUX and MDMA
 
-Nicholas Mc Guire (4):
-      ARM: imx: flag failure of of_iomap
-      ARM: hisi: fix error handling and missing of_node_put
-      ARM: hisi: check of_iomap and fix missing of_node_put
-      ARM: hisi: handle of_iomap and fix missing of_node_put
+Ray Jui (1):
+      arm64: defconfig: add CONFIG_ARM_SP805_WATCHDOG
 
-Oleksij Rempel (1):
-      ARM: imx: Provide support for NXP i.MX7D Cortex-M4
+Robin Gong (1):
+      ARM: imx_v6_v7_defconfig: add DMATEST support
 
-Olof Johansson (14):
-      Merge tag 'renesas-arm-soc-for-v4.19' of https://git.kernel.org/.../horms/renesas into next/soc
-      Merge tag 'arm-soc/for-4.19/soc' of https://github.com/Broadcom/stblinux into next/soc
-      Merge tag 'davinci-for-v4.19/soc' of git://git.kernel.org/.../nsekhar/linux-davinci into next/soc
-      Merge tag 'imx-maintainer-4.19' of git://git.kernel.org/.../shawnguo/linux into next/soc
-      Merge tag 'omap-for-v4.19/omap1-v2-signed' of git://git.kernel.org/.../tmlind/linux-omap into next/soc
-      Merge tag 'omap-for-v4.19/soc-signed' of git://git.kernel.org/.../tmlind/linux-omap into next/soc
-      Merge tag 'tegra-for-4.19-firmware' of git://git.kernel.org/.../tegra/linux into next/soc
-      Merge tag 'pxa-for-4.19-v2' of https://github.com/rjarzmik/linux into next/soc
-      Merge tag 'mvebu-arm-4.19-1' of git://git.infradead.org/linux-mvebu into next/soc
-      Merge tag 'hisi-armv7-soc-for-4.19' of git://github.com/hisilicon/linux-hisi into next/soc
-      Merge tag 'at91-ab-4.19-soc' of git://git.kernel.org/.../abelloni/linux into next/soc
-      Merge tag 'renesas-arm-soc2-for-v4.19' of https://git.kernel.org/.../horms/renesas into next/soc
-      Merge tag 'imx-soc-4.19' of git://git.kernel.org/.../shawnguo/linux into next/soc
-      Merge tag 'samsung-soc-4.19' of https://git.kernel.org/.../krzk/linux into next/soc
+Stefan Agner (2):
+      ARM: mxs_defconfig: use MXSFB DRM driver
+      ARM: imx_v6_v7_defconfig: use MXSFB DRM driver
 
-Robert Jarzmik (6):
-      ARM: pxa: hx4700: fix the usb client
-      ARM: pxa: mioa701 convert to the new AC97 bus
-      ARM: pxa: add the missing AC97 clocks
-      ARM: pxa: zylonite: use the new ac97 bus support
-      net: smc911x: remove the dmaengine compat need
-      net: smc91x: remove the dmaengine compat need
+Stefan Wahren (3):
+      ARM: bcm2835_defconfig: Enable RPi voltage sensor
+      ARM: multi_v7_defconfig: Enable RPi voltage sensor
+      arm64: defconfig: Enable RPi voltage sensor
 
-Sekhar Nori (1):
-      Merge branch 'for-sekhar' of https://github.com/dlech/linux into v4.19/soc
-
-Shawn Guo (1):
-      MAINTAINERS: add Freescale Layerscape ARM architecture entry
-
-Stefan Agner (1):
-      ARM: trusted_foundations: do not use naked function
-
-Vladimir Zapolskiy (1):
-      ARM: i.MX31: remove rnga registration as a platform device
-
-Wenyou Yang (1):
-      ARM: at91: pm: Add ULP1 mode support
-
-Wolfram Sang (1):
-      ARM: shmobile: convert to SPDX identifier
+Zhou Wang (1):
+      arm64: defconfig: enable HiSilicon PMU driver
 
 
- MAINTAINERS                                     |  16 +-
- arch/arm/Kconfig                                |   5 +-
- arch/arm/Kconfig.debug                          |  14 +-
- arch/arm/Makefile                               |   1 -
- arch/arm/firmware/trusted_foundations.c         |  14 +-
- arch/arm/include/debug/renesas-scif.S           |   5 +-
- arch/arm/mach-at91/pm.c                         | 187 ++++-
- arch/arm/mach-at91/pm.h                         |   6 +-
- arch/arm/mach-at91/pm_suspend.S                 | 142 +++-
- arch/arm/mach-davinci/Kconfig                   |  13 +-
- arch/arm/mach-davinci/Makefile                  |   4 +-
- arch/arm/mach-davinci/aemif.c                   | 218 ------
- arch/arm/mach-davinci/board-da830-evm.c         |  68 +-
- arch/arm/mach-davinci/board-da850-evm.c         |  95 ++-
- arch/arm/mach-davinci/board-dm355-evm.c         |   2 +
- arch/arm/mach-davinci/board-dm355-leopard.c     |   2 +
- arch/arm/mach-davinci/board-dm365-evm.c         |  61 +-
- arch/arm/mach-davinci/board-dm644x-evm.c        |  57 +-
- arch/arm/mach-davinci/board-dm646x-evm.c        |  54 +-
- arch/arm/mach-davinci/board-mityomapl138.c      |  57 +-
- arch/arm/mach-davinci/board-neuros-osd2.c       |   2 +
- arch/arm/mach-davinci/board-omapl138-hawk.c     | 143 +++-
- arch/arm/mach-davinci/board-sffsdr.c            |   2 +
- arch/arm/mach-davinci/clock.c                   | 745 ------------------
- arch/arm/mach-davinci/clock.h                   |  76 --
- arch/arm/mach-davinci/common.c                  |   3 -
- arch/arm/mach-davinci/da830.c                   | 462 ++---------
- arch/arm/mach-davinci/da850.c                   | 778 +++----------------
- arch/arm/mach-davinci/da8xx-dt.c                |  66 --
- arch/arm/mach-davinci/davinci.h                 |   8 +
- arch/arm/mach-davinci/devices-da8xx.c           |  43 +-
- arch/arm/mach-davinci/devices.c                 |   1 -
- arch/arm/mach-davinci/dm355.c                   | 406 ++--------
- arch/arm/mach-davinci/dm365.c                   | 485 +-----------
- arch/arm/mach-davinci/dm644x.c                  | 344 ++------
- arch/arm/mach-davinci/dm646x.c                  | 372 ++-------
- arch/arm/mach-davinci/include/mach/clock.h      |   3 -
- arch/arm/mach-davinci/include/mach/common.h     |  11 +-
- arch/arm/mach-davinci/include/mach/da8xx.h      |   6 +-
- arch/arm/mach-davinci/pm_domain.c               |   5 +
- arch/arm/mach-davinci/psc.c                     | 137 ----
- arch/arm/mach-davinci/psc.h                     |  12 -
- arch/arm/mach-davinci/time.c                    |  22 +-
- arch/arm/mach-davinci/usb-da8xx.c               | 242 +-----
- arch/arm/mach-exynos/exynos.c                   |   2 -
- arch/arm/mach-exynos/suspend.c                  |   1 +
- arch/arm/mach-hisi/hotplug.c                    |  41 +-
- arch/arm/mach-imx/Kconfig                       |  33 +-
- arch/arm/mach-imx/Makefile                      |   5 +-
- arch/arm/mach-imx/common.h                      |   3 +-
- arch/arm/mach-imx/cpu-imx5.c                    |  45 ++
- arch/arm/mach-imx/cpu.c                         |   1 +
- arch/arm/mach-imx/cpuidle-imx6sl.c              |   7 +-
- arch/arm/mach-imx/cpuidle-imx6sx.c              |   1 +
- arch/arm/mach-imx/gpc.c                         |  14 +
- arch/arm/mach-imx/imx31-dt.c                    |  18 -
- arch/arm/mach-imx/mach-imx51.c                  |  30 +-
- arch/arm/mach-imx/mach-imx53.c                  |   2 +-
- arch/arm/mach-imx/mach-imx6sl.c                 |   5 +-
- arch/arm/mach-imx/mach-imx7d-cm4.c              |  18 +
- arch/arm/mach-imx/pm-imx6.c                     |  33 +-
- arch/arm/mach-mvebu/platsmp.c                   |  49 +-
- arch/arm/mach-mvebu/pmsu.c                      |   6 +-
- arch/arm/mach-omap1/ams-delta-fiq-handler.S     |   5 +-
- arch/arm/mach-omap1/ams-delta-fiq.c             | 113 ++-
- arch/arm/mach-omap1/ams-delta-fiq.h             |  42 +
- arch/arm/mach-omap1/board-ams-delta.c           | 301 +++++--
- arch/arm/mach-omap1/board-h2.c                  |   2 +-
- arch/arm/mach-omap1/board-h3.c                  |   2 +-
- arch/arm/mach-omap1/board-htcherald.c           |   2 +-
- arch/arm/mach-omap1/board-osk.c                 |   4 +-
- arch/arm/mach-omap2/omap_hwmod_reset.c          |  12 +-
- arch/arm/mach-omap2/pm-asm-offsets.c            |   2 +
- arch/arm/mach-omap2/pm-debug.c                  |  37 +-
- arch/arm/mach-omap2/pm33xx-core.c               |  20 +-
- arch/arm/mach-omap2/sleep33xx.S                 |  52 +-
- arch/arm/mach-omap2/sleep43xx.S                 | 110 ++-
- arch/arm/mach-pxa/devices.c                     |  13 +
- arch/arm/mach-pxa/hx4700.c                      |   4 +
- arch/arm/mach-pxa/mioa701.c                     |   2 -
- arch/arm/mach-pxa/zylonite.c                    |  11 -
- arch/arm/mach-s3c24xx/include/mach/s3c2412.h    |   2 +-
- arch/arm/mach-shmobile/Kconfig                  |   2 +
- arch/arm/mach-shmobile/Makefile                 |   8 +-
- arch/arm/mach-shmobile/common.h                 |   1 -
- arch/arm/mach-shmobile/headsmp-apmu.S           |   7 +-
- arch/arm/mach-shmobile/platsmp-apmu.c           | 245 +++---
- arch/arm/mach-shmobile/platsmp-apmu.h           |  32 -
- arch/arm/mach-shmobile/platsmp.c                |   9 -
- arch/arm/mach-shmobile/pm-r8a7779.c             |  41 -
- arch/arm/mach-shmobile/pm-rcar-gen2.c           |  25 -
- arch/arm/mach-shmobile/r8a7779.h                |   2 -
- arch/arm/mach-shmobile/r8a7790.h                |   7 -
- arch/arm/mach-shmobile/r8a7791.h                |   7 -
- .../mach-shmobile/regulator-quirk-rcar-gen2.c   |  10 +-
- arch/arm/mach-shmobile/setup-emev2.c            |  10 +-
- arch/arm/mach-shmobile/setup-r7s72100.c         |  10 +-
- arch/arm/mach-shmobile/setup-r8a73a4.c          |  11 +-
- arch/arm/mach-shmobile/setup-r8a7740.c          |  10 +-
- arch/arm/mach-shmobile/setup-r8a7778.c          |  10 +-
- arch/arm/mach-shmobile/setup-r8a7779.c          |  10 +-
- arch/arm/mach-shmobile/setup-r8a7790.c          |  38 -
- arch/arm/mach-shmobile/setup-r8a7791.c          |  39 -
- arch/arm/mach-shmobile/setup-rcar-gen2.c        |  20 +-
- arch/arm/mach-shmobile/setup-sh73a0.c           |  10 +-
- arch/arm/mach-shmobile/smp-emev2.c              |  10 +-
- arch/arm/mach-shmobile/smp-r8a7779.c            |  78 +-
- arch/arm/mach-shmobile/smp-r8a7790.c            |  71 --
- arch/arm/mach-shmobile/smp-r8a7791.c            |  53 --
- arch/arm/mach-shmobile/timer.c                  |   8 -
- arch/arm/mach-uniphier/Kconfig                  |   1 +
- arch/arm/mach-uniphier/Makefile                 |   0
- arch/arm64/Kconfig.platforms                    |   1 +
- drivers/clk/davinci/psc-da830.c                 |   3 +-
- drivers/clk/davinci/psc-da850.c                 |   3 +-
- drivers/clk/davinci/psc-dm365.c                 |   3 +-
- drivers/clk/davinci/psc-dm644x.c                |   3 +-
- drivers/clk/davinci/psc-dm646x.c                |   3 +-
- drivers/input/serio/ams_delta_serio.c           | 198 ++---
- drivers/net/ethernet/smsc/smc911x.c             |  13 +-
- drivers/net/ethernet/smsc/smc91x.c              |   9 +-
- drivers/net/ethernet/smsc/smc91x.h              |   1 -
- drivers/soc/renesas/Makefile                    |   3 +
- drivers/soc/renesas/r9a06g032-smp.c             |  96 +++
- drivers/soc/renesas/rcar-sysc.c                 |  64 +-
- drivers/soc/ti/pm33xx.c                         |  16 +-
- include/linux/clk/at91_pmc.h                    |  15 +
- include/linux/cpuhotplug.h                      |   1 +
- include/linux/mfd/syscon/imx6q-iomuxc-gpr.h     |   3 +
- .../linux/platform_data}/ams-delta-fiq.h        |  31 +-
- include/linux/platform_data/mtd-davinci-aemif.h |   1 -
- include/linux/platform_data/pm33xx.h            |  29 +-
- include/linux/soc/renesas/rcar-sysc.h           |  13 +-
- 133 files changed, 2432 insertions(+), 5307 deletions(-)
- delete mode 100644 arch/arm/mach-davinci/aemif.c
- delete mode 100644 arch/arm/mach-davinci/clock.c
- delete mode 100644 arch/arm/mach-davinci/psc.c
- create mode 100644 arch/arm/mach-imx/mach-imx7d-cm4.c
- create mode 100644 arch/arm/mach-omap1/ams-delta-fiq.h
- delete mode 100644 arch/arm/mach-shmobile/platsmp-apmu.h
- delete mode 100644 arch/arm/mach-shmobile/pm-r8a7779.c
- delete mode 100644 arch/arm/mach-shmobile/r8a7790.h
- delete mode 100644 arch/arm/mach-shmobile/r8a7791.h
- delete mode 100644 arch/arm/mach-shmobile/setup-r8a7790.c
- delete mode 100644 arch/arm/mach-shmobile/setup-r8a7791.c
- delete mode 100644 arch/arm/mach-shmobile/smp-r8a7790.c
- delete mode 100644 arch/arm/mach-shmobile/smp-r8a7791.c
- delete mode 100644 arch/arm/mach-uniphier/Makefile
- create mode 100644 drivers/soc/renesas/r9a06g032-smp.c
- rename {arch/arm/mach-omap1/include/mach => include/linux/platform_data}/ams-delta-fiq.h (68%)
+ arch/arm/configs/aspeed_g4_defconfig   | 113 +++++++++++++++++++++++----
+ arch/arm/configs/aspeed_g5_defconfig   | 117 +++++++++++++++++++++++-----
+ arch/arm/configs/bcm2835_defconfig     |   2 +-
+ arch/arm/configs/davinci_all_defconfig |  11 ++-
+ arch/arm/configs/imx_v6_v7_defconfig   |   8 +-
+ arch/arm/configs/keystone_defconfig    |   5 ++
+ arch/arm/configs/multi_v5_defconfig    |  30 ++++---
+ arch/arm/configs/multi_v7_defconfig    |  10 +++
+ arch/arm/configs/mvebu_v7_defconfig    |  13 +---
+ arch/arm/configs/mxs_defconfig         |   5 +-
+ arch/arm/configs/qcom_defconfig        |   2 +
+ arch/arm/configs/s5pv210_defconfig     |  49 +++++++++++-
+ arch/arm/configs/shmobile_defconfig    |  17 +---
+ arch/arm64/configs/defconfig           |  23 ++++++
+ 14 files changed, 324 insertions(+), 81 deletions(-)
