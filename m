@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73109C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:12:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A22DAC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:12:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37DA021473
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:12:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37DA021473
+	by mail.kernel.org (Postfix) with ESMTP id 629FD21473
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:12:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 629FD21473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729979AbeHWLkZ (ORCPT
+        id S1729994AbeHWLk2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:40:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45890 "EHLO
+        Thu, 23 Aug 2018 07:40:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45898 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728918AbeHWLkY (ORCPT
+        with ESMTP id S1728918AbeHWLk2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:40:24 -0400
+        Thu, 23 Aug 2018 07:40:28 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8E1ECC7B;
-        Thu, 23 Aug 2018 08:11:57 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B44AAC7B;
+        Thu, 23 Aug 2018 08:12:00 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Stefan Wahren <stefan.wahren@i2se.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 114/130] net: qca_spi: Make sure the QCA7000 reset is triggered
-Date:   Thu, 23 Aug 2018 09:53:50 +0200
-Message-Id: <20180823074934.420995377@linuxfoundation.org>
+Subject: [PATCH 4.9 115/130] net: qca_spi: Fix log level if probe fails
+Date:   Thu, 23 Aug 2018 09:53:51 +0200
+Message-Id: <20180823074934.478959660@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
 References: <20180823074927.161454870@linuxfoundation.org>
@@ -53,32 +53,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Stefan Wahren <stefan.wahren@i2se.com>
 
-[ Upstream commit 711c62dfa6bdb4326ca6c587f295ea5c4f7269de ]
+[ Upstream commit 50973993260a6934f0a00da53d9b746cfbea89ab ]
 
-In case the SPI thread is not running, a simple reset of sync
-state won't fix the transmit timeout. We also need to wake up the kernel
-thread.
+In cases the probing fails the log level of the messages should
+be an error.
 
 Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
-Fixes: ed7d42e24eff ("net: qca_spi: fix transmit queue timeout handling")
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/qualcomm/qca_spi.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/ethernet/qualcomm/qca_spi.c |   16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
 --- a/drivers/net/ethernet/qualcomm/qca_spi.c
 +++ b/drivers/net/ethernet/qualcomm/qca_spi.c
-@@ -739,6 +739,9 @@ qcaspi_netdev_tx_timeout(struct net_devi
- 	qca->net_dev->stats.tx_errors++;
- 	/* Trigger tx queue flush and QCA7000 reset */
- 	qca->sync = QCASPI_SYNC_UNKNOWN;
-+
-+	if (qca->spi_thread)
-+		wake_up_process(qca->spi_thread);
- }
+@@ -868,22 +868,22 @@ qca_spi_probe(struct spi_device *spi)
  
- static int
+ 	if ((qcaspi_clkspeed < QCASPI_CLK_SPEED_MIN) ||
+ 	    (qcaspi_clkspeed > QCASPI_CLK_SPEED_MAX)) {
+-		dev_info(&spi->dev, "Invalid clkspeed: %d\n",
+-			 qcaspi_clkspeed);
++		dev_err(&spi->dev, "Invalid clkspeed: %d\n",
++			qcaspi_clkspeed);
+ 		return -EINVAL;
+ 	}
+ 
+ 	if ((qcaspi_burst_len < QCASPI_BURST_LEN_MIN) ||
+ 	    (qcaspi_burst_len > QCASPI_BURST_LEN_MAX)) {
+-		dev_info(&spi->dev, "Invalid burst len: %d\n",
+-			 qcaspi_burst_len);
++		dev_err(&spi->dev, "Invalid burst len: %d\n",
++			qcaspi_burst_len);
+ 		return -EINVAL;
+ 	}
+ 
+ 	if ((qcaspi_pluggable < QCASPI_PLUGGABLE_MIN) ||
+ 	    (qcaspi_pluggable > QCASPI_PLUGGABLE_MAX)) {
+-		dev_info(&spi->dev, "Invalid pluggable: %d\n",
+-			 qcaspi_pluggable);
++		dev_err(&spi->dev, "Invalid pluggable: %d\n",
++			qcaspi_pluggable);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -944,8 +944,8 @@ qca_spi_probe(struct spi_device *spi)
+ 	}
+ 
+ 	if (register_netdev(qcaspi_devs)) {
+-		dev_info(&spi->dev, "Unable to register net device %s\n",
+-			 qcaspi_devs->name);
++		dev_err(&spi->dev, "Unable to register net device %s\n",
++			qcaspi_devs->name);
+ 		free_netdev(qcaspi_devs);
+ 		return -EFAULT;
+ 	}
 
 
