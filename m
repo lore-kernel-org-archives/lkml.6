@@ -1,113 +1,97 @@
-Return-Path: <SRS0=FObM=LF=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDFC4C4321D
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 23:57:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3718C41535
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 00:20:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CFD8208D9
-	for <linux-kernel@archiver.kernel.org>; Wed, 22 Aug 2018 23:57:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CFD8208D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
+	by mail.kernel.org (Postfix) with ESMTP id 27C2120BF2
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 00:20:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="F9gi79gL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27C2120BF2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727453AbeHWDYg (ORCPT
+        id S1727571AbeHWDrO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 22 Aug 2018 23:24:36 -0400
-Received: from nautica.notk.org ([91.121.71.147]:33552 "EHLO nautica.notk.org"
+        Wed, 22 Aug 2018 23:47:14 -0400
+Received: from ozlabs.org ([203.11.71.1]:34239 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726809AbeHWDYf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 Aug 2018 23:24:35 -0400
-Received: by nautica.notk.org (Postfix, from userid 1001)
-        id D5276C009; Thu, 23 Aug 2018 01:57:37 +0200 (CEST)
-Date:   Thu, 23 Aug 2018 01:57:22 +0200
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     joe@perches.com, Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Arnd Bergmann <arnd@arndb.de>, dwmw@amazon.co.uk,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] compiler-gcc: get back Clang build
-Message-ID: <20180822235722.GA27485@nautica>
-References: <1534834088-15835-1-git-send-email-yamada.masahiro@socionext.com>
- <20180821123832.GA19034@nautica>
- <CAKwvOdmLQen+TWF_F3e5-66vtF3FEnoxjEgZbjmOZ9cv6YrEpA@mail.gmail.com>
- <acb93bae0086447c7cbe0eec05907335ebae7788.camel@perches.com>
- <CAKwvOdkLGhdQxx3oV=R2kv290NOv_w8qQ_yHWCVpvmofp7+ivQ@mail.gmail.com>
- <20180822041646.GA21716@nautica>
- <78396ba82562326f4b3a395a63e3e8dc38d608b2.camel@perches.com>
- <20180822043230.GA26654@nautica>
- <CAKwvOdm+BwvDxAw-A_1v5xO2EjDff1axAttHVz5QnBSxSbKo=g@mail.gmail.com>
+        id S1726800AbeHWDrO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 Aug 2018 23:47:14 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41wlRc53l5z9s3Z;
+        Thu, 23 Aug 2018 10:20:12 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1534983612;
+        bh=kqyvbC6NIffenx9nLX/6LmV00S9ZyPdSaQW5pVNU2O4=;
+        h=Date:From:To:Cc:Subject:From;
+        b=F9gi79gLDzARSwBgaixtoqbBgMoStPpXbwC1dBXUu6eZiIqPsR3/ymCr4756C0xGa
+         X9faJeB3/NK+shv5T5IIQAhuh8OeU51nlhTiXA3nkj3bzkdg7zktMrBGkEemNxtYji
+         nIk5Ms958zGJf4s9ejTqRpVNSnFu4c+ENuMtakr8e2u9U+PkNj2OqUAAXXhTNGOznv
+         3cxDYvvqNGZt21UCig/UD+SCmJFLSKSewHeIJHWVbStvm7HLd2Sj/HqyMeiSIid9tX
+         8TUjtCHH+pqoaGRAj7wxNioEPc9sAiIHSP8etZmF9mNEhuPSQ5sj2c5rko9Mwi+uWt
+         euTzZ2M9G8p8w==
+Date:   Thu, 23 Aug 2018 10:20:12 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     John Johansen <john.johansen@canonical.com>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: build warning after merge of the apparmor tree
+Message-ID: <20180823102012.0c7cbe1c@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAKwvOdm+BwvDxAw-A_1v5xO2EjDff1axAttHVz5QnBSxSbKo=g@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ne3jaP9jZKMvco7v7M/_dyG"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nick Desaulniers wrote on Wed, Aug 22, 2018:
-> I'm currently testing a fix in
-> https://github.com/ClangBuiltLinux/linux/commit/1f89ae7622c26b8131f42f3a362d6ef41b88a595,
-> can you please share with me your steps to test/verify that the patch
-> fixes the issue for eBPF?  I'll go talk to a co-worker who know more
-> about eBPF, but I've not yet done anything with it.
+--Sig_/ne3jaP9jZKMvco7v7M/_dyG
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the link.
+Hi John,
 
-The simplest way to test with bcc for me would probably be to fetch the
-example from their repo itself[1], whether you install bcc through your
-distro or compile it yourself.
+After merging the apparmor tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-There are dozens of example programs in the tools/ directory of which
-you can just run any, if will try to compile the program embedded wihtin
-the example at runtime with clang.
+security/apparmor/policy_unpack.c: In function 'unpack_dfa':
+security/apparmor/policy_unpack.c:426:1: warning: label 'fail' defined but =
+not used [-Wunused-label]
+ fail:
+ ^~~~
 
-[1] https://github.com/iovisor/bcc
+Introduced by commit
 
-(I just noticed fedora provides a bcc-tools package which provides these
-tools directly, so if you're lucky you can just install that and run
-examples in /usr/share/bcc/tools)
+  fb5841091f28 ("apparmor: remove no-op permission check in policy_unpack")
 
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/ne3jaP9jZKMvco7v7M/_dyG
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-In particular I get a couple of errors with your patch, I think it boils
-down to this one:
------
-In file included from <built-in>:3:
-In file included from /virtual/include/bcc/helpers.h:23:
-In file included from /lib/modules/4.18.0+/build/include/linux/log2.h:16:
-In file included from /lib/modules/4.18.0+/build/include/linux/bitops.h:18:
-In file included from /lib/modules/4.18.0+/build/arch/x86/include/asm/bitops.h:16:
-/lib/modules/4.18.0+/build/include/linux/compiler.h:217:3: error:
-expected expression
-                barrier();
-                ^
-/lib/modules/4.18.0+/build/include/linux/compiler-clang.h:43:20: note:
-expanded from macro 'barrier'
-#define barrier() (__asm__ __volatile__("" : : : "memory"))
-                   ^
------
+-----BEGIN PGP SIGNATURE-----
 
-And removing the parenthesis around the expression seems to work, they
-weren't here in the compiler-gcc.h file in the previous version?
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlt9/bwACgkQAVBC80lX
+0GxBPwf/cHb/E+iZ6IeOU9O64Y/SExKCaGLlsOAp/7K2wbsiVmRdkeyBG9mO1Qlt
+GVEt50EmvREmYdiJkJ1wojfPC3+ML/ScehG/meMqLKoY1AV2r4oNRGdJc2U/RzHs
+c9C4qBBlltjVRw53tJFLDzivc1wBqkYN113s76kuu5TTC2xY+vChg21DvjxHKbhK
+NBsGdXmKZRHr5avAdm6KXdda5kLbhIfMgq1/IH7vNLo3NsyQClFGrf+5Qa1jXKIu
+Ho3WNcBQswY9q8wi7q/BnFAeZs9w/qdwZGMdTfwUCe5EadZgXsWXr6XMOL9Ng49n
+OMF4Qd2HHPyep/jp0iVlKyW8YlsTJg==
+=3qEc
+-----END PGP SIGNATURE-----
 
-There might be other defines the simple examples I ran do not use but
-from a quick glance it doesn't look like it, thank you for the split
-work!
-
--- 
-Dominique Martinet
+--Sig_/ne3jaP9jZKMvco7v7M/_dyG--
