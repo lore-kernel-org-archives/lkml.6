@@ -2,203 +2,226 @@ Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8025AC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:33:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 686F4C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:35:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12CF42154E
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:33:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ESE5RKxX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12CF42154E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DED2921557
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 17:35:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DED2921557
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727044AbeHWVEB (ORCPT
+        id S1727020AbeHWVGS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 17:04:01 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43387 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726556AbeHWVEB (ORCPT
+        Thu, 23 Aug 2018 17:06:18 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35266 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726691AbeHWVGR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 17:04:01 -0400
-Received: by mail-pg1-f193.google.com with SMTP id v66-v6so2954390pgb.10
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 10:33:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=GdfS3vnRQh4S+/6b/eNX1ma2PFxYjRiTLwMJEeBAl/I=;
-        b=ESE5RKxXe+ec56Zp9/kX10J/yJIqeLSCnVYjyRvFeBTbPccCtrx8rv/ZgI2zW2/u66
-         xxw7OXATX3AxmQ6UiTMznzQmIbpyscsGwklmemG42YqSenR9Os7xLs1CShs1ZpXv99bF
-         4nzuCU6U0r0pOnfnyPBop9S95Ff3dO2wClUNjllFqN5IWSZqW9i3wARYE4ertcNzKJ94
-         9wCGChbiJUlectIyWFoWxvJlTdFclx7smDyI7rvGj81Q7lTDl67IjzY3mJccv0LUPHZC
-         y6ezq9ntpyVkqp3jViTqPqbtmmMvtai4DICFBdGXwRt8ZhAwJQ6wqP1VBE3wlscZIM7k
-         +o/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GdfS3vnRQh4S+/6b/eNX1ma2PFxYjRiTLwMJEeBAl/I=;
-        b=LtLe7JHGRv+sCh+8vlqfSeR55SzWG9kjxB4pS8qElIookpvz5kJoNMeYFPRId6PTfp
-         3r63ih0PYfKJr8+Kneu5vCbp1SqLsvcDRijDEfPUmaVNcVrsTrsO51iya/kPz/5343y3
-         SQmMJWKyEjEvlFZKoun5RowTnXXo2+naY8lojmk3ZUUErf1VDSriFhgZUuW1g50W4nWY
-         g48Jm1aLOyU1VVQZBDkFPkCrVHv19uP4CAUjxFDvBbQ1p+6gTwAk+x4E0+vfdq9vM+NW
-         DbIDAEgXPP2zinTRyRsJktdT6DWgxuoKoxliMnfxyrTzIp1+wMrTfy9fnlPZuNi7AMpk
-         Ne1w==
-X-Gm-Message-State: AOUpUlFIRXPe1drEVBCQWhZIVW8TrnG3cWnpl3KHTnsjnMHIxkGrfVaO
-        m6VjLMIJVpLIlDyZP+l5ZG4=
-X-Google-Smtp-Source: AA+uWPxejj3I6G7YuMbj25Il0mJvvS8I4XEFz6J9BFWpusqMzTFp2msSODzTgZfW9i4+cxF9BA8JIA==
-X-Received: by 2002:a17:902:4d45:: with SMTP id o5-v6mr26054587plh.78.1535045596080;
-        Thu, 23 Aug 2018 10:33:16 -0700 (PDT)
-Received: from nishad ([106.51.27.228])
-        by smtp.gmail.com with ESMTPSA id m15-v6sm11100176pfk.149.2018.08.23.10.33.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 23 Aug 2018 10:33:15 -0700 (PDT)
-Date:   Thu, 23 Aug 2018 23:03:09 +0530
-From:   Nishad Kamdar <nishadkamdar@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Joe Perches <joe@perches.com>, NeilBrown <neil@brown.name>,
-        devel@driverdev.osuosl.org,
-        Christian =?utf-8?Q?L=C3=BCtke-Stetzkamp?= <christian@lkamp.de>,
-        linux-kernel@vger.kernel.org, John Crispin <blogic@openwrt.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH v5 4/4] staging: mt7621-mmc: Fix debug macro IRQ_MSG and its
- usages
-Message-ID: <892aecbcfc0a302e4509e540416ead2320d6a94e.1535038495.git.nishadkamdar@gmail.com>
-References: <cover.1535038494.git.nishadkamdar@gmail.com>
+        Thu, 23 Aug 2018 17:06:17 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7NHUVsU085300
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 13:35:31 -0400
+Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m1y8wnyrn-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 13:35:31 -0400
+Received: from localhost
+        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Thu, 23 Aug 2018 11:35:30 -0600
+Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
+        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 23 Aug 2018 11:35:27 -0600
+Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
+        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7NHZOjW19857550
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 23 Aug 2018 10:35:24 -0700
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B3B9E136063;
+        Thu, 23 Aug 2018 11:35:24 -0600 (MDT)
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 16FCB136060;
+        Thu, 23 Aug 2018 11:35:21 -0600 (MDT)
+Received: from oc8043147753.ibm.com (unknown [9.60.75.213])
+        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu, 23 Aug 2018 11:35:21 -0600 (MDT)
+Subject: Re: [PATCH v9 21/22] KVM: s390: CPU model support for AP
+ virtualization
+To:     pmorel@linux.ibm.com, David Hildenbrand <david@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1534196899-16987-22-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <2c2c4859-ed3e-a492-dd59-78529c7768b2@redhat.com>
+ <95e6ee74-69aa-9805-3233-b9ec81fce516@redhat.com>
+ <7e7a35f5-d1eb-7719-c5e8-57d6f19db675@linux.ibm.com>
+ <f5ec13ae-75b4-918e-aaf1-ed97944ff16e@redhat.com>
+ <fec90446-7f94-da28-d958-427a0446854e@linux.ibm.com>
+ <ef6082b7-da96-3a0b-77a0-f41d113d058a@redhat.com>
+ <8d6ae58f-967b-5e4e-0e54-8fb4962cb843@linux.ibm.com>
+ <be13d8fa-1ff7-6800-36b9-7f8320724cbf@redhat.com>
+ <049c5e8a-4f21-a079-0eb6-abe78d812de7@linux.ibm.com>
+ <1721a153-13f0-e695-6c01-cf6b65e1bbfa@linux.ibm.com>
+ <e782de8d-45d8-79fd-165c-c84f431e1d34@redhat.com>
+ <cd00d49a-f6d0-a911-8cda-8f95f58beb27@linux.ibm.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Thu, 23 Aug 2018 13:35:21 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1535038494.git.nishadkamdar@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <cd00d49a-f6d0-a911-8cda-8f95f58beb27@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18082317-0036-0000-0000-00000A288EE3
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009599; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01077777; UDB=6.00555710; IPR=6.00857751;
+ MB=3.00022890; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-23 17:35:30
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082317-0037-0000-0000-000048AFFBA3
+Message-Id: <79ae3a9c-70c3-7b08-09ee-0b8308cbca56@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-23_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808230181
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace all usages of IRQ_MSG with with dev_<level> without __func__
-or __LINE__ or current->comm and current->pid. Remove the do {}
-while(0) loop for the single statement macro. Drop IRQ_MSG from dbg.h.
-Issue found by checkpatch.
+On 08/23/2018 10:59 AM, Pierre Morel wrote:
+> On 23/08/2018 15:38, David Hildenbrand wrote:
+>> On 23.08.2018 15:22, Halil Pasic wrote:
+>>>
+>>>
+>>> On 08/23/2018 02:47 PM, Pierre Morel wrote:
+>>>> On 23/08/2018 13:12, David Hildenbrand wrote:
+>>> [..]
+>>>>>>>>
+>>>>>>>> I'm confused, which 128 bit?
+>>>>>>>
+>>>>>>>
+>>>>>>> Me too :) , I was assuming this block to be 128bit, but the qci 
+>>>>>>> block
+>>>>>>> has 128 bytes....
+>>>>>>>
+>>>>>>> And looking at arch/s390/include/asm/ap.h, there is a lot of 
+>>>>>>> information
+>>>>>>> contained that is definitely not of interest for CPU models...
+>>>>>>>
+>>>>>>> I wonder if there is somewhere defined which bits are reserved for
+>>>>>>> future features/facilities, compared to ap masks and such.
+>>>>>>>
+>>>>>>> This is really hard to understand/plan without access to 
+>>>>>>> documentation.
+>>>>>>>
+>>>>>>> You (Halil, Tony, Pier, ...) should have a look if what I described
+>>>>>>> related to PQAP(QCI) containing features that should get part of 
+>>>>>>> the CPU
+>>>>>>> model makes sense or not. For now I was thinking that there is 
+>>>>>>> some part
+>>>>>>> inside of QCI that is strictly reserved for facilities/features 
+>>>>>>> that we
+>>>>>>> can use.
+>>>
+>>> No there is no such part. The architecture documentation is quite 
+>>> confusing
+>>> with some aspects (e.g. persistence) of how exactly some of these 
+>>> features
+>>> work and are indicated. I'm having a hard time finding my opinion. I 
+>>> may
+>>> end up asking some questions later, but for now i have to think first.
+>>>
+>>> Just one hint. There is a programming note stating that if bit 2 of the
+>>> QCI block is one there is at least one AP card in the machine that 
+>>> actually
+>>> has APXA installed.
+>>>
+>>> I read the architecture so that the APXA has a 'cpu part' (if we are
+>>> doing APXA the cpu can't spec exception on certain bits not being zor9)
+>>> and a 'card(s) part'.
+>>>
+>>> Since the stuff seems quite difficult to sort out properly, I ask 
+>>> myself
+>>> are there real problems we must solve?
+>>>
+>>> This ultimately seems to be  about the migration, right? You say 
+>>> 'This helps
+>>> to catch nasty migration bugs (e.g. APXA suddenly disappearing).' at 
+>>> the very
+>>> beginning of the discussion. Yes, we don't have to have an vfio_ap 
+>>> device,
+>>> he guest can and will start looking for AP resources if
+>>> only the cpu model features installed. So the guest could observe
+>>> a disappearing APXA, but I don't think that would lead to problems 
+>>> (with
+>>> Linux at least).
+>>>
+>>> And there ain't much AP a guest can sanely do without if no AP 
+>>> resources
+>>> are there.
+>>>
+>>> I would really prefer not rushing a solution if we don't have to.
+>>>
+>>>>
+>>>>
+>>>>>
+>>>>> What is apsc, qact, rc8a in the qci blocks? are the facility bits?
+>>>>
+>>>> Yes, facility bits concerning the AP instructions
+>>>>
+>>>
+>>> According to the current AR document rc8a ain't a facility but bits
+>>> 0-2 and 4-7 kind of are.
+>>>
+>>
+>> Easy ( :) ) answer. Everything that is the CPU part should get into the
+>> CPU model. Everything that is AP specific not. If APXA is not a CPU
+>> facility, fine with me to leave it out.
+>>
+>> Ack to not rushing, but also ack to not leaving out important things.
+>> Ack that this stuff is hard to ficure out.
+>
+> APXA is not a CPU part, it is a machine part (SIE) and a AP part 
+> (QCI,TAPQ),
+> it has no influence on CPU instructions but on the AP instructions.
+> Consequently, if I understood the definition correctly, it should not 
+> go in the CPU model.
 
-Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
----
-Changes in v5:
-  - No change
----
- drivers/staging/mt7621-mmc/dbg.h | 12 -----------
- drivers/staging/mt7621-mmc/sd.c  | 36 ++++++++++++++++++++++++--------
- 2 files changed, 27 insertions(+), 21 deletions(-)
+The APXA bit returned via the PQAP(QCI) instruction indicates the APXA 
+facility is
+installed in the CPUs of the configuration. This means that the facility is
+installed in one or more adjunct processors but not necessarily all. 
+Given that
+it indicates a CPU property, maybe it does belong in the CPU model?
 
-diff --git a/drivers/staging/mt7621-mmc/dbg.h b/drivers/staging/mt7621-mmc/dbg.h
-index a5fdafe80d3d..256979424309 100644
---- a/drivers/staging/mt7621-mmc/dbg.h
-+++ b/drivers/staging/mt7621-mmc/dbg.h
-@@ -104,18 +104,6 @@ do { \
- 
- #define N_MSG(evt, fmt, args...)
- 
--#if 1
--//defined CONFIG_MTK_MMC_CD_POLL
--#define IRQ_MSG(fmt, args...)
--#else
--/* PID in ISR in not corrent */
--#define IRQ_MSG(fmt, args...) \
--do { \
--	printk(KERN_ERR TAG"%d -> "fmt" <- %s() : L<%d>\n",	\
--	       host->id,  ##args, __FUNCTION__, __LINE__);	\
--} while (0);
--#endif
--
- void msdc_debug_proc_init(void);
- 
- #if 0 /* --- chhung */
-diff --git a/drivers/staging/mt7621-mmc/sd.c b/drivers/staging/mt7621-mmc/sd.c
-index fd02bf819c6c..e5bd3273cc04 100644
---- a/drivers/staging/mt7621-mmc/sd.c
-+++ b/drivers/staging/mt7621-mmc/sd.c
-@@ -420,7 +420,9 @@ static void msdc_tasklet_card(struct work_struct *work)
- 		mmc_detect_change(host->mmc, msecs_to_jiffies(20));
- 	}
- 
--	IRQ_MSG("card found<%s>", inserted ? "inserted" : "removed");
-+	dev_err(mmc_dev(host->mmc),
-+		"%d -> card found<%s>\n",
-+		host->id, inserted ? "inserted" : "removed");
- #endif
- 
- 	spin_unlock(&host->lock);
-@@ -1848,14 +1850,17 @@ static irqreturn_t msdc_irq(int irq, void *dev_id)
- 	if (intsts & MSDC_INT_CDSC) {
- 		if (host->mmc->caps & MMC_CAP_NEEDS_POLL)
- 			return IRQ_HANDLED;
--		IRQ_MSG("MSDC_INT_CDSC irq<0x%.8x>", intsts);
-+		dev_err(mmc_dev(host->mmc),
-+			"%d -> MSDC_INT_CDSC irq<0x%.8x>\n", host->id, intsts);
- 		schedule_delayed_work(&host->card_delaywork, HZ);
- 		/* tuning when plug card ? */
- 	}
- 
- 	/* sdio interrupt */
- 	if (intsts & MSDC_INT_SDIOIRQ) {
--		IRQ_MSG("XXX MSDC_INT_SDIOIRQ");  /* seems not sdio irq */
-+		dev_err(mmc_dev(host->mmc),
-+			"%d -> XXX MSDC_INT_SDIOIRQ\n",
-+			host->id); /* seems not sdio irq */
- 		//mmc_signal_sdio_irq(host->mmc);
- 	}
- 
-@@ -1873,10 +1878,15 @@ static irqreturn_t msdc_irq(int irq, void *dev_id)
- 			msdc_clr_int();
- 
- 			if (intsts & MSDC_INT_DATTMO) {
--				IRQ_MSG("XXX CMD<%d> MSDC_INT_DATTMO", host->mrq->cmd->opcode);
-+				dev_err(mmc_dev(host->mmc),
-+					"%d -> XXX CMD<%d> MSDC_INT_DATTMO\n",
-+					host->id, host->mrq->cmd->opcode);
- 				data->error = -ETIMEDOUT;
- 			} else if (intsts & MSDC_INT_DATCRCERR) {
--				IRQ_MSG("XXX CMD<%d> MSDC_INT_DATCRCERR, SDC_DCRC_STS<0x%x>", host->mrq->cmd->opcode, readl(host->base + SDC_DCRC_STS));
-+				dev_err(mmc_dev(host->mmc),
-+					"%d -> XXX CMD<%d> MSDC_INT_DATCRCERR, SDC_DCRC_STS<0x%x>\n",
-+					host->id, host->mrq->cmd->opcode,
-+					readl(host->base + SDC_DCRC_STS);
- 				data->error = -EIO;
- 			}
- 
-@@ -1909,15 +1919,23 @@ static irqreturn_t msdc_irq(int irq, void *dev_id)
- 			}
- 		} else if ((intsts & MSDC_INT_RSPCRCERR) || (intsts & MSDC_INT_ACMDCRCERR)) {
- 			if (intsts & MSDC_INT_ACMDCRCERR)
--				IRQ_MSG("XXX CMD<%d> MSDC_INT_ACMDCRCERR", cmd->opcode);
-+				dev_err(mmc_dev(host->mmc),
-+					"%d -> XXX CMD<%d> MSDC_INT_ACMDCRCERR\n",
-+					host->id, cmd->opcode);
- 			else
--				IRQ_MSG("XXX CMD<%d> MSDC_INT_RSPCRCERR", cmd->opcode);
-+				dev_err(mmc_dev(host->mmc),
-+					"%d -> XXX CMD<%d> MSDC_INT_RSPCRCERR\n",
-+					host->id, cmd->opcode);
- 			cmd->error = -EIO;
- 		} else if ((intsts & MSDC_INT_CMDTMO) || (intsts & MSDC_INT_ACMDTMO)) {
- 			if (intsts & MSDC_INT_ACMDTMO)
--				IRQ_MSG("XXX CMD<%d> MSDC_INT_ACMDTMO", cmd->opcode);
-+				dev_err(mmc_dev(host->mmc),
-+					"%d -> XXX CMD<%d> MSDC_INT_ACMDTMO\n",
-+					host->id, cmd->opcode);
- 			else
--				IRQ_MSG("XXX CMD<%d> MSDC_INT_CMDTMO", cmd->opcode);
-+				dev_err(mmc_dev(host->mmc),
-+					"%d -> XXX CMD<%d> MSDC_INT_CMDTMO\n",
-+					host->id, cmd->opcode);
- 			cmd->error = -ETIMEDOUT;
- 			msdc_reset_hw(host);
- 			msdc_clr_fifo(host);
--- 
-2.17.1
+>
+> Regards,
+> Pierre
+>
+>
+>
+>
 
