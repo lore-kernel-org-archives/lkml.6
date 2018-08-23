@@ -6,93 +6,86 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BD39C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:00:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08B22C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:00:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FE692098B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:00:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FE692098B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id C01582098B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:00:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C01582098B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728746AbeHWL3D (ORCPT
+        id S1728721AbeHWL25 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:29:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43810 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727285AbeHWL3C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:29:02 -0400
-Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6C077CAD;
-        Thu, 23 Aug 2018 08:00:38 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Greg Kroah-Hartman <greg@kroah.com>
-Subject: [PATCH 4.4 75/79] PCI: hotplug: Dont leak pci_slot on registration failure
-Date:   Thu, 23 Aug 2018 09:53:51 +0200
-Message-Id: <20180823074924.095094304@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180823074918.641878835@linuxfoundation.org>
-References: <20180823074918.641878835@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Thu, 23 Aug 2018 07:28:57 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:37153 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727878AbeHWL24 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 07:28:56 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 38EAE816AA18E;
+        Thu, 23 Aug 2018 16:00:29 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.75) by
+ DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
+ 14.3.399.0; Thu, 23 Aug 2018 16:00:25 +0800
+From:   c00284940 <chenxiang66@hisilicon.com>
+To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
+CC:     <linuxarm@huawei.com>, <linux-scsi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <john.garry@huawei.com>,
+        c00284940 <chenxiang66@hisilicon.com>
+Subject: [PATCH plinth/topic-sas-4.18] {topost} scsi: hisi_sas: send HARD RESET to clear the previous affiliation of STP target port when init device
+Date:   Thu, 23 Aug 2018 15:58:47 +0800
+Message-ID: <1535011127-110586-1-git-send-email-chenxiang66@hisilicon.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+If exchange SAS expander from one SAS controller to other SAS controller
+without power down, the STP target port will maintain previous affiliation and
+reject all subsequent connection requests from other STP initiator ports
+with OPEN_REJECT (STP RESOURCES BUSY).
 
-------------------
+To solve this issue, send HARD RESET to clear the previous affiliation of
+STP target port according to SPL(chapter 6.19.4).
 
-From: Lukas Wunner <lukas@wunner.de>
-
-commit 4ce6435820d1f1cc2c2788e232735eb244bcc8a3 upstream.
-
-If addition of sysfs files fails on registration of a hotplug slot, the
-struct pci_slot as well as the entry in the slot_list is leaked.  The
-issue has been present since the hotplug core was introduced in 2002:
-https://git.kernel.org/tglx/history/c/a8a2069f432c
-
-Perhaps the idea was that even though sysfs addition fails, the slot
-should still be usable.  But that's not how drivers use the interface,
-they abort probe if a non-zero value is returned.
-
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Cc: stable@vger.kernel.org # v2.4.15+
-Cc: Greg Kroah-Hartman <greg@kroah.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
 ---
- drivers/pci/hotplug/pci_hotplug_core.c |    9 +++++++++
+ drivers/scsi/hisi_sas/hisi_sas_main.c | 9 +++++++++
  1 file changed, 9 insertions(+)
 
---- a/drivers/pci/hotplug/pci_hotplug_core.c
-+++ b/drivers/pci/hotplug/pci_hotplug_core.c
-@@ -457,8 +457,17 @@ int __pci_hp_register(struct hotplug_slo
- 	list_add(&slot->slot_list, &pci_hotplug_slot_list);
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
+index bb0fa24..9225138 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_main.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
+@@ -612,6 +612,7 @@ static int hisi_sas_init_device(struct domain_device *device)
+ 	struct hisi_sas_tmf_task tmf_task;
+ 	int retry = HISI_SAS_SRST_ATA_DISK_CNT;
+ 	struct hisi_hba *hisi_hba = dev_to_hisi_hba(device);
++	struct sas_phy *local_phy;
  
- 	result = fs_add_slot(pci_slot);
-+	if (result)
-+		goto err_list_del;
-+
- 	kobject_uevent(&pci_slot->kobj, KOBJ_ADD);
- 	dbg("Added slot %s to the list\n", name);
-+	goto out;
-+
-+err_list_del:
-+	list_del(&slot->slot_list);
-+	pci_slot->hotplug = NULL;
-+	pci_destroy_slot(pci_slot);
- out:
- 	mutex_unlock(&pci_hp_mutex);
- 	return result;
-
+ 	switch (device->dev_type) {
+ 	case SAS_END_DEVICE:
+@@ -627,6 +628,14 @@ static int hisi_sas_init_device(struct domain_device *device)
+ 	case SAS_SATA_PM:
+ 	case SAS_SATA_PM_PORT:
+ 	case SAS_SATA_PENDING:
++		/*
++		 * send HARD RESET to clear previous affiliation of
++		 * STP target port
++		 */
++		local_phy = sas_get_local_phy(device);
++		if (!scsi_is_sas_phy_local(local_phy))
++			sas_phy_reset(local_phy, 1);
++		sas_put_local_phy(local_phy);
+ 		while (retry-- > 0) {
+ 			rc = hisi_sas_softreset_ata_disk(device);
+ 			if (!rc)
+-- 
+1.9.1
 
