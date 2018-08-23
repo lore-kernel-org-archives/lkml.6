@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E138EC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:57:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BF22C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:57:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F36A20C0D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:57:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F36A20C0D
+	by mail.kernel.org (Postfix) with ESMTP id 3299F213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 07:57:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3299F213A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727443AbeHWLZt (ORCPT
+        id S1727481AbeHWLZw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:25:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41582 "EHLO
+        Thu, 23 Aug 2018 07:25:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41588 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726451AbeHWLZs (ORCPT
+        with ESMTP id S1726451AbeHWLZw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:25:48 -0400
+        Thu, 23 Aug 2018 07:25:52 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 175059D2;
-        Thu, 23 Aug 2018 07:57:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 421599D2;
+        Thu, 23 Aug 2018 07:57:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
+        stable@vger.kernel.org, Fathi Boudra <fathi.boudra@linaro.org>,
+        Anders Roxell <anders.roxell@linaro.org>,
         "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.4 06/79] selftests: zram: return Kselftest Skip code for skipped tests
-Date:   Thu, 23 Aug 2018 09:52:42 +0200
-Message-Id: <20180823074919.055086424@linuxfoundation.org>
+Subject: [PATCH 4.4 07/79] selftests: sync: add config fragment for testing sync framework
+Date:   Thu, 23 Aug 2018 09:52:43 +0200
+Message-Id: <20180823074919.121023069@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074918.641878835@linuxfoundation.org>
 References: <20180823074918.641878835@linuxfoundation.org>
@@ -51,68 +52,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
+From: Fathi Boudra <fathi.boudra@linaro.org>
 
-[ Upstream commit 685814466bf8398192cf855415a0bb2cefc1930e ]
+[ Upstream commit d6a3e55131fcb1e5ca1753f4b6f297a177b2fc91 ]
 
-When zram test is skipped because of unmet dependencies and/or
-unsupported configuration, it exits with error which is treated as
-a fail by the Kselftest framework. This leads to false negative result
-even when the test could not be run.
+Unless the software synchronization objects (CONFIG_SW_SYNC) is enabled,
+the sync test will be skipped:
 
-Change it to return kselftest skip code when a test gets skipped to
-clearly report that the test could not be run.
+TAP version 13
+1..0 # Skipped: Sync framework not supported by kernel
 
-Kselftest framework SKIP code is 4 and the framework prints appropriate
-messages to indicate that the test is skipped.
+Add a config fragment file to be able to run "make kselftest-merge" to
+enable relevant configuration required in order to run the sync test.
 
+Signed-off-by: Fathi Boudra <fathi.boudra@linaro.org>
+Link: https://lkml.org/lkml/2017/5/5/14
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/zram/zram.sh     |    5 ++++-
- tools/testing/selftests/zram/zram_lib.sh |    5 ++++-
- 2 files changed, 8 insertions(+), 2 deletions(-)
+ tools/testing/selftests/sync/config |    4 ++++
+ 1 file changed, 4 insertions(+)
+ create mode 100644 tools/testing/selftests/sync/config
 
---- a/tools/testing/selftests/zram/zram.sh
-+++ b/tools/testing/selftests/zram/zram.sh
-@@ -1,6 +1,9 @@
- #!/bin/bash
- TCID="zram.sh"
- 
-+# Kselftest framework requirement - SKIP code is 4.
-+ksft_skip=4
-+
- . ./zram_lib.sh
- 
- run_zram () {
-@@ -23,5 +26,5 @@ elif [ -b /dev/zram0 ]; then
- else
- 	echo "$TCID : No zram.ko module or /dev/zram0 device file not found"
- 	echo "$TCID : CONFIG_ZRAM is not set"
--	exit 1
-+	exit $ksft_skip
- fi
---- a/tools/testing/selftests/zram/zram_lib.sh
-+++ b/tools/testing/selftests/zram/zram_lib.sh
-@@ -18,6 +18,9 @@ MODULE=0
- dev_makeswap=-1
- dev_mounted=-1
- 
-+# Kselftest framework requirement - SKIP code is 4.
-+ksft_skip=4
-+
- trap INT
- 
- check_prereqs()
-@@ -27,7 +30,7 @@ check_prereqs()
- 
- 	if [ $uid -ne 0 ]; then
- 		echo $msg must be run as root >&2
--		exit 0
-+		exit $ksft_skip
- 	fi
- }
- 
+--- /dev/null
++++ b/tools/testing/selftests/sync/config
+@@ -0,0 +1,4 @@
++CONFIG_STAGING=y
++CONFIG_ANDROID=y
++CONFIG_SYNC=y
++CONFIG_SW_SYNC=y
 
 
