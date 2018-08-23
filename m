@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4078BC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:30:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28C66C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:30:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0292721486
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:30:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0292721486
+	by mail.kernel.org (Postfix) with ESMTP id E04B921486
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:30:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E04B921486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731093AbeHWL6e (ORCPT
+        id S1731105AbeHWL6j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:58:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47722 "EHLO
+        Thu, 23 Aug 2018 07:58:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47732 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728259AbeHWL6d (ORCPT
+        with ESMTP id S1728259AbeHWL6j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:58:33 -0400
+        Thu, 23 Aug 2018 07:58:39 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BDCB0C9A;
-        Thu, 23 Aug 2018 08:30:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 88CFAC9A;
+        Thu, 23 Aug 2018 08:30:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Arun Kumar Neelakantam <aneela@codeaurora.org>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 144/217] net: qrtr: Broadcast messages only from control port
-Date:   Thu, 23 Aug 2018 09:54:17 +0200
-Message-Id: <20180823075512.075005946@linuxfoundation.org>
+Subject: [PATCH 4.14 145/217] sh_eth: fix invalid context bug while calling auto-negotiation by ethtool
+Date:   Thu, 23 Aug 2018 09:54:18 +0200
+Message-Id: <20180823075512.116535440@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823075505.090246914@linuxfoundation.org>
 References: <20180823075505.090246914@linuxfoundation.org>
@@ -52,32 +53,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arun Kumar Neelakantam <aneela@codeaurora.org>
+From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 
-[ Upstream commit fdf5fd3975666804118e62c69de25dc85cc0909c ]
+[ Upstream commit 53a710b5044d8475faa6813000b6dd659400ef7b ]
 
-The broadcast node id should only be sent with the control port id.
+Since commit 35b5f6b1a82b ("PHYLIB: Locking fixes for PHY I/O
+potentially sleeping") phy_start_aneg() function utilizes a mutex
+to serialize changes to phy state, however the helper function is
+called in atomic context.
 
-Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
+The bug can be reproduced by running "ethtool -r" command, the bug
+is reported if CONFIG_DEBUG_ATOMIC_SLEEP build option is enabled.
+
+Fixes: dc19e4e5e02f ("sh: sh_eth: Add support ethtool")
+Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/qrtr/qrtr.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/ethernet/renesas/sh_eth.c |   10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
---- a/net/qrtr/qrtr.c
-+++ b/net/qrtr/qrtr.c
-@@ -710,6 +710,10 @@ static int qrtr_sendmsg(struct socket *s
- 	node = NULL;
- 	if (addr->sq_node == QRTR_NODE_BCAST) {
- 		enqueue_fn = qrtr_bcast_enqueue;
-+		if (addr->sq_port != QRTR_PORT_CTRL) {
-+			release_sock(sk);
-+			return -ENOTCONN;
-+		}
- 	} else if (addr->sq_node == ipc->us.sq_node) {
- 		enqueue_fn = qrtr_local_enqueue;
- 	} else {
+--- a/drivers/net/ethernet/renesas/sh_eth.c
++++ b/drivers/net/ethernet/renesas/sh_eth.c
+@@ -2156,18 +2156,10 @@ static void sh_eth_get_regs(struct net_d
+ 
+ static int sh_eth_nway_reset(struct net_device *ndev)
+ {
+-	struct sh_eth_private *mdp = netdev_priv(ndev);
+-	unsigned long flags;
+-	int ret;
+-
+ 	if (!ndev->phydev)
+ 		return -ENODEV;
+ 
+-	spin_lock_irqsave(&mdp->lock, flags);
+-	ret = phy_start_aneg(ndev->phydev);
+-	spin_unlock_irqrestore(&mdp->lock, flags);
+-
+-	return ret;
++	return phy_start_aneg(ndev->phydev);
+ }
+ 
+ static u32 sh_eth_get_msglevel(struct net_device *ndev)
 
 
