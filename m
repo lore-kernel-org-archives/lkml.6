@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2177DC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:00:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8E2AC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:00:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5D1D208CC
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:00:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5D1D208CC
+	by mail.kernel.org (Postfix) with ESMTP id 9DDF9208CC
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 09:00:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DDF9208CC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388227AbeHWM3M (ORCPT
+        id S2388239AbeHWM3Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:29:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54920 "EHLO
+        Thu, 23 Aug 2018 08:29:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55162 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728180AbeHWM3M (ORCPT
+        with ESMTP id S1728180AbeHWM3P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:29:12 -0400
+        Thu, 23 Aug 2018 08:29:15 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 81D4CCB5;
-        Thu, 23 Aug 2018 09:00:29 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AF739CC9;
+        Thu, 23 Aug 2018 09:00:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Scott Teel <scott.teel@microsemi.com>,
-        Kevin Barnett <kevin.barnett@microsemi.com>,
-        Don Brace <don.brace@microsemi.com>,
+        stable@vger.kernel.org, Saurav Kashyap <saurav.kashyap@cavium.com>,
+        Chad Dupuis <chad.dupuis@cavium.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 234/324] scsi: hpsa: correct enclosure sas address
-Date:   Thu, 23 Aug 2018 09:55:00 +0200
-Message-Id: <20180823075007.828571858@linuxfoundation.org>
+Subject: [PATCH 4.17 235/324] scsi: qedf: Send the driver state to MFW
+Date:   Thu, 23 Aug 2018 09:55:01 +0200
+Message-Id: <20180823075007.878702274@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -53,77 +52,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Don Brace <don.brace@microsemi.com>
+From: Saurav Kashyap <saurav.kashyap@cavium.com>
 
-[ Upstream commit 01d0e789a14aa735ddcfddd468ef06d4f917e06d ]
+[ Upstream commit 6ac174756dfc9884f08b23af840ca911155f5578 ]
 
-The original complaint was the lsscsi -t showed the same SAS address of the
-two enclosures (SEP devices). In fact the SAS address was being set to the
-Enclosure Logical Identifier (ELI).
+Need to notify firmware when driver is loaded and unloaded.
 
-Reviewed-by: Scott Teel <scott.teel@microsemi.com>
-Reviewed-by: Kevin Barnett <kevin.barnett@microsemi.com>
-Signed-off-by: Don Brace <don.brace@microsemi.com>
+Signed-off-by: Saurav Kashyap <saurav.kashyap@cavium.com>
+Signed-off-by: Chad Dupuis <chad.dupuis@cavium.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/hpsa.c |   25 +++++++++++++++++++++----
- drivers/scsi/hpsa.h |    1 +
- 2 files changed, 22 insertions(+), 4 deletions(-)
+ drivers/scsi/qedf/qedf_main.c |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
---- a/drivers/scsi/hpsa.c
-+++ b/drivers/scsi/hpsa.c
-@@ -3438,11 +3438,11 @@ static void hpsa_get_enclosure_info(stru
- 	struct ext_report_lun_entry *rle = &rlep->LUN[rle_index];
- 	u16 bmic_device_index = 0;
+--- a/drivers/scsi/qedf/qedf_main.c
++++ b/drivers/scsi/qedf/qedf_main.c
+@@ -3241,6 +3241,11 @@ static int __qedf_probe(struct pci_dev *
  
--	bmic_device_index = GET_BMIC_DRIVE_NUMBER(&rle->lunid[0]);
--
--	encl_dev->sas_address =
-+	encl_dev->eli =
- 		hpsa_get_enclosure_logical_identifier(h, scsi3addr);
+ 	init_completion(&qedf->flogi_compl);
  
-+	bmic_device_index = GET_BMIC_DRIVE_NUMBER(&rle->lunid[0]);
++	status = qed_ops->common->update_drv_state(qedf->cdev, true);
++	if (status)
++		QEDF_ERR(&(qedf->dbg_ctx),
++			"Failed to send drv state to MFW.\n");
 +
- 	if (encl_dev->target == -1 || encl_dev->lun == -1) {
- 		rc = IO_OK;
- 		goto out;
-@@ -9695,7 +9695,24 @@ hpsa_sas_get_linkerrors(struct sas_phy *
- static int
- hpsa_sas_get_enclosure_identifier(struct sas_rphy *rphy, u64 *identifier)
+ 	memset(&link_params, 0, sizeof(struct qed_link_params));
+ 	link_params.link_up = true;
+ 	status = qed_ops->common->set_link(qedf->cdev, &link_params);
+@@ -3289,6 +3294,7 @@ static int qedf_probe(struct pci_dev *pd
+ static void __qedf_remove(struct pci_dev *pdev, int mode)
  {
--	*identifier = rphy->identify.sas_address;
-+	struct Scsi_Host *shost = phy_to_shost(rphy);
-+	struct ctlr_info *h;
-+	struct hpsa_scsi_dev_t *sd;
-+
-+	if (!shost)
-+		return -ENXIO;
-+
-+	h = shost_to_hba(shost);
-+
-+	if (!h)
-+		return -ENXIO;
-+
-+	sd = hpsa_find_device_by_sas_rphy(h, rphy);
-+	if (!sd)
-+		return -ENXIO;
-+
-+	*identifier = sd->eli;
-+
- 	return 0;
- }
+ 	struct qedf_ctx *qedf;
++	int rc;
  
---- a/drivers/scsi/hpsa.h
-+++ b/drivers/scsi/hpsa.h
-@@ -68,6 +68,7 @@ struct hpsa_scsi_dev_t {
- #define RAID_CTLR_LUNID "\0\0\0\0\0\0\0\0"
- 	unsigned char device_id[16];    /* from inquiry pg. 0x83 */
- 	u64 sas_address;
-+	u64 eli;			/* from report diags. */
- 	unsigned char vendor[8];        /* bytes 8-15 of inquiry data */
- 	unsigned char model[16];        /* bytes 16-31 of inquiry data */
- 	unsigned char rev;		/* byte 2 of inquiry data */
+ 	if (!pdev) {
+ 		QEDF_ERR(NULL, "pdev is NULL.\n");
+@@ -3383,6 +3389,12 @@ static void __qedf_remove(struct pci_dev
+ 		qed_ops->common->set_power_state(qedf->cdev, PCI_D0);
+ 		pci_set_drvdata(pdev, NULL);
+ 	}
++
++	rc = qed_ops->common->update_drv_state(qedf->cdev, false);
++	if (rc)
++		QEDF_ERR(&(qedf->dbg_ctx),
++			"Failed to send drv state to MFW.\n");
++
+ 	qed_ops->common->slowpath_stop(qedf->cdev);
+ 	qed_ops->common->remove(qedf->cdev);
+ 
 
 
