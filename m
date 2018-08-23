@@ -6,39 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8467EC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:10:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F3FEC4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:10:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44D6A206B2
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:10:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44D6A206B2
+	by mail.kernel.org (Postfix) with ESMTP id EA3E9206B2
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:10:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA3E9206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729479AbeHWLi2 (ORCPT
+        id S1729493AbeHWLic (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:38:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45316 "EHLO
+        Thu, 23 Aug 2018 07:38:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45344 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726476AbeHWLi1 (ORCPT
+        with ESMTP id S1726476AbeHWLic (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:38:27 -0400
+        Thu, 23 Aug 2018 07:38:32 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 65D99C9A;
-        Thu, 23 Aug 2018 08:10:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8DBDCC9D;
+        Thu, 23 Aug 2018 08:10:05 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 052/130] selftests/x86/sigreturn/64: Fix spurious failures on AMD CPUs
-Date:   Thu, 23 Aug 2018 09:52:48 +0200
-Message-Id: <20180823074930.577165162@linuxfoundation.org>
+Subject: [PATCH 4.9 079/130] netfilter: x_tables: set module owner for icmp(6) matches
+Date:   Thu, 23 Aug 2018 09:53:15 +0200
+Message-Id: <20180823074932.395530434@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
 References: <20180823074927.161454870@linuxfoundation.org>
@@ -55,94 +51,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andy Lutomirski <luto@kernel.org>
+From: Florian Westphal <fw@strlen.de>
 
-[ Upstream commit ec348020566009d3da9b99f07c05814d13969c78 ]
+[ Upstream commit d376bef9c29b3c65aeee4e785fffcd97ef0a9a81 ]
 
-When I wrote the sigreturn test, I didn't realize that AMD's busted
-IRET behavior was different from Intel's busted IRET behavior:
+nft_compat relies on xt_request_find_match to increment
+refcount of the module that provides the match/target.
 
-On AMD CPUs, the CPU leaks the high 32 bits of the kernel stack pointer
-to certain userspace contexts.  Gee, thanks.  There's very little
-the kernel can do about it.  Modify the test so it passes.
+The (builtin) icmp matches did't set the module owner so it
+was possible to rmmod ip(6)tables while icmp extensions were still in use.
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/86e7fd3564497f657de30a36da4505799eebef01.1530076529.git.luto@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/x86/sigreturn.c |   46 ++++++++++++++++++++------------
- 1 file changed, 29 insertions(+), 17 deletions(-)
+ net/ipv4/netfilter/ip_tables.c  |    1 +
+ net/ipv6/netfilter/ip6_tables.c |    1 +
+ 2 files changed, 2 insertions(+)
 
---- a/tools/testing/selftests/x86/sigreturn.c
-+++ b/tools/testing/selftests/x86/sigreturn.c
-@@ -612,19 +612,38 @@ static int test_valid_sigreturn(int cs_b
- 		greg_t req = requested_regs[i], res = resulting_regs[i];
- 		if (i == REG_TRAPNO || i == REG_IP)
- 			continue;	/* don't care */
--		if (i == REG_SP) {
--			printf("\tSP: %llx -> %llx\n", (unsigned long long)req,
--			       (unsigned long long)res);
+--- a/net/ipv4/netfilter/ip_tables.c
++++ b/net/ipv4/netfilter/ip_tables.c
+@@ -1913,6 +1913,7 @@ static struct xt_match ipt_builtin_mt[]
+ 		.checkentry = icmp_checkentry,
+ 		.proto      = IPPROTO_ICMP,
+ 		.family     = NFPROTO_IPV4,
++		.me	    = THIS_MODULE,
+ 	},
+ };
  
-+		if (i == REG_SP) {
- 			/*
--			 * In many circumstances, the high 32 bits of rsp
--			 * are zeroed.  For example, we could be a real
--			 * 32-bit program, or we could hit any of a number
--			 * of poorly-documented IRET or segmented ESP
--			 * oddities.  If this happens, it's okay.
-+			 * If we were using a 16-bit stack segment, then
-+			 * the kernel is a bit stuck: IRET only restores
-+			 * the low 16 bits of ESP/RSP if SS is 16-bit.
-+			 * The kernel uses a hack to restore bits 31:16,
-+			 * but that hack doesn't help with bits 63:32.
-+			 * On Intel CPUs, bits 63:32 end up zeroed, and, on
-+			 * AMD CPUs, they leak the high bits of the kernel
-+			 * espfix64 stack pointer.  There's very little that
-+			 * the kernel can do about it.
-+			 *
-+			 * Similarly, if we are returning to a 32-bit context,
-+			 * the CPU will often lose the high 32 bits of RSP.
- 			 */
--			if (res == (req & 0xFFFFFFFF))
--				continue;  /* OK; not expected to work */
-+
-+			if (res == req)
-+				continue;
-+
-+			if (cs_bits != 64 && ((res ^ req) & 0xFFFFFFFF) == 0) {
-+				printf("[NOTE]\tSP: %llx -> %llx\n",
-+				       (unsigned long long)req,
-+				       (unsigned long long)res);
-+				continue;
-+			}
-+
-+			printf("[FAIL]\tSP mismatch: requested 0x%llx; got 0x%llx\n",
-+			       (unsigned long long)requested_regs[i],
-+			       (unsigned long long)resulting_regs[i]);
-+			nerrs++;
-+			continue;
- 		}
+--- a/net/ipv6/netfilter/ip6_tables.c
++++ b/net/ipv6/netfilter/ip6_tables.c
+@@ -1934,6 +1934,7 @@ static struct xt_match ip6t_builtin_mt[]
+ 		.checkentry = icmp6_checkentry,
+ 		.proto      = IPPROTO_ICMPV6,
+ 		.family     = NFPROTO_IPV6,
++		.me	    = THIS_MODULE,
+ 	},
+ };
  
- 		bool ignore_reg = false;
-@@ -663,13 +682,6 @@ static int test_valid_sigreturn(int cs_b
- 		}
- 
- 		if (requested_regs[i] != resulting_regs[i] && !ignore_reg) {
--			/*
--			 * SP is particularly interesting here.  The
--			 * usual cause of failures is that we hit the
--			 * nasty IRET case of returning to a 16-bit SS,
--			 * in which case bits 16:31 of the *kernel*
--			 * stack pointer persist in ESP.
--			 */
- 			printf("[FAIL]\tReg %d mismatch: requested 0x%llx; got 0x%llx\n",
- 			       i, (unsigned long long)requested_regs[i],
- 			       (unsigned long long)resulting_regs[i]);
 
 
