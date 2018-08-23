@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00590C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:48:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D7D6C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:48:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B93D12077B
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:48:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B93D12077B
+	by mail.kernel.org (Postfix) with ESMTP id 50CF52077B
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:48:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50CF52077B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732886AbeHWMQr (ORCPT
+        id S1732944AbeHWMQu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:16:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50772 "EHLO
+        Thu, 23 Aug 2018 08:16:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50780 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727445AbeHWMQq (ORCPT
+        with ESMTP id S1727445AbeHWMQt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:16:46 -0400
+        Thu, 23 Aug 2018 08:16:49 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9BD6BBC1;
-        Thu, 23 Aug 2018 08:48:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D4D15BE0;
+        Thu, 23 Aug 2018 08:48:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhenzhong Duan <zhenzhong.duan@oracle.com>,
-        Borislav Petkov <bp@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Srinivas REDDY Eeda <srinivas.eeda@oracle.com>,
+        stable@vger.kernel.org, Hangbin Liu <liuhangbin@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 091/324] x86/microcode/intel: Fix memleak in save_microcode_patch()
-Date:   Thu, 23 Aug 2018 09:52:37 +0200
-Message-Id: <20180823075000.402568886@linuxfoundation.org>
+Subject: [PATCH 4.17 092/324] ipv6: mcast: fix unsolicited report interval after receiving querys
+Date:   Thu, 23 Aug 2018 09:52:38 +0200
+Message-Id: <20180823075000.448779151@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -53,39 +51,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+From: Hangbin Liu <liuhangbin@gmail.com>
 
-[ Upstream commit 0218c766263e70795c5eaa17d75ed54bca350950 ]
+[ Upstream commit 6c6da92808442908287fae8ebb0ca041a52469f4 ]
 
-Free useless ucode_patch entry when it's replaced.
+After recieving MLD querys, we update idev->mc_maxdelay with max_delay
+from query header. This make the later unsolicited reports have the same
+interval with mc_maxdelay, which means we may send unsolicited reports with
+long interval time instead of default configured interval time.
 
-[ bp: Drop the memfree_patch() two-liner. ]
+Also as we will not call ipv6_mc_reset() after device up. This issue will
+be there even after leave the group and join other groups.
 
-Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Srinivas REDDY Eeda <srinivas.eeda@oracle.com>
-Link: http://lkml.kernel.org/r/888102f0-fd22-459d-b090-a1bd8a00cb2b@default
+Fixes: fc4eba58b4c14 ("ipv6: make unsolicited report intervals configurable for mld")
+Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/microcode/intel.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ net/ipv6/mcast.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/arch/x86/kernel/cpu/microcode/intel.c
-+++ b/arch/x86/kernel/cpu/microcode/intel.c
-@@ -190,8 +190,11 @@ static void save_microcode_patch(void *d
- 			p = memdup_patch(data, size);
- 			if (!p)
- 				pr_err("Error allocating buffer %p\n", data);
--			else
-+			else {
- 				list_replace(&iter->plist, &p->plist);
-+				kfree(iter->data);
-+				kfree(iter);
-+			}
- 		}
+--- a/net/ipv6/mcast.c
++++ b/net/ipv6/mcast.c
+@@ -2081,7 +2081,8 @@ void ipv6_mc_dad_complete(struct inet6_d
+ 		mld_send_initial_cr(idev);
+ 		idev->mc_dad_count--;
+ 		if (idev->mc_dad_count)
+-			mld_dad_start_timer(idev, idev->mc_maxdelay);
++			mld_dad_start_timer(idev,
++					    unsolicited_report_interval(idev));
  	}
+ }
  
+@@ -2093,7 +2094,8 @@ static void mld_dad_timer_expire(struct
+ 	if (idev->mc_dad_count) {
+ 		idev->mc_dad_count--;
+ 		if (idev->mc_dad_count)
+-			mld_dad_start_timer(idev, idev->mc_maxdelay);
++			mld_dad_start_timer(idev,
++					    unsolicited_report_interval(idev));
+ 	}
+ 	in6_dev_put(idev);
+ }
+@@ -2451,7 +2453,8 @@ static void mld_ifc_timer_expire(struct
+ 	if (idev->mc_ifc_count) {
+ 		idev->mc_ifc_count--;
+ 		if (idev->mc_ifc_count)
+-			mld_ifc_start_timer(idev, idev->mc_maxdelay);
++			mld_ifc_start_timer(idev,
++					    unsolicited_report_interval(idev));
+ 	}
+ 	in6_dev_put(idev);
+ }
 
 
