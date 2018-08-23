@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F25BC4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:11:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33162C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:11:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 125C820C0C
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:11:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 125C820C0C
+	by mail.kernel.org (Postfix) with ESMTP id EC22120C0C
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:11:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC22120C0C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729828AbeHWLjr (ORCPT
+        id S1729839AbeHWLjv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 07:39:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45750 "EHLO
+        Thu, 23 Aug 2018 07:39:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45762 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728548AbeHWLjq (ORCPT
+        with ESMTP id S1727420AbeHWLju (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 07:39:46 -0400
+        Thu, 23 Aug 2018 07:39:50 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AF59EBB6;
-        Thu, 23 Aug 2018 08:11:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 75776BB6;
+        Thu, 23 Aug 2018 08:11:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Willem de Bruijn <willemb@google.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 104/130] packet: reset network header if packet shorter than ll reserved space
-Date:   Thu, 23 Aug 2018 09:53:40 +0200
-Message-Id: <20180823074933.826287939@linuxfoundation.org>
+Subject: [PATCH 4.9 105/130] qlogic: check kstrtoul() for errors
+Date:   Thu, 23 Aug 2018 09:53:41 +0200
+Message-Id: <20180823074933.885552047@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
 References: <20180823074927.161454870@linuxfoundation.org>
@@ -51,35 +51,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Willem de Bruijn <willemb@google.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 993675a3100b16a4c80dfd70cbcde8ea7127b31d ]
+[ Upstream commit 5fc853cc01c68f84984ecc2d5fd777ecad78240f ]
 
-If variable length link layer headers result in a packet shorter
-than dev->hard_header_len, reset the network header offset. Else
-skb->mac_len may exceed skb->len after skb_mac_reset_len.
+We accidentally left out the error handling for kstrtoul().
 
-packet_sendmsg_spkt already has similar logic.
-
-Fixes: b84bbaf7a6c8 ("packet: in packet_snd start writing at link layer allocation")
-Signed-off-by: Willem de Bruijn <willemb@google.com>
+Fixes: a520030e326a ("qlcnic: Implement flash sysfs callback for 83xx adapter")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/packet/af_packet.c |    2 ++
+ drivers/net/ethernet/qlogic/qlcnic/qlcnic_sysfs.c |    2 ++
  1 file changed, 2 insertions(+)
 
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -2917,6 +2917,8 @@ static int packet_snd(struct socket *soc
- 			goto out_free;
- 	} else if (reserve) {
- 		skb_reserve(skb, -reserve);
-+		if (len < reserve)
-+			skb_reset_network_header(skb);
- 	}
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sysfs.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sysfs.c
+@@ -1128,6 +1128,8 @@ static ssize_t qlcnic_83xx_sysfs_flash_w
+ 	struct qlcnic_adapter *adapter = dev_get_drvdata(dev);
  
- 	/* Returns -EFAULT on error */
+ 	ret = kstrtoul(buf, 16, &data);
++	if (ret)
++		return ret;
+ 
+ 	switch (data) {
+ 	case QLC_83XX_FLASH_SECTOR_ERASE_CMD:
 
 
