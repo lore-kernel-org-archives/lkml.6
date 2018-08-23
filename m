@@ -6,41 +6,36 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D38C0C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CE58C4321D
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A0DE208DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A0DE208DA
+	by mail.kernel.org (Postfix) with ESMTP id E71F720839
+	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 08:53:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E71F720839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388054AbeHWMWB (ORCPT
+        id S2388067AbeHWMWE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 08:22:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51968 "EHLO
+        Thu, 23 Aug 2018 08:22:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51986 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728574AbeHWMWA (ORCPT
+        with ESMTP id S1728574AbeHWMWD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 08:22:00 -0400
+        Thu, 23 Aug 2018 08:22:03 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 54215C83;
-        Thu, 23 Aug 2018 08:53:20 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A5D29C74;
+        Thu, 23 Aug 2018 08:53:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhen Lei <thunder.leizhen@huawei.com>,
-        Dmitriy Vyukov <dvyukov@google.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Libin <huawei.libin@huawei.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org,
+        Wang Dongsheng <dongsheng.wang@hxt-semitech.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.17 180/324] kasan: fix shadow_size calculation error in kasan_module_alloc
-Date:   Thu, 23 Aug 2018 09:54:06 +0200
-Message-Id: <20180823075005.215242923@linuxfoundation.org>
+Subject: [PATCH 4.17 181/324] net: phy: marvell: change default m88e1510 LED configuration
+Date:   Thu, 23 Aug 2018 09:54:07 +0200
+Message-Id: <20180823075005.264686687@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180823074955.885811006@linuxfoundation.org>
 References: <20180823074955.885811006@linuxfoundation.org>
@@ -57,69 +52,126 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zhen Lei <thunder.leizhen@huawei.com>
+From: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
 
-[ Upstream commit 1e8e18f694a52d703665012ca486826f64bac29d ]
+[ Upstream commit 077772468ec141b22e1e7c0c58bc09e2f9dc8762 ]
 
-There is a special case that the size is "(N << KASAN_SHADOW_SCALE_SHIFT)
-Pages plus X", the value of X is [1, KASAN_SHADOW_SCALE_SIZE-1].  The
-operation "size >> KASAN_SHADOW_SCALE_SHIFT" will drop X, and the
-roundup operation can not retrieve the missed one page.  For example:
-size=0x28006, PAGE_SIZE=0x1000, KASAN_SHADOW_SCALE_SHIFT=3, we will get
-shadow_size=0x5000, but actually we need 6 pages.
+The m88e1121 LED default configuration does not apply m88e151x.
+So add a function to relpace m88e1121 LED configuration.
 
-  shadow_size = round_up(size >> KASAN_SHADOW_SCALE_SHIFT, PAGE_SIZE);
-
-This can lead to a kernel crash when kasan is enabled and the value of
-mod->core_layout.size or mod->init_layout.size is like above.  Because
-the shadow memory of X has not been allocated and mapped.
-
-move_module:
-  ptr = module_alloc(mod->core_layout.size);
-  ...
-  memset(ptr, 0, mod->core_layout.size);		//crashed
-
-  Unable to handle kernel paging request at virtual address ffff0fffff97b000
-  ......
-  Call trace:
-    __asan_storeN+0x174/0x1a8
-    memset+0x24/0x48
-    layout_and_allocate+0xcd8/0x1800
-    load_module+0x190/0x23e8
-    SyS_finit_module+0x148/0x180
-
-Link: http://lkml.kernel.org/r/1529659626-12660-1-git-send-email-thunder.leizhen@huawei.com
-Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
-Reviewed-by: Dmitriy Vyukov <dvyukov@google.com>
-Acked-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Hanjun Guo <guohanjun@huawei.com>
-Cc: Libin <huawei.libin@huawei.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/kasan/kasan.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/net/phy/marvell.c   |   54 +++++++++++++++++++++++++++++---------------
+ include/linux/marvell_phy.h |    2 +
+ 2 files changed, 38 insertions(+), 18 deletions(-)
 
---- a/mm/kasan/kasan.c
-+++ b/mm/kasan/kasan.c
-@@ -619,12 +619,13 @@ void kasan_kfree_large(void *ptr, unsign
- int kasan_module_alloc(void *addr, size_t size)
+--- a/drivers/net/phy/marvell.c
++++ b/drivers/net/phy/marvell.c
+@@ -130,8 +130,9 @@
+ #define MII_88E1318S_PHY_WOL_CTRL_CLEAR_WOL_STATUS		BIT(12)
+ #define MII_88E1318S_PHY_WOL_CTRL_MAGIC_PACKET_MATCH_ENABLE	BIT(14)
+ 
+-#define MII_88E1121_PHY_LED_CTRL	16
++#define MII_PHY_LED_CTRL	        16
+ #define MII_88E1121_PHY_LED_DEF		0x0030
++#define MII_88E1510_PHY_LED_DEF		0x1177
+ 
+ #define MII_M1011_PHY_STATUS		0x11
+ #define MII_M1011_PHY_STATUS_1000	0x8000
+@@ -632,8 +633,40 @@ error:
+ 	return err;
+ }
+ 
++static void marvell_config_led(struct phy_device *phydev)
++{
++	u16 def_config;
++	int err;
++
++	switch (MARVELL_PHY_FAMILY_ID(phydev->phy_id)) {
++	/* Default PHY LED config: LED[0] .. Link, LED[1] .. Activity */
++	case MARVELL_PHY_FAMILY_ID(MARVELL_PHY_ID_88E1121R):
++	case MARVELL_PHY_FAMILY_ID(MARVELL_PHY_ID_88E1318S):
++		def_config = MII_88E1121_PHY_LED_DEF;
++		break;
++	/* Default PHY LED config:
++	 * LED[0] .. 1000Mbps Link
++	 * LED[1] .. 100Mbps Link
++	 * LED[2] .. Blink, Activity
++	 */
++	case MARVELL_PHY_FAMILY_ID(MARVELL_PHY_ID_88E1510):
++		def_config = MII_88E1510_PHY_LED_DEF;
++		break;
++	default:
++		return;
++	}
++
++	err = phy_write_paged(phydev, MII_MARVELL_LED_PAGE, MII_PHY_LED_CTRL,
++			      def_config);
++	if (err < 0)
++		pr_warn("Fail to config marvell phy LED.\n");
++}
++
+ static int marvell_config_init(struct phy_device *phydev)
  {
- 	void *ret;
-+	size_t scaled_size;
- 	size_t shadow_size;
- 	unsigned long shadow_start;
++	/* Set defalut LED */
++	marvell_config_led(phydev);
++
+ 	/* Set registers from marvell,reg-init DT property */
+ 	return marvell_of_reg_init(phydev);
+ }
+@@ -813,21 +846,6 @@ static int m88e1111_config_init(struct p
+ 	return genphy_soft_reset(phydev);
+ }
  
- 	shadow_start = (unsigned long)kasan_mem_to_shadow(addr);
--	shadow_size = round_up(size >> KASAN_SHADOW_SCALE_SHIFT,
--			PAGE_SIZE);
-+	scaled_size = (size + KASAN_SHADOW_MASK) >> KASAN_SHADOW_SCALE_SHIFT;
-+	shadow_size = round_up(scaled_size, PAGE_SIZE);
+-static int m88e1121_config_init(struct phy_device *phydev)
+-{
+-	int err;
+-
+-	/* Default PHY LED config: LED[0] .. Link, LED[1] .. Activity */
+-	err = phy_write_paged(phydev, MII_MARVELL_LED_PAGE,
+-			      MII_88E1121_PHY_LED_CTRL,
+-			      MII_88E1121_PHY_LED_DEF);
+-	if (err < 0)
+-		return err;
+-
+-	/* Set marvell,reg-init configuration from device tree */
+-	return marvell_config_init(phydev);
+-}
+-
+ static int m88e1318_config_init(struct phy_device *phydev)
+ {
+ 	if (phy_interrupt_is_valid(phydev)) {
+@@ -841,7 +859,7 @@ static int m88e1318_config_init(struct p
+ 			return err;
+ 	}
  
- 	if (WARN_ON(!PAGE_ALIGNED(shadow_start)))
- 		return -EINVAL;
+-	return m88e1121_config_init(phydev);
++	return marvell_config_init(phydev);
+ }
+ 
+ static int m88e1510_config_init(struct phy_device *phydev)
+@@ -2090,7 +2108,7 @@ static struct phy_driver marvell_drivers
+ 		.features = PHY_GBIT_FEATURES,
+ 		.flags = PHY_HAS_INTERRUPT,
+ 		.probe = &m88e1121_probe,
+-		.config_init = &m88e1121_config_init,
++		.config_init = &marvell_config_init,
+ 		.config_aneg = &m88e1121_config_aneg,
+ 		.read_status = &marvell_read_status,
+ 		.ack_interrupt = &marvell_ack_interrupt,
+--- a/include/linux/marvell_phy.h
++++ b/include/linux/marvell_phy.h
+@@ -27,6 +27,8 @@
+  */
+ #define MARVELL_PHY_ID_88E6390		0x01410f90
+ 
++#define MARVELL_PHY_FAMILY_ID(id)	((id) >> 4)
++
+ /* struct phy_device dev_flags definitions */
+ #define MARVELL_PHY_M1145_FLAGS_RESISTANCE	0x00000001
+ #define MARVELL_PHY_M1118_DNS323_LEDS		0x00000002
 
 
