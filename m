@@ -2,139 +2,113 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DCD7C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 20:25:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27DA7C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 20:32:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2843220A8B
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 20:25:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFEC120A8B
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 20:32:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kECkC1co"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2843220A8B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G0vjn4Rp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFEC120A8B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727996AbeHYABH (ORCPT
+        id S1727261AbeHYAJE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 20:01:07 -0400
-Received: from mail-pg1-f180.google.com ([209.85.215.180]:39208 "EHLO
-        mail-pg1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726992AbeHYABH (ORCPT
+        Fri, 24 Aug 2018 20:09:04 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:43251 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726728AbeHYAJE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 20:01:07 -0400
-Received: by mail-pg1-f180.google.com with SMTP id m3-v6so3868899pgp.6
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 13:24:57 -0700 (PDT)
+        Fri, 24 Aug 2018 20:09:04 -0400
+Received: by mail-pf1-f194.google.com with SMTP id j26-v6so5034336pfi.10;
+        Fri, 24 Aug 2018 13:32:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=vQ7YkvZDBEk0QYXp/hSQnQMhPW+zEyToXWO8rFBSm/w=;
-        b=kECkC1coZk5PSz64P+ABtgtOtZ0yGc+W+gYyO/rfNUqE+pBxIBANswdQ94W3ExPHYt
-         AZatevfqSYmAig6DlzB1GaQ8S2TiTbgrCb7C7UXc/0ztaT2CjqlHTIhg0LgJt4fX+Z4u
-         6NLTgjX/5RwcSgtAkG705ePbR/wX1XLMTskYg7O2xBAfI2DZAfaab2/30PafoMMRfZZU
-         3IpWogJMqEIPqYwi/mFPz0eoufRxzO//Is2SU+fZB8QpaRnSc6AhBRjIOKzvBsUEAcYm
-         56lAbIm5050e+ufj0QTVLROhoVy6GB8WLSDEnuvwoCOLL4HWvDXtzTgxyZPvVsEYhcvT
-         aegw==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=d5/EeagCYp5yRsfBdWnmEMLlTzipxCg1f/U5p4y54jc=;
+        b=G0vjn4RpPQAMkpi/X6Tn+szvYOV75wgOnNcaeTCtb76U3b6yrytsqAQ+Dlya5Hzdow
+         k3MpM3+WL1w+/fJMzjLSw8Ue7gjGF3t9TbzaP2yMb7b865lACEdK0b4WkA0PfFzYANEI
+         fkoUU1NQLqdEOBwR8gmGK/R5Q0S108R9kKvvmFqF4hugh7sAaW0DRUsVqdOnDeSTBXrU
+         q9mIUV43jDQ3bpIBKQ52OHiebAW2JO7chrMNttziwd7S+NRwXFrU4aOoWdGZnN7daawN
+         jZhTT0kWbbuiS5ouZuSaQBGiRHNSZuYmkTh0unCyTqNgKW2O393HQgMBFIBCpPZt3/2D
+         q/Vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=vQ7YkvZDBEk0QYXp/hSQnQMhPW+zEyToXWO8rFBSm/w=;
-        b=IA7Iz+q3pT0XhMB7MDbItoJtINwPAyviUYtWvqjUJRRHeIQ1BNTNqMuaKOQVd2WgnU
-         WvTgfEfBpLPmIKVXmkKYCReYWc55qQc5Pm9NDF5E/o7oFmg/1ON4QVG98A0Un2zTzPRX
-         ZJmhDdLt3fYPGJ4JLE6sRyTG518i50dd2uDaRxsk6TyC+l5qxtTJQpqUBMeDWIQjo4RL
-         4ctWITAea3WulRY8OR6iY4hA17DLkfCcbwvYieghFVUpiZsj8iMv7vzpRnTwW4KQd7qL
-         h1txR+h0GqgZeOZaw4qMHCks1i+WD/dfVh3qUW0tzE9Yry7aO6YNzoSMCZCwly1Fcssf
-         8BsQ==
-X-Gm-Message-State: APzg51ByTasJWGyEXBQNo4YKTZxup3fG7A/z4abbDAsigeCL0vv010y/
-        aqE3xw3n/A9Jj2OlTBd7Lb8=
-X-Google-Smtp-Source: ANB0VdaIdg4/OktQwAlny42uC9MkmOcb+Im1Sqodwg8qwpi7KqlvgQ/qIVKHSZILImKiazMLnuDrmA==
-X-Received: by 2002:a65:594b:: with SMTP id g11-v6mr3034600pgu.260.1535142297361;
-        Fri, 24 Aug 2018 13:24:57 -0700 (PDT)
-Received: from [10.33.114.204] ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id c128-v6sm7854662pfa.177.2018.08.24.13.24.56
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=d5/EeagCYp5yRsfBdWnmEMLlTzipxCg1f/U5p4y54jc=;
+        b=OjFIrW6+XH8dnkTyyDxIrinyBhRvNPsLoTVVzZj+gGQH1l49t5F8TGivhnzvfBPFLN
+         V21ck2eiTLQ4BgF6mX0FAAigpi7NK+ZHQSHK5gQ9UE5T1JSShcXN/5+yCDWWzlDuz+4y
+         H1LsZQAM+rwVMPAPtrxxsA2TA1ZDzmK7hS/A2tlOhq+leuoISPIuEbtSyvATjljsr1MY
+         3Ga1RPlLTt0qVuHt4K1fDq8o6wcrEtw4r2Y1+D0AwgUeeXkdTfzu87CZAnnY80xF4l0+
+         vGvKmiqR0nem32mNuQZqU4Cwnwc3AIGSPDQ70xwwcH7pe2vqeW43+StDQe2Nft9df6lo
+         8zoQ==
+X-Gm-Message-State: APzg51Coavni9HTuCQaFpfWkeZtrb8ODTcdl306adcIjF0EyrDbu84so
+        lnG9w45H1q40gh0gEzuKzv4=
+X-Google-Smtp-Source: ANB0Vda/skoLS6ZuvvkeRA2yu+ChL+OUdgUK+6lKc+0MThHpxOvDpBebdW/qE49vdpvNNt6D3MtJzQ==
+X-Received: by 2002:a63:e516:: with SMTP id r22-v6mr3112754pgh.170.1535142772530;
+        Fri, 24 Aug 2018 13:32:52 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id x23-v6sm8880391pff.9.2018.08.24.13.32.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 Aug 2018 13:24:56 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
-Subject: Re: TLB flushes on fixmap changes
-From:   Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <CA+55aFzerzTPm94jugheVmWg8dJre94yu+GyZGT9NNZanNx_qw@mail.gmail.com>
-Date:   Fri, 24 Aug 2018 13:24:54 -0700
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Benjamin Herrenschmidt <benh@au1.ibm.com>,
-        Nick Piggin <npiggin@gmail.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Rik van Riel <riel@surriel.com>,
-        Jann Horn <jannh@google.com>,
-        Adin Scannell <ascannell@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        David Miller <davem@davemloft.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Content-Transfer-Encoding: 7bit
-Message-Id: <9A38D3F4-2F75-401D-8B4D-83A844C9061B@gmail.com>
-References: <20180822153012.173508681@infradead.org>
- <20180822154046.823850812@infradead.org>
- <20180822155527.GF24124@hirez.programming.kicks-ass.net>
- <20180823134525.5f12b0d3@roar.ozlabs.ibm.com>
- <CA+55aFxneZTFxxxAjLZmj92VUJg6z7hERxJ2cHoth-GC0RuELw@mail.gmail.com>
- <776104d4c8e4fc680004d69e3a4c2594b638b6d1.camel@au1.ibm.com>
- <CA+55aFzM77G9-Q6LboPLJ=5gHma66ZQKiMGCMqXoKABirdF98w@mail.gmail.com>
- <20180823133958.GA1496@brain-police>
- <20180824084717.GK24124@hirez.programming.kicks-ass.net>
- <D74A89DF-0D89-4AB6-8A6B-93BEC9A83595@gmail.com>
- <20180824180438.GS24124@hirez.programming.kicks-ass.net>
- <56A9902F-44BE-4520-A17C-26650FCC3A11@gmail.com>
- <CA+55aFzerzTPm94jugheVmWg8dJre94yu+GyZGT9NNZanNx_qw@mail.gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-X-Mailer: Apple Mail (2.3445.9.1)
+        Fri, 24 Aug 2018 13:32:51 -0700 (PDT)
+Date:   Fri, 24 Aug 2018 13:32:51 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Roland Dreier <roland@purestorage.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
+        matt@codeblueprint.co.uk, bp@suse.de,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>, luto@kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>, bp@alien8.de,
+        brgerst@gmail.com, davej@codemonkey.org.uk, dvlasenk@redhat.com,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        sai.praneeth.prakhya@intel.com, sds@tycho.nsa.gov,
+        Thomas Gleixner <tglx@linutronix.de>, toshi.kani@hp.com,
+        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Yazen.Ghannam@amd.com,
+        Guillaume Tucker <guillaume.tucker@collabora.com>
+Subject: Re: [PATCH 4.4 103/105] Revert "x86/mm/pat: Ensure cpa->pfn only
+ contains page frame numbers"
+Message-ID: <20180824203251.GD18715@roeck-us.net>
+References: <20171215092305.994559179@linuxfoundation.org>
+ <20171215092311.347628971@linuxfoundation.org>
+ <CAL1RGDVgShymmT+TJ3mAHEL7n+qoisk6mQ=Tji_T=0d_QA=VKw@mail.gmail.com>
+ <1535129126.2902.36.camel@codethink.co.uk>
+ <CAL1RGDW1Lo+F5D479Jsi-AFsmjVpdDre_qOFSCwWubG6U=bxeQ@mail.gmail.com>
+ <20180824191749.GA15489@kroah.com>
+ <CAL1RGDXUx-frpWuuYyc-VrAEoOU2+irGQPRWvoBzO2ZxEPGrww@mail.gmail.com>
+ <20180824201025.GB18715@roeck-us.net>
+ <CAL1RGDXa2POjmrr8UK-2oYyQtxYxiOs5t9BrpGUHRXqkDjMW5w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAL1RGDXa2POjmrr8UK-2oYyQtxYxiOs5t9BrpGUHRXqkDjMW5w@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-at 12:31 PM, Linus Torvalds <torvalds@linux-foundation.org> wrote:
-
-> On Fri, Aug 24, 2018 at 11:36 AM Nadav Amit <nadav.amit@gmail.com> wrote:
->>> Urgh.. weren't the fixmaps per cpu? Bah, I remember looking at this
->>> during PTI, but I seem to have forgotten everything again.
->> 
->> [ Changed the title. Sorry for hijacking the thread. ]
->> 
->> Since:
->> 
->> native_set_fixmap()->set_pte_vaddr()->pgd_offset_k()
+On Fri, Aug 24, 2018 at 01:16:18PM -0700, Roland Dreier wrote:
+> > Sounds great. I'll hold off with sending my RFT series and wait for your
+> > test results. I think we'll also need d367cef0a7f0c6 ("x86/mm/pat: Fix
+> > boot crash when 1GB pages are not supported by the CPU").
 > 
-> The fixmaps should be entirely fixed after bootup to constant
-> mappings, except for the KMAP ones, and they are indexed per-cpu.
+> Sure, makes sense - I don't have any EFI systems with CPUs old enough
+> not to support 1G pages but that looks reasonable.  I'll pull that
+> into my tree as well.
 > 
-> That's what my mental model is, at least.
-> 
-> Can you actually find something that changes the fixmaps after boot
-> (again, ignoring kmap)?
+kernelci reported a crash on a CPU which doesn't support 1G pages.
+See https://kernelci.org/boot/id/5b7d39ea59b514c03796ba9c/
 
-At least the alternatives mechanism appears to do so.
- 
-IIUC the following path is possible when adding a module:
-
-	jump_label_add_module()
-	->__jump_label_update()
-	->arch_jump_label_transform()
-	->__jump_label_transform()
-	->text_poke_bp()
-	->text_poke()
-	->set_fixmap()
-	
-And a similar path can happen when static_key_enable/disable() is called.
-
+Guenter
