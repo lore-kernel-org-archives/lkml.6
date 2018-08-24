@@ -3,170 +3,128 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE48AC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 14:51:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E7B9C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 14:52:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58AF321477
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 14:51:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA39E21477
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 14:52:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gTsNO+9p"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58AF321477
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="bCWpFvbR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA39E21477
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727501AbeHXS0n (ORCPT
+        id S1727547AbeHXS1G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 14:26:43 -0400
-Received: from mail-wm0-f46.google.com ([74.125.82.46]:51033 "EHLO
-        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726642AbeHXS0n (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 14:26:43 -0400
-Received: by mail-wm0-f46.google.com with SMTP id s12-v6so1858746wmc.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 07:51:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Z/I/DuwmLzDRme4kwBTXQ216vRK7u+qCq0RafqbitLs=;
-        b=gTsNO+9pR0hvc286CEZLFQy0aRe22Q/96xdMaa3QO0OV77bTshb3FXVLh51WHbqmdk
-         zZDyEZmqaf9jT6hLVa21GFDgT4NponnsQm8Z2HvIGKheXJVmKGt57M5O65ZbE8sTUPnc
-         w4xfq9U9DeEMnrVOffDFUcHmzm+XHIH/xgYus=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Z/I/DuwmLzDRme4kwBTXQ216vRK7u+qCq0RafqbitLs=;
-        b=QKn4uJF6SwxxBpiVjeoFLJ3CL5P99ZOPM/ukO/mQBroBlGapF4xtwc3kH+5If5U/bw
-         XOzL0ft8WAns+tGs1apFxOfbpNYmeUIVR6OP+ABM+YZa0bHA+HFegY5bjaEX1GjwTM/8
-         n7i9922iE5JrtwKou9jL3qOvNvzGHLxLwA/+ay3u83fn4WyHw9F31y1wVxwWk1aCXE/w
-         D8fC861sVFadtosd3lk7GxAd0zroYkMAKsh6dwUXC0aU6hv4Jh7KtRIT1hShFklFSQWb
-         QZFTlGxaOGC4eDUi1781unQAJogW4ywWWd1MWKH2Z96asYhbaNZHIYwDqbIbhkdIjKaO
-         tAvA==
-X-Gm-Message-State: APzg51D2VpRS3hbQG/ZGH2MRNjhzlQtdcaiiuh+7BjS6RlOp2fdj9XD+
-        b3vU8cGKy99JV2JfLu+Rwtyyr9B9uOo=
-X-Google-Smtp-Source: ANB0VdYgJtRgDfnNAvFlBMjmNQPyCxsDy5cbB6B9z65a75mbG0SdHZ/gZq+fZVpmtETRhE9q4tjsXA==
-X-Received: by 2002:a1c:7e13:: with SMTP id z19-v6mr1507543wmc.156.1535122301653;
-        Fri, 24 Aug 2018 07:51:41 -0700 (PDT)
-Received: from [10.44.66.8] ([212.45.67.2])
-        by smtp.googlemail.com with ESMTPSA id v46-v6sm11576164wrc.63.2018.08.24.07.51.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 Aug 2018 07:51:41 -0700 (PDT)
-Subject: Re: [PATCH v7 2/8] dt-bindings: Introduce interconnect provider
- bindings
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Rob Herring <robh@kernel.org>, linux-pm@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mike Turquette <mturquette@baylibre.com>, khilman@baylibre.com,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        skannan@codeaurora.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        seansw@qti.qualcomm.com, daidavid1@codeaurora.org,
-        evgreen@chromium.org, Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Alexandre Bailon <abailon@baylibre.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-References: <20180731161340.13000-1-georgi.djakov@linaro.org>
- <20180731161340.13000-3-georgi.djakov@linaro.org>
- <CABGGisxq+hf91R18pnZ=VZ9f99GssWWPhpPCjNAROJmKg5-udA@mail.gmail.com>
- <e114ed83-fd54-4952-f375-e1d94826ac6e@linaro.org>
- <20180820153207.xx5outviph7ec76p@flea>
-From:   Georgi Djakov <georgi.djakov@linaro.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=georgi.djakov@linaro.org; prefer-encrypt=mutual; keydata=
- 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
- KEmKjLDvB0pePJkdTw==
-Message-ID: <672e6c6c-222f-5e7f-5d0c-acc8da68b1ab@linaro.org>
-Date:   Fri, 24 Aug 2018 17:51:37 +0300
-MIME-Version: 1.0
-In-Reply-To: <20180820153207.xx5outviph7ec76p@flea>
-Content-Type: text/plain; charset=windows-1252
+        Fri, 24 Aug 2018 14:27:06 -0400
+Received: from mail-eopbgr20049.outbound.protection.outlook.com ([40.107.2.49]:36717
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726360AbeHXS1F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 14:27:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TQyiCWnAzwneRg7Aez1afvSnhPHv8pFI6cs/tEUlBc4=;
+ b=bCWpFvbRGDQBGoDfSDrFE++pcGqidUP/TyHcRVuo5gKhsTORsszHXf53qWZBMNrVWPFTUy6UkhKvCiNV6vGSX0zhUe0P22Knwx63YuaxjhCDM96VJy0bawSjmzwTB77cPrgKeKUlVuTkB7ENerYxIQsyzXTwvhEFgkYfGa4a85k=
+Received: from DB6PR0402MB2727.eurprd04.prod.outlook.com (10.172.245.17) by
+ DB6PR0402MB2711.eurprd04.prod.outlook.com (10.172.245.13) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1059.23; Fri, 24 Aug 2018 14:52:02 +0000
+Received: from DB6PR0402MB2727.eurprd04.prod.outlook.com
+ ([fe80::6414:aa98:7db2:a4dd]) by DB6PR0402MB2727.eurprd04.prod.outlook.com
+ ([fe80::6414:aa98:7db2:a4dd%12]) with mapi id 15.20.1080.015; Fri, 24 Aug
+ 2018 14:52:02 +0000
+From:   Roy Pledge <roy.pledge@nxp.com>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Leo Li <leoyang.li@nxp.com>
+CC:     "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] soc: fsl: qbman: qman_portal: defer probing when qman
+ is not available
+Thread-Topic: [PATCH 1/2] soc: fsl: qbman: qman_portal: defer probing when
+ qman is not available
+Thread-Index: AQHUOylQ2NNkF5RWl0WF1A0TtXJBEw==
+Date:   Fri, 24 Aug 2018 14:52:02 +0000
+Message-ID: <DB6PR0402MB27276B417034E7356B0CFA5886360@DB6PR0402MB2727.eurprd04.prod.outlook.com>
+References: <20180823213600.23426-1-alexandre.belloni@bootlin.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=roy.pledge@nxp.com; 
+x-originating-ip: [192.88.158.246]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB6PR0402MB2711;6:8fWK7Jq5ly3g5jtCVlChuuPVbS/S675wTNQ7AQgi1yJDLDJv6L1BMo4qF7435K4QwpAz3m5akk/Oe13WFTG+LSzMN0ZhOAx6w/p587XgO19r1y3aU7IfwDeO1GBW3IE86JCAHqUCyJAJhDIVXbxwGW+98G1CdwNDMjE4wsdqrF7792hUmqJRk3TGFxZd2fmB02f4liD0ZRJ/ALEwWQB8v1bUBW7jf4OlhGn8YcV4vs1diboqqRqEMhcteM9XC2z0WblPBxokVXWcfd08UOvDQTF9lv5Lf9E1FX6rTYSdr5+WqZQ8H7FtZhZTGXLi3yw/5LA41F0ydcNyk8nXSqXp5poMwTD5UipVTi5QH+OFijtBSa1HuxDiSqczIX8rGkeeEhL7ozeVIL58xrCFXF8ykuPaPXlL4HMQzRDwiv2TesbcDOCXYEdm7ujT/MrUUbCjGW+0ArFPwaS71mqpdzVN1A==;5:ESrkpydySK82MSbbgvENwloC2LePZ0/NXC9h9qgOiDZGN7AERZSX8FbG2tDtJCCaUa/TA9lEzQvMbEX0/Q5PR9GiQsNCzTh9a30IFn366LjyV3LMkww+oEUX73mvFH4O4Xu8FsGprL4ZHZuAqNc9kS+vmAoX6qtquqMa2rAJ/os=;7:nOMKKk5w21JdIRtp1U/Ybsl7FRfWbDtL5nWrs2FN0Mx5YtA4z4I05iGZbqvVXYl6AOeIyWyxPAbpiGVTgfHy2YILviB1ZTb5yJfCyoY/8ZgmFGy4ImEqSd3n1NGprVqyIZRLFcCS9RUxmRqT1RTozKr+yN1f/B6iXZfHoL2I6GOK3EssXBknoDv8ElwcdR7zHAKWq7IO+JbncaOywBjrwmOqRp3GqiFOTWPOCex0r4OdidO55RY2n7kn2/rLjXBt
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: c9ec9d67-c7f3-4724-5370-08d609d1271a
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB6PR0402MB2711;
+x-ms-traffictypediagnostic: DB6PR0402MB2711:
+x-microsoft-antispam-prvs: <DB6PR0402MB27117A8273B1AB5CA093435A86360@DB6PR0402MB2711.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(185117386973197);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823301075)(3002001)(10201501046)(3231311)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201708071742011)(7699016);SRVR:DB6PR0402MB2711;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0402MB2711;
+x-forefront-prvs: 07749F8C42
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(346002)(396003)(376002)(136003)(366004)(189003)(199004)(53546011)(99286004)(26005)(186003)(76176011)(6436002)(97736004)(6636002)(33656002)(446003)(476003)(7696005)(486006)(5250100002)(256004)(14444005)(81166006)(81156014)(229853002)(478600001)(55016002)(53936002)(8676002)(14454004)(44832011)(9686003)(6506007)(2900100001)(8936002)(106356001)(68736007)(74316002)(2906002)(6246003)(7736002)(305945005)(6116002)(3846002)(316002)(110136005)(54906003)(86362001)(105586002)(102836004)(66066001)(5660300001)(25786009)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0402MB2711;H:DB6PR0402MB2727.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: jBuXaubSXoE3t3f8zVhGBKcDXnQE8zuXTa4/umX0T0QqtitlCmL2FB10K0Tgsuwdy59h0QMdmWbfz8J4jjguyOJCV2RJxowL9KPHL8DKkWuYe6O1PIGeEF7B0Cwbz0LUzG9ozVFdFlWIz7XSjPkbSh+2zLL5hSV3xOrhssYWGuKdkR0o36F/JhTXU9pZPUiLWlM6Z6DrMon9S5y7kgmma/kpB3o/eJ/MFk2xHFY/s+TPWiaoKhUp2NHqHcP9katdidXpIktSPCldGePOd54cqK4k2bwGETyYVRO8CHA5xC8j7cU72bPa4ZPKADd0Wcr0w+QfrskvQWRc4hU/sQpMz7bIWBieFKzUYjai/JiSiUk=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c9ec9d67-c7f3-4724-5370-08d609d1271a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Aug 2018 14:52:02.6694
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0402MB2711
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maxime,
-
-On 08/20/2018 06:32 PM, Maxime Ripard wrote:
-> Hi Georgi,
-> 
-> On Tue, Aug 07, 2018 at 05:54:38PM +0300, Georgi Djakov wrote:
->>> There is also a patch series from Maxime Ripard that's addressing the
->>> same general area. See "dt-bindings: Add a dma-parent property". We
->>> don't need multiple ways to address describing the device to memory
->>> paths, so you all had better work out a common solution.
->>
->> Looks like this fits exactly into the interconnect API concept. I see
->> MBUS as interconnect provider and display/camera as consumers, that
->> report their bandwidth needs. I am also planning to add support for
->> priority.
-> 
-> Thanks for working on this. After looking at your serie, the one thing
-> I'm a bit uncertain about (and the most important one to us) is how we
-> would be able to tell through which interconnect the DMA are done.
-> 
-> This is important to us since our topology is actually quite simple as
-> you've seen, but the RAM is not mapped on that bus and on the CPU's,
-> so we need to apply an offset to each buffer being DMA'd.
-
-Ok, i see - your problem is not about bandwidth scaling but about using
-different memory ranges by the driver to access the same location. So
-this is not really the same and your problem is different. Also the
-interconnect bindings are describing a path and endpoints. However i am
-open to any ideas.
-
-Thanks,
-Georgi
+On 8/23/2018 5:36 PM, Alexandre Belloni wrote:=0A=
+> If the qman driver (qman_ccsr) doesn't probe or fail to probe before=0A=
+> qman_portal, qm_ccsr_start will be either NULL or a stale pointer to an=
+=0A=
+> unmapped page.=0A=
+>=0A=
+> This leads to a crash when probing  qman_portal as the init_pcfg function=
+=0A=
+> calls qman_liodn_fixup that tries to read qman registers.=0A=
+>=0A=
+> Assume that qman didn't probe when the pool mask is 0.=0A=
+>=0A=
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>=0A=
+> ---=0A=
+>  drivers/soc/fsl/qbman/qman_portal.c | 2 ++=0A=
+>  1 file changed, 2 insertions(+)=0A=
+>=0A=
+> diff --git a/drivers/soc/fsl/qbman/qman_portal.c b/drivers/soc/fsl/qbman/=
+qman_portal.c=0A=
+> index a120002b630e..4fc80d2c8feb 100644=0A=
+> --- a/drivers/soc/fsl/qbman/qman_portal.c=0A=
+> +++ b/drivers/soc/fsl/qbman/qman_portal.c=0A=
+> @@ -277,6 +277,8 @@ static int qman_portal_probe(struct platform_device *=
+pdev)=0A=
+>  	}=0A=
+>  =0A=
+>  	pcfg->pools =3D qm_get_pools_sdqcr();=0A=
+> +	if (pcfg->pools =3D=3D 0)=0A=
+> +		return -EPROBE_DEFER;=0A=
+>  =0A=
+>  	spin_lock(&qman_lock);=0A=
+>  	cpu =3D cpumask_next_zero(-1, &portal_cpus);=0A=
+=0A=
+Reviewed-by: Roy Pledge <roy.pledge@nxp.com>=0A=
+=0A=
+=0A=
