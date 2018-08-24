@@ -6,41 +6,43 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A12A7C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 12:55:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78C58C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 12:57:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DC6C21564
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 12:55:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DC6C21564
+	by mail.kernel.org (Postfix) with ESMTP id 257A621564
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 12:57:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 257A621564
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727561AbeHXQaE (ORCPT
+        id S1727298AbeHXQb5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 12:30:04 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:47950 "EHLO mail.bootlin.com"
+        Fri, 24 Aug 2018 12:31:57 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:47963 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726636AbeHXQaE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 12:30:04 -0400
+        id S1726556AbeHXQb4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 12:31:56 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id B4E48207A3; Fri, 24 Aug 2018 14:55:30 +0200 (CEST)
+        id 608AF2072C; Fri, 24 Aug 2018 14:57:23 +0200 (CEST)
 Received: from bbrezillon (AAubervilliers-681-1-53-19.w90-88.abo.wanadoo.fr [90.88.170.19])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 6300020728;
-        Fri, 24 Aug 2018 14:55:20 +0200 (CEST)
-Date:   Fri, 24 Aug 2018 14:55:19 +0200
+        by mail.bootlin.com (Postfix) with ESMTPSA id C01C2206A6;
+        Fri, 24 Aug 2018 14:57:19 +0200 (CEST)
+Date:   Fri, 24 Aug 2018 14:57:18 +0200
 From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-mtd@lists.infradead.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
+To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
         Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH] mtd: rawnand: denali: do not pass zero maxchips to
- nand_scan()
-Message-ID: <20180824145519.330133a4@bbrezillon>
-In-Reply-To: <1534839799-14112-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1534839799-14112-1-git-send-email-yamada.masahiro@socionext.com>
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] mtd: rawnand: ams-delta: Set port direction when
+ needed
+Message-ID: <20180824145718.07defe03@bbrezillon>
+In-Reply-To: <20180820213904.13475-4-jmkrzyszt@gmail.com>
+References: <20180813223448.21316-1-jmkrzyszt@gmail.com>
+        <20180820213904.13475-1-jmkrzyszt@gmail.com>
+        <20180820213904.13475-4-jmkrzyszt@gmail.com>
 X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -50,70 +52,147 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Masahiro,
+On Mon, 20 Aug 2018 23:39:04 +0200
+Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
 
-On Tue, 21 Aug 2018 17:23:19 +0900
-Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+> In its current shape, the driver sets data port direction before each
+> byte read/write operation, even during multi-byte transfers.  Improve
+> performance of the driver by setting the port direction only when
+> needed.
+> 
+> This optimisation will become particularly important as soon as
+> planned conversion of the driver to GPIO API for data I/O will be
+> implemented.
+> 
+> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 
-> Commit 49aa76b16676 ("mtd: rawnand: do not execute nand_scan_ident()
-> if maxchips is zero") gave a new meaning for calling nand_scan_ident()
-> with maxchips=0.
-> 
-> It is a special usage for some drivers such as docg4, but in fact
-> the Denali driver may pass maxchips=0 to nand_scan() when the driver
-> is enabled but no NAND chip is found on the board for some reasons.
-> 
-> If nand_scan_with_ids() is called with maxchips=0, nand_scan_ident()
-> is skipped, i.e. nand_set_defaults() is skipped.  Therefore, the
-> driver must have set chip->controller beforehand.  Otherwise,
-> nand_attach() causes NULL pointer dereference.
-> 
-> In fact, the Denali controller knows the number of connected chips
-> before calling nand_scan_ident(); if DEVICE_RESET fails, there is no
-> chip in that chip select.  Then, denali_reset_banks() sets the maxchips
-> to the number of detected chips.  If no chip is found, it is zero.
-> 
-> The reason of this trick was, as commit f486287d2372 ("mtd: nand:
-> denali: fix bank reset function to detect the number of chips")
-> explained, nand_scan_ident() issued Set Features (0xEF) command
-> to all CS lines, some of which may not be connected with a chip.
-> Then, the driver would wait until R/B# response, which never happens.
-> 
-> This problem was solved by commit 107b7d6a7ad4 ("mtd: rawnand: avoid
-> setting again the timings to mode 0 after a reset").  In the current
-> code, nand_setup_data_interface() is called from nand_scan_tail(),
-> which is after the chip detection is done.
-> 
-> Remove the code that is causing NULL pointer dereference.  Now, the
-> maxchips passed to nand_scan() is the maximum number of chip selects
-> supported by the IP (typically 4 or 8).  Leave all the chip detection
-> process to nand_scan_ident().
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
+
 > ---
+>  drivers/mtd/nand/raw/ams-delta.c | 68 ++++++++++++++++++++++++++--------------
+>  1 file changed, 45 insertions(+), 23 deletions(-)
 > 
->  drivers/mtd/nand/raw/denali.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/mtd/nand/raw/denali.c b/drivers/mtd/nand/raw/denali.c
-> index ca18612..3e4b8e1 100644
-> --- a/drivers/mtd/nand/raw/denali.c
-> +++ b/drivers/mtd/nand/raw/denali.c
-> @@ -1086,7 +1086,6 @@ static void denali_reset_banks(struct denali_nand_info *denali)
->  	}
+> diff --git a/drivers/mtd/nand/raw/ams-delta.c b/drivers/mtd/nand/raw/ams-delta.c
+> index 48233d638d2a..4d5e5790f18e 100644
+> --- a/drivers/mtd/nand/raw/ams-delta.c
+> +++ b/drivers/mtd/nand/raw/ams-delta.c
+> @@ -45,6 +45,7 @@ struct ams_delta_nand {
+>  	struct gpio_desc	*gpiod_ale;
+>  	struct gpio_desc	*gpiod_cle;
+>  	void __iomem		*io_base;
+> +	bool			data_in;
+>  };
 >  
->  	dev_dbg(denali->dev, "%d chips connected\n", i);
-> -	denali->max_banks = i;
-
-Shouldn't we instead avoid calling nand_scan() when
-denali->max_banks=0? I mean, what's the point of calling this function
-if you know for sure it will fail.
-
-Last question: do we still need this denali_reset_banks()? If it's only
-about resetting the chip to detect how many are actually present,
-that's already done by nand_scan().
-
+>  /*
+> @@ -72,50 +73,65 @@ static const struct mtd_partition partition_info[] = {
+>  	  .size		=  3 * SZ_256K },
+>  };
+>  
+> -static void ams_delta_write_byte(struct mtd_info *mtd, u_char byte)
+> +static void ams_delta_io_write(struct ams_delta_nand *priv, u8 byte)
+>  {
+> -	struct nand_chip *this = mtd_to_nand(mtd);
+> -	struct ams_delta_nand *priv = nand_get_controller_data(this);
+> -	void __iomem *io_base = priv->io_base;
+> -
+> -	writew(0, io_base + OMAP_MPUIO_IO_CNTL);
+> -	writew(byte, this->IO_ADDR_W);
+> +	writew(byte, priv->nand_chip.IO_ADDR_W);
+>  	gpiod_set_value(priv->gpiod_nwe, 0);
+>  	ndelay(40);
+>  	gpiod_set_value(priv->gpiod_nwe, 1);
 >  }
 >  
->  static void denali_hw_init(struct denali_nand_info *denali)
+> -static u_char ams_delta_read_byte(struct mtd_info *mtd)
+> +static u8 ams_delta_io_read(struct ams_delta_nand *priv)
+>  {
+> -	u_char res;
+> -	struct nand_chip *this = mtd_to_nand(mtd);
+> -	struct ams_delta_nand *priv = nand_get_controller_data(this);
+> -	void __iomem *io_base = priv->io_base;
+> +	u8 res;
+>  
+>  	gpiod_set_value(priv->gpiod_nre, 0);
+>  	ndelay(40);
+> -	writew(~0, io_base + OMAP_MPUIO_IO_CNTL);
+> -	res = readw(this->IO_ADDR_R);
+> +	res = readw(priv->nand_chip.IO_ADDR_R);
+>  	gpiod_set_value(priv->gpiod_nre, 1);
+>  
+>  	return res;
+>  }
+>  
+> -static void ams_delta_write_buf(struct mtd_info *mtd, const u_char *buf,
+> -				int len)
+> +static void ams_delta_dir_input(struct ams_delta_nand *priv, bool in)
+>  {
+> +	writew(in ? ~0 : 0, priv->io_base + OMAP_MPUIO_IO_CNTL);
+> +	priv->data_in = in;
+> +}
+> +
+> +static void ams_delta_write_buf(struct mtd_info *mtd, const u8 *buf, int len)
+> +{
+> +	struct nand_chip *this = mtd_to_nand(mtd);
+> +	struct ams_delta_nand *priv = nand_get_controller_data(this);
+>  	int i;
+>  
+> -	for (i=0; i<len; i++)
+> -		ams_delta_write_byte(mtd, buf[i]);
+> +	if (priv->data_in)
+> +		ams_delta_dir_input(priv, false);
+> +
+> +	for (i = 0; i < len; i++)
+> +		ams_delta_io_write(priv, buf[i]);
+>  }
+>  
+> -static void ams_delta_read_buf(struct mtd_info *mtd, u_char *buf, int len)
+> +static void ams_delta_read_buf(struct mtd_info *mtd, u8 *buf, int len)
+>  {
+> +	struct nand_chip *this = mtd_to_nand(mtd);
+> +	struct ams_delta_nand *priv = nand_get_controller_data(this);
+>  	int i;
+>  
+> -	for (i=0; i<len; i++)
+> -		buf[i] = ams_delta_read_byte(mtd);
+> +	if (!priv->data_in)
+> +		ams_delta_dir_input(priv, true);
+> +
+> +	for (i = 0; i < len; i++)
+> +		buf[i] = ams_delta_io_read(priv);
+> +}
+> +
+> +static u8 ams_delta_read_byte(struct mtd_info *mtd)
+> +{
+> +	u8 res;
+> +
+> +	ams_delta_read_buf(mtd, &res, 1);
+> +
+> +	return res;
+>  }
+>  
+>  /*
+> @@ -138,8 +154,11 @@ static void ams_delta_hwcontrol(struct mtd_info *mtd, int cmd,
+>  		gpiod_set_value(priv->gpiod_ale, !!(ctrl & NAND_ALE));
+>  	}
+>  
+> -	if (cmd != NAND_CMD_NONE)
+> -		ams_delta_write_byte(mtd, cmd);
+> +	if (cmd != NAND_CMD_NONE) {
+> +		u8 byte = cmd;
+> +
+> +		ams_delta_write_buf(mtd, &byte, 1);
+> +	}
+>  }
+>  
+>  static int ams_delta_nand_ready(struct mtd_info *mtd)
+> @@ -262,6 +281,9 @@ static int ams_delta_init(struct platform_device *pdev)
+>  		goto out_mtd;
+>  	}
+>  
+> +	/* Initialize data port direction to a known state */
+> +	ams_delta_dir_input(priv, true);
+> +
+>  	/* Scan to find existence of the device */
+>  	err = nand_scan(mtd, 1);
+>  	if (err)
 
