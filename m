@@ -6,74 +6,130 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7B53C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 14:33:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09F8BC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 14:39:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B58F208B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 14:33:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B58F208B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=winterdrache.de
+	by mail.kernel.org (Postfix) with ESMTP id AABEA206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 14:39:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AABEA206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726969AbeHXSIg (ORCPT
+        id S1726960AbeHXSOW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 14:08:36 -0400
-Received: from mout.kundenserver.de ([217.72.192.74]:36575 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726264AbeHXSIg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 14:08:36 -0400
-Received: from ninja ([83.135.210.22]) by mrelayeu.kundenserver.de (mreue104
- [212.227.15.183]) with ESMTPSA (Nemesis) id 0Lbqzs-1fU55T0XTQ-00jHGz; Fri, 24
- Aug 2018 16:33:39 +0200
-Date:   Fri, 24 Aug 2018 16:33:38 +0200
-From:   "Matthias B." <matthias@winterdrache.de>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: How to report kernel panic in 4.4.x
-Message-ID: <20180824163338.4bd9db8f@ninja>
-In-Reply-To: <20180824141254.GB31555@kroah.com>
-References: <20180824142408.6340d052@ninja>
-        <20180824125950.GA29673@kroah.com>
-        <20180824154344.1c53a68c@ninja>
-        <20180824141254.GB31555@kroah.com>
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        Fri, 24 Aug 2018 14:14:22 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:49950 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726569AbeHXSOV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 14:14:21 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id B90E322A3D; Fri, 24 Aug 2018 16:39:19 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-53-19.w90-88.abo.wanadoo.fr [90.88.170.19])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 0549622A2B;
+        Fri, 24 Aug 2018 16:39:18 +0200 (CEST)
+Date:   Fri, 24 Aug 2018 16:39:17 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Alban <albeu@free.fr>
+Cc:     Andrew Lunn <andrew@lunn.ch>, linux-doc@vger.kernel.org,
+        Sekhar Nori <nsekhar@ti.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        linux-i2c@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Russell King <linux@armlinux.org.uk>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        David Lechner <david@lechnology.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Sven Van Asbroeck <svendev@arcx.com>,
+        linux-mtd@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+        Lukas Wunner <lukas@wunner.de>, Naren <naren.kernel@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "David S . Miller" <davem@davemloft.net>
+Subject: Re: [PATCH v2 06/29] mtd: Add support for reading MTD devices via
+ the nvmem API
+Message-ID: <20180824163917.6bc349c9@bbrezillon>
+In-Reply-To: <20180823122921.6857d917@tock>
+References: <20180810080526.27207-1-brgl@bgdev.pl>
+        <20180810080526.27207-7-brgl@bgdev.pl>
+        <20180817182720.6a6e5e8e@bbrezillon>
+        <20180819133106.0420df5f@tock>
+        <20180819184609.6dcdbb9a@bbrezillon>
+        <5b8c30b8-41e1-d59e-542b-fef6c6469ff0@linaro.org>
+        <20180820202038.5d3dc195@bbrezillon>
+        <e0ec3194-fd3a-9b3d-fba8-f88447eb56e9@linaro.org>
+        <20180821133916.3a1c51b1@eos>
+        <6db14f9c-edd3-5e43-839c-953bb03097ff@linaro.org>
+        <20180821150121.4408672f@bbrezillon>
+        <20180823122921.6857d917@tock>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:W6OWxyqDgQ36dYE8Iq15dA1b/OkJScIDlVr7wbAGAYnSvdrzJ1J
- qRhh941gFyZI8jTvfkW8osaCOWqdbdjjoJfYTS0mpchGoE79MqsCUuWX//xEMUTl+P0DTl0
- SFpT3xYRgm/swERnw1axOArBWZviRQCFRzPORcIme2MmaP5x+m6txdOoj+j6NUjj2xAmUK8
- QmG7qVSE3tGFanerjnqYw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:tHHHj5oKM/o=:Bj5KdNmXgu/u1bs+MgBMQv
- D6l3D1rQ87rCA3U3mIp/YNByUgCVCbPKue+fUNi1EMEb7vQ56zV57uiq0ggldXqg13LXdPaau
- vIrNMwZKartwkIuun/Na1kV8HE6NZOuajRd02M9zd5C0pW0HLFa9+ViQvCp0FiDc/KjFlRclT
- rAsxYUwAjJdPGwOVGKATbPBFc0drTcftXSxbTyRgXbs5FwC3EvHiHAhbNnmKt9tW2vnH2D5Bd
- SSYB9/K0WoPdpLkEelqKwmCiF7x/zMtUsL0SxuSaKIX4pCPMi2ymBkog45Oaa1sSx9r92jKWY
- qa3vPk6a511Ip/CnmNa3zdCuiczhoV3Xh9td3vNKPpHfZe+X6TjECVUIuVAeIidFbJ39q+0z4
- kC6WLm/ukpJWvJc64DYcK8kOt65wteWlRoqzKrUPwkJ+izuXlynK/5T/UvRougB5AzrFyhFtn
- LS2o1wFwfwD7LUeUDMRwmGdOn9uH21KzyjTmLVNtSBrZxT2DyLHutnx4/z9kliiQw7rvMAslk
- zQg1gVe7aTREG5Sz9TsZMl8VtWMiu44mgdjtR2JIqNxQmHLG4bu/6Eu3VgZ/qwbkYpYx/0Z7O
- nNzaIDDL4lTQQJyVlErKy2NNO1HtprZmWkREP6ARvEnTZIS3pjiT825tn6xFDTLOMMG8+uZhQ
- 1cUiCdnzyds7t4p9b0TZpljSyZPeEUr7YDGier24sWB6aDZQDjCvloFQxiD686HHxX9aZEFDe
- TJ8iOnHJz840hCYr
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 24 Aug 2018 16:12:54 +0200
-Greg KH <gregkh@linuxfoundation.org> wrote:
+On Thu, 23 Aug 2018 12:29:21 +0200
+Alban <albeu@free.fr> wrote:
 
+> On Tue, 21 Aug 2018 15:01:21 +0200
+> Boris Brezillon <boris.brezillon@bootlin.com> wrote:
 > 
-> All of the stable trees are here:
-> 	https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/
-> you want the linux-4.4.y branch to work off of.
+> > On Tue, 21 Aug 2018 13:00:04 +0100
+> > Srinivas Kandagatla <srinivas.kandagatla@linaro.org> wrote:
+> >   
+> > > On 21/08/18 12:39, Alban wrote:    
+> > > > However we still have the a potential address space clash between
+> > > > the nvmem cells and the main device binding.      
+> > > Can you elaborate?
+> > >     
+> > 
+> > Yes, I'd be interested in having a real example too, cause I don't see
+> > what this address space clash is.  
 > 
-> All of the kernels releases are tagged, so you can start with v4.4.147
-> as the good entry for 'git bisect'.
+> Let say I have a device that use the following binding:
+> 
+> device {
+>     compatible = "example-device";
+>     #address-cells = <2>;
+>     #size-cells = <1>;
+> 
+>     child@0,0 {
+>         reg = <0x0 0x0>;
+>         ...
+>     };
+> 
+>     child@1,2 {
+>         reg = <0x1 0x2>;
+>         ...
+>     };
+> 
+> };
+> 
+> Now this binding already use the node address space for something,
+> so putting a nvmem node as direct child would not work. Here it is
+> quiet clear as we have 2 address cells, however even if the number of
+> cells and the cells size would match it would still be conceptually
+> wrong as both bindings then use the same address space for something
+> different.
 
-I've never used git bisect on the kernel. Can I simply do "make" for
-each step or do I need to "make mrproper" every time?
+When would we end up in this situation? MTD/flash nodes are supposed to
+be leaf nodes (if you omit the partitions underneath). What would be
+the case for defining subnodes there?
 
-MSB
+Do you know of any devices that uses such a representation?
