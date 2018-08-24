@@ -2,68 +2,128 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96BBEC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 11:25:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97440C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 11:26:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CB3D21581
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 11:25:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CB3D21581
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 5108621581
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 11:26:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5108621581
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727616AbeHXO7e (ORCPT
+        id S1727642AbeHXPAz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 10:59:34 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:45886 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726462AbeHXO7e (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 10:59:34 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1ftADO-0006EI-5b; Fri, 24 Aug 2018 19:25:18 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1ftADO-0001N0-1T; Fri, 24 Aug 2018 19:25:18 +0800
-Date:   Fri, 24 Aug 2018 19:25:18 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Mikulas Patocka <mpatocka@redhat.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, Mike Snitzer <msnitzer@redhat.com>,
-        dm-devel@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: Deadlock when using crypto API for block devices
-Message-ID: <20180824112517.pct5bwdlhfdtqwil@gondor.apana.org.au>
-References: <alpine.LRH.2.02.1808231621220.8560@file01.intranet.prod.int.rdu2.redhat.com>
- <20180824021010.hfar7gasp34ddrib@gondor.apana.org.au>
- <alpine.LRH.2.02.1808240659320.27014@file01.intranet.prod.int.rdu2.redhat.com>
- <alpine.LRH.2.02.1808240711380.28952@file01.intranet.prod.int.rdu2.redhat.com>
+        Fri, 24 Aug 2018 11:00:55 -0400
+Received: from mx2.suse.de ([195.135.220.15]:32892 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726513AbeHXPAy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 11:00:54 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id BE13AB007;
+        Fri, 24 Aug 2018 11:26:39 +0000 (UTC)
+Subject: Re: [Xen-devel] [PATCH] xen-netfront: wait xenbus state change when
+ load module manually
+To:     Jiri Slaby <jslaby@suse.cz>, Xiao Liang <xiliang@redhat.com>,
+        David Miller <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, boris.ostrovsky@oracle.com,
+        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org
+References: <20180727095608.25210-1-xiliang@redhat.com>
+ <20180729.083040.53901922165497594.davem@davemloft.net>
+ <60e93e09-7dc2-d2f6-379d-c1d086aa1f49@redhat.com>
+ <83ad1e3c-5e3b-8b24-430b-13e12b59ae8b@suse.cz>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <830d73b5-8bbb-4d9a-a004-7aeea0b35067@suse.com>
+Date:   Fri, 24 Aug 2018 13:26:38 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.02.1808240711380.28952@file01.intranet.prod.int.rdu2.redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <83ad1e3c-5e3b-8b24-430b-13e12b59ae8b@suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 24, 2018 at 07:22:19AM -0400, Mikulas Patocka wrote:
->
-> And also ablkcipher_next_slow, ablkcipher_copy_iv, skcipher_next_slow, 
-> skcipher_next_copy, skcipher_copy_iv, blkcipher_next_slow, 
-> blkcipher_copy_iv.
+On 24/08/18 13:12, Jiri Slaby wrote:
+> On 07/30/2018, 10:18 AM, Xiao Liang wrote:
+>> On 07/29/2018 11:30 PM, David Miller wrote:
+>>> From: Xiao Liang <xiliang@redhat.com>
+>>> Date: Fri, 27 Jul 2018 17:56:08 +0800
+>>>
+>>>> @@ -1330,6 +1331,11 @@ static struct net_device
+>>>> *xennet_create_dev(struct xenbus_device *dev)
+>>>>       netif_carrier_off(netdev);
+>>>>         xenbus_switch_state(dev, XenbusStateInitialising);
+>>>> +    wait_event(module_load_q,
+>>>> +               xenbus_read_driver_state(dev->otherend) !=
+>>>> +               XenbusStateClosed &&
+>>>> +               xenbus_read_driver_state(dev->otherend) !=
+>>>> +               XenbusStateUnknown);
+>>>>       return netdev;
+>>>>      exit:
+>>> What performs the wakeups that will trigger for this sleep site?
+>> In my understanding, backend leaving closed/unknow state can trigger the
+>> wakeups. I mean to make sure both sides are ready for creating connection.
 > 
-> So, I think that dropping CRYPTO_TFM_REQ_MAY_SLEEP is not possible.
+> While backporting this to 4.12, I was surprised by the commit the same
+> as Boris and David.
+> 
+> So I assume the explanation is that wake_up_all of module_unload_q in
+> netback_changed wakes also all the processes waiting on module_load_q?
+> If so, what makes sure that module_unload_q is queued and the process is
+> the same as for module_load_q?
 
-These should never trigger for dm-crypt AFAICS since it only
-happens if you provide unaligned input/output.
+How could it? Either the thread is waiting on module_unload_q _or_ on
+module_load_q. It can't wait on two queues at the same time.
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+> To me, it looks rather error-prone. Unless it is erroneous now, at least
+> for future changes. Wouldn't it make sense to wake up module_load_q
+> along with module_unload_q in netback_changed? Or drop module_load_q
+> completely and use only module_unload_q (i.e. in xennet_create_dev too)?
+
+To me this looks just wrong. A thread waiting on module_load_q won't be
+woken up again.
+
+I'd drop module_load_q in favor of module_unload_q.
+
+
+Juergen
+
