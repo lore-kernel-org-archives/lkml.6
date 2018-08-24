@@ -2,91 +2,131 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D3E3C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 01:44:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A822AC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 01:51:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EE5721557
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 01:44:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4876721557
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 01:51:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="L4/g/ciM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EE5721557
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="ioQ+8sEd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4876721557
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726730AbeHXFQ6 (ORCPT
+        id S1726589AbeHXFXh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 01:16:58 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:53738 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725735AbeHXFQ5 (ORCPT
+        Fri, 24 Aug 2018 01:23:37 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:24833 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725735AbeHXFXg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 01:16:57 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7O1iKJ8149346;
-        Fri, 24 Aug 2018 01:44:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=Yu1JHN2dY57YRz2EYuOEzZW2z6YXiEqw308gFNkN+/8=;
- b=L4/g/ciMQ/xNy+GlqZhwLxSwD3bI5NCtVj5sZ8ETcL7UX1YauqC6YFF9M2QpqJ23HoHB
- W8Qx4G7uokTZx3hQnmGfO9oNgP3AkUtGVcQwJQ0yJ4HHnsGiKJhw0a72PrHWZO9Epqrr
- ujoGS5IDYyVt3VegIfL3brVIrzi+SnvIdVjn+eXuwodCBLYlLy0Wis1kmkzLDMG95NF7
- 320AGQclELMWNp7/5ZhPFqz/gYX8U6oY4J+IXpd9qVF8HVFgjlJg3MJwIetww8rjeePq
- KeRTXsQJBHAKbqnuXSaYmFp1WDna0hFQp/+fmQvrMCaO29cur1dLU83wKR/FRgCiloL6 IA== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2130.oracle.com with ESMTP id 2kxavu4krw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 24 Aug 2018 01:44:20 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w7O1iJ9T007872
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 24 Aug 2018 01:44:20 GMT
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7O1iILJ018320;
-        Fri, 24 Aug 2018 01:44:19 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 23 Aug 2018 18:44:18 -0700
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Johannes Thumshirn <jthumshirn@suse.de>,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Ming Lei <ming.lei@redhat.com>,
-        John Garry <john.garry@huawei.com>, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: core: Update SCSI_MQ_DEFAULT help text to match default
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20180821114407.18393-1-geert+renesas@glider.be>
-Date:   Thu, 23 Aug 2018 21:44:16 -0400
-In-Reply-To: <20180821114407.18393-1-geert+renesas@glider.be> (Geert
-        Uytterhoeven's message of "Tue, 21 Aug 2018 13:44:07 +0200")
-Message-ID: <yq1y3cwa68f.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        Fri, 24 Aug 2018 01:23:36 -0400
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id w7O1p74m026483;
+        Fri, 24 Aug 2018 10:51:08 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w7O1p74m026483
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1535075468;
+        bh=kepMZOHvAyRHq2xgQ7f6pd6pvWIyEAnwypZ8JAYcSQg=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=ioQ+8sEdUPDuU0BdDetxGm7V05l7MidW1xrHkF8NzC/D2z3Evkx2VZOikvJm9f+r1
+         wgEVEkhJdn/h8CizWmlIawQWnscmLQ7ZofdoJ01itwElxI9Yk2M17myqnVbwtm2cMR
+         QmO2i18QmWTvGnyx1nJymB/F9QBxRRs5pWp4/LkHW7oLdxPwsaWfcD0WsBsm5EFTG8
+         zfQIm017WNuNbnVusksyuKeFqrv1fpiqEUftFMwSUKTmglfpYup5E8zlM53dZoCYOk
+         Aj5zMs8m4ENJclizSfpilh9k/EEvKIpuVLIfTjSnqQBzwMNvTB1PkcIcMpguncPDZq
+         g8pC9MVEoTaeg==
+X-Nifty-SrcIP: [209.85.222.52]
+Received: by mail-ua1-f52.google.com with SMTP id m26-v6so3142168uap.2;
+        Thu, 23 Aug 2018 18:51:08 -0700 (PDT)
+X-Gm-Message-State: APzg51B5na4dcv9bJMdqFDsw6FhEqxGFMnx1ZT4WDupM88qmmfW6Ilgz
+        5YM9KKv55XKWA54P1wN4f5/pwguXhNJmsFNxy8Q=
+X-Google-Smtp-Source: AA+uWPwkPOcMSOrQ7MY4k3d+vJ/3s+qIg38RCYE7k1e57piskYaclYa2kaOXLlizJhjbbYc5JEL4chZq86ml06MhoKA=
+X-Received: by 2002:ab0:4f17:: with SMTP id n23-v6mr10801384uah.135.1535075467020;
+ Thu, 23 Aug 2018 18:51:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8994 signatures=668707
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=651
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1808240017
+Received: by 2002:ab0:2642:0:0:0:0:0 with HTTP; Thu, 23 Aug 2018 18:50:26
+ -0700 (PDT)
+In-Reply-To: <CAPDyKFoW=wuYZw+VV6TncLgtMbFdvJCfYOzL8xg7x2WimqNN2A@mail.gmail.com>
+References: <1534999460-15111-1-git-send-email-yamada.masahiro@socionext.com>
+ <1534999460-15111-5-git-send-email-yamada.masahiro@socionext.com> <CAPDyKFoW=wuYZw+VV6TncLgtMbFdvJCfYOzL8xg7x2WimqNN2A@mail.gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 24 Aug 2018 10:50:26 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARYEf34cJG8=z4TgbuVAEzn=NMdOTH5tfMryHQX7uJrgg@mail.gmail.com>
+Message-ID: <CAK7LNARYEf34cJG8=z4TgbuVAEzn=NMdOTH5tfMryHQX7uJrgg@mail.gmail.com>
+Subject: Re: [PATCH v3 4/6] mmc: uniphier-sd: add UniPhier SD/eMMC controller driver
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+2018-08-23 19:43 GMT+09:00 Ulf Hansson <ulf.hansson@linaro.org>:
+> [...]
+>
+>> +static void uniphier_sd_external_dma_request(struct tmio_mmc_host *host,
+>> +                                            struct tmio_mmc_data *pdata)
+>> +{
+>> +       struct uniphier_sd_priv *priv = uniphier_sd_priv(host);
+>> +       struct dma_chan *chan;
+>> +
+>> +       chan = dma_request_chan(mmc_dev(host->mmc), "rx-tx");
+>> +       if (IS_ERR(chan)) {
+>> +               dev_warn(mmc_dev(host->mmc),
+>> +                        "failed to request DMA channel. falling back to PIO\n");
+>> +               return; /* just use PIO even for -EPROBE_DEFER */
+>> +       }
+>> +
+>> +       /* this driver uses a single channel for both RX an TX */
+>> +       priv->chan = chan;
+>> +       host->chan_rx = chan;
+>> +       host->chan_tx = chan;
+>> +
+>> +       tasklet_init(&host->dma_issue, uniphier_sd_external_dma_issue,
+>> +                    (unsigned long)host);
+>
+> Isn't it time to get rid of tasklets for tmio?
+>
+> No worries, I don't require that to be changed prior $subject patch,
+> however using threaded IRQs is a justified modernization for the tmio
+> variants.
 
-Geert,
 
-> The default was changed, but the help text was not updated.
+Yeah, I also thought this.
 
-Applied to 4.19/scsi-fixes, thanks!
+But, the irq handler is in the TMIO common code,
+so it would affect Renesas code.
+
+tmio-mmc has lots to be improved.
+Tasklet is not the only problem.
+
+
+Before investing more effort,
+I want working code base for my platform.
+
+
+Anyway, thanks for applying this!
+
+
+
+> [...]
+>
+> Kind regards
+> Uffe
+
+
 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+Best Regards
+Masahiro Yamada
