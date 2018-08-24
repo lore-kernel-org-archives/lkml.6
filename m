@@ -2,78 +2,87 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D10FDC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 09:36:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7E36C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 09:38:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CFC421712
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 09:36:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CFC421712
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 91AC621712
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 09:38:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91AC621712
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726840AbeHXNKd (ORCPT
+        id S1726946AbeHXNMB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 09:10:33 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52814 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726449AbeHXNKd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 09:10:33 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id ABA4B7DAC9;
-        Fri, 24 Aug 2018 09:36:43 +0000 (UTC)
-Received: from xz-x1 (ovpn-12-107.pek2.redhat.com [10.72.12.107])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A2E4A1007260;
-        Fri, 24 Aug 2018 09:36:38 +0000 (UTC)
-Date:   Fri, 24 Aug 2018 17:36:35 +0800
-From:   Peter Xu <peterx@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     mst@redhat.com, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] vhost: correctly check the iova range when waking
- virtqueue
-Message-ID: <20180824093635.GC3020@xz-x1>
-References: <20180824085313.21798-1-jasowang@redhat.com>
+        Fri, 24 Aug 2018 09:12:01 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:39201 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726382AbeHXNMB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 09:12:01 -0400
+Received: by mail-oi0-f65.google.com with SMTP id c190-v6so14295877oig.6;
+        Fri, 24 Aug 2018 02:38:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=sdyzI8+0OBSDs1GL/ET9pqiqRmCg7LygUvQxd91347E=;
+        b=AdvgvXHEpCtA9PZecQ3QSIPBVSjGbDmth0RkNtiApRyOcSrcVrOf5tgC/iURsHntvS
+         /HXIxPjZUP50YS9nGsny9Mpv66cFRu7BXmD6R2eAo1skcouX9fESmurNwaqo1KoJzdHA
+         myYyaPQD4GM8zULYTfIrgpSmOIiBvExcYC3JMDeWmt7CFXx0x5ob0PCKmtuXyMcmyDeb
+         gYaHd9lM0oIkPHubnR5ByHjA+RZTvsMkFstDHfsa9TNtWoPfTkCjV2UY62Gqf2WUJatF
+         ZCK/6Hw4B+V7T50H0eDzbpJGOHXcOAM8GUbY4qDQP2Dryn+5TzXk7gDdEL2sGR6lx8Bh
+         OktQ==
+X-Gm-Message-State: APzg51AbK+8yALVk7kUAbbMpCfVAHV21UWgEpVr5ibRyTqx61fRSAg6Y
+        aSyWkXkYvIsmX4hVqWTGDmhEKM9GPNiA3ecxXCC3ZrEh
+X-Google-Smtp-Source: ANB0VdbzqSGyMXykp8aN0CyEm15oBq7BT/fHet7PdwRbXMxFPCLn8WxiRHQgF2SJl9JyQ9pjOPKt+5Oo7qbsVCmtBSY=
+X-Received: by 2002:aca:1719:: with SMTP id j25-v6mr783381oii.138.1535103490790;
+ Fri, 24 Aug 2018 02:38:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180824085313.21798-1-jasowang@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 24 Aug 2018 09:36:43 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 24 Aug 2018 09:36:43 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'peterx@redhat.com' RCPT:''
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 24 Aug 2018 11:37:59 +0200
+Message-ID: <CAJZ5v0iwVRX+MJ0O2yTDo-mjVaZqv0HzEF0o=TqYKKXr2+p4KA@mail.gmail.com>
+Subject: [GIT PULL] Urgent ACPI Kconfig fix for v4.19-rc1
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 24, 2018 at 04:53:13PM +0800, Jason Wang wrote:
-> We don't wakeup the virtqueue if the first byte of pending iova range
-> is the last byte of the range we just got updated. This will lead a
-> virtqueue to wait for IOTLB updating forever. Fixing by correct the
-> check and wake up the virtqueue in this case.
-> 
-> Fixes: 6b1e6cc7855b ("vhost: new device IOTLB API")
-> Reported-by: Peter Xu <peterx@redhat.com>
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
+Hi Linus,
 
-Without this patch, this command will trigger the IO hang merely every
-time from host to guest:
+Please pull from the tag
 
-  netperf -H 1.2.3.4 -l 5 -t TCP_RR -- -b 100
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ acpi-4.19-rc1-3
 
-After applying, I can run it 10 times continuously without a problem.
+with top-most commit f5d707ede37a962bc3cb9b3f8531a870dae29e46
 
-Reviewed-by: Peter Xu <peterx@redhat.com>
-Tested-by: Peter Xu <peterx@redhat.com>
+ ACPI: fix menuconfig presentation of ACPI submenu
 
-Thanks,
+on top of commit df2def49c57b4146520a1f4ca37bc3f494e2cd67
 
--- 
-Peter Xu
+ Merge tag 'acpi-4.19-rc1-2' of
+git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm
+
+to receive an urgent ACPI Kconfig fix for 4.19-rc1.
+
+This fixes recent menuconfig breakage causing it to present
+ACPI-specific options incorrectly (Arnd Bergmann).
+
+Thanks!
+
+
+---------------
+
+Arnd Bergmann (1):
+      ACPI: fix menuconfig presentation of ACPI submenu
+
+---------------
+
+ drivers/acpi/Kconfig | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
