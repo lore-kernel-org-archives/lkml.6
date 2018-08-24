@@ -2,166 +2,136 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08153C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 11:58:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E35CC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 11:58:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B55F02152B
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 11:58:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B55F02152B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 5627521567
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 11:58:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="j1LZneEX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5627521567
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727753AbeHXPc3 (ORCPT
+        id S1727808AbeHXPdO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 11:32:29 -0400
-Received: from gateway31.websitewelcome.com ([192.185.144.91]:36535 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726891AbeHXPc3 (ORCPT
+        Fri, 24 Aug 2018 11:33:14 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:47056 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727252AbeHXPdO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 11:32:29 -0400
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway31.websitewelcome.com (Postfix) with ESMTP id 44AE01985D
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 06:58:08 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id tAjAfQ0fdSjJAtAjAf5tF3; Fri, 24 Aug 2018 06:58:08 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.73.28] (port=46950 helo=[192.168.1.71])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1ftAj9-000uOc-Ke; Fri, 24 Aug 2018 06:58:07 -0500
-To:     Joe Perches <joe@perches.com>, Kees Cook <keescook@chromium.org>
-Cc:     Johannes Berg <johannes.berg@intel.com>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20180824011540.GA25716@embeddedor.com>
- <CAGXu5jJxbFzKsV1=xHiKtcx+61QBsK0LYMrwo1vGNWgALzqakw@mail.gmail.com>
- <d0ee04ea40bfc2aecd71b3ed1e1d388911b7d6cb.camel@perches.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Subject: Re: [PATCH] iwlwifi: d3: use struct_size() in kzalloc()
-Message-ID: <f6818e31-d2da-82b4-b862-1ffb322f9365@embeddedor.com>
-Date:   Fri, 24 Aug 2018 06:58:05 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Fri, 24 Aug 2018 11:33:14 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w7OBwlce063728;
+        Fri, 24 Aug 2018 06:58:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1535111927;
+        bh=eBmvkdUMPo1o30DqvZgRB1b8zSSc4DCy+QnXS93KUfY=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=j1LZneEXaH4xPKnDqjhLX+oAK2Rx5Zho+5K/FP+2ydDocEjcPVHaSZMIw5rAXGfYu
+         1IyBUcPfWEET+MSYoQgtIuQN92E27mq6Zug/62nulfbRjlEuL2VeRZJvgogIZGqrw/
+         z63zVJL6kr6eaJrA5QATOUcp8F1embp01nURyZmM=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7OBwlOl002372;
+        Fri, 24 Aug 2018 06:58:47 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 24
+ Aug 2018 06:58:47 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Fri, 24 Aug 2018 06:58:47 -0500
+Received: from [172.22.190.165] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7OBwkp7018695;
+        Fri, 24 Aug 2018 06:58:46 -0500
+Subject: Re: [PATCH v5 2/2] leds: lm3697: Introduce the lm3697 driver
+To:     Pavel Machek <pavel@ucw.cz>
+CC:     <robh+dt@kernel.org>, <jacek.anaszewski@gmail.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-leds@vger.kernel.org>
+References: <20180817151528.21623-1-dmurphy@ti.com>
+ <20180817151528.21623-2-dmurphy@ti.com> <20180824100549.GC4045@amd>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <e5abd336-9861-66f3-3991-40cf1302ce8d@ti.com>
+Date:   Fri, 24 Aug 2018 06:58:36 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <d0ee04ea40bfc2aecd71b3ed1e1d388911b7d6cb.camel@perches.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.73.28
-X-Source-L: No
-X-Exim-ID: 1ftAj9-000uOc-Ke
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.71]) [189.250.73.28]:46950
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 11
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20180824100549.GC4045@amd>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joe,
+Jacek
 
-On 8/23/18 11:33 PM, Joe Perches wrote:
-> On Thu, 2018-08-23 at 20:03 -0700, Kees Cook wrote:
->> On Thu, Aug 23, 2018 at 6:15 PM, Gustavo A. R. Silva
->> <gustavo@embeddedor.com> wrote:
->>> One of the more common cases of allocation size calculations is finding
->>> the size of a structure that has a zero-sized array at the end, along
->>> with memory for some number of elements for that array. For example:
->>>
->>> struct foo {
->>>         int stuff;
->>>         void *entry[];
->>> };
+On 08/24/2018 05:05 AM, Pavel Machek wrote:
+> Hi!
 > 
-> Question for Gustavo.
+>> +/**
+>> + * struct lm3697 -
+>> + * @enable_gpio - Hardware enable gpio
+>> + * @regulator - LED supply regulator pointer
+>> + * @client - Pointer to the I2C client
+>> + * @regmap - Devices register map
+>> + * @dev - Pointer to the devices device struct
+>> + * @lock - Lock for reading/writing the device
+>> + * @leds - Array of LED strings.
+>> + */
 > 
-> Did you find any existing instances that are miscalculated?
+> extra .
+> 
+>> +	ret = regmap_write(led->priv->regmap, brt_msb_reg, brt_val);
+>> +	if (ret) {
+>> +		dev_err(&led->priv->client->dev, "Cannot write MSB\n");
+>> +		goto out;
+>> +	}
+>> +out:
+> 
+> I'd avoid this goto.
+> 
+>> +static int lm3697_set_control_bank(struct lm3697 *priv)
+>> +{
+>> +	u8 control_bank_config = 0;
+>> +	struct lm3697_led *led;
+>> +	int ret, i;
+>> +
+>> +	led = &priv->leds[0];
+>> +	if (led->control_bank == LM3697_CONTROL_A)
+>> +		led = &priv->leds[1];
+> 
+> I'd expect CONTROL_A to correspond to leds[0]...?
+> 
+>> +	for (i = 0; i < LM3697_MAX_LED_STRINGS; i++) {
+>> +		if (led->hvled_strings[i] == LM3697_HVLED_ASSIGNMENT)
+>> +			control_bank_config |= 1 << i;
+>> +	}
+> 
+> Extra {}s.
+> 
+>> +	priv->regulator = devm_regulator_get(&priv->client->dev, "vled");
+>> +	if (IS_ERR(priv->regulator))
+>> +		priv->regulator = NULL;
+> 
+> If vled regulator is specified in dt and _get fails, is it worth a
+> warning?
+> 
+> 									Pavel
 > 
 
-I found the following bug:
+Do you want v6 or a new patch on top?
 
-https://lore.kernel.org/patchwork/patch/977357/
+Dan
 
-
-> I believe there are some cases like:
-> 
-> 	size = sizeof(struct foo) + count * sizeof(something);
-> 	ptr = kmalloc(size);
-> 	memset(ptr + sizeof(struct foo), 0, size - sizeof(struct foo));
-> 
-> where something could go wrong and not be detected.
-> 
-
-It might be worth it to write a Coccinelle script for this.
-
---
-Gustavo
-
-
+-- 
+------------------
+Dan Murphy
