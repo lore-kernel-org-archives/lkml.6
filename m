@@ -2,179 +2,206 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 870C6C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 03:00:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C0CEC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 03:00:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDDE421570
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 03:00:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XNcaLagw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDDE421570
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id EB58621570
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 03:00:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB58621570
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727302AbeHXGcd (ORCPT
+        id S1727449AbeHXGcg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 02:32:33 -0400
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:33858 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726554AbeHXGc3 (ORCPT
+        Fri, 24 Aug 2018 02:32:36 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39430 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726554AbeHXGce (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 02:32:29 -0400
-Received: by mail-yw1-f65.google.com with SMTP id y134-v6so2608780ywg.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 19:59:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=W+40nW/kGC407FbZbaA8m0FyhoNg5ILSGFdbeembEdc=;
-        b=XNcaLagw56A1mHXnrepMoHuIY6eQ85xdRB1QIx8oenaTWTzse+n/biry7Yu4m+da5u
-         PRgX69V9WUYiLtedCjzBs5WJK+OOiYcTJKVpsE43YUCQEtTVG5w+Ew0ZI+ow2YdkvoGT
-         2U2kxmzGZTRmEtUd0eWcE/JcIPq2cTY7i+teQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=W+40nW/kGC407FbZbaA8m0FyhoNg5ILSGFdbeembEdc=;
-        b=CDCduTKjOD5xg9edCyryCNbK1HVVu9gN6oY7YVsW9aFWPOl+vdS6bRot2jepiQhup0
-         1xOM1VSAjTJqGkjUU1Bb0WuaQe5KhgFgr6DfaN5iayX4YoXAivDFT6JrpmIXk8uGK5B4
-         5okIktip6AK0ilh7xwIalbl0zmN4eORH9t4O3Ec4nIBb4eoPcqivnPMWH17GEg3MfJGA
-         JQqu6QV+ld6EmwBw3QdjarF4b87Wj6H6bx4qRDeFK6vlaYN5nfYxzh+DDNM9zpg+/2Ay
-         qu10WGJ3hMI4jkDla+MRCGkeY6ajvYdnWm30xn+JW2c1Fz8iH/3TTys5PIb8UjD0iESe
-         /FWQ==
-X-Gm-Message-State: APzg51Bup1caOtFkh+hK88J+b3wqD2LGKigqdtzTSGDuC9Rj83Nh5Bce
-        0GIGF2VNoK1SAnubZu6uYiVdsJV71m4=
-X-Google-Smtp-Source: ANB0Vdb/sXXsOVYWIo05fYKfn7opfImBufE79Zuei0qGyjkG0e/MkDnHLNBGIa4cOFqdcrMhJpe7vw==
-X-Received: by 2002:a0d:e251:: with SMTP id l78-v6mr4615052ywe.218.1535079594099;
-        Thu, 23 Aug 2018 19:59:54 -0700 (PDT)
-Received: from mail-yb0-f177.google.com (mail-yb0-f177.google.com. [209.85.213.177])
-        by smtp.gmail.com with ESMTPSA id d6-v6sm2415609ywa.85.2018.08.23.19.59.52
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 Aug 2018 19:59:53 -0700 (PDT)
-Received: by mail-yb0-f177.google.com with SMTP id z3-v6so2989477ybm.8
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 19:59:52 -0700 (PDT)
-X-Received: by 2002:a25:f606:: with SMTP id t6-v6mr21509244ybd.141.1535079592382;
- Thu, 23 Aug 2018 19:59:52 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a25:2c11:0:0:0:0:0 with HTTP; Thu, 23 Aug 2018 19:59:51
- -0700 (PDT)
-In-Reply-To: <20180824011247.GA25648@embeddedor.com>
-References: <20180824011247.GA25648@embeddedor.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Thu, 23 Aug 2018 19:59:51 -0700
-X-Gmail-Original-Message-ID: <CAGXu5j+TkaLoXaGi0mc4-xZSnDdM=z=J9n-h5GOaoOTM5MgBLQ@mail.gmail.com>
-Message-ID: <CAGXu5j+TkaLoXaGi0mc4-xZSnDdM=z=J9n-h5GOaoOTM5MgBLQ@mail.gmail.com>
-Subject: Re: [PATCH] ath10k: use struct_size() in kzalloc()
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        ath10k@lists.infradead.org,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 24 Aug 2018 02:32:34 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7O2wq8S031382
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 22:59:59 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m27cvcdtn-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 22:59:59 -0400
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <bauerman@linux.ibm.com>;
+        Thu, 23 Aug 2018 22:59:58 -0400
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 23 Aug 2018 22:59:53 -0400
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7O2xqpw39649282
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 24 Aug 2018 02:59:52 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3C239AE060;
+        Thu, 23 Aug 2018 22:59:24 -0400 (EDT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C51DFAE05F;
+        Thu, 23 Aug 2018 22:59:21 -0400 (EDT)
+Received: from morokweng.localdomain.com (unknown [9.85.189.29])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 23 Aug 2018 22:59:21 -0400 (EDT)
+From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
+To:     linuxppc-dev@lists.ozlabs.org
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Anshuman Khandual <anshuman.linux@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Mike Anderson <andmike@linux.ibm.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Ram Pai <linuxram@us.ibm.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Subject: [RFC PATCH 00/11] Secure Virtual Machine Enablement
+Date:   Thu, 23 Aug 2018 23:59:22 -0300
+X-Mailer: git-send-email 2.14.4
+X-TM-AS-GCONF: 00
+x-cbid: 18082402-0060-0000-0000-000002A37E1B
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009600; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01077964; UDB=6.00555823; IPR=6.00857939;
+ MB=3.00022897; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-24 02:59:56
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082402-0061-0000-0000-00004645DDC6
+Message-Id: <20180824025933.24319-1-bauerman@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-24_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808240029
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 23, 2018 at 6:12 PM, Gustavo A. R. Silva
-<gustavo@embeddedor.com> wrote:
-> One of the more common cases of allocation size calculations is finding
-> the size of a structure that has a zero-sized array at the end, along
-> with memory for some number of elements for that array. For example:
->
-> struct foo {
->         int stuff;
->         void *entry[];
-> };
->
-> instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
->
-> Instead of leaving these open-coded and prone to type mistakes, we can
-> now use the new struct_size() helper:
->
-> instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
->
-> This issue was detected with the help of Coccinelle.
->
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+This series contains preliminary work to enable Secure Virtual Machines
+(SVM) on powerpc. SVMs request to be migrated to secure memory very early in
+the boot process (in prom_init()), so by default all of their memory is
+inaccessible to the hypervisor. There is an ultravisor call that the VM can
+use to request certain pages to be made accessible (aka shared).
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+The objective of these patches is to have the guest perform this request for
+buffers that need to be shared with the hypervisor, such as the LPPACAs, the
+SWIOTLB buffer and the Debug Trace Log. This work is incomplete: there are
+surely other memory regions that need to be made accessible, but I'm posting
+it early to get comments on whether the approach being taken is appropriate.
 
--Kees
+It should be applied on top of the generic virtio DMA API rework series
+posted earlier, which adds a platform hook to override any arch based DMA
+API operations for any virtio device:
 
-> ---
->  drivers/net/wireless/ath/ath10k/ce.c | 24 ++++++++----------------
->  1 file changed, 8 insertions(+), 16 deletions(-)
->
-> diff --git a/drivers/net/wireless/ath/ath10k/ce.c b/drivers/net/wireless/ath/ath10k/ce.c
-> index 18c709c..d0381aa 100644
-> --- a/drivers/net/wireless/ath/ath10k/ce.c
-> +++ b/drivers/net/wireless/ath/ath10k/ce.c
-> @@ -1416,10 +1416,8 @@ ath10k_ce_alloc_src_ring(struct ath10k *ar, unsigned int ce_id,
->
->         nentries = roundup_pow_of_two(nentries);
->
-> -       src_ring = kzalloc(sizeof(*src_ring) +
-> -                          (nentries *
-> -                           sizeof(*src_ring->per_transfer_context)),
-> -                          GFP_KERNEL);
-> +       src_ring = kzalloc(struct_size(src_ring, per_transfer_context,
-> +                                      nentries), GFP_KERNEL);
->         if (src_ring == NULL)
->                 return ERR_PTR(-ENOMEM);
->
-> @@ -1476,10 +1474,8 @@ ath10k_ce_alloc_src_ring_64(struct ath10k *ar, unsigned int ce_id,
->
->         nentries = roundup_pow_of_two(nentries);
->
-> -       src_ring = kzalloc(sizeof(*src_ring) +
-> -                          (nentries *
-> -                           sizeof(*src_ring->per_transfer_context)),
-> -                          GFP_KERNEL);
-> +       src_ring = kzalloc(struct_size(src_ring, per_transfer_context,
-> +                                      nentries), GFP_KERNEL);
->         if (!src_ring)
->                 return ERR_PTR(-ENOMEM);
->
-> @@ -1534,10 +1530,8 @@ ath10k_ce_alloc_dest_ring(struct ath10k *ar, unsigned int ce_id,
->
->         nentries = roundup_pow_of_two(attr->dest_nentries);
->
-> -       dest_ring = kzalloc(sizeof(*dest_ring) +
-> -                           (nentries *
-> -                            sizeof(*dest_ring->per_transfer_context)),
-> -                           GFP_KERNEL);
-> +       dest_ring = kzalloc(struct_size(dest_ring, per_transfer_context,
-> +                                       nentries), GFP_KERNEL);
->         if (dest_ring == NULL)
->                 return ERR_PTR(-ENOMEM);
->
-> @@ -1580,10 +1574,8 @@ ath10k_ce_alloc_dest_ring_64(struct ath10k *ar, unsigned int ce_id,
->
->         nentries = roundup_pow_of_two(attr->dest_nentries);
->
-> -       dest_ring = kzalloc(sizeof(*dest_ring) +
-> -                           (nentries *
-> -                            sizeof(*dest_ring->per_transfer_context)),
-> -                           GFP_KERNEL);
-> +       dest_ring = kzalloc(struct_size(dest_ring, per_transfer_context,
-> +                                       nentries), GFP_KERNEL);
->         if (!dest_ring)
->                 return ERR_PTR(-ENOMEM);
->
-> --
-> 2.7.4
->
+https://lists.ozlabs.org/pipermail/linuxppc-dev/2018-July/175994.html
 
+I'm aware that changes need to be made to the patch series above, but IIUC
+it depends on upcoming virtio cleanup from Christoph Hellwig so for now the
+patch series above will be used as a stepping stone for this series.
 
+This code has been tested with virtio block, net and scsi devices with and
+without VIRTIO_F_IOMMU_PLATFORM flag. Please let me know what you think.
 
--- 
-Kees Cook
-Pixel Security
+For now I am testing on a regular guest with a couple of patches on top
+forcing is_svm_platform() to always return true and adding debug messages to
+confirm that mem_convert_shared() is being called in the expected places.
+
+These are the commands I'm using to start up the guest:
+
+Without VIRTIO_F_IOMMU_PLATFORM:
+
+qemu-system-ppc64 \
+  -enable-kvm \
+  -kernel /home/bauermann/src/linux/arch/powerpc/boot/zImage \
+  -append "root=PARTUUID=e550ad6f-05 ro" \
+  -machine pseries-2.6 \
+  -m 8G \
+  -smp 2 \
+  -serial mon:stdio \
+  -nographic \
+  -nodefaults \
+  -device virtio-scsi-pci,id=scsi0,bus=pci.0,addr=0x4 \
+  -drive file=/home/bauermann/VMs/svm.qcow2,format=qcow2,if=none,id=drive-scsi0-0-0-0 \
+  -device scsi-hd,bus=scsi0.0,channel=0,scsi-id=0,lun=0,drive=drive-scsi0-0-0-0,id=scsi0-0-0-0 \
+  -drive file=/home/bauermann/VMs/svm-blk.qcow2,format=qcow2,if=none,id=drive-virtio-disk0 \
+  -device virtio-blk-pci,scsi=off,bus=pci.0,addr=0x5,drive=drive-virtio-disk0,id=virtio-disk0 \
+  -device virtio-net,netdev=hostnet0,id=net0,mac=52:54:00:96:70:1f \
+  -netdev user,id=hostnet0 \
+  -set netdev.hostnet0.hostfwd=tcp::42022-:22
+
+With VIRTIO_F_IOMMU_PLATFORM. Same as above plus some -global options so
+that the virtio devices use the modern interface rather than the
+transitional one:
+
+qemu-system-ppc64 \
+  -enable-kvm \
+  -kernel /home/bauermann/src/linux/arch/powerpc/boot/zImage \
+  -append "root=PARTUUID=e550ad6f-05 ro" \
+  -machine pseries-2.6 \
+  -m 8G \
+  -smp 2 \
+  -serial mon:stdio \
+  -nographic \
+  -nodefaults \
+  -device virtio-scsi-pci,id=scsi0,bus=pci.0,addr=0x4 \
+  -drive file=/home/bauermann/VMs/svm.qcow2,format=qcow2,if=none,id=drive-scsi0-0-0-0 \
+  -device scsi-hd,bus=scsi0.0,channel=0,scsi-id=0,lun=0,drive=drive-scsi0-0-0-0,id=scsi0-0-0-0 \
+  -drive file=/home/bauermann/VMs/svm-blk.qcow2,format=qcow2,if=none,id=drive-virtio-disk0 \
+  -device virtio-blk-pci,scsi=off,bus=pci.0,addr=0x5,drive=drive-virtio-disk0,id=virtio-disk0 \
+  -device virtio-net,netdev=hostnet0,id=net0,mac=52:54:00:96:70:1f \
+  -netdev user,id=hostnet0 \
+  -set netdev.hostnet0.hostfwd=tcp::42022-:22 \
+  -global virtio-blk-pci.iommu_platform=true \
+  -global virtio-blk-pci.disable-legacy=on \
+  -global virtio-blk-pci.disable-modern=off \
+  -global virtio-net-pci.iommu_platform=true \
+  -global virtio-net-pci.disable-legacy=on \
+  -global virtio-net-pci.disable-modern=off \
+  -global virtio-scsi-pci.iommu_platform=true \
+  -global virtio-scsi-pci.disable-legacy=on \
+  -global virtio-scsi-pci.disable-modern=off
+
+The code was tested with a couple of other permutations where one virtio
+device has the flag VIRTIO_F_IOMMU_PLATFORM and others don't. Please suggest
+some other scenarios which need to be tested as well.
+
+Anshuman Khandual (10):
+  powerpc/svm: Detect Secure Virtual Machine (SVM) platform
+  powerpc/svm: Select CONFIG_DMA_DIRECT_OPS and CONFIG_SWIOTLB
+  powerpc/svm: Add memory conversion (shared/secure) helper functions
+  powerpc/svm: Convert SWIOTLB buffers to shared memory
+  powerpc/svm: Don't release SWIOTLB buffers on secure guests
+  powerpc/svm: Use SWIOTLB DMA API for all virtio devices
+  powerpc/svm: Use shared memory for Debug Trace Log (DTL)
+  powerpc/svm: Use shared memory for LPPACA structures
+  powerpc/svm: Force the use of bounce buffers
+  powerpc/svm: Increase SWIOTLB buffer size
+
+Thiago Jung Bauermann (1):
+  powerpc: Add and use LPPACA_SIZE constant
+
+ arch/powerpc/Kconfig                   | 22 ++++++++
+ arch/powerpc/include/asm/mem_encrypt.h | 19 +++++++
+ arch/powerpc/include/asm/reg.h         |  3 ++
+ arch/powerpc/include/asm/svm.h         | 26 +++++++++
+ arch/powerpc/kernel/Makefile           |  1 +
+ arch/powerpc/kernel/paca.c             | 41 ++++++++++++--
+ arch/powerpc/kernel/svm.c              | 99 ++++++++++++++++++++++++++++++++++
+ arch/powerpc/platforms/pseries/iommu.c |  6 ++-
+ arch/powerpc/platforms/pseries/setup.c |  5 +-
+ kernel/dma/swiotlb.c                   |  5 ++
+ 10 files changed, 221 insertions(+), 6 deletions(-)
+ create mode 100644 arch/powerpc/include/asm/mem_encrypt.h
+ create mode 100644 arch/powerpc/include/asm/svm.h
+ create mode 100644 arch/powerpc/kernel/svm.c
+
