@@ -2,109 +2,119 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64F46C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 01:18:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32736C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 01:35:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E118321557
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 01:18:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E118321557
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id C9A7E21557
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 01:35:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="AGXBdd0e"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9A7E21557
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727231AbeHXEue (ORCPT
+        id S1726972AbeHXFIK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 00:50:34 -0400
-Received: from out1.zte.com.cn ([202.103.147.172]:60294 "EHLO mxct.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725945AbeHXEud (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 00:50:33 -0400
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id E334AAC401FE62B0ABDB;
-        Fri, 24 Aug 2018 09:18:15 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id w7O1I9Fp087795;
-        Fri, 24 Aug 2018 09:18:09 +0800 (GMT-8)
-        (envelope-from liu.song11@zte.com.cn)
-Received: from localhost.localdomain ([10.75.10.200])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018082409181718-5941213 ;
-          Fri, 24 Aug 2018 09:18:17 +0800 
-From:   Liu Song <liu.song11@zte.com.cn>
-To:     richard@nod.at, dedekind1@gmail.com, adrian.hunter@intel.com
-Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        liu.song11@zte.com.cn, jiang.biao2@zte.com.cn,
-        zhong.weidong@zte.com.cn
-Subject: [PATCH v2] ubifs: remove unnecessary check in ubifs_log_start_commit
-Date:   Fri, 24 Aug 2018 09:15:45 +0800
-Message-Id: <1535073345-88009-1-git-send-email-liu.song11@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-08-24 09:18:17,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-08-24 09:17:54,
-        Serialize complete at 2018-08-24 09:17:54
-X-MAIL: mse01.zte.com.cn w7O1I9Fp087795
+        Fri, 24 Aug 2018 01:08:10 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:49459 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726279AbeHXFIJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 01:08:09 -0400
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id w7O1ZU4M023765;
+        Fri, 24 Aug 2018 10:35:31 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w7O1ZU4M023765
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1535074531;
+        bh=LsisJ6PKCjwyiOQOsB1LLBGBfli/YK7/4ZNDSoCIPTs=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=AGXBdd0eXWQ+HswCPENZeTRadzRsLA7nH5bgOYceaAnLWVl1pUp8yiiJDs9CsisC2
+         HROBN+8w0UcLuq1RcXEailUQrZR2RN6F2eXyKzuQetkhhgFmaoLiBJyVu4DicT8fc+
+         e2fFwdZz2/5OFNa6NJFzYvTef9wuRO03ehKQK6ZTcsNQZLZu11LXUDGj7vWtVhsBkG
+         Q+j9MDB0Ah6pdOjmLRTHa1k4dS+gv/quN094LP7I26vGzLc1PjQwhXhAQ7KQ4jt+SI
+         QyK5W60QBM4Gaow/diE64HI7k/byJZIm3hNPCw5cZw76yTGCsfbvAuDbXlWDwwkon7
+         ZA45w0JU3b8dA==
+X-Nifty-SrcIP: [209.85.222.51]
+Received: by mail-ua1-f51.google.com with SMTP id i4-v6so4446455uak.0;
+        Thu, 23 Aug 2018 18:35:31 -0700 (PDT)
+X-Gm-Message-State: AOUpUlHkxsDzL509ak/iEOx7/vBUnyLqREf3OyeqP4tyAy7zMTusGn8i
+        MBwm0ADVGJCjDejJZxfSXMt7bA84Q1oS3I1zT4E=
+X-Google-Smtp-Source: AA+uWPxXNDIXJ+HIrB7/UvigP4KPgW2E2qqktR5rcLx4a/wsfb9gDXILiI5snlUMx4s/X6+R7Q/CRIbxDDW6qpozAyM=
+X-Received: by 2002:ab0:6a6:: with SMTP id g35-v6mr41290037uag.16.1535074529990;
+ Thu, 23 Aug 2018 18:35:29 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:ab0:2642:0:0:0:0:0 with HTTP; Thu, 23 Aug 2018 18:34:49
+ -0700 (PDT)
+In-Reply-To: <CAJe_Zhee-qQtAt7+k_LZ+CGabLBr3v3t2MYvbVYG9N1nHZcL=g@mail.gmail.com>
+References: <1534843809-4137-1-git-send-email-yamada.masahiro@socionext.com>
+ <1534843809-4137-2-git-send-email-yamada.masahiro@socionext.com>
+ <CAK7LNASr=rf_foQ7PDTNS440rx3TLuY_TBagfQ-gCHxXpFB2vw@mail.gmail.com>
+ <CAJe_ZhdZbUa2njAvSazGzv+7UgG+QHCTS+-Y-Ckqze+pMf9KQA@mail.gmail.com>
+ <CAK7LNAT3MufLZhFB8HDnch09WUdEcLyDCU05dTYroOwWYcx=pQ@mail.gmail.com>
+ <CAJe_ZheNp9t0DNQjmiQKMyZsbHBjMxqV87mE_3nQ1N_RS9znYQ@mail.gmail.com>
+ <CAL_Jsq+ppQP9icJVhpUYGj_JCyxudi0Z4=+mKiBueMKZftrQ7A@mail.gmail.com> <CAJe_Zhee-qQtAt7+k_LZ+CGabLBr3v3t2MYvbVYG9N1nHZcL=g@mail.gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 24 Aug 2018 10:34:49 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASDULBeDdydetMLQXauvV7KBe8a5QXUXy=-GKkTyWkfbQ@mail.gmail.com>
+Message-ID: <CAK7LNASDULBeDdydetMLQXauvV7KBe8a5QXUXy=-GKkTyWkfbQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: dmaengine: add DT binding for UniPhier
+ MIO DMAC
+To:     Jassi Brar <jaswinder.singh@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Vinod <vkoul@kernel.org>,
+        "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" 
+        <dmaengine@vger.kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In ubifs_log_start_commit, the value of c->lhead_offs is zero or set
-to zero by code bellow.
+Hi Rob, Jassi,
 
-	/* Switch to the next log LEB */
-	if (c->lhead_offs) {
-		c->lhead_lnum = ubifs_next_log_lnum(c, c->lhead_lnum);
-		ubifs_assert(c->lhead_lnum != c->ltail_lnum);
-		c->lhead_offs = 0;
-	}
 
-The value of 'len' can not exceed 'max_len' which assigned value by
-code bellow.
+2018-08-23 23:12 GMT+09:00 Jassi Brar <jaswinder.singh@linaro.org>:
+> On 23 August 2018 at 18:51, Rob Herring <robh+dt@kernel.org> wrote:
+>> On Thu, Aug 23, 2018 at 12:38 AM Jassi Brar <jaswinder.singh@linaro.org> wrote:
+>>> On 23 August 2018 at 10:48, Masahiro Yamada
+>
+>>> >
+>>> > If desired, I will export of_irq_count()
+>>> > and use it from my driver.
+>>> >
+>>> If you don't want to leave too much footprint, you could do
+>>>
+>>>   count = 0;
+>>>   while (of_irq_parse_one(dev, count, &irq) == 0) count++
+>>>
+>>> of_irq_parse_one() is already exported.
+>>
+>> Yes, but we really don't more users and drivers shouldn't be using it.
+>> Grepping DT functions and when the only users are pretty much powerpc,
+>> that's a good indication not to use the function.
+>>
+>> And you don't want to use of_irq_count either. platform_irq_count is
+>> what should be used here. It's already exported.
+>>
+> Thanks, platform_irq_count() is definitely better.
+>
+> Yamada-san, for example, gpio-tegra.c infers the number of banks from
+> platform_irq_count() rather than the 'gpio-banks' property.
 
-	max_len = UBIFS_CS_NODE_SZ + c->jhead_cnt * UBIFS_REF_NODE_SZ;
 
-The value of c->lhead_offs changed by code bellow and cannot exceed
-'max_len'.
+I did not platform_irq_count().  I will send v2 with it.
 
-	c->lhead_offs += len;
-	if (c->lhead_offs == c->leb_size) {
-		c->lhead_lnum = ubifs_next_log_lnum(c, c->lhead_lnum);
-		c->lhead_offs = 0;
-	}
+Thanks.
 
-Usually, the size of PEB is between 64KB and 256KB. So the value of
-c->lhead_offs is far less than c->leb_size. The check 
-'if (c->lhead_offs == c->leb_size)' could never to be true.
 
-Signed-off-by: Liu Song <liu.song11@zte.com.cn>
-Reviewed-by: Jiang Biao <jiang.biao2@zte.com.cn>
----
-v2: Improve description and code as suggestted by Richard.
-
- fs/ubifs/log.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/fs/ubifs/log.c b/fs/ubifs/log.c
-index 7cffa12..78afb78 100644
---- a/fs/ubifs/log.c
-+++ b/fs/ubifs/log.c
-@@ -427,10 +427,7 @@ int ubifs_log_start_commit(struct ubifs_info *c, int *ltail_lnum)
- 	*ltail_lnum = c->lhead_lnum;
- 
- 	c->lhead_offs += len;
--	if (c->lhead_offs == c->leb_size) {
--		c->lhead_lnum = ubifs_next_log_lnum(c, c->lhead_lnum);
--		c->lhead_offs = 0;
--	}
-+	ubifs_assert(c->lhead_offs < c->leb_size);
- 
- 	remove_buds(c);
- 
 -- 
-2.1.0.GIT
-
+Best Regards
+Masahiro Yamada
