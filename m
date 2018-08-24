@@ -2,155 +2,150 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B986BC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 03:00:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D73C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 03:03:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 622E82156E
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 03:00:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 622E82156E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 75FB32156E
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 03:03:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aUIWagNr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75FB32156E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727809AbeHXGdX (ORCPT
+        id S1727302AbeHXGgB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 02:33:23 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43250 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726244AbeHXGdX (ORCPT
+        Fri, 24 Aug 2018 02:36:01 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:33288 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726140AbeHXGgB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 02:33:23 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7O2x0m1137975
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 23:00:46 -0400
-Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2m26n3dk68-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 23:00:46 -0400
-Received: from localhost
-        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Thu, 23 Aug 2018 23:00:46 -0400
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 23 Aug 2018 23:00:42 -0400
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7O30f4D64225446
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 24 Aug 2018 03:00:41 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F1AD0AE064;
-        Thu, 23 Aug 2018 23:00:12 -0400 (EDT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C6383AE05F;
-        Thu, 23 Aug 2018 23:00:09 -0400 (EDT)
-Received: from morokweng.localdomain.com (unknown [9.85.189.29])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 23 Aug 2018 23:00:09 -0400 (EDT)
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     linuxppc-dev@lists.ozlabs.org
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Anshuman Khandual <anshuman.linux@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Mike Anderson <andmike@linux.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Ram Pai <linuxram@us.ibm.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Subject: [RFC PATCH 11/11] powerpc/svm: Increase SWIOTLB buffer size
-Date:   Thu, 23 Aug 2018 23:59:33 -0300
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180824025933.24319-1-bauerman@linux.ibm.com>
-References: <20180824025933.24319-1-bauerman@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18082403-0060-0000-0000-000002A37E43
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009600; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01077964; UDB=6.00555823; IPR=6.00857939;
- MB=3.00022897; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-24 03:00:44
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082403-0061-0000-0000-00004645DE7A
-Message-Id: <20180824025933.24319-12-bauerman@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-24_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=782 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808240029
+        Fri, 24 Aug 2018 02:36:01 -0400
+Received: by mail-yw1-f67.google.com with SMTP id x67-v6so2611594ywg.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 20:03:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=j4KNIe9M4E5woRjNSx61c15zkstqheu33XjZ8tuJ0pc=;
+        b=aUIWagNrfZHiX9hfWjZj0SQcuydCoDyXLdGxDyqG8496k/5/daJ5OqASML45UbvjNH
+         UgGruiyJllkUX4eQQ/szX2/ojllUGevEixJzGUisMpr1dzkjV1EtdaFLsy1le2c136Ax
+         W1mQnrGSIO1n4NUua2TVXM0JSheu4J/GytOn8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=j4KNIe9M4E5woRjNSx61c15zkstqheu33XjZ8tuJ0pc=;
+        b=rkPgpni2t+4V6k4xB0rwKzgytcXtq3mxjv+H7ikcTQT23ZtxzqbkyhMkFxB9Vvq/t5
+         ZZDNDijQ2LsYm379ucFgi5cXGD/d1shaJQrD4hMYMy72IaJ5iT/ysXS42fsOWuyF2XM5
+         gq+nNBEcSCYVX6wQ51o0XAT6KlBEo2ATY50anZMQlu3v8SFtBTtLmOdbHNJpT7SIJRb4
+         jCtXJNo6/iPpvd3iNhJ+qooAnRAbQKpsXwINXWW8ExiklQRcxZ4gqo5QSXRYINPRVNiz
+         frdExSWfkVIDfePsk7msE+nTOStl0GW4GZV+86NiLKPyXMSKa4hBL7x8vVpx1YXhuk/O
+         iyPw==
+X-Gm-Message-State: APzg51BQuoSkjcG9NXhhVx2r3RHYJzn0yriVqbqgQ8t1EpSReLB6EcQa
+        KilMY6Jtrmq7gTfhq+xMmBIijvPTZvg=
+X-Google-Smtp-Source: ANB0VdaT5rwjljA7KCIoJnDAhaYJEHddkt9gia/LNaJNgDiqLTja3nU3BSfODP4rRP5bK2EMIG5tAg==
+X-Received: by 2002:a81:2244:: with SMTP id i65-v6mr2388601ywi.253.1535079805009;
+        Thu, 23 Aug 2018 20:03:25 -0700 (PDT)
+Received: from mail-yw1-f51.google.com (mail-yw1-f51.google.com. [209.85.161.51])
+        by smtp.gmail.com with ESMTPSA id m82-v6sm2510756ywc.29.2018.08.23.20.03.23
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 Aug 2018 20:03:23 -0700 (PDT)
+Received: by mail-yw1-f51.google.com with SMTP id l189-v6so2595439ywb.10
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 20:03:23 -0700 (PDT)
+X-Received: by 2002:a81:9b85:: with SMTP id s127-v6mr4431334ywg.47.1535079803053;
+ Thu, 23 Aug 2018 20:03:23 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a25:2c11:0:0:0:0:0 with HTTP; Thu, 23 Aug 2018 20:03:22
+ -0700 (PDT)
+In-Reply-To: <20180824011540.GA25716@embeddedor.com>
+References: <20180824011540.GA25716@embeddedor.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Thu, 23 Aug 2018 20:03:22 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jJxbFzKsV1=xHiKtcx+61QBsK0LYMrwo1vGNWgALzqakw@mail.gmail.com>
+Message-ID: <CAGXu5jJxbFzKsV1=xHiKtcx+61QBsK0LYMrwo1vGNWgALzqakw@mail.gmail.com>
+Subject: Re: [PATCH] iwlwifi: d3: use struct_size() in kzalloc()
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Johannes Berg <johannes.berg@intel.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Intel Linux Wireless <linuxwifi@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+On Thu, Aug 23, 2018 at 6:15 PM, Gustavo A. R. Silva
+<gustavo@embeddedor.com> wrote:
+> One of the more common cases of allocation size calculations is finding
+> the size of a structure that has a zero-sized array at the end, along
+> with memory for some number of elements for that array. For example:
+>
+> struct foo {
+>         int stuff;
+>         void *entry[];
+> };
+>
+> instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
+>
+> Instead of leaving these open-coded and prone to type mistakes, we can
+> now use the new struct_size() helper:
+>
+> instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
+>
+> This issue was detected with the help of Coccinelle.
+>
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-SWIOTLB buffer default size (64MB) is not enough for large sequential write
-operations which eventually leads to kernel crash like here.
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-virtio-pci 0000:00:05.0: swiotlb buffer is full (sz: 327680 bytes)
-virtio-pci 0000:00:05.0: DMA: Out of SW-IOMMU space for 327680 bytes
-Kernel panic - not syncing: DMA: Random memory could be DMA read
-CPU: 12 PID: 3985 Comm: mkfs.ext4 Not tainted 4.18.0-rc4+ #285
-Call Trace:
-[c0000007d2a27020] [c000000000cfdffc] dump_stack+0xb0/0xf4 (unreliable)
-[c0000007d2a27060] [c000000000112a98] panic+0x140/0x328
-[c0000007d2a270f0] [c0000000001b4f88] swiotlb_full+0x108/0x130
-[c0000007d2a27180] [c0000000001b5f6c] swiotlb_map_page+0x25c/0x2c0
-[c0000007d2a271e0] [c0000000007bfaf8] vring_map_one_sg.isra.0+0x58/0x70
-[c0000007d2a27200] [c0000000007c08dc] virtqueue_add_sgs+0x1bc/0x690
-[c0000007d2a272f0] [d0000000042a1280] virtio_queue_rq+0x358/0x4a0 [virtio_blk]
-[c0000007d2a273d0] [c0000000006b5d68] blk_mq_dispatch_rq_list+0x1f8/0x6d0
-..................
+-Kees
 
-Increase the SWIOTLB size to 1GB on Ultravisor based secure guests.
+> ---
+>  drivers/net/wireless/intel/iwlwifi/mvm/d3.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/d3.c b/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
+> index 79bdae9..6960318 100644
+> --- a/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
+> +++ b/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
+> @@ -1769,8 +1769,7 @@ static void iwl_mvm_query_netdetect_reasons(struct iwl_mvm *mvm,
+>                 n_matches = 0;
+>         }
+>
+> -       net_detect = kzalloc(sizeof(*net_detect) +
+> -                            (n_matches * sizeof(net_detect->matches[0])),
+> +       net_detect = kzalloc(struct_size(net_detect, matches, n_matches),
+>                              GFP_KERNEL);
+>         if (!net_detect || !n_matches)
+>                 goto out_report_nd;
+> @@ -1785,8 +1784,7 @@ static void iwl_mvm_query_netdetect_reasons(struct iwl_mvm *mvm,
+>                 for (j = 0; j < SCAN_OFFLOAD_MATCHING_CHANNELS_LEN; j++)
+>                         n_channels += hweight8(fw_match->matching_channels[j]);
+>
+> -               match = kzalloc(sizeof(*match) +
+> -                               (n_channels * sizeof(*match->channels)),
+> +               match = kzalloc(struct_size(match, channels, n_channels),
+>                                 GFP_KERNEL);
+>                 if (!match)
+>                         goto out_report_nd;
+> --
+> 2.7.4
+>
 
-Signed-off-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
-Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
----
- arch/powerpc/Kconfig | 5 +++++
- kernel/dma/swiotlb.c | 5 +++++
- 2 files changed, 10 insertions(+)
 
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 1466d1234723..fee7194ce9e4 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -457,6 +457,11 @@ config PPC_SVM
- 
- 	 If unsure, say "N".
- 
-+config SWIOTLB_DEFAULT_SIZE
-+       int "Size of Software I/O TLB buffer (in MiB)"
-+       default "1024"
-+       depends on PPC_SVM
-+
- config PPC_TRANSACTIONAL_MEM
-        bool "Transactional Memory support for POWERPC"
-        depends on PPC_BOOK3S_64
-diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
-index 04b68d9dffac..32dc67422d8a 100644
---- a/kernel/dma/swiotlb.c
-+++ b/kernel/dma/swiotlb.c
-@@ -146,8 +146,13 @@ void swiotlb_set_max_segment(unsigned int val)
- 		max_segment = rounddown(val, PAGE_SIZE);
- }
- 
-+#ifdef CONFIG_SWIOTLB_DEFAULT_SIZE
-+#define IO_TLB_DEFAULT_SIZE ((unsigned long) CONFIG_SWIOTLB_DEFAULT_SIZE << 20)
-+#else
- /* default to 64MB */
- #define IO_TLB_DEFAULT_SIZE (64UL<<20)
-+#endif
-+
- unsigned long swiotlb_size_or_default(void)
- {
- 	unsigned long size;
 
+-- 
+Kees Cook
+Pixel Security
