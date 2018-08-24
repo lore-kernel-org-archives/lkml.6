@@ -2,190 +2,111 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFF3EC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 23:21:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0E7BC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 23:23:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6189020836
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 23:21:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QuOCV6Sp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6189020836
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A292D20836
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 23:23:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A292D20836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727702AbeHYC6N (ORCPT
+        id S1727247AbeHYDAk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 22:58:13 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:36236 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726840AbeHYC6N (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 22:58:13 -0400
-Received: by mail-pf1-f193.google.com with SMTP id b11-v6so5195714pfo.3;
-        Fri, 24 Aug 2018 16:21:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2xy2Vu1zu5LKXHCGo6UeMBPFrErljlvd5ZsSzVgOei0=;
-        b=QuOCV6SpF8Z1+lgSIaQ2xclpuG5sI9cvam3QNS8EbkqQUBEwW/6SIauwg+sR5iYNDO
-         TVn9qTOvm4y2MdnCDyeejzfBQ28guRMrH++35eecgX6O7Mu+03zp7vN1R3ySr48qItHv
-         tzuIeR8X/XGa1v4L265BPPW2lOFdLLkw/ZT89Z+WAOEoIwiBrqgLaANX64jgoLfJ2mqa
-         ABbtVWkZFhQSfEwWKEbKVcpagHdFimJKB4uraLDHTSvmMB5wJM3srxpJ0TPEK0x3gjYe
-         3qVPxIIJS0UvujmrchZGpGRTZ/l+3diO+SR5348N5HEAlwXPLgZQnQ0iB5Otec1GuW5u
-         dhgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2xy2Vu1zu5LKXHCGo6UeMBPFrErljlvd5ZsSzVgOei0=;
-        b=a4mM70tlxxeZM+XW9eFaA3Y0iJBmjclunp8RaITyqEFczpi1G4S6wDjeE2+M+ySnxA
-         5d5/zd+HAi1Xw5njKg+iMedrPkHKOyhdOa/MMwko9hevG9paAxlst3beUJ2etTj7VDsN
-         /mNHDzg/gZg2JIKV4XuUNaa8wc3QVhZ+HyvG3ruCOl07M2UG1ZbgBGBnI1BeQQNXlfKO
-         atUg4C9k8Del6wPcwqsZ1fZ8v/mVRuixE7OQvZlCZafNQPrGYSDAdNgwyBUxy5cs26Qw
-         RqyQZSvujoVO+ZMuZmKdrTumJC3k3Rw4Jc9X3DdG6jrPpFmu5qrPqmByGUqvqQFZjFQY
-         3szw==
-X-Gm-Message-State: APzg51AMH3dZGWexhEUs+aftY1DcbLqYbmJJewzItvU8yqN7oaLehTUR
-        IpqApAbY7+w3Mrw6e+d+RDg=
-X-Google-Smtp-Source: ANB0VdZbvSqBjrZMPeBozDX1+72dbJ7PqKSDCe6ACpBX7tQ0Or3TRQFkEOB1MYbyS6NBMWwbi0PC3w==
-X-Received: by 2002:a63:352:: with SMTP id 79-v6mr3549431pgd.112.1535152888155;
-        Fri, 24 Aug 2018 16:21:28 -0700 (PDT)
-Received: from localhost.localdomain ([2601:644:8201:32e0:7256:81ff:febd:926d])
-        by smtp.gmail.com with ESMTPSA id x4-v6sm10632814pfm.119.2018.08.24.16.21.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 Aug 2018 16:21:27 -0700 (PDT)
-Date:   Fri, 24 Aug 2018 16:21:20 -0700
-From:   Eduardo Valentin <edubezval@gmail.com>
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, rnayak@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, bjorn.andersson@linaro.org,
-        smohanad@codeaurora.org, andy.gross@linaro.org,
-        dianders@chromium.org, mka@chromium.org,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Zhang Rui <rui.zhang@intel.com>, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v1 01/10] arm/arm64: dts: msm8974/msm8916: thermal: Split
- address space into two
-Message-ID: <20180824232118.GC25163@localhost.localdomain>
-References: <cover.1533815718.git.amit.kucheria@linaro.org>
- <d01f560abed221b536b27bfaa42a530257642974.1533815718.git.amit.kucheria@linaro.org>
+        Fri, 24 Aug 2018 23:00:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33128 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726770AbeHYDAj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 23:00:39 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B3B320836;
+        Fri, 24 Aug 2018 23:23:54 +0000 (UTC)
+Date:   Fri, 24 Aug 2018 19:23:52 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 24/32] selftests/ftrace: Add max stack tracer
+ testcase
+Message-ID: <20180824192352.262144f5@gandalf.local.home>
+In-Reply-To: <153443763074.23257.4052504725796725062.stgit@devbox>
+References: <153443695002.23257.13628220023468200991.stgit@devbox>
+        <153443763074.23257.4052504725796725062.stgit@devbox>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d01f560abed221b536b27bfaa42a530257642974.1533815718.git.amit.kucheria@linaro.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-hello,
+On Fri, 17 Aug 2018 01:40:30 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-On Thu, Aug 09, 2018 at 06:02:33PM +0530, Amit Kucheria wrote:
-> We've earlier added support to split the register address space into TM
-> and SROT regions.
+> Add a testcase for max stack tracer, which checks basic
+> max stack usage tracing and its filter feature.
 > 
-> Split up the regmap address space into two for the remaining platforms that
-> have a similar register layout and make corresponding changes to the
-> get_temp_common() function used by these platforms.
-> 
-> Since tsens-common.c/init_common() currently only registers one address
-> space, the order is important (TM before SROT).  This is OK since the code
-> doesn't really use the SROT functionality yet.
-> 
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 > ---
->  arch/arm/boot/dts/qcom-msm8974.dtsi   | 6 ++++--
->  arch/arm64/boot/dts/qcom/msm8916.dtsi | 6 ++++--
-
-
-
->  drivers/thermal/qcom/tsens-common.c   | 5 +++--
-
-
-Can you please resend this with two separate patches, one with
-the driver changes another for the dts(i) changes. Just that
-I prefer taking only the driver changes once accepting the
-dts changes. Makes merging easier to avoid conflicts when sending
-pulls.
-
-Thanks.
->  3 files changed, 11 insertions(+), 6 deletions(-)
+>  .../ftrace/test.d/ftrace/func_stack_tracer.tc      |   39 ++++++++++++++++++++
+>  1 file changed, 39 insertions(+)
+>  create mode 100644 tools/testing/selftests/ftrace/test.d/ftrace/func_stack_tracer.tc
 > 
-> diff --git a/arch/arm/boot/dts/qcom-msm8974.dtsi b/arch/arm/boot/dts/qcom-msm8974.dtsi
-> index d9019a49b292..3c4b81c29798 100644
-> --- a/arch/arm/boot/dts/qcom-msm8974.dtsi
-> +++ b/arch/arm/boot/dts/qcom-msm8974.dtsi
-> @@ -427,11 +427,13 @@
->  			};
->  		};
->  
-> -		tsens: thermal-sensor@fc4a8000 {
-> +		tsens: thermal-sensor@fc4a9000 {
->  			compatible = "qcom,msm8974-tsens";
-> -			reg = <0xfc4a8000 0x2000>;
-> +			reg = <0xfc4a9000 0x1000>, /* TM */
-> +			      <0xfc4a8000 0x1000>; /* SROT */
->  			nvmem-cells = <&tsens_calib>, <&tsens_backup>;
->  			nvmem-cell-names = "calib", "calib_backup";
-> +			#qcom,sensors = <11>;
->  			#thermal-sensor-cells = <1>;
->  		};
->  
-> diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-> index cc1040eacdf5..abf84df5a7bc 100644
-> --- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-> @@ -774,11 +774,13 @@
->  			};
->  		};
->  
-> -		tsens: thermal-sensor@4a8000 {
-> +		tsens: thermal-sensor@4a9000 {
->  			compatible = "qcom,msm8916-tsens";
-> -			reg = <0x4a8000 0x2000>;
-> +			reg = <0x4a9000 0x1000>, /* TM */
-> +			      <0x4a8000 0x1000>; /* SROT */
->  			nvmem-cells = <&tsens_caldata>, <&tsens_calsel>;
->  			nvmem-cell-names = "calib", "calib_sel";
-> +			#qcom,sensors = <5>;
->  			#thermal-sensor-cells = <1>;
->  		};
->  
-> diff --git a/drivers/thermal/qcom/tsens-common.c b/drivers/thermal/qcom/tsens-common.c
-> index 6207d8d92351..478739543bbc 100644
-> --- a/drivers/thermal/qcom/tsens-common.c
-> +++ b/drivers/thermal/qcom/tsens-common.c
-> @@ -21,7 +21,7 @@
->  #include <linux/regmap.h>
->  #include "tsens.h"
->  
-> -#define S0_ST_ADDR		0x1030
-> +#define STATUS_OFFSET		0x30
->  #define SN_ADDR_OFFSET		0x4
->  #define SN_ST_TEMP_MASK		0x3ff
->  #define CAL_DEGC_PT1		30
-> @@ -107,8 +107,9 @@ int get_temp_common(struct tsens_device *tmdev, int id, int *temp)
->  	unsigned int status_reg;
->  	int last_temp = 0, ret;
->  
-> -	status_reg = S0_ST_ADDR + s->hw_id * SN_ADDR_OFFSET;
-> +	status_reg = tmdev->tm_offset + STATUS_OFFSET + s->hw_id * SN_ADDR_OFFSET;
->  	ret = regmap_read(tmdev->map, status_reg, &code);
+> diff --git a/tools/testing/selftests/ftrace/test.d/ftrace/func_stack_tracer.tc b/tools/testing/selftests/ftrace/test.d/ftrace/func_stack_tracer.tc
+> new file mode 100644
+> index 000000000000..b414f0e3c646
+> --- /dev/null
+> +++ b/tools/testing/selftests/ftrace/test.d/ftrace/func_stack_tracer.tc
+> @@ -0,0 +1,39 @@
+> +#!/bin/sh
+> +# SPDX-License-Identifier: GPL-2.0
+> +# description: ftrace - Max stack tracer
+> +# Test the basic function of max-stack usage tracing
 > +
->  	if (ret)
->  		return ret;
->  	last_temp = code & SN_ST_TEMP_MASK;
-> -- 
-> 2.17.1
-> 
+> +if [ ! -f stack_trace ]; then
+> +  echo "Max stack tracer is not supported - please make CONFIG_STACK_TRACER=y"
+> +  exit_unsupported
+> +fi
+> +
+> +echo > stack_trace_filter
+> +echo 0 > stack_max_size
+> +echo 1 > /proc/sys/kernel/stack_tracer_enabled
+> +
+> +: "Fork and wait for the first entry become !lock"
+> +timeout=10
+> +while [ $timeout -ne 0 ]; do
+> +  ( echo "forked" )
+> +  FL=`grep " 0)" stack_trace`
+> +  echo $FL | grep -q "lock" || break;
+> +  timeout=$((timeout - 1))
+> +done
+> +echo 0 > /proc/sys/kernel/stack_tracer_enabled
+> +
+> +echo '*lock*' > stack_trace_filter
+> +test `cat stack_trace_filter | wc -l` -eq `grep lock stack_trace_filter | wc -l`
+> +
+> +echo 0 > stack_max_size
+> +echo 1 > /proc/sys/kernel/stack_tracer_enabled
+
+This test fails quite a bit because it doesn't guarantee that another
+stack trace gets in that is bigger, and we don't find the "lock".
+
+-- Steve
+
+> +
+> +: "Fork and always the first entry including lock"
+> +timeout=10
+> +while [ $timeout -ne 0 ]; do
+> +  ( echo "forked" )
+> +  FL=`grep " 0)" stack_trace`
+> +  echo $FL | grep -q "lock"
+> +  timeout=$((timeout - 1))
+> +done
+> +echo 0 > /proc/sys/kernel/stack_tracer_enabled
+
