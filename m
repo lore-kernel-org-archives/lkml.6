@@ -2,157 +2,267 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56F9CC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 05:33:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D498C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 05:33:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBB5C208B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 05:33:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBB5C208B0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 1739D208B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 05:33:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="G6L8pezO";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="KL9Lv+4n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1739D208B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727392AbeHXJGa (ORCPT
+        id S1727499AbeHXJG4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 05:06:30 -0400
-Received: from mga04.intel.com ([192.55.52.120]:18026 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726519AbeHXJGa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 05:06:30 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Aug 2018 22:33:28 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,281,1531810800"; 
-   d="scan'208";a="86001473"
-Received: from bee.sh.intel.com (HELO lkp-server01) ([10.239.97.14])
-  by orsmga002.jf.intel.com with ESMTP; 23 Aug 2018 22:33:25 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1ft4ib-0004lt-Mu; Fri, 24 Aug 2018 13:33:09 +0800
-Date:   Fri, 24 Aug 2018 13:32:24 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Weikang Shi <swkhack@gmail.com>
-Cc:     kbuild-all@01.org, akpm@linux-foundation.org,
-        alexander.h.duyck@intel.com, mhocko@suse.com, vbabka@suse.cz,
-        mgorman@suse.de, l.stach@pengutronix.de, vdavydov.dev@gmail.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        my_email@gmail.com, Weikang Shi <swkhack@gmail.com>
-Subject: Re: [PATCH] fs: fix local var type
-Message-ID: <201808241151.885cwq5J%fengguang.wu@intel.com>
-References: <1535014754-31918-1-git-send-email-swkhack@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1535014754-31918-1-git-send-email-swkhack@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Fri, 24 Aug 2018 05:06:56 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:34730 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726519AbeHXJGz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 05:06:55 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 054CE60227; Fri, 24 Aug 2018 05:33:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535088834;
+        bh=qP8uFB7RKo2aAtnztXAeNtlTXpCmmcS5RwQh6oBcr80=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=G6L8pezOdEfnhut7BwP30cvHopoIwEv8dnyLvOPsUXC19dZ2Tr2e2yXsyybxSa03S
+         BFgASQy8kof6ZbHHvjXuJj7oPds4f5lN+EnaW5vhY9nYOmFCmhY6efjUvWLJU2Ixr7
+         61nbnDZ2DpSM9HSzbVa31qjFOVWkYfqu5+5XAt80=
+Received: from sayalil-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sayalil@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0326660540;
+        Fri, 24 Aug 2018 05:33:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535088833;
+        bh=qP8uFB7RKo2aAtnztXAeNtlTXpCmmcS5RwQh6oBcr80=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=KL9Lv+4nZ4K1Mtup3cUEi13vLlkDS54qyq4sSYiHjlkwKUiJ00OQLl/32AwRdXtry
+         lWzZ7g1k7A2da5jvcAbPJ+RyBQkLTwivFurMR1FaCjq4KENpvDCDPiRhKsythdLNor
+         W+RFmpiBlxVdzM3iuSxl2HkuGx6xXt0GqMM/4dkU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0326660540
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
+From:   Sayali Lokhande <sayalil@codeaurora.org>
+To:     subhashj@codeaurora.org, cang@codeaurora.org,
+        vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
+        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, asutoshd@codeaurora.org,
+        evgreen@chromium.org, riteshh@codeaurora.org
+Cc:     adrian.hunter@intel.com, linux-scsi@vger.kernel.org,
+        Sayali Lokhande <sayalil@codeaurora.org>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH V10 1/2] scsi: ufs: set the device reference clock setting
+Date:   Fri, 24 Aug 2018 11:03:28 +0530
+Message-Id: <1535088810-20989-2-git-send-email-sayalil@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1535088810-20989-1-git-send-email-sayalil@codeaurora.org>
+References: <1535088810-20989-1-git-send-email-sayalil@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Weikang,
+From: Subhash Jadavani <subhashj@codeaurora.org>
 
-Thank you for the patch! Perhaps something to improve:
+UFS host supplies the reference clock to UFS device and UFS device
+specification allows host to provide one of the 4 frequencies (19.2 MHz,
+26 MHz, 38.4 MHz, 52 MHz) for reference clock. Host should set the
+device reference clock frequency setting in the device based on what
+frequency it is supplying to UFS device.
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v4.18 next-20180822]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Weikang-Shi/fs-fix-local-var-type/20180823-180758
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
-
-
-sparse warnings: (new ones prefixed by >>)
-
-   fs/seq_file.c:210:21: sparse: expression using sizeof(void)
-   fs/seq_file.c:210:21: sparse: expression using sizeof(void)
-   fs/seq_file.c:276:13: sparse: expression using sizeof(void)
-   fs/seq_file.c:276:13: sparse: expression using sizeof(void)
->> fs/seq_file.c:860:27: sparse: incompatible types in comparison expression (different type sizes)
-   fs/seq_file.c:1037:24: sparse: incompatible types in comparison expression (different address spaces)
-   fs/seq_file.c:1039:24: sparse: incompatible types in comparison expression (different address spaces)
->> fs/seq_file.c:860:27: sparse: call with no type!
-   In file included from include/linux/list.h:9:0,
-                    from include/linux/wait.h:7,
-                    from include/linux/wait_bit.h:8,
-                    from include/linux/fs.h:6,
-                    from fs/seq_file.c:10:
-   fs/seq_file.c: In function 'seq_hex_dump':
-   include/linux/kernel.h:845:29: warning: comparison of distinct pointer types lacks a cast
-      (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
-                                ^
-   include/linux/kernel.h:859:4: note: in expansion of macro '__typecheck'
-      (__typecheck(x, y) && __no_side_effects(x, y))
-       ^~~~~~~~~~~
-   include/linux/kernel.h:869:24: note: in expansion of macro '__safe_cmp'
-     __builtin_choose_expr(__safe_cmp(x, y), 23-                        ^~~~~~~~~~
-   include/linux/kernel.h:878:19: note: in expansion of macro '__careful_cmp'
-    #define min(x, y) __careful_cmp(x, y, <)
-                      ^~~~~~~~~~~~~
-   fs/seq_file.c:860:13: note: in expansion of macro 'min'
-      linelen = min(remaining, rowsize);
-                ^~~
-
-vim +860 fs/seq_file.c
-
-839cc2a9 Tetsuo Handa    2013-11-14  843  
-37607102 Andy Shevchenko 2015-09-09  844  /* A complete analogue of print_hex_dump() */
-37607102 Andy Shevchenko 2015-09-09  845  void seq_hex_dump(struct seq_file *m, const char *prefix_str, int prefix_type,
-37607102 Andy Shevchenko 2015-09-09  846  		  int rowsize, int groupsize, const void *buf, size_t len,
-37607102 Andy Shevchenko 2015-09-09  847  		  bool ascii)
-37607102 Andy Shevchenko 2015-09-09  848  {
-37607102 Andy Shevchenko 2015-09-09  849  	const u8 *ptr = buf;
-5f9924ac Weikang Shi     2018-08-23  850  	int i, linelen;
-5f9924ac Weikang Shi     2018-08-23  851  	size_t remaining = len;
-8b91a318 Andy Shevchenko 2015-11-06  852  	char *buffer;
-8b91a318 Andy Shevchenko 2015-11-06  853  	size_t size;
-37607102 Andy Shevchenko 2015-09-09  854  	int ret;
-37607102 Andy Shevchenko 2015-09-09  855  
-37607102 Andy Shevchenko 2015-09-09  856  	if (rowsize != 16 && rowsize != 32)
-37607102 Andy Shevchenko 2015-09-09  857  		rowsize = 16;
-37607102 Andy Shevchenko 2015-09-09  858  
-37607102 Andy Shevchenko 2015-09-09  859  	for (i = 0; i < len && !seq_has_overflowed(m); i += rowsize) {
-37607102 Andy Shevchenko 2015-09-09 @860  		linelen = min(remaining, rowsize);
-37607102 Andy Shevchenko 2015-09-09  861  		remaining -= rowsize;
-37607102 Andy Shevchenko 2015-09-09  862  
-37607102 Andy Shevchenko 2015-09-09  863  		switch (prefix_type) {
-37607102 Andy Shevchenko 2015-09-09  864  		case DUMP_PREFIX_ADDRESS:
-37607102 Andy Shevchenko 2015-09-09  865  			seq_printf(m, "%s%p: ", prefix_str, ptr + i);
-37607102 Andy Shevchenko 2015-09-09  866  			break;
-37607102 Andy Shevchenko 2015-09-09  867  		case DUMP_PREFIX_OFFSET:
-37607102 Andy Shevchenko 2015-09-09  868  			seq_printf(m, "%s%.8x: ", prefix_str, i);
-37607102 Andy Shevchenko 2015-09-09  869  			break;
-37607102 Andy Shevchenko 2015-09-09  870  		default:
-37607102 Andy Shevchenko 2015-09-09  871  			seq_printf(m, "%s", prefix_str);
-37607102 Andy Shevchenko 2015-09-09  872  			break;
-37607102 Andy Shevchenko 2015-09-09  873  		}
-37607102 Andy Shevchenko 2015-09-09  874  
-8b91a318 Andy Shevchenko 2015-11-06  875  		size = seq_get_buf(m, &buffer);
-37607102 Andy Shevchenko 2015-09-09  876  		ret = hex_dump_to_buffer(ptr + i, linelen, rowsize, groupsize,
-8b91a318 Andy Shevchenko 2015-11-06  877  					 buffer, size, ascii);
-8b91a318 Andy Shevchenko 2015-11-06  878  		seq_commit(m, ret < size ? ret : -1);
-8b91a318 Andy Shevchenko 2015-11-06  879  
-37607102 Andy Shevchenko 2015-09-09  880  		seq_putc(m, '\n');
-37607102 Andy Shevchenko 2015-09-09  881  	}
-37607102 Andy Shevchenko 2015-09-09  882  }
-37607102 Andy Shevchenko 2015-09-09  883  EXPORT_SYMBOL(seq_hex_dump);
-37607102 Andy Shevchenko 2015-09-09  884  
-
-:::::: The code at line 860 was first introduced by commit
-:::::: 37607102c4426cf92aeb5da1b1d9a79ba6d95e3f seq_file: provide an analogue of print_hex_dump()
-
-:::::: TO: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-:::::: CC: Linus Torvalds <torvalds@linux-foundation.org>
-
+Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+Signed-off-by: Can Guo <cang@codeaurora.org>
+Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ drivers/scsi/ufs/ufs.h           | 14 +++++++
+ drivers/scsi/ufs/ufshcd-pltfrm.c |  2 +
+ drivers/scsi/ufs/ufshcd.c        | 90 ++++++++++++++++++++++++++++++++++++++++
+ drivers/scsi/ufs/ufshcd.h        |  2 +
+ 4 files changed, 108 insertions(+)
+
+diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
+index 14e5bf7..a2e76b1 100644
+--- a/drivers/scsi/ufs/ufs.h
++++ b/drivers/scsi/ufs/ufs.h
+@@ -378,6 +378,20 @@ enum query_opcode {
+ 	UPIU_QUERY_OPCODE_TOGGLE_FLAG	= 0x8,
+ };
+ 
++/* bRefClkFreq attribute values */
++enum ufs_ref_clk_freq {
++	REF_CLK_FREQ_19_2_MHZ	= 0,
++	REF_CLK_FREQ_26_MHZ	= 1,
++	REF_CLK_FREQ_38_4_MHZ	= 2,
++	REF_CLK_FREQ_52_MHZ	= 3,
++	REF_CLK_FREQ_INVAL	= -1,
++};
++
++struct ufs_ref_clk {
++	u32 freq_hz;
++	enum ufs_ref_clk_freq val;
++};
++
+ /* Query response result code */
+ enum {
+ 	QUERY_RESULT_SUCCESS                    = 0x00,
+diff --git a/drivers/scsi/ufs/ufshcd-pltfrm.c b/drivers/scsi/ufs/ufshcd-pltfrm.c
+index e82bde0..0953563 100644
+--- a/drivers/scsi/ufs/ufshcd-pltfrm.c
++++ b/drivers/scsi/ufs/ufshcd-pltfrm.c
+@@ -343,6 +343,8 @@ int ufshcd_pltfrm_init(struct platform_device *pdev,
+ 	pm_runtime_set_active(&pdev->dev);
+ 	pm_runtime_enable(&pdev->dev);
+ 
++	ufshcd_parse_dev_ref_clk_freq(hba);
++
+ 	ufshcd_init_lanes_per_dir(hba);
+ 
+ 	err = ufshcd_init(hba, mmio_base, irq);
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index c5b1bf1..e01cdc0 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -6296,6 +6296,89 @@ static void ufshcd_def_desc_sizes(struct ufs_hba *hba)
+ 	hba->desc_size.hlth_desc = QUERY_DESC_HEALTH_DEF_SIZE;
+ }
+ 
++static struct ufs_ref_clk ufs_ref_clk_freqs[] = {
++	{19200000, REF_CLK_FREQ_19_2_MHZ},
++	{26000000, REF_CLK_FREQ_26_MHZ},
++	{38400000, REF_CLK_FREQ_38_4_MHZ},
++	{52000000, REF_CLK_FREQ_52_MHZ},
++	{0, REF_CLK_FREQ_INVAL},
++};
++
++static inline enum ufs_ref_clk_freq
++ufs_get_bref_clk_from_hz(u32 freq)
++{
++	int i = 0;
++
++	while (ufs_ref_clk_freqs[i].freq_hz != freq) {
++		if (!ufs_ref_clk_freqs[i].freq_hz)
++			return REF_CLK_FREQ_INVAL;
++		i++;
++	}
++
++	return ufs_ref_clk_freqs[i].val;
++}
++
++void ufshcd_parse_dev_ref_clk_freq(struct ufs_hba *hba)
++{
++	struct device *dev = hba->dev;
++	struct device_node *np = dev->of_node;
++	struct clk *refclk = NULL;
++	u32 freq = 0;
++
++	if (!np)
++		return;
++
++	refclk = of_clk_get_by_name(np, "ref_clk");
++	if (!refclk)
++		return;
++
++	freq = clk_get_rate(refclk);
++
++	hba->dev_ref_clk_freq =
++		ufs_get_bref_clk_from_hz(freq);
++
++	if (hba->dev_ref_clk_freq == REF_CLK_FREQ_INVAL)
++		dev_err(hba->dev,
++		"%s: invalid ref_clk setting = %d\n",
++		__func__, freq);
++}
++
++static int ufshcd_set_dev_ref_clk(struct ufs_hba *hba)
++{
++	int err, ref_clk = -1;
++	u32 freq = hba->dev_ref_clk_freq;
++
++	err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_READ_ATTR,
++			QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0, &ref_clk);
++
++	if (err) {
++		dev_err(hba->dev, "%s: failed reading bRefClkFreq. err = %d\n",
++			 __func__, err);
++		goto out;
++	}
++
++	if (ref_clk == hba->dev_ref_clk_freq)
++		goto out; /* nothing to update */
++
++	err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
++			QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0, &freq);
++
++	if (err) {
++		dev_err(hba->dev, "%s: bRefClkFreq setting to %u Hz failed\n",
++		__func__, ufs_ref_clk_freqs[freq].freq_hz);
++		goto out;
++	}
++	/*
++	 * It is good to print this out here to debug any later failures
++	 * related to gear switch.
++	 */
++	dev_dbg(hba->dev, "%s: bRefClkFreq setting to %u Hz succeeded\n",
++		__func__, ufs_ref_clk_freqs[freq].freq_hz);
++
++out:
++	return err;
++}
++
+ /**
+  * ufshcd_probe_hba - probe hba to detect device and initialize
+  * @hba: per-adapter instance
+@@ -6361,6 +6444,12 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
+ 			"%s: Failed getting max supported power mode\n",
+ 			__func__);
+ 	} else {
++		/*
++		 * Set the right value to bRefClkFreq before attempting to
++		 * switch to HS gears.
++		 */
++		if (hba->dev_ref_clk_freq != REF_CLK_FREQ_INVAL)
++			ufshcd_set_dev_ref_clk(hba);
+ 		ret = ufshcd_config_pwr_mode(hba, &hba->max_pwr_info.info);
+ 		if (ret) {
+ 			dev_err(hba->dev, "%s: Failed setting power mode, err = %d\n",
+@@ -7690,6 +7779,7 @@ int ufshcd_alloc_host(struct device *dev, struct ufs_hba **hba_handle)
+ 	hba->host = host;
+ 	hba->dev = dev;
+ 	*hba_handle = hba;
++	hba->dev_ref_clk_freq = REF_CLK_FREQ_INVAL;
+ 
+ 	INIT_LIST_HEAD(&hba->clk_list_head);
+ 
+diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+index 8110dcd..45013b6 100644
+--- a/drivers/scsi/ufs/ufshcd.h
++++ b/drivers/scsi/ufs/ufshcd.h
+@@ -548,6 +548,7 @@ struct ufs_hba {
+ 	void *priv;
+ 	unsigned int irq;
+ 	bool is_irq_enabled;
++	enum ufs_ref_clk_freq dev_ref_clk_freq;
+ 
+ 	/* Interrupt aggregation support is broken */
+ 	#define UFSHCD_QUIRK_BROKEN_INTR_AGGR			0x1
+@@ -746,6 +747,7 @@ static inline void ufshcd_rmwl(struct ufs_hba *hba, u32 mask, u32 val, u32 reg)
+ int ufshcd_wait_for_register(struct ufs_hba *hba, u32 reg, u32 mask,
+ 				u32 val, unsigned long interval_us,
+ 				unsigned long timeout_ms, bool can_sleep);
++void ufshcd_parse_dev_ref_clk_freq(struct ufs_hba *hba);
+ 
+ static inline void check_upiu_size(void)
+ {
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
