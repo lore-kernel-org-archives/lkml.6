@@ -3,123 +3,142 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	FROM_LOCAL_NOVOWEL,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIM_INVALID,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CE4CC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 20:06:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F06C0C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 20:07:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF4CD2150F
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 20:06:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6A0C2150F
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 20:07:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qIcfjktT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF4CD2150F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nl+wVFH3";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="N+cZMNPn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6A0C2150F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727557AbeHXXmP (ORCPT
+        id S1727642AbeHXXnG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 19:42:15 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43766 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726675AbeHXXmO (ORCPT
+        Fri, 24 Aug 2018 19:43:06 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:52004 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726675AbeHXXnG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 19:42:14 -0400
-Received: by mail-pg1-f195.google.com with SMTP id v66-v6so4749792pgb.10;
-        Fri, 24 Aug 2018 13:06:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vd6ddKIiDn7Wxc81DAU/CU1ZzdkNr6/YfvtOpLX6/Cg=;
-        b=qIcfjktTnB1TQzksJXK/ZxYzK0EEsNY3cXawAWGr6L8oeyR+v/H0t4OID3VyG89o/F
-         yZrWyTatnFgTq/Sy0t+mGPlT36sJpFD8o38qL/Cas3l7on6UrQEPsfViifGZOgFuRNFb
-         xw25WryNFYrSDmZsgxFZkNzcvRl4ZvvhiYtO1UtqZqPf4rdK+OYSH/csWdBv38Zl+wjS
-         YoeOQl7i8BALEvEdjdvatyBXCgeWiBANpSBxUT631XeR30pcxxU51mUfJaOMU5z0CfAH
-         7lYVcQWuVD6HnFaI/qIEXFbgi0z1w1LmZcdW06mxmFbyATkFqmtpxWszKxwQjyHrxu8H
-         +5rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vd6ddKIiDn7Wxc81DAU/CU1ZzdkNr6/YfvtOpLX6/Cg=;
-        b=E8jIXwkvwB/52ThaDjZrFB0B8qZxA+WEtK7H9WMuN3pEl1lMSbGTZ1Pne+gTpUy0oI
-         A8k5zYa50KpqmgHtMVaeFUzm0VqqCk4S3vm+0kJVT6mWb2om1YQXfLfE07V5cQOjuPi9
-         RUksrzXYovHlegeExIKO0+VjkC2OH6uiLVMqsFIxEaMZbs1FRYVYnQ8C/o14lf1ADrKB
-         Q1gDtWUid1nGMwNLgXcGDihUj35cQkLECOeMQeDsUhE7/gTJmTlopLYsZb+auZfjlL8J
-         grcLWCphW6nPWBBZ08M86hg2jJNh+/iYK81U3/TI6bHYYE22ijanSHS/RWFH8rcgnN3O
-         Lbrw==
-X-Gm-Message-State: APzg51AHf9tvuYcg6O831sZMZl9AK4DuhBnwarM/O4Sjo6DLAx9y6tD/
-        q4DAy+NsKTa098Ggp9bqR98=
-X-Google-Smtp-Source: ANB0Vdatl16XSfO/y2HfhZ3EN/IT9yjBX1A3ngzdWSD3yZU/ClpYoeJvyzm4n0xNsW286Ykl1qTesw==
-X-Received: by 2002:a63:fa17:: with SMTP id y23-v6mr3006541pgh.177.1535141169483;
-        Fri, 24 Aug 2018 13:06:09 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id o3-v6sm8835446pgv.53.2018.08.24.13.06.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 Aug 2018 13:06:08 -0700 (PDT)
-Date:   Fri, 24 Aug 2018 13:06:07 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Roland Dreier <roland@purestorage.com>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
-        matt@codeblueprint.co.uk, bp@suse.de,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>, luto@kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>, bp@alien8.de,
-        brgerst@gmail.com, davej@codemonkey.org.uk, dvlasenk@redhat.com,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        sai.praneeth.prakhya@intel.com, sds@tycho.nsa.gov,
-        Thomas Gleixner <tglx@linutronix.de>, toshi.kani@hp.com,
-        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Yazen.Ghannam@amd.com
-Subject: Re: [PATCH 4.4 103/105] Revert "x86/mm/pat: Ensure cpa->pfn only
- contains page frame numbers"
-Message-ID: <20180824200607.GA18715@roeck-us.net>
-References: <20171215092305.994559179@linuxfoundation.org>
- <20171215092311.347628971@linuxfoundation.org>
- <CAL1RGDVgShymmT+TJ3mAHEL7n+qoisk6mQ=Tji_T=0d_QA=VKw@mail.gmail.com>
- <1535129126.2902.36.camel@codethink.co.uk>
- <CAL1RGDW1Lo+F5D479Jsi-AFsmjVpdDre_qOFSCwWubG6U=bxeQ@mail.gmail.com>
- <20180824191749.GA15489@kroah.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180824191749.GA15489@kroah.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Fri, 24 Aug 2018 19:43:06 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 5681460540; Fri, 24 Aug 2018 20:07:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535141220;
+        bh=asRBXtmVv2KzOVPpqFPD58AFGxknQheu/+umNB4bwLA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=nl+wVFH3FM9P748xYz2h0cbujmsHmTwpvrRNWYxccdgn2w4dvq1hcE7WXOn+kaQtA
+         yZDLFyewwxxgyRpQ3VDAGk1TY1iKHr84c8hB4VsRPGt/1Cu2CjK9H2rROfbzv63crR
+         Hdu+9MBl/Ql7IGA77v+Vg0VXZH06rf29dohoJUKM=
+Received: from rplsssn-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rplsssn@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2D9DE601D1;
+        Fri, 24 Aug 2018 20:06:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535141219;
+        bh=asRBXtmVv2KzOVPpqFPD58AFGxknQheu/+umNB4bwLA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=N+cZMNPnSvoA1U0RuFolBqIfmDXIjBMFZ7OOa4pGf/c1GjEqNfeDtuac5hOv1WWxy
+         hCVDQmn+rPx4rkDQuy6zOxF1HlFlRpD4vO4Mr2B6f2AfsRatKSYh+wa7ADVKuP2QQd
+         v98dq23pPWyT/CE3SSq8LqHn7MEifCIY/+aRBWU0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2D9DE601D1
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rplsssn@codeaurora.org
+From:   "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
+To:     andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Cc:     rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, lorenzo.pieralisi@arm.com,
+        rafael@kernel.org, drake@endlessm.com, sboyd@kernel.org,
+        evgreen@chromium.org, dianders@chromium.org, mka@chromium.org,
+        ilina@codeaurora.org, "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
+Subject: [PATCH RFC 0/6] drivers: qcom: enable system low power modes for SDM845
+Date:   Sat, 25 Aug 2018 01:36:22 +0530
+Message-Id: <1535141188-29731-1-git-send-email-rplsssn@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 24, 2018 at 09:17:49PM +0200, Greg Kroah-Hartman wrote:
-> On Fri, Aug 24, 2018 at 10:08:28AM -0700, Roland Dreier wrote:
-> > > See
-> > > <https://lore.kernel.org/lkml/1512686629.18523.217.camel@codethink.co.uk/T/#u>.
-> > 
-> > Thanks!  I'm not using SGI UV and I'm not using kexec, so I guess I
-> > sidestepped most of those issues.  Greg, I think we need to unrevert
-> > the cpa->pfn change (otherwise the L1TF fix probably gets pretty
-> > messy) and I guess pull in the other patches that Ben mentions.
-> 
-> Ok, so what patch should be reverted?  I'm seeing other reports of
-> problems all around this same area, but I can't figure out exactly what
-> to do.
-> 
-> Guenter, any ideas?
-> 
-I think we'll need to reapply 87e2bd898d3a ("x86/mm/pat: Ensure cpa->pfn only
-contains page frame numbers"), and possibly apply d367cef0a7f0 ("x86/mm/pat:
-Fix boot crash when 1GB pages are not supported by the CPU"). Both require
-conflict resolutions, but they are quite straightforward. I am not sure
-about the other EFI patches.
+Hi,
 
-I am going to send the backports as RFT in a minute. Problem is that I don't
-have an EFI system at hand and can not test if this fixes the problem
-(or maybe introduces a new one), so someone will need to step in and do
-those tests.
+This is an attempt at a solution to perform activities necessary while entering
+deeper low power modes supported by firmware for QCOM SoCs which have hardened
+IP (Resource Power Manager Hardened - RPMH) for shared resource management.
 
-Guenter
+The shared resources that are no longer used, when processor enters deep idle
+states, can be turned off or put to lower state via sleep requests. Clients vote
+for lower resource state when application processor is asleep. These votes need
+to be flushed only during entry to low power modes.
+
+In addition to this, an always-on power domain wake-up timer present in PDC
+(Power Domain Controller)  needs to be programmed so that RSC is up and running
+by the time CPU has to wake-up. 
+
+The kernel does not notify that the CPU powering down is the last CPU.
+Therefore, in this series, we are doing a reference count to determine the last
+CPU in the system to enter idle and use that to perform the last-man activities.
+It would be optimal to do this than to flush whenever a core enters idle. The
+current approach can be revisited in future if OS-initiated support becomes
+available that enables certain actions to be taken when last core enters deepest
+low power mode.
+
+Apart from idle sleep, the deeper low modes can be exercised in system suspend.
+As it is expected that all other cores except the core entering system suspend
+will be disabled during suspend operations, the device suspend calls are
+utilized to perform the required tasks.
+
+Please review these patches. Your inputs would be greatly appreciated.
+
+Thanks,
+Raju
+
+Dependencies:
+
+The current series depends on patches[1][2], which add RPMH communication
+support, to send shared resource request votes by clients. The patches[1][2]
+also provide functions that are expected to be called by sleep manager client
+during low power mode entry. The other patches[3][4][5] which fix couple of
+issues are also needed. Apart from RPMH related patches, the current series
+depends on knowing the next wake up timer of a CPU[6] for programing the
+always-on timer present in PDC.
+
+[1]. https://lkml.org/lkml/2018/6/20/519
+[2]. https://lkml.org/lkml/2018/7/27/326
+[3]. https://lkml.org/lkml/2018/7/13/358 
+[4]. https://lkml.org/lkml/2018/7/19/84
+[5]. https://lkml.org/lkml/2018/8/24/641
+[6]. https://lkml.org/lkml/2018/6/20/800
+
+Raju P.L.S.S.S.N (6):
+  drivers: qcom: system_pm: add system PM client for RPMH based SoCs
+  dt-bindings: introduce System PM bindings for Qualcomm SoCs
+  drivers: qcom: system_pm: Add power management ops
+  drivers: qcom: system_pm: program next wakeup to PDC timer
+  drivers: qcom: rpmh: force flush new sleep/wake requests during
+    suspend
+  drivers: soc: system_pm: Add suspend notifier
+
+ .../devicetree/bindings/soc/qcom/system_pm.txt     |  28 ++++
+ drivers/soc/qcom/Kconfig                           |  11 ++
+ drivers/soc/qcom/Makefile                          |   1 +
+ drivers/soc/qcom/rpmh-internal.h                   |   1 +
+ drivers/soc/qcom/rpmh.c                            |  17 +++
+ drivers/soc/qcom/system_pm.c                       | 168 +++++++++++++++++++++
+ include/soc/qcom/rpmh.h                            |   5 +
+ 7 files changed, 231 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/qcom/system_pm.txt
+ create mode 100644 drivers/soc/qcom/system_pm.c
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum, hosted by The Linux Foundation.
+
