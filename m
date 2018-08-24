@@ -6,47 +6,43 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 010E2C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 01:16:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9F83C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 01:17:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2DA121557
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 01:16:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2DA121557
+	by mail.kernel.org (Postfix) with ESMTP id 647E321557
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 01:17:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 647E321557
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727134AbeHXEsa (ORCPT
+        id S1726972AbeHXEuL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 00:48:30 -0400
-Received: from gateway22.websitewelcome.com ([192.185.47.168]:39544 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725945AbeHXEs3 (ORCPT
+        Fri, 24 Aug 2018 00:50:11 -0400
+Received: from gateway20.websitewelcome.com ([192.185.47.18]:34803 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725945AbeHXEuL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 00:48:29 -0400
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id 874627A70
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 20:16:13 -0500 (CDT)
+        Fri, 24 Aug 2018 00:50:11 -0400
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id B38C1400D91E6
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 20:17:54 -0500 (CDT)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id t0hUf3Jz2PvAdt0hlf1hqA; Thu, 23 Aug 2018 20:16:13 -0500
+        id t0jafIXNfkBj6t0jafXLbk; Thu, 23 Aug 2018 20:17:54 -0500
 X-Authority-Reason: nr=8
-Received: from [189.250.73.28] (port=44186 helo=embeddedor)
+Received: from [189.250.73.28] (port=44204 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1ft0hT-003Wek-Ek; Thu, 23 Aug 2018 20:15:43 -0500
-Date:   Thu, 23 Aug 2018 20:15:40 -0500
+        id 1ft0ja-003Xxz-2h; Thu, 23 Aug 2018 20:17:54 -0500
+Date:   Thu, 23 Aug 2018 20:17:53 -0500
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Johannes Berg <johannes.berg@intel.com>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+To:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] iwlwifi: d3: use struct_size() in kzalloc()
-Message-ID: <20180824011540.GA25716@embeddedor.com>
+Subject: [PATCH] drivers: qcom: rpmh: use struct_size() in kzalloc()
+Message-ID: <20180824011753.GA25826@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -59,13 +55,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.250.73.28
 X-Source-L: No
-X-Exim-ID: 1ft0hT-003Wek-Ek
+X-Exim-ID: 1ft0ja-003Xxz-2h
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.73.28]:44186
+X-Source-Sender: (embeddedor) [189.250.73.28]:44204
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 41
+X-Email-Count: 47
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -82,44 +78,34 @@ struct foo {
         void *entry[];
 };
 
-instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
+instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_ATOMIC);
 
 Instead of leaving these open-coded and prone to type mistakes, we can
 now use the new struct_size() helper:
 
-instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
+instance = kzalloc(struct_size(instance, entry, count), GFP_ATOMIC);
 
 This issue was detected with the help of Coccinelle.
 
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/d3.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/soc/qcom/rpmh.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/d3.c b/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
-index 79bdae9..6960318 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
-@@ -1769,8 +1769,7 @@ static void iwl_mvm_query_netdetect_reasons(struct iwl_mvm *mvm,
- 		n_matches = 0;
- 	}
+diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
+index c7beb68..12c057a 100644
+--- a/drivers/soc/qcom/rpmh.c
++++ b/drivers/soc/qcom/rpmh.c
+@@ -362,8 +362,7 @@ int rpmh_write_batch(const struct device *dev, enum rpmh_state state,
+ 	if (!count)
+ 		return -EINVAL;
  
--	net_detect = kzalloc(sizeof(*net_detect) +
--			     (n_matches * sizeof(net_detect->matches[0])),
-+	net_detect = kzalloc(struct_size(net_detect, matches, n_matches),
- 			     GFP_KERNEL);
- 	if (!net_detect || !n_matches)
- 		goto out_report_nd;
-@@ -1785,8 +1784,7 @@ static void iwl_mvm_query_netdetect_reasons(struct iwl_mvm *mvm,
- 		for (j = 0; j < SCAN_OFFLOAD_MATCHING_CHANNELS_LEN; j++)
- 			n_channels += hweight8(fw_match->matching_channels[j]);
- 
--		match = kzalloc(sizeof(*match) +
--				(n_channels * sizeof(*match->channels)),
-+		match = kzalloc(struct_size(match, channels, n_channels),
- 				GFP_KERNEL);
- 		if (!match)
- 			goto out_report_nd;
+-	req = kzalloc(sizeof(*req) + count * sizeof(req->rpm_msgs[0]),
+-		      GFP_ATOMIC);
++	req = kzalloc(struct_size(req, rpm_msgs, count), GFP_ATOMIC);
+ 	if (!req)
+ 		return -ENOMEM;
+ 	req->count = count;
 -- 
 2.7.4
 
