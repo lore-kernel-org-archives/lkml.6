@@ -2,92 +2,87 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97763C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 12:48:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 781A8C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 12:48:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48D6621564
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 12:48:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="an/dob+c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48D6621564
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 3917E21564
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 12:48:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3917E21564
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727648AbeHXQWy (ORCPT
+        id S1727602AbeHXQWy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 24 Aug 2018 12:22:54 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:44431 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726848AbeHXQWx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+Received: from mail.bootlin.com ([62.4.15.54]:47885 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726268AbeHXQWx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 24 Aug 2018 12:22:53 -0400
-Received: by mail-lf1-f67.google.com with SMTP id g6-v6so6583935lfb.11
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 05:48:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=2FHUghnZPnzW+Olj0z+RL1R23rMcP/IaxBNeVxcPJeo=;
-        b=an/dob+c5UePlzOnJ3RH1TjdMkTjpEP1xtFfO4nhLCQIxIExqyZeU3M6XIrl4hQouQ
-         BESzwmlxZ8bytCUxocpoMvBQULtnLGo2AXmkQy5cdR5CkQlBF8ykmZEzhKMg2Fi3MJEv
-         tgzM0h8wfwtujccfTz4C/svQYUwRqoa6cZuS8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=2FHUghnZPnzW+Olj0z+RL1R23rMcP/IaxBNeVxcPJeo=;
-        b=VJFdInmjmDOcfXdF5iLab2eGhvqqEl/iJL7T27wwmssM7P7UAIJWkljuRU4kT2Xbmm
-         v23806AMOAm+oFWeEuGgJnQUDXzcj0jKckUZzfrLB0YbYTFAOqIZhQtjN/tReprEwPH2
-         3+2schO6bnA8KTccOJH4Nd8fmrSiAP7NXJz5zqf3rI8oXLzW1wy56EeCWjSwf6pqAWso
-         FkVpCau/RrQMhFv9uZTFOkiyGMp2LtYcR6zmTGSGESNAieb9NWW5/yAmL1JdNjzIz6tk
-         zba3cxnbHHh2uT64qExJamcLh42q/dX9+txiq7gIz+78JI1zQAXifV+CxN97ioDMh4wq
-         H8iA==
-X-Gm-Message-State: APzg51CRK/x4qxvOf8/Swacf3Fyhv7/QYu7gSbOxn7bgW8zRKb3iaP+e
-        xmiROGQ9FBYo20MJRIIL+dOATA==
-X-Google-Smtp-Source: ANB0Vdan0hg2dSNyOIng4AGXxUtWS8u+vA2eYGMxHWfejlKLKjYhcB48cu8Bsz/1mYakbAcOrxx+9g==
-X-Received: by 2002:a19:a685:: with SMTP id p127-v6mr1254558lfe.143.1535114901827;
-        Fri, 24 Aug 2018 05:48:21 -0700 (PDT)
-Received: from localhost (c-4c3770d5.07-21-73746f28.bbcust.telenor.se. [213.112.55.76])
-        by smtp.gmail.com with ESMTPSA id y85-v6sm1324298lfi.46.2018.08.24.05.48.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 24 Aug 2018 05:48:21 -0700 (PDT)
-From:   Anders Roxell <anders.roxell@linaro.org>
-To:     shuah@kernel.org, corbet@lwn.net
-Cc:     linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH] doc: dev-tools: kselftest.rst: update config file location
-Date:   Fri, 24 Aug 2018 14:47:44 +0200
-Message-Id: <20180824124744.9842-1-anders.roxell@linaro.org>
-X-Mailer: git-send-email 2.11.0
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 13E7A20728; Fri, 24 Aug 2018 14:48:22 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-53-19.w90-88.abo.wanadoo.fr [90.88.170.19])
+        by mail.bootlin.com (Postfix) with ESMTPSA id A0AEE207B1;
+        Fri, 24 Aug 2018 14:48:11 +0200 (CEST)
+Date:   Fri, 24 Aug 2018 14:48:10 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Liang Yang <liang.yang@amlogic.com>
+Cc:     Yixun Lan <yixun.lan@amlogic.com>, <linux-mtd@lists.infradead.org>,
+        Rob Herring <robh@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Richard Weinberger <richard@nod.at>,
+        <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        <linux-amlogic@lists.infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Jerome Brunet <jbrunet@baylibre.com>
+Subject: Re: [RFC PATCH v2 2/2] mtd: rawnand: meson: add support for Amlogic
+ NAND flash controller
+Message-ID: <20180824144810.31c929a5@bbrezillon>
+In-Reply-To: <96e538a5-1232-11f2-8b9e-5ddb09dcc2de@amlogic.com>
+References: <20180719094612.5833-1-yixun.lan@amlogic.com>
+        <20180719094612.5833-3-yixun.lan@amlogic.com>
+        <20180801235045.5b4d8211@bbrezillon>
+        <42877a0d-9830-0626-3f64-e49a326eaa3c@amlogic.com>
+        <20180817155608.5929b37a@bbrezillon>
+        <96e538a5-1232-11f2-8b9e-5ddb09dcc2de@amlogic.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Config fragment files should be placed in
-tools/testing/selftests/<testdir>/config
+On Wed, 22 Aug 2018 22:08:42 +0800
+Liang Yang <liang.yang@amlogic.com> wrote:
 
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
----
- Documentation/dev-tools/kselftest.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> > You have to wait tWB, that's for sure.
+> >   
+> we have a maximum 32 commands fifo. when command is written into 
+> NFC_REG_CMD, it doesn't mean that command is executing right now, maybe 
+> it is buffering on the queue.Assume one ERASE operation, when 2nd 
+> command(0xd0) is written into NFC_REG_CMD and then come into 
+> NAND_OP_WAITRDY_INSTR, if I read the RB status by register, it may be 
+> wrong because 0xd0 may not being executed. it is unusual unless 
+> buffering two many command.
 
-diff --git a/Documentation/dev-tools/kselftest.rst b/Documentation/dev-tools/kselftest.rst
-index 6f653acea248..dad1bb8711e2 100644
---- a/Documentation/dev-tools/kselftest.rst
-+++ b/Documentation/dev-tools/kselftest.rst
-@@ -159,7 +159,7 @@ Contributing new tests (details)
-  * If a test needs specific kernel config options enabled, add a config file in
-    the test directory to enable them.
- 
--   e.g: tools/testing/selftests/android/ion/config
-+   e.g: tools/testing/selftests/android/config
- 
- Test Harness
- ============
--- 
-2.11.0
+You should flush the queue and wait for it to empty at the end of
+->exec_op().
 
+> so it seems that i still need to use nand_soft_waitrdy or wait cmd is 
+> executed somewhere.
+
+Don't you have a WAIT_FOR_RB instruction? What is NFC_CMD_RB for? Also,
+NFC_CMD_IDLE seems to allow you to add an arbitrary delay, and that's
+probably what you should use for tWB.
