@@ -2,128 +2,111 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17954C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 18:50:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26D1FC43334
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 18:50:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA4A9208AC
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 18:50:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA4A9208AC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=holtmann.org
+	by mail.kernel.org (Postfix) with ESMTP id D2B722151C
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 18:50:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="gQ5pcsHZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2B722151C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726943AbeHXW0j convert rfc822-to-8bit (ORCPT
+        id S1727192AbeHXW0k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 18:26:39 -0400
-Received: from coyote.holtmann.net ([212.227.132.17]:50762 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726601AbeHXW0j (ORCPT
+        Fri, 24 Aug 2018 18:26:40 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:41624 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726617AbeHXW0j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 24 Aug 2018 18:26:39 -0400
-Received: from marcel-macpro.fritz.box (p4FEFCC41.dip0.t-ipconnect.de [79.239.204.65])
-        by mail.holtmann.org (Postfix) with ESMTPSA id B6627CEF96;
-        Fri, 24 Aug 2018 20:57:52 +0200 (CEST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
-Subject: Re: [PATCH v1 1/1] Bluetooth: hci_qca: Add poweroff support during
- hci down for wcn3990
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20180823112935.17342-2-bgodavar@codeaurora.org>
-Date:   Fri, 24 Aug 2018 20:50:46 +0200
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>, mka@chromium.org,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <E6C34892-0C0F-45E7-AC05-79A4A409FC48@holtmann.org>
-References: <20180823112935.17342-1-bgodavar@codeaurora.org>
- <20180823112935.17342-2-bgodavar@codeaurora.org>
-To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
-X-Mailer: Apple Mail (2.3445.9.1)
+Received: by mail-io0-f194.google.com with SMTP id q4-v6so7933413iob.8
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 11:50:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=7falQ6vJZgobqKYv+GpbnoF18oJtcIry5jMkzy8aWT0=;
+        b=gQ5pcsHZ6Zoy77qt7qsu4VPz+77OHYtqYq69MPjKFy1gy6ViPJyT9algzqsR2bYeYV
+         YqzFPc/b6NmfDgXz/Fy4ZU7tQSKsl8VLwgCh2ScEQds3kkTZvz8a+pgHAHCf0e9S5rTk
+         yaJ7MxhTr7b9LIwvo3v8nPsgUxUpzGFfGogY4f8XP7YoxUaERfzT8Xz2i/glwArITz+J
+         D9L5J1a7yAhwh5r0iPEu8bo8HRG4Kh45B2Jh5IAl5th6s0ymHBUKs+jDQvPyzRXzQCVb
+         6y2ghWPTN0Ir3md1t4hSXiVrP6mGANE8KFWv9xMp/ZQMLzT9dWCRACE61XDHsOBspnFl
+         ErrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7falQ6vJZgobqKYv+GpbnoF18oJtcIry5jMkzy8aWT0=;
+        b=Csov3LUQ59kEb1La/t3uIJELJXZ240eq8MbPlFehuwSbXeVZnTF3tq4g3Vf9MfC4yP
+         FU/B4hD2oZqL8N94+P8sKI6URpLEvFmcpiHOA3cQSSol7GdVejKu/2ZiziqeY9toX9j6
+         0oJTZCnmIKzT4GiAOTCSsECVd6uKmT1FuhvUUI1E/1KZlBs6WiOAttKu/zQ2aGHwzfsF
+         yU7/Zb0XdaEfwuR8aifxkXAOKdWY0BcZfFSNsa+Bkar3G9GgozqS6q8X1FJ6cDN8PaM/
+         05v4vr/hV/dlzlZIv5ZbrQaYrNJKnGTaHl5Nx62SxvyDJSPzX+E+hBLxl+87ji/57uE1
+         lLVg==
+X-Gm-Message-State: APzg51AZ74h2IrQXPmzjarTfk09FyaJ86gB+loc7hrZMNj7MFsSN2qsi
+        xWyCJXmmUPxUFj5PUKyQPxoLuA==
+X-Google-Smtp-Source: ANB0VdZkRbGL3PFLQkb5xjWyYnu8xYAHvHWeDZNaKwJueVnn2ZVRd3htS15rBrNEREkongVyPRBy6g==
+X-Received: by 2002:a6b:9108:: with SMTP id t8-v6mr2269177iod.260.1535136648194;
+        Fri, 24 Aug 2018 11:50:48 -0700 (PDT)
+Received: from [192.168.1.56] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id n1-v6sm2615008ioh.31.2018.08.24.11.50.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 24 Aug 2018 11:50:46 -0700 (PDT)
+Subject: Re: [PATCH] blk-wbt: get back the missed wakeup from __wbt_done
+To:     Anchal Agarwal <anchalag@amzn.com>
+Cc:     fllinden@amazon.com, Jianchao Wang <jianchao.w.wang@oracle.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        anchalag@amazon.com
+References: <1535029718-17259-1-git-send-email-jianchao.w.wang@oracle.com>
+ <bd84ff08-b75a-0a2f-6b37-07a104452bff@kernel.dk>
+ <da9458c632cb4c4695660664bf7c3fb3@EX13D13UWB002.ant.amazon.com>
+ <20180823210144.GB5624@kaos-source-ops-60001.pdx1.amazon.com>
+ <3eaa20ce-0599-c405-d979-87d91ea331d2@kernel.dk>
+ <20180824181223.GA9049@kaos-source-ops-60001.pdx1.amazon.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <677c8648-63fd-601c-b906-40a8502f9782@kernel.dk>
+Date:   Fri, 24 Aug 2018 12:50:44 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <20180824181223.GA9049@kaos-source-ops-60001.pdx1.amazon.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Balakrishna,
+On 8/24/18 12:12 PM, Anchal Agarwal wrote:
+> That's totally fair. As compared to before the patch it was way too high
+> and my test case wasn't even running due to the thunderign herd issues and
+> queue re-ordering. Anyways as I also mentioned before 10 times 
+> contention is not too bad since its not really affecting much the number of
+> files read in my applciation. Also, you are right waking up N tasks seems 
+> plausible. 
 
-> This patch enables power off support for hci down and power on support
-> for hci up. As wcn3990 power sources are ignited by regulators, we will
-> turn off them during hci down, i.e. an complete power off of wcn3990.
-> So while hci up, we will call vendor specific open/close and setup which
-> will turn on the regulators, requests BT chip version and download the
-> firmware.
-> 
-> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
-> ---
-> drivers/bluetooth/hci_qca.c | 34 ++++++++++++++++++++++++++++++++++
-> 1 file changed, 34 insertions(+)
-> 
-> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-> index e182f6019f68..98d33c6b8909 100644
-> --- a/drivers/bluetooth/hci_qca.c
-> +++ b/drivers/bluetooth/hci_qca.c
-> @@ -595,6 +595,9 @@ static int qca_close(struct hci_uart *hu)
-> 	struct qca_serdev *qcadev;
-> 	struct qca_data *qca = hu->priv;
-> 
-> +	if (!qca)
-> +		return 0;
-> +
-> 	BT_DBG("hu %p qca close", hu);
-> 
-> 	serial_clock_vote(HCI_IBS_VOTE_STATS_UPDATE, hu);
-> @@ -1098,6 +1101,32 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
-> 	return 0;
-> }
-> 
-> +static int hci_uart_open(struct hci_dev *hdev)
-> +{
-> +	struct hci_uart *hu = hci_get_drvdata(hdev);
-> +
-> +	BT_DBG("%s %p", hdev->name, hdev);
-> +	set_bit(HCI_UART_PROTO_READY, &hu->flags);
-> +
-> +	return qca_open(hu);
-> +}
-> +
-> +static int hci_uart_close(struct hci_dev *hdev)
-> +{
-> +	struct hci_uart *hu = hci_get_drvdata(hdev);
-> +
-> +	BT_DBG("%s %p", hdev->name, hdev);
-> +
-> +	/* After this step, we should not allow Tx and Rx work
-> +	 * function to execute. As we are freeing qca tx and rx
-> +	 * buffers which may cause kernel crash.
-> +	 */
-> +	clear_bit(HCI_UART_PROTO_READY, &hu->flags);
-> +	qca_close(hu);
-> +
-> +	return 0;
-> +}
-> +
-> static int qca_wcn3990_init(struct hci_uart *hu)
-> {
-> 	struct hci_dev *hdev = hu->hdev;
-> @@ -1154,6 +1183,11 @@ static int qca_setup(struct hci_uart *hu)
-> 
-> 	if (qcadev->btsoc_type == QCA_WCN3990) {
-> 		bt_dev_info(hdev, "setting up wcn3990");
-> +
-> +		hdev->open  = hci_uart_open;
-> +		hdev->close = hci_uart_close;
-> +		set_bit(HCI_QUIRK_NON_PERSISTENT_SETUP, &hdev->quirks);
-> +
+OK, I'm going to take that as a positive response. I'm going to propose
+the last patch as the final addition in this round, since it does fix a
+gap in the previous. And I do think that we need to wake as many tasks
+as can make progress, otherwise we're deliberately running the device at
+a lower load than we should.
 
-I do not get this change and I am also against it. Once hdev->open and hdev->close are assigned, don’t re-assign them. You called hci_register_dev and you are not changing the basic transport open/close functions after that. If you need some vendor specific things to open and close the transport, then do it properly.
+> My application is somewhat similar to database workload. It does uses fsync 
+> internally also. So what it does is it creates files of random sizes with 
+> random contents. It stores the hash of those files in memory. During the 
+> test it reads those files back from storage and checks their hashes. 
 
-When I posted the btuart.c serdev driver, it would be a lot easier to add vendor specific things then to hci_serdev.c which is still kinda hacked onto a line discipline driver.
+How many tasks are running for your test?
 
-Regards
-
-Marcel
+-- 
+Jens Axboe
 
