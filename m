@@ -6,40 +6,40 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9E56C43143
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 22:41:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B5CEC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 22:42:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73B0B2098B
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 22:41:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73B0B2098B
+	by mail.kernel.org (Postfix) with ESMTP id D0F4D2098B
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 22:42:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0F4D2098B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727972AbeHYCSJ (ORCPT
+        id S1728038AbeHYCSY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 22:18:09 -0400
-Received: from mga01.intel.com ([192.55.52.88]:55282 "EHLO mga01.intel.com"
+        Fri, 24 Aug 2018 22:18:24 -0400
+Received: from mga06.intel.com ([134.134.136.31]:59924 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726770AbeHYCSI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 22:18:08 -0400
+        id S1727478AbeHYCSY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 22:18:24 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Aug 2018 15:41:32 -0700
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Aug 2018 15:41:32 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,284,1531810800"; 
-   d="scan'208";a="84307219"
+   d="scan'208";a="84307211"
 Received: from cschaufl-mobl.amr.corp.intel.com ([10.254.2.129])
-  by fmsmga001.fm.intel.com with ESMTP; 24 Aug 2018 15:41:19 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 24 Aug 2018 15:41:18 -0700
 From:   Casey Schaufler <casey.schaufler@intel.com>
 To:     kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov,
         casey.schaufler@intel.com, dave.hansen@intel.com,
         deneen.t.dock@intel.com, kristen@linux.intel.com,
         arjan@linux.intel.com
-Subject: [PATCH v4 4/5] Smack: Support determination of side-channel
-Date:   Fri, 24 Aug 2018 15:41:16 -0700
-Message-Id: <20180824224117.3356-5-casey.schaufler@intel.com>
+Subject: [PATCH v4 1/5] LSM: Introduce a hook for side-channel danger
+Date:   Fri, 24 Aug 2018 15:41:13 -0700
+Message-Id: <20180824224117.3356-2-casey.schaufler@intel.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180824224117.3356-1-casey.schaufler@intel.com>
 References: <20180824224117.3356-1-casey.schaufler@intel.com>
@@ -48,50 +48,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Smack considers its private task data safe if the current task
-has read access to the passed task.
+There may be cases where the data maintained for
+security controls is more sensitive than general
+process information and that may be subjected to
+side-channel attacks. An LSM hook is provided so
+that this can be check for where the system would
+take action should the current task have potential
+access to the passed task.
 
 Signed-off-by: Casey Schaufler <casey.schaufler@intel.com>
 ---
- security/smack/smack_lsm.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ include/linux/lsm_hooks.h | 7 +++++++
+ include/linux/security.h  | 1 +
+ security/security.c       | 5 +++++
+ 3 files changed, 13 insertions(+)
 
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 91750205a5de..85dc053e610c 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -2299,6 +2299,23 @@ static void smack_task_to_inode(struct task_struct *p, struct inode *inode)
- 	isp->smk_inode = skp;
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index a08bc2587b96..fd2a7e6beb01 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -698,6 +698,11 @@
+  *	security attributes, e.g. for /proc/pid inodes.
+  *	@p contains the task_struct for the task.
+  *	@inode contains the inode structure for the inode.
++ * @task_safe_sidechannel:
++ *	Check if a side channel attack is harmless for the current task and @p.
++ *	The caller may have determined that no attack is possible, in which
++ *	case this hook won't get called.
++ *	@p contains the task_struct for the task.
+  *
+  * Security hooks for Netlink messaging.
+  *
+@@ -1611,6 +1616,7 @@ union security_list_options {
+ 	int (*task_prctl)(int option, unsigned long arg2, unsigned long arg3,
+ 				unsigned long arg4, unsigned long arg5);
+ 	void (*task_to_inode)(struct task_struct *p, struct inode *inode);
++	int (*task_safe_sidechannel)(struct task_struct *p);
+ 
+ 	int (*ipc_permission)(struct kern_ipc_perm *ipcp, short flag);
+ 	void (*ipc_getsecid)(struct kern_ipc_perm *ipcp, u32 *secid);
+@@ -1897,6 +1903,7 @@ struct security_hook_heads {
+ 	struct hlist_head task_kill;
+ 	struct hlist_head task_prctl;
+ 	struct hlist_head task_to_inode;
++	struct hlist_head task_safe_sidechannel;
+ 	struct hlist_head ipc_permission;
+ 	struct hlist_head ipc_getsecid;
+ 	struct hlist_head msg_msg_alloc_security;
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 3410acfe139c..69a5526f789f 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -366,6 +366,7 @@ int security_task_kill(struct task_struct *p, struct siginfo *info,
+ int security_task_prctl(int option, unsigned long arg2, unsigned long arg3,
+ 			unsigned long arg4, unsigned long arg5);
+ void security_task_to_inode(struct task_struct *p, struct inode *inode);
++int security_task_safe_sidechannel(struct task_struct *p);
+ int security_ipc_permission(struct kern_ipc_perm *ipcp, short flag);
+ void security_ipc_getsecid(struct kern_ipc_perm *ipcp, u32 *secid);
+ int security_msg_msg_alloc(struct msg_msg *msg);
+diff --git a/security/security.c b/security/security.c
+index 4927e7cc7d96..353b711e635a 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1165,6 +1165,11 @@ void security_task_to_inode(struct task_struct *p, struct inode *inode)
+ 	call_void_hook(task_to_inode, p, inode);
  }
  
-+/**
-+ * smack_task_safe_sidechannel - Are the task and current sidechannel safe?
-+ * @p: task to check on
-+ *
-+ * A crude value for sidechannel safety is that the current task is
-+ * already allowed to read from the other.
-+ *
-+ * Returns 0 if the tasks are sidechannel safe, -EACCES otherwise.
-+ */
-+static int smack_task_safe_sidechannel(struct task_struct *p)
++int security_task_safe_sidechannel(struct task_struct *p)
 +{
-+	struct smack_known *skp = smk_of_task_struct(p);
-+	struct smack_known *ckp = smk_of_task_struct(current);
-+
-+	return smk_access(ckp, skp, MAY_READ, NULL);
++	return call_int_hook(task_safe_sidechannel, 0, p);
 +}
 +
- /*
-  * Socket hooks.
-  */
-@@ -4718,6 +4735,7 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(task_movememory, smack_task_movememory),
- 	LSM_HOOK_INIT(task_kill, smack_task_kill),
- 	LSM_HOOK_INIT(task_to_inode, smack_task_to_inode),
-+	LSM_HOOK_INIT(task_safe_sidechannel, smack_task_safe_sidechannel),
- 
- 	LSM_HOOK_INIT(ipc_permission, smack_ipc_permission),
- 	LSM_HOOK_INIT(ipc_getsecid, smack_ipc_getsecid),
+ int security_ipc_permission(struct kern_ipc_perm *ipcp, short flag)
+ {
+ 	return call_int_hook(ipc_permission, 0, ipcp, flag);
 -- 
 2.17.1
 
