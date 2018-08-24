@@ -2,159 +2,157 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E4EC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 05:26:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56F9CC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 05:33:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC6362157F
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 05:26:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KWjXGYto"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC6362157F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id EBB5C208B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 05:33:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBB5C208B0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727507AbeHXI7d (ORCPT
+        id S1727392AbeHXJGa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 04:59:33 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:34034 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726459AbeHXI7d (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 04:59:33 -0400
-Received: by mail-lf1-f66.google.com with SMTP id g9-v6so5809864lfh.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 22:26:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=IUyI4BaDZ6W8m9kURDLWuwkhOpeyiYfDo6dHOzPo2sE=;
-        b=KWjXGYtozZlIogLgRWNIlEXae8s4bA0kEtAj9IQl8cpyfzzWrzmrWjQJgvUhXWcOl+
-         dNnyJrUSYxDwo9KEpp0nyt7XTa23P/sI1mVT0MOCkuc0azJuuUbi8ucEA7TNZQDR7k+R
-         2Cx7qf8tQ5bMdk0KXNqUpNfR20JPieH9a5b5k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=IUyI4BaDZ6W8m9kURDLWuwkhOpeyiYfDo6dHOzPo2sE=;
-        b=mfoL4s9d91JWnrXolISXqfZLvgAp8mSZnD8QmO3ju7gwtgjnuv78TqfDIBLHcZuwE+
-         pjM8i7pTjNhc0N/d17Q5sQULW1kvyjCbgjDWtlrEE/uuPDbSTYTn6q5VYlp4QxPnIYae
-         gzTCjUxC39WCSW0FQu4WxgwxvaCbcGACuskjdIMIQUkCHwk3m4Lt6rLm/jtBx/u9cRop
-         bihft5HZqUWZHZKgqKDL4SfLwTltV/vBWmhMroL57ntjcacoKdG7Q7cL8HBkwZfaYyFB
-         TsgK+FhmGcy8T9OLwviIv41e//PVGeVAFGx/biAHVoA8LH6M3qW2xGw68+7tN171zvWb
-         N2wQ==
-X-Gm-Message-State: APzg51A/EKwRXy/UuENrS77+kdFzyxu9xV1UvzO90dyvXcN+NmgU6DYD
-        QRRcmJbcxuxgnmeF1YYvabQx+1X90PGFzBJwWruP6NyOFmA=
-X-Google-Smtp-Source: ANB0Vda92AemEWqlMflQoFNboYeKDfTkAdZT0wjXXOQKc/YATQKxiQURsHODW8w9mcABXpf/eZ6o7/rABaqpsI/cN3E=
-X-Received: by 2002:a19:164a:: with SMTP id m71-v6mr125626lfi.82.1535088391597;
- Thu, 23 Aug 2018 22:26:31 -0700 (PDT)
+        Fri, 24 Aug 2018 05:06:30 -0400
+Received: from mga04.intel.com ([192.55.52.120]:18026 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726519AbeHXJGa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 05:06:30 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Aug 2018 22:33:28 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,281,1531810800"; 
+   d="scan'208";a="86001473"
+Received: from bee.sh.intel.com (HELO lkp-server01) ([10.239.97.14])
+  by orsmga002.jf.intel.com with ESMTP; 23 Aug 2018 22:33:25 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1ft4ib-0004lt-Mu; Fri, 24 Aug 2018 13:33:09 +0800
+Date:   Fri, 24 Aug 2018 13:32:24 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Weikang Shi <swkhack@gmail.com>
+Cc:     kbuild-all@01.org, akpm@linux-foundation.org,
+        alexander.h.duyck@intel.com, mhocko@suse.com, vbabka@suse.cz,
+        mgorman@suse.de, l.stach@pengutronix.de, vdavydov.dev@gmail.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        my_email@gmail.com, Weikang Shi <swkhack@gmail.com>
+Subject: Re: [PATCH] fs: fix local var type
+Message-ID: <201808241151.885cwq5J%fengguang.wu@intel.com>
+References: <1535014754-31918-1-git-send-email-swkhack@gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a19:16cd:0:0:0:0:0 with HTTP; Thu, 23 Aug 2018 22:26:30
- -0700 (PDT)
-In-Reply-To: <20180823074927.161454870@linuxfoundation.org>
-References: <20180823074927.161454870@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Fri, 24 Aug 2018 10:56:30 +0530
-Message-ID: <CA+G9fYsEvSDTAFOt1f4roErZirsmJOJ1PvzaTpW-CpZ1unCcnw@mail.gmail.com>
-Subject: Re: [PATCH 4.9 000/130] 4.9.124-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1535014754-31918-1-git-send-email-swkhack@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23 August 2018 at 13:21, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> This is the start of the stable review cycle for the 4.9.124 release.
-> There are 130 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat Aug 25 07:48:45 UTC 2018.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.9.124-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.9.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Hi Weikang,
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm and x86_64.
+Thank you for the patch! Perhaps something to improve:
 
-Summary
-------------------------------------------------------------------------
+[auto build test WARNING on linus/master]
+[also build test WARNING on v4.18 next-20180822]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-kernel: 4.9.124-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.9.y
-git commit: d8c335b8a13deabf0c024b9728d62d686a2a9d0f
-git describe: v4.9.123-131-gd8c335b8a13d
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/bui=
-ld/v4.9.123-131-gd8c335b8a13d
+url:    https://github.com/0day-ci/linux/commits/Weikang-Shi/fs-fix-local-var-type/20180823-180758
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
 
 
-No regressions (compared to build v4.9.122)
+sparse warnings: (new ones prefixed by >>)
 
+   fs/seq_file.c:210:21: sparse: expression using sizeof(void)
+   fs/seq_file.c:210:21: sparse: expression using sizeof(void)
+   fs/seq_file.c:276:13: sparse: expression using sizeof(void)
+   fs/seq_file.c:276:13: sparse: expression using sizeof(void)
+>> fs/seq_file.c:860:27: sparse: incompatible types in comparison expression (different type sizes)
+   fs/seq_file.c:1037:24: sparse: incompatible types in comparison expression (different address spaces)
+   fs/seq_file.c:1039:24: sparse: incompatible types in comparison expression (different address spaces)
+>> fs/seq_file.c:860:27: sparse: call with no type!
+   In file included from include/linux/list.h:9:0,
+                    from include/linux/wait.h:7,
+                    from include/linux/wait_bit.h:8,
+                    from include/linux/fs.h:6,
+                    from fs/seq_file.c:10:
+   fs/seq_file.c: In function 'seq_hex_dump':
+   include/linux/kernel.h:845:29: warning: comparison of distinct pointer types lacks a cast
+      (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
+                                ^
+   include/linux/kernel.h:859:4: note: in expansion of macro '__typecheck'
+      (__typecheck(x, y) && __no_side_effects(x, y))
+       ^~~~~~~~~~~
+   include/linux/kernel.h:869:24: note: in expansion of macro '__safe_cmp'
+     __builtin_choose_expr(__safe_cmp(x, y), 23-                        ^~~~~~~~~~
+   include/linux/kernel.h:878:19: note: in expansion of macro '__careful_cmp'
+    #define min(x, y) __careful_cmp(x, y, <)
+                      ^~~~~~~~~~~~~
+   fs/seq_file.c:860:13: note: in expansion of macro 'min'
+      linelen = min(remaining, rowsize);
+                ^~~
 
-Ran 12411 total tests in the following environments and test suites.
+vim +860 fs/seq_file.c
 
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- juno-r2 - arm64
-- x15 - arm
-- x86_64
+839cc2a9 Tetsuo Handa    2013-11-14  843  
+37607102 Andy Shevchenko 2015-09-09  844  /* A complete analogue of print_hex_dump() */
+37607102 Andy Shevchenko 2015-09-09  845  void seq_hex_dump(struct seq_file *m, const char *prefix_str, int prefix_type,
+37607102 Andy Shevchenko 2015-09-09  846  		  int rowsize, int groupsize, const void *buf, size_t len,
+37607102 Andy Shevchenko 2015-09-09  847  		  bool ascii)
+37607102 Andy Shevchenko 2015-09-09  848  {
+37607102 Andy Shevchenko 2015-09-09  849  	const u8 *ptr = buf;
+5f9924ac Weikang Shi     2018-08-23  850  	int i, linelen;
+5f9924ac Weikang Shi     2018-08-23  851  	size_t remaining = len;
+8b91a318 Andy Shevchenko 2015-11-06  852  	char *buffer;
+8b91a318 Andy Shevchenko 2015-11-06  853  	size_t size;
+37607102 Andy Shevchenko 2015-09-09  854  	int ret;
+37607102 Andy Shevchenko 2015-09-09  855  
+37607102 Andy Shevchenko 2015-09-09  856  	if (rowsize != 16 && rowsize != 32)
+37607102 Andy Shevchenko 2015-09-09  857  		rowsize = 16;
+37607102 Andy Shevchenko 2015-09-09  858  
+37607102 Andy Shevchenko 2015-09-09  859  	for (i = 0; i < len && !seq_has_overflowed(m); i += rowsize) {
+37607102 Andy Shevchenko 2015-09-09 @860  		linelen = min(remaining, rowsize);
+37607102 Andy Shevchenko 2015-09-09  861  		remaining -= rowsize;
+37607102 Andy Shevchenko 2015-09-09  862  
+37607102 Andy Shevchenko 2015-09-09  863  		switch (prefix_type) {
+37607102 Andy Shevchenko 2015-09-09  864  		case DUMP_PREFIX_ADDRESS:
+37607102 Andy Shevchenko 2015-09-09  865  			seq_printf(m, "%s%p: ", prefix_str, ptr + i);
+37607102 Andy Shevchenko 2015-09-09  866  			break;
+37607102 Andy Shevchenko 2015-09-09  867  		case DUMP_PREFIX_OFFSET:
+37607102 Andy Shevchenko 2015-09-09  868  			seq_printf(m, "%s%.8x: ", prefix_str, i);
+37607102 Andy Shevchenko 2015-09-09  869  			break;
+37607102 Andy Shevchenko 2015-09-09  870  		default:
+37607102 Andy Shevchenko 2015-09-09  871  			seq_printf(m, "%s", prefix_str);
+37607102 Andy Shevchenko 2015-09-09  872  			break;
+37607102 Andy Shevchenko 2015-09-09  873  		}
+37607102 Andy Shevchenko 2015-09-09  874  
+8b91a318 Andy Shevchenko 2015-11-06  875  		size = seq_get_buf(m, &buffer);
+37607102 Andy Shevchenko 2015-09-09  876  		ret = hex_dump_to_buffer(ptr + i, linelen, rowsize, groupsize,
+8b91a318 Andy Shevchenko 2015-11-06  877  					 buffer, size, ascii);
+8b91a318 Andy Shevchenko 2015-11-06  878  		seq_commit(m, ret < size ? ret : -1);
+8b91a318 Andy Shevchenko 2015-11-06  879  
+37607102 Andy Shevchenko 2015-09-09  880  		seq_putc(m, '\n');
+37607102 Andy Shevchenko 2015-09-09  881  	}
+37607102 Andy Shevchenko 2015-09-09  882  }
+37607102 Andy Shevchenko 2015-09-09  883  EXPORT_SYMBOL(seq_hex_dump);
+37607102 Andy Shevchenko 2015-09-09  884  
 
-Test Suites
------------
-* boot
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* ltp-open-posix-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
+:::::: The code at line 860 was first introduced by commit
+:::::: 37607102c4426cf92aeb5da1b1d9a79ba6d95e3f seq_file: provide an analogue of print_hex_dump()
 
---=20
-Linaro LKFT
-https://lkft.linaro.org
+:::::: TO: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+:::::: CC: Linus Torvalds <torvalds@linux-foundation.org>
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
