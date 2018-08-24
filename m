@@ -2,145 +2,113 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 040CAC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:50:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AF66C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:52:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B26BA2151C
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:50:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B26BA2151C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0554B2151C
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:52:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0554B2151C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728029AbeHXRZm (ORCPT
+        id S1727952AbeHXR1M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 13:25:42 -0400
-Received: from foss.arm.com ([217.140.101.70]:57614 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726960AbeHXRZl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 13:25:41 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 52128ED1;
-        Fri, 24 Aug 2018 06:50:56 -0700 (PDT)
-Received: from brain-police (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F13563F675;
-        Fri, 24 Aug 2018 06:50:51 -0700 (PDT)
-Date:   Fri, 24 Aug 2018 14:50:48 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        torvalds@linux-foundation.org, luto@kernel.org, x86@kernel.org,
-        bp@alien8.de, riel@surriel.com, jannh@google.com,
-        ascannell@google.com, dave.hansen@intel.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        David Miller <davem@davemloft.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-arch@vger.kernel.org, Palmer Dabbelt <palmer@sifive.com>,
-        linux-riscv@lists.infradead.org
-Subject: Re: [RFC PATCH 2/2] mm: mmu_notifier fix for tlb_end_vma (build
- failures)
-Message-ID: <20180824135048.GF11868@brain-police>
-References: <20180823084709.19717-1-npiggin@gmail.com>
- <20180823084709.19717-3-npiggin@gmail.com>
- <20180824130722.GA31409@roeck-us.net>
- <20180824131026.GB11868@brain-police>
- <20180824132419.GA9983@roeck-us.net>
- <20180824133427.GC11868@brain-police>
+        Fri, 24 Aug 2018 13:27:12 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57110 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726883AbeHXR1M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 13:27:12 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 43881AE8E;
+        Fri, 24 Aug 2018 13:52:24 +0000 (UTC)
+Subject: Re: [PATCH v3 0/5] xen/blk: persistent grant rework
+To:     =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>
+Cc:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        linux-block@vger.kernel.org, konrad.wilk@oracle.com,
+        axboe@kernel.dk, boris.ostrovsky@oracle.com
+References: <20180813140114.20126-1-jgross@suse.com>
+ <20180817155909.4cwiy6bhhgiala5m@mac>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <8aaf02b1-999d-81fc-2732-ed556b959a8a@suse.com>
+Date:   Fri, 24 Aug 2018 15:52:23 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <20180817155909.4cwiy6bhhgiala5m@mac>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Language: de-DE
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180824133427.GC11868@brain-police>
-User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 24, 2018 at 02:34:27PM +0100, Will Deacon wrote:
-> On Fri, Aug 24, 2018 at 06:24:19AM -0700, Guenter Roeck wrote:
-> > On Fri, Aug 24, 2018 at 02:10:27PM +0100, Will Deacon wrote:
-> > > On Fri, Aug 24, 2018 at 06:07:22AM -0700, Guenter Roeck wrote:
-> > > > On Thu, Aug 23, 2018 at 06:47:09PM +1000, Nicholas Piggin wrote:
-> > > > > The generic tlb_end_vma does not call invalidate_range mmu notifier,
-> > > > > and it resets resets the mmu_gather range, which means the notifier
-> > > > > won't be called on part of the range in case of an unmap that spans
-> > > > > multiple vmas.
-> > > > > 
-> > > > > ARM64 seems to be the only arch I could see that has notifiers and
-> > > > > uses the generic tlb_end_vma. I have not actually tested it.
-> > > > > 
-> > > > > Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
-> > > > > Acked-by: Will Deacon <will.deacon@arm.com>
-> > > > 
-> > > > This patch breaks riscv builds in mainline.
-> > > 
-> > > Looks very similar to the breakage we hit on arm64. diff below should fix
-> > > it.
-> > > 
-> > 
-> > Unfortunately it doesn't.
-> > 
-> > In file included from ./arch/riscv/include/asm/pgtable.h:26:0,
-> >                  from ./include/linux/memremap.h:7,
-> >                  from ./include/linux/mm.h:27,
-> >                  from arch/riscv/mm/fault.c:23:
-> > ./arch/riscv/include/asm/tlb.h: In function ‘tlb_flush’:
-> > ./arch/riscv/include/asm/tlb.h:19:18: error: dereferencing pointer to incomplete type ‘struct mmu_gather’
-> >   flush_tlb_mm(tlb->mm);
-> >                   ^
+On 17/08/18 17:59, Roger Pau Monné wrote:
+> On Mon, Aug 13, 2018 at 04:01:09PM +0200, Juergen Gross wrote:
+>> Persistent grants are used in the Xen's blkfront/blkback drivers to
+>> avoid mapping/unmapping of I/O buffers in the backend for each I/O.
+>>
+>> While this speeds up processing quite a bit there are problems related
+>> to persistent grants in some configurations: domains with multiple
+>> block devices making use of persistent grants might suffer from a lack
+>> of grants if each of the block devices experienced a high I/O load at
+>> some time. This is due to the number of persistent grants per device
+>> only to be limited by a rather high maximum value, but never being
+>> released even in case of longer times without any I/O.
+>>
+>> This series modifies xen-blkback to unmap any domU page mapped via a
+>> persistent grant after a timeout (default: 60 seconds). The timeout
+>> is set to its default value again when a persistent grant has been
+>> used for an I/O.
+>>
+>> xen-blkfront is modified to scan every 10 seconds for persistent grants
+>> not in use by blkback any more and to remove such grants.
+>>
+>> The last 3 patches are small cleanups of blkfront and blkback drivers.
+>>
+>> V3:
+>> - patch 1: make timeout parameter static
 > 
-> Sorry, I was a bit quick of the mark there. You'll need a forward
-> declaration for the paramater type. Here it is with a commit message,
-> although still untested because I haven't got round to setting up a riscv
-> toolchain yet.
-> 
-> Will
-> 
-> --->8
-> 
-> From adb9be33d68320edcda80d540a97a647792894d2 Mon Sep 17 00:00:00 2001
-> From: Will Deacon <will.deacon@arm.com>
-> Date: Fri, 24 Aug 2018 14:33:48 +0100
-> Subject: [PATCH] riscv: tlb: Provide definition of tlb_flush() before
->  including tlb.h
-> 
-> As of commit fd1102f0aade ("mm: mmu_notifier fix for tlb_end_vma"),
-> asm-generic/tlb.h now calls tlb_flush() from a static inline function,
-> so we need to make sure that it's declared before #including the
-> asm-generic header in the arch header.
-> 
-> Since tlb_flush() is a one-liner for riscv, we can define it before
-> including asm-generic/tlb.h as long as we provide a forward declaration
-> of struct mmu_gather.
-> 
-> Reported-by: Guenter Roeck <linux@roeck-us.net>
-> Signed-off-by: Will Deacon <will.deacon@arm.com>
-> ---
->  arch/riscv/include/asm/tlb.h | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/riscv/include/asm/tlb.h b/arch/riscv/include/asm/tlb.h
-> index c229509288ea..a3d1380ad970 100644
-> --- a/arch/riscv/include/asm/tlb.h
-> +++ b/arch/riscv/include/asm/tlb.h
-> @@ -14,11 +14,13 @@
->  #ifndef _ASM_RISCV_TLB_H
->  #define _ASM_RISCV_TLB_H
->  
-> -#include <asm-generic/tlb.h>
-> +struct mmu_gather;
->  
->  static inline void tlb_flush(struct mmu_gather *tlb)
->  {
->  	flush_tlb_mm(tlb->mm);
+> Konrad if you are OK with this series, could you please send a pull
+> request to Jens?
 
-Bah, didn't spot the dereference so this won't work either. You basically
-just need to copy what I did for arm64 in d475fac95779.
+Ping?
 
-Will
+
+Juergen
