@@ -2,133 +2,201 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 710B5C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 11:36:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B878AC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 11:43:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32CDB21581
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 11:36:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32CDB21581
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 4DE1C21581
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 11:43:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sO6/HYrT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DE1C21581
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727729AbeHXPKs (ORCPT
+        id S1727562AbeHXPRi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 11:10:48 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34460 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726513AbeHXPKs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 11:10:48 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 656F3AC89;
-        Fri, 24 Aug 2018 11:36:30 +0000 (UTC)
-Date:   Fri, 24 Aug 2018 13:36:29 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        Fri, 24 Aug 2018 11:17:38 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42009 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727135AbeHXPRi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 11:17:38 -0400
+Received: by mail-wr1-f68.google.com with SMTP id v17-v6so7228087wrr.9;
+        Fri, 24 Aug 2018 04:43:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=reply-to:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=e9ql2+sj+GkRkDzKAPhZVeGuZiOG2t4QiKIhZtz0KGY=;
+        b=sO6/HYrTIYO+HeWeym0gBEJ5t9TVhEMJMBNc5FxlwH839RfRj1DzhbMEqJykkDM4aq
+         LPtLlKVVxcFCVGwFGrE8YDjjGgfumhe5As4HODcx62WU1frQGUab99fr+c4thgKDokAt
+         FAZOo9ZqQvgePwslnbqpqibs/5f73hoihudRiElvC+AyiOZq1XOYY1VDEi36qmv2oaLT
+         J9qfOoN30Zax9cMsEgfHXR0u+sYWC6jZSYnQgh+gQbKy1wM5hHfc+qpEIDMkL6qa7KD3
+         mjfU+11tmbKIpjV3HvTRz4z5OyNlYc62KhuyzT14n5djIsoBuognCWt2bOm24CXM6QeF
+         r1KQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:reply-to:subject:to:cc:references:from
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-transfer-encoding:content-language;
+        bh=e9ql2+sj+GkRkDzKAPhZVeGuZiOG2t4QiKIhZtz0KGY=;
+        b=qw6QSZprqVSuxjzIF38Wr5AE7GrFuHUrF3/NOjty5wYVMDNA1RZQ8x/4CggvWI1+hO
+         H7UWbgsPAoSZN0fCZhhoFH8bwrGqgqT9BBdqhGGpf8YOQTBtvzh3nUI/G16QjAKJTrx6
+         PkpnYjiGe2+CDzQT0BHhr5EERvIkUutzYsi7V/qvoB9e1Iy/587QCopIPk46X2ds+FOu
+         yQXpo30AbD6sbMwMeIpQNLNl0jef7I9Gs9kl0QWgrd510NWcDCf45wXQTW/qA/tgHCmr
+         zHkCJYHX8n7hgmoZIFnoZL/tKn75LpUeK1XcX8yC+Ye/bEIMbvdXHwG/CzfQ0HuDZDvU
+         PUpA==
+X-Gm-Message-State: APzg51CXJkaI89BgVriL+km8r8YlugpXM4BxfYnnW1yJ2M7sYqWRw4Ue
+        vE10s4AuT7qtOp0rs0LQStM=
+X-Google-Smtp-Source: ANB0VdbLnhDQoAznumzophkUhtkbk+2ZTqfs22ejzpIGWRWDuxOIAMobOmlKa576Ju7W87M22me8wQ==
+X-Received: by 2002:adf:f410:: with SMTP id g16-v6mr979074wro.256.1535110999376;
+        Fri, 24 Aug 2018 04:43:19 -0700 (PDT)
+Received: from ?IPv6:2a02:908:1257:4460:1ab8:55c1:a639:6740? ([2a02:908:1257:4460:1ab8:55c1:a639:6740])
+        by smtp.gmail.com with ESMTPSA id g126-v6sm1646800wmg.5.2018.08.24.04.43.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 24 Aug 2018 04:43:18 -0700 (PDT)
+Reply-To: christian.koenig@amd.com
+Subject: Re: [PATCH] mm, oom: distinguish blockable mode for mmu notifiers
+To:     Michal Hocko <mhocko@kernel.org>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+Cc:     kvm@vger.kernel.org,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
         David Airlie <airlied@linux.ie>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
         Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
         Sudeep Dutt <sudeep.dutt@intel.com>,
-        Ashutosh Dixit <ashutosh.dixit@intel.com>,
+        dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
         Dimitri Sivanich <sivanich@sgi.com>,
+        linux-rdma@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Doug Ledford <dledford@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        xen-devel@lists.xenproject.org, intel-gfx@lists.freedesktop.org,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
         Boris Ostrovsky <boris.ostrovsky@oracle.com>,
         Juergen Gross <jgross@suse.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Felix Kuehling <felix.kuehling@amd.com>, kvm@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, linux-rdma@vger.kernel.org,
-        xen-devel@lists.xenproject.org,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        David Rientjes <rientjes@google.com>,
-        Leon Romanovsky <leonro@mellanox.com>
-Subject: Re: [PATCH] mm, oom: distinguish blockable mode for mmu notifiers
-Message-ID: <20180824113629.GI29735@dhcp22.suse.cz>
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ashutosh Dixit <ashutosh.dixit@intel.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Felix Kuehling <felix.kuehling@amd.com>
 References: <20180716115058.5559-1-mhocko@kernel.org>
  <8cbfb09f-0c5a-8d43-1f5e-f3ff7612e289@I-love.SAKURA.ne.jp>
+ <20180824113248.GH29735@dhcp22.suse.cz>
+From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
+Message-ID: <b088e382-e90e-df63-a079-19b2ae2b985d@gmail.com>
+Date:   Fri, 24 Aug 2018 13:43:16 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8cbfb09f-0c5a-8d43-1f5e-f3ff7612e289@I-love.SAKURA.ne.jp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180824113248.GH29735@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 24-08-18 19:54:19, Tetsuo Handa wrote:
-[...]
-> > --- a/mm/hmm.c
-> > +++ b/mm/hmm.c
-> > @@ -177,16 +177,19 @@ static void hmm_release(struct mmu_notifier *mn, struct mm_struct *mm)
-> >         up_write(&hmm->mirrors_sem);
-> >  }
-> > 
-> > -static void hmm_invalidate_range_start(struct mmu_notifier *mn,
-> > +static int hmm_invalidate_range_start(struct mmu_notifier *mn,
-> >                                        struct mm_struct *mm,
-> >                                        unsigned long start,
-> > -                                      unsigned long end)
-> > +                                      unsigned long end,
-> > +                                      bool blockable)
-> >  {
-> >         struct hmm *hmm = mm->hmm;
-> > 
-> >         VM_BUG_ON(!hmm);
-> > 
-> >         atomic_inc(&hmm->sequence);
-> > +
-> > +       return 0;
-> >  }
-> > 
-> >  static void hmm_invalidate_range_end(struct mmu_notifier *mn,
-> 
-> This assumes that hmm_invalidate_range_end() does not have memory
-> allocation dependency. But hmm_invalidate_range() from
-> hmm_invalidate_range_end() involves
-> 
->         down_read(&hmm->mirrors_sem);
->         list_for_each_entry(mirror, &hmm->mirrors, list)
->                 mirror->ops->sync_cpu_device_pagetables(mirror, action,
->                                                         start, end);
->         up_read(&hmm->mirrors_sem);
-> 
-> sequence. What is surprising is that there is no in-tree user who assigns
-> sync_cpu_device_pagetables field.
+Am 24.08.2018 um 13:32 schrieb Michal Hocko:
+> On Fri 24-08-18 19:54:19, Tetsuo Handa wrote:
+>> Two more worries for this patch.
+>>
+>>
+>>
+>>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
+>>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
+>>> @@ -178,12 +178,18 @@ void amdgpu_mn_unlock(struct amdgpu_mn *mn)
+>>>    *
+>>>    * @amn: our notifier
+>>>    */
+>>> -static void amdgpu_mn_read_lock(struct amdgpu_mn *amn)
+>>> +static int amdgpu_mn_read_lock(struct amdgpu_mn *amn, bool blockable)
+>>>   {
+>>> -       mutex_lock(&amn->read_lock);
+>>> +       if (blockable)
+>>> +               mutex_lock(&amn->read_lock);
+>>> +       else if (!mutex_trylock(&amn->read_lock))
+>>> +               return -EAGAIN;
+>>> +
+>>>          if (atomic_inc_return(&amn->recursion) == 1)
+>>>                  down_read_non_owner(&amn->lock);
+>> Why don't we need to use trylock here if blockable == false ?
+>> Want comment why it is safe to use blocking lock here.
+> Hmm, I am pretty sure I have checked the code but it was quite confusing
+> so I might have missed something. Double checking now, it seems that
+> this read_lock is not used anywhere else and it is not _the_ lock we are
+> interested about. It is the amn->lock (amdgpu_mn_lock) which matters as
+> it is taken in exclusive mode for expensive operations.
 
-Yes HMM doesn't have any in tree user yet.
+The write side of the lock is only taken in the command submission IOCTL.
 
->   $ grep -Fr sync_cpu_device_pagetables *
->   Documentation/vm/hmm.rst:     /* sync_cpu_device_pagetables() - synchronize page tables
->   include/linux/hmm.h: * will get callbacks through sync_cpu_device_pagetables() operation (see
->   include/linux/hmm.h:    /* sync_cpu_device_pagetables() - synchronize page tables
->   include/linux/hmm.h:    void (*sync_cpu_device_pagetables)(struct hmm_mirror *mirror,
->   include/linux/hmm.h: * hmm_mirror_ops.sync_cpu_device_pagetables() callback, so that CPU page
->   mm/hmm.c:               mirror->ops->sync_cpu_device_pagetables(mirror, action,
-> 
-> That is, this API seems to be currently used by only out-of-tree users. Since
-> we can't check that nobody has memory allocation dependency, I think that
-> hmm_invalidate_range_start() should return -EAGAIN if blockable == false for now.
+So you actually don't need to change anything here (even the proposed 
+changes are overkill) since we can't tear down the struct_mm while an 
+IOCTL is still using.
 
-The code expects that the invalidate_range_end doesn't block if
-invalidate_range_start hasn't blocked. That is the reason why the end
-callback doesn't have blockable parameter. If this doesn't hold then the
-whole scheme is just fragile because those two calls should pair.
+> Is that correct Christian? If this is correct then we need to update the
+> locking here. I am struggling to grasp the ref counting part. Why cannot
+> all readers simply take the lock rather than rely on somebody else to
+> take it? 1ed3d2567c800 didn't really help me to understand the locking
+> scheme here so any help would be appreciated.
 
--- 
-Michal Hocko
-SUSE Labs
+That won't work like this there might be multiple 
+invalidate_range_start()/invalidate_range_end() pairs open at the same 
+time. E.g. the lock might be taken recursively and that is illegal for a 
+rw_semaphore.
+
+Regards,
+Christian.
+
+>
+> I am wondering why we cannot do
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
+> index e55508b39496..93034178673d 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
+> @@ -180,14 +180,11 @@ void amdgpu_mn_unlock(struct amdgpu_mn *mn)
+>    */
+>   static int amdgpu_mn_read_lock(struct amdgpu_mn *amn, bool blockable)
+>   {
+> -	if (blockable)
+> -		mutex_lock(&amn->read_lock);
+> -	else if (!mutex_trylock(&amn->read_lock))
+> -		return -EAGAIN;
+> -
+> -	if (atomic_inc_return(&amn->recursion) == 1)
+> -		down_read_non_owner(&amn->lock);
+> -	mutex_unlock(&amn->read_lock);
+> +	if (!down_read_trylock(&amn->lock)) {
+> +		if (!blockable)
+> +			return -EAGAIN;
+> +		down_read(amn->lock);
+> +	}
+>   
+>   	return 0;
+>   }
+> @@ -199,8 +196,7 @@ static int amdgpu_mn_read_lock(struct amdgpu_mn *amn, bool blockable)
+>    */
+>   static void amdgpu_mn_read_unlock(struct amdgpu_mn *amn)
+>   {
+> -	if (atomic_dec_return(&amn->recursion) == 0)
+> -		up_read_non_owner(&amn->lock);
+> +	up_read(&amn->lock);
+>   }
+>   
+>   /**
+>
+
