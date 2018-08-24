@@ -2,195 +2,102 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 228C4C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 18:16:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7808BC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 18:16:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D214D208FE
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 18:16:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D214D208FE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 9F55C208FE
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 18:16:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F55C208FE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=us.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727557AbeHXVvr (ORCPT
+        id S1727624AbeHXVwX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 17:51:47 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:60548 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726801AbeHXVvr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 17:51:47 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 4B3D620877; Fri, 24 Aug 2018 20:16:03 +0200 (CEST)
-Received: from bbrezillon (unknown [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 80DB2206FF;
-        Fri, 24 Aug 2018 20:16:02 +0200 (CEST)
-Date:   Fri, 24 Aug 2018 20:16:00 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     vitor <Vitor.Soares@synopsys.com>
-Cc:     <linux-gpio@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>,
-        Wolfram Sang <wsa@the-dreams.de>, <linux-i2c@vger.kernel.org>,
-        "Jonathan Corbet" <corbet@lwn.net>, <linux-doc@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        "Cyprian Wronka" <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        "Rafal Ciepiela" <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        "Kumar Gala" <galak@codeaurora.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        Przemyslaw Gaj <pgaj@cadence.com>,
-        Peter Rosin <peda@axentia.se>
-Subject: Re: [PATCH v6 01/10] i3c: Add core I3C infrastructure
-Message-ID: <20180824201600.7d80bca9@bbrezillon>
-In-Reply-To: <bdb2924f-ecfa-1da3-41db-9ac77d4d933b@synopsys.com>
-References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
-        <20180719152930.3715-2-boris.brezillon@bootlin.com>
-        <d2f40cc2-b344-69d1-4314-83524ad7b178@synopsys.com>
-        <20180824143934.6d6b6487@bbrezillon>
-        <bdb2924f-ecfa-1da3-41db-9ac77d4d933b@synopsys.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Fri, 24 Aug 2018 17:52:23 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40844 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726535AbeHXVwX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 17:52:23 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7OIEFcS034240
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 14:16:39 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m2p9rj0du-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 14:16:39 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <linuxram@us.ibm.com>;
+        Fri, 24 Aug 2018 19:16:37 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 24 Aug 2018 19:16:33 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7OIGUgF37224672
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 24 Aug 2018 18:16:30 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 334A552051;
+        Fri, 24 Aug 2018 21:16:29 +0100 (BST)
+Received: from ram.oc3035372033.ibm.com (unknown [9.80.218.12])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 7DA3B52059;
+        Fri, 24 Aug 2018 21:16:26 +0100 (BST)
+Date:   Fri, 24 Aug 2018 11:16:24 -0700
+From:   Ram Pai <linuxram@us.ibm.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Anshuman Khandual <anshuman.linux@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Mike Anderson <andmike@linux.ibm.com>,
+        Paul Mackerras <paulus@samba.org>
+Subject: Re: [RFC PATCH 00/11] Secure Virtual Machine Enablement
+Reply-To: Ram Pai <linuxram@us.ibm.com>
+References: <20180824162535.22798-1-bauerman@linux.ibm.com>
+ <20180824163330.GA15438@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180824163330.GA15438@lst.de>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-TM-AS-GCONF: 00
+x-cbid: 18082418-0020-0000-0000-000002BB51AB
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082418-0021-0000-0000-00002108B41F
+Message-Id: <20180824181624.GM5905@ram.oc3035372033.ibm.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-24_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=888 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808240189
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vitor,
-
-On Fri, 24 Aug 2018 18:52:52 +0100
-vitor <Vitor.Soares@synopsys.com> wrote:
-
-> Hi Boris,
+On Fri, Aug 24, 2018 at 06:33:30PM +0200, Christoph Hellwig wrote:
+> On Fri, Aug 24, 2018 at 01:25:24PM -0300, Thiago Jung Bauermann wrote:
+> > [ Some people didn't receive all the patches in this series, even though
+> >   the linuxppc-dev list did so trying to send again. This is exactly the
+> >   same series I posted yesterday. Sorry for the clutter. ]
 > 
-> 
-> On 24-08-2018 13:39, Boris Brezillon wrote:
-> > Hi Vitor,
-> >
-> > On Wed, 22 Aug 2018 17:43:34 +0100
-> > vitor <Vitor.Soares@synopsys.com> wrote:
-> >  
-> >> Hi Boris,
-> >>
-> >>
-> >> On 19-07-2018 16:29, Boris Brezillon wrote:  
-> >>> +int i3c_bus_register(struct i3c_bus *i3cbus)
-> >>> +{
-> >>> +	struct i2c_dev_desc *desc;
-> >>> +
-> >>> +	i3c_bus_for_each_i2cdev(i3cbus, desc) {
-> >>> +		switch (desc->boardinfo->lvr & I3C_LVR_I2C_INDEX_MASK) {
-> >>> +		case I3C_LVR_I2C_INDEX(0):
-> >>> +			if (i3cbus->mode < I3C_BUS_MODE_MIXED_FAST)
-> >>> +				i3cbus->mode = I3C_BUS_MODE_MIXED_FAST;
-> >>> +			break;
-> >>> +
-> >>> +		case I3C_LVR_I2C_INDEX(1):
-> >>> +		case I3C_LVR_I2C_INDEX(2):
-> >>> +			if (i3cbus->mode < I3C_BUS_MODE_MIXED_SLOW)
-> >>> +				i3cbus->mode = I3C_BUS_MODE_MIXED_SLOW;
-> >>> +			break;
-> >>> +
-> >>> +		default:
-> >>> +			return -EINVAL;
-> >>> +		}
-> >>> +	}
-> >>> +
-> >>> +	if (!i3cbus->scl_rate.i3c)
-> >>> +		i3cbus->scl_rate.i3c = I3C_BUS_TYP_I3C_SCL_RATE;
-> >>> +
-> >>> +	if (!i3cbus->scl_rate.i2c) {
-> >>> +		if (i3cbus->mode == I3C_BUS_MODE_MIXED_SLOW)
-> >>> +			i3cbus->scl_rate.i2c = I3C_BUS_I2C_FM_SCL_RATE;
-> >>> +		else
-> >>> +			i3cbus->scl_rate.i2c = I3C_BUS_I2C_FM_PLUS_SCL_RATE;
-> >>> +	}
-> >>> +
-> >>> +	/*
-> >>> +	 * I3C/I2C frequency may have been overridden, check that user-provided
-> >>> +	 * values are not exceeding max possible frequency.
-> >>> +	 */
-> >>> +	if (i3cbus->scl_rate.i3c > I3C_BUS_MAX_I3C_SCL_RATE ||
-> >>> +	    i3cbus->scl_rate.i2c > I3C_BUS_I2C_FM_PLUS_SCL_RATE) {
-> >>> +		return -EINVAL;
-> >>> +	}
-> >>> +
-> >>> +	dev_set_name(&i3cbus->dev, "i3c-%d", i3cbus->id);
-> >>> +
-> >>> +	return device_add(&i3cbus->dev);
-> >>> +}  
-> >> During the tests of the bus with i2c devices I found the i2c_dev_desc
-> >> objects aren't allocated before this function. This cause i3cbus->mode =
-> >> I3C_BUS_MODE_PURE.  
-> > I just checked and DT parsing (+ I2C descs creation) is done before
-> > i3c_bus_register() is called, so we should be good. How did you declare
-> > your I2C devices (right now, only DT declaration is supported).  
-> During the DT parsing, you create the i2c_dev_boardinfo. the 
-> i2c_dev_desc is created in i3c_master_bus_init() which is after the 
-> i3c_mater_create_bus().
+> I'm still only getting six of the patches.
 
-Oops, you're right.
+We are all receving the entire series.  And I see that the mails have
+also landed on the mailing lists.  Some filter on your side
+is dropping the mails?
 
-> One possible way to fix this is to pass master 
-> also to i3c_bus_register and iterate over i2c_dev_board_info list.
+-- 
+Ram Pai
 
-Yes, that's the proper fix. I'll do that in v7.
-
-> 
-> >> I want to do something for the slave and secondary master, do you
-> >> already have infrastructure that you can share?  
-> > What do you mean?
-> >
-> > Regards,
-> >
-> > Boris  
-> 
-> I want start to add the secondary master functionality but it is also 
-> necessary to add the infrastructure to the subsystem.
-> So, to avoid duplicated work can you share your plans for the secondary 
-> master?
-
-Well, before even considering supporting secondary master registration,
-we need to handle mastership handover. As for the DAA operation, it's
-likely to be host specific, so we'll have to add a new hook to the
-i3c_master_controller_ops struct.
-
-Once you've done that, we'll have trigger a mastership handover
-everytime an I3C driver tries to send a frame on the bus, and the
-master this frame should do through is not in control of the bus. That
-should be pretty easy for the nominal case, but error cases are likely
-to be hard to deal with.
-Note that I have a ->cur_master field in the i3c_bus object which
-stores allows us to track whose the currently active master. If
-master->this != master->bus->cur_master that means you need to start a
-mastership handover procedure.
-
-That's all I thought about for now, and we'll probably face other
-problems when implementing it. Let me know if you have other questions,
-and don't hesitate to share your code early during the development
-phase.
-
-Also note that the bus representation is likely to change based on
-Arnd's feedback, so you might have to rework your implementation a bit
-at some point.
-
-Regards,
-
-Boris
