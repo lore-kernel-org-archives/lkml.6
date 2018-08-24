@@ -2,230 +2,106 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02E76C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 20:02:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EDC1C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 20:04:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5F862150F
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 20:02:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A97462151C
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 20:04:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZzfdeNak";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZzfdeNak"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5F862150F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="c6KZfCKp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A97462151C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=purestorage.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727865AbeHXXit (ORCPT
+        id S1727652AbeHXXka (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 19:38:49 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49608 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727079AbeHXXia (ORCPT
+        Fri, 24 Aug 2018 19:40:30 -0400
+Received: from mail-lf1-f54.google.com ([209.85.167.54]:44467 "EHLO
+        mail-lf1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726855AbeHXXk3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 19:38:30 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id DC0FE605BD; Fri, 24 Aug 2018 20:02:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535140945;
-        bh=SGzxTsWSQ0+0z1G4/z2fnifnj3aW70Q5l85KXatJLHE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZzfdeNakGtgPpxX0T2Xs2DWHBD/RDAbHiPgxrgDV+oDTCNRnzn1nLMDZKfNP69A+n
-         eBBq27hDzhP5e3Ay0Qkd+N/HId6KE8AV8apTjSV/xsR5pAckcDvYE+isuuAjhrAZkI
-         d65guG+GH3l8OVVz4n5F+viRrvhWS7voC1+hxfmk=
-Received: from codeaurora.org (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: ilina@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 338A66055D;
-        Fri, 24 Aug 2018 20:02:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535140945;
-        bh=SGzxTsWSQ0+0z1G4/z2fnifnj3aW70Q5l85KXatJLHE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZzfdeNakGtgPpxX0T2Xs2DWHBD/RDAbHiPgxrgDV+oDTCNRnzn1nLMDZKfNP69A+n
-         eBBq27hDzhP5e3Ay0Qkd+N/HId6KE8AV8apTjSV/xsR5pAckcDvYE+isuuAjhrAZkI
-         d65guG+GH3l8OVVz4n5F+viRrvhWS7voC1+hxfmk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 338A66055D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-From:   Lina Iyer <ilina@codeaurora.org>
-To:     marc.zyngier@arm.com, bjorn.andersson@linaro.org, sboyd@kernel.org,
-        evgreen@chromium.org, linus.walleij@linaro.org
-Cc:     rplsssn@codeaurora.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, rnayak@codeaurora.org,
-        devicetree@vger.kernel.org, andy.gross@linaro.org,
-        dianders@chromium.org, Lina Iyer <ilina@codeaurora.org>
-Subject: [PATCH v2 3/5] drivers: pinctrl: msm: enable PDC interrupt only during suspend
-Date:   Fri, 24 Aug 2018 14:01:55 -0600
-Message-Id: <20180824200157.9993-4-ilina@codeaurora.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180824200157.9993-1-ilina@codeaurora.org>
-References: <20180824200157.9993-1-ilina@codeaurora.org>
+        Fri, 24 Aug 2018 19:40:29 -0400
+Received: by mail-lf1-f54.google.com with SMTP id g6-v6so7546569lfb.11
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 13:04:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LlWSQBxY1v7f/X3Sm4jQMGTF0EAGOAzf/BsBZ9BFuNw=;
+        b=c6KZfCKp18T6T7r2k/eq5g/qmhtYxGrtnmHapapGRVCUWW/gc5SzJijBj4jKqkkUrm
+         q8ZzXfyzZcSGznf1ZWJoNszHXFNtkLGVaNVNS9vx7CfieOmNAW/L6HRI2gA33dii72Zy
+         8aCQv408aYyqhSZlQj21pc4LHnPWVdVOYnE+Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LlWSQBxY1v7f/X3Sm4jQMGTF0EAGOAzf/BsBZ9BFuNw=;
+        b=CgzdS+/5HmSMb6EgjisOFWPIIZ7GQSrqhJVE68tFzyUFic1AlVvsmhRAnNbS+KdMMH
+         MId1igJyLksay9MD/atY7gYk1XcC9fIvcsTWHYs48UQ++RdNYS6QbCbfWUXRoFzW1ajc
+         qN8atZFJQwmzsbiBdb9GZIij7KV/St2cWbXdhzW04ttCuU45P21oaoqH0mxlO+9zz1Vj
+         YfnAKR6+c6ti2YRacc1K3pUOjD0mG/izIeUJwgV1luoZ45HgCbsnAhnxUV0qggcjHfyP
+         a+hRGIjf+6uiK1HQrLw/DkCn5dvoipoIDoAKBqdtbRyQqLuKSLAwnwkW8eHfUXdwBRdI
+         zC+A==
+X-Gm-Message-State: APzg51Bd5d1zZsUM/haOWT2zezZQuhCNghrOBvXBopC+N/6b2v6IsPsY
+        11OFpS8LAaYRZB8Vyhp/ibFvPiypPLSWFX+4yXkbhg==
+X-Google-Smtp-Source: ANB0VdbA8MZJ1wF6YHr5Rq3evP4VKS9v6HajbfRBNByWuGAFQahJuTfdue/EZ+l9PEbyV4fEzabMqoEHHy+LLIkoZmI=
+X-Received: by 2002:a19:ea52:: with SMTP id i79-v6mr2147458lfh.75.1535141062663;
+ Fri, 24 Aug 2018 13:04:22 -0700 (PDT)
+MIME-Version: 1.0
+References: <20171215092305.994559179@linuxfoundation.org> <20171215092311.347628971@linuxfoundation.org>
+ <CAL1RGDVgShymmT+TJ3mAHEL7n+qoisk6mQ=Tji_T=0d_QA=VKw@mail.gmail.com>
+ <1535129126.2902.36.camel@codethink.co.uk> <CAL1RGDW1Lo+F5D479Jsi-AFsmjVpdDre_qOFSCwWubG6U=bxeQ@mail.gmail.com>
+ <20180824191749.GA15489@kroah.com>
+In-Reply-To: <20180824191749.GA15489@kroah.com>
+From:   Roland Dreier <roland@purestorage.com>
+Date:   Fri, 24 Aug 2018 13:04:09 -0700
+Message-ID: <CAL1RGDXUx-frpWuuYyc-VrAEoOU2+irGQPRWvoBzO2ZxEPGrww@mail.gmail.com>
+Subject: Re: [PATCH 4.4 103/105] Revert "x86/mm/pat: Ensure cpa->pfn only
+ contains page frame numbers"
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux@roeck-us.net, Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
+        matt@codeblueprint.co.uk, bp@suse.de,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>, luto@kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>, bp@alien8.de,
+        brgerst@gmail.com, davej@codemonkey.org.uk, dvlasenk@redhat.com,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        sai.praneeth.prakhya@intel.com, sds@tycho.nsa.gov,
+        Thomas Gleixner <tglx@linutronix.de>, toshi.kani@hp.com,
+        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Yazen.Ghannam@amd.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-During suspend the system may power down some of the system rails. As a
-result, the TLMM hw block may not be operational anymore and wakeup
-capable GPIOs will not be detected. The PDC however will be operational
-and the GPIOs that are routed to the PDC as IRQs can wake the system up.
+> Ok, so what patch should be reverted?  I'm seeing other reports of
+> problems all around this same area, but I can't figure out exactly what
+> to do.
 
-To avoid being interrupted twice (for TLMM and once for PDC IRQ) when a
-GPIO trips, use TLMM for active and switch to PDC for suspend. When
-entering suspend, disable the TLMM wakeup interrupt and instead enable
-the PDC IRQ and revert upon resume.
+Are any of those reports public?  If so can you point me at them, I'm
+curious if the symptoms match up.
 
-Signed-off-by: Lina Iyer <ilina@codeaurora.org>
----
-Changes in v2:
-	- Fix PDC IRQ max port, 126 is the max supported in h/w
-	- Use PDC hwirq in bitmap, linux numbers could be large
-	- Setup DISABLE_UNLAZY for both TLMM and PDC IRQs
----
- drivers/pinctrl/qcom/pinctrl-msm.c | 70 +++++++++++++++++++++++++++++-
- drivers/pinctrl/qcom/pinctrl-msm.h |  3 ++
- 2 files changed, 72 insertions(+), 1 deletion(-)
+I don't think we want to revert anything.  I think you should pull in
+edc3b9129cec and at least the first three patches that Ben listed:
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index b675ea56a4ff..a880cefbd248 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -37,6 +37,7 @@
- #include "../pinctrl-utils.h"
- 
- #define MAX_NR_GPIO 300
-+#define MAX_PDC_HWIRQ 126
- #define PS_HOLD_OFFSET 0x820
- 
- /**
-@@ -51,6 +52,7 @@
-  * @enabled_irqs:   Bitmap of currently enabled irqs.
-  * @dual_edge_irqs: Bitmap of irqs that need sw emulated dual edge
-  *                  detection.
-+ * @pdc_hwirqs:     Bitmap of wakeup capable irqs.
-  * @soc;            Reference to soc_data of platform specific data.
-  * @regs:           Base address for the TLMM register map.
-  */
-@@ -68,11 +70,15 @@ struct msm_pinctrl {
- 
- 	DECLARE_BITMAP(dual_edge_irqs, MAX_NR_GPIO);
- 	DECLARE_BITMAP(enabled_irqs, MAX_NR_GPIO);
-+	DECLARE_BITMAP(pdc_hwirqs, MAX_PDC_HWIRQ);
- 
- 	const struct msm_pinctrl_soc_data *soc;
- 	void __iomem *regs;
-+	struct irq_domain *pdc_irq_domain;
- };
- 
-+static bool in_suspend;
-+
- static int msm_get_groups_count(struct pinctrl_dev *pctldev)
- {
- 	struct msm_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
-@@ -787,8 +793,13 @@ static int msm_gpio_irq_set_wake(struct irq_data *d, unsigned int on)
- 
- 	raw_spin_lock_irqsave(&pctrl->lock, flags);
- 
--	if (pdc_irqd)
-+	if (pdc_irqd && !in_suspend) {
- 		irq_set_irq_wake(pdc_irqd->irq, on);
-+		if (on)
-+			set_bit(pdc_irqd->hwirq, pctrl->pdc_hwirqs);
-+		else
-+			clear_bit(pdc_irqd->hwirq, pctrl->pdc_hwirqs);
-+	}
- 
- 	irq_set_irq_wake(pctrl->irq, on);
- 
-@@ -919,7 +930,12 @@ static int msm_gpio_pdc_pin_request(struct irq_data *d)
- 	}
- 
- 	irq_set_handler_data(d->irq, irq_get_irq_data(irq));
-+	irq_set_handler_data(irq, d);
-+	irq_set_status_flags(irq, IRQ_DISABLE_UNLAZY);
-+	irq_set_status_flags(d->irq, IRQ_DISABLE_UNLAZY);
- 	disable_irq(irq);
-+	if (!pctrl->pdc_irq_domain)
-+		pctrl->pdc_irq_domain = irq_get_irq_data(irq)->domain;
- 
- 	return 0;
- }
-@@ -1069,6 +1085,58 @@ static void msm_pinctrl_setup_pm_reset(struct msm_pinctrl *pctrl)
- 		}
- }
- 
-+int __maybe_unused msm_pinctrl_suspend_late(struct device *dev)
-+{
-+	struct msm_pinctrl *pctrl = dev_get_drvdata(dev);
-+	struct irq_data *irqd;
-+	unsigned int irq;
-+	int i;
-+
-+	in_suspend = true;
-+	for_each_set_bit(i, pctrl->pdc_hwirqs, MAX_PDC_HWIRQ) {
-+		irq = irq_find_mapping(pctrl->pdc_irq_domain, i);
-+		irqd = irq_get_handler_data(irq);
-+		/*
-+		 * We don't know if the TLMM will be functional
-+		 * or not, during the suspend. If its functional,
-+		 * we do not want duplicate interrupts from PDC.
-+		 * Hence disable the GPIO IRQ and enable PDC IRQ.
-+		 */
-+		if (irqd_is_wakeup_set(irqd)) {
-+			disable_irq_wake(irqd->irq);
-+			disable_irq(irqd->irq);
-+			enable_irq(irq);
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+int __maybe_unused msm_pinctrl_resume_late(struct device *dev)
-+{
-+	struct msm_pinctrl *pctrl = dev_get_drvdata(dev);
-+	struct irq_data *irqd;
-+	unsigned int irq;
-+	int i;
-+
-+	for_each_set_bit(i, pctrl->pdc_hwirqs, MAX_PDC_HWIRQ) {
-+		irq = irq_find_mapping(pctrl->pdc_irq_domain, i);
-+		irqd = irq_get_handler_data(irq);
-+		/*
-+		 * The TLMM will be operational now, so disable
-+		 * the PDC IRQ.
-+		 */
-+		if (irqd_is_wakeup_set(irq_get_irq_data(irq))) {
-+			disable_irq_nosync(irq);
-+			enable_irq_wake(irqd->irq);
-+			enable_irq(irqd->irq);
-+		}
-+	}
-+	in_suspend = false;
-+
-+	return 0;
-+}
-+
- int msm_pinctrl_probe(struct platform_device *pdev,
- 		      const struct msm_pinctrl_soc_data *soc_data)
- {
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.h b/drivers/pinctrl/qcom/pinctrl-msm.h
-index 9b9feea540ff..21b56fb5dae9 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.h
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.h
-@@ -123,4 +123,7 @@ int msm_pinctrl_probe(struct platform_device *pdev,
- 		      const struct msm_pinctrl_soc_data *soc_data);
- int msm_pinctrl_remove(struct platform_device *pdev);
- 
-+int msm_pinctrl_suspend_late(struct device *dev);
-+int msm_pinctrl_resume_late(struct device *dev);
-+
- #endif
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+21cdb6b56843 x86/mm: Page align the '_end' symbol to avoid pfn conversion bugs
+b61a76f8850d x86/efi: Map RAM into the identity page table for mixed mode
+753b11ef8e92 x86/efi: Setup separate EFI page tables in kexec paths
 
+the first patch takes a bit of massaging (mostly because some of it is
+already touched by 02ff2769edbc, which keeps the changes from
+edc3b9129cec, and so we can drop a good bit when applying).  The other
+three apply cleanly.
+
+I'm currently testing that and can send you the state of my tree in a bit.
+
+ - R.
