@@ -2,170 +2,188 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	UPPERCASE_50_75,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1131C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 09:48:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 270B8C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 09:54:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81B1F208D8
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 09:48:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81B1F208D8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id B8AA021714
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 09:54:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JZ885sKY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8AA021714
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727020AbeHXNWT (ORCPT
+        id S1727092AbeHXN2G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 09:22:19 -0400
-Received: from foss.arm.com ([217.140.101.70]:55008 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726243AbeHXNWT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 09:22:19 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 58F257A9;
-        Fri, 24 Aug 2018 02:48:27 -0700 (PDT)
-Received: from [10.4.12.81] (melchizedek.emea.arm.com [10.4.12.81])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D1DFE3F5A0;
-        Fri, 24 Aug 2018 02:48:25 -0700 (PDT)
-Subject: Re: [RFC PATCH] EDAC, ghes: Enable per-layer error reporting for ARM
-To:     Tyler Baicar <baicar.tyler@gmail.com>
-Cc:     Tyler Baicar <tbaicar@codeaurora.org>, wufan@codeaurora.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        harba@qti.qualcomm.com, Borislav Petkov <bp@alien8.de>,
-        mchehab@kernel.org,
-        arm-mail-list <linux-arm-kernel@lists.infradead.org>,
-        linux-edac@vger.kernel.org
-References: <1531762009-15112-1-git-send-email-tbaicar@codeaurora.org>
- <20180719140102.GB25185@nazgul.tnic>
- <94e3a0fb-9b7d-045f-733b-9f063dcb39e4@arm.com>
- <45fefe7d-c6ea-5791-4477-13ecce39ce48@codeaurora.org>
- <b568fdcc-ca39-67ea-2799-8ed246c8ffb6@arm.com>
- <CABo9ajA7SPrVE-oiG=RicH+nL9_pp7fVATCdMugY5fuNAPzHaQ@mail.gmail.com>
-From:   James Morse <james.morse@arm.com>
-Message-ID: <68a800c7-446e-9b6b-1847-6e45a1d17262@arm.com>
-Date:   Fri, 24 Aug 2018 10:48:24 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <CABo9ajA7SPrVE-oiG=RicH+nL9_pp7fVATCdMugY5fuNAPzHaQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Fri, 24 Aug 2018 09:28:06 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:41088 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726622AbeHXN2G (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 09:28:06 -0400
+Received: by mail-pl1-f195.google.com with SMTP id p4-v6so886128pll.8
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 02:54:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=BmPn3Ui+wn7l8U/+D7YYbAknqK83axwm9I6WGgXVU6I=;
+        b=JZ885sKYI54pJRtQk/y1J7Z5BdCO4wDXqTuv+FBR68A+ipytK4NvpGN69GLWG+Hy+H
+         Tbk5hTHgFoMyt24wMAozLYRPR/5A10VmfhQQ/tNWqA1ypkNtYc2/OyPyiAksYb5gJb5Z
+         mtf0hAmiExkqMfVH/Anhehfzrm+m1FeSVnVCo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=BmPn3Ui+wn7l8U/+D7YYbAknqK83axwm9I6WGgXVU6I=;
+        b=uLsIaBg9B0w0Css47mskC4CL210ggQbzxqgXoeLJG3cWek5oiu3T+aej4czWBUkdYp
+         FVwyPHrAeGOHrOov71+3pdjWpzQpojwww/l59YvwarGtPGTK4ucQzn6RyYrt3v5EtCEA
+         i2aJGVs3bFWexqLI3yv2UXUZzy4hGavktMTu/CUgcqLYoUIsmFv6KU4C3bhd59V9f21K
+         1MaoGFOC9z0xfVDJWRlE5QDFZN9zaf7oRSGdYWm/Ep06gqCgy5saxlS2z/pPNbpXMI6i
+         sGUscnDxTYuK4JMGHYs0aLUtnjMOPapt80f8gXbgPLJJbOASmAN3qPFhix2XG87x4mP2
+         K0dA==
+X-Gm-Message-State: APzg51DBopjM3QCuT1z2K5FLSAJQCjpKjnqfkReKrS6kc0LmdT1W9G0A
+        tVXvC4DwGLWHNcA7bYkiHJpuHA==
+X-Google-Smtp-Source: ANB0VdZmP4SVGcrMkIuRnW4IUBSutuceGqxDgDhbEK9MZ/S99IsCin1NK3wrApqwqoKhFcKS7/cAeQ==
+X-Received: by 2002:a17:902:28eb:: with SMTP id f98-v6mr970754plb.149.1535104452763;
+        Fri, 24 Aug 2018 02:54:12 -0700 (PDT)
+Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
+        by smtp.gmail.com with ESMTPSA id j16-v6sm22046560pfk.125.2018.08.24.02.54.09
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 24 Aug 2018 02:54:12 -0700 (PDT)
+From:   Baolin Wang <baolin.wang@linaro.org>
+To:     jic23@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        freeman.liu@spreadtrum.com, broonie@kernel.org,
+        baolin.wang@linaro.org, devicetree@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] iio: adc: sc27xx: Add raw data support
+Date:   Fri, 24 Aug 2018 17:53:15 +0800
+Message-Id: <4a7e33457617e6f0f7c9627fe20ddd3039e4fe82.1535103920.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tyler,
+The headset device will use channel 20 of ADC controller to detect events,
+but it needs the raw ADC data to do conversion according to its own formula.
 
-On 23/08/18 16:46, Tyler Baicar wrote:
-> On Thu, Aug 23, 2018 at 5:29 AM James Morse <james.morse@arm.com> wrote:
->> On 19/07/18 19:36, Tyler Baicar wrote:
->>> On 7/19/2018 10:46 AM, James Morse wrote:
->>>> On 19/07/18 15:01, Borislav Petkov wrote:
->>>>> On Mon, Jul 16, 2018 at 01:26:49PM -0400, Tyler Baicar wrote:
->>>>>> Enable per-layer error reporting for ARM systems so that the error
->>>>>> counters are incremented per-DIMM.
->>
->> This 'layer' term seems to be EDAC's artificial view of memory.
->>
-> 
-> Yes, it's just the terminology that EDAC uses for locating a DIMM.
-> 
-> "Layer" can mean several things here:
-> 
-> https://elixir.bootlin.com/linux/latest/source/include/linux/edac.h#L318
+Thus we should configure the channel mask separately and configure channel
+20 as IIO_CHAN_INFO_RAW, as well as adding raw data read support.
 
-Aha, its an enum. I thought it was an upper/middle/lower mapping at the whim of
-the edac driver.
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+---
+ drivers/iio/adc/sc27xx_adc.c |   80 ++++++++++++++++++++++++------------------
+ 1 file changed, 45 insertions(+), 35 deletions(-)
 
-[...]
+diff --git a/drivers/iio/adc/sc27xx_adc.c b/drivers/iio/adc/sc27xx_adc.c
+index 2b60efe..153c311 100644
+--- a/drivers/iio/adc/sc27xx_adc.c
++++ b/drivers/iio/adc/sc27xx_adc.c
+@@ -273,6 +273,17 @@ static int sc27xx_adc_read_raw(struct iio_dev *indio_dev,
+ 	int ret, tmp;
+ 
+ 	switch (mask) {
++	case IIO_CHAN_INFO_RAW:
++		mutex_lock(&indio_dev->mlock);
++		ret = sc27xx_adc_read(data, chan->channel, scale, &tmp);
++		mutex_unlock(&indio_dev->mlock);
++
++		if (ret)
++			return ret;
++
++		*val = tmp;
++		return IIO_VAL_INT;
++
+ 	case IIO_CHAN_INFO_PROCESSED:
+ 		mutex_lock(&indio_dev->mlock);
+ 		ret = sc27xx_adc_read_processed(data, chan->channel, scale,
+@@ -315,48 +326,47 @@ static int sc27xx_adc_write_raw(struct iio_dev *indio_dev,
+ 	.write_raw = &sc27xx_adc_write_raw,
+ };
+ 
+-#define SC27XX_ADC_CHANNEL(index) {				\
++#define SC27XX_ADC_CHANNEL(index, mask) {			\
+ 	.type = IIO_VOLTAGE,					\
+ 	.channel = index,					\
+-	.info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED) |	\
+-			      BIT(IIO_CHAN_INFO_SCALE),		\
++	.info_mask_separate = mask | BIT(IIO_CHAN_INFO_SCALE),	\
+ 	.datasheet_name = "CH##index",				\
+ 	.indexed = 1,						\
+ }
+ 
+ static const struct iio_chan_spec sc27xx_channels[] = {
+-	SC27XX_ADC_CHANNEL(0),
+-	SC27XX_ADC_CHANNEL(1),
+-	SC27XX_ADC_CHANNEL(2),
+-	SC27XX_ADC_CHANNEL(3),
+-	SC27XX_ADC_CHANNEL(4),
+-	SC27XX_ADC_CHANNEL(5),
+-	SC27XX_ADC_CHANNEL(6),
+-	SC27XX_ADC_CHANNEL(7),
+-	SC27XX_ADC_CHANNEL(8),
+-	SC27XX_ADC_CHANNEL(9),
+-	SC27XX_ADC_CHANNEL(10),
+-	SC27XX_ADC_CHANNEL(11),
+-	SC27XX_ADC_CHANNEL(12),
+-	SC27XX_ADC_CHANNEL(13),
+-	SC27XX_ADC_CHANNEL(14),
+-	SC27XX_ADC_CHANNEL(15),
+-	SC27XX_ADC_CHANNEL(16),
+-	SC27XX_ADC_CHANNEL(17),
+-	SC27XX_ADC_CHANNEL(18),
+-	SC27XX_ADC_CHANNEL(19),
+-	SC27XX_ADC_CHANNEL(20),
+-	SC27XX_ADC_CHANNEL(21),
+-	SC27XX_ADC_CHANNEL(22),
+-	SC27XX_ADC_CHANNEL(23),
+-	SC27XX_ADC_CHANNEL(24),
+-	SC27XX_ADC_CHANNEL(25),
+-	SC27XX_ADC_CHANNEL(26),
+-	SC27XX_ADC_CHANNEL(27),
+-	SC27XX_ADC_CHANNEL(28),
+-	SC27XX_ADC_CHANNEL(29),
+-	SC27XX_ADC_CHANNEL(30),
+-	SC27XX_ADC_CHANNEL(31),
++	SC27XX_ADC_CHANNEL(0, BIT(IIO_CHAN_INFO_PROCESSED)),
++	SC27XX_ADC_CHANNEL(1, BIT(IIO_CHAN_INFO_PROCESSED)),
++	SC27XX_ADC_CHANNEL(2, BIT(IIO_CHAN_INFO_PROCESSED)),
++	SC27XX_ADC_CHANNEL(3, BIT(IIO_CHAN_INFO_PROCESSED)),
++	SC27XX_ADC_CHANNEL(4, BIT(IIO_CHAN_INFO_PROCESSED)),
++	SC27XX_ADC_CHANNEL(5, BIT(IIO_CHAN_INFO_PROCESSED)),
++	SC27XX_ADC_CHANNEL(6, BIT(IIO_CHAN_INFO_PROCESSED)),
++	SC27XX_ADC_CHANNEL(7, BIT(IIO_CHAN_INFO_PROCESSED)),
++	SC27XX_ADC_CHANNEL(8, BIT(IIO_CHAN_INFO_PROCESSED)),
++	SC27XX_ADC_CHANNEL(9, BIT(IIO_CHAN_INFO_PROCESSED)),
++	SC27XX_ADC_CHANNEL(10, BIT(IIO_CHAN_INFO_PROCESSED)),
++	SC27XX_ADC_CHANNEL(11, BIT(IIO_CHAN_INFO_PROCESSED)),
++	SC27XX_ADC_CHANNEL(12, BIT(IIO_CHAN_INFO_PROCESSED)),
++	SC27XX_ADC_CHANNEL(13, BIT(IIO_CHAN_INFO_PROCESSED)),
++	SC27XX_ADC_CHANNEL(14, BIT(IIO_CHAN_INFO_PROCESSED)),
++	SC27XX_ADC_CHANNEL(15, BIT(IIO_CHAN_INFO_PROCESSED)),
++	SC27XX_ADC_CHANNEL(16, BIT(IIO_CHAN_INFO_PROCESSED)),
++	SC27XX_ADC_CHANNEL(17, BIT(IIO_CHAN_INFO_PROCESSED)),
++	SC27XX_ADC_CHANNEL(18, BIT(IIO_CHAN_INFO_PROCESSED)),
++	SC27XX_ADC_CHANNEL(19, BIT(IIO_CHAN_INFO_PROCESSED)),
++	SC27XX_ADC_CHANNEL(20, BIT(IIO_CHAN_INFO_RAW)),
++	SC27XX_ADC_CHANNEL(21, BIT(IIO_CHAN_INFO_PROCESSED)),
++	SC27XX_ADC_CHANNEL(22, BIT(IIO_CHAN_INFO_PROCESSED)),
++	SC27XX_ADC_CHANNEL(23, BIT(IIO_CHAN_INFO_PROCESSED)),
++	SC27XX_ADC_CHANNEL(24, BIT(IIO_CHAN_INFO_PROCESSED)),
++	SC27XX_ADC_CHANNEL(25, BIT(IIO_CHAN_INFO_PROCESSED)),
++	SC27XX_ADC_CHANNEL(26, BIT(IIO_CHAN_INFO_PROCESSED)),
++	SC27XX_ADC_CHANNEL(27, BIT(IIO_CHAN_INFO_PROCESSED)),
++	SC27XX_ADC_CHANNEL(28, BIT(IIO_CHAN_INFO_PROCESSED)),
++	SC27XX_ADC_CHANNEL(29, BIT(IIO_CHAN_INFO_PROCESSED)),
++	SC27XX_ADC_CHANNEL(30, BIT(IIO_CHAN_INFO_PROCESSED)),
++	SC27XX_ADC_CHANNEL(31, BIT(IIO_CHAN_INFO_PROCESSED)),
+ };
+ 
+ static int sc27xx_adc_enable(struct sc27xx_adc_data *data)
+-- 
+1.7.9.5
 
->> [re-ordered hunk:]
->>> This seems pretty hacky to me, so if anyone has other suggestions please share
->>> them.
->>
->> CPER's "Memory Error Record 2" thinks that "NODE, CARD and MODULE should provide
->> the information necessary to identify the failing FRU". As EDAC has three
->> 'levels', these are what they should correspond to for ghes-edac.
->>
->> I assume NODE means rack/chassis in some distributed system. Lets ignore it as
->> it doesn't seem to map to anything in the SMBIOS table.
-> 
-> I believe NODE should map to socket number for multi-socket systems.
-
-Isn't the Memory Array Structure still unique in a multi-socket system? If so
-the node isn't telling us anything new.
-
-Do sockets show up in the SMBIOS table? We would need to know how many there are
-in advance. For arm systems the cpu topology from PPTT is the best bet for this
-information, but what do we do if that table is missing? (also, does firmware
-count from 1 or 0?) I suspect we can't use this field unless we know what the
-range of values is going to be in advance.
-
-I assumed this node must be a level of information above Card/Memory-Array's
-address-space. Somehow the Card handle isn't no long unique, we need the node
-number too. If the CPER records were all being pumped at a single agent, (shared
-BMC in a blade/chassis thing) then this might matter. I suspect we can ignore it
-in linux.
-
-
->> The CPER record's card and module numbers are useless to us, as we need to know
->> how many there will be in advance. (does this version of firmware count from 0
->> or 1?)
->>
->> ... but CPER also gives us a 'Card Handle' and 'Module Handle'.
->> 'Module Handle' maps to SMBIOS:17 Memory Device (aka, a DIMM). The Handle is a
->> word-value in the structure, so it doesn't depend on the layout/parse-order of
->> the SMBIOS tables. When we count the DIMMs in edac-ghes we can give them some
->> level-idx, then use the handle to find which level-idx to use for this DIMM.
->>
->> ghes_edac_report_mem_error() already picks up the module-handle, but only uses
->> it to print the bank/device.
->>
->> 'Card' doesn't mean much to me, but it maps to SMBIOS:17 "Memory Array
->> Structure", which the Memory Device structure also points to.
->> Card then must mean "a collection of memory devices (DIMMs) that operate
->> together to form an address space".
->>
->> This might be what I think of as a memory-controller, or it might be something
->> more complicated. Regardless, the CPER records think its relevant.
->>
->> For the edac:layers, we could walk the DMI table to find these structures, and
->> build the layers from them. If the Memory-array-structures are missing, we can
->> use the existing 1:NUM_DIMMS approach.
-
-> I think the proper way to get this working would be to use these handles. We can
-> avoid populating this layer information and instead have a mapping of type 17
-> index number (how edac is numbering the DIMMs today) to the handle number.
-
-Why get avoid the layer stuff? Isn't counting DIMM/memory-devices what
-EDAC_MC_LAYER_SLOT is for?
-
-
-> Then we will need a new function to increment the counter based on the handle
-> number rather than this layer information. Is that how you are envisioning it?
-
-I'm not familiar with edac's internals, so I didn't have any particular vision!
-
-Isn't the problem that ghes_edac_report_mem_error() does this:
-|	e->top_layer = -1;
-|	e->mid_layer = -1;
-|	e->low_layer = -1;
-
-so edac_raw_mc_handle_error() has no clue where the error happened. (I haven't
-read what it does with this information yet).
-
-ghes_edac_report_mem_error() does check CPER_MEM_VALID_MODULE_HANDLE, and if its
-set, it uses the handle to find the bank/device strings and prints them out.
-
-Naively I thought we could generate some index during ghes_edac_count_dimms(),
-and use this as e->${whichever}_layer. I hoped there would be something we could
-already use as the index, but I can't spot it, so this will be more than the
-one-liner I was hoping for!
-
-
-Thanks,
-
-James
