@@ -2,110 +2,120 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 125E8C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 08:20:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A2CAC43615
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 08:21:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8BDA208AF
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 08:20:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C184F21581
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 08:20:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="EfXclA0H";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="c+kwUFUg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8BDA208AF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XTxdKwBi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C184F21581
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727387AbeHXLyO (ORCPT
+        id S1726562AbeHXLya (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 07:54:14 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:59482 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726325AbeHXLyO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 07:54:14 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 2578360555; Fri, 24 Aug 2018 08:20:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535098841;
-        bh=kkLxmCWlVcMQWNzI8Qe8xnUuiHCLfYVtYFG6iV4JSMA=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=EfXclA0H/6SdkI6aj3Bj/BcCU71HLH7SJBhVYTjBy7gtgOj8aEKDalZ3MUwGXaOUO
-         yjohcbU/+B7vYVMIevPO8kAMuYFneo+XRJSH/zwhURiUSQW+wIyxfwsVLYue3vDJxT
-         glO/ByrL17gk1VAZIUyo6mjLH9so0uHZ4L0nE2dM=
-Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Fri, 24 Aug 2018 07:54:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38748 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726274AbeHXLya (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 07:54:30 -0400
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0EB0D601A0;
-        Fri, 24 Aug 2018 08:20:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535098840;
-        bh=kkLxmCWlVcMQWNzI8Qe8xnUuiHCLfYVtYFG6iV4JSMA=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=c+kwUFUg+x+fBiseURCqoXa58RBxITpzaqUJ56bsccrL1GV8qgJozkjY0uCK6BQHy
-         hSOtI6ZmuGaH79Ae0xwtpZ7hyYdUgYt+tf6ml1xWvM8UW5TzS5ezb8fVLafqp3ucAV
-         sskc1FUiNIY/IYOA0IxzCxrWfAV5d/j5zYxTN+Ig=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0EB0D601A0
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Stanislaw Gruszka <sgruszka@redhat.com>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mt76: Fix comparisons with invalid hardware key index
-In-Reply-To: <20180824080817.GA6651@redhat.com> (Stanislaw Gruszka's message
-        of "Fri, 24 Aug 2018 10:08:18 +0200")
-References: <20180823212738.18431-1-geert@linux-m68k.org>
-        <20180824080817.GA6651@redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
-Date:   Fri, 24 Aug 2018 11:20:35 +0300
-Message-ID: <87pny8jhv0.fsf@kamboji.qca.qualcomm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+        by mail.kernel.org (Postfix) with ESMTPSA id 9538F208E3;
+        Fri, 24 Aug 2018 08:20:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535098856;
+        bh=1mFop6dtuRUSyheS75lrH268pLjyQreF2cGZcAP9cRg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=XTxdKwBiv9fTvQxwEggsrbxBYl5TzohG4CtYsy8UAhj+a+Cn1hwGT4/1KqzPrhrvf
+         qwEBg5Tp/xiFUUwD6F9i3Ufyl5NBsC8Q5ynO9FbVy6TjFd6co1Rsa465tmfCyRZMsC
+         s9ZPdU24YOiG0fR7B39Ry5GE/I+/C12arDbiFjJo=
+Date:   Fri, 24 Aug 2018 17:20:53 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: build warnings from the build of Linus' tree
+Message-Id: <20180824172053.20fa197294f51496dcec5605@kernel.org>
+In-Reply-To: <20180824133206.4218c2e5@canb.auug.org.au>
+References: <20180824133206.4218c2e5@canb.auug.org.au>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Stanislaw Gruszka <sgruszka@redhat.com> writes:
+On Fri, 24 Aug 2018 13:32:06 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-> On Thu, Aug 23, 2018 at 11:27:38PM +0200, Geert Uytterhoeven wrote:
->> With gcc 4.1.2:
->>=20
->>     drivers/net/wireless/mediatek/mt76/mt76x0/tx.c: In function =E2=80=
-=98mt76x0_tx=E2=80=99:
->>     drivers/net/wireless/mediatek/mt76/mt76x0/tx.c:169: warning:
->> comparison is always true due to limited range of data type
->>     drivers/net/wireless/mediatek/mt76/mt76x2_tx_common.c: In function =
-=E2=80=98mt76x2_tx=E2=80=99:
->>     drivers/net/wireless/mediatek/mt76/mt76x2_tx_common.c:35:
->> warning: comparison is always true due to limited range of data type
->>=20
->> While assigning -1 to a u8 works fine, comparing with -1 does not work
->> as expected.
->>=20
->> Fix this by comparing with 0xff, like is already done in some other
->> places.
->>=20
->> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
->
-> Ack for mt76x0. I think Lorenzo already posted patch for mt76x2.
+> Hi all,
+> 
+> After merging the origin tree, today's linux-next build (powerpc
+> allyesconfig) produced these warnings:
+> 
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_selftest_dynamic.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_kprobe_selftest.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_clock.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/ftrace.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/ring_buffer.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/ring_buffer_benchmark.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_output.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_seq.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_stat.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_printk.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/tracing_map.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_sched_switch.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_functions.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_preemptirq.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_irqsoff.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_sched_wakeup.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_hwlat.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_nop.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_stack.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_functions_graph.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/blktrace.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_events.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_export.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_syscalls.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_event_perf.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_events_filter.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_events_trigger.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_events_hist.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/bpf_trace.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_kprobe.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/power-traces.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/rpm-traces.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_kdb.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_probe.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_uprobe.o' being placed in section `.data..LPBX1'
+> ld: warning: orphan section `.data..LPBX1' from `kernel/trace/trace_benchmark.o' being placed in section `.data..LPBX1'
+> 
+> Maybe introduced by commit
+> 
+>   6b7dca401cb1 ("tracing: Allow gcov profiling on only ftrace subsystem")
+> 
+> I am guessing, but that is the only new thing that affects all of
+> kernel/trace ...
 
-Yeah, Lorenzo's patch is here:
+Yes, I agree. But I just followed Documentation/dev-tools/gcov.rst
+to enable profiling in kernel/trace. Hmm, doesn't ppc64 support
+GCOV_PROFILE?  (But as far as I can see, ARCH_HAS_GCOV_PROFILE_ALL
+is enabled in arch/powerpc/Kconfig)
 
-https://patchwork.kernel.org/patch/10570555/
+Anyway, I'll try to reproduce it.
 
-As Geert's patch seems to be more complete I'm planning to take Geert's
-version.
+Thanks,
 
---=20
-Kalle Valo
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
