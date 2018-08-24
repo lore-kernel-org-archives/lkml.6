@@ -2,147 +2,132 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3A8DC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 17:42:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A8BDC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 17:46:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E23821477
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 17:42:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4B7E20A8B
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 17:46:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kFP39eXI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E23821477
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verbum.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uC08Kimd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4B7E20A8B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727374AbeHXVSI (ORCPT
+        id S1727203AbeHXVWX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 17:18:08 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:39109 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726279AbeHXVSI (ORCPT
+        Fri, 24 Aug 2018 17:22:23 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:43839 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726279AbeHXVWX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 17:18:08 -0400
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.nyi.internal (Postfix) with ESMTP id D348220DB5;
-        Fri, 24 Aug 2018 13:42:29 -0400 (EDT)
-Received: from web3 ([10.202.2.213])
-  by compute3.internal (MEProxy); Fri, 24 Aug 2018 13:42:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=hMyDuG
-        sUGsOndGgHXyEPC5oxHKFKpIY8s4la6F2H0Gk=; b=kFP39eXING/nWEGwRt/ZmL
-        cuYXYC98no843Nm9lPJXALTWD5yAwLYOXVA0VX3N6wpvUjO7jDbRLm9BIlNQ7D3q
-        V0ILdQqPNVL3Enm8aA0OlXuXhOB5DAJLS0VYHJfojUIItcDn/bW4wfODnGreSir6
-        os5wCykPLnuo7/M2FQtWOsAXfRBB0jSgYuGsrUq4Ekoh8CG2lzusUciygGzL8gYt
-        1krhYpabPSowYKumTHQb5lYERD33okgybfSJKOiJDbU4RdzRKAHreRkyNzMKDoS3
-        chPjxre4CwZ7hi2I1hNeQdPcj3CoHpPYp60GRhvaIGI3HvpPNA2DO5LO7aSnzDow
-        ==
-X-ME-Proxy: <xmx:hUOAW-rPKoYJ28OlnPu8CQR2KB3z3sT8m39fSGPEMOxkzY6DeFpUsA>
-    <xmx:hUOAW7nH6cKu4-HgdYhvRaG7CpPh4i7QzaxJiCoY7sSO1myafUGpOg>
-    <xmx:hUOAW_SyMMemRIeJP6C_Kr0P-tL6F0dzk_SSDrZe4J3qyvzUzcq6kg>
-    <xmx:hUOAWxbaVoLhGrU5ccRrIEzNzMcy2Pe-ONUw2YRYRzhSKG8nhn93fA>
-    <xmx:hUOAW_9uxP1M9XzFeZad_w3KTg9d0eFlVx12-ggmeFAtWqIMd-ORQQ>
-    <xmx:hUOAWy4cNWv44a5A-NBBCtwXmspfODoe7vU5YGhjMMtv6AoT_TvRwA>
-X-ME-Sender: <xms:hUOAW3ps0ubP8j1Y0CFowiQWmVYgpvrqwh_r__GTTTaSch9UfnPiLA>
-Received: by mailuser.nyi.internal (Postfix, from userid 99)
-        id 408E79E508; Fri, 24 Aug 2018 13:42:29 -0400 (EDT)
-Message-Id: <1535132549.2855027.1485213752.129E3334@webmail.messagingengine.com>
-From:   Colin Walters <walters@verbum.org>
-To:     Eric Biggers <ebiggers@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc:     linux-integrity@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Michael Halcrow <mhalcrow@google.com>,
-        Victor Hsieh <victorhsieh@google.com>
+        Fri, 24 Aug 2018 17:22:23 -0400
+Received: by mail-pf1-f193.google.com with SMTP id j26-v6so4857670pfi.10
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 10:46:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=QLv57vH4TFbkEqfYHE9BAs67PfV/2yI4wPFVuyp9jaE=;
+        b=uC08Kimd0oZ65i9Sth1PUAhwf+YjdQl3JS6bRkybkMcQlBVgUvIom3zx1YuvIQN5JC
+         Tc3RfTlE0OImBzg3veBx6OFxKGOZ6YYeXWbGPFkI25a87pGYatSBATvnGBf4UhxClBPs
+         E6vlfqhoLdBiDLXX42em67d4jxulyYxL0RL0QPpaNY1GPCtp/PQiwRMBrTVKePqeZBZe
+         B2d4ym6dy4oVDwMm7xw0QW8WWSmF0Kl2LVWhOzJqdB9r7AfHwsL9ZZAu4CLAATmxDdw8
+         8rkJaYrfob2IvZ9bDl4ASOHnffPqCG1mA8JG5XZtIWUzYpo1rsD1/UBP4X2vh7JzxLgs
+         7/Aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=QLv57vH4TFbkEqfYHE9BAs67PfV/2yI4wPFVuyp9jaE=;
+        b=SPXlXSV/DJYeiFJ+r0IXHLeJ+pjrRqdUYSj2UDtLeXHDl2KG+3HZhnC3yGDMePLEwP
+         3FCbHlC7nblBkfjUenuUFLBuDobBiJacO0xW1bsNqzabcMRMzv5IZArv1a89oo1s5LEC
+         pdUyw4Ho16WfXxaM/al77kTjzUNPuXt8oHnxWFdQXqRmi/QnvTrYxWNZz0d/qdMIcOM8
+         JqdE9Inv/PcZ5Q6+EITmQxMLXHv5wy1Jfjip+2hK9J3GOVNcYjkHBneOyapT5YghC/zX
+         2zAGlQfPnmwZvcmml7sBsn154RHU4rdTGvX0qiZHbEdpkNcXxlZBBQz7Ry/nq0/lh3iL
+         +mzw==
+X-Gm-Message-State: APzg51BOc/MuvZvXi20LpJ3tJ+b0UkkM0OOWh1R5jO72PwhzAQGzPXVJ
+        7Uhi4blzbU4kTBLIk/EnWN+lKrRc3E9pMCD71X8qTQ==
+X-Google-Smtp-Source: ANB0Vda8b0+hRZjKClhCAb0QxoGUvaYv+XxagvvA1r+PlDHeZ/CO+/7Jq9vrqAAdLicRR9hmglDfBX/Wed9CwasYvjY=
+X-Received: by 2002:a63:5660:: with SMTP id g32-v6mr2544497pgm.227.1535132804484;
+ Fri, 24 Aug 2018 10:46:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: MessagingEngine.com Webmail Interface - ajax-7b72137a
-In-Reply-To: <20180824161642.1144-2-ebiggers@kernel.org>
-References: <20180824161642.1144-1-ebiggers@kernel.org>
- <20180824161642.1144-2-ebiggers@kernel.org>
-Subject: Re: [RFC PATCH 01/10] fs-verity: add setup code, UAPI, and Kconfig
-Date:   Fri, 24 Aug 2018 13:42:29 -0400
+Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Fri, 24 Aug 2018 10:46:23
+ -0700 (PDT)
+In-Reply-To: <20180823210315.2449cf3e@vmware.local.home>
+References: <0000000000003723710569916833@google.com> <CACT4Y+Yz-zRdEKTJeSdK5QTqPtgsSqwoJ4WU8bcX+8RwXUAiSA@mail.gmail.com>
+ <20180510102331.02ee1346@gandalf.local.home> <CACT4Y+bSBgbSntkdEXFD+_aJZOrtMfm_WB0K7-psYVSVCg8vTg@mail.gmail.com>
+ <20180823210315.2449cf3e@vmware.local.home>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Fri, 24 Aug 2018 10:46:23 -0700
+Message-ID: <CACT4Y+agmMRmey6XeMV3tJ1riNNdcO6Wqt2QZ4CEKs3nZHEp_g@mail.gmail.com>
+Subject: Re: KASAN: slab-out-of-bounds Write in process_preds
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     syzbot <syzbot+5702a7e6d4a13b3accd5@syzkaller.appspotmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Aug 23, 2018 at 6:03 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
+> On Thu, 23 Aug 2018 07:13:13 -0700
+> Dmitry Vyukov <dvyukov@google.com> wrote:
+>
+>> On Thu, May 10, 2018 at 7:23 AM, Steven Rostedt <rostedt@goodmis.org> wrote:
+>> > On Thu, 10 May 2018 07:14:26 +0200
+>> > Dmitry Vyukov <dvyukov@google.com> wrote:
+>> >
+>> >> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>> >> > Reported-by: syzbot+5702a7e6d4a13b3accd5@syzkaller.appspotmail.com
+>> >> > It will help syzbot understand when the bug is fixed. See footer for
+>> >> > details.
+>> >> > If you forward the report, please keep this part and the footer.
+>> >>
+>> >>
+>> >> This was bisected to:
+>> >>
+>> >> commit 80765597bc587feae8dbc8ce97a0f32e12a6e625
+>> >> Author: Steven Rostedt (VMware) <rostedt@goodmis.org>
+>> >> Date:   Fri Mar 9 13:19:28 2018 -0500
+>> >>
+>> >>     tracing: Rewrite filter logic to be simpler and faster
+>> >
+>> > I could have told you that without the bisect ;-)
+>> >
+>> > I'll try to get some time to look into this.
+>>
+>>
+>> It seems this was lost on kernel mailing lists, then re-reported after 2 months:
+>> https://bugzilla.kernel.org/show_bug.cgi?id=200019
+>> and then fixed.
+>
+> Yeah, that time was quite busy for me. I guess I failed to get time to
+> look into it when it was first reported :-(
+>
+>>
+>> Since the fixing commit does not contain syzbot tag, need to tell it
+>> about the fix manually:
+>>
+>> #syz fix: tracing: Check for no filter when processing event filters
+>
+> Sorry about that. Thanks,
 
+Hi Steven,
 
-On Fri, Aug 24, 2018, at 12:16 PM, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> fs-verity is a filesystem feature that provides efficient, transparent
-> integrity verification and authentication of read-only files.  It uses a
-> dm-verity like mechanism at the file level: a Merkle tree hidden past
-> the end of the file is used to verify any block in the file in
-> log(filesize) time.  It is implemented mainly by helper functions in
-> fs/verity/ that will be shared by multiple filesystems.
-> 
-> Essentially, fs-verity reports a file's hash in constant time, but reads
-> that would violate that hash fail at runtime.  This is useful when only
-> a portion of the file is actually accessed, as only the accessed portion
-> has to be hashed, and the latency to the first read is much reduced over
-> a full file hash.  On top of this hashing mechanism, auditing or
-> authentication policies can be implemented to log or verify file hashes.
-> 
-> Note that in general, fs-verity is *not* a replacement for IMA.
-> fs-verity is a lower-level feature, primarily a way to hash a file;
-> whereas IMA deals more with higher-level policy logic, like defining
-> which files are "measured" and what to do with those measurements.  We
-> plan for IMA to support fs-verity measurements as an alternative to the
-> traditional full file hash.  Still, some users find fs-verity useful by
-> itself, so it's also usable without IMA in simple cases, e.g. in cases
-> where just retrieving the file measurement via an ioctl is enough.
-> 
-> A structure containing the properties of the Merkle tree -- such as the
-> hash algorithm used, the block size, and the root hash -- is also stored
-> on-disk, following the Merkle tree.  The actual file measurement hash
-> that fs-verity reports is the hash of this structure.
-> 
-> All fs-verity metadata is written by userspace; the kernel only reads
-> it.  Extended attributes aren't used because the Merkle tree may be much
-> larger than XATTR_SIZE_MAX, we want the hash pages to be cached in the
-> page cache as usual, and in the case of fs-verity combined with fscrypt
-> we want the metadata to be encrypted to avoid leaking plaintext hashes.
-> The fs-verity metadata is hidden from userspace by overriding the i_size
-> of the in-memory VFS inode; ext4 additionally will override the on-disk
-> i_size in order to make verity a RO_COMPAT filesystem feature.
-> 
-> This initial patch only adds the fs-verity Kconfig option, UAPI, and
-> setup code, e.g. the ->open() hook that parses the fs-verity descriptor.
-
-This first patch also adds a bit of core logic in the
-simple fsverity_prepare_setattr() which ends up being called
-by ext4 later.
-
-While I'm not too familiar with the vfs, as far as I can
-tell  from inspection of Linus' git master is that pretty much any change (timestamp, hardlinks) ends up
-calling notify_change() which calls the fs-specific one, and in
-the verity case basically denies everything, right?
-
-Previously I brought up many uses for "content immutable" files:
-https://marc.info/?l=linux-fsdevel&m=151698481512084&w=2
-
-The discussion sort of died out but...did you have any opinion
-on e.g. my proposal to use the Unix mode bits as a way to describe
-levels of mutablility?
-
-Let's say that your new _VERITY inode flag becomes "_WRITEPROT"
-or something a bit more generic.
-
-Do you have any thoughts on my proposal to reuse the Unix mode
-bits to control levels of inode mutability?
-
-For example, it seems to me we could define u+w as "hardlinks are OK".
-There shouldn't be any reason ext4/f2fs couldn't hardlink a verity-protected
-inode right?  Or if for some reason that is hard, we could disallow that to
-start, but at least have the core VFS support _WRITEPROT inodes?
-
+No personal criticism meant. I guess this is an inevitable consequence
+of the current kernel development process and tooling. Reports and
+patches get lots on a regular basis. In some subsystems we don't hear
+from maintainers at all. That's one of the things we wanted to solve
+with the syzbot dashboard: no thing get lost ever:
+https://syzkaller.appspot.com/#upstream
+But the other side of the medal is that bug report statues need to be
+maintained.
