@@ -3,99 +3,112 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0EEBC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 22:53:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 979BCC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 23:00:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 747BD20A8B
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 22:53:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 747BD20A8B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 2EBFC2098B
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 23:00:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EBFC2098B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=yhbt.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727464AbeHYCaW (ORCPT
+        id S1727247AbeHYCgw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 22:30:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55786 "EHLO mail.kernel.org"
+        Fri, 24 Aug 2018 22:36:52 -0400
+Received: from dcvr.yhbt.net ([64.71.152.64]:54246 "EHLO dcvr.yhbt.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726754AbeHYCaW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 22:30:22 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C5DB02098B;
-        Fri, 24 Aug 2018 22:53:43 +0000 (UTC)
-Date:   Fri, 24 Aug 2018 18:53:42 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 19/32] selftests/ftrace: Add a testcase for nop
- tracer
-Message-ID: <20180824185342.542d8a6a@gandalf.local.home>
-In-Reply-To: <153443748943.23257.13855745627496095446.stgit@devbox>
-References: <153443695002.23257.13628220023468200991.stgit@devbox>
-        <153443748943.23257.13855745627496095446.stgit@devbox>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726840AbeHYCgw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 22:36:52 -0400
+X-Greylist: delayed 342 seconds by postgrey-1.27 at vger.kernel.org; Fri, 24 Aug 2018 22:36:51 EDT
+Received: from localhost (dcvr.yhbt.net [127.0.0.1])
+        by dcvr.yhbt.net (Postfix) with ESMTP id AB81A1F404;
+        Fri, 24 Aug 2018 22:54:31 +0000 (UTC)
+Date:   Fri, 24 Aug 2018 22:54:31 +0000
+From:   Eric Wong <normalperson@yhbt.net>
+To:     Al Viro <viro@ZenIV.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [RFC] pipe: prevent compiler reordering in pipe_poll
+Message-ID: <20180824225431.tpaxuck7idgnj3b7@dcvr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 17 Aug 2018 01:38:09 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+The pipe_poll function does not use locks, and adding an entry
+to the waitqueue is not guaranteed to happen before pipe->nrbufs
+(or other fields) are read, leading to missed wakeups.
 
-> Add a testcase for nop tracer. This tracer has 2 test
-> options, so check it too.
-> 
+Looking at Ruby CI build logs and backtraces, I've noticed
+occasional instances where processes are stuck in select(2) or
+ppoll(2) with a pipe.
 
-I'd rather not include this. In fact, I'd love to get rid of the nop
-options. They were added to make sure options worked when we first
-added them. They are actually pointless.
+I don't have access to the systems where this is happening to
+test/reproduce the problem, and haven't been able to reproduce
+it locally on less-powerful hardware, either.  However, it seems
+like a problem based on similar comments in
+fs/eventfd.c::eventfd_poll made by Paolo.
 
-The only point of this test is to know if options work or not. Hmm, I
-guess that is something that could possibly be valuable :-/
+Signed-off-by: Eric Wong <normalperson@yhbt.net>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+---
+ fs/pipe.c | 32 ++++++++++++++++++++++++++++++--
+ 1 file changed, 30 insertions(+), 2 deletions(-)
 
--- Steve
-
-
-> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> ---
->  .../testing/selftests/ftrace/test.d/tracer/nop.tc  |   22 ++++++++++++++++++++
->  1 file changed, 22 insertions(+)
->  create mode 100644 tools/testing/selftests/ftrace/test.d/tracer/nop.tc
-> 
-> diff --git a/tools/testing/selftests/ftrace/test.d/tracer/nop.tc b/tools/testing/selftests/ftrace/test.d/tracer/nop.tc
-> new file mode 100644
-> index 000000000000..ca63e316e0f5
-> --- /dev/null
-> +++ b/tools/testing/selftests/ftrace/test.d/tracer/nop.tc
-> @@ -0,0 +1,22 @@
-> +#!/bin/sh
-> +# SPDX-License-Identifier: GPL-2.0
-> +# description: Test nop tracer
-> +
-> +# nop must be supported always
-> +grep -q "nop" available_tracers
-> +
-> +echo "nop" > current_tracer
-> +
-> +# nop provides 2 test options
-> +grep -q "test_nop_accept" trace_options
-> +grep -q "test_nop_refuse" trace_options
-> +
-> +# nop_accept always success
-> +echo "test_nop_accept" > trace_options
-> +echo "notest_nop_accept" > trace_options
-> +
-> +# nop_refuse always failed
-> +! echo "test_nop_refuse" > trace_options
-> +! echo "notest_nop_refuse" > trace_options
-> +
-> +exit 0
-
+diff --git a/fs/pipe.c b/fs/pipe.c
+index 39d6f431da83..1a904d941cf1 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -509,7 +509,7 @@ static long pipe_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 	}
+ }
+ 
+-/* No kernel lock held - fine */
++/* No kernel lock held - fine, but a compiler barrier is required */
+ static __poll_t
+ pipe_poll(struct file *filp, poll_table *wait)
+ {
+@@ -519,7 +519,35 @@ pipe_poll(struct file *filp, poll_table *wait)
+ 
+ 	poll_wait(filp, &pipe->wait, wait);
+ 
+-	/* Reading only -- no need for acquiring the semaphore.  */
++	/*
++	 * Reading only -- no need for acquiring the semaphore, but
++	 * we need a compiler barrier to ensure the compiler does
++	 * not reorder reads to pipe->nrbufs, pipe->writers,
++	 * pipe->readers, filp->f_version, pipe->w_counter, and
++	 * pipe->buffers before poll_wait to avoid missing wakeups
++	 * from compiler reordering.  In other words, we need to
++	 * prevent the following situation:
++	 *
++	 * pipe_poll                          pipe_write
++	 * -----------------                  ------------
++	 * nrbufs = pipe->nrbufs (INVALID!)
++	 *
++	 *                                    __pipe_lock
++	 *                                    pipe->nrbufs = ++bufs;
++	 *                                    __pipe_unlock
++	 *                                    wake_up_interruptible_sync_poll
++	 *                                      pipe->wait is empty, no wakeup
++	 *
++	 * lock pipe->wait.lock (in poll_wait)
++	 * __add_wait_queue
++	 * unlock pipe->wait.lock
++	 *
++	 *  // pipe->nrbufs should be read here, NOT above
++	 *
++	 * pipe_poll returns 0 (WRONG)
++	 */
++	barrier();
++
+ 	nrbufs = pipe->nrbufs;
+ 	mask = 0;
+ 	if (filp->f_mode & FMODE_READ) {
+-- 
+EW
