@@ -6,49 +6,48 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E35AFC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 19:26:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 210F1C43334
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 19:26:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A956F208EB
+	by mail.kernel.org (Postfix) with ESMTP id D9FFD2151C
 	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 19:26:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A956F208EB
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9FFD2151C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727741AbeHXXB5 (ORCPT
+        id S1727800AbeHXXCJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 19:01:57 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59936 "EHLO mx1.redhat.com"
+        Fri, 24 Aug 2018 19:02:09 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53324 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727507AbeHXXBx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727355AbeHXXBx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 24 Aug 2018 19:01:53 -0400
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0B0564023475;
-        Fri, 24 Aug 2018 19:25:56 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id EBB8E804B9F4;
+        Fri, 24 Aug 2018 19:25:54 +0000 (UTC)
 Received: from localhost.localdomain.com (ovpn-122-125.rdu2.redhat.com [10.10.122.125])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8AF432026D6D;
-        Fri, 24 Aug 2018 19:25:55 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 81A972026D6D;
+        Fri, 24 Aug 2018 19:25:54 +0000 (UTC)
 From:   jglisse@redhat.com
 To:     linux-mm@kvack.org
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
         linux-kernel@vger.kernel.org,
         =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
         Ralph Campbell <rcampbell@nvidia.com>,
         John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH 7/7] mm/hmm: proper support for blockable mmu_notifier
-Date:   Fri, 24 Aug 2018 15:25:49 -0400
-Message-Id: <20180824192549.30844-8-jglisse@redhat.com>
+Subject: [PATCH 5/7] mm/hmm: use a structure for update callback parameters
+Date:   Fri, 24 Aug 2018 15:25:47 -0400
+Message-Id: <20180824192549.30844-6-jglisse@redhat.com>
 In-Reply-To: <20180824192549.30844-1-jglisse@redhat.com>
 References: <20180824192549.30844-1-jglisse@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 24 Aug 2018 19:25:56 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 24 Aug 2018 19:25:56 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jglisse@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 24 Aug 2018 19:25:54 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 24 Aug 2018 19:25:54 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jglisse@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -56,145 +55,147 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jérôme Glisse <jglisse@redhat.com>
 
-When mmu_notifier calls invalidate_range_start callback with blockable
-set to false we should not sleep. Properly propagate this to HMM users.
+Use a structure to gather all the parameters for the update callback.
+This make it easier when adding new parameters by avoiding having to
+update all callback function signature.
 
 Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
-Cc: Michal Hocko <mhocko@suse.com>
 Cc: Ralph Campbell <rcampbell@nvidia.com>
 Cc: John Hubbard <jhubbard@nvidia.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 ---
- include/linux/hmm.h | 12 +++++++++---
- mm/hmm.c            | 39 ++++++++++++++++++++++++++++-----------
- 2 files changed, 37 insertions(+), 14 deletions(-)
+ include/linux/hmm.h | 25 +++++++++++++++++--------
+ mm/hmm.c            | 27 ++++++++++++++-------------
+ 2 files changed, 31 insertions(+), 21 deletions(-)
 
 diff --git a/include/linux/hmm.h b/include/linux/hmm.h
-index 064924bce75c..c783916f8732 100644
+index 1ff4bae7ada7..a7f7600b6bb0 100644
 --- a/include/linux/hmm.h
 +++ b/include/linux/hmm.h
-@@ -287,11 +287,13 @@ enum hmm_update_event {
-  * @start: virtual start address of the range to update
-  * @end: virtual end address of the range to update
-  * @event: event triggering the update (what is happening)
-+ * @blockable: can the callback block/sleep ?
-  */
- struct hmm_update {
- 	unsigned long start;
- 	unsigned long end;
- 	enum hmm_update_event event;
-+	bool blockable;
- };
+@@ -274,13 +274,26 @@ static inline uint64_t hmm_pfn_from_pfn(const struct hmm_range *range,
+ struct hmm_mirror;
  
  /*
-@@ -314,6 +316,8 @@ struct hmm_mirror_ops {
+- * enum hmm_update_type - type of update
++ * enum hmm_update_event - type of update
+  * @HMM_UPDATE_INVALIDATE: invalidate range (no indication as to why)
+  */
+-enum hmm_update_type {
++enum hmm_update_event {
+ 	HMM_UPDATE_INVALIDATE,
+ };
+ 
++/*
++ * struct hmm_update - HMM update informations for callback
++ *
++ * @start: virtual start address of the range to update
++ * @end: virtual end address of the range to update
++ * @event: event triggering the update (what is happening)
++ */
++struct hmm_update {
++	unsigned long start;
++	unsigned long end;
++	enum hmm_update_event event;
++};
++
+ /*
+  * struct hmm_mirror_ops - HMM mirror device operations callback
+  *
+@@ -300,9 +313,7 @@ struct hmm_mirror_ops {
+ 	/* sync_cpu_device_pagetables() - synchronize page tables
  	 *
  	 * @mirror: pointer to struct hmm_mirror
- 	 * @update: update informations (see struct hmm_update)
-+	 * Returns: -EAGAIN if update.blockable false and callback need to
-+	 *          block, 0 otherwise.
+-	 * @update_type: type of update that occurred to the CPU page table
+-	 * @start: virtual start address of the range to update
+-	 * @end: virtual end address of the range to update
++	 * @update: update informations (see struct hmm_update)
  	 *
  	 * This callback ultimately originates from mmu_notifiers when the CPU
  	 * page table is updated. The device driver must update its page table
-@@ -322,10 +326,12 @@ struct hmm_mirror_ops {
- 	 *
- 	 * The device driver must not return from this callback until the device
- 	 * page tables are completely updated (TLBs flushed, etc); this is a
--	 * synchronous call.
-+	 * synchronous call. If driver need to sleep and update->blockable is
-+	 * false then you need to abort (do not do anything that would sleep or
-+	 * block) and return -EAGAIN.
+@@ -314,9 +325,7 @@ struct hmm_mirror_ops {
+ 	 * synchronous call.
  	 */
--	void (*sync_cpu_device_pagetables)(struct hmm_mirror *mirror,
--					   const struct hmm_update *update);
-+	int (*sync_cpu_device_pagetables)(struct hmm_mirror *mirror,
+ 	void (*sync_cpu_device_pagetables)(struct hmm_mirror *mirror,
+-					   enum hmm_update_type update_type,
+-					   unsigned long start,
+-					   unsigned long end);
 +					  const struct hmm_update *update);
  };
  
  /*
 diff --git a/mm/hmm.c b/mm/hmm.c
-index 6fe31e2bfa1e..1d8fcaa0606f 100644
+index 659efc9aada6..debd2f734ab5 100644
 --- a/mm/hmm.c
 +++ b/mm/hmm.c
-@@ -123,12 +123,18 @@ void hmm_mm_destroy(struct mm_struct *mm)
- 	kfree(mm->hmm);
+@@ -127,9 +127,7 @@ void hmm_mm_destroy(struct mm_struct *mm)
  }
  
--static void hmm_invalidate_range(struct hmm *hmm, bool device,
--				 const struct hmm_update *update)
-+static int hmm_invalidate_range(struct hmm *hmm, bool device,
+ static void hmm_invalidate_range(struct hmm *hmm,
+-				 enum hmm_update_type action,
+-				 unsigned long start,
+-				 unsigned long end)
 +				const struct hmm_update *update)
  {
  	struct hmm_mirror *mirror;
  	struct hmm_range *range;
- 
-+	/*
-+	 * It is fine to wait on lock here even if update->blockable is false
-+	 * as the hmm->lock is only held for short period of time (when adding
-+	 * or walking the ranges list). We could also convert the range list
-+	 * into a lru list and avoid the spinlock all together.
-+	 */
- 	spin_lock(&hmm->lock);
+@@ -138,21 +136,20 @@ static void hmm_invalidate_range(struct hmm *hmm,
  	list_for_each_entry(range, &hmm->ranges, list) {
  		unsigned long addr, idx, npages;
-@@ -145,12 +151,26 @@ static void hmm_invalidate_range(struct hmm *hmm, bool device,
+ 
+-		if (end < range->start || start >= range->end)
++		if (update->end < range->start || update->start >= range->end)
+ 			continue;
+ 
+ 		range->valid = false;
+-		addr = max(start, range->start);
++		addr = max(update->start, range->start);
+ 		idx = (addr - range->start) >> PAGE_SHIFT;
+-		npages = (min(range->end, end) - addr) >> PAGE_SHIFT;
++		npages = (min(range->end, update->end) - addr) >> PAGE_SHIFT;
+ 		memset(&range->pfns[idx], 0, sizeof(*range->pfns) * npages);
+ 	}
  	spin_unlock(&hmm->lock);
  
- 	if (!device)
--		return;
-+		return 0;
- 
-+	/*
-+	 * It is fine to wait on mirrors_sem here even if update->blockable is
-+	 * false as this semaphore is only taken in write mode for short period
-+	 * when adding a new mirror to the list.
-+	 */
  	down_read(&hmm->mirrors_sem);
--	list_for_each_entry(mirror, &hmm->mirrors, list)
--		mirror->ops->sync_cpu_device_pagetables(mirror, update);
-+	list_for_each_entry(mirror, &hmm->mirrors, list) {
-+		int ret;
-+
-+		ret = mirror->ops->sync_cpu_device_pagetables(mirror, update);
-+		if (!update->blockable && ret == -EAGAIN) {
-+			up_read(&hmm->mirrors_sem);
-+			return -EAGAIN;
-+		}
-+	}
+ 	list_for_each_entry(mirror, &hmm->mirrors, list)
+-		mirror->ops->sync_cpu_device_pagetables(mirror, action,
+-							start, end);
++		mirror->ops->sync_cpu_device_pagetables(mirror, update);
  	up_read(&hmm->mirrors_sem);
-+
-+	return 0;
  }
  
- static void hmm_release(struct mmu_notifier *mn, struct mm_struct *mm)
-@@ -188,17 +208,13 @@ static int hmm_invalidate_range_start(struct mmu_notifier *mn,
- 	struct hmm_update update;
+@@ -183,10 +180,10 @@ static void hmm_release(struct mmu_notifier *mn, struct mm_struct *mm)
+ }
+ 
+ static int hmm_invalidate_range_start(struct mmu_notifier *mn,
+-				       struct mm_struct *mm,
+-				       unsigned long start,
+-				       unsigned long end,
+-				       bool blockable)
++				      struct mm_struct *mm,
++				      unsigned long start,
++				      unsigned long end,
++				      bool blockable)
+ {
  	struct hmm *hmm = mm->hmm;
  
--	if (!blockable)
--		return -EAGAIN;
--
+@@ -202,11 +199,15 @@ static void hmm_invalidate_range_end(struct mmu_notifier *mn,
+ 				     unsigned long start,
+ 				     unsigned long end)
+ {
++	struct hmm_update update;
+ 	struct hmm *hmm = mm->hmm;
+ 
  	VM_BUG_ON(!hmm);
  
- 	update.start = start;
- 	update.end = end;
- 	update.event = HMM_UPDATE_INVALIDATE;
--	hmm_invalidate_range(hmm, true, &update);
--
--	return 0;
-+	update.blockable = blockable;
-+	return hmm_invalidate_range(hmm, true, &update);
+-	hmm_invalidate_range(mm->hmm, HMM_UPDATE_INVALIDATE, start, end);
++	update.start = start;
++	update.end = end;
++	update.event = HMM_UPDATE_INVALIDATE;
++	hmm_invalidate_range(hmm, &update);
  }
  
- static void hmm_invalidate_range_end(struct mmu_notifier *mn,
-@@ -214,6 +230,7 @@ static void hmm_invalidate_range_end(struct mmu_notifier *mn,
- 	update.start = start;
- 	update.end = end;
- 	update.event = HMM_UPDATE_INVALIDATE;
-+	update.blockable = true;
- 	hmm_invalidate_range(hmm, false, &update);
- }
- 
+ static const struct mmu_notifier_ops hmm_mmu_notifier_ops = {
 -- 
 2.17.1
 
