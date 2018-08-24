@@ -2,158 +2,119 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54DFCC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 12:40:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69061C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 12:42:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 106A6208F7
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 12:40:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 106A6208F7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axis.com
+	by mail.kernel.org (Postfix) with ESMTP id 08A8421567
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 12:42:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="sE4QLLr1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08A8421567
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727261AbeHXQPJ (ORCPT
+        id S1727331AbeHXQRJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 12:15:09 -0400
-Received: from bastet.se.axis.com ([195.60.68.11]:50046 "EHLO
-        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726268AbeHXQPJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 12:15:09 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bastet.se.axis.com (Postfix) with ESMTP id E4AAD184CD;
-        Fri, 24 Aug 2018 14:40:36 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at bastet.se.axis.com
-Received: from bastet.se.axis.com ([IPv6:::ffff:127.0.0.1])
-        by localhost (bastet.se.axis.com [::ffff:127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id j8J-Yr8PnoKx; Fri, 24 Aug 2018 14:40:36 +0200 (CEST)
-Received: from boulder03.se.axis.com (boulder03.se.axis.com [10.0.8.17])
-        by bastet.se.axis.com (Postfix) with ESMTPS id 06A76184B7;
-        Fri, 24 Aug 2018 14:40:35 +0200 (CEST)
-Received: from boulder03.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D3D8E1E06C;
-        Fri, 24 Aug 2018 14:40:35 +0200 (CEST)
-Received: from boulder03.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C6B501E068;
-        Fri, 24 Aug 2018 14:40:35 +0200 (CEST)
-Received: from seth.se.axis.com (unknown [10.0.2.172])
-        by boulder03.se.axis.com (Postfix) with ESMTP;
-        Fri, 24 Aug 2018 14:40:35 +0200 (CEST)
-Received: from lnxartpec.se.axis.com (lnxartpec.se.axis.com [10.88.4.9])
-        by seth.se.axis.com (Postfix) with ESMTP id B94F23118;
-        Fri, 24 Aug 2018 14:40:35 +0200 (CEST)
-Received: by lnxartpec.se.axis.com (Postfix, from userid 10564)
-        id B27198016F; Fri, 24 Aug 2018 14:40:35 +0200 (CEST)
-From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
-To:     catalin.marinas@arm.com, akpm@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Vincent Whitchurch <rabinv@axis.com>
-Subject: [PATCH] kmemleak: Add option to print warnings to dmesg
-Date:   Fri, 24 Aug 2018 14:40:11 +0200
-Message-Id: <20180824124011.22879-1-vincent.whitchurch@axis.com>
-X-Mailer: git-send-email 2.11.0
-X-TM-AS-GCONF: 00
+        Fri, 24 Aug 2018 12:17:09 -0400
+Received: from ozlabs.org ([203.11.71.1]:51451 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726268AbeHXQRJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 12:17:09 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41xgsm3Tmhz9ryn;
+        Fri, 24 Aug 2018 22:42:36 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1535114557;
+        bh=4WH7/HEUsO2YfOlbm+bYgYYep2kjKto2tAQpjx7o1VU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=sE4QLLr119dEJxtMJBdWZUaQsYQi8wo8jCtaQAfFBnZOO3Z/ByODDIcSEAaWJxHFo
+         ugDvhqCmvXbouD295QlS1G/MrxnJyNygmojda4GPpAQAltKy4cLPwg6JfO2yhlp0lK
+         XvjjFt9RSsSQ4v6uVqiz8nknzFTW9ZnKr8oPq4HOBzYWxFwJTCfsPrQpNRW5xMHn7J
+         GSWYGpWWPdS4YUb0TJ7xTrAdYqQz7VZ1xerYX/HA700vUHy4Li77s4RxCrQLDQBBP+
+         Jo2wLg7Dk8XpGq/oPhQKpxNDm4JiedHwegI/Sv7+3LelyVrTNVBtZd70eLlBL57fbR
+         D/5Cn6f2TkfMw==
+Date:   Fri, 24 Aug 2018 22:42:11 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: build warnings from the build of Linus' tree
+Message-ID: <20180824224211.2934d7c0@canb.auug.org.au>
+In-Reply-To: <20180824204756.e787765461975cd1e27502dc@kernel.org>
+References: <20180824133206.4218c2e5@canb.auug.org.au>
+        <20180824172053.20fa197294f51496dcec5605@kernel.org>
+        <20180824204756.e787765461975cd1e27502dc@kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/e9c6xvEObhgKwcLMESA5VWx"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, kmemleak only prints the number of suspected leaks to dmesg
-but requires the user to read a debugfs file to get the actual stack
-traces of the objects' allocation points.  Add an option to print the
-stack trace information (except the hex dumps) to dmesg too.  This
-allows easier integration of kmemleak into automated test systems since
-those kind of systems presumably already save kernel logs.
+--Sig_/e9c6xvEObhgKwcLMESA5VWx
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
----
- lib/Kconfig.debug |  9 +++++++++
- mm/kmemleak.c     | 21 +++++++++++++++++----
- 2 files changed, 26 insertions(+), 4 deletions(-)
+Hi Masami,
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index ab1b599202bc..9a3fc905b8bd 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -593,6 +593,15 @@ config DEBUG_KMEMLEAK_DEFAULT_OFF
- 	  Say Y here to disable kmemleak by default. It can then be enabled
- 	  on the command line via kmemleak=on.
- 
-+config DEBUG_KMEMLEAK_WARN
-+	bool "Print kmemleak object warnings to log buffer"
-+	depends on DEBUG_KMEMLEAK
-+	help
-+	  Say Y here to make kmemleak print information about unreferenced
-+	  objects (including stacktraces) as warnings to the kernel log buffer.
-+	  Otherwise this information is only available by reading the kmemleak
-+	  debugfs file.
-+
- config DEBUG_STACK_USAGE
- 	bool "Stack utilization instrumentation"
- 	depends on DEBUG_KERNEL && !IA64
-diff --git a/mm/kmemleak.c b/mm/kmemleak.c
-index 9a085d525bbc..61ba47a357fc 100644
---- a/mm/kmemleak.c
-+++ b/mm/kmemleak.c
-@@ -311,6 +311,9 @@ static void hex_dump_object(struct seq_file *seq,
- 	const u8 *ptr = (const u8 *)object->pointer;
- 	size_t len;
- 
-+	if (!seq)
-+		return;
-+
- 	/* limit the number of lines to HEX_MAX_LINES */
- 	len = min_t(size_t, object->size, HEX_MAX_LINES * HEX_ROW_SIZE);
- 
-@@ -355,6 +358,13 @@ static bool unreferenced_object(struct kmemleak_object *object)
- 			       jiffies_last_scan);
- }
- 
-+#define warn_or_seq_printf(seq, fmt, ...)	do {	\
-+	if (seq)					\
-+		seq_printf(seq, fmt, ##__VA_ARGS__);	\
-+	else						\
-+		pr_warn(fmt, ##__VA_ARGS__);		\
-+} while (0)
-+
- /*
-  * Printing of the unreferenced objects information to the seq file. The
-  * print_unreferenced function must be called with the object->lock held.
-@@ -365,17 +375,17 @@ static void print_unreferenced(struct seq_file *seq,
- 	int i;
- 	unsigned int msecs_age = jiffies_to_msecs(jiffies - object->jiffies);
- 
--	seq_printf(seq, "unreferenced object 0x%08lx (size %zu):\n",
-+	warn_or_seq_printf(seq, "unreferenced object 0x%08lx (size %zu):\n",
- 		   object->pointer, object->size);
--	seq_printf(seq, "  comm \"%s\", pid %d, jiffies %lu (age %d.%03ds)\n",
-+	warn_or_seq_printf(seq, "  comm \"%s\", pid %d, jiffies %lu (age %d.%03ds)\n",
- 		   object->comm, object->pid, object->jiffies,
- 		   msecs_age / 1000, msecs_age % 1000);
- 	hex_dump_object(seq, object);
--	seq_printf(seq, "  backtrace:\n");
-+	warn_or_seq_printf(seq, "  backtrace:\n");
- 
- 	for (i = 0; i < object->trace_len; i++) {
- 		void *ptr = (void *)object->trace[i];
--		seq_printf(seq, "    [<%p>] %pS\n", ptr, ptr);
-+		warn_or_seq_printf(seq, "    [<%p>] %pS\n", ptr, ptr);
- 	}
- }
- 
-@@ -1598,6 +1608,9 @@ static void kmemleak_scan(void)
- 		if (unreferenced_object(object) &&
- 		    !(object->flags & OBJECT_REPORTED)) {
- 			object->flags |= OBJECT_REPORTED;
-+#ifdef CONFIG_DEBUG_KMEMLEAK_WARN
-+			print_unreferenced(NULL, object);
-+#endif
- 			new_leaks++;
- 		}
- 		spin_unlock_irqrestore(&object->lock, flags);
--- 
-2.11.0
+On Fri, 24 Aug 2018 20:47:56 +0900 Masami Hiramatsu <mhiramat@kernel.org> w=
+rote:
+>
+> gcc-7.3.0 cross build ld shows below warnings.
+>=20
+>   MODPOST vmlinux.o
+> /opt/gcc-7.3.0-nolibc/powerpc64-linux/bin/powerpc64-linux-ld: warning: or=
+phan section `.gnu.hash' from `linker stubs' being placed in section `.gnu.=
+hash'.
+>   KSYM    .tmp_kallsyms1.o
+> /opt/gcc-7.3.0-nolibc/powerpc64-linux/bin/powerpc64-linux-ld: warning: or=
+phan section `.gnu.hash' from `linker stubs' being placed in section `.gnu.=
+hash'.
+>   KSYM    .tmp_kallsyms2.o
+> /opt/gcc-7.3.0-nolibc/powerpc64-linux/bin/powerpc64-linux-ld: warning: or=
+phan section `.gnu.hash' from `linker stubs' being placed in section `.gnu.=
+hash'.
+>   KSYM    .tmp_kallsyms3.o
+>   LD      vmlinux
+> /opt/gcc-7.3.0-nolibc/powerpc64-linux/bin/powerpc64-linux-ld: warning: or=
+phan section `.gnu.hash' from `linker stubs' being placed in section `.gnu.=
+hash'.
 
+I reported those a while ago when I started using the native Debian gcc
+on my Powerpc build box.
+
+> But it seems another warning, and I couldn't see your warnings. Could you=
+ tell me your gcc version?
+
+Currently, it is the Debian gcc 8.2.0, ld 2.31.1.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/e9c6xvEObhgKwcLMESA5VWx
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlt//SMACgkQAVBC80lX
+0Gw5+gf+MwH1M707OUGCMLgta/PsBCZiEcgIa5ryFx7YuugactRTexd8SpsdRxa8
+MVRjHW2VJ9OIDwwEiBOVR38KhSPSRlhs4kkpiIwbNjjc0W4XXKTrVAeo0XCpoYVc
+w7C59pRUYPklQLkUuIx7V4lwAzkzzxNN6XSYtd2GaxmLf+5AXXbt4dRHUTuIu5Yr
+X/uiGAkMlWi5ldKMeX1Z31oMGn4uIZSmK/l69jgX+EHcbff6VtJEhpsX10r3O9uz
+w9CAv3lbd81ExRKi7Ms4tfSapzFsICkn/vAH9Ujy9AHfCADVvfka/hAjigWTicCo
+BNpcTNwlW2b6g1HOJI4OjFtk8us2Ng==
+=ZEGq
+-----END PGP SIGNATURE-----
+
+--Sig_/e9c6xvEObhgKwcLMESA5VWx--
