@@ -2,225 +2,131 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9D25C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 22:08:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D94C0C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 22:13:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 729EE208B9
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 22:08:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B5CE208B3
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 22:13:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tzhr6p9z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 729EE208B9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="04b2uNED"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B5CE208B3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727820AbeHYBof (ORCPT
+        id S1727247AbeHYBtg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 21:44:35 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:37676 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726559AbeHYBof (ORCPT
+        Fri, 24 Aug 2018 21:49:36 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:46814 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726563AbeHYBtg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 21:44:35 -0400
-Received: by mail-io0-f194.google.com with SMTP id v14-v6so8335559iob.4
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 15:08:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=0xM2pNsYZf385S4EkacTgpZYu/nCsjMd3on65ye0rhA=;
-        b=tzhr6p9zEr70jmuekB2rzlEJr6aKQM24lX2Y2DWo6xV0O4XAkIh4wXfBfBOKwCTgJT
-         LCQLASsTcQ1T1tLXbwDx2KCJXXuSjXWlFpmMmrUf+BMQr3l0UjviXT8VG/Rkso1s87mW
-         LZ89oN1+WbzDadx2CCdpmmZMz/0eOM9CYTt9P9UdGPrK2cd9+HHiQOUhfhVUERGRPFNq
-         iNEKrNyaHLBDnXGCNjDrkQMn43/NHkRaCnBzZ0Dy2UvIVjq2/EzqCZluqdgRRFGvkt6r
-         uY1obbrhf7thl0iRmesRNxgL5MGqFxj0KvVNLmvaZ1Fm4/6Kfu9SOSS0bkIvMymZsF7V
-         65sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=0xM2pNsYZf385S4EkacTgpZYu/nCsjMd3on65ye0rhA=;
-        b=UglkGX86LWYiuYUN4ClJzD67vuQH5S19Oaa3RywM/Y5Maw4lHh0+4a3gauv5iP9tQc
-         3szrlWB8AIWlrDfQWEshUTJCifkP70Gj/29xHaeViSiIP03ZJFeqYIdDl2rv/KX2CMna
-         ZiyzGmc2mkqp5Hg2ophv12+YT4z2Nb3rWn4wM8BOlsfvjiKImVQTB/Hpi9Qoc3sNZrjh
-         qeqlS1JrPG2cUqrlbinMiJbB4Lqc9mASMqdkmtov7dFV0QFSD7lHfWSS1Q8Qh+Bw6TnR
-         8fi/xdaLi0zE9sBayjyqZxGVWZjkRyv7TJB+y/6MuYja0OybC1Ks/4q+JYoW7SOQ+SWI
-         0oHA==
-X-Gm-Message-State: APzg51DpPl/wyYn2fh8ExrXBs9Z3GgNizM3eT3+biYj8US0puSj0pOg8
-        DxmvDX4bNl9k7qG6SJjtOhQ5NplVb8RpJFytlN4=
-X-Google-Smtp-Source: ANB0Vdbj0eLhH2HBWrunEARGiG+3YsyZG4lV93kB8T/rzwGQV8lPhHGt85sVA0zBvLKKm9zXqrRHkVJAHOe+Mp6Ej2w=
-X-Received: by 2002:a5e:890c:: with SMTP id k12-v6mr2667329ioj.136.1535148485155;
- Fri, 24 Aug 2018 15:08:05 -0700 (PDT)
+        Fri, 24 Aug 2018 21:49:36 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7OM8wQV172383;
+        Fri, 24 Aug 2018 22:12:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=4hGWNp7Bsk69DpU8HQwCpjnaeh9B6rwD7duUx+24XQ8=;
+ b=04b2uNEDYlvPrH4093Q+xNAVD2/JFN2rN1TRaV/jsHotkcnpABbfJ0uo0gap0YPvLIsw
+ duzMev8xPeoYSl0Vk0Ylc/4sdRmNQkknVpRFcY2HrBbvt5X958b2vknvjSp/kQe98nUr
+ 8mn3q4HztUFsIA8MBVvH3vRKm5x0PG33U3Szf/IIjonXw5JhRK0Ccp65inYD0o1UvWBV
+ AS8qTdz68+Ir7ewBJ7ho0DHiOIQMuycRuwaSyclKTiYPBMRNmGuo4Qy7qtdU6R5DK0Wz
+ GD8SwLggliCyDhXXkhOcGjeTiBZJoEmFbiZMfaGR+D00nUNd0IQG1ukRw5t0HkM71Imf QQ== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2kxc3raasv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 24 Aug 2018 22:12:46 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7OMCiFT032436
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 24 Aug 2018 22:12:44 GMT
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w7OMCgTL024342;
+        Fri, 24 Aug 2018 22:12:43 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 24 Aug 2018 15:12:42 -0700
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Jeffrey Lien <Jeff.Lien@wdc.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-crypto\@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-block\@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi\@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "herbert\@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "tim.c.chen\@linux.intel.com" <tim.c.chen@linux.intel.com>,
+        David Darrington <david.darrington@wdc.com>,
+        Jeff Furlong <jeff.furlong@wdc.com>
+Subject: Re: [PATCH] Performance Improvement in CRC16 Calculations.
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <1533928331-21303-1-git-send-email-jeff.lien@wdc.com>
+        <yq1in4gq5jf.fsf@oracle.com> <yq1lg8zb2lp.fsf@oracle.com>
+        <20180822062016.GA10356@infradead.org>
+        <SN1PR04MB18241CBDC8E4CA5275EE4424EA360@SN1PR04MB1824.namprd04.prod.outlook.com>
+        <CAKv+Gu-RwCrdgW69NVpyRLwGPGPCZx+ksTBM7NZk7v0-dzczGg@mail.gmail.com>
+        <yq1a7pb9196.fsf@oracle.com>
+        <CAKv+Gu8Y7YmyB5rmxaj-SGB7q03in7ijv2cOifwYnhP5CNastw@mail.gmail.com>
+        <yq1tvnj780o.fsf@oracle.com>
+        <CAKv+Gu8dMBUKmw+5rxWoiRKXngPeAsNyXzOY-nZwd3GPi1S5FA@mail.gmail.com>
+Date:   Fri, 24 Aug 2018 18:12:39 -0400
+In-Reply-To: <CAKv+Gu8dMBUKmw+5rxWoiRKXngPeAsNyXzOY-nZwd3GPi1S5FA@mail.gmail.com>
+        (Ard Biesheuvel's message of "Fri, 24 Aug 2018 22:54:26 +0100")
+Message-ID: <yq1pny776so.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-Received: by 2002:a6b:7112:0:0:0:0:0 with HTTP; Fri, 24 Aug 2018 15:08:04
- -0700 (PDT)
-In-Reply-To: <e8622920d68c008edf72bcd93a8716fc59c2f55d.camel@intel.com>
-References: <e8622920d68c008edf72bcd93a8716fc59c2f55d.camel@intel.com>
-From:   Dan Williams <dan.j.williams@gmail.com>
-Date:   Fri, 24 Aug 2018 15:08:04 -0700
-Message-ID: <CAA9_cmcwcjeVGkVNZnrAb2V61t1VibyxX5zsuZLYfB93g-2ynA@mail.gmail.com>
-Subject: Re: [GIT PULL]: libnvdimm updates for 4.19-rc1 v2 [2/2]
-To:     torvalds@linux-foundation.org
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        dave.jiang@intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8995 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=747
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808240222
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/22/18, Jiang, Dave <dave.jiang@intel.com> wrote:
-> Hi Linus,
->
-> Please pull to receive the libnvdimm dax-memory-failure series for
-> v4.19-rc1. I have removed the
-> offending ilog2() call and fixed up the patch accordingly.
 
-Hi Linus,
+Ard,
 
-Last business day of the merge window, one last ditch effort to
-advocate for the inclusion of this and the other v2 libnvdimm pull
-request for 4.19.
+> This looks like it should work, yes. It does rely on the module name
+> to start with 'crct10dif' but I guess that is reasonable, and matches
+> the current state on all architectures.
 
-I agree with you that something is broken when a readily visible
-mistake in core code makes it all the way to you. I take no issue with
-your frustration, and I would not have pulled that branch either.
+Yep, I verified the module names on ARM and Power. There really wasn't
+much I could key off of other than the name string.
 
-Dave fixed it up, albeit with a rebase, but I'm not aware of any
-lingering issues.
+> Anyone care to boot test this? Jeffrey?
 
-Please save me from having to do another apology tour with
-stakeholders that were expecting this to land since 4.18, or otherwise
-let me know what process changes you would like to see going forward
-for these cross sub-system pmem / dax feature series.
+Did some quick tests on my end with both scsi_debug and FC hardware. I
+verified that performance went up as I loaded crct10dif-pclmul while the
+test was running:
 
->
-> As Dan mentioned, the justification for pushing this sooner rather than
-> later is to
-> start the pipeline to the distros since enterprise in-memory-database
-> developers reported this gap in the kernel memory error handling
-> compared to the DRAM / page cache case.
->
-> I'm including Dan's original cover for the series for context:
-> "
-> As it stands, memory_failure() gets thoroughly confused by dev_pagemap
-> backed mappings. The recovery code has specific enabling for several
-> possible page states and needs new enabling to handle poison in dax
-> mappings.
->
-> In order to support reliable reverse mapping of user space addresses:
->
-> 1/ Add new locking in the memory_failure() rmap path to prevent races
-> that would typically be handled by the page lock.
->
-> 2/ Since dev_pagemap pages are hidden from the page allocator and the
-> "compound page" accounting machinery, add a mechanism to determine the
-> size of the mapping that encompasses a given poisoned pfn.
->
-> 3/ Given pmem errors can be repaired, change the speculatively accessed
-> poison protection, mce_unmap_kpfn(), to be reversible and otherwise
-> allow ongoing access from the kernel.
->
-> A side effect of this enabling is that MADV_HWPOISON becomes usable for
-> dax mappings, however the primary motivation is to allow the system to
-> survive userspace consumption of hardware-poison via dax. Specifically
-> the current behavior is:
->
->     mce: Uncorrected hardware memory error in user-access at af34214200
->     {1}[Hardware Error]: It has been corrected by h/w and requires no
-> further action
->     mce: [Hardware Error]: Machine check events logged
->     {1}[Hardware Error]: event severity: corrected
->     Memory failure: 0xaf34214: reserved kernel page still referenced by 1
-> users
->     [..]
->     Memory failure: 0xaf34214: recovery action for reserved kernel page:
-> Failed
->     mce: Memory error not recovered
->     <reboot>
->
-> ...and with these changes:
->
->     Injecting memory failure for pfn 0x20cb00 at process virtual address
-> 0x7f763dd00000
->     Memory failure: 0x20cb00: Killing dax-pmd:5421 due to hardware memory
-> corruption
->     Memory failure: 0x20cb00: recovery action for dax page: Recovered
->
-> Given all the cross dependencies I propose taking this through
-> nvdimm.git with acks from Naoya, x86/core, x86/RAS, and of course dax
-> folks.
-> "
->
-> I hope you will consider pulling the patch series. Thank you!
->
-> The following changes since commit
-> 021c91791a5e7e85c567452f1be3e4c2c6cb6063:
->
->   Linux 4.18-rc3 (2018-07-01 16:04:53 -0700)
->
-> are available in the Git repository at:
->
->   git@gitolite.kernel.org:pub/scm/linux/kernel/git/nvdimm/nvdimm.git
-> tags/libnvdimm-for-4.19_dax-memory-failure
->
-> for you to fetch changes up to c953cc987ab87d180e1d5de2f1c217abe33aac77:
->
->   libnvdimm, pmem: Restore page attributes when clearing errors (2018-08-20
-> 09:22:45 -0700)
->
-> ----------------------------------------------------------------
-> libnvdimm-for-4.19_dax-memory-failure
->
-> * memory_failure() gets confused by dev_pagemap backed mappings. The
->   recovery code has specific enabling for several possible page states
->   that needs new enabling to handle poison in dax mappings. Teach
->   memory_failure() about ZONE_DEVICE pages.
->
-> ----------------------------------------------------------------
-> Dan Williams (13):
->       device-dax: Convert to vmf_insert_mixed and vm_fault_t
->       device-dax: Enable page_mapping()
->       device-dax: Set page->index
->       filesystem-dax: Set page->index
->       mm, madvise_inject_error: Disable MADV_SOFT_OFFLINE for ZONE_DEVICE
-> pages
->       mm, dev_pagemap: Do not clear ->mapping on final put
->       mm, madvise_inject_error: Let memory_failure() optionally take a page
-> reference
->       mm, memory_failure: Collect mapping size in collect_procs()
->       filesystem-dax: Introduce dax_lock_mapping_entry()
->       mm, memory_failure: Teach memory_failure() about dev_pagemap pages
->       x86/mm/pat: Prepare {reserve, free}_memtype() for "decoy" addresses
->       x86/memory_failure: Introduce {set, clear}_mce_nospec()
->       libnvdimm, pmem: Restore page attributes when clearing errors
->
->  arch/x86/include/asm/set_memory.h         |  42 ++++++
->  arch/x86/kernel/cpu/mcheck/mce-internal.h |  15 ---
->  arch/x86/kernel/cpu/mcheck/mce.c          |  38 +-----
->  arch/x86/mm/pat.c                         |  16 +++
->  drivers/dax/device.c                      |  75 +++++++----
->  drivers/nvdimm/pmem.c                     |  26 ++++
->  drivers/nvdimm/pmem.h                     |  13 ++
->  fs/dax.c                                  | 125 ++++++++++++++++--
->  include/linux/dax.h                       |  13 ++
->  include/linux/huge_mm.h                   |   5 +-
->  include/linux/mm.h                        |   1 +
->  include/linux/set_memory.h                |  14 ++
->  kernel/memremap.c                         |   1 -
->  mm/hmm.c                                  |   2 +
->  mm/huge_memory.c                          |   4 +-
->  mm/madvise.c                              |  16 ++-
->  mm/memory-failure.c                       | 210
-> ++++++++++++++++++++++++------
->  17 files changed, 481 insertions(+), 135 deletions(-)
-> _______________________________________________
-> Linux-nvdimm mailing list
-> Linux-nvdimm@lists.01.org
-> https://lists.01.org/mailman/listinfo/linux-nvdimm
->
+[   23.488059] CRC T10 DIF calculated using crypto hash crct10dif-generic
+[  156.922455] sd 0:0:0:0: [sda] Enabling DIX T10-DIF-TYPE1-CRC protection
+[  221.577731] CRC T10 DIF calculated using crypto hash crct10dif-pclmul
+
+R  63.60 MB/s, W  61.00 MB/s, IOPS  486 | Ops     4460, Rec  0, Err  0
+R  61.80 MB/s, W  62.00 MB/s, IOPS  493 | Ops     6926, Rec  0, Err  0
+R  62.60 MB/s, W  60.80 MB/s, IOPS  494 | Ops     9396, Rec  0, Err  0
+R  59.40 MB/s, W  58.80 MB/s, IOPS  482 | Ops    11804, Rec  0, Err  0
+R 151.40 MB/s, W 155.40 MB/s, IOPS 1216 | Ops    17883, Rec  0, Err  0
+R 165.00 MB/s, W 166.40 MB/s, IOPS 1327 | Ops    24520, Rec  0, Err  0
+R 175.00 MB/s, W 177.40 MB/s, IOPS 1417 | Ops    31604, Rec  0, Err  0
+R 185.80 MB/s, W 188.60 MB/s, IOPS 1507 | Ops    39137, Rec  0, Err  0
+R 200.60 MB/s, W 203.00 MB/s, IOPS 1629 | Ops    47284, Rec  0, Err  0
+
+Note that in this case the CRC is calculated twice per I/O (block layer
+and scsi_debug).
+
+I'll do some more testing over the weekend...
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
