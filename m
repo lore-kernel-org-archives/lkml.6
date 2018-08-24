@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 983B6C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 16:26:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FB93C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 16:26:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DDEA21523
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 16:26:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DDEA21523
+	by mail.kernel.org (Postfix) with ESMTP id D6D6D21523
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 16:26:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6D6D21523
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728278AbeHXUBq (ORCPT
+        id S1728291AbeHXUBs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 16:01:46 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52324 "EHLO
+        Fri, 24 Aug 2018 16:01:48 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44486 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726488AbeHXUBp (ORCPT
+        by vger.kernel.org with ESMTP id S1726488AbeHXUBr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 16:01:45 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7OGNpjp014869
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 12:26:23 -0400
-Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m2msa9u96-1
+        Fri, 24 Aug 2018 16:01:47 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7OGOZ1A065011
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 12:26:25 -0400
+Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m2jy9puyx-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 12:26:22 -0400
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 12:26:24 -0400
 Received: from localhost
-        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Fri, 24 Aug 2018 10:26:21 -0600
-Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
-        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Fri, 24 Aug 2018 10:26:24 -0600
+Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
+        by e36.co.us.ibm.com (192.168.1.136) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 24 Aug 2018 10:26:17 -0600
+        Fri, 24 Aug 2018 10:26:20 -0600
 Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7OGQEhN18415744
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7OGQJE236569340
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 24 Aug 2018 09:26:14 -0700
+        Fri, 24 Aug 2018 09:26:19 -0700
 Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7AE7378066;
-        Fri, 24 Aug 2018 10:26:14 -0600 (MDT)
+        by IMSVA (Postfix) with ESMTP id 7EFFD78063;
+        Fri, 24 Aug 2018 10:26:19 -0600 (MDT)
 Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DF9077805C;
-        Fri, 24 Aug 2018 10:26:10 -0600 (MDT)
+        by IMSVA (Postfix) with ESMTP id EA4C37805E;
+        Fri, 24 Aug 2018 10:26:15 -0600 (MDT)
 Received: from morokweng.localdomain.com (unknown [9.80.232.133])
         by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Fri, 24 Aug 2018 10:26:10 -0600 (MDT)
+        Fri, 24 Aug 2018 10:26:15 -0600 (MDT)
 From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
 To:     linuxppc-dev@lists.ozlabs.org
 Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
@@ -64,26 +64,26 @@ Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         Ram Pai <linuxram@us.ibm.com>,
         Anshuman Khandual <khandual@linux.vnet.ibm.com>,
         Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Subject: [RFC PATCH 05/11] powerpc/svm: Don't release SWIOTLB buffers on secure guests
-Date:   Fri, 24 Aug 2018 13:25:29 -0300
+Subject: [RFC PATCH 06/11] powerpc/svm: Use SWIOTLB DMA API for all virtio devices
+Date:   Fri, 24 Aug 2018 13:25:30 -0300
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180824162535.22798-1-bauerman@linux.ibm.com>
 References: <20180824162535.22798-1-bauerman@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18082416-0004-0000-0000-0000147CD844
+x-cbid: 18082416-0020-0000-0000-00000E57A3B6
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009603; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01078233; UDB=6.00555984; IPR=6.00858208;
- MB=3.00022910; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-24 16:26:20
+ PH=3.00000004; SC=3.00000266; SDB=6.01078233; UDB=6.00555984; IPR=6.00858207;
+ MB=3.00022909; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-24 16:26:23
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082416-0005-0000-0000-00008892DD9C
-Message-Id: <20180824162535.22798-6-bauerman@linux.ibm.com>
+x-cbparentid: 18082416-0021-0000-0000-000062CAB5EA
+Message-Id: <20180824162535.22798-7-bauerman@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-24_07:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=828 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=883 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1807170000 definitions=main-1808240172
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -92,29 +92,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Anshuman Khandual <khandual@linux.vnet.ibm.com>
 
-Even though SWIOTLB slab gets allocated and initialized on each powerpc
-platform with swiotlb_init(), it gets released away again on all server
-platforms because ppc_swiotlb_enable variable never gets set. Secure
-guests would require SWIOTLB DMA API support for virtio bounce buffering
-purpose. Hence retain the allocated buffer by setting ppc_swiotlb_enable
-variable for secure guests on Ultravisor platforms.
+Secure guest memory (GPA range) is isolated and inaccessible from the host.
+But virtio ring transactions require the back end drivers to process
+incoming scatter gather buffers which require their access in host. Hence a
+portion of guest memory can be converted to shared memory and all buffers
+need to be bounced into the pool before being passed on to the host.
+
+SWIOTLB buffers can be pre-allocated and converted as shared memory during
+early boot. Generic SWIOTLB DMA API (swiotlb_dma_ops) callbacks can be used
+to bounce each incoming scatter gather I/O buffer addresses into this pool
+of shared memory before being passed on to the host. All virtio devices on
+secure guest platform need to use generic SWIOTLB DMA API. Utilize the new
+virtio core platform hook platform_override_dma_ops() to achieve this.
 
 Signed-off-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
 Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
 ---
- arch/powerpc/kernel/svm.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/powerpc/platforms/pseries/iommu.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/kernel/svm.c b/arch/powerpc/kernel/svm.c
-index eab2a64d8643..891db2de8c04 100644
---- a/arch/powerpc/kernel/svm.c
-+++ b/arch/powerpc/kernel/svm.c
-@@ -16,6 +16,7 @@ static int __init init_svm(void)
- 	if (!is_svm_platform())
- 		return 0;
+diff --git a/arch/powerpc/platforms/pseries/iommu.c b/arch/powerpc/platforms/pseries/iommu.c
+index 5773bc7eb4bd..56b894d65dba 100644
+--- a/arch/powerpc/platforms/pseries/iommu.c
++++ b/arch/powerpc/platforms/pseries/iommu.c
+@@ -39,6 +39,7 @@
+ #include <linux/iommu.h>
+ #include <linux/rculist.h>
+ #include <linux/virtio.h>
++#include <linux/virtio_config.h>
+ #include <asm/io.h>
+ #include <asm/prom.h>
+ #include <asm/rtas.h>
+@@ -51,6 +52,7 @@
+ #include <asm/udbg.h>
+ #include <asm/mmzone.h>
+ #include <asm/plpar_wrappers.h>
++#include <asm/svm.h>
  
-+	ppc_swiotlb_enable = 1;
- 	swiotlb_update_mem_attributes();
+ #include "pseries.h"
  
- 	return 0;
+@@ -1400,5 +1402,7 @@ machine_subsys_initcall_sync(pseries, tce_iommu_bus_notifier_init);
+ 
+ void platform_override_dma_ops(struct virtio_device *vdev)
+ {
+-	/* Override vdev->parent.dma_ops if required */
++	if (is_svm_platform() &&
++			!virtio_has_feature(vdev, VIRTIO_F_IOMMU_PLATFORM))
++		set_dma_ops(vdev->dev.parent, &swiotlb_dma_ops);
+ }
 
