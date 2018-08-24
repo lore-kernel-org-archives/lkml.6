@@ -2,197 +2,109 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53782C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 01:41:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47AF6C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 01:42:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB54D21568
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 01:41:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB54D21568
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id ED7BE21568
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 01:42:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="Hn9SSvvo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED7BE21568
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726898AbeHXFNc (ORCPT
+        id S1727049AbeHXFOx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 01:13:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46336 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725735AbeHXFNc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 01:13:32 -0400
-Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 466A621557;
-        Fri, 24 Aug 2018 01:41:11 +0000 (UTC)
-Date:   Thu, 23 Aug 2018 21:41:09 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Michael Rodin <michael@rodin.online>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [BUGFIX PATCH -tip] kprobes/x86: Fix to copy RIP relative
- instruction correctly
-Message-ID: <20180823214109.5b8f5756@vmware.local.home>
-In-Reply-To: <153504457253.22602.1314289671019919596.stgit@devbox>
-References: <153504457253.22602.1314289671019919596.stgit@devbox>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Fri, 24 Aug 2018 01:14:53 -0400
+Received: from conuserg-12.nifty.com ([210.131.2.79]:62323 "EHLO
+        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725735AbeHXFOx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 01:14:53 -0400
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-12.nifty.com with ESMTP id w7O1fPr0000411;
+        Fri, 24 Aug 2018 10:41:27 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com w7O1fPr0000411
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1535074887;
+        bh=CzdodUwtZIgwu2wu5HeMR4NestBlGRCdpgz3kG8nWjE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Hn9SSvvodpg88kFXgfG1lpXSR8sAqS/3MU0YdjDmwUkbB9zS6t0VdH0O4rxkW65hn
+         xqAAeM1q+VMw507sQVsdtZmDzM9YfNqPgRkj+E428EgmsUVCI2oZcEAIf1+w/Cg1YN
+         /2w3KFTThl0qgGmzFMGIfnpUQDdWa6JTL0HhW+vGkgVK3xEaPCRdrFue1mDTmrLV4P
+         50sOPF0juhOegv1ALpfNggTXwCXXPExD0o1XfZvOc1T/MwZpAQjbb3z/Oyg1Ed1jk3
+         MlqJKC4T6C7GyAhv3AMwmgZCEJIgizQe+VcSGUbI5HDIS+3mF5+/abXuaBJENxOlFI
+         vK9Ko9h0RjjTg==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org
+Cc:     devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 1/2] dt-bindings: dmaengine: add DT binding for UniPhier MIO DMAC
+Date:   Fri, 24 Aug 2018 10:41:12 +0900
+Message-Id: <1535074873-15617-2-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1535074873-15617-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1535074873-15617-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 24 Aug 2018 02:16:12 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+The MIO DMAC (Media IO DMA Controller) is used in UniPhier LD4,
+Pro4, and sLD8 SoCs.
 
-> Dump of assembler code from 0xffffffffa000207a to 0xffffffffa00020ea:
-> 	54	push   %rsp
-> ...
-> 	48 83 c4 08	add    $0x8,%rsp
-> 	9d	popfq
-> 	48 89 f0	mov    %rsi,%rax
-> 	8b 35 82 7d db e2	mov    -0x1d24827e(%rip),%esi
->         # 0xffffffff82db9e67 <nr_cpu_ids+3>
-> 
-> As it shows, the 2nd mov accesses *(nr_cpu_ids+3) instead of
-> *nr_cpu_ids. This leads a kernel freeze because cpumask_next()
-> always returns 0 and for_each_cpu() never ended.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-Ouch! Nice catch.
+Changes in v2:
+ - Rename the node "dmac" to "dma-controller"
+ - Remove dma-channels property
 
-> 
-> Fixing this by adding len correctly to real RIP address while
-> copying.
-> 
-> Fixes: 63fef14fc98a ("kprobes/x86: Make insn buffer always ROX and use text_poke()")
-> Reported-by: Michael Rodin <michael@rodin.online>
-> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> Cc: stable@vger.kernel.org
-> ---
->  arch/x86/kernel/kprobes/opt.c |    3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kernel/kprobes/opt.c b/arch/x86/kernel/kprobes/opt.c
-> index eaf02f2e7300..e92672b8b490 100644
-> --- a/arch/x86/kernel/kprobes/opt.c
-> +++ b/arch/x86/kernel/kprobes/opt.c
-> @@ -189,7 +189,8 @@ static int copy_optimized_instructions(u8 *dest, u8 *src, u8 *real)
->  	int len = 0, ret;
->  
->  	while (len < RELATIVEJUMP_SIZE) {
-> -		ret = __copy_instruction(dest + len, src + len, real, &insn);
-> +		ret = __copy_instruction(dest + len, src + len, real + len,
-> +			&insn);
->  		if (!ret || !can_boost(&insn, src + len))
->  			return -EINVAL;
->  		len += ret;
+ .../devicetree/bindings/dma/uniphier-mio-dmac.txt  | 25 ++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/dma/uniphier-mio-dmac.txt
 
-Looking at the change that broke this we have:
+diff --git a/Documentation/devicetree/bindings/dma/uniphier-mio-dmac.txt b/Documentation/devicetree/bindings/dma/uniphier-mio-dmac.txt
+new file mode 100644
+index 0000000..b12388d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/dma/uniphier-mio-dmac.txt
+@@ -0,0 +1,25 @@
++UniPhier Media IO DMA controller
++
++This works as an external DMA engine for SD/eMMC controllers etc.
++found in UniPhier LD4, Pro4, sLD8 SoCs.
++
++Required properties:
++- compatible: should be "socionext,uniphier-mio-dmac".
++- reg: offset and length of the register set for the device.
++- interrupts: a list of interrupt specifiers associated with the DMA channels.
++- clocks: a single clock specifier.
++- #dma-cells: should be <1>. The single cell represents the channel index.
++
++Example:
++	dmac: dma-controller@5a000000 {
++		compatible = "socionext,uniphier-mio-dmac";
++		reg = <0x5a000000 0x1000>;
++		interrupts = <0 68 4>, <0 68 4>, <0 69 4>, <0 70 4>,
++			     <0 71 4>, <0 72 4>, <0 73 4>, <0 74 4>;
++		clocks = <&mio_clk 7>;
++		#dma-cells = <1>;
++	};
++
++Note:
++In the example above, "interrupts = <0 68 4>, <0 68 4>, ..." is not a typo.
++The first two channels share a single interrupt line.
+-- 
+2.7.4
 
-> -static int copy_optimized_instructions(u8 *dest, u8 *src)
-> +static int copy_optimized_instructions(u8 *dest, u8 *src, u8 *real)
->  {
->         struct insn insn;
->         int len = 0, ret;
->  
->         while (len < RELATIVEJUMP_SIZE) {
-> -               ret = __copy_instruction(dest + len, src + len, &insn);
-> +               ret = __copy_instruction(dest + len, src + len, real, &insn);
-
-Where "real" was added as a parameter to __copy_instruction. Note that
-we pass in "dest + len" but not "real + len" as you patch fixes.
-__copy_instruction was changed by the bad commit with:
-
-> -int __copy_instruction(u8 *dest, u8 *src, struct insn *insn)
-> +int __copy_instruction(u8 *dest, u8 *src, u8 *real, struct insn *insn)
->  {
->         kprobe_opcode_t buf[MAX_INSN_SIZE];
->         unsigned long recovered_insn =
-> @@ -387,11 +388,11 @@ int __copy_instruction(u8 *dest, u8 *src, struct insn *insn)
->                  * have given.
->                  */
->                 newdisp = (u8 *) src + (s64) insn->displacement.value
-> -                         - (u8 *) dest;
-> +                         - (u8 *) real;
-
-"real" replaces "dest", which was the first parameter to __copy_instruction.
-
->                         return 0;
-
-And:
-
->  int arch_prepare_optimized_kprobe(struct optimized_kprobe *op,
->                                   struct kprobe *__unused)
->  {
-> -       u8 *buf;
-> -       int ret;
-> +       u8 *buf = NULL, *slot;
-> +       int ret, len;
->         long rel;
->  
->         if (!can_optimize((unsigned long)op->kp.addr))
->                 return -EILSEQ;
->  
-> -       op->optinsn.insn = get_optinsn_slot();
-> -       if (!op->optinsn.insn)
-> +       buf = kzalloc(MAX_OPTINSN_SIZE, GFP_KERNEL);
-> +       if (!buf)
->                 return -ENOMEM;
->  
-> +       op->optinsn.insn = slot = get_optinsn_slot();
-> +       if (!slot) {
-> +               ret = -ENOMEM;
-> +               goto out;
-> +       }
-> +
->         /*
->          * Verify if the address gap is in 2GB range, because this uses
->          * a relative jump.
->          */
-> -       rel = (long)op->optinsn.insn - (long)op->kp.addr + RELATIVEJUMP_SIZE;
-> +       rel = (long)slot - (long)op->kp.addr + RELATIVEJUMP_SIZE;
->         if (abs(rel) > 0x7fffffff) {
-> -               __arch_remove_optimized_kprobe(op, 0);
-> -               return -ERANGE;
-> +               ret = -ERANGE;
-> +               goto err;
->         }
->  
-> -       buf = (u8 *)op->optinsn.insn;
-
-"slot" is equivalent to the old "buf".
-
-> -       set_memory_rw((unsigned long)buf & PAGE_MASK, 1);
-> +       /* Copy arch-dep-instance from template */
-> +       memcpy(buf, &optprobe_template_entry, TMPL_END_IDX);
->  
->         /* Copy instructions into the out-of-line buffer */
-> -       ret = copy_optimized_instructions(buf + TMPL_END_IDX, op->kp.addr);
-> -       if (ret < 0) {
-> -               __arch_remove_optimized_kprobe(op, 0);
-> -               return ret;
-> -       }
-> +       ret = copy_optimized_instructions(buf + TMPL_END_IDX, op->kp.addr,
-> +                                         slot + TMPL_END_IDX);
-
-We pass in "real" as "slot + TMPL_END_IDX" and "dest" as "buf +
-TMPL_END_IDX", thus to make it be equivalent to the code before this
-commit, "real" should have "+ len" added to it in order to be
-equivalent to what was there before.
-
-That said...
-
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
--- Steve
-
-
-> +       if (ret < 0)
-> +               goto err;
