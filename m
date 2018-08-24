@@ -2,119 +2,84 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED0EC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 20:12:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1371C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 20:14:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 526D821529
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 20:12:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 526D821529
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 6F80121523
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 20:14:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="arUUkACm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F80121523
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727557AbeHXXsk (ORCPT
+        id S1727593AbeHXXu0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 19:48:40 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:53219 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726675AbeHXXsj (ORCPT
+        Fri, 24 Aug 2018 19:50:26 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:34042 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726675AbeHXXu0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 19:48:39 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id BC2BD83F58; Fri, 24 Aug 2018 22:12:30 +0200 (CEST)
-Date:   Fri, 24 Aug 2018 22:12:27 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     Baolin Wang <baolin.wang@linaro.org>, rteysseyre@gmail.com,
-        bjorn.andersson@linaro.org, broonie@kernel.org,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/2] leds: core: Introduce LED pattern trigger
-Message-ID: <20180824201227.GB17146@amd>
-References: <1dc5d394324b2bf1ffe229b8e42691fab6d749e0.1533556992.git.baolin.wang@linaro.org>
- <c18fd41f-831c-ab74-57e5-d4151f4b47cc@gmail.com>
- <20180824101145.GA1510@amd>
- <9bb7ac19-36a6-d11a-6d46-fc65c2026201@gmail.com>
+        Fri, 24 Aug 2018 19:50:26 -0400
+Received: by mail-it0-f65.google.com with SMTP id x79-v6so6149490ita.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 13:14:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rbBEAO3XSnzwVOgGNyIT6iir8KKYRCVKkvMMhdlRCzw=;
+        b=arUUkACmbXBPBeaO6wp0id4mJ7MesD5IkYIPEaa1yIhbFnFEWADUqIQ24lV5xVRMcv
+         2tLDYGn/rPf9FxrgSi+IKboiVFpJsCj9ewKBxv2SnK0vbG9hSpPbdBFG4Ra3oXtkTIn4
+         rA87mZdj8+b8V7uDQEIShJvtHjg8+y6bfevLI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rbBEAO3XSnzwVOgGNyIT6iir8KKYRCVKkvMMhdlRCzw=;
+        b=VolgQM34A1x2m780oVYHGGablRMi6O5sq7UPlPYI+pijwkfxt7K5OoH4RgBFHcWXjq
+         FnZcvxep+kbBipCnjyc7dDEMh46Tp+KlsKPN0LnLcOUMDD7yaOtIwPs8X0dNRm2z/Q38
+         cErUy92lez2d/0VIDSfA/lq5yh0Vsn1Np2t7JP+dlp1Oih4vdLUkSZdkj4XU1etv8GPN
+         hOFKegHwfpb9lgFbOR9b8h9EXxdw+TCLxyMn/wlck1bKYvsLas8wARAvRqw6qqpgAJMu
+         AZW2GNozC5/Sxj5s2LgEiEtmp7MHnh/P0rIa8r6Hu3ik4C4qQwKAjxbAWywacISJgChH
+         hU1g==
+X-Gm-Message-State: APzg51Bq6oNrBFapJlq4C45awxchLAf8xucXY87RduRKDauzNU3QIbIJ
+        M0YVHHRs+MlchQUxWpJLbCYg/OWCuIn6tsOJkKg19oji
+X-Google-Smtp-Source: ANB0VdYkkpDcPBA4YJ2l44kII+zUvkmPP/IoKeQHJ0s2VDHiVl92/14vyWNsvuxEqYd82Tf3ZhFRqJkqcFt2R/R6Gs8=
+X-Received: by 2002:a24:8309:: with SMTP id d9-v6mr2591602ite.123.1535141658054;
+ Fri, 24 Aug 2018 13:14:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="p2kqVDKq5asng8Dg"
-Content-Disposition: inline
-In-Reply-To: <9bb7ac19-36a6-d11a-6d46-fc65c2026201@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20180824130120.lwv5bklvv64hjsde@8bytes.org>
+In-Reply-To: <20180824130120.lwv5bklvv64hjsde@8bytes.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 24 Aug 2018 13:14:07 -0700
+Message-ID: <CA+55aFz08bncAD=Q_1NO87YO_z9rTkUShSZ0V2wCMRSNY_WH4w@mail.gmail.com>
+Subject: Re: [git pull] IOMMU Updates for Linux v4.19
+To:     Joerg Roedel <joro@8bytes.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Magnus Damm <damm+renesas@opensource.se>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:AMD IOMMU (AMD-VI)" <iommu@lists.linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Aug 24, 2018 at 6:01 AM Joerg Roedel <joro@8bytes.org> wrote:
+>
+> note that this time there is a trivial conflict when merging this into
+> your tree. The conflict is in drivers/iommu/ipmmu-vmsa.c, apparently
+> some other tree also added DT matching entries there.
 
---p2kqVDKq5asng8Dg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+No, the IOMMU_OF_DECLARE() thing went away entirely, so my merge
+removes the entries your branch added..
 
-On Fri 2018-08-24 21:49:50, Jacek Anaszewski wrote:
-> Hi Pavel,
->=20
-> On 08/24/2018 12:11 PM, Pavel Machek wrote:
-> > Hi!
-> >=20
-> >> I think that it would be more flexible if software pattern fallback
-> >> was applied in case of pattern_set failure. Otherwise, it would
-> >> lead to the situation where LED class devices that support hardware
-> >> blinking couldn't be applied the same set of patterns as LED class
-> >> devices that don't implement pattern_set. The latter will always have =
-to
-> >> resort to using software pattern engine which will accept far greater
-> >> amount of pattern combinations.
-> >>
-> >> In this case we need to discuss on what basis the decision will be
-> >> made on whether hardware or software engine will be used.
-> >>
-> >> Possible options coming to mind:
-> >> - an interface will be provided to determine max difference between
-> >>   the settings supported by the hardware and the settings requested by
-> >>   the user, that will result in aligning user's setting to the hardware
-> >>   capabilities
-> >> - the above alignment rate will be predefined instead
-> >> - hardware engine will be used only if user requests supported settings
-> >>   on the whole span of the requested pattern
-> >> - in each of the above cases it would be worth to think of the
-> >>   interface to show the scope of the settings supported by hardware
-> >=20
-> > I'd recommend keeping it simple. We use hardware engine if driver
-> > author thinks pattern is "close enough".
->=20
-> The thing is that in the ledtrig-pattern v5 implementation there
-> is no option of using software fallback if pattern_set op
-> is initialized:
->=20
-> +	if (led_cdev->pattern_set) {
-> +		return led_cdev->pattern_set(led_cdev, data->patterns,
-> +					     data->npatterns, data->repeat);
-> +	}
+They should be unnecessary, but I obviously can't test that driver, so
+people should check that out.
 
-Yeah, that sounds wrong. (Sorry I did not pay enough attention).
-
-It pattern_set() returns special error code, it should just continue
-and use software pattern fallback.
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---p2kqVDKq5asng8Dg
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAluAZqsACgkQMOfwapXb+vL6qACfUF2J7US+MKxUh5rbg3o0Pz2L
-w8EAnjdHFhPzPYHAXmpCrKfW4jdnOlLp
-=XQ6Y
------END PGP SIGNATURE-----
-
---p2kqVDKq5asng8Dg--
+           Linus
