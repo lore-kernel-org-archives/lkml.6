@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4402C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 22:15:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FE32C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 22:22:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 413692083A
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 22:15:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE09B208A1
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 22:22:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="a1fHkxyk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 413692083A
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="IfnnGySk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE09B208A1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727499AbeHYBvv (ORCPT
+        id S1727282AbeHYB6l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 21:51:51 -0400
-Received: from mail-cys01nam02on0076.outbound.protection.outlook.com ([104.47.37.76]:40688
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        Fri, 24 Aug 2018 21:58:41 -0400
+Received: from mail-eopbgr710048.outbound.protection.outlook.com ([40.107.71.48]:6694
+        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726881AbeHYBvv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 21:51:51 -0400
+        id S1726720AbeHYB6k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 21:58:40 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MbhodYRlgTBAeSkzn3hpl6TEI5ir3kgwBodQf9UIGkg=;
- b=a1fHkxyk2Kwo2QcjHWXo0BJeO7CzRVBooiZvcbDzVD9Lj64XMUCvL7iH0zWUr3O9GNDt8+099iGviE/FHB5CpBbzeMO6uTzu8RLjQdxH6SYIF7CwNd79WlgudsUHjRW7BtbOzfbxkPQQ+akAkL1nrjNQdkccT/7MRGlV2ukPuyE=
+ bh=AZdYx+6nJpi+hhQMMWkflVZeyRNjSZh5uURISmbXKZI=;
+ b=IfnnGySkWYGcOyEnQCmW9P6ZDAHEMIEyODPsTdxJYKTWpMBcaGT9VgE4VQbbtevMM2X9+0Mt4TNQkGjHk7MnOEUQ4Ol1lhG3la2d8VN6q2CeCy1d20PUkzmxr4pONxuPIGBNL9aFdQ99SLhqY2sS1QCEIrrkPaj1OmNchcVnZJ0=
 Received: from CY1PR02MB2138.namprd02.prod.outlook.com (10.166.190.144) by
- CY1PR02MB1261.namprd02.prod.outlook.com (10.163.16.154) with Microsoft SMTP
+ CY1PR02MB1119.namprd02.prod.outlook.com (10.163.15.145) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1059.23; Fri, 24 Aug 2018 22:15:15 +0000
+ 15.20.1080.15; Fri, 24 Aug 2018 22:22:05 +0000
 Received: from CY1PR02MB2138.namprd02.prod.outlook.com
  ([fe80::8e7:cd9d:9f7b:4539]) by CY1PR02MB2138.namprd02.prod.outlook.com
  ([fe80::8e7:cd9d:9f7b:4539%2]) with mapi id 15.20.1059.023; Fri, 24 Aug 2018
- 22:15:14 +0000
+ 22:22:03 +0000
 From:   Jolly Shah <JOLLYS@xilinx.com>
 To:     Rob Herring <robh@kernel.org>
 CC:     "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
@@ -55,15 +55,17 @@ CC:     "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
         <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Rajan Vaja <RAJANV@xilinx.com>
-Subject: RE: [PATCH v2 1/3] dt-bindings: soc: Add ZynqMP PM bindings
-Thread-Topic: [PATCH v2 1/3] dt-bindings: soc: Add ZynqMP PM bindings
-Thread-Index: AQHUNZSEIR4iIXZiTkiqEPwyxjFtnKTJEESAgAACRwCABnFVQA==
-Date:   Fri, 24 Aug 2018 22:15:13 +0000
-Message-ID: <CY1PR02MB213857834064CF182DA72704B8360@CY1PR02MB2138.namprd02.prod.outlook.com>
-References: <1534446483-12156-1-git-send-email-jollys@xilinx.com>
- <1534446483-12156-2-git-send-email-jollys@xilinx.com>
- <20180820194057.GA21738@bogus> <20180820194906.GB26783@bogus>
-In-Reply-To: <20180820194906.GB26783@bogus>
+Subject: RE: [PATCH v2 1/3] dt-bindings: power: Add ZynqMP power domain
+ bindings
+Thread-Topic: [PATCH v2 1/3] dt-bindings: power: Add ZynqMP power domain
+ bindings
+Thread-Index: AQHUNZZmk8R+8nI1IUOvMk0TistbVaTJEcsAgAZy97A=
+Date:   Fri, 24 Aug 2018 22:22:03 +0000
+Message-ID: <CY1PR02MB2138CD14431A976812492D0BB8360@CY1PR02MB2138.namprd02.prod.outlook.com>
+References: <1534447304-12919-1-git-send-email-jollys@xilinx.com>
+ <1534447304-12919-2-git-send-email-jollys@xilinx.com>
+ <20180820194628.GA26783@bogus>
+In-Reply-To: <20180820194628.GA26783@bogus>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -73,33 +75,33 @@ authentication-results: spf=none (sender IP is )
  smtp.mailfrom=JOLLYS@xilinx.com; 
 x-originating-ip: [149.199.62.133]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY1PR02MB1261;6:BHTkM6cw+gPRw3v7RRH+2auMHmLsc9EP2Td5NCPpRB6RGV+uYZHBcV8LsXKSBk5iNEbm3qcHzzeG4QclFI7BCCrTSfEx2q1Jq66IjzDNBWdrFPCEBbu6aJGrDa2pF1Y798d+d+Nyp7Fwgnnp5LC8K2ZToq7+QMO4Hb0s1waxtti6j0txviy6GqZBaZhQveX8ubIix1WQxk97y3gtajgL4tTSvBMF7KQsKTcHl1rqWk6gzea1Qdyf1r5J+r65sV5GvYtEiUMTguxUllT53b236A2fbp9Syis+r/rIZGaXSXHhsovfYqNsfOF+zdH3AeaHNfbK13kBGvDVmNsH0QMgADXFFLsh9wHvdQ6xUP2HohhMUQiHVA2GKWe6wKgtkewfJ8bkhPCpv+q3znFZxdRqce/L50hWoWU76wLxNFI7e3wNVfIMPhn9UVrwBxf7tsN5v4YoSQ0djC7FkTNXuvf8Qw==;5:u2/4bQa51y0TbnQzpJdRT7K6M3bCzWs1nNYYhR7V7GGcvSTErWw/2ZqPqd738U6S+vQ89/rspXT762UFP+KBS8t2GsO2crSv7JoDi3KNY/rdBQXjWO3PF/4e90JBoKu96tm5uF0iTJv6XPjvRId6GRge3N497iB/cvWGBg4tH9s=;7:Q41q57he8mmMfrCbrJ29N8Rn1nHRRsp6UHYMMnXDp3vEYeZdAn/ChaSatyZTnMqoSSxmwvg/e0yszIu5cjMdywccvJq6ZaEYfJJ73MDBqJLoCZUIDZmBRt3wHx98M9nJBQO5wMEYuNmDVW6M3KHH01bmRxndq1YUkdgRBuAG9u0aMdgpDgFuinxrXTfsuPXhfCjiNt7LuTWtOGn9zEV1Ac7cW8wMVmpRkz4sbXOjJrqzZ3ggOi63RRR0vuJoP06E
+x-microsoft-exchange-diagnostics: 1;CY1PR02MB1119;6:rbRvSJ2RZrCU9YbCngWcJylAprCzd/XZEUBWK/avSUIh4+q9Jo12Hh8V2SIQsQuJyv4vSLSHyh8D7En3p9K1JAhK2Hhi2vAdVkjyckrpjcz0dIZU7864ffh1LeAjJC7hC3WmZkPOgG8ibxiQ66aW5rRMCwNjaWGwBSfa4vn4LcqBokp6DFoSLnNomSJCxNtZqg6ry3cYrmPCfQp8PpazIFpO7YvQJE5AmdyA/nsDRK+qOnkQtuMPdGJDnWVN4PndAxnyRBja1485Y1GA/NcIGFQLVdDs/9Ei72T3fhQryWuOKLl1+/12jzCjjgdx2FFNw5Y3pVBAiwCgsyKxWnMIwdZ+a16myKpgMxNf/hU0Znl9gZ3+h+axaIQhkvQl7ggQioJK0cckzfjgeQjakdxweNw9fM2epWxPDsetHDtSTeSPJ766Jw9I4qqODoy54pcMEHEH2YjFBgWJ92cMmLAI8A==;5:2GB+vTLIxLywAKYgWnJfkWpj1GcQQNDq+K7G2jXDJlcqZkWhns8rmtxB7Qkub3/bvL6ttYESTjYl1vefYkj95oMpMILDBh7FZqeBD5WNlBKgloOsdH0e51BKVlG+w/POedSGmx+3OrmPnraM+luTcdUdLVw33JDG0faeCN/3Mbk=;7:z/vyLOqmX4cUjCeqa4ru20jZqM63dIFonmyWH0cGWVHhjA6Urjne081wQjqi6lfHhAjns284hLJpclbQbNmyXXqtyXvOHEBnwh4FsUF/l4fJnNyS0oodZH+i4qxRcrCVxqZ1333R1l/hf+LEowlmDSwNfgTgiuTLQfJo9pYPoeWJ6sbJJ8uDs1nuHWPSY6ueDh7+IyldPWEk8AgOWr9hR4dQtTIkTli1FGZsnZlpXUDwG4ch8GI3DXGDtsKYNcdd
 x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(136003)(346002)(39860400002)(396003)(366004)(376002)(13464003)(189003)(199004)(54906003)(99286004)(186003)(81166006)(76176011)(6246003)(446003)(2906002)(5250100002)(476003)(72206003)(8676002)(478600001)(486006)(11346002)(4326008)(316002)(107886003)(81156014)(25786009)(39060400002)(7696005)(33656002)(86362001)(5660300001)(93886005)(53546011)(6506007)(229853002)(256004)(66066001)(102836004)(53936002)(106356001)(305945005)(7736002)(6916009)(74316002)(68736007)(14454004)(105586002)(8936002)(26005)(2900100001)(3846002)(97736004)(6436002)(6116002)(7416002)(9686003)(55016002)(14444005);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR02MB1261;H:CY1PR02MB2138.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-ms-office365-filtering-correlation-id: 16d7ec7e-c259-4990-7ea7-08d60a0f10ad
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(396003)(376002)(346002)(39860400002)(136003)(366004)(189003)(199004)(13464003)(486006)(6506007)(39060400002)(26005)(68736007)(305945005)(53546011)(107886003)(53936002)(6246003)(186003)(81156014)(97736004)(105586002)(7736002)(2906002)(99286004)(81166006)(9686003)(33656002)(55016002)(476003)(11346002)(6436002)(106356001)(7416002)(7696005)(8676002)(3846002)(102836004)(6116002)(76176011)(54906003)(478600001)(25786009)(86362001)(229853002)(74316002)(5250100002)(446003)(4326008)(66066001)(256004)(2900100001)(6916009)(14454004)(72206003)(8936002)(5660300001)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR02MB1119;H:CY1PR02MB2138.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-correlation-id: 4556a6bd-4f48-45fb-0963-08d60a10050d
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:CY1PR02MB1261;
-x-ms-traffictypediagnostic: CY1PR02MB1261:
-x-microsoft-antispam-prvs: <CY1PR02MB12615FA72D8EAAC28F2A529EB8360@CY1PR02MB1261.namprd02.prod.outlook.com>
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:CY1PR02MB1119;
+x-ms-traffictypediagnostic: CY1PR02MB1119:
+x-microsoft-antispam-prvs: <CY1PR02MB1119EC90292BDFD0CF54D12DB8360@CY1PR02MB1119.namprd02.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(85827821059158)(258649278758335)(192813158149592)(7411616537696);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823301075)(3002001)(10201501046)(3231311)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(201708071742011)(7699016);SRVR:CY1PR02MB1261;BCL:0;PCL:0;RULEID:;SRVR:CY1PR02MB1261;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823301075)(93006095)(93001095)(3231311)(944501410)(52105095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123562045)(201708071742011)(7699016);SRVR:CY1PR02MB1119;BCL:0;PCL:0;RULEID:;SRVR:CY1PR02MB1119;
 x-forefront-prvs: 07749F8C42
 received-spf: None (protection.outlook.com: xilinx.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: yMBP9BKCLGfZ3eKdXRZ1KLAbriWvjSww7v3hMzjDqBrEiZgeQLDjumyKO3hv+MYQMstQFFcBKRiUDnHJdBNAyCdIc9e1jOSPws/2czsjhf35MV7gJqU9itZ8YKWH1mxEpaf4+978SBdImbpzDzY4nBnCSUrBOPJj14qnGi8N6NQ8tTh4xtTJhPXHO2rU95BuPsgXZxjmQPItXka3nJO35tk1qC5//cMxHrnvMjTzO/124cutSYP4TX74eN7HqyWnC5LG5HIxxeAcM9q12dxsh7e+xbD0pQTxOYZuUz4FsUnsBkcsRrPP0LaRZV8aayNJROHU4Pt/9bfFk1rOHbWEiU6YUUuxclFRWUWaxphhK+g=
+x-microsoft-antispam-message-info: 8mO5Wxq59dT69eEKbi3F7ezjQq+LFr7yczUNY5VQjicV3wxTuOA561DbNM3i1taEs7BnZHIjOL7d5wiEpKd+j1jROfl9TGyrs+DDthKMaqtp/5njXF6hCRXBw1weFdZuHvxVTxcFWVrmhcK5aqjM6+2NZsXRrp5JJdxbDN473nrzLCkfuSnABCblB4S+Um2ZjNgnBGGUyRSx3ac/8OperC3Ih5U234oWruIAU/mzq2N+j3hK/1FXFc0mCEpftl9VpMikrs/fvWYCJ4IR/ORv/veTsp6n+8UZzWs/WfLQKQABDdCcurBzziRLR2yAgw0mZgAI/xJB8s2cd9yfJ6ud/eP6erCs8oCphFyHNVXJXtw=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 16d7ec7e-c259-4990-7ea7-08d60a0f10ad
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Aug 2018 22:15:13.8690
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4556a6bd-4f48-45fb-0963-08d60a10050d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Aug 2018 22:22:03.8592
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR02MB1261
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR02MB1119
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -109,7 +111,7 @@ Hi Rob,
 
 > -----Original Message-----
 > From: Rob Herring [mailto:robh@kernel.org]
-> Sent: Monday, August 20, 2018 12:49 PM
+> Sent: Monday, August 20, 2018 12:46 PM
 > To: Jolly Shah <JOLLYS@xilinx.com>
 > Cc: matthias.bgg@gmail.com; andy.gross@linaro.org; shawnguo@kernel.org;
 > geert+renesas@glider.be; bjorn.andersson@linaro.org;
@@ -118,84 +120,123 @@ Hi Rob,
 > <RAJANV@xilinx.com>; devicetree@vger.kernel.org; linux-arm-
 > kernel@lists.infradead.org; linux-kernel@vger.kernel.org; Rajan Vaja
 > <RAJANV@xilinx.com>; Jolly Shah <JOLLYS@xilinx.com>
-> Subject: Re: [PATCH v2 1/3] dt-bindings: soc: Add ZynqMP PM bindings
+> Subject: Re: [PATCH v2 1/3] dt-bindings: power: Add ZynqMP power domain
+> bindings
 >=20
-> On Mon, Aug 20, 2018 at 02:40:57PM -0500, Rob Herring wrote:
-> > On Thu, Aug 16, 2018 at 12:08:01PM -0700, Jolly Shah wrote:
-> > > From: Rajan Vaja <rajan.vaja@xilinx.com>
-> > >
-> > > Add documentation to describe Xilinx ZynqMP power management
-> > > bindings.
-> > >
-> > > Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
-> > > Signed-off-by: Jolly Shah <jollys@xilinx.com>
-> > > ---
-> > >  .../bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt    | 16
-> ++++++++++++++++
+> On Thu, Aug 16, 2018 at 12:21:42PM -0700, Jolly Shah wrote:
+> > From: Rajan Vaja <rajan.vaja@xilinx.com>
+> >
+> > Add documentation to describe ZynqMP power domain bindings.
+> >
+> > Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
+> > Signed-off-by: Jolly Shah <jollys@xilinx.com>
+> > ---
+> >  .../firmware/xilinx/xlnx,zynqmp-firmware.txt       | 47
+> ++++++++++++++++++++++
 >=20
-> Also, this should be located in bindings/power/reset/
+> This should be with all the other power domain bindings.
+>=20
 
-Base firmware node has clock subnode too. Do you still suggest to move bind=
-ings to "bindings/power/reset/" or keep it=20
-under "bindings/firmware" ?
+The firmware node has clock, reset and power domain subnodes. Please sugges=
+t the right location for binding.
+
+> >  1 file changed, 47 insertions(+)
+> >
+> > diff --git
+> > a/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmwa
+> > re.txt
+> > b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmwa
+> > re.txt
+> > index d215d15..5fa10a0 100644
+> > ---
+> > a/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmwa
+> > re.txt
+> > +++ b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-fi
+> > +++ rmware.txt
+> > @@ -64,6 +64,29 @@ Output clocks are registered based on clock
+> > information received  from firmware. Output clocks indexes are
+> > mentioned in  include/dt-bindings/clock/xlnx,zynqmp-clk.h.
+> >
+> > +-----------------------------------------------------------
+> > +Device Tree Bindings for the Xilinx Zynq MPSoC PM domains
+> > +-----------------------------------------------------------
+> > +The binding for zynqmp-power-controller follow the common generic PM
+> > +domain binding[1].
+> > +
+> > +[1] Documentation/devicetree/bindings/power/power_domain.txt
+> > +
+> > +=3D=3D Zynq MPSoC Generic PM Domain Node =3D=3D
+> > +
+> > +Required properties:
+> > + - compatible:	Must be: "xlnx,zynqmp-power-controller"
+> > +
+> > +This node contains a number of subnodes, each representing a single
+> > +PM domain that PM domain consumer devices reference.
+> > +
+> > +=3D=3D PM Domain Nodes =3D=3D
+> > +
+> > +Required properties:
+> > + - #power-domain-cells:	Number of cells in a PM domain specifier. Must
+> be 0.
+> > + - pd-id:		Domain identifier as defined by platform firmware.
+> > +			This identifier is passed to the PM firmware.
+>=20
+> Make this a cell for the power domain consumer.
+>=20
+
+I am not clear here. Do you suggest to move pd-id property under consumer n=
+odes? Right now, consumer nodes use power-domains property as below:
+
+usb0: usb0@ff9d0000 {
+                        #address-cells =3D <2>;
+	          ...................................................
+                        power-domains =3D <&pd_usb0>;
+	};
 
 Thanks,
 Jolly Shah
 
->=20
-> > >  1 file changed, 16 insertions(+)
-> > >
-> > > diff --git
-> > > a/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firm
-> > > ware.txt
-> > > b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firm
-> > > ware.txt
-> > > index d215d15..cb9a6b7 100644
-> > > ---
-> > > a/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firm
-> > > ware.txt
-> > > +++ b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-
-> > > +++ firmware.txt
-> > > @@ -64,6 +64,17 @@ Output clocks are registered based on clock
-> > > information received  from firmware. Output clocks indexes are
-> > > mentioned in  include/dt-bindings/clock/xlnx,zynqmp-clk.h.
-> > >
-> > > +-------------------------------------------------------------------
-> > > +- Device Tree Bindings for the Xilinx Zynq MPSoC Power Management
-> > > +-------------------------------------------------------------------
-> > > +- The zynqmp-power node describes the power management
-> > > +configurations.
-> > > +It will control remote suspend/shutdown interfaces.
-> > > +
-> > > +Required properties:
-> > > + - compatible:		Must contain:	"xlnx,zynqmp-power"
-> > > + - interrupt-parent:	Interrupt controller the interrupt is routed th=
-rough
-> >
-> > interrupt-parent is implied and could be in a parent node, so remove.
-> >
-> > With that,
-> >
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> >
-> > > + - interrupts:		Interrupt specifier
-> > > +
-> > >  -------
-> > >  Example
-> > >  -------
-> > > @@ -78,5 +89,10 @@ firmware {
-> > >  			clocks =3D <&pss_ref_clk>, <&video_clk>,
+> > +
+> >  -------
+> >  Example
+> >  -------
+> > @@ -78,5 +101,29 @@ firmware {
+> >  			clocks =3D <&pss_ref_clk>, <&video_clk>,
 > <&pss_alt_ref_clk>, <&aux_ref_clk>, <&gt_crx_ref_clk>;
-> > >  			clock-names =3D "pss_ref_clk", "video_clk",
+> >  			clock-names =3D "pss_ref_clk", "video_clk",
 > "pss_alt_ref_clk","aux_ref_clk", "gt_crx_ref_clk";
-> > >  		};
-> > > +		zynqmp_power: zynqmp-power {
-> > > +			compatible =3D "xlnx,zynqmp-power";
-> > > +			interrupt-parent =3D <&gic>;
-> > > +			interrupts =3D <0 35 4>;
-> > > +		};
-> > >  	};
-> > >  };
-> > > --
-> > > 2.7.4
-> > >
+> >  		};
+> > +		zynqmp-power-controller {
+> > +			compatible =3D "xlnx,zynqmp-power-controller";
+> > +
+> > +			pd_usb0: pd-usb0 {
+> > +				pd-id =3D <22>;
+> > +				#power-domain-cells =3D <0>;
+> > +			};
+> > +
+> > +			pd_sata: pd-sata {
+> > +				pd-id =3D <28>;
+> > +				#power-domain-cells =3D <0>;
+> > +			};
+> > +
+> > +			pd_gpu : pd-gpu {
+> > +				pd-id =3D <58 20 21>;
+> > +				#power-domain-cells =3D <0>;
+> > +			};
+> > +		};
+> >  	};
+> >  };
+> > +
+> > +sata0: ahci@SATA_AHCI_HBA {
+>=20
+> Don't use defines in unit-addresses (or reg for that matter). It's pointl=
+ess
+> indirection.
+>=20
+> > +	...
+> > +	power-domains =3D <&pd_sata>;
+> > +	...
+> > +};
+> > --
+> > 2.7.4
+> >
