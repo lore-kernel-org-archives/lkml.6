@@ -2,167 +2,104 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FB6CC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 00:05:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDB79C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 00:08:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FA91208B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 00:05:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FA91208B6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ah.jp.nec.com
+	by mail.kernel.org (Postfix) with ESMTP id 54DA9208B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 00:08:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IvjCc8P5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54DA9208B6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726459AbeHXDho convert rfc822-to-8bit (ORCPT
+        id S1727134AbeHXDkO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 23:37:44 -0400
-Received: from tyo161.gate.nec.co.jp ([114.179.232.161]:48956 "EHLO
-        tyo161.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726085AbeHXDhn (ORCPT
+        Thu, 23 Aug 2018 23:40:14 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:34524 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726148AbeHXDkO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 23:37:43 -0400
-Received: from mailgate02.nec.co.jp ([114.179.233.122])
-        by tyo161.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id w7O05KaB032216
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 24 Aug 2018 09:05:20 +0900
-Received: from mailsv01.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
-        by mailgate02.nec.co.jp (8.15.1/8.15.1) with ESMTP id w7O05Jf7015837;
-        Fri, 24 Aug 2018 09:05:20 +0900
-Received: from mail02.kamome.nec.co.jp (mail02.kamome.nec.co.jp [10.25.43.5])
-        by mailsv01.nec.co.jp (8.15.1/8.15.1) with ESMTP id w7O03jKC002529;
-        Fri, 24 Aug 2018 09:05:19 +0900
-Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.148] [10.38.151.148]) by mail03.kamome.nec.co.jp with ESMTP id BT-MMP-3045557; Fri, 24 Aug 2018 09:03:27 +0900
-Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
- BPXC20GP.gisp.nec.co.jp ([10.38.151.148]) with mapi id 14.03.0319.002; Fri,
- 24 Aug 2018 09:03:26 +0900
-From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
-CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "osalvador@techadventures.net" <osalvador@techadventures.net>,
-        "pasha.tatashin@oracle.com" <pasha.tatashin@oracle.com>,
-        "mhocko@kernel.org" <mhocko@kernel.org>
-Subject: Re: [PATCH 1/2] Revert "x86/e820: put !E820_TYPE_RAM regions into
- memblock.reserved"
-Thread-Topic: [PATCH 1/2] Revert "x86/e820: put !E820_TYPE_RAM regions into
- memblock.reserved"
-Thread-Index: AQHUOz3hJO6tZLKv2Eedq0vBDZ0sig==
-Date:   Fri, 24 Aug 2018 00:03:25 +0000
-Message-ID: <20180824000325.GA20143@hori1.linux.bs1.fc.nec.co.jp>
-References: <20180823182513.8801-1-msys.mizuma@gmail.com>
-In-Reply-To: <20180823182513.8801-1-msys.mizuma@gmail.com>
-Accept-Language: en-US, ja-JP
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.51.8.82]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-ID: <4ACE734EF426E548A9644DAC9290E1B2@gisp.nec.co.jp>
-Content-Transfer-Encoding: 8BIT
+        Thu, 23 Aug 2018 23:40:14 -0400
+Received: by mail-pf1-f193.google.com with SMTP id k19-v6so3642930pfi.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 17:08:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=UoCSvgQ7RQhA78+dPcHxGBrTqDUH9h2Z/zZv1xU16yg=;
+        b=IvjCc8P5QSgmdTQstOJQdRe1c3HaGcxUMIQKc08hNihmkcqTr1PoxmjbpWWQ/LQcUt
+         wWF+X9lhvj/q43fn8DGg/XkZq01X2sW0Hc7iY5nFb6+cwDjcysH98eD7purPoLZztVHH
+         RlePVEOBImoZwOeQbeSQLMWqm655OF2kqHI0afzb8bOUHW6bGIXAw2ZLTfVKv+egU4/T
+         omQGnUa5+hz06OhrlcL5UV5v8oDLYRbg2RP61DBroWa2feMieOtXb3+EJZdGC93gFz9F
+         5pvfnA6WdPFqZ/xdRlgX2JmfVGDznvibYilinjv1WQuE3hL8wARRHn3lULxXcX8p79P5
+         YgKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=UoCSvgQ7RQhA78+dPcHxGBrTqDUH9h2Z/zZv1xU16yg=;
+        b=RPhPo8feaNQVxt/Ruyo+pcEn7Xnl7AD+rFfaFjPFqmVP5bMR0YyE85kcx6iMHTIySK
+         keknpvJTyOo2c8j9+Igv7iqF/vU71Biq6ycheCIUP6OS88eclm6gmW8p39xEyxB+M/KM
+         iQD7Sgi1S/iVrSamJrvF2t5MCVT0qj6QsA7mIGxzT1JKtax2M0eKBI/03+vPHRv8i6SJ
+         E2xpFJ2KFJMCWCkSeCZVeruN2F8H2qIeQ9ZyU0mtbEdwfFurR42XRTaXXyoI+A+Y19ZC
+         Q3zjGe+M5MmfDPEA6UlVuDQKrAmKxLPfXMtCaHR2a3X2LYwrTxfrAjeeEpQ4ebMnQW/+
+         VBzA==
+X-Gm-Message-State: APzg51DKvUCqhjqHs5aK10FDJy+4AOCN8ZoNFKZaq35OrDKIVw8cVa0e
+        XGasN8uSdjJrhW+fOacoua8=
+X-Google-Smtp-Source: ANB0VdZ9cSV0Y0rPuMqILcD+r7NYPGA5sVjC0u4K7p3MWcdish1uT/T7c9ee2sjL3YhEYkjSYeu3pA==
+X-Received: by 2002:a63:d90b:: with SMTP id r11-v6mr4082150pgg.315.1535069290489;
+        Thu, 23 Aug 2018 17:08:10 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id t14-v6sm6116424pgu.0.2018.08.23.17.08.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 23 Aug 2018 17:08:09 -0700 (PDT)
+Date:   Thu, 23 Aug 2018 17:08:07 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     ryans.lee@maximintegrated.com, Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        lkml <linux-kernel@vger.kernel.org>, ryan.lee.maxim@gmail.com
+Subject: Re: [PATCH] ASoC: max98373: Added 10ms delay after amp software reset
+Message-ID: <20180824000807.GF53155@dtor-ws>
+References: <20180823001519.20056-1-ryans.lee@maximintegrated.com>
+ <CAKdAkRT-71tL7U1t_WMenh5kquppsZpiL=0bEyL4RLjj622zqw@mail.gmail.com>
+ <20180823095107.GA5207@sirena.org.uk>
 MIME-Version: 1.0
-X-TM-AS-MML: disable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180823095107.GA5207@sirena.org.uk>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(CCed related people)
+On Thu, Aug 23, 2018 at 10:51:07AM +0100, Mark Brown wrote:
+> On Wed, Aug 22, 2018 at 05:31:04PM -0700, Dmitry Torokhov wrote:
+> > On Wed, Aug 22, 2018 at 5:21 PM Ryan Lee <ryans.lee@maximintegrated.com> wrote:
+> > > +       mdelay(10);
+> 
+> > Is it really necessary for the CPU to spin for 10msec here?
+> > usleep_range() would be better solution.
+> 
+> Or msleep() for that matter, it's not going ot be the end of the world
+> if we delay a bit too long.
 
-Hi Mizuma-san,
+Frankly, I'd rather we did not introduce extra delays. I do not know if
+we use this part, but on ChromeOS we are interested in shaving as much
+from the boot time as possible and 10 msecs here and 10 msecs there do
+add up.
 
-Thank you for the report.
-The mentioned patch was created based on feedbacks from reviewers/maintainers,
-so I'd like to hear from them about how we should handle the issue.
+Thanks.
 
-And one note is that there is a follow-up patch for "x86/e820: put !E820_TYPE_RAM
-regions into memblock.reserved" which might be affected by your changes.
-
-> commit e181ae0c5db9544de9c53239eb22bc012ce75033
-> Author: Pavel Tatashin <pasha.tatashin@oracle.com>
-> Date:   Sat Jul 14 09:15:07 2018 -0400
-> 
->     mm: zero unavailable pages before memmap init
-
-Thanks,
-Naoya Horiguchi
-
-On Thu, Aug 23, 2018 at 02:25:12PM -0400, Masayoshi Mizuma wrote:
-> From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-> 
-> commit 124049decbb1 ("x86/e820: put !E820_TYPE_RAM regions into
-> memblock.reserved") breaks movable_node kernel option because it
-> changed the memory gap range to reserved memblock. So, the node
-> is marked as Normal zone even if the SRAT has Hot plaggable affinity.
-> 
->     =====================================================================
->     kernel: BIOS-e820: [mem 0x0000180000000000-0x0000180fffffffff] usable
->     kernel: BIOS-e820: [mem 0x00001c0000000000-0x00001c0fffffffff] usable
->     ...
->     kernel: reserved[0x12]#011[0x0000181000000000-0x00001bffffffffff], 0x000003f000000000 bytes flags: 0x0
->     ...
->     kernel: ACPI: SRAT: Node 2 PXM 6 [mem 0x180000000000-0x1bffffffffff] hotplug
->     kernel: ACPI: SRAT: Node 3 PXM 7 [mem 0x1c0000000000-0x1fffffffffff] hotplug
->     ...
->     kernel: Movable zone start for each node
->     kernel:  Node 3: 0x00001c0000000000
->     kernel: Early memory node ranges
->     ...
->     =====================================================================
-> 
-> Naoya's v1 patch [*] fixes the original issue and this movable_node
-> issue doesn't occur.
-> Let's revert commit 124049decbb1 ("x86/e820: put !E820_TYPE_RAM
-> regions into memblock.reserved") and apply the v1 patch.
-> 
-> [*] https://lkml.org/lkml/2018/6/13/27
-> 
-> Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-> ---
->  arch/x86/kernel/e820.c | 15 +++------------
->  1 file changed, 3 insertions(+), 12 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
-> index c88c23c658c1..d1f25c831447 100644
-> --- a/arch/x86/kernel/e820.c
-> +++ b/arch/x86/kernel/e820.c
-> @@ -1248,7 +1248,6 @@ void __init e820__memblock_setup(void)
->  {
->  	int i;
->  	u64 end;
-> -	u64 addr = 0;
->  
->  	/*
->  	 * The bootstrap memblock region count maximum is 128 entries
-> @@ -1265,21 +1264,13 @@ void __init e820__memblock_setup(void)
->  		struct e820_entry *entry = &e820_table->entries[i];
->  
->  		end = entry->addr + entry->size;
-> -		if (addr < entry->addr)
-> -			memblock_reserve(addr, entry->addr - addr);
-> -		addr = end;
->  		if (end != (resource_size_t)end)
->  			continue;
->  
-> -		/*
-> -		 * all !E820_TYPE_RAM ranges (including gap ranges) are put
-> -		 * into memblock.reserved to make sure that struct pages in
-> -		 * such regions are not left uninitialized after bootup.
-> -		 */
->  		if (entry->type != E820_TYPE_RAM && entry->type != E820_TYPE_RESERVED_KERN)
-> -			memblock_reserve(entry->addr, entry->size);
-> -		else
-> -			memblock_add(entry->addr, entry->size);
-> +			continue;
-> +
-> +		memblock_add(entry->addr, entry->size);
->  	}
->  
->  	/* Throw away partial pages: */
-> -- 
-> 2.18.0
-> 
-> 
+-- 
+Dmitry
