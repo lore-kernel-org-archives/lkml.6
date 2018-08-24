@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77590C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:19:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73A33C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:19:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BF762152B
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:19:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B06721564
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:19:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="extrh0fB";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="m0SClBue"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BF762152B
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cxkfF9MV";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fEuDP8DL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B06721564
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727602AbeHXQyE (ORCPT
+        id S1727827AbeHXQyK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 12:54:04 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:55258 "EHLO
+        Fri, 24 Aug 2018 12:54:10 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:55526 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726556AbeHXQyE (ORCPT
+        with ESMTP id S1726556AbeHXQyK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 12:54:04 -0400
+        Fri, 24 Aug 2018 12:54:10 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A246B6032D; Fri, 24 Aug 2018 13:19:25 +0000 (UTC)
+        id F139D60540; Fri, 24 Aug 2018 13:19:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535116765;
-        bh=UywL39+S1oIh6m9SZyVj7vKflGYzXlHzf4uHZvhEQRg=;
+        s=default; t=1535116772;
+        bh=ND5io7WlNPAxAeHVhookpLQXpvsAxZ71neE8ELPfd5A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=extrh0fBpP8q2GpO7v666Ks4kLqEI+M5VE/Rqf1nbMlVlNWASGsFFOZCaWzWdsxvU
-         8ML7f1pcUxqFt8DGyJYdAf41yy6tW5OlmZ5omWHCvxf+Qr+1a74Ml/SGqtOF9PQMBq
-         IVRuJZlKzrhQJ/e9d1kw8oAPFrlO2Ss9u9Sg4prk=
+        b=cxkfF9MV0JiAgMH4wGkNlbPP37RUTtdO3pgAeI+DVeUZkAjsiiznH6CHiVWqnNO+q
+         JsY0cSjuWs5zZF7e7AT+jhEDahzi1D27HI2WtWoi01OdBQD6BpfEd7Nap8tAaBRVTi
+         v6nqGBYl/fD/rKmrCnpgosYvLf4jrvhZooxZhxhk=
 Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: sibis@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id ADDFF60559;
-        Fri, 24 Aug 2018 13:19:20 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1BC306053C;
+        Fri, 24 Aug 2018 13:19:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535116764;
-        bh=UywL39+S1oIh6m9SZyVj7vKflGYzXlHzf4uHZvhEQRg=;
+        s=default; t=1535116771;
+        bh=ND5io7WlNPAxAeHVhookpLQXpvsAxZ71neE8ELPfd5A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m0SClBueQBadfpy/jLr85UMsT3RKycNfChOoRS3HM8qhbmMeasUkIUk/o82eesNhx
-         Sr01Mc5EKXq1AL4FsjxDj5SOpzNDOOJCrpi9MU64I5DmRfu4OOmDw7lFpqKvylSZmg
-         if2j5joqPtW/a9ZDT7kcEQHxtG0pXH/i9KG2TXig=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org ADDFF60559
+        b=fEuDP8DLOr39A2oOMXpyklP3uQHVHdF2RE/6NliayCUQVXfU4PrBNiVIQ7l3JG9lD
+         OtbkSSLmdQlFzGlPJlTazyqia6f4+O1/xpD2Leh38p3V0ltdczRyWJ3rRO8x7jx0Xk
+         EF2XzfxdmUDyopZcxylU3v39/zuRmWM5oK5d7YPo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1BC306053C
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
 From:   Sibi Sankar <sibis@codeaurora.org>
@@ -59,9 +59,9 @@ Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
         sricharan@codeaurora.org, akdwived@codeaurora.org,
         linux-arm-msm@vger.kernel.org, tsoni@codeaurora.org,
         Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v2 2/6] reset: qcom: PDC Global (Power Domain Controller) reset controller
-Date:   Fri, 24 Aug 2018 18:48:56 +0530
-Message-Id: <20180824131900.5353-3-sibis@codeaurora.org>
+Subject: [PATCH v2 3/6] dt-bindings: remoteproc: Remove additional definition tag
+Date:   Fri, 24 Aug 2018 18:48:57 +0530
+Message-Id: <20180824131900.5353-4-sibis@codeaurora.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180824131900.5353-1-sibis@codeaurora.org>
 References: <20180824131900.5353-1-sibis@codeaurora.org>
@@ -70,198 +70,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add reset controller for SDM845 SoCs to control reset signals provided
-by PDC Global for Modem, Compute, Display, GPU, Debug, AOP, Sensors,
-Audio, SP and APPS
+Remove the additional definition tag declared for WCSS sub-system
+under reset-names.
 
 Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 ---
- drivers/reset/Kconfig          |   9 +++
- drivers/reset/Makefile         |   1 +
- drivers/reset/reset-qcom-pdc.c | 142 +++++++++++++++++++++++++++++++++
- 3 files changed, 152 insertions(+)
- create mode 100644 drivers/reset/reset-qcom-pdc.c
+ Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index 13d28fdbdbb5..c21da9fe51ec 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -98,6 +98,15 @@ config RESET_QCOM_AOSS
- 	  reset signals provided by AOSS for Modem, Venus, ADSP,
- 	  GPU, Camera, Wireless, Display subsystem. Otherwise, say N.
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+index 601dd9f389aa..c45e4c131fa2 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+@@ -58,7 +58,7 @@ on the Qualcomm Hexagon core.
+ 	Usage: required
+ 	Value type: <stringlist>
+ 	Definition: must be "mss_restart" for the modem sub-system
+-	Definition: must be "wcss_aon_reset", "wcss_reset", "wcss_q6_reset"
++		    must be "wcss_aon_reset", "wcss_reset", "wcss_q6_reset"
+ 		    for the wcss syb-system
  
-+config RESET_QCOM_PDC
-+	tristate "Qualcomm PDC Reset Driver"
-+	depends on ARCH_QCOM || COMPILE_TEST
-+	help
-+	  This enables the PDC (Power Domain Controller) reset driver
-+	  for Qualcomm Technologies Inc SDM845 SoCs. Say Y if you want
-+	  to control reset signals provided by PDC for Modem, Compute,
-+	  Display, GPU, Debug, AOP, Sensors, Audio, SP and APPS.
-+
- config RESET_SIMPLE
- 	bool "Simple Reset Controller Driver" if COMPILE_TEST
- 	default ARCH_SOCFPGA || ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARCH_ZX || ARCH_ASPEED
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index 4243c38228e2..d08e8b90046a 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -16,6 +16,7 @@ obj-$(CONFIG_RESET_MESON_AUDIO_ARB) += reset-meson-audio-arb.o
- obj-$(CONFIG_RESET_OXNAS) += reset-oxnas.o
- obj-$(CONFIG_RESET_PISTACHIO) += reset-pistachio.o
- obj-$(CONFIG_RESET_QCOM_AOSS) += reset-qcom-aoss.o
-+obj-$(CONFIG_RESET_QCOM_PDC) += reset-qcom-pdc.o
- obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
- obj-$(CONFIG_RESET_STM32MP157) += reset-stm32mp1.o
- obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
-diff --git a/drivers/reset/reset-qcom-pdc.c b/drivers/reset/reset-qcom-pdc.c
-new file mode 100644
-index 000000000000..bb6a5e5ee0f8
---- /dev/null
-+++ b/drivers/reset/reset-qcom-pdc.c
-@@ -0,0 +1,142 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018 The Linux Foundation. All rights reserved.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset-controller.h>
-+#include <linux/regmap.h>
-+#include <linux/of_device.h>
-+#include <dt-bindings/reset/qcom,sdm845-pdc.h>
-+
-+#define RPMH_PDC_SYNC_RESET	0x100
-+
-+struct qcom_pdc_reset_map {
-+	u8 bit;
-+};
-+
-+struct qcom_pdc_desc {
-+	const struct regmap_config *config;
-+	const struct qcom_pdc_reset_map *resets;
-+	size_t num_resets;
-+};
-+
-+struct qcom_pdc_reset_data {
-+	struct reset_controller_dev rcdev;
-+	struct regmap *regmap;
-+	const struct qcom_pdc_desc *desc;
-+};
-+
-+static const struct regmap_config sdm845_pdc_regmap_config = {
-+	.name		= "pdc-reset",
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.max_register	= 0x20000,
-+	.fast_io	= true,
-+};
-+
-+static const struct qcom_pdc_reset_map sdm845_pdc_resets[] = {
-+	[PDC_APPS_SYNC_RESET] = {0},
-+	[PDC_SP_SYNC_RESET] = {1},
-+	[PDC_AUDIO_SYNC_RESET] = {2},
-+	[PDC_SENSORS_SYNC_RESET] = {3},
-+	[PDC_AOP_SYNC_RESET] = {4},
-+	[PDC_DEBUG_SYNC_RESET] = {5},
-+	[PDC_GPU_SYNC_RESET] = {6},
-+	[PDC_DISPLAY_SYNC_RESET] = {7},
-+	[PDC_COMPUTE_SYNC_RESET] = {8},
-+	[PDC_MODEM_SYNC_RESET] = {9},
-+};
-+
-+static const struct qcom_pdc_desc sdm845_pdc_desc = {
-+	.config = &sdm845_pdc_regmap_config,
-+	.resets = sdm845_pdc_resets,
-+	.num_resets = ARRAY_SIZE(sdm845_pdc_resets),
-+};
-+
-+static inline struct qcom_pdc_reset_data *to_qcom_pdc_reset_data(
-+				struct reset_controller_dev *rcdev)
-+{
-+	return container_of(rcdev, struct qcom_pdc_reset_data, rcdev);
-+}
-+
-+static int qcom_pdc_control_assert(struct reset_controller_dev *rcdev,
-+					unsigned long idx)
-+{
-+	struct qcom_pdc_reset_data *data = to_qcom_pdc_reset_data(rcdev);
-+	const struct qcom_pdc_reset_map *map = &data->desc->resets[idx];
-+
-+	return regmap_update_bits(data->regmap, RPMH_PDC_SYNC_RESET,
-+					BIT(map->bit), BIT(map->bit));
-+}
-+
-+static int qcom_pdc_control_deassert(struct reset_controller_dev *rcdev,
-+					unsigned long idx)
-+{
-+	struct qcom_pdc_reset_data *data = to_qcom_pdc_reset_data(rcdev);
-+	const struct qcom_pdc_reset_map *map = &data->desc->resets[idx];
-+
-+	return regmap_update_bits(data->regmap, RPMH_PDC_SYNC_RESET,
-+					BIT(map->bit), 0);
-+}
-+
-+static const struct reset_control_ops qcom_pdc_reset_ops = {
-+	.assert = qcom_pdc_control_assert,
-+	.deassert = qcom_pdc_control_deassert,
-+};
-+
-+static int qcom_pdc_reset_probe(struct platform_device *pdev)
-+{
-+	struct qcom_pdc_reset_data *data;
-+	struct device *dev = &pdev->dev;
-+	const struct qcom_pdc_desc *desc;
-+	void __iomem *base;
-+	struct resource *res;
-+
-+	desc = of_device_get_match_data(dev);
-+	if (!desc)
-+		return -EINVAL;
-+
-+	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	data->desc = desc;
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	data->regmap = devm_regmap_init_mmio(dev, base, desc->config);
-+	if (IS_ERR(data->regmap)) {
-+		dev_err(dev, "Unable to get pdc-global regmap");
-+		return PTR_ERR(data->regmap);
-+	}
-+
-+	data->rcdev.owner = THIS_MODULE;
-+	data->rcdev.ops = &qcom_pdc_reset_ops;
-+	data->rcdev.nr_resets = desc->num_resets;
-+	data->rcdev.of_node = dev->of_node;
-+
-+	return devm_reset_controller_register(dev, &data->rcdev);
-+}
-+
-+static const struct of_device_id qcom_pdc_reset_of_match[] = {
-+	{ .compatible = "qcom,sdm845-pdc-global", .data = &sdm845_pdc_desc },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, qcom_pdc_reset_of_match);
-+
-+static struct platform_driver qcom_pdc_reset_driver = {
-+	.probe = qcom_pdc_reset_probe,
-+	.driver = {
-+		.name = "qcom_pdc_reset",
-+		.of_match_table = qcom_pdc_reset_of_match,
-+	},
-+};
-+module_platform_driver(qcom_pdc_reset_driver);
-+
-+MODULE_DESCRIPTION("Qualcomm PDC Reset Driver");
-+MODULE_LICENSE("GPL v2");
+ - cx-supply:
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
