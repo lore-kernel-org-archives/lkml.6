@@ -2,793 +2,125 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3219EC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 10:35:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A022FC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 10:36:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4A9F21567
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 10:35:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4A9F21567
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 53DF821567
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 10:36:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53DF821567
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727020AbeHXOJX (ORCPT
+        id S1727055AbeHXOKk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 10:09:23 -0400
-Received: from mga02.intel.com ([134.134.136.20]:62942 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726462AbeHXOJX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 10:09:23 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Aug 2018 03:35:21 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,281,1531810800"; 
-   d="scan'208";a="257693191"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.90])
-  by fmsmga006.fm.intel.com with ESMTP; 24 Aug 2018 03:35:17 -0700
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jeremy Boone <jeremy.boone@nccgroup.trust>,
-        Colin Ian King <colin.king@canonical.com>,
-        James Morris <james.morris@microsoft.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] tpm: factor out TPM 1.x duration calculation to tpm1-cmd.c
-Date:   Fri, 24 Aug 2018 13:35:10 +0300
-Message-Id: <20180824103512.11252-1-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 24 Aug 2018 10:10:40 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53064 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726382AbeHXOKk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 10:10:40 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id BFA84ADA9;
+        Fri, 24 Aug 2018 10:36:35 +0000 (UTC)
+Subject: Re: [PATCH] x86/speculation/l1tf: suggest what to do on systems with
+ too much RAM
+From:   Vlastimil Babka <vbabka@suse.cz>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>, stable@vger.kernel.org
+References: <20180823134418.17008-1-vbabka@suse.cz>
+ <20180823142812.7363-1-vbabka@suse.cz>
+ <20180823192709.GT29735@dhcp22.suse.cz>
+ <966571f0-9d7f-43dc-92c6-a10eec7a1254@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <d789bd84-a982-b8bb-ee24-6a7fcdf8221d@suse.cz>
+Date:   Fri, 24 Aug 2018 12:36:34 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <966571f0-9d7f-43dc-92c6-a10eec7a1254@suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tomas Winkler <tomas.winkler@intel.com>
+On 08/24/2018 09:32 AM, Vlastimil Babka wrote:
+> On 08/23/2018 09:27 PM, Michal Hocko wrote:
+>> On Thu 23-08-18 16:28:12, Vlastimil Babka wrote:
+>>> Two users have reported [1] that they have an "extremely unlikely" system
+>>> with more than MAX_PA/2 memory and L1TF mitigation is not effective. Let's
+>>> make the warning more helpful by suggesting the proper mem=X kernel boot param,
+>>> a rough calculation of how much RAM can be lost (not precise if there's holes
+>>> between MAX_PA/2 and max_pfn in the e820 map) and a link to the L1TF document
+>>> to help decide if the mitigation is worth the unusable RAM.
+>>>
+>>> [1] https://bugzilla.suse.com/show_bug.cgi?id=1105536
+>>>
+>>> Suggested-by: Michal Hocko <mhocko@suse.com>
+>>> Cc: stable@vger.kernel.org
+>>> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+>>
+>> I wouldn't bother with max_pfn-half_pa part but other than that this is
+>> much more useful than the original message.
+> 
+> Right, and it causes build failures on some configs.
+> 
+>> Acked-by: Michal Hocko <mhocko@suse.com>
+> 
+> Thanks! Here's a v2:
 
-Factor out TPM 1.x commands calculation into tpm1-cmd.c file and change
-the prefix from "tpm_" to "tpm1_". No functional changes are done here.
-
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
-Applied Tomas' patch with "patch -p1 -u", added SPDIX header and fixed
-some minor typos in the commit message. Better to apply this first
-before backporting rest of the patches. Other than those updates, the
-commit should be unchanged from the original.
-
-The associated patch sets:
-* https://lkml.org/lkml/2018/3/6/147
-* https://lkml.org/lkml/2018/3/10/45
- drivers/char/tpm/Makefile            |   2 +-
- drivers/char/tpm/st33zp24/st33zp24.c |   2 +-
- drivers/char/tpm/tpm-interface.c     | 284 +-------------------------
- drivers/char/tpm/tpm.h               |   2 +-
- drivers/char/tpm/tpm1-cmd.c          | 294 +++++++++++++++++++++++++++
- drivers/char/tpm/tpm_i2c_nuvoton.c   |  10 +-
- drivers/char/tpm/tpm_tis_core.c      |   2 +-
- drivers/char/tpm/xen-tpmfront.c      |   2 +-
- 8 files changed, 306 insertions(+), 292 deletions(-)
- create mode 100644 drivers/char/tpm/tpm1-cmd.c
-
-diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
-index 4e9c33ca1f8f..fd3f12847e86 100644
---- a/drivers/char/tpm/Makefile
-+++ b/drivers/char/tpm/Makefile
-@@ -3,7 +3,7 @@
- # Makefile for the kernel tpm device drivers.
- #
- obj-$(CONFIG_TCG_TPM) += tpm.o
--tpm-y := tpm-interface.o tpm-dev.o tpm-sysfs.o tpm-chip.o tpm2-cmd.o \
-+tpm-y := tpm-interface.o tpm-dev.o tpm-sysfs.o tpm-chip.o tpm1-cmd.o tpm2-cmd.o \
- 	 tpm-dev-common.o tpmrm-dev.o eventlog/common.o eventlog/tpm1.o \
- 	 eventlog/tpm2.o tpm2-space.o
- tpm-$(CONFIG_ACPI) += tpm_ppi.o eventlog/acpi.o
-diff --git a/drivers/char/tpm/st33zp24/st33zp24.c b/drivers/char/tpm/st33zp24/st33zp24.c
-index abd675bec88c..16be974955ea 100644
---- a/drivers/char/tpm/st33zp24/st33zp24.c
-+++ b/drivers/char/tpm/st33zp24/st33zp24.c
-@@ -430,7 +430,7 @@ static int st33zp24_send(struct tpm_chip *chip, unsigned char *buf,
- 		ordinal = be32_to_cpu(*((__be32 *) (buf + 6)));
- 
- 		ret = wait_for_stat(chip, TPM_STS_DATA_AVAIL | TPM_STS_VALID,
--				tpm_calc_ordinal_duration(chip, ordinal),
-+				tpm1_calc_ordinal_duration(chip, ordinal),
- 				&tpm_dev->read_queue, false);
- 		if (ret < 0)
- 			goto out_err;
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 1a803b0cf980..7c37bda68cab 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -33,7 +33,6 @@
- 
- #include "tpm.h"
- 
--#define TPM_MAX_ORDINAL 243
- #define TSC_MAX_ORDINAL 12
- #define TPM_PROTECTED_COMMAND 0x00
- #define TPM_CONNECTION_COMMAND 0x40
-@@ -48,285 +47,6 @@ module_param_named(suspend_pcr, tpm_suspend_pcr, uint, 0644);
- MODULE_PARM_DESC(suspend_pcr,
- 		 "PCR to use for dummy writes to facilitate flush on suspend.");
- 
--/*
-- * Array with one entry per ordinal defining the maximum amount
-- * of time the chip could take to return the result.  The ordinal
-- * designation of short, medium or long is defined in a table in
-- * TCG Specification TPM Main Part 2 TPM Structures Section 17. The
-- * values of the SHORT, MEDIUM, and LONG durations are retrieved
-- * from the chip during initialization with a call to tpm_get_timeouts.
-- */
--static const u8 tpm_ordinal_duration[TPM_MAX_ORDINAL] = {
--	TPM_UNDEFINED,		/* 0 */
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,		/* 5 */
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_SHORT,		/* 10 */
--	TPM_SHORT,
--	TPM_MEDIUM,
--	TPM_LONG,
--	TPM_LONG,
--	TPM_MEDIUM,		/* 15 */
--	TPM_SHORT,
--	TPM_SHORT,
--	TPM_MEDIUM,
--	TPM_LONG,
--	TPM_SHORT,		/* 20 */
--	TPM_SHORT,
--	TPM_MEDIUM,
--	TPM_MEDIUM,
--	TPM_MEDIUM,
--	TPM_SHORT,		/* 25 */
--	TPM_SHORT,
--	TPM_MEDIUM,
--	TPM_SHORT,
--	TPM_SHORT,
--	TPM_MEDIUM,		/* 30 */
--	TPM_LONG,
--	TPM_MEDIUM,
--	TPM_SHORT,
--	TPM_SHORT,
--	TPM_SHORT,		/* 35 */
--	TPM_MEDIUM,
--	TPM_MEDIUM,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_MEDIUM,		/* 40 */
--	TPM_LONG,
--	TPM_MEDIUM,
--	TPM_SHORT,
--	TPM_SHORT,
--	TPM_SHORT,		/* 45 */
--	TPM_SHORT,
--	TPM_SHORT,
--	TPM_SHORT,
--	TPM_LONG,
--	TPM_MEDIUM,		/* 50 */
--	TPM_MEDIUM,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,		/* 55 */
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_MEDIUM,		/* 60 */
--	TPM_MEDIUM,
--	TPM_MEDIUM,
--	TPM_SHORT,
--	TPM_SHORT,
--	TPM_MEDIUM,		/* 65 */
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_SHORT,		/* 70 */
--	TPM_SHORT,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,		/* 75 */
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_LONG,		/* 80 */
--	TPM_UNDEFINED,
--	TPM_MEDIUM,
--	TPM_LONG,
--	TPM_SHORT,
--	TPM_UNDEFINED,		/* 85 */
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_SHORT,		/* 90 */
--	TPM_SHORT,
--	TPM_SHORT,
--	TPM_SHORT,
--	TPM_SHORT,
--	TPM_UNDEFINED,		/* 95 */
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_MEDIUM,		/* 100 */
--	TPM_SHORT,
--	TPM_SHORT,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,		/* 105 */
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_SHORT,		/* 110 */
--	TPM_SHORT,
--	TPM_SHORT,
--	TPM_SHORT,
--	TPM_SHORT,
--	TPM_SHORT,		/* 115 */
--	TPM_SHORT,
--	TPM_SHORT,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_LONG,		/* 120 */
--	TPM_LONG,
--	TPM_MEDIUM,
--	TPM_UNDEFINED,
--	TPM_SHORT,
--	TPM_SHORT,		/* 125 */
--	TPM_SHORT,
--	TPM_LONG,
--	TPM_SHORT,
--	TPM_SHORT,
--	TPM_SHORT,		/* 130 */
--	TPM_MEDIUM,
--	TPM_UNDEFINED,
--	TPM_SHORT,
--	TPM_MEDIUM,
--	TPM_UNDEFINED,		/* 135 */
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_SHORT,		/* 140 */
--	TPM_SHORT,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,		/* 145 */
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_SHORT,		/* 150 */
--	TPM_MEDIUM,
--	TPM_MEDIUM,
--	TPM_SHORT,
--	TPM_SHORT,
--	TPM_UNDEFINED,		/* 155 */
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_SHORT,		/* 160 */
--	TPM_SHORT,
--	TPM_SHORT,
--	TPM_SHORT,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,		/* 165 */
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_LONG,		/* 170 */
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,		/* 175 */
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_MEDIUM,		/* 180 */
--	TPM_SHORT,
--	TPM_MEDIUM,
--	TPM_MEDIUM,
--	TPM_MEDIUM,
--	TPM_MEDIUM,		/* 185 */
--	TPM_SHORT,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,		/* 190 */
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,		/* 195 */
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_SHORT,		/* 200 */
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_SHORT,
--	TPM_SHORT,		/* 205 */
--	TPM_SHORT,
--	TPM_SHORT,
--	TPM_SHORT,
--	TPM_SHORT,
--	TPM_MEDIUM,		/* 210 */
--	TPM_UNDEFINED,
--	TPM_MEDIUM,
--	TPM_MEDIUM,
--	TPM_MEDIUM,
--	TPM_UNDEFINED,		/* 215 */
--	TPM_MEDIUM,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_SHORT,
--	TPM_SHORT,		/* 220 */
--	TPM_SHORT,
--	TPM_SHORT,
--	TPM_SHORT,
--	TPM_SHORT,
--	TPM_UNDEFINED,		/* 225 */
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_SHORT,		/* 230 */
--	TPM_LONG,
--	TPM_MEDIUM,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,		/* 235 */
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_UNDEFINED,
--	TPM_SHORT,		/* 240 */
--	TPM_UNDEFINED,
--	TPM_MEDIUM,
--};
--
--/*
-- * Returns max number of jiffies to wait
-- */
--unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip,
--					   u32 ordinal)
--{
--	int duration_idx = TPM_UNDEFINED;
--	int duration = 0;
--
--	/*
--	 * We only have a duration table for protected commands, where the upper
--	 * 16 bits are 0. For the few other ordinals the fallback will be used.
--	 */
--	if (ordinal < TPM_MAX_ORDINAL)
--		duration_idx = tpm_ordinal_duration[ordinal];
--
--	if (duration_idx != TPM_UNDEFINED)
--		duration = chip->duration[duration_idx];
--	if (duration <= 0)
--		return 2 * 60 * HZ;
--	else
--		return duration;
--}
--EXPORT_SYMBOL_GPL(tpm_calc_ordinal_duration);
--
- static int tpm_validate_command(struct tpm_chip *chip,
- 				 struct tpm_space *space,
- 				 const u8 *cmd,
-@@ -503,7 +223,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
- 	if (chip->flags & TPM_CHIP_FLAG_TPM2)
- 		stop = jiffies + tpm2_calc_ordinal_duration(chip, ordinal);
- 	else
--		stop = jiffies + tpm_calc_ordinal_duration(chip, ordinal);
-+		stop = jiffies + tpm1_calc_ordinal_duration(chip, ordinal);
- 	do {
- 		u8 status = chip->ops->status(chip);
- 		if ((status & chip->ops->req_complete_mask) ==
-@@ -1085,7 +805,7 @@ int tpm_do_selftest(struct tpm_chip *chip)
- 	unsigned long duration;
- 	u8 dummy[TPM_DIGEST_SIZE];
- 
--	duration = tpm_calc_ordinal_duration(chip, TPM_ORD_CONTINUE_SELFTEST);
-+	duration = tpm1_calc_ordinal_duration(chip, TPM_ORD_CONTINUE_SELFTEST);
- 
- 	loops = jiffies_to_msecs(duration) / delay_msec;
- 
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index f3501d05264f..a0b9e784bc3b 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -537,7 +537,7 @@ ssize_t tpm_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
- int tpm_get_timeouts(struct tpm_chip *);
- int tpm1_auto_startup(struct tpm_chip *chip);
- int tpm_do_selftest(struct tpm_chip *chip);
--unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
-+unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
- int tpm_pm_suspend(struct device *dev);
- int tpm_pm_resume(struct device *dev);
- 
-diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-new file mode 100644
-index 000000000000..18ae79dc0445
---- /dev/null
-+++ b/drivers/char/tpm/tpm1-cmd.c
-@@ -0,0 +1,294 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Copyright (C) 2004 IBM Corporation
-+// Copyright (C) 2014 Intel Corporation
-+
-+#include <linux/poll.h>
-+#include <linux/slab.h>
-+#include <linux/mutex.h>
-+#include <linux/spinlock.h>
-+#include <linux/freezer.h>
-+#include <linux/tpm_eventlog.h>
-+
-+#include "tpm.h"
-+
-+#define TPM_MAX_ORDINAL 243
-+
-+/*
-+ * Array with one entry per ordinal defining the maximum amount
-+ * of time the chip could take to return the result.  The ordinal
-+ * designation of short, medium or long is defined in a table in
-+ * TCG Specification TPM Main Part 2 TPM Structures Section 17. The
-+ * values of the SHORT, MEDIUM, and LONG durations are retrieved
-+ * from the chip during initialization with a call to tpm_get_timeouts.
-+ */
-+static const u8 tpm1_ordinal_duration[TPM_MAX_ORDINAL] = {
-+	TPM_UNDEFINED,		/* 0 */
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,		/* 5 */
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_SHORT,		/* 10 */
-+	TPM_SHORT,
-+	TPM_MEDIUM,
-+	TPM_LONG,
-+	TPM_LONG,
-+	TPM_MEDIUM,		/* 15 */
-+	TPM_SHORT,
-+	TPM_SHORT,
-+	TPM_MEDIUM,
-+	TPM_LONG,
-+	TPM_SHORT,		/* 20 */
-+	TPM_SHORT,
-+	TPM_MEDIUM,
-+	TPM_MEDIUM,
-+	TPM_MEDIUM,
-+	TPM_SHORT,		/* 25 */
-+	TPM_SHORT,
-+	TPM_MEDIUM,
-+	TPM_SHORT,
-+	TPM_SHORT,
-+	TPM_MEDIUM,		/* 30 */
-+	TPM_LONG,
-+	TPM_MEDIUM,
-+	TPM_SHORT,
-+	TPM_SHORT,
-+	TPM_SHORT,		/* 35 */
-+	TPM_MEDIUM,
-+	TPM_MEDIUM,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_MEDIUM,		/* 40 */
-+	TPM_LONG,
-+	TPM_MEDIUM,
-+	TPM_SHORT,
-+	TPM_SHORT,
-+	TPM_SHORT,		/* 45 */
-+	TPM_SHORT,
-+	TPM_SHORT,
-+	TPM_SHORT,
-+	TPM_LONG,
-+	TPM_MEDIUM,		/* 50 */
-+	TPM_MEDIUM,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,		/* 55 */
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_MEDIUM,		/* 60 */
-+	TPM_MEDIUM,
-+	TPM_MEDIUM,
-+	TPM_SHORT,
-+	TPM_SHORT,
-+	TPM_MEDIUM,		/* 65 */
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_SHORT,		/* 70 */
-+	TPM_SHORT,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,		/* 75 */
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_LONG,		/* 80 */
-+	TPM_UNDEFINED,
-+	TPM_MEDIUM,
-+	TPM_LONG,
-+	TPM_SHORT,
-+	TPM_UNDEFINED,		/* 85 */
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_SHORT,		/* 90 */
-+	TPM_SHORT,
-+	TPM_SHORT,
-+	TPM_SHORT,
-+	TPM_SHORT,
-+	TPM_UNDEFINED,		/* 95 */
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_MEDIUM,		/* 100 */
-+	TPM_SHORT,
-+	TPM_SHORT,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,		/* 105 */
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_SHORT,		/* 110 */
-+	TPM_SHORT,
-+	TPM_SHORT,
-+	TPM_SHORT,
-+	TPM_SHORT,
-+	TPM_SHORT,		/* 115 */
-+	TPM_SHORT,
-+	TPM_SHORT,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_LONG,		/* 120 */
-+	TPM_LONG,
-+	TPM_MEDIUM,
-+	TPM_UNDEFINED,
-+	TPM_SHORT,
-+	TPM_SHORT,		/* 125 */
-+	TPM_SHORT,
-+	TPM_LONG,
-+	TPM_SHORT,
-+	TPM_SHORT,
-+	TPM_SHORT,		/* 130 */
-+	TPM_MEDIUM,
-+	TPM_UNDEFINED,
-+	TPM_SHORT,
-+	TPM_MEDIUM,
-+	TPM_UNDEFINED,		/* 135 */
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_SHORT,		/* 140 */
-+	TPM_SHORT,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,		/* 145 */
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_SHORT,		/* 150 */
-+	TPM_MEDIUM,
-+	TPM_MEDIUM,
-+	TPM_SHORT,
-+	TPM_SHORT,
-+	TPM_UNDEFINED,		/* 155 */
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_SHORT,		/* 160 */
-+	TPM_SHORT,
-+	TPM_SHORT,
-+	TPM_SHORT,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,		/* 165 */
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_LONG,		/* 170 */
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,		/* 175 */
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_MEDIUM,		/* 180 */
-+	TPM_SHORT,
-+	TPM_MEDIUM,
-+	TPM_MEDIUM,
-+	TPM_MEDIUM,
-+	TPM_MEDIUM,		/* 185 */
-+	TPM_SHORT,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,		/* 190 */
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,		/* 195 */
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_SHORT,		/* 200 */
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_SHORT,
-+	TPM_SHORT,		/* 205 */
-+	TPM_SHORT,
-+	TPM_SHORT,
-+	TPM_SHORT,
-+	TPM_SHORT,
-+	TPM_MEDIUM,		/* 210 */
-+	TPM_UNDEFINED,
-+	TPM_MEDIUM,
-+	TPM_MEDIUM,
-+	TPM_MEDIUM,
-+	TPM_UNDEFINED,		/* 215 */
-+	TPM_MEDIUM,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_SHORT,
-+	TPM_SHORT,		/* 220 */
-+	TPM_SHORT,
-+	TPM_SHORT,
-+	TPM_SHORT,
-+	TPM_SHORT,
-+	TPM_UNDEFINED,		/* 225 */
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_SHORT,		/* 230 */
-+	TPM_LONG,
-+	TPM_MEDIUM,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,		/* 235 */
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_UNDEFINED,
-+	TPM_SHORT,		/* 240 */
-+	TPM_UNDEFINED,
-+	TPM_MEDIUM,
-+};
-+
-+/*
-+ * Returns max number of jiffies to wait
-+ */
-+unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
-+{
-+	int duration_idx = TPM_UNDEFINED;
-+	int duration = 0;
-+
-+	/*
-+	 * We only have a duration table for protected commands, where the upper
-+	 * 16 bits are 0. For the few other ordinals the fallback will be used.
-+	 */
-+	if (ordinal < TPM_MAX_ORDINAL)
-+		duration_idx = tpm1_ordinal_duration[ordinal];
-+
-+	if (duration_idx != TPM_UNDEFINED)
-+		duration = chip->duration[duration_idx];
-+	if (duration <= 0)
-+		return 2 * 60 * HZ;
-+	else
-+		return duration;
-+}
-+EXPORT_SYMBOL_GPL(tpm1_calc_ordinal_duration);
-+
-diff --git a/drivers/char/tpm/tpm_i2c_nuvoton.c b/drivers/char/tpm/tpm_i2c_nuvoton.c
-index caa86b19c76d..5d20e98b844f 100644
---- a/drivers/char/tpm/tpm_i2c_nuvoton.c
-+++ b/drivers/char/tpm/tpm_i2c_nuvoton.c
-@@ -370,6 +370,7 @@ static int i2c_nuvoton_send(struct tpm_chip *chip, u8 *buf, size_t len)
- 	struct i2c_client *client = to_i2c_client(dev);
- 	u32 ordinal;
- 	size_t count = 0;
-+	unsigned long duration;
- 	int burst_count, bytes2write, retries, rc = -EIO;
- 
- 	for (retries = 0; retries < TPM_RETRY; retries++) {
-@@ -455,12 +456,11 @@ static int i2c_nuvoton_send(struct tpm_chip *chip, u8 *buf, size_t len)
- 		return rc;
- 	}
- 	ordinal = be32_to_cpu(*((__be32 *) (buf + 6)));
--	rc = i2c_nuvoton_wait_for_data_avail(chip,
--					     tpm_calc_ordinal_duration(chip,
--								       ordinal),
--					     &priv->read_queue);
-+	duration = tpm1_calc_ordinal_duration(chip, ordinal);
-+	rc = i2c_nuvoton_wait_for_data_avail(chip, duration, &priv->read_queue);
- 	if (rc) {
--		dev_err(dev, "%s() timeout command duration\n", __func__);
-+		dev_err(dev, "%s() timeout command duration %ld\n",
-+			__func__, duration);
- 		i2c_nuvoton_ready(chip);
- 		return rc;
- 	}
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index d2345d9fd7b5..14c332104de4 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -476,7 +476,7 @@ static int tpm_tis_send_main(struct tpm_chip *chip, const u8 *buf, size_t len)
- 		if (chip->flags & TPM_CHIP_FLAG_TPM2)
- 			dur = tpm2_calc_ordinal_duration(chip, ordinal);
- 		else
--			dur = tpm_calc_ordinal_duration(chip, ordinal);
-+			dur = tpm1_calc_ordinal_duration(chip, ordinal);
- 
- 		if (wait_for_tpm_stat
- 		    (chip, TPM_STS_DATA_AVAIL | TPM_STS_VALID, dur,
-diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-tpmfront.c
-index 911475d36800..c7ded298617d 100644
---- a/drivers/char/tpm/xen-tpmfront.c
-+++ b/drivers/char/tpm/xen-tpmfront.c
-@@ -164,7 +164,7 @@ static int vtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
- 	notify_remote_via_evtchn(priv->evtchn);
- 
- 	ordinal = be32_to_cpu(((struct tpm_input_header*)buf)->ordinal);
--	duration = tpm_calc_ordinal_duration(chip, ordinal);
-+	duration = tpm1_calc_ordinal_duration(chip, ordinal);
- 
- 	if (wait_for_tpm_stat(chip, VTPM_STATUS_IDLE, duration,
- 			&priv->read_queue, true) < 0) {
--- 
-2.17.1
-
+Just realized that kvm printk's refer to the online version at
+https://www.kernel.org/doc/html/latest/admin-guide/l1tf.html
+which should be easier for the users of distro kernels, should I change
+that?
