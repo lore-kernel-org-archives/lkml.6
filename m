@@ -2,82 +2,105 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67872C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 14:07:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A802C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 14:09:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A1AF2083B
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 14:07:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A1AF2083B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id 17FB02083B
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 14:09:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17FB02083B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=winterdrache.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727302AbeHXRl5 (ORCPT
+        id S1726508AbeHXRoj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 13:41:57 -0400
-Received: from sauhun.de ([88.99.104.3]:40978 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726552AbeHXRl5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 13:41:57 -0400
-Received: from localhost (p54B33931.dip0.t-ipconnect.de [84.179.57.49])
-        by pokefinder.org (Postfix) with ESMTPSA id 7E88C305B98;
-        Fri, 24 Aug 2018 16:07:06 +0200 (CEST)
-Date:   Fri, 24 Aug 2018 16:07:06 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Sedat Dilek <sedat.dilek@credativ.de>
-Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: Re: [PATCH v2] i2c: Remove '-Wno-deprecated-declarations' compiler
- warning
-Message-ID: <20180824140705.t3pkiqfpnqzaaksz@ninjato>
-References: <20180819135135.8801-1-sedat.dilek@credativ.de>
- <20180824130130.bialyhjarwkwodzw@ninjato>
- <1335058904.531.1535118581478@ox.credativ.com>
+        Fri, 24 Aug 2018 13:44:39 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:37567 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726182AbeHXRoj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 13:44:39 -0400
+Received: from ninja ([83.135.210.22]) by mrelayeu.kundenserver.de (mreue105
+ [212.227.15.183]) with ESMTPSA (Nemesis) id 0MKZOx-1fv8SR1VyB-001vNC; Fri, 24
+ Aug 2018 16:09:48 +0200
+Date:   Fri, 24 Aug 2018 16:09:47 +0200
+From:   "Matthias B." <matthias@winterdrache.de>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: How to report kernel panic in 4.4.x
+Message-ID: <20180824160947.49387d7b@ninja>
+In-Reply-To: <20180824125950.GA29673@kroah.com>
+References: <20180824142408.6340d052@ninja>
+        <20180824125950.GA29673@kroah.com>
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ac2cl3ttkkj4qfwg"
-Content-Disposition: inline
-In-Reply-To: <1335058904.531.1535118581478@ox.credativ.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:Xb8HheezUbCR5GuaSn9cL0Alw2/ygMMO7eJmKUP/fsu3Knve8ca
+ AsVdIemjQII0EEay79QG68e9JzK3H2utdqrfztnLrH0QztQPYlqGnromuW+SQ2PnwYEsHgE
+ zgnJBwMqIzktFY/k6LkQtr4dqrhNHUixx4DdspdEz5Z/T3TUuftlTOqHfVgmLLbzoc2wUCz
+ tudZ7HpP7YYphpUaaP+lQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:KgwKqquz+ZU=:dEQYaGxS20jzj07MJUxv3m
+ 7hGsSVzb7a47FFtq0OD+kbTANRFb6tDItQbGRavpwFUhSoKSOVrCdNsvVATXFhdb5iZUZLw1d
+ 49HYiGLkPutKn0u9yTIQYsBvVIeCPhVZbWv7uff3iHmJIJ7KosDPxoBO/tWocfZFqlQAiQZWA
+ EbRUmDA1qX4zSXGtDzEmbDfR+5pRC6hzoqG9HtWkqy8hY1OmLv1pOjZJMSnpbjUxMReqtt81n
+ O8Ebd/dQCB9x+k0boLDwJEjCI1Adbx6PrFhryzloybIKqay0mumBoGS8Tg+qVy5aTf7wIgJWx
+ GZD2+4u6QQ0a5FWlHGdhDBpAABVTEV6UuzDRH4Uwv/VzD1zp+hDqWZmw7cmBaEv6BgiBwytaU
+ yeWs64bfqQquFWrR09jVMkXIkvshkdtNj4c/YkDTCumUcYb1I/XHBsVe3w0lWXv5L7SvUaDzR
+ CbHEKe3lwkmCfuSTfwWTZZqDElegX+B6l7sWdkZceW1tEl1VZ0bCPCmNYs+7IWinHV4fx5Mwz
+ dcoPr/il6N3oEODNPgBrc1hAsYLjyBJPc7hA7D/dKzoZFp13UZZZ1VfwTHfyvd3AA3qYNRN30
+ gg8e8oBHQ/A5NeZ3YerhiAfG2nMozgr/KVrNMjn4QDhBrcHzG7IAMmANlBh0llpnj6y4gaYvY
+ 9ZkV+NndOTxcgVez9/IFVWbfswxBIe5b2myDkFxJapdJQhT02djpmzNrtR1iJc4yjyaDQQZN+
+ YwYp5HGnEZqvsXH6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---ac2cl3ttkkj4qfwg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The following is the dmesg output from my working 4.4.147 around the
+time when the newer kernel panics.
 
 
-> will my patch go to [1]?
+    0.425380] Bluetooth: HIDP (Human Interface Emulation) ver 1.2
+[    0.425932] Bluetooth: HIDP socket layer initialized
+[    0.426617] microcode: CPU0 sig=0x306c3, pf=0x2, revision=0x19
+[    0.427203] microcode: CPU1 sig=0x306c3, pf=0x2, revision=0x19
+[    0.427772] microcode: CPU2 sig=0x306c3, pf=0x2, revision=0x19
+[    0.428688] microcode: CPU3 sig=0x306c3, pf=0x2, revision=0x19
+[    0.429221] microcode: CPU4 sig=0x306c3, pf=0x2, revision=0x19
+[    0.429744] microcode: CPU5 sig=0x306c3, pf=0x2, revision=0x19
+[    0.430255] microcode: CPU6 sig=0x306c3, pf=0x2, revision=0x19
+[    0.430761] microcode: CPU7 sig=0x306c3, pf=0x2, revision=0x19
+[    0.431271] microcode: Microcode Update Driver: v2.01
+    <tigran@aivazian.fsnet.co.uk>, Peter Oruba [    0.431815] AVX2
+    version of gcm_enc/dec engaged. [    0.432347] AES CTR mode by8
+    optimization enabled [    0.433358] registered taskstats version 1
+[    0.434086] Btrfs loaded
+[    0.434991] rtc_cmos 00:02: setting system clock to 2018-08-24
+    13:35:45 UTC (1535117745) [    0.435586] ALSA device list:
+[    0.436074]   No soundcards found.
 
-It won't be needed anymore, the __deprecated function will go away until
-next week.
 
 
---ac2cl3ttkkj4qfwg
-Content-Type: application/pgp-signature; name="signature.asc"
+All of the times visible on screen for the panicking kernel are in this
+gap.
 
------BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAluAEQUACgkQFA3kzBSg
-Kba5Ow//dcKcXBiZ1sBJZgLzYdDjQPBb/xfPsxE8a4LzlShBun23hA9u2MiAh0q2
-kJLeTsyAfiQR3nbb4ax1oUNLycqzInz/HrYW4zyiajbg4o8dQQugJNWwWbMJtiO3
-UhasNZv3nwnbJ6DEOS3XVko9FQkjnn73fgfL0gq6qpSuC+YIYQOMjbdvhfFaR065
-QJIGK/zz/xktwRRswSL2CV1rsF6edJMizgJR/IjXCZVFg5gYKQsk344MbK5w6pjZ
-0lEiSkMML+fCk8rhkyYewrHKak99hM7IIRuwGGo2BJiukqgXpedLPzVVreYFlzu2
-z2XfXZcJg15s6lgol54X4kk9bnBeqwsDz7TnveeVoqu4QaoMiva3ay2hkeS3zmpj
-8XfaMy9o7PQMQdzx2OiX8w9uI9AEFRjd+5y4KknavVOqaoXmWEqwp1RMTZistIt/
-BeJZE2vnazA8q3bG9n7ffzulY11ImxraEsgfY5uT88pfdaGeJrbLWEp7n/kFttGK
-JFYGzSYL+HkcwoNra3odYDbef3t4j6TGZYh0HeDPHJpfyT2NWew237FGlR2cgUxb
-hCq4oIG1+Q2TD7bZUstsJSg/tfycqYEUknr1KKiAYg3ZPAm9yuKocvVssIPg1loV
-TXo5ORSiQy0TlqA6/qE1Ox8N0Ork76p1NNOlfswqn6rP9MLCRN0=
-=oWai
------END PGP SIGNATURE-----
 
---ac2cl3ttkkj4qfwg--
+[    0.595677] snd_hda_intel 0000:01:00.1: Too many HDMI devices
+[    0.596251] snd_hda_intel 0000:01:00.1: Consider building the kernel
+    with CONFIG_SND_DYNAMIC_MINORS=y [    0.596839] snd_hda_intel
+    0000:01:00.1: Too many HDMI devices [    0.597412] snd_hda_intel
+    0000:01:00.1: Consider building the kernel with
+    CONFIG_SND_DYNAMIC_MINORS=y [    0.612466] snd_hda_intel
+    0000:01:00.1: control 3:0:0:ELD:0 is already present [    0.613100]
+    snd_hda_codec_hdmi: probe of hdaudioC0D0 failed with error -16
+
+
+-- 
+If God hadn't wanted me to be paranoid,
+He wouldn't have given me such a vivid imagination.
+
