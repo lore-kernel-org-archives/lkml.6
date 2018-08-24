@@ -2,89 +2,135 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22AA2C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 11:50:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 764B3C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 11:52:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8E4E21523
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 11:50:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CtetxMzg";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LIx1B2aj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8E4E21523
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 262BF208AD
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 11:52:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 262BF208AD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727684AbeHXPZD (ORCPT
+        id S1727782AbeHXP0t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 11:25:03 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:51970 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726513AbeHXPZD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 11:25:03 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 185996032D; Fri, 24 Aug 2018 11:50:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535111445;
-        bh=suwnnnhNy9/js4Ggwue2NIECenMNsSEeHuSQ42zPRxU=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=CtetxMzgUpT2F3CDDr5cgNGMwAuGOoEPrjLCb6tHWtgasM44/NDG/ncTrS4oDdE8P
-         Qe+Ss41sfi1yIawqU52bFr/u76BXDM4y5IvuB+3JIF4+d64XfxYSCN9jMHIzegr7eY
-         3lAwhQM4b9zhoEqrIVgr8JmzLb1TzOO/eHRj6ERc=
-Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0E24E601A0;
-        Fri, 24 Aug 2018 11:50:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535111444;
-        bh=suwnnnhNy9/js4Ggwue2NIECenMNsSEeHuSQ42zPRxU=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=LIx1B2ajk25uos33rdyr/cyzS9DSZJ8QcBoEmPj9FIyyR/K3turzua9gNdV9x3mqm
-         nuUiwVYOKBqGkF7ugghMci7nKCCEOGm3scle+3mnWO1RZcqg9JsYo2uRacZ1pDaH0I
-         DGUV2/IkUIgeLrvzS6lGkc+xAfRBHik4YJMWYKAQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0E24E601A0
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Fri, 24 Aug 2018 11:26:49 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36850 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726891AbeHXP0t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 11:26:49 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0F021B049;
+        Fri, 24 Aug 2018 11:52:28 +0000 (UTC)
+Date:   Fri, 24 Aug 2018 13:52:26 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     christian.koenig@amd.com
+Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        kvm@vger.kernel.org,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Sudeep Dutt <sudeep.dutt@intel.com>,
+        dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        Dimitri Sivanich <sivanich@sgi.com>,
+        linux-rdma@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Doug Ledford <dledford@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        xen-devel@lists.xenproject.org, intel-gfx@lists.freedesktop.org,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ashutosh Dixit <ashutosh.dixit@intel.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Felix Kuehling <felix.kuehling@amd.com>
+Subject: Re: [PATCH] mm, oom: distinguish blockable mode for mmu notifiers
+Message-ID: <20180824115226.GK29735@dhcp22.suse.cz>
+References: <20180716115058.5559-1-mhocko@kernel.org>
+ <8cbfb09f-0c5a-8d43-1f5e-f3ff7612e289@I-love.SAKURA.ne.jp>
+ <20180824113248.GH29735@dhcp22.suse.cz>
+ <b088e382-e90e-df63-a079-19b2ae2b985d@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] wcn36xx: use dma_zalloc_coherent instead of
- allocator/memset
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20180724115211.19264-1-yuehaibing@huawei.com>
-References: <20180724115211.19264-1-yuehaibing@huawei.com>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     <davem@davemloft.net>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-wireless@vger.kernel.org>,
-        <wcn36xx@lists.infradead.org>, YueHaibing <yuehaibing@huawei.com>
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20180824115045.185996032D@smtp.codeaurora.org>
-Date:   Fri, 24 Aug 2018 11:50:45 +0000 (UTC)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b088e382-e90e-df63-a079-19b2ae2b985d@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-YueHaibing <yuehaibing@huawei.com> wrote:
-
-> Use dma_zalloc_coherent instead of dma_alloc_coherent
-> followed by memset 0.
+On Fri 24-08-18 13:43:16, Christian König wrote:
+> Am 24.08.2018 um 13:32 schrieb Michal Hocko:
+> > On Fri 24-08-18 19:54:19, Tetsuo Handa wrote:
+> > > Two more worries for this patch.
+> > > 
+> > > 
+> > > 
+> > > > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
+> > > > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
+> > > > @@ -178,12 +178,18 @@ void amdgpu_mn_unlock(struct amdgpu_mn *mn)
+> > > >    *
+> > > >    * @amn: our notifier
+> > > >    */
+> > > > -static void amdgpu_mn_read_lock(struct amdgpu_mn *amn)
+> > > > +static int amdgpu_mn_read_lock(struct amdgpu_mn *amn, bool blockable)
+> > > >   {
+> > > > -       mutex_lock(&amn->read_lock);
+> > > > +       if (blockable)
+> > > > +               mutex_lock(&amn->read_lock);
+> > > > +       else if (!mutex_trylock(&amn->read_lock))
+> > > > +               return -EAGAIN;
+> > > > +
+> > > >          if (atomic_inc_return(&amn->recursion) == 1)
+> > > >                  down_read_non_owner(&amn->lock);
+> > > Why don't we need to use trylock here if blockable == false ?
+> > > Want comment why it is safe to use blocking lock here.
+> > Hmm, I am pretty sure I have checked the code but it was quite confusing
+> > so I might have missed something. Double checking now, it seems that
+> > this read_lock is not used anywhere else and it is not _the_ lock we are
+> > interested about. It is the amn->lock (amdgpu_mn_lock) which matters as
+> > it is taken in exclusive mode for expensive operations.
 > 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+> The write side of the lock is only taken in the command submission IOCTL.
+> 
+> So you actually don't need to change anything here (even the proposed
+> changes are overkill) since we can't tear down the struct_mm while an IOCTL
+> is still using.
 
-Patch applied to ath-next branch of ath.git, thanks.
+I am not so sure. We are not in the mm destruction phase yet. This is
+mostly about the oom context which might fire right during the IOCTL. If
+any of the path which is holding the write lock blocks for unbound
+amount of time or even worse allocates a memory then we are screwed. So
+we need to back of when blockable = false.
 
-d410e28f3ae4 wcn36xx: use dma_zalloc_coherent instead of allocator/memset
+> > Is that correct Christian? If this is correct then we need to update the
+> > locking here. I am struggling to grasp the ref counting part. Why cannot
+> > all readers simply take the lock rather than rely on somebody else to
+> > take it? 1ed3d2567c800 didn't really help me to understand the locking
+> > scheme here so any help would be appreciated.
+> 
+> That won't work like this there might be multiple
+> invalidate_range_start()/invalidate_range_end() pairs open at the same time.
+> E.g. the lock might be taken recursively and that is illegal for a
+> rw_semaphore.
 
+I am not sure I follow. Are you saying that one invalidate_range might
+trigger another one from the same path?
 -- 
-https://patchwork.kernel.org/patch/10541939/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+Michal Hocko
+SUSE Labs
