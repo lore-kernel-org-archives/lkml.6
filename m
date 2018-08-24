@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C0CEC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 03:00:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3A46C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 03:00:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB58621570
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 03:00:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB58621570
+	by mail.kernel.org (Postfix) with ESMTP id 652E72156E
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 03:00:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 652E72156E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727449AbeHXGcg (ORCPT
+        id S1727485AbeHXGck (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 02:32:36 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39430 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726554AbeHXGce (ORCPT
+        Fri, 24 Aug 2018 02:32:40 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52240 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726458AbeHXGcj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 02:32:34 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7O2wq8S031382
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 22:59:59 -0400
-Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m27cvcdtn-1
+        Fri, 24 Aug 2018 02:32:39 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7O2wsXa086585
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 23:00:03 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2m2867jtex-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 22:59:59 -0400
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 23:00:03 -0400
 Received: from localhost
-        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Thu, 23 Aug 2018 22:59:58 -0400
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Thu, 23 Aug 2018 23:00:02 -0400
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 23 Aug 2018 22:59:53 -0400
+        Thu, 23 Aug 2018 22:59:58 -0400
 Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7O2xqpw39649282
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7O2xvLD26148978
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 24 Aug 2018 02:59:52 GMT
+        Fri, 24 Aug 2018 02:59:57 GMT
 Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3C239AE060;
-        Thu, 23 Aug 2018 22:59:24 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id B73A0AE062;
+        Thu, 23 Aug 2018 22:59:28 -0400 (EDT)
 Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C51DFAE05F;
-        Thu, 23 Aug 2018 22:59:21 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id AB0D1AE05C;
+        Thu, 23 Aug 2018 22:59:25 -0400 (EDT)
 Received: from morokweng.localdomain.com (unknown [9.85.189.29])
         by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 23 Aug 2018 22:59:21 -0400 (EDT)
+        Thu, 23 Aug 2018 22:59:25 -0400 (EDT)
 From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
 To:     linuxppc-dev@lists.ozlabs.org
 Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
@@ -62,19 +62,23 @@ Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         Mike Anderson <andmike@linux.ibm.com>,
         Paul Mackerras <paulus@samba.org>,
         Ram Pai <linuxram@us.ibm.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
         Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Subject: [RFC PATCH 00/11] Secure Virtual Machine Enablement
-Date:   Thu, 23 Aug 2018 23:59:22 -0300
+Subject: [RFC PATCH 01/11] powerpc/svm: Detect Secure Virtual Machine (SVM) platform
+Date:   Thu, 23 Aug 2018 23:59:23 -0300
 X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20180824025933.24319-1-bauerman@linux.ibm.com>
+References: <20180824025933.24319-1-bauerman@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18082402-0060-0000-0000-000002A37E1B
+x-cbid: 18082403-0040-0000-0000-000004647356
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009600; HX=3.00000242; KW=3.00000007;
  PH=3.00000004; SC=3.00000266; SDB=6.01077964; UDB=6.00555823; IPR=6.00857939;
- MB=3.00022897; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-24 02:59:56
+ MB=3.00022897; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-24 03:00:00
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082402-0061-0000-0000-00004645DDC6
-Message-Id: <20180824025933.24319-1-bauerman@linux.ibm.com>
+x-cbparentid: 18082402-0041-0000-0000-0000086B87F8
+Message-Id: <20180824025933.24319-2-bauerman@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-24_01:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -87,121 +91,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series contains preliminary work to enable Secure Virtual Machines
-(SVM) on powerpc. SVMs request to be migrated to secure memory very early in
-the boot process (in prom_init()), so by default all of their memory is
-inaccessible to the hypervisor. There is an ultravisor call that the VM can
-use to request certain pages to be made accessible (aka shared).
+From: Anshuman Khandual <khandual@linux.vnet.ibm.com>
 
-The objective of these patches is to have the guest perform this request for
-buffers that need to be shared with the hypervisor, such as the LPPACAs, the
-SWIOTLB buffer and the Debug Trace Log. This work is incomplete: there are
-surely other memory regions that need to be made accessible, but I'm posting
-it early to get comments on whether the approach being taken is appropriate.
+A guest requests to be moved to secure memory early at the kernel
+startup (in prom_init). Define a flag that can be easily checked by other
+parts of the kernel so that they can set things up accordingly. This is
+done by checking the MSR(S) bit, which is always set for secure VMs.
 
-It should be applied on top of the generic virtio DMA API rework series
-posted earlier, which adds a platform hook to override any arch based DMA
-API operations for any virtio device:
+Also add a new config option CONFIG_PPC_SVM to wrap all these code to
+prevent it from being executed from non subscribing platforms. This SVM
+platform detection is applicable only to guest kernels that will run under
+an Ultravisor as a secure guest.
 
-https://lists.ozlabs.org/pipermail/linuxppc-dev/2018-July/175994.html
+Signed-off-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+Signed-off-by: Ram Pai <linuxram@us.ibm.com>
+Signed-off-by: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
+Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+---
+ arch/powerpc/Kconfig           | 11 +++++++++++
+ arch/powerpc/include/asm/reg.h |  3 +++
+ arch/powerpc/include/asm/svm.h | 22 ++++++++++++++++++++++
+ 3 files changed, 36 insertions(+)
 
-I'm aware that changes need to be made to the patch series above, but IIUC
-it depends on upcoming virtio cleanup from Christoph Hellwig so for now the
-patch series above will be used as a stepping stone for this series.
-
-This code has been tested with virtio block, net and scsi devices with and
-without VIRTIO_F_IOMMU_PLATFORM flag. Please let me know what you think.
-
-For now I am testing on a regular guest with a couple of patches on top
-forcing is_svm_platform() to always return true and adding debug messages to
-confirm that mem_convert_shared() is being called in the expected places.
-
-These are the commands I'm using to start up the guest:
-
-Without VIRTIO_F_IOMMU_PLATFORM:
-
-qemu-system-ppc64 \
-  -enable-kvm \
-  -kernel /home/bauermann/src/linux/arch/powerpc/boot/zImage \
-  -append "root=PARTUUID=e550ad6f-05 ro" \
-  -machine pseries-2.6 \
-  -m 8G \
-  -smp 2 \
-  -serial mon:stdio \
-  -nographic \
-  -nodefaults \
-  -device virtio-scsi-pci,id=scsi0,bus=pci.0,addr=0x4 \
-  -drive file=/home/bauermann/VMs/svm.qcow2,format=qcow2,if=none,id=drive-scsi0-0-0-0 \
-  -device scsi-hd,bus=scsi0.0,channel=0,scsi-id=0,lun=0,drive=drive-scsi0-0-0-0,id=scsi0-0-0-0 \
-  -drive file=/home/bauermann/VMs/svm-blk.qcow2,format=qcow2,if=none,id=drive-virtio-disk0 \
-  -device virtio-blk-pci,scsi=off,bus=pci.0,addr=0x5,drive=drive-virtio-disk0,id=virtio-disk0 \
-  -device virtio-net,netdev=hostnet0,id=net0,mac=52:54:00:96:70:1f \
-  -netdev user,id=hostnet0 \
-  -set netdev.hostnet0.hostfwd=tcp::42022-:22
-
-With VIRTIO_F_IOMMU_PLATFORM. Same as above plus some -global options so
-that the virtio devices use the modern interface rather than the
-transitional one:
-
-qemu-system-ppc64 \
-  -enable-kvm \
-  -kernel /home/bauermann/src/linux/arch/powerpc/boot/zImage \
-  -append "root=PARTUUID=e550ad6f-05 ro" \
-  -machine pseries-2.6 \
-  -m 8G \
-  -smp 2 \
-  -serial mon:stdio \
-  -nographic \
-  -nodefaults \
-  -device virtio-scsi-pci,id=scsi0,bus=pci.0,addr=0x4 \
-  -drive file=/home/bauermann/VMs/svm.qcow2,format=qcow2,if=none,id=drive-scsi0-0-0-0 \
-  -device scsi-hd,bus=scsi0.0,channel=0,scsi-id=0,lun=0,drive=drive-scsi0-0-0-0,id=scsi0-0-0-0 \
-  -drive file=/home/bauermann/VMs/svm-blk.qcow2,format=qcow2,if=none,id=drive-virtio-disk0 \
-  -device virtio-blk-pci,scsi=off,bus=pci.0,addr=0x5,drive=drive-virtio-disk0,id=virtio-disk0 \
-  -device virtio-net,netdev=hostnet0,id=net0,mac=52:54:00:96:70:1f \
-  -netdev user,id=hostnet0 \
-  -set netdev.hostnet0.hostfwd=tcp::42022-:22 \
-  -global virtio-blk-pci.iommu_platform=true \
-  -global virtio-blk-pci.disable-legacy=on \
-  -global virtio-blk-pci.disable-modern=off \
-  -global virtio-net-pci.iommu_platform=true \
-  -global virtio-net-pci.disable-legacy=on \
-  -global virtio-net-pci.disable-modern=off \
-  -global virtio-scsi-pci.iommu_platform=true \
-  -global virtio-scsi-pci.disable-legacy=on \
-  -global virtio-scsi-pci.disable-modern=off
-
-The code was tested with a couple of other permutations where one virtio
-device has the flag VIRTIO_F_IOMMU_PLATFORM and others don't. Please suggest
-some other scenarios which need to be tested as well.
-
-Anshuman Khandual (10):
-  powerpc/svm: Detect Secure Virtual Machine (SVM) platform
-  powerpc/svm: Select CONFIG_DMA_DIRECT_OPS and CONFIG_SWIOTLB
-  powerpc/svm: Add memory conversion (shared/secure) helper functions
-  powerpc/svm: Convert SWIOTLB buffers to shared memory
-  powerpc/svm: Don't release SWIOTLB buffers on secure guests
-  powerpc/svm: Use SWIOTLB DMA API for all virtio devices
-  powerpc/svm: Use shared memory for Debug Trace Log (DTL)
-  powerpc/svm: Use shared memory for LPPACA structures
-  powerpc/svm: Force the use of bounce buffers
-  powerpc/svm: Increase SWIOTLB buffer size
-
-Thiago Jung Bauermann (1):
-  powerpc: Add and use LPPACA_SIZE constant
-
- arch/powerpc/Kconfig                   | 22 ++++++++
- arch/powerpc/include/asm/mem_encrypt.h | 19 +++++++
- arch/powerpc/include/asm/reg.h         |  3 ++
- arch/powerpc/include/asm/svm.h         | 26 +++++++++
- arch/powerpc/kernel/Makefile           |  1 +
- arch/powerpc/kernel/paca.c             | 41 ++++++++++++--
- arch/powerpc/kernel/svm.c              | 99 ++++++++++++++++++++++++++++++++++
- arch/powerpc/platforms/pseries/iommu.c |  6 ++-
- arch/powerpc/platforms/pseries/setup.c |  5 +-
- kernel/dma/swiotlb.c                   |  5 ++
- 10 files changed, 221 insertions(+), 6 deletions(-)
- create mode 100644 arch/powerpc/include/asm/mem_encrypt.h
- create mode 100644 arch/powerpc/include/asm/svm.h
- create mode 100644 arch/powerpc/kernel/svm.c
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index 9f2b75fe2c2d..f786c962edf0 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -440,6 +440,17 @@ config MATH_EMULATION_HW_UNIMPLEMENTED
+ 
+ endchoice
+ 
++config PPC_SVM
++       bool "Secure virtual machine (SVM) support for POWERPC"
++       default n
++       depends on PPC_PSERIES
++       help
++         Support secure guests on POWERPC. There are certain POWER platforms
++	 which support secure guests with the help of an Ultravisor executing
++	 below the hypervisor layer. This enables the support for those guests.
++
++	 If unsure, say "N".
++
+ config PPC_TRANSACTIONAL_MEM
+        bool "Transactional Memory support for POWERPC"
+        depends on PPC_BOOK3S_64
+diff --git a/arch/powerpc/include/asm/reg.h b/arch/powerpc/include/asm/reg.h
+index 562568414cf4..fcf7b79356d0 100644
+--- a/arch/powerpc/include/asm/reg.h
++++ b/arch/powerpc/include/asm/reg.h
+@@ -36,6 +36,7 @@
+ #define MSR_TM_LG	32		/* Trans Mem Available */
+ #define MSR_VEC_LG	25	        /* Enable AltiVec */
+ #define MSR_VSX_LG	23		/* Enable VSX */
++#define MSR_S_LG	22		/* Secure VM bit */
+ #define MSR_POW_LG	18		/* Enable Power Management */
+ #define MSR_WE_LG	18		/* Wait State Enable */
+ #define MSR_TGPR_LG	17		/* TLB Update registers in use */
+@@ -69,11 +70,13 @@
+ #define MSR_SF		__MASK(MSR_SF_LG)	/* Enable 64 bit mode */
+ #define MSR_ISF		__MASK(MSR_ISF_LG)	/* Interrupt 64b mode valid on 630 */
+ #define MSR_HV 		__MASK(MSR_HV_LG)	/* Hypervisor state */
++#define MSR_S 		__MASK(MSR_S_LG)	/* Secure state */
+ #else
+ /* so tests for these bits fail on 32-bit */
+ #define MSR_SF		0
+ #define MSR_ISF		0
+ #define MSR_HV		0
++#define MSR_S		0
+ #endif
+ 
+ /*
+diff --git a/arch/powerpc/include/asm/svm.h b/arch/powerpc/include/asm/svm.h
+new file mode 100644
+index 000000000000..6f89e5d6d37f
+--- /dev/null
++++ b/arch/powerpc/include/asm/svm.h
+@@ -0,0 +1,22 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++/*
++ * SVM helper functions
++ *
++ * Copyright 2018 Anshuman Khandual, IBM Corporation.
++ */
++
++#ifndef _ASM_POWERPC_SVM_H
++#define _ASM_POWERPC_SVM_H
++
++#ifdef CONFIG_PPC_SVM
++static bool is_svm_platform(void)
++{
++	return mfmsr() & MSR_S;
++}
++#else
++static inline bool is_svm_platform(void)
++{
++	return false;
++}
++#endif
++#endif /* _ASM_POWERPC_SVM_H */
 
