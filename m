@@ -2,99 +2,91 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5142C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 19:18:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5700C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 19:25:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C87721477
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 19:18:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C87721477
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 6184A21523
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 19:25:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6184A21523
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727443AbeHXWys (ORCPT
+        id S1727095AbeHXXBu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 18:54:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38066 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726808AbeHXWys (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 18:54:48 -0400
-Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7BC3FF4F;
-        Fri, 24 Aug 2018 19:18:51 +0000 (UTC)
-Date:   Fri, 24 Aug 2018 21:18:48 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     "Matthias B." <matthias@winterdrache.de>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: How to report kernel panic in 4.4.x
-Message-ID: <20180824191848.GB15489@kroah.com>
-References: <20180824142408.6340d052@ninja>
- <20180824125950.GA29673@kroah.com>
- <20180824154344.1c53a68c@ninja>
- <20180824141254.GB31555@kroah.com>
- <20180824163338.4bd9db8f@ninja>
- <20180824155545.GA6066@kroah.com>
- <20180824181919.36e6b3c7@ninja>
+        Fri, 24 Aug 2018 19:01:50 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59906 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726645AbeHXXBt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 19:01:49 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 97273402332F;
+        Fri, 24 Aug 2018 19:25:52 +0000 (UTC)
+Received: from localhost.localdomain.com (ovpn-122-125.rdu2.redhat.com [10.10.122.125])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 46B812026D6D;
+        Fri, 24 Aug 2018 19:25:52 +0000 (UTC)
+From:   jglisse@redhat.com
+To:     linux-mm@kvack.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>
+Subject: [PATCH 1/7] mm/hmm: fix utf8 ...
+Date:   Fri, 24 Aug 2018 15:25:43 -0400
+Message-Id: <20180824192549.30844-2-jglisse@redhat.com>
+In-Reply-To: <20180824192549.30844-1-jglisse@redhat.com>
+References: <20180824192549.30844-1-jglisse@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180824181919.36e6b3c7@ninja>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 24 Aug 2018 19:25:52 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 24 Aug 2018 19:25:52 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jglisse@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 24, 2018 at 06:19:19PM +0200, Matthias B. wrote:
-> Bisect identified the problem. It's the attached patch. I applied it to
-> 4.4.152 with patch -Rp1 and I'm running the resulting kernel now.
-> 
-> MSB
-> 
-> -- 
-> For every idiot-proof system there exists at least one system-proof
-> idiot.
-> 
+From: Jérôme Glisse <jglisse@redhat.com>
 
-> >From 02ff2769edbce2261e981effbc3c4b98fae4faf0 Mon Sep 17 00:00:00 2001
-> From: Andi Kleen <ak@linux.intel.com>
-> Date: Tue, 7 Aug 2018 15:09:39 -0700
-> Subject: [PATCH] x86/mm/pat: Make set_memory_np() L1TF safe
-> 
-> commit 958f79b9ee55dfaf00c8106ed1c22a2919e0028b upstream
-> 
-> set_memory_np() is used to mark kernel mappings not present, but it has
-> it's own open coded mechanism which does not have the L1TF protection of
-> inverting the address bits.
-> 
-> Replace the open coded PTE manipulation with the L1TF protecting low level
-> PTE routines.
-> 
-> Passes the CPA self test.
-> 
-> Signed-off-by: Andi Kleen <ak@linux.intel.com>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> [ dwmw2: Pull in pud_mkhuge() from commit a00cc7d9dd, and pfn_pud() ]
-> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-> [groeck: port to 4.4]
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->  arch/x86/include/asm/pgtable.h | 27 +++++++++++++++++++++++++++
->  arch/x86/mm/pageattr.c         |  8 ++++----
->  2 files changed, 31 insertions(+), 4 deletions(-)
+Somehow utf=8 must have been broken.
 
-<snip>
+Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+---
+ include/linux/hmm.h | 2 +-
+ mm/hmm.c            | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Guenter, another report of this patch causing an issue.  Any ideas?  I
-am away from test systems this weekend, but can push out patches if
-needed.
+diff --git a/include/linux/hmm.h b/include/linux/hmm.h
+index 4c92e3ba3e16..1ff4bae7ada7 100644
+--- a/include/linux/hmm.h
++++ b/include/linux/hmm.h
+@@ -11,7 +11,7 @@
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+  *
+- * Authors: JÃ©rÃ´me Glisse <jglisse@redhat.com>
++ * Authors: Jérôme Glisse <jglisse@redhat.com>
+  */
+ /*
+  * Heterogeneous Memory Management (HMM)
+diff --git a/mm/hmm.c b/mm/hmm.c
+index c968e49f7a0c..9a068a1da487 100644
+--- a/mm/hmm.c
++++ b/mm/hmm.c
+@@ -11,7 +11,7 @@
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+  *
+- * Authors: JÃ©rÃ´me Glisse <jglisse@redhat.com>
++ * Authors: Jérôme Glisse <jglisse@redhat.com>
+  */
+ /*
+  * Refer to include/linux/hmm.h for information about heterogeneous memory
+-- 
+2.17.1
 
-thanks,
-
-greg k-h
