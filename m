@@ -1,124 +1,83 @@
 Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.2 required=3.0 tests=CHARSET_FARAWAY_HEADER,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 002DAC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 00:31:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A400BC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 00:32:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6ABC6208E8
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 00:31:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6ABC6208E8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 2FFA121557
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 00:32:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FFA121557
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726649AbeHXEDP (ORCPT
+        id S1726746AbeHXEEe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 00:03:15 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:55360 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725266AbeHXEDP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 00:03:15 -0400
-Received: from fsav404.sakura.ne.jp (fsav404.sakura.ne.jp [133.242.250.103])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w7O0V5VS019534;
-        Fri, 24 Aug 2018 09:31:05 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav404.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav404.sakura.ne.jp);
- Fri, 24 Aug 2018 09:31:05 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav404.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w7O0V5sS019530;
-        Fri, 24 Aug 2018 09:31:05 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: (from i-love@localhost)
-        by www262.sakura.ne.jp (8.15.2/8.15.2/Submit) id w7O0V5hT019529;
-        Fri, 24 Aug 2018 09:31:05 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Message-Id: <201808240031.w7O0V5hT019529@www262.sakura.ne.jp>
-X-Authentication-Warning: www262.sakura.ne.jp: i-love set sender to penguin-kernel@i-love.sakura.ne.jp using -f
-Subject: Re: [PATCH] =?ISO-2022-JP?B?bW0scGFnZV9hbGxvYzogUEZfV1FfV09SS0VSIHRocmVh?=
- =?ISO-2022-JP?B?ZHMgbXVzdCBzbGVlcCBhdCBzaG91bGRfcmVjbGFpbV9yZXRyeSgpLg==?=
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To:     David Rientjes <rientjes@google.com>
-Cc:     Michal Hocko <mhocko@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Roman Gushchin <guro@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        Fri, 24 Aug 2018 00:04:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35096 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725266AbeHXEEe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 00:04:34 -0400
+Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 79D29208E8;
+        Fri, 24 Aug 2018 00:32:25 +0000 (UTC)
+Date:   Thu, 23 Aug 2018 20:32:23 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Tiejun Chen <tiejunc@vmware.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Carsten Emde <C.Emde@osadl.org>,
+        John Kacur <jkacur@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Julia Cartwright <julia@ni.com>,
+        Daniel Wagner <daniel.wagner@siemens.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Subject: Re: [ANNOUNCE] 4.14.63-rt40
+Message-ID: <20180823203223.11dee5e8@vmware.local.home>
+In-Reply-To: <CY1PR0501MB14666E51F4D066F2E0C5208AC5370@CY1PR0501MB1466.namprd05.prod.outlook.com>
+References: <20180822141458.0b6b6af7@gandalf.local.home>
+        <CY1PR0501MB14666E51F4D066F2E0C5208AC5370@CY1PR0501MB1466.namprd05.prod.outlook.com>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Date:   Fri, 24 Aug 2018 09:31:05 +0900
-References: <cb2d635c-c14d-c2cc-868a-d4c447364f0d@i-love.sakura.ne.jp> <alpine.DEB.2.21.1808231544001.150774@chino.kir.corp.google.com>
-In-Reply-To: <alpine.DEB.2.21.1808231544001.150774@chino.kir.corp.google.com>
-Content-Type: text/plain; charset="ISO-2022-JP"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-David Rientjes wrote:
-> On Fri, 24 Aug 2018, Tetsuo Handa wrote:
+On Thu, 23 Aug 2018 09:31:09 +0000
+Tiejun Chen <tiejunc@vmware.com> wrote:
+
+> Steven,
 > 
-> > > For those of us who are tracking CVE-2016-10723 which has peristently been 
-> > > labeled as "disputed" and with no clear indication of what patches address 
-> > > it, I am assuming that commit 9bfe5ded054b ("mm, oom: remove sleep from 
-> > > under oom_lock") and this patch are the intended mitigations?
-> > > 
-> > > A list of SHA1s for merged fixed and links to proposed patches to address 
-> > > this issue would be appreciated.
-> > > 
-> > 
-> > Commit 9bfe5ded054b ("mm, oom: remove sleep from under oom_lock") is a
-> > mitigation for CVE-2016-10723.
-> > 
-> > "[PATCH] mm,page_alloc: PF_WQ_WORKER threads must sleep at
-> > should_reclaim_retry()." is independent from CVE-2016-10723.
-> > 
+> commit 7f11a591bbdb111792298144c3476506aa7f1ca8 (HEAD -> v4.14.63-rt40-rebase, tag: v4.14.63-rt40-rebase, origin/v4.14-rt-rebase)
+> Author: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> Date:   Wed May 16 09:33:00 2018 -0400
 > 
-> Thanks, Tetsuo.  Should commit af5679fbc669 ("mm, oom: remove oom_lock 
-> from oom_reaper") also be added to the list for CVE-2016-10723?
+>     Linux 4.14.63-rt40 REBASE
+> 
+> diff --git a/localversion-rt b/localversion-rt
+> index 90290c642ed5..a3b2408c1da6 100644
+> --- a/localversion-rt
+> +++ b/localversion-rt
+> @@ -1 +1 @@
+> --rt29
+> +-rt37
+>     ^
+> Isn't it supposed to be rt40?
 > 
 
-Commit af5679fbc669f31f ("mm, oom: remove oom_lock from oom_reaper")
-negated one of the two rationales for commit 9bfe5ded054b8e28 ("mm, oom:
-remove sleep from under oom_lock"). If we didn't apply af5679fbc669f31f,
-we could make sure that CPU resource is given to the owner of oom_lock
-by replacing mutex_trylock() in __alloc_pages_may_oom() with mutex_lock().
-But now that af5679fbc669f31f was already applied, we don't know how to
-give CPU resource to the OOM reaper / exit_mmap(). We might arrive at
-direct OOM reaping but we haven't reached there...
+Ug, the last step of creating the rebase is to manually update the
+localversion-rt file. Which I did. But I forgot to add "-a" to the 
+"git commit --amend" part. Thanks for pointing this out!
 
-For now, I don't think we need to add af5679fbc669f31f to the list for
-CVE-2016-10723, for af5679fbc669f31f might cause premature next OOM victim
-selection (especially with CONFIG_PREEMPT=y kernels) due to
+Luckily, this is the rebase branch, where I can just rebase it ;-)
 
-   __alloc_pages_may_oom():               oom_reap_task():
-
-     mutex_trylock(&oom_lock) succeeds.
-     get_page_from_freelist() fails.
-     Preempted to other process.
-                                            oom_reap_task_mm() succeeds.
-                                            Sets MMF_OOM_SKIP.
-     Returned from preemption.
-     Finds that MMF_OOM_SKIP was already set.
-     Selects next OOM victim and kills it.
-     mutex_unlock(&oom_lock) is called.
-
-race window like described as
-
-    Tetsuo was arguing that at least MMF_OOM_SKIP should be set under the lock
-    to prevent from races when the page allocator didn't manage to get the
-    freed (reaped) memory in __alloc_pages_may_oom but it sees the flag later
-    on and move on to another victim.  Although this is possible in principle
-    let's wait for it to actually happen in real life before we make the
-    locking more complex again.
-
-in that commit.
+-- Steve
