@@ -2,217 +2,120 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36307C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 07:57:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40371C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 07:58:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF01A21581
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 07:57:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="z02xthgD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF01A21581
+	by mail.kernel.org (Postfix) with ESMTP id EF5E62157F
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 07:58:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF5E62157F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728020AbeHXLav (ORCPT
+        id S1727871AbeHXLbq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 07:30:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58144 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727444AbeHXLav (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 07:30:51 -0400
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B8C22157F;
-        Fri, 24 Aug 2018 07:57:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535097443;
-        bh=p54TBY9+sjRzRX7kw2ugqNKXMV2OA5tqoUAvBJrDqf8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=z02xthgD0SNIyL7gxnrzd14fk/9Gu678Cu37gwokNFvbIqts6Q0sfQvaX+dj+4/oa
-         FDLcIhtEd/h3B+NYnm+kIk9C1/W7E37Kz/TpueDOJTW86DlewDJV2zIaG4IxQnMBCy
-         acSH+i9P0VAcKbyZC6QSCES6lWdQLlACuBK3B1qg=
-Date:   Fri, 24 Aug 2018 16:57:19 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Michael Rodin <michael@rodin.online>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [BUGFIX PATCH -tip] kprobes/x86: Fix to copy RIP relative
- instruction correctly
-Message-Id: <20180824165719.77d1d624d629ad3907dbb55c@kernel.org>
-In-Reply-To: <20180823214109.5b8f5756@vmware.local.home>
-References: <153504457253.22602.1314289671019919596.stgit@devbox>
-        <20180823214109.5b8f5756@vmware.local.home>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Fri, 24 Aug 2018 07:31:46 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54614 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726899AbeHXLbp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 07:31:45 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 13344ADF3;
+        Fri, 24 Aug 2018 07:58:16 +0000 (UTC)
+Date:   Fri, 24 Aug 2018 09:58:15 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, mike.kravetz@oracle.com,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Subject: Re: [PATCH] mm/hugetlb: filter out hugetlb pages if HUGEPAGE
+ migration is not supported.
+Message-ID: <20180824075815.GA29735@dhcp22.suse.cz>
+References: <20180824063314.21981-1-aneesh.kumar@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180824063314.21981-1-aneesh.kumar@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 23 Aug 2018 21:41:09 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Fri 24-08-18 12:03:14, Aneesh Kumar K.V wrote:
+> When scanning for movable pages, filter out Hugetlb pages if hugepage migration
+> is not supported. Without this we hit infinte loop in __offline pages where we
+> do
+> 	pfn = scan_movable_pages(start_pfn, end_pfn);
+> 	if (pfn) { /* We have movable pages */
+> 		ret = do_migrate_range(pfn, end_pfn);
+> 		goto repeat;
+> 	}
+> 
+> We do support hugetlb migration ony if the hugetlb pages are at pmd level. Here
+> we just check for Kernel config. The gigantic page size check is done in
+> page_huge_active.
 
-> On Fri, 24 Aug 2018 02:16:12 +0900
-> Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> 
-> > Dump of assembler code from 0xffffffffa000207a to 0xffffffffa00020ea:
-> > 	54	push   %rsp
-> > ...
-> > 	48 83 c4 08	add    $0x8,%rsp
-> > 	9d	popfq
-> > 	48 89 f0	mov    %rsi,%rax
-> > 	8b 35 82 7d db e2	mov    -0x1d24827e(%rip),%esi
-> >         # 0xffffffff82db9e67 <nr_cpu_ids+3>
-> > 
-> > As it shows, the 2nd mov accesses *(nr_cpu_ids+3) instead of
-> > *nr_cpu_ids. This leads a kernel freeze because cpumask_next()
-> > always returns 0 and for_each_cpu() never ended.
-> 
-> Ouch! Nice catch.
-> 
-> > 
-> > Fixing this by adding len correctly to real RIP address while
-> > copying.
-> > 
-> > Fixes: 63fef14fc98a ("kprobes/x86: Make insn buffer always ROX and use text_poke()")
-> > Reported-by: Michael Rodin <michael@rodin.online>
-> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> > Cc: stable@vger.kernel.org
-> > ---
-> >  arch/x86/kernel/kprobes/opt.c |    3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/x86/kernel/kprobes/opt.c b/arch/x86/kernel/kprobes/opt.c
-> > index eaf02f2e7300..e92672b8b490 100644
-> > --- a/arch/x86/kernel/kprobes/opt.c
-> > +++ b/arch/x86/kernel/kprobes/opt.c
-> > @@ -189,7 +189,8 @@ static int copy_optimized_instructions(u8 *dest, u8 *src, u8 *real)
-> >  	int len = 0, ret;
-> >  
-> >  	while (len < RELATIVEJUMP_SIZE) {
-> > -		ret = __copy_instruction(dest + len, src + len, real, &insn);
-> > +		ret = __copy_instruction(dest + len, src + len, real + len,
-> > +			&insn);
-> >  		if (!ret || !can_boost(&insn, src + len))
-> >  			return -EINVAL;
-> >  		len += ret;
-> 
-> Looking at the change that broke this we have:
-> 
-> > -static int copy_optimized_instructions(u8 *dest, u8 *src)
-> > +static int copy_optimized_instructions(u8 *dest, u8 *src, u8 *real)
-> >  {
-> >         struct insn insn;
-> >         int len = 0, ret;
-> >  
-> >         while (len < RELATIVEJUMP_SIZE) {
-> > -               ret = __copy_instruction(dest + len, src + len, &insn);
-> > +               ret = __copy_instruction(dest + len, src + len, real, &insn);
-> 
-> Where "real" was added as a parameter to __copy_instruction. Note that
-> we pass in "dest + len" but not "real + len" as you patch fixes.
-> __copy_instruction was changed by the bad commit with:
-> 
-> > -int __copy_instruction(u8 *dest, u8 *src, struct insn *insn)
-> > +int __copy_instruction(u8 *dest, u8 *src, u8 *real, struct insn *insn)
-> >  {
-> >         kprobe_opcode_t buf[MAX_INSN_SIZE];
-> >         unsigned long recovered_insn =
-> > @@ -387,11 +388,11 @@ int __copy_instruction(u8 *dest, u8 *src, struct insn *insn)
-> >                  * have given.
-> >                  */
-> >                 newdisp = (u8 *) src + (s64) insn->displacement.value
-> > -                         - (u8 *) dest;
-> > +                         - (u8 *) real;
-> 
-> "real" replaces "dest", which was the first parameter to __copy_instruction.
-> 
-> >                         return 0;
-> 
-> And:
-> 
-> >  int arch_prepare_optimized_kprobe(struct optimized_kprobe *op,
-> >                                   struct kprobe *__unused)
-> >  {
-> > -       u8 *buf;
-> > -       int ret;
-> > +       u8 *buf = NULL, *slot;
-> > +       int ret, len;
-> >         long rel;
-> >  
-> >         if (!can_optimize((unsigned long)op->kp.addr))
-> >                 return -EILSEQ;
-> >  
-> > -       op->optinsn.insn = get_optinsn_slot();
-> > -       if (!op->optinsn.insn)
-> > +       buf = kzalloc(MAX_OPTINSN_SIZE, GFP_KERNEL);
-> > +       if (!buf)
-> >                 return -ENOMEM;
-> >  
-> > +       op->optinsn.insn = slot = get_optinsn_slot();
-> > +       if (!slot) {
-> > +               ret = -ENOMEM;
-> > +               goto out;
-> > +       }
-> > +
-> >         /*
-> >          * Verify if the address gap is in 2GB range, because this uses
-> >          * a relative jump.
-> >          */
-> > -       rel = (long)op->optinsn.insn - (long)op->kp.addr + RELATIVEJUMP_SIZE;
-> > +       rel = (long)slot - (long)op->kp.addr + RELATIVEJUMP_SIZE;
-> >         if (abs(rel) > 0x7fffffff) {
-> > -               __arch_remove_optimized_kprobe(op, 0);
-> > -               return -ERANGE;
-> > +               ret = -ERANGE;
-> > +               goto err;
-> >         }
-> >  
-> > -       buf = (u8 *)op->optinsn.insn;
-> 
-> "slot" is equivalent to the old "buf".
-> 
-> > -       set_memory_rw((unsigned long)buf & PAGE_MASK, 1);
-> > +       /* Copy arch-dep-instance from template */
-> > +       memcpy(buf, &optprobe_template_entry, TMPL_END_IDX);
-> >  
-> >         /* Copy instructions into the out-of-line buffer */
-> > -       ret = copy_optimized_instructions(buf + TMPL_END_IDX, op->kp.addr);
-> > -       if (ret < 0) {
-> > -               __arch_remove_optimized_kprobe(op, 0);
-> > -               return ret;
-> > -       }
-> > +       ret = copy_optimized_instructions(buf + TMPL_END_IDX, op->kp.addr,
-> > +                                         slot + TMPL_END_IDX);
-> 
-> We pass in "real" as "slot + TMPL_END_IDX" and "dest" as "buf +
-> TMPL_END_IDX", thus to make it be equivalent to the code before this
-> commit, "real" should have "+ len" added to it in order to be
-> equivalent to what was there before.
+Well, this is a bit misleading. I would say that
 
-Right! The broken commit splits trampoline buffer into 
-"temporary" destination buffer and "real" trampoline buffer,
-and use the "real" address for RIP-relative adjustment.
-However, I forgot to introduce update the "real" address
-in the copying loop.
+Fix this by checking hugepage_migration_supported both in has_unmovable_pages
+which is the primary backoff mechanism for page offlining and for
+consistency reasons also into scan_movable_pages because it doesn't make
+any sense to return a pfn to non-migrateable huge page.
 
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> Reported-by: Haren Myneni <haren@linux.vnet.ibm.com>
+> CC: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+
+I would add
+Fixes: 72b39cfc4d75 ("mm, memory_hotplug: do not fail offlining too early")
+
+Not because the bug has been introduced by that commit but rather
+because the issue would be latent before that commit.
+
+My Acked-by still holds.
+
+> ---
+>  mm/memory_hotplug.c | 3 ++-
+>  mm/page_alloc.c     | 4 ++++
+>  2 files changed, 6 insertions(+), 1 deletion(-)
 > 
-> That said...
-> 
-> Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
-Thanks!
-
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index 9eea6e809a4e..38d94b703e9d 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -1333,7 +1333,8 @@ static unsigned long scan_movable_pages(unsigned long start, unsigned long end)
+>  			if (__PageMovable(page))
+>  				return pfn;
+>  			if (PageHuge(page)) {
+> -				if (page_huge_active(page))
+> +				if (hugepage_migration_supported(page_hstate(page)) &&
+> +				    page_huge_active(page))
+>  					return pfn;
+>  				else
+>  					pfn = round_up(pfn + 1,
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index c677c1506d73..b8d91f59b836 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -7709,6 +7709,10 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
+>  		 * handle each tail page individually in migration.
+>  		 */
+>  		if (PageHuge(page)) {
+> +
+> +			if (!hugepage_migration_supported(page_hstate(page)))
+> +				goto unmovable;
+> +
+>  			iter = round_up(iter + 1, 1<<compound_order(page)) - 1;
+>  			continue;
+>  		}
+> -- 
+> 2.17.1
 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Michal Hocko
+SUSE Labs
