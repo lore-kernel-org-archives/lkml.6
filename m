@@ -3,84 +3,113 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C43DC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 11:02:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47336C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 11:06:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B389208D8
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 11:02:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B389208D8
+	by mail.kernel.org (Postfix) with ESMTP id E483D208E8
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 11:06:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E483D208E8
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727086AbeHXOgt (ORCPT
+        id S1727051AbeHXOkp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 10:36:49 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57846 "EHLO mx1.redhat.com"
+        Fri, 24 Aug 2018 10:40:45 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60752 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726522AbeHXOgt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 10:36:49 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        id S1726522AbeHXOkp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 10:40:45 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 32DA840216E8;
-        Fri, 24 Aug 2018 11:02:40 +0000 (UTC)
-Received: from redhat.com (ovpn-120-77.rdu2.redhat.com [10.10.120.77])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 08DFA1006EB7;
-        Fri, 24 Aug 2018 11:02:36 +0000 (UTC)
-Date:   Fri, 24 Aug 2018 14:02:36 +0300
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        peterx@redhat.com
-Subject: Re: [PATCH net] vhost: correctly check the iova range when waking
- virtqueue
-Message-ID: <20180824140231-mutt-send-email-mst@kernel.org>
-References: <20180824085313.21798-1-jasowang@redhat.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 2A16B402211D;
+        Fri, 24 Aug 2018 11:06:35 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 85746B27BA;
+        Fri, 24 Aug 2018 11:06:33 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w7OB6XVs028128;
+        Fri, 24 Aug 2018 07:06:33 -0400
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w7OB6WVT028124;
+        Fri, 24 Aug 2018 07:06:33 -0400
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Fri, 24 Aug 2018 07:06:32 -0400 (EDT)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+cc:     "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, Mike Snitzer <msnitzer@redhat.com>,
+        dm-devel@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: Deadlock when using crypto API for block devices
+In-Reply-To: <20180824021010.hfar7gasp34ddrib@gondor.apana.org.au>
+Message-ID: <alpine.LRH.2.02.1808240659320.27014@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.1808231621220.8560@file01.intranet.prod.int.rdu2.redhat.com> <20180824021010.hfar7gasp34ddrib@gondor.apana.org.au>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180824085313.21798-1-jasowang@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 24 Aug 2018 11:02:40 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 24 Aug 2018 11:02:40 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 24 Aug 2018 11:06:35 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 24 Aug 2018 11:06:35 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 24, 2018 at 04:53:13PM +0800, Jason Wang wrote:
-> We don't wakeup the virtqueue if the first byte of pending iova range
-> is the last byte of the range we just got updated. This will lead a
-> virtqueue to wait for IOTLB updating forever. Fixing by correct the
-> check and wake up the virtqueue in this case.
-> 
-> Fixes: 6b1e6cc7855b ("vhost: new device IOTLB API")
-> Reported-by: Peter Xu <peterx@redhat.com>
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
 
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
 
-> ---
-> The patch is needed for -stable.
-> ---
->  drivers/vhost/vhost.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On Fri, 24 Aug 2018, Herbert Xu wrote:
+
+> On Thu, Aug 23, 2018 at 04:39:23PM -0400, Mikulas Patocka wrote:
+> >
+> > 1. don't set CRYPTO_TFM_REQ_MAY_SLEEP in dm-crypt
+> > =================================================
+> > If we don't set it, dm-crypt will use GFP_ATOMIC and GFP_ATOMIC may fail. 
+> > The function init_crypt in xts.c handles the failure gracefully - but the 
+> > question is - does the whole crypto code handle allocation failures 
+> > gracefully? If not and if it returns -ENOMEM somewhere, it would result in 
+> > I/O errors and data corruption.
 > 
-> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-> index 96c1d8400822..b13c6b4b2c66 100644
-> --- a/drivers/vhost/vhost.c
-> +++ b/drivers/vhost/vhost.c
-> @@ -952,7 +952,7 @@ static void vhost_iotlb_notify_vq(struct vhost_dev *d,
->  	list_for_each_entry_safe(node, n, &d->pending_list, node) {
->  		struct vhost_iotlb_msg *vq_msg = &node->msg.iotlb;
->  		if (msg->iova <= vq_msg->iova &&
-> -		    msg->iova + msg->size - 1 > vq_msg->iova &&
-> +		    msg->iova + msg->size - 1 >= vq_msg->iova &&
->  		    vq_msg->type == VHOST_IOTLB_MISS) {
->  			vhost_poll_queue(&node->vq->poll);
->  			list_del(&node->node);
+> It is safe to use GFP_ATOMIC.  First of the allocation is really
+> small (less than a page) so it will only fail when the system is
+> almost completely out of memory.
+
+GFP_ATOMIC is used by networking code. If the system is in a situation 
+when packets arrive faster than the swapper is able to swap, it will 
+happen. It does happen during netwoking surge and corrupting the 
+filesystem in tris situation is not acceptable.
+
+> Even when it does fail the crypto
+> operation will still succeed, albeit it will process things at a
+> smaller granularity so the performance will degrade.
+
+A quick search through the crypto code shows that ahash_save_req and 
+seqiv_aead_encrypt return -ENOMEM.
+
+Will you fix them?
+
+> The sleeping part of that flag is also not an issue because it
+> only kicks in once per page.  As this is going to be less than
+> or equal to a page it shouldn't matter.
+>  
+> > 3. introduce new flag CRYPTO_TFM_REQ_MAY_SLEEP_NOIO
+> > ===================================================
+> > Would you like to introduce it?
+> 
+> For now I don't think this is necessary given that this allocation
+> and similar ones in lrw and other places in the crypto API are just
+> performance enhancements and unlikely to fail except in very dire
+> situations.
+> 
+> But if new problems arise I'm certainly not opposed to this.
+> 
+> Thanks,
 > -- 
-> 2.17.1
+> Email: Herbert Xu <herbert@gondor.apana.org.au>
+> Home Page: http://gondor.apana.org.au/~herbert/
+> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+
+Mikulas
