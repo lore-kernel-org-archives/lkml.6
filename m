@@ -2,148 +2,102 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C293CC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 11:32:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B281C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 11:33:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E6242159F
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 11:32:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E6242159F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C870621581
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 11:33:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HsmqB+sK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C870621581
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727516AbeHXPHH (ORCPT
+        id S1727595AbeHXPHN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 11:07:07 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33990 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726513AbeHXPHH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 11:07:07 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7CE0BB03B;
-        Fri, 24 Aug 2018 11:32:50 +0000 (UTC)
-Date:   Fri, 24 Aug 2018 13:32:48 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Sudeep Dutt <sudeep.dutt@intel.com>,
-        Ashutosh Dixit <ashutosh.dixit@intel.com>,
-        Dimitri Sivanich <sivanich@sgi.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Felix Kuehling <felix.kuehling@amd.com>, kvm@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, linux-rdma@vger.kernel.org,
-        xen-devel@lists.xenproject.org,
-        David Rientjes <rientjes@google.com>,
-        Leon Romanovsky <leonro@mellanox.com>
-Subject: Re: [PATCH] mm, oom: distinguish blockable mode for mmu notifiers
-Message-ID: <20180824113248.GH29735@dhcp22.suse.cz>
-References: <20180716115058.5559-1-mhocko@kernel.org>
- <8cbfb09f-0c5a-8d43-1f5e-f3ff7612e289@I-love.SAKURA.ne.jp>
+        Fri, 24 Aug 2018 11:07:13 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:39414 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726513AbeHXPHN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 11:07:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=LLUAsvFjVQOLC+/BSMcQKo/dW4L9MjA8mSmGzF68crc=; b=HsmqB+sKvF50iqyNZ34dbENZ2
+        M+nSBAD/vP7bdyTaB34a4rjmKp+gOg/H4U2cwUGlG+xxeibMNHoYzBMPGM7goDSwMHBdbP55RmmEZ
+        XC6kCDjbbWtWL78ThRaDlxW+QA6Idx7FvOct50ZmlqsO08KJTA7sgFILlEYHSKIhPoBTycInNfWJU
+        4h3qd71wVd7iHGFONlOQ9XNgr+oOLiVWqLRRWhymkv/5QhBCeI5SkxnMf0mmDfZsng0Qj8R/8zRUE
+        U7PgIzS+Yv8D0ijYEbajF6R4wHZSR9GSmdHgM5GemCeFDCTSAHFvV7ef+jjGjM1YRUIa7dkwKBHSw
+        vZ7nm0gfg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ftAKA-0000eb-VX; Fri, 24 Aug 2018 11:32:19 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 0B8A82024D44B; Fri, 24 Aug 2018 13:32:15 +0200 (CEST)
+Date:   Fri, 24 Aug 2018 13:32:14 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Benjamin Herrenschmidt <benh@au1.ibm.com>,
+        Nick Piggin <npiggin@gmail.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Rik van Riel <riel@surriel.com>,
+        Jann Horn <jannh@google.com>,
+        Adin Scannell <ascannell@google.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        David Miller <davem@davemloft.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [PATCH 3/4] mm/tlb, x86/mm: Support invalidating TLB caches for
+ RCU_TABLE_FREE
+Message-ID: <20180824113214.GK24142@hirez.programming.kicks-ass.net>
+References: <20180822153012.173508681@infradead.org>
+ <20180822154046.823850812@infradead.org>
+ <20180822155527.GF24124@hirez.programming.kicks-ass.net>
+ <20180823134525.5f12b0d3@roar.ozlabs.ibm.com>
+ <CA+55aFxneZTFxxxAjLZmj92VUJg6z7hERxJ2cHoth-GC0RuELw@mail.gmail.com>
+ <776104d4c8e4fc680004d69e3a4c2594b638b6d1.camel@au1.ibm.com>
+ <CA+55aFzM77G9-Q6LboPLJ=5gHma66ZQKiMGCMqXoKABirdF98w@mail.gmail.com>
+ <20180823133958.GA1496@brain-police>
+ <20180824084717.GK24124@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8cbfb09f-0c5a-8d43-1f5e-f3ff7612e289@I-love.SAKURA.ne.jp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180824084717.GK24124@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 24-08-18 19:54:19, Tetsuo Handa wrote:
-> Two more worries for this patch.
+On Fri, Aug 24, 2018 at 10:47:17AM +0200, Peter Zijlstra wrote:
+> On Thu, Aug 23, 2018 at 02:39:59PM +0100, Will Deacon wrote:
+> > The only problem with this approach is that we've lost track of the granule
+> > size by the point we get to the tlb_flush(), so we can't adjust the stride of
+> > the TLB invalidations for huge mappings, which actually works nicely in the
+> > synchronous case (e.g. we perform a single invalidation for a 2MB mapping,
+> > rather than iterating over it at a 4k granule).
+> > 
+> > One thing we could do is switch to synchronous mode if we detect a change in
+> > granule (i.e. treat it like a batch failure).
 > 
-> 
-> 
-> > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-> > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-> > @@ -178,12 +178,18 @@ void amdgpu_mn_unlock(struct amdgpu_mn *mn)
-> >   *
-> >   * @amn: our notifier
-> >   */
-> > -static void amdgpu_mn_read_lock(struct amdgpu_mn *amn)
-> > +static int amdgpu_mn_read_lock(struct amdgpu_mn *amn, bool blockable)
-> >  {
-> > -       mutex_lock(&amn->read_lock);
-> > +       if (blockable)
-> > +               mutex_lock(&amn->read_lock);
-> > +       else if (!mutex_trylock(&amn->read_lock))
-> > +               return -EAGAIN;
-> > +
-> >         if (atomic_inc_return(&amn->recursion) == 1)
-> >                 down_read_non_owner(&amn->lock);
-> 
-> Why don't we need to use trylock here if blockable == false ?
-> Want comment why it is safe to use blocking lock here.
+> We could use tlb_start_vma() to track that, I think. Shouldn't be too
+> hard.
 
-Hmm, I am pretty sure I have checked the code but it was quite confusing
-so I might have missed something. Double checking now, it seems that
-this read_lock is not used anywhere else and it is not _the_ lock we are
-interested about. It is the amn->lock (amdgpu_mn_lock) which matters as
-it is taken in exclusive mode for expensive operations.
+Hurm.. look at commit:
 
-Is that correct Christian? If this is correct then we need to update the
-locking here. I am struggling to grasp the ref counting part. Why cannot
-all readers simply take the lock rather than rely on somebody else to
-take it? 1ed3d2567c800 didn't really help me to understand the locking
-scheme here so any help would be appreciated.
+  e77b0852b551 ("mm/mmu_gather: track page size with mmu gather and force flush if page size change")
 
-I am wondering why we cannot do
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-index e55508b39496..93034178673d 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-@@ -180,14 +180,11 @@ void amdgpu_mn_unlock(struct amdgpu_mn *mn)
-  */
- static int amdgpu_mn_read_lock(struct amdgpu_mn *amn, bool blockable)
- {
--	if (blockable)
--		mutex_lock(&amn->read_lock);
--	else if (!mutex_trylock(&amn->read_lock))
--		return -EAGAIN;
--
--	if (atomic_inc_return(&amn->recursion) == 1)
--		down_read_non_owner(&amn->lock);
--	mutex_unlock(&amn->read_lock);
-+	if (!down_read_trylock(&amn->lock)) {
-+		if (!blockable)
-+			return -EAGAIN;
-+		down_read(amn->lock);
-+	}
- 
- 	return 0;
- }
-@@ -199,8 +196,7 @@ static int amdgpu_mn_read_lock(struct amdgpu_mn *amn, bool blockable)
-  */
- static void amdgpu_mn_read_unlock(struct amdgpu_mn *amn)
- {
--	if (atomic_dec_return(&amn->recursion) == 0)
--		up_read_non_owner(&amn->lock);
-+	up_read(&amn->lock);
- }
- 
- /**
-
--- 
-Michal Hocko
-SUSE Labs
+yuck yuck yuck. That needs fixing.
