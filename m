@@ -2,125 +2,164 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A022FC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 10:36:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73889C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 10:38:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53DF821567
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 10:36:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53DF821567
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 1409421567
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 10:38:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1409421567
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727055AbeHXOKk (ORCPT
+        id S1727159AbeHXOMU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 10:10:40 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53064 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726382AbeHXOKk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 10:10:40 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BFA84ADA9;
-        Fri, 24 Aug 2018 10:36:35 +0000 (UTC)
-Subject: Re: [PATCH] x86/speculation/l1tf: suggest what to do on systems with
- too much RAM
-From:   Vlastimil Babka <vbabka@suse.cz>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>, stable@vger.kernel.org
-References: <20180823134418.17008-1-vbabka@suse.cz>
- <20180823142812.7363-1-vbabka@suse.cz>
- <20180823192709.GT29735@dhcp22.suse.cz>
- <966571f0-9d7f-43dc-92c6-a10eec7a1254@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <d789bd84-a982-b8bb-ee24-6a7fcdf8221d@suse.cz>
-Date:   Fri, 24 Aug 2018 12:36:34 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 24 Aug 2018 10:12:20 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55340 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726382AbeHXOMU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 10:12:20 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 95E8F80D;
+        Fri, 24 Aug 2018 03:38:17 -0700 (PDT)
+Received: from red-moon (red-moon.emea.arm.com [10.4.13.120])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3A1FC3F5A0;
+        Fri, 24 Aug 2018 03:38:14 -0700 (PDT)
+Date:   Fri, 24 Aug 2018 11:38:28 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Lina Iyer <lina.iyer@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Juri Lelli <juri.lelli@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH v8 07/26] PM / Domains: Add genpd governor for CPUs
+Message-ID: <20180824103828.GA11491@red-moon>
+References: <20180620172226.15012-1-ulf.hansson@linaro.org>
+ <20180620172226.15012-8-ulf.hansson@linaro.org>
+ <3574880.GjmnMm1lMq@aspire.rjw.lan>
+ <10360149.m4MlxDWZY5@aspire.rjw.lan>
+ <CAPDyKFonHYSq32WxvB1x5PXissXZvraqazgU_ZyLR=tsyD9vAA@mail.gmail.com>
+ <CAJZ5v0hX3gC0J_z1tMu-KkNBRf3GuJ91tbFC2Z+0D1BnHkY8kg@mail.gmail.com>
+ <20180809153925.GA20329@red-moon>
+ <CAPDyKFp=AuqEPHKYgi-+DAhejQZSHixmtLORj_Rkn3m8fUoqJw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <966571f0-9d7f-43dc-92c6-a10eec7a1254@suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFp=AuqEPHKYgi-+DAhejQZSHixmtLORj_Rkn3m8fUoqJw@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/24/2018 09:32 AM, Vlastimil Babka wrote:
-> On 08/23/2018 09:27 PM, Michal Hocko wrote:
->> On Thu 23-08-18 16:28:12, Vlastimil Babka wrote:
->>> Two users have reported [1] that they have an "extremely unlikely" system
->>> with more than MAX_PA/2 memory and L1TF mitigation is not effective. Let's
->>> make the warning more helpful by suggesting the proper mem=X kernel boot param,
->>> a rough calculation of how much RAM can be lost (not precise if there's holes
->>> between MAX_PA/2 and max_pfn in the e820 map) and a link to the L1TF document
->>> to help decide if the mitigation is worth the unusable RAM.
->>>
->>> [1] https://bugzilla.suse.com/show_bug.cgi?id=1105536
->>>
->>> Suggested-by: Michal Hocko <mhocko@suse.com>
->>> Cc: stable@vger.kernel.org
->>> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
->>
->> I wouldn't bother with max_pfn-half_pa part but other than that this is
->> much more useful than the original message.
-> 
-> Right, and it causes build failures on some configs.
-> 
->> Acked-by: Michal Hocko <mhocko@suse.com>
-> 
-> Thanks! Here's a v2:
+On Fri, Aug 24, 2018 at 11:26:19AM +0200, Ulf Hansson wrote:
 
-Just realized that kvm printk's refer to the online version at
-https://www.kernel.org/doc/html/latest/admin-guide/l1tf.html
-which should be easier for the users of distro kernels, should I change
-that?
+[...]
+
+> > That's a good question and it maybe gives a path towards a solution.
+> >
+> > AFAICS the genPD governor only selects the idle state parameter that
+> > determines the idle state at, say, GenPD cpumask level it does not touch
+> > the CPUidle decision, that works on a subset of idle states (at cpu
+> > level).
+> >
+> > That's my understanding, which can be wrong so please correct me
+> > if that's the case because that's a bit confusing.
+> >
+> > Let's imagine that we flattened out the list of idle states and feed
+> > CPUidle with it (all of them - cpu, cluster, package, system - as it is
+> > in the mainline _now_). Then the GenPD governor can run-through the
+> > CPUidle selection and _demote_ the idle state if necessary since it
+> > understands that some CPUs in the GenPD will wake up shortly and break
+> > the target residency hyphothesis the CPUidle governor is expecting.
+> >
+> > The whole idea about this series is improving CPUidle decision when
+> > the target idle state is _shared_ among groups of cpus (again, please
+> > do correct me if I am wrong).
+> 
+> Absolutely, this is one of the main reason for the series!
+> 
+> >
+> > It is obvious that a GenPD governor must only demote - never promote a
+> > CPU idle state selection given that hierarchy implies more power
+> > savings and higher target residencies required.
+> 
+> Absolutely. I apologize if I have been using the word "promote"
+> wrongly, I realize it may be a bit confusing.
+> 
+> >
+> > This whole series would become more generic and won't depend on
+> > PSCI OSI at all - actually that would become a hierarchical
+> > CPUidle governor.
+> 
+> Well, to me we need a first user of the new infrastructure code in
+> genpd and PSCI is probably the easiest one to start with. An option
+> would be to start with an old ARM32 platform, but it seems a bit silly
+> to me.
+
+If the code can be structured as described above as a hierarchical
+(possibly optional through a Kconfig entry or sysfs tuning) idle
+decision you can apply it to _any_ PSCI based platform out there,
+provided that the new governor improves power savings.
+
+> In regards to OS-initiated mode vs platform coordinated mode, let's
+> discuss that in details in the other email thread instead.
+
+I think that's crystal clear by now that IMHO PSCI OS-initiated mode is
+a red-herring, it has nothing to do with this series, it is there just
+because QC firmware does not support PSCI platform coordinated suspend
+mode.
+
+You can apply the concept in this series to _any_ arch provided
+the power domains representation is correct (and again, I would sound
+like a broken record but the series must improve power savings over
+vanilla CPUidle menu governor).
+
+> > I still think that PSCI firmware and most certainly mwait() play the
+> > role the GenPD governor does since they can detect in FW/HW whether
+> > that's worthwhile to switch off a domain, the information is obviously
+> > there and the kernel would just add latency to the idle path in that
+> > case but let's gloss over this for the sake of this discussion.
+> 
+> Yep, let's discuss that separately.
+> 
+> That said, can I interpret your comments on the series up until this
+> change, that you seems rather happy with where the series is going?
+
+It is something we have been discussing with Daniel since generic idle
+was merged for Arm a long while back. I have nothing against describing
+idle states with power domains but it must improve idle decisions
+against the mainline. As I said before, runtime PM can also be used
+to get rid of CPU PM notifiers (because with power domains we KNOW
+what devices eg PMU are switched off on idle entry, we do not guess
+any longer; replacing CPU PM notifiers is challenging and can be
+tackled - if required - in a different series).
+
+Bottom line (talk is cheap, I know and apologise about that): this
+series (up until this change) adds complexity to the idle path and lots
+of code; if its usage is made optional and can be switched on on systems
+where it saves power that's fine by me as long as we keep PSCI
+OS-initiated idle states out of the equation, that's an orthogonal
+discussion as, I hope, I managed to convey.
+
+Thanks,
+Lorenzo
