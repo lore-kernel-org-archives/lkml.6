@@ -3,57 +3,62 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47336C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 11:06:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D8A6C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 11:10:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E483D208E8
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 11:06:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E483D208E8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id CD8122150F
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 11:10:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD8122150F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727051AbeHXOkp (ORCPT
+        id S1727120AbeHXOot (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 10:40:45 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60752 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726522AbeHXOkp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 10:40:45 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2A16B402211D;
-        Fri, 24 Aug 2018 11:06:35 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 85746B27BA;
-        Fri, 24 Aug 2018 11:06:33 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w7OB6XVs028128;
-        Fri, 24 Aug 2018 07:06:33 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w7OB6WVT028124;
-        Fri, 24 Aug 2018 07:06:33 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Fri, 24 Aug 2018 07:06:32 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-cc:     "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, Mike Snitzer <msnitzer@redhat.com>,
-        dm-devel@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: Deadlock when using crypto API for block devices
-In-Reply-To: <20180824021010.hfar7gasp34ddrib@gondor.apana.org.au>
-Message-ID: <alpine.LRH.2.02.1808240659320.27014@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.1808231621220.8560@file01.intranet.prod.int.rdu2.redhat.com> <20180824021010.hfar7gasp34ddrib@gondor.apana.org.au>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        Fri, 24 Aug 2018 10:44:49 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:6600 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726714AbeHXOot (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 10:44:49 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 41xdqb1g4yz9tvNY;
+        Fri, 24 Aug 2018 13:10:35 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id Xnxot4He7S4i; Fri, 24 Aug 2018 13:10:35 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 41xdqb19CPz9tvMl;
+        Fri, 24 Aug 2018 13:10:35 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 12BD58B8D8;
+        Fri, 24 Aug 2018 13:10:38 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id tsdZFJ5Pnso1; Fri, 24 Aug 2018 13:10:38 +0200 (CEST)
+Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id DF1CF8B74C;
+        Fri, 24 Aug 2018 13:10:37 +0200 (CEST)
+Subject: Re: [PATCH] drivers/video/fbdev: use ioremap_wc() instead of
+ __ioremap(_PAGE_NO_CACHE)
+To:     Segher Boessenkool <segher@kernel.crashing.org>
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-fbdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <0fe514f6e105a2c7f773679a14fce80216594a9b.1535103285.git.christophe.leroy@c-s.fr>
+ <20180824110548.GV24439@gate.crashing.org>
+From:   Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <78342b34-1a47-26a5-1636-0f7f64588c73@c-s.fr>
+Date:   Fri, 24 Aug 2018 13:10:37 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 24 Aug 2018 11:06:35 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 24 Aug 2018 11:06:35 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
+In-Reply-To: <20180824110548.GV24439@gate.crashing.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,55 +66,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On Fri, 24 Aug 2018, Herbert Xu wrote:
-
-> On Thu, Aug 23, 2018 at 04:39:23PM -0400, Mikulas Patocka wrote:
-> >
-> > 1. don't set CRYPTO_TFM_REQ_MAY_SLEEP in dm-crypt
-> > =================================================
-> > If we don't set it, dm-crypt will use GFP_ATOMIC and GFP_ATOMIC may fail. 
-> > The function init_crypt in xts.c handles the failure gracefully - but the 
-> > question is - does the whole crypto code handle allocation failures 
-> > gracefully? If not and if it returns -ENOMEM somewhere, it would result in 
-> > I/O errors and data corruption.
+Le 24/08/2018 à 13:05, Segher Boessenkool a écrit :
+> On Fri, Aug 24, 2018 at 10:16:22AM +0000, Christophe Leroy wrote:
+>> _PAGE_NO_CACHE is a target specific flag. Prefer generic functions.
 > 
-> It is safe to use GFP_ATOMIC.  First of the allocation is really
-> small (less than a page) so it will only fail when the system is
-> almost completely out of memory.
-
-GFP_ATOMIC is used by networking code. If the system is in a situation 
-when packets arrive faster than the swapper is able to swap, it will 
-happen. It does happen during netwoking surge and corrupting the 
-filesystem in tris situation is not acceptable.
-
-> Even when it does fail the crypto
-> operation will still succeed, albeit it will process things at a
-> smaller granularity so the performance will degrade.
-
-A quick search through the crypto code shows that ahash_save_req and 
-seqiv_aead_encrypt return -ENOMEM.
-
-Will you fix them?
-
-> The sleeping part of that flag is also not an issue because it
-> only kicks in once per page.  As this is going to be less than
-> or equal to a page it shouldn't matter.
->  
-> > 3. introduce new flag CRYPTO_TFM_REQ_MAY_SLEEP_NOIO
-> > ===================================================
-> > Would you like to introduce it?
+>>   #ifdef CONFIG_PPC
+>> -	p->screen_base = __ioremap(addr, 0x200000, _PAGE_NO_CACHE);
+>> +	p->screen_base = ioremap_wc(addr, 0x200000);
+>>   #else
 > 
-> For now I don't think this is necessary given that this allocation
-> and similar ones in lrw and other places in the crypto API are just
-> performance enhancements and unlikely to fail except in very dire
-> situations.
+> But that is not the same.  I think you want ioremap_nocache?
 > 
-> But if new problems arise I'm certainly not opposed to this.
 > 
-> Thanks,
-> -- 
-> Email: Herbert Xu <herbert@gondor.apana.org.au>
-> Home Page: http://gondor.apana.org.au/~herbert/
-> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
-Mikulas
+No, ioremap_nocache() is _PAGE_NO_CACHE | _PAGE_GUARDED
+
+
+
+/arch/powerpc/include/asm/io.h
+
+#define ioremap_nocache(addr, size)	ioremap((addr), (size))
+
+
+/arch/powerpc/mm/pgtable_32.c:
+
+void __iomem *
+ioremap_wc(phys_addr_t addr, unsigned long size)
+{
+	return __ioremap_caller(addr, size, _PAGE_NO_CACHE,
+				__builtin_return_address(0));
+}
+
+void __iomem *
+ioremap(phys_addr_t addr, unsigned long size)
+{
+	return __ioremap_caller(addr, size, _PAGE_NO_CACHE | _PAGE_GUARDED,
+				__builtin_return_address(0));
+}
+
+Christophe
