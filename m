@@ -2,163 +2,192 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89766C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:53:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37B45C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:53:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48A9E2156B
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:53:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48A9E2156B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id E5CE02151C
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:53:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5CE02151C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727602AbeHXR1p (ORCPT
+        id S1728066AbeHXR1t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 13:27:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57156 "EHLO mx1.suse.de"
+        Fri, 24 Aug 2018 13:27:49 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57210 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726264AbeHXR1p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 13:27:45 -0400
+        id S1726374AbeHXR1r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 13:27:47 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C9C16AE8E;
-        Fri, 24 Aug 2018 13:52:56 +0000 (UTC)
-Subject: Re: [PATCH v2 00/11] x86/paravirt: several cleanups
-To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org, virtualization@lists.linux-foundation.org
-Cc:     akataria@vmware.com, rusty@rustcorp.com.au,
-        boris.ostrovsky@oracle.com, hpa@zytor.com, tglx@linutronix.de,
-        mingo@redhat.com, peterz@infradead.org
-References: <20180813073739.26108-1-jgross@suse.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <45bfe8ab-683f-ab79-e3c6-c0a707b667c2@suse.com>
-Date:   Fri, 24 Aug 2018 15:52:55 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A17B2AEC2;
+        Fri, 24 Aug 2018 13:52:58 +0000 (UTC)
+Date:   Fri, 24 Aug 2018 15:52:57 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc:     kvm@vger.kernel.org,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Sudeep Dutt <sudeep.dutt@intel.com>,
+        dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Dimitri Sivanich <sivanich@sgi.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        Doug Ledford <dledford@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        xen-devel@lists.xenproject.org, intel-gfx@lists.freedesktop.org,
+        Leon Romanovsky <leonro@mellanox.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ashutosh Dixit <ashutosh.dixit@intel.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Felix Kuehling <felix.kuehling@amd.com>
+Subject: Re: [PATCH] mm, oom: distinguish blockable mode for mmu notifiers
+Message-ID: <20180824135257.GU29735@dhcp22.suse.cz>
+References: <20180824120339.GL29735@dhcp22.suse.cz>
+ <eb546bcb-9c5f-7d5d-43a7-bfde489f0e7f@amd.com>
+ <20180824123341.GN29735@dhcp22.suse.cz>
+ <b11df415-baf8-0a41-3c16-60dfe8d32bd3@amd.com>
+ <20180824130132.GP29735@dhcp22.suse.cz>
+ <23d071d2-82e4-9b78-1000-be44db5f6523@gmail.com>
+ <20180824132442.GQ29735@dhcp22.suse.cz>
+ <86bd94d5-0ce8-c67f-07a5-ca9ebf399cdd@gmail.com>
+ <20180824134009.GS29735@dhcp22.suse.cz>
+ <735b0a53-5237-8827-d20e-e57fa24d798f@amd.com>
 MIME-Version: 1.0
-In-Reply-To: <20180813073739.26108-1-jgross@suse.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <735b0a53-5237-8827-d20e-e57fa24d798f@amd.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/08/18 09:37, Juergen Gross wrote:
-> This series removes some no longer needed stuff from paravirt
-> infrastructure and puts large quantities of paravirt ops under a new
-> config option PARAVIRT_XXL which is selected by XEN_PV only.
+On Fri 24-08-18 15:44:03, Christian König wrote:
+> Am 24.08.2018 um 15:40 schrieb Michal Hocko:
+> > On Fri 24-08-18 15:28:33, Christian König wrote:
+> > > Am 24.08.2018 um 15:24 schrieb Michal Hocko:
+> > > > On Fri 24-08-18 15:10:08, Christian König wrote:
+> > > > > Am 24.08.2018 um 15:01 schrieb Michal Hocko:
+> > > > > > On Fri 24-08-18 14:52:26, Christian König wrote:
+> > > > > > > Am 24.08.2018 um 14:33 schrieb Michal Hocko:
+> > > > > > [...]
+> > > > > > > > Thiking about it some more, I can imagine that a notifier callback which
+> > > > > > > > performs an allocation might trigger a memory reclaim and that in turn
+> > > > > > > > might trigger a notifier to be invoked and recurse. But notifier
+> > > > > > > > shouldn't really allocate memory. They are called from deep MM code
+> > > > > > > > paths and this would be extremely deadlock prone. Maybe Jerome can come
+> > > > > > > > up some more realistic scenario. If not then I would propose to simplify
+> > > > > > > > the locking here. We have lockdep to catch self deadlocks and it is
+> > > > > > > > always better to handle a specific issue rather than having a code
+> > > > > > > > without a clear indication how it can recurse.
+> > > > > > > Well I agree that we should probably fix that, but I have some concerns to
+> > > > > > > remove the existing workaround.
+> > > > > > > 
+> > > > > > > See we added that to get rid of a real problem in a customer environment and
+> > > > > > > I don't want to that to show up again.
+> > > > > > It would really help to know more about that case and fix it properly
+> > > > > > rather than workaround it like this. Anyway, let me think how to handle
+> > > > > > the non-blocking notifier invocation then. I was not able to come up
+> > > > > > with anything remotely sane yet.
+> > > > > With avoiding allocating memory in the write lock path I don't see an issue
+> > > > > any more with that.
+> > > > > 
+> > > > > All what the write lock path does now is adding items to a linked lists,
+> > > > > arrays etc....
+> > > > Can we change it to non-sleepable lock then?
+> > > No, the write side doesn't sleep any more, but the read side does.
+> > > 
+> > > See amdgpu_mn_invalidate_node() and that is where you actually need to
+> > > handle the non-blocking flag correctly.
+> > Ohh, right you are. We already handle that by bailing out before calling
+> > amdgpu_mn_invalidate_node in !blockable mode.
 > 
-> A pvops kernel without XEN_PV being configured is about 2.5% smaller
-> with this series applied.
+> Yeah, that is sufficient.
 > 
-> tip commit 5800dc5c19f34e6e03b5adab1282535cb102fafd ("x86/paravirt:
-> Fix spectre-v2 mitigations for paravirt guests") is a prerequisite
-> for this series.
+> It could be improved because we have something like 90% chance that
+> amdgpu_mn_invalidate_node() actually doesn't need to do anything.
 > 
-> The last 4 patches of this series require my Xen cleanup series
-> https://lore.kernel.org/lkml/20180717120113.12756-1-jgross@suse.com/
-> which hides more Xen PV-only code behind CONFIG_XEN_PV.
+> But I can take care of that when the patch set has landed.
 > 
-> Changes in V2:
-> - patch 4: shorten pv_ops sub-structure names (Jan Beulich)
-> - patch 11: new patch
+> > So does this looks good to you?
 > 
-> Juergen Gross (11):
->   x86/paravirt: make paravirt_patch_call() and paravirt_patch_jmp()
->     static
->   x86/paravirt: remove clobbers parameter from paravirt patch functions
->   x86/paravirt: remove clobbers from struct paravirt_patch_site
->   x86/paravirt: use a single ops structure
->   x86/paravirt: remove unused paravirt bits
->   x86/paravirt: introduce new config option PARAVIRT_XXL
->   x86/paravirt: move items in pv_info under PARAVIRT_XXL umbrella
->   x86/paravirt: move the Xen-only pv_cpu_ops under the PARAVIRT_XXL
->     umbrella
->   x86/paravirt: move the Xen-only pv_irq_ops under the PARAVIRT_XXL
->     umbrella
->   x86/paravirt: move the Xen-only pv_mmu_ops under the PARAVIRT_XXL
->     umbrella
->   x86/paravirt: remove unneeded mmu related paravirt ops bits
-> 
->  arch/x86/Kconfig                            |   3 +
->  arch/x86/hyperv/mmu.c                       |   4 +-
->  arch/x86/include/asm/debugreg.h             |   2 +-
->  arch/x86/include/asm/desc.h                 |   4 +-
->  arch/x86/include/asm/fixmap.h               |   2 +-
->  arch/x86/include/asm/irqflags.h             |  56 ++--
->  arch/x86/include/asm/mmu_context.h          |   4 +-
->  arch/x86/include/asm/msr.h                  |   4 +-
->  arch/x86/include/asm/paravirt.h             | 399 +++++++++++++---------------
->  arch/x86/include/asm/paravirt_types.h       |  77 +++---
->  arch/x86/include/asm/pgalloc.h              |   2 +-
->  arch/x86/include/asm/pgtable-3level_types.h |   2 +-
->  arch/x86/include/asm/pgtable.h              |   7 +-
->  arch/x86/include/asm/processor.h            |   4 +-
->  arch/x86/include/asm/ptrace.h               |   3 +-
->  arch/x86/include/asm/segment.h              |   2 +-
->  arch/x86/include/asm/special_insns.h        |   4 +-
->  arch/x86/kernel/alternative.c               |   2 +-
->  arch/x86/kernel/asm-offsets.c               |  13 +-
->  arch/x86/kernel/asm-offsets_64.c            |   9 +-
->  arch/x86/kernel/cpu/common.c                |   4 +-
->  arch/x86/kernel/cpu/vmware.c                |   4 +-
->  arch/x86/kernel/head_64.S                   |   2 +-
->  arch/x86/kernel/kvm.c                       |  17 +-
->  arch/x86/kernel/kvmclock.c                  |   4 +-
->  arch/x86/kernel/paravirt-spinlocks.c        |  15 +-
->  arch/x86/kernel/paravirt.c                  | 292 ++++++++++----------
->  arch/x86/kernel/paravirt_patch_32.c         |  57 ++--
->  arch/x86/kernel/paravirt_patch_64.c         |  65 ++---
->  arch/x86/kernel/tsc.c                       |   2 +-
->  arch/x86/kernel/vsmp_64.c                   |  24 +-
->  arch/x86/xen/Kconfig                        |   1 +
->  arch/x86/xen/enlighten_pv.c                 |  31 ++-
->  arch/x86/xen/irq.c                          |   2 +-
->  arch/x86/xen/mmu_hvm.c                      |   2 +-
->  arch/x86/xen/mmu_pv.c                       |  28 +-
->  arch/x86/xen/spinlock.c                     |  11 +-
->  arch/x86/xen/time.c                         |   4 +-
->  drivers/xen/time.c                          |   2 +-
->  39 files changed, 575 insertions(+), 595 deletions(-)
-> 
+> Yeah, that looks perfect to me. Reviewed-by: Christian König
+> <christian.koenig@amd.com>
 
-Ping?
+Cool! Thanks for your guidance and patience with me. Here is the full
+patch. Feel free to take it and route per your preference.
 
+From 4e297bf5a55906ee369d70bee9f7beeb3cba74bb Mon Sep 17 00:00:00 2001
+From: Michal Hocko <mhocko@suse.com>
+Date: Fri, 24 Aug 2018 15:45:52 +0200
+Subject: [PATCH] drm/amd: clarify amdgpu_mn_read_lock !blocking mode
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Juergen
+Tetsuo has noticed that 93065ac753e4 ("mm, oom: distinguish blockable
+mode for mmu notifiers") !blocking case for amdgpu_mn_read_lock is
+incomplete because it might sleep on the notifier lock. This is true
+but as it turned out from the discussion with Christian this doesn't
+really matter.
+
+The amd notifier lock doesn't block in the exclusive mode. It only ever
+sleeps with the read lock inside amdgpu_mn_invalidate_node. That one
+is not called in !blockable state so while we might sleep on notifier
+read_lock this will only be for a short while. The same applies on the
+notifier lock.
+
+Therefore remove blockable handling from amdgpu_mn_read_lock and
+document it properly.
+
+Noticed-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reviewed-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
+index e55508b39496..48fa152231be 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
+@@ -180,11 +180,15 @@ void amdgpu_mn_unlock(struct amdgpu_mn *mn)
+  */
+ static int amdgpu_mn_read_lock(struct amdgpu_mn *amn, bool blockable)
+ {
+-	if (blockable)
+-		mutex_lock(&amn->read_lock);
+-	else if (!mutex_trylock(&amn->read_lock))
+-		return -EAGAIN;
+-
++	/*
++	 * We can take sleepable lock even on !blockable mode because
++	 * read_lock is only ever take from this path and the notifier
++	 * lock never really sleeps. In fact the only reason why the
++	 * later is sleepable is because the notifier itself might sleep
++	 * in amdgpu_mn_invalidate_node but blockable mode is handled
++	 * before calling into that path.
++	 */
++	mutex_lock(&amn->read_lock);
+ 	if (atomic_inc_return(&amn->recursion) == 1)
+ 		down_read_non_owner(&amn->lock);
+ 	mutex_unlock(&amn->read_lock);
+-- 
+2.18.0
+-- 
+Michal Hocko
+SUSE Labs
