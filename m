@@ -2,82 +2,62 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C22CC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 17:17:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C82DC43334
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 17:28:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 088E12151C
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 17:17:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C9B821529
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 17:28:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="ehott7HA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 088E12151C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ij1l7UEO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C9B821529
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727835AbeHXUwt (ORCPT
+        id S1727761AbeHXVD4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 16:52:49 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:35410 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727635AbeHXUwt (ORCPT
+        Fri, 24 Aug 2018 17:03:56 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50784 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726277AbeHXVDz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 16:52:49 -0400
-Received: by mail-io0-f194.google.com with SMTP id w11-v6so7737904iob.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 10:17:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=gRkYXRRWU+MJKFUoTWQ1aVKdyHPeViwNia0ZJBTqx6A=;
-        b=ehott7HAhiGN7rNHL9Sp7S+SdL+gakiau0LwEuhDPsZt0woJs7pb+WNWyOJnE7bIZM
-         g9AxNRzDoUfMiyXwebinj/Y+kMhW+eAjg/sYsWP1EwkRqp08Etw4aCeSnMQJYqkj8iww
-         YEUNATCvj8+DzqUHJlHumprUKjnT7bQgPN4Ws3OOv6BJzSTwwN1b6Hx6SZKdvDD6gMeb
-         QKwSTau1eWzLiqgQyRrJp1QRypKyGiAEeiB7mJhR94Lf8gkCL0b5ZA/0YMfWIRZIRzJh
-         Vr/nSCUTcfv/Xo+K0LMEh6P7ZLi4MvDo3tk2hD6L1lWDQTB0gktOP+uH06Fm8/34CV37
-         dldQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=gRkYXRRWU+MJKFUoTWQ1aVKdyHPeViwNia0ZJBTqx6A=;
-        b=EG23Bn+IHJWNjSbwFK5Cy4Zhp9DjlSuZ2Lkj/E6aVg7FLOaC4ziJHjRyM80ptCSaPD
-         tHzdf7NfsPxDGMd0fJt8WpA7yg0coUNedKC7SAgyYqAaS7N6236rDbDFDnlVTtNe0BUL
-         Z5fzqKe+QetdRW6ERTmk0rA6PCn2VfM/L3NrLyPE5QDhhWc63UwCEzIuuyyb+gq7qZfz
-         PS6szfcIvB+6bY0RSNSX34ccHFa/FJWVV1vGuYuRKxjkUZyh4HwqyCIaKJuYM+PVChM6
-         xzuMkWXlIqXknWmXwoxQBjS4g8fVV20dn9OAckqAzuytiWOd5AjxFkg/UyD5CVga+Anb
-         xmGQ==
-X-Gm-Message-State: APzg51Dcn7w2gzZ3Mpf5Ib3uDCrRSXyWWCQP2fUHk+lcM9SloUGayKz3
-        297PwJRFDGcORCQ9F+Ma5TYR8A==
-X-Google-Smtp-Source: ANB0VdZZZNZ5WkeOcoUsdgB+cRTxoVGYSpN5ey7YRQGZ6aRGt5Aw6xW5/rvKBrEcVfrVrj/4NYsuXw==
-X-Received: by 2002:a6b:1505:: with SMTP id 5-v6mr2062333iov.56.1535131036026;
-        Fri, 24 Aug 2018 10:17:16 -0700 (PDT)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id v5-v6sm2791916ioe.61.2018.08.24.10.17.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 Aug 2018 10:17:14 -0700 (PDT)
-Subject: Re: [PATCH] blk-wbt: get back the missed wakeup from __wbt_done
-To:     Eduardo Valentin <eduval@amazon.com>
-Cc:     "jianchao.wang" <jianchao.w.wang@oracle.com>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Anchal Agarwal <anchalag@amazon.com>,
-        Frank van der Linden <fllinden@amazon.com>
-References: <1535029718-17259-1-git-send-email-jianchao.w.wang@oracle.com>
- <809b2243-7a76-3d8a-5d1b-b6b9d9712f41@kernel.dk>
- <d28bca3a-196d-1520-35cf-bec1e1872d34@oracle.com>
- <1f2d5ab0-2322-56b7-3544-3cf733a22dd8@kernel.dk>
- <2f83f994-2734-17b2-3c74-b6869ba18184@kernel.dk>
- <20180824171439.GA12587@u40b0340c692b58f6553c.ant.amazon.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <40137009-76ed-d48b-758e-d09283305fb7@kernel.dk>
-Date:   Fri, 24 Aug 2018 11:17:13 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Fri, 24 Aug 2018 17:03:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ikNoK2E3hR/v1Ib5B/8wQlmaRPV+lj3E92YcGv1r9PQ=; b=Ij1l7UEOqImqK+BbobNGdxv6J
+        cqzdQC4bCaaEpMx3E3yPNqItLxpqDySGT5D2c3YFc/HUQw4fyRim6YE0HdnR/VSO77yj0YQNwLQyl
+        /EQp1aNHSHDsOwYeWGeW/dLZ+E5s7s7ZjHGqV6tUYUV0NHK9yWXGwXOlSdR7MVsnDWtmIEd+WtZJm
+        7npjBTyZyJpqJHxYerV6Fj/s6W+1e2SF8o7J9q8+NKim7hhxsHGmKBsinnsfy1iWohw1ypi1+A8t8
+        n2x/uKZREZh3b/7g3OhX8pDogjxB1FhZ1+ZPK2L5WXVzn0TG+3kKlq+lg4fiwFSmrYJHxnFi/iX8a
+        /eC0HIzAw==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ftFsf-0000xt-AZ; Fri, 24 Aug 2018 17:28:17 +0000
+Subject: Re: [RFC PATCH 01/10] fs-verity: add setup code, UAPI, and Kconfig
+To:     Eric Biggers <ebiggers@kernel.org>, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc:     linux-integrity@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Michael Halcrow <mhalcrow@google.com>,
+        Victor Hsieh <victorhsieh@google.com>
+References: <20180824161642.1144-1-ebiggers@kernel.org>
+ <20180824161642.1144-2-ebiggers@kernel.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <224dccfa-8ce2-8bfd-ffd3-4684b6bc7448@infradead.org>
+Date:   Fri, 24 Aug 2018 10:28:16 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180824171439.GA12587@u40b0340c692b58f6553c.ant.amazon.com>
+In-Reply-To: <20180824161642.1144-2-ebiggers@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -86,35 +66,22 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/24/18 11:14 AM, Eduardo Valentin wrote:
->> +	if (lock) {
->> +		spin_unlock_irq(lock);
->> +		io_schedule();
->> +		spin_lock_irq(lock);
->> +	} else
->> +		io_schedule();
-> 
-> Nitpick but, shouldn't this look like:
-> 
-> +	if (lock) {
-> +		spin_unlock_irq(lock);
-> +		io_schedule();
-> +		spin_lock_irq(lock);
-> +	} else {
-> +		io_schedule();
-> +	}
+On 08/24/2018 09:16 AM, Eric Biggers wrote:
+> +/* ========== Ioctls ========== */
+> +
+> +struct fsverity_digest {
+> +	__u16 digest_algorithm;
+> +	__u16 digest_size; /* input/output */
+> +	__u8 digest[];
+> +};
+> +
+> +#define FS_IOC_ENABLE_VERITY	_IO('f', 133)
+> +#define FS_IOC_MEASURE_VERITY	_IOWR('f', 134, struct fsverity_digest)
 
-Depends on who you ask... I prefer the former.
+Hi,
 
-> And another random though, it would be good to have some sort of
-> tracing of this.
+Please update Documentation/ioctl/ioctl-number.txt also.
 
-wbt does have tracing, but we've never had tracing on the sleep/wakeup
-parts. But that's pretty much completely orthogonal to the issue, that
-should be done as a separate patch, if useful.
-
-BTW, I've now tested this and it seems to work fine for me.
-
+thanks,
 -- 
-Jens Axboe
-
+~Randy
