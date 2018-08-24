@@ -6,140 +6,116 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2EBBC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 07:59:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB31AC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 08:01:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99AD82157F
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 07:59:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99AD82157F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 59F362157F
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 08:01:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59F362157F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727947AbeHXLdC (ORCPT
+        id S1727672AbeHXLfJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 07:33:02 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59762 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727134AbeHXLdC (ORCPT
+        Fri, 24 Aug 2018 07:35:09 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:39536 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727134AbeHXLfJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 07:33:02 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7O7wprR061309
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 03:59:32 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m2cgyupvn-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 03:59:32 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <tmricht@linux.ibm.com>;
-        Fri, 24 Aug 2018 08:59:30 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 24 Aug 2018 08:59:24 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7O7xN8R41091182
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 24 Aug 2018 07:59:23 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4EAAD11C04A;
-        Fri, 24 Aug 2018 10:59:22 +0100 (BST)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8766211C06C;
-        Fri, 24 Aug 2018 10:59:21 +0100 (BST)
-Received: from oc3784624756.ibm.com (unknown [9.152.212.155])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 24 Aug 2018 10:59:21 +0100 (BST)
-Subject: Re: [PATCH] perf annotate: fix parsing aarch64 branch instructions
- after objdump update
-To:     Kim Phillips <kim.phillips@arm.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-        Anton Blanchard <anton@samba.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Taeung Song <treeze.taeung@gmail.com>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        perf group <linux-perf-users@vger.kernel.org>
-References: <20180823191047.9260992844205984b75e6721@arm.com>
-From:   Thomas-Mich Richter <tmricht@linux.ibm.com>
-Organization: IBM
-Date:   Fri, 24 Aug 2018 09:59:22 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 24 Aug 2018 07:35:09 -0400
+Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1ft72G-0002Wn-Ed; Fri, 24 Aug 2018 10:01:36 +0200
+Date:   Fri, 24 Aug 2018 10:01:35 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Heiner Kallweit <hkallweit1@gmail.com>
+cc:     Frederic Weisbecker <frederic@kernel.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: Fix 80d20d35af1e ("nohz: Fix local_timer_softirq_pending()")
+ may have revealed another problem
+In-Reply-To: <67ce38dc-1f00-55c6-f9ae-2dec00172cf6@gmail.com>
+Message-ID: <alpine.DEB.2.21.1808241000340.1668@nanos.tec.linutronix.de>
+References: <8b93f213-fe67-f132-f3f5-5b17995ec63d@gmail.com> <20180824041245.GA2730@lerouge> <67ce38dc-1f00-55c6-f9ae-2dec00172cf6@gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20180823191047.9260992844205984b75e6721@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18082407-0028-0000-0000-000002EF1383
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082407-0029-0000-0000-000023A85C1A
-Message-Id: <18abf031-f803-b8e6-129e-ed50c63e73d0@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-24_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808240086
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/24/2018 02:10 AM, Kim Phillips wrote:
-> Starting with binutils 2.28, aarch64 objdump adds comments to the
-> disassembly output to show the alternative names of a condition code [1].
-> 
-> It is assumed that commas in objdump comments could occur in other arches
-> now or in the future, so this fix is arch-independent.
-> 
-> The fix could have been done with arm64 specific jump__parse and
-> jump__scnprintf functions, but the jump__scnprintf instruction would
-> have to have its comment character be a literal, since the scnprintf
-> functions cannot receive a struct arch easily.
-> 
-> This inconvenience also applies to the generic jump__scnprintf, which
-> is why we add a raw_comment pointer to struct ins_operands, so the
-> __parse function assigns it to be re-used by its corresponding __scnprintf
-> function.
-> 
-> Example differences in 'perf annotate --stdio2' output on an
-> aarch64 perf.data file:
-> 
-> BEFORE: → b.cs   ffff200008133d1c <unwind_frame+0x18c>  // b.hs, dffff7ecc47b
-> AFTER : ↓ b.cs   18c
-> 
-> BEFORE: → b.cc   ffff200008d8d9cc <get_alloc_profile+0x31c>  // b.lo, b.ul, dffff727295b
-> AFTER : ↓ b.cc   31c
-> 
-> The branch target labels 18c and 31c also now appear in the output:
-> 
-> BEFORE:        add    x26, x29, #0x80
-> AFTER : 18c:   add    x26, x29, #0x80
-> 
-> BEFORE:        add    x21, x21, #0x8
-> AFTER : 31c:   add    x21, x21, #0x8
-> 
-> The Fixes: tag below is added so stable branches will get the update; it
-> doesn't necessarily mean that commit was broken at the time, rather it
-> didn't withstand the aarch64 objdump update.
-> 
-> Tested no difference in output for sample x86_64, power arch perf.data files.
+On Fri, 24 Aug 2018, Heiner Kallweit wrote:
+> On 24.08.2018 06:12, Frederic Weisbecker wrote:
+> > On Thu, Aug 16, 2018 at 08:13:03AM +0200, Heiner Kallweit wrote:
+> >> Recently I started to get warning "NOHZ: local_softirq_pending 202" and
+> >> I think it's related to mentioned commit (didn't bisect it yet).
+> >> See log from suspending.
+> >>
+> >> I have no reason to think the fix is wrong, it may just have revealed
+> >> another issue which existed before and was hidden by the bug.
+> >>
+> >> Rgds, Heiner
+> >>
+> >> [   75.073353] random: crng init done
+> >> [   75.073402] random: 7 urandom warning(s) missed due to ratelimiting
+> >> [   78.619564] PM: suspend entry (deep)
+> >> [   78.619675] PM: Syncing filesystems ... done.
+> >> [   78.653684] Freezing user space processes ... (elapsed 0.002 seconds) done.
+> >> [   78.656094] OOM killer disabled.
+> >> [   78.656113] Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
+> >> [   78.658177] Suspending console(s) (use no_console_suspend to debug)
+> >> [   78.663066] nuvoton-cir 00:07: disabled
+> >> [   78.671817] sd 0:0:0:0: [sda] Synchronizing SCSI cache
+> >> [   78.672210] sd 0:0:0:0: [sda] Stopping disk
+> >> [   78.786651] ACPI: Preparing to enter system sleep state S3
+> >> [   78.789613] PM: Saving platform NVS memory
+> >> [   78.789759] Disabling non-boot CPUs ...
+> >> [   78.805154] NOHZ: local_softirq_pending 202
+> >> [   78.805182] NOHZ: local_softirq_pending 202
+> >> [   78.807102] smpboot: CPU 1 is now offline
+> > 
+> > I've tried to reproduce with suspend on disk but got unsuccessful.
+> > 
+> > A small question as I see someone is having a similar issue with a stable
+> > release only. On which kernel did you trigger that: upstream or stable?
+> > 
+> > I'll continue investigating.
+> > 
+> > Thanks.
+> > 
+> Affected is recent linux-next, after the commit mentioned in the subject.
+> I can work around the warning (not sure whether it's a proper fix),
+> see here:
+> https://lkml.org/lkml/2018/8/18/272
 
-Tested,  no difference in output on s390. Just to let you know.
--- 
-Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
---
-Vorsitzende des Aufsichtsrats: Martina Koederitz 
-Geschäftsführung: Dirk Wittkopp
-Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
+Can you try the one I posted in this thread:
 
+ https://lkml.kernel.org/r/alpine.DEB.2.21.1808240851420.1668@nanos.tec.linutronix.de
+
+Also below for reference.
+
+Thanks,
+
+	tglx
+
+8<----------------
+diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
+index 5b33e2f5c0ed..6aab9d54a331 100644
+--- a/kernel/time/tick-sched.c
++++ b/kernel/time/tick-sched.c
+@@ -888,7 +888,7 @@ static bool can_stop_idle_tick(int cpu, struct tick_sched *ts)
+ 	if (unlikely(local_softirq_pending() && cpu_online(cpu))) {
+ 		static int ratelimit;
+ 
+-		if (ratelimit < 10 &&
++		if (ratelimit < 10 && !in_softirq() &&
+ 		    (local_softirq_pending() & SOFTIRQ_STOP_IDLE_MASK)) {
+ 			pr_warn("NOHZ: local_softirq_pending %02x\n",
+ 				(unsigned int) local_softirq_pending());
