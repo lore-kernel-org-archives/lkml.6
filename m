@@ -2,112 +2,178 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05FDEC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 07:47:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8AD9C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 07:49:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD3A92157C
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 07:47:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD3A92157C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 68EBD2157C
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 07:49:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68EBD2157C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727743AbeHXLUj (ORCPT
+        id S1727716AbeHXLWb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 07:20:39 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:42877 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726969AbeHXLUj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 07:20:39 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id D9FFC20732; Fri, 24 Aug 2018 09:47:12 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-53-19.w90-88.abo.wanadoo.fr [90.88.170.19])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 714BA206DE;
-        Fri, 24 Aug 2018 09:47:02 +0200 (CEST)
-Date:   Fri, 24 Aug 2018 09:47:01 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Peter Rosin <peda@axentia.se>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, jmondi <jacopo@jmondi.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        David Airlie <airlied@linux.ie>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Jyri Sarha <jsarha@ti.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Russell King <linux@armlinux.org.uk>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v8 3/4] drm/atmel-hlcdc: iterate over all output
- endpoints
-Message-ID: <20180824094701.1f17393f@bbrezillon>
-In-Reply-To: <56016787-0487-1571-7c28-2767033cda23@axentia.se>
-References: <20180810130359.9882-1-peda@axentia.se>
-        <20180810130359.9882-4-peda@axentia.se>
-        <20180813135949.32vrlrevtazr5x7d@apu3b.nibble.pw>
-        <0baac94e-f3d2-53fd-4af9-854bb4498345@axentia.se>
-        <CAL_JsqJPzwpN2TFghy-FfHZppexG9gW4qBy6iYtGpyP_Bp6dUA@mail.gmail.com>
-        <5c9853fc-e2ea-6983-ac88-b52b6e9e6ecd@axentia.se>
-        <CAL_JsqJHRL0f2YwvOJBpggKRVQwPWy8j08-+_nd-VifOOKYqFA@mail.gmail.com>
-        <56016787-0487-1571-7c28-2767033cda23@axentia.se>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Fri, 24 Aug 2018 07:22:31 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53360 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726899AbeHXLWb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 07:22:31 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4C7C9AF6F;
+        Fri, 24 Aug 2018 07:49:03 +0000 (UTC)
+Date:   Fri, 24 Aug 2018 09:49:02 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Juergen Gross <jgross@suse.com>
+Cc:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        xen-devel@lists.xenproject.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] xen/gntdev: fix up blockable calls to mn_invl_range_start
+Message-ID: <20180824074902.GY29735@dhcp22.suse.cz>
+References: <20180823120707.10998-1-mhocko@kernel.org>
+ <07c7ead4-334d-9b25-f588-25e9b46bbea0@i-love.sakura.ne.jp>
+ <20180823135151.GM29735@dhcp22.suse.cz>
+ <9d2d11eb-7fe1-b836-056c-7886d6fc56e5@oracle.com>
+ <20180823190933.GP29735@dhcp22.suse.cz>
+ <2afe2559-78ad-2d5b-41aa-1988f941759b@suse.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2afe2559-78ad-2d5b-41aa-1988f941759b@suse.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 14 Aug 2018 17:05:29 +0200
-Peter Rosin <peda@axentia.se> wrote:
-
-> >>>>>> @@ -77,13 +79,29 @@ static int atmel_hlcdc_attach_endpoint(struct drm_device *dev, int endpoint)
-> >>>>>>
-> >>>>>>  int atmel_hlcdc_create_outputs(struct drm_device *dev)
-> >>>>>>  {
-> >>>>>> -    int endpoint, ret = 0;
-> >>>>>> -
-> >>>>>> -    for (endpoint = 0; !ret; endpoint++)
-> >>>>>> -            ret = atmel_hlcdc_attach_endpoint(dev, endpoint);
-> >>>>>> +    struct of_endpoint endpoint;
-> >>>>>> +    struct device_node *node = NULL;
-> >>>>>> +    int count = 0;
-> >>>>>> +    int ret = 0;
-> >>>>>> +
-> >>>>>> +    for_each_endpoint_of_node(dev->dev->of_node, node) {
-> >>>>>> +            of_graph_parse_endpoint(node, &endpoint);  
+On Fri 24-08-18 07:03:28, Juergen Gross wrote:
+> On 23/08/18 21:09, Michal Hocko wrote:
+> > On Thu 23-08-18 10:06:53, Boris Ostrovsky wrote:
+> >> On 08/23/2018 09:51 AM, Michal Hocko wrote:
+> >>> On Thu 23-08-18 22:44:07, Tetsuo Handa wrote:
+> >>>> On 2018/08/23 21:07, Michal Hocko wrote:
+> >>>>> diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
+> >>>>> index 57390c7666e5..e7d8bb1bee2a 100644
+> >>>>> --- a/drivers/xen/gntdev.c
+> >>>>> +++ b/drivers/xen/gntdev.c
+> >>>>> @@ -519,21 +519,20 @@ static int mn_invl_range_start(struct mmu_notifier *mn,
+> >>>>>  	struct gntdev_grant_map *map;
+> >>>>>  	int ret = 0;
+> >>>>>  
+> >>>>> -	/* TODO do we really need a mutex here? */
+> >>>>>  	if (blockable)
+> >>>>>  		mutex_lock(&priv->lock);
+> >>>>>  	else if (!mutex_trylock(&priv->lock))
+> >>>>>  		return -EAGAIN;
+> >>>>>  
+> >>>>>  	list_for_each_entry(map, &priv->maps, next) {
+> >>>>> -		if (in_range(map, start, end)) {
+> >>>>> +		if (!blockable && in_range(map, start, end)) {
+> >>>> This still looks strange. Prior to 93065ac753e4, in_range() test was
+> >>>> inside unmap_if_in_range(). But this patch removes in_range() test
+> >>>> if blockable == true. That is, unmap_if_in_range() will unconditionally
+> >>>> unmap if blockable == true, which seems to be an unexpected change.
+> >>> You are right. I completely forgot I've removed in_range there. Does
+> >>> this look any better?
 > >>>
-> >>> I'd really like to kill off of_graph_parse_endpoint, not add more
-> >>> users (check the git history on this code). You should know what are
-> >>> possible port and endpoint numbers, so iterate over those.  
+> >>> diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
+> >>> index e7d8bb1bee2a..30f81004ea63 100644
+> >>> --- a/drivers/xen/gntdev.c
+> >>> +++ b/drivers/xen/gntdev.c
+> >>> @@ -525,14 +525,20 @@ static int mn_invl_range_start(struct mmu_notifier *mn,
+> >>>  		return -EAGAIN;
+> >>>  
+> >>>  	list_for_each_entry(map, &priv->maps, next) {
+> >>> -		if (!blockable && in_range(map, start, end)) {
+> >>> +		if (in_range(map, start, end)) {
+> >>> +			if (blockable)
+> >>> +				continue;
+> >>> +
+> >>>  			ret = -EAGAIN;
+> >>>  			goto out_unlock;
+> >>>  		}
+> >>>  		unmap_if_in_range(map, start, end);
 > >>
-> >> So, add a comment to that effect in the docs of the of_graph_parse_endpoint
-> >> function.
 > >>
-> >> How can the hlcdc driver know the actual number of endpoints? It's a
-> >> one-way signal path out from that port, and it can easily be routed to
-> >> 1, 2, 3 or even more places. As shown above, forcing the endpoint id
-> >> to start at zero is a nuisance, and I don't see the point of it.
+> >> (I obviously missed that too with my R-b).
 > >>
-> >> But I welcome suggestions on how to arrange the above dtsi/dts fragments
-> >> in a world where the endpoint id absolutely has to start at zero.  
+> >> This will never get anything done either. How about
 > > 
-> > Your dts file arrangement seems fine. Can't you just not exit the loop
-> > on -ENODEV? IOW, just iterate til you find an enabled endpoint.  
+> > Yeah. I was half way out and posted a complete garbage. Sorry about
+> > that!
+> > 
+> > Michal repeat after me
+> > Never post patches when in hurry! Never post patches when in hurry!
+> > Never post patches when in hurry! Never post patches when in hurry!
+> > Never post patches when in hurry! Never post patches when in hurry!
+> > Never post patches when in hurry! Never post patches when in hurry!
+> > Never post patches when in hurry! Never post patches when in hurry! 
+> > 
+> > What I really meant was this
+> > 
+> > diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
+> > index e7d8bb1bee2a..6fcc5a44f29d 100644
+> > --- a/drivers/xen/gntdev.c
+> > +++ b/drivers/xen/gntdev.c
+> > @@ -525,17 +525,25 @@ static int mn_invl_range_start(struct mmu_notifier *mn,
+> >  		return -EAGAIN;
+> >  
+> >  	list_for_each_entry(map, &priv->maps, next) {
+> > -		if (!blockable && in_range(map, start, end)) {
+> > +		if (!in_range(map, start, end))
+> > +			continue;
+> > +
+> > +		if (!blockable) {
+> >  			ret = -EAGAIN;
+> >  			goto out_unlock;
+> >  		}
+> > +
+> >  		unmap_if_in_range(map, start, end);
+> >  	}
+> >  	list_for_each_entry(map, &priv->freeable_maps, next) {
+> > -		if (!blockable && in_range(map, start, end)) {
+> > +		if (!in_range(map, start, end))
+> > +			continue;
+> > +
+> > +		if (!blockable) {
+> >  			ret = -EAGAIN;
+> >  			goto out_unlock;
+> >  		}
+> > +
+> >  		unmap_if_in_range(map, start, end);
+> >  	}
+> >  
+> > 
 > 
-> That would regress cases where two (or more) endpoints are enabled
-> (which is currently supported). As I see it, the driver will have a
-> very hard time knowing when to stop iterating with any solution not
-> involving the equivalent of the functions for_each_endpoint_of_node
-> and of_graph_parse_endpoint. Open-coding of_graph_parse_endpoint just
-> to avoid it is a bit more than silly IMHO...
+> I liked the general structure before 93065ac753e4 better.
+> 
+> Why don't you return to that, add blockable parameter to
+> unmap_if_in_range() and let unmap_if_in_range() return a value (0 or
+> -EAGAIN)? This will avoid repeating the very same code.
 
-I agree, and actually, I think this is Rob who suggested to do what we
-do here :-) (iterate from 0 to X, and stop as soon as
--ENODEV is returned).
+I can do that if that is your preference of course. I have even
+considered that but then I have got to this...
+
+> @@ -508,6 +504,8 @@ static void unmap_if_in_range(struct
+> gntdev_grant_map *map,
+>                                 (mstart - map->vma->vm_start) >> PAGE_SHIFT,
+>                                 (mend - mstart) >> PAGE_SHIFT);
+>         WARN_ON(err);
+> +
+> +       return 0;
+>  }
+
+and I really didn't know what to do about that. On one hand the error
+has been ignored already, on the other hand it is just too ugly to
+ignore it when we do provide a return value. Moreover I can see how
+somebody would like to clean that up later and I am not sure what are we
+going to do about it in callers.
+
+But by all means, I will go the way you maintainers prefer.
+-- 
+Michal Hocko
+SUSE Labs
