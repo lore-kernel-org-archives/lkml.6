@@ -4,56 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6957C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 09:21:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C397C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 09:21:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EEC620676
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 09:21:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33EE320676
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 09:21:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eaSFFO0r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EEC620676
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TE1oNf5h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33EE320676
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727765AbeHXMzL (ORCPT
+        id S1727800AbeHXMzU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 08:55:11 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:34089 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726423AbeHXMzL (ORCPT
+        Fri, 24 Aug 2018 08:55:20 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:33820 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726423AbeHXMzT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 08:55:11 -0400
-Received: by mail-pl1-f194.google.com with SMTP id f6-v6so849597plo.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 02:21:25 -0700 (PDT)
+        Fri, 24 Aug 2018 08:55:19 -0400
+Received: by mail-pg1-f194.google.com with SMTP id u10-v6so2320444pgr.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 02:21:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=VLyWTs4wkn6Lk1EZkxQq2kCYTxna3ww596giwJ8qsjk=;
-        b=eaSFFO0rjDeVblmfXrJh6DRbfNO94vDFPn62rsymhsBfMK7eMwJ4Mtzd7Qut8sn/c/
-         gtwc6jmiRkAe3iYjMptFUqsw7KpmBZOR31Fc8GBX4AVxuAYUJjKUF85eHtb3yD/io+4V
-         H9D+YMhP+kY4utkm8/zLIc5B3CYzdl3VXlfMA=
+        bh=V5KxzKbPEKh15VckZhi+wrWCuks4RPVSThG8QwbL0Z8=;
+        b=TE1oNf5hN18R8DBmmI2wVeB1mB7plVYjeYeFN2BImp3b2ZMEGYjuZBTaXoxKaQaPHv
+         3JuUqWALeppdZ5MNaB+TsWGz/gQV8w0oH5eOmC1kPQ57c68+uCUXoWey/KPlnhHJyGA4
+         LpuWF/2NPyRO4w6PWfWweE0eObmZdh7o+y+so=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=VLyWTs4wkn6Lk1EZkxQq2kCYTxna3ww596giwJ8qsjk=;
-        b=kTH1B1bMKYdMOsjn387jUB6pqWFqaQUxTN++jetq/4EOCWvdInc7YizCUxWLT9Gx1I
-         RaTLZDkz2PPNBbwyikT22sP43ZrxpOJ5rICl8bxKvlOfZlY6ShXreeUe//Vq55NHiXn/
-         Oc57E2/RuB48cHAoyIAit1BKu3BraTx9TrcCeodiMRRK9qXiiO7GMOGAEEQKDav2UMlF
-         kepU/ldmkINkKYxelO6FXkkCdo/dPCGnDeRjXBzbogfnJtMHYoSqFUGLJC10j6vdrn0f
-         yDJf6qyvqV9nw9095784ZYAoN6jtlrOJG1QwUV3YVZL2eyyVq7MBkZrAZ3HLt/u2xhBb
-         htYQ==
-X-Gm-Message-State: APzg51DWR4C6755Js7N8aIYo1JhReQ1VJVveso8vNeBW9iTLyegyhnTi
-        tFHrRrbaJ8BzO5XhgU2sVf1raA==
-X-Google-Smtp-Source: ANB0VdYCSSYxYrE+0M97HDQ0AiTeIVBAnEnaxx70gPnnNJyioLe8kjpD+sseNdR+OD45LoDWMulwlg==
-X-Received: by 2002:a17:902:4324:: with SMTP id i33-v6mr865592pld.43.1535102485071;
-        Fri, 24 Aug 2018 02:21:25 -0700 (PDT)
+        bh=V5KxzKbPEKh15VckZhi+wrWCuks4RPVSThG8QwbL0Z8=;
+        b=Db5uwDfDbAqtLDcQl8cKde+NbKfMeW4WccStR3n3KqdldasJUH3LHgtxs2Zkz1r13H
+         sp6FCNgE7fZPy2FMutfgwvcB+8A2ZRLga+oRg5DUUfj+pfoEq58iVGKh1E01p8coz0LS
+         vpG0cEpE3EtKpURITDhlxTbS4PonK9kUrWqbz7QFGcKc4zOIK6uJVH3K7fmTnJJVSCZk
+         Y3mk4TUl3l0Fuvfqyg0L3zU+kIt6FG+QDp1srSqS7uvHoBdRT/ulX+DP8MfItG4qyfmZ
+         CwvJ828aUoNg84yxxqe601LRUe13VBhyJ8UL+jY3+x/BdGYED8EnpdpciBOXnAgn3YAg
+         6fsA==
+X-Gm-Message-State: APzg51C65H1BKCwcz+BZgnNMUzWR3VUykdtjJ5o8NtqtENULR8XpEJXu
+        PSw6fXFhrEeQvOC4mhzKwi5EGA==
+X-Google-Smtp-Source: ANB0VdZ49uxTiwGT9G7UZr2TDV6ZsVA0hb0PvEul1UFojpdmg2G+QgZoMblGQNtg7ZjU1R5nzPh3Dg==
+X-Received: by 2002:a63:4104:: with SMTP id o4-v6mr905316pga.146.1535102493307;
+        Fri, 24 Aug 2018 02:21:33 -0700 (PDT)
 Received: from ubt.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id g6-v6sm9520314pfb.11.2018.08.24.02.21.00
+        by smtp.gmail.com with ESMTPSA id g6-v6sm9520314pfb.11.2018.08.24.02.21.25
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 24 Aug 2018 02:21:24 -0700 (PDT)
+        Fri, 24 Aug 2018 02:21:32 -0700 (PDT)
 From:   Chunyan Zhang <zhang.chunyan@linaro.org>
 To:     Ulf Hansson <ulf.hansson@linaro.org>,
         Adrian Hunter <adrian.hunter@intel.com>
@@ -64,9 +64,9 @@ Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jason Wu <jason.wu@unisoc.com>,
         Chunyan Zhang <chunyan.zhang@unisoc.com>,
         Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH V6 3/9] mmc: sdhci: Change SDMA address register for v4 mode
-Date:   Fri, 24 Aug 2018 17:20:22 +0800
-Message-Id: <1535102428-20332-4-git-send-email-zhang.chunyan@linaro.org>
+Subject: [PATCH V6 4/9] mmc: sdhci: Add ADMA2 64-bit addressing support for V4 mode
+Date:   Fri, 24 Aug 2018 17:20:23 +0800
+Message-Id: <1535102428-20332-5-git-send-email-zhang.chunyan@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1535102428-20332-1-git-send-email-zhang.chunyan@linaro.org>
 References: <1535102428-20332-1-git-send-email-zhang.chunyan@linaro.org>
@@ -75,94 +75,202 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to the SD host controller specification version 4.10, when
-Host Version 4 is enabled, SDMA uses ADMA System Address register
-(05Fh-058h) instead of using SDMA System Address register to
-support both 32-bit and 64-bit addressing.
+ADMA2 64-bit addressing support is divided into V3 mode and V4 mode.
+So there are two kinds of descriptors for ADMA2 64-bit addressing
+i.e. 96-bit Descriptor for V3 mode, and 128-bit Descriptor for V4
+mode. 128-bit Descriptor is aligned to 8-byte.
+
+For V4 mode, ADMA2 64-bit addressing is enabled via Host Control 2
+register.
 
 Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
 ---
- drivers/mmc/host/sdhci.c | 30 ++++++++++++++++++++----------
- 1 file changed, 20 insertions(+), 10 deletions(-)
+ drivers/mmc/host/sdhci.c | 92 +++++++++++++++++++++++++++++++++++-------------
+ drivers/mmc/host/sdhci.h | 12 +++++--
+ 2 files changed, 78 insertions(+), 26 deletions(-)
 
 diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index a50842c..df283ca 100644
+index df283ca..38d083c 100644
 --- a/drivers/mmc/host/sdhci.c
 +++ b/drivers/mmc/host/sdhci.c
-@@ -727,7 +727,7 @@ static void sdhci_adma_table_post(struct sdhci_host *host,
- 	}
+@@ -266,6 +266,52 @@ static void sdhci_set_default_irqs(struct sdhci_host *host)
+ 	sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
  }
  
--static u32 sdhci_sdma_address(struct sdhci_host *host)
-+static dma_addr_t sdhci_sdma_address(struct sdhci_host *host)
- {
- 	if (host->bounce_buffer)
- 		return host->bounce_addr;
-@@ -735,6 +735,17 @@ static u32 sdhci_sdma_address(struct sdhci_host *host)
- 		return sg_dma_address(host->data->sg);
- }
- 
-+static void sdhci_set_sdma_addr(struct sdhci_host *host, dma_addr_t addr)
++static void sdhci_config_dma(struct sdhci_host *host)
 +{
-+	if (host->v4_mode) {
-+		sdhci_writel(host, addr, SDHCI_ADMA_ADDRESS);
-+		if (host->flags & SDHCI_USE_64_BIT_DMA)
-+			sdhci_writel(host, (u64)addr >> 32, SDHCI_ADMA_ADDRESS_HI);
-+	} else {
-+		sdhci_writel(host, addr, SDHCI_DMA_ADDRESS);
++	u8 ctrl;
++	u16 ctrl2;
++
++	if (host->version < SDHCI_SPEC_200)
++		return;
++
++	ctrl = sdhci_readb(host, SDHCI_HOST_CONTROL);
++
++	/*
++	 * Always adjust the DMA selection as some controllers
++	 * (e.g. JMicron) can't do PIO properly when the selection
++	 * is ADMA.
++	 */
++	ctrl &= ~SDHCI_CTRL_DMA_MASK;
++	if (!(host->flags & SDHCI_REQ_USE_DMA))
++		goto out;
++
++	/* Note if DMA Select is zero then SDMA is selected */
++	if (host->flags & SDHCI_USE_ADMA)
++		ctrl |= SDHCI_CTRL_ADMA32;
++
++	if (host->flags & SDHCI_USE_64_BIT_DMA) {
++		/*
++		 * If v4 mode, all supported DMA can be 64-bit addressing if
++		 * controller supports 64-bit system address, otherwise only
++		 * ADMA can support 64-bit addressing.
++		 */
++		if (host->v4_mode) {
++			ctrl2 = sdhci_readw(host, SDHCI_HOST_CONTROL2);
++			ctrl2 |= SDHCI_CTRL_64BIT_ADDR;
++			sdhci_writew(host, ctrl2, SDHCI_HOST_CONTROL2);
++		} else if (host->flags & SDHCI_USE_ADMA) {
++			/*
++			 * Don't need to undo SDHCI_CTRL_ADMA32 in order to
++			 * set SDHCI_CTRL_ADMA64.
++			 */
++			ctrl |= SDHCI_CTRL_ADMA64;
++		}
 +	}
++
++out:
++	sdhci_writeb(host, ctrl, SDHCI_HOST_CONTROL);
 +}
 +
- static unsigned int sdhci_target_timeout(struct sdhci_host *host,
- 					 struct mmc_command *cmd,
- 					 struct mmc_data *data)
-@@ -994,8 +1005,7 @@ static void sdhci_prepare_data(struct sdhci_host *host, struct mmc_command *cmd)
- 					     SDHCI_ADMA_ADDRESS_HI);
- 		} else {
- 			WARN_ON(sg_cnt != 1);
--			sdhci_writel(host, sdhci_sdma_address(host),
--				     SDHCI_DMA_ADDRESS);
-+			sdhci_set_sdma_addr(host, sdhci_sdma_address(host));
+ static void sdhci_init(struct sdhci_host *host, int soft)
+ {
+ 	struct mmc_host *mmc = host->mmc;
+@@ -913,7 +959,6 @@ static void sdhci_set_timeout(struct sdhci_host *host, struct mmc_command *cmd)
+ 
+ static void sdhci_prepare_data(struct sdhci_host *host, struct mmc_command *cmd)
+ {
+-	u8 ctrl;
+ 	struct mmc_data *data = cmd->data;
+ 
+ 	host->data_timeout = 0;
+@@ -1009,25 +1054,7 @@ static void sdhci_prepare_data(struct sdhci_host *host, struct mmc_command *cmd)
  		}
  	}
  
-@@ -2823,7 +2833,7 @@ static void sdhci_data_irq(struct sdhci_host *host, u32 intmask)
- 		 * some controllers are faulty, don't trust them.
+-	/*
+-	 * Always adjust the DMA selection as some controllers
+-	 * (e.g. JMicron) can't do PIO properly when the selection
+-	 * is ADMA.
+-	 */
+-	if (host->version >= SDHCI_SPEC_200) {
+-		ctrl = sdhci_readb(host, SDHCI_HOST_CONTROL);
+-		ctrl &= ~SDHCI_CTRL_DMA_MASK;
+-		if ((host->flags & SDHCI_REQ_USE_DMA) &&
+-			(host->flags & SDHCI_USE_ADMA)) {
+-			if (host->flags & SDHCI_USE_64_BIT_DMA)
+-				ctrl |= SDHCI_CTRL_ADMA64;
+-			else
+-				ctrl |= SDHCI_CTRL_ADMA32;
+-		} else {
+-			ctrl |= SDHCI_CTRL_SDMA;
+-		}
+-		sdhci_writeb(host, ctrl, SDHCI_HOST_CONTROL);
+-	}
++	sdhci_config_dma(host);
+ 
+ 	if (!(host->flags & SDHCI_REQ_USE_DMA)) {
+ 		int flags;
+@@ -3504,6 +3531,19 @@ static int sdhci_allocate_bounce_buffer(struct sdhci_host *host)
+ 	return 0;
+ }
+ 
++static inline bool sdhci_can_64bit_dma(struct sdhci_host *host)
++{
++	/*
++	 * According to SD Host Controller spec v4.10, bit[27] added from
++	 * version 4.10 in Capabilities Register is used as 64-bit System
++	 * Address support for V4 mode.
++	 */
++	if (host->version >= SDHCI_SPEC_410 && host->v4_mode)
++		return host->caps & SDHCI_CAN_64BIT_V4;
++
++	return host->caps & SDHCI_CAN_64BIT;
++}
++
+ int sdhci_setup_host(struct sdhci_host *host)
+ {
+ 	struct mmc_host *mmc;
+@@ -3575,7 +3615,7 @@ int sdhci_setup_host(struct sdhci_host *host)
+ 	 * SDHCI_QUIRK2_BROKEN_64_BIT_DMA must be left to the drivers to
+ 	 * implement.
+ 	 */
+-	if (host->caps & SDHCI_CAN_64BIT)
++	if (sdhci_can_64bit_dma(host))
+ 		host->flags |= SDHCI_USE_64_BIT_DMA;
+ 
+ 	if (host->flags & (SDHCI_USE_SDMA | SDHCI_USE_ADMA)) {
+@@ -3609,8 +3649,8 @@ int sdhci_setup_host(struct sdhci_host *host)
  		 */
- 		if (intmask & SDHCI_INT_DMA_END) {
--			u32 dmastart, dmanow;
-+			dma_addr_t dmastart, dmanow;
- 
- 			dmastart = sdhci_sdma_address(host);
- 			dmanow = dmastart + host->data->bytes_xfered;
-@@ -2831,12 +2841,12 @@ static void sdhci_data_irq(struct sdhci_host *host, u32 intmask)
- 			 * Force update to the next DMA block boundary.
- 			 */
- 			dmanow = (dmanow &
--				~(SDHCI_DEFAULT_BOUNDARY_SIZE - 1)) +
-+				~((dma_addr_t)SDHCI_DEFAULT_BOUNDARY_SIZE - 1)) +
- 				SDHCI_DEFAULT_BOUNDARY_SIZE;
- 			host->data->bytes_xfered = dmanow - dmastart;
--			DBG("DMA base 0x%08x, transferred 0x%06x bytes, next 0x%08x\n",
--			    dmastart, host->data->bytes_xfered, dmanow);
--			sdhci_writel(host, dmanow, SDHCI_DMA_ADDRESS);
-+			DBG("DMA base %pad, transferred 0x%06x bytes, next %pad\n",
-+			    &dmastart, host->data->bytes_xfered, &dmanow);
-+			sdhci_set_sdma_addr(host, dmanow);
+ 		if (host->flags & SDHCI_USE_64_BIT_DMA) {
+ 			host->adma_table_sz = (SDHCI_MAX_SEGS * 2 + 1) *
+-					      SDHCI_ADMA2_64_DESC_SZ;
+-			host->desc_sz = SDHCI_ADMA2_64_DESC_SZ;
++					      SDHCI_ADMA2_64_DESC_SZ(host);
++			host->desc_sz = SDHCI_ADMA2_64_DESC_SZ(host);
+ 		} else {
+ 			host->adma_table_sz = (SDHCI_MAX_SEGS * 2 + 1) *
+ 					      SDHCI_ADMA2_32_DESC_SZ;
+@@ -3618,7 +3658,11 @@ int sdhci_setup_host(struct sdhci_host *host)
  		}
  
- 		if (intmask & SDHCI_INT_DATA_END) {
-@@ -3583,8 +3593,8 @@ int sdhci_setup_host(struct sdhci_host *host)
- 		}
- 	}
+ 		host->align_buffer_sz = SDHCI_MAX_SEGS * SDHCI_ADMA2_ALIGN;
+-		buf = dma_alloc_coherent(mmc_dev(mmc), host->align_buffer_sz +
++		/*
++		 * Use zalloc to zero the reserved high 32-bits of 128-bit
++		 * descriptors so that they never need to be written.
++		 */
++		buf = dma_zalloc_coherent(mmc_dev(mmc), host->align_buffer_sz +
+ 					 host->adma_table_sz, &dma, GFP_KERNEL);
+ 		if (!buf) {
+ 			pr_warn("%s: Unable to allocate ADMA buffers - falling back to standard DMA\n",
+diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+index 131d869..f3b9ebc 100644
+--- a/drivers/mmc/host/sdhci.h
++++ b/drivers/mmc/host/sdhci.h
+@@ -185,6 +185,7 @@
+ #define  SDHCI_CTRL_EXEC_TUNING		0x0040
+ #define  SDHCI_CTRL_TUNED_CLK		0x0080
+ #define  SDHCI_CTRL_V4_MODE		0x1000
++#define  SDHCI_CTRL_64BIT_ADDR		0x2000
+ #define  SDHCI_CTRL_PRESET_VAL_ENABLE	0x8000
  
--	/* SDMA does not support 64-bit DMA */
--	if (host->flags & SDHCI_USE_64_BIT_DMA)
-+	/* SDMA does not support 64-bit DMA if v4 mode not set */
-+	if ((host->flags & SDHCI_USE_64_BIT_DMA) && !host->v4_mode)
- 		host->flags &= ~SDHCI_USE_SDMA;
+ #define SDHCI_CAPABILITIES	0x40
+@@ -205,6 +206,7 @@
+ #define  SDHCI_CAN_VDD_330	0x01000000
+ #define  SDHCI_CAN_VDD_300	0x02000000
+ #define  SDHCI_CAN_VDD_180	0x04000000
++#define  SDHCI_CAN_64BIT_V4	0x08000000
+ #define  SDHCI_CAN_64BIT	0x10000000
  
- 	if (host->flags & SDHCI_USE_ADMA) {
+ #define  SDHCI_SUPPORT_SDR50	0x00000001
+@@ -309,8 +311,14 @@ struct sdhci_adma2_32_desc {
+  */
+ #define SDHCI_ADMA2_DESC_ALIGN	8
+ 
+-/* ADMA2 64-bit DMA descriptor size */
+-#define SDHCI_ADMA2_64_DESC_SZ	12
++/*
++ * ADMA2 64-bit DMA descriptor size
++ * According to SD Host Controller spec v4.10, there are two kinds of
++ * descriptors for 64-bit addressing mode: 96-bit Descriptor and 128-bit
++ * Descriptor, if Host Version 4 Enable is set in the Host Control 2
++ * register, 128-bit Descriptor will be selected.
++ */
++#define SDHCI_ADMA2_64_DESC_SZ(host)	((host)->v4_mode ? 16 : 12)
+ 
+ /*
+  * ADMA2 64-bit descriptor. Note 12-byte descriptor can't always be 8-byte
 -- 
 2.7.4
 
