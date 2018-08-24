@@ -2,397 +2,145 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83212C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:50:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 040CAC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:50:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 134F62151C
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:50:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 134F62151C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B26BA2151C
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:50:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B26BA2151C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727968AbeHXRZS (ORCPT
+        id S1728029AbeHXRZm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 13:25:18 -0400
-Received: from mga07.intel.com ([134.134.136.100]:59407 "EHLO mga07.intel.com"
+        Fri, 24 Aug 2018 13:25:42 -0400
+Received: from foss.arm.com ([217.140.101.70]:57614 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727099AbeHXRZS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 13:25:18 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Aug 2018 06:50:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,281,1531810800"; 
-   d="scan'208";a="84189414"
-Received: from bpeschka-mobl.amr.corp.intel.com (HELO localhost) ([10.252.24.83])
-  by fmsmga001.fm.intel.com with ESMTP; 24 Aug 2018 06:50:08 -0700
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Satendra Singh Thakur <satendra.t@samsung.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc:     hemanshu.s@samsung.com, vineet.j@samsung.com, sst2005@gmail.com,
-        Satendra Singh Thakur <satendra.t@samsung.com>
-Subject: Re: [PATCH] drm/kms/crtc: Improving the func drm_mode_setcrtc
-In-Reply-To: <20180727101302epcas5p22561edd1d60101e611933ccff3e3d008~FMiUBZnCN2101321013epcas5p2Z@epcas5p2.samsung.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <CGME20180727101302epcas5p22561edd1d60101e611933ccff3e3d008@epcas5p2.samsung.com> <20180727101302epcas5p22561edd1d60101e611933ccff3e3d008~FMiUBZnCN2101321013epcas5p2Z@epcas5p2.samsung.com>
-Date:   Fri, 24 Aug 2018 16:50:35 +0300
-Message-ID: <87wosflvpw.fsf@intel.com>
+        id S1726960AbeHXRZl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 13:25:41 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 52128ED1;
+        Fri, 24 Aug 2018 06:50:56 -0700 (PDT)
+Received: from brain-police (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F13563F675;
+        Fri, 24 Aug 2018 06:50:51 -0700 (PDT)
+Date:   Fri, 24 Aug 2018 14:50:48 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Nicholas Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        torvalds@linux-foundation.org, luto@kernel.org, x86@kernel.org,
+        bp@alien8.de, riel@surriel.com, jannh@google.com,
+        ascannell@google.com, dave.hansen@intel.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        David Miller <davem@davemloft.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-arch@vger.kernel.org, Palmer Dabbelt <palmer@sifive.com>,
+        linux-riscv@lists.infradead.org
+Subject: Re: [RFC PATCH 2/2] mm: mmu_notifier fix for tlb_end_vma (build
+ failures)
+Message-ID: <20180824135048.GF11868@brain-police>
+References: <20180823084709.19717-1-npiggin@gmail.com>
+ <20180823084709.19717-3-npiggin@gmail.com>
+ <20180824130722.GA31409@roeck-us.net>
+ <20180824131026.GB11868@brain-police>
+ <20180824132419.GA9983@roeck-us.net>
+ <20180824133427.GC11868@brain-police>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180824133427.GC11868@brain-police>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 27 Jul 2018, Satendra Singh Thakur <satendra.t@samsung.com> wrote:
-> Following changes are done to this func:
-
-Just a drive-by observation, if your commit message lists a number of
-changes, with "also", it's usually an indication they should be separate
-patches.
-
-BR,
-Jani.
-
-
-> 1. Currently there are many redundant error checks for
-> count_connectors, mode, fb and mode_valid.
-> if (crtc_req->mode_valid)
-> if (crtc_req->count_connectors == 0 && mode)
-> if (crtc_req->count_connectors > 0 && (!mode || !fb))
-> if (crtc_req->count_connectors > 0)
-> if (crtc_req->count_connectors > config->num_connector)
->
-> These 5 checks are replaced by just 2 checks.
-> if (!crtc_req->mode_valid)
-> if (!crtc_req->count_connectors ||
-> crtc_req->count_connectors > config->num_connector)
->
-> 2. Also, currently, if user pass invalid args
-> count_connectors=0, mode=NULL, fb=NULL, code wont throw
-> any errors and eventually __drm_mode_set_config_internal
-> will be called.
-> With the modified code, this will be taken care.
->
-> 3. Also, these error checks alongwith following
-> if (!file_priv->aspect_ratio_allowed &&
-> (crtc_req->mode.flags & DRM_MODE_FLAG_PIC_AR_MASK)
->
-> has been  moved  before taking mutex and modeset lock
-> because they don't need any lock. Moreover, after grabbing locks,
-> if its found that user supplied  invalid args, it will
-> be too late as getting lock may require considerable time.
->
-> 4. Also, if modeset_lock is tried many times in case of EDEADLK
-> error, then this will be the code flow
->
-> retry:
-> 	ret = drm_modeset_lock_all_ctx(crtc->dev, &ctx);
->
-> if (ret)-->this is true
-> 		goto out;
->
-> out:
-> 	if (fb)
-> 	if (connector_set)
-> 	drm_mode_destroy(dev, mode);
-> 	if (ret == -EDEADLK)
-> 		goto retry;
-> It can be observed that checks on fb, connector_set and call to
-> mode_destroy are redundant in retry-case.
-> If we keep if (ret == -EDEADLK) just after out:,
-> that will avoid redundant checks.
->
-> In the normal case (non-retry), all checks will be required.
-> Thus shifting of if (ret == -EDEADLK) right after out label
-> won't affect normal case.
->
-> 5. Also, kfree is moved inside if (connector_set).
-> 6. Also, if major error checks are in the beginning of the func
-> and if user supplied invalid params,  we will exit the func sooner
-> without wasting much effort in finding crtc and framebuffer etc.
->
-> Signed-off-by: Satendra Singh Thakur <satendra.t@samsung.com>
+On Fri, Aug 24, 2018 at 02:34:27PM +0100, Will Deacon wrote:
+> On Fri, Aug 24, 2018 at 06:24:19AM -0700, Guenter Roeck wrote:
+> > On Fri, Aug 24, 2018 at 02:10:27PM +0100, Will Deacon wrote:
+> > > On Fri, Aug 24, 2018 at 06:07:22AM -0700, Guenter Roeck wrote:
+> > > > On Thu, Aug 23, 2018 at 06:47:09PM +1000, Nicholas Piggin wrote:
+> > > > > The generic tlb_end_vma does not call invalidate_range mmu notifier,
+> > > > > and it resets resets the mmu_gather range, which means the notifier
+> > > > > won't be called on part of the range in case of an unmap that spans
+> > > > > multiple vmas.
+> > > > > 
+> > > > > ARM64 seems to be the only arch I could see that has notifiers and
+> > > > > uses the generic tlb_end_vma. I have not actually tested it.
+> > > > > 
+> > > > > Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+> > > > > Acked-by: Will Deacon <will.deacon@arm.com>
+> > > > 
+> > > > This patch breaks riscv builds in mainline.
+> > > 
+> > > Looks very similar to the breakage we hit on arm64. diff below should fix
+> > > it.
+> > > 
+> > 
+> > Unfortunately it doesn't.
+> > 
+> > In file included from ./arch/riscv/include/asm/pgtable.h:26:0,
+> >                  from ./include/linux/memremap.h:7,
+> >                  from ./include/linux/mm.h:27,
+> >                  from arch/riscv/mm/fault.c:23:
+> > ./arch/riscv/include/asm/tlb.h: In function ‘tlb_flush’:
+> > ./arch/riscv/include/asm/tlb.h:19:18: error: dereferencing pointer to incomplete type ‘struct mmu_gather’
+> >   flush_tlb_mm(tlb->mm);
+> >                   ^
+> 
+> Sorry, I was a bit quick of the mark there. You'll need a forward
+> declaration for the paramater type. Here it is with a commit message,
+> although still untested because I haven't got round to setting up a riscv
+> toolchain yet.
+> 
+> Will
+> 
+> --->8
+> 
+> From adb9be33d68320edcda80d540a97a647792894d2 Mon Sep 17 00:00:00 2001
+> From: Will Deacon <will.deacon@arm.com>
+> Date: Fri, 24 Aug 2018 14:33:48 +0100
+> Subject: [PATCH] riscv: tlb: Provide definition of tlb_flush() before
+>  including tlb.h
+> 
+> As of commit fd1102f0aade ("mm: mmu_notifier fix for tlb_end_vma"),
+> asm-generic/tlb.h now calls tlb_flush() from a static inline function,
+> so we need to make sure that it's declared before #including the
+> asm-generic header in the arch header.
+> 
+> Since tlb_flush() is a one-liner for riscv, we can define it before
+> including asm-generic/tlb.h as long as we provide a forward declaration
+> of struct mmu_gather.
+> 
+> Reported-by: Guenter Roeck <linux@roeck-us.net>
+> Signed-off-by: Will Deacon <will.deacon@arm.com>
 > ---
->  drivers/gpu/drm/drm_crtc.c | 207 +++++++++++++++++++++------------------------
->  1 file changed, 98 insertions(+), 109 deletions(-)
->
-> diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
-> index 98a36e6..15927e7 100644
-> --- a/drivers/gpu/drm/drm_crtc.c
-> +++ b/drivers/gpu/drm/drm_crtc.c
-> @@ -578,7 +578,25 @@ int drm_mode_setcrtc(struct drm_device *dev, void *data,
->  	 */
->  	if (crtc_req->x & 0xffff0000 || crtc_req->y & 0xffff0000)
->  		return -ERANGE;
-> -
-> +	if (!file_priv->aspect_ratio_allowed &&
-> +		(crtc_req->mode.flags & DRM_MODE_FLAG_PIC_AR_MASK) !=
-> +		DRM_MODE_FLAG_PIC_AR_NONE) {
-> +		DRM_DEBUG_KMS("Unexpected aspect-ratio flag bits\n");
-> +		return -EINVAL;
-> +	}
-> +	/* Check if the flag is set*/
-> +	if (!crtc_req->mode_valid) {
-> +		DRM_DEBUG_KMS("mode_valid flag [%d] is not set\n",
-> +		crtc_req->mode_valid);
-> +		return -EINVAL;
-> +	}
-> +	/* Check the validity of count_connectors supplied by user */
-> +	if (!crtc_req->count_connectors ||
-> +		crtc_req->count_connectors > config->num_connector) {
-> +		DRM_DEBUG_KMS("Invalid connectors' count %d\n",
-> +		crtc_req->count_connectors);
-> +		return -EINVAL;
-> +	}
->  	crtc = drm_crtc_find(dev, file_priv, crtc_req->crtc_id);
->  	if (!crtc) {
->  		DRM_DEBUG_KMS("Unknown CRTC ID %d\n", crtc_req->crtc_id);
-> @@ -595,134 +613,105 @@ int drm_mode_setcrtc(struct drm_device *dev, void *data,
->  	if (ret)
->  		goto out;
+>  arch/riscv/include/asm/tlb.h | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/riscv/include/asm/tlb.h b/arch/riscv/include/asm/tlb.h
+> index c229509288ea..a3d1380ad970 100644
+> --- a/arch/riscv/include/asm/tlb.h
+> +++ b/arch/riscv/include/asm/tlb.h
+> @@ -14,11 +14,13 @@
+>  #ifndef _ASM_RISCV_TLB_H
+>  #define _ASM_RISCV_TLB_H
 >  
-> -	if (crtc_req->mode_valid) {
-> -		/* If we have a mode we need a framebuffer. */
-> -		/* If we pass -1, set the mode with the currently bound fb */
-> -		if (crtc_req->fb_id == -1) {
-> -			struct drm_framebuffer *old_fb;
-> +	/* If we have a mode we need a framebuffer. */
-> +	/* If we pass -1, set the mode with the currently bound fb */
-> +	if (crtc_req->fb_id == -1) {
-> +		struct drm_framebuffer *old_fb;
+> -#include <asm-generic/tlb.h>
+> +struct mmu_gather;
 >  
-> -			if (plane->state)
-> -				old_fb = plane->state->fb;
-> -			else
-> -				old_fb = plane->fb;
-> +		if (plane->state)
-> +			old_fb = plane->state->fb;
-> +		else
-> +			old_fb = plane->fb;
->  
-> -			if (!old_fb) {
-> -				DRM_DEBUG_KMS("CRTC doesn't have current FB\n");
-> -				ret = -EINVAL;
-> -				goto out;
-> -			}
-> -
-> -			fb = old_fb;
-> -			/* Make refcounting symmetric with the lookup path. */
-> -			drm_framebuffer_get(fb);
-> -		} else {
-> -			fb = drm_framebuffer_lookup(dev, file_priv, crtc_req->fb_id);
-> -			if (!fb) {
-> -				DRM_DEBUG_KMS("Unknown FB ID%d\n",
-> -						crtc_req->fb_id);
-> -				ret = -ENOENT;
-> -				goto out;
-> -			}
-> -		}
-> -
-> -		mode = drm_mode_create(dev);
-> -		if (!mode) {
-> -			ret = -ENOMEM;
-> -			goto out;
-> -		}
-> -		if (!file_priv->aspect_ratio_allowed &&
-> -		    (crtc_req->mode.flags & DRM_MODE_FLAG_PIC_AR_MASK) != DRM_MODE_FLAG_PIC_AR_NONE) {
-> -			DRM_DEBUG_KMS("Unexpected aspect-ratio flag bits\n");
-> +		if (!old_fb) {
-> +			DRM_DEBUG_KMS("CRTC doesn't have current FB\n");
->  			ret = -EINVAL;
->  			goto out;
->  		}
->  
-> -
-> -		ret = drm_mode_convert_umode(dev, mode, &crtc_req->mode);
-> -		if (ret) {
-> -			DRM_DEBUG_KMS("Invalid mode\n");
-> +		fb = old_fb;
-> +		/* Make refcounting symmetric with the lookup path. */
-> +		drm_framebuffer_get(fb);
-> +	} else {
-> +		fb = drm_framebuffer_lookup(dev, file_priv, crtc_req->fb_id);
-> +		if (!fb) {
-> +			DRM_DEBUG_KMS("Unknown FB ID%d\n",
-> +					crtc_req->fb_id);
-> +			ret = -ENOENT;
->  			goto out;
->  		}
-> -
-> -		/*
-> -		 * Check whether the primary plane supports the fb pixel format.
-> -		 * Drivers not implementing the universal planes API use a
-> -		 * default formats list provided by the DRM core which doesn't
-> -		 * match real hardware capabilities. Skip the check in that
-> -		 * case.
-> -		 */
-> -		if (!plane->format_default) {
-> -			ret = drm_plane_check_pixel_format(plane,
-> -							   fb->format->format,
-> -							   fb->modifier);
-> -			if (ret) {
-> -				struct drm_format_name_buf format_name;
-> -				DRM_DEBUG_KMS("Invalid pixel format %s, modifier 0x%llx\n",
-> -					      drm_get_format_name(fb->format->format,
-> -								  &format_name),
-> -					      fb->modifier);
-> -				goto out;
-> -			}
-> -		}
-> -
-> -		ret = drm_crtc_check_viewport(crtc, crtc_req->x, crtc_req->y,
-> -					      mode, fb);
-> -		if (ret)
-> -			goto out;
-> -
->  	}
->  
-> -	if (crtc_req->count_connectors == 0 && mode) {
-> -		DRM_DEBUG_KMS("Count connectors is 0 but mode set\n");
-> -		ret = -EINVAL;
-> +	mode = drm_mode_create(dev);
-> +	if (!mode) {
-> +		ret = -ENOMEM;
->  		goto out;
->  	}
->  
-> -	if (crtc_req->count_connectors > 0 && (!mode || !fb)) {
-> -		DRM_DEBUG_KMS("Count connectors is %d but no mode or fb set\n",
-> -			  crtc_req->count_connectors);
-> -		ret = -EINVAL;
-> +	ret = drm_mode_convert_umode(dev, mode, &crtc_req->mode);
-> +	if (ret) {
-> +		DRM_DEBUG_KMS("Invalid mode\n");
->  		goto out;
->  	}
->  
-> -	if (crtc_req->count_connectors > 0) {
-> -		u32 out_id;
-> +	/*
-> +	 * Check whether the primary plane supports the fb pixel format.
-> +	 * Drivers not implementing the universal planes API use a
-> +	 * default formats list provided by the DRM core which doesn't
-> +	 * match real hardware capabilities. Skip the check in that
-> +	 * case.
-> +	 */
-> +	if (!plane->format_default) {
-> +		ret = drm_plane_check_pixel_format(plane,
-> +						   fb->format->format,
-> +						   fb->modifier);
-> +		if (ret) {
-> +			struct drm_format_name_buf format_name;
->  
-> -		/* Avoid unbounded kernel memory allocation */
-> -		if (crtc_req->count_connectors > config->num_connector) {
-> -			ret = -EINVAL;
-> +			DRM_DEBUG_KMS("Invalid pixel format %s, modifier 0x%llx\n",
-> +				      drm_get_format_name(fb->format->format,
-> +							  &format_name),
-> +				      fb->modifier);
->  			goto out;
->  		}
-> +	}
->  
-> -		connector_set = kmalloc_array(crtc_req->count_connectors,
-> +	ret = drm_crtc_check_viewport(crtc, crtc_req->x, crtc_req->y,
-> +				      mode, fb);
-> +	if (ret)
-> +		goto out;
-> +
-> +	connector_set = kmalloc_array(crtc_req->count_connectors,
->  					      sizeof(struct drm_connector *),
->  					      GFP_KERNEL);
-> -		if (!connector_set) {
-> -			ret = -ENOMEM;
-> -			goto out;
-> -		}
-> +	if (!connector_set) {
-> +		ret = -ENOMEM;
-> +		goto out;
-> +	}
->  
-> -		for (i = 0; i < crtc_req->count_connectors; i++) {
-> -			connector_set[i] = NULL;
-> -			set_connectors_ptr = (uint32_t __user *)(unsigned long)crtc_req->set_connectors_ptr;
-> -			if (get_user(out_id, &set_connectors_ptr[i])) {
-> -				ret = -EFAULT;
-> -				goto out;
-> -			}
-> +	for (i = 0; i < crtc_req->count_connectors; i++) {
-> +		u32 out_id;
->  
-> -			connector = drm_connector_lookup(dev, file_priv, out_id);
-> -			if (!connector) {
-> -				DRM_DEBUG_KMS("Connector id %d unknown\n",
-> -						out_id);
-> -				ret = -ENOENT;
-> -				goto out;
-> -			}
-> -			DRM_DEBUG_KMS("[CONNECTOR:%d:%s]\n",
-> -					connector->base.id,
-> -					connector->name);
-> +		connector_set[i] = NULL;
-> +		set_connectors_ptr =
-> +		(uint32_t __user *)(unsigned long)crtc_req->set_connectors_ptr;
-> +		if (get_user(out_id, &set_connectors_ptr[i])) {
-> +			ret = -EFAULT;
-> +			goto out;
-> +		}
->  
-> -			connector_set[i] = connector;
-> +		connector = drm_connector_lookup(dev, file_priv, out_id);
-> +		if (!connector) {
-> +			DRM_DEBUG_KMS("Connector id %d unknown\n",
-> +					out_id);
-> +			ret = -ENOENT;
-> +			goto out;
->  		}
-> +		DRM_DEBUG_KMS("[CONNECTOR:%d:%s]\n",
-> +				connector->base.id,
-> +				connector->name);
-> +
-> +		connector_set[i] = connector;
->  	}
->  
->  	set.crtc = crtc;
-> @@ -735,6 +724,11 @@ int drm_mode_setcrtc(struct drm_device *dev, void *data,
->  	ret = __drm_mode_set_config_internal(&set, &ctx);
->  
->  out:
-> +	if (ret == -EDEADLK) {
-> +		ret = drm_modeset_backoff(&ctx);
-> +		if (!ret)
-> +			goto retry;
-> +	}
->  	if (fb)
->  		drm_framebuffer_put(fb);
->  
-> @@ -743,14 +737,9 @@ int drm_mode_setcrtc(struct drm_device *dev, void *data,
->  			if (connector_set[i])
->  				drm_connector_put(connector_set[i]);
->  		}
-> +		kfree(connector_set);
->  	}
-> -	kfree(connector_set);
->  	drm_mode_destroy(dev, mode);
-> -	if (ret == -EDEADLK) {
-> -		ret = drm_modeset_backoff(&ctx);
-> -		if (!ret)
-> -			goto retry;
-> -	}
->  	drm_modeset_drop_locks(&ctx);
->  	drm_modeset_acquire_fini(&ctx);
->  	mutex_unlock(&crtc->dev->mode_config.mutex);
+>  static inline void tlb_flush(struct mmu_gather *tlb)
+>  {
+>  	flush_tlb_mm(tlb->mm);
 
--- 
-Jani Nikula, Intel Open Source Graphics Center
+Bah, didn't spot the dereference so this won't work either. You basically
+just need to copy what I did for arm64 in d475fac95779.
+
+Will
