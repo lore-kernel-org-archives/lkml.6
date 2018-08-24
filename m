@@ -1,170 +1,168 @@
-Return-Path: <SRS0=AKWg=LG=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25C39C4321D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 23:42:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FB6CC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 00:05:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C83D12152D
-	for <linux-kernel@archiver.kernel.org>; Thu, 23 Aug 2018 23:42:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dfhnk7OE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C83D12152D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2FA91208B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 00:05:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FA91208B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ah.jp.nec.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727199AbeHXDO3 (ORCPT
+        id S1726459AbeHXDho convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 23:14:29 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:39928 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726085AbeHXDO3 (ORCPT
+        Thu, 23 Aug 2018 23:37:44 -0400
+Received: from tyo161.gate.nec.co.jp ([114.179.232.161]:48956 "EHLO
+        tyo161.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726085AbeHXDhn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 23:14:29 -0400
-Received: by mail-pg1-f196.google.com with SMTP id m3-v6so2494591pgp.6;
-        Thu, 23 Aug 2018 16:42:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=f3MgpXJ0tEgWaIBlP6Yio9nmxEHq9CVJWKgbe1GKI54=;
-        b=dfhnk7OEVDY8HOZqm5+42Cy2aCsIGUGTplhcn29f8lSzloNVsYcvFI3j8SDnCU8jR2
-         hjWZofFwSk6qmH5U6p4OBHScMnYsNcAE+q9ULmICYyrpGrmR2j+TZdAMTaW3/4ToqqQV
-         Z+0BAIiZl1RzRvCluyzHWQlJ9YLKJnA3N0Vxv3B6QXVtqtcaoCw/ehPHbjeL45/aC/C8
-         Ivps95NgN0aehpu221LqvxNjYMv9XT3aIYTvRVnekUCcHJLjnjkqyIxh8FgI97umMT1M
-         hGmJGz7YV1Rx7EpzVgxve29H4vv4mSOBYf0M5drdShYyjMjAiQoIr17wx3S4FgLGJggq
-         PRUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=f3MgpXJ0tEgWaIBlP6Yio9nmxEHq9CVJWKgbe1GKI54=;
-        b=Q00IlHp+8N9jaZ0AbP6AsPpYpvVR+lAz9EAYCfUFl6fBq6TiPu8hH2x4NYMX3X7Gwu
-         EOUVdbsL9Ik8raKaLicOlRA6AFKQAr84ixPobbuIrAWc+CgdrXqZf+97CFnWptlhYFi9
-         jz5Rkz38MthfMtF9z9RTIgJgcmRxqGdU4hbL+OBDgx7O+LoajSgBGpR6dNM0r/WtWAtg
-         52IxI9U96n7C1YII5oW+Sl2acMBr8R4ZHqSpMdBpMAjNsYaVb/4E6slTpVVvEWtHAJPD
-         E7KtjS9Wu+wO+I7e7cdK9a6HiyFGzKZrJU0XLj20IGOU3JBX4DYsx4EHVVJ3fOs7SKfr
-         sB4w==
-X-Gm-Message-State: AOUpUlFMgJE/cXNS5dcwRCOncg8nhlA0rJnNBuqjNcrMh2MqAIiAJS8u
-        sAUFCM19SDO8SfoU+F0LHw4=
-X-Google-Smtp-Source: AA+uWPz6Ag5Nnv/65hdLIOdq5Wn7qy5zb7RZezfCq4TgCKk0zZCWa1FKmg1BsEK9KrY4yip6PwW7SA==
-X-Received: by 2002:a62:411a:: with SMTP id o26-v6mr64884286pfa.111.1535067748841;
-        Thu, 23 Aug 2018 16:42:28 -0700 (PDT)
-Received: from roar.ozlabs.ibm.com ([122.99.82.10])
-        by smtp.gmail.com with ESMTPSA id v23-v6sm7111592pfm.80.2018.08.23.16.42.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 23 Aug 2018 16:42:28 -0700 (PDT)
-Date:   Fri, 24 Aug 2018 09:42:20 +1000
-From:   Nicholas Piggin <npiggin@gmail.com>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Rik van Riel <riel@surriel.com>,
-        Jann Horn <jannh@google.com>,
-        Adin Scannell <ascannell@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        David Miller <davem@davemloft.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-arch <linux-arch@vger.kernel.org>
-Subject: Re: [RFC PATCH 0/2] minor mmu_gather patches
-Message-ID: <20180824094220.3ac18168@roar.ozlabs.ibm.com>
-In-Reply-To: <20180823232704.GA4487@brain-police>
-References: <20180823084709.19717-1-npiggin@gmail.com>
-        <CA+55aFxaiv3SMvFUSEnd_p6nuGttUnv2_O3v_G2zCnnc0pV2pA@mail.gmail.com>
-        <CA+55aFwEZftzAd9k-kjiaXonP2XeTDYshjY56jmd1CFBaXmGHA@mail.gmail.com>
-        <20180823232704.GA4487@brain-police>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 23 Aug 2018 23:37:43 -0400
+Received: from mailgate02.nec.co.jp ([114.179.233.122])
+        by tyo161.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id w7O05KaB032216
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 24 Aug 2018 09:05:20 +0900
+Received: from mailsv01.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
+        by mailgate02.nec.co.jp (8.15.1/8.15.1) with ESMTP id w7O05Jf7015837;
+        Fri, 24 Aug 2018 09:05:20 +0900
+Received: from mail02.kamome.nec.co.jp (mail02.kamome.nec.co.jp [10.25.43.5])
+        by mailsv01.nec.co.jp (8.15.1/8.15.1) with ESMTP id w7O03jKC002529;
+        Fri, 24 Aug 2018 09:05:19 +0900
+Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.148] [10.38.151.148]) by mail03.kamome.nec.co.jp with ESMTP id BT-MMP-3045557; Fri, 24 Aug 2018 09:03:27 +0900
+Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
+ BPXC20GP.gisp.nec.co.jp ([10.38.151.148]) with mapi id 14.03.0319.002; Fri,
+ 24 Aug 2018 09:03:26 +0900
+From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
+CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "osalvador@techadventures.net" <osalvador@techadventures.net>,
+        "pasha.tatashin@oracle.com" <pasha.tatashin@oracle.com>,
+        "mhocko@kernel.org" <mhocko@kernel.org>
+Subject: Re: [PATCH 1/2] Revert "x86/e820: put !E820_TYPE_RAM regions into
+ memblock.reserved"
+Thread-Topic: [PATCH 1/2] Revert "x86/e820: put !E820_TYPE_RAM regions into
+ memblock.reserved"
+Thread-Index: AQHUOz3hJO6tZLKv2Eedq0vBDZ0sig==
+Date:   Fri, 24 Aug 2018 00:03:25 +0000
+Message-ID: <20180824000325.GA20143@hori1.linux.bs1.fc.nec.co.jp>
+References: <20180823182513.8801-1-msys.mizuma@gmail.com>
+In-Reply-To: <20180823182513.8801-1-msys.mizuma@gmail.com>
+Accept-Language: en-US, ja-JP
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.51.8.82]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <4ACE734EF426E548A9644DAC9290E1B2@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 24 Aug 2018 00:27:05 +0100
-Will Deacon <will.deacon@arm.com> wrote:
+(CCed related people)
 
-> Hi Linus,
-> 
-> On Thu, Aug 23, 2018 at 12:37:58PM -0700, Linus Torvalds wrote:
-> > On Thu, Aug 23, 2018 at 12:15 PM Linus Torvalds
-> > <torvalds@linux-foundation.org> wrote:  
-> > >
-> > > So right now my "tlb-fixes" branch looks like this:
-> > > [..]
-> > >
-> > > I'll do a few more test builds and boots, but I think I'm going to
-> > > merge it in this cleaned-up and re-ordered form.  
-> > 
-> > In the meantime, I decided to push out that branch in case anybody
-> > wants to look at it.
-> > 
-> > I may rebase it if I - or anybody else - find anything bad there, so
-> > consider it non-stable, but I think it's in its final shape modulo
-> > issues.  
-> 
-> Unfortunately, that branch doesn't build for arm64 because of Nick's patch
-> moving tlb_flush_mmu_tlbonly() into tlb.h (which I acked!). It's a static
-> inline which calls tlb_flush(), which in our case is also a static inline
-> but one that is defined in our asm/tlb.h after including asm-generic/tlb.h.
-> 
-> Ah, just noticed you've pushed this to master! Please could you take the
-> arm64 patch below on top, in order to fix the build?
+Hi Mizuma-san,
 
-Sorry yeah I had the sign offs but should have clear I hadn't fully
-build tested them. It's reasonable for reviewers to assume basic
-diligence was done and concentrate on the logic rather than build
-trivialities. So that's my bad. Thanks for the fix.
+Thank you for the report.
+The mentioned patch was created based on feedbacks from reviewers/maintainers,
+so I'd like to hear from them about how we should handle the issue.
+
+And one note is that there is a follow-up patch for "x86/e820: put !E820_TYPE_RAM
+regions into memblock.reserved" which might be affected by your changes.
+
+> commit e181ae0c5db9544de9c53239eb22bc012ce75033
+> Author: Pavel Tatashin <pasha.tatashin@oracle.com>
+> Date:   Sat Jul 14 09:15:07 2018 -0400
+> 
+>     mm: zero unavailable pages before memmap init
 
 Thanks,
-Nick
+Naoya Horiguchi
 
+On Thu, Aug 23, 2018 at 02:25:12PM -0400, Masayoshi Mizuma wrote:
+> From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
 > 
-> Cheers,
+> commit 124049decbb1 ("x86/e820: put !E820_TYPE_RAM regions into
+> memblock.reserved") breaks movable_node kernel option because it
+> changed the memory gap range to reserved memblock. So, the node
+> is marked as Normal zone even if the SRAT has Hot plaggable affinity.
 > 
-> Will
+>     =====================================================================
+>     kernel: BIOS-e820: [mem 0x0000180000000000-0x0000180fffffffff] usable
+>     kernel: BIOS-e820: [mem 0x00001c0000000000-0x00001c0fffffffff] usable
+>     ...
+>     kernel: reserved[0x12]#011[0x0000181000000000-0x00001bffffffffff], 0x000003f000000000 bytes flags: 0x0
+>     ...
+>     kernel: ACPI: SRAT: Node 2 PXM 6 [mem 0x180000000000-0x1bffffffffff] hotplug
+>     kernel: ACPI: SRAT: Node 3 PXM 7 [mem 0x1c0000000000-0x1fffffffffff] hotplug
+>     ...
+>     kernel: Movable zone start for each node
+>     kernel:  Node 3: 0x00001c0000000000
+>     kernel: Early memory node ranges
+>     ...
+>     =====================================================================
 > 
-> --->8  
+> Naoya's v1 patch [*] fixes the original issue and this movable_node
+> issue doesn't occur.
+> Let's revert commit 124049decbb1 ("x86/e820: put !E820_TYPE_RAM
+> regions into memblock.reserved") and apply the v1 patch.
 > 
-> From 48ea452db90a91ff2b62a94277daf565e715a126 Mon Sep 17 00:00:00 2001
-> From: Will Deacon <will.deacon@arm.com>
-> Date: Fri, 24 Aug 2018 00:23:04 +0100
-> Subject: [PATCH] arm64: tlb: Provide forward declaration of tlb_flush() before
->  including tlb.h
+> [*] https://lkml.org/lkml/2018/6/13/27
 > 
-> As of commit fd1102f0aade ("mm: mmu_notifier fix for tlb_end_vma"),
-> asm-generic/tlb.h now calls tlb_flush() from a static inline function,
-> so we need to make sure that it's declared before #including the
-> asm-generic header in the arch header.
-> 
-> Signed-off-by: Will Deacon <will.deacon@arm.com>
+> Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
 > ---
->  arch/arm64/include/asm/tlb.h | 2 ++
->  1 file changed, 2 insertions(+)
+>  arch/x86/kernel/e820.c | 15 +++------------
+>  1 file changed, 3 insertions(+), 12 deletions(-)
 > 
-> diff --git a/arch/arm64/include/asm/tlb.h b/arch/arm64/include/asm/tlb.h
-> index 0ad1cf233470..a3233167be60 100644
-> --- a/arch/arm64/include/asm/tlb.h
-> +++ b/arch/arm64/include/asm/tlb.h
-> @@ -33,6 +33,8 @@ static inline void __tlb_remove_table(void *_table)
->  #define tlb_remove_entry(tlb, entry)	tlb_remove_page(tlb, entry)
->  #endif /* CONFIG_HAVE_RCU_TABLE_FREE */
+> diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
+> index c88c23c658c1..d1f25c831447 100644
+> --- a/arch/x86/kernel/e820.c
+> +++ b/arch/x86/kernel/e820.c
+> @@ -1248,7 +1248,6 @@ void __init e820__memblock_setup(void)
+>  {
+>  	int i;
+>  	u64 end;
+> -	u64 addr = 0;
 >  
-> +static void tlb_flush(struct mmu_gather *tlb);
+>  	/*
+>  	 * The bootstrap memblock region count maximum is 128 entries
+> @@ -1265,21 +1264,13 @@ void __init e820__memblock_setup(void)
+>  		struct e820_entry *entry = &e820_table->entries[i];
+>  
+>  		end = entry->addr + entry->size;
+> -		if (addr < entry->addr)
+> -			memblock_reserve(addr, entry->addr - addr);
+> -		addr = end;
+>  		if (end != (resource_size_t)end)
+>  			continue;
+>  
+> -		/*
+> -		 * all !E820_TYPE_RAM ranges (including gap ranges) are put
+> -		 * into memblock.reserved to make sure that struct pages in
+> -		 * such regions are not left uninitialized after bootup.
+> -		 */
+>  		if (entry->type != E820_TYPE_RAM && entry->type != E820_TYPE_RESERVED_KERN)
+> -			memblock_reserve(entry->addr, entry->size);
+> -		else
+> -			memblock_add(entry->addr, entry->size);
+> +			continue;
 > +
->  #include <asm-generic/tlb.h>
+> +		memblock_add(entry->addr, entry->size);
+>  	}
 >  
->  static inline void tlb_flush(struct mmu_gather *tlb)
-
+>  	/* Throw away partial pages: */
+> -- 
+> 2.18.0
+> 
+> 
