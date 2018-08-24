@@ -2,124 +2,182 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 820C2C04AB9
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 08:22:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6F93C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 08:23:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 358B0208E3
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 08:22:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F65A208E3
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 08:23:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="D1lKNXhI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 358B0208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="lS80CVE0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F65A208E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbeHXL4R (ORCPT
+        id S1727524AbeHXL4c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 07:56:17 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:32892 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726510AbeHXL4Q (ORCPT
+        Fri, 24 Aug 2018 07:56:32 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:51569 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727406AbeHXL4c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 07:56:16 -0400
-Received: by mail-pf1-f194.google.com with SMTP id d4-v6so4206765pfn.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 01:22:42 -0700 (PDT)
+        Fri, 24 Aug 2018 07:56:32 -0400
+Received: by mail-wm0-f65.google.com with SMTP id y2-v6so777774wma.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 01:22:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
-         :references:message-id:user-agent:subject:date;
-        bh=BYbArSWLlD9BeWe+HSmpb3sGYvyY6JnBEUU2tEHyIuc=;
-        b=D1lKNXhIlfiEsbgcoupszN7CKxJ68V3x0gDtzaLQGzIdlGaAPdZq0+CxV7xmBfhoPP
-         LJuH7mgx0cRZYGlegI9eO+qgk2TLc/rtZTZMpseXPf7UvWpb/Urmq0W1s/Ml+rtGhhtw
-         xJ5kJUZGFLVT1VQLJs7VpxaN7mNDUcXFNCCSU=
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=rdI3eGrgDRdi+ZECJXI3q/qcnJLKHUsibWfAleizWb4=;
+        b=lS80CVE07PWoOdbqjP4M3CHlLEvuumJe3lhWIUl2QnI3HJJrOMDu+zxJVD2avW7P/J
+         Rav8N+7Txa4bRIuhxhOdqHvh9QHe51zashB6ndz0YlPG0LvEkV45PT77ZeazXGfXW+Np
+         7VGb/9/Ezr2PBwAY4mt9NZtCUHRp1Abs1cw/fzJK7vNm6oFE27OJmlDBVNDxhp7XEzOi
+         7b2P2omdP63aVyOiuiLeQgKKMYgGBW/4bE9EEHF9Mhd8cNKk6hX+InS9sWzyopE1W1K4
+         UI0QSLP5If+K9vqzS4b0DlvU4cp0R/+pARqnlqhzXkEYlyC5J67r6nKCouaP2Wclqefh
+         qSAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
-         :in-reply-to:cc:references:message-id:user-agent:subject:date;
-        bh=BYbArSWLlD9BeWe+HSmpb3sGYvyY6JnBEUU2tEHyIuc=;
-        b=VkC7sDvXoa7Jjogr+qUmKcnbS9r1Aeuui0GaVSO7RlB8HcrNmhYwvyr5vPpa4N1toA
-         V0b4m7in6KzZKEe5XY4HI77zHDSDC/XHJD4RXft2C+lUU43wqLIxCkJzxstMYWV/JFJQ
-         ivDkyCcKkmRFoAe0s5NhfXIBESsJ1dk4qAZEv5O+fFLwEDVvd7EtS0Cg2jUXC/p2ZYzS
-         zh+O0NKU+I8qoAsXOjHvDtMMiH8/aSZxxdoBwCff1jZ1mLrg3E9pRwwb/6Ratt7YHM7A
-         +1CBK3RnY1M4qoAgY574lhhni3MWhTIX0ldzLEZ3luc35+/BvbkjNULNb51rXd7d+60m
-         Uo5g==
-X-Gm-Message-State: APzg51C3vZaGE2uyZD+53Arn0Nmn5ouv42H9BytRAEo0rPBcMuF50Ufl
-        Q+CeJUj5ST0onkT6Op4PQVgF/A==
-X-Google-Smtp-Source: ANB0VdYgrJUXzvDx0ws5krNbOGbQc2djtU6zcLjdbj568xF0M+EC+6y6SrMTGOzULdjFoJ3SaRT+Xg==
-X-Received: by 2002:a62:54c7:: with SMTP id i190-v6mr789955pfb.155.1535098962546;
-        Fri, 24 Aug 2018 01:22:42 -0700 (PDT)
-Received: from localhost ([2620:15c:202:201:7e28:b9f3:6afc:5326])
-        by smtp.gmail.com with ESMTPSA id 1-v6sm13846561pfk.134.2018.08.24.01.22.41
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=rdI3eGrgDRdi+ZECJXI3q/qcnJLKHUsibWfAleizWb4=;
+        b=BR43Izv6Eea7xA3h5IEHCeWkjx/wgOWM/cgwt1Bj6evREsMqeGFP1Co99yRqOvmM/Z
+         CFrlbLZ5XhSPq0McPwi0PVu93CGACVCZcWDwXiEOAsAyIj0H5NRZlod4rXdYtk7OrU4V
+         dFeu7SVm4/zQLI9C/d4LUbpjaV8p0C92JvaqwXz2m3h1TFeP+aXL59tYW5F8oLH4ZPrh
+         JhV4ZkrwC/werbkkMo9tEExmdHlsdOn7lu78dsN4mt5Zcairfn5zEBeN+WSW1BJ6/PLW
+         G23pHQW3uSDXFKf3Cr9n1cZfrgrVsy2lRt1Rn4TS0lRlgla8HJGkWWbGZoHs0SKabjzV
+         lVzQ==
+X-Gm-Message-State: APzg51Dpg3B9lyXDiZvUJ7jzLZ41UVUl0oa2EH12EB5dyzmz3LoElwwX
+        mGX+8Ee9INThB41BlBUoEtRR8Q==
+X-Google-Smtp-Source: ANB0VdYElGPb0wd3nTOyJ39kIG6grnhXR9wqwhwSWov1s0/Ah8CS50tLfIHFPIJZ47vNuXv2PMHy+Q==
+X-Received: by 2002:a1c:9dc3:: with SMTP id g186-v6mr732486wme.26.1535098977659;
+        Fri, 24 Aug 2018 01:22:57 -0700 (PDT)
+Received: from boomer ([90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id a37-v6sm16148462wrc.21.2018.08.24.01.22.56
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 24 Aug 2018 01:22:42 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Lina Iyer <ilina@codeaurora.org>, bjorn.andersson@linaro.org,
-        evgreen@chromium.org, linus.walleij@linaro.org,
-        marc.zyngier@arm.com
-From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <20180817191026.32245-3-ilina@codeaurora.org>
-Cc:     rplsssn@codeaurora.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, rnayak@codeaurora.org,
-        devicetree@vger.kernel.org, andy.gross@linaro.org,
-        dianders@chromium.org, Lina Iyer <ilina@codeaurora.org>
-References: <20180817191026.32245-1-ilina@codeaurora.org>
- <20180817191026.32245-3-ilina@codeaurora.org>
-Message-ID: <153509896098.28926.3622217918056498792@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH RESEND v1 2/5] drivers: pinctrl: msm: enable PDC interrupt only
- during suspend
-Date:   Fri, 24 Aug 2018 01:22:40 -0700
+        Fri, 24 Aug 2018 01:22:57 -0700 (PDT)
+Message-ID: <8c48964151d24758298ba935da336c0829e2b287.camel@baylibre.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: PCI: meson: add DT bindings for
+ Amlogic Meson PCIe controller
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Hanjie Lin <hanjie.lin@amlogic.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Yue Wang <yue.wang@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>, devicetree@vger.kernel.org
+Date:   Fri, 24 Aug 2018 10:22:55 +0200
+In-Reply-To: <1535096165-45827-2-git-send-email-hanjie.lin@amlogic.com>
+References: <1535096165-45827-1-git-send-email-hanjie.lin@amlogic.com>
+         <1535096165-45827-2-git-send-email-hanjie.lin@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Lina Iyer (2018-08-17 12:10:23)
-> During suspend the system may power down some of the system rails. As a
-> result, the TLMM hw block may not be operational anymore and wakeup
-> capable GPIOs will not be detected. The PDC however will be operational
-> and the GPIOs that are routed to the PDC as IRQs can wake the system up.
-> =
+On Fri, 2018-08-24 at 15:36 +0800, Hanjie Lin wrote:
+> From: Yue Wang <yue.wang@amlogic.com>
+> 
+> The Amlogic Meson PCIe host controller is based on the Synopsys DesignWare
+> PCI core. This patch adds documentation for the DT bindings in Meson PCIe
+> controller.
+> 
+> Signed-off-by: Yue Wang <yue.wang@amlogic.com>
+> Signed-off-by: Hanjie Lin <hanjie.lin@amlogic.com>
+> ---
+>  .../devicetree/bindings/pci/amlogic,meson-pcie.txt | 63 ++++++++++++++++++++++
+>  1 file changed, 63 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt b/Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt
+> new file mode 100644
+> index 0000000..8a831d1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt
+> @@ -0,0 +1,63 @@
+> +Amlogic Meson AXG DWC PCIE SoC controller
+> +
+> +Amlogic Meson PCIe host controller is based on the Synopsys DesignWare PCI core.
+> +It shares common functions with the PCIe DesignWare core driver and
+> +inherits common properties defined in
+> +Documentation/devicetree/bindings/pci/designware-pci.txt.
+> +
+> +Additional properties are described here:
+> +
+> +Required properties:
+> +- compatible:
+> +	should contain "amlogic,axg-pcie" to identify the core.
+> +- reg:
+> +	Should contain the configuration address space.
+> +- reg-names: Must be
+> +	- "elbi"	External local bus interface registers
+> +	- "cfg"		Meson specific registers
+> +	- "config"	PCIe configuration space
+> +- reset-gpios: The GPIO to generate PCIe PERST# assert and deassert signal.
+> +- clocks: Must contain an entry for each entry in clock-names.
+> +- clock-names: Must include the following entries:
+> +	- "pclk"       PCIe GEN 100M PLL clock
+> +	- "port"       PCIe_x(A or B) RC clock gate
+> +	- "general"    PCIe Phy clock
+> +	- "mipi"       PCIe_x(A or B) 100M ref clock gate
+> +- resets: phandle to the reset lines.
+> +- reset-names: must contain "phy" and "peripheral"
+> +       - "port" Port A or B reset
+> +       - "apb" APB reset
 
-> To avoid being interrupted twice (for TLMM and once for PDC IRQ) when a
-> GPIO trips, use TLMM for active and switch to PDC for suspend. When
-> entering suspend, disable the TLMM wakeup interrupt and instead enable
-> the PDC IRQ and revert upon resume.
+The above description is not coherent (phy <=> port)
 
-What about idle paths? Don't we want to disable the TLMM interrupt and
-enable the PDC interrupt when the whole cluster goes idle so we get
-wakeup interrupts? It's really unfortunate that the hardware can't
-replay the interrupt from PDC to TLMM when it knows TLMM didn't get the
-interrupt (because the whole chip was off) or the GIC didn't get the
-summary irq (because the GIC was powered off). A little more hardware
-effort would make this completely transparent to software and make TLMM
-work across all low power modes.
+> +
+> +Example configuration:
+> +
+> +	pcie: pcie@f9800000 {
+> +			compatible = "amlogic,axg-pcie", "snps,dw-pcie";
+> +			reg = <0x0 0xf9800000 0x0 0x400000
+> +					0x0 0xff646000 0x0 0x2000
+> +					0x0 0xf9f00000 0x0 0x100000>;
+> +			reg-names = "elbi", "cfg", "config";
+> +			reset-gpios = <&gpio GPIOX_19 GPIO_ACTIVE_HIGH>;
+> +			interrupts = <GIC_SPI 177 IRQ_TYPE_EDGE_RISING>;
+> +			#interrupt-cells = <1>;
+> +			interrupt-map-mask = <0 0 0 0>;
+> +			interrupt-map = <0 0 0 0 &gic GIC_SPI 179 IRQ_TYPE_EDGE_RISING>;
+> +			bus-range = <0x0 0xff>;
+> +			#address-cells = <3>;
+> +			#size-cells = <2>;
+> +			device_type = "pci";
 
-Because of this complicated dance, it may make sense to always get the
-interrupt at the PDC and then replay it into the TLMM chip "manually"
-with the irq_set_irqchip_state() APIs. This way the duplicate interrupt
-can't happen. The only way for the interrupt handler to run would be by
-PDC poking the TLMM hardware to inject the irq into the status register.
-I think with the TLMM that's possible if we configure the pin to have
-the raw status bit disabled (so that edges on the physical line don't
-latch into the GPIO interrupt status register) and the normal status bit
-enabled (so that if the status register changes we'll interrupt the
-CPU). It needs some testing to make sure that actually works though. If
-it does work, then we have a way to inject interrupts on TLMM without
-worry that the TLMM hardware will also see the interrupt.
+Not described above - is it even used ?
 
-Is there a good way to test an interrupt to see if it's edge or level
-type configured? And is it really a problem to make PDC the hierarchical
-parent of TLMM here so that PDC can intercept the type and wake state of
-the GPIO irq? Plus there's the part where a GIC SPI interrupt runs for
-some GPIO irq, and that needs to be decoded to figure out which GPIO it
-is for and if it should be replayed or not. Maybe all types of GPIO irqs
-can be replayed and if it's a level type interrupt we waste some time
-handling the PDC interrupt just to do nothing besides forward what would
-presumably already work without PDC intervention.
+> +			phys = <&pcie_phy>;
+
+Not documented and not necessary. Please remove this.
+
+> +			ranges = <0x82000000 0 0 0x0 0xf9c00000 0 0x00300000>;
+> +
+> +			clocks = <&clkc CLKID_USB
+> +					&clkc CLKID_MIPI_ENABLE
+> +					&clkc CLKID_PCIE_A
+> +					&clkc CLKID_PCIE_CML_EN0>;
+> +			clock-names = "general",
+> +					"mipi",
+> +					"pclk",
+> +					"port";
+> +			resets = <&reset RESET_PCIE_A>,
+> +				<&reset RESET_PCIE_APB>;
+> +			reset-names = "port",
+> +					"apb";
+> +	};
+
 
