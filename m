@@ -3,159 +3,184 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E620C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 17:48:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EFD4C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 17:53:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 009142145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 17:48:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC7EF2145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 17:53:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LBgCwSwf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 009142145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="ibJAnnrv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC7EF2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727556AbeHXVXt (ORCPT
+        id S1727652AbeHXV2m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 17:23:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33704 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726279AbeHXVXt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 17:23:49 -0400
-Received: from mail-wm0-f42.google.com (mail-wm0-f42.google.com [74.125.82.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A3F7F21477
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 17:48:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535132889;
-        bh=sRiH7Dy5I73dG+MsTzXyloD5DJE0ZYp384/dzDRC9B8=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=LBgCwSwfWC1+Ofrjzr+ewSYJ+QU+dghOamhhXk50CcQCjFJsGXGPCCigBgG+KWWqb
-         +CmfBrZ9o1yOzRvzZH3qqWivvB/eZaUl28ab22konEk3fKo575hkG66wMM1MpgvqoL
-         zGiIc975D0ZHBzcGojjTbmuzKYeVtCOAJEYpzMx8=
-Received: by mail-wm0-f42.google.com with SMTP id 207-v6so2396267wme.5
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 10:48:09 -0700 (PDT)
-X-Gm-Message-State: APzg51AjkqiioFJBEQMY8gTi/147k14Wu0oArdBApF8Yr9KByHoJE8bk
-        HSLA3PdnfWkp5L1QSeS/sNPOXgANKPkczFZ9e06XnA==
-X-Google-Smtp-Source: ANB0VdZHGdb8QiuGGrSty/IHEDKCEj49joeRUjJ1uWxCxuAvEKIUd7l2EV2/gqCRWlS5/C3vHh7/NDVbjZvz79oyQKg=
-X-Received: by 2002:a1c:f30d:: with SMTP id q13-v6mr1965252wmq.36.1535132888132;
- Fri, 24 Aug 2018 10:48:08 -0700 (PDT)
+        Fri, 24 Aug 2018 17:28:42 -0400
+Received: from smtprelay2.synopsys.com ([198.182.60.111]:38544 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726601AbeHXV2m (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 17:28:42 -0400
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 571ED10C1BAC;
+        Fri, 24 Aug 2018 10:53:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1535133182; bh=pU6Vt7axWq5CX5naq7DXYQ1wFeapZtzLGaLvIpFHHmw=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
+        b=ibJAnnrvg8P17BDi0++Rgi4Z2v0FiZn9LFgtcmpozeiUw6RpBSBsfrlrSIUFN6FMd
+         9MdOQhFRDVw1Xp5aC72BwoIjjeEx7C8GPc/UmjJ4AyLW7lPqpxjw/WZo3GZzRqTSoI
+         pfrkVDGxVc1vJU60xoAIo+1TqB3lNkREqKI+P1yxe00TScEuLES7uyEuab3NF/4YYN
+         RMQdQnF64QRd05NfuANVbhq1FYxrPRtlhN8zlalPFiNOHgWmBnKNKmts7sMyCJTpfS
+         Q4se1IrEf0GhdoHdO7ep/Vv+d9mQ7pmY55VsQ2Cd5uPmni5zIXe5wRS08lUxUnBQLW
+         bCkl/IyCDl/KA==
+Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 5817B3CB3;
+        Fri, 24 Aug 2018 10:52:58 -0700 (PDT)
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ us01wehtc1.internal.synopsys.com (10.12.239.231) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Fri, 24 Aug 2018 10:52:58 -0700
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ DE02WEHTCB.internal.synopsys.com (10.225.19.94) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Fri, 24 Aug 2018 19:52:56 +0200
+Received: from [10.0.2.15] (10.107.25.66) by DE02WEHTCA.internal.synopsys.com
+ (10.225.19.80) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 24 Aug
+ 2018 19:52:55 +0200
+Subject: Re: [PATCH v6 01/10] i3c: Add core I3C infrastructure
+To:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        vitor <Vitor.Soares@synopsys.com>, <linux-gpio@vger.kernel.org>,
+        Sekhar Nori <nsekhar@ti.com>
+CC:     Wolfram Sang <wsa@the-dreams.de>, <linux-i2c@vger.kernel.org>,
+        "Jonathan Corbet" <corbet@lwn.net>, <linux-doc@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Przemyslaw Sroka <psroka@cadence.com>,
+        Arkadiusz Golec <agolec@cadence.com>,
+        Alan Douglas <adouglas@cadence.com>,
+        Bartosz Folta <bfolta@cadence.com>,
+        Damian Kos <dkos@cadence.com>,
+        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
+        "Cyprian Wronka" <cwronka@cadence.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        "Rafal Ciepiela" <rafalc@cadence.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        "Kumar Gala" <galak@codeaurora.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiang Lin <Xiang.Lin@synaptics.com>,
+        Przemyslaw Gaj <pgaj@cadence.com>,
+        Peter Rosin <peda@axentia.se>
+References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
+ <20180719152930.3715-2-boris.brezillon@bootlin.com>
+ <d2f40cc2-b344-69d1-4314-83524ad7b178@synopsys.com>
+ <20180824143934.6d6b6487@bbrezillon>
+From:   vitor <Vitor.Soares@synopsys.com>
+Message-ID: <bdb2924f-ecfa-1da3-41db-9ac77d4d933b@synopsys.com>
+Date:   Fri, 24 Aug 2018 18:52:52 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a1c:548:0:0:0:0:0 with HTTP; Fri, 24 Aug 2018 10:47:47 -0700 (PDT)
-In-Reply-To: <20180817121251.4EB5318E01A1@virtux64.softrans.com.au>
-References: <20180817121251.4EB5318E01A1@virtux64.softrans.com.au>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Fri, 24 Aug 2018 10:47:47 -0700
-X-Gmail-Original-Message-ID: <CALCETrXY=PSdp6mpQ89yBQPsMrDj7j2p8AyLR1o4_+heiMzRbQ@mail.gmail.com>
-Message-ID: <CALCETrXY=PSdp6mpQ89yBQPsMrDj7j2p8AyLR1o4_+heiMzRbQ@mail.gmail.com>
-Subject: Re: [RESEND PATCH] x86/vdso: Handle clock_gettime(CLOCK_TAI) in vDSO
-To:     Matt Rickard <matt@softrans.com.au>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        John Stultz <john.stultz@linaro.org>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180824143934.6d6b6487@bbrezillon>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.107.25.66]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Minor nit: if it's not literally a resend, don't call it "RESEND" in
-$SUBJECT.  Call it v2, please.
+Hi Boris,
 
-Also, I added LKML and relevant maintainers to cc.  John and Stephen:
-this is a purely x86 patch, but it digs into the core timekeeping
-structures a bit.
 
-On Fri, Aug 17, 2018 at 5:12 AM, Matt Rickard <matt@softrans.com.au> wrote:
-> Process clock_gettime(CLOCK_TAI) in vDSO. This makes the call about as fast as
-> CLOCK_REALTIME instead of taking about four times as long.
-
-I'm conceptually okay with this, but the bug encountered last time
-around makes me suspect that GCC is generating genuinely horrible
-code.  Can you benchmark CLOCK_MONOTONIC before and after to make sure
-there isn't a big regression?  Please do this benchmark with
-CONFIG_RETPOLINE=y.
-
-If there is a regression, then the code will need some reasonable
-restructuring to fix it.  Or perhaps -fno-jump-tables.
-
---Andy
-
-> Signed-off-by: Matt Rickard <matt@softrans.com.au>
-> ---
->  arch/x86/entry/vdso/vclock_gettime.c    | 25 +++++++++++++++++++++++++
->  arch/x86/entry/vsyscall/vsyscall_gtod.c |  2 ++
->  arch/x86/include/asm/vgtod.h            |  1 +
->  3 files changed, 28 insertions(+)
+On 24-08-2018 13:39, Boris Brezillon wrote:
+> Hi Vitor,
 >
-> diff --git a/arch/x86/entry/vdso/vclock_gettime.c b/arch/x86/entry/vdso/vclock_gettime.c
-> index f19856d95c60..91ed1bb2a3bb 100644
-> --- a/arch/x86/entry/vdso/vclock_gettime.c
-> +++ b/arch/x86/entry/vdso/vclock_gettime.c
-> @@ -246,6 +246,27 @@ notrace static int __always_inline do_monotonic(struct timespec *ts)
->         return mode;
->  }
+> On Wed, 22 Aug 2018 17:43:34 +0100
+> vitor <Vitor.Soares@synopsys.com> wrote:
 >
-> +notrace static int __always_inline do_tai(struct timespec *ts)
-> +{
-> +       unsigned long seq;
-> +       u64 ns;
-> +       int mode;
-> +
-> +       do {
-> +               seq = gtod_read_begin(gtod);
-> +               mode = gtod->vclock_mode;
-> +               ts->tv_sec = gtod->tai_time_sec;
-> +               ns = gtod->wall_time_snsec;
-> +               ns += vgetsns(&mode);
-> +               ns >>= gtod->shift;
-> +       } while (unlikely(gtod_read_retry(gtod, seq)));
-> +
-> +       ts->tv_sec += __iter_div_u64_rem(ns, NSEC_PER_SEC, &ns);
-> +       ts->tv_nsec = ns;
-> +
-> +       return mode;
-> +}
-> +
->  notrace static void do_realtime_coarse(struct timespec *ts)
->  {
->         unsigned long seq;
-> @@ -277,6 +298,10 @@ notrace int __vdso_clock_gettime(clockid_t clock, struct timespec *ts)
->                 if (do_monotonic(ts) == VCLOCK_NONE)
->                         goto fallback;
->                 break;
-> +       case CLOCK_TAI:
-> +               if (do_tai(ts) == VCLOCK_NONE)
-> +                       goto fallback;
-> +               break;
->         case CLOCK_REALTIME_COARSE:
->                 do_realtime_coarse(ts);
->                 break;
-> diff --git a/arch/x86/entry/vsyscall/vsyscall_gtod.c b/arch/x86/entry/vsyscall/vsyscall_gtod.c
-> index e1216dd95c04..d61392fe17f6 100644
-> --- a/arch/x86/entry/vsyscall/vsyscall_gtod.c
-> +++ b/arch/x86/entry/vsyscall/vsyscall_gtod.c
-> @@ -53,6 +53,8 @@ void update_vsyscall(struct timekeeper *tk)
->         vdata->monotonic_time_snsec     = tk->tkr_mono.xtime_nsec
->                                         + ((u64)tk->wall_to_monotonic.tv_nsec
->                                                 << tk->tkr_mono.shift);
-> +       vdata->tai_time_sec             = tk->xtime_sec
-> +                                       + tk->tai_offset;
->         while (vdata->monotonic_time_snsec >=
->                                         (((u64)NSEC_PER_SEC) << tk->tkr_mono.shift)) {
->                 vdata->monotonic_time_snsec -=
-> diff --git a/arch/x86/include/asm/vgtod.h b/arch/x86/include/asm/vgtod.h
-> index fb856c9f0449..adc9f7b20b9c 100644
-> --- a/arch/x86/include/asm/vgtod.h
-> +++ b/arch/x86/include/asm/vgtod.h
-> @@ -32,6 +32,7 @@ struct vsyscall_gtod_data {
->         gtod_long_t     wall_time_coarse_nsec;
->         gtod_long_t     monotonic_time_coarse_sec;
->         gtod_long_t     monotonic_time_coarse_nsec;
-> +       gtod_long_t     tai_time_sec;
+>> Hi Boris,
+>>
+>>
+>> On 19-07-2018 16:29, Boris Brezillon wrote:
+>>> +int i3c_bus_register(struct i3c_bus *i3cbus)
+>>> +{
+>>> +	struct i2c_dev_desc *desc;
+>>> +
+>>> +	i3c_bus_for_each_i2cdev(i3cbus, desc) {
+>>> +		switch (desc->boardinfo->lvr & I3C_LVR_I2C_INDEX_MASK) {
+>>> +		case I3C_LVR_I2C_INDEX(0):
+>>> +			if (i3cbus->mode < I3C_BUS_MODE_MIXED_FAST)
+>>> +				i3cbus->mode = I3C_BUS_MODE_MIXED_FAST;
+>>> +			break;
+>>> +
+>>> +		case I3C_LVR_I2C_INDEX(1):
+>>> +		case I3C_LVR_I2C_INDEX(2):
+>>> +			if (i3cbus->mode < I3C_BUS_MODE_MIXED_SLOW)
+>>> +				i3cbus->mode = I3C_BUS_MODE_MIXED_SLOW;
+>>> +			break;
+>>> +
+>>> +		default:
+>>> +			return -EINVAL;
+>>> +		}
+>>> +	}
+>>> +
+>>> +	if (!i3cbus->scl_rate.i3c)
+>>> +		i3cbus->scl_rate.i3c = I3C_BUS_TYP_I3C_SCL_RATE;
+>>> +
+>>> +	if (!i3cbus->scl_rate.i2c) {
+>>> +		if (i3cbus->mode == I3C_BUS_MODE_MIXED_SLOW)
+>>> +			i3cbus->scl_rate.i2c = I3C_BUS_I2C_FM_SCL_RATE;
+>>> +		else
+>>> +			i3cbus->scl_rate.i2c = I3C_BUS_I2C_FM_PLUS_SCL_RATE;
+>>> +	}
+>>> +
+>>> +	/*
+>>> +	 * I3C/I2C frequency may have been overridden, check that user-provided
+>>> +	 * values are not exceeding max possible frequency.
+>>> +	 */
+>>> +	if (i3cbus->scl_rate.i3c > I3C_BUS_MAX_I3C_SCL_RATE ||
+>>> +	    i3cbus->scl_rate.i2c > I3C_BUS_I2C_FM_PLUS_SCL_RATE) {
+>>> +		return -EINVAL;
+>>> +	}
+>>> +
+>>> +	dev_set_name(&i3cbus->dev, "i3c-%d", i3cbus->id);
+>>> +
+>>> +	return device_add(&i3cbus->dev);
+>>> +}
+>> During the tests of the bus with i2c devices I found the i2c_dev_desc
+>> objects aren't allocated before this function. This cause i3cbus->mode =
+>> I3C_BUS_MODE_PURE.
+> I just checked and DT parsing (+ I2C descs creation) is done before
+> i3c_bus_register() is called, so we should be good. How did you declare
+> your I2C devices (right now, only DT declaration is supported).
+During the DT parsing, you create the i2c_dev_boardinfo. the 
+i2c_dev_desc is created in i3c_master_bus_init() which is after the 
+i3c_mater_create_bus(). One possible way to fix this is to pass master 
+also to i3c_bus_register and iterate over i2c_dev_board_info list.
+
+>> I want to do something for the slave and secondary master, do you
+>> already have infrastructure that you can share?
+> What do you mean?
 >
->         int             tz_minuteswest;
->         int             tz_dsttime;
+> Regards,
+>
+> Boris
+
+I want start to add the secondary master functionality but it is also 
+necessary to add the infrastructure to the subsystem.
+So, to avoid duplicated work can you share your plans for the secondary 
+master?
+
+Best regards,
+Vitor Soares
+
+
