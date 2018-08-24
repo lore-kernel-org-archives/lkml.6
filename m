@@ -2,151 +2,105 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB27C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 08:48:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 299E2C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 08:50:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5181321710
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 08:48:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5181321710
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ah.jp.nec.com
+	by mail.kernel.org (Postfix) with ESMTP id BC7CA2168B
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 08:50:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OK7LFeKj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC7CA2168B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727538AbeHXMVx convert rfc822-to-8bit (ORCPT
+        id S1727019AbeHXMYa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 08:21:53 -0400
-Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:43163 "EHLO
-        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726686AbeHXMVx (ORCPT
+        Fri, 24 Aug 2018 08:24:30 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:38182 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726325AbeHXMYa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 08:21:53 -0400
-Received: from mailgate02.nec.co.jp ([114.179.233.122])
-        by tyo162.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id w7O8m2af004956
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 24 Aug 2018 17:48:02 +0900
-Received: from mailsv01.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
-        by mailgate02.nec.co.jp (8.15.1/8.15.1) with ESMTP id w7O8m1cw019465;
-        Fri, 24 Aug 2018 17:48:02 +0900
-Received: from mail03.kamome.nec.co.jp (mail03.kamome.nec.co.jp [10.25.43.7])
-        by mailsv01.nec.co.jp (8.15.1/8.15.1) with ESMTP id w7O8iBnX024146;
-        Fri, 24 Aug 2018 17:48:01 +0900
-Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.152] [10.38.151.152]) by mail02.kamome.nec.co.jp with ESMTP id BT-MMP-3062286; Fri, 24 Aug 2018 17:46:54 +0900
-Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
- BPXC24GP.gisp.nec.co.jp ([10.38.151.152]) with mapi id 14.03.0319.002; Fri,
- 24 Aug 2018 17:46:54 +0900
-From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Michal Hocko <mhocko@kernel.org>
-CC:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mike.kravetz@oracle.com" <mike.kravetz@oracle.com>
-Subject: Re: [PATCH] mm/hugetlb: filter out hugetlb pages if HUGEPAGE
- migration is not supported.
-Thread-Topic: [PATCH] mm/hugetlb: filter out hugetlb pages if HUGEPAGE
- migration is not supported.
-Thread-Index: AQHUO3RjbmsiOlp/NU6jB8cJR2hk2KTN8qOAgAANl4A=
-Date:   Fri, 24 Aug 2018 08:46:53 +0000
-Message-ID: <20180824084652.GA31218@hori1.linux.bs1.fc.nec.co.jp>
-References: <20180824063314.21981-1-aneesh.kumar@linux.ibm.com>
- <20180824075815.GA29735@dhcp22.suse.cz>
-In-Reply-To: <20180824075815.GA29735@dhcp22.suse.cz>
-Accept-Language: en-US, ja-JP
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.51.8.80]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-ID: <D455CDDFDFDC3D49B4F804BCB78999D3@gisp.nec.co.jp>
-Content-Transfer-Encoding: 8BIT
+        Fri, 24 Aug 2018 08:24:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=1XZnLm2rzEGM69DymWV0T5VnodzC8AvkUFIC2UFoywc=; b=OK7LFeKjtz91nijG5MnFvoXYY
+        3sO5oipm46znvr84nX2FVwOCdJDvWPw1da1NgbVKR5c50ni4kVwK/BgqD8PWZx1nzoDDDDXhmciUJ
+        OPbQtevRW/QmIz305DIPiUeMhC1TETPOHVskiqbhnQ682I8VpfXXmq6kG9UnOCHOWwfieZtYTqBpP
+        MK5NySgY7K+o7ICitPz1iv7cdeV49/H3oe94OoFFBxHbLPtXPjz2tsMh922W8NRhJty6IRIumn6Vd
+        lpAIBqzTiVdBhaDvq9kIvSd8tKI1uxbpm8joYZmdDBFPMn2UPVN6OP4MhBA0EjppMCzHkpjUet9n3
+        fPa+kJ2og==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ft7no-0007LJ-05; Fri, 24 Aug 2018 08:50:44 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id BA217202E65E0; Fri, 24 Aug 2018 10:50:42 +0200 (CEST)
+Date:   Fri, 24 Aug 2018 10:50:42 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Vince Weaver <vincent.weaver@maine.edu>
+Cc:     linux-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: [perf] perf_event.h ABI visibility question
+Message-ID: <20180824085042.GL24124@hirez.programming.kicks-ass.net>
+References: <alpine.DEB.2.21.1808231401440.28868@macbook-air>
 MIME-Version: 1.0
-X-TM-AS-MML: disable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1808231401440.28868@macbook-air>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 24, 2018 at 09:58:15AM +0200, Michal Hocko wrote:
-> On Fri 24-08-18 12:03:14, Aneesh Kumar K.V wrote:
-> > When scanning for movable pages, filter out Hugetlb pages if hugepage migration
-> > is not supported. Without this we hit infinte loop in __offline pages where we
-> > do
-> > 	pfn = scan_movable_pages(start_pfn, end_pfn);
-> > 	if (pfn) { /* We have movable pages */
-> > 		ret = do_migrate_range(pfn, end_pfn);
-> > 		goto repeat;
-> > 	}
-> > 
-> > We do support hugetlb migration ony if the hugetlb pages are at pmd level. Here
-> > we just check for Kernel config. The gigantic page size check is done in
-> > page_huge_active.
+On Thu, Aug 23, 2018 at 02:25:06PM -0400, Vince Weaver wrote:
 > 
-> Well, this is a bit misleading. I would say that
+> I notice that Linux 4.18 has the following changeset which changes the
+> user visible perf_event.h file
 > 
-> Fix this by checking hugepage_migration_supported both in has_unmovable_pages
-> which is the primary backoff mechanism for page offlining and for
-> consistency reasons also into scan_movable_pages because it doesn't make
-> any sense to return a pfn to non-migrateable huge page.
+> 	commit 6cbc304f2f360f25cc8607817239d6f4a2fd3dc5
+> 	Author: Peter Zijlstra <peterz@infradead.org>
+> 	Date:   Thu May 10 15:48:41 2018 +0200
 > 
-> > Acked-by: Michal Hocko <mhocko@suse.com>
-> > Reported-by: Haren Myneni <haren@linux.vnet.ibm.com>
-> > CC: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-> > Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+>     perf/x86/intel: Fix unwind errors from PEBS entries (mk-II)
 > 
-> I would add
-> Fixes: 72b39cfc4d75 ("mm, memory_hotplug: do not fail offlining too early")
+> which contains
 > 
-> Not because the bug has been introduced by that commit but rather
-> because the issue would be latent before that commit.
+> --- a/include/uapi/linux/perf_event.h
+> +++ b/include/uapi/linux/perf_event.h
+> @@ -143,6 +143,8 @@ enum perf_event_sample_format {
+>         PERF_SAMPLE_PHYS_ADDR                   = 1U << 19,
+>  
+>         PERF_SAMPLE_MAX = 1U << 20,             /* non-ABI */
+> +
+> +       __PERF_SAMPLE_CALLCHAIN_EARLY           = 1ULL << 63,
+>  };
 > 
-> My Acked-by still holds.
+> 
+> Is this supposed to be a user-visible interface?
+> 
+> I realize that if the user tries to set anything above PERF_SAMPLE_MAX
+> it will be caught and flagged as EINVAL.
+> 
+> However even with the double-underscore hint in 
+> __PERF_SAMPLE_CALLCHAIN_EARLY the value is still in the user-visible 
+> header so it's now part of the ABI and I guess the manpage has to document it.
 
-Looks good to me (with Michal's update on description).
+Hurphm.. visible yes, but as you say, also quite useless. Does it really
+make sense to document that?
 
-Reviewed-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-
-> 
-> > ---
-> >  mm/memory_hotplug.c | 3 ++-
-> >  mm/page_alloc.c     | 4 ++++
-> >  2 files changed, 6 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> > index 9eea6e809a4e..38d94b703e9d 100644
-> > --- a/mm/memory_hotplug.c
-> > +++ b/mm/memory_hotplug.c
-> > @@ -1333,7 +1333,8 @@ static unsigned long scan_movable_pages(unsigned long start, unsigned long end)
-> >  			if (__PageMovable(page))
-> >  				return pfn;
-> >  			if (PageHuge(page)) {
-> > -				if (page_huge_active(page))
-> > +				if (hugepage_migration_supported(page_hstate(page)) &&
-> > +				    page_huge_active(page))
-> >  					return pfn;
-> >  				else
-> >  					pfn = round_up(pfn + 1,
-> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> > index c677c1506d73..b8d91f59b836 100644
-> > --- a/mm/page_alloc.c
-> > +++ b/mm/page_alloc.c
-> > @@ -7709,6 +7709,10 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
-> >  		 * handle each tail page individually in migration.
-> >  		 */
-> >  		if (PageHuge(page)) {
-> > +
-> > +			if (!hugepage_migration_supported(page_hstate(page)))
-> > +				goto unmovable;
-> > +
-> >  			iter = round_up(iter + 1, 1<<compound_order(page)) - 1;
-> >  			continue;
-> >  		}
-> > -- 
-> > 2.17.1
-> 
-> -- 
-> Michal Hocko
-> SUSE Labs
-> 
