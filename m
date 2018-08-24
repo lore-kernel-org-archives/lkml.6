@@ -2,87 +2,96 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 781A8C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 12:48:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CAABC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 12:49:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3917E21564
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 12:48:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3917E21564
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 9FA9121564
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 12:49:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VGS4c/Tt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FA9121564
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727602AbeHXQWy (ORCPT
+        id S1727457AbeHXQYP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 12:22:54 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:47885 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726268AbeHXQWx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 12:22:53 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 13E7A20728; Fri, 24 Aug 2018 14:48:22 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-53-19.w90-88.abo.wanadoo.fr [90.88.170.19])
-        by mail.bootlin.com (Postfix) with ESMTPSA id A0AEE207B1;
-        Fri, 24 Aug 2018 14:48:11 +0200 (CEST)
-Date:   Fri, 24 Aug 2018 14:48:10 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Liang Yang <liang.yang@amlogic.com>
-Cc:     Yixun Lan <yixun.lan@amlogic.com>, <linux-mtd@lists.infradead.org>,
-        Rob Herring <robh@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Richard Weinberger <richard@nod.at>,
-        <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        <linux-amlogic@lists.infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Jerome Brunet <jbrunet@baylibre.com>
-Subject: Re: [RFC PATCH v2 2/2] mtd: rawnand: meson: add support for Amlogic
- NAND flash controller
-Message-ID: <20180824144810.31c929a5@bbrezillon>
-In-Reply-To: <96e538a5-1232-11f2-8b9e-5ddb09dcc2de@amlogic.com>
-References: <20180719094612.5833-1-yixun.lan@amlogic.com>
-        <20180719094612.5833-3-yixun.lan@amlogic.com>
-        <20180801235045.5b4d8211@bbrezillon>
-        <42877a0d-9830-0626-3f64-e49a326eaa3c@amlogic.com>
-        <20180817155608.5929b37a@bbrezillon>
-        <96e538a5-1232-11f2-8b9e-5ddb09dcc2de@amlogic.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Fri, 24 Aug 2018 12:24:15 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35314 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726649AbeHXQYP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 12:24:15 -0400
+Received: by mail-wm0-f65.google.com with SMTP id o18-v6so1562143wmc.0;
+        Fri, 24 Aug 2018 05:49:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=bxxvBICkel4BZqKVVgOBccwwBhBoonk9fpI9AbZ2jjc=;
+        b=VGS4c/TtPPODCRARKarBSSRwZE9gu7/j0/vp+bByAHkwj8a9mBrpJoGrzrFh/Gtqql
+         511FyG3xsyzpqnzH40i1xKt/bSYunCE71ioTPojMptOghNnY31Q9NvmIGaMBH+gv89wq
+         GjBzaokNNrEtjLcTmQ/x8ppSpXk32MODwpiLQ0vZ3fp0vx2tqoYzk2FcH7izX4kRug37
+         s74nars97e3SlWoXCuubTW82SoumO9Rd5JJzC0ycJhOJxLyRr1rbQRB3gVX83M8YutiR
+         ID2V6cw0DS1Hl7JlxxQiz9mUik5iZAIaNHqrhC/vNvM/sVyclkDTf+XPSRk2f0iWFQq/
+         jpkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=bxxvBICkel4BZqKVVgOBccwwBhBoonk9fpI9AbZ2jjc=;
+        b=DqvALwkRg+r8f/sb1A08pqg5YEbAuN/OJ36WwPUvWoZJ99zD1vfC0EEkMhBpXTQKUo
+         UwBeUPH1E7JbAuAvYMjUc6GdV//w0qf5+OTtTIqDAhJQk/KfbMwtIHfYEw+oPE/R40Q8
+         LEM6aNrec4ojHk5hfLfPQT5ISrUZ4TNyK2+pWj+J7e6HP4lUedTr3sm5UU6vwZgw4b4+
+         oVDp3t2pjJ3+jJo0aMKjZxA7ud3024/PyfwGXh1YQ89lPwkllvcpawY453uJABpEZDhx
+         4ejBRTgaqp4/hDrK7FXCyzTF6vzy2NKZVe9gKGxyL0azkMT5z6l4ShDGUHy7wY0DDfFJ
+         /RKw==
+X-Gm-Message-State: APzg51BPbSdWW40FSmBaLLk2TMY6lJUscWfshIuXe+hoDSbCzfFbHaQt
+        d9egxJjAkgxSxqeUiNeVZlI=
+X-Google-Smtp-Source: ANB0VdZmFLGXh5h89LSESJ5NnVMYi3EvN+2pHPA+1m1zTFEcT/tDETdxkFnyz6PDGItQ3g+Sc0HQ1g==
+X-Received: by 2002:a1c:ae94:: with SMTP id x142-v6mr1385142wme.125.1535114982658;
+        Fri, 24 Aug 2018 05:49:42 -0700 (PDT)
+Received: from localhost.localdomain ([41.249.214.155])
+        by smtp.gmail.com with ESMTPSA id y203-v6sm1050884wmd.1.2018.08.24.05.49.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 24 Aug 2018 05:49:42 -0700 (PDT)
+From:   Mehdi Bounya <bounya9mehdi@gmail.com>
+X-Google-Original-From: Mehdi Bounya <contact.mehdi@pm.me>
+To:     b.zolnierkie@samsung.com
+Cc:     linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mehdi Bounya <contact.mehdi@pm.me>,
+        Mehdi Bounya <mehdi.bounya@gmail.com>
+Subject: [PATCH] Video: vgastate: fixed a spacing coding style
+Date:   Fri, 24 Aug 2018 13:49:08 +0100
+Message-Id: <1535114948-18615-1-git-send-email-contact.mehdi@pm.me>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 22 Aug 2018 22:08:42 +0800
-Liang Yang <liang.yang@amlogic.com> wrote:
+Removed a space between function name and open parant.
 
-> > You have to wait tWB, that's for sure.
-> >   
-> we have a maximum 32 commands fifo. when command is written into 
-> NFC_REG_CMD, it doesn't mean that command is executing right now, maybe 
-> it is buffering on the queue.Assume one ERASE operation, when 2nd 
-> command(0xd0) is written into NFC_REG_CMD and then come into 
-> NAND_OP_WAITRDY_INSTR, if I read the RB status by register, it may be 
-> wrong because 0xd0 may not being executed. it is unusual unless 
-> buffering two many command.
+Signed-off-by: Mehdi Bounya <mehdi.bounya@gmail.com>
+---
+ drivers/video/vgastate.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-You should flush the queue and wait for it to empty at the end of
-->exec_op().
+diff --git a/drivers/video/vgastate.c b/drivers/video/vgastate.c
+index 548c751..122fb3c 100644
+--- a/drivers/video/vgastate.c
++++ b/drivers/video/vgastate.c
+@@ -455,7 +455,7 @@ int save_vga(struct vgastate *state)
+ 	return 0;
+ }
+ 
+-int restore_vga (struct vgastate *state)
++int restore_vga(struct vgastate *state)
+ {
+ 	if (state->vidstate == NULL)
+ 		return 1;
+-- 
+2.7.4
 
-> so it seems that i still need to use nand_soft_waitrdy or wait cmd is 
-> executed somewhere.
-
-Don't you have a WAIT_FOR_RB instruction? What is NFC_CMD_RB for? Also,
-NFC_CMD_IDLE seems to allow you to add an arbitrary delay, and that's
-probably what you should use for tWB.
