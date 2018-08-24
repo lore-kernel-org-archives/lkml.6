@@ -2,123 +2,239 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C4A3C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 06:49:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3235C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 06:53:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3EDD20847
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 06:49:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3EDD20847
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 4C3862147A
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 06:53:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="syq3M/k3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C3862147A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727615AbeHXKXL (ORCPT
+        id S1727231AbeHXK0r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 06:23:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41432 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726455AbeHXKXK (ORCPT
+        Fri, 24 Aug 2018 06:26:47 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:37913 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726455AbeHXK0r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 06:23:10 -0400
-Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B29058B1;
-        Fri, 24 Aug 2018 06:49:54 +0000 (UTC)
-Date:   Fri, 24 Aug 2018 08:49:51 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc:     stable@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4.14.y] PCI: OF: Fix I/O space page leak
-Message-ID: <20180824064951.GC24399@kroah.com>
-References: <3e862a05-084a-d732-3060-6e2b234e9718@cogentembedded.com>
- <0a28fd20-ea95-2b2b-d6bf-116be9983902@cogentembedded.com>
+        Fri, 24 Aug 2018 06:26:47 -0400
+Received: by mail-lf1-f66.google.com with SMTP id i7-v6so5917306lfh.5;
+        Thu, 23 Aug 2018 23:53:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=ZPCQnBlLlhbf3VeeCfEdv+Ec/fINg7gVR7Xlqsyz9DQ=;
+        b=syq3M/k3QGE81BwFgNNrDW6bP7taaLo2PEpw9fJsJ/f4T21a441W7FHVuQQbVNunkq
+         2eCMw1ZSor6SYM2d+zBAplT87FTD2ccFzHzXM0Kf/y10+i7oU4BpDHheKTVQPGswYazn
+         tYi6vDghIoIjIMHtPas5SD+nWNfFPy03KoRYzaBR0SJ91Qn6VzPYTlcvKHCdnmxkA+Js
+         K2y49Lk0eapH/EMOKxd26Slmih1yE/JZrwXyLyZ3mIBJFhQiUixmGN5F4T+qziJBz2n6
+         AEbdu/sBZAOH+Uu/Zzh9RShoFWee61RCz63mOuRHofomkVWA3iLTlkY3G/whsuGGRqNb
+         QUmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=ZPCQnBlLlhbf3VeeCfEdv+Ec/fINg7gVR7Xlqsyz9DQ=;
+        b=J0vEZViIgf8HcPUm5J+rb62eqH0MX12nqIRwVQw/kCXKTxKW3LguxWU5+a5eM4188y
+         Hn493APE3kab9l6b81TLSf70riE8IiOkPJs17MRBA1farsGTgHNiWKRELsV+D3RbW4tS
+         4pYMAR9YIEYSQJfun2lHeM3hBWDlU/exMDUJtCdjz15pwsVJEHomBUjj4SMpCAjjhXRu
+         r81KQ+J8S26g7A+FyywioHPLreCcXf139VWDD2u9u3cViEWqX8rnMK1sZafbxv8AyV2l
+         O+RvZeo6Joc7tQTvybxA1H7KSR09KnLsxLWV8XqlQN/S/X67rWVErf3MYBrCuqEOu5A+
+         um5Q==
+X-Gm-Message-State: APzg51Buim4RQco70jOMz8+hP3onhzYjG4o0I0FMmCnEyspOjPCoMxwp
+        ZZpRfh9rrLmesuU6zPF/muuPFhh//Y/iaSXIP8o=
+X-Google-Smtp-Source: ANB0VdaBazkbMAQwabGeW710XyrKbfjeICNog7Kzq6wnBlQkOSKTp7ewnWCJS2EG9Nf6JN/LW1Zz62W5nkSTKVgLSN4=
+X-Received: by 2002:a19:eb83:: with SMTP id f3-v6mr332682lfk.89.1535093609344;
+ Thu, 23 Aug 2018 23:53:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0a28fd20-ea95-2b2b-d6bf-116be9983902@cogentembedded.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:ab3:6318:0:0:0:0:0 with HTTP; Thu, 23 Aug 2018 23:52:49
+ -0700 (PDT)
+In-Reply-To: <0dc112ca-1c01-d8ae-c6f0-80492264f5a4@intel.com>
+References: <1534406064-10065-1-git-send-email-zhang.chunyan@linaro.org>
+ <1534406064-10065-8-git-send-email-zhang.chunyan@linaro.org> <0dc112ca-1c01-d8ae-c6f0-80492264f5a4@intel.com>
+From:   Chunyan Zhang <zhang.lyra@gmail.com>
+Date:   Fri, 24 Aug 2018 14:52:49 +0800
+Message-ID: <CAAfSe-uZ3ghR+8dZ7CD03UnGX2Uf1fv=-5s656ZkybcU8LWzJQ@mail.gmail.com>
+Subject: Re: [PATCH V5 07/10] mmc: sdhci: Add Auto CMD Auto Select support
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Chunyan Zhang <zhang.chunyan@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Billows Wu <billows.wu@unisoc.com>,
+        Jason Wu <jason.wu@unisoc.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 23, 2018 at 10:55:26PM +0300, Sergei Shtylyov wrote:
-> Commit a5fb9fb023a1435f2b42bccd7f547560f3a21dc3 upstream.
-> 
-> When testing the R-Car PCIe driver on the Condor board, if the PCIe PHY
-> driver was left disabled, the kernel crashed with this BUG:
-> 
->   kernel BUG at lib/ioremap.c:72!
->   Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
->   Modules linked in:
->   CPU: 0 PID: 39 Comm: kworker/0:1 Not tainted 4.17.0-dirty #1092
->   Hardware name: Renesas Condor board based on r8a77980 (DT)
->   Workqueue: events deferred_probe_work_func
->   pstate: 80000005 (Nzcv daif -PAN -UAO)
->   pc : ioremap_page_range+0x370/0x3c8
->   lr : ioremap_page_range+0x40/0x3c8
->   sp : ffff000008da39e0
->   x29: ffff000008da39e0 x28: 00e8000000000f07
->   x27: ffff7dfffee00000 x26: 0140000000000000
->   x25: ffff7dfffef00000 x24: 00000000000fe100
->   x23: ffff80007b906000 x22: ffff000008ab8000
->   x21: ffff000008bb1d58 x20: ffff7dfffef00000
->   x19: ffff800009c30fb8 x18: 0000000000000001
->   x17: 00000000000152d0 x16: 00000000014012d0
->   x15: 0000000000000000 x14: 0720072007200720
->   x13: 0720072007200720 x12: 0720072007200720
->   x11: 0720072007300730 x10: 00000000000000ae
->   x9 : 0000000000000000 x8 : ffff7dffff000000
->   x7 : 0000000000000000 x6 : 0000000000000100
->   x5 : 0000000000000000 x4 : 000000007b906000
->   x3 : ffff80007c61a880 x2 : ffff7dfffeefffff
->   x1 : 0000000040000000 x0 : 00e80000fe100f07
->   Process kworker/0:1 (pid: 39, stack limit = 0x        (ptrval))
->   Call trace:
->    ioremap_page_range+0x370/0x3c8
->    pci_remap_iospace+0x7c/0xac
->    pci_parse_request_of_pci_ranges+0x13c/0x190
->    rcar_pcie_probe+0x4c/0xb04
->    platform_drv_probe+0x50/0xbc
->    driver_probe_device+0x21c/0x308
->    __device_attach_driver+0x98/0xc8
->    bus_for_each_drv+0x54/0x94
->    __device_attach+0xc4/0x12c
->    device_initial_probe+0x10/0x18
->    bus_probe_device+0x90/0x98
->    deferred_probe_work_func+0xb0/0x150
->    process_one_work+0x12c/0x29c
->    worker_thread+0x200/0x3fc
->    kthread+0x108/0x134
->    ret_from_fork+0x10/0x18
->   Code: f9004ba2 54000080 aa0003fb 17ffff48 (d4210000)
-> 
-> It turned out that pci_remap_iospace() wasn't undone when the driver's
-> probe failed, and since devm_phy_optional_get() returned -EPROBE_DEFER,
-> the probe was retried, finally causing the BUG due to trying to remap
-> already remapped pages.
-> 
-> Introduce the devm_pci_remap_iospace() managed API and replace the
-> pci_remap_iospace() call with it to fix the bug.
-> 
-> Fixes: dbf9826d5797 ("PCI: generic: Convert to DT resource parsing API")
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> [lorenzo.pieralisi@arm.com: split commit/updated the commit log]
-> Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-> ---
->  drivers/pci/host/pci-host-common.c |    2 -
->  drivers/pci/host/pcie-rcar.c       |    2 -
->  drivers/pci/pci.c                  |   38 +++++++++++++++++++++++++++++++++++++
->  include/linux/pci.h                |    2 +
->  4 files changed, 42 insertions(+), 2 deletions(-)
+On 23 August 2018 at 20:55, Adrian Hunter <adrian.hunter@intel.com> wrote:
+> On 16/08/18 10:54, Chunyan Zhang wrote:
+>> As SD Host Controller Specification v4.10 documents:
+>> Host Controller Version 4.10 defines this "Auto CMD Auto Select" mode.
+>> Selection of Auto CMD depends on setting of CMD23 Enable in the Host
+>> Control 2 register which indicates whether card supports CMD23. If CMD23
+>> Enable =1, Auto CMD23 is used and if CMD23 Enable =0, Auto CMD12 is
+>> used. In case of Version 4.10 or later, use of Auto CMD Auto Select is
+>> recommended rather than use of Auto CMD12 Enable or Auto CMD23
+>> Enable.
+>>
+>> This patch add this new mode support.
+>>
+>> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
+>> ---
+>>  drivers/mmc/host/sdhci.c | 67 ++++++++++++++++++++++++++++++++++++++++--------
+>>  drivers/mmc/host/sdhci.h |  2 ++
+>>  2 files changed, 58 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+>> index a72ad0d..06c2ae9 100644
+>> --- a/drivers/mmc/host/sdhci.c
+>> +++ b/drivers/mmc/host/sdhci.c
+>> @@ -312,6 +312,23 @@ static void sdhci_config_dma(struct sdhci_host *host)
+>>       sdhci_writeb(host, ctrl, SDHCI_HOST_CONTROL);
+>>  }
+>>
+>> +static void sdhci_enable_cmd23(struct sdhci_host *host)
+>> +{
+>> +     u16 ctrl2;
+>> +
+>> +     /*
+>> +      * This is used along with "Auto CMD Auto Select" feature,
+>> +      * which is introduced from v4.10, if card supports CMD23,
+>> +      * Auto CMD23 should be used instead of Auto CMD12.
+>> +      */
+>> +     if (host->version >= SDHCI_SPEC_410 &&
+>> +         (host->mmc->caps & MMC_CAP_CMD23)) {
+>
+> The caller has already checked those conditions
+>
+>> +             ctrl2 = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+>> +             ctrl2 |= SDHCI_CMD23_ENABLE;
+>> +             sdhci_writew(host, ctrl2, SDHCI_HOST_CONTROL2);
+>> +     }
+>> +}
+>> +
+>>  static void sdhci_init(struct sdhci_host *host, int soft)
+>>  {
+>>       struct mmc_host *mmc = host->mmc;
+>> @@ -1095,6 +1112,44 @@ static inline bool sdhci_auto_cmd12(struct sdhci_host *host,
+>>              !mrq->cap_cmd_during_tfr;
+>>  }
+>>
+>> +static inline void sdhci_auto_cmd_select(struct sdhci_host *host,
+>> +                                      struct mmc_command *cmd,
+>> +                                      u16 *mode)
+>> +{
+>> +     bool use_cmd12 = sdhci_auto_cmd12(host, cmd->mrq) &&
+>> +                      (cmd->opcode != SD_IO_RW_EXTENDED);
+>> +     bool use_cmd23 = cmd->mrq->sbc && (host->flags & SDHCI_AUTO_CMD23);
+>> +
+>> +     /*
+>> +      * In case of Version 4.10 or later, use of 'Auto CMD Auto
+>> +      * Select' is recommended rather than use of 'Auto CMD12
+>> +      * Enable' or 'Auto CMD23 Enable'.
+>> +      */
+>> +     if (host->version >= SDHCI_SPEC_410 && (use_cmd12 || use_cmd23)) {
+>> +             *mode |= SDHCI_TRNS_AUTO_SEL;
+>> +             /*
+>> +              * Note no need to set SDHCI_ARGUMENT2 here, since for version
+>> +              * 4.10 and aboves, it doesn't support stuff bits of CMD23
+>> +              * argument but only number of blocks which have been set
+>> +              * already during prepare data.
+>
+> The argument will only have already been written in v4_mode.
 
-Also now applied.
+It seems that we still need to set SDHCI_ARGUMENT2 here, if adding a
+quirk for broken using 32-bit block count and also moved below to
+sdhci-sprd.c
 
-greg k-h
+"
++     /*
++      * For version 4.10 and above, ARGUMENT2 register is also used as 32-bit
++      * block count register which don't support stuff bits of CMD23 argument
++      */
++     if (host->version >= SDHCI_SPEC_410 &&
++         mrq->sbc && (mrq->sbc->arg & SDHCI_ARG2_STUFF) &&
++         (host->flags & SDHCI_AUTO_CMD23))
++             host->flags &= ~SDHCI_AUTO_CMD23
+"
+
+>
+>> +              */
+>> +             if (use_cmd23)
+>> +                     sdhci_enable_cmd23(host);
+>
+> Need to ensure that SDHCI_CMD23_ENABLE is cleared for !use_cmd23
+>
+>> +             return;
+>> +     }
+>> +
+>> +     /*
+>> +      * If we are sending CMD23, CMD12 never gets sent
+>> +      * on successful completion (so no Auto-CMD12).
+>> +      */
+>> +     if (use_cmd12) {
+>> +             *mode |= SDHCI_TRNS_AUTO_CMD12;
+>> +     } else if (use_cmd23) {
+>> +             *mode |= SDHCI_TRNS_AUTO_CMD23;
+>> +             sdhci_writel(host, cmd->mrq->sbc->arg, SDHCI_ARGUMENT2);
+>> +     }
+>> +}
+>> +
+>>  static void sdhci_set_transfer_mode(struct sdhci_host *host,
+>>       struct mmc_command *cmd)
+>>  {
+>> @@ -1121,17 +1176,7 @@ static void sdhci_set_transfer_mode(struct sdhci_host *host,
+>>
+>>       if (mmc_op_multi(cmd->opcode) || data->blocks > 1) {
+>>               mode = SDHCI_TRNS_BLK_CNT_EN | SDHCI_TRNS_MULTI;
+>> -             /*
+>> -              * If we are sending CMD23, CMD12 never gets sent
+>> -              * on successful completion (so no Auto-CMD12).
+>> -              */
+>> -             if (sdhci_auto_cmd12(host, cmd->mrq) &&
+>> -                 (cmd->opcode != SD_IO_RW_EXTENDED))
+>> -                     mode |= SDHCI_TRNS_AUTO_CMD12;
+>> -             else if (cmd->mrq->sbc && (host->flags & SDHCI_AUTO_CMD23)) {
+>> -                     mode |= SDHCI_TRNS_AUTO_CMD23;
+>> -                     sdhci_writel(host, cmd->mrq->sbc->arg, SDHCI_ARGUMENT2);
+>> -             }
+>> +             sdhci_auto_cmd_select(host, cmd, &mode);
+>>       }
+>>
+>>       if (data->flags & MMC_DATA_READ)
+>> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+>> index daf8c1e..a8d5be5 100644
+>> --- a/drivers/mmc/host/sdhci.h
+>> +++ b/drivers/mmc/host/sdhci.h
+>> @@ -43,6 +43,7 @@
+>>  #define  SDHCI_TRNS_BLK_CNT_EN       0x02
+>>  #define  SDHCI_TRNS_AUTO_CMD12       0x04
+>>  #define  SDHCI_TRNS_AUTO_CMD23       0x08
+>> +#define  SDHCI_TRNS_AUTO_SEL 0x0C
+>>  #define  SDHCI_TRNS_READ     0x10
+>>  #define  SDHCI_TRNS_MULTI    0x20
+>>
+>> @@ -186,6 +187,7 @@
+>>  #define   SDHCI_CTRL_DRV_TYPE_D              0x0030
+>>  #define  SDHCI_CTRL_EXEC_TUNING              0x0040
+>>  #define  SDHCI_CTRL_TUNED_CLK                0x0080
+>> +#define  SDHCI_CMD23_ENABLE          0x0800
+>>  #define  SDHCI_CTRL_V4_MODE          0x1000
+>>  #define  SDHCI_CTRL_64BIT_ADDR               0x2000
+>>  #define  SDHCI_CTRL_PRESET_VAL_ENABLE        0x8000
+>>
+>
