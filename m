@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BFB2C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 08:55:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD648C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 08:55:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4B292083A
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 08:55:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B2012168B
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 08:55:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="DKrLShed"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4B292083A
+	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="Ny78XuY0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B2012168B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axentia.se
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727402AbeHXM2y (ORCPT
+        id S1727599AbeHXM3B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 08:28:54 -0400
-Received: from mail-eopbgr70131.outbound.protection.outlook.com ([40.107.7.131]:21472
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        Fri, 24 Aug 2018 08:29:01 -0400
+Received: from mail-ve1eur01on0102.outbound.protection.outlook.com ([104.47.1.102]:7584
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726510AbeHXM2y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 08:28:54 -0400
+        id S1726842AbeHXM3A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 08:29:00 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6HdPJn/MnUsjx2btOGu8UmHiN57KCYoihzIKNufZZF0=;
- b=DKrLShednGpAXdbfy90QGxPsnsN3kmcxRI/RmJjxrIGn1mreR6FGz7AWTlJb/icNrZl2PKCbxTCuQZ7QtUJgfPJk1TdBKJ2tTABAt3GQwsYZTUVYqzsNjv05YbI4WHealSYdBvvHF91bpbuRXwZJJ/hN+d1jIfMW1riXagBN+fY=
+ bh=aUHazAjb+AZ6xewRIlaKIdmlsDhyO5hSQEZ6mcjpVyE=;
+ b=Ny78XuY02XKgMHBVYajB1uFDTwG9VYa0y0515KSadagYAXfxyPfz1FU7KBf4Gnk9/YzNFXptS7XrVuFETLnhJu9bTBRIHv7XNMcDYUGL6c+YQg7f3Q7RHwnX/4YFzD9jGYYsgAxdfoQJDwg6/JppOVU1elXNHDEmz+IhFZdvyHI=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=peda@axentia.se; 
 Received: from orc.pedanet (85.226.244.23) by
  AM5PR0201MB2450.eurprd02.prod.outlook.com (2603:10a6:203:35::7) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1080.15; Fri, 24 Aug
- 2018 08:55:09 +0000
+ 2018 08:55:16 +0000
 From:   Peter Rosin <peda@axentia.se>
 To:     linux-kernel@vger.kernel.org
 Cc:     Peter Rosin <peda@axentia.se>,
@@ -46,10 +46,12 @@ Cc:     Peter Rosin <peda@axentia.se>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
         dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 0/2] drm/atmel-hlcdc: revise selection of pixel-clock frequency divider
-Date:   Fri, 24 Aug 2018 10:54:59 +0200
-Message-Id: <20180824085501.9740-1-peda@axentia.se>
+Subject: [PATCH 1/2] drm/atmel-hlcdc: prefer a higher rate clock as pixel-clock base
+Date:   Fri, 24 Aug 2018 10:55:00 +0200
+Message-Id: <20180824085501.9740-2-peda@axentia.se>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180824085501.9740-1-peda@axentia.se>
+References: <20180824085501.9740-1-peda@axentia.se>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [85.226.244.23]
@@ -57,48 +59,49 @@ X-ClientProxiedBy: VI1PR0701CA0070.eurprd07.prod.outlook.com
  (2603:10a6:800:5f::32) To AM5PR0201MB2450.eurprd02.prod.outlook.com
  (2603:10a6:203:35::7)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 0c4410b8-9a87-4984-fa8e-08d6099f4c19
+X-MS-Office365-Filtering-Correlation-Id: 40eb9bda-5b0b-4864-3e0a-08d6099f502e
 X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(7021125)(8989137)(4534165)(7022125)(4603075)(4627221)(201702281549075)(8990107)(7048125)(7024125)(7027125)(7028125)(7023125)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:AM5PR0201MB2450;
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0201MB2450;3:kzlKqmyPT+2MpA5os6pzQQZ9kE3Lmz6iaG5eOSWqH3lrI0P16pHBfCTsbmLeZhHdrzqYcb1/uHnbqpBaWr4jFTpdXjmd30I0vJqS9VGq+jBm+M2676Q1ITx+z5+b2tLhewDdD9Ocw038rtvlBc4IHmaLJG6SPjov5hj/4oGpduxPQb6Z9KoQaj3thcu5aTnAIQGdIWyyw1NztlfOOnYk7WGYuVLscuCltG5gfScxKyhR0ovJYnWnG7Cfi5bKCHfX;25:8Z+hTYCA/6hasyMdSwwwuIT0wRZHOXkgHKHcddl1RkgCQ1qsr42xfdUGEarDOgtIfkfpRGAoqfjcbIlce2E+9MPZhlv/JyFkRK7B9H5Nj0iUypMtVtUrlOZHU2n5Wh/klTqAUt27zvnQR0JvLlwmIw4vmeRWeCi/pWJw02nmsvdZRsu2mNBr2GTVQ4w9e2QK7jYrnw4o1H3b0Aw0pk904Crwvk/SPRDL7E41Nx32imfEfbesdGrqVvGhqWAuGNB4tnTNHwr/DhjsNrYQNQnESzySAyfQ3aifnJ4W3prKlaUbhaV3Jfc6NyOurVjhoQCHNAGHlR2ONo0yRs/B5H7Qew==;31:qxGyhpRB6NcuFS3CRbchP/bhPiUOfvfi8+QMVDFYzzK+JX6revpeNnnvxReI/pQfn2ZxsugqREEd4GlhHJqDGvDUQymzuMfECkBBIfrpRXow5w7rcQJyYhmd0NVEGWjN/Fx30rTHMtEdW+swzbk6X82x78mLfXoklnunCdpniH/7gqWSwCunUwZIFtp7pFl5OHC2acEibg7CYxFAM/2wSg/V9zNnc5zHBa7nSid5HMY=
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0201MB2450;3:gm+hSH2AgdiYd4+DAsCRypxOhcwnp/45SXq7ylgQp3GdhVxDg/EP3yq6JgRHyIoK91F/yY+4HlBayTjx+d812Yu4l36fxRMeso9LhZoXHBCOCZosnsWYpGsjSdknHXaHVvH1CC/8UNxI17W04HloW3TowOdlSbjhOBuvr6bd7IAAKn6CP5IiptirsMI1qd2h0M8J4him9Udfym3tlPqalPswDmgyIn1a3i+LOKN8bkp2/aBPzYkfexqQWGqYiA+n;25:N8bJUhI/ruszqh+SahIP9zD5QvLqzL3XHHj6D/OquNUfUxNG+LsyCbuxhDVaiuNn6fcEsQQRVeru1fBJIeqNaHfjUWyMO9QPtcYr+dzhL+LcMICifT30StljU2Q7v+ANkKJeeYGM/higWh79BO3q70s/Y1s9Qjj+/aRUCc91K2BG2HxSVdRAVnGNKuT60NmIs3sotEHQ/e0gReBCujvP9ymagOdHxc2o7im4Q8GGDmXxtfX6Llz9qtq/ydCAyQpleSMYRJU992X/byoDvuknqimCcgIJf9L2udqNWKre5SWIf5VynUz/Z0etAgb0Kr+qepZPHmsAawffwfiWagdNXQ==;31:GhoprdQFd2LiRN2isZyhYkWaZfI8QT1CmSl7a+1dS2Uniee1twUhmf+92sFQnlgaCLhd+zdcoTgVW+1hcWOi3bfBPxB6w+K6xlNWxaLCl6l69ncK86d8s+JoUCKAKsdIozcKC3RCXWjvqNboj3BYU9NFqVsLltqLaKbFRmTvjkmDEoZQFW9qfWIiajSCBpwNzK3SQzbt8ClsDBflWwCPtubYc/lRNHida/HmTG3HpD4=
 X-MS-TrafficTypeDiagnostic: AM5PR0201MB2450:
-X-Microsoft-Antispam-PRVS: <AM5PR0201MB2450609D8CFAD284E4FB4854BC360@AM5PR0201MB2450.eurprd02.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(217544274631240);
+X-Microsoft-Antispam-PRVS: <AM5PR0201MB2450BEA5AE7AD240B5715216BC360@AM5PR0201MB2450.eurprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231311)(944501410)(52105095)(10201501046)(93006095)(93001095)(3002001)(149027)(150027)(6041310)(20161123562045)(2016111802025)(20161123560045)(20161123564045)(20161123558120)(6043046)(201708071742011)(7699016);SRVR:AM5PR0201MB2450;BCL:0;PCL:0;RULEID:;SRVR:AM5PR0201MB2450;
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0201MB2450;4:Q5A7ie78U+XZQD0NB1d0LyoIsDcd7xVbXIjM8aVSEoYBT/pCkxzl36QfoIvlvbDBymcHi0kCDh2n9iPIInb/ga2xQjuu+D+q2h1MWTuZNtye1j0ZkUp/e2D80TeEKFlnBku2FzPI16nae1Hb39bET862pEmRAmpa2aXUzslk1vgr/HjqpXzLVkRNORmINArMKHLf16GSKDmwWbiZTo5HNPKIOFCiahcYFkex8LUtnwLhstLiy2EhObPQEsuWFh+6OeVuQCtCN5Za9E8XT4K7bLZ6psiAXnVM5s77MBKR2amdPb4DXR6Wf9/0zYjiCJhs
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0201MB2450;4:4ogDoinr9/pY2z9dPnldiAQHRjcrvAGcZWXY2CuGypfNqCtk2KzoFzWRkuYE8sI5TsbVwcL19FjnrCPfqmRt7C2WFas7QMCkuQ04VBRCht0mdYsiMjk92Sj/JP4erUK/oN+tlpQ5lmfDeJ62I4KFokgohvoX8fYUktfgpQ3XjRVvRuDdkELHYzrY94BHHu/iym0hPIHohUK0qHJXTwYQB1VGE/yCU080hNGU1c24NpiUXM6yiBvKQyTJnSidpSTJgylu34ajpG2EhHYPH9Ip/g==
 X-Forefront-PRVS: 07749F8C42
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(136003)(346002)(366004)(396003)(376002)(39830400003)(189003)(199004)(16586007)(5660300001)(8936002)(2351001)(81166006)(81156014)(8676002)(26005)(186003)(50226002)(4326008)(105586002)(16526019)(106356001)(68736007)(478600001)(966005)(2361001)(25786009)(74482002)(6666003)(305945005)(476003)(6486002)(6916009)(36756003)(53936002)(51416003)(2616005)(52116002)(7736002)(66066001)(50466002)(86362001)(956004)(6306002)(486006)(54906003)(6512007)(48376002)(1076002)(316002)(386003)(6506007)(3846002)(2906002)(97736004)(47776003)(6116002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:AM5PR0201MB2450;H:orc.pedanet;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(136003)(346002)(366004)(396003)(376002)(39830400003)(189003)(199004)(16586007)(5660300001)(8936002)(2351001)(81166006)(81156014)(8676002)(26005)(186003)(50226002)(4326008)(105586002)(16526019)(106356001)(68736007)(478600001)(2361001)(25786009)(74482002)(6666003)(305945005)(476003)(6486002)(6916009)(446003)(11346002)(36756003)(53936002)(76176011)(51416003)(2616005)(52116002)(7736002)(66066001)(50466002)(86362001)(956004)(486006)(54906003)(6512007)(48376002)(1076002)(316002)(386003)(6506007)(3846002)(2906002)(97736004)(47776003)(6116002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:AM5PR0201MB2450;H:orc.pedanet;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 Received-SPF: None (protection.outlook.com: axentia.se does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM5PR0201MB2450;23:LJEi4pjGJNTZ6NFFVZBhC4McZympXV3kjrQdmH7?=
- =?us-ascii?Q?Ub1qHpkQtbB+Uw6Ni5jRTnMkccd3rQRJIklqEPdlK0u1DqwgFt1BlFu9qee8?=
- =?us-ascii?Q?RKgay0l8GacJKO/bByLWU0dnnsi4VmvqUhz02rqUQFKMs+ruwII00T0K/Vhv?=
- =?us-ascii?Q?5qUjW4ArW4xebox+FuDfs4rKbVMpl90KmQGnvUrMZOfQQayB0R4rXNWKVJum?=
- =?us-ascii?Q?xHWt9tjlVHK3l4IGKF7HD/jkrHQaBbLAGzd5qYaTJ1Aq8EeXTepDWv+shrH0?=
- =?us-ascii?Q?GE8/IQplErbdwec2xivsr69ukDCQnFR+HAiaO5MXbdvvYGyqyeSYmP3dm2Qd?=
- =?us-ascii?Q?lGFeI/Ik+ZTNNVZSdjAh0hHJ4sZY7BEhP7YTSSRIeoZCbeZyx4/iRJ36lbJR?=
- =?us-ascii?Q?ljAAM4Pdj2FHNK/9eM3fZBZY7FcKV2YshYrRJMZeyN0yf8JHlnESri19d0EI?=
- =?us-ascii?Q?Pc2dNaJni9LmenZrnHrZlO1x6DAGkR4f+3h7/uVnmtgY8gsrN2Q16Cnc6T9N?=
- =?us-ascii?Q?27JcgE6F11HmoiuGAxy8R/CmKEwsaDE/KXpjekfQ7FuUMqsTuDKwWp2WfHdz?=
- =?us-ascii?Q?C3DL92SCEi46kbEX15FkNhPget9tFyWxk5TYQJHd1z5KYW5LZCmbEx+dky0j?=
- =?us-ascii?Q?K0lkdcJPtEntkxTY/jt6Wa5BokwUgw+7FxsB3qXiBOP+doGgDCZL9jrMLzXu?=
- =?us-ascii?Q?c2Ke5rlzC3t8U+JD6H9d5vHzJu2TMkcJt2stc/ksioIcY20nGid2A97zF9OG?=
- =?us-ascii?Q?IXk2xVHloKlonrpFb68SaszHo5+I8xtcJxN4AVLlGtNhKZTxyCClpxUqvwo5?=
- =?us-ascii?Q?prcfXAqW8fyzCMNRxsQb+hALp+mV64bE7+scOTRnQRGxt08H2nJbO+6NHO6P?=
- =?us-ascii?Q?kOKKkmPx+Bw/9wiJWdm8kxuNl4EMu8oMPKPxRSxtsVUIEVd+HXtEsTcNAnQT?=
- =?us-ascii?Q?ZG7kR+9Bidi5snEcpJiWk/xbOQg+wvqUDjLiDnhBHvEwB2HwQi8cd0QAt9m4?=
- =?us-ascii?Q?ouJSr7HW20/Tdvvv/t4zbxpFZVlJ7nOH7KLBaCELfVirmpZ3X4XSOcthz/+I?=
- =?us-ascii?Q?MjahNjdDYzgJBcBXRzC8/eqEdCf/VyiYdcqYC+RKvzJj9MmOmDndnlQFtxUU?=
- =?us-ascii?Q?FxC5R3PFfMklFco2U5ZEe450GuCoUhQXSTr4uppDjA4hmE284WiAWFtLu+Pi?=
- =?us-ascii?Q?vACl+Tm9WJqjCKhhIfTaYt/JEe+8E7RgHPZcQhin5i6wNFWFn+vsqywMrWqo?=
- =?us-ascii?Q?wpQF/wl3MsA3x40HgEPup7au9wnmKt39nTTNHCKIf?=
-X-Microsoft-Antispam-Message-Info: a6QNwBaiQfTlFadCbZuyRlDtQ42HnuKwEQdg1Ot3wqyq8vlBcGonWwFYKgeB92L3m04lQkQ5PTGlHilpHh+9DuWvTRhyWair2SUNDX0gw+z7UlaYlVfMnrdYEQgoc7fyqoJG9QuC8qX5aL+5Pr+oZUEkGgk0rg7sTnG0FH4w/hTqBO+pz7xeacHrjGPHykTvlwjx43iKRTMRBOhP/pIl7s3H0hwAuEGk4BRcoyXEm4OCOAeuBONghvIUS73PKfoN1xskG8X1pDdWIube8/DLibwSW0juore+Gk30s+LZwd+QwppAMg9+2DiwP9LbeHQ3gdtbprjzFHUY8SQh2x0YiZ8q1+eLvIZhuonrai0syVY=
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0201MB2450;6:4DD1HuxK4/APgdZtop0Bp5BGagQShC/W3LPjj5hEym8QgsfEGp4p8uruZUZpI9+57ljNaYCkIdXK2/Lz+JgzJwA8pqeqhZxbDuNc7R3QJLlJ1C0WSvB0qXMiPJKsxDcpi0mcw+MbyzExJHW7uGAf7QR3V5u7b491bhqb161M7SVN/MDQZc/OtMUEYr/edwk2yApguw1G5wE7dKtdupV1aA+TQIctai02F2z5+MR5Xj2LbykFDkF9NVtW6rfomN8tETW1ZvqeDoJYLCprAE1XBqn46FaYX7mHf5C3ZBHbhsuVRugRZZSqNW7ght6mLIuf8CCvFxK/ChnQP3aJra3mFRjkGvdOh8djzjIgNarImNdEzNpE/FX1wgIFG3SAc277U3KPcT4jSFvG1eVKZCL7rAfal9GHYZq/f9SprXXoDB158H0Xev4My3Nzoh5zwTuZ0u1jDbdy8kgKan7NqwlYgQ==;5:E34ZHHeKeHdMTbvmFzA+me8xOEelY2nGmlIfj/JxA3LUfzEDlBx+9h70Zdv0WvfhY/lqnYLdsEOTOXO3Kp4gy+UQuWRm7g7iisK3QrxA00buGbDMNpqdRgJUspWeefRVyuuf8NaCrN8JCo4adcIHoTU9dXR3zRksj/KvPVavqiI=;7:CLCV2OtWd2BcArHn5GxQ8ayQyB38dK2EWvfPfGUj4tFFvEiIB1Eu8ytLE7vRMsm/nOQ1v/3RnUVM3sUWvinbXx+loG6E+5Ut1+J5BMikwUfIFgVWcd8VYO8L58e8xk0FzsN0+0r3+bH3O6u1OBs1JwCduONofQ47H4YWUGMDDLxa7UY+ltoChBp16a5/QswWV/82mMyQyW3dpmeaodwFdfshMM+B+U+EZgSFZMU3IPJvT36LuRNwjHlHoTIjAk6C
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM5PR0201MB2450;23:d5VL1zZBk+XlawO+mZezL/Tyw3sQpUCvmBAdrIb?=
+ =?us-ascii?Q?+MRPQGKXGMDfc8/+y4mOK5nMZx+3WfPXEEl8tXclOVy3csl3oY8KXOKr+Nin?=
+ =?us-ascii?Q?LoSfxfmY3uq1lQ+ouoVRs8UqXnQA3cCZpkqEC/+oADEP8Li/FBKEdFeI8//S?=
+ =?us-ascii?Q?u4M10kBNNPkyLgNNzipuRXMfOhxSgTJiIKEbzxCv5jXjiFYI4van+VM2L6x1?=
+ =?us-ascii?Q?Sm2y7Dj6IILfZ8hpAoCJ+f8VbOaVUPT7bQg4WNfCm2BkSmAdvR0inmdHn+KE?=
+ =?us-ascii?Q?GE1vlZXud4IUMM+asaVDarPIOJodqUFx2rdN66q5nbyLB6mf+fMvWBrbZRh9?=
+ =?us-ascii?Q?Z9KwvzzMtfoHdSgLwrTLjro3dbDTOgFI95WvooGkK00HIUDyfkAhtIBlqdMK?=
+ =?us-ascii?Q?SndokemDVwVr8jVeOsu295KXEglv3P0088jUJJBO5Tz2LRdw9gVLVaXB5jUf?=
+ =?us-ascii?Q?r4d7RxoZBd7P1BSRiHibjKSoc3R6W2astowaid99cfwYmgewa8VnLYb2lOex?=
+ =?us-ascii?Q?N2cd5XGSRsBl+M7YX+bZOlPchYH+FdLyJxiyKgkhu7ELGtlPreVM7fVmKLBt?=
+ =?us-ascii?Q?aFIHNGI6FTfJUPYuwZkNtFd+8mPSDgcpzj+rwuHUvqcIusDs/Aqk1+LzOkDh?=
+ =?us-ascii?Q?WFvB2k9KcfpWiKqxgZH+XDkTo2oKHHVm0gqkI03vWRIdOXy6zlbgABVTabfM?=
+ =?us-ascii?Q?s1sPs6JPLQr64QqJq4KRUs1N81rlmh2MFdbRGgTS94pCsFpHozuYkqStCFyS?=
+ =?us-ascii?Q?GC39o7ctamC7thIID5OdnhDyKDHYojjxovFb/mf7pRTBkiXqwGDtv3LfItLK?=
+ =?us-ascii?Q?wa/TUtbFKuOCIsBWpfxA7sDhPKZzGWovhkwQZnU4Ne2UjNgIbv1PnDtb2rpr?=
+ =?us-ascii?Q?bZzk4eBYzimS1XWTbAhb9f9NMtDTkiBdv5COCuB/JH0yarezEVvIro815D/E?=
+ =?us-ascii?Q?1WUI2lHNSZp7MiZrJV+A5jV7MT0PPYBmD3rkWZGVbD09yRe4NKB5/Im6QJhG?=
+ =?us-ascii?Q?+Yzy42QO/EZNW+LHoBFlqcb5F8DEObPkHYM7VcbNYrPSHdbjF3hfn5IxdYmP?=
+ =?us-ascii?Q?VJWRZx23dR1Opyu5K80drqVAvCprf0m4BGkASWRB47N1tKKjSQ34MGOfe7VH?=
+ =?us-ascii?Q?hGUNBk7uPeN1u/FyINqzbSPfEv4aA2nLpCmZ2NPY29oBg/tTDzlpdMK66dmt?=
+ =?us-ascii?Q?8kli4S5Yj+RHzqNTK0IQOYnLy2X7WyvqL07LOOe3MHrEbY+tdiRNBHNUuztf?=
+ =?us-ascii?Q?jaVEEfDJf3Wv/3HpCQPGC8sIugydNJQk1z7tMqTySJ+V6oiHSBJvjFzR4Tl/?=
+ =?us-ascii?Q?LOA=3D=3D?=
+X-Microsoft-Antispam-Message-Info: SgMW/UFo03L3nLYSGPeDHWTau/VQd5tRKTkWgWvb5FAP4Oft13IL8e7xTObkYCQ/Hcgtorq+YSOqpJS8safJKSoJdAc8+AXtLehlFU5WxGzmUXNG2jXFc4nR0gnx+08vldZQEpmF5qWI5W1C5DZ7cSZVfHN/p0RUi8z2LW6ICagr2voAd2TcgMwmtADReUGXDccD4orZJ+tSiY3A3htFwmgMoKCbwbBvL9fe8+8FYHjdEYJORx+vFgjgwLtRh8NqcbZXfNlyBlR8R+u145VpzV8zs7nstvBsm+5tMYoVnGLNGl4z8oou+V5d648EZH2UYlDRyVoHiP8r/iYsWp5JsNOEhXdaioKXxQJijilUbCY=
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0201MB2450;6:XVZry1sj42TB7kWwBZ86L4Why8ZD1+9iblVbv4ckKByTK/XHfcDBTFFUIUAXYmj1Ckh3IvtLOwGbajCmdBgKTomy6nqOht9lsiy8IXBnkkJpYXExWCT4XzOFVQ8vxLRhgCIkjic7jdpiiaBIqgCWryPw7LYa38f1JEjew22U5mtZvda7/R25D6zyFyDIioCGtikBX/6ngiVgvhm9Fzwk5++1S39CxqVd1/Gp7aNQHOL5mKO6AlqYFsFjTrj+zxK/PiszrwAdF78WmevTDsGZbma/Q53rtoyv27yl0VlzyZiRP59eRozi+a6l94JiTJo4tWEv4otoKvvR1Xe4e9rrTYPBy89JFNCdgdQqlcq0BLXxka97f8fXj8vVaflBi14a780zw/lfdmB2PTUqomKtasW0jGWljB8mNrBcuOQmaDeqIEn96nd/uycQZ9zxxFZLHEgrxdiL/STq1beCMAcPTQ==;5:Macboi2SGlvrRz52xyn7tmxA5GWXglWD19DPvAIbDTBde/T8HpuQXEIsjRcOx4+mrxRyk0l0w7V0nQCN5aHFSqYABFLBFcD5OSzz57JsMQD9UeEtdr9QjFty9E5yXTqswBTISpQVN5DzO/+fr1SQNLTntuvf+VVMc9E/rEjUWds=;7:WgyzC0MUGCrQx5/2nQw/TYWPGoawBScHET5+9Jk53TNM9oGk8sP6gs9nWnkJjtJvfSq/QDtLGQbuZVkjFzd6wIhBtbBj5m9pEiCLEo/WihSI5zaAK2BJ3VKrHp2VHe3U22ffhXiECDfwSz9atf5bErGdUVJbqsGltPvn+KGK2eapRKFibaD8cJVHx1ZHR+H1s+IyNd0jfvcX8jciyEkxoqY+66pq4gQtnaCbyCndTBTpgdD2uauXVTm/DruAd7Cv
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Aug 2018 08:55:09.4474 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0c4410b8-9a87-4984-fa8e-08d6099f4c19
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Aug 2018 08:55:16.2911 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 40eb9bda-5b0b-4864-3e0a-08d6099f502e
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0201MB2450
@@ -107,23 +110,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
+If the divider used to get the pixel-clock is small, the granularity
+of the frequencies possible for the pixel-clock is quite coarse. E.g.
+requesting a pixel-clock of 65MHz with a sys_clk of 132MHz results
+in the divider being set to 3 ending up with 44MHz.
 
-Some background can be found here:
-https://lists.freedesktop.org/archives/dri-devel/2018-August/187182.html
+By preferring the doubled sys_clk as base, the divider instead ends
+up as 5 yielding a pixel-clock of 52.8Mhz, which is a definite
+improvement.
 
-The "10 times" discriminator in patch 2/2 can certainly be discussed...
+While at it, clamp the divider so that it does not overflow in case
+it gets big.
 
-Cheers,
-Peter
+Signed-off-by: Peter Rosin <peda@axentia.se>
+---
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
-Peter Rosin (2):
-  drm/atmel-hlcdc: prefer a higher rate clock as pixel-clock base
-  drm/atmel-hlcdc: allow selecting a higher pixel-clock that requested
-
- drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c | 29 ++++++++++++++++++++------
- 1 file changed, 23 insertions(+), 6 deletions(-)
-
+diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
+index c38a479ada98..71c9cd90d2ae 100644
+--- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
++++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
+@@ -101,18 +101,22 @@ static void atmel_hlcdc_crtc_mode_set_nofb(struct drm_crtc *c)
+ 		     (adj->crtc_hdisplay - 1) |
+ 		     ((adj->crtc_vdisplay - 1) << 16));
+ 
+-	cfg = 0;
++	cfg = ATMEL_HLCDC_CLKSEL;
+ 
+-	prate = clk_get_rate(crtc->dc->hlcdc->sys_clk);
++	prate = 2 * clk_get_rate(crtc->dc->hlcdc->sys_clk);
+ 	mode_rate = adj->crtc_clock * 1000;
+-	if ((prate / 2) < mode_rate) {
+-		prate *= 2;
+-		cfg |= ATMEL_HLCDC_CLKSEL;
+-	}
+ 
+ 	div = DIV_ROUND_UP(prate, mode_rate);
+ 	if (div < 2)
+ 		div = 2;
++	else if (ATMEL_HLCDC_CLKDIV(div) & ~ATMEL_HLCDC_CLKDIV_MASK) {
++		/* the divider ended up too big, try a lower base rate */
++		cfg &= ~ATMEL_HLCDC_CLKSEL;
++		prate /= 2;
++		div = DIV_ROUND_UP(prate, mode_rate);
++		if (ATMEL_HLCDC_CLKDIV(div) & ~ATMEL_HLCDC_CLKDIV_MASK)
++			div = ATMEL_HLCDC_CLKDIV_MASK;
++	}
+ 
+ 	cfg |= ATMEL_HLCDC_CLKDIV(div);
+ 
 -- 
 2.11.0
 
