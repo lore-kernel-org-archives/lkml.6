@@ -2,179 +2,462 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0891C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 21:54:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C54F5C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 21:54:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35287208B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 21:54:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YjJOkW7N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35287208B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 661DE208B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 21:54:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 661DE208B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727026AbeHYBa4 (ORCPT
+        id S1728076AbeHYBbJ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 21:30:56 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:38817 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726896AbeHYBaz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 21:30:55 -0400
-Received: by mail-it0-f66.google.com with SMTP id p129-v6so3747143ite.3
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 14:54:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=v424ShiyTLXftwcsDxGFlIW3vyt+xOhu1ZOiBoXjA98=;
-        b=YjJOkW7NfqETCaYJzbEpwQZK/SOMjumTj5i44m1okSqwNYDkNkvsycD0aq5+D8VFLC
-         d+mLApLk9uJXvHRDErbx9vPepvkH06MD1uDCMox9M1NYroMulgWNP0Q/miktZh5wtOFl
-         RbuTiLuuEahIoHaC6I+kToS52PgQLv2tyErIQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=v424ShiyTLXftwcsDxGFlIW3vyt+xOhu1ZOiBoXjA98=;
-        b=qj8CnHmCGKVEH/oYVtVHMQcRbVs4rymeCOCD2OMQLuc2nkNyaAvLaurfEaJzFXUVHg
-         x9z4MC8sthAQKZFbyDwZYa04d3OB4ZTK+J9bMPW9KSksSdAXzldjpyQ0zCQQzyUYoxgX
-         rxwqTPJOt0Evh+O5M98aLEP9GC8R+XkbOf9bYJwKWASdcDDxr8aSWJ2tmq6y0+rDOqfB
-         RN0RyRTJJ8FDgi2sLFN3HtPx760LyTntS3WrtixCkcuTPmnH/Wh1yr8LAp+krgJWqa4x
-         9xq3b9/W/1y/vm+03/6i7b4OijOu4Fht5Td/0wUDiObK93uSnFpIfh00Sq0aIGO0IKeb
-         Ju0g==
-X-Gm-Message-State: APzg51BiK8HAjB1gGtROhKkpj9By9NBhJrFpR2pHM5xoDQhFq3FEqjWX
-        6g7ftUbaGjgMVFw2FBFOpPiFqjumOMEznybK1ZT4XQ==
-X-Google-Smtp-Source: ANB0VdaF9lHmY5Eb3MTUCl8X4sV63IRXy3vBOeCCqVVR8lo9x+JGw1czsZewRPGLxy1iURzpox8Qon3wy7dHBoAhVhE=
-X-Received: by 2002:a24:8309:: with SMTP id d9-v6mr2833556ite.123.1535147667684;
- Fri, 24 Aug 2018 14:54:27 -0700 (PDT)
+        Fri, 24 Aug 2018 21:31:09 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46094 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726896AbeHYBbJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 21:31:09 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 48EAC40216EA;
+        Fri, 24 Aug 2018 21:54:40 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-8.bos.redhat.com [10.18.17.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E56072156889;
+        Fri, 24 Aug 2018 21:54:39 +0000 (UTC)
+Subject: Re: [PATCH 2/2] xfs: Use wake_q for waking up log space waiters
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dave Chinner <dchinner@redhat.com>
+References: <1535041570-24102-1-git-send-email-longman@redhat.com>
+ <1535041570-24102-3-git-send-email-longman@redhat.com>
+ <20180824003017.GZ2234@dastard>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <bbdaf330-ce6b-bc53-eb97-93b34359bd3d@redhat.com>
+Date:   Fri, 24 Aug 2018 17:54:39 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Received: by 2002:a6b:ac05:0:0:0:0:0 with HTTP; Fri, 24 Aug 2018 14:54:26
- -0700 (PDT)
-In-Reply-To: <yq1tvnj780o.fsf@oracle.com>
-References: <1533928331-21303-1-git-send-email-jeff.lien@wdc.com>
- <yq1in4gq5jf.fsf@oracle.com> <yq1lg8zb2lp.fsf@oracle.com> <20180822062016.GA10356@infradead.org>
- <SN1PR04MB18241CBDC8E4CA5275EE4424EA360@SN1PR04MB1824.namprd04.prod.outlook.com>
- <CAKv+Gu-RwCrdgW69NVpyRLwGPGPCZx+ksTBM7NZk7v0-dzczGg@mail.gmail.com>
- <yq1a7pb9196.fsf@oracle.com> <CAKv+Gu8Y7YmyB5rmxaj-SGB7q03in7ijv2cOifwYnhP5CNastw@mail.gmail.com>
- <yq1tvnj780o.fsf@oracle.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Fri, 24 Aug 2018 22:54:26 +0100
-Message-ID: <CAKv+Gu8dMBUKmw+5rxWoiRKXngPeAsNyXzOY-nZwd3GPi1S5FA@mail.gmail.com>
-Subject: Re: [PATCH] Performance Improvement in CRC16 Calculations.
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Jeffrey Lien <Jeff.Lien@wdc.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "tim.c.chen@linux.intel.com" <tim.c.chen@linux.intel.com>,
-        David Darrington <david.darrington@wdc.com>,
-        Jeff Furlong <jeff.furlong@wdc.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180824003017.GZ2234@dastard>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 24 Aug 2018 21:54:40 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 24 Aug 2018 21:54:40 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24 August 2018 at 22:46, Martin K. Petersen
-<martin.petersen@oracle.com> wrote:
+On 08/23/2018 08:30 PM, Dave Chinner wrote:
+> On Thu, Aug 23, 2018 at 12:26:10PM -0400, Waiman Long wrote:
+>> Running the AIM7 fserver workload on a 2-socket 24-core 48-thread
+>> Broadwell system, it was found that there were severe spinlock contention
+>> in the XFS code. In particular, native_queued_spin_lock_slowpath()
+>> consumes 69.7% of cpu time. The xlog_grant_head_check() function call and
+>> its sub-function calls underneath it consumed 27.2% of the cpu time. This
+>> function tried to wake up tasks in the log space wait queue and then
+>> put itself into the wait queue if there is not enough log space left.
+> Interesting - I don't see the grant head reservation code in any of
+> my performance benchmark profiling, even when running at over a
+> million transactions/s on a 2-socket 32-core 64-thread skylake
+> system. I see other places in the transaction subsystem that are
+> hot (e.g the CIL context lock), but not the space reservations.
 >
-> Ard,
+> My initial suspect is that you have a tiny log on your test
+> filesystem, so it's permanently out of space and so always hitting
+> the slow path. Can you tell us what the storage is and it's
+> configuration? At minimum, I need to see the output of the xfs_info
+> command on your test filesystem. Fixing this may simply be using a
+> larger log on your benchmark systems.
+
+You are right. The XFS filesystem was created on a small ramfs device
+and so the disk space was tiny. The microbenchmark that I used exposes
+some extreme cases that may not be normally observed.
+
+> FWIW, can you post the actual profile you are seeing in the commit
+> message? That helps us identify similar problems in the future, and
+> it lets us know what paths are leading to the transaction
+> reservation contention. i.e. this may not even be a problem with the
+> transaction reservation code itself.
+
+Those were part of the perf trace that I marked down:
+
+Before patch:
+
++   69.69%    69.17%  reaim            [kernel.vmlinux]            [k]
+native_queued_spin_lock_
+-   54.48%     0.01%  reaim            [kernel.vmlinux]            [k]
+do_sys_open
+   - 54.46% do_sys_open
+      - 54.35% do_filp_open
+         - 54.34% path_openat
+            - 42.18% do_truncate
+               - 42.17% notify_change
+                  - 42.12% xfs_vn_setattr
+                     - 42.09% xfs_setattr_size
+                        - 42.08% xfs_setattr_nonsize
+                           - 27.31% xfs_trans_alloc
+                              - 27.28% xfs_trans_reserve
+                                 - xfs_log_reserve
+                                    - 27.20% xlog_grant_head_check
+                                       + 13.79% queued_spin_lock_slowpath
+                                       + 12.95% xlog_grant_head_wait
+                           + 14.72% __xfs_trans_commit
+            - 8.90% xfs_generic_create
+               - 5.81% security_inode_init_security
+                  - 5.72% xfs_initxattrs
+                     - xfs_attr_set
+                        - 2.90% xfs_bmap_add_attrfork
+                           + 1.88% xfs_trans_alloc
+                           + 1.02% __xfs_trans_commit
+                        + 1.78% xfs_trans_alloc
+                        + 1.01% __xfs_trans_commit
+               + 3.08% xfs_create
+            + 2.62% down_write
+
+1500    99.36    3982.81 351.51  91485.51   60.99      15.87    20.05    79
+
+After patch:
+
+-   41.68%     0.07%  reaim  [kernel.vmlinux] [k] do_sys_open
+   - 41.62% do_sys_open
+      - 41.23% do_filp_open
+         - 41.20% path_openat
+            - 30.32% do_truncate
+               - 30.27% notify_change
+                  - 30.06% xfs_vn_setattr
+                     - 29.90% xfs_setattr_size
+                        - 29.88% xfs_setattr_nonsize
+                           - 20.61% xfs_trans_alloc
+                              - 20.46% xfs_trans_reserve
+                                 - 20.43% xfs_log_reserve
+                                    - 19.96% xlog_grant_head_check
+                                       + 10.24% queued_spin_lock_slowpath
+                                       + 9.04% xlog_grant_head_wait
+                           + 9.06% __xfs_trans_commit
+            - 7.16% xfs_generic_create
+               + 4.27% security_inode_init_security
+               + 2.87% xfs_create
+            + 1.44% down_write
++   39.59%    38.98%  reaim  [kernel.vmlinux] [k] native_queued_spin_lock
+
+1500    22.88    414.82  365.48  397290.21  264.86     3.40     18.41    81
+
+>> The process of waking up task can be time consuming and it is not
+>> really necessary to hold an XFS lock while doing the wakeups. So the
+>> xlog_grant_head_wake() function is modified to put the tasks to be waken
+>> up into a wake_q to be passed to wake_up_q() without holding the lock.
+> How does this impact on the strict FIFO queue behaviour the grant
+> queues currently have? The current code only wakes up enough waiters
+> to consume the newly available space and it queues new waiters to
+> the tail of the queue. If there ever is a spurious wakeup then the
+> waiter that was woken from the head remains there until the next
+> wakeup comes in. This is intentional - spurious wakeups are rare
+> enough we can ignore them because a) this is the slow path, and b)
+> correctness is far more important that performance in this path.
+> The fast path is already lockless, and we've already given up
+> peformance if we reach this slow path. hence we only care about
+> correctness in this path, not performance optimisation.
+
+A spurious wakeup shouldn't change the behavior as the waiter should
+find that it is still being queued (list not empty) and so will sleep
+again. However, if the waiter is rightfully waken but find that there is
+not enough log space somehow, it will put itself back to the end of the
+queue. That is a change in behavior that I think could be an issue.
+
+I am just wondering why the code doesn't reserve the actual log space at
+the time a task is being waken. Instead, it has to try to get it itself
+after being waken.
+
+Also I think the current code allows consecutive waiters to come in and
+wake up the same set of tasks again and again. That may be where a part
+of the performance slowdown come from.
+
 >
->> I'd prefer to handle this without help from userland.
+> AFAICT the patch changes the spurious wakeup behaviour - it requeues
+> tasks to the tail of the queue if there wasn't space available when
+> they are woken, rather than leaving them as them at the head.  They
+> now have to wait for all the other reservations to make progress.
+> This breaks the guarantees of ordered forward progress the grant
+> queue provides permanent transaction reservations and hence opens us
+> up to log space deadlocks because those transactions can't move
+> their objects forward in the log to free up space in the log...
+
+As I said above, spurious wakeup shouldn't cause problem. However,
+consecutive waiters will probably wake up more tasks than there is log
+space available. In this case, some of the tasks will be put back to the
+queue. Maybe a counter to record the log space temporarily reserved for
+the waken-up task can help to prevent over-subscription.
+ 
+>
+> Also, I note that wake_q_add() assumes that the wake queue is a
+> local stack object and so not subject to concurrency - it explicitly
+> states this in the code. That's not the case here - the wake queue
+> is part of the grant head, and so is subject to extreme concurrency
+> that is tempered by a spin lock.  Does the wake_q code work
+> correctly (e.g. have all the necessary memory barriers, etc) when
+> it's not a local stack object and instead protected from concurrency
+> by a spin lock? At minimum, the wake_q infrastructure comments and
+> documentation need updating to accommodate this new use case that
+> wake queues are being used for.
+
+The wake_q should work correctly as it is used by mutexes and rwsems. We
+will see a lot of problem reports if that is not the case.
+
+>> Corresponding changes are made in xlog_grant_head_wait() to dequeue the
+>> tasks from the wait queue after they are put into the wake_q. This avoids
+>> multiple wakeups of the same task from different log space waiters.
+> This doesn't generally doesn't happen because the space accounting
+> tends to prevent multiple wakeups. i.e. we only wake the tasks we
+> have reservation space for, and log space being made available tends
+> to arrive in discrete chunks (because IO is slow!) such that that
+> pending wakeups have already been processed before the next chunk of
+> available space comes in....
+>
+>> Multiple wakeups seems to be a possibility in the existing code too.
+> Yes, but they are very rare and we don't really care about this in
+> the slow path. If you see lots of them, it's typically a sign of an
+> inappropriately configured filesystem for the workload being run. On
+> a correctly configured system, we should almost never use this slow
+> path....
+>
+>> With the use of the wake_q, the cpu time used by
+>> native_queued_spin_lock_slowpath() dropped to 39.6%. However, the
+>> performance of the AIM7 fserver workload increased from 91,485.51
+>> jobs/min to 397,290.21 jobs/min which was more than 4X improvement.
+> I'm betting that you'll get that and a whole lot more simply by
+> increasing the log size and not running the slow path at all.
+
+That is probably true.
+
+>> Signed-off-by: Waiman Long <longman@redhat.com>
+>> ---
+>>  fs/xfs/xfs_log.c | 48 +++++++++++++++++++++++++++++++++++++-----------
+>>  1 file changed, 37 insertions(+), 11 deletions(-)
 >>
->> It shouldn't be too difficult to register a module notifier that only
->> sets a flag (or the static key, even?), and to free and re-allocate
->> the crc_t10dif transform if the flag is set.
->
-> Something like this proof of concept?
->
-> diff --git a/lib/crc-t10dif.c b/lib/crc-t10dif.c
-> index 1ad33e555805..87d0e8f0794a 100644
-> --- a/lib/crc-t10dif.c
-> +++ b/lib/crc-t10dif.c
-> @@ -15,10 +15,50 @@
->  #include <linux/init.h>
->  #include <crypto/hash.h>
->  #include <linux/static_key.h>
-> +#include <linux/notifier.h>
->
->  static struct crypto_shash *crct10dif_tfm;
->  static struct static_key crct10dif_fallback __read_mostly;
->
-> +static void crc_t10dif_print(void)
-> +{
-> +       if (static_key_false(&crct10dif_fallback))
-> +               pr_info("CRC T10 DIF calculated using library function\n");
-> +       else
-> +               pr_info("CRC T10 DIF calculated using crypto hash %s\n",
-> +                       crypto_tfm_alg_driver_name(crypto_shash_tfm(crct10dif_tfm)));
-> +}
-> +
-> +static int crc_t10dif_rehash(struct notifier_block *self, unsigned long val, void *data)
-> +{
-> +#ifdef CONFIG_MODULES
-> +       struct module *mod = data;
-> +
-> +       if (val != MODULE_STATE_LIVE ||
-> +           strncmp(mod->name, "crct10dif", strlen("crct10dif")))
-> +               return 0;
-> +
-> +       /* Fall back to library function while we replace the tfm */
-> +       static_key_slow_inc(&crct10dif_fallback);
-> +
-> +       crypto_free_shash(crct10dif_tfm);
-> +       crct10dif_tfm = crypto_alloc_shash("crct10dif", 0, 0);
-> +       if (IS_ERR(crct10dif_tfm)) {
-> +               crct10dif_tfm = NULL;
-> +               goto out;
-> +       }
-> +
-> +       static_key_slow_dec(&crct10dif_fallback);
-> +out:
-> +       crc_t10dif_print();
-> +       return 0;
-> +#endif /* CONFIG_MODULES */
-> +}
-> +
-> +static struct notifier_block crc_t10dif_nb = {
-> +       .notifier_call = crc_t10dif_rehash,
-> +};
-> +
->  __u16 crc_t10dif_update(__u16 crc, const unsigned char *buffer, size_t len)
->  {
->         struct {
-> @@ -49,16 +90,21 @@ EXPORT_SYMBOL(crc_t10dif);
->
->  static int __init crc_t10dif_mod_init(void)
->  {
-> +       register_module_notifier(&crc_t10dif_nb);
-> +
->         crct10dif_tfm = crypto_alloc_shash("crct10dif", 0, 0);
->         if (IS_ERR(crct10dif_tfm)) {
->                 static_key_slow_inc(&crct10dif_fallback);
->                 crct10dif_tfm = NULL;
->         }
-> +
-> +       crc_t10dif_print();
->         return 0;
->  }
->
->  static void __exit crc_t10dif_mod_fini(void)
->  {
-> +       unregister_module_notifier(&crc_t10dif_nb);
->         crypto_free_shash(crct10dif_tfm);
->  }
+>> diff --git a/fs/xfs/xfs_log.c b/fs/xfs/xfs_log.c
+>> index c3b610b..1402ad3 100644
+>> --- a/fs/xfs/xfs_log.c
+>> +++ b/fs/xfs/xfs_log.c
+>> @@ -3,6 +3,8 @@
+> Where's the hunk context in your headers? You must be using a
+> non-standard git option here.
+
+I am using a old git (1.8). I should probably upgrade to a newer one.
+
+>>   * Copyright (c) 2000-2005 Silicon Graphics, Inc.
+>>   * All Rights Reserved.
+>>   */
+>> +#include <linux/sched/wake_q.h>
+> Linux kernel specific includes go in fs/xfs/xfs_linux.h, not
+> individual files.
 >
 
-This looks like it should work, yes. It does rely on the module name
-to start with 'crct10dif' but I guess that is reasonable, and matches
-the current state on all architectures.
+OK
 
-Anyone care to boot test this? Jeffrey?
+>> +
+>>  #include "xfs.h"
+>>  #include "xfs_fs.h"
+>>  #include "xfs_shared.h"
+>> @@ -221,19 +223,21 @@
+>>  xlog_grant_head_wake(
+>>  	struct xlog		*log,
+>>  	struct xlog_grant_head	*head,
+>> -	int			*free_bytes)
+>> +	int			*free_bytes,
+>> +	struct wake_q_head	*wakeq)
+>>  {
+>> -	struct xlog_ticket	*tic;
+>> +	struct xlog_ticket	*tic, *next;
+>>  	int			need_bytes;
+>>  
+>> -	list_for_each_entry(tic, &head->waiters, t_queue) {
+>> +	list_for_each_entry_safe(tic, next, &head->waiters, t_queue) {
+>>  		need_bytes = xlog_ticket_reservation(log, head, tic);
+>>  		if (*free_bytes < need_bytes)
+>>  			return false;
+>>  
+>>  		*free_bytes -= need_bytes;
+>>  		trace_xfs_log_grant_wake_up(log, tic);
+>> -		wake_up_process(tic->t_task);
+>> +		wake_q_add(wakeq, tic->t_task);
+>> +		list_del_init(&tic->t_queue);
+>>  	}
+> Why do you need to delete the ticket from the queue here? This leads
+> to landmines and incorrect non-FIFO behaviour...
+
+It is because the wake_q uses a field in the task structure for queuing.
+So a task can only be in one wake_q at a time. Leaving the ticket in the
+queue may cause the task to be put into multiple wake_q causing missed
+wakeup, perhaps.
+ 
+>>  	return true;
+>> @@ -247,13 +251,14 @@
+>>  	int			need_bytes) __releases(&head->lock)
+>>  					    __acquires(&head->lock)
+>>  {
+>> -	list_add_tail(&tic->t_queue, &head->waiters);
+>> -
+>>  	do {
+>> +		list_add_tail(&tic->t_queue, &head->waiters);
+>> +
+> .... here. This is a potential list corruption landmine because this
+> function now has unbalanced list add and removal contexts. IOWs, we
+> can't restart this loop without first having guaranteed the ticket
+> is not already on the ticket queue. You need to document constraints
+> like this in comments and explain what code needs to guarantee those
+> constraints are met. [Because, as I noted at the end, you got this
+> wrong for xlog_grant_head_wake_all()]
+
+Yes, you are right. The xlog_grant_head_wake_all() need to be modified
+as well.
+
+>
+> To maintian FIFO behaviour, the ticket needs to be left at the head
+> of the grant head wait queue until it has space available to make
+> progress, not get removed and requeued to the tail. Spurious wake
+> ups are irrelevant here - forwards progress (i.e. correctness)
+> requires FIFO ticket ordering behaviour be maintained.
+>
+>>  		if (XLOG_FORCED_SHUTDOWN(log))
+>>  			goto shutdown;
+>>  		xlog_grant_push_ail(log, need_bytes);
+> This push is needed to make the necessary space we are waiting on
+> available in the log. Hence leaving it out of the loop you put
+> below will cause the journal to get stuck in the spurious wakeup
+> loop below and be unable to make progress. This will lead to
+> filesystem hangs.
+>
+>>  
+>> +sleep:
+>>  		__set_current_state(TASK_UNINTERRUPTIBLE);
+>>  		spin_unlock(&head->lock);
+>>  
+>> @@ -264,11 +269,18 @@
+>>  		trace_xfs_log_grant_wake(log, tic);
+>>  
+>>  		spin_lock(&head->lock);
+>> +
+>> +		/*
+>> +		 * The current task should have been dequeued from the
+>> +		 * list before it is waken up.
+>> +		 */
+>> +		if (unlikely(!list_empty(&tic->t_queue)))
+>> +			goto sleep;
+> That's a new nested loop. Please implement it as a loop.
+>
+>> +
+>>  		if (XLOG_FORCED_SHUTDOWN(log))
+>>  			goto shutdown;
+> This is buggy  - i will lead to hangs if the filesystem is shut
+> down and there is a spurious wakeup that triggers this to go back to
+> sleep.
+> The shutdown check needs to break the sleep loop.
+>
+>>  	} while (xlog_space_left(log, &head->grant) < need_bytes);
+>>  
+>> -	list_del_init(&tic->t_queue);
+>>  	return 0;
+>>  shutdown:
+>>  	list_del_init(&tic->t_queue);
+>> @@ -301,6 +313,7 @@
+>>  {
+>>  	int			free_bytes;
+>>  	int			error = 0;
+>> +	DEFINE_WAKE_Q(wakeq);
+>>  
+>>  	ASSERT(!(log->l_flags & XLOG_ACTIVE_RECOVERY));
+>>  
+>> @@ -313,9 +326,16 @@
+>>  	*need_bytes = xlog_ticket_reservation(log, head, tic);
+>>  	free_bytes = xlog_space_left(log, &head->grant);
+>>  	if (!list_empty_careful(&head->waiters)) {
+>> +		bool wake_all;
+>> +
+>>  		spin_lock(&head->lock);
+>> -		if (!xlog_grant_head_wake(log, head, &free_bytes) ||
+>> -		    free_bytes < *need_bytes) {
+>> +		wake_all = xlog_grant_head_wake(log, head, &free_bytes, &wakeq);
+>> +		if (!wake_q_empty(&wakeq)) {
+>> +			spin_unlock(&head->lock);
+>> +			wake_up_q(&wakeq);
+>> +			spin_lock(&head->lock);
+>> +		}
+>> +		if (!wake_all || free_bytes < *need_bytes) {
+>>  			error = xlog_grant_head_wait(log, head, tic,
+>>  						     *need_bytes);
+>>  		}
+> That's racy. You can't drop the spin lock between
+> xlog_grant_head_wake() and xlog_grant_head_wait(), because
+> free_bytes is only valid while while the spinlock is held.  Same for
+> the "wake_all" variable you added. i..e. while waking up the
+> waiters, we could have run out of space again and had more tasks
+> queued, or had the AIL tail move and now have space available.
+> Either way, we can do the wrong thing because we dropped the lock
+> and free_bytes and wake_all are now stale and potentially incorrect.
+>
+>> @@ -1068,6 +1088,7 @@
+>>  {
+>>  	struct xlog		*log = mp->m_log;
+>>  	int			free_bytes;
+>> +	DEFINE_WAKE_Q(wakeq);
+>>  
+>>  	if (XLOG_FORCED_SHUTDOWN(log))
+>>  		return;
+>> @@ -1077,8 +1098,11 @@
+>>  
+>>  		spin_lock(&log->l_write_head.lock);
+>>  		free_bytes = xlog_space_left(log, &log->l_write_head.grant);
+>> -		xlog_grant_head_wake(log, &log->l_write_head, &free_bytes);
+>> +		xlog_grant_head_wake(log, &log->l_write_head, &free_bytes,
+>> +				     &wakeq);
+>>  		spin_unlock(&log->l_write_head.lock);
+>> +		wake_up_q(&wakeq);
+>> +		wake_q_init(&wakeq);
+> That's another landmine. Just define the wakeq in the context where
+> it is used rather than use a function wide variable that requires
+> reinitialisation.
+>
+>>  	}
+>>  
+>>  	if (!list_empty_careful(&log->l_reserve_head.waiters)) {
+>> @@ -1086,8 +1110,10 @@
+>>  
+>>  		spin_lock(&log->l_reserve_head.lock);
+>>  		free_bytes = xlog_space_left(log, &log->l_reserve_head.grant);
+>> -		xlog_grant_head_wake(log, &log->l_reserve_head, &free_bytes);
+>> +		xlog_grant_head_wake(log, &log->l_reserve_head, &free_bytes,
+>> +				     &wakeq);
+>>  		spin_unlock(&log->l_reserve_head.lock);
+>> +		wake_up_q(&wakeq);
+>>  	}
+>>  }
+> Ok, what about xlog_grant_head_wake_all()? You didn't convert that
+> to use wake queues, and so that won't remove tickets for the grant
+> head waiter list, and so those tasks will never get out of the new
+> inner loop you added to xlog_grant_head_wait(). That means
+> filesystem shutdowns will just hang the filesystem and leave it
+> unmountable. Did you run this through fstests?
+>
+> Cheers,
+>
+> Dave
+
+OK, I need more time to think about some of the questions that you
+raise.  Thanks for reviewing the patch.
+
+Cheers,
+Longman
+
+
+
