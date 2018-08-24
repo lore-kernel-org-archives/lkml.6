@@ -6,48 +6,46 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04A07C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 18:47:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3673CC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 18:49:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DB412151C
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 18:47:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A75AB2151C
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 18:49:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="ehUMsAmM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DB412151C
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="dNqjy2h7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A75AB2151C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727079AbeHXWXL (ORCPT
+        id S1727023AbeHXWYw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 18:23:11 -0400
-Received: from mail-eopbgr710075.outbound.protection.outlook.com ([40.107.71.75]:58880
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        Fri, 24 Aug 2018 18:24:52 -0400
+Received: from mail-by2nam03on0043.outbound.protection.outlook.com ([104.47.42.43]:13615
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726670AbeHXWXL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 18:23:11 -0400
+        id S1726601AbeHXWYw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 18:24:52 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8RuC1alN/+UUMwjKUmaZ6JEHSCQeELQygiLuNrSgfmU=;
- b=ehUMsAmMgT6ozpFvKvvSHClqjg7baV4Qt/VgJ8HR9ADHLkXAftWuoMg7lF25fO9bSUkF6ldjTv2JIeXXSkOJ0IxkQKi1f1fuwUkn0UdcvoNnFio6125X1HoWyrFqPnxVh6FL24rd4vt28Om3H1Rs6ajkkSXleMyuiB6dyw69mqs=
+ bh=ahS+gj5sDLEz2OvC4CLdbYlGD/+HsnpSMrh4q3sS9m4=;
+ b=dNqjy2h7/xL5R7/jZPIEmhAio5Doxm1kBI1FLBdOM++cXYANEkBfYDiOAXCwHY5FJnm5zp6jRpuX/KXgfeBdwnk4nU8pSIuBJxEk7oRv67jlFXyYTXyN4yKSQJGNe8lXTazcqSPiYeLbPoTW0jO8eQ47yaacNpLe82oCrCkn1uI=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=brijesh.singh@amd.com; 
 Received: from [10.236.136.62] (165.204.77.1) by
- SN6PR12MB2688.namprd12.prod.outlook.com (2603:10b6:805:6f::29) with Microsoft
+ BN7PR12MB2673.namprd12.prod.outlook.com (2603:10b6:408:29::27) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1059.24; Fri, 24 Aug 2018 18:47:14 +0000
-Cc:     brijesh.singh@amd.com, Borislav Petkov <bp@suse.de>,
+ 15.20.1059.23; Fri, 24 Aug 2018 18:48:56 +0000
+Cc:     brijesh.singh@amd.com, Paolo Bonzini <pbonzini@redhat.com>,
+        Borislav Petkov <bp@suse.de>,
         "x86@kernel.org" <x86@kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
         "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
         Thomas Gleixner <tglx@linutronix.de>
 Subject: Re: SEV guest regression in 4.18
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>
-References: <20ad6cd5-394c-d3ae-d99c-b656d7ef8293@amd.com>
- <20180821083911.GF24940@nazgul.tnic>
- <3d46f44c-dd78-8fa9-02ac-8206676ffde9@amd.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+References: <3d46f44c-dd78-8fa9-02ac-8206676ffde9@amd.com>
  <20180821151938.GA31212@nazgul.tnic>
  <92e2b80c-0dcc-94be-8d3a-5e11e5cf2370@amd.com>
  <20180822081417.GB4069@nazgul.tnic> <20180822150033.GA14200@linux.intel.com>
@@ -56,82 +54,81 @@ References: <20ad6cd5-394c-d3ae-d99c-b656d7ef8293@amd.com>
  <20180823152907.GA1488@linux.intel.com>
  <60acb594-abe3-912f-9702-2f34961e575d@redhat.com>
  <c565ae1c-c2f0-8a43-b1f5-404c2efe7c56@amd.com>
- <25d2cf1f-11ee-ecba-73a9-15a9553a3d96@redhat.com>
+ <20180824162408.GA5491@linux.intel.com>
 From:   Brijesh Singh <brijesh.singh@amd.com>
-Message-ID: <47b8f9dc-fb55-f14d-cb88-343810ad5763@amd.com>
-Date:   Fri, 24 Aug 2018 13:47:10 -0500
+Message-ID: <ebac0ab1-6d7e-56b3-c533-20921a5d3fa1@amd.com>
+Date:   Fri, 24 Aug 2018 13:48:52 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <25d2cf1f-11ee-ecba-73a9-15a9553a3d96@redhat.com>
+In-Reply-To: <20180824162408.GA5491@linux.intel.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Originating-IP: [165.204.77.1]
-X-ClientProxiedBy: SN6PR02CA0006.namprd02.prod.outlook.com
- (2603:10b6:805:a2::19) To SN6PR12MB2688.namprd12.prod.outlook.com
- (2603:10b6:805:6f::29)
+X-ClientProxiedBy: SN6PR02CA0029.namprd02.prod.outlook.com
+ (2603:10b6:805:a2::42) To BN7PR12MB2673.namprd12.prod.outlook.com
+ (2603:10b6:408:29::27)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 181081f0-7381-4951-8dac-08d609f202fd
+X-MS-Office365-Filtering-Correlation-Id: 00d546fe-83eb-40a6-6bfd-08d609f23f6b
 X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:SN6PR12MB2688;
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR12MB2688;3:fGs9U1aYTHAR80eq/iKIqB0Wpyr3eVDoBZOjA/Jg2hlIMEtotUOUQjYPuZmfggmwUuTIU7wwihPSX8tZn8JKVY+vlQ4dRp6WUlXU9V7jAwrhVeeFe5rM/8GB5ug+0zuHzSWRVfGX0WRzAugImwV54kudeGxlgchTvwBbqVirGFpSGuJOmcoAVEu2KTcBmsf1ynAOomGV57dzsBCjUxG6rrRyKeBTo+MjXc9ct7t4uNHXM2OHkLWT9n+/25EtvJRC;25:XHaZ9k+FuBCBLbNB3FVfnDXMcL15rmMbB/l8TCLuZ8+Gp2swBX1gzc43AYK7aUog+J26gwWZcEiB6/8LOh2exuK/EwLH62CT2RGjN+b5qszmtfZgmZdFdtAzwYpwFWthAPzmi1vYYN4hHTZyQDTV2c5CnHcYHXK3C+Hh4P7BuLlv1hXQ6Ew14ShSV3IqaWjFRRnML1rhfVcCAXNpAQJ9GsYNbZ/AuCAA84R5MccOjW2336SolTY3rGdWH/1a0JE6lwyeCzD3hjLQkYXyYzGsCWmIvzOgyt/YRJ65wROox+567XTqGTZrE98wz/Sw54TyxTv7EN7kPphKHh6Jhoo8ng==;31:ceIMBURT+tsbZN8SUQokh7BkJphj2ow5mBs7LystskCDuJrVUpyYLIPSqoFI96Q6UxILYiSQ2qSz2MZlTqWEoJLIv2sS1pMzuCBSQ4WrvMI78lnQ/Hv6Ngy+vwGAR/T4r9KgR2aeQ+EzwnAXURanq+ldrjimnKEtij4WlEZLo/YrkBXomyCbW/BAO4txZgMNhkm2ok9pysLf0L5f7bLwQbb3tW5l1l8R1qxUCBVO3nM=
-X-MS-TrafficTypeDiagnostic: SN6PR12MB2688:
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR12MB2688;20:JkDXPyfZwRtYBiy3vnCy30hAfEFfYRhqI+NE42gonOzee46/OrS1zuKBnH63nLm4FLzo/GhUuWo06xCYrJ9E08GBAY418ZoNDm75PyQyzGCqm8G7ae7x8nNoqSVFA005YciecTpPKlcjvhHaYyvvt5jl8fd1elb7cFM9pdtqGxma+5McdZSOG8L1FfrEMJpZ3ixqozBu+VNcll8E+3clPsfeGvu+/iqYAZ+qTAAqSwPL12hWotJFCi23xYyn453nnGa8pmlxlLRFBDOS7FnquOcM2qpup17cRLRgyIy0s+6P9WkCysjnCjxC0EBxi93gQEFVoCIIBKFA15/ZU/8UpOZ/fJ08HDbZTxnqoM5drSMsrYZninlK9qwBR8nota8Kxk09ex/PDViTJkf66A3CzfGB7bmtGYsxyEbmARgerYvbsiBaOMFhkUNsLVuXj4A2/N1joOtru+D/IeYQCarTU6/y73J5oQDaP4isogwPVlS/s6IOIudy5wMidjb9FSkS;4:T2bH/d+DNRjmKn3N8z8A39fMzOT/pA2aAF1rtczKTt5hb7a77kUbRh/2VgC4c14BePniwvQ6KK0m2GHlR2dgrHJ3Xz3YM/n8Ed7bVxxjKTFM5AHapgTZh0I4pTSgPBq5Oa/vei2X4AIDAA5kvmVuP09jK77eBii7ZhDded7ocnzV6yC8Qp9n6olXyV47YPtQwG+UdEJDVCGcJiqBc+OSRM9WKpYmQh7ucxTfnGrNxngqUzhUlpZe/dkgOGgxFZ/f1xRuF4VvWROfhokgvBxBhg==
-X-Microsoft-Antispam-PRVS: <SN6PR12MB26887590D5B354DCD2B05302E5360@SN6PR12MB2688.namprd12.prod.outlook.com>
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BN7PR12MB2673;
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR12MB2673;3:vV0WY5n5lZIUI/eSxxEc/Mphs1/7xlnFn5f5UhGjx1Z3OeGDEWT2LhTZNCYyMUBz55TRwuCmU6i4upDU/B1RUsWTh0/gMUChj/1QB2OSIxcaTX6lHb7cX0TryruiIq5lOF6u2hJCnAC7wdHnSvPd7K1t5QOkG5aS6tajUOq/xsRlWO3O5DFbHLFPpyhqbkdUxb/B//cRChZJ+xE5GNS0e/8vKyG5t4+ENzAGmLJshmrrElACJXKYnlPR0RgHPGGG;25:D6cTn1bkFAdbyWh1fwRmaNM1v7MRcRJqTbz/zRVl1+abeKK1iMzdzWNiSQ1EYxUwet7CrB7/2mlnQvLVBumbz+LQS8GnEacU4frZpSKSL9J6vUaeZ/YwmmRb4a4XbN6HBMpvsDdvLN7ePtW/cynz7KbXadkKzh4DDyDihkwx5SC1QFX3bsSFC8xNiHCoJchaTR9uRi/3MTigo1umbiE897vb932pK0v6KwJpkvftpQOl4HlSmdRWpzNZ/htd6FJR7N73n/Z0Nhts+DNO2+Gh8DNM8aMlp951UJcg0OToNzn9zwUQ60JMsS0s/x7c5OeeAjLvn3D0w1kmuqyujl1Nkw==;31:DQNfGUj8ZVHtEt03uRHYgxpfdTIvz7ET9/ogT/nbeZHmjNq5tfHqiQOy+au9kRC/FaTumu3EyVN82esu6XYLERU68ExklvawujutkGwQ6QbVIUhgupKeopjLNtQTlDnLFBi9QooHFDw/XYCKRQeusJiaNkuLDTYmyE63AyhDsiODmMf/Bu1nXTP7VE2vYrPlN/4gIJD9GjtQVQWziuMoCgqNbXLK9hpXeSQD0Xa1gXU=
+X-MS-TrafficTypeDiagnostic: BN7PR12MB2673:
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR12MB2673;20:oojhHQajd++U7AHBoFY6Xe1GhlnUfq3YoCfJ0q1WMNNfPvsjtM7e+QflmDpfOnS7IdKZy7iDI7u/OjYGvHs08xHPIUjscNev+iNiKjvTI0XJLMiDSwsHb4jYPty0V5Pon/AKRAo9/fohbOQp8G+X3+x8ttMt7XWplaA/HSbiCGslS0Xrm5oBmW36uUJYWne0OVX3ioVZvpXQj9HTyZ3VM43WxxG3EtXMS/37Gjf7RAJ47ulmSbrGOJgtUHVNW51Ks45fPXjC+AMZab1xUMZsyBL3cyvTTN0U0mjTcOX4wYXEeyOSQZQGt5B+4uA7dcAq7QXK5LpGSL4Q5tJSHmmVVc296rg1Pp4Mjnw9eShrCbPjdBcWKlzi1WlVo19+m2p7nee+ZXiS7q9DWBOq0mKLVmMoh5Y8xL3v8Hl7D8kPLKNug24D4IXAbILhHnliNfa5NYTfFyfymMKPaJSzPIzGpb+tDtElFEj3LLDP2s8G/U40zbfDjrqSUos/k/8ok+1g;4:C8N4GXdkLDOl2mzkdJDPoc4UPPMLRWPdai7wDzALqEdOGTnrC4MEJou1MpKdXKs1E7VB8zgXLE0rlqkfvWXehSwShDbRw63mwln/vKjiF5U36E2i10MTXuIZCK4f7sFe91qxSLdNx8Lzi5czc+/hxfP8l24lxxbidTf5706OzauZfEp+J1ihmR2iyriNgycjTGnc4L7VHPgzo1+SwwByuqN9A8rDbTRNG01MZkKyHBBOCO/Pu9eYIqD2tbe2L2YEsMoHO4ZWnSzTlG1dW4HqwQ==
+X-Microsoft-Antispam-PRVS: <BN7PR12MB267331789011201A47312C12E5360@BN7PR12MB2673.namprd12.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:;
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231311)(944501410)(52105095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699016);SRVR:SN6PR12MB2688;BCL:0;PCL:0;RULEID:;SRVR:SN6PR12MB2688;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93001095)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699016);SRVR:BN7PR12MB2673;BCL:0;PCL:0;RULEID:;SRVR:BN7PR12MB2673;
 X-Forefront-PRVS: 07749F8C42
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(396003)(346002)(39860400002)(376002)(366004)(136003)(189003)(199004)(53546011)(77096007)(26005)(16526019)(186003)(67846002)(2486003)(97736004)(76176011)(446003)(6666003)(11346002)(956004)(2616005)(476003)(52146003)(52116002)(23676004)(486006)(229853002)(81156014)(14444005)(81166006)(478600001)(6486002)(53936002)(8676002)(44832011)(50466002)(305945005)(31686004)(106356001)(68736007)(8936002)(2906002)(7736002)(64126003)(6246003)(2870700001)(36756003)(3846002)(316002)(58126008)(386003)(6116002)(16576012)(54906003)(110136005)(86362001)(65826007)(65956001)(66066001)(93886005)(5660300001)(47776003)(65806001)(25786009)(31696002)(4326008)(105586002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR12MB2688;H:[10.236.136.62];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(396003)(376002)(136003)(346002)(39860400002)(366004)(199004)(189003)(8676002)(486006)(2616005)(446003)(956004)(316002)(16576012)(25786009)(44832011)(11346002)(305945005)(2906002)(7736002)(53936002)(97736004)(81166006)(58126008)(16526019)(186003)(5660300001)(229853002)(230700001)(6246003)(81156014)(50466002)(476003)(6916009)(6666003)(6116002)(65826007)(54906003)(36756003)(67846002)(3846002)(4326008)(93886005)(86362001)(478600001)(31696002)(47776003)(26005)(77096007)(65956001)(66066001)(106356001)(53546011)(105586002)(65806001)(6486002)(386003)(31686004)(8936002)(64126003)(68736007)(76176011)(23676004)(52116002)(2486003)(52146003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR12MB2673;H:[10.236.136.62];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 Received-SPF: None (protection.outlook.com: amd.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtTTjZQUjEyTUIyNjg4OzIzOm1TeGVGN01USDhFUEdoS3dxUWQwakFxNnM1?=
- =?utf-8?B?UGgwK2wrVmhVV01CcGJDb2lORDNHNmlVcklQeU9xNXlTWC8yOUhXTm1oUisx?=
- =?utf-8?B?eWd1d0tnSFIzdUw1Skxxby9SZzhReFVNNEU4OGREOFZmLzFKQyttQ2pjKzlU?=
- =?utf-8?B?WnBUcDZaRzJVMXZRMXNDTU0wNHZLQ1ZIYVgzcXpWaGVoNm4yVG1lNlJTYUVE?=
- =?utf-8?B?YjNyUzl2SEthckdINS95ajFZVWF3SCtDMm4wT2FKaGFtUmVPempUSmI3S2NF?=
- =?utf-8?B?VzQ5NHdwQnRPd0xVVFppTWhZV3lMSkZUaVdUdnBaaGlqb3RESGJrd0MyOGc0?=
- =?utf-8?B?N3phamp5QXI4QkkwUmJ6U0VWMG14T3ppc0xMWjd1YTdwU2JLYXZEL2puVU5Q?=
- =?utf-8?B?UlhBUllhTWFSaUFpb2RlU0lWSmlzVlc4Q0RoeFJzNU5BcjV4L3ZTN3VOdU1s?=
- =?utf-8?B?U3Q5Tk0xM3NyeFcwTVZNbEdVd2ZYak9CUTdBV3RReFpsa1M2NlBZb0NsK0s4?=
- =?utf-8?B?WDF4b2N5QVdJbG85b2d0TWpCekxnV3p3YTJhR1dUeUlBeWFqRzRVczIzMEhK?=
- =?utf-8?B?WnZFV2hFYW1JRDFYeVoyaEhWdFA3eGE2dURIVHdSeE1FdGxLME5SWVFOSGU4?=
- =?utf-8?B?dHdMUlZSYlZoTnRoN2ZrbVYxb1c5ckR2djk2UDFrM1dmTHdRWHhUVzAyYnF6?=
- =?utf-8?B?L05Sd0Q4WVpRK3NBS0ZUK1l2bDg2bHR1bXdoSllnUEpXeXhFUkZ0dkQ3SjFS?=
- =?utf-8?B?TGprVUo1dGs0OXNScFhqQWcxU3R3VEdhSTZHVFA3My92dGdGQmVueVhEcVlL?=
- =?utf-8?B?VG41aldDRGxrQ2RGc1pPaVVQVHk0SjZnWWNNNnp0bDg0WnVVMGtNcGtBdzRk?=
- =?utf-8?B?UW1DRkE3SnphK0FvL2ZwaDg4SEIzdVhFMmFuTDZNTlNqQ25GVGlUZmFnU0xG?=
- =?utf-8?B?NmFvRTYzdXhuRnZZUXZOMTlBTE5xYzdCNklRZ2grd0NkcmsxMEFzSzc5cjYw?=
- =?utf-8?B?MHJXUklFSUkvQ05RQ2hMSHdlZlhxajlMQU1YSzRLenJ6aXRSQzdadDlvcWZE?=
- =?utf-8?B?NzZhOC9JOEpmeGlLV3drVmE1cnlWa1hNQXRoVFk3RzJmMFhHQVp3UVphS1Nt?=
- =?utf-8?B?Z2JNL1MxMEVYMHZFMHZTMSs0RzZxcUl1S3hQMGF1TnBIZ3JVdll2a1kweXJL?=
- =?utf-8?B?TjcwVjM0dndCNGJpUVNrMVF5UW8zZHBFTERBZUdYZ29EdnhqRTJFQlNCdGtZ?=
- =?utf-8?B?WHMxejJJQ2t5eXEzK29PUExaS2R3eTZPNnUxM3BUZFN2TW9kUmpPTVBiUC9X?=
- =?utf-8?B?RUJ5K3paYWE0YlFJWGMzVSt3c3hFa1E3TDFYZUlleGxyVU1XOTNkVGdIOG9v?=
- =?utf-8?B?by9CS3JRSzdlQ0lmemtEUkhjb1NreDJ1aE1leWVmeTNKam1CZ01LVm5kRFdO?=
- =?utf-8?B?M2V0SUFQeTJBVERGbHFqWHNwV1l6VFpXWFdRN1NpZkhDQ3ppLytHM3ZpQ0V6?=
- =?utf-8?B?NzB3NE9sbEtuOHd6cTYwc3JDaEhUZFdPUFBrMmpEcWhKcTZvcnFsZFJ0OHg0?=
- =?utf-8?B?WjJJbXlQU21LMlBkeUZNTWFYM3VwcXkySW8zbGQwaHcraFdUZ1RSMXBpamsy?=
- =?utf-8?B?L2FIeElnQVZOOThGTEtpMVF0VnY2YjF0RUc3aHNEK3lRT0ZiOWZSclB3cW55?=
- =?utf-8?B?QWhXd0dtTFJHK1VpTWNQRlgxSVVpQUVHMk5vZFNIcnZwSGxqWW4va3ZNNWFI?=
- =?utf-8?B?U0k1MW4zZ3l2U1VOODVCRkR2VE1OVjBrWmE3cUM3UVZ0b3hGK0dDa0FWdG0v?=
- =?utf-8?B?aFpaZ0VQNHRVN28xTE9SL2ttcStLTmtkbDd3MkRwcWVFbnA5SmpKT0ZyWmJ4?=
- =?utf-8?B?OFpiMXZvN21BYXNMSmJUOTBiaVF1L2NPV3p2MmlsL05vL0RJQWhBbWVCYlFW?=
- =?utf-8?B?cXhRL1FibmhpUlJ4UjV2RWVuYVVnREdESTBNQnJCRkxWUHlPK01OZmRmY0tk?=
- =?utf-8?B?MzJnVWhLcnRhWmpkVWl4dk1XdmRLaE9oTzdBRS81Q1Exb1c5OTdLTDMwbGVv?=
- =?utf-8?Q?RO/s=3D?=
-X-Microsoft-Antispam-Message-Info: jGEhhR/AReCC8A8b4pAPEOP5SB2nifAgM6CcLXHvfh1Eg7tDYzspNN82dCyXyIUJltjdlqsJepNOKZRMU1QE4k7+uZ91q2jd1mqX7OF2UTmO4tEhY1WyPX8mtgduRQZD0HXvALoWG/6XEtwYx1gACAX/WS9iQf+yjlsyG4k3iQc4l8FXOO8Ih84Vd24WdvT4mjpy0DNb4mzWFuALSrm8KmZlrWAv028RXDaGZJWYE8AEEBZ21Y7edJKsvkpyOghRReBExjM5Whnm6hdrpnqzCET/Z+ZMvEoYpcyoYX6vwhqglzhL5eEhwyWzR0yHVr425H8ZPZbUM9yamhBgnU33AABJEMvgFPN/TsltBOddOpY=
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR12MB2688;6:45uwZVnuahhXoGvu6z6URhDgwigeJoi/fENUP4lmrFoQFBNtBlFccPGFLYoEVobfGwX0y9ParIc8e9ujetnlr3adCap2FRjBjuI9eRKrU/yB8DcMFXMq6XDySvGRDgIGpz4DVDU/TYUkt9NVP64pYLuUXx7Lfti8t4F5HKuS2IBLIVNkkLvhABZqC8xblMF2x/2+DkhsqzGD8gwYnZw750Tex56/eokLLkfdSZZXBUOKbDICgK+nRZYR84YvD9Y0ZGw/tzC8fztUqwfAPck3HfK6VeUazhfvQ9T74iEGm63DuGQOvHA4h/b9N8zARJHn0QoRO/+QojDwMq5l16EpKCBiH/0beZntkv5uHHOozCo7iA6hh9ngIRjNZPpDM61YZ0TYx/7Ip0PXulz/lzxeRjU9NiltKJGQqOxad9VsS1qXw/Z4dNBU6nUuRVrhaY8qaxysFRae576j4E9NBZ4DVQ==;5:qWHj8nqtIDz08hEkOBpmYe4acSrH6sRWwNeOQmoUaNmvgqPzwVpLIqHq5wwQYqFLMZi2Ou+DhlcBBZAugONiwu+tvZWqNivhof9rJWnA5zZLuNtOEXSIIZwmWodWA2WIqB/6hWR6W9t9OLvc6SiAJFu/+Mh6VJj71Dxo8W3l1/Q=;7:howMozcvdabytNijAPdiFsbP2we/030DKKv39iRSe2lvilFHcYkWxxjnM/X3p/r3dSaUv9l91THFGmvtHXKCWdH2Xw7QMtTZ2pPpZ0uY2BfWhYKY4gvuv1FVSV4uDGBqhfvGZSryRD4hnMQT/eK7z6sC4ocKMgR8Y/FUkWvfammhQWQ1GBOqaTB6++KzlDUhKhSRCV4H6w4sznm3affdYMpsHgb7syAMxOo6iShokqSrTYrEMGkJnNpR5jsBJS0L
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtCTjdQUjEyTUIyNjczOzIzOm85NUtJQmZVNWFJTWtyUllMcEhZdFd4VUVk?=
+ =?utf-8?B?ZDV0WXRGeXhaSkJFSnZOS0FNMXRoOTdjVDBSL2pESWJGUmJNaXFKeXQvOTNL?=
+ =?utf-8?B?NFNQVUpvTTVLK3FvODY0UGtSdW9zY1c3dCs5aTR1MEZhMFpsWjhEWmowWFlK?=
+ =?utf-8?B?TG1uSmV0Q0pleU1LR3B6bSs0cjdKNzk4T2xwYXZPZlkrODVhVHlXdWVOaEZm?=
+ =?utf-8?B?SEFjQzFmRXUrd2hvRjFaWkhYZTBQYjdnTTYyZGw2Uk0wU2dEQTJZMEVtSWZT?=
+ =?utf-8?B?VjZJUUV5bWN4RzIzK1RzejRqYTBlTS9GcDl1cHg0SjdpWWxxREhBZUF2ZXhr?=
+ =?utf-8?B?Z3JEU0pZY2lDRU01dmt6U0NyVVRhSnFMMklUM2pYazg5Y1Y2ZUVpc09VamRm?=
+ =?utf-8?B?QjI1MFBmTFl0TVZpZmFKbGFtV1hVV3hxa3RraFNVQVdkSXFrWjhKRjZIblBL?=
+ =?utf-8?B?VTZHY0tCQXV6TzRpYUxCU01COGVkV0NscFpJYnRyVm0xRWY3OEl6WE9IZy8v?=
+ =?utf-8?B?ejJrYzhxRVp4dW0zdEZHYUZyRTl0ZEJNclZLbitZQ3dIeVlkc3VUekRYYkE1?=
+ =?utf-8?B?eGdTemdjMStocnRDdkdBaFNSWSs1M3dRdWFwWnlTZXpMejZ2aFVyL1BEVDhV?=
+ =?utf-8?B?Z0RJWDgxZTliUnBPM0pxcW5wUnllTFlVTGtBcWR6aDZHa002SUhhaXJNVDd5?=
+ =?utf-8?B?WFFud1hDaXVhSXNIZDdjMVQ0SUxNbmtDanB1MmtRaUppWGt4Z1dHa3RPNGI3?=
+ =?utf-8?B?MEw4RmF3VzVBVzRmT1p5ZGErcTRnUTc4TURWWG9xd0s4UFdJbVp1aFNkZjdI?=
+ =?utf-8?B?MHJ2bTZZUGtPUFBGcm1UeFdCaEJtaUh1UEVtYTlSU2ZKdDZwV3o3QStxMzkz?=
+ =?utf-8?B?MjQ0bzNhYy9TbXdGOHUraVBEc0N6emJnNmdYYXVTSmFFMm85L0xxRWdST0ts?=
+ =?utf-8?B?TUIvZU5JTnBUQ2RQclM0YjRWVUo0R0dlRmcvSGZYSVBRV2IzbHJTTEQzMnFJ?=
+ =?utf-8?B?ZUVhODNBTnZacXk3T1R4UUxSelFNM2NUcXVyM1VtU24zN0M0OXBPWS9RVkpo?=
+ =?utf-8?B?a1N2S3dDVEVpc09wS2F1UmZRd0p2K3RmVGFvK0pZTlpzT2I3UWpJWnlKVkZu?=
+ =?utf-8?B?TW1ZcEtPcW1zNmQ1aE9laGZwQVJlQkJIRkxvOCs2akFNbzlLeGRXSEUvRGhy?=
+ =?utf-8?B?di9YOUVOR000Z2pkTnpJNVRadWRPNU1hMGxPSDIvVVA3d2NWaUZnZXBzM3R1?=
+ =?utf-8?B?eTBvVlBOSldCK1BXU1gySUZnelJsdlR1QUJDNFZFUXVleUQzMGVaTHlNSGxn?=
+ =?utf-8?B?RlZoWmhMajRCYWpQL1BYcVIyblhJZmFPSXR0Vll2dnFMcVplUmVDYzBpR1lV?=
+ =?utf-8?B?ZXBoaUx5OWNWS2p6cVVmTEhRRjNqNTJFOW9SVzlrVVhjc2pZRlZ1VFBwR09Z?=
+ =?utf-8?B?MEcrVzFQYWxiTzd1WUtZK20xMWltRUZlMFpicGxhMk1HSzNTVnlDSitEbjlM?=
+ =?utf-8?B?SWliRklJdElxZGdSNTliK3g5Szc2djFBc2RBS2s5UVNjZzQyd3k4SkNSVW9L?=
+ =?utf-8?B?Q0Mra1puc3RvNGJIL1ZBLzh1L0ZEeGpvOVZiYlIzb1JXRDB4ak9TNFQwd2lC?=
+ =?utf-8?B?ZVRnS2tWU1IvK3VTRU9ldGNPdUZEVWpob1AzU3pNODJHM1IzVnJKbFhDTGhv?=
+ =?utf-8?B?cEtRMzN3OUdDdzdONllaNGtLWnBRcXdJSVlTNUE3VVNzdlMwSkZLR1lOdjRI?=
+ =?utf-8?B?YmZueVZTcTJiRld1R3hoaVNJdlJhQUh3QnJ3NTMxTDNtWjhxb1cwU1ByMlIr?=
+ =?utf-8?B?NWJXOUg0MVg3a2t4YXpXL1V4VlVKWHFiQzZMS1B2SzNqYzNTclQrUGRRN1lQ?=
+ =?utf-8?B?L3pYVkZrSHFSYjdnRGsxUmtYaHdwb2ZPWm95aFordDl3bGFoMFhSZGVrL2g2?=
+ =?utf-8?B?Y2ZiNStGU0lFMUpnOFRWMlFKSnZ0SlJzNzdUVkRnOGQ5aVVoTzJSNzlrZysz?=
+ =?utf-8?B?aEtiMkRTSkVSSXRQcHpLMVU0QTR1ZW1FZ1BvQT09?=
+X-Microsoft-Antispam-Message-Info: XpLOCfl77r+0+yfN9yYJWIaXVVvH6Gr3DicCo22EogcoOF3hj1i6pptfZZ3Ez60BHwXPclwgZ4LAWif4K2F7wRYOIge/2n2ZUf3H3dJxSKb1sjfuqMGD0Ad4UpLeJFIlQOG8JCshR3fG528hzv1jbd+xTSF2Wsh1DsDJpbkdeucAc+IFDwywUbM6Ll6W50Qfkuazw1fwHkKmFA0Qvlg5Nq0isZvxxg0DawF7tMCW3FlsFUpda9d42Gih+EW7yp7LnnabjiNIBXrvsArOApRo8C8/HbNqywKJPn4UVQxnhDrNAAYjVONBJ/IIhUo/YBZpXdoGorh8F6owZs/efFuI1Cmb/UQJgcXU21fV+hpKiwU=
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR12MB2673;6:1EwVaOEv7tnu41td9n/fAZPmqCbJtQsTBZmCdfd9fWjpfsenkC+wgF2cTbJcIxVi5EURxhHHE13irDfw4Qelkd8dZt7Zl+20wQEZw+dGZetctxjaX3XGLFglNSCXHtqJ60J/q7iwWCLb94y+jc858XbYxauC10i9S2JEKjJHoUdB+nGu8PlTKL2WJG2IWO0M8cec7zUnrIKmClj8pax+NaOzN7euLjX20skSQbzt8FgUUk0O1STO/76PTYxxAXF9gvw6DQ3NipuOGdV5/M0eZ8lWWA6ZXLCHoipqquBi/vDA8ZIEdLrFX4R+e1VQDbZuwQx33cq/OoHwwgr5ZPe72Juw+85bBjYdc6RpVd/GkACQ5BbNC6mqxDVpGnDk43nfH0LsvjNoEml1DCnkGNLip9glCXUfmc1sLN5biQj7F1znWH5mwO14Foo94vcdEZ3eer7FvLm09v7LvM+Awja7hQ==;5:b3v7wyPU6B+FkGGf0fCIwvWUD4+dJIndCajT861SEBpQ+V7WV2xmjuYv6845oz3FHX8RZB54F92lrGJ4HFKRZ84x5Y/NnojwTGVRyIC2ZadDnPxwIQ4S6gMn7/3NCVbW+t1zgytqRiHyKL/FWbM+UlUW2v3Ip6PWQsFj53rYYyE=;7:YewPoerJVj604BVlW+S8X0gyJzsLiOfia6+Uyl+WlSP2R//Ofcs0BEfp16Jxv6NnLHw7ndtZhp3bdD6Uq1KNwPNxjnXlcdJmVEMSF4F+pjjTqy/PcauxdyNEL8uufNhnJTBcYH+h50CNo6phD3+RnS8ICSTl+caeiz8OOGaV2wAWeglZpukXa9VvwV+dy2+IF1SWCxvbUo+aA6TLg6il+ldVzdwimch8O5ts1atxgvgHrpxKAZVfCcZlpgFr+uU6
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR12MB2688;20:+SR/uDUMfdVlEMZ+Yu88o/OJ54XEsnquMLMhqgTYCu8WtWJ9fpVJ4tO7NiSNxaWkYlwVNCVPbHwm9r8k9T9mGc8QBj9YvdAwJCwZi3SY64QXMP6zj68RduTj9bYTTjycyX+IhmgFfq3MyMr5CK/KiULeRwJwIGrxj1H3mEH1+F3MVEVo5K9CO5AxNW5dkWXZehO0QJrC73QwE0xtlDe3sMrAmeO16kwF4HdTDK1g68e6bFkNhzp4sPijgkYvq/iq
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR12MB2673;20:frXWr2hksOollMuLwnUiC01XEphvk4XgU+lqRWMtqDks+hNZAtxWGq8hosBuvz/9WRF/413DqAatN31cqCjdT/yUGJjvMtTgbrbxj5crql/1mU5lYJbpyql9eYdlcw1+SmNnDSHQyomcAeyBNNteDObaiRgiSFyEdk4VBDSStpoeNA1EmNwiHKnSjLcnnqzUifdBM5hLqELVSsXLk3GOAsGR+s0AG3geCwlvtiZq7ivwGJjZAiSN1NVNW03a7/Dz
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Aug 2018 18:47:14.9815 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 181081f0-7381-4951-8dac-08d609f202fd
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Aug 2018 18:48:56.4269 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 00d546fe-83eb-40a6-6bfd-08d609f23f6b
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2688
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR12MB2673
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -139,12 +136,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 08/24/2018 10:50 AM, Paolo Bonzini wrote:
-> On 24/08/2018 17:41, Brijesh Singh wrote:
+On 08/24/2018 11:24 AM, Sean Christopherson wrote:
+> On Fri, Aug 24, 2018 at 10:41:27AM -0500, Brijesh Singh wrote:
+>>
+>>
+>> On 08/23/2018 11:16 AM, Paolo Bonzini wrote:
+>>> On 23/08/2018 17:29, Sean Christopherson wrote:
+>>>> On Thu, Aug 23, 2018 at 01:26:55PM +0200, Paolo Bonzini wrote:
+>>>>> On 22/08/2018 22:11, Brijesh Singh wrote:
+>>>>>>
+>>>>>> Yes, this is one of approach I have in mind. It will avoid splitting
+>>>>>> the larger pages; I am thinking that early in boot code we can lookup
+>>>>>> for this special section and decrypt it in-place and probably maps with
+>>>>>> C=0. Only downside, it will increase data section footprint a bit
+>>>>>> because we need to align this section to PM_SIZE.
+>>>>>
+>>>>> If you can ensure it doesn't span a PMD, maybe it does not need to be
+>>>>> aligned; you could establish a C=0 mapping of the whole 2M around it.
 >>>>
 >>>> Wouldn't that result in exposing/leaking whatever code/data happened
 >>>> to reside on the same 2M page (or corrupting it if the entire page
->>>> isn't decrypted)?  Or are you suggesting that we'd also leave the
+>>>> isn't decrypted)?  Or are you suggesting that we'd also leave the
 >>>> encrypted mapping intact?
 >>>
 >>> Yes, exactly the latter, because...
@@ -154,35 +166,14 @@ On 08/24/2018 10:50 AM, Paolo Bonzini wrote:
 >> unencrypted mapping for the same physical page. So, creating a
 >> two mapping of same physical address will lead a possible data
 >> corruption.
->>
->> Note, SME creates two mapping of the same physical address to perform
->> in-place encryption of kernel and initrd images; this is a special case
->> and APM documents steps on how to do this.
 > 
-> Ah, so that's what I was thinking about.  But a single cache line would
-> never be used both encrypted and unencrypted, would it?
+> But couldn't we avoid corruption by ensuring data accessed via the
+> unencrypted mapping is cache line aligned and sized?  The CPU could
+> speculatively bring the encrypted version into the cache but it
+> should never get into a modified state (barring a software bug, but
+> that would be a problem regardless of encryption).
 > 
 
-No.
+Yes, if we can ensure that accessed are cache line aligned and sized
+then we should be fine.
 
-If we create two mapping of same physical address and ensure that
-accesses are cache line aligned and size then I think we will safe from
-cache point of view.
-
-I have not tried early remap from kvmclock_init() yet and not sure if it
-will work so early. The downside of this approach is, we will put
-too many constraints on caller; it will need to ensure that variables
-are cache line aligned and sized, never accessed with C=1, and must
-create a new mapping before accessing it.
-
-
-I am more inclined towards creating a new section with PMD aligned and
-sized. This section will contains the decrypted data. In early
-boot code we will update the mapping with C=0. If caller wants to create
-a shared variable then it can do so with:
-
-static int foo __decrypted;
-
-I will submit patch fir review.
-
-thanks
