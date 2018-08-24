@@ -3,42 +3,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14C94C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 15:53:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49F15C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 15:53:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBB7A21557
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 15:53:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBB7A21557
+	by mail.kernel.org (Postfix) with ESMTP id 0C866208B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 15:53:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C866208B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728086AbeHXT2R (ORCPT
+        id S1728114AbeHXT2Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 15:28:17 -0400
-Received: from foss.arm.com ([217.140.101.70]:32902 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727613AbeHXT1w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 15:28:25 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:32874 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727566AbeHXT1w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 24 Aug 2018 15:27:52 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E8EC01AC1;
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D297D174E;
         Fri, 24 Aug 2018 08:52:38 -0700 (PDT)
 Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id BB12A3F994;
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9FD2E3F7BE;
         Fri, 24 Aug 2018 08:52:38 -0700 (PDT)
 Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 50CF51AE33DD; Fri, 24 Aug 2018 16:52:48 +0100 (BST)
+        id 1BE9D1AE33A3; Fri, 24 Aug 2018 16:52:48 +0100 (BST)
 From:   Will Deacon <will.deacon@arm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     peterz@infradead.org, benh@au1.ibm.com,
         torvalds@linux-foundation.org, npiggin@gmail.com,
         catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org,
         Will Deacon <will.deacon@arm.com>
-Subject: [RFC PATCH 10/11] arm64: tlb: Adjust stride and type of TLBI according to mmu_gather
-Date:   Fri, 24 Aug 2018 16:52:45 +0100
-Message-Id: <1535125966-7666-11-git-send-email-will.deacon@arm.com>
+Subject: [RFC PATCH 07/11] asm-generic/tlb: Guard with #ifdef CONFIG_MMU
+Date:   Fri, 24 Aug 2018 16:52:42 +0100
+Message-Id: <1535125966-7666-8-git-send-email-will.deacon@arm.com>
 X-Mailer: git-send-email 2.1.4
 In-Reply-To: <1535125966-7666-1-git-send-email-will.deacon@arm.com>
 References: <1535125966-7666-1-git-send-email-will.deacon@arm.com>
@@ -47,51 +47,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that the core mmu_gather code keeps track of both the levels of page
-table cleared and also whether or not these entries correspond to
-intermediate entries, we can use this in our tlb_flush() callback to
-reduce the number of invalidations we issue as well as their scope.
+The inner workings of the mmu_gather-based TLB invalidation mechanism
+are not relevant to nommu configurations, so guard them with an ifdef.
+This allows us to implement future functions using static inlines
+without breaking the build.
 
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 ---
- arch/arm64/include/asm/tlb.h | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+ include/asm-generic/tlb.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm64/include/asm/tlb.h b/arch/arm64/include/asm/tlb.h
-index bd00017d529a..baca8dff6884 100644
---- a/arch/arm64/include/asm/tlb.h
-+++ b/arch/arm64/include/asm/tlb.h
-@@ -34,20 +34,21 @@ static void tlb_flush(struct mmu_gather *tlb);
- static inline void tlb_flush(struct mmu_gather *tlb)
- {
- 	struct vm_area_struct vma = TLB_FLUSH_VMA(tlb->mm, 0);
-+	bool last_level = !tlb->freed_tables;
-+	unsigned long stride = tlb_get_unmap_granule(tlb);
+diff --git a/include/asm-generic/tlb.h b/include/asm-generic/tlb.h
+index b3353e21f3b3..859f897d3d53 100644
+--- a/include/asm-generic/tlb.h
++++ b/include/asm-generic/tlb.h
+@@ -20,6 +20,8 @@
+ #include <asm/pgalloc.h>
+ #include <asm/tlbflush.h>
  
- 	/*
--	 * The ASID allocator will either invalidate the ASID or mark
--	 * it as used.
-+	 * If we're tearing down the address space then we only care about
-+	 * invalidating the walk-cache, since the ASID allocator won't
-+	 * reallocate our ASID without invalidating the entire TLB.
- 	 */
--	if (tlb->fullmm)
-+	if (tlb->fullmm) {
-+		if (!last_level)
-+			flush_tlb_mm(tlb->mm);
- 		return;
-+	}
++#ifdef CONFIG_MMU
++
+ #ifdef CONFIG_HAVE_RCU_TABLE_FREE
+ /*
+  * Semi RCU freeing of the page directories.
+@@ -312,4 +314,5 @@ static inline void tlb_remove_check_page_size_change(struct mmu_gather *tlb,
  
--	/*
--	 * The intermediate page table levels are already handled by
--	 * the __(pte|pmd|pud)_free_tlb() functions, so last level
--	 * TLBI is sufficient here.
--	 */
--	__flush_tlb_range(&vma, tlb->start, tlb->end, PAGE_SIZE, true);
-+	__flush_tlb_range(&vma, tlb->start, tlb->end, stride, last_level);
- }
+ #define tlb_migrate_finish(mm) do {} while (0)
  
- static inline void __pte_free_tlb(struct mmu_gather *tlb, pgtable_t pte,
++#endif /* CONFIG_MMU */
+ #endif /* _ASM_GENERIC__TLB_H */
 -- 
 2.1.4
 
