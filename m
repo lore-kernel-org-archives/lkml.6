@@ -2,163 +2,92 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03531C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 09:11:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA1A0C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 09:12:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83A982168B
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 09:11:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WWxnDq2S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83A982168B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 147E421710
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 09:12:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 147E421710
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727077AbeHXMov (ORCPT
+        id S1727414AbeHXMp7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 08:44:51 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:38292 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726382AbeHXMov (ORCPT
+        Fri, 24 Aug 2018 08:45:59 -0400
+Received: from cmccmta2.chinamobile.com ([221.176.66.80]:38096 "EHLO
+        cmccmta2.chinamobile.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726382AbeHXMp7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 08:44:51 -0400
-Received: by mail-wr1-f67.google.com with SMTP id w11-v6so6871518wrc.5;
-        Fri, 24 Aug 2018 02:11:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=FA1JbL3Juek2hpcPqsHLO5QMOGIPrblOptI7dIDnjgE=;
-        b=WWxnDq2SKGtvrafxm/6bJpEM8265ASZPhDd6Ngaj1ddYxvOD1d0YTsB97ZRd2lp7Hf
-         wlaxd9kdUYkiwbQn7YbdnQH5m56czR2CGbB8cbrb6wHPbh5T2KM3zL05mWWHUzfO5RF0
-         GdLEosUzgmgoVyNvsOoEJO8BnnauuNCmynKlqAOYzLR0x/zg+tQ5yVkAgsjTX/zSkoAM
-         1bshvtcp9quV8C1j2HC3mQfKwjzTXGLcz4XrS6UIb1XPsJZZUjoaZXXZkkOrEmjVkBZh
-         diydtB1MifBHWvk0qg1Zq8y+JLKOCLYaloYSMTAXyc4D1ytzgMkyj30v3IfZZrjNRg4f
-         ZwJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FA1JbL3Juek2hpcPqsHLO5QMOGIPrblOptI7dIDnjgE=;
-        b=BKQBdZd22k4kTI/5anifM4mnt4+LYI37+6OSVgntRamvJlCbmvqfmk/4Hy6XdxDlo7
-         j29/HeBJNdTnSogmw7MhkeqsdwLufXbCaNPzV25pSGT726YafkUPLDcXSZyZizUpP7hX
-         WjCLSt2Jjfo7c/aS9XCQnVt0hN/4y7J+MvL24KxOr2p75M6vzR+M45vqIOPulRwifJJv
-         HKgLDqW98ijUZNW6SP+aYerUw47W0UFO50eJTYeNiAqf22nhiS5KboRGK24x+F+MZBvs
-         fPlw4AQEuULE4bUO6NpBy9xEogpe7gwHxYQt54+KepK4ttA+PK5gVW6LCqZrrX585dSM
-         lIJA==
-X-Gm-Message-State: APzg51DkZ68jWv6svzEVZsaVwmxNTGp8mTBpXGl5/2rzYG6hu7vNAVXG
-        1UgtaAMAZ4u9qNpv8qvUiok=
-X-Google-Smtp-Source: ANB0VdbcupS8U8I95WYjyb6mk4X4k49OeVKeLF+0Qgkfv6Z2LwUTZXMjq5hzz43/govS8DyQE4dRAA==
-X-Received: by 2002:adf:aa9c:: with SMTP id h28-v6mr624604wrc.149.1535101865584;
-        Fri, 24 Aug 2018 02:11:05 -0700 (PDT)
-Received: from localhost (pD9E51C80.dip0.t-ipconnect.de. [217.229.28.128])
-        by smtp.gmail.com with ESMTPSA id a9-v6sm1002356wmf.28.2018.08.24.02.11.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 24 Aug 2018 02:11:04 -0700 (PDT)
-Date:   Fri, 24 Aug 2018 11:11:03 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Aapo Vienamo <avienamo@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/8] Tegra SDHCI support HS400 on Tegra210 and Tegra186
-Message-ID: <20180824091103.GA9100@ulmo>
-References: <1533924845-1466-1-git-send-email-avienamo@nvidia.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="RnlQjJ0d97Da+TV1"
-Content-Disposition: inline
-In-Reply-To: <1533924845-1466-1-git-send-email-avienamo@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 24 Aug 2018 08:45:59 -0400
+Received: from spf.mail.chinamobile.com (unknown[172.16.121.11]) by rmmx-syy-dmz-app08-12008 (RichMail) with SMTP id 2ee85b7fcbecf11-d9925; Fri, 24 Aug 2018 17:12:12 +0800 (CST)
+X-RM-TRANSID: 2ee85b7fcbecf11-d9925
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG: 00000000
+Received: from bclinux72.localdomain (unknown[223.105.0.243])
+        by rmsmtp-syy-appsvr06-12006 (RichMail) with SMTP id 2ee65b7fcbeb777-45906;
+        Fri, 24 Aug 2018 17:12:12 +0800 (CST)
+X-RM-TRANSID: 2ee65b7fcbeb777-45906
+From:   Ding Xiang <dingxiang@cmss.chinamobile.com>
+To:     marcel@holtmann.org, johan.hedberg@gmail.com,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] Bluetooth: bt3c_cs: Fix obsolete function
+Date:   Fri, 24 Aug 2018 06:23:32 -0400
+Message-Id: <1535106212-21514-1-git-send-email-dingxiang@cmss.chinamobile.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+simple_strtol and simple_strtoul are obsolete, both place
+use kstrtoul instead.
 
---RnlQjJ0d97Da+TV1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
+---
+ drivers/bluetooth/bt3c_cs.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-On Fri, Aug 10, 2018 at 09:13:57PM +0300, Aapo Vienamo wrote:
-> Hi all,
-> This series implements support for HS400 signaling on Tegra210 and
-> Tegra186. This includes programming the DQS trimmer values, implementing
-> enhanced strobe and HS400 delay line calibration.
->=20
-> This series depends on the "Tegra SDHCI add support for HS200 and UHS
-> signaling" series.
->=20
-> Changelog:
-> v2:
-> 	- Document in dt-bindings which controllers support HS400
-> 	- Use val instead of reg in tegra_sdhci_set_dqs_trim()
-> 	- Change "dt" to "DT" in "mmc: tegra: Parse and program DQS trim
-> 	  value" commit message
-> 	- Add spaces around << in tegra_sdhci_set_dqs_trim()
-> 	- Make the "mmc: tegra: Implement HS400 enhanced strobe" commit
-> 	  message more detailed
-> 	- Remove a debug print from tegra_sdhci_hs400_enhanced_strobe()
-> 	- Add blank lines around if-else-block in
-> 	  tegra_sdhci_hs400_enhanced_strobe()
-> 	- Use val instead of reg in tegra_sdhci_hs400_enhanced_strobe()
-> 	- Make commit message of "mmc: tegra: Implement HS400 delay line
-> 	  calibration" more detailed
->=20
-> Aapo Vienamo (8):
->   dt-bindings: mmc: Add DQS trim value to Tegra SDHCI
->   mmc: tegra: Parse and program DQS trim value
->   mmc: tegra: Implement HS400 enhanced strobe
->   mmc: tegra: Implement HS400 delay line calibration
->   arm64: dts: tegra186: Add SDMMC4 DQS trim value
->   arm64: dts: tegra210: Add SDMMC4 DQS trim value
->   arm64: dts: tegra186: Enable HS400
->   arm64: dts: tegra210: Enable HS400
->=20
->  .../bindings/mmc/nvidia,tegra20-sdhci.txt          |  4 ++
->  arch/arm64/boot/dts/nvidia/tegra186.dtsi           |  2 +
->  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  2 +
->  drivers/mmc/host/sdhci-tegra.c                     | 84 ++++++++++++++++=
-+++++-
->  4 files changed, 89 insertions(+), 3 deletions(-)
+diff --git a/drivers/bluetooth/bt3c_cs.c b/drivers/bluetooth/bt3c_cs.c
+index 25b0cf9..5e4800d 100644
+--- a/drivers/bluetooth/bt3c_cs.c
++++ b/drivers/bluetooth/bt3c_cs.c
+@@ -449,7 +449,7 @@ static int bt3c_load_firmware(struct bt3c_info *info,
+ 	char *ptr = (char *) firmware;
+ 	char b[9];
+ 	unsigned int iobase, tmp;
+-	unsigned long size, addr, fcs;
++	unsigned long size, addr, fcs, tn;
+ 	int i, err = 0;
+ 
+ 	iobase = info->p_dev->resource[0]->start;
+@@ -490,7 +490,9 @@ static int bt3c_load_firmware(struct bt3c_info *info,
+ 		memset(b, 0, sizeof(b));
+ 		for (tmp = 0, i = 0; i < size; i++) {
+ 			memcpy(b, ptr + (i * 2) + 2, 2);
+-			tmp += simple_strtol(b, NULL, 16);
++			if (kstrtoul(b, 16, &tn))
++				return -EINVAL;
++			tmp += tn;
+ 		}
+ 
+ 		if (((tmp + fcs) & 0xff) != 0xff) {
+@@ -505,7 +507,9 @@ static int bt3c_load_firmware(struct bt3c_info *info,
+ 			memset(b, 0, sizeof(b));
+ 			for (i = 0; i < (size - 4) / 2; i++) {
+ 				memcpy(b, ptr + (i * 4) + 12, 4);
+-				tmp = simple_strtoul(b, NULL, 16);
++				if (kstrtoul(b, 16, &tn))
++					return -EINVAL;
++				tmp += tn;
+ 				bt3c_put(iobase, tmp);
+ 			}
+ 		}
+-- 
+1.8.3.1
 
-Ulf, Adrian,
 
-Aapo just reminded me of this small series that also has a dependency on
-the UHS signalling series posted earlier. I think it's easiest if I just
-stash this on top of the existing branch that I have and send this along
-with the rest as part of a pull request early after v4.19-rc1.
 
-Thierry
-
---RnlQjJ0d97Da+TV1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlt/y6QACgkQ3SOs138+
-s6Geow/8CNBjRVUWrjNn8USykHyGclhdyCpr/77F6uuL3MmDMAVZGt1U7o0RTDYb
-T55DEJ+4e1uoaWjSbd+DnPQ+IHKON+sSykG0rrGJvQxnEWEYZjnzfKkmfpnQZPna
-R13JQlTVtRCa4/QYBJUMu1Do9e4kCgrA5Kd8h1cRTrAerQkJXWX6mELxnYx8Bk6R
-zYefZ7pPxjQCoRLD3sMiLLsd+hxdLKsuIda5ztEySErZWQYZzhHGgltvDPkfeZ//
-N9ZmGHyLSpwsGj2WL13SzRCbgqUt8s6ZtgtEz4W3WqNq+Dw1Gid0WtdUeVvzQHH8
-eK6F2keTobhlMEqQCgyWd3HGiugnZCFaEa2nAa8lcGXNhxKWLVxDfJ7QGtSeATVj
-5zL+sm7obWV+juGM3U/IHW/u4wn8N+BgAT1sm0f91rDTMcOQyOIh8gBhX/vNm60h
-OJaoZKVv0NnDK9E3VJ+Iw3a4b1DODnTl8AX5wpBYMk+QdG8OiLJjGPLGwBFN1vtg
-xnzRej7hSSkQOaFB8GZGppXibn63qZ19gLM1j1GIJElQGVVUtBTmXKcdZ2WwwIAB
-fmSAj0yItCi6UacuoVzTkdaYb60F86wDF9ohUlehD1fLJOFWpxZzfq6sZQpJyMie
-x7OGxoHF6l84SSz6pUVXNn4LByqu4n6Nweh3FcrpWEvjJEiNbdc=
-=gC/o
------END PGP SIGNATURE-----
-
---RnlQjJ0d97Da+TV1--
