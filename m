@@ -2,81 +2,130 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FC39C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:22:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F61EC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:24:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B8E4208D6
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:22:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B8E4208D6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
+	by mail.kernel.org (Postfix) with ESMTP id C02E5208D6
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:24:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ma0MTVDJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C02E5208D6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727942AbeHXQ5Q (ORCPT
+        id S1727615AbeHXQ7B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 12:57:16 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:46228 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727615AbeHXQ5Q (ORCPT
+        Fri, 24 Aug 2018 12:59:01 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:34427 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726883AbeHXQ7A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 12:57:16 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1ftC2q-0008CC-JY; Fri, 24 Aug 2018 21:22:32 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1ftC2p-0001X1-FB; Fri, 24 Aug 2018 21:22:31 +0800
-Date:   Fri, 24 Aug 2018 21:22:31 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Mikulas Patocka <mpatocka@redhat.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, Mike Snitzer <msnitzer@redhat.com>,
-        dm-devel@redhat.com, linux-kernel@vger.kernel.org,
-        Dave Watson <davejwatson@fb.com>
-Subject: Re: Deadlock when using crypto API for block devices
-Message-ID: <20180824132231.t3narmsfcykseeee@gondor.apana.org.au>
-References: <alpine.LRH.2.02.1808231621220.8560@file01.intranet.prod.int.rdu2.redhat.com>
- <20180824021010.hfar7gasp34ddrib@gondor.apana.org.au>
- <alpine.LRH.2.02.1808240659320.27014@file01.intranet.prod.int.rdu2.redhat.com>
- <20180824112435.ggizlqrymuibm6oo@gondor.apana.org.au>
- <alpine.LRH.2.02.1808240837120.11243@file01.intranet.prod.int.rdu2.redhat.com>
- <alpine.LRH.2.02.1808240854010.15479@file01.intranet.prod.int.rdu2.redhat.com>
- <20180824132145.2zsnqwbih3iygeeq@gondor.apana.org.au>
+        Fri, 24 Aug 2018 12:59:00 -0400
+Received: by mail-pl1-f196.google.com with SMTP id f6-v6so1100625plo.1;
+        Fri, 24 Aug 2018 06:24:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=MEN261RyY8I4ejLe/rQi+xRf9nkBpoD1hYeHJGm5BTg=;
+        b=ma0MTVDJzK5x10t6qvh2IjB1kSMG0TH3UBlNXTpCe3dRTAdX64djkSBLGHWpVK3SM3
+         Zd20AiH3FnSNzZJLf6EbhiVaKR1iB/8obv6UuivrcHQZp9oPAgybi5nyFw1vhZC9Qv+0
+         8qoKXn2y20NGg9z08I6fl+3VZTkGKwRN1J7da7trffRmHTEbsR091pLw/iNm8gMC8TSf
+         Te87lpUBgxurWsXV11SfdFS+uQG+ed/JN2oCx3XpgA0fQvgNBYhl8QaumcID8yTHeQN/
+         x20XwkeZ0xdyv6weRqZxfCkt1FnAwVkpuybiSptG0K+UvSOF9SmNmT4h/C1mUlYqBvts
+         0Fgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=MEN261RyY8I4ejLe/rQi+xRf9nkBpoD1hYeHJGm5BTg=;
+        b=MqIR1HWTJWzoNT87JtpVkF3/Lcsn7R0cRS+ZmBl5o8TRYGZElcCNd+kHYjquvT2Dm5
+         UuVAO4JVWQi18l+pqxtJPRfBYMoxPSaAuNkKncTb1aVNueyxjTDiWdh3x0wx8yN9gmvr
+         VSjV0nxzxlZ8DyLPtKH5rThqWYGvrXR1oJZ67nSLNrXYVn7Js1IvrQmilhaITz/Q6NZ4
+         17GtrvM3lJx2U3NHV7hqhZE0XQiP+UYA99xU5HA0ZZUw9l5JlWn5pCqCEjQfzZEnmih6
+         b0DQJBLmJq2pH9B2gvOtnoqxi1aUiJb2Kwwz9H9BOCCJhWnNeYk1HpZDggQJUYvgNBAe
+         A1vQ==
+X-Gm-Message-State: APzg51A4eNh2g3QIqx+YBRn9dstFVRiNK0vFuFMxIZNp4tFp9Vt/JeP7
+        2rI/Rj5Yf15BshnLPFMNFek=
+X-Google-Smtp-Source: ANB0VdY5ZymbWKo5o6dx5S57UnoDbm4aFbEDeh922A4Wtd3ejGo6c3occ0bJKViaYpMiG1GoqgHXKw==
+X-Received: by 2002:a17:902:28c7:: with SMTP id f65-v6mr1715101plb.240.1535117060917;
+        Fri, 24 Aug 2018 06:24:20 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id j15-v6sm9223217pfn.52.2018.08.24.06.24.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 24 Aug 2018 06:24:20 -0700 (PDT)
+Date:   Fri, 24 Aug 2018 06:24:19 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Nicholas Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        torvalds@linux-foundation.org, luto@kernel.org, x86@kernel.org,
+        bp@alien8.de, riel@surriel.com, jannh@google.com,
+        ascannell@google.com, dave.hansen@intel.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        David Miller <davem@davemloft.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-arch@vger.kernel.org, Palmer Dabbelt <palmer@sifive.com>,
+        linux-riscv@lists.infradead.org
+Subject: Re: [RFC PATCH 2/2] mm: mmu_notifier fix for tlb_end_vma (build
+ failures)
+Message-ID: <20180824132419.GA9983@roeck-us.net>
+References: <20180823084709.19717-1-npiggin@gmail.com>
+ <20180823084709.19717-3-npiggin@gmail.com>
+ <20180824130722.GA31409@roeck-us.net>
+ <20180824131026.GB11868@brain-police>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180824132145.2zsnqwbih3iygeeq@gondor.apana.org.au>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180824131026.GB11868@brain-police>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 24, 2018 at 09:21:45PM +0800, Herbert Xu wrote:
-> On Fri, Aug 24, 2018 at 09:00:00AM -0400, Mikulas Patocka wrote:
-> >
-> > BTW. gcmaes_crypt_by_sg also contains GFP_ATOMIC and -ENOMEM, behind a 
-> > pretty complex condition. Do you mean that this condition is part of the 
-> > contract that the crypto API provides?
+On Fri, Aug 24, 2018 at 02:10:27PM +0100, Will Deacon wrote:
+> On Fri, Aug 24, 2018 at 06:07:22AM -0700, Guenter Roeck wrote:
+> > On Thu, Aug 23, 2018 at 06:47:09PM +1000, Nicholas Piggin wrote:
+> > > The generic tlb_end_vma does not call invalidate_range mmu notifier,
+> > > and it resets resets the mmu_gather range, which means the notifier
+> > > won't be called on part of the range in case of an unmap that spans
+> > > multiple vmas.
+> > > 
+> > > ARM64 seems to be the only arch I could see that has notifiers and
+> > > uses the generic tlb_end_vma. I have not actually tested it.
+> > > 
+> > > Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+> > > Acked-by: Will Deacon <will.deacon@arm.com>
+> > 
+> > This patch breaks riscv builds in mainline.
 > 
-> This is an implementation defect.  I think for this case we should
-> fall back to software GCM if the accelerated version fails.
+> Looks very similar to the breakage we hit on arm64. diff below should fix
+> it.
 > 
-> > Should "req->src->offset + req->src->length < PAGE_SIZE" use "<=" instead? 
-> > Because if the data ends up at page boundary, it will use the atomic 
-> > allocation that can fail.
-> 
-> This condition does look strange.  It's introduced by the commit
-> e845520707f85c539ce04bb73c6070e9441480be.   Dave, what exactly is
-> it meant to do?
 
-I forgot to Cc Dave Watson.
+Unfortunately it doesn't.
 
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+In file included from ./arch/riscv/include/asm/pgtable.h:26:0,
+                 from ./include/linux/memremap.h:7,
+                 from ./include/linux/mm.h:27,
+                 from arch/riscv/mm/fault.c:23:
+./arch/riscv/include/asm/tlb.h: In function ‘tlb_flush’:
+./arch/riscv/include/asm/tlb.h:19:18: error: dereferencing pointer to incomplete type ‘struct mmu_gather’
+  flush_tlb_mm(tlb->mm);
+                  ^
+./arch/riscv/include/asm/tlbflush.h:58:35: note: in definition of macro ‘flush_tlb_mm’
+  sbi_remote_sfence_vma(mm_cpumask(mm)->bits, 0, -1)
+
+Note that reverting the offending patch does fix the problem,
+so there is no secondary problem lurking around.
+
+Guenter
