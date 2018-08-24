@@ -2,103 +2,79 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36500C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 16:45:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0491C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 16:52:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2FED20845
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 16:45:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2FED20845
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id 6571A208C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 16:52:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6571A208C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727679AbeHXUVA (ORCPT
+        id S1727517AbeHXU2F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 16:21:00 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:41996 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726277AbeHXUVA (ORCPT
+        Fri, 24 Aug 2018 16:28:05 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:54661 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726277AbeHXU2F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 16:21:00 -0400
-Received: from [148.252.241.226] (helo=xylophone)
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1ftFDE-0005e5-0J; Fri, 24 Aug 2018 17:45:28 +0100
-Message-ID: <1535129126.2902.36.camel@codethink.co.uk>
-Subject: Re: [PATCH 4.4 103/105] Revert "x86/mm/pat: Ensure cpa->pfn only
- contains page frame numbers"
-From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
-To:     Roland Dreier <roland@purestorage.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
-        matt@codeblueprint.co.uk, bp@suse.de,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>, luto@kernel.org,
-        ard.biesheuvel@linaro.org, bp@alien8.de, brgerst@gmail.com,
-        davej@codemonkey.org.uk, dvlasenk@redhat.com,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        sai.praneeth.prakhya@intel.com, sds@tycho.nsa.gov,
-        Thomas Gleixner <tglx@linutronix.de>, toshi.kani@hp.com,
-        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Yazen.Ghannam@amd.com
-Date:   Fri, 24 Aug 2018 17:45:26 +0100
-In-Reply-To: <CAL1RGDVgShymmT+TJ3mAHEL7n+qoisk6mQ=Tji_T=0d_QA=VKw@mail.gmail.com>
-References: <20171215092305.994559179@linuxfoundation.org>
-         <20171215092311.347628971@linuxfoundation.org>
-         <CAL1RGDVgShymmT+TJ3mAHEL7n+qoisk6mQ=Tji_T=0d_QA=VKw@mail.gmail.com>
-Organization: Codethink Ltd.
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
+        Fri, 24 Aug 2018 16:28:05 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1ftFK4-00035w-GD; Fri, 24 Aug 2018 16:52:32 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ixgb: replace dma_alloc_coherent + memset with dma_zalloc_coherent
+Date:   Fri, 24 Aug 2018 17:52:32 +0100
+Message-Id: <20180824165232.21585-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-08-22 at 17:48 -0700, Roland Dreier wrote:
-> On Fri, Dec 15, 2017 at 2:20 AM Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > This reverts commit 87e2bd898d3a79a8c609f183180adac47879a2a4 which is
-> > commit edc3b9129cecd0f0857112136f5b8b1bc1d45918 upstream.
-> > 
-> > Turns there was too many other issues with this patch to make it viable
-> > for the stable tree.
-> 
-> This was sort of a long time ago, but does anyone remember why this
-> needed to be reverted from 4.4?
+From: Colin Ian King <colin.king@canonical.com>
 
-See
-<https://lore.kernel.org/lkml/1512686629.18523.217.camel@codethink.co.uk/T/#u>.
+Use dma_zalloc_coherent rather than dam_alloc_coherent and memset.
 
-Ben.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/intel/ixgb/ixgb_main.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-> The reason I ask is that without this, commit 02ff2769edbc /
-> "x86/mm/pat: Make set_memory_np() L1TF safe" in 4.4.148 is broken.
-> That patch has
-> 
-> -               set_pud(pud, __pud(cpa->pfn | _PAGE_PSE |
-> -                                  massage_pgprot(pud_pgprot)));
-> +               set_pud(pud, pud_mkhuge(pfn_pud(cpa->pfn,
-> +                                  canon_pgprot(pud_pgprot))));
-> 
-> (and similarly for pmds) but pfn_pud() is operating on page frame
-> numbers and __pud(cpa->pfn... in the old code is operating on physical
-> addresses.
-> 
-> This is bad enough that 4.4.148 and all newer 4.4.y crash early in
-> boot on some EFI systems that I have.
-> 
-> For now I am re-applying the "ensure cpa->pfn only contains page frame
-> numbers" patch, ported on top of 4.4.151.
-> 
->  - R.
-> 
+diff --git a/drivers/net/ethernet/intel/ixgb/ixgb_main.c b/drivers/net/ethernet/intel/ixgb/ixgb_main.c
+index 43664adf7a3c..c71bc0237108 100644
+--- a/drivers/net/ethernet/intel/ixgb/ixgb_main.c
++++ b/drivers/net/ethernet/intel/ixgb/ixgb_main.c
+@@ -771,14 +771,12 @@ ixgb_setup_rx_resources(struct ixgb_adapter *adapter)
+ 	rxdr->size = rxdr->count * sizeof(struct ixgb_rx_desc);
+ 	rxdr->size = ALIGN(rxdr->size, 4096);
+ 
+-	rxdr->desc = dma_alloc_coherent(&pdev->dev, rxdr->size, &rxdr->dma,
+-					GFP_KERNEL);
+-
++	rxdr->desc = dma_zalloc_coherent(&pdev->dev, rxdr->size, &rxdr->dma,
++					 GFP_KERNEL);
+ 	if (!rxdr->desc) {
+ 		vfree(rxdr->buffer_info);
+ 		return -ENOMEM;
+ 	}
+-	memset(rxdr->desc, 0, rxdr->size);
+ 
+ 	rxdr->next_to_clean = 0;
+ 	rxdr->next_to_use = 0;
 -- 
-Ben Hutchings, Software Developer                         Codethink Ltd
-https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-                                     Manchester, M1 2HF, United Kingdom
+2.17.1
+
