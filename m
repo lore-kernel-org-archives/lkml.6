@@ -2,146 +2,155 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72463C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 08:26:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36E7AC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 08:29:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 167942173A
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 08:26:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="Pu+Emdxs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 167942173A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verge.net.au
+	by mail.kernel.org (Postfix) with ESMTP id DB2942157F
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 08:29:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB2942157F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726776AbeHXMAW (ORCPT
+        id S1726949AbeHXMCp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 08:00:22 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:34961 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726274AbeHXMAW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 08:00:22 -0400
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 42FC525BE91;
-        Fri, 24 Aug 2018 18:26:46 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1535099206; bh=Ioxek+0kboNaNeuKtjY7DhcFjKE2EZAL3rx8Z/Ve0ss=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Pu+EmdxsrvIvsq3arXQ5+ucCs6QnSci4HtSFIJCghWraw9lHJw3rkLeMsrYDl/1E6
-         +ETNhE27WHbVSlObrv7tiQzsMwsZU+q2S2OOQoagT596Wb3PMyOemMQ+oDpCjPlVgl
-         3oHO/WRt7qR7k5p394EZ5YQuiAIDbX9BKMHxTFr8=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 2AC51940443; Fri, 24 Aug 2018 10:26:44 +0200 (CEST)
-Date:   Fri, 24 Aug 2018 10:26:44 +0200
-From:   Simon Horman <horms@verge.net.au>
-To:     Chris Paterson <Chris.Paterson2@renesas.com>
-Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Biju Das <biju.das@bp.renesas.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] dt-bindings: can: rcar_can: Add r8a774a1 support
-Message-ID: <20180824082643.7eapxf72iuvkdw3j@verge.net.au>
-References: <1534516703-11448-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <20180822104856.34nusjd4ajtwb4ef@verge.net.au>
- <TYAPR01MB2285834E95AB0D0D3E2C5B72B7300@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+        Fri, 24 Aug 2018 08:02:45 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58630 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726274AbeHXMCo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 08:02:44 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B1E05ACDB;
+        Fri, 24 Aug 2018 08:29:08 +0000 (UTC)
+Date:   Fri, 24 Aug 2018 10:29:08 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "osalvador@techadventures.net" <osalvador@techadventures.net>,
+        Pavel Tatashin <Pavel.Tatashin@microsoft.com>
+Subject: Re: [PATCH 1/2] Revert "x86/e820: put !E820_TYPE_RAM regions into
+ memblock.reserved"
+Message-ID: <20180824082908.GC29735@dhcp22.suse.cz>
+References: <20180823182513.8801-1-msys.mizuma@gmail.com>
+ <20180824000325.GA20143@hori1.linux.bs1.fc.nec.co.jp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <TYAPR01MB2285834E95AB0D0D3E2C5B72B7300@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180824000325.GA20143@hori1.linux.bs1.fc.nec.co.jp>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 22, 2018 at 03:12:26PM +0000, Chris Paterson wrote:
-> Hello Simon,
-> 
-> > From: Simon Horman <horms@verge.net.au>
-> > Sent: 22 August 2018 11:49
-> > 
-> > On Fri, Aug 17, 2018 at 03:38:23PM +0100, Fabrizio Castro wrote:
-> > > Document RZ/G2M (r8a774a1) SoC bindings.
-> > >
-> > > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > > Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-> > 
-> > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-> 
-> Thank you.
-> 
-> > 
-> > > ---
-> > > This patch applies on top of next-20180817
-> > >
-> > >  Documentation/devicetree/bindings/net/can/rcar_can.txt | 8 ++++++--
-> > >  1 file changed, 6 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/net/can/rcar_can.txt
-> > > b/Documentation/devicetree/bindings/net/can/rcar_can.txt
-> > > index 94a7f33..84afc78 100644
-> > > --- a/Documentation/devicetree/bindings/net/can/rcar_can.txt
-> > > +++ b/Documentation/devicetree/bindings/net/can/rcar_can.txt
-> > > @@ -4,6 +4,7 @@ Renesas R-Car CAN controller Device Tree Bindings
-> > > Required properties:
-> > >  - compatible: "renesas,can-r8a7743" if CAN controller is a part of R8A7743
-> > SoC.
-> > >  	      "renesas,can-r8a7745" if CAN controller is a part of R8A7745 SoC.
-> > > +	      "renesas,can-r8a774a1" if CAN controller is a part of R8A774A1 SoC.
-> > >  	      "renesas,can-r8a7778" if CAN controller is a part of R8A7778 SoC.
-> > >  	      "renesas,can-r8a7779" if CAN controller is a part of R8A7779 SoC.
-> > >  	      "renesas,can-r8a7790" if CAN controller is a part of R8A7790 SoC.
-> > > @@ -16,7 +17,8 @@ Required properties:
-> > >  	      "renesas,rcar-gen1-can" for a generic R-Car Gen1 compatible device.
-> > >  	      "renesas,rcar-gen2-can" for a generic R-Car Gen2 or RZ/G1
-> > >  	      compatible device.
-> > > -	      "renesas,rcar-gen3-can" for a generic R-Car Gen3 compatible device.
-> > > +	      "renesas,rcar-gen3-can" for a generic R-Car Gen3 or RZ/G2
-> > > +	      compatible device.
-> > >  	      When compatible with the generic version, nodes must list the
-> > >  	      SoC-specific version corresponding to the platform first
-> > >  	      followed by the generic version.
-> > > @@ -24,7 +26,9 @@ Required properties:
-> > >  - reg: physical base address and size of the R-Car CAN register map.
-> > >  - interrupts: interrupt specifier for the sole interrupt.
-> > >  - clocks: phandles and clock specifiers for 3 CAN clock inputs.
-> > > -- clock-names: 3 clock input name strings: "clkp1", "clkp2", "can_clk".
-> > > +- clock-names: 2 clock input name strings for RZ/G2: "clkp1",
-> > > +"can_clk", and
-> > 
-> > Minor comment: Personally I would start a new sentence at "and".
-> > 
-> > Question: Is a driver update required so support 2-clock SoCs?
-> 
-> The driver will work okay as-is.
-> 
-> In theory CAN could be broken if renesas,can-clock-select is set to 0x1
-> (clkp2) in the DT, as this value will be written to the CAN Clock Select
-> Register. However if the documentation is followed there will be no
-> problems.
-> 
-> We should probably update the driver to fix this though, which will be a
-> change specific to all RZ/G2 devices, so perhaps we should also be adding
-> a "renesas,rzg-gen2-can" family compatible string as well? (to driver and
-> documentation)
+On Fri 24-08-18 00:03:25, Naoya Horiguchi wrote:
+> (CCed related people)
 
-Yes, I think that sounds reasonable.
+Fixup Pavel email.
 
-But in that case we should pre-emptively not use renesas,rcar-gen3-can for
-RZ/G2.
+> 
+> Hi Mizuma-san,
+> 
+> Thank you for the report.
+> The mentioned patch was created based on feedbacks from reviewers/maintainers,
+> so I'd like to hear from them about how we should handle the issue.
+> 
+> And one note is that there is a follow-up patch for "x86/e820: put !E820_TYPE_RAM
+> regions into memblock.reserved" which might be affected by your changes.
+> 
+> > commit e181ae0c5db9544de9c53239eb22bc012ce75033
+> > Author: Pavel Tatashin <pasha.tatashin@oracle.com>
+> > Date:   Sat Jul 14 09:15:07 2018 -0400
+> > 
+> >     mm: zero unavailable pages before memmap init
+> 
+> Thanks,
+> Naoya Horiguchi
+> 
+> On Thu, Aug 23, 2018 at 02:25:12PM -0400, Masayoshi Mizuma wrote:
+> > From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+> > 
+> > commit 124049decbb1 ("x86/e820: put !E820_TYPE_RAM regions into
+> > memblock.reserved") breaks movable_node kernel option because it
+> > changed the memory gap range to reserved memblock. So, the node
+> > is marked as Normal zone even if the SRAT has Hot plaggable affinity.
+> > 
+> >     =====================================================================
+> >     kernel: BIOS-e820: [mem 0x0000180000000000-0x0000180fffffffff] usable
+> >     kernel: BIOS-e820: [mem 0x00001c0000000000-0x00001c0fffffffff] usable
+> >     ...
+> >     kernel: reserved[0x12]#011[0x0000181000000000-0x00001bffffffffff], 0x000003f000000000 bytes flags: 0x0
+> >     ...
+> >     kernel: ACPI: SRAT: Node 2 PXM 6 [mem 0x180000000000-0x1bffffffffff] hotplug
+> >     kernel: ACPI: SRAT: Node 3 PXM 7 [mem 0x1c0000000000-0x1fffffffffff] hotplug
+> >     ...
+> >     kernel: Movable zone start for each node
+> >     kernel:  Node 3: 0x00001c0000000000
+> >     kernel: Early memory node ranges
+> >     ...
+> >     =====================================================================
+> > 
+> > Naoya's v1 patch [*] fixes the original issue and this movable_node
+> > issue doesn't occur.
+> > Let's revert commit 124049decbb1 ("x86/e820: put !E820_TYPE_RAM
+> > regions into memblock.reserved") and apply the v1 patch.
+> > 
+> > [*] https://lkml.org/lkml/2018/6/13/27
+> > 
+> > Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+> > ---
+> >  arch/x86/kernel/e820.c | 15 +++------------
+> >  1 file changed, 3 insertions(+), 12 deletions(-)
+> > 
+> > diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
+> > index c88c23c658c1..d1f25c831447 100644
+> > --- a/arch/x86/kernel/e820.c
+> > +++ b/arch/x86/kernel/e820.c
+> > @@ -1248,7 +1248,6 @@ void __init e820__memblock_setup(void)
+> >  {
+> >  	int i;
+> >  	u64 end;
+> > -	u64 addr = 0;
+> >  
+> >  	/*
+> >  	 * The bootstrap memblock region count maximum is 128 entries
+> > @@ -1265,21 +1264,13 @@ void __init e820__memblock_setup(void)
+> >  		struct e820_entry *entry = &e820_table->entries[i];
+> >  
+> >  		end = entry->addr + entry->size;
+> > -		if (addr < entry->addr)
+> > -			memblock_reserve(addr, entry->addr - addr);
+> > -		addr = end;
+> >  		if (end != (resource_size_t)end)
+> >  			continue;
+> >  
+> > -		/*
+> > -		 * all !E820_TYPE_RAM ranges (including gap ranges) are put
+> > -		 * into memblock.reserved to make sure that struct pages in
+> > -		 * such regions are not left uninitialized after bootup.
+> > -		 */
+> >  		if (entry->type != E820_TYPE_RAM && entry->type != E820_TYPE_RESERVED_KERN)
+> > -			memblock_reserve(entry->addr, entry->size);
+> > -		else
+> > -			memblock_add(entry->addr, entry->size);
+> > +			continue;
+> > +
+> > +		memblock_add(entry->addr, entry->size);
+> >  	}
+> >  
+> >  	/* Throw away partial pages: */
+> > -- 
+> > 2.18.0
+> > 
+> > 
+
+-- 
+Michal Hocko
+SUSE Labs
