@@ -2,93 +2,116 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 437B3C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 08:38:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5185C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 08:42:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A29F2157F
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 08:38:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="nsZ3SG07"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A29F2157F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 6693D2157F
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 08:42:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6693D2157F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727313AbeHXMMC (ORCPT
+        id S1726842AbeHXMPg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 08:12:02 -0400
-Received: from conuserg-08.nifty.com ([210.131.2.75]:19953 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726325AbeHXMMC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 08:12:02 -0400
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id w7O8Xx37003689;
-        Fri, 24 Aug 2018 17:33:59 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com w7O8Xx37003689
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1535099640;
-        bh=6OsoEPd0b5FwNp/w3Nb3ajYja/2+3jHAz6i2lUnqawI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=nsZ3SG07JLB/R7MkKqR8yzYWnPgYopy8s09ZVJK9Kb9BSSyYXkgm2+3wl4GHHF3bl
-         6AT2cxkgIEk6Y8+QmuowT/m/EDVMDZ5/TBqgidaucskn5xw3cODlfY9ccoONgr15eZ
-         a1U8t2Mhoto5ArwHex2bC4aXPiAWYcBDTGhtsMgGmcHGqI1mjC+EErtp8HFTBaVLOh
-         ct2JHDFoxOU1kSopQrFMxdzH+K+//gEzJ6FvKp3EzLu06C9zxjHRrsS4NDkggqvJXt
-         ILIr99bhsi4e4IhaOUo78qesyAapx4jX0GIW9+wYuMq5XvIl12WhdNi4SEam0VrCLP
-         Kwt1jNKiGXx4A==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        linux-riscv@lists.infradead.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] riscv: move GCC version check for ARCH_SUPPORTS_INT128 to Kconfig
-Date:   Fri, 24 Aug 2018 17:33:53 +0900
-Message-Id: <1535099634-29439-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 24 Aug 2018 08:15:36 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60316 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726325AbeHXMPg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 08:15:36 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C631FAFC6;
+        Fri, 24 Aug 2018 08:41:57 +0000 (UTC)
+Date:   Fri, 24 Aug 2018 10:41:57 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Mike Kravetz <mike.kravetz@oracle.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v6 1/2] mm: migration: fix migration of huge PMD shared
+ pages
+Message-ID: <20180824084157.GD29735@dhcp22.suse.cz>
+References: <20180823205917.16297-1-mike.kravetz@oracle.com>
+ <20180823205917.16297-2-mike.kravetz@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180823205917.16297-2-mike.kravetz@oracle.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This becomes much neater in Kconfig.
+On Thu 23-08-18 13:59:16, Mike Kravetz wrote:
+> The page migration code employs try_to_unmap() to try and unmap the
+> source page.  This is accomplished by using rmap_walk to find all
+> vmas where the page is mapped.  This search stops when page mapcount
+> is zero.  For shared PMD huge pages, the page map count is always 1
+> no matter the number of mappings.  Shared mappings are tracked via
+> the reference count of the PMD page.  Therefore, try_to_unmap stops
+> prematurely and does not completely unmap all mappings of the source
+> page.
+> 
+> This problem can result is data corruption as writes to the original
+> source page can happen after contents of the page are copied to the
+> target page.  Hence, data is lost.
+> 
+> This problem was originally seen as DB corruption of shared global
+> areas after a huge page was soft offlined due to ECC memory errors.
+> DB developers noticed they could reproduce the issue by (hotplug)
+> offlining memory used to back huge pages.  A simple testcase can
+> reproduce the problem by creating a shared PMD mapping (note that
+> this must be at least PUD_SIZE in size and PUD_SIZE aligned (1GB on
+> x86)), and using migrate_pages() to migrate process pages between
+> nodes while continually writing to the huge pages being migrated.
+> 
+> To fix, have the try_to_unmap_one routine check for huge PMD sharing
+> by calling huge_pmd_unshare for hugetlbfs huge pages.  If it is a
+> shared mapping it will be 'unshared' which removes the page table
+> entry and drops the reference on the PMD page.  After this, flush
+> caches and TLB.
+> 
+> mmu notifiers are called before locking page tables, but we can not
+> be sure of PMD sharing until page tables are locked.  Therefore,
+> check for the possibility of PMD sharing before locking so that
+> notifiers can prepare for the worst possible case.
+> 
+> Fixes: 39dde65c9940 ("shared page table for hugetlb page")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Acked-by: Michal Hocko <mhocko@suse.com>
 
- arch/riscv/Kconfig  | 1 +
- arch/riscv/Makefile | 2 --
- 2 files changed, 1 insertion(+), 2 deletions(-)
+One nit below.
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index a344980..ed81df4 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -112,6 +112,7 @@ config ARCH_RV32I
- config ARCH_RV64I
- 	bool "RV64I"
- 	select 64BIT
-+	select ARCH_SUPPORTS_INT128 if GCC_VERSION >= 50000
- 	select HAVE_FUNCTION_TRACER
- 	select HAVE_FUNCTION_GRAPH_TRACER
- 	select HAVE_FTRACE_MCOUNT_RECORD
-diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
-index 61ec424..33700e4 100644
---- a/arch/riscv/Makefile
-+++ b/arch/riscv/Makefile
-@@ -25,8 +25,6 @@ ifeq ($(CONFIG_ARCH_RV64I),y)
- 
- 	KBUILD_CFLAGS += -mabi=lp64
- 	KBUILD_AFLAGS += -mabi=lp64
--	
--	KBUILD_CFLAGS	+= $(call cc-ifversion, -ge, 0500, -DCONFIG_ARCH_SUPPORTS_INT128)
- 
- 	KBUILD_MARCH = rv64im
- 	KBUILD_LDFLAGS += -melf64lriscv
+[...]
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index 3103099f64fd..a73c5728e961 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -4548,6 +4548,9 @@ static unsigned long page_table_shareable(struct vm_area_struct *svma,
+>  	return saddr;
+>  }
+>  
+> +#define _range_in_vma(vma, start, end) \
+> +	((vma)->vm_start <= (start) && (end) <= (vma)->vm_end)
+> +
+
+static inline please. Macros and potential side effects on given
+arguments are just not worth the risk. I also think this is something
+for more general use. We have that pattern at many places. So I would
+stick that to linux/mm.h
+
+Thanks!
 -- 
-2.7.4
-
+Michal Hocko
+SUSE Labs
