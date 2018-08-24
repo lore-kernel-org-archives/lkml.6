@@ -2,114 +2,182 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C8A3C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 11:55:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2B64C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 11:57:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44BFD2152B
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 11:55:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71ABB2159F
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 11:57:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eGJGxMD3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44BFD2152B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bmudtbit"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71ABB2159F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727505AbeHXPaJ (ORCPT
+        id S1727626AbeHXPcR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 11:30:09 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:39251 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726513AbeHXPaJ (ORCPT
+        Fri, 24 Aug 2018 11:32:17 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:34763 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726513AbeHXPcQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 11:30:09 -0400
-Received: by mail-lj1-f193.google.com with SMTP id l15-v6so6669831lji.6
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 04:55:48 -0700 (PDT)
+        Fri, 24 Aug 2018 11:32:16 -0400
+Received: by mail-wm0-f68.google.com with SMTP id m199-v6so4121474wma.1;
+        Fri, 24 Aug 2018 04:57:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=6EFBjIvyxcvEDtwCniygFOB4sr/UwhemARyGz9r3LW4=;
-        b=eGJGxMD3h5ihlqAkMzUAxk3w6l+Kp4QmmR+2IxW5/Ackph7j/9g8+li/MgVO0za50e
-         YcW142i28xtP111aGQ+OKLybjPnhsbOIuiGkB8e+rAXqiB0aO3yv66gToQlJmzmOK1EX
-         gPxriVM2kOi3vONu8/DHTLhDYZ9D5nFKbWDH0=
+        d=gmail.com; s=20161025;
+        h=reply-to:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=7Tgnc12QIQxSq82jQ3lR1SJaq7jw2S1sY/VMy2KAqAc=;
+        b=bmudtbitOhFna6vfzwUoCneFSpsDT6Qu/DrpkDTsh0ZZFUo+fthBYSs3E/mArrVUPb
+         gbiD3xjgqI4ykFjqd5qe5ErviliVHQ9Fbmcur87Kvnp1g1cZkz1MeT+sc1+7UEhTMMzH
+         NFp6xyez+ZttgMbIsaNhEj8cUPRPR5jXyVxjjSArUbFraCsTfMiU3g8iiOSMJou5A9N0
+         DwMb+NNzSCa8H86GhHOF7H7OaOlBeboHX3TccEw+bpcmXWuoLB6r38Xc6GCg/JqchtQt
+         HaqGJtmDz5sRnaY9U1V49hGpNPRQ+VFMgqXrCXi9EhFBrkuCt+jnq260WwEE+ib3MhQL
+         lKOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=6EFBjIvyxcvEDtwCniygFOB4sr/UwhemARyGz9r3LW4=;
-        b=ScQ73sTuMjLWqsTFrNNJJtuJUy2B8QmTIiWU7ab6eDuPsJtAGFsdrRCUzgTAziiltX
-         71hC47PWk68JVPw8mw41iFIjKZojSE35FAN8RtqN9cvE92moFEOMG2225yCdb1AbHinF
-         ZkfVK6G4soWs2OUh64Ym0i3XMtTXJ4bPUoogwmdZbifX7SJswQqwVXURhA/B15LCxtwM
-         GMVuUeSCuy4m5vaKEplO3hY5p8ozncJ6Vw1GUQBJUg5XtbZ7LnpshdaRm6e2ufdB2108
-         ERGQTq5gPsae4NPXoV8PmCbvhAEU1SCs7LiO3o3wTHTtcUAElAs/FWKRDtSRdA5v9UYN
-         FvQg==
-X-Gm-Message-State: APzg51CRotAfwfcyuk5ISr24VgwHSvhuNA+0o1iUvhdc6IfR4kAvC9nC
-        hkkDTLehDbnfM2/7Rr+AijWvYQ==
-X-Google-Smtp-Source: ANB0VdbDUYOr1V86+f6FDzvIIp+wSxZk9FB7aYnOJeXYB2PIed/ucEvvnVt0ki7zQ8J8h8dMre3gDA==
-X-Received: by 2002:a2e:8257:: with SMTP id j23-v6mr1164878ljh.49.1535111747989;
-        Fri, 24 Aug 2018 04:55:47 -0700 (PDT)
-Received: from jax.lan (81-236-179-152-no272.tbcn.telia.com. [81.236.179.152])
-        by smtp.gmail.com with ESMTPSA id w15-v6sm1301374lfc.62.2018.08.24.04.55.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 24 Aug 2018 04:55:47 -0700 (PDT)
-Date:   Fri, 24 Aug 2018 13:55:45 +0200
-From:   Jens Wiklander <jens.wiklander@linaro.org>
-To:     arm-soc <arm@kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: [GIT PULL] tee subsystem for v4.20
-Message-ID: <20180824115545.GA4989@jax.lan>
+        h=x-gm-message-state:reply-to:subject:to:cc:references:from
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-transfer-encoding:content-language;
+        bh=7Tgnc12QIQxSq82jQ3lR1SJaq7jw2S1sY/VMy2KAqAc=;
+        b=PDXCDdJ8FEjYFw0/chf1J0dJLsDCTtB1cRFdT8Qvi+XZXpEEW6nyHxem4oHWnOC0Id
+         0UM8mL3s5epxCjPOZpXsjsCt0WEoghGxIP7DP0rUgPzvWrkXr4ou2XAjUJms/8hSTD94
+         CywXk7GX9XH7W/wdkaICWl6GB0JnZtHAfDBHpthZl+ATxaD+Yz6q0z6D9/UijkpFH+TN
+         QFQmFhdTJaH9JeGH7wIGkpC9Olae6SpiMP/phBRWfflPcMkjMPHq7y1s5wl/zV63LHVK
+         sn5wfasxE1tSjMqRAQRRttqbk+yzr6cKxat20yi1KppC+jGBkMF1YO8V3LdmBpc6TGJq
+         Lg+A==
+X-Gm-Message-State: APzg51CFpswKFHc/wOK6hNshLJtNrC8U8bdkXesavo7d7NcFp8w0GYKE
+        1z7WNaX4pvzuScxwmMs7tao=
+X-Google-Smtp-Source: ANB0Vdaf6XF8GBSBXWoWwjxuhY0L/JCOuGKb5u104MH4WBEHWKLmWfARgqovCUwtS4XVDxs5bH8drw==
+X-Received: by 2002:a1c:888e:: with SMTP id k136-v6mr1258867wmd.6.1535111874638;
+        Fri, 24 Aug 2018 04:57:54 -0700 (PDT)
+Received: from ?IPv6:2a02:908:1257:4460:1ab8:55c1:a639:6740? ([2a02:908:1257:4460:1ab8:55c1:a639:6740])
+        by smtp.gmail.com with ESMTPSA id c15-v6sm888113wmb.2.2018.08.24.04.57.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 24 Aug 2018 04:57:54 -0700 (PDT)
+Reply-To: christian.koenig@amd.com
+Subject: Re: [PATCH] mm, oom: distinguish blockable mode for mmu notifiers
+To:     Michal Hocko <mhocko@kernel.org>, christian.koenig@amd.com
+Cc:     kvm@vger.kernel.org,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Sudeep Dutt <sudeep.dutt@intel.com>,
+        dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        Dimitri Sivanich <sivanich@sgi.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        Doug Ledford <dledford@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        xen-devel@lists.xenproject.org, intel-gfx@lists.freedesktop.org,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ashutosh Dixit <ashutosh.dixit@intel.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Felix Kuehling <felix.kuehling@amd.com>
+References: <20180716115058.5559-1-mhocko@kernel.org>
+ <8cbfb09f-0c5a-8d43-1f5e-f3ff7612e289@I-love.SAKURA.ne.jp>
+ <20180824113248.GH29735@dhcp22.suse.cz>
+ <b088e382-e90e-df63-a079-19b2ae2b985d@gmail.com>
+ <20180824115226.GK29735@dhcp22.suse.cz>
+From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
+Message-ID: <a27ad1a3-34bd-6b7d-fd09-7737ec3c888d@gmail.com>
+Date:   Fri, 24 Aug 2018 13:57:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180824115226.GK29735@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello arm-soc maintainers,
+Am 24.08.2018 um 13:52 schrieb Michal Hocko:
+> On Fri 24-08-18 13:43:16, Christian König wrote:
+>> Am 24.08.2018 um 13:32 schrieb Michal Hocko:
+>>> On Fri 24-08-18 19:54:19, Tetsuo Handa wrote:
+>>>> Two more worries for this patch.
+>>>>
+>>>>
+>>>>
+>>>>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
+>>>>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
+>>>>> @@ -178,12 +178,18 @@ void amdgpu_mn_unlock(struct amdgpu_mn *mn)
+>>>>>     *
+>>>>>     * @amn: our notifier
+>>>>>     */
+>>>>> -static void amdgpu_mn_read_lock(struct amdgpu_mn *amn)
+>>>>> +static int amdgpu_mn_read_lock(struct amdgpu_mn *amn, bool blockable)
+>>>>>    {
+>>>>> -       mutex_lock(&amn->read_lock);
+>>>>> +       if (blockable)
+>>>>> +               mutex_lock(&amn->read_lock);
+>>>>> +       else if (!mutex_trylock(&amn->read_lock))
+>>>>> +               return -EAGAIN;
+>>>>> +
+>>>>>           if (atomic_inc_return(&amn->recursion) == 1)
+>>>>>                   down_read_non_owner(&amn->lock);
+>>>> Why don't we need to use trylock here if blockable == false ?
+>>>> Want comment why it is safe to use blocking lock here.
+>>> Hmm, I am pretty sure I have checked the code but it was quite confusing
+>>> so I might have missed something. Double checking now, it seems that
+>>> this read_lock is not used anywhere else and it is not _the_ lock we are
+>>> interested about. It is the amn->lock (amdgpu_mn_lock) which matters as
+>>> it is taken in exclusive mode for expensive operations.
+>> The write side of the lock is only taken in the command submission IOCTL.
+>>
+>> So you actually don't need to change anything here (even the proposed
+>> changes are overkill) since we can't tear down the struct_mm while an IOCTL
+>> is still using.
+> I am not so sure. We are not in the mm destruction phase yet. This is
+> mostly about the oom context which might fire right during the IOCTL. If
+> any of the path which is holding the write lock blocks for unbound
+> amount of time or even worse allocates a memory then we are screwed. So
+> we need to back of when blockable = false.
 
-Please pull these tee driver enhancements. There's one small fix for the
-OP-TEE driver to take DT status into account. There's also a patch
-providing a kernel only tee client interface that can be used by other
-drivers etc. Currently there's no users of this interface in the kernel
-but there seems to be some work in the pipe as some has tested it with
-out of tree patches.
+Oh, yeah good point. Haven't thought about that possibility.
 
-Thanks,
-Jens
+>
+>>> Is that correct Christian? If this is correct then we need to update the
+>>> locking here. I am struggling to grasp the ref counting part. Why cannot
+>>> all readers simply take the lock rather than rely on somebody else to
+>>> take it? 1ed3d2567c800 didn't really help me to understand the locking
+>>> scheme here so any help would be appreciated.
+>> That won't work like this there might be multiple
+>> invalidate_range_start()/invalidate_range_end() pairs open at the same time.
+>> E.g. the lock might be taken recursively and that is illegal for a
+>> rw_semaphore.
+> I am not sure I follow. Are you saying that one invalidate_range might
+> trigger another one from the same path?
 
-The following changes since commit 94710cac0ef4ee177a63b5227664b38c95bbf703:
+No, but what can happen is:
 
-  Linux 4.18 (2018-08-12 13:41:04 -0700)
+invalidate_range_start(A,B);
+invalidate_range_start(C,D);
+...
+invalidate_range_end(C,D);
+invalidate_range_end(A,B);
 
-are available in the Git repository at:
+Grabbing the read lock twice would be illegal in this case.
 
-  git://git.linaro.org/people/jens.wiklander/linux-tee.git tags/tee-drv-for-4.20
-
-for you to fetch changes up to 25559c22cef879c5cf7119540bfe21fb379d29f3:
-
-  tee: add kernel internal client interface (2018-08-24 11:57:37 +0200)
-
-----------------------------------------------------------------
-Misc enhancement for tee driver subsystem
-
-* Adds a kernel internal tee client interface allowing other drivers
-  etc to access a TEE
-* OP-TEE driver takes DT status property into account
-
-----------------------------------------------------------------
-Ard Biesheuvel (1):
-      tee: optee: take DT status property into account
-
-Jens Wiklander (1):
-      tee: add kernel internal client interface
-
- drivers/tee/optee/core.c |   2 +-
- drivers/tee/tee_core.c   | 113 ++++++++++++++++++++++++++++++++++++++++++++---
- include/linux/tee_drv.h  |  73 ++++++++++++++++++++++++++++++
- 3 files changed, 180 insertions(+), 8 deletions(-)
+Regards,
+Christian.
