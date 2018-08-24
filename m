@@ -2,135 +2,98 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DATE_IN_FUTURE_03_06,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E77BC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 03:05:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 302F7C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 03:06:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B18DA2083A
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 03:05:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fVkaaosS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B18DA2083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id E6F662157C
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 03:06:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6F662157C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727199AbeHXGhq (ORCPT
+        id S1727448AbeHXGik (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 02:37:46 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:41743 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726459AbeHXGhq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 02:37:46 -0400
-Received: by mail-yb0-f194.google.com with SMTP id z3-v6so2993207ybm.8
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 20:05:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=L3lSm62PN8ogq6nCwcD7++HmLjCC7RmFbfrW/cenEOg=;
-        b=fVkaaosS78Zw6uhAeHy3xYLLa0j/JVIYEwRoc1KGQwfnm+awUfao2KQC8mS2s6C9fm
-         I4U2152H65YCe/X4vDMhDVbHKpqFl5p8R3j5M07lRd/ZtM81UZ1VlgRJGPZqE5si67wS
-         6pA3o3PJiH1MPqKuzPwDvFybUdXIMJxb+EMqM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=L3lSm62PN8ogq6nCwcD7++HmLjCC7RmFbfrW/cenEOg=;
-        b=hUVsxcAeZ7mHIJwqYiabyzu58tHewUDyHzQ/HZh+b/FnnZgqrsxFnhWDbFpqUmIaSH
-         ihG0ZJ4r+s3u3e81X+/5s8gJs0QEnkqMo4fsbaXpVOhkEGRVY7zvvT0Vgb1gdNoJBzQK
-         C/4UziEPmvzQMgIjZAuZ0dtkRBS6CLMizOr02FwSxrIPp3SSq9QmZbonQEdPdZUdwIv3
-         SM1jTunPkRKbGoW+5V/9A+CDfkylXbWNpx8vmkT25TcX9HvL41w3ofPm70PsSalrxH1T
-         QflyDlXRO7VB3gZQ3uGG5SjoQaMqM8bxqoe+t+fH2jAe2P5zGk0ZNTRG1JESCHQMSlWZ
-         NtmA==
-X-Gm-Message-State: AOUpUlF2UTgLIBhavwK2OlDa0vgA2dvPCBiDhpbuDQ7Y+0bifaflr2/K
-        F702HZoK4IWKvEaSZyMRB+sK9DmMTcw=
-X-Google-Smtp-Source: AA+uWPxOOIdLpx7zSv+itTQMuNfCl2OGXq3ldjy8zMtpZEY6qEcp62YbYAqn09Q62hygiqoWWpnuxA==
-X-Received: by 2002:a25:a469:: with SMTP id f96-v6mr11534171ybi.241.1535079909387;
-        Thu, 23 Aug 2018 20:05:09 -0700 (PDT)
-Received: from mail-yw1-f48.google.com (mail-yw1-f48.google.com. [209.85.161.48])
-        by smtp.gmail.com with ESMTPSA id s63-v6sm2512204ywd.63.2018.08.23.20.05.07
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 Aug 2018 20:05:08 -0700 (PDT)
-Received: by mail-yw1-f48.google.com with SMTP id 14-v6so2614575ywe.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 20:05:07 -0700 (PDT)
-X-Received: by 2002:a81:9fd6:: with SMTP id w205-v6mr4629756ywg.288.1535079907483;
- Thu, 23 Aug 2018 20:05:07 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a25:2c11:0:0:0:0:0 with HTTP; Thu, 23 Aug 2018 20:05:06
- -0700 (PDT)
-In-Reply-To: <20180824011753.GA25826@embeddedor.com>
-References: <20180824011753.GA25826@embeddedor.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Thu, 23 Aug 2018 20:05:06 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jJP4UbFbfRmLiDLT5Bq3CzBum7tRdXMXY3nPDQQ+bZZmQ@mail.gmail.com>
-Message-ID: <CAGXu5jJP4UbFbfRmLiDLT5Bq3CzBum7tRdXMXY3nPDQQ+bZZmQ@mail.gmail.com>
-Subject: Re: [PATCH] drivers: qcom: rpmh: use struct_size() in kzalloc()
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 24 Aug 2018 02:38:40 -0400
+Received: from mxhk.zte.com.cn ([63.217.80.70]:13922 "EHLO mxhk.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726140AbeHXGij (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 02:38:39 -0400
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id CC556C23FE6141678060;
+        Fri, 24 Aug 2018 11:06:00 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id w7O35qHu036684;
+        Fri, 24 Aug 2018 11:05:52 +0800 (GMT-8)
+        (envelope-from peng.hao2@zte.com.cn)
+Received: from localhost.localdomain.localdomain ([10.74.120.59])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018082411060009-5963661 ;
+          Fri, 24 Aug 2018 11:06:00 +0800 
+From:   Peng Hao <peng.hao2@zte.com.cn>
+To:     pbonzini@redhat.com, rkrcmar@redhat.com
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        zhong.weidong@zte.com.cn, wanpeng.li@hotmail.com,
+        Peng Hao <peng.hao2@zte.com.cn>
+Subject: [PATCH V3 0/2] introduce coalesced pio support
+Date:   Fri, 24 Aug 2018 19:20:30 +0800
+Message-Id: <1535109632-59745-1-git-send-email-peng.hao2@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-08-24 11:06:00,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-08-24 11:05:37,
+        Serialize complete at 2018-08-24 11:05:37
+X-MAIL: mse01.zte.com.cn w7O35qHu036684
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 23, 2018 at 6:17 PM, Gustavo A. R. Silva
-<gustavo@embeddedor.com> wrote:
-> One of the more common cases of allocation size calculations is finding
-> the size of a structure that has a zero-sized array at the end, along
-> with memory for some number of elements for that array. For example:
->
-> struct foo {
->         int stuff;
->         void *entry[];
-> };
->
-> instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_ATOMIC);
->
-> Instead of leaving these open-coded and prone to type mistakes, we can
-> now use the new struct_size() helper:
->
-> instance = kzalloc(struct_size(instance, entry, count), GFP_ATOMIC);
->
-> This issue was detected with the help of Coccinelle.
->
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Coalesced pio is base on coalesced mmio and can be used for some port
+like rtc port, pci-host config port, virtio-pci config port and so on.
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+Specially in case of rtc as coalesced pio, some versions of windows guest
+access rtc frequently because of rtc as system tick. guest access rtc like
+this: write register index to 0x70, then write or read data from 0x71.
+writing 0x70 port is just as index and do nothing else. So we can use
+coalesced pio to handle this scene to reduce VM-EXIT time.
 
--Kees
+When it starts and closes the virtual machine, it will access pci-host config 
+port or virtio-pci config port frequently. So setting these port as 
+coalesced pio can reduce startup and shutdown time. In qemu I just realize
+piixfx's pci-host, it is convenient for other pci-host type implementations.
 
-> ---
->  drivers/soc/qcom/rpmh.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
-> index c7beb68..12c057a 100644
-> --- a/drivers/soc/qcom/rpmh.c
-> +++ b/drivers/soc/qcom/rpmh.c
-> @@ -362,8 +362,7 @@ int rpmh_write_batch(const struct device *dev, enum rpmh_state state,
->         if (!count)
->                 return -EINVAL;
->
-> -       req = kzalloc(sizeof(*req) + count * sizeof(req->rpm_msgs[0]),
-> -                     GFP_ATOMIC);
-> +       req = kzalloc(struct_size(req, rpm_msgs, count), GFP_ATOMIC);
->         if (!req)
->                 return -ENOMEM;
->         req->count = count;
-> --
-> 2.7.4
->
+without my patch, get the vm-exit time of accessing rtc 0x70 and piix 0xcf8
+using perf tools: (guest OS : windows 7 64bit)
+IO Port Access  Samples Samples%  Time%  Min Time  Max Time  Avg time
+0x70:POUT        86     30.99%    74.59%   9us      29us    10.75us (+- 3.41%)
+0xcf8:POUT     1119     2.60%     2.12%   2.79us    56.83us 3.41us (+- 2.23%)
+
+with my patch
+IO Port Access  Samples Samples%  Time%   Min Time  Max Time   Avg time
+0x70:POUT       106    32.02%    29.47%    0us      10us     1.57us (+- 7.38%)
+0xcf8:POUT      1065    1.67%     0.28%   0.41us    65.44us   0.66us (+- 10.55%)
+
+I think there is a need for further consideration in changing coalesecd_mmio's
+naming in kernel and qemu together.So maybe another patch does it.
 
 
+Peng Hao (2):
+  kvm/x86 : add coalesced pio support
+  kvm/x86 : add document for coalesced pio
+
+ Documentation/virtual/kvm/00-INDEX          |  4 ++++
+ Documentation/virtual/kvm/coalesced-pio.txt | 14 ++++++++++++++
+ include/uapi/linux/kvm.h                    |  5 +++--
+ virt/kvm/coalesced_mmio.c                   |  8 +++++---
+ virt/kvm/kvm_main.c                         |  2 ++
+ 5 files changed, 28 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/virtual/kvm/coalesced-pio.txt
 
 -- 
-Kees Cook
-Pixel Security
+1.8.3.1
+
