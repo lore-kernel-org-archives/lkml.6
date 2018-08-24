@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
 	T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B70EC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 20:07:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43A2AC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 20:07:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09CCE2150F
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 20:07:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F41EF2150F
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 20:07:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="J4uQBeLN";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="aZlP6P1K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09CCE2150F
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UPjo8tkz";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mhNF0QDH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F41EF2150F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727852AbeHXXnU (ORCPT
+        id S1727942AbeHXXn0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 19:43:20 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52446 "EHLO
+        Fri, 24 Aug 2018 19:43:26 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:52592 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726675AbeHXXnU (ORCPT
+        with ESMTP id S1726675AbeHXXnZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 19:43:20 -0400
+        Fri, 24 Aug 2018 19:43:25 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id AC03B605A4; Fri, 24 Aug 2018 20:07:11 +0000 (UTC)
+        id 784B96053D; Fri, 24 Aug 2018 20:07:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535141234;
-        bh=LgJG3k90wDm+T9oL8OpZ8qUFfYVfRDWGfnQIOfWoG1E=;
+        s=default; t=1535141239;
+        bh=80p+hVcHiozCeb8iIF+K72+zmyqyACym21JQWgbupek=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J4uQBeLNt/jbNwIScfTJ0OeC3KJeE9HoOrdaYL0kACl1UURzWuITMkSzByafOFveG
-         sBqEMKeW8RMjK+zP8we7uHR40B+YpSG6CDk+Au5ERssRjfq8GxLeF0oUdaf/jAFZbK
-         8FAG+loFvP0YLR0M6VaPAGCxIJ9rM+aWrgvWJ2mw=
+        b=UPjo8tkzXSBLQBfj+UjRqY2ponTuCuOSxC078H8Ep+O1XRZadrW1lB+P9uxddaQKs
+         KW66Cs3jU92j30uTw7Mr2j301DdvXVNksaGn8NcNQnO5RBkXq/Hy/Ua6WMJ6TirvwN
+         UaEQlelRJhv2EekLa2mQd0ZCS4PbLTTLjhcEaKZQ=
 Received: from rplsssn-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: rplsssn@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 75CB2605A2;
-        Fri, 24 Aug 2018 20:07:05 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 88DBB60591;
+        Fri, 24 Aug 2018 20:07:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535141230;
-        bh=LgJG3k90wDm+T9oL8OpZ8qUFfYVfRDWGfnQIOfWoG1E=;
+        s=default; t=1535141236;
+        bh=80p+hVcHiozCeb8iIF+K72+zmyqyACym21JQWgbupek=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aZlP6P1K8ojCK0iGKG0PTfqPQIHXYv6msMtblbuvhQ4t5o1Oxdc7aQeeefju4Vpp7
-         evRxpfzbZ6Sduzeg7TtPmKWoTDtxkYjGfUAvju3RLKDIx49gEO3T5uNctYgSBp3rp9
-         /4bHvxroLdnfBSJ72yvW+Uzt3r7kBsClrNhmE70E=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 75CB2605A2
+        b=mhNF0QDHWKcLiSlJso50gNejM4/B9v6YGbIWCxQ22iMJ+9jmQgXloYUh0/0LqLchm
+         rCmvFXo7JoHOOZCaXKn1MMvpqoZK5pgONMgHdTQoT3zmJ/nsTqcAhsFnb0vPIWfBdu
+         JwoBpOO8GxGGbQgJlNEJlLQb7MIAwh3NqoSHv8t8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 88DBB60591
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rplsssn@codeaurora.org
 From:   "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
@@ -60,11 +60,10 @@ Cc:     rnayak@codeaurora.org, bjorn.andersson@linaro.org,
         linux-kernel@vger.kernel.org, lorenzo.pieralisi@arm.com,
         rafael@kernel.org, drake@endlessm.com, sboyd@kernel.org,
         evgreen@chromium.org, dianders@chromium.org, mka@chromium.org,
-        ilina@codeaurora.org, "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>,
-        devicetree@vger.kernel.org
-Subject: [PATCH RFC 2/6] dt-bindings: introduce System PM bindings for Qualcomm SoCs
-Date:   Sat, 25 Aug 2018 01:36:24 +0530
-Message-Id: <1535141188-29731-3-git-send-email-rplsssn@codeaurora.org>
+        ilina@codeaurora.org, "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
+Subject: [PATCH RFC 3/6] drivers: qcom: system_pm: Add power management ops
+Date:   Sat, 25 Aug 2018 01:36:25 +0530
+Message-Id: <1535141188-29731-4-git-send-email-rplsssn@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1535141188-29731-1-git-send-email-rplsssn@codeaurora.org>
 References: <1535141188-29731-1-git-send-email-rplsssn@codeaurora.org>
@@ -73,51 +72,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add device binding documentation for Qualcomm Technology Inc's System PM
-driver. The driver is used for managing system sleep activities that are
-required when application processor is going to deepest low power mode.
+Add suspend power management ops so that the sleep & wake resource
+requests are flushed to corresponding TCS. The firmware would ensure
+that the buffered requests in TCS are sent to Resource Power Manager
+during entry to deepest low power modes.
 
-Cc: devicetree@vger.kernel.org
 Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
 ---
- .../devicetree/bindings/soc/qcom/system_pm.txt     | 28 ++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/soc/qcom/system_pm.txt
+ drivers/soc/qcom/Kconfig     |  2 +-
+ drivers/soc/qcom/system_pm.c | 18 ++++++++++++++++++
+ 2 files changed, 19 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/soc/qcom/system_pm.txt b/Documentation/devicetree/bindings/soc/qcom/system_pm.txt
-new file mode 100644
-index 0000000..0915760
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/qcom/system_pm.txt
-@@ -0,0 +1,28 @@
-+System PM
-+---------
+diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+index a52abe9..ac0e413 100644
+--- a/drivers/soc/qcom/Kconfig
++++ b/drivers/soc/qcom/Kconfig
+@@ -88,7 +88,7 @@ config QCOM_RPMH
+ 
+ config QCOM_SYSTEM_PM
+ 	bool "Qualcomm System PM"
+-	depends on CPU_PM && QCOM_RPMH
++	depends on CPU_PM && PM_SLEEP && QCOM_RPMH
+ 	help
+ 	  Support for QCOM platform system power management to perform tasks
+ 	  necessary while application processor votes for deeper modes so that
+diff --git a/drivers/soc/qcom/system_pm.c b/drivers/soc/qcom/system_pm.c
+index 40e5aa7..8810b84 100644
+--- a/drivers/soc/qcom/system_pm.c
++++ b/drivers/soc/qcom/system_pm.c
+@@ -67,6 +67,23 @@ static int sys_pm_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static int sys_pm_suspend(struct device *dev)
++{
++	if (rpmh_ctrlr_idle(dev)) {
++		/* Flush the sleep/wake sets in RSC controller */
++		rpmh_flush(dev);
++	} else {
++		pr_err("%s:rpmh controller is busy\n", __func__);
++		return -EBUSY;
++	}
 +
-+System PM device handles the tasks that need to be performed during application
-+processor deeper low power mode entry for QCOM SoCs which have hardened IP blocks
-+combinedly called as RPMH (Resource Power Manager Hardened) for shared resource
-+management. System PM is a client of APPS_RSC. Flushing the buffered requests to
-+TCSs in RSC and programming the wakeup timer in PDC for timer based wakeup are
-+handled by this device.
++	return 0;
++}
 +
-+The bindings for System PM is specified in the RSC section in devicetree.
++static const struct dev_pm_ops sys_pm_dev_pm_ops = {
++	SET_LATE_SYSTEM_SLEEP_PM_OPS(sys_pm_suspend, NULL)
++};
 +
-+Properties:
-+- compatible:
-+	Usage: required
-+	Value type: <string>
-+	Definition: must be "qcom,system-pm".
-+
-+Example:
-+
-+	apps_rsc: rsc@179c0000 {
-+		[...]
-+		system_pm {
-+			compatible = "qcom,system-pm";
-+		};
-+	};
-+
-+
+ static const struct of_device_id sys_pm_drv_match[] = {
+ 	{ .compatible = "qcom,system-pm", },
+ 	{ }
+@@ -77,6 +94,7 @@ static int sys_pm_probe(struct platform_device *pdev)
+ 	.driver = {
+ 		.name = KBUILD_MODNAME,
+ 		.of_match_table = sys_pm_drv_match,
++		.pm = &sys_pm_dev_pm_ops,
+ 	},
+ };
+ builtin_platform_driver(sys_pm_driver);
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum, hosted by The Linux Foundation.
 
