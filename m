@@ -2,146 +2,174 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93360C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:40:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FFD8C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:43:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 072CD2151C
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:40:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 072CD2151C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id AD6B52151C
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:43:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD6B52151C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727836AbeHXRO7 (ORCPT
+        id S1727720AbeHXRRq convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 13:14:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54986 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726969AbeHXRO6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 13:14:58 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E3956AE06;
-        Fri, 24 Aug 2018 13:40:12 +0000 (UTC)
-Date:   Fri, 24 Aug 2018 15:40:09 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     christian.koenig@amd.com
-Cc:     kvm@vger.kernel.org,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Sudeep Dutt <sudeep.dutt@intel.com>,
-        dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Dimitri Sivanich <sivanich@sgi.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        Doug Ledford <dledford@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        xen-devel@lists.xenproject.org, intel-gfx@lists.freedesktop.org,
-        Leon Romanovsky <leonro@mellanox.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ashutosh Dixit <ashutosh.dixit@intel.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Felix Kuehling <felix.kuehling@amd.com>
-Subject: Re: [PATCH] mm, oom: distinguish blockable mode for mmu notifiers
-Message-ID: <20180824134009.GS29735@dhcp22.suse.cz>
-References: <20180824115226.GK29735@dhcp22.suse.cz>
- <a27ad1a3-34bd-6b7d-fd09-7737ec3c888d@gmail.com>
- <20180824120339.GL29735@dhcp22.suse.cz>
- <eb546bcb-9c5f-7d5d-43a7-bfde489f0e7f@amd.com>
- <20180824123341.GN29735@dhcp22.suse.cz>
- <b11df415-baf8-0a41-3c16-60dfe8d32bd3@amd.com>
- <20180824130132.GP29735@dhcp22.suse.cz>
- <23d071d2-82e4-9b78-1000-be44db5f6523@gmail.com>
- <20180824132442.GQ29735@dhcp22.suse.cz>
- <86bd94d5-0ce8-c67f-07a5-ca9ebf399cdd@gmail.com>
+        Fri, 24 Aug 2018 13:17:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39980 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726960AbeHXRRq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 13:17:46 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF5E12151C;
+        Fri, 24 Aug 2018 13:43:00 +0000 (UTC)
+Date:   Fri, 24 Aug 2018 09:42:59 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@redhat.com>,
+        Tzvetomir Stoyanov <tz.stoyanov@gmail.com>,
+        Yordan Karadzhov <y.karadz@gmail.com>,
+        Linux Trace Devel <linux-trace-devel@vger.kernel.org>,
+        Tiago Macieira <thiago.macieira@intel.com>
+Subject: Re: libtracevent build warnings on Clear Linux (gcc 8.2.0)
+Message-ID: <20180824094259.3e7dfbc7@gandalf.local.home>
+In-Reply-To: <20180820133943.GB21100@kernel.org>
+References: <20180820133943.GB21100@kernel.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <86bd94d5-0ce8-c67f-07a5-ca9ebf399cdd@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 24-08-18 15:28:33, Christian K�nig wrote:
-> Am 24.08.2018 um 15:24 schrieb Michal Hocko:
-> > On Fri 24-08-18 15:10:08, Christian K�nig wrote:
-> > > Am 24.08.2018 um 15:01 schrieb Michal Hocko:
-> > > > On Fri 24-08-18 14:52:26, Christian K�nig wrote:
-> > > > > Am 24.08.2018 um 14:33 schrieb Michal Hocko:
-> > > > [...]
-> > > > > > Thiking about it some more, I can imagine that a notifier callback which
-> > > > > > performs an allocation might trigger a memory reclaim and that in turn
-> > > > > > might trigger a notifier to be invoked and recurse. But notifier
-> > > > > > shouldn't really allocate memory. They are called from deep MM code
-> > > > > > paths and this would be extremely deadlock prone. Maybe Jerome can come
-> > > > > > up some more realistic scenario. If not then I would propose to simplify
-> > > > > > the locking here. We have lockdep to catch self deadlocks and it is
-> > > > > > always better to handle a specific issue rather than having a code
-> > > > > > without a clear indication how it can recurse.
-> > > > > Well I agree that we should probably fix that, but I have some concerns to
-> > > > > remove the existing workaround.
-> > > > > 
-> > > > > See we added that to get rid of a real problem in a customer environment and
-> > > > > I don't want to that to show up again.
-> > > > It would really help to know more about that case and fix it properly
-> > > > rather than workaround it like this. Anyway, let me think how to handle
-> > > > the non-blocking notifier invocation then. I was not able to come up
-> > > > with anything remotely sane yet.
-> > > With avoiding allocating memory in the write lock path I don't see an issue
-> > > any more with that.
-> > > 
-> > > All what the write lock path does now is adding items to a linked lists,
-> > > arrays etc....
-> > Can we change it to non-sleepable lock then?
-> 
-> No, the write side doesn't sleep any more, but the read side does.
-> 
-> See amdgpu_mn_invalidate_node() and that is where you actually need to
-> handle the non-blocking flag correctly.
+On Mon, 20 Aug 2018 10:39:43 -0300
+Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
 
-Ohh, right you are. We already handle that by bailing out before calling
-amdgpu_mn_invalidate_node in !blockable mode. So does this looks good to
-you?
+> Hi guys,
+> 
+> I noticed this while working on a new perf build container for the Clear
+> Linux distro, can you take a look at it so that we get the build clean on Clear?
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-index e55508b39496..48fa152231be 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-@@ -180,11 +180,15 @@ void amdgpu_mn_unlock(struct amdgpu_mn *mn)
-  */
- static int amdgpu_mn_read_lock(struct amdgpu_mn *amn, bool blockable)
- {
--	if (blockable)
--		mutex_lock(&amn->read_lock);
--	else if (!mutex_trylock(&amn->read_lock))
--		return -EAGAIN;
--
-+	/*
-+	 * We can take sleepable lock even on !blockable mode because
-+	 * read_lock is only ever take from this path and the notifier
-+	 * lock never really sleeps. In fact the only reason why the
-+	 * later is sleepable is because the notifier itself might sleep
-+	 * in amdgpu_mn_invalidate_node but blockable mode is handled
-+	 * before calling into that path.
-+	 */
-+	mutex_lock(&amn->read_lock);
- 	if (atomic_inc_return(&amn->recursion) == 1)
- 		down_read_non_owner(&amn->lock);
- 	mutex_unlock(&amn->read_lock);
--- 
-Michal Hocko
-SUSE Labs
+These all look like the compiler is being stupid. Do you think we
+really need to address it?
+
+-- Steve
+
+> 
+> - Arnaldo
+> 
+> root@28864dcfe31b /git/perf # gcc -v
+> Using built-in specs.
+> COLLECT_GCC=gcc
+> COLLECT_LTO_WRAPPER=/usr/lib64/gcc/x86_64-generic-linux/8.2.0/lto-wrapper
+> Target: x86_64-generic-linux
+> Configured with: ../gcc-8.2.0/configure --prefix=/usr --with-pkgversion='Clear Linux OS for Intel Architecture' --libdir=/usr/lib64 --enable-libstdcxx-pch --libexecdir=/usr/lib64 --with-system-zlib --enable-shared --enable-gnu-indirect-function --disable-vtable-verify --enable-threads=posix --enable-__cxa_atexit --enable-plugin --enable-ld=default --enable-clocale=gnu --disable-multiarch --enable-multilib --enable-lto --enable-linker-build-id --build=x86_64-generic-linux --target=x86_64-generic-linux --enable-languages=c,c++,fortran,go --enable-bootstrap --with-ppl=yes --with-isl --includedir=/usr/include --with-gxx-include-dir=/usr/include/c++/ --exec-prefix=/usr --with-glibc-version=2.19 --disable-libunwind-exceptions --with-gnu-ld --with-tune=haswell --with-arch=westmere --disable-libmpx
+> Thread model: posix
+> gcc version 8.2.0 (Clear Linux OS for Intel Architecture) 
+> root@28864dcfe31b /git/perf # 
+> 
+> root@28864dcfe31b /git # swupd bundle-add c-basic
+> Downloading packs...
+> 
+> Extracting c-basic pack for version 24500
+> 	...50%
+> Extracting perl-basic pack for version 24430
+> 	...100%
+> Starting download of remaining update content. This may take a while...
+> 	...100%
+> Finishing download of update content...
+> Installing bundle(s) files...
+> 	...100%
+> Calling post-update helper scripts.
+> Successfully installed 1 bundle
+> root@28864dcfe31b /git # 
+> root@28864dcfe31b /git/perf # make -C tools/perf O=/tmp/build/perf
+> make: Entering directory '/git/perf/tools/perf'
+>   BUILD:   Doing 'make -j4' parallel build
+>   HOSTCC   /tmp/build/perf/fixdep.o
+>   HOSTLD   /tmp/build/perf/fixdep-in.o
+>   LINK     /tmp/build/perf/fixdep
+> 
+> Auto-detecting system features:
+> ...                         dwarf: [ OFF ]
+> ...            dwarf_getlocations: [ OFF ]
+> ...                         glibc: [ on  ]
+> ...                          gtk2: [ OFF ]
+> ...                      libaudit: [ OFF ]
+> ...                        libbfd: [ on  ]
+> ...                        libelf: [ OFF ]
+> ...                       libnuma: [ OFF ]
+> ...        numa_num_possible_cpus: [ OFF ]
+> ...                       libperl: [ on  ]
+> ...                     libpython: [ OFF ]
+> ...                      libslang: [ OFF ]
+> ...                     libcrypto: [ OFF ]
+> ...                     libunwind: [ OFF ]
+> ...            libdw-dwarf-unwind: [ OFF ]
+> ...                          zlib: [ on  ]
+> ...                          lzma: [ OFF ]
+> ...                     get_cpuid: [ on  ]
+> ...                           bpf: [ on  ]
+> 
+> Makefile.config:318: No libelf found. Disables 'probe' tool, jvmti and BPF support in 'perf record'. Please install libelf-dev, libelf-devel or elfutils-libelf-devel
+> Makefile.config:445: No sys/sdt.h found, no SDT events are defined, please install systemtap-sdt-devel or systemtap-sdt-dev
+> Makefile.config:518: Disabling post unwind, no support found.
+> Makefile.config:583: No libcrypto.h found, disables jitted code injection, please install libssl-devel or libssl-dev
+> Makefile.config:598: slang not found, disables TUI support. Please install slang-devel, libslang-dev or libslang2-dev
+> Makefile.config:612: GTK2 not found, disables GTK2 support. Please install gtk2-devel or libgtk2.0-dev
+> Makefile.config:666: No python interpreter was found: disables Python support - please install python-devel/python-dev
+> Makefile.config:750: No liblzma found, disables xz kernel module decompression, please install xz-devel/liblzma-dev
+> Makefile.config:763: No numa.h found, disables 'perf bench numa mem' benchmark, please install numactl-devel/libnuma-devel/libnuma-dev
+> Makefile.config:814: No libbabeltrace found, disables 'perf data' CTF format support, please install libbabeltrace-dev[el]/libbabeltrace-ctf-dev
+>   GEN      /tmp/build/perf/common-cmds.h
+>   MKDIR    /tmp/build/perf/fd/
+>   CC       /tmp/build/perf/fd/array.o
+>   CC       /tmp/build/perf/event-parse.o
+>   LD       /tmp/build/perf/fd/libapi-in.o
+>   MKDIR    /tmp/build/perf/fs/
+>   CC       /tmp/build/perf/fs/fs.o
+>   MKDIR    /tmp/build/perf/fs/
+>   CC       /tmp/build/perf/fs/tracing_path.o
+>   LD       /tmp/build/perf/fs/libapi-in.o
+>   CC       /tmp/build/perf/cpu.o
+>   CC       /tmp/build/perf/debug.o
+>   CC       /tmp/build/perf/str_error_r.o
+>   LD       /tmp/build/perf/libapi-in.o
+>   AR       /tmp/build/perf/libapi.a
+>   CC       /tmp/build/perf/exec-cmd.o
+>   MKDIR    /tmp/build/perf/pmu-events/
+>   HOSTCC   /tmp/build/perf/pmu-events/json.o
+> event-parse.c: In function ‘tep_find_event_by_name’:
+> event-parse.c:3519:21: warning: ‘event’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+>   pevent->last_event = event;
+>   ~~~~~~~~~~~~~~~~~~~^~~~~~~
+>   MKDIR    /tmp/build/perf/pmu-events/
+> event-parse.c: In function ‘tep_data_lat_fmt’:
+> event-parse.c:5198:4: warning: ‘migrate_disable’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+>     trace_seq_printf(s, "%d", migrate_disable);
+>     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> event-parse.c:5205:4: warning: ‘lock_depth’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+>     trace_seq_printf(s, "%d", lock_depth);
+>     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>   HOSTCC   /tmp/build/perf/pmu-events/jsmn.o
+> event-parse.c: In function ‘tep_event_info’:
+> event-parse.c:5045:7: warning: ‘len_arg’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+>        trace_seq_printf(s, format, len_arg, (char)val);
+>        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> event-parse.c:4882:6: note: ‘len_arg’ was declared here
+>   int len_arg;
+>       ^~~~~~~
+> event-parse.c:4336:11: warning: ‘vsize’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+>      val = tep_read_number(pevent, bptr, vsize);
+>            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> event-parse.c:4222:6: note: ‘vsize’ was declared here
+>   int vsize;
+>       ^~~~~
+>   CC       /tmp/build/perf/help.o
+>
