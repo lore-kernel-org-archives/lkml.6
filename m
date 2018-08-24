@@ -2,108 +2,116 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50DCEC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:58:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A652C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:58:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A5B721567
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:58:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A5B721567
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 4198D2156B
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:58:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=fooishbar-org.20150623.gappssmtp.com header.i=@fooishbar-org.20150623.gappssmtp.com header.b="ROGaYjHS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4198D2156B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728018AbeHXRdB (ORCPT
+        id S1728076AbeHXRdR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 13:33:01 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:53669 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726601AbeHXRdB (ORCPT
+        Fri, 24 Aug 2018 13:33:17 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:46584 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726601AbeHXRdR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 13:33:01 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w7ODvv3U3660086
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 24 Aug 2018 06:57:57 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w7ODvv3j3660083;
-        Fri, 24 Aug 2018 06:57:57 -0700
-Date:   Fri, 24 Aug 2018 06:57:57 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Vlastimil Babka <tipbot@zytor.com>
-Message-ID: <tip-6a012288d6906fee1dbc244050ade1dafe4a9c8d@git.kernel.org>
-Cc:     hpa@zytor.com, tglx@linutronix.de, dave.hansen@intel.com,
-        ak@linux.intel.com, mingo@kernel.org,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        mhocko@suse.com, vbabka@suse.cz
-Reply-To: dave.hansen@intel.com, tglx@linutronix.de, hpa@zytor.com,
-          mhocko@suse.com, vbabka@suse.cz, torvalds@linux-foundation.org,
-          linux-kernel@vger.kernel.org, mingo@kernel.org,
-          ak@linux.intel.com
-In-Reply-To: <966571f0-9d7f-43dc-92c6-a10eec7a1254@suse.cz>
-References: <966571f0-9d7f-43dc-92c6-a10eec7a1254@suse.cz>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/speculation/l1tf: Suggest what to do on
- systems with too much RAM
-Git-Commit-ID: 6a012288d6906fee1dbc244050ade1dafe4a9c8d
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 24 Aug 2018 13:33:17 -0400
+Received: by mail-lf1-f66.google.com with SMTP id e23-v6so6737794lfc.13
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 06:58:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fooishbar-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0xzYYv2I0UbFTaqJtlOG+/E6PT6DAVNcTD7Q9DU+SY0=;
+        b=ROGaYjHSxxyiSKLoR32oJlI5InofX5KKHMg/yqg647a0UXsnnwWbaAE18czWW3uSFy
+         wfBM1IgBYyENZnsZlIKD0I5sXFYZp+K5vMXtBU3o6IRtOsbV9f43KBwnJtpwz4MYlCoI
+         Bj79PacZsWwzcXPBnWbCqsuhSyzrMIHuqES5cOkhRSW8yerBYm7IIHgQw+Biom5+86yB
+         7jO19hs6s0UHk2UywFs6tR09R5tr5ec890pyuh5CnlMC6DnzCJE1LXS0igsEozKJPjw7
+         zM0IEDU1EVYvBeiiJlUb0ot0wnkftbXlGPsdnU+d4eKRNY7xQ86bivBggC+pRxIUasRv
+         kD7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0xzYYv2I0UbFTaqJtlOG+/E6PT6DAVNcTD7Q9DU+SY0=;
+        b=BVfc8SG9YcnDH5vmD7k5ZfZX5FZvsQ5MyMoI2miH+jH8wzjVT5+ZhlrezXoaAsb4mh
+         eDZKNgZ82ycd6cILeG2O+DLLjhhlZVRKTzi/iGRdVhte8XgIRsmgFFHa1bscpkZ9Jedr
+         cd5RVTsRydFXeeCSYe8vY7aRS7eLB9h8V2MIq6t7NlM44e6GCUlslWRGFKxUjm4T+q+E
+         bwD7NtzH0d2saIm+HwDhAp0+8LpxO7WX+Su3MVjpS4lCp4JDR3v2Qg9uz1dd/z4a775O
+         6P7BfVZtmsoPYdQzdQ0QT7aVAgpg+pPHcuArN6+L9Xd2xzuCywGfXqAMfRVD4RqzzLam
+         TFlQ==
+X-Gm-Message-State: APzg51Dn/285/M5MVzdA/W1cZ/amHMxw1og0hpF6yyLoapxHvIJmGlei
+        uCnaSqpHDzR+hIjZGnPvjxTouRvQ2VMTUhG1ks4vgA==
+X-Google-Smtp-Source: ANB0VdbbCKTzVVlwcEMG3Um8skSm8kcgp9KwcTXbWhSw/gisvoJ30PH8nK1674emyv7u0NEruoJyeaIxzi9ObtNUZ7I=
+X-Received: by 2002:a19:db55:: with SMTP id s82-v6mr1425852lfg.127.1535119107633;
+ Fri, 24 Aug 2018 06:58:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+References: <CGME20180727101302epcas5p22561edd1d60101e611933ccff3e3d008@epcas5p2.samsung.com>
+ <20180727101302epcas5p22561edd1d60101e611933ccff3e3d008~FMiUBZnCN2101321013epcas5p2Z@epcas5p2.samsung.com>
+In-Reply-To: <20180727101302epcas5p22561edd1d60101e611933ccff3e3d008~FMiUBZnCN2101321013epcas5p2Z@epcas5p2.samsung.com>
+From:   Daniel Stone <daniel@fooishbar.org>
+Date:   Fri, 24 Aug 2018 14:58:16 +0100
+Message-ID: <CAPj87rPY6gTjTVdxZ4qtwtNhQPKyrfxeN2_=Z6qH3SoO9QYw+g@mail.gmail.com>
+Subject: Re: [PATCH] drm/kms/crtc: Improving the func drm_mode_setcrtc
+To:     Satendra Singh Thakur <satendra.t@samsung.com>
+Cc:     Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        vineet.j@samsung.com, hemanshu.s@samsung.com, sst2005@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6a012288d6906fee1dbc244050ade1dafe4a9c8d
-Gitweb:     https://git.kernel.org/tip/6a012288d6906fee1dbc244050ade1dafe4a9c8d
-Author:     Vlastimil Babka <vbabka@suse.cz>
-AuthorDate: Thu, 23 Aug 2018 16:21:29 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 24 Aug 2018 15:55:17 +0200
+Hi Satendra,
 
-x86/speculation/l1tf: Suggest what to do on systems with too much RAM
+On Fri, 27 Jul 2018 at 11:13, Satendra Singh Thakur
+<satendra.t@samsung.com> wrote:
+> Following changes are done to this func:
 
-Two users have reported [1] that they have an "extremely unlikely" system
-with more than MAX_PA/2 memory and L1TF mitigation is not effective.
+I would certainly agree with Sean, Martin, and Jani's comments. This
+patch was difficult to follow as it made so many changes at once.
+Being a crucial function which has many subtle details, it is
+important to keep the _changes_ as readable as possible: not just the
+final result, but the intermediate patches.
 
-Make the warning more helpful by suggesting the proper mem=X kernel boot
-parameter to make it effective and a link to the L1TF document to help
-decide if the mitigation is worth the unusable RAM.
+Another thing you might consider is running the igt test suite after
+your patches, particularly when touching core code. Running igt
+would've flagged the below:
 
-[1] https://bugzilla.suse.com/show_bug.cgi?id=1105536
+> +       /* Check if the flag is set*/
+> +       if (!crtc_req->mode_valid) {
+> +               DRM_DEBUG_KMS("mode_valid flag [%d] is not set\n",
+> +               crtc_req->mode_valid);
+> +               return -EINVAL;
+> +       }
 
-Suggested-by: Michal Hocko <mhocko@suse.com>
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: "H . Peter Anvin" <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/966571f0-9d7f-43dc-92c6-a10eec7a1254@suse.cz
----
- arch/x86/kernel/cpu/bugs.c | 4 ++++
- 1 file changed, 4 insertions(+)
+This is a change from the previous behaviour, and not correct.
+mode_valid is allowed to be NULL if there are also no connectors and
+there is no FB: this disables the CRTC.
 
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index cb4a16292aa7..4c2313d0b9ca 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -702,6 +702,10 @@ static void __init l1tf_select_mitigation(void)
- 	half_pa = (u64)l1tf_pfn_limit() << PAGE_SHIFT;
- 	if (e820__mapped_any(half_pa, ULLONG_MAX - half_pa, E820_TYPE_RAM)) {
- 		pr_warn("System has more than MAX_PA/2 memory. L1TF mitigation not effective.\n");
-+		pr_info("You may make it effective by booting the kernel with mem=%llu parameter.\n",
-+				half_pa);
-+		pr_info("However, doing so will make a part of your RAM unusable.\n");
-+		pr_info("Reading https://www.kernel.org/doc/html/latest/admin-guide/l1tf.html might help you decide.\n");
- 		return;
- 	}
- 
+> +       /* Check the validity of count_connectors supplied by user */
+> +       if (!crtc_req->count_connectors ||
+> +               crtc_req->count_connectors > config->num_connector) {
+> +               DRM_DEBUG_KMS("Invalid connectors' count %d\n",
+> +               crtc_req->count_connectors);
+> +               return -EINVAL;
+> +       }
+
+Same comment applies here.
+
+Cheers,
+Daniel
