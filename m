@@ -3,101 +3,140 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7172CC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 16:15:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA897C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 16:16:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 295CA2147A
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 16:15:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84BCF2147A
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 16:16:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="YKTQQ7p6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 295CA2147A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QYMn7YCi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84BCF2147A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727368AbeHXTus (ORCPT
+        id S1727454AbeHXTwB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 15:50:48 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:54711 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726268AbeHXTus (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 15:50:48 -0400
-Received: by mail-it0-f68.google.com with SMTP id l186-v6so2819629itb.4
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 09:15:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8EI6Cmnn55rUrZk3eqlRIC883FRYLzC0/FwbAfAYvzM=;
-        b=YKTQQ7p6v7WyBKA+MYZ7oidxJWR3bZ7c+T5ibTTrm8J3v175QBoJFPhKE7cVp+r27+
-         eMJG7S/01luwXz1YDL8CencEaxh9bY1ke7lzOvq2xPs6MYpt5F7dEiwmhYT3CepYuz5M
-         aCHgqPSbI+FZzM5afue6N1Y1xB3QrA6vJ2+kA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8EI6Cmnn55rUrZk3eqlRIC883FRYLzC0/FwbAfAYvzM=;
-        b=MpPBuMhxPx1MM73keoJvh/7CxZ98HG4Me/aB9yhE5axfFR/VVGEsLtIuXF0CCK8xD3
-         rEQvetZ6Kq19Pgc0EN97HatneQXA38d6yxxm9w4mK+KmUrBvSDO+/E+Rini7ZrhQHodJ
-         Enjf9S9df4eSz0bwv9KWYJrapId/yAWzrmIfgS+xZb+iRGsSdE5iw199t46Hlt9U3Vrt
-         Ar4QohQQyaZcjFy8xHRjp1kPjKkNLJAUZQYhBCrKw458NI9T2+IJxA6Wvn2GouYqngFf
-         SHES+jkOWbDu6jZdiZghV3FdYKI2WReWZiaRf+zErJcMMG9NcMimaxAUNMxDDN4cigNQ
-         AAfw==
-X-Gm-Message-State: APzg51AC0negtxhm13V1STvLlpwXwY2Aqs3ku1fnjE2kfr0bk7PUZCQA
-        P2nHAhL3qE0v/enPxFdGP6dXRwJ5pPiJHIJStOM=
-X-Google-Smtp-Source: ANB0VdZluH2OtuzgBVrqJAWMJVrSZaSVo+01111iLNx1s98NdXbsogFoxUFNznX6vhUCrcBRyFfhMpHNMKd6j/FAoFk=
-X-Received: by 2002:a24:3046:: with SMTP id q67-v6mr2042613itq.9.1535127329127;
- Fri, 24 Aug 2018 09:15:29 -0700 (PDT)
+        Fri, 24 Aug 2018 15:52:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39764 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726268AbeHXTwA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 15:52:00 -0400
+Received: from mail-qt0-f174.google.com (mail-qt0-f174.google.com [209.85.216.174])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A97202147A;
+        Fri, 24 Aug 2018 16:16:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535127400;
+        bh=4VguAd5EYbqM9JUbN1sPYM7lQjjjLL3RD77X4X+MH5U=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=QYMn7YCiaLUnkt3YzewpXG3WK6dHneKLkg1pZGW9bTzrwfsw5TufhGdhmzxjGrc8e
+         5S2/hu3M3Mo1OGImtNqF/DixT2PhQsVQGLHadZXUaMK2TiFdRZLQRkpyCk3MvVMrZh
+         MFVNkmCcqvdyZJg7fvuvUEnAY6+Dj8SSYznJUSP0=
+Received: by mail-qt0-f174.google.com with SMTP id g44-v6so10034476qtb.12;
+        Fri, 24 Aug 2018 09:16:40 -0700 (PDT)
+X-Gm-Message-State: APzg51AizEBWGpys3BY40WHPfMCCmQSSZ13sqvBKbEkHyl1x1UQo5wD4
+        d2LWDZVdioZ6FdCtynRmP6dgKTnBOxPElVaQ2g==
+X-Google-Smtp-Source: ANB0Vdbba/i2GDNbVGWhngeVU4Jws4AtmL6jH8LBVemo8av2mlQEHX/NuIKXVCT1K658BdkwxeaIiZQDtVbjpflUHPk=
+X-Received: by 2002:ac8:46d3:: with SMTP id h19-v6mr2513100qto.188.1535127399902;
+ Fri, 24 Aug 2018 09:16:39 -0700 (PDT)
 MIME-Version: 1.0
-References: <1535125966-7666-1-git-send-email-will.deacon@arm.com> <1535125966-7666-4-git-send-email-will.deacon@arm.com>
-In-Reply-To: <1535125966-7666-4-git-send-email-will.deacon@arm.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 24 Aug 2018 09:15:17 -0700
-Message-ID: <CA+55aFyAWyGTCzG8YtNwDdmS9TDVYoMCUYvxo0cj3V79w7hQ4A@mail.gmail.com>
-Subject: Re: [RFC PATCH 03/11] arm64: pgtable: Implement p[mu]d_valid() and
- check in set_p[mu]d()
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Benjamin Herrenschmidt <benh@au1.ibm.com>,
-        Nick Piggin <npiggin@gmail.com>,
+References: <1534747636-20064-1-git-send-email-vabhav.sharma@nxp.com>
+ <1534747636-20064-6-git-send-email-vabhav.sharma@nxp.com> <CAL_JsqKH4haGy2F2_2EP=evC8ip7DmGR8J4wzrO0wWnOLsaZqA@mail.gmail.com>
+ <AM6PR04MB478980C90EE825D024D8B977F3370@AM6PR04MB4789.eurprd04.prod.outlook.com>
+In-Reply-To: <AM6PR04MB478980C90EE825D024D8B977F3370@AM6PR04MB4789.eurprd04.prod.outlook.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Fri, 24 Aug 2018 11:16:28 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+QrDR_YyZ+icftUrwOoMZcSCMkmj8cR=bqEJ-q+pdntg@mail.gmail.com>
+Message-ID: <CAL_Jsq+QrDR_YyZ+icftUrwOoMZcSCMkmj8cR=bqEJ-q+pdntg@mail.gmail.com>
+Subject: Re: [PATCH 5/5] arm64: dts: add LX2160ARDB board support
+To:     vabhav.sharma@nxp.com
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        linux-kernel-owner@vger.kernel.org,
         Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+        Will Deacon <will.deacon@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Russell King <linux@armlinux.org.uk>, V.Sethi@nxp.com,
+        Udit Kumar <udit.kumar@nxp.com>,
+        Priyanka Jain <priyanka.jain@nxp.com>,
+        Sriram Dash <sriram.dash@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 24, 2018 at 8:52 AM Will Deacon <will.deacon@arm.com> wrote:
->
-> Now that our walk-cache invalidation routines imply a DSB before the
-> invalidation, we no longer need one when we are clearing an entry during
-> unmap.
+On Thu, Aug 23, 2018 at 10:08 AM Vabhav Sharma <vabhav.sharma@nxp.com> wrote:
 
-Do you really still need it when *setting* it?
+[...]
 
-I'm wondering if you could just remove the thing unconditionally.
+> > > +               i2c@3 {
+> > > +                       #address-cells = <1>;
+> > > +                       #size-cells = <0>;
+> > > +                       reg = <0x3>;
+> > > +
+> > > +                       sa56004@4c {
+> >
+> > temperature-sensor@4c
+> Ok, temperature-sensor-1@4c
 
-Why would you need a barrier for another CPU for a mapping that is
-just being created? It's ok if they see the old lack of mapping until
-they are told about it, and that eventual "being told about it" must
-involve a data transfer already.
+No, that's not what I said. You don't need the '-1' because the
+unit-address makes the node name unique. Node names are supposed to be
+generic based on the class/type of device. See the DT spec.
 
-And I'm assuming arm doesn't cache negative page table entries, so
-there's no issue with any stale tlb.
-
-And any other kernel thread looking at the page tables will have to
-honor the page table locking, so you don't need it for some direct
-page table lookup either.
-
-Hmm? It seems like you shouldn't need to order the "set page directory
-entry" with anything.
-
-But maybe there's some magic arm64 rule I'm not aware of. Maybe even
-the local TLB hardware walker isn't coherent with local stores?
-
-                Linus
+> >
+> > > +                               compatible = "nxp,sa56004";
+> > > +                               reg = <0x4c>;
+> > > +                       };
+> > > +
+> > > +                       sa56004@4d {
+> Ok,temperature-sensor-2@4d
+> > > +                               compatible = "nxp,sa56004";
+> > > +                               reg = <0x4d>;
+> > > +                       };
+> > > +               };
+> > > +       };
+> > > +};
+> > > +
+> > > +&i2c4 {
+> > > +       status = "okay";
+> > > +
+> > > +       rtc@51 {
+> > > +               compatible = "nxp,pcf2129";
+> > > +               reg = <0x51>;
+> > > +               // IRQ10_B
+> > > +               interrupts = <0 150 0x4>;
+> > > +               };
+> > > +
+> > > +};
+> > > +
+> > > +&usb0 {
+> > > +       status = "okay";
+> > > +};
+> > > +
+> > > +&usb1 {
+> > > +       status = "okay";
+> > > +};
+> > > +
+> > > +&crypto {
+> > > +       status = "okay";
+> > > +};
+> > > --
+> > > 2.7.4
+> > >
