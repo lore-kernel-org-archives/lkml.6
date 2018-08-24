@@ -2,185 +2,111 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EFD4C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 17:53:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C61BC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 17:56:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC7EF2145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 17:53:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04CAE2145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 17:56:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="ibJAnnrv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC7EF2145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="f7omG2Gt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04CAE2145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727652AbeHXV2m (ORCPT
+        id S1727447AbeHXVcB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 17:28:42 -0400
-Received: from smtprelay2.synopsys.com ([198.182.60.111]:38544 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726601AbeHXV2m (ORCPT
+        Fri, 24 Aug 2018 17:32:01 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:49422 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726573AbeHXVcB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 17:28:42 -0400
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 571ED10C1BAC;
-        Fri, 24 Aug 2018 10:53:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1535133182; bh=pU6Vt7axWq5CX5naq7DXYQ1wFeapZtzLGaLvIpFHHmw=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
-        b=ibJAnnrvg8P17BDi0++Rgi4Z2v0FiZn9LFgtcmpozeiUw6RpBSBsfrlrSIUFN6FMd
-         9MdOQhFRDVw1Xp5aC72BwoIjjeEx7C8GPc/UmjJ4AyLW7lPqpxjw/WZo3GZzRqTSoI
-         pfrkVDGxVc1vJU60xoAIo+1TqB3lNkREqKI+P1yxe00TScEuLES7uyEuab3NF/4YYN
-         RMQdQnF64QRd05NfuANVbhq1FYxrPRtlhN8zlalPFiNOHgWmBnKNKmts7sMyCJTpfS
-         Q4se1IrEf0GhdoHdO7ep/Vv+d9mQ7pmY55VsQ2Cd5uPmni5zIXe5wRS08lUxUnBQLW
-         bCkl/IyCDl/KA==
-Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 5817B3CB3;
-        Fri, 24 Aug 2018 10:52:58 -0700 (PDT)
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- us01wehtc1.internal.synopsys.com (10.12.239.231) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Fri, 24 Aug 2018 10:52:58 -0700
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- DE02WEHTCB.internal.synopsys.com (10.225.19.94) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Fri, 24 Aug 2018 19:52:56 +0200
-Received: from [10.0.2.15] (10.107.25.66) by DE02WEHTCA.internal.synopsys.com
- (10.225.19.80) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 24 Aug
- 2018 19:52:55 +0200
-Subject: Re: [PATCH v6 01/10] i3c: Add core I3C infrastructure
-To:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        vitor <Vitor.Soares@synopsys.com>, <linux-gpio@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>
-CC:     Wolfram Sang <wsa@the-dreams.de>, <linux-i2c@vger.kernel.org>,
-        "Jonathan Corbet" <corbet@lwn.net>, <linux-doc@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        "Cyprian Wronka" <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        "Rafal Ciepiela" <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        "Kumar Gala" <galak@codeaurora.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        Przemyslaw Gaj <pgaj@cadence.com>,
-        Peter Rosin <peda@axentia.se>
-References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
- <20180719152930.3715-2-boris.brezillon@bootlin.com>
- <d2f40cc2-b344-69d1-4314-83524ad7b178@synopsys.com>
- <20180824143934.6d6b6487@bbrezillon>
-From:   vitor <Vitor.Soares@synopsys.com>
-Message-ID: <bdb2924f-ecfa-1da3-41db-9ac77d4d933b@synopsys.com>
-Date:   Fri, 24 Aug 2018 18:52:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 24 Aug 2018 17:32:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=LoDocgFW2joMI+j7awZAkM7FU25dFjm9lPuzWH8J7gA=; b=f7omG2GtNKmtF/fFUL+6QAjI4
+        UFJ357Qolwb8oglnkcFEpW9Ue+t6ziC0Hr0VTKqwRhfo6bFEGAFVgou8XOJhfyDHwvqBoP8S0DTEW
+        gD8N0H2TCkOm+kFQNeNMeXp96fIkTfvysTZUCMnQWM/t8qaAJURJe+zHuS7vnXpbtcLlqv60J5FR+
+        YIfjcAsYrxslWXUUvDR+YyiG4FkhOZw50HV6qKJP/3v7H3ApPgs31qOL0gYeetXJSWb7v1gQP2+Rb
+        IvSeiGomXNxfy+oX3zKdZKXwpHXXq/M7+d0+pjKPjqi8cLCQSKzT8gobBYl/QzT1xz8mMhq2j+J5e
+        PQoSU9JXA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ftGJg-00047d-AK; Fri, 24 Aug 2018 17:56:12 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 082372024D706; Fri, 24 Aug 2018 19:56:10 +0200 (CEST)
+Date:   Fri, 24 Aug 2018 19:56:09 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     linux-kernel@vger.kernel.org, benh@au1.ibm.com,
+        torvalds@linux-foundation.org, npiggin@gmail.com,
+        catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org
+Subject: Re: [RFC PATCH 02/11] arm64: tlb: Add DSB ISHST prior to TLBI in
+ __flush_tlb_[kernel_]pgtable()
+Message-ID: <20180824175609.GR24124@hirez.programming.kicks-ass.net>
+References: <1535125966-7666-1-git-send-email-will.deacon@arm.com>
+ <1535125966-7666-3-git-send-email-will.deacon@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180824143934.6d6b6487@bbrezillon>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [10.107.25.66]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1535125966-7666-3-git-send-email-will.deacon@arm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
+On Fri, Aug 24, 2018 at 04:52:37PM +0100, Will Deacon wrote:
+> __flush_tlb_[kernel_]pgtable() rely on set_pXd() having a DSB after
+> writing the new table entry and therefore avoid the barrier prior to the
+> TLBI instruction.
+> 
+> In preparation for delaying our walk-cache invalidation on the unmap()
+> path, move the DSB into the TLB invalidation routines.
+> 
+> Signed-off-by: Will Deacon <will.deacon@arm.com>
+> ---
+>  arch/arm64/include/asm/tlbflush.h | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
+> index 7e2a35424ca4..e257f8655b84 100644
+> --- a/arch/arm64/include/asm/tlbflush.h
+> +++ b/arch/arm64/include/asm/tlbflush.h
+> @@ -213,6 +213,7 @@ static inline void __flush_tlb_pgtable(struct mm_struct *mm,
+>  {
+>  	unsigned long addr = __TLBI_VADDR(uaddr, ASID(mm));
+>  
+> +	dsb(ishst);
+>  	__tlbi(vae1is, addr);
+>  	__tlbi_user(vae1is, addr);
+>  	dsb(ish);
+> @@ -222,6 +223,7 @@ static inline void __flush_tlb_kernel_pgtable(unsigned long kaddr)
+>  {
+>  	unsigned long addr = __TLBI_VADDR(kaddr, 0);
+>  
+> +	dsb(ishst);
+>  	__tlbi(vaae1is, addr);
+>  	dsb(ish);
+>  }
 
+I would suggest these barrier -- like any other barriers, carry a
+comment that explain the required ordering.
 
-On 24-08-2018 13:39, Boris Brezillon wrote:
-> Hi Vitor,
->
-> On Wed, 22 Aug 2018 17:43:34 +0100
-> vitor <Vitor.Soares@synopsys.com> wrote:
->
->> Hi Boris,
->>
->>
->> On 19-07-2018 16:29, Boris Brezillon wrote:
->>> +int i3c_bus_register(struct i3c_bus *i3cbus)
->>> +{
->>> +	struct i2c_dev_desc *desc;
->>> +
->>> +	i3c_bus_for_each_i2cdev(i3cbus, desc) {
->>> +		switch (desc->boardinfo->lvr & I3C_LVR_I2C_INDEX_MASK) {
->>> +		case I3C_LVR_I2C_INDEX(0):
->>> +			if (i3cbus->mode < I3C_BUS_MODE_MIXED_FAST)
->>> +				i3cbus->mode = I3C_BUS_MODE_MIXED_FAST;
->>> +			break;
->>> +
->>> +		case I3C_LVR_I2C_INDEX(1):
->>> +		case I3C_LVR_I2C_INDEX(2):
->>> +			if (i3cbus->mode < I3C_BUS_MODE_MIXED_SLOW)
->>> +				i3cbus->mode = I3C_BUS_MODE_MIXED_SLOW;
->>> +			break;
->>> +
->>> +		default:
->>> +			return -EINVAL;
->>> +		}
->>> +	}
->>> +
->>> +	if (!i3cbus->scl_rate.i3c)
->>> +		i3cbus->scl_rate.i3c = I3C_BUS_TYP_I3C_SCL_RATE;
->>> +
->>> +	if (!i3cbus->scl_rate.i2c) {
->>> +		if (i3cbus->mode == I3C_BUS_MODE_MIXED_SLOW)
->>> +			i3cbus->scl_rate.i2c = I3C_BUS_I2C_FM_SCL_RATE;
->>> +		else
->>> +			i3cbus->scl_rate.i2c = I3C_BUS_I2C_FM_PLUS_SCL_RATE;
->>> +	}
->>> +
->>> +	/*
->>> +	 * I3C/I2C frequency may have been overridden, check that user-provided
->>> +	 * values are not exceeding max possible frequency.
->>> +	 */
->>> +	if (i3cbus->scl_rate.i3c > I3C_BUS_MAX_I3C_SCL_RATE ||
->>> +	    i3cbus->scl_rate.i2c > I3C_BUS_I2C_FM_PLUS_SCL_RATE) {
->>> +		return -EINVAL;
->>> +	}
->>> +
->>> +	dev_set_name(&i3cbus->dev, "i3c-%d", i3cbus->id);
->>> +
->>> +	return device_add(&i3cbus->dev);
->>> +}
->> During the tests of the bus with i2c devices I found the i2c_dev_desc
->> objects aren't allocated before this function. This cause i3cbus->mode =
->> I3C_BUS_MODE_PURE.
-> I just checked and DT parsing (+ I2C descs creation) is done before
-> i3c_bus_register() is called, so we should be good. How did you declare
-> your I2C devices (right now, only DT declaration is supported).
-During the DT parsing, you create the i2c_dev_boardinfo. the 
-i2c_dev_desc is created in i3c_master_bus_init() which is after the 
-i3c_mater_create_bus(). One possible way to fix this is to pass master 
-also to i3c_bus_register and iterate over i2c_dev_board_info list.
+I think this here reads like:
 
->> I want to do something for the slave and secondary master, do you
->> already have infrastructure that you can share?
-> What do you mean?
->
-> Regards,
->
-> Boris
+	STORE: unhook page
 
-I want start to add the secondary master functionality but it is also 
-necessary to add the infrastructure to the subsystem.
-So, to avoid duplicated work can you share your plans for the secondary 
-master?
+	DSB-ishst: wait for all stores to complete
+	TLBI: invalidate broadcast
+	DSB-ish: wait for TLBI to complete
 
-Best regards,
-Vitor Soares
-
-
+And the 'newly' placed DSB-ishst ensures the page is observed unlinked
+before we issue the invalidate.
