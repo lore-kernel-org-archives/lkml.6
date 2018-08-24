@@ -2,99 +2,107 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 688A1C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:10:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F901C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:12:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A6672157C
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:10:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A6672157C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 08F372157C
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:12:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08F372157C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axis.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727939AbeHXQpL (ORCPT
+        id S1727519AbeHXQrQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 12:45:11 -0400
-Received: from foss.arm.com ([217.140.101.70]:57156 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727519AbeHXQpL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 12:45:11 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DA29815A2;
-        Fri, 24 Aug 2018 06:10:34 -0700 (PDT)
-Received: from brain-police (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8462C3F675;
-        Fri, 24 Aug 2018 06:10:30 -0700 (PDT)
-Date:   Fri, 24 Aug 2018 14:10:27 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        torvalds@linux-foundation.org, luto@kernel.org, x86@kernel.org,
-        bp@alien8.de, riel@surriel.com, jannh@google.com,
-        ascannell@google.com, dave.hansen@intel.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        David Miller <davem@davemloft.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-arch@vger.kernel.org, Palmer Dabbelt <palmer@sifive.com>,
-        linux-riscv@lists.infradead.org
-Subject: Re: [RFC PATCH 2/2] mm: mmu_notifier fix for tlb_end_vma (build
- failures)
-Message-ID: <20180824131026.GB11868@brain-police>
-References: <20180823084709.19717-1-npiggin@gmail.com>
- <20180823084709.19717-3-npiggin@gmail.com>
- <20180824130722.GA31409@roeck-us.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180824130722.GA31409@roeck-us.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Fri, 24 Aug 2018 12:47:16 -0400
+Received: from bastet.se.axis.com ([195.60.68.11]:53811 "EHLO
+        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727027AbeHXQrQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 12:47:16 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bastet.se.axis.com (Postfix) with ESMTP id 7DBB1184C7;
+        Fri, 24 Aug 2018 15:12:37 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at bastet.se.axis.com
+Received: from bastet.se.axis.com ([IPv6:::ffff:127.0.0.1])
+        by localhost (bastet.se.axis.com [::ffff:127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id k8ZXcun8HrAW; Fri, 24 Aug 2018 15:12:36 +0200 (CEST)
+Received: from boulder02.se.axis.com (boulder02.se.axis.com [10.0.8.16])
+        by bastet.se.axis.com (Postfix) with ESMTPS id CDEF5184D8;
+        Fri, 24 Aug 2018 15:12:36 +0200 (CEST)
+Received: from boulder02.se.axis.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6D1C21A06D;
+        Fri, 24 Aug 2018 15:12:36 +0200 (CEST)
+Received: from boulder02.se.axis.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 61E871A06B;
+        Fri, 24 Aug 2018 15:12:36 +0200 (CEST)
+Received: from seth.se.axis.com (unknown [10.0.2.172])
+        by boulder02.se.axis.com (Postfix) with ESMTP;
+        Fri, 24 Aug 2018 15:12:36 +0200 (CEST)
+Received: from lnxartpec.se.axis.com (lnxartpec.se.axis.com [10.88.4.9])
+        by seth.se.axis.com (Postfix) with ESMTP id 554CF1E7F;
+        Fri, 24 Aug 2018 15:12:36 +0200 (CEST)
+Received: by lnxartpec.se.axis.com (Postfix, from userid 10564)
+        id 501B78016F; Fri, 24 Aug 2018 15:12:36 +0200 (CEST)
+From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
+To:     catalin.marinas@arm.com, akpm@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Vincent Whitchurch <rabinv@axis.com>
+Subject: [PATCH] kmemleak: Always register debugfs file
+Date:   Fri, 24 Aug 2018 15:12:20 +0200
+Message-Id: <20180824131220.19176-1-vincent.whitchurch@axis.com>
+X-Mailer: git-send-email 2.11.0
+X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 24, 2018 at 06:07:22AM -0700, Guenter Roeck wrote:
-> On Thu, Aug 23, 2018 at 06:47:09PM +1000, Nicholas Piggin wrote:
-> > The generic tlb_end_vma does not call invalidate_range mmu notifier,
-> > and it resets resets the mmu_gather range, which means the notifier
-> > won't be called on part of the range in case of an unmap that spans
-> > multiple vmas.
-> > 
-> > ARM64 seems to be the only arch I could see that has notifiers and
-> > uses the generic tlb_end_vma. I have not actually tested it.
-> > 
-> > Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
-> > Acked-by: Will Deacon <will.deacon@arm.com>
-> 
-> This patch breaks riscv builds in mainline.
+If kmemleak built in to the kernel, but is disabled by default, the
+debugfs file is never registered.  Because of this, it is not possible
+to find out if the kernel is built with kmemleak support by checking for
+the presence of this file.  To allow this, always register the file.
 
-Looks very similar to the breakage we hit on arm64. diff below should fix
-it.
+After this patch, if the file doesn't exist, kmemleak is not available
+in the kernel.  If writing "scan" or any other value than "clear" to
+this file results in EBUSY, then kmemleak is available but is disabled
+by default and can be activated via the kernel command line.
 
-Will
+Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
+---
+ mm/kmemleak.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---->*
-
-diff --git a/arch/riscv/include/asm/tlb.h b/arch/riscv/include/asm/tlb.h
-index c229509288ea..5017060be63c 100644
---- a/arch/riscv/include/asm/tlb.h
-+++ b/arch/riscv/include/asm/tlb.h
-@@ -14,11 +14,11 @@
- #ifndef _ASM_RISCV_TLB_H
- #define _ASM_RISCV_TLB_H
+diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+index 9a085d525bbc..17dd883198ae 100644
+--- a/mm/kmemleak.c
++++ b/mm/kmemleak.c
+@@ -2097,6 +2097,11 @@ static int __init kmemleak_late_init(void)
  
--#include <asm-generic/tlb.h>
--
- static inline void tlb_flush(struct mmu_gather *tlb)
- {
- 	flush_tlb_mm(tlb->mm);
- }
+ 	kmemleak_initialized = 1;
  
-+#include <asm-generic/tlb.h>
++	dentry = debugfs_create_file("kmemleak", 0644, NULL, NULL,
++				     &kmemleak_fops);
++	if (!dentry)
++		pr_warn("Failed to create the debugfs kmemleak file\n");
 +
- #endif /* _ASM_RISCV_TLB_H */
+ 	if (kmemleak_error) {
+ 		/*
+ 		 * Some error occurred and kmemleak was disabled. There is a
+@@ -2108,10 +2113,6 @@ static int __init kmemleak_late_init(void)
+ 		return -ENOMEM;
+ 	}
+ 
+-	dentry = debugfs_create_file("kmemleak", 0644, NULL, NULL,
+-				     &kmemleak_fops);
+-	if (!dentry)
+-		pr_warn("Failed to create the debugfs kmemleak file\n");
+ 	mutex_lock(&scan_mutex);
+ 	start_scan_thread();
+ 	mutex_unlock(&scan_mutex);
+-- 
+2.11.0
+
