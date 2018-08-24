@@ -2,265 +2,98 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C342C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 05:24:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DEE2C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 05:25:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AB3D208B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 05:24:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFE642157C
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 05:25:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ABKy6TLH";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="gf0x+15C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AB3D208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HU9DibU4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFE642157C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727368AbeHXI5J (ORCPT
+        id S1727484AbeHXI6n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 04:57:09 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33232 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726338AbeHXI5J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 04:57:09 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 78B716032D; Fri, 24 Aug 2018 05:24:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535088248;
-        bh=bKfDw4AFXPgCsOlMPxzulc+iYOc9PiNUCLsAOff4NJE=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ABKy6TLHYTkoylqr4yWw2hi56HwFb9LPqa2BkZyx5A1vpDSewPtPCSnR/EVA4jnJm
-         dUf9j9B2jE/afDDu7Fwkb00emN34dGWSvqPXknblIJb0RDEfCr0rC6jAbHtoIflTin
-         Hikwi47FHz/WFF90IEQkMaPQSgrIqhMX/jUqd5js=
-Received: from [10.206.24.101] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Fri, 24 Aug 2018 04:58:43 -0400
+Received: from ozlabs.org ([203.11.71.1]:37257 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726338AbeHXI6n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 04:58:43 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: sayalil@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2E6A16032D;
-        Fri, 24 Aug 2018 05:24:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535088247;
-        bh=bKfDw4AFXPgCsOlMPxzulc+iYOc9PiNUCLsAOff4NJE=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=gf0x+15CxcHfCkNpqM4rkwgfJ4HTucbsEHxCGCenSB9c3kINWrWwJbQErb2LdqJ4F
-         e+iv+z7ttYn2DKKGaALJoUcUkh9HoFCRjDuYqlMtCD0OBlD3xc1ErqP4fgw8DUKHQI
-         ZoYtJ5JRHuuGWsjfa9oBXAABC5lGdXpqimu8KPC0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2E6A16032D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
-Subject: Re: [PATCH V9 1/2] scsi: ufs: set the device reference clock setting
-To:     Evan Green <evgreen@chromium.org>
-Cc:     subhashj@codeaurora.org, cang@codeaurora.org,
-        vivek.gautam@codeaurora.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vinayak Holikatti <vinholikatti@gmail.com>,
-        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
-        asutoshd@codeaurora.org, riteshh@codeaurora.org,
-        adrian.hunter@intel.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1534846649-2456-1-git-send-email-sayalil@codeaurora.org>
- <1534846649-2456-2-git-send-email-sayalil@codeaurora.org>
- <CAE=gft6tA=B008oS-TP2e-aJ80ZQT_tF3Ngf6Ly5f5r=QqpBng@mail.gmail.com>
-From:   Sayali Lokhande <sayalil@codeaurora.org>
-Message-ID: <73519148-aa7e-2bc4-bf12-3efbe8367efe@codeaurora.org>
-Date:   Fri, 24 Aug 2018 10:54:00 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        by ozlabs.org (Postfix) with ESMTPSA id 41xV9d6203z9s3C;
+        Fri, 24 Aug 2018 15:25:41 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1535088342;
+        bh=xlMgHAwBVrDWcJMoL8Q4YDTqcjtKORk/LupLWuDoG5k=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=HU9DibU4HtW820znyTzUegfWuncCjkt8J8Y65rSYEBCTLBoZ6QduNjCx5C8tMJ7UZ
+         fer3lXhhlGziUKnKtuUiPbLlzkjurR828+hc2X5wK+rrZbP7CJDpOmDpnY1S3f10Wm
+         G/DcT19+GZ8bgscvlz7a/e8j4nbaV0MEBr7peloJye894ExjU4TwWsDNsKvcyt5keI
+         NNlDJJ/ZqpTtkKGa3A7fbpGdz21PXQdNABwAT7Hx79IcfBt5ITC5y2aQ2llDbKyN1W
+         5H4Of0hfD1yeqbl6B0IKT6gHPsDroGSH9y3zRbcDph+kiir8RQQ2cw8tMClOhN67ne
+         zMv9hHT1EnSaA==
+Date:   Fri, 24 Aug 2018 15:25:41 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        linux-mm <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] XArray for 4.19
+Message-ID: <20180824152541.3553a8cc@canb.auug.org.au>
+In-Reply-To: <CA+55aFxFjAmrFpwQmEHCthHOzgidCKnod+cNDEE+3Spu9o1s3w@mail.gmail.com>
+References: <20180813161357.GB1199@bombadil.infradead.org>
+        <CA+55aFxFjAmrFpwQmEHCthHOzgidCKnod+cNDEE+3Spu9o1s3w@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAE=gft6tA=B008oS-TP2e-aJ80ZQT_tF3Ngf6Ly5f5r=QqpBng@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/eTQPGCSlA1hGnl5O.I6Lyi0"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/eTQPGCSlA1hGnl5O.I6Lyi0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 8/23/2018 10:49 PM, Evan Green wrote:
-> On Tue, Aug 21, 2018 at 3:18 AM Sayali Lokhande <sayalil@codeaurora.org> wrote:
->> From: Subhash Jadavani <subhashj@codeaurora.org>
->>
->> UFS host supplies the reference clock to UFS device and UFS device
->> specification allows host to provide one of the 4 frequencies (19.2 MHz,
->> 26 MHz, 38.4 MHz, 52 MHz) for reference clock. Host should set the
->> device reference clock frequency setting in the device based on what
->> frequency it is supplying to UFS device.
->>
->> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
->> Signed-off-by: Can Guo <cang@codeaurora.org>
->> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
->> ---
->>   drivers/scsi/ufs/ufs.h    | 14 ++++++++
->>   drivers/scsi/ufs/ufshcd.c | 92 +++++++++++++++++++++++++++++++++++++++++++++++
->>   drivers/scsi/ufs/ufshcd.h |  2 ++
->>   3 files changed, 108 insertions(+)
->>
->> diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
->> index 14e5bf7..a2e76b1 100644
->> --- a/drivers/scsi/ufs/ufs.h
->> +++ b/drivers/scsi/ufs/ufs.h
->> @@ -378,6 +378,20 @@ enum query_opcode {
->>          UPIU_QUERY_OPCODE_TOGGLE_FLAG   = 0x8,
->>   };
->>
->> +/* bRefClkFreq attribute values */
->> +enum ufs_ref_clk_freq {
->> +       REF_CLK_FREQ_19_2_MHZ   = 0,
->> +       REF_CLK_FREQ_26_MHZ     = 1,
->> +       REF_CLK_FREQ_38_4_MHZ   = 2,
->> +       REF_CLK_FREQ_52_MHZ     = 3,
->> +       REF_CLK_FREQ_INVAL      = -1,
->> +};
->> +
->> +struct ufs_ref_clk {
->> +       u32 freq_hz;
->> +       enum ufs_ref_clk_freq val;
->> +};
->> +
->>   /* Query response result code */
->>   enum {
->>          QUERY_RESULT_SUCCESS                    = 0x00,
->> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
->> index c5b1bf1..e946844 100644
->> --- a/drivers/scsi/ufs/ufshcd.c
->> +++ b/drivers/scsi/ufs/ufshcd.c
->> @@ -6296,6 +6296,91 @@ static void ufshcd_def_desc_sizes(struct ufs_hba *hba)
->>          hba->desc_size.hlth_desc = QUERY_DESC_HEALTH_DEF_SIZE;
->>   }
->>
->> +static struct ufs_ref_clk ufs_ref_clk_freqs[] = {
->> +       {19200000, REF_CLK_FREQ_19_2_MHZ},
->> +       {26000000, REF_CLK_FREQ_26_MHZ},
->> +       {38400000, REF_CLK_FREQ_38_4_MHZ},
->> +       {52000000, REF_CLK_FREQ_52_MHZ},
->> +       {0, REF_CLK_FREQ_INVAL},
->> +};
->> +
->> +static inline enum ufs_ref_clk_freq
->> +ufs_get_bref_clk_for_ref_clk_freq_hz(u32 freq)
-> This name is a little hairy. Maybe ufs_get_bref_clk_from_hz, or
-> ufs_hz_to_bref_clk?
-Done.  ufs_get_bref_clk_from_hz() sounds good. Will update.
->> +{
->> +       int i = 0;
->> +
->> +       while (ufs_ref_clk_freqs[i].freq_hz != freq) {
->> +               if (!ufs_ref_clk_freqs[i].freq_hz)
->> +                       return REF_CLK_FREQ_INVAL;
->> +               i++;
->> +       }
->> +
->> +       return ufs_ref_clk_freqs[i].val;
->> +}
->> +
->> +void ufshcd_parse_dev_ref_clk_freq(struct ufs_hba *hba)
->> +{
->> +       struct device *dev = hba->dev;
->> +       struct device_node *np = dev->of_node;
->> +       struct clk *refclk = NULL;
->> +       u32 freq = 0;
->> +
->> +       if (!np)
->> +               return;
->> +
->> +       hba->dev_ref_clk_freq = REF_CLK_FREQ_INVAL;
->> +
->> +       refclk = of_clk_get_by_name(np, "ref_clk");
->> +       if (!refclk)
->> +               return;
->> +
->> +       freq = clk_get_rate(refclk);
->> +       if (freq > REF_CLK_FREQ_52_MHZ) {
-> freq is in Hertz, but the enum value will be something like 3. I think
-> you should just call your function below, and then check the return
-> value of it for the error case you're trying to do here.
-Agree. I should be checking hba->dev_ref_clk_freq instead of freq (which 
-is in hz). Will update.
->> +               dev_err(hba->dev,
->> +               "%s: invalid ref_clk setting = %d\n",
->> +               __func__, freq);
->> +               return;
->> +       }
->> +
->> +       hba->dev_ref_clk_freq =
->> +               ufs_get_bref_clk_for_ref_clk_freq_hz(freq);
->> +}
->> +
->> +static int ufshcd_set_dev_ref_clk(struct ufs_hba *hba)
->> +{
->> +       int err = 0;
-> You don't need to initialize this since you immediately assign it below.
-Done.
->> +       int ref_clk = -1;
->> +       u32 freq = (u32)hba->dev_ref_clk_freq;
-> Is the cast necessary?
-Not necessary. Will be removed.
->> +
->> +       err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_READ_ATTR,
->> +                       QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0, &ref_clk);
->> +
->> +       if (err) {
->> +               dev_err(hba->dev, "%s: failed reading bRefClkFreq. err = %d\n",
->> +                        __func__, err);
->> +               goto out;
->> +       }
->> +
->> +       if (ref_clk == hba->dev_ref_clk_freq)
->> +               goto out; /* nothing to update */
->> +
->> +       err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
->> +                       QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0, &freq);
->> +
->> +       if (err)
->> +               dev_err(hba->dev, "%s: bRefClkFreq setting to %u Hz failed\n",
->> +               __func__, ufs_ref_clk_freqs[freq].freq_hz);
->> +       /*
->> +        * It is good to print this out here to debug any later failures
->> +        * related to gear switch.
->> +        */
->> +       dev_dbg(hba->dev, "%s: bRefClkFreq setting to %u Hz succeeded\n",
->> +               __func__, ufs_ref_clk_freqs[freq].freq_hz);
-> In the error case you print out both the failed message and the success message?
-Agree. Will add goto out; in error case above.
->> +
->> +out:
->> +       return err;
->> +}
->> +
->>   /**
->>    * ufshcd_probe_hba - probe hba to detect device and initialize
->>    * @hba: per-adapter instance
->> @@ -6361,6 +6446,12 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
->>                          "%s: Failed getting max supported power mode\n",
->>                          __func__);
->>          } else {
->> +               /*
->> +                * Set the right value to bRefClkFreq before attempting to
->> +                * switch to HS gears.
->> +                */
->> +               if (hba->dev_ref_clk_freq != REF_CLK_FREQ_INVAL)
->> +                       ufshcd_set_dev_ref_clk(hba);
->>                  ret = ufshcd_config_pwr_mode(hba, &hba->max_pwr_info.info);
->>                  if (ret) {
->>                          dev_err(hba->dev, "%s: Failed setting power mode, err = %d\n",
->> @@ -7693,6 +7784,7 @@ int ufshcd_alloc_host(struct device *dev, struct ufs_hba **hba_handle)
->>
->>          INIT_LIST_HEAD(&hba->clk_list_head);
->>
->> +       ufshcd_parse_dev_ref_clk_freq(hba);
-> I get an uncomfortable feeling about calling this function from
-> alloc_host, given that everybody else calls their parse functions from
-> ufshcd_pltfrm_init. I wonder if you should just initialize the new
-> member here in alloc_host to the invalid value, and then move the call
-> to the parse function where you had it before in ufshcd_pltfrm_init.
-> That way you don't have the problems in the previous series with
-> leaving the value uninitialized, but you're also not calling of_
-> functions from alloc_host, which seems like an abuse of alloc_host.
-Agree. Will only initialize the ref_clk in alloc_host() and move the 
-actual parse() call in pltfrm_init as before.
-> -Evan
+Hi Linus,
 
+On Tue, 21 Aug 2018 19:09:31 -0700 Linus Torvalds <torvalds@linux-foundatio=
+n.org> wrote:
+>
+> For some unfathomable reason, you have based it on the libnvdimm tree.
+> I don't understand at all wjhy you did that.
+
+That was partly my fault for giving not very good advice when the
+(quite complex) merge conflict turned up in the linux-next tree.  I
+will try to give better advice in the future.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/eTQPGCSlA1hGnl5O.I6Lyi0
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlt/ltUACgkQAVBC80lX
+0Gy/tgf/XrHWEdPxK3PFOvQTMG8aUVpqmkA+ggelCwrXVXK3QoAWV1fSUc70RzRd
+GDFbkjdI31YaJij+BuTJkOQt3p/aQ/kr0QCBJTh4ZHS3qEfkHQXbJTUH1Q3jnxuH
+8ze7k4z3wfcTMMZCNRwdxVht0/dRxUO1roJBqcwnxS2Hjnu+kuqXTOYG/BI9EZii
+cmyK9JM9Cl1a8rK9yQ7y7xWGrh6+tWrjwX9ED/0cFPioDpDxplrx21pN7wdA2OvY
+FTALotroiMCfJyNF4claRsxAH8FxW1jz9Dy+zOapuFfOQGJUVh6Btlnr9/MyL32c
+DO9ImcA8kAXIq5kflYhjAt+gEchmPg==
+=oNGr
+-----END PGP SIGNATURE-----
+
+--Sig_/eTQPGCSlA1hGnl5O.I6Lyi0--
