@@ -2,116 +2,132 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5C09C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 21:24:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69A8CC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 21:39:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B4642150F
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 21:24:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BACCB2150F
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 21:39:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IJrf/wln"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B4642150F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="dpvZ8EW0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BACCB2150F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727988AbeHYBBM (ORCPT
+        id S1727265AbeHYBQG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 21:01:12 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:36530 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726992AbeHYBBM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 21:01:12 -0400
-Received: by mail-pg1-f195.google.com with SMTP id h17-v6so4840161pgv.3
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 14:24:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=wVNaP7cQg4a3pxkFxPonWowsN2mCVx8YyA1KYt5WFAA=;
-        b=IJrf/wlnJ9i6ujQ6UjFtIiV+pYIIdkX2aqCR01XqJ/WZNIAyxv2YuJ9u13tTgSfnsz
-         +nPrpeQAr1ReuXTxlSU1uenOBZpMHry/H4y+Mqm5srnFgPvOsFxSqGqpL2zJqETIY+69
-         anoZKQdXnvH0g1s+aqg+8Ks4ifjBCopLONpi7ONxUdUA3E/wnfOq/iN93M50pKb9p/z+
-         Qt90VvEmV52ddzQS7GB83t61R6Al92vncWCX1rf6l1g6ty9BbZMfcuFS9o6WoDfxzg7g
-         4FbxQJq49+MY7VTnH2Ef0QjUyWSIFNXNG/aOtz8YLTX2ZAeK8saXrVnd4Vz5eLuvhR0n
-         H/JA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=wVNaP7cQg4a3pxkFxPonWowsN2mCVx8YyA1KYt5WFAA=;
-        b=HxAabnAedmewCdgeNvPSWjtlixUSC8jd8YBlfWDgDuN7xu0AhzMS/5rssPWUftSsud
-         XDU0JxfIAjtKk2aLVCSwPHnw1vVPoliKyuqtxmnhSgkOZV8Ks701dQZAXyZB3mdzY6Fs
-         +3N/DrSBsijPxdKTSZ4NKWySQxQ9MaDTahTYF+os9700mTM2rRhagvNAL0JBMMOkaOpX
-         2qLlaGOkHZlA5H87f7qjPensoq/g4WYpm1EgPImg5P3Ze5noCHdyobKFRd53GwZnNR6Q
-         9iuxr+TN6kvNIILNDwfF/aZqPnL22DBMGCeNngGos6t32cu/yeZt6u+hMLaBND3tLxKo
-         4Odg==
-X-Gm-Message-State: APzg51CsBGeG994eE7ieCB3pIVXJtGMSBGUhoEnDiUvpgf7gi01M9j3s
-        pWFy97Wx4Wue/DInW/7LFzQfJQ==
-X-Google-Smtp-Source: ANB0VdY0vtvPY+7tyF7BEyNI25HIk9pQAs2AV6zy8fxiNfYtXX5JUq8MbfeAa/sBakXvQBw2k77Ikw==
-X-Received: by 2002:a63:e001:: with SMTP id e1-v6mr3247118pgh.380.1535145890768;
-        Fri, 24 Aug 2018 14:24:50 -0700 (PDT)
-Received: from smuckle.san.corp.google.com ([2620:15c:2d:3:fa74:b312:5fef:6cbf])
-        by smtp.gmail.com with ESMTPSA id l9-v6sm10200260pgg.79.2018.08.24.14.24.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 Aug 2018 14:24:50 -0700 (PDT)
-Subject: Re: [PATCH] sched/fair: vruntime should normalize when switching from
- fair
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Miguel de Dios <migueldedios@google.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        kernel-team@android.com, Todd Kjos <tkjos@google.com>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Patrick Bellasi <Patrick.Bellasi@arm.com>,
-        Chris Redpath <Chris.Redpath@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        John Dias <joaodias@google.com>
-References: <20180817182728.76129-1-smuckle@google.com>
- <dcd2fa21-7fef-d648-017d-9d42d11793e0@google.com>
- <20180824093227.GN24124@hirez.programming.kicks-ass.net>
- <20180824094742.GJ24142@hirez.programming.kicks-ass.net>
-From:   Steve Muckle <smuckle@google.com>
-Message-ID: <ae94fb88-646b-1d82-b61d-103792965dbf@google.com>
-Date:   Fri, 24 Aug 2018 14:24:48 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Fri, 24 Aug 2018 21:16:06 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:35289 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726559AbeHYBQG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 21:16:06 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id b256b4e8;
+        Fri, 24 Aug 2018 21:25:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=from:to:cc
+        :subject:date:message-id:mime-version:content-type
+        :content-transfer-encoding; s=mail; bh=oeU+spnXqRdqWFPwIcSCz7RNL
+        3A=; b=dpvZ8EW0GPKeiTVvVhhBT5B8mw4+KuiplZPp+QTAAXzXF8zgVNvSG/R1P
+        7hZzI1lgMOsRMjRvke23ifI4+Hd8aunhqAEieTejrHKHrawMZbWgxJn6Rj8pAN9X
+        Gv3V92q66FGaj1vj7V7Y9eoUOaXHwI5KE1K+ZaWr5LR3MoDX5zARcKFy+Pxbi7je
+        dtPdCfE47QCirTKJZbGWDTlDttneZOToWPV0WR2KrD4ovukHZKcJ2YR+Jg/n/j+d
+        reDV1rb2v9fY3FsmncpyIIy+NralukzK9wfhx+oSHSnzLDiJibXTpNpyt8vVPYAU
+        0SCY7Ho15h2Qa5etmkPNCK4cAYVBA==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id cdcd694d (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
+        Fri, 24 Aug 2018 21:25:14 +0000 (UTC)
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+To:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        davem@davemloft.net
+Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Subject: [PATCH v2 00/17] WireGuard: Secure Network Tunnel
+Date:   Fri, 24 Aug 2018 15:38:32 -0600
+Message-Id: <20180824213849.23647-1-Jason@zx2c4.com>
 MIME-Version: 1.0
-In-Reply-To: <20180824094742.GJ24142@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/24/2018 02:47 AM, Peter Zijlstra wrote:
->>> On 08/17/2018 11:27 AM, Steve Muckle wrote:
-> 
->>>> When rt_mutex_setprio changes a task's scheduling class to RT,
->>>> we're seeing cases where the task's vruntime is not updated
->>>> correctly upon return to the fair class.
-> 
->>>> Specifically, the following is being observed:
->>>> - task is deactivated while still in the fair class
->>>> - task is boosted to RT via rt_mutex_setprio, which changes
->>>>     the task to RT and calls check_class_changed.
->>>> - check_class_changed leads to detach_task_cfs_rq, at which point
->>>>     the vruntime_normalized check sees that the task's state is TASK_WAKING,
->>>>     which results in skipping the subtraction of the rq's min_vruntime
->>>>     from the task's vruntime
->>>> - later, when the prio is deboosted and the task is moved back
->>>>     to the fair class, the fair rq's min_vruntime is added to
->>>>     the task's vruntime, even though it wasn't subtracted earlier.
-> 
-> I'm thinking that is an incomplete scenario; where do we get to
-> TASK_WAKING.
+This patchset is available on git.kernel.org in this branch, where it may be
+pulled directly for inclusion into net-next:
 
-Yes there's a missing bit of context here at the beginning that the task 
-to be boosted had already been put into TASK_WAKING.
+  * https://git.kernel.org/pub/scm/linux/kernel/git/zx2c4/linux.git/log/?h=jd/wireguard
+
+WireGuard is a secure network tunnel written especially for Linux, which
+has faced around three years of serious development, deployment, and
+scrutiny. It delivers excellent performance and is extremely easy to
+use and configure. It has been designed with the primary goal of being
+both easy to audit by virtue of being small and highly secure from a
+cryptography and systems security perspective. WireGuard is used by some
+massive companies pushing enormous amounts of traffic, and likely
+already today you've consumed bytes that at some point transited through
+a WireGuard tunnel. Even as an out-of-tree module, WireGuard has been
+integrated into various userspace tools, Linux distributions, mobile
+phones, and data centers. There are ports in several languages to
+several operating systems, and even commercial hardware and services
+sold integrating WireGuard. It is time, therefore, for WireGuard to be
+properly integrated into Linux.
+
+Ample information, including documentation, installation instructions,
+and project details, is available at:
+
+  * https://www.wireguard.com/
+  * https://www.wireguard.com/papers/wireguard.pdf
+
+As it is currently an out-of-tree module, it lives in its own git repo
+and has its own mailing list, and every commit for the module is tested
+against every stable kernel since 3.10 on a variety of architectures
+using an extensive test suite:
+
+  * https://git.zx2c4.com/WireGuard
+    https://git.kernel.org/pub/scm/linux/kernel/git/zx2c4/WireGuard.git/
+  * https://lists.zx2c4.com/mailman/listinfo/wireguard
+  * https://www.wireguard.com/build-status/
+
+The project has been broadly discussed at conferences, and was presented
+to the Netdev developers in Seoul last November, where a paper was
+released detailing some interesting aspects of the project. Dave asked
+me after the talk if I would consider sending in a v1 "sooner rather
+than later", hence this patchset. A decision is still waiting from the
+LPC network track committee, but an update on these topics may be
+presented in Vancouver in a few months. Presentations:
+
+  * https://www.wireguard.com/presentations/
+  * https://www.wireguard.com/papers/wireguard-netdev22.pdf
+
+The cryptography in the protocol itself has been formally verified by
+several independent academic teams with positive results, and I know of
+two additional efforts on their way to further corroborate those
+findings. The version 1 protocol is "complete", and so the purpose of
+this review is to assess the implementation of the protocol. However, it
+still may be of interest to know that the thing you're reviewing uses a
+protocol with various nice security properties:
+
+  * https://www.wireguard.com/formal-verification/
+
+This patchset is divided into three segments. The first introduces a very
+simple helper for working with the FPU state for the purposes of amortizing
+SIMD operations. The second segment is a small collection of cryptographic
+primitives, split up into several commits by primitive and by hardware. The
+third is WireGuard itself, presented as an unintrusive and self-contained
+virtual network driver.
+
+It is intended that this entire patch series enter the kernel through
+DaveM's net-next tree.
+
+Changes v1->v2:
+  - Zinc has been split into multiple patches.
+  - Zinc has been split into multiple config options.
+  - WireGuard has been wrapped at 80 characters.
+  - Numerous cleanups of inside WireGuard.
+  - Splitting out the simd helper into linux/.
+  - Simplification of bitwise arithmetic inside some Zinc primitives.
+  - Better handling of unaligned buffers inside Zinc.
+  - Expanded CC list.
+
+Enjoy,
+Jason
