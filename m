@@ -2,143 +2,124 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1E5CC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 02:34:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC2F4C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 02:51:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A1572156B
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 02:34:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A1572156B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 9CFA52156E
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 02:51:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CFA52156E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727440AbeHXGHW (ORCPT
+        id S1726804AbeHXGYO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 02:07:22 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:42107 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726178AbeHXGHV (ORCPT
+        Fri, 24 Aug 2018 02:24:14 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:37339 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726140AbeHXGYO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 02:07:21 -0400
-Received: from static-50-53-48-205.bvtn.or.frontiernet.net ([50.53.48.205] helo=[192.168.192.153])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1ft1w1-0007Bx-Vp; Fri, 24 Aug 2018 02:34:50 +0000
-From:   John Johansen <john.johansen@canonical.com>
-Subject: [GIT PULL] apparmor updates for v4.19
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     LKLM <linux-kernel@vger.kernel.org>,
-        "open list:SECURITY SUBSYSTEM" 
-        <linux-security-module@vger.kernel.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Canonical
-Message-ID: <f4d603ba-254b-fbf5-8d06-11cc61d29de0@canonical.com>
-Date:   Thu, 23 Aug 2018 19:34:46 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 24 Aug 2018 02:24:14 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
+   d="scan'208";a="43888538"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 24 Aug 2018 10:51:39 +0800
+Received: from G08CNEXCHPEKD03.g08.fujitsu.local (unknown [10.167.33.85])
+        by cn.fujitsu.com (Postfix) with ESMTP id A7B224B6AE02;
+        Fri, 24 Aug 2018 10:51:36 +0800 (CST)
+Received: from localhost.localdomain (10.167.226.106) by
+ G08CNEXCHPEKD03.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 24 Aug 2018 10:51:36 +0800
+From:   Dou Liyang <douly.fnst@cn.fujitsu.com>
+To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+        <linux-acpi@vger.kernel.org>
+CC:     <lenb@kernel.org>, <rjw@rjwysocki.net>, <tglx@linutronix.de>,
+        <rafael@kernel.org>, <indou.takao@jp.fujitsu.com>,
+        Dou Liyang <douly.fnst@cn.fujitsu.com>
+Subject: [PATCH v3] acpi/processor: Fix the return value of acpi_processor_ids_walk()
+Date:   Fri, 24 Aug 2018 10:51:26 +0800
+Message-ID: <20180824025126.19231-1-douly.fnst@cn.fujitsu.com>
+X-Mailer: git-send-email 2.14.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.167.226.106]
+X-yoursite-MailScanner-ID: A7B224B6AE02.AB934
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+ACPI driver should make sure all the processor IDs in their ACPI Namespace
+are unique. the driver performs a depth-first walk of the namespace tree
+and calls the acpi_processor_ids_walk() to check the duplicate IDs.
+
+But, the acpi_processor_ids_walk() mistakes the return value. If a
+processor is checked, it returns true which causes the walk break
+immediately, and other processors will never be checked.
+
+Repace the value with AE_OK which is the standard acpi_status value.
+And don't abort the namespace walk even on error.
+
+Fixes 8c8cb30f49b8 ("acpi/processor: Implement DEVICE operator for processor enumeration")
+Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
+---
+Changelog:
+  v2 --> v3:
+   - Fix a compiler error reported by LKP
+  v1 --> v2:
+   - Fix the check against duplicate IDs suggested by Rafael.
+  
+  Now，the duplicate IDs only be found in Ivb42 machine, and we have added this check at 
+  linux-4.9. But, we introduced a bug in linux-4.12 by commit 8c8cb30f49b8.
+
+  For resolving the bug, firstly, I removed the check[1]. because Linux will compare
+  the coming ID with present processors when it hot-added a physical CPU and will avoid
+  using duplicate IDs.
+
+  But, seems we should consider all the possible processors. So, with this patch, All
+  the processors with the same IDs will never be hot-plugged.
+
+[1] https://lkml.org/lkml/2018/5/28/213
+---
+ drivers/acpi/acpi_processor.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/acpi/acpi_processor.c b/drivers/acpi/acpi_processor.c
+index 449d86d39965..fc447410ae4d 100644
+--- a/drivers/acpi/acpi_processor.c
++++ b/drivers/acpi/acpi_processor.c
+@@ -643,7 +643,7 @@ static acpi_status __init acpi_processor_ids_walk(acpi_handle handle,
+ 
+ 	status = acpi_get_type(handle, &acpi_type);
+ 	if (ACPI_FAILURE(status))
+-		return false;
++		return status;
+ 
+ 	switch (acpi_type) {
+ 	case ACPI_TYPE_PROCESSOR:
+@@ -663,11 +663,12 @@ static acpi_status __init acpi_processor_ids_walk(acpi_handle handle,
+ 	}
+ 
+ 	processor_validated_ids_update(uid);
+-	return true;
++	return AE_OK;
+ 
+ err:
++	/* Exit on error, but don't abort the namespace walk */
+ 	acpi_handle_info(handle, "Invalid processor object\n");
+-	return false;
++	return AE_OK;
+ 
+ }
+ 
+-- 
+2.14.3
 
 
-Please pull these apparmor changes for v4.19. There is nothing major this time just 4 bug fixes and a patch to remove so dead code.
 
-Thanks!
-
-- John
-
-
-The following changes since commit fb7d1bcf1602b46f37ada72178516c01a250e434:
-
-  Merge tag 'pci-v4.18-fixes-3' of git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci (2018-07-19 11:54:04 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-pr-2018-08-23
-
-for you to fetch changes up to c037bd615885f1d9d3bdb48531bace79fae1505d:
-
-  apparmor: remove no-op permission check in policy_unpack (2018-08-22 18:44:42 -0700)
-
-----------------------------------------------------------------
-+ Cleanups
-  - apparmor: remove no-op permission check in policy_unpack
-
-+ Bug fixes
-  - apparmor: fix an error code in __aa_create_ns()
-  - apparmor: Fix failure to audit context info in build_change_hat
-  - apparmor: Check buffer bounds when mapping permissions mask
-  - apparmor: Fully initialize aa_perms struct when answering userspace query
-
-----------------------------------------------------------------
-Dan Carpenter (1):
-      apparmor: fix an error code in __aa_create_ns()
-
-John Johansen (2):
-      apparmor: Fix failure to audit context info in build_change_hat
-      apparmor: remove no-op permission check in policy_unpack
-
-Tyler Hicks (2):
-      apparmor: Check buffer bounds when mapping permissions mask
-      apparmor: Fully initialize aa_perms struct when answering userspace query
-
- security/apparmor/apparmorfs.c    |  5 +----
- security/apparmor/domain.c        |  2 +-
- security/apparmor/file.c          |  3 ++-
- security/apparmor/include/perms.h |  3 ++-
- security/apparmor/lib.c           | 17 +++++++++++++----
- security/apparmor/policy_ns.c     |  2 +-
- security/apparmor/policy_unpack.c | 32 --------------------------------
- 7 files changed, 20 insertions(+), 44 deletions(-)
