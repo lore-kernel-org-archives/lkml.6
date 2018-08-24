@@ -2,161 +2,125 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A97C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:07:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B0E5C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:07:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D602021564
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:06:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D602021564
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id EAE8A21567
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:07:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EBus8tRn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAE8A21567
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727405AbeHXQlc (ORCPT
+        id S1727625AbeHXQlu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 12:41:32 -0400
-Received: from ozlabs.org ([203.11.71.1]:35725 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726556AbeHXQlc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 12:41:32 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41xhPn2r5gz9s47;
-        Fri, 24 Aug 2018 23:06:53 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     aneesh.kumar@linux.ibm.com, benh@kernel.crashing.org,
-        christophe.leroy@c-s.fr, hbathini@linux.ibm.com,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        luke@dashjr.org, mahesh@linux.vnet.ibm.com,
-        naveen.n.rao@linux.vnet.ibm.com, npiggin@gmail.com,
-        paulus@ozlabs.org, srikar@linux.vnet.ibm.com
-Subject: [GIT PULL] Please pull powerpc/linux.git powerpc-4.19-2 tag
-Date:   Fri, 24 Aug 2018 23:06:49 +1000
-Message-ID: <87o9drkj6e.fsf@concordia.ellerman.id.au>
+        Fri, 24 Aug 2018 12:41:50 -0400
+Received: from mail-yb0-f196.google.com ([209.85.213.196]:40359 "EHLO
+        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726556AbeHXQlu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 12:41:50 -0400
+Received: by mail-yb0-f196.google.com with SMTP id f4-v6so3444361ybp.7
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 06:07:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=tAkxiQVhB/4oXk51I1meUDbL60OAuk736CDQik6Ywqo=;
+        b=EBus8tRnG+EzJxSk8Yv/gm1oCSB2X0UJkzN/2/sAlODqHFxgP5D9B5ju97oipHc/1a
+         dKFgbBXNgA5rnfvo1x7bZTaWtUj9HSuS/YLIe4Y7sijH051Mf5BX51DeXS2757EHHwnW
+         tE4yFuU6Dt1QyYO2/rS1zJMfOGpmm3W2m/lLg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=tAkxiQVhB/4oXk51I1meUDbL60OAuk736CDQik6Ywqo=;
+        b=BZCKze45Vw2DfcrhmgNlAWl/sodeTuCGiRkHK3OsBzvLNJTHFHXMtmxwyiJenW62US
+         qwWT0vnX6JWKgZ2mwNPzS1zZ1QKl9gS4xOKYqMYVROZEX3vNH+yskrDwfJmrUnNT6NVF
+         endiY4752aFX0zP9ZNmwQDfc0z5YEMJ0JuvFdUTK87Om6smWh223+LZeb2hOPXtUPwAP
+         KVZfuETHbYKcHhlcIeA+3eZPeOqdpQpSN156TLcQQa7Tm7lT6PWbur6YmaB7ZK3O9j3d
+         1+pz04xbLREruPxoUUP1db4lOmgAB6kqXmizdeLn/jW0hBHBG23zkTko10Jqjx4ojfpu
+         HVag==
+X-Gm-Message-State: APzg51AK19evMMi9eF1k7Xjnc4QOvldgTdKSBeid00wXLn++k3QEk91y
+        bBdBSQpnQUmIT1ey5RhhyKqiBeUu6Vo2V96F0E0BPA==
+X-Google-Smtp-Source: ANB0Vdb6niu9QO+OcHKN6lT5j0TU9xeKFbbjmqy9OjlGvFAAI3Qlm/a04JNoCmiWGAZfqzILy9MCHZ13U1uHZZojfxk=
+X-Received: by 2002:a25:ad01:: with SMTP id y1-v6mr881436ybi.195.1535116034837;
+ Fri, 24 Aug 2018 06:07:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20180704095318.19218-1-anders.roxell@linaro.org> <CAMuHMdWCyH-E9VA7ihsoXEq4dvLrPjYd01TYot6qja-psVRcog@mail.gmail.com>
+In-Reply-To: <CAMuHMdWCyH-E9VA7ihsoXEq4dvLrPjYd01TYot6qja-psVRcog@mail.gmail.com>
+From:   Anders Roxell <anders.roxell@linaro.org>
+Date:   Fri, 24 Aug 2018 15:07:03 +0200
+Message-ID: <CADYN=9KH134zWogYt=FMMTgsYm6GEqBUY6=C453yj_NY=oq1hg@mail.gmail.com>
+Subject: Re: [PATCH] fs/ocfs2/dlmglue: lockdep_keys defined but not used
+To:     geert@linux-m68k.org
+Cc:     Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
+        ocfs2-devel@oss.oracle.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA512
+On Thu, 23 Aug 2018 at 23:07, Geert Uytterhoeven <geert@linux-m68k.org> wro=
+te:
+>
+> Hi Anders,
+>
+> On Wed, Jul 4, 2018 at 11:54 AM Anders Roxell <anders.roxell@linaro.org> =
+wrote:
+> > When CONFIG_DEBUG_LOCK_ALLOC isn't enabled lockdep_keys isn't used and
+> > we get a warning:
+> > fs/ocfs2/dlmglue.c:99:30: warning: =E2=80=98lockdep_keys=E2=80=99 defin=
+ed but not used
+> >     [-Wunused-variable]
+> >  static struct lock_class_key lockdep_keys[OCFS2_NUM_LOCK_TYPES];
+> >                               ^~~~~~~~~~~~
+> > Adding __maybe_unused to the declaration hids the warning.
+>
+> Thanks for your patcj!
+>
+> > Fixes: 1cd75cdb8fbb ("ocfs2: make several functions and variables stati=
+c (and some const)")
+>
+> Fixes: 480bd56485b77c36 ("ocfs2: make several functions and variables
+> static (and some const)")
 
-Hi Linus,
+Thanks, thats correct.
 
-Please pull powerpc fixes for 4.19:
+>
+> Presumably the branch got rebased?
 
-The following changes since commit a2dc009afa9ae8b92305be7728676562a104cb40:
+probably.
 
-  powerpc/mm/book3s/radix: Add mapping statistics (2018-08-13 16:35:05 +1000)
+Mark, Joel, do you want me to send a new patch where I correct the sha
+in the "Fixes" part of the changelog or can you fix that?
 
-are available in the git repository at:
+Cheers,
+Anders
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-4.19-2
-
-for you to fetch changes up to 0f52b3a00c789569d7ed822b5a6b30f59a8d4393:
-
-  powerpc/mce: Fix SLB rebolting during MCE recovery path. (2018-08-23 23:40:10 +1000)
-
-- ------------------------------------------------------------------
-powerpc fixes for 4.19 #2
-
- - An implementation for the newly added hv_ops->flush() for the OPAL hvc
-   console driver backends, I forgot to apply this after merging the hvc driver
-   changes before the merge window.
-
- - Enable all PCI bridges at boot on powernv, to avoid races when multiple
-   children of a bridge try to enable it simultaneously. This is a workaround
-   until the PCI core can be enhanced to fix the races.
-
- - A fix to query PowerVM for the correct system topology at boot before
-   initialising sched domains, seen in some configurations to cause broken
-   scheduling etc.
-
- - A fix for pte_access_permitted() on "nohash" platforms.
-
- - Two commits to fix SIGBUS when using remap_pfn_range() seen on Power9 due to
-   a workaround when using the nest MMU (GPUs, accelerators).
-
- - Another fix to the VFIO code used by KVM, the previous fix had some bugs
-   which caused guests to not start in some configurations.
-
- - A handful of other minor fixes.
-
-Thanks to:
-  Aneesh Kumar K.V, Benjamin Herrenschmidt, Christophe Leroy, Hari Bathini, Luke
-  Dashjr, Mahesh Salgaonkar, Nicholas Piggin, Paul Mackerras, Srikar Dronamraju.
-
-- ------------------------------------------------------------------
-Aneesh Kumar K.V (2):
-      powerpc/mm/books3s: Add new pte bit to mark pte temporarily invalid.
-      powerpc/mm/radix: Only need the Nest MMU workaround for R -> RW transition
-
-Benjamin Herrenschmidt (1):
-      powerpc/powernv/pci: Work around races in PCI bridge enabling
-
-Christophe Leroy (1):
-      powerpc/nohash: fix pte_access_permitted()
-
-Hari Bathini (1):
-      powerpc/fadump: cleanup crash memory ranges support
-
-Luke Dashjr (1):
-      powerpc64/ftrace: Include ftrace.h needed for enable/disable calls
-
-Mahesh Salgaonkar (1):
-      powerpc/mce: Fix SLB rebolting during MCE recovery path.
-
-Michael Ellerman (1):
-      powerpc/traps: Avoid rate limit messages from show unhandled signals
-
-Nicholas Piggin (2):
-      powerpc/64s: Fix PACA_IRQ_HARD_DIS accounting in idle_power4()
-      powerpc/powernv: provide a console flush operation for opal hvc driver
-
-Paul Mackerras (1):
-      KVM: PPC: Book3S: Fix guest DMA when guest partially backed by THP pages
-
-Srikar Dronamraju (1):
-      powerpc/topology: Get topology for shared processors at boot
-
-
- arch/powerpc/include/asm/book3s/64/pgtable.h | 18 +++++-
- arch/powerpc/include/asm/nohash/pgtable.h    |  9 +--
- arch/powerpc/include/asm/opal.h              |  1 +
- arch/powerpc/include/asm/topology.h          |  5 ++
- arch/powerpc/kernel/fadump.c                 |  8 +--
- arch/powerpc/kernel/idle_power4.S            | 16 +++++-
- arch/powerpc/kernel/smp.c                    |  5 ++
- arch/powerpc/kernel/traps.c                  | 13 ++---
- arch/powerpc/kvm/book3s_hv.c                 |  1 +
- arch/powerpc/mm/mmu_context_iommu.c          | 17 +++---
- arch/powerpc/mm/numa.c                       | 20 +++----
- arch/powerpc/mm/pgtable-radix.c              |  8 ++-
- arch/powerpc/mm/slb.c                        |  2 +-
- arch/powerpc/platforms/powernv/opal.c        | 83 +++++++++++++++++-----------
- arch/powerpc/platforms/powernv/pci-ioda.c    | 37 +++++++++++++
- drivers/tty/hvc/hvc_opal.c                   |  2 +
- 16 files changed, 170 insertions(+), 75 deletions(-)
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEJFGtCPCthwEv2Y/bUevqPMjhpYAFAluAAlEACgkQUevqPMjh
-pYAueQ//Zd7kQQjarCi9Je008GtEEFXL+8GgXnIuyXxKnBgJaueTgN9gg0hCIV05
-bQazC5Mzg4jY2QJVh1Kft4bxdB01RDAh7G5E0Gbi16/E4UcqvIS+7s+hZds9RI45
-exH5qjj/V5pejL2+7Ct5F5eBjysoYxZ0Jn5gyQICjOgaK57Z/q5x9lvUhOfdpJk/
-VxT6Uu62a/wwlVsaRmXS3c3byufJgNLTwBtJ1q/5+El2NR3F0nSzGxG99IupSWrw
-dWcSZbsNKvXjGh9U46WNnJTMJLp2IH4l/INX2tg4PR2m+ZsIFKAgmqej39YIv8gk
-4Md2kje/3/Y6mqy8sA1Eh8Wc3+VM2QEhMhJ27T7Ooivk0ljooR9AtMMwkrj1TrCK
-zh4lWBxfaaRfTQH/cmafz6yfgpXAAMig/4XI1gOb53mPfYkByzFsZcFUC6ytic72
-6q0gNDGtgdFD99rI4qUDc6QxrdDSKUin4hRaLoh8sL4mCyT6tdsATwL3Jn1kY2e3
-rhaCHUw3V6evbkd+OiW5V7KBO4vvd3sIEYiWGiqIIevls8DeS6hhwpL4zVQBah+L
-m9juSb9FvdHs/+jIDOIdyDncDh9rRoctQoXHyRQ3ocduM4b2CJu+tja4ZilJ2KpW
-lZEwwF4v3v5OZ/qMqh3sZp5dp+py61mH+a4OAIe123qTXgiv1SA=
-=GMLT
------END PGP SIGNATURE-----
+>
+> > Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+>
+> Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+>
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
