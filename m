@@ -2,462 +2,172 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C54F5C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 21:54:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78FFCC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 21:54:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 661DE208B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 21:54:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 661DE208B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 11DB8208B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 21:54:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eLjlOtoe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11DB8208B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728076AbeHYBbJ convert rfc822-to-8bit (ORCPT
+        id S1727991AbeHYBbJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 24 Aug 2018 21:31:09 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46094 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726896AbeHYBbJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:37755 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727755AbeHYBbJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 24 Aug 2018 21:31:09 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 48EAC40216EA;
-        Fri, 24 Aug 2018 21:54:40 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-8.bos.redhat.com [10.18.17.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E56072156889;
-        Fri, 24 Aug 2018 21:54:39 +0000 (UTC)
-Subject: Re: [PATCH 2/2] xfs: Use wake_q for waking up log space waiters
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dave Chinner <dchinner@redhat.com>
-References: <1535041570-24102-1-git-send-email-longman@redhat.com>
- <1535041570-24102-3-git-send-email-longman@redhat.com>
- <20180824003017.GZ2234@dastard>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <bbdaf330-ce6b-bc53-eb97-93b34359bd3d@redhat.com>
-Date:   Fri, 24 Aug 2018 17:54:39 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+Received: by mail-pf1-f195.google.com with SMTP id h69-v6so5116478pfd.4
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 14:54:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=VNEkxXkidzEHAxkFpWfrQAsxp/W61/akgxbHxyGhhmQ=;
+        b=eLjlOtoelXrkCSQuQb5parmbEJFJf6zD7OFGPfXpRVl2LYemyl6hL+lHBaETMFk2zV
+         KxbsL3apHX8Wzmayla7ijBIMgdeOYK1C+QIOypsguFEciJHdvreNrrPrN5VaVGslxVev
+         kOT6afOX/QyAT6kShNvqvq6bstmyKaDKeyYOw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=VNEkxXkidzEHAxkFpWfrQAsxp/W61/akgxbHxyGhhmQ=;
+        b=A9o9bAC4VpiXtDQwJiIxDTJkKEYZWlaGLFLUW57lyUHyDC4qfCbIVXWDoOXbeLcBKS
+         ucDu6MOIAO+01SqALLtm5qZtRN7knz5YHHBfOQzffyIq9FSY9zQHBPxjtBq7zUNlFasi
+         O9bzWKi1w6WKZ+urDwyB4HJXnmzhdBrEf0H9tKQN3QHbP/veUccxs0uUr0j4HXaWHM4z
+         URa6/IobGNVx9ahodpBXeszpVE/iO9ZEfh/nIfR5n71Pe73PgOG6T9/XrbJWQSRQ+Eck
+         lWYhubIvtc826aCVerbdaaWvVArzKUSJ7C9c6y8Wxmz/hHAZ7sx9zvR+CupWLmlaS5Rz
+         rDIw==
+X-Gm-Message-State: APzg51A/NTSsUqilMTkJ/N+ucSxIShr75JP8B2keBZkUvxjMysKWLv62
+        96NmeaqkHiwBsy3r2YUCMx9nkQ==
+X-Google-Smtp-Source: ANB0VdaaftOGg0oyNtb8eyC6mf0rDodShDSgUfbXZisv2mPrc+AtISL222i8C55vUxClBInLC1KcwA==
+X-Received: by 2002:a62:6547:: with SMTP id z68-v6mr3717201pfb.20.1535147681439;
+        Fri, 24 Aug 2018 14:54:41 -0700 (PDT)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id t14-v6sm9023166pgu.0.2018.08.24.14.54.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 24 Aug 2018 14:54:40 -0700 (PDT)
+Date:   Fri, 24 Aug 2018 14:54:39 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Andreas Christoforou <andreaschristofo@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] ipc/mqueue: Only perform resource calculation if user valid
+Message-ID: <20180824215439.GA46785@beast>
 MIME-Version: 1.0
-In-Reply-To: <20180824003017.GZ2234@dastard>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 24 Aug 2018 21:54:40 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 24 Aug 2018 21:54:40 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/23/2018 08:30 PM, Dave Chinner wrote:
-> On Thu, Aug 23, 2018 at 12:26:10PM -0400, Waiman Long wrote:
->> Running the AIM7 fserver workload on a 2-socket 24-core 48-thread
->> Broadwell system, it was found that there were severe spinlock contention
->> in the XFS code. In particular, native_queued_spin_lock_slowpath()
->> consumes 69.7% of cpu time. The xlog_grant_head_check() function call and
->> its sub-function calls underneath it consumed 27.2% of the cpu time. This
->> function tried to wake up tasks in the log space wait queue and then
->> put itself into the wait queue if there is not enough log space left.
-> Interesting - I don't see the grant head reservation code in any of
-> my performance benchmark profiling, even when running at over a
-> million transactions/s on a 2-socket 32-core 64-thread skylake
-> system. I see other places in the transaction subsystem that are
-> hot (e.g the CIL context lock), but not the space reservations.
->
-> My initial suspect is that you have a tiny log on your test
-> filesystem, so it's permanently out of space and so always hitting
-> the slow path. Can you tell us what the storage is and it's
-> configuration? At minimum, I need to see the output of the xfs_info
-> command on your test filesystem. Fixing this may simply be using a
-> larger log on your benchmark systems.
+Andreas Christoforou reported:
 
-You are right. The XFS filesystem was created on a small ramfs device
-and so the disk space was tiny. The microbenchmark that I used exposes
-some extreme cases that may not be normally observed.
+UBSAN: Undefined behaviour in ipc/mqueue.c:414:49 signed integer overflow:
+9 * 2305843009213693951 cannot be represented in type 'long int'
+...
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x11b/0x1fe lib/dump_stack.c:113
+ ubsan_epilogue+0xe/0x81 lib/ubsan.c:159
+ handle_overflow+0x193/0x218 lib/ubsan.c:190
+ mqueue_evict_inode+0x8e7/0xa10 ipc/mqueue.c:414
+ evict+0x472/0x8c0 fs/inode.c:558
+ iput_final fs/inode.c:1547 [inline]
+ iput+0x51d/0x8c0 fs/inode.c:1573
+ mqueue_get_inode+0x8eb/0x1070 ipc/mqueue.c:320
+ mqueue_create_attr+0x198/0x440 ipc/mqueue.c:459
+ vfs_mkobj+0x39e/0x580 fs/namei.c:2892
+ prepare_open ipc/mqueue.c:731 [inline]
+ do_mq_open+0x6da/0x8e0 ipc/mqueue.c:771
+...
 
-> FWIW, can you post the actual profile you are seeing in the commit
-> message? That helps us identify similar problems in the future, and
-> it lets us know what paths are leading to the transaction
-> reservation contention. i.e. this may not even be a problem with the
-> transaction reservation code itself.
+Which could be triggered by:
 
-Those were part of the perf trace that I marked down:
+        struct mq_attr attr = {
+                .mq_flags = 0,
+                .mq_maxmsg = 9,
+                .mq_msgsize = 0x1fffffffffffffff,
+                .mq_curmsgs = 0,
+        };
 
-Before patch:
+        if (mq_open("/testing", 0x40, 3, &attr) == (mqd_t) -1)
+                perror("mq_open");
 
-+   69.69%    69.17%  reaim            [kernel.vmlinux]            [k]
-native_queued_spin_lock_
--   54.48%     0.01%  reaim            [kernel.vmlinux]            [k]
-do_sys_open
-   - 54.46% do_sys_open
-      - 54.35% do_filp_open
-         - 54.34% path_openat
-            - 42.18% do_truncate
-               - 42.17% notify_change
-                  - 42.12% xfs_vn_setattr
-                     - 42.09% xfs_setattr_size
-                        - 42.08% xfs_setattr_nonsize
-                           - 27.31% xfs_trans_alloc
-                              - 27.28% xfs_trans_reserve
-                                 - xfs_log_reserve
-                                    - 27.20% xlog_grant_head_check
-                                       + 13.79% queued_spin_lock_slowpath
-                                       + 12.95% xlog_grant_head_wait
-                           + 14.72% __xfs_trans_commit
-            - 8.90% xfs_generic_create
-               - 5.81% security_inode_init_security
-                  - 5.72% xfs_initxattrs
-                     - xfs_attr_set
-                        - 2.90% xfs_bmap_add_attrfork
-                           + 1.88% xfs_trans_alloc
-                           + 1.02% __xfs_trans_commit
-                        + 1.78% xfs_trans_alloc
-                        + 1.01% __xfs_trans_commit
-               + 3.08% xfs_create
-            + 2.62% down_write
+mqueue_get_inode() was correctly rejecting the giant mq_msgsize,
+and preparing to return -EINVAL. During the cleanup, it calls
+mqueue_evict_inode() which performed resource usage tracking math for
+updating "user", before checking if there was a valid "user" at all
+(which would indicate that the calculations would be sane). Instead,
+delay this check to after seeing a valid "user".
 
-1500    99.36    3982.81 351.51  91485.51   60.99      15.87    20.05    79
+The overflow was real, but the results went unused, so while the flaw
+is harmless, it's noisy for kernel fuzzers, and the fix makes things
+technically more efficient.
 
-After patch:
+Reported-by: Andreas Christoforou <andreaschristofo@gmail.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ ipc/mqueue.c | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
--   41.68%     0.07%  reaim  [kernel.vmlinux] [k] do_sys_open
-   - 41.62% do_sys_open
-      - 41.23% do_filp_open
-         - 41.20% path_openat
-            - 30.32% do_truncate
-               - 30.27% notify_change
-                  - 30.06% xfs_vn_setattr
-                     - 29.90% xfs_setattr_size
-                        - 29.88% xfs_setattr_nonsize
-                           - 20.61% xfs_trans_alloc
-                              - 20.46% xfs_trans_reserve
-                                 - 20.43% xfs_log_reserve
-                                    - 19.96% xlog_grant_head_check
-                                       + 10.24% queued_spin_lock_slowpath
-                                       + 9.04% xlog_grant_head_wait
-                           + 9.06% __xfs_trans_commit
-            - 7.16% xfs_generic_create
-               + 4.27% security_inode_init_security
-               + 2.87% xfs_create
-            + 1.44% down_write
-+   39.59%    38.98%  reaim  [kernel.vmlinux] [k] native_queued_spin_lock
-
-1500    22.88    414.82  365.48  397290.21  264.86     3.40     18.41    81
-
->> The process of waking up task can be time consuming and it is not
->> really necessary to hold an XFS lock while doing the wakeups. So the
->> xlog_grant_head_wake() function is modified to put the tasks to be waken
->> up into a wake_q to be passed to wake_up_q() without holding the lock.
-> How does this impact on the strict FIFO queue behaviour the grant
-> queues currently have? The current code only wakes up enough waiters
-> to consume the newly available space and it queues new waiters to
-> the tail of the queue. If there ever is a spurious wakeup then the
-> waiter that was woken from the head remains there until the next
-> wakeup comes in. This is intentional - spurious wakeups are rare
-> enough we can ignore them because a) this is the slow path, and b)
-> correctness is far more important that performance in this path.
-> The fast path is already lockless, and we've already given up
-> peformance if we reach this slow path. hence we only care about
-> correctness in this path, not performance optimisation.
-
-A spurious wakeup shouldn't change the behavior as the waiter should
-find that it is still being queued (list not empty) and so will sleep
-again. However, if the waiter is rightfully waken but find that there is
-not enough log space somehow, it will put itself back to the end of the
-queue. That is a change in behavior that I think could be an issue.
-
-I am just wondering why the code doesn't reserve the actual log space at
-the time a task is being waken. Instead, it has to try to get it itself
-after being waken.
-
-Also I think the current code allows consecutive waiters to come in and
-wake up the same set of tasks again and again. That may be where a part
-of the performance slowdown come from.
-
->
-> AFAICT the patch changes the spurious wakeup behaviour - it requeues
-> tasks to the tail of the queue if there wasn't space available when
-> they are woken, rather than leaving them as them at the head.  They
-> now have to wait for all the other reservations to make progress.
-> This breaks the guarantees of ordered forward progress the grant
-> queue provides permanent transaction reservations and hence opens us
-> up to log space deadlocks because those transactions can't move
-> their objects forward in the log to free up space in the log...
-
-As I said above, spurious wakeup shouldn't cause problem. However,
-consecutive waiters will probably wake up more tasks than there is log
-space available. In this case, some of the tasks will be put back to the
-queue. Maybe a counter to record the log space temporarily reserved for
-the waken-up task can help to prevent over-subscription.
+diff --git a/ipc/mqueue.c b/ipc/mqueue.c
+index c0d58f390c3b..f31e334e3635 100644
+--- a/ipc/mqueue.c
++++ b/ipc/mqueue.c
+@@ -389,7 +389,6 @@ static void mqueue_evict_inode(struct inode *inode)
+ {
+ 	struct mqueue_inode_info *info;
+ 	struct user_struct *user;
+-	unsigned long mq_bytes, mq_treesize;
+ 	struct ipc_namespace *ipc_ns;
+ 	struct msg_msg *msg;
  
->
-> Also, I note that wake_q_add() assumes that the wake queue is a
-> local stack object and so not subject to concurrency - it explicitly
-> states this in the code. That's not the case here - the wake queue
-> is part of the grant head, and so is subject to extreme concurrency
-> that is tempered by a spin lock.  Does the wake_q code work
-> correctly (e.g. have all the necessary memory barriers, etc) when
-> it's not a local stack object and instead protected from concurrency
-> by a spin lock? At minimum, the wake_q infrastructure comments and
-> documentation need updating to accommodate this new use case that
-> wake queues are being used for.
-
-The wake_q should work correctly as it is used by mutexes and rwsems. We
-will see a lot of problem reports if that is not the case.
-
->> Corresponding changes are made in xlog_grant_head_wait() to dequeue the
->> tasks from the wait queue after they are put into the wake_q. This avoids
->> multiple wakeups of the same task from different log space waiters.
-> This doesn't generally doesn't happen because the space accounting
-> tends to prevent multiple wakeups. i.e. we only wake the tasks we
-> have reservation space for, and log space being made available tends
-> to arrive in discrete chunks (because IO is slow!) such that that
-> pending wakeups have already been processed before the next chunk of
-> available space comes in....
->
->> Multiple wakeups seems to be a possibility in the existing code too.
-> Yes, but they are very rare and we don't really care about this in
-> the slow path. If you see lots of them, it's typically a sign of an
-> inappropriately configured filesystem for the workload being run. On
-> a correctly configured system, we should almost never use this slow
-> path....
->
->> With the use of the wake_q, the cpu time used by
->> native_queued_spin_lock_slowpath() dropped to 39.6%. However, the
->> performance of the AIM7 fserver workload increased from 91,485.51
->> jobs/min to 397,290.21 jobs/min which was more than 4X improvement.
-> I'm betting that you'll get that and a whole lot more simply by
-> increasing the log size and not running the slow path at all.
-
-That is probably true.
-
->> Signed-off-by: Waiman Long <longman@redhat.com>
->> ---
->>  fs/xfs/xfs_log.c | 48 +++++++++++++++++++++++++++++++++++++-----------
->>  1 file changed, 37 insertions(+), 11 deletions(-)
->>
->> diff --git a/fs/xfs/xfs_log.c b/fs/xfs/xfs_log.c
->> index c3b610b..1402ad3 100644
->> --- a/fs/xfs/xfs_log.c
->> +++ b/fs/xfs/xfs_log.c
->> @@ -3,6 +3,8 @@
-> Where's the hunk context in your headers? You must be using a
-> non-standard git option here.
-
-I am using a old git (1.8). I should probably upgrade to a newer one.
-
->>   * Copyright (c) 2000-2005 Silicon Graphics, Inc.
->>   * All Rights Reserved.
->>   */
->> +#include <linux/sched/wake_q.h>
-> Linux kernel specific includes go in fs/xfs/xfs_linux.h, not
-> individual files.
->
-
-OK
-
->> +
->>  #include "xfs.h"
->>  #include "xfs_fs.h"
->>  #include "xfs_shared.h"
->> @@ -221,19 +223,21 @@
->>  xlog_grant_head_wake(
->>  	struct xlog		*log,
->>  	struct xlog_grant_head	*head,
->> -	int			*free_bytes)
->> +	int			*free_bytes,
->> +	struct wake_q_head	*wakeq)
->>  {
->> -	struct xlog_ticket	*tic;
->> +	struct xlog_ticket	*tic, *next;
->>  	int			need_bytes;
->>  
->> -	list_for_each_entry(tic, &head->waiters, t_queue) {
->> +	list_for_each_entry_safe(tic, next, &head->waiters, t_queue) {
->>  		need_bytes = xlog_ticket_reservation(log, head, tic);
->>  		if (*free_bytes < need_bytes)
->>  			return false;
->>  
->>  		*free_bytes -= need_bytes;
->>  		trace_xfs_log_grant_wake_up(log, tic);
->> -		wake_up_process(tic->t_task);
->> +		wake_q_add(wakeq, tic->t_task);
->> +		list_del_init(&tic->t_queue);
->>  	}
-> Why do you need to delete the ticket from the queue here? This leads
-> to landmines and incorrect non-FIFO behaviour...
-
-It is because the wake_q uses a field in the task structure for queuing.
-So a task can only be in one wake_q at a time. Leaving the ticket in the
-queue may cause the task to be put into multiple wake_q causing missed
-wakeup, perhaps.
+@@ -406,16 +405,18 @@ static void mqueue_evict_inode(struct inode *inode)
+ 	kfree(info->node_cache);
+ 	spin_unlock(&info->lock);
  
->>  	return true;
->> @@ -247,13 +251,14 @@
->>  	int			need_bytes) __releases(&head->lock)
->>  					    __acquires(&head->lock)
->>  {
->> -	list_add_tail(&tic->t_queue, &head->waiters);
->> -
->>  	do {
->> +		list_add_tail(&tic->t_queue, &head->waiters);
->> +
-> .... here. This is a potential list corruption landmine because this
-> function now has unbalanced list add and removal contexts. IOWs, we
-> can't restart this loop without first having guaranteed the ticket
-> is not already on the ticket queue. You need to document constraints
-> like this in comments and explain what code needs to guarantee those
-> constraints are met. [Because, as I noted at the end, you got this
-> wrong for xlog_grant_head_wake_all()]
-
-Yes, you are right. The xlog_grant_head_wake_all() need to be modified
-as well.
-
->
-> To maintian FIFO behaviour, the ticket needs to be left at the head
-> of the grant head wait queue until it has space available to make
-> progress, not get removed and requeued to the tail. Spurious wake
-> ups are irrelevant here - forwards progress (i.e. correctness)
-> requires FIFO ticket ordering behaviour be maintained.
->
->>  		if (XLOG_FORCED_SHUTDOWN(log))
->>  			goto shutdown;
->>  		xlog_grant_push_ail(log, need_bytes);
-> This push is needed to make the necessary space we are waiting on
-> available in the log. Hence leaving it out of the loop you put
-> below will cause the journal to get stuck in the spurious wakeup
-> loop below and be unable to make progress. This will lead to
-> filesystem hangs.
->
->>  
->> +sleep:
->>  		__set_current_state(TASK_UNINTERRUPTIBLE);
->>  		spin_unlock(&head->lock);
->>  
->> @@ -264,11 +269,18 @@
->>  		trace_xfs_log_grant_wake(log, tic);
->>  
->>  		spin_lock(&head->lock);
->> +
->> +		/*
->> +		 * The current task should have been dequeued from the
->> +		 * list before it is waken up.
->> +		 */
->> +		if (unlikely(!list_empty(&tic->t_queue)))
->> +			goto sleep;
-> That's a new nested loop. Please implement it as a loop.
->
->> +
->>  		if (XLOG_FORCED_SHUTDOWN(log))
->>  			goto shutdown;
-> This is buggy  - i will lead to hangs if the filesystem is shut
-> down and there is a spurious wakeup that triggers this to go back to
-> sleep.
-> The shutdown check needs to break the sleep loop.
->
->>  	} while (xlog_space_left(log, &head->grant) < need_bytes);
->>  
->> -	list_del_init(&tic->t_queue);
->>  	return 0;
->>  shutdown:
->>  	list_del_init(&tic->t_queue);
->> @@ -301,6 +313,7 @@
->>  {
->>  	int			free_bytes;
->>  	int			error = 0;
->> +	DEFINE_WAKE_Q(wakeq);
->>  
->>  	ASSERT(!(log->l_flags & XLOG_ACTIVE_RECOVERY));
->>  
->> @@ -313,9 +326,16 @@
->>  	*need_bytes = xlog_ticket_reservation(log, head, tic);
->>  	free_bytes = xlog_space_left(log, &head->grant);
->>  	if (!list_empty_careful(&head->waiters)) {
->> +		bool wake_all;
->> +
->>  		spin_lock(&head->lock);
->> -		if (!xlog_grant_head_wake(log, head, &free_bytes) ||
->> -		    free_bytes < *need_bytes) {
->> +		wake_all = xlog_grant_head_wake(log, head, &free_bytes, &wakeq);
->> +		if (!wake_q_empty(&wakeq)) {
->> +			spin_unlock(&head->lock);
->> +			wake_up_q(&wakeq);
->> +			spin_lock(&head->lock);
->> +		}
->> +		if (!wake_all || free_bytes < *need_bytes) {
->>  			error = xlog_grant_head_wait(log, head, tic,
->>  						     *need_bytes);
->>  		}
-> That's racy. You can't drop the spin lock between
-> xlog_grant_head_wake() and xlog_grant_head_wait(), because
-> free_bytes is only valid while while the spinlock is held.  Same for
-> the "wake_all" variable you added. i..e. while waking up the
-> waiters, we could have run out of space again and had more tasks
-> queued, or had the AIL tail move and now have space available.
-> Either way, we can do the wrong thing because we dropped the lock
-> and free_bytes and wake_all are now stale and potentially incorrect.
->
->> @@ -1068,6 +1088,7 @@
->>  {
->>  	struct xlog		*log = mp->m_log;
->>  	int			free_bytes;
->> +	DEFINE_WAKE_Q(wakeq);
->>  
->>  	if (XLOG_FORCED_SHUTDOWN(log))
->>  		return;
->> @@ -1077,8 +1098,11 @@
->>  
->>  		spin_lock(&log->l_write_head.lock);
->>  		free_bytes = xlog_space_left(log, &log->l_write_head.grant);
->> -		xlog_grant_head_wake(log, &log->l_write_head, &free_bytes);
->> +		xlog_grant_head_wake(log, &log->l_write_head, &free_bytes,
->> +				     &wakeq);
->>  		spin_unlock(&log->l_write_head.lock);
->> +		wake_up_q(&wakeq);
->> +		wake_q_init(&wakeq);
-> That's another landmine. Just define the wakeq in the context where
-> it is used rather than use a function wide variable that requires
-> reinitialisation.
->
->>  	}
->>  
->>  	if (!list_empty_careful(&log->l_reserve_head.waiters)) {
->> @@ -1086,8 +1110,10 @@
->>  
->>  		spin_lock(&log->l_reserve_head.lock);
->>  		free_bytes = xlog_space_left(log, &log->l_reserve_head.grant);
->> -		xlog_grant_head_wake(log, &log->l_reserve_head, &free_bytes);
->> +		xlog_grant_head_wake(log, &log->l_reserve_head, &free_bytes,
->> +				     &wakeq);
->>  		spin_unlock(&log->l_reserve_head.lock);
->> +		wake_up_q(&wakeq);
->>  	}
->>  }
-> Ok, what about xlog_grant_head_wake_all()? You didn't convert that
-> to use wake queues, and so that won't remove tickets for the grant
-> head waiter list, and so those tasks will never get out of the new
-> inner loop you added to xlog_grant_head_wait(). That means
-> filesystem shutdowns will just hang the filesystem and leave it
-> unmountable. Did you run this through fstests?
->
-> Cheers,
->
-> Dave
-
-OK, I need more time to think about some of the questions that you
-raise.  Thanks for reviewing the patch.
-
-Cheers,
-Longman
+-	/* Total amount of bytes accounted for the mqueue */
+-	mq_treesize = info->attr.mq_maxmsg * sizeof(struct msg_msg) +
+-		min_t(unsigned int, info->attr.mq_maxmsg, MQ_PRIO_MAX) *
+-		sizeof(struct posix_msg_tree_node);
+-
+-	mq_bytes = mq_treesize + (info->attr.mq_maxmsg *
+-				  info->attr.mq_msgsize);
+-
+ 	user = info->user;
+ 	if (user) {
++		unsigned long mq_bytes, mq_treesize;
++
++		/* Total amount of bytes accounted for the mqueue */
++		mq_treesize = info->attr.mq_maxmsg * sizeof(struct msg_msg) +
++			min_t(unsigned int, info->attr.mq_maxmsg, MQ_PRIO_MAX) *
++			sizeof(struct posix_msg_tree_node);
++
++		mq_bytes = mq_treesize + (info->attr.mq_maxmsg *
++					  info->attr.mq_msgsize);
++
+ 		spin_lock(&mq_lock);
+ 		user->mq_bytes -= mq_bytes;
+ 		/*
+-- 
+2.17.1
 
 
-
+-- 
+Kees Cook
+Pixel Security
