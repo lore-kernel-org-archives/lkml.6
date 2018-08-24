@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BD59C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 15:53:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C555C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 15:53:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95CD9208B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 15:53:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95CD9208B2
+	by mail.kernel.org (Postfix) with ESMTP id 579D8208B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 15:53:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 579D8208B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728135AbeHXT2b (ORCPT
+        id S1728150AbeHXT2i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 15:28:31 -0400
-Received: from foss.arm.com ([217.140.101.70]:32866 "EHLO foss.arm.com"
+        Fri, 24 Aug 2018 15:28:38 -0400
+Received: from foss.arm.com ([217.140.101.70]:32826 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727565AbeHXT1w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 15:27:52 -0400
+        id S1726871AbeHXT1v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 15:27:51 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C590E1713;
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0A8B41682;
         Fri, 24 Aug 2018 08:52:38 -0700 (PDT)
 Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 96D163F763;
-        Fri, 24 Aug 2018 08:52:38 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D01ED3F7F3;
+        Fri, 24 Aug 2018 08:52:37 -0700 (PDT)
 Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 0B9D51AE3333; Fri, 24 Aug 2018 16:52:47 +0100 (BST)
+        id C7F1D1AE3307; Fri, 24 Aug 2018 16:52:47 +0100 (BST)
 From:   Will Deacon <will.deacon@arm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     peterz@infradead.org, benh@au1.ibm.com,
         torvalds@linux-foundation.org, npiggin@gmail.com,
         catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org,
         Will Deacon <will.deacon@arm.com>
-Subject: [RFC PATCH 06/11] arm64: tlb: Remove redundant !CONFIG_HAVE_RCU_TABLE_FREE code
-Date:   Fri, 24 Aug 2018 16:52:41 +0100
-Message-Id: <1535125966-7666-7-git-send-email-will.deacon@arm.com>
+Subject: [RFC PATCH 03/11] arm64: pgtable: Implement p[mu]d_valid() and check in set_p[mu]d()
+Date:   Fri, 24 Aug 2018 16:52:38 +0100
+Message-Id: <1535125966-7666-4-git-send-email-will.deacon@arm.com>
 X-Mailer: git-send-email 2.1.4
 In-Reply-To: <1535125966-7666-1-git-send-email-will.deacon@arm.com>
 References: <1535125966-7666-1-git-send-email-will.deacon@arm.com>
@@ -47,65 +47,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If there's one thing the RCU-based table freeing doesn't need, it's more
-ifdeffery.
-
-Remove the redundant !CONFIG_HAVE_RCU_TABLE_FREE code, since this option
-is unconditionally selected in our Kconfig.
+Now that our walk-cache invalidation routines imply a DSB before the
+invalidation, we no longer need one when we are clearing an entry during
+unmap.
 
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 ---
- arch/arm64/include/asm/tlb.h | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+ arch/arm64/include/asm/pgtable.h | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/include/asm/tlb.h b/arch/arm64/include/asm/tlb.h
-index 1e1f68ce28f4..bd00017d529a 100644
---- a/arch/arm64/include/asm/tlb.h
-+++ b/arch/arm64/include/asm/tlb.h
-@@ -22,16 +22,10 @@
- #include <linux/pagemap.h>
- #include <linux/swap.h>
- 
--#ifdef CONFIG_HAVE_RCU_TABLE_FREE
--
--#define tlb_remove_entry(tlb, entry)	tlb_remove_table(tlb, entry)
- static inline void __tlb_remove_table(void *_table)
+diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+index 1bdeca8918a6..2ab2031b778c 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -360,6 +360,7 @@ static inline int pmd_protnone(pmd_t pmd)
+ #define pmd_present(pmd)	pte_present(pmd_pte(pmd))
+ #define pmd_dirty(pmd)		pte_dirty(pmd_pte(pmd))
+ #define pmd_young(pmd)		pte_young(pmd_pte(pmd))
++#define pmd_valid(pmd)		pte_valid(pmd_pte(pmd))
+ #define pmd_wrprotect(pmd)	pte_pmd(pte_wrprotect(pmd_pte(pmd)))
+ #define pmd_mkold(pmd)		pte_pmd(pte_mkold(pmd_pte(pmd)))
+ #define pmd_mkwrite(pmd)	pte_pmd(pte_mkwrite(pmd_pte(pmd)))
+@@ -431,7 +432,9 @@ extern pgprot_t phys_mem_access_prot(struct file *file, unsigned long pfn,
+ static inline void set_pmd(pmd_t *pmdp, pmd_t pmd)
  {
- 	free_page_and_swap_cache((struct page *)_table);
- }
--#else
--#define tlb_remove_entry(tlb, entry)	tlb_remove_page(tlb, entry)
--#endif /* CONFIG_HAVE_RCU_TABLE_FREE */
- 
- static void tlb_flush(struct mmu_gather *tlb);
- 
-@@ -61,7 +55,7 @@ static inline void __pte_free_tlb(struct mmu_gather *tlb, pgtable_t pte,
- {
- 	__flush_tlb_pgtable(tlb->mm, addr);
- 	pgtable_page_dtor(pte);
--	tlb_remove_entry(tlb, pte);
-+	tlb_remove_table(tlb, pte);
+ 	WRITE_ONCE(*pmdp, pmd);
+-	dsb(ishst);
++
++	if (pmd_valid(pmd))
++		dsb(ishst);
  }
  
- #if CONFIG_PGTABLE_LEVELS > 2
-@@ -69,7 +63,7 @@ static inline void __pmd_free_tlb(struct mmu_gather *tlb, pmd_t *pmdp,
- 				  unsigned long addr)
- {
- 	__flush_tlb_pgtable(tlb->mm, addr);
--	tlb_remove_entry(tlb, virt_to_page(pmdp));
-+	tlb_remove_table(tlb, virt_to_page(pmdp));
- }
- #endif
+ static inline void pmd_clear(pmd_t *pmdp)
+@@ -477,11 +480,14 @@ static inline phys_addr_t pmd_page_paddr(pmd_t pmd)
+ #define pud_none(pud)		(!pud_val(pud))
+ #define pud_bad(pud)		(!(pud_val(pud) & PUD_TABLE_BIT))
+ #define pud_present(pud)	pte_present(pud_pte(pud))
++#define pud_valid(pud)		pte_valid(pud_pte(pud))
  
-@@ -78,7 +72,7 @@ static inline void __pud_free_tlb(struct mmu_gather *tlb, pud_t *pudp,
- 				  unsigned long addr)
+ static inline void set_pud(pud_t *pudp, pud_t pud)
  {
- 	__flush_tlb_pgtable(tlb->mm, addr);
--	tlb_remove_entry(tlb, virt_to_page(pudp));
-+	tlb_remove_table(tlb, virt_to_page(pudp));
+ 	WRITE_ONCE(*pudp, pud);
+-	dsb(ishst);
++
++	if (pud_valid(pud))
++		dsb(ishst);
  }
- #endif
  
+ static inline void pud_clear(pud_t *pudp)
 -- 
 2.1.4
 
