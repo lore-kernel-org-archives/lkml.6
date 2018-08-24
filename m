@@ -5,27 +5,27 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 496DCC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 14:13:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8830C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 14:15:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB404208CC
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 14:13:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB404208CC
+	by mail.kernel.org (Postfix) with ESMTP id 5EC6B208CC
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 14:15:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EC6B208CC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727135AbeHXRsh (ORCPT
+        id S1726847AbeHXRuD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 13:48:37 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60366 "EHLO mx1.suse.de"
+        Fri, 24 Aug 2018 13:50:03 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60538 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726182AbeHXRsh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 13:48:37 -0400
+        id S1726182AbeHXRuC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 13:50:02 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BF22BAD4C;
-        Fri, 24 Aug 2018 14:13:44 +0000 (UTC)
-Subject: Re: [PATCH v2 09/11] x86/paravirt: move the Xen-only pv_irq_ops under
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A133EAD0B;
+        Fri, 24 Aug 2018 14:15:09 +0000 (UTC)
+Subject: Re: [PATCH v2 10/11] x86/paravirt: move the Xen-only pv_mmu_ops under
  the PARAVIRT_XXL umbrella
 To:     Peter Zijlstra <peterz@infradead.org>
 Cc:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
@@ -34,8 +34,8 @@ Cc:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
         boris.ostrovsky@oracle.com, hpa@zytor.com, tglx@linutronix.de,
         mingo@redhat.com
 References: <20180813073739.26108-1-jgross@suse.com>
- <20180813073739.26108-10-jgross@suse.com>
- <20180824141045.GO24124@hirez.programming.kicks-ass.net>
+ <20180813073739.26108-11-jgross@suse.com>
+ <20180824141218.GP24124@hirez.programming.kicks-ass.net>
 From:   Juergen Gross <jgross@suse.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
@@ -69,12 +69,12 @@ Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
  pAd7a7BdsqWC4o+GTm5tnGrCyD+4gfDSpkOT53S/GNO07YkPkm/8J4OBoFfgSaCnQ1izwgJQ
  jIpcG2fPCI2/hxf2oqXPYbKr1v4Z1wthmoyUgGN0LPTIm+B5vdY82wI5qe9uN6UOGyTH2B3p
  hRQUWqCwu2sqkI3LLbTdrnyDZaixT2T0f4tyF5Lfs+Ha8xVMhIyzNb1byDI5FKCb
-Message-ID: <4477edae-e7c0-dcad-0621-824d55e97eaf@suse.com>
-Date:   Fri, 24 Aug 2018 16:13:43 +0200
+Message-ID: <e4862ca0-ccff-1662-0db2-86891b95f598@suse.com>
+Date:   Fri, 24 Aug 2018 16:15:08 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180824141045.GO24124@hirez.programming.kicks-ass.net>
+In-Reply-To: <20180824141218.GP24124@hirez.programming.kicks-ass.net>
 Content-Type: text/plain; charset=utf-8
 Content-Language: de-DE
 Content-Transfer-Encoding: 7bit
@@ -83,31 +83,24 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/08/18 16:10, Peter Zijlstra wrote:
-> On Mon, Aug 13, 2018 at 09:37:37AM +0200, Juergen Gross wrote:
->> Some of the paravirt ops defined in pv_irq_ops are for Xen PV guests
->> only. Define them only if CONFIG_PARAVIRT_XXL is set.
->> diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
->> index e652ec27d945..ae53ee36d8fb 100644
->> --- a/arch/x86/include/asm/paravirt_types.h
->> +++ b/arch/x86/include/asm/paravirt_types.h
->> @@ -197,8 +197,10 @@ struct pv_irq_ops {
->>  	struct paravirt_callee_save irq_disable;
->>  	struct paravirt_callee_save irq_enable;
->>  
->> +#ifdef CONFIG_PARAVIRT_XXL
->>  	void (*safe_halt)(void);
->>  	void (*halt)(void);
->> +#endif
+On 24/08/18 16:12, Peter Zijlstra wrote:
+> On Mon, Aug 13, 2018 at 09:37:38AM +0200, Juergen Gross wrote:
+>>  struct pv_mmu_ops {
+>> +	/* TLB operations */
+>> +	void (*flush_tlb_user)(void);
+>> +	void (*flush_tlb_kernel)(void);
+>> +	void (*flush_tlb_one_user)(unsigned long addr);
+>> +	void (*flush_tlb_others)(const struct cpumask *cpus,
+>> +				 const struct flush_tlb_info *info);
+>> +
+>> +	/* Hook for intercepting the destruction of an mm_struct. */
+>> +	void (*exit_mmap)(struct mm_struct *mm);
 > 
-> that makes me sad... but it appears VSMP also uses them. Can't you
-> simply make VSMP also select XXL, I don't think that's used quite as
-> much as Xen is :-)
-> 
+> Right, so I just wrecked that for you by adding a new:
+> tlb_remove_table virt function. But I don't suppose that's a difficult
+> thing to fix up.
 
-Sure, why not?
-
-Any objections?
+Right. This will stay outside of XXL, I think. :-)
 
 
 Juergen
