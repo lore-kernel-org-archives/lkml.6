@@ -2,97 +2,66 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 496F0C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 03:36:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BCD9C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 03:41:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F30CC208A6
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 03:36:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F30CC208A6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 630A9208B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 03:41:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="epyyuNpE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 630A9208B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727547AbeHXHJ3 (ORCPT
+        id S1727094AbeHXHOH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 03:09:29 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:43484 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726085AbeHXHJ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 03:09:29 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 01D2B24E51B0;
-        Fri, 24 Aug 2018 11:36:42 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.68) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.399.0; Fri, 24 Aug 2018
- 11:36:42 +0800
-Message-ID: <5B7F7D49.10206@huawei.com>
-Date:   Fri, 24 Aug 2018 11:36:41 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
+        Fri, 24 Aug 2018 03:14:07 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:42154 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726085AbeHXHOG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 03:14:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=pdD2qG9yHXy+rgoLHwGHLClGqoRRtclBpqor3teUiv4=;
+        b=epyyuNpEGQABcmMsuUxtI9yks/5zzBE/wfgehHGG+ihaClkstViL9FcBc88ft2Mzm++pM4MuAVGg0MGreQx2qJuWLA7Lay9ZrPvkn/cY57pJRmZMqBT0xrPuB9YkSqRSnLaPGQoDDiP+qwjVouTlwasfSG7E0Zm/oGJK9ZFXJWg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1ft2yN-0007uT-MR; Fri, 24 Aug 2018 05:41:19 +0200
+Date:   Fri, 24 Aug 2018 05:41:19 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Peng Li <lipeng321@huawei.com>
+Cc:     davem@davemloft.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linuxarm@huawei.com,
+        yisen.zhuang@huawei.com, salil.mehta@huawei.com
+Subject: Re: [PATCH NET 3/3] net: hns: add configuration constraints for
+ 1000M half
+Message-ID: <20180824034119.GA29111@lunn.ch>
+References: <1535082143-122281-1-git-send-email-lipeng321@huawei.com>
+ <1535082143-122281-4-git-send-email-lipeng321@huawei.com>
 MIME-Version: 1.0
-To:     Bing Bu Cao <bingbu.cao@linux.intel.com>
-CC:     <yong.zhi@intel.com>, <sakari.ailus@linux.intel.com>,
-        <bingbu.cao@intel.com>, <mchehab@kernel.org>,
-        <matthias.bgg@gmail.com>, <tian.shu.qiu@intel.com>,
-        <jian.xu.zheng@intel.com>, <linux-kernel@vger.kernel.org>,
-        <linux-media@vger.kernel.org>
-Subject: Re: [PATCH 1/2] media: ipu3-cio2: Use dma_zalloc_coherent to replace
- dma_alloc_coherent + memset
-References: <1534605415-11452-1-git-send-email-zhongjiang@huawei.com> <1534605415-11452-2-git-send-email-zhongjiang@huawei.com> <541b8c22-018f-4df6-85d1-82a72d9ab669@linux.intel.com>
-In-Reply-To: <541b8c22-018f-4df6-85d1-82a72d9ab669@linux.intel.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.68]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1535082143-122281-4-git-send-email-lipeng321@huawei.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/8/24 10:58, Bing Bu Cao wrote:
-> Hi, Jiang
->
-> This looks fine for me in ipu3-cio2.
-> Actually, we already have this change locally, but I think we miss submit it to community.
-> Thanks!
- It's ok,  Anyway,  Thank you for let me know that.
+On Fri, Aug 24, 2018 at 11:42:23AM +0800, Peng Li wrote:
+> Hisilicon hip05 and hip06 board network card do not support
+> 1000M half configuration. Driver can not config gmac as
+> 1000M half.
+> 
+> Signed-off-by: Peng Li <lipeng321@huawei.com>
 
- Best wishes,
- zhong jiang
-> On 08/18/2018 11:16 PM, zhong jiang wrote:
->> dma_zalloc_coherent has implemented the dma_alloc_coherent() + memset(),
->> We prefer to dma_zalloc_coherent instead of open-codeing.
->>
->> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
->> ---
->>  drivers/media/pci/intel/ipu3/ipu3-cio2.c | 6 ++----
->>  1 file changed, 2 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/media/pci/intel/ipu3/ipu3-cio2.c b/drivers/media/pci/intel/ipu3/ipu3-cio2.c
->> index 2902715..f0c6374 100644
->> --- a/drivers/media/pci/intel/ipu3/ipu3-cio2.c
->> +++ b/drivers/media/pci/intel/ipu3/ipu3-cio2.c
->> @@ -218,13 +218,11 @@ static int cio2_fbpt_init(struct cio2_device *cio2, struct cio2_queue *q)
->>  {
->>  	struct device *dev = &cio2->pci_dev->dev;
->>  
->> -	q->fbpt = dma_alloc_coherent(dev, CIO2_FBPT_SIZE, &q->fbpt_bus_addr,
->> -				     GFP_KERNEL);
->> +	q->fbpt = dma_zalloc_coherent(dev, CIO2_FBPT_SIZE, &q->fbpt_bus_addr,
->> +				      GFP_KERNEL);
->>  	if (!q->fbpt)
->>  		return -ENOMEM;
->>  
->> -	memset(q->fbpt, 0, CIO2_FBPT_SIZE);
->> -
->>  	return 0;
->>  }
->>  
->
-> .
->
+Hi Peng
 
+Does the driver remove SUPPORTED_1000baseT_Half from
+phydev->supported?  If you do that, the PHY should never negotiate
+this speed.
 
+   Andrew
