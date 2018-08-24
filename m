@@ -2,88 +2,106 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DE48C433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 18:41:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C9EFC433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 18:44:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B5E22147D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 18:41:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CCC82147A
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 18:44:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NkirNp9f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B5E22147D
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pyo25sgb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CCC82147A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727057AbeHXWQz (ORCPT
+        id S1726943AbeHXWTy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 18:16:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46268 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726535AbeHXWQz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 18:16:55 -0400
-Received: from localhost (LFbn-NCY-1-241-207.w83-194.abo.wanadoo.fr [83.194.85.207])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 729FB2147A;
-        Fri, 24 Aug 2018 18:41:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535136067;
-        bh=SdIomO4MEFSUrqg/ntH9iYImSYSAyiElDBzJnU1VqA4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NkirNp9f+/6ywNgcR0jEND+/iJT1GTesQDREly9YrwqBVl0e5T+EY3i4M0x52BQDT
-         xGcakgN6aPEWG02GwLwUeGbQ7+6eIPt7880eBc8370l1Oci+NlRlymB6G/lXDAfycX
-         TKttY9ARutfIKKOFNU+Ww1LAxk/IxS5MPwja6q18=
-Date:   Fri, 24 Aug 2018 20:41:04 +0200
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     Grygorii Strashko <grygorii.strashko@ti.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        stable@vger.kernel.org, Tero Kristo <t-kristo@ti.com>
-Subject: Re: [PATCH] nohz: Fix missing tick reprog while interrupting inline
- timer softirq
-Message-ID: <20180824184103.GD2730@lerouge>
-References: <1533077570-9169-1-git-send-email-frederic@kernel.org>
- <8ecb9229-4c14-6967-0863-15b47cefd251@ti.com>
- <20180824061750.GA20523@kroah.com>
- <alpine.DEB.2.21.1808240851420.1668@nanos.tec.linutronix.de>
- <0d63c2bb-f75d-3f79-c19d-bb4ac9a00cd5@ti.com>
+        Fri, 24 Aug 2018 18:19:54 -0400
+Received: from mail-yb0-f177.google.com ([209.85.213.177]:41602 "EHLO
+        mail-yb0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726569AbeHXWTx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 18:19:53 -0400
+Received: by mail-yb0-f177.google.com with SMTP id z3-v6so3830232ybm.8
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 11:44:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=PrbHQOVKhgPh73rQe6wLZBn7d7Ma0dZw/5maf5X3p+g=;
+        b=Pyo25sgbKFbFBAm+zHpdDwsECnGOvtxMiGQeFzEnq2MbEQRloY2SnvnjUwriK0HKlH
+         cP1OO/lsdXfk9cagpoxWOi0lXo555Uzq+waILkcR+TcfTiCx2ZgSimVfJPdXI9KNgp5h
+         aMv35q+DAhKis+ZOdxDY/OiJ73gUyYsV7hUpc0xN2IcnvtWbGn8dt+lzxVBnvacuq7hb
+         YcnrAd4H5D7p7LJXKFPLATn4rBa+FnvIZ/hQjc2I+025ntTtOiwgcItYhWm+B64HR0Iv
+         TxyVpiJw0eWsxnOYI/rZgZIHUrb1DJecJGYttuRQa/fywdBWqDEU3dBFBYX52R00LLJT
+         MB5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=PrbHQOVKhgPh73rQe6wLZBn7d7Ma0dZw/5maf5X3p+g=;
+        b=Lm6ox89ftBY+EdTuE+Zape0jPgoEjLub8XNGWZBkl4BwcgqcJE27niy+5MHgLJNDPH
+         KaTyqXAKWGmAshMjNCcOgDbdGdecBN6o5t8V77pzC39+wOJ8winEriYgObGFXIk41LSa
+         xRlih5rSELDN8sET/jwV7wdLomUtgsAfe/boArYSwmKT8CJ6ZFOZDut1UabpQqVVXAP2
+         LMMuFx3t/vm12dB7sSkB8zJ28rkGIrk2GqUYxzFAwypoIaIjdrnWB6GmRDpOet8slDCN
+         tlRGtWS7M4aAk7TBae/HHQ+I0dZil1/H3Z3B86jSVCpd96f0BGhHrzJzZvwW6tdG6Lrl
+         UJ6g==
+X-Gm-Message-State: APzg51CbKVmH2D1UnBLKdOGyOjdMnmsTZNP1Ee4VYi7XTwO3SAqUbeE4
+        JpxjiBu7TUA/lcDoFcWxKSM=
+X-Google-Smtp-Source: ANB0Vdbx+y7yzneooolcZziM2RxHm5yJODvQ69oJuCPzWXcPHwfrMJ97QynQcUSctzj03KI20qum/w==
+X-Received: by 2002:a25:abaf:: with SMTP id v44-v6mr1249704ybi.142.1535136244033;
+        Fri, 24 Aug 2018 11:44:04 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:200::3:8925])
+        by smtp.gmail.com with ESMTPSA id k184-v6sm3077301ywc.62.2018.08.24.11.44.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 24 Aug 2018 11:44:03 -0700 (PDT)
+Date:   Fri, 24 Aug 2018 11:44:01 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [GIT PULL] workqueue changes for v4.19-rc1
+Message-ID: <20180824184401.GW3978217@devbig004.ftw2.facebook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0d63c2bb-f75d-3f79-c19d-bb4ac9a00cd5@ti.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 24, 2018 at 11:10:44AM -0500, Grygorii Strashko wrote:
-> Yes. i do not see local_softirq_pending messages any more
-> 
-> But one question, just to clarify, after patch "nohz: Fix missing tick reprog while interrupting inline timer softirq"
-> the tick_nohz_irq_exit() will be called few times in case of nested interrupts (min 2):
-> gic_handle_irq
->  |- irq_exit
->     |- preempt_count_sub(HARDIRQ_OFFSET); 
->     |-__do_softirq 
-> 	<irqs enabled>
-> 	|- gic_handle_irq()
-> 	   |- irq_exit()
-> 		|- tick_irq_exit()
-> 		   if (!in_irq())
-> 			tick_nohz_irq_exit(); <-- [1]
->     |- tick_irq_exit()
-> 	if (!in_irq())
-> 		tick_nohz_irq_exit(); <-- [2]
-> 
-> Is it correct? in 4.14 tick_nohz_irq_exit() is much more complex then in LKML now,
-> and this is hot path.
+Hello,
 
-That's correct and it's indeed more costly in 4.14 as then the tick is going to be programmed
-twice.
+Workqueue changes for v4.19-rc1.  Over the lockdep cross-release
+churn, workqueue lost some of the existing annotations.  Johannes Berg
+restored it and also improved them.
+
+Thanks.
+
+The following changes since commit 66448bc274cadedb71fda7d914e7c29d8dead217:
+
+  workqueue: move function definitions within CONFIG_SMP block (2018-05-23 11:16:58 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tj/wq.git for-4.19
+
+for you to fetch changes up to 87915adc3f0acdf03c776df42e308e5a155c19af:
+
+  workqueue: re-add lockdep dependencies for flushing (2018-08-22 08:31:38 -0700)
+
+----------------------------------------------------------------
+Johannes Berg (2):
+      workqueue: skip lockdep wq dependency in cancel_work_sync()
+      workqueue: re-add lockdep dependencies for flushing
+
+ kernel/workqueue.c | 45 ++++++++++++++++++++++++++++++---------------
+ 1 file changed, 30 insertions(+), 15 deletions(-)
+
+-- 
+tejun
