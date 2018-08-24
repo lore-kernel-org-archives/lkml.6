@@ -2,111 +2,118 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 585DBC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 17:35:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 172F5C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 17:38:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 054582082B
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 17:35:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B073E2082B
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 17:38:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Q/1DMn8E";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Duen7Y2h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 054582082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FtYn4IS8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B073E2082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727821AbeHXVKz (ORCPT
+        id S1727635AbeHXVOP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 17:10:55 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:46128 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726277AbeHXVKy (ORCPT
+        Fri, 24 Aug 2018 17:14:15 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:36150 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726277AbeHXVOO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 17:10:54 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 5F8EE6022B; Fri, 24 Aug 2018 17:35:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535132118;
-        bh=ROiaCqo7tWwMPTxGo0KEd5ex8NllKOUXVHyuJQni6KM=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=Q/1DMn8Eg4LCGr7nIuBfC0xh4jYvB+N34LdQNZ9bMgT8l61XLgyPiNJzliCg0hMlJ
-         CFPDU4fZIX2SiIIWtEX/1YqB93Rr+dsxZlC5e/bwahFvEuvvG4EV0pIrwUmjyUR3Ar
-         wGHcSUwQZtpNRzQO0bV0dOBXNojKIncaanpPRg38=
-Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0B3E9604A6;
-        Fri, 24 Aug 2018 17:35:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535132117;
-        bh=ROiaCqo7tWwMPTxGo0KEd5ex8NllKOUXVHyuJQni6KM=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=Duen7Y2ht6KI0s5ybhMP5C7K3kb8Q3DnLcuYJJ20/3dg+zaGsFnkkxfBqprXPn6vK
-         zTVhOgJ4Ddf3hxDP/kxByRXEhZLV/IkfMNoBx/YgGDTxQaBNax3Atei9uLdd8ZjVDC
-         +GzECT1ziqmDtUPAMcrZU1XB9joj1Sxn8epvrUfI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0B3E9604A6
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Colin King <colin.king@canonical.com>
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        wcn36xx@lists.infradead.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] wcn36xx: replace dma_alloc_coherent + memset with dma_zalloc_coherent
-References: <20180824171410.22539-1-colin.king@canonical.com>
-Date:   Fri, 24 Aug 2018 20:35:12 +0300
-In-Reply-To: <20180824171410.22539-1-colin.king@canonical.com> (Colin King's
-        message of "Fri, 24 Aug 2018 18:14:10 +0100")
-Message-ID: <87bm9rhdm7.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Fri, 24 Aug 2018 17:14:14 -0400
+Received: by mail-it0-f65.google.com with SMTP id p16-v6so2929186itp.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 10:38:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=iwbWMBkCso+qLTd2UCAKLGBi2iYoAU0GFGbvtER/g9g=;
+        b=FtYn4IS8X1CaLjybliZa+ZXgNQPW9nAawlCV3s//F4fE3x1rKBA9jvo/oXf93ty/tN
+         RseuFtoQtMQH4LdJSeHurfQ/HMyOxCWgPF9A4GNQ7wwdOq5tW52s/TFiHzDINEh5W+EB
+         xWTSg1H9VLwVLcjHH2rD8obVQ47PD7qTo7s38=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=iwbWMBkCso+qLTd2UCAKLGBi2iYoAU0GFGbvtER/g9g=;
+        b=EoUbRdu3iGbKleofuX2fk8VIX4MSBF6ijP0AH3LMaSTlAxzGBlZ+d1X1r+50uvvrNh
+         jb/MBhK7aZyWjNKFcZFaOlhWZq8Mirmk7Au99Crzf9KY2mSo+t39J2Se2VjUEuWtXHfM
+         tq+DIoyU2gbtsSVxgzH0p6ZfPd3NxNJ7mNbNj/H6pbNguiwUWaJaW8i/regOe/O0R1Zb
+         bP7ftvkoDQAjxv7mvbt7Qo0yIVZWSZIxF/+PuSHYH/IVFbeC+28CbALOh3LX7aY4ApQr
+         nrQ7CwC15dkFAgA429jLNM1iKpduJk+dRimj9HcdUvBtoPguji4vGyuVW1+gq3Gnez09
+         DJ5w==
+X-Gm-Message-State: APzg51DJsrCKg/EWoeBSZarQtnRH0YUKcQUDNenh2KeOl0LQ0ug1boCh
+        /yosqXYUczsQHHiYyNb7oKYcD1aM8wTJ2wKocpizlg==
+X-Google-Smtp-Source: ANB0Vda9ryT0OjUdi7046i3BDdMIWymkSNNd69s1UAxYkIx9OMppSilGidvwQtIfrbjeip37KTgtjWvUIpiCe7jwYuI=
+X-Received: by 2002:a24:8309:: with SMTP id d9-v6mr2157496ite.123.1535132317619;
+ Fri, 24 Aug 2018 10:38:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+Received: by 2002:a6b:ac05:0:0:0:0:0 with HTTP; Fri, 24 Aug 2018 10:38:36
+ -0700 (PDT)
+In-Reply-To: <yq1a7pb9196.fsf@oracle.com>
+References: <1533928331-21303-1-git-send-email-jeff.lien@wdc.com>
+ <yq1in4gq5jf.fsf@oracle.com> <yq1lg8zb2lp.fsf@oracle.com> <20180822062016.GA10356@infradead.org>
+ <SN1PR04MB18241CBDC8E4CA5275EE4424EA360@SN1PR04MB1824.namprd04.prod.outlook.com>
+ <CAKv+Gu-RwCrdgW69NVpyRLwGPGPCZx+ksTBM7NZk7v0-dzczGg@mail.gmail.com> <yq1a7pb9196.fsf@oracle.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Fri, 24 Aug 2018 18:38:36 +0100
+Message-ID: <CAKv+Gu8Y7YmyB5rmxaj-SGB7q03in7ijv2cOifwYnhP5CNastw@mail.gmail.com>
+Subject: Re: [PATCH] Performance Improvement in CRC16 Calculations.
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     Jeffrey Lien <Jeff.Lien@wdc.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "tim.c.chen@linux.intel.com" <tim.c.chen@linux.intel.com>,
+        David Darrington <david.darrington@wdc.com>,
+        Jeff Furlong <jeff.furlong@wdc.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Colin King <colin.king@canonical.com> writes:
-
-> From: Colin Ian King <colin.king@canonical.com>
+On 24 August 2018 at 17:29, Martin K. Petersen
+<martin.petersen@oracle.com> wrote:
 >
-> It is preferable to use dma_zalloc_coherent rather than dam_alloc_coherent
-> and memset, so use it.
+> Ard,
 >
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/wireless/ath/wcn36xx/dxe.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
+>> Would it be possible to allocate the crypto transform upon first use
+>> instead of from an initcall? If crc_t10dif() is mostly called from
+>> non-process context, that would not really work, but otherwise, we
+>> could simply defer it (and occasional calls from non-process context
+>> that do occur would use the generic code until the point where another
+>> call from process context allocates the transform)
 >
-> diff --git a/drivers/net/wireless/ath/wcn36xx/dxe.c b/drivers/net/wireless/ath/wcn36xx/dxe.c
-> index 06cfe8d311f3..e66ddaa39523 100644
-> --- a/drivers/net/wireless/ath/wcn36xx/dxe.c
-> +++ b/drivers/net/wireless/ath/wcn36xx/dxe.c
-> @@ -174,13 +174,11 @@ static int wcn36xx_dxe_init_descs(struct device *dev, struct wcn36xx_dxe_ch *wcn
->  	int i;
->  
->  	size = wcn_ch->desc_num * sizeof(struct wcn36xx_dxe_desc);
-> -	wcn_ch->cpu_addr = dma_alloc_coherent(dev, size, &wcn_ch->dma_addr,
-> -					      GFP_KERNEL);
-> +	wcn_ch->cpu_addr = dma_zalloc_coherent(dev, size, &wcn_ch->dma_addr,
-> +					       GFP_KERNEL);
->  	if (!wcn_ch->cpu_addr)
->  		return -ENOMEM;
->  
-> -	memset(wcn_ch->cpu_addr, 0, size);
-> -
->  	cur_dxe = (struct wcn36xx_dxe_desc *)wcn_ch->cpu_addr;
->  	cur_ctl = wcn_ch->head_blk_ctl;
+> The function is always called from user context. However, postponing the
+> crypto transform registration doesn't solve the common scenario of the
+> user booting off of a Fibre Channel/SAS/NVMe device with the desired
+> crct10dif-pclmul.ko module located on the boot drive.
+>
+> If there is no good way to teach crypto to update existing registrations
+> when a higher priority transformation becomes available, then we
+> probably need to explore tweaking dracut to unconditionally load
+> crct10dif-pclmul (and your ARM equivalent). Looks like there are already
+> hacks in place in dracut to preload crc32c for btrfs and XFS.
+>
 
-Hehe, I think you are the third person submitting a similar patch :)
-Anyway, I just applied this few hours ago:
+I'd prefer to handle this without help from userland.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/kvalo/ath.git/commit/?h=ath-next&id=d410e28f3ae476e1572b8893c646ef44fae7bbbd
+It shouldn't be too difficult to register a module notifier that only
+sets a flag (or the static key, even?), and to free and re-allocate
+the crc_t10dif transform if the flag is set.
 
--- 
-Kalle Valo
+
+> Anyway. Just seems like the kernel is violating the principle of least
+> surprise here. The kernel should always pick the best available tool for
+> the job...
+>
+> --
+> Martin K. Petersen      Oracle Linux Engineering
