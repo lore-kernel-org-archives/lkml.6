@@ -2,254 +2,96 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 875E4C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 15:01:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA47AC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 15:01:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2833921477
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 15:01:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2833921477
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6F1E021477
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 15:01:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F1E021477
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727540AbeHXSgA (ORCPT
+        id S1727770AbeHXSgX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 14:36:00 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53026 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726556AbeHXSgA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 14:36:00 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6D402402332F;
-        Fri, 24 Aug 2018 15:00:57 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-116-161.ams2.redhat.com [10.36.116.161])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 39C9D10EE790;
-        Fri, 24 Aug 2018 15:00:53 +0000 (UTC)
-Subject: Re: [PATCH v5 01/23] iommu: introduce bind_pasid_table API function
-To:     Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-References: <1526072055-86990-1-git-send-email-jacob.jun.pan@linux.intel.com>
- <1526072055-86990-2-git-send-email-jacob.jun.pan@linux.intel.com>
-Cc:     Yi L <yi.l.liu@linux.intel.com>, Raj Ashok <ashok.raj@intel.com>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Liu@mail.linuxfoundation.org, Jean Delvare <khali@linux-fr.org>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <b6621306-fd32-7ede-ae88-7345898eb134@redhat.com>
-Date:   Fri, 24 Aug 2018 17:00:51 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        Fri, 24 Aug 2018 14:36:23 -0400
+Received: from sauhun.de ([88.99.104.3]:41406 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726504AbeHXSgW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 14:36:22 -0400
+Received: from localhost (p54B33931.dip0.t-ipconnect.de [84.179.57.49])
+        by pokefinder.org (Postfix) with ESMTPSA id A4423305D9C;
+        Fri, 24 Aug 2018 17:01:19 +0200 (CEST)
+Date:   Fri, 24 Aug 2018 17:01:19 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Sedat Dilek <sedat.dilek@credativ.de>
+Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: Re: [PATCH v2] i2c: Remove '-Wno-deprecated-declarations' compiler
+ warning
+Message-ID: <20180824150119.y7ikykvq37a6brbj@ninjato>
+References: <20180819135135.8801-1-sedat.dilek@credativ.de>
+ <20180824130130.bialyhjarwkwodzw@ninjato>
+ <1335058904.531.1535118581478@ox.credativ.com>
+ <20180824140705.t3pkiqfpnqzaaksz@ninjato>
+ <1600966696.540.1535120394100@ox.credativ.com>
 MIME-Version: 1.0
-In-Reply-To: <1526072055-86990-2-git-send-email-jacob.jun.pan@linux.intel.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 24 Aug 2018 15:00:57 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 24 Aug 2018 15:00:57 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'eric.auger@redhat.com' RCPT:''
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ypud544zi5r45xoq"
+Content-Disposition: inline
+In-Reply-To: <1600966696.540.1535120394100@ox.credativ.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacob,
 
-On 05/11/2018 10:53 PM, Jacob Pan wrote:
-> Virtual IOMMU was proposed to support Shared Virtual Memory (SVM)
-> use in the guest:
-> https://lists.gnu.org/archive/html/qemu-devel/2016-11/msg05311.html
-> 
-> As part of the proposed architecture, when an SVM capable PCI
-> device is assigned to a guest, nested mode is turned on. Guest owns the
-> first level page tables (request with PASID) which performs GVA->GPA
-> translation. Second level page tables are owned by the host for GPA->HPA
-> translation for both request with and without PASID.
-> 
-> A new IOMMU driver interface is therefore needed to perform tasks as
-> follows:
-> * Enable nested translation and appropriate translation type
-> * Assign guest PASID table pointer (in GPA) and size to host IOMMU
-> 
-> This patch introduces new API functions to perform bind/unbind guest PASID
-> tables. Based on common data, model specific IOMMU drivers can be extended
-> to perform the specific steps for binding pasid table of assigned devices.
-> 
-> Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-> Signed-off-by: Liu, Yi L <yi.l.liu@linux.intel.com>
-> Signed-off-by: Ashok Raj <ashok.raj@intel.com>
-> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> ---
->  drivers/iommu/iommu.c      | 19 +++++++++++++++++++
->  include/linux/iommu.h      | 24 ++++++++++++++++++++++++
->  include/uapi/linux/iommu.h | 33 +++++++++++++++++++++++++++++++++
->  3 files changed, 76 insertions(+)
->  create mode 100644 include/uapi/linux/iommu.h
-> 
-> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-> index d2aa2320..3a69620 100644
-> --- a/drivers/iommu/iommu.c
-> +++ b/drivers/iommu/iommu.c
-> @@ -1325,6 +1325,25 @@ int iommu_attach_device(struct iommu_domain *domain, struct device *dev)
->  }
->  EXPORT_SYMBOL_GPL(iommu_attach_device);
->  
-> +int iommu_bind_pasid_table(struct iommu_domain *domain, struct device *dev,
-> +			struct pasid_table_config *pasidt_binfo)
-As Jean-Philippe, I must confessed i am very confused by having both the
-iommu_domain and dev passed as argument.
+--ypud544zi5r45xoq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I know this was discussed when the RFC was submitted and maybe I missed
-the main justification behind that choice. I understand that at the HW
-level we want to change the context entry or ARM CD in my case for a
-specific device. But on other hand, at the logical level, I understand
-the iommu_domain is representing a set of translation config & page
-tables shared by all the devices within the domain (hope this is
-fundamentally correct ?!). So to me we can't change the device
-translation setup without changing the whole iommu_device setup
-otherwise this would mean this device has a translation configuration
-that is not consistent anymore with the other devices in the same
-domain. Is that correct? So can't we only keep the iommu_domain arg?
+On Fri, Aug 24, 2018 at 04:19:53PM +0200, Sedat Dilek wrote:
+> > Wolfram Sang <wsa@the-dreams.de> hat am 24. August 2018 um 16:07 geschr=
+ieben:
+> >=20
+> >=20
+> >=20
+> > > will my patch go to [1]?
+> >=20
+> > It won't be needed anymore, the __deprecated function will go away until
+> > next week.
+> >
+>=20
+> The relict in drivers/i2/Makefile should go away, too.
 
-> +{
-> +	if (unlikely(!domain->ops->bind_pasid_table))
-> +		return -ENODEV;
-> +
-> +	return domain->ops->bind_pasid_table(domain, dev, pasidt_binfo);
-> +}
-> +EXPORT_SYMBOL_GPL(iommu_bind_pasid_table);
-> +
-> +void iommu_unbind_pasid_table(struct iommu_domain *domain, struct device *dev)
-> +{
-> +	if (unlikely(!domain->ops->unbind_pasid_table))
-> +		return;
-> +
-> +	domain->ops->unbind_pasid_table(domain, dev);
-> +}
-> +EXPORT_SYMBOL_GPL(iommu_unbind_pasid_table);
-> +
->  static void __iommu_detach_device(struct iommu_domain *domain,
->  				  struct device *dev)
->  {
-> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-> index 19938ee..5199ca4 100644
-> --- a/include/linux/iommu.h
-> +++ b/include/linux/iommu.h
-> @@ -25,6 +25,7 @@
->  #include <linux/errno.h>
->  #include <linux/err.h>
->  #include <linux/of.h>
-> +#include <uapi/linux/iommu.h>
->  
->  #define IOMMU_READ	(1 << 0)
->  #define IOMMU_WRITE	(1 << 1)
-> @@ -187,6 +188,8 @@ struct iommu_resv_region {
->   * @domain_get_windows: Return the number of windows for a domain
->   * @of_xlate: add OF master IDs to iommu grouping
->   * @pgsize_bitmap: bitmap of all possible supported page sizes
-> + * @bind_pasid_table: bind pasid table pointer for guest SVM
-> + * @unbind_pasid_table: unbind pasid table pointer and restore defaults
->   */
->  struct iommu_ops {
->  	bool (*capable)(enum iommu_cap);
-> @@ -233,8 +236,14 @@ struct iommu_ops {
->  	u32 (*domain_get_windows)(struct iommu_domain *domain);
->  
->  	int (*of_xlate)(struct device *dev, struct of_phandle_args *args);
-> +
->  	bool (*is_attach_deferred)(struct iommu_domain *domain, struct device *dev);
->  
-> +	int (*bind_pasid_table)(struct iommu_domain *domain, struct device *dev,
-> +				struct pasid_table_config *pasidt_binfo);
-> +	void (*unbind_pasid_table)(struct iommu_domain *domain,
-> +				struct device *dev);
-> +
->  	unsigned long pgsize_bitmap;
->  };
->  
-> @@ -296,6 +305,10 @@ extern int iommu_attach_device(struct iommu_domain *domain,
->  			       struct device *dev);
->  extern void iommu_detach_device(struct iommu_domain *domain,
->  				struct device *dev);
-> +extern int iommu_bind_pasid_table(struct iommu_domain *domain,
-> +		struct device *dev, struct pasid_table_config *pasidt_binfo);
-> +extern void iommu_unbind_pasid_table(struct iommu_domain *domain,
-> +				struct device *dev);
->  extern struct iommu_domain *iommu_get_domain_for_dev(struct device *dev);
->  extern int iommu_map(struct iommu_domain *domain, unsigned long iova,
->  		     phys_addr_t paddr, size_t size, int prot);
-> @@ -696,6 +709,17 @@ const struct iommu_ops *iommu_ops_from_fwnode(struct fwnode_handle *fwnode)
->  	return NULL;
->  }
->  
-> +static inline
-> +int iommu_bind_pasid_table(struct iommu_domain *domain, struct device *dev,
-> +			struct pasid_table_config *pasidt_binfo)
-> +{
-> +	return -ENODEV;
-> +}
-> +static inline
-> +void iommu_unbind_pasid_table(struct iommu_domain *domain, struct device *dev)
-> +{
-> +}
-> +
->  #endif /* CONFIG_IOMMU_API */
->  
->  #endif /* __LINUX_IOMMU_H */
-> diff --git a/include/uapi/linux/iommu.h b/include/uapi/linux/iommu.h
-> new file mode 100644
-> index 0000000..cb2d625
-> --- /dev/null
-> +++ b/include/uapi/linux/iommu.h
-> @@ -0,0 +1,33 @@
-> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> +/*
-> + * IOMMU user API definitions
-> + *
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +#ifndef _UAPI_IOMMU_H
-> +#define _UAPI_IOMMU_H
-> +
-> +#include <linux/types.h>
-> +
-> +/**
-> + * PASID table data used to bind guest PASID table to the host IOMMU. This will
-> + * enable guest managed first level page tables.
-> + * @version: for future extensions and identification of the data format
-> + * @bytes: size of this structure
-> + * @base_ptr:	PASID table pointer
-> + * @pasid_bits:	number of bits supported in the guest PASID table, must be less
-> + *		or equal than the host supported PASID size.
-> + */
-> +struct pasid_table_config {
-> +	__u32 version;
-> +#define PASID_TABLE_CFG_VERSION_1 1
-> +	__u32 bytes;
-> +	__u64 base_ptr;
-> +	__u8 pasid_bits;
-> +};
-Don't we need to index all structs with iommu_ to protect the naming
-spaces? Same comment on other patches impacting the uapi.
+Correct. I will apply your patch, just with an shoertened commit message
+(because the use case is gone) if this is OK with you.
 
-A question about the alignment. Don't we need to be 64b aligned? VFIO
-uapi structs are.
 
-Thanks
+--ypud544zi5r45xoq
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Eric
-> +
-> +#endif /* _UAPI_IOMMU_H */
-> 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAluAHbkACgkQFA3kzBSg
+KbZ4rRAAhxadVF05CgNk4OwtTLIpGXgZLUYQy0wJId3h+thmcGT8OkQ9uUvintRo
+Iz/fFfl33Or9DhdSTSungbWqjA9FkhNXfi0vg5rXbwsvMOg/oFFsEYEW+uR53sX7
+CyEcpd8kYiIKYGuV5ppo7Y5pMVF336cqyt7tt7FoB6cpvCphoYVZtvg3hjkjfMLW
+npUtkaWO4ZvTb/EvZQbYLg3j8fgOlnB4qJ1nIxJHAXFfGHp6eup9m5ve2m9d/1ae
+V451XukT1fmyFWHiIK6iM0OvSX9F5cWsJ0/v3AvNhxvO0nVZLvAjaynmwzjvzKO1
+9BzEQkfYQp/QKpVAOLQeh0nsTCj1DTGR6y8RC9ss+B/yylQ8aZfaUpdRmVi5mwvJ
+jfqN3x4UPdxCkSqzHoqBjBi5hMr/HgJgHoc8VqlWJJ8RzKABZvYtriBIGOLhhUay
+Pcgsw7ZR7gdjkSOrvd3nve9d/1P8zB5heR1DJFGDUjn8hmXORE8/+iFt1f/BQq6x
+9V52/c+v/hmYNdNOPO7ZhsMYAgFNA3TNBCeDVemkMh5+ewEcoKxTD7hZFxJt0Emd
+RvOumo9MbsVwnboJKYzXf62MV6jOrmZNcXVa30QVR/BV/AdhJx3GuSZhCsIPz/Sr
+14LUC8B2AdiVA4UCUyg2MSyqQ7iAg/tKSPqogHPWAbi6XXd5Aos=
+=L8HM
+-----END PGP SIGNATURE-----
+
+--ypud544zi5r45xoq--
