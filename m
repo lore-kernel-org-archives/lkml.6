@@ -5,75 +5,139 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86E50C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 12:37:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B234FC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 12:39:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 297F121564
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 12:37:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 297F121564
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5D10021564
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 12:39:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D10021564
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726891AbeHXQMY (ORCPT
+        id S1727147AbeHXQOR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 12:12:24 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60300 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726504AbeHXQMY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 12:12:24 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3F41A40216E8;
-        Fri, 24 Aug 2018 12:37:55 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B67292156701;
-        Fri, 24 Aug 2018 12:37:52 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w7OCbqxh011762;
-        Fri, 24 Aug 2018 08:37:52 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w7OCbqJv011757;
-        Fri, 24 Aug 2018 08:37:52 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Fri, 24 Aug 2018 08:37:52 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-cc:     "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, Mike Snitzer <msnitzer@redhat.com>,
-        dm-devel@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: Deadlock when using crypto API for block devices
-In-Reply-To: <20180824112435.ggizlqrymuibm6oo@gondor.apana.org.au>
-Message-ID: <alpine.LRH.2.02.1808240837120.11243@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.1808231621220.8560@file01.intranet.prod.int.rdu2.redhat.com> <20180824021010.hfar7gasp34ddrib@gondor.apana.org.au> <alpine.LRH.2.02.1808240659320.27014@file01.intranet.prod.int.rdu2.redhat.com>
- <20180824112435.ggizlqrymuibm6oo@gondor.apana.org.au>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        Fri, 24 Aug 2018 12:14:17 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:47757 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726504AbeHXQOR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 12:14:17 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id C8B7322A39; Fri, 24 Aug 2018 14:39:46 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-53-19.w90-88.abo.wanadoo.fr [90.88.170.19])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 1B60B206DE;
+        Fri, 24 Aug 2018 14:39:36 +0200 (CEST)
+Date:   Fri, 24 Aug 2018 14:39:34 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     vitor <Vitor.Soares@synopsys.com>, <linux-gpio@vger.kernel.org>,
+        Sekhar Nori <nsekhar@ti.com>
+Cc:     Wolfram Sang <wsa@the-dreams.de>, <linux-i2c@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, <linux-doc@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Przemyslaw Sroka <psroka@cadence.com>,
+        Arkadiusz Golec <agolec@cadence.com>,
+        Alan Douglas <adouglas@cadence.com>,
+        Bartosz Folta <bfolta@cadence.com>,
+        Damian Kos <dkos@cadence.com>,
+        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
+        Cyprian Wronka <cwronka@cadence.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        "Kumar Gala" <galak@codeaurora.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiang Lin <Xiang.Lin@synaptics.com>,
+        Przemyslaw Gaj <pgaj@cadence.com>,
+        Peter Rosin <peda@axentia.se>
+Subject: Re: [PATCH v6 01/10] i3c: Add core I3C infrastructure
+Message-ID: <20180824143934.6d6b6487@bbrezillon>
+In-Reply-To: <d2f40cc2-b344-69d1-4314-83524ad7b178@synopsys.com>
+References: <20180719152930.3715-1-boris.brezillon@bootlin.com>
+        <20180719152930.3715-2-boris.brezillon@bootlin.com>
+        <d2f40cc2-b344-69d1-4314-83524ad7b178@synopsys.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 24 Aug 2018 12:37:55 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 24 Aug 2018 12:37:55 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Vitor,
 
+On Wed, 22 Aug 2018 17:43:34 +0100
+vitor <Vitor.Soares@synopsys.com> wrote:
 
-On Fri, 24 Aug 2018, Herbert Xu wrote:
-
-> On Fri, Aug 24, 2018 at 07:06:32AM -0400, Mikulas Patocka wrote:
-> >
-> > A quick search through the crypto code shows that ahash_save_req and 
-> > seqiv_aead_encrypt return -ENOMEM.
-> > 
-> > Will you fix them?
+> Hi Boris,
 > 
-> These only trigger for unaligned buffers.  It would be much better
-> if dm-crypt can ensure that the input/output is properly unaligned
-> and if otherwise do the allocation in dm-crypt.
+> 
+> On 19-07-2018 16:29, Boris Brezillon wrote:
+> > +int i3c_bus_register(struct i3c_bus *i3cbus)
+> > +{
+> > +	struct i2c_dev_desc *desc;
+> > +
+> > +	i3c_bus_for_each_i2cdev(i3cbus, desc) {
+> > +		switch (desc->boardinfo->lvr & I3C_LVR_I2C_INDEX_MASK) {
+> > +		case I3C_LVR_I2C_INDEX(0):
+> > +			if (i3cbus->mode < I3C_BUS_MODE_MIXED_FAST)
+> > +				i3cbus->mode = I3C_BUS_MODE_MIXED_FAST;
+> > +			break;
+> > +
+> > +		case I3C_LVR_I2C_INDEX(1):
+> > +		case I3C_LVR_I2C_INDEX(2):
+> > +			if (i3cbus->mode < I3C_BUS_MODE_MIXED_SLOW)
+> > +				i3cbus->mode = I3C_BUS_MODE_MIXED_SLOW;
+> > +			break;
+> > +
+> > +		default:
+> > +			return -EINVAL;
+> > +		}
+> > +	}
+> > +
+> > +	if (!i3cbus->scl_rate.i3c)
+> > +		i3cbus->scl_rate.i3c = I3C_BUS_TYP_I3C_SCL_RATE;
+> > +
+> > +	if (!i3cbus->scl_rate.i2c) {
+> > +		if (i3cbus->mode == I3C_BUS_MODE_MIXED_SLOW)
+> > +			i3cbus->scl_rate.i2c = I3C_BUS_I2C_FM_SCL_RATE;
+> > +		else
+> > +			i3cbus->scl_rate.i2c = I3C_BUS_I2C_FM_PLUS_SCL_RATE;
+> > +	}
+> > +
+> > +	/*
+> > +	 * I3C/I2C frequency may have been overridden, check that user-provided
+> > +	 * values are not exceeding max possible frequency.
+> > +	 */
+> > +	if (i3cbus->scl_rate.i3c > I3C_BUS_MAX_I3C_SCL_RATE ||
+> > +	    i3cbus->scl_rate.i2c > I3C_BUS_I2C_FM_PLUS_SCL_RATE) {
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	dev_set_name(&i3cbus->dev, "i3c-%d", i3cbus->id);
+> > +
+> > +	return device_add(&i3cbus->dev);
+> > +}  
+> During the tests of the bus with i2c devices I found the i2c_dev_desc 
+> objects aren't allocated before this function. This cause i3cbus->mode = 
+> I3C_BUS_MODE_PURE.
 
-But we are relying here on an implementation detail and not on contract.
+I just checked and DT parsing (+ I2C descs creation) is done before
+i3c_bus_register() is called, so we should be good. How did you declare
+your I2C devices (right now, only DT declaration is supported).
 
-Mikulas
+> 
+> I want to do something for the slave and secondary master, do you 
+> already have infrastructure that you can share?
+
+What do you mean?
+
+Regards,
+
+Boris
