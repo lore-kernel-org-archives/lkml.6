@@ -2,94 +2,101 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0AE1C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 15:48:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78759C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 15:50:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E3FD2152B
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 15:48:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fbmRZsDv";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Vr/bEitR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E3FD2152B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 2CA6E2152B
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 15:50:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CA6E2152B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726988AbeHXTYF (ORCPT
+        id S1727142AbeHXTZP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 15:24:05 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:32880 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726513AbeHXTYF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 15:24:05 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 96B9760214; Fri, 24 Aug 2018 15:48:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535125732;
-        bh=TyinUkAs8tDUy91faIewVv7WYg5eqVFsSwSSDeBm8Y4=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=fbmRZsDvfO7ADEqjGG0/xTzTKmg1EhNaM0xMKBpFuZbfDF/18CCv2iWdylGompOjv
-         iRy589DWrvFGhiLM1X//4lb7dA9RqlZD0gkbHoWPHKO7zSrMBB5PuthjgnAcklDX7m
-         LiWOvNcPtakTEFEPqZLHyi+jbako3T/osAcvkhOU=
-Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6368060214;
-        Fri, 24 Aug 2018 15:48:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535125731;
-        bh=TyinUkAs8tDUy91faIewVv7WYg5eqVFsSwSSDeBm8Y4=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=Vr/bEitRS1/rBCYWqdqq5eIkwDIyJGlSXBZk3XzgD8L56Fbkat4uakk2Aeakgmvy2
-         VQpS5MP0tKAWaMhpqP2uB+H13iHm6CAy8WH+ID48BtmK51wkLquMEwRgPfra7hHMlP
-         IBQ8KBDrW3XctIIzZbi7ZQhcHsBhZyhtkV49FSlQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6368060214
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Fri, 24 Aug 2018 15:25:15 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60962 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726268AbeHXTZP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 15:25:15 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CC40480D;
+        Fri, 24 Aug 2018 08:50:02 -0700 (PDT)
+Received: from brain-police (unknown [10.37.8.229])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1852F3F5BC;
+        Fri, 24 Aug 2018 08:49:58 -0700 (PDT)
+Date:   Fri, 24 Aug 2018 16:49:53 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Benjamin Herrenschmidt <benh@au1.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Nick Piggin <npiggin@gmail.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Rik van Riel <riel@surriel.com>,
+        Jann Horn <jannh@google.com>,
+        Adin Scannell <ascannell@google.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        David Miller <davem@davemloft.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [PATCH 3/4] mm/tlb, x86/mm: Support invalidating TLB caches for
+ RCU_TABLE_FREE
+Message-ID: <20180824154953.GA15226@brain-police>
+References: <20180822153012.173508681@infradead.org>
+ <20180822154046.823850812@infradead.org>
+ <20180822155527.GF24124@hirez.programming.kicks-ass.net>
+ <20180823134525.5f12b0d3@roar.ozlabs.ibm.com>
+ <CA+55aFxneZTFxxxAjLZmj92VUJg6z7hERxJ2cHoth-GC0RuELw@mail.gmail.com>
+ <776104d4c8e4fc680004d69e3a4c2594b638b6d1.camel@au1.ibm.com>
+ <20180824083556.GI24124@hirez.programming.kicks-ass.net>
+ <20180824131332.GM24142@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v2] wcn36xx: Use dma_zalloc_coherent instead of
- dma_alloc_coherent + memset
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <1534761895-10457-1-git-send-email-zhongjiang@huawei.com>
-References: <1534761895-10457-1-git-send-email-zhongjiang@huawei.com>
-To:     zhong jiang <zhongjiang@huawei.com>
-Cc:     <davem@davemloft.net>, <wcn36xx@lists.infradead.org>,
-        <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20180824154852.96B9760214@smtp.codeaurora.org>
-Date:   Fri, 24 Aug 2018 15:48:52 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180824131332.GM24142@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-zhong jiang <zhongjiang@huawei.com> wrote:
+Hi Peter,
 
-> dma_zalloc_coherent has implemented the dma_alloc_coherent() + memset(),
-> We prefer to dma_zalloc_coherent instead of open-codeing.
+On Fri, Aug 24, 2018 at 03:13:32PM +0200, Peter Zijlstra wrote:
+> On Fri, Aug 24, 2018 at 10:35:56AM +0200, Peter Zijlstra wrote:
 > 
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+> > Anyway, its sorted now; although I'd like to write me a fairly big
+> > comment in asm-generic/tlb.h about things, before I forget again.
+> 
+> How's something like so? There's a little page_size thingy in this;
+> mostly because I couldn't be arsed to split it for now.
+> 
+> Will has opinions on the page_size thing; I'll let him explain.
 
-Doesn't apply as I had already applied similar patch:
+They're not especially strong opinions, it's just that I don't think the
+page size is necessarily the right thing to track and I'd rather remove that
+altogether.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/kvalo/ath.git/commit/?h=ath-next&id=d410e28f3ae476e1572b8893c646ef44fae7bbbd
+In the patches I've hacked up (I'll post shortly as an RFC), I track the
+levels of page-table instead so you can relate the mmu_gather explicitly
+with the page-table structure, rather than have to infer it from the page
+size. For example, if an architecture could put down huge mappings at the
+pte level (e.g. using a contiguous hint in the pte like we have on arm64),
+then actually you want to know about the level rather than the size. You can
+also track the levels using only 4 bits in the gather structure.
 
-error: patch failed: drivers/net/wireless/ath/wcn36xx/dxe.c:174
-error: drivers/net/wireless/ath/wcn36xx/dxe.c: patch does not apply
-stg import: Diff does not apply cleanly
+Finally, both approaches have a funny corner case when a VMA contains a
+mixture of granule sizes. With the "page size has changed so flush
+synchronously" you can theoretically end up with a lot of flushes, where
+you'd have been better off just invalidating the whole mm. If you track the
+levels instead and postpone a flush using the smallest level you saw, then
+you're likely to hit whatever threshold you have and nuke the mm.
 
-Patch set to Rejected.
-
--- 
-https://patchwork.kernel.org/patch/10570243/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+Will
