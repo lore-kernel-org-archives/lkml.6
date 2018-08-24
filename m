@@ -5,33 +5,33 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AF66C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:52:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89766C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:53:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0554B2151C
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:52:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0554B2151C
+	by mail.kernel.org (Postfix) with ESMTP id 48A9E2156B
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:53:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48A9E2156B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727952AbeHXR1M (ORCPT
+        id S1727602AbeHXR1p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 13:27:12 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57110 "EHLO mx1.suse.de"
+        Fri, 24 Aug 2018 13:27:45 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57156 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726883AbeHXR1M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 13:27:12 -0400
+        id S1726264AbeHXR1p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 13:27:45 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 43881AE8E;
-        Fri, 24 Aug 2018 13:52:24 +0000 (UTC)
-Subject: Re: [PATCH v3 0/5] xen/blk: persistent grant rework
-To:     =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>
-Cc:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        linux-block@vger.kernel.org, konrad.wilk@oracle.com,
-        axboe@kernel.dk, boris.ostrovsky@oracle.com
-References: <20180813140114.20126-1-jgross@suse.com>
- <20180817155909.4cwiy6bhhgiala5m@mac>
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C9C16AE8E;
+        Fri, 24 Aug 2018 13:52:56 +0000 (UTC)
+Subject: Re: [PATCH v2 00/11] x86/paravirt: several cleanups
+To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org, virtualization@lists.linux-foundation.org
+Cc:     akataria@vmware.com, rusty@rustcorp.com.au,
+        boris.ostrovsky@oracle.com, hpa@zytor.com, tglx@linutronix.de,
+        mingo@redhat.com, peterz@infradead.org
+References: <20180813073739.26108-1-jgross@suse.com>
 From:   Juergen Gross <jgross@suse.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
@@ -65,48 +65,98 @@ Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
  pAd7a7BdsqWC4o+GTm5tnGrCyD+4gfDSpkOT53S/GNO07YkPkm/8J4OBoFfgSaCnQ1izwgJQ
  jIpcG2fPCI2/hxf2oqXPYbKr1v4Z1wthmoyUgGN0LPTIm+B5vdY82wI5qe9uN6UOGyTH2B3p
  hRQUWqCwu2sqkI3LLbTdrnyDZaixT2T0f4tyF5Lfs+Ha8xVMhIyzNb1byDI5FKCb
-Message-ID: <8aaf02b1-999d-81fc-2732-ed556b959a8a@suse.com>
-Date:   Fri, 24 Aug 2018 15:52:23 +0200
+Message-ID: <45bfe8ab-683f-ab79-e3c6-c0a707b667c2@suse.com>
+Date:   Fri, 24 Aug 2018 15:52:55 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180817155909.4cwiy6bhhgiala5m@mac>
+In-Reply-To: <20180813073739.26108-1-jgross@suse.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: de-DE
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/08/18 17:59, Roger Pau Monné wrote:
-> On Mon, Aug 13, 2018 at 04:01:09PM +0200, Juergen Gross wrote:
->> Persistent grants are used in the Xen's blkfront/blkback drivers to
->> avoid mapping/unmapping of I/O buffers in the backend for each I/O.
->>
->> While this speeds up processing quite a bit there are problems related
->> to persistent grants in some configurations: domains with multiple
->> block devices making use of persistent grants might suffer from a lack
->> of grants if each of the block devices experienced a high I/O load at
->> some time. This is due to the number of persistent grants per device
->> only to be limited by a rather high maximum value, but never being
->> released even in case of longer times without any I/O.
->>
->> This series modifies xen-blkback to unmap any domU page mapped via a
->> persistent grant after a timeout (default: 60 seconds). The timeout
->> is set to its default value again when a persistent grant has been
->> used for an I/O.
->>
->> xen-blkfront is modified to scan every 10 seconds for persistent grants
->> not in use by blkback any more and to remove such grants.
->>
->> The last 3 patches are small cleanups of blkfront and blkback drivers.
->>
->> V3:
->> - patch 1: make timeout parameter static
+On 13/08/18 09:37, Juergen Gross wrote:
+> This series removes some no longer needed stuff from paravirt
+> infrastructure and puts large quantities of paravirt ops under a new
+> config option PARAVIRT_XXL which is selected by XEN_PV only.
 > 
-> Konrad if you are OK with this series, could you please send a pull
-> request to Jens?
+> A pvops kernel without XEN_PV being configured is about 2.5% smaller
+> with this series applied.
+> 
+> tip commit 5800dc5c19f34e6e03b5adab1282535cb102fafd ("x86/paravirt:
+> Fix spectre-v2 mitigations for paravirt guests") is a prerequisite
+> for this series.
+> 
+> The last 4 patches of this series require my Xen cleanup series
+> https://lore.kernel.org/lkml/20180717120113.12756-1-jgross@suse.com/
+> which hides more Xen PV-only code behind CONFIG_XEN_PV.
+> 
+> Changes in V2:
+> - patch 4: shorten pv_ops sub-structure names (Jan Beulich)
+> - patch 11: new patch
+> 
+> Juergen Gross (11):
+>   x86/paravirt: make paravirt_patch_call() and paravirt_patch_jmp()
+>     static
+>   x86/paravirt: remove clobbers parameter from paravirt patch functions
+>   x86/paravirt: remove clobbers from struct paravirt_patch_site
+>   x86/paravirt: use a single ops structure
+>   x86/paravirt: remove unused paravirt bits
+>   x86/paravirt: introduce new config option PARAVIRT_XXL
+>   x86/paravirt: move items in pv_info under PARAVIRT_XXL umbrella
+>   x86/paravirt: move the Xen-only pv_cpu_ops under the PARAVIRT_XXL
+>     umbrella
+>   x86/paravirt: move the Xen-only pv_irq_ops under the PARAVIRT_XXL
+>     umbrella
+>   x86/paravirt: move the Xen-only pv_mmu_ops under the PARAVIRT_XXL
+>     umbrella
+>   x86/paravirt: remove unneeded mmu related paravirt ops bits
+> 
+>  arch/x86/Kconfig                            |   3 +
+>  arch/x86/hyperv/mmu.c                       |   4 +-
+>  arch/x86/include/asm/debugreg.h             |   2 +-
+>  arch/x86/include/asm/desc.h                 |   4 +-
+>  arch/x86/include/asm/fixmap.h               |   2 +-
+>  arch/x86/include/asm/irqflags.h             |  56 ++--
+>  arch/x86/include/asm/mmu_context.h          |   4 +-
+>  arch/x86/include/asm/msr.h                  |   4 +-
+>  arch/x86/include/asm/paravirt.h             | 399 +++++++++++++---------------
+>  arch/x86/include/asm/paravirt_types.h       |  77 +++---
+>  arch/x86/include/asm/pgalloc.h              |   2 +-
+>  arch/x86/include/asm/pgtable-3level_types.h |   2 +-
+>  arch/x86/include/asm/pgtable.h              |   7 +-
+>  arch/x86/include/asm/processor.h            |   4 +-
+>  arch/x86/include/asm/ptrace.h               |   3 +-
+>  arch/x86/include/asm/segment.h              |   2 +-
+>  arch/x86/include/asm/special_insns.h        |   4 +-
+>  arch/x86/kernel/alternative.c               |   2 +-
+>  arch/x86/kernel/asm-offsets.c               |  13 +-
+>  arch/x86/kernel/asm-offsets_64.c            |   9 +-
+>  arch/x86/kernel/cpu/common.c                |   4 +-
+>  arch/x86/kernel/cpu/vmware.c                |   4 +-
+>  arch/x86/kernel/head_64.S                   |   2 +-
+>  arch/x86/kernel/kvm.c                       |  17 +-
+>  arch/x86/kernel/kvmclock.c                  |   4 +-
+>  arch/x86/kernel/paravirt-spinlocks.c        |  15 +-
+>  arch/x86/kernel/paravirt.c                  | 292 ++++++++++----------
+>  arch/x86/kernel/paravirt_patch_32.c         |  57 ++--
+>  arch/x86/kernel/paravirt_patch_64.c         |  65 ++---
+>  arch/x86/kernel/tsc.c                       |   2 +-
+>  arch/x86/kernel/vsmp_64.c                   |  24 +-
+>  arch/x86/xen/Kconfig                        |   1 +
+>  arch/x86/xen/enlighten_pv.c                 |  31 ++-
+>  arch/x86/xen/irq.c                          |   2 +-
+>  arch/x86/xen/mmu_hvm.c                      |   2 +-
+>  arch/x86/xen/mmu_pv.c                       |  28 +-
+>  arch/x86/xen/spinlock.c                     |  11 +-
+>  arch/x86/xen/time.c                         |   4 +-
+>  drivers/xen/time.c                          |   2 +-
+>  39 files changed, 575 insertions(+), 595 deletions(-)
+> 
 
 Ping?
 
