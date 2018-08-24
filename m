@@ -2,90 +2,181 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B060DC433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 16:20:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 940C3C433F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 16:23:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CBD32150F
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 16:20:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D89C21567
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 16:23:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="H2q/8d/B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CBD32150F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GWUGCbSq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D89C21567
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727113AbeHXTzb (ORCPT
+        id S1727099AbeHXT6q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 15:55:31 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:51614 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726488AbeHXTzb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 15:55:31 -0400
-Received: by mail-it0-f68.google.com with SMTP id e14-v6so2853292itf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 09:20:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KXVPfkvGpsowS6Z/9Nt+7K7irqH0Qk0wBCpTsUL8SdA=;
-        b=H2q/8d/BdOm9cQVRs1vvWl7NyQempDwJUpbty7Samb1stIpBKimrP1/WCxj2J6Jq0V
-         8RURQg7MxDl7rE9M0yeS4s20SsutLkft47AqWUMo46zeT3LkGMxkdWHjg12AHpzPRMMO
-         sZLiLh1I0hhC1290u35rEIdlnaynoF38VFIQI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KXVPfkvGpsowS6Z/9Nt+7K7irqH0Qk0wBCpTsUL8SdA=;
-        b=n+anAGLT1ePYSlKwcdODVoiJtl0tgf0+Iig3xrzgvgaG+puz4Py/Clft6OTjwQ1tcE
-         7EVChPt7ACLm3q6wXEO2z2YOy3T9wLb6Eg/E0GqGcMWtFuMG2Oty6QZiT1L3V9TuNBK6
-         gVpehFBldbXDWdkN6vcbNObZ3/0gUpjOc36YGsdVV8eRSk0TTD2OMYpnKBKWK4UpxlPs
-         AophX4fepdicjHNvibHUL+eEMQ87Za2B5RcmWE0p6GJjvHdxZGhnfrqXWjKtOhIbRmf+
-         Zjf8mdzxZD4cHxErRSyyKNXWzAuD/mVo3r8G53AX40qhf1Y9Hs8hpgJ7a/tz3gQibFmY
-         h7lA==
-X-Gm-Message-State: APzg51DzJ0YiWsKT/rbBxg+kq+E9LAosRNJrKvQLSrlU3Flpg6Xo2S8i
-        PMT2L/ytqWgQZZ1khY9bdVLXWS3j2Ea11NsIvJtoEA==
-X-Google-Smtp-Source: ANB0Vdal+EiBwgiDkCATARsGgEfDsPKLGZHtiYbnbOZPcVvKyhytdsurd72dXhK6/i5SkYcfPmZj5/SjoRiRnr1z/ZY=
-X-Received: by 2002:a24:61d2:: with SMTP id s201-v6mr2120317itc.22.1535127610935;
- Fri, 24 Aug 2018 09:20:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <1535125966-7666-1-git-send-email-will.deacon@arm.com>
-In-Reply-To: <1535125966-7666-1-git-send-email-will.deacon@arm.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 24 Aug 2018 09:20:00 -0700
-Message-ID: <CA+55aFxNs5B=j_g_OpAd=Xp_iiO_+idT-ogd_WM2EcL_6brbqg@mail.gmail.com>
-Subject: Re: [RFC PATCH 00/11] Avoid synchronous TLB invalidation for
- intermediate page-table entries on arm64
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Benjamin Herrenschmidt <benh@au1.ibm.com>,
-        Nick Piggin <npiggin@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 24 Aug 2018 15:58:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41380 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726484AbeHXT6q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 15:58:46 -0400
+Received: from sol.localdomain (c-67-185-97-198.hsd1.wa.comcast.net [67.185.97.198])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 107D120666;
+        Fri, 24 Aug 2018 16:23:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535127804;
+        bh=MYabmF03JSTBjEkFoQggs+A5zENBeKI1hYKPeGYHKvM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=GWUGCbSqBcFYmkbzKwWrE5x1fSciXBuyK1nyO4t2Vcy50BYU+HRld7Vh8m+R4Vxm2
+         AZXDnRRvcNMYRi7wtHzwHmLwB8rTljxEcJDn7lVVoaqyzYa9U+o2Zs0ZVX4aMbgxRc
+         emOoGwnHv7m1QWvisKnbIiv1uTmAM+zC7efoV+Hs=
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Cc:     linux-integrity@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Michael Halcrow <mhalcrow@google.com>,
+        Victor Hsieh <victorhsieh@google.com>
+Subject: [RFC PATCH 00/10] fs-verity: filesystem-level integrity protection
+Date:   Fri, 24 Aug 2018 09:16:32 -0700
+Message-Id: <20180824161642.1144-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 24, 2018 at 8:52 AM Will Deacon <will.deacon@arm.com> wrote:
->
-> I hacked up this RFC on the back of the recent changes to the mmu_gather
-> stuff in mainline. It's had a bit of testing and it looks pretty good so
-> far.
+Hello,
 
-Looks good to me.
+This RFC patchset implements fs-verity for ext4 and f2fs.  fs-verity is
+similar to dm-verity, but implemented on a per-file basis: a Merkle tree
+hidden past the end of the file is used to verify the file's data as it
+is paged in.  Most of the code is in fs/verity/, and not too many
+filesystem-specific changes are needed.  The Merkle tree is written by
+userspace before calling an ioctl to mark the file as a verity file; the
+file then becomes read-only and the tree is hidden from userspace.
 
-Apart from the arm64-specific question I had, I wonder whether we need
-to have that single "freed_tables" bit at all, since you wanted to
-have the four individual bits for the different levels.
+Note: on Monday, Michael Halcrow and I will be giving a talk about
+fs-verity at the Linux Security Summit.  fs-verity was also previously
+discussed at LSFMM 2018; see https://lwn.net/Articles/752614/.  It was
+also previously discussed on linux-fsdevel here:
+https://www.spinics.net/lists/linux-fsdevel/msg121182.html
 
-Even if somebody doesn't care about the individual bits, it's
-generally exactly as cheap to test four bits as it is to test one, so
-it seems unnecessary to have that summary bit.
+Since fs-verity provides the Merkle tree root hash in constant time and
+verifies data blocks on-demand, it is useful for efficiently verifying
+the authenticity of, or "appraising", large files of which only a small
+portion may be accessed -- such as Android application (APK) files.  It
+can also be useful in "audit" use cases where file hashes are logged.
+fs-verity also provides better protection against malicious disk
+firmware than an ahead-of-time hash, since fs-verity re-verifies data
+each time it's paged in.
 
-             Linus
+This patchset doesn't yet include IMA support for fs-verity file
+measurements; this is planned and we'd like to collaborate with the IMA
+maintainers.  Although fs-verity can be used on its own without IMA,
+fs-verity is primarily a lower level feature (think of it as a way of
+hashing a file), so some users will probably still need IMA's policy
+mechanism.  The patchset *does* include an optional means of including a
+signature in the fs-verity metadata and verifying it against the
+certificates in an fs-verity keyring; though, this might need to be
+re-assessed if it turns out IMA works just as well for that use case.
+
+For now this patchset only supports the case where the fs-verity block
+sizes are equal to PAGE_SIZE.  However, the fs-verity block sizes can be
+different from the filesystem's block size.
+
+A documentation file in Documentation/filesystems/ is planned but not
+yet included.
+
+This patchset is based on Linux v4.18.  It can also be found in git at
+tag "fsverity_2018-08-24" of:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git
+
+A userspace utility for fs-verity can be found at:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/fsverity-utils.git
+
+See the README.md file in the userspace utility source tree for examples.
+
+Tests for fs-verity can be found at branch "fsverity" of:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/xfstests-dev.git
+
+On ext4 and f2fs, using fs-verity requires setting the verity feature
+flag on your filesystem.  The verity feature flag is supported since
+e2fsprogs 1.44.4-2 and f2fs-tools 1.11.0.
+
+Warning: besides the feature bit and inode flag, fs-verity's on-disk
+format is not yet stable, i.e. it can still be changed.  Please don't
+use this patchset "in production" yet!
+
+Feedback on the design and implementation is greatly appreciated.
+
+Thanks!
+
+Eric Biggers (8):
+  fs-verity: add setup code, UAPI, and Kconfig
+  fs-verity: add data verification hooks for ->readpages()
+  fs-verity: implement FS_IOC_ENABLE_VERITY ioctl
+  fs-verity: implement FS_IOC_MEASURE_VERITY ioctl
+  fs-verity: add SHA-512 support
+  fs-verity: add CRC-32C support
+  fs-verity: support builtin file signatures
+  f2fs: fs-verity support
+
+Theodore Ts'o (2):
+  ext4: add basic fs-verity support
+  ext4: add fs-verity read support
+
+ fs/Kconfig                    |   2 +
+ fs/Makefile                   |   1 +
+ fs/ext4/Kconfig               |  20 +
+ fs/ext4/ext4.h                |  22 +-
+ fs/ext4/file.c                |   6 +
+ fs/ext4/inode.c               |  11 +
+ fs/ext4/ioctl.c               |  12 +
+ fs/ext4/readpage.c            | 207 ++++++--
+ fs/ext4/super.c               |  87 ++++
+ fs/ext4/sysfs.c               |   6 +
+ fs/f2fs/Kconfig               |  20 +
+ fs/f2fs/data.c                |  43 +-
+ fs/f2fs/f2fs.h                |  17 +-
+ fs/f2fs/file.c                |  58 +++
+ fs/f2fs/inode.c               |   3 +-
+ fs/f2fs/super.c               |  22 +
+ fs/f2fs/sysfs.c               |  11 +
+ fs/verity/Kconfig             |  53 ++
+ fs/verity/Makefile            |   5 +
+ fs/verity/fsverity_private.h  | 136 +++++
+ fs/verity/hash_algs.c         | 115 +++++
+ fs/verity/ioctl.c             | 170 +++++++
+ fs/verity/setup.c             | 931 ++++++++++++++++++++++++++++++++++
+ fs/verity/signature.c         | 187 +++++++
+ fs/verity/verify.c            | 310 +++++++++++
+ include/linux/fs.h            |   9 +
+ include/linux/fsverity.h      | 102 ++++
+ include/uapi/linux/fsverity.h |  98 ++++
+ 28 files changed, 2623 insertions(+), 41 deletions(-)
+ create mode 100644 fs/verity/Kconfig
+ create mode 100644 fs/verity/Makefile
+ create mode 100644 fs/verity/fsverity_private.h
+ create mode 100644 fs/verity/hash_algs.c
+ create mode 100644 fs/verity/ioctl.c
+ create mode 100644 fs/verity/setup.c
+ create mode 100644 fs/verity/signature.c
+ create mode 100644 fs/verity/verify.c
+ create mode 100644 include/linux/fsverity.h
+ create mode 100644 include/uapi/linux/fsverity.h
+
+-- 
+2.18.0
+
