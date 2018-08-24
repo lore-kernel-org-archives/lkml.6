@@ -2,69 +2,82 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 927E4C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 15:24:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1CCDC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 15:26:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D02621529
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 15:24:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D02621529
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8C53221564
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 15:26:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C53221564
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727742AbeHXS76 (ORCPT
+        id S1727474AbeHXTBe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 14:59:58 -0400
-Received: from foss.arm.com ([217.140.101.70]:60580 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726268AbeHXS76 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 14:59:58 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E2A4CED1;
-        Fri, 24 Aug 2018 08:24:51 -0700 (PDT)
-Received: from [10.4.12.131] (e110467-lin.emea.arm.com [10.4.12.131])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 271783F5BC;
-        Fri, 24 Aug 2018 08:24:51 -0700 (PDT)
-Subject: Re: [PATCH] Changing the AMD IOMMU API path to work in an atomic
- context which is necessary for any custom drivers using the IOMMU API while
- holding a spinlock.
-To:     Christoph Hellwig <hch@infradead.org>, murphyt7@tcd.ie
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-References: <1535120929-5693-1-git-send-email-murphyt7@tcd.ie>
- <20180824145328.GA7996@infradead.org>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <24d3f04a-e6e2-ed8f-e2bd-b38144f33f26@arm.com>
-Date:   Fri, 24 Aug 2018 16:24:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180824145328.GA7996@infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        Fri, 24 Aug 2018 15:01:34 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:35346 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726268AbeHXTBe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 15:01:34 -0400
+Received: by mail-oi0-f66.google.com with SMTP id m11-v6so15983883oic.2
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 08:26:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=57dRHTQn427mhHXpuBgiWI88kOyTDzrTdbLvs4H5kZE=;
+        b=Ks4tRd+01XM2kbdTyBDpcksB3Bz/AgVV5TsmtyoXjUbu+K/nAghjbwFmSA4diE/5b4
+         jAn43CuVv9rdelBIeMmKcNJ3nlmjaaqoXBqDv9fGU7j5+pGuYKkZd2YoYDt0mM4jTZv/
+         ZnsVs6yhgLXC7dmfxIYECE60K7fimPijVmilfNQaaoT1ZNhOYpxo/sdVmIxaw5GSmwI6
+         xaH8DwinmlCIxUWfdP4gipxfomVT1FVAcKLWAJjIhbOXNE3EC9k7vLxU9yCMBQGXFLRd
+         O/is8SrtQR1PgjC5Ch+B1pHbZ5A5FTujOAUOyvA+KuX6G2v06k5JUYbkaayaQs5LVDl5
+         cQ5A==
+X-Gm-Message-State: APzg51A79RFmB7wAPNUig6e9lgBHBxIO9EsicT1W2U9vKyptWtA8DQlL
+        z8fhPTRkfDgfiTyflRbpsxB8lQ==
+X-Google-Smtp-Source: ANB0Vdap5KmiE6mRaP6d3UcyKNyf9Z0ryXiIYYLG2E/bm8/DevNRgeUROfbXhB2U8hc+0yPuwHMzOA==
+X-Received: by 2002:aca:5b88:: with SMTP id p130-v6mr1877963oib.247.1535124386960;
+        Fri, 24 Aug 2018 08:26:26 -0700 (PDT)
+Received: from localhost ([130.164.62.204])
+        by smtp.gmail.com with ESMTPSA id b125-v6sm6626121oia.38.2018.08.24.08.26.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 24 Aug 2018 08:26:26 -0700 (PDT)
+From:   Moritz Fischer <mdf@kernel.org>
+To:     hao.wu@intel.com, atull@kernel.org
+Cc:     linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Moritz Fischer <mdf@kernel.org>
+Subject: [PATCH 1/2] fpga: of-fpga-region: Use platform_set_drvdata
+Date:   Fri, 24 Aug 2018 08:25:12 -0700
+Message-Id: <20180824152513.8336-1-mdf@kernel.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/08/18 15:53, Christoph Hellwig wrote:
-> On Fri, Aug 24, 2018 at 02:28:49PM +0000, murphyt7@tcd.ie wrote:
->> From: Tom Murphy <murphyt7@tcd.ie>
->>
->> ---
->>
->> This patch allows the IOMMU API path in the AMD driver to be called from an atomic context.
->> This is useful for anyone building a driver which needs to call the IOMMU API while holding a spinlock.
-> 
-> I don't think that is a good idea.  Please point to the code in the
-> driver and we can't probably find a better solution.
+Use platform_set_drvdata rather than dev_set_drvdata
+to match the platform_get_drvdata in the _remove()
+function of the platform driver.
 
-Although IIRC the AMD driver is in fact the only one whose map/unmap 
-callbacks aren't already spinlock-safe (or at least it was last time I 
-was looking). Stuff like iommu-dma is already relying on this in order 
-to implement streaming DMA API calls (which may be in atomic context) on 
-top of the corresponding IOMMU API operations.
+Signed-off-by: Moritz Fischer <mdf@kernel.org>
+---
+ drivers/fpga/of-fpga-region.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Robin.
+diff --git a/drivers/fpga/of-fpga-region.c b/drivers/fpga/of-fpga-region.c
+index 35fabb8083fb..8c6120e30930 100644
+--- a/drivers/fpga/of-fpga-region.c
++++ b/drivers/fpga/of-fpga-region.c
+@@ -421,7 +421,7 @@ static int of_fpga_region_probe(struct platform_device *pdev)
+ 		goto eprobe_free;
+ 
+ 	of_platform_populate(np, fpga_region_of_match, NULL, &region->dev);
+-	dev_set_drvdata(dev, region);
++	platform_set_drvdata(pdev, region);
+ 
+ 	dev_info(dev, "FPGA Region probed\n");
+ 
+-- 
+2.18.0
+
