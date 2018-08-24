@@ -2,93 +2,78 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63EBBC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 09:33:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D10FDC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 09:36:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F8F621712
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 09:33:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F8F621712
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+	by mail.kernel.org (Postfix) with ESMTP id 5CFC421712
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 09:36:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CFC421712
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727160AbeHXNG6 (ORCPT
+        id S1726840AbeHXNKd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 09:06:58 -0400
-Received: from cmccmta2.chinamobile.com ([221.176.66.80]:38115 "EHLO
-        cmccmta2.chinamobile.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726492AbeHXNG6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 09:06:58 -0400
-Received: from spf.mail.chinamobile.com (unknown[172.16.121.5]) by rmmx-syy-dmz-app08-12008 (RichMail) with SMTP id 2ee85b7fd0d1de7-da7fc; Fri, 24 Aug 2018 17:33:05 +0800 (CST)
-X-RM-TRANSID: 2ee85b7fd0d1de7-da7fc
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG: 00000000
-Received: from bclinux72.localdomain (unknown[223.105.0.243])
-        by rmsmtp-syy-appsvr03-12003 (RichMail) with SMTP id 2ee35b7fd0d0bcb-475a2;
-        Fri, 24 Aug 2018 17:33:05 +0800 (CST)
-X-RM-TRANSID: 2ee35b7fd0d0bcb-475a2
-From:   Ding Xiang <dingxiang@cmss.chinamobile.com>
-To:     marcel@holtmann.org, johan.hedberg@gmail.com,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V2] Bluetooth: bt3c_cs: Fix obsolete function
-Date:   Fri, 24 Aug 2018 06:44:25 -0400
-Message-Id: <1535107465-5470-1-git-send-email-dingxiang@cmss.chinamobile.com>
-X-Mailer: git-send-email 1.8.3.1
+        Fri, 24 Aug 2018 09:10:33 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52814 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726449AbeHXNKd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 09:10:33 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id ABA4B7DAC9;
+        Fri, 24 Aug 2018 09:36:43 +0000 (UTC)
+Received: from xz-x1 (ovpn-12-107.pek2.redhat.com [10.72.12.107])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A2E4A1007260;
+        Fri, 24 Aug 2018 09:36:38 +0000 (UTC)
+Date:   Fri, 24 Aug 2018 17:36:35 +0800
+From:   Peter Xu <peterx@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     mst@redhat.com, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] vhost: correctly check the iova range when waking
+ virtqueue
+Message-ID: <20180824093635.GC3020@xz-x1>
+References: <20180824085313.21798-1-jasowang@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180824085313.21798-1-jasowang@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 24 Aug 2018 09:36:43 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 24 Aug 2018 09:36:43 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'peterx@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-simple_strtol and simple_strtoul are obsolete, both place
-use kstrtoul instead.
+On Fri, Aug 24, 2018 at 04:53:13PM +0800, Jason Wang wrote:
+> We don't wakeup the virtqueue if the first byte of pending iova range
+> is the last byte of the range we just got updated. This will lead a
+> virtqueue to wait for IOTLB updating forever. Fixing by correct the
+> check and wake up the virtqueue in this case.
+> 
+> Fixes: 6b1e6cc7855b ("vhost: new device IOTLB API")
+> Reported-by: Peter Xu <peterx@redhat.com>
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
 
-V2: fix error tmp += tn
+Without this patch, this command will trigger the IO hang merely every
+time from host to guest:
 
-Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
----
- drivers/bluetooth/bt3c_cs.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+  netperf -H 1.2.3.4 -l 5 -t TCP_RR -- -b 100
 
-diff --git a/drivers/bluetooth/bt3c_cs.c b/drivers/bluetooth/bt3c_cs.c
-index 25b0cf9..8f03774 100644
---- a/drivers/bluetooth/bt3c_cs.c
-+++ b/drivers/bluetooth/bt3c_cs.c
-@@ -449,7 +449,7 @@ static int bt3c_load_firmware(struct bt3c_info *info,
- 	char *ptr = (char *) firmware;
- 	char b[9];
- 	unsigned int iobase, tmp;
--	unsigned long size, addr, fcs;
-+	unsigned long size, addr, fcs, tn;
- 	int i, err = 0;
- 
- 	iobase = info->p_dev->resource[0]->start;
-@@ -490,7 +490,9 @@ static int bt3c_load_firmware(struct bt3c_info *info,
- 		memset(b, 0, sizeof(b));
- 		for (tmp = 0, i = 0; i < size; i++) {
- 			memcpy(b, ptr + (i * 2) + 2, 2);
--			tmp += simple_strtol(b, NULL, 16);
-+			if (kstrtoul(b, 16, &tn))
-+				return -EINVAL;
-+			tmp += tn;
- 		}
- 
- 		if (((tmp + fcs) & 0xff) != 0xff) {
-@@ -505,7 +507,8 @@ static int bt3c_load_firmware(struct bt3c_info *info,
- 			memset(b, 0, sizeof(b));
- 			for (i = 0; i < (size - 4) / 2; i++) {
- 				memcpy(b, ptr + (i * 4) + 12, 4);
--				tmp = simple_strtoul(b, NULL, 16);
-+				if (kstrtoul(b, 16, &tmp))
-+					return -EINVAL;
- 				bt3c_put(iobase, tmp);
- 			}
- 		}
+After applying, I can run it 10 times continuously without a problem.
+
+Reviewed-by: Peter Xu <peterx@redhat.com>
+Tested-by: Peter Xu <peterx@redhat.com>
+
+Thanks,
+
 -- 
-1.8.3.1
-
-
-
+Peter Xu
