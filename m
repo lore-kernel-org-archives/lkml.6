@@ -6,68 +6,69 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04EAAC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 07:39:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38B87C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 07:39:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FAE62159F
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 07:39:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAF142159F
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 07:39:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hIBGOsE5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FAE62159F
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KbNKhs/r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAF142159F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727696AbeHXLMp (ORCPT
+        id S1727743AbeHXLMt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 07:12:45 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:36833 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727333AbeHXLMo (ORCPT
+        Fri, 24 Aug 2018 07:12:49 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:54059 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727333AbeHXLMr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 07:12:44 -0400
-Received: by mail-io0-f193.google.com with SMTP id q5-v6so3200618iop.3
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 00:39:20 -0700 (PDT)
+        Fri, 24 Aug 2018 07:12:47 -0400
+Received: by mail-it0-f65.google.com with SMTP id k188-v6so972394itk.3
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 00:39:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=O8+ZrSrrYmeB0y0BOyaYP2/fY0441p92/h7FYP7EWjg=;
-        b=hIBGOsE5It/xDjPduaYqBWv/VseoP2csTUHpK+k1x7eFNhlvHhle9Yiof/f4uJ1iaj
-         qvHQREJZDV8SC1ElTQlxbVMIW32cZT+iO2bCQV1y1MV5jB8S6Z7S902sAVFOHBQjt+PK
-         0pIMFULvE66LUMrfuFXFPwvhkQCvTu0uV50KE=
+        bh=L6nwo8SLxlO4QIbUQ35KT/Lite+qG+oMbnu8Xy2VoFs=;
+        b=KbNKhs/rHPR8Nkfvs+4qb+UmjZGx/P+vExr5tPYhk602pA6VSPLgNDYbD5fdd6isX1
+         iP7dbp2BJsRqCaK0ke7hHJbaZ+eH/EeCs9JvY9pn+CjuNtW0FHtdQGvwowEDDSbCWX0W
+         fqfrG7+5kWOMHii7NDCaeg+HuNSZPl8hQiyZA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=O8+ZrSrrYmeB0y0BOyaYP2/fY0441p92/h7FYP7EWjg=;
-        b=bbkk/99ny4BdA0MOEDTC9fElYAJSIBZSNuXQqv608GOGxIWSUke2Z/VnxxXgBk4xcH
-         guZ5jw9vppkpRLNxhZfbtxZG8Y/hYT5XShN6hzwlZ2Wc/zdLUQUr7eOH/IMrJ6tN6Dcf
-         GvMgbJljQQ2vZSy/OeXGpme27GlF8ATM68B4Cr7CuFDPzDIS/MddSKuwUnohDjnO5GrL
-         ix0Ba6WQyvkPnobKETqzfEDYKlJ9HViaRTf9I15A3+N5MGujAFH6oiQrTeKrYYfvbDlD
-         c1RxC6P/t1Wsg1Q16byBUO+dutKkxCj5ZaY1hket/t8WpjzG7PZ48bKR3iiHgU/GCb0D
-         FWiA==
-X-Gm-Message-State: APzg51CW0reNbQMu2vwki0XiPBE1U6UXxqyQbKCdEDoN3BfC/RK2uUST
-        CvpVPE3r1EzinjozPRxG9GgIIBehV9sKLw==
-X-Google-Smtp-Source: ANB0VdbYlbtEDUEKm2XhtOn4L+N7c8iofLKN+JDHHlXD/BlBbvH0VKNBLHBDWcYhimUnloRP3ZKBiA==
-X-Received: by 2002:a6b:be46:: with SMTP id o67-v6mr343539iof.143.1535096359723;
-        Fri, 24 Aug 2018 00:39:19 -0700 (PDT)
-Received: from mail-it0-f49.google.com (mail-it0-f49.google.com. [209.85.214.49])
-        by smtp.gmail.com with ESMTPSA id 5-v6sm2339655ioy.35.2018.08.24.00.39.18
+        bh=L6nwo8SLxlO4QIbUQ35KT/Lite+qG+oMbnu8Xy2VoFs=;
+        b=VdvsbOBedc+L81B+RCg1GSlaUELMC8DoxCfulLGTpDdJeMTQD2NZJUnSroTRS6aGUY
+         rXsHa7nMqGJoUQRPzFLUwDiDnzD/Jjym2IdGb4v1E6/PJxLI0b09IBkG0BPgrUYOtUuO
+         rZn2lM3CqhG+AqCtSRLuBhmxyZDVxn3WIf5uy584ABuvR+l5Etasyx0eANH9fCaTRBpy
+         O/kk+/OdxYMefs+yGU/8zUeV03UIck+X0HB5/BfdT20OYezfk9iFqlP7jTe2VC0senH5
+         AvOrRisDbGmLYlj5gnbYVJxy9nj37gV0nNTCQOOXJcx0kliYA2ain3WM1W8KDCq8w/Gn
+         K2cg==
+X-Gm-Message-State: APzg51C5L4FCC+n8ioAurd2o3ODKsF1IkMtwnHaV26BI9Nry81DQb0dG
+        mhSuQ7ZuxldAYOHDrSnowO3kvL8XItpCAw==
+X-Google-Smtp-Source: ANB0VdYZfHLI79PECrdVm8NYAfAYYcIhrO6slCQt7pFPHpDcg/0DM80EsTg4EYo1u3jP4yAChVuihA==
+X-Received: by 2002:a24:9ec1:: with SMTP id p184-v6mr547929itd.6.1535096362474;
+        Fri, 24 Aug 2018 00:39:22 -0700 (PDT)
+Received: from mail-io0-f176.google.com (mail-io0-f176.google.com. [209.85.223.176])
+        by smtp.gmail.com with ESMTPSA id y21-v6sm1144005ioy.20.2018.08.24.00.39.21
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 Aug 2018 00:39:19 -0700 (PDT)
-Received: by mail-it0-f49.google.com with SMTP id e14-v6so980242itf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 00:39:18 -0700 (PDT)
-X-Received: by 2002:a24:400b:: with SMTP id n11-v6mr606860ita.2.1535096358405;
- Fri, 24 Aug 2018 00:39:18 -0700 (PDT)
+        Fri, 24 Aug 2018 00:39:21 -0700 (PDT)
+Received: by mail-io0-f176.google.com with SMTP id v14-v6so6425772iob.4
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 00:39:21 -0700 (PDT)
+X-Received: by 2002:a6b:33ce:: with SMTP id z197-v6mr396303ioz.112.1535096360445;
+ Fri, 24 Aug 2018 00:39:20 -0700 (PDT)
 MIME-Version: 1.0
-References: <1535034528-11590-1-git-send-email-vgarodia@codeaurora.org> <1535034528-11590-4-git-send-email-vgarodia@codeaurora.org>
-In-Reply-To: <1535034528-11590-4-git-send-email-vgarodia@codeaurora.org>
+References: <1535034528-11590-1-git-send-email-vgarodia@codeaurora.org> <1535034528-11590-5-git-send-email-vgarodia@codeaurora.org>
+In-Reply-To: <1535034528-11590-5-git-send-email-vgarodia@codeaurora.org>
 From:   Alexandre Courbot <acourbot@chromium.org>
-Date:   Fri, 24 Aug 2018 16:39:06 +0900
-X-Gmail-Original-Message-ID: <CAPBb6MV1jjksgbSaCuUcY_ZbjfGeK-GaQ_+OZ7LWUv4ehA3dGQ@mail.gmail.com>
-Message-ID: <CAPBb6MV1jjksgbSaCuUcY_ZbjfGeK-GaQ_+OZ7LWUv4ehA3dGQ@mail.gmail.com>
-Subject: Re: [PATCH v6 3/4] venus: firmware: add no TZ boot and shutdown routine
+Date:   Fri, 24 Aug 2018 16:39:09 +0900
+X-Gmail-Original-Message-ID: <CAPBb6MW8uN5_ghxx7h3g0TjmULUpvNSDn8g=trTC5fOegHP1QQ@mail.gmail.com>
+Message-ID: <CAPBb6MW8uN5_ghxx7h3g0TjmULUpvNSDn8g=trTC5fOegHP1QQ@mail.gmail.com>
+Subject: Re: [PATCH v6 4/4] venus: firmware: register separate platform_device
+ for firmware loader
 To:     vgarodia@codeaurora.org
 Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
         Hans Verkuil <hverkuil@xs4all.nl>,
@@ -86,193 +87,179 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Thu, Aug 23, 2018 at 11:29 PM Vikash Garodia <vgarodia@codeaurora.org> wrote:
 >
-> Video hardware is mainly comprised of vcodec subsystem and video
-> control subsystem. Video control has ARM9 which executes the video
-> firmware instructions whereas vcodec does the video frame processing.
-> This change adds support to load the video firmware and bring ARM9
-> out of reset for platforms which does not have trustzone.
+> From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 >
-> Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
+> This registers a firmware platform_device and associate it with
+> video-firmware DT subnode. Then calls dma configure to initialize
+> dma and iommu.
+>
+> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 > ---
->  drivers/media/platform/qcom/venus/core.c         |  6 +-
->  drivers/media/platform/qcom/venus/core.h         |  7 ++
->  drivers/media/platform/qcom/venus/firmware.c     | 90 +++++++++++++++++++++++-
->  drivers/media/platform/qcom/venus/firmware.h     |  2 +-
->  drivers/media/platform/qcom/venus/hfi_venus_io.h |  1 +
->  5 files changed, 99 insertions(+), 7 deletions(-)
+>  .../devicetree/bindings/media/qcom,venus.txt       | 13 +++++-
+>  drivers/media/platform/qcom/venus/core.c           | 14 +++++--
+>  drivers/media/platform/qcom/venus/firmware.c       | 49 ++++++++++++++++++++++
+>  drivers/media/platform/qcom/venus/firmware.h       |  2 +
+>  4 files changed, 73 insertions(+), 5 deletions(-)
 >
+> diff --git a/Documentation/devicetree/bindings/media/qcom,venus.txt b/Documentation/devicetree/bindings/media/qcom,venus.txt
+> index 00d0d1b..7e04586 100644
+> --- a/Documentation/devicetree/bindings/media/qcom,venus.txt
+> +++ b/Documentation/devicetree/bindings/media/qcom,venus.txt
+> @@ -53,7 +53,7 @@
+>
+>  * Subnodes
+>  The Venus video-codec node must contain two subnodes representing
+> -video-decoder and video-encoder.
+> +video-decoder and video-encoder, and one optional firmware subnode.
+
+Just noticed that the document does not explain in which case the
+firmware subnode must be used. Maybe we should have a sentence
+explaining that without it we will be using TrustZone to load the
+firmware?
+
+>
+>  Every of video-encoder or video-decoder subnode should have:
+>
+> @@ -79,6 +79,13 @@ Every of video-encoder or video-decoder subnode should have:
+>                     power domain which is responsible for collapsing
+>                     and restoring power to the subcore.
+>
+> +The firmware subnode must have:
+> +
+> +- iommus:
+> +       Usage: required
+> +       Value type: <prop-encoded-array>
+> +       Definition: A list of phandle and IOMMU specifier pairs.
+> +
+>  * An Example
+>         video-codec@1d00000 {
+>                 compatible = "qcom,msm8916-venus";
+> @@ -105,4 +112,8 @@ Every of video-encoder or video-decoder subnode should have:
+>                         clock-names = "core";
+>                         power-domains = <&mmcc VENUS_CORE1_GDSC>;
+>                 };
+> +
+> +               video-firmware {
+> +                       iommus = <&apps_iommu 0x10b2 0x0>;
+> +               };
+>         };
 > diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
-> index 75b9785..393994e 100644
+> index 393994e..3bd3b8a 100644
 > --- a/drivers/media/platform/qcom/venus/core.c
 > +++ b/drivers/media/platform/qcom/venus/core.c
-> @@ -76,7 +76,7 @@ static void venus_sys_error_handler(struct work_struct *work)
->         hfi_core_deinit(core, true);
->         hfi_destroy(core);
->         mutex_lock(&core->lock);
-> -       venus_shutdown(core->dev);
-> +       venus_shutdown(core);
+> @@ -284,6 +284,14 @@ static int venus_probe(struct platform_device *pdev)
+>         if (ret < 0)
+>                 goto err_runtime_disable;
 >
->         pm_runtime_put_sync(core->dev);
+> +       ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
+> +       if (ret)
+> +               goto err_runtime_disable;
+> +
+> +       ret = venus_firmware_init(core);
+> +       if (ret)
+> +               goto err_runtime_disable;
+> +
+>         ret = venus_boot(core);
+>         if (ret)
+>                 goto err_runtime_disable;
+> @@ -308,10 +316,6 @@ static int venus_probe(struct platform_device *pdev)
+>         if (ret)
+>                 goto err_core_deinit;
 >
-> @@ -323,7 +323,7 @@ static int venus_probe(struct platform_device *pdev)
->  err_core_deinit:
->         hfi_core_deinit(core, false);
->  err_venus_shutdown:
-> -       venus_shutdown(dev);
-> +       venus_shutdown(core);
->  err_runtime_disable:
->         pm_runtime_set_suspended(dev);
->         pm_runtime_disable(dev);
-> @@ -344,7 +344,7 @@ static int venus_remove(struct platform_device *pdev)
->         WARN_ON(ret);
->
->         hfi_destroy(core);
-> -       venus_shutdown(dev);
-> +       venus_shutdown(core);
+> -       ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
+> -       if (ret)
+> -               goto err_dev_unregister;
+> -
+>         ret = pm_runtime_put_sync(dev);
+>         if (ret)
+>                 goto err_dev_unregister;
+> @@ -347,6 +351,8 @@ static int venus_remove(struct platform_device *pdev)
+>         venus_shutdown(core);
 >         of_platform_depopulate(dev);
 >
->         pm_runtime_put_sync(dev);
-> diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
-> index dfd5c10..b2cb359 100644
-> --- a/drivers/media/platform/qcom/venus/core.h
-> +++ b/drivers/media/platform/qcom/venus/core.h
-> @@ -81,6 +81,11 @@ struct venus_caps {
->         bool valid;     /* used only for Venus v1xx */
->  };
->
-> +struct video_firmware {
-> +       struct device *dev;
-> +       struct iommu_domain *iommu_domain;
-> +};
+> +       venus_firmware_deinit(core);
 > +
->  /**
->   * struct venus_core - holds core parameters valid for all instances
->   *
-> @@ -98,6 +103,7 @@ struct venus_caps {
->   * @dev:               convenience struct device pointer
->   * @dev_dec:   convenience struct device pointer for decoder device
->   * @dev_enc:   convenience struct device pointer for encoder device
-> + * @fw:                a struct for venus firmware info
->   * @no_tz:     a flag that suggests presence of trustzone
->   * @lock:      a lock for this strucure
->   * @instances: a list_head of all instances
-> @@ -130,6 +136,7 @@ struct venus_core {
->         struct device *dev;
->         struct device *dev_dec;
->         struct device *dev_enc;
-> +       struct video_firmware fw;
-
-Since struct video_firmware is only used here I think you can declare
-it inline, i.e.
-
-    struct {
-        struct device *dev;
-        struct iommu_domain *iommu_domain;
-    } fw;
-
-This structure is actually a good candidate to hold the firmware
-memory area start address and size.
-
->         bool no_tz;
->         struct mutex lock;
->         struct list_head instances;
+>         pm_runtime_put_sync(dev);
+>         pm_runtime_disable(dev);
+>
 > diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media/platform/qcom/venus/firmware.c
-> index 34224eb..79b3858 100644
+> index 79b3858..86a26fb 100644
 > --- a/drivers/media/platform/qcom/venus/firmware.c
 > +++ b/drivers/media/platform/qcom/venus/firmware.c
-> @@ -15,9 +15,11 @@
->  #include <linux/device.h>
->  #include <linux/firmware.h>
->  #include <linux/kernel.h>
-> +#include <linux/iommu.h>
->  #include <linux/io.h>
+> @@ -20,6 +20,7 @@
 >  #include <linux/of.h>
 >  #include <linux/of_address.h>
-> +#include <linux/platform_device.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/of_device.h>
 >  #include <linux/qcom_scm.h>
 >  #include <linux/sizes.h>
 >  #include <linux/soc/qcom/mdt_loader.h>
-> @@ -120,6 +122,76 @@ static int venus_load_fw(struct venus_core *core, const char *fwname,
+> @@ -228,3 +229,51 @@ int venus_shutdown(struct venus_core *core)
+>
 >         return ret;
 >  }
->
-> +static int venus_boot_no_tz(struct venus_core *core, phys_addr_t mem_phys,
-> +                           size_t mem_size)
-
-After moving the firmware address and size into venus_core you won't
-need the last two arguments.
-
+> +
+> +int venus_firmware_init(struct venus_core *core)
 > +{
-> +       struct iommu_domain *iommu_dom;
-> +       struct device *dev;
+> +       struct platform_device_info info;
+> +       struct platform_device *pdev;
+> +       struct device_node *np;
 > +       int ret;
 > +
-> +       dev = core->fw.dev;
-> +       if (!dev)
-> +               return -EPROBE_DEFER;
+> +       np = of_get_child_by_name(core->dev->of_node, "video-firmware");
+> +       if (!np)
+> +               return 0;
 > +
-> +       iommu_dom = iommu_domain_alloc(&platform_bus_type);
-> +       if (!iommu_dom) {
-> +               dev_err(dev, "Failed to allocate iommu domain\n");
-> +               return -ENOMEM;
+> +       memset(&info, 0, sizeof(info));
+> +       info.fwnode = &np->fwnode;
+> +       info.parent = core->dev;
+> +       info.name = np->name;
+> +       info.dma_mask = DMA_BIT_MASK(32);
+> +
+> +       pdev = platform_device_register_full(&info);
+> +       if (IS_ERR(pdev)) {
+> +               of_node_put(np);
+> +               return PTR_ERR(pdev);
 > +       }
 > +
-> +       ret = iommu_attach_device(iommu_dom, dev);
-> +       if (ret) {
-> +               dev_err(dev, "could not attach device\n");
-> +               goto err_attach;
-> +       }
-
-I think like the above belongs more in venus_firmware_init()
-(introduced in patch 4/4) than here. There is no reason to
-detach/reattach the iommu if we stop the firmware.
-
+> +       pdev->dev.of_node = np;
 > +
-> +       ret = iommu_map(iommu_dom, VENUS_FW_START_ADDR, mem_phys, mem_size,
-> +                       IOMMU_READ | IOMMU_WRITE | IOMMU_PRIV);
-> +       if (ret) {
-> +               dev_err(dev, "could not map video firmware region\n");
-> +               goto err_map;
-> +       }
-
-Maybe this too?
-
+> +       ret = of_dma_configure(&pdev->dev, np);
+> +       if (ret)
+> +               dev_err(core->dev, "dma configure fail\n");
 > +
-> +       core->fw.iommu_domain = iommu_dom;
-> +       venus_reset_cpu(core);
+> +       of_node_put(np);
+> +
+> +       if (ret)
+> +               return ret;
+> +
+> +       core->no_tz = true;
+> +       core->fw.dev = &pdev->dev;
 > +
 > +       return 0;
-> +
-> +err_map:
-> +       iommu_detach_device(iommu_dom, dev);
-> +err_attach:
-> +       iommu_domain_free(iommu_dom);
-> +       return ret;
 > +}
 > +
-> +static int venus_shutdown_no_tz(struct venus_core *core)
+> +void venus_firmware_deinit(struct venus_core *core)
 > +{
-> +       struct iommu_domain *iommu;
-> +       size_t unmapped;
-> +       u32 reg;
-> +       struct device *dev = core->fw.dev;
-> +       void __iomem *base = core->base;
+> +       if (!core->fw.dev)
+> +               return;
 > +
-> +       /* Assert the reset to ARM9 */
-> +       reg = readl_relaxed(base + WRAPPER_A9SS_SW_RESET);
-> +       reg |= WRAPPER_A9SS_SW_RESET_BIT;
-> +       writel_relaxed(reg, base + WRAPPER_A9SS_SW_RESET);
-> +
-> +       /* Make sure reset is asserted before the mapping is removed */
-> +       mb();
-> +
-> +       iommu = core->fw.iommu_domain;
-> +
-> +       unmapped = iommu_unmap(iommu, VENUS_FW_START_ADDR, VENUS_FW_MEM_SIZE);
-> +       if (unmapped != VENUS_FW_MEM_SIZE)
-> +               dev_err(dev, "failed to unmap firmware\n");
-> +
-> +       iommu_detach_device(iommu, dev);
-> +       iommu_domain_free(iommu);
-
-Accordingly, this would also be moved into venus_firmware_deinit().
+> +       platform_device_unregister(to_platform_device(core->fw.dev));
+> +}
+> diff --git a/drivers/media/platform/qcom/venus/firmware.h b/drivers/media/platform/qcom/venus/firmware.h
+> index f41b615..119a9a4 100644
+> --- a/drivers/media/platform/qcom/venus/firmware.h
+> +++ b/drivers/media/platform/qcom/venus/firmware.h
+> @@ -16,6 +16,8 @@
+>
+>  struct device;
+>
+> +int venus_firmware_init(struct venus_core *core);
+> +void venus_firmware_deinit(struct venus_core *core);
+>  int venus_boot(struct venus_core *core);
+>  int venus_shutdown(struct venus_core *core);
+>  int venus_set_hw_state(struct venus_core *core, bool suspend);
+> --
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+>
