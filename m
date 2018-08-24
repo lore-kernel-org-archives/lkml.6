@@ -2,102 +2,81 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94EA1C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 10:11:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30C48C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 10:16:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13C212174D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 10:11:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13C212174D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id D912321714
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 10:16:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D912321714
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726633AbeHXNpt (ORCPT
+        id S1726768AbeHXNuV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 09:45:49 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:36117 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726243AbeHXNpt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 09:45:49 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 924EE83DF6; Fri, 24 Aug 2018 12:11:50 +0200 (CEST)
-Date:   Fri, 24 Aug 2018 12:11:45 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     Baolin Wang <baolin.wang@linaro.org>, rteysseyre@gmail.com,
-        bjorn.andersson@linaro.org, broonie@kernel.org,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/2] leds: core: Introduce LED pattern trigger
-Message-ID: <20180824101145.GA1510@amd>
-References: <1dc5d394324b2bf1ffe229b8e42691fab6d749e0.1533556992.git.baolin.wang@linaro.org>
- <c18fd41f-831c-ab74-57e5-d4151f4b47cc@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="/9DWx/yDrRhgMJTb"
-Content-Disposition: inline
-In-Reply-To: <c18fd41f-831c-ab74-57e5-d4151f4b47cc@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Fri, 24 Aug 2018 09:50:21 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:30772 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726243AbeHXNuV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 09:50:21 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 41xcd01d9Cz9tvpt;
+        Fri, 24 Aug 2018 12:16:20 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 7ruIsTZPzxqs; Fri, 24 Aug 2018 12:16:20 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 41xcd0159Vz9tvpq;
+        Fri, 24 Aug 2018 12:16:20 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id F1A1A8B8D7;
+        Fri, 24 Aug 2018 12:16:22 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id kW7JP7AixTHJ; Fri, 24 Aug 2018 12:16:22 +0200 (CEST)
+Received: from pc16082vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id CC8ED8B74C;
+        Fri, 24 Aug 2018 12:16:22 +0200 (CEST)
+Received: by pc16082vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id C7F3D714EE; Fri, 24 Aug 2018 10:16:22 +0000 (UTC)
+Message-Id: <0fe514f6e105a2c7f773679a14fce80216594a9b.1535103285.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] drivers/video/fbdev: use ioremap_wc() instead of
+ __ioremap(_PAGE_NO_CACHE)
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Fri, 24 Aug 2018 10:16:22 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+_PAGE_NO_CACHE is a target specific flag. Prefer generic functions.
 
---/9DWx/yDrRhgMJTb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ drivers/video/fbdev/chipsfb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Hi!
+diff --git a/drivers/video/fbdev/chipsfb.c b/drivers/video/fbdev/chipsfb.c
+index f103665cad43..48fbc22d6867 100644
+--- a/drivers/video/fbdev/chipsfb.c
++++ b/drivers/video/fbdev/chipsfb.c
+@@ -401,7 +401,7 @@ static int chipsfb_pci_init(struct pci_dev *dp, const struct pci_device_id *ent)
+ #endif /* CONFIG_PMAC_BACKLIGHT */
+ 
+ #ifdef CONFIG_PPC
+-	p->screen_base = __ioremap(addr, 0x200000, _PAGE_NO_CACHE);
++	p->screen_base = ioremap_wc(addr, 0x200000);
+ #else
+ 	p->screen_base = ioremap(addr, 0x200000);
+ #endif
+-- 
+2.13.3
 
-> I think that it would be more flexible if software pattern fallback
-> was applied in case of pattern_set failure. Otherwise, it would
-> lead to the situation where LED class devices that support hardware
-> blinking couldn't be applied the same set of patterns as LED class
-> devices that don't implement pattern_set. The latter will always have to
-> resort to using software pattern engine which will accept far greater
-> amount of pattern combinations.
->=20
-> In this case we need to discuss on what basis the decision will be
-> made on whether hardware or software engine will be used.
->=20
-> Possible options coming to mind:
-> - an interface will be provided to determine max difference between
->   the settings supported by the hardware and the settings requested by
->   the user, that will result in aligning user's setting to the hardware
->   capabilities
-> - the above alignment rate will be predefined instead
-> - hardware engine will be used only if user requests supported settings
->   on the whole span of the requested pattern
-> - in each of the above cases it would be worth to think of the
->   interface to show the scope of the settings supported by hardware
-
-I'd recommend keeping it simple. We use hardware engine if driver
-author thinks pattern is "close enough".
-
-If human can not tell the difference, it probably is.
-
-We may want to do something more formal later.
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---/9DWx/yDrRhgMJTb
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlt/2eEACgkQMOfwapXb+vKtBgCgp15fsv7FX679nW0h33YTmU70
-KqwAoLsWGFNPvDCFIabrzTu9n1dvfmgM
-=KBsf
------END PGP SIGNATURE-----
-
---/9DWx/yDrRhgMJTb--
