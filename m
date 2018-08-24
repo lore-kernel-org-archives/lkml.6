@@ -3,176 +3,186 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82916C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 00:10:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F0B7C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 00:27:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3166E208D6
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 00:10:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3166E208D6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id BEA88208DA
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 00:27:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEA88208DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727246AbeHXDmx (ORCPT
+        id S1727136AbeHXD7l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 23 Aug 2018 23:42:53 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52202 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726085AbeHXDmw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 Aug 2018 23:42:52 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7715C7A9;
-        Thu, 23 Aug 2018 17:10:48 -0700 (PDT)
-Received: from dupont (dupont.austin.arm.com [10.118.16.87])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C331C3F2EA;
-        Thu, 23 Aug 2018 17:10:47 -0700 (PDT)
-Date:   Thu, 23 Aug 2018 19:10:47 -0500
-From:   Kim Phillips <kim.phillips@arm.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-        Anton Blanchard <anton@samba.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Taeung Song <treeze.taeung@gmail.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        perf group <linux-perf-users@vger.kernel.org>
-Subject: [PATCH] perf annotate: fix parsing aarch64 branch instructions
- after objdump update
-Message-Id: <20180823191047.9260992844205984b75e6721@arm.com>
-Organization: Arm
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Thu, 23 Aug 2018 23:59:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39896 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726156AbeHXD7l (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 Aug 2018 23:59:41 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A76E13EE;
+        Fri, 24 Aug 2018 00:27:32 +0000 (UTC)
+Date:   Thu, 23 Aug 2018 17:27:31 -0700
+From:   akpm@linux-foundation.org
+To:     broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au,
+        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        mm-commits@vger.kernel.org
+Subject:  mmotm 2018-08-23-17-26 uploaded
+Message-ID: <20180824002731.XMNCl%akpm@linux-foundation.org>
+User-Agent: s-nail v14.9.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Starting with binutils 2.28, aarch64 objdump adds comments to the
-disassembly output to show the alternative names of a condition code [1].
+The mm-of-the-moment snapshot 2018-08-23-17-26 has been uploaded to
 
-It is assumed that commas in objdump comments could occur in other arches
-now or in the future, so this fix is arch-independent.
+   http://www.ozlabs.org/~akpm/mmotm/
 
-The fix could have been done with arm64 specific jump__parse and
-jump__scnprintf functions, but the jump__scnprintf instruction would
-have to have its comment character be a literal, since the scnprintf
-functions cannot receive a struct arch easily.
+mmotm-readme.txt says
 
-This inconvenience also applies to the generic jump__scnprintf, which
-is why we add a raw_comment pointer to struct ins_operands, so the
-__parse function assigns it to be re-used by its corresponding __scnprintf
-function.
+README for mm-of-the-moment:
 
-Example differences in 'perf annotate --stdio2' output on an
-aarch64 perf.data file:
+http://www.ozlabs.org/~akpm/mmotm/
 
-BEFORE: → b.cs   ffff200008133d1c <unwind_frame+0x18c>  // b.hs, dffff7ecc47b
-AFTER : ↓ b.cs   18c
+This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+more than once a week.
 
-BEFORE: → b.cc   ffff200008d8d9cc <get_alloc_profile+0x31c>  // b.lo, b.ul, dffff727295b
-AFTER : ↓ b.cc   31c
+You will need quilt to apply these patches to the latest Linus release (4.x
+or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+http://ozlabs.org/~akpm/mmotm/series
 
-The branch target labels 18c and 31c also now appear in the output:
+The file broken-out.tar.gz contains two datestamp files: .DATE and
+.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+followed by the base kernel version against which this patch series is to
+be applied.
 
-BEFORE:        add    x26, x29, #0x80
-AFTER : 18c:   add    x26, x29, #0x80
+This tree is partially included in linux-next.  To see which patches are
+included in linux-next, consult the `series' file.  Only the patches
+within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+linux-next.
 
-BEFORE:        add    x21, x21, #0x8
-AFTER : 31c:   add    x21, x21, #0x8
+A git tree which contains the memory management portion of this tree is
+maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+by Michal Hocko.  It contains the patches which are between the
+"#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
+file, http://www.ozlabs.org/~akpm/mmotm/series.
 
-The Fixes: tag below is added so stable branches will get the update; it
-doesn't necessarily mean that commit was broken at the time, rather it
-didn't withstand the aarch64 objdump update.
 
-Tested no difference in output for sample x86_64, power arch perf.data files.
+A full copy of the full kernel tree with the linux-next and mmotm patches
+already applied is available through git within an hour of the mmotm
+release.  Individual mmotm releases are tagged.  The master branch always
+points to the latest release, so it's constantly rebasing.
 
-[1] https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;a=commit;h=bb7eff5206e4795ac79c177a80fe9f4630aaf730
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
 
-Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: Anton Blanchard <anton@samba.org>
-Cc: Robin Murphy <robin.murphy@arm.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Christian Borntraeger <borntraeger@de.ibm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Taeung Song <treeze.taeung@gmail.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Fixes: b13bbeee5ee6 ("perf annotate: Fix branch instruction with multiple operands")
-Signed-off-by: Kim Phillips <kim.phillips@arm.com>
----
- tools/perf/util/annotate.c | 17 ++++++++++++++++-
- tools/perf/util/annotate.h |  1 +
- 2 files changed, 17 insertions(+), 1 deletion(-)
+To develop on top of mmotm git:
 
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index e32ead4744bd..b83897dafbb0 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -282,7 +282,8 @@ bool ins__is_call(const struct ins *ins)
- 	return ins->ops == &call_ops || ins->ops == &s390_call_ops;
- }
- 
--static int jump__parse(struct arch *arch __maybe_unused, struct ins_operands *ops, struct map_symbol *ms)
-+static int jump__parse(struct arch *arch, struct ins_operands *ops,
-+		       struct map_symbol *ms)
- {
- 	struct map *map = ms->map;
- 	struct symbol *sym = ms->sym;
-@@ -291,6 +292,15 @@ static int jump__parse(struct arch *arch __maybe_unused, struct ins_operands *op
- 	};
- 	const char *c = strchr(ops->raw, ',');
- 	u64 start, end;
-+
-+	/*
-+	 * Prevent from matching commas in the comment section, e.g.:
-+	 * ffff200008446e70:       b.cs    ffff2000084470f4 <generic_exec_single+0x314>  // b.hs, b.nlast
-+	 */
-+	ops->raw_comment = strchr(ops->raw, arch->objdump.comment_char);
-+	if (c && ops->raw_comment && c > ops->raw_comment)
-+		c = NULL;
-+
- 	/*
- 	 * Examples of lines to parse for the _cpp_lex_token@@Base
- 	 * function:
-@@ -367,6 +377,11 @@ static int jump__scnprintf(struct ins *ins, char *bf, size_t size,
- 		return scnprintf(bf, size, "%-6s %s", ins->name, ops->target.sym->name);
- 
- 	c = strchr(ops->raw, ',');
-+
-+	/* Prevent from matching commas in the comment section */
-+	if (ops->raw_comment && c && c > ops->raw_comment)
-+		c = NULL;
-+
- 	if (c != NULL) {
- 		const char *c2 = strchr(c + 1, ',');
- 
-diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-index 005a5fe8a8c6..5399ba2321bb 100644
---- a/tools/perf/util/annotate.h
-+++ b/tools/perf/util/annotate.h
-@@ -22,6 +22,7 @@ struct ins {
- 
- struct ins_operands {
- 	char	*raw;
-+	char	*raw_comment;
- 	struct {
- 		char	*raw;
- 		char	*name;
--- 
-2.17.1
+  $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+  $ git remote update mmotm
+  $ git checkout -b topic mmotm/master
+  <make changes, commit>
+  $ git send-email mmotm/master.. [...]
 
+To rebase a branch with older patches to a new mmotm release:
+
+  $ git remote update mmotm
+  $ git rebase --onto mmotm/master <topic base> topic
+
+
+
+
+The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+contains daily snapshots of the -mm tree.  It is updated more frequently
+than mmotm, and is untested.
+
+A git copy of this tree is available at
+
+	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
+
+and use of this tree is similar to
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
+
+
+This mmotm tree contains the following patches against 4.18:
+(patches marked "*" will be included in linux-next)
+
+  origin.patch
+* hfsplus-fix-null-dereference-in-hfsplus_lookup.patch
+* hfsplus-prevent-crash-on-exit-from-failed-search.patch
+* hfs-prevent-crash-on-exit-from-failed-search.patch
+* namei-allow-restricted-o_creat-of-fifos-and-regular-files.patch
+* mm-fix-race-on-soft-offlining-free-huge-pages.patch
+* mm-soft-offline-close-the-race-against-page-allocation.patch
+* hwtracing-intel_th-change-return-type-to-vm_fault_t.patch
+* fs-afs-adding-new-return-type-vm_fault_t.patch
+* treewide-correct-differenciate-and-instanciate-typos.patch
+* vmcore-hide-vmcoredd_mmap_dumps-for-nommu-builds.patch
+* mm-util-make-strndup_user-description-a-kernel-doc-comment.patch
+* mm-util-add-kernel-doc-for-kvfree.patch
+* docs-core-api-kill-trailing-whitespace-in-kernel-apirst.patch
+* docs-core-api-move-strmemdup-to-string-manipulation.patch
+* docs-core-api-split-memory-management-api-to-a-separate-file.patch
+* docs-mm-make-gfp-flags-descriptions-usable-as-kernel-doc.patch
+* docs-core-api-mm-api-add-section-about-gfp-flags.patch
+* gpu-drm-gma500-change-return-type-to-vm_fault_t.patch
+* treewide-convert-iso_8859-1-text-comments-to-utf-8.patch
+* s390-ebcdic-convert-comments-to-utf-8.patch
+* lib-fonts-convert-comments-to-utf-8.patch
+* mm-change-return-type-int-to-vm_fault_t-for-fault-handlers.patch
+* mm-memcontrol-print-proper-oom-header-when-no-eligible-victim-left.patch
+* mm-migration-fix-migration-of-huge-pmd-shared-pages.patch
+* hugetlb-take-pmd-sharing-into-account-when-flushing-tlb-caches.patch
+* mm-oom-fix-missing-tlb_finish_mmu-in-__oom_reap_task_mm.patch
+* mm-respect-arch_dup_mmap-return-value.patch
+* arm-arch-arm-include-asm-pageh-needs-personalityh.patch
+* ocfs2-get-rid-of-ocfs2_is_o2cb_active-function.patch
+* ocfs2-without-quota-support-try-to-avoid-calling-quota-recovery.patch
+* ocfs2-dont-use-iocb-when-eiocbqueued-returns.patch
+* ocfs2-fix-a-misuse-a-of-brelse-after-failing-ocfs2_check_dir_entry.patch
+* ocfs2-dont-put-and-assigning-null-to-bh-allocated-outside.patch
+* ocfs2-dlmglue-clean-up-timestamp-handling.patch
+* block-restore-proc-partitions-to-not-display-non-partitionable-removable-devices.patch
+  mm.patch
+* arm-arm64-introduce-config_have_memblock_pfn_valid.patch
+* mm-page_alloc-remain-memblock_next_valid_pfn-on-arm-arm64.patch
+* mm-page_alloc-reduce-unnecessary-binary-search-in-memblock_next_valid_pfn.patch
+* mm-page_alloc-reduce-unnecessary-binary-search-in-memblock_next_valid_pfn-fix.patch
+* mm-page_alloc-reduce-unnecessary-binary-search-in-memblock_next_valid_pfn-fix-fix.patch
+* mm-memblock-introduce-memblock_search_pfn_regions.patch
+* mm-memblock-introduce-memblock_search_pfn_regions-fix.patch
+* mm-memblock-introduce-pfn_valid_region.patch
+* mm-page_alloc-reduce-unnecessary-binary-search-in-early_pfn_valid.patch
+* z3fold-fix-wrong-handling-of-headless-pages.patch
+* mm-adjust-max-read-count-in-generic_file_buffered_read.patch
+* mm-make-memmap_init-a-proper-function.patch
+* mm-calculate-deferred-pages-after-skipping-mirrored-memory.patch
+* mm-calculate-deferred-pages-after-skipping-mirrored-memory-v2.patch
+* mm-calculate-deferred-pages-after-skipping-mirrored-memory-fix.patch
+* mm-move-mirrored-memory-specific-code-outside-of-memmap_init_zone.patch
+* mm-move-mirrored-memory-specific-code-outside-of-memmap_init_zone-v2.patch
+* mm-swap-fix-race-between-swapoff-and-some-swap-operations.patch
+* mm-swap-fix-race-between-swapoff-and-some-swap-operations-v6.patch
+* mm-fix-race-between-swapoff-and-mincore.patch
+* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock.patch
+* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock-fix.patch
+* mm-add-strictlimit-knob-v2.patch
+* mm-dont-expose-page-to-fast-gup-before-its-ready.patch
+* mm-page_owner-align-with-pageblock_nr_pages.patch
+* mm-page_owner-align-with-pageblock_nr-pages.patch
+* info-task-hung-in-generic_file_write_iter.patch
+* bfs-add-sanity-check-at-bfs_fill_super.patch
+  linux-next.patch
+  linux-next-git-rejects.patch
+* vfs-replace-current_kernel_time64-with-ktime-equivalent.patch
+* fix-read-buffer-overflow-in-delta-ipc.patch
+  make-sure-nobodys-leaking-resources.patch
+  releasing-resources-with-children.patch
+  mutex-subsystem-synchro-test-module.patch
+  kernel-forkc-export-kernel_thread-to-modules.patch
+  slab-leaks3-default-y.patch
+  workaround-for-a-pci-restoring-bug.patch
