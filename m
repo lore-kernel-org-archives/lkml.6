@@ -6,51 +6,44 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6581C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 01:11:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E57D2C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 01:13:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6208B21557
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 01:11:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6208B21557
+	by mail.kernel.org (Postfix) with ESMTP id 945EE21568
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 01:13:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 945EE21568
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726887AbeHXEnd (ORCPT
+        id S1727021AbeHXEpi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 00:43:33 -0400
-Received: from gateway34.websitewelcome.com ([192.185.149.13]:35241 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725945AbeHXEnd (ORCPT
+        Fri, 24 Aug 2018 00:45:38 -0400
+Received: from gateway23.websitewelcome.com ([192.185.48.84]:12746 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725945AbeHXEpi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 00:43:33 -0400
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id E9351168920
-        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 20:09:39 -0500 (CDT)
+        Fri, 24 Aug 2018 00:45:38 -0400
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id BE24D137AA
+        for <linux-kernel@vger.kernel.org>; Thu, 23 Aug 2018 20:13:22 -0500 (CDT)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id t0bbfITdVkBj6t0bbfXHvT; Thu, 23 Aug 2018 20:09:39 -0500
+        id t0eef34P6PvAdt0ezf1SRf; Thu, 23 Aug 2018 20:13:21 -0500
 X-Authority-Reason: nr=8
-Received: from [189.250.73.28] (port=44124 helo=embeddedor)
+Received: from [189.250.73.28] (port=44150 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1ft0ba-003Sfb-V3; Thu, 23 Aug 2018 20:09:39 -0500
-Date:   Thu, 23 Aug 2018 20:09:38 -0500
+        id 1ft0ed-003Uo1-QY; Thu, 23 Aug 2018 20:12:47 -0500
+Date:   Thu, 23 Aug 2018 20:12:47 -0500
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Josh Wu <rainyfeeling@outlook.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     linux-mtd@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+To:     Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         Kees Cook <keescook@chromium.org>,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] mtd: rawnand: atmel: use struct_size() in devm_kzalloc()
-Message-ID: <20180824010938.GA25581@embeddedor.com>
+Subject: [PATCH] ath10k: use struct_size() in kzalloc()
+Message-ID: <20180824011247.GA25648@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -63,13 +56,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.250.73.28
 X-Source-L: No
-X-Exim-ID: 1ft0ba-003Sfb-V3
+X-Exim-ID: 1ft0ed-003Uo1-QY
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.73.28]:44124
+X-Source-Sender: (embeddedor) [189.250.73.28]:44150
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 24
+X-Email-Count: 31
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -86,35 +79,76 @@ struct foo {
         void *entry[];
 };
 
-instance = devm_kzalloc(dev, sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
+instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
 
 Instead of leaving these open-coded and prone to type mistakes, we can
 now use the new struct_size() helper:
 
-instance = devm_kzalloc(dev, struct_size(instance, entry, count), GFP_KERNEL);
+instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
 
 This issue was detected with the help of Coccinelle.
 
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/mtd/nand/raw/atmel/nand-controller.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/net/wireless/ath/ath10k/ce.c | 24 ++++++++----------------
+ 1 file changed, 8 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/atmel/nand-controller.c b/drivers/mtd/nand/raw/atmel/nand-controller.c
-index a068b21..b17cfd0 100644
---- a/drivers/mtd/nand/raw/atmel/nand-controller.c
-+++ b/drivers/mtd/nand/raw/atmel/nand-controller.c
-@@ -1586,9 +1586,7 @@ static struct atmel_nand *atmel_nand_create(struct atmel_nand_controller *nc,
- 		return ERR_PTR(-EINVAL);
- 	}
+diff --git a/drivers/net/wireless/ath/ath10k/ce.c b/drivers/net/wireless/ath/ath10k/ce.c
+index 18c709c..d0381aa 100644
+--- a/drivers/net/wireless/ath/ath10k/ce.c
++++ b/drivers/net/wireless/ath/ath10k/ce.c
+@@ -1416,10 +1416,8 @@ ath10k_ce_alloc_src_ring(struct ath10k *ar, unsigned int ce_id,
  
--	nand = devm_kzalloc(nc->dev,
--			    sizeof(*nand) + (numcs * sizeof(*nand->cs)),
--			    GFP_KERNEL);
-+	nand = devm_kzalloc(nc->dev, struct_size(nand, cs, numcs), GFP_KERNEL);
- 	if (!nand) {
- 		dev_err(nc->dev, "Failed to allocate NAND object\n");
+ 	nentries = roundup_pow_of_two(nentries);
+ 
+-	src_ring = kzalloc(sizeof(*src_ring) +
+-			   (nentries *
+-			    sizeof(*src_ring->per_transfer_context)),
+-			   GFP_KERNEL);
++	src_ring = kzalloc(struct_size(src_ring, per_transfer_context,
++				       nentries), GFP_KERNEL);
+ 	if (src_ring == NULL)
  		return ERR_PTR(-ENOMEM);
+ 
+@@ -1476,10 +1474,8 @@ ath10k_ce_alloc_src_ring_64(struct ath10k *ar, unsigned int ce_id,
+ 
+ 	nentries = roundup_pow_of_two(nentries);
+ 
+-	src_ring = kzalloc(sizeof(*src_ring) +
+-			   (nentries *
+-			    sizeof(*src_ring->per_transfer_context)),
+-			   GFP_KERNEL);
++	src_ring = kzalloc(struct_size(src_ring, per_transfer_context,
++				       nentries), GFP_KERNEL);
+ 	if (!src_ring)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -1534,10 +1530,8 @@ ath10k_ce_alloc_dest_ring(struct ath10k *ar, unsigned int ce_id,
+ 
+ 	nentries = roundup_pow_of_two(attr->dest_nentries);
+ 
+-	dest_ring = kzalloc(sizeof(*dest_ring) +
+-			    (nentries *
+-			     sizeof(*dest_ring->per_transfer_context)),
+-			    GFP_KERNEL);
++	dest_ring = kzalloc(struct_size(dest_ring, per_transfer_context,
++					nentries), GFP_KERNEL);
+ 	if (dest_ring == NULL)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -1580,10 +1574,8 @@ ath10k_ce_alloc_dest_ring_64(struct ath10k *ar, unsigned int ce_id,
+ 
+ 	nentries = roundup_pow_of_two(attr->dest_nentries);
+ 
+-	dest_ring = kzalloc(sizeof(*dest_ring) +
+-			    (nentries *
+-			     sizeof(*dest_ring->per_transfer_context)),
+-			    GFP_KERNEL);
++	dest_ring = kzalloc(struct_size(dest_ring, per_transfer_context,
++					nentries), GFP_KERNEL);
+ 	if (!dest_ring)
+ 		return ERR_PTR(-ENOMEM);
+ 
 -- 
 2.7.4
 
