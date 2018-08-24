@@ -6,104 +6,198 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4061AC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 16:13:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD326C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 16:14:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3444208B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 16:13:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67044208B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 16:14:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JGfn9e/H"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3444208B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qF2gKxrE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67044208B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727753AbeHXTs5 (ORCPT
+        id S1727322AbeHXTuD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 15:48:57 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:39067 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727067AbeHXTs5 (ORCPT
+        Fri, 24 Aug 2018 15:50:03 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:53324 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726504AbeHXTuC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 15:48:57 -0400
-Received: by mail-pf1-f194.google.com with SMTP id j8-v6so4755971pff.6
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 09:13:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
-         :references:message-id:user-agent:subject:date;
-        bh=PPE6Zxv/FDDaxTVGwSy1NgBMRQCXOg9I+/o9ERtEu6M=;
-        b=JGfn9e/H6p53ZHueAVx2IDkAZBsIzNX43T704PkRi+2kNw26IN/AVZIGlubbrExZAM
-         EfoGko9I8HRcGAZqvBArpngBscSUK/bHeYALOHTSrSPQ3quXwqzxioHJZMIlqO2YMW2z
-         eL8c+lBcIgB5pgjnoJspgP5iMlBrqIgkUf1Vw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
-         :in-reply-to:cc:references:message-id:user-agent:subject:date;
-        bh=PPE6Zxv/FDDaxTVGwSy1NgBMRQCXOg9I+/o9ERtEu6M=;
-        b=mXMum2PqCaIsSmgsYVt+YNcs0xaOEpJKb4I+X5fYCfNGsmYvX9m6ELbVbn3Afbe043
-         7oUOKHcqRkGBsaL9bgktui96tBHhzpHRnzoZH7ZwX3sSQZPwERlSEnysQ/ROmgNl5QRk
-         7N1PacGuq6RRklvmuc4MAKAdcsG0QRsje6TZKItOkNLUlFFeVeNFh2yMudDXl+sCEMWz
-         vRGEe04o2bl3vk61axCCYL9tPUUknS1Trl2rqIJFxT2GjeI35jG0+CqeH5o/dEHM04qq
-         raPRl7YZpySEPpjqDpTYhizs5jlpSoPdu2COnuk118LZb/TfM4Llo3QQCtVhj4EJF1f9
-         45xg==
-X-Gm-Message-State: APzg51CFSVojiNdXfvIN+OPZJGDvmolMqfqOEWpIwml52v7JR8NScVG+
-        vhN3EQJGC8TdblgSYxlahJWmUw==
-X-Google-Smtp-Source: ANB0VdYyHENAUxrgCnGUFNxVEgyWOUdBH+wXwFAy9eIRnQCRxyd/RBHIy4Gn+IvwpBR4h02AwAUHYQ==
-X-Received: by 2002:a62:2459:: with SMTP id r86-v6mr2680122pfj.31.1535127218793;
-        Fri, 24 Aug 2018 09:13:38 -0700 (PDT)
-Received: from localhost ([2620:15c:202:201:7e28:b9f3:6afc:5326])
-        by smtp.gmail.com with ESMTPSA id v20-v6sm15379800pfk.12.2018.08.24.09.13.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 24 Aug 2018 09:13:38 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Fri, 24 Aug 2018 15:50:02 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w7OGETis090796;
+        Fri, 24 Aug 2018 11:14:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1535127269;
+        bh=9EaBSguA/lFh/vdLo9kA/pGPTan0oTshNpGxE7mWk6M=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=qF2gKxrE3wH7GtrwF5x5HPjM8WHMrUVHBZ1YpO0i6v0vJncG68dlu/laGLr3Enpg1
+         wAo7VeH1lfafdW+PshjoG2zbUSqttL1Jir++KK2eMlHxT6HwccG39UPaY41j6bHOEJ
+         qPYw5mtA9RDIKL/2I45K6vzVhrhKD1Pm/7fIa6H4=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7OGETA3032392;
+        Fri, 24 Aug 2018 11:14:29 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 24
+ Aug 2018 11:14:29 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Fri, 24 Aug 2018 11:14:29 -0500
+Received: from [128.247.59.147] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7OGETEf019296;
+        Fri, 24 Aug 2018 11:14:29 -0500
+Subject: Re: [PATCH] nohz: Fix missing tick reprog while interrupting inline
+ timer softirq
+To:     Greg KH <gregkh@linuxfoundation.org>
+CC:     Frederic Weisbecker <frederic@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        <stable@vger.kernel.org>
+References: <1533077570-9169-1-git-send-email-frederic@kernel.org>
+ <8ecb9229-4c14-6967-0863-15b47cefd251@ti.com>
+ <20180824061750.GA20523@kroah.com>
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+Message-ID: <64587070-b9b1-4bc4-0f2e-59d33fe68f67@ti.com>
+Date:   Fri, 24 Aug 2018 11:14:29 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Andy Gross <andy.gross@linaro.org>,
-        Douglas Anderson <dianders@chromium.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <20180822173629.202885-4-dianders@chromium.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>, tfiga@chromium.org,
-        Manu Gautam <mgautam@codeaurora.org>,
-        David Collins <collinsd@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-soc@vger.kernel.org
-References: <20180822173629.202885-1-dianders@chromium.org>
- <20180822173629.202885-4-dianders@chromium.org>
-Message-ID: <153512721757.28926.8065711677671939620@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v3 3/3] arm64: dts: qcom: sdm845-mtp: Add nodes for USB
-Date:   Fri, 24 Aug 2018 09:13:37 -0700
+In-Reply-To: <20180824061750.GA20523@kroah.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Douglas Anderson (2018-08-22 10:36:29)
-> Set the various nodes to "okay" and hook up the regulators.
-> =
 
-> NOTE: For now the main USB port (the one that goes out the Type C
-> connector) is forced to host.  Eventually someone will need to get the
-> Type C detection hooked up and get this all integrated with the
-> PMI8998 PMIC.  The reason for forcing to "host" in the meantime is
-> that this will leave us with one "host" and one "peripheral" port.
-> =
 
-> In order for host mode this to work, we assume that the bootloader
-> left things configured enough for us.  Apparently the magic for that
-> is is to do these writes on pmi8998:
-> - pm_comm_write_byte(2, 0x1153, 0x2C, 0);
-> - pm_comm_write_byte(2, 0x1152, 0x07, 0);
-> - pm_comm_write_byte(2, 0x1140, 0x00, 0);
-> - pm_comm_write_byte(2, 0x1140, 0x01, 0);
-> =
+On 08/24/2018 01:17 AM, Greg KH wrote:
+> On Thu, Aug 23, 2018 at 05:57:06PM -0500, Grygorii Strashko wrote:
+>> Hi
+>>
+>> On 07/31/2018 05:52 PM, Frederic Weisbecker wrote:
+>>> Before updating the full nohz tick or the idle time on IRQ exit, we
+>>> check first if we are not in a nesting interrupt, whether the inner
+>>> interrupt is a hard or a soft IRQ.
+>>>
+>>> There is a historical reason for that: the dyntick idle mode used to
+>>> reprogram the tick on IRQ exit, after softirq processing, and there was
+>>> no point in doing that job in the outer nesting interrupt because the
+>>> tick update will be performed through the end of the inner interrupt
+>>> eventually, with even potential new timer updates.
+>>>
+>>> One corner case could show up though: if an idle tick interrupts a softirq
+>>> executing inline in the idle loop (through a call to local_bh_enable())
+>>> after we entered in dynticks mode, the IRQ won't reprogram the tick
+>>> because it assumes the softirq executes on an inner IRQ-tail. As a
+>>> result we might put the CPU in sleep mode with the tick completely
+>>> stopped whereas a timer can still be enqueued. Indeed there is no tick
+>>> reprogramming in local_bh_enable(). We probably asssumed there was no bh
+>>> disabled section in idle, although there didn't seem to be debug code
+>>> ensuring that.
+>>>
+>>> Nowadays the nesting interrupt optimization still stands but only concern
+>>> full dynticks. The tick is stopped on IRQ exit in full dynticks mode
+>>> and we want to wait for the end of the inner IRQ to reprogramm the tick.
+>>> But in_interrupt() doesn't make a difference between softirqs executing
+>>> on IRQ tail and those executing inline. What was to be considered a
+>>> corner case in dynticks-idle mode now becomes a serious opportunity for
+>>> a bug in full dynticks mode: if a tick interrupts a task executing
+>>> softirq inline, the tick reprogramming will be ignored and we may exit
+>>> to userspace after local_bh_enable() with an enqueued timer that will
+>>> never fire.
+>>>
+>>> To fix this, simply keep reprogramming the tick if we are in a hardirq
+>>> interrupting softirq. We can still figure out a way later to restore
+>>> this optimization while excluding inline softirq processing.
+>>>
+>>> Reported-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
+>>> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+>>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>>> Cc: Ingo Molnar <mingo@kernel.org>
+>>> Tested-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
+>>> ---
+>>>    kernel/softirq.c | 2 +-
+>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/kernel/softirq.c b/kernel/softirq.c
+>>> index 900dcfe..0980a81 100644
+>>> --- a/kernel/softirq.c
+>>> +++ b/kernel/softirq.c
+>>> @@ -386,7 +386,7 @@ static inline void tick_irq_exit(void)
+>>>    
+>>>    	/* Make sure that timer wheel updates are propagated */
+>>>    	if ((idle_cpu(cpu) && !need_resched()) || tick_nohz_full_cpu(cpu)) {
+>>> -		if (!in_interrupt())
+>>> +		if (!in_irq())
+>>>    			tick_nohz_irq_exit();
+>>>    	}
+>>>    #endif
+>>>
+>>
+>> This patch was back ported to the Stable linux-4.14.y and It causes regression -
+>>   flood of "NOHZ: local_softirq_pending" messages on all TI boards during boot (NFS boot):
+>>
+>> [    4.179796] NOHZ: local_softirq_pending 2c2 in sirq 256
+>> [    4.185051] NOHZ: local_softirq_pending 2c2 in sirq 256
+>>
+>> the same is not reproducible with LKML - seems due to changes in tick-sched.c
+>> __tick_nohz_idle_enter()/tick_nohz_irq_exit().
+> 
+> What changes do you think fixed this?
 
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> ---
+not sure. But it seems set of changes from Rafael J. Wysocki:
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+ff7de62 nohz: Avoid duplication of code related to got_idle_tick
+296bb1e cpuidle: menu: Refine idle state selection for running tick
+554c8aa sched: idle: Select idle state before stopping the tick
+23a8d88 time: tick-sched: Split tick_nohz_stop_sched_tick()
+45f1ff5 cpuidle: Return nohz hint from cpuidle_select()
+2aaf709 sched: idle: Do not stop the tick upfront in the idle loop
+0e77676 time: tick-sched: Reorganize idle tick management code
+b7eaf1a cpufreq: schedutil: Avoid reducing frequency of busy CPUs prematurely
 
+> 
+>> I've generated backtrace from  can_stop_idle_tick() (see below) and seems this
+>> patch makes tick_nohz_irq_exit() call unconditional in case of nested interrupt:
+>>
+>> gic_handle_irq
+>>   |- irq_exit
+>>      |- preempt_count_sub(HARDIRQ_OFFSET); <-- [1]
+>>      |-__do_softirq
+>> 	<irqs enabled>
+>> 	|- gic_handle_irq()
+>> 	   |- irq_exit()
+>> 		|- tick_irq_exit()
+>> 		   if (!in_irq()) <-- My understanding is that this condition will be always true due to [1]
+>> 			tick_nohz_irq_exit();
+>> 			|-__tick_nohz_idle_enter()
+>> 			  |- can_stop_idle_tick()
+>>
+>> Sry, not sure if my conclusion is right and how can it be fixed.
+> 
+> Any pointers to a patch that might need to be backported would be
+> appreciated.
+> 
+
+commit 
+Author: Frederic Weisbecker <frederic@kernel.org>
+Date: Fri Aug 3 15:31:34 2018 +0200
+
+nohz: Fix missing tick reprogram when interrupting an inline softirq
+
+commit 0a0e0829f990120cef165bbb804237f400953ec2 upstream.
+
+
+
+-- 
+regards,
+-grygorii
