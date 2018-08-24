@@ -2,124 +2,88 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8836C433F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 18:38:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DE48C433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 18:41:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CEB420836
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 18:38:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B5E22147D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 18:41:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kzutvwlX";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="c9TA5YX5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CEB420836
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NkirNp9f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B5E22147D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727265AbeHXWOA (ORCPT
+        id S1727057AbeHXWQz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 18:14:00 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:45218 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726535AbeHXWOA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 18:14:00 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id D15EA6055B; Fri, 24 Aug 2018 18:38:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535135891;
-        bh=/I7/mgO8X8EYdFpFLL0eVJCIimgTfpI/v3Oah7iCPgk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=kzutvwlXe6VB1kGBxI/c6NXoGuzLA3wqddEECU6yzBxKvGQ7UIMMYZu7u1HBWBPlQ
-         xjkbEcYjhXOBERMkI45MoZTdN5n//9Dd6vDHksuUuTSOYRKxy2Ze4aSNfOfcKJgcyq
-         jU1/K0ApRsqOxm0Nx8eHD4VHUd4+fMJPyKaZl4jM=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 7E65660227;
-        Fri, 24 Aug 2018 18:38:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535135890;
-        bh=/I7/mgO8X8EYdFpFLL0eVJCIimgTfpI/v3Oah7iCPgk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=c9TA5YX5QqNphir2/NqoX/I89RCYmbvVGfdoDbYvo/T5LkpcsmMr7E40no8jJMI5I
-         t0HS9cTwvddagSHqS+RwmLXsYdiexwKWFuS6rOkGNgsAWNJ1zjQv0bLhDZ3qvBIeEH
-         OSbEIaS/BfMi2JrT9Tbyl0FQMPHWdKg0L/Pv2ftQ=
+        Fri, 24 Aug 2018 18:16:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46268 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726535AbeHXWQz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 18:16:55 -0400
+Received: from localhost (LFbn-NCY-1-241-207.w83-194.abo.wanadoo.fr [83.194.85.207])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 729FB2147A;
+        Fri, 24 Aug 2018 18:41:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535136067;
+        bh=SdIomO4MEFSUrqg/ntH9iYImSYSAyiElDBzJnU1VqA4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NkirNp9f+/6ywNgcR0jEND+/iJT1GTesQDREly9YrwqBVl0e5T+EY3i4M0x52BQDT
+         xGcakgN6aPEWG02GwLwUeGbQ7+6eIPt7880eBc8370l1Oci+NlRlymB6G/lXDAfycX
+         TKttY9ARutfIKKOFNU+Ww1LAxk/IxS5MPwja6q18=
+Date:   Fri, 24 Aug 2018 20:41:04 +0200
+From:   Frederic Weisbecker <frederic@kernel.org>
+To:     Grygorii Strashko <grygorii.strashko@ti.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        stable@vger.kernel.org, Tero Kristo <t-kristo@ti.com>
+Subject: Re: [PATCH] nohz: Fix missing tick reprog while interrupting inline
+ timer softirq
+Message-ID: <20180824184103.GD2730@lerouge>
+References: <1533077570-9169-1-git-send-email-frederic@kernel.org>
+ <8ecb9229-4c14-6967-0863-15b47cefd251@ti.com>
+ <20180824061750.GA20523@kroah.com>
+ <alpine.DEB.2.21.1808240851420.1668@nanos.tec.linutronix.de>
+ <0d63c2bb-f75d-3f79-c19d-bb4ac9a00cd5@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 24 Aug 2018 11:38:10 -0700
-From:   vnkgutta@codeaurora.org
-To:     Evan Green <evgreen@chromium.org>
-Cc:     robh@kernel.org, mchehab@kernel.org, linux-edac@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, tsoni@codeaurora.org,
-        ckadabi@codeaurora.org, rishabhb@codeaurora.org, bp@alien8.de
-Subject: Re: [PATCH v2 3/4] drivers: edac: Add EDAC driver support for QCOM
- SoCs
-In-Reply-To: <CAE=gft6GTuk+j81J+jTNqD_6VFQym=gb6aJ==cbcg-6odVq3qg@mail.gmail.com>
-References: <1534550915-18230-1-git-send-email-vnkgutta@codeaurora.org>
- <1534550915-18230-4-git-send-email-vnkgutta@codeaurora.org>
- <CAE=gft4vheqe9Yqb3H_gMChUmQqvmBeeWvKWCf_j4sWrFceFiQ@mail.gmail.com>
- <CAE=gft6GTuk+j81J+jTNqD_6VFQym=gb6aJ==cbcg-6odVq3qg@mail.gmail.com>
-Message-ID: <ffe2184066ddc9b4be4bf1bafc3497be@codeaurora.org>
-X-Sender: vnkgutta@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0d63c2bb-f75d-3f79-c19d-bb4ac9a00cd5@ti.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-08-23 16:07, Evan Green wrote:
-> On Thu, Aug 23, 2018 at 4:04 PM Evan Green <evgreen@chromium.org> 
-> wrote:
->> 
->> On Fri, Aug 17, 2018 at 5:08 PM Venkata Narendra Kumar Gutta
->> <vnkgutta@codeaurora.org> wrote:
->> >
->> > From: Channagoud Kadabi <ckadabi@codeaurora.org>
+On Fri, Aug 24, 2018 at 11:10:44AM -0500, Grygorii Strashko wrote:
+> Yes. i do not see local_softirq_pending messages any more
 > 
-> Also checkpatch.pl complains a bit about this patch:
+> But one question, just to clarify, after patch "nohz: Fix missing tick reprog while interrupting inline timer softirq"
+> the tick_nohz_irq_exit() will be called few times in case of nested interrupts (min 2):
+> gic_handle_irq
+>  |- irq_exit
+>     |- preempt_count_sub(HARDIRQ_OFFSET); 
+>     |-__do_softirq 
+> 	<irqs enabled>
+> 	|- gic_handle_irq()
+> 	   |- irq_exit()
+> 		|- tick_irq_exit()
+> 		   if (!in_irq())
+> 			tick_nohz_irq_exit(); <-- [1]
+>     |- tick_irq_exit()
+> 	if (!in_irq())
+> 		tick_nohz_irq_exit(); <-- [2]
 > 
->             WARNING: Non-standard signature: Co-developed-by:
->             #14:
->             Co-developed-by: Venkata Narendra Kumar Gutta
-> <vnkgutta@codeaurora.org>
+> Is it correct? in 4.14 tick_nohz_irq_exit() is much more complex then in LKML now,
+> and this is hot path.
 
-This needs to be there as the original author is Channagoud Kadabi
-and I'm the one who is modifying and upstreaming this driver.
-It was suggested to have this kind of signature from the earlier 
-patchset comments.
-
-Can we do anything about this?
-
-> 
->             WARNING: please write a paragraph that describes the
-> config symbol fully
->             #63: FILE: drivers/edac/Kconfig:460:
->             +config EDAC_QCOM
-
-This is also, I will check if I can get rid of this by writing more in 
-the description.
-I don't really understand why do we need a paragraph here.
-
-> 
->             WARNING: DT compatible string "qcom,llcc-edac" appears
-> un-documented -- check ./Documentation/devicetree/bindings/
->             #536: FILE: drivers/edac/qcom_edac.c:430:
->             + { .compatible = "qcom,llcc-edac" },
-
-This file is not added in the dt-bindings as there are no properties 
-(like reg-names or interrupts) for this driver
-and anyway initialized from llcc driver.
-
-Do we still need to have the Documentation in place?
-
-> 
->             total: 0 errors, 3 warnings, 533 lines checked
-> 
-> -Evan
+That's correct and it's indeed more costly in 4.14 as then the tick is going to be programmed
+twice.
