@@ -2,107 +2,94 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DB71C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 15:45:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0AE1C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 15:48:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEBAF2152B
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 15:45:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E3FD2152B
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 15:48:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bdQ7dBcf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEBAF2152B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fbmRZsDv";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Vr/bEitR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E3FD2152B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727147AbeHXTUQ (ORCPT
+        id S1726988AbeHXTYF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 15:20:16 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:44896 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726268AbeHXTUQ (ORCPT
+        Fri, 24 Aug 2018 15:24:05 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:32880 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726513AbeHXTYF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 15:20:16 -0400
-Received: by mail-lj1-f195.google.com with SMTP id q127-v6so7216626ljq.11;
-        Fri, 24 Aug 2018 08:45:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ax/oXp4vJyDj6LbekR00oxOMvpoWuKn6ddcYUF/a/E0=;
-        b=bdQ7dBcf7o9RBWthKGE7PIlem+pN0jAUiZ5kOeSR14RTHyIF+HNRXBDgTRzhYsJqc+
-         DcyLHWJMogyT0REz+JbeYVpwQA9MkVAVtrX+bI0XvDIGKNZMYf86lSh187Ynzp/5wbZF
-         zSOrWBIRLKC3fbcV/scsa2PpWGF+WWAA3jBtDqAYqGYVUDOP6pAwJ5DZp/8admTuHb6Z
-         ogvDlG9Pt+v3p9XTjoABZ4umPUFy/qzOkcvC1PxMU4suvxPORe6ZYGrD/42mgLWTu2Ic
-         b2mxnI0VZO9lgcIjZ+PLel+lIBX+y9MTietKrSur0E/tV+kRpeUT4COStexpu3Z6x26/
-         1/lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ax/oXp4vJyDj6LbekR00oxOMvpoWuKn6ddcYUF/a/E0=;
-        b=rcJrjwQHVwda94XzUQ9Sn6COqc3Yr9FZQHF9CaIFlSmFHeTS2CT4TKtUpnipwtB7Gt
-         gZAAY4CXn/auRE7IX/XpB6uJsuZKHqI2b5odOiCF6esj+JHM91trQvkt1lbuvSPuaE+D
-         afzkRGqSpPzGy7CtVo4ZFp5eon3BnHqZc5ULhIOf/kjERr+dQF5wirtJGnER1LLBCDLz
-         2sYM+zYGorn8u6Jb7l/WKe0yQwWPK+IrCHKRE16nq6MyRaRituCNZl5mBYKfsVKbO2TK
-         DLDKVS0jGKwewjOF5iTVbYRSPC/G0jXDpnCqQb9ouFRGgwAAtSIOijH/xrsWxJgVol+K
-         4cow==
-X-Gm-Message-State: APzg51CCnVu0Xf/FFEA42wKGu8qhojXuIO2Msazq7ribMww2V4IcD152
-        Ab5nbOetmX9y29iNAbNCxeCVuTmVRPA4m40MOS0=
-X-Google-Smtp-Source: ANB0VdY0I1A6XxFT8DxzynXrJ/9kGa+VXgfJ15cCwZjnNSe+uADuiDhzm38UfI7NZesU1Kbh6an7Ejh0vb0Tscfal2k=
-X-Received: by 2002:a2e:92c4:: with SMTP id k4-v6mr1843220ljh.18.1535125502243;
- Fri, 24 Aug 2018 08:45:02 -0700 (PDT)
+        Fri, 24 Aug 2018 15:24:05 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 96B9760214; Fri, 24 Aug 2018 15:48:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535125732;
+        bh=TyinUkAs8tDUy91faIewVv7WYg5eqVFsSwSSDeBm8Y4=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=fbmRZsDvfO7ADEqjGG0/xTzTKmg1EhNaM0xMKBpFuZbfDF/18CCv2iWdylGompOjv
+         iRy589DWrvFGhiLM1X//4lb7dA9RqlZD0gkbHoWPHKO7zSrMBB5PuthjgnAcklDX7m
+         LiWOvNcPtakTEFEPqZLHyi+jbako3T/osAcvkhOU=
+Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6368060214;
+        Fri, 24 Aug 2018 15:48:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535125731;
+        bh=TyinUkAs8tDUy91faIewVv7WYg5eqVFsSwSSDeBm8Y4=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=Vr/bEitRS1/rBCYWqdqq5eIkwDIyJGlSXBZk3XzgD8L56Fbkat4uakk2Aeakgmvy2
+         VQpS5MP0tKAWaMhpqP2uB+H13iHm6CAy8WH+ID48BtmK51wkLquMEwRgPfra7hHMlP
+         IBQ8KBDrW3XctIIzZbi7ZQhcHsBhZyhtkV49FSlQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6368060214
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20180424080437.21367-1-benjamin.tissoires@redhat.com> <20180424080437.21367-3-benjamin.tissoires@redhat.com>
-In-Reply-To: <20180424080437.21367-3-benjamin.tissoires@redhat.com>
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date:   Fri, 24 Aug 2018 08:44:51 -0700
-Message-ID: <CAKdAkRRsca1Q2Ltqr=yyZ-rr7vxkty1cGVYjFB5bcC87UtWDSw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/6] HID: generic: create one input report per
- application type
-To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>
-Cc:     Peter Hutterer <peter.hutterer@who-t.net>,
-        Mario Limonciello <Mario.Limonciello@dell.com>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2] wcn36xx: Use dma_zalloc_coherent instead of
+ dma_alloc_coherent + memset
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <1534761895-10457-1-git-send-email-zhongjiang@huawei.com>
+References: <1534761895-10457-1-git-send-email-zhongjiang@huawei.com>
+To:     zhong jiang <zhongjiang@huawei.com>
+Cc:     <davem@davemloft.net>, <wcn36xx@lists.infradead.org>,
+        <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20180824154852.96B9760214@smtp.codeaurora.org>
+Date:   Fri, 24 Aug 2018 15:48:52 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Benjamin, Jiri,
+zhong jiang <zhongjiang@huawei.com> wrote:
 
-On Tue, Apr 24, 2018 at 1:04 AM Benjamin Tissoires
-<benjamin.tissoires@redhat.com> wrote:
->
-> It is not a good idea to try to fit all types of applications in the
-> same input report. There are a lot of devices that are needing
-> the quirk HID_MULTI_INPUT but this quirk doesn't match the actual HID
-> description as it is based on the report ID.
->
-> Given that most devices with MULTI_INPUT I can think of split nicely
-> the devices inputs into application, it is a good thing to split the
-> devices by default based on this assumption.
->
-> Also make hid-multitouch following this rule, to not have to deal
-> with too many input created.
->
-> While we are at it, fix some checkpatch complaints about converting
-> 'unsigned' to 'unsigned int'.
->
-> Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-> ---
+> dma_zalloc_coherent has implemented the dma_alloc_coherent() + memset(),
+> We prefer to dma_zalloc_coherent instead of open-codeing.
+> 
+> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
 
-I see a spike of user reports on Bugzilla with HID devices being
-broken on 4.18 that seem to point to this commit. For example:
-https://bugzilla.kernel.org/show_bug.cgi?id=200849
+Doesn't apply as I had already applied similar patch:
 
-Thanks.
+https://git.kernel.org/pub/scm/linux/kernel/git/kvalo/ath.git/commit/?h=ath-next&id=d410e28f3ae476e1572b8893c646ef44fae7bbbd
+
+error: patch failed: drivers/net/wireless/ath/wcn36xx/dxe.c:174
+error: drivers/net/wireless/ath/wcn36xx/dxe.c: patch does not apply
+stg import: Diff does not apply cleanly
+
+Patch set to Rejected.
 
 -- 
-Dmitry
+https://patchwork.kernel.org/patch/10570243/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
