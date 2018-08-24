@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4914EC433F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 16:23:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 527DDC433F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 16:23:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2EFB21557
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 16:23:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E26C520666
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 16:23:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0ENEA4CT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2EFB21557
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XuRIIIuG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E26C520666
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727963AbeHXT6z (ORCPT
+        id S1728146AbeHXT7L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 15:58:55 -0400
+        Fri, 24 Aug 2018 15:59:11 -0400
 Received: from mail.kernel.org ([198.145.29.99]:41458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726484AbeHXT6v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 15:58:51 -0400
+        id S1727679AbeHXT6y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 15:58:54 -0400
 Received: from sol.localdomain (c-67-185-97-198.hsd1.wa.comcast.net [67.185.97.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 27DB42156B;
-        Fri, 24 Aug 2018 16:23:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C2D02174D;
+        Fri, 24 Aug 2018 16:23:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535127809;
-        bh=1sSk+Kwr4bkln3nxOljgWzmay0UcOoVVThgSzjHSlBU=;
+        s=default; t=1535127811;
+        bh=Yq99QQ4UNXLULYzSp/s1hGUILfOu6J7wgXxVTCdxHMA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0ENEA4CT60ctysne0vUoP/BFNtvUuJreQacHOLP4V2gz6iCTvQFU0OcGaRRE53vPK
-         sifsws/dMisQiOFGdiSa0DuUXpkryD6xJwRf79ipuz8SxcaMjNnvQLor4ynakLcrED
-         l0FB0CDeY0tPlPaT8OAe7q1HZkkb+MgQG71Nk9q4=
+        b=XuRIIIuG6sbV4zFlfN9Fm7JZ2TzbrLdhf1dFx9iM51SaPcr5iU0IqMPm/5MGLuSwV
+         MrdcUhw3i+mj0GsWz06pkilErVrozFjkbY0y9YY4hEfGGzm9mfXtg9+GfY9Igc3G31
+         5zD3uot1T8rzc9oKci+GaKFqJj++jBg7CaBEIV7o=
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net
@@ -45,9 +45,9 @@ Cc:     linux-integrity@vger.kernel.org, linux-fscrypt@vger.kernel.org,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         Michael Halcrow <mhalcrow@google.com>,
         Victor Hsieh <victorhsieh@google.com>
-Subject: [RFC PATCH 03/10] fs-verity: implement FS_IOC_ENABLE_VERITY ioctl
-Date:   Fri, 24 Aug 2018 09:16:35 -0700
-Message-Id: <20180824161642.1144-4-ebiggers@kernel.org>
+Subject: [RFC PATCH 08/10] ext4: add basic fs-verity support
+Date:   Fri, 24 Aug 2018 09:16:40 -0700
+Message-Id: <20180824161642.1144-9-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180824161642.1144-1-ebiggers@kernel.org>
 References: <20180824161642.1144-1-ebiggers@kernel.org>
@@ -56,189 +56,351 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-Add a function for filesystems to call to implement the
-FS_IOC_ENABLE_VERITY ioctl.  This ioctl performs various validations
-(e.g., checking that the file isn't open for writing), then calls back
-into the filesystem to set the verity bit on the inode.
+Add basic fs-verity support to ext4.  fs-verity is a filesystem feature
+that provides efficient, transparent integrity verification and
+authentication of read-only files.  It uses a dm-verity like mechanism
+at the file level: a Merkle tree hidden past the end of the file is used
+to verify any block in the file in log(filesize) time.  It is
+implemented mainly by helper functions in fs/verity/.
 
-This ioctl is used to mark a file as being fs-verity protected, after
-userspace has appended the Merkle tree and other metadata to the file.
+This patch adds everything except the data verification hooks that will
+needed in ->readpages().
 
+On ext4, enabling fs-verity on a file requires that the filesystem has
+the 'verity' feature, e.g. that it was formatted with
+'mkfs.ext4 -O verity' or had 'tune2fs -O verity' run on it.
+This requires e2fsprogs 1.44.4-2 or later.
+
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+(EB: lots of changes, including adding the verity feature flag and
+ storing the data i_size on disk to make it an RO_COMPAT feature)
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/verity/Makefile       |   2 +-
- fs/verity/ioctl.c        | 121 +++++++++++++++++++++++++++++++++++++++
- include/linux/fsverity.h |  11 ++++
- 3 files changed, 133 insertions(+), 1 deletion(-)
- create mode 100644 fs/verity/ioctl.c
+ fs/ext4/Kconfig | 20 ++++++++++++
+ fs/ext4/ext4.h  | 20 +++++++++++-
+ fs/ext4/file.c  |  6 ++++
+ fs/ext4/inode.c |  8 +++++
+ fs/ext4/ioctl.c | 12 ++++++++
+ fs/ext4/super.c | 81 +++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/ext4/sysfs.c |  6 ++++
+ 7 files changed, 152 insertions(+), 1 deletion(-)
 
-diff --git a/fs/verity/Makefile b/fs/verity/Makefile
-index a6c7cefb61ab7..6450925e3a8b7 100644
---- a/fs/verity/Makefile
-+++ b/fs/verity/Makefile
-@@ -1,3 +1,3 @@
- obj-$(CONFIG_FS_VERITY)	+= fsverity.o
+diff --git a/fs/ext4/Kconfig b/fs/ext4/Kconfig
+index a453cc87082b5..5a76125ac0f8a 100644
+--- a/fs/ext4/Kconfig
++++ b/fs/ext4/Kconfig
+@@ -111,6 +111,26 @@ config EXT4_FS_ENCRYPTION
+ 	default y
+ 	depends on EXT4_ENCRYPTION
  
--fsverity-y := hash_algs.o setup.o verify.o
-+fsverity-y := hash_algs.o ioctl.o setup.o verify.o
-diff --git a/fs/verity/ioctl.c b/fs/verity/ioctl.c
-new file mode 100644
-index 0000000000000..993f2afdcc734
---- /dev/null
-+++ b/fs/verity/ioctl.c
-@@ -0,0 +1,121 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * fs/verity/ioctl.c: fs-verity ioctls
-+ *
-+ * Copyright (C) 2018 Google LLC
-+ *
-+ * Originally written by Jaegeuk Kim and Michael Halcrow;
-+ * heavily rewritten by Eric Biggers.
-+ */
++config EXT4_FS_VERITY
++	bool "Ext4 Verity"
++	depends on EXT4_FS
++	select FS_VERITY
++	help
++	  This option enables fs-verity for ext4.  fs-verity is the
++	  dm-verity mechanism implemented at the file level.  Userspace
++	  can append a Merkle tree (hash tree) to a file, then enable
++	  fs-verity on the file.  ext4 will then transparently verify
++	  any data read from the file against the Merkle tree.  The file
++	  is also made read-only.
 +
-+#include "fsverity_private.h"
++	  This serves as an integrity check, but the availability of the
++	  Merkle tree root hash also allows efficiently supporting
++	  various use cases where normally the whole file would need to
++	  be hashed at once, such as auditing and authenticity
++	  verification (appraisal).
 +
-+#include <linux/capability.h>
-+#include <linux/mm.h>
-+#include <linux/mount.h>
-+#include <linux/uaccess.h>
++	  If unsure, say N.
 +
-+/**
-+ * fsverity_ioctl_enable - enable fs-verity on a file
-+ *
-+ * Set the verity bit on a file.  Userspace must have already appended verity
-+ * metadata to the file.
-+ *
-+ * Enabling fs-verity makes the file contents immutable, and the filesystem
-+ * doesn't allow disabling it (other than by replacing the file).
-+ *
-+ * To avoid races with the file contents being modified, no processes must have
-+ * the file open for writing.  This includes the caller!
-+ *
-+ * Return: 0 on success, -errno on failure
-+ */
-+int fsverity_ioctl_enable(struct file *filp, const void __user *arg)
+ config EXT4_DEBUG
+ 	bool "EXT4 debugging support"
+ 	depends on EXT4_FS
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index 7c7123f265c25..335c99e781728 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -43,6 +43,9 @@
+ #define __FS_HAS_ENCRYPTION IS_ENABLED(CONFIG_EXT4_FS_ENCRYPTION)
+ #include <linux/fscrypt.h>
+ 
++#define __FS_HAS_VERITY IS_ENABLED(CONFIG_EXT4_FS_VERITY)
++#include <linux/fsverity.h>
++
+ /*
+  * The fourth extended filesystem constants/structures
+  */
+@@ -394,6 +397,7 @@ struct flex_groups {
+ #define EXT4_TOPDIR_FL			0x00020000 /* Top of directory hierarchies*/
+ #define EXT4_HUGE_FILE_FL               0x00040000 /* Set to each huge file */
+ #define EXT4_EXTENTS_FL			0x00080000 /* Inode uses extents */
++#define EXT4_VERITY_FL			0x00100000 /* Verity protected inode */
+ #define EXT4_EA_INODE_FL	        0x00200000 /* Inode used for large EA */
+ #define EXT4_EOFBLOCKS_FL		0x00400000 /* Blocks allocated beyond EOF */
+ #define EXT4_INLINE_DATA_FL		0x10000000 /* Inode has inline data. */
+@@ -461,6 +465,7 @@ enum {
+ 	EXT4_INODE_TOPDIR	= 17,	/* Top of directory hierarchies*/
+ 	EXT4_INODE_HUGE_FILE	= 18,	/* Set to each huge file */
+ 	EXT4_INODE_EXTENTS	= 19,	/* Inode uses extents */
++	EXT4_INODE_VERITY	= 20,	/* Verity protected inode */
+ 	EXT4_INODE_EA_INODE	= 21,	/* Inode used for large EA */
+ 	EXT4_INODE_EOFBLOCKS	= 22,	/* Blocks allocated beyond EOF */
+ 	EXT4_INODE_INLINE_DATA	= 28,	/* Data in inode. */
+@@ -506,6 +511,7 @@ static inline void ext4_check_flag_values(void)
+ 	CHECK_FLAG_VALUE(TOPDIR);
+ 	CHECK_FLAG_VALUE(HUGE_FILE);
+ 	CHECK_FLAG_VALUE(EXTENTS);
++	CHECK_FLAG_VALUE(VERITY);
+ 	CHECK_FLAG_VALUE(EA_INODE);
+ 	CHECK_FLAG_VALUE(EOFBLOCKS);
+ 	CHECK_FLAG_VALUE(INLINE_DATA);
+@@ -1632,6 +1638,7 @@ static inline void ext4_clear_state_flags(struct ext4_inode_info *ei)
+ #define EXT4_FEATURE_RO_COMPAT_METADATA_CSUM	0x0400
+ #define EXT4_FEATURE_RO_COMPAT_READONLY		0x1000
+ #define EXT4_FEATURE_RO_COMPAT_PROJECT		0x2000
++#define EXT4_FEATURE_RO_COMPAT_VERITY		0x8000
+ 
+ #define EXT4_FEATURE_INCOMPAT_COMPRESSION	0x0001
+ #define EXT4_FEATURE_INCOMPAT_FILETYPE		0x0002
+@@ -1720,6 +1727,7 @@ EXT4_FEATURE_RO_COMPAT_FUNCS(bigalloc,		BIGALLOC)
+ EXT4_FEATURE_RO_COMPAT_FUNCS(metadata_csum,	METADATA_CSUM)
+ EXT4_FEATURE_RO_COMPAT_FUNCS(readonly,		READONLY)
+ EXT4_FEATURE_RO_COMPAT_FUNCS(project,		PROJECT)
++EXT4_FEATURE_RO_COMPAT_FUNCS(verity,		VERITY)
+ 
+ EXT4_FEATURE_INCOMPAT_FUNCS(compression,	COMPRESSION)
+ EXT4_FEATURE_INCOMPAT_FUNCS(filetype,		FILETYPE)
+@@ -1775,7 +1783,8 @@ EXT4_FEATURE_INCOMPAT_FUNCS(encrypt,		ENCRYPT)
+ 					 EXT4_FEATURE_RO_COMPAT_BIGALLOC |\
+ 					 EXT4_FEATURE_RO_COMPAT_METADATA_CSUM|\
+ 					 EXT4_FEATURE_RO_COMPAT_QUOTA |\
+-					 EXT4_FEATURE_RO_COMPAT_PROJECT)
++					 EXT4_FEATURE_RO_COMPAT_PROJECT |\
++					 EXT4_FEATURE_RO_COMPAT_VERITY)
+ 
+ #define EXTN_FEATURE_FUNCS(ver) \
+ static inline bool ext4_has_unknown_ext##ver##_compat_features(struct super_block *sb) \
+@@ -2271,6 +2280,15 @@ static inline bool ext4_encrypted_inode(struct inode *inode)
+ 	return ext4_test_inode_flag(inode, EXT4_INODE_ENCRYPT);
+ }
+ 
++static inline bool ext4_verity_inode(struct inode *inode)
 +{
-+	struct inode *inode = file_inode(filp);
-+	struct fsverity_info *vi;
++#ifdef CONFIG_EXT4_FS_VERITY
++	return ext4_test_inode_flag(inode, EXT4_INODE_VERITY);
++#else
++	return false;
++#endif
++}
++
+ #ifdef CONFIG_EXT4_FS_ENCRYPTION
+ static inline int ext4_fname_setup_filename(struct inode *dir,
+ 			const struct qstr *iname,
+diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+index 7f8023340eb8c..97a6a7699cff6 100644
+--- a/fs/ext4/file.c
++++ b/fs/ext4/file.c
+@@ -444,6 +444,12 @@ static int ext4_file_open(struct inode * inode, struct file * filp)
+ 	if (ret)
+ 		return ret;
+ 
++	if (ext4_verity_inode(inode)) {
++		ret = fsverity_file_open(inode, filp);
++		if (ret)
++			return ret;
++	}
++
+ 	/*
+ 	 * Set up the jbd2_inode if we are opening the inode for
+ 	 * writing and the journal is present
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 4efe77286ecd5..bb8f50230d055 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -4651,6 +4651,8 @@ static bool ext4_should_use_dax(struct inode *inode)
+ 		return false;
+ 	if (ext4_encrypted_inode(inode))
+ 		return false;
++	if (ext4_verity_inode(inode))
++		return false;
+ 	return true;
+ }
+ 
+@@ -5436,6 +5438,12 @@ int ext4_setattr(struct dentry *dentry, struct iattr *attr)
+ 	if (error)
+ 		return error;
+ 
++	if (ext4_verity_inode(inode)) {
++		error = fsverity_prepare_setattr(dentry, attr);
++		if (error)
++			return error;
++	}
++
+ 	if (is_quota_modification(inode, attr)) {
+ 		error = dquot_initialize(inode);
+ 		if (error)
+diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
+index a7074115d6f68..55d54a176107e 100644
+--- a/fs/ext4/ioctl.c
++++ b/fs/ext4/ioctl.c
+@@ -983,6 +983,16 @@ long ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 	case EXT4_IOC_GET_ENCRYPTION_POLICY:
+ 		return fscrypt_ioctl_get_policy(filp, (void __user *)arg);
+ 
++	case FS_IOC_ENABLE_VERITY:
++		if (!ext4_has_feature_verity(sb))
++			return -EOPNOTSUPP;
++		return fsverity_ioctl_enable(filp, (const void __user *)arg);
++
++	case FS_IOC_MEASURE_VERITY:
++		if (!ext4_has_feature_verity(sb))
++			return -EOPNOTSUPP;
++		return fsverity_ioctl_measure(filp, (void __user *)arg);
++
+ 	case EXT4_IOC_FSGETXATTR:
+ 	{
+ 		struct fsxattr fa;
+@@ -1101,6 +1111,8 @@ long ext4_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 	case EXT4_IOC_SET_ENCRYPTION_POLICY:
+ 	case EXT4_IOC_GET_ENCRYPTION_PWSALT:
+ 	case EXT4_IOC_GET_ENCRYPTION_POLICY:
++	case FS_IOC_ENABLE_VERITY:
++	case FS_IOC_MEASURE_VERITY:
+ 	case EXT4_IOC_SHUTDOWN:
+ 	case FS_IOC_GETFSMAP:
+ 		break;
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index b7f7922061be8..c2f372c634ccb 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -1112,6 +1112,7 @@ void ext4_clear_inode(struct inode *inode)
+ 		EXT4_I(inode)->jinode = NULL;
+ 	}
+ 	fscrypt_put_encryption_info(inode);
++	fsverity_cleanup_inode(inode);
+ }
+ 
+ static struct inode *ext4_nfs_get_inode(struct super_block *sb,
+@@ -1283,6 +1284,83 @@ static const struct fscrypt_operations ext4_cryptops = {
+ };
+ #endif
+ 
++#ifdef CONFIG_EXT4_FS_VERITY
++static int ext4_set_verity(struct inode *inode, loff_t data_i_size)
++{
 +	int err;
++	handle_t *handle;
++	struct ext4_iloc iloc;
 +
-+	/*
-+	 * In principle we need only check 'inode_owner_or_capable(inode)',
-+	 * which would allow non-root users to enable fs-verity on their own
-+	 * files.  But to be conservative, for now restrict this to root-only.
-+	 */
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EACCES;
-+
-+	if (arg) /* argument is reserved */
-+		return -EINVAL;
-+
-+	if (S_ISDIR(inode->i_mode))
-+		return -EISDIR;
-+
-+	if (!S_ISREG(inode->i_mode))
-+		return -EINVAL;
-+
-+	err = mnt_want_write_file(filp);
++	err = ext4_convert_inline_data(inode);
 +	if (err)
-+		goto out;
++		return err;
 +
-+	/*
-+	 * Temporarily lock out writers via writable file descriptors or
-+	 * truncate().  This should stabilize the contents of the file as well
-+	 * as its size.  Note that at the end of this ioctl we will unlock
-+	 * writers, but at that point the verity bit will be set (if the ioctl
-+	 * succeeded), preventing future writers.
-+	 */
-+	err = deny_write_access(filp);
-+	if (err) /* -ETXTBSY */
-+		goto out_drop_write;
-+
-+	/*
-+	 * fsync so that the verity bit can't be persisted to disk prior to the
-+	 * data, causing verification errors after a crash.
-+	 */
-+	err = vfs_fsync(filp, 1);
++	/* Remove extents past EOF; see ext4_get_verity_full_size() */
++	err = ext4_truncate(inode);
 +	if (err)
-+		goto out_allow_write;
++		return err;
 +
-+	/* Serialize concurrent use of this ioctl on the same inode */
-+	inode_lock(inode);
-+
-+	if (get_fsverity_info(inode)) { /* fs-verity already enabled? */
-+		err = -EEXIST;
-+		goto out_unlock;
++	handle = ext4_journal_start(inode, EXT4_HT_INODE, 1);
++	if (IS_ERR(handle))
++		return PTR_ERR(handle);
++	err = ext4_reserve_inode_write(handle, inode, &iloc);
++	if (err == 0) {
++		ext4_set_inode_flag(inode, EXT4_INODE_VERITY);
++		EXT4_I(inode)->i_disksize = data_i_size;
++		err = ext4_mark_iloc_dirty(handle, inode, &iloc);
 +	}
++	ext4_journal_stop(handle);
 +
-+	/* Validate the verity metadata */
-+	vi = create_fsverity_info(inode, true);
-+	if (IS_ERR(vi)) {
-+		err = PTR_ERR(vi);
-+		if (err == -EINVAL) /* distinguish "invalid metadata" case */
-+			err = -EBADMSG;
-+		goto out_unlock;
-+	}
-+
-+	/* Set the verity bit */
-+	err = inode->i_sb->s_vop->set_verity(inode, vi->data_i_size);
-+	if (err)
-+		goto out_free_vi;
-+
-+	/* Invalidate all cached pages, forcing re-verification */
-+	truncate_inode_pages(inode->i_mapping, 0);
-+
-+	/*
-+	 * Set ->i_verity_info, unless another task managed to do it already
-+	 * between ->set_verity() and here.
-+	 */
-+	if (set_fsverity_info(inode, vi))
-+		vi = NULL;
-+	err = 0;
-+out_free_vi:
-+	free_fsverity_info(vi);
-+out_unlock:
-+	inode_unlock(inode);
-+out_allow_write:
-+	allow_write_access(filp);
-+out_drop_write:
-+	mnt_drop_write_file(filp);
-+out:
 +	return err;
 +}
-+EXPORT_SYMBOL_GPL(fsverity_ioctl_enable);
-diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-index 56341f10aa965..c710b6b5fb4a6 100644
---- a/include/linux/fsverity.h
-+++ b/include/linux/fsverity.h
-@@ -21,6 +21,9 @@ struct fsverity_operations {
- 
- #if __FS_HAS_VERITY
- 
-+/* ioctl.c */
-+extern int fsverity_ioctl_enable(struct file *filp, const void __user *arg);
 +
- /* setup.c */
- extern int fsverity_file_open(struct inode *inode, struct file *filp);
- extern int fsverity_prepare_setattr(struct dentry *dentry, struct iattr *attr);
-@@ -35,6 +38,14 @@ extern void fsverity_enqueue_verify_work(struct work_struct *work);
- 
- #else /* !__FS_HAS_VERITY */
- 
-+/* ioctl.c */
-+
-+static inline int fsverity_ioctl_enable(struct file *filp,
-+					const void __user *arg)
++/*
++ * Retrieve the full size of a verity file.  This is size of the original data
++ * plus the verity metadata such as the Merkle tree.  To find this, we have to
++ * find the end of the last extent.  This is needed because in ext4, in order to
++ * make verity an RO_COMPAT filesystem feature, the i_disksize of verity inodes
++ * is set to the data size rather than the full size.
++ */
++static int ext4_get_verity_full_size(struct inode *inode,
++				     loff_t *full_i_size_ret)
 +{
-+	return -EOPNOTSUPP;
++	struct ext4_ext_path *path;
++	struct ext4_extent *last_extent;
++	u32 end_lblk;
++	int err;
++
++	if (ext4_has_inline_data(inode)) {
++		EXT4_ERROR_INODE(inode, "verity file has inline data");
++		return -EFSCORRUPTED;
++	}
++
++	path = ext4_find_extent(inode, EXT_MAX_BLOCKS - 1, NULL, 0);
++	if (IS_ERR(path))
++		return PTR_ERR(path);
++
++	last_extent = path[path->p_depth].p_ext;
++	if (!last_extent) {
++		EXT4_ERROR_INODE(inode, "verity file has no extents");
++		err = -EFSCORRUPTED;
++		goto out_drop_path;
++	}
++
++	end_lblk = le32_to_cpu(last_extent->ee_block) +
++		   ext4_ext_get_actual_len(last_extent);
++	*full_i_size_ret = (loff_t)end_lblk << inode->i_blkbits;
++	err = 0;
++out_drop_path:
++	ext4_ext_drop_refs(path);
++	kfree(path);
++	return err;
 +}
 +
- /* setup.c */
++static const struct fsverity_operations ext4_verityops = {
++	.set_verity		= ext4_set_verity,
++	.get_full_i_size	= ext4_get_verity_full_size,
++};
++#endif /* CONFIG_EXT4_FS_VERITY */
++
+ #ifdef CONFIG_QUOTA
+ static const char * const quotatypes[] = INITQFNAMES;
+ #define QTYPE2NAME(t) (quotatypes[t])
+@@ -4104,6 +4182,9 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
+ #ifdef CONFIG_EXT4_FS_ENCRYPTION
+ 	sb->s_cop = &ext4_cryptops;
+ #endif
++#ifdef CONFIG_EXT4_FS_VERITY
++	sb->s_vop = &ext4_verityops;
++#endif
+ #ifdef CONFIG_QUOTA
+ 	sb->dq_op = &ext4_quota_operations;
+ 	if (ext4_has_feature_quota(sb))
+diff --git a/fs/ext4/sysfs.c b/fs/ext4/sysfs.c
+index f34da0bb8f174..3f3175367b696 100644
+--- a/fs/ext4/sysfs.c
++++ b/fs/ext4/sysfs.c
+@@ -223,6 +223,9 @@ EXT4_ATTR_FEATURE(meta_bg_resize);
+ #ifdef CONFIG_EXT4_FS_ENCRYPTION
+ EXT4_ATTR_FEATURE(encryption);
+ #endif
++#ifdef CONFIG_EXT4_FS_VERITY
++EXT4_ATTR_FEATURE(verity);
++#endif
+ EXT4_ATTR_FEATURE(metadata_csum_seed);
  
- static inline int fsverity_file_open(struct inode *inode, struct file *filp)
+ static struct attribute *ext4_feat_attrs[] = {
+@@ -231,6 +234,9 @@ static struct attribute *ext4_feat_attrs[] = {
+ 	ATTR_LIST(meta_bg_resize),
+ #ifdef CONFIG_EXT4_FS_ENCRYPTION
+ 	ATTR_LIST(encryption),
++#endif
++#ifdef CONFIG_EXT4_FS_VERITY
++	ATTR_LIST(verity),
+ #endif
+ 	ATTR_LIST(metadata_csum_seed),
+ 	NULL,
 -- 
 2.18.0
 
