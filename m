@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF86CC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 07:56:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A79DFC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 07:56:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8203421581
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 07:56:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8203421581
+	by mail.kernel.org (Postfix) with ESMTP id 672C621581
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 07:56:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 672C621581
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727877AbeHXLaF (ORCPT
+        id S1727951AbeHXLaI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 07:30:05 -0400
-Received: from relmlor3.renesas.com ([210.160.252.173]:35152 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726969AbeHXLaE (ORCPT
+        Fri, 24 Aug 2018 07:30:08 -0400
+Received: from relmlor4.renesas.com ([210.160.252.174]:56162 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726969AbeHXLaH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 07:30:04 -0400
-Received: from unknown (HELO relmlir3.idc.renesas.com) ([10.200.68.153])
-  by relmlie2.idc.renesas.com with ESMTP; 24 Aug 2018 16:56:35 +0900
+        Fri, 24 Aug 2018 07:30:07 -0400
+Received: from unknown (HELO relmlir1.idc.renesas.com) ([10.200.68.151])
+  by relmlie3.idc.renesas.com with ESMTP; 24 Aug 2018 16:56:38 +0900
 Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
-        by relmlir3.idc.renesas.com (Postfix) with ESMTP id 41E1774FBE;
-        Fri, 24 Aug 2018 16:56:35 +0900 (JST)
+        by relmlir1.idc.renesas.com (Postfix) with ESMTP id 9299374AB9;
+        Fri, 24 Aug 2018 16:56:38 +0900 (JST)
 X-IronPort-AV: E=Sophos;i="5.53,281,1531753200"; 
-   d="scan'208";a="288949482"
+   d="scan'208";a="288949488"
 Received: from unknown (HELO fabrizio-dev.ree.adwin.renesas.com) ([10.226.36.250])
-  by relmlii1.idc.renesas.com with ESMTP; 24 Aug 2018 16:56:32 +0900
+  by relmlii1.idc.renesas.com with ESMTP; 24 Aug 2018 16:56:35 +0900
 From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Rob Herring <robh+dt@kernel.org>,
+To:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+Cc:     Biju Das <biju.das@bp.renesas.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
         Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/6] dt-bindings: usb-xhci: Add r8a774a1 support
-Date:   Fri, 24 Aug 2018 08:56:12 +0100
-Message-Id: <1535097375-5561-4-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: [PATCH 4/6] dt-bindings: dmaengine: usb-dmac: Add binding for r8a774a1
+Date:   Fri, 24 Aug 2018 08:56:13 +0100
+Message-Id: <1535097375-5561-5-git-send-email-fabrizio.castro@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1535097375-5561-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1535097375-5561-1-git-send-email-fabrizio.castro@bp.renesas.com>
@@ -54,36 +54,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document RZ/G2M (R8A774A1) SoC bindings.
+From: Biju Das <biju.das@bp.renesas.com>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+This patch adds binding for r8a774a1 (RZ/G2M).
+
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/usb/usb-xhci.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/usb/usb-xhci.txt b/Documentation/devicetree/bindings/usb/usb-xhci.txt
-index ac4cd0d..fb564e7 100644
---- a/Documentation/devicetree/bindings/usb/usb-xhci.txt
-+++ b/Documentation/devicetree/bindings/usb/usb-xhci.txt
-@@ -8,6 +8,7 @@ Required properties:
-     - "marvell,armada-375-xhci" for Armada 375 SoCs
-     - "marvell,armada-380-xhci" for Armada 38x SoCs
-     - "renesas,xhci-r8a7743" for r8a7743 SoC
-+    - "renesas,xhci-r8a774a1" for r8a774a1 SoC
-     - "renesas,xhci-r8a7790" for r8a7790 SoC
-     - "renesas,xhci-r8a7791" for r8a7791 SoC
-     - "renesas,xhci-r8a7793" for r8a7793 SoC
-@@ -17,7 +18,8 @@ Required properties:
-     - "renesas,xhci-r8a77990" for r8a77990 SoC
-     - "renesas,rcar-gen2-xhci" for a generic R-Car Gen2 or RZ/G1 compatible
-       device
--    - "renesas,rcar-gen3-xhci" for a generic R-Car Gen3 compatible device
-+    - "renesas,rcar-gen3-xhci" for a generic R-Car Gen3 or RZ/G2 compatible
-+      device
-     - "xhci-platform" (deprecated)
- 
-     When compatible with the generic version, nodes must list the
+diff --git a/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt b/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt
+index 482e543..417ca90 100644
+--- a/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt
++++ b/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt
+@@ -5,6 +5,7 @@ Required Properties:
+ 	Examples with soctypes are:
+ 	  - "renesas,r8a7743-usb-dmac" (RZ/G1M)
+ 	  - "renesas,r8a7745-usb-dmac" (RZ/G1E)
++	  - "renesas,r8a774a1-usb-dmac" (RZ/G2M)
+ 	  - "renesas,r8a7790-usb-dmac" (R-Car H2)
+ 	  - "renesas,r8a7791-usb-dmac" (R-Car M2-W)
+ 	  - "renesas,r8a7793-usb-dmac" (R-Car M2-N)
 -- 
 2.7.4
 
