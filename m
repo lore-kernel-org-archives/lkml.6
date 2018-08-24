@@ -2,185 +2,80 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E36FC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 03:34:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3636C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 03:35:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51FBA2157C
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 03:34:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51FBA2157C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
+	by mail.kernel.org (Postfix) with ESMTP id A6CA3208A6
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 03:35:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6CA3208A6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727501AbeHXHHU (ORCPT
+        id S1727524AbeHXHIX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 03:07:20 -0400
-Received: from lucky1.263xmail.com ([211.157.147.134]:60790 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726085AbeHXHHU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 03:07:20 -0400
-Received: from tony.xie?rock-chips.com (unknown [192.168.167.97])
-        by lucky1.263xmail.com (Postfix) with ESMTP id 2E149275;
-        Fri, 24 Aug 2018 11:34:34 +0800 (CST)
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 1
-X-MAIL-DELIVERY: 0
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        by smtp.263.net (Postfix) with ESMTPA id 539D83CB;
-        Fri, 24 Aug 2018 11:34:30 +0800 (CST)
-X-IP-DOMAINF: 1
-X-RL-SENDER: tony.xie@rock-chips.com
-X-FST-TO: heiko@sntech.de
-X-SENDER-IP: 58.22.7.114
-X-LOGIN-NAME: tony.xie@rock-chips.com
-X-UNIQUE-TAG: <4bc386bdeb7d6b5f0f44ed0f1a043962>
-X-ATTACHMENT-NUM: 0
-X-SENDER: xxx@rock-chips.com
-X-DNS-TYPE: 0
-Received: from localhost.localdomain (unknown [58.22.7.114])
-        by smtp.263.net (Postfix) whith ESMTP id 2400WUHDBH;
-        Fri, 24 Aug 2018 11:34:33 +0800 (CST)
-From:   Tony Xie <tony.xie@rock-chips.com>
-To:     heiko@sntech.de
-Cc:     broonie@kernel.org, lee.jones@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
-        xsf@rock-chips.com, zhangqing@rock-chips.com,
-        huangtao@rock-chips.com, tony.xie@rock-chips.com
-Subject: [PATCH v3 5/5] clk: RK808: add RK809 and RK817 support.
-Date:   Fri, 24 Aug 2018 11:36:02 +0800
-Message-Id: <1535081762-20844-1-git-send-email-tony.xie@rock-chips.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1535081441-20718-1-git-send-email-tony.xie@rock-chips.com>
-References: <1535081441-20718-1-git-send-email-tony.xie@rock-chips.com>
+        Fri, 24 Aug 2018 03:08:23 -0400
+Received: from mga03.intel.com ([134.134.136.65]:39453 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726085AbeHXHIX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 03:08:23 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Aug 2018 20:35:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,280,1531810800"; 
+   d="scan'208";a="85979268"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
+  by orsmga002.jf.intel.com with ESMTP; 23 Aug 2018 20:35:40 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id 63E37301B8F; Thu, 23 Aug 2018 20:35:40 -0700 (PDT)
+Date:   Thu, 23 Aug 2018 20:35:40 -0700
+From:   Andi Kleen <ak@linux.intel.com>
+To:     Andre Tomt <andre@tomt.net>
+Cc:     Vlastimil Babka <vbabka@suse.cz>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Michal Hocko <mhocko@kernel.org>, stable@vger.kernel.org,
+        Christopher Snowhill <kode54@gmail.com>,
+        George Anchev <studio@anchev.net>
+Subject: Re: [PATCH] x86/speculation/l1tf: fix off-by-one error when warning
+ that system has too much RAM
+Message-ID: <20180824033540.GI12066@tassilo.jf.intel.com>
+References: <20180823134418.17008-1-vbabka@suse.cz>
+ <20180823154437.GC12066@tassilo.jf.intel.com>
+ <0fa72221-2272-4489-d9d3-0f68cb874087@tomt.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0fa72221-2272-4489-d9d3-0f68cb874087@tomt.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RK809 and RK817 are power management IC chips for multimedia products.
-most of their functions and registers are same, including the clkout
-funciton.
+On Fri, Aug 24, 2018 at 04:22:57AM +0200, Andre Tomt wrote:
+> On 23. aug. 2018 17:44, Andi Kleen wrote:
+> > On Thu, Aug 23, 2018 at 03:44:18PM +0200, Vlastimil Babka wrote:
+> > > Two users have reported [1] that they have an "extremely unlikely" system
+> > > with more than MAX_PA/2 memory and L1TF mitigation is not effective. In fact
+> > > it's a CPU with 36bits phys limit (64GB) and 32GB memory, but due to holes
+> > > in the e820 map, the main region is almost 500MB over the 32GB limit:
+> > 
+> > Ah I see it's a client part with very large DIMMs and someone being
+> > very brave and using that much memory without ECC.
+> 
+> FYI; It is also happening on Xeon E3v2 (Ivy Bridge generation) w/ 32GB of
+> ECC RAM here, a low-end server part that officially supports up to 32GB.
 
-Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
----
- drivers/clk/Kconfig     |  9 ++++---
- drivers/clk/clk-rk808.c | 62 ++++++++++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 65 insertions(+), 6 deletions(-)
+Good point.
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 721572a..92cf5ad 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -46,13 +46,12 @@ config COMMON_CLK_MAX77686
- 	  clock.
- 
- config COMMON_CLK_RK808
--	tristate "Clock driver for RK805/RK808/RK818"
-+	tristate "Clock driver for RK805/RK808/RK809/RK817/RK818"
- 	depends on MFD_RK808
- 	---help---
--	  This driver supports RK805, RK808 and RK818 crystal oscillator clock. These
--	  multi-function devices have two fixed-rate oscillators,
--	  clocked at 32KHz each. Clkout1 is always on, Clkout2 can off
--	  by control register.
-+	  This driver supports RK805, RK809 and RK817, RK808 and RK818 crystal oscillator clock.
-+	  These multi-function devices have two fixed-rate oscillators, clocked at 32KHz each.
-+	  Clkout1 is always on, Clkout2 can off by control register.
- 
- config COMMON_CLK_HI655X
- 	tristate "Clock driver for Hi655x" if EXPERT
-diff --git a/drivers/clk/clk-rk808.c b/drivers/clk/clk-rk808.c
-index 6461f28..c5d3492 100644
---- a/drivers/clk/clk-rk808.c
-+++ b/drivers/clk/clk-rk808.c
-@@ -96,6 +96,66 @@ static int rk808_clkout2_is_prepared(struct clk_hw *hw)
- 	return idx ? &rk808_clkout->clkout2_hw : &rk808_clkout->clkout1_hw;
- }
- 
-+static int rk817_clkout2_enable(struct clk_hw *hw, bool enable)
-+{
-+	struct rk808_clkout *rk808_clkout = container_of(hw,
-+							 struct rk808_clkout,
-+							 clkout2_hw);
-+	struct rk808 *rk808 = rk808_clkout->rk808;
-+
-+	return regmap_update_bits(rk808->regmap, RK817_SYS_CFG(1),
-+				  RK817_CLK32KOUT2_EN,
-+				  enable ? RK817_CLK32KOUT2_EN : 0);
-+}
-+
-+static int rk817_clkout2_prepare(struct clk_hw *hw)
-+{
-+	return rk817_clkout2_enable(hw, true);
-+}
-+
-+static void rk817_clkout2_unprepare(struct clk_hw *hw)
-+{
-+	rk817_clkout2_enable(hw, false);
-+}
-+
-+static int rk817_clkout2_is_prepared(struct clk_hw *hw)
-+{
-+	struct rk808_clkout *rk808_clkout = container_of(hw,
-+							 struct rk808_clkout,
-+							 clkout2_hw);
-+	struct rk808 *rk808 = rk808_clkout->rk808;
-+	unsigned int val;
-+
-+	int ret = regmap_read(rk808->regmap, RK817_SYS_CFG(1), &val);
-+
-+	if (ret < 0)
-+		return ret;
-+
-+	return (val & RK817_CLK32KOUT2_EN) ? 1 : 0;
-+}
-+
-+static const struct clk_ops rk817_clkout2_ops = {
-+	.prepare = rk817_clkout2_prepare,
-+	.unprepare = rk817_clkout2_unprepare,
-+	.is_prepared = rk817_clkout2_is_prepared,
-+	.recalc_rate = rk808_clkout_recalc_rate,
-+};
-+
-+static const struct clk_ops *rkpmic_get_ops(long variant)
-+{
-+	switch (variant) {
-+	case RK809_ID:
-+	case RK817_ID:
-+		return &rk817_clkout2_ops;
-+	case RK805_ID:
-+	case RK808_ID:
-+	case RK818_ID:
-+		return &rk808_clkout2_ops;
-+	}
-+
-+	return &rk808_clkout2_ops;
-+}
-+
- static int rk808_clkout_probe(struct platform_device *pdev)
- {
- 	struct rk808 *rk808 = dev_get_drvdata(pdev->dev.parent);
-@@ -127,7 +187,7 @@ static int rk808_clkout_probe(struct platform_device *pdev)
- 		return ret;
- 
- 	init.name = "rk808-clkout2";
--	init.ops = &rk808_clkout2_ops;
-+	init.ops = rkpmic_get_ops(rk808->variant);
- 	rk808_clkout->clkout2_hw.init = &init;
- 
- 	/* optional override of the clockname */
--- 
-1.9.1
-
-
+-andi
