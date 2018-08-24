@@ -2,122 +2,146 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE710C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 15:08:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EC7DC4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 15:09:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A78C921557
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 15:08:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A78C921557
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id CFFDD21557
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 15:09:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFFDD21557
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728079AbeHXSnz (ORCPT
+        id S1728104AbeHXSoH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 14:43:55 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:55397 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726374AbeHXSnz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 14:43:55 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id D257F22A2A; Fri, 24 Aug 2018 17:08:50 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-53-19.w90-88.abo.wanadoo.fr [90.88.170.19])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 1AA0B20719;
-        Fri, 24 Aug 2018 17:08:50 +0200 (CEST)
-Date:   Fri, 24 Aug 2018 17:08:48 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Jonathan Corbet <corbet@lwn.net>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Naren <naren.kernel@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Fri, 24 Aug 2018 14:44:07 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34134 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726374AbeHXSoH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 14:44:07 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C39887DAC9;
+        Fri, 24 Aug 2018 15:09:02 +0000 (UTC)
+Received: from redhat.com (ovpn-125-224.rdu2.redhat.com [10.10.125.224])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9863510073B5;
+        Fri, 24 Aug 2018 15:09:00 +0000 (UTC)
+Date:   Fri, 24 Aug 2018 11:08:59 -0400
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        kvm@vger.kernel.org,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Sudeep Dutt <sudeep.dutt@intel.com>,
+        dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        Dimitri Sivanich <sivanich@sgi.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        Doug Ledford <dledford@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        xen-devel@lists.xenproject.org, intel-gfx@lists.freedesktop.org,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ashutosh Dixit <ashutosh.dixit@intel.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Lukas Wunner <lukas@wunner.de>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Sven Van Asbroeck <svendev@arcx.com>,
-        Paolo Abeni <pabeni@redhat.com>, Alban Bedel <albeu@free.fr>,
-        Rob Herring <robh@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Andrew Lunn <andrew@lunn.ch>, linux-doc@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-mtd@lists.infradead.org, linux-i2c@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 01/29] nvmem: add support for cell lookups
-Message-ID: <20180824170848.29594318@bbrezillon>
-In-Reply-To: <20180810080526.27207-2-brgl@bgdev.pl>
-References: <20180810080526.27207-1-brgl@bgdev.pl>
-        <20180810080526.27207-2-brgl@bgdev.pl>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Felix Kuehling <felix.kuehling@amd.com>
+Subject: Re: [PATCH] mm, oom: distinguish blockable mode for mmu notifiers
+Message-ID: <20180824150858.GB4244@redhat.com>
+References: <20180716115058.5559-1-mhocko@kernel.org>
+ <8cbfb09f-0c5a-8d43-1f5e-f3ff7612e289@I-love.SAKURA.ne.jp>
+ <20180824113248.GH29735@dhcp22.suse.cz>
+ <b088e382-e90e-df63-a079-19b2ae2b985d@gmail.com>
+ <20180824115226.GK29735@dhcp22.suse.cz>
+ <a27ad1a3-34bd-6b7d-fd09-7737ec3c888d@gmail.com>
+ <20180824120339.GL29735@dhcp22.suse.cz>
+ <eb546bcb-9c5f-7d5d-43a7-bfde489f0e7f@amd.com>
+ <20180824123341.GN29735@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180824123341.GN29735@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 24 Aug 2018 15:09:03 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 24 Aug 2018 15:09:03 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jglisse@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bartosz,
+On Fri, Aug 24, 2018 at 02:33:41PM +0200, Michal Hocko wrote:
+> On Fri 24-08-18 14:18:44, Christian König wrote:
+> > Am 24.08.2018 um 14:03 schrieb Michal Hocko:
+> > > On Fri 24-08-18 13:57:52, Christian König wrote:
+> > > > Am 24.08.2018 um 13:52 schrieb Michal Hocko:
+> > > > > On Fri 24-08-18 13:43:16, Christian König wrote:
+> > > [...]
+> > > > > > That won't work like this there might be multiple
+> > > > > > invalidate_range_start()/invalidate_range_end() pairs open at the same time.
+> > > > > > E.g. the lock might be taken recursively and that is illegal for a
+> > > > > > rw_semaphore.
+> > > > > I am not sure I follow. Are you saying that one invalidate_range might
+> > > > > trigger another one from the same path?
+> > > > No, but what can happen is:
+> > > > 
+> > > > invalidate_range_start(A,B);
+> > > > invalidate_range_start(C,D);
+> > > > ...
+> > > > invalidate_range_end(C,D);
+> > > > invalidate_range_end(A,B);
+> > > > 
+> > > > Grabbing the read lock twice would be illegal in this case.
+> > > I am sorry but I still do not follow. What is the context the two are
+> > > called from?
+> > 
+> > I don't have the slightest idea.
+> > 
+> > > Can you give me an example. I simply do not see it in the
+> > > code, mostly because I am not familiar with it.
+> > 
+> > I'm neither.
+> > 
+> > We stumbled over that by pure observation and after discussing the problem
+> > with Jerome came up with this solution.
+> > 
+> > No idea where exactly that case comes from, but I can confirm that it indeed
+> > happens.
+> 
+> Thiking about it some more, I can imagine that a notifier callback which
+> performs an allocation might trigger a memory reclaim and that in turn
+> might trigger a notifier to be invoked and recurse. But notifier
+> shouldn't really allocate memory. They are called from deep MM code
+> paths and this would be extremely deadlock prone. Maybe Jerome can come
+> up some more realistic scenario. If not then I would propose to simplify
+> the locking here. We have lockdep to catch self deadlocks and it is
+> always better to handle a specific issue rather than having a code
+> without a clear indication how it can recurse.
 
-On Fri, 10 Aug 2018 10:04:58 +0200
-Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+Multiple concurrent mmu notifier, for overlapping range or not, is
+common (each concurrent threads can trigger some). So you might have
+multiple invalidate_range_start() in flight for same mm and thus might
+complete in different order (invalidate_range_end()). IIRC this is
+what this lock was trying to protect against.
 
-> +struct nvmem_cell_lookup {
-> +	struct nvmem_cell_info	info;
-> +	struct list_head	list;
-> +	const char		*nvmem_name;
-> +};
+I can't think of a reason for recursive mmu notifier call right now.
+I will ponder see if i remember something about it.
 
-Hm, maybe I don't get it right, but this looks suspicious. Usually the
-consumer lookup table is here to attach device specific names to
-external resources.
-
-So what I'd expect here is:
-
-struct nvmem_cell_lookup {
-	/* The nvmem device name. */
-	const char *nvmem_name;
-
-	/* The nvmem cell name */
-	const char *nvmem_cell_name;
-
-	/*
-	 * The local resource name. Basically what you have in the
-	 * nvmem-cell-names prop.
-	 */
-	const char *conid;
-};
-
-struct nvmem_cell_lookup_table {
-	struct list_head list;
-
-	/* ID of the consumer device. */
-	const char *devid;
-
-	/* Array of cell lookup entries. */
-	unsigned int ncells;
-	const struct nvmem_cell_lookup *cells;
-};
-
-Looks like your nvmem_cell_lookup is more something used to attach cells
-to an nvmem device, which is NVMEM provider's responsibility not the
-consumer one.
-
-Regards,
-
-Boris
+Cheers,
+Jérôme
