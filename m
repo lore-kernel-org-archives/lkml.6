@@ -3,122 +3,110 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 672F5C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 10:05:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5355C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 10:07:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2797A21714
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 10:05:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2797A21714
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 8A9F52173D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 10:07:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A9F52173D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=etezian.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727315AbeHXNju (ORCPT
+        id S1726851AbeHXNlL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 09:39:50 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:35796 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726268AbeHXNju (ORCPT
+        Fri, 24 Aug 2018 09:41:11 -0400
+Received: from 10.mo173.mail-out.ovh.net ([46.105.74.148]:50477 "EHLO
+        10.mo173.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726243AbeHXNlL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 09:39:50 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id D927383DCC; Fri, 24 Aug 2018 12:05:52 +0200 (CEST)
-Date:   Fri, 24 Aug 2018 12:05:49 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     robh+dt@kernel.org, jacek.anaszewski@gmail.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org
-Subject: Re: [PATCH v5 2/2] leds: lm3697: Introduce the lm3697 driver
-Message-ID: <20180824100549.GC4045@amd>
-References: <20180817151528.21623-1-dmurphy@ti.com>
- <20180817151528.21623-2-dmurphy@ti.com>
+        Fri, 24 Aug 2018 09:41:11 -0400
+X-Greylist: delayed 3623 seconds by postgrey-1.27 at vger.kernel.org; Fri, 24 Aug 2018 09:41:11 EDT
+Received: from player687.ha.ovh.net (unknown [10.109.143.238])
+        by mo173.mail-out.ovh.net (Postfix) with ESMTP id 972DDC8AA3
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 10:49:49 +0200 (CEST)
+Received: from etezian.org (unknown [194.136.86.45])
+        (Authenticated sender: andi@etezian.org)
+        by player687.ha.ovh.net (Postfix) with ESMTPSA id 072BD2C00B0;
+        Fri, 24 Aug 2018 10:49:34 +0200 (CEST)
+Date:   Fri, 24 Aug 2018 11:49:33 +0300
+From:   Andi Shyti <andi@etezian.org>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Derek Basehore <dbasehore@chromium.org>,
+        Johnny Chuang <johnny.chuang@emc.com.tw>,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+        joe@perches.com, andi@etezian.org, gregkh@linuxfoundation.org,
+        James Chen <james.chen@emc.com.tw>,
+        KT Liao <kt.liao@emc.com.tw>
+Subject: Re: [PATCH] Input: elants_i2c - Fix sw reset delays
+Message-ID: <20180824084933.GA29856@jack.zhora.eu>
+References: <20180823231013.254037-1-dbasehore@chromium.org>
+ <20180823233028.GC53155@dtor-ws>
+ <20180823233211.GD53155@dtor-ws>
+ <20180823233424.GE53155@dtor-ws>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="Pk6IbRAofICFmK5e"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180817151528.21623-2-dmurphy@ti.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180823233424.GE53155@dtor-ws>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Ovh-Tracer-Id: 14316098794527769242
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtjedrfeehgddtlecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Derek,
 
---Pk6IbRAofICFmK5e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> > > On Thu, Aug 23, 2018 at 04:10:13PM -0700, Derek Basehore wrote:
+> > > > We only need to wait 10ms instead of 30ms before starting fastboot or
+> > > > sending IAP on the touchscreen. Also, instead of delaying everytime
+> > > > sw_reset is called, this delays 10ms in the function that starts
+> > > > fastboot. There's also an explicit 20ms delay before sending IAP when
+> > > > updating the firmware, so no additional delay is needed there. This
+> > > > change also has the benefit of not delaying when wakeup is enabled
+> > > > during suspend. This is because sw_reset is called, yet fastboot
+> > > > isn't.
 
-Hi!
+...
 
-> +/**
-> + * struct lm3697 -
-> + * @enable_gpio - Hardware enable gpio
-> + * @regulator - LED supply regulator pointer
-> + * @client - Pointer to the I2C client
-> + * @regmap - Devices register map
-> + * @dev - Pointer to the devices device struct
-> + * @lock - Lock for reading/writing the device
-> + * @leds - Array of LED strings.
-> + */
+> > > > -	/*
+> > > > -	 * We should wait at least 10 msec (but no more than 40) before
+> > > > -	 * sending fastboot or IAP command to the device.
+> > > > -	 */
+> > > > -	msleep(30);
+> > > > -
 
-extra .
+moving from 30 to 0 is a bit alarming... what does the datasheet
+say?
 
-> +	ret =3D regmap_write(led->priv->regmap, brt_msb_reg, brt_val);
-> +	if (ret) {
-> +		dev_err(&led->priv->client->dev, "Cannot write MSB\n");
-> +		goto out;
-> +	}
-> +out:
+Sometimes delays are implicit in the system where you are testing
+the driver, so that without any msleep it might work in your
+system but it might not on others.
 
-I'd avoid this goto.
+> +             /*
+> +              * We should wait at least 10 msec (but no more than 40) before
+> +              * sending IAP command to the device.
+> +              */
+>               msleep(20);
 
-> +static int lm3697_set_control_bank(struct lm3697 *priv)
-> +{
-> +	u8 control_bank_config =3D 0;
-> +	struct lm3697_led *led;
-> +	int ret, i;
+I agree though that it's not nice to wait twice here (even though
+as Dmitry says it doesn't hurt so much). Wouldn't it make more
+sense to remove this msleep instead?
+This way...
+
+> +     /*
+> +      * We should wait at least 10 msec (but no more than 40) before sending
+> +      * fastboot command to the device.
+> +      */
+> +     usleep_range(10 * 1000, 11 * 1000);
 > +
-> +	led =3D &priv->leds[0];
-> +	if (led->control_bank =3D=3D LM3697_CONTROL_A)
-> +		led =3D &priv->leds[1];
+>       error = elants_i2c_send(client, boot_cmd, sizeof(boot_cmd));
 
-I'd expect CONTROL_A to correspond to leds[0]...?
+... you do not need to add an extra sleep here.
 
-> +	for (i =3D 0; i < LM3697_MAX_LED_STRINGS; i++) {
-> +		if (led->hvled_strings[i] =3D=3D LM3697_HVLED_ASSIGNMENT)
-> +			control_bank_config |=3D 1 << i;
-> +	}
-
-Extra {}s.
-
-> +	priv->regulator =3D devm_regulator_get(&priv->client->dev, "vled");
-> +	if (IS_ERR(priv->regulator))
-> +		priv->regulator =3D NULL;
-
-If vled regulator is specified in dt and _get fails, is it worth a
-warning?
-
-									Pavel
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---Pk6IbRAofICFmK5e
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlt/2H0ACgkQMOfwapXb+vLSQACfbOzfw9WCO0CVnAcjrNIxSKyz
-eS8An0UchEiAIjiBDMn9u7bzWP9+Sx9C
-=7GoP
------END PGP SIGNATURE-----
-
---Pk6IbRAofICFmK5e--
+Andi
