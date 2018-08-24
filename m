@@ -5,116 +5,158 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E693C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:03:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A97C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:07:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0814921564
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:03:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0814921564
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id D602021564
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 13:06:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D602021564
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727783AbeHXQhy (ORCPT
+        id S1727405AbeHXQlc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 12:37:54 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:56408 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726752AbeHXQhy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 12:37:54 -0400
-Received: from fsav404.sakura.ne.jp (fsav404.sakura.ne.jp [133.242.250.103])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w7OD2TF0031188;
-        Fri, 24 Aug 2018 22:02:29 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav404.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav404.sakura.ne.jp);
- Fri, 24 Aug 2018 22:02:29 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav404.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w7OD2OEO031141
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Fri, 24 Aug 2018 22:02:29 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH] mm, oom: distinguish blockable mode for mmu notifiers
-To:     Michal Hocko <mhocko@kernel.org>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Sudeep Dutt <sudeep.dutt@intel.com>,
-        Ashutosh Dixit <ashutosh.dixit@intel.com>,
-        Dimitri Sivanich <sivanich@sgi.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Felix Kuehling <felix.kuehling@amd.com>, kvm@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, linux-rdma@vger.kernel.org,
-        xen-devel@lists.xenproject.org,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        David Rientjes <rientjes@google.com>,
-        Leon Romanovsky <leonro@mellanox.com>
-References: <20180716115058.5559-1-mhocko@kernel.org>
- <8cbfb09f-0c5a-8d43-1f5e-f3ff7612e289@I-love.SAKURA.ne.jp>
- <20180824113629.GI29735@dhcp22.suse.cz>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <103b1b33-1a1d-27a1-dcf8-5c8ad60056a6@i-love.sakura.ne.jp>
-Date:   Fri, 24 Aug 2018 22:02:23 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 24 Aug 2018 12:41:32 -0400
+Received: from ozlabs.org ([203.11.71.1]:35725 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726556AbeHXQlc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 12:41:32 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41xhPn2r5gz9s47;
+        Fri, 24 Aug 2018 23:06:53 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     aneesh.kumar@linux.ibm.com, benh@kernel.crashing.org,
+        christophe.leroy@c-s.fr, hbathini@linux.ibm.com,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        luke@dashjr.org, mahesh@linux.vnet.ibm.com,
+        naveen.n.rao@linux.vnet.ibm.com, npiggin@gmail.com,
+        paulus@ozlabs.org, srikar@linux.vnet.ibm.com
+Subject: [GIT PULL] Please pull powerpc/linux.git powerpc-4.19-2 tag
+Date:   Fri, 24 Aug 2018 23:06:49 +1000
+Message-ID: <87o9drkj6e.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <20180824113629.GI29735@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/08/24 20:36, Michal Hocko wrote:
->> That is, this API seems to be currently used by only out-of-tree users. Since
->> we can't check that nobody has memory allocation dependency, I think that
->> hmm_invalidate_range_start() should return -EAGAIN if blockable == false for now.
-> 
-> The code expects that the invalidate_range_end doesn't block if
-> invalidate_range_start hasn't blocked. That is the reason why the end
-> callback doesn't have blockable parameter. If this doesn't hold then the
-> whole scheme is just fragile because those two calls should pair.
-> 
-That is
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
 
-  More worrisome part in that patch is that I don't know whether using
-  trylock if blockable == false at entry is really sufficient.
+Hi Linus,
 
-. Since those two calls should pair, I think that we need to determine whether
-we need to return -EAGAIN at start call by evaluating both calls.
+Please pull powerpc fixes for 4.19:
 
-Like mn_invl_range_start() involves schedule_delayed_work() which could be
-blocked on memory allocation under OOM situation, I worry that (currently
-out-of-tree) users of this API are involving work / recursion.
-And hmm_release() says that
+The following changes since commit a2dc009afa9ae8b92305be7728676562a104cb40:
 
-	/*
-	 * Drop mirrors_sem so callback can wait on any pending
-	 * work that might itself trigger mmu_notifier callback
-	 * and thus would deadlock with us.
-	 */
+  powerpc/mm/book3s/radix: Add mapping statistics (2018-08-13 16:35:05 +1000)
 
-and keeps "all operations protected by hmm->mirrors_sem held for write are
-atomic". This suggests that "some operations protected by hmm->mirrors_sem held
-for read will sleep (and in the worst case involves memory allocation
-dependency)".
+are available in the git repository at:
 
+  https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-4.19-2
+
+for you to fetch changes up to 0f52b3a00c789569d7ed822b5a6b30f59a8d4393:
+
+  powerpc/mce: Fix SLB rebolting during MCE recovery path. (2018-08-23 23:40:10 +1000)
+
+- ------------------------------------------------------------------
+powerpc fixes for 4.19 #2
+
+ - An implementation for the newly added hv_ops->flush() for the OPAL hvc
+   console driver backends, I forgot to apply this after merging the hvc driver
+   changes before the merge window.
+
+ - Enable all PCI bridges at boot on powernv, to avoid races when multiple
+   children of a bridge try to enable it simultaneously. This is a workaround
+   until the PCI core can be enhanced to fix the races.
+
+ - A fix to query PowerVM for the correct system topology at boot before
+   initialising sched domains, seen in some configurations to cause broken
+   scheduling etc.
+
+ - A fix for pte_access_permitted() on "nohash" platforms.
+
+ - Two commits to fix SIGBUS when using remap_pfn_range() seen on Power9 due to
+   a workaround when using the nest MMU (GPUs, accelerators).
+
+ - Another fix to the VFIO code used by KVM, the previous fix had some bugs
+   which caused guests to not start in some configurations.
+
+ - A handful of other minor fixes.
+
+Thanks to:
+  Aneesh Kumar K.V, Benjamin Herrenschmidt, Christophe Leroy, Hari Bathini, Luke
+  Dashjr, Mahesh Salgaonkar, Nicholas Piggin, Paul Mackerras, Srikar Dronamraju.
+
+- ------------------------------------------------------------------
+Aneesh Kumar K.V (2):
+      powerpc/mm/books3s: Add new pte bit to mark pte temporarily invalid.
+      powerpc/mm/radix: Only need the Nest MMU workaround for R -> RW transition
+
+Benjamin Herrenschmidt (1):
+      powerpc/powernv/pci: Work around races in PCI bridge enabling
+
+Christophe Leroy (1):
+      powerpc/nohash: fix pte_access_permitted()
+
+Hari Bathini (1):
+      powerpc/fadump: cleanup crash memory ranges support
+
+Luke Dashjr (1):
+      powerpc64/ftrace: Include ftrace.h needed for enable/disable calls
+
+Mahesh Salgaonkar (1):
+      powerpc/mce: Fix SLB rebolting during MCE recovery path.
+
+Michael Ellerman (1):
+      powerpc/traps: Avoid rate limit messages from show unhandled signals
+
+Nicholas Piggin (2):
+      powerpc/64s: Fix PACA_IRQ_HARD_DIS accounting in idle_power4()
+      powerpc/powernv: provide a console flush operation for opal hvc driver
+
+Paul Mackerras (1):
+      KVM: PPC: Book3S: Fix guest DMA when guest partially backed by THP pages
+
+Srikar Dronamraju (1):
+      powerpc/topology: Get topology for shared processors at boot
+
+
+ arch/powerpc/include/asm/book3s/64/pgtable.h | 18 +++++-
+ arch/powerpc/include/asm/nohash/pgtable.h    |  9 +--
+ arch/powerpc/include/asm/opal.h              |  1 +
+ arch/powerpc/include/asm/topology.h          |  5 ++
+ arch/powerpc/kernel/fadump.c                 |  8 +--
+ arch/powerpc/kernel/idle_power4.S            | 16 +++++-
+ arch/powerpc/kernel/smp.c                    |  5 ++
+ arch/powerpc/kernel/traps.c                  | 13 ++---
+ arch/powerpc/kvm/book3s_hv.c                 |  1 +
+ arch/powerpc/mm/mmu_context_iommu.c          | 17 +++---
+ arch/powerpc/mm/numa.c                       | 20 +++----
+ arch/powerpc/mm/pgtable-radix.c              |  8 ++-
+ arch/powerpc/mm/slb.c                        |  2 +-
+ arch/powerpc/platforms/powernv/opal.c        | 83 +++++++++++++++++-----------
+ arch/powerpc/platforms/powernv/pci-ioda.c    | 37 +++++++++++++
+ drivers/tty/hvc/hvc_opal.c                   |  2 +
+ 16 files changed, 170 insertions(+), 75 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEJFGtCPCthwEv2Y/bUevqPMjhpYAFAluAAlEACgkQUevqPMjh
+pYAueQ//Zd7kQQjarCi9Je008GtEEFXL+8GgXnIuyXxKnBgJaueTgN9gg0hCIV05
+bQazC5Mzg4jY2QJVh1Kft4bxdB01RDAh7G5E0Gbi16/E4UcqvIS+7s+hZds9RI45
+exH5qjj/V5pejL2+7Ct5F5eBjysoYxZ0Jn5gyQICjOgaK57Z/q5x9lvUhOfdpJk/
+VxT6Uu62a/wwlVsaRmXS3c3byufJgNLTwBtJ1q/5+El2NR3F0nSzGxG99IupSWrw
+dWcSZbsNKvXjGh9U46WNnJTMJLp2IH4l/INX2tg4PR2m+ZsIFKAgmqej39YIv8gk
+4Md2kje/3/Y6mqy8sA1Eh8Wc3+VM2QEhMhJ27T7Ooivk0ljooR9AtMMwkrj1TrCK
+zh4lWBxfaaRfTQH/cmafz6yfgpXAAMig/4XI1gOb53mPfYkByzFsZcFUC6ytic72
+6q0gNDGtgdFD99rI4qUDc6QxrdDSKUin4hRaLoh8sL4mCyT6tdsATwL3Jn1kY2e3
+rhaCHUw3V6evbkd+OiW5V7KBO4vvd3sIEYiWGiqIIevls8DeS6hhwpL4zVQBah+L
+m9juSb9FvdHs/+jIDOIdyDncDh9rRoctQoXHyRQ3ocduM4b2CJu+tja4ZilJ2KpW
+lZEwwF4v3v5OZ/qMqh3sZp5dp+py61mH+a4OAIe123qTXgiv1SA=
+=GMLT
+-----END PGP SIGNATURE-----
