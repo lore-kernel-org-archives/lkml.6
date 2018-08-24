@@ -2,101 +2,103 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12F1AC4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 12:01:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B075C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 12:03:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C65E62157F
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 12:01:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C65E62157F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 151E62152B
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 12:03:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 151E62152B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727857AbeHXPft (ORCPT
+        id S1727682AbeHXPiG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 11:35:49 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:58704 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727043AbeHXPft (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 11:35:49 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id uISBwQ4W370m; Fri, 24 Aug 2018 14:01:09 +0200 (CEST)
-Received: from nazgul.tnic (79-100-101-223.ip.btc-net.bg [79.100.101.223])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1311D1EC0310;
-        Fri, 24 Aug 2018 14:00:49 +0200 (CEST)
-Date:   Fri, 24 Aug 2018 14:01:02 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     James Morse <james.morse@arm.com>
-Cc:     Tyler Baicar <baicar.tyler@gmail.com>,
-        Tyler Baicar <tbaicar@codeaurora.org>, wufan@codeaurora.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        harba@qti.qualcomm.com, mchehab@kernel.org,
-        arm-mail-list <linux-arm-kernel@lists.infradead.org>,
-        linux-edac@vger.kernel.org
-Subject: Re: [RFC PATCH] EDAC, ghes: Enable per-layer error reporting for ARM
-Message-ID: <20180824120102.GB29751@nazgul.tnic>
-References: <1531762009-15112-1-git-send-email-tbaicar@codeaurora.org>
- <20180719140102.GB25185@nazgul.tnic>
- <94e3a0fb-9b7d-045f-733b-9f063dcb39e4@arm.com>
- <45fefe7d-c6ea-5791-4477-13ecce39ce48@codeaurora.org>
- <b568fdcc-ca39-67ea-2799-8ed246c8ffb6@arm.com>
- <CABo9ajA7SPrVE-oiG=RicH+nL9_pp7fVATCdMugY5fuNAPzHaQ@mail.gmail.com>
- <68a800c7-446e-9b6b-1847-6e45a1d17262@arm.com>
+        Fri, 24 Aug 2018 11:38:06 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38404 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726513AbeHXPiF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 11:38:05 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 776F8AD65;
+        Fri, 24 Aug 2018 12:03:42 +0000 (UTC)
+Date:   Fri, 24 Aug 2018 14:03:39 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     christian.koenig@amd.com
+Cc:     kvm@vger.kernel.org,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Sudeep Dutt <sudeep.dutt@intel.com>,
+        dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        Dimitri Sivanich <sivanich@sgi.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        Doug Ledford <dledford@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        xen-devel@lists.xenproject.org, intel-gfx@lists.freedesktop.org,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ashutosh Dixit <ashutosh.dixit@intel.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Felix Kuehling <felix.kuehling@amd.com>
+Subject: Re: [PATCH] mm, oom: distinguish blockable mode for mmu notifiers
+Message-ID: <20180824120339.GL29735@dhcp22.suse.cz>
+References: <20180716115058.5559-1-mhocko@kernel.org>
+ <8cbfb09f-0c5a-8d43-1f5e-f3ff7612e289@I-love.SAKURA.ne.jp>
+ <20180824113248.GH29735@dhcp22.suse.cz>
+ <b088e382-e90e-df63-a079-19b2ae2b985d@gmail.com>
+ <20180824115226.GK29735@dhcp22.suse.cz>
+ <a27ad1a3-34bd-6b7d-fd09-7737ec3c888d@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <68a800c7-446e-9b6b-1847-6e45a1d17262@arm.com>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a27ad1a3-34bd-6b7d-fd09-7737ec3c888d@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 24, 2018 at 10:48:24AM +0100, James Morse wrote:
-> Why get avoid the layer stuff? Isn't counting DIMM/memory-devices what
-> EDAC_MC_LAYER_SLOT is for?
+On Fri 24-08-18 13:57:52, Christian König wrote:
+> Am 24.08.2018 um 13:52 schrieb Michal Hocko:
+> > On Fri 24-08-18 13:43:16, Christian König wrote:
+[...]
+> > > That won't work like this there might be multiple
+> > > invalidate_range_start()/invalidate_range_end() pairs open at the same time.
+> > > E.g. the lock might be taken recursively and that is illegal for a
+> > > rw_semaphore.
+> > I am not sure I follow. Are you saying that one invalidate_range might
+> > trigger another one from the same path?
+> 
+> No, but what can happen is:
+> 
+> invalidate_range_start(A,B);
+> invalidate_range_start(C,D);
+> ...
+> invalidate_range_end(C,D);
+> invalidate_range_end(A,B);
+> 
+> Grabbing the read lock twice would be illegal in this case.
 
-Yap.
-
-> so edac_raw_mc_handle_error() has no clue where the error happened. (I haven't
-> read what it does with this information yet).
-
-See edac_inc_ce_error(), for example - it uses the layers which are not
-negative (-1) to increment the error counts of the respective layer. It
-all depends on what granularity of the hardware part you're reporting
-the error for: is it a DIMM rank, a whole DIMM or for a channel which
-can span multiple DIMM ranks. And so on...
-
-Look at some of the drivers and how they're doing that layering. It all
-depends on whether you can get the precise info from the hw.
-
-> ghes_edac_report_mem_error() does check CPER_MEM_VALID_MODULE_HANDLE, and if its
-> set, it uses the handle to find the bank/device strings and prints them out.
-
-Yap, and the error counts are lumped together into
-
-  /sys/devices/system/edac/mc/mc*/ce_noinfo_count
-
-> Naively I thought we could generate some index during ghes_edac_count_dimms(),
-> and use this as e->${whichever}_layer. I hoped there would be something we could
-> already use as the index, but I can't spot it, so this will be more than the
-> one-liner I was hoping for!
-
-If you can get that info from the hardware and injecting an error into
-a DIMM gives you the correct DIMM number so that we can increment the
-proper counter, then you're golden. I don't think that works reliably on
-x86, though, therefore the lumping together.
-
+I am sorry but I still do not follow. What is the context the two are
+called from? Can you give me an example. I simply do not see it in the
+code, mostly because I am not familiar with it.
 -- 
-Regards/Gruss,
-    Boris.
-
-ECO tip #101: Trim your mails when you reply.
---
+Michal Hocko
+SUSE Labs
