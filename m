@@ -2,157 +2,157 @@ Return-Path: <SRS0=6SfI=LH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19020C4321D
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 08:55:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC4B4C4321D
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 08:57:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9CE82159F
-	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 08:55:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 549952168B
+	for <linux-kernel@archiver.kernel.org>; Fri, 24 Aug 2018 08:57:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="iGCBcX5L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9CE82159F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axentia.se
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TvrBvvOd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 549952168B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727680AbeHXM3G (ORCPT
+        id S1727261AbeHXMbh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 24 Aug 2018 08:29:06 -0400
-Received: from mail-ve1eur01on0104.outbound.protection.outlook.com ([104.47.1.104]:24404
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726842AbeHXM3G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 Aug 2018 08:29:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eIIZYXqauK0zE4jEcg6L5XKiP5luQMgclEu2MXyvWPc=;
- b=iGCBcX5LZUjgAFpOIdyRV9zOaAtQxbdrx+vdn9Dvto+OxOZBC727/YZQtfCzWIMsRBxaIHkhLOicsl6uE+70J4jMRnRFbgPfFRnrX5R9JYg0g9mKN2MsiLg3Kpw/r0Jpc9vvSeR3x50npUGneKZsvaVp4wSo9z0m7kiCsPotfPw=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=peda@axentia.se; 
-Received: from orc.pedanet (85.226.244.23) by
- AM5PR0201MB2450.eurprd02.prod.outlook.com (2603:10a6:203:35::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1080.15; Fri, 24 Aug
- 2018 08:55:22 +0000
-From:   Peter Rosin <peda@axentia.se>
-To:     linux-kernel@vger.kernel.org
-Cc:     Peter Rosin <peda@axentia.se>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        David Airlie <airlied@linux.ie>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 2/2] drm/atmel-hlcdc: allow selecting a higher pixel-clock that requested
-Date:   Fri, 24 Aug 2018 10:55:01 +0200
-Message-Id: <20180824085501.9740-3-peda@axentia.se>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180824085501.9740-1-peda@axentia.se>
-References: <20180824085501.9740-1-peda@axentia.se>
+        Fri, 24 Aug 2018 08:31:37 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:38167 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726633AbeHXMbh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 Aug 2018 08:31:37 -0400
+Received: by mail-wm0-f68.google.com with SMTP id t25-v6so891571wmi.3
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 01:57:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=D31WSED4rLHFwWsEwfBBfCULhVmUX1cp69t3tvz3U6Q=;
+        b=TvrBvvOdLKOuJyTf4l+DFUNnjnIaySd931plb3xEcCoqpmeVYMPkphy23FwhuuZYt4
+         XrRY6OsaZ3mlTEUwF+uXtKM2y+s5iw9/XpgXOHmw8i1OmY95LGkr+MYoLuLEh/3+T+qT
+         3o1mVEJokh+6KZnIEOBkJaoQwtzHblzckbK1Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=D31WSED4rLHFwWsEwfBBfCULhVmUX1cp69t3tvz3U6Q=;
+        b=A7iVtQa6ykFmnUQq1Ohb9t6O5w6zfy0lkSSpozEwy4Rg4FEcECYTdIh/Fs0ohnjtXa
+         HoWPU4Ysd2mcAg+rozAwW3fcQf4xkPk3gQcFoPDeB9XGKo9ZoBSJPfCm8vclEy2NflDT
+         jznJ+sNBmYyXQzj9W/ZiRdG4Ed+8QSKtvxV122jfG4V3BiFUny9tYtbhCYckB8RgHqZz
+         4FS8eSi2Gx6TqpAhq5xUVNMhffIWq7PdelmRGwst2PJOGvwtCjkt+3VhD0/hFckrpSsn
+         zPbX7gmMDl5REIOntP4rR/0noNFa9opVSyW1Qr91iHPq89BjeevlpufD7rBYNsLKFIPH
+         nGEA==
+X-Gm-Message-State: APzg51BS+U1KrBhp6DPNn0Rzq3K6FK0ZucqN0sb4sE6jejm015113cfK
+        MbybV8LiNm0dKwDCrbZWtWuNBA==
+X-Google-Smtp-Source: ANB0VdZ2xjIoiXOEMCgMZNnH/IwEc3CynztsuLLQ2PlJtgi0NkUREFA7C/lLXE8IAtq3QkGcUCRzZw==
+X-Received: by 2002:a1c:8682:: with SMTP id i124-v6mr829546wmd.77.1535101075650;
+        Fri, 24 Aug 2018 01:57:55 -0700 (PDT)
+Received: from [192.168.27.209] ([37.157.136.206])
+        by smtp.googlemail.com with ESMTPSA id c3-v6sm8574391wrm.56.2018.08.24.01.57.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 24 Aug 2018 01:57:55 -0700 (PDT)
+Subject: Re: [PATCH v6 1/4] venus: firmware: add routine to reset ARM9
+To:     Alexandre Courbot <acourbot@chromium.org>, vgarodia@codeaurora.org
+Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>, robh@kernel.org,
+        mark.rutland@arm.com, Andy Gross <andy.gross@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, bjorn.andersson@linaro.org,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <1535034528-11590-1-git-send-email-vgarodia@codeaurora.org>
+ <1535034528-11590-2-git-send-email-vgarodia@codeaurora.org>
+ <CAPBb6MUZawT84Wcrhi+MEyn+zSCWOpn_iOZMMudZz+_Urixsrw@mail.gmail.com>
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <51cc9d6b-0483-76a6-d413-3f5cc63f3f56@linaro.org>
+Date:   Fri, 24 Aug 2018 11:57:52 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [85.226.244.23]
-X-ClientProxiedBy: VI1PR0701CA0070.eurprd07.prod.outlook.com
- (2603:10a6:800:5f::32) To AM5PR0201MB2450.eurprd02.prod.outlook.com
- (2603:10a6:203:35::7)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 46304afd-f185-487e-7336-08d6099f53d2
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(7021125)(8989137)(4534165)(7022125)(4603075)(4627221)(201702281549075)(8990107)(7048125)(7024125)(7027125)(7028125)(7023125)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:AM5PR0201MB2450;
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0201MB2450;3:iSVlE8QtU/oMjS9LMhMfQfrquUtDFWL7y23imUR8d46onREaVLSkZnvny12NC0bRufnrPSpM2GNXRlslwTNSsFPVyArJxk2DT9lreMe9ltrCDX/tJPUNqkPHSlM05muGYRE3Io5YNYBtnWvfwa9NoJDwEBepVHlQo5rQNn4Dfv15bbJT32s7aUJQ6SRWZf+4yPge68DXloMNR3ImRHaf/tyO02f9W00xzCZJCXJTTjiMSoSs/fwLtsj0LF3iG95o;25:poyXCrXfS1PLcSJi2BxwZbggK91+h2zmsaWc1IXUbCA7lppf+8AWn3K5iQCxuSHOy8Q5UALUfbVbH8TiWk22qOOYmkhGvzlaCDf8PkwC7uOFzH4elcjfrZEhhWOoO0nP3y+DkoH9kydemJsusA1pbbp4Rsr64QyIgqYmNwbFJBMNiE8gINNYkNd77WemFVHPGWdMjU+I62/KsuHNYMCRTxR0/mtlUf3Dx1K091Lji25SXvGZ1F8Cdw+XT2lNfuZFUp57Swtyp7mQXF2NYoulp8YgsW2gYJfV+LYOAk18UjannqbtZYZbGtqb7Y4XFjvB5SQtxFTsd4tzccnhcKamNQ==;31:O5bVgzASy+IEewz4D0bLJEg4Adr3KUkFqmBPI4UXQTRWMwRu74qs1onBNjk3G6/N1k+qBmfc68iiiT74vqf1cu8486G2Bh3rd3nAhSk5wcwIrQf7iJVxQrbBu/Ptukpd/3B1TEHA9TVBiOARxmG9hTV1wblH124lAO5xgKkUoOXx/ifeWOadIuPpTy81Jj0BVaoAGMRrFLGpbVOdzzt8LfaSCyWtnFt4g7xFz7fds6o=
-X-MS-TrafficTypeDiagnostic: AM5PR0201MB2450:
-X-Microsoft-Antispam-PRVS: <AM5PR0201MB2450B671DE18A421EC8BE026BC360@AM5PR0201MB2450.eurprd02.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231311)(944501410)(52105095)(10201501046)(93006095)(93001095)(3002001)(149027)(150027)(6041310)(20161123562045)(2016111802025)(20161123560045)(20161123564045)(20161123558120)(6043046)(201708071742011)(7699016);SRVR:AM5PR0201MB2450;BCL:0;PCL:0;RULEID:;SRVR:AM5PR0201MB2450;
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0201MB2450;4:/UC3Z0nFhEx4dortupxtwjMO5asAwe+HA0oGr100TFIr9Cn++kb15gxojHduWuA7Bc0hj0yk/cyJypFCdCsA+sZWdpYT7EqW17s2BxOQCDzAeCO/wUc4T8okd7FwMJS6GLS3+vIqo6hUuaMUKnyrfSg0ucEJC64Hf2g51YUJZkOiwYKygHUPx9P3GH4SUAVfeQ3KLkWhw0euLxJj3FvIc3w0YPSlLfHWmhkfIwpTIcyyAY9EnR336/tshcIHHAfQq9YZ7uOOlC/k+mxXABDIxA==
-X-Forefront-PRVS: 07749F8C42
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(979002)(136003)(346002)(366004)(396003)(376002)(39830400003)(189003)(199004)(16586007)(5660300001)(8936002)(2351001)(81166006)(81156014)(8676002)(26005)(186003)(50226002)(4326008)(105586002)(16526019)(106356001)(68736007)(478600001)(2361001)(25786009)(74482002)(6666003)(305945005)(476003)(6486002)(6916009)(446003)(11346002)(36756003)(53936002)(76176011)(51416003)(2616005)(52116002)(7736002)(66066001)(50466002)(86362001)(956004)(486006)(54906003)(6512007)(48376002)(1076002)(316002)(386003)(6506007)(3846002)(2906002)(97736004)(47776003)(6116002)(42262002)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:AM5PR0201MB2450;H:orc.pedanet;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: axentia.se does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM5PR0201MB2450;23:phEf8SlCmls0pMrksshx0fe+PizQzgyODn7fyce?=
- =?us-ascii?Q?83Y6F2zw6iGXeERKsMQVvctWBmQNRsICJKwzYDhK1vbs5kyUcLoN87eRM1Lg?=
- =?us-ascii?Q?+jU7IRF8tKno7damY2krecNuy9MvwWc6wxEqicmF7KqPP6coW+uDAYrU/XOH?=
- =?us-ascii?Q?2wdFwgLWqxgdGb/nuZ3Pu30xB0eHWoGI3HiREnr7a+bUpRodK0DPxjxolJP4?=
- =?us-ascii?Q?Ba52ZmEkV9PKC5RgEMszgjU6GW0BBQR7w0QZe19uxqIqfLvIo30K1ZG/NVZr?=
- =?us-ascii?Q?fIVhb+jhOvbmjnm8leCRnMFPiCkzVUx7nmwkS7rK0FYDsB42uxCe7bDYFOIo?=
- =?us-ascii?Q?HyC672zlePdczhge/0033qMogOCGgiQkufbgbguBfVSUkvP4IXCxJy6s4BGb?=
- =?us-ascii?Q?ooel7fjJ+QB2YNLyVQam125dsOMrroyr3rynHmTcr1gXW7WcNCi+hHp0NmBk?=
- =?us-ascii?Q?5gqeJvDwIkuRcTeWygSDJXzP5292jXfRhsg2CNFMlaBfC9VIQH5WLVsq54Xi?=
- =?us-ascii?Q?gL7Sq2L6SPKIn8u/TzZd9NkfF5M182hW19597OzdpVWaufalOL/ioTunxKeo?=
- =?us-ascii?Q?H+rALalDX+LD2ulvz0iBcs1cq8cw8z+FFgeJJJ2eh/R4avIRUu4yvqDgKO98?=
- =?us-ascii?Q?sdq9LAmqFHD3TLfzFqjtKH4vdZL8X9OTh0XDAVmMs/4N9NVoyOWbEd5tUEd9?=
- =?us-ascii?Q?dDq2w7kpvpYpR8OpVVjnXhxJuyIg6cQNEW8iKgzCrjG7xWBheDVkoHC/glOq?=
- =?us-ascii?Q?0qmMVplnG+TDv32gYU5tXcD4ok9N5RgG0tQN/lk2jP8IajzcJBplDjalO7MQ?=
- =?us-ascii?Q?rbSe2b/HJP/SicdHBb4sxS097CiKu/zhOvAy60TR+OojQDvdhMgv3j12REAb?=
- =?us-ascii?Q?apJdmO0vuMNnp2hLfR+6nWzXXzT8nUNwMVLVQVYxutBwmrV9S37s8UFszpiX?=
- =?us-ascii?Q?zSI0ZJZLsqFMKqDmSXhJYZiNteFC+LCMOuPYtvU/slSUszcPMygAMkZgAi+j?=
- =?us-ascii?Q?eAEsgeyJ8js8NzsKcEG7sALfRmA+fEMSo9QtWl75VmCbSMlkqXNzDRxMVEA2?=
- =?us-ascii?Q?9EXC29ifJXxEt+iJ61BKel8xeE7wcYct3VOnPFQcOVf62QJ9yl/ohP88bxkT?=
- =?us-ascii?Q?paWvl6zOZJGn58erSIJbSFmgq7OMBbgA3GyswUp726fAOMiMGFdq6OPCXUun?=
- =?us-ascii?Q?rivS+T+cwdkN+jZpnUuRfhUf8uPVwkmw5hCSDpXA5gad70zrhIQZ/lOBTZa2?=
- =?us-ascii?Q?rn53j3v28FjaYTd+WoA0ZWa+7pL40TkbsGBn5lqo/jrXxSFbHGB+dJyWvsgF?=
- =?us-ascii?Q?pGBCbV6c1D4F1ck1tGEDJgi5su8dTUIlh1JvfuvPF777hMeLcdCKNVB0+Xab?=
- =?us-ascii?Q?+UJVSacsZXRm7zLTtdQ8zac28LKs=3D?=
-X-Microsoft-Antispam-Message-Info: K6HgcjuBLf+ODtSyR6v2jJYQaw0TGgiAtv9iQo3ERRjY5PAzwEwEZcuW2hjK7oIIHXbym+PgDu2XHAUgh6flFj5Hllu+bzH2apoXWr1SxQxkl1nq09+0PNllD/1/SWWqDjjd1WHYGdgi8MUGHVPNI5PDlHPiteIjc1XujfKVP+WjurRd3+aRVauo+vRIK5ww7Dhn1/HY5vODj3G++JX6Qz/WB13/dwSE1CF1ysRgPajGgnA71ZeuO2CzHkXaQsgVgVl3pQCgXWxJlkBylVJ7a2P+W2mHn0GoakxdSqmt5RPFJ5d+nqWXIelkpvj+tmXBrjxhH+nhhJCdst5lnOqcjR7zJJX9n6sk27KrE31DQO0=
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0201MB2450;6:3H43+bBGd2g3koD7+WwClSG+wRls3oAjayLUckt8KqXlX0BA2IyPf6pvqs2tJU74wR4ws07GsPGojrb7WXMr0z3Mbpoy27mZdP+QhHe/VD2sm3OVz5XKBH4fs7dRWDb07ZZ5D9OofHp/YiWIaA9MuPiQYF5fzFLs1zbLVF7c2p8SV+QbVX81XpM5rJ+zUiw9ZmVwpnPLmQwgVLSbOLwYfwIrSS5UN6NEyhW+21bQpKfpYFqWu5n022/JXl9QDltsoAkRACA1ztwGAmWSuI76LFuvITVuVGoCNpwFdwQYmgXQdx5pYRsrdV3Q/JVmD7yQmNvRFidKXTq98y/E4Nk50V+PzhQVc2u8JRBnnYZtilUNP46x0XPp5tO97WAUfQ9OPrs9kZdjC8Sj5RAhxxexUT9Sq5kxfVickNLhv+VuXHO4wnfpQ9pq/nIIbjQKCS6vx51B1Kd7IYkzHDefXYNKdw==;5:0qDLdXtF7Jbaz/Me+1kjOcrrGwT4jgWCTMavpqhN6YM0bFN2+0NOuKmuwSKwTmJhAxQZhE8aZ0mwFZACi9LFNJV6aXu8JVjzThWsVy6OhZH/oyIQI+qACxg4tNXYL5yic200Ry0Qz1H2wgdYH41XpmMCrX9BNlsK6xEcSq6gr4k=;7:JtWW54Abt0gznvcHqZRP+4y/mAF0rdtN737ke3SXJD1dgzSzkvCswptg9mh16xYwUUhCKWCcVrhV8SLZty6NCOj2bqpWDlEHwqhCCrb/GXFz3tndVgLvKTNQ5i1PNOmnzBw8oaWLQ8un8Hvl2ahqUY18EkRdgCY16jBr4ofROloJS41hkh9kiTpONmsYT9IgltBEUs1GHm7L6QdmMBKX/NRgB0ZiUOvjECiupfv8D06whyHAmh5XdSwF/o8JmOO5
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Aug 2018 08:55:22.3848 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 46304afd-f185-487e-7336-08d6099f53d2
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0201MB2450
+In-Reply-To: <CAPBb6MUZawT84Wcrhi+MEyn+zSCWOpn_iOZMMudZz+_Urixsrw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-But only if the highest pixel-clock frequency lower than requested
-is significantly much less accurate that the lowest frequency higher
-than requested.
+Hi Alex,
 
-I pulled "10 times" as the discriminator out of the hat, and went with
-that.
+On 08/24/2018 10:38 AM, Alexandre Courbot wrote:
+> On Thu, Aug 23, 2018 at 11:29 PM Vikash Garodia <vgarodia@codeaurora.org> wrote:
+>>
+>> Add routine to reset the ARM9 and brings it out of reset. Also
+>> abstract the Venus CPU state handling with a new function. This
+>> is in preparation to add PIL functionality in venus driver.
+>>
+>> Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
+>> ---
+>>  drivers/media/platform/qcom/venus/core.h         |  2 ++
+>>  drivers/media/platform/qcom/venus/firmware.c     | 33 ++++++++++++++++++++++++
+>>  drivers/media/platform/qcom/venus/firmware.h     | 11 ++++++++
+>>  drivers/media/platform/qcom/venus/hfi_venus.c    | 13 +++-------
+>>  drivers/media/platform/qcom/venus/hfi_venus_io.h |  7 +++++
+>>  5 files changed, 57 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
+>> index 2f02365..dfd5c10 100644
+>> --- a/drivers/media/platform/qcom/venus/core.h
+>> +++ b/drivers/media/platform/qcom/venus/core.h
+>> @@ -98,6 +98,7 @@ struct venus_caps {
+>>   * @dev:               convenience struct device pointer
+>>   * @dev_dec:   convenience struct device pointer for decoder device
+>>   * @dev_enc:   convenience struct device pointer for encoder device
+>> + * @no_tz:     a flag that suggests presence of trustzone
+>>   * @lock:      a lock for this strucure
+>>   * @instances: a list_head of all instances
+>>   * @insts_count:       num of instances
+>> @@ -129,6 +130,7 @@ struct venus_core {
+>>         struct device *dev;
+>>         struct device *dev_dec;
+>>         struct device *dev_enc;
+>> +       bool no_tz;
+>>         struct mutex lock;
+>>         struct list_head instances;
+>>         atomic_t insts_count;
+>> diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media/platform/qcom/venus/firmware.c
+>> index c4a5778..a9d042e 100644
+>> --- a/drivers/media/platform/qcom/venus/firmware.c
+>> +++ b/drivers/media/platform/qcom/venus/firmware.c
+>> @@ -22,10 +22,43 @@
+>>  #include <linux/sizes.h>
+>>  #include <linux/soc/qcom/mdt_loader.h>
+>>
+>> +#include "core.h"
+>>  #include "firmware.h"
+>> +#include "hfi_venus_io.h"
+>>
+>>  #define VENUS_PAS_ID                   9
+>>  #define VENUS_FW_MEM_SIZE              (6 * SZ_1M)
+> 
+> This is making a strong assumption about the size of the FW memory
+> region, which in practice is not always true (I had to reduce it to
+> 5MB). How about having this as a member of venus_core, which is
 
-This is useful, if e.g. the target pixel-clock is 65MHz and the sys_clk
-is 132MHz. In this case the highest possible pixel-clock lower than the
-requested 65MHz is 52.8MHz, which is almost 20% off (and outside the
-spec for the panel). The lowest possible pixel-clock higher than 65MHz
-is 66MHz, which is a *much* better match, and only 1.5% off.
+Why you reduced to 5MB? Is there an issue with 6MB or you don't want to
+waste reserved memory?
 
-Signed-off-by: Peter Rosin <peda@axentia.se>
----
- drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+> initialized in venus_load_fw() from the actual size of the memory
+> region? You could do this as an extra patch that comes before this
+> one.
+> 
 
-diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-index 71c9cd90d2ae..0c2717ed4ac6 100644
---- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-+++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-@@ -116,6 +116,19 @@ static void atmel_hlcdc_crtc_mode_set_nofb(struct drm_crtc *c)
- 		div = DIV_ROUND_UP(prate, mode_rate);
- 		if (ATMEL_HLCDC_CLKDIV(div) & ~ATMEL_HLCDC_CLKDIV_MASK)
- 			div = ATMEL_HLCDC_CLKDIV_MASK;
-+	} else {
-+		int div_low = prate / mode_rate;
-+
-+		if (div_low >= 2 &&
-+		    ((prate / div_low - mode_rate) <
-+		     10 * (mode_rate - prate / div)))
-+			/*
-+			 * At least 10 times better when
-+			 * using a higher frequency than
-+			 * requested, instead of a lower.
-+			 * So, go with that.
-+			 */
-+			div = div_low;
- 	}
- 
- 	cfg |= ATMEL_HLCDC_CLKDIV(div);
+The size is 6MB by historical reasons and they are no more valid, so I
+think we could safely decrease to 5MB. I could prepare a patch for that.
+
 -- 
-2.11.0
-
+regards,
+Stan
