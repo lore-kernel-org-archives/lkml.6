@@ -3,138 +3,146 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E881C433F5
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 02:31:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF35BC433F5
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 02:41:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5740F21567
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 02:31:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5740F21567
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 522E9208B2
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 02:41:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 522E9208B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727101AbeHYGIN (ORCPT
+        id S1726574AbeHYGSm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 25 Aug 2018 02:08:13 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:11195 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726138AbeHYGIM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Aug 2018 02:08:12 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 9A7667B24E499;
-        Sat, 25 Aug 2018 10:30:53 +0800 (CST)
-Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
- (10.3.19.206) with Microsoft SMTP Server (TLS) id 14.3.399.0; Sat, 25 Aug
- 2018 10:30:50 +0800
-Subject: Re: [f2fs-dev] [RFC PATCH 02/10] fs-verity: add data verification
- hooks for ->readpages()
-To:     Eric Biggers <ebiggers@kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-ext4@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-CC:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Michael Halcrow <mhalcrow@google.com>,
-        <linux-kernel@vger.kernel.org>, <linux-fscrypt@vger.kernel.org>,
-        <linux-integrity@vger.kernel.org>,
-        "Mimi Zohar" <zohar@linux.vnet.ibm.com>,
-        Victor Hsieh <victorhsieh@google.com>
-References: <20180824161642.1144-1-ebiggers@kernel.org>
- <20180824161642.1144-3-ebiggers@kernel.org>
-From:   Gao Xiang <gaoxiang25@huawei.com>
-Message-ID: <2f2382c3-e5e9-f0da-dc89-42dfc7b2b636@huawei.com>
-Date:   Sat, 25 Aug 2018 10:29:26 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Sat, 25 Aug 2018 02:18:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34744 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726110AbeHYGSl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 25 Aug 2018 02:18:41 -0400
+Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4ECF9208B2;
+        Sat, 25 Aug 2018 02:41:24 +0000 (UTC)
+Date:   Fri, 24 Aug 2018 22:41:22 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 24/32] selftests/ftrace: Add max stack tracer
+ testcase
+Message-ID: <20180824224122.2e10e7f9@vmware.local.home>
+In-Reply-To: <20180825104509.1b739d5d17d860e453daa0ca@kernel.org>
+References: <153443695002.23257.13628220023468200991.stgit@devbox>
+        <153443763074.23257.4052504725796725062.stgit@devbox>
+        <20180824192352.262144f5@gandalf.local.home>
+        <20180825104509.1b739d5d17d860e453daa0ca@kernel.org>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180824161642.1144-3-ebiggers@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.151.23.176]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Sat, 25 Aug 2018 10:45:09 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-On 2018/8/25 0:16, Eric Biggers wrote:
-> +/**
-> + * fsverity_verify_page - verify a data page
-> + *
-> + * Verify a page that has just been read from a file against that file's Merkle
-> + * tree.  The page is assumed to be a pagecache page.
-> + *
-> + * Return: true if the page is valid, else false.
-> + */
-> +bool fsverity_verify_page(struct page *data_page)
-> +{
-> +	struct inode *inode = data_page->mapping->host;
-> +	const struct fsverity_info *vi = get_fsverity_info(inode);
-> +	struct ahash_request *req;
-> +	bool valid;
-> +
-> +	req = ahash_request_alloc(vi->hash_alg->tfm, GFP_KERNEL);
-> +	if (unlikely(!req))
-> +		return false;
-> +
-> +	valid = verify_page(inode, vi, req, data_page);
-> +
-> +	ahash_request_free(req);
-> +
-> +	return valid;
-> +}
-> +EXPORT_SYMBOL_GPL(fsverity_verify_page);
-> +
-> +/**
-> + * fsverity_verify_bio - verify a 'read' bio that has just completed
-> + *
-> + * Verify a set of pages that have just been read from a file against that
-> + * file's Merkle tree.  The pages are assumed to be pagecache pages.  Pages that
-> + * fail verification are set to the Error state.  Verification is skipped for
-> + * pages already in the Error state, e.g. due to fscrypt decryption failure.
-> + */
-> +void fsverity_verify_bio(struct bio *bio)
-> +{
-> +	struct inode *inode = bio_first_page_all(bio)->mapping->host;
-> +	const struct fsverity_info *vi = get_fsverity_info(inode);
-> +	struct ahash_request *req;
-> +	struct bio_vec *bv;
-> +	int i;
-> +
-> +	req = ahash_request_alloc(vi->hash_alg->tfm, GFP_KERNEL);
-> +	if (unlikely(!req)) {
-> +		bio_for_each_segment_all(bv, bio, i)
-> +			SetPageError(bv->bv_page);
-> +		return;
-> +	}
-> +
-> +	bio_for_each_segment_all(bv, bio, i) {
-> +		struct page *page = bv->bv_page;
-> +
-> +		if (!PageError(page) && !verify_page(inode, vi, req, page))
-> +			SetPageError(page);
-> +	}
-> +
-> +	ahash_request_free(req);
-> +}
-> +EXPORT_SYMBOL_GPL(fsverity_verify_bio);
+> On Fri, 24 Aug 2018 19:23:52 -0400
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+> 
+> > On Fri, 17 Aug 2018 01:40:30 +0900
+> > Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> >   
+> > > Add a testcase for max stack tracer, which checks basic
+> > > max stack usage tracing and its filter feature.
+> > > 
+> > > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> > > ---
+> > >  .../ftrace/test.d/ftrace/func_stack_tracer.tc      |   39 ++++++++++++++++++++
+> > >  1 file changed, 39 insertions(+)
+> > >  create mode 100644 tools/testing/selftests/ftrace/test.d/ftrace/func_stack_tracer.tc
+> > > 
+> > > diff --git a/tools/testing/selftests/ftrace/test.d/ftrace/func_stack_tracer.tc b/tools/testing/selftests/ftrace/test.d/ftrace/func_stack_tracer.tc
+> > > new file mode 100644
+> > > index 000000000000..b414f0e3c646
+> > > --- /dev/null
+> > > +++ b/tools/testing/selftests/ftrace/test.d/ftrace/func_stack_tracer.tc
+> > > @@ -0,0 +1,39 @@
+> > > +#!/bin/sh
+> > > +# SPDX-License-Identifier: GPL-2.0
+> > > +# description: ftrace - Max stack tracer
+> > > +# Test the basic function of max-stack usage tracing
+> > > +
+> > > +if [ ! -f stack_trace ]; then
+> > > +  echo "Max stack tracer is not supported - please make CONFIG_STACK_TRACER=y"
+> > > +  exit_unsupported
+> > > +fi
+> > > +
+> > > +echo > stack_trace_filter
+> > > +echo 0 > stack_max_size
+> > > +echo 1 > /proc/sys/kernel/stack_tracer_enabled
+> > > +
+> > > +: "Fork and wait for the first entry become !lock"
+> > > +timeout=10
+> > > +while [ $timeout -ne 0 ]; do
+> > > +  ( echo "forked" )
+> > > +  FL=`grep " 0)" stack_trace`
+> > > +  echo $FL | grep -q "lock" || break;
+> > > +  timeout=$((timeout - 1))
+> > > +done
+> > > +echo 0 > /proc/sys/kernel/stack_tracer_enabled
+> > > +
+> > > +echo '*lock*' > stack_trace_filter
+> > > +test `cat stack_trace_filter | wc -l` -eq `grep lock stack_trace_filter | wc -l`
+> > > +
+> > > +echo 0 > stack_max_size
+> > > +echo 1 > /proc/sys/kernel/stack_tracer_enabled  
+> > 
+> > This test fails quite a bit because it doesn't guarantee that another
+> > stack trace gets in that is bigger, and we don't find the "lock".  
+> 
+> Hmm, maybe I misunderstand what is the stack_trace_filter.
+> I thought it filtered the function that triggered stack trace,
+> so the top of stack trace was always filtered function.
+> If not, what does this filter?
 
-Out of curiosity, I quickly scanned the fs-verity source code and some minor question out there....
+Ah, I missed the filter part, no its correct, and actually found a
+bug ;-) By adding this patch, it works again:
 
-If something is wrong, please point out, thanks in advance...
+diff --git a/kernel/trace/trace_stack.c b/kernel/trace/trace_stack.c
+index 4237eba4ef20..2b0d1ee3241c 100644
+--- a/kernel/trace/trace_stack.c
++++ b/kernel/trace/trace_stack.c
+@@ -111,7 +111,7 @@ check_stack(unsigned long ip, unsigned long *stack)
+ 	stack_trace_max_size = this_size;
+ 
+ 	stack_trace_max.nr_entries = 0;
+-	stack_trace_max.skip = 3;
++	stack_trace_max.skip = 0;
+ 
+ 	save_stack_trace(&stack_trace_max);
+ 
 
-My first question is that 'Is there any way to skip to verify pages in a bio?'
-I am thinking about
-If metadata and data page are mixed in a filesystem of such kind, they could submit together in a bio, but metadata could be unsuitable for such kind of verification.
 
-The second question is related to the first question --- 'Is there any way to verify a partial page?'
-Take scalability into consideration, some files could be totally inlined or partially inlined in metadata.
-Is there any way to deal with them in per-file approach? at least --- support for the interface?
+-- Steve
 
-At last, I hope filesystems could select the on-disk position of hash tree and 'struct fsverity_descriptor'
-rather than fixed in the end of verity files...I think if fs-verity preparing such support and interfaces could be better.....hmmm... :(
-
-Thanks,
-Gao Xiang
+> >   
+> > > +
+> > > +: "Fork and always the first entry including lock"
+> > > +timeout=10
+> > > +while [ $timeout -ne 0 ]; do
+> > > +  ( echo "forked" )
+> > > +  FL=`grep " 0)" stack_trace`
+> > > +  echo $FL | grep -q "lock"
+> > > +  timeout=$((timeout - 1))
+> > > +done
+> > > +echo 0 > /proc/sys/kernel/stack_tracer_enabled  
+> >   
+> 
+> 
 
