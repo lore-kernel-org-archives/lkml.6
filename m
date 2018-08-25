@@ -2,321 +2,166 @@ Return-Path: <SRS0=itv6=LI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE61AC433F4
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 07:18:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C47A9C433F4
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 07:24:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42AD7214AB
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 07:18:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A646214AB
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 07:24:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rpHZQJw1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42AD7214AB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mMbWmvxR";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kM/Prqas"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A646214AB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727354AbeHYK4c (ORCPT
+        id S1727091AbeHYLCU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 25 Aug 2018 06:56:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43852 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726009AbeHYK4b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Aug 2018 06:56:31 -0400
-Received: from sol.localdomain (c-67-185-97-198.hsd1.wa.comcast.net [67.185.97.198])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Sat, 25 Aug 2018 07:02:20 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:51278 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726428AbeHYLCU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 25 Aug 2018 07:02:20 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id D7E256055C; Sat, 25 Aug 2018 07:24:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535181857;
+        bh=e7jVJWcDYw2pbZt/HaT13VjaCVY7glP9Ej4cy7e/7Fo=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=mMbWmvxRziuE+1B3/1SfQfqVuI21uMltxBmOC4AZDFDzWnpVk/gAm8C9Y3HxN3SAV
+         yY3kOIgvENft4pqkQmx0VrqNCRRx3hPnoKObpQ2d4u7DpXknOraKNIOvSXlvKjRZzx
+         37vtXFSSzQkPyePRpOJsd/5T5LNwAJBcAoUx4LCM=
+Received: from [192.168.31.253] (unknown [103.66.79.25])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D180D2147D;
-        Sat, 25 Aug 2018 07:18:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535181510;
-        bh=jTdqCX2z9R6qEA2ePswRY2HhUuydrZdu3G/KP+vFzwQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rpHZQJw1cNI9sXQLZAbJSiA71tIIDL27dyypP2u0+tKN81fiKZ0mPujEUuKCOIOdQ
-         WkpZfNaaa0vZxoTEGL2B1YSYaRjm1w1lt0hRboN/b6nHURTXBgrPRl2SKK+qYMu5Fk
-         H376+NXlbO19ettjlGPWeyzsyWvQcZKT3jAiAgH8=
-Date:   Sat, 25 Aug 2018 00:18:28 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Gao Xiang <gaoxiang25@huawei.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Michael Halcrow <mhalcrow@google.com>,
-        linux-kernel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Victor Hsieh <victorhsieh@google.com>
-Subject: Re: [RFC PATCH 02/10] fs-verity: add data verification hooks for
- ->readpages()
-Message-ID: <20180825071827.GD726@sol.localdomain>
-References: <20180824161642.1144-1-ebiggers@kernel.org>
- <20180824161642.1144-3-ebiggers@kernel.org>
- <2f2382c3-e5e9-f0da-dc89-42dfc7b2b636@huawei.com>
- <20180825041647.GA726@sol.localdomain>
- <21e86199-28a7-4693-aef5-5fc28842535c@huawei.com>
+        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3386C601D1;
+        Sat, 25 Aug 2018 07:24:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535181856;
+        bh=e7jVJWcDYw2pbZt/HaT13VjaCVY7glP9Ej4cy7e/7Fo=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=kM/PrqasvGPBpJ5sLmVPxsKpqnf4Bxab/tfn9dxOqBp92YHGHd79i6Z8UZUMkvhVu
+         22LrIaSRBYwDwhuCdHrKAaFWqysOIueoQwiKUMZNZDJrX8IbAznwhafBZ69EV0RhbH
+         NIumpSxJG0i6dRd3X3E6gwpq51Nx/A9gje8GQh80=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3386C601D1
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
+Subject: Re: [RFC PATCH v2 2/3] pstore: Add register read/write{b,w,l,q}
+ tracing support
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Jason Baron <jbaron@akamai.com>,
+        Tony Luck <tony.luck@intel.com>, Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Joe Perches <joe@perches.com>,
+        Jim Cromie <jim.cromie@gmail.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+References: <cover.1535119710.git.saiprakash.ranjan@codeaurora.org>
+ <65985f8df55b037283746559c1718a54d56e7ec4.1535119711.git.saiprakash.ranjan@codeaurora.org>
+ <CAGXu5jL6tGu9U_ANrZSfWREtySqFAJ+CQa3v5YRihZ2oHNMGGw@mail.gmail.com>
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Message-ID: <7b212c02-d7ce-4309-155f-22b36963e41c@codeaurora.org>
+Date:   Sat, 25 Aug 2018 12:54:07 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <21e86199-28a7-4693-aef5-5fc28842535c@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAGXu5jL6tGu9U_ANrZSfWREtySqFAJ+CQa3v5YRihZ2oHNMGGw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gao,
-
-On Sat, Aug 25, 2018 at 02:31:16PM +0800, Gao Xiang wrote:
-> Hi Eric,
+On 8/24/2018 8:59 PM, Kees Cook wrote:
+> On Fri, Aug 24, 2018 at 7:45 AM, Sai Prakash Ranjan
+> <saiprakash.ranjan@codeaurora.org> wrote:
+>> read/write{b,w,l,q} are typically used for reading from memory
+>> mapped registers, which can cause hangs if accessed
+>> unclocked. Tracing these events can help in debugging
+>> various issues faced during initial development.
+>>
+>> We log this trace information in persistent ram buffer which
+>> can be viewed after reset.
+>>
+>> We use pstore_rtb_call() to write the RTB log to pstore.
+>> RTB buffer size is taken from ramoops dt node with additional
+>> property called rtb-size.
+>>
+>> For reading the trace after mounting pstore, rtb-ramoops entry
+>> can be seen in /sys/fs/pstore/ as in below sample output.
+>>
+>> Sample output of tracing register reads/writes in drivers:
+>>
+>>   # mount -t pstore pstore /sys/fs/pstore
+>>   # tail /sys/fs/pstore/rtb-ramoops-0
+>>   [LOGK_READ ] ts:36468476204  data:ffff00000800d0fc  <ffff0000084e9ee0>  gic_check_gicv2+0x58/0x60
+>>   [LOGK_WRITE] ts:36468477715  data:ffff00000800d000  <ffff0000084e9fac>  gic_cpu_if_up+0xc4/0x110
+>>   [LOGK_READ ] ts:36468478548  data:ffff00000800d000  <ffff0000084e9fd8>  gic_cpu_if_up+0xf0/0x110
+>>   [LOGK_WRITE] ts:36468480319  data:ffff00000800d000  <ffff0000084e9fac>  gic_cpu_if_up+0xc4/0x110
+>>   [LOGK_READ ] ts:36468481048  data:ffff00000800d00c  <ffff000008081a34>  gic_handle_irq+0xac/0x128
+>>   [LOGK_WRITE] ts:36468482923  data:ffff00000800d010  <ffff000008081aac>  gic_handle_irq+0x124/0x128
+>>   [LOGK_READ ] ts:36468483184  data:ffff00000800d00c  <ffff000008081a34>  gic_handle_irq+0xac/0x128
+>>   [LOGK_WRITE] ts:36468485215  data:ffff00000800d010  <ffff000008081aac>  gic_handle_irq+0x124/0x128
+>>   [LOGK_READ ] ts:36468486309  data:ffff00000800d00c  <ffff000008081a34>  gic_handle_irq+0xac/0x128
+>>   [LOGK_WRITE] ts:36468488236  data:ffff00000800d010  <ffff000008081aac>  gic_handle_irq+0x124/0x128
+>>
+>> Output has below 5 fields:
+>>
+>>   * Log type, Timestamp, Data from caller which is the address of
+>>     read/write{b,w,l,q}, Caller ip and Caller name.
+>>
+>> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
 > 
-> Thanks for your detailed reply.
-> 
-> My english is not quite well, I could not type logically and quickly like you and could use some words improperly,
-> I just want to express my personal concern, please understand, thanks. :)
-> 
-> On 2018/8/25 12:16, Eric Biggers wrote:
-> > Hi Gao,
-> > 
-> > On Sat, Aug 25, 2018 at 10:29:26AM +0800, Gao Xiang wrote:
-> >> Hi,
-> >>
-> >> On 2018/8/25 0:16, Eric Biggers wrote:
-> >>> +/**
-> >>> + * fsverity_verify_page - verify a data page
-> >>> + *
-> >>> + * Verify a page that has just been read from a file against that file's Merkle
-> >>> + * tree.  The page is assumed to be a pagecache page.
-> >>> + *
-> >>> + * Return: true if the page is valid, else false.
-> >>> + */
-> >>> +bool fsverity_verify_page(struct page *data_page)
-> >>> +{
-> >>> +	struct inode *inode = data_page->mapping->host;
-> >>> +	const struct fsverity_info *vi = get_fsverity_info(inode);
-> >>> +	struct ahash_request *req;
-> >>> +	bool valid;
-> >>> +
-> >>> +	req = ahash_request_alloc(vi->hash_alg->tfm, GFP_KERNEL);
-> >>> +	if (unlikely(!req))
-> >>> +		return false;
-> >>> +
-> >>> +	valid = verify_page(inode, vi, req, data_page);
-> >>> +
-> >>> +	ahash_request_free(req);
-> >>> +
-> >>> +	return valid;
-> >>> +}
-> >>> +EXPORT_SYMBOL_GPL(fsverity_verify_page);
-> >>> +
-> >>> +/**
-> >>> + * fsverity_verify_bio - verify a 'read' bio that has just completed
-> >>> + *
-> >>> + * Verify a set of pages that have just been read from a file against that
-> >>> + * file's Merkle tree.  The pages are assumed to be pagecache pages.  Pages that
-> >>> + * fail verification are set to the Error state.  Verification is skipped for
-> >>> + * pages already in the Error state, e.g. due to fscrypt decryption failure.
-> >>> + */
-> >>> +void fsverity_verify_bio(struct bio *bio)
-> >>> +{
-> >>> +	struct inode *inode = bio_first_page_all(bio)->mapping->host;
-> >>> +	const struct fsverity_info *vi = get_fsverity_info(inode);
-> >>> +	struct ahash_request *req;
-> >>> +	struct bio_vec *bv;
-> >>> +	int i;
-> >>> +
-> >>> +	req = ahash_request_alloc(vi->hash_alg->tfm, GFP_KERNEL);
-> >>> +	if (unlikely(!req)) {
-> >>> +		bio_for_each_segment_all(bv, bio, i)
-> >>> +			SetPageError(bv->bv_page);
-> >>> +		return;
-> >>> +	}
-> >>> +
-> >>> +	bio_for_each_segment_all(bv, bio, i) {
-> >>> +		struct page *page = bv->bv_page;
-> >>> +
-> >>> +		if (!PageError(page) && !verify_page(inode, vi, req, page))
-> >>> +			SetPageError(page);
-> >>> +	}
-> >>> +
-> >>> +	ahash_request_free(req);
-> >>> +}
-> >>> +EXPORT_SYMBOL_GPL(fsverity_verify_bio);
-> >>
-> >> Out of curiosity, I quickly scanned the fs-verity source code and some minor question out there....
-> >>
-> >> If something is wrong, please point out, thanks in advance...
-> >>
-> >> My first question is that 'Is there any way to skip to verify pages in a bio?'
-> >> I am thinking about
-> >> If metadata and data page are mixed in a filesystem of such kind, they could submit together in a bio, but metadata could be unsuitable for such kind of verification.
-> >>
-> > 
-> > Pages below i_size are verified, pages above are not.
-> > 
-> > With my patches, ext4 and f2fs won't actually submit pages in both areas in the
-> > same bio, and they won't call the fs-verity verification function for bios in
-> > the data area.  But even if they did, there's also a check in verify_page() that
-> 
-> I think you mean the hash area?
-
-Yes, I meant the hash area.
-
-> > skips the verification if the page is above i_size.
-> >
-> 
-> I think it could not be as simple as you said for all cases.
-> 
-> If some fs submits contiguous access with different MAPPING (something like
-> mixed FILE_MAPPING and META_MAPPING), their page->index are actually
-> unreliable(could be logical page index for FILE_MAPPING,and physical page
-> index for META_MAPPING), and data are organized by design in multi bios for a
-> fs-specific use (such as compresssion).
-> 
-> You couldn't do such verification `if the page is above i_size' and it could
-> be hard to integrate somehow.
-
-We do have to be very careful here, but the same restriction already exists with
-fscrypt which both f2fs and ext4 already support too.  With fscrypt, each page
-is decrypted with the key from page->mapping->host->i_crypt_info and the
-initialization vector from page->index.  With fs-verity, each page is verified
-using the Merkle tree state from page->mapping->host->i_verify_info and the
-block location from page->index.  So, they are very similar.
-
-On f2fs, any pages submitted via META_MAPPING just skip both fscrypt and
-fs-verity since the "meta_inode" doesn't have either feature enabled.  That's
-done intentionally, so that garbage collection can move the blocks on-disk.
-Regular reads aren't done via META_MAPPING.
-
-> 
-> >> The second question is related to the first question --- 'Is there any way to verify a partial page?'
-> >> Take scalability into consideration, some files could be totally inlined or partially inlined in metadata.
-> >> Is there any way to deal with them in per-file approach? at least --- support for the interface?
-> > 
-> > Well, one problem is that inline data has its own separate I/O path; see
-> > ext4_readpage_inline() and f2fs_read_inline_data().  So it would be a large
-> > effort to support features like encryption and verity which require
-> > postprocessing after reads, and probably not worthwhile especially for verity
-> > which is primarily intended for large files.
-> 
-> Yes, for the current user ext4 and f2fs, it is absolutely wonderful.
-> 
-> 
-> I have to admit I am curious about Google fs-verity roadmap for the future Android
-> (I have to identify whether it is designed to replace dm-verity, currently I think is no)
-> 
-> since it is very important whether our EROFS should support fs-verity or not in the near future...
-> 
-> 
-> I could give some EROFS use case if you have some time to discuss.
-> 
-> EROFS uses a more aggressive inline approach, which means it not only inline data for small files.
-> It is designed to inline the last page, which are reasonable small (eg. only a few byte) to inline for all files, eg.
-> 
->                                                                  IN FILE_MAPPING
-> IN META_MAPPING                                                  blk-aligned
-> +--------------------------------------|                         +--------+--------+     +----------+.......+
-> |inode A+inlined-last data.. inode B...|                         | page 0 | page 1 | ... | page n-1 . page n.
-> +--------------------------------------+                         +--------+--------+     +----------+.......+
->          |------------------------------------------------------------------------------------------|\
-> 
-> In priciple, this approach could be also used for read-write file systems to save more storage space.
-> I think it is still easy for uncompressed file if you do the zero padding as you said below.
-> 
-> But if considering _compression_.....especially compression in VLE, I think it should not rely on `bio' directly, because,
-> 1) endio with compressed data rather than FILE_MAPPING plain data, these pages which could from META_MAPPING
-> (for caching compressed page on purpose) or FILE_MAPPING(for decompressing in-place to save redundant META_MAPPING memory).
-> 
-> I think it should be decompress at first and then fs-verity, but there could be more filepages other than compresssed pages joined
-> (eg. 128kb->32kb, we submit 8 pages but decompress end with 32 pages), it should not be the original bio any more...
-> (actually I think it is not the bio concept anymore...)
-> 
-> 2) EROFS VLE is more complicated, we could end a bio with a compressed page but decompress a partial file page, eg.
->     +-------------------+--------------------+
-> ... | compressed page X |compressed page X+1 |
->     +-------------------|--------------------+
->             end of bio Y/     bio Y+1
->                  \      |      /
->                   +-------------------------+
->                   |   plain data (file page)|
->                   +-------------------------+
-> which means a bio could only decompress partial data of a page, the page could be Uptodate by two bios rather than one,
-> I have no idea how to fs-verity like this...
-> 
-> `it could call fsverity after assembling the page in the page cache.` as Ted said in that case.
+> As this is a tracing-like method, could this instead be added to
+> ftrace? That would mean it could reuse all the ftrace tools and you'd
+> get pstore storage for free.
 > 
 
-I don't know of any plan to use fs-verity on Android's system partition or to
-replace dm-verity on the system partition.  The use cases so far have been
-verifying files on /data, like APK files.
+Ftrace does not trace __raw{read,write}{b,l,w,q}() functions. I am not 
+sure why and how it is filtered out because I do not see any notrace 
+flag in those functions, maybe that whole directory is filtered out.
+So adding this functionality to ftrace would mean removing the notrace 
+for these functions i.e., something like using 
+__raw{read,write}{b,l,w,q}() as the available filter functions. Also 
+pstore ftrace does not filter functions to trace I suppose?
 
-So I don't think you need to support fs-verity in EROFS.
+Coming to the reason as to why it would be good to keep this separate 
+from ftrace would be:
+* Ftrace can get ip and parent ip, but suppose we need extra data (field 
+data) as in above sample output we would not be able to get through ftrace.
 
-Re: the compression, I don't see how it would be much of a problem (even if you
-did need or want to add fs-verity support).  Assuming that the verification is
-done over the uncompressed version of the data, you wouldn't verify the pages
-directly from the bio's page list since those would contain compressed data.
-But even without fs-verity you'd need to decompress the data into pagecache
-pages... so you could just call fsverity_verify_page() on each of those
-decompressed pages before unlocking them and setting them Uptodate.  You don't
-*have* to call fsverity_verify_bio() to do the verification; it's just a helper
-for the case where the list of pages to verify happens to be in a completed bio.
+* Although this patch is for tracing register read/write, we can easily
+add more functionality since we have dynamic_rtb api which can be hooked 
+to functions and start tracing events(IRQ, Context ID) something similar 
+to tracepoints.
+Initially thought of having tracepoints for logging register read/write 
+but I do not know if we can export tracepoint data to pstore since the 
+main usecase is to debug unknown resets and hangs.
 
-> > 
-> > A somewhat separate question is whether the zero padding to a block boundary
-> > after i_size, before the Merkle tree begins, is needed.  The answer is yes,
-> > since mixing data and metadata in the same page would cause problems.  First,
-> > userspace would be able to mmap the page and see some of the metadata rather
-> > than zeroes.  That's not a huge problem, but it breaks the standard behavior.
-> > Second, any page containing data cannot be set Uptodate until it's been
-> > verified.  So, a special case would be needed to handle reading the part of the
-> > metadata that's located in a data page.
-> 
-> Yes, after I just thinked over, I think there should be a zero padding to a block boundary
-> as you said due to Uptodate and mmap scenerio if you directly use its inode(file) mapping for verification.
-> 
-> 
-> > 
-> >> At last, I hope filesystems could select the on-disk position of hash tree and 'struct fsverity_descriptor'
-> >> rather than fixed in the end of verity files...I think if fs-verity preparing such support and interfaces could be better.....hmmm... :(
-> > 
-> > In theory it would be a much cleaner design to store verity metadata separately
-> > from the data.  But the Merkle tree can be very large.  For example, a 1 GB file
-> > using SHA-512 would have a 16.6 MB Merkle tree.  So the Merkle tree can't be an
-> > extended attribute, since the xattrs API requires xattrs to be small (<= 64 KB),
-> > and most filesystems further limit xattr sizes in their on-disk format to as
-> > little as 4 KB.  Furthermore, even if both of these limits were to be increased,
-> > the xattrs functions (both the syscalls, and the internal functions that
-> > filesystems have) are all based around getting/setting the entire xattr value.
-> > 
-> > Also when used with fscrypt, we want the Merkle tree and fsverity_descriptor to
-> > be encrypted, so they doesn't leak plaintext hashes.  And we want the Merkle
-> > tree to be paged into memory, just like the file contents, to take advantage of
-> > the usual Linux memory management.
-> > 
-> > What we really need is *streams*, like NTFS has.  But the filesystems we're
-> > targetting don't support streams, nor does the Linux syscall interface have any
-> > API for accessing streams, nor does the VFS support them.
-> > 
-> > Adding streams support to all those things would be a huge multi-year effort,
-> > controversial, and almost certainly not worth it just for fs-verity.
-> > 
-> > So simply storing the verity metadata past i_size seems like the best solution
-> > for now.
-> > 
-> > That being said, in the future we could pretty easily swap out the calls to
-> > read_mapping_page() with something else if a particular filesystem wanted to
-> > store the metadata somewhere else.  We actually even originally had a function
-> > ->read_metadata_page() in the filesystem's fsverity_operations, but it turned
-> > out to be unnecessary and I replaced it with directly calling
-> > read_mapping_page(), but it could be changed back at any time.
-> 
-> OK, I got it.
-> 
-> I have to look into that and think over again. Thanks for your reply again in the end. :)
-> 
-> Thanks,
-> Gao Xiang
-> 
+* This can be something similar to mmiotrace in x86 and kept seperate 
+from function tracer.
 
-- Eric
+Thanks,
+Sai Prakash
