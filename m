@@ -2,71 +2,77 @@ Return-Path: <SRS0=itv6=LI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2B6AC433F4
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 17:16:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AA62C433F4
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 17:17:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50ABD2173D
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 17:16:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50ABD2173D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wanadoo.fr
+	by mail.kernel.org (Postfix) with ESMTP id 051CB2173D
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 17:17:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="S8mt48J8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 051CB2173D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726969AbeHYU4Y (ORCPT
+        id S1727072AbeHYU5T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 25 Aug 2018 16:56:24 -0400
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:19041 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726847AbeHYU4Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Aug 2018 16:56:24 -0400
-Received: from localhost.localdomain ([90.126.241.217])
-        by mwinf5d25 with ME
-        id TVGm1y0084i89ZE03VGmgq; Sat, 25 Aug 2018 19:16:48 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 25 Aug 2018 19:16:48 +0200
-X-ME-IP: 90.126.241.217
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     lduncan@suse.com, cleech@redhat.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com
-Cc:     open-iscsi@googlegroups.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] scsi: libiscsi: Fix an error handling path in 'iscsi_session_setup()'
-Date:   Sat, 25 Aug 2018 19:16:42 +0200
-Message-Id: <20180825171642.29010-1-christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.17.1
+        Sat, 25 Aug 2018 16:57:19 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:60349 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726751AbeHYU5S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 25 Aug 2018 16:57:18 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 5877c344;
+        Sat, 25 Aug 2018 17:03:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type; s=mail; bh=EqGIxTPnweK0XbShgttNIg0Tm1k=; b=S8mt48
+        J8aGNXcx1cGW9Z75mM5f6XH3iXuODg6WSdWdhhlDGFyBh/jLKcaATnQvNmK3zHp/
+        VWFP/jtBcgvyhIwVckCbXZVICYH5DNMQkP4KsO4OQWJv/xkVvKd0HU30/KBOGcLi
+        HhxXfBn93qa1yVGLymQt6oFDHY8VLYf2eOWV16e3dl5lelPuJBuiMlCHZ8vvE7a6
+        9Zxyp+7g2MS52dk8DwllvfYjw1HOvDyrgsZFiAHSYDimH8UPwr3D+XrsztrOjZod
+        t2qEmvg1vrzQBokD0IDPp56MAThqyLZS2mGl+/N6WVXjaEvssRloAqHi/iqmH3/y
+        ZjI/bxglzTEjmAxg==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id ac8af107 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
+        Sat, 25 Aug 2018 17:03:11 +0000 (UTC)
+Received: by mail-oi0-f50.google.com with SMTP id p84-v6so20588718oic.4;
+        Sat, 25 Aug 2018 10:17:43 -0700 (PDT)
+X-Gm-Message-State: APzg51AdXjmi3m4HBsbjCmmVvdDhzF54LnmXGYPUZkaA1aeIZOooG+8x
+        4XrOLWVb417w/HpysxU41NI4TGqSI1tuhIG6d4Y=
+X-Google-Smtp-Source: ANB0Vdbk6/Z6hE8brk4U0xgiz6j3Nl+cXrQu69kXHjqri99Jv41/F1gJjd2w3vg/r578/NyUiHmUO7rJI4lWQMHBthY=
+X-Received: by 2002:a54:4f88:: with SMTP id g8-v6mr6141380oiy.191.1535217462661;
+ Sat, 25 Aug 2018 10:17:42 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180824213849.23647-1-Jason@zx2c4.com> <20180824213849.23647-3-Jason@zx2c4.com>
+ <CAKv+Gu-u7vPkU49AzToGHyf_cWp0MiOmpD3cRUt8260QC2wj-Q@mail.gmail.com> <20180825170629.GA8971@zx2c4.com>
+In-Reply-To: <20180825170629.GA8971@zx2c4.com>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Sat, 25 Aug 2018 11:17:31 -0600
+X-Gmail-Original-Message-ID: <CAHmME9oE-Gb94PqVE0Bvenf9OycZN50Th2-KZV7M==5vg7x5TA@mail.gmail.com>
+Message-ID: <CAHmME9oE-Gb94PqVE0Bvenf9OycZN50Th2-KZV7M==5vg7x5TA@mail.gmail.com>
+Subject: Re: [PATCH v2 02/17] zinc: introduce minimal cryptography library
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Neves <sneves@dei.uc.pt>,
+        Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All error handling paths in this function go through
-'iscsi_host_dec_session_cnt()' except this one.
-Fix it and properly decrement the number of active sessions in such a case.
+Pressed send too fast.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/scsi/libiscsi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/scsi/libiscsi.c b/drivers/scsi/libiscsi.c
-index 93c66ebad907..1fa7d6b77761 100644
---- a/drivers/scsi/libiscsi.c
-+++ b/drivers/scsi/libiscsi.c
-@@ -2803,7 +2803,7 @@ iscsi_session_setup(struct iscsi_transport *iscsit, struct Scsi_Host *shost,
- 		       "must be a power of 2.\n", total_cmds);
- 		total_cmds = rounddown_pow_of_two(total_cmds);
- 		if (total_cmds < ISCSI_TOTAL_CMDS_MIN)
--			return NULL;
-+			goto dec_session_count;
- 		printk(KERN_INFO "iscsi: Rounding can_queue to %d.\n",
- 		       total_cmds);
- 	}
--- 
-2.17.1
-
+On Sat, Aug 25, 2018 at 11:06 AM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+>   - https://www.wireguard.com/papers/wireguard-formal-verification.pdf
+>   - https://www.wireguard.com/papers/dowling-paterson-computational-2018.pdf
+>   - https://www.wireguard.com/formal-verification/
+- https://www.wireguard.com/papers/lipp-computational-2018.pdf
+- https://eprint.iacr.org/2018/766.pdf
