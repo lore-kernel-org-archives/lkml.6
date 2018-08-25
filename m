@@ -6,84 +6,201 @@ X-Spam-Status: No, score=-2.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
 	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B3F5C433F5
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 08:44:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39574C433F5
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 08:46:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D77F21477
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 08:44:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D77F21477
+	by mail.kernel.org (Postfix) with ESMTP id CC5BA21477
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 08:46:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC5BA21477
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726895AbeHYMWs (ORCPT
+        id S1726901AbeHYMYp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 25 Aug 2018 08:22:48 -0400
-Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:47501 "EHLO
+        Sat, 25 Aug 2018 08:24:45 -0400
+Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:29589 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725815AbeHYMWs (ORCPT
+        with ESMTP id S1725815AbeHYMYp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Aug 2018 08:22:48 -0400
+        Sat, 25 Aug 2018 08:24:45 -0400
 Received: from belgarion.home ([90.89.234.36])
         by mwinf5d41 with ME
-        id TLkR1y00h0nnJME03LkXDn; Sat, 25 Aug 2018 10:44:31 +0200
+        id TLmS1y0010nnJME03LmSMG; Sat, 25 Aug 2018 10:46:28 +0200
 X-ME-Helo: belgarion.home
 X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
-X-ME-Date: Sat, 25 Aug 2018 10:44:31 +0200
+X-ME-Date: Sat, 25 Aug 2018 10:46:28 +0200
 X-ME-IP: 90.89.234.36
 From:   Robert Jarzmik <robert.jarzmik@free.fr>
-To:     Robert Jarzmik <robert.jarzmik@free.fr>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] gpio: pxa: handle corner case of unprobed device
-Date:   Sat, 25 Aug 2018 10:44:17 +0200
-Message-Id: <20180825084417.13526-1-robert.jarzmik@free.fr>
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v9] ASoC: pxa: switch to new ac97 bus support
+Date:   Sat, 25 Aug 2018 10:46:18 +0200
+Message-Id: <20180825084618.13641-1-robert.jarzmik@free.fr>
 X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the corner case where the gpio driver probe fails, for whatever
-reason, the suspend and resume handlers will still be called as they
-have to be registered as syscore operations. This applies as well when
-no probe was called while the driver has been built in the kernel.
-
-Nicolas tracked this in :
-https://bugzilla.kernel.org/show_bug.cgi?id=200905
-
-Therefore, add a failsafe in these function, and test if a proper probe
-succeeded and the driver is functional.
+Switch to the new ac97 bus support in sound/ac97 instead of the legacy
+snd_ac97 one.
 
 Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
-Reported-by: Nicolas Chauvet <kwizart@gmail.com>
 ---
- drivers/gpio/gpio-pxa.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Since v8: fixed the trivial compilation error
+          v7 was in https://patchwork.kernel.org/patch/9951919/
+---
+ sound/arm/Kconfig           |  1 -
+ sound/soc/pxa/Kconfig       |  5 ++---
+ sound/soc/pxa/pxa2xx-ac97.c | 48 +++++++++++++++++++++++----------------------
+ 3 files changed, 27 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
-index c18712dabf93..bfe4c5c9f41c 100644
---- a/drivers/gpio/gpio-pxa.c
-+++ b/drivers/gpio/gpio-pxa.c
-@@ -776,6 +776,9 @@ static int pxa_gpio_suspend(void)
- 	struct pxa_gpio_bank *c;
- 	int gpio;
+diff --git a/sound/arm/Kconfig b/sound/arm/Kconfig
+index 5fbd47a9177e..28867732a318 100644
+--- a/sound/arm/Kconfig
++++ b/sound/arm/Kconfig
+@@ -31,7 +31,6 @@ endif	# SND_ARM
  
-+	if (!pchip)
-+		return 0;
-+
- 	for_each_gpio_bank(gpio, c, pchip) {
- 		c->saved_gplr = readl_relaxed(c->regbase + GPLR_OFFSET);
- 		c->saved_gpdr = readl_relaxed(c->regbase + GPDR_OFFSET);
-@@ -794,6 +797,9 @@ static void pxa_gpio_resume(void)
- 	struct pxa_gpio_bank *c;
- 	int gpio;
+ config SND_PXA2XX_LIB
+ 	tristate
+-	select SND_AC97_CODEC if SND_PXA2XX_LIB_AC97
+ 	select SND_DMAENGINE_PCM
  
-+	if (!pchip)
-+		return;
+ config SND_PXA2XX_LIB_AC97
+diff --git a/sound/soc/pxa/Kconfig b/sound/soc/pxa/Kconfig
+index 776e148b0aa2..29f577e6dfc0 100644
+--- a/sound/soc/pxa/Kconfig
++++ b/sound/soc/pxa/Kconfig
+@@ -19,14 +19,13 @@ config SND_MMP_SOC
+ 
+ config SND_PXA2XX_AC97
+ 	tristate
+-	select SND_AC97_CODEC
+ 
+ config SND_PXA2XX_SOC_AC97
+ 	tristate
+-	select AC97_BUS
++	select AC97_BUS_NEW
+ 	select SND_PXA2XX_LIB
+ 	select SND_PXA2XX_LIB_AC97
+-	select SND_SOC_AC97_BUS
++	select SND_SOC_AC97_BUS_NEW
+ 
+ config SND_PXA2XX_SOC_I2S
+ 	select SND_PXA2XX_LIB
+diff --git a/sound/soc/pxa/pxa2xx-ac97.c b/sound/soc/pxa/pxa2xx-ac97.c
+index 9f779657bc86..f8a3aa6c6d4e 100644
+--- a/sound/soc/pxa/pxa2xx-ac97.c
++++ b/sound/soc/pxa/pxa2xx-ac97.c
+@@ -17,6 +17,7 @@
+ #include <linux/dmaengine.h>
+ #include <linux/dma/pxa-dma.h>
+ 
++#include <sound/ac97/controller.h>
+ #include <sound/core.h>
+ #include <sound/ac97_codec.h>
+ #include <sound/soc.h>
+@@ -27,43 +28,35 @@
+ #include <mach/regs-ac97.h>
+ #include <mach/audio.h>
+ 
+-static void pxa2xx_ac97_warm_reset(struct snd_ac97 *ac97)
++static void pxa2xx_ac97_warm_reset(struct ac97_controller *adrv)
+ {
+ 	pxa2xx_ac97_try_warm_reset();
+ 
+ 	pxa2xx_ac97_finish_reset();
+ }
+ 
+-static void pxa2xx_ac97_cold_reset(struct snd_ac97 *ac97)
++static void pxa2xx_ac97_cold_reset(struct ac97_controller *adrv)
+ {
+ 	pxa2xx_ac97_try_cold_reset();
+ 
+ 	pxa2xx_ac97_finish_reset();
+ }
+ 
+-static unsigned short pxa2xx_ac97_legacy_read(struct snd_ac97 *ac97,
+-					      unsigned short reg)
++static int pxa2xx_ac97_read_actrl(struct ac97_controller *adrv, int slot,
++				  unsigned short reg)
+ {
+-	int ret;
+-
+-	ret = pxa2xx_ac97_read(ac97->num, reg);
+-	if (ret < 0)
+-		return 0;
+-	else
+-		return (unsigned short)(ret & 0xffff);
++	return pxa2xx_ac97_read(slot, reg);
+ }
+ 
+-static void pxa2xx_ac97_legacy_write(struct snd_ac97 *ac97,
+-				     unsigned short reg, unsigned short val)
++static int pxa2xx_ac97_write_actrl(struct ac97_controller *adrv, int slot,
++				   unsigned short reg, unsigned short val)
+ {
+-	int ret;
+-
+-	ret = pxa2xx_ac97_write(ac97->num, reg, val);
++	return pxa2xx_ac97_write(slot, reg, val);
+ }
+ 
+-static struct snd_ac97_bus_ops pxa2xx_ac97_ops = {
+-	.read	= pxa2xx_ac97_legacy_read,
+-	.write	= pxa2xx_ac97_legacy_write,
++static struct ac97_controller_ops pxa2xx_ac97_ops = {
++	.read	= pxa2xx_ac97_read_actrl,
++	.write	= pxa2xx_ac97_write_actrl,
+ 	.warm_reset	= pxa2xx_ac97_warm_reset,
+ 	.reset	= pxa2xx_ac97_cold_reset,
+ };
+@@ -233,6 +226,9 @@ MODULE_DEVICE_TABLE(of, pxa2xx_ac97_dt_ids);
+ static int pxa2xx_ac97_dev_probe(struct platform_device *pdev)
+ {
+ 	int ret;
++	struct ac97_controller *ctrl;
++	pxa2xx_audio_ops_t *pdata = pdev->dev.platform_data;
++	void **codecs_pdata;
+ 
+ 	if (pdev->id != -1) {
+ 		dev_err(&pdev->dev, "PXA2xx has only one AC97 port.\n");
+@@ -245,10 +241,14 @@ static int pxa2xx_ac97_dev_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	ret = snd_soc_set_ac97_ops(&pxa2xx_ac97_ops);
+-	if (ret != 0)
+-		return ret;
++	codecs_pdata = pdata ? pdata->codec_pdata : NULL;
++	ctrl = snd_ac97_controller_register(&pxa2xx_ac97_ops, &pdev->dev,
++					    AC97_SLOTS_AVAILABLE_ALL,
++					    codecs_pdata);
++	if (IS_ERR(ctrl))
++		return PTR_ERR(ctrl);
+ 
++	platform_set_drvdata(pdev, ctrl);
+ 	/* Punt most of the init to the SoC probe; we may need the machine
+ 	 * driver to do interesting things with the clocking to get us up
+ 	 * and running.
+@@ -259,8 +259,10 @@ static int pxa2xx_ac97_dev_probe(struct platform_device *pdev)
+ 
+ static int pxa2xx_ac97_dev_remove(struct platform_device *pdev)
+ {
++	struct ac97_controller *ctrl = platform_get_drvdata(pdev);
 +
- 	for_each_gpio_bank(gpio, c, pchip) {
- 		/* restore level with set/clear */
- 		writel_relaxed(c->saved_gplr, c->regbase + GPSR_OFFSET);
+ 	snd_soc_unregister_component(&pdev->dev);
+-	snd_soc_set_ac97_ops(NULL);
++	snd_ac97_controller_unregister(ctrl);
+ 	pxa2xx_ac97_hw_remove(pdev);
+ 	return 0;
+ }
 -- 
 2.11.0
 
