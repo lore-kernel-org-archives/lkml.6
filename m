@@ -2,205 +2,112 @@ Return-Path: <SRS0=itv6=LI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39574C433F5
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 08:46:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BD73C433F5
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 08:47:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC5BA21477
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 08:46:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC5BA21477
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
+	by mail.kernel.org (Postfix) with ESMTP id E24B62147E
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 08:47:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mnNI0E7Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E24B62147E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726901AbeHYMYp (ORCPT
+        id S1726958AbeHYM0C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 25 Aug 2018 08:24:45 -0400
-Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:29589 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725815AbeHYMYp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Aug 2018 08:24:45 -0400
-Received: from belgarion.home ([90.89.234.36])
-        by mwinf5d41 with ME
-        id TLmS1y0010nnJME03LmSMG; Sat, 25 Aug 2018 10:46:28 +0200
-X-ME-Helo: belgarion.home
-X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
-X-ME-Date: Sat, 25 Aug 2018 10:46:28 +0200
-X-ME-IP: 90.89.234.36
-From:   Robert Jarzmik <robert.jarzmik@free.fr>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v9] ASoC: pxa: switch to new ac97 bus support
-Date:   Sat, 25 Aug 2018 10:46:18 +0200
-Message-Id: <20180825084618.13641-1-robert.jarzmik@free.fr>
-X-Mailer: git-send-email 2.11.0
+        Sat, 25 Aug 2018 08:26:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36566 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725815AbeHYM0C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 25 Aug 2018 08:26:02 -0400
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2BBE621477;
+        Sat, 25 Aug 2018 08:47:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535186865;
+        bh=r1HLz70+/YUxsTyyYVX3Vcie3xf+ZixZI4ziD0a+qg8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=mnNI0E7QdebK/j4keCHnnScyZRpbWzbYBIvH5nRALYgKgRpTIABE28m15mfwOB0dB
+         l5CtAnjwpLZcRGTH0FaaslTttoSUkGDY7/BDx4rnNmujWl6PQ8epzq2MzXMTJ++tUU
+         QcMAULhP6irvtHoO+thLH+xMkMfzM/i//X+4nAEY=
+Date:   Sat, 25 Aug 2018 09:47:41 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Marcus Folkesson <marcus.folkesson@gmail.com>
+Cc:     Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Michael Welling <mwelling@ieee.org>
+Subject: Re: [PATCH] iio: dac: mcp4922: fix error handling in
+ mcp4922_write_raw
+Message-ID: <20180825094741.4581deb0@archlinux>
+In-Reply-To: <20180824202440.21754-1-marcus.folkesson@gmail.com>
+References: <20180824202440.21754-1-marcus.folkesson@gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch to the new ac97 bus support in sound/ac97 instead of the legacy
-snd_ac97 one.
+On Fri, 24 Aug 2018 22:24:40 +0200
+Marcus Folkesson <marcus.folkesson@gmail.com> wrote:
 
-Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
----
-Since v8: fixed the trivial compilation error
-          v7 was in https://patchwork.kernel.org/patch/9951919/
----
- sound/arm/Kconfig           |  1 -
- sound/soc/pxa/Kconfig       |  5 ++---
- sound/soc/pxa/pxa2xx-ac97.c | 48 +++++++++++++++++++++++----------------------
- 3 files changed, 27 insertions(+), 27 deletions(-)
+> Do not try to write negative values and make sure that the write goes well.
+> 
++CC Michael as it's his driver.
 
-diff --git a/sound/arm/Kconfig b/sound/arm/Kconfig
-index 5fbd47a9177e..28867732a318 100644
---- a/sound/arm/Kconfig
-+++ b/sound/arm/Kconfig
-@@ -31,7 +31,6 @@ endif	# SND_ARM
- 
- config SND_PXA2XX_LIB
- 	tristate
--	select SND_AC97_CODEC if SND_PXA2XX_LIB_AC97
- 	select SND_DMAENGINE_PCM
- 
- config SND_PXA2XX_LIB_AC97
-diff --git a/sound/soc/pxa/Kconfig b/sound/soc/pxa/Kconfig
-index 776e148b0aa2..29f577e6dfc0 100644
---- a/sound/soc/pxa/Kconfig
-+++ b/sound/soc/pxa/Kconfig
-@@ -19,14 +19,13 @@ config SND_MMP_SOC
- 
- config SND_PXA2XX_AC97
- 	tristate
--	select SND_AC97_CODEC
- 
- config SND_PXA2XX_SOC_AC97
- 	tristate
--	select AC97_BUS
-+	select AC97_BUS_NEW
- 	select SND_PXA2XX_LIB
- 	select SND_PXA2XX_LIB_AC97
--	select SND_SOC_AC97_BUS
-+	select SND_SOC_AC97_BUS_NEW
- 
- config SND_PXA2XX_SOC_I2S
- 	select SND_PXA2XX_LIB
-diff --git a/sound/soc/pxa/pxa2xx-ac97.c b/sound/soc/pxa/pxa2xx-ac97.c
-index 9f779657bc86..f8a3aa6c6d4e 100644
---- a/sound/soc/pxa/pxa2xx-ac97.c
-+++ b/sound/soc/pxa/pxa2xx-ac97.c
-@@ -17,6 +17,7 @@
- #include <linux/dmaengine.h>
- #include <linux/dma/pxa-dma.h>
- 
-+#include <sound/ac97/controller.h>
- #include <sound/core.h>
- #include <sound/ac97_codec.h>
- #include <sound/soc.h>
-@@ -27,43 +28,35 @@
- #include <mach/regs-ac97.h>
- #include <mach/audio.h>
- 
--static void pxa2xx_ac97_warm_reset(struct snd_ac97 *ac97)
-+static void pxa2xx_ac97_warm_reset(struct ac97_controller *adrv)
- {
- 	pxa2xx_ac97_try_warm_reset();
- 
- 	pxa2xx_ac97_finish_reset();
- }
- 
--static void pxa2xx_ac97_cold_reset(struct snd_ac97 *ac97)
-+static void pxa2xx_ac97_cold_reset(struct ac97_controller *adrv)
- {
- 	pxa2xx_ac97_try_cold_reset();
- 
- 	pxa2xx_ac97_finish_reset();
- }
- 
--static unsigned short pxa2xx_ac97_legacy_read(struct snd_ac97 *ac97,
--					      unsigned short reg)
-+static int pxa2xx_ac97_read_actrl(struct ac97_controller *adrv, int slot,
-+				  unsigned short reg)
- {
--	int ret;
--
--	ret = pxa2xx_ac97_read(ac97->num, reg);
--	if (ret < 0)
--		return 0;
--	else
--		return (unsigned short)(ret & 0xffff);
-+	return pxa2xx_ac97_read(slot, reg);
- }
- 
--static void pxa2xx_ac97_legacy_write(struct snd_ac97 *ac97,
--				     unsigned short reg, unsigned short val)
-+static int pxa2xx_ac97_write_actrl(struct ac97_controller *adrv, int slot,
-+				   unsigned short reg, unsigned short val)
- {
--	int ret;
--
--	ret = pxa2xx_ac97_write(ac97->num, reg, val);
-+	return pxa2xx_ac97_write(slot, reg, val);
- }
- 
--static struct snd_ac97_bus_ops pxa2xx_ac97_ops = {
--	.read	= pxa2xx_ac97_legacy_read,
--	.write	= pxa2xx_ac97_legacy_write,
-+static struct ac97_controller_ops pxa2xx_ac97_ops = {
-+	.read	= pxa2xx_ac97_read_actrl,
-+	.write	= pxa2xx_ac97_write_actrl,
- 	.warm_reset	= pxa2xx_ac97_warm_reset,
- 	.reset	= pxa2xx_ac97_cold_reset,
- };
-@@ -233,6 +226,9 @@ MODULE_DEVICE_TABLE(of, pxa2xx_ac97_dt_ids);
- static int pxa2xx_ac97_dev_probe(struct platform_device *pdev)
- {
- 	int ret;
-+	struct ac97_controller *ctrl;
-+	pxa2xx_audio_ops_t *pdata = pdev->dev.platform_data;
-+	void **codecs_pdata;
- 
- 	if (pdev->id != -1) {
- 		dev_err(&pdev->dev, "PXA2xx has only one AC97 port.\n");
-@@ -245,10 +241,14 @@ static int pxa2xx_ac97_dev_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	ret = snd_soc_set_ac97_ops(&pxa2xx_ac97_ops);
--	if (ret != 0)
--		return ret;
-+	codecs_pdata = pdata ? pdata->codec_pdata : NULL;
-+	ctrl = snd_ac97_controller_register(&pxa2xx_ac97_ops, &pdev->dev,
-+					    AC97_SLOTS_AVAILABLE_ALL,
-+					    codecs_pdata);
-+	if (IS_ERR(ctrl))
-+		return PTR_ERR(ctrl);
- 
-+	platform_set_drvdata(pdev, ctrl);
- 	/* Punt most of the init to the SoC probe; we may need the machine
- 	 * driver to do interesting things with the clocking to get us up
- 	 * and running.
-@@ -259,8 +259,10 @@ static int pxa2xx_ac97_dev_probe(struct platform_device *pdev)
- 
- static int pxa2xx_ac97_dev_remove(struct platform_device *pdev)
- {
-+	struct ac97_controller *ctrl = platform_get_drvdata(pdev);
-+
- 	snd_soc_unregister_component(&pdev->dev);
--	snd_soc_set_ac97_ops(NULL);
-+	snd_ac97_controller_unregister(ctrl);
- 	pxa2xx_ac97_hw_remove(pdev);
- 	return 0;
- }
--- 
-2.11.0
+I'll take this as it 'appears' straight forward but I won't be pushing
+it out as a non rebasing branch for a few days if I've missed anything.
+
+Applied to the togreg branch of iio.git and pushed out for now as testing
+for the autobuilders to play with it.
+
+Thanks,
+
+Jonathan
+
+> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+> ---
+>  drivers/iio/dac/mcp4922.c | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/iio/dac/mcp4922.c b/drivers/iio/dac/mcp4922.c
+> index bf9aa3fc0534..b5190d1dae8e 100644
+> --- a/drivers/iio/dac/mcp4922.c
+> +++ b/drivers/iio/dac/mcp4922.c
+> @@ -94,17 +94,22 @@ static int mcp4922_write_raw(struct iio_dev *indio_dev,
+>  		long mask)
+>  {
+>  	struct mcp4922_state *state = iio_priv(indio_dev);
+> +	int ret;
+>  
+>  	if (val2 != 0)
+>  		return -EINVAL;
+>  
+>  	switch (mask) {
+>  	case IIO_CHAN_INFO_RAW:
+> -		if (val > GENMASK(chan->scan_type.realbits-1, 0))
+> +		if (val < 0 || val > GENMASK(chan->scan_type.realbits - 1, 0))
+>  			return -EINVAL;
+>  		val <<= chan->scan_type.shift;
+> -		state->value[chan->channel] = val;
+> -		return mcp4922_spi_write(state, chan->channel, val);
+> +
+> +		ret = mcp4922_spi_write(state, chan->channel, val);
+> +		if (!ret)
+> +			state->value[chan->channel] = val;
+> +		return ret;
+> +
+>  	default:
+>  		return -EINVAL;
+>  	}
 
