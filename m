@@ -6,46 +6,44 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC5B7C433F4
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 14:18:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75EA4C433F5
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 14:27:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 659712170B
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 14:18:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 659712170B
+	by mail.kernel.org (Postfix) with ESMTP id 089E421766
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 14:27:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 089E421766
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hauke-m.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726970AbeHYRzv (ORCPT
+        id S1726934AbeHYSFu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 25 Aug 2018 13:55:51 -0400
-Received: from mx2.mailbox.org ([80.241.60.215]:36236 "EHLO mx2.mailbox.org"
+        Sat, 25 Aug 2018 14:05:50 -0400
+Received: from mx1.mailbox.org ([80.241.60.212]:47984 "EHLO mx1.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726555AbeHYRzv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Aug 2018 13:55:51 -0400
+        id S1726555AbeHYSFu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 25 Aug 2018 14:05:50 -0400
 Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id AAB8B4147A;
-        Sat, 25 Aug 2018 16:16:43 +0200 (CEST)
+        by mx1.mailbox.org (Postfix) with ESMTPS id 4239E48CB5;
+        Sat, 25 Aug 2018 16:26:41 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at heinlein-support.de
 Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter02.heinlein-hosting.de (spamfilter02.heinlein-hosting.de [80.241.56.116]) (amavisd-new, port 10030)
-        with ESMTP id 9lnmfpJ0vDZV; Sat, 25 Aug 2018 16:16:42 +0200 (CEST)
-Subject: Re: [PATCHv2 2/2] phy:phy-lantiq-rcu-usb2: Use PTR_ERR_OR_ZERO to
- replace the open coded version
-To:     zhong jiang <zhongjiang@huawei.com>, alcooperx@gmail.com,
-        kishon@ti.com, robh@kernel.org, ralf@linux-mips.org
-Cc:     f.fainelli@gmail.com, linux-kernel@vger.kernel.org
-References: <1534435135-49332-1-git-send-email-zhongjiang@huawei.com>
- <1534435135-49332-3-git-send-email-zhongjiang@huawei.com>
+        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
+        with ESMTP id wRpLuhN9WlgT; Sat, 25 Aug 2018 16:26:39 +0200 (CEST)
+Subject: Re: [PATCH] MIPS: BCM47XX: Enable USB power on Netgear WNDR3400v3
+To:     Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>,
+        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc:     linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
+References: <20180819192023.18463-1-tuomas.tynkkynen@iki.fi>
 From:   Hauke Mehrtens <hauke@hauke-m.de>
-Message-ID: <3de3eebf-4d28-5791-d0cf-e76290d630ce@hauke-m.de>
-Date:   Sat, 25 Aug 2018 16:16:40 +0200
+Message-ID: <8b81db2e-050f-c467-04b5-d81244f2f500@hauke-m.de>
+Date:   Sat, 25 Aug 2018 16:26:38 +0200
 MIME-Version: 1.0
-In-Reply-To: <1534435135-49332-3-git-send-email-zhongjiang@huawei.com>
+In-Reply-To: <20180819192023.18463-1-tuomas.tynkkynen@iki.fi>
 Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -53,32 +51,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 08/16/2018 05:58 PM, zhong jiang wrote:
-> PTR_ERR_OR_ZERO has implemented the if(IS_ERR(...)) + PTR_ERR, So
-> just replace them rather than duplicating its implement.
+On 08/19/2018 09:20 PM, Tuomas Tynkkynen wrote:
+> Setting GPIO 21 high seems to be required to enable power to USB ports
+> on the WNDR3400v3. As there is already similar code for WNR3500L,
+> make the existing USB power GPIO code generic and use that.
 > 
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+> Signed-off-by: Tuomas Tynkkynen <tuomas.tynkkynen@iki.fi>
+
+I didn't runtime tested this and didn't checked the board, but this
+looks good.
 
 Acked-by: Hauke Mehrtens <hauke@hauke-m.de>
 
 > ---
->  drivers/phy/lantiq/phy-lantiq-rcu-usb2.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+>  arch/mips/bcm47xx/workarounds.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/phy/lantiq/phy-lantiq-rcu-usb2.c b/drivers/phy/lantiq/phy-lantiq-rcu-usb2.c
-> index 986224f..a918c5b 100644
-> --- a/drivers/phy/lantiq/phy-lantiq-rcu-usb2.c
-> +++ b/drivers/phy/lantiq/phy-lantiq-rcu-usb2.c
-> @@ -196,10 +196,8 @@ static int ltq_rcu_usb2_of_parse(struct ltq_rcu_usb2_priv *priv,
->  	}
+> diff --git a/arch/mips/bcm47xx/workarounds.c b/arch/mips/bcm47xx/workarounds.c
+> index 1a8a07e7a563..46eddbec8d9f 100644
+> --- a/arch/mips/bcm47xx/workarounds.c
+> +++ b/arch/mips/bcm47xx/workarounds.c
+> @@ -5,9 +5,8 @@
+>  #include <bcm47xx_board.h>
+>  #include <bcm47xx.h>
 >  
->  	priv->phy_reset = devm_reset_control_get_optional(dev, "phy");
-> -	if (IS_ERR(priv->phy_reset))
-> -		return PTR_ERR(priv->phy_reset);
+> -static void __init bcm47xx_workarounds_netgear_wnr3500l(void)
+> +static void __init bcm47xx_workarounds_enable_usb_power(int usb_power)
+>  {
+> -	const int usb_power = 12;
+>  	int err;
 >  
-> -	return 0;
-> +	return PTR_ERR_OR_ZERO(priv->phy_reset);
->  }
+>  	err = gpio_request_one(usb_power, GPIOF_OUT_INIT_HIGH, "usb_power");
+> @@ -23,7 +22,10 @@ void __init bcm47xx_workarounds(void)
 >  
->  static int ltq_rcu_usb2_phy_probe(struct platform_device *pdev)
+>  	switch (board) {
+>  	case BCM47XX_BOARD_NETGEAR_WNR3500L:
+> -		bcm47xx_workarounds_netgear_wnr3500l();
+> +		bcm47xx_workarounds_enable_usb_power(12);
+> +		break;
+> +	case BCM47XX_BOARD_NETGEAR_WNDR3400_V3:
+> +		bcm47xx_workarounds_enable_usb_power(21);
+>  		break;
+>  	default:
+>  		/* No workaround(s) needed */
 > 
