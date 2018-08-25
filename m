@@ -2,201 +2,178 @@ Return-Path: <SRS0=itv6=LI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AEFDC433F5
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 04:16:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D673C433F4
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 04:23:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 974132147A
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 04:16:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C476208C4
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 04:23:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fbqGMDsy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 974132147A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vziqK7zk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C476208C4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726994AbeHYHyW (ORCPT
+        id S1727014AbeHYIBW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 25 Aug 2018 03:54:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54478 "EHLO mail.kernel.org"
+        Sat, 25 Aug 2018 04:01:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726138AbeHYHyW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Aug 2018 03:54:22 -0400
-Received: from sol.localdomain (c-67-185-97-198.hsd1.wa.comcast.net [67.185.97.198])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726110AbeHYIBW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 25 Aug 2018 04:01:22 -0400
+Received: from mail-wm0-f51.google.com (mail-wm0-f51.google.com [74.125.82.51])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F1BA208C3;
-        Sat, 25 Aug 2018 04:16:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AEDEA214AB
+        for <linux-kernel@vger.kernel.org>; Sat, 25 Aug 2018 04:23:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535170609;
-        bh=+4RbZxZYhoWETkpChCPyi+Q19qSeAE8r9IN8IOiuz20=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fbqGMDsyZatNKkI1a8ILNozo2pM23Qljj+9fMbwe4g7O4Q6dlUCCZnBSCf1Kv5mHw
-         I3YqIj8InHQYN5qzYrTsIq5H91xa1bRyVNuxNjs5pJNDxRQ1oG/Iqlez0S3UeKNmH3
-         rOyRI5wkPMIVlKHcCXmTX5fKc8J3DOIrfDfJb6UQ=
-Date:   Fri, 24 Aug 2018 21:16:48 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Gao Xiang <gaoxiang25@huawei.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Michael Halcrow <mhalcrow@google.com>,
-        linux-kernel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Victor Hsieh <victorhsieh@google.com>
-Subject: Re: [RFC PATCH 02/10] fs-verity: add data verification hooks for
- ->readpages()
-Message-ID: <20180825041647.GA726@sol.localdomain>
-References: <20180824161642.1144-1-ebiggers@kernel.org>
- <20180824161642.1144-3-ebiggers@kernel.org>
- <2f2382c3-e5e9-f0da-dc89-42dfc7b2b636@huawei.com>
+        s=default; t=1535171029;
+        bh=6zT9xyiKyS2ziClSfORdmfeZ4q27DCZxuAAy7ioWLOg=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=vziqK7zk2OgdfQy6bmm4Birm9sMTXfAjv85bYzlTNP4E41t+s4ioUf+oQyD9x2mi5
+         sTwoOuWt0RKRvtFGSiMcy3wQpPNo68+yv3U+HTGt3fG9cddWIPRQoMuje1Wv0q5miP
+         4M9w+Ur1PgTkIIwSgRWipjOGrWkbP1gi+SWeinSE=
+Received: by mail-wm0-f51.google.com with SMTP id y2-v6so3235401wma.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 21:23:48 -0700 (PDT)
+X-Gm-Message-State: APzg51CbD7sLDEb9xufXu8DqCsYU5bRKct5V9ZT/6/Gd5aF2rUc51h1x
+        p+y+mqPBZjb9vg6PFuPRZXMecBM3fzPX0N7WY1+TtA==
+X-Google-Smtp-Source: ANB0VdadjmTSB3h1z/KjJ5FvBTZz+mAx7+T51BN5WNGob54s3Jv0fC3uZIgnBdcmCzOMl6u/nzJYFlkAaZLI0YeO42U=
+X-Received: by 2002:a1c:ef0f:: with SMTP id n15-v6mr279711wmh.116.1535171027145;
+ Fri, 24 Aug 2018 21:23:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2f2382c3-e5e9-f0da-dc89-42dfc7b2b636@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a1c:548:0:0:0:0:0 with HTTP; Fri, 24 Aug 2018 21:23:26 -0700 (PDT)
+In-Reply-To: <8E0D8C66-6F21-4890-8984-B6B3082D4CC5@gmail.com>
+References: <20180822153012.173508681@infradead.org> <20180822154046.823850812@infradead.org>
+ <20180822155527.GF24124@hirez.programming.kicks-ass.net> <20180823134525.5f12b0d3@roar.ozlabs.ibm.com>
+ <CA+55aFxneZTFxxxAjLZmj92VUJg6z7hERxJ2cHoth-GC0RuELw@mail.gmail.com>
+ <776104d4c8e4fc680004d69e3a4c2594b638b6d1.camel@au1.ibm.com>
+ <CA+55aFzM77G9-Q6LboPLJ=5gHma66ZQKiMGCMqXoKABirdF98w@mail.gmail.com>
+ <20180823133958.GA1496@brain-police> <20180824084717.GK24124@hirez.programming.kicks-ass.net>
+ <D74A89DF-0D89-4AB6-8A6B-93BEC9A83595@gmail.com> <20180824180438.GS24124@hirez.programming.kicks-ass.net>
+ <56A9902F-44BE-4520-A17C-26650FCC3A11@gmail.com> <CA+55aFzerzTPm94jugheVmWg8dJre94yu+GyZGT9NNZanNx_qw@mail.gmail.com>
+ <9A38D3F4-2F75-401D-8B4D-83A844C9061B@gmail.com> <CA+55aFz1KYT7fRRG98wei24spiVg7u1Ec66piWY5359ykFmezw@mail.gmail.com>
+ <8E0D8C66-6F21-4890-8984-B6B3082D4CC5@gmail.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Fri, 24 Aug 2018 21:23:26 -0700
+X-Gmail-Original-Message-ID: <CALCETrWdeKBcEs7zAbpEM1YdYiT2UBXwPtF0mMTvcDX_KRpz1A@mail.gmail.com>
+Message-ID: <CALCETrWdeKBcEs7zAbpEM1YdYiT2UBXwPtF0mMTvcDX_KRpz1A@mail.gmail.com>
+Subject: Re: TLB flushes on fixmap changes
+To:     Nadav Amit <nadav.amit@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Benjamin Herrenschmidt <benh@au1.ibm.com>,
+        Nick Piggin <npiggin@gmail.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Rik van Riel <riel@surriel.com>,
+        Jann Horn <jannh@google.com>,
+        Adin Scannell <ascannell@google.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        David Miller <davem@davemloft.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gao,
+On Fri, Aug 24, 2018 at 7:29 PM,  <nadav.amit@gmail.com> wrote:
+>
+>
+> On August 24, 2018 5:58:43 PM PDT, Linus Torvalds <torvalds@linux-foundation.org> wrote:
+>>Adding a few people to the cc.
+>>
+>>On Fri, Aug 24, 2018 at 1:24 PM Nadav Amit <nadav.amit@gmail.com>
+>>wrote:
+>>> >
+>>> > Can you actually find something that changes the fixmaps after boot
+>>> > (again, ignoring kmap)?
+>>>
+>>> At least the alternatives mechanism appears to do so.
+>>>
+>>> IIUC the following path is possible when adding a module:
+>>>
+>>>         jump_label_add_module()
+>>>         ->__jump_label_update()
+>>>         ->arch_jump_label_transform()
+>>>         ->__jump_label_transform()
+>>>         ->text_poke_bp()
+>>>         ->text_poke()
+>>>         ->set_fixmap()
+>>
+>>Yeah, that looks a bit iffy.
+>>
+>>But making the tlb flush global wouldn't help.  This is running on a
+>>local core, and if there are other CPU's that can do this at the same
+>>time, then they'd just fight about the same mapping.
+>>
+>>Honestly, I think it's ok just because I *hope* this is all serialized
+>>anyway (jump_label_lock? But what about other users of text_poke?).
+>
+> The users should hold text_mutex.
+>
+>>
+>>But I'd be a lot happier about it if it either used an explicit lock
+>>to make sure, or used per-cpu fixmap entries.
+>
+> My concern is that despite the lock, one core would do a speculative page walk and cache a translation that soon after would become stale.
+>
+>>
+>>And the tlb flush is done *after* the address is used, which is bogus
+>>anyway.
+>
+> It seems to me that it is intended to remove the mapping that might be a security issue.
+>
+> But anyhow, set_fixmap and clear_fixmap perform a local TLB flush, (in __set_pte_vaddr()) so locally things should be fine.
+>
+>>
+>>> And a similar path can happen when static_key_enable/disable() is
+>>called.
+>>
+>>Same comments.
+>>
+>>How about replacing that
+>>
+>>        local_irq_save(flags);
+>>       ... do critical things here ...
+>>        local_irq_restore(flags);
+>>
+>>in text_poke() with
+>>
+>>        static DEFINE_SPINLOCK(poke_lock);
+>>
+>>        spin_lock_irqsave(&poke_lock, flags);
+>>       ... do critical things here ...
+>>        spin_unlock_irqrestore(&poke_lock, flags);
+>>
+>>and moving the local_flush_tlb() to after the set_fixmaps, but before
+>>the access through the virtual address.
+>>
+>>But changing things to do a global tlb flush would just be wrong.
+>
+> As I noted, I think that locking and local flushes as they are right now are fine (besides the redundant flush).
+>
+> My concern is merely that speculative page walks on other cores would cache stale entries.
+>
+>
 
-On Sat, Aug 25, 2018 at 10:29:26AM +0800, Gao Xiang wrote:
-> Hi,
-> 
-> On 2018/8/25 0:16, Eric Biggers wrote:
-> > +/**
-> > + * fsverity_verify_page - verify a data page
-> > + *
-> > + * Verify a page that has just been read from a file against that file's Merkle
-> > + * tree.  The page is assumed to be a pagecache page.
-> > + *
-> > + * Return: true if the page is valid, else false.
-> > + */
-> > +bool fsverity_verify_page(struct page *data_page)
-> > +{
-> > +	struct inode *inode = data_page->mapping->host;
-> > +	const struct fsverity_info *vi = get_fsverity_info(inode);
-> > +	struct ahash_request *req;
-> > +	bool valid;
-> > +
-> > +	req = ahash_request_alloc(vi->hash_alg->tfm, GFP_KERNEL);
-> > +	if (unlikely(!req))
-> > +		return false;
-> > +
-> > +	valid = verify_page(inode, vi, req, data_page);
-> > +
-> > +	ahash_request_free(req);
-> > +
-> > +	return valid;
-> > +}
-> > +EXPORT_SYMBOL_GPL(fsverity_verify_page);
-> > +
-> > +/**
-> > + * fsverity_verify_bio - verify a 'read' bio that has just completed
-> > + *
-> > + * Verify a set of pages that have just been read from a file against that
-> > + * file's Merkle tree.  The pages are assumed to be pagecache pages.  Pages that
-> > + * fail verification are set to the Error state.  Verification is skipped for
-> > + * pages already in the Error state, e.g. due to fscrypt decryption failure.
-> > + */
-> > +void fsverity_verify_bio(struct bio *bio)
-> > +{
-> > +	struct inode *inode = bio_first_page_all(bio)->mapping->host;
-> > +	const struct fsverity_info *vi = get_fsverity_info(inode);
-> > +	struct ahash_request *req;
-> > +	struct bio_vec *bv;
-> > +	int i;
-> > +
-> > +	req = ahash_request_alloc(vi->hash_alg->tfm, GFP_KERNEL);
-> > +	if (unlikely(!req)) {
-> > +		bio_for_each_segment_all(bv, bio, i)
-> > +			SetPageError(bv->bv_page);
-> > +		return;
-> > +	}
-> > +
-> > +	bio_for_each_segment_all(bv, bio, i) {
-> > +		struct page *page = bv->bv_page;
-> > +
-> > +		if (!PageError(page) && !verify_page(inode, vi, req, page))
-> > +			SetPageError(page);
-> > +	}
-> > +
-> > +	ahash_request_free(req);
-> > +}
-> > +EXPORT_SYMBOL_GPL(fsverity_verify_bio);
-> 
-> Out of curiosity, I quickly scanned the fs-verity source code and some minor question out there....
-> 
-> If something is wrong, please point out, thanks in advance...
-> 
-> My first question is that 'Is there any way to skip to verify pages in a bio?'
-> I am thinking about
-> If metadata and data page are mixed in a filesystem of such kind, they could submit together in a bio, but metadata could be unsuitable for such kind of verification.
-> 
+This is almost certainly a bug, or even two bugs.  Bug 1:  why on
+Earth do we flush in __set_pte_vaddr()?  We should flush when
+*clearing* or when modifying an existing fixmap entry.  Right now, if
+we do text_poke() after boot, then the TLB entry will stick around and
+will be a nice exploit target.
 
-Pages below i_size are verified, pages above are not.
+Bug 2: what you're describing.  It's racy.
 
-With my patches, ext4 and f2fs won't actually submit pages in both areas in the
-same bio, and they won't call the fs-verity verification function for bios in
-the data area.  But even if they did, there's also a check in verify_page() that
-skips the verification if the page is above i_size.
-
-> The second question is related to the first question --- 'Is there any way to verify a partial page?'
-> Take scalability into consideration, some files could be totally inlined or partially inlined in metadata.
-> Is there any way to deal with them in per-file approach? at least --- support for the interface?
-
-Well, one problem is that inline data has its own separate I/O path; see
-ext4_readpage_inline() and f2fs_read_inline_data().  So it would be a large
-effort to support features like encryption and verity which require
-postprocessing after reads, and probably not worthwhile especially for verity
-which is primarily intended for large files.
-
-A somewhat separate question is whether the zero padding to a block boundary
-after i_size, before the Merkle tree begins, is needed.  The answer is yes,
-since mixing data and metadata in the same page would cause problems.  First,
-userspace would be able to mmap the page and see some of the metadata rather
-than zeroes.  That's not a huge problem, but it breaks the standard behavior.
-Second, any page containing data cannot be set Uptodate until it's been
-verified.  So, a special case would be needed to handle reading the part of the
-metadata that's located in a data page.
-
-> At last, I hope filesystems could select the on-disk position of hash tree and 'struct fsverity_descriptor'
-> rather than fixed in the end of verity files...I think if fs-verity preparing such support and interfaces could be better.....hmmm... :(
-
-In theory it would be a much cleaner design to store verity metadata separately
-from the data.  But the Merkle tree can be very large.  For example, a 1 GB file
-using SHA-512 would have a 16.6 MB Merkle tree.  So the Merkle tree can't be an
-extended attribute, since the xattrs API requires xattrs to be small (<= 64 KB),
-and most filesystems further limit xattr sizes in their on-disk format to as
-little as 4 KB.  Furthermore, even if both of these limits were to be increased,
-the xattrs functions (both the syscalls, and the internal functions that
-filesystems have) are all based around getting/setting the entire xattr value.
-
-Also when used with fscrypt, we want the Merkle tree and fsverity_descriptor to
-be encrypted, so they doesn't leak plaintext hashes.  And we want the Merkle
-tree to be paged into memory, just like the file contents, to take advantage of
-the usual Linux memory management.
-
-What we really need is *streams*, like NTFS has.  But the filesystems we're
-targetting don't support streams, nor does the Linux syscall interface have any
-API for accessing streams, nor does the VFS support them.
-
-Adding streams support to all those things would be a huge multi-year effort,
-controversial, and almost certainly not worth it just for fs-verity.
-
-So simply storing the verity metadata past i_size seems like the best solution
-for now.
-
-That being said, in the future we could pretty easily swap out the calls to
-read_mapping_page() with something else if a particular filesystem wanted to
-store the metadata somewhere else.  We actually even originally had a function
-->read_metadata_page() in the filesystem's fsverity_operations, but it turned
-out to be unnecessary and I replaced it with directly calling
-read_mapping_page(), but it could be changed back at any time.
-
-- Eric
+Couldn't text_poke() use kmap_atomic()?  Or, even better, just change CR3?
