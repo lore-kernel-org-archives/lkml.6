@@ -2,100 +2,107 @@ Return-Path: <SRS0=itv6=LI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C174C433F5
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 01:29:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8CAAC433F5
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 01:33:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC64821581
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 01:29:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NwyFPh3R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC64821581
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 406D121581
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 01:33:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 406D121581
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=freedesktop.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726630AbeHYFGi (ORCPT
+        id S1726785AbeHYFKG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 25 Aug 2018 01:06:38 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:39509 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725958AbeHYFGi (ORCPT
+        Sat, 25 Aug 2018 01:10:06 -0400
+Received: from mail.bsd-unix.net ([65.175.82.195]:41628 "EHLO
+        mail.bsd-unix.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbeHYFKG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Aug 2018 01:06:38 -0400
-Received: by mail-io0-f196.google.com with SMTP id l7-v6so8573733iok.6
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 18:29:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=GLYFUksMrLJJl8xdEo5zQsPHTOFGj4tqAV7rw+tNSas=;
-        b=NwyFPh3ROuhZvVO+g58uvaf/72vVb7uuECuPdZrKYsAXMu0tIbWxUvn4duLpwjA2S/
-         pr6nA+8U+CljKyM7uObCdjmpubu27ld15C/hsXVayHkDwPIwbF3yISPT1cv5DmpO81IB
-         GuI+vhTBBcaLPILnCkPYzz1FdtH9jvNhXHDhby26F331e1Yp/9kLHBOzPL8sV6dJyAZG
-         pTdqD9GGSVAIE9bWcqgreBuLTevvv3FMQajXQ8cCKNBJEmNAPCoNaeseJ2twrMbNtLPT
-         ENHnqnVlO+C8kcJUM1FYzzBpzmo8UAy506WXq9s3T1R4U9ZcwZ7MrbDKmWqp98BJUZw3
-         5ilg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=GLYFUksMrLJJl8xdEo5zQsPHTOFGj4tqAV7rw+tNSas=;
-        b=MC1i1UfMDoAm5Bezv/h9BxreUN1zsepIidIwfJAFIHJp2+SzSrN/ZxoQXm7SzrKPJi
-         wF/pjLgQsIcGBO9k7qkxs2UUwuwzW/1pMRkH4gIyoh7cFoAHZX2kKsf2+bkwEsmTBVKB
-         NWEm0MIukdlLC0XC1GwCMpZq9f10q16x97KExAvgsGG+mrstVRvXPa786jhoBr74qxpw
-         pQsjPsgFLT7Q/HCSbhw73tIO59USgb8KfOYCjOvSyu6TN0V48/40RkpENiXgZQ6o6THs
-         sv5ZK03MjrN+9istPYegyLORxQls4KLA0xU+ivcnT5g9biJkKyq0FDtQH3p3lRFXgav0
-         X1Ug==
-X-Gm-Message-State: APzg51DtVHg1dtj2RwhR91+dKBJvUAMhYeStQ+V+LuPwPvM7fWAc3ele
-        BTQW95uUnOi+XQm49BTBD9009cFN6x1g9gm4pUwhGeeXPjY=
-X-Google-Smtp-Source: ANB0VdZPKb9QX5HWEAQkpvY9DFbgWR5yFrtVvr04MYEjn3Sg8mH/3OxBvGEP5CyjwqfiIVJvsxpwjSErO1XA6Vdyg84=
-X-Received: by 2002:a6b:c694:: with SMTP id w142-v6mr2975575iof.142.1535160573530;
- Fri, 24 Aug 2018 18:29:33 -0700 (PDT)
+        Sat, 25 Aug 2018 01:10:06 -0400
+X-Greylist: delayed 386 seconds by postgrey-1.27 at vger.kernel.org; Sat, 25 Aug 2018 01:10:06 EDT
+Received: from vlee-ubuntu.corp.dropbox.com (unknown [4.16.47.227])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: mailrelay)
+        by mail.bsd-unix.net (Postfix) with ESMTPSA id 5FA801C00D7;
+        Fri, 24 Aug 2018 21:26:36 -0400 (EDT)
+From:   Vinson Lee <vlee@freedesktop.org>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        Sowmini Varadhan <sowmini.varadhan@oracle.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Ka-Cheong Poon <ka-cheong.poon@oracle.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH] uapi: Fix linux/rds.h userspace compilation errors.
+Date:   Fri, 24 Aug 2018 18:26:56 -0700
+Message-Id: <20180825012656.12443-1-vlee@freedesktop.org>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-From:   xin tan <tanxin0725@gmail.com>
-Date:   Sat, 25 Aug 2018 09:29:22 +0800
-Message-ID: <CAPt3h3XTjAY5v-_-VB2ud8wHQUDcRe8hjhHzW+03=j08zPbh6w@mail.gmail.com>
-Subject: Ask for your comment for our research: Reducing the Workload of the
- Linux Kernel Maintainers: Multiple-Committer Model
-To:     linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
-I am a Ph.D. student from China. Our research team is dedicated to
-helping FLOSS ecosystems have healthy and sustainable development. The
-Linux kernel is one of the key study cases for us because as a
-prominent FLOSS project, the Linux kernel has many unique practices.
-Recently, we observed that increasing numbers of contributors to the
-Linux kernel have concerns regarding whether the development process
-(workflow) can handle the current mass of patches and even more
-patches in the future. While the workflow gives maintainers many
-rights, it also places significant pressure on them, which bears the
-risk of a single point of failure. We investigated the effect of a new
-model, the multiple-committer model, which is currently used by the
-i915 subsystem to alleviate the burden on its maintainer. We find that
-this model can reduce the proportion of the review workload of the
-busiest maintainer, reduce the review latency and maintainers'
-overwork, and simplify the review network. The review process is
-strictly enforced to guarantee the quality of patches. Subsystems with
-usage demands, mechanisms for ensuring patch quality, and candidate
-committers are suitable for the model. Sufficient precommit testing, a
-strict review process, necessary documentation, and the use of
-automatic tools are important practices to follow when applying the
-model.
-We hope our work would help other subsystems extract valuable
-information and optimize their workflow to achieve a more efficient
-review process and sustain themselves in a constantly changing,
-complicated environment. We uploaded the draft paper at
-"https://github.com/SunflowerPKU/Reducing-the-Workload-of-the-Linux-Kernel-Maintainers-Multiple-Committer-Model/blob/master/reduce-workload-linux.pdf".
-If you are interested in this topic, please take a moment to
-understand our work. We are looking forward to your comments and
-suggestions.
+Include linux/in6.h for struct in6_addr.
 
-Best regard,
-Xin Tan
+/usr/include/linux/rds.h:156:18: error: field ‘laddr’ has incomplete type
+  struct in6_addr laddr;
+                  ^~~~~
+/usr/include/linux/rds.h:157:18: error: field ‘faddr’ has incomplete type
+  struct in6_addr faddr;
+                  ^~~~~
+/usr/include/linux/rds.h:178:18: error: field ‘laddr’ has incomplete type
+  struct in6_addr laddr;
+                  ^~~~~
+/usr/include/linux/rds.h:179:18: error: field ‘faddr’ has incomplete type
+  struct in6_addr faddr;
+                  ^~~~~
+/usr/include/linux/rds.h:198:18: error: field ‘bound_addr’ has incomplete type
+  struct in6_addr bound_addr;
+                  ^~~~~~~~~~
+/usr/include/linux/rds.h:199:18: error: field ‘connected_addr’ has incomplete type
+  struct in6_addr connected_addr;
+                  ^~~~~~~~~~~~~~
+/usr/include/linux/rds.h:219:18: error: field ‘local_addr’ has incomplete type
+  struct in6_addr local_addr;
+                  ^~~~~~~~~~
+/usr/include/linux/rds.h:221:18: error: field ‘peer_addr’ has incomplete type
+  struct in6_addr peer_addr;
+                  ^~~~~~~~~
+/usr/include/linux/rds.h:245:18: error: field ‘src_addr’ has incomplete type
+  struct in6_addr src_addr;
+                  ^~~~~~~~
+/usr/include/linux/rds.h:246:18: error: field ‘dst_addr’ has incomplete type
+  struct in6_addr dst_addr;
+                  ^~~~~~~~
+
+Fixes: b7ff8b1036f0 ("rds: Extend RDS API for IPv6 support")
+Signed-off-by: Vinson Lee <vlee@freedesktop.org>
+---
+ include/uapi/linux/rds.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/uapi/linux/rds.h b/include/uapi/linux/rds.h
+index dc520e1a4123..8b73cb603c5f 100644
+--- a/include/uapi/linux/rds.h
++++ b/include/uapi/linux/rds.h
+@@ -37,6 +37,7 @@
+ 
+ #include <linux/types.h>
+ #include <linux/socket.h>		/* For __kernel_sockaddr_storage. */
++#include <linux/in6.h>			/* For struct in6_addr. */
+ 
+ #define RDS_IB_ABI_VERSION		0x301
+ 
+-- 
+2.17.1
+
