@@ -2,151 +2,501 @@ Return-Path: <SRS0=itv6=LI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DE9DC433F4
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 21:11:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01FD3C433F4
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 21:20:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0566920652
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 21:11:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 848C82147D
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 21:20:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="iNqz6gKu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0566920652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pados.hu header.i=@pados.hu header.b="bLYuc8DV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 848C82147D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=pados.hu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbeHZAv3 (ORCPT
+        id S1726891AbeHZBAk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 25 Aug 2018 20:51:29 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:38476 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726428AbeHZAv3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Aug 2018 20:51:29 -0400
-Received: by mail-lf1-f68.google.com with SMTP id i7-v6so9128778lfh.5
-        for <linux-kernel@vger.kernel.org>; Sat, 25 Aug 2018 14:11:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=dvd4Ml9kGEKoh6mxbHvryBDCiZLfRpN9NBpPfZ4qgTA=;
-        b=iNqz6gKu+CkN4tr41eYSMcyCZ9ilXEkFOMYyDdYUZ0r6snzYCjYu51Ounvf4a0sDLb
-         wbb+3w9CCiDNtPG7bDx1KVmNYhDtGsjTFC3QbQ1zr1aKv01VTLGz/bsNJOUxT54AMrVF
-         Zq4505blxpAkJb6rTUMzzXNbWl5VFCsdPemApKSAS/Bnt3+16FF4Bz38rfiEF0UmUsLB
-         s9bvM/0EvlkyLDw3K8DpXbATauWvx3flwrXxUhbJQCQy+6vwwCdNYv3DOCduFuGthRzn
-         mhHdJWUwY11GKf/POZTKKVWbzfyR1f4t/YIu2sohX5prnztZYsAsM8IF767CDD4+lKTG
-         ngKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=dvd4Ml9kGEKoh6mxbHvryBDCiZLfRpN9NBpPfZ4qgTA=;
-        b=EPR4bbac78gaVPvi2nnpGi2a2QaIZdwHXv6HtTgEDTY/hGyrTRk20i1qZpOKOQizi9
-         dtOSvyx6WmKSD880IOvvNAvK0woHppKrRyLEs/fnE0XuF+MZ0LurDXWtG3xhTiKTlCJU
-         2kLGigNqOO3MO8Q/QLcEqeHCtLC8NG0Biw3tiBa/qXaVWv3EUFUc+bTNgH9qv6Yb3m+F
-         GgqFR/lxdF002HsSv8FWbfzqgUEvE2oG1jG+jUxM9wfKxq0enfCONaq9BGud/gH/GKsD
-         2KhQ5JybdAdECyWb3UQsuRe05W7EVAie4+chRp+ImeIHjG8fLNlkGYZtMXoX3nFN9NI5
-         PWhw==
-X-Gm-Message-State: APzg51Ap8Xwo/23py8zR+VbJp6UKorskByMTu4G/lCD/g9N2PBf9E/r/
-        tW+rWLHtSqXJsB//nssib4yUjw==
-X-Google-Smtp-Source: ANB0Vdav71E+cGoou49zrAl5o6J3/pZ64OYTXjnnZLPLWx2QIjC3nsqjj5lIZ0wntZALf2wlYYGLaQ==
-X-Received: by 2002:a19:9355:: with SMTP id v82-v6mr4423493lfd.134.1535231480389;
-        Sat, 25 Aug 2018 14:11:20 -0700 (PDT)
-Received: from localhost (h85-30-9-151.cust.se.alltele.net. [85.30.9.151])
-        by smtp.gmail.com with ESMTPSA id d6-v6sm1976016lfb.30.2018.08.25.14.11.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 25 Aug 2018 14:11:17 -0700 (PDT)
-Date:   Sat, 25 Aug 2018 12:29:27 -0700
-From:   Olof Johansson <olof@lixom.net>
-To:     torvalds@linux-foundation.org
-Cc:     olof@lixom.net, arm@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] ARM: SoC late branch
-Message-ID: <20180825192927.votock3x5zpwplzo@localhost>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Sat, 25 Aug 2018 21:00:40 -0400
+Received: from erza.pados.hu ([176.9.136.194]:41844 "EHLO erza.pados.hu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726616AbeHZBAk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 25 Aug 2018 21:00:40 -0400
+X-Greylist: delayed 1948 seconds by postgrey-1.27 at vger.kernel.org; Sat, 25 Aug 2018 21:00:37 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=pados.hu;
+         s=february2016; h=Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=ZuR0uW0jIASj+WT+8qFVC5eSBbsC285pj0PxXDMh0rQ=; b=bLYuc8DVu0ek0qzRdzrL6eHCXM
+        ltTbFrdoWGN47PBhWoFbr6ipEMwnWJe4fTzxTR+M/TKXv5RqhFONdeZIS6QwYoJNyjR1Kbv+6dFZB
+        BPrXfs0aU2pSpJt7v6VjN7iOWvUmZ+Os0CsP+PBk5jBgJu6ZKl5pbS5v4PS8P101SnUbbfIT+76ho
+        k1rcF1omI74JYNejY13Zf6b+OXA3KjQrHmmbrw6BEyuikECiTMCLhMo/o0m10brYFRug90S6vhVQW
+        3pjYy9Kn/pZ+dG9F47PCMCvBoe8m/Mb5V7SDENdtIo1HGvoZkKdXELSXwe/MrBBP9q046fX11XxeX
+        2cAMQANQ==;
+Received: from 4f7a7acb.dsl.pool.telekom.hu ([79.122.122.203] helo=localhost)
+        by erza with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <pados@pados.hu>)
+        id 1ftfTX-0003yc-2o; Sat, 25 Aug 2018 22:48:03 +0200
+From:   Karoly Pados <pados@pados.hu>
+To:     "Johan Hovold" <johan@kernel.org>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Karoly Pados <pados@pados.hu>
+Subject: [PATCH] USB: serial: ftdi_sio: implement GPIO support for FT230X
+Date:   Sat, 25 Aug 2018 22:47:44 +0200
+Message-Id: <20180825204744.2307-1-pados@pados.hu>
+X-Mailer: git-send-email 2.18.0
+X-Spam_score: -2.9
+X-Spam_report: Spam detection software, running on the system "erza",
+ has NOT identified this incoming email as spam.  The original
+ message has been attached to this so you can view it or label
+ similar future email.  If you have any questions, see
+ the administrator of that system for details.
+ Content preview:  This patch uses the CBUS bitbang mode of the device, so there
+    is no conflict between the GPIO and VCP functionality. Signed-off-by: Karoly
+    Pados <pados@pados.hu> --- Tested on an FT230X device. Though there is no
+    copied code from other sources, libftdi was used as a reference. [...] 
+ Content analysis details:   (-2.9 points, 5.0 required)
+  pts rule name              description
+ ---- ---------------------- --------------------------------------------------
+ -1.0 ALL_TRUSTED            Passed through trusted hosts only via SMTP
+  0.0 URIBL_BLOCKED          ADMINISTRATOR NOTICE: The query to URIBL was blocked.
+                             See
+                             http://wiki.apache.org/spamassassin/DnsBlocklists#dnsbl-block
+                              for more information.
+                             [URIs: checkpatch.pl]
+ -1.9 BAYES_00               BODY: Bayes spam probability is 0 to 1%
+                             [score: 0.0000]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+This patch uses the CBUS bitbang mode of the device, so there is
+no conflict between the GPIO and VCP functionality.
 
-The following changes since commit 29ed45fff05899f6f39d05fe1c32b1bc51f8926b:
+Signed-off-by: Karoly Pados <pados@pados.hu>
+---
 
-  Merge tag 'v4.18-next-soc' of https://git.kernel.org/pub/scm/linux/kernel/git/matthias.bgg/linux into next/drivers (2018-07-26 13:08:01 -0700)
+Tested on an FT230X device. Though there is no copied code from other 
+sources, libftdi was used as a reference.
 
-are available in the git repository at:
+I noticed there have been numerous historic attempts by other people at 
+adding GPIO support to ftdi_sio. One tried adding it in some very 
+application-specific way, another one tried to use the mfd framework, the
+tried using a GPIO mode which is mutually exclusive to VCP, another
+one did not implement the review results etc... I hope I learned from those 
+attempts and am planning to respond to reviews. Also, this patch follows 
+the rough structure of the GPIO support for cp210x devices that have 
+already been accepted, in the hope that it is a good starting point.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git tags/armsoc-late
+This patch uses CBUS bitbanging mode, which works nicely in parallel with
+the VCP function. The other modes do not, and so IMHO it does not make
+sense to try adding them to this same module.
 
-for you to fetch changes up to 1aa55ca9b14af6cfd987ce4fdaf548f7067a5d07:
+For this device, whenever changing the state of any single pin, all the
+others need to be written too. This means in order to change any pin, we 
+need to know the current state of all the others. So when using GPIO,
+we need to have a known starting state for all pins, but there seems to 
+be no way to retrieve the existing GPIO configuration (directions and
+output register values). The way I handle this in this patch is that when
+requesting a GPIO for the first time, the module initializes all pins to 
+a known default state (to inputs). Input was chosen, because a potentially
+floating pin is better than a potential driver conflict, because the latter
+could result in hardware damage. However, if the user does not request a 
+GPIO, the CBUS pins are not initialized, avoiding unnecessarily changing 
+hardware state. I figured I cannot rely on the default power-on state of
+the device for this as the user might have used libftdi before loading 
+our module. When the module is unloaded, CBUS bitbanging mode is exited 
+if it were us who entered it earlier.
 
-  iommu/rockchip: Move irq request past pm_runtime_enable (2018-08-24 08:50:32 -0700)
+checkpatch.pl emits a bunch of warnings, recommending const for structs. 
+I am unsure if this makes sense, existing code in this same and also
+other modules does not adhere to this rule either. I fixed everything else.
 
-----------------------------------------------------------------
-ARM: SoC: late updates
 
-A couple of late-merged changes that would be useful to get in this
-merge window:
+ drivers/usb/serial/ftdi_sio.c | 284 +++++++++++++++++++++++++++++++++-
+ drivers/usb/serial/ftdi_sio.h |  25 +++
+ 2 files changed, 308 insertions(+), 1 deletion(-)
 
- - Driver support for reset of audio complex on Meson platforms. The
-   audio driver went in this merge window, and these changes have been
-   in -next for a while (just not in our tree).
+diff --git a/drivers/usb/serial/ftdi_sio.c b/drivers/usb/serial/ftdi_sio.c
+index b5cef322826f..d1ff4a372b6e 100644
+--- a/drivers/usb/serial/ftdi_sio.c
++++ b/drivers/usb/serial/ftdi_sio.c
+@@ -40,6 +40,9 @@
+ #include <linux/usb.h>
+ #include <linux/serial.h>
+ #include <linux/usb/serial.h>
++#ifdef CONFIG_GPIOLIB
++#include <linux/gpio/driver.h>
++#endif
+ #include "ftdi_sio.h"
+ #include "ftdi_sio_ids.h"
+ 
+@@ -72,6 +75,14 @@ struct ftdi_private {
+ 	unsigned int latency;		/* latency setting in use */
+ 	unsigned short max_packet_size;
+ 	struct mutex cfg_lock; /* Avoid mess by parallel calls of config ioctl() and change_speed() */
++#ifdef CONFIG_GPIOLIB
++	struct gpio_chip gc;
++	bool	gpio_registered;  /* is the gpiochip in kernel registered */
++	bool	gpio_used;	  /* true if the user requested a gpio */
++	u8	gpio_altfunc;	  /* which pins are in gpio mode */
++	u8	gpio_input;	  /* pin directions cache */
++	u8	gpio_value;	  /* pin value for outputs */
++#endif
+ };
+ 
+ /* struct ftdi_sio_quirk is used by devices requiring special attention. */
+@@ -1766,6 +1777,268 @@ static void remove_sysfs_attrs(struct usb_serial_port *port)
+ 
+ }
+ 
++#ifdef CONFIG_GPIOLIB
++
++static int ftdi_sio_set_cbus(struct usb_serial_port *port,
++			     u8 direction,
++			     u8 value,
++			     u8 mode)
++{
++	struct ftdi_private *priv = usb_get_serial_port_data(port);
++	u16 val;
++
++	/* device's direction polarity is different from kernel's */
++	direction = (~direction) & 0x0f;
++
++	val = (mode << 8) | (direction << 4) | (value & 0x0f);
++	return usb_control_msg(port->serial->dev,
++				 usb_sndctrlpipe(port->serial->dev, 0),
++				 FTDI_SIO_SET_BITMODE_REQUEST,
++				 FTDI_SIO_SET_BITMODE_REQUEST_TYPE, val,
++				 priv->interface, NULL, 0, WDR_TIMEOUT);
++}
++
++static int ftdi_sio_gpio_request(struct gpio_chip *gc, unsigned int offset)
++{
++	struct usb_serial_port *port = gpiochip_get_data(gc);
++	struct ftdi_private *priv = usb_get_serial_port_data(port);
++	int result = 0;
++
++	if (priv->gpio_altfunc & BIT(offset))
++		return -ENODEV;
++
++	if (!priv->gpio_used) {
++		/* Set default pin states, as we cannot get them from device */
++		priv->gpio_input = 0xff;
++		priv->gpio_value = 0x00;
++		result = ftdi_sio_set_cbus(port,
++					   priv->gpio_input,
++					   priv->gpio_value,
++					   FTDI_SIO_GPIO_MODE_CBUS);
++		if (result)
++			return result;
++
++		priv->gpio_used = true;
++	}
++
++	return 0;
++}
++
++static int ftdi_sio_gpio_get(struct gpio_chip *gc, unsigned int gpio)
++{
++	struct usb_serial_port *port = gpiochip_get_data(gc);
++	struct ftdi_private *priv = usb_get_serial_port_data(port);
++	struct usb_serial *serial = port->serial;
++	unsigned char *rcvbuf;
++	int result;
++
++	rcvbuf = kmalloc(1, GFP_KERNEL);
++	if (!rcvbuf)
++		return -ENOMEM;
++
++	result = usb_control_msg(serial->dev,
++				 usb_rcvctrlpipe(serial->dev, 0),
++				 FTDI_SIO_READ_PINS_REQUEST,
++				 FTDI_SIO_READ_PINS_REQUEST_TYPE, 0,
++				 priv->interface, rcvbuf, 1, WDR_TIMEOUT);
++
++	if (result < 1)
++		result = -EIO;
++	else
++		result = !!(rcvbuf[0] & BIT(gpio));
++
++	kfree(rcvbuf);
++
++	return result;
++}
++
++static void ftdi_sio_gpio_set(struct gpio_chip *gc,
++			      unsigned int gpio,
++			      int value
++)
++{
++	struct usb_serial_port *port = gpiochip_get_data(gc);
++	struct ftdi_private *priv = usb_get_serial_port_data(port);
++	int result;
++
++	if (value)
++		priv->gpio_value |= BIT(gpio);
++	else
++		priv->gpio_value &= ~BIT(gpio);
++
++	result = ftdi_sio_set_cbus(port,
++				   priv->gpio_input,
++				   priv->gpio_value,
++				   FTDI_SIO_GPIO_MODE_CBUS);
++
++	if (result < 0) {
++		dev_err(&port->serial->interface->dev,
++			"failed to set GPIO value: %d\n",
++			result);
++	}
++}
++
++static int ftdi_sio_gpio_direction_get(struct gpio_chip *gc,
++				       unsigned int gpio)
++{
++	struct usb_serial_port *port = gpiochip_get_data(gc);
++	struct ftdi_private *priv = usb_get_serial_port_data(port);
++
++	return priv->gpio_input & BIT(gpio);
++}
++
++static int ftdi_sio_gpio_direction_input(struct gpio_chip *gc,
++					 unsigned int gpio)
++{
++	struct usb_serial_port *port = gpiochip_get_data(gc);
++	struct ftdi_private *priv = usb_get_serial_port_data(port);
++
++	priv->gpio_input |= BIT(gpio);
++
++	return ftdi_sio_set_cbus(port,
++			  priv->gpio_input,
++			  priv->gpio_value,
++			  FTDI_SIO_GPIO_MODE_CBUS);
++}
++
++static int ftdi_sio_gpio_direction_output(struct gpio_chip *gc,
++					  unsigned int gpio,
++					  int value)
++{
++	struct usb_serial_port *port = gpiochip_get_data(gc);
++	struct ftdi_private *priv = usb_get_serial_port_data(port);
++
++	priv->gpio_input &= ~BIT(gpio);
++	if (value)
++		priv->gpio_value |= BIT(gpio);
++	else
++		priv->gpio_value &= ~BIT(gpio);
++
++	return ftdi_sio_set_cbus(port,
++			  priv->gpio_input,
++			  priv->gpio_value,
++			  FTDI_SIO_GPIO_MODE_CBUS);
++}
++
++static int ftx_gpioconf_init(struct usb_serial_port *port)
++{
++	struct ftdi_private *priv = usb_get_serial_port_data(port);
++	struct usb_serial *serial = port->serial;
++	const u16 config_size = 0x24;
++	u8 *config_buf;
++	int result;
++	u8 i;
++
++	/* Read part of device EEPROM */
++	config_buf = kmalloc(config_size, GFP_KERNEL);
++	if (!config_buf)
++		return -ENOMEM;
++
++	for (i = 0; i < config_size / 2; i++) {
++		result = usb_control_msg(serial->dev,
++					 usb_rcvctrlpipe(serial->dev, 0),
++					 FTDI_SIO_READ_EEPROM_REQUEST,
++					 FTDI_SIO_READ_EEPROM_REQUEST_TYPE, 0,
++					 i, config_buf + (i * 2),
++					 2, WDR_TIMEOUT);
++		if (result < 2) {
++			result = -EIO;
++			break;
++		}
++	}
++
++	if (result < 0) {
++		kfree(config_buf);
++		return result;
++	}
++
++	/*
++	 * All FT-X devices have at least 1 GPIO, some have more.
++	 * Chip-type guessing logic based on libftdi.
++	 */
++	priv->gc.ngpio = 1;
++	if (serial->dev->descriptor.bcdDevice == 0x1000)  /* FT230X */
++		priv->gc.ngpio = 4;
++
++	/* Determine which pins are configured for CBUS bitbanging */
++	priv->gpio_altfunc = 0xff;
++	for (i = 0; i < priv->gc.ngpio; ++i) {
++		if (config_buf[0x1A + i] == FTDI_SIO_CBUS_MUX_GPIO)
++			priv->gpio_altfunc &= ~BIT(i);
++	}
++
++	kfree(config_buf);
++
++	return 0;
++}
++
++static int ftdi_sio_gpio_init(struct usb_serial_port *port)
++{
++	struct ftdi_private *priv = usb_get_serial_port_data(port);
++	struct usb_serial *serial = port->serial;
++	int result;
++
++	/* Device-specific initializations */
++	switch (priv->chip_type) {
++	case FTX:
++		result = ftx_gpioconf_init(port);
++		break;
++	default:
++		return 0;
++	}
++
++	if (result < 0)
++		return result;
++
++	/* Register GPIO chip to kernel */
++	priv->gc.label = "ftdi_sio";
++	priv->gc.request = ftdi_sio_gpio_request;
++	priv->gc.get_direction = ftdi_sio_gpio_direction_get;
++	priv->gc.direction_input = ftdi_sio_gpio_direction_input;
++	priv->gc.direction_output = ftdi_sio_gpio_direction_output;
++	priv->gc.get = ftdi_sio_gpio_get;
++	priv->gc.set = ftdi_sio_gpio_set;
++	priv->gc.owner = THIS_MODULE;
++	priv->gc.parent = &serial->interface->dev;
++	priv->gc.base = -1;
++	priv->gc.can_sleep = true;
++
++	result = gpiochip_add_data(&priv->gc, port);
++	if (!result)
++		priv->gpio_registered = true;
++
++	return result;
++}
++
++static void ftdi_sio_gpio_remove(struct usb_serial_port *port)
++{
++	struct ftdi_private *priv = usb_get_serial_port_data(port);
++
++	if (priv->gpio_used) {
++		ftdi_sio_set_cbus(port, 0, 0, FTDI_SIO_GPIO_MODE_RESET);
++		priv->gpio_used = false;
++	}
++
++	if (priv->gpio_registered) {
++		gpiochip_remove(&priv->gc);
++		priv->gpio_registered = false;
++	}
++}
++
++#else
++
++static int ftdi_sio_gpio_init(struct usb_serial *serial)
++{
++	return 0;
++}
++
++static void ftdi_sio_gpio_remove(struct usb_serial *serial)
++{
++	/* Nothing to do */
++}
++
++#endif
++
+ /*
+  * ***************************************************************************
+  * FTDI driver specific functions
+@@ -1794,7 +2067,7 @@ static int ftdi_sio_port_probe(struct usb_serial_port *port)
+ {
+ 	struct ftdi_private *priv;
+ 	const struct ftdi_sio_quirk *quirk = usb_get_serial_data(port->serial);
+-
++	int result;
+ 
+ 	priv = kzalloc(sizeof(struct ftdi_private), GFP_KERNEL);
+ 	if (!priv)
+@@ -1813,6 +2086,13 @@ static int ftdi_sio_port_probe(struct usb_serial_port *port)
+ 		priv->latency = 16;
+ 	write_latency_timer(port);
+ 	create_sysfs_attrs(port);
++
++	result = ftdi_sio_gpio_init(port);
++	if (result < 0)
++		dev_err(&port->serial->interface->dev,
++			"GPIO initialisation failed: %d\n",
++			result);
++
+ 	return 0;
+ }
+ 
+@@ -1930,6 +2210,8 @@ static int ftdi_sio_port_remove(struct usb_serial_port *port)
+ {
+ 	struct ftdi_private *priv = usb_get_serial_port_data(port);
+ 
++	ftdi_sio_gpio_remove(port);
++
+ 	remove_sysfs_attrs(port);
+ 
+ 	kfree(priv);
+diff --git a/drivers/usb/serial/ftdi_sio.h b/drivers/usb/serial/ftdi_sio.h
+index dcd0b6e05baf..5046d02fe3ac 100644
+--- a/drivers/usb/serial/ftdi_sio.h
++++ b/drivers/usb/serial/ftdi_sio.h
+@@ -36,6 +36,10 @@
+ #define FTDI_SIO_SET_ERROR_CHAR		7 /* Set the error character */
+ #define FTDI_SIO_SET_LATENCY_TIMER	9 /* Set the latency timer */
+ #define FTDI_SIO_GET_LATENCY_TIMER	10 /* Get the latency timer */
++#define FTDI_SIO_SET_BITMODE		11 /* Set CBUS GPIO pin mode */
++#define FTDI_SIO_READ_PINS		12 /* Read immediate value of pins */
++#define FTDI_SIO_READ_EEPROM		144 /* Read EEPROM */
++
+ 
+ /* Interface indices for FT2232, FT2232H and FT4232H devices */
+ #define INTERFACE_A		1
+@@ -433,6 +437,27 @@ enum ftdi_sio_baudrate {
+  *         1 = active
+  */
+ 
++/* FTDI_SIO_SET_BITMODE */
++#define FTDI_SIO_SET_BITMODE_REQUEST_TYPE 0x40
++#define FTDI_SIO_SET_BITMODE_REQUEST FTDI_SIO_SET_BITMODE
++
++/* FTDI_SIO_READ_PINS */
++#define FTDI_SIO_READ_PINS_REQUEST_TYPE 0xc0
++#define FTDI_SIO_READ_PINS_REQUEST FTDI_SIO_READ_PINS
++
++/*
++ * FTDI_SIO_READ_EEPROM
++ *
++ * EEPROM format found in FTDI AN_201, "FT-X MTP memory Configuration",
++ * http://www.ftdichip.com/Support/Documents/AppNotes/AN_201_FT-X%20MTP%20Memory%20Configuration.pdf
++ */
++#define FTDI_SIO_READ_EEPROM_REQUEST_TYPE 0xc0
++#define FTDI_SIO_READ_EEPROM_REQUEST FTDI_SIO_READ_EEPROM
++
++#define FTDI_SIO_GPIO_MODE_CBUS		0x20
++#define FTDI_SIO_GPIO_MODE_RESET	0x00
++
++#define FTDI_SIO_CBUS_MUX_GPIO		8
+ 
+ 
+ /* Descriptors returned by the device
+-- 
+2.18.0
 
- - Power management fixes for IOMMU on Rockchip platforms, getting
-   closer to kexec working on them, including Chromebooks.
-
- - Another pass updating "arm,psci" -> "psci" for some properties that
-   have snuck in since last time it was done.
-
-----------------------------------------------------------------
-Amit Kucheria (1):
-      arm64: dts: Fix various entry-method properties to reflect documentation
-
-Jerome Brunet (2):
-      reset: meson: add dt-bindings for meson-axg audio arb
-      reset: meson: add meson audio arb driver
-
-Leonard Crestez (1):
-      reset: imx7: Fix always writing bits as 0
-
-Marc Zyngier (4):
-      ARM: rockchip: Force CONFIG_PM on Rockchip systems
-      arm64: rockchip: Force CONFIG_PM on Rockchip systems
-      iommu/rockchip: Handle errors returned from PM framework
-      iommu/rockchip: Move irq request past pm_runtime_enable
-
-Olof Johansson (2):
-      Merge tag 'reset-for-4.19-2' of git://git.pengutronix.de/git/pza/linux into next/late
-      Merge tag 'reset-fixes-for-4.18' of git://git.pengutronix.de/git/pza/linux into next/late
-
- .../devicetree/bindings/arm/cpu-capacity.txt       |   2 +-
- .../devicetree/bindings/arm/idle-states.txt        |   4 +-
- .../bindings/reset/amlogic,meson-axg-audio-arb.txt |  21 +++
- arch/arm/mach-rockchip/Kconfig                     |   1 +
- arch/arm64/Kconfig.platforms                       |   1 +
- arch/arm64/boot/dts/arm/juno-r1.dts                |   2 +-
- arch/arm64/boot/dts/arm/juno-r2.dts                |   2 +-
- arch/arm64/boot/dts/arm/juno.dts                   |   2 +-
- arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi     |   2 +-
- arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi     |   2 +-
- arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi     |   2 +-
- arch/arm64/boot/dts/mediatek/mt2712e.dtsi          |   2 +-
- arch/arm64/boot/dts/sprd/sc9860.dtsi               |   2 +-
- arch/arm64/boot/dts/xilinx/zynqmp.dtsi             |   2 +-
- drivers/iommu/rockchip-iommu.c                     |  45 +++---
- drivers/reset/Kconfig                              |   7 +
- drivers/reset/Makefile                             |   1 +
- drivers/reset/reset-imx7.c                         |   2 +-
- drivers/reset/reset-meson-audio-arb.c              | 168 +++++++++++++++++++++
- .../reset/amlogic,meson-axg-audio-arb.h            |  17 +++
- 20 files changed, 257 insertions(+), 30 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/reset/amlogic,meson-axg-audio-arb.txt
- create mode 100644 drivers/reset/reset-meson-audio-arb.c
- create mode 100644 include/dt-bindings/reset/amlogic,meson-axg-audio-arb.h
