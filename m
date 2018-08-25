@@ -2,166 +2,107 @@ Return-Path: <SRS0=itv6=LI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C47A9C433F4
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 07:24:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3457AC433F5
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 07:34:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A646214AB
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 07:24:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mMbWmvxR";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kM/Prqas"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A646214AB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id BCE362147D
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 07:34:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCE362147D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727091AbeHYLCU (ORCPT
+        id S1726842AbeHYLM0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 25 Aug 2018 07:02:20 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:51278 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726428AbeHYLCU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Aug 2018 07:02:20 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id D7E256055C; Sat, 25 Aug 2018 07:24:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535181857;
-        bh=e7jVJWcDYw2pbZt/HaT13VjaCVY7glP9Ej4cy7e/7Fo=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=mMbWmvxRziuE+1B3/1SfQfqVuI21uMltxBmOC4AZDFDzWnpVk/gAm8C9Y3HxN3SAV
-         yY3kOIgvENft4pqkQmx0VrqNCRRx3hPnoKObpQ2d4u7DpXknOraKNIOvSXlvKjRZzx
-         37vtXFSSzQkPyePRpOJsd/5T5LNwAJBcAoUx4LCM=
-Received: from [192.168.31.253] (unknown [103.66.79.25])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3386C601D1;
-        Sat, 25 Aug 2018 07:24:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535181856;
-        bh=e7jVJWcDYw2pbZt/HaT13VjaCVY7glP9Ej4cy7e/7Fo=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=kM/PrqasvGPBpJ5sLmVPxsKpqnf4Bxab/tfn9dxOqBp92YHGHd79i6Z8UZUMkvhVu
-         22LrIaSRBYwDwhuCdHrKAaFWqysOIueoQwiKUMZNZDJrX8IbAznwhafBZ69EV0RhbH
-         NIumpSxJG0i6dRd3X3E6gwpq51Nx/A9gje8GQh80=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3386C601D1
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-Subject: Re: [RFC PATCH v2 2/3] pstore: Add register read/write{b,w,l,q}
- tracing support
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Tony Luck <tony.luck@intel.com>, Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Joe Perches <joe@perches.com>,
-        Jim Cromie <jim.cromie@gmail.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-References: <cover.1535119710.git.saiprakash.ranjan@codeaurora.org>
- <65985f8df55b037283746559c1718a54d56e7ec4.1535119711.git.saiprakash.ranjan@codeaurora.org>
- <CAGXu5jL6tGu9U_ANrZSfWREtySqFAJ+CQa3v5YRihZ2oHNMGGw@mail.gmail.com>
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Message-ID: <7b212c02-d7ce-4309-155f-22b36963e41c@codeaurora.org>
-Date:   Sat, 25 Aug 2018 12:54:07 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sat, 25 Aug 2018 07:12:26 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:11196 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726412AbeHYLM0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 25 Aug 2018 07:12:26 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id E1EE7820DE6AC;
+        Sat, 25 Aug 2018 15:34:17 +0800 (CST)
+Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server (TLS) id 14.3.399.0; Sat, 25 Aug
+ 2018 15:34:16 +0800
+Subject: Re: [f2fs-dev] [RFC PATCH 02/10] fs-verity: add data verification
+ hooks for ->readpages()
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Eric Biggers <ebiggers@kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-ext4@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Michael Halcrow <mhalcrow@google.com>,
+        <linux-kernel@vger.kernel.org>, <linux-fscrypt@vger.kernel.org>,
+        <linux-integrity@vger.kernel.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Victor Hsieh <victorhsieh@google.com>
+References: <20180824161642.1144-1-ebiggers@kernel.org>
+ <20180824161642.1144-3-ebiggers@kernel.org>
+ <2f2382c3-e5e9-f0da-dc89-42dfc7b2b636@huawei.com>
+ <20180825034544.GA5281@thunk.org>
+ <cb646950-94ea-9b28-80f1-3c840ad85581@huawei.com>
+ <20180825050621.GA25031@thunk.org>
+From:   Gao Xiang <gaoxiang25@huawei.com>
+Message-ID: <faf1fe45-e325-bae4-e60d-871f0b7b41b0@huawei.com>
+Date:   Sat, 25 Aug 2018 15:33:18 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jL6tGu9U_ANrZSfWREtySqFAJ+CQa3v5YRihZ2oHNMGGw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <20180825050621.GA25031@thunk.org>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.151.23.176]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/24/2018 8:59 PM, Kees Cook wrote:
-> On Fri, Aug 24, 2018 at 7:45 AM, Sai Prakash Ranjan
-> <saiprakash.ranjan@codeaurora.org> wrote:
->> read/write{b,w,l,q} are typically used for reading from memory
->> mapped registers, which can cause hangs if accessed
->> unclocked. Tracing these events can help in debugging
->> various issues faced during initial development.
->>
->> We log this trace information in persistent ram buffer which
->> can be viewed after reset.
->>
->> We use pstore_rtb_call() to write the RTB log to pstore.
->> RTB buffer size is taken from ramoops dt node with additional
->> property called rtb-size.
->>
->> For reading the trace after mounting pstore, rtb-ramoops entry
->> can be seen in /sys/fs/pstore/ as in below sample output.
->>
->> Sample output of tracing register reads/writes in drivers:
->>
->>   # mount -t pstore pstore /sys/fs/pstore
->>   # tail /sys/fs/pstore/rtb-ramoops-0
->>   [LOGK_READ ] ts:36468476204  data:ffff00000800d0fc  <ffff0000084e9ee0>  gic_check_gicv2+0x58/0x60
->>   [LOGK_WRITE] ts:36468477715  data:ffff00000800d000  <ffff0000084e9fac>  gic_cpu_if_up+0xc4/0x110
->>   [LOGK_READ ] ts:36468478548  data:ffff00000800d000  <ffff0000084e9fd8>  gic_cpu_if_up+0xf0/0x110
->>   [LOGK_WRITE] ts:36468480319  data:ffff00000800d000  <ffff0000084e9fac>  gic_cpu_if_up+0xc4/0x110
->>   [LOGK_READ ] ts:36468481048  data:ffff00000800d00c  <ffff000008081a34>  gic_handle_irq+0xac/0x128
->>   [LOGK_WRITE] ts:36468482923  data:ffff00000800d010  <ffff000008081aac>  gic_handle_irq+0x124/0x128
->>   [LOGK_READ ] ts:36468483184  data:ffff00000800d00c  <ffff000008081a34>  gic_handle_irq+0xac/0x128
->>   [LOGK_WRITE] ts:36468485215  data:ffff00000800d010  <ffff000008081aac>  gic_handle_irq+0x124/0x128
->>   [LOGK_READ ] ts:36468486309  data:ffff00000800d00c  <ffff000008081a34>  gic_handle_irq+0xac/0x128
->>   [LOGK_WRITE] ts:36468488236  data:ffff00000800d010  <ffff000008081aac>  gic_handle_irq+0x124/0x128
->>
->> Output has below 5 fields:
->>
->>   * Log type, Timestamp, Data from caller which is the address of
->>     read/write{b,w,l,q}, Caller ip and Caller name.
->>
->> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Hi Ted,
+
+Thanks for your detailed reply. Sorry about my english, the words could not be logical.
+
+Tiny pieces in B-tree to compose a page is too far from us too, and you are right,
+fs-verity is complete for >99% cases for the existed file system, and no need to worry about currently.
+
+As I mentioned in reply to Eric, I am actually curious about the Google fs-verity roadmap
+for the future Android, I need to analyze if it is only limited to APKs for the read-write partitions
+and not to replace dm-verity in the near future since fs-verity has some conflicts
+to EROFS I am working on I mentioned in the email to Eric.
+
+I think it is more than just to handle FILE_MAPPING and bio-strict for compression use.
+
+On 2018/8/25 13:06, Theodore Y. Ts'o wrote:
+> But I'd suggest worrying about it when such a file system
+> comes out of the woodwork, and someone is willing to do the work to
+> integrate fserity in that file system.
 > 
-> As this is a tracing-like method, could this instead be added to
-> ftrace? That would mean it could reuse all the ftrace tools and you'd
-> get pstore storage for free.
-> 
+Yes, we are now handling partial page due to compression use.
 
-Ftrace does not trace __raw{read,write}{b,l,w,q}() functions. I am not 
-sure why and how it is filtered out because I do not see any notrace 
-flag in those functions, maybe that whole directory is filtered out.
-So adding this functionality to ftrace would mean removing the notrace 
-for these functions i.e., something like using 
-__raw{read,write}{b,l,w,q}() as the available filter functions. Also 
-pstore ftrace does not filter functions to trace I suppose?
+fs could submit bios in pages from different mapping(FILE_MAPPING[compress in-place and no caching
+compressed page to reduce extra memory overhead] or META_MAPPING [for caching compressed page]) and
+they could be decompressed into many full pages and (possible) a partial page (in-place or out-of-place).
 
-Coming to the reason as to why it would be good to keep this separate 
-from ftrace would be:
-* Ftrace can get ip and parent ip, but suppose we need extra data (field 
-data) as in above sample output we would not be able to get through ftrace.
+so in principle, since we have BIO_MAX_PAGES limitation, a filemap page could be Uptodate
+after two bios is ended and decompressed. and other runtime limitations could also divide a bio into two bios for encoded cases.
 
-* Although this patch is for tracing register read/write, we can easily
-add more functionality since we have dynamic_rtb api which can be hooked 
-to functions and start tracing events(IRQ, Context ID) something similar 
-to tracepoints.
-Initially thought of having tracepoints for logging register read/write 
-but I do not know if we can export tracepoint data to pstore since the 
-main usecase is to debug unknown resets and hangs.
+Therefore, I think in that case we could not just consider FILE_MAPPING and one bio, and as you said `In
+that case, it could call fsverity after assembling the page in the page cache.' should be done in this way.
 
-* This can be something similar to mmiotrace in x86 and kept seperate 
-from function tracer.
+> Well, the userspace interface for instantiating a fs-verity file is
+> that it writes the file data with the fs-verity metadata (which
+> consists of the Merkle tree with a fs-verity header at the end of the
+> file).  The program (which might be a package manager such as dpkg or
+> rpm) would then call an ioctl which would cause the file system to
+> read the fs-verity header and make only the file data visible, and the
+> file system would the verify the data as it is read into the page
+> cache.
+
+Thanks for your reply again, I think fs-verity is good enough for now.
+However, I need to think over about fs-verity itself more... :(
 
 Thanks,
-Sai Prakash
+Gao Xiang
