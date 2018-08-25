@@ -2,107 +2,84 @@ Return-Path: <SRS0=itv6=LI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8CAAC433F5
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 01:33:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 571EFC433F5
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 01:35:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 406D121581
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 01:33:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 406D121581
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=freedesktop.org
+	by mail.kernel.org (Postfix) with ESMTP id F0D5321581
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 01:35:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2R3XLlkA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0D5321581
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726785AbeHYFKG (ORCPT
+        id S1726886AbeHYFMW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 25 Aug 2018 01:10:06 -0400
-Received: from mail.bsd-unix.net ([65.175.82.195]:41628 "EHLO
-        mail.bsd-unix.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725958AbeHYFKG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Aug 2018 01:10:06 -0400
-X-Greylist: delayed 386 seconds by postgrey-1.27 at vger.kernel.org; Sat, 25 Aug 2018 01:10:06 EDT
-Received: from vlee-ubuntu.corp.dropbox.com (unknown [4.16.47.227])
+        Sat, 25 Aug 2018 01:12:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55142 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725958AbeHYFMV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 25 Aug 2018 01:12:21 -0400
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: mailrelay)
-        by mail.bsd-unix.net (Postfix) with ESMTPSA id 5FA801C00D7;
-        Fri, 24 Aug 2018 21:26:36 -0400 (EDT)
-From:   Vinson Lee <vlee@freedesktop.org>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        Sowmini Varadhan <sowmini.varadhan@oracle.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Ka-Cheong Poon <ka-cheong.poon@oracle.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH] uapi: Fix linux/rds.h userspace compilation errors.
-Date:   Fri, 24 Aug 2018 18:26:56 -0700
-Message-Id: <20180825012656.12443-1-vlee@freedesktop.org>
-X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        by mail.kernel.org (Postfix) with ESMTPSA id B3C38205C9;
+        Sat, 25 Aug 2018 01:35:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535160916;
+        bh=aNUY2WOU50LHVpzvovtEbywPIRHqYHEhmZDcm0mTv0s=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=2R3XLlkAYsywccHq8cEjqnRNbiGYrZaubSqh4LwwNzxQls+mYoUb2Utrmi40DHkvy
+         0s2bbcAqn+b/iM1QIfKX7mmwZvP5Ud8h2Dyc6XJ5KXI82O6HdBLP/ZRwZCeoKf4PNj
+         LZ7jiEUwLMyr0B2md3UZ3sbPFkX//SGzK7eRb2M8=
+Date:   Sat, 25 Aug 2018 10:35:13 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 03/32] selftests/ftrace: Add --console hidden option
+Message-Id: <20180825103513.5b86d42a7ee2d20435522fbb@kernel.org>
+In-Reply-To: <20180824163737.0f47535a@gandalf.local.home>
+References: <153443695002.23257.13628220023468200991.stgit@devbox>
+        <153443703653.23257.12015337438174061938.stgit@devbox>
+        <20180824163737.0f47535a@gandalf.local.home>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Include linux/in6.h for struct in6_addr.
+On Fri, 24 Aug 2018 16:37:37 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-/usr/include/linux/rds.h:156:18: error: field ‘laddr’ has incomplete type
-  struct in6_addr laddr;
-                  ^~~~~
-/usr/include/linux/rds.h:157:18: error: field ‘faddr’ has incomplete type
-  struct in6_addr faddr;
-                  ^~~~~
-/usr/include/linux/rds.h:178:18: error: field ‘laddr’ has incomplete type
-  struct in6_addr laddr;
-                  ^~~~~
-/usr/include/linux/rds.h:179:18: error: field ‘faddr’ has incomplete type
-  struct in6_addr faddr;
-                  ^~~~~
-/usr/include/linux/rds.h:198:18: error: field ‘bound_addr’ has incomplete type
-  struct in6_addr bound_addr;
-                  ^~~~~~~~~~
-/usr/include/linux/rds.h:199:18: error: field ‘connected_addr’ has incomplete type
-  struct in6_addr connected_addr;
-                  ^~~~~~~~~~~~~~
-/usr/include/linux/rds.h:219:18: error: field ‘local_addr’ has incomplete type
-  struct in6_addr local_addr;
-                  ^~~~~~~~~~
-/usr/include/linux/rds.h:221:18: error: field ‘peer_addr’ has incomplete type
-  struct in6_addr peer_addr;
-                  ^~~~~~~~~
-/usr/include/linux/rds.h:245:18: error: field ‘src_addr’ has incomplete type
-  struct in6_addr src_addr;
-                  ^~~~~~~~
-/usr/include/linux/rds.h:246:18: error: field ‘dst_addr’ has incomplete type
-  struct in6_addr dst_addr;
-                  ^~~~~~~~
+> On Fri, 17 Aug 2018 01:30:36 +0900
+> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> 
+> > Add --console hidden option for debug test cases.
+> > This option allows to put "sh" or something else
+> > when the test case hits a bug.
+> 
+> Can you add more information to why and how this would be used.
 
-Fixes: b7ff8b1036f0 ("rds: Extend RDS API for IPv6 support")
-Signed-off-by: Vinson Lee <vlee@freedesktop.org>
----
- include/uapi/linux/rds.h | 1 +
- 1 file changed, 1 insertion(+)
+For example, if you find a testcase which doesn't
+pass, you can insert sh for interactive debug as below
 
-diff --git a/include/uapi/linux/rds.h b/include/uapi/linux/rds.h
-index dc520e1a4123..8b73cb603c5f 100644
---- a/include/uapi/linux/rds.h
-+++ b/include/uapi/linux/rds.h
-@@ -37,6 +37,7 @@
- 
- #include <linux/types.h>
- #include <linux/socket.h>		/* For __kernel_sockaddr_storage. */
-+#include <linux/in6.h>			/* For struct in6_addr. */
- 
- #define RDS_IB_ABI_VERSION		0x301
- 
+  #!/bin/sh
+  # description: sample test case
+
+  good-command
+  suspicious-wrong-command
+  sh # <- add this for interactive debug
+
+
+Thank you,
+
 -- 
-2.17.1
-
+Masami Hiramatsu <mhiramat@kernel.org>
