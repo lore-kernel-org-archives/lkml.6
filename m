@@ -2,116 +2,88 @@ Return-Path: <SRS0=itv6=LI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE36FC433F4
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 07:56:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37152C433F5
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 08:04:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E4A02147D
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 07:56:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E4A02147D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id DA587214AB
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 08:04:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA587214AB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726987AbeHYLee (ORCPT
+        id S1727067AbeHYLm2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 25 Aug 2018 07:34:34 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:11198 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726526AbeHYLee (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Aug 2018 07:34:34 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 7013BBA7FC02;
-        Sat, 25 Aug 2018 15:56:22 +0800 (CST)
-Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
- (10.3.19.205) with Microsoft SMTP Server (TLS) id 14.3.399.0; Sat, 25 Aug
- 2018 15:56:19 +0800
-Subject: Re: [f2fs-dev] [RFC PATCH 02/10] fs-verity: add data verification
- hooks for ->readpages()
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Eric Biggers <ebiggers@kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-ext4@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Michael Halcrow <mhalcrow@google.com>,
-        <linux-kernel@vger.kernel.org>, <linux-fscrypt@vger.kernel.org>,
-        <linux-integrity@vger.kernel.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Victor Hsieh <victorhsieh@google.com>
-References: <20180824161642.1144-1-ebiggers@kernel.org>
- <20180824161642.1144-3-ebiggers@kernel.org>
- <2f2382c3-e5e9-f0da-dc89-42dfc7b2b636@huawei.com>
- <20180825034544.GA5281@thunk.org>
- <cb646950-94ea-9b28-80f1-3c840ad85581@huawei.com>
- <20180825050621.GA25031@thunk.org>
- <faf1fe45-e325-bae4-e60d-871f0b7b41b0@huawei.com>
-Message-ID: <22b235b0-8615-5947-bcae-78f4d492d28a@huawei.com>
-Date:   Sat, 25 Aug 2018 15:55:18 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Sat, 25 Aug 2018 07:42:28 -0400
+Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:29851 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726412AbeHYLm2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 25 Aug 2018 07:42:28 -0400
+Received: from belgarion ([90.89.234.36])
+        by mwinf5d41 with ME
+        id TL4B1y0020nnJME03L4BRP; Sat, 25 Aug 2018 10:04:17 +0200
+X-ME-Helo: belgarion
+X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
+X-ME-Date: Sat, 25 Aug 2018 10:04:17 +0200
+X-ME-IP: 90.89.234.36
+From:   Robert Jarzmik <robert.jarzmik@free.fr>
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
+        lee.jones@linaro.org, kernel@collabora.com, heiko@sntech.de,
+        linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        dri-devel@lists.freedesktop.org, Jingoo Han <jingoohan1@gmail.com>
+Subject: Re: [PATCH] backlight: pwm_bl: Fix brightness levels for non-DT case.
+References: <20180824155402.2822-1-enric.balletbo@collabora.com>
+X-URL:  http://belgarath.falguerolles.org/
+Date:   Sat, 25 Aug 2018 10:04:10 +0200
+In-Reply-To: <20180824155402.2822-1-enric.balletbo@collabora.com> (Enric
+        Balletbo i. Serra's message of "Fri, 24 Aug 2018 17:54:02 +0200")
+Message-ID: <87h8ji98jp.fsf@belgarion.home>
+User-Agent: Gnus/5.130008 (Ma Gnus v0.8) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <faf1fe45-e325-bae4-e60d-871f0b7b41b0@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.151.23.176]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ted,
+Enric Balletbo i Serra <enric.balletbo@collabora.com> writes:
 
-Please ignore the following email, Eric has replied to me. :)
-I need to dig into these fs-verity patches later and best wishes to fs-verity.
+> Commit '88ba95bedb79 ("backlight: pwm_bl: Compute brightness of LED
+> linearly to human eye")' allows the possibility to compute a default
+> brightness table when there isn't the brightness-levels property in the
+> DT. Unfortunately the changes made broke the pwm backlight for the
+> non-DT boards.
+>
+> Usually, the non-DT boards don't pass the brightness levels via platform
+> data, instead, they set the max_brightness in their platform data and the
+> driver calculates the level without a table. The ofending patch assumed
+> that when there is no brightness levels table we should create one, but this
+> is clearly wrong for the non-DT case.
+>
+> After this patch the code handles the DT and the non-DT case taking in
+> consideration also if max_brightness is set or not. The default table is
+> only created when neither, brightness-levels and max_brightness, are
+> set.
+>
+> The patch also fixes another issue found by Robert. Before this patch
+> looks like a division by 0 was possible when state.period returned 0 by
+> pwm_get_state(). This is because pwm_get_state() was called before
+> pwm_apply_args() so state.period was not initialized. The patch moves
+> the pwm_apply_args() call before any call to pwm_get_state().
+>
+> Fixes: '88ba95bedb79 ("backlight: pwm_bl: Compute brightness of LED linearly to human eye")'
+> Reported-by: Robert Jarzmik <robert.jarzmik@free.fr>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Tested-by: Robert Jarzmik <robert.jarzmik@free.fr>
 
-Thanks,
-Gao Xiang
+Cheers.
 
-On 2018/8/25 15:33, Gao Xiang wrote:
-> Hi Ted,
-> 
-> Thanks for your detailed reply. Sorry about my english, the words could not be logical.
-> 
-> Tiny pieces in B-tree to compose a page is too far from us too, and you are right,
-> fs-verity is complete for >99% cases for the existed file system, and no need to worry about currently.
-> 
-> As I mentioned in reply to Eric, I am actually curious about the Google fs-verity roadmap
-> for the future Android, I need to analyze if it is only limited to APKs for the read-write partitions
-> and not to replace dm-verity in the near future since fs-verity has some conflicts
-> to EROFS I am working on I mentioned in the email to Eric.
-> 
-> I think it is more than just to handle FILE_MAPPING and bio-strict for compression use.
-> 
-> On 2018/8/25 13:06, Theodore Y. Ts'o wrote:
->> But I'd suggest worrying about it when such a file system
->> comes out of the woodwork, and someone is willing to do the work to
->> integrate fserity in that file system.
->>
-> Yes, we are now handling partial page due to compression use.
-> 
-> fs could submit bios in pages from different mapping(FILE_MAPPING[compress in-place and no caching
-> compressed page to reduce extra memory overhead] or META_MAPPING [for caching compressed page]) and
-> they could be decompressed into many full pages and (possible) a partial page (in-place or out-of-place).
-> 
-> so in principle, since we have BIO_MAX_PAGES limitation, a filemap page could be Uptodate
-> after two bios is ended and decompressed. and other runtime limitations could also divide a bio into two bios for encoded cases.
-> 
-> Therefore, I think in that case we could not just consider FILE_MAPPING and one bio, and as you said `In
-> that case, it could call fsverity after assembling the page in the page cache.' should be done in this way.
-> 
->> Well, the userspace interface for instantiating a fs-verity file is
->> that it writes the file data with the fs-verity metadata (which
->> consists of the Merkle tree with a fs-verity header at the end of the
->> file).  The program (which might be a package manager such as dpkg or
->> rpm) would then call an ioctl which would cause the file system to
->> read the fs-verity header and make only the file data visible, and the
->> file system would the verify the data as it is read into the page
->> cache.
-> Thanks for your reply again, I think fs-verity is good enough for now.
-> However, I need to think over about fs-verity itself more... :(
-> 
-> Thanks,
-> Gao Xiang
+--
+Robert
