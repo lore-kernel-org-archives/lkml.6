@@ -2,133 +2,100 @@ Return-Path: <SRS0=itv6=LI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34F08C433F4
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 01:22:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C174C433F5
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 01:29:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBCC821581
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 01:22:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBCC821581
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id DC64821581
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 01:29:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NwyFPh3R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC64821581
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726574AbeHYE7O (ORCPT
+        id S1726630AbeHYFGi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 25 Aug 2018 00:59:14 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:11194 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726113AbeHYE7O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Aug 2018 00:59:14 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 8A6A8DFA87CB7;
-        Sat, 25 Aug 2018 09:22:08 +0800 (CST)
-Received: from [127.0.0.1] (10.63.173.108) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.399.0; Sat, 25 Aug 2018
- 09:22:02 +0800
-Subject: Re: [PATCH NET 3/3] net: hns: add configuration constraints for 1000M
- half
-To:     Andrew Lunn <andrew@lunn.ch>
-CC:     <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-        <yisen.zhuang@huawei.com>, <salil.mehta@huawei.com>
-References: <1535082143-122281-1-git-send-email-lipeng321@huawei.com>
- <1535082143-122281-4-git-send-email-lipeng321@huawei.com>
- <20180824034119.GA29111@lunn.ch>
- <194ac663-94d8-55e2-0231-a6be53e35f04@huawei.com>
- <20180824132857.GA1999@lunn.ch>
-From:   "lipeng (Y)" <lipeng321@huawei.com>
-Message-ID: <7c40c758-2ef2-665d-f429-0cc4e63a7a38@huawei.com>
-Date:   Sat, 25 Aug 2018 09:21:55 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Sat, 25 Aug 2018 01:06:38 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:39509 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbeHYFGi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 25 Aug 2018 01:06:38 -0400
+Received: by mail-io0-f196.google.com with SMTP id l7-v6so8573733iok.6
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 18:29:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=GLYFUksMrLJJl8xdEo5zQsPHTOFGj4tqAV7rw+tNSas=;
+        b=NwyFPh3ROuhZvVO+g58uvaf/72vVb7uuECuPdZrKYsAXMu0tIbWxUvn4duLpwjA2S/
+         pr6nA+8U+CljKyM7uObCdjmpubu27ld15C/hsXVayHkDwPIwbF3yISPT1cv5DmpO81IB
+         GuI+vhTBBcaLPILnCkPYzz1FdtH9jvNhXHDhby26F331e1Yp/9kLHBOzPL8sV6dJyAZG
+         pTdqD9GGSVAIE9bWcqgreBuLTevvv3FMQajXQ8cCKNBJEmNAPCoNaeseJ2twrMbNtLPT
+         ENHnqnVlO+C8kcJUM1FYzzBpzmo8UAy506WXq9s3T1R4U9ZcwZ7MrbDKmWqp98BJUZw3
+         5ilg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=GLYFUksMrLJJl8xdEo5zQsPHTOFGj4tqAV7rw+tNSas=;
+        b=MC1i1UfMDoAm5Bezv/h9BxreUN1zsepIidIwfJAFIHJp2+SzSrN/ZxoQXm7SzrKPJi
+         wF/pjLgQsIcGBO9k7qkxs2UUwuwzW/1pMRkH4gIyoh7cFoAHZX2kKsf2+bkwEsmTBVKB
+         NWEm0MIukdlLC0XC1GwCMpZq9f10q16x97KExAvgsGG+mrstVRvXPa786jhoBr74qxpw
+         pQsjPsgFLT7Q/HCSbhw73tIO59USgb8KfOYCjOvSyu6TN0V48/40RkpENiXgZQ6o6THs
+         sv5ZK03MjrN+9istPYegyLORxQls4KLA0xU+ivcnT5g9biJkKyq0FDtQH3p3lRFXgav0
+         X1Ug==
+X-Gm-Message-State: APzg51DtVHg1dtj2RwhR91+dKBJvUAMhYeStQ+V+LuPwPvM7fWAc3ele
+        BTQW95uUnOi+XQm49BTBD9009cFN6x1g9gm4pUwhGeeXPjY=
+X-Google-Smtp-Source: ANB0VdZPKb9QX5HWEAQkpvY9DFbgWR5yFrtVvr04MYEjn3Sg8mH/3OxBvGEP5CyjwqfiIVJvsxpwjSErO1XA6Vdyg84=
+X-Received: by 2002:a6b:c694:: with SMTP id w142-v6mr2975575iof.142.1535160573530;
+ Fri, 24 Aug 2018 18:29:33 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180824132857.GA1999@lunn.ch>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Originating-IP: [10.63.173.108]
-X-CFilter-Loop: Reflected
+From:   xin tan <tanxin0725@gmail.com>
+Date:   Sat, 25 Aug 2018 09:29:22 +0800
+Message-ID: <CAPt3h3XTjAY5v-_-VB2ud8wHQUDcRe8hjhHzW+03=j08zPbh6w@mail.gmail.com>
+Subject: Ask for your comment for our research: Reducing the Workload of the
+ Linux Kernel Maintainers: Multiple-Committer Model
+To:     linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi all,
+I am a Ph.D. student from China. Our research team is dedicated to
+helping FLOSS ecosystems have healthy and sustainable development. The
+Linux kernel is one of the key study cases for us because as a
+prominent FLOSS project, the Linux kernel has many unique practices.
+Recently, we observed that increasing numbers of contributors to the
+Linux kernel have concerns regarding whether the development process
+(workflow) can handle the current mass of patches and even more
+patches in the future. While the workflow gives maintainers many
+rights, it also places significant pressure on them, which bears the
+risk of a single point of failure. We investigated the effect of a new
+model, the multiple-committer model, which is currently used by the
+i915 subsystem to alleviate the burden on its maintainer. We find that
+this model can reduce the proportion of the review workload of the
+busiest maintainer, reduce the review latency and maintainers'
+overwork, and simplify the review network. The review process is
+strictly enforced to guarantee the quality of patches. Subsystems with
+usage demands, mechanisms for ensuring patch quality, and candidate
+committers are suitable for the model. Sufficient precommit testing, a
+strict review process, necessary documentation, and the use of
+automatic tools are important practices to follow when applying the
+model.
+We hope our work would help other subsystems extract valuable
+information and optimize their workflow to achieve a more efficient
+review process and sustain themselves in a constantly changing,
+complicated environment. We uploaded the draft paper at
+"https://github.com/SunflowerPKU/Reducing-the-Workload-of-the-Linux-Kernel-Maintainers-Multiple-Committer-Model/blob/master/reduce-workload-linux.pdf".
+If you are interested in this topic, please take a moment to
+understand our work. We are looking forward to your comments and
+suggestions.
 
-
-On 2018/8/24 21:28, Andrew Lunn wrote:
-> On Fri, Aug 24, 2018 at 02:39:36PM +0800, lipeng (Y) wrote:
->>
->> On 2018/8/24 11:41, Andrew Lunn wrote:
->>> On Fri, Aug 24, 2018 at 11:42:23AM +0800, Peng Li wrote:
->>>> Hisilicon hip05 and hip06 board network card do not support
->>>> 1000M half configuration. Driver can not config gmac as
->>>> 1000M half.
->>>>
->>>> Signed-off-by: Peng Li <lipeng321@huawei.com>
->>> Hi Peng
->>>
->>> Does the driver remove SUPPORTED_1000baseT_Half from
->>> phydev->supported?  If you do that, the PHY should never negotiate
->>> this speed.
->>>
->>>     Andrew
->> Hi, Andrew,
->>
->> The driver has removed SUPPORTED_1000baseT_Half from
->>
->> phydev->supported.
->>
->> the code is :
->> #define MAC_GMAC_SUPPORTED \
->> 	(SUPPORTED_10baseT_Half \
->> 	| SUPPORTED_10baseT_Full \
->> 	| SUPPORTED_100baseT_Half \
->> 	| SUPPORTED_100baseT_Full \
->> 	| SUPPORTED_Autoneg)
->>   h->if_support = MAC_GMAC_SUPPORTED;
->>   h->if_support |= SUPPORTED_1000baseT_Full;
->> phydev->supported &= h->if_support;
->>
->> As gmac do not support 1000M half, we add this patch to
->> make sure that no users can set 1000M half in any case.
-> Well, not quite. What this patch does is protect the hardware when it
-> is asked to change to an unsupported mode. This patch has nothing to
-> do with user APIs.
->
-> The user API for setting link modes is hns_nic_set_link_ksettings().
->
-> What you do have is
->
->                  if (speed == SPEED_1000 && cmd->base.duplex == DUPLEX_HALF)
->                          return -EINVAL;
->
-> which should stop somebody setting up a fixed speed link at 1000Half.
->
-> But you don't do anything with cmd->link_modes.advertising. However,
-> when you call phy_ethtool_ksettings_set(), it gets AND'ed with
-> phydev->supported, which you have already removed 1000Half from.
->
-> So is this a patch for a theoretical problem? Or have you seen it
-> happen? If it did happen, how did the user configure it to cause this
-> problem? That user API needs to prevent it.
->
-> 	 Andrew
-Hi,  Andrew,
-
-HW  do not support 1000M half, and the driver has done the 2 things:
-1, remove SUPPORTED_1000baseT_Half from phydev->supported.
-2,   add the protect in  hns_nic_set_link_ksettings().
-
-This patch is a  theoretical protect, and the problem does not really  
-happen.
-
-I think you really get the point, do you think we need this patch?
-
-Thanks
-> .
->
-
-
+Best regard,
+Xin Tan
