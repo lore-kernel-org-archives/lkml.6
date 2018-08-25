@@ -2,278 +2,106 @@ Return-Path: <SRS0=itv6=LI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37F3AC433F4
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 06:32:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7642C433F4
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 07:15:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5AFB20C51
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 06:32:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5AFB20C51
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 13DF8206B5
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 07:15:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Omkkn3F+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13DF8206B5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727278AbeHYKKX (ORCPT
+        id S1727091AbeHYKxM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 25 Aug 2018 06:10:23 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:37791 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726159AbeHYKKW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Aug 2018 06:10:22 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 8820089A80E15;
-        Sat, 25 Aug 2018 14:32:21 +0800 (CST)
-Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
- (10.3.19.214) with Microsoft SMTP Server (TLS) id 14.3.399.0; Sat, 25 Aug
- 2018 14:32:08 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-Subject: Re: [RFC PATCH 02/10] fs-verity: add data verification hooks for
- ->readpages()
-To:     Eric Biggers <ebiggers@kernel.org>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-ext4@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Michael Halcrow <mhalcrow@google.com>,
-        <linux-kernel@vger.kernel.org>, <linux-fscrypt@vger.kernel.org>,
-        <linux-integrity@vger.kernel.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Victor Hsieh <victorhsieh@google.com>
-References: <20180824161642.1144-1-ebiggers@kernel.org>
- <20180824161642.1144-3-ebiggers@kernel.org>
- <2f2382c3-e5e9-f0da-dc89-42dfc7b2b636@huawei.com>
- <20180825041647.GA726@sol.localdomain>
-Message-ID: <21e86199-28a7-4693-aef5-5fc28842535c@huawei.com>
-Date:   Sat, 25 Aug 2018 14:31:16 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Sat, 25 Aug 2018 06:53:12 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:57608 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726454AbeHYKxL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 25 Aug 2018 06:53:11 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7P7EGS2122828;
+        Sat, 25 Aug 2018 07:15:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=JTjxeJWwfMAtI0V6+t7nnC36RQAkLVsmhcKxpu8E+mY=;
+ b=Omkkn3F+mHywggQ2QizH7pKaKtKm4ttqH2QM0sSh3874HCIW9OJC6gHplJdsHt65TJKK
+ w0H7wkHelmQI7MtoOzSTbLh79hGpiZBwX2ULy/S+Ie1dc65QtDgHITAWk2+wGckmNACY
+ 9rCBb41tAIdA3J95JDddoVVkjlERlQr6ogbH/rLfUfysA49AdoG7X5PUIhflVhB6aMZr
+ G2nDC3SRWfA4eQq/hkgZyOScoOs8Ogfh8VffvC363E5IPvLGDkoM3kYoGdHlTfncDrZy
+ 7R4e/Oa5JNddLi3tYfCxrejI9KfD2MncJ9tpwJOuUPzXO4y4+kzHE/J+G6DpF0LYQxer PQ== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2m2xht89b6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 25 Aug 2018 07:15:03 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7P7F1jJ024574
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 25 Aug 2018 07:15:01 GMT
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w7P7Ewe4003240;
+        Sat, 25 Aug 2018 07:14:58 GMT
+Received: from mwanda (/197.232.248.111)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sat, 25 Aug 2018 00:14:57 -0700
+Date:   Sat, 25 Aug 2018 10:14:50 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Sven Luthi <dev@svenluthi.com>
+Cc:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        abbotti@mev.co.uk, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: comedi: drivers: adl_pci9118: Fixes format of
+ line 1283.
+Message-ID: <20180825071450.pwque6fw6vvy3sl7@mwanda>
+References: <20180824210657.16926-1-dev@svenluthi.com>
 MIME-Version: 1.0
-In-Reply-To: <20180825041647.GA726@sol.localdomain>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.151.23.176]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180824210657.16926-1-dev@svenluthi.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8995 signatures=668707
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808250077
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric,
-
-Thanks for your detailed reply.
-
-My english is not quite well, I could not type logically and quickly like you and could use some words improperly,
-I just want to express my personal concern, please understand, thanks. :)
-
-On 2018/8/25 12:16, Eric Biggers wrote:
-> Hi Gao,
+On Fri, Aug 24, 2018 at 11:06:56PM +0200, Sven Luthi wrote:
+> Checkpatch repored "Lines should not end with a '('" for line 1283.
 > 
-> On Sat, Aug 25, 2018 at 10:29:26AM +0800, Gao Xiang wrote:
->> Hi,
->>
->> On 2018/8/25 0:16, Eric Biggers wrote:
->>> +/**
->>> + * fsverity_verify_page - verify a data page
->>> + *
->>> + * Verify a page that has just been read from a file against that file's Merkle
->>> + * tree.  The page is assumed to be a pagecache page.
->>> + *
->>> + * Return: true if the page is valid, else false.
->>> + */
->>> +bool fsverity_verify_page(struct page *data_page)
->>> +{
->>> +	struct inode *inode = data_page->mapping->host;
->>> +	const struct fsverity_info *vi = get_fsverity_info(inode);
->>> +	struct ahash_request *req;
->>> +	bool valid;
->>> +
->>> +	req = ahash_request_alloc(vi->hash_alg->tfm, GFP_KERNEL);
->>> +	if (unlikely(!req))
->>> +		return false;
->>> +
->>> +	valid = verify_page(inode, vi, req, data_page);
->>> +
->>> +	ahash_request_free(req);
->>> +
->>> +	return valid;
->>> +}
->>> +EXPORT_SYMBOL_GPL(fsverity_verify_page);
->>> +
->>> +/**
->>> + * fsverity_verify_bio - verify a 'read' bio that has just completed
->>> + *
->>> + * Verify a set of pages that have just been read from a file against that
->>> + * file's Merkle tree.  The pages are assumed to be pagecache pages.  Pages that
->>> + * fail verification are set to the Error state.  Verification is skipped for
->>> + * pages already in the Error state, e.g. due to fscrypt decryption failure.
->>> + */
->>> +void fsverity_verify_bio(struct bio *bio)
->>> +{
->>> +	struct inode *inode = bio_first_page_all(bio)->mapping->host;
->>> +	const struct fsverity_info *vi = get_fsverity_info(inode);
->>> +	struct ahash_request *req;
->>> +	struct bio_vec *bv;
->>> +	int i;
->>> +
->>> +	req = ahash_request_alloc(vi->hash_alg->tfm, GFP_KERNEL);
->>> +	if (unlikely(!req)) {
->>> +		bio_for_each_segment_all(bv, bio, i)
->>> +			SetPageError(bv->bv_page);
->>> +		return;
->>> +	}
->>> +
->>> +	bio_for_each_segment_all(bv, bio, i) {
->>> +		struct page *page = bv->bv_page;
->>> +
->>> +		if (!PageError(page) && !verify_page(inode, vi, req, page))
->>> +			SetPageError(page);
->>> +	}
->>> +
->>> +	ahash_request_free(req);
->>> +}
->>> +EXPORT_SYMBOL_GPL(fsverity_verify_bio);
->>
->> Out of curiosity, I quickly scanned the fs-verity source code and some minor question out there....
->>
->> If something is wrong, please point out, thanks in advance...
->>
->> My first question is that 'Is there any way to skip to verify pages in a bio?'
->> I am thinking about
->> If metadata and data page are mixed in a filesystem of such kind, they could submit together in a bio, but metadata could be unsuitable for such kind of verification.
->>
+> Moved opening parenthesis of function on line 1283 onto next line.
 > 
-> Pages below i_size are verified, pages above are not.
+> Signed-off-by: Sven Luthi <dev@svenluthi.com>
+> ---
+>  drivers/staging/comedi/drivers/adl_pci9118.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> With my patches, ext4 and f2fs won't actually submit pages in both areas in the
-> same bio, and they won't call the fs-verity verification function for bios in
-> the data area.  But even if they did, there's also a check in verify_page() that
+> diff --git a/drivers/staging/comedi/drivers/adl_pci9118.c b/drivers/staging/comedi/drivers/adl_pci9118.c
+> index 2528ca0ede6d..07431dc9cde9 100644
+> --- a/drivers/staging/comedi/drivers/adl_pci9118.c
+> +++ b/drivers/staging/comedi/drivers/adl_pci9118.c
+> @@ -1280,8 +1280,8 @@ static int pci9118_ai_cmdtest(struct comedi_device *dev,
+>  			} else {
+>  				arg = cmd->convert_arg * cmd->chanlist_len;
+>  			}
+> -			err |= comedi_check_trigger_arg_min(
+> -				&cmd->scan_begin_arg, arg);
+> +			err |= comedi_check_trigger_arg_min
+> +			       (&cmd->scan_begin_arg, arg);
 
-I think you mean the hash area?
-Yes, I understand your design. It is a wonderful job for ext4/f2fs for now as Ted said.
+The original is fine.  It's probably better than the new version.
+Checkpatch.pl is just a hint, not a command.
 
-> skips the verification if the page is above i_size.
->
+regards,
+dan carpenter
 
-I think it could not be as simple as you said for all cases.
-
-If some fs submits contiguous access with different MAPPING (something like mixed FILE_MAPPING and META_MAPPING),
-their page->index are actually unreliable(could be logical page index for FILE_MAPPING,and physical page index for META_MAPPING),
-and data are organized by design in multi bios for a fs-specific use (such as compresssion).
-
-You couldn't do such verification `if the page is above i_size' and it could be hard to integrate somehow.
-
->> The second question is related to the first question --- 'Is there any way to verify a partial page?'
->> Take scalability into consideration, some files could be totally inlined or partially inlined in metadata.
->> Is there any way to deal with them in per-file approach? at least --- support for the interface?
-> 
-> Well, one problem is that inline data has its own separate I/O path; see
-> ext4_readpage_inline() and f2fs_read_inline_data().  So it would be a large
-> effort to support features like encryption and verity which require
-> postprocessing after reads, and probably not worthwhile especially for verity
-> which is primarily intended for large files.
-
-Yes, for the current user ext4 and f2fs, it is absolutely wonderful.
-
-
-I have to admit I am curious about Google fs-verity roadmap for the future Android
-(I have to identify whether it is designed to replace dm-verity, currently I think is no)
-
-since it is very important whether our EROFS should support fs-verity or not in the near future...
-
-
-I could give some EROFS use case if you have some time to discuss.
-
-EROFS uses a more aggressive inline approach, which means it not only inline data for small files.
-It is designed to inline the last page, which are reasonable small (eg. only a few byte) to inline for all files, eg.
-
-                                                                 IN FILE_MAPPING
-IN META_MAPPING                                                  blk-aligned
-+--------------------------------------|                         +--------+--------+     +----------+.......+
-|inode A+inlined-last data.. inode B...|                         | page 0 | page 1 | ... | page n-1 . page n.
-+--------------------------------------+                         +--------+--------+     +----------+.......+
-         |------------------------------------------------------------------------------------------|\
-
-In priciple, this approach could be also used for read-write file systems to save more storage space.
-I think it is still easy for uncompressed file if you do the zero padding as you said below.
-
-But if considering _compression_.....especially compression in VLE, I think it should not rely on `bio' directly, because,
-1) endio with compressed data rather than FILE_MAPPING plain data, these pages which could from META_MAPPING
-(for caching compressed page on purpose) or FILE_MAPPING(for decompressing in-place to save redundant META_MAPPING memory).
-
-I think it should be decompress at first and then fs-verity, but there could be more filepages other than compresssed pages joined
-(eg. 128kb->32kb, we submit 8 pages but decompress end with 32 pages), it should not be the original bio any more...
-(actually I think it is not the bio concept anymore...)
-
-2) EROFS VLE is more complicated, we could end a bio with a compressed page but decompress a partial file page, eg.
-    +-------------------+--------------------+
-... | compressed page X |compressed page X+1 |
-    +-------------------|--------------------+
-            end of bio Y/     bio Y+1
-                 \      |      /
-                  +-------------------------+
-                  |   plain data (file page)|
-                  +-------------------------+
-which means a bio could only decompress partial data of a page, the page could be Uptodate by two bios rather than one,
-I have no idea how to fs-verity like this...
-
-`it could call fsverity after assembling the page in the page cache.` as Ted said in that case.
-
-> 
-> A somewhat separate question is whether the zero padding to a block boundary
-> after i_size, before the Merkle tree begins, is needed.  The answer is yes,
-> since mixing data and metadata in the same page would cause problems.  First,
-> userspace would be able to mmap the page and see some of the metadata rather
-> than zeroes.  That's not a huge problem, but it breaks the standard behavior.
-> Second, any page containing data cannot be set Uptodate until it's been
-> verified.  So, a special case would be needed to handle reading the part of the
-> metadata that's located in a data page.
-
-Yes, after I just thinked over, I think there should be a zero padding to a block boundary
-as you said due to Uptodate and mmap scenerio if you directly use its inode(file) mapping for verification.
-
-
-> 
->> At last, I hope filesystems could select the on-disk position of hash tree and 'struct fsverity_descriptor'
->> rather than fixed in the end of verity files...I think if fs-verity preparing such support and interfaces could be better.....hmmm... :(
-> 
-> In theory it would be a much cleaner design to store verity metadata separately
-> from the data.  But the Merkle tree can be very large.  For example, a 1 GB file
-> using SHA-512 would have a 16.6 MB Merkle tree.  So the Merkle tree can't be an
-> extended attribute, since the xattrs API requires xattrs to be small (<= 64 KB),
-> and most filesystems further limit xattr sizes in their on-disk format to as
-> little as 4 KB.  Furthermore, even if both of these limits were to be increased,
-> the xattrs functions (both the syscalls, and the internal functions that
-> filesystems have) are all based around getting/setting the entire xattr value.
-> 
-> Also when used with fscrypt, we want the Merkle tree and fsverity_descriptor to
-> be encrypted, so they doesn't leak plaintext hashes.  And we want the Merkle
-> tree to be paged into memory, just like the file contents, to take advantage of
-> the usual Linux memory management.
-> 
-> What we really need is *streams*, like NTFS has.  But the filesystems we're
-> targetting don't support streams, nor does the Linux syscall interface have any
-> API for accessing streams, nor does the VFS support them.
-> 
-> Adding streams support to all those things would be a huge multi-year effort,
-> controversial, and almost certainly not worth it just for fs-verity.
-> 
-> So simply storing the verity metadata past i_size seems like the best solution
-> for now.
-> 
-> That being said, in the future we could pretty easily swap out the calls to
-> read_mapping_page() with something else if a particular filesystem wanted to
-> store the metadata somewhere else.  We actually even originally had a function
-> ->read_metadata_page() in the filesystem's fsverity_operations, but it turned
-> out to be unnecessary and I replaced it with directly calling
-> read_mapping_page(), but it could be changed back at any time.
-
-OK, I got it.
-
-I have to look into that and think over again. Thanks for your reply again in the end. :)
-
-Thanks,
-Gao Xiang
-
-> 
-> - Eric
-> 
