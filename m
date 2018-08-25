@@ -2,182 +2,184 @@ Return-Path: <SRS0=itv6=LI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 828A1C433F5
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 02:22:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7125AC433F4
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 02:29:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AF1B21567
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 02:22:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AF1B21567
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 0CB8021567
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 02:29:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VhepF3+J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CB8021567
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726442AbeHYF7f (ORCPT
+        id S1726468AbeHYGGg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 25 Aug 2018 01:59:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59812 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725881AbeHYF7f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Aug 2018 01:59:35 -0400
-Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 305B721567;
-        Sat, 25 Aug 2018 02:22:21 +0000 (UTC)
-Date:   Fri, 24 Aug 2018 22:22:19 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH v2 32/32] selftests/ftrace: Add blktrace testcase
-Message-ID: <20180824222219.1d8aae6f@vmware.local.home>
-In-Reply-To: <153443785794.23257.1676529524763163046.stgit@devbox>
-References: <153443695002.23257.13628220023468200991.stgit@devbox>
-        <153443785794.23257.1676529524763163046.stgit@devbox>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sat, 25 Aug 2018 02:06:36 -0400
+Received: from mail-pl1-f174.google.com ([209.85.214.174]:33380 "EHLO
+        mail-pl1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725881AbeHYGGg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 25 Aug 2018 02:06:36 -0400
+Received: by mail-pl1-f174.google.com with SMTP id 60-v6so1813704ple.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 19:29:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:user-agent:in-reply-to:references:mime-version
+         :content-transfer-encoding:subject:to:cc:from:message-id;
+        bh=l/2s2t3rtE37tt0LycqUWsfX9GphsseHJOzzA5vuQTI=;
+        b=VhepF3+J3OGjX2UZpFCg9Di4y8D4puOcyIFnZFOa6a1S9FzBxZ639SIRp9ApbtNJEs
+         hf5ScEMm8SYJpcjB2j+t5rLTigjOxsPgCuZH4nI0XZzbA6D1+aEFg79ZMzZ2mu8MI615
+         UH1jve9Jxc6gVX7Ta1LsvhKf9NYxHNDPVTb2ACuP55HdcetKlQ9GU5c29QtaON364MXw
+         VXbFCOh892F9RLnJLEuojK5QF4LM3a0Qsbhee31GWCH+t/33/ZKt8tfMj7ENrLrXc2eX
+         gObvozue0U0VaVgULaxEpKjg13cEHO/gRspM+jpx45IdZkSQYXcfA+dIxpADVEx64G0V
+         KvSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:user-agent:in-reply-to:references
+         :mime-version:content-transfer-encoding:subject:to:cc:from
+         :message-id;
+        bh=l/2s2t3rtE37tt0LycqUWsfX9GphsseHJOzzA5vuQTI=;
+        b=r3T/6ws7mlAlDsm/smjAsO4ydLEFeLHrDLzcl5OPqdOLWCTtPDAo+P4QZs/7U7dfQY
+         Y4pg5MU/jMu6eIuyKIBSjLfAcidTeiT2K7HgF+fQ9vgh4u2c156gRpw18oSt5HDBFmXm
+         3DsvvZtQqfOtsesDvTfK6KCrggOCFt0e081L1acuBcJTC/C68o2Xsc5Y+PxMiH9BL3M6
+         mel20qL3VWoU5mAe9hEZBj5QVqdBBm0NUwzCduMw3Dg+rGan63aNwgsDjmSFTStsqxt4
+         P0Qtj6ShxiMTTI17HyuO2c+061FUbC/l2y/UYm7HEZ/CocbS6TldQpC0xvE3OAC/vAu5
+         eEnw==
+X-Gm-Message-State: APzg51AsDhkpb9Rzp2xSDSaSVMXw3lv3pccyLGZkoNl8nwNVWfbpOLfZ
+        2ufYHgR4Ac30tkYhSACaeW0=
+X-Google-Smtp-Source: ANB0VdbjkGlxOsyEzsvPiBSMkYbDB8BFcFJ7dn6nFPTlJ5zdncYYoFUmylKPsdOw0UEXqu4PfpnDDw==
+X-Received: by 2002:a17:902:7613:: with SMTP id k19-v6mr3997897pll.317.1535164161098;
+        Fri, 24 Aug 2018 19:29:21 -0700 (PDT)
+Received: from [10.64.111.8] (c-98-234-136-180.hsd1.ca.comcast.net. [98.234.136.180])
+        by smtp.gmail.com with ESMTPSA id l27-v6sm17346388pfi.180.2018.08.24.19.29.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 24 Aug 2018 19:29:20 -0700 (PDT)
+Date:   Fri, 24 Aug 2018 19:29:02 -0700
+User-Agent: K-9 Mail for Android
+In-Reply-To: <CA+55aFz1KYT7fRRG98wei24spiVg7u1Ec66piWY5359ykFmezw@mail.gmail.com>
+References: <20180822153012.173508681@infradead.org> <20180822154046.823850812@infradead.org> <20180822155527.GF24124@hirez.programming.kicks-ass.net> <20180823134525.5f12b0d3@roar.ozlabs.ibm.com> <CA+55aFxneZTFxxxAjLZmj92VUJg6z7hERxJ2cHoth-GC0RuELw@mail.gmail.com> <776104d4c8e4fc680004d69e3a4c2594b638b6d1.camel@au1.ibm.com> <CA+55aFzM77G9-Q6LboPLJ=5gHma66ZQKiMGCMqXoKABirdF98w@mail.gmail.com> <20180823133958.GA1496@brain-police> <20180824084717.GK24124@hirez.programming.kicks-ass.net> <D74A89DF-0D89-4AB6-8A6B-93BEC9A83595@gmail.com> <20180824180438.GS24124@hirez.programming.kicks-ass.net> <56A9902F-44BE-4520-A17C-26650FCC3A11@gmail.com> <CA+55aFzerzTPm94jugheVmWg8dJre94yu+GyZGT9NNZanNx_qw@mail.gmail.com> <9A38D3F4-2F75-401D-8B4D-83A844C9061B@gmail.com> <CA+55aFz1KYT7fRRG98wei24spiVg7u1Ec66piWY5359ykFmezw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: TLB flushes on fixmap changes
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+CC:     Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Benjamin Herrenschmidt <benh@au1.ibm.com>,
+        Nick Piggin <npiggin@gmail.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Rik van Riel <riel@surriel.com>,
+        Jann Horn <jannh@google.com>,
+        Adin Scannell <ascannell@google.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        David Miller <davem@davemloft.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+From:   nadav.amit@gmail.com
+Message-ID: <8E0D8C66-6F21-4890-8984-B6B3082D4CC5@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 17 Aug 2018 01:44:18 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-> Add a basic testcase for blktrace. For making it portable,
-> this test uses a loop device.
 
-blktrace is a bit special, as it's maintained by the block subsystem
-and not really truly part of ftrace. It lives in the tracing directory,
-but the changes go through Jens's tree. I'm guessing that Jens already
-has tests for this. Not sure we should add a test to the ftrace
-selftests for this tracer.
+On August 24, 2018 5:58:43 PM PDT, Linus Torvalds <torvalds@linux-foundati=
+on=2Eorg> wrote:
+>Adding a few people to the cc=2E
+>
+>On Fri, Aug 24, 2018 at 1:24 PM Nadav Amit <nadav=2Eamit@gmail=2Ecom>
+>wrote:
+>> >
+>> > Can you actually find something that changes the fixmaps after boot
+>> > (again, ignoring kmap)?
+>>
+>> At least the alternatives mechanism appears to do so=2E
+>>
+>> IIUC the following path is possible when adding a module:
+>>
+>>         jump_label_add_module()
+>>         ->__jump_label_update()
+>>         ->arch_jump_label_transform()
+>>         ->__jump_label_transform()
+>>         ->text_poke_bp()
+>>         ->text_poke()
+>>         ->set_fixmap()
+>
+>Yeah, that looks a bit iffy=2E
+>
+>But making the tlb flush global wouldn't help=2E  This is running on a
+>local core, and if there are other CPU's that can do this at the same
+>time, then they'd just fight about the same mapping=2E
+>
+>Honestly, I think it's ok just because I *hope* this is all serialized
+>anyway (jump_label_lock? But what about other users of text_poke?)=2E
 
-Jens, you have thoughts on this?
+The users should hold text_mutex=2E
 
--- Steve
+>
+>But I'd be a lot happier about it if it either used an explicit lock
+>to make sure, or used per-cpu fixmap entries=2E
 
-> 
-> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> ---
->  tools/testing/selftests/ftrace/config              |    1 
->  .../testing/selftests/ftrace/test.d/tracer/blk.tc  |   91 ++++++++++++++++++++
->  2 files changed, 92 insertions(+)
->  create mode 100644 tools/testing/selftests/ftrace/test.d/tracer/blk.tc
-> 
-> diff --git a/tools/testing/selftests/ftrace/config b/tools/testing/selftests/ftrace/config
-> index c2c8de4fafff..d999032442e1 100644
-> --- a/tools/testing/selftests/ftrace/config
-> +++ b/tools/testing/selftests/ftrace/config
-> @@ -5,6 +5,7 @@ CONFIG_TRACER_SNAPSHOT=y
->  CONFIG_STACK_TRACER=y
->  CONFIG_HIST_TRIGGERS=y
->  CONFIG_SCHED_TRACER=y
-> +CONFIG_BLK_DEV_IO_TRACE=y
->  CONFIG_PREEMPT_TRACER=y
->  CONFIG_IRQSOFF_TRACER=y
->  CONFIG_PREEMPTIRQ_DELAY_TEST=m
-> diff --git a/tools/testing/selftests/ftrace/test.d/tracer/blk.tc b/tools/testing/selftests/ftrace/test.d/tracer/blk.tc
-> new file mode 100644
-> index 000000000000..9d6e72810c8a
-> --- /dev/null
-> +++ b/tools/testing/selftests/ftrace/test.d/tracer/blk.tc
-> @@ -0,0 +1,91 @@
-> +#!/bin/sh
-> +# SPDX-License-Identifier: GPL2.0
-> +# description: Test blktrace
-> +
-> +IMG=$TMPDIR/fs.img
-> +MNTDIR=$TMPDIR/mnt
-> +
-> +if ! grep -wq "blk" available_tracers ; then
-> +  echo "blktrace is not supported"
-> +  exit_unsupported
-> +fi
-> +
-> +available_fs() { #fstype
-> +  grep -q $1 /proc/filesystems && which mkfs.$1
-> +}
-> +
-> +if available_fs ext3; then
-> +  FSTYPE=ext3
-> +elif available_fs ext4; then
-> +  FSTYPE=ext4
-> +elif available_fs ext2; then
-> +  FSTYPE=ext2
-> +elif available_fs xfs; then
-> +  FSTYPE=xfs
-> +elif available_fs btrfs; then
-> +  FSTYPE=btrfs
-> +else
-> +  echo "No available block-based filesystems"
-> +  exit_unresolved
-> +fi
-> +
-> +if ! which losetup; then
-> +  echo "No losetup found"
-> +  exit_unresolved
-> +fi
-> +LODEV=`losetup -f`
-> +LODEVTRACE=/sys/block/`basename $LODEV`/trace
-> +
-> +do_cleanup() {
-> +  if [ -d $MNTDIR ]; then
-> +   umount $MNTDIR ||:
-> +  fi
-> +  losetup -d $LODEV ||:
-> +  rm -f $IMG
-> +}
-> +
-> +# workload failure is not a tracer's failure
-> +workload_fail() {
-> +  do_cleanup
-> +  echo "Failed to run workload"
-> +  exit_unresolved
-> +}
-> +
-> +do_fail() {
-> +  do_cleanup
-> +  echo "Test failed"
-> +  exit 1
-> +}
-> +
-> +enable_lodevtrace() {
-> +  if [ `cat $LODEVTRACE/enable` -ne 1 ]; then
-> +    echo 1 > $LODEVTRACE/enable
-> +  fi
-> +}
-> +
-> +echo blk > current_tracer
-> +
-> +dd if=/dev/zero of=$IMG bs=1M count=10 &&\
-> +losetup $LODEV $IMG &&\
-> +mkfs.$FSTYPE $LODEV &&\
-> +mkdir -p $MNTDIR &&\
-> +mount -t $FSTYPE $LODEV $MNTDIR &&\
-> +enable_lodevtrace &&\
-> +dd if=/dev/urandom of=$MNTDIR/testfile bs=1M count=1 &&\
-> +sync &&\
-> +umount $MNTDIR || workload_fail
-> +
-> +grep -q "[dd]" trace || do_fail
-> +grep -q "[umount]" trace || do_fail
-> +echo > trace
-> +
-> +losetup $LODEV $IMG &&\
-> +mount -t $FSTYPE $LODEV $MNTDIR &&\
-> +cat $MNTDIR/testfile > /dev/null &&\
-> +echo 0 > $LODEVTRACE/enable &&\
-> +umount $MNTDIR || workload_fail
-> +
-> +grep -q "[cat]" trace || do_fail
-> +grep -q "[mount]" trace || do_fail
-> +
-> +do_cleanup
+My concern is that despite the lock, one core would do a speculative page =
+walk and cache a translation that soon after would become stale=2E
 
+>
+>And the tlb flush is done *after* the address is used, which is bogus
+>anyway=2E
+
+It seems to me that it is intended to remove the mapping that might be a s=
+ecurity issue=2E=C2=A0
+
+But anyhow, set_fixmap and clear_fixmap perform a local TLB flush, (in __s=
+et_pte_vaddr()) so locally things should be fine=2E
+
+>
+>> And a similar path can happen when static_key_enable/disable() is
+>called=2E
+>
+>Same comments=2E
+>
+>How about replacing that
+>
+>        local_irq_save(flags);
+>       =2E=2E=2E do critical things here =2E=2E=2E
+>        local_irq_restore(flags);
+>
+>in text_poke() with
+>
+>        static DEFINE_SPINLOCK(poke_lock);
+>
+>        spin_lock_irqsave(&poke_lock, flags);
+>       =2E=2E=2E do critical things here =2E=2E=2E
+>        spin_unlock_irqrestore(&poke_lock, flags);
+>
+>and moving the local_flush_tlb() to after the set_fixmaps, but before
+>the access through the virtual address=2E
+>
+>But changing things to do a global tlb flush would just be wrong=2E
+
+As I noted, I think that locking and local flushes as they are right now a=
+re fine (besides the redundant flush)=2E
+
+My concern is merely that speculative page walks on other cores would cach=
+e stale entries=2E
+
+
+
+--=20
+Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
