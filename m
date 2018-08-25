@@ -2,147 +2,115 @@ Return-Path: <SRS0=itv6=LI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF35BC433F5
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 02:41:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C3A6C433F4
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 03:01:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 522E9208B2
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 02:41:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 522E9208B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id DEC4120897
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 03:01:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CNLe+ZkK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEC4120897
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726574AbeHYGSm (ORCPT
+        id S1726879AbeHYGim (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 25 Aug 2018 02:18:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34744 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726110AbeHYGSl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Aug 2018 02:18:41 -0400
-Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4ECF9208B2;
-        Sat, 25 Aug 2018 02:41:24 +0000 (UTC)
-Date:   Fri, 24 Aug 2018 22:41:22 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 24/32] selftests/ftrace: Add max stack tracer
- testcase
-Message-ID: <20180824224122.2e10e7f9@vmware.local.home>
-In-Reply-To: <20180825104509.1b739d5d17d860e453daa0ca@kernel.org>
-References: <153443695002.23257.13628220023468200991.stgit@devbox>
-        <153443763074.23257.4052504725796725062.stgit@devbox>
-        <20180824192352.262144f5@gandalf.local.home>
-        <20180825104509.1b739d5d17d860e453daa0ca@kernel.org>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sat, 25 Aug 2018 02:38:42 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:42154 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726110AbeHYGim (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 25 Aug 2018 02:38:42 -0400
+Received: by mail-pf1-f194.google.com with SMTP id l9-v6so5330662pff.9;
+        Fri, 24 Aug 2018 20:01:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-transfer-encoding;
+        bh=Tj4JIaHF/UzMqiqoRgQruJrP1tA6YfrhXZt8z1Ywk/w=;
+        b=CNLe+ZkKAF5h8QULJJLe7dYPvE8fgfg8562qahGnAYnKvX1dbpsGTi7A18BkTfGAs8
+         MpJdXnh5RUvhRprXAYwOQJtTxHaQChqlwAqHfFczI9fDXdDVCo8oRS39EgMtwtYMHr1r
+         bZO+7tFY2y5ERYxn9RLh9Kr4KQZuW8jfxTXMaNoGErZW5VsWRC7LuLqYjXAfwxS/D2GD
+         WdnxqJ40QptznrcOIwjnHscBKmyBdAbgX32GK17+GivPQhZn5CvlJ5+ys6MXs52DzC4p
+         lwtUfZhFOycURiIDDviRkTEAjM403xcSkSlcnEAd8T+0ykImZAH0oON4yUla6e2/Coma
+         eUEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
+        bh=Tj4JIaHF/UzMqiqoRgQruJrP1tA6YfrhXZt8z1Ywk/w=;
+        b=Pb/dQ5qW8lUWKTqsWSLMImWzytKmnJLqAueZLS4a+EIhRmCgu0jvLliacmITRe/kFl
+         GgXtWhR9NnEnwW4JZRNOVqFXEMTi167BcPBYnB/SsIfr0TVJLvvZKDj+uqMSseCP3q5e
+         FTP1s0VhHwoCuErLI0dTepvP5hdXZrnqZZaQNS3dTRy+bFXbMobPvprxXfnCgb1QaX8b
+         9sk19WYMwNoQMai9trtGaRIdMOS0+sLZwi0CiOLCLP8Xkoy051o1eYFny2n3qJWwDo3f
+         zRof26KtsGxW7C/+P1hXIrMWQMwv6z68U+aux7nzPTeNR/u38guT+Ar/KRLjgVb66Rtu
+         2OhQ==
+X-Gm-Message-State: APzg51BKaS2AoMMoaEaB1fDYWlOvl6xpEirrSMJPaWDAv5LsquCABGxp
+        FG5jzNIgROrSemPGKskH7Rw=
+X-Google-Smtp-Source: ANB0VdYvnsjfQaTHM1AwuVtAOyAfeVpCx2BLv9pSXYQgNiEAiaViKBQSX1IUPiKbTQnkD5cfgdgebA==
+X-Received: by 2002:a63:d613:: with SMTP id q19-v6mr4096376pgg.327.1535166082621;
+        Fri, 24 Aug 2018 20:01:22 -0700 (PDT)
+Received: from [0.0.0.0] (96.45.178.72.16clouds.com. [96.45.178.72])
+        by smtp.gmail.com with ESMTPSA id v20-v6sm16592867pfk.12.2018.08.24.20.01.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 24 Aug 2018 20:01:21 -0700 (PDT)
+Subject: Re: [PATCH] fs: Fix double prealloc_shrinker() in sget_fc()
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, akpm@linux-foundation.org, dhowells@redhat.com
+References: <153131984019.24777.15284245961241666054.stgit@localhost.localdomain>
+From:   Jia He <hejianet@gmail.com>
+Message-ID: <3a12cb86-5d2d-aa24-56fb-ec046570705d@gmail.com>
+Date:   Sat, 25 Aug 2018 11:01:23 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <153131984019.24777.15284245961241666054.stgit@localhost.localdomain>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 25 Aug 2018 10:45:09 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-> On Fri, 24 Aug 2018 19:23:52 -0400
-> Steven Rostedt <rostedt@goodmis.org> wrote:
+
+On 7/11/2018 10:37 PM, Kirill Tkhai Wrote:
+> Hi,
 > 
-> > On Fri, 17 Aug 2018 01:40:30 +0900
-> > Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> >   
-> > > Add a testcase for max stack tracer, which checks basic
-> > > max stack usage tracing and its filter feature.
-> > > 
-> > > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> > > ---
-> > >  .../ftrace/test.d/ftrace/func_stack_tracer.tc      |   39 ++++++++++++++++++++
-> > >  1 file changed, 39 insertions(+)
-> > >  create mode 100644 tools/testing/selftests/ftrace/test.d/ftrace/func_stack_tracer.tc
-> > > 
-> > > diff --git a/tools/testing/selftests/ftrace/test.d/ftrace/func_stack_tracer.tc b/tools/testing/selftests/ftrace/test.d/ftrace/func_stack_tracer.tc
-> > > new file mode 100644
-> > > index 000000000000..b414f0e3c646
-> > > --- /dev/null
-> > > +++ b/tools/testing/selftests/ftrace/test.d/ftrace/func_stack_tracer.tc
-> > > @@ -0,0 +1,39 @@
-> > > +#!/bin/sh
-> > > +# SPDX-License-Identifier: GPL-2.0
-> > > +# description: ftrace - Max stack tracer
-> > > +# Test the basic function of max-stack usage tracing
-> > > +
-> > > +if [ ! -f stack_trace ]; then
-> > > +  echo "Max stack tracer is not supported - please make CONFIG_STACK_TRACER=y"
-> > > +  exit_unsupported
-> > > +fi
-> > > +
-> > > +echo > stack_trace_filter
-> > > +echo 0 > stack_max_size
-> > > +echo 1 > /proc/sys/kernel/stack_tracer_enabled
-> > > +
-> > > +: "Fork and wait for the first entry become !lock"
-> > > +timeout=10
-> > > +while [ $timeout -ne 0 ]; do
-> > > +  ( echo "forked" )
-> > > +  FL=`grep " 0)" stack_trace`
-> > > +  echo $FL | grep -q "lock" || break;
-> > > +  timeout=$((timeout - 1))
-> > > +done
-> > > +echo 0 > /proc/sys/kernel/stack_tracer_enabled
-> > > +
-> > > +echo '*lock*' > stack_trace_filter
-> > > +test `cat stack_trace_filter | wc -l` -eq `grep lock stack_trace_filter | wc -l`
-> > > +
-> > > +echo 0 > stack_max_size
-> > > +echo 1 > /proc/sys/kernel/stack_tracer_enabled  
-> > 
-> > This test fails quite a bit because it doesn't guarantee that another
-> > stack trace gets in that is bigger, and we don't find the "lock".  
+> I'm observing "KASAN: use-after-free Read in shrink_slab" on recent
+> linux-next in the code I've added:
 > 
-> Hmm, maybe I misunderstand what is the stack_trace_filter.
-> I thought it filtered the function that triggered stack trace,
-> so the top of stack trace was always filtered function.
-> If not, what does this filter?
-
-Ah, I missed the filter part, no its correct, and actually found a
-bug ;-) By adding this patch, it works again:
-
-diff --git a/kernel/trace/trace_stack.c b/kernel/trace/trace_stack.c
-index 4237eba4ef20..2b0d1ee3241c 100644
---- a/kernel/trace/trace_stack.c
-+++ b/kernel/trace/trace_stack.c
-@@ -111,7 +111,7 @@ check_stack(unsigned long ip, unsigned long *stack)
- 	stack_trace_max_size = this_size;
- 
- 	stack_trace_max.nr_entries = 0;
--	stack_trace_max.skip = 3;
-+	stack_trace_max.skip = 0;
- 
- 	save_stack_trace(&stack_trace_max);
- 
-
-
--- Steve
-
-> >   
-> > > +
-> > > +: "Fork and always the first entry including lock"
-> > > +timeout=10
-> > > +while [ $timeout -ne 0 ]; do
-> > > +  ( echo "forked" )
-> > > +  FL=`grep " 0)" stack_trace`
-> > > +  echo $FL | grep -q "lock"
-> > > +  timeout=$((timeout - 1))
-> > > +done
-> > > +echo 0 > /proc/sys/kernel/stack_tracer_enabled  
-> >   
+> https://syzkaller.appspot.com/bug?id=91767fc6346a4b9e0309a8cd7e2f356c434450b9
 > 
+> It seems to be not related to my patchset, since there is
+> a problem with double preallocation of shrinker. We should
+> use register_shrinker_prepared() in sget_fc(), since shrinker
+> is already allocated in alloc_super().
 > 
+> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+> ---
+>  fs/super.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/super.c b/fs/super.c
+> index 13647d4fd262..47a819f1a300 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -551,7 +551,7 @@ struct super_block *sget_fc(struct fs_context *fc,
+>  	hlist_add_head(&s->s_instances, &s->s_type->fs_supers);
+>  	spin_unlock(&sb_lock);
+>  	get_filesystem(s->s_type);
+> -	register_shrinker(&s->s_shrink);
+> +	register_shrinker_prepared(&s->shrinker);
 
+should be &s->shrink here  ?
+
+-- 
+Cheers,
+Jia
