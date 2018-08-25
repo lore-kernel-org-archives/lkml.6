@@ -2,100 +2,126 @@ Return-Path: <SRS0=itv6=LI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0740C433F4
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 06:12:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A11B6C433F4
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 06:16:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9947E208D4
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 06:12:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9947E208D4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 4FB5F208EB
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 06:16:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FB5F208EB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726886AbeHYJuI (ORCPT
+        id S1727043AbeHYJxu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 25 Aug 2018 05:50:08 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:47050 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726159AbeHYJuI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Aug 2018 05:50:08 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1ftRnw-0005y1-2F; Sat, 25 Aug 2018 14:12:12 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1ftRnp-0002vD-HM; Sat, 25 Aug 2018 14:12:05 +0800
-Date:   Sat, 25 Aug 2018 14:12:05 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jeffrey Lien <Jeff.Lien@wdc.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "tim.c.chen@linux.intel.com" <tim.c.chen@linux.intel.com>,
-        David Darrington <david.darrington@wdc.com>,
-        Jeff Furlong <jeff.furlong@wdc.com>
-Subject: Re: [PATCH] Performance Improvement in CRC16 Calculations.
-Message-ID: <20180825061205.ygrjjazkooqghrqy@gondor.apana.org.au>
-References: <1533928331-21303-1-git-send-email-jeff.lien@wdc.com>
- <yq1in4gq5jf.fsf@oracle.com>
- <yq1lg8zb2lp.fsf@oracle.com>
- <20180822062016.GA10356@infradead.org>
- <SN1PR04MB18241CBDC8E4CA5275EE4424EA360@SN1PR04MB1824.namprd04.prod.outlook.com>
- <CAKv+Gu-RwCrdgW69NVpyRLwGPGPCZx+ksTBM7NZk7v0-dzczGg@mail.gmail.com>
- <yq1a7pb9196.fsf@oracle.com>
- <CAKv+Gu8Y7YmyB5rmxaj-SGB7q03in7ijv2cOifwYnhP5CNastw@mail.gmail.com>
- <yq1tvnj780o.fsf@oracle.com>
+        Sat, 25 Aug 2018 05:53:50 -0400
+Received: from mga11.intel.com ([192.55.52.93]:39983 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726159AbeHYJxu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 25 Aug 2018 05:53:50 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Aug 2018 23:15:59 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,285,1531810800"; 
+   d="scan'208";a="84801314"
+Received: from bee.sh.intel.com (HELO lkp-server01) ([10.239.97.14])
+  by orsmga001.jf.intel.com with ESMTP; 24 Aug 2018 23:15:52 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1ftRrS-0002hg-Kb; Sat, 25 Aug 2018 14:15:50 +0800
+Date:   Sat, 25 Aug 2018 14:14:53 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Dilip Kota <dkota@codeaurora.org>
+Cc:     kbuild-all@01.org, swboyd@chromium.org, broonie@kernel.org,
+        mka@chromium.org, dianders@chromium.org,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Girish Mahadevan <girishm@codeaurora.org>,
+        Dilip Kota <dkota@codeaurora.org>
+Subject: Re: [PATCH V3] spi: spi-geni-qcom: Add SPI driver support for GENI
+ based QUP
+Message-ID: <201808251129.Mc6yEfip%fengguang.wu@intel.com>
+References: <1535107336-2214-1-git-send-email-dkota@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <yq1tvnj780o.fsf@oracle.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1535107336-2214-1-git-send-email-dkota@codeaurora.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 24, 2018 at 05:46:15PM -0400, Martin K. Petersen wrote:
->
-> +#ifdef CONFIG_MODULES
-> +	struct module *mod = data;
-> +
-> +	if (val != MODULE_STATE_LIVE ||
-> +	    strncmp(mod->name, "crct10dif", strlen("crct10dif")))
-> +		return 0;
-> +
-> +	/* Fall back to library function while we replace the tfm */
-> +	static_key_slow_inc(&crct10dif_fallback);
-> +
-> +	crypto_free_shash(crct10dif_tfm);
-> +	crct10dif_tfm = crypto_alloc_shash("crct10dif", 0, 0);
-> +	if (IS_ERR(crct10dif_tfm)) {
-> +		crct10dif_tfm = NULL;
-> +		goto out;
-> +	}
-> +
-> +	static_key_slow_dec(&crct10dif_fallback);
+Hi Girish,
 
-I don't think this is safe unless you do some kind of locking
-which would slow down the data path.  The easiest fix would be
-to keep the old tfm around forever, or use RCU if RCU read locking
-is acceptable to your use-case.
+Thank you for the patch! Yet something to improve:
 
-We already have a notifier mechanism in the crypto API for algorithm
-registration events.  However, it currently only notifies for untested
-algorithms.  So we need to add an event for tested algorithms and also
-export this for use outside of the crypto API.
+[auto build test ERROR on spi/for-next]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+url:    https://github.com/0day-ci/linux/commits/Dilip-Kota/spi-spi-geni-qcom-Add-SPI-driver-support-for-GENI-based-QUP/20180824-190528
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+config: i386-allyesconfig
+compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
+reproduce:
+        make ARCH=i386  allyesconfig
+        make ARCH=i386 
+
+All errors (new ones prefixed by >>):
+
+
+vim +/GENI_SE_VERSION_MAJOR +239 drivers/spi/spi-geni-qcom.c
+
+   212	
+   213	static int spi_geni_prepare_transfer_hardware(struct spi_master *spi)
+   214	{
+   215		struct spi_geni_master *mas = spi_master_get_devdata(spi);
+   216		struct geni_se *se = &mas->se;
+   217	
+   218		if (!mas->setup) {
+   219			unsigned int proto = geni_se_read_proto(se);
+   220			unsigned int major, minor, step, ver;
+   221	
+   222			if (proto != GENI_SE_SPI) {
+   223				dev_err(mas->dev, "Invalid proto %d\n", proto);
+   224				return -ENXIO;
+   225			}
+   226			mas->tx_fifo_depth = geni_se_get_tx_fifo_depth(se);
+   227			mas->rx_fifo_depth = geni_se_get_rx_fifo_depth(se);
+   228			mas->tx_fifo_width = geni_se_get_tx_fifo_width(se);
+   229	
+   230			/*
+   231			 * Hardware programming guide suggests to configure
+   232			 * RX FIFO RFR level to fifo_depth-2.
+   233			 */
+   234			geni_se_init(se, 0x0, mas->tx_fifo_depth - 2);
+   235			mas->oversampling = 1;
+   236			/* Transmit an entire FIFO worth of data per IRQ */
+   237			mas->tx_wm = 1;
+   238			ver = geni_se_get_qup_hw_version(se);
+ > 239			major = GENI_SE_VERSION_MAJOR(ver);
+ > 240			minor = GENI_SE_VERSION_MINOR(ver);
+ > 241			step = GENI_SE_VERSION_STEP(ver);
+   242	
+   243			if (major == 1 && minor == 0)
+   244				mas->oversampling = 2;
+   245			mas->setup = 1;
+   246		}
+   247		return 0;
+   248	}
+   249	
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
