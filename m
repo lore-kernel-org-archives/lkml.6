@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20F66C433F4
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 02:18:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF222C433F5
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 02:19:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAB6B21567
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 02:18:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAB6B21567
+	by mail.kernel.org (Postfix) with ESMTP id 6C19921567
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 02:19:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C19921567
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726630AbeHYFzi (ORCPT
+        id S1727011AbeHYF4l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 25 Aug 2018 01:55:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59094 "EHLO mail.kernel.org"
+        Sat, 25 Aug 2018 01:56:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725881AbeHYFzh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Aug 2018 01:55:37 -0400
+        id S1725881AbeHYF4l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 25 Aug 2018 01:56:41 -0400
 Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B56A21567;
-        Sat, 25 Aug 2018 02:18:24 +0000 (UTC)
-Date:   Fri, 24 Aug 2018 22:18:22 -0400
+        by mail.kernel.org (Postfix) with ESMTPSA id 098B121567;
+        Sat, 25 Aug 2018 02:19:27 +0000 (UTC)
+Date:   Fri, 24 Aug 2018 22:19:26 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     Masami Hiramatsu <mhiramat@kernel.org>
 Cc:     Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@redhat.com>,
         linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 30/32] selftests/ftrace: Add ftrace cpumask testcase
-Message-ID: <20180824221822.3e0092c9@vmware.local.home>
-In-Reply-To: <153443780039.23257.5243924038958174104.stgit@devbox>
+Subject: Re: [PATCH v2 31/32] selftests/ftrace: Add output format testcase
+Message-ID: <20180824221926.40cae9f9@vmware.local.home>
+In-Reply-To: <153443782973.23257.16320326555688796000.stgit@devbox>
 References: <153443695002.23257.13628220023468200991.stgit@devbox>
-        <153443780039.23257.5243924038958174104.stgit@devbox>
+        <153443782973.23257.16320326555688796000.stgit@devbox>
 X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -46,72 +46,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 17 Aug 2018 01:43:20 +0900
+On Fri, 17 Aug 2018 01:43:49 +0900
 Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-> Add a testcase for tracing_cpumask with function tracer.
-> 
-> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> ---
->  .../selftests/ftrace/test.d/ftrace/func_cpumask.tc |   34 ++++++++++++++++++++
->  1 file changed, 34 insertions(+)
->  create mode 100644 tools/testing/selftests/ftrace/test.d/ftrace/func_cpumask.tc
-> 
-> diff --git a/tools/testing/selftests/ftrace/test.d/ftrace/func_cpumask.tc b/tools/testing/selftests/ftrace/test.d/ftrace/func_cpumask.tc
-> new file mode 100644
-> index 000000000000..37420e355445
-> --- /dev/null
-> +++ b/tools/testing/selftests/ftrace/test.d/ftrace/func_cpumask.tc
-> @@ -0,0 +1,34 @@
-> +#!/bin/sh
-> +# SPDX-License-Identifier: GPL2.0
-> +# description: ftrace - function trace with cpumask
-> +
-> +NP=`grep "^processor" /proc/cpuinfo | wc -l`
+> Add a testcase for tracing output format using trace_marker.
+> This tests raw, hex and bin format output.
 
-A better way to find the number of CPUs is to either use "nproc" or
-just look at /sys/devices/system/cpu/cpu[0-9]*. Because what I learned
-from experience is that searching for strings in /proc/cpuinfo is not
-cross arch compatible. For example, other archs don't use "processor"
-in the stings and would come up with a box with 0 CPUs. Something we've
-been working on for some time ;-)
+I'd like to deprecate these formats. They are useless ever since we
+implemented trace_pipe_raw.
+
+Let's not add this test.
+
+Thanks,
 
 -- Steve
 
+> 
+> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> ---
+>  .../ftrace/test.d/00basic/print_format.tc          |   51 ++++++++++++++++++++
+>  1 file changed, 51 insertions(+)
+>  create mode 100644 tools/testing/selftests/ftrace/test.d/00basic/print_format.tc
+> 
+> diff --git a/tools/testing/selftests/ftrace/test.d/00basic/print_format.tc b/tools/testing/selftests/ftrace/test.d/00basic/print_format.tc
+> new file mode 100644
+> index 000000000000..55feb542e83e
+> --- /dev/null
+> +++ b/tools/testing/selftests/ftrace/test.d/00basic/print_format.tc
+> @@ -0,0 +1,51 @@
+> +#!/bin/sh
+> +# SPDX-License-Identifier: GPL2.0
+> +# description: Change print trace format
 > +
-> +if [ $NP -eq 1 ] ;then
-> +  echo "We can not test cpumask on UP environment"
+> +if [ ! -f trace_marker ]; then
+> +  echo "trace_marker is not supported, can not continue testing"
 > +  exit_unresolved
 > +fi
 > +
 > +do_reset() {
-> +  echo ffff > tracing_cpumask
-
-Why ffff? Should we save what was in tracing_cpumask first and just
-reuse it?
-
--- Steve
-
-
+> +  if [ `cat options/bin` -eq 1 ]; then
+> +    grep -v "^#" trace | od -h | cut -f 2- -d " " | xargs echo
+> +  fi
+> +  echo 0 > options/hex
+> +  echo 0 > options/raw
+> +  echo 0 > options/bin
+> +  cat trace
+> +  exit 1
 > +}
 > +
-> +echo 0 > tracing_on
 > +echo > trace
-> +: "Bitmask only record on CPU1"
-> +echo 2 > tracing_cpumask
-> +MASK=0x`cat tracing_cpumask`
-> +test `printf "%d" $MASK` -eq 2 || do_reset
-> +
-> +echo function > current_tracer
-> +echo 1 > tracing_on
-> +(echo "forked")
+> +echo "abcdefgh" > trace_marker
 > +echo 0 > tracing_on
 > +
-> +: "Check CPU1 events are recorded"
-> +grep -q -e "\[001\]" trace || do_reset
+> +: "Get the pid and cpu#"
+> +IDS=`grep -v "^#" trace | sed -e 's/[[:space:]]*.*-\([[:digit:]]*\)[[:space:]]*\[\([[:digit:]]*\)\].*/\1 \2/'`
 > +
-> +: "There should be No other cpu events"
-> +! grep -qv -e "\[001\]" -e "^#" trace || do_reset
+> +read_pid_cpu() {
+> +  _PID=$1
+> +  _CPU=`printf "%d" $2`
+> +}
 > +
-> +do_reset
+> +read_pid_cpu $IDS
+> +
+> +: "Test raw output format"
+> +echo 1 > options/raw
+> +grep -v "^#" trace | grep "^$_PID $_CPU" || do_reset
+> +echo 0 > options/raw
+> +
+> +: "Test hex output format"
+> +echo 1 > options/hex
+> +PAT=`printf "%08x %08x" $_PID $_CPU`
+> +grep -v "^#" trace | grep "^$PAT" || do_reset
+> +echo 0 > options/hex
+> +
+> +: "Test bin output format"
+> +echo 1 > options/bin
+> +PAT=`printf "%04x [[:xdigit:]]* [[:xdigit:]]*%02x" $_PID $_CPU`
+> +# Make a stream of hexdump
+> +grep -v "^#" trace | od -h | cut -f 2- -d " " | xargs echo | grep "$PAT" || do_reset
+> +echo 0 > options/bin
 
