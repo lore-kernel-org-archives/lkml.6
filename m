@@ -2,126 +2,159 @@ Return-Path: <SRS0=itv6=LI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A11B6C433F4
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 06:16:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1455C433F5
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 06:27:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FB5F208EB
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 06:16:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FB5F208EB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 57AC620C51
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 06:27:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57AC620C51
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727043AbeHYJxu (ORCPT
+        id S1727091AbeHYKFW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 25 Aug 2018 05:53:50 -0400
-Received: from mga11.intel.com ([192.55.52.93]:39983 "EHLO mga11.intel.com"
+        Sat, 25 Aug 2018 06:05:22 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:38391 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726159AbeHYJxu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Aug 2018 05:53:50 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Aug 2018 23:15:59 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,285,1531810800"; 
-   d="scan'208";a="84801314"
-Received: from bee.sh.intel.com (HELO lkp-server01) ([10.239.97.14])
-  by orsmga001.jf.intel.com with ESMTP; 24 Aug 2018 23:15:52 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1ftRrS-0002hg-Kb; Sat, 25 Aug 2018 14:15:50 +0800
-Date:   Sat, 25 Aug 2018 14:14:53 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Dilip Kota <dkota@codeaurora.org>
-Cc:     kbuild-all@01.org, swboyd@chromium.org, broonie@kernel.org,
-        mka@chromium.org, dianders@chromium.org,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Girish Mahadevan <girishm@codeaurora.org>,
-        Dilip Kota <dkota@codeaurora.org>
-Subject: Re: [PATCH V3] spi: spi-geni-qcom: Add SPI driver support for GENI
- based QUP
-Message-ID: <201808251129.Mc6yEfip%fengguang.wu@intel.com>
-References: <1535107336-2214-1-git-send-email-dkota@codeaurora.org>
+        id S1726159AbeHYKFW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 25 Aug 2018 06:05:22 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id A98BB207B1; Sat, 25 Aug 2018 08:27:28 +0200 (CEST)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id D99E3206FF;
+        Sat, 25 Aug 2018 08:27:27 +0200 (CEST)
+Date:   Sat, 25 Aug 2018 08:27:22 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     linux-doc@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        linux-i2c@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Russell King <linux@armlinux.org.uk>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        David Lechner <david@lechnology.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Sven Van Asbroeck <svendev@arcx.com>,
+        linux-mtd@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+        Lukas Wunner <lukas@wunner.de>, Naren <naren.kernel@gmail.com>,
+        netdev@vger.kernel.org, Alban Bedel <albeu@free.fr>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "David S . Miller" <davem@davemloft.net>
+Subject: Re: [PATCH v2 01/29] nvmem: add support for cell lookups
+Message-ID: <20180825082722.567e8c9a@bbrezillon>
+In-Reply-To: <20180824152740.GD27483@lunn.ch>
+References: <20180810080526.27207-1-brgl@bgdev.pl>
+        <20180810080526.27207-2-brgl@bgdev.pl>
+        <20180824170848.29594318@bbrezillon>
+        <20180824152740.GD27483@lunn.ch>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1535107336-2214-1-git-send-email-dkota@codeaurora.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Girish,
+On Fri, 24 Aug 2018 17:27:40 +0200
+Andrew Lunn <andrew@lunn.ch> wrote:
 
-Thank you for the patch! Yet something to improve:
+> On Fri, Aug 24, 2018 at 05:08:48PM +0200, Boris Brezillon wrote:
+> > Hi Bartosz,
+> > 
+> > On Fri, 10 Aug 2018 10:04:58 +0200
+> > Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> >   
+> > > +struct nvmem_cell_lookup {
+> > > +	struct nvmem_cell_info	info;
+> > > +	struct list_head	list;
+> > > +	const char		*nvmem_name;
+> > > +};  
+> > 
+> > Hm, maybe I don't get it right, but this looks suspicious. Usually the
+> > consumer lookup table is here to attach device specific names to
+> > external resources.
+> > 
+> > So what I'd expect here is:
+> > 
+> > struct nvmem_cell_lookup {
+> > 	/* The nvmem device name. */
+> > 	const char *nvmem_name;
+> > 
+> > 	/* The nvmem cell name */
+> > 	const char *nvmem_cell_name;
+> > 
+> > 	/*
+> > 	 * The local resource name. Basically what you have in the
+> > 	 * nvmem-cell-names prop.
+> > 	 */
+> > 	const char *conid;
+> > };
+> > 
+> > struct nvmem_cell_lookup_table {
+> > 	struct list_head list;
+> > 
+> > 	/* ID of the consumer device. */
+> > 	const char *devid;
+> > 
+> > 	/* Array of cell lookup entries. */
+> > 	unsigned int ncells;
+> > 	const struct nvmem_cell_lookup *cells;
+> > };
+> > 
+> > Looks like your nvmem_cell_lookup is more something used to attach cells
+> > to an nvmem device, which is NVMEM provider's responsibility not the
+> > consumer one.  
+> 
+> Hi Boris
+> 
+> There are cases where there is not a clear providier/consumer split. I
+> have an x86 platform, with a few at24 EEPROMs on it. It uses an off
+> the shelf Komtron module, placed on a custom carrier board. One of the
+> EEPROMs contains the hardware variant information. Once i know the
+> variant, i need to instantiate other I2C, SPI, MDIO devices, all using
+> platform devices, since this is x86, no DT available.
+> 
+> So the first thing my x86 platform device does is instantiate the
+> first i2c device for the AT24. Once the EEPROM pops into existence, i
+> need to add nvmem cells onto it. So at that point, the x86 platform
+> driver is playing the provider role. Once the cells are added, i can
+> then use nvmem consumer interfaces to get the contents of the cell,
+> run a checksum, and instantiate the other devices.
+> 
+> I wish the embedded world was all DT, but the reality is that it is
+> not :-(
 
-[auto build test ERROR on spi/for-next]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+Actually, I'm not questioning the need for this feature (being able to
+attach NVMEM cells to an NVMEM device on a platform that does not use
+DT). What I'm saying is that this functionality is provider related,
+not consumer related. Also, I wonder if defining such NVMEM cells
+shouldn't go through the provider driver instead of being passed
+directly to the NVMEM layer, because nvmem_config already have a fields
+to pass cells at registration time, plus, the name of the NVMEM cell
+device is sometimes created dynamically and can be hard to guess at
+platform_device registration time.
 
-url:    https://github.com/0day-ci/linux/commits/Dilip-Kota/spi-spi-geni-qcom-Add-SPI-driver-support-for-GENI-based-QUP/20180824-190528
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-config: i386-allyesconfig
-compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
-reproduce:
-        make ARCH=i386  allyesconfig
-        make ARCH=i386 
-
-All errors (new ones prefixed by >>):
-
-
-vim +/GENI_SE_VERSION_MAJOR +239 drivers/spi/spi-geni-qcom.c
-
-   212	
-   213	static int spi_geni_prepare_transfer_hardware(struct spi_master *spi)
-   214	{
-   215		struct spi_geni_master *mas = spi_master_get_devdata(spi);
-   216		struct geni_se *se = &mas->se;
-   217	
-   218		if (!mas->setup) {
-   219			unsigned int proto = geni_se_read_proto(se);
-   220			unsigned int major, minor, step, ver;
-   221	
-   222			if (proto != GENI_SE_SPI) {
-   223				dev_err(mas->dev, "Invalid proto %d\n", proto);
-   224				return -ENXIO;
-   225			}
-   226			mas->tx_fifo_depth = geni_se_get_tx_fifo_depth(se);
-   227			mas->rx_fifo_depth = geni_se_get_rx_fifo_depth(se);
-   228			mas->tx_fifo_width = geni_se_get_tx_fifo_width(se);
-   229	
-   230			/*
-   231			 * Hardware programming guide suggests to configure
-   232			 * RX FIFO RFR level to fifo_depth-2.
-   233			 */
-   234			geni_se_init(se, 0x0, mas->tx_fifo_depth - 2);
-   235			mas->oversampling = 1;
-   236			/* Transmit an entire FIFO worth of data per IRQ */
-   237			mas->tx_wm = 1;
-   238			ver = geni_se_get_qup_hw_version(se);
- > 239			major = GENI_SE_VERSION_MAJOR(ver);
- > 240			minor = GENI_SE_VERSION_MINOR(ver);
- > 241			step = GENI_SE_VERSION_STEP(ver);
-   242	
-   243			if (major == 1 && minor == 0)
-   244				mas->oversampling = 2;
-   245			mas->setup = 1;
-   246		}
-   247		return 0;
-   248	}
-   249	
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+I also think non-DT consumers will need a way to reference exiting
+NVMEM cells, but this consumer-oriented nvmem cell lookup table should
+look like the gpio or pwm lookup table (basically what I proposed in my
+previous email).
