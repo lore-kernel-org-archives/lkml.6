@@ -2,90 +2,100 @@ Return-Path: <SRS0=itv6=LI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4B2BC433F4
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 05:54:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0740C433F4
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 06:12:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E74C208A5
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 05:54:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E74C208A5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 9947E208D4
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 06:12:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9947E208D4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727014AbeHYJcB (ORCPT
+        id S1726886AbeHYJuI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 25 Aug 2018 05:32:01 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:55433 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726552AbeHYJcB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Aug 2018 05:32:01 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 2A7949C5CCD81;
-        Sat, 25 Aug 2018 13:54:08 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.399.0; Sat, 25 Aug 2018
- 13:54:09 +0800
-Subject: Re: [f2fs-dev] [RFC PATCH 10/10] f2fs: fs-verity support
-To:     Eric Biggers <ebiggers@kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-ext4@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-CC:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Michael Halcrow <mhalcrow@google.com>,
-        <linux-kernel@vger.kernel.org>, <linux-fscrypt@vger.kernel.org>,
-        <linux-integrity@vger.kernel.org>,
-        "Mimi Zohar" <zohar@linux.vnet.ibm.com>,
-        Victor Hsieh <victorhsieh@google.com>
-References: <20180824161642.1144-1-ebiggers@kernel.org>
- <20180824161642.1144-11-ebiggers@kernel.org>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <b2b6a810-9605-15c8-b905-a4591c0cf3a5@huawei.com>
-Date:   Sat, 25 Aug 2018 13:54:08 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sat, 25 Aug 2018 05:50:08 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:47050 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726159AbeHYJuI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 25 Aug 2018 05:50:08 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1ftRnw-0005y1-2F; Sat, 25 Aug 2018 14:12:12 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1ftRnp-0002vD-HM; Sat, 25 Aug 2018 14:12:05 +0800
+Date:   Sat, 25 Aug 2018 14:12:05 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jeffrey Lien <Jeff.Lien@wdc.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "tim.c.chen@linux.intel.com" <tim.c.chen@linux.intel.com>,
+        David Darrington <david.darrington@wdc.com>,
+        Jeff Furlong <jeff.furlong@wdc.com>
+Subject: Re: [PATCH] Performance Improvement in CRC16 Calculations.
+Message-ID: <20180825061205.ygrjjazkooqghrqy@gondor.apana.org.au>
+References: <1533928331-21303-1-git-send-email-jeff.lien@wdc.com>
+ <yq1in4gq5jf.fsf@oracle.com>
+ <yq1lg8zb2lp.fsf@oracle.com>
+ <20180822062016.GA10356@infradead.org>
+ <SN1PR04MB18241CBDC8E4CA5275EE4424EA360@SN1PR04MB1824.namprd04.prod.outlook.com>
+ <CAKv+Gu-RwCrdgW69NVpyRLwGPGPCZx+ksTBM7NZk7v0-dzczGg@mail.gmail.com>
+ <yq1a7pb9196.fsf@oracle.com>
+ <CAKv+Gu8Y7YmyB5rmxaj-SGB7q03in7ijv2cOifwYnhP5CNastw@mail.gmail.com>
+ <yq1tvnj780o.fsf@oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <20180824161642.1144-11-ebiggers@kernel.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <yq1tvnj780o.fsf@oracle.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/8/25 0:16, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
->  #ifdef CONFIG_F2FS_CHECK_FS
->  #define f2fs_bug_on(sbi, condition)	BUG_ON(condition)
->  #else
-> @@ -146,7 +149,7 @@ struct f2fs_mount_info {
->  #define F2FS_FEATURE_QUOTA_INO		0x0080
->  #define F2FS_FEATURE_INODE_CRTIME	0x0100
->  #define F2FS_FEATURE_LOST_FOUND		0x0200
-> -#define F2FS_FEATURE_VERITY		0x0400	/* reserved */
-> +#define F2FS_FEATURE_VERITY		0x0400
->  
->  #define F2FS_HAS_FEATURE(sb, mask)					\
->  	((F2FS_SB(sb)->raw_super->feature & cpu_to_le32(mask)) != 0)
-> @@ -598,7 +601,7 @@ enum {
->  #define FADVISE_ENC_NAME_BIT	0x08
->  #define FADVISE_KEEP_SIZE_BIT	0x10
->  #define FADVISE_HOT_BIT		0x20
-> -#define FADVISE_VERITY_BIT	0x40	/* reserved */
-> +#define FADVISE_VERITY_BIT	0x40
+On Fri, Aug 24, 2018 at 05:46:15PM -0400, Martin K. Petersen wrote:
+>
+> +#ifdef CONFIG_MODULES
+> +	struct module *mod = data;
+> +
+> +	if (val != MODULE_STATE_LIVE ||
+> +	    strncmp(mod->name, "crct10dif", strlen("crct10dif")))
+> +		return 0;
+> +
+> +	/* Fall back to library function while we replace the tfm */
+> +	static_key_slow_inc(&crct10dif_fallback);
+> +
+> +	crypto_free_shash(crct10dif_tfm);
+> +	crct10dif_tfm = crypto_alloc_shash("crct10dif", 0, 0);
+> +	if (IS_ERR(crct10dif_tfm)) {
+> +		crct10dif_tfm = NULL;
+> +		goto out;
+> +	}
+> +
+> +	static_key_slow_dec(&crct10dif_fallback);
 
-As I suggested before, how about moving f2fs' verity_bit from i_fadvise to more
-generic i_flags field like ext4, so we can a) remaining more bits for those
-demands which really need file advise fields. b) using i_flags bits keeping line
-with ext4. Not sure, if user want to know whether the file is verity one, it
-will be easy for f2fs to export the status through FS_IOC_SETFLAGS.
+I don't think this is safe unless you do some kind of locking
+which would slow down the data path.  The easiest fix would be
+to keep the old tfm around forever, or use RCU if RCU read locking
+is acceptable to your use-case.
 
-#define EXT4_VERITY_FL			0x00100000 /* Verity protected inode */
+We already have a notifier mechanism in the crypto API for algorithm
+registration events.  However, it currently only notifies for untested
+algorithms.  So we need to add an event for tested algorithms and also
+export this for use outside of the crypto API.
 
-#define F2FS_VERITY_FL			0x00100000 /* Verity protected inode */
-
-Thanks,
-
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
