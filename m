@@ -2,157 +2,150 @@ Return-Path: <SRS0=itv6=LI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06754C433F4
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 00:38:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B771C433F5
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 00:58:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95D8021581
-	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 00:38:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95D8021581
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id F0A7F2168B
+	for <linux-kernel@archiver.kernel.org>; Sat, 25 Aug 2018 00:58:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="hbJHRP4i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0A7F2168B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726184AbeHYEPU (ORCPT
+        id S1726286AbeHYEfz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 25 Aug 2018 00:15:20 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51846 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725738AbeHYEPU (ORCPT
+        Sat, 25 Aug 2018 00:35:55 -0400
+Received: from mail-it0-f53.google.com ([209.85.214.53]:52067 "EHLO
+        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725910AbeHYEfz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 Aug 2018 00:15:20 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7P0Y9pg061219
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 20:38:23 -0400
-Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2m2qe4t0x9-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 20:38:23 -0400
-Received: from localhost
-        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Fri, 24 Aug 2018 18:38:22 -0600
-Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
-        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 24 Aug 2018 18:38:17 -0600
-Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7P0cGgw27263050
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 24 Aug 2018 17:38:16 -0700
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1F15BC6055;
-        Fri, 24 Aug 2018 18:38:16 -0600 (MDT)
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A1D40C6057;
-        Fri, 24 Aug 2018 18:38:10 -0600 (MDT)
-Received: from morokweng.localdomain (unknown [9.85.162.69])
-        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTPS;
-        Fri, 24 Aug 2018 18:38:10 -0600 (MDT)
-References: <20180824162535.22798-1-bauerman@linux.ibm.com> <20180824162535.22798-12-bauerman@linux.ibm.com> <45561478-ee75-ee62-52d6-a96d60132669@infradead.org>
-User-agent: mu4e 1.0; emacs 25.3.1
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Anshuman Khandual <anshuman.linux@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Mike Anderson <andmike@linux.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Ram Pai <linuxram@us.ibm.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>
-Subject: Re: [RFC PATCH 11/11] powerpc/svm: Increase SWIOTLB buffer size
-In-reply-to: <45561478-ee75-ee62-52d6-a96d60132669@infradead.org>
-Date:   Fri, 24 Aug 2018 21:38:02 -0300
+        Sat, 25 Aug 2018 00:35:55 -0400
+Received: by mail-it0-f53.google.com with SMTP id e14-v6so4455454itf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 Aug 2018 17:58:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ofr3q4SGcvRolQoxJotYyoGCM+4YOEbAafHjmgn/j8w=;
+        b=hbJHRP4iPFSTCwiE5ebvSvKKvaEG6t3r5466DhoVJn8Z1uoXuY4+Pkr69r+Uwx4F8w
+         w13tczkdSngQk6Cy+XevMwvAQKTrJF/jpkI5xBwAEtUQKdxsv99+tehAkD2VrNuLQfNC
+         4UtZbEHDyzJipN0++Ig3NwfcXIuBRqtFPd6ys=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ofr3q4SGcvRolQoxJotYyoGCM+4YOEbAafHjmgn/j8w=;
+        b=r4RSyFkin22DRV0LWONFgNVR28XRvHq2q4Z/rAxOSlv1YYxFRKVzlTkorIJ9TNlXrj
+         iiI+EUJHogGvnajRspAKRLD0C2j5p9Z7W9hFXe1kH/nVN7XZlxx79AB2u5CgR7UjrzXq
+         zSk3nsqVkDoiCBFP/1a4cu2971GNxs+vIRtcnvtax2TltQwkcaIITauiq6W2u5dlSE17
+         JgmP4Hqu+rhUzSi8N3322LQ/8VMeFT9E7EC/9XlUBVSuhV507hxuoFZx73/sl/TGiYxe
+         hTLIYmyDYuXm9gdNM7OWKmnGEq1ihWZEDK0LTvWftIBiLkezrXGQS7LCCkfRDJ7mfaGi
+         UZGA==
+X-Gm-Message-State: APzg51DFXhV5XGByUEaosl7uUSnOcnAP/SsZ0fX+hqPltq2vQoAJzNI5
+        TrXczhWOeTcl5U0SXxFJLJg1wLxmudGdrl9ZYIk=
+X-Google-Smtp-Source: ANB0VdYHgPU6e9W46oJZn2l3apMWJczwyEIGZU7L8WzyqEIXD0HJdasO6YHB/aL9rNSIeAdlbPzo3Eg3fq70AYAxZgI=
+X-Received: by 2002:a24:8309:: with SMTP id d9-v6mr60318ite.123.1535158734765;
+ Fri, 24 Aug 2018 17:58:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-x-cbid: 18082500-0036-0000-0000-00000A2A60C8
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009605; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01078397; UDB=6.00556082; IPR=6.00858371;
- MB=3.00022918; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-25 00:38:20
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082500-0037-0000-0000-000048B49054
-Message-Id: <87mutbxout.fsf@morokweng.localdomain>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-24_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=691 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808250004
+References: <20180822153012.173508681@infradead.org> <20180822154046.823850812@infradead.org>
+ <20180822155527.GF24124@hirez.programming.kicks-ass.net> <20180823134525.5f12b0d3@roar.ozlabs.ibm.com>
+ <CA+55aFxneZTFxxxAjLZmj92VUJg6z7hERxJ2cHoth-GC0RuELw@mail.gmail.com>
+ <776104d4c8e4fc680004d69e3a4c2594b638b6d1.camel@au1.ibm.com>
+ <CA+55aFzM77G9-Q6LboPLJ=5gHma66ZQKiMGCMqXoKABirdF98w@mail.gmail.com>
+ <20180823133958.GA1496@brain-police> <20180824084717.GK24124@hirez.programming.kicks-ass.net>
+ <D74A89DF-0D89-4AB6-8A6B-93BEC9A83595@gmail.com> <20180824180438.GS24124@hirez.programming.kicks-ass.net>
+ <56A9902F-44BE-4520-A17C-26650FCC3A11@gmail.com> <CA+55aFzerzTPm94jugheVmWg8dJre94yu+GyZGT9NNZanNx_qw@mail.gmail.com>
+ <9A38D3F4-2F75-401D-8B4D-83A844C9061B@gmail.com>
+In-Reply-To: <9A38D3F4-2F75-401D-8B4D-83A844C9061B@gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 24 Aug 2018 17:58:43 -0700
+Message-ID: <CA+55aFz1KYT7fRRG98wei24spiVg7u1Ec66piWY5359ykFmezw@mail.gmail.com>
+Subject: Re: TLB flushes on fixmap changes
+To:     Nadav Amit <nadav.amit@gmail.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Benjamin Herrenschmidt <benh@au1.ibm.com>,
+        Nick Piggin <npiggin@gmail.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Rik van Riel <riel@surriel.com>,
+        Jann Horn <jannh@google.com>,
+        Adin Scannell <ascannell@google.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        David Miller <davem@davemloft.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Adding a few people to the cc.
 
-Hello Randy,
-
-Thanks for your quick review.
-
-Randy Dunlap <rdunlap@infradead.org> writes:
-
-> On 08/24/2018 09:25 AM, Thiago Jung Bauermann wrote:
->> From: Anshuman Khandual <khandual@linux.vnet.ibm.com>
->>
->> SWIOTLB buffer default size (64MB) is not enough for large sequential write
->> operations which eventually leads to kernel crash like here.
->>
->> virtio-pci 0000:00:05.0: swiotlb buffer is full (sz: 327680 bytes)
->> virtio-pci 0000:00:05.0: DMA: Out of SW-IOMMU space for 327680 bytes
->> Kernel panic - not syncing: DMA: Random memory could be DMA read
->> CPU: 12 PID: 3985 Comm: mkfs.ext4 Not tainted 4.18.0-rc4+ #285
->> Call Trace:
->> [c0000007d2a27020] [c000000000cfdffc] dump_stack+0xb0/0xf4 (unreliable)
->> [c0000007d2a27060] [c000000000112a98] panic+0x140/0x328
->> [c0000007d2a270f0] [c0000000001b4f88] swiotlb_full+0x108/0x130
->> [c0000007d2a27180] [c0000000001b5f6c] swiotlb_map_page+0x25c/0x2c0
->> [c0000007d2a271e0] [c0000000007bfaf8] vring_map_one_sg.isra.0+0x58/0x70
->> [c0000007d2a27200] [c0000000007c08dc] virtqueue_add_sgs+0x1bc/0x690
->> [c0000007d2a272f0] [d0000000042a1280] virtio_queue_rq+0x358/0x4a0 [virtio_blk]
->> [c0000007d2a273d0] [c0000000006b5d68] blk_mq_dispatch_rq_list+0x1f8/0x6d0
->> ..................
->>
->> Increase the SWIOTLB size to 1GB on Ultravisor based secure guests.
->>
->> Signed-off-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
->> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
->> ---
->>  arch/powerpc/Kconfig | 5 +++++
->>  kernel/dma/swiotlb.c | 5 +++++
->>  2 files changed, 10 insertions(+)
->>
->> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
->> index 1466d1234723..fee7194ce9e4 100644
->> --- a/arch/powerpc/Kconfig
->> +++ b/arch/powerpc/Kconfig
->> @@ -457,6 +457,11 @@ config PPC_SVM
->>
->>  	 If unsure, say "N".
->>
->> +config SWIOTLB_DEFAULT_SIZE
->> +       int "Size of Software I/O TLB buffer (in MiB)"
->> +       default "1024"
+On Fri, Aug 24, 2018 at 1:24 PM Nadav Amit <nadav.amit@gmail.com> wrote:
+> >
+> > Can you actually find something that changes the fixmaps after boot
+> > (again, ignoring kmap)?
 >
-> I would add a "range" to limit (restrict) how small or large that can be.  E.g.:
+> At least the alternatives mechanism appears to do so.
 >
-> 	range 16 102400
+> IIUC the following path is possible when adding a module:
 >
-> or even smaller for the maximum value...
+>         jump_label_add_module()
+>         ->__jump_label_update()
+>         ->arch_jump_label_transform()
+>         ->__jump_label_transform()
+>         ->text_poke_bp()
+>         ->text_poke()
+>         ->set_fixmap()
 
-That's an interesting idea. Since this config option is restricted to
-PPC_SVM it may be possible to find out what reasonable limits would be.
-I'll have to experiment a bit to find out. Though I can say that 16 MB
-is too small since even with 64 MB the kernel panics with the simple
-task of formatting a filesystem...
+Yeah, that looks a bit iffy.
 
---
-Thiago Jung Bauermann
-IBM Linux Technology Center
+But making the tlb flush global wouldn't help.  This is running on a
+local core, and if there are other CPU's that can do this at the same
+time, then they'd just fight about the same mapping.
 
+Honestly, I think it's ok just because I *hope* this is all serialized
+anyway (jump_label_lock? But what about other users of text_poke?).
+
+But I'd be a lot happier about it if it either used an explicit lock
+to make sure, or used per-cpu fixmap entries.
+
+And the tlb flush is done *after* the address is used, which is bogus anyway.
+
+> And a similar path can happen when static_key_enable/disable() is called.
+
+Same comments.
+
+How about replacing that
+
+        local_irq_save(flags);
+       ... do critical things here ...
+        local_irq_restore(flags);
+
+in text_poke() with
+
+        static DEFINE_SPINLOCK(poke_lock);
+
+        spin_lock_irqsave(&poke_lock, flags);
+       ... do critical things here ...
+        spin_unlock_irqrestore(&poke_lock, flags);
+
+and moving the local_flush_tlb() to after the set_fixmaps, but before
+the access through the virtual address.
+
+But changing things to do a global tlb flush would just be wrong.
+
+           Linus
