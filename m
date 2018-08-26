@@ -6,94 +6,76 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3DF7C433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:06:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B8CFC433F5
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:16:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51F23216E3
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:06:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51F23216E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id E2F0C2124D
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:16:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2F0C2124D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726611AbeHZJrq (ORCPT
+        id S1726772AbeHZJ53 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 05:47:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51908 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726245AbeHZJrq (ORCPT
+        Sun, 26 Aug 2018 05:57:29 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:56088 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726324AbeHZJ53 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 05:47:46 -0400
-Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B9D27707;
-        Sun, 26 Aug 2018 06:06:15 +0000 (UTC)
-Date:   Sun, 26 Aug 2018 08:06:12 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Borislav Petkov <bp@alien8.de>,
-        Brian Gerst <brgerst@gmail.com>, Dave Hansen <dave@sr71.net>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rik van Riel <riel@redhat.com>, linux-mm@kvack.org,
-        Ingo Molnar <mingo@kernel.org>,
-        "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
-        "Matt Helsley (VMware)" <matt.helsley@gmail.com>,
-        Alexey Makhalov <amakhalov@vmware.com>,
-        Bo Gan <ganb@vmware.com>
-Subject: Re: [PATCH 4.4 037/107] x86/mm: Factor out LDT init from context init
-Message-ID: <20180826060612.GA21746@kroah.com>
-References: <20180723122413.003644357@linuxfoundation.org>
- <20180723122414.735940678@linuxfoundation.org>
- <1535154250.2902.63.camel@codethink.co.uk>
+        Sun, 26 Aug 2018 05:57:29 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1ftoKt-0005c2-4u; Sun, 26 Aug 2018 06:15:46 +0000
+Date:   Sun, 26 Aug 2018 07:15:43 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, Jamal Hadi Salim <jhs@mojatatu.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Jiri Pirko <jiri@resnulli.us>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Subject: Re: [PATCH] net: sched: Fix memory exposure from short TCA_U32_SEL
+Message-ID: <20180826061534.GT6515@ZenIV.linux.org.uk>
+References: <20180826055801.GA42063@beast>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1535154250.2902.63.camel@codethink.co.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180826055801.GA42063@beast>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 25, 2018 at 12:44:10AM +0100, Ben Hutchings wrote:
-> On Mon, 2018-07-23 at 14:41 +0200, Greg Kroah-Hartman wrote:
-> > 4.4-stable review patch.  If anyone has any objections, please let me know.
-> > 
-> > ------------------
-> > 
-> > From: Dave Hansen <dave.hansen@linux.intel.com>
-> > 
-> > commit 39a0526fb3f7d93433d146304278477eb463f8af upstream
-> [...]
-> > --- a/arch/x86/include/asm/mmu_context.h
-> > +++ b/arch/x86/include/asm/mmu_context.h
-> [...]
-> > +static inline int init_new_context(struct task_struct *tsk,
-> > +				   struct mm_struct *mm)
-> > +{
-> > +	init_new_context_ldt(tsk, mm);
-> > +	return 0;
-> > +}
-> [...]
+On Sat, Aug 25, 2018 at 10:58:01PM -0700, Kees Cook wrote:
+> Via u32_change(), TCA_U32_SEL has an unspecified type in the netlink
+> policy, so max length isn't enforced, only minimum. This means nkeys
+> (from userspace) was being trusted without checking the actual size of
+> nla_len(), which could lead to a memory over-read, and ultimately an
+> exposure via a call to u32_dump(). Reachability is CAP_NET_ADMIN within
+> a namespace.
 > 
-> This hides errors from init_new_context_ldt(), which is very bad.
-> Fixed upstream by:
-> 
-> commit ccd5b3235180eef3cfec337df1c8554ab151b5cc
-> Author: Eric Biggers <ebiggers@google.com>
-> Date:   Thu Aug 24 10:50:29 2017 -0700
-> 
->     x86/mm: Fix use-after-free of ldt_struct
-> 
-> Ben.
+> Reported-by: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: Jamal Hadi Salim <jhs@mojatatu.com>
+> Cc: Cong Wang <xiyou.wangcong@gmail.com>
+> Cc: Jiri Pirko <jiri@resnulli.us>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: netdev@vger.kernel.org
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+> This should go through -stable please, but I have left off the "Cc:
+> stable" as per netdev patch policy. Note that use of struct_size()
+> will need manual expansion in backports, such as:
+> 	sel_size = sizeof(*s) + sizeof(*s->keys) * s->nkeys;
 
-Good catch, now applied, thanks.
+Saner approach would be sel_size = offsetof(struct tc_u32_sel, keys[s->nkeys])...
 
-greg k-h
+> +	sel_size = struct_size(s, keys, s->nkeys);
+> +	if (nla_len(tb[TCA_U32_SEL]) < sel_size) {
+> +		err = -EINVAL;
+> +		goto erridr;
+> +	}
+>  
+> -	n = kzalloc(sizeof(*n) + s->nkeys*sizeof(struct tc_u32_key), GFP_KERNEL);
+> +	n = kzalloc(offsetof(typeof(*n), sel) + sel_size, GFP_KERNEL);
+
+ITYM
+	n = kzalloc(offsetof(struct tc_u_common, sel.keys[s->nkeys]), GFP_KERNEL);
