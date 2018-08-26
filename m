@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BCE4C433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:47:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2EAEC433F5
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:47:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 210142170B
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:47:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 210142170B
+	by mail.kernel.org (Postfix) with ESMTP id 6A8222172F
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:47:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A8222172F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727672AbeHZK2j (ORCPT
+        id S1727694AbeHZK2r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 06:28:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53718 "EHLO
+        Sun, 26 Aug 2018 06:28:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53740 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726245AbeHZK2j (ORCPT
+        with ESMTP id S1726245AbeHZK2q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 06:28:39 -0400
+        Sun, 26 Aug 2018 06:28:46 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 67D089D3;
-        Sun, 26 Aug 2018 06:47:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0944725A;
+        Sun, 26 Aug 2018 06:47:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>,
-        Ariel Elior <ariel.elior@cavium.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 36/56] bnx2x: Fix receiving tx-timeout in error or recovery state.
-Date:   Sun, 26 Aug 2018 08:44:57 +0200
-Message-Id: <20180826064234.103792609@linuxfoundation.org>
+Subject: [PATCH 3.18 38/56] ARM: imx_v4_v5_defconfig: Select ULPI support
+Date:   Sun, 26 Aug 2018 08:44:59 +0200
+Message-Id: <20180826064234.190526174@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180826064232.320669119@linuxfoundation.org>
 References: <20180826064232.320669119@linuxfoundation.org>
@@ -53,77 +51,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
+From: Fabio Estevam <fabio.estevam@nxp.com>
 
-[ Upstream commit 484c016d9392786ce5c74017c206c706f29f823d ]
+[ Upstream commit 2ceb2780b790b74bc408a949f6aedbad8afa693e ]
 
-Driver performs the internal reload when it receives tx-timeout event from
-the OS. Internal reload might fail in some scenarios e.g., fatal HW issues.
-In such cases OS still see the link, which would result in undesirable
-functionalities such as re-generation of tx-timeouts.
-The patch addresses this issue by indicating the link-down to OS when
-tx-timeout is detected, and keeping the link in down state till the
-internal reload is successful.
+Select CONFIG_USB_CHIPIDEA_ULPI and CONFIG_USB_ULPI_BUS so that
+USB ULPI can be functional on some boards like that use ULPI
+interface.
 
-Please consider applying it to 'net' branch.
-
-Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
-Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/bnx2x/bnx2x.h      |    1 +
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c  |    6 ++++++
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c |    6 ++++++
- 3 files changed, 13 insertions(+)
+ arch/arm/configs/imx_v4_v5_defconfig |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h
-@@ -1613,6 +1613,7 @@ struct bnx2x {
- 	struct link_vars	link_vars;
- 	u32			link_cnt;
- 	struct bnx2x_link_report_data last_reported_link;
-+	bool			force_link_down;
- 
- 	struct mdio_if_info	mdio;
- 
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
-@@ -1257,6 +1257,11 @@ void __bnx2x_link_report(struct bnx2x *b
- {
- 	struct bnx2x_link_report_data cur_data;
- 
-+	if (bp->force_link_down) {
-+		bp->link_vars.link_up = 0;
-+		return;
-+	}
-+
- 	/* reread mf_cfg */
- 	if (IS_PF(bp) && !CHIP_IS_E1(bp))
- 		bnx2x_read_mf_cfg(bp);
-@@ -2799,6 +2804,7 @@ int bnx2x_nic_load(struct bnx2x *bp, int
- 		bp->pending_max = 0;
- 	}
- 
-+	bp->force_link_down = false;
- 	if (bp->port.pmf) {
- 		rc = bnx2x_initial_phy_init(bp, load_mode);
- 		if (rc)
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-@@ -10036,6 +10036,12 @@ static void bnx2x_sp_rtnl_task(struct wo
- 		bp->sp_rtnl_state = 0;
- 		smp_mb();
- 
-+		/* Immediately indicate link as down */
-+		bp->link_vars.link_up = 0;
-+		bp->force_link_down = true;
-+		netif_carrier_off(bp->dev);
-+		BNX2X_ERR("Indicating link is down due to Tx-timeout\n");
-+
- 		bnx2x_nic_unload(bp, UNLOAD_NORMAL, true);
- 		bnx2x_nic_load(bp, LOAD_NORMAL);
- 
+--- a/arch/arm/configs/imx_v4_v5_defconfig
++++ b/arch/arm/configs/imx_v4_v5_defconfig
+@@ -146,9 +146,11 @@ CONFIG_USB_STORAGE=y
+ CONFIG_USB_CHIPIDEA=y
+ CONFIG_USB_CHIPIDEA_UDC=y
+ CONFIG_USB_CHIPIDEA_HOST=y
++CONFIG_USB_CHIPIDEA_ULPI=y
+ CONFIG_NOP_USB_XCEIV=y
+ CONFIG_USB_GADGET=y
+ CONFIG_USB_ETH=m
++CONFIG_USB_ULPI_BUS=y
+ CONFIG_MMC=y
+ CONFIG_MMC_SDHCI=y
+ CONFIG_MMC_SDHCI_PLTFM=y
 
 
