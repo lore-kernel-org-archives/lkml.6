@@ -5,33 +5,34 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F582C433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B528BC43334
 	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 09:39:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F19532098B
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 09:39:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F19532098B
+	by mail.kernel.org (Postfix) with ESMTP id 6ABEB2098B
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 09:39:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6ABEB2098B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726873AbeHZNVY (ORCPT
+        id S1726955AbeHZNVa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 09:21:24 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:41653 "EHLO
+        Sun, 26 Aug 2018 09:21:30 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:41670 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726643AbeHZNVY (ORCPT
+        with ESMTP id S1726925AbeHZNV3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 09:21:24 -0400
+        Sun, 26 Aug 2018 09:21:29 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1ftrVv-0000GT-Tm; Sun, 26 Aug 2018 11:39:20 +0200
-Subject: [GIT pull] irq updates for 4.19
-Message-ID: <153527451522.1785.1711099585239615812.tglx@nanos.tec.linutronix.de>
+        id 1ftrW1-0000H6-CE; Sun, 26 Aug 2018 11:39:25 +0200
+Subject: [GIT pull] x86 updates for 4.19
+Message-ID: <153527451524.1785.7313731649360975643.tglx@nanos.tec.linutronix.de>
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
-Date:   Sun, 26 Aug 2018 11:39:20 +0200
+References: <153527451522.1785.1711099585239615812.tglx@nanos.tec.linutronix.de>
+Date:   Sun, 26 Aug 2018 11:39:25 +0200
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -39,217 +40,212 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Linus,
 
-please pull the latest irq-urgent-for-linus git tree from:
+please pull the latest x86-urgent-for-linus git tree from:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq-urgent-for-linus
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-for-linus
 
-A small set of updats/fixes for the irq subsystem:
+A pile of x86 fixes:
 
- - Allow GICv3 interrupts to be configured as wake-up sources to enable
-   wakeup from suspend
+ - Correct the L!TF fallout on 32bit and the off by one in the 'too much
+   RAM for protection' calculation.
 
- - Make the error handling of the STM32 irqchip init function work
+ - Add a helpful kernel message for the 'too much RAM' case
 
- - A set of small cleanups and improvements
+ - Unbreak the VDSO in case that the compiler desides to use indirect
+   jumps/calls and emits retpolines which cannot be resolved because the
+   kernel uses its own thunks, which does not work for the VDSO. Make it
+   use the builtin thunks.
+
+ - Re-export start_thread() which was unexported when the 32/64bit
+   implementation was unified. start_thread() is required by modular binfmt
+   handlers.
+
+ - Trivial cleanups
 
 Thanks,
 
 	tglx
 
 ------------------>
-Dan Carpenter (1):
-      irqchip/stm32: Fix init error handling
+Andy Lutomirski (1):
+      x86/vdso: Fix vDSO build if a retpoline is emitted
 
-Fabrizio Castro (1):
-      dt-bindings: irqchip: renesas-irqc: Document r8a774a1 support
+Arnd Bergmann (1):
+      x86/mce: Add notifier_block forward declaration
 
-Jonas Gorski (1):
-      irqchip/bcm7038-l1: Hide cpu offline callback when building for !SMP
+Josh Poimboeuf (1):
+      x86/kvm/vmx: Remove duplicate l1d flush definitions
 
-Krzysztof Kozlowski (1):
-      irqchip/s3c24xx: Remove unneeded comparison of unsigned long to 0
+Rian Hunter (1):
+      x86/process: Re-export start_thread()
 
-Marc Zyngier (1):
-      irqchip/gic-v3: Allow interrupt to be configured as wake-up sources
+Vlastimil Babka (3):
+      x86/speculation/l1tf: Fix overflow in l1tf_pfn_limit() on 32bit
+      x86/speculation/l1tf: Fix off-by-one error when warning that system has too much RAM
+      x86/speculation/l1tf: Suggest what to do on systems with too much RAM
 
-Martin Kaiser (1):
-      irqchip/tango: Set irq handler and data in one go
 
+ Makefile                         | 4 ++++
+ arch/x86/entry/vdso/Makefile     | 6 ++++--
+ arch/x86/include/asm/mce.h       | 1 +
+ arch/x86/include/asm/processor.h | 4 ++--
+ arch/x86/kernel/cpu/bugs.c       | 4 ++++
+ arch/x86/kernel/process_64.c     | 1 +
+ arch/x86/kvm/vmx.c               | 3 ---
+ arch/x86/mm/init.c               | 4 ++--
+ arch/x86/mm/mmap.c               | 2 +-
+ 9 files changed, 19 insertions(+), 10 deletions(-)
 
- .../bindings/interrupt-controller/renesas,irqc.txt |  1 +
- drivers/irqchip/irq-bcm7038-l1.c                   |  4 ++++
- drivers/irqchip/irq-gic-v3.c                       |  8 +++++--
- drivers/irqchip/irq-s3c24xx.c                      |  2 +-
- drivers/irqchip/irq-stm32-exti.c                   | 25 +++++++++++-----------
- drivers/irqchip/irq-tango.c                        |  3 +--
- 6 files changed, 26 insertions(+), 17 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
-index 697ca2f26d1b..a046ed374d80 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
-+++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
-@@ -13,6 +13,7 @@ Required properties:
-     - "renesas,irqc-r8a7792" (R-Car V2H)
-     - "renesas,irqc-r8a7793" (R-Car M2-N)
-     - "renesas,irqc-r8a7794" (R-Car E2)
-+    - "renesas,intc-ex-r8a774a1" (RZ/G2M)
-     - "renesas,intc-ex-r8a7795" (R-Car H3)
-     - "renesas,intc-ex-r8a7796" (R-Car M3-W)
-     - "renesas,intc-ex-r8a77965" (R-Car M3-N)
-diff --git a/drivers/irqchip/irq-bcm7038-l1.c b/drivers/irqchip/irq-bcm7038-l1.c
-index faf734ff4cf3..0f6e30e9009d 100644
---- a/drivers/irqchip/irq-bcm7038-l1.c
-+++ b/drivers/irqchip/irq-bcm7038-l1.c
-@@ -217,6 +217,7 @@ static int bcm7038_l1_set_affinity(struct irq_data *d,
- 	return 0;
- }
+diff --git a/Makefile b/Makefile
+index a0650bf79606..7bab2e90e4e1 100644
+--- a/Makefile
++++ b/Makefile
+@@ -507,9 +507,13 @@ KBUILD_AFLAGS += $(call cc-option, -no-integrated-as)
+ endif
  
-+#ifdef CONFIG_SMP
- static void bcm7038_l1_cpu_offline(struct irq_data *d)
+ RETPOLINE_CFLAGS_GCC := -mindirect-branch=thunk-extern -mindirect-branch-register
++RETPOLINE_VDSO_CFLAGS_GCC := -mindirect-branch=thunk-inline -mindirect-branch-register
+ RETPOLINE_CFLAGS_CLANG := -mretpoline-external-thunk
++RETPOLINE_VDSO_CFLAGS_CLANG := -mretpoline
+ RETPOLINE_CFLAGS := $(call cc-option,$(RETPOLINE_CFLAGS_GCC),$(call cc-option,$(RETPOLINE_CFLAGS_CLANG)))
++RETPOLINE_VDSO_CFLAGS := $(call cc-option,$(RETPOLINE_VDSO_CFLAGS_GCC),$(call cc-option,$(RETPOLINE_VDSO_CFLAGS_CLANG)))
+ export RETPOLINE_CFLAGS
++export RETPOLINE_VDSO_CFLAGS
+ 
+ KBUILD_CFLAGS	+= $(call cc-option,-fno-PIE)
+ KBUILD_AFLAGS	+= $(call cc-option,-fno-PIE)
+diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
+index 9f695f517747..fa3f439f0a92 100644
+--- a/arch/x86/entry/vdso/Makefile
++++ b/arch/x86/entry/vdso/Makefile
+@@ -68,9 +68,9 @@ $(obj)/vdso-image-%.c: $(obj)/vdso%.so.dbg $(obj)/vdso%.so $(obj)/vdso2c FORCE
+ CFL := $(PROFILING) -mcmodel=small -fPIC -O2 -fasynchronous-unwind-tables -m64 \
+        $(filter -g%,$(KBUILD_CFLAGS)) $(call cc-option, -fno-stack-protector) \
+        -fno-omit-frame-pointer -foptimize-sibling-calls \
+-       -DDISABLE_BRANCH_PROFILING -DBUILD_VDSO
++       -DDISABLE_BRANCH_PROFILING -DBUILD_VDSO $(RETPOLINE_VDSO_CFLAGS)
+ 
+-$(vobjs): KBUILD_CFLAGS := $(filter-out $(GCC_PLUGINS_CFLAGS),$(KBUILD_CFLAGS)) $(CFL)
++$(vobjs): KBUILD_CFLAGS := $(filter-out $(GCC_PLUGINS_CFLAGS) $(RETPOLINE_CFLAGS),$(KBUILD_CFLAGS)) $(CFL)
+ 
+ #
+ # vDSO code runs in userspace and -pg doesn't help with profiling anyway.
+@@ -132,11 +132,13 @@ KBUILD_CFLAGS_32 := $(filter-out -mcmodel=kernel,$(KBUILD_CFLAGS_32))
+ KBUILD_CFLAGS_32 := $(filter-out -fno-pic,$(KBUILD_CFLAGS_32))
+ KBUILD_CFLAGS_32 := $(filter-out -mfentry,$(KBUILD_CFLAGS_32))
+ KBUILD_CFLAGS_32 := $(filter-out $(GCC_PLUGINS_CFLAGS),$(KBUILD_CFLAGS_32))
++KBUILD_CFLAGS_32 := $(filter-out $(RETPOLINE_CFLAGS),$(KBUILD_CFLAGS_32))
+ KBUILD_CFLAGS_32 += -m32 -msoft-float -mregparm=0 -fpic
+ KBUILD_CFLAGS_32 += $(call cc-option, -fno-stack-protector)
+ KBUILD_CFLAGS_32 += $(call cc-option, -foptimize-sibling-calls)
+ KBUILD_CFLAGS_32 += -fno-omit-frame-pointer
+ KBUILD_CFLAGS_32 += -DDISABLE_BRANCH_PROFILING
++KBUILD_CFLAGS_32 += $(RETPOLINE_VDSO_CFLAGS)
+ $(obj)/vdso32.so.dbg: KBUILD_CFLAGS = $(KBUILD_CFLAGS_32)
+ 
+ $(obj)/vdso32.so.dbg: FORCE \
+diff --git a/arch/x86/include/asm/mce.h b/arch/x86/include/asm/mce.h
+index 8c7b3e5a2d01..3a17107594c8 100644
+--- a/arch/x86/include/asm/mce.h
++++ b/arch/x86/include/asm/mce.h
+@@ -148,6 +148,7 @@ enum mce_notifier_prios {
+ 	MCE_PRIO_LOWEST		= 0,
+ };
+ 
++struct notifier_block;
+ extern void mce_register_decode_chain(struct notifier_block *nb);
+ extern void mce_unregister_decode_chain(struct notifier_block *nb);
+ 
+diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+index 682286aca881..c24297268ebc 100644
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -181,9 +181,9 @@ extern const struct seq_operations cpuinfo_op;
+ 
+ extern void cpu_detect(struct cpuinfo_x86 *c);
+ 
+-static inline unsigned long l1tf_pfn_limit(void)
++static inline unsigned long long l1tf_pfn_limit(void)
  {
- 	struct cpumask *mask = irq_data_get_affinity_mask(d);
-@@ -241,6 +242,7 @@ static void bcm7038_l1_cpu_offline(struct irq_data *d)
- 	}
- 	irq_set_affinity_locked(d, &new_affinity, false);
- }
-+#endif
- 
- static int __init bcm7038_l1_init_one(struct device_node *dn,
- 				      unsigned int idx,
-@@ -293,7 +295,9 @@ static struct irq_chip bcm7038_l1_irq_chip = {
- 	.irq_mask		= bcm7038_l1_mask,
- 	.irq_unmask		= bcm7038_l1_unmask,
- 	.irq_set_affinity	= bcm7038_l1_set_affinity,
-+#ifdef CONFIG_SMP
- 	.irq_cpu_offline	= bcm7038_l1_cpu_offline,
-+#endif
- };
- 
- static int bcm7038_l1_map(struct irq_domain *d, unsigned int virq,
-diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index e214181b77b7..d5912f1ec884 100644
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -861,7 +861,9 @@ static struct irq_chip gic_chip = {
- 	.irq_set_affinity	= gic_set_affinity,
- 	.irq_get_irqchip_state	= gic_irq_get_irqchip_state,
- 	.irq_set_irqchip_state	= gic_irq_set_irqchip_state,
--	.flags			= IRQCHIP_SET_TYPE_MASKED,
-+	.flags			= IRQCHIP_SET_TYPE_MASKED |
-+				  IRQCHIP_SKIP_SET_WAKE |
-+				  IRQCHIP_MASK_ON_SUSPEND,
- };
- 
- static struct irq_chip gic_eoimode1_chip = {
-@@ -874,7 +876,9 @@ static struct irq_chip gic_eoimode1_chip = {
- 	.irq_get_irqchip_state	= gic_irq_get_irqchip_state,
- 	.irq_set_irqchip_state	= gic_irq_set_irqchip_state,
- 	.irq_set_vcpu_affinity	= gic_irq_set_vcpu_affinity,
--	.flags			= IRQCHIP_SET_TYPE_MASKED,
-+	.flags			= IRQCHIP_SET_TYPE_MASKED |
-+				  IRQCHIP_SKIP_SET_WAKE |
-+				  IRQCHIP_MASK_ON_SUSPEND,
- };
- 
- #define GIC_ID_NR	(1U << GICD_TYPER_ID_BITS(gic_data.rdists.gicd_typer))
-diff --git a/drivers/irqchip/irq-s3c24xx.c b/drivers/irqchip/irq-s3c24xx.c
-index f6fd57ebe6e6..c19766fe8a1a 100644
---- a/drivers/irqchip/irq-s3c24xx.c
-+++ b/drivers/irqchip/irq-s3c24xx.c
-@@ -250,7 +250,7 @@ static int s3c_irqext0_type(struct irq_data *data, unsigned int type)
- 	void __iomem *gpcon_reg;
- 	unsigned long gpcon_offset, extint_offset;
- 
--	if ((data->hwirq >= 0) && (data->hwirq <= 3)) {
-+	if (data->hwirq <= 3) {
- 		gpcon_reg = S3C2410_GPFCON;
- 		extint_reg = S3C24XX_EXTINT0;
- 		gpcon_offset = (data->hwirq) * 2;
-diff --git a/drivers/irqchip/irq-stm32-exti.c b/drivers/irqchip/irq-stm32-exti.c
-index 3df527fcf4e1..0a2088e12d96 100644
---- a/drivers/irqchip/irq-stm32-exti.c
-+++ b/drivers/irqchip/irq-stm32-exti.c
-@@ -603,17 +603,24 @@ stm32_exti_host_data *stm32_exti_host_init(const struct stm32_exti_drv_data *dd,
- 					sizeof(struct stm32_exti_chip_data),
- 					GFP_KERNEL);
- 	if (!host_data->chips_data)
--		return NULL;
-+		goto free_host_data;
- 
- 	host_data->base = of_iomap(node, 0);
- 	if (!host_data->base) {
- 		pr_err("%pOF: Unable to map registers\n", node);
--		return NULL;
-+		goto free_chips_data;
- 	}
- 
- 	stm32_host_data = host_data;
- 
- 	return host_data;
-+
-+free_chips_data:
-+	kfree(host_data->chips_data);
-+free_host_data:
-+	kfree(host_data);
-+
-+	return NULL;
+-	return BIT(boot_cpu_data.x86_phys_bits - 1 - PAGE_SHIFT) - 1;
++	return BIT_ULL(boot_cpu_data.x86_phys_bits - 1 - PAGE_SHIFT);
  }
  
- static struct
-@@ -665,10 +672,8 @@ static int __init stm32_exti_init(const struct stm32_exti_drv_data *drv_data,
- 	struct irq_domain *domain;
- 
- 	host_data = stm32_exti_host_init(drv_data, node);
--	if (!host_data) {
--		ret = -ENOMEM;
--		goto out_free_mem;
--	}
-+	if (!host_data)
-+		return -ENOMEM;
- 
- 	domain = irq_domain_add_linear(node, drv_data->bank_nr * IRQS_PER_BANK,
- 				       &irq_exti_domain_ops, NULL);
-@@ -725,7 +730,6 @@ static int __init stm32_exti_init(const struct stm32_exti_drv_data *drv_data,
- 	irq_domain_remove(domain);
- out_unmap:
- 	iounmap(host_data->base);
--out_free_mem:
- 	kfree(host_data->chips_data);
- 	kfree(host_data);
- 	return ret;
-@@ -752,10 +756,8 @@ __init stm32_exti_hierarchy_init(const struct stm32_exti_drv_data *drv_data,
+ extern void early_cpu_init(void);
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index cb4a16292aa7..4c2313d0b9ca 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -702,6 +702,10 @@ static void __init l1tf_select_mitigation(void)
+ 	half_pa = (u64)l1tf_pfn_limit() << PAGE_SHIFT;
+ 	if (e820__mapped_any(half_pa, ULLONG_MAX - half_pa, E820_TYPE_RAM)) {
+ 		pr_warn("System has more than MAX_PA/2 memory. L1TF mitigation not effective.\n");
++		pr_info("You may make it effective by booting the kernel with mem=%llu parameter.\n",
++				half_pa);
++		pr_info("However, doing so will make a part of your RAM unusable.\n");
++		pr_info("Reading https://www.kernel.org/doc/html/latest/admin-guide/l1tf.html might help you decide.\n");
+ 		return;
  	}
  
- 	host_data = stm32_exti_host_init(drv_data, node);
--	if (!host_data) {
--		ret = -ENOMEM;
--		goto out_free_mem;
--	}
-+	if (!host_data)
-+		return -ENOMEM;
+diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
+index 476e3ddf8890..a451bc374b9b 100644
+--- a/arch/x86/kernel/process_64.c
++++ b/arch/x86/kernel/process_64.c
+@@ -384,6 +384,7 @@ start_thread(struct pt_regs *regs, unsigned long new_ip, unsigned long new_sp)
+ 	start_thread_common(regs, new_ip, new_sp,
+ 			    __USER_CS, __USER_DS, 0);
+ }
++EXPORT_SYMBOL_GPL(start_thread);
  
- 	for (i = 0; i < drv_data->bank_nr; i++)
- 		stm32_exti_chip_init(host_data, i, node);
-@@ -777,7 +779,6 @@ __init stm32_exti_hierarchy_init(const struct stm32_exti_drv_data *drv_data,
+ #ifdef CONFIG_COMPAT
+ void compat_start_thread(struct pt_regs *regs, u32 new_ip, u32 new_sp)
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 46b428c0990e..4be481c72f60 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -9726,9 +9726,6 @@ static int vmx_handle_exit(struct kvm_vcpu *vcpu)
+  * information but as all relevant affected CPUs have 32KiB L1D cache size
+  * there is no point in doing so.
+  */
+-#define L1D_CACHE_ORDER 4
+-static void *vmx_l1d_flush_pages;
+-
+ static void vmx_l1d_flush(struct kvm_vcpu *vcpu)
+ {
+ 	int size = PAGE_SIZE << L1D_CACHE_ORDER;
+diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
+index acfab322fbe0..63a6f9fcaf20 100644
+--- a/arch/x86/mm/init.c
++++ b/arch/x86/mm/init.c
+@@ -923,7 +923,7 @@ unsigned long max_swapfile_size(void)
  
- out_unmap:
- 	iounmap(host_data->base);
--out_free_mem:
- 	kfree(host_data->chips_data);
- 	kfree(host_data);
- 	return ret;
-diff --git a/drivers/irqchip/irq-tango.c b/drivers/irqchip/irq-tango.c
-index 0c085303a583..580e2d72b9ba 100644
---- a/drivers/irqchip/irq-tango.c
-+++ b/drivers/irqchip/irq-tango.c
-@@ -205,8 +205,7 @@ static int __init tangox_irq_init(void __iomem *base, struct resource *baseres,
- 
- 	tangox_irq_domain_init(dom);
- 
--	irq_set_chained_handler(irq, tangox_irq_handler);
--	irq_set_handler_data(irq, dom);
-+	irq_set_chained_handler_and_data(irq, tangox_irq_handler, dom);
- 
- 	return 0;
+ 	if (boot_cpu_has_bug(X86_BUG_L1TF)) {
+ 		/* Limit the swap file size to MAX_PA/2 for L1TF workaround */
+-		unsigned long l1tf_limit = l1tf_pfn_limit() + 1;
++		unsigned long long l1tf_limit = l1tf_pfn_limit();
+ 		/*
+ 		 * We encode swap offsets also with 3 bits below those for pfn
+ 		 * which makes the usable limit higher.
+@@ -931,7 +931,7 @@ unsigned long max_swapfile_size(void)
+ #if CONFIG_PGTABLE_LEVELS > 2
+ 		l1tf_limit <<= PAGE_SHIFT - SWP_OFFSET_FIRST_BIT;
+ #endif
+-		pages = min_t(unsigned long, l1tf_limit, pages);
++		pages = min_t(unsigned long long, l1tf_limit, pages);
+ 	}
+ 	return pages;
+ }
+diff --git a/arch/x86/mm/mmap.c b/arch/x86/mm/mmap.c
+index f40ab8185d94..1e95d57760cf 100644
+--- a/arch/x86/mm/mmap.c
++++ b/arch/x86/mm/mmap.c
+@@ -257,7 +257,7 @@ bool pfn_modify_allowed(unsigned long pfn, pgprot_t prot)
+ 	/* If it's real memory always allow */
+ 	if (pfn_valid(pfn))
+ 		return true;
+-	if (pfn > l1tf_pfn_limit() && !capable(CAP_SYS_ADMIN))
++	if (pfn >= l1tf_pfn_limit() && !capable(CAP_SYS_ADMIN))
+ 		return false;
+ 	return true;
  }
 
