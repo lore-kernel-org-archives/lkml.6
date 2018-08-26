@@ -3,38 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DAF1C433F5
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 22:10:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92FF0C433F5
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 22:14:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E9F7208CA
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 22:10:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E9F7208CA
+	by mail.kernel.org (Postfix) with ESMTP id 3DE7A216FA
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 22:14:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DE7A216FA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726986AbeH0Bxw (ORCPT
+        id S1727045AbeH0B5x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 21:53:52 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:50840 "EHLO
+        Sun, 26 Aug 2018 21:57:53 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:50872 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726831AbeH0Bxw (ORCPT
+        with ESMTP id S1726831AbeH0B5x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 21:53:52 -0400
+        Sun, 26 Aug 2018 21:57:53 -0400
 Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
         (Exim 4.76)
         (envelope-from <colin.king@canonical.com>)
-        id 1fu3EI-0006UE-8O; Sun, 26 Aug 2018 22:09:54 +0000
+        id 1fu3IC-0006ce-MO; Sun, 26 Aug 2018 22:13:56 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org
+To:     Wu Hao <hao.wu@intel.com>, Alan Tull <atull@kernel.org>,
+        Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ALSA: hdspm: fix spelling mistake "Initializeing" -> "Initializing"
-Date:   Sun, 26 Aug 2018 23:09:52 +0100
-Message-Id: <20180826220952.12335-1-colin.king@canonical.com>
+Subject: [PATCH] fpga: dfl: fme-mgr: fix spelling mistake "Invaild" -> "Invalid"
+Date:   Sun, 26 Aug 2018 23:13:55 +0100
+Message-Id: <20180826221355.12661-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -46,27 +46,26 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-Trivial fix to spelling mistake in dev_dbg message and also remove
-extraneous white space and repeated question marks.
+Trivial fix to spelling mistake in dev_err message.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- sound/pci/rme9652/hdspm.c | 2 +-
+ drivers/fpga/dfl-fme-mgr.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/pci/rme9652/hdspm.c b/sound/pci/rme9652/hdspm.c
-index 11b5b5e0e058..679ad0415e3b 100644
---- a/sound/pci/rme9652/hdspm.c
-+++ b/sound/pci/rme9652/hdspm.c
-@@ -6534,7 +6534,7 @@ static int snd_hdspm_create_alsa_devices(struct snd_card *card,
- 	dev_dbg(card->dev, "Update mixer controls...\n");
- 	hdspm_update_simple_mixer_controls(hdspm);
+diff --git a/drivers/fpga/dfl-fme-mgr.c b/drivers/fpga/dfl-fme-mgr.c
+index b5ef405b6d88..9f045d058cfd 100644
+--- a/drivers/fpga/dfl-fme-mgr.c
++++ b/drivers/fpga/dfl-fme-mgr.c
+@@ -201,7 +201,7 @@ static int fme_mgr_write(struct fpga_manager *mgr,
+ 		}
  
--	dev_dbg(card->dev, "Initializeing complete ???\n");
-+	dev_dbg(card->dev, "Initializing complete?\n");
+ 		if (count < 4) {
+-			dev_err(dev, "Invaild PR bitstream size\n");
++			dev_err(dev, "Invalid PR bitstream size\n");
+ 			return -EINVAL;
+ 		}
  
- 	err = snd_card_register(card);
- 	if (err < 0) {
 -- 
 2.17.1
 
