@@ -2,222 +2,186 @@ Return-Path: <SRS0=U0Lc=LJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09246C433F5
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 11:03:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 390A7C433F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 11:11:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96E40208D6
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 11:03:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fze305OR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96E40208D6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id E758E208D6
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 11:11:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E758E208D6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726847AbeHZOjP (ORCPT
+        id S1726809AbeHZOxI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 10:39:15 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:55108 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726542AbeHZOjP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 10:39:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=okVl40r08ymCMYFrO8VFfJig/KLop8Io/sRmBMlnL+8=; b=fze305ORNJxwSTwfi0TCCi697
-        s8mWsr/Q+Ix1pJvGWXcMP4zBBBNNj3wD0xUkTCn8M/nnUl8eg5pP1xo+5QHq9iGtRnVCrcDXRavKO
-        M4qZKIfI4NayLRnzi4LulSLoGc/TEFRdTX+X+XBnUJMxTzkQS+Xqo1Bf7lV+MLiiFjPO0JeuJ/UgU
-        YYsy9RABYPQJog1d7ko+iH3WslN+UqEZ9iVBvJHsMXgzzVDr70S0Trisiu4dLmLBUkleFylhggVzb
-        6zK5w5ffat7mSZgmSjk1rOgS4kpH/BGKa+GKMOnPIQ6aHlWHz4YCmsXSBz7+V0JAt0gpsO/M42aeh
-        v1kVup1QA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1ftsix-0004RP-JT; Sun, 26 Aug 2018 10:56:52 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 52B672024EB1B; Sun, 26 Aug 2018 12:56:48 +0200 (CEST)
-Date:   Sun, 26 Aug 2018 12:56:48 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Benjamin Herrenschmidt <benh@au1.ibm.com>,
-        Nick Piggin <npiggin@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [RFC PATCH 00/11] Avoid synchronous TLB invalidation for
- intermediate page-table entries on arm64
-Message-ID: <20180826105648.GU24124@hirez.programming.kicks-ass.net>
-References: <1535125966-7666-1-git-send-email-will.deacon@arm.com>
- <CA+55aFxNs5B=j_g_OpAd=Xp_iiO_+idT-ogd_WM2EcL_6brbqg@mail.gmail.com>
+        Sun, 26 Aug 2018 10:53:08 -0400
+Received: from mga09.intel.com ([134.134.136.24]:34783 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726531AbeHZOxI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 26 Aug 2018 10:53:08 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Aug 2018 04:10:53 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,290,1531810800"; 
+   d="scan'208";a="75703229"
+Received: from bee.sh.intel.com (HELO lkp-server01) ([10.239.97.14])
+  by FMSMGA003.fm.intel.com with ESMTP; 26 Aug 2018 04:10:46 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1ftsw9-0001O5-FB; Sun, 26 Aug 2018 19:10:29 +0800
+Date:   Sun, 26 Aug 2018 17:00:46 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Ding Xiang <dingxiang@cmss.chinamobile.com>
+Cc:     kbuild-all@01.org, marcel@holtmann.org, johan.hedberg@gmail.com,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2] Bluetooth: bt3c_cs: Fix obsolete function
+Message-ID: <201808261649.k4zGe5cR%fengguang.wu@intel.com>
+References: <1535107465-5470-1-git-send-email-dingxiang@cmss.chinamobile.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+55aFxNs5B=j_g_OpAd=Xp_iiO_+idT-ogd_WM2EcL_6brbqg@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <1535107465-5470-1-git-send-email-dingxiang@cmss.chinamobile.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 24, 2018 at 09:20:00AM -0700, Linus Torvalds wrote:
-> On Fri, Aug 24, 2018 at 8:52 AM Will Deacon <will.deacon@arm.com> wrote:
-> >
-> > I hacked up this RFC on the back of the recent changes to the mmu_gather
-> > stuff in mainline. It's had a bit of testing and it looks pretty good so
-> > far.
-> 
-> Looks good to me.
-> 
-> Apart from the arm64-specific question I had, I wonder whether we need
-> to have that single "freed_tables" bit at all, since you wanted to
-> have the four individual bits for the different levels.
+Hi Ding,
 
-I think so; because he also sets those size bits for things like hugetlb
-and thp user page frees, not only table page frees. So they're not
-exactly the same.
+Thank you for the patch! Perhaps something to improve:
 
-And I think x86 could use this too; if we know we only freed 2M
-pages, we can use that in flush_tlb_mm_range() to range flush in 2M
-increments instead of 4K.
+[auto build test WARNING on bluetooth/master]
+[also build test WARNING on v4.18 next-20180824]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-Something a little like so..
+url:    https://github.com/0day-ci/linux/commits/Ding-Xiang/Bluetooth-bt3c_cs-Fix-obsolete-function/20180824-184743
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth.git master
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
 
-diff --git a/arch/x86/include/asm/tlb.h b/arch/x86/include/asm/tlb.h
-index cb0a1f470980..cb0898fe9d37 100644
---- a/arch/x86/include/asm/tlb.h
-+++ b/arch/x86/include/asm/tlb.h
-@@ -8,10 +8,15 @@
- 
- #define tlb_flush(tlb)							\
- {									\
--	if (!tlb->fullmm && !tlb->need_flush_all) 			\
--		flush_tlb_mm_range(tlb->mm, tlb->start, tlb->end, 0UL);	\
--	else								\
--		flush_tlb_mm_range(tlb->mm, 0UL, TLB_FLUSH_ALL, 0UL);	\
-+	unsigned long start = 0UL, end = TLB_FLUSH_ALL;			\
-+	unsigned int invl_shift = tlb_get_unmap_shift(tlb);		\
-+									\
-+	if (!tlb->fullmm && !tlb->need_flush_all) {			\
-+		start = tlb->start;					\
-+		end = tlb->end;						\
-+	}								\
-+									\
-+	flush_tlb_mm_range(tlb->mm, start, end, invl_shift);		\
- }
- 
- #include <asm-generic/tlb.h>
-diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-index 511bf5fae8b8..8ac1cac34f63 100644
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -491,23 +491,25 @@ struct flush_tlb_info {
- 	unsigned long		start;
- 	unsigned long		end;
- 	u64			new_tlb_gen;
-+	unsigned int		invl_shift;
- };
- 
- #define local_flush_tlb() __flush_tlb()
- 
- #define flush_tlb_mm(mm)	flush_tlb_mm_range(mm, 0UL, TLB_FLUSH_ALL, 0UL)
- 
--#define flush_tlb_range(vma, start, end)	\
--		flush_tlb_mm_range(vma->vm_mm, start, end, vma->vm_flags)
-+#define flush_tlb_range(vma, start, end)			\
-+		flush_tlb_mm_range(vma->vm_mm, start, end,	\
-+				vma->vm_flags & VM_HUGETLB ? PMD_SHUFT : PAGE_SHIFT)
- 
- extern void flush_tlb_all(void);
- extern void flush_tlb_mm_range(struct mm_struct *mm, unsigned long start,
--				unsigned long end, unsigned long vmflag);
-+				unsigned long end, unsigned int invl_shift);
- extern void flush_tlb_kernel_range(unsigned long start, unsigned long end);
- 
- static inline void flush_tlb_page(struct vm_area_struct *vma, unsigned long a)
- {
--	flush_tlb_mm_range(vma->vm_mm, a, a + PAGE_SIZE, VM_NONE);
-+	flush_tlb_mm_range(vma->vm_mm, a, a + PAGE_SIZE, PAGE_SHIFT);
- }
- 
- void native_flush_tlb_others(const struct cpumask *cpumask,
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 752dbf4e0e50..806aa74a8fb4 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -537,12 +537,12 @@ static void flush_tlb_func_common(const struct flush_tlb_info *f,
- 	    f->new_tlb_gen == mm_tlb_gen) {
- 		/* Partial flush */
- 		unsigned long addr;
--		unsigned long nr_pages = (f->end - f->start) >> PAGE_SHIFT;
-+		unsigned long nr_pages = (f->end - f->start) >> f->invl_shift;
- 
- 		addr = f->start;
- 		while (addr < f->end) {
- 			__flush_tlb_one_user(addr);
--			addr += PAGE_SIZE;
-+			addr += 1UL << f->invl_shift;
- 		}
- 		if (local)
- 			count_vm_tlb_events(NR_TLB_LOCAL_FLUSH_ONE, nr_pages);
-@@ -653,12 +653,13 @@ void native_flush_tlb_others(const struct cpumask *cpumask,
- static unsigned long tlb_single_page_flush_ceiling __read_mostly = 33;
- 
- void flush_tlb_mm_range(struct mm_struct *mm, unsigned long start,
--				unsigned long end, unsigned long vmflag)
-+				unsigned long end, unsigned int invl_shift)
- {
- 	int cpu;
- 
- 	struct flush_tlb_info info __aligned(SMP_CACHE_BYTES) = {
- 		.mm = mm,
-+		.invl_shift = invl_shift;
- 	};
- 
- 	cpu = get_cpu();
-@@ -668,8 +669,7 @@ void flush_tlb_mm_range(struct mm_struct *mm, unsigned long start,
- 
- 	/* Should we flush just the requested range? */
- 	if ((end != TLB_FLUSH_ALL) &&
--	    !(vmflag & VM_HUGETLB) &&
--	    ((end - start) >> PAGE_SHIFT) <= tlb_single_page_flush_ceiling) {
-+	    ((end - start) >> invl_shift) <= tlb_single_page_flush_ceiling) {
- 		info.start = start;
- 		info.end = end;
- 	} else {
-diff --git a/include/asm-generic/tlb.h b/include/asm-generic/tlb.h
-index e811ef7b8350..cdde0cdb23e7 100644
---- a/include/asm-generic/tlb.h
-+++ b/include/asm-generic/tlb.h
-@@ -175,6 +200,25 @@ static inline void tlb_remove_check_page_size_change(struct mmu_gather *tlb,
- }
- #endif
- 
-+static inline unsigned long tlb_get_unmap_shift(struct mmu_gather *tlb)
-+{
-+	if (tlb->cleared_ptes)
-+		return PAGE_SHIFT;
-+	if (tlb->cleared_pmds)
-+		return PMD_SHIFT;
-+	if (tlb->cleared_puds)
-+		return PUD_SHIFT;
-+	if (tlb->cleared_p4ds)
-+		return P4D_SHIFT;
-+
-+	return PAGE_SHIFT;
-+}
-+
-+static inline unsigned long tlb_get_unmap_size(struct mmu_gather *tlb)
-+{
-+	return 1ULL << tlb_get_unmap_shift(tlb);
-+}
-+
- /*
-  * In the case of tlb vma handling, we can optimise these away in the
-  * case where we're doing a full MM flush.  When we're doing a munmap,
+
+sparse warnings: (new ones prefixed by >>)
+
+>> drivers/bluetooth/bt3c_cs.c:510:54: sparse: incorrect type in argument 3 (different type sizes) @@    expected unsigned long *res @@    got nsigned long *res @@
+   drivers/bluetooth/bt3c_cs.c:510:54:    expected unsigned long *res
+   drivers/bluetooth/bt3c_cs.c:510:54:    got unsigned int *<noident>
+   drivers/bluetooth/bt3c_cs.c: In function 'bt3c_load_firmware':
+   drivers/bluetooth/bt3c_cs.c:510:25: error: passing argument 3 of 'kstrtoul' from incompatible pointer type [-Werror=incompatible-pointer-types]
+        if (kstrtoul(b, 16, &tmp))
+                            ^
+   In file included from include/linux/list.h:9:0,
+                    from include/linux/module.h:9,
+                    from drivers/bluetooth/bt3c_cs.c:24:
+   include/linux/kernel.h:333:32: note: expected 'long unsigned int *' but argument is of type 'unsigned int *'
+    static inline int __must_check kstrtoul(const char *s, unsigned int base, unsigned long *res)
+                                   ^~~~~~~~
+   cc1: some warnings being treated as errors
+
+vim +510 drivers/bluetooth/bt3c_cs.c
+
+   443	
+   444	
+   445	static int bt3c_load_firmware(struct bt3c_info *info,
+   446				      const unsigned char *firmware,
+   447				      int count)
+   448	{
+   449		char *ptr = (char *) firmware;
+   450		char b[9];
+   451		unsigned int iobase, tmp;
+   452		unsigned long size, addr, fcs, tn;
+   453		int i, err = 0;
+   454	
+   455		iobase = info->p_dev->resource[0]->start;
+   456	
+   457		/* Reset */
+   458		bt3c_io_write(iobase, 0x8040, 0x0404);
+   459		bt3c_io_write(iobase, 0x8040, 0x0400);
+   460	
+   461		udelay(1);
+   462	
+   463		bt3c_io_write(iobase, 0x8040, 0x0404);
+   464	
+   465		udelay(17);
+   466	
+   467		/* Load */
+   468		while (count) {
+   469			if (ptr[0] != 'S') {
+   470				BT_ERR("Bad address in firmware");
+   471				err = -EFAULT;
+   472				goto error;
+   473			}
+   474	
+   475			memset(b, 0, sizeof(b));
+   476			memcpy(b, ptr + 2, 2);
+   477			if (kstrtoul(b, 16, &size) < 0)
+   478				return -EINVAL;
+   479	
+   480			memset(b, 0, sizeof(b));
+   481			memcpy(b, ptr + 4, 8);
+   482			if (kstrtoul(b, 16, &addr) < 0)
+   483				return -EINVAL;
+   484	
+   485			memset(b, 0, sizeof(b));
+   486			memcpy(b, ptr + (size * 2) + 2, 2);
+   487			if (kstrtoul(b, 16, &fcs) < 0)
+   488				return -EINVAL;
+   489	
+   490			memset(b, 0, sizeof(b));
+   491			for (tmp = 0, i = 0; i < size; i++) {
+   492				memcpy(b, ptr + (i * 2) + 2, 2);
+   493				if (kstrtoul(b, 16, &tn))
+   494					return -EINVAL;
+   495				tmp += tn;
+   496			}
+   497	
+   498			if (((tmp + fcs) & 0xff) != 0xff) {
+   499				BT_ERR("Checksum error in firmware");
+   500				err = -EILSEQ;
+   501				goto error;
+   502			}
+   503	
+   504			if (ptr[1] == '3') {
+   505				bt3c_address(iobase, addr);
+   506	
+   507				memset(b, 0, sizeof(b));
+   508				for (i = 0; i < (size - 4) / 2; i++) {
+   509					memcpy(b, ptr + (i * 4) + 12, 4);
+ > 510					if (kstrtoul(b, 16, &tmp))
+   511						return -EINVAL;
+   512					bt3c_put(iobase, tmp);
+   513				}
+   514			}
+   515	
+   516			ptr   += (size * 2) + 6;
+   517			count -= (size * 2) + 6;
+   518		}
+   519	
+   520		udelay(17);
+   521	
+   522		/* Boot */
+   523		bt3c_address(iobase, 0x3000);
+   524		outb(inb(iobase + CONTROL) | 0x40, iobase + CONTROL);
+   525	
+   526	error:
+   527		udelay(17);
+   528	
+   529		/* Clear */
+   530		bt3c_io_write(iobase, 0x7006, 0x0000);
+   531		bt3c_io_write(iobase, 0x7005, 0x0000);
+   532		bt3c_io_write(iobase, 0x7001, 0x0000);
+   533	
+   534		return err;
+   535	}
+   536	
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
