@@ -6,100 +6,233 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06D9FC433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:43:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 080AAC433F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:43:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8F5021536
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:43:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8F5021536
+	by mail.kernel.org (Postfix) with ESMTP id B8590216E3
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:43:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8590216E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726523AbeHZKYi (ORCPT
+        id S1726751AbeHZKZZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 06:24:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53242 "EHLO
+        Sun, 26 Aug 2018 06:25:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53384 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726224AbeHZKYi (ORCPT
+        with ESMTP id S1726224AbeHZKZZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 06:24:38 -0400
+        Sun, 26 Aug 2018 06:25:25 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3D8AE25A;
-        Sun, 26 Aug 2018 06:43:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4A83125A;
+        Sun, 26 Aug 2018 06:43:49 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.4 0/5] 4.4.153-stable review
-Date:   Sun, 26 Aug 2018 08:42:52 +0200
-Message-Id: <20180826064102.584749876@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Borislav Petkov <bp@alien8.de>,
+        Brian Gerst <brgerst@gmail.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rik van Riel <riel@redhat.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
+        Ingo Molnar <mingo@kernel.org>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.4 2/5] x86/mm: Fix use-after-free of ldt_struct
+Date:   Sun, 26 Aug 2018 08:42:54 +0200
+Message-Id: <20180826064103.324031685@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180826064102.584749876@linuxfoundation.org>
+References: <20180826064102.584749876@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.153-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.4.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.4.153-rc1
-X-KernelTest-Deadline: 2018-08-28T06:41+00:00
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 4.4.153 release.
-There are 5 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-Responses should be made by Tue Aug 28 06:40:50 UTC 2018.
-Anything received after that time might be too late.
+------------------
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.153-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
-and the diffstat can be found below.
+From: Eric Biggers <ebiggers@google.com>
 
-thanks,
+commit ccd5b3235180eef3cfec337df1c8554ab151b5cc upstream.
 
-greg k-h
+The following commit:
 
--------------
-Pseudo-Shortlog of commits:
+  39a0526fb3f7 ("x86/mm: Factor out LDT init from context init")
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.4.153-rc1
+renamed init_new_context() to init_new_context_ldt() and added a new
+init_new_context() which calls init_new_context_ldt().  However, the
+error code of init_new_context_ldt() was ignored.  Consequently, if a
+memory allocation in alloc_ldt_struct() failed during a fork(), the
+->context.ldt of the new task remained the same as that of the old task
+(due to the memcpy() in dup_mm()).  ldt_struct's are not intended to be
+shared, so a use-after-free occurred after one task exited.
 
-Vivek Goyal <vgoyal@redhat.com>
-    ovl: warn instead of error if d_type is not supported
+Fix the bug by making init_new_context() pass through the error code of
+init_new_context_ldt().
 
-Vivek Goyal <vgoyal@redhat.com>
-    ovl: Do d_type check only if work dir creation was successful
+This bug was found by syzkaller, which encountered the following splat:
 
-Vivek Goyal <vgoyal@redhat.com>
-    ovl: Ensure upper filesystem supports d_type
+    BUG: KASAN: use-after-free in free_ldt_struct.part.2+0x10a/0x150 arch/x86/kernel/ldt.c:116
+    Read of size 4 at addr ffff88006d2cb7c8 by task kworker/u9:0/3710
 
-Eric Biggers <ebiggers@google.com>
-    x86/mm: Fix use-after-free of ldt_struct
+    CPU: 1 PID: 3710 Comm: kworker/u9:0 Not tainted 4.13.0-rc4-next-20170811 #2
+    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
+    Call Trace:
+     __dump_stack lib/dump_stack.c:16 [inline]
+     dump_stack+0x194/0x257 lib/dump_stack.c:52
+     print_address_description+0x73/0x250 mm/kasan/report.c:252
+     kasan_report_error mm/kasan/report.c:351 [inline]
+     kasan_report+0x24e/0x340 mm/kasan/report.c:409
+     __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:429
+     free_ldt_struct.part.2+0x10a/0x150 arch/x86/kernel/ldt.c:116
+     free_ldt_struct arch/x86/kernel/ldt.c:173 [inline]
+     destroy_context_ldt+0x60/0x80 arch/x86/kernel/ldt.c:171
+     destroy_context arch/x86/include/asm/mmu_context.h:157 [inline]
+     __mmdrop+0xe9/0x530 kernel/fork.c:889
+     mmdrop include/linux/sched/mm.h:42 [inline]
+     exec_mmap fs/exec.c:1061 [inline]
+     flush_old_exec+0x173c/0x1ff0 fs/exec.c:1291
+     load_elf_binary+0x81f/0x4ba0 fs/binfmt_elf.c:855
+     search_binary_handler+0x142/0x6b0 fs/exec.c:1652
+     exec_binprm fs/exec.c:1694 [inline]
+     do_execveat_common.isra.33+0x1746/0x22e0 fs/exec.c:1816
+     do_execve+0x31/0x40 fs/exec.c:1860
+     call_usermodehelper_exec_async+0x457/0x8f0 kernel/umh.c:100
+     ret_from_fork+0x2a/0x40 arch/x86/entry/entry_64.S:431
 
-Andi Kleen <ak@linux.intel.com>
-    x86/mm/pat: Fix L1TF stable backport for CPA
+    Allocated by task 3700:
+     save_stack_trace+0x16/0x20 arch/x86/kernel/stacktrace.c:59
+     save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+     set_track mm/kasan/kasan.c:459 [inline]
+     kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:551
+     kmem_cache_alloc_trace+0x136/0x750 mm/slab.c:3627
+     kmalloc include/linux/slab.h:493 [inline]
+     alloc_ldt_struct+0x52/0x140 arch/x86/kernel/ldt.c:67
+     write_ldt+0x7b7/0xab0 arch/x86/kernel/ldt.c:277
+     sys_modify_ldt+0x1ef/0x240 arch/x86/kernel/ldt.c:307
+     entry_SYSCALL_64_fastpath+0x1f/0xbe
 
+    Freed by task 3700:
+     save_stack_trace+0x16/0x20 arch/x86/kernel/stacktrace.c:59
+     save_stack+0x43/0xd0 mm/kasan/kasan.c:447
+     set_track mm/kasan/kasan.c:459 [inline]
+     kasan_slab_free+0x71/0xc0 mm/kasan/kasan.c:524
+     __cache_free mm/slab.c:3503 [inline]
+     kfree+0xca/0x250 mm/slab.c:3820
+     free_ldt_struct.part.2+0xdd/0x150 arch/x86/kernel/ldt.c:121
+     free_ldt_struct arch/x86/kernel/ldt.c:173 [inline]
+     destroy_context_ldt+0x60/0x80 arch/x86/kernel/ldt.c:171
+     destroy_context arch/x86/include/asm/mmu_context.h:157 [inline]
+     __mmdrop+0xe9/0x530 kernel/fork.c:889
+     mmdrop include/linux/sched/mm.h:42 [inline]
+     __mmput kernel/fork.c:916 [inline]
+     mmput+0x541/0x6e0 kernel/fork.c:927
+     copy_process.part.36+0x22e1/0x4af0 kernel/fork.c:1931
+     copy_process kernel/fork.c:1546 [inline]
+     _do_fork+0x1ef/0xfb0 kernel/fork.c:2025
+     SYSC_clone kernel/fork.c:2135 [inline]
+     SyS_clone+0x37/0x50 kernel/fork.c:2129
+     do_syscall_64+0x26c/0x8c0 arch/x86/entry/common.c:287
+     return_from_SYSCALL_64+0x0/0x7a
 
--------------
+Here is a C reproducer:
 
-Diffstat:
+    #include <asm/ldt.h>
+    #include <pthread.h>
+    #include <signal.h>
+    #include <stdlib.h>
+    #include <sys/syscall.h>
+    #include <sys/wait.h>
+    #include <unistd.h>
 
- Makefile                           |  4 ++--
- arch/x86/include/asm/mmu_context.h |  3 +--
- arch/x86/mm/pageattr.c             |  2 +-
- fs/overlayfs/overlayfs.h           |  1 +
- fs/overlayfs/readdir.c             | 37 +++++++++++++++++++++++++++++++++++++
- fs/overlayfs/super.c               | 20 ++++++++++++++++++++
- 6 files changed, 62 insertions(+), 5 deletions(-)
+    static void *fork_thread(void *_arg)
+    {
+        fork();
+    }
+
+    int main(void)
+    {
+        struct user_desc desc = { .entry_number = 8191 };
+
+        syscall(__NR_modify_ldt, 1, &desc, sizeof(desc));
+
+        for (;;) {
+            if (fork() == 0) {
+                pthread_t t;
+
+                srand(getpid());
+                pthread_create(&t, NULL, fork_thread, NULL);
+                usleep(rand() % 10000);
+                syscall(__NR_exit_group, 0);
+            }
+            wait(NULL);
+        }
+    }
+
+Note: the reproducer takes advantage of the fact that alloc_ldt_struct()
+may use vmalloc() to allocate a large ->entries array, and after
+commit:
+
+  5d17a73a2ebe ("vmalloc: back off when the current task is killed")
+
+it is possible for userspace to fail a task's vmalloc() by
+sending a fatal signal, e.g. via exit_group().  It would be more
+difficult to reproduce this bug on kernels without that commit.
+
+This bug only affected kernels with CONFIG_MODIFY_LDT_SYSCALL=y.
+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: <stable@vger.kernel.org> [v4.6+]
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rik van Riel <riel@redhat.com>
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-mm@kvack.org
+Fixes: 39a0526fb3f7 ("x86/mm: Factor out LDT init from context init")
+Link: http://lkml.kernel.org/r/20170824175029.76040-1-ebiggers3@gmail.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ arch/x86/include/asm/mmu_context.h |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+--- a/arch/x86/include/asm/mmu_context.h
++++ b/arch/x86/include/asm/mmu_context.h
+@@ -109,8 +109,7 @@ static inline int init_new_context(struc
+ 				   struct mm_struct *mm)
+ {
+ 	mm->context.ctx_id = atomic64_inc_return(&last_mm_ctx_id);
+-	init_new_context_ldt(tsk, mm);
+-	return 0;
++	return init_new_context_ldt(tsk, mm);
+ }
+ static inline void destroy_context(struct mm_struct *mm)
+ {
 
 
