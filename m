@@ -6,38 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FB7AC433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:48:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A11B5C433F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:48:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 275C02170B
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:48:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 275C02170B
+	by mail.kernel.org (Postfix) with ESMTP id 661052170B
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:48:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 661052170B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728034AbeHZK3y (ORCPT
+        id S1728051AbeHZK35 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 06:29:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53930 "EHLO
+        Sun, 26 Aug 2018 06:29:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53944 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726611AbeHZK3x (ORCPT
+        with ESMTP id S1726611AbeHZK34 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 06:29:53 -0400
+        Sun, 26 Aug 2018 06:29:56 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8420E9D2;
-        Sun, 26 Aug 2018 06:48:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 07D6B25A;
+        Sun, 26 Aug 2018 06:48:20 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Jeff Mahoney <jeffm@suse.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 3.18 56/56] reiserfs: fix broken xattr handling (heap corruption, bad retval)
-Date:   Sun, 26 Aug 2018 08:45:17 +0200
-Message-Id: <20180826064234.971688832@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 46/56] qlogic: check kstrtoul() for errors
+Date:   Sun, 26 Aug 2018 08:45:07 +0200
+Message-Id: <20180826064234.539458728@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180826064232.320669119@linuxfoundation.org>
 References: <20180826064232.320669119@linuxfoundation.org>
@@ -54,59 +51,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit a13f085d111e90469faf2d9965eb39b11c114d7e upstream.
+[ Upstream commit 5fc853cc01c68f84984ecc2d5fd777ecad78240f ]
 
-This fixes the following issues:
+We accidentally left out the error handling for kstrtoul().
 
-- When a buffer size is supplied to reiserfs_listxattr() such that each
-  individual name fits, but the concatenation of all names doesn't fit,
-  reiserfs_listxattr() overflows the supplied buffer.  This leads to a
-  kernel heap overflow (verified using KASAN) followed by an out-of-bounds
-  usercopy and is therefore a security bug.
-
-- When a buffer size is supplied to reiserfs_listxattr() such that a
-  name doesn't fit, -ERANGE should be returned.  But reiserfs instead just
-  truncates the list of names; I have verified that if the only xattr on a
-  file has a longer name than the supplied buffer length, listxattr()
-  incorrectly returns zero.
-
-With my patch applied, -ERANGE is returned in both cases and the memory
-corruption doesn't happen anymore.
-
-Credit for making me clean this code up a bit goes to Al Viro, who pointed
-out that the ->actor calling convention is suboptimal and should be
-changed.
-
-Link: http://lkml.kernel.org/r/20180802151539.5373-1-jannh@google.com
-Fixes: 48b32a3553a5 ("reiserfs: use generic xattr handlers")
-Signed-off-by: Jann Horn <jannh@google.com>
-Acked-by: Jeff Mahoney <jeffm@suse.com>
-Cc: Eric Biggers <ebiggers@google.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: a520030e326a ("qlcnic: Implement flash sysfs callback for 83xx adapter")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/reiserfs/xattr.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/qlogic/qlcnic/qlcnic_sysfs.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/fs/reiserfs/xattr.c
-+++ b/fs/reiserfs/xattr.c
-@@ -842,8 +842,10 @@ static int listxattr_filler(void *buf, c
- 			size = handler->list(b->dentry, b->buf + b->pos,
- 					 b->size, name, namelen,
- 					 handler->flags);
--			if (size > b->size)
-+			if (b->pos + size > b->size) {
-+				b->pos = -ERANGE;
- 				return -ERANGE;
-+			}
- 		} else {
- 			size = handler->list(b->dentry, NULL, 0, name,
- 					     namelen, handler->flags);
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sysfs.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sysfs.c
+@@ -1136,6 +1136,8 @@ static ssize_t qlcnic_83xx_sysfs_flash_w
+ 		return QL_STATUS_INVALID_PARAM;
+ 
+ 	ret = kstrtoul(buf, 16, &data);
++	if (ret)
++		return ret;
+ 
+ 	switch (data) {
+ 	case QLC_83XX_FLASH_SECTOR_ERASE_CMD:
 
 
