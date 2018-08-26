@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A42FC433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:46:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 707C3C433F5
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:46:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5213B2172A
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:46:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5213B2172A
+	by mail.kernel.org (Postfix) with ESMTP id 366522170B
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:46:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 366522170B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727628AbeHZK21 (ORCPT
+        id S1727635AbeHZK2b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 06:28:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53692 "EHLO
+        Sun, 26 Aug 2018 06:28:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53698 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726245AbeHZK21 (ORCPT
+        with ESMTP id S1726245AbeHZK2b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 06:28:27 -0400
+        Sun, 26 Aug 2018 06:28:31 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D7A599D2;
-        Sun, 26 Aug 2018 06:46:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8A6AE9D2;
+        Sun, 26 Aug 2018 06:46:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Vinod Koul <vkoul@kernel.org>,
+        stable@vger.kernel.org, Alex Chen <alexchen@synology.com>,
+        Alex Wu <alexwu@synology.com>,
+        Chung-Chiang Cheng <cccheng@synology.com>,
+        BingJing Chang <bingjingc@synology.com>,
+        Shaohua Li <shli@fb.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 33/56] dmaengine: k3dma: Off by one in k3_of_dma_simple_xlate()
-Date:   Sun, 26 Aug 2018 08:44:54 +0200
-Message-Id: <20180826064233.967370475@linuxfoundation.org>
+Subject: [PATCH 3.18 34/56] md/raid10: fix that replacement cannot complete recovery after reassemble
+Date:   Sun, 26 Aug 2018 08:44:55 +0200
+Message-Id: <20180826064234.010327628@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180826064232.320669119@linuxfoundation.org>
 References: <20180826064232.320669119@linuxfoundation.org>
@@ -51,32 +54,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: BingJing Chang <bingjingc@synology.com>
 
-[ Upstream commit c4c2b7644cc9a41f17a8cc8904efe3f66ae4c7ed ]
+[ Upstream commit bda3153998f3eb2cafa4a6311971143628eacdbc ]
 
-The d->chans[] array has d->dma_requests elements so the > should be
->= here.
+During assemble, the spare marked for replacement is not checked.
+conf->fullsync cannot be updated to be 1. As a result, recovery will
+treat it as a clean array. All recovering sectors are skipped. Original
+device is replaced with the not-recovered spare.
 
-Fixes: 8e6152bc660e ("dmaengine: Add hisilicon k3 DMA engine driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+mdadm -C /dev/md0 -l10 -n4 -pn2 /dev/loop[0123]
+mdadm /dev/md0 -a /dev/loop4
+mdadm /dev/md0 --replace /dev/loop0
+mdadm -S /dev/md0 # stop array during recovery
+
+mdadm -A /dev/md0 /dev/loop[01234]
+
+After reassemble, you can see recovery go on, but it completes
+immediately. In fact, recovery is not actually processed.
+
+To solve this problem, we just add the missing logics for replacment
+spares. (In raid1.c or raid5.c, they have already been checked.)
+
+Reported-by: Alex Chen <alexchen@synology.com>
+Reviewed-by: Alex Wu <alexwu@synology.com>
+Reviewed-by: Chung-Chiang Cheng <cccheng@synology.com>
+Signed-off-by: BingJing Chang <bingjingc@synology.com>
+Signed-off-by: Shaohua Li <shli@fb.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/dma/k3dma.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/raid10.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/dma/k3dma.c
-+++ b/drivers/dma/k3dma.c
-@@ -652,7 +652,7 @@ static struct dma_chan *k3_of_dma_simple
- 	struct k3_dma_dev *d = ofdma->of_dma_data;
- 	unsigned int request = dma_spec->args[0];
+--- a/drivers/md/raid10.c
++++ b/drivers/md/raid10.c
+@@ -3770,6 +3770,13 @@ static int run(struct mddev *mddev)
+ 			    disk->rdev->saved_raid_disk < 0)
+ 				conf->fullsync = 1;
+ 		}
++
++		if (disk->replacement &&
++		    !test_bit(In_sync, &disk->replacement->flags) &&
++		    disk->replacement->saved_raid_disk < 0) {
++			conf->fullsync = 1;
++		}
++
+ 		disk->recovery_disabled = mddev->recovery_disabled - 1;
+ 	}
  
--	if (request > d->dma_requests)
-+	if (request >= d->dma_requests)
- 		return NULL;
- 
- 	return dma_get_slave_channel(&(d->chans[request].vc.chan));
 
 
