@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15553C433F5
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:47:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 585FAC433F5
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:47:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C68B42170B
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:47:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C68B42170B
+	by mail.kernel.org (Postfix) with ESMTP id 1D9562170B
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:47:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D9562170B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727760AbeHZK3B (ORCPT
+        id S1727788AbeHZK3G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 06:29:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53784 "EHLO
+        Sun, 26 Aug 2018 06:29:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53792 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727065AbeHZK3B (ORCPT
+        with ESMTP id S1727765AbeHZK3E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 06:29:01 -0400
+        Sun, 26 Aug 2018 06:29:04 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B97E825A;
-        Sun, 26 Aug 2018 06:47:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 52F3725A;
+        Sun, 26 Aug 2018 06:47:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, Daniel Mack <daniel@zonque.org>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 41/56] netfilter: x_tables: set module owner for icmp(6) matches
-Date:   Sun, 26 Aug 2018 08:45:02 +0200
-Message-Id: <20180826064234.325695893@linuxfoundation.org>
+Subject: [PATCH 3.18 42/56] ARM: pxa: irq: fix handling of ICMR registers in suspend/resume
+Date:   Sun, 26 Aug 2018 08:45:03 +0200
+Message-Id: <20180826064234.373894547@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180826064232.320669119@linuxfoundation.org>
 References: <20180826064232.320669119@linuxfoundation.org>
@@ -51,44 +51,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Daniel Mack <daniel@zonque.org>
 
-[ Upstream commit d376bef9c29b3c65aeee4e785fffcd97ef0a9a81 ]
+[ Upstream commit 0c1049dcb4ceec640d8bd797335bcbebdcab44d2 ]
 
-nft_compat relies on xt_request_find_match to increment
-refcount of the module that provides the match/target.
+PXA3xx platforms have 56 interrupts that are stored in two ICMR
+registers. The code in pxa_irq_suspend() and pxa_irq_resume() however
+does a simple division by 32 which only leads to one register being
+saved at suspend and restored at resume time. The NAND interrupt
+setting, for instance, is lost.
 
-The (builtin) icmp matches did't set the module owner so it
-was possible to rmmod ip(6)tables while icmp extensions were still in use.
+Fix this by using DIV_ROUND_UP() instead.
 
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Daniel Mack <daniel@zonque.org>
+Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/netfilter/ip_tables.c  |    1 +
- net/ipv6/netfilter/ip6_tables.c |    1 +
- 2 files changed, 2 insertions(+)
+ arch/arm/mach-pxa/irq.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/ipv4/netfilter/ip_tables.c
-+++ b/net/ipv4/netfilter/ip_tables.c
-@@ -2069,6 +2069,7 @@ static struct xt_match ipt_builtin_mt[]
- 		.checkentry = icmp_checkentry,
- 		.proto      = IPPROTO_ICMP,
- 		.family     = NFPROTO_IPV4,
-+		.me	    = THIS_MODULE,
- 	},
- };
+--- a/arch/arm/mach-pxa/irq.c
++++ b/arch/arm/mach-pxa/irq.c
+@@ -160,7 +160,7 @@ static int pxa_irq_suspend(void)
+ {
+ 	int i;
  
---- a/net/ipv6/netfilter/ip6_tables.c
-+++ b/net/ipv6/netfilter/ip6_tables.c
-@@ -2071,6 +2071,7 @@ static struct xt_match ip6t_builtin_mt[]
- 		.checkentry = icmp6_checkentry,
- 		.proto      = IPPROTO_ICMPV6,
- 		.family     = NFPROTO_IPV6,
-+		.me	    = THIS_MODULE,
- 	},
- };
+-	for (i = 0; i < pxa_internal_irq_nr / 32; i++) {
++	for (i = 0; i < DIV_ROUND_UP(pxa_internal_irq_nr, 32); i++) {
+ 		void __iomem *base = irq_base(i);
  
+ 		saved_icmr[i] = __raw_readl(base + ICMR);
+@@ -179,7 +179,7 @@ static void pxa_irq_resume(void)
+ {
+ 	int i;
+ 
+-	for (i = 0; i < pxa_internal_irq_nr / 32; i++) {
++	for (i = 0; i < DIV_ROUND_UP(pxa_internal_irq_nr, 32); i++) {
+ 		void __iomem *base = irq_base(i);
+ 
+ 		__raw_writel(saved_icmr[i], base + ICMR);
 
 
