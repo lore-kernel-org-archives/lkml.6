@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96269C433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:48:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89425C433F5
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:48:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C1292170B
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:48:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C1292170B
+	by mail.kernel.org (Postfix) with ESMTP id 4FC632170B
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:48:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FC632170B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728001AbeHZK3q (ORCPT
+        id S1728020AbeHZK3u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 06:29:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53910 "EHLO
+        Sun, 26 Aug 2018 06:29:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53922 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726611AbeHZK3q (ORCPT
+        with ESMTP id S1726611AbeHZK3t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 06:29:46 -0400
+        Sun, 26 Aug 2018 06:29:49 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 115CF25A;
-        Sun, 26 Aug 2018 06:48:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0808325A;
+        Sun, 26 Aug 2018 06:48:13 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>,
-        Willem de Bruijn <willemb@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 54/56] packet: refine ring v3 block size test to hold one frame
-Date:   Sun, 26 Aug 2018 08:45:15 +0200
-Message-Id: <20180826064234.879976772@linuxfoundation.org>
+        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Greg Kroah-Hartman <greg@kroah.com>
+Subject: [PATCH 3.18 55/56] PCI: hotplug: Dont leak pci_slot on registration failure
+Date:   Sun, 26 Aug 2018 08:45:16 +0200
+Message-Id: <20180826064234.924352726@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180826064232.320669119@linuxfoundation.org>
 References: <20180826064232.320669119@linuxfoundation.org>
@@ -51,66 +51,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Willem de Bruijn <willemb@google.com>
+From: Lukas Wunner <lukas@wunner.de>
 
-commit 4576cd469d980317c4edd9173f8b694aa71ea3a3 upstream.
+commit 4ce6435820d1f1cc2c2788e232735eb244bcc8a3 upstream.
 
-TPACKET_V3 stores variable length frames in fixed length blocks.
-Blocks must be able to store a block header, optional private space
-and at least one minimum sized frame.
+If addition of sysfs files fails on registration of a hotplug slot, the
+struct pci_slot as well as the entry in the slot_list is leaked.  The
+issue has been present since the hotplug core was introduced in 2002:
+https://git.kernel.org/tglx/history/c/a8a2069f432c
 
-Frames, even for a zero snaplen packet, store metadata headers and
-optional reserved space.
+Perhaps the idea was that even though sysfs addition fails, the slot
+should still be usable.  But that's not how drivers use the interface,
+they abort probe if a non-zero value is returned.
 
-In the block size bounds check, ensure that the frame of the
-chosen configuration fits. This includes sockaddr_ll and optional
-tp_reserve.
-
-Syzbot was able to construct a ring with insuffient room for the
-sockaddr_ll in the header of a zero-length frame, triggering an
-out-of-bounds write in dev_parse_header.
-
-Convert the comparison to less than, as zero is a valid snap len.
-This matches the test for minimum tp_frame_size immediately below.
-
-Fixes: f6fb8f100b80 ("af-packet: TPACKET_V3 flexible buffer implementation.")
-Fixes: eb73190f4fbe ("net/packet: refine check for priv area size")
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: Willem de Bruijn <willemb@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Cc: stable@vger.kernel.org # v2.4.15+
+Cc: Greg Kroah-Hartman <greg@kroah.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/packet/af_packet.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/pci/hotplug/pci_hotplug_core.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -3853,6 +3853,8 @@ static int packet_set_ring(struct sock *
- 	}
+--- a/drivers/pci/hotplug/pci_hotplug_core.c
++++ b/drivers/pci/hotplug/pci_hotplug_core.c
+@@ -457,8 +457,17 @@ int __pci_hp_register(struct hotplug_slo
+ 	list_add(&slot->slot_list, &pci_hotplug_slot_list);
  
- 	if (req->tp_block_nr) {
-+		unsigned int min_frame_size;
+ 	result = fs_add_slot(pci_slot);
++	if (result)
++		goto err_list_del;
 +
- 		/* Sanity tests and some calculations */
- 		err = -EBUSY;
- 		if (unlikely(rb->pg_vec))
-@@ -3875,12 +3877,12 @@ static int packet_set_ring(struct sock *
- 			goto out;
- 		if (unlikely(req->tp_block_size & (PAGE_SIZE - 1)))
- 			goto out;
-+		min_frame_size = po->tp_hdrlen + po->tp_reserve;
- 		if (po->tp_version >= TPACKET_V3 &&
--		    req->tp_block_size <=
--		    BLK_PLUS_PRIV((u64)req_u->req3.tp_sizeof_priv) + sizeof(struct tpacket3_hdr))
-+		    req->tp_block_size <
-+		    BLK_PLUS_PRIV((u64)req_u->req3.tp_sizeof_priv) + min_frame_size)
- 			goto out;
--		if (unlikely(req->tp_frame_size < po->tp_hdrlen +
--					po->tp_reserve))
-+		if (unlikely(req->tp_frame_size < min_frame_size))
- 			goto out;
- 		if (unlikely(req->tp_frame_size & (TPACKET_ALIGNMENT - 1)))
- 			goto out;
+ 	kobject_uevent(&pci_slot->kobj, KOBJ_ADD);
+ 	dbg("Added slot %s to the list\n", name);
++	goto out;
++
++err_list_del:
++	list_del(&slot->slot_list);
++	pci_slot->hotplug = NULL;
++	pci_destroy_slot(pci_slot);
+ out:
+ 	mutex_unlock(&pci_hp_mutex);
+ 	return result;
 
 
