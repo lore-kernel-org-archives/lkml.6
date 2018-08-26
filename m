@@ -2,223 +2,177 @@ Return-Path: <SRS0=U0Lc=LJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2A4BC433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 08:22:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF9BAC433F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 08:41:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 273FF208DA
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 08:22:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CsYfY7uU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 273FF208DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 5316E2147D
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 08:41:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5316E2147D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726791AbeHZMEg (ORCPT
+        id S1726741AbeHZMX0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 08:04:36 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:39037 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726364AbeHZMEf (ORCPT
+        Sun, 26 Aug 2018 08:23:26 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:57283 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726261AbeHZMX0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 08:04:35 -0400
-Received: by mail-it0-f66.google.com with SMTP id t69-v6so6943047itb.4
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Aug 2018 01:22:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=iv8vMp7U6kpiizLVr4U54BzhKMFYPmA2/siXMyoADMM=;
-        b=CsYfY7uUiznY4QVL55BTKkl5LXEVO5s54pTIP2Va3AmTnLCwnVILEmHVBMrPkZDzvx
-         lxWFhY99Zult+9nIdczOYJASU2q6MCRb1G/F8vA1k+3pwFljrUI1ZWI8oVcZVCIPdKTw
-         5W1n5v7EV3Ofn62V1BsqVCduntCx8DOQUiIbE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=iv8vMp7U6kpiizLVr4U54BzhKMFYPmA2/siXMyoADMM=;
-        b=TN/0g0QgFSUOpAJyPM2Q8rcLEtdHsEriOTViqN9vOeOrZ0bvEEhb/PMYD8YUu9eCgq
-         yOVTWxLBrV/Q5Zs+LOpMhiEPBAv+utAdR75riHgPt7lr6PP6w7wQgIb4bk5DWkLD4G6v
-         kdS0kup0I/nxKAsDLYkibeve3Uc1jGakTkwidqSck2t7YOUtW7QgtpnUzAvbbaftGzJ6
-         hdY46mlAq/0aeibWOzSPjXHkagIT3LLeFdFMaURulbYx6ieOZGd/WJpPy6j8RVk3exOG
-         2a67tmFwscnnWm14l0P9vsD5ztGFoitqp6IAAt580dbt1S/EKhlLOtTzgRB92NluzP+X
-         LYGQ==
-X-Gm-Message-State: APzg51AXVYv/JkrunxkAlp7ctpAJY/XQqXk19MesrIJmyHaxVApm6cvg
-        Tp9CAL1KUZxW7KKOHIQieWzYxSA3xUgXEi7AlNN7cw==
-X-Google-Smtp-Source: ANB0VdYduiWWObednfhT8vH9krCiT+85Vqus2Qt0hc7RlihzzmGOotv0Kw3Z62tcN9eFebPcrX3u3oYoYNDTh9Eox3Q=
-X-Received: by 2002:a02:1515:: with SMTP id j21-v6mr6818250jad.2.1535271764642;
- Sun, 26 Aug 2018 01:22:44 -0700 (PDT)
+        Sun, 26 Aug 2018 08:23:26 -0400
+Received: from fsav104.sakura.ne.jp (fsav104.sakura.ne.jp [27.133.134.231])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w7Q8eFmb074738;
+        Sun, 26 Aug 2018 17:40:15 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav104.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp);
+ Sun, 26 Aug 2018 17:40:15 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w7Q8e1lu074665
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Sun, 26 Aug 2018 17:40:15 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] mm, oom: distinguish blockable mode for mmu notifiers
+To:     Michal Hocko <mhocko@kernel.org>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+Cc:     kvm@vger.kernel.org,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Sudeep Dutt <sudeep.dutt@intel.com>,
+        dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Dimitri Sivanich <sivanich@sgi.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        Doug Ledford <dledford@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        xen-devel@lists.xenproject.org, intel-gfx@lists.freedesktop.org,
+        Leon Romanovsky <leonro@mellanox.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ashutosh Dixit <ashutosh.dixit@intel.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Felix Kuehling <felix.kuehling@amd.com>
+References: <20180824120339.GL29735@dhcp22.suse.cz>
+ <eb546bcb-9c5f-7d5d-43a7-bfde489f0e7f@amd.com>
+ <20180824123341.GN29735@dhcp22.suse.cz>
+ <b11df415-baf8-0a41-3c16-60dfe8d32bd3@amd.com>
+ <20180824130132.GP29735@dhcp22.suse.cz>
+ <23d071d2-82e4-9b78-1000-be44db5f6523@gmail.com>
+ <20180824132442.GQ29735@dhcp22.suse.cz>
+ <86bd94d5-0ce8-c67f-07a5-ca9ebf399cdd@gmail.com>
+ <20180824134009.GS29735@dhcp22.suse.cz>
+ <735b0a53-5237-8827-d20e-e57fa24d798f@amd.com>
+ <20180824135257.GU29735@dhcp22.suse.cz>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <b78f8b3a-7bc6-0dea-6752-5ea798eccb6b@i-love.sakura.ne.jp>
+Date:   Sun, 26 Aug 2018 17:40:00 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a6b:ac05:0:0:0:0:0 with HTTP; Sun, 26 Aug 2018 01:22:43
- -0700 (PDT)
-In-Reply-To: <20180826024006.13800-4-martin.petersen@oracle.com>
-References: <20180825061205.ygrjjazkooqghrqy@gondor.apana.org.au>
- <20180826024006.13800-1-martin.petersen@oracle.com> <20180826024006.13800-4-martin.petersen@oracle.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Sun, 26 Aug 2018 09:22:43 +0100
-Message-ID: <CAKv+Gu92yj5Cuz36bRS7wz3Lg2srp8OFJC6QVO0UWYSjm8eEeg@mail.gmail.com>
-Subject: Re: [PATCH 4/4] block: Integrity profile init function to trigger
- module loads
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Jeffrey Lien <Jeff.Lien@wdc.com>,
-        David Darrington <david.darrington@wdc.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jeff Furlong <jeff.furlong@wdc.com>,
-        linux-block@vger.kernel.org,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-scsi@vger.kernel.org, Tim Chen <tim.c.chen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180824135257.GU29735@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Martin,
+On 2018/08/24 22:52, Michal Hocko wrote:
+> @@ -180,11 +180,15 @@ void amdgpu_mn_unlock(struct amdgpu_mn *mn)
+>   */
+>  static int amdgpu_mn_read_lock(struct amdgpu_mn *amn, bool blockable)
+>  {
+> -	if (blockable)
+> -		mutex_lock(&amn->read_lock);
+> -	else if (!mutex_trylock(&amn->read_lock))
+> -		return -EAGAIN;
+> -
+> +	/*
+> +	 * We can take sleepable lock even on !blockable mode because
+> +	 * read_lock is only ever take from this path and the notifier
+> +	 * lock never really sleeps. In fact the only reason why the
+> +	 * later is sleepable is because the notifier itself might sleep
+> +	 * in amdgpu_mn_invalidate_node but blockable mode is handled
+> +	 * before calling into that path.
+> +	 */
+> +	mutex_lock(&amn->read_lock);
+>  	if (atomic_inc_return(&amn->recursion) == 1)
+>  		down_read_non_owner(&amn->lock);
+>  	mutex_unlock(&amn->read_lock);
+> 
 
-On 26 August 2018 at 03:40, Martin K. Petersen
-<martin.petersen@oracle.com> wrote:
-> The T10 CRC library function is built into the kernel and therefore
-> registered early. The hardware-accelerated CRC helpers are typically
-> loaded as modules and only become available later in the boot
-> sequence. A separate patch modifies the T10 CRC library to subscribe
-> to notifications from crypto and permits switching from the
-> table-based algorithm to a hardware accelerated ditto once the
-> relevant module is loaded.
->
-> However, since the dependency for "crc10dif" is already satisfied,
-> nothing is going to cause the hardware-accelerated kernel modules to
-> get loaded.
+I'm not following. Why don't we need to do like below (given that
+nobody except amdgpu_mn_read_lock() holds ->read_lock) because e.g.
+drm_sched_fence_create() from drm_sched_job_init() from amdgpu_cs_submit()
+is doing GFP_KERNEL memory allocation with ->lock held for write?
 
-This is not true. All accelerated implementations based on SIMD
-polynomial multiplication are tried to the respective CPU features
-bits. This applies to x86, power, ARM and arm64.
-
-E.g., for x86 you have
-
-alias:          cpu:type:x86,ven*fam*mod*:feature:*0081*
-
-which will be matched by udev if /sys/devices/system/cpu/modalias
-contains feature 0081, and so the modules will be loaded automatically
-at boot.
-
-
-
-> Introduce an init_fn in the integrity profile that can be
-> called to trigger a load of modules providing the T10 CRC calculation
-> capability. This function will ony get called when a new integrity
-> profile is registered during device discovery.
->
-> Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-> ---
->  block/blk-integrity.c  |  5 +++++
->  block/t10-pi.c         | 10 ++++++++++
->  include/linux/blkdev.h |  2 ++
->  3 files changed, 17 insertions(+)
->
-> diff --git a/block/blk-integrity.c b/block/blk-integrity.c
-> index 6121611e1316..5cacae9a2dc2 100644
-> --- a/block/blk-integrity.c
-> +++ b/block/blk-integrity.c
-> @@ -27,6 +27,7 @@
->  #include <linux/scatterlist.h>
->  #include <linux/export.h>
->  #include <linux/slab.h>
-> +#include <linux/module.h>
->
->  #include "blk.h"
->
-> @@ -391,6 +392,7 @@ static blk_status_t blk_integrity_nop_fn(struct blk_integrity_iter *iter)
->
->  static const struct blk_integrity_profile nop_profile = {
->         .name = "nop",
-> +       .init_fn = NULL,
->         .generate_fn = blk_integrity_nop_fn,
->         .verify_fn = blk_integrity_nop_fn,
->  };
-> @@ -418,6 +420,9 @@ void blk_integrity_register(struct gendisk *disk, struct blk_integrity *template
->         bi->tuple_size = template->tuple_size;
->         bi->tag_size = template->tag_size;
->
-> +       if (bi->profile->init_fn)
-> +               bi->profile->init_fn();
-> +
->         disk->queue->backing_dev_info->capabilities |= BDI_CAP_STABLE_WRITES;
->  }
->  EXPORT_SYMBOL(blk_integrity_register);
-> diff --git a/block/t10-pi.c b/block/t10-pi.c
-> index a98db384048f..b83278f9163a 100644
-> --- a/block/t10-pi.c
-> +++ b/block/t10-pi.c
-> @@ -24,6 +24,7 @@
->  #include <linux/t10-pi.h>
->  #include <linux/blkdev.h>
->  #include <linux/crc-t10dif.h>
-> +#include <linux/module.h>
->  #include <net/checksum.h>
->
->  typedef __be16 (csum_fn) (void *, unsigned int);
-> @@ -157,8 +158,14 @@ static blk_status_t t10_pi_type3_verify_ip(struct blk_integrity_iter *iter)
->         return t10_pi_verify(iter, t10_pi_ip_fn, 3);
->  }
->
-> +static void t10_pi_crc_init(void)
-> +{
-> +       request_module_nowait(CRC_T10DIF_STRING);
-> +}
-> +
->  const struct blk_integrity_profile t10_pi_type1_crc = {
->         .name                   = "T10-DIF-TYPE1-CRC",
-> +       .init_fn                = t10_pi_crc_init,
->         .generate_fn            = t10_pi_type1_generate_crc,
->         .verify_fn              = t10_pi_type1_verify_crc,
->  };
-> @@ -166,6 +173,7 @@ EXPORT_SYMBOL(t10_pi_type1_crc);
->
->  const struct blk_integrity_profile t10_pi_type1_ip = {
->         .name                   = "T10-DIF-TYPE1-IP",
-> +       .init_fn                = NULL,
->         .generate_fn            = t10_pi_type1_generate_ip,
->         .verify_fn              = t10_pi_type1_verify_ip,
->  };
-> @@ -173,6 +181,7 @@ EXPORT_SYMBOL(t10_pi_type1_ip);
->
->  const struct blk_integrity_profile t10_pi_type3_crc = {
->         .name                   = "T10-DIF-TYPE3-CRC",
-> +       .init_fn                = t10_pi_crc_init,
->         .generate_fn            = t10_pi_type3_generate_crc,
->         .verify_fn              = t10_pi_type3_verify_crc,
->  };
-> @@ -180,6 +189,7 @@ EXPORT_SYMBOL(t10_pi_type3_crc);
->
->  const struct blk_integrity_profile t10_pi_type3_ip = {
->         .name                   = "T10-DIF-TYPE3-IP",
-> +       .init_fn                = NULL,
->         .generate_fn            = t10_pi_type3_generate_ip,
->         .verify_fn              = t10_pi_type3_verify_ip,
->  };
-> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-> index 79226ca8f80f..a43c02e4f43d 100644
-> --- a/include/linux/blkdev.h
-> +++ b/include/linux/blkdev.h
-> @@ -1806,10 +1806,12 @@ struct blk_integrity_iter {
->  };
->
->  typedef blk_status_t (integrity_processing_fn) (struct blk_integrity_iter *);
-> +typedef void (integrity_init_fn) (void);
->
->  struct blk_integrity_profile {
->         integrity_processing_fn         *generate_fn;
->         integrity_processing_fn         *verify_fn;
-> +       integrity_init_fn               *init_fn;
->         const char                      *name;
->  };
->
-> --
-> 2.17.1
->
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
+index e55508b..e1cb344 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
+@@ -64,8 +64,6 @@
+  * @node: hash table node to find structure by adev and mn
+  * @lock: rw semaphore protecting the notifier nodes
+  * @objects: interval tree containing amdgpu_mn_nodes
+- * @read_lock: mutex for recursive locking of @lock
+- * @recursion: depth of recursion
+  *
+  * Data for each amdgpu device and process address space.
+  */
+@@ -85,8 +83,6 @@ struct amdgpu_mn {
+ 	/* objects protected by lock */
+ 	struct rw_semaphore	lock;
+ 	struct rb_root_cached	objects;
+-	struct mutex		read_lock;
+-	atomic_t		recursion;
+ };
+ 
+ /**
+@@ -181,14 +177,9 @@ void amdgpu_mn_unlock(struct amdgpu_mn *mn)
+ static int amdgpu_mn_read_lock(struct amdgpu_mn *amn, bool blockable)
+ {
+ 	if (blockable)
+-		mutex_lock(&amn->read_lock);
+-	else if (!mutex_trylock(&amn->read_lock))
++		down_read(&amn->lock);
++	else if (!down_read_trylock(&amn->lock))
+ 		return -EAGAIN;
+-
+-	if (atomic_inc_return(&amn->recursion) == 1)
+-		down_read_non_owner(&amn->lock);
+-	mutex_unlock(&amn->read_lock);
+-
+ 	return 0;
+ }
+ 
+@@ -199,8 +190,7 @@ static int amdgpu_mn_read_lock(struct amdgpu_mn *amn, bool blockable)
+  */
+ static void amdgpu_mn_read_unlock(struct amdgpu_mn *amn)
+ {
+-	if (atomic_dec_return(&amn->recursion) == 0)
+-		up_read_non_owner(&amn->lock);
++	up_read(&amn->lock);
+ }
+ 
+ /**
+@@ -410,8 +400,6 @@ struct amdgpu_mn *amdgpu_mn_get(struct amdgpu_device *adev,
+ 	amn->type = type;
+ 	amn->mn.ops = &amdgpu_mn_ops[type];
+ 	amn->objects = RB_ROOT_CACHED;
+-	mutex_init(&amn->read_lock);
+-	atomic_set(&amn->recursion, 0);
+ 
+ 	r = __mmu_notifier_register(&amn->mn, mm);
+ 	if (r)
