@@ -2,81 +2,121 @@ Return-Path: <SRS0=U0Lc=LJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B31E2C433F5
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 14:06:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6582CC433F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 14:18:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E9D9208B6
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 14:06:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E9D9208B6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id E6C87208EB
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 14:18:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="TrL2V/Lt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6C87208EB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727053AbeHZRt3 (ORCPT
+        id S1726920AbeHZSBL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 13:49:29 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:41771 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726373AbeHZRt3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 13:49:29 -0400
-Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos.glx-home)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1ftvgh-0005hr-5t; Sun, 26 Aug 2018 16:06:43 +0200
-Date:   Sun, 26 Aug 2018 16:06:32 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-cc:     LKML <linux-kernel@vger.kernel.org>,
+        Sun, 26 Aug 2018 14:01:11 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:45681 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726685AbeHZSBL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 26 Aug 2018 14:01:11 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 277309f0;
+        Sun, 26 Aug 2018 14:03:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type; s=mail; bh=5DWFA2ZhRLp6zw9sspG0okQGiBk=; b=TrL2V/
+        Ltov1YVbUcmNP2fnQzHyUs/mgtx5AFPqMzYZtn7Q+Xz7kRdMjCqAFlnNSmyHm0fX
+        BZVvgG6aFI/ZDhvZK6tPqJI7tsWUh2rO2SCL2Vd2HSakF5ab5qwMyDsAo+u2qIEj
+        /EXbV1Q8FBYNYA0OtLwwXY9T2w8/LH0hmXhBjegqhW4GBB2PgkFfdHddCGNARyNA
+        YfE+w5PKQQyFrsU9bystH0Km2CHRCJq/8FyjLOVu6esLSQa3zqROozXekkH58ghk
+        iWXLk9oOG2RKT8+vO0JoGwaluY+aUoikOHwXFNhAQ/BqYdaNGP/FOD48wIv4AjqP
+        c24Q+K4po2EFE8Aw==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 114cadd1 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO);
+        Sun, 26 Aug 2018 14:03:50 +0000 (UTC)
+Received: by mail-oi0-f45.google.com with SMTP id l202-v6so16091838oig.7;
+        Sun, 26 Aug 2018 07:18:28 -0700 (PDT)
+X-Gm-Message-State: APzg51Bbk1l7dAF3sPbn6BiBN9vwzT7/YUitxtMIflEufYHbLWDQUBhJ
+        SU4KjV3m+kInIEOE//7EOo4XU8n5Lzy/9ML+3zs=
+X-Google-Smtp-Source: ANB0VdbH0V1n0ZBRVX6vkRbuCXbVANEAzuidNlRtURzG2VFAxUq8+vXPystpP9wMNfJ1M2CO2wP8bCQk8W0GFw9wP6Y=
+X-Received: by 2002:aca:e6d4:: with SMTP id d203-v6mr9295762oih.311.1535293107830;
+ Sun, 26 Aug 2018 07:18:27 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180824213849.23647-1-Jason@zx2c4.com> <20180824213849.23647-2-Jason@zx2c4.com>
+ <alpine.DEB.2.21.1808261234240.1195@nanos.tec.linutronix.de>
+ <CAHmME9qrc_f6uqGOrRVpnO_sTXHg2cg-WwWg4ik3yqu=HCOZSg@mail.gmail.com> <alpine.DEB.2.21.1808261602250.1195@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1808261602250.1195@nanos.tec.linutronix.de>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Sun, 26 Aug 2018 08:18:15 -0600
+X-Gmail-Original-Message-ID: <CAHmME9q+JcT9pnZ5jgowf15O4BkVF-2-QkHA2o1ZKbVe4nAg6g@mail.gmail.com>
+Message-ID: <CAHmME9q+JcT9pnZ5jgowf15O4BkVF-2-QkHA2o1ZKbVe4nAg6g@mail.gmail.com>
+Subject: Re: [PATCH v2 01/17] asm: simd context helper API
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
         Netdev <netdev@vger.kernel.org>,
         David Miller <davem@davemloft.net>,
         Andrew Lutomirski <luto@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Samuel Neves <sneves@dei.uc.pt>, linux-arch@vger.kernel.org,
         Rik van Riel <riel@surriel.com>
-Subject: Re: [PATCH v2 01/17] asm: simd context helper API
-In-Reply-To: <CAHmME9qrc_f6uqGOrRVpnO_sTXHg2cg-WwWg4ik3yqu=HCOZSg@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1808261602250.1195@nanos.tec.linutronix.de>
-References: <20180824213849.23647-1-Jason@zx2c4.com> <20180824213849.23647-2-Jason@zx2c4.com> <alpine.DEB.2.21.1808261234240.1195@nanos.tec.linutronix.de> <CAHmME9qrc_f6uqGOrRVpnO_sTXHg2cg-WwWg4ik3yqu=HCOZSg@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jason,
+On Sun, Aug 26, 2018 at 8:06 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+> > Do you mean to say you intend to make kernel_fpu_end() and
+> > kernel_neon_end() only actually do something upon context switch, but
+> > not when it's actually called? So that multiple calls to
+> > kernel_fpu_begin() and kernel_neon_begin() can be made without
+> > penalty?
+>
+> On context switch and exit to user. That allows to keep those code pathes
+> fully preemptible. Still twisting my brain around the details.
 
-On Sun, 26 Aug 2018, Jason A. Donenfeld wrote:
-> On Sun, Aug 26, 2018 at 6:10 AM Thomas Gleixner <tglx@linutronix.de> wrote:
-> > I'm not too fond of this simply because it requires that relax() step in
-> > all code pathes. I'd rather make that completely transparent by just
-> > marking the task as FPU using and let the context switch code deal with it
-> > in case that it gets preempted. I'll let one of my engineers look into
-> > that next week.
-> 
-> Do you mean to say you intend to make kernel_fpu_end() and
-> kernel_neon_end() only actually do something upon context switch, but
-> not when it's actually called? So that multiple calls to
-> kernel_fpu_begin() and kernel_neon_begin() can be made without
-> penalty?
+Just to make sure we're on the same page, the goal is so that this code:
 
-On context switch and exit to user. That allows to keep those code pathes
-fully preemptible. Still twisting my brain around the details.
+kernel_fpu_begin();
+kernel_fpu_end();
+kernel_fpu_begin();
+kernel_fpu_end();
+kernel_fpu_begin();
+kernel_fpu_end();
+kernel_fpu_begin();
+kernel_fpu_end();
+kernel_fpu_begin();
+kernel_fpu_end();
+kernel_fpu_begin();
+kernel_fpu_end();
+...
 
-> If so, that'd be great, and I'd certainly prefer this to the
-> simd_context_t passing. I consider the simd_get/put/relax API a
-> stopgap measure until something like that is implemented.
+has the same performance as this code:
 
-I really want to avoid this stopgap^Wducttape thing.
+kernel_fpu_begin();
+kernel_fpu_end();
 
-Thanks,
+(Unless of course the process is preempted or the like.)
 
-	tglx
+Currently the present situation makes the performance of the above
+wildly different, since kernel_fpu_end() does something immediately.
+
+What about something like this:
+- Add a tristate flag connected to task_struct (or in the global fpu
+struct in the case that this happens in irq and there isn't a valid
+current).
+- On kernel_fpu_begin(), if the flag is 0, do the usual expensive
+XSAVE stuff, and set the flag to 1.
+- On kernel_fpu_begin(), if the flag is non-0, just set the flag to 1
+and return.
+- On kernel_fpu_end(), if the flag is non-0, set the flag to 2.
+(Otherwise WARN() or BUG() or something.)
+- On context switch / preemption / etc away from the task, if the flag
+is non-0, XRSTOR and such.
+- On context switch / preemption / etc back to the task, if the flag
+is 1, XSAVE and such. If the flag is 2, set it to 0.
+
+Jason
