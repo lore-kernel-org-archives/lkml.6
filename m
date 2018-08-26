@@ -2,202 +2,211 @@ Return-Path: <SRS0=U0Lc=LJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C45EC433F5
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 19:36:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78D7CC433F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 19:37:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFBC9208B1
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 19:36:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFBC9208B1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id E8C42208B8
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 19:37:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=telus.net header.i=@telus.net header.b="FI/o0UM1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8C42208B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=telus.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726942AbeHZXTc (ORCPT
+        id S1726972AbeHZXUq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 19:19:32 -0400
-Received: from mail-io0-f200.google.com ([209.85.223.200]:44975 "EHLO
-        mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726741AbeHZXTb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 19:19:31 -0400
-Received: by mail-io0-f200.google.com with SMTP id s15-v6so12202093iob.11
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Aug 2018 12:36:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=oL7aILd3BZwtRIy81l2nqDG+SU9YAPgRJnpkOL6lEGQ=;
-        b=cmuB7mRTmxCVm+BJ3+qJGdPRmNT0LD6wdfKYFweq9hO6d0q3FGnl07JaDmf8kFREtL
-         JBzh5sQfyUkBgSFIXe4wNkYfNgipWirq75rFsggt910p/wwpVfKk5tSw/xfnXyn5sD0H
-         Zi6uYY7aKfdYcDEmJLUP4vpnGVKJLNL5Laqtt1Cj1K9Dx9/i/fU87z+mMxHQISm2hPPK
-         IR+ux/569u3UvFx3LwP5XRv9XhU8IXSWTDqvVA+S8cGJt0eanF+Ha1qB2KtGW9cALr6Q
-         CfNEx9qxSWAbSTOoK2rLfRsUoXgGJlOlYijOYheOh4xP52wT2nnUuTcoYmda/mrdH5pQ
-         HyZQ==
-X-Gm-Message-State: APzg51BLgBZgzqerXXeTfho4b7Y3wvnclG5+he81b8AGJ4jP/fXbKauR
-        ez6ZSsPypc9VVep/VvgB+MYA18GrFwMgQXKlCx+08mni0BTV
-X-Google-Smtp-Source: ANB0VdaQ5RfI6v2E7+ba1gTPIAgRdQOMh5P+Dksyuw4XKMy9XuLr00NOTwxotDWkVAuf1CScEbHflNVmxOC0Iita5QxZveLd/Twk
+        Sun, 26 Aug 2018 19:20:46 -0400
+Received: from cmta17.telus.net ([209.171.16.90]:60458 "EHLO cmta17.telus.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726741AbeHZXUq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 26 Aug 2018 19:20:46 -0400
+Received: from dougxps ([173.180.45.4])
+        by cmsmtp with SMTP
+        id u0qVfkIfGLmeUu0qWfTAUj; Sun, 26 Aug 2018 13:37:15 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=telus.net; s=neo;
+        t=1535312235; bh=6lOnGN9GyNKJYdQrT6x9tGgLryVAic8V7PVjlXZPoYA=;
+        h=From:To:Cc:References:In-Reply-To:Subject:Date;
+        b=FI/o0UM1keixZQVB3YMMfxl9w8q6ykKaFHghiwOSG9gCwSk4d5t9CjTVIdvUFmQIn
+         mnCxXYsTLqKgG4O8Oa1LtEpamOVVJVVXwKOFqAZ2bUQMgpCy39rEXrTERsR3WJWicR
+         uqonqHe367vyMiKp7P3xtF8BPb39ldExjW9yToROHWbBwDopqs6EWsrr5G5lWQf3d5
+         /oNT+2J/idWNBLPLS4sAOM65VidzxMF4IMNXu2JdtKsa2jdAjy0GhXp4p/GtAS7PG1
+         z+I40ehRPCRDqGSBojqe65ZdH4wXz4LhhG79U93p7M3N90suoYludZE8H6YGD7FG3p
+         WS1m+vZaq1VqQ==
+X-Authority-Analysis: v=2.3 cv=ING29TnG c=1 sm=1 tr=0
+ a=zJWegnE7BH9C0Gl4FFgQyA==:117 a=zJWegnE7BH9C0Gl4FFgQyA==:17
+ a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=IkcTkHD0fZMA:10 a=O76VCmqbo-wA:10
+ a=aatUQebYAAAA:8 a=QyXUC8HyAAAA:8 a=FGbulvE0AAAA:8 a=gu6fZOg2AAAA:8
+ a=RQB35MKzeMY9OjtUgiEA:9 a=QEXdDO2ut3YA:10 a=IDo41p8BC2IA:10
+ a=iq8WHSR1OGAA:10 a=5DLwxePbAi8A:10 a=XUPwaq2ENRcA:10 a=OYrdJcPLPnMA:10
+ a=46HeQFaYVjEA:10 a=-FEs8UIgK8oA:10 a=NWVoK91CQyQA:10
+ a=7715FyvI7WU-l6oqrZBK:22 a=svzTaB3SJmTkU8mK-ULk:22 a=2RSlZUUhi9gRBrsHwhhZ:22
+ a=fH6ezBh0GlpOJwpmk9fj:22 a=EE-hDNo6nQ8U3qjUCziE:22 a=NWVoK91CQySWRX1oVYDe:22
+ a=IeVV3oy9AQTmNaZTXIJc:22 a=HH7FIXwXL_sUf1zzYxQd:22
+From:   "Doug Smythies" <dsmythies@telus.net>
+To:     "'Rafael J. Wysocki'" <rafael@kernel.org>
+Cc:     "'Rafael J. Wysocki'" <rjw@rjwysocki.net>,
+        "'Linux Kernel Mailing List'" <linux-kernel@vger.kernel.org>,
+        "'Leo Yan'" <leo.yan@linaro.org>,
+        "'Daniel Lezcano'" <daniel.lezcano@linaro.org>,
+        "'Frederic Weisbecker'" <frederic@kernel.org>,
+        "'Linux PM'" <linux-pm@vger.kernel.org>,
+        "'Peter Zijlstra'" <peterz@infradead.org>,
+        "Doug Smythies" <dsmythies@telus.net>
+References: <34910476.pgRhNDWo5t@aspire.rjw.lan> <000701d43bc1$5e0c2c50$1a2484f0$@net> tWdkfsxwM1azttWdlfI2Eq
+In-Reply-To: tWdkfsxwM1azttWdlfI2Eq
+Subject: RE: [PATCH] cpuidle: menu: Retain tick when shallow state is selected
+Date:   Sun, 26 Aug 2018 12:37:09 -0700
+Message-ID: <000001d43d74$306e1b50$914a51f0$@net>
 MIME-Version: 1.0
-X-Received: by 2002:a24:ac64:: with SMTP id m36-v6mr2893930iti.5.1535312162773;
- Sun, 26 Aug 2018 12:36:02 -0700 (PDT)
-Date:   Sun, 26 Aug 2018 12:36:02 -0700
-In-Reply-To: <000000000000ccaf1d0574297b6b@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000014e7c305745bb8f7@google.com>
-Subject: Re: KASAN: use-after-free Read in sctp_transport_get_next
-From:   syzbot <syzbot+fe62a0c9aa6a85c6de16@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, linux-kernel@vger.kernel.org,
-        linux-sctp@vger.kernel.org, lucien.xin@gmail.com,
-        marcelo.leitner@gmail.com, netdev@vger.kernel.org,
-        nhorman@tuxdriver.com, syzkaller-bugs@googlegroups.com,
-        vyasevich@gmail.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Office Outlook 12.0
+Thread-Index: AdQ8Zdhe90KmwzHNR/SycCVMT3lTKAATni+Q
+Content-Language: en-ca
+X-CMAE-Envelope: MS4wfOBM2EBdTv877nqLMGIi0HSsgcQKurELSEl7C59zrw0Vv175d2qnQRxEuxEb+riMuGpTKAX9pTrYcpNOrEzJ2DyWagFjNAE20ePDEJLHoxsxgbpYgzG/
+ NLB2GJl0VAZcMezWjl6YFKuArf2yawAr740KnemFS3An8MYxioXeIbFUTyUn3actMoFr6a6gLKaw2QNZ9za4Ce1kIqIfB5otqxyq9hZMB4l4Q1glUrjPXKSf
+ 96F6Z0Zxv5Uw7Ju2iIWu0zrJU8SoBSzJfIZ5YWIB8WMTVAb6hwnOqAdxSg4Q1ZNiIa0ADvGufSr3YmJBpWdksbBIKIPwlHiaMNzm+NLOKJFN9VwkQb806lG9
+ 8y4WOKPgiR1IKAk0ccGIbIaS9pKPSY92sXUwf7PjywuAIFTW/mVxSv4QTU4MaZbxZgjFMoYs
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+On 2018.08.25 04:22 Rafael J. Wysocki wrote:
+> On Fri, Aug 24, 2018 at 5:52 PM Doug Smythies <dsmythies@telus.net> wrote:
+>> On 2018.08.24 02:44 Rafael J. Wysocki wrote:
+>>> On Tuesday, August 21, 2018 10:44:10 AM CEST Rafael J. Wysocki wrote:
+>>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>>>
+>>>> The case addressed by commit 5ef499cd571c (cpuidle: menu: Handle
+>>>> stopped tick more aggressively) in the stopped tick case is present
+>>>> when the tick has not been stopped yet too.
+>>
+>> ... [snip] ...
+>>
+>>>> Fixes: 87c9fe6ee495 (cpuidle: menu: Avoid selecting shallow states with stopped tick)
+>>
+>> ... [snip] ...
+>>
+>>> Due to the lack of objections, I'm inclined to queue this up.
+>>
+>> I have been following these threads.
+>> Recall that I was involved, over a period of months, in the original
+>> "powernightmare" stuff.
+>> I have revived my tests (and wish I had left myself better notes), and
+>> am establishing a baseline before adding and trying this patch.
+>> My baseline is actually two tests with and without the previous two patches (the ones
+>> that were just sent a couple of days ago in "More power management updates for v4.19-rc1".
+>> I might have those results in some presentable form by later today (it looks O.K.)
+>> Results with this patch will take another couple of days.
+>
+> Thanks Doug, much appreciated!
 
-HEAD commit:    2923b27e5424 Merge tag 'libnvdimm-for-4.19_dax-memory-fail..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10f01a1e400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3b576e333ca31bb2
-dashboard link: https://syzkaller.appspot.com/bug?extid=fe62a0c9aa6a85c6de16
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1022f96a400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13be8b32400000
+Test 1: A Thomas Ilsche type "powernightmare" test:
+(forever ((10 times - variable usec sleep) 0.999 seconds sleep) X 40 staggered threads.
+Where the "variable" was from 0.05 to 5 in steps of 0.05, for the first ~200 minutes of the test.
+(note: overheads mean that actual loop times are quite different.)
+And then from 5 to 500 in steps of 1, for the remaining 1000 minutes of the test.
+Each step ran for 2 minutes. The system was idle for 1 minute at the start, and a few
+minutes at the end of the graphs.
+While called "kernel 4.18", the baseline was actually from mainline at head = df2def4,
+or just after Rafael's linux-pm "pm-4.19-rc1-2" merge.
+(actually after the next acpi merge).
+Reference kernel = df2def4 with the two patches reverted.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+fe62a0c9aa6a85c6de16@syzkaller.appspotmail.com
+Test 1.1 compares baseline reference and the two patches added.
+Summary: Nothing of note.
+Results: http://fast.smythies.com/linux-pm/k418-pn-sweep.htm 
+Differences: http://fast.smythies.com/linux-pm/k418-pn-sweep-differences.htm
+Note: the title in the last graph in each link above is mislabelled.
 
-==================================================================
-BUG: KASAN: use-after-free in sctp_transport_get_next+0x11c/0x140  
-net/sctp/socket.c:5008
-Read of size 8 at addr ffff8801b09a23e0 by task syz-executor305/13769
+Test 1.2 compares baseline reference and the three patches added (the two at 
+df2def4 plus the one of this thread).
+Summary: Nothing of note.
+Results: http://fast.smythies.com/linux-pm/k418-pn-sweep-rjw.htm
+Differences: http://fast.smythies.com/linux-pm/k418-pn-sweep-rjw-differences.htm
 
-CPU: 0 PID: 13769 Comm: syz-executor305 Not tainted 4.18.0+ #209
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0x242/0x30d mm/kasan/report.c:412
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  sctp_transport_get_next+0x11c/0x140 net/sctp/socket.c:5008
-  sctp_transport_get_idx net/sctp/socket.c:5022 [inline]
-  sctp_for_each_transport+0x152/0x370 net/sctp/socket.c:5083
-  sctp_diag_dump+0x3a7/0x620 net/sctp/diag.c:527
-  __inet_diag_dump+0xa8/0x140 net/ipv4/inet_diag.c:1049
-  inet_diag_dump+0x9b/0x110 net/ipv4/inet_diag.c:1065
-  netlink_dump+0x519/0xd50 net/netlink/af_netlink.c:2233
-  __netlink_dump_start+0x4f1/0x6f0 net/netlink/af_netlink.c:2329
-  netlink_dump_start include/linux/netlink.h:213 [inline]
-  inet_diag_handler_cmd+0x2ce/0x3f0 net/ipv4/inet_diag.c:1170
-  __sock_diag_cmd net/core/sock_diag.c:232 [inline]
-  sock_diag_rcv_msg+0x31d/0x410 net/core/sock_diag.c:263
-  netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2454
-  sock_diag_rcv+0x2a/0x40 net/core/sock_diag.c:274
-  netlink_unicast_kernel net/netlink/af_netlink.c:1317 [inline]
-  netlink_unicast+0x5a0/0x760 net/netlink/af_netlink.c:1343
-  netlink_sendmsg+0xa18/0xfc0 net/netlink/af_netlink.c:1908
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg+0xd5/0x120 net/socket.c:631
-  sock_write_iter+0x362/0x5c0 net/socket.c:900
-  call_write_iter include/linux/fs.h:1807 [inline]
-  do_iter_readv_writev+0x8b0/0xa80 fs/read_write.c:680
-  do_iter_write+0x185/0x5f0 fs/read_write.c:959
-  vfs_writev+0x1f1/0x360 fs/read_write.c:1004
-  do_writev+0x11a/0x310 fs/read_write.c:1039
-  __do_sys_writev fs/read_write.c:1112 [inline]
-  __se_sys_writev fs/read_write.c:1109 [inline]
-  __x64_sys_writev+0x75/0xb0 fs/read_write.c:1109
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x446679
-Code: e8 0c e8 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 7b 08 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f5b0050bda8 EFLAGS: 00000246 ORIG_RAX: 0000000000000014
-RAX: ffffffffffffffda RBX: 00000000006dbc48 RCX: 0000000000446679
-RDX: 0000000000000001 RSI: 0000000020000000 RDI: 0000000000000005
-RBP: 00000000006dbc40 R08: 000000000000001c R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dbc4c
-R13: 0100000000000000 R14: 00007f5b0050c9c0 R15: 00000000006dbd4c
+Side note: There is an interesting, slight, power bump at about the 
+260 minute point of the tests. Perhaps for further investigation some other day.
 
-Allocated by task 13750:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
-  kmem_cache_alloc_trace+0x152/0x730 mm/slab.c:3620
-  kmalloc include/linux/slab.h:513 [inline]
-  kzalloc include/linux/slab.h:707 [inline]
-  sctp_association_new+0x127/0x2290 net/sctp/associola.c:311
-  sctp_sendmsg_new_asoc+0x39e/0x1200 net/sctp/socket.c:1742
-  sctp_sendmsg+0x18a5/0x1da0 net/sctp/socket.c:2103
-  inet_sendmsg+0x1a1/0x690 net/ipv4/af_inet.c:798
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg+0xd5/0x120 net/socket.c:631
-  __sys_sendto+0x3d7/0x670 net/socket.c:1786
-  __do_sys_sendto net/socket.c:1798 [inline]
-  __se_sys_sendto net/socket.c:1794 [inline]
-  __x64_sys_sendto+0xe1/0x1a0 net/socket.c:1794
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+Test 2: pipe test 2 CPUs, one core. CPU test.
 
-Freed by task 13747:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kfree+0xd9/0x210 mm/slab.c:3813
-  sctp_association_destroy net/sctp/associola.c:437 [inline]
-  sctp_association_put+0x264/0x350 net/sctp/associola.c:885
-  sctp_transport_destroy net/sctp/transport.c:180 [inline]
-  sctp_transport_put+0x193/0x200 net/sctp/transport.c:332
-  sctp_backlog_rcv+0x28e/0xd50 net/sctp/input.c:357
-  sk_backlog_rcv include/net/sock.h:931 [inline]
-  __release_sock+0x12f/0x3a0 net/core/sock.c:2336
-  release_sock+0xad/0x2c0 net/core/sock.c:2849
-  sctp_close+0x49c/0xa80 net/sctp/socket.c:1569
-  inet_release+0x104/0x1f0 net/ipv4/af_inet.c:428
-  inet6_release+0x50/0x70 net/ipv6/af_inet6.c:457
-  __sock_release+0xd7/0x250 net/socket.c:579
-  sock_close+0x19/0x20 net/socket.c:1139
-  __fput+0x36e/0x8c0 fs/file_table.c:278
-  ____fput+0x15/0x20 fs/file_table.c:309
-  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:193 [inline]
-  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
-  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
-  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+Recall this was one of the more interesting tests with the original "powernightmare"
+work, and in the end, back then, both energy was saved and performance improved.
 
-The buggy address belongs to the object at ffff8801b09a23c0
-  which belongs to the cache kmalloc-4096 of size 4096
-The buggy address is located 32 bytes inside of
-  4096-byte region [ffff8801b09a23c0, ffff8801b09a33c0)
-The buggy address belongs to the page:
-page:ffffea0006c26880 count:1 mapcount:0 mapping:ffff8801dac00dc0 index:0x0  
-compound_mapcount: 0
-flags: 0x2fffc0000008100(slab|head)
-raw: 02fffc0000008100 ffffea0006c0f188 ffffea0006bf8108 ffff8801dac00dc0
-raw: 0000000000000000 ffff8801b09a23c0 0000000100000001 0000000000000000
-page dumped because: kasan: bad access detected
+The average loop times graph is here:
+http://fast.smythies.com/linux-pm/k418-rjw-pipe-1core.png
+with the average loop times:
+Baseline:		4.83 uSec
++ 2 rjw patches:	4.69 uSec
++ 3 rjw patches:	4.80 uSec
 
-Memory state around the buggy address:
-  ffff8801b09a2280: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-  ffff8801b09a2300: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> ffff8801b09a2380: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
-                                                        ^
-  ffff8801b09a2400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801b09a2480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+The power and idle statistics graphs are here:
+http://fast.smythies.com/linux-pm/k418-rjw-pipe-1core.htm
+
+Test 3: 100% load on CPU 7 test.
+
+Recall this was another of the more interesting tests last time, but
+had more to do with idle state 0 than anything else.
+
+The performance seems to stay within a 1% window, with the 3 patches
+being about 1% faster than the 2 patches and the baseline somewhere
+in the middle.
+
+The power and idle statistics graphs are here:
+http://fast.smythies.com/linux-pm/k418-rjw-100.htm
+
+From observing at the test 2 and test 3 results, it looks as
+though there are indeed "powernightmares" in the baseline kernel.
+This was not the situation at the end of the original work, 
+"V9" for anybody that recalls. I don't know when they got
+re-introduced, and didn't look.
+
+While these don't add up to much extra energy for my processor,
+they might be more significant for other processors.
+
+I revived my "powernightmare" trace post processor assessment
+program, and re-did some 100% Single load tests (20 minute trace):
+(recall that the "is it a 'powernigthmare' or not" threshold
+is rather arbitrary [1]. However, and for what is being done here,
+it should be greater than a tick time, which it is for my 1000Hz
+kernel.)
+
+1.) Reference or baseline kernel:
+
+Idle State 0: Total Entries: 458 : PowerNightmares: 0 : Not PN time (seconds): 0.016160 : PN time: 0.000000 : Ratio: 0.000000
+Idle State 1: Total Entries: 950 : PowerNightmares: 33 : Not PN time (seconds): 0.084723 : PN time: 3.172124 : Ratio: 37.441120
+Idle State 2: Total Entries: 456 : PowerNightmares: 3 : Not PN time (seconds): 0.142255 : PN time: 0.396037 : Ratio: 2.783994
+Idle State 3: Total Entries: 218 : PowerNightmares: 1 : Not PN time (seconds): 0.095584 : PN time: 0.214608 : Ratio: 2.245229
+
+2.) + 2 rjw patches:
+
+Idle State 0: Total Entries: 481 : PowerNightmares: 0 : Not PN time (seconds): 0.014849 : PN time: 0.000000 : Ratio: 0.000000
+Idle State 1: Total Entries: 734 : PowerNightmares: 0 : Not PN time (seconds): 0.046496 : PN time: 0.000000 : Ratio: 0.000000
+Idle State 2: Total Entries: 534 : PowerNightmares: 0 : Not PN time (seconds): 0.133086 : PN time: 0.000000 : Ratio: 0.000000
+Idle State 3: Total Entries: 145 : PowerNightmares: 0 : Not PN time (seconds): 0.054476 : PN time: 0.000000 : Ratio: 0.000000
+
+3.) + 3 rjw patches:
+
+Idle State 0: Total Entries: 369 : PowerNightmares: 0 : Not PN time (seconds): 0.010182 : PN time: 0.000000 : Ratio: 0.000000
+Idle State 1: Total Entries: 800 : PowerNightmares: 0 : Not PN time (seconds): 0.122816 : PN time: 0.000000 : Ratio: 0.000000
+Idle State 2: Total Entries: 1041 : PowerNightmares: 0 : Not PN time (seconds): 0.233984 : PN time: 0.000000 : Ratio: 0.000000
+Idle State 3: Total Entries: 269 : PowerNightmares: 0 : Not PN time (seconds): 0.114399 : PN time: 0.000000 : Ratio: 0.000000
+
+4.) The old kernel 4.16+V9 patch set (sanity check):
+
+Idle State 0: Total Entries: 265 : PowerNightmares: 0 : Not PN time (seconds): 0.009892 : PN time: 0.000000 : Ratio: 0.000000
+Idle State 1: Total Entries: 708 : PowerNightmares: 0 : Not PN time (seconds): 0.091070 : PN time: 0.000000 : Ratio: 0.000000
+Idle State 2: Total Entries: 712 : PowerNightmares: 0 : Not PN time (seconds): 0.212778 : PN time: 0.000000 : Ratio: 0.000000
+Idle State 3: Total Entries: 421 : PowerNightmares: 0 : Not PN time (seconds): 0.230097 : PN time: 0.000000 : Ratio: 0.000000
+
+[1] https://marc.info/?l=linux-kernel&m=152156611814576&w=2  (formatting a mess)
+
+... Doug
+
 
