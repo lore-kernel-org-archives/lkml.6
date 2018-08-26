@@ -6,37 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 316B8C433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:46:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 947C0C433F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:46:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0BA52170B
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:46:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0BA52170B
+	by mail.kernel.org (Postfix) with ESMTP id 509FB2172A
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:46:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 509FB2172A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727547AbeHZK2I (ORCPT
+        id S1727568AbeHZK2L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 06:28:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53634 "EHLO
+        Sun, 26 Aug 2018 06:28:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53646 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726245AbeHZK2H (ORCPT
+        with ESMTP id S1726245AbeHZK2L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 06:28:07 -0400
+        Sun, 26 Aug 2018 06:28:11 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6BFD09D2;
-        Sun, 26 Aug 2018 06:46:32 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DC4949D3;
+        Sun, 26 Aug 2018 06:46:35 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Zhizhou Zhang <zhizhouzhang@asrmicro.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
+        stable@vger.kernel.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 20/56] arm64: make secondary_start_kernel() notrace
-Date:   Sun, 26 Aug 2018 08:44:41 +0200
-Message-Id: <20180826064233.345282986@linuxfoundation.org>
+Subject: [PATCH 3.18 29/56] brcmfmac: stop watchdog before detach and free everything
+Date:   Sun, 26 Aug 2018 08:44:50 +0200
+Message-Id: <20180826064233.790726174@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180826064232.320669119@linuxfoundation.org>
 References: <20180826064232.320669119@linuxfoundation.org>
@@ -53,40 +54,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zhizhou Zhang <zhizhouzhang@asrmicro.com>
+From: Michael Trimarchi <michael@amarulasolutions.com>
 
-[ Upstream commit b154886f7892499d0d3054026e19dfb9a731df61 ]
+[ Upstream commit 373c83a801f15b1e3d02d855fad89112bd4ccbe0 ]
 
-We can't call function trace hook before setup percpu offset.
-When entering secondary_start_kernel(), percpu offset has not
-been initialized.  So this lead hotplug malfunction.
-Here is the flow to reproduce this bug:
+Using built-in in kernel image without a firmware in filesystem
+or in the kernel image can lead to a kernel NULL pointer deference.
+Watchdog need to be stopped in brcmf_sdio_remove
 
-echo 0 > /sys/devices/system/cpu/cpu1/online
-echo function > /sys/kernel/debug/tracing/current_tracer
-echo 1 > /sys/kernel/debug/tracing/tracing_on
-echo 1 > /sys/devices/system/cpu/cpu1/online
+The system is going down NOW!
+[ 1348.110759] Unable to handle kernel NULL pointer dereference at virtual address 000002f8
+Sent SIGTERM to all processes
+[ 1348.121412] Mem abort info:
+[ 1348.126962]   ESR = 0x96000004
+[ 1348.130023]   Exception class = DABT (current EL), IL = 32 bits
+[ 1348.135948]   SET = 0, FnV = 0
+[ 1348.138997]   EA = 0, S1PTW = 0
+[ 1348.142154] Data abort info:
+[ 1348.145045]   ISV = 0, ISS = 0x00000004
+[ 1348.148884]   CM = 0, WnR = 0
+[ 1348.151861] user pgtable: 4k pages, 48-bit VAs, pgdp = (____ptrval____)
+[ 1348.158475] [00000000000002f8] pgd=0000000000000000
+[ 1348.163364] Internal error: Oops: 96000004 [#1] PREEMPT SMP
+[ 1348.168927] Modules linked in: ipv6
+[ 1348.172421] CPU: 3 PID: 1421 Comm: brcmf_wdog/mmc0 Not tainted 4.17.0-rc5-next-20180517 #18
+[ 1348.180757] Hardware name: Amarula A64-Relic (DT)
+[ 1348.185455] pstate: 60000005 (nZCv daif -PAN -UAO)
+[ 1348.190251] pc : brcmf_sdiod_freezer_count+0x0/0x20
+[ 1348.195124] lr : brcmf_sdio_watchdog_thread+0x64/0x290
+[ 1348.200253] sp : ffff00000b85be30
+[ 1348.203561] x29: ffff00000b85be30 x28: 0000000000000000
+[ 1348.208868] x27: ffff00000b6cb918 x26: ffff80003b990638
+[ 1348.214176] x25: ffff0000087b1a20 x24: ffff80003b94f800
+[ 1348.219483] x23: ffff000008e620c8 x22: ffff000008f0b660
+[ 1348.224790] x21: ffff000008c6a858 x20: 00000000fffffe00
+[ 1348.230097] x19: ffff80003b94f800 x18: 0000000000000001
+[ 1348.235404] x17: 0000ffffab2e8a74 x16: ffff0000080d7de8
+[ 1348.240711] x15: 0000000000000000 x14: 0000000000000400
+[ 1348.246018] x13: 0000000000000400 x12: 0000000000000001
+[ 1348.251324] x11: 00000000000002c4 x10: 0000000000000a10
+[ 1348.256631] x9 : ffff00000b85bc40 x8 : ffff80003be11870
+[ 1348.261937] x7 : ffff80003dfc7308 x6 : 000000078ff08b55
+[ 1348.267243] x5 : 00000139e1058400 x4 : 0000000000000000
+[ 1348.272550] x3 : dead000000000100 x2 : 958f2788d6618100
+[ 1348.277856] x1 : 00000000fffffe00 x0 : 0000000000000000
 
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-Tested-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Zhizhou Zhang <zhizhouzhang@asrmicro.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
+Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+Tested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/kernel/smp.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/brcm80211/brcmfmac/dhd_sdio.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/arch/arm64/kernel/smp.c
-+++ b/arch/arm64/kernel/smp.c
-@@ -130,7 +130,7 @@ static void smp_store_cpu_info(unsigned
-  * This is the secondary CPU boot entry.  We're using this CPUs
-  * idle thread stack, but a set of temporary page tables.
-  */
--asmlinkage void secondary_start_kernel(void)
-+asmlinkage notrace void secondary_start_kernel(void)
- {
- 	struct mm_struct *mm = &init_mm;
- 	unsigned int cpu = smp_processor_id();
+--- a/drivers/net/wireless/brcm80211/brcmfmac/dhd_sdio.c
++++ b/drivers/net/wireless/brcm80211/brcmfmac/dhd_sdio.c
+@@ -4201,6 +4201,13 @@ void brcmf_sdio_remove(struct brcmf_sdio
+ 	brcmf_dbg(TRACE, "Enter\n");
+ 
+ 	if (bus) {
++		/* Stop watchdog task */
++		if (bus->watchdog_tsk) {
++			send_sig(SIGTERM, bus->watchdog_tsk, 1);
++			kthread_stop(bus->watchdog_tsk);
++			bus->watchdog_tsk = NULL;
++		}
++
+ 		/* De-register interrupt handler */
+ 		brcmf_sdiod_intr_unregister(bus->sdiodev);
+ 
 
 
