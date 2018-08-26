@@ -5,101 +5,123 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37BDDC433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 20:16:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9370BC433F5
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 20:41:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA971208B8
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 20:16:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA971208B8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 28DF9208B8
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 20:41:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28DF9208B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lucaceresoli.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727095AbeHZX7k (ORCPT
+        id S1726847AbeH0AYz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 19:59:40 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:41954 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726805AbeHZX7k (ORCPT
+        Sun, 26 Aug 2018 20:24:55 -0400
+Received: from srv-hp10-72.netsons.net ([94.141.22.72]:41027 "EHLO
+        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726694AbeH0AYz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 19:59:40 -0400
-Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos.glx-home)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fu1RX-0007hk-MU; Sun, 26 Aug 2018 22:15:27 +0200
-Date:   Sun, 26 Aug 2018 22:15:17 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Andy Lutomirski <luto@amacapital.net>
-cc:     Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Benjamin Herrenschmidt <benh@au1.ibm.com>,
-        Nick Piggin <npiggin@gmail.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Rik van Riel <riel@surriel.com>,
-        Jann Horn <jannh@google.com>,
-        Adin Scannell <ascannell@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        David Miller <davem@davemloft.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: TLB flushes on fixmap changes
-In-Reply-To: <DF353FDA-4A57-4F5E-A403-531DDA0DBC25@amacapital.net>
-Message-ID: <alpine.DEB.2.21.1808262212030.1195@nanos.tec.linutronix.de>
-References: <20180822153012.173508681@infradead.org> <20180823133958.GA1496@brain-police> <20180824084717.GK24124@hirez.programming.kicks-ass.net> <D74A89DF-0D89-4AB6-8A6B-93BEC9A83595@gmail.com> <20180824180438.GS24124@hirez.programming.kicks-ass.net>
- <56A9902F-44BE-4520-A17C-26650FCC3A11@gmail.com> <CA+55aFzerzTPm94jugheVmWg8dJre94yu+GyZGT9NNZanNx_qw@mail.gmail.com> <9A38D3F4-2F75-401D-8B4D-83A844C9061B@gmail.com> <CA+55aFz1KYT7fRRG98wei24spiVg7u1Ec66piWY5359ykFmezw@mail.gmail.com>
- <8E0D8C66-6F21-4890-8984-B6B3082D4CC5@gmail.com> <CALCETrWdeKBcEs7zAbpEM1YdYiT2UBXwPtF0mMTvcDX_KRpz1A@mail.gmail.com> <20180826112341.f77a528763e297cbc36058fa@kernel.org> <CALCETrXPaX-+R6Z9LqZp0uOVmq-TUX_ksPbUL7mnfbdqo6z2AA@mail.gmail.com>
- <CAGXu5j+xUbq_mu=2jvH2Vu+mviteZJqdPNTrxpaijwsuDdN-sw@mail.gmail.com> <952A64F0-90B3-4E2F-B410-7E20BE90D617@amacapital.net> <CAGXu5jKk+ELGsSXC8e3v67oo74BF9rP2HDqMHx1Sb17-0F-xZQ@mail.gmail.com> <DF353FDA-4A57-4F5E-A403-531DDA0DBC25@amacapital.net>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sun, 26 Aug 2018 20:24:55 -0400
+Received: from [146.241.227.52] (port=25220 helo=[192.168.77.64])
+        by srv-hp10.netsons.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1fu1qR-007p2h-2P; Sun, 26 Aug 2018 22:41:11 +0200
+Subject: Re: [PATCH 3/7] media: imx274: don't hard-code the subdev name to
+ DRIVER_NAME
+To:     Sakari Ailus <sakari.ailus@iki.fi>
+Cc:     linux-media@vger.kernel.org, Leon Luo <leonl@leopardimaging.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-kernel@vger.kernel.org, hverkuil@xs4all.nl,
+        laurent.pinchart@ideasonboard.com
+References: <20180824163525.12694-1-luca@lucaceresoli.net>
+ <20180824163525.12694-4-luca@lucaceresoli.net>
+ <20180825144915.tq7m5jlikwndndzq@valkosipuli.retiisi.org.uk>
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+Message-ID: <799f4d1a-b91d-0404-7ef0-965d123319da@lucaceresoli.net>
+Date:   Sun, 26 Aug 2018 22:41:13 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <20180825144915.tq7m5jlikwndndzq@valkosipuli.retiisi.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 26 Aug 2018, Andy Lutomirski wrote:
-> > On Aug 26, 2018, at 9:47 AM, Kees Cook <keescook@chromium.org> wrote:
-> >> On Sun, Aug 26, 2018 at 7:20 AM, Andy Lutomirski <luto@amacapital.net> wrote:
-> >>> I tried to convince Ingo to use this method for doing "write rarely"
-> >>> and he soundly rejected it. :) I've always liked this because AFAICT,
-> >>> it's local to the CPU. I had proposed it in
-> >>> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/commit/?h=kspp/write-rarely&id=9ab0cb2618ebbc51f830ceaa06b7d2182fe1a52d
-> >> 
-> >> Ingo, can you clarify why you hate it?  I personally would rather use CR3, but CR0 seems like a fine first step, at least for text_poke.
-> > 
-> > Sorry, it looks like it was tglx, not Ingo:
-> > 
-> > https://lkml.kernel.org/r/alpine.DEB.2.20.1704071048360.1716@nanos
-> > 
-> > This thread is long, and one thing that I think went unanswered was
-> > "why do we want this to be fast?" the answer is: for doing page table
-> > updates. Page tables are becoming a bigger target for attacks now, and
-> > it's be nice if they could stay read-only unless they're getting
-> > updated (with something like this).
-> > 
-> > 
-> It kind of sounds like tglx would prefer the CR3 approach. And indeed my
-> patch has a serious problem wrt the NMI code.
+Hi Sakari,
 
-That's exactly the problem I have with CR0. It leaves everything and some
-more writeable for any code which can interrupt that section.
+On 25/08/2018 16:49, Sakari Ailus wrote:
+> Hi Luca,
+> 
+> On Fri, Aug 24, 2018 at 06:35:21PM +0200, Luca Ceresoli wrote:
+>> Forcibly setting the subdev name to DRIVER_NAME (i.e. "IMX274") makes
+>> it non-unique and less informative.
+>>
+>> Let the driver use the default name from i2c, e.g. "IMX274 2-001a".
+>>
+>> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+>> ---
+>>  drivers/media/i2c/imx274.c | 1 -
+>>  1 file changed, 1 deletion(-)
+>>
+>> diff --git a/drivers/media/i2c/imx274.c b/drivers/media/i2c/imx274.c
+>> index 9b524de08470..570706695ca7 100644
+>> --- a/drivers/media/i2c/imx274.c
+>> +++ b/drivers/media/i2c/imx274.c
+>> @@ -1885,7 +1885,6 @@ static int imx274_probe(struct i2c_client *client,
+>>  	imx274->client = client;
+>>  	sd = &imx274->sd;
+>>  	v4l2_i2c_subdev_init(sd, client, &imx274_subdev_ops);
+>> -	strlcpy(sd->name, DRIVER_NAME, sizeof(sd->name));
+>>  	sd->flags |= V4L2_SUBDEV_FL_HAS_DEVNODE | V4L2_SUBDEV_FL_HAS_EVENTS;
+>>  
+>>  	/* initialize subdev media pad */
+> 
+> This ends up changing the entity as well as the sub-device name which may
+> well break applications.
 
-Performance wise CR0 is not that much better than CR3 except that it has
-the costs nicely hidden.
+Right, unfortunately.
 
-Thanks,
+> On the other hand, you currently can't have more
+> than one of these devices on a media device complex due to the name being
+> specific to a driver, not the device.
+>
+> An option avoiding that would be to let the user choose by e.g. through a
+> Kconfig option would avoid having to address that, but I really hate adding
+> such options.
 
-	tglx
+I agree adding a Kconfig option just for this would be very annoying.
+However I think the issue affects a few other drivers (sr030pc30.c and
+s5c73m3-core.c apparently), thus maybe one option could serve them all.
+
+> I wonder what others think. If anyone ever needs to add another on a board
+> so that it ends up being the part of the same media device complex
+> (likely), then changing the name now rather than later would be the least
+> pain. In this case I'd be leaning (slightly) towards accepting the patch
+> and hoping there wouldn't be any fallout... I don't see any board (DT)
+> containing imx274, at least not in the upstream kernel.
+
+I'll be OK with either decision. Should we keep it as is, then I think a
+comment before that line would be appropriate to clarify it's not
+correct but it is kept for backward userspace compatibility. This would
+help avoid new driver writers doing the same mistake, and prevent other
+people to send another patch like mine.
+
+Regards,
+-- 
+Luca
