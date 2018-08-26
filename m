@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5836DC433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47699C433F5
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:45:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CCEE216FA
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:45:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CCEE216FA
+	by mail.kernel.org (Postfix) with ESMTP id 0F520216FA
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:45:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F520216FA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727206AbeHZK1Z (ORCPT
+        id S1727238AbeHZK12 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 06:27:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53510 "EHLO
+        Sun, 26 Aug 2018 06:27:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53518 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727055AbeHZK1Y (ORCPT
+        with ESMTP id S1727055AbeHZK12 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 06:27:24 -0400
+        Sun, 26 Aug 2018 06:27:28 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F05E8949;
-        Sun, 26 Aug 2018 06:45:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A6FEB9D2;
+        Sun, 26 Aug 2018 06:45:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Karsten Keil <isdn@linux-pingi.de>,
-        Kees Cook <keescook@chromium.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 15/56] isdn: Disable IIOCDBGVAR
-Date:   Sun, 26 Aug 2018 08:44:36 +0200
-Message-Id: <20180826064233.097033509@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 16/56] netfilter: ipv6: nf_defrag: reduce struct net memory waste
+Date:   Sun, 26 Aug 2018 08:44:37 +0200
+Message-Id: <20180826064233.149416654@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180826064232.320669119@linuxfoundation.org>
 References: <20180826064232.320669119@linuxfoundation.org>
@@ -52,41 +51,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kees Cook <keescook@chromium.org>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 5e22002aa8809e2efab2da95855f73f63e14a36c ]
+[ Upstream commit 9ce7bc036ae4cfe3393232c86e9e1fea2153c237 ]
 
-It was possible to directly leak the kernel address where the isdn_dev
-structure pointer was stored. This is a kernel ASLR bypass for anyone
-with access to the ioctl. The code had been present since the beginning
-of git history, though this shouldn't ever be needed for normal operation,
-therefore remove it.
+It is a waste of memory to use a full "struct netns_sysctl_ipv6"
+while only one pointer is really used, considering netns_sysctl_ipv6
+keeps growing.
 
-Reported-by: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Karsten Keil <isdn@linux-pingi.de>
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Also, since "struct netns_frags" has cache line alignment,
+it is better to move the frags_hdr pointer outside, otherwise
+we spend a full cache line for this pointer.
+
+This saves 192 bytes of memory per netns.
+
+Fixes: c038a767cd69 ("ipv6: add a new namespace for nf_conntrack_reasm")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/isdn/i4l/isdn_common.c |    8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ include/net/net_namespace.h             |    1 +
+ include/net/netns/ipv6.h                |    1 -
+ net/ipv6/netfilter/nf_conntrack_reasm.c |    6 +++---
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/isdn/i4l/isdn_common.c
-+++ b/drivers/isdn/i4l/isdn_common.c
-@@ -1655,13 +1655,7 @@ isdn_ioctl(struct file *file, uint cmd,
- 			} else
- 				return -EINVAL;
- 		case IIOCDBGVAR:
--			if (arg) {
--				if (copy_to_user(argp, &dev, sizeof(ulong)))
--					return -EFAULT;
--				return 0;
--			} else
--				return -EINVAL;
--			break;
-+			return -EINVAL;
- 		default:
- 			if ((cmd & IIOCDRVCTL) == IIOCDRVCTL)
- 				cmd = ((cmd >> _IOC_NRSHIFT) & _IOC_NRMASK) & ISDN_DRVIOCTL_MASK;
+--- a/include/net/net_namespace.h
++++ b/include/net/net_namespace.h
+@@ -112,6 +112,7 @@ struct net {
+ #endif
+ #if IS_ENABLED(CONFIG_NF_DEFRAG_IPV6)
+ 	struct netns_nf_frag	nf_frag;
++	struct ctl_table_header *nf_frag_frags_hdr;
+ #endif
+ 	struct sock		*nfnl;
+ 	struct sock		*nfnl_stash;
+--- a/include/net/netns/ipv6.h
++++ b/include/net/netns/ipv6.h
+@@ -81,7 +81,6 @@ struct netns_ipv6 {
+ 
+ #if IS_ENABLED(CONFIG_NF_DEFRAG_IPV6)
+ struct netns_nf_frag {
+-	struct netns_sysctl_ipv6 sysctl;
+ 	struct netns_frags	frags;
+ };
+ #endif
+--- a/net/ipv6/netfilter/nf_conntrack_reasm.c
++++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
+@@ -118,7 +118,7 @@ static int nf_ct_frag6_sysctl_register(s
+ 	if (hdr == NULL)
+ 		goto err_reg;
+ 
+-	net->nf_frag.sysctl.frags_hdr = hdr;
++	net->nf_frag_frags_hdr = hdr;
+ 	return 0;
+ 
+ err_reg:
+@@ -132,8 +132,8 @@ static void __net_exit nf_ct_frags6_sysc
+ {
+ 	struct ctl_table *table;
+ 
+-	table = net->nf_frag.sysctl.frags_hdr->ctl_table_arg;
+-	unregister_net_sysctl_table(net->nf_frag.sysctl.frags_hdr);
++	table = net->nf_frag_frags_hdr->ctl_table_arg;
++	unregister_net_sysctl_table(net->nf_frag_frags_hdr);
+ 	if (!net_eq(net, &init_net))
+ 		kfree(table);
+ }
 
 
