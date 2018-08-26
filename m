@@ -2,68 +2,63 @@ Return-Path: <SRS0=U0Lc=LJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0807C433F5
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 21:23:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37700C433F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 21:24:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 694912170B
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 21:23:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 694912170B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id D982B2170B
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 21:24:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D982B2170B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727000AbeH0BGm (ORCPT
+        id S1727029AbeH0BIK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 21:06:42 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:46176 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726751AbeH0BGm (ORCPT
+        Sun, 26 Aug 2018 21:08:10 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:39072 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726751AbeH0BIK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 21:06:42 -0400
-Received: from localhost (unknown [70.97.65.230])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id EC156146C38B0;
-        Sun, 26 Aug 2018 14:22:56 -0700 (PDT)
-Date:   Sun, 26 Aug 2018 14:22:52 -0700 (PDT)
-Message-Id: <20180826.142252.1150683531522716249.davem@davemloft.net>
-To:     keescook@chromium.org
-Cc:     linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        jhs@mojatatu.com, xiyou.wangcong@gmail.com, jiri@resnulli.us,
-        netdev@vger.kernel.org
+        Sun, 26 Aug 2018 21:08:10 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1fu2WD-0004hs-R4; Sun, 26 Aug 2018 21:24:21 +0000
+Date:   Sun, 26 Aug 2018 22:24:21 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     Joe Perches <joe@perches.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Jiri Pirko <jiri@resnulli.us>,
+        "David S. Miller" <davem@davemloft.net>,
+        Network Development <netdev@vger.kernel.org>
 Subject: Re: [PATCH] net: sched: Fix memory exposure from short TCA_U32_SEL
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20180826055801.GA42063@beast>
+Message-ID: <20180826212421.GW6515@ZenIV.linux.org.uk>
 References: <20180826055801.GA42063@beast>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 26 Aug 2018 14:22:57 -0700 (PDT)
+ <20180826061534.GT6515@ZenIV.linux.org.uk>
+ <CAGXu5jK7VzayzZTcxgZBf-+YHWO+Hv7s8utj2rzTc3gFtA8pFQ@mail.gmail.com>
+ <20180826173236.GU6515@ZenIV.linux.org.uk>
+ <d31fe59160e0b7d40e09536a3c74619ebb1f3b13.camel@perches.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d31fe59160e0b7d40e09536a3c74619ebb1f3b13.camel@perches.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kees Cook <keescook@chromium.org>
-Date: Sat, 25 Aug 2018 22:58:01 -0700
+On Sun, Aug 26, 2018 at 11:57:57AM -0700, Joe Perches wrote:
 
-> Via u32_change(), TCA_U32_SEL has an unspecified type in the netlink
-> policy, so max length isn't enforced, only minimum. This means nkeys
-> (from userspace) was being trusted without checking the actual size of
-> nla_len(), which could lead to a memory over-read, and ultimately an
-> exposure via a call to u32_dump(). Reachability is CAP_NET_ADMIN within
-> a namespace.
+> > That, BTW, is why I hate the use of sizeof(*p) in kmalloc, etc.
+> > arguments.  typeof is even worse in that respect.
 > 
-> Reported-by: Al Viro <viro@zeniv.linux.org.uk>
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+> True.  Semantic searches via tools like coccinelle could help here
+> but those searches are quite a bit slower than straightforward greps.
 
-I'll apply this as-is and queued it up for -stable.
-
-If we want to avoid sizeof(*p) type stuff, it can be done as a follow-up.
-
-Thanks.
+Those searches are .config-sensitive as well, which can be much more
+unpleasant than being slow...
