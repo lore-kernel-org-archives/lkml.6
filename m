@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 707C3C433F5
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:46:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AC4AC433F5
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:47:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 366522170B
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:46:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 366522170B
+	by mail.kernel.org (Postfix) with ESMTP id C72A02170B
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:47:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C72A02170B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727635AbeHZK2b (ORCPT
+        id S1727654AbeHZK2f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 06:28:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53698 "EHLO
+        Sun, 26 Aug 2018 06:28:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53712 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726245AbeHZK2b (ORCPT
+        with ESMTP id S1726245AbeHZK2f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 06:28:31 -0400
+        Sun, 26 Aug 2018 06:28:35 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8A6AE9D2;
-        Sun, 26 Aug 2018 06:46:55 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 247EE9D3;
+        Sun, 26 Aug 2018 06:46:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alex Chen <alexchen@synology.com>,
-        Alex Wu <alexwu@synology.com>,
-        Chung-Chiang Cheng <cccheng@synology.com>,
-        BingJing Chang <bingjingc@synology.com>,
-        Shaohua Li <shli@fb.com>,
+        stable@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 34/56] md/raid10: fix that replacement cannot complete recovery after reassemble
-Date:   Sun, 26 Aug 2018 08:44:55 +0200
-Message-Id: <20180826064234.010327628@linuxfoundation.org>
+Subject: [PATCH 3.18 35/56] drm/exynos: gsc: Fix support for NV16/61, YUV420/YVU420 and YUV422 modes
+Date:   Sun, 26 Aug 2018 08:44:56 +0200
+Message-Id: <20180826064234.057023582@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180826064232.320669119@linuxfoundation.org>
 References: <20180826064232.320669119@linuxfoundation.org>
@@ -54,54 +52,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: BingJing Chang <bingjingc@synology.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-[ Upstream commit bda3153998f3eb2cafa4a6311971143628eacdbc ]
+[ Upstream commit dd209ef809080ced903e7747ee3ef640c923a1d2 ]
 
-During assemble, the spare marked for replacement is not checked.
-conf->fullsync cannot be updated to be 1. As a result, recovery will
-treat it as a clean array. All recovering sectors are skipped. Original
-device is replaced with the not-recovered spare.
+Fix following issues related to planar YUV pixel format configuration:
+- NV16/61 modes were incorrectly programmed as NV12/21,
+- YVU420 was programmed as YUV420 on source,
+- YVU420 and YUV422 were programmed as YUV420 on output.
 
-mdadm -C /dev/md0 -l10 -n4 -pn2 /dev/loop[0123]
-mdadm /dev/md0 -a /dev/loop4
-mdadm /dev/md0 --replace /dev/loop0
-mdadm -S /dev/md0 # stop array during recovery
-
-mdadm -A /dev/md0 /dev/loop[01234]
-
-After reassemble, you can see recovery go on, but it completes
-immediately. In fact, recovery is not actually processed.
-
-To solve this problem, we just add the missing logics for replacment
-spares. (In raid1.c or raid5.c, they have already been checked.)
-
-Reported-by: Alex Chen <alexchen@synology.com>
-Reviewed-by: Alex Wu <alexwu@synology.com>
-Reviewed-by: Chung-Chiang Cheng <cccheng@synology.com>
-Signed-off-by: BingJing Chang <bingjingc@synology.com>
-Signed-off-by: Shaohua Li <shli@fb.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Inki Dae <inki.dae@samsung.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/raid10.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/gpu/drm/exynos/exynos_drm_gsc.c |   29 ++++++++++++++++++++---------
+ drivers/gpu/drm/exynos/regs-gsc.h       |    1 +
+ 2 files changed, 21 insertions(+), 9 deletions(-)
 
---- a/drivers/md/raid10.c
-+++ b/drivers/md/raid10.c
-@@ -3770,6 +3770,13 @@ static int run(struct mddev *mddev)
- 			    disk->rdev->saved_raid_disk < 0)
- 				conf->fullsync = 1;
- 		}
-+
-+		if (disk->replacement &&
-+		    !test_bit(In_sync, &disk->replacement->flags) &&
-+		    disk->replacement->saved_raid_disk < 0) {
-+			conf->fullsync = 1;
-+		}
-+
- 		disk->recovery_disabled = mddev->recovery_disabled - 1;
- 	}
- 
+--- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+@@ -526,21 +526,25 @@ static int gsc_src_set_fmt(struct device
+ 			GSC_IN_CHROMA_ORDER_CRCB);
+ 		break;
+ 	case DRM_FORMAT_NV21:
++		cfg |= (GSC_IN_CHROMA_ORDER_CRCB | GSC_IN_YUV420_2P);
++		break;
+ 	case DRM_FORMAT_NV61:
+-		cfg |= (GSC_IN_CHROMA_ORDER_CRCB |
+-			GSC_IN_YUV420_2P);
++		cfg |= (GSC_IN_CHROMA_ORDER_CRCB | GSC_IN_YUV422_2P);
+ 		break;
+ 	case DRM_FORMAT_YUV422:
+ 		cfg |= GSC_IN_YUV422_3P;
+ 		break;
+ 	case DRM_FORMAT_YUV420:
++		cfg |= (GSC_IN_CHROMA_ORDER_CBCR | GSC_IN_YUV420_3P);
++		break;
+ 	case DRM_FORMAT_YVU420:
+-		cfg |= GSC_IN_YUV420_3P;
++		cfg |= (GSC_IN_CHROMA_ORDER_CRCB | GSC_IN_YUV420_3P);
+ 		break;
+ 	case DRM_FORMAT_NV12:
++		cfg |= (GSC_IN_CHROMA_ORDER_CBCR | GSC_IN_YUV420_2P);
++		break;
+ 	case DRM_FORMAT_NV16:
+-		cfg |= (GSC_IN_CHROMA_ORDER_CBCR |
+-			GSC_IN_YUV420_2P);
++		cfg |= (GSC_IN_CHROMA_ORDER_CBCR | GSC_IN_YUV422_2P);
+ 		break;
+ 	case DRM_FORMAT_NV12MT:
+ 		cfg |= (GSC_IN_TILE_C_16x8 | GSC_IN_TILE_MODE);
+@@ -796,18 +800,25 @@ static int gsc_dst_set_fmt(struct device
+ 			GSC_OUT_CHROMA_ORDER_CRCB);
+ 		break;
+ 	case DRM_FORMAT_NV21:
+-	case DRM_FORMAT_NV61:
+ 		cfg |= (GSC_OUT_CHROMA_ORDER_CRCB | GSC_OUT_YUV420_2P);
+ 		break;
++	case DRM_FORMAT_NV61:
++		cfg |= (GSC_OUT_CHROMA_ORDER_CRCB | GSC_OUT_YUV422_2P);
++		break;
+ 	case DRM_FORMAT_YUV422:
++		cfg |= GSC_OUT_YUV422_3P;
++		break;
+ 	case DRM_FORMAT_YUV420:
++		cfg |= (GSC_OUT_CHROMA_ORDER_CBCR | GSC_OUT_YUV420_3P);
++		break;
+ 	case DRM_FORMAT_YVU420:
+-		cfg |= GSC_OUT_YUV420_3P;
++		cfg |= (GSC_OUT_CHROMA_ORDER_CRCB | GSC_OUT_YUV420_3P);
+ 		break;
+ 	case DRM_FORMAT_NV12:
++		cfg |= (GSC_OUT_CHROMA_ORDER_CBCR | GSC_OUT_YUV420_2P);
++		break;
+ 	case DRM_FORMAT_NV16:
+-		cfg |= (GSC_OUT_CHROMA_ORDER_CBCR |
+-			GSC_OUT_YUV420_2P);
++		cfg |= (GSC_OUT_CHROMA_ORDER_CBCR | GSC_OUT_YUV422_2P);
+ 		break;
+ 	case DRM_FORMAT_NV12MT:
+ 		cfg |= (GSC_OUT_TILE_C_16x8 | GSC_OUT_TILE_MODE);
+--- a/drivers/gpu/drm/exynos/regs-gsc.h
++++ b/drivers/gpu/drm/exynos/regs-gsc.h
+@@ -138,6 +138,7 @@
+ #define GSC_OUT_YUV420_3P		(3 << 4)
+ #define GSC_OUT_YUV422_1P		(4 << 4)
+ #define GSC_OUT_YUV422_2P		(5 << 4)
++#define GSC_OUT_YUV422_3P		(6 << 4)
+ #define GSC_OUT_YUV444			(7 << 4)
+ #define GSC_OUT_TILE_TYPE_MASK		(1 << 2)
+ #define GSC_OUT_TILE_C_16x8		(0 << 2)
 
 
