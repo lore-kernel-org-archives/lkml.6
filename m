@@ -3,36 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45109C433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:46:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 316B8C433F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:46:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B6512172A
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:46:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B6512172A
+	by mail.kernel.org (Postfix) with ESMTP id E0BA52170B
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:46:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0BA52170B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727523AbeHZK2E (ORCPT
+        id S1727547AbeHZK2I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 06:28:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53628 "EHLO
+        Sun, 26 Aug 2018 06:28:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53634 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726245AbeHZK2D (ORCPT
+        with ESMTP id S1726245AbeHZK2H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 06:28:03 -0400
+        Sun, 26 Aug 2018 06:28:07 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9EC909D2;
-        Sun, 26 Aug 2018 06:46:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6BFD09D2;
+        Sun, 26 Aug 2018 06:46:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 3.18 09/56] ALSA: cs5535audio: Fix invalid endian conversion
-Date:   Sun, 26 Aug 2018 08:44:30 +0200
-Message-Id: <20180826064232.722960922@linuxfoundation.org>
+        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Zhizhou Zhang <zhizhouzhang@asrmicro.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 20/56] arm64: make secondary_start_kernel() notrace
+Date:   Sun, 26 Aug 2018 08:44:41 +0200
+Message-Id: <20180826064233.345282986@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180826064232.320669119@linuxfoundation.org>
 References: <20180826064232.320669119@linuxfoundation.org>
@@ -49,53 +53,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Zhizhou Zhang <zhizhouzhang@asrmicro.com>
 
-commit 69756930f2de0457d51db7d505a1e4f40e9fd116 upstream.
+[ Upstream commit b154886f7892499d0d3054026e19dfb9a731df61 ]
 
-One place in cs5535audio_build_dma_packets() does an extra conversion
-via cpu_to_le32(); namely jmpprd_addr is passed to setup_prd() ops,
-which writes the value via cs_writel().  That is, the callback does
-the conversion by itself, and we don't need to convert beforehand.
+We can't call function trace hook before setup percpu offset.
+When entering secondary_start_kernel(), percpu offset has not
+been initialized.  So this lead hotplug malfunction.
+Here is the flow to reproduce this bug:
 
-This patch fixes that bogus conversion.
+echo 0 > /sys/devices/system/cpu/cpu1/online
+echo function > /sys/kernel/debug/tracing/current_tracer
+echo 1 > /sys/kernel/debug/tracing/tracing_on
+echo 1 > /sys/devices/system/cpu/cpu1/online
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+Tested-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Signed-off-by: Zhizhou Zhang <zhizhouzhang@asrmicro.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- sound/pci/cs5535audio/cs5535audio.h     |    6 +++---
- sound/pci/cs5535audio/cs5535audio_pcm.c |    4 ++--
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ arch/arm64/kernel/smp.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/pci/cs5535audio/cs5535audio.h
-+++ b/sound/pci/cs5535audio/cs5535audio.h
-@@ -66,9 +66,9 @@ struct cs5535audio_dma_ops {
- };
- 
- struct cs5535audio_dma_desc {
--	u32 addr;
--	u16 size;
--	u16 ctlreserved;
-+	__le32 addr;
-+	__le16 size;
-+	__le16 ctlreserved;
- };
- 
- struct cs5535audio_dma {
---- a/sound/pci/cs5535audio/cs5535audio_pcm.c
-+++ b/sound/pci/cs5535audio/cs5535audio_pcm.c
-@@ -158,8 +158,8 @@ static int cs5535audio_build_dma_packets
- 	lastdesc->addr = cpu_to_le32((u32) dma->desc_buf.addr);
- 	lastdesc->size = 0;
- 	lastdesc->ctlreserved = cpu_to_le16(PRD_JMP);
--	jmpprd_addr = cpu_to_le32(lastdesc->addr +
--				  (sizeof(struct cs5535audio_dma_desc)*periods));
-+	jmpprd_addr = (u32)dma->desc_buf.addr +
-+		sizeof(struct cs5535audio_dma_desc) * periods;
- 
- 	dma->substream = substream;
- 	dma->period_bytes = period_bytes;
+--- a/arch/arm64/kernel/smp.c
++++ b/arch/arm64/kernel/smp.c
+@@ -130,7 +130,7 @@ static void smp_store_cpu_info(unsigned
+  * This is the secondary CPU boot entry.  We're using this CPUs
+  * idle thread stack, but a set of temporary page tables.
+  */
+-asmlinkage void secondary_start_kernel(void)
++asmlinkage notrace void secondary_start_kernel(void)
+ {
+ 	struct mm_struct *mm = &init_mm;
+ 	unsigned int cpu = smp_processor_id();
 
 
