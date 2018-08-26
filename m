@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B995DC433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 21:15:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D70A3C433F5
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 21:15:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 635C220C51
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 21:15:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82567208CA
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 21:15:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="huB5DbcH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 635C220C51
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V8ChQEK9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82567208CA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727481AbeH0A7I (ORCPT
+        id S1727501AbeH0A7J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 20:59:08 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:35811 "EHLO
+        Sun, 26 Aug 2018 20:59:09 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:39074 "EHLO
         mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726898AbeH0A7F (ORCPT
+        with ESMTP id S1727465AbeH0A7I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 20:59:05 -0400
-Received: by mail-ed1-f68.google.com with SMTP id y20-v6so2442115edq.2
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Aug 2018 14:15:22 -0700 (PDT)
+        Sun, 26 Aug 2018 20:59:08 -0400
+Received: by mail-ed1-f68.google.com with SMTP id h4-v6so9106159edi.6
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Aug 2018 14:15:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=v2je0fxPJe0FPcMt9hz8p1DeVxCYBSIuigNEjubMk2A=;
-        b=huB5DbcHfHufr8ylFIy97wYYv3d5y+y93n3XVrqULBQwUg087ZwbMZxOXhoG74EDVt
-         nGOCc7fv8W4ACsu+dCrj7Wma8TB6al3EBjvphl1TamaSmGlJLBOo2q7qFMpurqYdDI4u
-         l2PWTGQdjEDaWjRi4Csxlv79ubBFdzLR1fS+Pycm5pm5VgvcOSZBy3Lft7FJR1xvUQ4J
-         iNUXzamJIHX0ENdalWsU9Bg4Xbeb93zgvlUPaWurIiAKbtqxNZyttAEqpqd5NVq5el59
-         z+ZLrsyboBTkL+LsIxlk0YqO71tnTNLzmDUhMA9K1XI/KwLb5nphU1M49p+NdjRwlc+W
-         nXMA==
+        bh=CcbhNEhUgjrdL59jJmcoCY4Bn61AQlI0pO8lIzNatrI=;
+        b=V8ChQEK9oGpEbnZlxqqfKkn3p/mmxe8YooXsTHtD3Eig847cxDmsZHLqK1kvTPsvhl
+         yva9o3t6nTsw3InRP0nrABPXPpw+EUnabU4CviODPHLRB7sQdZEQ2ImQ67cunen6FODT
+         kBauB3TZMF2WZrse5hRSPAd4e4EVYo5ZZVxDxRO3UVBjRZtiG/u9B8dZzESllLdg9xGH
+         ++FDhFE/p4BXfzfvzQfeYLj3suZpNfB9zUtl2YS0sxphFx1JWWpakZ/7SOa2xpAssKkl
+         qrp8LHvulHakr1kUrzKvuNmp9xlROVJOyo1NPhZZjvcrrKc2eq+alDueCGWgBc/WrIFS
+         LFRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=v2je0fxPJe0FPcMt9hz8p1DeVxCYBSIuigNEjubMk2A=;
-        b=dSIhXjpZCVvV6Sgy4buv4K0IcsffFvPsVE+CeU528z7FrVUpAKS0LGgtnCKh5pzbtk
-         IbheCqN8qaIyhdypXsOKKN0CIXGCZm2atc7w6VbZUMsxPx+sbE90PmpNMn0xX1XpC7ju
-         go8IoD2T/OtjQydbx33nhBhGsBSbGIsVxcS6pBAMxhLJRY9vps7K/VexbzyKcZ+/noc2
-         yNzKcKdjMz2PL3F/ARgYHbxafSZ7OprzaQAmAvanQcEPsqFqDhdv7IKxdH5JCuSP8Qg9
-         FpIaIWrpuZrJobOnH9PBgsngaXJxKYqOWShmEqN2JbbFVjXVMKQCrkYafVr5t1Ic8F2o
-         Oazg==
-X-Gm-Message-State: APzg51DBQ9e0UcgSJSbFttaAi9W/HZEjOTdnQs6r55UrRsDrekskkdYq
-        xK9ovIs/SA/TN+1fJpPsdj+eia2y
-X-Google-Smtp-Source: ANB0VdbJdp7ynX2UIDF4bo39OATPXRvIeqKHxhfYYrw+W8cNSgwLu6OKYP6icE1w2jxjgFu07SXzFw==
-X-Received: by 2002:a50:86b5:: with SMTP id r50-v6mr13703187eda.201.1535318121213;
-        Sun, 26 Aug 2018 14:15:21 -0700 (PDT)
+        bh=CcbhNEhUgjrdL59jJmcoCY4Bn61AQlI0pO8lIzNatrI=;
+        b=cjnvDXb/9X61dcdMg69o057tH3gRrHpGOik74uDvQeYQEhvE/iu/hlahg7bya0zXyM
+         7ArHmgZFbQRYB5BiZ5xpEYcU4AyS2BWzatET8adt/sDasejyvki4cNt9caIpUVdFDWvX
+         KRrlTUiURr3E6irRY9Qct8TXP8mCNKsyWsbmK2ZeaobQZIcjvqJ0ArYx5HkG++WaXLca
+         GWi7Y7w/i5f2Tp3y3oRMc7/VvTbFZz9OcOTDKoYeiF6+UeLegmODDi7Leg879n9NNxpw
+         0RIVXNCKDVDfo+KVTR4ZSl+PJwxUdfjCGA8yZ/DkeTGs97nkHVgpVGQLf3NNGudbFWgw
+         mXMQ==
+X-Gm-Message-State: APzg51DMWaZt87PkQpi9rg9GZq6N5MbfkQhg9AkbN4GXhxF+mur8eJ9F
+        iExXoLNw75TeHqNfNFoRNUhGEktX
+X-Google-Smtp-Source: ANB0VdbGEFBeBbEanPwisLuBf34C/0Ivj/etEiHWAXrZ3PtjvG95Uif3BoIJdeue9POwiq6Hur6Lhg==
+X-Received: by 2002:a50:d798:: with SMTP id w24-v6mr13749403edi.19.1535318123843;
+        Sun, 26 Aug 2018 14:15:23 -0700 (PDT)
 Received: from localhost.localdomain ([109.78.216.151])
-        by smtp.gmail.com with ESMTPSA id b47-v6sm5937300eda.79.2018.08.26.14.15.20
+        by smtp.gmail.com with ESMTPSA id b47-v6sm5937300eda.79.2018.08.26.14.15.22
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 26 Aug 2018 14:15:20 -0700 (PDT)
+        Sun, 26 Aug 2018 14:15:23 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 19/21] staging:rtl8192u: Rename EEPROM_Default_TxPower - Style
-Date:   Sun, 26 Aug 2018 22:14:37 +0100
-Message-Id: <20180826211439.14326-20-johnfwhitmore@gmail.com>
+Subject: [PATCH 21/21] staging:rtl8192u: Rename EEPROM_ChannelPlan - Style
+Date:   Sun, 26 Aug 2018 22:14:39 +0100
+Message-Id: <20180826211439.14326-22-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180826211439.14326-1-johnfwhitmore@gmail.com>
 References: <20180826211439.14326-1-johnfwhitmore@gmail.com>
@@ -73,11 +73,11 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-rename the constant EEPROM_Default_TxPower to EEPROM_DEFAULT_TX_POWER,
-this clears the checkpatch issue with CamelCase issue.
+Rename the constant EEPROM_ChannelPlan to EEPROM_CHANNEL_PLAN,
+this clears the checkpatch issue with CamelCase naming.
 
-This is purely a coding style change which should have no impact
-on runtime code execution.
+This is purely a coding style change which should have no impact on
+runtime code execution.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
@@ -86,31 +86,31 @@ Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
  2 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
-index 236c4dee7921..5bb0602e8a20 100644
+index 905484ac439f..b65684ceea7a 100644
 --- a/drivers/staging/rtl8192u/r8192U_core.c
 +++ b/drivers/staging/rtl8192u/r8192U_core.c
-@@ -2430,7 +2430,7 @@ static int rtl8192_read_eeprom_info(struct net_device *dev)
- 				return ret;
- 			priv->EEPROMTxPowerDiff = ((u16)ret & 0xff00) >> 8;
- 		} else
--			priv->EEPROMTxPowerDiff = EEPROM_Default_TxPower;
-+			priv->EEPROMTxPowerDiff = EEPROM_DEFAULT_TX_POWER;
- 		RT_TRACE(COMP_EPROM, "TxPowerDiff:%d\n", priv->EEPROMTxPowerDiff);
- 		/* read ThermalMeter from EEPROM */
- 		if (bLoad_From_EEPOM) {
+@@ -2382,7 +2382,7 @@ static int rtl8192_read_eeprom_info(struct net_device *dev)
+ 		if (ret < 0)
+ 			return ret;
+ 		priv->eeprom_pid = (u16)ret;
+-		ret = eprom_read(dev, EEPROM_ChannelPlan >> 1);
++		ret = eprom_read(dev, EEPROM_CHANNEL_PLAN >> 1);
+ 		if (ret < 0)
+ 			return ret;
+ 		tmpValue = (u16)ret;
 diff --git a/drivers/staging/rtl8192u/r8192U_hw.h b/drivers/staging/rtl8192u/r8192U_hw.h
-index 923d8ab5939d..af3f84065619 100644
+index 606ab46d1a0c..5a958335681d 100644
 --- a/drivers/staging/rtl8192u/r8192U_hw.h
 +++ b/drivers/staging/rtl8192u/r8192U_hw.h
-@@ -51,7 +51,7 @@
- #define EEPROM_DEFAULT_THERNAL_METER		0x7
- #define EEPROM_DEFAULT_PW_DIFF			0x4
+@@ -53,7 +53,7 @@
  #define EEPROM_DEFAULT_CRYSTAL_CAP		0x5
--#define EEPROM_Default_TxPower			0x1010
-+#define EEPROM_DEFAULT_TX_POWER		0x1010
- #define EEPROM_Customer_ID			0x7B	//0x7B:CustomerID
- #define EEPROM_ChannelPlan			0x16	//0x7C
+ #define EEPROM_DEFAULT_TX_POWER		0x1010
+ #define EEPROM_CUSTOMER_ID			0x7B	//0x7B:CustomerID
+-#define EEPROM_ChannelPlan			0x16	//0x7C
++#define EEPROM_CHANNEL_PLAN			0x16	//0x7C
  
+ #define EEPROM_CID_RUNTOP				0x2
+ #define EEPROM_CID_DLINK				0x8
 -- 
 2.18.0
 
