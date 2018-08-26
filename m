@@ -2,100 +2,139 @@ Return-Path: <SRS0=U0Lc=LJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91977C433F5
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 05:55:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24EA4C433F5
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 05:58:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EBF8208DA
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 05:55:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B87C42147D
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 05:58:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="A0ECRi1M";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="he0l+pr+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EBF8208DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kroah.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FNrMYqdJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B87C42147D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726751AbeHZJhF (ORCPT
+        id S1726809AbeHZJjb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 05:37:05 -0400
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:42533 "EHLO
-        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726245AbeHZJhE (ORCPT
+        Sun, 26 Aug 2018 05:39:31 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:37156 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726245AbeHZJjb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 05:37:04 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id 310182C8;
-        Sun, 26 Aug 2018 01:55:35 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Sun, 26 Aug 2018 01:55:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-        :content-type:date:from:in-reply-to:message-id:mime-version
-        :references:subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=CTqSLvwUHy9E/Z2Xu5PfCmHnnO9BngeD8Qas5w0dCgo=; b=A0ECRi1M
-        pQq3iVvgO/VW7i85BcHGMJ453vE4HlP7KEeOLT3I6bOqhtgm1Y5KTAFgnZq9z1YP
-        apf1+mWjjAk3cjq8xwfue5OVAxboxPsdxYxd46Yu75mZQNzunhs1sqR8CXkK/JCT
-        2Ppy0MpA2BVeHmtT66jIZqZJBFacR+HXsLbUyloOF1huWkl04si20NjF3F7kJaGa
-        n6CzNWtcRH12ZkmU6rQv+InfUMrwNs8HaUobspgiEdc6B+4m9id9AzE95vlZWIEh
-        Wvaybt9qmVVRLlhl80wo6YPAIProbPgtngUpTOKzwVMBgy7TmCR3p3so3CKkssZl
-        gi6GGlY3TLNoDw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm3; bh=CTqSLvwUHy9E/Z2Xu5PfCmHnnO9Bn
-        geD8Qas5w0dCgo=; b=he0l+pr+o/Cbxw9XrBJpu4D/9+IZbn0Yw2atQMax8Jeg3
-        CGzWm5Z6lnUhFpPihz1WPbIN6CQ/f0iQYBnyqWBmn89Ceuj4W0wvceMMN27UZG0Z
-        b3xK2dbYoNZrSTmDVCQ99GTwqBFgaMKgoQ/MrjMy99jTuqmoTlzNHrJqk458Gwik
-        Au9NPIfUHNUXyH8qPBeJuk3cPtJdAiK1W43ThlCkS1RyxpmXVFs5uHehrMOFwx/i
-        IXOYyYAUsNhSZysptBKAA/ZyHrq9oTZjUt1Zs8sXNHfB7fj9QrKO7FLMJi7kym1B
-        BzgsFDSmzRqn33yUT0ndYyxDhuUibqaKB4/BC9ZuA==
-X-ME-Proxy: <xmx:1UCCW7G-cQ_phU9op04SgCe8_tDESRwSw6-ndHZuuTA32v-WC1gJGg>
-    <xmx:1UCCW_MdGilxs2R1C0NSg1YyXWmOntP2DvZy-FzqN5CePrDdqm_05A>
-    <xmx:1UCCW1elHfCFq4-JyPq98rPFj3z24oczfC_IUZ9jSCd1InZ4nPpsvA>
-    <xmx:1UCCW0u6AEMW0B2Yxb_K2sX8gwhAajujPckL6hJ7yrb7VCh3OPTKxg>
-    <xmx:1UCCW-lw6CrPSegY31MOnxXX7gGUEsN9JGwRkWuBiwA1-SX1-l3ApQ>
-    <xmx:1kCCW7SUrgLsqcSA-d8FPszAZ8TmxZQ9JqnABWs1JltT9uU03rPcCQ>
-X-ME-Sender: <xms:1UCCW2AE_XvT1_aZeiZzsXdcAvOgXbDnxSdqDBDH_r7MZ3MpS_s0nw>
-Received: from localhost (5355525a.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 4DCF7E447F;
-        Sun, 26 Aug 2018 01:55:33 -0400 (EDT)
-Date:   Sun, 26 Aug 2018 07:55:31 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Andi Kleen <ak@linux.intel.com>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Andi Kleen <andi@firstfloor.org>, stable@vger.kernel.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org,
-        bernhard.kaindl@thalesgroup.com
-Subject: Re: [PATCH] x86/mm/pat: Fix L1TF stable backport for CPA
-Message-ID: <20180826055531.GA20871@kroah.com>
-References: <20180825135015.33547-1-andi@firstfloor.org>
- <20180826044646.GA24782@roeck-us.net>
- <20180826050641.GT12066@tassilo.jf.intel.com>
+        Sun, 26 Aug 2018 05:39:31 -0400
+Received: by mail-pg1-f193.google.com with SMTP id h8-v6so6016252pgs.4
+        for <linux-kernel@vger.kernel.org>; Sat, 25 Aug 2018 22:58:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=AkagPnxDpVrAzllDBHb9Cd+YDId70uSkhKXJ2KEDkuU=;
+        b=FNrMYqdJZ4lzfwQav84fKtbWhbfogYm13bsprXS3JoiaLAzb0fFsr89JmiERhl5oBL
+         dGCDM/ZJ1RDjopmqX7yPybMhYssOHrPDKGXDtAiUqmy7vPC8zKOk00E31N5oDdvi0u7k
+         8Ce4NgS+5/zKpBelsCy3SodjIpiSJRzpjWCkc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=AkagPnxDpVrAzllDBHb9Cd+YDId70uSkhKXJ2KEDkuU=;
+        b=KkYnlvLLsFfgLMW8Mwo4Jlj/mDu/l9aiqWsGXgbI/vkYOt3VInsR/ZaXbl2TRI+gAh
+         tfytnVeUkqoGg0VlqjPXjb8NYwTqmfV8+78fcgP3aN68Q6Evi3z/Eeqz9OFYkigmCDZx
+         ruRGmQZ9TUt3UigleyzJ9r7JVioHNZ0wPZaN1wonyMEEmE3bAgQx40q2S/86w3mluq9b
+         IRMj/po1Z84vXHVVgxYPQ/GH3JoM49HW0a/NZPxZ/JzSgB410hgk5ruzlgaMb2FLjW/6
+         kypySKTFIhpyfkOdLe9JLMRiaNWwxLMdXymA+nVKpG3Nv/cnARur96VzW6+KRL3MZMHZ
+         0XhQ==
+X-Gm-Message-State: APzg51C8zSXfeS9SogPeud7iNOzEA9WukKdCWyYF3iwNIZEv0D0hQqg4
+        w76tQvtR/mF73Sk4U3WiyskbVg==
+X-Google-Smtp-Source: ANB0VdaKWJRIXA7Ud5AA5h+8lOJGT5RMyIjagwBswDkpVD1gZRWAL0sCWevWVouk33DYyq4bJ1IzHg==
+X-Received: by 2002:a62:591a:: with SMTP id n26-v6mr8817584pfb.94.1535263083685;
+        Sat, 25 Aug 2018 22:58:03 -0700 (PDT)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id n18-v6sm18231605pfa.50.2018.08.25.22.58.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 25 Aug 2018 22:58:02 -0700 (PDT)
+Date:   Sat, 25 Aug 2018 22:58:01 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Jiri Pirko <jiri@resnulli.us>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Subject: [PATCH] net: sched: Fix memory exposure from short TCA_U32_SEL
+Message-ID: <20180826055801.GA42063@beast>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180826050641.GT12066@tassilo.jf.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 25, 2018 at 10:06:41PM -0700, Andi Kleen wrote:
-> > > Cc: stable@vger.kernel.org # 4.4 and 4.9
-> > 
-> > LGTM for v4.4.y but ... are you sure that this patch applies to v4.9.y ?
-> > Commit edc3b9129cec is 'native' in v4.9.y and has not been reverted there.
-> 
-> You're right. I thought it was needed for 4.9 too, but yes it has the CPA pfn
-> patch. So for 4.9 the patch is not needed and in fact incorrect.
-> 
-> The original report was for 4.4.
-> 
-> Greg can you please revert/remove it again for 4.9?
+Via u32_change(), TCA_U32_SEL has an unspecified type in the netlink
+policy, so max length isn't enforced, only minimum. This means nkeys
+(from userspace) was being trusted without checking the actual size of
+nla_len(), which could lead to a memory over-read, and ultimately an
+exposure via a call to u32_dump(). Reachability is CAP_NET_ADMIN within
+a namespace.
 
-Now dropped, thanks.
+Reported-by: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Jamal Hadi Salim <jhs@mojatatu.com>
+Cc: Cong Wang <xiyou.wangcong@gmail.com>
+Cc: Jiri Pirko <jiri@resnulli.us>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: netdev@vger.kernel.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+This should go through -stable please, but I have left off the "Cc:
+stable" as per netdev patch policy. Note that use of struct_size()
+will need manual expansion in backports, such as:
+	sel_size = sizeof(*s) + sizeof(*s->keys) * s->nkeys;
+---
+ net/sched/cls_u32.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-greg k-h
+diff --git a/net/sched/cls_u32.c b/net/sched/cls_u32.c
+index d5d2a6dc3921..f218ccf1e2d9 100644
+--- a/net/sched/cls_u32.c
++++ b/net/sched/cls_u32.c
+@@ -914,6 +914,7 @@ static int u32_change(struct net *net, struct sk_buff *in_skb,
+ 	struct nlattr *opt = tca[TCA_OPTIONS];
+ 	struct nlattr *tb[TCA_U32_MAX + 1];
+ 	u32 htid, flags = 0;
++	size_t sel_size;
+ 	int err;
+ #ifdef CONFIG_CLS_U32_PERF
+ 	size_t size;
+@@ -1076,8 +1077,13 @@ static int u32_change(struct net *net, struct sk_buff *in_skb,
+ 	}
+ 
+ 	s = nla_data(tb[TCA_U32_SEL]);
++	sel_size = struct_size(s, keys, s->nkeys);
++	if (nla_len(tb[TCA_U32_SEL]) < sel_size) {
++		err = -EINVAL;
++		goto erridr;
++	}
+ 
+-	n = kzalloc(sizeof(*n) + s->nkeys*sizeof(struct tc_u32_key), GFP_KERNEL);
++	n = kzalloc(offsetof(typeof(*n), sel) + sel_size, GFP_KERNEL);
+ 	if (n == NULL) {
+ 		err = -ENOBUFS;
+ 		goto erridr;
+@@ -1092,7 +1098,7 @@ static int u32_change(struct net *net, struct sk_buff *in_skb,
+ 	}
+ #endif
+ 
+-	memcpy(&n->sel, s, sizeof(*s) + s->nkeys*sizeof(struct tc_u32_key));
++	memcpy(&n->sel, s, sel_size);
+ 	RCU_INIT_POINTER(n->ht_up, ht);
+ 	n->handle = handle;
+ 	n->fshift = s->hmask ? ffs(ntohl(s->hmask)) - 1 : 0;
+-- 
+2.17.1
+
+
+-- 
+Kees Cook
+Pixel Security
