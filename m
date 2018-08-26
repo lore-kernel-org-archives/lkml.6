@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 151D4C433F5
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:47:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52BEBC433F5
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:47:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D085E2170B
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:47:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D085E2170B
+	by mail.kernel.org (Postfix) with ESMTP id 175BF2170B
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:47:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 175BF2170B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727822AbeHZK3M (ORCPT
+        id S1727837AbeHZK3Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 06:29:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53812 "EHLO
+        Sun, 26 Aug 2018 06:29:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53822 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727065AbeHZK3M (ORCPT
+        with ESMTP id S1727065AbeHZK3P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 06:29:12 -0400
+        Sun, 26 Aug 2018 06:29:15 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7ACD025A;
-        Sun, 26 Aug 2018 06:47:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 820EA9D3;
+        Sun, 26 Aug 2018 06:47:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
+        stable@vger.kernel.org, Li RongQing <lirongqing@baidu.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 22/56] net: hamradio: use eth_broadcast_addr
-Date:   Sun, 26 Aug 2018 08:44:43 +0200
-Message-Id: <20180826064233.449800481@linuxfoundation.org>
+Subject: [PATCH 3.18 23/56] net: propagate dev_get_valid_name return code
+Date:   Sun, 26 Aug 2018 08:44:44 +0200
+Message-Id: <20180826064233.495136479@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180826064232.320669119@linuxfoundation.org>
 References: <20180826064232.320669119@linuxfoundation.org>
@@ -51,52 +51,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefan Agner <stefan@agner.ch>
+From: Li RongQing <lirongqing@baidu.com>
 
-[ Upstream commit 4e8439aa34802deab11cee68b0ecb18f887fb153 ]
+[ Upstream commit 7892bd081045222b9e4027fec279a28d6fe7aa66 ]
 
-The array bpq_eth_addr is only used to get the size of an
-address, whereas the bcast_addr is used to set the broadcast
-address. This leads to a warning when using clang:
-drivers/net/hamradio/bpqether.c:94:13: warning: variable 'bpq_eth_addr' is not
-      needed and will not be emitted [-Wunneeded-internal-declaration]
-static char bpq_eth_addr[6];
-            ^
+if dev_get_valid_name failed, propagate its return code
 
-Remove both variables and use the common eth_broadcast_addr
-to set the broadcast address.
+and remove the setting err to ENODEV, it will be set to
+0 again before dev_change_net_namespace exits.
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/hamradio/bpqether.c |    8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ net/core/dev.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/hamradio/bpqether.c
-+++ b/drivers/net/hamradio/bpqether.c
-@@ -90,10 +90,6 @@
- static const char banner[] __initconst = KERN_INFO \
- 	"AX.25: bpqether driver version 004\n";
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -6911,7 +6911,8 @@ int dev_change_net_namespace(struct net_
+ 		/* We get here if we can't use the current device name */
+ 		if (!pat)
+ 			goto out;
+-		if (dev_get_valid_name(net, dev, pat) < 0)
++		err = dev_get_valid_name(net, dev, pat);
++		if (err < 0)
+ 			goto out;
+ 	}
  
--static char bcast_addr[6]={0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};
--
--static char bpq_eth_addr[6];
--
- static int bpq_rcv(struct sk_buff *, struct net_device *, struct packet_type *, struct net_device *);
- static int bpq_device_event(struct notifier_block *, unsigned long, void *);
+@@ -6923,7 +6924,6 @@ int dev_change_net_namespace(struct net_
+ 	dev_close(dev);
  
-@@ -512,8 +508,8 @@ static int bpq_new_device(struct net_dev
- 	bpq->ethdev = edev;
- 	bpq->axdev = ndev;
+ 	/* And unlink it from device chain */
+-	err = -ENODEV;
+ 	unlist_netdevice(dev);
  
--	memcpy(bpq->dest_addr, bcast_addr, sizeof(bpq_eth_addr));
--	memcpy(bpq->acpt_addr, bcast_addr, sizeof(bpq_eth_addr));
-+	eth_broadcast_addr(bpq->dest_addr);
-+	eth_broadcast_addr(bpq->acpt_addr);
- 
- 	err = register_netdevice(ndev);
- 	if (err)
+ 	synchronize_net();
 
 
