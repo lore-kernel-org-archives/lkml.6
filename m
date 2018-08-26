@@ -2,101 +2,81 @@ Return-Path: <SRS0=U0Lc=LJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.0 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01086C433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 14:04:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B31E2C433F5
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 14:06:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A779A2098B
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 14:04:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kzw0x2/R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A779A2098B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 5E9D9208B6
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 14:06:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E9D9208B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726995AbeHZRrE (ORCPT
+        id S1727053AbeHZRt3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 13:47:04 -0400
-Received: from mail-pg1-f172.google.com ([209.85.215.172]:36958 "EHLO
-        mail-pg1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726373AbeHZRrE (ORCPT
+        Sun, 26 Aug 2018 13:49:29 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:41771 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726373AbeHZRt3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 13:47:04 -0400
-Received: by mail-pg1-f172.google.com with SMTP id h8-v6so6246890pgs.4;
-        Sun, 26 Aug 2018 07:04:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=WJexeKybLaNIsYClLEaQlFXdAxls59p4pI2Vhz54ccY=;
-        b=kzw0x2/RUecE5sW9f351hmkhHNtZ3gSbTBxOupDM8OH9YvwES4pWdUEDeUVhYb0xqn
-         7OzI23u1E/hEZo65PzY92R8aFR482z/b1IWNDbXWqkZJRy7haVjCkfIps/C1LTomli1X
-         m/1T7ByicD7pFfw9AIo7yJyk1CMM04MLvJMSf3DF+M48y0KT7vIwR6+WadTv3Qil7HJ1
-         9t7a+n1NjX5v8A2eEBWFABeLgoAEcTmSrKhEjfvPr2hS5ez1UXXK7AVvB9TeBKOc6cVN
-         QlinKxksjGWgZB+/j99N/JFafmdhRJxSWlLdXjLVXZQFWb+Y9P7+IuyzRyD0rJSCTNQP
-         25JQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=WJexeKybLaNIsYClLEaQlFXdAxls59p4pI2Vhz54ccY=;
-        b=QXN3FdGtdK4QPQlPLT0M9UbGGRArq+hfueBHcegSisvLbH5a5zS9zqxBQlEUfcxg3d
-         uWKoYpd3hRxg5hq+SFsWZOPi1uONsRe9ttV10YG716Kk0tnDAJIoLKoKpeETr8WtYbVA
-         /dLw6wUVTfa0KeK+BvPNkPEEekTq5hHwF8Nj1fatPXvu6uOUmy9kEJVme+7JbuIv3VkR
-         7I6HC5AZut6eI4Ay4Dy7R4KrnPfx9QGzas5aA9Pffxxhcxi0//obYUH6BeCUl57XbLbc
-         1pIN2EEAg3gvQBqvzKucUU+6Bn2dF6wtpKAG2vhh6l8hrzLgGlFVtUTAyoHyMJvbWDdw
-         /NUQ==
-X-Gm-Message-State: APzg51A6c8TpV0PbmB82NaQ5gQwGC8Tx1G47Sw3I+ercfPszp5ceaOao
-        Z+uYXi70Yn0jST4FVtrzMZVh/8RT
-X-Google-Smtp-Source: ANB0VdZNuO72RBumVOLqtOWdjDSjw3k1m7CaRBOk61POdL+9xRUtDQ+gLVdA2+VNG1pqHTC5Extz8g==
-X-Received: by 2002:a62:444d:: with SMTP id r74-v6mr10145517pfa.96.1535292264105;
-        Sun, 26 Aug 2018 07:04:24 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id t19-v6sm18340102pfk.182.2018.08.26.07.04.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 26 Aug 2018 07:04:23 -0700 (PDT)
-Subject: Re: [PATCH 3.18 00/56] 3.18.120-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-References: <20180826064232.320669119@linuxfoundation.org>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <fa2f1a7e-77e9-b2d3-4d4a-47d7cd377455@roeck-us.net>
-Date:   Sun, 26 Aug 2018 07:04:21 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sun, 26 Aug 2018 13:49:29 -0400
+Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=nanos.glx-home)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1ftvgh-0005hr-5t; Sun, 26 Aug 2018 16:06:43 +0200
+Date:   Sun, 26 Aug 2018 16:06:32 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+cc:     LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Samuel Neves <sneves@dei.uc.pt>, linux-arch@vger.kernel.org,
+        Rik van Riel <riel@surriel.com>
+Subject: Re: [PATCH v2 01/17] asm: simd context helper API
+In-Reply-To: <CAHmME9qrc_f6uqGOrRVpnO_sTXHg2cg-WwWg4ik3yqu=HCOZSg@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1808261602250.1195@nanos.tec.linutronix.de>
+References: <20180824213849.23647-1-Jason@zx2c4.com> <20180824213849.23647-2-Jason@zx2c4.com> <alpine.DEB.2.21.1808261234240.1195@nanos.tec.linutronix.de> <CAHmME9qrc_f6uqGOrRVpnO_sTXHg2cg-WwWg4ik3yqu=HCOZSg@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20180826064232.320669119@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/25/2018 11:44 PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 3.18.120 release.
-> There are 56 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Jason,
+
+On Sun, 26 Aug 2018, Jason A. Donenfeld wrote:
+> On Sun, Aug 26, 2018 at 6:10 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+> > I'm not too fond of this simply because it requires that relax() step in
+> > all code pathes. I'd rather make that completely transparent by just
+> > marking the task as FPU using and let the context switch code deal with it
+> > in case that it gets preempted. I'll let one of my engineers look into
+> > that next week.
 > 
-> Responses should be made by Tue Aug 28 06:42:19 UTC 2018.
-> Anything received after that time might be too late.
-> 
+> Do you mean to say you intend to make kernel_fpu_end() and
+> kernel_neon_end() only actually do something upon context switch, but
+> not when it's actually called? So that multiple calls to
+> kernel_fpu_begin() and kernel_neon_begin() can be made without
+> penalty?
 
-Build results:
-	total: 137 pass: 137 fail: 0
-Qemu test results:
-	total: 207 pass: 207 fail: 0
+On context switch and exit to user. That allows to keep those code pathes
+fully preemptible. Still twisting my brain around the details.
 
-Details are available at http://kerneltests.org/builders/.
+> If so, that'd be great, and I'd certainly prefer this to the
+> simd_context_t passing. I consider the simd_get/put/relax API a
+> stopgap measure until something like that is implemented.
 
-Guenter
+I really want to avoid this stopgap^Wducttape thing.
+
+Thanks,
+
+	tglx
