@@ -6,69 +6,55 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1697C433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 00:33:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6962C433F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 00:36:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9055B20A8B
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 00:33:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9055B20A8B
+	by mail.kernel.org (Postfix) with ESMTP id 257B820A8B
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 00:36:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 257B820A8B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726493AbeHZENm (ORCPT
+        id S1726768AbeHZERU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 00:13:42 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:60616 "EHLO
+        Sun, 26 Aug 2018 00:17:20 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:60666 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725751AbeHZENm (ORCPT
+        with ESMTP id S1725776AbeHZERU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 00:13:42 -0400
+        Sun, 26 Aug 2018 00:17:20 -0400
 Received: from localhost (50-243-110-91-static.hfc.comcastbusiness.net [50.243.110.91])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 8F29D14600CE7;
-        Sat, 25 Aug 2018 17:33:04 -0700 (PDT)
-Date:   Sat, 25 Aug 2018 17:33:03 -0700 (PDT)
-Message-Id: <20180825.173303.2089439798101856039.davem@davemloft.net>
-To:     geert@linux-m68k.org
-Cc:     peppe.cavallaro@st.com, alexandre.torgue@st.com,
-        joabreu@synopsys.com, arnd@arnd.de, netdev@vger.kernel.org,
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 1C268145F7071;
+        Sat, 25 Aug 2018 17:36:42 -0700 (PDT)
+Date:   Sat, 25 Aug 2018 17:36:41 -0700 (PDT)
+Message-Id: <20180825.173641.1890220553842463695.davem@davemloft.net>
+To:     Haiqing.Bai@windriver.com
+Cc:     netdev@vger.kernel.org, jon.maloy@ericsson.com,
+        ying.xue@windriver.com, zhenbo.gao@windriver.com,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] Revert "net: stmmac: fix build failure due to
- missing COMMON_CLK dependency"
+Subject: Re: [PATCH net] tipc: fix the big/little endian issue in tipc_dest
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20180822132723.30047-1-geert@linux-m68k.org>
-References: <20180822132723.30047-1-geert@linux-m68k.org>
+In-Reply-To: <1535014158-18578-1-git-send-email-Haiqing.Bai@windriver.com>
+References: <1535014158-18578-1-git-send-email-Haiqing.Bai@windriver.com>
 X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 25 Aug 2018 17:33:04 -0700 (PDT)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 25 Aug 2018 17:36:42 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 22 Aug 2018 15:27:23 +0200
+From: Haiqing Bai <Haiqing.Bai@windriver.com>
+Date: Thu, 23 Aug 2018 16:49:18 +0800
 
-> This reverts commit bde4975310eb1982bd0bbff673989052d92fd481.
-> 
-> All legacy clock implementations now implement clk_set_rate() (Some
-> implementations may be dummies, though).
-> 
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Acked-by: Arnd Bergmann <arnd@arnd.de>
-> Acked-by: Jose Abreu <joabreu@synopsys.com>
-> ---
-> Marked "RFC", as this depends on "m68k: coldfire: Normalize clk API" and
-> "MIPS: AR7: Normalize clk API".
-> 
-> v2:
->   - Add Acked-by,
->   - Dropped RFC state, as all dependencies are now upstream:
->       - commit eec85fa9d98a889e ("m68k: coldfire: Normalize clk API"),
->       - commit 6b5939d2e528525a ("MIPS: AR7: Normalize clk API").
+> Fixes: d06b2fa34f18 ("tipc: improve destination linked list")
 
-Applied, thank you.
+Please fix this:
+
+[davem@localhost net]$ git describe d06b2fa34f18
+fatal: Not a valid object name d06b2fa34f18
