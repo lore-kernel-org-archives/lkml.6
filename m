@@ -6,142 +6,157 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41A92C433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 22:04:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C52DFC433F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 22:08:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC5E421722
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 22:04:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6409F208CA
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 22:08:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="O3C3h+1V"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC5E421722
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ekWeUVF2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6409F208CA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726947AbeH0Brz (ORCPT
+        id S1727029AbeH0Bsq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 21:47:55 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:38155 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726802AbeH0Brz (ORCPT
+        Sun, 26 Aug 2018 21:48:46 -0400
+Received: from mail-yb0-f196.google.com ([209.85.213.196]:46994 "EHLO
+        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726802AbeH0Bsq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 21:47:55 -0400
-Received: by mail-yw1-f66.google.com with SMTP id n21-v6so4824849ywh.5
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Aug 2018 15:04:03 -0700 (PDT)
+        Sun, 26 Aug 2018 21:48:46 -0400
+Received: by mail-yb0-f196.google.com with SMTP id y20-v6so5357917ybi.13
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Aug 2018 15:04:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=Vw/vpMtNloNfEZxPwTTY9XIGpMEqoQcmV42JHdQlmdY=;
-        b=O3C3h+1VmW4rfHW8p5+eiDiCaYBhkRFAmquqQVvJZW5u7q0s2n56y5kGu93nkglFZd
-         AFmK35IKgfSdwCWQ4ZPA/8VwUC6ccD7M3RtORls6Gr4gNSwXb+w/X6cIDn5NfWqylpjc
-         C3HlCljCkYvRKKPDFP31q8HABP9LpqJdy+5/Q=
+        bh=ej936iLY9EHK3H6pbFMhj4gM/urRqmvEbiwm85NUVXM=;
+        b=ekWeUVF2yRlItN8KMsFwLBypLLl3+oE1cegcwK3OZlzjQGaE24PP2HlbMmXau5wV8s
+         6N1MA1NQNLxXzzQTehId3PvDhBKTf+1NG63IWkDMPZxFJ8TxDqS4zbpOBv7bYAeBpJSH
+         TN73Q3HO04N8+B/SwJotb7vni8GeizuOYhkPA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=Vw/vpMtNloNfEZxPwTTY9XIGpMEqoQcmV42JHdQlmdY=;
-        b=noUwg04wFM7pXS13DeWec7sUQgrku2pVeaE3diGgjTPswbJGCvwyT6nFxwW66j//YZ
-         IYGFgAZGVZi1ZUMCznFnfaKDPv0aLYPVmpem2p5gGm0xmt5dJ/kwFP9mzk89JPwi0ouA
-         rYJrosNdzqiXwCpbfIKzEWA4QIoHBlLPZ8gwas49V+C/wjTciGtzjlJ82hfaHBMLqQ5h
-         x8XY4cPuruKbU0wdIQnPl3/hEJmVR3r9A4Gdgqv37DZSEG2OQ3fDS7ryyOxW9Zi9Jc4K
-         5zRerhsAIpvkWqx0nNMX1eB5VTQSJh+4mQn4nY2VSAiKv4kZl9B4YHF+C2fsYnraU+tf
-         Ny8Q==
-X-Gm-Message-State: APzg51D4vQm9NKDqjioIR2fxch0EKcnjccpupPc59uuzFZ2rBhxO1ILA
-        CVl0iuEULJFnACIEBe+/QGmW/HTfJes=
-X-Google-Smtp-Source: ANB0Vdalt56F1ot9u2tL3zQtiz3FGM0QMmiTbVuQ9V2GKawQ3uqU+IOBbCGEJ0sVGfpFe8BD1C01fw==
-X-Received: by 2002:a0d:db89:: with SMTP id d131-v6mr5768165ywe.318.1535321042913;
-        Sun, 26 Aug 2018 15:04:02 -0700 (PDT)
-Received: from mail-yb0-f178.google.com (mail-yb0-f178.google.com. [209.85.213.178])
-        by smtp.gmail.com with ESMTPSA id s63-v6sm5800894ywd.63.2018.08.26.15.04.01
+        bh=ej936iLY9EHK3H6pbFMhj4gM/urRqmvEbiwm85NUVXM=;
+        b=Rc8aaEfwn2apATdBFQLjUy3EmNC1qls6K6PioLV/X5nhYdEeallSQp9pQqvK/lP/nM
+         wyugPnasiYFDpy7pMxUPAZ6WZjdgBGN1nkRSseJiMc3A2NEcG1K0fYHJ0WTt0vmS2G8M
+         TF+xMXl43CJVgdRzS+0le22yWIXbki3ZCrypb1Dg2Trkuc/eJQvYr93zg56zs16ebJFD
+         rZnQDaI6kahpsZEcrWcdmmE+l4FiLinkq0f1CCnF5QRRva+5VL7K2PSAgo6gLuGtsGN3
+         LWW+bVR/I5vgQgUkk1PJ/W9OOFjk2e5QO4wa1BUHbNWodT+arrBDJotdd8ASfHnOcLCJ
+         +T7Q==
+X-Gm-Message-State: APzg51BsDpzyIXk6QZElZDUd5d2Bg5oqawbNSVG78N+NUjDdQlsD8GyF
+        X7nUsPKlQc+V63sx9hd4knlue+TdzXo=
+X-Google-Smtp-Source: ANB0VdYj8UVnqhJkFTWsu0T/phEy2qaGvfCk1x0sSFU9qOa1zxKL7qbHdS8i2OvJlP/PrJ25WPzCaQ==
+X-Received: by 2002:a5b:811:: with SMTP id x17-v6mr5631826ybp.382.1535321094481;
+        Sun, 26 Aug 2018 15:04:54 -0700 (PDT)
+Received: from mail-yw1-f46.google.com (mail-yw1-f46.google.com. [209.85.161.46])
+        by smtp.gmail.com with ESMTPSA id e124-v6sm5792599ywh.66.2018.08.26.15.04.53
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 26 Aug 2018 15:04:01 -0700 (PDT)
-Received: by mail-yb0-f178.google.com with SMTP id o17-v6so5383364yba.2
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Aug 2018 15:04:01 -0700 (PDT)
-X-Received: by 2002:a25:19c3:: with SMTP id 186-v6mr5773553ybz.410.1535321040528;
- Sun, 26 Aug 2018 15:04:00 -0700 (PDT)
+        Sun, 26 Aug 2018 15:04:53 -0700 (PDT)
+Received: by mail-yw1-f46.google.com with SMTP id j131-v6so4909878ywc.13
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Aug 2018 15:04:53 -0700 (PDT)
+X-Received: by 2002:a81:4e01:: with SMTP id c1-v6mr5912918ywb.237.1535321092910;
+ Sun, 26 Aug 2018 15:04:52 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a25:2c11:0:0:0:0:0 with HTTP; Sun, 26 Aug 2018 15:03:59
+Received: by 2002:a25:2c11:0:0:0:0:0 with HTTP; Sun, 26 Aug 2018 15:04:52
  -0700 (PDT)
-In-Reply-To: <alpine.DEB.2.21.1808262212030.1195@nanos.tec.linutronix.de>
-References: <20180822153012.173508681@infradead.org> <20180823133958.GA1496@brain-police>
- <20180824084717.GK24124@hirez.programming.kicks-ass.net> <D74A89DF-0D89-4AB6-8A6B-93BEC9A83595@gmail.com>
- <20180824180438.GS24124@hirez.programming.kicks-ass.net> <56A9902F-44BE-4520-A17C-26650FCC3A11@gmail.com>
- <CA+55aFzerzTPm94jugheVmWg8dJre94yu+GyZGT9NNZanNx_qw@mail.gmail.com>
- <9A38D3F4-2F75-401D-8B4D-83A844C9061B@gmail.com> <CA+55aFz1KYT7fRRG98wei24spiVg7u1Ec66piWY5359ykFmezw@mail.gmail.com>
- <8E0D8C66-6F21-4890-8984-B6B3082D4CC5@gmail.com> <CALCETrWdeKBcEs7zAbpEM1YdYiT2UBXwPtF0mMTvcDX_KRpz1A@mail.gmail.com>
- <20180826112341.f77a528763e297cbc36058fa@kernel.org> <CALCETrXPaX-+R6Z9LqZp0uOVmq-TUX_ksPbUL7mnfbdqo6z2AA@mail.gmail.com>
- <CAGXu5j+xUbq_mu=2jvH2Vu+mviteZJqdPNTrxpaijwsuDdN-sw@mail.gmail.com>
- <952A64F0-90B3-4E2F-B410-7E20BE90D617@amacapital.net> <CAGXu5jKk+ELGsSXC8e3v67oo74BF9rP2HDqMHx1Sb17-0F-xZQ@mail.gmail.com>
- <DF353FDA-4A57-4F5E-A403-531DDA0DBC25@amacapital.net> <alpine.DEB.2.21.1808262212030.1195@nanos.tec.linutronix.de>
+In-Reply-To: <20180826184712.GA9330@embeddedor.com>
+References: <20180826184712.GA9330@embeddedor.com>
 From:   Kees Cook <keescook@chromium.org>
-Date:   Sun, 26 Aug 2018 15:03:59 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jJQGiGwQRBGuVrmhQqyUEfRUUSD6WYokc2xezExY9ZNUg@mail.gmail.com>
-Message-ID: <CAGXu5jJQGiGwQRBGuVrmhQqyUEfRUUSD6WYokc2xezExY9ZNUg@mail.gmail.com>
-Subject: Re: TLB flushes on fixmap changes
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Benjamin Herrenschmidt <benh@au1.ibm.com>,
-        Nick Piggin <npiggin@gmail.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Rik van Riel <riel@surriel.com>,
-        Jann Horn <jannh@google.com>,
-        Adin Scannell <ascannell@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        David Miller <davem@davemloft.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
+Date:   Sun, 26 Aug 2018 15:04:52 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jKkLMWz6aBzPHde9X5+_=k-X3ryjq6mm=z5X1QtRg-MxQ@mail.gmail.com>
+Message-ID: <CAGXu5jKkLMWz6aBzPHde9X5+_=k-X3ryjq6mm=z5X1QtRg-MxQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/rockchip: Use struct_size() in devm_kzalloc()
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Sandy Huang <hjc@rock-chips.com>,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        David Airlie <airlied@linux.ie>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-rockchip@lists.infradead.org,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Aug 26, 2018 at 1:15 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> On Sun, 26 Aug 2018, Andy Lutomirski wrote:
->> > On Aug 26, 2018, at 9:47 AM, Kees Cook <keescook@chromium.org> wrote:
->> >> On Sun, Aug 26, 2018 at 7:20 AM, Andy Lutomirski <luto@amacapital.net> wrote:
->> >>> I tried to convince Ingo to use this method for doing "write rarely"
->> >>> and he soundly rejected it. :) I've always liked this because AFAICT,
->> >>> it's local to the CPU. I had proposed it in
->> >>> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/commit/?h=kspp/write-rarely&id=9ab0cb2618ebbc51f830ceaa06b7d2182fe1a52d
->> >>
->> >> Ingo, can you clarify why you hate it?  I personally would rather use CR3, but CR0 seems like a fine first step, at least for text_poke.
->> >
->> > Sorry, it looks like it was tglx, not Ingo:
->> >
->> > https://lkml.kernel.org/r/alpine.DEB.2.20.1704071048360.1716@nanos
->> >
->> > This thread is long, and one thing that I think went unanswered was
->> > "why do we want this to be fast?" the answer is: for doing page table
->> > updates. Page tables are becoming a bigger target for attacks now, and
->> > it's be nice if they could stay read-only unless they're getting
->> > updated (with something like this).
->> >
->> >
->> It kind of sounds like tglx would prefer the CR3 approach. And indeed my
->> patch has a serious problem wrt the NMI code.
+On Sun, Aug 26, 2018 at 11:47 AM, Gustavo A. R. Silva
+<gustavo@embeddedor.com> wrote:
+> One of the more common cases of allocation size calculations is finding
+> the size of a structure that has a zero-sized array at the end, along
+> with memory for some number of elements for that array. For example:
 >
-> That's exactly the problem I have with CR0. It leaves everything and some
-> more writeable for any code which can interrupt that section.
+> struct foo {
+>         int stuff;
+>         void *entry[];
+> };
+>
+> instance = devm_kzalloc(dev, sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
+>
+> or, like in this particular case:
+>
+> size = sizeof(struct foo) + sizeof(void *) * count;
+> instance = devm_kzalloc(dev, size, GFP_KERNEL);
+>
+> Instead of leaving these open-coded and prone to type mistakes, we can
+> now use the new struct_size() helper:
+>
+> instance = devm_kzalloc(dev, struct_size(instance, entry, count),
+> GFP_KERNEL);
+>
+> This issue was detected with the help of Coccinelle.
+>
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-I thought the point was that the implementation I suggested was
-NMI-proof? (And in reading Documentation/preempt-locking.txt it sounds
-like disabling interrupts is redundant to preempt_disable()? But I
-don't understand how; it looks like the preempt stuff is advisory?)
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
 -Kees
+
+> ---
+>  drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> index 1359e5c..cf64e4d 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> @@ -32,6 +32,7 @@
+>  #include <linux/of_device.h>
+>  #include <linux/pm_runtime.h>
+>  #include <linux/component.h>
+> +#include <linux/overflow.h>
+>
+>  #include <linux/reset.h>
+>  #include <linux/delay.h>
+> @@ -1561,7 +1562,6 @@ static int vop_bind(struct device *dev, struct device *master, void *data)
+>         struct drm_device *drm_dev = data;
+>         struct vop *vop;
+>         struct resource *res;
+> -       size_t alloc_size;
+>         int ret, irq;
+>
+>         vop_data = of_device_get_match_data(dev);
+> @@ -1569,8 +1569,8 @@ static int vop_bind(struct device *dev, struct device *master, void *data)
+>                 return -ENODEV;
+>
+>         /* Allocate vop struct and its vop_win array */
+> -       alloc_size = sizeof(*vop) + sizeof(*vop->win) * vop_data->win_size;
+> -       vop = devm_kzalloc(dev, alloc_size, GFP_KERNEL);
+> +       vop = devm_kzalloc(dev, struct_size(vop, win, vop_data->win_size),
+> +                          GFP_KERNEL);
+>         if (!vop)
+>                 return -ENOMEM;
+>
+> --
+> 2.7.4
+>
+
+
 
 -- 
 Kees Cook
