@@ -2,149 +2,144 @@ Return-Path: <SRS0=U0Lc=LJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ED46C433F5
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 22:46:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1A3AC433F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 22:48:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAF5921735
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 22:46:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 828402174A
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 22:48:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WTO9k1it"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAF5921735
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sa1WeKIe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 828402174A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727223AbeH0C37 (ORCPT
+        id S1727056AbeH0Ccj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 22:29:59 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:45515 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726802AbeH0C36 (ORCPT
+        Sun, 26 Aug 2018 22:32:39 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:33749 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726886AbeH0Ccj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 22:29:58 -0400
-Received: by mail-ed1-f66.google.com with SMTP id p52-v6so9156942eda.12
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Aug 2018 15:46:00 -0700 (PDT)
+        Sun, 26 Aug 2018 22:32:39 -0400
+Received: by mail-oi0-f66.google.com with SMTP id 8-v6so24213350oip.0
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Aug 2018 15:48:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Ny3xpdYE4GZoyfGDid0DJcIY/falZyAeou8iEb9Rgr0=;
-        b=WTO9k1itg12Rti7ouETqvwnMcEXg6hJ9g+6RLnigd4X07rRiKdxTwOIHJs17JElzxr
-         TbNxGY2kg+4pWC0aIp9wxlSi2YhxAkPuDnEdqYf174x563TD2K8HmV4CGyCbX5iFTNNt
-         jfcnvfK4RqU8lG++pRokie3WyftWtIzxYZREZkkb5ILJTQvCME9jtkdBmlQBGLRW1F7h
-         ylvDcqHcj1kkFBQIfFtSAYlc8MKPV8BOvSIsz/xPQ/U5kuuVfWp5jwMB7IGrBOWbcjM/
-         xaSRPeVjUBpiM0DUb9zYbJzWQgpj5amCsIwCB2bMDYx8FhJBjZUdszsz/6zVhIv+KBsi
-         +9ow==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9kja6EKcXqqjnmzW2H8iq+TMhfbXGWXL1OC3ffYvWeA=;
+        b=sa1WeKIe2aO8sU7QNyKFlhTa2Ql9YfNe46gksYsH9hoLqrBHq7zAtSOJmunLJb0G0p
+         e4dZI11eT4QBKKSNtr/ZSM+dnkm9Tdgjyjz8GhhJesc1ygsdN8wER94x+4pakbOSQa3j
+         RfHUpX/NbL8+uPQZafdYxXLG4W8AyX11wlOzbOTBE4jtXJ27Uge7nOY/pevusIaUag0P
+         xJFBp7DnYOAxfmF05uyx0gc2YubwF36dGM2JD954MjTpJhMUJKSF812uS9wgfR9M6Mwc
+         jtBEWlxXc+KSJA6zKN4W6zhrEi0kjyjHmCbOpauh7k8fQIQ+c0BRPuQHoUmzGIl+1i0A
+         LeaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Ny3xpdYE4GZoyfGDid0DJcIY/falZyAeou8iEb9Rgr0=;
-        b=pjxy5yeRL2COdTQ422ltACZUadKwrxJDRFQQiqROiI4VpQudBg76NtQlQTfSU+K0ns
-         Ly2Ix/UBi42pKnMmlDRKCL7Zk4F1BoGqKugjAFIDN8CzBmPLsb6/o7yrk+Ekaa2uIYVP
-         DdPRmjilhefNLQiNfxxvd9w5yUxT9PTnK6nm+BJFOtDsZcQlTIVbte9wk/IqZZ8MX+/q
-         F0CFRjbZ3ZFXDcEYdIuwsFcU1XgE5QCxpmpmLsVHJGY9lRHUBr2+i3bttwlchCfrJ8ny
-         LfxRLsMLI4pqyzPXvbkipG5C49btwE0LDua3AJeu5sxilpBTuzZE87/aE5x/EeFy7U7K
-         Rt2w==
-X-Gm-Message-State: APzg51Bhf5sT6YNE6gT/u4BDOzvy2GZ3yz+gnXK15E8j6jzKlcFitZDI
-        baC9cIQWpdv7nT7GGX+wNCArLdqi
-X-Google-Smtp-Source: ANB0VdaTo29WN4kRsdUcSA7MPHBLjjel6xzvkd8Iu3NRpmwVMfhW7j1pa2m4EsJe9+MXDsSTvNHXTQ==
-X-Received: by 2002:a50:89d3:: with SMTP id h19-v6mr14069770edh.140.1535323559250;
-        Sun, 26 Aug 2018 15:45:59 -0700 (PDT)
-Received: from localhost.localdomain ([109.78.216.151])
-        by smtp.gmail.com with ESMTPSA id a33-v6sm5519165eda.2.2018.08.26.15.45.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 26 Aug 2018 15:45:58 -0700 (PDT)
-From:   John Whitmore <johnfwhitmore@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
-        John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 3/6] staging:rtl8192u: Refactor phy_RF8256_Config_ParaFile() - Style
-Date:   Sun, 26 Aug 2018 23:45:30 +0100
-Message-Id: <20180826224533.16020-4-johnfwhitmore@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180826224533.16020-1-johnfwhitmore@gmail.com>
-References: <20180826224533.16020-1-johnfwhitmore@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9kja6EKcXqqjnmzW2H8iq+TMhfbXGWXL1OC3ffYvWeA=;
+        b=SGbkXuelMWNd1X42mu0x50e7qET+L6LpLqWMh5LIMDtuR6PZLZxBJQU80+fNNcGalC
+         IlCgbqaMegyVmzkXWZ0Ha4QbWLd/2rnxkp70S+KQD0HIx5ON9Aw2QGYJct1/3qttz80Q
+         aDfVtp8MOacMUCjUgXofMdrYsNntRojCH08EOgeavVQJIv4RCHNjx6l13FPyCuexwuYU
+         q6u6AHEP22c4Jp/2O85rhLzf9VZ+YGKxi0+AQqHsOSRDTiB8V1zoPUunJpSvw8jcZhr3
+         7Wac21d4+VLuuj97232VeqdoCtktn67kZTLMTqrPtyvr9ISfBTpW+fGgBZWf9V+Bz2fQ
+         n50g==
+X-Gm-Message-State: APzg51BKDOg33syBk3LFr/6cUc1lZ3u+futnOdpCjNwd8Rmb80uCkgcJ
+        7LSsTsuy12GrPZH4UoxFCHp98uOJt01TubCzoV5r2A==
+X-Google-Smtp-Source: ANB0VdaQYT60G7xfC+9v4Bxje6yBjtkNU+h2hLPLJa+mtQF1OYo4UDeF0eezxruP0dT9ajict9Bp0yqWv0cjq4GmI9A=
+X-Received: by 2002:aca:4204:: with SMTP id p4-v6mr9503346oia.242.1535323720160;
+ Sun, 26 Aug 2018 15:48:40 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180822153012.173508681@infradead.org> <20180822154046.823850812@infradead.org>
+ <20180822155527.GF24124@hirez.programming.kicks-ass.net> <20180823134525.5f12b0d3@roar.ozlabs.ibm.com>
+ <CA+55aFxneZTFxxxAjLZmj92VUJg6z7hERxJ2cHoth-GC0RuELw@mail.gmail.com>
+ <776104d4c8e4fc680004d69e3a4c2594b638b6d1.camel@au1.ibm.com>
+ <CA+55aFzM77G9-Q6LboPLJ=5gHma66ZQKiMGCMqXoKABirdF98w@mail.gmail.com>
+ <20180823133958.GA1496@brain-police> <20180824084717.GK24124@hirez.programming.kicks-ass.net>
+ <D74A89DF-0D89-4AB6-8A6B-93BEC9A83595@gmail.com> <20180824180438.GS24124@hirez.programming.kicks-ass.net>
+ <56A9902F-44BE-4520-A17C-26650FCC3A11@gmail.com> <CA+55aFzerzTPm94jugheVmWg8dJre94yu+GyZGT9NNZanNx_qw@mail.gmail.com>
+ <9A38D3F4-2F75-401D-8B4D-83A844C9061B@gmail.com> <CA+55aFz1KYT7fRRG98wei24spiVg7u1Ec66piWY5359ykFmezw@mail.gmail.com>
+ <8E0D8C66-6F21-4890-8984-B6B3082D4CC5@gmail.com> <CALCETrWdeKBcEs7zAbpEM1YdYiT2UBXwPtF0mMTvcDX_KRpz1A@mail.gmail.com>
+ <20180826112341.f77a528763e297cbc36058fa@kernel.org> <CALCETrXPaX-+R6Z9LqZp0uOVmq-TUX_ksPbUL7mnfbdqo6z2AA@mail.gmail.com>
+In-Reply-To: <CALCETrXPaX-+R6Z9LqZp0uOVmq-TUX_ksPbUL7mnfbdqo6z2AA@mail.gmail.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Mon, 27 Aug 2018 00:48:13 +0200
+Message-ID: <CAG48ez1cYsa+5Grbzp0oGTFyjqE4pR-Qe9gb=0TKc9Q5HuOpmA@mail.gmail.com>
+Subject: Re: TLB flushes on fixmap changes
+To:     Andy Lutomirski <luto@kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Cc:     mhiramat@kernel.org, Nadav Amit <nadav.amit@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Paolo Bonzini <pbonzini@redhat.com>, jkosina@suse.cz,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>, benh@au1.ibm.com,
+        npiggin@gmail.com, "the arch/x86 maintainers" <x86@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Rik van Riel <riel@surriel.com>,
+        Adin Scannell <ascannell@google.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename the function phy_RF8256_Config_ParaFile() to
-phy_rf8256_config_para_file(). This change clears the checkpatch issue
-with CamelCase naming.
+On Sun, Aug 26, 2018 at 6:21 AM Andy Lutomirski <luto@kernel.org> wrote:
+>
+> On Sat, Aug 25, 2018 at 7:23 PM, Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> > On Fri, 24 Aug 2018 21:23:26 -0700
+> > Andy Lutomirski <luto@kernel.org> wrote:
+> >> Couldn't text_poke() use kmap_atomic()?  Or, even better, just change CR3?
+> >
+> > No, since kmap_atomic() is only for x86_32 and highmem support kernel.
+> > In x86-64, it seems that returns just a page address. That is not
+> > good for text_poke, since it needs to make a writable alias for RO
+> > code page. Hmm, maybe, can we mimic copy_oldmem_page(), it uses ioremap_cache?
+> >
+>
+> I just re-read text_poke().  It's, um, horrible.  Not only is the
+> implementation overcomplicated and probably buggy, but it's SLOOOOOW.
+> It's totally the wrong API -- poking one instruction at a time
+> basically can't be efficient on x86.  The API should either poke lots
+> of instructions at once or should be text_poke_begin(); ...;
+> text_poke_end();.
+>
+> Anyway, the attached patch seems to boot.  Linus, Kees, etc: is this
+> too scary of an approach?  With the patch applied, text_poke() is a
+> fantastic exploit target.  On the other hand, even without the patch
+> applied, text_poke() is every bit as juicy.
 
-Additionally as the function is only ever used in one file,
-(r8190_rtl8256.c), the function prototype has been removed from the
-header file, (r8190_rtl8256.h).
+Twiddling CR0.WP is incompatible with Xen PV, right? It can't let you
+do it because you're not actually running in ring 0 (but in ring 1 or
+3), so CR0.WP has no influence on what you can access; and it must not
+let you bypass write protection because you have read-only access to
+host page tables. I think this code has to be compatible with Xen PV,
+right?
 
-These changes are purely coding style in nature and should have no
-impact on runtime code execution.
+In theory Xen PV could support this by emulating X86 instructions, but
+I don't see anything related to CR0.WP in their emulation code. From
+xen/arch/x86/pv/emul-priv-op.c:
 
-Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
----
- drivers/staging/rtl8192u/r8190_rtl8256.c | 11 ++++++++---
- drivers/staging/rtl8192u/r8190_rtl8256.h |  1 -
- 2 files changed, 8 insertions(+), 4 deletions(-)
+    case 0: /* Write CR0 */
+        if ( (val ^ read_cr0()) & ~X86_CR0_TS )
+        {
+            gdprintk(XENLOG_WARNING,
+                     "Attempt to change unmodifiable CR0 flags\n");
+            break;
+        }
+        do_fpu_taskswitch(!!(val & X86_CR0_TS));
+        return X86EMUL_OKAY;
 
-diff --git a/drivers/staging/rtl8192u/r8190_rtl8256.c b/drivers/staging/rtl8192u/r8190_rtl8256.c
-index 8cc7b0d46a02..7dbed5e4ea8b 100644
---- a/drivers/staging/rtl8192u/r8190_rtl8256.c
-+++ b/drivers/staging/rtl8192u/r8190_rtl8256.c
-@@ -14,6 +14,11 @@
- #include "r819xU_phy.h"
- #include "r8190_rtl8256.h"
- 
-+/*
-+ * Forward declaration of local functions
-+ */
-+static void phy_rf8256_config_para_file(struct net_device *dev);
-+
- /*--------------------------------------------------------------------------
-  * Overview:	set RF band width (20M or 40M)
-  * Input:       struct net_device*	dev
-@@ -94,7 +99,7 @@ void phy_rf8256_config(struct net_device *dev)
- 	 */
- 	priv->NumTotalRFPath = RTL819X_TOTAL_RF_PATH;
- 	/* Config BB and RF */
--	phy_RF8256_Config_ParaFile(dev);
-+	phy_rf8256_config_para_file(dev);
- }
- /*--------------------------------------------------------------------------
-  * Overview:    Interface to config 8256
-@@ -103,7 +108,7 @@ void phy_rf8256_config(struct net_device *dev)
-  * Return:      NONE
-  *--------------------------------------------------------------------------
-  */
--void phy_RF8256_Config_ParaFile(struct net_device *dev)
-+static void phy_rf8256_config_para_file(struct net_device *dev)
- {
- 	u32	u4RegValue = 0;
- 	u8	eRFPath;
-@@ -207,7 +212,7 @@ void phy_RF8256_Config_ParaFile(struct net_device *dev)
- 		}
- 
- 		if (ret) {
--			RT_TRACE(COMP_ERR, "phy_RF8256_Config_ParaFile():Radio[%d] Fail!!", eRFPath);
-+			RT_TRACE(COMP_ERR, "phy_rf8256_config_para_file():Radio[%d] Fail!!", eRFPath);
- 			goto phy_RF8256_Config_ParaFile_Fail;
- 		}
- 
-diff --git a/drivers/staging/rtl8192u/r8190_rtl8256.h b/drivers/staging/rtl8192u/r8190_rtl8256.h
-index b58aab020e51..891d7510cea1 100644
---- a/drivers/staging/rtl8192u/r8190_rtl8256.h
-+++ b/drivers/staging/rtl8192u/r8190_rtl8256.h
-@@ -17,7 +17,6 @@
- void phy_set_rf8256_bandwidth(struct net_device *dev,
- 			      enum ht_channel_width bandwidth);
- void phy_rf8256_config(struct net_device *dev);
--void phy_RF8256_Config_ParaFile(struct net_device *dev);
- void PHY_SetRF8256CCKTxPower(struct net_device *dev, u8	powerlevel);
- void PHY_SetRF8256OFDMTxPower(struct net_device *dev, u8 powerlevel);
- 
--- 
-2.18.0
-
+Having a special fallback path for "patch kernel code while running
+under Xen PV" would be kinda ugly.
