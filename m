@@ -6,37 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D034C433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:46:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10316C433F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:46:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 356D121731
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:46:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 356D121731
+	by mail.kernel.org (Postfix) with ESMTP id C5F5D2170B
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:46:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5F5D2170B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727315AbeHZK1f (ORCPT
+        id S1727354AbeHZK1j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 06:27:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53542 "EHLO
+        Sun, 26 Aug 2018 06:27:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53554 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727055AbeHZK1e (ORCPT
+        with ESMTP id S1727055AbeHZK1j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 06:27:34 -0400
+        Sun, 26 Aug 2018 06:27:39 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 765C39D2;
-        Sun, 26 Aug 2018 06:45:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 742039D3;
+        Sun, 26 Aug 2018 06:46:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gevorg Sahakyan <sahakyan@synopsys.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        William Wu <william.wu@rock-chips.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 18/56] usb: dwc2: fix isoc split in transfer with no data
-Date:   Sun, 26 Aug 2018 08:44:39 +0200
-Message-Id: <20180826064233.239738191@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+05f840f3b04f211bad55@syzkaller.appspotmail.com,
+        Wei Wang <weiwan@google.com>, Martin KaFai Lau <kafai@fb.com>,
+        Guillaume Nault <g.nault@alphalink.fr>,
+        David Ahern <dsahern@gmail.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 3.18 02/56] l2tp: use sk_dst_check() to avoid race on sk->sk_dst_cache
+Date:   Sun, 26 Aug 2018 08:44:23 +0200
+Message-Id: <20180826064232.421380252@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180826064232.320669119@linuxfoundation.org>
 References: <20180826064232.320669119@linuxfoundation.org>
@@ -53,59 +55,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: William Wu <william.wu@rock-chips.com>
+From: Wei Wang <weiwan@google.com>
 
-[ Upstream commit 70c3c8cb83856758025c2a211dd022bc0478922a ]
+[ Upstream commit 6d37fa49da1e8db8fb1995be22ac837ca41ac8a8 ]
 
-If isoc split in transfer with no data (the length of DATA0
-packet is zero), we can't simply return immediately. Because
-the DATA0 can be the first transaction or the second transaction
-for the isoc split in transaction. If the DATA0 packet with no
-data is in the first transaction, we can return immediately.
-But if the DATA0 packet with no data is in the second transaction
-of isoc split in transaction sequence, we need to increase the
-qtd->isoc_frame_index and giveback urb to device driver if needed,
-otherwise, the MDATA packet will be lost.
+In l2tp code, if it is a L2TP_UDP_ENCAP tunnel, tunnel->sk points to a
+UDP socket. User could call sendmsg() on both this tunnel and the UDP
+socket itself concurrently. As l2tp_xmit_skb() holds socket lock and call
+__sk_dst_check() to refresh sk->sk_dst_cache, while udpv6_sendmsg() is
+lockless and call sk_dst_check() to refresh sk->sk_dst_cache, there
+could be a race and cause the dst cache to be freed multiple times.
+So we fix l2tp side code to always call sk_dst_check() to garantee
+xchg() is called when refreshing sk->sk_dst_cache to avoid race
+conditions.
 
-A typical test case is that connect the dwc2 controller with an
-usb hs Hub (GL852G-12), and plug an usb fs audio device (Plantronics
-headset) into the downstream port of Hub. Then use the usb mic
-to record, we can find noise when playback.
+Syzkaller reported stack trace:
+BUG: KASAN: use-after-free in atomic_read include/asm-generic/atomic-instrumented.h:21 [inline]
+BUG: KASAN: use-after-free in atomic_fetch_add_unless include/linux/atomic.h:575 [inline]
+BUG: KASAN: use-after-free in atomic_add_unless include/linux/atomic.h:597 [inline]
+BUG: KASAN: use-after-free in dst_hold_safe include/net/dst.h:308 [inline]
+BUG: KASAN: use-after-free in ip6_hold_safe+0xe6/0x670 net/ipv6/route.c:1029
+Read of size 4 at addr ffff8801aea9a880 by task syz-executor129/4829
 
-In the case, the isoc split in transaction sequence like this:
+CPU: 0 PID: 4829 Comm: syz-executor129 Not tainted 4.18.0-rc7-next-20180802+ #30
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+ print_address_description+0x6c/0x20b mm/kasan/report.c:256
+ kasan_report_error mm/kasan/report.c:354 [inline]
+ kasan_report.cold.7+0x242/0x30d mm/kasan/report.c:412
+ check_memory_region_inline mm/kasan/kasan.c:260 [inline]
+ check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
+ kasan_check_read+0x11/0x20 mm/kasan/kasan.c:272
+ atomic_read include/asm-generic/atomic-instrumented.h:21 [inline]
+ atomic_fetch_add_unless include/linux/atomic.h:575 [inline]
+ atomic_add_unless include/linux/atomic.h:597 [inline]
+ dst_hold_safe include/net/dst.h:308 [inline]
+ ip6_hold_safe+0xe6/0x670 net/ipv6/route.c:1029
+ rt6_get_pcpu_route net/ipv6/route.c:1249 [inline]
+ ip6_pol_route+0x354/0xd20 net/ipv6/route.c:1922
+ ip6_pol_route_output+0x54/0x70 net/ipv6/route.c:2098
+ fib6_rule_lookup+0x283/0x890 net/ipv6/fib6_rules.c:122
+ ip6_route_output_flags+0x2c5/0x350 net/ipv6/route.c:2126
+ ip6_dst_lookup_tail+0x1278/0x1da0 net/ipv6/ip6_output.c:978
+ ip6_dst_lookup_flow+0xc8/0x270 net/ipv6/ip6_output.c:1079
+ ip6_sk_dst_lookup_flow+0x5ed/0xc50 net/ipv6/ip6_output.c:1117
+ udpv6_sendmsg+0x2163/0x36b0 net/ipv6/udp.c:1354
+ inet_sendmsg+0x1a1/0x690 net/ipv4/af_inet.c:798
+ sock_sendmsg_nosec net/socket.c:622 [inline]
+ sock_sendmsg+0xd5/0x120 net/socket.c:632
+ ___sys_sendmsg+0x51d/0x930 net/socket.c:2115
+ __sys_sendmmsg+0x240/0x6f0 net/socket.c:2210
+ __do_sys_sendmmsg net/socket.c:2239 [inline]
+ __se_sys_sendmmsg net/socket.c:2236 [inline]
+ __x64_sys_sendmmsg+0x9d/0x100 net/socket.c:2236
+ do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x446a29
+Code: e8 ac b8 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 eb 08 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f4de5532db8 EFLAGS: 00000246 ORIG_RAX: 0000000000000133
+RAX: ffffffffffffffda RBX: 00000000006dcc38 RCX: 0000000000446a29
+RDX: 00000000000000b8 RSI: 0000000020001b00 RDI: 0000000000000003
+RBP: 00000000006dcc30 R08: 00007f4de5533700 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dcc3c
+R13: 00007ffe2b830fdf R14: 00007f4de55339c0 R15: 0000000000000001
 
-- SSPLIT IN transaction
-- CSPLIT IN transaction
-  - MDATA packet (176 bytes)
-- CSPLIT IN transaction
-  - DATA0 packet (0 byte)
-
-This patch use both the length of DATA0 and qtd->isoc_split_offset
-to check if the DATA0 is in the second transaction.
-
-Tested-by: Gevorg Sahakyan <sahakyan@synopsys.com>
-Tested-by: Heiko Stuebner <heiko@sntech.de>
-Acked-by: Minas Harutyunyan hminas@synopsys.com>
-Signed-off-by: William Wu <william.wu@rock-chips.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Fixes: 71b1391a4128 ("l2tp: ensure sk->dst is still valid")
+Reported-by: syzbot+05f840f3b04f211bad55@syzkaller.appspotmail.com
+Signed-off-by: Wei Wang <weiwan@google.com>
+Signed-off-by: Martin KaFai Lau <kafai@fb.com>
+Cc: Guillaume Nault <g.nault@alphalink.fr>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/dwc2/hcd_intr.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ net/l2tp/l2tp_core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/dwc2/hcd_intr.c
-+++ b/drivers/usb/dwc2/hcd_intr.c
-@@ -913,9 +913,8 @@ static int dwc2_xfercomp_isoc_split_in(s
- 	frame_desc = &qtd->urb->iso_descs[qtd->isoc_frame_index];
- 	len = dwc2_get_actual_xfer_length(hsotg, chan, chnum, qtd,
- 					  DWC2_HC_XFER_COMPLETE, NULL);
--	if (!len) {
-+	if (!len && !qtd->isoc_split_offset) {
- 		qtd->complete_split = 0;
--		qtd->isoc_split_offset = 0;
- 		return 0;
- 	}
+--- a/net/l2tp/l2tp_core.c
++++ b/net/l2tp/l2tp_core.c
+@@ -1141,7 +1141,7 @@ int l2tp_xmit_skb(struct l2tp_session *s
  
+ 	/* Get routing info from the tunnel socket */
+ 	skb_dst_drop(skb);
+-	skb_dst_set(skb, dst_clone(__sk_dst_check(sk, 0)));
++	skb_dst_set(skb, sk_dst_check(sk, 0));
+ 
+ 	inet = inet_sk(sk);
+ 	fl = &inet->cork.fl;
 
 
