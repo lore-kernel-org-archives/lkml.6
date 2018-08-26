@@ -6,33 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1C90C433F5
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:45:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 273FEC433F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:45:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 785D7216FA
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:45:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 785D7216FA
+	by mail.kernel.org (Postfix) with ESMTP id DEEE9216FA
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:45:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEEE9216FA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727049AbeHZK1L (ORCPT
+        id S1727085AbeHZK1O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 06:27:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53476 "EHLO
+        Sun, 26 Aug 2018 06:27:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53486 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726224AbeHZK1L (ORCPT
+        with ESMTP id S1727055AbeHZK1O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 06:27:11 -0400
+        Sun, 26 Aug 2018 06:27:14 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 757D29D2;
-        Sun, 26 Aug 2018 06:45:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C7823949;
+        Sun, 26 Aug 2018 06:45:38 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 3.18 11/56] ALSA: vxpocket: Fix invalid endian conversions
-Date:   Sun, 26 Aug 2018 08:44:32 +0200
-Message-Id: <20180826064232.813448415@linuxfoundation.org>
+        stable@vger.kernel.org, John Ogness <john.ogness@linutronix.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 3.18 12/56] USB: serial: sierra: fix potential deadlock at close
+Date:   Sun, 26 Aug 2018 08:44:33 +0200
+Message-Id: <20180826064232.860505331@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180826064232.320669119@linuxfoundation.org>
 References: <20180826064232.320669119@linuxfoundation.org>
@@ -49,65 +51,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: John Ogness <john.ogness@linutronix.de>
 
-commit 3acd3e3bab95ec3622ff98da313290ee823a0f68 upstream.
+commit e60870012e5a35b1506d7b376fddfb30e9da0b27 upstream.
 
-The endian conversions used in vxp_dma_read() and vxp_dma_write() are
-superfluous and even wrong on big-endian machines, as inw() and outw()
-already do conversions.  Kill them.
+The portdata spinlock can be taken in interrupt context (via
+sierra_outdat_callback()).
+Disable interrupts when taking the portdata spinlock when discarding
+deferred URBs during close to prevent a possible deadlock.
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: 014333f77c0b ("USB: sierra: fix urb and memory leak on disconnect")
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: John Ogness <john.ogness@linutronix.de>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+[ johan: amend commit message and add fixes and stable tags ]
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pcmcia/vx/vxp_ops.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/usb/serial/sierra.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/sound/pcmcia/vx/vxp_ops.c
-+++ b/sound/pcmcia/vx/vxp_ops.c
-@@ -375,7 +375,7 @@ static void vxp_dma_write(struct vx_core
- 		length >>= 1; /* in 16bit words */
- 		/* Transfer using pseudo-dma. */
- 		for (; length > 0; length--) {
--			outw(cpu_to_le16(*addr), port);
-+			outw(*addr, port);
- 			addr++;
- 		}
- 		addr = (unsigned short *)runtime->dma_area;
-@@ -385,7 +385,7 @@ static void vxp_dma_write(struct vx_core
- 	count >>= 1; /* in 16bit words */
- 	/* Transfer using pseudo-dma. */
- 	for (; count > 0; count--) {
--		outw(cpu_to_le16(*addr), port);
-+		outw(*addr, port);
- 		addr++;
+--- a/drivers/usb/serial/sierra.c
++++ b/drivers/usb/serial/sierra.c
+@@ -790,9 +790,9 @@ static void sierra_close(struct usb_seri
+ 		kfree(urb->transfer_buffer);
+ 		usb_free_urb(urb);
+ 		usb_autopm_put_interface_async(serial->interface);
+-		spin_lock(&portdata->lock);
++		spin_lock_irq(&portdata->lock);
+ 		portdata->outstanding_urbs--;
+-		spin_unlock(&portdata->lock);
++		spin_unlock_irq(&portdata->lock);
  	}
- 	vx_release_pseudo_dma(chip);
-@@ -417,7 +417,7 @@ static void vxp_dma_read(struct vx_core
- 		length >>= 1; /* in 16bit words */
- 		/* Transfer using pseudo-dma. */
- 		for (; length > 0; length--)
--			*addr++ = le16_to_cpu(inw(port));
-+			*addr++ = inw(port);
- 		addr = (unsigned short *)runtime->dma_area;
- 		pipe->hw_ptr = 0;
- 	}
-@@ -425,12 +425,12 @@ static void vxp_dma_read(struct vx_core
- 	count >>= 1; /* in 16bit words */
- 	/* Transfer using pseudo-dma. */
- 	for (; count > 1; count--)
--		*addr++ = le16_to_cpu(inw(port));
-+		*addr++ = inw(port);
- 	/* Disable DMA */
- 	pchip->regDIALOG &= ~VXP_DLG_DMAREAD_SEL_MASK;
- 	vx_outb(chip, DIALOG, pchip->regDIALOG);
- 	/* Read the last word (16 bits) */
--	*addr = le16_to_cpu(inw(port));
-+	*addr = inw(port);
- 	/* Disable 16-bit accesses */
- 	pchip->regDIALOG &= ~VXP_DLG_DMA16_SEL_MASK;
- 	vx_outb(chip, DIALOG, pchip->regDIALOG);
+ 
+ 	sierra_stop_rx_urbs(port);
 
 
