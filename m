@@ -2,132 +2,157 @@ Return-Path: <SRS0=U0Lc=LJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDDA2C433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 14:33:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CEA1C433F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 15:01:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D59A208E9
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 14:33:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40315208EB
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 15:01:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QzqsJ0/f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D59A208E9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="GQHTrBHH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40315208EB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726968AbeHZSQM (ORCPT
+        id S1726972AbeHZSoL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 14:16:12 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:37834 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726791AbeHZSQM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 14:16:12 -0400
-Received: by mail-it0-f66.google.com with SMTP id h20-v6so7465229itf.2
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Aug 2018 07:33:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1CCnZotdDQg27IKceQe7qutnNszXgPFvXAM41QX6OC8=;
-        b=QzqsJ0/f3x/mCe6YHDWebts9cTfq9rRSYpN2b0pLNtX2yx01NFyXnn45KjW6SUI+Vg
-         5vHSI0IHLby6b/5O+qVx3yS2WcelN/b3Ks3mDWPQswOMdSiwpYz2RX2oJXesxrW4xvTt
-         l/ho5IGa2DtC4nFEcJp5BwLogl9M2zes5rgDA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1CCnZotdDQg27IKceQe7qutnNszXgPFvXAM41QX6OC8=;
-        b=KLo1Q+vYhNZs8pk6jA27CBcqb3Lzilp5V1/0ExzjVbAF/Z1WT/umx+UWaJb7MSSprv
-         jT9qK/cxFT4RJydbFx5zhTZTlmZd/T1ksDC+cHS3bpuUupETWpLyrU0wrAuqrGCF8hfy
-         RFMcP8X1JTQHw9DQeUpsivXuE0T0bPe2AaPvvgrPWEYJJkg5UVtlKIYunFGb+mtRirHd
-         OBveF8BZKUx6TzQLZQYwHzH7M4CmeUipcw2Yk9P7twYP5iKr0LwS5GNlE+QZKEuup0Q8
-         EHD2CavtKciLNgIt0b2w+lomMTYx9IkHxsDYBcwbzCcfXzLqYkXNsLO+fdvhvyMLq0Hg
-         TqhA==
-X-Gm-Message-State: APzg51Atuix2IIeNzvqzgStffuASDg8lxa5ex2jnbwOsaV487V1RDcLl
-        1UBNtsT+V+q+L2sA/3QEjns6jNatfHuaHN4AhOip1A==
-X-Google-Smtp-Source: ANB0VdZs3GOuhvY6imtWR1g1sn2zG4wTdAYMNQV0ZI2YcWOw2J6VYWmurKVuAVHc29MVnlbIK/Z+3ehnKMQwx0fZXXs=
-X-Received: by 2002:a24:6b0d:: with SMTP id v13-v6mr4455138itc.16.1535294007798;
- Sun, 26 Aug 2018 07:33:27 -0700 (PDT)
+        Sun, 26 Aug 2018 14:44:11 -0400
+Received: from m12-13.163.com ([220.181.12.13]:52829 "EHLO m12-13.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726779AbeHZSoL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 26 Aug 2018 14:44:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=Date:From:Subject:Message-ID:MIME-Version; bh=Bgw1/
+        glztYrFsjVOQlewPXLgQFwxhT1btg/iQ6GTX9E=; b=GQHTrBHHDgW/ERlSSckAq
+        86YiRbygCqixWbq34bntAC+NkXbDe4ZyUm1Eq1pXc60XrojZNLosBVniVsqTmoog
+        uRMtj7VOJHeiL1uyMtbZZiIJJC014iMpiZo05VaVqhbUf7rxoUuaIIq1bhRsLxLA
+        UWmKTBPWy0TdTsYuimdAHg=
+Received: from localhost (unknown [36.24.137.174])
+        by smtp9 (Coremail) with SMTP id DcCowAA3jZGawIJbUDzNHA--.56275S5;
+        Sun, 26 Aug 2018 23:00:43 +0800 (CST)
+Date:   Sun, 26 Aug 2018 08:00:42 -0700
+From:   QIANJUN <hangdianqj@163.com>
+To:     gregkh@linuxfoundation.org, jslaby@suse.com,
+        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: spin_lock instead of spin_lock_irqsave in imx uart interuput
+Message-ID: <20180826150042.GA7972@ubuntu>
 MIME-Version: 1.0
-References: <20180817163849.30750-1-ilina@codeaurora.org> <20180817163849.30750-2-ilina@codeaurora.org>
-In-Reply-To: <20180817163849.30750-2-ilina@codeaurora.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sun, 26 Aug 2018 16:33:15 +0200
-Message-ID: <CACRpkdb+Opdn1eWZSRydS1Bafpqwcg83xEcT-YJC6D-kSSi1ew@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] drivers: pinctrl: qcom: add wakeup capability to GPIO
-To:     ilina@codeaurora.org, Hans Verkuil <hverkuil@xs4all.nl>,
-        Hans Verkuil <hans.verkuil@cisco.com>
-Cc:     Marc Zyngier <marc.zyngier@arm.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>, evgreen@chromium.org,
-        rplsssn@codeaurora.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Andy Gross <andy.gross@linaro.org>,
-        Doug Anderson <dianders@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/mixed; boundary="3V7upXqbjpZ4EhLz"
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-CM-TRANSID: DcCowAA3jZGawIJbUDzNHA--.56275S5
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+        VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUaS_MDUUUU
+X-Originating-IP: [36.24.137.174]
+X-CM-SenderInfo: pkdqwvpldq1yi6rwjhhfrp/1tbiNxyuR1WBY25ubgAAsb
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 17, 2018 at 6:39 PM Lina Iyer <ilina@codeaurora.org> wrote:
 
-> QCOM SoC's that have Power Domain Controller (PDC) chip in the always-on
-> domain can wakeup the SoC, when interrupts and GPIOs are routed to the
-> its interrupt controller. Only select GPIOs that are deemed wakeup
-> capable are routed to specific PDC pins. During low power state, the
-> pinmux interrupt controller may be non-functional but the PDC would be.
-> The PDC can detect the wakeup GPIO is triggered and bring the TLMM to an
-> operational state.
->
-> Interrupts that are level triggered will be detected at the TLMM when
-> the controller becomes operational. Edge interrupts however need to be
-> replayed again.
->
-> Request the corresponding PDC IRQ, when the GPIO is requested as an IRQ,
-> but keep it disabled. During suspend, we can enable the PDC IRQ instead
-> of the GPIO IRQ, which may or not be detected.
->
-> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
-> ---
-> Changes in v1:
->         - Trigger GPIO in h/w from PDC IRQ handler
->         - Avoid big tables for GPIO-PDC map, pick from DT instead
->         - Use handler_data
+--3V7upXqbjpZ4EhLz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Just for the record this is an impressive and much needed patch
-set, no other SoC developer has yet taken on the task of making this
-work so I very much appreciate that Qualcomm show the way.
+spin_lock instead of spin_lock_irqsave in imx uart interuput
 
-> +static int msm_gpio_pdc_pin_request(struct irq_data *d)
-> +static int msm_gpio_pdc_pin_release(struct irq_data *d)
-> +static int msm_gpio_irq_reqres(struct irq_data *d)
-> +{
-(...)
-> +       if (gpiochip_lock_as_irq(gc, irqd_to_hwirq(d))) {
-(...)
-> +static void msm_gpio_irq_relres(struct irq_data *d)
-> +{
-> +       gpiochip_unlock_as_irq(gc, irqd_to_hwirq(d));
-> +}
+--3V7upXqbjpZ4EhLz
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment; filename="0001-before-the-programe-into-the-uart-interuput-s-handle.patch"
 
-FYI Hans Verkuil is working on a patch set that moves the
-lock/unlock as IRQ call to the irqchip request() and release()
-functions so we can switch a GPIO irqchip line from IRQ
-mode to say output at runtime without too much trouble.
-(CEC needs this.)
+From 6580790d7be51a78d1376b90df49b04019a1f944 Mon Sep 17 00:00:00 2001
+From: jun qian <hangdianqj@163.com>
+Date: Sun, 26 Aug 2018 06:58:35 -0700
+Subject: [PATCH] before the programe into the uart interuput's handler, the
+ system has already disabled the local cpu interuput. so the spin_lock
+ interface is More suitable for here.
 
-I suspect that will make your work easier?
+Signed-off-by: jun qian <hangdianqj@163.com>
+---
+ drivers/tty/serial/imx.c | 21 ++++++++-------------
+ 1 file changed, 8 insertions(+), 13 deletions(-)
 
-Hans can you include Lina in the loop for your patches
-so she can take that into accoun because I think we might
-need that as a base for this.
+diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
+index 239c0fa2e981..3069ee93583e 100644
+--- a/drivers/tty/serial/imx.c
++++ b/drivers/tty/serial/imx.c
+@@ -706,27 +706,25 @@ static irqreturn_t imx_uart_rtsint(int irq, void *dev_id)
+ {
+ 	struct imx_port *sport = dev_id;
+ 	u32 usr1;
+-	unsigned long flags;
+ 
+-	spin_lock_irqsave(&sport->port.lock, flags);
++	spin_lock(&sport->port.lock);
+ 
+ 	imx_uart_writel(sport, USR1_RTSD, USR1);
+ 	usr1 = imx_uart_readl(sport, USR1) & USR1_RTSS;
+ 	uart_handle_cts_change(&sport->port, !!usr1);
+ 	wake_up_interruptible(&sport->port.state->port.delta_msr_wait);
+ 
+-	spin_unlock_irqrestore(&sport->port.lock, flags);
++	spin_unlock(&sport->port.lock);
+ 	return IRQ_HANDLED;
+ }
+ 
+ static irqreturn_t imx_uart_txint(int irq, void *dev_id)
+ {
+ 	struct imx_port *sport = dev_id;
+-	unsigned long flags;
+ 
+-	spin_lock_irqsave(&sport->port.lock, flags);
++	spin_lock(&sport->port.lock);
+ 	imx_uart_transmit_buffer(sport);
+-	spin_unlock_irqrestore(&sport->port.lock, flags);
++	spin_unlock(&sport->port.lock);
+ 	return IRQ_HANDLED;
+ }
+ 
+@@ -735,9 +733,8 @@ static irqreturn_t imx_uart_rxint(int irq, void *dev_id)
+ 	struct imx_port *sport = dev_id;
+ 	unsigned int rx, flg, ignored = 0;
+ 	struct tty_port *port = &sport->port.state->port;
+-	unsigned long flags;
+ 
+-	spin_lock_irqsave(&sport->port.lock, flags);
++	spin_lock(&sport->port.lock);
+ 
+ 	while (imx_uart_readl(sport, USR2) & USR2_RDR) {
+ 		u32 usr2;
+@@ -797,7 +794,7 @@ static irqreturn_t imx_uart_rxint(int irq, void *dev_id)
+ 	}
+ 
+ out:
+-	spin_unlock_irqrestore(&sport->port.lock, flags);
++	spin_unlock(&sport->port.lock);
+ 	tty_flip_buffer_push(port);
+ 	return IRQ_HANDLED;
+ }
+@@ -903,13 +900,11 @@ static irqreturn_t imx_uart_int(int irq, void *dev_id)
+ 	}
+ 
+ 	if (usr1 & USR1_DTRD) {
+-		unsigned long flags;
+-
+ 		imx_uart_writel(sport, USR1_DTRD, USR1);
+ 
+-		spin_lock_irqsave(&sport->port.lock, flags);
++		spin_lock(&sport->port.lock);
+ 		imx_uart_mctrl_check(sport);
+-		spin_unlock_irqrestore(&sport->port.lock, flags);
++		spin_unlock(&sport->port.lock);
+ 
+ 		ret = IRQ_HANDLED;
+ 	}
+-- 
+2.17.1
 
-Yours,
-Linus Walleij
+
+--3V7upXqbjpZ4EhLz--
+
+
