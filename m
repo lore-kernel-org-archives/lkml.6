@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89425C433F5
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:48:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FB7AC433F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:48:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FC632170B
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:48:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FC632170B
+	by mail.kernel.org (Postfix) with ESMTP id 275C02170B
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:48:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 275C02170B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728020AbeHZK3u (ORCPT
+        id S1728034AbeHZK3y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 06:29:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53922 "EHLO
+        Sun, 26 Aug 2018 06:29:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53930 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726611AbeHZK3t (ORCPT
+        with ESMTP id S1726611AbeHZK3x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 06:29:49 -0400
+        Sun, 26 Aug 2018 06:29:53 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0808325A;
-        Sun, 26 Aug 2018 06:48:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8420E9D2;
+        Sun, 26 Aug 2018 06:48:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Greg Kroah-Hartman <greg@kroah.com>
-Subject: [PATCH 3.18 55/56] PCI: hotplug: Dont leak pci_slot on registration failure
-Date:   Sun, 26 Aug 2018 08:45:16 +0200
-Message-Id: <20180826064234.924352726@linuxfoundation.org>
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Jeff Mahoney <jeffm@suse.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 3.18 56/56] reiserfs: fix broken xattr handling (heap corruption, bad retval)
+Date:   Sun, 26 Aug 2018 08:45:17 +0200
+Message-Id: <20180826064234.971688832@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180826064232.320669119@linuxfoundation.org>
 References: <20180826064232.320669119@linuxfoundation.org>
@@ -51,48 +54,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lukas Wunner <lukas@wunner.de>
+From: Jann Horn <jannh@google.com>
 
-commit 4ce6435820d1f1cc2c2788e232735eb244bcc8a3 upstream.
+commit a13f085d111e90469faf2d9965eb39b11c114d7e upstream.
 
-If addition of sysfs files fails on registration of a hotplug slot, the
-struct pci_slot as well as the entry in the slot_list is leaked.  The
-issue has been present since the hotplug core was introduced in 2002:
-https://git.kernel.org/tglx/history/c/a8a2069f432c
+This fixes the following issues:
 
-Perhaps the idea was that even though sysfs addition fails, the slot
-should still be usable.  But that's not how drivers use the interface,
-they abort probe if a non-zero value is returned.
+- When a buffer size is supplied to reiserfs_listxattr() such that each
+  individual name fits, but the concatenation of all names doesn't fit,
+  reiserfs_listxattr() overflows the supplied buffer.  This leads to a
+  kernel heap overflow (verified using KASAN) followed by an out-of-bounds
+  usercopy and is therefore a security bug.
 
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Cc: stable@vger.kernel.org # v2.4.15+
-Cc: Greg Kroah-Hartman <greg@kroah.com>
+- When a buffer size is supplied to reiserfs_listxattr() such that a
+  name doesn't fit, -ERANGE should be returned.  But reiserfs instead just
+  truncates the list of names; I have verified that if the only xattr on a
+  file has a longer name than the supplied buffer length, listxattr()
+  incorrectly returns zero.
+
+With my patch applied, -ERANGE is returned in both cases and the memory
+corruption doesn't happen anymore.
+
+Credit for making me clean this code up a bit goes to Al Viro, who pointed
+out that the ->actor calling convention is suboptimal and should be
+changed.
+
+Link: http://lkml.kernel.org/r/20180802151539.5373-1-jannh@google.com
+Fixes: 48b32a3553a5 ("reiserfs: use generic xattr handlers")
+Signed-off-by: Jann Horn <jannh@google.com>
+Acked-by: Jeff Mahoney <jeffm@suse.com>
+Cc: Eric Biggers <ebiggers@google.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/hotplug/pci_hotplug_core.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ fs/reiserfs/xattr.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/pci/hotplug/pci_hotplug_core.c
-+++ b/drivers/pci/hotplug/pci_hotplug_core.c
-@@ -457,8 +457,17 @@ int __pci_hp_register(struct hotplug_slo
- 	list_add(&slot->slot_list, &pci_hotplug_slot_list);
- 
- 	result = fs_add_slot(pci_slot);
-+	if (result)
-+		goto err_list_del;
-+
- 	kobject_uevent(&pci_slot->kobj, KOBJ_ADD);
- 	dbg("Added slot %s to the list\n", name);
-+	goto out;
-+
-+err_list_del:
-+	list_del(&slot->slot_list);
-+	pci_slot->hotplug = NULL;
-+	pci_destroy_slot(pci_slot);
- out:
- 	mutex_unlock(&pci_hp_mutex);
- 	return result;
+--- a/fs/reiserfs/xattr.c
++++ b/fs/reiserfs/xattr.c
+@@ -842,8 +842,10 @@ static int listxattr_filler(void *buf, c
+ 			size = handler->list(b->dentry, b->buf + b->pos,
+ 					 b->size, name, namelen,
+ 					 handler->flags);
+-			if (size > b->size)
++			if (b->pos + size > b->size) {
++				b->pos = -ERANGE;
+ 				return -ERANGE;
++			}
+ 		} else {
+ 			size = handler->list(b->dentry, NULL, 0, name,
+ 					     namelen, handler->flags);
 
 
