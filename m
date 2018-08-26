@@ -2,75 +2,119 @@ Return-Path: <SRS0=U0Lc=LJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB022C433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 10:25:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14816C433F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 10:43:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60E5120A8B
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 10:25:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60E5120A8B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 9B1562124D
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 10:43:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B1562124D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726785AbeHZOHe (ORCPT
+        id S1726724AbeHZOZY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 10:07:34 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:41679 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726415AbeHZOHe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 10:07:34 -0400
-Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=[192.168.0.145])
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1ftsER-000384-HF; Sun, 26 Aug 2018 12:25:19 +0200
-Date:   Sun, 26 Aug 2018 12:25:09 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Juergen Gross <jgross@suse.com>
-cc:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org, boris.ostrovsky@oracle.com, hpa@zytor.com,
-        mingo@redhat.com
-Subject: Re: [PATCH v2 2/2] x86/pae: use 64 bit atomic xchg function in
- native_ptep_get_and_clear
-In-Reply-To: <20180821153755.30462-3-jgross@suse.com>
-Message-ID: <alpine.DEB.2.21.1808261224440.1195@nanos.tec.linutronix.de>
-References: <20180821153755.30462-1-jgross@suse.com> <20180821153755.30462-3-jgross@suse.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Sun, 26 Aug 2018 10:25:24 -0400
+Received: from mga04.intel.com ([192.55.52.120]:9612 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726415AbeHZOZX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 26 Aug 2018 10:25:23 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Aug 2018 03:43:12 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,290,1531810800"; 
+   d="scan'208";a="86474575"
+Received: from kohsamui.iil.intel.com ([10.236.193.12])
+  by orsmga002.jf.intel.com with ESMTP; 26 Aug 2018 03:43:10 -0700
+From:   Alexey Skidanov <alexey.skidanov@intel.com>
+To:     labbott@redhat.com, dri-devel@lists.freedesktop.org
+Cc:     linux-kernel@vger.kernel.org,
+        Alexey Skidanov <alexey.skidanov@intel.com>
+Subject: [PATCH] staging: android: ion: Clean unused debug_show memeber of the heap object
+Date:   Sun, 26 Aug 2018 13:44:12 +0300
+Message-Id: <1535280252-26647-1-git-send-email-alexey.skidanov@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 21 Aug 2018, Juergen Gross wrote:
+Signed-off-by: Alexey Skidanov <alexey.skidanov@intel.com>
+---
+ drivers/staging/android/ion/ion.h             |  5 -----
+ drivers/staging/android/ion/ion_system_heap.c | 24 ------------------------
+ 2 files changed, 29 deletions(-)
 
-> Using only 32-bit writes for the pte will result in an intermediate
-> L1TF vulnerable PTE. When running as a Xen PV guest this will at once
-> switch the guest to shadow mode resulting in a loss of performance.
-> 
-> Use arch_atomic64_xchg() instead which will perform the requested
-> operation atomically with all 64 bits.
-> 
-> Some performance considerations according to:
-> 
-> https://software.intel.com/sites/default/files/managed/ad/dc/Intel-Xeon-Scalable-Processor-throughput-latency.pdf
-> 
-> The main number should be the latency, as there is no tight loop around
-> native_ptep_get_and_clear().
-> 
-> "lock cmpxchg8b" has a latency of 20 cycles, while "lock xchg" (with a
-> memory operand) isn't mentioned in that document. "lock xadd" (with xadd
-> having 3 cycles less latency than xchg) has a latency of 11, so we can
-> assume a latency of 14 for "lock xchg".
-> 
-> Signed-off-by: Juergen Gross <jgross@suse.com>
+diff --git a/drivers/staging/android/ion/ion.h b/drivers/staging/android/ion/ion.h
+index 876197b..0afa9cd 100644
+--- a/drivers/staging/android/ion/ion.h
++++ b/drivers/staging/android/ion/ion.h
+@@ -158,8 +158,6 @@ struct ion_heap_ops {
+  * @lock:		protects the free list
+  * @waitqueue:		queue to wait on from deferred free thread
+  * @task:		task struct of deferred free thread
+- * @debug_show:		called when heap debug file is read to add any
+- *			heap specific debug info to output
+  *
+  * Represents a pool of memory from which buffers can be made.  In some
+  * systems the only heap is regular system memory allocated via vmalloc.
+@@ -180,9 +178,6 @@ struct ion_heap {
+ 	spinlock_t free_lock;
+ 	wait_queue_head_t waitqueue;
+ 	struct task_struct *task;
+-
+-	int (*debug_show)(struct ion_heap *heap, struct seq_file *s,
+-			  void *unused);
+ };
+ 
+ /**
+diff --git a/drivers/staging/android/ion/ion_system_heap.c b/drivers/staging/android/ion/ion_system_heap.c
+index b5c3195..d0d0490 100644
+--- a/drivers/staging/android/ion/ion_system_heap.c
++++ b/drivers/staging/android/ion/ion_system_heap.c
+@@ -213,29 +213,6 @@ static struct ion_heap_ops system_heap_ops = {
+ 	.shrink = ion_system_heap_shrink,
+ };
+ 
+-static int ion_system_heap_debug_show(struct ion_heap *heap, struct seq_file *s,
+-				      void *unused)
+-{
+-	struct ion_system_heap *sys_heap = container_of(heap,
+-							struct ion_system_heap,
+-							heap);
+-	int i;
+-	struct ion_page_pool *pool;
+-
+-	for (i = 0; i < NUM_ORDERS; i++) {
+-		pool = sys_heap->pools[i];
+-
+-		seq_printf(s, "%d order %u highmem pages %lu total\n",
+-			   pool->high_count, pool->order,
+-			   (PAGE_SIZE << pool->order) * pool->high_count);
+-		seq_printf(s, "%d order %u lowmem pages %lu total\n",
+-			   pool->low_count, pool->order,
+-			   (PAGE_SIZE << pool->order) * pool->low_count);
+-	}
+-
+-	return 0;
+-}
+-
+ static void ion_system_heap_destroy_pools(struct ion_page_pool **pools)
+ {
+ 	int i;
+@@ -282,7 +259,6 @@ static struct ion_heap *__ion_system_heap_create(void)
+ 	if (ion_system_heap_create_pools(heap->pools))
+ 		goto free_heap;
+ 
+-	heap->heap.debug_show = ion_system_heap_debug_show;
+ 	return &heap->heap;
+ 
+ free_heap:
+-- 
+2.7.4
 
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
