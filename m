@@ -6,35 +6,40 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1EAAC433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:46:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEA2AC433F5
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:46:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FFE12170B
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:46:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FFE12170B
+	by mail.kernel.org (Postfix) with ESMTP id AD3542172A
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:46:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD3542172A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727582AbeHZK2Q (ORCPT
+        id S1727604AbeHZK2U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 06:28:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53658 "EHLO
+        Sun, 26 Aug 2018 06:28:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53668 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726245AbeHZK2P (ORCPT
+        with ESMTP id S1726245AbeHZK2T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 06:28:15 -0400
+        Sun, 26 Aug 2018 06:28:19 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C4F5B9D2;
-        Sun, 26 Aug 2018 06:46:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1988B9D2;
+        Sun, 26 Aug 2018 06:46:43 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Mack <daniel@zonque.org>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Sandipan Das <sandipan@linux.ibm.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 30/56] ARM: dts: am437x: make edt-ft5x06 a wakeup source
-Date:   Sun, 26 Aug 2018 08:44:51 +0200
-Message-Id: <20180826064233.837140935@linuxfoundation.org>
+Subject: [PATCH 3.18 31/56] perf report powerpc: Fix crash if callchain is empty
+Date:   Sun, 26 Aug 2018 08:44:52 +0200
+Message-Id: <20180826064233.886052915@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180826064232.320669119@linuxfoundation.org>
 References: <20180826064232.320669119@linuxfoundation.org>
@@ -51,31 +56,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Mack <daniel@zonque.org>
+From: Sandipan Das <sandipan@linux.ibm.com>
 
-[ Upstream commit 49a6ec5b807ea4ad7ebe1f58080ebb8497cb2d2c ]
+[ Upstream commit 143c99f6ac6812d23254e80844d6e34be897d3e1 ]
 
-The touchscreen driver no longer configures the device as wakeup source by
-default. A "wakeup-source" property is needed.
+For some cases, the callchain provided by the kernel may be empty. So,
+the callchain ip filtering code will cause a crash if we do not check
+whether the struct ip_callchain pointer is NULL before accessing any
+members.
 
-Signed-off-by: Daniel Mack <daniel@zonque.org>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+This can be observed on a powerpc64le system running Fedora 27 as shown
+below.
+
+  # perf record -b -e cycles:u ls
+
+Before:
+
+  # perf report --branch-history
+
+  perf: Segmentation fault
+  -------- backtrace --------
+  perf[0x1027615c]
+  linux-vdso64.so.1(__kernel_sigtramp_rt64+0x0)[0x7fff856304d8]
+  perf(arch_skip_callchain_idx+0x44)[0x10257c58]
+  perf[0x1017f2e4]
+  perf(thread__resolve_callchain+0x124)[0x1017ff5c]
+  perf(sample__resolve_callchain+0xf0)[0x10172788]
+  ...
+
+After:
+
+  # perf report --branch-history
+
+  Samples: 25  of event 'cycles:u', Event count (approx.): 2306870
+    Overhead  Source:Line            Symbol                   Shared Object
+  +   11.60%  _init+35736            [.] _init                ls
+  +    9.84%  strcoll_l.c:137        [.] __strcoll_l          libc-2.26.so
+  +    9.16%  memcpy.S:175           [.] __memcpy_power7      libc-2.26.so
+  +    9.01%  gconv_charset.h:54     [.] _nl_find_locale      libc-2.26.so
+  +    8.87%  dl-addr.c:52           [.] _dl_addr             libc-2.26.so
+  +    8.83%  _init+236              [.] _init                ls
+  ...
+
+Reported-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Signed-off-by: Sandipan Das <sandipan@linux.ibm.com>
+Acked-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Cc: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
+Link: http://lkml.kernel.org/r/20180611104049.11048-1-sandipan@linux.ibm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/am437x-sk-evm.dts |    2 ++
- 1 file changed, 2 insertions(+)
+ tools/perf/arch/powerpc/util/skip-callchain-idx.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/am437x-sk-evm.dts
-+++ b/arch/arm/boot/dts/am437x-sk-evm.dts
-@@ -415,6 +415,8 @@
+--- a/tools/perf/arch/powerpc/util/skip-callchain-idx.c
++++ b/tools/perf/arch/powerpc/util/skip-callchain-idx.c
+@@ -230,7 +230,7 @@ int arch_skip_callchain_idx(struct machi
+ 	u64 ip;
+ 	u64 skip_slot = -1;
  
- 		touchscreen-size-x = <480>;
- 		touchscreen-size-y = <272>;
-+
-+		wakeup-source;
- 	};
+-	if (chain->nr < 3)
++	if (!chain || chain->nr < 3)
+ 		return skip_slot;
  
- 	tlv320aic3106: tlv320aic3106@1b {
+ 	ip = chain->ips[2];
 
 
