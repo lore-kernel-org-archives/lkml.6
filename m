@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FC19C433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 22:46:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87FEDC433F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 22:46:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7CEF2172A
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 22:46:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BEED2172A
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 22:46:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hcdqi+IO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7CEF2172A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aC1toV+Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BEED2172A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727128AbeH0C34 (ORCPT
+        id S1727174AbeH0C35 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 22:29:56 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:35223 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726802AbeH0C34 (ORCPT
+        Sun, 26 Aug 2018 22:29:57 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:35225 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727091AbeH0C35 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 22:29:56 -0400
-Received: by mail-ed1-f65.google.com with SMTP id y20-v6so2513643edq.2
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Aug 2018 15:45:57 -0700 (PDT)
+        Sun, 26 Aug 2018 22:29:57 -0400
+Received: by mail-ed1-f66.google.com with SMTP id y20-v6so2513657edq.2
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Aug 2018 15:45:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=vC0Nr0VRgE7y9lO944pfWpYNY3TDqT2hWIjmjmT2Gj0=;
-        b=Hcdqi+IO8HGup17uFr5oDirP4VE33ipNbOpqjP4MUgpCUKuEWcJEIWS1MYlo9nIW/l
-         E8M0anlktfXTM3xXjRu5E6+ROwPCd1jaojA9Jtyr33SxUj1ea4L+iaGoq/tah7E+Quyg
-         b7xJrHk9edhL5O3gWvMeO/DCBJtvOK7zfYsNG27Ciaf8N2XgEd/x4VwsBzO4dcvLQv0P
-         xBGm7COhtAqUKRq+dgxrZGN12K0pnP1lRR9YDijrvlnE3bC7tEeWy2u0TREkcyYcAEGD
-         yF79G6KibbCenXRAb5QVgMZDehGmCH4yl2nBPYQuSJLb/+thyRF6ZjVafsUKbdcd8fYf
-         On9g==
+        bh=Pun/4tr1105TkVGALARew0+lhhY01+nz/F0Aju9q72Y=;
+        b=aC1toV+Y+AD+ltcrbMGJ7HPSfjt1xdWvEJckxkiz3TBE4nc6F9sjjtKynYhqVfxNgM
+         OFA0Mnt5EC8d8BjB6FtGIhVYoRNChORqropMVrRysrsERrQoa4O8gHTaZXmFpB9W1TkR
+         sgJ33nO8ogZe59aTVWt51XhAmrN/Dfwe+6WUbq46K7uxlFW3wF1GdkcpvQjcDhH1AHMi
+         MuMmpwFaI4k9hsXG8DBQE74Q6p02CRSNuHcMMAniKL8ii1HswLbJxnLAEvHWZhv4Di6c
+         ctDjxCzG3NvrSlSZc1NphgprrwNqjnLDefCK07S5jKxnWZDPXEafJeI/t61WvCdCk70Q
+         vOjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=vC0Nr0VRgE7y9lO944pfWpYNY3TDqT2hWIjmjmT2Gj0=;
-        b=a/g9Mgyz16TEwJlBzkubIPdEK5r01Ahx1Xq31zQOyiJg5pDfjF8+4WM3DTxo2aLYVm
-         dhZlCoqOkEnAgMkM/H4+PP0GWGLbR39mNc11hP8BcHznTCgNvXMfgNSW6z/SfnRzkwbk
-         kkWNOjgQG7U53N2pRrtABvq8dsQvYvjGxG3l8X4wdgFtPd77dIJqHBBUxVMqeCoK762H
-         BqitT7MkAk4wbDRRLKanCIePigO8tyFqu9t2P6TYOrKWUGIE6H7u5UhAmlotH1b5L30o
-         m5oP8Zq8M7ZXk75BBV20JmolB/CEnX1IpyDbyhfiqM/YnuVysNS4bR7zpgn/Jy4ImlGJ
-         BBXA==
-X-Gm-Message-State: APzg51CyaBupJA9BJGl1gi1fXry/p5pt/f2ED3O04Jcbe+rIk/Pjs8m0
-        O2SkHR5jUSqBYkrBhz4Q8Q3gIj5f
-X-Google-Smtp-Source: ANB0VdZNyZWc+l3Y0DoLBgfDbERHdKeZaNGFvEaqIfkeiQZJLFlfFPA1W4jXytD/9BSkik8QvLhJUg==
-X-Received: by 2002:a50:cb8c:: with SMTP id k12-v6mr13897360edi.171.1535323556640;
-        Sun, 26 Aug 2018 15:45:56 -0700 (PDT)
+        bh=Pun/4tr1105TkVGALARew0+lhhY01+nz/F0Aju9q72Y=;
+        b=Nid/9FB9/ps0GQP5LC0maNkCaY+u5iyLB5chMzytZ0mRQSOYnFhvVrfQswj6XbQYQz
+         90dWxTmUgYQ2LjxbGOyMaMmKpXxrORmta6xNi6XN4GaiTU4+tXE6YK5jl8D7mltG4RPO
+         9bI4p8O+TCvyq7vQijE8oprd4/K/1jQE+KnguGQXmBaR3zj7Z8FB4GCcFpixfFjuL3Yc
+         3J3vcHv2hOgzyIcCmjSutwKt5+dA0qvIJnAzsTYySZwHrkj8A7IAwOi1SgWI/lHdXWiO
+         pNOxWAwyBKte+8Pb9qADkRX/JBd0Qy0ozl1H1yZ/RVEdTjt7NBA6FZaKivrGG3+gZ8jg
+         CB+A==
+X-Gm-Message-State: APzg51CfUv3hBSWz+GPEJOPDxTD5reRSw7bBVnvseDDH5gpxh7e1+vlQ
+        VItClgnv/CiGCqH84KjEhedGjxBI
+X-Google-Smtp-Source: ANB0VdYcWVuwkqrL00D+eIxIIvBExIjbl7RJscEPPDtzKVguX7Rdz/LOVzA79GeXOzEpl70CY4zYdQ==
+X-Received: by 2002:a50:de03:: with SMTP id z3-v6mr13989766edk.245.1535323557965;
+        Sun, 26 Aug 2018 15:45:57 -0700 (PDT)
 Received: from localhost.localdomain ([109.78.216.151])
-        by smtp.gmail.com with ESMTPSA id a33-v6sm5519165eda.2.2018.08.26.15.45.55
+        by smtp.gmail.com with ESMTPSA id a33-v6sm5519165eda.2.2018.08.26.15.45.56
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 26 Aug 2018 15:45:55 -0700 (PDT)
+        Sun, 26 Aug 2018 15:45:57 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 1/6] staging:rtl8192u: Rename PHY_SetRF8256Bandwidth() - Style
-Date:   Sun, 26 Aug 2018 23:45:28 +0100
-Message-Id: <20180826224533.16020-2-johnfwhitmore@gmail.com>
+Subject: [PATCH 2/6] staging:rtl8192u: Rename function PHY_RF8256_Config() - Style
+Date:   Sun, 26 Aug 2018 23:45:29 +0100
+Message-Id: <20180826224533.16020-3-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180826224533.16020-1-johnfwhitmore@gmail.com>
 References: <20180826224533.16020-1-johnfwhitmore@gmail.com>
@@ -73,90 +73,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename the function PHY_SetRF8256Bandwidth() to
-phy_set_rf8256_bandwidth(). This change clears the checkpatch issue
-with CamelCase naming.
+Rename the function PHY_RF8256_Config() to phy_rf8256_config(). This
+change clears the checkpatch issue with CamelCase naming.
 
-The parameter Bandwidth has been renamed to bandwidth, for the
-same reason.
-
-Additionally a new line has been added to the parameter list of the
-function declaration in r8190_rtl8256.h to truncate the line length
-to the checkpatch limit.
-
-These changes are simple coding style changes which should have no
-impact on runtime code execution.
+This is a simple coding style change which should have no impact on
+runtime code execution.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/r8190_rtl8256.c | 8 ++++----
- drivers/staging/rtl8192u/r8190_rtl8256.h | 3 ++-
- drivers/staging/rtl8192u/r819xU_phy.c    | 2 +-
- 3 files changed, 7 insertions(+), 6 deletions(-)
+ drivers/staging/rtl8192u/r8190_rtl8256.c | 4 ++--
+ drivers/staging/rtl8192u/r8190_rtl8256.h | 2 +-
+ drivers/staging/rtl8192u/r819xU_phy.c    | 4 ++--
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/staging/rtl8192u/r8190_rtl8256.c b/drivers/staging/rtl8192u/r8190_rtl8256.c
-index 9b7f822e9762..8916a1069b38 100644
+index 8916a1069b38..8cc7b0d46a02 100644
 --- a/drivers/staging/rtl8192u/r8190_rtl8256.c
 +++ b/drivers/staging/rtl8192u/r8190_rtl8256.c
-@@ -23,7 +23,7 @@
-  * Note:	8226 support both 20M  and 40 MHz
+@@ -85,7 +85,7 @@ void phy_set_rf8256_bandwidth(struct net_device *dev, enum ht_channel_width Band
+  * Return:      NONE
   *--------------------------------------------------------------------------
   */
--void PHY_SetRF8256Bandwidth(struct net_device *dev, enum ht_channel_width Bandwidth)
-+void phy_set_rf8256_bandwidth(struct net_device *dev, enum ht_channel_width Bandwidth)
+-void PHY_RF8256_Config(struct net_device *dev)
++void phy_rf8256_config(struct net_device *dev)
  {
- 	u8	eRFPath;
  	struct r8192_priv *priv = ieee80211_priv(dev);
-@@ -53,7 +53,7 @@ void PHY_SetRF8256Bandwidth(struct net_device *dev, enum ht_channel_width Bandwi
- 						(enum rf90_radio_path_e)eRFPath,
- 						0x14, bMask12Bits, 0x5ab);
- 				} else {
--					RT_TRACE(COMP_ERR, "PHY_SetRF8256Bandwidth(): unknown hardware version\n");
-+					RT_TRACE(COMP_ERR, "phy_set_rf8256_bandwidth(): unknown hardware version\n");
- 					}
- 				break;
- 		case HT_CHANNEL_WIDTH_20_40:
-@@ -68,11 +68,11 @@ void PHY_SetRF8256Bandwidth(struct net_device *dev, enum ht_channel_width Bandwi
- 					else
- 						rtl8192_phy_SetRFReg(dev, (enum rf90_radio_path_e)eRFPath, 0x14, bMask12Bits, 0x5ab);
- 				} else {
--					RT_TRACE(COMP_ERR, "PHY_SetRF8256Bandwidth(): unknown hardware version\n");
-+					RT_TRACE(COMP_ERR, "phy_set_rf8256_bandwidth(): unknown hardware version\n");
- 					}
- 				break;
- 		default:
--				RT_TRACE(COMP_ERR, "PHY_SetRF8256Bandwidth(): unknown Bandwidth: %#X\n", Bandwidth);
-+				RT_TRACE(COMP_ERR, "phy_set_rf8256_bandwidth(): unknown Bandwidth: %#X\n", Bandwidth);
- 				break;
- 
+ 	/* Initialize general global value
+@@ -152,7 +152,7 @@ void phy_RF8256_Config_ParaFile(struct net_device *dev)
+ 		 * TODO: this function should be removed on ASIC , Emily 2007.2.2
+ 		 */
+ 		if (rtl8192_phy_checkBBAndRF(dev, HW90_BLOCK_RF, (enum rf90_radio_path_e)eRFPath)) {
+-			RT_TRACE(COMP_ERR, "PHY_RF8256_Config():Check Radio[%d] Fail!!\n", eRFPath);
++			RT_TRACE(COMP_ERR, "phy_rf8256_config():Check Radio[%d] Fail!!\n", eRFPath);
+ 			goto phy_RF8256_Config_ParaFile_Fail;
  		}
+ 
 diff --git a/drivers/staging/rtl8192u/r8190_rtl8256.h b/drivers/staging/rtl8192u/r8190_rtl8256.h
-index 29b926cad14b..25f5c8b72e92 100644
+index 25f5c8b72e92..b58aab020e51 100644
 --- a/drivers/staging/rtl8192u/r8190_rtl8256.h
 +++ b/drivers/staging/rtl8192u/r8190_rtl8256.h
-@@ -14,7 +14,8 @@
- #define RTL8225H
- 
+@@ -16,7 +16,7 @@
  #define RTL819X_TOTAL_RF_PATH 2 /* for 8192U */
--void PHY_SetRF8256Bandwidth(struct net_device *dev, enum ht_channel_width Bandwidth);
-+void phy_set_rf8256_bandwidth(struct net_device *dev,
-+			      enum ht_channel_width bandwidth);
- void PHY_RF8256_Config(struct net_device *dev);
+ void phy_set_rf8256_bandwidth(struct net_device *dev,
+ 			      enum ht_channel_width bandwidth);
+-void PHY_RF8256_Config(struct net_device *dev);
++void phy_rf8256_config(struct net_device *dev);
  void phy_RF8256_Config_ParaFile(struct net_device *dev);
  void PHY_SetRF8256CCKTxPower(struct net_device *dev, u8	powerlevel);
+ void PHY_SetRF8256OFDMTxPower(struct net_device *dev, u8 powerlevel);
 diff --git a/drivers/staging/rtl8192u/r819xU_phy.c b/drivers/staging/rtl8192u/r819xU_phy.c
-index 7ee10d49894b..77ded1efc3a3 100644
+index 77ded1efc3a3..4ecd12923b93 100644
 --- a/drivers/staging/rtl8192u/r819xU_phy.c
 +++ b/drivers/staging/rtl8192u/r819xU_phy.c
-@@ -1633,7 +1633,7 @@ void rtl8192_SetBWModeWorkItem(struct net_device *dev)
- 		break;
+@@ -793,7 +793,7 @@ static void rtl8192_BB_Config_ParaFile(struct net_device *dev)
+ 						  (enum rf90_radio_path_e)0);
+ 		if (status != 0) {
+ 			RT_TRACE((COMP_ERR | COMP_PHY),
+-				 "PHY_RF8256_Config(): Check PHY%d Fail!!\n",
++				 "phy_rf8256_config(): Check PHY%d Fail!!\n",
+ 				 eCheckItem-1);
+ 			return;
+ 		}
+@@ -940,7 +940,7 @@ void rtl8192_phy_RFConfig(struct net_device *dev)
  
+ 	switch (priv->rf_chip) {
  	case RF_8256:
--		PHY_SetRF8256Bandwidth(dev, priv->CurrentChannelBW);
-+		phy_set_rf8256_bandwidth(dev, priv->CurrentChannelBW);
+-		PHY_RF8256_Config(dev);
++		phy_rf8256_config(dev);
  		break;
- 
- 	case RF_8258:
+ 	default:
+ 		RT_TRACE(COMP_ERR, "error chip id\n");
 -- 
 2.18.0
 
