@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2EAEC433F5
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:47:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6D8AC433F5
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:47:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A8222172F
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:47:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A8222172F
+	by mail.kernel.org (Postfix) with ESMTP id 6C0B32170B
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:47:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C0B32170B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727694AbeHZK2r (ORCPT
+        id S1727715AbeHZK2v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 06:28:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53740 "EHLO
+        Sun, 26 Aug 2018 06:28:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53750 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726245AbeHZK2q (ORCPT
+        with ESMTP id S1726245AbeHZK2u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 06:28:46 -0400
+        Sun, 26 Aug 2018 06:28:50 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0944725A;
-        Sun, 26 Aug 2018 06:47:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9311425A;
+        Sun, 26 Aug 2018 06:47:14 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
+        stable@vger.kernel.org,
+        Govindarajulu Varadarajan <gvaradar@cisco.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 3.18 38/56] ARM: imx_v4_v5_defconfig: Select ULPI support
-Date:   Sun, 26 Aug 2018 08:44:59 +0200
-Message-Id: <20180826064234.190526174@linuxfoundation.org>
+Subject: [PATCH 3.18 21/56] enic: initialize enic->rfs_h.lock in enic_probe
+Date:   Sun, 26 Aug 2018 08:44:42 +0200
+Message-Id: <20180826064233.402721768@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180826064232.320669119@linuxfoundation.org>
 References: <20180826064232.320669119@linuxfoundation.org>
@@ -51,35 +52,98 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Fabio Estevam <fabio.estevam@nxp.com>
+From: Govindarajulu Varadarajan <gvaradar@cisco.com>
 
-[ Upstream commit 2ceb2780b790b74bc408a949f6aedbad8afa693e ]
+[ Upstream commit 3256d29fc7aecdf99feb1cb9475ed2252769a8a7 ]
 
-Select CONFIG_USB_CHIPIDEA_ULPI and CONFIG_USB_ULPI_BUS so that
-USB ULPI can be functional on some boards like that use ULPI
-interface.
+lockdep spotted that we are using rfs_h.lock in enic_get_rxnfc() without
+initializing. rfs_h.lock is initialized in enic_open(). But ethtool_ops
+can be called when interface is down.
 
-Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Move enic_rfs_flw_tbl_init to enic_probe.
+
+INFO: trying to register non-static key.
+the code is fine but needs lockdep annotation.
+turning off the locking correctness validator.
+CPU: 18 PID: 1189 Comm: ethtool Not tainted 4.17.0-rc7-devel+ #27
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-20171110_100015-anatol 04/01/2014
+Call Trace:
+dump_stack+0x85/0xc0
+register_lock_class+0x550/0x560
+? __handle_mm_fault+0xa8b/0x1100
+__lock_acquire+0x81/0x670
+lock_acquire+0xb9/0x1e0
+?  enic_get_rxnfc+0x139/0x2b0 [enic]
+_raw_spin_lock_bh+0x38/0x80
+? enic_get_rxnfc+0x139/0x2b0 [enic]
+enic_get_rxnfc+0x139/0x2b0 [enic]
+ethtool_get_rxnfc+0x8d/0x1c0
+dev_ethtool+0x16c8/0x2400
+? __mutex_lock+0x64d/0xa00
+? dev_load+0x6a/0x150
+dev_ioctl+0x253/0x4b0
+sock_do_ioctl+0x9a/0x130
+sock_ioctl+0x1af/0x350
+do_vfs_ioctl+0x8e/0x670
+? syscall_trace_enter+0x1e2/0x380
+ksys_ioctl+0x60/0x90
+__x64_sys_ioctl+0x16/0x20
+do_syscall_64+0x5a/0x170
+entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Signed-off-by: Govindarajulu Varadarajan <gvaradar@cisco.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/configs/imx_v4_v5_defconfig |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/cisco/enic/enic_clsf.c |    3 +--
+ drivers/net/ethernet/cisco/enic/enic_main.c |    3 ++-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
---- a/arch/arm/configs/imx_v4_v5_defconfig
-+++ b/arch/arm/configs/imx_v4_v5_defconfig
-@@ -146,9 +146,11 @@ CONFIG_USB_STORAGE=y
- CONFIG_USB_CHIPIDEA=y
- CONFIG_USB_CHIPIDEA_UDC=y
- CONFIG_USB_CHIPIDEA_HOST=y
-+CONFIG_USB_CHIPIDEA_ULPI=y
- CONFIG_NOP_USB_XCEIV=y
- CONFIG_USB_GADGET=y
- CONFIG_USB_ETH=m
-+CONFIG_USB_ULPI_BUS=y
- CONFIG_MMC=y
- CONFIG_MMC_SDHCI=y
- CONFIG_MMC_SDHCI_PLTFM=y
+--- a/drivers/net/ethernet/cisco/enic/enic_clsf.c
++++ b/drivers/net/ethernet/cisco/enic/enic_clsf.c
+@@ -78,7 +78,6 @@ void enic_rfs_flw_tbl_init(struct enic *
+ 	enic->rfs_h.max = enic->config.num_arfs;
+ 	enic->rfs_h.free = enic->rfs_h.max;
+ 	enic->rfs_h.toclean = 0;
+-	enic_rfs_timer_start(enic);
+ }
+ 
+ void enic_rfs_flw_tbl_free(struct enic *enic)
+@@ -87,7 +86,6 @@ void enic_rfs_flw_tbl_free(struct enic *
+ 
+ 	enic_rfs_timer_stop(enic);
+ 	spin_lock_bh(&enic->rfs_h.lock);
+-	enic->rfs_h.free = 0;
+ 	for (i = 0; i < (1 << ENIC_RFS_FLW_BITSHIFT); i++) {
+ 		struct hlist_head *hhead;
+ 		struct hlist_node *tmp;
+@@ -98,6 +96,7 @@ void enic_rfs_flw_tbl_free(struct enic *
+ 			enic_delfltr(enic, n->fltr_id);
+ 			hlist_del(&n->node);
+ 			kfree(n);
++			enic->rfs_h.free++;
+ 		}
+ 	}
+ 	spin_unlock_bh(&enic->rfs_h.lock);
+--- a/drivers/net/ethernet/cisco/enic/enic_main.c
++++ b/drivers/net/ethernet/cisco/enic/enic_main.c
+@@ -1643,7 +1643,7 @@ static int enic_open(struct net_device *
+ 		vnic_intr_unmask(&enic->intr[i]);
+ 
+ 	enic_notify_timer_start(enic);
+-	enic_rfs_flw_tbl_init(enic);
++	enic_rfs_timer_start(enic);
+ 
+ 	return 0;
+ 
+@@ -2508,6 +2508,7 @@ static int enic_probe(struct pci_dev *pd
+ 	enic->notify_timer.function = enic_notify_timer;
+ 	enic->notify_timer.data = (unsigned long)enic;
+ 
++	enic_rfs_flw_tbl_init(enic);
+ 	enic_set_rx_coal_setting(enic);
+ 	INIT_WORK(&enic->reset, enic_reset);
+ 	INIT_WORK(&enic->change_mtu_work, enic_change_mtu_work);
 
 
