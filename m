@@ -2,137 +2,202 @@ Return-Path: <SRS0=U0Lc=LJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.5 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02446C433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 19:20:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C45EC433F5
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 19:36:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AB3120893
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 19:20:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AB3120893
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id AFBC9208B1
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 19:36:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFBC9208B1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726875AbeHZXD2 (ORCPT
+        id S1726942AbeHZXTc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 19:03:28 -0400
-Received: from gateway30.websitewelcome.com ([192.185.152.11]:47927 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726643AbeHZXD2 (ORCPT
+        Sun, 26 Aug 2018 19:19:32 -0400
+Received: from mail-io0-f200.google.com ([209.85.223.200]:44975 "EHLO
+        mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726741AbeHZXTb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 19:03:28 -0400
-X-Greylist: delayed 1973 seconds by postgrey-1.27 at vger.kernel.org; Sun, 26 Aug 2018 19:03:28 EDT
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id BFB7234E4
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Aug 2018 13:47:13 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id u049fLXV9BcCXu049fqQgy; Sun, 26 Aug 2018 13:47:13 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.132.202] (port=46808 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fu048-003zfG-Vs; Sun, 26 Aug 2018 13:47:13 -0500
-Date:   Sun, 26 Aug 2018 13:47:12 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Sandy Huang <hjc@rock-chips.com>,
-        Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-        David Airlie <airlied@linux.ie>
-Cc:     dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] drm/rockchip: Use struct_size() in devm_kzalloc()
-Message-ID: <20180826184712.GA9330@embeddedor.com>
+        Sun, 26 Aug 2018 19:19:31 -0400
+Received: by mail-io0-f200.google.com with SMTP id s15-v6so12202093iob.11
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Aug 2018 12:36:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=oL7aILd3BZwtRIy81l2nqDG+SU9YAPgRJnpkOL6lEGQ=;
+        b=cmuB7mRTmxCVm+BJ3+qJGdPRmNT0LD6wdfKYFweq9hO6d0q3FGnl07JaDmf8kFREtL
+         JBzh5sQfyUkBgSFIXe4wNkYfNgipWirq75rFsggt910p/wwpVfKk5tSw/xfnXyn5sD0H
+         Zi6uYY7aKfdYcDEmJLUP4vpnGVKJLNL5Laqtt1Cj1K9Dx9/i/fU87z+mMxHQISm2hPPK
+         IR+ux/569u3UvFx3LwP5XRv9XhU8IXSWTDqvVA+S8cGJt0eanF+Ha1qB2KtGW9cALr6Q
+         CfNEx9qxSWAbSTOoK2rLfRsUoXgGJlOlYijOYheOh4xP52wT2nnUuTcoYmda/mrdH5pQ
+         HyZQ==
+X-Gm-Message-State: APzg51BLgBZgzqerXXeTfho4b7Y3wvnclG5+he81b8AGJ4jP/fXbKauR
+        ez6ZSsPypc9VVep/VvgB+MYA18GrFwMgQXKlCx+08mni0BTV
+X-Google-Smtp-Source: ANB0VdaQ5RfI6v2E7+ba1gTPIAgRdQOMh5P+Dksyuw4XKMy9XuLr00NOTwxotDWkVAuf1CScEbHflNVmxOC0Iita5QxZveLd/Twk
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.132.202
-X-Source-L: No
-X-Exim-ID: 1fu048-003zfG-Vs
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.132.202]:46808
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 7
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+X-Received: by 2002:a24:ac64:: with SMTP id m36-v6mr2893930iti.5.1535312162773;
+ Sun, 26 Aug 2018 12:36:02 -0700 (PDT)
+Date:   Sun, 26 Aug 2018 12:36:02 -0700
+In-Reply-To: <000000000000ccaf1d0574297b6b@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000014e7c305745bb8f7@google.com>
+Subject: Re: KASAN: use-after-free Read in sctp_transport_get_next
+From:   syzbot <syzbot+fe62a0c9aa6a85c6de16@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, linux-kernel@vger.kernel.org,
+        linux-sctp@vger.kernel.org, lucien.xin@gmail.com,
+        marcelo.leitner@gmail.com, netdev@vger.kernel.org,
+        nhorman@tuxdriver.com, syzkaller-bugs@googlegroups.com,
+        vyasevich@gmail.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
+syzbot has found a reproducer for the following crash on:
 
-struct foo {
-	int stuff;
-        void *entry[];
-};
+HEAD commit:    2923b27e5424 Merge tag 'libnvdimm-for-4.19_dax-memory-fail..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10f01a1e400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3b576e333ca31bb2
+dashboard link: https://syzkaller.appspot.com/bug?extid=fe62a0c9aa6a85c6de16
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1022f96a400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13be8b32400000
 
-instance = devm_kzalloc(dev, sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+fe62a0c9aa6a85c6de16@syzkaller.appspotmail.com
 
-or, like in this particular case:
+==================================================================
+BUG: KASAN: use-after-free in sctp_transport_get_next+0x11c/0x140  
+net/sctp/socket.c:5008
+Read of size 8 at addr ffff8801b09a23e0 by task syz-executor305/13769
 
-size = sizeof(struct foo) + sizeof(void *) * count;
-instance = devm_kzalloc(dev, size, GFP_KERNEL);
+CPU: 0 PID: 13769 Comm: syz-executor305 Not tainted 4.18.0+ #209
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x30d mm/kasan/report.c:412
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+  sctp_transport_get_next+0x11c/0x140 net/sctp/socket.c:5008
+  sctp_transport_get_idx net/sctp/socket.c:5022 [inline]
+  sctp_for_each_transport+0x152/0x370 net/sctp/socket.c:5083
+  sctp_diag_dump+0x3a7/0x620 net/sctp/diag.c:527
+  __inet_diag_dump+0xa8/0x140 net/ipv4/inet_diag.c:1049
+  inet_diag_dump+0x9b/0x110 net/ipv4/inet_diag.c:1065
+  netlink_dump+0x519/0xd50 net/netlink/af_netlink.c:2233
+  __netlink_dump_start+0x4f1/0x6f0 net/netlink/af_netlink.c:2329
+  netlink_dump_start include/linux/netlink.h:213 [inline]
+  inet_diag_handler_cmd+0x2ce/0x3f0 net/ipv4/inet_diag.c:1170
+  __sock_diag_cmd net/core/sock_diag.c:232 [inline]
+  sock_diag_rcv_msg+0x31d/0x410 net/core/sock_diag.c:263
+  netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2454
+  sock_diag_rcv+0x2a/0x40 net/core/sock_diag.c:274
+  netlink_unicast_kernel net/netlink/af_netlink.c:1317 [inline]
+  netlink_unicast+0x5a0/0x760 net/netlink/af_netlink.c:1343
+  netlink_sendmsg+0xa18/0xfc0 net/netlink/af_netlink.c:1908
+  sock_sendmsg_nosec net/socket.c:621 [inline]
+  sock_sendmsg+0xd5/0x120 net/socket.c:631
+  sock_write_iter+0x362/0x5c0 net/socket.c:900
+  call_write_iter include/linux/fs.h:1807 [inline]
+  do_iter_readv_writev+0x8b0/0xa80 fs/read_write.c:680
+  do_iter_write+0x185/0x5f0 fs/read_write.c:959
+  vfs_writev+0x1f1/0x360 fs/read_write.c:1004
+  do_writev+0x11a/0x310 fs/read_write.c:1039
+  __do_sys_writev fs/read_write.c:1112 [inline]
+  __se_sys_writev fs/read_write.c:1109 [inline]
+  __x64_sys_writev+0x75/0xb0 fs/read_write.c:1109
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x446679
+Code: e8 0c e8 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 7b 08 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f5b0050bda8 EFLAGS: 00000246 ORIG_RAX: 0000000000000014
+RAX: ffffffffffffffda RBX: 00000000006dbc48 RCX: 0000000000446679
+RDX: 0000000000000001 RSI: 0000000020000000 RDI: 0000000000000005
+RBP: 00000000006dbc40 R08: 000000000000001c R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dbc4c
+R13: 0100000000000000 R14: 00007f5b0050c9c0 R15: 00000000006dbd4c
 
-Instead of leaving these open-coded and prone to type mistakes, we can
-now use the new struct_size() helper:
+Allocated by task 13750:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
+  kmem_cache_alloc_trace+0x152/0x730 mm/slab.c:3620
+  kmalloc include/linux/slab.h:513 [inline]
+  kzalloc include/linux/slab.h:707 [inline]
+  sctp_association_new+0x127/0x2290 net/sctp/associola.c:311
+  sctp_sendmsg_new_asoc+0x39e/0x1200 net/sctp/socket.c:1742
+  sctp_sendmsg+0x18a5/0x1da0 net/sctp/socket.c:2103
+  inet_sendmsg+0x1a1/0x690 net/ipv4/af_inet.c:798
+  sock_sendmsg_nosec net/socket.c:621 [inline]
+  sock_sendmsg+0xd5/0x120 net/socket.c:631
+  __sys_sendto+0x3d7/0x670 net/socket.c:1786
+  __do_sys_sendto net/socket.c:1798 [inline]
+  __se_sys_sendto net/socket.c:1794 [inline]
+  __x64_sys_sendto+0xe1/0x1a0 net/socket.c:1794
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-instance = devm_kzalloc(dev, struct_size(instance, entry, count),
-GFP_KERNEL);
+Freed by task 13747:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kfree+0xd9/0x210 mm/slab.c:3813
+  sctp_association_destroy net/sctp/associola.c:437 [inline]
+  sctp_association_put+0x264/0x350 net/sctp/associola.c:885
+  sctp_transport_destroy net/sctp/transport.c:180 [inline]
+  sctp_transport_put+0x193/0x200 net/sctp/transport.c:332
+  sctp_backlog_rcv+0x28e/0xd50 net/sctp/input.c:357
+  sk_backlog_rcv include/net/sock.h:931 [inline]
+  __release_sock+0x12f/0x3a0 net/core/sock.c:2336
+  release_sock+0xad/0x2c0 net/core/sock.c:2849
+  sctp_close+0x49c/0xa80 net/sctp/socket.c:1569
+  inet_release+0x104/0x1f0 net/ipv4/af_inet.c:428
+  inet6_release+0x50/0x70 net/ipv6/af_inet6.c:457
+  __sock_release+0xd7/0x250 net/socket.c:579
+  sock_close+0x19/0x20 net/socket.c:1139
+  __fput+0x36e/0x8c0 fs/file_table.c:278
+  ____fput+0x15/0x20 fs/file_table.c:309
+  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:193 [inline]
+  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-This issue was detected with the help of Coccinelle.
+The buggy address belongs to the object at ffff8801b09a23c0
+  which belongs to the cache kmalloc-4096 of size 4096
+The buggy address is located 32 bytes inside of
+  4096-byte region [ffff8801b09a23c0, ffff8801b09a33c0)
+The buggy address belongs to the page:
+page:ffffea0006c26880 count:1 mapcount:0 mapping:ffff8801dac00dc0 index:0x0  
+compound_mapcount: 0
+flags: 0x2fffc0000008100(slab|head)
+raw: 02fffc0000008100 ffffea0006c0f188 ffffea0006bf8108 ffff8801dac00dc0
+raw: 0000000000000000 ffff8801b09a23c0 0000000100000001 0000000000000000
+page dumped because: kasan: bad access detected
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-index 1359e5c..cf64e4d 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-@@ -32,6 +32,7 @@
- #include <linux/of_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/component.h>
-+#include <linux/overflow.h>
- 
- #include <linux/reset.h>
- #include <linux/delay.h>
-@@ -1561,7 +1562,6 @@ static int vop_bind(struct device *dev, struct device *master, void *data)
- 	struct drm_device *drm_dev = data;
- 	struct vop *vop;
- 	struct resource *res;
--	size_t alloc_size;
- 	int ret, irq;
- 
- 	vop_data = of_device_get_match_data(dev);
-@@ -1569,8 +1569,8 @@ static int vop_bind(struct device *dev, struct device *master, void *data)
- 		return -ENODEV;
- 
- 	/* Allocate vop struct and its vop_win array */
--	alloc_size = sizeof(*vop) + sizeof(*vop->win) * vop_data->win_size;
--	vop = devm_kzalloc(dev, alloc_size, GFP_KERNEL);
-+	vop = devm_kzalloc(dev, struct_size(vop, win, vop_data->win_size),
-+			   GFP_KERNEL);
- 	if (!vop)
- 		return -ENOMEM;
- 
--- 
-2.7.4
+Memory state around the buggy address:
+  ffff8801b09a2280: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff8801b09a2300: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> ffff8801b09a2380: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
+                                                        ^
+  ffff8801b09a2400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801b09a2480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
