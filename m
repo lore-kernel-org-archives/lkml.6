@@ -7,105 +7,227 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8B58C433F5
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 21:14:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 598CDC433F5
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 21:15:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 710812086A
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 21:14:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDD112086A
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 21:15:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l/oVb1Kz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 710812086A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VI974cTJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDD112086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726891AbeH0A6k (ORCPT
+        id S1726958AbeH0A6m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 20:58:40 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:37648 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726714AbeH0A6k (ORCPT
+        Sun, 26 Aug 2018 20:58:42 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:35792 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726714AbeH0A6l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 20:58:40 -0400
-Received: by mail-ed1-f66.google.com with SMTP id b10-v6so9112083eds.4
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Aug 2018 14:14:56 -0700 (PDT)
+        Sun, 26 Aug 2018 20:58:41 -0400
+Received: by mail-ed1-f67.google.com with SMTP id y20-v6so2441726edq.2
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Aug 2018 14:14:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=wX1TzTruBVv+m8QSn9dlWSxL7KPLTLX652RKtUlYisc=;
-        b=l/oVb1KzvYN0VwkJ7RRu/7Dz5qWQqsMMOALeDybHoR4QU7/9SDaa2ikY2nRl0Uqf4l
-         esi0SJrMXUflVq5d75Yi2Q49AsBVuLe/mg6VeHrEeqEF9hM7z7BExx/Jip6D8nglV8Lg
-         UHNKAJS9TQPAMw8eXmYKa6uVa9oYYj0Sr7hgSmRc2JDqX6oIpBSMaNqjzIsxaHi9cAEJ
-         SU5NlDwwc0aESCOc/VWLj2LgqEzNnkVh5ML5dc64hqVKoigIwdhikBFlhHCJyoNumjz+
-         L7Dw9thG+E/jxdQ9LQsuAMp+pitf4gc/Stt5SHEmnYu9QTgdXIm1ovHHdtvb0gGEuvND
-         wEXA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=WXMZHC4drIynOYLCSCC5+Ozc3UpZJDDn9U6acW84FvM=;
+        b=VI974cTJioiLwc0CwesGY3QKksWtGSM24R3VmozJi4KEU3eJO6rMkk0iYTDDdeLhX6
+         NuaGd5qO53x0eSwvO75HhEjM4urIxLtztjzF2e7B0zi189QVUp1EbSjwQX/AKCsT1QxK
+         RPZ1Bq39JUEjuD189J1CjA6z4q8SuMnnCdXl36ejvu4cey6AL3b41hHnLE176EW0lP8s
+         ny/XATRPM4KQanrmYZh902CuPeWVbJ2+Ua6ca4TGFllOxYgOTPssmTMnYeU01Cze9xxd
+         AZMymlXXH+5oj9ujEkuCjisl4UJBgWf1JrU8DSixe7ipiYT4mAQmTZm/YXpTc3SKZ0+o
+         MSIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=wX1TzTruBVv+m8QSn9dlWSxL7KPLTLX652RKtUlYisc=;
-        b=cPCGRb3acip75hSZzhI4WfqD27KRbXInDhyQUo5yJJVwxRS0OuN4HxD0O8cFKCGy3A
-         RIgOPVNDnheaLKkV/Wfrm3/4fX0qrAHl9IohqSSl1zfhb2FUSfucEujDUnxDFhhli5N0
-         LJebWyFaGz8b4ilTPKOkZujQpbIIhn2CoCmNF/EN+R8wR5UVKNZCzqc8s9pQzH8h4YqC
-         rAToqm7Oeg6vYllC1zWbAUOxzw/p6XkadYBTvaBwz4qIzHBVA/4Rd9Y5wSEMFUzwmMXi
-         I8P8DcMYjNQitDz0IKT7r5Vjiy7Go+SvHwo0wg6Hu7tih+QX5NKMsB1FTXmaY62eyucx
-         2LJg==
-X-Gm-Message-State: APzg51DsJ0nk2SxV6SkFyqiQKN1MbFZ2cjgpMJVRCXqXnLDWkP88wJCJ
-        /WsKYbqtPkFuwKHt2RUiaDnK9AKU
-X-Google-Smtp-Source: ANB0VdaiASlHGHeT+4X2Ajbosy53I/aXnYqRunLc6pyofYIlVVExCoSTQd3+PgPRne9RnGJl1gxPYg==
-X-Received: by 2002:a50:ce5e:: with SMTP id k30-v6mr13560152edj.207.1535318095294;
-        Sun, 26 Aug 2018 14:14:55 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=WXMZHC4drIynOYLCSCC5+Ozc3UpZJDDn9U6acW84FvM=;
+        b=pP2L/sRxVYQ5TLn9t0OSzZXFxAXfWvzn3VS0dDhIpUVK1jS7XoXo6v5eEaJbOzzFRu
+         +09z39fnaJNqr5bWu9vSzIAnRLOxpnW62zHHP0D1Ap4CZB9Jp+QcUgdpBfw6w4qIz4MW
+         6sbCOd/WZSi8hk92QdHQ6m7R5TDOOTvxx+FliMQYVSuy/Sm9oeqdkyrBT/yHbfGYwGyc
+         klkfyt8NAaVTdox9z2Hab2ZE6wJtDJDyxxnFeGOEl2oHY9scdvA3Tiz9TWMfrEe/259p
+         n93C2Ag1oSbgDkbfWtiAabV7A6flPXnY9E2N8gHSNY2LblIPIqSfp02BostdJZHknWRK
+         C50g==
+X-Gm-Message-State: APzg51B/vH+EzsCW0mJLrRMq6fHWmCHohC1aLkwuRCqrlhAGGxNlXqIh
+        e4RbXthbhpUx5wpjxMiNEbAEpWnZ
+X-Google-Smtp-Source: ANB0VdYaghT4PRnZEfHdmzjeKkn//yUGjjR58CN2QKQcZE9ggk9JENR7EHuyGt6aRigpGyHGjDgUIA==
+X-Received: by 2002:aa7:d707:: with SMTP id t7-v6mr13331763edq.250.1535318096801;
+        Sun, 26 Aug 2018 14:14:56 -0700 (PDT)
 Received: from localhost.localdomain ([109.78.216.151])
-        by smtp.gmail.com with ESMTPSA id b47-v6sm5937300eda.79.2018.08.26.14.14.53
+        by smtp.gmail.com with ESMTPSA id b47-v6sm5937300eda.79.2018.08.26.14.14.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 26 Aug 2018 14:14:54 -0700 (PDT)
+        Sun, 26 Aug 2018 14:14:56 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 00/21] staging:rtl8192u: r8192U_hw.h - Style
-Date:   Sun, 26 Aug 2018 22:14:18 +0100
-Message-Id: <20180826211439.14326-1-johnfwhitmore@gmail.com>
+Subject: [PATCH 01/21] staging:rtl8192u: Refactor enum VERSION_819xU - Style
+Date:   Sun, 26 Aug 2018 22:14:19 +0100
+Message-Id: <20180826211439.14326-2-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180826211439.14326-1-johnfwhitmore@gmail.com>
+References: <20180826211439.14326-1-johnfwhitmore@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series of patches contain simple coding style changes to the file
-r8192U_hw.h, most of the changes are to clear the CamelCase issue in
-checkpatch. To minimise the number of CamelCase names which have to be
-renamed the unused definitions have been removed from the header file.
+Rename enumerated type VERSION_819xU to version_819xu to clear
+checkpatch issue with CamelCase naming. Additionally the constants
+defined by the type are renamed for the same reason.
 
-John Whitmore (21):
-  staging:rtl8192u: Refactor enum VERSION_819xU - Style
-  staging:rtl8192u: Refactor RT_RF_TYPE_DEF - Style
-  staging:rtl8192u: Make function rtl8192_phyConfigBB static
-  staging:rtl8192u: Refactor BaseBand_Config_Type - Style
-  staging:rtl8192u: Remove unused definitions - Style
-  staging:rtl8192u: Reorder enum _RTL8192Usb_HW members - Style
-  staging:rtl8192u: Rename EEPROM_TxPowerDiff - Style
-  staging:rtl8192u: Rename EEPROM_ThermalMeter - Style
-  staging:rtl8192u: Rename EEPROM_PwDiff - Style
-  staging:rtl8192u: Rename EEPROM_CrystalCap - Style
-  staging:rtl8192u: Rename EEPROM_TxPwIndex_CCK - Style
-  staging:rtl8192u: Rename EEPROM_TxPwIndex_OFDM_24G_V1 - STYLE
-  staging:rtl8192u: Rename EEPROM_TxPwIndex_OFDM_24G - Style
-  staging:rtl8192u: Rename EEPROM_TxPwIndex_CCK_V1 - Style
-  staging:rtl8192u: rename EEPROM_TxPwIndex_Ver - Style
-  staging:rtl8192u: Rename EEPROM_Default_ThermalMeter - Style
-  staging:rtl8192u: Rename EEPROM_Default_PwDiff - Style
-  staging:rtl8192u: Rename EEPROM_Default_CrystalCap - Style
-  staging:rtl8192u: Rename EEPROM_Default_TxPower - Style
-  staging:rtl8192u: Rename EEPROM_Customer_ID - Style
-  staging:rtl8192u: Rename EEPROM_ChannelPlan - Style
+Remove the 'typedef' directive to clear the checkpatch issue with
+defining new types.
 
- drivers/staging/rtl8192u/r8190_rtl8256.c |   6 +-
- drivers/staging/rtl8192u/r8192U.h        |  16 +-
- drivers/staging/rtl8192u/r8192U_core.c   |  44 ++---
- drivers/staging/rtl8192u/r8192U_hw.h     | 204 +++--------------------
- drivers/staging/rtl8192u/r819xU_phy.c    |  15 +-
- drivers/staging/rtl8192u/r819xU_phy.h    |   6 +-
- 6 files changed, 71 insertions(+), 220 deletions(-)
+The enumerated type has been moved to the file where the type is
+actually used, r8192U.h
 
+Additionally the memeber variable, which uses the type
+(card_8192_version), has been changed to use the type to enable
+compiler typechecking.
+
+These are coding style changes which should not impact runtime code
+execution.
+
+Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
+---
+ drivers/staging/rtl8192u/r8190_rtl8256.c | 6 +++---
+ drivers/staging/rtl8192u/r8192U.h        | 8 +++++++-
+ drivers/staging/rtl8192u/r8192U_core.c   | 8 ++++----
+ drivers/staging/rtl8192u/r8192U_hw.h     | 5 -----
+ drivers/staging/rtl8192u/r819xU_phy.c    | 4 ++--
+ 5 files changed, 16 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/staging/rtl8192u/r8190_rtl8256.c b/drivers/staging/rtl8192u/r8190_rtl8256.c
+index 9b7f822e9762..e60da2358343 100644
+--- a/drivers/staging/rtl8192u/r8190_rtl8256.c
++++ b/drivers/staging/rtl8192u/r8190_rtl8256.c
+@@ -37,9 +37,9 @@ void PHY_SetRF8256Bandwidth(struct net_device *dev, enum ht_channel_width Bandwi
+ 
+ 		switch (Bandwidth) {
+ 		case HT_CHANNEL_WIDTH_20:
+-				if (priv->card_8192_version == VERSION_819xU_A
++				if (priv->card_8192_version == VERSION_819XU_A
+ 					|| priv->card_8192_version
+-					== VERSION_819xU_B) { /* 8256 D-cut, E-cut, xiong: consider it later! */
++					== VERSION_819XU_B) { /* 8256 D-cut, E-cut, xiong: consider it later! */
+ 					rtl8192_phy_SetRFReg(dev,
+ 						(enum rf90_radio_path_e)eRFPath,
+ 						0x0b, bMask12Bits, 0x100); /* phy para:1ba */
+@@ -57,7 +57,7 @@ void PHY_SetRF8256Bandwidth(struct net_device *dev, enum ht_channel_width Bandwi
+ 					}
+ 				break;
+ 		case HT_CHANNEL_WIDTH_20_40:
+-				if (priv->card_8192_version == VERSION_819xU_A || priv->card_8192_version == VERSION_819xU_B) { /* 8256 D-cut, E-cut, xiong: consider it later! */
++				if (priv->card_8192_version == VERSION_819XU_A || priv->card_8192_version == VERSION_819XU_B) { /* 8256 D-cut, E-cut, xiong: consider it later! */
+ 					rtl8192_phy_SetRFReg(dev, (enum rf90_radio_path_e)eRFPath, 0x0b, bMask12Bits, 0x300); /* phy para:3ba */
+ 					rtl8192_phy_SetRFReg(dev, (enum rf90_radio_path_e)eRFPath, 0x2c, bMask12Bits, 0x3df);
+ 					rtl8192_phy_SetRFReg(dev, (enum rf90_radio_path_e)eRFPath, 0x0e, bMask12Bits, 0x0a1);
+diff --git a/drivers/staging/rtl8192u/r8192U.h b/drivers/staging/rtl8192u/r8192U.h
+index 94a148994069..ce287e2f79e1 100644
+--- a/drivers/staging/rtl8192u/r8192U.h
++++ b/drivers/staging/rtl8192u/r8192U.h
+@@ -798,6 +798,12 @@ typedef enum _tag_TxCmd_Config_Index {
+ 	TXCMD_XXXX_CTRL,
+ } DCMD_TXCMD_OP;
+ 
++enum version_819xu {
++	VERSION_819XU_A, // A-cut
++	VERSION_819XU_B, // B-cut
++	VERSION_819XU_C,// C-cut
++};
++
+ typedef struct r8192_priv {
+ 	struct usb_device *udev;
+ 	/* For maintain info from eeprom */
+@@ -815,7 +821,7 @@ typedef struct r8192_priv {
+ 	/* O: rtl8192, 1: rtl8185 V B/C, 2: rtl8185 V D */
+ 	short card_8192;
+ 	/* If TCR reports card V B/C, this discriminates */
+-	u8 card_8192_version;
++	enum version_819xu card_8192_version;
+ 	short enable_gpio0;
+ 	enum card_type {
+ 		PCI, MINIPCI, CARDBUS, USB
+diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
+index e218b5c20642..3b89f2669754 100644
+--- a/drivers/staging/rtl8192u/r8192U_core.c
++++ b/drivers/staging/rtl8192u/r8192U_core.c
+@@ -2395,7 +2395,7 @@ static int rtl8192_read_eeprom_info(struct net_device *dev)
+ 	} else {
+ 		priv->eeprom_vid = 0;
+ 		priv->eeprom_pid = 0;
+-		priv->card_8192_version = VERSION_819xU_B;
++		priv->card_8192_version = VERSION_819XU_B;
+ 		priv->eeprom_ChannelPlan = 0;
+ 		priv->eeprom_CustomerID = 0;
+ 	}
+@@ -2422,7 +2422,7 @@ static int rtl8192_read_eeprom_info(struct net_device *dev)
+ 	priv->rf_type = RTL819X_DEFAULT_RF_TYPE; /* default 1T2R */
+ 	priv->rf_chip = RF_8256;
+ 
+-	if (priv->card_8192_version == (u8)VERSION_819xU_A) {
++	if (priv->card_8192_version == VERSION_819XU_A) {
+ 		/* read Tx power gain offset of legacy OFDM to HT rate */
+ 		if (bLoad_From_EEPOM) {
+ 			ret = eprom_read(dev, (EEPROM_TxPowerDiff >> 1));
+@@ -2567,7 +2567,7 @@ static int rtl8192_read_eeprom_info(struct net_device *dev)
+ 		 * 92U does not enable TX power tracking.
+ 		 */
+ 		priv->ThermalMeter[0] = priv->EEPROMThermalMeter;
+-	} /* end if VersionID == VERSION_819xU_A */
++	} /* end if VersionID == VERSION_819XU_A */
+ 
+ 	/* for dlink led */
+ 	switch (priv->eeprom_CustomerID) {
+@@ -2872,7 +2872,7 @@ static bool rtl8192_adapter_start(struct net_device *dev)
+ 
+ 	rtl8192_phy_configmac(dev);
+ 
+-	if (priv->card_8192_version == (u8)VERSION_819xU_A) {
++	if (priv->card_8192_version == VERSION_819XU_A) {
+ 		rtl8192_phy_getTxPower(dev);
+ 		rtl8192_phy_setTxPower(dev, priv->chan);
+ 	}
+diff --git a/drivers/staging/rtl8192u/r8192U_hw.h b/drivers/staging/rtl8192u/r8192U_hw.h
+index 00a123d44207..15e56003d97c 100644
+--- a/drivers/staging/rtl8192u/r8192U_hw.h
++++ b/drivers/staging/rtl8192u/r8192U_hw.h
+@@ -20,11 +20,6 @@
+ #ifndef R8192_HW
+ #define R8192_HW
+ 
+-typedef enum _VERSION_819xU {
+-	VERSION_819xU_A, // A-cut
+-	VERSION_819xU_B, // B-cut
+-	VERSION_819xU_C,// C-cut
+-} VERSION_819xU, *PVERSION_819xU;
+ //added for different RF type
+ typedef enum _RT_RF_TYPE_DEF {
+ 	RF_1T2R = 0,
+diff --git a/drivers/staging/rtl8192u/r819xU_phy.c b/drivers/staging/rtl8192u/r819xU_phy.c
+index 7ee10d49894b..8e6ed20848d8 100644
+--- a/drivers/staging/rtl8192u/r819xU_phy.c
++++ b/drivers/staging/rtl8192u/r819xU_phy.c
+@@ -814,7 +814,7 @@ static void rtl8192_BB_Config_ParaFile(struct net_device *dev)
+ 
+ 	/* ----Enable XSTAL ---- */
+ 	write_nic_byte_E(dev, 0x5e, 0x00);
+-	if (priv->card_8192_version == (u8)VERSION_819xU_A) {
++	if (priv->card_8192_version == VERSION_819XU_A) {
+ 		/* Antenna gain offset from B/C/D to A */
+ 		reg_u32 = priv->AntennaTxPwDiff[1]<<4 |
+ 			   priv->AntennaTxPwDiff[0];
+@@ -1367,7 +1367,7 @@ static u8 rtl8192_phy_SwChnlStepByStep(struct net_device *dev, u8 channel,
+ 
+ 		switch (CurrentCmd->cmd_id) {
+ 		case CMD_ID_SET_TX_PWR_LEVEL:
+-			if (priv->card_8192_version == (u8)VERSION_819xU_A)
++			if (priv->card_8192_version == VERSION_819XU_A)
+ 				/* consider it later! */
+ 				rtl8192_SetTxPowerLevel(dev, channel);
+ 			break;
 -- 
 2.18.0
 
