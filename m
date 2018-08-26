@@ -6,39 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10316C433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:46:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06F39C433F5
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:46:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5F5D2170B
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:46:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5F5D2170B
+	by mail.kernel.org (Postfix) with ESMTP id C165A2170B
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:46:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C165A2170B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727354AbeHZK1j (ORCPT
+        id S1727388AbeHZK1m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 06:27:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53554 "EHLO
+        Sun, 26 Aug 2018 06:27:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53570 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727055AbeHZK1j (ORCPT
+        with ESMTP id S1727055AbeHZK1l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 06:27:39 -0400
+        Sun, 26 Aug 2018 06:27:41 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 742039D3;
-        Sun, 26 Aug 2018 06:46:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0E5489D3;
+        Sun, 26 Aug 2018 06:46:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+05f840f3b04f211bad55@syzkaller.appspotmail.com,
-        Wei Wang <weiwan@google.com>, Martin KaFai Lau <kafai@fb.com>,
-        Guillaume Nault <g.nault@alphalink.fr>,
-        David Ahern <dsahern@gmail.com>,
+        syzbot+278893f3f7803871f7ce@syzkaller.appspotmail.com,
         Cong Wang <xiyou.wangcong@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 02/56] l2tp: use sk_dst_check() to avoid race on sk->sk_dst_cache
-Date:   Sun, 26 Aug 2018 08:44:23 +0200
-Message-Id: <20180826064232.421380252@linuxfoundation.org>
+Subject: [PATCH 3.18 03/56] llc: use refcount_inc_not_zero() for llc_sap_find()
+Date:   Sun, 26 Aug 2018 08:44:24 +0200
+Message-Id: <20180826064232.467540858@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180826064232.320669119@linuxfoundation.org>
 References: <20180826064232.320669119@linuxfoundation.org>
@@ -55,95 +52,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wei Wang <weiwan@google.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit 6d37fa49da1e8db8fb1995be22ac837ca41ac8a8 ]
+[ Upstream commit 0dcb82254d65f72333aa50ad626d1e9665ad093b ]
 
-In l2tp code, if it is a L2TP_UDP_ENCAP tunnel, tunnel->sk points to a
-UDP socket. User could call sendmsg() on both this tunnel and the UDP
-socket itself concurrently. As l2tp_xmit_skb() holds socket lock and call
-__sk_dst_check() to refresh sk->sk_dst_cache, while udpv6_sendmsg() is
-lockless and call sk_dst_check() to refresh sk->sk_dst_cache, there
-could be a race and cause the dst cache to be freed multiple times.
-So we fix l2tp side code to always call sk_dst_check() to garantee
-xchg() is called when refreshing sk->sk_dst_cache to avoid race
-conditions.
+llc_sap_put() decreases the refcnt before deleting sap
+from the global list. Therefore, there is a chance
+llc_sap_find() could find a sap with zero refcnt
+in this global list.
 
-Syzkaller reported stack trace:
-BUG: KASAN: use-after-free in atomic_read include/asm-generic/atomic-instrumented.h:21 [inline]
-BUG: KASAN: use-after-free in atomic_fetch_add_unless include/linux/atomic.h:575 [inline]
-BUG: KASAN: use-after-free in atomic_add_unless include/linux/atomic.h:597 [inline]
-BUG: KASAN: use-after-free in dst_hold_safe include/net/dst.h:308 [inline]
-BUG: KASAN: use-after-free in ip6_hold_safe+0xe6/0x670 net/ipv6/route.c:1029
-Read of size 4 at addr ffff8801aea9a880 by task syz-executor129/4829
+Close this race condition by checking if refcnt is zero
+or not in llc_sap_find(), if it is zero then it is being
+removed so we can just treat it as gone.
 
-CPU: 0 PID: 4829 Comm: syz-executor129 Not tainted 4.18.0-rc7-next-20180802+ #30
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
- print_address_description+0x6c/0x20b mm/kasan/report.c:256
- kasan_report_error mm/kasan/report.c:354 [inline]
- kasan_report.cold.7+0x242/0x30d mm/kasan/report.c:412
- check_memory_region_inline mm/kasan/kasan.c:260 [inline]
- check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
- kasan_check_read+0x11/0x20 mm/kasan/kasan.c:272
- atomic_read include/asm-generic/atomic-instrumented.h:21 [inline]
- atomic_fetch_add_unless include/linux/atomic.h:575 [inline]
- atomic_add_unless include/linux/atomic.h:597 [inline]
- dst_hold_safe include/net/dst.h:308 [inline]
- ip6_hold_safe+0xe6/0x670 net/ipv6/route.c:1029
- rt6_get_pcpu_route net/ipv6/route.c:1249 [inline]
- ip6_pol_route+0x354/0xd20 net/ipv6/route.c:1922
- ip6_pol_route_output+0x54/0x70 net/ipv6/route.c:2098
- fib6_rule_lookup+0x283/0x890 net/ipv6/fib6_rules.c:122
- ip6_route_output_flags+0x2c5/0x350 net/ipv6/route.c:2126
- ip6_dst_lookup_tail+0x1278/0x1da0 net/ipv6/ip6_output.c:978
- ip6_dst_lookup_flow+0xc8/0x270 net/ipv6/ip6_output.c:1079
- ip6_sk_dst_lookup_flow+0x5ed/0xc50 net/ipv6/ip6_output.c:1117
- udpv6_sendmsg+0x2163/0x36b0 net/ipv6/udp.c:1354
- inet_sendmsg+0x1a1/0x690 net/ipv4/af_inet.c:798
- sock_sendmsg_nosec net/socket.c:622 [inline]
- sock_sendmsg+0xd5/0x120 net/socket.c:632
- ___sys_sendmsg+0x51d/0x930 net/socket.c:2115
- __sys_sendmmsg+0x240/0x6f0 net/socket.c:2210
- __do_sys_sendmmsg net/socket.c:2239 [inline]
- __se_sys_sendmmsg net/socket.c:2236 [inline]
- __x64_sys_sendmmsg+0x9d/0x100 net/socket.c:2236
- do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x446a29
-Code: e8 ac b8 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 eb 08 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f4de5532db8 EFLAGS: 00000246 ORIG_RAX: 0000000000000133
-RAX: ffffffffffffffda RBX: 00000000006dcc38 RCX: 0000000000446a29
-RDX: 00000000000000b8 RSI: 0000000020001b00 RDI: 0000000000000003
-RBP: 00000000006dcc30 R08: 00007f4de5533700 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dcc3c
-R13: 00007ffe2b830fdf R14: 00007f4de55339c0 R15: 0000000000000001
-
-Fixes: 71b1391a4128 ("l2tp: ensure sk->dst is still valid")
-Reported-by: syzbot+05f840f3b04f211bad55@syzkaller.appspotmail.com
-Signed-off-by: Wei Wang <weiwan@google.com>
-Signed-off-by: Martin KaFai Lau <kafai@fb.com>
-Cc: Guillaume Nault <g.nault@alphalink.fr>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Cong Wang <xiyou.wangcong@gmail.com>
+Reported-by: <syzbot+278893f3f7803871f7ce@syzkaller.appspotmail.com>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/l2tp/l2tp_core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/net/llc.h  |    5 +++++
+ net/llc/llc_core.c |    4 ++--
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
---- a/net/l2tp/l2tp_core.c
-+++ b/net/l2tp/l2tp_core.c
-@@ -1141,7 +1141,7 @@ int l2tp_xmit_skb(struct l2tp_session *s
+--- a/include/net/llc.h
++++ b/include/net/llc.h
+@@ -116,6 +116,11 @@ static inline void llc_sap_hold(struct l
+ 	atomic_inc(&sap->refcnt);
+ }
  
- 	/* Get routing info from the tunnel socket */
- 	skb_dst_drop(skb);
--	skb_dst_set(skb, dst_clone(__sk_dst_check(sk, 0)));
-+	skb_dst_set(skb, sk_dst_check(sk, 0));
++static inline bool llc_sap_hold_safe(struct llc_sap *sap)
++{
++	return atomic_inc_not_zero(&sap->refcnt);
++}
++
+ void llc_sap_close(struct llc_sap *sap);
  
- 	inet = inet_sk(sk);
- 	fl = &inet->cork.fl;
+ static inline void llc_sap_put(struct llc_sap *sap)
+--- a/net/llc/llc_core.c
++++ b/net/llc/llc_core.c
+@@ -73,8 +73,8 @@ struct llc_sap *llc_sap_find(unsigned ch
+ 
+ 	rcu_read_lock_bh();
+ 	sap = __llc_sap_find(sap_value);
+-	if (sap)
+-		llc_sap_hold(sap);
++	if (!sap || !llc_sap_hold_safe(sap))
++		sap = NULL;
+ 	rcu_read_unlock_bh();
+ 	return sap;
+ }
 
 
