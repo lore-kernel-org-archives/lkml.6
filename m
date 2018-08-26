@@ -2,132 +2,110 @@ Return-Path: <SRS0=U0Lc=LJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E57E6C433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 21:02:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8B58C433F5
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 21:14:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D9E1208B6
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 21:02:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D9E1208B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 710812086A
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 21:14:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l/oVb1Kz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 710812086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726918AbeH0Aq1 convert rfc822-to-8bit (ORCPT
+        id S1726891AbeH0A6k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 20:46:27 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43728 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726793AbeH0Aq1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 20:46:27 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CB8C440216ED;
-        Sun, 26 Aug 2018 21:02:44 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-121-41.rdu2.redhat.com [10.10.121.41])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 54B0C63F59;
-        Sun, 26 Aug 2018 21:02:44 +0000 (UTC)
-Subject: Re: [PATCH 2/2] xfs: Use wake_q for waking up log space waiters
-From:   Waiman Long <longman@redhat.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dave Chinner <dchinner@redhat.com>
-References: <1535041570-24102-1-git-send-email-longman@redhat.com>
- <1535041570-24102-3-git-send-email-longman@redhat.com>
- <20180824003017.GZ2234@dastard>
- <bbdaf330-ce6b-bc53-eb97-93b34359bd3d@redhat.com>
-Organization: Red Hat
-Message-ID: <36d1f3f5-9a4a-2511-4dce-c3ae30022d4a@redhat.com>
-Date:   Sun, 26 Aug 2018 17:02:44 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <bbdaf330-ce6b-bc53-eb97-93b34359bd3d@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Sun, 26 Aug 2018 21:02:44 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Sun, 26 Aug 2018 21:02:44 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
+        Sun, 26 Aug 2018 20:58:40 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:37648 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726714AbeH0A6k (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 26 Aug 2018 20:58:40 -0400
+Received: by mail-ed1-f66.google.com with SMTP id b10-v6so9112083eds.4
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Aug 2018 14:14:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=wX1TzTruBVv+m8QSn9dlWSxL7KPLTLX652RKtUlYisc=;
+        b=l/oVb1KzvYN0VwkJ7RRu/7Dz5qWQqsMMOALeDybHoR4QU7/9SDaa2ikY2nRl0Uqf4l
+         esi0SJrMXUflVq5d75Yi2Q49AsBVuLe/mg6VeHrEeqEF9hM7z7BExx/Jip6D8nglV8Lg
+         UHNKAJS9TQPAMw8eXmYKa6uVa9oYYj0Sr7hgSmRc2JDqX6oIpBSMaNqjzIsxaHi9cAEJ
+         SU5NlDwwc0aESCOc/VWLj2LgqEzNnkVh5ML5dc64hqVKoigIwdhikBFlhHCJyoNumjz+
+         L7Dw9thG+E/jxdQ9LQsuAMp+pitf4gc/Stt5SHEmnYu9QTgdXIm1ovHHdtvb0gGEuvND
+         wEXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=wX1TzTruBVv+m8QSn9dlWSxL7KPLTLX652RKtUlYisc=;
+        b=cPCGRb3acip75hSZzhI4WfqD27KRbXInDhyQUo5yJJVwxRS0OuN4HxD0O8cFKCGy3A
+         RIgOPVNDnheaLKkV/Wfrm3/4fX0qrAHl9IohqSSl1zfhb2FUSfucEujDUnxDFhhli5N0
+         LJebWyFaGz8b4ilTPKOkZujQpbIIhn2CoCmNF/EN+R8wR5UVKNZCzqc8s9pQzH8h4YqC
+         rAToqm7Oeg6vYllC1zWbAUOxzw/p6XkadYBTvaBwz4qIzHBVA/4Rd9Y5wSEMFUzwmMXi
+         I8P8DcMYjNQitDz0IKT7r5Vjiy7Go+SvHwo0wg6Hu7tih+QX5NKMsB1FTXmaY62eyucx
+         2LJg==
+X-Gm-Message-State: APzg51DsJ0nk2SxV6SkFyqiQKN1MbFZ2cjgpMJVRCXqXnLDWkP88wJCJ
+        /WsKYbqtPkFuwKHt2RUiaDnK9AKU
+X-Google-Smtp-Source: ANB0VdaiASlHGHeT+4X2Ajbosy53I/aXnYqRunLc6pyofYIlVVExCoSTQd3+PgPRne9RnGJl1gxPYg==
+X-Received: by 2002:a50:ce5e:: with SMTP id k30-v6mr13560152edj.207.1535318095294;
+        Sun, 26 Aug 2018 14:14:55 -0700 (PDT)
+Received: from localhost.localdomain ([109.78.216.151])
+        by smtp.gmail.com with ESMTPSA id b47-v6sm5937300eda.79.2018.08.26.14.14.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 26 Aug 2018 14:14:54 -0700 (PDT)
+From:   John Whitmore <johnfwhitmore@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
+        John Whitmore <johnfwhitmore@gmail.com>
+Subject: [PATCH 00/21] staging:rtl8192u: r8192U_hw.h - Style
+Date:   Sun, 26 Aug 2018 22:14:18 +0100
+Message-Id: <20180826211439.14326-1-johnfwhitmore@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/24/2018 05:54 PM, Waiman Long wrote:
-> On 08/23/2018 08:30 PM, Dave Chinner wrote:
->>
->> That's racy. You can't drop the spin lock between
->> xlog_grant_head_wake() and xlog_grant_head_wait(), because
->> free_bytes is only valid while while the spinlock is held.  Same for
->> the "wake_all" variable you added. i..e. while waking up the
->> waiters, we could have run out of space again and had more tasks
->> queued, or had the AIL tail move and now have space available.
->> Either way, we can do the wrong thing because we dropped the lock
->> and free_bytes and wake_all are now stale and potentially incorrect.
->>
->>> @@ -1068,6 +1088,7 @@
->>>  {
->>>  	struct xlog		*log = mp->m_log;
->>>  	int			free_bytes;
->>> +	DEFINE_WAKE_Q(wakeq);
->>>  
->>>  	if (XLOG_FORCED_SHUTDOWN(log))
->>>  		return;
->>> @@ -1077,8 +1098,11 @@
->>>  
->>>  		spin_lock(&log->l_write_head.lock);
->>>  		free_bytes = xlog_space_left(log, &log->l_write_head.grant);
->>> -		xlog_grant_head_wake(log, &log->l_write_head, &free_bytes);
->>> +		xlog_grant_head_wake(log, &log->l_write_head, &free_bytes,
->>> +				     &wakeq);
->>>  		spin_unlock(&log->l_write_head.lock);
->>> +		wake_up_q(&wakeq);
->>> +		wake_q_init(&wakeq);
->> That's another landmine. Just define the wakeq in the context where
->> it is used rather than use a function wide variable that requires
->> reinitialisation.
->>
->>>  	}
->>>  
->>>  	if (!list_empty_careful(&log->l_reserve_head.waiters)) {
->>> @@ -1086,8 +1110,10 @@
->>>  
->>>  		spin_lock(&log->l_reserve_head.lock);
->>>  		free_bytes = xlog_space_left(log, &log->l_reserve_head.grant);
->>> -		xlog_grant_head_wake(log, &log->l_reserve_head, &free_bytes);
->>> +		xlog_grant_head_wake(log, &log->l_reserve_head, &free_bytes,
->>> +				     &wakeq);
->>>  		spin_unlock(&log->l_reserve_head.lock);
->>> +		wake_up_q(&wakeq);
->>>  	}
->>>  }
->> Ok, what about xlog_grant_head_wake_all()? You didn't convert that
->> to use wake queues, and so that won't remove tickets for the grant
->> head waiter list, and so those tasks will never get out of the new
->> inner loop you added to xlog_grant_head_wait(). That means
->> filesystem shutdowns will just hang the filesystem and leave it
->> unmountable. Did you run this through fstests?
->>
->> Cheers,
->>
->> Dave
-> OK, I need more time to think about some of the questions that you
-> raise.  Thanks for reviewing the patch.
->
-> Cheers,
-> Longman
+This series of patches contain simple coding style changes to the file
+r8192U_hw.h, most of the changes are to clear the CamelCase issue in
+checkpatch. To minimise the number of CamelCase names which have to be
+renamed the unused definitions have been removed from the header file.
 
-Thanks for your detailed review of the patch. I now have a better
-understanding of what should and shouldn't be done. I have sent out a
-more conservative v2 patchset which, hopefully, can address the concerns
-that you raised.
+John Whitmore (21):
+  staging:rtl8192u: Refactor enum VERSION_819xU - Style
+  staging:rtl8192u: Refactor RT_RF_TYPE_DEF - Style
+  staging:rtl8192u: Make function rtl8192_phyConfigBB static
+  staging:rtl8192u: Refactor BaseBand_Config_Type - Style
+  staging:rtl8192u: Remove unused definitions - Style
+  staging:rtl8192u: Reorder enum _RTL8192Usb_HW members - Style
+  staging:rtl8192u: Rename EEPROM_TxPowerDiff - Style
+  staging:rtl8192u: Rename EEPROM_ThermalMeter - Style
+  staging:rtl8192u: Rename EEPROM_PwDiff - Style
+  staging:rtl8192u: Rename EEPROM_CrystalCap - Style
+  staging:rtl8192u: Rename EEPROM_TxPwIndex_CCK - Style
+  staging:rtl8192u: Rename EEPROM_TxPwIndex_OFDM_24G_V1 - STYLE
+  staging:rtl8192u: Rename EEPROM_TxPwIndex_OFDM_24G - Style
+  staging:rtl8192u: Rename EEPROM_TxPwIndex_CCK_V1 - Style
+  staging:rtl8192u: rename EEPROM_TxPwIndex_Ver - Style
+  staging:rtl8192u: Rename EEPROM_Default_ThermalMeter - Style
+  staging:rtl8192u: Rename EEPROM_Default_PwDiff - Style
+  staging:rtl8192u: Rename EEPROM_Default_CrystalCap - Style
+  staging:rtl8192u: Rename EEPROM_Default_TxPower - Style
+  staging:rtl8192u: Rename EEPROM_Customer_ID - Style
+  staging:rtl8192u: Rename EEPROM_ChannelPlan - Style
 
-Cheers,
-Longman
+ drivers/staging/rtl8192u/r8190_rtl8256.c |   6 +-
+ drivers/staging/rtl8192u/r8192U.h        |  16 +-
+ drivers/staging/rtl8192u/r8192U_core.c   |  44 ++---
+ drivers/staging/rtl8192u/r8192U_hw.h     | 204 +++--------------------
+ drivers/staging/rtl8192u/r819xU_phy.c    |  15 +-
+ drivers/staging/rtl8192u/r819xU_phy.h    |   6 +-
+ 6 files changed, 71 insertions(+), 220 deletions(-)
+
+-- 
+2.18.0
 
