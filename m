@@ -2,581 +2,620 @@ Return-Path: <SRS0=U0Lc=LJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30F6DC433F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 15:20:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29416C433F5
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 15:56:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B080F208A1
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 15:20:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B080F208A1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+	by mail.kernel.org (Postfix) with ESMTP id AFD97208C1
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 15:56:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X/tV69RR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFD97208C1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726988AbeHZTDk (ORCPT
+        id S1726846AbeHZTi6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 15:03:40 -0400
-Received: from mail-out.m-online.net ([212.18.0.9]:39682 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726891AbeHZTDj (ORCPT
+        Sun, 26 Aug 2018 15:38:58 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:37768 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726625AbeHZTi5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 15:03:39 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 41yzHF48c7z1qvTf;
-        Sun, 26 Aug 2018 17:20:36 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 41yzH80zrfz1qqkX;
-        Sun, 26 Aug 2018 17:20:36 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id faXTqXpylKGB; Sun, 26 Aug 2018 17:20:30 +0200 (CEST)
-X-Auth-Info: sMRMnjFI520fdXPcbE6+MHoekxHPiZMGJZVYahVOPXY=
-Received: from [192.168.178.26] (unknown [62.91.11.8])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Sun, 26 Aug 2018 17:20:30 +0200 (CEST)
-Subject: Re: [PATCH v2 2/3] drivers/irqchip: Add Actions external interrupts
- support
-To:     Marc Zyngier <marc.zyngier@arm.com>, tglx@linutronix.de,
-        jason@lakedaemon.net, robh+dt@kernel.org, mark.rutland@arm.com,
-        afaerber@suse.de, catalin.marinas@arm.com, will.deacon@arm.com,
-        manivannan.sadhasivam@linaro.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, sravanhome@gmail.com,
-        thomas.liau@actions-semi.com, mp-cs@actions-semi.com,
-        linux@cubietech.com, edgar.righi@lsitec.org.br,
-        laisa.costa@lsitec.org.br, guilherme.simoes@lsitec.org.br,
-        mkzuffo@lsi.usp.br, pn@denx.de
-References: <20180812122215.1079590-1-pn@denx.de>
- <20180812122215.1079590-3-pn@denx.de>
- <64b9ae63-c2b9-a2e0-f648-4bf80f34a57a@arm.com>
-From:   Parthiban Nallathambi <pn@denx.de>
-Organization: DENX Software Engineering GmbH
-Message-ID: <e8ff35c7-813c-2597-ab51-781336d551c5@denx.de>
-Date:   Sun, 26 Aug 2018 17:20:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <64b9ae63-c2b9-a2e0-f648-4bf80f34a57a@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Sun, 26 Aug 2018 15:38:57 -0400
+Received: by mail-io0-f194.google.com with SMTP id v14-v6so10891032iob.4;
+        Sun, 26 Aug 2018 08:56:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=/P6SMlUDKGD2jQnycK57VvHZC6jQk3et0V1A/u8oX18=;
+        b=X/tV69RR40P92qt9En8xjRpD76byUtn9Jeffh1zoIlY8GU/GQ2U2+kw4rdt680NkQc
+         w6ZJGUvPNpIcgso1QKrQB7gkdOKid32urxbN1N3o2FA8LCa79GAXPlQo1THP2uG+KjNI
+         q1wAYikJrZ/pPJpbuXGbx2jFERpXxjcDk4ThWagVg1YYw0vZ/HKSsmct+S7+K9AE7HoC
+         V6cWtGn9a9bSYav/fkgQMdfLhyO3jPYLT/oZffWfpHUajPkIBUpxwhG1FtjYjuQHbVfw
+         BKesuCIesrafngf0Goh3POKnRFJB51BCl7BmpU0qD9Mm2Q061zM7+wnaGHPOrtwzw9IN
+         ztPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=/P6SMlUDKGD2jQnycK57VvHZC6jQk3et0V1A/u8oX18=;
+        b=Sj5rkY3RPhZVszG21gqb+saRCC+VY9bOPozeSFevqZUdNqyOdDO9essFvgOIdVfGeP
+         HvTkvBwapAcyUGeUdLHhaIqp02/+f5iUz+w1MHDvtoqxTVPvGnq59jjsViq07Trd8RRD
+         8Ltg0s+2S1Sakg7DksPPHPr18C1LjZCdwZ+ebsT0U7jKEp40F02KIZaXE19oG/+5P7qU
+         PUpDfuuCjJIvg+bOTqDNusWeVZTrHQ3zi0llycFgM/nVNydWofEBDygkT59a+Fom3yVJ
+         1+dTdaS+nCqet2/tTBb7RCDmcTqnfVphDQQqPxPQiWhiC0YDzWAWcNv/TitbQ2s7cCss
+         5ePA==
+X-Gm-Message-State: APzg51CYsN8j1tUpHjtZc03HoeaAbPNe9NbtGd0wP/hsjYYENZuxXMmR
+        sn5ts18UiPpkKeXm3hXHB1o=
+X-Google-Smtp-Source: ANB0Vdb76g0nIFa/Ny0OzBagByJRPp6zUcz9LHzyJLCJIhNPCq5SLlvpjxGKbIYXsXjMvPn6uMjSsA==
+X-Received: by 2002:a5e:9615:: with SMTP id a21-v6mr7475220ioq.53.1535298959741;
+        Sun, 26 Aug 2018 08:55:59 -0700 (PDT)
+Received: from anon-dhcp-171.1015granger.net (c-68-61-232-219.hsd1.mi.comcast.net. [68.61.232.219])
+        by smtp.gmail.com with ESMTPSA id w196-v6sm3001751itb.9.2018.08.26.08.55.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 26 Aug 2018 08:55:59 -0700 (PDT)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Subject: Re: [RFC PATCH 02/10] fs-verity: add data verification hooks for
+ ->readpages()
+From:   Chuck Lever <chucklever@gmail.com>
+In-Reply-To: <20180824161642.1144-3-ebiggers@kernel.org>
+Date:   Sun, 26 Aug 2018 11:55:57 -0400
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-integrity@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Michael Halcrow <mhalcrow@google.com>,
+        Victor Hsieh <victorhsieh@google.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <C86750D6-CA95-4A7F-9204-51345C497EC2@gmail.com>
+References: <20180824161642.1144-1-ebiggers@kernel.org>
+ <20180824161642.1144-3-ebiggers@kernel.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+X-Mailer: Apple Mail (2.3445.9.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Marc,
 
-Thanks for your feedback.
 
-On 8/13/18 1:46 PM, Marc Zyngier wrote:
-> On 12/08/18 13:22, Parthiban Nallathambi wrote:
->> Actions Semi Owl family SoC's S500, S700 and S900 provides support
->> for 3 external interrupt controllers through SIRQ pins.
->>
->> Each line can be independently configured as interrupt and triggers
->> on either of the edges (raising or falling) or either of the levels
->> (high or low) . Each line can also be masked independently.
->>
->> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
->> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
->> ---
->>  drivers/irqchip/Makefile       |   1 +
->>  drivers/irqchip/irq-owl-sirq.c | 305 +++++++++++++++++++++++++++++++++++++++++
->>  2 files changed, 306 insertions(+)
->>  create mode 100644 drivers/irqchip/irq-owl-sirq.c
->>
->> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
->> index 15f268f646bf..072c4409e7c4 100644
->> --- a/drivers/irqchip/Makefile
->> +++ b/drivers/irqchip/Makefile
->> @@ -7,6 +7,7 @@ obj-$(CONFIG_ATH79)			+= irq-ath79-misc.o
->>  obj-$(CONFIG_ARCH_BCM2835)		+= irq-bcm2835.o
->>  obj-$(CONFIG_ARCH_BCM2835)		+= irq-bcm2836.o
->>  obj-$(CONFIG_ARCH_EXYNOS)		+= exynos-combiner.o
->> +obj-$(CONFIG_ARCH_ACTIONS)		+= irq-owl-sirq.o
->>  obj-$(CONFIG_FARADAY_FTINTC010)		+= irq-ftintc010.o
->>  obj-$(CONFIG_ARCH_HIP04)		+= irq-hip04.o
->>  obj-$(CONFIG_ARCH_LPC32XX)		+= irq-lpc32xx.o
->> diff --git a/drivers/irqchip/irq-owl-sirq.c b/drivers/irqchip/irq-owl-sirq.c
->> new file mode 100644
->> index 000000000000..b69301388300
->> --- /dev/null
->> +++ b/drivers/irqchip/irq-owl-sirq.c
->> @@ -0,0 +1,305 @@
->> +// SPDX-License-Identifier: GPL-2.0+
->> +/*
->> + *
->> + * Actions Semi Owl SoCs SIRQ interrupt controller driver
->> + *
->> + * Copyright (C) 2014 Actions Semi Inc.
->> + * David Liu <liuwei@actions-semi.com>
->> + *
->> + * Author: Parthiban Nallathambi <pn@denx.de>
->> + * Author: Saravanan Sekar <sravanhome@gmail.com>
->> + */
->> +
->> +#include <linux/interrupt.h>
->> +#include <linux/irqchip.h>
->> +#include <linux/of_irq.h>
->> +#include <linux/of_address.h>
->> +
->> +#include <dt-bindings/interrupt-controller/arm-gic.h>
->> +
->> +#define INTC_GIC_INTERRUPT_PIN		13
-> 
-> Why isn't that coming from the DT?
-
-DT numbering is taken irqchip local, by which hwirq is directly used to
-calculate the offset into register when it is shared. Even if this is 
-directly from DT, I need the value to offset into the register. So maintianed
-inside the driver.
-
-Should it make sense to move it to DT and use another macro (different name)
-for offsetting?
-
-> 
->> +#define INTC_EXTCTL_PENDING		BIT(0)
->> +#define INTC_EXTCTL_CLK_SEL		BIT(4)
->> +#define INTC_EXTCTL_EN			BIT(5)
->> +#define	INTC_EXTCTL_TYPE_MASK		GENMASK(6, 7)
->> +#define	INTC_EXTCTL_TYPE_HIGH		0
->> +#define	INTC_EXTCTL_TYPE_LOW		BIT(6)
->> +#define	INTC_EXTCTL_TYPE_RISING		BIT(7)
->> +#define	INTC_EXTCTL_TYPE_FALLING	(BIT(6) | BIT(7))
->> +
->> +#define get_sirq_offset(x)	chip_data->sirq[x].offset
->> +
->> +/* Per SIRQ data */
->> +struct owl_sirq {
->> +	u16 offset;
->> +	/* software is responsible to clear interrupt pending bit when
->> +	 * type is edge triggered. This value is for per SIRQ line.
->> +	 */
-> 
-> Please follow the normal multi-line comment style:
-> 
-> /*
->  * This is a comment, starting with a capital letter and ending with
->  * a full stop.
->  */
-
-Sure, thanks.
-
-> 
->> +	bool type_edge;
->> +};
->> +
->> +struct owl_sirq_chip_data {
->> +	void __iomem *base;
->> +	raw_spinlock_t lock;
->> +	/* some SoC's share the register for all SIRQ lines, so maintain
->> +	 * register is shared or not here. This value is from DT.
->> +	 */
->> +	bool shared_reg;
->> +	struct owl_sirq *sirq;
-> 
-> Given that this driver handles at most 3 interrupts, do we need the
-> overhead of a pointer and an additional allocation, while we could store
-> all of this data in the space taken by the pointer itself?
-> 
-> Something like:
-> 
-> 	u16 offset[3];
-> 	u8  trigger; // Bit mask indicating edge-triggered interrupts
-> 
-> and we're done.
-
-Sure, I will modify with one allocation.
-
-> 
->> +};
->> +
->> +static struct owl_sirq_chip_data *sirq_data;
->> +
->> +static unsigned int sirq_read_extctl(struct irq_data *data)
-> 
-> Why isn't this taking a struct owl_sirq_chip_data as a parameter instead
-> of always passing irq_data?
-> 
-> Also, this should return a well defined size, which "unsigned int"
-> isn't. Make that u32.
-
-Sure, will adapt this.
-
-> 
->> +{
->> +	struct owl_sirq_chip_data *chip_data = data->chip_data;
->> +	unsigned int val;
-> 
-> u32;
-
-Sure.
-
-> 
->> +
->> +	val = readl_relaxed(chip_data->base + get_sirq_offset(data->hwirq));
->> +	if (chip_data->shared_reg)
->> +		val = (val >> (2 - data->hwirq) * 8) & 0xff;
->> +
->> +	return val;
->> +}
->> +
->> +static void sirq_write_extctl(struct irq_data *data, unsigned int extctl)
-> 
-> Same comments.
-
-Sure.
-
-> 
->> +{
->> +	struct owl_sirq_chip_data *chip_data = data->chip_data;
->> +	unsigned int val;
-> 
-> u32;
-
-Sure.
-
-> 
->> +
->> +	if (chip_data->shared_reg) {
->> +		val = readl_relaxed(chip_data->base +
->> +				get_sirq_offset(data->hwirq));
-> 
-> Single line, please.
-
-Sure.
-
-> 
->> +		val &= ~(0xff << (2 - data->hwirq) * 8);
->> +		extctl &= 0xff;
->> +		extctl = (extctl << (2 - data->hwirq) * 8) | val;
->> +	}
->> +
->> +	writel_relaxed(extctl, chip_data->base +
->> +			get_sirq_offset(data->hwirq));
-> 
-> Single line.
-
-Sure.
-
-> 
->> +}
->> +
->> +static void owl_sirq_ack(struct irq_data *data)
->> +{
->> +	struct owl_sirq_chip_data *chip_data = data->chip_data;
->> +	unsigned int extctl;
->> +	unsigned long flags;
->> +
->> +	/* software must clear external interrupt pending, when interrupt type
->> +	 * is edge triggered, so we need per SIRQ based clearing.
->> +	 */
->> +	if (chip_data->sirq[data->hwirq].type_edge) {
->> +		raw_spin_lock_irqsave(&chip_data->lock, flags);
->> +
->> +		extctl = sirq_read_extctl(data);
->> +		extctl |= INTC_EXTCTL_PENDING;
->> +		sirq_write_extctl(data, extctl);
->> +
->> +		raw_spin_unlock_irqrestore(&chip_data->lock, flags);
-> 
-> It would make a lot more sense if the lock was taken inside the accessor
-> so that the rest of the driver doesn't have to deal with it. Something
-> along of the line of:
-> 
-> static void sirq_clear_set_extctl(struct owl_sirq_chip_data *d,
->                                   u32 clear, u32 set)
-> {
-> 	unsigned long flags;
-> 	u32 val;
-> 
-> 	raw_spin_lock_irqsave(&d->lock, flags);
-> 	val = sirq_read_extctl(d);
-> 	val &= ~clear;
-> 	val |= set;
-> 	sirq_write_extctl(d, val);
-> 	raw_spin_unlock_irqrestore(&d->lock, flags)
+> On Aug 24, 2018, at 12:16 PM, Eric Biggers <ebiggers@kernel.org> =
+wrote:
+>=20
+> From: Eric Biggers <ebiggers@google.com>
+>=20
+> Add functions that verify data pages that have been read from a
+> fs-verity file, against that file's Merkle tree.  These will be called
+> from filesystems' ->readpage() and ->readpages() methods.
+>=20
+> Since data verification can block, a workqueue is provided for these
+> methods to enqueue verification work from their bio completion =
+callback.
+>=20
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+> fs/verity/Makefile           |   2 +-
+> fs/verity/fsverity_private.h |   3 +
+> fs/verity/setup.c            |  26 ++-
+> fs/verity/verify.c           | 310 +++++++++++++++++++++++++++++++++++
+> include/linux/fsverity.h     |  23 +++
+> 5 files changed, 362 insertions(+), 2 deletions(-)
+> create mode 100644 fs/verity/verify.c
+>=20
+> diff --git a/fs/verity/Makefile b/fs/verity/Makefile
+> index 39e123805c827..a6c7cefb61ab7 100644
+> --- a/fs/verity/Makefile
+> +++ b/fs/verity/Makefile
+> @@ -1,3 +1,3 @@
+> obj-$(CONFIG_FS_VERITY)	+=3D fsverity.o
+>=20
+> -fsverity-y :=3D hash_algs.o setup.o
+> +fsverity-y :=3D hash_algs.o setup.o verify.o
+> diff --git a/fs/verity/fsverity_private.h =
+b/fs/verity/fsverity_private.h
+> index a18ff645695f4..c553f99dc4973 100644
+> --- a/fs/verity/fsverity_private.h
+> +++ b/fs/verity/fsverity_private.h
+> @@ -96,4 +96,7 @@ static inline bool set_fsverity_info(struct inode =
+*inode,
+> 	return true;
 > }
-> 
-> And use that throughout the driver.
+>=20
+> +/* verify.c */
+> +extern struct workqueue_struct *fsverity_read_workqueue;
+> +
+> #endif /* _FSVERITY_PRIVATE_H */
+> diff --git a/fs/verity/setup.c b/fs/verity/setup.c
+> index e675c52898d5b..84cc2edeca25b 100644
+> --- a/fs/verity/setup.c
+> +++ b/fs/verity/setup.c
+> @@ -824,18 +824,42 @@ EXPORT_SYMBOL_GPL(fsverity_full_i_size);
+>=20
+> static int __init fsverity_module_init(void)
+> {
+> +	int err;
+> +
+> +	/*
+> +	 * Use an unbound workqueue to allow bios to be verified in =
+parallel
+> +	 * even when they happen to complete on the same CPU.  This =
+sacrifices
+> +	 * locality, but it's worthwhile since hashing is CPU-intensive.
+> +	 *
+> +	 * Also use a high-priority workqueue to prioritize verification =
+work,
+> +	 * which blocks reads from completing, over regular application =
+tasks.
+> +	 */
+> +	err =3D -ENOMEM;
+> +	fsverity_read_workqueue =3D =
+alloc_workqueue("fsverity_read_queue",
+> +						  WQ_UNBOUND | =
+WQ_HIGHPRI,
+> +						  num_online_cpus());
+> +	if (!fsverity_read_workqueue)
+> +		goto error;
+> +
+> +	err =3D -ENOMEM;
+> 	fsverity_info_cachep =3D KMEM_CACHE(fsverity_info, =
+SLAB_RECLAIM_ACCOUNT);
+> 	if (!fsverity_info_cachep)
+> -		return -ENOMEM;
+> +		goto error_free_workqueue;
+>=20
+> 	fsverity_check_hash_algs();
+>=20
+> 	pr_debug("Initialized fs-verity\n");
+> 	return 0;
+> +
+> +error_free_workqueue:
+> +	destroy_workqueue(fsverity_read_workqueue);
+> +error:
+> +	return err;
+> }
+>=20
+> static void __exit fsverity_module_exit(void)
+> {
+> +	destroy_workqueue(fsverity_read_workqueue);
+> 	kmem_cache_destroy(fsverity_info_cachep);
+> 	fsverity_exit_hash_algs();
+> }
+> diff --git a/fs/verity/verify.c b/fs/verity/verify.c
+> new file mode 100644
+> index 0000000000000..1452dd05f75d3
+> --- /dev/null
+> +++ b/fs/verity/verify.c
+> @@ -0,0 +1,310 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * fs/verity/verify.c: fs-verity data verification functions,
+> + *		       i.e. hooks for ->readpages()
+> + *
+> + * Copyright (C) 2018 Google LLC
+> + *
+> + * Originally written by Jaegeuk Kim and Michael Halcrow;
+> + * heavily rewritten by Eric Biggers.
+> + */
+> +
+> +#include "fsverity_private.h"
+> +
+> +#include <crypto/hash.h>
+> +#include <linux/bio.h>
+> +#include <linux/pagemap.h>
+> +#include <linux/ratelimit.h>
+> +#include <linux/scatterlist.h>
+> +
+> +struct workqueue_struct *fsverity_read_workqueue;
+> +
+> +/**
+> + * hash_at_level() - compute the location of the block's hash at the =
+given level
+> + *
+> + * @vi:		(in) the file's verity info
+> + * @dindex:	(in) the index of the data block being verified
+> + * @level:	(in) the level of hash we want
+> + * @hindex:	(out) the index of the hash block containing the wanted =
+hash
+> + * @hoffset:	(out) the byte offset to the wanted hash within the hash =
+block
+> + */
+> +static void hash_at_level(const struct fsverity_info *vi, pgoff_t =
+dindex,
+> +			  unsigned int level, pgoff_t *hindex,
+> +			  unsigned int *hoffset)
+> +{
+> +	pgoff_t hoffset_in_lvl;
+> +
+> +	/*
+> +	 * Compute the offset of the hash within the level's region, in =
+hashes.
+> +	 * For example, with 4096-byte blocks and 32-byte hashes, there =
+are
+> +	 * 4096/32 =3D 128 =3D 2^7 hashes per hash block, i.e. log_arity =
+=3D 7.  Then,
+> +	 * if the data block index is 65668 and we want the level 1 =
+hash, it is
+> +	 * located at 65668 >> 7 =3D 513 hashes into the level 1 region.
+> +	 */
+> +	hoffset_in_lvl =3D dindex >> (level * vi->log_arity);
+> +
+> +	/*
+> +	 * Compute the index of the hash block containing the wanted =
+hash.
+> +	 * Continuing the above example, the block would be at index 513 =
+>> 7 =3D
+> +	 * 4 within the level 1 region.  To this we'd add the index at =
+which the
+> +	 * level 1 region starts.
+> +	 */
+> +	*hindex =3D vi->hash_lvl_region_idx[level] +
+> +		  (hoffset_in_lvl >> vi->log_arity);
+> +
+> +	/*
+> +	 * Finally, compute the index of the hash within the block =
+rather than
+> +	 * the region, and multiply by the hash size to turn it into a =
+byte
+> +	 * offset.  Continuing the above example, the hash would be at =
+byte
+> +	 * offset (513 & ((1 << 7) - 1)) * 32 =3D 32 within the block.
+> +	 */
+> +	*hoffset =3D (hoffset_in_lvl & ((1 << vi->log_arity) - 1)) *
+> +		   vi->hash_alg->digest_size;
+> +}
+> +
+> +/* Extract a hash from a hash page */
+> +static void extract_hash(struct page *hpage, unsigned int hoffset,
+> +			 unsigned int hsize, u8 *out)
+> +{
+> +	void *virt =3D kmap_atomic(hpage);
+> +
+> +	memcpy(out, virt + hoffset, hsize);
+> +	kunmap_atomic(virt);
+> +}
+> +
+> +static int hash_page(const struct fsverity_info *vi, struct =
+ahash_request *req,
+> +		     struct page *page, u8 *out)
+> +{
+> +	struct scatterlist sg[3];
+> +	DECLARE_CRYPTO_WAIT(wait);
+> +	int err;
+> +
+> +	sg_init_table(sg, 1);
+> +	sg_set_page(&sg[0], page, PAGE_SIZE, 0);
+> +
+> +	ahash_request_set_callback(req, CRYPTO_TFM_REQ_MAY_SLEEP |
+> +				   CRYPTO_TFM_REQ_MAY_BACKLOG,
+> +				   crypto_req_done, &wait);
+> +	ahash_request_set_crypt(req, sg, out, PAGE_SIZE);
+> +
+> +	err =3D crypto_ahash_import(req, vi->hashstate);
+> +	if (err)
+> +		return err;
+> +
+> +	return crypto_wait_req(crypto_ahash_finup(req), &wait);
+> +}
+> +
+> +static inline int compare_hashes(const u8 *want_hash, const u8 =
+*real_hash,
+> +				 int digest_size, struct inode *inode,
+> +				 pgoff_t index, int level, const char =
+*algname)
+> +{
+> +	if (memcmp(want_hash, real_hash, digest_size) =3D=3D 0)
+> +		return 0;
+> +
+> +	pr_warn_ratelimited("VERIFICATION FAILURE!  ino=3D%lu, =
+index=3D%lu, level=3D%d, want_hash=3D%s:%*phN, real_hash=3D%s:%*phN\n",
+> +			    inode->i_ino, index, level,
+> +			    algname, digest_size, want_hash,
+> +			    algname, digest_size, real_hash);
+> +	return -EBADMSG;
+> +}
+> +
+> +/*
+> + * Verify a single data page against the file's Merkle tree.
+> + *
+> + * In principle, we need to verify the entire path to the root node.  =
+But as an
+> + * optimization, we cache the hash pages in the file's page cache, =
+similar to
+> + * data pages.  Therefore, we can stop verifying as soon as a =
+verified hash page
+> + * is seen while ascending the tree.
+> + *
+> + * Note that unlike data pages, hash pages are marked Uptodate =
+*before* they are
+> + * verified; instead, the Checked bit is set on hash pages that have =
+been
+> + * verified.  Multiple tasks may race to verify a hash page and mark =
+it Checked,
+> + * but it doesn't matter.  The use of the Checked bit also implies =
+that the hash
+> + * block size must equal PAGE_SIZE (for now).
+> + */
+> +static bool verify_page(struct inode *inode, const struct =
+fsverity_info *vi,
+> +			struct ahash_request *req, struct page =
+*data_page)
+> +{
+> +	pgoff_t index =3D data_page->index;
+> +	int level =3D 0;
+> +	u8 _want_hash[FS_VERITY_MAX_DIGEST_SIZE];
+> +	const u8 *want_hash =3D NULL;
+> +	u8 real_hash[FS_VERITY_MAX_DIGEST_SIZE];
+> +	struct page *hpages[FS_VERITY_MAX_LEVELS];
+> +	unsigned int hoffsets[FS_VERITY_MAX_LEVELS];
+> +	int err;
+> +
+> +	/* The page must not be unlocked until verification has =
+completed. */
+> +	if (WARN_ON_ONCE(!PageLocked(data_page)))
+> +		return false;
+> +
+> +	/*
+> +	 * Since ->i_size is overridden with ->data_i_size, and =
+fs-verity avoids
+> +	 * recursing into itself when reading hash pages, we shouldn't =
+normally
+> +	 * get here with a page beyond ->data_i_size.  But, it can =
+happen if a
+> +	 * read is issued at or beyond EOF since the VFS doesn't check =
+i_size
+> +	 * before calling ->readpage().  Thus, just skip verification if =
+the
+> +	 * page is beyond ->data_i_size.
+> +	 */
+> +	if (index >=3D (vi->data_i_size + PAGE_SIZE - 1) >> PAGE_SHIFT) =
+{
+> +		pr_debug("Page %lu is in metadata region\n", index);
+> +		return true;
+> +	}
+> +
+> +	pr_debug_ratelimited("Verifying data page %lu...\n", index);
+> +
+> +	/*
+> +	 * Starting at the leaves, ascend the tree saving hash pages =
+along the
+> +	 * way until we find a verified hash page, indicated by =
+PageChecked; or
+> +	 * until we reach the root.
+> +	 */
+> +	for (level =3D 0; level < vi->depth; level++) {
+> +		pgoff_t hindex;
+> +		unsigned int hoffset;
+> +		struct page *hpage;
+> +
+> +		hash_at_level(vi, index, level, &hindex, &hoffset);
+> +
+> +		pr_debug_ratelimited("Level %d: hindex=3D%lu, =
+hoffset=3D%u\n",
+> +				     level, hindex, hoffset);
+> +
+> +		hpage =3D read_mapping_page(inode->i_mapping, hindex, =
+NULL);
+> +		if (IS_ERR(hpage)) {
+> +			err =3D PTR_ERR(hpage);
+> +			goto out;
+> +		}
+> +
+> +		if (PageChecked(hpage)) {
+> +			extract_hash(hpage, hoffset, =
+vi->hash_alg->digest_size,
+> +				     _want_hash);
+> +			want_hash =3D _want_hash;
+> +			put_page(hpage);
+> +			pr_debug_ratelimited("Hash page already checked, =
+want %s:%*phN\n",
+> +					     vi->hash_alg->name,
+> +					     vi->hash_alg->digest_size,
+> +					     want_hash);
+> +			break;
+> +		}
+> +		pr_debug_ratelimited("Hash page not yet checked\n");
+> +		hpages[level] =3D hpage;
+> +		hoffsets[level] =3D hoffset;
+> +	}
+> +
+> +	if (!want_hash) {
+> +		want_hash =3D vi->root_hash;
+> +		pr_debug("Want root hash: %s:%*phN\n", =
+vi->hash_alg->name,
+> +			 vi->hash_alg->digest_size, want_hash);
+> +	}
+> +
+> +	/* Descend the tree verifying hash pages */
+> +	for (; level > 0; level--) {
+> +		struct page *hpage =3D hpages[level - 1];
+> +		unsigned int hoffset =3D hoffsets[level - 1];
+> +
+> +		err =3D hash_page(vi, req, hpage, real_hash);
+> +		if (err)
+> +			goto out;
+> +		err =3D compare_hashes(want_hash, real_hash,
+> +				     vi->hash_alg->digest_size,
+> +				     inode, index, level - 1,
+> +				     vi->hash_alg->name);
+> +		if (err)
+> +			goto out;
+> +		SetPageChecked(hpage);
+> +		extract_hash(hpage, hoffset, vi->hash_alg->digest_size,
+> +			     _want_hash);
+> +		want_hash =3D _want_hash;
+> +		put_page(hpage);
+> +		pr_debug("Verified hash page at level %d, now want =
+%s:%*phN\n",
+> +			 level - 1, vi->hash_alg->name,
+> +			 vi->hash_alg->digest_size, want_hash);
+> +	}
+> +
+> +	/* Finally, verify the data page */
+> +	err =3D hash_page(vi, req, data_page, real_hash);
+> +	if (err)
+> +		goto out;
+> +	err =3D compare_hashes(want_hash, real_hash, =
+vi->hash_alg->digest_size,
+> +			     inode, index, -1, vi->hash_alg->name);
+> +out:
+> +	for (; level > 0; level--)
+> +		put_page(hpages[level - 1]);
+> +	if (err) {
+> +		pr_warn_ratelimited("Error verifying page; ino=3D%lu, =
+index=3D%lu (err=3D%d)\n",
+> +				    inode->i_ino, data_page->index, =
+err);
+> +		return false;
+> +	}
+> +	return true;
+> +}
+> +
+> +/**
+> + * fsverity_verify_page - verify a data page
+> + *
+> + * Verify a page that has just been read from a file against that =
+file's Merkle
+> + * tree.  The page is assumed to be a pagecache page.
+> + *
+> + * Return: true if the page is valid, else false.
+> + */
+> +bool fsverity_verify_page(struct page *data_page)
+> +{
+> +	struct inode *inode =3D data_page->mapping->host;
+> +	const struct fsverity_info *vi =3D get_fsverity_info(inode);
+> +	struct ahash_request *req;
+> +	bool valid;
+> +
+> +	req =3D ahash_request_alloc(vi->hash_alg->tfm, GFP_KERNEL);
+> +	if (unlikely(!req))
+> +		return false;
+> +
+> +	valid =3D verify_page(inode, vi, req, data_page);
+> +
+> +	ahash_request_free(req);
+> +
+> +	return valid;
+> +}
+> +EXPORT_SYMBOL_GPL(fsverity_verify_page);
+> +
+> +/**
+> + * fsverity_verify_bio - verify a 'read' bio that has just completed
+> + *
+> + * Verify a set of pages that have just been read from a file against =
+that
+> + * file's Merkle tree.  The pages are assumed to be pagecache pages.  =
+Pages that
+> + * fail verification are set to the Error state.  Verification is =
+skipped for
+> + * pages already in the Error state, e.g. due to fscrypt decryption =
+failure.
+> + */
+> +void fsverity_verify_bio(struct bio *bio)
 
-Thanks for sharing the function with lock, will update it.
+Hi Eric-
 
-> 
->> +	}
->> +	irq_chip_ack_parent(data);
-> 
-> That being said, I'm terribly sceptical about this whole function. At
-> the end of the day, the flow handler used by the GIC is
-> handle_fasteoi_irq, which doesn't call the ack callback at all. So how
-> does this work?
+This kind of API won't work for remote filesystems, which do not use
+"struct bio" to do their I/O. Could a remote filesystem solely use
+fsverity_verify_page instead?
 
-That's my mistake. I will move this function for ".irq_eoi". Will that be fine?
-In short, all the devices/interrupt controller connected to sirq lines are level
-triggered in my board. So, I couldn't test this part last time.
 
-> 
->> +}
->> +
->> +static void owl_sirq_mask(struct irq_data *data)
->> +{
->> +	struct owl_sirq_chip_data *chip_data = data->chip_data;
->> +	unsigned int extctl;
->> +	unsigned long flags;
->> +
->> +	raw_spin_lock_irqsave(&chip_data->lock, flags);
->> +
->> +	extctl = sirq_read_extctl(data);
->> +	extctl &= ~(INTC_EXTCTL_EN);
->> +	sirq_write_extctl(data, extctl);
->> +
->> +	raw_spin_unlock_irqrestore(&chip_data->lock, flags);
->> +	irq_chip_mask_parent(data);
->> +}
->> +
->> +static void owl_sirq_unmask(struct irq_data *data)
->> +{
->> +	struct owl_sirq_chip_data *chip_data = data->chip_data;
->> +	unsigned int extctl;
->> +	unsigned long flags;
->> +
->> +	raw_spin_lock_irqsave(&chip_data->lock, flags);
->> +
->> +	extctl = sirq_read_extctl(data);
->> +	extctl |= INTC_EXTCTL_EN;
->> +	sirq_write_extctl(data, extctl);
->> +
->> +	raw_spin_unlock_irqrestore(&chip_data->lock, flags);
->> +	irq_chip_unmask_parent(data);
->> +}
->> +
->> +/* PAD_PULLCTL needs to be defined in pinctrl */
->> +static int owl_sirq_set_type(struct irq_data *data, unsigned int flow_type)
->> +{
->> +	struct owl_sirq_chip_data *chip_data = data->chip_data;
->> +	unsigned int extctl, type;
->> +	unsigned long flags;
->> +
->> +	switch (flow_type) {
->> +	case IRQF_TRIGGER_LOW:
->> +		type = INTC_EXTCTL_TYPE_LOW;
->> +		break;
->> +	case IRQF_TRIGGER_HIGH:
->> +		type = INTC_EXTCTL_TYPE_HIGH;
->> +		break;
->> +	case IRQF_TRIGGER_FALLING:
->> +		type = INTC_EXTCTL_TYPE_FALLING;
->> +		chip_data->sirq[data->hwirq].type_edge = true;
->> +		break;
->> +	case IRQF_TRIGGER_RISING:
->> +		type = INTC_EXTCTL_TYPE_RISING;
->> +		chip_data->sirq[data->hwirq].type_edge = true;
->> +		break;
-> 
-> So let's say I configure an interrupt as edge, then switch it to level.
-> The edge setting remains and bad things will happen.
+> +{
+> +	struct inode *inode =3D bio_first_page_all(bio)->mapping->host;
+> +	const struct fsverity_info *vi =3D get_fsverity_info(inode);
+> +	struct ahash_request *req;
+> +	struct bio_vec *bv;
+> +	int i;
+> +
+> +	req =3D ahash_request_alloc(vi->hash_alg->tfm, GFP_KERNEL);
+> +	if (unlikely(!req)) {
+> +		bio_for_each_segment_all(bv, bio, i)
+> +			SetPageError(bv->bv_page);
+> +		return;
+> +	}
+> +
+> +	bio_for_each_segment_all(bv, bio, i) {
+> +		struct page *page =3D bv->bv_page;
+> +
+> +		if (!PageError(page) && !verify_page(inode, vi, req, =
+page))
+> +			SetPageError(page);
+> +	}
+> +
+> +	ahash_request_free(req);
+> +}
+> +EXPORT_SYMBOL_GPL(fsverity_verify_bio);
+> +
+> +/**
+> + * fsverity_enqueue_verify_work - enqueue work on the fs-verity =
+workqueue
+> + *
+> + * Enqueue verification work for asynchronous processing.
+> + */
+> +void fsverity_enqueue_verify_work(struct work_struct *work)
+> +{
+> +	queue_work(fsverity_read_workqueue, work);
+> +}
+> +EXPORT_SYMBOL_GPL(fsverity_enqueue_verify_work);
+> diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
+> index 3af55241046aa..56341f10aa965 100644
+> --- a/include/linux/fsverity.h
+> +++ b/include/linux/fsverity.h
+> @@ -28,6 +28,11 @@ extern int fsverity_prepare_getattr(struct inode =
+*inode);
+> extern void fsverity_cleanup_inode(struct inode *inode);
+> extern loff_t fsverity_full_i_size(const struct inode *inode);
+>=20
+> +/* verify.c */
+> +extern bool fsverity_verify_page(struct page *page);
+> +extern void fsverity_verify_bio(struct bio *bio);
+> +extern void fsverity_enqueue_verify_work(struct work_struct *work);
+> +
+> #else /* !__FS_HAS_VERITY */
+>=20
+> /* setup.c */
+> @@ -57,6 +62,24 @@ static inline loff_t fsverity_full_i_size(const =
+struct inode *inode)
+> 	return i_size_read(inode);
+> }
+>=20
+> +/* verify.c */
+> +
+> +static inline bool fsverity_verify_page(struct page *page)
+> +{
+> +	WARN_ON(1);
+> +	return false;
+> +}
+> +
+> +static inline void fsverity_verify_bio(struct bio *bio)
+> +{
+> +	WARN_ON(1);
+> +}
+> +
+> +static inline void fsverity_enqueue_verify_work(struct work_struct =
+*work)
+> +{
+> +	WARN_ON(1);
+> +}
+> +
+> #endif	/* !__FS_HAS_VERITY */
+>=20
+> #endif	/* _LINUX_FSVERITY_H */
+> --=20
+> 2.18.0
+>=20
 
-Ok, I will update the value to false for edge cases.
+--
+Chuck Lever
+chucklever@gmail.com
 
-> 
->> +	default:
->> +		return  -EINVAL;
->> +	}
->> +
->> +	raw_spin_lock_irqsave(&chip_data->lock, flags);
->> +
->> +	extctl = sirq_read_extctl(data);
->> +	extctl &= ~INTC_EXTCTL_TYPE_MASK;
->> +	extctl |= type;
->> +	sirq_write_extctl(data, extctl);
->> +
->> +	raw_spin_unlock_irqrestore(&chip_data->lock, flags);
->> +	data = data->parent_data;
->> +	return irq_chip_set_type_parent(data, flow_type);
->> +}
->> +
->> +static struct irq_chip owl_sirq_chip = {
->> +	.name		= "owl-sirq",
->> +	.irq_ack	= owl_sirq_ack,
->> +	.irq_mask	= owl_sirq_mask,
->> +	.irq_unmask	= owl_sirq_unmask,
->> +	.irq_set_type	= owl_sirq_set_type,
->> +	.irq_eoi	= irq_chip_eoi_parent,
->> +	.irq_retrigger	= irq_chip_retrigger_hierarchy,
->> +};
->> +
->> +static int owl_sirq_domain_alloc(struct irq_domain *domain, unsigned int virq,
->> +				 unsigned int nr_irqs, void *arg)
->> +{
->> +	struct irq_fwspec *fwspec = arg;
->> +	struct irq_fwspec parent_fwspec = {
->> +		.param_count	= 3,
->> +		.param[0]	= GIC_SPI,
->> +		.param[1]	= fwspec->param[0] + INTC_GIC_INTERRUPT_PIN,
->> +		.param[2]	= fwspec->param[1],
-> 
-> param[2] is supposed to be the trigger configuration. Your driver
-> supports LEVEL_LOW and EDGE_FALLING, which the GIC cannot handle. And
-> yet you're passing it directly.
 
-That's my mistake. I will translate and restrict LEVEL_HIGH and EDGE_RISING
-for GIC here. Thanks.
 
-> 
->> +		.fwnode		= domain->parent->fwnode,
->> +	};
->> +
->> +	if (WARN_ON(nr_irqs != 1))
->> +		return -EINVAL;
->> +
->> +	irq_domain_set_hwirq_and_chip(domain, virq, fwspec->param[0],
->> +				      &owl_sirq_chip,
->> +				      domain->host_data);
->> +
->> +	return irq_domain_alloc_irqs_parent(domain, virq, nr_irqs,
->> +					    &parent_fwspec);
->> +}
->> +
->> +static const struct irq_domain_ops sirq_domain_ops = {
->> +	.alloc	= owl_sirq_domain_alloc,
->> +	.free	= irq_domain_free_irqs_common,
-> 
-> No translation method? Again, how does this work?
-
-Missed this part, I will update this next version.
-
-> 
->> +};
->> +
->> +static void owl_sirq_clk_init(int offset, int hwirq)
->> +{
->> +	unsigned int val;
->> +
->> +	/* register default clock is 32Khz, change to 24Mhz only when defined */
->> +	val = readl_relaxed(sirq_data->base + offset);
->> +	if (sirq_data->shared_reg)
->> +		val |= INTC_EXTCTL_CLK_SEL << (2 - hwirq) * 8;
->> +	else
->> +		val |= INTC_EXTCTL_CLK_SEL;
->> +
->> +	writel_relaxed(val, sirq_data->base + offset);
->> +}
-> 
-> I've asked questions about this in the first review, and you didn't
-> answer. Why is it even configurable? How do you choose the sample rate?
-> What's the drawback of always setting it one way or the other?
-
-The provision for selecting sampling rate here seems meant for power
-management, which I wasn't aware of. So this configuration doesn't need
-to come from DT.
-
-Possibly this needs to be implemented as "syscore_ops" suspend and resume
-calls. Should I register this as "register_syscore_ops" or leaving 32MHz
-is fine?
-
-> 
->> +
->> +static int __init owl_sirq_of_init(struct device_node *node,
->> +					struct device_node *parent)
->> +{
->> +	struct irq_domain *domain, *domain_parent;
->> +	int ret = 0, i, sirq_cnt = 0;
->> +	struct owl_sirq_chip_data *chip_data;
->> +
->> +	sirq_cnt = of_property_count_u32_elems(node, "actions,sirq-offset");
->> +	if (sirq_cnt <= 0) {
->> +		pr_err("owl_sirq: register offset not specified\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	chip_data = kzalloc(sizeof(*chip_data), GFP_KERNEL);
->> +	if (!chip_data)
->> +		return -ENOMEM;
->> +	sirq_data = chip_data;
->> +
->> +	chip_data->sirq = kcalloc(sirq_cnt, sizeof(*chip_data->sirq),
->> +				GFP_KERNEL);
->> +	if (!chip_data->sirq)
->> +		goto out_free;
->> +
->> +	raw_spin_lock_init(&chip_data->lock);
->> +	chip_data->base = of_iomap(node, 0);
->> +	if (!chip_data->base) {
->> +		pr_err("owl_sirq: unable to map sirq register\n");
->> +		ret = -ENXIO;
->> +		goto out_free;
->> +	}
->> +
->> +	chip_data->shared_reg = of_property_read_bool(node,
->> +						"actions,sirq-shared-reg");
->> +	for (i = 0; i < sirq_cnt; i++) {
->> +		u32 value;
->> +
->> +		ret = of_property_read_u32_index(node, "actions,sirq-offset",
->> +						i, &value);
->> +		if (ret)
->> +			goto out_unmap;
->> +
->> +		get_sirq_offset(i) = (u16)value;
->> +
->> +		ret = of_property_read_u32_index(node, "actions,sirq-clk-sel",
->> +						i, &value);
->> +		if (ret || !value)
->> +			continue;
->> +
->> +		/* external interrupt controller can be either connect to 32Khz/
->> +		 * 24Mhz external/internal clock. This shall be configured for
->> +		 * per SIRQ line. It can be defined from DT, failing defaults to
->> +		 * 24Mhz clock.
->> +		 */
->> +		owl_sirq_clk_init(get_sirq_offset(i), i);
->> +	}
->> +
->> +	domain_parent = irq_find_host(parent);
->> +	if (!domain_parent) {
->> +		pr_err("owl_sirq: interrupt-parent not found\n");
->> +		goto out_unmap;
->> +	}
->> +
->> +	domain = irq_domain_add_hierarchy(domain_parent, 0,
->> +			sirq_cnt, node,
->> +			&sirq_domain_ops, chip_data);
->> +	if (!domain) {
->> +		ret = -ENOMEM;
->> +		goto out_unmap;
->> +	}
->> +
->> +	return 0;
->> +
->> +out_unmap:
->> +	iounmap(chip_data->base);
->> +out_free:
->> +	kfree(chip_data);
->> +	kfree(chip_data->sirq);
->> +	return ret;
->> +}
->> +
->> +IRQCHIP_DECLARE(owl_sirq, "actions,owl-sirq", owl_sirq_of_init);
->>
-> 
-> As it stands, this driver is nowhere near ready. I don't even understand
-> how edge signalling works. Also, I'd appreciate if you could answer my
-> comments before respining another version.
-
-As the previous version wasn't based on hierarchy, which I was working on
-after your feedback. Apologize!
-
-> 
-> Thanks,
-> 
-> 	M.
-> 
-
--- 
-Thanks,
-Parthiban N
