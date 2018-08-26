@@ -6,33 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D511C433F5
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:46:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F020C433F5
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:46:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03F922172A
-	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:46:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03F922172A
+	by mail.kernel.org (Postfix) with ESMTP id 1B9CB2170B
+	for <linux-kernel@archiver.kernel.org>; Sun, 26 Aug 2018 06:46:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B9CB2170B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727480AbeHZK15 (ORCPT
+        id S1727502AbeHZK2A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 26 Aug 2018 06:27:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53614 "EHLO
+        Sun, 26 Aug 2018 06:28:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53622 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726245AbeHZK14 (ORCPT
+        with ESMTP id S1726245AbeHZK2A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 Aug 2018 06:27:56 -0400
+        Sun, 26 Aug 2018 06:28:00 -0400
 Received: from localhost (5355525A.cm-6-6b.dynamic.ziggo.nl [83.85.82.90])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D52EE9D3;
-        Sun, 26 Aug 2018 06:46:20 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9ACA79D3;
+        Sun, 26 Aug 2018 06:46:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 3.18 07/56] ALSA: vx222: Fix invalid endian conversions
-Date:   Sun, 26 Aug 2018 08:44:28 +0200
-Message-Id: <20180826064232.640574616@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+619d9f40141d826b097e@syzkaller.appspotmail.com,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 3.18 08/56] ALSA: virmidi: Fix too long output trigger loop
+Date:   Sun, 26 Aug 2018 08:44:29 +0200
+Message-Id: <20180826064232.682300338@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180826064232.320669119@linuxfoundation.org>
 References: <20180826064232.320669119@linuxfoundation.org>
@@ -51,60 +53,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Takashi Iwai <tiwai@suse.de>
 
-commit fff71a4c050ba46e305d910c837b99ba1728135e upstream.
+commit 50e9ffb1996a5d11ff5040a266585bad4ceeca0a upstream.
 
-The endian conversions used in vx2_dma_read() and vx2_dma_write() are
-superfluous and even wrong on big-endian machines, as inl() and outl()
-already do conversions.  Kill them.
+The virmidi output trigger tries to parse the all available bytes and
+process sequencer events as much as possible.  In a normal situation,
+this is supposed to be relatively short, but a program may give a huge
+buffer and it'll take a long time in a single spin lock, which may
+eventually lead to a soft lockup.
 
-Spotted by sparse, a warning like:
-  sound/pci/vx222/vx222_ops.c:278:30: warning: incorrect type in argument 1 (different base types)
+This patch simply adds a workaround, a cond_resched() call in the loop
+if applicable.  A better solution would be to move the event processor
+into a work, but let's put a duct-tape quickly at first.
 
+Reported-and-tested-by: Dae R. Jeong <threeearcat@gmail.com>
+Reported-by: syzbot+619d9f40141d826b097e@syzkaller.appspotmail.com
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/vx222/vx222_ops.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ sound/core/seq/seq_virmidi.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/sound/pci/vx222/vx222_ops.c
-+++ b/sound/pci/vx222/vx222_ops.c
-@@ -270,7 +270,7 @@ static void vx2_dma_write(struct vx_core
- 		length >>= 2; /* in 32bit words */
- 		/* Transfer using pseudo-dma. */
- 		for (; length > 0; length--) {
--			outl(cpu_to_le32(*addr), port);
-+			outl(*addr, port);
- 			addr++;
+--- a/sound/core/seq/seq_virmidi.c
++++ b/sound/core/seq/seq_virmidi.c
+@@ -163,6 +163,7 @@ static void snd_virmidi_output_trigger(s
+ 	int count, res;
+ 	unsigned char buf[32], *pbuf;
+ 	unsigned long flags;
++	bool check_resched = !in_atomic();
+ 
+ 	if (up) {
+ 		vmidi->trigger = 1;
+@@ -200,6 +201,15 @@ static void snd_virmidi_output_trigger(s
+ 					vmidi->event.type = SNDRV_SEQ_EVENT_NONE;
+ 				}
+ 			}
++			if (!check_resched)
++				continue;
++			/* do temporary unlock & cond_resched() for avoiding
++			 * CPU soft lockup, which may happen via a write from
++			 * a huge rawmidi buffer
++			 */
++			spin_unlock_irqrestore(&substream->runtime->lock, flags);
++			cond_resched();
++			spin_lock_irqsave(&substream->runtime->lock, flags);
  		}
- 		addr = (u32 *)runtime->dma_area;
-@@ -280,7 +280,7 @@ static void vx2_dma_write(struct vx_core
- 	count >>= 2; /* in 32bit words */
- 	/* Transfer using pseudo-dma. */
- 	for (; count > 0; count--) {
--		outl(cpu_to_le32(*addr), port);
-+		outl(*addr, port);
- 		addr++;
- 	}
- 
-@@ -308,7 +308,7 @@ static void vx2_dma_read(struct vx_core
- 		length >>= 2; /* in 32bit words */
- 		/* Transfer using pseudo-dma. */
- 		for (; length > 0; length--)
--			*addr++ = le32_to_cpu(inl(port));
-+			*addr++ = inl(port);
- 		addr = (u32 *)runtime->dma_area;
- 		pipe->hw_ptr = 0;
- 	}
-@@ -316,7 +316,7 @@ static void vx2_dma_read(struct vx_core
- 	count >>= 2; /* in 32bit words */
- 	/* Transfer using pseudo-dma. */
- 	for (; count > 0; count--)
--		*addr++ = le32_to_cpu(inl(port));
-+		*addr++ = inl(port);
- 
- 	vx2_release_pseudo_dma(chip);
- }
+ 	out:
+ 		spin_unlock_irqrestore(&substream->runtime->lock, flags);
 
 
