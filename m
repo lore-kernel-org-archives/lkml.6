@@ -5,41 +5,50 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02372C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:41:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25EB5C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:42:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B494D208DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:41:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B494D208DA
+	by mail.kernel.org (Postfix) with ESMTP id D5163208B2
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:42:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5163208B2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727416AbeH0X33 (ORCPT
+        id S1727412AbeH0Xak (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 19:29:29 -0400
-Received: from mga03.intel.com ([134.134.136.65]:52484 "EHLO mga03.intel.com"
+        Mon, 27 Aug 2018 19:30:40 -0400
+Received: from mga14.intel.com ([192.55.52.115]:28586 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726826AbeH0X33 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 19:29:29 -0400
+        id S1726826AbeH0Xaj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 19:30:39 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2018 12:41:29 -0700
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2018 12:42:39 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,296,1531810800"; 
-   d="scan'208";a="252347021"
+   d="scan'208";a="252347333"
 Received: from ray.jf.intel.com (HELO [10.54.74.168]) ([10.54.74.168])
-  by orsmga005.jf.intel.com with ESMTP; 27 Aug 2018 12:41:29 -0700
-Subject: Re: [PATCH v13 04/13] x86/sgx: Architectural structures
+  by orsmga005.jf.intel.com with ESMTP; 27 Aug 2018 12:42:33 -0700
+Subject: Re: [PATCH v13 05/13] x86/msr: Add SGX definitions to msr-index.h
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
         platform-driver-x86@vger.kernel.org
 References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-5-jarkko.sakkinen@linux.intel.com>
+ <20180827185507.17087-6-jarkko.sakkinen@linux.intel.com>
 Cc:     sean.j.christopherson@intel.com, nhorman@redhat.com,
         npmccallum@redhat.com, linux-sgx@vger.kernel.org,
+        Haim Cohen <haim.cohen@intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@suse.de>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
+        Matt Turner <mattst88@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
         "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
         <linux-kernel@vger.kernel.org>
 From:   Dave Hansen <dave.hansen@intel.com>
@@ -87,42 +96,33 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <3e8cf7d4-0d84-9526-816a-a2da30d81de7@intel.com>
-Date:   Mon, 27 Aug 2018 12:41:29 -0700
+Message-ID: <c4c85a47-6de4-1171-4fd5-4a4bdd4d31db@intel.com>
+Date:   Mon, 27 Aug 2018 12:42:32 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180827185507.17087-5-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20180827185507.17087-6-jarkko.sakkinen@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +/**
-> + * enum sgx_encls_leaves - return codes for ENCLS, ENCLU and ENCLV
-> + * %SGX_SUCCESS:		No error.
-> + * %SGX_INVALID_SIG_STRUCT:	SIGSTRUCT contains an invalid value.
-> + * %SGX_INVALID_ATTRIBUTE:	Enclave is not attempting to access a resource
-> + *				for which it is not authorized.
-> + * %SGX_BLKSTATE:		EPC page is already blocked.
-> + * %SGX_INVALID_MEASUREMENT:	SIGSTRUCT or EINITTOKEN contains an incorrect
-> + *				measurement.
-...
-> +enum sgx_return_codes {
-> +	SGX_SUCCESS			= 0,
-> +	SGX_INVALID_SIG_STRUCT		= 1,
-> +	SGX_INVALID_ATTRIBUTE		= 2,
-> +	SGX_BLKSTATE			= 3,
-> +	SGX_INVALID_MEASUREMENT		= 4,
-...
+On 08/27/2018 11:53 AM, Jarkko Sakkinen wrote:
+> @@ -866,10 +867,9 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
+>  		}
+>  	}
+>  
+> -	/* Intel SGX features: level 0x00000012 */
+> -	if (c->cpuid_level >= 0x00000012) {
+> -		cpuid(0x00000012, &eax, &ebx, &ecx, &edx);
+> -
+> +	/* Intel SGX features */
+> +	if (c->cpuid_level >= SGX_CPUID) {
+> +		cpuid(SGX_CPUID,  &eax, &ebx, &ecx, &edx);
+>  		c->x86_capability[CPUID_12_EAX] = eax;
+>  	}
 
-I don't think I've ever seen this particular method of commenting
-before.  It's rather verbose and duplicates the names twice, which seems
-a bit silly.
-
-Can you talk a bit about why you chose to do it this way?  I'd
-personally much rather see at least some brief comments inline with the
-definitions.
+This hunk has no apparent connection to the changelog.
