@@ -2,75 +2,64 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C73CDC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 04:20:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EE26C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 04:31:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 703E52175C
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 04:20:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 703E52175C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 221BA20C51
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 04:31:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 221BA20C51
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tkos.co.il
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727014AbeH0IE5 (ORCPT
+        id S1726966AbeH0IQ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 04:04:57 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:51732 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726753AbeH0IE5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 04:04:57 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 3PrOwlEjivDk; Mon, 27 Aug 2018 06:19:46 +0200 (CEST)
-Received: from nazgul.tnic (79-100-101-223.ip.btc-net.bg [79.100.101.223])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1A1441EC01AF;
-        Mon, 27 Aug 2018 06:19:46 +0200 (CEST)
-Date:   Mon, 27 Aug 2018 06:20:01 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Michael Jin <mikhail.jin@gmail.com>
-Cc:     Borislav Petkov <bp@suse.de>,
-        Yazen Ghannam <Yazen.Ghannam@amd.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v3] EDAC, amd64: Add Family 17h Model 10h support.
-Message-ID: <20180827042001.GC14577@nazgul.tnic>
-References: <20180816192840.31166-1-mikhail.jin@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180816192840.31166-1-mikhail.jin@gmail.com>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+        Mon, 27 Aug 2018 04:16:27 -0400
+Received: from guitar.tcltek.co.il ([192.115.133.116]:39730 "EHLO
+        mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726714AbeH0IQ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 04:16:27 -0400
+Received: from sapphire.tkos.co.il (unknown [10.0.4.3])
+        by mx.tkos.co.il (Postfix) with ESMTP id 59AEC440633;
+        Mon, 27 Aug 2018 07:31:30 +0300 (IDT)
+From:   Baruch Siach <baruch@tkos.co.il>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-ide@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Baruch Siach <baruch@tkos.co.il>
+Subject: [PATCH] MAINTAINERS: libata pata: fix Jens Axboe's email address
+Date:   Mon, 27 Aug 2018 07:29:35 +0300
+Message-Id: <d99162f25e4860bb04f1f56f031d11ceab1fc725.1535344175.git.baruch@tkos.co.il>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 16, 2018 at 03:28:40PM -0400, Michael Jin wrote:
-> Add new device IDs for family 17h models 10h-2fh.
-> 
-> This is required by amd64_edac_mod in order to properly detect PCI
-> device functions 0 and 6.
-> 
-> Link: https://lkml.kernel.org/r/20180815114107.29797-1-mikhail.jin@gmail.com
-> Cc: <stable@vger.kernel.org> # 4.10.x
-> Signed-off-by: Michael Jin <mikhail.jin@gmail.com>
-> ---
->  drivers/edac/amd64_edac.c | 14 ++++++++++++++
->  drivers/edac/amd64_edac.h |  3 +++
->  2 files changed, 17 insertions(+)
+Commit 7634ccd2da (libata: maintainership update) added an invalid email
+address. Fix that.
 
-Applied, thanks.
+Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a5b256b25905..9ae5cdef37a1 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8255,7 +8255,7 @@ F:	drivers/ata/pata_arasan_cf.c
+ 
+ LIBATA PATA DRIVERS
+ M:	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+-M:	Jens Axboe <kernel.dk>
++M:	Jens Axboe <axboe@kernel.dk>
+ L:	linux-ide@vger.kernel.org
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git
+ S:	Maintained
 -- 
-Regards/Gruss,
-    Boris.
+2.18.0
 
-ECO tip #101: Trim your mails when you reply.
---
