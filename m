@@ -4,203 +4,269 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 067EFC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 04:00:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A42CAC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 04:03:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C55921722
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 04:00:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0C4921722
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 04:03:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KqIqe+t/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C55921722
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QbzNTsjC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0C4921722
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726946AbeH0Hpi (ORCPT
+        id S1726966AbeH0Hsg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 03:45:38 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:44540 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726714AbeH0Hpi (ORCPT
+        Mon, 27 Aug 2018 03:48:36 -0400
+Received: from mail-yw1-f52.google.com ([209.85.161.52]:43562 "EHLO
+        mail-yw1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726714AbeH0Hsg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 03:45:38 -0400
-Received: by mail-lj1-f195.google.com with SMTP id q127-v6so11145088ljq.11
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Aug 2018 21:00:48 -0700 (PDT)
+        Mon, 27 Aug 2018 03:48:36 -0400
+Received: by mail-yw1-f52.google.com with SMTP id l189-v6so5099243ywb.10
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Aug 2018 21:03:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=gTv3mcUS9k98qN/8KD9IhyMd0VWQEieYnAiATfS8tgs=;
-        b=KqIqe+t/htoMU9d/A2667ZAa5U6+yBeuQw4PEdRt6HfC3BmDu2x5nccwASUQtazgNG
-         oVgwLcst1diVOz7bkbjKC6Bj6rRi9WptzMUMtD4psdn97r1rb4aVITTQ8qEBlk4s0Ar3
-         YOdUy0P3wtr5Nwy9ixePMPdEVNxRcyPJmLetM=
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WsJtpkOsRggwGQ8Y3rRRIh3C6XqWL3Lg48vPGPiZYsY=;
+        b=QbzNTsjC08lxIH5tQ1Bz2nfTmLUquXn+iu4gD63LBHX39LjwQ/ZO4TF0z20ypAAInR
+         AzAbhHokLE81wTpehG0itg8ebT3gxJz2bXWOrnqdi4YYCNK1vcxri2ljnqwNa+79IxOG
+         znlGYNhYGFo2DaKeAO3gmzliUo29AYxR2izyA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=gTv3mcUS9k98qN/8KD9IhyMd0VWQEieYnAiATfS8tgs=;
-        b=MlCenpkgrUqiXlpkgokJb2HsDsEaMT5lQBGOmex1t8FKXA1OwfO/+rTUXrZI/O4z+r
-         NBC45o+acUxK6Fm6DOXk/yC/oJP1KLnvo9cIdjxCTKCJ/5CXzoCc7lyub4ag5/CTjnOW
-         8NQ7P4EkiyYqgDjDQXtaPZG2o/0hfSLRnpDmd32o0TZKghro9e+X9WeyN6v8Nb51hWaD
-         wJvprXT8Otubvidsqq75o0X8J9gUGtTkNfl1AcXQIgDRxkqDsLB9iokHfo+yVHHfKjkf
-         Pe06crPMwix2VqoNH8X/FCG/1S5sr/I+sxbdrPHj+EdycPoQisbTp92NRztyddBdKKHM
-         2wNA==
-X-Gm-Message-State: APzg51Ch/XywfifLjmAS5sOQ88LmbMyGSD3zRlJ9uxGRFnRqa2usXcBh
-        vdzLAwggyQKBiq8JwI6yGz8jjQQeweXVOvvMgipT0g==
-X-Google-Smtp-Source: ANB0VdZB8Xz6P+yUhyfsLM8J145j/jp9WpBzSMpZRR4XbdmXkA3y4TotpOwnozV03b1wcbLi5MR4bRCDV3ePTjx/7xU=
-X-Received: by 2002:a2e:429c:: with SMTP id h28-v6mr7001019ljf.67.1535342445913;
- Sun, 26 Aug 2018 21:00:45 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WsJtpkOsRggwGQ8Y3rRRIh3C6XqWL3Lg48vPGPiZYsY=;
+        b=SwSyAZvysVJedSeMPT1C3HjAZDMRbXzlKSkvpqlmsnWCJ5JWRE1y8sZBg55+pDebFk
+         tfcrm4/mXwyEmfPAuBSgwHO383+feBk4czHP4nGsk8G7D35C6AdQ4l9bCoBcqe/EP31z
+         Kc6bgd4W3v0BQ+c8PITXuAMfbM0xJchL+FXS52DvTnVQaSqYsG+lCjyPs0UJ/FTzjQSn
+         qxo6zu2QKxkshfvqdHShXJDGZR/XC24csQ2+sSj/8lKJmz6/oy2gs1uYqdwgbVsbjK3f
+         qxsb+wGlYwq7WB+2zKFjGhtuzDPyVFCeJuPHW+WruO5BB6sxlJUo3pj9DRd2hiFpaoeO
+         3aSA==
+X-Gm-Message-State: APzg51CL9kEdS3BVJBUB7yvXyG412rWNDXW0e/1F6WbECXoCimQ3t40W
+        51slmxLxx3t4+AMMVqwRJPVfXj+LKQ4=
+X-Google-Smtp-Source: ANB0VdZlUGDD+LbC/T/zz8x0NlqSssDHxAHP1GdJli3WisX3speFTY0YRfaGkWj9BAJIwu8VOXAuVg==
+X-Received: by 2002:a0d:d7c6:: with SMTP id z189-v6mr6276267ywd.282.1535342625038;
+        Sun, 26 Aug 2018 21:03:45 -0700 (PDT)
+Received: from mail-yw1-f44.google.com (mail-yw1-f44.google.com. [209.85.161.44])
+        by smtp.gmail.com with ESMTPSA id a129-v6sm16702792ywh.79.2018.08.26.21.03.43
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 26 Aug 2018 21:03:43 -0700 (PDT)
+Received: by mail-yw1-f44.google.com with SMTP id n21-v6so5011611ywh.5
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Aug 2018 21:03:43 -0700 (PDT)
+X-Received: by 2002:a81:2804:: with SMTP id o4-v6mr4809278ywo.342.1535342622475;
+ Sun, 26 Aug 2018 21:03:42 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a19:16cd:0:0:0:0:0 with HTTP; Sun, 26 Aug 2018 21:00:45
- -0700 (PDT)
-In-Reply-To: <20180826064102.584749876@linuxfoundation.org>
-References: <20180826064102.584749876@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Mon, 27 Aug 2018 09:30:45 +0530
-Message-ID: <CA+G9fYscn6rUO6XRnfnjxHJDLkvZwk3fgE1aPPs+AdScoBM5og@mail.gmail.com>
-Subject: Re: [PATCH 4.4 0/5] 4.4.153-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
+References: <20180724140621.59624-1-tfiga@chromium.org> <20180724140621.59624-2-tfiga@chromium.org>
+ <1534770242.5445.13.camel@pengutronix.de> <CAAFQd5BBOh7nPZ70aaWiSuygGSOTiAQrOm0V9UPgFqqBgZf_LA@mail.gmail.com>
+ <1534774398.5445.32.camel@pengutronix.de> <CAAFQd5ACR7wQO7k6PfBg2rJEe81pQvnCzd2yp8AEkU+iLXQXPw@mail.gmail.com>
+ <1534779232.5445.34.camel@pengutronix.de>
+In-Reply-To: <1534779232.5445.34.camel@pengutronix.de>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Mon, 27 Aug 2018 13:03:31 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5BuUaW45+jLCn6TAkEBogfcWAGgZSPwLygFGsEsE5XZ2A@mail.gmail.com>
+Message-ID: <CAAFQd5BuUaW45+jLCn6TAkEBogfcWAGgZSPwLygFGsEsE5XZ2A@mail.gmail.com>
+Subject: Re: [PATCH 1/2] media: docs-rst: Document memory-to-memory video
+ decoder interface
+To:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Pawel Osciak <posciak@chromium.org>
+Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Alexandre Courbot <acourbot@chromium.org>, kamil@wypas.org,
+        a.hajda@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        jtp.park@samsung.com,
+        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
+        <tiffany.lin@mediatek.com>,
+        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
+        <andrew-ct.chen@mediatek.com>, todor.tomov@linaro.org,
+        nicolas@ndufresne.ca,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        dave.stevenson@raspberrypi.org,
+        Ezequiel Garcia <ezequiel@collabora.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26 August 2018 at 12:12, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> This is the start of the stable review cycle for the 4.4.153 release.
-> There are 5 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Hi Philipp,
+
+On Tue, Aug 21, 2018 at 12:34 AM Philipp Zabel <p.zabel@pengutronix.de> wrote:
 >
-> Responses should be made by Tue Aug 28 06:40:50 UTC 2018.
-> Anything received after that time might be too late.
+> On Mon, 2018-08-20 at 23:27 +0900, Tomasz Figa wrote:
+> [...]
+> > +3. Start queuing buffers to ``OUTPUT`` queue containing stream data after
+> > > > > > +   the seek until a suitable resume point is found.
+> > > > > > +
+> > > > > > +   .. note::
+> > > > > > +
+> > > > > > +      There is no requirement to begin queuing stream starting exactly from
+> > > > > > +      a resume point (e.g. SPS or a keyframe). The driver must handle any
+> > > > > > +      data queued and must keep processing the queued buffers until it
+> > > > > > +      finds a suitable resume point. While looking for a resume point, the
+> > > > >
+> > > > > I think the definition of a resume point is too vague in this place.
+> > > > > Can the driver decide whether or not a keyframe without SPS is a
+> > > > > suitable resume point? Or do drivers have to parse and store SPS/PPS if
+> > > > > the hardware does not support resuming from a keyframe without sending
+> > > > > SPS/PPS again?
+> > > >
+> > > > The thing is that existing drivers implement and user space clients
+> > > > rely on the behavior described above, so we cannot really change it
+> > > > anymore.
+> > >
+> > > My point is that I'm not exactly sure what that behaviour is, given the
+> > > description.
+> > >
+> > > Must a driver be able to resume from a keyframe even if userspace never
+> > > pushes SPS/PPS again?
+> > > If so, I think it should be mentioned more explicitly than just via an
+> > > example in parentheses, to make it clear to all driver developers that
+> > > this is a requirement that userspace is going to rely on.
+> > >
+> > > Or, if that is not the case, is a driver free to define "SPS only" as
+> > > its "suitable resume point" and to discard all input including keyframes
+> > > until the next SPS/PPS is pushed?
+> > >
+> > > It would be better to clearly define what a "suitable resume point" has
+> > > to be per codec, and not let the drivers decide for themselves, if at
+> > > all possible. Otherwise we'd need a away to inform userspace about the
+> > > per-driver definition.
+> >
+> > The intention here is that there is exactly no requirement for the
+> > user space to seek to any kind of resume point
 >
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.4.153-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.4.y
-> and the diffstat can be found below.
+> No question about this.
 >
-> thanks,
+> > and so there is no point in defining such.
 >
-> greg k-h
+> I don't agree. Let me give an example:
+>
+> Assume userspace wants to play back a simple h.264 stream that has
+> SPS/PPS exactly once, in the beginning.
+>
+> If drivers are allowed to resume from SPS/PPS only, and have no way to
+> communicate this to userspace, userspace always has to assume that
+> resuming from keyframes alone is not possible. So it has to store
+> SPS/PPS and resubmit them with every seek, even if a specific driver
+> wouldn't require it: Otherwise those drivers that don't store SPS/PPS
+> themselves (or in hardware) would be allowed to just drop everything
+> after the first seek.
+> This effectively would make resending SPS/PPS mandatory, which doesn't
+> fit well with the intention of letting userspace just seek anywhere and
+> start feeding data (or: NAL units) into the driver blindly.
+>
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm and x86_64.
+I'd say that such video is broken by design, because you cannot play
+back any arbitrary later part of it without decoding it from the
+beginning.
 
-Summary
-------------------------------------------------------------------------
+However, if the hardware keeps SPS/PPS across seeks (and that should
+normally be the case), the case could be handled by the user space
+letting the decoder initialize with the first frames and only then
+seeking, which would probably be the typical case of a user opening a
+video file and then moving the seek bar to desired position (or
+clicking a bookmark).
 
-kernel: 4.4.153-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.4.y
-git commit: 7994d02b246beb4349cf0ae547c0a6461320e6c7
-git describe: v4.4.152-6-g7994d02b246b
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/bui=
-ld/v4.4.152-6-g7994d02b246b
+If the hardware doesn't keep SPS/PPS across seeks, stateless API could
+arguably be a better candidate for it, since it mandates the user
+space to keep SPS/PPS around.
 
-No regressions (compared to build v4.4.152)
+> > The only requirement here is that the
+> > hardware/driver keeps processing the source stream until it finds a
+> > resume point suitable for it - if the hardware keeps SPS/PPS in its
+> > state then just a keyframe; if it doesn't then SPS/PPS.
+>
+> Yes, but the difference between those two might be very relevant to
+> userspace behaviour.
+>
+> > Note that this is a documentation of the user space API, not a driver
+> > implementation guide. We may want to create the latter separately,
+> > though.
+>
+> This is a good point, I keep switching the perspective from which I look
+> at this document.
+> Even for userspace it would make sense to be as specific as possible,
+> though. Otherwise, doesn't userspace always have to assume the worst?
+>
 
+That's right, a generic user space is expected to handle all the
+possible cases possible with the interface it's using. This is
+precisely why I'd like to avoid introducing the case where user space
+needs to carry state around. The API is for stateful hardware, which
+is expected to carry all the needed state around itself.
 
-Ran 12246 total tests in the following environments and test suites.
+> > H264 is a bit special here, because one may still seek to a key frame,
+> > but past the relevant SPS/PPS headers. In this case, there is no way
+> > for the hardware to know that the SPS/PPS it has in its local state is
+> > not the one that applies to the frame. It may be worth adding that
+> > such case leads to undefined results, but must not cause crash nor a
+> > fatal decode error.
+> >
+> > What do you think?
+>
+> That sounds like a good idea. I haven't thought about seeking over a
+> SPS/PPS change. Of course userspace must not expect correct results in
+> this case without providing the new SPS/PPS.
+>
 
-Environments
---------------
-- juno-r2 - arm64
-- qemu_arm
-- qemu_x86_64
-- x15 - arm
-- x86_64
+From what I talked with Pawel, our hardware (s5p-mfc, mtk-vcodec) will
+just notice that the frames refer to a different SPS/PPS (based on
+seq_parameter_set_id, I assume) and keep dropping frames until next
+corresponding header is encountered.
 
-Test Suites
------------
-* boot
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-open-posix-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
+> > > > Do we have hardware for which this wouldn't work to the point that the
+> > > > driver couldn't even continue with a bunch of frames corrupted? If
+> > > > only frame corruption is a problem, we can add a control to tell the
+> > > > user space to seek to resume points and it can happen in an
+> > > > incremental patch.
+> > >
+> > > The coda driver currently can't seek at all, it always stops and
+> > > restarts the sequence. So depending on the above I might have to either
+> > > find and store SPS/PPS in software, or figure out how to make the
+> > > firmware flush the bitstream buffer and restart without actually
+> > > stopping the sequence.
+> > > I'm sure the hardware is capable of this, it's more a question of what
+> > > behaviour is actually intended, and whether I have enough information
+> > > about the firmware interface to implement it.
+> >
+> > What happens if you just keep feeding it with next frames?
+>
+> As long as they are well formed, it should just decode them, possibly
+> with artifacts due to mismatched reference buffers. There is an I-Frame
+> search mode that should be usable to skip to the next resume point, as
+> well, so I'm sure coda will end up not needing the
+> NEEDS_SEEK_TO_RESUME_POINT flag below. I'm just not certain at this
+> point whether I'll be able to (or: whether I'll have to) keep the
+> SPS/PPS state across seeks. I have seen so many decoder hangs with
+> malformed input on i.MX53 that I couldn't recover from, that I'm wary
+> to make any guarantees without flushing the bitstream buffer first.
 
-Summary
-------------------------------------------------------------------------
+Based on the above, I believe the answer is that your hardware/driver
+needs to keep SPS/PPS around. Is there a good way to do it with Coda?
+We definitely don't want to do any parsing inside the driver.
 
-kernel: 4.4.153-rc1
-git repo: https://git.linaro.org/lkft/arm64-stable-rc.git
-git branch: 4.4.153-rc1-hikey-20180826-270
-git commit: 1d9b202cd56188353c13a49bf48f3f97383984ee
-git describe: 4.4.153-rc1-hikey-20180826-270
-Test details: https://qa-reports.linaro.org/lkft/linaro-hikey-stable-rc-4.4=
--oe/build/4.4.153-rc1-hikey-20180826-270
+>
+> > If that would result only in corrupted frames, I suppose the control (say
+> > V4L2_CID_MPEG_VIDEO_NEEDS_SEEK_TO_RESUME_POINT) would solve the
+> > problem?
+>
+> For this to be useful, userspace needs to know what a resume point is in
+> the first place, though.
 
+That would be defined in the context of that control and particular
+pixel format, since there is no general, yet precise enough definition
+that could apply to all codecs. Right now, I would like to defer
+adding such constraints until there is really a hardware which needs
+it and it can't be handled using stateless API.
 
-No regressions (compared to build 4.4.152-rc1-hikey-20180823-268)
-
-
-Ran 2724 total tests in the following environments and test suites.
-
-Environments
---------------
-- hi6220-hikey - arm64
-- qemu_arm64
-
-Test Suites
------------
-* boot
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
+Best regards,
+Tomasz
