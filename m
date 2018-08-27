@@ -2,80 +2,589 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 247F3C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 07:53:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B232FC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 07:55:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0DAA208DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 07:53:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4637121735
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 07:55:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="s0qxdmJy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0DAA208DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oD8jCbY6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4637121735
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727372AbeH0LjQ (ORCPT
+        id S1727317AbeH0Lk6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 07:39:16 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46464 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727101AbeH0LjQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 07:39:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=2iwai4mP+Qjak9gKjRqDjd/ma83sd80Ld7ymivudl6I=; b=s0qxdmJyCVLQMdTLlgAV5F9ep
-        Y91khaZ6IXhWVTZYUWoWEIfV4u2Kf0KkKF8czlThqv8YXOCsY1NrU0vwmN2ojzcbU9J87X5PK78AY
-        IyztcRNJo+MIuP9L2gn3CwGPgB3CWmP6WXqT9ZD8UAUfeYYY7TrBmcTgRkODnJCncNzuPVPzqRAKm
-        prCscZ3W+/Nc89+w37jYpji7YPDd07SMwi37DDJkCMyXeEWUddektCa6q8vs8rooSfozhvOIta6iL
-        r1k0KI1i9+QdWoViq3ptTLpO9jQTo3ejnCMOJYBDHCFCbwZYNLcjUj4eXzhuD2WpJxuqMBcDBRv0y
-        5kQZGEtxA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fuCLH-0005cs-6v; Mon, 27 Aug 2018 07:53:43 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id B8A942024EFCD; Mon, 27 Aug 2018 09:53:41 +0200 (CEST)
-Date:   Mon, 27 Aug 2018 09:53:41 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     linux-kernel@vger.kernel.org, benh@au1.ibm.com,
-        torvalds@linux-foundation.org, npiggin@gmail.com,
-        catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFC PATCH 09/11] asm-generic/tlb: Track which levels of the
- page tables have been cleared
-Message-ID: <20180827075341.GY24124@hirez.programming.kicks-ass.net>
-References: <1535125966-7666-1-git-send-email-will.deacon@arm.com>
- <1535125966-7666-10-git-send-email-will.deacon@arm.com>
+        Mon, 27 Aug 2018 07:40:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33354 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727101AbeH0Lk6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 07:40:58 -0400
+Received: from dragon (unknown [45.56.155.152])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A580520671;
+        Mon, 27 Aug 2018 07:55:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535356526;
+        bh=wcHWjp+4FC3GS4mZycaHZjeCydc4ShFl5v7Y36UC2bM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=oD8jCbY63jfTlgnGHKjuSR+H4iPWKXj8VOPxwBwoy0hDck9McvGXrPKs1+ZgYZRwn
+         YVp4/qHndrt938cnxhpzLthdL6Gwb1GzFEBarCxB0iOqD8Wv1ZaklFCU44VLBefbtc
+         820+NmcyB7AI5gGv+wdpqH+gf/Aon7irMxC4x/ao=
+Date:   Mon, 27 Aug 2018 15:54:29 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Alex Gonzalez <alex.gonzalez@digi.com>
+Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
+        s.hauer@pengutronix.de, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, linux-imx@nxp.com, kernel@pengutronix.de,
+        fabio.estevam@nxp.com, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] ARM: dts: imx6ul: Add DTS for ConnectCore 6UL SBC Pro
+Message-ID: <20180827075426.GK3850@dragon>
+References: <1534936719-13770-1-git-send-email-alex.gonzalez@digi.com>
+ <1534936719-13770-2-git-send-email-alex.gonzalez@digi.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1535125966-7666-10-git-send-email-will.deacon@arm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <1534936719-13770-2-git-send-email-alex.gonzalez@digi.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 24, 2018 at 04:52:44PM +0100, Will Deacon wrote:
-> +static inline unsigned long tlb_get_unmap_granule(struct mmu_gather *tlb)
-> +{
-> +	if (tlb->cleared_ptes)
-> +		return PAGE_SIZE;
-> +	if (tlb->cleared_pmds)
-> +		return PMD_SIZE;
-> +	if (tlb->cleared_puds)
-> +		return PUD_SIZE;
-> +	if (tlb->cleared_p4ds)
-> +		return P4D_SIZE;
+On Wed, Aug 22, 2018 at 01:18:39PM +0200, Alex Gonzalez wrote:
+> The ConnectCore 6UL Single Board Computer (SBC) Pro contains the
+> ConnectCore 6UL System-On-Module.
+> 
+> Its hardware specifications are:
+> 
+> * 256MB DDR3 memory
+> * On module 256MB NAND flash
+> * Dual 10/100 Ethernet
+> * USB Host and USB OTG
+> * Parallel RGB display header
+> * LVDS display header
+> * CSI camera
+> * GPIO header
+> * I2C, SPI, CAN headers
+> * PCIe mini card and micro SIM slot
+> * MicroSD external storage
+> * On board 4GB eMMC flash
+> * Audio headphone, line in/out, microphone lines
+> 
+> Signed-off-by: Alex Gonzalez <alex.gonzalez@digi.com>
+> ---
+>  arch/arm/boot/dts/Makefile                  |   1 +
+>  arch/arm/boot/dts/imx6ul-ccimx6ulsbcpro.dts | 466 ++++++++++++++++++++++++++++
+>  2 files changed, 467 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/imx6ul-ccimx6ulsbcpro.dts
+> 
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index 6135d3dc381c..3f6f8983f6c6 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -534,6 +534,7 @@ dtb-$(CONFIG_SOC_IMX6SX) += \
+>  dtb-$(CONFIG_SOC_IMX6UL) += \
+>  	imx6ul-14x14-evk.dtb \
+>  	imx6ul-ccimx6ulsbcexpress.dtb \
+> +	imx6ul-ccimx6ulsbcpro.dtb \
+>  	imx6ul-geam.dtb \
+>  	imx6ul-isiot-emmc.dtb \
+>  	imx6ul-isiot-nand.dtb \
+> diff --git a/arch/arm/boot/dts/imx6ul-ccimx6ulsbcpro.dts b/arch/arm/boot/dts/imx6ul-ccimx6ulsbcpro.dts
+> new file mode 100644
+> index 000000000000..4570347845fc
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/imx6ul-ccimx6ulsbcpro.dts
+> @@ -0,0 +1,466 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Digi International's ConnectCore6UL SBC Pro board device tree source
+> + *
+> + * Copyright 2018 Digi International, Inc.
+> + *
+> + */
 > +
-> +	return PAGE_SIZE;
-> +}
+> +/dts-v1/;
+> +#include <dt-bindings/input/input.h>
+> +#include <dt-bindings/interrupt-controller/irq.h>
+> +#include "imx6ul.dtsi"
+> +#include "imx6ul-ccimx6ulsom.dtsi"
+> +
+> +/ {
+> +	model = "Digi International ConnectCore 6UL SBC Pro.";
+> +	compatible = "digi,ccimx6ulsbcpro", "digi,ccimx6ulsom", "fsl,imx6ul";
+> +
+> +	lcd_backlight: backlight {
+> +		compatible = "pwm-backlight";
+> +		pwms = <&pwm5 0 50000>;
+> +		brightness-levels = <0 4 8 16 32 64 128 255>;
+> +		default-brightness-level = <6>;
+> +		status = "okay";
+> +	};
+> +
+> +	reg_usb_otg1_vbus: reg_usb_otg1@0 {
 
-When doing the x86 patch; I found _SHIFT more useful than _SIZE.
+Hyphen is recommended in node name.  Also the unit-address makes no
+sense here.
+
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "usb_otg1_vbus";
+> +		regulator-min-microvolt = <5000000>;
+> +		regulator-max-microvolt = <5000000>;
+> +		gpio = <&gpio1 4 GPIO_ACTIVE_HIGH>;
+> +		enable-active-high;
+> +	};
+> +};
+> +
+> +&adc1 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_adc1>;
+> +	status = "okay";
+> +};
+> +
+> +&can1 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_flexcan1>;
+> +	xceiver-supply = <&ext_3v3>;
+> +	status = "okay";
+> +};
+> +
+> +/* CAN2 is multiplexed with UART2 RTS/CTS */
+> +&can2 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_flexcan2>;
+> +	xceiver-supply = <&ext_3v3>;
+> +	status = "disabled";
+> +};
+> +
+> +&ecspi1 {
+> +	cs-gpios = <&gpio3 26 GPIO_ACTIVE_LOW>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_ecspi1_master>;
+> +	status = "okay";
+> +};
+> +
+> +&fec1 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_enet1>;
+> +	phy-mode = "rmii";
+> +	phy-handle = <&ethphy0>;
+> +	status = "okay";
+> +};
+> +
+> +&fec2 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_enet2 &pinctrl_enet2_mdio>;
+> +	phy-mode = "rmii";
+> +	phy-handle = <&ethphy1>;
+> +	phy-reset-gpios = <&gpio5 6 GPIO_ACTIVE_LOW>;
+> +	phy-reset-duration = <26>;
+> +	status = "okay";
+> +
+> +	mdio {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		ethphy0: ethernet-phy@0 {
+> +			compatible = "ethernet-phy-ieee802.3-c22";
+> +			smsc,disable-energy-detect;
+> +			reg = <0>;
+> +		};
+> +
+> +		ethphy1: ethernet-phy@1 {
+> +			compatible = "ethernet-phy-ieee802.3-c22";
+> +			smsc,disable-energy-detect;
+> +			reg = <1>;
+> +		};
+> +	};
+> +};
+> +
+> +&lcdif {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_lcdif_dat0_17
+> +		     &pinctrl_lcdif_clken
+> +		     &pinctrl_lcdif_hvsync>;
+> +	lcd-supply = <&ldo4_ext>;       /* BU90T82 LVDS bridge power */
+> +	status = "okay";
+> +};
+> +
+> +&ldo4_ext {
+> +	regulator-max-microvolt = <1800000>;
+> +};
+> +
+> +&pwm1 {
+> +	status = "okay";
+> +};
+> +
+> +&pwm2 {
+> +	status = "okay";
+> +};
+> +
+> +&pwm3 {
+> +	status = "okay";
+> +};
+> +
+> +&pwm4 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_pwm4>;
+> +	clocks = <&clks IMX6UL_CLK_PWM4>,
+> +		<&clks IMX6UL_CLK_PWM4>;
+> +	status = "okay";
+> +};
+> +
+> +&pwm5 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_pwm5>;
+> +	clocks = <&clks IMX6UL_CLK_PWM5>,
+> +		 <&clks IMX6UL_CLK_PWM5>;
+> +	status = "okay";
+> +};
+> +
+> +&pwm6 {
+> +	status = "okay";
+> +};
+> +
+> +&pwm7 {
+> +	status = "okay";
+> +};
+> +
+> +&pwm8 {
+> +	status = "okay";
+> +};
+> +
+> +&sai2 {
+> +	pinctrl-names = "default", "sleep";
+> +	pinctrl-0 = <&pinctrl_sai2>;
+> +	pinctrl-1 = <&pinctrl_sai2_sleep>;
+> +	assigned-clocks = <&clks IMX6UL_CLK_SAI2_SEL>,
+> +			  <&clks IMX6UL_CLK_PLL4_AUDIO_DIV>,
+> +			  <&clks IMX6UL_CLK_SAI2>;
+> +	assigned-clock-rates = <0>, <786432000>, <12288000>;
+> +	assigned-clock-parents = <&clks IMX6UL_CLK_PLL4_AUDIO_DIV>;
+> +	status = "okay";
+> +};
+> +
+> +/* UART2 RTS/CTS muxed with CAN2 */
+> +&uart2 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_uart2_4wires>;
+> +	uart-has-rtscts;
+> +	status = "okay";
+> +};
+> +
+> +/* UART3 RTS/CTS muxed with CAN 1 */
+> +&uart3 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_uart3_2wires>;
+> +	status = "okay";
+> +};
+> +
+> +&uart5 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_uart5>;
+> +	status = "okay";
+> +};
+> +
+> +&usbotg1 {
+> +	dr_mode = "otg";
+> +	vbus-supply = <&reg_usb_otg1_vbus>;
+> +	pinctrl-0 = <&pinctrl_usbotg1>;
+> +	status = "okay";
+> +};
+> +
+> +&usbotg2 {
+> +	dr_mode = "host";
+> +	disable-over-current;
+> +	status = "okay";
+> +};
+> +
+> +/* USDHC2 (microSD conflicts with eMMC) */
+> +&usdhc2 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_usdhc2>;
+> +	no-1-8-v;
+> +	pinctrl-assert-gpios = <&gpio5 1 GPIO_ACTIVE_LOW>;
+
+This is undocumented/unsupported, no?
+
+> +	broken-cd;	/* no carrier detect line (use polling) */
+> +	status = "okay";
+> +};
+> +
+> +&iomuxc {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_hog>;
+> +
+> +	pinctrl_adc1: adc1grp {
+> +		fsl,pins = <
+> +			/* EXP_GPIO_2 -> GPIO1_3/ADC1_IN3 */
+> +			MX6UL_PAD_GPIO1_IO03__GPIO1_IO03        0xb0
+> +		>;
+> +	};
+> +
+> +	pinctrl_ecspi1_master: ecspi1grp1 {
+> +		fsl,pins = <
+> +			MX6UL_PAD_LCD_DATA20__ECSPI1_SCLK	0x10b0
+> +			MX6UL_PAD_LCD_DATA22__ECSPI1_MOSI	0x10b0
+> +			MX6UL_PAD_LCD_DATA23__ECSPI1_MISO	0x10b0
+> +			MX6UL_PAD_LCD_DATA21__GPIO3_IO26	0x10b0
+> +		>;
+> +	};
+> +
+> +	pinctrl_ecspi1_slave: ecspi1grp2 {
+> +		fsl,pins = <
+> +			MX6UL_PAD_LCD_DATA20__ECSPI1_SCLK	0x10b0
+> +			MX6UL_PAD_LCD_DATA22__ECSPI1_MOSI	0x10b0
+> +			MX6UL_PAD_LCD_DATA23__ECSPI1_MISO	0x10b0
+> +			MX6UL_PAD_LCD_DATA21__ECSPI1_SS0	0x10b0
+> +		>;
+> +	};
+> +
+> +	pinctrl_enet1: enet1grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_ENET1_RX_EN__ENET1_RX_EN	0x1b0b0
+> +			MX6UL_PAD_ENET1_RX_ER__ENET1_RX_ER	0x1b0b0
+> +			MX6UL_PAD_ENET1_RX_DATA0__ENET1_RDATA00	0x1b0b0
+> +			MX6UL_PAD_ENET1_RX_DATA1__ENET1_RDATA01	0x1b0b0
+> +			MX6UL_PAD_ENET1_TX_EN__ENET1_TX_EN	0x1b0b0
+> +			MX6UL_PAD_ENET1_TX_DATA0__ENET1_TDATA00	0x1b0b0
+> +			MX6UL_PAD_ENET1_TX_DATA1__ENET1_TDATA01	0x1b0b0
+> +			MX6UL_PAD_ENET1_TX_CLK__ENET1_REF_CLK1	0x40017051
+> +		>;
+> +	};
+> +
+> +	pinctrl_enet2: enet2grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_ENET2_RX_EN__ENET2_RX_EN	0x1b0b0
+> +			MX6UL_PAD_ENET2_RX_ER__ENET2_RX_ER	0x1b0b0
+> +			MX6UL_PAD_ENET2_RX_DATA0__ENET2_RDATA00	0x1b0b0
+> +			MX6UL_PAD_ENET2_RX_DATA1__ENET2_RDATA01	0x1b0b0
+> +			MX6UL_PAD_ENET2_TX_EN__ENET2_TX_EN	0x1b0b0
+> +			MX6UL_PAD_ENET2_TX_DATA0__ENET2_TDATA00	0x1b0b0
+> +			MX6UL_PAD_ENET2_TX_DATA1__ENET2_TDATA01	0x1b0b0
+> +			MX6UL_PAD_ENET2_TX_CLK__ENET2_REF_CLK2	0x40017051
+> +		>;
+> +	};
+> +
+> +	/*
+> +	 * The same pins GPIO1_IO6 and GPIO_IO7 are shared as the MII
+> +	 * bus of ENET1 and ENET2. If both interfaces are enabled, the
+> +	 * IOMUX of ENET2 will apply.
+> +	 * If only one interface is enabled, the IOMUX of the enabled
+> +	 * interface will apply.
+> +	 */
+> +	pinctrl_enet1_mdio: mdioenet1grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_GPIO1_IO07__ENET1_MDC		0x1b0b0
+> +			MX6UL_PAD_GPIO1_IO06__ENET1_MDIO	0x1b0b0
+> +		>;
+> +	};
+> +	pinctrl_enet2_mdio: mdioenet2grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_GPIO1_IO07__ENET2_MDC		0x1b0b0
+> +			MX6UL_PAD_GPIO1_IO06__ENET2_MDIO	0x1b0b0
+> +		>;
+> +	};
+> +
+> +	pinctrl_flexcan1: flexcan1grp{
+> +		fsl,pins = <
+> +			MX6UL_PAD_UART3_CTS_B__FLEXCAN1_TX	0x1b020
+> +			MX6UL_PAD_UART3_RTS_B__FLEXCAN1_RX	0x1b020
+> +		>;
+> +	};
+> +	pinctrl_flexcan2: flexcan2grp{
+> +		fsl,pins = <
+> +			MX6UL_PAD_UART2_CTS_B__FLEXCAN2_TX	0x1b020
+> +			MX6UL_PAD_UART2_RTS_B__FLEXCAN2_RX	0x1b020
+> +		>;
+> +	};
+> +
+> +	pinctrl_lcdif_dat0_17: lcdifdatgrp0_17 {
+> +		fsl,pins = <
+> +			MX6UL_PAD_LCD_DATA00__LCDIF_DATA00	0x79
+> +			MX6UL_PAD_LCD_DATA01__LCDIF_DATA01	0x79
+> +			MX6UL_PAD_LCD_DATA02__LCDIF_DATA02	0x79
+> +			MX6UL_PAD_LCD_DATA03__LCDIF_DATA03	0x79
+> +			MX6UL_PAD_LCD_DATA04__LCDIF_DATA04	0x79
+> +			MX6UL_PAD_LCD_DATA05__LCDIF_DATA05	0x79
+> +			MX6UL_PAD_LCD_DATA06__LCDIF_DATA06	0x79
+> +			MX6UL_PAD_LCD_DATA07__LCDIF_DATA07	0x79
+> +			MX6UL_PAD_LCD_DATA08__LCDIF_DATA08	0x79
+> +			MX6UL_PAD_LCD_DATA09__LCDIF_DATA09	0x79
+> +			MX6UL_PAD_LCD_DATA10__LCDIF_DATA10	0x79
+> +			MX6UL_PAD_LCD_DATA11__LCDIF_DATA11	0x79
+> +			MX6UL_PAD_LCD_DATA12__LCDIF_DATA12	0x79
+> +			MX6UL_PAD_LCD_DATA13__LCDIF_DATA13	0x79
+> +			MX6UL_PAD_LCD_DATA14__LCDIF_DATA14	0x79
+> +			MX6UL_PAD_LCD_DATA15__LCDIF_DATA15	0x79
+> +			MX6UL_PAD_LCD_DATA16__LCDIF_DATA16	0x79
+> +			MX6UL_PAD_LCD_DATA17__LCDIF_DATA17	0x79
+> +		>;
+> +	};
+> +
+> +	pinctrl_lcdif_dat18_23: lcdifdatgrp18_23 {
+> +		fsl,pins = <
+> +			MX6UL_PAD_LCD_DATA18__LCDIF_DATA18	0x79
+> +			MX6UL_PAD_LCD_DATA19__LCDIF_DATA19	0x79
+> +			MX6UL_PAD_LCD_DATA20__LCDIF_DATA20	0x79
+> +			MX6UL_PAD_LCD_DATA21__LCDIF_DATA21	0x79
+> +			MX6UL_PAD_LCD_DATA22__LCDIF_DATA22	0x79
+> +			MX6UL_PAD_LCD_DATA23__LCDIF_DATA23	0x79
+> +		>;
+> +	};
+> +
+> +	pinctrl_lcdif_clken: lcdifctrlgrp1 {
+> +		fsl,pins = <
+> +			MX6UL_PAD_LCD_CLK__LCDIF_CLK		0x17050
+> +			MX6UL_PAD_LCD_ENABLE__LCDIF_ENABLE	0x79
+> +		>;
+> +	};
+> +
+> +	pinctrl_lcdif_hvsync: lcdifctrlgrp2 {
+> +		fsl,pins = <
+> +			MX6UL_PAD_LCD_HSYNC__LCDIF_HSYNC	0x79
+> +			MX6UL_PAD_LCD_VSYNC__LCDIF_VSYNC	0x79
+> +		>;
+> +	};
+> +
+> +	pinctrl_lcdif_reset: lcdifctrlgrp3 {
+> +		fsl,pins = <
+> +			MX6UL_PAD_LCD_RESET__LCDIF_RESET	0x79
+> +		>;
+> +	};
+> +
+> +	pinctrl_pwm4: pwm4grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_GPIO1_IO05__PWM4_OUT          0x110b0
+> +		>;
+> +	};
+> +
+> +	pinctrl_pwm5: pwm5grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_NAND_DQS__PWM5_OUT		0x110b0
+> +		>;
+> +	};
+> +
+> +	pinctrl_sai2: sai2grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_JTAG_TRST_B__SAI2_TX_DATA	0x11088
+> +			MX6UL_PAD_JTAG_TCK__SAI2_RX_DATA	0x11088
+> +			MX6UL_PAD_JTAG_TMS__SAI2_MCLK		0x17088
+> +			MX6UL_PAD_JTAG_TDI__SAI2_TX_BCLK	0x17088
+> +			MX6UL_PAD_JTAG_TDO__SAI2_TX_SYNC	0x17088
+> +			/* Interrupt */
+> +			MX6UL_PAD_SNVS_TAMPER7__GPIO5_IO07	0x80000000
+> +		>;
+> +	};
+> +
+> +	pinctrl_sai2_sleep: sai2grp_sleep {
+> +		fsl,pins = <
+> +			MX6UL_PAD_JTAG_TRST_B__GPIO1_IO15	0x3000
+> +			MX6UL_PAD_JTAG_TCK__GPIO1_IO14		0x3000
+> +			MX6UL_PAD_JTAG_TMS__GPIO1_IO11		0x3000
+> +			MX6UL_PAD_JTAG_TDO__GPIO1_IO12		0x3000
+> +			/* Interrupt */
+> +			MX6UL_PAD_SNVS_TAMPER7__GPIO5_IO07	0x3000
+> +		>;
+> +	};
+> +
+> +	pinctrl_uart2_2wires: uart2grp_2wires {
+> +		fsl,pins = <
+> +			MX6UL_PAD_UART2_TX_DATA__UART2_DCE_TX	0x1b0b1
+> +			MX6UL_PAD_UART2_RX_DATA__UART2_DCE_RX	0x1b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_uart2_4wires: uart2grp_4wires {
+> +		fsl,pins = <
+> +			MX6UL_PAD_UART2_TX_DATA__UART2_DCE_TX	0x1b0b1
+> +			MX6UL_PAD_UART2_RX_DATA__UART2_DCE_RX	0x1b0b1
+> +			MX6UL_PAD_UART2_CTS_B__UART2_DCE_CTS	0x1b0b1
+> +			MX6UL_PAD_UART2_RTS_B__UART2_DCE_RTS	0x1b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_uart3_2wires: uart3grp_2wires {
+> +		fsl,pins = <
+> +			MX6UL_PAD_UART3_TX_DATA__UART3_DCE_TX	0x1b0b1
+> +			MX6UL_PAD_UART3_RX_DATA__UART3_DCE_RX	0x1b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_uart3_4wires: uart3grp_4wires {
+> +		fsl,pins = <
+> +			MX6UL_PAD_UART3_TX_DATA__UART3_DCE_TX	0x1b0b1
+> +			MX6UL_PAD_UART3_RX_DATA__UART3_DCE_RX	0x1b0b1
+> +			MX6UL_PAD_UART3_CTS_B__UART3_DCE_CTS	0x1b0b1
+> +			MX6UL_PAD_UART3_RTS_B__UART3_DCE_RTS	0x1b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_uart5: uart5grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_UART5_TX_DATA__UART5_DCE_TX	0x1b0b1
+> +			MX6UL_PAD_UART5_RX_DATA__UART5_DCE_RX	0x1b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_usdhc2: usdhc2grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_CSI_HSYNC__USDHC2_CMD		0x17059
+> +			MX6UL_PAD_CSI_VSYNC__USDHC2_CLK		0x10039
+> +			MX6UL_PAD_CSI_DATA00__USDHC2_DATA0	0x17059
+> +			MX6UL_PAD_CSI_DATA01__USDHC2_DATA1	0x17059
+> +			MX6UL_PAD_CSI_DATA02__USDHC2_DATA2	0x17059
+> +			MX6UL_PAD_CSI_DATA03__USDHC2_DATA3	0x17059
+> +			/* Mux selector between eMMC/SD# */
+> +			MX6UL_PAD_SNVS_TAMPER1__GPIO5_IO01	0x79
+> +		>;
+> +	};
+> +
+> +	pinctrl_usdhc2_8databits: usdhc2-8databits-grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_CSI_HSYNC__USDHC2_CMD		0x17059
+> +			MX6UL_PAD_CSI_VSYNC__USDHC2_CLK		0x10039
+> +			MX6UL_PAD_CSI_DATA00__USDHC2_DATA0	0x17059
+> +			MX6UL_PAD_CSI_DATA01__USDHC2_DATA1	0x17059
+> +			MX6UL_PAD_CSI_DATA02__USDHC2_DATA2	0x17059
+> +			MX6UL_PAD_CSI_DATA03__USDHC2_DATA3	0x17059
+> +			MX6UL_PAD_CSI_DATA04__USDHC2_DATA4	0x17059
+> +			MX6UL_PAD_CSI_DATA05__USDHC2_DATA5	0x17059
+> +			MX6UL_PAD_CSI_DATA06__USDHC2_DATA6	0x17059
+> +			MX6UL_PAD_CSI_DATA07__USDHC2_DATA7	0x17059
+> +			/* Mux selector between eMMC/SD# */
+> +			MX6UL_PAD_SNVS_TAMPER1__GPIO5_IO01	0x79
+> +		>;
+> +	};
+
+Please drop unused pinctrl entries.  And again, use hyphen in node name.
+
+> +
+> +	pinctrl_usbotg1: usbotg1grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_GPIO1_IO00__ANATOP_OTG1_ID	0x17059
+> +			MX6UL_PAD_GPIO1_IO04__GPIO1_IO04	0x17059
+> +			MX6UL_PAD_GPIO1_IO01__USB_OTG1_OC	0x17059
+> +		>;
+> +	};
+> +
+> +	/* General purpose pinctrl */
+> +	pinctrl_hog: hoggrp {
+> +	};
+
+Drop this empty node.
+
+Shawn
+
+> +};
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
