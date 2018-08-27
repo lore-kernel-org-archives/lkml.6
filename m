@@ -2,130 +2,114 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A743BC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 14:25:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 683ACC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 14:26:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5644A208B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 14:25:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B5C7208B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 14:26:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qN1rxIq6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5644A208B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=mojatatu-com.20150623.gappssmtp.com header.i=@mojatatu-com.20150623.gappssmtp.com header.b="ZLaiczwU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B5C7208B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727546AbeH0SMa (ORCPT
+        id S1727574AbeH0SM4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 14:12:30 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:41284 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726958AbeH0SMa (ORCPT
+        Mon, 27 Aug 2018 14:12:56 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:44088 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727113AbeH0SM4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 14:12:30 -0400
-Received: by mail-pf1-f196.google.com with SMTP id h79-v6so6946406pfk.8
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 07:25:39 -0700 (PDT)
+        Mon, 27 Aug 2018 14:12:56 -0400
+Received: by mail-io0-f193.google.com with SMTP id 75-v6so12923015iou.11
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 07:26:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=77Hg5SAXBbLnn128ZLaXgNQPCrX2iC248IWI1ACyDPs=;
-        b=qN1rxIq6J6Nm8d5Qesm/pygLyjJuIK6fwDJ/LPQ33LuNMGQSX/x0F4huNPNUmeyyDK
-         H3AGplC49LBHyc1MLiRG0hZoBLQ3em7GdBUFvi0Zkx7XtHFr1dnluZowTPQY34jo9diE
-         i/pEvy9MRKFWuYk/dhHGUNrv/V/VXSjw7P2m3x79EhXB0WLHKXiVv5hemOQDEjO80j7w
-         ++aqUKHFQ+tnsXTH1AFbqAi7h4EDa5vX7tLUQws8aEzpKjc3V1PT17sCraGlP86Tv09K
-         +3aNSXyEDIpxw0sMahyMAwTPQWsmznHBwBBAoCoJNaClbV9diQOlf+GRGuhbsNtPdLMF
-         Q8Tg==
+        d=mojatatu-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:references:date:in-reply-to:message-id
+         :user-agent:mime-version;
+        bh=Je71mQP9k2ulgeyMLgbTeWh40ubvX/3LJLVlUgowNK4=;
+        b=ZLaiczwUUKBDDTWJbo/CPlfe2lmvA8sPFn5X28JowA9KRyiISeGv81iyCAwAmlJshs
+         5w3xCCvpRCGy5FnUXxbubsQjjGi57UmInOF1Jg/wBEiWqbCIVGl1YDs1ZO2NCWarnbun
+         chdvgNlIEAL0raR3r3WC+4dYFusd8FGO7e3qKAN3lC5dihHmeiVH9wvn0s1xJ2Fv+el/
+         76rx7IxxSH62tjnc7XkurpLHVCqONCDBTK/iOGoIlW+jbah/edmYdXa0j35uhgHN8/9B
+         OruyA1POYHoKGxmrR2pLCYkwa5tDkC1ytu9isjWNkZGrs/Qc3Chv4U7ZJN+HzUXndH2F
+         TNiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=77Hg5SAXBbLnn128ZLaXgNQPCrX2iC248IWI1ACyDPs=;
-        b=ssRXu5sPIOWNX037MNC08EqnvW+XTUs0vMYrewfuBZ3VOEwoE7SKvHVd47siIPcNyc
-         a4yDFUJCaVnoCLqIgJbOmPLFBmafQ6d9L3tUNBQmmljQEDqyCNyfunLsfU61EZWssjZH
-         MBWzqYxpg9bUnwxFIUFz6FDHv5K3nZ/2RGIxbP2uD9+GlM8XXThszZDBAm2pcm7bDrN4
-         QuyOKyqWPxKY/5x8I3M9mWhK/+IVDWHVv5ayinwqCG+C28Iux1PHYW0wDY/dBvDhmq66
-         JdqlX/Lf68Ms1mdn+XJGpl5JN4W7k9Kynu6QuRkV75D5US4C+/xDpBpCs+DMxxNkG5Tw
-         Mfqg==
-X-Gm-Message-State: APzg51Bsi8iw7gEp+sTcAVbDSJJBZHGSyZpJxS4hBhr4C2VJ+NlmoH0T
-        V77om8YB9ub53AaTk2EHYP7FyYJbHNqQ0zIldBlWPQ==
-X-Google-Smtp-Source: ANB0VdY75ZVBjkdmplkcyy9nKGhOOLC6dXwVSTk+SG6+52QJVPwI+YqO8N/SthQYfpoSvC0JAUaE3vFFCyGsmnngoLk=
-X-Received: by 2002:a62:a05:: with SMTP id s5-v6mr14872271pfi.147.1535379938595;
- Mon, 27 Aug 2018 07:25:38 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Mon, 27 Aug 2018 07:25:18
- -0700 (PDT)
-In-Reply-To: <20180827052412.GA26294@nautica>
-References: <000000000000af648b057456e234@google.com> <20180827052412.GA26294@nautica>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 27 Aug 2018 07:25:18 -0700
-Message-ID: <CACT4Y+b1B5_Eg+j91GxaVbPk5sb8+SVOU_z5k9HYb4R716X9kQ@mail.gmail.com>
-Subject: Re: KASAN: invalid-free in p9stat_free
-To:     Dominique Martinet <asmadeus@codewreck.org>
-Cc:     syzbot <syzbot+d4252148d198410b864f@syzkaller.appspotmail.com>,
-        David Miller <davem@davemloft.net>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
+        h=x-gm-message-state:from:to:cc:subject:references:date:in-reply-to
+         :message-id:user-agent:mime-version;
+        bh=Je71mQP9k2ulgeyMLgbTeWh40ubvX/3LJLVlUgowNK4=;
+        b=tRplWf5RQbfj0fybDJ9anUmB9we8ueD3JAVQ9mbtR1EnrVd7LDYpFUcfQMGCmp352H
+         KklTKmVKjOPuvc59dQh4GhG7kfrXcs99nBMAc+zy0TnzoZ+bbOVenKbdSIy1lNoW062G
+         sS7vd9LuObE8UjBaSPIBR9536i10R1cTSO3YHU3+w9HDk5Y6uG3st3DMiM9ki7jDpNe3
+         H0Wwswn7pdxCz92PY1AhyQiAGFsm8JQQXUOBYINXO2wn5UvTDveQoDafDXRgJVLdSgok
+         He9v6mNuLrSyfkjzFfbhweiPPCCs+wxAUzQMcLW+P8UNs5ZRd7iZksGLtDzvTClRMcBa
+         lp8w==
+X-Gm-Message-State: APzg51AT+xzCnXkk0iJO0QSBsAcBHwwcmsqwjf7rs+oLo3iSoWbHYuM5
+        nwgnTr4H2YBgmqXnKCPSKxNlkg==
+X-Google-Smtp-Source: ANB0Vdblk1gae3gH+mD+7aPKsZEZeVBA4V+tABJJPJkCjn7d45VMankbgCyDGtrdP6e6LVot6Tpowg==
+X-Received: by 2002:a6b:1acf:: with SMTP id a198-v6mr2160071ioa.286.1535379964933;
+        Mon, 27 Aug 2018 07:26:04 -0700 (PDT)
+Received: from sevai ([64.26.149.125])
+        by smtp.gmail.com with ESMTPSA id 185-v6sm1171448itk.28.2018.08.27.07.26.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 27 Aug 2018 07:26:04 -0700 (PDT)
+From:   Roman Mashak <mrv@mojatatu.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Jamal Hadi Salim <jhs@mojatatu.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         LKML <linux-kernel@vger.kernel.org>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        v9fs-developer@lists.sourceforge.net
-Content-Type: text/plain; charset="UTF-8"
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Jiri Pirko <jiri@resnulli.us>,
+        "David S. Miller" <davem@davemloft.net>,
+        Network Development <netdev@vger.kernel.org>
+Subject: Re: [PATCH] net: sched: Fix memory exposure from short TCA_U32_SEL
+References: <20180826055801.GA42063@beast>
+        <20180826061534.GT6515@ZenIV.linux.org.uk>
+        <CAGXu5jK7VzayzZTcxgZBf-+YHWO+Hv7s8utj2rzTc3gFtA8pFQ@mail.gmail.com>
+        <5c88b08d-b9ca-f3df-ae78-cf685ee6723a@mojatatu.com>
+        <CAGXu5jJZ-BfJPA+m1BOuVVQxPb8SXpSRo+F2cVTF62C9JTyRXQ@mail.gmail.com>
+        <d68f13e6-339a-2a40-9c0d-7549cd9aabb3@mojatatu.com>
+        <CAGXu5jJD++hegH4j0ajZNejg8mgcHjqVyjveWj9BFaXwRCV_dQ@mail.gmail.com>
+Date:   Mon, 27 Aug 2018 10:26:03 -0400
+In-Reply-To: <CAGXu5jJD++hegH4j0ajZNejg8mgcHjqVyjveWj9BFaXwRCV_dQ@mail.gmail.com>
+        (Kees Cook's message of "Mon, 27 Aug 2018 07:08:22 -0700")
+Message-ID: <85zhx7zy10.fsf@mojatatu.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Aug 26, 2018 at 10:24 PM, Dominique Martinet
-<asmadeus@codewreck.org> wrote:
-> syzbot wrote on Sun, Aug 26, 2018:
->> HEAD commit:    e27bc174c9c6 Add linux-next specific files for 20180824
->> git tree:       linux-next
->> console output: https://syzkaller.appspot.com/x/log.txt?x=15dc19a6400000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=28446088176757ea
->> dashboard link: https://syzkaller.appspot.com/bug?extid=d4252148d198410b864f
->> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15f8efba400000
->> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1178256a400000
+Kees Cook <keescook@chromium.org> writes:
+
+> On Mon, Aug 27, 2018 at 4:46 AM, Jamal Hadi Salim <jhs@mojatatu.com> wrote:
+>> On 2018-08-26 5:56 p.m., Kees Cook wrote:
+>>>
+>>> On Sun, Aug 26, 2018 at 10:30 AM, Jamal Hadi Salim <jhs@mojatatu.com>
+>>> wrote:
+>>>>
+>>>> We should add an nla_policy later.
+>>>
+>>>
+>>> What's the right way to do that for cases like this?
 >>
->> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->> Reported-by: syzbot+d4252148d198410b864f@syzkaller.appspotmail.com
 >>
->> random: sshd: uninitialized urandom read (32 bytes read)
->> random: sshd: uninitialized urandom read (32 bytes read)
->> random: sshd: uninitialized urandom read (32 bytes read)
->> random: sshd: uninitialized urandom read (32 bytes read)
->> ==================================================================
->> BUG: KASAN: double-free or invalid-free in p9stat_free+0x35/0x100
->> net/9p/protocol.c:48
+>> Meant something like attached which you alluded-to in your comments
+>> would give an upper bound (Max allowed keys is 128).
 >
-> That looks straight-forward enough, p9pdu_vreadf does p9stat_free on
-> error then v9fs_dir_readdir does the same ; there is nothing else that
-> could return an error without going through the first free so we could
-> just remove the later one...
->
-> There are a couple other users of the 'S' pdu read (that reads the stat
-> struct and frees it on error), so it's probably best to keep the current
-> behaviour as far as this is concerned, what we could do though is make
-> the free function idempotent (write NULLs in the freed fields), but I do
-> not see this being done often, do you know what the policy is about
-> this kind of pattern nowadays?
+> The problem is that policy doesn't parse the contents: "nkeys"
+> determines the size, so we have to both validate minimum size (to be
+> sure the location of "nkeys" is valid) and check that the size is at
+> least nkeys * struct long. I don't think there is a way to do this
+> with the existing policy language.
 
-
-Hi Dominique,
-
-kfree and then null pointer is pretty common, try to run:
-
-find -name "*.c" -exec grep -A 1 "kfree(" {} \; | grep -B 1 " = NULL;"
-
-Leaving dangling pointers behind is not the best idea.
-And from what I remember a bunch of similar double frees were fixed by
-nulling the pointer after the first kfree.
-
-
-> The struct is cleanly zeroed before being read so there is no risk of
-> double-frees between iterations so zeroing pointers is not strictly
-> required, but it does make things safer in general.
+While at these changes, could you also add and export in UAPI max
+allowed keys count, which is currently 128? For example,
+TCA_U32_NKEYS_MAX in pkt_cls.h
