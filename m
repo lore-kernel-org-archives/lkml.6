@@ -2,182 +2,121 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E57B3C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 07:45:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1888BC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 07:46:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BA36208DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 07:45:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Vhti4eYY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BA36208DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id C87EB208DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 07:46:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C87EB208DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727201AbeH0La6 (ORCPT
+        id S1727274AbeH0LcS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 07:30:58 -0400
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:33203 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727049AbeH0La6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 07:30:58 -0400
-Received: by mail-yw1-f65.google.com with SMTP id x67-v6so5253934ywg.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 00:45:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=eH4vm//qybksYdeJPpfi08obzMQoaLoLFRKlSFr+2lU=;
-        b=Vhti4eYYz4PqCF4XKJd9GQ8tiGoqdERa54A5RrMzawUeI8sKSdUEDhZQpRNbhlEadQ
-         LBXhEP3kVVIPKyAMmBP52Ad+/K7Zl1pZLhHXyP/YJnAZKo4awGnIjoeKZDM4+WdZ5Wst
-         xN5to9qr18ofS8pFURiv1YWIxYDGY/KXpAMPY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=eH4vm//qybksYdeJPpfi08obzMQoaLoLFRKlSFr+2lU=;
-        b=EqPxtENKloE1fFT5q54h1q2EfA7efs/gGHw/AMSV6uF1gCQiS6CeOAyUvIxiBvygsU
-         2EGCWPJz2DCtwIFbTfCacn3V2utUhNhVIAxfWUe5fyXKF8ac4r+k7rCvsKaUpuaos5Pq
-         xHWi1x5ks1M59r6nXNOkPU+IC7wPPKZPaDsLklmSZmCv1ivO1D+H6SPW06Lc7zjlGdeJ
-         SRlX5P6pQGACHLzGhoIY6ahfClt+viJ4SUfdT7gKNHrvmN0azLSzs+KUypUsYFgqKi+F
-         y1P8PzaiDcpPCXzb7VvfdlIb/mf8/0hWt49XTUwEC3MD74Y2IF0RPO0cGl4ybUKZFNyr
-         8pZA==
-X-Gm-Message-State: APzg51AgOdFSGeze9g8FN0gF8CMIH3Kx7yAM3muNA7gcgj8RfrhQGDId
-        11b7yhYSVW5GZWipkVpIVPVtLN1SKgM=
-X-Google-Smtp-Source: ANB0VdYKLoC0jiWD2rUM9+3r3VNaPU8UqMxp+ms6oiTBvcMeJMaXZ0tHmopO3yLp35o+Tce/dEBj7w==
-X-Received: by 2002:a81:23d3:: with SMTP id j202-v6mr6126649ywj.201.1535355927967;
-        Mon, 27 Aug 2018 00:45:27 -0700 (PDT)
-Received: from mail-yw1-f47.google.com (mail-yw1-f47.google.com. [209.85.161.47])
-        by smtp.gmail.com with ESMTPSA id k186-v6sm6014030ywd.106.2018.08.27.00.45.26
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 Aug 2018 00:45:26 -0700 (PDT)
-Received: by mail-yw1-f47.google.com with SMTP id q129-v6so5243419ywg.8
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 00:45:26 -0700 (PDT)
-X-Received: by 2002:a81:9fd6:: with SMTP id w205-v6mr6568214ywg.288.1535355925994;
- Mon, 27 Aug 2018 00:45:25 -0700 (PDT)
+        Mon, 27 Aug 2018 07:32:18 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42996 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727049AbeH0LcS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 07:32:18 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 20744AECD;
+        Mon, 27 Aug 2018 07:46:47 +0000 (UTC)
+Date:   Mon, 27 Aug 2018 09:46:45 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Mike Kravetz <mike.kravetz@oracle.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v6 1/2] mm: migration: fix migration of huge PMD shared
+ pages
+Message-ID: <20180827074645.GB21556@dhcp22.suse.cz>
+References: <20180823205917.16297-1-mike.kravetz@oracle.com>
+ <20180823205917.16297-2-mike.kravetz@oracle.com>
+ <20180824084157.GD29735@dhcp22.suse.cz>
+ <6063f215-a5c8-2f0c-465a-2c515ddc952d@oracle.com>
 MIME-Version: 1.0
-Received: by 2002:a25:2c11:0:0:0:0:0 with HTTP; Mon, 27 Aug 2018 00:45:25
- -0700 (PDT)
-In-Reply-To: <20180529132722.GH7445@brain>
-References: <1520467365-7194-1-git-send-email-bbellevi@uci.edu> <20180529132722.GH7445@brain>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 27 Aug 2018 00:45:25 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jLXm8mJuwtDEO_+dDJk5tRA+2mkEv5S9NaPP87J42B7KQ@mail.gmail.com>
-Message-ID: <CAGXu5jLXm8mJuwtDEO_+dDJk5tRA+2mkEv5S9NaPP87J42B7KQ@mail.gmail.com>
-Subject: Re: [PATCH] floppy: Do not copy a kernel pointer to user memory in
- FDGETPRM ioctl
-To:     Andy Whitcroft <robobotbotbot@gmail.com>
-Cc:     Brian Belleville <bbellevi@uci.edu>,
-        Jiri Kosina <jikos@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6063f215-a5c8-2f0c-465a-2c515ddc952d@oracle.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 29, 2018 at 6:27 AM, Andy Whitcroft <robobotbotbot@gmail.com> wrote:
-> On Wed, Mar 07, 2018 at 04:02:45PM -0800, Brian Belleville wrote:
->> The final field of a floppy_struct is the field "name", which is a
->> pointer to a string in kernel memory. The kernel pointer should not be
->> copied to user memory. The FDGETPRM ioctl copies a floppy_struct to
->> user memory, including the "name" field. This pointer cannot be used
->> by the user, and it will leak a kernel address to user-space, which
->> will reveal the location of kernel code and data and undermine KASLR
->> protection. Instead, copy the floppy_struct except for the "name"
->> field.
->>
->> Signed-off-by: Brian Belleville <bbellevi@uci.edu>
->> ---
->>  drivers/block/floppy.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
->> index eae484a..4d4a422 100644
->> --- a/drivers/block/floppy.c
->> +++ b/drivers/block/floppy.c
->> @@ -3470,6 +3470,7 @@ static int fd_locked_ioctl(struct block_device *bdev, fmode_t mode, unsigned int
->>                                         (struct floppy_struct **)&outparam);
->>               if (ret)
->>                       return ret;
->> +             size = offsetof(struct floppy_struct, name);
->>               break;
->>       case FDMSGON:
->>               UDP->flags |= FTD_MSG;
->
-> I am not sure it is reasonable to simply set size here to the length of the
-> valid data.  Though in the real world everyonne should be using the defines
-> and those should include the full length, the code itself does not require
-> this, it only prevents overly long reads.  So I think it is possible to do
-> this read with a shorter userspace buffer; with this change we would
-> then write beyond the end of the buffer.
->
-> This also seems to introduce a slight behavioural difference between the
-> primary and compat calls.  The compat call already elides the name but it
-> also is copying into a new structure for return and this is pre-cleared,
-> so the name will always be null for the compat case and undefined for
-> the primary ioctl.
->
-> Perhaps the below patch would be more appropriate.
->
-> -apw
->
-> From ddb8c77229a9507fa5575c910d2847e123a9c94c Mon Sep 17 00:00:00 2001
-> From: Andy Whitcroft <apw@canonical.com>
-> Date: Tue, 29 May 2018 13:04:15 +0100
-> Subject: [PATCH 1/1] floppy: Do not copy a kernel pointer to user memory in
->  FDGETPRM ioctl
->
-> The final field of a floppy_struct is the field "name", which is a pointer
-> to a string in kernel memory.  The kernel pointer should not be copied to
-> user memory.  The FDGETPRM ioctl copies a floppy_struct to user memory,
-> including this "name" field.  This pointer cannot be used by the user
-> and it will leak a kernel address to user-space, which will reveal the
-> location of kernel code and data and undermine KASLR protection.
->
-> Model this code after the compat ioctl which copies the returned data
-> to a previously cleared temporary structure on the stack (excluding the
-> name pointer) and copy out to userspace from there.  As we already have
-> an inparam union with an appropriate member and that memory is already
-> cleared even for read only calls make use of that as a temporary store.
->
-> Based on an initial patch by Brian Belleville.
->
-> CVE-2018-7755
-> Signed-off-by: Andy Whitcroft <apw@canonical.com>
+On Fri 24-08-18 11:08:24, Mike Kravetz wrote:
+> On 08/24/2018 01:41 AM, Michal Hocko wrote:
+> > On Thu 23-08-18 13:59:16, Mike Kravetz wrote:
+> > 
+> > Acked-by: Michal Hocko <mhocko@suse.com>
+> > 
+> > One nit below.
+> > 
+> > [...]
+> >> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> >> index 3103099f64fd..a73c5728e961 100644
+> >> --- a/mm/hugetlb.c
+> >> +++ b/mm/hugetlb.c
+> >> @@ -4548,6 +4548,9 @@ static unsigned long page_table_shareable(struct vm_area_struct *svma,
+> >>  	return saddr;
+> >>  }
+> >>  
+> >> +#define _range_in_vma(vma, start, end) \
+> >> +	((vma)->vm_start <= (start) && (end) <= (vma)->vm_end)
+> >> +
+> > 
+> > static inline please. Macros and potential side effects on given
+> > arguments are just not worth the risk. I also think this is something
+> > for more general use. We have that pattern at many places. So I would
+> > stick that to linux/mm.h
+> 
+> Thanks Michal,
+> 
+> Here is an updated patch which does as you suggest above.
+[...]
+> @@ -1409,6 +1419,32 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
+>  		subpage = page - page_to_pfn(page) + pte_pfn(*pvmw.pte);
+>  		address = pvmw.address;
+>  
+> +		if (PageHuge(page)) {
+> +			if (huge_pmd_unshare(mm, &address, pvmw.pte)) {
+> +				/*
+> +				 * huge_pmd_unshare unmapped an entire PMD
+> +				 * page.  There is no way of knowing exactly
+> +				 * which PMDs may be cached for this mm, so
+> +				 * we must flush them all.  start/end were
+> +				 * already adjusted above to cover this range.
+> +				 */
+> +				flush_cache_range(vma, start, end);
+> +				flush_tlb_range(vma, start, end);
+> +				mmu_notifier_invalidate_range(mm, start, end);
+> +
+> +				/*
+> +				 * The ref count of the PMD page was dropped
+> +				 * which is part of the way map counting
+> +				 * is done for shared PMDs.  Return 'true'
+> +				 * here.  When there is no other sharing,
+> +				 * huge_pmd_unshare returns false and we will
+> +				 * unmap the actual page and drop map count
+> +				 * to zero.
+> +				 */
+> +				page_vma_mapped_walk_done(&pvmw);
+> +				break;
+> +			}
 
-I didn't see this land anywhere? Who's tree is this going through?
-
--Kees
-
-> ---
->  drivers/block/floppy.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
-> index 8ec7235fc93b..7512f6ff7c43 100644
-> --- a/drivers/block/floppy.c
-> +++ b/drivers/block/floppy.c
-> @@ -3470,6 +3470,8 @@ static int fd_locked_ioctl(struct block_device *bdev, fmode_t mode, unsigned int
->                                           (struct floppy_struct **)&outparam);
->                 if (ret)
->                         return ret;
-> +               memcpy(&inparam.g, outparam, offsetof(struct floppy_struct, name));
-> +               outparam = &inparam.g;
->                 break;
->         case FDMSGON:
->                 UDP->flags |= FTD_MSG;
-> --
-> 2.17.0
->
-
-
+This still calls into notifier while holding the ptl lock. Either I am
+missing something or the invalidation is broken in this loop (not also
+for other invalidations).
 
 -- 
-Kees Cook
-Pixel Security
+Michal Hocko
+SUSE Labs
