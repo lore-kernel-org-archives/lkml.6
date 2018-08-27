@@ -2,111 +2,127 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 085A6C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:07:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E4A9C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:10:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FF65208B9
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:07:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s6fcQhwV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FF65208B9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id F133C208B9
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:10:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F133C208B9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727322AbeH0Tyl (ORCPT
+        id S1727078AbeH0T5i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 15:54:41 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:42181 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727026AbeH0Tyl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 15:54:41 -0400
-Received: by mail-lj1-f194.google.com with SMTP id f1-v6so12820073ljc.9
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 09:07:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ditRqlRrj18LC77XfO6ow3uOwxGoZIS5tDinhHKEV+I=;
-        b=s6fcQhwVG3+XwHGQX5TiBC8jX8titB08pPHqFr3xRxeAgIIEKgrSlf7ZLL81dmMJeN
-         TSa4mlvxtNOMWYbTB2sdB3NTdhYk7v0ikgm2UmjLDYgwnZlLSWYw9k/4g73QIhZ/6nOh
-         2+ALMyMAsejrV5BcIG5SWgrLn0ophc4Pj75GGu4bXXdk5kWZ0hwnHCJOcisRmABU/RI/
-         q817jw1whBOxGK+k7V1tWaxdARBWRwUzZKwzZ91RpOvotZgua1xZjFMNnKKYbMOdOATu
-         Pr+WkSuENdQvH+PoXTgK1F4c6g8Ty/eNe7VVgUnvlfWQq/cdnS1Fpw2w0myoRjofkrc6
-         Fe0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ditRqlRrj18LC77XfO6ow3uOwxGoZIS5tDinhHKEV+I=;
-        b=JbjecEE1fedaq/fmfmQcgN5+H9itw1K08gmDOtGPX8PAP3JKeJYWAvLTY6DawoOmEi
-         28JtB9BvfW7f2JpGjZiJfjsXPD6VdFE+wRlusLtNFuCh0ZAOOIKFUTtGTcI1V02RrhWL
-         MxTfPBp1hiNFbqepDJC4SgmbSQo2cE3s3otXrYHCpDN4lP4CUHJVKOcrLGFUlLarqHaM
-         PrY/b52nr/NB4P9godLfEFIf4fEUcvsBuFXVaAwgXWmJMsY5msqGaG3cOFMLKJqT7Op8
-         MG3S5jS/rLFgkAjI+L6BYoASDSvs/f0NxhmryB4jo1bDefEwfqafOHs6R2eo5GworFpf
-         M87A==
-X-Gm-Message-State: APzg51DzXMzTco23o7zuIH2O11jJRw5CmBMKZ7qFv8vyHmjC/M5DGgb7
-        03RVB13p0WrOYVuxu4COErjXCzgoLZTGes7GhVA=
-X-Google-Smtp-Source: ANB0VdYiXd7rCCN71+BMLn91HzPFsn+ECsy6rRKacKHQIPCZ+sz66wQIT29BeRd7VLsaj6aXx9Q6IpmTmo258/9dlMc=
-X-Received: by 2002:a2e:93c4:: with SMTP id p4-v6mr8778038ljh.150.1535386046242;
- Mon, 27 Aug 2018 09:07:26 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180821153755.30462-1-jgross@suse.com> <CAKf6xps=OoS_S22KAiRwBdUeJE8b=EruiLJpc95b28+Ku3246w@mail.gmail.com>
-In-Reply-To: <CAKf6xps=OoS_S22KAiRwBdUeJE8b=EruiLJpc95b28+Ku3246w@mail.gmail.com>
-From:   Jason Andryuk <jandryuk@gmail.com>
-Date:   Mon, 27 Aug 2018 12:07:14 -0400
-Message-ID: <CAKf6xpso+LuN2npRvD8qB=b4eX8=uVc+5-ynEC3iNXBZpG0WWA@mail.gmail.com>
-Subject: Re: [Xen-devel] [PATCH v2 0/2] x86/xen: avoid 32-bit writes to PTEs
- in PV PAE guests
-To:     Juergen Gross <jgross@suse.com>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        xen-devel <xen-devel@lists.xenproject.org>, x86@kernel.org,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 27 Aug 2018 15:57:38 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:61292 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726920AbeH0T5h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 15:57:37 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 41zcKx5l1Dz9ttmB;
+        Mon, 27 Aug 2018 18:10:13 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id z5Z4VXzDONDU; Mon, 27 Aug 2018 18:10:13 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 41zcKx55ckz9ttlx;
+        Mon, 27 Aug 2018 18:10:13 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 38A808B7D5;
+        Mon, 27 Aug 2018 18:10:22 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id iqIGGyOCWWh3; Mon, 27 Aug 2018 18:10:22 +0200 (CEST)
+Received: from pc16082vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id E4C3A8B7D1;
+        Mon, 27 Aug 2018 18:10:21 +0200 (CEST)
+Received: by pc16082vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id B51F8711E6; Mon, 27 Aug 2018 16:10:21 +0000 (UTC)
+Message-Id: <ab6b6c60d921335b44c100c5018fcc6585f05c24.1535385970.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v2 1/3] powerpc/32: Add ioremap_wt()
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-m68k@lists.linux-m68k.org
+Date:   Mon, 27 Aug 2018 16:10:21 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 12:03 PM Jason Andryuk <jandryuk@gmail.com> wrote:
->
-> On Tue, Aug 21, 2018 at 11:40 AM Juergen Gross <jgross@suse.com> wrote:
-> >
-> > While the hypervisor emulates plain writes to PTEs happily, this is
-> > much slower than issuing a hypercall for PTE modifcations. And writing
-> > a PTE via two 32-bit write instructions (especially when clearing the
-> > PTE) will result in an intermediate L1TF vulnerable PTE.
-> >
-> > Writes to PAE PTEs should always be done with 64-bit writes or via
-> > hypercalls.
-> >
-> > Juergen Gross (2):
-> >   x86/xen: don't write ptes directly in 32-bit PV guests
-> >   x86/pae: use 64 bit atomic xchg function in native_ptep_get_and_clear
-> >
->
-> I tested both patches on 4.14, changing patch 2 to atomic64_xchg since
-> arch_atomic64_xchg doesn't exist.
->
-> I haven't seen https://bugzilla.kernel.org/show_bug.cgi?id=198497
-> trigger since incorporating these patch. Without the patches, I would
-> have seen it trigger by now.  Also, I've confirmed Xen does not enable
-> page table shadowing.  For what it's worth, the PTEs that would
-> trigger Xen shadowing (0x8000'0002'0000'0000) are the same as those
-> that triggered bug 198497.  There was at least 1 non-Xen user affected
-> by 198497, but this at least seems to fix it for me.
->
-> Tested-by: Jason Andryuk <jandryuk@gmail.com>
+Other arches have ioremap_wt() to map IO areas write-through.
+Implement it on PPC as well in order to avoid drivers using
+__ioremap(_PAGE_WRITETHRU)
 
-Also, can these patches be Cc: stable@vger.kernel.org?
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ v2: no change
 
-Thanks,
-Jason
+ arch/powerpc/include/asm/io.h | 6 ++++++
+ arch/powerpc/mm/pgtable_32.c  | 8 ++++++++
+ 2 files changed, 14 insertions(+)
+
+diff --git a/arch/powerpc/include/asm/io.h b/arch/powerpc/include/asm/io.h
+index e0331e754568..3380b5b22450 100644
+--- a/arch/powerpc/include/asm/io.h
++++ b/arch/powerpc/include/asm/io.h
+@@ -3,6 +3,9 @@
+ #ifdef __KERNEL__
+ 
+ #define ARCH_HAS_IOREMAP_WC
++#ifdef CONFIG_PPC32
++#define ARCH_HAS_IOREMAP_WT
++#endif
+ 
+ /*
+  * This program is free software; you can redistribute it and/or
+@@ -746,6 +749,8 @@ static inline void iosync(void)
+  *
+  * * ioremap_wc enables write combining
+  *
++ * * ioremap_wt enables write through
++ *
+  * * iounmap undoes such a mapping and can be hooked
+  *
+  * * __ioremap_at (and the pending __iounmap_at) are low level functions to
+@@ -767,6 +772,7 @@ extern void __iomem *ioremap(phys_addr_t address, unsigned long size);
+ extern void __iomem *ioremap_prot(phys_addr_t address, unsigned long size,
+ 				  unsigned long flags);
+ extern void __iomem *ioremap_wc(phys_addr_t address, unsigned long size);
++void __iomem *ioremap_wt(phys_addr_t address, unsigned long size);
+ #define ioremap_nocache(addr, size)	ioremap((addr), (size))
+ #define ioremap_uc(addr, size)		ioremap((addr), (size))
+ #define ioremap_cache(addr, size) \
+diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
+index 120a49bfb9c6..528999738645 100644
+--- a/arch/powerpc/mm/pgtable_32.c
++++ b/arch/powerpc/mm/pgtable_32.c
+@@ -90,6 +90,14 @@ ioremap_wc(phys_addr_t addr, unsigned long size)
+ EXPORT_SYMBOL(ioremap_wc);
+ 
+ void __iomem *
++ioremap_wt(phys_addr_t addr, unsigned long size)
++{
++	return __ioremap_caller(addr, size, _PAGE_WRITETHRU,
++				__builtin_return_address(0));
++}
++EXPORT_SYMBOL(ioremap_wt);
++
++void __iomem *
+ ioremap_prot(phys_addr_t addr, unsigned long size, unsigned long flags)
+ {
+ 	/* writeable implies dirty for kernel addresses */
+-- 
+2.13.3
+
