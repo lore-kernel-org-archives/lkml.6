@@ -4,89 +4,405 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 922FDC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 22:54:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E922C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 22:55:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B0F8208DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 22:54:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4941208D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 22:55:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="heQBEBO+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B0F8208DA
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S3Xi/ysh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4941208D5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727342AbeH1Cn3 (ORCPT
+        id S1727452AbeH1Cnl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 22:43:29 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:36794 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727058AbeH1Cn3 (ORCPT
+        Mon, 27 Aug 2018 22:43:41 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:42010 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727058AbeH1Cnk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 22:43:29 -0400
-Received: by mail-io0-f196.google.com with SMTP id q5-v6so544568iop.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 15:54:48 -0700 (PDT)
+        Mon, 27 Aug 2018 22:43:40 -0400
+Received: by mail-pl1-f194.google.com with SMTP id g23-v6so241757plq.9
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 15:54:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dURr3UIQMJ8thueMnfh33Wd7F1/6XjH2eQORYekdtn8=;
-        b=heQBEBO+mWfo07TngI+l6C7ctleQFA4NTyGXd9nX8QiiPy1uQe7t8D08GnVzQjlT6I
-         QFSfSV0S2CYZV62MpGR7qrgzEKzH6eZpWv9IwaFDPo5Bz5dyRNwJtNmfFHOszx68MOUU
-         jkx77YyKd3AN3GuorqlVJMeFf6GVtxjKsgjZO6F6XbJbiVTAXVSLoHhiSSGa7WuXDxuu
-         bvQidefmTDxVEmhUwRSM/1wT49I/02JQabBYz5i08MpLVHYsn18G/0ycydAztF79wFxP
-         A/bCCsrxDSlNI/M8ATkKvCZh3N8w77HxJEuffGHOycYtaJu+4szV8G8wHEwlvS3Sx3mx
-         MPrw==
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=Pb3qqGCFliSA0GCL+caugRMv493QhxPC8EU+HQD9rc8=;
+        b=S3Xi/yshUQ+FGv/vzoFVLsYhQitPMp5iEdBB2jxUQFJo6qrLtOiHDddgosl5w0XkzD
+         gFcYkVNICDzwBSrQUShaap1Fmc2yV4+8UPWQnuEOGN+WdcxLZ0BjiCTPAHxCGRrnj6eN
+         a4Lb9stPJkqZUKU1N2wOe13raU7dpG982lnk7a4mWTlWKsO1+97VP9E7cEzAj7s0njJa
+         VrCrCJapq6jTlwnqKBWH1R4KfrZjhHz9gXY3e7ieZ6oCjusmTaMsPSDXOCjfWFC37Lhd
+         V95/baE6DLH4M7vddF8e8vhRuC2usfFnhL3LXY8nUq+doM2qF77sg4IAPH4nG41oUCBN
+         Wfkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dURr3UIQMJ8thueMnfh33Wd7F1/6XjH2eQORYekdtn8=;
-        b=uCBq3QwXtAjNRPwkkdqZ1y4WIhGymTmAvuyyZp6xBAE2Q4iALsDaIia4uCZoMjMu0E
-         XU7401NoDmzhEWH27f5CvqIRuqqu+n11/t3SibqsJ8ziWCM1CkyRF7Z+F7MaHNTUUcz6
-         Cjx0BbQPocFGtzOhzqmeB42AImE/JO2+snaFaSUP5pjTHvYrwIszccnz0FGDy2eZQe1B
-         gAvlAFOTDNJ4O+uHjrTttbexCrgij0jgbpU0a3x9vPlkQPCB5ahDpRFSYy7BHP1y82R0
-         nu0+1NyTi1yMpgeLZ/IdH9Em4ICVXjjf7rkrdHycaPH6HyVjWqF2dx27j5r2LDYMMYiD
-         xh8w==
-X-Gm-Message-State: APzg51Djelxvbnx/EEBgsA7ywst4O7Cyy90KgkD1FgE2NbRVD5WfVBHw
-        jErbFWC+Lrmak7NJTlHG/Zy/fTDwkMb5dFuwqOo=
-X-Google-Smtp-Source: ANB0VdZeGG4uVKvrehoOXk9a6zUL6CYDC8zuJx7POZccxwLoWqCafQNU2z9C9JRJWWe9MMuVf962mw+DqlGbFPxoKzA=
-X-Received: by 2002:a6b:bf04:: with SMTP id p4-v6mr12023011iof.15.1535410487819;
- Mon, 27 Aug 2018 15:54:47 -0700 (PDT)
-MIME-Version: 1.0
-References: <1533537589-7202-1-git-send-email-Anson.Huang@nxp.com> <20180827021326.GA3850@dragon>
-In-Reply-To: <20180827021326.GA3850@dragon>
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-Date:   Mon, 27 Aug 2018 15:54:36 -0700
-Message-ID: <CAHQ1cqFFDMJsi7tOj3DyiRp8scWJNg0kiu_=NMP4ZzZPbLXP-w@mail.gmail.com>
-Subject: Re: [PATCH 1/2] soc: imx: gpc: use A_CORE instread of A7 for more
- i.MX platforms
-To:     Shawn Guo <shawnguo@kernel.org>
-Cc:     Anson Huang <Anson.Huang@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, Linux-imx@nxp.com
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=Pb3qqGCFliSA0GCL+caugRMv493QhxPC8EU+HQD9rc8=;
+        b=uXt6jjfkNseOl070fA1bS3mdLE/Dmh7pmCPegEn7OQwZH+duQsbN9rW3RfpWuPCP7e
+         k5I+sfN/hWxW7mIEAHc9dYNvW7HJlSWayirzeuENd7gGgFezDTGf1356ZFz/qBfW2WyK
+         U+njDnp3h4pcO8UyqkxuIxcNXBXAormhFiQFbvEiH5/FDZ/ZFRCf2A6HX4dIvuXG1LVT
+         zcjAd4TTGoh6tP+j+n1/U0wo7o8Ajz4fKDyxZoX2+CVfU2mB4PMatE/7nK0n+n78ffDo
+         Mhef9EvvqIwuVHAU3fct1kQNleL6hpbiSB/aipV+d98bizYuClgjrqbQI8vpal2v4xOl
+         Korw==
+X-Gm-Message-State: APzg51Bhkh38k3yf++TcwlgimTLLiQ2eITu/TrRkHfV9V2jeViqHmLon
+        hEcbJBqTaf71fOg8xiHDfWI=
+X-Google-Smtp-Source: ANB0VdalBdCO31h5Jh7aO0LZZ/Qu7KqQjXev77/a182TRVgxmxHHMFp662pmZ/dpWNRH4EFqDwivVg==
+X-Received: by 2002:a17:902:925:: with SMTP id 34-v6mr14960947plm.307.1535410499056;
+        Mon, 27 Aug 2018 15:54:59 -0700 (PDT)
+Received: from [10.33.114.204] ([66.170.99.1])
+        by smtp.gmail.com with ESMTPSA id h10-v6sm516704pfj.78.2018.08.27.15.54.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 27 Aug 2018 15:54:58 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Subject: Re: TLB flushes on fixmap changes
+From:   Nadav Amit <nadav.amit@gmail.com>
+In-Reply-To: <CALCETrWaYgyaGcHYdvbcwXBEwHx61qbX_T99+XGD7qnRpRVGuA@mail.gmail.com>
+Date:   Mon, 27 Aug 2018 15:54:55 -0700
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Will Deacon <will.deacon@arm.com>,
+        Benjamin Herrenschmidt <benh@au1.ibm.com>,
+        Nick Piggin <npiggin@gmail.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Rik van Riel <riel@surriel.com>,
+        Jann Horn <jannh@google.com>,
+        Adin Scannell <ascannell@google.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        David Miller <davem@davemloft.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <2998E63A-5663-4805-9DE7-829A5870AA6D@gmail.com>
+References: <D74A89DF-0D89-4AB6-8A6B-93BEC9A83595@gmail.com>
+ <20180824180438.GS24124@hirez.programming.kicks-ass.net>
+ <56A9902F-44BE-4520-A17C-26650FCC3A11@gmail.com>
+ <CA+55aFzerzTPm94jugheVmWg8dJre94yu+GyZGT9NNZanNx_qw@mail.gmail.com>
+ <9A38D3F4-2F75-401D-8B4D-83A844C9061B@gmail.com>
+ <CA+55aFz1KYT7fRRG98wei24spiVg7u1Ec66piWY5359ykFmezw@mail.gmail.com>
+ <8E0D8C66-6F21-4890-8984-B6B3082D4CC5@gmail.com>
+ <CALCETrWdeKBcEs7zAbpEM1YdYiT2UBXwPtF0mMTvcDX_KRpz1A@mail.gmail.com>
+ <20180826112341.f77a528763e297cbc36058fa@kernel.org>
+ <CALCETrXPaX-+R6Z9LqZp0uOVmq-TUX_ksPbUL7mnfbdqo6z2AA@mail.gmail.com>
+ <20180826090958.GT24124@hirez.programming.kicks-ass.net>
+ <20180827120305.01a6f26267c64610cadec5d8@kernel.org>
+ <4BF82052-4738-441C-8763-26C85003F2C9@gmail.com>
+ <20180827170511.6bafa15cbc102ae135366e86@kernel.org>
+ <01DA0BDD-7504-4209-8A8F-20B27CF6A1C7@gmail.com>
+ <CALCETrWxwpr+Xx0mCK1HUkanmCDOSRbw50VmebgoAgeNaaPAKg@mail.gmail.com>
+ <0000D631-FDDF-4273-8F3C-714E6825E59B@gmail.com>
+ <CALCETrUoNdwDuNSHb3haw9-fYk+sNC_M4r+5EMVVzJ8HWeSsOQ@mail.gmail.com>
+ <823D916E-4056-4A36-BDD8-0FB682A8DCAE@gmail.com>
+ <E5B40DF6-C28A-4EB2-84C3-146BC5B8B312@gmail.com>
+ <CALCETrW+nx7kRWov_+hCAxJRUSsUUJuVqvRP7KoVUxvFFTqi5Q@mail.gmail.com>
+ <08A6BCB2-66C2-47ED-AEB8-AA8F4D7DBD45@gmail.com>
+ <4F72D40A-25A3-4C64-B8DD-56970CFDE61E@gmail.com>
+ <CALCETrWaYgyaGcHYdvbcwXBEwHx61qbX_T99+XGD7qnRpRVGuA@mail.gmail.com>
+To:     Andy Lutomirski <luto@kernel.org>
+X-Mailer: Apple Mail (2.3445.9.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Aug 26, 2018 at 7:14 PM Shawn Guo <shawnguo@kernel.org> wrote:
->
-> Andrey,
->
-> Are you fine with these two patches?
->
+at 3:32 PM, Andy Lutomirski <luto@kernel.org> wrote:
 
-I made a small comment on 2/2, but otherwise both patches seem
-reasonable (Acks provided in separate reply).
+> On Mon, Aug 27, 2018 at 2:55 PM, Nadav Amit <nadav.amit@gmail.com> =
+wrote:
+>> at 1:16 PM, Nadav Amit <nadav.amit@gmail.com> wrote:
+>>=20
+>>> at 12:58 PM, Andy Lutomirski <luto@kernel.org> wrote:
+>>>=20
+>>>> On Mon, Aug 27, 2018 at 12:43 PM, Nadav Amit <nadav.amit@gmail.com> =
+wrote:
+>>>>> at 12:10 PM, Nadav Amit <nadav.amit@gmail.com> wrote:
+>>>>>=20
+>>>>>> at 11:58 AM, Andy Lutomirski <luto@kernel.org> wrote:
+>>>>>>=20
+>>>>>>> On Mon, Aug 27, 2018 at 11:54 AM, Nadav Amit =
+<nadav.amit@gmail.com> wrote:
+>>>>>>>>> On Mon, Aug 27, 2018 at 10:34 AM, Nadav Amit =
+<nadav.amit@gmail.com> wrote:
+>>>>>>>>> What do you all think?
+>>>>>>>>=20
+>>>>>>>> I agree in general. But I think that current->mm would need to =
+be loaded, as
+>>>>>>>> otherwise I am afraid it would break switch_mm_irqs_off().
+>>>>>>>=20
+>>>>>>> What breaks?
+>>>>>>=20
+>>>>>> Actually nothing. I just saw the IBPB stuff regarding tsk, but it =
+should not
+>>>>>> matter.
+>>>>>=20
+>>>>> So here is what I got. It certainly needs some cleanup, but it =
+boots.
+>>>>>=20
+>>>>> Let me know how crappy you find it...
+>>>>>=20
+>>>>>=20
+>>>>> diff --git a/arch/x86/include/asm/mmu_context.h =
+b/arch/x86/include/asm/mmu_context.h
+>>>>> index bbc796eb0a3b..336779650a41 100644
+>>>>> --- a/arch/x86/include/asm/mmu_context.h
+>>>>> +++ b/arch/x86/include/asm/mmu_context.h
+>>>>> @@ -343,4 +343,24 @@ static inline unsigned long =
+__get_current_cr3_fast(void)
+>>>>>      return cr3;
+>>>>> }
+>>>>>=20
+>>>>> +typedef struct {
+>>>>> +       struct mm_struct *prev;
+>>>>> +} temporary_mm_state_t;
+>>>>> +
+>>>>> +static inline temporary_mm_state_t use_temporary_mm(struct =
+mm_struct *mm)
+>>>>> +{
+>>>>> +       temporary_mm_state_t state;
+>>>>> +
+>>>>> +       lockdep_assert_irqs_disabled();
+>>>>> +       state.prev =3D this_cpu_read(cpu_tlbstate.loaded_mm);
+>>>>> +       switch_mm_irqs_off(NULL, mm, current);
+>>>>> +       return state;
+>>>>> +}
+>>>>> +
+>>>>> +static inline void unuse_temporary_mm(temporary_mm_state_t prev)
+>>>>> +{
+>>>>> +       lockdep_assert_irqs_disabled();
+>>>>> +       switch_mm_irqs_off(NULL, prev.prev, current);
+>>>>> +}
+>>>>> +
+>>>>> #endif /* _ASM_X86_MMU_CONTEXT_H */
+>>>>> diff --git a/arch/x86/include/asm/pgtable.h =
+b/arch/x86/include/asm/pgtable.h
+>>>>> index 5715647fc4fe..ef62af9a0ef7 100644
+>>>>> --- a/arch/x86/include/asm/pgtable.h
+>>>>> +++ b/arch/x86/include/asm/pgtable.h
+>>>>> @@ -976,6 +976,10 @@ static inline void __meminit =
+init_trampoline_default(void)
+>>>>>      /* Default trampoline pgd value */
+>>>>>      trampoline_pgd_entry =3D =
+init_top_pgt[pgd_index(__PAGE_OFFSET)];
+>>>>> }
+>>>>> +
+>>>>> +void __init patching_mm_init(void);
+>>>>> +#define patching_mm_init patching_mm_init
+>>>>> +
+>>>>> # ifdef CONFIG_RANDOMIZE_MEMORY
+>>>>> void __meminit init_trampoline(void);
+>>>>> # else
+>>>>> diff --git a/arch/x86/include/asm/pgtable_64_types.h =
+b/arch/x86/include/asm/pgtable_64_types.h
+>>>>> index 054765ab2da2..9f44262abde0 100644
+>>>>> --- a/arch/x86/include/asm/pgtable_64_types.h
+>>>>> +++ b/arch/x86/include/asm/pgtable_64_types.h
+>>>>> @@ -116,6 +116,9 @@ extern unsigned int ptrs_per_p4d;
+>>>>> #define LDT_PGD_ENTRY          (pgtable_l5_enabled() ? =
+LDT_PGD_ENTRY_L5 : LDT_PGD_ENTRY_L4)
+>>>>> #define LDT_BASE_ADDR          (LDT_PGD_ENTRY << PGDIR_SHIFT)
+>>>>>=20
+>>>>> +#define TEXT_POKE_PGD_ENTRY    -5UL
+>>>>> +#define TEXT_POKE_ADDR         (TEXT_POKE_PGD_ENTRY << =
+PGDIR_SHIFT)
+>>>>> +
+>>>>> #define __VMALLOC_BASE_L4      0xffffc90000000000UL
+>>>>> #define __VMALLOC_BASE_L5      0xffa0000000000000UL
+>>>>>=20
+>>>>> diff --git a/arch/x86/include/asm/pgtable_types.h =
+b/arch/x86/include/asm/pgtable_types.h
+>>>>> index 99fff853c944..840c72ec8c4f 100644
+>>>>> --- a/arch/x86/include/asm/pgtable_types.h
+>>>>> +++ b/arch/x86/include/asm/pgtable_types.h
+>>>>> @@ -505,6 +505,9 @@ pgprot_t phys_mem_access_prot(struct file =
+*file, unsigned long pfn,
+>>>>> /* Install a pte for a particular vaddr in kernel space. */
+>>>>> void set_pte_vaddr(unsigned long vaddr, pte_t pte);
+>>>>>=20
+>>>>> +struct mm_struct;
+>>>>> +void set_mm_pte_vaddr(struct mm_struct *mm, unsigned long vaddr, =
+pte_t pte);
+>>>>> +
+>>>>> #ifdef CONFIG_X86_32
+>>>>> extern void native_pagetable_init(void);
+>>>>> #else
+>>>>> diff --git a/arch/x86/include/asm/text-patching.h =
+b/arch/x86/include/asm/text-patching.h
+>>>>> index 2ecd34e2d46c..cb364ea5b19d 100644
+>>>>> --- a/arch/x86/include/asm/text-patching.h
+>>>>> +++ b/arch/x86/include/asm/text-patching.h
+>>>>> @@ -38,4 +38,6 @@ extern void *text_poke(void *addr, const void =
+*opcode, size_t len);
+>>>>> extern int poke_int3_handler(struct pt_regs *regs);
+>>>>> extern void *text_poke_bp(void *addr, const void *opcode, size_t =
+len, void *handler);
+>>>>>=20
+>>>>> +extern struct mm_struct *patching_mm;
+>>>>> +
+>>>>> #endif /* _ASM_X86_TEXT_PATCHING_H */
+>>>>> diff --git a/arch/x86/kernel/alternative.c =
+b/arch/x86/kernel/alternative.c
+>>>>> index a481763a3776..fd8a950b0d62 100644
+>>>>> --- a/arch/x86/kernel/alternative.c
+>>>>> +++ b/arch/x86/kernel/alternative.c
+>>>>> @@ -11,6 +11,7 @@
+>>>>> #include <linux/stop_machine.h>
+>>>>> #include <linux/slab.h>
+>>>>> #include <linux/kdebug.h>
+>>>>> +#include <linux/mmu_context.h>
+>>>>> #include <asm/text-patching.h>
+>>>>> #include <asm/alternative.h>
+>>>>> #include <asm/sections.h>
+>>>>> @@ -701,8 +702,36 @@ void *text_poke(void *addr, const void =
+*opcode, size_t len)
+>>>>>              WARN_ON(!PageReserved(pages[0]));
+>>>>>              pages[1] =3D virt_to_page(addr + PAGE_SIZE);
+>>>>>      }
+>>>>> -       BUG_ON(!pages[0]);
+>>>>> +
+>>>>>      local_irq_save(flags);
+>>>>> +       BUG_ON(!pages[0]);
+>>>>> +
+>>>>> +       /*
+>>>>> +        * During initial boot, it is hard to initialize =
+patching_mm due to
+>>>>> +        * dependencies in boot order.
+>>>>> +        */
+>>>>> +       if (patching_mm) {
+>>>>> +               pte_t pte;
+>>>>> +               temporary_mm_state_t prev;
+>>>>> +
+>>>>> +               prev =3D use_temporary_mm(patching_mm);
+>>>>> +               pte =3D mk_pte(pages[0], PAGE_KERNEL);
+>>>>> +               set_mm_pte_vaddr(patching_mm, TEXT_POKE_ADDR, =
+pte);
+>>>>> +               pte =3D mk_pte(pages[1], PAGE_KERNEL);
+>>>>> +               set_mm_pte_vaddr(patching_mm, TEXT_POKE_ADDR + =
+PAGE_SIZE, pte);
+>>>>> +
+>>>>> +               memcpy((void *)(TEXT_POKE_ADDR | ((unsigned =
+long)addr & ~PAGE_MASK)),
+>>>>> +                      opcode, len);
+>>>>> +
+>>>>> +               set_mm_pte_vaddr(patching_mm, TEXT_POKE_ADDR, =
+__pte(0));
+>>>>> +               set_mm_pte_vaddr(patching_mm, TEXT_POKE_ADDR + =
+PAGE_SIZE, __pte(0));
+>>>>> +               local_flush_tlb();
+>>>>=20
+>>>> Hmm.  This is stuff busted on SMP, and it's IMO more complicated =
+than
+>>>> needed.  How about getting rid of all the weird TLB flushing stuff =
+and
+>>>> instead putting the mapping at vaddr - __START_KERNEL_map or =
+whatever
+>>>> it is?  You *might* need to flush_tlb_mm_range() on module unload, =
+but
+>>>> that's it.
+>>>=20
+>>> I don=E2=80=99t see what=E2=80=99s wrong in SMP, since this entire =
+piece of code should be
+>>> running under text_mutex.
+>>>=20
+>>> I don=E2=80=99t quite understand your proposal. I really don=E2=80=99t=
+ want to have any
+>>> chance in which the page-tables for the poked address is not =
+preallocated.
+>>>=20
+>>> It is more complicated than needed, and there are redundant TLB =
+flushes. The
+>>> reason I preferred to do it this way, is in order not to use other =
+functions
+>>> that take locks during the software page-walk and not to duplicate =
+existing
+>>> code. Yet, duplication might be the way to go.
+>>>=20
+>>>>> +               sync_core();
+>>>>=20
+>>>> I can't think of any case where sync_core() is needed.  The mm =
+switch
+>>>> serializes.
+>>>=20
+>>> Good point!
+>>>=20
+>>>> Also, is there any circumstance in which any of this is used before =
+at
+>>>> least jump table init?  All the early stuff is text_poke_early(),
+>>>> right?
+>>>=20
+>>> Not before jump_label_init. However, I did not manage to get rid of =
+the two
+>>> code-patches in text_poke(), since text_poke is used relatively =
+early by
+>>> x86_late_time_init(), and at this stage kmem_cache_alloc() - which =
+is needed
+>>> to duplicate init_mm - still fails.
+>>=20
+>> Another correction: the populate_extra_pte() is not needed.
+>>=20
+>> Anyhow, if you want to do this whole thing differently, I obviously =
+will not
+>> object, but I think it will end up more complicated.
+>>=20
+>> I think I finally understood your comment about "vaddr -
+>> __START_KERNEL_map=E2=80=9D. I did something like that before, and it =
+is not
+>> super-simple. You need not only to conditionally flush the TLB, but =
+also
+>> to synchronize the PUD/PMD on changes. Don=E2=80=99t forget that =
+module memory
+>> is installed even when BPF programs are installed.
+>>=20
+>> Let me know if you want me to submit cleaner patches or you want to =
+carry on
+>> yourself.
+>=20
+> I think your approach is a good start and should be good enough (with
+> cleanups) as a fix for the bug.  But I think your code has the same
+> bug that we have now!  You're reusing the same address on multiple
+> CPUs without flushing.  You can easily fix it by forcing a flush
+> before loading the mm, which should be as simple as adding
+> flush_tlb_mm() before you load the mm.  (It won't actually flush
+> anything by itself, since the mm isn't loaded, but it will update the
+> bookkeeping so that switch_mm_irqs_off() flushes the mm.)
 
-Let me know if you need anything else from me.
+What am I missing?
+
+We have a lock (text_mutex) which prevents the use of the new page-table
+hierarchy on multiple CPUs. In addition we have __set_pte_vaddr() which =
+does
+a local TLB flush before the lock is released and before IRQs are =
+enabled.
+So how can the PTE be cached on multiple CPUs?
+
+Yes, __set_pte_vaddr() is ugly and flushes too much. I=E2=80=99ll try to =
+remove some
+redundant TLB flushes, but these flushes are already there.
+
+> Also, please at least get rid of TEXT_POKE_ADDR.  If you don't want to
+> do the vaddr - __START_KERNEL_map thing, then at least pick an address
+> in the low half of the address space such as 0 :)  Ideally you'd only
+> use this thing late enough that you could even use the normal
+> insert_pfn (or similar) API for it, but that doesn't really matter.
+
+Perhaps the vaddr - __START_KERNEL_map actually makes sense. I was
+misunderstanding it (again) before, thinking you want me to use vaddr =
+(and
+not the delta). I=E2=80=99ll give it a try.
 
 Thanks,
-Andrey Smirnov
+Nadav
+
