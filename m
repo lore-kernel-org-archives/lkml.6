@@ -2,165 +2,79 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 873CFC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:26:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE50CC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:27:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2ABC1208B2
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:26:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2ABC1208B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 82122208B2
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:27:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82122208B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727408AbeH1AOI (ORCPT
+        id S1727125AbeH1APR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 20:14:08 -0400
-Received: from mga12.intel.com ([192.55.52.136]:9107 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727013AbeH1AOI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 20:14:08 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2018 13:25:57 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,296,1531810800"; 
-   d="scan'208";a="76015691"
-Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
-  by FMSMGA003.fm.intel.com with ESMTP; 27 Aug 2018 13:25:47 -0700
-Received: from fmsmsx122.amr.corp.intel.com (10.18.125.37) by
- FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Mon, 27 Aug 2018 13:25:47 -0700
-Received: from HASMSX110.ger.corp.intel.com (10.184.198.28) by
- fmsmsx122.amr.corp.intel.com (10.18.125.37) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Mon, 27 Aug 2018 13:25:46 -0700
-Received: from hasmsx108.ger.corp.intel.com ([169.254.9.242]) by
- HASMSX110.ger.corp.intel.com ([169.254.6.6]) with mapi id 14.03.0319.002;
- Mon, 27 Aug 2018 23:25:43 +0300
-From:   "Winkler, Tomas" <tomas.winkler@intel.com>
-To:     Shuah Khan <shuahkhan@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-CC:     LKML <linux-kernel@vger.kernel.org>,
-        "shuah@kernel.org" <shuah@kernel.org>,
-        "Greg KH (gregkh@linuxfoundation.org)" <gregkh@linuxfoundation.org>
-Subject: RE: Linux 4.19-rc1
-Thread-Topic: Linux 4.19-rc1
-Thread-Index: AQHUPjm6iyjB8PUS5UCQ97DNzCDq3KTUCwvQ
-Date:   Mon, 27 Aug 2018 20:25:43 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9D99E5D9@hasmsx108.ger.corp.intel.com>
-References: <CA+55aFw9mxNPX6OtOp-aoUMdXSg=gBkQudGGamo__sh_ts_LdQ@mail.gmail.com>
- <CAKocOOMQ7wukxNV1QL1to8SC2XgxsZUJ_7=fb7ZkN4r1tXBaew@mail.gmail.com>
-In-Reply-To: <CAKocOOMQ7wukxNV1QL1to8SC2XgxsZUJ_7=fb7ZkN4r1tXBaew@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMTc3YTY0NDctZGM2OS00OTk3LTk5NDAtYTFjOGUwNjU1NjRhIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiYUkwRVdFem5LU0tOK3F6NE1MVGhhaE5rbld1ajJQV0d3VzdnOGlqRzVXdzg3Q21BRkEzRXc1clBLcVBkMmdrZSJ9
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.252.2.182]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 27 Aug 2018 20:15:17 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39458 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726826AbeH1APR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 20:15:17 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BDD9F40073BE;
+        Mon, 27 Aug 2018 20:27:06 +0000 (UTC)
+Received: from napanee.usersys.redhat.com (dhcp-17-211.bos.redhat.com [10.18.17.211])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AC145202704E;
+        Mon, 27 Aug 2018 20:27:06 +0000 (UTC)
+Received: by napanee.usersys.redhat.com (Postfix, from userid 1000)
+        id 7DCF7C0B2A; Mon, 27 Aug 2018 16:27:06 -0400 (EDT)
+Date:   Mon, 27 Aug 2018 16:27:06 -0400
+From:   Aristeu Rozanski <aris@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH] sysctl: do not allow a 64bit value write in a 32bit knob
+Message-ID: <20180827202706.olt3saqjzzzyax6i@redhat.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20180323
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 27 Aug 2018 20:27:06 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 27 Aug 2018 20:27:06 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'aris@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiANCj4gT24gU3VuLCBBdWcgMjYsIDIwMTggYXQgMzo1MSBQTSBMaW51cyBUb3J2YWxkcyA8dG9y
-dmFsZHNAbGludXgtDQo+IGZvdW5kYXRpb24ub3JnPiB3cm90ZToNCj4gPg0KPiA+IFNvIHR3byB3
-ZWVrcyBoYXZlIHBhc3NlZCwgYW5kIHRoZSBtZXJnZSB3aW5kb3cgZm9yIDQuMTkgaXMgb3Zlci4N
-Cj4gPg0KPiANCj4gDQo+ID4gQW55d2F5LCBnbyBmb3J0aCBhbmQgdGVzdCwNCj4gPg0KPiANCj4g
-SSBhbSBzZWVpbmcgdGhlIGVycm9ycyB1c2UtYWZ0ZXItZnJlZSBlcnJvcnMgaW4gbWVpX2NsX3dy
-aXRlLiBkbWVzZyBhcyBmb2xsb3dzLg0KPiBBZGRpbmcgVG9tYXMgV2lua2xlciB0byB0aGUgdGhy
-ZWFkLg0KPiANCmh0dHBzOi8vbGttbC5vcmcvbGttbC8yMDE4LzgvMjMvODMNCg0KVGhhbmtzIGZv
-ciB0aGUgcmVwb3J0LCB0aGUgZml4IHdhcyBhbHJlYWR5IHNlbnQgb3V0IGEgd2VlayBhZ28sIGhv
-cGUgaXQgd2lsbCBtYWtlIGl0IGludG8gNC4xOS1yYzIgDQoNClRoYW5rcw0KVG9tYXMNCg0KDQo+
-IFsgICAxMi42MDI5MTJdIFBNOiBBZGRpbmcgaW5mbyBmb3INCj4gbWVpOm1laTo6MzA5ZGNkZTgt
-Y2NiMS00MDYyLThmNzgtNjAwMTE1YTM0MzI3OjAxDQo+IFsgICAxMi42MDMxMjZdDQo+ID09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT0NCj4gPT0NCj4gWyAgIDEyLjYwMzIwNV0gQlVHOiBLQVNBTjogdXNlLWFmdGVyLWZyZWUgaW4g
-bWVpX2NsX3dyaXRlKzB4NDgxLzB4ODYwDQo+IFsgICAxMi42MDMyNDhdIFJlYWQgb2Ygc2l6ZSA4
-IGF0IGFkZHIgZmZmZjg4MDQxNmQzYTMyMCBieSB0YXNrIGt3b3JrZXIvMjoxLzY4DQo+IA0KPiBb
-ICAgMTIuNjAzMzExXSBDUFU6IDIgUElEOiA2OCBDb21tOiBrd29ya2VyLzI6MSBUYWludGVkOiBH
-ICAgICAgICBXDQo+ICAgICAgNC4xOS4wLXJjMSAjMQ0KPiBbICAgMTIuNjAzMzYzXSBIYXJkd2Fy
-ZSBuYW1lOiBTeXN0ZW03NiwgSW5jLiBXaWxkIERvZw0KPiBQZXJmb3JtYW5jZS9IODctUExVUywg
-QklPUyAwNzA1IDEyLzA1LzIwMTMNCj4gWyAgIDEyLjYwMzQyMF0gV29ya3F1ZXVlOiBldmVudHMg
-bWVpX2NsX2J1c19yZXNjYW5fd29yaw0KPiBbICAgMTIuNjAzNDU5XSBDYWxsIFRyYWNlOg0KPiBb
-ICAgMTIuNjAzNDg2XSAgZHVtcF9zdGFjaysweDdjLzB4YmINCj4gWyAgIDEyLjYwMzUyMF0gIHBy
-aW50X2FkZHJlc3NfZGVzY3JpcHRpb24rMHg3My8weDI4MA0KPiBbICAgMTIuNjAzNTYwXSAga2Fz
-YW5fcmVwb3J0KzB4MjU4LzB4MzgwDQo+IFsgICAxMi42MDM1ODldICA/IG1laV9jbF93cml0ZSsw
-eDQ4MS8weDg2MA0KPiBbICAgMTIuNjAzNjI1XSAgbWVpX2NsX3dyaXRlKzB4NDgxLzB4ODYwDQo+
-IFsgICAxMi42MDM2NjRdICA/IG1laV9jbF9pcnFfd3JpdGUrMHg1NzAvMHg1NzANCj4gWyAgIDEy
-LjYwMzY5OV0gID8ga2FzYW5fdW5wb2lzb25fc2hhZG93KzB4MzAvMHg0MA0KPiBbICAgMTIuNjAz
-NzM1XSAgPyBrYXNhbl9rbWFsbG9jKzB4YTAvMHhkMA0KPiBbICAgMTIuNjAzNzcwXSAgPyB3YWl0
-X3dva2VuKzB4MTQwLzB4MTQwDQo+IFsgICAxMi42MDM4MDNdICA/IG1laV9jbF9hbGxvY19jYisw
-eGE5LzB4ZjANCj4gWyAgIDEyLjYwMzg0N10gIF9fbWVpX2NsX3NlbmQrMHgzNzEvMHgzZTANCj4g
-WyAgIDEyLjYwMzg4OF0gID8gd2FpdF9mb3JfY29tcGxldGlvbisweDFkMC8weDFkMA0KPiBbICAg
-MTIuNjAzOTIzXSAgPyBtZWlfY2xkZXZfZHJpdmVyX3VucmVnaXN0ZXIrMHg0MC8weDQwDQo+IFsg
-ICAxMi42MDM5NjFdICA/IGZpbmRfZmlyc3RfemVyb19iaXQrMHgxOS8weDcwDQo+IFsgICAxMi42
-MDQwMTRdICBtZWlfbWtoaV9maXgrMHgxMmQvMHg0ODANCj4gWyAgIDEyLjYwNDA0NV0gID8gd29y
-a2VyX3RocmVhZCsweDY5LzB4NjkwDQo+IFsgICAxMi42MDQwNzVdICA/IGt0aHJlYWQrMHgxYWUv
-MHgxZDANCj4gWyAgIDEyLjYwNDEwM10gID8gcmV0X2Zyb21fZm9yaysweDNhLzB4NTANCj4gWyAg
-IDEyLjYwNDEzNV0gID8gY2hlY2tfY2hhaW5fa2V5KzB4MTM5LzB4MWYwDQo+IFsgICAxMi42MDQx
-NzNdICA/IG1laV93ZCsweGEwLzB4YTANCj4gWyAgIDEyLjYwNDIwM10gID8gbWFya19sb2NrKzB4
-YzcvMHg3YzANCj4gWyAgIDEyLjYwNDIzNF0gID8gbWFya19sb2NrKzB4YzcvMHg3YzANCj4gWyAg
-IDEyLjYwNDI4NV0gIG1laV9jbF9idXNfZGV2X2ZpeHVwKzB4MTk2LzB4MWIwDQo+IFsgICAxMi42
-MDQzMjJdICA/IG1laV9uZmMrMHg0ZDAvMHg0ZDANCj4gWyAgIDEyLjYwNDM1NF0gID8gbG9ja2Rl
-cF9oYXJkaXJxc19vbisweDE4Yy8weDI4MA0KPiBbICAgMTIuNjA0NDAwXSAgPyBfX2thc2FuX3Ns
-YWJfZnJlZSsweDE0My8weDE4MA0KPiBbICAgMTIuNjA0NDQxXSAgPyBtZWlfY2xfYnVzX3Jlc2Nh
-bl93b3JrKzB4MmYxLzB4NTAwDQo+IFsgICAxMi42MDQ0NzddICBtZWlfY2xfYnVzX3Jlc2Nhbl93
-b3JrKzB4MmYxLzB4NTAwDQo+IFsgICAxMi42MDQ1MjddICBwcm9jZXNzX29uZV93b3JrKzB4NWU1
-LzB4YjAwDQo+IFsgICAxMi42MDQ1NzNdICA/IHdxX3Bvb2xfaWRzX3Nob3crMHgxZTAvMHgxZTAN
-Cj4gWyAgIDEyLjYwNDYyOF0gIHdvcmtlcl90aHJlYWQrMHg2OS8weDY5MA0KPiBbICAgMTIuNjA0
-Njc1XSAgPyBwcm9jZXNzX29uZV93b3JrKzB4YjAwLzB4YjAwDQo+IFsgICAxMi42MDQ3MDZdICBr
-dGhyZWFkKzB4MWFlLzB4MWQwDQo+IFsgICAxMi42MDQ3MzRdICA/IGt0aHJlYWRfY3JlYXRlX3dv
-cmtlcl9vbl9jcHUrMHhjMC8weGMwDQo+IFsgICAxMi42MDQ3NzZdICByZXRfZnJvbV9mb3JrKzB4
-M2EvMHg1MA0KPiANCj4gWyAgIDEyLjYwNDg0NV0gQWxsb2NhdGVkIGJ5IHRhc2sgNjg6DQo+IFsg
-ICAxMi42MDQ4NzJdICBrYXNhbl9rbWFsbG9jKzB4YTAvMHhkMA0KPiBbICAgMTIuNjA0OTAwXSAg
-a21lbV9jYWNoZV9hbGxvY190cmFjZSsweDExOC8weDI1MA0KPiBbICAgMTIuNjA0OTMzXSAgbWVp
-X2NsX2FsbG9jX2NiKzB4M2IvMHhmMA0KPiBbICAgMTIuNjA0OTYyXSAgX19tZWlfY2xfc2VuZCsw
-eDMxMi8weDNlMA0KPiBbICAgMTIuNjA0OTkxXSAgbWVpX21raGlfZml4KzB4MTJkLzB4NDgwDQo+
-IFsgICAxMi42MDUwMjBdICBtZWlfY2xfYnVzX2Rldl9maXh1cCsweDE5Ni8weDFiMA0KPiBbICAg
-MTIuNjA1MDUyXSAgbWVpX2NsX2J1c19yZXNjYW5fd29yaysweDJmMS8weDUwMA0KPiBbICAgMTIu
-NjA1MDg1XSAgcHJvY2Vzc19vbmVfd29yaysweDVlNS8weGIwMA0KPiBbICAgMTIuNjA1MTE2XSAg
-d29ya2VyX3RocmVhZCsweDY5LzB4NjkwDQo+IFsgICAxMi42MDUxNDRdICBrdGhyZWFkKzB4MWFl
-LzB4MWQwDQo+IFsgICAxMi42MDUxNzBdICByZXRfZnJvbV9mb3JrKzB4M2EvMHg1MA0KPiANCj4g
-WyAgIDEyLjYwNTIxM10gRnJlZWQgYnkgdGFzayAxMDQ6DQo+IFsgICAxMi42MDUyMzhdICBfX2th
-c2FuX3NsYWJfZnJlZSsweDEyZS8weDE4MA0KPiBbICAgMTIuNjA1MjY5XSAga2ZyZWUrMHhkNC8w
-eDI1MA0KPiBbICAgMTIuNjA1Mjk0XSAgbWVpX2NsX2NvbXBsZXRlKzB4YzEvMHgyMzANCj4gWyAg
-IDEyLjYwNTMyNF0gIG1laV9pcnFfY29tcGxfaGFuZGxlcisweDk1LzB4ZjANCj4gWyAgIDEyLjYw
-NTM1Nl0gIG1laV9tZV9pcnFfdGhyZWFkX2hhbmRsZXIrMHg3ZTUvMHhjOTANCj4gWyAgIDEyLjYw
-NTM5MV0gIGlycV90aHJlYWRfZm4rMHgzZi8weDgwDQo+IFsgICAxMi42MDU0MThdICBpcnFfdGhy
-ZWFkKzB4MTc1LzB4MjUwDQo+IFsgICAxMi42MDU0NDZdICBrdGhyZWFkKzB4MWFlLzB4MWQwDQo+
-IFsgICAxMi42MDU0NzJdICByZXRfZnJvbV9mb3JrKzB4M2EvMHg1MA0KPiANCj4gWyAgIDEyLjYw
-NTUxNV0gVGhlIGJ1Z2d5IGFkZHJlc3MgYmVsb25ncyB0byB0aGUgb2JqZWN0IGF0IGZmZmY4ODA0
-MTZkM2EzMDANCj4gICAgICAgICAgICAgICAgIHdoaWNoIGJlbG9uZ3MgdG8gdGhlIGNhY2hlIGtt
-YWxsb2MtOTYgb2Ygc2l6ZSA5Ng0KPiBbICAgMTIuNjA1NTkxXSBUaGUgYnVnZ3kgYWRkcmVzcyBp
-cyBsb2NhdGVkIDMyIGJ5dGVzIGluc2lkZSBvZg0KPiAgICAgICAgICAgICAgICAgOTYtYnl0ZSBy
-ZWdpb24gW2ZmZmY4ODA0MTZkM2EzMDAsIGZmZmY4ODA0MTZkM2EzNjApDQo+IFsgICAxMi42MDU2
-NjJdIFRoZSBidWdneSBhZGRyZXNzIGJlbG9uZ3MgdG8gdGhlIHBhZ2U6DQo+IFsgICAxMi42MDU2
-OTddIHBhZ2U6ZmZmZmVhMDAxMDViNGU4MCBjb3VudDoxIG1hcGNvdW50OjANCj4gbWFwcGluZzpm
-ZmZmODgwMGI1ODBmNDAwIGluZGV4OjB4MA0KPiBbICAgMTIuNjA1NzUzXSBmbGFnczogMHhhMDAw
-MDAwMDAwMDAxMDAoc2xhYikNCj4gWyAgIDEyLjYwNTc4NV0gcmF3OiAwYTAwMDAwMDAwMDAwMTAw
-IGRlYWQwMDAwMDAwMDAxMDANCj4gZGVhZDAwMDAwMDAwMDIwMA0KPiBmZmZmODgwMGI1ODBmNDAw
-DQo+IFsgICAxMi42MDU4MzhdIHJhdzogMDAwMDAwMDAwMDAwMDAwMCAwMDAwMDAwMDgwMjAwMDIw
-IDAwMDAwMDAxZmZmZmZmZmYNCj4gMDAwMDAwMDAwMDAwMDAwMA0KPiBbICAgMTIuNjA1ODg4XSBw
-YWdlIGR1bXBlZCBiZWNhdXNlOiBrYXNhbjogYmFkIGFjY2VzcyBkZXRlY3RlZA0KPiANCj4gWyAg
-IDEyLjYwNTk0MV0gTWVtb3J5IHN0YXRlIGFyb3VuZCB0aGUgYnVnZ3kgYWRkcmVzczoNCj4gWyAg
-IDEyLjYwNTk3Nl0gIGZmZmY4ODA0MTZkM2EyMDA6IGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZi
-IGZiIGZiIGZiDQo+IGZjIGZjIGZjIGZjDQo+IFsgICAxMi42MDYwMjRdICBmZmZmODgwNDE2ZDNh
-MjgwOiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYg0KPiBmYyBmYyBmYyBmYw0K
-PiBbICAgMTIuNjA2MDczXSA+ZmZmZjg4MDQxNmQzYTMwMDogZmIgZmIgZmIgZmIgZmIgZmIgZmIg
-ZmIgZmIgZmIgZmIgZmINCj4gZmMgZmMgZmMgZmMNCj4gWyAgIDEyLjYwNjEyMV0gICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgIF4NCj4gWyAgIDEyLjYwNjE1Ml0gIGZmZmY4ODA0MTZkM2Ez
-ODA6IGZjIGZjIGZjIGZjIGZjIGZjIGZjIGZjIGZjIGZjIGZjIGZjDQo+IGZjIGZjIGZjIGZjDQo+
-IFsgICAxMi42MDYyMDFdICBmZmZmODgwNDE2ZDNhNDAwOiBmYyBmYyBmYyBmYyBmYyBmYyBmYyBm
-YyBmYyBmYyBmYyBmYw0KPiBmYyBmYyBmYyBmYw0KPiBbICAgMTIuNjA2MjQ5XQ0KPiA9PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-DQo+ID0NCj4gDQo+IHRoYW5rcywNCj4gLS0gU2h1YWgNCg==
+Writing to a sysctl file that uses proc_dointvec_minmax like user/max_uts_namespaces
+a larger than 32 bit value won't cause an error as expected but instead will zero
+its value:
+	# echo 214748364800000 > max_uts_namespaces
+	# cat max_uts_namespaces
+	0
+
+This patches fixes it.
+
+Signed-off-by: Aristeu Rozanski <aris@redhat.com>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 4ac9b9a..243f277 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -2486,7 +2486,8 @@ static int do_proc_dointvec_minmax_conv(bool *negp, unsigned long *lvalp,
+ 	if (write) {
+ 		int val = *negp ? -*lvalp : *lvalp;
+ 		if ((param->min && *param->min > val) ||
+-		    (param->max && *param->max < val))
++		    (param->max && *param->max < val) ||
++		    *lvalp >> (sizeof(int) * 8))
+ 			return -EINVAL;
+ 		*valp = val;
+ 	} else {
