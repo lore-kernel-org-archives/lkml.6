@@ -2,133 +2,118 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 839D5C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 10:25:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EC90C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 10:26:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AC70208D4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 10:25:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AC70208D4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id DB200208B8
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 10:26:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB200208B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726947AbeH0OLu (ORCPT
+        id S1726987AbeH0OMz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 10:11:50 -0400
-Received: from mga04.intel.com ([192.55.52.120]:17021 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726868AbeH0OLu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 10:11:50 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2018 03:25:47 -0700
-X-ExtLoop1: 1
+        Mon, 27 Aug 2018 10:12:55 -0400
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:25223 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726868AbeH0OMz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 10:12:55 -0400
 X-IronPort-AV: E=Sophos;i="5.53,294,1531810800"; 
-   d="scan'208";a="75890976"
-Received: from linux.intel.com ([10.54.29.200])
-  by FMSMGA003.fm.intel.com with ESMTP; 27 Aug 2018 03:25:38 -0700
-Received: from [10.125.252.155] (abudanko-mobl.ccr.corp.intel.com [10.125.252.155])
-        by linux.intel.com (Postfix) with ESMTP id 6DAEE5803DA;
-        Mon, 27 Aug 2018 03:25:36 -0700 (PDT)
-Subject: Re: [PATCH v2 2/2]: perf record: enable asynchronous trace writing
-To:     Namhyung Kim <namhyung@kernel.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org, kernel-team@lge.com
-References: <e92805d0-3338-2ce5-5e88-369d406fe0a7@linux.intel.com>
- <54cc11d7-3ef2-c856-052e-6e2c309ff743@linux.intel.com>
- <20180827083852.GF24695@krava>
- <a34aa784-e36c-02fd-3e9d-7df4bc61ffe2@linux.intel.com>
- <20180827100536.GA8065@sejong>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <3c0a8ecc-a68e-7e19-066c-096f7e318e1f@linux.intel.com>
-Date:   Mon, 27 Aug 2018 13:25:35 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+   d="scan'208";a="16021296"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 27 Aug 2018 03:26:50 -0700
+Received: from localhost.localdomain.com (10.10.76.4) by
+ chn-sv-exch04.mchp-main.com (10.10.76.105) with Microsoft SMTP Server id
+ 14.3.352.0; Mon, 27 Aug 2018 03:26:49 -0700
+From:   Tudor Ambarus <tudor.ambarus@microchip.com>
+To:     <marek.vasut@gmail.com>, <cyrille.pitchen@microchip.com>,
+        <dwmw2@infradead.org>, <computersforpeace@gmail.com>,
+        <boris.brezillon@bootlin.com>, <richard@nod.at>
+CC:     <linux-mtd@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <nicolas.ferre@microchip.com>,
+        <Cristian.Birsan@microchip.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>
+Subject: [RESEND PATCH v2 0/3] add support to non-uniform SFDP SPI NOR flash memories
+Date:   Mon, 27 Aug 2018 13:26:41 +0300
+Message-ID: <20180827102644.7323-1-tudor.ambarus@microchip.com>
+X-Mailer: git-send-email 2.9.4
 MIME-Version: 1.0
-In-Reply-To: <20180827100536.GA8065@sejong>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Namhyung,
+Rebased on spi-nor/next.
 
-On 27.08.2018 13:05, Namhyung Kim wrote:
-> Hello,
-> 
-> On Mon, Aug 27, 2018 at 12:33:07PM +0300, Alexey Budankov wrote:
->> Hi,
->>
->> On 27.08.2018 11:38, Jiri Olsa wrote:
->>> On Thu, Aug 23, 2018 at 07:47:01PM +0300, Alexey Budankov wrote:
->>>
->>> SNIP
->>>
->>>>  static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evlist,
->>>>  				    bool overwrite)
->>>>  {
->>>>  	u64 bytes_written = rec->bytes_written;
->>>> -	int i;
->>>> -	int rc = 0;
->>>> +	int i, rc = 0;
->>>>  	struct perf_mmap *maps;
->>>> +	int trace_fd = rec->session->data->file.fd;
->>>> +	struct aiocb **mmap_aio = rec->evlist->mmap_aio;
->>>> +	int mmap_aio_size = 0;
->>>> +	off_t off;
->>>>  
->>>>  	if (!evlist)
->>>>  		return 0;
->>>> @@ -546,14 +620,17 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
->>>>  	if (overwrite && evlist->bkw_mmap_state != BKW_MMAP_DATA_PENDING)
->>>>  		return 0;
->>>>  
->>>> +	off = lseek(trace_fd, 0, SEEK_CUR);
->>>> +
->>>
->>> with async write, do we need to query/set the offset like this
->>> all the time?
->>
->> It looks like we need it this way. Internally glibc AIO implements writes 
->> using pwrite64 syscall in our case. The sycall requires offset as a parameter 
->> and doesn't update file position on the completion.
->>
->>>
->>> could we just keep/update the offset value in the 'struct perf_data_file'
->>> and skip both lseek calls?
->>
->> Don't see how it is possible. offset is different for every enqeued write 
->> operation and write areas don't intersect for the whole writing loop. 
->> To know the final file position it is required to iterate thru 
->> the loop.
-> 
-> But as far as I can see the offset is linearly updated in
-> perf_mmap__push() and I guess those two lseek() calls will return
-> a same value as the last updated offset, no?
+Backward compatibility test done on mx25l3273fm2i-08g.
+Non-uniform erase test done on sst26vf064b-104i/sn.
 
-Yes, offset is linearly calculated by perf_mmap__push() code for 
-the next possible write operation, but file position is update by 
-the kernel only in the second lseek() syscall after the loop. 
-The first lseek() syscall reads that file position for 
-the next loop iterations.
+Note that in order to do the non-uniform test you'll have to force the
+spi_nor_has_uniform_erase() to return false, because the erase map is
+tuned to come back to the uniform case. Also, for the SST flashes, you'll
+have to unlock the global protection (see https://www.spinics.net/lists/arm-kernel/msg666350.html).
 
-Regards,
-Alexey
+Changes in v2:
+- add JESD216B SFDP optional parsers: Sector Map Parameter Table parser and
+  4-byte Address Instruction Table parser (patch 2/3 and patch 3/3).
 
-> 
-> Thanks,
-> Namhyung
-> 
+- save the Erase Types from bfpt to determine the Erase Type sizes. Sort all
+  the map's Erase Types in ascending order with the smallest erase size being
+  the first member in the erase_type array. Sort in the same way the Erase Type
+  mask in regions in order to have a 1-to-1 correspondence with the Erase
+  Types defined in the map. We sort the Erase Type by size, at init, in order to
+  speed up the process of finding the best erase command at run-time.
+
+- remove setting of mtd->erasesize and nor->erase_opcode when parsing the Basic
+  Flash Parameter Table. mtd->erasesize was set to the maximum supported Erase
+  Type size, without verifying if that Erase Type can erase the entire flash.
+  mtd->erasesize is now set just in spi_nor_select_erase(), after we find which
+  Erase Types are supported in the uniform case.
+
+- spi_nor_select_erase(): pass directly info->sector_size instead of the whole
+  flash_info structure in order to simplify the code.
+
+- fix condition on finding erase regions:
+  while (addr < region_start || addr >= region_end) {
+- fix the list command adding: list_add_tail() instead of list_add()
+- write_enable(nor); before erasing the sectors
+- As Boris suggested, remove likely() because it doesn't make any difference
+  given the time it takes to actually erase the block.
+- bool return value for spi_nor_has_uniform_erase().
+
+Changes in v1 or what I've done on top of Cyrille's work (https://lkml.org/lkml/2017/4/15/70):
+- minimize the amount of erase() calls by using the best sequence of erase
+  type commands depending on alignment.
+- build the list of best fitted erase commands to be executed once we
+  validate that the erase can be performed.
+- add improvements on how the erase map is handled. The regions are
+  consecutive in the address space, walk through the regions incrementally.
+- speed up finding the best erase type command. Order erase types by
+  size, iterate them from the biggest to the smallest and stop when best
+  fitted command is found.
+- determine at init if there are erase types that can erase the entire
+  memory
+- fix support for overlaid regions.
+
+
+Cyrille Pitchen (1):
+  mtd: spi-nor: parse SFDP 4-byte Address Instruction Table
+
+Tudor Ambarus (2):
+  mtd: spi-nor: add support to non-uniform SFDP SPI NOR flash memories
+  mtd: spi-nor: parse SFDP Sector Map Parameter Table
+
+ drivers/mtd/spi-nor/spi-nor.c | 892 +++++++++++++++++++++++++++++++++++++++---
+ include/linux/mtd/spi-nor.h   | 120 ++++++
+ 2 files changed, 954 insertions(+), 58 deletions(-)
+
+-- 
+2.9.4
+
