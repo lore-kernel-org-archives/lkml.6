@@ -2,111 +2,91 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E55E3C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 04:04:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D29ABC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 04:04:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84F8C2173D
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 04:04:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84F8C2173D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 888F921722
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 04:04:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="ndaatIai"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 888F921722
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727026AbeH0HtT (ORCPT
+        id S1727079AbeH0Htf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 03:49:19 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:44358 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725878AbeH0HtS (ORCPT
+        Mon, 27 Aug 2018 03:49:35 -0400
+Received: from conuserg-10.nifty.com ([210.131.2.77]:40458 "EHLO
+        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725878AbeH0Htf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 03:49:18 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fu8lL-0002mA-Pu; Mon, 27 Aug 2018 04:04:23 +0000
-Date:   Mon, 27 Aug 2018 05:04:23 +0100
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     Julia Lawall <julia.lawall@lip6.fr>
-Cc:     Joe Perches <joe@perches.com>, Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jamal Hadi Salim <jhs@mojatatu.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Jiri Pirko <jiri@resnulli.us>,
-        "David S. Miller" <davem@davemloft.net>,
-        Network Development <netdev@vger.kernel.org>
-Subject: Re: [PATCH] net: sched: Fix memory exposure from short TCA_U32_SEL
-Message-ID: <20180827040423.GB6515@ZenIV.linux.org.uk>
-References: <20180826061534.GT6515@ZenIV.linux.org.uk>
- <CAGXu5jK7VzayzZTcxgZBf-+YHWO+Hv7s8utj2rzTc3gFtA8pFQ@mail.gmail.com>
- <20180826173236.GU6515@ZenIV.linux.org.uk>
- <d31fe59160e0b7d40e09536a3c74619ebb1f3b13.camel@perches.com>
- <20180826212421.GW6515@ZenIV.linux.org.uk>
- <eca48539a3dede3bfaed9ab9a6c06794cf8160e0.camel@perches.com>
- <20180826224322.GX6515@ZenIV.linux.org.uk>
- <alpine.DEB.2.21.1808262159430.2528@hadrien>
- <20180827023526.GA6515@ZenIV.linux.org.uk>
- <alpine.DEB.2.21.1808262319000.2295@hadrien>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1808262319000.2295@hadrien>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        Mon, 27 Aug 2018 03:49:35 -0400
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-10.nifty.com with ESMTP id w7R43Sia004053;
+        Mon, 27 Aug 2018 13:03:28 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w7R43Sia004053
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1535342609;
+        bh=QWXSE7/OQHBlT44+TGlqxkRhZ97JeJizcyopsk4jHsY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ndaatIailO5hoiLFnlwomC10Ew0c2977L3NOi01UukofNBoXEcec/BLZjs4FJByq3
+         h1onO5yIbQQdy4ukmP+kKAfSy85VKqsss7gZ0oyGAw62kfMyn//Y1ERbdmxorFY9n0
+         S45j8ZM+3RPx+oETlh3PD8OryIQODP1HYzeOSrMgbBnPx350RssdP3AYSlUy9EEujP
+         HL3h7T15KEpOBn46UwMQIREh025770ah+sFED4fRIIN0dpP+mhwpWGxF+YK8f/r/DI
+         PWC6WJ1GbsY++E3q/3WgMB5fqybF+QXj4o2onBDwPYFQUZcnvwu7FKTu9JGmo1x9Tv
+         ZqYGcvU5gHTHw==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
+        user-mode-linux-devel@lists.sourceforge.net
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>
+Subject: [PATCH] um: remove -fno-unit-at-a-time workaround for pre-4.0 GCC
+Date:   Mon, 27 Aug 2018 13:03:04 +0900
+Message-Id: <1535342584-22174-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Aug 26, 2018 at 11:35:17PM -0400, Julia Lawall wrote:
+Commit cafa0010cd51 ("Raise the minimum required gcc version to 4.6")
+bumped the minimum GCC version to 4.6 for all architectures.
 
-> * x = \(kmalloc\|kzalloc\|devm_kmalloc\|devm_kzalloc\)(...)
+'$(call cc-option,-fno-unit-at-a-time)' is now dead code since
+'$(cc-version) -lt 0400' is always false.
 
-I can name several you've missed right off the top of my head -
-vmalloc, kvmalloc, kmem_cache_alloc, kmem_cache_zalloc, variants
-with _trace slapped on, and that is not to mention the things like
-get_free_page or
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-void *my_k3wl_alloc(u64 n) // 'cause all artificial limits suck, that's why
-{
-	lots and lots of home-grown stats collection
-	some tracepoints thrown in just for fun
-	return kmalloc(n);
-}
+ arch/x86/Makefile.um | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-(and no, I'm not implying that net/sched folks had done anything of that
-sort; I have seen that and worse in drivers, though)
+diff --git a/arch/x86/Makefile.um b/arch/x86/Makefile.um
+index 91085a0..577976b 100644
+--- a/arch/x86/Makefile.um
++++ b/arch/x86/Makefile.um
+@@ -26,12 +26,8 @@ cflags-y += $(call cc-option,-mpreferred-stack-boundary=2)
+ # an unresolved reference.
+ cflags-y += -ffreestanding
+ 
+-# Disable unit-at-a-time mode on pre-gcc-4.0 compilers, it makes gcc use
+-# a lot more stack due to the lack of sharing of stacklots.  Also, gcc
+-# 4.3.0 needs -funit-at-a-time for extern inline functions.
+-KBUILD_CFLAGS += $(shell if [ $(cc-version) -lt 0400 ] ; then \
+-			echo $(call cc-option,-fno-unit-at-a-time); \
+-			else echo $(call cc-option,-funit-at-a-time); fi ;)
++# gcc 4.3.0 needs -funit-at-a-time for extern inline functions.
++KBUILD_CFLAGS += $(call cc-option,-funit-at-a-time)
+ 
+ KBUILD_CFLAGS += $(cflags-y)
+ 
+-- 
+2.7.4
 
-> The * at the beginning of the line means to highlight what you are looking
-> for, which is done by making a diff in which the highlighted line
-> appears to be removed.
-
-Umm...  Does that cover return, BTW?  Or something like
-	T *barf;
-	extern void foo(T *p);
-	foo(kmalloc(sizeof(*barf)));
-
-
-> The limitation is the ability to figure out the type of x.  If it is a
-> local variable, Coccinelle should have no problem.  If it is a structure
-> field, it may be necessary to provide command line arguments like
-> 
-> --all-includes --include-headers-for-types
-> 
-> --all-includes means to try to find all include files that are mentioned
-> in the .c file.  The next stronger option is --recursive includes, which
-> means include what all of the mentioned files include as well,
-> recursively.  This tends to cause a major performance hit, because a lot
-> of code is being parsed.  --include-headers-for-types heals a bit with
-> that, as it only considers the header files when computing type
-> information, and now when applying the rules.
-> 
-> With respect to ifdefs around variable declarations and structure field
-> declaration, in these cases Coccinelle considers that it cannot make the
-> ifdef have an if-like control flow, and so if considers the #ifdef, #else
-> and #endif to be comments.  Thus it takes into account only the last type
-> provided for a given variable.
-
-[snip]
-
-What about several variants of structure definition?  Because ifdefs around
-includes do occur in the wild...
