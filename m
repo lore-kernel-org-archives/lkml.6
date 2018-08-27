@@ -2,139 +2,65 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2820DC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:52:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17B2AC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:52:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFB9F208D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:52:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFB9F208D5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+	by mail.kernel.org (Postfix) with ESMTP id C49B5208DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:52:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C49B5208DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727309AbeH1AkP (ORCPT
+        id S1727470AbeH1Aks (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 20:40:15 -0400
-Received: from lithops.sigma-star.at ([195.201.40.130]:36360 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726958AbeH1AkP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 20:40:15 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 448BC606D4A7;
-        Mon, 27 Aug 2018 22:51:57 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id cCf3NR-tXWlK; Mon, 27 Aug 2018 22:51:57 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id ED9CC603B655;
-        Mon, 27 Aug 2018 22:51:56 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id G4dGKNsuJqqC; Mon, 27 Aug 2018 22:51:56 +0200 (CEST)
-Received: from blindfold.localnet (213-47-184-186.cable.dynamic.surfer.at [213.47.184.186])
-        by lithops.sigma-star.at (Postfix) with ESMTPSA id A33E2608D734;
-        Mon, 27 Aug 2018 22:51:56 +0200 (CEST)
-From:   Richard Weinberger <richard@nod.at>
-To:     Sascha Hauer <s.hauer@pengutronix.de>
-Cc:     linux-mtd@lists.infradead.org, David Gstir <david@sigma-star.at>,
-        kernel@pengutronix.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 15/25] ubifs: Add auth nodes to garbage collector journal head
-Date:   Mon, 27 Aug 2018 22:51:56 +0200
-Message-ID: <1660996.WYUJqu3I4M@blindfold>
-In-Reply-To: <20180704124137.13396-16-s.hauer@pengutronix.de>
-References: <20180704124137.13396-1-s.hauer@pengutronix.de> <20180704124137.13396-16-s.hauer@pengutronix.de>
+        Mon, 27 Aug 2018 20:40:48 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:52247 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726958AbeH1Aks (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 20:40:48 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 997EF2079D; Mon, 27 Aug 2018 22:52:32 +0200 (CEST)
+Received: from localhost (unknown [88.191.26.124])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 7029E20719;
+        Mon, 27 Aug 2018 22:52:32 +0200 (CEST)
+Date:   Mon, 27 Aug 2018 22:52:31 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc:     a.zummo@towertech.it, linux-rtc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rtc: rtc-mrst: Replace mdelay() with msleep() in
+ mrst_read_time()
+Message-ID: <20180827205231.GA24549@piout.net>
+References: <20180730135903.9442-1-baijiaju1990@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180730135903.9442-1-baijiaju1990@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Mittwoch, 4. Juli 2018, 14:41:27 CEST schrieb Sascha Hauer:
-> To be able to authenticate the garbage collector journal head add
-> authentication nodes to the buds the garbage collector creates.
+On 30/07/2018 21:59:03+0800, Jia-Ju Bai wrote:
+> mrst_read_time() is never called in atomic context.
+> It calls mdelay() to busily wait, which is not necessary.
+> mdelay() can be replaced with msleep().
 > 
-> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> This is found by a static analysis tool named DCNS written by myself.
+> 
+> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 > ---
->  fs/ubifs/gc.c | 37 ++++++++++++++++++++++++++++++++++---
->  1 file changed, 34 insertions(+), 3 deletions(-)
+>  drivers/rtc/rtc-mrst.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/fs/ubifs/gc.c b/fs/ubifs/gc.c
-> index ac3a3f7c6a6e..8feeeb12b6ed 100644
-> --- a/fs/ubifs/gc.c
-> +++ b/fs/ubifs/gc.c
-> @@ -365,12 +365,13 @@ static int move_nodes(struct ubifs_info *c, struct ubifs_scan_leb *sleb)
->  
->  	/* Write nodes to their new location. Use the first-fit strategy */
->  	while (1) {
-> -		int avail;
-> +		int avail, moved = 0;
->  		struct ubifs_scan_node *snod, *tmp;
->  
->  		/* Move data nodes */
->  		list_for_each_entry_safe(snod, tmp, &sleb->nodes, list) {
-> -			avail = c->leb_size - wbuf->offs - wbuf->used;
-> +			avail = c->leb_size - wbuf->offs - wbuf->used -
-> +					ubifs_auth_node_sz(c);
->  			if  (snod->len > avail)
->  				/*
->  				 * Do not skip data nodes in order to optimize
-> @@ -378,14 +379,19 @@ static int move_nodes(struct ubifs_info *c, struct ubifs_scan_leb *sleb)
->  				 */
->  				break;
->  
-> +			ubifs_shash_update(c, c->jheads[GCHD].log_hash,
-> +					   snod->node, snod->len);
-> +
->  			err = move_node(c, sleb, snod, wbuf);
->  			if (err)
->  				goto out;
-> +			moved = 1;
->  		}
->  
->  		/* Move non-data nodes */
->  		list_for_each_entry_safe(snod, tmp, &nondata, list) {
-> -			avail = c->leb_size - wbuf->offs - wbuf->used;
-> +			avail = c->leb_size - wbuf->offs - wbuf->used -
-> +					ubifs_auth_node_sz(c);
->  			if (avail < min)
->  				break;
->  
-> @@ -403,7 +409,32 @@ static int move_nodes(struct ubifs_info *c, struct ubifs_scan_leb *sleb)
->  				continue;
->  			}
->  
-> +			ubifs_shash_update(c, c->jheads[GCHD].log_hash,
-> +					   snod->node, snod->len);
-> +
->  			err = move_node(c, sleb, snod, wbuf);
-> +			if (err)
-> +				goto out;
-> +			moved = 1;
-> +		}
-> +
-> +		if (ubifs_authenticated(c) && moved) {
-> +			struct ubifs_auth_node *auth;
-> +
-> +			auth = kmalloc(ubifs_auth_node_sz(c), GFP_NOFS);
-> +			if (!auth) {
-> +				err = -ENOMEM;
-> +				goto out;
-> +			}
-> +
-> +			ubifs_prepare_auth_node(c, auth,
-> +						c->jheads[GCHD].log_hash);
+Applied, thanks.
 
-ubifs_prepare_auth_node() does a crypto_shash_final(), check.
-But the overall "hash life cycle" is not 100% clear to me.
-For example, does move_nodes() assume that the hash is initialized
-or is it allowed that an crypto_shash_update() happened before?
-
-Thanks,
-//richard
-
-
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
