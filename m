@@ -2,145 +2,118 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.5 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16E74C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:10:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F0A1C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:10:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE5F9208B3
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:10:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WhmvIW4f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE5F9208B3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 25372208B3
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:10:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25372208B3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727285AbeH0U5b (ORCPT
+        id S1727215AbeH0U5b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 27 Aug 2018 16:57:31 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35691 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727027AbeH0U5b (ORCPT
+Received: from mail-it0-f71.google.com ([209.85.214.71]:59832 "EHLO
+        mail-it0-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727021AbeH0U5b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 27 Aug 2018 16:57:31 -0400
-Received: by mail-pf1-f194.google.com with SMTP id p12-v6so8039704pfh.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 10:10:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=X7xyYrLEGjCD9cZd0Fg3/J3UV79BVfjeLisH32dYsls=;
-        b=WhmvIW4fJhYnuunoxdYLTVbcXiSiUWvcpF8jw+nBjYgRe1Iat7NR6qCdvSjQSvZx4P
-         4iU//8nXWyfDYK8PR1oZ3/lEuR66UmSFr+/Nr5E2xSo1Ah3x3U+8a3PVBlidtkj5IaNx
-         E5RY/HQW+w/HnPIf8MAVwJm9b1wqk5/ZL/XTk=
+Received: by mail-it0-f71.google.com with SMTP id a10-v6so9105924itc.9
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 10:10:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=X7xyYrLEGjCD9cZd0Fg3/J3UV79BVfjeLisH32dYsls=;
-        b=FrQmlto3j2OwdQ40MFLm0hvwaFBlxuScu0t8A862J1mA99OP/B5SWRyuEVPNnBk376
-         3LVX/wEtgWvMClxvXtOC+aWm6UvbmfKLfza8wSLXT6oCG93ewQnKg96pWI5qTWCpwlla
-         vid1FWJX6T4+IWFF+unaBrIqx/F7lEjPT02koog8RZG+N0NQc3qDPKtJd4ioS3wqDpHS
-         PSCzsz889BOg1B1G3IjC3r/QLf5+7lfHjkq7vSXrazg8ExS+MjJc2umDWoK0GASnHUHG
-         0uMPSqwHrainCmz2M/2LhMyxRRCWCJK0d+8L6/6qSC1gmSic/gdPuprL9QRlDQ4CpTAd
-         fJUA==
-X-Gm-Message-State: APzg51BQ1X2Y45/UIPvkjfr9QmGtm9jn7r/n+kOi6PZUengOnVcuibJd
-        FpQZB8/NKTCMvGZgZdhYF8LvsQ==
-X-Google-Smtp-Source: ANB0Vdb3sLqqKo5HPlIpI1jgwyvBfsI1EnbWtZBc9ZX+mL42sni+0H5GxzenRuS1aDnS+2aeqZvmGA==
-X-Received: by 2002:a62:5cc1:: with SMTP id q184-v6mr15403095pfb.241.1535389804881;
-        Mon, 27 Aug 2018 10:10:04 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id c88-v6sm25664429pfe.132.2018.08.27.10.10.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 27 Aug 2018 10:10:04 -0700 (PDT)
-Date:   Mon, 27 Aug 2018 10:10:03 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Siddartha Mohanadoss <smohanad@codeaurora.org>,
-        Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [PATCH 2/3] arm64: dts: qcom: pm8998: Add adc node
-Message-ID: <20180827171003.GU160295@google.com>
-References: <20180808191339.16875-1-mka@chromium.org>
- <20180808191339.16875-3-mka@chromium.org>
- <CAD=FV=Ug3oiHOLxYRXtr0LbBUyXjBB=92fAYfpfhEQ8Xih6PNA@mail.gmail.com>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to
+         :content-transfer-encoding;
+        bh=lnzUpom4al8F8UoKQz9kH09Tz28FlIHXr/pQaKXw7MQ=;
+        b=GnNbam05qzsJ5atu50O3MZ7k3fr6oTvNntVC2SX5uHbAncAw3u/F5F8BNm23fgWuXD
+         E6FbgQzrFi6Y6p7A9BhfJka7ybMrj4BbFcvX9MERD6wpZT5oq0XpFaWSBA0UYLMhh5xL
+         fktcRS86Y2JSuW1/6WDq6MWbGWYdJigJwHk5YmSYdpQy9ZBAws0psq1+i+MjsUO4zBts
+         yMIp7nriVVHTBBJEsFq5DV0TkfpIw/p7vDlrLar0cY4Et2PZN3BpH7qFHcIVlnX15cEN
+         Ijl9C7qojLOphqNw5dD1ThV6DKTNI6NXumtvKMIKLsi6aAdf89F6Rqg1FGXn8YD9zzE+
+         ZWQw==
+X-Gm-Message-State: APzg51BvGyUgiGF03GarsLpI6fJIRfsBQ08N63CXxa6jdsFIJG5AsxyN
+        LmoUFWuPL0nn4sJju6do5GPSKEReJR7Lzb3FEJ589DiJixl4
+X-Google-Smtp-Source: ANB0VdYYbZX8uGxbM+0/+kg9V1q/1FlKul7fhWxan6yo/1B4b+uj5IYfj1p1++hpCeI4dFKPyQ7heGmSPxQEiM8Kii/GGeaHMyoP
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=Ug3oiHOLxYRXtr0LbBUyXjBB=92fAYfpfhEQ8Xih6PNA@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-Received: by 2002:a24:3cc3:: with SMTP id m186-v6mr4585428ita.30.1535389804340;
+ Mon, 27 Aug 2018 10:10:04 -0700 (PDT)
+Date:   Mon, 27 Aug 2018 10:10:04 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e12d4105746dcb0d@google.com>
+Subject: WARNING in format_decode (2)
+From:   syzbot <syzbot+1ec5c5ec949c4adaa0c4@syzkaller.appspotmail.com>
+To:     linux-kernel@vger.kernel.org, mingo@redhat.com,
+        rostedt@goodmis.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 10, 2018 at 05:09:17PM -0700, Doug Anderson wrote:
-> Hi,
-> 
-> On Wed, Aug 8, 2018 at 12:13 PM, Matthias Kaehlcke <mka@chromium.org> wrote:
-> > This adds the adc node to pm8998 based on the examples in the
-> > bindings. It also fixes the order of the included headers.
-> >
-> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> > ---
-> >  arch/arm64/boot/dts/qcom/pm8998.dtsi | 13 ++++++++++++-
-> >  1 file changed, 12 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/arm64/boot/dts/qcom/pm8998.dtsi b/arch/arm64/boot/dts/qcom/pm8998.dtsi
-> > index 92bed1e7d4bb..f70f6101bceb 100644
-> > --- a/arch/arm64/boot/dts/qcom/pm8998.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/pm8998.dtsi
-> > @@ -1,8 +1,9 @@
-> >  // SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> >  /* Copyright 2018 Google LLC. */
-> >
-> > -#include <dt-bindings/spmi/spmi.h>
-> > +#include <dt-bindings/iio/qcom,spmi-vadc.h>
-> >  #include <dt-bindings/interrupt-controller/irq.h>
-> > +#include <dt-bindings/spmi/spmi.h>
-> >
-> >  &spmi_bus {
-> >         pm8998_lsid0: pmic@0 {
-> > @@ -11,6 +12,16 @@
-> >                 #address-cells = <1>;
-> >                 #size-cells = <0>;
-> >
-> > +               pm8998_adc: adc@3100 {
-> > +                       compatible = "qcom,spmi-adc-rev2";
-> > +                       reg = <0x3100>;
-> > +                       interrupts = <0x0 0x31 0x0 IRQ_TYPE_EDGE_RISING>;
-> > +                       #address-cells = <1>;
-> > +                       #size-cells = <0>;
-> > +                       #io-channel-cells = <1>;
-> > +                       io-channel-ranges;
-> > +               };
-> 
-> I'm a little confused about what the "io-channel-ranges" does here.
-> The documentation isn't clear at all to me for it.  If I'm reading it
-> right it's also supposed to be for iio-consumers, but you're using it
-> in a provider.  I see you copied this from the example.  Maybe the
-> example is wrong?  ...or I'm just confused...
-
-Yes, I copied it from the example, its use here is also not clear to
-me, other ADC providers like adc@126c0000 in exynos3250.dtsi or
-adc@180a6000 in bcm-cygnus.dtsi also specify it ...
-
-Siddartha/Jonathan, could you help to clarify if "io-channel-ranges"
-should really be specified here as the DT example suggests?
-
-Thanks
-
-Matthias
+SGVsbG8sDQoNCnN5emJvdCBmb3VuZCB0aGUgZm9sbG93aW5nIGNyYXNoIG9uOg0KDQpIRUFEIGNv
+bW1pdDogICAgMmFkMGQ1MjY5OTcwIE1lcmdlIGdpdDovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20v
+bGludXgva2Vybi4uDQpnaXQgdHJlZTogICAgICAgbmV0LW5leHQNCmNvbnNvbGUgb3V0cHV0OiBo
+dHRwczovL3N5emthbGxlci5hcHBzcG90LmNvbS94L2xvZy50eHQ/eD0xNWI4ZWZiYTQwMDAwMA0K
+a2VybmVsIGNvbmZpZzogIGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29tL3gvLmNvbmZpZz94
+PTc5ZTY5NTgzOGNlN2EyMTANCmRhc2hib2FyZCBsaW5rOiBodHRwczovL3N5emthbGxlci5hcHBz
+cG90LmNvbS9idWc/ZXh0aWQ9MWVjNWM1ZWM5NDljNGFkYWEwYzQNCmNvbXBpbGVyOiAgICAgICBn
+Y2MgKEdDQykgOC4wLjEgMjAxODA0MTMgKGV4cGVyaW1lbnRhbCkNCnN5eiByZXBybzogICAgICBo
+dHRwczovL3N5emthbGxlci5hcHBzcG90LmNvbS94L3JlcHJvLnN5ej94PTE2MjZmNzYxNDAwMDAw
+DQoNCklNUE9SVEFOVDogaWYgeW91IGZpeCB0aGUgYnVnLCBwbGVhc2UgYWRkIHRoZSBmb2xsb3dp
+bmcgdGFnIHRvIHRoZSBjb21taXQ6DQpSZXBvcnRlZC1ieTogc3l6Ym90KzFlYzVjNWVjOTQ5YzRh
+ZGFhMGM0QHN5emthbGxlci5hcHBzcG90bWFpbC5jb20NCg0KKiogICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAqKg0KKiogICBOT1RJQ0UgTk9USUNF
+IE5PVElDRSBOT1RJQ0UgTk9USUNFIE5PVElDRSBOT1RJQ0UgICAqKg0KKioqKioqKioqKioqKioq
+KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKg0KLS0tLS0tLS0tLS0t
+WyBjdXQgaGVyZSBdLS0tLS0tLS0tLS0tDQpQbGVhc2UgcmVtb3ZlIHVuc3VwcG9ydGVkICUAIGlu
+IGZvcm1hdCBzdHJpbmcNCldBUk5JTkc6IENQVTogMCBQSUQ6IDY0NTMgYXQgbGliL3ZzcHJpbnRm
+LmM6MjE0OSBmb3JtYXRfZGVjb2RlKzB4OGZjLzB4YWYwICANCmxpYi92c3ByaW50Zi5jOjIxNDkN
+Cktlcm5lbCBwYW5pYyAtIG5vdCBzeW5jaW5nOiBwYW5pY19vbl93YXJuIHNldCAuLi4NCg0KQ1BV
+OiAwIFBJRDogNjQ1MyBDb21tOiBzeXotZXhlY3V0b3I3IE5vdCB0YWludGVkIDQuMTguMCsgIzE5
+MA0KSGFyZHdhcmUgbmFtZTogR29vZ2xlIEdvb2dsZSBDb21wdXRlIEVuZ2luZS9Hb29nbGUgQ29t
+cHV0ZSBFbmdpbmUsIEJJT1MgIA0KR29vZ2xlIDAxLzAxLzIwMTENCkNhbGwgVHJhY2U6DQogIF9f
+ZHVtcF9zdGFjayBsaWIvZHVtcF9zdGFjay5jOjc3IFtpbmxpbmVdDQogIGR1bXBfc3RhY2srMHgx
+YzkvMHgyYjQgbGliL2R1bXBfc3RhY2suYzoxMTMNCiAgcGFuaWMrMHgyMzgvMHg0ZTcga2VybmVs
+L3BhbmljLmM6MTg0DQogIF9fd2Fybi5jb2xkLjgrMHgxNjMvMHgxYmEga2VybmVsL3BhbmljLmM6
+NTM2DQogIHJlcG9ydF9idWcrMHgyNTIvMHgyZDAgbGliL2J1Zy5jOjE4Ng0KICBmaXh1cF9idWcg
+YXJjaC94ODYva2VybmVsL3RyYXBzLmM6MTc4IFtpbmxpbmVdDQogIGRvX2Vycm9yX3RyYXArMHgx
+ZmMvMHg0ZDAgYXJjaC94ODYva2VybmVsL3RyYXBzLmM6Mjk2DQogIGRvX2ludmFsaWRfb3ArMHgx
+Yi8weDIwIGFyY2gveDg2L2tlcm5lbC90cmFwcy5jOjMxNg0KICBpbnZhbGlkX29wKzB4MTQvMHgy
+MCBhcmNoL3g4Ni9lbnRyeS9lbnRyeV82NC5TOjk5Mw0KUklQOiAwMDEwOmZvcm1hdF9kZWNvZGUr
+MHg4ZmMvMHhhZjAgbGliL3ZzcHJpbnRmLmM6MjE0OQ0KQ29kZTogZTggNTkgNTkgYzkgZmEgNDEg
+YzYgMDQgMjQgMTIgZTkgOTQgZmQgZmYgZmYgZTggNGEgNTkgYzkgZmEgMGYgYmUgZjMgIA0KNDgg
+YzcgYzcgNjAgYmMgODkgODcgYzYgMDUgMjggYWEgZDIgMDEgMDEgZTggZTQgZTkgOTMgZmEgPDBm
+PiAwYiA0ZCA4YiA3ZCAgDQpjMCBlOSA1NiBmZSBmZiBmZiA0OCA4YiBiZCA2OCBmZiBmZiBmZiBl
+OCBjZCA0ZiAwOA0KUlNQOiAwMDE4OmZmZmY4ODAxYjZiMjc2ODggRUZMQUdTOiAwMDAxMDI4Mg0K
+UkFYOiAwMDAwMDAwMDAwMDAwMDAwIFJCWDogMDAwMDAwMDAwMDAwMDAwMCBSQ1g6IDAwMDAwMDAw
+MDAwMDAwMDANClJEWDogMDAwMDAwMDAwMDAwMDAwMCBSU0k6IGZmZmZmZmZmODE2NDIyYjEgUkRJ
+OiBmZmZmODgwMWI2YjI3Mzc4DQpSQlA6IGZmZmY4ODAxYjZiMjc3MzAgUjA4OiBmZmZmODgwMWI2
+OWEwMDQwIFIwOTogMDAwMDAwMDAwMDAwMDAwNg0KUjEwOiAwMDAwMDAwMDAwMDAwMDAwIFIxMTog
+MDAwMDAwMDAwMDAwMDAwMCBSMTI6IGZmZmY4ODAxYjZiMjc3YTgNClIxMzogZmZmZjg4MDFiNmIy
+NzcwOCBSMTQ6IDAwMDAwMDAwMDAwMDAwMDAgUjE1OiBmZmZmODgwMWI2YjI3YjA0DQogIHZzbnBy
+aW50ZisweDE4NS8weDFiNjAgbGliL3ZzcHJpbnRmLmM6MjI0NQ0KICB2c2NucHJpbnRmKzB4MmQv
+MHg4MCBsaWIvdnNwcmludGYuYzoyMzk2DQogIF9fdHJhY2VfYXJyYXlfdnByaW50ay5wYXJ0LjYw
+KzB4YzcvMHgzMzAga2VybmVsL3RyYWNlL3RyYWNlLmM6Mjk5MA0KICBfX3RyYWNlX2FycmF5X3Zw
+cmludGsga2VybmVsL3RyYWNlL3RyYWNlLmM6MzAyMSBbaW5saW5lXQ0KICB0cmFjZV9hcnJheV92
+cHJpbnRrIGtlcm5lbC90cmFjZS90cmFjZS5jOjMwMjEgW2lubGluZV0NCiAgdHJhY2VfdnByaW50
+aysweDVmLzB4OTAga2VybmVsL3RyYWNlL3RyYWNlLmM6MzA1OQ0KICBfX3RyYWNlX3ByaW50aysw
+eGNlLzB4MTIwIGtlcm5lbC90cmFjZS90cmFjZV9wcmludGsuYzoyMzcNCiAgX19fX2JwZl90cmFj
+ZV9wcmludGsga2VybmVsL3RyYWNlL2JwZl90cmFjZS5jOjI3NCBbaW5saW5lXQ0KICBicGZfdHJh
+Y2VfcHJpbnRrKzB4YjE2LzB4YzMwIGtlcm5lbC90cmFjZS9icGZfdHJhY2UuYzoxNjYNCiAgYnBm
+X3Byb2dfZTUxZGVhYzE0NDFiYzA4MysweDk0YS8weDEwMDANCkR1bXBpbmcgZnRyYWNlIGJ1ZmZl
+cjoNCiAgICAoZnRyYWNlIGJ1ZmZlciBlbXB0eSkNCktlcm5lbCBPZmZzZXQ6IGRpc2FibGVkDQpS
+ZWJvb3RpbmcgaW4gODY0MDAgc2Vjb25kcy4uDQoNCg0KLS0tDQpUaGlzIGJ1ZyBpcyBnZW5lcmF0
+ZWQgYnkgYSBib3QuIEl0IG1heSBjb250YWluIGVycm9ycy4NClNlZSBodHRwczovL2dvby5nbC90
+cHNtRUogZm9yIG1vcmUgaW5mb3JtYXRpb24gYWJvdXQgc3l6Ym90Lg0Kc3l6Ym90IGVuZ2luZWVy
+cyBjYW4gYmUgcmVhY2hlZCBhdCBzeXprYWxsZXJAZ29vZ2xlZ3JvdXBzLmNvbS4NCg0Kc3l6Ym90
+IHdpbGwga2VlcCB0cmFjayBvZiB0aGlzIGJ1ZyByZXBvcnQuIFNlZToNCmh0dHBzOi8vZ29vLmds
+L3Rwc21FSiNidWctc3RhdHVzLXRyYWNraW5nIGZvciBob3cgdG8gY29tbXVuaWNhdGUgd2l0aCAg
+DQpzeXpib3QuDQpzeXpib3QgY2FuIHRlc3QgcGF0Y2hlcyBmb3IgdGhpcyBidWcsIGZvciBkZXRh
+aWxzIHNlZToNCmh0dHBzOi8vZ29vLmdsL3Rwc21FSiN0ZXN0aW5nLXBhdGNoZXMNCg==
