@@ -6,89 +6,79 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABF77C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 07:22:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3A48C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 07:23:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E30B21735
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 07:22:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E30B21735
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 6022F2152E
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 07:23:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6022F2152E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727119AbeH0LHx (ORCPT
+        id S1727193AbeH0LJS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 07:07:53 -0400
-Received: from smtprelay0205.hostedemail.com ([216.40.44.205]:48344 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726882AbeH0LHx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 07:07:53 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 2BD22100E86C3;
-        Mon, 27 Aug 2018 07:22:28 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: form49_4f9a6980d761e
-X-Filterd-Recvd-Size: 2363
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf05.hostedemail.com (Postfix) with ESMTPA;
-        Mon, 27 Aug 2018 07:22:26 +0000 (UTC)
-Message-ID: <cf176d1aecc2590f0bfe8c4f22d968452392bd75.camel@perches.com>
-Subject: Re: [PATCH] checkpatch: remove GCC_BINARY_CONSTANT warning
-From:   Joe Perches <joe@perches.com>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Andy Whitcroft <apw@canonical.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org
-Date:   Mon, 27 Aug 2018 00:22:25 -0700
-In-Reply-To: <392eeae782302ee8812a3c932a602035deed1609.1535351453.git.christophe.leroy@c-s.fr>
-References: <392eeae782302ee8812a3c932a602035deed1609.1535351453.git.christophe.leroy@c-s.fr>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
+        Mon, 27 Aug 2018 07:09:18 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:58284 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726882AbeH0LJS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 07:09:18 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 5C99120795; Mon, 27 Aug 2018 09:23:53 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-53-19.w90-88.abo.wanadoo.fr [90.88.170.19])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 1CCD2206DE;
+        Mon, 27 Aug 2018 09:23:43 +0200 (CEST)
+Date:   Mon, 27 Aug 2018 09:23:41 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-mtd@lists.infradead.org,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH v2] mtd: rawnand: denali: do not pass zero maxchips to
+ nand_scan()
+Message-ID: <20180827092341.1385ea7d@bbrezillon>
+In-Reply-To: <1535353301-1727-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1535353301-1727-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-08-27 at 06:59 +0000, Christophe Leroy wrote:
-> This warning was there to avoid the use of 0bxxx values
-> as they are not supported by gcc prior to v4.3
-> 
-> Since commit cafa0010cd51f ("Raise the minimum required gcc
-> version to 4.6"), it's not an issue anymore and using
-> such values can increase readability of code.
+On Mon, 27 Aug 2018 16:01:41 +0900
+Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
 
-Seems sensible as the other compilers also support binary literals
-from relatively old versions.
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2012/n3472.pdf
-https://software.intel.com/en-us/articles/c14-features-supported-by-intel-c-compiler
-
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> ---
->  scripts/checkpatch.pl | 11 -----------
->  1 file changed, 11 deletions(-)
+> Commit 49aa76b16676 ("mtd: rawnand: do not execute nand_scan_ident()
+> if maxchips is zero") gave a new meaning for calling nand_scan_ident()
+> with maxchips=0.
 > 
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> index 5219280bf7ff..d98650790722 100755
-> --- a/scripts/checkpatch.pl
-> +++ b/scripts/checkpatch.pl
-> @@ -4933,17 +4933,6 @@ sub process {
->  		while ($line =~ m{($Constant|$Lval)}g) {
->  			my $var = $1;
->  
-> -#gcc binary extension
-> -			if ($var =~ /^$Binary$/) {
-> -				if (WARN("GCC_BINARY_CONSTANT",
-> -					 "Avoid gcc v4.3+ binary constant extension: <$var>\n" . $herecurr) &&
-> -				    $fix) {
-> -					my $hexval = sprintf("0x%x", oct($var));
-> -					$fixed[$fixlinenr] =~
-> -					    s/\b$var\b/$hexval/;
-> -				}
-> -			}
-> -
->  #CamelCase
->  			if ($var !~ /^$Constant$/ &&
->  			    $var =~ /[A-Z][a-z]|[a-z][A-Z]/ &&
+> It is a special usage for some drivers such as docg4, but actually
+> the Denali driver may pass maxchips=0 to nand_scan() when the driver
+> is enabled but no NAND chip is found on the board for some reasons.
+> 
+> If nand_scan_with_ids() is called with maxchips=0, nand_scan_ident()
+> is skipped, then nand_set_defaults() is skipped as well.  Thus, the
+> driver must set chip->controller beforehand.  Otherwise, nand_attach()
+> causes NULL pointer dereference.
+> 
+> In fact, the Denali controller knows the number of connected chips
+> before calling nand_scan_ident(); if DEVICE_RESET fails, there is no
+> chip in that chip select.  Then, denali_reset_banks() sets the maxchips
+> to the number of detected chips.  If no chip is found, maxchips is zero.
+> 
+> In this case, there is no point for calling nand_scan() because we know
+> it will fail for sure.  Let's make the probe function fail immediately.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+
+Looks good to me. I'm waiting for Miquel's ack and I'll queue it to
+mtd/fixes.
+
+Thanks,
+
+Boris
