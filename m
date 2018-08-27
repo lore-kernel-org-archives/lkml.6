@@ -2,161 +2,109 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD33AC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 23:04:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BAB4C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 23:10:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 605EE208B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 23:04:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aBwLaKPo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 605EE208B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id DEF3B208B4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 23:10:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEF3B208B4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727468AbeH1CxF (ORCPT
+        id S1727408AbeH1C64 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 22:53:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33458 "EHLO mail.kernel.org"
+        Mon, 27 Aug 2018 22:58:56 -0400
+Received: from nautica.notk.org ([91.121.71.147]:47193 "EHLO nautica.notk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726994AbeH1CxF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 22:53:05 -0400
-Received: from localhost (c-71-202-137-17.hsd1.ca.comcast.net [71.202.137.17])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C9EE4208B4;
-        Mon, 27 Aug 2018 23:04:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535411060;
-        bh=bf/smKm0XruB+xEAFXs4VNj68sROk4pHonkMI1K/Jl0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=aBwLaKPoXx28t6UitT3Ie/L5v69vdeX17sJnfDbhovih3pwx9txxr4SpumzoDQOEx
-         QbW0YS9Phk67g14B0GaWxikbPuHvPWo/mbci0wl8n8dbdw5aFkdLxqwdyNk3PHsLXB
-         8fLdX0rrfArf3VKRMeuOPlNjLwNeb0UYXITgbGoc=
-From:   Andy Lutomirski <luto@kernel.org>
-To:     x86@kernel.org
-Cc:     Borislav Petkov <bp@alien8.de>, Rik van Riel <riel@surriel.com>,
-        Jann Horn <jannh@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>, stable@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Nadav Amit <nadav.amit@gmail.com>
-Subject: [PATCH] x86/nmi: Fix some races in NMI uaccess
-Date:   Mon, 27 Aug 2018 16:04:16 -0700
-Message-Id: <c7ee1ee7a1b8d17743f7c3680ea5d2c32bf3e897.1535410956.git.luto@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        id S1727101AbeH1C64 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 22:58:56 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id D2A41C009; Tue, 28 Aug 2018 01:10:09 +0200 (CEST)
+Date:   Tue, 28 Aug 2018 01:09:54 +0200
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Tomas Bortoli <tomasbortoli@gmail.com>
+Cc:     ericvh@gmail.com, rminnich@sandia.gov, lucho@ionkov.net,
+        davem@davemloft.net, v9fs-developer@lists.sourceforge.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller@googlegroups.com,
+        Dominique Martinet <dominique.martinet@cea.fr>
+Subject: Re: [PATCH v2 2/2] 9p: Add refcount to p9_req_t
+Message-ID: <20180827230954.GA21513@nautica>
+References: <20180814174342.11068-1-tomasbortoli@gmail.com>
+ <20180814174342.11068-2-tomasbortoli@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180814174342.11068-2-tomasbortoli@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In NMI context, we might be in the middle of context switching or in
-the middle of switch_mm_irqs_off().  In either case, CR3 might not
-match current->mm, which could cause copy_from_user_nmi() and
-friends to read the wrong memory.
+Tomas Bortoli wrote on Tue, Aug 14, 2018:
+> To avoid use-after-free(s), use a refcount to keep track of the
+> usable references to any instantiated struct p9_req_t.
+> 
+> This commit adds p9_req_put(), p9_req_get() and p9_req_try_get() as
+> wrappers to kref_put(), kref_get() and kref_get_unless_zero().
+> These are used by the client and the transports to keep track of
+> valid requests' references.
+> 
+> p9_free_req() is added back and used as callback by kref_put().
+> 
+> Add SLAB_TYPESAFE_BY_RCU as it ensures that the memory freed by
+> kmem_cache_free() will not be reused for another type until the rcu
+> synchronisation period is over, so an address gotten under rcu read
+> lock is safe to inc_ref() without corrupting random memory while
+> the lock is held.
 
-Fix it by adding a new nmi_uaccess_okay() helper and checking it in
-copy_from_user_nmi() and in __copy_from_user_nmi()'s callers.
 
-Cc: stable@vger.kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Nadav Amit <nadav.amit@gmail.com>
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
----
+FWIW, since 4.19-rc1 has been tagged I was going to push this and all
+the perrequesites to linux-next, but I've managed to leak some requests
+by interrupting them in trans_virtio.
+I think I've found why (see below), so I'll push a fixed version after
+some more testing and another thorough read -- at some point today, but
+this hasn't been 'approved' explicitely so please review! :)
 
-The 0day bot is still chewing on this, but I've tested it a bit locally
-and it seems to do the right thing.
+(Jun, I think you'll need to ask again to rename 'req' to 'rreq' if you
+think it's important -- I think such a rename should go in a separate
+patch anyway, there's plenty of time until the 4.20 merge window)
 
-I've never observed the bug it fixes, but it does appear to fix a bug
-unless I've missed something.  It's also a prerequisite for Nadav's
-fixmap bugfix.
 
-arch/x86/events/core.c          |  2 +-
- arch/x86/include/asm/tlbflush.h | 16 ++++++++++++++++
- arch/x86/lib/usercopy.c         |  5 +++++
- arch/x86/mm/tlb.c               |  3 +++
- 4 files changed, 25 insertions(+), 1 deletion(-)
+By "all the prerequesites" I mean this patch "serie":
+* 9p: Use a slab for allocating requests
+* 9p: Remove p9_idpool
+* net/9p: embed fcall in req to round down buffer allocs
+* net/9p: add a per-client fcall kmem_cache
+* 9p: rename p9_free_req() function
+* 9p: Add refcount to p9_req_t
 
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index 5f4829f10129..dfb2f7c0d019 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -2465,7 +2465,7 @@ perf_callchain_user(struct perf_callchain_entry_ctx *entry, struct pt_regs *regs
- 
- 	perf_callchain_store(entry, regs->ip);
- 
--	if (!current->mm)
-+	if (!nmi_uaccess_okay())
- 		return;
- 
- 	if (perf_callchain_user32(regs, entry))
-diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-index 89a73bc31622..b23b2625793b 100644
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -230,6 +230,22 @@ struct tlb_state {
- };
- DECLARE_PER_CPU_SHARED_ALIGNED(struct tlb_state, cpu_tlbstate);
- 
-+/*
-+ * Blindly accessing user memory from NMI context can be dangerous
-+ * if we're in the middle of switching the current user task or
-+ * switching the loaded mm.  It can also be dangerous if we
-+ * interrupted some kernel code that was temporarily using a
-+ * different mm.
-+ */
-+static inline bool nmi_uaccess_okay(void)
-+{
-+	struct mm_struct *loaded_mm = this_cpu_read(cpu_tlbstate.loaded_mm);
-+	struct mm_struct *current_mm = current->mm;
-+
-+	return current_mm && loaded_mm == current_mm &&
-+		loaded_mm->pgd == __va(read_cr3_pa());
-+}
-+
- /* Initialize cr4 shadow for this CPU. */
- static inline void cr4_init_shadow(void)
- {
-diff --git a/arch/x86/lib/usercopy.c b/arch/x86/lib/usercopy.c
-index c8c6ad0d58b8..3f435d7fca5e 100644
---- a/arch/x86/lib/usercopy.c
-+++ b/arch/x86/lib/usercopy.c
-@@ -7,6 +7,8 @@
- #include <linux/uaccess.h>
- #include <linux/export.h>
- 
-+#include <asm/tlbflush.h>
-+
- /*
-  * We rely on the nested NMI work to allow atomic faults from the NMI path; the
-  * nested NMI paths are careful to preserve CR2.
-@@ -19,6 +21,9 @@ copy_from_user_nmi(void *to, const void __user *from, unsigned long n)
- 	if (__range_not_ok(from, n, TASK_SIZE))
- 		return n;
- 
-+	if (!nmi_uaccess_okay())
-+		return n;
-+
- 	/*
- 	 * Even though this function is typically called from NMI/IRQ context
- 	 * disable pagefaults so that its behaviour is consistent even when
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 457b281b9339..f4b41d5a93dd 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -345,6 +345,9 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
- 		 */
- 		trace_tlb_flush_rcuidle(TLB_FLUSH_ON_TASK_SWITCH, TLB_FLUSH_ALL);
- 	} else {
-+		/* Let NMI code know that CR3 may not match expectations. */
-+		this_cpu_write(cpu_tlbstate.loaded_mm, NULL);
-+
- 		/* The new ASID is already up to date. */
- 		load_new_mm_cr3(next->pgd, new_asid, false);
- 
+All the other patchs have had some review though, I was just waiting for
+the start of this cycle, but if someone has any issue with the above
+patches now is a good time to say.
+
+
+> diff --git a/net/9p/client.c b/net/9p/client.c
+> index 7942c0bfcc5b..c9bb5d41afa4 100644
+> --- a/net/9p/client.c
+> +++ b/net/9p/client.c
+> @@ -716,6 +756,8 @@ p9_client_rpc(struct p9_client *c, int8_t type, const char *fmt, ...)
+>  
+>  	err = c->trans_mod->request(c, req);
+>  	if (err < 0) {
+> +		/* write won't happen */
+> +		p9_req_put(req);
+>  		if (err != -ERESTARTSYS && err != -EFAULT)
+>  			c->status = Disconnected;
+>  		goto recalc_sigpending;
+
+p9_client_zc_rpc needs the same put if zc_request failed, I'm not sure
+why it wasn't here in my draft
+
 -- 
-2.17.1
-
+Dominique
