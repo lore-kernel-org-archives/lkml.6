@@ -2,243 +2,109 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B457CC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 10:27:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC84C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 10:27:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A99D208D4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 10:27:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A99D208D4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id 223B3208B8
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 10:27:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 223B3208B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727234AbeH0ONF (ORCPT
+        id S1727265AbeH0ON4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 10:13:05 -0400
-Received: from esa4.microchip.iphmx.com ([68.232.154.123]:15145 "EHLO
-        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726868AbeH0ONE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 10:13:04 -0400
+        Mon, 27 Aug 2018 10:13:56 -0400
+Received: from mga01.intel.com ([192.55.52.88]:46070 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726826AbeH0ON4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 10:13:56 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2018 03:27:51 -0700
+X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,294,1531810800"; 
-   d="scan'208";a="18441297"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 27 Aug 2018 03:26:59 -0700
-Received: from localhost.localdomain.com (10.10.76.4) by
- chn-sv-exch04.mchp-main.com (10.10.76.105) with Microsoft SMTP Server id
- 14.3.352.0; Mon, 27 Aug 2018 03:26:59 -0700
-From:   Tudor Ambarus <tudor.ambarus@microchip.com>
-To:     <marek.vasut@gmail.com>, <cyrille.pitchen@microchip.com>,
-        <dwmw2@infradead.org>, <computersforpeace@gmail.com>,
-        <boris.brezillon@bootlin.com>, <richard@nod.at>
-CC:     <linux-mtd@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <nicolas.ferre@microchip.com>,
-        <Cristian.Birsan@microchip.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>
-Subject: [RESEND PATCH v2 3/3] mtd: spi-nor: parse SFDP 4-byte Address Instruction Table
-Date:   Mon, 27 Aug 2018 13:26:44 +0300
-Message-ID: <20180827102644.7323-4-tudor.ambarus@microchip.com>
-X-Mailer: git-send-email 2.9.4
-In-Reply-To: <20180827102644.7323-1-tudor.ambarus@microchip.com>
-References: <20180827102644.7323-1-tudor.ambarus@microchip.com>
+   d="scan'208";a="86675592"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.137]) ([10.237.72.137])
+  by orsmga002.jf.intel.com with ESMTP; 27 Aug 2018 03:27:48 -0700
+Subject: Re: [PATCH v2 0/8] Tegra SDHCI support HS400 on Tegra210 and Tegra186
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Aapo Vienamo <avienamo@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1533924845-1466-1-git-send-email-avienamo@nvidia.com>
+ <20180827100826.GA18542@ulmo>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <095142c4-2697-d9e1-4930-a39e27b7ef40@intel.com>
+Date:   Mon, 27 Aug 2018 13:26:05 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180827100826.GA18542@ulmo>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cyrille Pitchen <cyrille.pitchen@microchip.com>
+On 27/08/18 13:08, Thierry Reding wrote:
+> On Fri, Aug 10, 2018 at 09:13:57PM +0300, Aapo Vienamo wrote:
+>> Hi all,
+>> This series implements support for HS400 signaling on Tegra210 and
+>> Tegra186. This includes programming the DQS trimmer values, implementing
+>> enhanced strobe and HS400 delay line calibration.
+>>
+>> This series depends on the "Tegra SDHCI add support for HS200 and UHS
+>> signaling" series.
+>>
+>> Changelog:
+>> v2:
+>> 	- Document in dt-bindings which controllers support HS400
+>> 	- Use val instead of reg in tegra_sdhci_set_dqs_trim()
+>> 	- Change "dt" to "DT" in "mmc: tegra: Parse and program DQS trim
+>> 	  value" commit message
+>> 	- Add spaces around << in tegra_sdhci_set_dqs_trim()
+>> 	- Make the "mmc: tegra: Implement HS400 enhanced strobe" commit
+>> 	  message more detailed
+>> 	- Remove a debug print from tegra_sdhci_hs400_enhanced_strobe()
+>> 	- Add blank lines around if-else-block in
+>> 	  tegra_sdhci_hs400_enhanced_strobe()
+>> 	- Use val instead of reg in tegra_sdhci_hs400_enhanced_strobe()
+>> 	- Make commit message of "mmc: tegra: Implement HS400 delay line
+>> 	  calibration" more detailed
+>>
+>> Aapo Vienamo (8):
+>>   dt-bindings: mmc: Add DQS trim value to Tegra SDHCI
+>>   mmc: tegra: Parse and program DQS trim value
+>>   mmc: tegra: Implement HS400 enhanced strobe
+>>   mmc: tegra: Implement HS400 delay line calibration
+>>   arm64: dts: tegra186: Add SDMMC4 DQS trim value
+>>   arm64: dts: tegra210: Add SDMMC4 DQS trim value
+>>   arm64: dts: tegra186: Enable HS400
+>>   arm64: dts: tegra210: Enable HS400
+>>
+>>  .../bindings/mmc/nvidia,tegra20-sdhci.txt          |  4 ++
+>>  arch/arm64/boot/dts/nvidia/tegra186.dtsi           |  2 +
+>>  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  2 +
+>>  drivers/mmc/host/sdhci-tegra.c                     | 84 +++++++++++++++++++++-
+>>  4 files changed, 89 insertions(+), 3 deletions(-)
+> 
+> Adrian,
+> 
+> any chance you could take a brief look at these? They are a prerequisite
+> for the 2-patch series ("[PATCH 0/2] Tegra SDHCI rerun pad calibration
+> periodically") that you already acked.
 
-Add support for SFDP (JESD216B) 4-byte Address Instruction Table. This
-table is optional but when available, we parse it to get the 4-byte
-address op codes supported by the memory.
-Using these op codes is stateless as opposed to entering the 4-byte
-address mode or setting the Base Address Register (BAR).
-
-Signed-off-by: Cyrille Pitchen <cyrille.pitchen@microchip.com>
-Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
----
- drivers/mtd/spi-nor/spi-nor.c | 148 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 148 insertions(+)
-
-diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-index 522d5aa..4e69d47 100644
---- a/drivers/mtd/spi-nor/spi-nor.c
-+++ b/drivers/mtd/spi-nor/spi-nor.c
-@@ -2196,6 +2196,7 @@ struct sfdp_parameter_header {
- 
- #define SFDP_BFPT_ID		0xff00	/* Basic Flash Parameter Table */
- #define SFDP_SECTOR_MAP_ID	0xff81	/* Sector Map Table */
-+#define SFDP_4BAIT_ID		0xff84u	/* 4-byte Address Instruction Table */
- 
- #define SFDP_SIGNATURE		0x50444653U
- #define SFDP_JESD216_MAJOR	1
-@@ -2883,6 +2884,149 @@ static int spi_nor_parse_smpt(struct spi_nor *nor,
- 	return ret;
- }
- 
-+struct sfdp_4bait {
-+	/* The hardware capability. */
-+	u32		hwcaps;
-+
-+	/*
-+	 * The <supported_bit> bit in DWORD1 of the 4BAIT tells us whether
-+	 * the associated 4-byte address op code is supported.
-+	 */
-+	u32		supported_bit;
-+};
-+
-+static int spi_nor_parse_4bait(struct spi_nor *nor,
-+			       const struct sfdp_parameter_header *param_header,
-+			       struct spi_nor_flash_parameter *params)
-+{
-+	static const struct sfdp_4bait reads[] = {
-+		{ SNOR_HWCAPS_READ,		BIT(0) },
-+		{ SNOR_HWCAPS_READ_FAST,	BIT(1) },
-+		{ SNOR_HWCAPS_READ_1_1_2,	BIT(2) },
-+		{ SNOR_HWCAPS_READ_1_2_2,	BIT(3) },
-+		{ SNOR_HWCAPS_READ_1_1_4,	BIT(4) },
-+		{ SNOR_HWCAPS_READ_1_4_4,	BIT(5) },
-+		{ SNOR_HWCAPS_READ_1_1_1_DTR,	BIT(13) },
-+		{ SNOR_HWCAPS_READ_1_2_2_DTR,	BIT(14) },
-+		{ SNOR_HWCAPS_READ_1_4_4_DTR,	BIT(15) },
-+	};
-+	static const struct sfdp_4bait programs[] = {
-+		{ SNOR_HWCAPS_PP,		BIT(6) },
-+		{ SNOR_HWCAPS_PP_1_1_4,		BIT(7) },
-+		{ SNOR_HWCAPS_PP_1_4_4,		BIT(8) },
-+	};
-+	static const struct sfdp_4bait erases[SNOR_ERASE_TYPE_MAX] = {
-+		{ 0u /* not used */,		BIT(9) },
-+		{ 0u /* not used */,		BIT(10) },
-+		{ 0u /* not used */,		BIT(11) },
-+		{ 0u /* not used */,		BIT(12) },
-+	};
-+	u32 dwords[2], addr, discard_hwcaps, read_hwcaps, pp_hwcaps, erase_mask;
-+	struct spi_nor_erase_map *map = &nor->erase_map;
-+	int i, err;
-+
-+	if (param_header->major != SFDP_JESD216_MAJOR ||
-+	    param_header->length < ARRAY_SIZE(dwords))
-+		return -EINVAL;
-+
-+	/* Read the 4-byte Address Instruction Table. */
-+	addr = SFDP_PARAM_HEADER_PTP(param_header);
-+	err = spi_nor_read_sfdp(nor, addr, sizeof(dwords), dwords);
-+	if (err)
-+		return err;
-+
-+	/* Fix endianness of the 4BAIT DWORDs. */
-+	for (i = 0; i < ARRAY_SIZE(dwords); i++)
-+		dwords[i] = le32_to_cpu(dwords[i]);
-+
-+	/*
-+	 * Compute the subset of (Fast) Read commands for which the 4-byte
-+	 * version is supported.
-+	 */
-+	discard_hwcaps = 0;
-+	read_hwcaps = 0;
-+	for (i = 0; i < ARRAY_SIZE(reads); i++) {
-+		const struct sfdp_4bait *read = &reads[i];
-+
-+		discard_hwcaps |= read->hwcaps;
-+		if ((params->hwcaps.mask & read->hwcaps) &&
-+		    (dwords[0] & read->supported_bit))
-+			read_hwcaps |= read->hwcaps;
-+	}
-+
-+	/*
-+	 * Compute the subset of Page Program commands for which the 4-byte
-+	 * version is supported.
-+	 */
-+	pp_hwcaps = 0;
-+	for (i = 0; i < ARRAY_SIZE(programs); i++) {
-+		const struct sfdp_4bait *program = &programs[i];
-+
-+		discard_hwcaps |= program->hwcaps;
-+		if ((params->hwcaps.mask & program->hwcaps) &&
-+		    (dwords[0] & program->supported_bit))
-+			pp_hwcaps |= program->hwcaps;
-+	}
-+
-+	/*
-+	 * Compute the subet of Sector Erase commands for which the 4-byte
-+	 * version is supported.
-+	 */
-+	erase_mask = 0;
-+	for (i = 0; i < SNOR_ERASE_TYPE_MAX; i++) {
-+		const struct sfdp_4bait *erase = &erases[i];
-+
-+		if (map->erase_type[i].size > 0 &&
-+		    (dwords[0] & erase->supported_bit))
-+			erase_mask |= BIT(i);
-+	}
-+
-+	/*
-+	 * We need at least one 4-byte op code per read, program and erase
-+	 * operation; the .read(), .write() and .erase() hooks share the
-+	 * nor->addr_width value.
-+	 */
-+	if (!read_hwcaps || !pp_hwcaps || !erase_mask)
-+		return 0;
-+
-+	/*
-+	 * Discard all operations from the 4-byte instruction set which are
-+	 * not supported by this memory.
-+	 */
-+	params->hwcaps.mask &= ~discard_hwcaps;
-+	params->hwcaps.mask |= (read_hwcaps | pp_hwcaps);
-+
-+	/* Use the 4-byte address instruction set. */
-+	for (i = 0; i < SNOR_CMD_READ_MAX; i++) {
-+		struct spi_nor_read_command *read_cmd = &params->reads[i];
-+
-+		read_cmd->opcode = spi_nor_convert_3to4_read(read_cmd->opcode);
-+	}
-+	for (i = 0; i < SNOR_CMD_PP_MAX; i++) {
-+		struct spi_nor_pp_command *pp_cmd = &params->page_programs[i];
-+
-+		pp_cmd->opcode = spi_nor_convert_3to4_program(pp_cmd->opcode);
-+	}
-+	for (i = 0; i < SNOR_ERASE_TYPE_MAX; i++) {
-+		struct spi_nor_erase_type *erase = &map->erase_type[i];
-+
-+		if (erase_mask & BIT(erase->idx))
-+			erase->opcode = (dwords[1] >> (erase->idx * 8)) & 0xFF;
-+		else
-+			spi_nor_set_erase_type(erase, 0u, 0xFF);
-+	}
-+
-+	/*
-+	 * We set nor->addr_width here to skip spi_nor_set_4byte_opcodes()
-+	 * later because this latest function implements a legacy quirk for
-+	 * the erase size of Spansion memory. However this quirk is no longer
-+	 * needed with new SFDP compliant memories.
-+	 */
-+	nor->addr_width = 4;
-+	nor->flags |= SPI_NOR_4B_OPCODES;
-+	return 0;
-+}
-+
- /**
-  * spi_nor_parse_sfdp() - parse the Serial Flash Discoverable Parameters.
-  * @nor:		pointer to a 'struct spi_nor'
-@@ -2980,6 +3124,10 @@ static int spi_nor_parse_sfdp(struct spi_nor *nor,
- 			err = spi_nor_parse_smpt(nor, param_header);
- 			break;
- 
-+		case SFDP_4BAIT_ID:
-+			err = spi_nor_parse_4bait(nor, param_header, params);
-+			break;
-+
- 		default:
- 			break;
- 		}
--- 
-2.9.4
-
+Sure, I'll try and have a look today.
