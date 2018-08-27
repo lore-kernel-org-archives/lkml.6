@@ -2,120 +2,308 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3A15C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:47:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0718C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:47:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BD9E20BED
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:47:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BD9E20BED
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 45308208D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:47:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JPyeiHPP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45308208D5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727308AbeH1Af2 (ORCPT
+        id S1727408AbeH1AgG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 20:35:28 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35906 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726994AbeH1Af1 (ORCPT
+        Mon, 27 Aug 2018 20:36:06 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:36760 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726994AbeH1AgG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 20:35:27 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7RKhXCc132730
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 16:47:12 -0400
-Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2m4m6gtsxw-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 16:47:12 -0400
-Received: from localhost
-        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Mon, 27 Aug 2018 14:47:11 -0600
-Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
-        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 27 Aug 2018 14:47:09 -0600
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7RKl8JQ42532914
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 27 Aug 2018 13:47:08 -0700
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3E60D78064;
-        Mon, 27 Aug 2018 14:47:08 -0600 (MDT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 23EA878067;
-        Mon, 27 Aug 2018 14:47:07 -0600 (MDT)
-Received: from morokweng.localdomain (unknown [9.85.152.225])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTPS;
-        Mon, 27 Aug 2018 14:47:06 -0600 (MDT)
-References: <20180725025725.4214-1-bauerman@linux.ibm.com> <99fd20f8-b3fd-c5b7-ccb2-092888c8545f@kernel.org>
-User-agent: mu4e 1.0; emacs 25.3.1
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     Shuah Khan <shuah@kernel.org>
-Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests: kselftest: Remove outdated comment
-In-reply-to: <99fd20f8-b3fd-c5b7-ccb2-092888c8545f@kernel.org>
-Date:   Mon, 27 Aug 2018 17:47:03 -0300
+        Mon, 27 Aug 2018 20:36:06 -0400
+Received: by mail-oi0-f66.google.com with SMTP id r69-v6so644004oie.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 13:47:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:reply-to:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=Fn1pXpN2U+DN1rHfpjRTaNy+wJdgncIVsmwMjBdUvPU=;
+        b=JPyeiHPPqWBpq+3ZpwGFSoN14LQBdjisKI8fl5HQ0Zsk70dDy3imhqCIuDCAXS9Aj7
+         zKUDGJ0Y/AKF1kNTpaUlfRgjFxKzIzjjF+var0UjxG9j6tNwgBgE2i5di8cl01ZFOcxn
+         GCI1nBIc5DB62cTWu8kPk269lTov2P9mxys0f5razobX9B11uNcCc/KuFwkhc5W/d0+Q
+         ykc560Syaxs3h0+06YCuLb2gAotIeEUno6fEUedtCt0l0FhZhY5AXSHTi5Nq4+edud8z
+         EZl1Z8my68ttftZrRgcTU7JXcvkCTQCe7ndXIuRGqbpSkoBvNoiAO2acL3pBPFVMnOzQ
+         A1jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:reply-to:subject:to:cc:references:from
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-transfer-encoding:content-language;
+        bh=Fn1pXpN2U+DN1rHfpjRTaNy+wJdgncIVsmwMjBdUvPU=;
+        b=cd/Il1Qzvky4wfvvxn14nYOV3A7PUBT1N2B5d2VlU8z38ZT20G/1l9mBcx8hH1i+pj
+         g47GQTMaAymXQ1sEeY0SgZMTGcFAPXWWWT4OJ7DCk5yGySrba9P06lzGcdTIsYWGW6W4
+         mX/hWG75bbtwJBWg6Pzgq4hGVTIYaQ/qibB+EvXUawXudKtoXJgNlzlQefKGq7cXwyzN
+         uQP5VYPVttiIkKAVgPCHO59M0gUVpuF9iXu8G5YOmPqbhI1eqZshW1W+LS5MEVKJFR7K
+         JtAG78ahgYCe8yv738VIrIViJEOR330wwldbnRhNQGM0xEEv1syG6OkMaHZq5Y2vt+TS
+         7o8w==
+X-Gm-Message-State: APzg51A208lmdIJGSvnQs+jLDnjljzP8QKwO7XG6ZK9SRhfnKjEOLnu6
+        UpwS6oRaIMu+/9RYwRWA0cJfiMQ=
+X-Google-Smtp-Source: ANB0VdZw3EfRcR0CCKlkgzG2zu+5qH4Bqlbv/Xe5DjL4PFMtUxpa7KiDUeYL1hA4l7v9GONYeanlBw==
+X-Received: by 2002:aca:b256:: with SMTP id b83-v6mr248953oif.235.1535402871322;
+        Mon, 27 Aug 2018 13:47:51 -0700 (PDT)
+Received: from serve.minyard.net ([47.184.170.128])
+        by smtp.gmail.com with ESMTPSA id x5-v6sm390163oix.3.2018.08.27.13.47.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 27 Aug 2018 13:47:50 -0700 (PDT)
+Received: from [IPv6:2001:470:b8f6:1b:fcd1:4328:3a3e:96be] (unknown [IPv6:2001:470:b8f6:1b:fcd1:4328:3a3e:96be])
+        by serve.minyard.net (Postfix) with ESMTPSA id 652373A8;
+        Mon, 27 Aug 2018 15:47:49 -0500 (CDT)
+Reply-To: minyard@acm.org
+Subject: Re: [PATCH 1/2] ipmi: Move BT capabilities detection to the detect
+ call
+To:     "Banman, Andrew" <abanman@hpe.com>
+Cc:     "openipmi-developer@lists.sourceforge.net" 
+        <openipmi-developer@lists.sourceforge.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Anderson, Russ" <russ.anderson@hpe.com>,
+        "Ramsay, Frank" <frank.ramsay@hpe.com>,
+        "Ernst, Justin" <justin.ernst@hpe.com>,
+        Corey Minyard <cminyard@mvista.com>
+References: <1535056623-26634-1-git-send-email-minyard@acm.org>
+ <1535056623-26634-2-git-send-email-minyard@acm.org>
+ <TU4PR8401MB0430BCEBB2F6C81611054555A60B0@TU4PR8401MB0430.NAMPRD84.PROD.OUTLOOK.COM>
+From:   Corey Minyard <minyard@acm.org>
+Message-ID: <32b44854-93bd-57cd-2aab-f8cebc1bc0a9@acm.org>
+Date:   Mon, 27 Aug 2018 15:47:48 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-x-cbid: 18082720-8235-0000-0000-00000DF35117
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009622; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01079749; UDB=6.00556899; IPR=6.00859732;
- MB=3.00022963; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-27 20:47:10
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082720-8236-0000-0000-0000426D884A
-Message-Id: <871sajtu48.fsf@morokweng.localdomain>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-27_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808270213
+In-Reply-To: <TU4PR8401MB0430BCEBB2F6C81611054555A60B0@TU4PR8401MB0430.NAMPRD84.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-Shuah Khan <shuah@kernel.org> writes:
-
-> On 07/24/2018 08:57 PM, Thiago Jung Bauermann wrote:
->> Commit 3c07aaef6598 ("selftests: kselftest: change KSFT_SKIP=4 instead of
->> KSFT_PASS") reverted commit 11867a77eb85 ("selftests: kselftest framework:
->> change skip exit code to 0") but missed removing the comment which that
->> commit added, so do that now.
->> 
->> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
->> ---
->>  tools/testing/selftests/kselftest.h | 1 -
->>  1 file changed, 1 deletion(-)
->> 
->> diff --git a/tools/testing/selftests/kselftest.h b/tools/testing/selftests/kselftest.h
->> index 15e6b75fc3a5..a3edb2c8e43d 100644
->> --- a/tools/testing/selftests/kselftest.h
->> +++ b/tools/testing/selftests/kselftest.h
->> @@ -19,7 +19,6 @@
->>  #define KSFT_FAIL  1
->>  #define KSFT_XFAIL 2
->>  #define KSFT_XPASS 3
->> -/* Treat skip as pass */
->>  #define KSFT_SKIP  4
->>  
->>  /* counters */
->> 
->> 
+On 08/27/2018 03:16 PM, Banman, Andrew wrote:
+> Tested-by: Andrew Banman
 >
-> Thanks for the patch. Sorry for the delay. It is now in linux-kselfttest
-> next for the next 4.19-rc
+> Ran through 100+ boots with no error with your 1st patch applied. I don't see any endcases to worry about.
+>
 
-The delay isn't a problem. Thanks!
+Thanks for the testing, it's queued for the next release.
 
--- 
-Thiago Jung Bauermann
-IBM Linux Technology Center
+-corey
+
+> Thanks Corey!
+>
+> Andrew
+>
+>> -----Original Message-----
+>> From: Corey Minyard [mailto:tcminyard@gmail.com] On Behalf Of
+>> minyard@acm.org
+>> Sent: Thursday, August 23, 2018 3:37 PM
+>> To: Banman, Andrew <abanman@hpe.com>
+>> Cc: openipmi-developer@lists.sourceforge.net; linux-
+>> kernel@vger.kernel.org; Anderson, Russ <russ.anderson@hpe.com>; Ramsay,
+>> Frank <frank.ramsay@hpe.com>; Ernst, Justin <justin.ernst@hpe.com>;
+>> Corey Minyard <cminyard@mvista.com>
+>> Subject: [PATCH 1/2] ipmi: Move BT capabilities detection to the detect
+>> call
+>>
+>> From: Corey Minyard <cminyard@mvista.com>
+>>
+>> The capabilities detection was being done as part of the normal
+>> state machine, but it was possible for it to be running while
+>> the upper layers of the IPMI driver were initializing the
+>> device, resulting in error and failure to initialize.
+>>
+>> Move the capabilities detection to the the detect function,
+>> so it's done before anything else runs on the device.  This also
+>> simplifies the state machine and removes some code, as a bonus.
+>>
+>> Signed-off-by: Corey Minyard <cminyard@mvista.com>
+>> Reported-by: Andrew Banman <abanman@hpe.com>
+>> ---
+>>   drivers/char/ipmi/ipmi_bt_sm.c | 92 ++++++++++++++++++++++-------------
+>> -------
+>>   1 file changed, 48 insertions(+), 44 deletions(-)
+>>
+>> diff --git a/drivers/char/ipmi/ipmi_bt_sm.c
+>> b/drivers/char/ipmi/ipmi_bt_sm.c
+>> index cbc6126..b4133832e 100644
+>> --- a/drivers/char/ipmi/ipmi_bt_sm.c
+>> +++ b/drivers/char/ipmi/ipmi_bt_sm.c
+>> @@ -59,8 +59,6 @@ enum bt_states {
+>>   	BT_STATE_RESET3,
+>>   	BT_STATE_RESTART,
+>>   	BT_STATE_PRINTME,
+>> -	BT_STATE_CAPABILITIES_BEGIN,
+>> -	BT_STATE_CAPABILITIES_END,
+>>   	BT_STATE_LONG_BUSY	/* BT doesn't get hosed :-) */
+>>   };
+>>
+>> @@ -86,7 +84,6 @@ struct si_sm_data {
+>>   	int		error_retries;	/* end of "common" fields */
+>>   	int		nonzero_status;	/* hung BMCs stay all 0 */
+>>   	enum bt_states	complete;	/* to divert the state machine */
+>> -	int		BT_CAP_outreqs;
+>>   	long		BT_CAP_req2rsp;
+>>   	int		BT_CAP_retries;	/* Recommended retries */
+>>   };
+>> @@ -137,8 +134,6 @@ static char *state2txt(unsigned char state)
+>>   	case BT_STATE_RESET3:		return("RESET3");
+>>   	case BT_STATE_RESTART:		return("RESTART");
+>>   	case BT_STATE_LONG_BUSY:	return("LONG_BUSY");
+>> -	case BT_STATE_CAPABILITIES_BEGIN: return("CAP_BEGIN");
+>> -	case BT_STATE_CAPABILITIES_END:	return("CAP_END");
+>>   	}
+>>   	return("BAD STATE");
+>>   }
+>> @@ -185,7 +180,6 @@ static unsigned int bt_init_data(struct si_sm_data
+>> *bt, struct si_sm_io *io)
+>>   	bt->complete = BT_STATE_IDLE;	/* end here */
+>>   	bt->BT_CAP_req2rsp = BT_NORMAL_TIMEOUT * USEC_PER_SEC;
+>>   	bt->BT_CAP_retries = BT_NORMAL_RETRY_LIMIT;
+>> -	/* BT_CAP_outreqs == zero is a flag to read BT Capabilities */
+>>   	return 3; /* We claim 3 bytes of space; ought to check SPMI table
+>> */
+>>   }
+>>
+>> @@ -447,7 +441,7 @@ static enum si_sm_result error_recovery(struct
+>> si_sm_data *bt,
+>>
+>>   static enum si_sm_result bt_event(struct si_sm_data *bt, long time)
+>>   {
+>> -	unsigned char status, BT_CAP[8];
+>> +	unsigned char status;
+>>   	static enum bt_states last_printed = BT_STATE_PRINTME;
+>>   	int i;
+>>
+>> @@ -500,12 +494,6 @@ static enum si_sm_result bt_event(struct si_sm_data
+>> *bt, long time)
+>>   		if (status & BT_H_BUSY)		/* clear a leftover H_BUSY */
+>>   			BT_CONTROL(BT_H_BUSY);
+>>
+>> -		bt->timeout = bt->BT_CAP_req2rsp;
+>> -
+>> -		/* Read BT capabilities if it hasn't been done yet */
+>> -		if (!bt->BT_CAP_outreqs)
+>> -			BT_STATE_CHANGE(BT_STATE_CAPABILITIES_BEGIN,
+>> -					SI_SM_CALL_WITHOUT_DELAY);
+>>   		BT_SI_SM_RETURN(SI_SM_IDLE);
+>>
+>>   	case BT_STATE_XACTION_START:
+>> @@ -610,37 +598,6 @@ static enum si_sm_result bt_event(struct si_sm_data
+>> *bt, long time)
+>>   		BT_STATE_CHANGE(BT_STATE_XACTION_START,
+>>   				SI_SM_CALL_WITH_DELAY);
+>>
+>> -	/*
+>> -	 * Get BT Capabilities, using timing of upper level state machine.
+>> -	 * Set outreqs to prevent infinite loop on timeout.
+>> -	 */
+>> -	case BT_STATE_CAPABILITIES_BEGIN:
+>> -		bt->BT_CAP_outreqs = 1;
+>> -		{
+>> -			unsigned char GetBT_CAP[] = { 0x18, 0x36 };
+>> -			bt->state = BT_STATE_IDLE;
+>> -			bt_start_transaction(bt, GetBT_CAP, sizeof(GetBT_CAP));
+>> -		}
+>> -		bt->complete = BT_STATE_CAPABILITIES_END;
+>> -		BT_STATE_CHANGE(BT_STATE_XACTION_START,
+>> -				SI_SM_CALL_WITH_DELAY);
+>> -
+>> -	case BT_STATE_CAPABILITIES_END:
+>> -		i = bt_get_result(bt, BT_CAP, sizeof(BT_CAP));
+>> -		bt_init_data(bt, bt->io);
+>> -		if ((i == 8) && !BT_CAP[2]) {
+>> -			bt->BT_CAP_outreqs = BT_CAP[3];
+>> -			bt->BT_CAP_req2rsp = BT_CAP[6] * USEC_PER_SEC;
+>> -			bt->BT_CAP_retries = BT_CAP[7];
+>> -		} else
+>> -			pr_warn("IPMI BT: using default values\n");
+>> -		if (!bt->BT_CAP_outreqs)
+>> -			bt->BT_CAP_outreqs = 1;
+>> -		pr_warn("IPMI BT: req2rsp=%ld secs retries=%d\n",
+>> -			bt->BT_CAP_req2rsp / USEC_PER_SEC, bt->BT_CAP_retries);
+>> -		bt->timeout = bt->BT_CAP_req2rsp;
+>> -		return SI_SM_CALL_WITHOUT_DELAY;
+>> -
+>>   	default:	/* should never occur */
+>>   		return error_recovery(bt,
+>>   				      status,
+>> @@ -651,6 +608,11 @@ static enum si_sm_result bt_event(struct si_sm_data
+>> *bt, long time)
+>>
+>>   static int bt_detect(struct si_sm_data *bt)
+>>   {
+>> +	unsigned char GetBT_CAP[] = { 0x18, 0x36 };
+>> +	unsigned char BT_CAP[8];
+>> +	enum si_sm_result smi_result;
+>> +	int rv;
+>> +
+>>   	/*
+>>   	 * It's impossible for the BT status and interrupt registers to be
+>>   	 * all 1's, (assuming a properly functioning, self-initialized BMC)
+>> @@ -661,6 +623,48 @@ static int bt_detect(struct si_sm_data *bt)
+>>   	if ((BT_STATUS == 0xFF) && (BT_INTMASK_R == 0xFF))
+>>   		return 1;
+>>   	reset_flags(bt);
+>> +
+>> +	/*
+>> +	 * Try getting the BT capabilities here.
+>> +	 */
+>> +	rv = bt_start_transaction(bt, GetBT_CAP, sizeof(GetBT_CAP));
+>> +	if (rv) {
+>> +		dev_warn(bt->io->dev,
+>> +			 "Can't start capabilities transaction: %d\n", rv);
+>> +		goto out_no_bt_cap;
+>> +	}
+>> +
+>> +	smi_result = SI_SM_CALL_WITHOUT_DELAY;
+>> +	for (;;) {
+>> +		if (smi_result == SI_SM_CALL_WITH_DELAY ||
+>> +		    smi_result == SI_SM_CALL_WITH_TICK_DELAY) {
+>> +			schedule_timeout_uninterruptible(1);
+>> +			smi_result = bt_event(bt, jiffies_to_usecs(1));
+>> +		} else if (smi_result == SI_SM_CALL_WITHOUT_DELAY) {
+>> +			smi_result = bt_event(bt, 0);
+>> +		} else
+>> +			break;
+>> +	}
+>> +
+>> +	rv = bt_get_result(bt, BT_CAP, sizeof(BT_CAP));
+>> +	bt_init_data(bt, bt->io);
+>> +	if (rv < 8) {
+>> +		dev_warn(bt->io->dev, "bt cap response too short: %d\n", rv);
+>> +		goto out_no_bt_cap;
+>> +	}
+>> +
+>> +	if (BT_CAP[2]) {
+>> +		dev_warn(bt->io->dev, "Error fetching bt cap: %x\n",
+>> BT_CAP[2]);
+>> +out_no_bt_cap:
+>> +		dev_warn(bt->io->dev, "using default values\n");
+>> +	} else {
+>> +		bt->BT_CAP_req2rsp = BT_CAP[6] * USEC_PER_SEC;
+>> +		bt->BT_CAP_retries = BT_CAP[7];
+>> +	}
+>> +
+>> +	dev_info(bt->io->dev, "req2rsp=%ld secs retries=%d\n",
+>> +		 bt->BT_CAP_req2rsp / USEC_PER_SEC, bt->BT_CAP_retries);
+>> +
+>>   	return 0;
+>>   }
+>>
+>> --
+>> 2.7.4
+
 
