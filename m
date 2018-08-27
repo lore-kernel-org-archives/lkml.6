@@ -3,50 +3,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9483C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:57:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF736C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:57:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77ABC208B9
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:57:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77ABC208B9
+	by mail.kernel.org (Postfix) with ESMTP id A019B208E2
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:57:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A019B208E2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727589AbeH0WpB (ORCPT
+        id S1727608AbeH0WpH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 18:45:01 -0400
+        Mon, 27 Aug 2018 18:45:07 -0400
 Received: from mga05.intel.com ([192.55.52.43]:56507 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727077AbeH0WpA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 18:45:00 -0400
+        id S1727058AbeH0WpB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 18:45:01 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga006.jf.intel.com ([10.7.209.51])
   by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2018 11:57:11 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,296,1531810800"; 
-   d="scan'208";a="69524602"
+   d="scan'208";a="69524633"
 Received: from nitikasi-mobl.ger.corp.intel.com (HELO localhost) ([10.249.36.186])
-  by orsmga006.jf.intel.com with ESMTP; 27 Aug 2018 11:56:55 -0700
+  by orsmga006.jf.intel.com with ESMTP; 27 Aug 2018 11:57:03 -0700
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     x86@kernel.org, platform-driver-x86@vger.kernel.org
 Cc:     dave.hansen@intel.com, sean.j.christopherson@intel.com,
         nhorman@redhat.com, npmccallum@redhat.com,
         linux-sgx@vger.kernel.org,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Serge Ayoun <serge.ayoun@intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
         "H. Peter Anvin" <hpa@zytor.com>,
+        Serge Ayoun <serge.ayoun@intel.com>,
         Suresh Siddha <suresh.b.siddha@intel.com>,
         linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND
         64-BIT))
-Subject: [PATCH v13 07/13] x86/sgx: Add data structures for tracking the EPC pages
-Date:   Mon, 27 Aug 2018 21:53:28 +0300
-Message-Id: <20180827185507.17087-8-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v13 08/13] x86/sgx: Add wrappers for ENCLS leaf functions
+Date:   Mon, 27 Aug 2018 21:53:29 +0300
+Message-Id: <20180827185507.17087-9-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
 References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
@@ -55,237 +55,287 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add data structures to track Enclave Page Cache (EPC) pages.  EPC is
-divided into multiple banks (1-N) of which addresses and sizes can be
-enumerated with CPUID by the OS.
-
-On NUMA systems a node can have at most bank. A bank can be at most part of
-two nodes. SGX supports both nodes with a single memory controller and also
-sub-cluster nodes with severals memory controllers on a single die.
+Add wrappers for Intel(R) SGX ENCLS opcode leaf functions except
+ENCLS(EINIT). ENCLS invokes privileged functions for managing (creation,
+initialization and swapping) and debugging enclaves.
 
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Co-developed-by: Serge Ayoun <serge.ayoun@intel.com>
 Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Serge Ayoun <serge.ayoun@intel.com>
 Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- arch/x86/include/asm/sgx.h      |  60 ++++++++++++++++++
- arch/x86/kernel/cpu/intel_sgx.c | 106 +++++++++++++++++++++++++++++++-
- 2 files changed, 164 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/sgx.h | 261 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 261 insertions(+)
 
 diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
-index 2130e639ab49..17b7b3aa66bf 100644
+index 17b7b3aa66bf..f8e419378f30 100644
 --- a/arch/x86/include/asm/sgx.h
 +++ b/arch/x86/include/asm/sgx.h
-@@ -4,9 +4,69 @@
- #ifndef _ASM_X86_SGX_H
- #define _ASM_X86_SGX_H
+@@ -69,4 +69,265 @@ static inline void *sgx_epc_addr(struct sgx_epc_page *page)
+ 	return (void *)(bank->va + (page->desc & PAGE_MASK) - bank->pa);
+ }
  
-+#include <linux/bitops.h>
-+#include <linux/err.h>
-+#include <linux/rwsem.h>
- #include <linux/types.h>
-+#include <asm/sgx_arch.h>
-+#include <asm/asm.h>
-+
-+#define SGX_MAX_EPC_BANKS 8
-+
-+struct sgx_epc_page {
-+	unsigned long desc;
-+	struct list_head list;
-+};
-+
-+struct sgx_epc_bank {
-+	unsigned long pa;
-+	void *va;
-+	unsigned long size;
-+	struct sgx_epc_page *pages_data;
-+	struct sgx_epc_page **pages;
-+	unsigned long free_cnt;
-+	spinlock_t lock;
-+};
- 
- extern bool sgx_enabled;
- extern bool sgx_lc_enabled;
-+extern struct sgx_epc_bank sgx_epc_banks[SGX_MAX_EPC_BANKS];
-+
-+/*
-+ * enum sgx_epc_page_desc - defines bits and masks for an EPC page's desc
-+ * @SGX_EPC_BANK_MASK:	      SGX allows a system to multiple EPC banks (at
-+ *			      different physical locations).  The index of a
-+ *			      page's bank in its desc so that we can do a quick
-+ *			      lookup of its virtual address (EPC is mapped via
-+ *			      ioremap_cache() because it's non-standard memory).
-+ *			      Current and near-future hardware defines at most
-+ *			      eight banks, hence three bits to hold the bank.
-+ *			      sgx_page_cache_init() asserts that the max bank
-+ *			      index doesn't exceed SGX_EPC_BANK_MASK.
-+ * @SGX_EPC_PAGE_RECLAIMABLE: When set, indicates a page is reclaimable.  Used
-+ *			      when freeing a page to know that we also need to
-+ *			      remove the page from the active page list.
++/**
++ * ENCLS_FAULT_FLAG - flag signifying an ENCLS return code is a trapnr
 + *
-+ * Defines the layout of the desc field in the &struct sgx_epc_page, which
-+ * contains EPC bank number, physical address of the page and the page status
-+ * flag.
++ * ENCLS has its own (positive value) error codes and also generates
++ * ENCLS specific #GP and #PF faults.  And the ENCLS values get munged
++ * with system error codes as everything percolates back up the stack.
++ * Unfortunately (for us), we need to precisely identify each unique
++ * error code, e.g. the action taken if EWB fails varies based on the
++ * type of fault and on the exact SGX error code, i.e. we can't simply
++ * convert all faults to -EFAULT.
++ *
++ * To make all three error types coexist, we set bit 30 to identify an
++ * ENCLS fault.  Bit 31 (technically bits N:31) is used to differentiate
++ * between positive (faults and SGX error codes) and negative (system
++ * error codes) values.
 + */
-+enum sgx_epc_page_desc {
-+	SGX_EPC_BANK_MASK			= GENMASK_ULL(3, 0),
-+	SGX_EPC_PAGE_RECLAIMABLE		= BIT(4),
-+	/* bits 12-63 are reserved for the physical page address of the page */
-+};
++#define ENCLS_FAULT_FLAG 0x40000000UL
++#define ENCLS_FAULT_FLAG_ASM "$0x40000000"
 +
-+static inline struct sgx_epc_bank *sgx_epc_bank(struct sgx_epc_page *page)
++/**
++ * IS_ENCLS_FAULT - check if a return code indicates an ENCLS fault
++ *
++ * Check for a fault by looking for a postive value with the fault
++ * flag set.  The postive value check is needed to filter out system
++ * error codes since negative values will have all higher order bits
++ * set, including ENCLS_FAULT_FLAG.
++ */
++#define IS_ENCLS_FAULT(r) ((int)(r) > 0 && ((r) & ENCLS_FAULT_FLAG))
++
++/**
++ * ENCLS_TRAPNR - retrieve the trapnr exactly as passed via _ASM_EXTABLE_FAULT
++ *
++ * Retrieve the encoded trapnr from the specified return code, keeping
++ * any error code bits that were included in trapnr when it was supplied
++ * to the _ASM_EXTABLE_FAULT handler.
++ */
++#define ENCLS_TRAPNR(r) ((r) & ~ENCLS_FAULT_FLAG)
++
++/**
++ * ENCLS_FAULT_VECTOR - retrieve the fault vector from a return code
++ *
++ * Retrieve the encoded fault vector, e.g. #GP or #PF, from the specified
++ * return code, dropping any potential error code bits in trapnr.
++ */
++#define ENCLS_FAULT_VECTOR(r) (ENCLS_TRAPNR(r) & 0x1f)
++
++/**
++ * encls_to_err - translate an ENCLS fault or SGX code into a system error code
++ * @ret:	positive value return code
++ *
++ * Returns:
++ *	-EFAULT for faults
++ *	-EINTR for unmasked events
++ *	-EINVAL for SGX_INVALID_* error codes
++ *	-EBUSY for non-fatal resource contention errors
++ *	-EIO for all other errors
++ *
++ * Translate a postive return code, e.g. from ENCLS, into a system error
++ * code.  Primarily used by functions that cannot return a non-negative
++ * error code, e.g. kernel callbacks.
++ */
++static inline int encls_to_err(int ret)
 +{
-+	return &sgx_epc_banks[page->desc & SGX_EPC_BANK_MASK];
++	if (IS_ENCLS_FAULT(ret))
++		return -EFAULT;
++
++	switch (ret) {
++	case SGX_UNMASKED_EVENT:
++		return -EINTR;
++	case SGX_INVALID_SIG_STRUCT:
++	case SGX_INVALID_ATTRIBUTE:
++	case SGX_INVALID_MEASUREMENT:
++	case SGX_INVALID_EINITTOKEN:
++	case SGX_INVALID_CPUSVN:
++	case SGX_INVALID_ISVSVN:
++	case SGX_INVALID_KEYNAME:
++		return -EINVAL;
++	case SGX_ENCLAVE_ACT:
++	case SGX_CHILD_PRESENT:
++	case SGX_ENTRYEPOCH_LOCKED:
++	case SGX_PREV_TRK_INCMPL:
++	case SGX_PAGE_NOT_MODIFIABLE:
++	case SGX_PAGE_NOT_DEBUGGABLE:
++		return -EBUSY;
++	default:
++		return -EIO;
++	};
 +}
 +
-+static inline void *sgx_epc_addr(struct sgx_epc_page *page)
-+{
-+	struct sgx_epc_bank *bank = sgx_epc_bank(page);
++/**
++ * __encls_ret_N - encode an ENCLS leaf that returns an error code in EAX
++ * @rax:	leaf number
++ * @inputs:	asm inputs for the leaf
++ *
++ * Returns:
++ *	0 on success
++ *	SGX error code on failure
++ *	trapnr with ENCLS_FAULT_FLAG set on fault
++ *
++ * Emit assembly for an ENCLS leaf that returns an error code, e.g. EREMOVE.
++ * And because SGX isn't complex enough as it is, leafs that return an error
++ * code also modify flags.
++ */
++#define __encls_ret_N(rax, inputs...)			\
++	({						\
++	int ret;					\
++	asm volatile(					\
++	"1: .byte 0x0f, 0x01, 0xcf;\n\t"		\
++	"2:\n"						\
++	".section .fixup,\"ax\"\n"			\
++	"3: orl "ENCLS_FAULT_FLAG_ASM",%%eax\n"		\
++	"   jmp 2b\n"					\
++	".previous\n"					\
++	_ASM_EXTABLE_FAULT(1b, 3b)			\
++	: "=a"(ret)					\
++	: "a"(rax), inputs				\
++	: "memory", "cc");				\
++	ret;						\
++	})
 +
-+	return (void *)(bank->va + (page->desc & PAGE_MASK) - bank->pa);
++#define __encls_ret_1(rax, rcx)				\
++	({						\
++	__encls_ret_N(rax, "c"(rcx));			\
++	})
++
++#define __encls_ret_2(rax, rbx, rcx)			\
++	({						\
++	__encls_ret_N(rax, "b"(rbx), "c"(rcx));		\
++	})
++
++#define __encls_ret_3(rax, rbx, rcx, rdx)			\
++	({							\
++	__encls_ret_N(rax, "b"(rbx), "c"(rcx), "d"(rdx));	\
++	})
++
++/**
++ * __encls_N - encode an ENCLS leaf that doesn't return an error code
++ * @rax:	leaf number
++ * @rbx_out:	optional output variable
++ * @inputs:	asm inputs for the leaf
++ *
++ * Returns:
++ *	0 on success
++ *	trapnr with ENCLS_FAULT_FLAG set on fault
++ *
++ * Emit assembly for an ENCLS leaf that does not return an error code,
++ * e.g. ECREATE.  Leaves without error codes either succeed or fault.
++ * @rbx_out is an optional parameter for use by EDGBRD, which returns
++ * the the requested value in RBX.
++ */
++#define __encls_N(rax, rbx_out, inputs...)		\
++	({						\
++	int ret;					\
++	asm volatile(					\
++	"1: .byte 0x0f, 0x01, 0xcf;\n\t"		\
++	"   xor %%eax,%%eax;\n"				\
++	"2:\n"						\
++	".section .fixup,\"ax\"\n"			\
++	"3: orl "ENCLS_FAULT_FLAG_ASM",%%eax\n"		\
++	"   jmp 2b\n"					\
++	".previous\n"					\
++	_ASM_EXTABLE_FAULT(1b, 3b)			\
++	: "=a"(ret), "=b"(rbx_out)			\
++	: "a"(rax), inputs				\
++	: "memory");					\
++	ret;						\
++	})
++
++#define __encls_2(rax, rbx, rcx)				\
++	({							\
++	unsigned long ign_rbx_out;				\
++	__encls_N(rax, ign_rbx_out, "b"(rbx), "c"(rcx));	\
++	})
++
++#define __encls_1_1(rax, data, rcx)			\
++	({						\
++	unsigned long rbx_out;				\
++	int ret = __encls_N(rax, rbx_out, "c"(rcx));	\
++	if (!ret)					\
++		data = rbx_out;				\
++	ret;						\
++	})
++
++static inline int __ecreate(struct sgx_pageinfo *pginfo, void *secs)
++{
++	return __encls_2(ECREATE, pginfo, secs);
 +}
- 
++
++static inline int __eextend(void *secs, void *epc)
++{
++	return __encls_2(EEXTEND, secs, epc);
++}
++
++static inline int __eadd(struct sgx_pageinfo *pginfo, void *epc)
++{
++	return __encls_2(EADD, pginfo, epc);
++}
++
++static inline int __einit(void *sigstruct, struct sgx_einittoken *einittoken,
++			  void *secs)
++{
++	return __encls_ret_3(EINIT, sigstruct, secs, einittoken);
++}
++
++static inline int __eremove(void *epc)
++{
++	return __encls_ret_1(EREMOVE, epc);
++}
++
++static inline int __edbgwr(void *addr, unsigned long *data)
++{
++	return __encls_2(EDGBWR, *data, addr);
++}
++
++static inline int __edbgrd(void *addr, unsigned long *data)
++{
++	return __encls_1_1(EDGBRD, *data, addr);
++}
++
++static inline int __etrack(void *epc)
++{
++	return __encls_ret_1(ETRACK, epc);
++}
++
++static inline int __eldu(struct sgx_pageinfo *pginfo, void *epc, void *va)
++{
++	return __encls_ret_3(ELDU, pginfo, epc, va);
++}
++
++static inline int __eblock(void *epc)
++{
++	return __encls_ret_1(EBLOCK, epc);
++}
++
++static inline int __epa(void *epc)
++{
++	unsigned long rbx = SGX_PAGE_TYPE_VA;
++
++	return __encls_2(EPA, rbx, epc);
++}
++
++static inline int __ewb(struct sgx_pageinfo *pginfo, void *epc, void *va)
++{
++	return __encls_ret_3(EWB, pginfo, epc, va);
++}
++
++static inline int __eaug(struct sgx_pageinfo *pginfo, void *epc)
++{
++	return __encls_2(EAUG, pginfo, epc);
++}
++
++static inline int __emodpr(struct sgx_secinfo *secinfo, void *epc)
++{
++	return __encls_ret_2(EMODPR, secinfo, epc);
++}
++
++static inline int __emodt(struct sgx_secinfo *secinfo, void *epc)
++{
++	return __encls_ret_2(EMODT, secinfo, epc);
++}
++
  #endif /* _ASM_X86_SGX_H */
-diff --git a/arch/x86/kernel/cpu/intel_sgx.c b/arch/x86/kernel/cpu/intel_sgx.c
-index 17b46bec9c54..53ac172e8006 100644
---- a/arch/x86/kernel/cpu/intel_sgx.c
-+++ b/arch/x86/kernel/cpu/intel_sgx.c
-@@ -1,23 +1,121 @@
- // SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
- // Copyright(c) 2016-17 Intel Corporation.
- 
--#include <asm/sgx.h>
--#include <asm/sgx_pr.h>
- #include <linux/freezer.h>
- #include <linux/highmem.h>
- #include <linux/kthread.h>
-+#include <linux/pagemap.h>
- #include <linux/ratelimit.h>
- #include <linux/sched/signal.h>
-+#include <linux/shmem_fs.h>
- #include <linux/slab.h>
-+#include <asm/sgx.h>
-+#include <asm/sgx_pr.h>
- 
- bool sgx_enabled __ro_after_init;
- EXPORT_SYMBOL_GPL(sgx_enabled);
- bool sgx_lc_enabled __ro_after_init;
- EXPORT_SYMBOL_GPL(sgx_lc_enabled);
-+struct sgx_epc_bank sgx_epc_banks[SGX_MAX_EPC_BANKS];
-+EXPORT_SYMBOL_GPL(sgx_epc_banks);
-+
-+static int sgx_nr_epc_banks;
-+
-+static __init int sgx_init_epc_bank(u64 addr, u64 size, unsigned long index,
-+				    struct sgx_epc_bank *bank)
-+{
-+	unsigned long nr_pages = size >> PAGE_SHIFT;
-+	struct sgx_epc_page *pages_data;
-+	unsigned long i;
-+	void *va;
-+
-+	va = ioremap_cache(addr, size);
-+	if (!va)
-+		return -ENOMEM;
-+
-+	pages_data = kcalloc(nr_pages, sizeof(struct sgx_epc_page), GFP_KERNEL);
-+	if (!pages_data)
-+		goto out_iomap;
-+
-+	bank->pages = kcalloc(nr_pages, sizeof(struct sgx_epc_page *),
-+			      GFP_KERNEL);
-+	if (!bank->pages)
-+		goto out_pdata;
-+
-+	for (i = 0; i < nr_pages; i++) {
-+		bank->pages[i] = &pages_data[i];
-+		bank->pages[i]->desc = (addr + (i << PAGE_SHIFT)) | index;
-+	}
-+
-+	bank->pa = addr;
-+	bank->size = size;
-+	bank->va = va;
-+	bank->free_cnt = nr_pages;
-+	bank->pages_data = pages_data;
-+	spin_lock_init(&bank->lock);
-+	return 0;
-+out_pdata:
-+	kfree(pages_data);
-+out_iomap:
-+	iounmap(va);
-+	return -ENOMEM;
-+}
-+
-+static __init void sgx_page_cache_teardown(void)
-+{
-+	struct sgx_epc_bank *bank;
-+	int i;
-+
-+	for (i = 0; i < sgx_nr_epc_banks; i++) {
-+		bank = &sgx_epc_banks[i];
-+		iounmap((void *)bank->va);
-+		kfree(bank->pages);
-+		kfree(bank->pages_data);
-+	}
-+}
-+
-+static inline u64 sgx_combine_bank_regs(u64 low, u64 high)
-+{
-+	return (low & 0xFFFFF000) + ((high & 0xFFFFF) << 32);
-+}
-+
-+static __init int sgx_page_cache_init(void)
-+{
-+	u32 eax, ebx, ecx, edx;
-+	u64 pa, size;
-+	int ret;
-+	int i;
-+
-+	for (i = 0; i < SGX_MAX_EPC_BANKS; i++) {
-+		cpuid_count(SGX_CPUID, 2 + i, &eax, &ebx, &ecx, &edx);
-+		if (!(eax & 0xF))
-+			break;
-+
-+		pa = sgx_combine_bank_regs(eax, ebx);
-+		size = sgx_combine_bank_regs(ecx, edx);
-+		pr_info("EPC bank 0x%llx-0x%llx\n", pa, pa + size - 1);
-+
-+		ret = sgx_init_epc_bank(pa, size, i, &sgx_epc_banks[i]);
-+		if (ret) {
-+			sgx_page_cache_teardown();
-+			return ret;
-+		}
-+
-+		sgx_nr_epc_banks++;
-+	}
-+
-+	if (!sgx_nr_epc_banks) {
-+		pr_err("There are zero EPC banks.\n");
-+		return -ENODEV;
-+	}
-+
-+	return 0;
-+}
- 
- static __init int sgx_init(void)
- {
- 	unsigned long fc;
-+	int ret;
- 
- 	if (!boot_cpu_has(X86_FEATURE_SGX))
- 		return false;
-@@ -39,6 +137,10 @@ static __init int sgx_init(void)
- 	if (!(fc & FEATURE_CONTROL_SGX_LE_WR))
- 		pr_info("IA32_SGXLEPUBKEYHASHn MSRs are not writable\n");
- 
-+	ret = sgx_page_cache_init();
-+	if (ret)
-+		return ret;
-+
- 	sgx_enabled = true;
- 	sgx_lc_enabled = !!(fc & FEATURE_CONTROL_SGX_LE_WR);
- 	return 0;
 -- 
 2.17.1
 
