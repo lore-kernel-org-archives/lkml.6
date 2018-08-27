@@ -2,237 +2,257 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 641C9C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 10:56:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D282C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 10:57:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00CFA208B9
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 10:56:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7B2D208D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 10:57:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="V7kHo6eF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00CFA208B9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TyO1jKN4";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VTWg7o8c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7B2D208D8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727023AbeH0Omb (ORCPT
+        id S1727083AbeH0OnM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 10:42:31 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33283 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726911AbeH0Omb (ORCPT
+        Mon, 27 Aug 2018 10:43:12 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:38520 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726785AbeH0OnM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 10:42:31 -0400
-Received: by mail-wr1-f66.google.com with SMTP id v90-v6so13211750wrc.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 03:56:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=pYHMVOf02c0+7Xh+HuAY6OWwqS9JJF3wLD8JxraWx/A=;
-        b=V7kHo6eFSWsZWnb7N7TnO26weZynIjnhHQc+k/uSTudm3R4H2dy0jKCdFIcLaxXQBA
-         TxLPRloIZsAtX0qdawUnB3VSN9xBZm6C/FyzPIKxJJvJj8EVqzP72FiQk3LJ1HcVsXhS
-         9U9vkCfqYUmSsu38p1nbRzH367pjs9vlMK+Fc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=pYHMVOf02c0+7Xh+HuAY6OWwqS9JJF3wLD8JxraWx/A=;
-        b=cs03hP6pIkglvqFkZazII540vOpGKpVwWXNbg1XshemR72zQ9+zBsJcEp8kU7nyhQQ
-         B9keSJXZXsEM5HRb8HXmKkkWYjNjF5ffzshpIkSoClm0cUuNdfVaXfP9p81hbMtDI09Z
-         6zUBP2cmVtJH0xCYyAq0qRJ6FD2QSNeUQwjGt+ztPvOx2pPOK3wR0mC61IvlYwysBUkG
-         jw1zzF8ggCWlUqtXB2aZPUNhS7UTbO5ZZlwuzJL0tP46pp8EW7/nG5Z6ueJVOAeOgDy2
-         e/7lnwlzLH2uCrJMSKTe96KDzJ1/8H71GyYh9tDH87I7UbWfTqa6kwa9NDoH+FQTfAVl
-         CD1g==
-X-Gm-Message-State: APzg51AXLx9krs8f7OVzH9QpLPQzAcKdDmAGWZq/hPliVaESs0YZ7Vfh
-        pzGS2uI0KH7mSMd+viUGUa6aPA==
-X-Google-Smtp-Source: ANB0VdZEfyCrpu5ezU73E9/9rg/bi5K3Ry2k2x/fkVAoZowGf3zC37HcbGlD9nekRutjU49EsDqG6g==
-X-Received: by 2002:a5d:4605:: with SMTP id t5-v6mr7935964wrq.200.1535367379871;
-        Mon, 27 Aug 2018 03:56:19 -0700 (PDT)
-Received: from [192.168.27.209] ([37.157.136.206])
-        by smtp.googlemail.com with ESMTPSA id r30-v6sm28301698wrc.90.2018.08.27.03.56.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 Aug 2018 03:56:19 -0700 (PDT)
-Subject: Re: [PATCH v6 1/4] venus: firmware: add routine to reset ARM9
-To:     Alexandre Courbot <acourbot@chromium.org>
-Cc:     vgarodia@codeaurora.org, Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>, robh@kernel.org,
-        mark.rutland@arm.com, Andy Gross <andy.gross@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, bjorn.andersson@linaro.org,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <1535034528-11590-1-git-send-email-vgarodia@codeaurora.org>
- <1535034528-11590-2-git-send-email-vgarodia@codeaurora.org>
- <CAPBb6MUZawT84Wcrhi+MEyn+zSCWOpn_iOZMMudZz+_Urixsrw@mail.gmail.com>
- <51cc9d6b-0483-76a6-d413-3f5cc63f3f56@linaro.org>
- <CAPBb6MWMQeXAabnis0iJxE91MCSscacbim3T_K6VF6OODw5TuQ@mail.gmail.com>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <85ffba9c-8b29-4c7a-7aec-999af94aeda0@linaro.org>
-Date:   Mon, 27 Aug 2018 13:56:15 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <CAPBb6MWMQeXAabnis0iJxE91MCSscacbim3T_K6VF6OODw5TuQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 27 Aug 2018 10:43:12 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id BD28660241; Mon, 27 Aug 2018 10:57:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535367421;
+        bh=BVUinp9Ja1UsNdFyIif7fRz3H4TlJ/dGSxN4wEtyHjQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=TyO1jKN4Zk5PfzPz6IXnUWgUkIZqbqa7eANUQH60uj7WNH7sS4HFkMjl3yLTBhK2v
+         8f2f/JwnB5H2j4tU5mAc0OrWGoSgWvpeTD7VbOL6XeHm6caYXMiZJ/HhuElaznUVrQ
+         mJSSkfjfvjt+DIxOvn0FKzonf0A/PsvsEV+7Wdsg=
+Received: from blr-ubuntu-41.ap.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6AC0360710;
+        Mon, 27 Aug 2018 10:56:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535367418;
+        bh=BVUinp9Ja1UsNdFyIif7fRz3H4TlJ/dGSxN4wEtyHjQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=VTWg7o8cdAhLrTHOKS5jUk2otnXE/e9A1ogCZhn0tuKqelmvoujzIQGZioh4Qv0pL
+         EC0Xr9gJPeRQVq5bS7mOIYg8W5wsaMe1Jk7etOipyUrgdKSgPbL9XBk+PJW2sw7eK7
+         4fi3k5Rp7wneSteQxhPV47B18gWzm/TSFqL2cyi4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6AC0360710
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+To:     joro@8bytes.org, robh+dt@kernel.org, robin.murphy@arm.com,
+        will.deacon@arm.com, iommu@lists.linux-foundation.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        freedreno@lists.freedesktop.org
+Cc:     alex.williamson@redhat.com, mark.rutland@arm.com,
+        rjw@rjwysocki.net, robdclark@gmail.com, andy.gross@linaro.org,
+        linux-pm@vger.kernel.org, sboyd@kernel.org, tfiga@chromium.org,
+        jcrouse@codeaurora.org, sricharan@codeaurora.org,
+        m.szyprowski@samsung.com, architt@codeaurora.org,
+        linux-arm-msm@vger.kernel.org,
+        Vivek Gautam <vivek.gautam@codeaurora.org>
+Subject: [Patch v15 0/5] iommu/arm-smmu: Add runtime pm/sleep support
+Date:   Mon, 27 Aug 2018 16:25:46 +0530
+Message-Id: <20180827105551.16346-1-vivek.gautam@codeaurora.org>
+X-Mailer: git-send-email 2.16.1.72.g5be1f00a9a70
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This series provides the support for turning on the arm-smmu's
+clocks/power domains using runtime pm. This is done using
+device links between smmu and client devices. The device link
+framework keeps the two devices in correct order for power-cycling
+across runtime PM or across system-wide PM.
 
+With addition of a new device link flag DL_FLAG_AUTOREMOVE_SUPPLIER [8],
+the device links created between arm-smmu and its clients will be
+automatically purged when arm-smmu driver unbinds from its device.
 
-On 08/27/2018 06:04 AM, Alexandre Courbot wrote:
-> On Fri, Aug 24, 2018 at 5:57 PM Stanimir Varbanov
-> <stanimir.varbanov@linaro.org> wrote:
->>
->> Hi Alex,
->>
->> On 08/24/2018 10:38 AM, Alexandre Courbot wrote:
->>> On Thu, Aug 23, 2018 at 11:29 PM Vikash Garodia <vgarodia@codeaurora.org> wrote:
->>>>
->>>> Add routine to reset the ARM9 and brings it out of reset. Also
->>>> abstract the Venus CPU state handling with a new function. This
->>>> is in preparation to add PIL functionality in venus driver.
->>>>
->>>> Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
->>>> ---
->>>>  drivers/media/platform/qcom/venus/core.h         |  2 ++
->>>>  drivers/media/platform/qcom/venus/firmware.c     | 33 ++++++++++++++++++++++++
->>>>  drivers/media/platform/qcom/venus/firmware.h     | 11 ++++++++
->>>>  drivers/media/platform/qcom/venus/hfi_venus.c    | 13 +++-------
->>>>  drivers/media/platform/qcom/venus/hfi_venus_io.h |  7 +++++
->>>>  5 files changed, 57 insertions(+), 9 deletions(-)
->>>>
->>>> diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
->>>> index 2f02365..dfd5c10 100644
->>>> --- a/drivers/media/platform/qcom/venus/core.h
->>>> +++ b/drivers/media/platform/qcom/venus/core.h
->>>> @@ -98,6 +98,7 @@ struct venus_caps {
->>>>   * @dev:               convenience struct device pointer
->>>>   * @dev_dec:   convenience struct device pointer for decoder device
->>>>   * @dev_enc:   convenience struct device pointer for encoder device
->>>> + * @no_tz:     a flag that suggests presence of trustzone
->>>>   * @lock:      a lock for this strucure
->>>>   * @instances: a list_head of all instances
->>>>   * @insts_count:       num of instances
->>>> @@ -129,6 +130,7 @@ struct venus_core {
->>>>         struct device *dev;
->>>>         struct device *dev_dec;
->>>>         struct device *dev_enc;
->>>> +       bool no_tz;
->>>>         struct mutex lock;
->>>>         struct list_head instances;
->>>>         atomic_t insts_count;
->>>> diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media/platform/qcom/venus/firmware.c
->>>> index c4a5778..a9d042e 100644
->>>> --- a/drivers/media/platform/qcom/venus/firmware.c
->>>> +++ b/drivers/media/platform/qcom/venus/firmware.c
->>>> @@ -22,10 +22,43 @@
->>>>  #include <linux/sizes.h>
->>>>  #include <linux/soc/qcom/mdt_loader.h>
->>>>
->>>> +#include "core.h"
->>>>  #include "firmware.h"
->>>> +#include "hfi_venus_io.h"
->>>>
->>>>  #define VENUS_PAS_ID                   9
->>>>  #define VENUS_FW_MEM_SIZE              (6 * SZ_1M)
->>>
->>> This is making a strong assumption about the size of the FW memory
->>> region, which in practice is not always true (I had to reduce it to
->>> 5MB). How about having this as a member of venus_core, which is
->>
->> Why you reduced to 5MB? Is there an issue with 6MB or you don't want to
->> waste reserved memory?
-> 
-> The DT layout of our board only has 5MB reserved for Venus.
-> 
->>> initialized in venus_load_fw() from the actual size of the memory
->>> region? You could do this as an extra patch that comes before this
->>> one.
->>>
->>
->> The size is 6MB by historical reasons and they are no more valid, so I
->> think we could safely decrease to 5MB. I could prepare a patch for that.
-> 
-> Whether we settle with 6MB or 5MB, that size remains arbitrary and not
-> based on the actual firmware size. And __qcom_mdt_load() does check
+As not all implementations support clock/power gating, we are checking
+for a valid 'smmu->dev's pm_domain' to conditionally enable the runtime
+power management for such smmu implementations that can support it.
+Otherwise, the clocks are turned to be always on in .probe until .remove.
+With conditional runtime pm now, we avoid touching dev->power.lock
+in fastpaths for smmu implementations that don't need to do anything
+useful with pm_runtime.
+This lets us to use the much-argued pm_runtime_get_sync/put_sync()
+calls in map/unmap callbacks so that the clients do not have to
+worry about handling any of the arm-smmu's power.
 
-If we go with 5MB it will not be arbitrary, cause all firmware we have
-support to are expecting that size of memory.
+This series also adds support for Qcom's arm-smmu-v2 variant that
+has different clocks and power requirements.
 
-> that the firmware fits the memory area. So I don't understand what
-> extra safety is added by ensuring the memory region is larger than a
-> given number of megabytes?
-> 
+Previous version of this patch series is @ [2].
 
-OK, is that fine for you? Drop size and check does memory region size is
-big enough to contain the firmware.
+Build tested the series based on 4.19-rc1.
 
-diff --git a/drivers/media/platform/qcom/venus/firmware.c
-b/driver/media/platform/qcom/venus/firmware.c
-index c4a577848dd7..9bf0d21e02d4 100644
---- a/drivers/media/platform/qcom/venus/firmware.c
-+++ b/drivers/media/platform/qcom/venus/firmware.c
-@@ -25,7 +25,6 @@
- #include "firmware.h"
+[v15]
+   * Added a list of valid values of '<soc>' in "qcom,<soc>-smmu-v2"
+     compatible string as pointed out by Robin, and Rob in the thread [9]:
+   * Added Srini's Tested-by.
+   * Separated out the dt-bindings change from driver change into a new
+     patch as suggested by new checkpatch warning.
 
- #define VENUS_PAS_ID                   9
--#define VENUS_FW_MEM_SIZE              (6 * SZ_1M)
+     Rob, I took the liberty of removing your Reviewed-by (for your
+     comment on '<soc>') for the new dt-bindings patch 4/5.
+     Please feel free to review it again. Thanks!
 
- int venus_boot(struct device *dev, const char *fwname)
- {
-@@ -54,25 +53,28 @@ int venus_boot(struct device *dev, const char *fwname)
-        mem_phys = r.start;
-        mem_size = resource_size(&r);
+[v14]
+   * Moved arm_smmu_device_reset() from arm_smmu_pm_resume() to
+     arm_smmu_runtime_resume() so that the pm_resume callback calls
+     only runtime_resume to resume the device.
+     This should take care of restoring the state of smmu in systems
+     in which smmu lose register state on power-domain collapse.
 
--       if (mem_size < VENUS_FW_MEM_SIZE)
--               return -EINVAL;
--
--       mem_va = memremap(r.start, mem_size, MEMREMAP_WC);
--       if (!mem_va) {
--               dev_err(dev, "unable to map memory region: %pa+%zx\n",
--                       &r.start, mem_size);
--               return -ENOMEM;
--       }
--
-        ret = request_firmware(&mdt, fwname, dev);
-        if (ret < 0)
--               goto err_unmap;
-+               return ret;
+[v13]
+   Addressing Rafael's comments:
+   * Added .suspend pm callback to disable the clocks in system wide suspend.
+   * Added corresponding clock enable in .resume pm callback.
+   * Explicitly enabling/disabling the clocks now when runtime PM is disabled.
+   * device_link_add() doesn't depend on pm_runtime_enabled() as we can
+     use device links across system suspend/resume too.
 
-        fw_size = qcom_mdt_get_size(mdt);
-        if (fw_size < 0) {
-                ret = fw_size;
-                release_firmware(mdt);
--               goto err_unmap;
-+               return ret;
-+       }
-+
-+       if (mem_size < fw_size) {
-+               release_firmware(mdt);
-+               return -EINVAL;
-+       }
-+
-+       mem_va = memremap(r.start, mem_size, MEMREMAP_WC);
-+       if (!mem_va) {
-+               release_firmware(mdt);
-+               dev_err(dev, "unable to map memory region: %pa+%zx\n",
-+                       &r.start, mem_size);
-+               return -ENOMEM;
-        }
+   Addressing Robin's comments:
+   * Making device_link_add failures as non-fatal.
 
-        ret = qcom_mdt_load(dev, mdt, fwname, VENUS_PAS_ID, mem_va,
-mem_phys,
+   * Removed IOMMU_OF_DECLARE() declaration as we don't need this after Rob's
+     patch that removed all of these declarations.
 
+[v12]
+   * Use new device link's flag introduced in [8] -
+     DL_FLAG_AUTOREMOVE_SUPPLIER. With this devices links are automatically
+     purged when arm-smmu driver unbinds.
+   * Using pm_runtime_force_suspend() instead of pm_runtime_disable() to
+     avoid following warning from arm_smmu_device_remove()
+
+     [295711.537507] ------------[ cut here ]------------
+     [295711.544226] Unpreparing enabled smmu_mdp_ahb_clk
+     [295711.549099] WARNING: CPU: 0 PID: 1 at ../drivers/clk/clk.c:697
+                     clk_core_unprepare+0xd8/0xe0
+     ...
+     [295711.674073] Call trace:
+     [295711.679454]  clk_core_unprepare+0xd8/0xe0
+     [295711.682059]  clk_unprepare+0x28/0x40
+     [295711.685964]  clk_bulk_unprepare+0x28/0x40
+     [295711.689701]  arm_smmu_device_remove+0x88/0xd8
+     [295711.693692]  arm_smmu_device_shutdown+0xc/0x18
+     [295711.698120]  platform_drv_shutdown+0x20/0x30
+
+[v11]
+   * Some more cleanups for device link. We don't need an explicit
+     delete for device link from the driver, but just set the flag
+     DL_FLAG_AUTOREMOVE.
+     device_link_add() API description says -
+     "If the DL_FLAG_AUTOREMOVE is set, the link will be removed
+     automatically when the consumer device driver unbinds."
+   * Addressed the comments for 'smmu' in arm_smmu_map/unmap().
+   * Dropped the patch [7] that introduced device_link_del_dev() API. 
+
+[v10]
+   * Introduce device_link_del_dev() API to delete the link between
+     given consumer and supplier devices. The users of device link
+     do not need to store link pointer to delete the link later.
+     They can straightaway use this API by passing consumer and
+     supplier devices.
+   * Made corresponding changes to arm-smmu driver patch handling the
+     device links.
+   * Dropped the patch [6] that was adding device_link_find() API to
+     device core layer. device_link_del_dev() serves the purpose to
+     directly delete the link between two given devices.
+
+[v9]
+   * Removed 'rpm_supported' flag, instead checking on pm_domain
+     to enable runtime pm.
+   * Creating device link only when the runtime pm is enabled, as we
+     don't need a device link besides managing the power dependency
+     between supplier and consumer devices.
+   * Introducing a patch to add device_link_find() API that finds
+     and existing link between supplier and consumer devices.
+     Also, made necessary change to device_link_add() to use this API.
+   * arm_smmu_remove_device() now uses this device_link_find() to find
+     the device link between smmu device and the master device, and then
+     delete this link.
+   * Dropped the destroy_domain_context() fix [5] as it was rather,
+     introducing catastrophically bad problem by destroying
+     'good dev's domain context.
+   * Added 'Reviwed-by' tag for Tomasz's review.
+
+[v8]
+   * Major change -
+     - Added a flag 'rpm_supported' which each platform that supports
+       runtime pm, can enable, and we enable runtime_pm over arm-smmu
+       only when this flag is set.
+     - Adding the conditional pm_runtime_get/put() calls to .map, .unmap
+       and .attach_dev ops.
+     - Dropped the patch [3] that exported pm_runtim_get/put_suupliers(),
+       and also dropped the user driver patch [4] for these APIs.
+
+   * Clock code further cleanup
+     - doing only clk_bulk_enable() and clk_bulk_disable() in runtime pm
+       callbacks. We shouldn't be taking a slow path (clk_prepare/unprepare())
+       from these runtime pm callbacks. Thereby, moved clk_bulk_prepare() to
+       arm_smmu_device_probe(), and clk_bulk_unprepare() to
+       arm_smmu_device_remove().
+     - clk data filling to a common method arm_smmu_fill_clk_data() that
+       fills the clock ids and number of clocks.
+
+   * Addressed other nits and comments
+     - device_link_add() error path fixed.
+     - Fix for checking negative error value from pm_runtime_get_sync().
+     - Documentation redo.
+
+   * Added another patch fixing the error path in arm_smmu_attach_dev()
+     to destroy allocated domain context.
+
+[v7]
+   * Addressed review comments given by Robin Murphy -
+     - Added device_link_del() in .remove_device path.
+     - Error path cleanup in arm_smmu_add_device().
+     - Added pm_runtime_get/put_sync() in .remove path, and replaced
+        pm_runtime_force_suspend() with pm_runtime_disable().
+     - clk_names cleanup in arm_smmu_init_clks()
+   * Added 'Reviewed-by' given by Rob H.
+
+** Change logs for previous versions is available in previous series [4].
+
+[1] https://patchwork.kernel.org/patch/10204925/
+[2] https://lore.kernel.org/patchwork/cover/968013/
+[3] https://patchwork.kernel.org/patch/10204945/
+[4] https://patchwork.kernel.org/patch/10204925/
+[5] https://patchwork.kernel.org/patch/10254105/
+[6] https://patchwork.kernel.org/patch/10277975/
+[7] https://patchwork.kernel.org/patch/10281613/
+[8] https://patchwork.kernel.org/patch/10491481/
+[9] https://lore.kernel.org/patchwork/patch/974116/
+
+Sricharan R (3):
+  iommu/arm-smmu: Add pm_runtime/sleep ops
+  iommu/arm-smmu: Invoke pm_runtime during probe, add/remove device
+  iommu/arm-smmu: Add the device_link between masters and smmu
+
+Vivek Gautam (2):
+  dt-bindings: arm-smmu: Add bindings for qcom,smmu-v2
+  iommu/arm-smmu: Add support for qcom,smmu-v2 variant
+
+ .../devicetree/bindings/iommu/arm,smmu.txt         |  47 +++++
+ drivers/iommu/arm-smmu.c                           | 194 +++++++++++++++++++--
+ 2 files changed, 230 insertions(+), 11 deletions(-)
 
 -- 
-regards,
-Stan
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
+
