@@ -2,174 +2,81 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35AEAC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 01:08:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E792AC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 01:09:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF5102174E
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 01:08:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF5102174E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=andestech.com
+	by mail.kernel.org (Postfix) with ESMTP id 979E12174E
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 01:09:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 979E12174E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727203AbeH0Ew4 (ORCPT
+        id S1727081AbeH0EyE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 00:52:56 -0400
-Received: from exmail.andestech.com ([59.124.169.137]:60599 "EHLO
-        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726825AbeH0Ew4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 00:52:56 -0400
-Received: from mail.andestech.com (atcpcs16.andestech.com [10.0.1.222])
-        by ATCSQR.andestech.com with ESMTP id w7R1641T025415;
-        Mon, 27 Aug 2018 09:06:04 +0800 (GMT-8)
-        (envelope-from alankao@andestech.com)
-Received: from atcsqa06.andestech.com (10.0.1.85) by ATCPCS16.andestech.com
- (10.0.1.222) with Microsoft SMTP Server id 14.3.123.3; Mon, 27 Aug 2018
- 09:08:24 +0800
-From:   Alan Kao <alankao@andestech.com>
-To:     <linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
-        "Palmer Dabbelt" <palmer@sifive.com>,
-        Albert Ou <albert@sifive.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Andrew Waterman <andrew@sifive.com>,
-        Arnd Bergmann <arnd@arndb.de>, Darius Rad <darius@bluespec.com>
-CC:     <greentime@andestech.com>, <vincentc@andestech.com>,
-        <zong@andestech.com>, <nickhu@andestech.com>,
-        Alan Kao <alankao@andestech.com>
-Subject: [PATCH 5/5] Auto-detect whether a FPU exists
-Date:   Mon, 27 Aug 2018 09:07:55 +0800
-Message-ID: <1535332075-5727-6-git-send-email-alankao@andestech.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1535332075-5727-1-git-send-email-alankao@andestech.com>
-References: <1535332075-5727-1-git-send-email-alankao@andestech.com>
+        Mon, 27 Aug 2018 00:54:04 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:11606 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726825AbeH0EyE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 00:54:04 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 5239296697043;
+        Mon, 27 Aug 2018 09:09:41 +0800 (CST)
+Received: from [127.0.0.1] (10.63.173.108) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.399.0; Mon, 27 Aug 2018
+ 09:09:34 +0800
+Subject: Re: [PATCH NET 3/3] net: hns: add configuration constraints for 1000M
+ half
+To:     Andrew Lunn <andrew@lunn.ch>
+CC:     <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
+        <yisen.zhuang@huawei.com>, <salil.mehta@huawei.com>
+References: <1535082143-122281-1-git-send-email-lipeng321@huawei.com>
+ <1535082143-122281-4-git-send-email-lipeng321@huawei.com>
+ <20180824034119.GA29111@lunn.ch>
+ <194ac663-94d8-55e2-0231-a6be53e35f04@huawei.com>
+ <20180824132857.GA1999@lunn.ch>
+ <7c40c758-2ef2-665d-f429-0cc4e63a7a38@huawei.com>
+ <20180825180721.GB23992@lunn.ch>
+From:   "lipeng (Y)" <lipeng321@huawei.com>
+Message-ID: <e4b9af46-3f16-9cff-41ad-a520f648f13f@huawei.com>
+Date:   Mon, 27 Aug 2018 09:08:45 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.0.1.85]
-X-DNSRBL: 
-X-MAIL: ATCSQR.andestech.com w7R1641T025415
+In-Reply-To: <20180825180721.GB23992@lunn.ch>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Originating-IP: [10.63.173.108]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We expect that a kernel with CONFIG_FPU=y can still support no-FPU
-machines. To do so, the kernel should first examine the existence of a
-FPU, then do nothing if a FPU does exist; otherwise, it should
-disable/bypass all FPU-related functions.
 
-In this patch, a new global variable, has_fpu, is created and determined
-when parsing the hardware capability from device tree during booting.
-This variable is used in those FPU-related functions.
 
-Signed-off-by: Alan Kao <alankao@andestech.com>
-Cc: Greentime Hu <greentime@andestech.com>
-Cc: Vincent Chen <vincentc@andestech.com>
-Cc: Zong Li <zong@andestech.com>
-Cc: Nick Hu <nickhu@andestech.com>
----
- arch/riscv/include/asm/switch_to.h | 8 ++++----
- arch/riscv/kernel/cpufeature.c     | 8 ++++++++
- arch/riscv/kernel/process.c        | 4 +++-
- arch/riscv/kernel/signal.c         | 6 ++++--
- 4 files changed, 19 insertions(+), 7 deletions(-)
+On 2018/8/26 2:07, Andrew Lunn wrote:
+>> This patch is a  theoretical protect, and the problem does not really
+>> happen.
+>>
+>> I think you really get the point, do you think we need this patch?
+> I think it is not needed.
+>
+> And if it was needed, it would indicate there is a bug somewhere else.
+Hi, Andrew
 
-diff --git a/arch/riscv/include/asm/switch_to.h b/arch/riscv/include/asm/switch_to.h
-index 093050b03543..733559083f24 100644
---- a/arch/riscv/include/asm/switch_to.h
-+++ b/arch/riscv/include/asm/switch_to.h
-@@ -56,13 +56,12 @@ static inline void __switch_to_aux(struct task_struct *prev,
- 	fstate_restore(next, task_pt_regs(next));
- }
- 
--#define DEFAULT_SSTATUS (SR_SPIE | SR_FS_INITIAL)
--
-+extern bool has_fpu;
- #else
-+#define has_fpu false
- #define fstate_save(task, regs) do { } while (0)
- #define fstate_restore(task, regs) do { } while (0)
- #define __switch_to_aux(__prev, __next) do { } while (0)
--#define DEFAULT_SSTATUS (SR_SPIE | SR_FS_OFF)
- #endif
- 
- extern struct task_struct *__switch_to(struct task_struct *,
-@@ -72,7 +71,8 @@ extern struct task_struct *__switch_to(struct task_struct *,
- do {							\
- 	struct task_struct *__prev = (prev);		\
- 	struct task_struct *__next = (next);		\
--	__switch_to_aux(__prev, __next);		\
-+	if (has_fpu)					\
-+		__switch_to_aux(__prev, __next);	\
- 	((last) = __switch_to(__prev, __next));		\
- } while (0)
- 
-diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
-index 17011a870044..46942e635266 100644
---- a/arch/riscv/kernel/cpufeature.c
-+++ b/arch/riscv/kernel/cpufeature.c
-@@ -22,6 +22,9 @@
- #include <asm/hwcap.h>
- 
- unsigned long elf_hwcap __read_mostly;
-+#ifdef CONFIG_FPU
-+bool has_fpu __read_mostly;
-+#endif
- 
- void riscv_fill_hwcap(void)
- {
-@@ -58,4 +61,9 @@ void riscv_fill_hwcap(void)
- 		elf_hwcap |= isa2hwcap[(unsigned char)(isa[i])];
- 
- 	pr_info("elf_hwcap is 0x%lx", elf_hwcap);
-+
-+#ifdef CONFIG_FPU
-+	if (elf_hwcap & (COMPAT_HWCAP_ISA_F | COMPAT_HWCAP_ISA_D))
-+		has_fpu = true;
-+#endif
- }
-diff --git a/arch/riscv/kernel/process.c b/arch/riscv/kernel/process.c
-index 07d515655aa9..bef19993ea92 100644
---- a/arch/riscv/kernel/process.c
-+++ b/arch/riscv/kernel/process.c
-@@ -76,7 +76,9 @@ void show_regs(struct pt_regs *regs)
- void start_thread(struct pt_regs *regs, unsigned long pc,
- 	unsigned long sp)
- {
--	regs->sstatus = DEFAULT_SSTATUS;
-+	regs->sstatus = SR_SPIE;
-+	if (has_fpu)
-+		regs->sstatus |= SR_FS_INITIAL;
- 	regs->sepc = pc;
- 	regs->sp = sp;
- 	set_fs(USER_DS);
-diff --git a/arch/riscv/kernel/signal.c b/arch/riscv/kernel/signal.c
-index 2450b824d799..f9b5e7e352ef 100644
---- a/arch/riscv/kernel/signal.c
-+++ b/arch/riscv/kernel/signal.c
-@@ -98,7 +98,8 @@ static long restore_sigcontext(struct pt_regs *regs,
- 	/* sc_regs is structured the same as the start of pt_regs */
- 	err = __copy_from_user(regs, &sc->sc_regs, sizeof(sc->sc_regs));
- 	/* Restore the floating-point state. */
--	err |= restore_fp_state(regs, &sc->sc_fpregs);
-+	if (has_fpu)
-+		err |= restore_fp_state(regs, &sc->sc_fpregs);
- 	return err;
- }
- 
-@@ -150,7 +151,8 @@ static long setup_sigcontext(struct rt_sigframe __user *frame,
- 	/* sc_regs is structured the same as the start of pt_regs */
- 	err = __copy_to_user(&sc->sc_regs, regs, sizeof(sc->sc_regs));
- 	/* Save the floating-point state. */
--	err |= save_fp_state(regs, &sc->sc_fpregs);
-+	if (has_fpu)
-+		err |= save_fp_state(regs, &sc->sc_fpregs);
- 	return err;
- }
- 
--- 
-2.18.0
+It is a theoretical protect,we can remove  this patch from patchset.
+
+Thanks.
+
+>
+>      Andrew
+>
+> .
+>
+
 
