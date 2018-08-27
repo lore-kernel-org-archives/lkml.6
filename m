@@ -2,83 +2,89 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BCDCC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 21:42:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32DBEC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 21:43:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D2DA208B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 21:42:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D2DA208B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
+	by mail.kernel.org (Postfix) with ESMTP id B637C208B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 21:43:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B637C208B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=certi.org.br
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727589AbeH1BbP (ORCPT
+        id S1727628AbeH1Bbl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 21:31:15 -0400
-Received: from ipmail06.adl6.internode.on.net ([150.101.137.145]:16838 "EHLO
-        ipmail06.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726994AbeH1BbM (ORCPT
+        Mon, 27 Aug 2018 21:31:41 -0400
+Received: from iridio.certi.org.br ([177.71.112.137]:40250 "EHLO
+        iridio.certi.org.br" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726958AbeH1Bbk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 21:31:12 -0400
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail06.adl6.internode.on.net with ESMTP; 28 Aug 2018 07:12:44 +0930
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1fuPHW-0008W3-V8; Tue, 28 Aug 2018 07:42:42 +1000
-Date:   Tue, 28 Aug 2018 07:42:42 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Waiman Long <longman@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] xfs: Prevent multiple wakeups of the same log
- space waiter
-Message-ID: <20180827214242.GH2234@dastard>
-References: <1535316795-21560-1-git-send-email-longman@redhat.com>
- <1535316795-21560-3-git-send-email-longman@redhat.com>
- <20180827002134.GE2234@dastard>
- <20180827073906.GA24831@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180827073906.GA24831@infradead.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Mon, 27 Aug 2018 21:31:40 -0400
+X-Greylist: delayed 358 seconds by postgrey-1.27 at vger.kernel.org; Mon, 27 Aug 2018 21:31:40 EDT
+Received: from CPS-11710M.certi.org (unknown [177.71.116.77])
+        (using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by iridio.certi.org.br (Postfix) with ESMTPSA id 8AAF260295;
+        Mon, 27 Aug 2018 18:37:10 -0300 (-03)
+From:   Bruno Meirelles Herrera <bmh@certi.org.br>
+To:     Minas Harutyunyan <hminas@synopsys.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     John.Youn@synopsys.com, alexandre.torgue@st.com,
+        Bruno Meirelles Herrera <bmh@certi.org.br>
+Subject: [PATCH] usb: dwc2: Fix call location of dwc2_check_core_endianness
+Date:   Mon, 27 Aug 2018 18:36:38 -0300
+Message-Id: <20180827213638.18890-1-bmh@certi.org.br>
+X-Mailer: git-send-email 2.15.2 (Apple Git-101.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 12:39:06AM -0700, Christoph Hellwig wrote:
-> On Mon, Aug 27, 2018 at 10:21:34AM +1000, Dave Chinner wrote:
-> > tl; dr: Once you pass a certain point, ramdisks can be *much* slower
-> > than SSDs on journal intensive workloads like AIM7. Hence it would be
-> > useful to see if you have the same problems on, say, high
-> > performance nvme SSDs.
-> 
-> Note that all these ramdisk issues you mentioned below will also apply
-> to using the pmem driver on nvdimms, which might be a more realistic
-> version.  Even worse at least for cases where the nvdimms aren't
-> actually powerfail dram of some sort with write through caching and
-> ADR the latency is going to be much higher than the ramdisk as well.
+Some SoC/IP as STM32F469, the snpsid can only be read after clock is
+enabled, otherwise it will read as 0, and the dwc2_check_core_endianness
+will assume the core and AHB have opposite endianness, leading to the
+following error:
 
-Yes, I realise that.
+[    1.976339] dwc2 50000000.usb: 50000000.usb supply vusb_d not found, using dummy regulator
+[    1.986124] dwc2 50000000.usb: Linked as a consumer to regulator.0
+[    1.992711] dwc2 50000000.usb: 50000000.usb supply vusb_a not found, using dummy regulator
+[    2.003672] dwc2 50000000.usb: dwc2_core_reset: HANG! AHB Idle timeout GRSTCTL GRSTCTL_AHBIDLE
+[    2.015176] dwc2: probe of 50000000.usb failed with error -16
 
-I am expecting that when it comes to optimising for pmem, we'll
-actually rewrite the journal to map pmem and memcpy() directly
-rather than go through the buffering and IO layers we currently do
-so we can minimise write latency and control concurrency ourselves.
-Hence I'm not really concerned by performance issues with pmem at
-this point - most of our still users have traditional storage and
-will for a long time to come....
+The proposed patch changes the location where dwc2_check_core_endianness
+is called, allowing the clock peripheral to be enabled first.
 
-Cheers,
+Signed-off-by: Bruno Meirelles Herrera <bmh@certi.org.br>
+---
+ drivers/usb/dwc2/platform.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Dave.
+diff --git a/drivers/usb/dwc2/platform.c b/drivers/usb/dwc2/platform.c
+index 9a53a58e676e..577642895b57 100644
+--- a/drivers/usb/dwc2/platform.c
++++ b/drivers/usb/dwc2/platform.c
+@@ -412,8 +412,6 @@ static int dwc2_driver_probe(struct platform_device *dev)
+ 	dev_dbg(&dev->dev, "mapped PA %08lx to VA %p\n",
+ 		(unsigned long)res->start, hsotg->regs);
+ 
+-	hsotg->needs_byte_swap = dwc2_check_core_endianness(hsotg);
+-
+ 	retval = dwc2_lowlevel_hw_init(hsotg);
+ 	if (retval)
+ 		return retval;
+@@ -438,6 +436,8 @@ static int dwc2_driver_probe(struct platform_device *dev)
+ 	if (retval)
+ 		return retval;
+ 
++	hsotg->needs_byte_swap = dwc2_check_core_endianness(hsotg);
++
+ 	retval = dwc2_get_dr_mode(hsotg);
+ 	if (retval)
+ 		goto error;
 -- 
-Dave Chinner
-david@fromorbit.com
+2.15.2 (Apple Git-101.1)
+
