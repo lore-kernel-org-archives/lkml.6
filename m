@@ -1,204 +1,128 @@
 Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Level: *
+X-Spam-Status: No, score=2.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CE00C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 14:28:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB42DC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 14:28:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16CB9208B6
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 14:28:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16CB9208B6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 8E041208B6
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 14:28:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="xc0f+7jb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E041208B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727500AbeH0SOz (ORCPT
+        id S1727585AbeH0SPS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 14:14:55 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49358 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726953AbeH0SOz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 14:14:55 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3B3F5AECB;
-        Mon, 27 Aug 2018 14:28:02 +0000 (UTC)
-Subject: Re: [PATCH] Properly interpret indirect call in perf annotate.
-To:     Namhyung Kim <namhyung@kernel.org>
-Cc:     linux-perf-users@vger.kernel.org,
-        lkml <linux-kernel@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>, kernel-team@lge.com
-References: <bd1f3932-be2b-85f9-7582-111ee0a43b07@suse.cz>
- <20180827103715.GB8065@sejong>
-From:   =?UTF-8?Q?Martin_Li=c5=a1ka?= <mliska@suse.cz>
-Message-ID: <3e0c89cf-3e2a-5e23-7921-123a061f3558@suse.cz>
-Date:   Mon, 27 Aug 2018 16:28:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 27 Aug 2018 14:15:18 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:38547 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727372AbeH0SPS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 14:15:18 -0400
+Received: by mail-it0-f68.google.com with SMTP id p129-v6so10679336ite.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 07:28:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=42/ScWLvAP9LfW07MP/hdiJQ3oXxk/1eFTh4ZJpia8s=;
+        b=xc0f+7jbwgpX2BkxpSFBua4vyoKZPW9XZKDYU4GVas1BfI/yT+PUKT0OF5Un+EBWUV
+         ihmlO25AcUoS+ADWg77ZOxI6fW5kP3xLbgKtBY2y5OECZyaJY9zbipCvouMib6IHdbru
+         1Yx7ZbmqxpMCgCyGqUlHiYWs5Igh9AyT9rQddX8teL7MNIUKKRj6+vWIXX8zebV8IHKp
+         0TERpBlby3u6tD64BrZkGCdy/geoITBVL7hZNErY59SbXr4CCkP50UzElkp4YyJFT6eL
+         Xr/6HHOOHh2fOdnz1hNjJIFG/aL1ok60x71tBUKHbveMF7QKwjSaflAKnjDI12+lkVTC
+         9N3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=42/ScWLvAP9LfW07MP/hdiJQ3oXxk/1eFTh4ZJpia8s=;
+        b=LLhVlJAZAWcDecCo8GJT7Vcyhm8pqYyB8BnadG1Hfzsa1OfYyg61Yc3FAK4Aauf7yQ
+         hwD17ZoyZjVFrwzbZcoOFfwUdabSZsMEkBiLS2ec9lCbuRCQfdTUOIvyfUSLq/ZJZXh4
+         U/8Du11Mrz1HAkRCt5CSraLoUxS4D2fd8ebiN8qRLOflO8Pf6nLtgFxR6oh7yzEkDIOz
+         fLV1lHb/7VoKtgj8DaPz6v97V/KO8orXhamk+olGUtG4djQTlYNhL9RkdoyMy6PdBVHr
+         yaDP2VdAVUkhzKMONVR2be/j/t3tMpiQAcr7wZpzMo/vCV5ZEqD5Jxx/Ifnda/5MeSA5
+         cz2A==
+X-Gm-Message-State: APzg51D+d2P+YKu/gCJ3WWpmaLYiqvoDaxQ0swkc1RU+2svVunitPiw0
+        kzC8MtSm3ESCnkvQ3flVIAETzkuiZ1Q=
+X-Google-Smtp-Source: ANB0VdZ5VkH5LHyhvrsPAcpbk+Ey0xvCOIJgbbYwFzMfUgzF27uOt5gWrQ1v6RI7ioJsLxur50UzUg==
+X-Received: by 2002:a02:8a05:: with SMTP id j5-v6mr10334556jak.59.1535380106325;
+        Mon, 27 Aug 2018 07:28:26 -0700 (PDT)
+Received: from [192.168.1.56] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id i139-v6sm8879702ioa.26.2018.08.27.07.28.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 27 Aug 2018 07:28:25 -0700 (PDT)
+Subject: Re: [PATCH] MAINTAINERS: libata pata: fix Jens Axboe's email address
+To:     Baruch Siach <baruch@tkos.co.il>
+Cc:     linux-ide@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+References: <d99162f25e4860bb04f1f56f031d11ceab1fc725.1535344175.git.baruch@tkos.co.il>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <f3d1c1b3-94af-3ea2-22ce-afaa1948ba1e@kernel.dk>
+Date:   Mon, 27 Aug 2018 08:28:23 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <20180827103715.GB8065@sejong>
-Content-Type: multipart/mixed;
- boundary="------------6A763E9AD35B1793E37A0A8C"
+In-Reply-To: <d99162f25e4860bb04f1f56f031d11ceab1fc725.1535344175.git.baruch@tkos.co.il>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------6A763E9AD35B1793E37A0A8C
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+On 8/26/18 10:29 PM, Baruch Siach wrote:
+> Commit 7634ccd2da (libata: maintainership update) added an invalid email
+> address. Fix that.
 
-On 08/27/2018 12:37 PM, Namhyung Kim wrote:
-> Hello,
-> 
-> On Thu, Aug 23, 2018 at 02:29:34PM +0200, Martin Liška wrote:
->> The patch changes interpretation of:
->> callq  *0x8(%rbx)
->>
->> from:
->>   0.26 │     → callq  *8
->> to:
->>   0.26 │     → callq  *0x8(%rbx)
->>
->> in this can an address is followed by a register, thus
->> one can't parse only address.
-> 
-> Also there's a case with no offset like:  callq  *%rbx
+Hah, what a mess. Outside of that, the git trees should also
+be updated. Something like the below. I'll send in an update.
 
-Yes. But this case is fine as strtoull returns 0 for that:
-'If there were no digits at all, strtoul() stores the original value of nptr in *endptr (and returns 0).'
-So ops->target.addr is then 0 and it's fine.
-
-> 
-> 
->>
->> Signed-off-by: Martin Liška <mliska@suse.cz>
->> ---
->>  tools/perf/util/annotate.c | 10 ++++++++--
->>  1 file changed, 8 insertions(+), 2 deletions(-)
->>
->>
-> 
->> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
->> index e4268b948e0e..e32ead4744bd 100644
->> --- a/tools/perf/util/annotate.c
->> +++ b/tools/perf/util/annotate.c
->> @@ -246,8 +246,14 @@ static int call__parse(struct arch *arch, struct ins_operands *ops, struct map_s
->>  
->>  indirect_call:
->>  	tok = strchr(endptr, '*');
->> -	if (tok != NULL)
->> -		ops->target.addr = strtoull(tok + 1, NULL, 16);
->> +	if (tok != NULL) {
->> +		endptr++;
->> +
->> +		/* Indirect call can use a non-rip register and offset: callq  *0x8(%rbx).
->> +		 * Do not parse such instruction.  */
->> +		if (strstr(endptr, "(%r") == NULL)
->> +			ops->target.addr = strtoull(endptr, NULL, 16);
-> 
-> It seems too x86-specific, what about this? (not tested)
-
-It is, I'm fine with that. I've just tested that for the callq  *0x8(%rbx) example.
-I'm sending patch for that version.
-
-Martin
-
-> 
-> 
-> indirect_call:
-> 	tok = strchr(endptr, '*');
-> 	if (tok != NULL) {
-> 		endptr++;
-> 		if (!isdigit(*endptr))
-> 			return 0;
-> 
-> 		addr = strtoull(endptr, &endptr, 0);
-> 		if (*endptr != '('))
-> 			ops->target.addr = addr;
-> 
-> 
-> Thanks,
-> Namhyung
-> 
-> 
->> +	}
->>  	goto find_target;
->>  }
->>  
->>
-> 
-
-
---------------6A763E9AD35B1793E37A0A8C
-Content-Type: text/x-patch;
- name="0001-Properly-interpret-indirect-call-in-perf-annotate.patch"
-Content-Transfer-Encoding: 8bit
-Content-Disposition: attachment;
- filename*0="0001-Properly-interpret-indirect-call-in-perf-annotate.patch"
-
-From 58a0eca544be8cc9e15b2ab5ecd9d9401ff4d2ec Mon Sep 17 00:00:00 2001
-From: marxin <mliska@suse.cz>
-Date: Thu, 23 Aug 2018 14:25:33 +0200
-Subject: [PATCH] Properly interpret indirect call in perf annotate.
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-The patch changes interpretation of:
-callq  *0x8(%rbx)
-
-from:
-  0.26 │     → callq  *8
-to:
-  0.26 │     → callq  *0x8(%rbx)
-
-in this can an address is followed by a register, thus
-one can't parse only address.
-
-Signed-off-by: Martin Liška <mliska@suse.cz>
----
- tools/perf/util/annotate.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index e4268b948e0e..18a8477d4664 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -212,6 +212,7 @@ static int call__parse(struct arch *arch, struct ins_operands *ops, struct map_s
- 	struct addr_map_symbol target = {
- 		.map = map,
- 	};
-+  u64 addr;
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a5b256b25905..9ad052aeac39 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8255,9 +8255,9 @@ F:	drivers/ata/pata_arasan_cf.c
  
- 	ops->target.addr = strtoull(ops->raw, &endptr, 16);
- 
-@@ -246,8 +247,15 @@ static int call__parse(struct arch *arch, struct ins_operands *ops, struct map_s
- 
- indirect_call:
- 	tok = strchr(endptr, '*');
--	if (tok != NULL)
--		ops->target.addr = strtoull(tok + 1, NULL, 16);
-+	if (tok != NULL) {
-+		endptr++;
-+		if (!isdigit(*endptr))
-+			return 0;
-+
-+		addr = strtoull(endptr, &endptr, 0);
-+		if (*endptr != '(')
-+			ops->target.addr = addr;
-+	}
- 	goto find_target;
- }
- 
+ LIBATA PATA DRIVERS
+ M:	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+-M:	Jens Axboe <kernel.dk>
++M:	Jens Axboe <axboe@kernel.dk>
+ L:	linux-ide@vger.kernel.org
+-T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git
+ S:	Maintained
+ F:	drivers/ata/pata_*.c
+ F:	drivers/ata/ata_generic.c
+@@ -8275,7 +8275,7 @@ LIBATA SATA AHCI PLATFORM devices support
+ M:	Hans de Goede <hdegoede@redhat.com>
+ M:	Jens Axboe <axboe@kernel.dk>
+ L:	linux-ide@vger.kernel.org
+-T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git
+ S:	Maintained
+ F:	drivers/ata/ahci_platform.c
+ F:	drivers/ata/libahci_platform.c
+@@ -8291,7 +8291,7 @@ F:	drivers/ata/sata_promise.*
+ LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)
+ M:	Jens Axboe <axboe@kernel.dk>
+ L:	linux-ide@vger.kernel.org
+-T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git
+ S:	Maintained
+ F:	drivers/ata/
+ F:	include/linux/ata.h
+
 -- 
-2.18.0
+Jens Axboe
 
-
---------------6A763E9AD35B1793E37A0A8C--
