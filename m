@@ -2,631 +2,118 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 064A6C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:49:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16690C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:50:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B5FA2088E
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:49:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bna0aMTb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B5FA2088E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id C3BE3208B4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:50:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3BE3208B4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727192AbeH0Vgj (ORCPT
+        id S1727361AbeH0Vh6 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 17:36:39 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:45111 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726971AbeH0Vgi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 17:36:38 -0400
-Received: by mail-pl1-f193.google.com with SMTP id j8-v6so4490860pll.12
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 10:49:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0+f9zziEy10Je3nf1k5Ms3rHkdr3uolT7pIl4CdSop4=;
-        b=bna0aMTb+gxH/0ltBz0PE3gUNpWp44/w1lX89Z5Hd6yXyZL7A0YJSCFxfzQcgrTIe9
-         i8hcuRn7OVF6rttfETZ6F6/mm6hB25epZDiXLqG4hlPDBgGauRWTuQlrTVhLJjdEGUbf
-         F7gHP+m5vToY++qU7aoKvEljAarTS4Umo11+wDITEbWoOdGBONCM9rwgxnpvePwIV3AT
-         5qJm4RN9IfGOSTU2+QYrO3SqVYUwYWUqaoCBS3rjL29kn1i5EG4eXXXVnBp5qdf71qd6
-         ScbFhR5/kWW8qDNrHy4BQS1FNxPACAUE1UsCoQUmTQYpo5c6CMZag/FaLWY5dYpXSosc
-         zzGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0+f9zziEy10Je3nf1k5Ms3rHkdr3uolT7pIl4CdSop4=;
-        b=cmcMihFXVx1/Rog+taq9iheIimjlFuOCKfN8I7XpcsTUkMTvezt5jv8giPZwD2lF1i
-         z8zuqiXJaXYcixKjqYmvvUMscEl622aULskmP6loNC78tabTx8EPxL4P/sikYsMMgETJ
-         Aip2Nr6sOnUkqHnYqUUbQaG3eki4CWor2XG7zxEe0MsJJQVdPzf7w7TjInjTGj5FbsnQ
-         03T4TFkij3JKWH8eb/F6L2Qq31VNGYGOCJ21aCMRil+GRjX4tIyMdTaIDzHFCUu3Dt5o
-         z87KcqX/NUwSerwWxoO5qMszelUyw9L9Xe1JF1Rbyx36iQhVmnE8sI/bnHEu1e6b8nV6
-         twCg==
-X-Gm-Message-State: APzg51Dinrt5mTdjkElMVks3dTdC/Bwwy+cgE8gfPRqah3Al6PIM0AAF
-        bIRmTKbsnd9lgqa1SwnHAGJHIBLYsj8zT7BCoaMVng==
-X-Google-Smtp-Source: ANB0VdYYI0mLLhQ24LkjARfyJ2vntiRKTd79/hCdx7Ails/bh255k5Asb21I7C3Sp/lJ5n9xLH3uwkyfevhC9oFoPTs=
-X-Received: by 2002:a17:902:561:: with SMTP id 88-v6mr13941445plf.320.1535392143709;
- Mon, 27 Aug 2018 10:49:03 -0700 (PDT)
+        Mon, 27 Aug 2018 17:37:58 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48650 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726966AbeH0Vh6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 17:37:58 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 14D894023ECC;
+        Mon, 27 Aug 2018 17:50:22 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-8.bos.redhat.com [10.18.17.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0AC2C2166B41;
+        Mon, 27 Aug 2018 17:50:18 +0000 (UTC)
+Subject: Re: [PATCH v12 9/9] cpuset: Support forced turning off of partition
+ flag
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
+        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
+        Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+References: <1535380884-31308-1-git-send-email-longman@redhat.com>
+ <1535380884-31308-10-git-send-email-longman@redhat.com>
+ <20180827164004.GE3978217@devbig004.ftw2.facebook.com>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <0daf1f43-2292-0281-3ab8-aef20d0475dc@redhat.com>
+Date:   Mon, 27 Aug 2018 13:50:18 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-References: <20180826175748.GA29525@gmail.com> <CAKwvOdnyHctAYRBOdrkX15MBPX68pOSiKc2P2S_JnDdffdY+OA@mail.gmail.com>
-In-Reply-To: <CAKwvOdnyHctAYRBOdrkX15MBPX68pOSiKc2P2S_JnDdffdY+OA@mail.gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 27 Aug 2018 10:48:52 -0700
-Message-ID: <CAKwvOdk3PjNtjMcsXxRVvKLNcT+O_=5D1B7DXNWcwxwcMqdV2w@mail.gmail.com>
-Subject: Re: [PATCH] include/linux/compiler*.h: Use feature checking instead
- of version checks for attributes
-To:     miguel.ojeda.sandonis@gmail.com
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        efriedma@codeaurora.org, sparse@chrisli.org,
-        Kees Cook <keescook@chromium.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        joe@perches.com, asmadeus@codewreck.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180827164004.GE3978217@devbig004.ftw2.facebook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 27 Aug 2018 17:50:22 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 27 Aug 2018 17:50:22 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 10:43 AM Nick Desaulniers
-<ndesaulniers@google.com> wrote:
+On 08/27/2018 12:40 PM, Tejun Heo wrote:
+> Hello, Waiman.
 >
-> On Sun, Aug 26, 2018 at 10:58 AM Miguel Ojeda
-> <miguel.ojeda.sandonis@gmail.com> wrote:
-> >
-> > Instead of using version checks per-compiler to define (or not) each attribute,
-> > use __has_attribute to test for them, following the cleanup started with
-> > commit 815f0ddb346c ("include/linux/compiler*.h: make compiler-*.h mutually exclusive").
-> >
-> > All the attributes that are fairly common/standard (i.e. those that do not
-> > require extra logic to define them) have been moved to a new file
-> > include/linux/compiler_attributes.h. The attributes have been sorted
-> > and divided between "required" and "optional".
+> On Mon, Aug 27, 2018 at 10:41:24AM -0400, Waiman Long wrote:
+>> Cpuset allows arbitrary modification of cpu list in "cpuset.cpus"
+>> even if the requested CPUs won't be granted in "cpuset.cpus.effective"
+>> as restricted by its parent. However, the validate_change() function
+>> will inhibit removal of CPUs that have been used in child cpusets.
+>>
+>> Being a partition root, however, limits the kind of cpu list
+>> modification that is allowed. Adding CPUs is not allowed if the new
+>> CPUs are not in the parent's effective cpu list that can be put into
+>> "cpuset.cpus.reserved". In addition, a child partition cannot exhaust
+>> all the parent's effective CPUs.
+>>
+>> Because of the implicit cpu exclusive nature of the partition root,
+>> cpu changes that break that cpu exclusivity will not be allowed. Other
+>> changes that break the conditions of being a partition root is generally
+>> allowed. However, the partition flag of the cpuset as well those of
+>> the descendant partitions will be forcefully turned off.
+> First of all, thanks a lot for your persistence.  I'm not necessarily
+> against the flag being forced off but wonder whether the same
+> config/effective approach can be used as in .cpus and .mems.  Can you
+> elaborate a bit on the choice here?
 >
-> Nice! Thanks Miguel.  Regarding sorting, I'm happy with that.  In
-> fact, some of the comments can be removed IMO, as the attributes have
-> common definitions in the docs (maybe an added link to the gcc and
-> clang attribute docs at the top of the file rather than per attribute
-> comments).
->
-> >
-> > Further, attributes that are already supported in gcc >= 4.6 and recent clang
-> > were simply made to be required (instead of testing for them):
-> >   * always_inline
-> >   * const (pure was already "required", by the way)
-> >   * gnu_inline
->
-> There's an important test for gnu_inline that isn't checking that it's
-> supported, but rather what the implicit behavior is depending on which
-> C standard is being used.  It's important not to remove that.
->
-> >
-> > Finally, some other bits were cleaned up in the process:
-> >   * __optimize: removed (unused in the whole kernel tree)
->
-> A+ for removing dead code.  I also don't see it used anywhere.
->
-> >   * __must_be_array: removed from -gcc and -clang (identical), moved to _types
->
-> Yep, uses a builtin (we should add guards for that, later, in a
-> similar style change that guards the use of builtins). Looks good.
->
-> >     (it depends on the unconditionally used  __builtin_types_compatible_p
-> >   * Removes unneeded underscores on the attributes' names
->
-> That doesn't sound right, but lets see what you mean by that.
->
-> >
-> > There are some things that can be further cleaned up afterwards:
-> >   * __attribute_const__: rename to __const
->
-> This doesn't look correct to me; the kernel is full of call sites for
-> __attribute_const__. You can't rename the definition without renaming
-> all of the call sites (and that would be too big a change for this
-> patch, IMO).  Skip the rename, and it also looks like you just removed
-> it outright (Oops).
->
-> >   * __noretpoline: avoid checking for defined(__notrepoline)
-> >   * __compiletime_warning/error: they are in two different places,
-> >     -gcc and compiler.h.
-> >   * sparse' attributes could potentially go into the end of attributes.h
-> >     too (as another separate section).
-> >
-> > Compile-tested an x86 allmodconfig for a while with gcc 8.2.0 and 4.6.4.
->
-> It's important to test changes to compiler-clang.h with clang. ;)
->
-> >
-> > Cc: Eli Friedman <efriedma@codeaurora.org>
-> > Cc: Christopher Li <sparse@chrisli.org>
-> > Cc: Kees Cook <keescook@chromium.org>
-> > Cc: Ingo Molnar <mingo@kernel.org>
-> > Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> > Cc: Arnd Bergmann <arnd@arndb.de>
-> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > Cc: Joe Perches <joe@perches.com>
-> > Cc: Dominique Martinet <asmadeus@codewreck.org>
-> > Cc: Nick Desaulniers <ndesaulniers@google.com>
-> > Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> > Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-> > ---
-> > *Seems* to work, but note that I did not finish the entire allmodconfig :)
-> >
-> > A few things could be splitted into their own patch, but I kept it
-> > as one for simplicity for a first review.
-> >
-> > These files are becoming no-headaches-readable again, yay.
->
-> A+
->
-> >
-> >  include/linux/compiler-clang.h      |   5 --
-> >  include/linux/compiler-gcc.h        |  60 ----------------
-> >  include/linux/compiler-intel.h      |   6 --
-> >  include/linux/compiler.h            |   4 --
-> >  include/linux/compiler_attributes.h | 105 ++++++++++++++++++++++++++++
-> >  include/linux/compiler_types.h      |  91 ++++--------------------
-> >  6 files changed, 118 insertions(+), 153 deletions(-)
-> >  create mode 100644 include/linux/compiler_attributes.h
-> >
-> > diff --git a/include/linux/compiler-clang.h b/include/linux/compiler-clang.h
-> > index b1ce500fe8b3..3e7dafb3ea80 100644
-> > --- a/include/linux/compiler-clang.h
-> > +++ b/include/linux/compiler-clang.h
-> > @@ -21,8 +21,6 @@
-> >  #define __SANITIZE_ADDRESS__
-> >  #endif
-> >
-> > -#define __no_sanitize_address __attribute__((no_sanitize("address")))
-> > -
-> >  /*
-> >   * Not all versions of clang implement the the type-generic versions
-> >   * of the builtin overflow checkers. Fortunately, clang implements
-> > @@ -41,6 +39,3 @@
-> >   * compilers, like ICC.
-> >   */
-> >  #define barrier() __asm__ __volatile__("" : : : "memory")
-> > -#define __must_be_array(a) BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
-> > -#define __assume_aligned(a, ...)       \
-> > -       __attribute__((__assume_aligned__(a, ## __VA_ARGS__)))
-> > diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-> > index 763bbad1e258..dde3daae6287 100644
-> > --- a/include/linux/compiler-gcc.h
-> > +++ b/include/linux/compiler-gcc.h
-> > @@ -68,13 +68,6 @@
-> >   */
-> >  #define uninitialized_var(x) x = x
-> >
-> > -#ifdef __CHECKER__
-> > -#define __must_be_array(a)     0
-> > -#else
-> > -/* &a[0] degrades to a pointer: a different type from an array */
-> > -#define __must_be_array(a)     BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
-> > -#endif
-> > -
-> >  #ifdef RETPOLINE
-> >  #define __noretpoline __attribute__((indirect_branch("keep")))
-> >  #endif
-> > @@ -95,8 +88,6 @@
-> >
-> >  #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
-> >
-> > -#define __optimize(level)      __attribute__((__optimize__(level)))
-> > -
-> >  #define __compiletime_object_size(obj) __builtin_object_size(obj, 0)
-> >
-> >  #ifndef __CHECKER__
-> > @@ -133,9 +124,6 @@
-> >                 __builtin_unreachable();        \
-> >         } while (0)
-> >
-> > -/* Mark a function definition as prohibited from being cloned. */
-> > -#define __noclone      __attribute__((__noclone__, __optimize__("no-tracer")))
-> > -
-> >  #if defined(RANDSTRUCT_PLUGIN) && !defined(__CHECKER__)
-> >  #define __randomize_layout __attribute__((randomize_layout))
-> >  #define __no_randomize_layout __attribute__((no_randomize_layout))
-> > @@ -144,32 +132,6 @@
-> >  #define randomized_struct_fields_end   } __randomize_layout;
-> >  #endif
-> >
-> > -/*
-> > - * When used with Link Time Optimization, gcc can optimize away C functions or
-> > - * variables which are referenced only from assembly code.  __visible tells the
-> > - * optimizer that something else uses this function or variable, thus preventing
-> > - * this.
-> > - */
-> > -#define __visible      __attribute__((externally_visible))
-> > -
-> > -/* gcc version specific checks */
-> > -
-> > -#if GCC_VERSION >= 40900 && !defined(__CHECKER__)
-> > -/*
-> > - * __assume_aligned(n, k): Tell the optimizer that the returned
-> > - * pointer can be assumed to be k modulo n. The second argument is
-> > - * optional (default 0), so we use a variadic macro to make the
-> > - * shorthand.
-> > - *
-> > - * Beware: Do not apply this to functions which may return
-> > - * ERR_PTRs. Also, it is probably unwise to apply it to functions
-> > - * returning extra information in the low bits (but in that case the
-> > - * compiler should see some alignment anyway, when the return value is
-> > - * massaged by 'flags = ptr & 3; ptr &= ~3;').
-> > - */
-> > -#define __assume_aligned(a, ...) __attribute__((__assume_aligned__(a, ## __VA_ARGS__)))
-> > -#endif
-> > -
-> >  /*
-> >   * GCC 'asm goto' miscompiles certain code sequences:
-> >   *
-> > @@ -201,32 +163,10 @@
-> >  #define KASAN_ABI_VERSION 3
-> >  #endif
-> >
-> > -#if GCC_VERSION >= 40902
-> > -/*
-> > - * Tell the compiler that address safety instrumentation (KASAN)
-> > - * should not be applied to that function.
-> > - * Conflicts with inlining: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=67368
-> > - */
-> > -#define __no_sanitize_address __attribute__((no_sanitize_address))
-> > -#endif
-> > -
-> >  #if GCC_VERSION >= 50100
-> > -/*
-> > - * Mark structures as requiring designated initializers.
-> > - * https://gcc.gnu.org/onlinedocs/gcc/Designated-Inits.html
-> > - */
-> > -#define __designated_init __attribute__((designated_init))
-> >  #define COMPILER_HAS_GENERIC_BUILTIN_OVERFLOW 1
-> >  #endif
-> >
-> > -#if !defined(__noclone)
-> > -#define __noclone      /* not needed */
-> > -#endif
-> > -
-> > -#if !defined(__no_sanitize_address)
-> > -#define __no_sanitize_address
-> > -#endif
-> > -
-> >  /*
-> >   * Turn individual warnings and errors on and off locally, depending
-> >   * on version.
-> > diff --git a/include/linux/compiler-intel.h b/include/linux/compiler-intel.h
-> > index 4c7f9befa9f6..fb9e77fc65ec 100644
-> > --- a/include/linux/compiler-intel.h
-> > +++ b/include/linux/compiler-intel.h
-> > @@ -37,9 +37,3 @@
-> >  /* icc has this, but it's called _bswap16 */
-> >  #define __HAVE_BUILTIN_BSWAP16__
-> >  #define __builtin_bswap16 _bswap16
-> > -
-> > -/* The following are for compatibility with GCC, from compiler-gcc.h,
-> > - * and may be redefined here because they should not be shared with other
-> > - * compilers, like clang.
-> > - */
-> > -#define __visible      __attribute__((externally_visible))
-> > diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-> > index 681d866efb1e..7c0157d50964 100644
-> > --- a/include/linux/compiler.h
-> > +++ b/include/linux/compiler.h
-> > @@ -301,10 +301,6 @@ static inline void *offset_to_ptr(const int *off)
-> >
-> >  #endif /* __ASSEMBLY__ */
-> >
-> > -#ifndef __optimize
-> > -# define __optimize(level)
-> > -#endif
-> > -
-> >  /* Compile time object size, -1 for unknown */
-> >  #ifndef __compiletime_object_size
-> >  # define __compiletime_object_size(obj) -1
-> > diff --git a/include/linux/compiler_attributes.h b/include/linux/compiler_attributes.h
-> > new file mode 100644
-> > index 000000000000..af8c8413d136
-> > --- /dev/null
-> > +++ b/include/linux/compiler_attributes.h
-> > @@ -0,0 +1,105 @@
-> > +#ifndef __LINUX_COMPILER_ATTRIBUTES_H
-> > +#define __LINUX_COMPILER_ATTRIBUTES_H
-> > +
-> > +/* This file is meant to be sorted. */
-> > +
-> > +/*
-> > + * Required attributes: your compiler must support these.
-> > + */
-> > +#define __alias(symbol)                __attribute__((alias(#symbol)))
-> > +#define __aligned(x)           __attribute__((aligned(x)))
-> > +#define __aligned_largest      __attribute__((aligned))
-> > +#define __always_inline         inline __attribute__((always_inline))
-> > +#define __always_unused                __attribute__((unused))
-> > +#define __attribute_const__     __attribute__((const))
-> > +#define __cold                 __attribute__((cold))
-> > +#define __gnu_inline            __attribute__((gnu_inline))
-> > +#define __malloc               __attribute__((malloc))
-> > +#define __maybe_unused         __attribute__((unused))
-> > +#define __mode(x)              __attribute__((mode(x)))
-> > +#define   noinline              __attribute__((noinline))
-> > +#define __noreturn             __attribute__((noreturn))
-> > +#define __packed               __attribute__((packed))
-> > +#define __printf(a, b)         __attribute__((format(printf, a, b)))
-> > +#define __pure                 __attribute__((pure))
-> > +#define __scanf(a, b)          __attribute__((format(scanf, a, b)))
-> > +#define __section(S)           __attribute__((section(#S)))
-> > +#define __used                 __attribute__((used))
-> > +#define __weak                 __attribute__((weak))
-> > +
-> > +/*
-> > + * Optional attributes: your compiler may or may not support them.
-> > + *
-> > + * To check for them, we use __has_attribute, which is supported on gcc >= 5,
-> > + * clang >= 2.9 and icc >= 17. In the meantime, to support 4.6 <= gcc < 5,
-> > + * we implement it by hand.
-> > + */
-> > +#ifndef __has_attribute
-> > +#define __has_attribute(x) __GCC46_has_attribute_##x
-> > +#define __GCC46_has_attribute_assume_aligned 0
-> > +#define __GCC46_has_attribute_designated_init 0
-> > +#define __GCC46_has_attribute_externally_visible 1
-> > +#define __GCC46_has_attribute_noclone 1
-> > +#define __GCC46_has_attribute_optimize 1
-> > +#define __GCC46_has_attribute_no_sanitize_address 0
-> > +#endif
+> Thank you.
 
-And a follow up; I'm trying to understand what will happen in the case
-of say gcc 4.9 here.  Were any of these supported between gcc 4.6 and
-5.0?  If so, then this code will not use them.  It's simpler than
-explicit version checks, but it won't use features that are supported.
+My current code has explicitly assumed the following relationship for
+partition root.
 
-> > +
-> > +/*
-> > + * __assume_aligned(n, k): Tell the optimizer that the returned
-> > + * pointer can be assumed to be k modulo n. The second argument is
-> > + * optional (default 0), so we use a variadic macro to make the
-> > + * shorthand.
-> > + *
-> > + * Beware: Do not apply this to functions which may return
-> > + * ERR_PTRs. Also, it is probably unwise to apply it to functions
-> > + * returning extra information in the low bits (but in that case the
-> > + * compiler should see some alignment anyway, when the return value is
-> > + * massaged by 'flags = ptr & 3; ptr &= ~3;').
-> > + */
-> > +#if __has_attribute(assume_aligned)
-> > +#define __assume_aligned(a, ...) __attribute__((assume_aligned(a, ## __VA_ARGS__)))
-> > +#else
-> > +#define __assume_aligned(a, ...)
-> > +#endif
-> > +
-> > +/*
-> > + * Mark structures as requiring designated initializers.
-> > + * https://gcc.gnu.org/onlinedocs/gcc/Designated-Inits.html
-> > + */
-> > +#if __has_attribute(designated_init)
-> > +#define __designated_init __attribute__((designated_init))
-> > +#else
-> > +#define __designated_init
-> > +#endif
-> > +
-> > +/*
-> > + * When used with Link Time Optimization, gcc can optimize away C functions or
-> > + * variables which are referenced only from assembly code.  __visible tells the
-> > + * optimizer that something else uses this function or variable, thus preventing
-> > + * this.
-> > + */
-> > +#if __has_attribute(externally_visible)
-> > +#define __visible __attribute__((externally_visible))
-> > +#else
-> > +#define __visible
-> > +#endif
-> > +
-> > +/* Mark a function definition as prohibited from being cloned. */
-> > +#if __has_attribute(noclone) && __has_attribute(optimize)
-> > +#define __noclone __attribute__((noclone, optimize("no-tracer")))
-> > +#else
-> > +#define __noclone
-> > +#endif
-> > +
-> > +/*
-> > + * Tell the compiler that address safety instrumentation (KASAN)
-> > + * should not be applied to that function.
-> > + * Conflicts with inlining: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=67368
-> > + */
-> > +#if __has_attribute(no_sanitize_address)
-> > +#define __no_sanitize_address __attribute__((no_sanitize_address))
-> > +#else
-> > +#define __no_sanitize_address
-> > +#endif
-> > +
-> > +#endif /* __LINUX_COMPILER_ATTRIBUTES_H */
-> > diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-> > index 3525c179698c..8cd622bedec4 100644
-> > --- a/include/linux/compiler_types.h
-> > +++ b/include/linux/compiler_types.h
-> > @@ -54,6 +54,9 @@ extern void __chk_io_ptr(const volatile void __iomem *);
-> >
-> >  #ifdef __KERNEL__
-> >
-> > +/* Attributes */
-> > +#include <linux/compiler_attributes.h>
-> > +
-> >  /* Compiler specific macros. */
-> >  #ifdef __clang__
-> >  #include <linux/compiler-clang.h>
-> > @@ -78,12 +81,6 @@ extern void __chk_io_ptr(const volatile void __iomem *);
-> >  #include <asm/compiler.h>
-> >  #endif
-> >
-> > -/*
-> > - * Generic compiler-independent macros required for kernel
-> > - * build go below this comment. Actual compiler/compiler version
-> > - * specific implementations come from the above header files
-> > - */
-> > -
-> >  struct ftrace_branch_data {
-> >         const char *func;
-> >         const char *file;
-> > @@ -119,10 +116,6 @@ struct ftrace_likely_data {
-> >   * compilers. We don't consider that to be an error, so set them to nothing.
-> >   * For example, some of them are for compiler specific plugins.
-> >   */
-> > -#ifndef __designated_init
-> > -# define __designated_init
-> > -#endif
-> > -
-> >  #ifndef __latent_entropy
-> >  # define __latent_entropy
-> >  #endif
-> > @@ -140,17 +133,6 @@ struct ftrace_likely_data {
-> >  # define randomized_struct_fields_end
-> >  #endif
-> >
-> > -#ifndef __visible
-> > -#define __visible
-> > -#endif
-> > -
-> > -/*
-> > - * Assume alignment of return value.
-> > - */
-> > -#ifndef __assume_aligned
-> > -#define __assume_aligned(a, ...)
-> > -#endif
-> > -
-> >  /* Are two types/vars the same type (ignoring qualifiers)? */
-> >  #define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
-> >
-> > @@ -159,14 +141,6 @@ struct ftrace_likely_data {
-> >         (sizeof(t) == sizeof(char) || sizeof(t) == sizeof(short) || \
-> >          sizeof(t) == sizeof(int) || sizeof(t) == sizeof(long))
-> >
-> > -#ifndef __attribute_const__
-> > -#define __attribute_const__    __attribute__((__const__))
-> > -#endif
-> > -
-> > -#ifndef __noclone
-> > -#define __noclone
-> > -#endif
-> > -
-> >  /* Helpers for emitting diagnostics in pragmas. */
-> >  #ifndef __diag
-> >  #define __diag(string)
-> > @@ -186,34 +160,6 @@ struct ftrace_likely_data {
-> >  #define __diag_error(compiler, version, option, comment) \
-> >         __diag_ ## compiler(version, error, option)
-> >
-> > -/*
-> > - * From the GCC manual:
-> > - *
-> > - * Many functions have no effects except the return value and their
-> > - * return value depends only on the parameters and/or global
-> > - * variables.  Such a function can be subject to common subexpression
-> > - * elimination and loop optimization just as an arithmetic operator
-> > - * would be.
-> > - * [...]
-> > - */
-> > -#define __pure                 __attribute__((pure))
-> > -#define __aligned(x)           __attribute__((aligned(x)))
-> > -#define __aligned_largest      __attribute__((aligned))
-> > -#define __printf(a, b)         __attribute__((format(printf, a, b)))
-> > -#define __scanf(a, b)          __attribute__((format(scanf, a, b)))
-> > -#define __maybe_unused         __attribute__((unused))
-> > -#define __always_unused                __attribute__((unused))
-> > -#define __mode(x)              __attribute__((mode(x)))
-> > -#define __malloc               __attribute__((__malloc__))
-> > -#define __used                 __attribute__((__used__))
-> > -#define __noreturn             __attribute__((noreturn))
-> > -#define __packed               __attribute__((packed))
-> > -#define __weak                 __attribute__((weak))
-> > -#define __alias(symbol)                __attribute__((alias(#symbol)))
-> > -#define __cold                 __attribute__((cold))
-> > -#define __section(S)           __attribute__((__section__(#S)))
-> > -
-> > -
-> >  #ifdef CONFIG_ENABLE_MUST_CHECK
-> >  #define __must_check           __attribute__((warn_unused_result))
-> >  #else
-> > @@ -228,18 +174,6 @@ struct ftrace_likely_data {
-> >
-> >  #define __compiler_offsetof(a, b)      __builtin_offsetof(a, b)
-> >
-> > -/*
-> > - * Feature detection for gnu_inline (gnu89 extern inline semantics). Either
-> > - * __GNUC_STDC_INLINE__ is defined (not using gnu89 extern inline semantics,
-> > - * and we opt in to the gnu89 semantics), or __GNUC_STDC_INLINE__ is not
-> > - * defined so the gnu89 semantics are the default.
-> > - */
-> > -#ifdef __GNUC_STDC_INLINE__
-> > -# define __gnu_inline  __attribute__((gnu_inline))
-> > -#else
-> > -# define __gnu_inline
-> > -#endif
-> > -
-> >  /*
-> >   * Force always-inline if the user requests it so via the .config.
-> >   * GCC does not warn about unused static inline functions for
-> > @@ -254,19 +188,13 @@ struct ftrace_likely_data {
-> >   */
-> >  #if !defined(CONFIG_ARCH_SUPPORTS_OPTIMIZED_INLINING) || \
-> >         !defined(CONFIG_OPTIMIZE_INLINING)
-> > -#define inline \
-> > -       inline __attribute__((always_inline, unused)) notrace __gnu_inline
-> > +#define inline inline __attribute__((always_inline, unused)) notrace __gnu_inline
-> >  #else
-> > -#define inline inline  __attribute__((unused)) notrace __gnu_inline
-> > +#define inline inline __attribute__((unused)) notrace __gnu_inline
-> >  #endif
-> >
-> >  #define __inline__ inline
-> > -#define __inline inline
-> > -#define noinline       __attribute__((noinline))
-> > -
-> > -#ifndef __always_inline
-> > -#define __always_inline inline __attribute__((always_inline))
-> > -#endif
-> > +#define __inline   inline
->
-> All of the changes to inline should not be removed, see above.  It's
-> important to make this work correctly regardless of C standard used.
->
-> >
-> >  /*
-> >   * Rather then using noinline to prevent stack consumption, use
-> > @@ -274,4 +202,11 @@ struct ftrace_likely_data {
-> >   */
-> >  #define noinline_for_stack noinline
-> >
-> > +#ifdef __CHECKER__
-> > +#define __must_be_array(a) 0
-> > +#else
-> > +/* &a[0] degrades to a pointer: a different type from an array */
-> > +#define __must_be_array(a) BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
-> > +#endif
-> > +
-> >  #endif /* __LINUX_COMPILER_TYPES_H */
-> > --
-> > 2.17.1
-> >
->
-> With the above changes requested, I'm super happy with the spirit of
-> this patch, and look forward to a v2.  Thanks again Miguel!
-> --
-> Thanks,
-> ~Nick Desaulniers
+    cpus_allowed = effective_cpus + reserved_cpus
+
+Also effective_cpus cannot be empty. Specifically, cpus_allowed has to
+be equal to effective_cpus before a cpuset can be made a partition root.
+
+Any changes that break the above conditions will turn off the partition
+flag forcefully. The only exception is cpu offlining where cpus_allowed
+> effective_cpus + reserved_cpus can happen.
+
+One reason for doing so is because reserved_cpus is hidden. So the main
+way to infer that is to do cpus_allowed - effective_cpus.
+
+It is probably doable to make cpus_allowed >= effective_cpus +
+reserved_cpus in general, but we may need to expose reserved_cpus as a
+read-only file, for instance. There may also be other complications that
+we will need to take care of if this is supported. My current preference
+is to not doing that unless there is compelling reason to do so.
+
+Cheers,
+Longman
 
 
 
--- 
-Thanks,
-~Nick Desaulniers
