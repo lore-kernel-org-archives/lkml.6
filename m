@@ -2,167 +2,129 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D542C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 08:44:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43CA7C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 08:44:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACCB1208B2
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 08:44:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACCB1208B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id F3706208B2
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 08:44:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NHYvm7eL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3706208B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727433AbeH0M3n convert rfc822-to-8bit (ORCPT
+        id S1727449AbeH0MaB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 08:29:43 -0400
-Received: from mga17.intel.com ([192.55.52.151]:64242 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726978AbeH0M3n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 08:29:43 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2018 01:44:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,294,1531810800"; 
-   d="scan'208";a="84768943"
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.72.61])
-  by fmsmga001.fm.intel.com with ESMTP; 27 Aug 2018 01:43:58 -0700
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Lyude Paul <lyude@redhat.com>, intel-gfx@lists.freedesktop.org
-Cc:     Jan-Marek Glogowski <glogow@fbihome.de>, stable@vger.kernel.org,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] drm/i915: Re-apply "Perform link quality check, unconditionally during long pulse"
-In-Reply-To: <20180825191035.3945-1-lyude@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20180825191035.3945-1-lyude@redhat.com>
-Date:   Mon, 27 Aug 2018 11:43:41 +0300
-Message-ID: <871sak5hdu.fsf@intel.com>
+        Mon, 27 Aug 2018 08:30:01 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:36123 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726934AbeH0MaA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 08:30:00 -0400
+Received: by mail-lj1-f194.google.com with SMTP id v26-v6so7872194ljj.3;
+        Mon, 27 Aug 2018 01:44:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=MVwnb6YB2NxrCktoPgmjFjHVGEIc7ASLkQhna90wuPU=;
+        b=NHYvm7eLa/qd0SBmJNi/hWFZ4K7tbxZVAbgFQZzWSSyPR4Rvb+LDVWFLDjSywUj1SE
+         G/1Fte7CeT7Se6Bl2bG7swiWKQ5SY/agQ8SubIY8qrduazLixJkNgH7XwiHksI1wJHba
+         Yu3e33KpJhGlTOnJsSlEQFrPjeAkIhgNMVlmKdO88bZcgEC99nwe1snu8m0v3JMls0O3
+         v3OIlKRxbFmSMFyZSbtraeQCADO9r63IyxqJGfCK9XHNWVRUap6AtuaCQq9QIy0rQYzy
+         TqNVkMHI7mkMtrpGQAjIXb0ryhSclRiZMRQUXt2FHH8DLC6YVHSLv2zGR8yOKgpVc8rE
+         oyaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=MVwnb6YB2NxrCktoPgmjFjHVGEIc7ASLkQhna90wuPU=;
+        b=XbKsIcynjCApLYaphxuYdjijgMNu6SP1U8cD+Tubf6UfA2Bw+q9BlGqA8Lnl8K7fmO
+         kABPiuzaizYd2CYKV9iJz3qdxXwkGCcmgeQANphwN8MPovArJVu9WTSQsGECtwoE9zc6
+         GYrM6r5f5CF8lxkeEdnU+BBgYJVsiuHwUvF/ULEpY0kxxWevWoSMbeBuJuWuhfOEDwLA
+         VuEVjLrFQlS/HY/HjSNgKYmWr4h1JM0wT4tam+DbzdYyW1/uWQ8foDXCekaky530rfjg
+         PkB1MoOEOQxFKsrqsacONEtjJPFOOmnjw+EE0bbdZkC33GVJTilONmYTbzg5h3hlav7w
+         wYDw==
+X-Gm-Message-State: APzg51DTBVMeeVrMqGQuZhuiDmXdUs3Ind6kLbda5P+HNwTiRHhUHUv6
+        TY0sQgOKLR3iPQGkHF9/xJA=
+X-Google-Smtp-Source: ANB0VdYkP19iPlGPjqF4EP0g9GCiVdVJqqwI1LZDrsOpjkvv6PJ3kPvVk3CMVtWS4saxi6Q0TuJncg==
+X-Received: by 2002:a2e:3c1a:: with SMTP id j26-v6mr7620867lja.149.1535359456787;
+        Mon, 27 Aug 2018 01:44:16 -0700 (PDT)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id q15-v6sm2634151ljh.34.2018.08.27.01.44.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 27 Aug 2018 01:44:15 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1fuD8A-0005z5-Rl; Mon, 27 Aug 2018 10:44:14 +0200
+Date:   Mon, 27 Aug 2018 10:44:14 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Johan Hovold <johan@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable <stable@vger.kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Josh Wu <rainyfeeling@outlook.com>
+Subject: Re: [PATCH v2 5/9] mtd: nand: atmel: fix OF child-node lookup
+Message-ID: <20180827084414.GZ14967@localhost>
+References: <20180827082153.22537-1-johan@kernel.org>
+ <20180827082153.22537-6-johan@kernel.org>
+ <20180827102820.3abf7291@bbrezillon>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180827102820.3abf7291@bbrezillon>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 25 Aug 2018, Lyude Paul <lyude@redhat.com> wrote:
-> From: Jan-Marek Glogowski <glogow@fbihome.de>
->
-> This re-applies the workaround for "some DP sinks, [which] are a
-> little nuts" from commit 1a36147bb939 ("drm/i915: Perform link
-> quality check unconditionally during long pulse").
-> It makes the secondary AOC E2460P monitor connected via DP to an
-> acer Veriton N4640G usable again.
->
-> This hunk was dropped in commit c85d200e8321 ("drm/i915: Move SST
-> DP link retraining into the ->post_hotplug() hook")
->
-> Fixes: c85d200e8321 ("drm/i915: Move SST DP link retraining into the ->post_hotplug() hook")
-> [Cleaned up commit message, added stable cc]
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> Signed-off-by: Jan-Marek Glogowski <glogow@fbihome.de>
-> Cc: stable@vger.kernel.org
-> ---
-> Resending this to update patchwork; will push in a little bit
+On Mon, Aug 27, 2018 at 10:28:20AM +0200, Boris Brezillon wrote:
+> Hi Johan
+> 
+> On Mon, 27 Aug 2018 10:21:49 +0200
+> Johan Hovold <johan@kernel.org> wrote:
+> 
+> > Use the new of_get_compatible_child() helper to lookup the nfc child
+> > node instead of using of_find_compatible_node(), which searches the
+> > entire tree from a given start node and thus can return an unrelated
+> > (i.e. non-child) node.
+> > 
+> > This also addresses a potential use-after-free (e.g. after probe
+> > deferral) as the tree-wide helper drops a reference to its first
+> > argument (i.e. the node of the device being probed).
+> > 
+> > While at it, also fix a related nfc-node reference leak.
+> > 
+> > Fixes: f88fc122cc34 ("mtd: nand: Cleanup/rework the atmel_nand driver")
+> > Cc: stable <stable@vger.kernel.org>     # 4.11
+> > Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+> > Cc: Josh Wu <rainyfeeling@outlook.com>
+> > Cc: Boris Brezillon <boris.brezillon@bootlin.com>
+> > Signed-off-by: Johan Hovold <johan@kernel.org>
+> 
+> Acked-by: Boris Brezillon <boris.brezillon@bootlin.com>
 
-Is there a bugzilla? Reference to a list discussion? Something with a
-dmesg where someone can actually verify this is the right fix?
+Thanks for the ack.
 
-IMO needs an ack from Ville too. He should be in Cc: in the first place
-as the author of the regressing commit.
+> I'll let Miquel queue this patch to the nand/next branch, unless you
+> want it to be merged in 4.19, in which case I'll queue it to the
+> mtd/fixes branch.
 
-'dim fixes c85d200e8321' gives you the output:
+Note that there's a dependency on the first patch of the series which
+adds the new helper. Rob can pick up the entire series if the various
+maintainers agree, otherwise I'll try to get at the least the helper
+into -rc2.
 
-Fixes: c85d200e8321 ("drm/i915: Move SST DP link retraining into the ->post_hotplug() hook")
-Cc: Manasi Navare <manasi.d.navare@intel.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Cc: Lyude Paul <lyude@redhat.com>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: intel-gfx@lists.freedesktop.org
-Cc: <stable@vger.kernel.org> # v4.17+
+I'd prefer getting the use-after-frees fixed in 4.19, but queuing for
+4.20 should be fine too.
 
-BR,
-Jani.
-
->
->  drivers/gpu/drm/i915/intel_dp.c | 33 +++++++++++++++++++--------------
->  1 file changed, 19 insertions(+), 14 deletions(-)
->
-> diff --git a/drivers/gpu/drm/i915/intel_dp.c b/drivers/gpu/drm/i915/intel_dp.c
-> index b3f6f04c3c7d..db8515171270 100644
-> --- a/drivers/gpu/drm/i915/intel_dp.c
-> +++ b/drivers/gpu/drm/i915/intel_dp.c
-> @@ -4333,18 +4333,6 @@ intel_dp_needs_link_retrain(struct intel_dp *intel_dp)
->  	return !drm_dp_channel_eq_ok(link_status, intel_dp->lane_count);
->  }
->  
-> -/*
-> - * If display is now connected check links status,
-> - * there has been known issues of link loss triggering
-> - * long pulse.
-> - *
-> - * Some sinks (eg. ASUS PB287Q) seem to perform some
-> - * weird HPD ping pong during modesets. So we can apparently
-> - * end up with HPD going low during a modeset, and then
-> - * going back up soon after. And once that happens we must
-> - * retrain the link to get a picture. That's in case no
-> - * userspace component reacted to intermittent HPD dip.
-> - */
->  int intel_dp_retrain_link(struct intel_encoder *encoder,
->  			  struct drm_modeset_acquire_ctx *ctx)
->  {
-> @@ -5031,7 +5019,8 @@ intel_dp_unset_edid(struct intel_dp *intel_dp)
->  }
->  
->  static int
-> -intel_dp_long_pulse(struct intel_connector *connector)
-> +intel_dp_long_pulse(struct intel_connector *connector,
-> +		    struct drm_modeset_acquire_ctx *ctx)
->  {
->  	struct drm_i915_private *dev_priv = to_i915(connector->base.dev);
->  	struct intel_dp *intel_dp = intel_attached_dp(&connector->base);
-> @@ -5090,6 +5079,22 @@ intel_dp_long_pulse(struct intel_connector *connector)
->  		 */
->  		status = connector_status_disconnected;
->  		goto out;
-> +	} else {
-> +		/*
-> +		 * If display is now connected check links status,
-> +		 * there has been known issues of link loss triggering
-> +		 * long pulse.
-> +		 *
-> +		 * Some sinks (eg. ASUS PB287Q) seem to perform some
-> +		 * weird HPD ping pong during modesets. So we can apparently
-> +		 * end up with HPD going low during a modeset, and then
-> +		 * going back up soon after. And once that happens we must
-> +		 * retrain the link to get a picture. That's in case no
-> +		 * userspace component reacted to intermittent HPD dip.
-> +		 */
-> +		struct intel_encoder *encoder = &dp_to_dig_port(intel_dp)->base;
-> +
-> +		intel_dp_retrain_link(encoder, ctx);
->  	}
->  
->  	/*
-> @@ -5151,7 +5156,7 @@ intel_dp_detect(struct drm_connector *connector,
->  				return ret;
->  		}
->  
-> -		status = intel_dp_long_pulse(intel_dp->attached_connector);
-> +		status = intel_dp_long_pulse(intel_dp->attached_connector, ctx);
->  	}
->  
->  	intel_dp->detect_done = false;
-
--- 
-Jani Nikula, Intel Open Source Graphics Center
+Thanks,
+Johan
