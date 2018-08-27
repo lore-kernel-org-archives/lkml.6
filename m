@@ -6,127 +6,116 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB93C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 10:07:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0CB9C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 10:07:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31E7520891
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 10:07:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CF1520891
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 10:07:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fazBTxR+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31E7520891
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WRyqmkuq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CF1520891
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727201AbeH0NxJ (ORCPT
+        id S1727234AbeH0NxZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 09:53:09 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:38748 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726802AbeH0NxJ (ORCPT
+        Mon, 27 Aug 2018 09:53:25 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:40033 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726873AbeH0NxZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 09:53:09 -0400
-Received: by mail-it0-f65.google.com with SMTP id p129-v6so9763693ite.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 03:07:09 -0700 (PDT)
+        Mon, 27 Aug 2018 09:53:25 -0400
+Received: by mail-io0-f196.google.com with SMTP id l14-v6so12325803iob.7
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 03:07:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=Xrvker25ukWpZUa72n604pK+6+wgd2Qj1rl/I6TVXUk=;
-        b=fazBTxR+m0yL2uqailSPKn1pN0AlGZ434VBw/5cg8SNluHTjUQQqlRw+dubshYu39D
-         mZ0OdbRKRbqL+C8MxodxIc48eMEKCKGxisSnwt0m3+FwoFte1USWEGZjsCsKaZ3HcSlR
-         5VhayDT+bExDVwXDOPMxnal+XHPH44j4ftZH4=
+        bh=8oDe0d0GaWEjTdjOchuNbOKsGZ/SHxzb0secHWpFJsI=;
+        b=WRyqmkuqUi0Xfgenaf95PrZn0Qbwzh2g/xUFO0tM7psmHjSGKenIrhiSluC65V9scQ
+         H7V5sNWbyl6GmAerUpQsTKEZTFdUJlViGYgrOEcRcwAKX9GkyxeQ8cBBtOLyEl0r38b8
+         qkBPApjq/rdMR3wDui52hcXA7K0xfVtTuVm48=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=Xrvker25ukWpZUa72n604pK+6+wgd2Qj1rl/I6TVXUk=;
-        b=ubMU0ecRmvz7O1G3HwnKrJPJ4mbsjlUnGLrra14slWFEkQ/4Iay5wKF3uTjYxAe6Z2
-         O9yzhMbpqCX+xA1TJKJsbtZR3d9+Co1rPSfxaUDecRAd7lZZtAjxdmURhGoWyyKztN94
-         w+qQjixsij8KeoEHTKvzbMWG+uoP2jw8lxx3CKN3dGLTMz5gW0eefNWEaPMpSyfLcWxd
-         WmW3oDjRxh2itPYzfv0EwxZ8l0/lEDoSxQwwa1fNTL770GS3R73l4KrmrPfPqmTik4OJ
-         olLIFWwD7Apv1jotGTcV2JIZIX+ko7zEXym/Mc9ih2TFp7E8wgGnBvohlFbYQJY3Eurb
-         19bA==
-X-Gm-Message-State: APzg51ChEu4LsVkZdmWhHXKobnwLVgwgRNCrc7R8uVooLg4+Il4FEMrO
-        YGnl7g2lHSKlp4dNWWlpIA1FExNhzH9sJ6b6pVlEdg==
-X-Google-Smtp-Source: ANB0Vda8QYDHqPZZrFA7ISwtndnhJPrOvHfL7utC6AAgsz9ac8FDnCdD1iRrTlha02AidBEoBuSr4XKlTXKBuXZ9918=
-X-Received: by 2002:a24:a388:: with SMTP id p130-v6mr5976387ite.146.1535364429047;
- Mon, 27 Aug 2018 03:07:09 -0700 (PDT)
+        bh=8oDe0d0GaWEjTdjOchuNbOKsGZ/SHxzb0secHWpFJsI=;
+        b=ukJzH4kING9WTDMJBrdnKXX7StkBcxrQXYqnt2nMF8JpbpRJpMSGeiOeomaVyo4nDy
+         3YooJXJXpNw9+2AMjmUNQht91Bq7ZQ1qRJYCLPT5Y2dZnnLwccVKSNj5auuI3RFlhNbR
+         yYgT1KZmQP9zlZvBMweVwf+CNFDTx8dcDysNo82gKqpwk76SCNeKwZos+pteXLRPU711
+         LgRHxzlwXSGoowuBLdQ+XWSoz2eM88VzFTVHGBUzgZ6pADn6xFr4u6uALKjBxb5nKrkK
+         qACMomGybRNyvc8tEWEPsGeO91WdYZo7bJfMv1Kj/cf6h8P6O7ywlo1Kl12B0EjIjXlj
+         siNw==
+X-Gm-Message-State: APzg51CyHW6nJkrhQ+pSf2PDNl+p09DrtfZrSAXTmj1aUas5fctzL3hJ
+        iVRNJNpKWuttSUlkGBZhJtNdAYVNBhXRLfYmHjvU2Q==
+X-Google-Smtp-Source: ANB0VdYCKIJWR7JmzVfU/MuKWhvotz9u/KsPAdpLNfZNgp6bmj1MW7hhLMxVPZuw1v4MXDJb2lzBd7Yl9bPIklbbhUw=
+X-Received: by 2002:a6b:c995:: with SMTP id z143-v6mr9835010iof.266.1535364444255;
+ Mon, 27 Aug 2018 03:07:24 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a02:2b03:0:0:0:0:0 with HTTP; Mon, 27 Aug 2018 03:07:08
+Received: by 2002:a02:2b03:0:0:0:0:0 with HTTP; Mon, 27 Aug 2018 03:07:23
  -0700 (PDT)
-In-Reply-To: <1534757013-4524-2-git-send-email-avienamo@nvidia.com>
-References: <1534757013-4524-1-git-send-email-avienamo@nvidia.com> <1534757013-4524-2-git-send-email-avienamo@nvidia.com>
+In-Reply-To: <9de08b30-cb92-01c6-caf3-c4abc3591dcf@intel.com>
+References: <1534406064-10065-1-git-send-email-zhang.chunyan@linaro.org>
+ <1534406064-10065-7-git-send-email-zhang.chunyan@linaro.org> <9de08b30-cb92-01c6-caf3-c4abc3591dcf@intel.com>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 27 Aug 2018 12:07:08 +0200
-Message-ID: <CAPDyKFrxMWBisB5uuhFjxosExJx5cqLnTLE5Eoxp5LVdFk_43g@mail.gmail.com>
-Subject: Re: [PATCH 1/2] mmc: sdhci: Export sdhci_request()
-To:     Aapo Vienamo <avienamo@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Mon, 27 Aug 2018 12:07:23 +0200
+Message-ID: <CAPDyKFpL_o2N_yteF=rTH5gy4Mm-HrQU5bL5i8s2dWjpTK_Fng@mail.gmail.com>
+Subject: Re: [PATCH V5 06/10] mmc: sdhci: Disable auto-CMD23 if stuff bits is
+ set in CMD23 argument
+To:     Chunyan Zhang <zhang.chunyan@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Cc:     "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Billows Wu <billows.wu@unisoc.com>,
+        Jason Wu <jason.wu@unisoc.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20 August 2018 at 11:23, Aapo Vienamo <avienamo@nvidia.com> wrote:
-> Allow SDHCI drivers to hook code before and after sdhci_request() by
-> making it externally visible.
+On 23 August 2018 at 14:50, Adrian Hunter <adrian.hunter@intel.com> wrote:
+> On 16/08/18 10:54, Chunyan Zhang wrote:
+>> For version 4.10 and aboves, SDHCI_ARGUMENT2 is also uses to indicate
+>> 32-bit number of blocks, it doesn't support stuff bits in argument of
+>> CMD23, but only block count for the following command (CMD18/25).
+>>
+>> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
+>> ---
+>>  drivers/mmc/host/sdhci.c | 9 +++++++++
+>>  drivers/mmc/host/sdhci.h | 1 +
+>>  2 files changed, 10 insertions(+)
+>>
+>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+>> index b3328ee..a72ad0d 100644
+>> --- a/drivers/mmc/host/sdhci.c
+>> +++ b/drivers/mmc/host/sdhci.c
+>> @@ -1729,6 +1729,15 @@ static void sdhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
+>>               }
+>>       }
+>>
+>> +     /*
+>> +      * For version 4.10 and above, ARGUMENT2 register is also used as 32-bit
+>> +      * block count register which don't support stuff bits of CMD23 argument
+>> +      */
+>> +     if (host->version >= SDHCI_SPEC_410 &&
+>> +         mrq->sbc && (mrq->sbc->arg & SDHCI_ARG2_STUFF) &&
+>> +         (host->flags & SDHCI_AUTO_CMD23))
+>> +             host->flags &= ~SDHCI_AUTO_CMD23;
 >
-> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+> I would prefer this be done in sdhci-sprd.c by hooking ->request().  Someone
+> sent a patch recently to export sdhci_request().
 
-This one happens to be useful for other variants but Tegras, hence I
-have applied this one for next. Thanks!
+Right. So I have picked up the patch you were referring to.
+https://lkml.org/lkml/2018/8/20/140
 
-Thierry, you may thus drop this one from your PR. Also, you should
-probably base your pull request on top of my next branch, as I have
-already started to queue up some changes for sdhci.
+Chunyan, you may now preferably base your next version on top of my
+mmc tree's next branch.
+
+[...]
 
 Kind regards
 Uffe
-
-> ---
->  drivers/mmc/host/sdhci.c | 3 ++-
->  drivers/mmc/host/sdhci.h | 1 +
->  2 files changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index da47f7b..1e0c0a6 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -1636,7 +1636,7 @@ EXPORT_SYMBOL_GPL(sdhci_set_power);
->   *                                                                           *
->  \*****************************************************************************/
->
-> -static void sdhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
-> +void sdhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
->  {
->         struct sdhci_host *host;
->         int present;
-> @@ -1675,6 +1675,7 @@ static void sdhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
->         mmiowb();
->         spin_unlock_irqrestore(&host->lock, flags);
->  }
-> +EXPORT_SYMBOL_GPL(sdhci_request);
->
->  void sdhci_set_bus_width(struct sdhci_host *host, int width)
->  {
-> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-> index cc963a5..73c4744 100644
-> --- a/drivers/mmc/host/sdhci.h
-> +++ b/drivers/mmc/host/sdhci.h
-> @@ -729,6 +729,7 @@ void sdhci_set_power(struct sdhci_host *host, unsigned char mode,
->                      unsigned short vdd);
->  void sdhci_set_power_noreg(struct sdhci_host *host, unsigned char mode,
->                            unsigned short vdd);
-> +void sdhci_request(struct mmc_host *mmc, struct mmc_request *mrq);
->  void sdhci_set_bus_width(struct sdhci_host *host, int width);
->  void sdhci_reset(struct sdhci_host *host, u8 mask);
->  void sdhci_set_uhs_signaling(struct sdhci_host *host, unsigned timing);
-> --
-> 2.7.4
->
