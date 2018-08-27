@@ -2,119 +2,86 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E7DFC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 09:33:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88778C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 09:34:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4968420666
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 09:33:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4968420666
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 48CE0208D6
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 09:34:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48CE0208D6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727313AbeH0NTf (ORCPT
+        id S1727516AbeH0NUZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 09:19:35 -0400
-Received: from mga02.intel.com ([134.134.136.20]:31423 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727098AbeH0NTf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 09:19:35 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2018 02:33:42 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,294,1531810800"; 
-   d="scan'208";a="66264628"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga008.fm.intel.com with ESMTP; 27 Aug 2018 02:33:11 -0700
-Received: from [10.125.252.155] (abudanko-mobl.ccr.corp.intel.com [10.125.252.155])
-        by linux.intel.com (Postfix) with ESMTP id B12B65802AD;
-        Mon, 27 Aug 2018 02:33:08 -0700 (PDT)
-Subject: Re: [PATCH v2 2/2]: perf record: enable asynchronous trace writing
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org
-References: <e92805d0-3338-2ce5-5e88-369d406fe0a7@linux.intel.com>
- <54cc11d7-3ef2-c856-052e-6e2c309ff743@linux.intel.com>
- <20180827083852.GF24695@krava>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <a34aa784-e36c-02fd-3e9d-7df4bc61ffe2@linux.intel.com>
-Date:   Mon, 27 Aug 2018 12:33:07 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 27 Aug 2018 09:20:25 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34902 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727098AbeH0NUZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 09:20:25 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A217A402212B;
+        Mon, 27 Aug 2018 09:34:31 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-117-138.ams2.redhat.com [10.36.117.138])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2E9EAA30A0;
+        Mon, 27 Aug 2018 09:34:31 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 1E6CC16E29; Mon, 27 Aug 2018 11:34:30 +0200 (CEST)
+Date:   Mon, 27 Aug 2018 11:34:30 +0200
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Shuah Khan <shuah@kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" 
+        <linux-media@vger.kernel.org>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
+        <linaro-mm-sig@lists.linaro.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
+Subject: Re: [PATCH v6] Add udmabuf misc device
+Message-ID: <20180827093430.ck2pf7lkxdt52n2h@sirius.home.kraxel.org>
+References: <20180703075359.30349-1-kraxel@redhat.com>
+ <20180703083757.GG7880@phenom.ffwll.local>
+ <20180704055338.n3b7oexltaejqmcd@sirius.home.kraxel.org>
+ <20180704080807.GH3891@phenom.ffwll.local>
+ <20180704085825.nfkv5i7ultaavjve@sirius.home.kraxel.org>
+ <20180704091954.GQ3891@phenom.ffwll.local>
 MIME-Version: 1.0
-In-Reply-To: <20180827083852.GF24695@krava>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180704091954.GQ3891@phenom.ffwll.local>
+User-Agent: NeoMutt/20180622
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 27 Aug 2018 09:34:31 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 27 Aug 2018 09:34:31 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'kraxel@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+  Hi,
 
-On 27.08.2018 11:38, Jiri Olsa wrote:
-> On Thu, Aug 23, 2018 at 07:47:01PM +0300, Alexey Budankov wrote:
+> > Covering udmabuf.c maintainance is a different issue.  I could just add
+> > myself to the existing entry, or create a new one specifically for
+> > udmabuf.
 > 
-> SNIP
-> 
->>  static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evlist,
->>  				    bool overwrite)
->>  {
->>  	u64 bytes_written = rec->bytes_written;
->> -	int i;
->> -	int rc = 0;
->> +	int i, rc = 0;
->>  	struct perf_mmap *maps;
->> +	int trace_fd = rec->session->data->file.fd;
->> +	struct aiocb **mmap_aio = rec->evlist->mmap_aio;
->> +	int mmap_aio_size = 0;
->> +	off_t off;
->>  
->>  	if (!evlist)
->>  		return 0;
->> @@ -546,14 +620,17 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
->>  	if (overwrite && evlist->bkw_mmap_state != BKW_MMAP_DATA_PENDING)
->>  		return 0;
->>  
->> +	off = lseek(trace_fd, 0, SEEK_CUR);
->> +
-> 
-> with async write, do we need to query/set the offset like this
-> all the time?
+> That's what I meant, do a more specific entry to add yourself just for
+> udmabuf.
 
-It looks like we need it this way. Internally glibc AIO implements writes 
-using pwrite64 syscall in our case. The sycall requires offset as a parameter 
-and doesn't update file position on the completion.
+Ok.  Back from summer vacation, finally found the time to continue
+working on this.  Entry added, rebased to 4.19-rc1, v7 comes in a
+moment.  Please review & ack.
 
-> 
-> could we just keep/update the offset value in the 'struct perf_data_file'
-> and skip both lseek calls?
+thanks,
+  Gerd
 
-Don't see how it is possible. offset is different for every enqeued write 
-operation and write areas don't intersect for the whole writing loop. 
-To know the final file position it is required to iterate thru 
-the loop.
-
-> 
-> jirka
-> 
-> SNIP
-> 
->>  
->> +	record__mmap_read_sync(trace_fd, mmap_aio, mmap_aio_size, rec);
->> +
->> +	lseek(trace_fd, off, SEEK_SET);
->> +
-> 
