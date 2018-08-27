@@ -2,166 +2,127 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=DATE_IN_FUTURE_03_06,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,LOCALPART_IN_SUBJECT,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE14CC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 00:56:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70E34C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 01:00:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FACE2174A
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 00:56:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FACE2174A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 18F002174A
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 01:00:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="P9+nMtw2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18F002174A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726927AbeH0Ekf (ORCPT
+        id S1726946AbeH0Eo7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 00:40:35 -0400
-Received: from mga17.intel.com ([192.55.52.151]:29318 "EHLO mga17.intel.com"
+        Mon, 27 Aug 2018 00:44:59 -0400
+Received: from ozlabs.org ([203.11.71.1]:52941 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725779AbeH0Ekf (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 00:40:35 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Aug 2018 17:56:18 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,293,1531810800"; 
-   d="scan'208";a="75793336"
-Received: from skl.sh.intel.com ([10.239.161.125])
-  by FMSMGA003.fm.intel.com with ESMTP; 26 Aug 2018 17:56:15 -0700
-From:   Jin Yao <yao.jin@linux.intel.com>
-To:     acme@kernel.org, peterz@infradead.org, mingo@redhat.com,
-        eranian@google.com, kan.liang@intel.com, jolsa@kernel.org
-Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        yao.jin@intel.com, Jin Yao <yao.jin@linux.intel.com>
-Subject: [PATCH] perf/x86/intel/uncore: Provide alias for IIO free-running boxes on SKX
-Date:   Mon, 27 Aug 2018 16:48:53 +0800
-Message-Id: <1535359733-6755-1-git-send-email-yao.jin@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S1726731AbeH0Eo7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 00:44:59 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41zD8Q5Cl1z9ryn;
+        Mon, 27 Aug 2018 11:00:38 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1535331638;
+        bh=y3nrkoGJas7CGeKtq+/7v/YnAxHWg0A940dxtVfXI00=;
+        h=Date:From:To:Cc:Subject:From;
+        b=P9+nMtw2wkej+sDzYV9GR3aZcHVMP86/+oJvJrX24UW/YvyNy411ZmFMWkFXeeHIA
+         U//eglNDyZmrV04h3U3vOibi3cyLBp6jfcNgYkBk4PF6Bw8ZWiwNXfVHI19i6PLvxc
+         lmeabCnZAYauyA3EF3ludck8TnTH0h43uh1A9l527ff8dKM8ATm8fcoNRwD71xS4gD
+         vj+z5FO2SZ1T1rBINHa+yZKUYMnqG307t2s5jAgjG1rV8qhDPuBPExcfH10b8TB5bA
+         zhok0VPoZVj+avx4oso2G/M0COBGFafpSDLV6cdjGDHz0y7Vfg3W+GOYpVQslNQJJA
+         QbFag8QAqKwdw==
+Date:   Mon, 27 Aug 2018 11:00:38 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Aug 27
+Message-ID: <20180827110038.2800ce18@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/M.Dft36Zq7RS0arIwr2QkgC"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For Skylake Server, Linux has supported a number of free running
-counters that collect counts of IO clocks/Bandwidth/Utilization.
+--Sig_/M.Dft36Zq7RS0arIwr2QkgC
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-For example, to collect the inbound bandwidth,
+Hi all,
 
-root@skx /sys/devices# ls | grep uncore_iio
-uncore_iio_0
-uncore_iio_1
-uncore_iio_2
-uncore_iio_3
-uncore_iio_4
-uncore_iio_5
-uncore_iio_free_running_0
-uncore_iio_free_running_1
-uncore_iio_free_running_2
-uncore_iio_free_running_3
-uncore_iio_free_running_4
-uncore_iio_free_running_5
+Changes since 20180824:
 
-root@skx /sys/devices# perf stat -a -e uncore_iio_free_running_2/bw_in_port0/
-^C
- Performance counter stats for 'system wide':
+Dropped trees: xarray, ida (temporarily)
 
-            153.19 MiB  uncore_iio_free_running_2/bw_in_port0/
+Non-merge commits (relative to Linus' tree): 427
+ 585 files changed, 17988 insertions(+), 5276 deletions(-)
 
-       8.037701069 seconds time elapsed
+----------------------------------------------------------------------------
 
-While it's hard for user to understanding what the box the
-uncore_iio_free_running_N means.
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
 
-This patch provides aliases for the boxes. With this patch,
-for example,
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log
+files in the Next directory.  Between each merge, the tree was built
+with a ppc64_defconfig for powerpc, an allmodconfig for x86_64, a
+multi_v7_defconfig for arm and a native build of tools/perf. After
+the final fixups (if any), I do an x86_64 modules_install followed by
+builds for x86_64 allnoconfig, powerpc allnoconfig (32 and 64 bit),
+ppc44x_defconfig, allyesconfig and pseries_le_defconfig and i386, sparc
+and sparc64 defconfig. And finally, a simple boot test of the powerpc
+pseries_le_defconfig kernel in qemu (with and without kvm enabled).
 
-root@skx /sys/devices# ls | grep uncore_iio
-uncore_iio_0
-uncore_iio_1
-uncore_iio_2
-uncore_iio_3
-uncore_iio_4
-uncore_iio_5
-uncore_iio_cbdma
-uncore_iio_mcp0
-uncore_iio_mcp1
-uncore_iio_pcie0
-uncore_iio_pcie1
-uncore_iio_pcie2
+Below is a summary of the state of the merge.
 
-root@skx ~# perf stat -a -e uncore_iio_pcie1/bw_in_port0/
-^C
- Performance counter stats for 'system wide':
+I am currently merging 287 trees (counting Linus' and 65 trees of bug
+fix patches pending for the current merge release).
 
-            153.12 MiB  uncore_iio_pcie1/bw_in_port0/
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
 
-       8.469790720 seconds time elapsed
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
 
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
----
- arch/x86/events/intel/uncore.c       |  9 +++++++--
- arch/x86/events/intel/uncore.h       |  1 +
- arch/x86/events/intel/uncore_snbep.c | 10 ++++++++++
- 3 files changed, 18 insertions(+), 2 deletions(-)
+Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
+Gortmaker for triage and bug fixes.
 
-diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
-index 27a4614..6c6615f 100644
---- a/arch/x86/events/intel/uncore.c
-+++ b/arch/x86/events/intel/uncore.c
-@@ -812,8 +812,13 @@ static int uncore_pmu_register(struct intel_uncore_pmu *pmu)
- 		else
- 			sprintf(pmu->name, "uncore");
- 	} else {
--		sprintf(pmu->name, "uncore_%s_%d", pmu->type->name,
--			pmu->pmu_idx);
-+		if (pmu->type->alias && pmu->pmu_idx < pmu->type->num_boxes) {
-+			sprintf(pmu->name, "uncore_%s",
-+				pmu->type->alias[pmu->pmu_idx]);
-+		} else {
-+			sprintf(pmu->name, "uncore_%s_%d", pmu->type->name,
-+				pmu->pmu_idx);
-+		}
- 	}
- 
- 	ret = perf_pmu_register(&pmu->pmu, pmu->name, -1);
-diff --git a/arch/x86/events/intel/uncore.h b/arch/x86/events/intel/uncore.h
-index e17ab88..db9fd9a 100644
---- a/arch/x86/events/intel/uncore.h
-+++ b/arch/x86/events/intel/uncore.h
-@@ -44,6 +44,7 @@ struct freerunning_counters;
- 
- struct intel_uncore_type {
- 	const char *name;
-+	const char **alias;
- 	int num_counters;
- 	int num_boxes;
- 	int perf_ctr_bits;
-diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
-index 51d7c11..9cd7e3d 100644
---- a/arch/x86/events/intel/uncore_snbep.c
-+++ b/arch/x86/events/intel/uncore_snbep.c
-@@ -3596,8 +3596,18 @@ static const struct attribute_group skx_uncore_iio_freerunning_format_group = {
- 	.attrs = skx_uncore_iio_freerunning_formats_attr,
- };
- 
-+static const char * const skx_uncore_iio_free_running_aliases[] = {
-+	{ "iio_cbdma" },
-+	{ "iio_pcie0" },
-+	{ "iio_pcie1" },
-+	{ "iio_pcie2" },
-+	{ "iio_mcp0" },
-+	{ "iio_mcp1" },
-+};
-+
- static struct intel_uncore_type skx_uncore_iio_free_running = {
- 	.name			= "iio_free_running",
-+	.alias			= skx_uncore_iio_free_running_aliases,
- 	.num_counters		= 17,
- 	.num_boxes		= 6,
- 	.num_freerunning_types	= SKX_IIO_FREERUNNING_TYPE_MAX,
--- 
-2.7.4
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/M.Dft36Zq7RS0arIwr2QkgC
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluDTTYACgkQAVBC80lX
+0GyESwf/cDHOAZc+1nTycCzjdQtGv1poHfwHcQvkiTx78ACQCf0s57TIbj/HZmXO
+Lt9CTB+gc+vZMui1q/zxFDIWCS15RjWVkiLheOwFgnUTsP7yc5CpCjWBmGWW2Szg
+D7oy6lCxs7u2KYnq6bHeO1DmSSphHa1eD4MDFeXSDuzCkYtp1Spz7SG4uFBivq0J
+6CzIOT+XQH+iRQfJ4N9R1GSkE5KRuFLgpaZRMknpxsUUec03yoTPMqvHDfM24j79
+WCk25ubNURW6aEP9wiEh/sDabSwETe1/uMi95CBuf2tnNCnZwbvEQSNujSAl2c8C
+tZT2dEHjmDW4gOxN31p0pzM4P3F/xQ==
+=SV7X
+-----END PGP SIGNATURE-----
+
+--Sig_/M.Dft36Zq7RS0arIwr2QkgC--
