@@ -2,116 +2,148 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07979C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:51:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2414AC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:56:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8292208D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:51:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8292208D8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=metafoo.de
+	by mail.kernel.org (Postfix) with ESMTP id BA751208B9
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:56:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lVazhHuK";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Q0k/PlI4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA751208B9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727530AbeH0UjD (ORCPT
+        id S1727346AbeH0UoM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 16:39:03 -0400
-Received: from www381.your-server.de ([78.46.137.84]:49976 "EHLO
-        www381.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726995AbeH0UjD (ORCPT
+        Mon, 27 Aug 2018 16:44:12 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:40672 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726994AbeH0UoL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 16:39:03 -0400
-Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
-        by www381.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <lars@metafoo.de>)
-        id 1fuKjb-0005Y1-CI; Mon, 27 Aug 2018 18:51:23 +0200
-Received: from [188.174.121.209] (helo=[192.168.178.32])
-        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <lars@metafoo.de>)
-        id 1fuKjb-0006vs-4k; Mon, 27 Aug 2018 18:51:23 +0200
-Subject: Re: [PATCH 1/1] axi-i2s: set period size register
-To:     Luca Ceresoli <luca@lucaceresoli.net>, alsa-devel@alsa-project.org
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org,
-        Michal Simek <michal.simek@xilinx.com>
-References: <20180824160430.10222-1-luca@lucaceresoli.net>
- <20180824160430.10222-2-luca@lucaceresoli.net>
- <b87937b6-da7c-76d7-5dd2-24909e648671@metafoo.de>
- <263e42b4-75a3-183c-894b-e485e387eccf@lucaceresoli.net>
-From:   Lars-Peter Clausen <lars@metafoo.de>
-Message-ID: <f1845eab-ea85-5c2f-98c2-ac63a13ff68a@metafoo.de>
-Date:   Mon, 27 Aug 2018 18:51:22 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 27 Aug 2018 16:44:11 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id C7DC7606DD; Mon, 27 Aug 2018 16:56:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535389006;
+        bh=8NyyRTX0SX7D0UuHcHWq80gYnbGevPxQyCdSMXAbQp8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lVazhHuKiysfCc760/2rJJ5yrJpG41mFW/3y5Ix2lgCjvcqwzbqAa9nhiTMJnIoMn
+         hCKaRcnZFnsPTgbGnfpMgUhL057psMv9PTdqf+LyyzWJPR3HzRjHU2QPt8vBM4ebdE
+         CSdcNOOF298r/+yO3NNi010W3RcctSa/26oyJRy0=
+Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: ilina@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9E62760271;
+        Mon, 27 Aug 2018 16:56:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535389005;
+        bh=8NyyRTX0SX7D0UuHcHWq80gYnbGevPxQyCdSMXAbQp8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Q0k/PlI4TOsazhVLLxI7jIBp4/cQ0J8AvnANPm89Pnw7sGKu88fJIFxhcV9cribdp
+         Ye7kG1PwyfbqgglSCgxhuIs5iS1ULRhCfWaHu0iVzTL7y+xNb31djW4le7GRXIOTpX
+         AF9h7GGYk8AyvybiLQkoWaG2xIim1HzhA860YK8U=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9E62760271
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date:   Mon, 27 Aug 2018 10:56:44 -0600
+From:   Lina Iyer <ilina@codeaurora.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>, evgreen@chromium.org,
+        rplsssn@codeaurora.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Andy Gross <andy.gross@linaro.org>,
+        Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v2 1/5] drivers: pinctrl: qcom: add wakeup capability to
+ GPIO
+Message-ID: <20180827165644.GR5081@codeaurora.org>
+References: <20180817163849.30750-1-ilina@codeaurora.org>
+ <20180817163849.30750-2-ilina@codeaurora.org>
+ <CACRpkdb+Opdn1eWZSRydS1Bafpqwcg83xEcT-YJC6D-kSSi1ew@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <263e42b4-75a3-183c-894b-e485e387eccf@lucaceresoli.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: lars@metafoo.de
-X-Virus-Scanned: Clear (ClamAV 0.100.1/24878/Mon Aug 27 14:49:42 2018)
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CACRpkdb+Opdn1eWZSRydS1Bafpqwcg83xEcT-YJC6D-kSSi1ew@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/27/2018 06:22 PM, Luca Ceresoli wrote:
-> Hi,
-> 
-> thanks for your feedback.
-> 
-> [Adding Michal Simek (Xilinx maintainer) in Cc]
-> 
-> On 27/08/2018 14:27, Lars-Peter Clausen wrote:
->> On 08/24/2018 06:04 PM, Luca Ceresoli wrote:
->>> The default value of the PERIOD_LEN register is 0 and results in
->>> axi-i2s keeping TLAST always asserted in its AXI Stream output.
->>>
->>> When the AXI Stream is sent to a Xilinx AXI-DMA, this results in the
->>> DMA generating an interrupt flood and ALSA produce a corrupted
->>> recording. This is because AXI-DMA raises an interrupt whenever TLAST
->>> is active.
->>>
->>> Fix by setting the PERIOD_LEN register as soon as the period is
->>> known. This way TLAST is emitted once per period, and the DMA raises
->>> interrupts correctly.
+On Sun, Aug 26 2018 at 08:33 -0600, Linus Walleij wrote:
+>On Fri, Aug 17, 2018 at 6:39 PM Lina Iyer <ilina@codeaurora.org> wrote:
+>
+>> QCOM SoC's that have Power Domain Controller (PDC) chip in the always-on
+>> domain can wakeup the SoC, when interrupts and GPIOs are routed to the
+>> its interrupt controller. Only select GPIOs that are deemed wakeup
+>> capable are routed to specific PDC pins. During low power state, the
+>> pinmux interrupt controller may be non-functional but the PDC would be.
+>> The PDC can detect the wakeup GPIO is triggered and bring the TLMM to an
+>> operational state.
 >>
->> The patch looks OK. But I'd prefer not to merge it if possible.
+>> Interrupts that are level triggered will be detected at the TLMM when
+>> the controller becomes operational. Edge interrupts however need to be
+>> replayed again.
 >>
->> We've done some early experiments with the Xilinx AXI-DMA, but it turned out
->> to be to unreliable and we've abandoned support for it. One of the more
->> critical issues was that you can't abort a DMA transfer. That means when
->> audio capture is stopped the DMA will halt, but not complete the current
->> transfer. Then when the next audio capture start the DMA will continue with
->> the previous transfer. The observed effect of this was that the system would
->> just crash randomly (Presumably due to memory corruption).
-> 
-> Strange. I have done many capture experiments with arecord and didn't
-> run into such bad issues. I only have a much less serious problem
-> (garbage or old samples in the first few buffers), but no crashes.
-> 
-> Michal, are you aware of these problems?
-> 
->> Have you considered using the ADI AXI-DMAC? That should work just fine.
-> 
-> Not until today, because AXI-DMA is working here.
-> 
-> I'd like to better understand what's going on before changing an IP that
-> is working. Do you have additional details about your setup? How do you
-> run your tests?
+>> Request the corresponding PDC IRQ, when the GPIO is requested as an IRQ,
+>> but keep it disabled. During suspend, we can enable the PDC IRQ instead
+>> of the GPIO IRQ, which may or not be detected.
+>>
+>> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+>> ---
+>> Changes in v1:
+>>         - Trigger GPIO in h/w from PDC IRQ handler
+>>         - Avoid big tables for GPIO-PDC map, pick from DT instead
+>>         - Use handler_data
+>
+>Just for the record this is an impressive and much needed patch
+>set, no other SoC developer has yet taken on the task of making this
+>work so I very much appreciate that Qualcomm show the way.
+>
+>> +static int msm_gpio_pdc_pin_request(struct irq_data *d)
+>> +static int msm_gpio_pdc_pin_release(struct irq_data *d)
+>> +static int msm_gpio_irq_reqres(struct irq_data *d)
+>> +{
+>(...)
+>> +       if (gpiochip_lock_as_irq(gc, irqd_to_hwirq(d))) {
+>(...)
+>> +static void msm_gpio_irq_relres(struct irq_data *d)
+>> +{
+>> +       gpiochip_unlock_as_irq(gc, irqd_to_hwirq(d));
+>> +}
+>
+>FYI Hans Verkuil is working on a patch set that moves the
+>lock/unlock as IRQ call to the irqchip request() and release()
+>functions so we can switch a GPIO irqchip line from IRQ
+>mode to say output at runtime without too much trouble.
+>(CEC needs this.)
+>
+Thanks, I will look into Hans's RFCv2. But what would help me would be
+to avoid creating the IRQ for the GPIO itself (I have the latent IRQ),
+if I could just return that instead in gpio_to_irq(), it might be
+easier. I understand ->to_irq() is supposed to be a translate function
+only, I can avoid the dance of enabling and diabling the PDC IRQ on
+suspend and resume.
 
-This was 4-5 years ago. A AXI-DMA with both TX and RX connected to the
-AXI-I2S.
+-- Lina
 
-It might be that back then I didn't have buffer prealloc enabled, so a
-new DMA buffer gets allocated for each transfer. Then you end up with
-use after free and the DMA overwriting freed (and maybe reused) memory.
-
-It was bad enough that it was a lot easier to add PL330 support to the
-I2S peripheral. Not using Xilinx DMA for anything anymore has saved me
-from a lot of headache.
+>I suspect that will make your work easier?
+>
+>Hans can you include Lina in the loop for your patches
+>so she can take that into accoun because I think we might
+>need that as a base for this.
+>
+>Yours,
+>Linus Walleij
