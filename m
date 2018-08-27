@@ -6,56 +6,57 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0788C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 08:21:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19303C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 08:21:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79E702174A
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 08:21:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C62242174E
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 08:21:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="bAKJB+6Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79E702174A
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="kSA+bUIP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C62242174E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726956AbeH0MHP (ORCPT
+        id S1726994AbeH0MHR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 08:07:15 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41001 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726785AbeH0MHO (ORCPT
+        Mon, 27 Aug 2018 08:07:17 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:41005 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726920AbeH0MHQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 08:07:14 -0400
-Received: by mail-wr1-f67.google.com with SMTP id z96-v6so12751480wrb.8
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 01:21:38 -0700 (PDT)
+        Mon, 27 Aug 2018 08:07:16 -0400
+Received: by mail-wr1-f68.google.com with SMTP id z96-v6so12751554wrb.8
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 01:21:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=fE0L4qS4JAIcIeGVF5WHMr5nRwEMI4xXJIjWAI4oJwo=;
-        b=bAKJB+6ZeJaBDy0gRuAYKSpwqe8e7mxVfGS3uGmJ9XEnoHTA/g9z+ibiHWvvAt5We9
-         A0HA9PUmAlPtA4SoAn9CMXYZD2S/tgSqpZbGQzoH7/Q8PcxfnKZOXpnac9lU2GXqhCfW
-         F7xIPrhcZ9D3e65SPVHmlwyG+JCuoxkT+rPeTF4x9XsOAgv6gyapsKrMWSjgWSIlRpBQ
-         0ddGzn3PSS0XCslxGwK0hDuoi/7RpAiQPH8/6w7ymGN/6MQI39yaIU7sm5h/XHtg9nUn
-         /ejm45JtXTw5Ex0ntGhVoqQRbNsSa/tNjBpqMV/kkYQ/sQe0b2G6WQ4iJa/QgH89UOYp
-         nUAw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=1rAADFiEcrgAP/MWUhEq9f5JToaQRAnXC+gfalAjE3k=;
+        b=kSA+bUIPd6Kz4LJRN6u2xwlR03fuwZZ0LXX7sehdNQwu33qwmRrZyno38C8pUoZHfw
+         JeAER5jFwAR2r3pHlT72urG7rxpz27ZVMgsenvJk3vF9hJLAVE90j5/OlXAZupc+s3p+
+         tehRe76aLGrVhr/oZL/mdKoNuNCap/PIrVVcc4VZbZQ26r/dZxUekiJsXE67ET5wIOrG
+         rPaamujN3EOrUS4t/N5dUJLHG7g8pvmO2+8HzrU+Wug2Vqt4WEo9hKOJjigQN8Uv+5Ny
+         zc/DapaghZbfFfpIK7LLFtW/JQNpCfpK1mwPw+wKyo1A/S1BJsrMHK7bgBhmw57NPf9y
+         tqhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=fE0L4qS4JAIcIeGVF5WHMr5nRwEMI4xXJIjWAI4oJwo=;
-        b=jajES9pdVjlgD2BYq7hkokIfrOrmlnyi7hopRF9cuHNweDoGEAiatBbeRJ3GtjNU+c
-         e24hF6Rj+6othN8OOk8zbEtMcE2Qqv13bMSTzLRRAElamVL1OVdBWm1zjE6Jh5cFVnI4
-         4qij7JyeKBRigmeU1HFdIYdRz+N5Gxx5zHrIpop/oeNc/y94YqQoCmV1S+w7GKFh6iUm
-         YHiBMt/RCsVIgkSGrOWFcG9gptfQ3C6kLK8uBsSMTmAlFEJuyFz8gfBbuwem09hxAlOd
-         pFgehwbHN2uXhFMmzRhP/Zcqdh7hwZXO6KKuzhctq5SXqsZSW1ZX11cO4q0fxSNU9jbk
-         wWag==
-X-Gm-Message-State: APzg51CyDXXd4tucueECyJEP+p28TC1PQlb/K0Jbr2zAQ63gJIajH2Ot
-        cHTivBjLeE+vV9yTHFVy2miFzA==
-X-Google-Smtp-Source: ANB0VdYVp6PH5lkGi93mUyekgo0jMNaTlitZiC7F1f47jSxuq+FzHEVKpHdnWQCwlydgRgnKfRA7nw==
-X-Received: by 2002:adf:b583:: with SMTP id c3-v6mr7953572wre.79.1535358097344;
-        Mon, 27 Aug 2018 01:21:37 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=1rAADFiEcrgAP/MWUhEq9f5JToaQRAnXC+gfalAjE3k=;
+        b=DP1OqS3jQskRmvq1PLGS76H2TSUui5mjvIn3NC/ke4KkE+1RtXEXPYQqoiDPcY60b0
+         zYZHZWmL9fv+ohsSEqEw4hALoxJaRN/x9dxjsDUDV3fNEn1hVC+VNdOXtkwENuSKaQq6
+         hArPM2oqiKbNKGzijj553uSkGofGHmNgdeElz5DrCHqYXJlUvivH7DU/Jnmxjx2bLYQQ
+         FEsrPMu5/pQtY2pgfNNd7hL1gx9aiWsIShUZ3Y3jwnwNn7HFxlFZXfKec6TUN67kwZiD
+         NGhD2RbfTThpwTrgS4RQ9G9zn80e0IwyL5YCW8xT49d8UHb4G7NJK1syBBWurLpwqOFj
+         i5Zg==
+X-Gm-Message-State: APzg51BsK21F5jpP6meA1fTZ2gCo4mz/BnXIhGZZKYiz6yTF6k6Ztz6e
+        Tyk+VVqGWlX7EA87qJSY+yeCBw==
+X-Google-Smtp-Source: ANB0Vda/wBMEVgVNlmupmmRuXOmBZUZx3pISV5xfHqiKv7wtutnfRK5d+xufRmR7miQhQbIZvZxuAw==
+X-Received: by 2002:adf:f24e:: with SMTP id b14-v6mr7420220wrp.184.1535358098735;
+        Mon, 27 Aug 2018 01:21:38 -0700 (PDT)
 Received: from brgl-bgdev.baylibre.local (AStLambert-681-1-34-229.w90-86.abo.wanadoo.fr. [90.86.153.229])
-        by smtp.gmail.com with ESMTPSA id b144-v6sm15402309wmd.23.2018.08.27.01.21.35
+        by smtp.gmail.com with ESMTPSA id b144-v6sm15402309wmd.23.2018.08.27.01.21.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 Aug 2018 01:21:36 -0700 (PDT)
+        Mon, 27 Aug 2018 01:21:38 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -78,92 +79,91 @@ To:     Michael Turquette <mturquette@baylibre.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH 1/2] devres: provide devm_kstrdup_const()
-Date:   Mon, 27 Aug 2018 10:21:00 +0200
-Message-Id: <20180827082101.5036-1-brgl@bgdev.pl>
+Subject: [PATCH 2/2] clk: pmc-atom: use devm_kstrdup_const()
+Date:   Mon, 27 Aug 2018 10:21:01 +0200
+Message-Id: <20180827082101.5036-2-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180827082101.5036-1-brgl@bgdev.pl>
+References: <20180827082101.5036-1-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide a resource managed version of kstrdup_const(). This variant
-internally calls devm_kstrdup() on pointers that are outside of
-.rodata section. Also provide a corresponding version of devm_kfree().
+Use devm_kstrdup_const() in the pmc-atom driver. This mostly serves as
+an example of how to use this new routine to shrink driver code.
+
+While we're at it: replace a call to kcalloc() with devm_kcalloc().
 
 Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 ---
- include/linux/device.h |  2 ++
- mm/util.c              | 35 +++++++++++++++++++++++++++++++++++
- 2 files changed, 37 insertions(+)
+ drivers/clk/x86/clk-pmc-atom.c | 19 ++++---------------
+ 1 file changed, 4 insertions(+), 15 deletions(-)
 
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 8f882549edee..f8f5982d26b2 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -693,7 +693,9 @@ static inline void *devm_kcalloc(struct device *dev,
- 	return devm_kmalloc_array(dev, n, size, flags | __GFP_ZERO);
+diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
+index 08ef69945ffb..daa2192e6568 100644
+--- a/drivers/clk/x86/clk-pmc-atom.c
++++ b/drivers/clk/x86/clk-pmc-atom.c
+@@ -253,14 +253,6 @@ static void plt_clk_unregister_fixed_rate_loop(struct clk_plt_data *data,
+ 		plt_clk_unregister_fixed_rate(data->parents[i]);
  }
- extern void devm_kfree(struct device *dev, void *p);
-+extern void devm_kfree_const(struct device *dev, void *p);
- extern char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp) __malloc;
-+extern char *devm_kstrdup_const(struct device *dev, const char *s, gfp_t gfp);
- extern void *devm_kmemdup(struct device *dev, const void *src, size_t len,
- 			  gfp_t gfp);
  
-diff --git a/mm/util.c b/mm/util.c
-index d2890a407332..6d1f41b5775e 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -39,6 +39,20 @@ void kfree_const(const void *x)
+-static void plt_clk_free_parent_names_loop(const char **parent_names,
+-					   unsigned int i)
+-{
+-	while (i--)
+-		kfree_const(parent_names[i]);
+-	kfree(parent_names);
+-}
+-
+ static void plt_clk_unregister_loop(struct clk_plt_data *data,
+ 				    unsigned int i)
+ {
+@@ -286,8 +278,8 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
+ 	if (!data->parents)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	parent_names = kcalloc(nparents, sizeof(*parent_names),
+-			       GFP_KERNEL);
++	parent_names = devm_kcalloc(&pdev->dev, nparents,
++				    sizeof(*parent_names), GFP_KERNEL);
+ 	if (!parent_names)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -300,7 +292,8 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
+ 			err = PTR_ERR(data->parents[i]);
+ 			goto err_unreg;
+ 		}
+-		parent_names[i] = kstrdup_const(clks[i].name, GFP_KERNEL);
++		parent_names[i] = devm_kstrdup_const(&pdev->dev,
++						     clks[i].name, GFP_KERNEL);
+ 	}
+ 
+ 	data->nparents = nparents;
+@@ -308,7 +301,6 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
+ 
+ err_unreg:
+ 	plt_clk_unregister_fixed_rate_loop(data, i);
+-	plt_clk_free_parent_names_loop(parent_names, i);
+ 	return ERR_PTR(err);
  }
- EXPORT_SYMBOL(kfree_const);
  
-+/**
-+ * devm_kfree_const - Resource managed conditional kfree
-+ * @dev: device this memory belongs to
-+ * @p: memory to free
-+ *
-+ * Function calls devm_kfree only if @p is not in .rodata section.
-+ */
-+void devm_kfree_const(struct device *dev, void *p)
-+{
-+	if (!is_kernel_rodata((unsigned long)p))
-+		devm_kfree(dev, p);
-+}
-+EXPORT_SYMBOL(devm_kfree_const);
-+
- /**
-  * kstrdup - allocate space for and copy an existing string
-  * @s: the string to duplicate
-@@ -78,6 +92,27 @@ const char *kstrdup_const(const char *s, gfp_t gfp)
+@@ -351,15 +343,12 @@ static int plt_clk_probe(struct platform_device *pdev)
+ 		goto err_unreg_clk_plt;
+ 	}
+ 
+-	plt_clk_free_parent_names_loop(parent_names, data->nparents);
+-
+ 	platform_set_drvdata(pdev, data);
+ 	return 0;
+ 
+ err_unreg_clk_plt:
+ 	plt_clk_unregister_loop(data, i);
+ 	plt_clk_unregister_parents(data);
+-	plt_clk_free_parent_names_loop(parent_names, data->nparents);
+ 	return err;
  }
- EXPORT_SYMBOL(kstrdup_const);
  
-+/**
-+ * devm_kstrdup_const - resource managed conditional string duplication
-+ * @dev: device for which to duplicate the string
-+ * @s: the string to duplicate
-+ * @gfp: the GFP mask used in the kmalloc() call when allocating memory
-+ *
-+ * Function returns source string if it is in .rodata section otherwise it
-+ * fallbacks to devm_kstrdup.
-+ *
-+ * Strings allocated by devm_kstrdup_const will be automatically freed when
-+ * the associated device is detached.
-+ */
-+char *devm_kstrdup_const(struct device *dev, const char *s, gfp_t gfp)
-+{
-+	if (is_kernel_rodata((unsigned long)s))
-+		return s;
-+
-+	return devm_kstrdup(dev, s, gfp);
-+}
-+EXPORT_SYMBOL(devm_kstrdup_const);
-+
- /**
-  * kstrndup - allocate space for and copy an existing string
-  * @s: the string to duplicate
 -- 
 2.18.0
 
