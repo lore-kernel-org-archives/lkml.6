@@ -2,80 +2,89 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E485C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:35:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B64EC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:35:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADEC6208DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:35:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="mzLUwkWd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADEC6208DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	by mail.kernel.org (Postfix) with ESMTP id E11AA208B4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:35:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E11AA208B4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727223AbeH1AXV (ORCPT
+        id S1727392AbeH1AXa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 20:23:21 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:44428 "EHLO vps0.lunn.ch"
+        Mon, 27 Aug 2018 20:23:30 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:51792 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726994AbeH1AXV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 20:23:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=lTG3DN1sP5zGVuTmPmzp3flK4bU7RGKxe4WwtbYWUQo=;
-        b=mzLUwkWdBNYD8omrCV9LDmg9MDLNZ5dFopeJUyr7/+zsayP6KDqSEFKZD/2s+zgsNtjqqNF+ml1UBnvONH4z92nYS5Asic6fiumC790oXZ2WX/UxWvew3nATyit1jklzrpRPpNXAZ8EO6R4C5m7rlJipIpCYdmG6EJkxEWzrOok=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1fuOE0-0006aq-8g; Mon, 27 Aug 2018 22:35:00 +0200
-Date:   Mon, 27 Aug 2018 22:35:00 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
+        id S1726994AbeH1AX3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 20:23:29 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 6F00B207EB; Mon, 27 Aug 2018 22:35:17 +0200 (CEST)
+Received: from bbrezillon (unknown [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 052F920789;
+        Mon, 27 Aug 2018 22:35:06 +0200 (CEST)
+Date:   Mon, 27 Aug 2018 22:35:05 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Peter Rosin <peda@axentia.se>
+Cc:     linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Jon Mason <jonmason@broadcom.com>,
-        "maintainer:BROADCOM IPROC ARM ARCHITECTURE" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        rmk+kernel@armlinux.org.uk
-Subject: Re: [PATCH 1/3] ARM: dts: NSP: Enable SFP on bcm958625hr
-Message-ID: <20180827203500.GN27483@lunn.ch>
-References: <20180827200344.16158-1-f.fainelli@gmail.com>
- <20180827200344.16158-2-f.fainelli@gmail.com>
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, Jyri Sarha <jsarha@ti.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH v9 0/4] drm/atmel-hlcdc: bus-width override support
+Message-ID: <20180827223505.7e2fe6f6@bbrezillon>
+In-Reply-To: <ca38bd82-09d2-8e55-a3a2-e0e559abdf7f@axentia.se>
+References: <20180825085620.10566-1-peda@axentia.se>
+        <20180827212449.723bdc99@bbrezillon>
+        <ca38bd82-09d2-8e55-a3a2-e0e559abdf7f@axentia.se>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180827200344.16158-2-f.fainelli@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> @@ -210,6 +228,17 @@
->  			reg = <4>;
->  		};
->  
-> +		port@5 {
-> +			label = "sfp";
-> +			phy-mode = "sgmii";
-> +			reg = <5>;
-> +			sfp = <&sfp>;
-> +			fixed-link {
-> +				speed = <1000>;
-> +				full-duplex;
-> +			};
+On Mon, 27 Aug 2018 22:31:22 +0200
+Peter Rosin <peda@axentia.se> wrote:
 
-Hi Florian
+> On 2018-08-27 21:24, Boris Brezillon wrote:
+> > On Sat, 25 Aug 2018 10:56:16 +0200
+> > Peter Rosin <peda@axentia.se> wrote:
+> >   
+> >> Hi!
+> >>
+> >> The background for these patches is that our PCB interface between
+> >> the SAMA5D3 and the ds90c185 lvds encoder is only using 16 bits, and
+> >> this has to be described somewhere, or the atmel-hlcdc driver have no
+> >> chance of selecting the correct output mode. Since we have similar
+> >> problems with a tda19988 HDMI encoder I added patches to override
+> >> the atmel-hlcdc output format via DT properties compatible with the
+> >> media video-interface binding and things start to play together.  
+> > 
+> > Queued to drm-misc-next.  
+> 
+> Thanks!
+> 
+> Minute issue, you seem to have some spell-check going on or something,
+> because the subject of patch 1/4 has been "corrected" from
+> "...add ti,ds90c185" to "...add ti, ds90c185"
+> 
+> You might want to evaluate if that auto-correction "feature" should be
+> disabled/tweaked/whatever...
 
-You might want to add a comment about why you are using fixed-link and
-sgmii, which seems very odd. Is it even correct?
-
-       Andrew
+Hm, weird. I just downloaded the mbox from dri-devel's patchwork and
+passed it to dim apply. dim tends to do a lot of things behind the
+scene, so maybe it's also trying to fix typos :-).
