@@ -3,163 +3,175 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44286C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 03:12:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98398C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 03:26:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E697421722
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 03:12:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CC2720873
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 03:26:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DgptUWcs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E697421722
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dmBk2hii"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CC2720873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726946AbeH0G44 (ORCPT
+        id S1726874AbeH0HK6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 02:56:56 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:41976 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726771AbeH0G44 (ORCPT
+        Mon, 27 Aug 2018 03:10:58 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:42433 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726771AbeH0HK6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 02:56:56 -0400
-Received: by mail-io0-f196.google.com with SMTP id q4-v6so11711079iob.8
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Aug 2018 20:12:14 -0700 (PDT)
+        Mon, 27 Aug 2018 03:10:58 -0400
+Received: by mail-pl1-f193.google.com with SMTP id g23-v6so3500094plq.9
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Aug 2018 20:26:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=314VfoTDKwrBprzTKAsKNAhUC2hj6gFDlxIyDvFDwC8=;
-        b=DgptUWcsmC0J7mKuV/d3CrV+bfA88Y8++41BLUEF4hkQeCoAJh92ylfZPlHRmFZO1r
-         TmkWQnJG9mJJ2IWg5U7uekIYrIq/5lmBYBWaoD0rvq88ifNOru1VIDJ+7YOOTeES3IRs
-         Jy5dK6AR048jUNlidsyI6Bowyy6ePeeXc7l6k=
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=XJAHdXnBJMJAI4N1dc7nhQMxbmZk4djGRzYosmTiN2o=;
+        b=dmBk2hiiS85R3mpGCshG7+C0ZQ/L2RBQ0mJL6Zg9DLoYRoV3XJ672ulhjXTlCFGSAb
+         3ODVDdPQuBaVuiNZ+toQUpizZNjEERaaph/K5LZFxELzcqqt5JrA3b/5K+nBLxa79gC4
+         QLrMO0OlO/tlVYDBu4M+vQgBq/XJGSg7bDCcdyJ0feitgytUrU+Xtt2Wrw5qtUUD7J9f
+         hNgfDay1kAoEjj7dbOxXnrQZUfnqSBwyAEnhVRPb00WrnZ0BJ0BPne++lem+9qRlLBBc
+         3LWFjgXpAxWqHvA375ZYnwrJcS5vB1Q34ITzGam8SQBovKK/KuilYcnsNx5tvHTwl87i
+         oTaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=314VfoTDKwrBprzTKAsKNAhUC2hj6gFDlxIyDvFDwC8=;
-        b=n2Auw5kDk+U4DKGKUTWOHOZ6EhMopLBlzFWo6AbUdoquA27adv/Sks2wShNIPVAUj2
-         doKZoRMOQ4memuRKn09veDYQtAS0lR6ak7b1VT/IBp/z/UT+F9fNkEJNJ2nSeNIWqxl9
-         WBwQ4ILHFFOJetRH05rKgO8dcnDMscga0ryQ/jP2WpF5otheRVLEtiPGBFstE3fux09b
-         9e6vRcawq/bmswMKCHQewFUzFM/3CXN+2PnQ3e9geItRKFRv3fV68I2tO81gDPxeigYC
-         UHTk2vU3L7Q9AkcZIkKdD+OTxV2Yn9X8qVFbfDKIQPeThAFQDBUKqf031ZODAH03FYAY
-         Bwkg==
-X-Gm-Message-State: APzg51Bo7sy+V0171KzzqfpV25PhwixHicrxAwMTkod+WJddp1YABFkk
-        AKEt+a44xNTmloZLJg0kDsAsRkCOVA9sQw==
-X-Google-Smtp-Source: ANB0Vda5/hnwPnkPd+6GyG5gaCUQwDgHy/OZLw0bD3HyE088pYyxPgFkCZTg/zeqaqYYCqhmRf+mZA==
-X-Received: by 2002:a6b:bc41:: with SMTP id m62-v6mr9215894iof.64.1535339534292;
-        Sun, 26 Aug 2018 20:12:14 -0700 (PDT)
-Received: from mail-it0-f41.google.com (mail-it0-f41.google.com. [209.85.214.41])
-        by smtp.gmail.com with ESMTPSA id j78-v6sm3366622itj.44.2018.08.26.20.12.14
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=XJAHdXnBJMJAI4N1dc7nhQMxbmZk4djGRzYosmTiN2o=;
+        b=sm4XTDwR/3zYW9XcdenPXiA4rUbdOMTRkBdW2/ED9oeKqsV3H5NNtpJs9Ktu49pglK
+         iBH/nYROoOrXNmH7KhSLWwtH+KPRRe4zvHw9Pq/Pts/5xRC2ZsZ5ZDDtMVXCVjbrjWoU
+         tgyQb249n2wAsRjHkLfjYA3xeg9bx4AugwaTpDfaibb+3uWEGmcB70cvBd+okR6QvQfs
+         a87t5uO5OvnffCMgkM3KLYArFqtNUiuWt/7GgFj4JjLY0NeBMKyS0vtThp8TZCZcdAdI
+         MDxhZu6dIz3yapGVHvdqf/IU9NQ+3xwc+moBg83HwxD4MTmVvDwWrJUOTDsItdCJ0HRk
+         LDYA==
+X-Gm-Message-State: APzg51AEIqc5DYYk5cZuHUbjthG9bqD3NTY9VpRiBvxUMpJcDNVfqH6O
+        DD5Nf3NVShL6l4B3zexgOew=
+X-Google-Smtp-Source: ANB0VdYvo8yJttWNNtZaB0o/Imy7QOGjEn33lzUy09U7BxoI4jPN1rChH9zUmS+X1HIRnlv9o6HYXg==
+X-Received: by 2002:a17:902:8481:: with SMTP id c1-v6mr11330712plo.177.1535340374218;
+        Sun, 26 Aug 2018 20:26:14 -0700 (PDT)
+Received: from ?IPv6:2601:647:4580:b719:95a3:75b3:796a:8fc5? ([2601:647:4580:b719:95a3:75b3:796a:8fc5])
+        by smtp.gmail.com with ESMTPSA id g6-v6sm16290995pgg.7.2018.08.26.20.26.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 26 Aug 2018 20:12:14 -0700 (PDT)
-Received: by mail-it0-f41.google.com with SMTP id e14-v6so9196857itf.1
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Aug 2018 20:12:14 -0700 (PDT)
-X-Received: by 2002:a24:b842:: with SMTP id m63-v6mr5263857ite.31.1535339066987;
- Sun, 26 Aug 2018 20:04:26 -0700 (PDT)
-MIME-Version: 1.0
-References: <1535034528-11590-1-git-send-email-vgarodia@codeaurora.org>
- <1535034528-11590-2-git-send-email-vgarodia@codeaurora.org>
- <CAPBb6MUZawT84Wcrhi+MEyn+zSCWOpn_iOZMMudZz+_Urixsrw@mail.gmail.com> <51cc9d6b-0483-76a6-d413-3f5cc63f3f56@linaro.org>
-In-Reply-To: <51cc9d6b-0483-76a6-d413-3f5cc63f3f56@linaro.org>
-From:   Alexandre Courbot <acourbot@chromium.org>
-Date:   Mon, 27 Aug 2018 12:04:15 +0900
-X-Gmail-Original-Message-ID: <CAPBb6MWMQeXAabnis0iJxE91MCSscacbim3T_K6VF6OODw5TuQ@mail.gmail.com>
-Message-ID: <CAPBb6MWMQeXAabnis0iJxE91MCSscacbim3T_K6VF6OODw5TuQ@mail.gmail.com>
-Subject: Re: [PATCH v6 1/4] venus: firmware: add routine to reset ARM9
-To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc:     vgarodia@codeaurora.org, Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>, robh@kernel.org,
-        mark.rutland@arm.com, Andy Gross <andy.gross@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, bjorn.andersson@linaro.org,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Sun, 26 Aug 2018 20:26:13 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Subject: Re: TLB flushes on fixmap changes
+From:   Nadav Amit <nadav.amit@gmail.com>
+In-Reply-To: <20180827120305.01a6f26267c64610cadec5d8@kernel.org>
+Date:   Sun, 26 Aug 2018 20:26:09 -0700
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Will Deacon <will.deacon@arm.com>,
+        Benjamin Herrenschmidt <benh@au1.ibm.com>,
+        Nick Piggin <npiggin@gmail.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Rik van Riel <riel@surriel.com>,
+        Jann Horn <jannh@google.com>,
+        Adin Scannell <ascannell@google.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        David Miller <davem@davemloft.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <4BF82052-4738-441C-8763-26C85003F2C9@gmail.com>
+References: <D74A89DF-0D89-4AB6-8A6B-93BEC9A83595@gmail.com>
+ <20180824180438.GS24124@hirez.programming.kicks-ass.net>
+ <56A9902F-44BE-4520-A17C-26650FCC3A11@gmail.com>
+ <CA+55aFzerzTPm94jugheVmWg8dJre94yu+GyZGT9NNZanNx_qw@mail.gmail.com>
+ <9A38D3F4-2F75-401D-8B4D-83A844C9061B@gmail.com>
+ <CA+55aFz1KYT7fRRG98wei24spiVg7u1Ec66piWY5359ykFmezw@mail.gmail.com>
+ <8E0D8C66-6F21-4890-8984-B6B3082D4CC5@gmail.com>
+ <CALCETrWdeKBcEs7zAbpEM1YdYiT2UBXwPtF0mMTvcDX_KRpz1A@mail.gmail.com>
+ <20180826112341.f77a528763e297cbc36058fa@kernel.org>
+ <CALCETrXPaX-+R6Z9LqZp0uOVmq-TUX_ksPbUL7mnfbdqo6z2AA@mail.gmail.com>
+ <20180826090958.GT24124@hirez.programming.kicks-ass.net>
+ <20180827120305.01a6f26267c64610cadec5d8@kernel.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+X-Mailer: Apple Mail (2.3445.9.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 24, 2018 at 5:57 PM Stanimir Varbanov
-<stanimir.varbanov@linaro.org> wrote:
->
-> Hi Alex,
->
-> On 08/24/2018 10:38 AM, Alexandre Courbot wrote:
-> > On Thu, Aug 23, 2018 at 11:29 PM Vikash Garodia <vgarodia@codeaurora.org> wrote:
-> >>
-> >> Add routine to reset the ARM9 and brings it out of reset. Also
-> >> abstract the Venus CPU state handling with a new function. This
-> >> is in preparation to add PIL functionality in venus driver.
-> >>
-> >> Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
-> >> ---
-> >>  drivers/media/platform/qcom/venus/core.h         |  2 ++
-> >>  drivers/media/platform/qcom/venus/firmware.c     | 33 ++++++++++++++++++++++++
-> >>  drivers/media/platform/qcom/venus/firmware.h     | 11 ++++++++
-> >>  drivers/media/platform/qcom/venus/hfi_venus.c    | 13 +++-------
-> >>  drivers/media/platform/qcom/venus/hfi_venus_io.h |  7 +++++
-> >>  5 files changed, 57 insertions(+), 9 deletions(-)
-> >>
-> >> diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
-> >> index 2f02365..dfd5c10 100644
-> >> --- a/drivers/media/platform/qcom/venus/core.h
-> >> +++ b/drivers/media/platform/qcom/venus/core.h
-> >> @@ -98,6 +98,7 @@ struct venus_caps {
-> >>   * @dev:               convenience struct device pointer
-> >>   * @dev_dec:   convenience struct device pointer for decoder device
-> >>   * @dev_enc:   convenience struct device pointer for encoder device
-> >> + * @no_tz:     a flag that suggests presence of trustzone
-> >>   * @lock:      a lock for this strucure
-> >>   * @instances: a list_head of all instances
-> >>   * @insts_count:       num of instances
-> >> @@ -129,6 +130,7 @@ struct venus_core {
-> >>         struct device *dev;
-> >>         struct device *dev_dec;
-> >>         struct device *dev_enc;
-> >> +       bool no_tz;
-> >>         struct mutex lock;
-> >>         struct list_head instances;
-> >>         atomic_t insts_count;
-> >> diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media/platform/qcom/venus/firmware.c
-> >> index c4a5778..a9d042e 100644
-> >> --- a/drivers/media/platform/qcom/venus/firmware.c
-> >> +++ b/drivers/media/platform/qcom/venus/firmware.c
-> >> @@ -22,10 +22,43 @@
-> >>  #include <linux/sizes.h>
-> >>  #include <linux/soc/qcom/mdt_loader.h>
-> >>
-> >> +#include "core.h"
-> >>  #include "firmware.h"
-> >> +#include "hfi_venus_io.h"
-> >>
-> >>  #define VENUS_PAS_ID                   9
-> >>  #define VENUS_FW_MEM_SIZE              (6 * SZ_1M)
-> >
-> > This is making a strong assumption about the size of the FW memory
-> > region, which in practice is not always true (I had to reduce it to
-> > 5MB). How about having this as a member of venus_core, which is
->
-> Why you reduced to 5MB? Is there an issue with 6MB or you don't want to
-> waste reserved memory?
+at 8:03 PM, Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-The DT layout of our board only has 5MB reserved for Venus.
+> On Sun, 26 Aug 2018 11:09:58 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
+>=20
+>> On Sat, Aug 25, 2018 at 09:21:22PM -0700, Andy Lutomirski wrote:
+>>> I just re-read text_poke().  It's, um, horrible.  Not only is the
+>>> implementation overcomplicated and probably buggy, but it's =
+SLOOOOOW.
+>>> It's totally the wrong API -- poking one instruction at a time
+>>> basically can't be efficient on x86.  The API should either poke =
+lots
+>>> of instructions at once or should be text_poke_begin(); ...;
+>>> text_poke_end();.
+>>=20
+>> I don't think anybody ever cared about performance here. Only
+>> correctness. That whole text_poke_bp() thing is entirely tricky.
+>=20
+> Agreed. Self modification is a special event.
+>=20
+>> FWIW, before text_poke_bp(), text_poke() would only be used from
+>> stop_machine, so all the other CPUs would be stuck busy-waiting with
+>> IRQs disabled. These days, yeah, that's lots more dodgy, but yes
+>> text_mutex should be serializing all that.
+>=20
+> I'm still not sure that speculative page-table walk can be done
+> over the mutex. Also, if the fixmap area is for aliasing
+> pages (which always mapped to memory), what kind of
+> security issue can happen?
 
-> > initialized in venus_load_fw() from the actual size of the memory
-> > region? You could do this as an extra patch that comes before this
-> > one.
-> >
->
-> The size is 6MB by historical reasons and they are no more valid, so I
-> think we could safely decrease to 5MB. I could prepare a patch for that.
+The PTE is accessible from other cores, so just as we assume for L1TF =
+that
+the every addressable memory might be cached in L1, we should assume and
+PTE might be cached in the TLB when it is present.
 
-Whether we settle with 6MB or 5MB, that size remains arbitrary and not
-based on the actual firmware size. And __qcom_mdt_load() does check
-that the firmware fits the memory area. So I don't understand what
-extra safety is added by ensuring the memory region is larger than a
-given number of megabytes?
+Although the mapping is for an alias, there are a couple of issues here.
+First, this alias mapping is writable, so it might an attacker to change =
+the
+kernel code (following another initial attack). Second, the alias =
+mapping is
+never explicitly flushed. We may assume that once the original mapping =
+is
+removed/changed, a full TLB flush would take place, but there is no
+guarantee it actually takes place.
+
+> Anyway, from the viewpoint of kprobes, either per-cpu fixmap or
+> changing CR3 sounds good to me. I think we don't even need per-cpu,
+> it can call a thread/function on a dedicated core (like the first
+> boot processor) and wait :) This may prevent leakage of pte change
+> to other cores.
+
+I implemented per-cpu fixmap, but I think that it makes more sense to =
+take
+peterz approach and set an entry in the PGD level. Per-CPU fixmap either
+requires to pre-populate various levels in the page-table hierarchy, or
+conditionally synchronize whenever module memory is allocated, since =
+they
+can share the same PGD, PUD & PMD. While usually the synchronization is =
+not
+needed, the possibility that synchronization is needed complicates =
+locking.
+
+Anyhow, having fixed addresses for the fixmap can be used to circumvent
+KASLR.
+
+I don=E2=80=99t think a dedicated core is needed. Anyhow there is a lock
+(text_mutex), so use_mm() can be used after acquiring the mutex.
+
