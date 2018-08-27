@@ -2,225 +2,131 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CA11C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:57:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9D65C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:57:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A616208DC
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:57:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A616208DC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A4F36208B9
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:57:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GHJyePU/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4F36208B9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727641AbeH0Wpe (ORCPT
+        id S1727665AbeH0Wpk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 18:45:34 -0400
-Received: from mga14.intel.com ([192.55.52.115]:23091 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727058AbeH0Wpa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 18:45:30 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2018 11:57:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,296,1531810800"; 
-   d="scan'208";a="69524693"
-Received: from nitikasi-mobl.ger.corp.intel.com (HELO localhost) ([10.249.36.186])
-  by orsmga006.jf.intel.com with ESMTP; 27 Aug 2018 11:57:26 -0700
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     x86@kernel.org, platform-driver-x86@vger.kernel.org
-Cc:     dave.hansen@intel.com, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com,
-        linux-sgx@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Mon, 27 Aug 2018 18:45:40 -0400
+Received: from mail-vk0-f73.google.com ([209.85.213.73]:41385 "EHLO
+        mail-vk0-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727446AbeH0Wpk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 18:45:40 -0400
+Received: by mail-vk0-f73.google.com with SMTP id d189-v6so7824vka.8
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 11:57:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=CrPdBBcwk99epHml2S6cYfO/WlQ+fyiLt/9ijCXrSp8=;
+        b=GHJyePU/W1cgX7K2kXjdOhpfYW0kXt0IJEE3ZIzKjlx9TKdTonrWPqQa6wWXNYngRu
+         OL7yTaMGxh9Rfe7RaBMnaWaWVz+nny17tAZzSvSza55SElPCcfSHaebSpOAigGU1R8MU
+         1UpdJsp4VRacTgFNGyqmZL7VmyQ3C53eYFHyPuD8pktVOw+uQLI5OBzxFlMjiBynpOEu
+         QNG8Ewr0bF5sHY5MfXDPskvd6pBXu+uP45K5mlWilQCMu3V+GY/vm6ZS83BIeGYAW6XG
+         tj3scn3OpQbT8M+L27H/r9LiA8jwknDZEHFpWShd9WBdVSiPu7+N+dETyn9mZOav9aD5
+         PGMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=CrPdBBcwk99epHml2S6cYfO/WlQ+fyiLt/9ijCXrSp8=;
+        b=cG1WZGi3i59HMABQA0nmEMhz/lxAK+u75RuqvrzeY65aKE2208eUk8kF+WWvf5urNB
+         tE0uNpAApBpCfRsgsO9qRwPIzU5pPGGYvfVA4NVQ/aGJb7SBzAvq92mrRwcd8KKaP55L
+         lc/l/iCuRIMUcOxNsiM87zWNoMuIZtK5qD+bUMOV4uDNbIPzIYkKZH4iCcoTZ2oBJc69
+         VlvNz3qWF8QWDLpn9msGmIBAiv4bytOBoO5XbkoumP8H7XHZycRzgwGFLam2OJNbMXqR
+         lXid5X+OhSyPN0TychU43bkl7eowmItthNiUATYyDEtp4SPYOUGCqO4XfdQgblLEK8s/
+         zqKQ==
+X-Gm-Message-State: APzg51AHVSdXZIJ0Aa/LyJRdqb6cwQ9IwgJxUN5e7yyTRLP89Vd00DQ9
+        9YrRcIhTYMw2VAqz/rXUztSQbr1Bag==
+X-Google-Smtp-Source: ANB0VdZffx48GvmurdIBDcdVHjoRie0ANsXOY3r4p+c5X7C02zbGBbhD/QMB/ZzLfqPcB8MDPotDhhiwvA==
+X-Received: by 2002:a9f:3812:: with SMTP id p18-v6mr7493785uad.103.1535396270277;
+ Mon, 27 Aug 2018 11:57:50 -0700 (PDT)
+Date:   Mon, 27 Aug 2018 20:56:24 +0200
+Message-Id: <20180827185631.163506-1-jannh@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.19.0.rc0.228.g281dcd1b4d0-goog
+Subject: [PATCH v2 0/7] x86: BUG() on #GP / kernel #PF in uaccess
+From:   Jann Horn <jannh@google.com>
+To:     Kees Cook <keescook@chromium.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        Serge Ayoun <serge.ayoun@intel.com>,
-        linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND
-        64-BIT))
-Subject: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing enclaves
-Date:   Mon, 27 Aug 2018 21:53:31 +0300
-Message-Id: <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        kernel-hardening@lists.openwall.com,
+        Tony Luck <tony.luck@intel.com>,
+        Borislav Petkov <bp@alien8.de>, jannh@google.com
+Cc:     linux-kernel@vger.kernel.org, dvyukov@google.com,
+        linux-edac@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+This is the second version of "[RFC PATCH 1/2] x86: WARN() when uaccess
+helpers fault on kernel addresses".
 
-Add a function to perform ENCLS(EINIT), which initializes an enclave,
-which can be used by a driver for running enclaves and VMMs.
+See patch 6/7 ("x86: BUG() when uaccess helpers fault on kernel
+addresses") for a description of the motivation for this series.
 
-Writing the LE hash MSRs is extraordinarily expensive, e.g. 3-4x slower
-than normal MSRs, so we use a per-cpu cache to track the last known value
-of the MSRs to avoid unnecessarily writing the MSRs with the current value.
+Patches 1 and 2 are cleanups that I did while working on this
+series, but the series doesn't depend on them. (I first thought these
+cleanups were necessary for the rest of the series, then noticed that
+they actually aren't, but decided to keep them since cleanups are good
+anyway.)
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- arch/x86/include/asm/sgx.h      |  2 +
- arch/x86/kernel/cpu/intel_sgx.c | 86 +++++++++++++++++++++++++++++++--
- 2 files changed, 85 insertions(+), 3 deletions(-)
+Patches 3, 4 and 5 are prep work; 4 and 5 are loosely based on code
+from the v1 patch. They've changed quite a bit though.
 
-diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
-index baf30d49b71f..c15c156436be 100644
---- a/arch/x86/include/asm/sgx.h
-+++ b/arch/x86/include/asm/sgx.h
-@@ -108,6 +108,8 @@ void sgx_free_page(struct sgx_epc_page *page);
- void sgx_page_reclaimable(struct sgx_epc_page *page);
- struct page *sgx_get_backing(struct file *file, pgoff_t index);
- void sgx_put_backing(struct page *backing_page, bool write);
-+int sgx_einit(struct sgx_sigstruct *sigstruct, struct sgx_einittoken *token,
-+	      struct sgx_epc_page *secs_page, u64 lepubkeyhash[4]);
- 
- #define ENCLS_FAULT_FLAG 0x40000000UL
- #define ENCLS_FAULT_FLAG_ASM "$0x40000000"
-diff --git a/arch/x86/kernel/cpu/intel_sgx.c b/arch/x86/kernel/cpu/intel_sgx.c
-index 1046478a3ab9..fe25e6805680 100644
---- a/arch/x86/kernel/cpu/intel_sgx.c
-+++ b/arch/x86/kernel/cpu/intel_sgx.c
-@@ -9,6 +9,7 @@
- #include <linux/sched/signal.h>
- #include <linux/shmem_fs.h>
- #include <linux/slab.h>
-+#include <linux/suspend.h>
- #include <asm/sgx.h>
- #include <asm/sgx_pr.h>
- 
-@@ -38,6 +39,18 @@ static LIST_HEAD(sgx_active_page_list);
- static DEFINE_SPINLOCK(sgx_active_page_list_lock);
- static struct task_struct *ksgxswapd_tsk;
- static DECLARE_WAIT_QUEUE_HEAD(ksgxswapd_waitq);
-+static struct notifier_block sgx_pm_notifier;
-+static u64 sgx_pm_cnt;
-+
-+/* The cache for the last known values of IA32_SGXLEPUBKEYHASHx MSRs for each
-+ * CPU. The entries are initialized when they are first used by sgx_einit().
-+ */
-+struct sgx_lepubkeyhash {
-+	u64 msrs[4];
-+	u64 pm_cnt;
-+};
-+
-+static DEFINE_PER_CPU(struct sgx_lepubkeyhash *, sgx_lepubkeyhash_cache);
- 
- /**
-  * sgx_reclaim_pages - reclaim EPC pages from the consumers
-@@ -328,6 +341,54 @@ void sgx_put_backing(struct page *backing_page, bool write)
- }
- EXPORT_SYMBOL_GPL(sgx_put_backing);
- 
-+/**
-+ * sgx_einit - initialize an enclave
-+ * @sigstruct:		a pointer to the SIGSTRUCT
-+ * @token:		a pointer to the EINITTOKEN
-+ * @secs_page:		a pointer to the SECS EPC page
-+ * @lepubkeyhash:	the desired value for IA32_SGXLEPUBKEYHASHx MSRs
-+ *
-+ * Try to perform EINIT operation. If the MSRs are writable, they are updated
-+ * according to @lepubkeyhash.
-+ *
-+ * Return:
-+ *   0 on success,
-+ *   -errno on failure
-+ *   SGX error code if EINIT fails
-+ */
-+int sgx_einit(struct sgx_sigstruct *sigstruct, struct sgx_einittoken *token,
-+	      struct sgx_epc_page *secs_page, u64 lepubkeyhash[4])
-+{
-+	struct sgx_lepubkeyhash __percpu *cache;
-+	bool cache_valid;
-+	int i, ret;
-+
-+	if (!sgx_lc_enabled)
-+		return __einit(sigstruct, token, sgx_epc_addr(secs_page));
-+
-+	cache = per_cpu(sgx_lepubkeyhash_cache, smp_processor_id());
-+	if (!cache) {
-+		cache = kzalloc(sizeof(struct sgx_lepubkeyhash), GFP_KERNEL);
-+		if (!cache)
-+			return -ENOMEM;
-+	}
-+
-+	cache_valid = cache->pm_cnt == sgx_pm_cnt;
-+	cache->pm_cnt = sgx_pm_cnt;
-+	preempt_disable();
-+	for (i = 0; i < 4; i++) {
-+		if (cache_valid && lepubkeyhash[i] == cache->msrs[i])
-+			continue;
-+
-+		wrmsrl(MSR_IA32_SGXLEPUBKEYHASH0 + i, lepubkeyhash[i]);
-+		cache->msrs[i] = lepubkeyhash[i];
-+	}
-+	ret = __einit(sigstruct, token, sgx_epc_addr(secs_page));
-+	preempt_enable();
-+	return ret;
-+}
-+EXPORT_SYMBOL(sgx_einit);
-+
- static __init int sgx_init_epc_bank(u64 addr, u64 size, unsigned long index,
- 				    struct sgx_epc_bank *bank)
- {
-@@ -426,6 +487,15 @@ static __init int sgx_page_cache_init(void)
- 	return 0;
- }
- 
-+static int sgx_pm_notifier_cb(struct notifier_block *nb, unsigned long action,
-+			      void *data)
-+{
-+	if (action == PM_SUSPEND_PREPARE || action == PM_HIBERNATION_PREPARE)
-+		sgx_pm_cnt++;
-+
-+	return NOTIFY_DONE;
-+}
-+
- static __init int sgx_init(void)
- {
- 	struct task_struct *tsk;
-@@ -452,20 +522,30 @@ static __init int sgx_init(void)
- 	if (!(fc & FEATURE_CONTROL_SGX_LE_WR))
- 		pr_info("IA32_SGXLEPUBKEYHASHn MSRs are not writable\n");
- 
--	ret = sgx_page_cache_init();
-+	sgx_pm_notifier.notifier_call = sgx_pm_notifier_cb;
-+	ret = register_pm_notifier(&sgx_pm_notifier);
- 	if (ret)
- 		return ret;
- 
-+	ret = sgx_page_cache_init();
-+	if (ret)
-+		goto out_pm;
-+
- 	tsk = kthread_run(ksgxswapd, NULL, "ksgxswapd");
- 	if (IS_ERR(tsk)) {
--		sgx_page_cache_teardown();
--		return PTR_ERR(tsk);
-+		ret = PTR_ERR(tsk);
-+		goto out_pcache;
- 	}
- 	ksgxswapd_tsk = tsk;
- 
- 	sgx_enabled = true;
- 	sgx_lc_enabled = !!(fc & FEATURE_CONTROL_SGX_LE_WR);
- 	return 0;
-+out_pcache:
-+	sgx_page_cache_teardown();
-+out_pm:
-+	unregister_pm_notifier(&sgx_pm_notifier);
-+	return ret;
- }
- 
- arch_initcall(sgx_init);
+Patch 6 is the main semantic change.
+
+Patch 7 is a small testcase for verifying that patch 6 works.
+
+Jann Horn (7):
+  x86: refactor kprobes_fault() like kprobe_exceptions_notify()
+  x86: inline kprobe_exceptions_notify() into do_general_protection()
+  x86: stop calling fixup_exception() from kprobe_fault_handler()
+  x86: introduce _ASM_EXTABLE_UA for uaccess fixups
+  x86: plumb error code and fault address through to fault handlers
+  x86: BUG() when uaccess helpers fault on kernel addresses
+  lkdtm: test copy_to_user() on bad kernel pointer under KERNEL_DS
+
+ arch/x86/include/asm/asm.h          |  10 ++-
+ arch/x86/include/asm/extable.h      |   3 +-
+ arch/x86/include/asm/fpu/internal.h |   2 +-
+ arch/x86/include/asm/futex.h        |   6 +-
+ arch/x86/include/asm/ptrace.h       |   2 +
+ arch/x86/include/asm/uaccess.h      |  22 ++---
+ arch/x86/kernel/cpu/mcheck/mce.c    |   2 +-
+ arch/x86/kernel/kprobes/core.c      |  38 +--------
+ arch/x86/kernel/traps.c             |  16 +++-
+ arch/x86/lib/checksum_32.S          |   4 +-
+ arch/x86/lib/copy_user_64.S         |  90 ++++++++++----------
+ arch/x86/lib/csum-copy_64.S         |   8 +-
+ arch/x86/lib/getuser.S              |  12 +--
+ arch/x86/lib/putuser.S              |  10 +--
+ arch/x86/lib/usercopy_32.c          | 126 ++++++++++++++--------------
+ arch/x86/lib/usercopy_64.c          |   4 +-
+ arch/x86/mm/extable.c               | 104 +++++++++++++++++++----
+ arch/x86/mm/fault.c                 |  21 ++---
+ drivers/misc/lkdtm/core.c           |   1 +
+ drivers/misc/lkdtm/lkdtm.h          |   1 +
+ drivers/misc/lkdtm/usercopy.c       |  13 +++
+ include/linux/sched.h               |   6 ++
+ mm/maccess.c                        |   6 ++
+ 23 files changed, 297 insertions(+), 210 deletions(-)
+
 -- 
-2.17.1
+2.19.0.rc0.228.g281dcd1b4d0-goog
 
