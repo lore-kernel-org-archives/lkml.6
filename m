@@ -2,78 +2,82 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B112C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:30:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F3E4C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:30:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B662C208B8
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:30:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B662C208B8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id D18D4208D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:30:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="kE+IJkk4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D18D4208D5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727333AbeH0XSp (ORCPT
+        id S1727181AbeH0XSo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 19:18:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59896 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726887AbeH0XSo (ORCPT
+        Mon, 27 Aug 2018 19:18:44 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:57658 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726823AbeH0XSo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 27 Aug 2018 19:18:44 -0400
-Received: from localhost (unknown [62.119.166.9])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C0184D80;
-        Mon, 27 Aug 2018 19:30:46 +0000 (UTC)
+Received: from trochilidae.lan (unknown [IPv6:2a02:169:34d6::189])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 6F8ED5C1EBA;
+        Mon, 27 Aug 2018 21:30:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1535398245;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:content-type:content-transfer-encoding:
+         in-reply-to:references; bh=OBhaFGOqZBODV5kV0skLvsD9hNTXWPKX9VQE2Q6xlgY=;
+        b=kE+IJkk4lAETsXgc4Yj03qz1xs3PdaJEeIqtquUWg9o5Brefxm64c6hf7BcNN9mNvFQwei
+        m0bCa3RIIwomGlF9HI3xMIUmrZRucs71wgAOe+JsjznP8CVJQAo3IlsL9xWQmgl5uZptn6
+        OEQUNBAfHTZYwVpuDw6NTea3MBsSF2Q=
+From:   Stefan Agner <stefan@agner.ch>
+To:     daniel@iogearbox.net
+Cc:     kafai@fb.com, ast@kernel.org, mka@chromium.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Stefan Agner <stefan@agner.ch>
+Subject: [PATCH] bpf: fix build error with clang
 Date:   Mon, 27 Aug 2018 21:30:42 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     John Whitmore <arigead@gmail.com>
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        John Whitmore <johnfwhitmore@gmail.com>
-Subject: Re: [PATCH 01/17] staging:rtl8192u: Remove unused defines - Style
-Message-ID: <20180827193042.GA32639@kroah.com>
-References: <20180821171537.9330-1-johnfwhitmore@gmail.com>
- <20180821171537.9330-2-johnfwhitmore@gmail.com>
- <20180827172719.GA27393@kroah.com>
- <20180827191648.GA19692@xux707-tw>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180827191648.GA19692@xux707-tw>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Message-Id: <20180827193042.3573-1-stefan@agner.ch>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 08:21:36PM +0100, John Whitmore wrote:
-> On Mon, Aug 27, 2018 at 07:27:19PM +0200, Greg KH wrote:
-> > On Tue, Aug 21, 2018 at 06:15:21PM +0100, John Whitmore wrote:
-> > > Remove a number of unused constant definitions.
-> > > 
-> > > This is a coding style change which should have no impact on runtime
-> > > code execution.
-> > > 
-> > > Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
-> > > ---
-> > >  drivers/staging/rtl8192u/ieee80211/rtl819x_BA.h | 5 -----
-> > >  1 file changed, 5 deletions(-)
-> > 
-> > Is this series a duplicate of a prebious series?
-> > 
-> > it doesn't apply at all to my tree now.
-> > 
-> > totally confused,
-> > 
-> > greg k-h
-> 
-> Sorry didn't mean to confuse you, but now you've got your own back ;)
-> After this message I got an automated email to say that the patch
-> had been applied. I'll give it a few days for the changes to make
-> it into staging-next and if needs be I will resubmit the patch.
+Building the newly introduced BPF_PROG_TYPE_SK_REUSEPORT leads to
+a compile time error when building with clang:
+net/core/filter.o: In function `sk_reuseport_convert_ctx_access':
+  ../net/core/filter.c:7284: undefined reference to `__compiletime_assert_7284'
 
-Ok, thanks, I went through all of the staging patches today, I might
-have ended up looking at a few of them twice :)
+It seems that clang has issues resolving hweight_long at compile
+time. Since SK_FL_PROTO_MASK is a constant, we can use the interface
+for known constant arguments which works fine with clang.
 
-greg k-h
+Fixes: 2dbb9b9e6df6 ("bpf: Introduce BPF_PROG_TYPE_SK_REUSEPORT")
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ net/core/filter.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/core/filter.c b/net/core/filter.c
+index c25eb36f1320..7a2430945c71 100644
+--- a/net/core/filter.c
++++ b/net/core/filter.c
+@@ -7281,7 +7281,7 @@ static u32 sk_reuseport_convert_ctx_access(enum bpf_access_type type,
+ 		break;
+ 
+ 	case offsetof(struct sk_reuseport_md, ip_protocol):
+-		BUILD_BUG_ON(hweight_long(SK_FL_PROTO_MASK) != BITS_PER_BYTE);
++		BUILD_BUG_ON(HWEIGHT32(SK_FL_PROTO_MASK) != BITS_PER_BYTE);
+ 		SK_REUSEPORT_LOAD_SK_FIELD_SIZE_OFF(__sk_flags_offset,
+ 						    BPF_W, 0);
+ 		*insn++ = BPF_ALU32_IMM(BPF_AND, si->dst_reg, SK_FL_PROTO_MASK);
+-- 
+2.18.0
+
