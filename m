@@ -2,115 +2,122 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DAABC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 22:13:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29461C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 22:16:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADD4E208B4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 22:13:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADD4E208B4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id CA0E8208B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 22:16:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA0E8208B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727215AbeH1CCW (ORCPT
+        id S1727142AbeH1CFQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 22:02:22 -0400
-Received: from gateway21.websitewelcome.com ([192.185.45.228]:45649 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727023AbeH1CCW (ORCPT
+        Mon, 27 Aug 2018 22:05:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57110 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726994AbeH1CFQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 22:02:22 -0400
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id 5B378400CA748
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 17:13:49 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id uPkzfp6pkBcCXuPlMfJilU; Mon, 27 Aug 2018 17:13:48 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.132.202] (port=54620 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fuPky-002e8a-Oc; Mon, 27 Aug 2018 17:13:08 -0500
-Date:   Mon, 27 Aug 2018 17:13:06 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Serge Semin <fancer.lancer@gmail.com>,
-        Jon Mason <jdmason@kudzu.us>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Allen Hubbe <allenbh@gmail.com>
-Cc:     linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] NTB: ntb_hw_idt: replace IS_ERR_OR_NULL with regular NULL
- checks
-Message-ID: <20180827221306.GA8936@embeddedor.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.132.202
-X-Source-L: No
-X-Exim-ID: 1fuPky-002e8a-Oc
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.132.202]:54620
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Mon, 27 Aug 2018 22:05:16 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BE53BA80;
+        Mon, 27 Aug 2018 22:16:42 +0000 (UTC)
+Date:   Mon, 27 Aug 2018 15:16:41 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Vincent Whitchurch <vincent.whitchurch@axis.com>
+Cc:     catalin.marinas@arm.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Vincent Whitchurch <rabinv@axis.com>
+Subject: Re: [PATCHv2] kmemleak: Add option to print warnings to dmesg
+Message-Id: <20180827151641.59bdca4e1ea2e532b10cd9fd@linux-foundation.org>
+In-Reply-To: <20180827083821.7706-1-vincent.whitchurch@axis.com>
+References: <20180827083821.7706-1-vincent.whitchurch@axis.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Both devm_kcalloc() and devm_kzalloc() return NULL on error. They
-never return error pointers.
+On Mon, 27 Aug 2018 10:38:21 +0200 Vincent Whitchurch <vincent.whitchurch@axis.com> wrote:
 
-The use of IS_ERR_OR_NULL is currently applied to the wrong
-context.
+> Currently, kmemleak only prints the number of suspected leaks to dmesg
+> but requires the user to read a debugfs file to get the actual stack
+> traces of the objects' allocation points.  Add an option to print the
+> full object information to dmesg too.  This allows easier integration of
+> kmemleak into automated test systems since those kind of systems
+> presumably already save kernel logs.
 
-Fix this by replacing IS_ERR_OR_NULL with regular NULL checks.
+"presumably" is a bit rubbery.  Are you sure this change is sufficienty
+useful to justify including it?  Do you have use-cases for it?
 
-Fixes: bf2a952d31d2 ("NTB: Add IDT 89HPESxNTx PCIe-switches support")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/ntb/hw/idt/ntb_hw_idt.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -593,6 +593,15 @@ config DEBUG_KMEMLEAK_DEFAULT_OFF
+>  	  Say Y here to disable kmemleak by default. It can then be enabled
+>  	  on the command line via kmemleak=on.
+>  
+> +config DEBUG_KMEMLEAK_WARN
+> +	bool "Print kmemleak object warnings to log buffer"
+> +	depends on DEBUG_KMEMLEAK
+> +	help
+> +	  Say Y here to make kmemleak print information about unreferenced
+> +	  objects (including stacktraces) as warnings to the kernel log buffer.
+> +	  Otherwise this information is only available by reading the kmemleak
+> +	  debugfs file.
 
-diff --git a/drivers/ntb/hw/idt/ntb_hw_idt.c b/drivers/ntb/hw/idt/ntb_hw_idt.c
-index dbe72f1..a67ef23 100644
---- a/drivers/ntb/hw/idt/ntb_hw_idt.c
-+++ b/drivers/ntb/hw/idt/ntb_hw_idt.c
-@@ -1105,9 +1105,9 @@ static struct idt_mw_cfg *idt_scan_mws(struct idt_ntb_dev *ndev, int port,
- 	}
- 
- 	/* Allocate memory for memory window descriptors */
--	ret_mws = devm_kcalloc(&ndev->ntb.pdev->dev, *mw_cnt,
--				sizeof(*ret_mws), GFP_KERNEL);
--	if (IS_ERR_OR_NULL(ret_mws))
-+	ret_mws = devm_kcalloc(&ndev->ntb.pdev->dev, *mw_cnt, sizeof(*ret_mws),
-+			       GFP_KERNEL);
-+	if (!ret_mws)
- 		return ERR_PTR(-ENOMEM);
- 
- 	/* Copy the info of detected memory windows */
-@@ -2390,7 +2390,7 @@ static struct idt_ntb_dev *idt_create_dev(struct pci_dev *pdev,
- 
- 	/* Allocate memory for the IDT PCIe-device descriptor */
- 	ndev = devm_kzalloc(&pdev->dev, sizeof(*ndev), GFP_KERNEL);
--	if (IS_ERR_OR_NULL(ndev)) {
-+	if (!ndev) {
- 		dev_err(&pdev->dev, "Memory allocation failed for descriptor");
- 		return ERR_PTR(-ENOMEM);
- 	}
--- 
-2.7.4
+Why add the config option?  Why not simply make the change for all
+configs?
 
+>  config DEBUG_STACK_USAGE
+>  	bool "Stack utilization instrumentation"
+>  	depends on DEBUG_KERNEL && !IA64
+> diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+> index 9a085d525bbc..22662715a3dc 100644
+> --- a/mm/kmemleak.c
+> +++ b/mm/kmemleak.c
+> @@ -181,6 +181,7 @@ struct kmemleak_object {
+>  /* flag set to not scan the object */
+>  #define OBJECT_NO_SCAN		(1 << 2)
+>  
+> +#define HEX_PREFIX		"    "
+>  /* number of bytes to print per line; must be 16 or 32 */
+>  #define HEX_ROW_SIZE		16
+>  /* number of bytes to print at a time (1, 2, 4, 8) */
+> @@ -299,6 +300,25 @@ static void kmemleak_disable(void);
+>  	kmemleak_disable();		\
+>  } while (0)
+>  
+> +#define warn_or_seq_printf(seq, fmt, ...)	do {	\
+> +	if (seq)					\
+> +		seq_printf(seq, fmt, ##__VA_ARGS__);	\
+> +	else						\
+> +		pr_warn(fmt, ##__VA_ARGS__);		\
+> +} while (0)
+> +
+> +static void warn_or_seq_hex_dump(struct seq_file *seq, int prefix_type,
+> +				 int rowsize, int groupsize, const void *buf,
+> +				 size_t len, bool ascii)
+> +{
+> +	if (seq)
+> +		seq_hex_dump(seq, HEX_PREFIX, prefix_type, rowsize, groupsize,
+> +			     buf, len, ascii);
+> +	else
+> +		print_hex_dump(KERN_WARNING, pr_fmt(HEX_PREFIX), prefix_type,
+> +			       rowsize, groupsize, buf, len, ascii);
+> +}
+
+This will print to the logs OR to the debugfs file, won't it?
+
+If so, should we continue to print to the debugfs file when we're also
+printing to the log?  That sounds potentially useful and will avoid
+breaking things which expect the debugfs file to still be working.
+
+>
+> ...
+>
