@@ -2,224 +2,168 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBAF8C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:10:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D653FC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:11:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F214208D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:10:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F214208D8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 6AAE4208B4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:11:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Svrl+bBl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AAE4208B4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727374AbeH0U5t (ORCPT
+        id S1727078AbeH0U7W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 16:57:49 -0400
-Received: from mail-io0-f197.google.com ([209.85.223.197]:49493 "EHLO
-        mail-io0-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726809AbeH0U5b (ORCPT
+        Mon, 27 Aug 2018 16:59:22 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:41426 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726809AbeH0U7W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 16:57:31 -0400
-Received: by mail-io0-f197.google.com with SMTP id k9-v6so14436759iob.16
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 10:10:04 -0700 (PDT)
+        Mon, 27 Aug 2018 16:59:22 -0400
+Received: by mail-oi0-f65.google.com with SMTP id k12-v6so28586279oiw.8
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 10:11:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=FOduJP7uZPkSeGmomrOzf3gRax1fjxg0ERp2igguX5Q=;
+        b=Svrl+bBlLOuOXeRvskABqRWRLXE5s9qz64lHU4cd6RPs4BFLZsWkE30YeH/Kb0ZLYD
+         14fZkE7+3mu1ohZ+UFNnH4uzHZqeCIbUWDRqABrfbdeQv869L1UtFrmGBr4r/D2ILFTI
+         8qspBriPcUfSHIwqQQU5cwZjAPVVuf9zYLto2AWgmTka07qnILHY/44Hvd4lD20k/GlJ
+         gALlBnyt7oXEeIk6XHwlaX0zUCYsIoyrzAXKDo/ep5Qm+zdAwKxPCHalFSh+1ujaGIm9
+         Kzt2DIl+Z9VKa1w36luD0CKLHIuW0calzhs3efPM1O1siuNWA3VPcS5qPjBUjSoBbTKD
+         5t7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=V242MZQdopRfOpWFhoLU8LuaoLYD3TGCCGt+VXZLlDs=;
-        b=o/A6bhwAF7OksUCnZfvUNpKk6UnSmE3HQ+HfExanzVGCimCepoSRA37cz/ORarXW81
-         dmMZ3/kqG7W4Q55ZeL+85ONK74Iw1SuEtxP9vbDvDXQes7bffvemmz/F8d2x2V6m/hBR
-         UZBERCOx6zt527mO3dfe4Zumfi+4smZL3KIku0gi/jX5NdxFUfUVlvlatXgVaYwsSzBv
-         JYYGDl8KgBHkMHBsTAyUA/+4Ucch0Y3Wa3fvkhZKCNvQ7w5h+QXRBjqMBRVoXSI7jxa1
-         L5ZySKLWXlZnPC2NJi47VsdAKCeOqi1EGfCrm4oXT6i3ajd/rgc8bI0F3y+KgWcRCI8q
-         qzQQ==
-X-Gm-Message-State: APzg51BD6gbn7t7OhN+qMAdY+Y4nJn84BdxoSl5YvN0YKlzc4WeQVef6
-        et0VKdl51iCJ0deoulcG3kX7MU4DaDXnliodpYnMDk6rUSou
-X-Google-Smtp-Source: ANB0VdZ3Gc271t9r3Y0DNFi0taKa15NOiKuUZNWzCdcGcgpwR1eGo6R9XssLS6L09HpubxdJZF6JJLYMd7RlMVtp42slPxiJlQY/
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FOduJP7uZPkSeGmomrOzf3gRax1fjxg0ERp2igguX5Q=;
+        b=WLwoWf3pcyZiebX8snF6g6jrE3GuX7pidxx6kteb4SK/0zYXrlEDhjoXFOz2ApxBuN
+         be6nqEs4BpUlnCnb7SL05p0YN0BG0rREEE5bsYNP/T5SCI2x7JJ2IrBz6ptAZCs2f2pY
+         8GyTtZ/wdJfI/c3mIMub6YI5nVkbQMxfSJjb50a4ZJhyPA5DCzupvlKVaVLbO7IKhPD1
+         trnr65+SEuvHjj+mCiCoUIat1nwdmmTiqV0Ykum24ivqg5LV4Bfmi4NhmnGHrWNyuYw+
+         fzSvB/esZVvhHsIjnxmuMT47Awegi8wAOWelX2m6CHcbbsLVJ3wgPYj0gIyjKlpbopX9
+         +1KQ==
+X-Gm-Message-State: APzg51Bh0u4yjVLRI0pT88TOLTe5mk3snT7syJZzVqhK+wLRD6YXjyOl
+        +wbdwNkp4YpiLP4pyr5qjFK4qL+T
+X-Google-Smtp-Source: ANB0Vdb/smAABG1KaD9f1jJ1lDcq/yoP/BMkLNwsBd6Z01jeVEczam4JFw8hHU4h1cibHmugzvOXIw==
+X-Received: by 2002:aca:7513:: with SMTP id q19-v6mr12203953oic.13.1535389915235;
+        Mon, 27 Aug 2018 10:11:55 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id m7-v6sm10029920oia.32.2018.08.27.10.11.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 27 Aug 2018 10:11:54 -0700 (PDT)
+Date:   Mon, 27 Aug 2018 10:11:52 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Linux 4.19-rc1
+Message-ID: <20180827171152.GA2705@roeck-us.net>
+References: <CA+55aFw9mxNPX6OtOp-aoUMdXSg=gBkQudGGamo__sh_ts_LdQ@mail.gmail.com>
+ <20180827134459.GA16094@roeck-us.net>
+ <20180827154641.GA17201@infradead.org>
 MIME-Version: 1.0
-X-Received: by 2002:a24:e14a:: with SMTP id n71-v6mr4415205ith.55.1535389804147;
- Mon, 27 Aug 2018 10:10:04 -0700 (PDT)
-Date:   Mon, 27 Aug 2018 10:10:04 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000de3c7705746dcbb7@google.com>
-Subject: KASAN: use-after-free Read in ccid_hc_tx_delete
-From:   syzbot <syzbot+3967c1caf256f4d5aefe@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, dccp@vger.kernel.org, gerrit@erg.abdn.ac.uk,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180827154641.GA17201@infradead.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Mon, Aug 27, 2018 at 08:46:41AM -0700, Christoph Hellwig wrote:
+> > sparc:
+> > 
+> > WARNING: CPU: 0 PID: 1 at ./include/linux/dma-mapping.h:516 esp_sbus_probe+0x408/0x6e8
+> > WARNING: CPU: 0 PID: 1 at ./include/linux/dma-mapping.h:516 sparc_lance_probe_one+0x428/0x4f
+> > 
+> > Missing initialization of coherent_dma_mask in the respective drivers.
+> > 
+> > ---
+> > Each platform driver instantiated through a devicetree node now generates
+> > the following warning:
+> > 
+> > esp ffd38e00: DMA mask not set
+> > 
+> > It isn't a traceback so it may fly under the radar. There is nothing the
+> > drivers can do about it; the message is generated by the core before the
+> > driver probe function is called. No idea what a correct fix might be.
+> 
+> Both of these should probably be fixed by something like the patch
+> below:
+> 
+> ---
+> From 6294e0e330851ee06e66ab85b348f1d92d375d7a Mon Sep 17 00:00:00 2001
+> From: Christoph Hellwig <hch@lst.de>
+> Date: Mon, 27 Aug 2018 17:23:24 +0200
+> Subject: driver core: initialize a default DMA mask for platform device
+> 
+> We still treat devices without a DMA mask as defaulting to 32-bits for
+> both mask, but a few releases ago we've started warning about such
+> cases, as they require special cases to work around this sloppyness.
+> Add a dma_mask field to struct platform_object so that we can initialize
+> the dma_mask pointer in struct device and initialize both masks to
+> 32-bits by default.  Architectures can still override this in
+> arch_setup_pdev_archdata if needed.
+> 
+> Note that the code looks a little odd with the various conditionals
+> because we have to support platform_device structures that are
+> statically allocated.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  drivers/base/platform.c         | 15 +++++++++++++--
+>  include/linux/platform_device.h |  1 +
+>  2 files changed, 14 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+> index dff82a3c2caa..baf4b06cf2d9 100644
+> --- a/drivers/base/platform.c
+> +++ b/drivers/base/platform.c
+> @@ -225,6 +225,17 @@ struct platform_object {
+>  	char name[];
+>  };
+>  
+> +static void setup_pdev_archdata(struct platform_device *pdev)
+> +{
+> +	if (!pdev->dev.coherent_dma_mask)
+> +		pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
+> +	if (!pdev->dma_mask)
+> +		pdev->dma_mask = DMA_BIT_MASK(32);
+> +	if (!pdev->dev.dma_mask)
+> +		pdev->dev.dma_mask = &pdev->dma_mask;
 
-syzbot found the following crash on:
+When building sparc32 images, this results in the following
+error.
 
-HEAD commit:    aba16dc5cf93 Merge branch 'ida-4.19' of git://git.infradea..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1750d382400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3b576e333ca31bb2
-dashboard link: https://syzkaller.appspot.com/bug?extid=3967c1caf256f4d5aefe
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=119d007a400000
+drivers/base/platform.c: In function 'setup_pdev_archdata':
+drivers/base/platform.c:235:22: error: assignment from incompatible pointer type [-Werror=incompatible-pointer-types]
+   pdev->dev.dma_mask = &pdev->dma_mask;
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+3967c1caf256f4d5aefe@syzkaller.appspotmail.com
+pdev->dev.dma_mask is u64 *, pdev->dma_mask is dma_addr_t which in turn
+is either u32 or u64 depending on the architecture.
 
-8021q: adding VLAN 0 to HW filter on device team0
-8021q: adding VLAN 0 to HW filter on device team0
-8021q: adding VLAN 0 to HW filter on device team0
-hrtimer: interrupt took 33823 ns
-==================================================================
-BUG: KASAN: use-after-free in ccid_hc_tx_delete+0xe0/0x100  
-net/dccp/ccid.c:188
-Read of size 8 at addr ffff8801b0726b40 by task syz-executor3/6567
+> +++ b/include/linux/platform_device.h
+> @@ -25,6 +25,7 @@ struct platform_device {
+>  	int		id;
+>  	bool		id_auto;
+>  	struct device	dev;
+> +	dma_addr_t	dma_mask;
 
-CPU: 1 PID: 6567 Comm: syz-executor3 Not tainted 4.18.0+ #210
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  <IRQ>
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0x242/0x30d mm/kasan/report.c:412
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  ccid_hc_tx_delete+0xe0/0x100 net/dccp/ccid.c:188
-  dccp_sk_destruct+0x3c/0x80 net/dccp/proto.c:181
-  __sk_destruct+0x107/0xa60 net/core/sock.c:1560
-  __rcu_reclaim kernel/rcu/rcu.h:236 [inline]
-  rcu_do_batch kernel/rcu/tree.c:2576 [inline]
-  invoke_rcu_callbacks kernel/rcu/tree.c:2880 [inline]
-  __rcu_process_callbacks kernel/rcu/tree.c:2847 [inline]
-  rcu_process_callbacks+0xf78/0x27c0 kernel/rcu/tree.c:2864
-  __do_softirq+0x2eb/0xa74 kernel/softirq.c:292
-  invoke_softirq kernel/softirq.c:372 [inline]
-  irq_exit+0x1d6/0x210 kernel/softirq.c:412
-  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
-  smp_apic_timer_interrupt+0x18e/0x6a0 arch/x86/kernel/apic/apic.c:1056
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:864
-  </IRQ>
-RIP: 0010:memset_erms+0x9/0x10 arch/x86/lib/memset_64.S:65
-Code: c1 e9 03 40 0f b6 f6 48 b8 01 01 01 01 01 01 01 01 48 0f af c6 f3 48  
-ab 89 d1 f3 aa 4c 89 c8 c3 90 49 89 f9 40 88 f0 48 89 d1 <f3> aa 4c 89 c8  
-c3 90 49 89 fa 40 0f b6 ce 48 b8 01 01 01 01 01 01
-RSP: 0018:ffff8801b2aa75b0 EFLAGS: 00010246 ORIG_RAX: ffffffffffffff13
-RAX: 0000000000000000 RBX: 00000000006080c0 RCX: 0000000000000240
-RDX: 0000000000000800 RSI: 0000000000000000 RDI: ffff8801addbc880
-RBP: ffff8801b2aa7630 R08: ffff8801d7642a80 R09: ffff8801addbc2c0
-R10: ffff8801d7642240 R11: 0000000000000000 R12: ffff8801addbc2c0
-R13: ffff8801dac00c40 R14: ffff8801dac00c40 R15: 00000000006080c0
-  kmalloc include/linux/slab.h:513 [inline]
-  kzalloc include/linux/slab.h:707 [inline]
-  perf_event_alloc.part.93+0x1e2/0x33c0 kernel/events/core.c:9927
-  perf_event_alloc kernel/events/core.c:10399 [inline]
-  __do_sys_perf_event_open+0xa9c/0x2f30 kernel/events/core.c:10500
-  __se_sys_perf_event_open kernel/events/core.c:10389 [inline]
-  __x64_sys_perf_event_open+0xbe/0x150 kernel/events/core.c:10389
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457089
-Code: fd b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fc7df221c78 EFLAGS: 00000246 ORIG_RAX: 000000000000012a
-RAX: ffffffffffffffda RBX: 00007fc7df2226d4 RCX: 0000000000457089
-RDX: ffffffffffffffff RSI: 0000000000000000 RDI: 000000002001d000
-RBP: 00000000009300a0 R08: 0000000000000000 R09: 0000000000000000
-R10: ffffffffffffffff R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000004d3300 R14: 00000000004c8290 R15: 0000000000000000
+... so this will have to be u64, or the pointer in struct device would
+have to be fixed.
 
-Allocated by task 6568:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
-  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
-  kmem_cache_alloc+0x12e/0x710 mm/slab.c:3554
-  ccid_new+0x25b/0x3e0 net/dccp/ccid.c:151
-  dccp_hdlr_ccid+0x27/0x150 net/dccp/feat.c:44
-  __dccp_feat_activate+0x184/0x270 net/dccp/feat.c:344
-  dccp_feat_activate_values+0x3b6/0x839 net/dccp/feat.c:1538
-  dccp_rcv_request_sent_state_process net/dccp/input.c:472 [inline]
-  dccp_rcv_state_process+0x11dc/0x1a30 net/dccp/input.c:678
-  dccp_v6_do_rcv+0x26f/0xb80 net/dccp/ipv6.c:638
-  sk_backlog_rcv include/net/sock.h:931 [inline]
-  __release_sock+0x12f/0x3a0 net/core/sock.c:2336
-  release_sock+0xad/0x2c0 net/core/sock.c:2849
-  inet_wait_for_connect net/ipv4/af_inet.c:588 [inline]
-  __inet_stream_connect+0x61f/0x1160 net/ipv4/af_inet.c:680
-  inet_stream_connect+0x58/0xa0 net/ipv4/af_inet.c:719
-  __sys_connect+0x37d/0x4c0 net/socket.c:1662
-  __do_sys_connect net/socket.c:1673 [inline]
-  __se_sys_connect net/socket.c:1670 [inline]
-  __x64_sys_connect+0x73/0xb0 net/socket.c:1670
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+However, even changing the definition to u64 does not help: The warnings
+are still reported. This is because setup_pdev_archdata() is not called
+for any of the affected devices. That is kind of interesting since it
+means that arch_setup_pdev_archdata() won't be called for those devices
+either.
 
-Freed by task 6582:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kmem_cache_free+0x86/0x280 mm/slab.c:3756
-  ccid_hc_tx_delete+0xc3/0x100 net/dccp/ccid.c:190
-  dccp_hdlr_ccid+0x7d/0x150 net/dccp/feat.c:53
-  __dccp_feat_activate+0x184/0x270 net/dccp/feat.c:344
-  dccp_feat_activate_values+0x3b6/0x839 net/dccp/feat.c:1538
-  dccp_create_openreq_child+0x47a/0x620 net/dccp/minisocks.c:127
-  dccp_v6_request_recv_sock+0x253/0x2040 net/dccp/ipv6.c:466
-  dccp_check_req+0x46e/0x6c0 net/dccp/minisocks.c:196
-  dccp_v6_rcv+0x88e/0x1d9c net/dccp/ipv6.c:744
-  ip6_input_finish+0x407/0x1a40 net/ipv6/ip6_input.c:383
-  NF_HOOK include/linux/netfilter.h:287 [inline]
-  ip6_input+0xe9/0x600 net/ipv6/ip6_input.c:426
-  dst_input include/net/dst.h:450 [inline]
-  ip6_rcv_finish+0x17a/0x330 net/ipv6/ip6_input.c:76
-  NF_HOOK include/linux/netfilter.h:287 [inline]
-  ipv6_rcv+0x11e/0x650 net/ipv6/ip6_input.c:271
-  __netif_receive_skb_one_core+0x14d/0x200 net/core/dev.c:4892
-  __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:5002
-  process_backlog+0x219/0x760 net/core/dev.c:5808
-  napi_poll net/core/dev.c:6228 [inline]
-  net_rx_action+0x799/0x1900 net/core/dev.c:6294
-  __do_softirq+0x2eb/0xa74 kernel/softirq.c:292
-
-The buggy address belongs to the object at ffff8801b0726b40
-  which belongs to the cache ccid2_hc_tx_sock of size 1240
-The buggy address is located 0 bytes inside of
-  1240-byte region [ffff8801b0726b40, ffff8801b0727018)
-The buggy address belongs to the page:
-page:ffffea0006c1c980 count:1 mapcount:0 mapping:ffff8801cd8b6680 index:0x0  
-compound_mapcount: 0
-flags: 0x2fffc0000008100(slab|head)
-raw: 02fffc0000008100 ffff8801cd8b3648 ffffea0006c1e308 ffff8801cd8b6680
-raw: 0000000000000000 ffff8801b0726040 0000000100000005 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801b0726a00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801b0726a80: fb fb fb fc fc fc fc fc fc fc fc fc fc fc fc fc
-> ffff8801b0726b00: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
-                                            ^
-  ffff8801b0726b80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801b0726c00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+Guenter
