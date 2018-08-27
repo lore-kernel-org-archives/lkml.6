@@ -2,148 +2,332 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2414AC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:56:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1C5BC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:05:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA751208B9
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:56:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lVazhHuK";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Q0k/PlI4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA751208B9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 8456C208B3
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:05:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8456C208B3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727346AbeH0UoM (ORCPT
+        id S1727029AbeH0UxN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 16:44:12 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:40672 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726994AbeH0UoL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 16:44:11 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id C7DC7606DD; Mon, 27 Aug 2018 16:56:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535389006;
-        bh=8NyyRTX0SX7D0UuHcHWq80gYnbGevPxQyCdSMXAbQp8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lVazhHuKiysfCc760/2rJJ5yrJpG41mFW/3y5Ix2lgCjvcqwzbqAa9nhiTMJnIoMn
-         hCKaRcnZFnsPTgbGnfpMgUhL057psMv9PTdqf+LyyzWJPR3HzRjHU2QPt8vBM4ebdE
-         CSdcNOOF298r/+yO3NNi010W3RcctSa/26oyJRy0=
-Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 27 Aug 2018 16:53:13 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47354 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726809AbeH0UxN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 16:53:13 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: ilina@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9E62760271;
-        Mon, 27 Aug 2018 16:56:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535389005;
-        bh=8NyyRTX0SX7D0UuHcHWq80gYnbGevPxQyCdSMXAbQp8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Q0k/PlI4TOsazhVLLxI7jIBp4/cQ0J8AvnANPm89Pnw7sGKu88fJIFxhcV9cribdp
-         Ye7kG1PwyfbqgglSCgxhuIs5iS1ULRhCfWaHu0iVzTL7y+xNb31djW4le7GRXIOTpX
-         AF9h7GGYk8AyvybiLQkoWaG2xIim1HzhA860YK8U=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9E62760271
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date:   Mon, 27 Aug 2018 10:56:44 -0600
-From:   Lina Iyer <ilina@codeaurora.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>, evgreen@chromium.org,
-        rplsssn@codeaurora.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Andy Gross <andy.gross@linaro.org>,
-        Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v2 1/5] drivers: pinctrl: qcom: add wakeup capability to
- GPIO
-Message-ID: <20180827165644.GR5081@codeaurora.org>
-References: <20180817163849.30750-1-ilina@codeaurora.org>
- <20180817163849.30750-2-ilina@codeaurora.org>
- <CACRpkdb+Opdn1eWZSRydS1Bafpqwcg83xEcT-YJC6D-kSSi1ew@mail.gmail.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 32ACB4023ECB;
+        Mon, 27 Aug 2018 17:05:47 +0000 (UTC)
+Received: from krava (ovpn-204-43.brq.redhat.com [10.40.204.43])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 6E7452166B41;
+        Mon, 27 Aug 2018 17:05:45 +0000 (UTC)
+Date:   Mon, 27 Aug 2018 19:05:43 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Stephane Eranian <eranian@google.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>, mingo@elte.hu,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: [PATCHv3] perf tools: Add struct ordered_events_buffer layer
+Message-ID: <20180827170543.GA31347@krava>
+References: <1533767600-7794-1-git-send-email-eranian@google.com>
+ <20180809080721.GB19243@krava>
+ <CABPqkBQEfoMDEqot1VbgExg1fU3+EEunzZqDFKSGmLKBhxNkwA@mail.gmail.com>
+ <20180810115431.GA4162@krava>
+ <20180813130446.GA8685@krava>
+ <CABPqkBSgYEFFAkddBqZbYXe9tjUY7RbMBjQsZht8ki1iOR6unw@mail.gmail.com>
+ <20180815084825.GD3180@krava>
+ <20180827092818.GA3725@krava>
+ <CABPqkBQS+QG1jjzMU=wpuOJXD5A8iiPj3fNZoHSsPep7rfEQow@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACRpkdb+Opdn1eWZSRydS1Bafpqwcg83xEcT-YJC6D-kSSi1ew@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <CABPqkBQS+QG1jjzMU=wpuOJXD5A8iiPj3fNZoHSsPep7rfEQow@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 27 Aug 2018 17:05:47 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 27 Aug 2018 17:05:47 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Aug 26 2018 at 08:33 -0600, Linus Walleij wrote:
->On Fri, Aug 17, 2018 at 6:39 PM Lina Iyer <ilina@codeaurora.org> wrote:
->
->> QCOM SoC's that have Power Domain Controller (PDC) chip in the always-on
->> domain can wakeup the SoC, when interrupts and GPIOs are routed to the
->> its interrupt controller. Only select GPIOs that are deemed wakeup
->> capable are routed to specific PDC pins. During low power state, the
->> pinmux interrupt controller may be non-functional but the PDC would be.
->> The PDC can detect the wakeup GPIO is triggered and bring the TLMM to an
->> operational state.
->>
->> Interrupts that are level triggered will be detected at the TLMM when
->> the controller becomes operational. Edge interrupts however need to be
->> replayed again.
->>
->> Request the corresponding PDC IRQ, when the GPIO is requested as an IRQ,
->> but keep it disabled. During suspend, we can enable the PDC IRQ instead
->> of the GPIO IRQ, which may or not be detected.
->>
->> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
->> ---
->> Changes in v1:
->>         - Trigger GPIO in h/w from PDC IRQ handler
->>         - Avoid big tables for GPIO-PDC map, pick from DT instead
->>         - Use handler_data
->
->Just for the record this is an impressive and much needed patch
->set, no other SoC developer has yet taken on the task of making this
->work so I very much appreciate that Qualcomm show the way.
->
->> +static int msm_gpio_pdc_pin_request(struct irq_data *d)
->> +static int msm_gpio_pdc_pin_release(struct irq_data *d)
->> +static int msm_gpio_irq_reqres(struct irq_data *d)
->> +{
->(...)
->> +       if (gpiochip_lock_as_irq(gc, irqd_to_hwirq(d))) {
->(...)
->> +static void msm_gpio_irq_relres(struct irq_data *d)
->> +{
->> +       gpiochip_unlock_as_irq(gc, irqd_to_hwirq(d));
->> +}
->
->FYI Hans Verkuil is working on a patch set that moves the
->lock/unlock as IRQ call to the irqchip request() and release()
->functions so we can switch a GPIO irqchip line from IRQ
->mode to say output at runtime without too much trouble.
->(CEC needs this.)
->
-Thanks, I will look into Hans's RFCv2. But what would help me would be
-to avoid creating the IRQ for the GPIO itself (I have the latent IRQ),
-if I could just return that instead in gpio_to_irq(), it might be
-easier. I understand ->to_irq() is supposed to be a translate function
-only, I can avoid the dance of enabling and diabling the PDC IRQ on
-suspend and resume.
+On Mon, Aug 27, 2018 at 08:24:56AM -0700, Stephane Eranian wrote:
 
--- Lina
+SNIP
 
->I suspect that will make your work easier?
->
->Hans can you include Lina in the loop for your patches
->so she can take that into accoun because I think we might
->need that as a base for this.
->
->Yours,
->Linus Walleij
+> > -               /* First entry is abused to maintain the to_free list. */
+> > -               oe->buffer_idx = 2;
+> > -               new = oe->buffer + 1;
+> > +               oe->buffer_idx = 1;
+> > +               new = &oe->buffer->event[0];
+> >         } else {
+> >                 pr("allocation limit reached %" PRIu64 "B\n", oe->max_alloc_size);
+> 
+> 
+> I am wondering about the usefulness of returning a new_event with
+> new_event->event = NULL
+> in this case. Don't you need new_event->event? If so, then you need return NULL.
+
+yep, that's a bug.. with new being NULL in here,
+we'd get a crash anyway.. so 'return NULL;' it is
+
+SNIP
+
+> > +        * yet, we need to free only allocated ones ...
+> > +        */
+> > +       list_del(&oe->buffer->list);
+> > +       ordered_events_buffer__free(oe->buffer, oe->buffer_idx, oe);
+> > +
+> > +       /* ... and continue with the rest */
+> > +       list_for_each_entry_safe(buffer, tmp, &oe->to_free, list) {
+> > +               list_del(&buffer->list);
+> > +               ordered_events_buffer__free(buffer, MAX_SAMPLE_BUFFER, oe);
+> 
+> 
+> Here you are saying that if it is on the to_free list and not the
+> current buffer, then necessarily
+> all the entries have been used and it is safe to use
+> MAX_SAMPLE_BUFFER. Is that right?
+
+yes, at this point they either holds an event or NULL
+so it's free to call __free_dup_event on it
+
+thanks, v3 attached
+
+added also Namhyung's ack, as the 'return NULL' change wasn't
+related to the v2 changes
+
+jirka
+
+
+---
+When ordering events, we use preallocated buffers to store separated
+events. Those buffers currently don't have their own struct, but since
+they are basically array of 'struct ordered_event' objects, we use the
+first event to hold buffers data - list head, that holds all buffers
+together:
+
+   struct ordered_events {
+     ...
+     struct ordered_event *buffer;
+     ...
+   };
+
+   struct ordered_event {
+     u64               timestamp;
+     u64               file_offset;
+     union perf_event  *event;
+     struct list_head  list;
+   };
+
+This is quite convoluted and error prone as demonstrated by
+free-ing issue discovered and fixed by Stephane in here [1].
+
+This patch adds the 'struct ordered_events_buffer' object,
+that holds the buffer data and frees it up properly.
+
+[1] - https://marc.info/?l=linux-kernel&m=153376761329335&w=2
+
+Reported-by: Stephane Eranian <eranian@google.com>
+Acked-by: Namhyung Kim <namhyung@kernel.org>
+Link: http://lkml.kernel.org/n/tip-qrkcqm5m1sugy4q83pfn5a1r@git.kernel.org
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+---
+ tools/perf/util/ordered-events.c | 83 +++++++++++++++++++++++++++-----
+ tools/perf/util/ordered-events.h | 37 ++++++++------
+ 2 files changed, 91 insertions(+), 29 deletions(-)
+
+diff --git a/tools/perf/util/ordered-events.c b/tools/perf/util/ordered-events.c
+index bad9e0296e9a..87171e8fd70d 100644
+--- a/tools/perf/util/ordered-events.c
++++ b/tools/perf/util/ordered-events.c
+@@ -80,14 +80,20 @@ static union perf_event *dup_event(struct ordered_events *oe,
+ 	return oe->copy_on_queue ? __dup_event(oe, event) : event;
+ }
+ 
+-static void free_dup_event(struct ordered_events *oe, union perf_event *event)
++static void __free_dup_event(struct ordered_events *oe, union perf_event *event)
+ {
+-	if (event && oe->copy_on_queue) {
++	if (event) {
+ 		oe->cur_alloc_size -= event->header.size;
+ 		free(event);
+ 	}
+ }
+ 
++static void free_dup_event(struct ordered_events *oe, union perf_event *event)
++{
++	if (oe->copy_on_queue)
++		__free_dup_event(oe, event);
++}
++
+ #define MAX_SAMPLE_BUFFER	(64 * 1024 / sizeof(struct ordered_event))
+ static struct ordered_event *alloc_event(struct ordered_events *oe,
+ 					 union perf_event *event)
+@@ -100,15 +106,43 @@ static struct ordered_event *alloc_event(struct ordered_events *oe,
+ 	if (!new_event)
+ 		return NULL;
+ 
++	/*
++	 * We maintain following scheme of buffers for ordered
++	 * event allocation:
++	 *
++	 *   to_free list -> buffer1 (64K)
++	 *                   buffer2 (64K)
++	 *                   ...
++	 *
++	 * Each buffer keeps an array of ordered events objects:
++	 *    buffer -> event[0]
++	 *              event[1]
++	 *              ...
++	 *
++	 * Each allocated ordered event is linked to one of
++	 * following lists:
++	 *   - time ordered list 'events'
++	 *   - list of currently removed events 'cache'
++	 *
++	 * Allocation of the ordered event uses following order
++	 * to get the memory:
++	 *   - use recently removed object from 'cache' list
++	 *   - use available object in current allocation buffer
++	 *   - allocate new buffer if the current buffer is full
++	 *
++	 * Removal of ordered event object moves it from events to
++	 * the cache list.
++	 */
+ 	if (!list_empty(cache)) {
+ 		new = list_entry(cache->next, struct ordered_event, list);
+ 		list_del(&new->list);
+ 	} else if (oe->buffer) {
+-		new = oe->buffer + oe->buffer_idx;
++		new = &oe->buffer->event[oe->buffer_idx];
+ 		if (++oe->buffer_idx == MAX_SAMPLE_BUFFER)
+ 			oe->buffer = NULL;
+ 	} else if (oe->cur_alloc_size < oe->max_alloc_size) {
+-		size_t size = MAX_SAMPLE_BUFFER * sizeof(*new);
++		size_t size = sizeof(*oe->buffer) +
++			      MAX_SAMPLE_BUFFER * sizeof(*new);
+ 
+ 		oe->buffer = malloc(size);
+ 		if (!oe->buffer) {
+@@ -122,11 +156,11 @@ static struct ordered_event *alloc_event(struct ordered_events *oe,
+ 		oe->cur_alloc_size += size;
+ 		list_add(&oe->buffer->list, &oe->to_free);
+ 
+-		/* First entry is abused to maintain the to_free list. */
+-		oe->buffer_idx = 2;
+-		new = oe->buffer + 1;
++		oe->buffer_idx = 1;
++		new = &oe->buffer->event[0];
+ 	} else {
+ 		pr("allocation limit reached %" PRIu64 "B\n", oe->max_alloc_size);
++		return NULL;
+ 	}
+ 
+ 	new->event = new_event;
+@@ -300,15 +334,38 @@ void ordered_events__init(struct ordered_events *oe, ordered_events__deliver_t d
+ 	oe->deliver	   = deliver;
+ }
+ 
++static void
++ordered_events_buffer__free(struct ordered_events_buffer *buffer,
++			    unsigned int max, struct ordered_events *oe)
++{
++	if (oe->copy_on_queue) {
++		unsigned int i;
++
++		for (i = 0; i < max; i++)
++			__free_dup_event(oe, buffer->event[i].event);
++	}
++
++	free(buffer);
++}
++
+ void ordered_events__free(struct ordered_events *oe)
+ {
+-	while (!list_empty(&oe->to_free)) {
+-		struct ordered_event *event;
++	struct ordered_events_buffer *buffer, *tmp;
+ 
+-		event = list_entry(oe->to_free.next, struct ordered_event, list);
+-		list_del(&event->list);
+-		free_dup_event(oe, event->event);
+-		free(event);
++	if (list_empty(&oe->to_free))
++		return;
++
++	/*
++	 * Current buffer might not have all the events allocated
++	 * yet, we need to free only allocated ones ...
++	 */
++	list_del(&oe->buffer->list);
++	ordered_events_buffer__free(oe->buffer, oe->buffer_idx, oe);
++
++	/* ... and continue with the rest */
++	list_for_each_entry_safe(buffer, tmp, &oe->to_free, list) {
++		list_del(&buffer->list);
++		ordered_events_buffer__free(buffer, MAX_SAMPLE_BUFFER, oe);
+ 	}
+ }
+ 
+diff --git a/tools/perf/util/ordered-events.h b/tools/perf/util/ordered-events.h
+index 8c7a2948593e..1338d5c345dc 100644
+--- a/tools/perf/util/ordered-events.h
++++ b/tools/perf/util/ordered-events.h
+@@ -25,23 +25,28 @@ struct ordered_events;
+ typedef int (*ordered_events__deliver_t)(struct ordered_events *oe,
+ 					 struct ordered_event *event);
+ 
++struct ordered_events_buffer {
++	struct list_head	list;
++	struct ordered_event	event[0];
++};
++
+ struct ordered_events {
+-	u64			last_flush;
+-	u64			next_flush;
+-	u64			max_timestamp;
+-	u64			max_alloc_size;
+-	u64			cur_alloc_size;
+-	struct list_head	events;
+-	struct list_head	cache;
+-	struct list_head	to_free;
+-	struct ordered_event	*buffer;
+-	struct ordered_event	*last;
+-	ordered_events__deliver_t deliver;
+-	int			buffer_idx;
+-	unsigned int		nr_events;
+-	enum oe_flush		last_flush_type;
+-	u32			nr_unordered_events;
+-	bool                    copy_on_queue;
++	u64				 last_flush;
++	u64				 next_flush;
++	u64				 max_timestamp;
++	u64				 max_alloc_size;
++	u64				 cur_alloc_size;
++	struct list_head		 events;
++	struct list_head		 cache;
++	struct list_head		 to_free;
++	struct ordered_events_buffer	*buffer;
++	struct ordered_event		*last;
++	ordered_events__deliver_t	 deliver;
++	int				 buffer_idx;
++	unsigned int			 nr_events;
++	enum oe_flush			 last_flush_type;
++	u32				 nr_unordered_events;
++	bool				 copy_on_queue;
+ };
+ 
+ int ordered_events__queue(struct ordered_events *oe, union perf_event *event,
+-- 
+2.17.1
