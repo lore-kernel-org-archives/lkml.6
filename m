@@ -2,215 +2,139 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F2A8C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 07:10:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12BDEC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 07:11:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0CAC208B3
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 07:10:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0CAC208B3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C913121735
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 07:11:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C913121735
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727142AbeH0K4A (ORCPT
+        id S1727230AbeH0K4f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 06:56:00 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38998 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727058AbeH0K4A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 06:56:00 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C955881663F5;
-        Mon, 27 Aug 2018 07:10:36 +0000 (UTC)
-Received: from localhost (ovpn-8-24.pek2.redhat.com [10.72.8.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id AFDDD94641;
-        Mon, 27 Aug 2018 07:10:35 +0000 (UTC)
-Date:   Mon, 27 Aug 2018 15:10:32 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org,
-        keescook@chromium.org, n-horiguchi@ah.jp.nec.com,
-        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com,
-        douly.fnst@cn.fujitsu.com
-Subject: Re: [PATCH v5 4/4] x86/boot/KASLR: Limit kaslr to choosing the
- immovable memory
-Message-ID: <20180827071032.GE1748@MiWiFi-R3L-srv>
-References: <20180807065000.30958-1-fanc.fnst@cn.fujitsu.com>
- <20180807065000.30958-5-fanc.fnst@cn.fujitsu.com>
- <20180827055607.GB1748@MiWiFi-R3L-srv>
+        Mon, 27 Aug 2018 06:56:35 -0400
+Received: from mga07.intel.com ([134.134.136.100]:47215 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727058AbeH0K4e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 06:56:34 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2018 00:11:12 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,294,1531810800"; 
+   d="scan'208";a="83661460"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.137]) ([10.237.72.137])
+  by fmsmga004.fm.intel.com with ESMTP; 27 Aug 2018 00:09:20 -0700
+Subject: Re: [PATCH V6 5/9] mmc: sdhci: Add 32-bit block count support for v4
+ mode
+To:     Chunyan Zhang <zhang.chunyan@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Billows Wu <billows.wu@unisoc.com>,
+        Jason Wu <jason.wu@unisoc.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+References: <1535102428-20332-1-git-send-email-zhang.chunyan@linaro.org>
+ <1535102428-20332-6-git-send-email-zhang.chunyan@linaro.org>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <f209e114-152c-65e0-4c24-53252818ab5d@intel.com>
+Date:   Mon, 27 Aug 2018 10:07:37 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180827055607.GB1748@MiWiFi-R3L-srv>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 27 Aug 2018 07:10:36 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 27 Aug 2018 07:10:36 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
+In-Reply-To: <1535102428-20332-6-git-send-email-zhang.chunyan@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/27/18 at 01:56pm, Baoquan He wrote:
-> On 08/07/18 at 02:50pm, Chao Fan wrote:
-> > If 'CONFIG_MEMORY_HOTREMOVE' specified and the account of immovable
-> If CONFIG_MEMORY_HOTREMOVE is enabled, 
-> > memory regions is not zero. Calculate the intersection between memory
-> > regions from e820/efi memory table and immovable memory regions.
-> > Or go on the old code.
-> > 
-> > Rename process_mem_region to slots_count to match slots_fetch_random,
-> > and name new function as process_mem_region.
-> > 
-> > Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
-> > ---
-> >  arch/x86/boot/compressed/kaslr.c | 66 ++++++++++++++++++++++++++------
-> >  1 file changed, 55 insertions(+), 11 deletions(-)
-> > 
-> > diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
-> > index 720878f967a3..9c6e24a23a2d 100644
-> > --- a/arch/x86/boot/compressed/kaslr.c
-> > +++ b/arch/x86/boot/compressed/kaslr.c
-> > @@ -635,9 +635,9 @@ static unsigned long slots_fetch_random(void)
-> >  	return 0;
-> >  }
-> >  
-> > -static void process_mem_region(struct mem_vector *entry,
-> > -			       unsigned long minimum,
-> > -			       unsigned long image_size)
-> > +static void slots_count(struct mem_vector *entry,
-> > +			unsigned long minimum,
-> > +			unsigned long image_size)
-> >  {
-> >  	struct mem_vector region, overlap;
-> >  	struct slot_area slot_area;
-> > @@ -714,6 +714,56 @@ static void process_mem_region(struct mem_vector *entry,
-> >  	}
-> >  }
-> >  
-> > +static bool process_mem_region(struct mem_vector *region,
-> > +			       unsigned long long minimum,
-> > +			       unsigned long long image_size)
-> > +{
+On 24/08/18 12:20, Chunyan Zhang wrote:
+> Host Controller Version 4.10 re-defines SDMA System Address register
+> as 32-bit Block Count for v4 mode, and SDMA uses ADMA System
+> Address register (05Fh-058h) instead if v4 mode is enabled. Also
+> when using 32-bit block count, 16-bit block count register need
+> to be set to zero.
 > 
-> Is it possible to take num_immovable_mem definition out from #ifdef
-> CONFIG_MEMORY_HOTREMOVE block and check it here like below? This way,
-> one level of indentation can be reduced in the for loop, and code is
-> more readable.
+> Since using 32-bit Block Count would cause problems for auto-cmd23,
+> it can be chosen via host->quirk2.
 > 
+> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
+> ---
+>  drivers/mmc/host/sdhci.c | 15 ++++++++++++++-
+>  drivers/mmc/host/sdhci.h |  3 +++
+>  2 files changed, 17 insertions(+), 1 deletion(-)
 > 
-> static bool process_mem_region(struct mem_vector *region,
-> 			       unsigned long long minimum,
-> 			       unsigned long long image_size)
-> {
-> 
-> 	/*
-> 	 * If no immovable memory found, or MEMORY_HOTREMOVE disabled,
-> 	 * walk all the regions, so use region directely.
-> 	 */
-> 	if (num_immovable_mem > 0) {
-Sorry, I meant if (!num_immovable_mem) {
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 38d083c..05f9fff 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -1073,7 +1073,20 @@ static void sdhci_prepare_data(struct sdhci_host *host, struct mmc_command *cmd)
+>  	/* Set the DMA boundary value and block size */
+>  	sdhci_writew(host, SDHCI_MAKE_BLKSZ(host->sdma_boundary, data->blksz),
+>  		     SDHCI_BLOCK_SIZE);
+> -	sdhci_writew(host, data->blocks, SDHCI_BLOCK_COUNT);
+> +
+> +	/*
+> +	 * For Version 4.10 onwards, if v4 mode is enabled, 16-bit Block Count
+> +	 * register need to be set to zero, 32-bit Block Count register would
+> +	 * be selected.
+> +	 */
+> +	if (host->version >= SDHCI_SPEC_410 && host->v4_mode &&
+> +	    !(host->quirks2 & SDHCI_QUIRK2_BROKEN_32BIT_BLK_CNT)) {
 
+Because 32-bit block count is problematic but also not essential, I would
+prefer to do the quirk the other way around. i.e. SDHCI_QUIRK2_USE_32BIT_BLK_CNT
 
-> 		slots_count(region, minimum, image_size);
-> 		
-> 		if (slot_area_index == MAX_SLOT_AREA) {
-> 			debug_putstr("Aborted e820/efi memmap scan (slot_areas full)!\n");
-> 			return 1;
-> 		}
-> 		return 0;
-> 	}
+I would also add a comment to the definition of
+SDHCI_QUIRK2_USE_32BIT_BLK_CNT, like:
+
+32-bit block count may not support eMMC where upper bits of CMD23 are used
+for other purposes.  Consequently we support 16-bit block count by default.
+Otherwise, SDHCI_QUIRK2_USE_32BIT_BLK_CNT can be selected to use 32-bit
+block count.
+
+> +		if (sdhci_readw(host, SDHCI_BLOCK_COUNT))
+> +			sdhci_writew(host, 0, SDHCI_BLOCK_COUNT);
+> +		sdhci_writew(host, data->blocks, SDHCI_32BIT_BLK_CNT);
+> +	} else {
+> +		sdhci_writew(host, data->blocks, SDHCI_BLOCK_COUNT);
+> +	}
+>  }
+>  
+>  static inline bool sdhci_auto_cmd12(struct sdhci_host *host,
+> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> index f3b9ebc..0a1e25f 100644
+> --- a/drivers/mmc/host/sdhci.h
+> +++ b/drivers/mmc/host/sdhci.h
+> @@ -28,6 +28,7 @@
+>  
+>  #define SDHCI_DMA_ADDRESS	0x00
+>  #define SDHCI_ARGUMENT2		SDHCI_DMA_ADDRESS
+> +#define SDHCI_32BIT_BLK_CNT	SDHCI_DMA_ADDRESS
+>  
+>  #define SDHCI_BLOCK_SIZE	0x04
+>  #define  SDHCI_MAKE_BLKSZ(dma, blksz) (((dma & 0x7) << 12) | (blksz & 0xFFF))
+> @@ -462,6 +463,8 @@ struct sdhci_host {
+>   * obtainable timeout.
+>   */
+>  #define SDHCI_QUIRK2_DISABLE_HW_TIMEOUT			(1<<17)
+> +/* Controller broken with using 32-bit block count in v4_mode */
+> +#define SDHCI_QUIRK2_BROKEN_32BIT_BLK_CNT		(1<<18)
+>  
+>  	int irq;		/* Device IRQ */
+>  	void __iomem *ioaddr;	/* Mapped address */
 > 
-> #ifdef CONFIG_MEMORY_HOTREMOVE
-> 	for (i = 0; i < num_immovable_mem; i++) {
-> 		...
-> 	}
-> #endif
-> }
-> 
-> > +#ifdef CONFIG_MEMORY_HOTREMOVE
-> > +	/*
-> > +	 * If immovable memory found, filter the intersection between
-> > +	 * immovable memory and region to slots_count.
-> > +	 * Otherwise, go on old code.
-> > +	 */
-> > +	if (num_immovable_mem > 0) {
-> > +		int i;
-> > +
-> > +		for (i = 0; i < num_immovable_mem; i++) {
-> > +			struct mem_vector entry;
-> > +			unsigned long long start, end, entry_end, region_end;
-> > +
-> > +			start = immovable_mem[i].start;
-> > +			end = start + immovable_mem[i].size;
-> > +			region_end = region->start + region->size;
-> > +
-> > +			entry.start = clamp(region->start, start, end);
-> > +			entry_end = clamp(region_end, start, end);
-> > +
-> > +			if (entry.start + image_size < entry_end) {
-> > +				entry.size = entry_end - entry.start;
-> > +				slots_count(&entry, minimum, image_size);
-> > +
-> > +				if (slot_area_index == MAX_SLOT_AREA) {
-> > +					debug_putstr("Aborted e820/efi memmap scan (slot_areas full)!\n");
-> > +					return 1;
-> > +				}
-> > +			}
-> > +		}
-> > +		return 0;
-> > +	}
-> > +#endif
-> > +	/*
-> > +	 * If no immovable memory found, or MEMORY_HOTREMOVE disabled,
-> > +	 * walk all the regions, so use region directely.
-> > +	 */
-> > +	slots_count(region, minimum, image_size);
-> > +
-> > +	if (slot_area_index == MAX_SLOT_AREA) {
-> > +		debug_putstr("Aborted e820/efi memmap scan (slot_areas full)!\n");
-> > +		return 1;
-> > +	}
-> > +	return 0;
-> > +}
-> > +
-> >  #ifdef CONFIG_EFI
-> >  /*
-> >   * Returns true if mirror region found (and must have been processed
-> > @@ -779,11 +829,8 @@ process_efi_entries(unsigned long minimum, unsigned long image_size)
-> >  
-> >  		region.start = md->phys_addr;
-> >  		region.size = md->num_pages << EFI_PAGE_SHIFT;
-> > -		process_mem_region(&region, minimum, image_size);
-> > -		if (slot_area_index == MAX_SLOT_AREA) {
-> > -			debug_putstr("Aborted EFI scan (slot_areas full)!\n");
-> > +		if (process_mem_region(&region, minimum, image_size))
-> >  			break;
-> > -		}
-> >  	}
-> >  	return true;
-> >  }
-> > @@ -810,11 +857,8 @@ static void process_e820_entries(unsigned long minimum,
-> >  			continue;
-> >  		region.start = entry->addr;
-> >  		region.size = entry->size;
-> > -		process_mem_region(&region, minimum, image_size);
-> > -		if (slot_area_index == MAX_SLOT_AREA) {
-> > -			debug_putstr("Aborted e820 scan (slot_areas full)!\n");
-> > +		if (process_mem_region(&region, minimum, image_size))
-> >  			break;
-> > -		}
-> >  	}
-> >  }
-> >  
-> > -- 
-> > 2.17.1
-> > 
-> > 
-> > 
+
