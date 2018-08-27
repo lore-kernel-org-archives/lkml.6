@@ -2,147 +2,148 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA9C0C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:22:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2799C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:24:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 953A3208A5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:22:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52CAE208B8
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:24:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FX/YVmD3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 953A3208A5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="hm3xzdCg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52CAE208B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727295AbeH0XKn (ORCPT
+        id S1727308AbeH0XL7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 19:10:43 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:38674 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726895AbeH0XKm (ORCPT
+        Mon, 27 Aug 2018 19:11:59 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:38130 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726887AbeH0XL7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 19:10:42 -0400
-Received: by mail-oi0-f65.google.com with SMTP id x197-v6so169118oix.5
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 12:22:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=m2ahqzoEJ50pToHQv3UOg8VdlhaO9pPIx0D3UNF8sLQ=;
-        b=FX/YVmD3Y/j7rhnDWs6ZsSUiWpp4BpUlsmQiJCcW0SDEjCdUXHIBs0xQJHSpsWCnSp
-         v2rCfU+KwIy0XFhJqPXZoWYjvZc8Q7Ool+sbU7D28I8VAwxxF9j8DJUGNV8EEKpLCWZp
-         E8tBixzb5i4Zwo/cwbneoJfoikXSSW9fgTqeEoV67oihWQHe7pJFgxHjNxBvFysA6qBX
-         hOcOecIsw4+QMD6YI9UvaJ4iLzauKx2T3+pY9Eb5fhtm+BUIwkU5SFVBKilr908ogQ0/
-         Ogbm70RXA/dtynkzVu4OAlH7ux1z/N7Re1Lms1VmvfIjU+npNNsdf4ocx305XQCfr3OX
-         qQvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=m2ahqzoEJ50pToHQv3UOg8VdlhaO9pPIx0D3UNF8sLQ=;
-        b=NuEcyQZdJV7nv2Hci4Ha5QxuHpCRrw7+1Qxekca98EJw6M7HmP7P+GnkNYwEBATsVx
-         v+nFb3LTR8mH/2o7mhQyZA2go0T8XTGyBqSWv1R9XeJp6fJv2+y992LYXE8kU4ZI8SAA
-         8uO/9w0Ii/lSNn44lCL6FQ3uH25Wb9hGJ9lp6Q7Tsz7PpkQ6hlFZZlyHlVK6J6DS5Ymu
-         qdG8a3dnQvc1SHYQHCKqTOMZd2H7iLBKAwxLQL++X58FuDq5qTFFur0JWRG8pqzWqR/O
-         Hf5zh4hh5KXypCBeII4daGsgkPMQkz+W88IZQXL2FPlL9r1RLaLPsonzeorqwoStmTRX
-         J3jA==
-X-Gm-Message-State: APzg51CBYU5PKra6zevoAkzS+zuyNqRfce7CVK7+Xhan0hmaWGxKgKHv
-        uTp8xSfI3qpAgBr/JhJNTMlA/jwvQVGfYBThQ6ySkA==
-X-Google-Smtp-Source: ANB0VdZFDqpxksz42aXf2MYcBrZ0cK6pVRwMupbPoDwELlmjCfsgLhhqC9rzVv3ROXhVvVdr1sH4/kZH+txbXwQeWJo=
-X-Received: by 2002:aca:4784:: with SMTP id u126-v6mr13915592oia.229.1535397766293;
- Mon, 27 Aug 2018 12:22:46 -0700 (PDT)
+        Mon, 27 Aug 2018 19:11:59 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7RJNmej117536;
+        Mon, 27 Aug 2018 19:23:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=BtNrtsrCsZcMOmTNAfUwsD/TCC5nLvZwp8N7V1rFyG8=;
+ b=hm3xzdCgnWRcgkBMrXzrtwazOAZ8fI+shiradxu2Jcb6XjmdwpoPu4Rlj8PheGZhuR+G
+ Z9XNI9uAHeiUXpQT1yafIZg8dkBNYkEsZpR2NKQCuefssX8Y0Yn17eb6BITaUXAeMQAg
+ JURs67eaSRUCgnT5C9nGXvH8LEKtoZ1HZ0YXCUc+PWWyurzTEwz9rkMEueA2Nk520rQu
+ YPQgSNvN3/ckzxsMQDPFJz29iYOSiBIoyR6QmlRdBl9DPKJiZMajfH0wgGJihcWhQl8K
+ lX5vE+4K41CyqGmrrDp67Ijeh8eqVJ/dZKCJc2+6re8U3Qv8QsJEZyvLn9pCcLEngZ4K fw== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2m2yrpytc0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 27 Aug 2018 19:23:49 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w7RJNhlg002497
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 27 Aug 2018 19:23:43 GMT
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w7RJNg2x027126;
+        Mon, 27 Aug 2018 19:23:42 GMT
+Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 27 Aug 2018 12:23:42 -0700
+Subject: Re: [PATCH v2 0/2] x86/xen: avoid 32-bit writes to PTEs in PV PAE
+ guests
+To:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xenproject.org, x86@kernel.org
+Cc:     hpa@zytor.com, tglx@linutronix.de, mingo@redhat.com,
+        stable <stable@vger.kernel.org>
+References: <20180821153755.30462-1-jgross@suse.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <4d75b6c7-124f-873c-f89a-fcbc9725054f@oracle.com>
+Date:   Mon, 27 Aug 2018 15:25:03 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180827185631.163506-1-jannh@google.com> <20180827185631.163506-4-jannh@google.com>
- <CALCETrUeRA63Vt_LBOGmUHc_M9gc3J7+ewK6j+sB8P=9ijk7ag@mail.gmail.com>
-In-Reply-To: <CALCETrUeRA63Vt_LBOGmUHc_M9gc3J7+ewK6j+sB8P=9ijk7ag@mail.gmail.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Mon, 27 Aug 2018 21:22:19 +0200
-Message-ID: <CAG48ez0=-nDmQVQiJtD_6ingdWWVJE+y+5_oWQrggQ9Eqg-UKQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/7] x86: stop calling fixup_exception() from kprobe_fault_handler()
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     mhiramat@kernel.org, naveen.n.rao@linux.vnet.ibm.com,
-        anil.s.keshavamurthy@intel.com,
-        "David S. Miller" <davem@davemloft.net>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        tony.luck@intel.com, Borislav Petkov <bp@alien8.de>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>, linux-edac@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180821153755.30462-1-jgross@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8998 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=920
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808270199
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 9:02 PM Andy Lutomirski <luto@kernel.org> wrote:
+On 08/21/2018 11:37 AM, Juergen Gross wrote:
+> While the hypervisor emulates plain writes to PTEs happily, this is
+> much slower than issuing a hypercall for PTE modifcations. And writing
+> a PTE via two 32-bit write instructions (especially when clearing the
+> PTE) will result in an intermediate L1TF vulnerable PTE.
 >
-> On Mon, Aug 27, 2018 at 11:56 AM, Jann Horn <jannh@google.com> wrote:
-> > This removes the call into exception fixup that was added in
-> > commit c28f896634f2 ("[PATCH] kprobes: fix broken fault handling for
-> > x86_64").
-> >
-> > On X86, kprobe_fault_handler() is called from two places:
-> > do_general_protection() (for #GP) and kprobes_fault() (for #PF).
-> > In both paths, the fixup_exception() call in the kprobe fault handler is
-> > redundant.
-> >
-> > For #GP, fixup_exception() is called immediately before
-> > kprobe_fault_handler() is invoked - if someone wanted to fix up our #GP,
-> > they've already done so, no need to try again. (This assumes that the
-> > kprobe's fault handler isn't going to do something crazy like changing RIP
-> > so that it suddenly points to an instruction that does userspace access.)
+> Writes to PAE PTEs should always be done with 64-bit writes or via
+> hypercalls.
 >
-> This needs review by someone who understands kprobes better than I do.
-> What happens if someone puts a kprobe on a uaccess instruction and the
-> uaccess subsequently faults?
+> Juergen Gross (2):
+>   x86/xen: don't write ptes directly in 32-bit PV guests
+>   x86/pae: use 64 bit atomic xchg function in native_ptep_get_and_clear
+>
+>  arch/x86/include/asm/pgtable-3level.h | 7 +++----
+>  arch/x86/xen/mmu_pv.c                 | 7 +++----
+>  2 files changed, 6 insertions(+), 8 deletions(-)
+>
 
-Ugh, good point. I'll admit to not having thought about that properly.
 
-I think that's the "if (unlikely(regs->ip == (unsigned
-long)cur->ainsn.insn))" branch in kprobe_fault_handler(), which I'm
-not touching.
+Applied to for-linus-19b.
 
-For #PF, both without and with my patch, stuff should get fixed up by
-the normal pagefault handler, since the fixup happens after the kprobe
-handler has fiddled with the exception state.
+(+stable.)
 
-For #GP, we're already past the fixup call, and I think both without
-and with my patch, nothing will catch it - so I think that's a bug,
-but I don't think it's one I'm introducing.
-
-> > For #PF on a kernel address from kernel space, after the kprobe fault
-> > handler has run, we'll go into no_context(), which calls fixup_exception().
-> >
-> > Signed-off-by: Jann Horn <jannh@google.com>
-> > ---
-> >  arch/x86/kernel/kprobes/core.c | 7 -------
-> >  1 file changed, 7 deletions(-)
-> >
-> > diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
-> > index 467ac22691b0..7315ac202aad 100644
-> > --- a/arch/x86/kernel/kprobes/core.c
-> > +++ b/arch/x86/kernel/kprobes/core.c
-> > @@ -1021,13 +1021,6 @@ int kprobe_fault_handler(struct pt_regs *regs, int trapnr)
-> >                 if (cur->fault_handler && cur->fault_handler(cur, regs, trapnr))
-> >                         return 1;
-> >
-> > -               /*
-> > -                * In case the user-specified fault handler returned
-> > -                * zero, try to fix up.
-> > -                */
-> > -               if (fixup_exception(regs, trapnr))
-> > -                       return 1;
-> > -
-> >                 /* fixup routine could not handle it. */
-> >         }
-> >
-> > --
-> > 2.19.0.rc0.228.g281dcd1b4d0-goog
-> >
+-boris
