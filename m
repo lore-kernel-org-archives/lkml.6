@@ -2,181 +2,285 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9915AC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 11:05:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA94AC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 11:07:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5306F208B9
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 11:05:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5306F208B9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id 617EE208B9
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 11:07:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 617EE208B9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727112AbeH0Ov4 (ORCPT
+        id S1727118AbeH0OyC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 10:51:56 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:44474 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726785AbeH0Ov4 (ORCPT
+        Mon, 27 Aug 2018 10:54:02 -0400
+Received: from lgeamrelo13.lge.com ([156.147.23.53]:55285 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726785AbeH0OyC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 10:51:56 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 7D504261076
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     kernel@collabora.com, Chanwoo Choi <cw00.choi@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        linux-pm@vger.kernel.org
-Subject: [RESEND PATCH v5] PM / devfreq: Fix devfreq_add_device() when drivers are built as modules.
-Date:   Mon, 27 Aug 2018 13:05:32 +0200
-Message-Id: <20180827110532.28551-1-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.18.0
+        Mon, 27 Aug 2018 10:54:02 -0400
+Received: from unknown (HELO lgeamrelo02.lge.com) (156.147.1.126)
+        by 156.147.23.53 with ESMTP; 27 Aug 2018 20:07:47 +0900
+X-Original-SENDERIP: 156.147.1.126
+X-Original-MAILFROM: namhyung@kernel.org
+Received: from unknown (HELO sejong) (10.177.227.17)
+        by 156.147.1.126 with ESMTP; 27 Aug 2018 20:07:47 +0900
+X-Original-SENDERIP: 10.177.227.17
+X-Original-MAILFROM: namhyung@kernel.org
+Date:   Mon, 27 Aug 2018 20:07:47 +0900
+From:   Namhyung Kim <namhyung@kernel.org>
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Stephane Eranian <eranian@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>, mingo@elte.hu,
+        kernel-team@lge.com
+Subject: Re: [PATCHv2] perf tools: Add struct ordered_events_buffer layer
+Message-ID: <20180827110747.GD8065@sejong>
+References: <1533767600-7794-1-git-send-email-eranian@google.com>
+ <20180809080721.GB19243@krava>
+ <CABPqkBQEfoMDEqot1VbgExg1fU3+EEunzZqDFKSGmLKBhxNkwA@mail.gmail.com>
+ <20180810115431.GA4162@krava>
+ <20180813130446.GA8685@krava>
+ <CABPqkBSgYEFFAkddBqZbYXe9tjUY7RbMBjQsZht8ki1iOR6unw@mail.gmail.com>
+ <20180815084825.GD3180@krava>
+ <20180827092818.GA3725@krava>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180827092818.GA3725@krava>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the devfreq driver and the governor driver are built as modules,
-the call to devfreq_add_device() or governor_store() fails because the
-governor driver is not loaded at the time the devfreq driver loads. The
-devfreq driver has a build dependency on the governor but also should
-have a runtime dependency. We need to make sure that the governor driver
-is loaded before the devfreq driver.
+On Mon, Aug 27, 2018 at 11:28:18AM +0200, Jiri Olsa wrote:
 
-This patch fixes this bug by adding a try_then_request_governor()
-function. First tries to find the governor, and then, if it is not
-found, it requests the module and tries again.
+> When ordering events, we use preallocated buffers to store separated
+> events. Those buffers currently don't have their own struct, but since
+> they are basically array of 'struct ordered_event' objects, we use the
+> first event to hold buffers data - list head, that holds all buffers
+> together:
+> 
+>    struct ordered_events {
+>      ...
+>      struct ordered_event *buffer;
+>      ...
+>    };
+> 
+>    struct ordered_event {
+>      u64               timestamp;
+>      u64               file_offset;
+>      union perf_event  *event;
+>      struct list_head  list;
+>    };
+> 
+> This is quite convoluted and error prone as demonstrated by
+> free-ing issue discovered and fixed by Stephane in here [1].
+> 
+> This patch adds the 'struct ordered_events_buffer' object,
+> that holds the buffer data and frees it up properly.
+> 
+> [1] - https://marc.info/?l=linux-kernel&m=153376761329335&w=2
+> 
+> Reported-by: Stephane Eranian <eranian@google.com>
+> Link: http://lkml.kernel.org/n/tip-qrkcqm5m1sugy4q83pfn5a1r@git.kernel.org
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 
-Fixes: 1b5c1be2c88e (PM / devfreq: map devfreq drivers to governor using name)
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
----
+Acked-by: Namhyung Kim <namhyung@kernel.org>
 
-Changes in v5:
-- Requested by MyungJoo and Chanwoo.
-  - Fix returning without the lock acquired after request_module.
-- Requested by Chanwoo.
-  - In request governor function check if governor name is NULL or not.
-  - Remove some unrelated changes (added/removed some blank lines).
+Thanks,
+Namhyung
 
-Changes in v4:
-- Kept "locked" devfreq_list from the return of find_devfreq_governor() to
-  the unlock of governor_store(). Requested by MyungJoo Ham.
 
-Changes in v3:
-- Remove unneded change in dev_err message.
-- Fix err returned value in case to not find the governor.
-
-Changes in v2:
-- Add a new function to request the module and call that function from
-  devfreq_add_device and governor_store.
-
- drivers/devfreq/devfreq.c | 53 ++++++++++++++++++++++++++++++++++++---
- 1 file changed, 49 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index 4c49bb1330b5..62ead442a872 100644
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -11,6 +11,7 @@
-  */
- 
- #include <linux/kernel.h>
-+#include <linux/kmod.h>
- #include <linux/sched.h>
- #include <linux/errno.h>
- #include <linux/err.h>
-@@ -221,6 +222,49 @@ static struct devfreq_governor *find_devfreq_governor(const char *name)
- 	return ERR_PTR(-ENODEV);
- }
- 
-+/**
-+ * try_then_request_governor() - Try to find the governor and request the
-+ *                               module if is not found.
-+ * @name:	name of the governor
-+ *
-+ * Search the list of devfreq governors and request the module and try again
-+ * if is not found. This can happen when both drivers (the governor driver
-+ * and the driver that call devfreq_add_device) are built as modules.
-+ * devfreq_list_lock should be held by the caller. Returns the matched
-+ * governor's pointer.
-+ */
-+static struct devfreq_governor *try_then_request_governor(const char *name)
-+{
-+	struct devfreq_governor *governor;
-+	int err = 0;
-+
-+	if (IS_ERR_OR_NULL(name)) {
-+		pr_err("DEVFREQ: %s: Invalid parameters\n", __func__);
-+		return ERR_PTR(-EINVAL);
-+	}
-+	WARN(!mutex_is_locked(&devfreq_list_lock),
-+	     "devfreq_list_lock must be locked.");
-+
-+	governor = find_devfreq_governor(name);
-+	if (IS_ERR(governor)) {
-+		mutex_unlock(&devfreq_list_lock);
-+
-+		if (!strncmp(name, DEVFREQ_GOV_SIMPLE_ONDEMAND,
-+			     DEVFREQ_NAME_LEN))
-+			err = request_module("governor_%s", "simpleondemand");
-+		else
-+			err = request_module("governor_%s", name);
-+		/* Restore previous state before return */
-+		mutex_lock(&devfreq_list_lock);
-+		if (err)
-+			return NULL;
-+
-+		governor = find_devfreq_governor(name);
-+	}
-+
-+	return governor;
-+}
-+
- static int devfreq_notify_transition(struct devfreq *devfreq,
- 		struct devfreq_freqs *freqs, unsigned int state)
- {
-@@ -646,9 +690,8 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 	mutex_unlock(&devfreq->lock);
- 
- 	mutex_lock(&devfreq_list_lock);
--	list_add(&devfreq->node, &devfreq_list);
- 
--	governor = find_devfreq_governor(devfreq->governor_name);
-+	governor = try_then_request_governor(devfreq->governor_name);
- 	if (IS_ERR(governor)) {
- 		dev_err(dev, "%s: Unable to find governor for the device\n",
- 			__func__);
-@@ -664,12 +707,14 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 			__func__);
- 		goto err_init;
- 	}
-+
-+	list_add(&devfreq->node, &devfreq_list);
-+
- 	mutex_unlock(&devfreq_list_lock);
- 
- 	return devfreq;
- 
- err_init:
--	list_del(&devfreq->node);
- 	mutex_unlock(&devfreq_list_lock);
- 
- 	device_unregister(&devfreq->dev);
-@@ -991,7 +1036,7 @@ static ssize_t governor_store(struct device *dev, struct device_attribute *attr,
- 		return -EINVAL;
- 
- 	mutex_lock(&devfreq_list_lock);
--	governor = find_devfreq_governor(str_governor);
-+	governor = try_then_request_governor(str_governor);
- 	if (IS_ERR(governor)) {
- 		ret = PTR_ERR(governor);
- 		goto out;
--- 
-2.18.0
-
+> ---
+>  tools/perf/util/ordered-events.c | 82 +++++++++++++++++++++++++++-----
+>  tools/perf/util/ordered-events.h | 37 +++++++-------
+>  2 files changed, 90 insertions(+), 29 deletions(-)
+> 
+> diff --git a/tools/perf/util/ordered-events.c b/tools/perf/util/ordered-events.c
+> index bad9e0296e9a..3672060508a7 100644
+> --- a/tools/perf/util/ordered-events.c
+> +++ b/tools/perf/util/ordered-events.c
+> @@ -80,14 +80,20 @@ static union perf_event *dup_event(struct ordered_events *oe,
+>  	return oe->copy_on_queue ? __dup_event(oe, event) : event;
+>  }
+>  
+> -static void free_dup_event(struct ordered_events *oe, union perf_event *event)
+> +static void __free_dup_event(struct ordered_events *oe, union perf_event *event)
+>  {
+> -	if (event && oe->copy_on_queue) {
+> +	if (event) {
+>  		oe->cur_alloc_size -= event->header.size;
+>  		free(event);
+>  	}
+>  }
+>  
+> +static void free_dup_event(struct ordered_events *oe, union perf_event *event)
+> +{
+> +	if (oe->copy_on_queue)
+> +		__free_dup_event(oe, event);
+> +}
+> +
+>  #define MAX_SAMPLE_BUFFER	(64 * 1024 / sizeof(struct ordered_event))
+>  static struct ordered_event *alloc_event(struct ordered_events *oe,
+>  					 union perf_event *event)
+> @@ -100,15 +106,43 @@ static struct ordered_event *alloc_event(struct ordered_events *oe,
+>  	if (!new_event)
+>  		return NULL;
+>  
+> +	/*
+> +	 * We maintain following scheme of buffers for ordered
+> +	 * event allocation:
+> +	 *
+> +	 *   to_free list -> buffer1 (64K)
+> +	 *                   buffer2 (64K)
+> +	 *                   ...
+> +	 *
+> +	 * Each buffer keeps an array of ordered events objects:
+> +	 *    buffer -> event[0]
+> +	 *              event[1]
+> +	 *              ...
+> +	 *
+> +	 * Each allocated ordered event is linked to one of
+> +	 * following lists:
+> +	 *   - time ordered list 'events'
+> +	 *   - list of currently removed events 'cache'
+> +	 *
+> +	 * Allocation of the ordered event uses following order
+> +	 * to get the memory:
+> +	 *   - use recently removed object from 'cache' list
+> +	 *   - use available object in current allocation buffer
+> +	 *   - allocate new buffer if the current buffer is full
+> +	 *
+> +	 * Removal of ordered event object moves it from events to
+> +	 * the cache list.
+> +	 */
+>  	if (!list_empty(cache)) {
+>  		new = list_entry(cache->next, struct ordered_event, list);
+>  		list_del(&new->list);
+>  	} else if (oe->buffer) {
+> -		new = oe->buffer + oe->buffer_idx;
+> +		new = &oe->buffer->event[oe->buffer_idx];
+>  		if (++oe->buffer_idx == MAX_SAMPLE_BUFFER)
+>  			oe->buffer = NULL;
+>  	} else if (oe->cur_alloc_size < oe->max_alloc_size) {
+> -		size_t size = MAX_SAMPLE_BUFFER * sizeof(*new);
+> +		size_t size = sizeof(*oe->buffer) +
+> +			      MAX_SAMPLE_BUFFER * sizeof(*new);
+>  
+>  		oe->buffer = malloc(size);
+>  		if (!oe->buffer) {
+> @@ -122,9 +156,8 @@ static struct ordered_event *alloc_event(struct ordered_events *oe,
+>  		oe->cur_alloc_size += size;
+>  		list_add(&oe->buffer->list, &oe->to_free);
+>  
+> -		/* First entry is abused to maintain the to_free list. */
+> -		oe->buffer_idx = 2;
+> -		new = oe->buffer + 1;
+> +		oe->buffer_idx = 1;
+> +		new = &oe->buffer->event[0];
+>  	} else {
+>  		pr("allocation limit reached %" PRIu64 "B\n", oe->max_alloc_size);
+>  	}
+> @@ -300,15 +333,38 @@ void ordered_events__init(struct ordered_events *oe, ordered_events__deliver_t d
+>  	oe->deliver	   = deliver;
+>  }
+>  
+> +static void
+> +ordered_events_buffer__free(struct ordered_events_buffer *buffer,
+> +			    unsigned int max, struct ordered_events *oe)
+> +{
+> +	if (oe->copy_on_queue) {
+> +		unsigned int i;
+> +
+> +		for (i = 0; i < max; i++)
+> +			__free_dup_event(oe, buffer->event[i].event);
+> +	}
+> +
+> +	free(buffer);
+> +}
+> +
+>  void ordered_events__free(struct ordered_events *oe)
+>  {
+> -	while (!list_empty(&oe->to_free)) {
+> -		struct ordered_event *event;
+> +	struct ordered_events_buffer *buffer, *tmp;
+>  
+> -		event = list_entry(oe->to_free.next, struct ordered_event, list);
+> -		list_del(&event->list);
+> -		free_dup_event(oe, event->event);
+> -		free(event);
+> +	if (list_empty(&oe->to_free))
+> +		return;
+> +
+> +	/*
+> +	 * Current buffer might not have all the events allocated
+> +	 * yet, we need to free only allocated ones ...
+> +	 */
+> +	list_del(&oe->buffer->list);
+> +	ordered_events_buffer__free(oe->buffer, oe->buffer_idx, oe);
+> +
+> +	/* ... and continue with the rest */
+> +	list_for_each_entry_safe(buffer, tmp, &oe->to_free, list) {
+> +		list_del(&buffer->list);
+> +		ordered_events_buffer__free(buffer, MAX_SAMPLE_BUFFER, oe);
+>  	}
+>  }
+>  
+> diff --git a/tools/perf/util/ordered-events.h b/tools/perf/util/ordered-events.h
+> index 8c7a2948593e..1338d5c345dc 100644
+> --- a/tools/perf/util/ordered-events.h
+> +++ b/tools/perf/util/ordered-events.h
+> @@ -25,23 +25,28 @@ struct ordered_events;
+>  typedef int (*ordered_events__deliver_t)(struct ordered_events *oe,
+>  					 struct ordered_event *event);
+>  
+> +struct ordered_events_buffer {
+> +	struct list_head	list;
+> +	struct ordered_event	event[0];
+> +};
+> +
+>  struct ordered_events {
+> -	u64			last_flush;
+> -	u64			next_flush;
+> -	u64			max_timestamp;
+> -	u64			max_alloc_size;
+> -	u64			cur_alloc_size;
+> -	struct list_head	events;
+> -	struct list_head	cache;
+> -	struct list_head	to_free;
+> -	struct ordered_event	*buffer;
+> -	struct ordered_event	*last;
+> -	ordered_events__deliver_t deliver;
+> -	int			buffer_idx;
+> -	unsigned int		nr_events;
+> -	enum oe_flush		last_flush_type;
+> -	u32			nr_unordered_events;
+> -	bool                    copy_on_queue;
+> +	u64				 last_flush;
+> +	u64				 next_flush;
+> +	u64				 max_timestamp;
+> +	u64				 max_alloc_size;
+> +	u64				 cur_alloc_size;
+> +	struct list_head		 events;
+> +	struct list_head		 cache;
+> +	struct list_head		 to_free;
+> +	struct ordered_events_buffer	*buffer;
+> +	struct ordered_event		*last;
+> +	ordered_events__deliver_t	 deliver;
+> +	int				 buffer_idx;
+> +	unsigned int			 nr_events;
+> +	enum oe_flush			 last_flush_type;
+> +	u32				 nr_unordered_events;
+> +	bool				 copy_on_queue;
+>  };
+>  
+>  int ordered_events__queue(struct ordered_events *oe, union perf_event *event,
+> -- 
+> 2.17.1
+> 
