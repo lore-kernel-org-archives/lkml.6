@@ -3,110 +3,166 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DFA2C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 23:01:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2692EC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 23:01:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E507D208B4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 23:01:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB946208B8
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 23:01:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KQavkR6d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E507D208B4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="O4ACl2gx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB946208B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727484AbeH1Ctn (ORCPT
+        id S1727434AbeH1Ct5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 22:49:43 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:42170 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727238AbeH1Ctn (ORCPT
+        Mon, 27 Aug 2018 22:49:57 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:34468 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727128AbeH1Ct5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 22:49:43 -0400
-Received: by mail-io0-f193.google.com with SMTP id n18-v6so521657ioa.9
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 16:01:01 -0700 (PDT)
+        Mon, 27 Aug 2018 22:49:57 -0400
+Received: by mail-vk0-f68.google.com with SMTP id l143-v6so356239vke.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 16:01:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=bhkX9BVgN1BJlsxm3QVXZJ7U3zluf/nG4Hj+kDzZpoU=;
-        b=KQavkR6d2JxFwZH9+syItRFChAoH1TguU9X0BBykPEaP2wufnZ1gAs0NvfKt7g+Z96
-         NjM8H7ZTm08Ml3VHrpq/OW38SVpPfVLgN9wOtbrO+p4SKdW7UtYVEMaQKJ0ECpQFN3iL
-         ZkNgBXX8VkFAADmtF02XJU43QWwQU0scyoyAY=
+        bh=VfKBQQP0XiTYAbO3m1CjkqLYWuIeFBiGpT6Kjx9kc+U=;
+        b=O4ACl2gxwFc++koTOwfZHh9QjAbx08JSK0v3B4F4ModozViPWG8pXHC69sXj2Dxu8u
+         e3gSbP/OWW+FrVp5x/VT77W0CYGyCp810pfzICxmJTAmRbHz2BHpWACU/++4JD1+2LRP
+         V4bL+Ld91HUHe0i+nF9pXu5v2G3fIzZ/x75cw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=bhkX9BVgN1BJlsxm3QVXZJ7U3zluf/nG4Hj+kDzZpoU=;
-        b=h7/Qy9FXIMfUtI/pZWDFCTs6Xo/9MUQ9RaPziul/At86/XIWYCajt1NAtgQPf5twNK
-         iccv27vLgNiXopsz7f2v/m0AXxHo/HCl4nNUbq8ZFfHyGaea6ulacMW8puoj+bOwfvh0
-         0yXI6fUHzijlAU+xuzJwvZNfzfEum5oH1rXmMoTzQ9cM1I/YYWE2VX7LMLuWGhTgLDQU
-         xqm5PcbrYvYRU+vBTIqm+3uMuSXmhSv9bvj3zF4Z7EXglbScq1MVfRnYsaVBdT0HDStO
-         bvGCLtwbNb1eO05/RDr1CMQ1Xa9ch4nJmY7LdLn0jmcpuxSaNredLVjPzERGwVh5pA9V
-         H07Q==
-X-Gm-Message-State: APzg51AZ1t0EUUpgznLRrL0DA4BirMpQMxdzUy77e5dn5DuQ/fnaWjJI
-        ZJod4Xx8U3KwhnmzZCQGDMt8H1QdoKqE+8ogvvu8BA==
-X-Google-Smtp-Source: ANB0VdZ5/YYODdqlcJRaGyEV4k9XZ/rbrRp+TSoktsOzdz6yBrVij9H86iQw/YbedU/qW4y2598p1DqPxXso18nrbQ4=
-X-Received: by 2002:a6b:4516:: with SMTP id s22-v6mr3215805ioa.60.1535410860674;
- Mon, 27 Aug 2018 16:01:00 -0700 (PDT)
+        bh=VfKBQQP0XiTYAbO3m1CjkqLYWuIeFBiGpT6Kjx9kc+U=;
+        b=OB+PNtqoSHghDmDY9blSDT7+6/EuF3f/YbSZ6KLNpgyAhMbT95WJgKrBsN3rP6BVdx
+         9UnFByxnhdbfwJVNu4ow5girXZZxcZ5XNayev9lx4+INdX460dOpl8wtVzNtC2wteUL3
+         8dxDRRfgvGjsKNrME9JxlPB8TZS7j6/E2z7tzDYyM5VErllZh9jxfTqoGUpptn1rGBSG
+         QvRS4po5z1QsBgsK5W31hkFZej5dJ3D/zaJguDzgPzj7HkeOOlPo4X+BnO4Z425bm1bZ
+         ie/3MJAAOvsRPWI2zz0WeMEFctqVj/470O9f2x4bjyJIQ/HYvHxBHZI0NiK4oenSKoNn
+         6CRg==
+X-Gm-Message-State: APzg51BpPR4+Lp+o5nE7BpUS2S8YrEcxLuyTEPFZNZqI8T9iijsodUiz
+        5wbj4/Oujt8oRNFdPW1W5o1v3/JilmR0xg==
+X-Google-Smtp-Source: ANB0VdYAVkrGq9YTBlCGdjyBud5C/b0/g41EetnJugjaEqtAbuzHK7/QT75zTJoscQdFqdeD+SyzKA==
+X-Received: by 2002:a1f:c9c7:: with SMTP id z190-v6mr9038371vkf.168.1535410874182;
+        Mon, 27 Aug 2018 16:01:14 -0700 (PDT)
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
+        by smtp.gmail.com with ESMTPSA id 22-v6sm151040vkw.26.2018.08.27.16.01.12
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 27 Aug 2018 16:01:13 -0700 (PDT)
+Received: by mail-ua1-f43.google.com with SMTP id i4-v6so448017uak.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 16:01:12 -0700 (PDT)
+X-Received: by 2002:a9f:2432:: with SMTP id 47-v6mr9838646uaq.56.1535410872197;
+ Mon, 27 Aug 2018 16:01:12 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a6b:ac05:0:0:0:0:0 with HTTP; Mon, 27 Aug 2018 16:01:00
- -0700 (PDT)
-In-Reply-To: <1535411336.3516.2.camel@megha-Z97X-UD7-TH>
-References: <00000000000072d64d05737b6b8c@google.com> <20180820073119.GA14931@sol.localdomain>
- <CAKv+Gu9Y0TLOuMba43HPihYqy-kk0nttBfPj1_UukiYy1cBcFw@mail.gmail.com>
- <20180822062036.mdq4q5o5zdzuxh7s@gondor.apana.org.au> <1535411336.3516.2.camel@megha-Z97X-UD7-TH>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Tue, 28 Aug 2018 01:01:00 +0200
-Message-ID: <CAKv+Gu_oZ0Z37WV1h4opi-cYZT5FWU_bmrkBjx8LXpvKpPoZNA@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in sha512_ctx_mgr_resubmit
-To:     Megha Dey <megha.dey@linux.intel.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        syzbot <syzbot+d5455bac3ba1ee9114e5@syzkaller.appspotmail.com>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>
+References: <1534834520-18397-1-git-send-email-akshu.agrawal@amd.com>
+In-Reply-To: <1534834520-18397-1-git-send-email-akshu.agrawal@amd.com>
+From:   Daniel Kurtz <djkurtz@chromium.org>
+Date:   Mon, 27 Aug 2018 17:01:01 -0600
+X-Gmail-Original-Message-ID: <CAGS+omDCWFjLKNOfRHQzWNUG4efpC+9Tk=RXDDUDtza7skZ2dA@mail.gmail.com>
+Message-ID: <CAGS+omDCWFjLKNOfRHQzWNUG4efpC+9Tk=RXDDUDtza7skZ2dA@mail.gmail.com>
+Subject: Re: [PATCH] ASoC: AMD: Set constraints for DMIC and MAX98357a codec
+To:     Akshu Agrawal <akshu.agrawal@amd.com>
+Cc:     Alexander.Deucher@amd.com, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, perex@perex.cz,
+        tiwai@suse.com, Vijendar.Mukunda@amd.com,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        weiyongjun1@huawei.com, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28 August 2018 at 01:08, Megha Dey <megha.dey@linux.intel.com> wrote:
-> On Wed, 2018-08-22 at 14:20 +0800, Herbert Xu wrote:
->> On Tue, Aug 21, 2018 at 02:43:56PM +0200, Ard Biesheuvel wrote:
->> >
->> > I agree. The code is obviously broken in a way that would have been
->> > noticed if it were in wide use, and it is too complicated for mere
->> > mortals to fix or maintain. I suggest we simply remove it for now, and
->> > if anyone wants to reintroduce it, we can review the code *and* the
->> > justification for the approach from scratch (in which case we should
->> > consider factoring out the algo agnostics plumbing in a way that
->> > allows it to be reused by other architectures as well)
->>
->> I agree too.  Could one of you guys send me a patch to remove
->> them?
->>
+On Tue, Aug 21, 2018 at 12:55 AM Akshu Agrawal <akshu.agrawal@amd.com> wrote:
 >
-> Hi,
+> We support dual channel, 48Khz. This constraint was set only for
+> da7219. It is being extended to DMIC and MAX98357a.
 >
-> We are working on a fix to solve these corner cases.
->
+> Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
 
-Great. thanks.
+Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
 
-But it would also be helpful if you could try and answer the questions
-raised by Eric:
-- in which cases does this driver result in a speedup?
-- how should we tune the flush delay to prevent pathological
-performance regressions?
-- is it still safe in the post-Spectre era of computing to aggregate
-hash input from different sources (which may be different users
-altogether) and process them as a single source of input?
+> ---
+>  sound/soc/amd/acp-da7219-max98357a.c | 33 +++++++++++++++++++++++++++++++++
+>  1 file changed, 33 insertions(+)
+>
+> diff --git a/sound/soc/amd/acp-da7219-max98357a.c b/sound/soc/amd/acp-da7219-max98357a.c
+> index 066d5489..cf2f648 100644
+> --- a/sound/soc/amd/acp-da7219-max98357a.c
+> +++ b/sound/soc/amd/acp-da7219-max98357a.c
+> @@ -162,10 +162,21 @@ static void cz_da7219_shutdown(struct snd_pcm_substream *substream)
+>
+>  static int cz_max_startup(struct snd_pcm_substream *substream)
+>  {
+> +       struct snd_pcm_runtime *runtime = substream->runtime;
+>         struct snd_soc_pcm_runtime *rtd = substream->private_data;
+>         struct snd_soc_card *card = rtd->card;
+>         struct acp_platform_info *machine = snd_soc_card_get_drvdata(card);
+>
+> +       /*
+> +        * On this platform for PCM device we support stereo
+> +        */
+> +
+> +       runtime->hw.channels_max = DUAL_CHANNEL;
+> +       snd_pcm_hw_constraint_list(runtime, 0, SNDRV_PCM_HW_PARAM_CHANNELS,
+> +                                  &constraints_channels);
+> +       snd_pcm_hw_constraint_list(runtime, 0, SNDRV_PCM_HW_PARAM_RATE,
+> +                                  &constraints_rates);
+> +
+>         machine->i2s_instance = I2S_BT_INSTANCE;
+>         return da7219_clk_enable(substream);
+>  }
+> @@ -177,20 +188,42 @@ static void cz_max_shutdown(struct snd_pcm_substream *substream)
+>
+>  static int cz_dmic0_startup(struct snd_pcm_substream *substream)
+>  {
+> +       struct snd_pcm_runtime *runtime = substream->runtime;
+>         struct snd_soc_pcm_runtime *rtd = substream->private_data;
+>         struct snd_soc_card *card = rtd->card;
+>         struct acp_platform_info *machine = snd_soc_card_get_drvdata(card);
+>
+> +       /*
+> +        * On this platform for PCM device we support stereo
+> +        */
+> +
+> +       runtime->hw.channels_max = DUAL_CHANNEL;
+> +       snd_pcm_hw_constraint_list(runtime, 0, SNDRV_PCM_HW_PARAM_CHANNELS,
+> +                                  &constraints_channels);
+> +       snd_pcm_hw_constraint_list(runtime, 0, SNDRV_PCM_HW_PARAM_RATE,
+> +                                  &constraints_rates);
+> +
+>         machine->i2s_instance = I2S_BT_INSTANCE;
+>         return da7219_clk_enable(substream);
+>  }
+>
+>  static int cz_dmic1_startup(struct snd_pcm_substream *substream)
+>  {
+> +       struct snd_pcm_runtime *runtime = substream->runtime;
+>         struct snd_soc_pcm_runtime *rtd = substream->private_data;
+>         struct snd_soc_card *card = rtd->card;
+>         struct acp_platform_info *machine = snd_soc_card_get_drvdata(card);
+>
+> +       /*
+> +        * On this platform for PCM device we support stereo
+> +        */
+> +
+> +       runtime->hw.channels_max = DUAL_CHANNEL;
+> +       snd_pcm_hw_constraint_list(runtime, 0, SNDRV_PCM_HW_PARAM_CHANNELS,
+> +                                  &constraints_channels);
+> +       snd_pcm_hw_constraint_list(runtime, 0, SNDRV_PCM_HW_PARAM_RATE,
+> +                                  &constraints_rates);
+> +
+>         machine->i2s_instance = I2S_SP_INSTANCE;
+>         machine->capture_channel = CAP_CHANNEL0;
+>         return da7219_clk_enable(substream);
+> --
+> 1.9.1
+>
