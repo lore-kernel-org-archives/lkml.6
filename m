@@ -2,147 +2,187 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94955C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 06:25:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A640C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 06:31:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4916720891
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 06:25:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4916720891
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=web.de
+	by mail.kernel.org (Postfix) with ESMTP id CF85120891
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 06:31:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF85120891
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727094AbeH0KKi (ORCPT
+        id S1727040AbeH0KRL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 06:10:38 -0400
-Received: from mout.web.de ([212.227.15.4]:57485 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726776AbeH0KKh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 06:10:37 -0400
-Received: from [192.168.1.10] ([95.157.57.47]) by smtp.web.de (mrweb002
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0MMWA2-1g1J2P244c-008IWQ; Mon, 27
- Aug 2018 08:25:11 +0200
-Subject: Re: [PATCH] serial: mvebu-uart: Fix reporting of effective CSIZE to
- userspace
-From:   Jan Kiszka <jan.kiszka@web.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        linux-serial <linux-serial@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Allen Yan <yanwei@marvell.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Marc Zyngier <marc.zyngier@arm.com>
-References: <69ad54af-8732-b78a-7e0b-482bfcd6d25f@web.de>
-Message-ID: <211be85e-8ec1-541f-0d3a-9846079f068f@web.de>
-Date:   Mon, 27 Aug 2018 08:25:07 +0200
-User-Agent: Mozilla/5.0 (X11; U; Linux i686 (x86_64); de; rv:1.8.1.12)
- Gecko/20080226 SUSE/2.0.0.12-1.1 Thunderbird/2.0.0.12 Mnenhy/0.7.5.666
+        Mon, 27 Aug 2018 06:17:11 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:2903 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726776AbeH0KRL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 06:17:11 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
+   d="scan'208";a="43997538"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 27 Aug 2018 14:31:54 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id 48B5A4B6AE12;
+        Mon, 27 Aug 2018 14:31:52 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Mon, 27 Aug 2018 14:31:55 +0800
+Date:   Mon, 27 Aug 2018 14:28:54 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     Baoquan He <bhe@redhat.com>
+CC:     <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
+        <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <keescook@chromium.org>, <n-horiguchi@ah.jp.nec.com>,
+        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>,
+        <douly.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH v5 4/4] x86/boot/KASLR: Limit kaslr to choosing the
+ immovable memory
+Message-ID: <20180827062854.GD6769@localhost.localdomain>
+References: <20180807065000.30958-1-fanc.fnst@cn.fujitsu.com>
+ <20180807065000.30958-5-fanc.fnst@cn.fujitsu.com>
+ <20180827055607.GB1748@MiWiFi-R3L-srv>
 MIME-Version: 1.0
-In-Reply-To: <69ad54af-8732-b78a-7e0b-482bfcd6d25f@web.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:P7DNnD3LSAe4R5WEODPgNgQ7kA0YLP6Xvu/hZG9T0ue+E3x1yE7
- oyXrNGM6jmAAB2Dj4WHNzsbwDKpqNhm/UyPTK953Scfjzww1E7t/p9QLK7LYXPkIMewQ35m
- gk9wTp+kXZdeSQ94TxVijKg+gv/k3/104JaViu3yxFATOvD7e270exh0o7XAwNdbN/72QQM
- mQVbICZyL37NfFPj36ArA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:7Bkpil1yr/g=:d7jiAbF8NyiD4yh1M7p1c4
- hBtx9N6lAnHxUBc1OLmUsFcg1+ai/i2BVCs8WL9LxzCE/o3ZNOsUeFDP3a+y89/ZpE98iVun7
- GieBR0TZhA5dY7Kd/SRtyo1DUEUUK1NR/QYtaT4HyrwFRoGBoGe0UpCMt5DV7VekbsQ1drA0F
- dP9ffVx1UILSpHJIulLr5micrLep7RvkD2VbO6Mp7YEW3OwXvqbkoWFgFDZQiAcY1H0u5SWdA
- Fg8HUGu9nBFqdT8uHZC1T2/UAVcDp8LsM33qp5mBcWJm+KJ+AA1dMxyOedQXZzlodlb2UY+Yz
- suGn7Qa7kDIpD5Bnbzn6TgegRw6LS/OUBSAIT3o8/cuOt4qjrSycslccNkKwqcxEFmEfL6s4s
- EuLzKMJwbSLTptVnC/l5vUZ1RdMuA/c698J9YGVCPKTGq7p/AU1gJTcxTuIZkf5hZwVnAT0kz
- 8tfyQTvS2dW5T7zooPd53lNqHZheu2yLJIb9iInJxFzGp19VYqxOeZA1pAOoShSKiW4DRczak
- MYfWSYUktMQBh3GThIqytCuqKEnGE7+jWq/NgQe7T9XvQVVKYYi6hvjFRhbA3J2/J5/8LHol8
- WqbbLKTMttEAYHkHuyMqBSNeodrC+h5tEigGbbu0/yMs0yQFWdmXt1rzztA1dull9l6MrAxNO
- TwgnwP8ya0bxM+2qusaXdYNP3cxjSKNVFAQQWhQZU0N+hzJW3bhpGiCHlzRd4RklikUIWWmxN
- TVvfJiPsHvCos9vhMrLhPhPYAYTTvF4WSkp3ylorU+oeOHbHhNL4j5wsqvPbUH5teXQSJjUIV
- GaOxiyU
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180827055607.GB1748@MiWiFi-R3L-srv>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: 48B5A4B6AE12.AB5BD
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-08-26 19:49, Jan Kiszka wrote:
-> From: Jan Kiszka <jan.kiszka@siemens.com>
-> 
-> Apparently, this driver (or the hardware) does not support character
-> length settings. It's apparently running in 8-bit mode, but it makes
-> userspace believe it's in 5-bit mode. That makes tcsetattr with CS8
-> incorrectly fail, breaking e.g. getty from busybox, thus the login shell
-> on ttyMVx.
-> 
-> Fix by hard-wiring CS8 into c_cflag.
-> 
-> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-> ---
-> 
-> It's a bit of a shame that still maturing drivers can break userspace
-> that easily and subtly. I had to debug my way from old but working
-> buildroot to busybox, libc (tcsetattr) and then finally this driver.
-> This wasn't the first bug of this kind, and maybe it's not the last (I
-> didn't check all that termio flags). Could the kernel help in some way
-> with sanity checks or sane defaults driver have to make insane
-> willingly?
-> 
->   drivers/tty/serial/mvebu-uart.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/tty/serial/mvebu-uart.c b/drivers/tty/serial/mvebu-uart.c
-> index d04b5eeea3c6..170e446a2f62 100644
-> --- a/drivers/tty/serial/mvebu-uart.c
-> +++ b/drivers/tty/serial/mvebu-uart.c
-> @@ -511,6 +511,7 @@ static void mvebu_uart_set_termios(struct uart_port *port,
->   		termios->c_iflag |= old->c_iflag & ~(INPCK | IGNPAR);
->   		termios->c_cflag &= CREAD | CBAUD;
->   		termios->c_cflag |= old->c_cflag & ~(CREAD | CBAUD);
-> +		termios->c_cflag |= CS8;
->   	}
->   
->   	spin_unlock_irqrestore(&port->lock, flags);
-> 
+On Mon, Aug 27, 2018 at 01:56:07PM +0800, Baoquan He wrote:
+>On 08/07/18 at 02:50pm, Chao Fan wrote:
+>> If 'CONFIG_MEMORY_HOTREMOVE' specified and the account of immovable
+>If CONFIG_MEMORY_HOTREMOVE is enabled, 
+>> memory regions is not zero. Calculate the intersection between memory
+>> regions from e820/efi memory table and immovable memory regions.
+>> Or go on the old code.
+>> 
+>> Rename process_mem_region to slots_count to match slots_fetch_random,
+>> and name new function as process_mem_region.
+>> 
+>> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+>> ---
+>>  arch/x86/boot/compressed/kaslr.c | 66 ++++++++++++++++++++++++++------
+>>  1 file changed, 55 insertions(+), 11 deletions(-)
+>> 
+>> diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
+>> index 720878f967a3..9c6e24a23a2d 100644
+>> --- a/arch/x86/boot/compressed/kaslr.c
+>> +++ b/arch/x86/boot/compressed/kaslr.c
+>> @@ -635,9 +635,9 @@ static unsigned long slots_fetch_random(void)
+>>  	return 0;
+>>  }
+>>  
+>> -static void process_mem_region(struct mem_vector *entry,
+>> -			       unsigned long minimum,
+>> -			       unsigned long image_size)
+>> +static void slots_count(struct mem_vector *entry,
+>> +			unsigned long minimum,
+>> +			unsigned long image_size)
+>>  {
+>>  	struct mem_vector region, overlap;
+>>  	struct slot_area slot_area;
+>> @@ -714,6 +714,56 @@ static void process_mem_region(struct mem_vector *entry,
+>>  	}
+>>  }
+>>  
+>> +static bool process_mem_region(struct mem_vector *region,
+>> +			       unsigned long long minimum,
+>> +			       unsigned long long image_size)
+>> +{
+>
+>Is it possible to take num_immovable_mem definition out from #ifdef
+>CONFIG_MEMORY_HOTREMOVE block and check it here like below? This way,
+>one level of indentation can be reduced in the for loop, and code is
+>more readable.
+>
 
-FWIW, below is the analogous fix for stable trees <= 4.14.
+I think there is a mistake.
 
-Jan
+The logical is:
+if (#ifdef CONFIG_MEMORY_HOTREMOVE) && (num_immovable_mem > 0)
+	then A;
+else
+	then B;
 
----8<---
+But below is:
+if (num_immovable_mem > 0)
+	then B;
+else if (#ifdef CONFIG_MEMORY_HOTREMOVE)
+	then A;
+else
+	nothing;
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Subject: [PATCH] serial: mvebu-uart: Fix reporting of effective CSIZE to userspace
+The precondition of the loop is (num_immovable_mem > 0), because
+there is only one condition that we need go the A code:
+CONFIG_MEMORY_HOTREMOVE is defined, and memory information in srat
+found.
 
-Apparently, this driver (or the hardware) does not support character
-length settings. It's apparently running in 8-bit mode, but it makes
-userspace believe it's in 5-bit mode. That makes tcsetattr with CS8
-incorrectly fail, breaking e.g. getty from busybox, thus the login shell
-on ttyMVx.
+But there is many conditions we go the B code:
+1. CONFIG_MEMORY_HOTREMOVE is not defined.
+2. CONFIG_MEMORY_HOTREMOVE defined, but we didn't get the right acpi tables
+3. CONFIG_MEMORY_HOTREMOVE defined, or there is only one node in this machine.
 
-Fix by hard-wiring CS8 into c_cflag.
+Yes, the code is hard to read, but you have changed the logical, there
+is a compromise method, I don't know whether is better:
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
----
- drivers/tty/serial/mvebu-uart.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+#ifdef CONFIG_MEMORY_HOTREMOVE
+	if (num_immovable_mem == 0)
+		goto B;
 
-diff --git a/drivers/tty/serial/mvebu-uart.c b/drivers/tty/serial/mvebu-uart.c
-index 45b57c294d13..401c983ec5f3 100644
---- a/drivers/tty/serial/mvebu-uart.c
-+++ b/drivers/tty/serial/mvebu-uart.c
-@@ -327,8 +327,10 @@ static void mvebu_uart_set_termios(struct uart_port *port,
- 	if ((termios->c_cflag & CREAD) == 0)
- 		port->ignore_status_mask |= STAT_RX_RDY | STAT_BRK_ERR;
- 
--	if (old)
-+	if (old) {
- 		tty_termios_copy_hw(termios, old);
-+		termios->c_cflag |= CS8;
-+	}
- 
- 	baud = uart_get_baud_rate(port, termios, old, 0, 460800);
- 	uart_update_timeout(port, termios->c_cflag, baud);
--- 
-2.16.4
+	for (i = 0; i < num_immovable_mem; i++) {
+		...
+	}
+#endif
+
+B:
+	slots_count(region, minimum, image_size);
+	
+	if (slot_area_index == MAX_SLOT_AREA) {
+		debug_putstr("Aborted e820/efi memmap scan (slot_areas full)!\n");
+		return 1;
+	}
+	return 0;
+	
+
+>
+>static bool process_mem_region(struct mem_vector *region,
+>			       unsigned long long minimum,
+>			       unsigned long long image_size)
+>{
+>
+>	/*
+>	 * If no immovable memory found, or MEMORY_HOTREMOVE disabled,
+>	 * walk all the regions, so use region directely.
+>	 */
+>	if (num_immovable_mem > 0) {
+>		slots_count(region, minimum, image_size);
+>		
+>		if (slot_area_index == MAX_SLOT_AREA) {
+>			debug_putstr("Aborted e820/efi memmap scan (slot_areas full)!\n");
+>			return 1;
+>		}
+>		return 0;
+>	}
+>
+>#ifdef CONFIG_MEMORY_HOTREMOVE
+>	for (i = 0; i < num_immovable_mem; i++) {
+>		...
+>	}
+>#endif
+>}
+>
+
+
