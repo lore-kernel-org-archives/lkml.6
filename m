@@ -7,56 +7,57 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 817C6C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:04:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C1DC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:04:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EA0C208B8
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:04:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EBEF208B8
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:04:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WOrRGmYN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EA0C208B8
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JwosVQIP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EBEF208B8
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727515AbeH0Xwk (ORCPT
+        id S1727571AbeH0Xwm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 19:52:40 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36987 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727011AbeH0Xwk (ORCPT
+        Mon, 27 Aug 2018 19:52:42 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:38122 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727519AbeH0Xwl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 19:52:40 -0400
-Received: by mail-pf1-f195.google.com with SMTP id h69-v6so84399pfd.4;
-        Mon, 27 Aug 2018 13:04:35 -0700 (PDT)
+        Mon, 27 Aug 2018 19:52:41 -0400
+Received: by mail-pf1-f193.google.com with SMTP id x17-v6so82601pfh.5;
+        Mon, 27 Aug 2018 13:04:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=GOdJAoXuIeXe5R/4K2x6SaJn9M7867Zd3zC7P3VOoZs=;
-        b=WOrRGmYNJku1mXGlraI/44A+csEHy2RGhEEyuRd6gbxcGvR716xOITSShyGNWWOiLf
-         v0rBJSUaKByr3y8l2blYkPc7/rDz9aYSvVDv3YOYczCDOL/GS2ei8yaTc82F6NWy6b8O
-         9stsfv2q7btDTVyfsaLmyAHj5e54WhY5MuyNwe7ZcA5iEe9Kpfy2yzMU11luPJyPH9Qf
-         rSkVa0DqQe9lUnOBuvTMKnCtTQtuT1bDHfM0Hptm8OENa7Yv9KZaYm2NvLa4kDa9DWAX
-         0p+Dnwm9Gu69Vq9jMnvBJWU9tp2G0EfY3VeutIhCzHGLRTtKDRgezOETPGFmIYetZ30l
-         6LMQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=ReTvAwrgFWOoEexg0hgEP07gzw3p2GvoRnRvhI5zJ5I=;
+        b=JwosVQIPWRKKgl6BPbGfRUNz39BEO++kVHbRLKRBkDtNaJhdcCwcckdpDVNYpde1Pn
+         b/9wvsY1eY0oaR6rqbIcHoKIufQTHtdCozbLuAKXA7g0lc0ktxJs7MHg7oG4DjauBivJ
+         V8Dw2Y1UgNhceDBAf1kg3B6GEb2oZpE5fXETGNHHl+5ONQQJPj9oH0wIqtJ1+ZwJ19e6
+         3I2jR7fnHb49h9GgJb4Zt4d+RcFi2nB1KWqgRbZ2mWg34JxADBAwPgGP+2Jq0bdszySr
+         MXwG/eZ9LGiVQ0X2EVAXubg/5X7SA6/mo505yhMWJ5Gi4ALqCT7GjlurBPsb3RZzPH//
+         zkgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=GOdJAoXuIeXe5R/4K2x6SaJn9M7867Zd3zC7P3VOoZs=;
-        b=G8EIUC2fUOHdBSld2VHhd8dE5bJ+Yp3oGqW3BVUOluxjGXcCc95Wv0niEfipftnpej
-         2wmSC3QSq/9mK+k6NQV8KryvW6NZAMiybpkl382SEOhcrO9mTsjAj7lgwLLBgv7Cpo/4
-         DFb9VZoxHkbjVi3RA0uWGvSfU0Cv2yfNh9Wk3rzmn14zuoz2rztvl+SQYqgPqSlmPOjC
-         oI8i/mhMZ8AwCMTwfrqF1IUh8zOjJlS6VWnVwsmZn34AC5XlV44O2MDKAGu3POxD8yYF
-         S1NHFMtyaR9n4hzXUUhTJCcxbR6Xenb4IKPQDB5fHLCw4keXv7P9K0yQ3hOe8RF1h/Iq
-         RnRA==
-X-Gm-Message-State: APzg51A9EaSNX9VtZIKElWKTQRd/nPUAE/BQBbj+7xG2tn0Wi+fxgVVH
-        ENxnMaIESZj0ldwACrVmUfM=
-X-Google-Smtp-Source: ANB0VdYchKAfXuZAmKKSz/rFet09F1MPSHeCEqvyOeCQM1oPIEE+Moyb1eD5CNRsUL6chmUYIXL0mA==
-X-Received: by 2002:a63:4f14:: with SMTP id d20-v6mr13434611pgb.121.1535400274821;
-        Mon, 27 Aug 2018 13:04:34 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=ReTvAwrgFWOoEexg0hgEP07gzw3p2GvoRnRvhI5zJ5I=;
+        b=UokaxZN+AzBvetgvBiQBsAdkr4ehmxVeYw+aQ/zAlGDdYUNM6bz2WNNc51hsHxwABI
+         9KHtNjq8BFiIVv/VnFx7BMbUnowvdr3N2fZ7tTVlRDolAXCmu0sEgHZHdZoYtyLJFil3
+         ozKTK2e40Al/fvUwdfd5awDN+vJXWH25y0BO6bk9jHnrGdZzenho4GLn4z+RXw2DWIPF
+         +IC3DZCetpS0hetFE5YXmDsjN7KKTBygziEaHjOalRbOoTUeEa5WkgnwCKYHv4bV9lUV
+         klAHoOuyH4wox5JVNf8nJrqedMA6lBVpyf8d+T1P5LQbgvNPtvbVupVCYfJZs4huLlfu
+         njaw==
+X-Gm-Message-State: APzg51D5wIttga8agQ/NK1fo7sTNWY+0Y1xc2oIAYjvALZUoO4uEqm62
+        YjSvn2mBsyNwpqSgknDK17Y=
+X-Google-Smtp-Source: ANB0VdYRMbZwC2WiYP7ODbnwDV7kcsbZd3ICDt5Hp4sxncQGW38SpfUGkCQoithcy90Dqa09TS4AfQ==
+X-Received: by 2002:a62:7a01:: with SMTP id v1-v6mr15604269pfc.153.1535400276653;
+        Mon, 27 Aug 2018 13:04:36 -0700 (PDT)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id o21-v6sm148611pfa.54.2018.08.27.13.04.33
+        by smtp.gmail.com with ESMTPSA id o21-v6sm148611pfa.54.2018.08.27.13.04.34
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 Aug 2018 13:04:33 -0700 (PDT)
+        Mon, 27 Aug 2018 13:04:35 -0700 (PDT)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -70,36 +71,77 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
         DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list),
         andrew@lunn.ch, rmk+kernel@armlinux.org.uk
-Subject: [PATCH 0/3] ARM: NSP updates to support switch interrupts/SFP
-Date:   Mon, 27 Aug 2018 13:03:41 -0700
-Message-Id: <20180827200344.16158-1-f.fainelli@gmail.com>
+Subject: [PATCH 1/3] ARM: dts: NSP: Enable SFP on bcm958625hr
+Date:   Mon, 27 Aug 2018 13:03:42 -0700
+Message-Id: <20180827200344.16158-2-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180827200344.16158-1-f.fainelli@gmail.com>
+References: <20180827200344.16158-1-f.fainelli@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+Enable the SFP connected to port 5 of the switch and wire up all GPIOs
+to the SFP cage. Because of a hardware limitation of the i2c controller
+on the iProc SoCs which prevents large i2c (> 256 bytes) transactions to
+work, we use the i2c-gpio interface instead, which does not have that
+limitation. This allows us to read the SFP module EEPROM, which would
+not be possible otherwise since it exceeds that size during a single
+read transfer.
 
-This patch series updates the ARM NSP DTS and BCM958625HR in order to
-support the SFP connected to port 5 on these reference boards.
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ arch/arm/boot/dts/bcm958625hr.dts | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-I will be submitting the functional changes to drivers/net/dsa/b53 once
-net-next opens back up, but this is largely independent from getting
-these 3 patches out.
-
-Thank you
-
-Florian Fainelli (3):
-  ARM: dts: NSP: Enable SFP on bcm958625hr
-  dt-bindings: net: dsa: Document B53 SRAB interrupts and registers
-  ARM: dts: NSP: Wire up switch interrupts
-
- .../devicetree/bindings/net/dsa/b53.txt       | 23 ++++++++++++++
- arch/arm/boot/dts/bcm-nsp.dtsi                | 31 ++++++++++++++++++-
- arch/arm/boot/dts/bcm958625hr.dts             | 29 +++++++++++++++++
- 3 files changed, 82 insertions(+), 1 deletion(-)
-
+diff --git a/arch/arm/boot/dts/bcm958625hr.dts b/arch/arm/boot/dts/bcm958625hr.dts
+index ea3fc194f8f3..05751c895a0e 100644
+--- a/arch/arm/boot/dts/bcm958625hr.dts
++++ b/arch/arm/boot/dts/bcm958625hr.dts
+@@ -58,6 +58,24 @@
+ 		open-source;
+ 		priority = <200>;
+ 	};
++
++	/* Hardware I2C block has limitations on number of bytes it can
++	 * transfer, which breaks with SFP/SFF modules.
++	 */
++	i2c1: i2c1 {
++		compatible = "i2c-gpio";
++		sda-gpios = <&gpioa 5 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++		scl-gpios = <&gpioa 4 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
++	};
++
++	sfp: sfp {
++		compatible = "sff,sfp";
++		i2c-bus = <&i2c1>;
++		mod-def0-gpios = <&gpioa 28 GPIO_ACTIVE_LOW>;
++		los-gpios = <&gpioa 24 GPIO_ACTIVE_HIGH>;
++		tx-fault-gpios = <&gpioa 30 GPIO_ACTIVE_HIGH>;
++		tx-disable-gpios = <&gpioa 26 GPIO_ACTIVE_HIGH>;
++	};
+ };
+ 
+ &amac0 {
+@@ -210,6 +228,17 @@
+ 			reg = <4>;
+ 		};
+ 
++		port@5 {
++			label = "sfp";
++			phy-mode = "sgmii";
++			reg = <5>;
++			sfp = <&sfp>;
++			fixed-link {
++				speed = <1000>;
++				full-duplex;
++			};
++		};
++
+ 		port@8 {
+ 			ethernet = <&amac2>;
+ 			label = "cpu";
 -- 
 2.17.1
 
