@@ -2,157 +2,211 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7629C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:18:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABE7EC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:20:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C27E208D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:18:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B85620835
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:20:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZtTaiK2B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C27E208D5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=darnok.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bLYBwZF5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B85620835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727345AbeH0WGR (ORCPT
+        id S1727447AbeH0WH5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 18:06:17 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:45870 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726895AbeH0WGR (ORCPT
+        Mon, 27 Aug 2018 18:07:57 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:39287 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726895AbeH0WH5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 18:06:17 -0400
-Received: by mail-qk0-f195.google.com with SMTP id z125-v6so11127840qkb.12
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 11:18:36 -0700 (PDT)
+        Mon, 27 Aug 2018 18:07:57 -0400
+Received: by mail-yb0-f194.google.com with SMTP id c4-v6so6380509ybl.6
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 11:20:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0+QByKDfZfc7uugZ+ya6M2+5b0WBlp8DgVtfT/VpeZE=;
-        b=ZtTaiK2Bu/WcMzfpm5S4Hog1PZuUSsyjMXH84Fg5kezKIUlNSCRU889B65ZvCxeGV3
-         7wn5ylutvrOkLkqjBB2uaalzvQhp1eWFvzHmpEy+vPcmGpiiy5vmlAa3Ly02QPb/dzdx
-         6K1DB7SUdHH8vnOBAQXUj2wJkDbzXeNT9vhnvgQhian2DSoIiHz17qbufRMZBVcVu3RP
-         2GIw20pPePNezxN/MgmRbHSdxanRiqcmxYMl0N6ZFJ5VRmsPxPdpGU7zKGd+Aoazm/bW
-         dSJ2PSnkzuzZBmDfhxolCzrZ1l7yhCOUUHCo0V4hk3FQZkU33SQgKmxcP3hMGqTPnITE
-         /ILw==
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=PF233pjCKiRZ1uOy07scUd2ksgBFhPyBX29ivkxtDao=;
+        b=bLYBwZF5Q7pxH8dJDMoHP7YCKw36y5pFFeWt9T+SccMPZpo+CT7uMSWP/ZohUbtW0v
+         uQFP6xJJso8nsEo8E95DXxwSSksHpTQfodcXoAy+toMwxZBnji65FI334juOcoX5e7mA
+         YeuvqAk45iQACltk6bM66VYWQTdP5ygpjkPkg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0+QByKDfZfc7uugZ+ya6M2+5b0WBlp8DgVtfT/VpeZE=;
-        b=YYjyWN+fkrfJwbHfN/rNhDdmnaWprnvcrHJYj+p+oqG1awTy23dqHnDptgT6ZsueXL
-         DzxZ3DkuI08+ag/lYE4E7ETVFTAvCzd3yWEHM5XNHcRpzxrJBr1jSmHQwwxTj16SlMsL
-         NjLo/gbZn+6EyqDNEaq9DYI4NIy7+GRxvQzMy95YPWqksYtMFFz0AmaXSk5PZcN43Bno
-         kGN9cifGfmNNtNocAN1/raZz8EUKh3O1Kb5xxLxf9m3JGEq+pMSRttEusIhovU/0V+F2
-         teIrCJ8TprcAW3ybOUMcMnM45pa3Cuned+5cHr9W2krBZ/R5+CM0V058ZAe7tuU1A8SJ
-         7ZpA==
-X-Gm-Message-State: APzg51Aw3X0QtUn9EWwJmMkd6DIrFKsL6BNXAlFCHTqPwVTloSwcNhGv
-        ldRfjjdEQ6UXq6GWrWm5zmY=
-X-Google-Smtp-Source: ANB0VdbKyn1WMtgOGpUyA1Eh+2xI3BafmJNHdDxQi4E4J74FRAI3gy5RlpZXsjl0z40FwUbhmqcXOA==
-X-Received: by 2002:a37:10d1:: with SMTP id 78-v6mr14820917qkq.72.1535393915791;
-        Mon, 27 Aug 2018 11:18:35 -0700 (PDT)
-Received: from 0021ccb48c25 (209-6-36-129.s6527.c3-0.smr-cbr2.sbo-smr.ma.cable.rcncustomer.com. [209.6.36.129])
-        by smtp.gmail.com with ESMTPSA id d100-v6sm12999125qkh.34.2018.08.27.11.18.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 27 Aug 2018 11:18:34 -0700 (PDT)
-Date:   Mon, 27 Aug 2018 14:18:31 -0400
-From:   Konrad Rzeszutek Wilk <konrad@darnok.org>
-To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Cc:     linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Anshuman Khandual <anshuman.linux@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Mike Anderson <andmike@linux.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Ram Pai <linuxram@us.ibm.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>
-Subject: Re: [RFC PATCH 11/11] powerpc/svm: Increase SWIOTLB buffer size
-Message-ID: <20180827181830.GB3834@0021ccb48c25>
-References: <20180824162535.22798-1-bauerman@linux.ibm.com>
- <20180824162535.22798-12-bauerman@linux.ibm.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=PF233pjCKiRZ1uOy07scUd2ksgBFhPyBX29ivkxtDao=;
+        b=sCXGteoTWwK6avZS/A0BqjLr75s68yzKT72xq2F99OIgyqFPfhGbknAGNwSEHj1QlW
+         miYLZ+913sq/RAqRgPYBHJtOvZlhG4mh5nKJec6SK1NKpGkSLufyREk9fRd8oEMxXI+1
+         Fvns84iA3uqUJp2F63gtxywAUeIzmsxFQ3XkzxypZj/VUH4ShUe5XbCBqX6dNDpCdsoZ
+         qfwK5IrO9b/f3CmHXEibyl1XAlopkMtRKlq2C1o+2HAEmBciD7HOy8qPO6jdNhrd/y/7
+         TxGjJCXBW5Q/hBaISpT9sjUq7I879Rr6y9NblAbYZPwZeosCFgMNf1KYsM+T9HaQPYbl
+         0l2A==
+X-Gm-Message-State: APzg51BRS0rejkIwxC3ypBhKgLGo9walJ0A0A8gSlmgnN/nyRCsf2eSF
+        G0/KkaR6oeDqGTyfs68F36rnSvVDXk4=
+X-Google-Smtp-Source: ANB0VdZqlovZSSAYe2icWzI5/rwntvPJ3Km3GnVovIyBrsD2/jk18HVAQKCsyenYKL6VzEjtmoBz5A==
+X-Received: by 2002:a25:2614:: with SMTP id m20-v6mr7426476ybm.251.1535394015798;
+        Mon, 27 Aug 2018 11:20:15 -0700 (PDT)
+Received: from mail-yb0-f180.google.com (mail-yb0-f180.google.com. [209.85.213.180])
+        by smtp.gmail.com with ESMTPSA id d21-v6sm10332420ywb.16.2018.08.27.11.20.13
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 27 Aug 2018 11:20:14 -0700 (PDT)
+Received: by mail-yb0-f180.google.com with SMTP id o17-v6so6393986yba.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 11:20:13 -0700 (PDT)
+X-Received: by 2002:a25:e5c3:: with SMTP id c186-v6mr7488033ybh.209.1535394013156;
+ Mon, 27 Aug 2018 11:20:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180824162535.22798-12-bauerman@linux.ibm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Received: by 2002:a25:2c11:0:0:0:0:0 with HTTP; Mon, 27 Aug 2018 11:20:12
+ -0700 (PDT)
+In-Reply-To: <20171212220647.GJ185376@gmail.com>
+References: <001a113f711ae2110c055f45acb8@google.com> <20171212220647.GJ185376@gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 27 Aug 2018 11:20:12 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jLcuE-h9V04fTtoSfz9mZdVeH1zfJOpRncK2NZkv2gsnQ@mail.gmail.com>
+Message-ID: <CAGXu5jLcuE-h9V04fTtoSfz9mZdVeH1zfJOpRncK2NZkv2gsnQ@mail.gmail.com>
+Subject: Re: possible deadlock in seq_read
+To:     Eric Biggers <ebiggers3@gmail.com>
+Cc:     syzbot 
+        <bot+e93a80c1bb7c5c56e522461c149f8bf55eab1b2b@syzkaller.appspotmail.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com, Al Viro <viro@zeniv.linux.org.uk>,
+        Dmitry Vyukov <dvyukov@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 24, 2018 at 01:25:35PM -0300, Thiago Jung Bauermann wrote:
-> From: Anshuman Khandual <khandual@linux.vnet.ibm.com>
-> 
-> SWIOTLB buffer default size (64MB) is not enough for large sequential write
-> operations which eventually leads to kernel crash like here.
-> 
-> virtio-pci 0000:00:05.0: swiotlb buffer is full (sz: 327680 bytes)
-> virtio-pci 0000:00:05.0: DMA: Out of SW-IOMMU space for 327680 bytes
-> Kernel panic - not syncing: DMA: Random memory could be DMA read
-> CPU: 12 PID: 3985 Comm: mkfs.ext4 Not tainted 4.18.0-rc4+ #285
-> Call Trace:
-> [c0000007d2a27020] [c000000000cfdffc] dump_stack+0xb0/0xf4 (unreliable)
-> [c0000007d2a27060] [c000000000112a98] panic+0x140/0x328
-> [c0000007d2a270f0] [c0000000001b4f88] swiotlb_full+0x108/0x130
-> [c0000007d2a27180] [c0000000001b5f6c] swiotlb_map_page+0x25c/0x2c0
-> [c0000007d2a271e0] [c0000000007bfaf8] vring_map_one_sg.isra.0+0x58/0x70
-> [c0000007d2a27200] [c0000000007c08dc] virtqueue_add_sgs+0x1bc/0x690
-> [c0000007d2a272f0] [d0000000042a1280] virtio_queue_rq+0x358/0x4a0 [virtio_blk]
-> [c0000007d2a273d0] [c0000000006b5d68] blk_mq_dispatch_rq_list+0x1f8/0x6d0
-> ..................
-> 
-> Increase the SWIOTLB size to 1GB on Ultravisor based secure guests.
+On Tue, Dec 12, 2017 at 2:06 PM, Eric Biggers <ebiggers3@gmail.com> wrote:
+> On Fri, Dec 01, 2017 at 03:29:01AM -0800, syzbot wrote:
+>> Hello,
+>>
+>> syzkaller hit the following crash on
+>> df8ba95c572a187ed2aa7403e97a7a7f58c01f00
+>> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/master
+>> compiler: gcc (GCC) 7.1.1 20170620
+>> .config is attached
+>> Raw console output is attached.
+>>
+>> Unfortunately, I don't have any reproducer for this bug yet.
+>>
+>>
+>>
+>> ======================================================
+>> WARNING: possible circular locking dependency detected
+>> 4.15.0-rc1+ #202 Not tainted
+>> ------------------------------------------------------
+>> syz-executor4/26476 is trying to acquire lock:
+>>  (&p->lock){+.+.}, at: [<0000000040185b66>] seq_read+0xd5/0x13d0
+>> fs/seq_file.c:165
+>>
+>> but task is already holding lock:
+>>  (&pipe->mutex/1){+.+.}, at: [<00000000c644bcdc>] pipe_lock_nested
+>> fs/pipe.c:67 [inline]
+>>  (&pipe->mutex/1){+.+.}, at: [<00000000c644bcdc>]
+>> pipe_lock+0x56/0x70 fs/pipe.c:75
+>>
+>> which lock already depends on the new lock.
+>>
+>>
+>> the existing dependency chain (in reverse order) is:
+>>
+>> -> #2 (&pipe->mutex/1){+.+.}:
+>>        lock_acquire+0x1d5/0x580 kernel/locking/lockdep.c:4004
+>>        __mutex_lock_common kernel/locking/mutex.c:756 [inline]
+>>        __mutex_lock+0x16f/0x1a80 kernel/locking/mutex.c:893
+>>        mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:908
+>>        __pipe_lock fs/pipe.c:88 [inline]
+>>        fifo_open+0x15c/0xa40 fs/pipe.c:916
+>>        do_dentry_open+0x682/0xd70 fs/open.c:752
+>>        vfs_open+0x107/0x230 fs/open.c:866
+>>        do_last fs/namei.c:3379 [inline]
+>>        path_openat+0x1157/0x3530 fs/namei.c:3519
+>>        do_filp_open+0x25b/0x3b0 fs/namei.c:3554
+>>        do_open_execat+0x1b9/0x5c0 fs/exec.c:849
+>>        do_execveat_common.isra.30+0x90c/0x23c0 fs/exec.c:1741
+>>        do_execveat fs/exec.c:1859 [inline]
+>>        SYSC_execveat fs/exec.c:1940 [inline]
+>>        SyS_execveat+0x4f/0x60 fs/exec.c:1932
+>>        do_syscall_64+0x26c/0x920 arch/x86/entry/common.c:285
+>>        return_from_SYSCALL_64+0x0/0x75
+>>
+>> -> #1 (&sig->cred_guard_mutex){+.+.}:
+>>        lock_acquire+0x1d5/0x580 kernel/locking/lockdep.c:4004
+>>        __mutex_lock_common kernel/locking/mutex.c:756 [inline]
+>>        __mutex_lock+0x16f/0x1a80 kernel/locking/mutex.c:893
+>>        mutex_lock_killable_nested+0x16/0x20 kernel/locking/mutex.c:923
+>>        do_io_accounting+0x1c2/0xf50 fs/proc/base.c:2682
+>>        proc_tid_io_accounting+0x1f/0x30 fs/proc/base.c:2725
+>>        proc_single_show+0xf8/0x170 fs/proc/base.c:744
+>>        seq_read+0x385/0x13d0 fs/seq_file.c:234
+>>        __vfs_read+0xef/0xa00 fs/read_write.c:411
+>>        vfs_read+0x124/0x360 fs/read_write.c:447
+>>        SYSC_read fs/read_write.c:573 [inline]
+>>        SyS_read+0xef/0x220 fs/read_write.c:566
+>>        entry_SYSCALL_64_fastpath+0x1f/0x96
+>>
+>
+> So the problem with all these deadlocks involving pipe->mutex and
+> sig->cred_guard_mutex is that execve() ranks pipe->mutex below
+> sig->cred_guard_mutex when it tries to open a fifo, whereas reading or writing
+> some of the /proc files result in ->cred_guard_mutex being taken which may be
+> underneath pipe->mutex from splice().  Here's a program which causes an actual
+> deadlock using this bug (in addition to reproducing the lockdep report):
+>
+>         #define _GNU_SOURCE
+>         #include <fcntl.h>
+>         #include <pthread.h>
+>         #include <sys/stat.h>
+>         #include <unistd.h>
+>
+>         static void *exec_thread(void *_arg)
+>         {
+>                 for (;;)
+>                         execl("fifo", "fifo", NULL);
+>         }
+>
+>         int main()
+>         {
+>                 int readend, writeend;
+>                 int syscallfd;
+>                 pthread_t t;
+>
+>                 mknod("fifo", 0777|S_IFIFO, 0);
+>                 readend = open("fifo", O_RDONLY|O_NONBLOCK);
+>                 writeend = open("fifo", O_WRONLY);
+>                 syscallfd = open("/proc/self/syscall", O_RDONLY);
+>
+>                 pthread_create(&t, NULL, exec_thread, NULL);
+>
+>                 for (;;) {
+>                         char buffer[16];
+>                         loff_t off_in = 0;
+>                         splice(syscallfd, &off_in, writeend, NULL, 16, 0);
+>                         read(readend, buffer, 16);
+>                 }
+>         }
+>
+> I'm not sure what the fix will be.  Maybe the proc handlers should take a
+> different lock instead of cred_guard_mutex.  Or perhaps execve should check that
+> the file is a regular file before it attempts to open it.
 
-Gosh, that is huge.
+This cleaner reproducer still generates the lockdep warning (but I can
+ctrl-C out of it without leaving behind a zombie), but I see that
+syzbot isn't seeing this any more. Why did it stop? (And can we feed a
+reproducer in to syzbot?)
 
-What about making the SWIOTLB be more dynamic? That is expand it's size
-dynamically if it can?
+Was this creating an uninterruptible deadlock before? (Perhaps
+something did change here?)
 
-> 
-> Signed-off-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
-> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
-> ---
->  arch/powerpc/Kconfig | 5 +++++
->  kernel/dma/swiotlb.c | 5 +++++
->  2 files changed, 10 insertions(+)
-> 
-> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-> index 1466d1234723..fee7194ce9e4 100644
-> --- a/arch/powerpc/Kconfig
-> +++ b/arch/powerpc/Kconfig
-> @@ -457,6 +457,11 @@ config PPC_SVM
->  
->  	 If unsure, say "N".
->  
-> +config SWIOTLB_DEFAULT_SIZE
-> +       int "Size of Software I/O TLB buffer (in MiB)"
-> +       default "1024"
-> +       depends on PPC_SVM
-> +
->  config PPC_TRANSACTIONAL_MEM
->         bool "Transactional Memory support for POWERPC"
->         depends on PPC_BOOK3S_64
-> diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
-> index 04b68d9dffac..32dc67422d8a 100644
-> --- a/kernel/dma/swiotlb.c
-> +++ b/kernel/dma/swiotlb.c
-> @@ -146,8 +146,13 @@ void swiotlb_set_max_segment(unsigned int val)
->  		max_segment = rounddown(val, PAGE_SIZE);
->  }
->  
-> +#ifdef CONFIG_SWIOTLB_DEFAULT_SIZE
-> +#define IO_TLB_DEFAULT_SIZE ((unsigned long) CONFIG_SWIOTLB_DEFAULT_SIZE << 20)
-> +#else
->  /* default to 64MB */
->  #define IO_TLB_DEFAULT_SIZE (64UL<<20)
-> +#endif
-> +
->  unsigned long swiotlb_size_or_default(void)
->  {
->  	unsigned long size;
-> 
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
