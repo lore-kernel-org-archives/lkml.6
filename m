@@ -2,164 +2,113 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC3F1C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 14:21:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3857DC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 14:24:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 783E2208B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 14:21:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="vf0DiFJw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 783E2208B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id F3DAB208B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 14:24:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3DAB208B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727518AbeH0SIG (ORCPT
+        id S1727460AbeH0SLH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 14:08:06 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:36427 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726958AbeH0SIG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 14:08:06 -0400
-Received: by mail-wm0-f65.google.com with SMTP id j192-v6so8505376wmj.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 07:21:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=K3J/C6PUSNPX+1+GRCl8rpXvyVQLnz/WgMlsu3+XANg=;
-        b=vf0DiFJwRaNotCzttmjhzO+/6CIQvsrTowfK2DdgpQfkhPAQwPrLchYMTYwQrM7b2G
-         vZb5U5HpGQ8kOf3iHQV3BPYnTQSfK/6FzmhyQ5yMW49EGCVLqaeTHauvUlLmVzTJ3ybJ
-         LUiEnC1n5yZ+hpX+4zW8O203FAQnahYOq5Fqrol3EW5ue4VkpcwxtYG+1zX1sb3d2JUr
-         3nLBi8jfzht11fGep5Ke6aaAzXsT/N0dFTKUgXFhNnhSpJR5RLouO2Svz4o+lNUXAbMy
-         uGP7k8ZWO8n8KzC4LEpiv6dh72xRsOZzUMWrvJ6RpFviSh6i1PVycArod4dszqbU1WhF
-         UHaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=K3J/C6PUSNPX+1+GRCl8rpXvyVQLnz/WgMlsu3+XANg=;
-        b=CeTyKKEq4swFMrZDEpHXF08z1rhld6Wb1CKjn5B++DxqFHRR5+Af2GCDDqsmX4vIP0
-         6cQlzmFdJgb8k3DEDJ1iqtiaNQGzbFylgJ+x7ORzMT+Xa13KFvsnBpPIG6gA4OTU7+Hg
-         1kwN95gfsZ5TkL43cr+MeQ11e8e906CvfgyAqRCS9PPBU2rA2zncBaB+bFXWQZr0lkci
-         r7Jb4jid5Bl2BDwxBHnSaNco4WlSeopc9dYqL87/atVQQ8h23WmvLYpux8XQ7HdkYZNT
-         2O95hpk9vIkAmwchTzXPPQmzyZOjfG/JGotbjaH3tGQi7NVDpAzRP+VaS8PZDjCKSTft
-         wM0g==
-X-Gm-Message-State: APzg51CKqFVYPoxMuvFPzHszOJhsLFAMXazz0swLjucO/eUnXAQpyyyI
-        swC1mPcz+RmcrpFJJ4WoR0973w==
-X-Google-Smtp-Source: ANB0VdaADToHHkN+eBe+rDUGovJPgFEXMYtgLsWlH8dvc5s8Y3l+Huyrge30zc97EuEyVOFDDajkaQ==
-X-Received: by 2002:a7b:c04c:: with SMTP id u12-v6mr3627156wmc.24.1535379674517;
-        Mon, 27 Aug 2018 07:21:14 -0700 (PDT)
-Received: from boomer.baylibre.local ([90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id 204-v6sm13896316wmh.25.2018.08.27.07.21.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 27 Aug 2018 07:21:14 -0700 (PDT)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>, alsa-devel@alsa-project.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: meson: axg-tdm: restrict formats depending on slot width
-Date:   Mon, 27 Aug 2018 16:21:07 +0200
-Message-Id: <20180827142107.8153-1-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 27 Aug 2018 14:11:07 -0400
+Received: from mga04.intel.com ([192.55.52.120]:36769 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726953AbeH0SLH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 14:11:07 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2018 07:24:17 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,295,1531810800"; 
+   d="scan'208";a="252270665"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by orsmga005.jf.intel.com with ESMTP; 27 Aug 2018 07:24:13 -0700
+Date:   Mon, 27 Aug 2018 07:22:04 -0700
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     James Morse <james.morse@arm.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Vikas Shivappa <vikas.shivappa@linux.intel.com>
+Subject: Re: [RFC PATCH 00/20] x86/intel_rdt: Start abstraction for a second
+ arch
+Message-ID: <20180827142204.GA223688@romley-ivt3.sc.intel.com>
+References: <20180824104519.11203-1-james.morse@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180824104519.11203-1-james.morse@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Restrict the formats possible on the TDM interface depending on the width
-of the TDM slot and let dpcm merging do the rest.
+On Fri, Aug 24, 2018 at 11:44:59AM +0100, James Morse wrote:
+> Hi folks,
+> 
+> ARM have some upcoming CPU features that are similar to Intel RDT. Resctrl
+> is the defacto ABI for this sort of thing, but it lives under arch/x86.
+> 
+> To get existing software working, we need to make resctrl work with arm64.
+> This series is the first chunk of that. The aim is to move the filesystem/ABI
+> parts into /fs/resctrl, and implement a second arch backend.
+> 
+> 
+> What are the ARM features?
+> Future ARM SoCs may have a feature called MPAM: Memory Partitioning and
+> Monitoring. This is an umbrella term like RDT, and covers a range of controls
+> (like CAT) and monitors (like MBM, CMT).
 
-Fixes: d60e4f1e4be5 ("ASoC: meson: add tdm interface driver")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- sound/soc/meson/axg-tdm-interface.c | 50 +++++++++++++++++------------
- 1 file changed, 29 insertions(+), 21 deletions(-)
+Please send a link to MPAM spec.
 
-diff --git a/sound/soc/meson/axg-tdm-interface.c b/sound/soc/meson/axg-tdm-interface.c
-index 7b8baf46d968..585ce030b79b 100644
---- a/sound/soc/meson/axg-tdm-interface.c
-+++ b/sound/soc/meson/axg-tdm-interface.c
-@@ -42,6 +42,7 @@ int axg_tdm_set_tdm_slots(struct snd_soc_dai *dai, u32 *tx_mask,
- 	struct axg_tdm_stream *rx = (struct axg_tdm_stream *)
- 		dai->capture_dma_data;
- 	unsigned int tx_slots, rx_slots;
-+	unsigned int fmt = 0;
- 
- 	tx_slots = axg_tdm_slots_total(tx_mask);
- 	rx_slots = axg_tdm_slots_total(rx_mask);
-@@ -52,38 +53,45 @@ int axg_tdm_set_tdm_slots(struct snd_soc_dai *dai, u32 *tx_mask,
- 		return -EINVAL;
- 	}
- 
--	/*
--	 * Amend the dai driver channel number and let dpcm channel merge do
--	 * its job
--	 */
--	if (tx) {
--		tx->mask = tx_mask;
--		dai->driver->playback.channels_max = tx_slots;
--	}
--
--	if (rx) {
--		rx->mask = rx_mask;
--		dai->driver->capture.channels_max = rx_slots;
--	}
--
- 	iface->slots = slots;
- 
- 	switch (slot_width) {
- 	case 0:
--		/* defaults width to 32 if not provided */
--		iface->slot_width = 32;
--		break;
--	case 8:
--	case 16:
--	case 24:
-+		slot_width = 32;
-+		/* Fall-through */
- 	case 32:
--		iface->slot_width = slot_width;
-+		fmt |= SNDRV_PCM_FMTBIT_S32_LE;
-+		/* Fall-through */
-+	case 24:
-+		fmt |= SNDRV_PCM_FMTBIT_S24_LE;
-+		fmt |= SNDRV_PCM_FMTBIT_S20_LE;
-+		/* Fall-through */
-+	case 16:
-+		fmt |= SNDRV_PCM_FMTBIT_S16_LE;
-+		/* Fall-through */
-+	case 8:
-+		fmt |= SNDRV_PCM_FMTBIT_S8;
- 		break;
- 	default:
- 		dev_err(dai->dev, "unsupported slot width: %d\n", slot_width);
- 		return -EINVAL;
- 	}
- 
-+	iface->slot_width = slot_width;
-+
-+	/* Amend the dai driver and let dpcm merge do its job */
-+	if (tx) {
-+		tx->mask = tx_mask;
-+		dai->driver->playback.channels_max = tx_slots;
-+		dai->driver->playback.formats = fmt;
-+	}
-+
-+	if (rx) {
-+		rx->mask = rx_mask;
-+		dai->driver->capture.channels_max = rx_slots;
-+		dai->driver->capture.formats = fmt;
-+	}
-+
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(axg_tdm_set_tdm_slots);
--- 
-2.17.1
+> 
+> This series is almost all about CDP. MPAM has equivalent functionality, but
+> it doesn't need enabling, and doesn't affect the available closids. (I'll
+> try and use Intel terms). MPAM expects the equivalent to IA32_PRQ_MSR to
+> be configured with an Instruction closid and a Data closid. These are the
+> same for no-CDP, and different otherwise. There is no need for them to be
+> adjacent.
+> 
+> To avoid emulating CDP in arm64's arch code, this series moves all the ABI
+> parts of the CDP behaviour, (half the closid-space, each having two
+> configurations) into the filesystem parts of resctrl. These will eventually
+> be moved to /fs/.
 
+Do you have the patches that moves code to /fs/resctrl?
+
+> 
+> MPAMs control and monitor configuration is all memory mapped, the base
+> addresses are discovered via firmware tables, so we won't have a table of
+> possible resources that just need alloc_enabling.
+> 
+> Is this it? No... there are another two series of a similar size that
+> abstract the MBM/CMT overflow threads and avoid 'fs' code accessing things
+> that have moved into the 'hw' arch specific struct.
+> 
+> 
+> I'm after feedback on the general approach taken here, bugs, as there are
+> certainly subtleties I've missed, and any strong-opinions on what should be
+> arch-specific, and what shouldn't.
+> 
+> This series is based on v4.18, and can be retrieved from:
+> git://linux-arm.org/linux-jm.git -b mpam/resctrl_rework/rfc_1
+
+Could you please publish MPAM patches as well? Then we can have better idea
+on ARM's specific code. This patch set only has Intel RDT part.
+
+Thanks.
+
+-Fenghua
