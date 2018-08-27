@@ -2,140 +2,134 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31014C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 14:50:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 136EAC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 14:50:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E01CB2087A
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 14:50:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B08162087A
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 14:50:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OF4ztLOh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E01CB2087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Feku2z1f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B08162087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727252AbeH0Shi (ORCPT
+        id S1727344AbeH0Shp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 14:37:38 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:44193 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727174AbeH0Shi (ORCPT
+        Mon, 27 Aug 2018 14:37:45 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:38778 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727174AbeH0Shp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 14:37:38 -0400
-Received: by mail-pg1-f195.google.com with SMTP id r1-v6so7540009pgp.11
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 07:50:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=TZJ2PbymgiEijg3ptMu/B05O6z0FWcu9+9sZVlpoRMc=;
-        b=OF4ztLOhUFL02oJL/wOdaiFSeVJ42hlvzp99DnMlj4mv9uq46DeNBHs1gkl8a0quV+
-         5duygG/lHm1om6Rs86ktjPAbbsPL5gtVf7tmKX96r6JuKJrXhG8rwAjCVjslpOSRB00P
-         WZvJFj7V8lk7dKuVYNXEiz/vH88UF+g9zS144=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TZJ2PbymgiEijg3ptMu/B05O6z0FWcu9+9sZVlpoRMc=;
-        b=exJjQzFklLcSWjz7aNAGjmb5mwNwYhvSDGokBxWjYUfeVPB6OfNcWQMlc7ckpWXD39
-         wH1RKtzgiUVRpejIbU7TLBaAJD/Ak69S6AyOzkGzD7dii3ZI15xr56TK+Avl8iTYbqup
-         fr6am085VPG8yJ+wLFw/w0lFo+EMLamEb5gDkFwmmGKNnousZPDBpCwM7K0Bhzas2rG8
-         5tFlkLXeghSjE1XbVBzWcIgpuJ3bf9x6WRvWwilCD5hzdtSR8S//BOFHb4iGYG0ijyhu
-         kKLRl69iOswuzbDsi5kTOosFcW+JjtgtjyFrTn3KvcPCWMsU2Hfg/UC9wkrwBTfiKOLn
-         GknA==
-X-Gm-Message-State: APzg51D5x2wG79nYsA1uAwklNjNXFyaFUAy1+/f/Nwb9q7UEScf9pNKw
-        kbkC3CTssMczWpk7rZEXmuZTDA==
-X-Google-Smtp-Source: ANB0VdZ0TGYxavFjXK7IMRlr6C+ciNmRZYTjmPPZoCLbSkPrEnduL7cmWqeTY5fkIZkopAjBO6G9FQ==
-X-Received: by 2002:a63:dd49:: with SMTP id g9-v6mr12366373pgj.356.1535381441214;
-        Mon, 27 Aug 2018 07:50:41 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id j195-v6sm27028467pgc.25.2018.08.27.07.50.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 27 Aug 2018 07:50:40 -0700 (PDT)
-Date:   Mon, 27 Aug 2018 07:54:20 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Kiran Gunda <kgunda@codeaurora.org>
-Cc:     jingoohan1@gmail.com, lee.jones@linaro.org,
-        b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org,
-        daniel.thompson@linaro.org, jacek.anaszewski@gmail.com,
-        pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH V5 8/8] backlight: qcom-wled: Add auto string detection
- logic
-Message-ID: <20180827145420.GL3048@tuxbook-pro>
-References: <1535106467-17843-1-git-send-email-kgunda@codeaurora.org>
- <1535106467-17843-9-git-send-email-kgunda@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1535106467-17843-9-git-send-email-kgunda@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 27 Aug 2018 14:37:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
+        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=+1q0YrFsje/c9JxM7S1GXJ+Selqn9u0h3rTaKOuMI/w=; b=Feku2z1fclxXa0Ut9Nz9geDnn
+        maNgDvV2C2czxu0uGKCaHrPF7v+jaIvmtTCV0sbrR0wzBVLaqCME6G28pMOT70zPcqqDUDpDEIoR1
+        6BUZMtvnFKfXhUtEDpC0fTPlq7kYGXsw2Ag5UMme2hbPeLqtnXkqKdO8I1daJa6v/YLTtvvT5L4+h
+        VMSRInXTKaSLPuCMCdfXftkIzT2AC1n6xTTHmakF/v2kFFJ+odLOMJgnwVjwNTg/2mVEPVDQ4WUgw
+        wf3xyLW+ACrvnS/KMe+fzaOXvyLmhGFv4hQnMyBqk3dLNeCg8rPdmG8hGwje0f6tfL+SNgUnPsmD6
+        dgpx0JN6Q==;
+Received: from 089144202128.atnat0011.highway.a1.net ([89.144.202.128] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fuIqo-0004VR-IC; Mon, 27 Aug 2018 14:50:44 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     iommu@lists.linux-foundation.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/5] MIPS: don't select DMA_MAYBE_COHERENT from DMA_PERDEV_COHERENT
+Date:   Mon, 27 Aug 2018 16:50:28 +0200
+Message-Id: <20180827145032.9522-2-hch@lst.de>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180827145032.9522-1-hch@lst.de>
+References: <20180827145032.9522-1-hch@lst.de>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 24 Aug 03:27 PDT 2018, Kiran Gunda wrote:
-> diff --git a/drivers/video/backlight/qcom-wled.c b/drivers/video/backlight/qcom-wled.c
-[..]
->  struct wled {
-> @@ -135,16 +146,22 @@ struct wled {
->  	struct regmap *regmap;
->  	struct mutex lock;	/* Lock to avoid race from thread irq handler */
->  	ktime_t last_short_event;
-> +	ktime_t start_ovp_fault_time;
->  	u16 ctrl_addr;
->  	u16 sink_addr;
->  	u16 max_string_count;
-> +	u16 auto_detection_ovp_count;
->  	u32 brightness;
->  	u32 max_brightness;
->  	u32 short_count;
-> +	u32 auto_detect_count;
->  	bool disabled_by_short;
->  	bool has_short_detect;
-> +	int ovp_irq;
-> +	bool ovp_irq_disabled;
+While both option select a form of conditional dma coherence they don't
+actually share any code in the implementation, so untangle them.
 
-ovp_irq_disabled is now only assigned, never read. So you should be able
-to drop it.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ arch/mips/Kconfig        |  2 +-
+ arch/mips/kernel/setup.c |  2 +-
+ arch/mips/mm/c-r4k.c     | 17 ++++++++---------
+ 3 files changed, 10 insertions(+), 11 deletions(-)
 
-[..]
-> @@ -200,7 +226,18 @@ static int wled_module_enable(struct wled *wled, int val)
->  				WLED_CTRL_REG_MOD_EN,
->  				WLED_CTRL_REG_MOD_EN_MASK,
->  				val << WLED_CTRL_REG_MOD_EN_SHIFT);
-> -	return rc;
-> +	if (rc < 0)
-> +		return rc;
-> +
-> +	if (val) {
-> +		schedule_delayed_work(&wled->ovp_work, HZ / 100);
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index 35511999156a..0b25180028b8 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -1111,7 +1111,7 @@ config DMA_MAYBE_COHERENT
+ 
+ config DMA_PERDEV_COHERENT
+ 	bool
+-	select DMA_MAYBE_COHERENT
++	select DMA_NONCOHERENT
+ 
+ config DMA_NONCOHERENT
+ 	bool
+diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
+index c71d1eb7da59..6d840a44fa36 100644
+--- a/arch/mips/kernel/setup.c
++++ b/arch/mips/kernel/setup.c
+@@ -1067,7 +1067,7 @@ static int __init debugfs_mips(void)
+ arch_initcall(debugfs_mips);
+ #endif
+ 
+-#if defined(CONFIG_DMA_MAYBE_COHERENT) && !defined(CONFIG_DMA_PERDEV_COHERENT)
++#ifdef CONFIG_DMA_MAYBE_COHERENT
+ /* User defined DMA coherency from command line. */
+ enum coherent_io_user_state coherentio = IO_COHERENCE_DEFAULT;
+ EXPORT_SYMBOL_GPL(coherentio);
+diff --git a/arch/mips/mm/c-r4k.c b/arch/mips/mm/c-r4k.c
+index a9ef057c79fe..05bd77727fb9 100644
+--- a/arch/mips/mm/c-r4k.c
++++ b/arch/mips/mm/c-r4k.c
+@@ -1955,22 +1955,21 @@ void r4k_cache_init(void)
+ 	__flush_icache_user_range	= r4k_flush_icache_user_range;
+ 	__local_flush_icache_user_range	= local_r4k_flush_icache_user_range;
+ 
+-#if defined(CONFIG_DMA_NONCOHERENT) || defined(CONFIG_DMA_MAYBE_COHERENT)
+-# if defined(CONFIG_DMA_PERDEV_COHERENT)
+-	if (0) {
+-# else
+-	if ((coherentio == IO_COHERENCE_ENABLED) ||
+-	    ((coherentio == IO_COHERENCE_DEFAULT) && hw_coherentio)) {
+-# endif
++#ifdef CONFIG_DMA_NONCOHERENT
++#ifdef CONFIG_DMA_MAYBE_COHERENT
++	if (coherentio == IO_COHERENCE_ENABLED ||
++	    (coherentio == IO_COHERENCE_DEFAULT && hw_coherentio)) {
+ 		_dma_cache_wback_inv	= (void *)cache_noop;
+ 		_dma_cache_wback	= (void *)cache_noop;
+ 		_dma_cache_inv		= (void *)cache_noop;
+-	} else {
++	} else
++#endif /* CONFIG_DMA_MAYBE_COHERENT */
++	{
+ 		_dma_cache_wback_inv	= r4k_dma_cache_wback_inv;
+ 		_dma_cache_wback	= r4k_dma_cache_wback_inv;
+ 		_dma_cache_inv		= r4k_dma_cache_inv;
+ 	}
+-#endif
++#endif /* CONFIG_DMA_NONCOHERENT */
+ 
+ 	build_clear_page();
+ 	build_copy_page();
+-- 
+2.18.0
 
-wled_ovp_work() is a nop when ovp_irq == 0, so wrap the entire if/else
-in a check for ovp_irq > 0 (rather than include it in the else) and drop
-it from the worker.
-
-> +	} else {
-> +		if (!cancel_delayed_work_sync(&wled->ovp_work) &&
-> +		    wled->ovp_irq > 0)
-> +			disable_irq(wled->ovp_irq);
-> +	}
-> +
-> +	return 0;
-
-Also, if a user calls rmmod within 10ms of enabling module we will
-schedule work of code that's no longer available in the kernel. So you
-need to also cancel_delayed_work_sync() in the remove function of the
-driver.
-
-
-Apart from this I think this patch looks good now!
-
-Regards,
-Bjorn
