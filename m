@@ -6,59 +6,62 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A731C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:43:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46F0BC43334
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:43:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E4B8208D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:43:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E4B8208D8
+	by mail.kernel.org (Postfix) with ESMTP id 09D0B208D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:43:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09D0B208D5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727448AbeH0UbJ (ORCPT
+        id S1727463AbeH0UbK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 16:31:09 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52932 "EHLO
+        Mon, 27 Aug 2018 16:31:10 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53386 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727142AbeH0UbI (ORCPT
+        by vger.kernel.org with ESMTP id S1726995AbeH0UbJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 16:31:08 -0400
+        Mon, 27 Aug 2018 16:31:09 -0400
 Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7RGhgg9010568
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 12:43:46 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m4mb2hyhy-1
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7RGhgbs010551
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 12:43:48 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m4mb2hyhq-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 12:43:46 -0400
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 12:43:47 -0400
 Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <ivan@de.ibm.com>;
         Mon, 27 Aug 2018 17:43:42 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 27 Aug 2018 17:43:41 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7RGhe6U37814320
+        Mon, 27 Aug 2018 17:43:40 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7RGheYG43122800
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
         Mon, 27 Aug 2018 16:43:40 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AD4AC5204E;
-        Mon, 27 Aug 2018 19:43:37 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0808442042;
+        Mon, 27 Aug 2018 19:43:39 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F001942041;
+        Mon, 27 Aug 2018 19:43:38 +0100 (BST)
 Received: from d06ml001.portsmouth.uk.ibm.com (unknown [9.149.76.127])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id A1C2352050;
-        Mon, 27 Aug 2018 19:43:37 +0100 (BST)
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 27 Aug 2018 19:43:38 +0100 (BST)
 Received: from localhost.localdomain ([9.145.66.122])
           by d06ml001.portsmouth.uk.ibm.com (IBM Domino Release 9.0.1FP10HF192)
-          with ESMTP id 2018082717433980-6096 ;
+          with ESMTP id 2018082717433931-6095 ;
           Mon, 27 Aug 2018 17:43:39 +0100 
 From:   Ivan Mikhaylov <ivan@de.ibm.com>
 To:     netdev@vger.kernel.org
 Cc:     "David S . Miller" <davem@davemloft.net>,
         "Christian Lamparter" <chunkeey@gmail.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] net/ibm/emac: deletion of unneeded macros definitions
-Date:   Mon, 27 Aug 2018 19:43:36 +0300
+Subject: [PATCH 1/2] net/ibm/emac: wrong emac_calc_base call was used by typo
+Date:   Mon, 27 Aug 2018 19:43:35 +0300
 X-Mailer: git-send-email 2.15.1
 X-MIMETrack: Itemize by SMTP Server on D06ML001/06/M/IBM(Release 9.0.1FP10HF192 | April
  16, 2018) at 27/08/2018 17:43:39,
@@ -67,10 +70,10 @@ X-MIMETrack: Itemize by SMTP Server on D06ML001/06/M/IBM(Release 9.0.1FP10HF192 
         Serialize complete at 27/08/2018 17:43:39
 X-TNEFEvaluated: 1
 X-TM-AS-GCONF: 00
-x-cbid: 18082716-0028-0000-0000-000002F06102
+x-cbid: 18082716-0008-0000-0000-000002675E53
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082716-0029-0000-0000-000023A9B531
-Message-Id: <20180827164336.8815-2-ivan@de.ibm.com>
+x-cbparentid: 18082716-0009-0000-0000-000021CFB2DD
+Message-Id: <20180827164336.8815-1-ivan@de.ibm.com>
 Content-Type:   text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7BIT
 MIME-Version: 1.0
@@ -79,45 +82,46 @@ X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=955 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1807170000 definitions=main-1808270176
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+__emac_calc_base_mr1 was used instead of __emac4_calc_base_mr1
+by copy-paste mistake for emac4syn.
+
+Fixes: 45d6e545505fd32edb812f085be7de45b6a5c0af ("net/ibm/emac: add 8192 rx/tx fifo size")
 Signed-off-by: Ivan Mikhaylov <ivan@de.ibm.com>
 ---
- drivers/net/ethernet/ibm/emac/emac.h |    7 -------
- 1 files changed, 0 insertions(+), 7 deletions(-)
+ drivers/net/ethernet/ibm/emac/core.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/ibm/emac/emac.h b/drivers/net/ethernet/ibm/emac/emac.h
-index e2f80cc..f541660 100644
---- a/drivers/net/ethernet/ibm/emac/emac.h
-+++ b/drivers/net/ethernet/ibm/emac/emac.h
-@@ -229,7 +229,6 @@ struct emac_regs {
- #define EMAC_STACR_PHYD_SHIFT		16
- #define EMAC_STACR_OC			0x00008000
- #define EMAC_STACR_PHYE			0x00004000
--#define EMAC_STACR_STAC_MASK		0x00003000
- #define EMAC_STACR_STAC_READ		0x00001000
- #define EMAC_STACR_STAC_WRITE		0x00000800
- #define EMAC_STACR_OPBC_MASK		0x00000C00
-@@ -245,14 +244,8 @@ struct emac_regs {
- #define EMAC_STACR_PCDA_MASK		0x1f
- #define EMAC_STACR_PCDA_SHIFT		5
- #define EMAC_STACR_PRA_MASK		0x1f
--#define EMACX_STACR_STAC_MASK		0x00003800
- #define EMACX_STACR_STAC_READ		0x00001000
- #define EMACX_STACR_STAC_WRITE		0x00000800
--#define EMACX_STACR_STAC_IND_ADDR	0x00002000
--#define EMACX_STACR_STAC_IND_READ	0x00003800
--#define EMACX_STACR_STAC_IND_READINC	0x00003000
--#define EMACX_STACR_STAC_IND_WRITE	0x00002800
--
-
- /* EMACx_TRTR */
- #define EMAC_TRTR_SHIFT_EMAC4		24
+diff --git a/drivers/net/ethernet/ibm/emac/core.c b/drivers/net/ethernet/ibm/emac/core.c
+index 354c098..3726646 100644
+--- a/drivers/net/ethernet/ibm/emac/core.c
++++ b/drivers/net/ethernet/ibm/emac/core.c
+@@ -494,9 +494,6 @@ static u32 __emac_calc_base_mr1(struct emac_instance *dev, int tx_size, int rx_s
+ 	case 16384:
+ 		ret |= EMAC_MR1_RFS_16K;
+ 		break;
+-	case 8192:
+-		ret |= EMAC4_MR1_RFS_8K;
+-		break;
+ 	case 4096:
+ 		ret |= EMAC_MR1_RFS_4K;
+ 		break;
+@@ -537,6 +534,9 @@ static u32 __emac4_calc_base_mr1(struct emac_instance *dev, int tx_size, int rx_
+ 	case 16384:
+ 		ret |= EMAC4_MR1_RFS_16K;
+ 		break;
++	case 8192:
++		ret |= EMAC4_MR1_RFS_8K;
++		break;
+ 	case 4096:
+ 		ret |= EMAC4_MR1_RFS_4K;
+ 		break;
 --
 1.7.1
 
