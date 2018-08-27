@@ -2,254 +2,227 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EE5EC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 23:30:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FDD9C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 23:33:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2057F208B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 23:30:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0CA4208B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 23:33:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TFjCzbWq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2057F208B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="UnBwBsCB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0CA4208B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727425AbeH1DTT (ORCPT
+        id S1727199AbeH1DWJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 23:19:19 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:46014 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727305AbeH1DTT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 23:19:19 -0400
-Received: by mail-oi0-f67.google.com with SMTP id t68-v6so1223185oie.12
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 16:30:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:reply-to:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=D6nCmQ48omCh6GpYXVKCB2afNcjRqrasMsUFwhIs+GQ=;
-        b=TFjCzbWq1sgHlWqTm4rMdthMkEFpp3d7QumQUMKJkQifeT15wdZfO0yAz2hy3Dttlg
-         E9FJ4Zjc5XWpPjl/bEvs2YZbVYEovAqDEL5wyheRiZEqPOWs3D90iyFm+Aq5smCzpG04
-         DuVtwlKEWtIA1oki3+wGjnu1Pc4A7bCyaOGgiSntklTFzE0UNYrCvnZlCHOIkHod/3AE
-         sF7FNzvC02rzxMq9nx5fS9R4sOFsOxkxv9AQFItnCGpzb3Tumv01O2IAU0g82gi5/Axt
-         w2uhuevFOZmNl7KRUTT7gCqC4okhCe/RX5KVvn3z1+MYdL0LQA5Xq3NhQX/kXGc3XOom
-         tjsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:reply-to:subject:to:cc:references:from
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-transfer-encoding:content-language;
-        bh=D6nCmQ48omCh6GpYXVKCB2afNcjRqrasMsUFwhIs+GQ=;
-        b=p7IXyE9oVzxK3XaVr89Jyv+0dXhPFZaJs+8u+qxIjMeq+2RmXASNIeLdfUovP13O9H
-         OCVIMUuYhOU21Nq3FXtLnj91wMwVZOJAYjG4MdVGyigUfpUhikKxS7EXS7QUo3oiqPtm
-         uYVLtYgcJNKsxyJktSzPIsKqCly67ppp9dRwe9HSAHOV893qNwmgzbO7ymuader1zybu
-         7iXucmV/rSHuetCWFBe16ddOEwJjU4rjnw1ewoq9Zx67CMcCai3UUdmU1ZXfOqkCIqkX
-         5HKTiFY9ECCzKWoL3micNkDF08d+FX1GCpqMqCfFToIk0DlJI/l2XtOKY2OY+h04mpHE
-         V4dg==
-X-Gm-Message-State: APzg51Af/FY+82pFBkzh8oXlyJIWGNkjCBW/97g0BBU5dK8W7VMKpfQW
-        t38Y8oYoO5usQlDbwGMlBg==
-X-Google-Smtp-Source: ANB0VdYol95MBPeprWPpdiVdCRwQqG595LRZK0oqf4J3l2hG/w8Uc7srs2TGmcMpvM9i2T32/mdsyA==
-X-Received: by 2002:aca:efd7:: with SMTP id n206-v6mr750496oih.70.1535412629204;
-        Mon, 27 Aug 2018 16:30:29 -0700 (PDT)
-Received: from serve.minyard.net ([47.184.170.128])
-        by smtp.gmail.com with ESMTPSA id v202-v6sm556053oie.47.2018.08.27.16.30.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 Aug 2018 16:30:28 -0700 (PDT)
-Received: from [IPv6:2001:470:b8f6:1b:fcd1:4328:3a3e:96be] (unknown [IPv6:2001:470:b8f6:1b:fcd1:4328:3a3e:96be])
-        by serve.minyard.net (Postfix) with ESMTPSA id AE9F7677;
-        Mon, 27 Aug 2018 18:29:56 -0500 (CDT)
-Reply-To: minyard@acm.org
-Subject: Re: [PATCH 1/2] ipmi_ssif: Unregister i2c device only if created by
- ssif
-To:     George Cherian <gcherian@caviumnetworks.com>,
-        George Cherian <george.cherian@cavium.com>,
-        linux-kernel@vger.kernel.org,
-        openipmi-developer@lists.sourceforge.net
-Cc:     arnd@arndb.de, gregkh@linuxfoundation.org
-References: <1535109010-5074-1-git-send-email-george.cherian@cavium.com>
- <c25ed354-5971-389a-0439-369171b5aabc@acm.org>
- <0661f015-754e-a419-bbe0-8d1c4de57ad6@caviumnetworks.com>
-From:   Corey Minyard <minyard@acm.org>
-Message-ID: <f6bd95db-0ca7-ccfa-3ef6-7e3a7a51031d@acm.org>
-Date:   Mon, 27 Aug 2018 18:29:55 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 27 Aug 2018 23:22:09 -0400
+Received: from mail-dm3nam03on0104.outbound.protection.outlook.com ([104.47.41.104]:36027
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727026AbeH1DWJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 23:22:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0GYquLHhHaNEx7M+Nyax2+J4qIQMRPL7fwtrk6YVPTc=;
+ b=UnBwBsCBmBhW3KssLvAmuoFoFAZj5iDpOhyB62EtjOy9j7P/6YbPh1Uh5wTtSKLO7zmBi+4Dxy9TnM2o+pbVV50v1RJ12TltmY6Qt2X2nbd2v4bx099PliODo5z9TygQ5xjN/PQS7i+uoynDsWyrzhjZQuBzSmVoA/RtUj4LrCI=
+Received: from DM5PR21MB0508.namprd21.prod.outlook.com (10.172.91.142) by
+ DM5PR21MB0154.namprd21.prod.outlook.com (10.173.173.17) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1122.2; Mon, 27 Aug 2018 23:33:16 +0000
+Received: from DM5PR21MB0508.namprd21.prod.outlook.com
+ ([fe80::65dd:b17f:eb0d:2eee]) by DM5PR21MB0508.namprd21.prod.outlook.com
+ ([fe80::65dd:b17f:eb0d:2eee%8]) with mapi id 15.20.1122.000; Mon, 27 Aug 2018
+ 23:33:16 +0000
+From:   Pasha Tatashin <Pavel.Tatashin@microsoft.com>
+To:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH 2/2] mm: zero remaining unavailable struct pages
+Thread-Topic: [PATCH 2/2] mm: zero remaining unavailable struct pages
+Thread-Index: AQHUPl5T57B+TjywfUi/O3VLX6ktgw==
+Date:   Mon, 27 Aug 2018 23:33:15 +0000
+Message-ID: <7c773dec-ded0-7a1e-b3ad-6c6826851015@microsoft.com>
+References: <20180823182513.8801-1-msys.mizuma@gmail.com>
+ <20180823182513.8801-2-msys.mizuma@gmail.com>
+In-Reply-To: <20180823182513.8801-2-msys.mizuma@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [137.117.57.82]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR21MB0154;6:wvr1BOBVCFGHVplh1C5MoRKZKfz9y/QNoBy7X9PSjBrGcW/xjHV8jSkFliqZSHTJZWVcKNCCPHCuZdDvbIC7/UagdBU10k8uhSl/6Kw3aJJyHEDnSgIzPAgZ6jh8sRK6T/YNqXOkR+TJeUPy474l1OKAyrEUDmQNTBGxzGehzDqEA7hF+yN3YWLHCNx+sXyN5S7E6Xz+aMB9CFL3V/jHq7i4ZImMgogMOorls6GHsd20G8qVJrifAfA+FF+Wtm6kPnSvYW7KadMDWJxC2ZfrO1QLbh4M+xMP7pxk16ru+USFyW7TSRlXpBFLW75ewq/0V+arMGyR/ZHiEy2iS0tbs+sN1HNh3SITrediN8SCTtXeaPth5VLDQTJ1txKwsNrw3CzwLrk82SJbyQc2NXiJpEWGOJ0WVNPp2g2VcD/tc9TEEESYRMhCK+SxNLLUg3N/6/wRFZBKC9Q05X09QWh5fw==;5:xql30kyXF3m/vutyH9QLbLPolj9TCqytSaRjDwA0075p7PFS8Xfp/7a2QSzuF0iQwC/2s13RQiWZWGTaTO4Sbakir550M3OjT3X0qdIGiD/paq69syfZ14ROYSU1F1zImywuu0nwEmGtpl4HIeTxk8RaCHi3zoYuDLm5g9KSqzo=;7:kchjsUt2597AcMj9xhTAJ1ndur8GppNJJ/pTkRVr5nLwZy0z3rwTJ9zVnMo3y79JrXNp2S38ADuHGLJ5ZlBwXCbHSwHOWMXfbErT+UWMSRji6EvF2XJ931CDEmm4UmFr6pGLYP+6qHmwFaqJsEZNTzV54R+OBzkWXsJZGqhMwMVNq6ZIPLCuSx2eDBt3lG9Ll7Y1/Fhozw9KROW3PgFW/RO1JWR0NACVsWfUXrIXgkj6969VPv30VGsnzShAlA5o
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 45bcb6cc-6dbb-486a-b69e-08d60c75769a
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:DM5PR21MB0154;
+x-ms-traffictypediagnostic: DM5PR21MB0154:
+x-microsoft-antispam-prvs: <DM5PR21MB01548D4FF80F37D2B903BB899D0B0@DM5PR21MB0154.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(170618885588394)(268935105599563);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231336)(944501410)(52105095)(2018427008)(93006095)(93001095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699049)(76991033);SRVR:DM5PR21MB0154;BCL:0;PCL:0;RULEID:;SRVR:DM5PR21MB0154;
+x-forefront-prvs: 07778E4001
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(136003)(376002)(366004)(346002)(39860400002)(189003)(199004)(486006)(14454004)(72206003)(81156014)(36756003)(66066001)(81166006)(2900100001)(316002)(22452003)(110136005)(54906003)(186003)(6116002)(31696002)(86612001)(3846002)(26005)(5660300001)(6346003)(102836004)(8676002)(7736002)(53546011)(6506007)(305945005)(8936002)(86362001)(53936002)(10090500001)(6436002)(6486002)(68736007)(97736004)(14444005)(256004)(6512007)(25786009)(105586002)(4326008)(99286004)(76176011)(476003)(2616005)(106356001)(6246003)(31686004)(229853002)(5250100002)(478600001)(10290500003)(11346002)(2501003)(39060400002)(446003)(2906002)(131093003);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR21MB0154;H:DM5PR21MB0508.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Pavel.Tatashin@microsoft.com; 
+x-microsoft-antispam-message-info: ePxAQdv4QCmJnDUeHzsXb4rx10RWCWTjOb3tBIBFhLqYAB0Wv88ti+vcMAMEttP7Q4KiS7tb6zHJmOOo0OfcN0AjaVvJZaU1+6JCBXtVZLjwroungR6pT1sSUd4gzMKsfn+ekrbf5psQewkmvc4Eld23y3OML3NHoAkdmBUUI0VBeuPHEaCdQLkUivBGtCLr+qNG4bXkMXcPUqj2Yv6+44dPJUFVoLJkAH9fLwTa+lg1KMDX1TIjeMmm0sbp1yl27y522PpQfzhfHO9ESLnRYYxHYkoGOWRZ0i+k/c3c+86vcd8Dx1bN/jpsQH+SoYcTvTJxb3XE8Jka93Gt/yajVuZg7Ks35e6UwrBTwmH0zVw=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <C2B1CD3B479AB34F9C537AB67D4674D4@namprd21.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <0661f015-754e-a419-bbe0-8d1c4de57ad6@caviumnetworks.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 45bcb6cc-6dbb-486a-b69e-08d60c75769a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Aug 2018 23:33:15.7979
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR21MB0154
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/27/2018 01:07 AM, George Cherian wrote:
->
-> Hi Corey,
->
-> On 08/24/2018 06:37 PM, Corey Minyard wrote:
->>
->> On 08/24/2018 06:10 AM, George Cherian wrote:
->>> In ssif_probe error path the i2c client is left hanging, so that
->>> ssif_platform_remove will remove the client. But it is quite
->>> possible that ssif would never call an i2c_new_device.
->>> This condition would lead to kernel crash as below.
->>> To fix this leave only the client ssif registered hanging in error
->>> path. All other non-registered clients are set to NULL.
->>
->> I'm having a hard time seeing how this could happen.
->>
->> The i2c_new_device() call is only done in the case of dmi_ipmi_probe
->> (called from
->> ssif_platform_probe) or a hard-coded entry.  How does
->> ssif_platform_remove get
->> called on a device that was not registered with ssif_platform_probe?
->>
->
-> Initially I also had the same doubt but then,
-> ssif_adapter_hanlder is called for each i2c_dev only after initialized
-> is true. So we end up not calling i2c_new_device for devices probed
-> during the module_init time.
->
-
-I spent some time looking at this, and I don't think that's what is
-happening.
-
-I think that i2c_del_driver() in cleanup_ipmi_ssif() is causing
-i2c_unregister_device() to be called on all the devices, and
-platform_driver_unregister() causes it to be called on the
-devices that came in through the platform method.  It's
-a double-free.
-
-Try reversing the order of i2c_del_driver() and platform_driver_unregister()
-in cleanup_ipmi_ssif() to test this.
-
--corey
-
-> ssif_platform_remove() get called during removal of ipmi_ssif.
-> In case during ssif_probe() if there is a failure before
-> ipmi_smi_register then we leave the addr_info->client hanging.
->
-> In case of normal functioning without error, we set addr_info->client
-> to NULL after ipmi_unregiter_smi in ssif_remove.
->
->> Small style comment inline...
-> I will make the changess and sent out a v2!!
->
-> Thanks,
-> -George
->>
->>>   CPU: 107 PID: 30266 Comm: rmmod Not tainted 4.18.0+ #80
->>>   Hardware name: Cavium Inc. Saber/Saber, BIOS Cavium reference 
->>> firmware version 7.0 08/04/2018
->>>   pstate: 60400009 (nZCv daif +PAN -UAO)
->>>   pc : kernfs_find_ns+0x28/0x120
->>>   lr : kernfs_find_and_get_ns+0x40/0x60
->>>   sp : ffff00002310fb50
->>>   x29: ffff00002310fb50 x28: ffff800a8240f800
->>>   x27: 0000000000000000 x26: 0000000000000000
->>>   x25: 0000000056000000 x24: ffff000009073000
->>>   x23: ffff000008998b38 x22: 0000000000000000
->>>   x21: ffff800ed86de820 x20: 0000000000000000
->>>   x19: ffff00000913a1d8 x18: 0000000000000000
->>>   x17: 0000000000000000 x16: 0000000000000000
->>>   x15: 0000000000000000 x14: 5300737265766972
->>>   x13: 643d4d4554535953 x12: 0000000000000030
->>>   x11: 0000000000000030 x10: 0101010101010101
->>>   x9 : ffff800ea06cc3f9 x8 : 0000000000000000
->>>   x7 : 0000000000000141 x6 : ffff000009073000
->>>   x5 : ffff800adb706b00 x4 : 0000000000000000
->>>   x3 : 00000000ffffffff x2 : 0000000000000000
->>>   x1 : ffff000008998b38 x0 : ffff000008356760
->>>   Process rmmod (pid: 30266, stack limit = 0x00000000e218418d)
->>>   Call trace:
->>>    kernfs_find_ns+0x28/0x120
->>>    kernfs_find_and_get_ns+0x40/0x60
->>>    sysfs_unmerge_group+0x2c/0x6c
->>>    dpm_sysfs_remove+0x34/0x70
->>>    device_del+0x58/0x30c
->>>    device_unregister+0x30/0x7c
->>>    i2c_unregister_device+0x84/0x90 [i2c_core]
->>>    ssif_platform_remove+0x38/0x98 [ipmi_ssif]
->>>    platform_drv_remove+0x2c/0x6c
->>>    device_release_driver_internal+0x168/0x1f8
->>>    driver_detach+0x50/0xbc
->>>    bus_remove_driver+0x74/0xe8
->>>    driver_unregister+0x34/0x5c
->>>    platform_driver_unregister+0x20/0x2c
->>>    cleanup_ipmi_ssif+0x50/0xd82c [ipmi_ssif]
->>>    __arm64_sys_delete_module+0x1b4/0x220
->>>    el0_svc_handler+0x104/0x160
->>>    el0_svc+0x8/0xc
->>>   Code: aa1e03e0 aa0203f6 aa0103f7 d503201f (7940e280)
->>>   ---[ end trace 09f0e34cce8e2d8c ]---
->>>   Kernel panic - not syncing: Fatal exception
->>>   SMP: stopping secondary CPUs
->>>   Kernel Offset: disabled
->>>   CPU features: 0x23800c38
->>>
->>> Signed-off-by: George Cherian <george.cherian@cavium.com>
->>> ---
->>>   drivers/char/ipmi/ipmi_ssif.c | 8 +++++++-
->>>   1 file changed, 7 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/char/ipmi/ipmi_ssif.c 
->>> b/drivers/char/ipmi/ipmi_ssif.c
->>> index 18e4650..ccdf6b1 100644
->>> --- a/drivers/char/ipmi/ipmi_ssif.c
->>> +++ b/drivers/char/ipmi/ipmi_ssif.c
->>> @@ -181,6 +181,7 @@ struct ssif_addr_info {
->>>       struct device *dev;
->>>       struct i2c_client *client;
->>>
->>> +     bool client_registered;
->>>       struct mutex clients_mutex;
->>>       struct list_head clients;
->>>
->>> @@ -1658,6 +1659,8 @@ static int ssif_probe(struct i2c_client 
->>> *client, const struct i2c_device_id *id)
->>>                * the client like it should.
->>>                */
->>>               dev_err(&client->dev, "Unable to start IPMI SSIF: 
->>> %d\n", rv);
->>> +             if (!addr_info->client_registered)
->>> +                     addr_info->client = NULL;
->>>               kfree(ssif_info);
->>>       }
->>>       kfree(resp);
->>> @@ -1672,11 +1675,14 @@ static int ssif_probe(struct i2c_client 
->>> *client, const struct i2c_device_id *id)
->>>   static int ssif_adapter_handler(struct device *adev, void *opaque)
->>>   {
->>>       struct ssif_addr_info *addr_info = opaque;
->>> +     struct i2c_client *client;
->>>
->>>       if (adev->type != &i2c_adapter_type)
->>>               return 0;
->>>
->>> -     i2c_new_device(to_i2c_adapter(adev), &addr_info->binfo);
->>> +     client = i2c_new_device(to_i2c_adapter(adev), &addr_info->binfo);
->>> +     if (client)
->>> +             addr_info->client_registered = true;
->>>
->>
->> How about..
->>     if (i2c_new_device(to_i2c_adapter(adev), &addr_info->binfo))
->>         addr_info->client_registered = true;
->>
->> No need for the client variable.
->>
->> -corey
->>
->>>       if (!addr_info->adapter_name)
->>>               return 1; /* Only try the first I2C adapter by 
->>> default. */
->>
->>
-
+T24gOC8yMy8xOCAyOjI1IFBNLCBNYXNheW9zaGkgTWl6dW1hIHdyb3RlOg0KPiBGcm9tOiBOYW95
+YSBIb3JpZ3VjaGkgPG4taG9yaWd1Y2hpQGFoLmpwLm5lYy5jb20+DQo+IA0KPiBUaGVyZSBpcyBh
+IGtlcm5lbCBwYW5pYyB0aGF0IGlzIHRyaWdnZXJlZCB3aGVuIHJlYWRpbmcgL3Byb2Mva3BhZ2Vm
+bGFncw0KPiBvbiB0aGUga2VybmVsIGJvb3RlZCB3aXRoIGtlcm5lbCBwYXJhbWV0ZXIgJ21lbW1h
+cD1ubltLTUddIXNzW0tNR10nOg0KPiANCj4gICBCVUc6IHVuYWJsZSB0byBoYW5kbGUga2VybmVs
+IHBhZ2luZyByZXF1ZXN0IGF0IGZmZmZmZmZmZmZmZmZmZmUNCj4gICBQR0QgOWIyMGUwNjcgUDRE
+IDliMjBlMDY3IFBVRCA5YjIxMDA2NyBQTUQgMA0KPiAgIE9vcHM6IDAwMDAgWyMxXSBTTVAgUFRJ
+DQo+ICAgQ1BVOiAyIFBJRDogMTcyOCBDb21tOiBwYWdlLXR5cGVzIE5vdCB0YWludGVkIDQuMTcu
+MC1yYzYtbW0xLXY0LjE3LXJjNi0xODA2MDUtMDgxNi0wMDIzNi1nMmRmYjA4NmVmMDJjKyAjMTYw
+DQo+ICAgSGFyZHdhcmUgbmFtZTogUUVNVSBTdGFuZGFyZCBQQyAoaTQ0MEZYICsgUElJWCwgMTk5
+NiksIEJJT1MgMS4xMS4wLTIuZmMyOCAwNC8wMS8yMDE0DQo+ICAgUklQOiAwMDEwOnN0YWJsZV9w
+YWdlX2ZsYWdzKzB4MjcvMHgzYzANCj4gICBDb2RlOiAwMCAwMCAwMCAwZiAxZiA0NCAwMCAwMCA0
+OCA4NSBmZiAwZiA4NCBhMCAwMyAwMCAwMCA0MSA1NCA1NSA0OSA4OSBmYyA1MyA0OCA4YiA1NyAw
+OCA0OCA4YiAyZiA0OCA4ZCA0MiBmZiA4MyBlMiAwMSA0OCAwZiA0NCBjNyA8NDg+IDhiIDAwIGY2
+IGM0IDAxIDBmIDg0IDEwIDAzIDAwIDAwIDMxIGRiIDQ5IDhiIDU0IDI0IDA4IDRjIDg5IGU3DQo+
+ICAgUlNQOiAwMDE4OmZmZmZiYmQ0NDExMWZkZTAgRUZMQUdTOiAwMDAxMDIwMg0KPiAgIFJBWDog
+ZmZmZmZmZmZmZmZmZmZmZSBSQlg6IDAwMDA3ZmZmZmZmZmVmZjkgUkNYOiAwMDAwMDAwMDAwMDAw
+MDAwDQo+ICAgUkRYOiAwMDAwMDAwMDAwMDAwMDAxIFJTSTogMDAwMDAwMDAwMDAwMDIwMiBSREk6
+IGZmZmZlZDExODJmZmY1YzANCj4gICBSQlA6IGZmZmZmZmZmZmZmZmZmZmYgUjA4OiAwMDAwMDAw
+MDAwMDAwMDAxIFIwOTogMDAwMDAwMDAwMDAwMDAwMQ0KPiAgIFIxMDogZmZmZmJiZDQ0MTExZmVk
+OCBSMTE6IDAwMDAwMDAwMDAwMDAwMDAgUjEyOiBmZmZmZWQxMTgyZmZmNWMwDQo+ICAgUjEzOiAw
+MDAwMDAwMDAwMGJmZmQ3IFIxNDogMDAwMDAwMDAwMmZmZjVjMCBSMTU6IGZmZmZiYmQ0NDExMWZm
+MTANCj4gICBGUzogIDAwMDA3ZWZjNDMzNWE1MDAoMDAwMCkgR1M6ZmZmZjkzYTViZmMwMDAwMCgw
+MDAwKSBrbmxHUzowMDAwMDAwMDAwMDAwMDAwDQo+ICAgQ1M6ICAwMDEwIERTOiAwMDAwIEVTOiAw
+MDAwIENSMDogMDAwMDAwMDA4MDA1MDAzMw0KPiAgIENSMjogZmZmZmZmZmZmZmZmZmZmZSBDUjM6
+IDAwMDAwMDAwYjJhNTgwMDAgQ1I0OiAwMDAwMDAwMDAwMTQwNmUwDQo+ICAgQ2FsbCBUcmFjZToN
+Cj4gICAga3BhZ2VmbGFnc19yZWFkKzB4YzcvMHgxMjANCj4gICAgcHJvY19yZWdfcmVhZCsweDNj
+LzB4NjANCj4gICAgX192ZnNfcmVhZCsweDM2LzB4MTcwDQo+ICAgIHZmc19yZWFkKzB4ODkvMHgx
+MzANCj4gICAga3N5c19wcmVhZDY0KzB4NzEvMHg5MA0KPiAgICBkb19zeXNjYWxsXzY0KzB4NWIv
+MHgxNjANCj4gICAgZW50cnlfU1lTQ0FMTF82NF9hZnRlcl9od2ZyYW1lKzB4NDQvMHhhOQ0KPiAg
+IFJJUDogMDAzMzoweDdlZmM0MmU3NWUyMw0KPiAgIENvZGU6IDA5IDAwIGJhIDlmIDAxIDAwIDAw
+IGU4IGFiIDgxIGY0IGZmIDY2IDJlIDBmIDFmIDg0IDAwIDAwIDAwIDAwIDAwIDkwIDgzIDNkIDI5
+IDBhIDJkIDAwIDAwIDc1IDEzIDQ5IDg5IGNhIGI4IDExIDAwIDAwIDAwIDBmIDA1IDw0OD4gM2Qg
+MDEgZjAgZmYgZmYgNzMgMzQgYzMgNDggODMgZWMgMDggZTggZGIgZDMgMDEgMDAgNDggODkgMDQg
+MjQNCj4gDQo+IEFjY29yZGluZyB0byBrZXJuZWwgYmlzZWN0aW9uLCB0aGlzIHByb2JsZW0gYmVj
+YW1lIHZpc2libGUgZHVlIHRvIGNvbW1pdA0KPiBmN2Y5OTEwMGQ4ZDkgd2hpY2ggY2hhbmdlcyBo
+b3cgc3RydWN0IHBhZ2VzIGFyZSBpbml0aWFsaXplZC4NCj4gDQo+IE1lbWJsb2NrIGxheW91dCBh
+ZmZlY3RzIHRoZSBwZm4gcmFuZ2VzIGNvdmVyZWQgYnkgbm9kZS96b25lLiBDb25zaWRlcg0KPiB0
+aGF0IHdlIGhhdmUgYSBWTSB3aXRoIDIgTlVNQSBub2RlcyBhbmQgZWFjaCBub2RlIGhhcyA0R0Ig
+bWVtb3J5LCBhbmQNCj4gdGhlIGRlZmF1bHQgKG5vIG1lbW1hcD0gZ2l2ZW4pIG1lbWJsb2NrIGxh
+eW91dCBpcyBsaWtlIGJlbG93Og0KPiANCj4gICBNRU1CTE9DSyBjb25maWd1cmF0aW9uOg0KPiAg
+ICBtZW1vcnkgc2l6ZSA9IDB4MDAwMDAwMDFmZmY3NWMwMCByZXNlcnZlZCBzaXplID0gMHgwMDAw
+MDAwMDAzMDBjMDAwDQo+ICAgIG1lbW9yeS5jbnQgID0gMHg0DQo+ICAgIG1lbW9yeVsweDBdICAg
+ICBbMHgwMDAwMDAwMDAwMDAxMDAwLTB4MDAwMDAwMDAwMDA5ZWZmZl0sIDB4MDAwMDAwMDAwMDA5
+ZTAwMCBieXRlcyBvbiBub2RlIDAgZmxhZ3M6IDB4MA0KPiAgICBtZW1vcnlbMHgxXSAgICAgWzB4
+MDAwMDAwMDAwMDEwMDAwMC0weDAwMDAwMDAwYmZmZDZmZmZdLCAweDAwMDAwMDAwYmZlZDcwMDAg
+Ynl0ZXMgb24gbm9kZSAwIGZsYWdzOiAweDANCj4gICAgbWVtb3J5WzB4Ml0gICAgIFsweDAwMDAw
+MDAxMDAwMDAwMDAtMHgwMDAwMDAwMTNmZmZmZmZmXSwgMHgwMDAwMDAwMDQwMDAwMDAwIGJ5dGVz
+IG9uIG5vZGUgMCBmbGFnczogMHgwDQo+ICAgIG1lbW9yeVsweDNdICAgICBbMHgwMDAwMDAwMTQw
+MDAwMDAwLTB4MDAwMDAwMDIzZmZmZmZmZl0sIDB4MDAwMDAwMDEwMDAwMDAwMCBieXRlcyBvbiBu
+b2RlIDEgZmxhZ3M6IDB4MA0KPiAgICAuLi4NCj4gDQo+IElmIHlvdSBnaXZlIG1lbW1hcD0xRyE0
+RyAoc28gaXQganVzdCBjb3ZlcnMgbWVtb3J5WzB4Ml0pLA0KPiB0aGUgcmFuZ2UgWzB4MTAwMDAw
+MDAwLTB4MTNmZmZmZmZmXSBpcyBnb25lOg0KPiANCj4gICBNRU1CTE9DSyBjb25maWd1cmF0aW9u
+Og0KPiAgICBtZW1vcnkgc2l6ZSA9IDB4MDAwMDAwMDFiZmY3NWMwMCByZXNlcnZlZCBzaXplID0g
+MHgwMDAwMDAwMDAzMDBjMDAwDQo+ICAgIG1lbW9yeS5jbnQgID0gMHgzDQo+ICAgIG1lbW9yeVsw
+eDBdICAgICBbMHgwMDAwMDAwMDAwMDAxMDAwLTB4MDAwMDAwMDAwMDA5ZWZmZl0sIDB4MDAwMDAw
+MDAwMDA5ZTAwMCBieXRlcyBvbiBub2RlIDAgZmxhZ3M6IDB4MA0KPiAgICBtZW1vcnlbMHgxXSAg
+ICAgWzB4MDAwMDAwMDAwMDEwMDAwMC0weDAwMDAwMDAwYmZmZDZmZmZdLCAweDAwMDAwMDAwYmZl
+ZDcwMDAgYnl0ZXMgb24gbm9kZSAwIGZsYWdzOiAweDANCj4gICAgbWVtb3J5WzB4Ml0gICAgIFsw
+eDAwMDAwMDAxNDAwMDAwMDAtMHgwMDAwMDAwMjNmZmZmZmZmXSwgMHgwMDAwMDAwMTAwMDAwMDAw
+IGJ5dGVzIG9uIG5vZGUgMSBmbGFnczogMHgwDQo+ICAgIC4uLg0KPiANCj4gVGhpcyBjYXVzZXMg
+c2hyaW5raW5nIG5vZGUgMCdzIHBmbiByYW5nZSBiZWNhdXNlIGl0IGlzIGNhbGN1bGF0ZWQgYnkN
+Cj4gdGhlIGFkZHJlc3MgcmFuZ2Ugb2YgbWVtYmxvY2subWVtb3J5LiBTbyBzb21lIG9mIHN0cnVj
+dCBwYWdlcyBpbiB0aGUNCj4gZ2FwIHJhbmdlIGFyZSBsZWZ0IHVuaW5pdGlhbGl6ZWQuDQo+IA0K
+PiBXZSBoYXZlIGEgZnVuY3Rpb24gemVyb19yZXN2X3VuYXZhaWwoKSB3aGljaCBkb2VzIHplcm9p
+bmcgdGhlIHN0cnVjdA0KPiBwYWdlcyBvdXRzaWRlIG1lbWJsb2NrLm1lbW9yeSwgYnV0IGN1cnJl
+bnRseSBpdCBjb3ZlcnMgb25seSB0aGUgcmVzZXJ2ZWQNCj4gdW5hdmFpbGFibGUgcmFuZ2UgKGku
+ZS4gbWVtYmxvY2subWVtb3J5ICYmICFtZW1ibG9jay5yZXNlcnZlZCkuDQo+IFRoaXMgcGF0Y2gg
+ZXh0ZW5kcyBpdCB0byBjb3ZlciBhbGwgdW5hdmFpbGFibGUgcmFuZ2UsIHdoaWNoIGZpeGVzDQo+
+IHRoZSByZXBvcnRlZCBpc3N1ZS4NCj4gDQo+IEZpeGVzOiBmN2Y5OTEwMGQ4ZDkgKCJtbTogc3Rv
+cCB6ZXJvaW5nIG1lbW9yeSBkdXJpbmcgYWxsb2NhdGlvbiBpbiB2bWVtbWFwIikNCj4gU2lnbmVk
+LW9mZi1ieTogTmFveWEgSG9yaWd1Y2hpIDxuLWhvcmlndWNoaUBhaC5qcC5uZWMuY29tPg0KPiBU
+ZXN0ZWQtYnk6IE9zY2FyIFNhbHZhZG9yIDxvc2FsdmFkb3JAc3VzZS5kZT4NCj4gVGVzdGVkLWJ5
+OiBNYXNheW9zaGkgTWl6dW1hIDxtLm1penVtYUBqcC5mdWppdHN1LmNvbT4NCg0KUmV2aWV3ZWQt
+Ynk6IFBhdmVsIFRhdGFzaGluIDxwYXZlbC50YXRhc2hpbkBtaWNyb3NvZnQuY29tPg0KDQpBbHNv
+LCBwbGVhc2UgcmV2aWV3IGFuZCBhZGQgdGhlIGZvbGxvd2luZyBwYXRjaCB0byB0aGlzIHNlcmll
+czoNCg0KRnJvbSA2ZDIzZTY2ZTk3OTI0NDczNGEwNmMxYjYzNjc0MmMyNTY4MTIxYjM5IE1vbiBT
+ZXAgMTcgMDA6MDA6MDAgMjAwMQ0KRnJvbTogUGF2ZWwgVGF0YXNoaW4gPHBhdmVsLnRhdGFzaGlu
+QG1pY3Jvc29mdC5jb20+DQpEYXRlOiBNb24sIDI3IEF1ZyAyMDE4IDE5OjEwOjM1IC0wNDAwDQpT
+dWJqZWN0OiBbUEFUQ0hdIG1tOiByZXR1cm4gemVyb19yZXN2X3VuYXZhaWwgb3B0aW1pemF0aW9u
+DQoNCldoZW4gY2hlY2tpbmcgZm9yIHZhbGlkIHBmbnMgaW4gemVyb19yZXN2X3VuYXZhaWwoKSwg
+aXQgaXMgbm90IG5lY2Vzc2FyeSB0bw0KdmVyaWZ5IHRoYXQgcGZucyB3aXRoaW4gcGFnZWJsb2Nr
+X25yX3BhZ2VzIHJhbmdlcyBhcmUgdmFsaWQsIG9ubHkgdGhlIGZpcnN0DQpvbmUgbmVlZHMgdG8g
+YmUgY2hlY2tlZC4gVGhpcyBpcyBiZWNhdXNlIG1lbW9yeSBmb3IgcGFnZXMgYXJlIGFsbG9jYXRl
+ZCBpbg0KY29udGlndW91cyBjaHVua3MgdGhhdCBjb250YWluIHBhZ2VibG9ja19ucl9wYWdlcyBz
+dHJ1Y3QgcGFnZXMuDQoNClNpZ25lZC1vZmYtYnk6IFBhdmVsIFRhdGFzaGluIDxwYXZlbC50YXRh
+c2hpbkBtaWNyb3NvZnQuY29tPg0KLS0tDQogbW0vcGFnZV9hbGxvYy5jIHwgNDYgKysrKysrKysr
+KysrKysrKysrKysrKysrKystLS0tLS0tLS0tLS0tLS0tLS0tLQ0KIDEgZmlsZSBjaGFuZ2VkLCAy
+NiBpbnNlcnRpb25zKCspLCAyMCBkZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL21tL3BhZ2Vf
+YWxsb2MuYyBiL21tL3BhZ2VfYWxsb2MuYw0KaW5kZXggNjUwZDhmMTZhNjdlLi41ZGZjMjA2ZGI0
+MGUgMTAwNjQ0DQotLS0gYS9tbS9wYWdlX2FsbG9jLmMNCisrKyBiL21tL3BhZ2VfYWxsb2MuYw0K
+QEAgLTY0NDEsNiArNjQ0MSwyOSBAQCB2b2lkIF9faW5pdCBmcmVlX2FyZWFfaW5pdF9ub2RlKGlu
+dCBuaWQsIHVuc2lnbmVkIGxvbmcgKnpvbmVzX3NpemUsDQogfQ0KIA0KICNpZiBkZWZpbmVkKENP
+TkZJR19IQVZFX01FTUJMT0NLKSAmJiAhZGVmaW5lZChDT05GSUdfRkxBVF9OT0RFX01FTV9NQVAp
+DQorDQorLyoNCisgKiBaZXJvIGFsbCB2YWxpZCBzdHJ1Y3QgcGFnZXMgaW4gcmFuZ2UgW3NwZm4s
+IGVwZm4pLCByZXR1cm4gbnVtYmVyIG9mIHN0cnVjdA0KKyAqIHBhZ2VzIHplcm9lZA0KKyAqLw0K
+K3N0YXRpYyB1NjQgemVyb19wZm5fcmFuZ2UodW5zaWduZWQgbG9uZyBzcGZuLCB1bnNpZ25lZCBs
+b25nIGVwZm4pDQorew0KKwl1bnNpZ25lZCBsb25nIHBmbjsNCisJdTY0IHBnY250ID0gMDsNCisN
+CisJZm9yIChwZm4gPSBzcGZuOyBwZm4gPCBlcGZuOyBwZm4rKykgew0KKwkJaWYgKCFwZm5fdmFs
+aWQoQUxJR05fRE9XTihwZm4sIHBhZ2VibG9ja19ucl9wYWdlcykpKSB7DQorCQkJcGZuID0gQUxJ
+R05fRE9XTihwZm4sIHBhZ2VibG9ja19ucl9wYWdlcykNCisJCQkJKyBwYWdlYmxvY2tfbnJfcGFn
+ZXMgLSAxOw0KKwkJCWNvbnRpbnVlOw0KKwkJfQ0KKwkJbW1femVyb19zdHJ1Y3RfcGFnZShwZm5f
+dG9fcGFnZShwZm4pKTsNCisJCXBnY250Kys7DQorCX0NCisNCisJcmV0dXJuIHBnY250Ow0KK30N
+CisNCiAvKg0KICAqIE9ubHkgc3RydWN0IHBhZ2VzIHRoYXQgYXJlIGJhY2tlZCBieSBwaHlzaWNh
+bCBtZW1vcnkgYXJlIHplcm9lZCBhbmQNCiAgKiBpbml0aWFsaXplZCBieSBnb2luZyB0aHJvdWdo
+IF9faW5pdF9zaW5nbGVfcGFnZSgpLiBCdXQsIHRoZXJlIGFyZSBzb21lDQpAQCAtNjQ1Niw3ICs2
+NDc5LDYgQEAgdm9pZCBfX2luaXQgZnJlZV9hcmVhX2luaXRfbm9kZShpbnQgbmlkLCB1bnNpZ25l
+ZCBsb25nICp6b25lc19zaXplLA0KIHZvaWQgX19pbml0IHplcm9fcmVzdl91bmF2YWlsKHZvaWQp
+DQogew0KIAlwaHlzX2FkZHJfdCBzdGFydCwgZW5kOw0KLQl1bnNpZ25lZCBsb25nIHBmbjsNCiAJ
+dTY0IGksIHBnY250Ow0KIAlwaHlzX2FkZHJfdCBuZXh0ID0gMDsNCiANCkBAIC02NDY2LDM0ICs2
+NDg4LDE4IEBAIHZvaWQgX19pbml0IHplcm9fcmVzdl91bmF2YWlsKHZvaWQpDQogCXBnY250ID0g
+MDsNCiAJZm9yX2VhY2hfbWVtX3JhbmdlKGksICZtZW1ibG9jay5tZW1vcnksIE5VTEwsDQogCQkJ
+TlVNQV9OT19OT0RFLCBNRU1CTE9DS19OT05FLCAmc3RhcnQsICZlbmQsIE5VTEwpIHsNCi0JCWlm
+IChuZXh0IDwgc3RhcnQpIHsNCi0JCQlmb3IgKHBmbiA9IFBGTl9ET1dOKG5leHQpOyBwZm4gPCBQ
+Rk5fVVAoc3RhcnQpOyBwZm4rKykgew0KLQkJCQlpZiAoIXBmbl92YWxpZChBTElHTl9ET1dOKHBm
+biwgcGFnZWJsb2NrX25yX3BhZ2VzKSkpDQotCQkJCQljb250aW51ZTsNCi0JCQkJbW1femVyb19z
+dHJ1Y3RfcGFnZShwZm5fdG9fcGFnZShwZm4pKTsNCi0JCQkJcGdjbnQrKzsNCi0JCQl9DQotCQl9
+DQorCQlpZiAobmV4dCA8IHN0YXJ0KQ0KKwkJCXBnY250ICs9IHplcm9fcGZuX3JhbmdlKFBGTl9E
+T1dOKG5leHQpLCBQRk5fVVAoc3RhcnQpKTsNCiAJCW5leHQgPSBlbmQ7DQogCX0NCi0JZm9yIChw
+Zm4gPSBQRk5fRE9XTihuZXh0KTsgcGZuIDwgbWF4X3BmbjsgcGZuKyspIHsNCi0JCWlmICghcGZu
+X3ZhbGlkKEFMSUdOX0RPV04ocGZuLCBwYWdlYmxvY2tfbnJfcGFnZXMpKSkNCi0JCQljb250aW51
+ZTsNCi0JCW1tX3plcm9fc3RydWN0X3BhZ2UocGZuX3RvX3BhZ2UocGZuKSk7DQotCQlwZ2NudCsr
+Ow0KLQl9DQotDQorCXBnY250ICs9IHplcm9fcGZuX3JhbmdlKFBGTl9ET1dOKG5leHQpLCBtYXhf
+cGZuKTsNCiANCiAJLyoNCiAJICogU3RydWN0IHBhZ2VzIHRoYXQgZG8gbm90IGhhdmUgYmFja2lu
+ZyBtZW1vcnkuIFRoaXMgY291bGQgYmUgYmVjYXVzZQ0KIAkgKiBmaXJtd2FyZSBpcyB1c2luZyBz
+b21lIG9mIHRoaXMgbWVtb3J5LCBvciBmb3Igc29tZSBvdGhlciByZWFzb25zLg0KLQkgKiBPbmNl
+IG1lbWJsb2NrIGlzIGNoYW5nZWQgc28gc3VjaCBiZWhhdmlvdXIgaXMgbm90IGFsbG93ZWQ6IGku
+ZS4NCi0JICogbGlzdCBvZiAicmVzZXJ2ZWQiIG1lbW9yeSBtdXN0IGJlIGEgc3Vic2V0IG9mIGxp
+c3Qgb2YgIm1lbW9yeSIsIHRoZW4NCi0JICogdGhpcyBjb2RlIGNhbiBiZSByZW1vdmVkLg0KIAkg
+Ki8NCiAJaWYgKHBnY250KQ0KIAkJcHJfaW5mbygiWmVyb2VkIHN0cnVjdCBwYWdlIGluIHVuYXZh
+aWxhYmxlIHJhbmdlczogJWxsZCBwYWdlcyIsIHBnY250KTsNCi0NCiB9DQogI2VuZGlmIC8qIENP
+TkZJR19IQVZFX01FTUJMT0NLICYmICFDT05GSUdfRkxBVF9OT0RFX01FTV9NQVAgKi8NCiANCi0t
+IA0KMi4xOC4wDQo=
