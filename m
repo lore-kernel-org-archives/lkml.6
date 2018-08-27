@@ -2,120 +2,354 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4F39C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 09:12:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06180C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 09:13:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77301204EC
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 09:12:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77301204EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B627B204EC
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 09:13:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B627B204EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727488AbeH0M6k (ORCPT
+        id S1727130AbeH0M6Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 08:58:40 -0400
-Received: from mga07.intel.com ([134.134.136.100]:58054 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726809AbeH0M6k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 08:58:40 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2018 02:12:51 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,294,1531810800"; 
-   d="scan'208";a="68389495"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga008.jf.intel.com with ESMTP; 27 Aug 2018 02:12:38 -0700
-Received: from [10.125.252.155] (abudanko-mobl.ccr.corp.intel.com [10.125.252.155])
-        by linux.intel.com (Postfix) with ESMTP id 7C0B95803DA;
-        Mon, 27 Aug 2018 02:12:35 -0700 (PDT)
-Subject: Re: [PATCH v2 2/2]: perf record: enable asynchronous trace writing
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Mon, 27 Aug 2018 08:58:25 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39630 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726825AbeH0M6Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 08:58:24 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 47E108573A;
+        Mon, 27 Aug 2018 09:12:34 +0000 (UTC)
+Received: from krava.brq.redhat.com (unknown [10.43.17.209])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 914EA2166B41;
+        Mon, 27 Aug 2018 09:12:32 +0000 (UTC)
+From:   Jiri Olsa <jolsa@kernel.org>
+To:     Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org
-References: <e92805d0-3338-2ce5-5e88-369d406fe0a7@linux.intel.com>
- <54cc11d7-3ef2-c856-052e-6e2c309ff743@linux.intel.com>
- <20180827083457.GE24695@krava>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <8afd6aaf-45ec-e477-78bd-83b6c99da713@linux.intel.com>
-Date:   Mon, 27 Aug 2018 12:12:34 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180827083457.GE24695@krava>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Milind Chabbi <chabbi.milind@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>
+Subject: [PATCH 1/5] perf tests: Add breakpoint modify tests
+Date:   Mon, 27 Aug 2018 11:12:24 +0200
+Message-Id: <20180827091228.2878-2-jolsa@kernel.org>
+In-Reply-To: <20180827091228.2878-1-jolsa@kernel.org>
+References: <20180827091228.2878-1-jolsa@kernel.org>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 27 Aug 2018 09:12:34 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 27 Aug 2018 09:12:34 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@kernel.org' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Adding to tests that aims on kernel breakpoint
+modification bugs.
 
-On 27.08.2018 11:34, Jiri Olsa wrote:
-> On Thu, Aug 23, 2018 at 07:47:01PM +0300, Alexey Budankov wrote:
-> 
-> SNIP
-> 
->> diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
->> index e71d46cb01cc..c8b921c88a5d 100644
->> --- a/tools/perf/util/mmap.c
->> +++ b/tools/perf/util/mmap.c
->> @@ -292,11 +292,11 @@ int perf_mmap__read_init(struct perf_mmap *map)
->>  }
->>  
->>  int perf_mmap__push(struct perf_mmap *md, void *to,
->> -		    int push(void *to, void *buf, size_t size))
->> +		    int push(void *to, void *buf, size_t size, off_t), off_t *off)
->>  {
->>  	u64 head = perf_mmap__read_head(md);
->>  	unsigned char *data = md->base + page_size;
->> -	unsigned long size;
->> +	unsigned long size, size0 = 0;
->>  	void *buf;
->>  	int rc = 0;
->>  
->> @@ -308,23 +308,22 @@ int perf_mmap__push(struct perf_mmap *md, void *to,
->>  
->>  	if ((md->start & md->mask) + size != (md->end & md->mask)) {
->>  		buf = &data[md->start & md->mask];
->> -		size = md->mask + 1 - (md->start & md->mask);
->> -		md->start += size;
->> -
->> -		if (push(to, buf, size) < 0) {
->> -			rc = -1;
->> -			goto out;
->> -		}
->> +		size0 = md->mask + 1 - (md->start & md->mask);
->> +		md->start += size0;
->> +		memcpy(md->data, buf, size0);
->>  	}
->>  
->>  	buf = &data[md->start & md->mask];
->>  	size = md->end - md->start;
->>  	md->start += size;
->> +	memcpy(md->data + size0, buf, size);
-> 
-> this will need more comments.. and explanation why we copy the data
-> over to another buffer.. it's interesting, it's still faster 
+First test creates HW breakpoint, tries to change
+it and checks it was properly changed. It aims
+on kernel issue that prevents HW breakpoint to
+be changed via ptrace interface.
 
-Sure. Comments will follow in v3. 
-We copy data into a buffer to release space in the kernel buffer 
-as fast as possible. That lets the kernel to store more data earlier 
-than other per-cpu buffers are handled.
+The first test forks, the child sets itself as ptrace
+tracee and waits in signal for parent to trace it,
+then it calls bp_1 and quits.
 
-> 
-> jirka
-> 
+The parent does following steps:
+ - creates a new breakpoint (id 0) for bp_2 function
+ - changes that breakpoint to bp_1 function
+ - waits for the breakpoint to hit and checks
+   it has proper rip of bp_1 function
+
+This test aims on an issue in kernel preventing to change
+disabled breakpoints
+
+Second test mimics the first one except for few steps
+in the parent:
+ - creates a new breakpoint (id 0) for bp_1 function
+ - changes that breakpoint to bogus (-1) address
+ - waits for the breakpoint to hit and checks
+   it has proper rip of bp_1 function
+
+This test aims on an issue in kernel disabling enabled
+breakpoint after unsuccesful change.
+
+Link: http://lkml.kernel.org/n/tip-8a3x8utnljw8xtumkxkxkt18@git.kernel.org
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+---
+ tools/perf/arch/x86/include/arch-tests.h |   1 +
+ tools/perf/arch/x86/tests/Build          |   1 +
+ tools/perf/arch/x86/tests/arch-tests.c   |   6 +
+ tools/perf/arch/x86/tests/bp-modify.c    | 213 +++++++++++++++++++++++
+ 4 files changed, 221 insertions(+)
+ create mode 100644 tools/perf/arch/x86/tests/bp-modify.c
+
+diff --git a/tools/perf/arch/x86/include/arch-tests.h b/tools/perf/arch/x86/include/arch-tests.h
+index c1bd979b957b..613709cfbbd0 100644
+--- a/tools/perf/arch/x86/include/arch-tests.h
++++ b/tools/perf/arch/x86/include/arch-tests.h
+@@ -9,6 +9,7 @@ struct test;
+ int test__rdpmc(struct test *test __maybe_unused, int subtest);
+ int test__perf_time_to_tsc(struct test *test __maybe_unused, int subtest);
+ int test__insn_x86(struct test *test __maybe_unused, int subtest);
++int test__bp_modify(struct test *test, int subtest);
+ 
+ #ifdef HAVE_DWARF_UNWIND_SUPPORT
+ struct thread;
+diff --git a/tools/perf/arch/x86/tests/Build b/tools/perf/arch/x86/tests/Build
+index 8e2c5a38c3b9..586849ff83a0 100644
+--- a/tools/perf/arch/x86/tests/Build
++++ b/tools/perf/arch/x86/tests/Build
+@@ -5,3 +5,4 @@ libperf-y += arch-tests.o
+ libperf-y += rdpmc.o
+ libperf-y += perf-time-to-tsc.o
+ libperf-$(CONFIG_AUXTRACE) += insn-x86.o
++libperf-$(CONFIG_X86_64) += bp-modify.o
+diff --git a/tools/perf/arch/x86/tests/arch-tests.c b/tools/perf/arch/x86/tests/arch-tests.c
+index cc1802ff5410..d47d3f8e3c8e 100644
+--- a/tools/perf/arch/x86/tests/arch-tests.c
++++ b/tools/perf/arch/x86/tests/arch-tests.c
+@@ -23,6 +23,12 @@ struct test arch_tests[] = {
+ 		.desc = "x86 instruction decoder - new instructions",
+ 		.func = test__insn_x86,
+ 	},
++#endif
++#if defined(__x86_64__)
++	{
++		.desc = "x86 bp modify",
++		.func = test__bp_modify,
++	},
+ #endif
+ 	{
+ 		.func = NULL,
+diff --git a/tools/perf/arch/x86/tests/bp-modify.c b/tools/perf/arch/x86/tests/bp-modify.c
+new file mode 100644
+index 000000000000..f53e4406709f
+--- /dev/null
++++ b/tools/perf/arch/x86/tests/bp-modify.c
+@@ -0,0 +1,213 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <linux/compiler.h>
++#include <sys/types.h>
++#include <sys/wait.h>
++#include <sys/user.h>
++#include <syscall.h>
++#include <unistd.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <sys/ptrace.h>
++#include <asm/ptrace.h>
++#include <errno.h>
++#include "debug.h"
++#include "tests/tests.h"
++#include "arch-tests.h"
++
++static noinline int bp_1(void)
++{
++	pr_debug("in %s\n", __func__);
++	return 0;
++}
++
++static noinline int bp_2(void)
++{
++	pr_debug("in %s\n", __func__);
++	return 0;
++}
++
++static int spawn_child(void)
++{
++	int child = fork();
++
++	if (child == 0) {
++		/*
++		 * The child sets itself for as tracee and
++		 * waits in signal for parent to trace it,
++		 * then it calls bp_1 and quits.
++		 */
++		int err = ptrace(PTRACE_TRACEME, 0, NULL, NULL);
++
++		if (err) {
++			pr_debug("failed to PTRACE_TRACEME\n");
++			exit(1);
++		}
++
++		raise(SIGCONT);
++		bp_1();
++		exit(0);
++	}
++
++	return child;
++}
++
++/*
++ * This tests creates HW breakpoint, tries to
++ * change it and checks it was properly changed.
++ */
++static int bp_modify1(void)
++{
++	pid_t child;
++	int status;
++	unsigned long rip = 0, dr7 = 1;
++
++	child = spawn_child();
++
++	waitpid(child, &status, 0);
++	if (WIFEXITED(status)) {
++		pr_debug("tracee exited prematurely 1\n");
++		return TEST_FAIL;
++	}
++
++	/*
++	 * The parent does following steps:
++	 *  - creates a new breakpoint (id 0) for bp_2 function
++	 *  - changes that breakponit to bp_1 function
++	 *  - waits for the breakpoint to hit and checks
++	 *    it has proper rip of bp_1 function
++	 *  - detaches the child
++	 */
++	if (ptrace(PTRACE_POKEUSER, child,
++		   offsetof(struct user, u_debugreg[0]), bp_2)) {
++		pr_debug("failed to set breakpoint, 1st time: %s\n",
++			 strerror(errno));
++		goto out;
++	}
++
++	if (ptrace(PTRACE_POKEUSER, child,
++		   offsetof(struct user, u_debugreg[0]), bp_1)) {
++		pr_debug("failed to set breakpoint, 2nd time: %s\n",
++			 strerror(errno));
++		goto out;
++	}
++
++	if (ptrace(PTRACE_POKEUSER, child,
++		   offsetof(struct user, u_debugreg[7]), dr7)) {
++		pr_debug("failed to set dr7: %s\n", strerror(errno));
++		goto out;
++	}
++
++	if (ptrace(PTRACE_CONT, child, NULL, NULL)) {
++		pr_debug("failed to PTRACE_CONT: %s\n", strerror(errno));
++		goto out;
++	}
++
++	waitpid(child, &status, 0);
++	if (WIFEXITED(status)) {
++		pr_debug("tracee exited prematurely 2\n");
++		return TEST_FAIL;
++	}
++
++	rip = ptrace(PTRACE_PEEKUSER, child,
++		     offsetof(struct user_regs_struct, rip), NULL);
++	if (rip == (unsigned long) -1) {
++		pr_debug("failed to PTRACE_PEEKUSER: %s\n",
++			 strerror(errno));
++		goto out;
++	}
++
++	pr_debug("rip %lx, bp_1 %p\n", rip, bp_1);
++
++out:
++	if (ptrace(PTRACE_DETACH, child, NULL, NULL)) {
++		pr_debug("failed to PTRACE_DETACH: %s", strerror(errno));
++		return TEST_FAIL;
++	}
++
++	return rip == (unsigned long) bp_1 ? TEST_OK : TEST_FAIL;
++}
++
++/*
++ * This tests creates HW breakpoint, tries to
++ * change it to bogus value and checks the original
++ * breakpoint is hit.
++ */
++static int bp_modify2(void)
++{
++	pid_t child;
++	int status;
++	unsigned long rip = 0, dr7 = 1;
++
++	child = spawn_child();
++
++	waitpid(child, &status, 0);
++	if (WIFEXITED(status)) {
++		pr_debug("tracee exited prematurely 1\n");
++		return TEST_FAIL;
++	}
++
++	/*
++	 * The parent does following steps:
++	 *  - creates a new breakpoint (id 0) for bp_1 function
++	 *  - tries to change that breakpoint to (-1) address
++	 *  - waits for the breakpoint to hit and checks
++	 *    it has proper rip of bp_1 function
++	 *  - detaches the child
++	 */
++	if (ptrace(PTRACE_POKEUSER, child,
++		   offsetof(struct user, u_debugreg[0]), bp_1)) {
++		pr_debug("failed to set breakpoint: %s\n",
++			 strerror(errno));
++		goto out;
++	}
++
++	if (ptrace(PTRACE_POKEUSER, child,
++		   offsetof(struct user, u_debugreg[7]), dr7)) {
++		pr_debug("failed to set dr7: %s\n", strerror(errno));
++		goto out;
++	}
++
++	if (!ptrace(PTRACE_POKEUSER, child,
++		   offsetof(struct user, u_debugreg[0]), (unsigned long) (-1))) {
++		pr_debug("failed, breakpoint set to bogus address\n");
++		goto out;
++	}
++
++	if (ptrace(PTRACE_CONT, child, NULL, NULL)) {
++		pr_debug("failed to PTRACE_CONT: %s\n", strerror(errno));
++		goto out;
++	}
++
++	waitpid(child, &status, 0);
++	if (WIFEXITED(status)) {
++		pr_debug("tracee exited prematurely 2\n");
++		return TEST_FAIL;
++	}
++
++	rip = ptrace(PTRACE_PEEKUSER, child,
++		     offsetof(struct user_regs_struct, rip), NULL);
++	if (rip == (unsigned long) -1) {
++		pr_debug("failed to PTRACE_PEEKUSER: %s\n",
++			 strerror(errno));
++		goto out;
++	}
++
++	pr_debug("rip %lx, bp_1 %p\n", rip, bp_1);
++
++out:
++	if (ptrace(PTRACE_DETACH, child, NULL, NULL)) {
++		pr_debug("failed to PTRACE_DETACH: %s", strerror(errno));
++		return TEST_FAIL;
++	}
++
++	return rip == (unsigned long) bp_1 ? TEST_OK : TEST_FAIL;
++}
++
++int test__bp_modify(struct test *test __maybe_unused,
++		    int subtest __maybe_unused)
++{
++	TEST_ASSERT_VAL("modify test 1 failed\n", !bp_modify1());
++	TEST_ASSERT_VAL("modify test 2 failed\n", !bp_modify2());
++
++	return 0;
++}
+-- 
+2.17.1
+
