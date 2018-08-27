@@ -2,113 +2,210 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4731CC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 08:43:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4E93C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 08:43:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08F0B208B2
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 08:43:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08F0B208B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A0DF7208B2
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 08:43:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0DF7208B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=diasemi.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727380AbeH0M3T (ORCPT
+        id S1727407AbeH0M3a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 08:29:19 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48538 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727346AbeH0M3S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 08:29:18 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A7E004023461;
-        Mon, 27 Aug 2018 08:43:35 +0000 (UTC)
-Received: from krava (unknown [10.43.17.209])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 46167A9E52;
-        Mon, 27 Aug 2018 08:43:34 +0000 (UTC)
-Date:   Mon, 27 Aug 2018 10:43:33 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v2 2/2]: perf record: enable asynchronous trace writing
-Message-ID: <20180827084333.GG24695@krava>
-References: <e92805d0-3338-2ce5-5e88-369d406fe0a7@linux.intel.com>
- <54cc11d7-3ef2-c856-052e-6e2c309ff743@linux.intel.com>
+        Mon, 27 Aug 2018 08:29:30 -0400
+Received: from mail1.bemta25.messagelabs.com ([195.245.230.67]:4984 "EHLO
+        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727120AbeH0M3I (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 08:29:08 -0400
+Received: from [46.226.52.194] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
+        by server-3.bemta.az-b.eu-west-1.aws.symcld.net id 81/02-19860-BA9B38B5; Mon, 27 Aug 2018 08:43:23 +0000
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuplleJIrShJLcpLzFFi42IJ73Q4rLt6Z3O
+  0weJfChbzj5xjtTi86AWjxc1P31gtLu+aw2ax9PpFJovWvUfYHdg81sxbw+ixc9Zddo9NqzrZ
+  PD5vkgtgiWLNzEvKr0hgzfh6Zj9LwW61infd3xkbGN/KdzFycQgJrGWU2LnwC1sXIweQUyHx4
+  oRmFyMnB69AhMT6t39YQWxOATOJaf3trBAlphJ3LkuDhNkEdCQezVzPBGKzCKhKdE28AjZFWM
+  BHYneDLEhYRCBI4vGjsywgm5gFdjNKfLhwgBlivKDEyZlPWEBsZgEJiYMvXoDFhQS0JM6tWcU
+  IYksI2EtMf3+VGcLWl3j5dSMThG0o8X3WNxaQXRIC5hJHPhVAhK0lrn+YxTaBUWgWkg2zkGxY
+  wMi0itE8qSgzPaMkNzEzR9fQwEDX0NBI19DSQtfIWC+xSjdJL7VUtzy1uETXUC+xvFivuDI3O
+  SdFLy+1ZBMjMDoYgGAH4+4LyYcYJTmYlER5H1k1RQvxJeWnVGYkFmfEF5XmpBYfYpTh4FCS4L
+  22ozlaSLAoNT21Ii0zBxinMGkJDh4lEV4XkDRvcUFibnFmOkTqFKMlx6enPZOYOVbdnwIk/7y
+  fOolZiCUvPy9VSpx3KUiDAEhDRmke3DhYKrnEKCslzMsIdKAQT0FqUW5mCar8K0ZxDkYlYV5u
+  YGIS4snMK4Hb+groICagg2a8agA5qCQRISXVwGg6u1/29Przq6ffZjebuEUrIoCbcVbZ/ysWd
+  +e5139hb1nyqkzyFv+zi0rX//TLn5pUdE7oe+zVRNMQ9t1bGh7Gp+0NFAlTY47yjtp06WoUQ0
+  v1prCPZw9o8BjmHen4YL13oXZI9pasfNWLK3cGHksXjTmwTWO/3s0kkQ+LRKM4PD+Xmz+8kqL
+  EUpyRaKjFXFScCAD+oWTpIAMAAA==
+X-Env-Sender: roy.im.opensource@diasemi.com
+X-Msg-Ref: server-19.tower-282.messagelabs.com!1535359403!5991626!2
+X-Originating-IP: [87.137.64.195]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.9.15; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 28699 invoked from network); 27 Aug 2018 08:43:23 -0000
+Received: from unknown (HELO NB-EX-CASHUB01.diasemi.com) (87.137.64.195)
+  by server-19.tower-282.messagelabs.com with AES128-SHA encrypted SMTP; 27 Aug 2018 08:43:23 -0000
+Received: from krsrvapps-01.diasemi.com (10.95.17.50) by
+ NB-EX-CASHUB01.diasemi.com (10.1.16.140) with Microsoft SMTP Server id
+ 14.3.382.0; Mon, 27 Aug 2018 10:43:22 +0200
+Received: by krsrvapps-01.diasemi.com (Postfix, from userid 22266)      id
+ 277B25F7FC; Mon, 27 Aug 2018 17:43:21 +0900 (KST)
+Message-ID: <a0aba6fe0b63f5a685743c88e192701731e289ab.1535358095.git.Roy.Im@diasemi.com>
+In-Reply-To: <cover.1535358095.git.Roy.Im@diasemi.com>
+References: <cover.1535358095.git.Roy.Im@diasemi.com>
+From:   Roy Im <roy.im.opensource@diasemi.com>
+Date:   Mon, 27 Aug 2018 17:21:35 +0900
+Subject: [PATCH V5 2/3] dt-bindings: input: Add document bindings for DA7280
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     Mark Rutland <mark.rutland@arm.com>,
+        Support Opensource <support.opensource@diasemi.com>,
+        <devicetree@vger.kernel.org>, <linux-input@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <54cc11d7-3ef2-c856-052e-6e2c309ff743@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 27 Aug 2018 08:43:35 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 27 Aug 2018 08:43:35 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
+Content-Type: text/plain
+X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
+X-KSE-ServerInfo: NB-EX-CASHUB01.diasemi.com, 9
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 27.08.2018 03:30:00
+X-EXCLAIMER-MD-CONFIG: 8d172408-bd6a-42b1-8e53-daaedf35a5af
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 23, 2018 at 07:47:01PM +0300, Alexey Budankov wrote:
 
-SNIP
+Add device tree binding information for DA7280 haptic driver.
+Example bindings for DA7280 are added.
 
->  
->  static volatile int done;
-> @@ -528,13 +530,85 @@ static struct perf_event_header finished_round_event = {
->  	.type = PERF_RECORD_FINISHED_ROUND,
->  };
->  
-> +static int record__mmap_read_sync(int trace_fd, struct aiocb **cblocks,
-> +		int cblocks_size, struct record *rec)
-> +{
-> +	size_t rem;
-> +	ssize_t size;
-> +	off_t rem_off;
-> +	int i, aio_ret, aio_errno, do_suspend;
-> +	struct perf_mmap *md;
-> +	struct timespec timeout0 = { 0, 0 };
-> +	struct timespec timeoutS = { 0, 1000 * 1000  * 1 };
-> +
-> +	if (!cblocks_size)
-> +		return 0;
-> +
-> +	do {
-> +		do_suspend = 0;
-> +		nanosleep(&timeoutS, NULL);
-> +		if (aio_suspend((const struct aiocb**)cblocks, cblocks_size, &timeout0)) {
-> +			if (errno == EAGAIN || errno == EINTR) {
-> +				do_suspend = 1;
-> +				continue;
-> +			} else {
-> +				pr_err("failed to sync perf data, error: %m\n");
-> +				break;
-> +			}
-> +		}
-> +		for (i = 0; i < cblocks_size; i++) {
+Signed-off-by: Roy Im <roy.im.opensource@diasemi.com>
 
-it looks like we could set up the async write to receive the signal
-with the user pointer (sigev_value.sival_ptr), which would allow us
-to get the finished descriptor right away and we wouldn't need
-to iterate all of them and checking on them
+---
+v5: Updated descriptions and fixed errors.
+v4: Fixed commit message, properties.
+v3: Fixed subject format.
+v2: No changes
 
-jirka
-> +			if (cblocks[i] == NULL) {
-> +				continue;
-> +			}
-> +			aio_errno = aio_error(cblocks[i]);
-> +			if (aio_errno == EINPROGRESS) {
-> +				do_suspend = 1;
-> +				continue;
-> +			}
 
-SNIP
+ .../devicetree/bindings/input/dlg,da7280.txt       |  105 ++++++++++++++++++++
+ 1 file changed, 105 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/input/dlg,da7280.txt
+
+diff --git a/Documentation/devicetree/bindings/input/dlg,da7280.txt b/Documentation/devicetree/bindings/input/dlg,da7280.txt
+new file mode 100644
+index 0000000..a25a12f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/input/dlg,da7280.txt
+@@ -0,0 +1,105 @@
++Dialog Semiconductor DA7280 Haptics bindings
++
++Required properties:
++- compatible: Should be "dlg,da7280".
++- reg: Specifies the I2C slave address.
++
++- interrupt-parent : Specifies the phandle of the interrupt controller to
++  which the IRQs from DA7280 are delivered to.
++
++- dlg,actuator-type: Set Actuator type. it should be one of:
++  "LRA" - Linear Resonance Actuator type.
++  "ERM-bar" - Bar type Eccentric Rotating Mass.
++  "ERM-coin" - Coin type Eccentric Rotating Mass.
++
++- dlg,op-mode: Haptic operation mode.
++  Possible values:
++	1 - Direct register override(DRO) mode triggered by i2c(default),
++	2 - PWM data source mode controlled by PWM duty,
++	3 - Register triggered waveform memory(RTWM) mode, the pattern
++	    assigned to the PS_SEQ_ID played as much times as PS_SEQ_LOOP,
++	4 - Edge triggered waveform memory(ETWM) mode, external GPI(N)
++	    control are required to enable/disable and it needs to keep
++	    device enabled by sending magnitude (X > 0),
++	    the pattern is assigned to the GPI(N)_SEQUENCE_ID below.
++	For more details, please see the datasheet.
++
++- dlg,nom-microvolt: Nominal actuator voltage rating.
++  Valid values: 0 - 6000000.
++- dlg,abs-max-microvolt: Absolute actuator maximum voltage rating.
++  Valid values: 0 - 6000000.
++- dlg,imax-microamp: Actuator max current rating.
++  Valid values: 0 - 252000.
++  Default: 130000.
++- dlg,impd-micro-ohms: the impedance of the actuator in micro ohms.
++  Valid values: 0 - 1500000000.
++
++Optional properties:
++- pwms : phandle to the physical PWM(Pulse Width Modulation) device.
++  PWM properties should be named "pwms". And number of cell is different
++  for each pwm device.
++  (See Documentation/devicetree/bindings/pwm/pwm.txt
++   for further information relating to pwm properties)
++
++- dlg,ps-seq-id: the PS_SEQ_ID(pattern ID in waveform memory inside chip)
++  to play back when RTWM-MODE is enabled.
++  Valid range: 0 - 15.
++- dlg,ps-seq-loop: the PS_SEQ_LOOP, Number of times the pre-stored sequence
++  pointed to by PS_SEQ_ID or GPI(N)_SEQUENCE_ID is repeated.
++  Valid range: 0 - 15.
++- dlg,gpiN-seq-id: the GPI(N)_SEQUENCE_ID, pattern to play
++  when gpi0 is triggered, 'N' must be 0 - 2.
++  Valid range: 0 - 15.
++- dlg,gpiN-mode: the pattern mode which can select either
++  "Single-pattern" or "Multi-pattern", 'N' must be 0 - 2.
++- dlg,gpiN-polarity: gpiN polarity which can be chosen among
++  "Rising-edge", "Falling-edge" and "Both-edge",
++  'N' must be 0 - 2
++  Haptic will work by this edge option in case of ETWM mode.
++
++- dlg,resonant-freq-hz: use in case of LRA.
++  the frequency range: 50 - 300.
++  Default: 205.
++
++- dlg,bemf-sens-enable: Enable for internal loop computations.
++- dlg,freq-track-enable: Enable for resonant frequency tracking.
++- dlg,acc-enable: Enable for active acceleration.
++- dlg,rapid-stop-enable: Enable for rapid stop.
++- dlg,amp-pid-enable: Enable for the amplitude PID.
++- dlg,mem-array: Customized waveform memory(patterns) data downloaded to
++  the device during initialization. This is an array of 100 values(u8).
++
++For further information, see device datasheet.
++
++======
++
++Example:
++
++	haptics: da7280-haptics@4a {
++		compatible = "dlg,da7280";
++		reg = <0x4a>;
++		interrupt-parent = <&gpio6>;
++		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
++		dlg,actuator-type = "LRA";
++		dlg,op-mode = <1>;
++		dlg,nom-microvolt = <2000000>;
++		dlg,abs-max-microvolt = <2000000>;
++		dlg,imax-microamp = <170000>;
++		dlg,resonant-freq-hz = <180>;
++		dlg,impd-micro-ohms = <10500000>;
++		dlg,freq-track-enable;
++		dlg,rapid-stop-enable;
++		dlg,mem-array = <
++ 		  0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00
++ 		  0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00
++ 		  0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00
++ 		  0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00
++ 		  0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00
++ 		  0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00
++ 		  0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00
++ 		  0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00
++ 		  0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00
++ 		  0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00
++		>;
++
++	};
+-- 
+end-of-patch for PATCH V5
+
