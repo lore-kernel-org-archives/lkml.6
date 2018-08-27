@@ -2,83 +2,215 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC09CC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 07:07:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F2A8C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 07:10:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DACA21735
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 07:07:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XX07MH7f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DACA21735
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id C0CAC208B3
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 07:10:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0CAC208B3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727147AbeH0Kw4 (ORCPT
+        id S1727142AbeH0K4A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 06:52:56 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:51200 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726978AbeH0Kw4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 06:52:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=1panxVtOmSsADN3TGm/0dltLyUD+Zvze1riz4cHooIc=; b=XX07MH7f5iOUsYjhQsrXHXpNv
-        oelr+wgqF56EOMMOGycjPxGNOru7ZG8DlPDoZi0wCrqGuaPx2dzOOqfenZ5Z+olHyvt7L6sLPBsbW
-        JQny3Sgi4SQQefnpq10t28wvSoMW9gtf8+HMqY8r4cZrfsTLploKwhl/6NhuQ9Ruvm+Efc4PJ+FO2
-        KFdjrtUJCuST3heJ5aLKJfSI6MoCsnzKfZo/NgE9EUOce5c1deWT7U8mmuwC95+CyiEDd5oCDb6QZ
-        36MGPOerNrt4TmL4dBPyQiXdHnoN2wMsYmNwgD2aBjfkvEomCuDvsvvFDpzLEWY1PlnF8UIO/ZFo7
-        iCigk0alw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fuBca-0002cp-7N; Mon, 27 Aug 2018 07:07:32 +0000
-Date:   Mon, 27 Aug 2018 00:07:31 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Tom Murphy <murphyt7@tcd.ie>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Changing the AMD IOMMU API path to work in an atomic
- context which is necessary for any custom drivers using the IOMMU API while
- holding a spinlock.
-Message-ID: <20180827070731.GA8588@infradead.org>
-References: <1535120929-5693-1-git-send-email-murphyt7@tcd.ie>
- <20180824145328.GA7996@infradead.org>
- <24d3f04a-e6e2-ed8f-e2bd-b38144f33f26@arm.com>
- <CALQxJuuWqiygrGMVjZ0j-AxBZOskoNHfdYoHEwW4Zgigqjf7kg@mail.gmail.com>
- <CALQxJutCDrg5A6Mhqq9Tkyd3siGrdY03LdmfEtV9v5vjYO+ZZQ@mail.gmail.com>
+        Mon, 27 Aug 2018 06:56:00 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38998 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727058AbeH0K4A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 06:56:00 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C955881663F5;
+        Mon, 27 Aug 2018 07:10:36 +0000 (UTC)
+Received: from localhost (ovpn-8-24.pek2.redhat.com [10.72.8.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id AFDDD94641;
+        Mon, 27 Aug 2018 07:10:35 +0000 (UTC)
+Date:   Mon, 27 Aug 2018 15:10:32 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org,
+        keescook@chromium.org, n-horiguchi@ah.jp.nec.com,
+        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com,
+        douly.fnst@cn.fujitsu.com
+Subject: Re: [PATCH v5 4/4] x86/boot/KASLR: Limit kaslr to choosing the
+ immovable memory
+Message-ID: <20180827071032.GE1748@MiWiFi-R3L-srv>
+References: <20180807065000.30958-1-fanc.fnst@cn.fujitsu.com>
+ <20180807065000.30958-5-fanc.fnst@cn.fujitsu.com>
+ <20180827055607.GB1748@MiWiFi-R3L-srv>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALQxJutCDrg5A6Mhqq9Tkyd3siGrdY03LdmfEtV9v5vjYO+ZZQ@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20180827055607.GB1748@MiWiFi-R3L-srv>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 27 Aug 2018 07:10:36 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 27 Aug 2018 07:10:36 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 24, 2018 at 11:55:53PM +0100, Tom Murphy wrote:
-> We were going to do this by using the iommu-dma api and replacing all the
-> existing calls to the DMA api functions in the amd driver with their
-> iommu-dma equivalent like in this driver:
-> https://elixir.bootlin.com/linux/latest/source/arch/arm64/mm/dma-mapping.c#L810
+On 08/27/18 at 01:56pm, Baoquan He wrote:
+> On 08/07/18 at 02:50pm, Chao Fan wrote:
+> > If 'CONFIG_MEMORY_HOTREMOVE' specified and the account of immovable
+> If CONFIG_MEMORY_HOTREMOVE is enabled, 
+> > memory regions is not zero. Calculate the intersection between memory
+> > regions from e820/efi memory table and immovable memory regions.
+> > Or go on the old code.
+> > 
+> > Rename process_mem_region to slots_count to match slots_fetch_random,
+> > and name new function as process_mem_region.
+> > 
+> > Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+> > ---
+> >  arch/x86/boot/compressed/kaslr.c | 66 ++++++++++++++++++++++++++------
+> >  1 file changed, 55 insertions(+), 11 deletions(-)
+> > 
+> > diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
+> > index 720878f967a3..9c6e24a23a2d 100644
+> > --- a/arch/x86/boot/compressed/kaslr.c
+> > +++ b/arch/x86/boot/compressed/kaslr.c
+> > @@ -635,9 +635,9 @@ static unsigned long slots_fetch_random(void)
+> >  	return 0;
+> >  }
+> >  
+> > -static void process_mem_region(struct mem_vector *entry,
+> > -			       unsigned long minimum,
+> > -			       unsigned long image_size)
+> > +static void slots_count(struct mem_vector *entry,
+> > +			unsigned long minimum,
+> > +			unsigned long image_size)
+> >  {
+> >  	struct mem_vector region, overlap;
+> >  	struct slot_area slot_area;
+> > @@ -714,6 +714,56 @@ static void process_mem_region(struct mem_vector *entry,
+> >  	}
+> >  }
+> >  
+> > +static bool process_mem_region(struct mem_vector *region,
+> > +			       unsigned long long minimum,
+> > +			       unsigned long long image_size)
+> > +{
+> 
+> Is it possible to take num_immovable_mem definition out from #ifdef
+> CONFIG_MEMORY_HOTREMOVE block and check it here like below? This way,
+> one level of indentation can be reduced in the for loop, and code is
+> more readable.
+> 
+> 
+> static bool process_mem_region(struct mem_vector *region,
+> 			       unsigned long long minimum,
+> 			       unsigned long long image_size)
+> {
+> 
+> 	/*
+> 	 * If no immovable memory found, or MEMORY_HOTREMOVE disabled,
+> 	 * walk all the regions, so use region directely.
+> 	 */
+> 	if (num_immovable_mem > 0) {
+Sorry, I meant if (!num_immovable_mem) {
 
-FYI, I have a a wip branch to move the arm64 wrappers for both
-swiotlb and dma-iommu here:
 
-http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/dma-maybe-coherent
-
-Maybe you could try to base on top of that.
-
-> To do this we need the map/unmap callbacks to be spinlock-safe.
-
-You probably want to send the patch together with the one(s) making use
-of it.
+> 		slots_count(region, minimum, image_size);
+> 		
+> 		if (slot_area_index == MAX_SLOT_AREA) {
+> 			debug_putstr("Aborted e820/efi memmap scan (slot_areas full)!\n");
+> 			return 1;
+> 		}
+> 		return 0;
+> 	}
+> 
+> #ifdef CONFIG_MEMORY_HOTREMOVE
+> 	for (i = 0; i < num_immovable_mem; i++) {
+> 		...
+> 	}
+> #endif
+> }
+> 
+> > +#ifdef CONFIG_MEMORY_HOTREMOVE
+> > +	/*
+> > +	 * If immovable memory found, filter the intersection between
+> > +	 * immovable memory and region to slots_count.
+> > +	 * Otherwise, go on old code.
+> > +	 */
+> > +	if (num_immovable_mem > 0) {
+> > +		int i;
+> > +
+> > +		for (i = 0; i < num_immovable_mem; i++) {
+> > +			struct mem_vector entry;
+> > +			unsigned long long start, end, entry_end, region_end;
+> > +
+> > +			start = immovable_mem[i].start;
+> > +			end = start + immovable_mem[i].size;
+> > +			region_end = region->start + region->size;
+> > +
+> > +			entry.start = clamp(region->start, start, end);
+> > +			entry_end = clamp(region_end, start, end);
+> > +
+> > +			if (entry.start + image_size < entry_end) {
+> > +				entry.size = entry_end - entry.start;
+> > +				slots_count(&entry, minimum, image_size);
+> > +
+> > +				if (slot_area_index == MAX_SLOT_AREA) {
+> > +					debug_putstr("Aborted e820/efi memmap scan (slot_areas full)!\n");
+> > +					return 1;
+> > +				}
+> > +			}
+> > +		}
+> > +		return 0;
+> > +	}
+> > +#endif
+> > +	/*
+> > +	 * If no immovable memory found, or MEMORY_HOTREMOVE disabled,
+> > +	 * walk all the regions, so use region directely.
+> > +	 */
+> > +	slots_count(region, minimum, image_size);
+> > +
+> > +	if (slot_area_index == MAX_SLOT_AREA) {
+> > +		debug_putstr("Aborted e820/efi memmap scan (slot_areas full)!\n");
+> > +		return 1;
+> > +	}
+> > +	return 0;
+> > +}
+> > +
+> >  #ifdef CONFIG_EFI
+> >  /*
+> >   * Returns true if mirror region found (and must have been processed
+> > @@ -779,11 +829,8 @@ process_efi_entries(unsigned long minimum, unsigned long image_size)
+> >  
+> >  		region.start = md->phys_addr;
+> >  		region.size = md->num_pages << EFI_PAGE_SHIFT;
+> > -		process_mem_region(&region, minimum, image_size);
+> > -		if (slot_area_index == MAX_SLOT_AREA) {
+> > -			debug_putstr("Aborted EFI scan (slot_areas full)!\n");
+> > +		if (process_mem_region(&region, minimum, image_size))
+> >  			break;
+> > -		}
+> >  	}
+> >  	return true;
+> >  }
+> > @@ -810,11 +857,8 @@ static void process_e820_entries(unsigned long minimum,
+> >  			continue;
+> >  		region.start = entry->addr;
+> >  		region.size = entry->size;
+> > -		process_mem_region(&region, minimum, image_size);
+> > -		if (slot_area_index == MAX_SLOT_AREA) {
+> > -			debug_putstr("Aborted e820 scan (slot_areas full)!\n");
+> > +		if (process_mem_region(&region, minimum, image_size))
+> >  			break;
+> > -		}
+> >  	}
+> >  }
+> >  
+> > -- 
+> > 2.17.1
+> > 
+> > 
+> > 
