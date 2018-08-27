@@ -2,115 +2,127 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96DE5C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 15:36:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C776C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 15:37:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CA4D208AF
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 15:36:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CA4D208AF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4B675208AF
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 15:37:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="uQUT+N8u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B675208AF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727215AbeH0TXH (ORCPT
+        id S1727346AbeH0TY6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 15:23:07 -0400
-Received: from mga04.intel.com ([192.55.52.120]:43666 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727067AbeH0TXH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 15:23:07 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2018 08:36:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,295,1531810800"; 
-   d="scan'208";a="258408437"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga006.fm.intel.com with ESMTP; 27 Aug 2018 08:35:59 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 9218D139; Mon, 27 Aug 2018 18:35:58 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 4/7] extcon: cht-wc: Fix definition names according to spec
-Date:   Mon, 27 Aug 2018 18:35:54 +0300
-Message-Id: <20180827153557.58363-4-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180827153557.58363-1-andriy.shevchenko@linux.intel.com>
-References: <20180827153557.58363-1-andriy.shevchenko@linux.intel.com>
+        Mon, 27 Aug 2018 15:24:58 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:33695 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727055AbeH0TY6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 15:24:58 -0400
+Received: by mail-pf1-f194.google.com with SMTP id d4-v6so7925623pfn.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 08:37:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=NAU2QFwQIvF/QrV4WbIjBVbOO2SnP/hwier+0WbMwwc=;
+        b=uQUT+N8u1KXgRRVTt8kY0nFNqBAP2H2bDbG2npyOrxy8xB5Klns1WrwwEgpudOLWev
+         dvVEaNKGnjUIej/Kpy7Y7RPmyWYvWnYaR9I083ngRnB8dCPjbdAU+KySCz5Mt/4quhPW
+         7to+xa3JIw96BD7ZHkX/z+Vwy/KJYaIlbMtTuu1HWgnK3G85xgk02MqqTlracuwHJApe
+         S4uXR5d5GALrZJhtopQrjnhzVY8wwjit/KBz+FJWWx7dlvjSYUrPqPKvX3wT3oo8E6hN
+         aVTc3nb6ivxVVXXrbqgh1xptV6L26DgOMKmt9zSPPu/Zd6M2+LoxbiZCdOVe1XmjX+f8
+         gYTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=NAU2QFwQIvF/QrV4WbIjBVbOO2SnP/hwier+0WbMwwc=;
+        b=FK60RsiukvsgJZU/SJscFKMyyEC/dAbRzg3l+tkG/RAjS642hKjIQG+TcPFWPfSwli
+         lQOaqM47Xqn6/hFLv+ZO5OKI58+n71QSN8HiZfwcAN2DuWRGaSomr6AEbFWfTCsvpdBz
+         wmaIJZogFNKl/szRQPmRw6miz/VlJa4JwxQ3vR8M1c41AAZKhr7jNAXjwb3SU01cJMk8
+         YbyJ3OCT2e8SWjYr6fyhJwKZbN1UI1qjgR3ciE1OvP8A/D+2ZmqshBOHY7nb53c0mdVn
+         L8ifuDQ4N771J6PbU97Vs3Pn0oQy5wtVK0YPIumSk7Xk4hP+qIGb8MvyPhBbVpiNCzRL
+         kzng==
+X-Gm-Message-State: APzg51DeTBlIIci6tRXussITtR8UeK7/8byDJD+vHckNAUBVFsQ+GchF
+        I92b8BrfhF46ApKIzGRTGj4/As741lQ=
+X-Google-Smtp-Source: ANB0VdbzeQQBJMoJfZA9letGZOJGPQq8I3CyDRI87+8STR3jIKw8dt0i+KLKFND0V0kKNbYyukrudA==
+X-Received: by 2002:a63:ce43:: with SMTP id r3-v6mr13006530pgi.439.1535384270348;
+        Mon, 27 Aug 2018 08:37:50 -0700 (PDT)
+Received: from ?IPv6:2620:10d:c081:1133::121a? ([2620:10d:c090:180::1:8ad2])
+        by smtp.gmail.com with ESMTPSA id t70-v6sm24592308pgd.54.2018.08.27.08.37.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 27 Aug 2018 08:37:48 -0700 (PDT)
+Subject: Re: [PATCH] blk-wbt: get back the missed wakeup from __wbt_done
+To:     "jianchao.wang" <jianchao.w.wang@oracle.com>,
+        Anchal Agarwal <anchalag@amzn.com>
+Cc:     fllinden@amazon.com,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <1535029718-17259-1-git-send-email-jianchao.w.wang@oracle.com>
+ <bd84ff08-b75a-0a2f-6b37-07a104452bff@kernel.dk>
+ <da9458c632cb4c4695660664bf7c3fb3@EX13D13UWB002.ant.amazon.com>
+ <20180823210144.GB5624@kaos-source-ops-60001.pdx1.amazon.com>
+ <3eaa20ce-0599-c405-d979-87d91ea331d2@kernel.dk>
+ <20180824181223.GA9049@kaos-source-ops-60001.pdx1.amazon.com>
+ <677c8648-63fd-601c-b906-40a8502f9782@kernel.dk>
+ <20180824203305.GA4690@kaos-source-ops-60001.pdx1.amazon.com>
+ <dc734449-7cd8-3a8e-9fdc-d7d854393900@kernel.dk>
+ <2fecf2f2-f00b-f6ba-710a-54ceaacfedbb@kernel.dk>
+ <00445460-d826-4d85-c5f4-fa565892da01@oracle.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <cc7b19f7-b5c5-e89d-eb12-cdff6e35fb4d@kernel.dk>
+Date:   Mon, 27 Aug 2018 09:37:47 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <00445460-d826-4d85-c5f4-fa565892da01@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no suffix MASK in the spec and other small spelling fixes.
+On 8/26/18 9:52 PM, jianchao.wang wrote:
+> Hi Jens
+> 
+> On 08/25/2018 11:41 PM, Jens Axboe wrote:
+>>  	do {
+>> -		set_current_state(TASK_UNINTERRUPTIBLE);
+>> +		if (test_bit(0, &data.flags))
+>> +			break;
+>>  
+>> -		if (!has_sleeper && rq_wait_inc_below(rqw, get_limit(rwb, rw)))
+>> +		WARN_ON_ONCE(list_empty(&data.wq.entry));
+>> +
+>> +		if (!has_sleeper &&
+>> +		    rq_wait_inc_below(rqw, get_limit(rwb, rw))) {
+>> +			finish_wait(&rqw->wait, &data.wq);
+>> +
+>> +			/*
+>> +			 * We raced with wbt_wake_function() getting a token,
+>> +			 * which means we now have two. Put ours and wake
+>> +			 * anyone else potentially waiting for one.
+>> +			 */
+>> +			if (test_bit(0, &data.flags))
+>> +				wbt_rqw_done(rwb, rqw, wb_acct);
+>>  			break;
+> 
+> Just use 'bool' variable should be OK 
+> After finish_wait, no one could race with us here.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/extcon/extcon-intel-cht-wc.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+I was mostly concerned with the check post prep_to_wait(), but since the
+spin unlock should include a barrier, the bool should actually be enough.
+I'll change that back once I test.
 
-diff --git a/drivers/extcon/extcon-intel-cht-wc.c b/drivers/extcon/extcon-intel-cht-wc.c
-index bdb67878179e..71b1126dbb0b 100644
---- a/drivers/extcon/extcon-intel-cht-wc.c
-+++ b/drivers/extcon/extcon-intel-cht-wc.c
-@@ -32,10 +32,10 @@
- #define CHT_WC_CHGRCTRL0_EMRGCHREN	BIT(1)
- #define CHT_WC_CHGRCTRL0_EXTCHRDIS	BIT(2)
- #define CHT_WC_CHGRCTRL0_SWCONTROL	BIT(3)
--#define CHT_WC_CHGRCTRL0_TTLCK_MASK	BIT(4)
--#define CHT_WC_CHGRCTRL0_CCSM_OFF_MASK	BIT(5)
--#define CHT_WC_CHGRCTRL0_DBPOFF_MASK	BIT(6)
--#define CHT_WC_CHGRCTRL0_WDT_NOKICK	BIT(7)
-+#define CHT_WC_CHGRCTRL0_TTLCK		BIT(4)
-+#define CHT_WC_CHGRCTRL0_CCSM_OFF	BIT(5)
-+#define CHT_WC_CHGRCTRL0_DBPOFF		BIT(6)
-+#define CHT_WC_CHGRCTRL0_CHR_WDT_NOKICK	BIT(7)
- 
- #define CHT_WC_CHGRCTRL1		0x5e17
- 
-@@ -52,7 +52,7 @@
- #define CHT_WC_USBSRC_TYPE_ACA		4
- #define CHT_WC_USBSRC_TYPE_SE1		5
- #define CHT_WC_USBSRC_TYPE_MHL		6
--#define CHT_WC_USBSRC_TYPE_FLOAT_DP_DN	7
-+#define CHT_WC_USBSRC_TYPE_FLOATING	7
- #define CHT_WC_USBSRC_TYPE_OTHER	8
- #define CHT_WC_USBSRC_TYPE_DCP_EXTPHY	9
- 
-@@ -61,7 +61,7 @@
- #define CHT_WC_PWRSRC_STS		0x6e1e
- #define CHT_WC_PWRSRC_VBUS		BIT(0)
- #define CHT_WC_PWRSRC_DC		BIT(1)
--#define CHT_WC_PWRSRC_BAT		BIT(2)
-+#define CHT_WC_PWRSRC_BATT		BIT(2)
- #define CHT_WC_PWRSRC_ID_GND		BIT(3)
- #define CHT_WC_PWRSRC_ID_FLOAT		BIT(4)
- 
-@@ -158,7 +158,7 @@ static int cht_wc_extcon_get_charger(struct cht_wc_extcon_data *ext,
- 			 ret);
- 		return EXTCON_CHG_USB_SDP;
- 	case CHT_WC_USBSRC_TYPE_SDP:
--	case CHT_WC_USBSRC_TYPE_FLOAT_DP_DN:
-+	case CHT_WC_USBSRC_TYPE_FLOATING:
- 	case CHT_WC_USBSRC_TYPE_OTHER:
- 		return EXTCON_CHG_USB_SDP;
- 	case CHT_WC_USBSRC_TYPE_CDP:
-@@ -279,7 +279,7 @@ static int cht_wc_extcon_sw_control(struct cht_wc_extcon_data *ext, bool enable)
- {
- 	int ret, mask, val;
- 
--	mask = CHT_WC_CHGRCTRL0_SWCONTROL | CHT_WC_CHGRCTRL0_CCSM_OFF_MASK;
-+	mask = CHT_WC_CHGRCTRL0_SWCONTROL | CHT_WC_CHGRCTRL0_CCSM_OFF;
- 	val = enable ? mask : 0;
- 	ret = regmap_update_bits(ext->regmap, CHT_WC_CHGRCTRL0, mask, val);
- 	if (ret)
 -- 
-2.18.0
+Jens Axboe
 
