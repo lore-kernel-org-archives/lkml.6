@@ -2,348 +2,784 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF5DAC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 09:28:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6422C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 09:32:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7595C20897
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 09:28:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7595C20897
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 42D3120666
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 09:32:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42D3120666
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727065AbeH0NON (ORCPT
+        id S1727459AbeH0NSC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 09:14:13 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51924 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726802AbeH0NON (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 09:14:13 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0260F87916;
-        Mon, 27 Aug 2018 09:28:20 +0000 (UTC)
-Received: from krava (unknown [10.43.17.209])
-        by smtp.corp.redhat.com (Postfix) with SMTP id AA66F2166B41;
-        Mon, 27 Aug 2018 09:28:18 +0000 (UTC)
-Date:   Mon, 27 Aug 2018 11:28:18 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Stephane Eranian <eranian@google.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>, mingo@elte.hu,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: [PATCHv2] perf tools: Add struct ordered_events_buffer layer
-Message-ID: <20180827092818.GA3725@krava>
-References: <1533767600-7794-1-git-send-email-eranian@google.com>
- <20180809080721.GB19243@krava>
- <CABPqkBQEfoMDEqot1VbgExg1fU3+EEunzZqDFKSGmLKBhxNkwA@mail.gmail.com>
- <20180810115431.GA4162@krava>
- <20180813130446.GA8685@krava>
- <CABPqkBSgYEFFAkddBqZbYXe9tjUY7RbMBjQsZht8ki1iOR6unw@mail.gmail.com>
- <20180815084825.GD3180@krava>
+        Mon, 27 Aug 2018 09:18:02 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:46565 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726802AbeH0NSC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 09:18:02 -0400
+Received: from [10.18.16.3] (10.18.16.3) by mail-sh2.amlogic.com (10.18.11.6)
+ with Microsoft SMTP Server (TLS) id 15.0.1320.4; Mon, 27 Aug 2018 17:32:23
+ +0800
+Subject: Re: [PATCH v2 2/2] PCI: meson: add the Amlogic Meson PCIe controller
+ driver
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+CC:     Yue Wang <yue.wang@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Rob Herring <robh@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>
+References: <1535096165-45827-1-git-send-email-hanjie.lin@amlogic.com>
+ <1535096165-45827-3-git-send-email-hanjie.lin@amlogic.com>
+ <014e9135b81728d58c81bbec1996675489e45022.camel@baylibre.com>
+From:   Hanjie Lin <hanjie.lin@amlogic.com>
+Message-ID: <bc77c03b-256e-d833-eb55-13a3efc199f3@amlogic.com>
+Date:   Mon, 27 Aug 2018 17:32:23 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180815084825.GD3180@krava>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 27 Aug 2018 09:28:20 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 27 Aug 2018 09:28:20 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
+In-Reply-To: <014e9135b81728d58c81bbec1996675489e45022.camel@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.18.16.3]
+X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
+ (10.18.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 15, 2018 at 10:48:25AM +0200, Jiri Olsa wrote:
-> On Tue, Aug 14, 2018 at 12:14:19AM -0700, Stephane Eranian wrote:
+
+
+On 2018/8/24 16:22, Jerome Brunet wrote:
+> On Fri, 2018-08-24 at 15:36 +0800, Hanjie Lin wrote:
+>> From: Yue Wang <yue.wang@amlogic.com>
+>>
+>> The Amlogic Meson PCIe host controller is based on the Synopsys DesignWare
+>> PCI core. This patch adds the driver support for Meson PCIe controller.
+>>
+>> Signed-off-by: Yue Wang <yue.wang@amlogic.com>
+>> Signed-off-by: Hanjie Lin <hanjie.lin@amlogic.com>
+>> ---
+>>  drivers/pci/controller/dwc/Kconfig     |  12 +
+>>  drivers/pci/controller/dwc/Makefile    |   1 +
+>>  drivers/pci/controller/dwc/pci-meson.c | 613 +++++++++++++++++++++++++++++++++
+>>  3 files changed, 626 insertions(+)
+>>  create mode 100644 drivers/pci/controller/dwc/pci-meson.c
+>>
+>> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+>> index 91b0194..6cb36f6 100644
+>> --- a/drivers/pci/controller/dwc/Kconfig
+>> +++ b/drivers/pci/controller/dwc/Kconfig
+>> @@ -193,4 +193,16 @@ config PCIE_HISI_STB
+>>  	help
+>>            Say Y here if you want PCIe controller support on HiSilicon STB SoCs
+>>  
+>> +config PCI_MESON
+>> +	bool "MESON PCIe controller"
+>> +	depends on PCI
+>> +	depends on PCI_MSI_IRQ_DOMAIN
+>> +	select PCIEPORTBUS
+>> +	select PCIE_DW_HOST
+>> +	help
+>> +	  Say Y here if you want to enable PCI controller support on Amlogic
+>> +	  SoCs. The PCI controller on Amlogic is based on DesignWare hardware
+>> +	  and therefore the driver re-uses the DesignWare core functions to
+>> +	  implement the driver.
+>> +
+>>  endmenu
+>> diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
+>> index 5d2ce72..cf676bd 100644
+>> --- a/drivers/pci/controller/dwc/Makefile
+>> +++ b/drivers/pci/controller/dwc/Makefile
+>> @@ -14,6 +14,7 @@ obj-$(CONFIG_PCIE_ARMADA_8K) += pcie-armada8k.o
+>>  obj-$(CONFIG_PCIE_ARTPEC6) += pcie-artpec6.o
+>>  obj-$(CONFIG_PCIE_KIRIN) += pcie-kirin.o
+>>  obj-$(CONFIG_PCIE_HISI_STB) += pcie-histb.o
+>> +obj-$(CONFIG_PCI_MESON) += pci-meson.o
+>>  
+>>  # The following drivers are for devices that use the generic ACPI
+>>  # pci_root.c driver but don't support standard ECAM config access.
+>> diff --git a/drivers/pci/controller/dwc/pci-meson.c b/drivers/pci/controller/dwc/pci-meson.c
+>> new file mode 100644
+>> index 0000000..a9edf20
+>> --- /dev/null
+>> +++ b/drivers/pci/controller/dwc/pci-meson.c
+>> @@ -0,0 +1,613 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * PCIe host controller driver for Amlogic MESON SoCs
+>> + *
+>> + * Copyright (c) 2018 Amlogic, inc.
+>> + * Author: Yue Wang <yue.wang@amlogic.com>
+>> + */
+>> +
+>> +#include <linux/clk.h>
+>> +#include <linux/delay.h>
+>> +#include <linux/of_device.h>
+>> +#include <linux/of_gpio.h>
+>> +#include <linux/pci.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/phy/phy.h>
+>> +#include <linux/resource.h>
+>> +#include <linux/types.h>
+>> +#include <linux/reset.h>
+>> +
+>> +#include "pcie-designware.h"
+>> +
+>> +#define to_meson_pcie(x) dev_get_drvdata((x)->dev)
+>> +
+>> +/* External local bus interface registers */
+>> +#define PLR_OFFSET			0x700
+>> +#define PCIE_PORT_LINK_CTRL_OFF		(PLR_OFFSET + 0x10)
+>> +#define FAST_LINK_MODE			BIT(7)
+>> +#define LINK_CAPABLE_MASK		GENMASK(21, 16)
+>> +#define LINK_CAPABLE_X1			BIT(16)
+>> +
+>> +#define PCIE_GEN2_CTRL_OFF		(PLR_OFFSET + 0x10c)
+>> +#define NUM_OF_LANES_MASK		GENMASK(12, 8)
+>> +#define NUM_OF_LANES_X1			BIT(8)
+>> +#define DIRECT_SPEED_CHANGE		BIT(17)
+>> +
+>> +#define TYPE1_HDR_OFFSET		0x0
+>> +#define PCIE_STATUS_COMMAND		(TYPE1_HDR_OFFSET + 0x04)
+>> +#define PCI_IO_EN			BIT(0)
+>> +#define PCI_MEM_SPACE_EN		BIT(1)
+>> +#define PCI_BUS_MASTER_EN		BIT(2)
+>> +
+>> +#define PCIE_BASE_ADDR0			(TYPE1_HDR_OFFSET + 0x10)
+>> +#define PCIE_BASE_ADDR1			(TYPE1_HDR_OFFSET + 0x14)
+>> +
+>> +#define PCIE_CAP_OFFSET			0x70
+>> +#define PCIE_DEV_CTRL_DEV_STUS		(PCIE_CAP_OFFSET + 0x08)
+>> +#define PCIE_CAP_MAX_PAYLOAD_MASK	GENMASK(7, 5)
+>> +#define PCIE_CAP_MAX_PAYLOAD_SIZE(x)	((x) << 5)
+>> +#define PCIE_CAP_MAX_READ_REQ_MASK	GENMASK(14, 12)
+>> +#define PCIE_CAP_MAX_READ_REQ_SIZE(x)	((x) << 12)
+>> +
+>> +#define PCI_CLASS_REVISION_MASK		GENMASK(7, 0)
+>> +
+>> +/* PCIe specific config registers */
+>> +#define PCIE_CFG0			0x0
+>> +#define APP_LTSSM_ENABLE		BIT(7)
+>> +
+>> +#define PCIE_CFG_STATUS12		0x30
+>> +#define IS_SMLH_LINK_UP(x)		((x) & (1 << 6))
+>> +#define IS_RDLH_LINK_UP(x)		((x) & (1 << 16))
+>> +#define IS_LTSSM_UP(x)			((((x) >> 10) & 0x1f) == 0x11)
+>> +
+>> +#define PCIE_CFG_STATUS17		0x44
+>> +#define PM_CURRENT_STATE(x)		(((x) >> 7) & 0x1)
+>> +
+>> +#define WAIT_LINKUP_TIMEOUT		2000
+>> +#define PORT_CLK_RATE			100000000UL
+>> +#define MAX_PAYLOAD_SIZE		256
+>> +#define MAX_READ_REQ_SIZE		256
+>> +
+>> +enum pcie_data_rate {
+>> +	PCIE_GEN1,
+>> +	PCIE_GEN2,
+>> +	PCIE_GEN3,
+>> +	PCIE_GEN4
+>> +};
+>> +
+>> +struct meson_pcie_mem_res {
+>> +	void __iomem *elbi_base; /* DT 0th resource */
+>> +	void __iomem *cfg_base; /* DT 2nd resource */
+>> +};
+>> +
+>> +struct meson_pcie_clk_res {
+>> +	struct clk *clk;
+>> +	struct clk *mipi_gate;
+>> +	struct clk *port_clk;
+>> +	struct clk *general_clk;
+>> +};
+>> +
+>> +struct meson_pcie_rc_reset {
+>> +	struct reset_control *port;
+>> +	struct reset_control *apb;
+>> +};
+>> +
+>> +struct meson_pcie {
+>> +	struct dw_pcie pci;
+>> +	struct meson_pcie_mem_res mem_res;
+>> +	struct meson_pcie_clk_res clk_res;
+>> +	struct meson_pcie_rc_reset mrst;
+>> +	struct gpio_desc *reset_gpio;
+>> +
+>> +	struct phy *phy;
+>> +	enum of_gpio_flags gpio_flag;
+>> +	int pcie_num;
+>> +	u32 port_num;
+>> +	u32 device_attch;
+>> +};
+>> +
+>> +static int meson_pcie_get_mem(struct platform_device *pdev,
+>> +			      struct meson_pcie *mp)
+>> +{
+>> +	struct device *dev = mp->pci.dev;
+>> +	struct resource *res;
+>> +
+>> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "elbi");
+>> +	if (!res)
+>> +		return -ENODEV;
+>> +
+>> +	mp->mem_res.elbi_base = devm_ioremap_resource(dev, res);
+>> +	if (IS_ERR(mp->mem_res.elbi_base))
+>> +		return PTR_ERR(mp->mem_res.elbi_base);
+>> +
+>> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "cfg");
+>> +	if (!res)
+>> +		return -ENODEV;
+>> +
+>> +	mp->mem_res.cfg_base = devm_ioremap_resource(dev, res);
+>> +	if (IS_ERR(mp->mem_res.cfg_base))
+>> +		return PTR_ERR(mp->mem_res.cfg_base);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static void meson_pcie_rc_reset(struct meson_pcie *mp)
+>> +{
+>> +	struct meson_pcie_rc_reset *mrst = &mp->mrst;
+>> +
+>> +	reset_control_assert(mrst->port);
+>> +	reset_control_assert(mrst->apb);
+>> +	udelay(400);
+>> +	reset_control_deassert(mrst->port);
+>> +	reset_control_deassert(mrst->apb);
+>> +	udelay(500);
+>> +}
+>> +
+>> +static int meson_pcie_init_clk(struct meson_pcie *mp)
+>> +{
+>> +	struct device *dev = mp->pci.dev;
+>> +	struct meson_pcie_clk_res *res = &mp->clk_res;
+>> +	int ret;
+>> +
+>> +	res->port_clk = devm_clk_get(dev, "port");
+>> +	if (IS_ERR(res->port_clk)) {
+>> +		if (PTR_ERR(res->port_clk) != -EPROBE_DEFER)
+>> +			dev_err(dev, "Failed to get pcie port clock\n");
+>> +
+>> +		return PTR_ERR(res->port_clk);
+>> +	}
+>> +
+>> +	res->mipi_gate = devm_clk_get(dev, "pcie_mipi_en");
+>> +	if (IS_ERR(res->mipi_gate)) {
+>> +		if (PTR_ERR(res->mipi_gate) != -EPROBE_DEFER)
+>> +			dev_err(dev, "Failed to get pcie mipi clock\n");
+>> +
+>> +		return PTR_ERR(res->mipi_gate);
+>> +	}
+>> +
+>> +	res->general_clk = devm_clk_get(dev, "pcie_general");
+>> +	if (IS_ERR(res->general_clk)) {
+>> +		if (PTR_ERR(res->general_clk) != -EPROBE_DEFER)
+>> +			dev_err(dev, "Failed to get pcie general clock\n");
+>> +
+>> +		return PTR_ERR(res->general_clk);
+>> +	}
+>> +
+>> +	res->clk = devm_clk_get(dev, "pcie");
+>> +	if (IS_ERR(res->clk)) {
+>> +		if (PTR_ERR(res->clk) != -EPROBE_DEFER)
+>> +			dev_err(dev, "Failed to get pcie rc clock\n");
+>> +
+>> +		return PTR_ERR(res->clk);
+>> +	}
+>> +
+>> +	phy_init(mp->phy);
+>> +	meson_pcie_rc_reset(mp);
+>> +
+>> +	ret = clk_set_rate(res->port_clk, PORT_CLK_RATE);
+>> +	if (ret) {
+>> +		dev_err(dev, "set bus clk rate failed, ret = %d", ret);
+>> +		goto err_clk;
+>> +	}
+>> +
+>> +	ret = clk_prepare_enable(res->port_clk);
+>> +	if (ret) {
+>> +		dev_err(dev, "cannot enable pcie port clock");
+>> +		goto err_clk;
+>> +	}
+>> +
+>> +	ret = clk_prepare_enable(res->mipi_gate);
+>> +	if (ret) {
+>> +		dev_err(dev, "cannot enable pcie mipi gate clock");
+>> +		goto err_port_clk;
+>> +	}
+>> +
+>> +	ret = clk_prepare_enable(res->general_clk);
+>> +	if (ret) {
+>> +		dev_err(dev, "cannot enable pcie general clock");
+>> +		goto err_mipi_gate;
+>> +	}
+>> +
+>> +	ret = clk_prepare_enable(res->clk);
+>> +	if (ret) {
+>> +		dev_err(dev, "cannot enable pcie rc clock");
+>> +		goto err_general_clk;
+>> +	}
+>> +
+>> +	return 0;
+>> +
+>> +err_general_clk:
+>> +	clk_disable_unprepare(res->general_clk);
+>> +err_mipi_gate:
+>> +	clk_disable_unprepare(res->mipi_gate);
+>> +err_port_clk:
+>> +	clk_disable_unprepare(res->port_clk);
+>> +err_clk:
+>> +	return ret;
 > 
-> SNIP
+> You are doing this from device probe but there is no remove counter part,
+> meaning the clock will be left enabled when the device is removed (and clock
+> count unbalanced). To just fire and forget clock, like you are doing, you could
+> use :
 > 
-> > > @@ -104,11 +110,12 @@ static struct ordered_event *alloc_event(struct ordered_events *oe,
-> > >                 new = list_entry(cache->next, struct ordered_event, list);
-> > >                 list_del(&new->list);
-> > >         } else if (oe->buffer) {
-> > > -               new = oe->buffer + oe->buffer_idx;
-> > > +               new = &oe->buffer->event[oe->buffer_idx];
-> > >                 if (++oe->buffer_idx == MAX_SAMPLE_BUFFER)
-> > >                         oe->buffer = NULL;
-> > >         } else if (oe->cur_alloc_size < oe->max_alloc_size) {
-> > > -               size_t size = MAX_SAMPLE_BUFFER * sizeof(*new);
-> > > +               size_t size = sizeof(*oe->buffer) +
-> > > +                             MAX_SAMPLE_BUFFER * sizeof(*new);
-> > >
-> > >                 oe->buffer = malloc(size);
-> > >                 if (!oe->buffer) {
-> > > @@ -122,9 +129,8 @@ static struct ordered_event *alloc_event(struct ordered_events *oe,
-> > >                 oe->cur_alloc_size += size;
-> > >                 list_add(&oe->buffer->list, &oe->to_free);
-> > >
-> > > -               /* First entry is abused to maintain the to_free list. */
-> > > -               oe->buffer_idx = 2;
-> > > -               new = oe->buffer + 1;
-> > > +               oe->buffer_idx = 1;
-> > > +               new = &oe->buffer->event[0];
-> > 
-> > Ok, but I think this section between the malloc() and the line above
-> > needs some comments to clarify what is going on.
-> > It is still hard to read.
+> devm_add_action_or_reset(dev, (void(*)(void *))clk_disable_unprepare,
+> 				<you-clk>);
 > 
-> ok, I put some bigger comment at the top, but I'm not too happy
-> feel free to suggest different one ;-)
+> This will take care of the errors cases and driver removal
+> Maybe you could make an helper function to do the get - enable - add reset.
+> Also, if the you just fire and forget the clock in this way, you don't need to
+> keep the clock pointer around (in your device data)
 > 
-> > 
-> > >         } else {
-> > >                 pr("allocation limit reached %" PRIu64 "B\n", oe->max_alloc_size);
-> > >         }
-> > > @@ -300,15 +306,27 @@ void ordered_events__init(struct ordered_events *oe, ordered_events__deliver_t d
-> > >         oe->deliver        = deliver;
-> > >  }
-> > >
-> > > +static void
-> > > +ordered_events_buffer__free(struct ordered_events_buffer *buffer,
-> > > +                           struct ordered_events *oe)
-> > > +{
-> > > +       if (oe->copy_on_queue) {
-> > > +               unsigned int i;
-> > > +
-> > > +               for (i = 0; i < MAX_SAMPLE_BUFFER; i++)
-> > > +                       __free_dup_event(oe, buffer->event[i].event);
-> > > +       }
-> > > +
-> > I have a problem with this one, given that the buffer->event[] is
-> > never actually zeroed.
-> > So what happens if you do not use all the entries by the time you have to free?
-> > I think one way to avoid this is by iterating only all the way to
-> > oe->buffer_idx.
+> Last, do you really need to enable all the clocks at probe time ? Can't some be
+> enabled later on. I don't know much about pcie but maybe some enable could be
+> delayed until the pcie bus is actually connected to something ? in use ?
 > 
-> right, please check attached patch
 
-any comments? attaching v2
+Yes, it's better to use devm_add_action_or_reset().
 
-thanks,
-jirka
+Amlogic pcie driver doesn't support hotplug, so we must enable all clocks
+during system initialization.
 
+>> +}
+>> +
+>> +static void meson_pcie_deinit_clk(struct meson_pcie *mp)
+>> +{
+>> +	clk_disable_unprepare(mp->clk_res.clk);
+>> +	clk_disable_unprepare(mp->clk_res.general_clk);
+>> +	clk_disable_unprepare(mp->clk_res.mipi_gate);
+>> +	clk_disable_unprepare(mp->clk_res.port_clk);
+>> +}
+> 
+> ... then you can remove this function
 
----
-When ordering events, we use preallocated buffers to store separated
-events. Those buffers currently don't have their own struct, but since
-they are basically array of 'struct ordered_event' objects, we use the
-first event to hold buffers data - list head, that holds all buffers
-together:
+Ok, we'll remove this.
 
-   struct ordered_events {
-     ...
-     struct ordered_event *buffer;
-     ...
-   };
+> 
+>> +
+>> +static inline void meson_elb_writel(struct meson_pcie *mp, u32 val, u32 reg)
+>> +{
+>> +	writel(val, mp->mem_res.elbi_base + reg);
+>> +}
+>> +
+>> +static inline u32 meson_elb_readl(struct meson_pcie *mp, u32 reg)
+>> +{
+>> +	return readl(mp->mem_res.elbi_base + reg);
+>> +}
+>> +
+>> +static inline u32 meson_cfg_readl(struct meson_pcie *mp, u32 reg)
+>> +{
+>> +	return readl(mp->mem_res.cfg_base + reg);
+>> +}
+>> +
+>> +static inline void meson_cfg_writel(struct meson_pcie *mp, u32 val, u32 reg)
+>> +{
+>> +	writel(val, mp->mem_res.cfg_base + reg);
+>> +}
+>> +
+>> +static void meson_pcie_assert_reset(struct meson_pcie *mp)
+>> +{
+>> +	gpiod_set_value_cansleep(mp->reset_gpio, 0);
+>> +	udelay(500);
+>> +	gpiod_set_value_cansleep(mp->reset_gpio, 1);
+>> +}
+>> +
+>> +static void meson_pcie_init_dw(struct meson_pcie *mp)
+>> +{
+>> +	u32 val = 0;
+>> +
+>> +	val = meson_cfg_readl(mp, PCIE_CFG0);
+>> +	val |= APP_LTSSM_ENABLE;
+>> +	meson_cfg_writel(mp, val, PCIE_CFG0);
+>> +
+>> +	val = meson_elb_readl(mp, PCIE_PORT_LINK_CTRL_OFF);
+>> +	val &= ~LINK_CAPABLE_MASK;
+>> +	meson_elb_writel(mp, val, PCIE_PORT_LINK_CTRL_OFF);
+>> +
+>> +	val = meson_elb_readl(mp, PCIE_PORT_LINK_CTRL_OFF);
+>> +	val |= LINK_CAPABLE_X1 | FAST_LINK_MODE;
+>> +	meson_elb_writel(mp, val, PCIE_PORT_LINK_CTRL_OFF);
+>> +
+>> +	val = meson_elb_readl(mp, PCIE_GEN2_CTRL_OFF);
+>> +	val &= ~NUM_OF_LANES_MASK;
+>> +	meson_elb_writel(mp, val, PCIE_GEN2_CTRL_OFF);
+>> +
+>> +	val = meson_elb_readl(mp, PCIE_GEN2_CTRL_OFF);
+>> +	val |= NUM_OF_LANES_X1 | DIRECT_SPEED_CHANGE;
+>> +	meson_elb_writel(mp, val, PCIE_GEN2_CTRL_OFF);
+>> +
+>> +	meson_elb_writel(mp, 0x0, PCIE_BASE_ADDR0);
+>> +	meson_elb_writel(mp, 0x0, PCIE_BASE_ADDR1);
+>> +}
+>> +
+>> +static int meson_size_to_payload(int size)
+>> +{
+>> +	if (size & (size - 1) || size < 128 || size > 4096)
+>> +		return 1;
+>> +
+>> +	return fls(size) - 8;
+>> +}
+>> +
+>> +static void meson_set_max_payload(struct meson_pcie *mp, int size)
+>> +{
+>> +	u32 val = 0;
+>> +	int max_payload_size = meson_size_to_payload(size);
+>> +
+>> +	val = meson_elb_readl(mp, PCIE_DEV_CTRL_DEV_STUS);
+>> +	val &= ~PCIE_CAP_MAX_PAYLOAD_MASK;
+>> +	meson_elb_writel(mp, val, PCIE_DEV_CTRL_DEV_STUS);
+>> +
+>> +	val = meson_elb_readl(mp, PCIE_DEV_CTRL_DEV_STUS);
+>> +	val |= PCIE_CAP_MAX_PAYLOAD_SIZE(max_payload_size);
+>> +	meson_elb_writel(mp, val, PCIE_DEV_CTRL_DEV_STUS);
+>> +}
+>> +
+>> +static void meson_set_max_rd_req_size(struct meson_pcie *mp, int size)
+>> +{
+>> +	u32 val = 0;
+>> +	int max_rd_req_size = meson_size_to_payload(size);
+>> +
+>> +	val = meson_elb_readl(mp, PCIE_DEV_CTRL_DEV_STUS);
+>> +	val &= ~PCIE_CAP_MAX_READ_REQ_MASK;
+>> +	meson_elb_writel(mp, val, PCIE_DEV_CTRL_DEV_STUS);
+>> +
+>> +	val = meson_elb_readl(mp, PCIE_DEV_CTRL_DEV_STUS);
+>> +	val |= PCIE_CAP_MAX_READ_REQ_SIZE(max_rd_req_size);
+>> +	meson_elb_writel(mp, val, PCIE_DEV_CTRL_DEV_STUS);
+>> +}
+>> +
+>> +static inline void meson_enable_memory_space(struct meson_pcie *mp)
+>> +{
+>> +	/* Set the RC Bus Master, Memory Space and I/O Space enables */
+>> +	meson_elb_writel(mp, PCI_IO_EN | PCI_MEM_SPACE_EN | PCI_BUS_MASTER_EN,
+>> +			 PCIE_STATUS_COMMAND);
+>> +}
+>> +
+>> +static int meson_pcie_establish_link(struct meson_pcie *mp)
+>> +{
+>> +	struct dw_pcie *pci = &mp->pci;
+>> +	struct pcie_port *pp = &pci->pp;
+>> +
+>> +	meson_pcie_init_dw(mp);
+>> +	meson_set_max_payload(mp, MAX_PAYLOAD_SIZE);
+>> +	meson_set_max_rd_req_size(mp, MAX_READ_REQ_SIZE);
+>> +
+>> +	dw_pcie_setup_rc(pp);
+>> +	meson_enable_memory_space(mp);
+>> +
+>> +	meson_pcie_assert_reset(mp);
+>> +
+>> +	/* check if the link is up or not */
+>> +	if (!dw_pcie_wait_for_link(pci))
+>> +		return 0;
+>> +
+>> +	return -ETIMEDOUT;
+>> +}
+>> +
+>> +static void meson_pcie_msi_init(struct meson_pcie *mp)
+>> +{
+>> +	struct pcie_port *pp = &mp->pci.pp;
+>> +
+>> +	dw_pcie_msi_init(pp);
+>> +}
+>> +
+>> +static void meson_pcie_enable_interrupts(struct meson_pcie *mp)
+>> +{
+>> +	if (IS_ENABLED(CONFIG_PCI_MSI))
+>> +		meson_pcie_msi_init(mp);
+>> +}
+>> +
+>> +static u32 meson_pcie_read_dbi(struct dw_pcie *pci, void __iomem *base,
+>> +			       u32 reg, size_t size)
+>> +{
+>> +	u32 val;
+>> +
+>> +	dw_pcie_read(base + reg, size, &val);
+>> +
+>> +	return val;
+>> +}
+>> +
+>> +static void meson_pcie_write_dbi(struct dw_pcie *pci, void __iomem *base,
+>> +				 u32 reg, size_t size, u32 val)
+>> +{
+>> +	dw_pcie_write(base + reg, size, val);
+>> +}
+>> +
+>> +static int meson_pcie_rd_own_conf(struct pcie_port *pp, int where, int size,
+>> +				  u32 *val)
+>> +{
+>> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+>> +	struct meson_pcie *mp = to_meson_pcie(pci);
+>> +
+>> +	if (!mp->device_attch)
+>> +		return 0;
+>> +
+>> +	/* the device class is not reported correctly from the register */
+>> +	if (where == PCI_CLASS_REVISION) {
+>> +		*val = readl(pci->dbi_base + PCI_CLASS_REVISION);
+>> +		/* keep revision id */
+>> +		*val &= PCI_CLASS_REVISION_MASK;
+>> +		*val |= PCI_CLASS_BRIDGE_PCI << 16;
+>> +		return PCIBIOS_SUCCESSFUL;
+>> +	}
+>> +
+>> +	return dw_pcie_read(pci->dbi_base + where, size, val);
+>> +}
+>> +
+>> +static int meson_pcie_wr_own_conf(struct pcie_port *pp, int where,
+>> +				  int size, u32 val)
+>> +{
+>> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+>> +	struct meson_pcie *mp = to_meson_pcie(pci);
+>> +
+>> +	if (!mp->device_attch)
+>> +		return 0;
+>> +
+>> +	return dw_pcie_write(pci->dbi_base + where, size, val);
+>> +}
+>> +
+>> +static int meson_pcie_link_up(struct dw_pcie *pci)
+>> +{
+>> +	struct meson_pcie *mp = to_meson_pcie(pci);
+>> +	struct device *dev = pci->dev;
+>> +	u32 smlh_up = 0;
+>> +	u32 ltssm_up = 0;
+>> +	u32 rdlh_up = 0;
+>> +	u32 speed_okay = 0;
+>> +	u32 cnt = 0;
+>> +	u32 state12, state17;
+>> +
+>> +	while (smlh_up == 0 || rdlh_up == 0 || ltssm_up == 0 ||
+>> +	       speed_okay == 0) {
+>> +		udelay(20);
+>> +
+>> +		state12 = meson_cfg_readl(mp, PCIE_CFG_STATUS12);
+>> +		state17 = meson_cfg_readl(mp, PCIE_CFG_STATUS17);
+>> +		smlh_up = IS_SMLH_LINK_UP(state12);
+>> +		rdlh_up = IS_RDLH_LINK_UP(state12);
+>> +		ltssm_up = IS_LTSSM_UP(state12);
+>> +
+>> +		if (PM_CURRENT_STATE(state17) < PCIE_GEN3)
+>> +			speed_okay = 1;
+>> +
+>> +		if (smlh_up)
+>> +			dev_dbg(dev, "smlh_link_up is on\n");
+>> +		if (rdlh_up)
+>> +			dev_dbg(dev, "rdlh_link_up is on\n");
+>> +		if (ltssm_up)
+>> +			dev_dbg(dev, "ltssm_up is on\n");
+>> +		if (speed_okay)
+>> +			dev_dbg(dev, "speed_okay\n");
+>> +
+>> +		cnt++;
+>> +
+>> +		if (cnt >= WAIT_LINKUP_TIMEOUT) {
+>> +			dev_err(dev, "Error: Wait linkup timeout.\n");
+>> +			return 0;
+>> +		}
+>> +	}
+>> +
+>> +	return 1;
+>> +}
+>> +
+>> +static int meson_pcie_host_init(struct pcie_port *pp)
+>> +{
+>> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+>> +	struct meson_pcie *mp = to_meson_pcie(pci);
+>> +	int ret;
+>> +
+>> +	ret = meson_pcie_establish_link(mp);
+>> +
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	mp->device_attch = 1;
+>> +	meson_pcie_enable_interrupts(mp);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct dw_pcie_host_ops meson_pcie_host_ops = {
+>> +	.rd_own_conf = meson_pcie_rd_own_conf,
+>> +	.wr_own_conf = meson_pcie_wr_own_conf,
+>> +	.host_init = meson_pcie_host_init,
+>> +};
+>> +
+>> +static int meson_add_pcie_port(struct meson_pcie *mp,
+>> +			       struct platform_device *pdev)
+>> +{
+>> +	struct dw_pcie *pci = &mp->pci;
+>> +	struct pcie_port *pp = &pci->pp;
+>> +	struct device *dev = &pdev->dev;
+>> +	int ret;
+>> +
+>> +	if (IS_ENABLED(CONFIG_PCI_MSI)) {
+>> +		pp->msi_irq = platform_get_irq(pdev, 0);
+>> +		if (pp->msi_irq < 0) {
+>> +			dev_err(dev, "failed to get msi irq\n");
+>> +			return pp->msi_irq;
+>> +		}
+>> +	}
+>> +
+>> +	pp->root_bus_nr = -1;
+>> +	pp->ops = &meson_pcie_host_ops;
+>> +	pci->dbi_base = mp->mem_res.elbi_base;
+>> +
+>> +	ret = dw_pcie_host_init(pp);
+>> +	if (ret) {
+>> +		dev_err(dev, "failed to initialize host\n");
+>> +		return ret;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct dw_pcie_ops dw_pcie_ops = {
+>> +	.read_dbi = meson_pcie_read_dbi,
+>> +	.write_dbi = meson_pcie_write_dbi,
+>> +	.link_up = meson_pcie_link_up,
+>> +};
+>> +
+>> +static int meson_pcie_probe(struct platform_device *pdev)
+>> +{
+>> +	struct device *dev = &pdev->dev;
+>> +	struct device_node *np = dev->of_node;
+>> +	struct dw_pcie *pci;
+>> +	struct meson_pcie *mp;
+>> +	struct meson_pcie_rc_reset *mrst;
+>> +	int ret;
+>> +
+>> +	mp = devm_kzalloc(dev, sizeof(*mp), GFP_KERNEL);
+>> +	if (!mp)
+>> +		return -ENOMEM;
+>> +
+>> +	pci = &mp->pci;
+>> +	pci->dev = dev;
+>> +	pci->ops = &dw_pcie_ops;
+>> +
+>> +	mp->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
+>> +	if (IS_ERR(mp->reset_gpio)) {
+>> +		dev_err(dev, "Get reset gpio failed\n");
+>> +		return PTR_ERR(mp->reset_gpio);
+>> +	}
+>> +
+>> +	mp->phy = devm_of_phy_get(dev, np, NULL);
+> 
+> For the 3rd time, you do *not* need a phy driver to just handle a reset line.
+> It is overkill.
+> 
+> you should claim the shared reset line here and be done with it.
+> 
 
-   struct ordered_event {
-     u64               timestamp;
-     u64               file_offset;
-     union perf_event  *event;
-     struct list_head  list;
-   };
+As your suggestion, we'll integrate phy driver into the controller and use 
+shared reset line here.
 
-This is quite convoluted and error prone as demonstrated by
-free-ing issue discovered and fixed by Stephane in here [1].
+>> +	if (IS_ERR(mp->phy)) {
+>> +		if (PTR_ERR(mp->phy) != -EPROBE_DEFER)
+>> +			dev_err(dev, "Get phy failed, set default %ld\n",
+>> +				PTR_ERR(mp->phy));
+>> +		return PTR_ERR(mp->phy);
+>> +	}
+>> +
+>> +	mrst = &mp->mrst;
+>> +
+>> +	mrst->port = devm_reset_control_get_shared(dev, "port");
+> 
+> There is no reason for this reset to be shared since there is one per pcie port.
+> 
 
-This patch adds the 'struct ordered_events_buffer' object,
-that holds the buffer data and frees it up properly.
+Yes, we will correct it.
+Thanks for suggestions.
 
-[1] - https://marc.info/?l=linux-kernel&m=153376761329335&w=2
-
-Reported-by: Stephane Eranian <eranian@google.com>
-Link: http://lkml.kernel.org/n/tip-qrkcqm5m1sugy4q83pfn5a1r@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/perf/util/ordered-events.c | 82 +++++++++++++++++++++++++++-----
- tools/perf/util/ordered-events.h | 37 +++++++-------
- 2 files changed, 90 insertions(+), 29 deletions(-)
-
-diff --git a/tools/perf/util/ordered-events.c b/tools/perf/util/ordered-events.c
-index bad9e0296e9a..3672060508a7 100644
---- a/tools/perf/util/ordered-events.c
-+++ b/tools/perf/util/ordered-events.c
-@@ -80,14 +80,20 @@ static union perf_event *dup_event(struct ordered_events *oe,
- 	return oe->copy_on_queue ? __dup_event(oe, event) : event;
- }
- 
--static void free_dup_event(struct ordered_events *oe, union perf_event *event)
-+static void __free_dup_event(struct ordered_events *oe, union perf_event *event)
- {
--	if (event && oe->copy_on_queue) {
-+	if (event) {
- 		oe->cur_alloc_size -= event->header.size;
- 		free(event);
- 	}
- }
- 
-+static void free_dup_event(struct ordered_events *oe, union perf_event *event)
-+{
-+	if (oe->copy_on_queue)
-+		__free_dup_event(oe, event);
-+}
-+
- #define MAX_SAMPLE_BUFFER	(64 * 1024 / sizeof(struct ordered_event))
- static struct ordered_event *alloc_event(struct ordered_events *oe,
- 					 union perf_event *event)
-@@ -100,15 +106,43 @@ static struct ordered_event *alloc_event(struct ordered_events *oe,
- 	if (!new_event)
- 		return NULL;
- 
-+	/*
-+	 * We maintain following scheme of buffers for ordered
-+	 * event allocation:
-+	 *
-+	 *   to_free list -> buffer1 (64K)
-+	 *                   buffer2 (64K)
-+	 *                   ...
-+	 *
-+	 * Each buffer keeps an array of ordered events objects:
-+	 *    buffer -> event[0]
-+	 *              event[1]
-+	 *              ...
-+	 *
-+	 * Each allocated ordered event is linked to one of
-+	 * following lists:
-+	 *   - time ordered list 'events'
-+	 *   - list of currently removed events 'cache'
-+	 *
-+	 * Allocation of the ordered event uses following order
-+	 * to get the memory:
-+	 *   - use recently removed object from 'cache' list
-+	 *   - use available object in current allocation buffer
-+	 *   - allocate new buffer if the current buffer is full
-+	 *
-+	 * Removal of ordered event object moves it from events to
-+	 * the cache list.
-+	 */
- 	if (!list_empty(cache)) {
- 		new = list_entry(cache->next, struct ordered_event, list);
- 		list_del(&new->list);
- 	} else if (oe->buffer) {
--		new = oe->buffer + oe->buffer_idx;
-+		new = &oe->buffer->event[oe->buffer_idx];
- 		if (++oe->buffer_idx == MAX_SAMPLE_BUFFER)
- 			oe->buffer = NULL;
- 	} else if (oe->cur_alloc_size < oe->max_alloc_size) {
--		size_t size = MAX_SAMPLE_BUFFER * sizeof(*new);
-+		size_t size = sizeof(*oe->buffer) +
-+			      MAX_SAMPLE_BUFFER * sizeof(*new);
- 
- 		oe->buffer = malloc(size);
- 		if (!oe->buffer) {
-@@ -122,9 +156,8 @@ static struct ordered_event *alloc_event(struct ordered_events *oe,
- 		oe->cur_alloc_size += size;
- 		list_add(&oe->buffer->list, &oe->to_free);
- 
--		/* First entry is abused to maintain the to_free list. */
--		oe->buffer_idx = 2;
--		new = oe->buffer + 1;
-+		oe->buffer_idx = 1;
-+		new = &oe->buffer->event[0];
- 	} else {
- 		pr("allocation limit reached %" PRIu64 "B\n", oe->max_alloc_size);
- 	}
-@@ -300,15 +333,38 @@ void ordered_events__init(struct ordered_events *oe, ordered_events__deliver_t d
- 	oe->deliver	   = deliver;
- }
- 
-+static void
-+ordered_events_buffer__free(struct ordered_events_buffer *buffer,
-+			    unsigned int max, struct ordered_events *oe)
-+{
-+	if (oe->copy_on_queue) {
-+		unsigned int i;
-+
-+		for (i = 0; i < max; i++)
-+			__free_dup_event(oe, buffer->event[i].event);
-+	}
-+
-+	free(buffer);
-+}
-+
- void ordered_events__free(struct ordered_events *oe)
- {
--	while (!list_empty(&oe->to_free)) {
--		struct ordered_event *event;
-+	struct ordered_events_buffer *buffer, *tmp;
- 
--		event = list_entry(oe->to_free.next, struct ordered_event, list);
--		list_del(&event->list);
--		free_dup_event(oe, event->event);
--		free(event);
-+	if (list_empty(&oe->to_free))
-+		return;
-+
-+	/*
-+	 * Current buffer might not have all the events allocated
-+	 * yet, we need to free only allocated ones ...
-+	 */
-+	list_del(&oe->buffer->list);
-+	ordered_events_buffer__free(oe->buffer, oe->buffer_idx, oe);
-+
-+	/* ... and continue with the rest */
-+	list_for_each_entry_safe(buffer, tmp, &oe->to_free, list) {
-+		list_del(&buffer->list);
-+		ordered_events_buffer__free(buffer, MAX_SAMPLE_BUFFER, oe);
- 	}
- }
- 
-diff --git a/tools/perf/util/ordered-events.h b/tools/perf/util/ordered-events.h
-index 8c7a2948593e..1338d5c345dc 100644
---- a/tools/perf/util/ordered-events.h
-+++ b/tools/perf/util/ordered-events.h
-@@ -25,23 +25,28 @@ struct ordered_events;
- typedef int (*ordered_events__deliver_t)(struct ordered_events *oe,
- 					 struct ordered_event *event);
- 
-+struct ordered_events_buffer {
-+	struct list_head	list;
-+	struct ordered_event	event[0];
-+};
-+
- struct ordered_events {
--	u64			last_flush;
--	u64			next_flush;
--	u64			max_timestamp;
--	u64			max_alloc_size;
--	u64			cur_alloc_size;
--	struct list_head	events;
--	struct list_head	cache;
--	struct list_head	to_free;
--	struct ordered_event	*buffer;
--	struct ordered_event	*last;
--	ordered_events__deliver_t deliver;
--	int			buffer_idx;
--	unsigned int		nr_events;
--	enum oe_flush		last_flush_type;
--	u32			nr_unordered_events;
--	bool                    copy_on_queue;
-+	u64				 last_flush;
-+	u64				 next_flush;
-+	u64				 max_timestamp;
-+	u64				 max_alloc_size;
-+	u64				 cur_alloc_size;
-+	struct list_head		 events;
-+	struct list_head		 cache;
-+	struct list_head		 to_free;
-+	struct ordered_events_buffer	*buffer;
-+	struct ordered_event		*last;
-+	ordered_events__deliver_t	 deliver;
-+	int				 buffer_idx;
-+	unsigned int			 nr_events;
-+	enum oe_flush			 last_flush_type;
-+	u32				 nr_unordered_events;
-+	bool				 copy_on_queue;
- };
- 
- int ordered_events__queue(struct ordered_events *oe, union perf_event *event,
--- 
-2.17.1
-
+>> +	if (IS_ERR(mrst->port)) {
+>> +		if (PTR_ERR(mrst->port) != -EPROBE_DEFER)
+>> +			dev_err(dev, "couldn't get port reset %ld\n",
+>> +				PTR_ERR(mrst->port));
+>> +
+>> +		return PTR_ERR(mrst->port);
+>> +	}
+>> +
+>> +	mrst->apb = devm_reset_control_get_shared(dev, "apb");
+>> +	if (IS_ERR(mrst->apb)) {
+>> +		if (PTR_ERR(mrst->apb) != -EPROBE_DEFER)
+>> +			dev_err(dev, "couldn't get apb reset\n");
+>> +
+>> +		return PTR_ERR(mrst->apb);
+>> +	}
+>> +
+>> +	reset_control_deassert(mrst->port);
+>> +	reset_control_deassert(mrst->apb);
+>> +
+>> +	phy_power_on(mp->phy);
+>> +
+>> +	ret = meson_pcie_init_clk(mp);
+>> +	if (ret) {
+>> +		dev_err(dev, "Init clock resources failed, %d\n", ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	ret = meson_pcie_get_mem(pdev, mp);
+>> +	if (ret) {
+>> +		dev_err(dev, "Get memory resource failed, %d\n", ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	platform_set_drvdata(pdev, mp);
+>> +
+>> +	ret = meson_add_pcie_port(mp, pdev);
+>> +	if (ret < 0) {
+>> +		dev_err(dev, "Add PCIE port failed, %d\n", ret);
+>> +		meson_pcie_deinit_clk(mp);
+>> +	}
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static const struct of_device_id meson_pcie_of_match[] = {
+>> +	{
+>> +		.compatible = "amlogic,axg-pcie",
+>> +	},
+>> +	{},
+>> +};
+>> +
+>> +static struct platform_driver meson_pcie_driver = {
+>> +	.probe = meson_pcie_probe,
+>> +	.driver = {
+>> +		.name = "meson-pcie",
+>> +		.of_match_table = meson_pcie_of_match,
+>> +	},
+>> +};
+>> +
+>> +builtin_platform_driver(meson_pcie_driver);
+> 
+> 
+> .
+> 
