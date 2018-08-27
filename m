@@ -2,334 +2,310 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F078C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:16:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B115BC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:16:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC1B9208B2
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:16:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OLSUMMRs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC1B9208B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 5A74F208B8
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:16:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A74F208B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hpe.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727392AbeH1AEe (ORCPT
+        id S1727447AbeH1AEz convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 20:04:34 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41475 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727013AbeH1AEe (ORCPT
+        Mon, 27 Aug 2018 20:04:55 -0400
+Received: from g2t2352.austin.hpe.com ([15.233.44.25]:8095 "EHLO
+        g2t2352.austin.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727013AbeH1AEz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 20:04:34 -0400
-Received: by mail-pg1-f193.google.com with SMTP id s15-v6so87428pgv.8
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 13:16:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=w2rilaAqy6gNVgryVoyHTN98egfrOruUloIVWokSAUg=;
-        b=OLSUMMRsiDfhiNcEawfd81Dc4H2kGRWh5VAP3OhtauqEYzGnjlrzzV36oGN8y1l1jt
-         Ki9Ym/96/MsSt/SD1n1KrARtTEvWPOQ/R/SJi5r4KDHl86UOfvPm/V/x16ISHeFRn7vs
-         Qq2hqhn0OSCxiulQyi5mwqelm2VgZS3mj/Ji2HXYCqK37BfmlnZb1kLlwU0MhDgSc/1d
-         kO+yR5tY7jWEyhWoJKyHDZQcCFWAs3khbBbKp+Et1+FdrdmIHcPqAmPQLEaTU4pbqhEO
-         TCPhs6AfLX5G4qgG4thR5DhiH9pnGM9AngI80t77z2iBMrjkxgJzOBTOloziEKaA9Qsu
-         ceUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=w2rilaAqy6gNVgryVoyHTN98egfrOruUloIVWokSAUg=;
-        b=fAlNzRwy8DXU8zXROvl+e4Um+nLAERw4atxqsVpEd01Y/pHolHxZm7L2+2HN8EgAr1
-         eIURzUkIsCk+WNJSjloMeTO/tkApDwHiH7O+gZWeMmIifA/bDbwNL6MPFsJ6L6JOga/O
-         xJmWeN8xRZ+DvFnry9f4gTvKjOm4ACyektJejbYIegRAOnAAcin/agqVFt96H3WQvRQ8
-         hf85ZHrFcNv4MSRopg7RjwFWbrR+4JZ0Xpi65aIarZN29/lJ82N/AMoeIi4eKdgJzSTz
-         fnLykhJqzAgQhjftTpNMnMp3syDcSHmAuCOIa6wHioBzE4qokjGTJR7Fqddx3OzHgKHR
-         Gryg==
-X-Gm-Message-State: APzg51BoqU7WTeGsNqBcsI0Q381FKKXKLHt1WWjn6WxZAarszyVnOQLC
-        gYRjm3zYArUsqZ4ZE6Hs5oA=
-X-Google-Smtp-Source: ANB0VdYC3VnUBfQtw7wZjgmqHK9iYvv9PZH8apPQXX3GDsVlR31+CmpNJLYJYevW8nzdxALp5Eyc+A==
-X-Received: by 2002:a62:86ca:: with SMTP id x193-v6mr15853290pfd.252.1535400985450;
-        Mon, 27 Aug 2018 13:16:25 -0700 (PDT)
-Received: from [10.33.114.204] ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id t12-v6sm104465pgg.72.2018.08.27.13.16.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 Aug 2018 13:16:24 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
-Subject: Re: TLB flushes on fixmap changes
-From:   Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <CALCETrW+nx7kRWov_+hCAxJRUSsUUJuVqvRP7KoVUxvFFTqi5Q@mail.gmail.com>
-Date:   Mon, 27 Aug 2018 13:16:22 -0700
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Will Deacon <will.deacon@arm.com>,
-        Benjamin Herrenschmidt <benh@au1.ibm.com>,
-        Nick Piggin <npiggin@gmail.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Rik van Riel <riel@surriel.com>,
-        Jann Horn <jannh@google.com>,
-        Adin Scannell <ascannell@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        David Miller <davem@davemloft.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <08A6BCB2-66C2-47ED-AEB8-AA8F4D7DBD45@gmail.com>
-References: <D74A89DF-0D89-4AB6-8A6B-93BEC9A83595@gmail.com>
- <20180824180438.GS24124@hirez.programming.kicks-ass.net>
- <56A9902F-44BE-4520-A17C-26650FCC3A11@gmail.com>
- <CA+55aFzerzTPm94jugheVmWg8dJre94yu+GyZGT9NNZanNx_qw@mail.gmail.com>
- <9A38D3F4-2F75-401D-8B4D-83A844C9061B@gmail.com>
- <CA+55aFz1KYT7fRRG98wei24spiVg7u1Ec66piWY5359ykFmezw@mail.gmail.com>
- <8E0D8C66-6F21-4890-8984-B6B3082D4CC5@gmail.com>
- <CALCETrWdeKBcEs7zAbpEM1YdYiT2UBXwPtF0mMTvcDX_KRpz1A@mail.gmail.com>
- <20180826112341.f77a528763e297cbc36058fa@kernel.org>
- <CALCETrXPaX-+R6Z9LqZp0uOVmq-TUX_ksPbUL7mnfbdqo6z2AA@mail.gmail.com>
- <20180826090958.GT24124@hirez.programming.kicks-ass.net>
- <20180827120305.01a6f26267c64610cadec5d8@kernel.org>
- <4BF82052-4738-441C-8763-26C85003F2C9@gmail.com>
- <20180827170511.6bafa15cbc102ae135366e86@kernel.org>
- <01DA0BDD-7504-4209-8A8F-20B27CF6A1C7@gmail.com>
- <CALCETrWxwpr+Xx0mCK1HUkanmCDOSRbw50VmebgoAgeNaaPAKg@mail.gmail.com>
- <0000D631-FDDF-4273-8F3C-714E6825E59B@gmail.com>
- <CALCETrUoNdwDuNSHb3haw9-fYk+sNC_M4r+5EMVVzJ8HWeSsOQ@mail.gmail.com>
- <823D916E-4056-4A36-BDD8-0FB682A8DCAE@gmail.com>
- <E5B40DF6-C28A-4EB2-84C3-146BC5B8B312@gmail.com>
- <CALCETrW+nx7kRWov_+hCAxJRUSsUUJuVqvRP7KoVUxvFFTqi5Q@mail.gmail.com>
-To:     Andy Lutomirski <luto@kernel.org>
-X-Mailer: Apple Mail (2.3445.9.1)
+        Mon, 27 Aug 2018 20:04:55 -0400
+Received: from G9W8456.americas.hpqcorp.net (g9w8456.houston.hp.com [16.216.161.95])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by g2t2352.austin.hpe.com (Postfix) with ESMTPS id ADB6963;
+        Mon, 27 Aug 2018 20:16:46 +0000 (UTC)
+Received: from G4W9119.americas.hpqcorp.net (2002:10d2:14d6::10d2:14d6) by
+ G9W8456.americas.hpqcorp.net (2002:10d8:a15f::10d8:a15f) with Microsoft SMTP
+ Server (TLS) id 15.0.1367.3; Mon, 27 Aug 2018 20:16:46 +0000
+Received: from NAM04-SN1-obe.outbound.protection.outlook.com (15.241.52.12) by
+ G4W9119.americas.hpqcorp.net (16.210.20.214) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3 via Frontend Transport; Mon, 27 Aug 2018 20:16:46 +0000
+Received: from TU4PR8401MB0430.NAMPRD84.PROD.OUTLOOK.COM (10.169.43.15) by
+ TU4PR8401MB0397.NAMPRD84.PROD.OUTLOOK.COM (10.169.42.151) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1080.14; Mon, 27 Aug 2018 20:16:44 +0000
+Received: from TU4PR8401MB0430.NAMPRD84.PROD.OUTLOOK.COM
+ ([fe80::2995:a39:a0a2:3158]) by TU4PR8401MB0430.NAMPRD84.PROD.OUTLOOK.COM
+ ([fe80::2995:a39:a0a2:3158%8]) with mapi id 15.20.1080.015; Mon, 27 Aug 2018
+ 20:16:43 +0000
+From:   "Banman, Andrew" <abanman@hpe.com>
+To:     "minyard@acm.org" <minyard@acm.org>
+CC:     "openipmi-developer@lists.sourceforge.net" 
+        <openipmi-developer@lists.sourceforge.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Anderson, Russ" <russ.anderson@hpe.com>,
+        "Ramsay, Frank" <frank.ramsay@hpe.com>,
+        "Ernst, Justin" <justin.ernst@hpe.com>,
+        Corey Minyard <cminyard@mvista.com>
+Subject: RE: [PATCH 1/2] ipmi: Move BT capabilities detection to the detect
+ call
+Thread-Topic: [PATCH 1/2] ipmi: Move BT capabilities detection to the detect
+ call
+Thread-Index: AQHUOyEfRq+wlD+DEU2qdfapZpi27qTUD2Hw
+Date:   Mon, 27 Aug 2018 20:16:43 +0000
+Message-ID: <TU4PR8401MB0430BCEBB2F6C81611054555A60B0@TU4PR8401MB0430.NAMPRD84.PROD.OUTLOOK.COM>
+References: <1535056623-26634-1-git-send-email-minyard@acm.org>
+ <1535056623-26634-2-git-send-email-minyard@acm.org>
+In-Reply-To: <1535056623-26634-2-git-send-email-minyard@acm.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=abanman@hpe.com; 
+x-originating-ip: [15.203.227.8]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;TU4PR8401MB0397;6:geC8rhZvPfX2uMbbAnpTUfkcFRqy8IXnQiFlvlCmzi/Ica9wqI1UfkEjM9rT4/exSnG9sn3lALHBry5v6jA9D447Ss3IRefufvjKgIh0JpbiOMvrCn888x8TwceH/LGxA53R5FUrKFZ9KaJU9LbzZyIJ6OCOheFNCbCaDq4AhoRRuA5/KXs+y1fMT1aN4jjqw/akaKPZwIUPnkhblilV8nRmyWEVLYsmb1IqKgMCjTf6GQBH4DmI+RJeATYwyEL+4W7md4Zveyn/dWplcWTMtyUF23etK6pdiZ9HE0Ff3+ZTvTX1gnIx507iDI1J52Bf3HcbjoYmUtn4v8oqG27H8W7dN1P3+lnicL/FJx01Y9k4gTD7dweW6o56CJTxb/vdrX0t+SSSe+BfatgIEPNZAfsfhWptraWxjICQAjx37qLRVX0lBnoyGUTzvijqptoZHx6It7scY4ne+2FkZpPKmA==;5:JAc5cvYeAV0PhEXI4tJHSbav/WNgq5Y5XTCCHngoxj119n4bB3tvuVqzePkvnGJZlQsYyKmiRscaFMVAPP/ajDjUPTTfve55ADVPztLbFhW1YW12jRAazue7TEKgO/i1244/bc3Q+O+h6CKg9bFaV6y+uCooJ3OuCdWls1g6ghk=;7:pRSu90gwIXAelgpIVdPvvEkQCzOh9oKc2q8j0ERUOWnaGgJ8qTHst923hyEMCatnDCsBPTnlwxiWxG3N6LuzKUvl9nxBHMNGewmKse7+GFY6NZJr4TX5EPTUri8I+145OBzhQtIwtObmlXaf7VWACFw+A2AR2TSKid8oLup7bbyGKHiSkP6/kvufKgW1P22oPnsObJWP/8sVdlg3qHh1qXi0e7s8PLcMAI4LGU4WXlNQxNkrbX3kLx4nbw1C21zi
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10019020)(136003)(376002)(396003)(346002)(39860400002)(366004)(13464003)(189003)(199004)(5660300001)(99286004)(53546011)(6506007)(66066001)(97736004)(6916009)(186003)(551934003)(33656002)(102836004)(2906002)(76176011)(26005)(7736002)(305945005)(8676002)(74316002)(7696005)(2900100001)(229853002)(81166006)(3846002)(6116002)(68736007)(2351001)(4326008)(106356001)(105586002)(8936002)(25786009)(1730700003)(81156014)(55016002)(6246003)(53936002)(54906003)(6436002)(316002)(9686003)(5250100002)(5640700003)(256004)(2501003)(14444005)(486006)(86362001)(11346002)(476003)(446003)(14454004)(478600001);DIR:OUT;SFP:1102;SCL:1;SRVR:TU4PR8401MB0397;H:TU4PR8401MB0430.NAMPRD84.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-correlation-id: 508eb10e-9565-4afc-a7bd-08d60c5a0192
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:TU4PR8401MB0397;
+x-ms-traffictypediagnostic: TU4PR8401MB0397:
+x-microsoft-antispam-prvs: <TU4PR8401MB03972F23C4170B8B71D8794BA60B0@TU4PR8401MB0397.NAMPRD84.PROD.OUTLOOK.COM>
+x-exchange-antispam-report-test: UriScan:(143289334528602)(227479698468861)(9452136761055)(85827821059158)(42262312472803)(213716511872227)(222181515654134);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(10201501046)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(201708071742011)(7699016);SRVR:TU4PR8401MB0397;BCL:0;PCL:0;RULEID:;SRVR:TU4PR8401MB0397;
+x-forefront-prvs: 07778E4001
+received-spf: None (protection.outlook.com: hpe.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: a488aEROIFrZE12Y6AWx78GZCngl5EJlpjgKKF8FLiWFq7kk16WJ5MxPaZVsRPyHs2ZO3Kv13SIT+0IgCyDEymDgEpx4bJu3WLS2APqm/fLmrSXLBbIMJ0/n0kDQlYC7zbBkK7m5ZdwtXnW2yjFw/mRiJMR/Fmec4s5ePg7FlijgjXyVzTu9NMXPiHNLbAQfZNPOpUmVLrweuRD/Ggk1XSrmcco9Qd7hwoTQASlkhZXEEFyOXLxTtbCIjuzWMpurAUxTjmKIxIpkxwE3K2lW/FCf33Xhc3nTTN0SlpqlWSN/KYoAEDlyOOBbSZFdkkLKMwgHrDmH52lDZebFALQ/IRGK6RMhYH9V/WIcI52MLys=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 508eb10e-9565-4afc-a7bd-08d60c5a0192
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Aug 2018 20:16:43.1701
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 105b2061-b669-4b31-92ac-24d304d195dc
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TU4PR8401MB0397
+X-OriginatorOrg: hpe.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-at 12:58 PM, Andy Lutomirski <luto@kernel.org> wrote:
+Tested-by: Andrew Banman
 
-> On Mon, Aug 27, 2018 at 12:43 PM, Nadav Amit <nadav.amit@gmail.com> =
-wrote:
->> at 12:10 PM, Nadav Amit <nadav.amit@gmail.com> wrote:
->>=20
->>> at 11:58 AM, Andy Lutomirski <luto@kernel.org> wrote:
->>>=20
->>>> On Mon, Aug 27, 2018 at 11:54 AM, Nadav Amit <nadav.amit@gmail.com> =
-wrote:
->>>>>> On Mon, Aug 27, 2018 at 10:34 AM, Nadav Amit =
-<nadav.amit@gmail.com> wrote:
->>>>>> What do you all think?
->>>>>=20
->>>>> I agree in general. But I think that current->mm would need to be =
-loaded, as
->>>>> otherwise I am afraid it would break switch_mm_irqs_off().
->>>>=20
->>>> What breaks?
->>>=20
->>> Actually nothing. I just saw the IBPB stuff regarding tsk, but it =
-should not
->>> matter.
->>=20
->> So here is what I got. It certainly needs some cleanup, but it boots.
->>=20
->> Let me know how crappy you find it...
->>=20
->>=20
->> diff --git a/arch/x86/include/asm/mmu_context.h =
-b/arch/x86/include/asm/mmu_context.h
->> index bbc796eb0a3b..336779650a41 100644
->> --- a/arch/x86/include/asm/mmu_context.h
->> +++ b/arch/x86/include/asm/mmu_context.h
->> @@ -343,4 +343,24 @@ static inline unsigned long =
-__get_current_cr3_fast(void)
->>        return cr3;
->> }
->>=20
->> +typedef struct {
->> +       struct mm_struct *prev;
->> +} temporary_mm_state_t;
->> +
->> +static inline temporary_mm_state_t use_temporary_mm(struct mm_struct =
-*mm)
->> +{
->> +       temporary_mm_state_t state;
->> +
->> +       lockdep_assert_irqs_disabled();
->> +       state.prev =3D this_cpu_read(cpu_tlbstate.loaded_mm);
->> +       switch_mm_irqs_off(NULL, mm, current);
->> +       return state;
->> +}
->> +
->> +static inline void unuse_temporary_mm(temporary_mm_state_t prev)
->> +{
->> +       lockdep_assert_irqs_disabled();
->> +       switch_mm_irqs_off(NULL, prev.prev, current);
->> +}
->> +
->> #endif /* _ASM_X86_MMU_CONTEXT_H */
->> diff --git a/arch/x86/include/asm/pgtable.h =
-b/arch/x86/include/asm/pgtable.h
->> index 5715647fc4fe..ef62af9a0ef7 100644
->> --- a/arch/x86/include/asm/pgtable.h
->> +++ b/arch/x86/include/asm/pgtable.h
->> @@ -976,6 +976,10 @@ static inline void __meminit =
-init_trampoline_default(void)
->>        /* Default trampoline pgd value */
->>        trampoline_pgd_entry =3D =
-init_top_pgt[pgd_index(__PAGE_OFFSET)];
->> }
->> +
->> +void __init patching_mm_init(void);
->> +#define patching_mm_init patching_mm_init
->> +
->> # ifdef CONFIG_RANDOMIZE_MEMORY
->> void __meminit init_trampoline(void);
->> # else
->> diff --git a/arch/x86/include/asm/pgtable_64_types.h =
-b/arch/x86/include/asm/pgtable_64_types.h
->> index 054765ab2da2..9f44262abde0 100644
->> --- a/arch/x86/include/asm/pgtable_64_types.h
->> +++ b/arch/x86/include/asm/pgtable_64_types.h
->> @@ -116,6 +116,9 @@ extern unsigned int ptrs_per_p4d;
->> #define LDT_PGD_ENTRY          (pgtable_l5_enabled() ? =
-LDT_PGD_ENTRY_L5 : LDT_PGD_ENTRY_L4)
->> #define LDT_BASE_ADDR          (LDT_PGD_ENTRY << PGDIR_SHIFT)
->>=20
->> +#define TEXT_POKE_PGD_ENTRY    -5UL
->> +#define TEXT_POKE_ADDR         (TEXT_POKE_PGD_ENTRY << PGDIR_SHIFT)
->> +
->> #define __VMALLOC_BASE_L4      0xffffc90000000000UL
->> #define __VMALLOC_BASE_L5      0xffa0000000000000UL
->>=20
->> diff --git a/arch/x86/include/asm/pgtable_types.h =
-b/arch/x86/include/asm/pgtable_types.h
->> index 99fff853c944..840c72ec8c4f 100644
->> --- a/arch/x86/include/asm/pgtable_types.h
->> +++ b/arch/x86/include/asm/pgtable_types.h
->> @@ -505,6 +505,9 @@ pgprot_t phys_mem_access_prot(struct file *file, =
-unsigned long pfn,
->> /* Install a pte for a particular vaddr in kernel space. */
->> void set_pte_vaddr(unsigned long vaddr, pte_t pte);
->>=20
->> +struct mm_struct;
->> +void set_mm_pte_vaddr(struct mm_struct *mm, unsigned long vaddr, =
-pte_t pte);
->> +
->> #ifdef CONFIG_X86_32
->> extern void native_pagetable_init(void);
->> #else
->> diff --git a/arch/x86/include/asm/text-patching.h =
-b/arch/x86/include/asm/text-patching.h
->> index 2ecd34e2d46c..cb364ea5b19d 100644
->> --- a/arch/x86/include/asm/text-patching.h
->> +++ b/arch/x86/include/asm/text-patching.h
->> @@ -38,4 +38,6 @@ extern void *text_poke(void *addr, const void =
-*opcode, size_t len);
->> extern int poke_int3_handler(struct pt_regs *regs);
->> extern void *text_poke_bp(void *addr, const void *opcode, size_t len, =
-void *handler);
->>=20
->> +extern struct mm_struct *patching_mm;
->> +
->> #endif /* _ASM_X86_TEXT_PATCHING_H */
->> diff --git a/arch/x86/kernel/alternative.c =
-b/arch/x86/kernel/alternative.c
->> index a481763a3776..fd8a950b0d62 100644
->> --- a/arch/x86/kernel/alternative.c
->> +++ b/arch/x86/kernel/alternative.c
->> @@ -11,6 +11,7 @@
->> #include <linux/stop_machine.h>
->> #include <linux/slab.h>
->> #include <linux/kdebug.h>
->> +#include <linux/mmu_context.h>
->> #include <asm/text-patching.h>
->> #include <asm/alternative.h>
->> #include <asm/sections.h>
->> @@ -701,8 +702,36 @@ void *text_poke(void *addr, const void *opcode, =
-size_t len)
->>                WARN_ON(!PageReserved(pages[0]));
->>                pages[1] =3D virt_to_page(addr + PAGE_SIZE);
->>        }
->> -       BUG_ON(!pages[0]);
->> +
->>        local_irq_save(flags);
->> +       BUG_ON(!pages[0]);
->> +
->> +       /*
->> +        * During initial boot, it is hard to initialize patching_mm =
-due to
->> +        * dependencies in boot order.
->> +        */
->> +       if (patching_mm) {
->> +               pte_t pte;
->> +               temporary_mm_state_t prev;
->> +
->> +               prev =3D use_temporary_mm(patching_mm);
->> +               pte =3D mk_pte(pages[0], PAGE_KERNEL);
->> +               set_mm_pte_vaddr(patching_mm, TEXT_POKE_ADDR, pte);
->> +               pte =3D mk_pte(pages[1], PAGE_KERNEL);
->> +               set_mm_pte_vaddr(patching_mm, TEXT_POKE_ADDR + =
-PAGE_SIZE, pte);
->> +
->> +               memcpy((void *)(TEXT_POKE_ADDR | ((unsigned long)addr =
-& ~PAGE_MASK)),
->> +                      opcode, len);
->> +
->> +               set_mm_pte_vaddr(patching_mm, TEXT_POKE_ADDR, =
-__pte(0));
->> +               set_mm_pte_vaddr(patching_mm, TEXT_POKE_ADDR + =
-PAGE_SIZE, __pte(0));
->> +               local_flush_tlb();
->=20
-> Hmm.  This is stuff busted on SMP, and it's IMO more complicated than
-> needed.  How about getting rid of all the weird TLB flushing stuff and
-> instead putting the mapping at vaddr - __START_KERNEL_map or whatever
-> it is?  You *might* need to flush_tlb_mm_range() on module unload, but
-> that's it.
+Ran through 100+ boots with no error with your 1st patch applied. I don't see any endcases to worry about.
 
-I don=E2=80=99t see what=E2=80=99s wrong in SMP, since this entire piece =
-of code should be
-running under text_mutex.
+Thanks Corey!
 
-I don=E2=80=99t quite understand your proposal. I really don=E2=80=99t =
-want to have any
-chance in which the page-tables for the poked address is not =
-preallocated.
+Andrew
 
-It is more complicated than needed, and there are redundant TLB flushes. =
-The
-reason I preferred to do it this way, is in order not to use other =
-functions
-that take locks during the software page-walk and not to duplicate =
-existing
-code. Yet, duplication might be the way to go.
-
->> +               sync_core();
->=20
-> I can't think of any case where sync_core() is needed.  The mm switch
-> serializes.
-
-Good point!
-
->=20
-> Also, is there any circumstance in which any of this is used before at
-> least jump table init?  All the early stuff is text_poke_early(),
-> right?
-
-Not before jump_label_init. However, I did not manage to get rid of the =
-two
-code-patches in text_poke(), since text_poke is used relatively early by
-x86_late_time_init(), and at this stage kmem_cache_alloc() - which is =
-needed
-to duplicate init_mm - still fails.
+> -----Original Message-----
+> From: Corey Minyard [mailto:tcminyard@gmail.com] On Behalf Of
+> minyard@acm.org
+> Sent: Thursday, August 23, 2018 3:37 PM
+> To: Banman, Andrew <abanman@hpe.com>
+> Cc: openipmi-developer@lists.sourceforge.net; linux-
+> kernel@vger.kernel.org; Anderson, Russ <russ.anderson@hpe.com>; Ramsay,
+> Frank <frank.ramsay@hpe.com>; Ernst, Justin <justin.ernst@hpe.com>;
+> Corey Minyard <cminyard@mvista.com>
+> Subject: [PATCH 1/2] ipmi: Move BT capabilities detection to the detect
+> call
+> 
+> From: Corey Minyard <cminyard@mvista.com>
+> 
+> The capabilities detection was being done as part of the normal
+> state machine, but it was possible for it to be running while
+> the upper layers of the IPMI driver were initializing the
+> device, resulting in error and failure to initialize.
+> 
+> Move the capabilities detection to the the detect function,
+> so it's done before anything else runs on the device.  This also
+> simplifies the state machine and removes some code, as a bonus.
+> 
+> Signed-off-by: Corey Minyard <cminyard@mvista.com>
+> Reported-by: Andrew Banman <abanman@hpe.com>
+> ---
+>  drivers/char/ipmi/ipmi_bt_sm.c | 92 ++++++++++++++++++++++-------------
+> -------
+>  1 file changed, 48 insertions(+), 44 deletions(-)
+> 
+> diff --git a/drivers/char/ipmi/ipmi_bt_sm.c
+> b/drivers/char/ipmi/ipmi_bt_sm.c
+> index cbc6126..b4133832e 100644
+> --- a/drivers/char/ipmi/ipmi_bt_sm.c
+> +++ b/drivers/char/ipmi/ipmi_bt_sm.c
+> @@ -59,8 +59,6 @@ enum bt_states {
+>  	BT_STATE_RESET3,
+>  	BT_STATE_RESTART,
+>  	BT_STATE_PRINTME,
+> -	BT_STATE_CAPABILITIES_BEGIN,
+> -	BT_STATE_CAPABILITIES_END,
+>  	BT_STATE_LONG_BUSY	/* BT doesn't get hosed :-) */
+>  };
+> 
+> @@ -86,7 +84,6 @@ struct si_sm_data {
+>  	int		error_retries;	/* end of "common" fields */
+>  	int		nonzero_status;	/* hung BMCs stay all 0 */
+>  	enum bt_states	complete;	/* to divert the state machine */
+> -	int		BT_CAP_outreqs;
+>  	long		BT_CAP_req2rsp;
+>  	int		BT_CAP_retries;	/* Recommended retries */
+>  };
+> @@ -137,8 +134,6 @@ static char *state2txt(unsigned char state)
+>  	case BT_STATE_RESET3:		return("RESET3");
+>  	case BT_STATE_RESTART:		return("RESTART");
+>  	case BT_STATE_LONG_BUSY:	return("LONG_BUSY");
+> -	case BT_STATE_CAPABILITIES_BEGIN: return("CAP_BEGIN");
+> -	case BT_STATE_CAPABILITIES_END:	return("CAP_END");
+>  	}
+>  	return("BAD STATE");
+>  }
+> @@ -185,7 +180,6 @@ static unsigned int bt_init_data(struct si_sm_data
+> *bt, struct si_sm_io *io)
+>  	bt->complete = BT_STATE_IDLE;	/* end here */
+>  	bt->BT_CAP_req2rsp = BT_NORMAL_TIMEOUT * USEC_PER_SEC;
+>  	bt->BT_CAP_retries = BT_NORMAL_RETRY_LIMIT;
+> -	/* BT_CAP_outreqs == zero is a flag to read BT Capabilities */
+>  	return 3; /* We claim 3 bytes of space; ought to check SPMI table
+> */
+>  }
+> 
+> @@ -447,7 +441,7 @@ static enum si_sm_result error_recovery(struct
+> si_sm_data *bt,
+> 
+>  static enum si_sm_result bt_event(struct si_sm_data *bt, long time)
+>  {
+> -	unsigned char status, BT_CAP[8];
+> +	unsigned char status;
+>  	static enum bt_states last_printed = BT_STATE_PRINTME;
+>  	int i;
+> 
+> @@ -500,12 +494,6 @@ static enum si_sm_result bt_event(struct si_sm_data
+> *bt, long time)
+>  		if (status & BT_H_BUSY)		/* clear a leftover H_BUSY */
+>  			BT_CONTROL(BT_H_BUSY);
+> 
+> -		bt->timeout = bt->BT_CAP_req2rsp;
+> -
+> -		/* Read BT capabilities if it hasn't been done yet */
+> -		if (!bt->BT_CAP_outreqs)
+> -			BT_STATE_CHANGE(BT_STATE_CAPABILITIES_BEGIN,
+> -					SI_SM_CALL_WITHOUT_DELAY);
+>  		BT_SI_SM_RETURN(SI_SM_IDLE);
+> 
+>  	case BT_STATE_XACTION_START:
+> @@ -610,37 +598,6 @@ static enum si_sm_result bt_event(struct si_sm_data
+> *bt, long time)
+>  		BT_STATE_CHANGE(BT_STATE_XACTION_START,
+>  				SI_SM_CALL_WITH_DELAY);
+> 
+> -	/*
+> -	 * Get BT Capabilities, using timing of upper level state machine.
+> -	 * Set outreqs to prevent infinite loop on timeout.
+> -	 */
+> -	case BT_STATE_CAPABILITIES_BEGIN:
+> -		bt->BT_CAP_outreqs = 1;
+> -		{
+> -			unsigned char GetBT_CAP[] = { 0x18, 0x36 };
+> -			bt->state = BT_STATE_IDLE;
+> -			bt_start_transaction(bt, GetBT_CAP, sizeof(GetBT_CAP));
+> -		}
+> -		bt->complete = BT_STATE_CAPABILITIES_END;
+> -		BT_STATE_CHANGE(BT_STATE_XACTION_START,
+> -				SI_SM_CALL_WITH_DELAY);
+> -
+> -	case BT_STATE_CAPABILITIES_END:
+> -		i = bt_get_result(bt, BT_CAP, sizeof(BT_CAP));
+> -		bt_init_data(bt, bt->io);
+> -		if ((i == 8) && !BT_CAP[2]) {
+> -			bt->BT_CAP_outreqs = BT_CAP[3];
+> -			bt->BT_CAP_req2rsp = BT_CAP[6] * USEC_PER_SEC;
+> -			bt->BT_CAP_retries = BT_CAP[7];
+> -		} else
+> -			pr_warn("IPMI BT: using default values\n");
+> -		if (!bt->BT_CAP_outreqs)
+> -			bt->BT_CAP_outreqs = 1;
+> -		pr_warn("IPMI BT: req2rsp=%ld secs retries=%d\n",
+> -			bt->BT_CAP_req2rsp / USEC_PER_SEC, bt->BT_CAP_retries);
+> -		bt->timeout = bt->BT_CAP_req2rsp;
+> -		return SI_SM_CALL_WITHOUT_DELAY;
+> -
+>  	default:	/* should never occur */
+>  		return error_recovery(bt,
+>  				      status,
+> @@ -651,6 +608,11 @@ static enum si_sm_result bt_event(struct si_sm_data
+> *bt, long time)
+> 
+>  static int bt_detect(struct si_sm_data *bt)
+>  {
+> +	unsigned char GetBT_CAP[] = { 0x18, 0x36 };
+> +	unsigned char BT_CAP[8];
+> +	enum si_sm_result smi_result;
+> +	int rv;
+> +
+>  	/*
+>  	 * It's impossible for the BT status and interrupt registers to be
+>  	 * all 1's, (assuming a properly functioning, self-initialized BMC)
+> @@ -661,6 +623,48 @@ static int bt_detect(struct si_sm_data *bt)
+>  	if ((BT_STATUS == 0xFF) && (BT_INTMASK_R == 0xFF))
+>  		return 1;
+>  	reset_flags(bt);
+> +
+> +	/*
+> +	 * Try getting the BT capabilities here.
+> +	 */
+> +	rv = bt_start_transaction(bt, GetBT_CAP, sizeof(GetBT_CAP));
+> +	if (rv) {
+> +		dev_warn(bt->io->dev,
+> +			 "Can't start capabilities transaction: %d\n", rv);
+> +		goto out_no_bt_cap;
+> +	}
+> +
+> +	smi_result = SI_SM_CALL_WITHOUT_DELAY;
+> +	for (;;) {
+> +		if (smi_result == SI_SM_CALL_WITH_DELAY ||
+> +		    smi_result == SI_SM_CALL_WITH_TICK_DELAY) {
+> +			schedule_timeout_uninterruptible(1);
+> +			smi_result = bt_event(bt, jiffies_to_usecs(1));
+> +		} else if (smi_result == SI_SM_CALL_WITHOUT_DELAY) {
+> +			smi_result = bt_event(bt, 0);
+> +		} else
+> +			break;
+> +	}
+> +
+> +	rv = bt_get_result(bt, BT_CAP, sizeof(BT_CAP));
+> +	bt_init_data(bt, bt->io);
+> +	if (rv < 8) {
+> +		dev_warn(bt->io->dev, "bt cap response too short: %d\n", rv);
+> +		goto out_no_bt_cap;
+> +	}
+> +
+> +	if (BT_CAP[2]) {
+> +		dev_warn(bt->io->dev, "Error fetching bt cap: %x\n",
+> BT_CAP[2]);
+> +out_no_bt_cap:
+> +		dev_warn(bt->io->dev, "using default values\n");
+> +	} else {
+> +		bt->BT_CAP_req2rsp = BT_CAP[6] * USEC_PER_SEC;
+> +		bt->BT_CAP_retries = BT_CAP[7];
+> +	}
+> +
+> +	dev_info(bt->io->dev, "req2rsp=%ld secs retries=%d\n",
+> +		 bt->BT_CAP_req2rsp / USEC_PER_SEC, bt->BT_CAP_retries);
+> +
+>  	return 0;
+>  }
+> 
+> --
+> 2.7.4
 
