@@ -2,119 +2,188 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ACD9C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:32:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50A36C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:37:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAE8A208D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:32:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r2EIVQAq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAE8A208D5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 0757A208B8
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:37:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0757A208B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727230AbeH0XUQ (ORCPT
+        id S1727171AbeH0XY6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 19:20:16 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:32906 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726887AbeH0XUQ (ORCPT
+        Mon, 27 Aug 2018 19:24:58 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:35030 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726939AbeH0XY6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 19:20:16 -0400
-Received: by mail-pf1-f196.google.com with SMTP id d4-v6so57349pfn.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 12:32:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=zrw0gMp7VbCFPTnFnSIL0AYMTTvr965NAQ+XZOpw6fA=;
-        b=r2EIVQAqJo2DAjx4BXrrOT2vwSlgiYz0RezfknL9PnErcm3/CBqXm5d9PUlzkuWf30
-         wRIEL9NuUCXujeWGgGceRT4nRGTC1e7uI9is6hubxOW4pHQBFvv9lOLNL0UJWHfMAUNV
-         McJOo7uK6CsWUBi2uiRS/veFOxmFNlKoE1U9ayqJErTNX8LZQC5C73N+QWdKOrcGIBM2
-         gArOnjnOi32R0Q/73Z0s7msddmcFEn/mgbb7QLtk/ZESAa4EMr4cuw/bXdzv8XN4VZJr
-         hhTmGSlejyJMx88r37DNMwcp1+/rsVs6b1hYWAnWN6alCPYVnxCunPAtdmFKwoovA1JF
-         /YiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zrw0gMp7VbCFPTnFnSIL0AYMTTvr965NAQ+XZOpw6fA=;
-        b=F6PXgBO5/dRZOp58D+m6SVB+0XJ4beqVWAjIOt/oUeGMuVfdiisLYwj8W7MgmujHDE
-         pvNJswFSClYKKiZfOCLwLWY5I25DVa5RDOBxdyd5EFUGCQygEk7VsLQZoSzB33smv9SL
-         5KOqGsaYcggdwilZH3wmOdCdqe3S19AdW/fvUk/pJJeE9K9aPI3YwuBg8XF2YjXrKJUv
-         ObP961CZdHz/jDIcOwqn3n8NK/2qAH1xgPugPX9w2jAdPOxWit29GMGr9m8uNZuE6D0S
-         RDHgnum2iSrRhiAIP57b0Sq3RyR5cfws3IHbra77KKk2/jNrmK4vp0+Fx1h2mJ42H+Ld
-         WIGg==
-X-Gm-Message-State: APzg51B9mq+YrsdnQUMEvDlwJghKPha9SzEY3rrygd49YDDSwJPsNogE
-        XkAoTrkMxl9a2BLR32ey/F5LeFLd
-X-Google-Smtp-Source: ANB0VdaBRFxvlcBYczNRjU3mmNurYNaItx40hrBH8zuwU42y61jVyMqlmRocDg5NdgtXQ1fMjd9SbQ==
-X-Received: by 2002:a63:4506:: with SMTP id s6-v6mr13639108pga.422.1535398338491;
-        Mon, 27 Aug 2018 12:32:18 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id y4-v6sm51965pfm.137.2018.08.27.12.32.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 Aug 2018 12:32:17 -0700 (PDT)
-Date:   Mon, 27 Aug 2018 12:32:15 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Linux 4.19-rc1
-Message-ID: <20180827193215.GA18363@roeck-us.net>
-References: <CA+55aFw9mxNPX6OtOp-aoUMdXSg=gBkQudGGamo__sh_ts_LdQ@mail.gmail.com>
- <20180827134459.GA16094@roeck-us.net>
- <20180827154641.GA17201@infradead.org>
- <20180827171152.GA2705@roeck-us.net>
- <20180827181311.GA24778@infradead.org>
+        Mon, 27 Aug 2018 19:24:58 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 7BB5E606D4A7;
+        Mon, 27 Aug 2018 21:36:57 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id gf_BJpxcY10y; Mon, 27 Aug 2018 21:36:57 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 218CC603B65A;
+        Mon, 27 Aug 2018 21:36:57 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id gRHXXDNsQnws; Mon, 27 Aug 2018 21:36:57 +0200 (CEST)
+Received: from blindfold.localnet (213-47-184-186.cable.dynamic.surfer.at [213.47.184.186])
+        by lithops.sigma-star.at (Postfix) with ESMTPSA id C0BB8603B659;
+        Mon, 27 Aug 2018 21:36:56 +0200 (CEST)
+From:   Richard Weinberger <richard@nod.at>
+To:     Sascha Hauer <s.hauer@pengutronix.de>
+Cc:     linux-mtd@lists.infradead.org, David Gstir <david@sigma-star.at>,
+        kernel@pengutronix.de, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 13/25] ubifs: authentication: Add hashes to index nodes
+Date:   Mon, 27 Aug 2018 21:36:56 +0200
+Message-ID: <2092924.iTNEbfF25J@blindfold>
+In-Reply-To: <20180704124137.13396-14-s.hauer@pengutronix.de>
+References: <20180704124137.13396-1-s.hauer@pengutronix.de> <20180704124137.13396-14-s.hauer@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180827181311.GA24778@infradead.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 11:13:11AM -0700, Christoph Hellwig wrote:
-> On Mon, Aug 27, 2018 at 10:11:52AM -0700, Guenter Roeck wrote:
-> > When building sparc32 images, this results in the following
-> > error.
-> > 
-> > drivers/base/platform.c: In function 'setup_pdev_archdata':
-> > drivers/base/platform.c:235:22: error: assignment from incompatible pointer type [-Werror=incompatible-pointer-types]
-> >    pdev->dev.dma_mask = &pdev->dma_mask;
-> > 
-> > pdev->dev.dma_mask is u64 *, pdev->dma_mask is dma_addr_t which in turn
-> > is either u32 or u64 depending on the architecture.
+Am Mittwoch, 4. Juli 2018, 14:41:25 CEST schrieb Sascha Hauer:
+> With this patch the hashes over the index nodes stored in the tree node
+> cache are written to flash and are checked when read back from flash.
+> The hash of the root index node is stored in the master node.
 > 
-> Yes, I've fixed this up to be a u64.
+> During journal replay the hashes are regenerated from the read nodes
+> and stored in the tree node cache. This means the nodes must previously
+> be authenticated by other means. This is done in a later patch.
 > 
-> > 
-> > > +++ b/include/linux/platform_device.h
-> > > @@ -25,6 +25,7 @@ struct platform_device {
-> > >  	int		id;
-> > >  	bool		id_auto;
-> > >  	struct device	dev;
-> > > +	dma_addr_t	dma_mask;
-> > 
-> > ... so this will have to be u64, or the pointer in struct device would
-> > have to be fixed.
-> > 
-> > However, even changing the definition to u64 does not help: The warnings
-> > are still reported. This is because setup_pdev_archdata() is not called
-> > for any of the affected devices. That is kind of interesting since it
-> > means that arch_setup_pdev_archdata() won't be called for those devices
-> > either.
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> ---
+>  fs/ubifs/master.c     |  3 +++
+>  fs/ubifs/misc.h       |  5 +++--
+>  fs/ubifs/replay.c     | 29 ++++++++++++++++++-----------
+>  fs/ubifs/tnc.c        | 13 +++++++++++++
+>  fs/ubifs/tnc_commit.c | 26 ++++++++++++++++++++++++++
+>  fs/ubifs/tnc_misc.c   | 16 +++++++++++++++-
+>  fs/ubifs/ubifs.h      |  4 ++++
+>  7 files changed, 82 insertions(+), 14 deletions(-)
 > 
-> Yeah, this is odd.  I'll need some more time to figure out where
-> the platform devices for sbus are allocated.
 
-I think it is scan_one_device() in arch/sparc/kernel/of_device_32.c
-and arch/sparc/kernel/of_device_64.c.
+[...]
 
-Guenter
+> diff --git a/fs/ubifs/tnc.c b/fs/ubifs/tnc.c
+> index a47fced47823..a00809d4fe6f 100644
+> --- a/fs/ubifs/tnc.c
+> +++ b/fs/ubifs/tnc.c
+> @@ -488,6 +488,12 @@ static int try_read_node(const struct ubifs_info *c, void *buf, int type,
+>  	if (crc != node_crc)
+>  		return 0;
+>  
+> +	err = ubifs_node_check_hash(c, buf, zbr->hash);
+> +	if (err) {
+> +		ubifs_err(c, "hash mismatch on node at LEB %d:%d", lnum, offs);
+> +		return 0;
+> +	}
+
+Hmm, I think a global "hash is bad" handler would be nice to have.
+That way we always report in the same way.
+
+Maybe also a new file system specific ioctl to query whether a hash
+failure was noticed.
+
+>  	return 1;
+>  }
+>  
+> @@ -1713,6 +1719,13 @@ static int validate_data_node(struct ubifs_info *c, void *buf,
+>  		goto out;
+>  	}
+>  
+> +	err = ubifs_node_check_hash(c, buf, zbr->hash);
+> +	if (err) {
+> +		ubifs_err(c, "hash mismatch on node at LEB %d:%d",
+> +			  zbr->lnum, zbr->offs);
+> +		return err;
+> +	}
+> +
+>  	len = le32_to_cpu(ch->len);
+>  	if (len != zbr->len) {
+>  		ubifs_err(c, "bad node length %d, expected %d", len, zbr->len);
+> diff --git a/fs/ubifs/tnc_commit.c b/fs/ubifs/tnc_commit.c
+> index a9df94ad46a3..3ad78d538885 100644
+> --- a/fs/ubifs/tnc_commit.c
+> +++ b/fs/ubifs/tnc_commit.c
+> @@ -38,6 +38,7 @@ static int make_idx_node(struct ubifs_info *c, struct ubifs_idx_node *idx,
+>  			 struct ubifs_znode *znode, int lnum, int offs, int len)
+>  {
+>  	struct ubifs_znode *zp;
+> +	u8 hash[UBIFS_MAX_HASH_LEN];
+>  	int i, err;
+>  
+>  	/* Make index node */
+> @@ -62,6 +63,7 @@ static int make_idx_node(struct ubifs_info *c, struct ubifs_idx_node *idx,
+>  		}
+>  	}
+>  	ubifs_prepare_node(c, idx, len, 0);
+> +	ubifs_node_calc_hash(c, idx, hash);
+>  
+>  	znode->lnum = lnum;
+>  	znode->offs = offs;
+> @@ -78,10 +80,12 @@ static int make_idx_node(struct ubifs_info *c, struct ubifs_idx_node *idx,
+>  		zbr->lnum = lnum;
+>  		zbr->offs = offs;
+>  		zbr->len = len;
+> +		ubifs_copy_hash(c, hash, zbr->hash);
+>  	} else {
+>  		c->zroot.lnum = lnum;
+>  		c->zroot.offs = offs;
+>  		c->zroot.len = len;
+> +		ubifs_copy_hash(c, hash, c->zroot.hash);
+>  	}
+>  	c->calc_idx_sz += ALIGN(len, 8);
+>  
+> @@ -647,6 +651,8 @@ static int get_znodes_to_commit(struct ubifs_info *c)
+>  			znode->cnext = c->cnext;
+>  			break;
+>  		}
+> +		znode->cparent = znode->parent;
+> +		znode->ciip = znode->iip;
+>  		znode->cnext = cnext;
+>  		znode = cnext;
+>  		cnt += 1;
+> @@ -840,6 +846,8 @@ static int write_index(struct ubifs_info *c)
+>  	}
+>  
+>  	while (1) {
+> +		u8 hash[UBIFS_MAX_HASH_LEN];
+> +
+>  		cond_resched();
+>  
+>  		znode = cnext;
+> @@ -857,6 +865,7 @@ static int write_index(struct ubifs_info *c)
+>  			br->lnum = cpu_to_le32(zbr->lnum);
+>  			br->offs = cpu_to_le32(zbr->offs);
+>  			br->len = cpu_to_le32(zbr->len);
+> +			ubifs_copy_hash(c, zbr->hash, ubifs_branch_hash(c, br));
+>  			if (!zbr->lnum || !zbr->len) {
+>  				ubifs_err(c, "bad ref in znode");
+>  				ubifs_dump_znode(c, znode);
+> @@ -868,6 +877,23 @@ static int write_index(struct ubifs_info *c)
+>  		}
+>  		len = ubifs_idx_node_sz(c, znode->child_cnt);
+>  		ubifs_prepare_node(c, idx, len, 0);
+> +		ubifs_node_calc_hash(c, idx, hash);
+> +
+> +		mutex_lock(&c->tnc_mutex);
+
+This lock looks correct too me.
+Just in case, you did test with lockdep enabled? :-)
+
+
+
