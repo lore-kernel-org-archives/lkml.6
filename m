@@ -2,126 +2,109 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B76BEC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 04:41:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E91E9C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 04:45:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2401C2084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 04:41:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2401C2084A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lip6.fr
+	by mail.kernel.org (Postfix) with ESMTP id 892E72084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 04:45:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iqo9Vhex"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 892E72084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726895AbeH0I0E (ORCPT
+        id S1726927AbeH0IaD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 04:26:04 -0400
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:65482
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726753AbeH0I0E (ORCPT
+        Mon, 27 Aug 2018 04:30:03 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:44332 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726714AbeH0IaD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 04:26:04 -0400
-X-IronPort-AV: E=Sophos;i="5.53,293,1531778400"; 
-   d="scan'208";a="276816270"
-Received: from unknown (HELO hadrien) ([208.181.63.202])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2018 06:41:04 +0200
-Date:   Sun, 26 Aug 2018 21:41:02 -0700 (PDT)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-cc:     Joe Perches <joe@perches.com>, Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jamal Hadi Salim <jhs@mojatatu.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Jiri Pirko <jiri@resnulli.us>,
-        "David S. Miller" <davem@davemloft.net>,
-        Network Development <netdev@vger.kernel.org>
-Subject: Re: [PATCH] net: sched: Fix memory exposure from short TCA_U32_SEL
-In-Reply-To: <20180827040423.GB6515@ZenIV.linux.org.uk>
-Message-ID: <alpine.DEB.2.21.1808262107340.2295@hadrien>
-References: <20180826061534.GT6515@ZenIV.linux.org.uk> <CAGXu5jK7VzayzZTcxgZBf-+YHWO+Hv7s8utj2rzTc3gFtA8pFQ@mail.gmail.com> <20180826173236.GU6515@ZenIV.linux.org.uk> <d31fe59160e0b7d40e09536a3c74619ebb1f3b13.camel@perches.com> <20180826212421.GW6515@ZenIV.linux.org.uk>
- <eca48539a3dede3bfaed9ab9a6c06794cf8160e0.camel@perches.com> <20180826224322.GX6515@ZenIV.linux.org.uk> <alpine.DEB.2.21.1808262159430.2528@hadrien> <20180827023526.GA6515@ZenIV.linux.org.uk> <alpine.DEB.2.21.1808262319000.2295@hadrien>
- <20180827040423.GB6515@ZenIV.linux.org.uk>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 27 Aug 2018 04:30:03 -0400
+Received: by mail-pl1-f196.google.com with SMTP id ba4-v6so3576351plb.11
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Aug 2018 21:45:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=G9zs9GxhW1Rxy2KhsA14hqezNZbyMTJWiNJnnCu/aCc=;
+        b=Iqo9VhexSFlBn7u0VqzVLQ+TeqdHFHUzml8YgcC586qDK7YwpCspSIfZP7pqpOjKes
+         5NskrSSrdKJM8xYCffTVZlhEMgYKNo37A5Wmw7Ues17SeNmGPQfEjyZvP3sQvN3fybeY
+         BCbbQbzrOCXGDV3ZFpGxCWhjHPQtqZhC6bNT7iUhLyXMk4OLeaosy6GAwRU8ba+ceErc
+         SZ2EAERrBwaMNaT5T2CkrRdrKHIV3fc0Sj32jlP370b3m2ejqxBb3LResbaaWJcdeFSO
+         o2m33onP5UAITp68q61Cd4/cGBmK1/a3YukTLgTKSkVJkv0QU7bMp34mMWTLzgQ4d1WW
+         ainA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=G9zs9GxhW1Rxy2KhsA14hqezNZbyMTJWiNJnnCu/aCc=;
+        b=fXgP/gy/Za7G51sGGFvCFTrJwPrZv6wAdkjuNmZjgsNEfeZ6oHPN4jAWfT9quPFoS6
+         Ij/dKZ245ecevWGJ6HoL7YIRWrm3TVZrIujsXZKE0htFy9MBDp4l5AqqdAGc35VCkxSd
+         OScK7ZLF0HbBNChrfy9S4O+i5Ok0p+bUZbqL3VRQkKRY4t009YW3BB3PFnuWXHMpTq25
+         M2mk+0EOjeWRinhPqkUcukrT4IZQxJspm1ZR9zCbtupWakR3x/fYgzH6jZvUDDg4GrLh
+         xw/RoP7HeqqYCYaMb81tT9+f2OIfq8c5hx8SVVlKd37c5IwLdnXkOj4j1ypeRMaCEkul
+         sXqg==
+X-Gm-Message-State: APzg51DeFSfBKcmzuavnj7+JSWFkp98eNuZ7yPS8mrCPHa02ejgvZi8N
+        4kc5T/YV3mH/cimmdTnUqyU=
+X-Google-Smtp-Source: ANB0VdbEYsTfX2rZtJUAgz5TZbRCOrp4KxCl2Pyo43gJ24sh9O8M2fvBFexXr7Kudz7xwUnEjLEmLw==
+X-Received: by 2002:a17:902:6a83:: with SMTP id n3-v6mr11405869plk.246.1535345107095;
+        Sun, 26 Aug 2018 21:45:07 -0700 (PDT)
+Received: from roar.ozlabs.ibm.com (59-102-83-192.tpgi.com.au. [59.102.83.192])
+        by smtp.gmail.com with ESMTPSA id e131-v6sm19420180pfg.152.2018.08.26.21.45.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 26 Aug 2018 21:45:06 -0700 (PDT)
+Date:   Mon, 27 Aug 2018 14:44:57 +1000
+From:   Nicholas Piggin <npiggin@gmail.com>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
+        benh@au1.ibm.com, torvalds@linux-foundation.org,
+        catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org
+Subject: Re: [RFC PATCH 08/11] asm-generic/tlb: Track freeing of page-table
+ directories in struct mmu_gather
+Message-ID: <20180827144457.3f4036e3@roar.ozlabs.ibm.com>
+In-Reply-To: <1535125966-7666-9-git-send-email-will.deacon@arm.com>
+References: <1535125966-7666-1-git-send-email-will.deacon@arm.com>
+        <1535125966-7666-9-git-send-email-will.deacon@arm.com>
+X-Mailer: Claws Mail 3.17.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 24 Aug 2018 16:52:43 +0100
+Will Deacon <will.deacon@arm.com> wrote:
 
+> From: Peter Zijlstra <peterz@infradead.org>
+> 
+> Some architectures require different TLB invalidation instructions
+> depending on whether it is only the last-level of page table being
+> changed, or whether there are also changes to the intermediate
+> (directory) entries higher up the tree.
+> 
+> Add a new bit to the flags bitfield in struct mmu_gather so that the
+> architecture code can operate accordingly if it's the intermediate
+> levels being invalidated.
+> 
+> Signed-off-by: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Will Deacon <will.deacon@arm.com>
 
-On Mon, 27 Aug 2018, Al Viro wrote:
+powerpc should be able to move right over to using this rather
+than keeping the bit in need_flush_all.
 
-> On Sun, Aug 26, 2018 at 11:35:17PM -0400, Julia Lawall wrote:
->
-> > * x = \(kmalloc\|kzalloc\|devm_kmalloc\|devm_kzalloc\)(...)
->
-> I can name several you've missed right off the top of my head -
-> vmalloc, kvmalloc, kmem_cache_alloc, kmem_cache_zalloc, variants
-> with _trace slapped on, and that is not to mention the things like
-> get_free_page or
+powerpc may be able to use the unmap granule thing to improve
+its page size dependent flushes, but it might prefer to go
+a different way and track start-end for different page sizes.
+I wonder how much of that stuff should go into generic code,
+and whether it should instead go into a struct arch_mmu_gather.
 
-OK, maybe for a given type the set of functions would be smaller.
-
->
-> void *my_k3wl_alloc(u64 n) // 'cause all artificial limits suck, that's why
-> {
-> 	lots and lots of home-grown stats collection
-> 	some tracepoints thrown in just for fun
-> 	return kmalloc(n);
-> }
->
-> (and no, I'm not implying that net/sched folks had done anything of that
-> sort; I have seen that and worse in drivers, though)
->
-> > The * at the beginning of the line means to highlight what you are looking
-> > for, which is done by making a diff in which the highlighted line
-> > appears to be removed.
->
-> Umm...  Does that cover return, BTW?  Or something like
-> 	T *barf;
-> 	extern void foo(T *p);
-> 	foo(kmalloc(sizeof(*barf)));
-
-It only covers the pattern that is shown, ie an assignment.  For this,
-another pattern would be needed.  It would be necessary to match first the
-call that one is concerned with and then go find the function definition
-or prototype to find the type of the associated parameter.  It is possible
-to count the offset of the kmalloc call in the argument list and then get
-the type at the corresponding offset in the parameter list of the function
-declaration or prototype.
-
->
->
-> > The limitation is the ability to figure out the type of x.  If it is a
-> > local variable, Coccinelle should have no problem.  If it is a structure
-> > field, it may be necessary to provide command line arguments like
-> >
-> > --all-includes --include-headers-for-types
-> >
-> > --all-includes means to try to find all include files that are mentioned
-> > in the .c file.  The next stronger option is --recursive includes, which
-> > means include what all of the mentioned files include as well,
-> > recursively.  This tends to cause a major performance hit, because a lot
-> > of code is being parsed.  --include-headers-for-types heals a bit with
-> > that, as it only considers the header files when computing type
-> > information, and now when applying the rules.
-> >
-> > With respect to ifdefs around variable declarations and structure field
-> > declaration, in these cases Coccinelle considers that it cannot make the
-> > ifdef have an if-like control flow, and so if considers the #ifdef, #else
-> > and #endif to be comments.  Thus it takes into account only the last type
-> > provided for a given variable.
->
-> [snip]
->
-> What about several variants of structure definition?  Because ifdefs around
-> includes do occur in the wild...
-
-Such ifdefs would be ignored completely.  I suspect that only the last
-definition of the structure would be taken into account.
-
-julia
+Thanks,
+Nick
