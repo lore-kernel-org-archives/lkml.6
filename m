@@ -3,190 +3,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F617C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 21:42:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F4029C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 21:42:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37508208D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 21:42:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37508208D5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 992AA208B8
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 21:42:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 992AA208B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727485AbeH1Bak (ORCPT
+        id S1727545AbeH1BbL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 21:30:40 -0400
-Received: from mga04.intel.com ([192.55.52.120]:19246 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726994AbeH1Baj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 21:30:39 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2018 14:42:12 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,296,1531810800"; 
-   d="scan'208";a="83861380"
-Received: from pgsmsx104.gar.corp.intel.com ([10.221.44.91])
-  by fmsmga004.fm.intel.com with ESMTP; 27 Aug 2018 14:41:25 -0700
-Received: from pgsmsx112.gar.corp.intel.com ([169.254.3.58]) by
- PGSMSX104.gar.corp.intel.com ([169.254.3.57]) with mapi id 14.03.0319.002;
- Tue, 28 Aug 2018 05:41:24 +0800
-From:   "Huang, Kai" <kai.huang@intel.com>
-To:     "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
-        "platform-driver-x86@vger.kernel.org" 
-        <platform-driver-x86@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>
-CC:     "nhorman@redhat.com" <nhorman@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "suresh.b.siddha@intel.com" <suresh.b.siddha@intel.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>
-Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
- enclaves
-Thread-Topic: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
- enclaves
-Thread-Index: AQHUPjfc29Kn4Rp1DkeLR/DtZ2Q8VaTTmtMA
-Date:   Mon, 27 Aug 2018 21:41:22 +0000
-Message-ID: <1535406078.3416.9.camel@intel.com>
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
-         <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.254.178.148]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <6C72083B82148040BFA28EA5FB8D87D3@intel.com>
-Content-Transfer-Encoding: base64
+        Mon, 27 Aug 2018 21:31:11 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:43533 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726994AbeH1BbL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 21:31:11 -0400
+Received: from p4fea45ac.dip0.t-ipconnect.de ([79.234.69.172] helo=[192.168.0.145])
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fuPHW-0001vq-1i; Mon, 27 Aug 2018 23:42:42 +0200
+Date:   Mon, 27 Aug 2018 23:42:38 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Miroslav Lichvar <mlichvar@redhat.com>
+cc:     Ondrej Mosnacek <omosnace@redhat.com>,
+        Richard Guy Briggs <rgb@redhat.com>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        John Stultz <john.stultz@linaro.org>
+Subject: Re: [PATCH ghak10 v5 2/2] timekeeping/ntp: Audit clock/NTP params
+ adjustments
+In-Reply-To: <20180827114557.GN27091@localhost>
+Message-ID: <alpine.DEB.2.21.1808272341370.1359@nanos.tec.linutronix.de>
+References: <20180824120001.20771-1-omosnace@redhat.com> <20180824120001.20771-3-omosnace@redhat.com> <20180824194703.h3mbuhrxzixmna4e@madcap2.tricolour.ca> <CAFqZXNvD_7psR+wM-GTXQ4bwK3w8=t7UnBidojB5XbmbE_K2oA@mail.gmail.com>
+ <20180827114557.GN27091@localhost>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gTW9uLCAyMDE4LTA4LTI3IGF0IDIxOjUzICswMzAwLCBKYXJra28gU2Fra2luZW4gd3JvdGU6
-DQo+IEZyb206IFNlYW4gQ2hyaXN0b3BoZXJzb24gPHNlYW4uai5jaHJpc3RvcGhlcnNvbkBpbnRl
-bC5jb20+DQo+IA0KPiBBZGQgYSBmdW5jdGlvbiB0byBwZXJmb3JtIEVOQ0xTKEVJTklUKSwgd2hp
-Y2ggaW5pdGlhbGl6ZXMgYW4gZW5jbGF2ZSwNCj4gd2hpY2ggY2FuIGJlIHVzZWQgYnkgYSBkcml2
-ZXIgZm9yIHJ1bm5pbmcgZW5jbGF2ZXMgYW5kIFZNTXMuDQo+IA0KPiBXcml0aW5nIHRoZSBMRSBo
-YXNoIE1TUnMgaXMgZXh0cmFvcmRpbmFyaWx5IGV4cGVuc2l2ZSwgZS5nLiAzLTR4DQo+IHNsb3dl
-cg0KPiB0aGFuIG5vcm1hbCBNU1JzLCBzbyB3ZSB1c2UgYSBwZXItY3B1IGNhY2hlIHRvIHRyYWNr
-IHRoZSBsYXN0IGtub3duDQo+IHZhbHVlDQo+IG9mIHRoZSBNU1JzIHRvIGF2b2lkIHVubmVjZXNz
-YXJpbHkgd3JpdGluZyB0aGUgTVNScyB3aXRoIHRoZSBjdXJyZW50DQo+IHZhbHVlLg0KPiANCj4g
-U2lnbmVkLW9mZi1ieTogU2VhbiBDaHJpc3RvcGhlcnNvbiA8c2Vhbi5qLmNocmlzdG9waGVyc29u
-QGludGVsLmNvbT4NCj4gQ28tZGV2ZWxvcGVkLWJ5OiBKYXJra28gU2Fra2luZW4gPGphcmtrby5z
-YWtraW5lbkBsaW51eC5pbnRlbC5jb20+DQo+IFNpZ25lZC1vZmYtYnk6IEphcmtrbyBTYWtraW5l
-biA8amFya2tvLnNha2tpbmVuQGxpbnV4LmludGVsLmNvbT4NCj4gLS0tDQo+ICBhcmNoL3g4Ni9p
-bmNsdWRlL2FzbS9zZ3guaCAgICAgIHwgIDIgKw0KPiAgYXJjaC94ODYva2VybmVsL2NwdS9pbnRl
-bF9zZ3guYyB8IDg2DQo+ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKystLQ0KPiAgMiBm
-aWxlcyBjaGFuZ2VkLCA4NSBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlm
-ZiAtLWdpdCBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL3NneC5oIGIvYXJjaC94ODYvaW5jbHVkZS9h
-c20vc2d4LmgNCj4gaW5kZXggYmFmMzBkNDliNzFmLi5jMTVjMTU2NDM2YmUgMTAwNjQ0DQo+IC0t
-LSBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL3NneC5oDQo+ICsrKyBiL2FyY2gveDg2L2luY2x1ZGUv
-YXNtL3NneC5oDQo+IEBAIC0xMDgsNiArMTA4LDggQEAgdm9pZCBzZ3hfZnJlZV9wYWdlKHN0cnVj
-dCBzZ3hfZXBjX3BhZ2UgKnBhZ2UpOw0KPiAgdm9pZCBzZ3hfcGFnZV9yZWNsYWltYWJsZShzdHJ1
-Y3Qgc2d4X2VwY19wYWdlICpwYWdlKTsNCj4gIHN0cnVjdCBwYWdlICpzZ3hfZ2V0X2JhY2tpbmco
-c3RydWN0IGZpbGUgKmZpbGUsIHBnb2ZmX3QgaW5kZXgpOw0KPiAgdm9pZCBzZ3hfcHV0X2JhY2tp
-bmcoc3RydWN0IHBhZ2UgKmJhY2tpbmdfcGFnZSwgYm9vbCB3cml0ZSk7DQo+ICtpbnQgc2d4X2Vp
-bml0KHN0cnVjdCBzZ3hfc2lnc3RydWN0ICpzaWdzdHJ1Y3QsIHN0cnVjdCBzZ3hfZWluaXR0b2tl
-bg0KPiAqdG9rZW4sDQo+ICsJICAgICAgc3RydWN0IHNneF9lcGNfcGFnZSAqc2Vjc19wYWdlLCB1
-NjQgbGVwdWJrZXloYXNoWzRdKTsNCj4gIA0KPiAgI2RlZmluZSBFTkNMU19GQVVMVF9GTEFHIDB4
-NDAwMDAwMDBVTA0KPiAgI2RlZmluZSBFTkNMU19GQVVMVF9GTEFHX0FTTSAiJDB4NDAwMDAwMDAi
-DQo+IGRpZmYgLS1naXQgYS9hcmNoL3g4Ni9rZXJuZWwvY3B1L2ludGVsX3NneC5jDQo+IGIvYXJj
-aC94ODYva2VybmVsL2NwdS9pbnRlbF9zZ3guYw0KPiBpbmRleCAxMDQ2NDc4YTNhYjkuLmZlMjVl
-NjgwNTY4MCAxMDA2NDQNCj4gLS0tIGEvYXJjaC94ODYva2VybmVsL2NwdS9pbnRlbF9zZ3guYw0K
-PiArKysgYi9hcmNoL3g4Ni9rZXJuZWwvY3B1L2ludGVsX3NneC5jDQo+IEBAIC05LDYgKzksNyBA
-QA0KPiAgI2luY2x1ZGUgPGxpbnV4L3NjaGVkL3NpZ25hbC5oPg0KPiAgI2luY2x1ZGUgPGxpbnV4
-L3NobWVtX2ZzLmg+DQo+ICAjaW5jbHVkZSA8bGludXgvc2xhYi5oPg0KPiArI2luY2x1ZGUgPGxp
-bnV4L3N1c3BlbmQuaD4NCj4gICNpbmNsdWRlIDxhc20vc2d4Lmg+DQo+ICAjaW5jbHVkZSA8YXNt
-L3NneF9wci5oPg0KPiAgDQo+IEBAIC0zOCw2ICszOSwxOCBAQCBzdGF0aWMgTElTVF9IRUFEKHNn
-eF9hY3RpdmVfcGFnZV9saXN0KTsNCj4gIHN0YXRpYyBERUZJTkVfU1BJTkxPQ0soc2d4X2FjdGl2
-ZV9wYWdlX2xpc3RfbG9jayk7DQo+ICBzdGF0aWMgc3RydWN0IHRhc2tfc3RydWN0ICprc2d4c3dh
-cGRfdHNrOw0KPiAgc3RhdGljIERFQ0xBUkVfV0FJVF9RVUVVRV9IRUFEKGtzZ3hzd2FwZF93YWl0
-cSk7DQo+ICtzdGF0aWMgc3RydWN0IG5vdGlmaWVyX2Jsb2NrIHNneF9wbV9ub3RpZmllcjsNCj4g
-K3N0YXRpYyB1NjQgc2d4X3BtX2NudDsNCj4gKw0KPiArLyogVGhlIGNhY2hlIGZvciB0aGUgbGFz
-dCBrbm93biB2YWx1ZXMgb2YgSUEzMl9TR1hMRVBVQktFWUhBU0h4IE1TUnMNCj4gZm9yIGVhY2gN
-Cj4gKyAqIENQVS4gVGhlIGVudHJpZXMgYXJlIGluaXRpYWxpemVkIHdoZW4gdGhleSBhcmUgZmly
-c3QgdXNlZCBieQ0KPiBzZ3hfZWluaXQoKS4NCj4gKyAqLw0KPiArc3RydWN0IHNneF9sZXB1Ymtl
-eWhhc2ggew0KPiArCXU2NCBtc3JzWzRdOw0KPiArCXU2NCBwbV9jbnQ7DQoNCk1heSBJIGFzayB3
-aHkgZG8gd2UgbmVlZCBwbV9jbnQgaGVyZT8gSW4gZmFjdCB3aHkgZG8gd2UgbmVlZCBzdXNwZW5k
-DQpzdGFmZiAobmFtZWx5LCBzZ3hfcG1fY250IGFib3ZlLCBhbmQgcmVsYXRlZCBjb2RlIGluIHRo
-aXMgcGF0Y2gpIGhlcmUNCmluIHRoaXMgcGF0Y2g/IEZyb20gdGhlIHBhdGNoIGNvbW1pdCBtZXNz
-YWdlIEkgZG9uJ3Qgc2VlIHdoeSB3ZSBuZWVkIFBNDQpzdGFmZiBoZXJlLiBQbGVhc2UgZ2l2ZSBj
-b21tZW50IHdoeSB5b3UgbmVlZCBQTSBzdGFmZiwgb3IgeW91IG1heQ0KY29uc2lkZXIgdG8gc3Bs
-aXQgdGhlIFBNIHN0YWZmIHRvIGFub3RoZXIgcGF0Y2guDQoNCj4gK307DQo+ICsNCj4gK3N0YXRp
-YyBERUZJTkVfUEVSX0NQVShzdHJ1Y3Qgc2d4X2xlcHVia2V5aGFzaCAqLA0KPiBzZ3hfbGVwdWJr
-ZXloYXNoX2NhY2hlKTsNCj4gIA0KPiAgLyoqDQo+ICAgKiBzZ3hfcmVjbGFpbV9wYWdlcyAtIHJl
-Y2xhaW0gRVBDIHBhZ2VzIGZyb20gdGhlIGNvbnN1bWVycw0KPiBAQCAtMzI4LDYgKzM0MSw1NCBA
-QCB2b2lkIHNneF9wdXRfYmFja2luZyhzdHJ1Y3QgcGFnZSAqYmFja2luZ19wYWdlLA0KPiBib29s
-IHdyaXRlKQ0KPiAgfQ0KPiAgRVhQT1JUX1NZTUJPTF9HUEwoc2d4X3B1dF9iYWNraW5nKTsNCj4g
-IA0KPiArLyoqDQo+ICsgKiBzZ3hfZWluaXQgLSBpbml0aWFsaXplIGFuIGVuY2xhdmUNCj4gKyAq
-IEBzaWdzdHJ1Y3Q6CQlhIHBvaW50ZXIgdG8gdGhlIFNJR1NUUlVDVA0KPiArICogQHRva2VuOgkJ
-YSBwb2ludGVyIHRvIHRoZSBFSU5JVFRPS0VODQo+ICsgKiBAc2Vjc19wYWdlOgkJYSBwb2ludGVy
-IHRvIHRoZSBTRUNTIEVQQyBwYWdlDQo+ICsgKiBAbGVwdWJrZXloYXNoOgl0aGUgZGVzaXJlZCB2
-YWx1ZSBmb3IgSUEzMl9TR1hMRVBVQktFWUhBU0h4DQo+IE1TUnMNCj4gKyAqDQo+ICsgKiBUcnkg
-dG8gcGVyZm9ybSBFSU5JVCBvcGVyYXRpb24uIElmIHRoZSBNU1JzIGFyZSB3cml0YWJsZSwgdGhl
-eQ0KPiBhcmUgdXBkYXRlZA0KPiArICogYWNjb3JkaW5nIHRvIEBsZXB1YmtleWhhc2guDQo+ICsg
-Kg0KPiArICogUmV0dXJuOg0KPiArICogICAwIG9uIHN1Y2Nlc3MsDQo+ICsgKiAgIC1lcnJubyBv
-biBmYWlsdXJlDQo+ICsgKiAgIFNHWCBlcnJvciBjb2RlIGlmIEVJTklUIGZhaWxzDQo+ICsgKi8N
-Cj4gK2ludCBzZ3hfZWluaXQoc3RydWN0IHNneF9zaWdzdHJ1Y3QgKnNpZ3N0cnVjdCwgc3RydWN0
-IHNneF9laW5pdHRva2VuDQo+ICp0b2tlbiwNCj4gKwkgICAgICBzdHJ1Y3Qgc2d4X2VwY19wYWdl
-ICpzZWNzX3BhZ2UsIHU2NCBsZXB1YmtleWhhc2hbNF0pDQo+ICt7DQo+ICsJc3RydWN0IHNneF9s
-ZXB1YmtleWhhc2ggX19wZXJjcHUgKmNhY2hlOw0KPiArCWJvb2wgY2FjaGVfdmFsaWQ7DQo+ICsJ
-aW50IGksIHJldDsNCj4gKw0KPiArCWlmICghc2d4X2xjX2VuYWJsZWQpDQo+ICsJCXJldHVybiBf
-X2Vpbml0KHNpZ3N0cnVjdCwgdG9rZW4sDQo+IHNneF9lcGNfYWRkcihzZWNzX3BhZ2UpKTsNCj4g
-Kw0KPiArCWNhY2hlID0gcGVyX2NwdShzZ3hfbGVwdWJrZXloYXNoX2NhY2hlLCBzbXBfcHJvY2Vz
-c29yX2lkKCkpOw0KPiArCWlmICghY2FjaGUpIHsNCj4gKwkJY2FjaGUgPSBremFsbG9jKHNpemVv
-ZihzdHJ1Y3Qgc2d4X2xlcHVia2V5aGFzaCksDQo+IEdGUF9LRVJORUwpOw0KPiArCQlpZiAoIWNh
-Y2hlKQ0KPiArCQkJcmV0dXJuIC1FTk9NRU07DQo+ICsJfQ0KDQpJdCBzZWVtcyBwZXItY3B1IHZh
-cmlhYmxlIGlzIGEgcG9pbnRlciB0byBzdHJ1Y3Qgc2d4X2xlcHVia2V5aGFzaCwgYW5kDQp0aGUg
-YWN0dWFsIHN0cnVjdHVyZSBpcyBhbGxvY2F0ZWQgYXQgdGhlIGZpcnN0IHRpbWUgdGhlIGZ1bmN0
-aW9uIGlzDQpjYWxsZWQuIE1heSBJIGFzayB3aGVuIHdpbGwgaXQgYmUgZnJlZWQ/IEl0IHNlZW1z
-IHRoZSBmcmVlIGlzIG5vdCBpbg0KdGhpcyBwYXRjaC4gT3IgSSBhbSBtaXN1bmRlcnN0YW5kaW5n
-IHNvbWV0aGluZz8NCg0KPiArDQo+ICsJY2FjaGVfdmFsaWQgPSBjYWNoZS0+cG1fY250ID09IHNn
-eF9wbV9jbnQ7DQo+ICsJY2FjaGUtPnBtX2NudCA9IHNneF9wbV9jbnQ7DQo+ICsJcHJlZW1wdF9k
-aXNhYmxlKCk7DQo+ICsJZm9yIChpID0gMDsgaSA8IDQ7IGkrKykgew0KPiArCQlpZiAoY2FjaGVf
-dmFsaWQgJiYgbGVwdWJrZXloYXNoW2ldID09IGNhY2hlLQ0KPiA+bXNyc1tpXSkNCj4gKwkJCWNv
-bnRpbnVlOw0KPiArDQo+ICsJCXdybXNybChNU1JfSUEzMl9TR1hMRVBVQktFWUhBU0gwICsgaSwN
-Cj4gbGVwdWJrZXloYXNoW2ldKTsNCj4gKwkJY2FjaGUtPm1zcnNbaV0gPSBsZXB1YmtleWhhc2hb
-aV07DQo+ICsJfQ0KPiArCXJldCA9IF9fZWluaXQoc2lnc3RydWN0LCB0b2tlbiwgc2d4X2VwY19h
-ZGRyKHNlY3NfcGFnZSkpOw0KPiArCXByZWVtcHRfZW5hYmxlKCk7DQo+ICsJcmV0dXJuIHJldDsN
-Cj4gK30NCj4gK0VYUE9SVF9TWU1CT0woc2d4X2Vpbml0KTsNCj4gKw0KPiAgc3RhdGljIF9faW5p
-dCBpbnQgc2d4X2luaXRfZXBjX2JhbmsodTY0IGFkZHIsIHU2NCBzaXplLCB1bnNpZ25lZA0KPiBs
-b25nIGluZGV4LA0KPiAgCQkJCSAgICBzdHJ1Y3Qgc2d4X2VwY19iYW5rICpiYW5rKQ0KPiAgew0K
-PiBAQCAtNDI2LDYgKzQ4NywxNSBAQCBzdGF0aWMgX19pbml0IGludCBzZ3hfcGFnZV9jYWNoZV9p
-bml0KHZvaWQpDQo+ICAJcmV0dXJuIDA7DQo+ICB9DQo+ICANCj4gK3N0YXRpYyBpbnQgc2d4X3Bt
-X25vdGlmaWVyX2NiKHN0cnVjdCBub3RpZmllcl9ibG9jayAqbmIsIHVuc2lnbmVkDQo+IGxvbmcg
-YWN0aW9uLA0KPiArCQkJICAgICAgdm9pZCAqZGF0YSkNCj4gK3sNCj4gKwlpZiAoYWN0aW9uID09
-IFBNX1NVU1BFTkRfUFJFUEFSRSB8fCBhY3Rpb24gPT0NCj4gUE1fSElCRVJOQVRJT05fUFJFUEFS
-RSkNCj4gKwkJc2d4X3BtX2NudCsrOw0KPiArDQo+ICsJcmV0dXJuIE5PVElGWV9ET05FOw0KPiAr
-fQ0KPiArDQo+ICBzdGF0aWMgX19pbml0IGludCBzZ3hfaW5pdCh2b2lkKQ0KPiAgew0KPiAgCXN0
-cnVjdCB0YXNrX3N0cnVjdCAqdHNrOw0KPiBAQCAtNDUyLDIwICs1MjIsMzAgQEAgc3RhdGljIF9f
-aW5pdCBpbnQgc2d4X2luaXQodm9pZCkNCj4gIAlpZiAoIShmYyAmIEZFQVRVUkVfQ09OVFJPTF9T
-R1hfTEVfV1IpKQ0KPiAgCQlwcl9pbmZvKCJJQTMyX1NHWExFUFVCS0VZSEFTSG4gTVNScyBhcmUg
-bm90DQo+IHdyaXRhYmxlXG4iKTsNCj4gIA0KPiAtCXJldCA9IHNneF9wYWdlX2NhY2hlX2luaXQo
-KTsNCj4gKwlzZ3hfcG1fbm90aWZpZXIubm90aWZpZXJfY2FsbCA9IHNneF9wbV9ub3RpZmllcl9j
-YjsNCj4gKwlyZXQgPSByZWdpc3Rlcl9wbV9ub3RpZmllcigmc2d4X3BtX25vdGlmaWVyKTsNCj4g
-IAlpZiAocmV0KQ0KPiAgCQlyZXR1cm4gcmV0Ow0KPiAgDQo+ICsJcmV0ID0gc2d4X3BhZ2VfY2Fj
-aGVfaW5pdCgpOw0KPiArCWlmIChyZXQpDQo+ICsJCWdvdG8gb3V0X3BtOw0KPiArDQo+ICAJdHNr
-ID0ga3RocmVhZF9ydW4oa3NneHN3YXBkLCBOVUxMLCAia3NneHN3YXBkIik7DQo+ICAJaWYgKElT
-X0VSUih0c2spKSB7DQo+IC0JCXNneF9wYWdlX2NhY2hlX3RlYXJkb3duKCk7DQo+IC0JCXJldHVy
-biBQVFJfRVJSKHRzayk7DQo+ICsJCXJldCA9IFBUUl9FUlIodHNrKTsNCj4gKwkJZ290byBvdXRf
-cGNhY2hlOw0KPiAgCX0NCj4gIAlrc2d4c3dhcGRfdHNrID0gdHNrOw0KPiAgDQo+ICAJc2d4X2Vu
-YWJsZWQgPSB0cnVlOw0KPiAgCXNneF9sY19lbmFibGVkID0gISEoZmMgJiBGRUFUVVJFX0NPTlRS
-T0xfU0dYX0xFX1dSKTsNCj4gIAlyZXR1cm4gMDsNCj4gK291dF9wY2FjaGU6DQo+ICsJc2d4X3Bh
-Z2VfY2FjaGVfdGVhcmRvd24oKTsNCg0KSSBkb24ndCB0aGluayB0aGlzIHBhcnRpY3VsYXIgMiBs
-aW5lcyBvZiBjb2RlIG9mICdvdXRfcGNhY2hlJyBjYXNlDQpzaG91bGQgYmUgaW4gdGhpcyBwYXRj
-aD8NCg0KVGhhbmtzLA0KLUthaQ0KDQo+ICtvdXRfcG06DQo+ICsJdW5yZWdpc3Rlcl9wbV9ub3Rp
-Zmllcigmc2d4X3BtX25vdGlmaWVyKTsNCj4gKwlyZXR1cm4gcmV0Ow0KPiAgfQ0KPiAgDQo+ICBh
-cmNoX2luaXRjYWxsKHNneF9pbml0KTs=
+On Mon, 27 Aug 2018, Miroslav Lichvar wrote:
+
+> On Mon, Aug 27, 2018 at 01:35:09PM +0200, Ondrej Mosnacek wrote:
+> > On Fri, Aug 24, 2018 at 9:51 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > It appears this time_tai use of "constant" is different than
+> > > time_constant, the former not mentioned by Miroslav Lichvar.  What is it
+> > > and is it important to log for security?  It sounds like it is
+> > > important.
+> 
+> > The TAI offset is the offset of the clock from the International
+> > Atomic Time, so basically the time zone offset. I suppose it can't
+> > influence the audit timestamps, but changing timezones can still cause
+> > all sorts of confusion throughout the system, so intuitively I would
+> > say we should log it.
+> 
+> It's not related to timezones. ADJ_TAI sets the offset of the system
+> TAI clock (CLOCK_TAI) relative to the standard UTC clock
+> (CLOCK_REALTIME). CLOCK_TAI is rarely used by applications. Setting
+> the TAI offset effectively injects a whole-second offset to the TAI
+> time. 
+
+Rarely used today, but with TSN it's going to get more usage in not so
+distant future.
+
+Thanks,
+
+	tglx
