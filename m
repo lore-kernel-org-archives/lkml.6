@@ -2,99 +2,145 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 970FFC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:13:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FF9FC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:13:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38BAF208B4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:13:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07F19208D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:13:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="TRBs2p1f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38BAF208B4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fk2YG8Z5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07F19208D8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727167AbeH0VAd (ORCPT
+        id S1727201AbeH0VBN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 17:00:33 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:44160 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726809AbeH0VAc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 17:00:32 -0400
-Received: by mail-io0-f194.google.com with SMTP id 75-v6so13403343iou.11
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 10:13:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=r7uh6gXRz9COXdvsDGkITIzPj90qCtDdzdEdbFIGVyo=;
-        b=TRBs2p1fELvgw9OO4k3Z9YvBsP/lxbn/tNAVTbGqVk3fDH3cd/lRrlSDgNVVs7ExLK
-         cuGfovewDHSVuAM9jEOD9kYvj6sJaqALt3em2OcMCMy0v7sEa1EEEMhH4Arq0dZ4DXuJ
-         79V0YOm5ERHFkx4GiTH9fdyt8JP1y70zH09E/wAX++YbFBQ8lS0LWxconLxUE+PIQnF6
-         no6a9rs32KTm4BSudn4W31SoF2t2GeW4MeujW0IR9C2Tbxo1Lco/ggRB9ZGq4ZyL/7Wq
-         vAqNWI+7RVIHPwHEXOXZ8P1wKMLVizpl/XNMmyQ8AexLBwBarAF0UYGU4MmWpFFaOlRI
-         xEXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=r7uh6gXRz9COXdvsDGkITIzPj90qCtDdzdEdbFIGVyo=;
-        b=A3QFR0ShnXQWqDz5TfCELbiWIRaeb7lg7yTHbuiLmdfLpxKxQ9mH15lwwniIRYRkso
-         8w6dxC5kkyh7wXksmi2ZrOOkFMurmcV1C3JyOLXB9P643MFLEiwzLcYSvVSr4CLwmRSf
-         NDo+pbvTfOldlbGuerbe0S49VZHi/5v862ZFKPfE7540dCAkLt+eRR2xsNwu235ig4XZ
-         JAC108r6UKA8TUApyxDxw95/v5PY05pShA/ECVI1y5b3b6mCJSNabOOdaxU1uJDVZGTf
-         hX3WgCSyXIqD3Xrc8ofvj1uq78U3dz70+iNi2UdVttgvxXgaQkyVCOfLdiz+OOevVv18
-         +RpA==
-X-Gm-Message-State: APzg51Bt8NGZFmQubCYKdTfmH1Yrq2Rjkd/grzwUvS97h0MfE6WidmtH
-        4NzjVYJAVLbBVTL9R4SQ2P+Izg==
-X-Google-Smtp-Source: ANB0VdYLcpj49+p45W6WmjzvD43z8pNfS8JnD+HWh6WPhodbGehY+FTYuTW1G7bwoDWDIa54Ql/CgQ==
-X-Received: by 2002:a5e:9745:: with SMTP id h5-v6mr10838043ioq.257.1535389985345;
-        Mon, 27 Aug 2018 10:13:05 -0700 (PDT)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id a79-v6sm4262066itc.33.2018.08.27.10.13.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 Aug 2018 10:13:03 -0700 (PDT)
-Subject: Re: [GIT PULL] (xen) stable/for-jens-4.19 for 4.19..
-To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        linux-kernel@vger.kernel.org, jgross@suse.com,
-        roger.pau@citrix.com, xen-devel@lists.xensource.com
-References: <20180827161949.GG29187@char.us.oracle.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <a54a78c4-14e5-140f-e18d-a23bebd4726d@kernel.dk>
-Date:   Mon, 27 Aug 2018 11:13:02 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Mon, 27 Aug 2018 17:01:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53076 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726731AbeH0VBN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 17:01:13 -0400
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E7303208B4;
+        Mon, 27 Aug 2018 17:13:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535390025;
+        bh=LPe+qoDzPAdko8ur91kmRTODDdL/M4AVAWrcTtzg7OQ=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=fk2YG8Z5SgmSK9Izm8s+LoOaPbskyzzla+2l2Hg0IBJtKFEhoRy/9mMEoqYJEUSSX
+         F3hjR27M9rNRAOnkHqWfPZanKHnG4JSUHZ45RR3e8YdoLW06eZABXkLlUTwQc/lT7m
+         85k0Wm6M4Qfvcol+eTby8my5jcTmlfCoOmDtZYac=
+Date:   Mon, 27 Aug 2018 18:13:41 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Afonso Bordado <afonsobordado@az8.co>
+Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/4] iio: gyro: add device tree support for fxas21002c
+Message-ID: <20180827181341.6563c0bf@archlinux>
+In-Reply-To: <20180825211910.22929-2-afonsobordado@az8.co>
+References: <20180825211910.22929-1-afonsobordado@az8.co>
+        <20180825211910.22929-2-afonsobordado@az8.co>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180827161949.GG29187@char.us.oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/27/18 10:19 AM, Konrad Rzeszutek Wilk wrote:
-> Hey Jens,
-> 
-> Would you be OK pulling the following branch:
->  git://git.kernel.org/pub/scm/linux/kernel/git/konrad/xen.git stable/for-jens-4.19
-> 
-> which has a fix for flushing out persistent pages at a deterministic rate.
-> 
-> Thanks to the L1TF I did not manage to send this email until today - but
-> hopefully it won't be an issue to push it to Linus after -rc1?
-> 
-> It is based on your 'b86d865cb1ca (for-4.19/block) blkcg: Make blkg_root_lookup()
-> work for queues in bypass mode' branch.
+On Sat, 25 Aug 2018 22:19:08 +0100
+Afonso Bordado <afonsobordado@az8.co> wrote:
 
-Pulled, thanks.
+> This patch adds device tree support for the fxas21002c driver, including
+> bindings.
+> 
+> Signed-off-by: Afonso Bordado <afonsobordado@az8.co>
+Now, the devicetree bindings should not reflect just what the driver
+uses right now, but rather describe the hardware.
 
--- 
-Jens Axboe
+There are interrupts on there for starters that definitely want to be
+described from the start.  Also there is a reset line that should probably
+be here from the start.
+
+Potentially also the two power supplies though that's less critical
+(nice to have though)
+
+It is also an i2c and spi part though that can probably be added later as
+we can argue we are only documenting the bindings for the device in i2c mode
+for now.
+
+So what is here is fine, but I think we need to describe more.
+
+It's all well understood details of how it is connected so no need to
+have tested it with a driver to be sure it will be right.
+
+Jonathan
+
+> ---
+>  .../bindings/iio/gyroscope/fsl,fxas21002c.txt        | 12 ++++++++++++
+>  drivers/iio/gyro/fxas21002c.c                        | 10 +++++++++-
+>  2 files changed, 21 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/devicetree/bindings/iio/gyroscope/fsl,fxas21002c.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/gyroscope/fsl,fxas21002c.txt b/Documentation/devicetree/bindings/iio/gyroscope/fsl,fxas21002c.txt
+> new file mode 100644
+> index 000000000000..62f8c1bad85a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/gyroscope/fsl,fxas21002c.txt
+> @@ -0,0 +1,12 @@
+> +* Freescale FXAS21002C Digital Angular Rate Gyroscope
+> +
+> +Required properties:
+> +
+> +  - compatible: must be "fsl,fxas21002c"
+> +  - reg : the I2C address of the sensor
+> +
+> +Example:
+> +gyroscope@0 {
+> +       compatible = "fsl,fxas21002c";
+> +       reg = <0x20>;
+> +};
+> diff --git a/drivers/iio/gyro/fxas21002c.c b/drivers/iio/gyro/fxas21002c.c
+> index 7626b2f88d72..6fef210630e0 100644
+> --- a/drivers/iio/gyro/fxas21002c.c
+> +++ b/drivers/iio/gyro/fxas21002c.c
+> @@ -8,7 +8,6 @@
+>   * Datasheet: https://www.nxp.com/docs/en/data-sheet/FXAS21002.pdf
+>   * TODO:
+>   *        ODR / Scale Support
+> - *        Devicetree
+>   *        Power management
+>   *        LowPass/HighPass Filters
+>   *        Buffers
+> @@ -340,6 +339,14 @@ static int fxas21002c_remove(struct i2c_client *client)
+>  	return 0;
+>  }
+>  
+> +#ifdef CONFIG_OF
+> +static const struct of_device_id fxas21002c_of_ids[] = {
+> +	{.compatible = "fsl,fxas21002c"},
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, fxas21002c_of_ids);
+> +#endif
+> +
+>  static const struct i2c_device_id fxas21002c_id[] = {
+>  	{"fxas21002c", ID_FXAS21002C},
+>  	{}
+> @@ -350,6 +357,7 @@ MODULE_DEVICE_TABLE(i2c, fxas21002c_id);
+>  static struct i2c_driver fxas21002c_driver = {
+>  	.driver = {
+>  		.name = FXAS21002C_DRV_NAME,
+> +		.of_match_table = of_match_ptr(fxas21002c_of_ids),
+>  	},
+>  	.probe		= fxas21002c_probe,
+>  	.remove		= fxas21002c_remove,
 
