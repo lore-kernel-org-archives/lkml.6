@@ -2,98 +2,165 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26082C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 12:02:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AF7DC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 12:08:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0C85208A5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 12:02:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0C85208A5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E956C208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 12:08:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E956C208A6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727462AbeH0Psl (ORCPT
+        id S1726946AbeH0PzN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 11:48:41 -0400
-Received: from mail-oi0-f53.google.com ([209.85.218.53]:41083 "EHLO
-        mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726953AbeH0Psk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 11:48:40 -0400
-Received: by mail-oi0-f53.google.com with SMTP id k12-v6so26730839oiw.8
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 05:02:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aQ1N6XwTc0jcSkbo53PijjZ3rYJKsRVQKWf6XE1Bn9E=;
-        b=HBJxriD1NiE5TaXajqy0wo13wuJ25M5fP2NmLTCByE7S9bxqX7nBFiiewDg328/f/1
-         zS1Laowrb24VMAuZzpenisPvfRwWqWJmhrrl+YrAjFw/R+Ba2aOX8nH1x/PRTjssjPYg
-         9Oo3tfgVB4/2AsuE9COXJtcbdvCasr1F0fq20bES48ClCdUSP+SeHDblRQ1RfDWqOb9S
-         3lkdy1vef8qiHoLScpFy/SFFCXQhaDY30n67p4VaHPA2CGbM0vJYAHqz/C0E0NKdJDtf
-         d8kuMofKAIRucJYndzi/PwyaXkMH8Gj5Iy+8rNRPXALYiRy/0dLpUiHJJBwijdGTSGr9
-         aJgw==
-X-Gm-Message-State: APzg51DqgrHF+ONc7lTfLl+iK9qJfLtDaS0kMHKf4Qn++ZxLSlOGtcA2
-        V3X8KmDwYVjWZPr0JIrlyAOVJ8Zu1BB9R4M7/gFLQg==
-X-Google-Smtp-Source: ANB0VdarhYA6ATQlKYmqZqVEjkZP2EyoJKCMlmyEJlFmkO1VwV/ntsmGNT8avjqVF7eUsID8gGFdEFrCW7Ukzza+j4c=
-X-Received: by 2002:aca:3bc2:: with SMTP id i185-v6mr12460569oia.156.1535371337482;
- Mon, 27 Aug 2018 05:02:17 -0700 (PDT)
+        Mon, 27 Aug 2018 11:55:13 -0400
+Received: from mga17.intel.com ([192.55.52.151]:16856 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726809AbeH0PzM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 11:55:12 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2018 05:08:48 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,295,1531810800"; 
+   d="scan'208";a="68420370"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
+  by orsmga008.jf.intel.com with SMTP; 27 Aug 2018 05:08:44 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Mon, 27 Aug 2018 15:08:44 +0300
+Date:   Mon, 27 Aug 2018 15:08:44 +0300
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     Lyude Paul <lyude@redhat.com>
+Cc:     intel-gfx@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Jan-Marek Glogowski <glogow@fbihome.de>,
+        stable@vger.kernel.org, Rodrigo Vivi <rodrigo.vivi@intel.com>
+Subject: Re: [Intel-gfx] [PATCH v4] drm/i915: Re-apply "Perform link quality
+ check, unconditionally during long pulse"
+Message-ID: <20180827120844.GR5565@intel.com>
+References: <20180825191035.3945-1-lyude@redhat.com>
 MIME-Version: 1.0
-References: <20180824120001.20771-1-omosnace@redhat.com> <20180824120001.20771-3-omosnace@redhat.com>
- <20180824194703.h3mbuhrxzixmna4e@madcap2.tricolour.ca> <CAFqZXNvD_7psR+wM-GTXQ4bwK3w8=t7UnBidojB5XbmbE_K2oA@mail.gmail.com>
- <20180827114557.GN27091@localhost>
-In-Reply-To: <20180827114557.GN27091@localhost>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Mon, 27 Aug 2018 14:02:06 +0200
-Message-ID: <CAFqZXNuodMaEqD6psD375__abLVoe4-q6MrJjM8dT-c3ydcH6g@mail.gmail.com>
-Subject: Re: [PATCH ghak10 v5 2/2] timekeeping/ntp: Audit clock/NTP params adjustments
-To:     Miroslav Lichvar <mlichvar@redhat.com>
-Cc:     Richard Guy Briggs <rgb@redhat.com>,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180825191035.3945-1-lyude@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 1:46 PM Miroslav Lichvar <mlichvar@redhat.com> wrote:
-> On Mon, Aug 27, 2018 at 01:35:09PM +0200, Ondrej Mosnacek wrote:
-> > On Fri, Aug 24, 2018 at 9:51 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > It appears this time_tai use of "constant" is different than
-> > > time_constant, the former not mentioned by Miroslav Lichvar.  What is it
-> > > and is it important to log for security?  It sounds like it is
-> > > important.
->
-> > The TAI offset is the offset of the clock from the International
-> > Atomic Time, so basically the time zone offset. I suppose it can't
-> > influence the audit timestamps, but changing timezones can still cause
-> > all sorts of confusion throughout the system, so intuitively I would
-> > say we should log it.
->
-> It's not related to timezones. ADJ_TAI sets the offset of the system
-> TAI clock (CLOCK_TAI) relative to the standard UTC clock
-> (CLOCK_REALTIME). CLOCK_TAI is rarely used by applications. Setting
-> the TAI offset effectively injects a whole-second offset to the TAI
-> time.
+On Sat, Aug 25, 2018 at 03:10:35PM -0400, Lyude Paul wrote:
+> From: Jan-Marek Glogowski <glogow@fbihome.de>
+> 
+> This re-applies the workaround for "some DP sinks, [which] are a
+> little nuts" from commit 1a36147bb939 ("drm/i915: Perform link
+> quality check unconditionally during long pulse").
+> It makes the secondary AOC E2460P monitor connected via DP to an
+> acer Veriton N4640G usable again.
+> 
+> This hunk was dropped in commit c85d200e8321 ("drm/i915: Move SST
+> DP link retraining into the ->post_hotplug() hook")
+> 
+> Fixes: c85d200e8321 ("drm/i915: Move SST DP link retraining into the ->post_hotplug() hook")
+> [Cleaned up commit message, added stable cc]
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> Signed-off-by: Jan-Marek Glogowski <glogow@fbihome.de>
+> Cc: stable@vger.kernel.org
+> ---
+> Resending this to update patchwork; will push in a little bit
+> 
+>  drivers/gpu/drm/i915/intel_dp.c | 33 +++++++++++++++++++--------------
+>  1 file changed, 19 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/i915/intel_dp.c b/drivers/gpu/drm/i915/intel_dp.c
+> index b3f6f04c3c7d..db8515171270 100644
+> --- a/drivers/gpu/drm/i915/intel_dp.c
+> +++ b/drivers/gpu/drm/i915/intel_dp.c
+> @@ -4333,18 +4333,6 @@ intel_dp_needs_link_retrain(struct intel_dp *intel_dp)
+>  	return !drm_dp_channel_eq_ok(link_status, intel_dp->lane_count);
+>  }
+>  
+> -/*
+> - * If display is now connected check links status,
+> - * there has been known issues of link loss triggering
+> - * long pulse.
+> - *
+> - * Some sinks (eg. ASUS PB287Q) seem to perform some
+> - * weird HPD ping pong during modesets. So we can apparently
+> - * end up with HPD going low during a modeset, and then
+> - * going back up soon after. And once that happens we must
+> - * retrain the link to get a picture. That's in case no
+> - * userspace component reacted to intermittent HPD dip.
+> - */
+>  int intel_dp_retrain_link(struct intel_encoder *encoder,
+>  			  struct drm_modeset_acquire_ctx *ctx)
+>  {
+> @@ -5031,7 +5019,8 @@ intel_dp_unset_edid(struct intel_dp *intel_dp)
+>  }
+>  
+>  static int
+> -intel_dp_long_pulse(struct intel_connector *connector)
+> +intel_dp_long_pulse(struct intel_connector *connector,
+> +		    struct drm_modeset_acquire_ctx *ctx)
+>  {
+>  	struct drm_i915_private *dev_priv = to_i915(connector->base.dev);
+>  	struct intel_dp *intel_dp = intel_attached_dp(&connector->base);
+> @@ -5090,6 +5079,22 @@ intel_dp_long_pulse(struct intel_connector *connector)
+>  		 */
+>  		status = connector_status_disconnected;
+>  		goto out;
+> +	} else {
+> +		/*
+> +		 * If display is now connected check links status,
+> +		 * there has been known issues of link loss triggering
+> +		 * long pulse.
+> +		 *
+> +		 * Some sinks (eg. ASUS PB287Q) seem to perform some
+> +		 * weird HPD ping pong during modesets. So we can apparently
+> +		 * end up with HPD going low during a modeset, and then
+> +		 * going back up soon after. And once that happens we must
+> +		 * retrain the link to get a picture. That's in case no
+> +		 * userspace component reacted to intermittent HPD dip.
+> +		 */
+> +		struct intel_encoder *encoder = &dp_to_dig_port(intel_dp)->base;
+> +
+> +		intel_dp_retrain_link(encoder, ctx);
 
-Ah, I stand corrected then. In that case I think we don't actually
-need to audit it, since it just changes how the time reported by the
-CLOCK_TAI clock type will be different from CLOCK_REALTIME. Playing
-with this value could cause some strange jumps in time for
-applications that use it, but this seems like a very unlikely
-situation. It really depends on how careful we want to be (vs. how
-eagerly we want to reduce unimportant records), but this already looks
-like logging it would be overdoing it...
+We should really have a comment here that this is purely duct tape for
+sinks that fail to signal a hpd when the link goes bad (either that or
+we fail to process the hpd correctly).
 
-Thanks for the correction, I really should RTFM more :)
+I suppose a better way to do this hack would be to do the link quality
+check at the end of modeset, or from a delayed work. As is this depends
+on userspace/fbdev doing an explicit probe after the modeset which seems
+pretty fragile.
+
+>  	}
+>  
+>  	/*
+> @@ -5151,7 +5156,7 @@ intel_dp_detect(struct drm_connector *connector,
+>  				return ret;
+>  		}
+>  
+> -		status = intel_dp_long_pulse(intel_dp->attached_connector);
+> +		status = intel_dp_long_pulse(intel_dp->attached_connector, ctx);
+>  	}
+>  
+>  	intel_dp->detect_done = false;
+> -- 
+> 2.17.1
+> 
+> _______________________________________________
+> Intel-gfx mailing list
+> Intel-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/intel-gfx
 
 -- 
-Ondrej Mosnacek <omosnace at redhat dot com>
-Associate Software Engineer, Security Technologies
-Red Hat, Inc.
+Ville Syrjälä
+Intel
