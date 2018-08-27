@@ -3,104 +3,88 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30B51C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 08:48:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE23C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 08:49:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE241208B2
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 08:48:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE241208B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 74925208B2
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 08:49:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74925208B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727401AbeH0Me3 (ORCPT
+        id S1727230AbeH0MfQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 08:34:29 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:32990 "EHLO mail.bootlin.com"
+        Mon, 27 Aug 2018 08:35:16 -0400
+Received: from gate.crashing.org ([63.228.1.57]:59045 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726802AbeH0Me3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 08:34:29 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 8439C20787; Mon, 27 Aug 2018 10:48:45 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-53-19.w90-88.abo.wanadoo.fr [90.88.170.19])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 2A22C203EC;
-        Mon, 27 Aug 2018 10:48:45 +0200 (CEST)
-Date:   Mon, 27 Aug 2018 10:48:42 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable <stable@vger.kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Josh Wu <rainyfeeling@outlook.com>
-Subject: Re: [PATCH v2 5/9] mtd: nand: atmel: fix OF child-node lookup
-Message-ID: <20180827104842.26bce912@bbrezillon>
-In-Reply-To: <20180827084414.GZ14967@localhost>
-References: <20180827082153.22537-1-johan@kernel.org>
-        <20180827082153.22537-6-johan@kernel.org>
-        <20180827102820.3abf7291@bbrezillon>
-        <20180827084414.GZ14967@localhost>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1726802AbeH0MfQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 08:35:16 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w7R89p6x007276;
+        Mon, 27 Aug 2018 03:09:52 -0500
+Message-ID: <4ef8a2aa44db971340b0bcc4f73d639455dd4282.camel@kernel.crashing.org>
+Subject: Re: [PATCH 3/4] mm/tlb, x86/mm: Support invalidating TLB caches for
+ RCU_TABLE_FREE
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Nicholas Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Rik van Riel <riel@surriel.com>,
+        Jann Horn <jannh@google.com>,
+        Adin Scannell <ascannell@google.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        David Miller <davem@davemloft.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Date:   Mon, 27 Aug 2018 18:09:50 +1000
+In-Reply-To: <20180827180458.4af9b2ac@roar.ozlabs.ibm.com>
+References: <20180822155527.GF24124@hirez.programming.kicks-ass.net>
+         <20180823134525.5f12b0d3@roar.ozlabs.ibm.com>
+         <CA+55aFxneZTFxxxAjLZmj92VUJg6z7hERxJ2cHoth-GC0RuELw@mail.gmail.com>
+         <776104d4c8e4fc680004d69e3a4c2594b638b6d1.camel@au1.ibm.com>
+         <CA+55aFzM77G9-Q6LboPLJ=5gHma66ZQKiMGCMqXoKABirdF98w@mail.gmail.com>
+         <20180823133958.GA1496@brain-police>
+         <20180824084717.GK24124@hirez.programming.kicks-ass.net>
+         <20180824113214.GK24142@hirez.programming.kicks-ass.net>
+         <20180824113953.GL24142@hirez.programming.kicks-ass.net>
+         <20180827150008.13bce08f@roar.ozlabs.ibm.com>
+         <20180827074701.GW24124@hirez.programming.kicks-ass.net>
+         <20180827180458.4af9b2ac@roar.ozlabs.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 27 Aug 2018 10:44:14 +0200
-Johan Hovold <johan@kernel.org> wrote:
-
-> On Mon, Aug 27, 2018 at 10:28:20AM +0200, Boris Brezillon wrote:
-> > Hi Johan
-> > 
-> > On Mon, 27 Aug 2018 10:21:49 +0200
-> > Johan Hovold <johan@kernel.org> wrote:
-> >   
-> > > Use the new of_get_compatible_child() helper to lookup the nfc child
-> > > node instead of using of_find_compatible_node(), which searches the
-> > > entire tree from a given start node and thus can return an unrelated
-> > > (i.e. non-child) node.
-> > > 
-> > > This also addresses a potential use-after-free (e.g. after probe
-> > > deferral) as the tree-wide helper drops a reference to its first
-> > > argument (i.e. the node of the device being probed).
-> > > 
-> > > While at it, also fix a related nfc-node reference leak.
-> > > 
-> > > Fixes: f88fc122cc34 ("mtd: nand: Cleanup/rework the atmel_nand driver")
-> > > Cc: stable <stable@vger.kernel.org>     # 4.11
-> > > Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
-> > > Cc: Josh Wu <rainyfeeling@outlook.com>
-> > > Cc: Boris Brezillon <boris.brezillon@bootlin.com>
-> > > Signed-off-by: Johan Hovold <johan@kernel.org>  
-> > 
-> > Acked-by: Boris Brezillon <boris.brezillon@bootlin.com>  
+On Mon, 2018-08-27 at 18:04 +1000, Nicholas Piggin wrote:
+> > Yes.. I see that. tlb_remove_check_page_size_change() really is a rather
+> > ugly thing, it can cause loads of TLB flushes. Do you really _have_ to
+> > do that? The way ARM and x86 work is that using INVLPG in a 4K stride is
+> > still correct for huge pages, inefficient maybe, but so is flushing
+> > every other page because 'sparse' transparant-huge-pages.
 > 
-> Thanks for the ack.
-> 
-> > I'll let Miquel queue this patch to the nand/next branch, unless you
-> > want it to be merged in 4.19, in which case I'll queue it to the
-> > mtd/fixes branch.  
-> 
-> Note that there's a dependency on the first patch of the series which
-> adds the new helper.
+> It could do that. It requires a tlbie that matches the page size,
+> so it means 3 sizes. I think possibly even that would be better
+> than current code, but we could do better if we had a few specific
+> fields in there.
 
-I was not Cc-ed on this patch :P.
+More tlbies ? With the cost of the broadasts on the fabric ? I don't
+think so.. or I'm not understanding your point...
 
-> Rob can pick up the entire series if the various
-> maintainers agree, otherwise I'll try to get at the least the helper
-> into -rc2.
+Sadly our architecture requires a precise match between the page size
+specified in the tlbie instruction and the entry in the TLB or it won't
+be flushed.
 
-If everything goes in 4.19-rc2 through Rob's tree that's fine, but if
-it's queued for 4.20 we might need an immutable tag just in case we
-queue conflicting changes to the NAND tree.
+Ben.
 
-Thanks,
-
-Boris
