@@ -2,421 +2,229 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2A0EC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 10:10:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6361C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 10:10:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A5A0208B8
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 10:10:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A5A0208B8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 57CD9208B2
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 10:10:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nQYhUFXJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57CD9208B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727389AbeH0N4c (ORCPT
+        id S1727443AbeH0N4m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 09:56:32 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:11024 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727091AbeH0N4b (ORCPT
+        Mon, 27 Aug 2018 09:56:42 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:51752 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726809AbeH0N4l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 09:56:31 -0400
-X-UUID: a73557c84ec84cd09f51c598ae10de2d-20180827
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <sean.wang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 865454314; Mon, 27 Aug 2018 18:10:20 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Mon, 27 Aug 2018 18:10:18 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Mon, 27 Aug 2018 18:10:18 +0800
-From:   <sean.wang@mediatek.com>
-To:     <linus.walleij@linaro.org>, <linux-mediatek@lists.infradead.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>
-Subject: [PATCH 03/16] pinctrl: mediatek: extend struct mtk_pin_field_calc to pinctrl-mtk-common-v2.c
-Date:   Mon, 27 Aug 2018 18:10:02 +0800
-Message-ID: <a154763d36294cb7eed732ecec4e9e9f880be6a4.1535363951.git.sean.wang@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <cover.1535363951.git.sean.wang@mediatek.com>
-References: <cover.1535363951.git.sean.wang@mediatek.com>
+        Mon, 27 Aug 2018 09:56:41 -0400
+Received: by mail-wm0-f66.google.com with SMTP id y2-v6so7524311wma.1;
+        Mon, 27 Aug 2018 03:10:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=WPhHWamVBPkKTj96NIAS1/6NaEowmCOS1qtw5kD2dH0=;
+        b=nQYhUFXJt1fp/u/6D88OgdUmWN99LM2tfQ5VPlHTQ4wppw/wYazUsAq6D2GoVF9Mm4
+         jBr3VWXj6ix4Wnlb4Mtk4tmDx8FLRwkAKAJ+bhBY94Vr2TjnuCOWZXsBKwzo3MaXxGlc
+         ht3cLySbxrKij3m2ou0GUClZk1yvM1DpWCKQDJlfSNh8Lg4ld+borPEqTWtC8PDjDSVp
+         X6cFl8zgrhZn04O4zp+XLq7zS9tBv82ClQ6jLQZZhTHOLc/XKJswGKOJ3wm2viO4XnXK
+         Cq1G16mCq5Ba1Zx94kwFpD4umTeEO9l8oVlf+TwjhP5xODYpGoD/fiWLB7pj8sICw4+x
+         QVJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WPhHWamVBPkKTj96NIAS1/6NaEowmCOS1qtw5kD2dH0=;
+        b=Dg7LeUGDOsrAOCha2glnlqLp/qs3dTiAvyAhJda802t1IRHon7Tb9B9PD+lzfdXRUt
+         0hlFCDlBFdJa3GGpa2HLPgiJ9NTsaLK2BDv0RN1yzCFmM8oM8QOYpT8TKZmAq9pRJGtx
+         KLZXooGWxY/ubL3G64UsEGcAyanOBtKlyNON3frSNokG5rKSYs28Gb8MKEbxWi27/9JL
+         fHjEMUwGJpvi31o8EtRTjkfSsloDHnPhYiYd2PezxBJws2w39l6IzjLaBclV0qnoj/nu
+         r40gWT+n6bWZHAptIw+CD83GwTi9YVO4iJynx1bejEm+MMwLup5CD+1+wbopqLjvlkqi
+         /9Xw==
+X-Gm-Message-State: APzg51CXIILIXqBfiNIpGs950biMD7Lljcqfx45Um8gfE53CmZ94tK2H
+        +unwtTUtu795CZbYXP/m6c0=
+X-Google-Smtp-Source: ANB0VdYLXMSUSPc+nrp8FsTSpwfqFFVWGcDkWjmaoqzKgVuglmRkLxARKRuScZBxlKsWEwTDyjapzw==
+X-Received: by 2002:a1c:b143:: with SMTP id a64-v6mr5612481wmf.114.1535364638040;
+        Mon, 27 Aug 2018 03:10:38 -0700 (PDT)
+Received: from localhost (pD9E51C80.dip0.t-ipconnect.de. [217.229.28.128])
+        by smtp.gmail.com with ESMTPSA id o19-v6sm13348355wro.50.2018.08.27.03.10.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 27 Aug 2018 03:10:36 -0700 (PDT)
+Date:   Mon, 27 Aug 2018 12:10:36 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Aapo Vienamo <avienamo@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Stefan Agner <stefan@agner.ch>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mmc@vger.kernel.org
+Subject: Re: [PATCH v2 00/40] Tegra SDHCI add support for HS200 and UHS
+ signaling
+Message-ID: <20180827101036.GB18542@ulmo>
+References: <1533924522-1037-1-git-send-email-avienamo@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="cmJC7u66zC7hs+87"
+Content-Disposition: inline
+In-Reply-To: <1533924522-1037-1-git-send-email-avienamo@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Wang <sean.wang@mediatek.com>
 
-This patch adds members sz_reg fixed in struct mtk_pin_field_calc
+--cmJC7u66zC7hs+87
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-- The 'fixed' is used to represent the consecutive pins share the same
-bits within the same register with the 1st pin so that it can largely
-reduce the entry size a bit.
+On Fri, Aug 10, 2018 at 09:08:02PM +0300, Aapo Vienamo wrote:
+> Hi all,
+>=20
+> This series implements support for faster signaling modes on Tegra
+> SDHCI controllers. This series consist of several parts: changes
+> requried for 1.8 V signaling and pad control, pad calibration, and
+> tuning. Following earlies patch sets have been merged into this
+> larger set: "Tegra PMC pinctrl pad configuration", "Tegra SDHCI enable
+> 1.8 V signaling on Tegar210 and Tegra186", "Tegra SDHCI update the
+> padautocal procedure". Also the patches for enabling SDHCI tuning
+> are added.
+>=20
+> Changelog:
+> v2:
+> 	- Fix grammar in PMC device tree bindings docs
+> 	- Remove a stray line from tegra sdhci bindings
+> 	- Cosmetic changes to PMC pinctrl driver
+> 	- Fix a typo in "soc/tegra: pmc: Implement
+> 	  tegra_io_pad_is_powered()" commit message
+> 	- Declare mask and value on the same line in
+> 	  tegra_io_pad_is_powered()
+> 	- Move the call to tegra_sdhci_is_pad_and_regulator_valid() to
+> 	  inside the if condition in tegra_sdhci_reset()
+> 	- Use usleep_range() in tegra_sdhci_configure_cal_pad()
+> 	- Move sdhci_writel() out of the enable if-else body in
+> 	  tegra_sdhci_configure_cal_pad()
+> 	- Add a delay before starting polling in
+> 	  tegra_sdhci_pad_autocalib()
+> 	- Use usleep_range() in tegra_sdhci_set_tap()
+> 	- Rename orig_enabled to status in
+> 	  tegra_sdhci_configure_card_clk()
+> 	- Fix if condition wrapping alignment in tegra_sdhci_set_tap()
+>=20
+> v1:
+> 	- Probe the regulator voltage capabilities to determine whether pinctrl
+> 	  is needed in tegra_sdhci_r eset
+> 	- Don't remove tegra_sdhci_voltage_switch()
+> 	- Use dev_warn() in tegra_sdhci_init_pinctrl_info()
+> 	- Don't change start_signal_voltage_switch callback if pinctrl info
+> 	  invalid
+> 	- Only call udelay(1) on enable in tegra_sdhci_configure_cal_pad()
+> 	- Add nvidia, prefix to pad autocal offset dt props in the example
+>=20
+> See the original patch sets for earlier changelogs.
+>=20
+> Aapo Vienamo (40):
+>   dt-bindings: Add Tegra PMC pad configuration bindings
+>   dt-bindings: mmc: tegra: Add pad voltage control properties
+>   dt-bindings: Add Tegra SDHCI pad pdpu offset bindings
+>   dt-bindings: mmc: Add Tegra SDHCI sampling trimmer values
+>   soc/tegra: pmc: Fix pad voltage configuration for Tegra186
+>   soc/tegra: pmc: Factor out DPD register bit calculation
+>   soc/tegra: pmc: Implement tegra_io_pad_is_powered()
+>   soc/tegra: pmc: Use X macro to generate IO pad tables
+>   soc/tegra: pmc: Remove public pad voltage APIs
+>   soc/tegra: pmc: Implement pad configuration via pinctrl
+>   mmc: sdhci: Add a quirk to skip clearing the transfer mode register on
+>     tuning
+>   mmc: tegra: Reconfigure pad voltages during voltage switching
+>   mmc: tegra: Poll for calibration completion
+>   mmc: tegra: Set calibration pad voltage reference
+>   mmc: tegra: Power on the calibration pad
+>   mmc: tegra: Disable card clock during pad calibration
+>   mmc: tegra: Program pad autocal offsets from dt
+>   mmc: tegra: Perform pad calibration after voltage switch
+>   mmc: tegra: Enable pad calibration on Tegra210 and Tegra186
+>   mmc: tegra: Add a workaround for tap value change glitch
+>   mmc: tegra: Parse default trim and tap from dt
+>   mmc: tegra: Configure default tap values
+>   mmc: tegra: Configure default trim value on reset
+>   mmc: tegra: Use standard SDHCI tuning on Tegra210 and Tegra186
+>   mmc: sdhci: Add a quirk to disable card clock during tuning
+>   mmc: tegra: Enable workaround for tuning transfer mode bug
+>   mmc: tegra: Set SDHCI_QUIRK2_TUNE_DIS_CARD_CLK on Tegra210
+>   mmc: tegra: Enable UHS and HS200 modes for Tegra210
+>   mmc: tegra: Enable UHS and HS200 modes for Tegra186
+>   arm64: dts: Add Tegra210 sdmmc pinctrl voltage states
+>   arm64: dts: Add Tegra186 sdmmc pinctrl voltage states
+>   arm64: dts: tegra210-p2180: Allow ldo2 to go down to 1.8 V
+>   arm64: dts: tegra210-p2180: Correct sdmmc4 vqmmc-supply
+>   arm64: dts: tegra210-p2597: Remove no-1-8-v from sdmmc1
+>   arm64: dts: tegra186: Add sdmmc pad auto calibration offsets
+>   arm64: dts: tegra210: Add sdmmc pad auto calibration offsets
+>   arm64: dts: tegra210: Add SDHCI tap and trim values
+>   arm64: dts: tegra186: Add SDHCI tap and trim values
+>   arm64: dts: tegra186: Assign clocks for sdmmc1 and sdmmc4
+>   arm64: dts: tegra210: Assign clocks for sdmmc1 and sdmmc4
+>=20
+>  .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     |  93 ++++
+>  .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 103 ++++
+>  .../bindings/mmc/nvidia,tegra20-sdhci.txt          |  68 +++
+>  arch/arm64/boot/dts/nvidia/tegra186.dtsi           |  74 +++
+>  arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi     |  12 +-
+>  arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     |   1 -
+>  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  55 ++
+>  drivers/mmc/host/sdhci-tegra.c                     | 556 +++++++++++++++=
+++++--
+>  drivers/mmc/host/sdhci.c                           |  21 +
+>  drivers/mmc/host/sdhci.h                           |   4 +
+>  drivers/soc/tegra/pmc.c                            | 511 ++++++++++++++-=
+----
+>  include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h |  18 +
+>  include/soc/tegra/pmc.h                            |  20 +-
+>  13 files changed, 1324 insertions(+), 212 deletions(-)
+>  create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
 
-- The 'sz_reg' is used to indicate the range of bits we use in a register
-  that may vary by SoC
+Adrian,
 
-The above changes make the code more generic and this is useful as there
-might be other existing or future chips all use the same logic to access
-their register set and then being a little more abstract could help in the
-long run.
+these patches are also a prerequisite for the UHS signalling changes in
+the other two series that Aapo posted. It'd be great if you could take a
+quick look and weigh in.
 
-Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
----
- drivers/pinctrl/mediatek/pinctrl-mt7622.c        | 210 ++++++++++-------------
- drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c |  17 +-
- drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h |  25 +++
- 3 files changed, 126 insertions(+), 126 deletions(-)
+Thanks,
+Thierry
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt7622.c b/drivers/pinctrl/mediatek/pinctrl-mt7622.c
-index 224fc01..b9c1680 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt7622.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt7622.c
-@@ -9,159 +9,129 @@
- #include "pinctrl-moore.h"
- 
- static const struct mtk_pin_field_calc mt7622_pin_mode_range[] = {
--	{0, 0, 0x320, 0x10, 16, 4},
--	{1, 4, 0x3a0, 0x10,  16, 4},
--	{5, 5, 0x320, 0x10,  0, 4},
--	{6, 6, 0x300, 0x10,  4, 4},
--	{7, 7, 0x300, 0x10,  4, 4},
--	{8, 9, 0x350, 0x10,  20, 4},
--	{10, 10, 0x300, 0x10, 8, 4},
--	{11, 11, 0x300, 0x10, 8, 4},
--	{12, 12, 0x300, 0x10, 8, 4},
--	{13, 13, 0x300, 0x10, 8, 4},
--	{14, 15, 0x320, 0x10, 4, 4},
--	{16, 17, 0x320, 0x10, 20, 4},
--	{18, 21, 0x310, 0x10, 16, 4},
--	{22, 22, 0x380, 0x10, 16, 4},
--	{23, 23, 0x300,	0x10, 24, 4},
--	{24, 24, 0x300, 0x10, 24, 4},
--	{25, 25, 0x300, 0x10, 12, 4},
--	{25, 25, 0x300, 0x10, 12, 4},
--	{26, 26, 0x300, 0x10, 12, 4},
--	{27, 27, 0x300, 0x10, 12, 4},
--	{28, 28, 0x300, 0x10, 12, 4},
--	{29, 29, 0x300, 0x10, 12, 4},
--	{30, 30, 0x300, 0x10, 12, 4},
--	{31, 31, 0x300, 0x10, 12, 4},
--	{32, 32, 0x300, 0x10, 12, 4},
--	{33, 33, 0x300,	0x10, 12, 4},
--	{34, 34, 0x300,	0x10, 12, 4},
--	{35, 35, 0x300,	0x10, 12, 4},
--	{36, 36, 0x300, 0x10, 12, 4},
--	{37, 37, 0x300, 0x10, 20, 4},
--	{38, 38, 0x300, 0x10, 20, 4},
--	{39, 39, 0x300, 0x10, 20, 4},
--	{40, 40, 0x300, 0x10, 20, 4},
--	{41, 41, 0x300,	0x10, 20, 4},
--	{42, 42, 0x300, 0x10, 20, 4},
--	{43, 43, 0x300,	0x10, 20, 4},
--	{44, 44, 0x300, 0x10, 20, 4},
--	{45, 46, 0x300, 0x10, 20, 4},
--	{47, 47, 0x300,	0x10, 20, 4},
--	{48, 48, 0x300, 0x10, 20, 4},
--	{49, 49, 0x300, 0x10, 20, 4},
--	{50, 50, 0x300, 0x10, 20, 4},
--	{51, 70, 0x330, 0x10, 4, 4},
--	{71, 71, 0x300, 0x10, 16, 4},
--	{72, 72, 0x300, 0x10, 16, 4},
--	{73, 76, 0x310, 0x10, 0, 4},
--	{77, 77, 0x320, 0x10, 28, 4},
--	{78, 78, 0x320, 0x10, 12, 4},
--	{79, 82, 0x3a0, 0x10, 0, 4},
--	{83, 83, 0x350,	0x10, 28, 4},
--	{84, 84, 0x330, 0x10, 0, 4},
--	{85, 90, 0x360, 0x10, 4, 4},
--	{91, 94, 0x390, 0x10, 16, 4},
--	{95, 97, 0x380, 0x10, 20, 4},
--	{98, 101, 0x390, 0x10, 0, 4},
--	{102, 102, 0x360, 0x10, 0, 4},
-+	PIN_FIELD(0, 0, 0x320, 0x10, 16, 4),
-+	PIN_FIELD(1, 4, 0x3a0, 0x10, 16, 4),
-+	PIN_FIELD(5, 5, 0x320, 0x10, 0, 4),
-+	PINS_FIELD(6, 7, 0x300, 0x10, 4, 4),
-+	PIN_FIELD(8, 9, 0x350, 0x10, 20, 4),
-+	PINS_FIELD(10, 13, 0x300, 0x10, 8, 4),
-+	PIN_FIELD(14, 15, 0x320, 0x10, 4, 4),
-+	PIN_FIELD(16, 17, 0x320, 0x10, 20, 4),
-+	PIN_FIELD(18, 21, 0x310, 0x10, 16, 4),
-+	PIN_FIELD(22, 22, 0x380, 0x10, 16, 4),
-+	PINS_FIELD(23, 24, 0x300, 0x10, 24, 4),
-+	PINS_FIELD(25, 36, 0x300, 0x10, 12, 4),
-+	PINS_FIELD(37, 50, 0x300, 0x10, 20, 4),
-+	PIN_FIELD(51, 70, 0x330, 0x10, 4, 4),
-+	PINS_FIELD(71, 72, 0x300, 0x10, 16, 4),
-+	PIN_FIELD(73, 76, 0x310, 0x10, 0, 4),
-+	PIN_FIELD(77, 77, 0x320, 0x10, 28, 4),
-+	PIN_FIELD(78, 78, 0x320, 0x10, 12, 4),
-+	PIN_FIELD(79, 82, 0x3a0, 0x10, 0, 4),
-+	PIN_FIELD(83, 83, 0x350, 0x10, 28, 4),
-+	PIN_FIELD(84, 84, 0x330, 0x10, 0, 4),
-+	PIN_FIELD(85, 90, 0x360, 0x10, 4, 4),
-+	PIN_FIELD(91, 94, 0x390, 0x10, 16, 4),
-+	PIN_FIELD(95, 97, 0x380, 0x10, 20, 4),
-+	PIN_FIELD(98, 101, 0x390, 0x10, 0, 4),
-+	PIN_FIELD(102, 102, 0x360, 0x10, 0, 4),
- };
- 
- static const struct mtk_pin_field_calc mt7622_pin_dir_range[] = {
--	{0, 102, 0x0, 0x10, 0, 1},
-+	PIN_FIELD(0, 102, 0x0, 0x10, 0, 1),
- };
- 
- static const struct mtk_pin_field_calc mt7622_pin_di_range[] = {
--	{0, 102, 0x200, 0x10, 0, 1},
-+	PIN_FIELD(0, 102, 0x200, 0x10, 0, 1),
- };
- 
- static const struct mtk_pin_field_calc mt7622_pin_do_range[] = {
--	{0, 102, 0x100, 0x10, 0, 1},
-+	PIN_FIELD(0, 102, 0x100, 0x10, 0, 1),
- };
- 
- static const struct mtk_pin_field_calc mt7622_pin_sr_range[] = {
--	{0, 31, 0x910, 0x10, 0, 1},
--	{32, 50, 0xa10, 0x10, 0, 1},
--	{51, 70, 0x810, 0x10, 0, 1},
--	{71, 72, 0xb10, 0x10, 0, 1},
--	{73, 86, 0xb10, 0x10, 4, 1},
--	{87, 90, 0xc10, 0x10, 0, 1},
--	{91, 102, 0xb10, 0x10, 18, 1},
-+	PIN_FIELD(0, 31, 0x910, 0x10, 0, 1),
-+	PIN_FIELD(32, 50, 0xa10, 0x10, 0, 1),
-+	PIN_FIELD(51, 70, 0x810, 0x10, 0, 1),
-+	PIN_FIELD(71, 72, 0xb10, 0x10, 0, 1),
-+	PIN_FIELD(73, 86, 0xb10, 0x10, 4, 1),
-+	PIN_FIELD(87, 90, 0xc10, 0x10, 0, 1),
-+	PIN_FIELD(91, 102, 0xb10, 0x10, 18, 1),
- };
- 
- static const struct mtk_pin_field_calc mt7622_pin_smt_range[] = {
--	{0, 31, 0x920, 0x10, 0, 1},
--	{32, 50, 0xa20, 0x10, 0, 1},
--	{51, 70, 0x820, 0x10, 0, 1},
--	{71, 72, 0xb20, 0x10, 0, 1},
--	{73, 86, 0xb20, 0x10, 4, 1},
--	{87, 90, 0xc20, 0x10, 0, 1},
--	{91, 102, 0xb20, 0x10, 18, 1},
-+	PIN_FIELD(0, 31, 0x920, 0x10, 0, 1),
-+	PIN_FIELD(32, 50, 0xa20, 0x10, 0, 1),
-+	PIN_FIELD(51, 70, 0x820, 0x10, 0, 1),
-+	PIN_FIELD(71, 72, 0xb20, 0x10, 0, 1),
-+	PIN_FIELD(73, 86, 0xb20, 0x10, 4, 1),
-+	PIN_FIELD(87, 90, 0xc20, 0x10, 0, 1),
-+	PIN_FIELD(91, 102, 0xb20, 0x10, 18, 1),
- };
- 
- static const struct mtk_pin_field_calc mt7622_pin_pu_range[] = {
--	{0, 31, 0x930, 0x10, 0, 1},
--	{32, 50, 0xa30, 0x10, 0, 1},
--	{51, 70, 0x830, 0x10, 0, 1},
--	{71, 72, 0xb30, 0x10, 0, 1},
--	{73, 86, 0xb30, 0x10, 4, 1},
--	{87, 90, 0xc30, 0x10, 0, 1},
--	{91, 102, 0xb30, 0x10, 18, 1},
-+	PIN_FIELD(0, 31, 0x930, 0x10, 0, 1),
-+	PIN_FIELD(32, 50, 0xa30, 0x10, 0, 1),
-+	PIN_FIELD(51, 70, 0x830, 0x10, 0, 1),
-+	PIN_FIELD(71, 72, 0xb30, 0x10, 0, 1),
-+	PIN_FIELD(73, 86, 0xb30, 0x10, 4, 1),
-+	PIN_FIELD(87, 90, 0xc30, 0x10, 0, 1),
-+	PIN_FIELD(91, 102, 0xb30, 0x10, 18, 1),
- };
- 
- static const struct mtk_pin_field_calc mt7622_pin_pd_range[] = {
--	{0, 31, 0x940, 0x10, 0, 1},
--	{32, 50, 0xa40, 0x10, 0, 1},
--	{51, 70, 0x840, 0x10, 0, 1},
--	{71, 72, 0xb40, 0x10, 0, 1},
--	{73, 86, 0xb40, 0x10, 4, 1},
--	{87, 90, 0xc40, 0x10, 0, 1},
--	{91, 102, 0xb40, 0x10, 18, 1},
-+	PIN_FIELD(0, 31, 0x940, 0x10, 0, 1),
-+	PIN_FIELD(32, 50, 0xa40, 0x10, 0, 1),
-+	PIN_FIELD(51, 70, 0x840, 0x10, 0, 1),
-+	PIN_FIELD(71, 72, 0xb40, 0x10, 0, 1),
-+	PIN_FIELD(73, 86, 0xb40, 0x10, 4, 1),
-+	PIN_FIELD(87, 90, 0xc40, 0x10, 0, 1),
-+	PIN_FIELD(91, 102, 0xb40, 0x10, 18, 1),
- };
- 
- static const struct mtk_pin_field_calc mt7622_pin_e4_range[] = {
--	{0, 31, 0x960, 0x10, 0, 1},
--	{32, 50, 0xa60, 0x10, 0, 1},
--	{51, 70, 0x860, 0x10, 0, 1},
--	{71, 72, 0xb60, 0x10, 0, 1},
--	{73, 86, 0xb60, 0x10, 4, 1},
--	{87, 90, 0xc60, 0x10, 0, 1},
--	{91, 102, 0xb60, 0x10, 18, 1},
-+	PIN_FIELD(0, 31, 0x960, 0x10, 0, 1),
-+	PIN_FIELD(32, 50, 0xa60, 0x10, 0, 1),
-+	PIN_FIELD(51, 70, 0x860, 0x10, 0, 1),
-+	PIN_FIELD(71, 72, 0xb60, 0x10, 0, 1),
-+	PIN_FIELD(73, 86, 0xb60, 0x10, 4, 1),
-+	PIN_FIELD(87, 90, 0xc60, 0x10, 0, 1),
-+	PIN_FIELD(91, 102, 0xb60, 0x10, 18, 1),
- };
- 
- static const struct mtk_pin_field_calc mt7622_pin_e8_range[] = {
--	{0, 31, 0x970, 0x10, 0, 1},
--	{32, 50, 0xa70, 0x10, 0, 1},
--	{51, 70, 0x870, 0x10, 0, 1},
--	{71, 72, 0xb70, 0x10, 0, 1},
--	{73, 86, 0xb70, 0x10, 4, 1},
--	{87, 90, 0xc70, 0x10, 0, 1},
--	{91, 102, 0xb70, 0x10, 18, 1},
-+	PIN_FIELD(0, 31, 0x970, 0x10, 0, 1),
-+	PIN_FIELD(32, 50, 0xa70, 0x10, 0, 1),
-+	PIN_FIELD(51, 70, 0x870, 0x10, 0, 1),
-+	PIN_FIELD(71, 72, 0xb70, 0x10, 0, 1),
-+	PIN_FIELD(73, 86, 0xb70, 0x10, 4, 1),
-+	PIN_FIELD(87, 90, 0xc70, 0x10, 0, 1),
-+	PIN_FIELD(91, 102, 0xb70, 0x10, 18, 1),
- };
- 
- static const struct mtk_pin_field_calc mt7622_pin_tdsel_range[] = {
--	{0, 31, 0x980, 0x4, 0, 4},
--	{32, 50, 0xa80, 0x4, 0, 4},
--	{51, 70, 0x880, 0x4, 0, 4},
--	{71, 72, 0xb80, 0x4, 0, 4},
--	{73, 86, 0xb80, 0x4, 16, 4},
--	{87, 90, 0xc80, 0x4, 0, 4},
--	{91, 102, 0xb88, 0x4, 8, 4},
-+	PIN_FIELD(0, 31, 0x980, 0x4, 0, 4),
-+	PIN_FIELD(32, 50, 0xa80, 0x4, 0, 4),
-+	PIN_FIELD(51, 70, 0x880, 0x4, 0, 4),
-+	PIN_FIELD(71, 72, 0xb80, 0x4, 0, 4),
-+	PIN_FIELD(73, 86, 0xb80, 0x4, 16, 4),
-+	PIN_FIELD(87, 90, 0xc80, 0x4, 0, 4),
-+	PIN_FIELD(91, 102, 0xb88, 0x4, 8, 4),
- };
- 
- static const struct mtk_pin_field_calc mt7622_pin_rdsel_range[] = {
--	{0, 31, 0x990, 0x4, 0, 6},
--	{32, 50, 0xa90, 0x4, 0, 6},
--	{51, 58, 0x890, 0x4, 0, 6},
--	{59, 60, 0x894, 0x4, 28, 6},
--	{61, 62, 0x894, 0x4, 16, 6},
--	{63, 66, 0x898, 0x4, 8, 6},
--	{67, 68, 0x89c, 0x4, 12, 6},
--	{69, 70, 0x89c, 0x4, 0, 6},
--	{71, 72, 0xb90, 0x4, 0, 6},
--	{73, 86, 0xb90, 0x4, 24, 6},
--	{87, 90, 0xc90, 0x4, 0, 6},
--	{91, 102, 0xb9c, 0x4, 12, 6},
-+	PIN_FIELD(0, 31, 0x990, 0x4, 0, 6),
-+	PIN_FIELD(32, 50, 0xa90, 0x4, 0, 6),
-+	PIN_FIELD(51, 58, 0x890, 0x4, 0, 6),
-+	PIN_FIELD(59, 60, 0x894, 0x4, 28, 6),
-+	PIN_FIELD(61, 62, 0x894, 0x4, 16, 6),
-+	PIN_FIELD(63, 66, 0x898, 0x4, 8, 6),
-+	PIN_FIELD(67, 68, 0x89c, 0x4, 12, 6),
-+	PIN_FIELD(69, 70, 0x89c, 0x4, 0, 6),
-+	PIN_FIELD(71, 72, 0xb90, 0x4, 0, 6),
-+	PIN_FIELD(73, 86, 0xb90, 0x4, 24, 6),
-+	PIN_FIELD(87, 90, 0xc90, 0x4, 0, 6),
-+	PIN_FIELD(91, 102, 0xb9c, 0x4, 12, 6),
- };
- 
- static const struct mtk_pin_reg_calc mt7622_reg_cals[PINCTRL_PIN_REG_MAX] = {
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-index a74c3ff..2a16804 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-@@ -54,19 +54,24 @@ static int mtk_hw_pin_field_lookup(struct mtk_pinctrl *hw, int pin,
- 		return -EINVAL;
- 	}
- 
--	/* Caculated bits as the overall offset the pin is located at */
--	bits = c->s_bit + (pin - c->s_pin) * (c->x_bits);
-+	/* Calculated bits as the overall offset the pin is located at,
-+	 * if c->fixed is held, that determines the all the pins in the
-+	 * range use the same field with the s_pin.
-+	 */
-+	bits = c->fixed ? c->s_bit : c->s_bit + (pin - c->s_pin) * (c->x_bits);
- 
--	/* Fill pfd from bits and 32-bit register applied is assumed */
--	pfd->offset = c->s_addr + c->x_addrs * (bits / 32);
--	pfd->bitpos = bits % 32;
-+	/* Fill pfd from bits. For example 32-bit register applied is assumed
-+	 * when c->sz_reg is equal to 32.
-+	 */
-+	pfd->offset = c->s_addr + c->x_addrs * (bits / c->sz_reg);
-+	pfd->bitpos = bits % c->sz_reg;
- 	pfd->mask = (1 << c->x_bits) - 1;
- 
- 	/* pfd->next is used for indicating that bit wrapping-around happens
- 	 * which requires the manipulation for bit 0 starting in the next
- 	 * register to form the complete field read/write.
- 	 */
--	pfd->next = pfd->bitpos + c->x_bits - 1 > 31 ? c->x_addrs : 0;
-+	pfd->next = pfd->bitpos + c->x_bits > c->sz_reg ? c->x_addrs : 0;
- 
- 	return 0;
- }
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
-index b7800c9..f05c802 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h
-@@ -15,6 +15,26 @@
- #define MTK_DISABLE    0
- #define MTK_ENABLE     1
- 
-+#define PIN_FIELD_CALC(_s_pin, _e_pin, _s_addr, _x_addrs, _s_bit,	\
-+			_x_bits, _sz_reg, _fixed) {			\
-+		.s_pin = _s_pin,					\
-+		.e_pin = _e_pin,					\
-+		.s_addr = _s_addr,					\
-+		.x_addrs = _x_addrs,					\
-+		.s_bit = _s_bit,					\
-+		.x_bits = _x_bits,					\
-+		.sz_reg = _sz_reg,					\
-+		.fixed = _fixed,					\
-+	}
-+
-+#define PIN_FIELD(_s_pin, _e_pin, _s_addr, _x_addrs, _s_bit, _x_bits)	\
-+	PIN_FIELD_CALC(_s_pin, _e_pin, _s_addr, _x_addrs, _s_bit,	\
-+		       _x_bits, 32, 0)
-+
-+#define PINS_FIELD(_s_pin, _e_pin, _s_addr, _x_addrs, _s_bit, _x_bits)	\
-+	PIN_FIELD_CALC(_s_pin, _e_pin, _s_addr, _x_addrs, _s_bit,	\
-+		       _x_bits, 32, 1)
-+
- /* List these attributes which could be modified for the pin */
- enum {
- 	PINCTRL_PIN_REG_MODE,
-@@ -57,6 +77,9 @@ struct mtk_pin_field {
-  * @s_bit:		the start bit for the first register within the range
-  * @x_bits:		the bit distance between two consecutive pins within
-  *			the range
-+ * @sz_reg:		the size of bits in a register
-+ * @fixed:		the consecutive pins share the same bits with the 1st
-+ *			pin
-  */
- struct mtk_pin_field_calc {
- 	u16 s_pin;
-@@ -65,6 +88,8 @@ struct mtk_pin_field_calc {
- 	u8  x_addrs;
- 	u8  s_bit;
- 	u8  x_bits;
-+	u8  sz_reg;
-+	u8  fixed;
- };
- 
- /* struct mtk_pin_reg_calc - the structure that holds all ranges used to
--- 
-2.7.4
+--cmJC7u66zC7hs+87
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAluDzhwACgkQ3SOs138+
+s6G5jA/9HpMCkYUvtpab6RfEGNR3+8EWDEKJTzhJbY3/lkPRS53iPni/GWj41Pf6
+GZBVffsYXMY3DN8Or1De4/1VDxdbN0j1eQbXtMIRw/4ZRuuEcfKeQGy4ndKKgX3O
+6QPWolvc4KLuERlMdBSg4kT69zoDHk4Ozwha/q7VH/7Wc2+OrwhyP9pOgDS8vQw9
+0jgPxw2E/4vNdb7cfhRCzlb+5RhKmmlVFyGScYU0hKff39+S980rVqhtk/yfSXZA
+uUxceDuOYqopHUq6Te6/HJaYhaHoQjOWS9tQTP5uq9ZyPLBFNbd2//8c7Y0RqM89
+6GkjoRXZUzS8xNHPxUCI9NS9P321qBzuCZNW9A87YZZBSl14thP0zh14YsFl1m6L
+LI4b6josbfYkufYkefWAWPdvzCebXuU5JyyDwpt0wt4KfFlzsaccZG+o0R9xc3fO
+RTkSvDSaX8gLNefCM2vjWTQi+LDM6xvRcCCvwtmyAGWWtImIfVvTp1q315QzbfxS
+X88Yyu9KpHCslq4zcD12Bfu/WCPIMCiLs7gLI7Oyb6jX6DIfaJDB4Gv00zGdIwej
+MOHMVRma1f7dKNbamWaCeFmEVshrZwQtS3mze4zk3Lad7jfJQMO8DFhonApffn+z
+zPPkZoQZwCDs2htchKJp+/rk/EGKqr9ALJlHuSjfhGHug7O5TZY=
+=CECx
+-----END PGP SIGNATURE-----
+
+--cmJC7u66zC7hs+87--
