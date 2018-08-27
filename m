@@ -2,133 +2,119 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24DC5C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 13:51:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7702CC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 13:51:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBDCE208B8
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 13:51:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBDCE208B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
+	by mail.kernel.org (Postfix) with ESMTP id 35652208B8
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 13:51:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35652208B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727430AbeH0RiF (ORCPT
+        id S1727512AbeH0RiT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 13:38:05 -0400
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:46822 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726883AbeH0RiE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 13:38:04 -0400
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7RDnZ42022400;
-        Mon, 27 Aug 2018 08:51:19 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=rf@opensource.cirrus.com
-Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2m34h1tc7k-1;
-        Mon, 27 Aug 2018 08:51:19 -0500
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail1.cirrus.com (Postfix) with ESMTP id 1145B611E126;
-        Mon, 27 Aug 2018 08:51:19 -0500 (CDT)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Mon, 27 Aug 2018
- 14:51:18 +0100
-Received: from edi-sw-dsktp006.ad.cirrus.com (edi-sw-dsktp006.ad.cirrus.com
- [198.90.251.121])      by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id
- w7RDpHoA007537;        Mon, 27 Aug 2018 14:51:18 +0100
-From:   Richard Fitzgerald <rf@opensource.cirrus.com>
-To:     <lee.jones@linaro.org>
-CC:     <patches@opensource.cirrus.com>, <linux-kernel@vger.kernel.org>,
-        "Richard Fitzgerald" <rf@opensource.cirrus.com>
-Subject: [PATCH v2] mfd: madera: Don't use regmap_read_poll_timeout to poll for BOOT_DONE
-Date:   Mon, 27 Aug 2018 14:51:15 +0100
-Message-ID: <20180827135115.24231-1-rf@opensource.cirrus.com>
-X-Mailer: git-send-email 2.11.0
+        Mon, 27 Aug 2018 13:38:19 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38762 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726883AbeH0RiS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 13:38:18 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A23D64021702;
+        Mon, 27 Aug 2018 13:51:33 +0000 (UTC)
+Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 73A782026D6B;
+        Mon, 27 Aug 2018 13:51:28 +0000 (UTC)
+Date:   Mon, 27 Aug 2018 15:51:26 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Tony Krowiak <akrowiak@linux.ibm.com>
+Cc:     Halil Pasic <pasic@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        pmorel@linux.ibm.com, Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        frankja@linux.ibm.com
+Subject: Re: [PATCH v9 12/22] s390: vfio-ap: sysfs interfaces to configure
+ control domains
+Message-ID: <20180827155126.440f2170.cohuck@redhat.com>
+In-Reply-To: <65cb82b5-85ce-1831-5b2a-719d2cf27be8@linux.ibm.com>
+References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <1534196899-16987-13-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <20180820162317.08bd7d23.cohuck@redhat.com>
+        <660de00a-c403-28c1-4df4-82a973ab3ad5@linux.ibm.com>
+        <20180821172548.57a6c758.cohuck@redhat.com>
+        <82a391ee-85b1-cdc7-0f9b-d37fd8ba8e47@linux.ibm.com>
+        <a43ef10f-aa91-cb4c-a8aa-cd3ce9cfebf2@linux.ibm.com>
+        <20180822114250.59a250aa.cohuck@redhat.com>
+        <8bc5f207-f913-825c-f9fc-0a2c7fd280aa@linux.ibm.com>
+        <e36abc22-9daf-e0f4-c6b3-7adbb28db4c3@de.ibm.com>
+        <f84dbcc0-f627-be02-9933-3baa953adc09@linux.ibm.com>
+        <219b352b-d5a2-189c-e205-82e7f9ae3d64@de.ibm.com>
+        <dbb74c9c-93ab-ed05-fad4-ea2aa5f2b71e@linux.ibm.com>
+        <9ef5fcb9-02e0-88e3-007c-eedb14e6db80@linux.ibm.com>
+        <20180823122525.02fc4af3.cohuck@redhat.com>
+        <decfe307-4449-2c85-0b7e-6f2fcdb1164f@linux.ibm.com>
+        <20180827103316.4e7fbc10.cohuck@redhat.com>
+        <65cb82b5-85ce-1831-5b2a-719d2cf27be8@linux.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=841 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
- definitions=main-1808270148
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 27 Aug 2018 13:51:33 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 27 Aug 2018 13:51:33 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While polling for BOOT_DONE the chip could NAK a read because it is
-still booting, which would terminate the regmap_read_poll_timeout()
-with an error.
+On Mon, 27 Aug 2018 09:47:58 -0400
+Tony Krowiak <akrowiak@linux.ibm.com> wrote:
 
-Instead implement a polling loop that ignores read errors so we
-always poll until the chip signals boot or the loop times out.
+> On 08/27/2018 04:33 AM, Cornelia Huck wrote:
+> > On Thu, 23 Aug 2018 10:16:59 -0400
+> > Tony Krowiak <akrowiak@linux.ibm.com> wrote:
+> >  
+> >> On 08/23/2018 06:25 AM, Cornelia Huck wrote:  
+> >>> On Wed, 22 Aug 2018 15:16:19 -0400
+> >>> Tony Krowiak <akrowiak@linux.ibm.com> wrote:
+> >>>     
+> >>>> One of the things I suggested in a private conversation with Christian
+> >>>> earlier
+> >>>> today was to provide an additional rw sysfs attribute - a boolean - that
+> >>>> indicates
+> >>>> whether all usage domains should also be control domains. The default
+> >>>> could be
+> >>>> true. This would allow one to configure guests with usage-only domains
+> >>>> as well
+> >>>> as satisfy the convention.  
+> >>> Would this additional attribute then control "add usage domains to the
+> >>> list of control domains automatically", or "don't allow to add a usage
+> >>> domain if it has not already been added as a control domain"?  
+> >> It was just a proposal that wasn't really discussed at all, but this
+> >> attribute would add usage domains to the list of control domains
+> >> automatically if set to one. That would be the default behavior which
+> >> would be turned off by manually setting it to zero.  
+> > If we want to do something like that, having it add the usage domains
+> > automatically sounds like the more workable alternative. What I like
+> > about this is that we make it explicit that we change the masks beyond
+> > what the admin explicitly configured, and provide a knob to turn off
+> > that behaviour.  
+> 
+> So, are you saying I should go ahead and implement this?
 
-Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
----
- drivers/mfd/madera-core.c | 33 ++++++++++++++++++++-------------
- 1 file changed, 20 insertions(+), 13 deletions(-)
+I'm just saying that it does not sound like a bad idea :)
 
-diff --git a/drivers/mfd/madera-core.c b/drivers/mfd/madera-core.c
-index 8cfea969b060..440030cecbbd 100644
---- a/drivers/mfd/madera-core.c
-+++ b/drivers/mfd/madera-core.c
-@@ -132,32 +132,39 @@ const char *madera_name_from_type(enum madera_type type)
- }
- EXPORT_SYMBOL_GPL(madera_name_from_type);
- 
--#define MADERA_BOOT_POLL_MAX_INTERVAL_US  5000
--#define MADERA_BOOT_POLL_TIMEOUT_US	 25000
-+#define MADERA_BOOT_POLL_INTERVAL_USEC		5000
-+#define MADERA_BOOT_POLL_TIMEOUT_USEC		25000
- 
- static int madera_wait_for_boot(struct madera *madera)
- {
-+	ktime_t timeout;
- 	unsigned int val;
--	int ret;
-+	int ret = 0;
- 
- 	/*
- 	 * We can't use an interrupt as we need to runtime resume to do so,
- 	 * so we poll the status bit. This won't race with the interrupt
- 	 * handler because it will be blocked on runtime resume.
-+	 * The chip could NAK a read request while it is booting so ignore
-+	 * errors from regmap_read.
- 	 */
--	ret = regmap_read_poll_timeout(madera->regmap,
--				       MADERA_IRQ1_RAW_STATUS_1,
--				       val,
--				       (val & MADERA_BOOT_DONE_STS1),
--				       MADERA_BOOT_POLL_MAX_INTERVAL_US,
--				       MADERA_BOOT_POLL_TIMEOUT_US);
--
--	if (ret)
--		dev_err(madera->dev, "Polling BOOT_DONE_STS failed: %d\n", ret);
-+	timeout = ktime_add_us(ktime_get(), MADERA_BOOT_POLL_TIMEOUT_USEC);
-+	regmap_read(madera->regmap, MADERA_IRQ1_RAW_STATUS_1, &val);
-+	while (!(val & MADERA_BOOT_DONE_STS1) &&
-+	       !ktime_after(ktime_get(), timeout)) {
-+		usleep_range(MADERA_BOOT_POLL_INTERVAL_USEC / 2,
-+			     MADERA_BOOT_POLL_INTERVAL_USEC);
-+		regmap_read(madera->regmap, MADERA_IRQ1_RAW_STATUS_1, &val);
-+	};
-+
-+	if (!(val & MADERA_BOOT_DONE_STS1)) {
-+		dev_err(madera->dev, "Polling BOOT_DONE_STS timed out\n");
-+		ret = -ETIMEDOUT;
-+	}
- 
- 	/*
- 	 * BOOT_DONE defaults to unmasked on boot so we must ack it.
--	 * Do this unconditionally to avoid interrupt storms.
-+	 * Do this even after a timeout to avoid interrupt storms.
- 	 */
- 	regmap_write(madera->regmap, MADERA_IRQ1_STATUS_1,
- 		     MADERA_BOOT_DONE_EINT1);
--- 
-2.11.0
-
+If you agree that it's a good idea and if others also like it... I'd
+certainly not mind you going ahead :)
