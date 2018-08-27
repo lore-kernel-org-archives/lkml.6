@@ -2,103 +2,110 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B24DC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:20:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 572D1C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:22:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D92AC208AF
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:20:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Ym17ttrQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D92AC208AF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 03737208AF
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:22:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03737208AF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lucaceresoli.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727021AbeH0UH0 (ORCPT
+        id S1727056AbeH0UJ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 16:07:26 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:60566 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726731AbeH0UH0 (ORCPT
+        Mon, 27 Aug 2018 16:09:58 -0400
+Received: from srv-hp10-72.netsons.net ([94.141.22.72]:39576 "EHLO
+        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726731AbeH0UJ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 16:07:26 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7RGJW6u153570;
-        Mon, 27 Aug 2018 16:19:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to :
- subject : message-id : mime-version : content-type; s=corp-2018-07-02;
- bh=MGgjMmSUBUsqM7mt1pOqYh7D3G9R2MTY+oswJ7rjd9Q=;
- b=Ym17ttrQbo9vIyhTJRVfvBF95tbRdjnbT9Z68U/pcP6vIW7YjbX0cntZXTRqzafpUoTn
- m9WjxyhTdp7JhyP21wMdEEm6SG/R6FGuRubFJFQPKXnaRf10GULKKpBueh1lIp/n43p1
- /RKoHLbopbxEyvLTAxV70926BVJejS7+FGcd75eF4mOSdgt29YrJZPraSZOn5Wfu4tPG
- ige5FJJqFlfH5IJLkJAc/Kew8oHcw+o/AcxiCIqttIchbbzH8pVu9HcIF4C2A3GiSEXK
- UgaduW+tXLjvA/DfNoUXdv3ksq1k9XEz7Y5Ghjki1vl12owfJFNieJ/gHVAl+7FFWdhp Yw== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2120.oracle.com with ESMTP id 2m2yrpxv9d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 27 Aug 2018 16:19:59 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w7RGJqTG024754
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 27 Aug 2018 16:19:53 GMT
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w7RGJpeS001160;
-        Mon, 27 Aug 2018 16:19:51 GMT
-Received: from char.us.oracle.com (/10.152.35.101)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 27 Aug 2018 09:19:50 -0700
-Received: by char.us.oracle.com (Postfix, from userid 1000)
-        id 06EFD6A0112; Mon, 27 Aug 2018 12:19:49 -0400 (EDT)
-Date:   Mon, 27 Aug 2018 12:19:49 -0400
-From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To:     linux-kernel@vger.kernel.org, jgross@suse.com,
-        roger.pau@citrix.com, axboe@kernel.dk,
-        xen-devel@lists.xensource.com
-Subject: [GIT PULL] (xen) stable/for-jens-4.19 for 4.19..
-Message-ID: <20180827161949.GG29187@char.us.oracle.com>
+        Mon, 27 Aug 2018 16:09:57 -0400
+Received: from [109.168.11.45] (port=55498 helo=[192.168.101.125])
+        by srv-hp10.netsons.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1fuKHj-00CWMN-UM; Mon, 27 Aug 2018 18:22:35 +0200
+Subject: Re: [PATCH 1/1] axi-i2s: set period size register
+To:     Lars-Peter Clausen <lars@metafoo.de>, alsa-devel@alsa-project.org
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org,
+        Michal Simek <michal.simek@xilinx.com>
+References: <20180824160430.10222-1-luca@lucaceresoli.net>
+ <20180824160430.10222-2-luca@lucaceresoli.net>
+ <b87937b6-da7c-76d7-5dd2-24909e648671@metafoo.de>
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+Message-ID: <263e42b4-75a3-183c-894b-e485e387eccf@lucaceresoli.net>
+Date:   Mon, 27 Aug 2018 18:22:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8998 signatures=668708
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1808270173
+In-Reply-To: <b87937b6-da7c-76d7-5dd2-24909e648671@metafoo.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca@lucaceresoli.net
+X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Jens,
+Hi,
 
-Would you be OK pulling the following branch:
- git://git.kernel.org/pub/scm/linux/kernel/git/konrad/xen.git stable/for-jens-4.19
+thanks for your feedback.
 
-which has a fix for flushing out persistent pages at a deterministic rate.
+[Adding Michal Simek (Xilinx maintainer) in Cc]
 
-Thanks to the L1TF I did not manage to send this email until today - but
-hopefully it won't be an issue to push it to Linus after -rc1?
+On 27/08/2018 14:27, Lars-Peter Clausen wrote:
+> On 08/24/2018 06:04 PM, Luca Ceresoli wrote:
+>> The default value of the PERIOD_LEN register is 0 and results in
+>> axi-i2s keeping TLAST always asserted in its AXI Stream output.
+>>
+>> When the AXI Stream is sent to a Xilinx AXI-DMA, this results in the
+>> DMA generating an interrupt flood and ALSA produce a corrupted
+>> recording. This is because AXI-DMA raises an interrupt whenever TLAST
+>> is active.
+>>
+>> Fix by setting the PERIOD_LEN register as soon as the period is
+>> known. This way TLAST is emitted once per period, and the DMA raises
+>> interrupts correctly.
+> 
+> The patch looks OK. But I'd prefer not to merge it if possible.
+> 
+> We've done some early experiments with the Xilinx AXI-DMA, but it turned out
+> to be to unreliable and we've abandoned support for it. One of the more
+> critical issues was that you can't abort a DMA transfer. That means when
+> audio capture is stopped the DMA will halt, but not complete the current
+> transfer. Then when the next audio capture start the DMA will continue with
+> the previous transfer. The observed effect of this was that the system would
+> just crash randomly (Presumably due to memory corruption).
 
-It is based on your 'b86d865cb1ca (for-4.19/block) blkcg: Make blkg_root_lookup()
-work for queues in bypass mode' branch.
+Strange. I have done many capture experiments with arecord and didn't
+run into such bad issues. I only have a much less serious problem
+(garbage or old samples in the first few buffers), but no crashes.
 
-Thank you! 
+Michal, are you aware of these problems?
 
- Documentation/ABI/testing/sysfs-driver-xen-blkback |  10 ++
- drivers/block/xen-blkback/blkback.c                |  99 ++++++++++---------
- drivers/block/xen-blkback/common.h                 |  14 +--
- drivers/block/xen-blkfront.c                       | 110 ++++++++++++++++++---
- 4 files changed, 163 insertions(+), 70 deletions(-)
+> Have you considered using the ADI AXI-DMAC? That should work just fine.
 
-Juergen Gross (5):
-      xen/blkback: don't keep persistent grants too long
-      xen/blkfront: cleanup stale persistent grants
-      xen/blkfront: reorder tests in xlblk_init()
-      xen/blkback: move persistent grants flags to bool
-      xen/blkback: remove unused pers_gnts_lock from struct xen_blkif_ring
+Not until today, because AXI-DMA is working here.
 
+I'd like to better understand what's going on before changing an IP that
+is working. Do you have additional details about your setup? How do you
+run your tests?
+
+Regards,
+-- 
+Luca
