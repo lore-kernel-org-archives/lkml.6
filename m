@@ -2,113 +2,110 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5005FC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 09:55:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49EFEC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 09:55:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2AB2208B1
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 09:55:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bbODHc+U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2AB2208B1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 0F5E1208B4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 09:55:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F5E1208B4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727062AbeH0Nk7 (ORCPT
+        id S1727110AbeH0NlW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 09:40:59 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:36168 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726925AbeH0Nk7 (ORCPT
+        Mon, 27 Aug 2018 09:41:22 -0400
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:33950 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726925AbeH0NlW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 09:40:59 -0400
-Received: by mail-it0-f66.google.com with SMTP id u13-v6so1574700iti.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 02:55:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=c6gRYBIn7tL9m1cgzkeN0nTvLlObFqGKe51QQPBekW8=;
-        b=bbODHc+U9eZz38Nl6fXs/Ap2e2P+LR2jziduDN7/Svt6cUeGGW6U8VE8fBuDl+9iwq
-         3nlpVASS6iuMpkiWl5mS1E1u1bBxMIFD1qOlUxye4AauYpdak7wRm08tOPj+K/nX7aNG
-         ryU0quKjSCGYajKrA3Nv5ElDErZDrKnRKHbKY=
+        Mon, 27 Aug 2018 09:41:22 -0400
+Received: by mail-vk0-f66.google.com with SMTP id l143-v6so7260675vke.1;
+        Mon, 27 Aug 2018 02:55:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=c6gRYBIn7tL9m1cgzkeN0nTvLlObFqGKe51QQPBekW8=;
-        b=ZrZB/AJ3xyLV6W/TeFL0kZkA47HfUrk0dsEYyQRDB9K+sn+hYJb089T9CxfuxmhPd1
-         vcMuUOFAL8VvlGtcS7drIaYtfCMIQdgmvjOL39xQa0MfRpX5kDdH5yHy5Vo6oj3dBkh9
-         jUaXnjDKK3ki1tVXW6nVCONESnLCwESr3O6PfAyxh6uCFEjcXpqyyXEDCSw0vwdczyLz
-         bV9l9yxx0aoz9isvI+wbKjyial2v4PyCGRQqZNHiqGNJ3qX03ZZwhvOquLEMxa2z14mM
-         SCU0w5fjfDDbdtXT6qOVKEB3dNovUfpEl46duBrk9VFvk5RVGlqlv6HDHxPPXquWbNvw
-         FXvQ==
-X-Gm-Message-State: APzg51DD2ElKryaA1zFdtZVJS72Sa5AAz+VINvVFIG+9a8mY3nHrVAiP
-        hi0NEwRhLa2p0hsM7MzJZ+vBXLb5SFOdE9JBXQBXUYaUJlI=
-X-Google-Smtp-Source: ANB0VdYp5zm5SEeNOyO/6O1aLUMFym/nNFy+mp0ANYAZTddtYKLFrmqs++wKU2xr3Z53mUwNHFCApVcFtUESEEOc8qI=
-X-Received: by 2002:a24:a388:: with SMTP id p130-v6mr5942823ite.146.1535363701686;
- Mon, 27 Aug 2018 02:55:01 -0700 (PDT)
+        bh=Z015p4ynXfmmBj2Yrxtc2mTKUGfswqN3OUCvxFrT+zE=;
+        b=fLltbmH4leSVVMIeZvs7uVIoqfA2PfGSCgTswQ6NhZyue/4Sqv2qcJlL7RKzIj1zue
+         l7GdHTDa2HCKrJXbAoXS8yE7gb3u6bp8hz1McxFs1xSVi+I+aZ9PJLK5JCWpGk9T0tw+
+         34SpozhCbjnDoqPPzfQ24/wTpqzfoUnUsPkIwVjr2gsF7QneI8ijhrD+Q9+MnCNhYIja
+         Q5SzcolTwvx4n1uL+juMXlaPT/XJGhhxJ41Vv2euvvOdvJx51Mt3SxN0mIT/TUtYMlWG
+         cbe22xirXbB9LPmpC5/tkh2YgEguKW0VY8i8EQpLV+Po5AfRM+WnHC8DQbnzqYy6rvxt
+         eR8A==
+X-Gm-Message-State: APzg51BRI80GFaeqmHNgHoUamYDicBP7KHvZURuq89jN4mtI3blcZgEk
+        uNc+VZfTgln/zqIeHKuGCuF/yLRYPzZu3Z38+yD5fISF
+X-Google-Smtp-Source: ANB0VdapXRkmxOjqLItkVUaQLrFpIoNjHm/L4ApOtayADEZ84TnrfnnbgRLV60x/5qRmpa758R2P94wIGAmKGDT5+5g=
+X-Received: by 2002:a1f:1246:: with SMTP id 67-v6mr7391950vks.82.1535363722370;
+ Mon, 27 Aug 2018 02:55:22 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a02:2b03:0:0:0:0:0 with HTTP; Mon, 27 Aug 2018 02:55:01
- -0700 (PDT)
-In-Reply-To: <20180823085014.GB28696@ulmo>
-References: <1534757013-4524-1-git-send-email-avienamo@nvidia.com> <20180823085014.GB28696@ulmo>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 27 Aug 2018 11:55:01 +0200
-Message-ID: <CAPDyKFqJJhhJe-fNLs-_zCcZiYKb+JAgJHwEyZbbUbs69hvQaw@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Tegra SDHCI rerun pad calibration periodically
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Aapo Vienamo <avienamo@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180827094926.15512-1-geert@linux-m68k.org>
+In-Reply-To: <20180827094926.15512-1-geert@linux-m68k.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 27 Aug 2018 11:55:10 +0200
+Message-ID: <CAMuHMdVDmq+Kmi74jhL6CTS1cEt61xq-sX8cm208anYggUPWxg@mail.gmail.com>
+Subject: Re: Build regressions/improvements in v4.19-rc1
+To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc:     Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23 August 2018 at 10:50, Thierry Reding <thierry.reding@gmail.com> wrote:
-> On Mon, Aug 20, 2018 at 12:23:31PM +0300, Aapo Vienamo wrote:
->> Hi all,
->>
->> This series implements pad drive strength recalibration. The calibration
->> is rerun to compensate possible changes in temperature. The calibration
->> procedure is rerun as part of mmc_host_ops.request before
->> sdhci_request() is run. The calibration is executed only if the 100 ms
->> recalibration interval has passed.
->>
->> This series depends on the "Tegra SDHCI add support for HS200 and UHS
->> signaling" series.
->>
->> Aapo Vienamo (2):
->>   mmc: sdhci: Export sdhci_request()
->>   mmc: tegra: Implement periodic pad calibration
->>
->>  drivers/mmc/host/sdhci-tegra.c | 22 ++++++++++++++++++++++
->>  drivers/mmc/host/sdhci.c       |  3 ++-
->>  drivers/mmc/host/sdhci.h       |  1 +
->>  3 files changed, 25 insertions(+), 1 deletion(-)
+On Mon, Aug 27, 2018 at 11:50 AM Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> Below is the list of build error/warning regressions/improvements in
+> v4.19-rc1[1] compared to v4.18[2].
 >
-> Adrian, Ulf,
+> Summarized:
+>   - build errors: +5/-3
+>   - build warnings: +14732/-179
 >
-> Since this depends on the earlier, fairly large series, I could throw
-> these on top of the branch I already have. That way you don't have to
-> worry about the dependency yourself. Of course it's also fine if you
-> want to apply this yourselves, in which case the series is:
+> Note that there may be false regressions, as some logs are incomplete.
+> Still, they're build errors/warnings.
 >
-> Acked-by: Thierry Reding <treding@nvidia.com>
+> Happy fixing! ;-)
 >
-> Thanks,
-> Thierry
+> Thanks to the linux-next team for providing the build service.
+>
+> [1] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/5b394b2ddf0347bef56e50c69a58773c94343ff3/ (all 240 configs)
+> [2] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/94710cac0ef4ee177a63b5227664b38c95bbf703/ (239 out of 240 configs)
+>
+>
+> *** ERRORS ***
+>
+> 5 error regressions:
+>   + /kisskb/src/arch/nds32/include/asm/elf.h: error: expected '}' before ';' token:  => 126:29
 
-Feel free to put in top in your branch and send a PR. BTW, Adrian has
-already acked these changes.
+nds32-allmodconfig, nds32-allyesconfig
 
-Kind regards
-Uffe
+>   + error: arch/sparc/kernel/.tmp_head_32.o: relocation truncated to fit: R_SPARC_WDISP22 against `.init.text':  => (.head.text+0x5100), (.head.text+0x5040)
+>   + error: arch/sparc/kernel/.tmp_head_32.o: relocation truncated to fit: R_SPARC_WDISP22 against symbol `leon_smp_cpu_startup' defined in .text section in arch/sparc/kernel/trampoline_32.o:  => (.init.text+0xa4)
+>   + error: arch/sparc/kernel/process_32.o: relocation truncated to fit: R_SPARC_WDISP22 against `.text':  => (.fixup+0x4), (.fixup+0xc)
+>   + error: arch/sparc/kernel/signal_32.o: relocation truncated to fit: R_SPARC_WDISP22 against `.text':  => (.fixup+0x0), (.fixup+0x8), (.fixup+0x10), (.fixup+0x18), (.fixup+0x20)
+
+sparc64/sparc-allmodconfig
+
+> *** WARNINGS ***
+>
+> [Deleted 14564 lines about "warning: -ffunction-sections disabled; it makes profiling impossible [enabled by default]" on powerpc-all{mod,yes}config*]
+
+Parisc finally managed to get rid of these, and now powerpc got them :-(
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
