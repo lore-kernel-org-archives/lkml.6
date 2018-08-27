@@ -6,187 +6,110 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 492DDC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:39:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90169C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:44:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2D1F208D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:39:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2D1F208D5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 37747208D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:44:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37747208D5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727167AbeH0W0z (ORCPT
+        id S1727178AbeH0Wbw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 18:26:55 -0400
-Received: from mga03.intel.com ([134.134.136.65]:45375 "EHLO mga03.intel.com"
+        Mon, 27 Aug 2018 18:31:52 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:49633 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726826AbeH0W0z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 18:26:55 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2018 11:39:09 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,296,1531810800"; 
-   d="scan'208";a="252333773"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga005.jf.intel.com with ESMTP; 27 Aug 2018 11:39:09 -0700
-Received: from [10.252.7.119] (abudanko-mobl.ccr.corp.intel.com [10.252.7.119])
-        by linux.intel.com (Postfix) with ESMTP id 154C35803E2;
-        Mon, 27 Aug 2018 11:39:06 -0700 (PDT)
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: [PATCH v3 0/2]: perf: reduce data loss when profiling highly parallel
- CPU bound workloads
-To:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Organization: Intel Corp.
-Message-ID: <f05c9242-6e8b-6d8c-e240-cc12bb7df6d7@linux.intel.com>
-Date:   Mon, 27 Aug 2018 21:39:05 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726826AbeH0Wbv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 18:31:51 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 56BEA207EB; Mon, 27 Aug 2018 20:44:05 +0200 (CEST)
+Received: from bbrezillon (unknown [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 9271E2079D;
+        Mon, 27 Aug 2018 20:43:54 +0200 (CEST)
+Date:   Mon, 27 Aug 2018 20:43:49 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-mtd@lists.infradead.org,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        linux-kernel@vger.kernel.org,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH v2] mtd: rawnand: denali: do not pass zero maxchips to
+ nand_scan()
+Message-ID: <20180827204349.47f21c05@bbrezillon>
+In-Reply-To: <1535353301-1727-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1535353301-1727-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 27 Aug 2018 16:01:41 +0900
+Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
 
-Currently in record mode the tool implements trace writing serially. 
-The algorithm loops over mapped per-cpu data buffers and stores ready 
-data chunks into a trace file using write() system call.
+> Commit 49aa76b16676 ("mtd: rawnand: do not execute nand_scan_ident()
+> if maxchips is zero") gave a new meaning for calling nand_scan_ident()
+> with maxchips=0.
+> 
+> It is a special usage for some drivers such as docg4, but actually
+> the Denali driver may pass maxchips=0 to nand_scan() when the driver
+> is enabled but no NAND chip is found on the board for some reasons.
+> 
+> If nand_scan_with_ids() is called with maxchips=0, nand_scan_ident()
+> is skipped, then nand_set_defaults() is skipped as well.  Thus, the
+> driver must set chip->controller beforehand.  Otherwise, nand_attach()
+> causes NULL pointer dereference.
+> 
+> In fact, the Denali controller knows the number of connected chips
+> before calling nand_scan_ident(); if DEVICE_RESET fails, there is no
+> chip in that chip select.  Then, denali_reset_banks() sets the maxchips
+> to the number of detected chips.  If no chip is found, maxchips is zero.
+> 
+> In this case, there is no point for calling nand_scan() because we know
+> it will fail for sure.  Let's make the probe function fail immediately.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-At some circumstances the kernel may lack free space in a buffer 
-because the other buffer's half is not yet written to disk due to 
-some other buffer's data writing by the tool at the moment.
+Queued to mtd/master after adding
 
-Thus serial trace writing implementation may cause the kernel 
-to loose profiling data and that is what observed when profiling 
-highly parallel CPU bound workloads on machines with big number 
-of cores.
+49aa76b16676 ("mtd: rawnand: do not execute nand_scan_ident() if maxchips is zero")
 
-Experiment with profiling matrix multiplication code executing 128 
-threads on Intel Xeon Phi (KNM) with 272 cores, like below,
-demonstrates data loss metrics value of 98%:
+Thanks,
 
-/usr/bin/time perf record -o /tmp/perf-ser.data -a -N -B -T -R -g \
-    --call-graph dwarf,1024 --user-regs=IP,SP,BP \
-    --switch-events -e cycles,instructions,ref-cycles,software/period=1,name=cs,config=0x3/Duk -- \
-    matrix.gcc
+Boris
 
-Data loss metrics is the ratio lost_time/elapsed_time where 
-lost_time is the sum of time intervals containing PERF_RECORD_LOST 
-records and elapsed_time is the elapsed application run time 
-under profiling.
+> ---
+> 
+> Changes in v2:
+>   - Return -ENODEV immediately if no chip was found on the board
+>     for some reasons.
+>     This is the smallest, and safest change for the fixes branch.
+>     (I will investigate later if further cleanups are possible or not.)
+> 
+>  drivers/mtd/nand/raw/denali.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/mtd/nand/raw/denali.c b/drivers/mtd/nand/raw/denali.c
+> index ca18612..67b2065 100644
+> --- a/drivers/mtd/nand/raw/denali.c
+> +++ b/drivers/mtd/nand/raw/denali.c
+> @@ -1338,6 +1338,11 @@ int denali_init(struct denali_nand_info *denali)
+>  
+>  	denali_enable_irq(denali);
+>  	denali_reset_banks(denali);
+> +	if (!denali->max_banks) {
+> +		/* Error out earlier if no chip is found for some reasons. */
+> +		ret = -ENODEV;
+> +		goto disable_irq;
+> +	}
+>  
+>  	denali->active_bank = DENALI_INVALID_BANK;
+>  
 
-Applying asynchronous trace streaming thru Posix AIO API
-http://man7.org/linux/man-pages/man7/aio.7.html lowers data loss 
-metrics value providing ~25% improvement in average.
-
-Sanity testing:
-
-tools/perf/perf test
- 1: vmlinux symtab matches kallsyms                       : Ok
- 2: Detect openat syscall event                           : Ok
- 3: Detect openat syscall event on all cpus               : Ok
- 4: Read samples using the mmap interface                 : Ok
- 5: Test data source output                               : Ok
- 6: Parse event definition strings                        : Ok
- 7: Simple expression parser                              : Ok
- 8: PERF_RECORD_* events & perf_sample fields             : Ok
- 9: Parse perf pmu format                                 : Ok
-10: DSO data read                                         : Ok
-11: DSO data cache                                        : Ok
-12: DSO data reopen                                       : Ok
-13: Roundtrip evsel->name                                 : Ok
-14: Parse sched tracepoints fields                        : Ok
-15: syscalls:sys_enter_openat event fields                : Ok
-16: Setup struct perf_event_attr                          : Skip
-17: Match and link multiple hists                         : Ok
-18: 'import perf' in python                               : FAILED!
-19: Breakpoint overflow signal handler                    : Ok
-20: Breakpoint overflow sampling                          : Ok
-21: Breakpoint accounting                                 : Ok
-22: Number of exit events of a simple workload            : Ok
-23: Software clock events period values                   : Ok
-24: Object code reading                                   : Ok
-25: Sample parsing                                        : Ok
-26: Use a dummy software event to keep tracking           : Ok
-27: Parse with no sample_id_all bit set                   : Ok
-28: Filter hist entries                                   : Ok
-29: Lookup mmap thread                                    : Ok
-30: Share thread mg                                       : Ok
-31: Sort output of hist entries                           : Ok
-32: Cumulate child hist entries                           : Ok
-33: Track with sched_switch                               : Ok
-34: Filter fds with revents mask in a fdarray             : Ok
-35: Add fd to a fdarray, making it autogrow               : Ok
-36: kmod_path__parse                                      : Ok
-37: Thread map                                            : Ok
-38: LLVM search and compile                               :
-38.1: Basic BPF llvm compile                              : Skip
-38.2: kbuild searching                                    : Skip
-38.3: Compile source for BPF prologue generation          : Skip
-38.4: Compile source for BPF relocation                   : Skip
-39: Session topology                                      : Ok
-40: BPF filter                                            :
-40.1: Basic BPF filtering                                 : Skip
-40.2: BPF pinning                                         : Skip
-40.3: BPF prologue generation                             : Skip
-40.4: BPF relocation checker                              : Skip
-41: Synthesize thread map                                 : Ok
-42: Remove thread map                                     : Ok
-43: Synthesize cpu map                                    : Ok
-44: Synthesize stat config                                : Ok
-45: Synthesize stat                                       : Ok
-46: Synthesize stat round                                 : Ok
-47: Synthesize attr update                                : Ok
-48: Event times                                           : Ok
-49: Read backward ring buffer                             : Ok
-50: Print cpu map                                         : Ok
-51: Probe SDT events                                      : Ok
-52: is_printable_array                                    : Ok
-53: Print bitmap                                          : Ok
-54: perf hooks                                            : Ok
-55: builtin clang support                                 : Skip (not compiled in)
-56: unit_number__scnprintf                                : Ok
-57: mem2node                                              : Ok
-58: x86 rdpmc                                             : Ok
-59: Convert perf time to TSC                              : Ok
-60: DWARF unwind                                          : Ok
-61: x86 instruction decoder - new instructions            : Ok
-62: Use vfs_getname probe to get syscall args filenames   : Skip
-63: Add vfs_getname probe to get syscall args filenames   : Skip
-64: Check open filename arg using perf trace + vfs_getname: Skip
-65: probe libc's inet_pton & backtrace it with ping       : FAILED!
-
----
- Changes in v2:
- - converted zalloc() to calloc() for allocation of mmap_aio array,
- - cleared typo and adjusted fallback branch code;
-
- Changes in v3:
- - written comments about nanosleep(0.5ms) call prior aio_suspend()
-   to cope with intrusiveness of its implementation in glibc;
- - written comments about rationale behind coping profiling data 
-   into mmap->data buffer;
-
----
- Alexey Budankov (2):
-        perf util: map data buffer for preserving collected data
-	perf record: enable asynchronous trace writing
-
- tools/perf/builtin-record.c | 125 +++++++++++++++++++++++++++++++++++++++++---
- tools/perf/util/evlist.c    |   7 +++
- tools/perf/util/evlist.h    |   2 +
- tools/perf/util/mmap.c      |  48 ++++++++++++-----
- tools/perf/util/mmap.h      |   5 +-
- 5 files changed, 167 insertions(+), 20 deletions(-)
