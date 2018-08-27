@@ -3,117 +3,200 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16690C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:50:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36B81C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:53:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3BE3208B4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:50:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3BE3208B4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id BD7CC208B4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:53:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD7CC208B4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727361AbeH0Vh6 convert rfc822-to-8bit (ORCPT
+        id S1727142AbeH0VlR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 17:37:58 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48650 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726966AbeH0Vh6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 17:37:58 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 14D894023ECC;
-        Mon, 27 Aug 2018 17:50:22 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-8.bos.redhat.com [10.18.17.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0AC2C2166B41;
-        Mon, 27 Aug 2018 17:50:18 +0000 (UTC)
-Subject: Re: [PATCH v12 9/9] cpuset: Support forced turning off of partition
- flag
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
+        Mon, 27 Aug 2018 17:41:17 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54568 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726966AbeH0VlR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 17:41:17 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9C7C17A9;
+        Mon, 27 Aug 2018 10:53:41 -0700 (PDT)
+Received: from dupont (dupont.austin.arm.com [10.118.16.87])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EC2403F557;
+        Mon, 27 Aug 2018 10:53:40 -0700 (PDT)
+Date:   Mon, 27 Aug 2018 12:53:40 -0500
+From:   Kim Phillips <kim.phillips@arm.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
+        Anton Blanchard <anton@samba.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
-        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
-        Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-References: <1535380884-31308-1-git-send-email-longman@redhat.com>
- <1535380884-31308-10-git-send-email-longman@redhat.com>
- <20180827164004.GE3978217@devbig004.ftw2.facebook.com>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <0daf1f43-2292-0281-3ab8-aef20d0475dc@redhat.com>
-Date:   Mon, 27 Aug 2018 13:50:18 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <20180827164004.GE3978217@devbig004.ftw2.facebook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 27 Aug 2018 17:50:22 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 27 Aug 2018 17:50:22 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
+        Taeung Song <treeze.taeung@gmail.com>,
+        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        perf group <linux-perf-users@vger.kernel.org>
+Subject: [PATCH v2] perf annotate: fix parsing aarch64 branch instructions
+ after objdump update
+Message-Id: <20180827125340.a2f7e291901d17cea05daba4@arm.com>
+In-Reply-To: <20180827125049.GD22309@kernel.org>
+References: <20180823191047.9260992844205984b75e6721@arm.com>
+        <20180827125049.GD22309@kernel.org>
+Organization: Arm
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/27/2018 12:40 PM, Tejun Heo wrote:
-> Hello, Waiman.
->
-> On Mon, Aug 27, 2018 at 10:41:24AM -0400, Waiman Long wrote:
->> Cpuset allows arbitrary modification of cpu list in "cpuset.cpus"
->> even if the requested CPUs won't be granted in "cpuset.cpus.effective"
->> as restricted by its parent. However, the validate_change() function
->> will inhibit removal of CPUs that have been used in child cpusets.
->>
->> Being a partition root, however, limits the kind of cpu list
->> modification that is allowed. Adding CPUs is not allowed if the new
->> CPUs are not in the parent's effective cpu list that can be put into
->> "cpuset.cpus.reserved". In addition, a child partition cannot exhaust
->> all the parent's effective CPUs.
->>
->> Because of the implicit cpu exclusive nature of the partition root,
->> cpu changes that break that cpu exclusivity will not be allowed. Other
->> changes that break the conditions of being a partition root is generally
->> allowed. However, the partition flag of the cpuset as well those of
->> the descendant partitions will be forcefully turned off.
-> First of all, thanks a lot for your persistence.  I'm not necessarily
-> against the flag being forced off but wonder whether the same
-> config/effective approach can be used as in .cpus and .mems.  Can you
-> elaborate a bit on the choice here?
->
-> Thank you.
+Starting with binutils 2.28, aarch64 objdump adds comments to the
+disassembly output to show the alternative names of a condition code [1].
 
-My current code has explicitly assumed the following relationship for
-partition root.
+It is assumed that commas in objdump comments could occur in other arches
+now or in the future, so this fix is arch-independent.
 
-    cpus_allowed = effective_cpus + reserved_cpus
+The fix could have been done with arm64 specific jump__parse and
+jump__scnprintf functions, but the jump__scnprintf instruction would
+have to have its comment character be a literal, since the scnprintf
+functions cannot receive a struct arch easily.
 
-Also effective_cpus cannot be empty. Specifically, cpus_allowed has to
-be equal to effective_cpus before a cpuset can be made a partition root.
+This inconvenience also applies to the generic jump__scnprintf, which
+is why we add a raw_comment pointer to struct ins_operands, so the
+__parse function assigns it to be re-used by its corresponding __scnprintf
+function.
 
-Any changes that break the above conditions will turn off the partition
-flag forcefully. The only exception is cpu offlining where cpus_allowed
-> effective_cpus + reserved_cpus can happen.
+Example differences in 'perf annotate --stdio2' output on an
+aarch64 perf.data file:
 
-One reason for doing so is because reserved_cpus is hidden. So the main
-way to infer that is to do cpus_allowed - effective_cpus.
+BEFORE: → b.cs   ffff200008133d1c <unwind_frame+0x18c>  // b.hs, dffff7ecc47b
+AFTER : ↓ b.cs   18c
 
-It is probably doable to make cpus_allowed >= effective_cpus +
-reserved_cpus in general, but we may need to expose reserved_cpus as a
-read-only file, for instance. There may also be other complications that
-we will need to take care of if this is supported. My current preference
-is to not doing that unless there is compelling reason to do so.
+BEFORE: → b.cc   ffff200008d8d9cc <get_alloc_profile+0x31c>  // b.lo, b.ul, dffff727295b
+AFTER : ↓ b.cc   31c
 
-Cheers,
-Longman
+The branch target labels 18c and 31c also now appear in the output:
 
+BEFORE:        add    x26, x29, #0x80
+AFTER : 18c:   add    x26, x29, #0x80
 
+BEFORE:        add    x21, x21, #0x8
+AFTER : 31c:   add    x21, x21, #0x8
+
+The Fixes: tag below is added so stable branches will get the update; it
+doesn't necessarily mean that commit was broken at the time, rather it
+didn't withstand the aarch64 objdump update.
+
+Tested no difference in output for sample x86_64, power arch perf.data files.
+
+[1] https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;a=commit;h=bb7eff5206e4795ac79c177a80fe9f4630aaf730
+
+Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Cc: Anton Blanchard <anton@samba.org>
+Cc: Robin Murphy <robin.murphy@arm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Christian Borntraeger <borntraeger@de.ibm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Taeung Song <treeze.taeung@gmail.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Fixes: b13bbeee5ee6 ("perf annotate: Fix branch instruction with multiple operands")
+Signed-off-by: Kim Phillips <kim.phillips@arm.com>
+---
+v2: address acme's comments:
+    - consolidate into a validate_comma()
+    - call from an additional couple of places necessary
+    - don't listen to checkpatch wrt reflowing jump__parse definition
+      line to less than 80 characters, just rm the __maybe_unused
+    - re-tested no diff on x86_64 and power arch, arm64 conditional
+      branches fixed.
+
+ tools/perf/util/annotate.c | 22 +++++++++++++++++++++-
+ tools/perf/util/annotate.h |  1 +
+ 2 files changed, 22 insertions(+), 1 deletion(-)
+
+diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+index e4268b948e0e..4a2525524e52 100644
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -276,7 +276,19 @@ bool ins__is_call(const struct ins *ins)
+ 	return ins->ops == &call_ops || ins->ops == &s390_call_ops;
+ }
+ 
+-static int jump__parse(struct arch *arch __maybe_unused, struct ins_operands *ops, struct map_symbol *ms)
++/*
++ * Prevents from matching commas in the comment section, e.g.:
++ * ffff200008446e70:       b.cs    ffff2000084470f4 <generic_exec_single+0x314>  // b.hs, b.nlast
++ */
++static inline const char *validate_comma(const char *c, struct ins_operands *ops)
++{
++	if (ops->raw_comment && c > ops->raw_comment)
++		return NULL;
++
++	return c;
++}
++
++static int jump__parse(struct arch *arch, struct ins_operands *ops, struct map_symbol *ms)
+ {
+ 	struct map *map = ms->map;
+ 	struct symbol *sym = ms->sym;
+@@ -285,6 +297,10 @@ static int jump__parse(struct arch *arch __maybe_unused, struct ins_operands *op
+ 	};
+ 	const char *c = strchr(ops->raw, ',');
+ 	u64 start, end;
++
++	ops->raw_comment = strchr(ops->raw, arch->objdump.comment_char);
++	c = validate_comma(c, ops);
++
+ 	/*
+ 	 * Examples of lines to parse for the _cpp_lex_token@@Base
+ 	 * function:
+@@ -304,6 +320,7 @@ static int jump__parse(struct arch *arch __maybe_unused, struct ins_operands *op
+ 		ops->target.addr = strtoull(c, NULL, 16);
+ 		if (!ops->target.addr) {
+ 			c = strchr(c, ',');
++			c = validate_comma(c, ops);
+ 			if (c++ != NULL)
+ 				ops->target.addr = strtoull(c, NULL, 16);
+ 		}
+@@ -361,9 +378,12 @@ static int jump__scnprintf(struct ins *ins, char *bf, size_t size,
+ 		return scnprintf(bf, size, "%-6s %s", ins->name, ops->target.sym->name);
+ 
+ 	c = strchr(ops->raw, ',');
++	c = validate_comma(c, ops);
++
+ 	if (c != NULL) {
+ 		const char *c2 = strchr(c + 1, ',');
+ 
++		c2 = validate_comma(c2, ops);
+ 		/* check for 3-op insn */
+ 		if (c2 != NULL)
+ 			c = c2;
+diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
+index 005a5fe8a8c6..5399ba2321bb 100644
+--- a/tools/perf/util/annotate.h
++++ b/tools/perf/util/annotate.h
+@@ -22,6 +22,7 @@ struct ins {
+ 
+ struct ins_operands {
+ 	char	*raw;
++	char	*raw_comment;
+ 	struct {
+ 		char	*raw;
+ 		char	*name;
+-- 
+2.17.1
 
