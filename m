@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C09C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 01:08:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7688EC43334
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 01:08:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A9CD2174E
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 01:08:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A9CD2174E
+	by mail.kernel.org (Postfix) with ESMTP id 3D0D72174A
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 01:08:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D0D72174A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=andestech.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727094AbeH0Ewi (ORCPT
+        id S1727124AbeH0Ewn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 00:52:38 -0400
-Received: from exmail.andestech.com ([59.124.169.137]:7545 "EHLO
+        Mon, 27 Aug 2018 00:52:43 -0400
+Received: from exmail.andestech.com ([59.124.169.137]:16302 "EHLO
         ATCSQR.andestech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726825AbeH0Ewi (ORCPT
+        with ESMTP id S1726825AbeH0Ewn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 00:52:38 -0400
+        Mon, 27 Aug 2018 00:52:43 -0400
 Received: from mail.andestech.com (atcpcs16.andestech.com [10.0.1.222])
-        by ATCSQR.andestech.com with ESMTP id w7R15nRk025330;
-        Mon, 27 Aug 2018 09:05:49 +0800 (GMT-8)
+        by ATCSQR.andestech.com with ESMTP id w7R15sm6025343;
+        Mon, 27 Aug 2018 09:05:54 +0800 (GMT-8)
         (envelope-from alankao@andestech.com)
 Received: from atcsqa06.andestech.com (10.0.1.85) by ATCPCS16.andestech.com
  (10.0.1.222) with Microsoft SMTP Server id 14.3.123.3; Mon, 27 Aug 2018
- 09:08:09 +0800
+ 09:08:14 +0800
 From:   Alan Kao <alankao@andestech.com>
 To:     <linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
         "Palmer Dabbelt" <palmer@sifive.com>,
@@ -40,9 +40,9 @@ To:     <linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
 CC:     <greentime@andestech.com>, <vincentc@andestech.com>,
         <zong@andestech.com>, <nickhu@andestech.com>,
         Alan Kao <alankao@andestech.com>
-Subject: [PATCH 2/5] Refactor FPU code in signal setup/return procedures
-Date:   Mon, 27 Aug 2018 09:07:52 +0800
-Message-ID: <1535332075-5727-3-git-send-email-alankao@andestech.com>
+Subject: [PATCH 3/5] Cleanup ISA string setting
+Date:   Mon, 27 Aug 2018 09:07:53 +0800
+Message-ID: <1535332075-5727-4-git-send-email-alankao@andestech.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1535332075-5727-1-git-send-email-alankao@andestech.com>
 References: <1535332075-5727-1-git-send-email-alankao@andestech.com>
@@ -50,131 +50,67 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.0.1.85]
 X-DNSRBL: 
-X-MAIL: ATCSQR.andestech.com w7R15nRk025330
+X-MAIL: ATCSQR.andestech.com w7R15sm6025343
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-FPU-related logic is separated from normal signal handling path in
-this patch.  Kernel can easily be configured to exclude those procedures
-for no-FPU systems.
+This patch cleanup the MARCH string passing to both compiler and
+assembler.  Note that the CFLAGS should not contain "fd" before we
+have mechnisms like kernel_fpu_begin/end in other architectures.
 
 Signed-off-by: Alan Kao <alankao@andestech.com>
 Cc: Greentime Hu <greentime@andestech.com>
 Cc: Vincent Chen <vincentc@andestech.com>
 Cc: Zong Li <zong@andestech.com>
 Cc: Nick Hu <nickhu@andestech.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/riscv/kernel/signal.c | 68 +++++++++++++++++++++++---------------
- 1 file changed, 41 insertions(+), 27 deletions(-)
+ arch/riscv/Makefile | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
 
-diff --git a/arch/riscv/kernel/signal.c b/arch/riscv/kernel/signal.c
-index 718d0c984ef0..6a18b9819ead 100644
---- a/arch/riscv/kernel/signal.c
-+++ b/arch/riscv/kernel/signal.c
-@@ -37,45 +37,63 @@ struct rt_sigframe {
- 	struct ucontext uc;
- };
+diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
+index 1f536a7784aa..33bd3b4dd926 100644
+--- a/arch/riscv/Makefile
++++ b/arch/riscv/Makefile
+@@ -29,7 +29,6 @@ ifeq ($(CONFIG_ARCH_RV64I),y)
+ 	
+ 	KBUILD_CFLAGS	+= $(call cc-ifversion, -ge, 0500, -DCONFIG_ARCH_SUPPORTS_INT128)
  
--static long restore_d_state(struct pt_regs *regs,
--	struct __riscv_d_ext_state __user *state)
-+static long restore_fp_state(struct pt_regs *regs,
-+			     union __riscv_fp_state *sc_fpregs)
- {
- 	long err;
-+	struct __riscv_d_ext_state __user *state = &sc_fpregs->d;
-+	size_t i;
-+
- 	err = __copy_from_user(&current->thread.fstate, state, sizeof(*state));
--	if (likely(!err))
--		fstate_restore(current, regs);
-+	if (unlikely(err))
-+		return err;
-+
-+	fstate_restore(current, regs);
-+
-+	/* We support no other extension state at this time. */
-+	for (i = 0; i < ARRAY_SIZE(sc_fpregs->q.reserved); i++) {
-+		u32 value;
-+
-+		err = __get_user(value, &sc_fpregs->q.reserved[i]);
-+		if (unlikely(err))
-+			break;
-+		if (value != 0)
-+			return -EINVAL;
-+	}
-+
- 	return err;
- }
+-	KBUILD_MARCH = rv64im
+ 	LDFLAGS += -melf64lriscv
+ else
+ 	BITS := 32
+@@ -37,22 +36,20 @@ else
  
--static long save_d_state(struct pt_regs *regs,
--	struct __riscv_d_ext_state __user *state)
-+static long save_fp_state(struct pt_regs *regs,
-+			  union __riscv_fp_state *sc_fpregs)
- {
-+	long err;
-+	struct __riscv_d_ext_state __user *state = &sc_fpregs->d;
-+	size_t i;
-+
- 	fstate_save(current, regs);
--	return __copy_to_user(state, &current->thread.fstate, sizeof(*state));
-+	err = __copy_to_user(state, &current->thread.fstate, sizeof(*state));
-+	if (unlikely(err))
-+		return err;
-+
-+	/* We support no other extension state at this time. */
-+	for (i = 0; i < ARRAY_SIZE(sc_fpregs->q.reserved); i++) {
-+		err = __put_user(0, &sc_fpregs->q.reserved[i]);
-+		if (unlikely(err))
-+			break;
-+	}
-+
-+	return err;
- }
+ 	KBUILD_CFLAGS += -mabi=ilp32
+ 	KBUILD_AFLAGS += -mabi=ilp32
+-	KBUILD_MARCH = rv32im
+ 	LDFLAGS += -melf32lriscv
+ endif
  
- static long restore_sigcontext(struct pt_regs *regs,
- 	struct sigcontext __user *sc)
- {
- 	long err;
--	size_t i;
- 	/* sc_regs is structured the same as the start of pt_regs */
- 	err = __copy_from_user(regs, &sc->sc_regs, sizeof(sc->sc_regs));
--	if (unlikely(err))
--		return err;
- 	/* Restore the floating-point state. */
--	err = restore_d_state(regs, &sc->sc_fpregs.d);
--	if (unlikely(err))
--		return err;
--	/* We support no other extension state at this time. */
--	for (i = 0; i < ARRAY_SIZE(sc->sc_fpregs.q.reserved); i++) {
--		u32 value;
--		err = __get_user(value, &sc->sc_fpregs.q.reserved[i]);
--		if (unlikely(err))
--			break;
--		if (value != 0)
--			return -EINVAL;
--	}
-+	err |= restore_fp_state(regs, &sc->sc_fpregs);
- 	return err;
- }
+ KBUILD_CFLAGS += -Wall
  
-@@ -124,14 +142,10 @@ static long setup_sigcontext(struct rt_sigframe __user *frame,
- {
- 	struct sigcontext __user *sc = &frame->uc.uc_mcontext;
- 	long err;
--	size_t i;
- 	/* sc_regs is structured the same as the start of pt_regs */
- 	err = __copy_to_user(&sc->sc_regs, regs, sizeof(sc->sc_regs));
- 	/* Save the floating-point state. */
--	err |= save_d_state(regs, &sc->sc_fpregs.d);
--	/* We support no other extension state at this time. */
--	for (i = 0; i < ARRAY_SIZE(sc->sc_fpregs.q.reserved); i++)
--		err |= __put_user(0, &sc->sc_fpregs.q.reserved[i]);
-+	err |= save_fp_state(regs, &sc->sc_fpregs);
- 	return err;
- }
+-ifeq ($(CONFIG_RISCV_ISA_A),y)
+-	KBUILD_ARCH_A = a
+-endif
+-ifeq ($(CONFIG_RISCV_ISA_C),y)
+-	KBUILD_ARCH_C = c
+-endif
+-
+-KBUILD_AFLAGS += -march=$(KBUILD_MARCH)$(KBUILD_ARCH_A)fd$(KBUILD_ARCH_C)
++# ISA string setting
++riscv-march-$(CONFIG_ARCH_RV32I)	:= rv32im
++riscv-march-$(CONFIG_ARCH_RV64I)	:= rv64im
++riscv-march-$(CONFIG_RISCV_ISA_A)	:= $(riscv-march-y)a
++riscv-march-y				:= fd
++riscv-march-$(CONFIG_RISCV_ISA_C)	:= $(riscv-march-y)c
++KBUILD_CFLAGS += -march=$(subst fd,,$(riscv-march-y))
++KBUILD_AFLAGS += -march=$(riscv-march-y)
+ 
+-KBUILD_CFLAGS += -march=$(KBUILD_MARCH)$(KBUILD_ARCH_A)$(KBUILD_ARCH_C)
+ KBUILD_CFLAGS += -mno-save-restore
+ KBUILD_CFLAGS += -DCONFIG_PAGE_OFFSET=$(CONFIG_PAGE_OFFSET)
  
 -- 
 2.18.0
