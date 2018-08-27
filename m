@@ -2,126 +2,88 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D8AAC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:15:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03FFCC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:16:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8A7B208D6
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:15:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8A7B208D6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id AED7D208AF
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:16:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=mork.no header.i=@mork.no header.b="b4kNc42H"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AED7D208AF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mork.no
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727254AbeH0UCt (ORCPT
+        id S1727050AbeH0UDO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 16:02:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38154 "EHLO mail.kernel.org"
+        Mon, 27 Aug 2018 16:03:14 -0400
+Received: from canardo.mork.no ([148.122.252.1]:53065 "EHLO canardo.mork.no"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726920AbeH0UCt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 16:02:49 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B045208AF;
-        Mon, 27 Aug 2018 16:15:31 +0000 (UTC)
-Date:   Mon, 27 Aug 2018 12:15:30 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Cc:     Kees Cook <keescook@chromium.org>, Ingo Molnar <mingo@redhat.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Tony Luck <tony.luck@intel.com>, Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Joe Perches <joe@perches.com>,
-        Jim Cromie <jim.cromie@gmail.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org,
+        id S1726731AbeH0UDO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 16:03:14 -0400
+Received: from miraculix.mork.no (miraculix.mork.no [IPv6:2001:4641:0:2:7627:374e:db74:e353])
+        (authenticated bits=0)
+        by canardo.mork.no (8.15.2/8.15.2) with ESMTPSA id w7RGFrB6025580
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 27 Aug 2018 18:15:53 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mork.no; s=b;
+        t=1535386553; bh=FeX1yd0BphP3LVpPVtVoDA5spzeQ26wOD27tiDUFm9o=;
+        h=From:To:Cc:Subject:References:Date:Message-ID:From;
+        b=b4kNc42HYj8BLIFqr9MsoxPaVnaDgxaVyRi/iIrXyU7z3C7WncjtNyfM7v20ZImCG
+         a0dA3Iol6PPe1Sk1Hf4YGNUHSFvYzZ2EJinBft5wPpOC+eYrTttyO/NeTQv3BmYaxf
+         CLqcBF269xOmm7ffPN9Eefocp7EfyLFA82Qn0VCg=
+Received: from bjorn by miraculix.mork.no with local (Exim 4.89)
+        (envelope-from <bjorn@mork.no>)
+        id 1fuKBE-0005Ja-Id; Mon, 27 Aug 2018 18:15:52 +0200
+From:   =?utf-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Romain Izard <romain.izard.pro@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: Re: [RFC PATCH v2 2/3] pstore: Add register read/write{b,w,l,q}
- tracing support
-Message-ID: <20180827121530.525299e3@gandalf.local.home>
-In-Reply-To: <7b212c02-d7ce-4309-155f-22b36963e41c@codeaurora.org>
-References: <cover.1535119710.git.saiprakash.ranjan@codeaurora.org>
-        <65985f8df55b037283746559c1718a54d56e7ec4.1535119711.git.saiprakash.ranjan@codeaurora.org>
-        <CAGXu5jL6tGu9U_ANrZSfWREtySqFAJ+CQa3v5YRihZ2oHNMGGw@mail.gmail.com>
-        <7b212c02-d7ce-4309-155f-22b36963e41c@codeaurora.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        linux-usb@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>, Lars Melin <larsm17@gmail.com>
+Subject: Re: [PATCH] option: Do not try to bind to ADB interfaces
+Organization: m
+References: <20180723140220.7166-1-romain.izard.pro@gmail.com>
+        <20180723140801.GA4835@kroah.com>
+        <CAGkQfmPbuK7-f=9GcvQPH6mkHXwsaGpjqv40DLgFUJmbOCpbgQ@mail.gmail.com>
+        <20180827132815.GD14967@localhost>
+Date:   Mon, 27 Aug 2018 18:15:52 +0200
+In-Reply-To: <20180827132815.GD14967@localhost> (Johan Hovold's message of
+        "Mon, 27 Aug 2018 15:28:15 +0200")
+Message-ID: <87r2ijdbuv.fsf@miraculix.mork.no>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Virus-Scanned: clamav-milter 0.100.1 at canardo
+X-Virus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 25 Aug 2018 12:54:07 +0530
-Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org> wrote:
+Johan Hovold <johan@kernel.org> writes:
+
+> It would allow for simpler device-id entries, at least when ADB is the
+> only blacklisted interface, and may enable ADB for some older entries.
+>
+> On the other hand, interface class 0xff is indeed supposed to be vendor
+> specific as Lars and Greg pointed out, and with status quo we don't
+> cause any regressions. If ADB isn't currently available for some device
+> due to option binding to that interface, we'll just blacklist it as soon
+> we get a report.
+>
+> So personally I'm not sure it's worth it, but I don't have a strong
+> opinion on the matter either.
+
++1
+
+The adb userspace application is also free to unbind any conflicting
+driver, so I don't think blacklisting is strictly necessary.  Except to
+prevent any confusion caused by bogus ttyUSBx devices.
 
 
-> Ftrace does not trace __raw{read,write}{b,l,w,q}() functions. I am not 
-> sure why and how it is filtered out because I do not see any notrace 
-> flag in those functions, maybe that whole directory is filtered out.
-> So adding this functionality to ftrace would mean removing the notrace 
-> for these functions i.e., something like using 
-> __raw{read,write}{b,l,w,q}() as the available filter functions. Also 
-> pstore ftrace does not filter functions to trace I suppose?
-
-It's not traced because it is inlined. Simply make the __raw_read
-function a normal function and it will be traced. And then you could
-use ftrace to read the function.
-
-If this has to be per arch, you can register your callback with the
-REGS flags, and pt_regs will be passed to your callback function you
-attached to __raw_read*() as if you inserted a break point at that
-location, and you can get any reg data you want there.
-
-
-> 
-> Coming to the reason as to why it would be good to keep this separate 
-> from ftrace would be:
-> * Ftrace can get ip and parent ip, but suppose we need extra data (field 
-> data) as in above sample output we would not be able to get through ftrace.
-
-As mentioned above, you can get regs (and ftrace is being expanded now
-to get parameters of functions).
-
-> 
-> * Although this patch is for tracing register read/write, we can easily
-> add more functionality since we have dynamic_rtb api which can be hooked 
-> to functions and start tracing events(IRQ, Context ID) something similar 
-> to tracepoints.
-> Initially thought of having tracepoints for logging register read/write 
-> but I do not know if we can export tracepoint data to pstore since the 
-> main usecase is to debug unknown resets and hangs.
-
-I don't know why not? We have read/write tracepoints for
-read/write_msr() calls in x86.
-
-Anything can add a hook to the callback of the tracepoints, and use
-that infrastructure instead of creating yet another dynamic code
-modification infrastructure.
-
-
-> 
-> * This can be something similar to mmiotrace in x86 and kept seperate 
-> from function tracer.
-
-
-mmiotrace is separate because it faults on writes so that we can
-capture any reads and writes to the system that a binary driver does.
-
--- Steve
+Bj=C3=B8rn
