@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F37C8C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:23:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00B92C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:24:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7882208B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:23:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD2D8208B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:23:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uqqZyXj4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7882208B7
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BqmaXo0E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD2D8208B7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727590AbeH0WLg (ORCPT
+        id S1727613AbeH0WLi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 18:11:36 -0400
-Received: from mail-io0-f201.google.com ([209.85.223.201]:40138 "EHLO
-        mail-io0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726895AbeH0WLf (ORCPT
+        Mon, 27 Aug 2018 18:11:38 -0400
+Received: from mail-pg1-f202.google.com ([209.85.215.202]:53149 "EHLO
+        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726895AbeH0WLi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 18:11:35 -0400
-Received: by mail-io0-f201.google.com with SMTP id p22-v6so14569761ioh.7
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 11:23:54 -0700 (PDT)
+        Mon, 27 Aug 2018 18:11:38 -0400
+Received: by mail-pg1-f202.google.com with SMTP id m4-v6so11461651pgq.19
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 11:23:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=ZBmsTb6IwksazDs4PyROyPhoVAiGchwtF1sGndheJ9k=;
-        b=uqqZyXj4OPPzAOWXDFegJNbR+zus6oO1ECLnCr+O/jiY9CgCTciazZdNBv1PRVa08r
-         Q/xvwVUgz/Hn0NrE6IFiangdvr8rhOH+rqk2QavNaSJDgjtxTJmyFqMUUWiEnuwRab2J
-         NCcZyUMidFK7xmxbTO8+fhiP1fweRpFF0c1ve9v8TD3Mj12Fg6iFGkeO1jdxQOjCbcKc
-         +Sicn5foPdhnJQ8qH9WONpZ2/sTCQRb/UDXXgFIrJXzK2SJYjfH7USmKYKq2aYL/QMnZ
-         j9+iac1MkHipADxiVFKqOV8/m25SXS9LVbePrLp7ePfDvcDT39RAs0TxSKVVmEHPRVV2
-         egNQ==
+        bh=RzNeoAFkebhXg0R57+D1/uloGc/nij2JUFUJGLdnqbs=;
+        b=BqmaXo0E6SpWa0Cp1YqgJsqgRf2xDDZDUPQhXgcAkvAlVvhzZQzkkLNQQjDMzMi1Vz
+         S8q85U/pik22lkC9mFXkNFc309Y7rM0KWcMdPPx2+qDsuAL7fJxG0EZO47hQCHvuq7tg
+         zvuSboPReCzv4HG9PAP8UmtG0HefvjOYPx4DHJco5R87wV/QIcJee0BI04LmubqCV581
+         iWBqlFj5XZYqu6Um3i/Ev/KC5KRi8X4uwB6mQuZI+yKGs3uNMeTETx+vmY/jcGIfHKJH
+         T+0lQA8rQx+88kQDybtdRhm4cYvEP/eiptb45nuTYVS9B4+BGYp6Q31iLfFXobOpLhVk
+         T57g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=ZBmsTb6IwksazDs4PyROyPhoVAiGchwtF1sGndheJ9k=;
-        b=CTZFpBzuBgQ+qUqpC96tX9HvAnHGzS4AMPRYiJRIsPONwuP6KNVBA27EYhYg/nAKre
-         j+DAsXLPCFqk8h+qR/w2VtKz1w1UScreBLCqR2Hw+CgIu+45BXKSrI4dCM23Zdru6lna
-         5SckCSzphKL+g+bMnv4U/JmDgdPg3T8aMSb4845YR1olivBCwdU9CmwR1WenkMSk0+gi
-         BmWzRZ8EyRvt+0D+oPJnBxGFR+zTWrlICZhEdE2DpOcNcsxLKDcxLpI81b/+5OEQ45k1
-         GGJJeqJGgefCjSQeUxaSr+Ax5fvxVeL9ukikIx1rH38l8V5iLsb5WWIi6VV1SuzfeROy
-         qRfw==
-X-Gm-Message-State: APzg51DKTNjL5F5H+VQK9zQuGefujf55MDUBYTJu0Z2LatDHE/kYX+Vc
-        NE+23VmujBMS86E0WNOxJr9k2b2F
-X-Google-Smtp-Source: ANB0Vda/qrgwkqWJ17R0wO++2hULxsXu1awVIZNWVuCCjgwLPFrDA7KwjuzXN+8kdAmE0u7ACf7l0klc
-X-Received: by 2002:a24:a85:: with SMTP id 127-v6mr4677081itw.9.1535394233374;
- Mon, 27 Aug 2018 11:23:53 -0700 (PDT)
-Date:   Mon, 27 Aug 2018 11:23:02 -0700
+        bh=RzNeoAFkebhXg0R57+D1/uloGc/nij2JUFUJGLdnqbs=;
+        b=MUqbyNic21l9Mjts+K6aKCXAGrqEGlUt9JtiNlSKCyVOmxNgSyOftOY1Lin/fjEkno
+         VsnVXDNVx4KJq7VYW7JYSoD5+4ix2eNePiVwEv7XW7LshhL7W/6nC8yxq1rsyPy03w1Z
+         WSxKZ48PmG10FsU17sbY2UxuO+CmBKArAYfpzU8WW6M5zYX9bUfsmMMJaAaGT5MCX3u+
+         puYMoKMTqcpwN58Hj9w6RYDTOJmISv/BAr3hPo8e+XWW+OEo5FuCDZLZmn/W3ezAQ/Zm
+         Hdgy9dvaNUW3bwfOVpOwBVuiAOB1YxRNrN7PWU3eS9tGYGBbOUTK1iFnD9RlWkRd5cL/
+         FDzA==
+X-Gm-Message-State: APzg51Adz2Od7nqWso74wPIyb8XR7gwpFs2q+585TsjkgbpA8JY18hlh
+        F3GMvQBh+6HRFmKQ/kHt8tDN35cs
+X-Google-Smtp-Source: ANB0VdZRXu+GmmdD5biX1gnuPkXkv3c7QOAeRVFVOqpDWOltB7oTlaLmE2tfEAFlTR0q9zktHx79pIN0
+X-Received: by 2002:a65:430a:: with SMTP id j10-v6mr3396774pgq.92.1535394236285;
+ Mon, 27 Aug 2018 11:23:56 -0700 (PDT)
+Date:   Mon, 27 Aug 2018 11:23:03 -0700
 In-Reply-To: <20180827182315.126345-1-rkir@google.com>
-Message-Id: <20180827182315.126345-7-rkir@google.com>
+Message-Id: <20180827182315.126345-8-rkir@google.com>
 Mime-Version: 1.0
 References: <20180827182315.126345-1-rkir@google.com>
 X-Mailer: git-send-email 2.19.0.rc0.228.g281dcd1b4d0-goog
-Subject: [PATCH 07/20] platform: goldfish: pipe: Replace an array of 1 with a variable
+Subject: [PATCH 08/20] platform: goldfish: pipe: Replace pr_ with dev_ for logging
 From:   rkir@google.com
 To:     gregkh@linuxfoundation.org
 Cc:     linux-kernel@vger.kernel.org, tkjos@google.com,
@@ -74,119 +74,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Roman Kiryanov <rkir@google.com>
 
-There is no reason to have an array of 1.
+dev_ is preferred if struct device is available.
 
 Signed-off-by: Roman Kiryanov <rkir@google.com>
 ---
- drivers/platform/goldfish/goldfish_pipe.c | 28 +++++++++++------------
- 1 file changed, 13 insertions(+), 15 deletions(-)
+ drivers/platform/goldfish/goldfish_pipe.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/platform/goldfish/goldfish_pipe.c b/drivers/platform/goldfish/goldfish_pipe.c
-index 24e40deb98cc..e9e3e791c0d4 100644
+index e9e3e791c0d4..a61cd444e8ff 100644
 --- a/drivers/platform/goldfish/goldfish_pipe.c
 +++ b/drivers/platform/goldfish/goldfish_pipe.c
-@@ -205,7 +205,7 @@ struct goldfish_pipe_dev {
- 	unsigned char __iomem *base;
- };
+@@ -199,6 +199,9 @@ struct goldfish_pipe_dev {
+ 	/* Head of a doubly linked list of signalled pipes */
+ 	struct goldfish_pipe *first_signalled_pipe;
  
--static struct goldfish_pipe_dev pipe_dev[1] = {};
-+struct goldfish_pipe_dev goldfish_pipe_dev;
- 
- static int goldfish_cmd_locked(struct goldfish_pipe *pipe, enum PipeCmdCode cmd)
- {
-@@ -564,12 +564,12 @@ static struct goldfish_pipe *signalled_pipes_pop_front(
- 
- static void goldfish_interrupt_task(unsigned long unused)
- {
--	struct goldfish_pipe_dev *dev = pipe_dev;
- 	/* Iterate over the signalled pipes and wake them one by one */
- 	struct goldfish_pipe *pipe;
- 	int wakes;
- 
--	while ((pipe = signalled_pipes_pop_front(dev, &wakes)) != NULL) {
-+	while ((pipe = signalled_pipes_pop_front(&goldfish_pipe_dev, &wakes)) !=
-+			NULL) {
- 		if (wakes & PIPE_WAKE_CLOSED) {
- 			pipe->flags = 1 << BIT_CLOSED_ON_HOST;
- 		} else {
-@@ -607,7 +607,7 @@ static irqreturn_t goldfish_pipe_interrupt(int irq, void *dev_id)
- 	unsigned long flags;
- 	struct goldfish_pipe_dev *dev = dev_id;
- 
--	if (dev != pipe_dev)
-+	if (dev != &goldfish_pipe_dev)
- 		return IRQ_NONE;
- 
- 	/* Request the signalled pipes from the device */
-@@ -672,7 +672,7 @@ static int get_free_pipe_id_locked(struct goldfish_pipe_dev *dev)
-  */
- static int goldfish_pipe_open(struct inode *inode, struct file *file)
- {
--	struct goldfish_pipe_dev *dev = pipe_dev;
-+	struct goldfish_pipe_dev *dev = &goldfish_pipe_dev;
- 	unsigned long flags;
- 	int id;
- 	int status;
-@@ -763,7 +763,7 @@ static const struct file_operations goldfish_pipe_fops = {
- 	.release = goldfish_pipe_release,
- };
- 
--static struct miscdevice goldfish_pipe_dev = {
-+static struct miscdevice goldfish_pipe_miscdev = {
- 	.minor = MISC_DYNAMIC_MINOR,
- 	.name = "goldfish_pipe",
- 	.fops = &goldfish_pipe_fops,
-@@ -771,8 +771,8 @@ static struct miscdevice goldfish_pipe_dev = {
- 
- static int goldfish_pipe_device_init(struct platform_device *pdev)
- {
-+	struct goldfish_pipe_dev *dev = &goldfish_pipe_dev;
- 	char *page;
--	struct goldfish_pipe_dev *dev = pipe_dev;
- 	int err = devm_request_irq(&pdev->dev, dev->irq,
- 				goldfish_pipe_interrupt,
- 				IRQF_SHARED, "goldfish_pipe", dev);
-@@ -781,7 +781,7 @@ static int goldfish_pipe_device_init(struct platform_device *pdev)
++	/* ptr to platform device's device struct */
++	struct device *pdev_dev;
++
+ 	/* Some device-specific data */
+ 	int irq;
+ 	int version;
+@@ -434,7 +437,8 @@ static ssize_t goldfish_pipe_read_write(struct file *filp,
+ 			 * err.
+ 			 */
+ 			if (status != PIPE_ERROR_AGAIN)
+-				pr_info_ratelimited("goldfish_pipe: backend error %d on %s\n",
++				dev_err_ratelimited(pipe->dev->pdev_dev,
++					"backend error %d on %s\n",
+ 					status, is_write ? "write" : "read");
+ 			break;
+ 		}
+@@ -787,6 +791,7 @@ static int goldfish_pipe_device_init(struct platform_device *pdev)
  		return err;
  	}
  
--	err = misc_register(&goldfish_pipe_dev);
-+	err = misc_register(&goldfish_pipe_miscdev);
- 	if (err) {
- 		dev_err(&pdev->dev, "unable to register v2 device\n");
- 		return err;
-@@ -830,18 +830,16 @@ static int goldfish_pipe_device_init(struct platform_device *pdev)
- 
- static void goldfish_pipe_device_deinit(struct platform_device *pdev)
- {
--	struct goldfish_pipe_dev *dev = pipe_dev;
--
--	misc_deregister(&goldfish_pipe_dev);
--	kfree(dev->pipes);
--	free_page((unsigned long)dev->buffers);
-+	misc_deregister(&goldfish_pipe_miscdev);
-+	kfree(goldfish_pipe_dev.pipes);
-+	free_page((unsigned long)goldfish_pipe_dev.buffers);
- }
- 
- static int goldfish_pipe_probe(struct platform_device *pdev)
- {
- 	int err;
- 	struct resource *r;
--	struct goldfish_pipe_dev *dev = pipe_dev;
-+	struct goldfish_pipe_dev *dev = &goldfish_pipe_dev;
- 
- 	/* not thread safe, but this should not happen */
- 	WARN_ON(dev->base != NULL);
-@@ -889,7 +887,7 @@ static int goldfish_pipe_probe(struct platform_device *pdev)
- 
- static int goldfish_pipe_remove(struct platform_device *pdev)
- {
--	struct goldfish_pipe_dev *dev = pipe_dev;
-+	struct goldfish_pipe_dev *dev = &goldfish_pipe_dev;
- 	goldfish_pipe_device_deinit(pdev);
- 	dev->base = NULL;
- 	return 0;
++	dev->pdev_dev = &pdev->dev;
+ 	dev->first_signalled_pipe = NULL;
+ 	dev->pipes_capacity = INITIAL_PIPES_CAPACITY;
+ 	dev->pipes = kcalloc(dev->pipes_capacity, sizeof(*dev->pipes),
 -- 
 2.19.0.rc0.228.g281dcd1b4d0-goog
 
