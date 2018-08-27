@@ -1,316 +1,242 @@
 Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 558BFC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:18:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E93AC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:34:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 088FF208D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:18:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9B57208B9
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:34:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fHPV0yGA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 088FF208D8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iWudvpGN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9B57208B9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727124AbeH0VFn (ORCPT
+        id S1727128AbeH0VWM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 17:05:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53616 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726895AbeH0VFn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 17:05:43 -0400
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B9B3208D5;
-        Mon, 27 Aug 2018 17:18:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535390294;
-        bh=hS6HTvCqrNq5Jt+hPYRegCMKldWcjKjscRwbmW7QMow=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=fHPV0yGAz/8tunjH5i7TIIBH0kA5rFO8Xp1qITATRkxknajC0rTfsiS0wC8oTftbB
-         DwXQKjj2yJfWk1VfqqstL21qG94rlT3auyK1ziNDG+twfx7IQHr4mHBjeL2FXQXGxk
-         nMJOuScm+Di/n/cP3CiGDJzJqV/urzyHp+S6v9hY=
-Date:   Mon, 27 Aug 2018 18:18:10 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Afonso Bordado <afonsobordado@az8.co>
-Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/4] iio: fxas21002c: add ODR/Scale support
-Message-ID: <20180827181810.6b4ee31d@archlinux>
-In-Reply-To: <20180825211910.22929-3-afonsobordado@az8.co>
-References: <20180825211910.22929-1-afonsobordado@az8.co>
-        <20180825211910.22929-3-afonsobordado@az8.co>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Mon, 27 Aug 2018 17:22:12 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:43823 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726939AbeH0VWM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 17:22:12 -0400
+Received: by mail-pg1-f195.google.com with SMTP id v66-v6so7737423pgb.10
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 10:34:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=JrLhqF1ehZxrvsIEoFtfDR1uxk/uFuVr3I6zUIDteRw=;
+        b=iWudvpGNdq93RY63E0zSDc2EeBFvAVPo1J2xt8Ypwe9fR8y+hO3YEsT/sMSmSdYzvg
+         AgzRyGDWmENLtQWtE1nqPpYaRq7trl6kJhejKjF8xN4yoILZ7rwlVgPt1zkw4Dns1sBv
+         d6JTNwk44qI/lCR2EYW+HeR07Srr1PNXF8eAj5i54gS28HNsDdI2KG+4LklLyswGauwW
+         TKzTq31w2Jj7Byv8mZ+2hF3sAcyVyeUZoYfhQ4vnrwXEX23zZpGlvgqnkz5nmP6hEHD6
+         eL2AIPqdmcwoHPRiylU4NVS3X1Eu7xHOLqIQOsqOAkX7gkQtyma8nOtHfiizVhxTK91h
+         Py3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=JrLhqF1ehZxrvsIEoFtfDR1uxk/uFuVr3I6zUIDteRw=;
+        b=MVPGEmRxSpHzV9kxX7vcLUj02nLQRAi0rvqqvn1vn23lvCz6xf2Of+OznsyIetCC2r
+         GE6DIkficToyX+zgzJY7c6c8IOD0v0kct/2gmdEtsw40KOYfr1S5BEmLaGtxyGP/+/Xz
+         kChSR3tr5GepIo+HTkLpcky1RZBdqlS9QSMtihMw0mgYhQUXQQui8o0RQDuaiwF+wUDX
+         iZ0yVDzhmneaCyEaiRdob1EmIIBTEjPHge9CFvmgURq0DkMzyEtfQ0EdMwmUaeIzvfmL
+         eQo8Dp2EUTLWaseluLKSVI4bB6MRdYjWaS4yrrkrFLKKvUYOHPDijqA7TvJ81Db/iEoR
+         JOrw==
+X-Gm-Message-State: APzg51Dqlv6JMNuhL7ucVh4G7/maaPOwdguO9CfriYYXp1fgJaK6V0P1
+        DFMrE5RF3FwZRSI+LUpFMDU=
+X-Google-Smtp-Source: ANB0VdaBw7BGWM+787GrjL+O792IW9ekooY/81Uik9z3br/AMbrvfwzuCxnKfJoq9nyWCahEsG7Log==
+X-Received: by 2002:a63:6385:: with SMTP id x127-v6mr13314524pgb.413.1535391280366;
+        Mon, 27 Aug 2018 10:34:40 -0700 (PDT)
+Received: from [10.33.114.204] ([66.170.99.1])
+        by smtp.gmail.com with ESMTPSA id j16-v6sm47782725pfk.125.2018.08.27.10.34.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 27 Aug 2018 10:34:39 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Subject: Re: TLB flushes on fixmap changes
+From:   Nadav Amit <nadav.amit@gmail.com>
+In-Reply-To: <20180827170511.6bafa15cbc102ae135366e86@kernel.org>
+Date:   Mon, 27 Aug 2018 10:34:36 -0700
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Will Deacon <will.deacon@arm.com>,
+        Benjamin Herrenschmidt <benh@au1.ibm.com>,
+        Nick Piggin <npiggin@gmail.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Rik van Riel <riel@surriel.com>,
+        Jann Horn <jannh@google.com>,
+        Adin Scannell <ascannell@google.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        David Miller <davem@davemloft.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <01DA0BDD-7504-4209-8A8F-20B27CF6A1C7@gmail.com>
+References: <D74A89DF-0D89-4AB6-8A6B-93BEC9A83595@gmail.com>
+ <20180824180438.GS24124@hirez.programming.kicks-ass.net>
+ <56A9902F-44BE-4520-A17C-26650FCC3A11@gmail.com>
+ <CA+55aFzerzTPm94jugheVmWg8dJre94yu+GyZGT9NNZanNx_qw@mail.gmail.com>
+ <9A38D3F4-2F75-401D-8B4D-83A844C9061B@gmail.com>
+ <CA+55aFz1KYT7fRRG98wei24spiVg7u1Ec66piWY5359ykFmezw@mail.gmail.com>
+ <8E0D8C66-6F21-4890-8984-B6B3082D4CC5@gmail.com>
+ <CALCETrWdeKBcEs7zAbpEM1YdYiT2UBXwPtF0mMTvcDX_KRpz1A@mail.gmail.com>
+ <20180826112341.f77a528763e297cbc36058fa@kernel.org>
+ <CALCETrXPaX-+R6Z9LqZp0uOVmq-TUX_ksPbUL7mnfbdqo6z2AA@mail.gmail.com>
+ <20180826090958.GT24124@hirez.programming.kicks-ass.net>
+ <20180827120305.01a6f26267c64610cadec5d8@kernel.org>
+ <4BF82052-4738-441C-8763-26C85003F2C9@gmail.com>
+ <20180827170511.6bafa15cbc102ae135366e86@kernel.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+X-Mailer: Apple Mail (2.3445.9.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 25 Aug 2018 22:19:09 +0100
-Afonso Bordado <afonsobordado@az8.co> wrote:
+at 1:05 AM, Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-> This patch adds support for reading/writing ODR/Scale
-> 
-> We don't support the scale boost modes.
-> 
-> Signed-off-by: Afonso Bordado <afonsobordado@az8.co>
+> On Sun, 26 Aug 2018 20:26:09 -0700
+> Nadav Amit <nadav.amit@gmail.com> wrote:
+>=20
+>> at 8:03 PM, Masami Hiramatsu <mhiramat@kernel.org> wrote:
+>>=20
+>>> On Sun, 26 Aug 2018 11:09:58 +0200
+>>> Peter Zijlstra <peterz@infradead.org> wrote:
+>>>=20
+>>>> On Sat, Aug 25, 2018 at 09:21:22PM -0700, Andy Lutomirski wrote:
+>>>>> I just re-read text_poke().  It's, um, horrible.  Not only is the
+>>>>> implementation overcomplicated and probably buggy, but it's =
+SLOOOOOW.
+>>>>> It's totally the wrong API -- poking one instruction at a time
+>>>>> basically can't be efficient on x86.  The API should either poke =
+lots
+>>>>> of instructions at once or should be text_poke_begin(); ...;
+>>>>> text_poke_end();.
+>>>>=20
+>>>> I don't think anybody ever cared about performance here. Only
+>>>> correctness. That whole text_poke_bp() thing is entirely tricky.
+>>>=20
+>>> Agreed. Self modification is a special event.
+>>>=20
+>>>> FWIW, before text_poke_bp(), text_poke() would only be used from
+>>>> stop_machine, so all the other CPUs would be stuck busy-waiting =
+with
+>>>> IRQs disabled. These days, yeah, that's lots more dodgy, but yes
+>>>> text_mutex should be serializing all that.
+>>>=20
+>>> I'm still not sure that speculative page-table walk can be done
+>>> over the mutex. Also, if the fixmap area is for aliasing
+>>> pages (which always mapped to memory), what kind of
+>>> security issue can happen?
+>>=20
+>> The PTE is accessible from other cores, so just as we assume for L1TF =
+that
+>> the every addressable memory might be cached in L1, we should assume =
+and
+>> PTE might be cached in the TLB when it is present.
+>=20
+> Ok, so other cores can accidentally cache the PTE in TLB, (and no way
+> to shoot down explicitly?)
 
-A few trivial bits in here.
+There is way (although current it does not). But it seems that the =
+consensus
+is that it is better to avoid it being mapped at all in remote cores.
 
-Jonathan
+>> Although the mapping is for an alias, there are a couple of issues =
+here.
+>> First, this alias mapping is writable, so it might an attacker to =
+change the
+>> kernel code (following another initial attack).
+>=20
+> Combined with some buffer overflow, correct? If the attacker already =
+can
+> write a kernel data directly, he is in the kernel mode.
 
-> ---
->  drivers/iio/gyro/fxas21002c.c | 162 +++++++++++++++++++++++++++++++---
->  1 file changed, 149 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/iio/gyro/fxas21002c.c b/drivers/iio/gyro/fxas21002c.c
-> index 6fef210630e0..dc0cb9848386 100644
-> --- a/drivers/iio/gyro/fxas21002c.c
-> +++ b/drivers/iio/gyro/fxas21002c.c
-> @@ -7,7 +7,7 @@
->   * IIO driver for FXAS21002C (7-bit I2C slave address 0x20 or 0x21).
->   * Datasheet: https://www.nxp.com/docs/en/data-sheet/FXAS21002.pdf
->   * TODO:
-> - *        ODR / Scale Support
-> + *        Scale boost mode
->   *        Power management
->   *        LowPass/HighPass Filters
->   *        Buffers
-> @@ -40,7 +40,10 @@
->  #define FXAS21002C_REG_F_EVENT         0x0A
->  #define FXAS21002C_REG_INT_SRC_FLAG    0x0B
->  #define FXAS21002C_REG_WHO_AM_I        0x0C
-> +
->  #define FXAS21002C_REG_CTRL_REG0       0x0D
-> +#define FXAS21002C_SCALE_MASK          (BIT(0) | BIT(1))
+Right.
 
-This is a 2 bit mask, not a direct combination of two
-one bit different things, so better as GENMASK(1, 0) to
-make that implicit.
+>=20
+>> Second, the alias mapping is
+>> never explicitly flushed. We may assume that once the original =
+mapping is
+>> removed/changed, a full TLB flush would take place, but there is no
+>> guarantee it actually takes place.
+>=20
+> Hmm, would this means a full TLB flush will not flush alias mapping?
+> (or, the full TLB flush just doesn't work?)
 
-> +
->  #define FXAS21002C_REG_RT_CFG          0x0E
->  #define FXAS21002C_REG_RT_SRC          0x0F
->  #define FXAS21002C_REG_RT_THS          0x10
-> @@ -52,13 +55,12 @@
->  #define FXAS21002C_ACTIVE_BIT          BIT(1)
->  #define FXAS21002C_READY_BIT           BIT(0)
->  
-> -#define FXAS21002C_REG_CTRL_REG2       0x14
-> -#define FXAS21002C_REG_CTRL_REG3       0x15
-> +#define FXAS21002C_ODR_SHIFT           2
-> +#define FXAS21002C_ODR_MASK            (BIT(2) | BIT(3) | BIT(4))
->  
-> -#define FXAS21002C_DEFAULT_ODR_HZ      800
->  
-> -// 0.0625 deg/s
-> -#define FXAS21002C_DEFAULT_SENSITIVITY IIO_DEGREE_TO_RAD(62500)
-> +#define FXAS21002C_REG_CTRL_REG2       0x14
-> +#define FXAS21002C_REG_CTRL_REG3       0x15
->  
->  enum fxas21002c_id {
->  	ID_FXAS21002C,
-> @@ -76,6 +78,40 @@ struct fxas21002c_data {
->  	struct regmap *regmap;
->  };
->  
-> +enum fxas21002c_scale {
-> +	FXAS21002C_SCALE_62MDPS,
-> +	FXAS21002C_SCALE_31MDPS,
-> +	FXAS21002C_SCALE_15MDPS,
-> +	FXAS21002C_SCALE_7MDPS,
-> +};
-> +
-> +static const int fxas21002c_anglevel_scale_avail[4][2] = {
-> +	[FXAS21002C_SCALE_62MDPS] = { 0, IIO_DEGREE_TO_RAD(62500) },
-> +	[FXAS21002C_SCALE_31MDPS] = { 0, IIO_DEGREE_TO_RAD(31250) },
-> +	[FXAS21002C_SCALE_15MDPS] = { 0, IIO_DEGREE_TO_RAD(15625) },
-> +	[FXAS21002C_SCALE_7MDPS]  = { 0, IIO_DEGREE_TO_RAD(7812) },
-> +};
-> +
-> +enum fxas21002c_odr {
-> +	FXAS21002C_ODR_800,
-> +	FXAS21002C_ODR_400,
-> +	FXAS21002C_ODR_200,
-> +	FXAS21002C_ODR_100,
-> +	FXAS21002C_ODR_50,
-> +	FXAS21002C_ODR_25,
-> +	FXAS21002C_ODR_12_5,
-> +};
-> +
-> +static const int fxas21002c_sample_freq_avail[7][2] = {
-> +	[FXAS21002C_ODR_800]  = { 800, 0 },
-> +	[FXAS21002C_ODR_400]  = { 400, 0 },
-> +	[FXAS21002C_ODR_200]  = { 200, 0 },
-> +	[FXAS21002C_ODR_100]  = { 100, 0 },
-> +	[FXAS21002C_ODR_50]   = { 50, 0 },
-> +	[FXAS21002C_ODR_25]   = { 25, 0 },
-> +	[FXAS21002C_ODR_12_5] = { 12, 500000 },
-> +};
-> +
->  static const struct regmap_range fxas21002c_writable_ranges[] = {
->  	regmap_reg_range(FXAS21002C_REG_F_SETUP, FXAS21002C_REG_F_SETUP),
->  	regmap_reg_range(FXAS21002C_REG_CTRL_REG0, FXAS21002C_REG_RT_CFG),
-> @@ -242,6 +278,47 @@ static int fxas21002c_read_oneshot(struct fxas21002c_data *data,
->  	return IIO_VAL_INT;
->  }
->  
-> +static int fxas21002c_scale_read(struct fxas21002c_data *data, int *val,
-> +				 int *val2)
-> +{
-> +	int ret;
-> +	unsigned int raw;
-> +
-> +	ret = regmap_read(data->regmap, FXAS21002C_REG_CTRL_REG0, &raw);
-> +	if (ret)
-> +		return ret;
-> +
-> +	raw &= FXAS21002C_SCALE_MASK;
-> +
-> +	*val = fxas21002c_anglevel_scale_avail[raw][0];
-> +	*val2 = fxas21002c_anglevel_scale_avail[raw][1];
-> +
-> +	return IIO_VAL_INT_PLUS_MICRO;
-> +}
-> +
-> +static int fxas21002c_odr_read(struct fxas21002c_data *data, int *val,
-> +			       int *val2)
-> +{
-> +	int ret;
-> +	unsigned int raw;
-> +
-> +	ret = regmap_read(data->regmap, FXAS21002C_REG_CTRL_REG1, &raw);
-> +	if (ret)
-> +		return ret;
-> +
-> +	raw = (raw & FXAS21002C_ODR_MASK) >> FXAS21002C_ODR_SHIFT;
-> +
-> +	// We don't use this mode but according to the datasheet its
-> +	// also a 12.5Hz
-/*
- * We...
- * also..
- */
+It will flush the alias mapping, but currently there is no such explicit
+flush.
 
-The kernel style is very fussy about comment syntax.  It may seem silly but when
-you read a lot of code these little thing being consistent help.
+>>> Anyway, from the viewpoint of kprobes, either per-cpu fixmap or
+>>> changing CR3 sounds good to me. I think we don't even need per-cpu,
+>>> it can call a thread/function on a dedicated core (like the first
+>>> boot processor) and wait :) This may prevent leakage of pte change
+>>> to other cores.
+>>=20
+>> I implemented per-cpu fixmap, but I think that it makes more sense to =
+take
+>> peterz approach and set an entry in the PGD level. Per-CPU fixmap =
+either
+>> requires to pre-populate various levels in the page-table hierarchy, =
+or
+>> conditionally synchronize whenever module memory is allocated, since =
+they
+>> can share the same PGD, PUD & PMD. While usually the synchronization =
+is not
+>> needed, the possibility that synchronization is needed complicates =
+locking.
+>=20
+> Could you point which PeterZ approach you said? I guess it will be
+> make a clone of PGD and use it for local page mapping (as new mm).
+> If so, yes it sounds perfectly fine to me.
 
-> +	if (raw == 7)
-> +		raw = FXAS21002C_ODR_12_5;
-> +
-> +	*val = fxas21002c_sample_freq_avail[raw][0];
-> +	*val2 = fxas21002c_sample_freq_avail[raw][1];
-> +
-> +	return IIO_VAL_INT_PLUS_MICRO;
-> +}
-> +
->  static int fxas21002c_read_raw(struct iio_dev *indio_dev,
->  			       struct iio_chan_spec const *chan, int *val,
->  			       int *val2, long mask)
-> @@ -255,24 +332,83 @@ static int fxas21002c_read_raw(struct iio_dev *indio_dev,
->  		if (chan->type != IIO_ANGL_VEL)
->  			return -EINVAL;
->  
-> -		*val = 0;
-> -		*val2 = FXAS21002C_DEFAULT_SENSITIVITY;
-> -
-> -		return IIO_VAL_INT_PLUS_MICRO;
-> +		return fxas21002c_scale_read(data, val, val2);
->  	case IIO_CHAN_INFO_SAMP_FREQ:
->  		if (chan->type != IIO_ANGL_VEL)
->  			return -EINVAL;
->  
-> -		*val = FXAS21002C_DEFAULT_ODR_HZ;
-> -
-> -		return IIO_VAL_INT;
-> +		return fxas21002c_odr_read(data, val, val2);
->  	}
->  
->  	return -EINVAL;
->  }
->  
-> +static int fxas21002c_write_raw(struct iio_dev *indio_dev,
-> +				struct iio_chan_spec const *chan, int val,
-> +				int val2, long mask)
-> +{
-> +	struct fxas21002c_data *data = iio_priv(indio_dev);
-> +	int ret = -EINVAL;
-> +	int i;
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_SAMP_FREQ:
-> +		for (i = 0; i < ARRAY_SIZE(fxas21002c_sample_freq_avail); i++) {
-> +			if (fxas21002c_sample_freq_avail[i][0] == val &&
-> +			    fxas21002c_sample_freq_avail[i][1] == val2)
-> +				break;
-> +		}
-> +
-> +		if (i == ARRAY_SIZE(fxas21002c_sample_freq_avail))
-> +			break;
-> +
-> +		ret = regmap_update_bits(data->regmap, FXAS21002C_REG_CTRL_REG1,
-return regmap_update_bits...
+The thread is too long. What I think is best is having a mapping in the =
+PGD
+level. I=E2=80=99ll try to give it a shot, and see what I get.
 
-> +					 FXAS21002C_ODR_MASK,
-> +					 i << FXAS21002C_ODR_SHIFT);
-> +
-> +		break;
-> +	case IIO_CHAN_INFO_SCALE:
-> +		for (i = 0; i < ARRAY_SIZE(fxas21002c_anglevel_scale_avail);
-> +		     i++) {
-> +			if (fxas21002c_anglevel_scale_avail[i][0] == val &&
-> +			    fxas21002c_anglevel_scale_avail[i][1] == val2)
-> +				break;
-> +		}
-> +
-> +		if (i == ARRAY_SIZE(fxas21002c_anglevel_scale_avail))
-> +			break;
-> +
-> +		ret = regmap_update_bits(data->regmap, FXAS21002C_REG_CTRL_REG0,
-return regmap_update_bits.
-> +					 FXAS21002C_SCALE_MASK, i);
-> +
-> +		break;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static IIO_CONST_ATTR(anglevel_scale_available,
-> +		      "0.001090831 "  // 62.5    mdps
-/* ... */
-> +		      "0.000545415 "  // 31.25   mdps
-> +		      "0.000272708 "  // 15.625  mdps
-> +		      "0.000136354"); //  7.8125 mdps
-> +
-> +static IIO_CONST_ATTR_SAMP_FREQ_AVAIL("800 400 200 100 50 25 12.5");
-> +
-> +static struct attribute *fxas21002c_attributes[] = {
-> +	&iio_const_attr_anglevel_scale_available.dev_attr.attr,
-> +	&iio_const_attr_sampling_frequency_available.dev_attr.attr,
-> +	NULL
-> +};
-> +
-> +static const struct attribute_group fxas21002c_attribute_group = {
-> +	.attrs = fxas21002c_attributes,
-> +};
-> +
->  static const struct iio_info fxas21002c_info = {
->  	.read_raw		= fxas21002c_read_raw,
-> +	.write_raw              = fxas21002c_write_raw,
-> +	.attrs                  = &fxas21002c_attribute_group,
->  };
->  
->  static int fxas21002c_probe(struct i2c_client *client,
+>> Anyhow, having fixed addresses for the fixmap can be used to =
+circumvent
+>> KASLR.
+>=20
+> I think text_poke doesn't mind using random address :)
+>=20
+>> I don=E2=80=99t think a dedicated core is needed. Anyhow there is a =
+lock
+>> (text_mutex), so use_mm() can be used after acquiring the mutex.
+>=20
+> Hmm, use_mm() said;
+>=20
+> /*
+> * use_mm
+> *      Makes the calling kernel thread take on the specified
+> *      mm context.
+> *      (Note: this routine is intended to be called only
+> *      from a kernel thread context)
+> */
+>=20
+> So maybe we need a dedicated kernel thread for safeness?
+
+Yes, it says so. But I am not sure it cannot be changed, at least for =
+this
+specific use-case. Switching kernel threads just for patching seems to =
+me as
+an overkill.
+
+Let me see if I can get something half-reasonable doing so...
 
