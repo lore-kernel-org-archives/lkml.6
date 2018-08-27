@@ -6,70 +6,68 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21E4BC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:08:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB27EC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:08:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1EC6208B9
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:08:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1EC6208B9
+	by mail.kernel.org (Postfix) with ESMTP id 6B622208D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:08:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B622208D5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727425AbeH0V42 (ORCPT
+        id S1727459AbeH0V4d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 17:56:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41012 "EHLO
+        Mon, 27 Aug 2018 17:56:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41020 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726895AbeH0V42 (ORCPT
+        with ESMTP id S1727433AbeH0V4d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 17:56:28 -0400
+        Mon, 27 Aug 2018 17:56:33 -0400
 Received: from localhost (unknown [62.119.166.9])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 73530CB6;
-        Mon, 27 Aug 2018 18:08:49 +0000 (UTC)
-Date:   Mon, 27 Aug 2018 19:49:40 +0200
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 802AEC96;
+        Mon, 27 Aug 2018 18:08:54 +0000 (UTC)
+Date:   Mon, 27 Aug 2018 19:51:08 +0200
 From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Abishek V Ashok <abishekvashok@gmail.com>
-Cc:     sudipm.mukherjee@gmail.com, teddy.wang@siliconmotion.com,
-        linux-fbdev@vger.kernel.org, devel@driverdev.osuosl.org,
+To:     Tom Todd <thomas.m.a.todd@gmail.com>
+Cc:     Larry.Finger@lwfinger.net, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ddk750_mode.c: Wraps line to 80 charecters
-Message-ID: <20180827174940.GC27089@kroah.com>
-References: <20180808093552.2248-1-abishekvashok@gmail.com>
+Subject: Re: [PATCH] Staging: rtlwifi: efuse: fixed a line length coding
+ style issue
+Message-ID: <20180827175108.GD27089@kroah.com>
+References: <20180813211120.17015-1-thomas.m.a.todd@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180808093552.2248-1-abishekvashok@gmail.com>
+In-Reply-To: <20180813211120.17015-1-thomas.m.a.todd@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 08, 2018 at 03:05:52PM +0530, Abishek V Ashok wrote:
-> Splits definition of function programModeRegisters into two lines such
-> that each line is less than 80 characters.
+On Mon, Aug 13, 2018 at 10:11:21PM +0100, Tom Todd wrote:
+> Fixed a code style issue. Line length over 80 characters.
 > 
-> Signed-off-by: Abishek V Ashok <abishekvashok@gmail.com>
+> Signed-off-by: Tom Todd <thomas.m.a.todd@gmail.com>
 > ---
->  drivers/staging/sm750fb/ddk750_mode.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/staging/rtlwifi/efuse.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/staging/sm750fb/ddk750_mode.c b/drivers/staging/sm750fb/ddk750_mode.c
-> index 7e22d093b..57cf9e6a5 100644
-> --- a/drivers/staging/sm750fb/ddk750_mode.c
-> +++ b/drivers/staging/sm750fb/ddk750_mode.c
-> @@ -13,8 +13,8 @@
->   * HW only supports 7 predefined pixel clocks, and clock select is
->   * in bit 29:27 of Display Control register.
->   */
-> -static unsigned long displayControlAdjust_SM750LE(struct mode_parameter *pModeParam,
-> -						  unsigned long dispControl)
-> +static unsigned long displayControlAdjust_SM750LE(
-> +		struct mode_parameter *pModeParam, unsigned long dispControl)
+> diff --git a/drivers/staging/rtlwifi/efuse.c b/drivers/staging/rtlwifi/efuse.c
+> index 1dc71455f270..49ec9728fb04 100644
+> --- a/drivers/staging/rtlwifi/efuse.c
+> +++ b/drivers/staging/rtlwifi/efuse.c
+> @@ -245,7 +245,8 @@ void read_efuse(struct ieee80211_hw *hw, u16 _offset, u16 _size_byte, u8 *pbuf)
+>  	if (!efuse_word)
+>  		goto out;
+>  	for (i = 0; i < EFUSE_MAX_WORD_UNIT; i++) {
+> -		efuse_word[i] = kcalloc(efuse_max_section, sizeof(u16), GFP_ATOMIC);
+> +		efuse_word[i] =
+> +			kcalloc(efuse_max_section, sizeof(u16), GFP_ATOMIC);
 
-Ick, actually the original code is just fine here, please leave it
-as-is.
+No, keep the kcalloc on the same line and just wrap any needed
+parameters.
 
-thanks,,
+thanks,
 
 greg k-h
