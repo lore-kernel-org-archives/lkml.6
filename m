@@ -2,88 +2,103 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03FFCC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:16:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B24DC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:20:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AED7D208AF
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:16:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D92AC208AF
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:20:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mork.no header.i=@mork.no header.b="b4kNc42H"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AED7D208AF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mork.no
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Ym17ttrQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D92AC208AF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727050AbeH0UDO (ORCPT
+        id S1727021AbeH0UH0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 16:03:14 -0400
-Received: from canardo.mork.no ([148.122.252.1]:53065 "EHLO canardo.mork.no"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726731AbeH0UDO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 16:03:14 -0400
-Received: from miraculix.mork.no (miraculix.mork.no [IPv6:2001:4641:0:2:7627:374e:db74:e353])
-        (authenticated bits=0)
-        by canardo.mork.no (8.15.2/8.15.2) with ESMTPSA id w7RGFrB6025580
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 27 Aug 2018 18:15:53 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mork.no; s=b;
-        t=1535386553; bh=FeX1yd0BphP3LVpPVtVoDA5spzeQ26wOD27tiDUFm9o=;
-        h=From:To:Cc:Subject:References:Date:Message-ID:From;
-        b=b4kNc42HYj8BLIFqr9MsoxPaVnaDgxaVyRi/iIrXyU7z3C7WncjtNyfM7v20ZImCG
-         a0dA3Iol6PPe1Sk1Hf4YGNUHSFvYzZ2EJinBft5wPpOC+eYrTttyO/NeTQv3BmYaxf
-         CLqcBF269xOmm7ffPN9Eefocp7EfyLFA82Qn0VCg=
-Received: from bjorn by miraculix.mork.no with local (Exim 4.89)
-        (envelope-from <bjorn@mork.no>)
-        id 1fuKBE-0005Ja-Id; Mon, 27 Aug 2018 18:15:52 +0200
-From:   =?utf-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Romain Izard <romain.izard.pro@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>, Lars Melin <larsm17@gmail.com>
-Subject: Re: [PATCH] option: Do not try to bind to ADB interfaces
-Organization: m
-References: <20180723140220.7166-1-romain.izard.pro@gmail.com>
-        <20180723140801.GA4835@kroah.com>
-        <CAGkQfmPbuK7-f=9GcvQPH6mkHXwsaGpjqv40DLgFUJmbOCpbgQ@mail.gmail.com>
-        <20180827132815.GD14967@localhost>
-Date:   Mon, 27 Aug 2018 18:15:52 +0200
-In-Reply-To: <20180827132815.GD14967@localhost> (Johan Hovold's message of
-        "Mon, 27 Aug 2018 15:28:15 +0200")
-Message-ID: <87r2ijdbuv.fsf@miraculix.mork.no>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Mon, 27 Aug 2018 16:07:26 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:60566 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726731AbeH0UH0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 16:07:26 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7RGJW6u153570;
+        Mon, 27 Aug 2018 16:19:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to :
+ subject : message-id : mime-version : content-type; s=corp-2018-07-02;
+ bh=MGgjMmSUBUsqM7mt1pOqYh7D3G9R2MTY+oswJ7rjd9Q=;
+ b=Ym17ttrQbo9vIyhTJRVfvBF95tbRdjnbT9Z68U/pcP6vIW7YjbX0cntZXTRqzafpUoTn
+ m9WjxyhTdp7JhyP21wMdEEm6SG/R6FGuRubFJFQPKXnaRf10GULKKpBueh1lIp/n43p1
+ /RKoHLbopbxEyvLTAxV70926BVJejS7+FGcd75eF4mOSdgt29YrJZPraSZOn5Wfu4tPG
+ ige5FJJqFlfH5IJLkJAc/Kew8oHcw+o/AcxiCIqttIchbbzH8pVu9HcIF4C2A3GiSEXK
+ UgaduW+tXLjvA/DfNoUXdv3ksq1k9XEz7Y5Ghjki1vl12owfJFNieJ/gHVAl+7FFWdhp Yw== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2120.oracle.com with ESMTP id 2m2yrpxv9d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 27 Aug 2018 16:19:59 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w7RGJqTG024754
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 27 Aug 2018 16:19:53 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w7RGJpeS001160;
+        Mon, 27 Aug 2018 16:19:51 GMT
+Received: from char.us.oracle.com (/10.152.35.101)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 27 Aug 2018 09:19:50 -0700
+Received: by char.us.oracle.com (Postfix, from userid 1000)
+        id 06EFD6A0112; Mon, 27 Aug 2018 12:19:49 -0400 (EDT)
+Date:   Mon, 27 Aug 2018 12:19:49 -0400
+From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To:     linux-kernel@vger.kernel.org, jgross@suse.com,
+        roger.pau@citrix.com, axboe@kernel.dk,
+        xen-devel@lists.xensource.com
+Subject: [GIT PULL] (xen) stable/for-jens-4.19 for 4.19..
+Message-ID: <20180827161949.GG29187@char.us.oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Virus-Scanned: clamav-milter 0.100.1 at canardo
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.8.3 (2017-05-23)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8998 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808270173
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Johan Hovold <johan@kernel.org> writes:
+Hey Jens,
 
-> It would allow for simpler device-id entries, at least when ADB is the
-> only blacklisted interface, and may enable ADB for some older entries.
->
-> On the other hand, interface class 0xff is indeed supposed to be vendor
-> specific as Lars and Greg pointed out, and with status quo we don't
-> cause any regressions. If ADB isn't currently available for some device
-> due to option binding to that interface, we'll just blacklist it as soon
-> we get a report.
->
-> So personally I'm not sure it's worth it, but I don't have a strong
-> opinion on the matter either.
+Would you be OK pulling the following branch:
+ git://git.kernel.org/pub/scm/linux/kernel/git/konrad/xen.git stable/for-jens-4.19
 
-+1
+which has a fix for flushing out persistent pages at a deterministic rate.
 
-The adb userspace application is also free to unbind any conflicting
-driver, so I don't think blacklisting is strictly necessary.  Except to
-prevent any confusion caused by bogus ttyUSBx devices.
+Thanks to the L1TF I did not manage to send this email until today - but
+hopefully it won't be an issue to push it to Linus after -rc1?
 
+It is based on your 'b86d865cb1ca (for-4.19/block) blkcg: Make blkg_root_lookup()
+work for queues in bypass mode' branch.
 
-Bj=C3=B8rn
+Thank you! 
+
+ Documentation/ABI/testing/sysfs-driver-xen-blkback |  10 ++
+ drivers/block/xen-blkback/blkback.c                |  99 ++++++++++---------
+ drivers/block/xen-blkback/common.h                 |  14 +--
+ drivers/block/xen-blkfront.c                       | 110 ++++++++++++++++++---
+ 4 files changed, 163 insertions(+), 70 deletions(-)
+
+Juergen Gross (5):
+      xen/blkback: don't keep persistent grants too long
+      xen/blkfront: cleanup stale persistent grants
+      xen/blkfront: reorder tests in xlblk_init()
+      xen/blkback: move persistent grants flags to bool
+      xen/blkback: remove unused pers_gnts_lock from struct xen_blkif_ring
+
