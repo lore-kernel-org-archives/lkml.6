@@ -2,157 +2,125 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6CD1C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 07:01:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4434CC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 07:02:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A263821722
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 07:01:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A263821722
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E151C21722
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 07:02:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OycqJwyh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E151C21722
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727162AbeH0Kqf (ORCPT
+        id S1727172AbeH0Krh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 06:46:35 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56164 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726875AbeH0Kqf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 06:46:35 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 29B6240216EB;
-        Mon, 27 Aug 2018 07:01:14 +0000 (UTC)
-Received: from localhost (ovpn-8-24.pek2.redhat.com [10.72.8.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id EB182A9E60;
-        Mon, 27 Aug 2018 07:01:12 +0000 (UTC)
-Date:   Mon, 27 Aug 2018 15:01:09 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org,
-        keescook@chromium.org, n-horiguchi@ah.jp.nec.com,
-        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com,
-        douly.fnst@cn.fujitsu.com
-Subject: Re: [PATCH v5 4/4] x86/boot/KASLR: Limit kaslr to choosing the
- immovable memory
-Message-ID: <20180827070109.GD1748@MiWiFi-R3L-srv>
-References: <20180807065000.30958-1-fanc.fnst@cn.fujitsu.com>
- <20180807065000.30958-5-fanc.fnst@cn.fujitsu.com>
- <20180827055607.GB1748@MiWiFi-R3L-srv>
- <20180827062854.GD6769@localhost.localdomain>
+        Mon, 27 Aug 2018 06:47:37 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:44593 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726875AbeH0Krg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 06:47:36 -0400
+Received: by mail-qt0-f194.google.com with SMTP id k38-v6so2520007qtk.11
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 00:02:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=rOy085fvEkUAPIKm+M2S8VyPaJg0ZfK9BxSmCKewvg0=;
+        b=OycqJwyhBeVW5rOses0jKPm1AsM7//sdVeo7WeEXalGSkrt1G9tTzanZYItWVv+I7M
+         lFfkQzySh/RvFegemmxF2ffXDqH22us0RU3tPNXJ+2lSPii3vi2mRk+b0DmsBQiz0DCK
+         TigYbLywjZ0XP+ER+yvXKyOXvmJCJKAMd8Au7l/oYKA1FQZrsSyetu7Qmw1NER/P+jb5
+         i84P/m9AaiWeW7kllb8RsgQMp/gCC6/IU9r04LZ6X/+MTJHbfTNYm230h0l/jHHQiCBu
+         2fb//DZWoyCH4hv2m+Cc9dXbrN7+KrFzD1ylUtA/RLbKgKMmlpCV6mh/hyOZNYkWT3vu
+         n41w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=rOy085fvEkUAPIKm+M2S8VyPaJg0ZfK9BxSmCKewvg0=;
+        b=UCfcsdBvvQH3d+LzMD6VuiEnYDSnp/CkZaJAm2c7CU2pQiVScwyizU1gVaQuMrZnpE
+         MwQv/UW/3zvnADcxaJiNsfd/ltvbPKz456xRcB5m6fJLw6fwBQUwSLXtFRYeFuTSLmyR
+         n6tiRVYuGqI37+P+74q1VTjOCS1+v8JgIubXLA0tuBMU7KBlpdQfrIEVi6sbr+vIDNte
+         vlUBWZwc9jXGnNXZFLtSvbseM08oRX7dq96Dqhnnjw6lm6Z5O55uVhtacOJq2d2EzftA
+         kXtQXHwvBq9u5bEgRRHIWt2ThY2z/c2WLCMf8bu5wRRBKqU5BYZPKQzPzWwsP60+xECC
+         0Ecg==
+X-Gm-Message-State: APzg51CUn3UXyJ1ecKE40Zl7ee+nGA7UE0sp1vqcFtJI34DpSTQ/ElYb
+        WwApDttqt0tWRsrDlQ9ecnpQaENiqgBxkjazDFE=
+X-Google-Smtp-Source: ANB0VdZ8NBPxhV6EBshFwG7dKk+YIQW4H0a077pAXcoTLDz1j7uep+iwLmP9rcKNCnfothabVtJZTW37Sg4NnONaxPY=
+X-Received: by 2002:ac8:16ec:: with SMTP id y41-v6mr12961620qtk.187.1535353335356;
+ Mon, 27 Aug 2018 00:02:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180827062854.GD6769@localhost.localdomain>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 27 Aug 2018 07:01:14 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 27 Aug 2018 07:01:14 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
+References: <1535351378-128643-1-git-send-email-hjc@rock-chips.com>
+In-Reply-To: <1535351378-128643-1-git-send-email-hjc@rock-chips.com>
+From:   Enric Balletbo Serra <eballetbo@gmail.com>
+Date:   Mon, 27 Aug 2018 09:02:04 +0200
+Message-ID: <CAFqH_514pyvKTNHYM=wDab6yAPB+cDCNy8shHPpOP5aeLkyafg@mail.gmail.com>
+Subject: Re: [PATCH] drm/rockchip: fix coding style and incorrect description
+To:     hjc@rock-chips.com
+Cc:     =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        David Airlie <airlied@linux.ie>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/27/18 at 02:28pm, Chao Fan wrote:
-> >Is it possible to take num_immovable_mem definition out from #ifdef
-> >CONFIG_MEMORY_HOTREMOVE block and check it here like below? This way,
-> >one level of indentation can be reduced in the for loop, and code is
-> >more readable.
-> >
-> 
-> I think there is a mistake.
-> 
-> The logical is:
-> if (#ifdef CONFIG_MEMORY_HOTREMOVE) && (num_immovable_mem > 0)
-> 	then A;
-> else
-> 	then B;
-> 
-> But below is:
-> if (num_immovable_mem > 0)
-> 	then B;
-> else if (#ifdef CONFIG_MEMORY_HOTREMOVE)
-> 	then A;
-> else
-> 	nothing;
-> 
-> The precondition of the loop is (num_immovable_mem > 0), because
-> there is only one condition that we need go the A code:
-> CONFIG_MEMORY_HOTREMOVE is defined, and memory information in srat
-> found.
+Hi Sandy,
 
+Just noticed a typo that I think will be good fix also
+Missatge de Sandy Huang <hjc@rock-chips.com> del dia dl., 27 d=E2=80=99ag.
+2018 a les 8:31:
+>
+> Align with other drivers, tab + 2 space key for description.
+> and this option should be enabled on both rk3288 and rk3399.
+>
+> Signed-off-by: Sandy Huang <hjc@rock-chips.com>
+> ---
+>  drivers/gpu/drm/rockchip/Kconfig | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/rockchip/Kconfig b/drivers/gpu/drm/rockchip/=
+Kconfig
+> index 0ccc762..601234b 100644
+> --- a/drivers/gpu/drm/rockchip/Kconfig
+> +++ b/drivers/gpu/drm/rockchip/Kconfig
+> @@ -45,10 +45,10 @@ config ROCKCHIP_DW_HDMI
+>  config ROCKCHIP_DW_MIPI_DSI
+>         bool "Rockchip specific extensions for Synopsys DW MIPI DSI"
+>         help
+> -        This selects support for Rockchip SoC specific extensions
+> -        for the Synopsys DesignWare HDMI driver. If you want to
+> -        enable MIPI DSI on RK3288 based SoC, you should selet this
+> -        option.
+> +         This selects support for Rockchip SoC specific extensions
+> +         for the Synopsys DesignWare HDMI driver. If you want to
+> +         enable MIPI DSI on RK3288 or RK3399 based SoC, you should
+> +         selet this option.
 
-Yes, we are saying the same thing. if num_immovable_mem == 0, it covers
-all the cases you listed at below. Here I assume you have taken
-num_immovable_mem definition out.
+s/selet/select/
 
-#ifdef CONFIG_MEMORY_HOTREMOVE
-/* Store the immovable memory regions */
-static struct mem_vector immovable_mem[MAX_NUMNODES*2];
-#endif
+Cheers,
+ Enric
 
-/* Store the amount of immovable memory regions */
-static int num_immovable_mem;
-
-> 
-> But there is many conditions we go the B code:
-> 1. CONFIG_MEMORY_HOTREMOVE is not defined.
-> 2. CONFIG_MEMORY_HOTREMOVE defined, but we didn't get the right acpi tables
-> 3. CONFIG_MEMORY_HOTREMOVE defined, or there is only one node in this machine.
-> 
-> Yes, the code is hard to read, but you have changed the logical, there
-> is a compromise method, I don't know whether is better:
-> 
-> #ifdef CONFIG_MEMORY_HOTREMOVE
-> 	if (num_immovable_mem == 0)
-> 		goto B;
-> 
-> 	for (i = 0; i < num_immovable_mem; i++) {
-> 		...
-> 	}
-> #endif
-> 
-> B:
-> 	slots_count(region, minimum, image_size);
-> 	
-> 	if (slot_area_index == MAX_SLOT_AREA) {
-> 		debug_putstr("Aborted e820/efi memmap scan (slot_areas full)!\n");
-> 		return 1;
-> 	}
-> 	return 0;
-> 	
-> 
-> >
-> >static bool process_mem_region(struct mem_vector *region,
-> >			       unsigned long long minimum,
-> >			       unsigned long long image_size)
-> >{
-> >
-> >	/*
-> >	 * If no immovable memory found, or MEMORY_HOTREMOVE disabled,
-> >	 * walk all the regions, so use region directely.
-> >	 */
-> >	if (num_immovable_mem > 0) {
-> >		slots_count(region, minimum, image_size);
-> >		
-> >		if (slot_area_index == MAX_SLOT_AREA) {
-> >			debug_putstr("Aborted e820/efi memmap scan (slot_areas full)!\n");
-> >			return 1;
-> >		}
-> >		return 0;
-> >	}
-> >
-> >#ifdef CONFIG_MEMORY_HOTREMOVE
-> >	for (i = 0; i < num_immovable_mem; i++) {
-> >		...
-> >	}
-> >#endif
-> >}
-> >
-> 
-> 
+>
+>  config ROCKCHIP_INNO_HDMI
+>         bool "Rockchip specific extensions for Innosilicon HDMI"
+> --
+> 2.7.4
+>
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
