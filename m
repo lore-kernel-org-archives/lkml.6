@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3453EC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:49:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 788A5C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:49:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E40C6208B9
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:49:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E40C6208B9
+	by mail.kernel.org (Postfix) with ESMTP id 2DD28208B9
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:49:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DD28208B9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727469AbeH0Ugg (ORCPT
+        id S1727497AbeH0Ugl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 16:36:36 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38750 "EHLO mx1.redhat.com"
+        Mon, 27 Aug 2018 16:36:41 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43580 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727444AbeH0Ugg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 16:36:36 -0400
+        id S1727444AbeH0Ugl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 16:36:41 -0400
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1C2E483221;
-        Mon, 27 Aug 2018 16:49:14 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id ABC0B4001868;
+        Mon, 27 Aug 2018 16:49:17 +0000 (UTC)
 Received: from vitty.brq.redhat.com (ovpn-204-86.brq.redhat.com [10.40.204.86])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 130772166B41;
-        Mon, 27 Aug 2018 16:49:10 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6CDE52166B41;
+        Mon, 27 Aug 2018 16:49:14 +0000 (UTC)
 From:   Vitaly Kuznetsov <vkuznets@redhat.com>
 To:     kvm@vger.kernel.org
 Cc:     Paolo Bonzini <pbonzini@redhat.com>,
@@ -43,166 +43,95 @@ Cc:     Paolo Bonzini <pbonzini@redhat.com>,
         Cathy Avery <cavery@redhat.com>,
         Wanpeng Li <wanpeng.li@hotmail.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v5 3/5] KVM: x86: hyperv: use get_vcpu_by_vpidx() in kvm_hv_flush_tlb()
-Date:   Mon, 27 Aug 2018 18:48:56 +0200
-Message-Id: <20180827164858.12496-4-vkuznets@redhat.com>
+Subject: [PATCH v5 4/5] x86/hyper-v: rename ipi_arg_{ex,non_ex} structures
+Date:   Mon, 27 Aug 2018 18:48:57 +0200
+Message-Id: <20180827164858.12496-5-vkuznets@redhat.com>
 In-Reply-To: <20180827164858.12496-1-vkuznets@redhat.com>
 References: <20180827164858.12496-1-vkuznets@redhat.com>
 X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 27 Aug 2018 16:49:14 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 27 Aug 2018 16:49:14 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 27 Aug 2018 16:49:17 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 27 Aug 2018 16:49:17 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VP_INDEX almost always matches VCPU id and get_vcpu_by_vpidx() is fast,
-use it instead of traversing full vCPU list every time.
-
-To support the change split off get_vcpu_idx_by_vpidx() from
-get_vcpu_by_vpidx().
+These structures are going to be used from KVM code so let's make
+their names reflect their Hyper-V origin.
 
 Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 Reviewed-by: Roman Kagan <rkagan@virtuozzo.com>
 ---
- arch/x86/kvm/hyperv.c | 78 ++++++++++++++++++++-------------------------------
- 1 file changed, 31 insertions(+), 47 deletions(-)
+ arch/x86/hyperv/hv_apic.c          |  8 ++++----
+ arch/x86/include/asm/hyperv-tlfs.h | 16 +++++++++-------
+ 2 files changed, 13 insertions(+), 11 deletions(-)
 
-diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
-index b45ce136be2f..d1a911132b59 100644
---- a/arch/x86/kvm/hyperv.c
-+++ b/arch/x86/kvm/hyperv.c
-@@ -127,20 +127,31 @@ static int synic_set_sint(struct kvm_vcpu_hv_synic *synic, int sint,
- 	return 0;
- }
- 
--static struct kvm_vcpu *get_vcpu_by_vpidx(struct kvm *kvm, u32 vpidx)
-+static u32 get_vcpu_idx_by_vpidx(struct kvm *kvm, u32 vpidx)
+diff --git a/arch/x86/hyperv/hv_apic.c b/arch/x86/hyperv/hv_apic.c
+index 5b0f613428c2..2c43e3055948 100644
+--- a/arch/x86/hyperv/hv_apic.c
++++ b/arch/x86/hyperv/hv_apic.c
+@@ -95,8 +95,8 @@ static void hv_apic_eoi_write(u32 reg, u32 val)
+  */
+ static bool __send_ipi_mask_ex(const struct cpumask *mask, int vector)
  {
- 	struct kvm_vcpu *vcpu = NULL;
- 	int i;
+-	struct ipi_arg_ex **arg;
+-	struct ipi_arg_ex *ipi_arg;
++	struct hv_send_ipi_ex **arg;
++	struct hv_send_ipi_ex *ipi_arg;
+ 	unsigned long flags;
+ 	int nr_bank = 0;
+ 	int ret = 1;
+@@ -105,7 +105,7 @@ static bool __send_ipi_mask_ex(const struct cpumask *mask, int vector)
+ 		return false;
  
- 	if (vpidx >= KVM_MAX_VCPUS)
--		return NULL;
-+		return U32_MAX;
+ 	local_irq_save(flags);
+-	arg = (struct ipi_arg_ex **)this_cpu_ptr(hyperv_pcpu_input_arg);
++	arg = (struct hv_send_ipi_ex **)this_cpu_ptr(hyperv_pcpu_input_arg);
  
- 	vcpu = kvm_get_vcpu(kvm, vpidx);
- 	if (vcpu && vcpu_to_hv_vcpu(vcpu)->vp_index == vpidx)
--		return vcpu;
-+		return vpidx;
- 	kvm_for_each_vcpu(i, vcpu, kvm)
- 		if (vcpu_to_hv_vcpu(vcpu)->vp_index == vpidx)
--			return vcpu;
-+			return i;
-+	return U32_MAX;
-+}
-+
-+static __always_inline struct kvm_vcpu *get_vcpu_by_vpidx(struct kvm *kvm,
-+							  u32 vpidx)
-+{
-+	u32 vcpu_idx = get_vcpu_idx_by_vpidx(kvm, vpidx);
-+
-+	if (vcpu_idx < KVM_MAX_VCPUS)
-+		return kvm_get_vcpu(kvm, vcpu_idx);
-+
- 	return NULL;
- }
- 
-@@ -1257,20 +1268,6 @@ int kvm_hv_get_msr_common(struct kvm_vcpu *vcpu, u32 msr, u64 *pdata, bool host)
- 		return kvm_hv_get_msr(vcpu, msr, pdata, host);
- }
- 
--static __always_inline int get_sparse_bank_no(u64 valid_bank_mask, int bank_no)
--{
--	int i = 0, j;
--
--	if (!(valid_bank_mask & BIT_ULL(bank_no)))
--		return -1;
--
--	for (j = 0; j < bank_no; j++)
--		if (valid_bank_mask & BIT_ULL(j))
--			i++;
--
--	return i;
--}
--
- static u64 kvm_hv_flush_tlb(struct kvm_vcpu *current_vcpu, u64 ingpa,
- 			    u16 rep_cnt, bool ex)
+ 	ipi_arg = *arg;
+ 	if (unlikely(!ipi_arg))
+@@ -135,7 +135,7 @@ static bool __send_ipi_mask_ex(const struct cpumask *mask, int vector)
+ static bool __send_ipi_mask(const struct cpumask *mask, int vector)
  {
-@@ -1278,11 +1275,10 @@ static u64 kvm_hv_flush_tlb(struct kvm_vcpu *current_vcpu, u64 ingpa,
- 	struct kvm_vcpu_hv *hv_current = &current_vcpu->arch.hyperv;
- 	struct hv_tlb_flush_ex flush_ex;
- 	struct hv_tlb_flush flush;
--	struct kvm_vcpu *vcpu;
- 	unsigned long vcpu_bitmap[BITS_TO_LONGS(KVM_MAX_VCPUS)] = {0};
--	unsigned long valid_bank_mask = 0;
-+	unsigned long valid_bank_mask;
- 	u64 sparse_banks[64];
--	int sparse_banks_len, i;
-+	int sparse_banks_len, bank, i;
- 	bool all_cpus;
+ 	int cur_cpu, vcpu;
+-	struct ipi_arg_non_ex ipi_arg;
++	struct hv_send_ipi ipi_arg;
+ 	int ret = 1;
  
- 	if (!ex) {
-@@ -1292,6 +1288,7 @@ static u64 kvm_hv_flush_tlb(struct kvm_vcpu *current_vcpu, u64 ingpa,
- 		trace_kvm_hv_flush_tlb(flush.processor_mask,
- 				       flush.address_space, flush.flags);
+ 	trace_hyperv_send_ipi_mask(mask, vector);
+diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
+index e977b6b3a538..00e01d215f74 100644
+--- a/arch/x86/include/asm/hyperv-tlfs.h
++++ b/arch/x86/include/asm/hyperv-tlfs.h
+@@ -726,19 +726,21 @@ struct hv_enlightened_vmcs {
+ #define HV_STIMER_AUTOENABLE		(1ULL << 3)
+ #define HV_STIMER_SINT(config)		(__u8)(((config) >> 16) & 0x0F)
  
-+		valid_bank_mask = BIT_ULL(0);
- 		sparse_banks[0] = flush.processor_mask;
- 		all_cpus = flush.flags & HV_FLUSH_ALL_PROCESSORS;
- 	} else {
-@@ -1332,38 +1329,25 @@ static u64 kvm_hv_flush_tlb(struct kvm_vcpu *current_vcpu, u64 ingpa,
- 		goto ret_success;
- 	}
- 
--	kvm_for_each_vcpu(i, vcpu, kvm) {
--		struct kvm_vcpu_hv *hv = &vcpu->arch.hyperv;
--		int bank = hv->vp_index / 64, sbank = 0;
-+	for_each_set_bit(bank, (unsigned long *)&valid_bank_mask,
-+			 BITS_PER_LONG) {
- 
--		/* Banks >64 can't be represented */
--		if (bank >= 64)
--			continue;
-+		for_each_set_bit(i, (unsigned long *)&sparse_banks[bank],
-+				 BITS_PER_LONG) {
-+			u32 vp_index = bank * 64 + i;
-+			u32 vcpu_idx = get_vcpu_idx_by_vpidx(kvm, vp_index);
- 
--		/* Non-ex hypercalls can only address first 64 vCPUs */
--		if (!ex && bank)
--			continue;
-+			/* A non-existent vCPU was specified */
-+			if (vcpu_idx >= KVM_MAX_VCPUS)
-+				return HV_STATUS_INVALID_HYPERCALL_INPUT;
- 
--		if (ex) {
- 			/*
--			 * Check is the bank of this vCPU is in sparse
--			 * set and get the sparse bank number.
-+			 * vcpu->arch.cr3 may not be up-to-date for running
-+			 * vCPUs so we can't analyze it here, flush TLB
-+			 * regardless of the specified address space.
- 			 */
--			sbank = get_sparse_bank_no(valid_bank_mask, bank);
+-struct ipi_arg_non_ex {
+-	u32 vector;
+-	u32 reserved;
+-	u64 cpu_mask;
+-};
 -
--			if (sbank < 0)
--				continue;
-+			__set_bit(vcpu_idx, vcpu_bitmap);
- 		}
--
--		if (!(sparse_banks[sbank] & BIT_ULL(hv->vp_index % 64)))
--			continue;
--
--		/*
--		 * vcpu->arch.cr3 may not be up-to-date for running vCPUs so we
--		 * can't analyze it here, flush TLB regardless of the specified
--		 * address space.
--		 */
--		__set_bit(i, vcpu_bitmap);
- 	}
+ struct hv_vpset {
+ 	u64 format;
+ 	u64 valid_bank_mask;
+ 	u64 bank_contents[];
+ };
  
- 	kvm_make_vcpus_request_mask(kvm,
+-struct ipi_arg_ex {
++/* HvCallSendSyntheticClusterIpi hypercall */
++struct hv_send_ipi {
++	u32 vector;
++	u32 reserved;
++	u64 cpu_mask;
++};
++
++/* HvCallSendSyntheticClusterIpiEx hypercall */
++struct hv_send_ipi_ex {
+ 	u32 vector;
+ 	u32 reserved;
+ 	struct hv_vpset vp_set;
 -- 
 2.14.4
 
