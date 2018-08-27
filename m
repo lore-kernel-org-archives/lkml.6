@@ -6,129 +6,167 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 441C9C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 03:03:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87497C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 03:06:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF91B21722
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 03:03:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 288E021531
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 03:06:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Xt9pfFSk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF91B21722
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="G2sRq4nT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 288E021531
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727337AbeH0Gry (ORCPT
+        id S1726825AbeH0GvH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 02:47:54 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:57642 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727159AbeH0Grx (ORCPT
+        Mon, 27 Aug 2018 02:51:07 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:50326 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726558AbeH0GvH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 02:47:53 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w7R32QVN046572;
-        Sun, 26 Aug 2018 22:02:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1535338946;
-        bh=LVfKNu97CZvHKk0ilqoFSQHuSu5A8ZgUkHYD8u5FjFk=;
-        h=Subject:To:References:CC:From:Date:In-Reply-To;
-        b=Xt9pfFSkuobcxr9MPhf74dwUyjMoYNZwnMaMtvGCuAaGxF3Nv+5NggDuWfEVm8JR5
-         5VkYdgTzQyQFAf76kx5KKW9/b524B0NqH4Zqh0kP1Gm8cb+FJKKbvTZ/3dekZDU4RL
-         NahD/p2y+jSS1msLvHE2iQHttIFM7OU4vLOhc15g=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7R32QpN026026;
-        Sun, 26 Aug 2018 22:02:26 -0500
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Sun, 26
- Aug 2018 22:02:26 -0500
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Sun, 26 Aug 2018 22:02:26 -0500
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7R32Lne019603;
-        Sun, 26 Aug 2018 22:02:22 -0500
-Subject: Re: [RFC PATCH 5/6] arm64: dts: ti: Add Support for AM654 SoC
-To:     Tony Lindgren <tony@atomide.com>
-References: <20180605060510.32473-1-nm@ti.com>
- <CAL_JsqJusWTvr4A_-Bk81meYddMHBMJ4=Fch6L0MFoF7HfBW2w@mail.gmail.com>
- <454c277e-8a63-81cb-b341-a50f4e25cbea@ti.com>
- <20180820143153.GD7523@atomide.com>
-CC:     Rob Herring <robh+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Vignesh R <vigneshr@ti.com>, Tero Kristo <t-kristo@ti.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Sudeep Holla <sudeep.holla@arm.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <40cecb47-bd32-04aa-b7cd-ff16c1eb28f3@ti.com>
-Date:   Mon, 27 Aug 2018 08:32:21 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        Mon, 27 Aug 2018 02:51:07 -0400
+Received: by mail-it0-f66.google.com with SMTP id j81-v6so9192280ite.0
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Aug 2018 20:06:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0ssnZssSsaWtLCXChnybVVOzxNsYSdN73+OhXcnqWT4=;
+        b=G2sRq4nT5iuA4lCnfPnD+ojLBkhWw4302QEeX0tRY2aC2sPcVLj1FcNDbrmDBrljk8
+         4tL/JYmuGhaDEk2WjRT8ohJHNjst1PMJmU9fbDkePAZzTMFxyu8YRsaShBOZ7MoFrdGl
+         jFIuLfw904iP5LQLqz4Rdw2Gwvo6slk9mBRG4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0ssnZssSsaWtLCXChnybVVOzxNsYSdN73+OhXcnqWT4=;
+        b=qveTkL4jMCtF2zLIlmmSW4xzLVzz4VWkd01vjJpE84q9N7XO3JZrF1EzcGQpcUjQu2
+         0lEfVNMLd35BZIaBdNTVlXwxiGP8zfU/go30PFbEQFmlYww4hI9euGtQ32ENP6pqWSRh
+         ZjgQrVPge5zluKqLVPpG/d9GZhxxiqNOAIf1d3HrZ2TSUlFKr8njgVcSqkYG6E82LtXB
+         TE+IVQwnOdl9h5yWR84+oEozYj+6tqQ67j9hhdrZQ9s9pNdT/yldL0J6D0LoMQoi1HM7
+         WWfkLneOSYhCEctwgB/yrxoHp7rQa3/imFowsU3Uxc0QlJChWMeMaZExdXU0tr0TIe9r
+         W6yA==
+X-Gm-Message-State: APzg51CrLiaha90Afh73kmFQvNe7Xu/GVxtCBjSYDafen2fBhvtD2xMD
+        yvwZ1wBf+Dx0ESa0A3LDv8D63iV21FdEJQ==
+X-Google-Smtp-Source: ANB0VdabS6L8KTEYvCoxdVsaWoNogT0Qd041GFBrkPC2/5S+yxRQjo9Ou+ap1YKWFpA5/J1DASTrMg==
+X-Received: by 2002:a24:ed0c:: with SMTP id r12-v6mr5405916ith.37.1535339186928;
+        Sun, 26 Aug 2018 20:06:26 -0700 (PDT)
+Received: from mail-it0-f50.google.com (mail-it0-f50.google.com. [209.85.214.50])
+        by smtp.gmail.com with ESMTPSA id q19-v6sm5163546ith.1.2018.08.26.20.06.25
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 26 Aug 2018 20:06:25 -0700 (PDT)
+Received: by mail-it0-f50.google.com with SMTP id j81-v6so9192245ite.0
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Aug 2018 20:06:25 -0700 (PDT)
+X-Received: by 2002:a24:b842:: with SMTP id m63-v6mr5267278ite.31.1535339185332;
+ Sun, 26 Aug 2018 20:06:25 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180820143153.GD7523@atomide.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <1535034528-11590-1-git-send-email-vgarodia@codeaurora.org>
+ <1535034528-11590-4-git-send-email-vgarodia@codeaurora.org>
+ <CAPBb6MV1jjksgbSaCuUcY_ZbjfGeK-GaQ_+OZ7LWUv4ehA3dGQ@mail.gmail.com> <9e9417cf2fccfed4015f6893045e4f7f@codeaurora.org>
+In-Reply-To: <9e9417cf2fccfed4015f6893045e4f7f@codeaurora.org>
+From:   Alexandre Courbot <acourbot@chromium.org>
+Date:   Mon, 27 Aug 2018 12:06:14 +0900
+X-Gmail-Original-Message-ID: <CAPBb6MX7EQvXfq_F+8b2FcqROpGY7ud4M6UyttGzoELsw=NJ=Q@mail.gmail.com>
+Message-ID: <CAPBb6MX7EQvXfq_F+8b2FcqROpGY7ud4M6UyttGzoELsw=NJ=Q@mail.gmail.com>
+Subject: Re: [PATCH v6 3/4] venus: firmware: add no TZ boot and shutdown routine
+To:     vgarodia@codeaurora.org
+Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>, robh@kernel.org,
+        mark.rutland@arm.com, Andy Gross <andy.gross@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, bjorn.andersson@linaro.org,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tony,
+On Fri, Aug 24, 2018 at 9:26 PM Vikash Garodia <vgarodia@codeaurora.org> wrote:
+>
+> Hi Alex,
+>
+> On 2018-08-24 13:09, Alexandre Courbot wrote:
+> > On Thu, Aug 23, 2018 at 11:29 PM Vikash Garodia
+> > <vgarodia@codeaurora.org> wrote:
+>
+> [snip]
+>
+> >> +struct video_firmware {
+> >> +       struct device *dev;
+> >> +       struct iommu_domain *iommu_domain;
+> >> +};
+> >> +
+> >>  /**
+> >>   * struct venus_core - holds core parameters valid for all instances
+> >>   *
+> >> @@ -98,6 +103,7 @@ struct venus_caps {
+> >>   * @dev:               convenience struct device pointer
+> >>   * @dev_dec:   convenience struct device pointer for decoder device
+> >>   * @dev_enc:   convenience struct device pointer for encoder device
+> >> + * @fw:                a struct for venus firmware info
+> >>   * @no_tz:     a flag that suggests presence of trustzone
+> >>   * @lock:      a lock for this strucure
+> >>   * @instances: a list_head of all instances
+> >> @@ -130,6 +136,7 @@ struct venus_core {
+> >>         struct device *dev;
+> >>         struct device *dev_dec;
+> >>         struct device *dev_enc;
+> >> +       struct video_firmware fw;
+> >
+> > Since struct video_firmware is only used here I think you can declare
+> > it inline, i.e.
+> >
+> >     struct {
+> >         struct device *dev;
+> >         struct iommu_domain *iommu_domain;
+> >     } fw;
+> >
+> > This structure is actually a good candidate to hold the firmware
+> > memory area start address and size.
+>
+> I can make it inline.
+> Memory area and size are common parameters populated
+> locally while loading the firmware with or without tz. Firmware struct
+> has
+> info more specific to firmware device.
+>
+> [snip]
+>
+> >
+> >> +{
+> >> +       struct iommu_domain *iommu_dom;
+> >> +       struct device *dev;
+> >> +       int ret;
+> >> +
+> >> +       dev = core->fw.dev;
+> >> +       if (!dev)
+> >> +               return -EPROBE_DEFER;
+> >> +
+> >> +       iommu_dom = iommu_domain_alloc(&platform_bus_type);
+> >> +       if (!iommu_dom) {
+> >> +               dev_err(dev, "Failed to allocate iommu domain\n");
+> >> +               return -ENOMEM;
+> >> +       }
+> >> +
+> >> +       ret = iommu_attach_device(iommu_dom, dev);
+> >> +       if (ret) {
+> >> +               dev_err(dev, "could not attach device\n");
+> >> +               goto err_attach;
+> >> +       }
+> >
+> > I think like the above belongs more in venus_firmware_init()
+> > (introduced in patch 4/4) than here. There is no reason to
+> > detach/reattach the iommu if we stop the firmware.
+>
+> Consider the case when we want to reload the firmware during error
+> recovery.
+> Boot and shutdown will be needed in such case without the need to
+> populate
+> the firmware device again.
 
-On Monday 20 August 2018 08:01 PM, Tony Lindgren wrote:
-> * Kishon Vijay Abraham I <kishon@ti.com> [180808 06:35]:
->> On Tuesday 05 June 2018 07:35 PM, Rob Herring wrote:
->>> Really need 64-bit addresses and sizes? Use ranges to limit the
->>> address space if possible.
->>
->> We now have address-cells as <1>,
->> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/arch/arm64/boot/dts/ti/k3-am65.dtsi#n49
->>
->> However each PCIe instance has 2 data regions and one of the regions
->> (PCIE0_CORE_CORE_DAT_SLV_PCIE_DAT1/PCIE1_CORE_CORE_DAT_SLV_PCIE_DAT1 specified
->> in the "MAIN Domain Memory Map" table of TRM http://www.ti.com/lit/pdf/spruid7)
->> is above the 32bit region and requires 2 cells to specify the start address.
->> This region is used to access MEM_SPACE of PCIe endpoint when operating in root
->> complex mode and access memory of PCI root complex when operating in endpoint mode.
->>
->> In order to describe this, should we change the address-cells back to <2> or do
->> you suggest any other alternatives?
-> 
-> It's probably best to have the top level cbass interconnect use
-> #size-cells = <2> and then have it's child interconnects have
-> #size-cells = <1> if they don't need ranges above 4GB.
-
-PCIe has a region starting at 0x40_00000000 and size 4GB. We need 2 address
-cells and 2 size cells to describe this no?
-> 
-> BTW, what's the difference between all these three similar PCIE
-> ranges?
-> 
-> PCIE0_CORE_CORE_DAT_SLV_PCIE_CORE 0x0005500000 0x0005600000 1 MB
-> PCIE1_CORE_CORE_DAT_SLV_PCIE_CORE 0x0005600000 0x0005700000 1 MB
-
-This is the register space for the two instances of PCIe controller.
-> 
-> PCIE0_CORE_CORE_DAT_SLV_PCIE_DAT0 0x0010000000 0x0018000000 128 MB
-> PCIE1_CORE_CORE_DAT_SLV_PCIE_DAT0 0x0018000000 0x0020000000 128 MB
-> 
-> PCIE0_CORE_CORE_DAT_SLV_PCIE_DAT1 0x4000000000 0x4100000000 4 GB
-> PCIE1_CORE_CORE_DAT_SLV_PCIE_DAT1 0x4100000000 0x4200000000 4 GB
-
-The above are regions which can be used by CPU/DMA to access the PCIe address
-space. The mapping from the above regions to the PCIe address space will be
-programmed in the PCIe controller.
-
-Thanks
-Kishon
+Is there a need to reattach the iommu domain in case of an error?
