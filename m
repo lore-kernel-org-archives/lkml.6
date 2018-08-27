@@ -2,119 +2,135 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7702CC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 13:51:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CD5BC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 13:55:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35652208B8
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 13:51:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35652208B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 36B27208B8
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 13:55:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Huz8QeIw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36B27208B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727512AbeH0RiT (ORCPT
+        id S1727328AbeH0RmK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 13:38:19 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38762 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726883AbeH0RiS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 13:38:18 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A23D64021702;
-        Mon, 27 Aug 2018 13:51:33 +0000 (UTC)
-Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 73A782026D6B;
-        Mon, 27 Aug 2018 13:51:28 +0000 (UTC)
-Date:   Mon, 27 Aug 2018 15:51:26 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Tony Krowiak <akrowiak@linux.ibm.com>
-Cc:     Halil Pasic <pasic@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        pmorel@linux.ibm.com, Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        frankja@linux.ibm.com
-Subject: Re: [PATCH v9 12/22] s390: vfio-ap: sysfs interfaces to configure
- control domains
-Message-ID: <20180827155126.440f2170.cohuck@redhat.com>
-In-Reply-To: <65cb82b5-85ce-1831-5b2a-719d2cf27be8@linux.ibm.com>
-References: <1534196899-16987-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <1534196899-16987-13-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <20180820162317.08bd7d23.cohuck@redhat.com>
-        <660de00a-c403-28c1-4df4-82a973ab3ad5@linux.ibm.com>
-        <20180821172548.57a6c758.cohuck@redhat.com>
-        <82a391ee-85b1-cdc7-0f9b-d37fd8ba8e47@linux.ibm.com>
-        <a43ef10f-aa91-cb4c-a8aa-cd3ce9cfebf2@linux.ibm.com>
-        <20180822114250.59a250aa.cohuck@redhat.com>
-        <8bc5f207-f913-825c-f9fc-0a2c7fd280aa@linux.ibm.com>
-        <e36abc22-9daf-e0f4-c6b3-7adbb28db4c3@de.ibm.com>
-        <f84dbcc0-f627-be02-9933-3baa953adc09@linux.ibm.com>
-        <219b352b-d5a2-189c-e205-82e7f9ae3d64@de.ibm.com>
-        <dbb74c9c-93ab-ed05-fad4-ea2aa5f2b71e@linux.ibm.com>
-        <9ef5fcb9-02e0-88e3-007c-eedb14e6db80@linux.ibm.com>
-        <20180823122525.02fc4af3.cohuck@redhat.com>
-        <decfe307-4449-2c85-0b7e-6f2fcdb1164f@linux.ibm.com>
-        <20180827103316.4e7fbc10.cohuck@redhat.com>
-        <65cb82b5-85ce-1831-5b2a-719d2cf27be8@linux.ibm.com>
-Organization: Red Hat GmbH
+        Mon, 27 Aug 2018 13:42:10 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:39695 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726931AbeH0RmK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 13:42:10 -0400
+Received: by mail-oi0-f67.google.com with SMTP id c190-v6so27374914oig.6
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 06:55:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=LrMe5qV2FEx7Ovh52zi6bUiFejPilfd6LnGKiNbt5rU=;
+        b=Huz8QeIwCp6ZJ4ZIkxpiuYD3nDb0/CqG9/WFiqY20pGuroVU48lzNnOD36tlixSr5L
+         9Y0IybrYN+tfB/ofouHPTTIMRhVIdzIqRK68dpCkAqGn5FOISP/7UE79Ar2p7iqK0Zxc
+         BkZYofoyjxjfy7NO0UGQlax+H5I0RF32+bGDY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=LrMe5qV2FEx7Ovh52zi6bUiFejPilfd6LnGKiNbt5rU=;
+        b=iXiNTPWpDp5VTWeUyIFC7RGUFnY7W1J4hYjNBVHrCcEAuf3TJFRVKiidE3AY0pisPT
+         8UdN2qUfmE5AH6UjUc/hGkSB1F/9VV+1cI002XOQk5E91ruvu2tlDUEQyUUwoKCdsrkk
+         ptfkxeWLRq49fNDqe8mhG3DkiQ/LGsBMeV1AuS3UTxJPplzMbeZ9WtAwY1Q+5xlMggSb
+         xoE6HsmtVV+NABYPevmOcHr1K6KDbfK/siCv4bqxhrQ54mJP+Q8PBK3VJhzwHQAxW3xe
+         RHS+u+MrKgIUo9dsymwFqxOnwroE574YCL9k1AMPTzP0skaqurAcJoAztoatWT2rrrqc
+         K7+A==
+X-Gm-Message-State: APzg51DhG+TVGOdhGkow39VwAJh0wEOHwVSGjnpBD3JL2n1k44CloBy4
+        7mfaZ2TsBnEl7jYCmsbPoOaP2Q==
+X-Google-Smtp-Source: ANB0VdZRW4zL41bmxnIIlKvBINuZdHTVcqu9f7LtYxnCDteIOSVCzzzFNafwsAlWYwETLZOn1DXwEg==
+X-Received: by 2002:aca:dbc2:: with SMTP id s185-v6mr12811688oig.251.1535378125335;
+        Mon, 27 Aug 2018 06:55:25 -0700 (PDT)
+Received: from localhost (68-248-140-212.lightspeed.austtx.sbcglobal.net. [68.248.140.212])
+        by smtp.gmail.com with ESMTPSA id h186-v6sm25356180oib.55.2018.08.27.06.55.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 27 Aug 2018 06:55:24 -0700 (PDT)
+Date:   Mon, 27 Aug 2018 08:55:24 -0500
+From:   Brian Brooks <brian.brooks@linaro.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     David Miller <davem@davemloft.net>, antoine.tenart@bootlin.com,
+        maxime.chevallier@bootlin.com, ymarkman@marvell.com,
+        stefanc@marvell.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bjorn.topel@intel.com,
+        brian.brooks@arm.com
+Subject: Re: [PATCH] net: mvpp2: avoid bouncing buffers
+Message-ID: <20180827135524.fv4mxkwjn5bv7p5e@di3>
+References: <20180820024730.9147-1-brian.brooks@linaro.org>
+ <20180819.195505.1988137313680465320.davem@davemloft.net>
+ <20180820062326.GA22222@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 27 Aug 2018 13:51:33 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 27 Aug 2018 13:51:33 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180820062326.GA22222@infradead.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 27 Aug 2018 09:47:58 -0400
-Tony Krowiak <akrowiak@linux.ibm.com> wrote:
-
-> On 08/27/2018 04:33 AM, Cornelia Huck wrote:
-> > On Thu, 23 Aug 2018 10:16:59 -0400
-> > Tony Krowiak <akrowiak@linux.ibm.com> wrote:
-> >  
-> >> On 08/23/2018 06:25 AM, Cornelia Huck wrote:  
-> >>> On Wed, 22 Aug 2018 15:16:19 -0400
-> >>> Tony Krowiak <akrowiak@linux.ibm.com> wrote:
-> >>>     
-> >>>> One of the things I suggested in a private conversation with Christian
-> >>>> earlier
-> >>>> today was to provide an additional rw sysfs attribute - a boolean - that
-> >>>> indicates
-> >>>> whether all usage domains should also be control domains. The default
-> >>>> could be
-> >>>> true. This would allow one to configure guests with usage-only domains
-> >>>> as well
-> >>>> as satisfy the convention.  
-> >>> Would this additional attribute then control "add usage domains to the
-> >>> list of control domains automatically", or "don't allow to add a usage
-> >>> domain if it has not already been added as a control domain"?  
-> >> It was just a proposal that wasn't really discussed at all, but this
-> >> attribute would add usage domains to the list of control domains
-> >> automatically if set to one. That would be the default behavior which
-> >> would be turned off by manually setting it to zero.  
-> > If we want to do something like that, having it add the usage domains
-> > automatically sounds like the more workable alternative. What I like
-> > about this is that we make it explicit that we change the masks beyond
-> > what the admin explicitly configured, and provide a knob to turn off
-> > that behaviour.  
+On 08/19 23:23:26, Christoph Hellwig wrote:
+> On Sun, Aug 19, 2018 at 07:55:05PM -0700, David Miller wrote:
+> > From: Brian Brooks <brian.brooks@linaro.org>
+> > Date: Sun, 19 Aug 2018 21:47:30 -0500
+> > 
+> > > @@ -5126,6 +5126,12 @@ static int mvpp2_probe(struct platform_device *pdev)
+> > >  	}
+> > >  
+> > >  	if (priv->hw_version == MVPP22) {
+> > > +		/* Platform code may have set dev->dma_mask to point
+> > > +		 * to dev->coherent_dma_mask, but we want to ensure
+> > > +		 * they take different values due to comment below.
+> > > +		 */
+> > > +		pdev->dev.dma_mask = &priv->dma_mask;
+> > 
+> > The platform code might be doing this exactly because it cannot support
+> > different coherent and streaming DMA masks.
+> > 
+> > Well, in any case, the platform code is doing it for a reason and
+> > overriding this in a "driver" of all places seems totally
+> > inappropriate and at best a layering violation.
+> > 
+> > I would rather you fix this in a way that involves well defined APIs
+> > that set the DMA masks or whatever to the values that you need, rather
+> > than going behind the platform code's back and changing the DMA mask
+> > pointer like this.
 > 
-> So, are you saying I should go ahead and implement this?
+> Agreed.  What platform do you see this issue on?
 
-I'm just saying that it does not sound like a bad idea :)
+This is Armada 8040 SoC with PPv2 net device on chip. MACCHIATObin board.
 
-If you agree that it's a good idea and if others also like it... I'd
-certainly not mind you going ahead :)
+Both DT and ACPI have the following snippet:
+
+	/*
+	 * Set default coherent_dma_mask to 32 bit.  Drivers are expected to
+	 * setup the correct supported mask.
+	 */
+	if (!dev->coherent_dma_mask)
+		dev->coherent_dma_mask = DMA_BIT_MASK(32);
+
+	/*
+	 * Set it to coherent_dma_mask by default if the architecture
+	 * code has not set it.
+	 */
+	if (!dev->dma_mask)
+		dev->dma_mask = &dev->coherent_dma_mask;
+
+Some architectures code setup DMA masks, but it does not seem appropriate
+to add mvpp2 specific code in arch/arm64. The mvpp2 driver appeared to be
+the least invasive place to resolve the limitation of this net device.
+
+Another DMA API could be added to allocate storage for the streaming
+mask to ensure masks can take on separate values when the existing DMA
+APIs are used by the driver to set those values. But, this would be the
+only driver using such API. Would that be how to handle this?
