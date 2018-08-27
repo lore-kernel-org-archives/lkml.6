@@ -2,128 +2,228 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CA68C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:02:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19798C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:03:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0F9B208A5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:02:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0F9B208A5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id BFCE9208A5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:03:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="f80Kz8b1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFCE9208A5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727294AbeH0Xum (ORCPT
+        id S1727405AbeH0Xva (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 19:50:42 -0400
-Received: from mail-pl1-f201.google.com ([209.85.214.201]:54882 "EHLO
-        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726958AbeH0Xum (ORCPT
+        Mon, 27 Aug 2018 19:51:30 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:38500 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726895AbeH0Xv3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 19:50:42 -0400
-Received: by mail-pl1-f201.google.com with SMTP id k17-v6so22496pll.21
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 13:02:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=qOPJ1Lm/VEOOwFL6Aumtpuxb4QZ0lauwOVoD8FNkv2Q=;
-        b=FJ1y9CKw0jyo1IHqNPZj5fbWYUkcni3kPcNSeU43vzzFna0ZkMAUxAnERUfbXR2c3i
-         75uKrcvkrm1qCSqYFc4asI2cz+FhXFUDRuzvEzgudG5Y+QANPw0wvq1wBFfu8yfUYKwn
-         EY8yFYG9ocwMi9BigI/NS3WESesmHkb7LOaQJc3PzllFTnBVwMfbdE2cqgNnK8G+u1Xl
-         vs6XAT12BORNVy/xzRqwsJ6/S10I9INrAvnYFrGPZ1jGQqRXMnkKvGHRklA/58aiFOAL
-         q5m+6PLTR2XEbXcZ4dFqfFjV/qdxruHv5byMRNzilJVJtDSGXsVpgKXkzHu3+sS+Ibh9
-         sTwA==
-X-Gm-Message-State: APzg51DFRLOhmCmHkWHyA+EwEf9wljA1UCVmwkHGTc1v6zmry9P0FGOO
-        QTnkepO088oZiMWFQ/mZSP6AKUFjdmC+yA==
-X-Google-Smtp-Source: ANB0Vdb9ETRlp8dIe/CXq4BS9txPvZ7F5VzhSWTNpLc1LFDt3M+oz2tlTfnwdSKDB3s1g0N7ONhNB8wWcteIZA==
-X-Received: by 2002:a63:d74e:: with SMTP id w14-v6mr80085pgi.105.1535400157357;
- Mon, 27 Aug 2018 13:02:37 -0700 (PDT)
-Date:   Mon, 27 Aug 2018 13:02:15 -0700
-Message-Id: <20180827200215.172838-1-seobrien@chromium.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.19.0.rc0.228.g281dcd1b4d0-goog
-Subject: [PATCH] [v2] HID: add support for Apple Magic Keyboards
-From:   "Sean O'Brien" <seobrien@chromium.org>
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Dmitry Torokhov <dtor@chromium.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 27 Aug 2018 19:51:29 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7RJwuqC189051;
+        Mon, 27 Aug 2018 20:03:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=GeSVyHWOAbtoG500bsb3xHIupwbr3G+RyzdYUgZtA2M=;
+ b=f80Kz8b1q/zqQCiYHeV0JdnPuagdqji3YGAyUGsLpHQmbF2ShMAcJwazR1A4EhQlWUD6
+ h1+++ndcb+5qyRQ4jWGtjJDv3mJNyDfFg+y3CpcrnkW4YCr4SG7oHdPVJIcsnME3Ti2U
+ gIKxSu8816ycu223H9F8ZBE+67q9QYqfL2uSrTbl5l3SXq2DzgaGYeYmF8YYRF8yEo9R
+ p7j6cttTNDzyGqHZ+rNupARJu+CjqTCrxvZpDOkGk2DTnmDyuBe1gLsjZj+qJzjrUp4h
+ piAiMzjkuK2VLhSBM5NXxtMu5M/64gkMdWgln15PhDn9ovsdX1rPx778yV2ccdQTlFlI xw== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2120.oracle.com with ESMTP id 2m2y2p82ag-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 27 Aug 2018 20:03:13 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7RK3CWV014365
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 27 Aug 2018 20:03:12 GMT
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7RK3ADb017766;
+        Mon, 27 Aug 2018 20:03:11 GMT
+Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 27 Aug 2018 13:03:10 -0700
+Subject: Re: [PATCH 1/3] xen/gntdev: fix up blockable calls to
+ mn_invl_range_start
+To:     Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>, Juergen Gross <jgross@suse.com>
+References: <20180827112623.8992-1-mhocko@kernel.org>
+ <20180827112623.8992-2-mhocko@kernel.org>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <8adb816b-5d2c-4be1-379c-e4fdc5668e68@oracle.com>
+Date:   Mon, 27 Aug 2018 16:04:33 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180827112623.8992-2-mhocko@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8998 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808270205
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-USB device
-	Vendor 05ac (Apple)
-	Device 026c (Magic Keyboard with Numeric Keypad)
+On 08/27/2018 07:26 AM, Michal Hocko wrote:
+> From: Michal Hocko <mhocko@suse.com>
+>
+> 93065ac753e4 ("mm, oom: distinguish blockable mode for mmu notifiers")
+> has introduced blockable parameter to all mmu_notifiers and the notifier
+> has to back off when called in !blockable case and it could block down
+> the road.
+>
+> The above commit implemented that for mn_invl_range_start but both
+> in_range checks are done unconditionally regardless of the blockable
+> mode and as such they would fail all the time for regular calls.
+> Fix this by checking blockable parameter as well.
+>
+> Once we are there we can remove the stale TODO. The lock has to be
+> sleepable because we wait for completion down in gnttab_unmap_refs_sync.
+>
+> Changes since v1
+> - pull in_range check into mn_invl_range_start - Juergen
+>
+> Fixes: 93065ac753e4 ("mm, oom: distinguish blockable mode for mmu notifiers")
+> Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+> Cc: Juergen Gross <jgross@suse.com>
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
 
-Bluetooth devices
-	Vendor 004c (Apple)
-	Device 0267 (Magic Keyboard)
-	Device 026c (Magic Keyboard with Numeric Keypad)
 
-Support already exists for the Magic Keyboard over USB connection.
-Add support for the Magic Keyboard over Bluetooth connection, and for
-the Magic Keyboard with Numeric Keypad over Bluetooth and USB
-connection.
+LGTM, although in_range() has a single call site so we really don't need it.
 
-Signed-off-by: Sean O'Brien <seobrien@chromium.org>
----
+I'll wait for Juergen to bless this since he asked for this approach.
 
- drivers/hid/hid-apple.c | 9 ++++++++-
- drivers/hid/hid-ids.h   | 2 ++
- 2 files changed, 10 insertions(+), 1 deletion(-)
+-boris
 
-diff --git a/drivers/hid/hid-apple.c b/drivers/hid/hid-apple.c
-index 25b7bd56ae11..1cb41992aaa1 100644
---- a/drivers/hid/hid-apple.c
-+++ b/drivers/hid/hid-apple.c
-@@ -335,7 +335,8 @@ static int apple_input_mapping(struct hid_device *hdev, struct hid_input *hi,
- 		struct hid_field *field, struct hid_usage *usage,
- 		unsigned long **bit, int *max)
- {
--	if (usage->hid == (HID_UP_CUSTOM | 0x0003)) {
-+	if (usage->hid == (HID_UP_CUSTOM | 0x0003) ||
-+			usage->hid == (HID_UP_MSVENDOR | 0x0003)) {
- 		/* The fn key on Apple USB keyboards */
- 		set_bit(EV_REP, hi->input->evbit);
- 		hid_map_usage_clear(hi, usage, bit, max, EV_KEY, KEY_FN);
-@@ -472,6 +473,12 @@ static const struct hid_device_id apple_devices[] = {
- 		.driver_data = APPLE_NUMLOCK_EMULATION | APPLE_HAS_FN },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_ANSI),
- 		.driver_data = APPLE_HAS_FN },
-+	{ HID_BLUETOOTH_DEVICE(BT_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_ANSI),
-+		.driver_data = APPLE_HAS_FN },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_ANSI),
-+		.driver_data = APPLE_HAS_FN },
-+	{ HID_BLUETOOTH_DEVICE(BT_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_ANSI),
-+		.driver_data = APPLE_HAS_FN },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_WELLSPRING_ANSI),
- 		.driver_data = APPLE_HAS_FN },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_WELLSPRING_ISO),
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index 79bdf0c7e351..5dbe3fb82690 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -88,6 +88,7 @@
- #define USB_DEVICE_ID_ANTON_TOUCH_PAD	0x3101
- 
- #define USB_VENDOR_ID_APPLE		0x05ac
-+#define BT_VENDOR_ID_APPLE		0x004c
- #define USB_DEVICE_ID_APPLE_MIGHTYMOUSE	0x0304
- #define USB_DEVICE_ID_APPLE_MAGICMOUSE	0x030d
- #define USB_DEVICE_ID_APPLE_MAGICTRACKPAD	0x030e
-@@ -157,6 +158,7 @@
- #define USB_DEVICE_ID_APPLE_ALU_WIRELESS_2011_ISO   0x0256
- #define USB_DEVICE_ID_APPLE_ALU_WIRELESS_2011_JIS   0x0257
- #define USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_ANSI   0x0267
-+#define USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_ANSI   0x026c
- #define USB_DEVICE_ID_APPLE_WELLSPRING8_ANSI	0x0290
- #define USB_DEVICE_ID_APPLE_WELLSPRING8_ISO	0x0291
- #define USB_DEVICE_ID_APPLE_WELLSPRING8_JIS	0x0292
--- 
-2.19.0.rc0.228.g281dcd1b4d0-goog
+
+> ---
+>  drivers/xen/gntdev.c | 26 +++++++++++++++-----------
+>  1 file changed, 15 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
+> index 57390c7666e5..b0b02a501167 100644
+> --- a/drivers/xen/gntdev.c
+> +++ b/drivers/xen/gntdev.c
+> @@ -492,12 +492,19 @@ static bool in_range(struct gntdev_grant_map *map,
+>  	return true;
+>  }
+>  
+> -static void unmap_if_in_range(struct gntdev_grant_map *map,
+> -			      unsigned long start, unsigned long end)
+> +static int unmap_if_in_range(struct gntdev_grant_map *map,
+> +			      unsigned long start, unsigned long end,
+> +			      bool blockable)
+>  {
+>  	unsigned long mstart, mend;
+>  	int err;
+>  
+> +	if (!in_range(map, start, end))
+> +		return 0;
+> +
+> +	if (!blockable)
+> +		return -EAGAIN;
+> +
+>  	mstart = max(start, map->vma->vm_start);
+>  	mend   = min(end,   map->vma->vm_end);
+>  	pr_debug("map %d+%d (%lx %lx), range %lx %lx, mrange %lx %lx\n",
+> @@ -508,6 +515,8 @@ static void unmap_if_in_range(struct gntdev_grant_map *map,
+>  				(mstart - map->vma->vm_start) >> PAGE_SHIFT,
+>  				(mend - mstart) >> PAGE_SHIFT);
+>  	WARN_ON(err);
+> +
+> +	return 0;
+>  }
+>  
+>  static int mn_invl_range_start(struct mmu_notifier *mn,
+> @@ -519,25 +528,20 @@ static int mn_invl_range_start(struct mmu_notifier *mn,
+>  	struct gntdev_grant_map *map;
+>  	int ret = 0;
+>  
+> -	/* TODO do we really need a mutex here? */
+>  	if (blockable)
+>  		mutex_lock(&priv->lock);
+>  	else if (!mutex_trylock(&priv->lock))
+>  		return -EAGAIN;
+>  
+>  	list_for_each_entry(map, &priv->maps, next) {
+> -		if (in_range(map, start, end)) {
+> -			ret = -EAGAIN;
+> +		ret = unmap_if_in_range(map, start, end, blockable);
+> +		if (ret)
+>  			goto out_unlock;
+> -		}
+> -		unmap_if_in_range(map, start, end);
+>  	}
+>  	list_for_each_entry(map, &priv->freeable_maps, next) {
+> -		if (in_range(map, start, end)) {
+> -			ret = -EAGAIN;
+> +		ret = unmap_if_in_range(map, start, end, blockable);
+> +		if (ret)
+>  			goto out_unlock;
+> -		}
+> -		unmap_if_in_range(map, start, end);
+>  	}
+>  
+>  out_unlock:
 
