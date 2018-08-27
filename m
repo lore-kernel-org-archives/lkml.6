@@ -2,135 +2,295 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 388C4C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 10:57:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D417C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 11:01:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E39F1208B9
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 10:57:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBBB1208B9
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 11:01:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="EbP6k13J";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="l/2LqoKd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E39F1208B9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UMTblX/X"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBBB1208B9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727346AbeH0Onx (ORCPT
+        id S1727045AbeH0OrX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 10:43:53 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:40136 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726785AbeH0Onx (ORCPT
+        Mon, 27 Aug 2018 10:47:23 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:60756 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726785AbeH0OrW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 10:43:53 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 8A8DC60B1E; Mon, 27 Aug 2018 10:57:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535367462;
-        bh=zqhjyYXYCkGxUuBTOWuU20CG4QwyI9M1vCIVXijAu+s=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EbP6k13JiCgxBB7Wo2Y4Kuv4b6a8s0XrxjLzatH4NCrPptInNBOxAPxJdwmO2sP6E
-         JuMfBicb5zZeI8PzjhyZcSFO4FiPlufpUc8sTmtK3nifTEg2jiRqvPZXL+bWo4Mpcz
-         zeetQjHgqmhSPd7eK0uNRDIn16WuYAGy1fGx+j20=
-Received: from blr-ubuntu-41.ap.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1EAC5601D1;
-        Mon, 27 Aug 2018 10:57:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535367453;
-        bh=zqhjyYXYCkGxUuBTOWuU20CG4QwyI9M1vCIVXijAu+s=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l/2LqoKdUPVYnpg8y8vWMAdGS4ZSlnYf09nT+7ceBiS+BLySHhcldPRWQTK8O2hzh
-         dFUnc2qKw/guEbaNILPJr3hTSnApQ76rrvU4qJJp0wb8YZmO+tIdSCBWN0nJxqV/9M
-         NXb/NcXt7YfC4itaGQ216oXsnuVuFs5pXXQodXf8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1EAC5601D1
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-To:     joro@8bytes.org, robh+dt@kernel.org, robin.murphy@arm.com,
-        will.deacon@arm.com, iommu@lists.linux-foundation.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        freedreno@lists.freedesktop.org
-Cc:     alex.williamson@redhat.com, mark.rutland@arm.com,
-        rjw@rjwysocki.net, robdclark@gmail.com, andy.gross@linaro.org,
-        linux-pm@vger.kernel.org, sboyd@kernel.org, tfiga@chromium.org,
-        jcrouse@codeaurora.org, sricharan@codeaurora.org,
-        m.szyprowski@samsung.com, architt@codeaurora.org,
-        linux-arm-msm@vger.kernel.org,
-        Vivek Gautam <vivek.gautam@codeaurora.org>
-Subject: [Patch v15 5/5] iommu/arm-smmu: Add support for qcom,smmu-v2 variant
-Date:   Mon, 27 Aug 2018 16:25:51 +0530
-Message-Id: <20180827105551.16346-6-vivek.gautam@codeaurora.org>
-X-Mailer: git-send-email 2.16.1.72.g5be1f00a9a70
-In-Reply-To: <20180827105551.16346-1-vivek.gautam@codeaurora.org>
-References: <20180827105551.16346-1-vivek.gautam@codeaurora.org>
+        Mon, 27 Aug 2018 10:47:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=k+qmIb1ldSHZQHRSC79FGezEWMb2cDZaSQdLfYoANwg=; b=UMTblX/XLK25MOtju3ZGNPRrZ
+        Ngq3Byi3NmtAjrDvHzCZBbZ35iWvgyrJYNhdc+3a7Yx9GeYlArH3exR7uz1YO8oI38ug0XXbp0ut9
+        Ga+K9rHQrgJm4rpccnZ11ap+AjAdvZxQ1Eb5VYEYu0Hbo0S/KJcmF34RMLAGNQzz4dXu1vse+aAhC
+        /dj0IlbugxL73wSl+0lPccw8F3zNVD4at16ifRISDN8lwfl98bRE51iPKAvGyZ1dwiZY+246kRdyk
+        4vSnmXD2BN0qFboPLFh7jnQJpbHbZwmIbQ6Qtp/O0aZ9OOS1b9uruWsUsvSJep+KslOPyCydzc0nu
+        rcFsck+JQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fuFFt-0001d2-Ob; Mon, 27 Aug 2018 11:00:22 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id CEA2F20321BBD; Mon, 27 Aug 2018 13:00:17 +0200 (CEST)
+Date:   Mon, 27 Aug 2018 13:00:17 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Nicholas Piggin <npiggin@gmail.com>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Benjamin Herrenschmidt <benh@au1.ibm.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Rik van Riel <riel@surriel.com>,
+        Jann Horn <jannh@google.com>,
+        Adin Scannell <ascannell@google.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        David Miller <davem@davemloft.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>, jejb@parisc-linux.org,
+        vgupta@synopsys.com
+Subject: Re: [PATCH 3/4] mm/tlb, x86/mm: Support invalidating TLB caches for
+ RCU_TABLE_FREE
+Message-ID: <20180827110017.GO24142@hirez.programming.kicks-ass.net>
+References: <20180823134525.5f12b0d3@roar.ozlabs.ibm.com>
+ <CA+55aFxneZTFxxxAjLZmj92VUJg6z7hERxJ2cHoth-GC0RuELw@mail.gmail.com>
+ <776104d4c8e4fc680004d69e3a4c2594b638b6d1.camel@au1.ibm.com>
+ <CA+55aFzM77G9-Q6LboPLJ=5gHma66ZQKiMGCMqXoKABirdF98w@mail.gmail.com>
+ <20180823133958.GA1496@brain-police>
+ <20180824084717.GK24124@hirez.programming.kicks-ass.net>
+ <20180824113214.GK24142@hirez.programming.kicks-ass.net>
+ <20180824113953.GL24142@hirez.programming.kicks-ass.net>
+ <20180827150008.13bce08f@roar.ozlabs.ibm.com>
+ <20180827074701.GW24124@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180827074701.GW24124@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-qcom,smmu-v2 is an arm,smmu-v2 implementation with specific
-clock and power requirements.
-On msm8996, multiple cores, viz. mdss, video, etc. use this
-smmu. On sdm845, this smmu is used with gpu.
-Add bindings for the same.
+On Mon, Aug 27, 2018 at 09:47:01AM +0200, Peter Zijlstra wrote:
+> And there's only like 4 architectures that still have a custom
+> mmu_gather:
+> 
+>   - sh
+>   - arm
+>   - ia64
+>   - s390
+> 
+> sh is trivial, arm seems doable, with a bit of luck we can do 'rm -rf
+> arch/ia64' leaving us with s390.
 
-Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Tomasz Figa <tfiga@chromium.org>
-Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+The one obvious thing SH and ARM want is a sensible default for
+tlb_start_vma(). (also: https://lkml.org/lkml/2004/1/15/6 )
+
+The below make tlb_start_vma() default to flush_cache_range(), which
+should be right and sufficient. The only exceptions that I found where
+(oddly):
+
+  - m68k-mmu
+  - sparc64
+  - unicore
+
+Those architectures appear to have a non-NOP flush_cache_range(), but
+their current tlb_start_vma() does not call it.
+
+Furthermore, I think tlb_flush() is broken on arc and parisc; in
+particular they don't appear to have any TLB invalidate for the
+shift_arg_pages() case, where we do not call tlb_*_vma() and fullmm=0.
+
+Possibly shift_arg_pages() should be fixed instead.
+
+Some archs (nds32,sparc32) avoid this by having an unconditional
+flush_tlb_mm() in tlb_flush(), which seems somewhat suboptimal if you
+have flush_tlb_range().  TLB_FLUSH_VMA() might be an option, however
+hideous it is.
+
 ---
 
-Changes since v14:
- - Moved out dt-bindings change to separate patch.
-
- drivers/iommu/arm-smmu.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index b5e7f72d418c..c0177ea32678 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -119,6 +119,7 @@ enum arm_smmu_implementation {
- 	GENERIC_SMMU,
- 	ARM_MMU500,
- 	CAVIUM_SMMUV2,
-+	QCOM_SMMUV2,
- };
+diff --git a/arch/arc/include/asm/tlb.h b/arch/arc/include/asm/tlb.h
+index a9db5f62aaf3..7af2b373ebe7 100644
+--- a/arch/arc/include/asm/tlb.h
++++ b/arch/arc/include/asm/tlb.h
+@@ -23,15 +23,6 @@ do {						\
+  *
+  * Note, read http://lkml.org/lkml/2004/1/15/6
+  */
+-#ifndef CONFIG_ARC_CACHE_VIPT_ALIASING
+-#define tlb_start_vma(tlb, vma)
+-#else
+-#define tlb_start_vma(tlb, vma)						\
+-do {									\
+-	if (!tlb->fullmm)						\
+-		flush_cache_range(vma, vma->vm_start, vma->vm_end);	\
+-} while(0)
+-#endif
  
- struct arm_smmu_s2cr {
-@@ -1970,6 +1971,17 @@ ARM_SMMU_MATCH_DATA(arm_mmu401, ARM_SMMU_V1_64K, GENERIC_SMMU);
- ARM_SMMU_MATCH_DATA(arm_mmu500, ARM_SMMU_V2, ARM_MMU500);
- ARM_SMMU_MATCH_DATA(cavium_smmuv2, ARM_SMMU_V2, CAVIUM_SMMUV2);
+ #define tlb_end_vma(tlb, vma)						\
+ do {									\
+diff --git a/arch/mips/include/asm/tlb.h b/arch/mips/include/asm/tlb.h
+index b6823b9e94da..9d04b4649692 100644
+--- a/arch/mips/include/asm/tlb.h
++++ b/arch/mips/include/asm/tlb.h
+@@ -5,16 +5,6 @@
+ #include <asm/cpu-features.h>
+ #include <asm/mipsregs.h>
  
-+static const char * const qcom_smmuv2_clks[] = {
-+	"bus", "iface",
-+};
-+
-+static const struct arm_smmu_match_data qcom_smmuv2 = {
-+	.version = ARM_SMMU_V2,
-+	.model = QCOM_SMMUV2,
-+	.clks = qcom_smmuv2_clks,
-+	.num_clks = ARRAY_SIZE(qcom_smmuv2_clks),
-+};
-+
- static const struct of_device_id arm_smmu_of_match[] = {
- 	{ .compatible = "arm,smmu-v1", .data = &smmu_generic_v1 },
- 	{ .compatible = "arm,smmu-v2", .data = &smmu_generic_v2 },
-@@ -1977,6 +1989,7 @@ static const struct of_device_id arm_smmu_of_match[] = {
- 	{ .compatible = "arm,mmu-401", .data = &arm_mmu401 },
- 	{ .compatible = "arm,mmu-500", .data = &arm_mmu500 },
- 	{ .compatible = "cavium,smmu-v2", .data = &cavium_smmuv2 },
-+	{ .compatible = "qcom,smmu-v2", .data = &qcom_smmuv2 },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, arm_smmu_of_match);
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
-
+-/*
+- * MIPS doesn't need any special per-pte or per-vma handling, except
+- * we need to flush cache for area to be unmapped.
+- */
+-#define tlb_start_vma(tlb, vma)					\
+-	do {							\
+-		if (!tlb->fullmm)				\
+-			flush_cache_range(vma, vma->vm_start, vma->vm_end); \
+-	}  while (0)
+-#define tlb_end_vma(tlb, vma) do { } while (0)
+ #define __tlb_remove_tlb_entry(tlb, ptep, address) do { } while (0)
+ 
+ /*
+diff --git a/arch/nds32/include/asm/tlb.h b/arch/nds32/include/asm/tlb.h
+index b35ae5eae3ab..0bf7c9482381 100644
+--- a/arch/nds32/include/asm/tlb.h
++++ b/arch/nds32/include/asm/tlb.h
+@@ -4,12 +4,6 @@
+ #ifndef __ASMNDS32_TLB_H
+ #define __ASMNDS32_TLB_H
+ 
+-#define tlb_start_vma(tlb,vma)						\
+-	do {								\
+-		if (!tlb->fullmm)					\
+-			flush_cache_range(vma, vma->vm_start, vma->vm_end); \
+-	} while (0)
+-
+ #define tlb_end_vma(tlb,vma)				\
+ 	do { 						\
+ 		if(!tlb->fullmm)			\
+diff --git a/arch/nios2/include/asm/tlb.h b/arch/nios2/include/asm/tlb.h
+index d3bc648e08b5..9b518c6d0f62 100644
+--- a/arch/nios2/include/asm/tlb.h
++++ b/arch/nios2/include/asm/tlb.h
+@@ -15,16 +15,6 @@
+ 
+ extern void set_mmu_pid(unsigned long pid);
+ 
+-/*
+- * NiosII doesn't need any special per-pte or per-vma handling, except
+- * we need to flush cache for the area to be unmapped.
+- */
+-#define tlb_start_vma(tlb, vma)					\
+-	do {							\
+-		if (!tlb->fullmm)				\
+-			flush_cache_range(vma, vma->vm_start, vma->vm_end); \
+-	}  while (0)
+-
+ #define tlb_end_vma(tlb, vma)	do { } while (0)
+ #define __tlb_remove_tlb_entry(tlb, ptep, address)	do { } while (0)
+ 
+diff --git a/arch/parisc/include/asm/tlb.h b/arch/parisc/include/asm/tlb.h
+index 0c881e74d8a6..b1984f9cd3af 100644
+--- a/arch/parisc/include/asm/tlb.h
++++ b/arch/parisc/include/asm/tlb.h
+@@ -7,11 +7,6 @@ do {	if ((tlb)->fullmm)		\
+ 		flush_tlb_mm((tlb)->mm);\
+ } while (0)
+ 
+-#define tlb_start_vma(tlb, vma) \
+-do {	if (!(tlb)->fullmm)	\
+-		flush_cache_range(vma, vma->vm_start, vma->vm_end); \
+-} while (0)
+-
+ #define tlb_end_vma(tlb, vma)	\
+ do {	if (!(tlb)->fullmm)	\
+ 		flush_tlb_range(vma, vma->vm_start, vma->vm_end); \
+diff --git a/arch/sparc/include/asm/tlb_32.h b/arch/sparc/include/asm/tlb_32.h
+index 343cea19e573..68d817273de8 100644
+--- a/arch/sparc/include/asm/tlb_32.h
++++ b/arch/sparc/include/asm/tlb_32.h
+@@ -2,11 +2,6 @@
+ #ifndef _SPARC_TLB_H
+ #define _SPARC_TLB_H
+ 
+-#define tlb_start_vma(tlb, vma) \
+-do {								\
+-	flush_cache_range(vma, vma->vm_start, vma->vm_end);	\
+-} while (0)
+-
+ #define tlb_end_vma(tlb, vma) \
+ do {								\
+ 	flush_tlb_range(vma, vma->vm_start, vma->vm_end);	\
+diff --git a/arch/xtensa/include/asm/tlb.h b/arch/xtensa/include/asm/tlb.h
+index 0d766f9c1083..1a93e350382e 100644
+--- a/arch/xtensa/include/asm/tlb.h
++++ b/arch/xtensa/include/asm/tlb.h
+@@ -16,19 +16,10 @@
+ 
+ #if (DCACHE_WAY_SIZE <= PAGE_SIZE)
+ 
+-/* Note, read http://lkml.org/lkml/2004/1/15/6 */
+-
+-# define tlb_start_vma(tlb,vma)			do { } while (0)
+ # define tlb_end_vma(tlb,vma)			do { } while (0)
+ 
+ #else
+ 
+-# define tlb_start_vma(tlb, vma)					      \
+-	do {								      \
+-		if (!tlb->fullmm)					      \
+-			flush_cache_range(vma, vma->vm_start, vma->vm_end);   \
+-	} while(0)
+-
+ # define tlb_end_vma(tlb, vma)						      \
+ 	do {								      \
+ 		if (!tlb->fullmm)					      \
+diff --git a/include/asm-generic/tlb.h b/include/asm-generic/tlb.h
+index e811ef7b8350..1d037fd5bb7a 100644
+--- a/include/asm-generic/tlb.h
++++ b/include/asm-generic/tlb.h
+@@ -181,19 +181,21 @@ static inline void tlb_remove_check_page_size_change(struct mmu_gather *tlb,
+  * the vmas are adjusted to only cover the region to be torn down.
+  */
+ #ifndef tlb_start_vma
+-#define tlb_start_vma(tlb, vma) do { } while (0)
++#define tlb_start_vma(tlb, vma)						\
++do {									\
++	if (!tlb->fullmm)						\
++		flush_cache_range(vma, vma->vm_start, vma->vm_end);	\
++} while (0)
+ #endif
+ 
+-#define __tlb_end_vma(tlb, vma)					\
+-	do {							\
+-		if (!tlb->fullmm && tlb->end) {			\
+-			tlb_flush(tlb);				\
+-			__tlb_reset_range(tlb);			\
+-		}						\
+-	} while (0)
+-
+ #ifndef tlb_end_vma
+-#define tlb_end_vma	__tlb_end_vma
++#define tlb_end_vma(tlb, vma)						\
++	do {								\
++		if (!tlb->fullmm && tlb->end) {				\
++			tlb_flush(tlb);					\
++			__tlb_reset_range(tlb);				\
++		}							\
++	} while (0)
+ #endif
+ 
+ #ifndef __tlb_remove_tlb_entry
