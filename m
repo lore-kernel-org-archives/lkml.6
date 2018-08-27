@@ -6,52 +6,58 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45C59C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 15:46:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63908C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 15:48:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00AB2208B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 15:46:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08FD8208B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 15:48:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MI+1Cx6w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00AB2208B7
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OvSEFes3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08FD8208B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727218AbeH0Tdv (ORCPT
+        id S1727251AbeH0Tf5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 15:33:51 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56632 "EHLO
+        Mon, 27 Aug 2018 15:35:57 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56804 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727026AbeH0Tdv (ORCPT
+        with ESMTP id S1727065AbeH0Tf5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 15:33:51 -0400
+        Mon, 27 Aug 2018 15:35:57 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=iCSgrku7GDEzBGEGt4+edCgv0+exeZofv0v+E1v0fxU=; b=MI+1Cx6wXFRLoOz+r6LtItZbU
-        V75rqeaQA6W3348YPNQOVs+vZktMs2ElOpqfm1nNeeIAJPBzW0fnKeYjqhat2JxtVV/A2Df/ljb7k
-        1uH687CFbQ1IOkT8UNVMbZcNXQVzbD6SlyDODA0sOMI4UO4ZU/v4xA8LnTbkWrCpbYs9E+NAdQdT9
-        AYd2nYpP8pA0++RM0xeNN7uyH+T3qg76l4PZ4KswehmhFK2no0omYbwjtqqB0PK0I0IOm5AC9yEmC
-        oBQaK9bA12qx9A+D6gYLgfUa49HZJhmWrf5xBYg+i3NHBUF6E+USLmuvBp/WgG4PG58OsXJ1fzXV+
-        qoQMdyULA==;
+         bh=uhSfLm9Yl5QGeLGzANiItpcn+o00tIdXF7yPm+JhtTY=; b=OvSEFes3qqkfQuy3eAtOXWBs3
+        X7mDmX3nowzyrtEt7T+MBMI9Z7NcQ5f8t3I2SkcqCGrpJkfQGYJhgNBJ06XxwUezo3VFTxstX4V2j
+        jsVCk6wEjsftz5vY2yhoYOniaNqDG5AY215C+eG3skHF5vWYI3cQJAk69KIdetLgdXGakwyCW36sV
+        p39m+wBwX2gjF1KcC1g4kTjFHPABhO0J2ucIth57TPPmAA+DfyMz5NW8ErOVUzzZNE5+kMnPm9all
+        8vR+LBS6hPCr2p5dQuYww5Z4PK1CbCRbEUnYWY9daa5jK6LFsl0yX0LxbE/8EDDapVwQsqJPiF0ea
+        wIq/y86Rg==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fuJiz-0006iE-Bs; Mon, 27 Aug 2018 15:46:41 +0000
-Date:   Mon, 27 Aug 2018 08:46:41 -0700
+        id 1fuJkx-0006ra-L9; Mon, 27 Aug 2018 15:48:43 +0000
+Date:   Mon, 27 Aug 2018 08:48:43 -0700
 From:   Christoph Hellwig <hch@infradead.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Linux 4.19-rc1
-Message-ID: <20180827154641.GA17201@infradead.org>
-References: <CA+55aFw9mxNPX6OtOp-aoUMdXSg=gBkQudGGamo__sh_ts_LdQ@mail.gmail.com>
- <20180827134459.GA16094@roeck-us.net>
+To:     Brian Brooks <brian.brooks@linaro.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        David Miller <davem@davemloft.net>, antoine.tenart@bootlin.com,
+        maxime.chevallier@bootlin.com, ymarkman@marvell.com,
+        stefanc@marvell.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bjorn.topel@intel.com,
+        brian.brooks@arm.com
+Subject: Re: [PATCH] net: mvpp2: avoid bouncing buffers
+Message-ID: <20180827154843.GA25821@infradead.org>
+References: <20180820024730.9147-1-brian.brooks@linaro.org>
+ <20180819.195505.1988137313680465320.davem@davemloft.net>
+ <20180820062326.GA22222@infradead.org>
+ <20180827135524.fv4mxkwjn5bv7p5e@di3>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180827134459.GA16094@roeck-us.net>
+In-Reply-To: <20180827135524.fv4mxkwjn5bv7p5e@di3>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,27 +65,13 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> sparc:
-> 
-> WARNING: CPU: 0 PID: 1 at ./include/linux/dma-mapping.h:516 esp_sbus_probe+0x408/0x6e8
-> WARNING: CPU: 0 PID: 1 at ./include/linux/dma-mapping.h:516 sparc_lance_probe_one+0x428/0x4f
-> 
-> Missing initialization of coherent_dma_mask in the respective drivers.
-> 
-> ---
-> Each platform driver instantiated through a devicetree node now generates
-> the following warning:
-> 
-> esp ffd38e00: DMA mask not set
-> 
-> It isn't a traceback so it may fly under the radar. There is nothing the
-> drivers can do about it; the message is generated by the core before the
-> driver probe function is called. No idea what a correct fix might be.
+WE should basically never have dev->dma_mask = &dev->coherent_dma_mask,
+so until that is the case you are doctoring around the symptoms and
+not the problem.
 
-Both of these should probably be fixed by something like the patch
-below:
+Does the patch below help your case?
 
----
+----
 From 6294e0e330851ee06e66ab85b348f1d92d375d7a Mon Sep 17 00:00:00 2001
 From: Christoph Hellwig <hch@lst.de>
 Date: Mon, 27 Aug 2018 17:23:24 +0200
