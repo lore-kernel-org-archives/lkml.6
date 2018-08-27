@@ -2,167 +2,209 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97287C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:50:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C39D9C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:54:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50C0A208B8
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:50:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="jWVi/olm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50C0A208B8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	by mail.kernel.org (Postfix) with ESMTP id 6289F208B4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:54:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6289F208B4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727433AbeH0Xij (ORCPT
+        id S1727218AbeH0Xms (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 19:38:39 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:43130 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727218AbeH0Xih (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 19:38:37 -0400
-Received: by mail-pl1-f195.google.com with SMTP id x6-v6so52390plv.10
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 12:50:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YTTmwKLGeR4XonCav68BtUxFcLBZiwhISDalkn2irs4=;
-        b=jWVi/olmzo98/rW+l+fvlskDpT60QRfE/oFfiVcSNS3fGr6I/65wHNBnagCuoP1YWn
-         IEoMGh5FFsO55CYkpvz+8AEnCSNMvEtzMy1gL67oVOh9Bm71QD1GqwytKkQDKs7oDBCc
-         UfILxv9+Q1SXuHNbqKdJJiYoUsMvSzfuYKFGea5+b3x+y2DKfuTsoLxz6bOaFUvEY45k
-         CDQLnzweX6Riw1gunEsUJUqmFk63zoMN5ZyDqWe7a+4LLC0MtWeGiRro6WPUqEVCZziU
-         fkKKOy/p2/RNqzwMa2Q31ELG9yD/T1bzd0nb79O6DUHtyEdaB+ce+Hfa6wy78NDQ62rO
-         VErw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=YTTmwKLGeR4XonCav68BtUxFcLBZiwhISDalkn2irs4=;
-        b=sFcAZdzwRn1BEk6IKqS8EdIf5PoixtGScaYSgEU+gOniBSsTY1PLH5jzTbQBjmEK/J
-         ZCDLg5jC+C2r1lUngT5jRvTbyM9uXfnzdVFWyME0n6k/Fju9nZh0xX9sX7cw5ERAbp2v
-         Z92/0Yi7i+upluXhWZcGoR9FyRab99W50vHiuJg5zFfMNqZDyLmC3O2sZT5QrXOoV0BB
-         YN3uhS6kbdZRhsm3rV5cSOO/nidSmwfopM9UJJRlr2siUK0OzcjciwIyg2BAeROa7QrR
-         b7pL5gsubp7kPJplX3mPqWh/mpalK/gD9WGg4C0OhWzSSQdRrfzjtU30czrKK5J8HuCj
-         ASvg==
-X-Gm-Message-State: APzg51AMktTic9xw087vxEGGddQqaenU2pcK+ugBkGaZKxG8Xm/nsj0H
-        mKp4yjt8EFuNaCAe1FxzoEvHIDcxRy4=
-X-Google-Smtp-Source: ANB0VdarmudXOh6lAkGLYQAzK0lf2o3z1LP8TUHEvibQqq5jR5wzXxAdUlXJIoR3KTYtqlbdYim1Uw==
-X-Received: by 2002:a17:902:820a:: with SMTP id x10-v6mr14436645pln.261.1535399435311;
-        Mon, 27 Aug 2018 12:50:35 -0700 (PDT)
-Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id 3-v6sm166133pfq.10.2018.08.27.12.50.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 Aug 2018 12:50:34 -0700 (PDT)
-Date:   Mon, 27 Aug 2018 12:50:34 -0700 (PDT)
-X-Google-Original-Date: Mon, 27 Aug 2018 12:49:01 PDT (-0700)
-Subject:     Re: [PATCH v2 01/17] asm: simd context helper API
-In-Reply-To: <20180824213849.23647-2-Jason@zx2c4.com>
-CC:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        davem@davemloft.net, Jason@zx2c4.com, luto@kernel.org,
-        Greg KH <gregkh@linuxfoundation.org>, sneves@dei.uc.pt,
-        linux-arch@vger.kernel.org
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     Jason@zx2c4.com
-Message-ID: <mhng-7989f094-cc42-4d36-9db5-a6e6a7747048@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Mon, 27 Aug 2018 19:42:48 -0400
+Received: from mga04.intel.com ([192.55.52.120]:7054 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726826AbeH0Xmr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 19:42:47 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2018 12:54:44 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,296,1531810800"; 
+   d="scan'208";a="252349492"
+Received: from ray.jf.intel.com (HELO [10.54.74.168]) ([10.54.74.168])
+  by orsmga005.jf.intel.com with ESMTP; 27 Aug 2018 12:53:59 -0700
+Subject: Re: [PATCH v13 06/13] x86/sgx: Detect Intel SGX
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
+        platform-driver-x86@vger.kernel.org
+References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
+ <20180827185507.17087-7-jarkko.sakkinen@linux.intel.com>
+Cc:     sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, linux-sgx@vger.kernel.org,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Serge Ayoun <serge.ayoun@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Borislav Petkov <bp@suse.de>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <50c199b6-e8eb-9120-0d2a-5e60ac0139b4@intel.com>
+Date:   Mon, 27 Aug 2018 12:53:59 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180827185507.17087-7-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 24 Aug 2018 14:38:33 PDT (-0700), Jason@zx2c4.com wrote:
-> Sometimes it's useful to amortize calls to XSAVE/XRSTOR and the related
-> FPU/SIMD functions over a number of calls, because FPU restoration is
-> quite expensive. This adds a simple header for carrying out this pattern:
->
->     simd_context_t simd_context = simd_get();
->     while ((item = get_item_from_queue()) != NULL) {
->         encrypt_item(item, simd_context);
->         simd_context = simd_relax(simd_context);
->     }
->     simd_put(simd_context);
->
-> The relaxation step ensures that we don't trample over preemption, and
-> the get/put API should be a familiar paradigm in the kernel.
->
-> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Greg KH <gregkh@linuxfoundation.org>
-> Cc: Samuel Neves <sneves@dei.uc.pt>
-> Cc: linux-arch@vger.kernel.org
-> ---
->  arch/alpha/include/asm/Kbuild      |  5 ++--
->  arch/arc/include/asm/Kbuild        |  1 +
->  arch/arm/include/asm/simd.h        | 42 ++++++++++++++++++++++++++++++
->  arch/arm64/include/asm/simd.h      | 37 +++++++++++++++++++++-----
->  arch/c6x/include/asm/Kbuild        |  3 ++-
->  arch/h8300/include/asm/Kbuild      |  3 ++-
->  arch/hexagon/include/asm/Kbuild    |  1 +
->  arch/ia64/include/asm/Kbuild       |  1 +
->  arch/m68k/include/asm/Kbuild       |  1 +
->  arch/microblaze/include/asm/Kbuild |  1 +
->  arch/mips/include/asm/Kbuild       |  1 +
->  arch/nds32/include/asm/Kbuild      |  7 ++---
->  arch/nios2/include/asm/Kbuild      |  1 +
->  arch/openrisc/include/asm/Kbuild   |  7 ++---
->  arch/parisc/include/asm/Kbuild     |  1 +
->  arch/powerpc/include/asm/Kbuild    |  3 ++-
->  arch/riscv/include/asm/Kbuild      |  3 ++-
->  arch/s390/include/asm/Kbuild       |  3 ++-
->  arch/sh/include/asm/Kbuild         |  1 +
->  arch/sparc/include/asm/Kbuild      |  1 +
->  arch/um/include/asm/Kbuild         |  3 ++-
->  arch/unicore32/include/asm/Kbuild  |  1 +
->  arch/x86/include/asm/simd.h        | 30 ++++++++++++++++++++-
->  arch/xtensa/include/asm/Kbuild     |  1 +
->  include/asm-generic/simd.h         | 15 +++++++++++
->  include/linux/simd.h               | 28 ++++++++++++++++++++
->  26 files changed, 180 insertions(+), 21 deletions(-)
->  create mode 100644 arch/arm/include/asm/simd.h
->  create mode 100644 include/linux/simd.h
+> +config INTEL_SGX_CORE
+> +	prompt "Intel SGX core functionality"
+> +	def_bool n
+> +	depends on X86_64 && CPU_SUP_INTEL
+> +	help
+> +	Intel Software Guard eXtensions (SGX) is a set of CPU instructions
+> +	that allows ring 3 applications to create enclaves, private regions
+> +	of memory that are protected, by hardware, from unauthorized access
+> +	and/or modification.
 
-...
+This is a bit comma-crazy.  Also, considering some of our recent CVE
+fun, I'd probably not claim hardware protection. :)
 
-> diff --git a/arch/riscv/include/asm/Kbuild b/arch/riscv/include/asm/Kbuild
-> index 576ffdca06ba..8d3e7aef3234 100644
-> --- a/arch/riscv/include/asm/Kbuild
-> +++ b/arch/riscv/include/asm/Kbuild
-> @@ -4,9 +4,9 @@ generic-y += checksum.h
->  generic-y += cputime.h
->  generic-y += device.h
->  generic-y += div64.h
-> -generic-y += dma.h
->  generic-y += dma-contiguous.h
->  generic-y += dma-mapping.h
-> +generic-y += dma.h
->  generic-y += emergency-restart.h
->  generic-y += errno.h
->  generic-y += exec.h
+Maybe:
 
-If this is the canonical ordering and doing so makes your life easier then I'm 
-OK taking this as a separate patch into the RISC-V tree, but if not then feel 
-free to roll something like this up into your next patch set.
+	Intel Software Guard eXtensions (SGX) CPU feature that allows
+	ring 3 applications to create enclaves: private regions
+	of memory that are architecturally protected from unauthorized
+	access and/or modification.
 
-> @@ -45,6 +45,7 @@ generic-y += setup.h
->  generic-y += shmbuf.h
->  generic-y += shmparam.h
->  generic-y += signal.h
-> +generic-y += simd.h
->  generic-y += socket.h
->  generic-y += sockios.h
->  generic-y += stat.h
+> +	This option enables kernel recognition of SGX, high-level management
+> +	of the Enclave Page Cache (EPC), tracking and writing of SGX Launch
+> +	Enclave Hash MSRs, and allows for virtualization of SGX via KVM. By
+> +	iteslf, this option does not provide SGX support to userspace.
 
-Either way, this looks fine for as far as the RISC-V stuff goes as it's pretty 
-much a NOP.  As long as it stays a NOP then feel free to add a 
+itself
 
-Reviewed-by: Palmer Dabbelt <palmer@sifive.com>
 
-as far as the RISC-V parts are conceded.  It looks like there's a lot of other 
-issues, though, so it's not much of a review :)
+> diff --git a/arch/x86/include/asm/sgx_pr.h b/arch/x86/include/asm/sgx_pr.h
+> new file mode 100644
+> index 000000000000..c68578127620
+> --- /dev/null
+> +++ b/arch/x86/include/asm/sgx_pr.h
+> @@ -0,0 +1,13 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+> +// Copyright(c) 2016-17 Intel Corporation.
+> +
+> +#ifndef _ASM_X86_SGX_PR_H
+> +#define _ASM_X86_SGX_PR_H
+> +
+> +#include <linux/printk.h>
+> +#include <linux/ratelimit.h>
+> +
+> +#undef pr_fmt
+> +#define pr_fmt(fmt) "sgx: " fmt
+> +
+> +#endif /* _ASM_X86_SGX_PR_H */
+
+I don't think this belongs in a generic header.  Generally, we do the
+pr_fmt stuff in .c files, not in headers.  If someone includes this
+header directly or indirectly, they'll get a big surprise.
+
+If you *must* have this in a .h file, put it in
+arch/x86/kernel/cpu/intel_sgx.h or something and #include "intel_sgx.h"
+in all the .c files where you want this.
+
+
+> +static __init int sgx_init(void)
+> +{
+> +	unsigned long fc;
+> +
+> +	if (!boot_cpu_has(X86_FEATURE_SGX))
+> +		return false;
+> +
+> +	if (!boot_cpu_has(X86_FEATURE_SGX1))
+> +		return false;
+> +
+> +	rdmsrl(MSR_IA32_FEATURE_CONTROL, fc);
+> +	if (!(fc & FEATURE_CONTROL_LOCKED)) {
+> +		pr_info("IA32_FEATURE_CONTROL MSR is not locked\n");
+> +		return false;
+> +	}
+
+This is a rather crummy error message.  Doesn't this keep sgx from
+initializing?  Would something like this be more informative?
+
+	pr_info("failed init: IA32_FEATURE_CONTROL MSR not locked\n");
+
+> +	if (!(fc & FEATURE_CONTROL_SGX_ENABLE)) {
+> +		pr_info("disabled by the firmware\n");
+> +		return false;
+> +	}
+> +
+> +	if (!(fc & FEATURE_CONTROL_SGX_LE_WR))
+> +		pr_info("IA32_SGXLEPUBKEYHASHn MSRs are not writable\n");
+
+How about something that might help an end user?  Perhaps:
+
+	pr_warn("launch configuration not available\n");
+
+> +	sgx_enabled = true;
+> +	sgx_lc_enabled = !!(fc & FEATURE_CONTROL_SGX_LE_WR);
+> +	return 0;
+> +}
+> +
+> +arch_initcall(sgx_init);
+> 
+
+
