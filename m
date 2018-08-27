@@ -6,174 +6,105 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9E71C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:45:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE8A1C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:45:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FD6D208B4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:45:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FD6D208B4
+	by mail.kernel.org (Postfix) with ESMTP id 81B88208B8
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:45:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81B88208B8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727556AbeH0Xdq (ORCPT
+        id S1727616AbeH0Xds (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 19:33:46 -0400
-Received: from mout.kundenserver.de ([212.227.17.24]:45271 "EHLO
+        Mon, 27 Aug 2018 19:33:48 -0400
+Received: from mout.kundenserver.de ([212.227.17.24]:45741 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726895AbeH0Xdp (ORCPT
+        with ESMTP id S1727559AbeH0Xdr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 19:33:45 -0400
+        Mon, 27 Aug 2018 19:33:47 -0400
 Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
  (mreue101 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0M3C4d-1fcZQF0p8B-00szIC; Mon, 27 Aug 2018 21:45:36 +0200
+ 0LrsLe-1fnKv649vS-013fan; Mon, 27 Aug 2018 21:45:39 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     tglx@linutronix.de
 Cc:     y2038@lists.linaro.org, linux-api@vger.kernel.org,
         Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
         torvalds@linux-foundation.org, deepa.kernel@gmail.com,
         linux-arch@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 02/14] y2038: Make do_gettimeofday() and get_seconds() inline
-Date:   Mon, 27 Aug 2018 21:45:19 +0200
-Message-Id: <20180827194531.3796559-3-arnd@arndb.de>
+Subject: [PATCH 09/14] y2038: Change sys_utimensat() to use __kernel_timespec
+Date:   Mon, 27 Aug 2018 21:45:26 +0200
+Message-Id: <20180827194531.3796559-10-arnd@arndb.de>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180827194531.3796559-1-arnd@arndb.de>
 References: <20180827194531.3796559-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:ZKEuasSY6qBIJl4zp5+4KIsKGtK2ldyYHmcFAwK4NsZcBWRneDq
- TCRRFam+NkSbu5cVboFYQdk9iO/8ixZz2Q+neyUrL8aNm1o57NYoQKEjC6vSHQk8tZlWLxz
- j/HeQAdMbD0+t4hkjvMfJX3rpqi+14nZDELzD+Ge4mceN153aZTP4frxbiyy8YUT5DK4uUn
- M+yf2SJp7IiCu4ZqHm4KA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:Kplm45ZfzPY=:iyPj1VALJCMelqM4mSLnmk
- zGRAs+FyDkRSnyOZD+J+htlMsUWcFLcuSPSzouqtcPCQE5P/64/CEt2IZWztYG0TZdS2fFb+b
- ccbnwptjuo1rGxieeOOPAh5xs28yZRmKMHWY2mepheAER8G9EsdSJ5l4MUryWCLxhtVmqYM70
- NGmTvd4PZt8GK0vXI55ayFJFTmOyG2q6ryPpKGhLU2SRGOHXtsP/OhcF0CJXkT5UQQtyb5t3N
- MjVrzrtcGuuwr9m5yROTEAjGPK6uNZU3JNk6tpTs+lXDKfc9ULTG+dW6r+Vt8tDDGrU/7oziG
- vPmv6wn7ClN3pjjyAYnDlZiNV0DQRzRK6icN+vABR2Gw+DV7jCfa9A67aYLu3b7ph4v9MMV8i
- 3RPD8F3ht7xw5ZVBTcDp746ig2wc3KHVrsgORvglXztWYcljqDoU21Qe7JXbEsuNeRLKHZc0J
- b2t6LyyUB8/0cO+Cdu/9K4nq4lL9eQRhyz33osC4mHPPIB5rAUiejAV+UDL/dc3WsFVa3ec07
- lR9VQsJAUpy3yfajKVurSycXVTl+zncoMMq4YgblDXkngKBRWyagZUOx8pd1ZWMLhgROEX3bb
- +14JG2XVsyHaW3x/+aO33QWnWT82uKva359AHB99t2AjRbxBOtyzbLTYslrRnuuuopNwIuXVU
- 8vFLNcLhckaSKvxhr4SuN0dq1GKcEEToJnFZwCpIVTbijEV8faLW/axN8K17mLzihnJ8=
+X-Provags-ID: V03:K1:1qFKP/S7PvEA3HGD/4Qil6EAAqGJOKrgU2K9WNFrsWxBv9b6Q0D
+ yYM7i59XcgAykwlLnhg08OtGr1cj409eIHpZMBTy0E7PgCktsEx6ZrD+e1PgXyCPr77haTj
+ K5GGYfJLeo+g7ahQpTBdteZmDgAwyXZqtzTiIRf8M754nT8GRk4MEZzZGeaJnUBxjnEwDEl
+ vkT7XDbZHei0fnN8oCI/g==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:HZsGQAdmNqU=:Xig2Cyx/76WH5+gacDPcEs
+ 1qOjGEr+CkA3fQ3xBS1Cq0cyTrNvmqvJVXcRObhCFLQjWDwuEOmTo2HbIVUOM0hnnEjzYaXsI
+ eyZEJNOs4msPq9C64ypqRN30fmhcsD5EkbXt8kOOjD/ONME10+4I4XDHzO1ASUKZu0RSWx3Uq
+ m/DZxWvZZXfV/LGQT2kIVTDvRB2Z/knUwRnVUXntKVylqrR83sP7u4c/8TVsDfRSiNuJEYLoM
+ njp0TRTJd7UahF2if6HioBG+HVbjYuHqdE8akUmy+wf+ouET49d/WDPMUM+nWi8BDmDzaB4gO
+ C01CoTW7jdNA6J1v+eRzfTfRBWAZnqBDpE3C33d77IgW5pFfPO45C7Y4BnCUR2h1pxmoONS//
+ D2VCKrn71adJMT8rAr87x1IHzVwUuVoen9f/iHXVbBokdzeabsIRI+h+TJMV8pKW2EiTxgUT1
+ zHRYWuXAQZMuOg8KrY/6b4igBWgg4dmV+2Fs2F5QeqapEBWQJUGfwOfSwpeahBQ6nhgtVbU0G
+ 8Hh7tn2WRlG09+eNd+OFUbfWhSrEdzV/X2mfbSrmIcBznVzXJ+p3JD3Fpe64BPD11Lnmxs0Vk
+ LdaRv3Wa/zdlKsp9bjwyJQxj7pOg8qEu9eHotj2VRZDnY+c/y5XFRrfB/5hAc3hOF8JSuDbin
+ cfMqcHIG4C8BqcOUaeLSo0oYb3Dr47zZ4VWM85fwQGR/HmKeWnriIiAH/NT7gwsbWLg4=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-get_seconds() and do_gettimeofday() are only used by a few modules now any
-more (waiting for the respective patches to get accepted), and they are
-among the last holdouts of code that is not y2038 safe in the core kernel.
+When 32-bit architectures get changed to support 64-bit time_t,
+utimensat() needs to use the new __kernel_timespec structure as its
+argument.
 
-Move the implementation into the timekeeping32.h header to clean up
-the core kernel and isolate the old interfaces further.
+The older utime(), utimes() and futimesat() system calls don't need a
+corresponding change as they are no longer used on C libraries that have
+64-bit time support.
+
+As we do for the other syscalls that have timespec arguments, we reuse
+the 'compat' syscall entry points to implement the traditional four
+interfaces, and only leave the new utimensat() as a native handler,
+so that the same code gets used on both 32-bit and 64-bit kernels
+on each syscall.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- include/linux/timekeeping32.h | 15 +++++++++++++--
- kernel/time/time.c            | 15 +++++++++------
- kernel/time/timekeeping.c     | 24 ------------------------
- 3 files changed, 22 insertions(+), 32 deletions(-)
+ fs/utimes.c              | 2 +-
+ include/linux/syscalls.h | 3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/timekeeping32.h b/include/linux/timekeeping32.h
-index a4a4991160fb..a502616f7e1c 100644
---- a/include/linux/timekeeping32.h
-+++ b/include/linux/timekeeping32.h
-@@ -6,8 +6,19 @@
-  * over time so we can remove the file here.
-  */
- 
--extern void do_gettimeofday(struct timeval *tv);
--unsigned long get_seconds(void);
-+static inline void do_gettimeofday(struct timeval *tv)
-+{
-+	struct timespec64 now;
-+
-+	ktime_get_real_ts64(&now);
-+	tv->tv_sec = now.tv_sec;
-+	tv->tv_usec = now.tv_nsec/1000;
-+}
-+
-+static inline unsigned long get_seconds(void)
-+{
-+	return ktime_get_real_seconds();
-+}
- 
- static inline void getnstimeofday(struct timespec *ts)
- {
-diff --git a/kernel/time/time.c b/kernel/time/time.c
-index 712543011106..de332250d6fa 100644
---- a/kernel/time/time.c
-+++ b/kernel/time/time.c
-@@ -144,9 +144,11 @@ SYSCALL_DEFINE2(gettimeofday, struct timeval __user *, tv,
- 		struct timezone __user *, tz)
- {
- 	if (likely(tv != NULL)) {
--		struct timeval ktv;
--		do_gettimeofday(&ktv);
--		if (copy_to_user(tv, &ktv, sizeof(ktv)))
-+		struct timespec64 ts;
-+
-+		ktime_get_real_ts64(&ts);
-+		if (put_user(ts.tv_sec, &tv->tv_sec) ||
-+		    put_user(ts.tv_nsec / 1000, &tv->tv_usec))
- 			return -EFAULT;
- 	}
- 	if (unlikely(tz != NULL)) {
-@@ -227,10 +229,11 @@ COMPAT_SYSCALL_DEFINE2(gettimeofday, struct compat_timeval __user *, tv,
- 		       struct timezone __user *, tz)
- {
- 	if (tv) {
--		struct timeval ktv;
-+		struct timespec64 ts;
- 
--		do_gettimeofday(&ktv);
--		if (compat_put_timeval(&ktv, tv))
-+		ktime_get_real_ts64(&ts);
-+		if (put_user(ts.tv_sec, &tv->tv_sec) ||
-+		    put_user(ts.tv_nsec / 1000, &tv->tv_usec))
- 			return -EFAULT;
- 	}
- 	if (tz) {
-diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-index f3b22f456fac..2d110c948805 100644
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -1211,22 +1211,6 @@ int get_device_system_crosststamp(int (*get_time_fn)
+diff --git a/fs/utimes.c b/fs/utimes.c
+index 79a65c163f40..d30f409ecc1a 100644
+--- a/fs/utimes.c
++++ b/fs/utimes.c
+@@ -166,7 +166,7 @@ long do_utimes(int dfd, const char __user *filename, struct timespec64 *times,
  }
- EXPORT_SYMBOL_GPL(get_device_system_crosststamp);
  
--/**
-- * do_gettimeofday - Returns the time of day in a timeval
-- * @tv:		pointer to the timeval to be set
-- *
-- * NOTE: Users should be converted to using getnstimeofday()
-- */
--void do_gettimeofday(struct timeval *tv)
--{
--	struct timespec64 now;
--
--	getnstimeofday64(&now);
--	tv->tv_sec = now.tv_sec;
--	tv->tv_usec = now.tv_nsec/1000;
--}
--EXPORT_SYMBOL(do_gettimeofday);
--
- /**
-  * do_settimeofday64 - Sets the time of day.
-  * @ts:     pointer to the timespec64 variable containing the new time
-@@ -2174,14 +2158,6 @@ void getboottime64(struct timespec64 *ts)
- }
- EXPORT_SYMBOL_GPL(getboottime64);
- 
--unsigned long get_seconds(void)
--{
--	struct timekeeper *tk = &tk_core.timekeeper;
--
--	return tk->xtime_sec;
--}
--EXPORT_SYMBOL(get_seconds);
--
- void ktime_get_coarse_real_ts64(struct timespec64 *ts)
+ SYSCALL_DEFINE4(utimensat, int, dfd, const char __user *, filename,
+-		struct timespec __user *, utimes, int, flags)
++		struct __kernel_timespec __user *, utimes, int, flags)
  {
- 	struct timekeeper *tk = &tk_core.timekeeper;
+ 	struct timespec64 tstimes[2];
+ 
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index b3e27e5ee322..420ac881a610 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -513,7 +513,8 @@ asmlinkage long sys_timerfd_gettime(int ufd, struct __kernel_itimerspec __user *
+ 
+ /* fs/utimes.c */
+ asmlinkage long sys_utimensat(int dfd, const char __user *filename,
+-				struct timespec __user *utimes, int flags);
++				struct __kernel_timespec __user *utimes,
++				int flags);
+ 
+ /* kernel/acct.c */
+ asmlinkage long sys_acct(const char __user *name);
 -- 
 2.18.0
 
