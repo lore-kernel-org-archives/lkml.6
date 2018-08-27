@@ -2,109 +2,92 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BAB4C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 23:10:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B301DC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 23:12:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEF3B208B4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 23:10:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEF3B208B4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
+	by mail.kernel.org (Postfix) with ESMTP id 533C7208B1
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 23:12:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UVu5/Be4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 533C7208B1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727408AbeH1C64 (ORCPT
+        id S1727444AbeH1DBX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 22:58:56 -0400
-Received: from nautica.notk.org ([91.121.71.147]:47193 "EHLO nautica.notk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727101AbeH1C64 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 22:58:56 -0400
-Received: by nautica.notk.org (Postfix, from userid 1001)
-        id D2A41C009; Tue, 28 Aug 2018 01:10:09 +0200 (CEST)
-Date:   Tue, 28 Aug 2018 01:09:54 +0200
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Tomas Bortoli <tomasbortoli@gmail.com>
-Cc:     ericvh@gmail.com, rminnich@sandia.gov, lucho@ionkov.net,
-        davem@davemloft.net, v9fs-developer@lists.sourceforge.net,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller@googlegroups.com,
-        Dominique Martinet <dominique.martinet@cea.fr>
-Subject: Re: [PATCH v2 2/2] 9p: Add refcount to p9_req_t
-Message-ID: <20180827230954.GA21513@nautica>
-References: <20180814174342.11068-1-tomasbortoli@gmail.com>
- <20180814174342.11068-2-tomasbortoli@gmail.com>
+        Mon, 27 Aug 2018 23:01:23 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:39202 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726994AbeH1DBX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 23:01:23 -0400
+Received: by mail-oi0-f65.google.com with SMTP id c190-v6so1221564oig.6
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 16:12:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NIhkFPEB3HSC62HBYwM8qrc3OYJJPvPmXsLDQTpmepw=;
+        b=UVu5/Be4PzNfeLI4dfxd25tipZ0h9m/ovnTAdTQHf/bVEq916WGurhgid7XwYB7WcE
+         z33Z7WrLPRCd15zeJ4yj4ZuDkNSUf/cFRnaYDrJSeCb4KRkwuu8dtxePxrPnmjdP+N5u
+         cm0KKLGoRPnexVsPNgDNFkkM5C7A8DyFFkYBL66fAI3xAxxCBWVc/GGNxqvAqFiSMDHO
+         ocYHxSG7RuzyEGosp51090Pg8q8n7FOMQCAnsaZDTEWRcVramLvVGeXPdkqFQ6w3WJQd
+         0agHNtfmOGUQ3wnRUnf/oPE1R9rLUngAxFD1slFc5oKDMOQuRXzMSXQor7nEz8J/1lZ8
+         thqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NIhkFPEB3HSC62HBYwM8qrc3OYJJPvPmXsLDQTpmepw=;
+        b=Jj93gjdsuRL1/vrZqth4OLlsU+WWrd/2Ixq/3hDtffpf4dT6z1pNcTNHpV6DdP/Y5L
+         leAa9Cc9B5q0OwFbHTmALx2JgfA1hCKsh/ekSak5YnWjxhC/Mx6tSY5F1CqS+Q2Gxj77
+         bdcACDuFsxpqhGaW1vNrL/hPIWGwKsOp7TCZfL6L86JINTfdETaCAAaOS3okwWKk5yYZ
+         ZrTdSyvTBUWicuA5fwP3fZItFXnyb3y2C0UevLKl/Jt/g+hjzmJYPMnXn5Qq8Nclm3Jr
+         vgfwWMb2kxgG4Osg/NkMCUfM0sMNS1WMRRxTSEQ1RTfB4wXkmz3COqb6EnTs0LiIfPVM
+         RS3g==
+X-Gm-Message-State: APzg51DMXR0oK6CbJh0JOHtuh9zyRc/O03nqrqtL4uBRFEqf27Y3f3zI
+        oE6Eweenbc1+hxrAazfgEB4Jk93FVyRCzsxkHv307Q==
+X-Google-Smtp-Source: ANB0VdaydxBWecF09P84nIKwwAZr0AeX7DmuCdM5KmPq+vWzxaIhJSCY8djdaYyUtcdnGIp+LH8AT6RNaoH93fRxql8=
+X-Received: by 2002:aca:c585:: with SMTP id v127-v6mr682647oif.348.1535411557463;
+ Mon, 27 Aug 2018 16:12:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180814174342.11068-2-tomasbortoli@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <c7ee1ee7a1b8d17743f7c3680ea5d2c32bf3e897.1535410956.git.luto@kernel.org>
+In-Reply-To: <c7ee1ee7a1b8d17743f7c3680ea5d2c32bf3e897.1535410956.git.luto@kernel.org>
+From:   Jann Horn <jannh@google.com>
+Date:   Tue, 28 Aug 2018 01:12:11 +0200
+Message-ID: <CAG48ez2DkjrvmP57JvbC+4ee0qCXCEXEyYuA4YApWGX_k29y_w@mail.gmail.com>
+Subject: Re: [PATCH] x86/nmi: Fix some races in NMI uaccess
+To:     Andy Lutomirski <luto@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Cc:     "the arch/x86 maintainers" <x86@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Rik van Riel <riel@surriel.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        stable@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Nadav Amit <nadav.amit@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tomas Bortoli wrote on Tue, Aug 14, 2018:
-> To avoid use-after-free(s), use a refcount to keep track of the
-> usable references to any instantiated struct p9_req_t.
-> 
-> This commit adds p9_req_put(), p9_req_get() and p9_req_try_get() as
-> wrappers to kref_put(), kref_get() and kref_get_unless_zero().
-> These are used by the client and the transports to keep track of
-> valid requests' references.
-> 
-> p9_free_req() is added back and used as callback by kref_put().
-> 
-> Add SLAB_TYPESAFE_BY_RCU as it ensures that the memory freed by
-> kmem_cache_free() will not be reused for another type until the rcu
-> synchronisation period is over, so an address gotten under rcu read
-> lock is safe to inc_ref() without corrupting random memory while
-> the lock is held.
+On Tue, Aug 28, 2018 at 1:04 AM Andy Lutomirski <luto@kernel.org> wrote:
+>
+> In NMI context, we might be in the middle of context switching or in
+> the middle of switch_mm_irqs_off().  In either case, CR3 might not
+> match current->mm, which could cause copy_from_user_nmi() and
+> friends to read the wrong memory.
+>
+> Fix it by adding a new nmi_uaccess_okay() helper and checking it in
+> copy_from_user_nmi() and in __copy_from_user_nmi()'s callers.
 
-
-FWIW, since 4.19-rc1 has been tagged I was going to push this and all
-the perrequesites to linux-next, but I've managed to leak some requests
-by interrupting them in trans_virtio.
-I think I've found why (see below), so I'll push a fixed version after
-some more testing and another thorough read -- at some point today, but
-this hasn't been 'approved' explicitely so please review! :)
-
-(Jun, I think you'll need to ask again to rename 'req' to 'rreq' if you
-think it's important -- I think such a rename should go in a separate
-patch anyway, there's plenty of time until the 4.20 merge window)
-
-
-By "all the prerequesites" I mean this patch "serie":
-* 9p: Use a slab for allocating requests
-* 9p: Remove p9_idpool
-* net/9p: embed fcall in req to round down buffer allocs
-* net/9p: add a per-client fcall kmem_cache
-* 9p: rename p9_free_req() function
-* 9p: Add refcount to p9_req_t
-
-All the other patchs have had some review though, I was just waiting for
-the start of this cycle, but if someone has any issue with the above
-patches now is a good time to say.
-
-
-> diff --git a/net/9p/client.c b/net/9p/client.c
-> index 7942c0bfcc5b..c9bb5d41afa4 100644
-> --- a/net/9p/client.c
-> +++ b/net/9p/client.c
-> @@ -716,6 +756,8 @@ p9_client_rpc(struct p9_client *c, int8_t type, const char *fmt, ...)
->  
->  	err = c->trans_mod->request(c, req);
->  	if (err < 0) {
-> +		/* write won't happen */
-> +		p9_req_put(req);
->  		if (err != -ERESTARTSYS && err != -EFAULT)
->  			c->status = Disconnected;
->  		goto recalc_sigpending;
-
-p9_client_zc_rpc needs the same put if zc_request failed, I'm not sure
-why it wasn't here in my draft
-
--- 
-Dominique
+What about eBPF probes (which I think can be attached to kprobe points
+/ tracepoints / perf events) that perform userspace reads / userspace
+writes / kernel reads? Can those run in NMI context, and if so, do
+they also need special handling?
