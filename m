@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51B89C43334
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 10:01:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0C89C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 10:04:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A30620852
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 10:01:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A30620852
+	by mail.kernel.org (Postfix) with ESMTP id A1E7F2083C
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 10:04:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1E7F2083C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727118AbeH0Nrp (ORCPT
+        id S1727130AbeH0Nuv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 09:47:45 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:60475 "EHLO
+        Mon, 27 Aug 2018 09:50:51 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:60848 "EHLO
         atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726809AbeH0Nro (ORCPT
+        with ESMTP id S1726809AbeH0Nuu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 09:47:44 -0400
+        Mon, 27 Aug 2018 09:50:50 -0400
 Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id D6B5A82F9C; Mon, 27 Aug 2018 12:01:43 +0200 (CEST)
-Date:   Mon, 27 Aug 2018 12:01:43 +0200
+        id 383D6808E4; Mon, 27 Aug 2018 12:04:49 +0200 (CEST)
+Date:   Mon, 27 Aug 2018 12:04:48 +0200
 From:   Pavel Machek <pavel@ucw.cz>
 To:     Kiran Gunda <kgunda@codeaurora.org>
 Cc:     bjorn.andersson@linaro.org, jingoohan1@gmail.com,
@@ -34,17 +34,16 @@ Cc:     bjorn.andersson@linaro.org, jingoohan1@gmail.com,
         jacek.anaszewski@gmail.com, robh+dt@kernel.org,
         mark.rutland@arm.com, linux-leds@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH V5 3/8] backlight: qcom-wled: Add new properties for
- PMI8998
-Message-ID: <20180827100143.GE31905@amd>
+        linux-fbdev@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH V5 4/8] backlight: qcom-wled: Rename PM8941* to WLED3
+Message-ID: <20180827100448.GF31905@amd>
 References: <1535106467-17843-1-git-send-email-kgunda@codeaurora.org>
- <1535106467-17843-4-git-send-email-kgunda@codeaurora.org>
+ <1535106467-17843-5-git-send-email-kgunda@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="C94crkcyjafcjHxo"
+        protocol="application/pgp-signature"; boundary="m1UC1K4AOz1Ywdkx"
 Content-Disposition: inline
-In-Reply-To: <1535106467-17843-4-git-send-email-kgunda@codeaurora.org>
+In-Reply-To: <1535106467-17843-5-git-send-email-kgunda@codeaurora.org>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -52,80 +51,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---C94crkcyjafcjHxo
+--m1UC1K4AOz1Ywdkx
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi!
+On Fri 2018-08-24 15:57:43, Kiran Gunda wrote:
+> Rename the PM8941* references as WLED3 to make the driver
+> generic and have WLED support for other PMICs. Also rename
+> "i_boost_limit" and "i_limit" variables to "boost_i_limit"
+> and "string_i_limit" respectively to resemble the corresponding
+> register names.
 
-On Fri 2018-08-24 15:57:42, Kiran Gunda wrote:
-> Update the bindings with the new properties used for
-> PMI8998.
+Acked-by: Pavel Machek <pavel@ucw.cz>
 
-> Changes from V3:
->     - Removed the default values.
+> -MODULE_DESCRIPTION("pm8941 wled driver");
+> +MODULE_DESCRIPTION("Qualcomm WLED driver");
 
-Why?
+"... supporting pm8941, xxx devices" ?
 
-> +- qcom,current-limit-microamp
-> +	Usage:        optional
-> +	Value type:   <u32>
-> +	Definition:   uA; per-string current limit; value from 0 to 30000 with
-> +		      2500 uA step.
-> =20
->  - qcom,current-boost-limit
->  	Usage:        optional
->  	Value type:   <u32>
->  	Definition:   mA; boost current limit.
->  		      For pm8941: one of: 105, 385, 525, 805, 980, 1260, 1400,
-> -		      1680. Default: 805 mA
-> +		      1680.
->  		      For pmi8998: one of: 105, 280, 450, 620, 970, 1150, 1300,
-> -		      1500. Default: 970 mA
-> +		      1500.
->
+>  MODULE_LICENSE("GPL v2");
 
-I'd say that optional properties should list default values...?
-
->  - qcom,ovp
->  	Usage:        optional
->  	Value type:   <u32>
->  	Definition:   V; Over-voltage protection limit; one of:
-> -		      27, 29, 32, 35. default: 29V
-> +		      27, 29, 32, 35.
->  		      This property is supported only for PM8941.
->
-
-Same here.
-
-> +- qcom,ovp-millivolt
-> +	Usage:        optional
-> +	Value type:   <u32>
-> +	Definition:   mV; Over-voltage protection limit;
-> +		      For pmi8998: one of 18100, 19600, 29600, 31100
-> +		      If this property is not specified for PM8941, it
-> +		      falls back to "qcom,ovp" property.
-> +
-
-"voltage-limit-millivolt"? "ovp" is not really well known acronym.
-									Pavel
-								=09
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---C94crkcyjafcjHxo
+--m1UC1K4AOz1Ywdkx
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAluDzAcACgkQMOfwapXb+vIp1gCfb3HRiCG01VfOcS0fmSAkZALF
-eMsAoJ9WOxCqP7mQKiPdgicGXubmhmzN
-=Ap6I
+iEYEARECAAYFAluDzMAACgkQMOfwapXb+vIxDwCfSZHys4+U14pB3RnG3eNhcldU
+BM4Anj4olAVu0Y51Le9DlFhi+s6FAJOG
+=jfYa
 -----END PGP SIGNATURE-----
 
---C94crkcyjafcjHxo--
+--m1UC1K4AOz1Ywdkx--
