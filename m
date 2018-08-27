@@ -6,51 +6,50 @@ X-Spam-Status: No, score=-0.5 required=3.0 tests=FROM_LOCAL_HEX,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D64C4C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 21:03:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 186ECC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 21:04:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69D46208B2
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 21:03:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69D46208B2
+	by mail.kernel.org (Postfix) with ESMTP id B7F6A208B2
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 21:04:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7F6A208B2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727561AbeH1AvW (ORCPT
+        id S1727380AbeH1AwV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 20:51:22 -0400
-Received: from mail-io0-f200.google.com ([209.85.223.200]:49998 "EHLO
-        mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726958AbeH1AvW (ORCPT
+        Mon, 27 Aug 2018 20:52:21 -0400
+Received: from mail-io0-f199.google.com ([209.85.223.199]:33587 "EHLO
+        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727100AbeH1AwV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 20:51:22 -0400
-Received: by mail-io0-f200.google.com with SMTP id k9-v6so291135iob.16
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 14:03:04 -0700 (PDT)
+        Mon, 27 Aug 2018 20:52:21 -0400
+Received: by mail-io0-f199.google.com with SMTP id s14-v6so340253ioc.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 14:04:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=VpR1eB7lJbtMcMycRv8NZynP3fXO80jlxkdKLAzgYcY=;
-        b=R5G0K3MixqyYVE6vCCNN6frhwsNyxfXHqYuFvpSTcd7II2GvqZk3naMLxOe15btzMA
-         Na/gl9yQxPiv3Z1qZFmTQZe1nKOKRe5PaqDxv0SjIS4fx574rwvqv/2Bcuga4shy8WFt
-         SIofYYyuBTZNpi7San+T7ZGmTTnEszNWareWW56HM3vqXpfAfobSlDM4kRHsd1ELICo3
-         lXhmcwfqkQzAH56WRocF+6dBHIm/Y6HU2HUz20zupYo/Ca9vCy7N1fVGG6DyYifWRCkY
-         D1iAN3MMMgJ2xurP+Q0R3Tsh628JQpvzSP8U+U6kj4nYK8TC07VVA/8euAaI0vSWMz9n
-         4SAg==
-X-Gm-Message-State: APzg51Axo8owONd2cF6FI/KwayUW6Bh5p1BO8lxbYzZAAB1jyip8Df28
-        9SV8GctmWJCioAmis3016yNzSBSlw/+rmC860CRuxm1KJkif
-X-Google-Smtp-Source: ANB0Vdat3wBHntNvld2ACJNS/jOPbOG0Sdozy3sTFHTY1bwE3l/n+3J0R2sHQvP0u6DNwiwZApG1hQGO9uZr5fqa2qiw6W8x6PqR
+        bh=H4ZSuz5fIu1OCbE4UKJPGgrDQxN5PYYwdRfI01Ey7nA=;
+        b=FiLToOz9Jni8/Vymz426x7C+PfFP5hyy6ptWFqGyUFIuNYSggHrWpia3qB3FjWqb42
+         4wGcto1Y6wkQea7qya+7lmMf/alGa7mU4eTBjGMNo3WU9zcSBnD0PKqnBVP7qkvOCGPh
+         UGT+s2wMRf7TpdmUH7gNr+NxUK4QvVQY1LzoQYW7uolpsMBGlnS/BJXeKPJZPcslL3qF
+         8yvoTUjTi/LjIPMPyy9Azr0IKvYtN34SftCyV+bW1brchTYHYoNaYhjpXBzoyIaXgcil
+         uwoRPOoubfePcm/RbBxGyvMexTB1KNqAacBLTeCcKkJhLL1Y4hqmgIlgNRnnD//cnKH4
+         iMGQ==
+X-Gm-Message-State: APzg51CTXO2HiJwDxWK2QxHqK3PyJxMx+G8sp65rNQI5cj3AhnfWjZZ8
+        VRRq+6UY2r77Yc/cxSB7162NXxhjds4wXV3eFqEAW6A+vvjl
+X-Google-Smtp-Source: ANB0Vdb6JOipBk8lNzTNDNIKr7/Q25vWi9Q/kxcf/fs/3/3m4/5gxCE3Cf4isfyo0k2GHfW3eK2LH5YXx/zuQ3nWaOocfcwyLxTh
 MIME-Version: 1.0
-X-Received: by 2002:a6b:3ad4:: with SMTP id h203-v6mr197229ioa.94.1535403783841;
- Mon, 27 Aug 2018 14:03:03 -0700 (PDT)
-Date:   Mon, 27 Aug 2018 14:03:03 -0700
+X-Received: by 2002:a24:ca:: with SMTP id 193-v6mr134003ita.45.1535403842497;
+ Mon, 27 Aug 2018 14:04:02 -0700 (PDT)
+Date:   Mon, 27 Aug 2018 14:04:02 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000001f74de0574710d3e@google.com>
-Subject: INFO: task hung in snd_seq_write
-From:   syzbot <syzbot+4c595632b98bb8ffcc66@syzkaller.appspotmail.com>
-To:     alsa-devel@alsa-project.org, gregkh@linuxfoundation.org,
-        keescook@chromium.org, linux-kernel@vger.kernel.org,
-        perex@perex.cz, syzkaller-bugs@googlegroups.com, tiwai@suse.com,
-        viro@zeniv.linux.org.uk
+Message-ID: <0000000000009e76240574711017@google.com>
+Subject: WARNING: ODEBUG bug in f2fs_fill_super
+From:   syzbot <syzbot+77ea19d309d4cdc55cc1@syzkaller.appspotmail.com>
+To:     jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        yuchao0@huawei.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -63,325 +62,265 @@ syzbot found the following crash on:
 
 HEAD commit:    e27bc174c9c6 Add linux-next specific files for 20180824
 git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1772020a400000
+console output: https://syzkaller.appspot.com/x/log.txt?x=11c0034a400000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=28446088176757ea
-dashboard link: https://syzkaller.appspot.com/bug?extid=4c595632b98bb8ffcc66
+dashboard link: https://syzkaller.appspot.com/bug?extid=77ea19d309d4cdc55cc1
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
 Unfortunately, I don't have any reproducer for this crash yet.
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+4c595632b98bb8ffcc66@syzkaller.appspotmail.com
+Reported-by: syzbot+77ea19d309d4cdc55cc1@syzkaller.appspotmail.com
 
-INFO: task syz-executor1:8015 blocked for more than 140 seconds.
-       Not tainted 4.18.0-next-20180824+ #47
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor1   D25408  8015   4471 0x00000004
-Call Trace:
-  context_switch kernel/sched/core.c:2825 [inline]
-  __schedule+0x87c/0x1df0 kernel/sched/core.c:3473
-  schedule+0xfb/0x450 kernel/sched/core.c:3517
-  schedule_preempt_disabled+0x10/0x20 kernel/sched/core.c:3575
-  __mutex_lock_common kernel/locking/mutex.c:1003 [inline]
-  __mutex_lock+0xbf9/0x1700 kernel/locking/mutex.c:1073
-  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1088
-  snd_seq_write+0x1f1/0x8d0 sound/core/seq/seq_clientmgr.c:1021
-  __vfs_write+0x117/0x9d0 fs/read_write.c:485
-  vfs_write+0x1fc/0x560 fs/read_write.c:549
-  ksys_write+0x101/0x260 fs/read_write.c:598
-  __do_sys_write fs/read_write.c:610 [inline]
-  __se_sys_write fs/read_write.c:607 [inline]
-  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457089
-Code: 08 e8 3b a9 fb ff 48 8b 44 24 20 48 8b 4c 24 18 48 8b 54 24 38 48 8b  
-7c 24 48 eb 8d 48 8b 6c 24 50 48 83 c4 58 c3 48 89 04 24 <48> 89 5c 24 08  
-e8 0d a9 fb ff 48 8b 44 24 40 48 8b 4c 24 48 48 8b
-RSP: 002b:00007f5f1ec8fc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007f5f1ec906d4 RCX: 0000000000457089
-RDX: 0000000000000020 RSI: 0000000020000480 RDI: 0000000000000006
-RBP: 0000000000930140 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000004d7388 R14: 00000000004c1780 R15: 0000000000000001
-INFO: task syz-executor1:8019 blocked for more than 140 seconds.
-       Not tainted 4.18.0-next-20180824+ #47
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor1   D25896  8019   4471 0x00000004
-Call Trace:
-  context_switch kernel/sched/core.c:2825 [inline]
-  __schedule+0x87c/0x1df0 kernel/sched/core.c:3473
-  schedule+0xfb/0x450 kernel/sched/core.c:3517
-  schedule_preempt_disabled+0x10/0x20 kernel/sched/core.c:3575
-  __mutex_lock_common kernel/locking/mutex.c:1003 [inline]
-  __mutex_lock+0xbf9/0x1700 kernel/locking/mutex.c:1073
-  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1088
-  snd_seq_write+0x1f1/0x8d0 sound/core/seq/seq_clientmgr.c:1021
-  __vfs_write+0x117/0x9d0 fs/read_write.c:485
-  vfs_write+0x1fc/0x560 fs/read_write.c:549
-  ksys_write+0x101/0x260 fs/read_write.c:598
-  __do_sys_write fs/read_write.c:610 [inline]
-  __se_sys_write fs/read_write.c:607 [inline]
-  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457089
-Code: 08 e8 3b a9 fb ff 48 8b 44 24 20 48 8b 4c 24 18 48 8b 54 24 38 48 8b  
-7c 24 48 eb 8d 48 8b 6c 24 50 48 83 c4 58 c3 48 89 04 24 <48> 89 5c 24 08  
-e8 0d a9 fb ff 48 8b 44 24 40 48 8b 4c 24 48 48 8b
-RSP: 002b:00007f5f1ec6ec78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007f5f1ec6f6d4 RCX: 0000000000457089
-RDX: 0000000000000090 RSI: 0000000020000580 RDI: 0000000000000003
-RBP: 00000000009301e0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000004d7340 R14: 00000000004ca576 R15: 0000000000000002
-INFO: task syz-executor1:8026 blocked for more than 140 seconds.
-       Not tainted 4.18.0-next-20180824+ #47
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor1   D25112  8026   4471 0x00000004
-Call Trace:
-  context_switch kernel/sched/core.c:2825 [inline]
-  __schedule+0x87c/0x1df0 kernel/sched/core.c:3473
-  schedule+0xfb/0x450 kernel/sched/core.c:3517
-  schedule_preempt_disabled+0x10/0x20 kernel/sched/core.c:3575
-  __mutex_lock_common kernel/locking/mutex.c:1003 [inline]
-  __mutex_lock+0xbf9/0x1700 kernel/locking/mutex.c:1073
-  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1088
-  snd_seq_ioctl+0x221/0x440 sound/core/seq/seq_clientmgr.c:2137
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:501 [inline]
-  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
-  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
-  __do_sys_ioctl fs/ioctl.c:709 [inline]
-  __se_sys_ioctl fs/ioctl.c:707 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457089
-Code: 08 e8 3b a9 fb ff 48 8b 44 24 20 48 8b 4c 24 18 48 8b 54 24 38 48 8b  
-7c 24 48 eb 8d 48 8b 6c 24 50 48 83 c4 58 c3 48 89 04 24 <48> 89 5c 24 08  
-e8 0d a9 fb ff 48 8b 44 24 40 48 8b 4c 24 48 48 8b
-RSP: 002b:00007f5f1ec4dc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f5f1ec4e6d4 RCX: 0000000000457089
-RDX: 00000000200006c0 RSI: 00000000c08c5332 RDI: 0000000000000006
-RBP: 0000000000930280 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000004cfed0 R14: 00000000004bf048 R15: 0000000000000003
-INFO: task syz-executor1:8040 blocked for more than 140 seconds.
-       Not tainted 4.18.0-next-20180824+ #47
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor1   D25896  8040   4471 0x00000004
-Call Trace:
-  context_switch kernel/sched/core.c:2825 [inline]
-  __schedule+0x87c/0x1df0 kernel/sched/core.c:3473
-  schedule+0xfb/0x450 kernel/sched/core.c:3517
-  schedule_preempt_disabled+0x10/0x20 kernel/sched/core.c:3575
-  __mutex_lock_common kernel/locking/mutex.c:1003 [inline]
-  __mutex_lock+0xbf9/0x1700 kernel/locking/mutex.c:1073
-  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1088
-  snd_seq_write+0x1f1/0x8d0 sound/core/seq/seq_clientmgr.c:1021
-  __vfs_write+0x117/0x9d0 fs/read_write.c:485
-  vfs_write+0x1fc/0x560 fs/read_write.c:549
-  ksys_write+0x101/0x260 fs/read_write.c:598
-  __do_sys_write fs/read_write.c:610 [inline]
-  __se_sys_write fs/read_write.c:607 [inline]
-  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457089
-Code: 08 e8 3b a9 fb ff 48 8b 44 24 20 48 8b 4c 24 18 48 8b 54 24 38 48 8b  
-7c 24 48 eb 8d 48 8b 6c 24 50 48 83 c4 58 c3 48 89 04 24 <48> 89 5c 24 08  
-e8 0d a9 fb ff 48 8b 44 24 40 48 8b 4c 24 48 48 8b
-RSP: 002b:00007f5f1ec2cc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007f5f1ec2d6d4 RCX: 0000000000457089
-RDX: 00000000000000a0 RSI: 00000000200004c0 RDI: 0000000000000006
-RBP: 0000000000930320 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000004d7418 R14: 00000000004c1870 R15: 0000000000000004
-INFO: task syz-executor1:8043 blocked for more than 140 seconds.
-       Not tainted 4.18.0-next-20180824+ #47
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor1   D25896  8043   4471 0x00000004
-Call Trace:
-  context_switch kernel/sched/core.c:2825 [inline]
-  __schedule+0x87c/0x1df0 kernel/sched/core.c:3473
-  schedule+0xfb/0x450 kernel/sched/core.c:3517
-  schedule_preempt_disabled+0x10/0x20 kernel/sched/core.c:3575
-  __mutex_lock_common kernel/locking/mutex.c:1003 [inline]
-  __mutex_lock+0xbf9/0x1700 kernel/locking/mutex.c:1073
-  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1088
-  snd_seq_write+0x1f1/0x8d0 sound/core/seq/seq_clientmgr.c:1021
-  __vfs_write+0x117/0x9d0 fs/read_write.c:485
-  vfs_write+0x1fc/0x560 fs/read_write.c:549
-  ksys_write+0x101/0x260 fs/read_write.c:598
-  __do_sys_write fs/read_write.c:610 [inline]
-  __se_sys_write fs/read_write.c:607 [inline]
-  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457089
-Code: 08 e8 3b a9 fb ff 48 8b 44 24 20 48 8b 4c 24 18 48 8b 54 24 38 48 8b  
-7c 24 48 eb 8d 48 8b 6c 24 50 48 83 c4 58 c3 48 89 04 24 <48> 89 5c 24 08  
-e8 0d a9 fb ff 48 8b 44 24 40 48 8b 4c 24 48 48 8b
-RSP: 002b:00007f5f1ebeac78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007f5f1ebeb6d4 RCX: 0000000000457089
-RDX: 00000000ffffff76 RSI: 0000000020000000 RDI: 0000000000000006
-RBP: 0000000000930460 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000004d7790 R14: 00000000004ca7f1 R15: 0000000000000006
+------------[ cut here ]------------
+ODEBUG: free active (active state 0) object type: percpu_counter  
+hint:           (null)
+WARNING: CPU: 1 PID: 18832 at lib/debugobjects.c:329  
+debug_print_object+0x16a/0x210 lib/debugobjects.c:326
+Kernel panic - not syncing: panic_on_warn set ...
 
-Showing all locks held in the system:
-1 lock held by khungtaskd/776:
-  #0: 0000000098b2492f (rcu_read_lock){....}, at:  
-debug_show_all_locks+0xd0/0x428 kernel/locking/lockdep.c:4436
-1 lock held by rsyslogd/4329:
-2 locks held by getty/4419:
-  #0: 00000000a4856276 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 000000004b3fbd4e (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-2 locks held by getty/4420:
-  #0: 00000000d3776216 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 0000000018b91ba2 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-2 locks held by getty/4421:
-  #0: 00000000e90a323e (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 00000000369e6155 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-2 locks held by getty/4422:
-  #0: 000000001139f51f (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 000000003aa121ca (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-2 locks held by getty/4423:
-  #0: 00000000dc25f399 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 000000009e2aa14c (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-2 locks held by getty/4424:
-  #0: 00000000fe22db15 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 00000000249dec83 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-2 locks held by getty/4425:
-  #0: 000000002fbf78cf (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 000000000377af90 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-1 lock held by syz-executor1/7988:
-1 lock held by syz-executor1/8015:
-  #0: 000000007dc4af24 (&client->ioctl_mutex){+.+.}, at:  
-snd_seq_write+0x1f1/0x8d0 sound/core/seq/seq_clientmgr.c:1021
-1 lock held by syz-executor1/8019:
-  #0: 000000007dc4af24 (&client->ioctl_mutex){+.+.}, at:  
-snd_seq_write+0x1f1/0x8d0 sound/core/seq/seq_clientmgr.c:1021
-1 lock held by syz-executor1/8026:
-  #0: 000000007dc4af24 (&client->ioctl_mutex){+.+.}, at:  
-snd_seq_ioctl+0x221/0x440 sound/core/seq/seq_clientmgr.c:2137
-1 lock held by syz-executor1/8040:
-  #0: 000000007dc4af24 (&client->ioctl_mutex){+.+.}, at:  
-snd_seq_write+0x1f1/0x8d0 sound/core/seq/seq_clientmgr.c:1021
-1 lock held by syz-executor1/8043:
-  #0: 000000007dc4af24 (&client->ioctl_mutex){+.+.}, at:  
-snd_seq_write+0x1f1/0x8d0 sound/core/seq/seq_clientmgr.c:1021
-
-=============================================
-
-NMI backtrace for cpu 1
-CPU: 1 PID: 776 Comm: khungtaskd Not tainted 4.18.0-next-20180824+ #47
+CPU: 1 PID: 18832 Comm: syz-executor4 Not tainted 4.18.0-next-20180824+ #47
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
   __dump_stack lib/dump_stack.c:77 [inline]
   dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-  nmi_cpu_backtrace.cold.3+0x48/0x88 lib/nmi_backtrace.c:101
-  nmi_trigger_cpumask_backtrace+0x151/0x192 lib/nmi_backtrace.c:62
-  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
-  trigger_all_cpu_backtrace include/linux/nmi.h:144 [inline]
-  check_hung_uninterruptible_tasks kernel/hung_task.c:204 [inline]
-  watchdog+0xb39/0x1040 kernel/hung_task.c:265
-  kthread+0x35a/0x420 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:415
-Sending NMI from CPU 1 to CPUs 0:
-INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.319  
-msecs
-NMI backtrace for cpu 0
-CPU: 0 PID: 7988 Comm: syz-executor1 Not tainted 4.18.0-next-20180824+ #47
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:mark_lock+0x181/0x19f0 kernel/locking/lockdep.c:3155
-Code: 43 10 00 00 00 00 48 8b 75 d0 65 48 33 34 25 28 00 00 00 0f 85 f5 11  
-00 00 48 81 c4 08 01 00 00 5b 41 5c 41 5d 41 5e 41 5f 5d <c3> 48 c7 c7 a0  
-97 90 89 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48
-RSP: 0018:ffff8801db0072e8 EFLAGS: 00000086
-RAX: 0000000000000001 RBX: 0000000000000039 RCX: 1ffff100365035f1
-RDX: 1ffffffff12853f6 RSI: 0000000000000000 RDI: ffffffff89429fb0
-RBP: ffff8801db007680 R08: 0000000000000008 R09: 0000000000000001
-R10: ffff8801b281a700 R11: ffff8801b281af2c R12: ffff8801b281af8a
-R13: 0000000000000040 R14: ffff8801b281a700 R15: 000000000000000e
-FS:  00007f5f1ecb1700(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffff600400 CR3: 00000001c3883000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  <IRQ>
-  lock_acquire+0x1e4/0x4f0 kernel/locking/lockdep.c:3901
-  seqcount_lockdep_reader_access include/linux/seqlock.h:81 [inline]
-  read_seqcount_begin include/linux/seqlock.h:164 [inline]
-  ktime_get+0x14e/0x440 kernel/time/timekeeping.c:754
-  hrtimer_forward_now include/linux/hrtimer.h:473 [inline]
-  perf_swevent_hrtimer+0x405/0x510 kernel/events/core.c:9124
-  __run_hrtimer kernel/time/hrtimer.c:1398 [inline]
-  __hrtimer_run_queues+0x3eb/0xff0 kernel/time/hrtimer.c:1460
-  hrtimer_interrupt+0x2f3/0x750 kernel/time/hrtimer.c:1518
-  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1029 [inline]
-  smp_apic_timer_interrupt+0x16d/0x6a0 arch/x86/kernel/apic/apic.c:1054
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:867
-  </IRQ>
-RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:783  
-[inline]
-RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:160  
-[inline]
-RIP: 0010:_raw_spin_unlock_irqrestore+0xa1/0xc0  
-kernel/locking/spinlock.c:184
-Code: 68 bc f1 87 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 80 3c  
-02 00 75 21 48 83 3d 2e be 3a 01 00 74 0e 48 89 df 57 9d <0f> 1f 44 00 00  
-eb bb 0f 0b 0f 0b e8 cf 10 05 fb eb 97 e8 c8 10 05
-RSP: 0018:ffff88019430f7b0 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff13
-RAX: dffffc0000000000 RBX: 0000000000000282 RCX: 1ffff100365035ec
-RDX: 1ffffffff0fe378d RSI: 0000000000000000 RDI: 0000000000000282
-RBP: ffff88019430f7c0 R08: ffff8801b281af40 R09: 0000000000000006
-R10: ffff8801b281a700 R11: 0000000000000000 R12: ffffffff8861fc20
-R13: ffff8801b0156540 R14: 0000000000000282 R15: ffffffff8a34a020
-  spin_unlock_irqrestore include/linux/spinlock.h:384 [inline]
-  snd_seq_client_use_ptr+0x9e/0x3f0 sound/core/seq/seq_clientmgr.c:178
-  snd_seq_dispatch_event+0xbf/0x650 sound/core/seq/seq_clientmgr.c:845
-  snd_seq_check_queue.part.4+0x139/0x360 sound/core/seq/seq_queue.c:275
-  snd_seq_check_queue sound/core/seq/seq_queue.c:255 [inline]
-  snd_seq_enqueue_event+0x346/0x4d0 sound/core/seq/seq_queue.c:343
-  snd_seq_client_enqueue_event+0x2a5/0x510 sound/core/seq/seq_clientmgr.c:957
-  snd_seq_write+0x3f1/0x8d0 sound/core/seq/seq_clientmgr.c:1074
-  __vfs_write+0x117/0x9d0 fs/read_write.c:485
-  vfs_write+0x1fc/0x560 fs/read_write.c:549
-  ksys_write+0x101/0x260 fs/read_write.c:598
-  __do_sys_write fs/read_write.c:610 [inline]
-  __se_sys_write fs/read_write.c:607 [inline]
-  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
+  panic+0x238/0x4e7 kernel/panic.c:184
+  __warn.cold.8+0x163/0x1ba kernel/panic.c:536
+  report_bug+0x252/0x2d0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  do_error_trap+0x1fc/0x4d0 arch/x86/kernel/traps.c:296
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:316
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:996
+RIP: 0010:debug_print_object+0x16a/0x210 lib/debugobjects.c:326
+Code: 3a 87 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 92 00 00 00 48 8b 14 dd  
+20 e5 3a 87 4c 89 f6 48 c7 c7 c0 da 3a 87 e8 26 ec e3 fd <0f> 0b 83 05 a9  
+49 28 05 01 48 83 c4 18 5b 41 5c 41 5d 41 5e 41 5f
+RSP: 0018:ffff8801a9a97360 EFLAGS: 00010082
+RAX: 0000000000000000 RBX: 0000000000000003 RCX: ffffc90012037000
+RDX: 000000000002cd2b RSI: ffffffff8163b051 RDI: 0000000000000001
+RBP: ffff8801a9a973a0 R08: ffff8801c1f76100 R09: ffffed003b623eca
+R10: ffffed003b623eca R11: ffff8801db11f657 R12: 0000000000000001
+R13: ffffffff882b7ae0 R14: ffffffff873adf60 R15: 0000000000000000
+  __debug_check_no_obj_freed lib/debugobjects.c:786 [inline]
+  debug_check_no_obj_freed+0x3b2/0x595 lib/debugobjects.c:818
+  kfree+0xc7/0x210 mm/slab.c:3812
+  f2fs_fill_super+0xe1a/0x8150 fs/f2fs/super.c:3147
+  mount_bdev+0x314/0x3e0 fs/super.c:1347
+  f2fs_mount+0x3c/0x50 fs/f2fs/super.c:3161
+  legacy_get_tree+0x131/0x460 fs/fs_context.c:732
+  vfs_get_tree+0x1cb/0x5c0 fs/super.c:1746
+  do_new_mount fs/namespace.c:2627 [inline]
+  do_mount+0x6f9/0x1e30 fs/namespace.c:2951
+  ksys_mount+0x12d/0x140 fs/namespace.c:3167
+  __do_sys_mount fs/namespace.c:3181 [inline]
+  __se_sys_mount fs/namespace.c:3178 [inline]
+  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3178
   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457089
-Code: fd b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f5f1ecb0c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007f5f1ecb16d4 RCX: 0000000000457089
-RDX: 00000000ffffff76 RSI: 0000000020000000 RDI: 0000000000000003
-RBP: 00000000009300a0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000004d7790 R14: 00000000004ca7f1 R15: 0000000000000000
+RIP: 0033:0x459aba
+Code: b8 a6 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 bd 8a fb ff c3 66 2e 0f  
+1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 9a 8a fb ff c3 66 0f 1f 84 00 00 00 00 00
+RSP: 002b:00007f16f9937a88 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f16f9937b30 RCX: 0000000000459aba
+RDX: 00007f16f9937ad0 RSI: 0000000020000100 RDI: 00007f16f9937af0
+RBP: 0000000020000100 R08: 00007f16f9937b30 R09: 00007f16f9937ad0
+R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000003
+R13: 0000000000000000 R14: 00000000004c9c12 R15: 0000000000000000
+
+======================================================
+WARNING: possible circular locking dependency detected
+4.18.0-next-20180824+ #47 Not tainted
+------------------------------------------------------
+syz-executor4/18832 is trying to acquire lock:
+00000000cd8e7eb7 ((console_sem).lock){-.-.}, at: down_trylock+0x13/0x70  
+kernel/locking/semaphore.c:136
+
+but task is already holding lock:
+0000000046ad1dd4 (&obj_hash[i].lock){-.-.}, at: __debug_check_no_obj_freed  
+lib/debugobjects.c:777 [inline]
+0000000046ad1dd4 (&obj_hash[i].lock){-.-.}, at:  
+debug_check_no_obj_freed+0x16c/0x595 lib/debugobjects.c:818
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #3 (&obj_hash[i].lock){-.-.}:
+        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+        _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
+        __debug_object_init+0x127/0x12e0 lib/debugobjects.c:384
+        debug_object_init+0x16/0x20 lib/debugobjects.c:432
+        debug_hrtimer_init kernel/time/hrtimer.c:410 [inline]
+        debug_init kernel/time/hrtimer.c:458 [inline]
+        hrtimer_init+0x97/0x410 kernel/time/hrtimer.c:1308
+        init_dl_task_timer+0x1b/0x50 kernel/sched/deadline.c:1057
+        __sched_fork+0x2ae/0x590 kernel/sched/core.c:2160
+        init_idle+0x75/0x740 kernel/sched/core.c:5377
+        sched_init+0xbee/0xcbd kernel/sched/core.c:6060
+        start_kernel+0x47d/0x94e init/main.c:602
+        x86_64_start_reservations+0x29/0x2b arch/x86/kernel/head64.c:452
+        x86_64_start_kernel+0x76/0x79 arch/x86/kernel/head64.c:433
+        secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:242
+
+-> #2 (&rq->lock){-.-.}:
+        __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
+        _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:144
+        rq_lock kernel/sched/sched.h:1821 [inline]
+        task_fork_fair+0x93/0x680 kernel/sched/fair.c:9574
+        sched_fork+0x44b/0xbd0 kernel/sched/core.c:2353
+        copy_process+0x235e/0x7af0 kernel/fork.c:1840
+        _do_fork+0x1ca/0x1170 kernel/fork.c:2169
+        kernel_thread+0x34/0x40 kernel/fork.c:2228
+        rest_init+0x22/0xe4 init/main.c:408
+        start_kernel+0x913/0x94e init/main.c:739
+        x86_64_start_reservations+0x29/0x2b arch/x86/kernel/head64.c:452
+        x86_64_start_kernel+0x76/0x79 arch/x86/kernel/head64.c:433
+        secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:242
+
+-> #1 (&p->pi_lock){-.-.}:
+        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+        _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
+        try_to_wake_up+0xd2/0x1250 kernel/sched/core.c:1960
+        wake_up_process+0x10/0x20 kernel/sched/core.c:2123
+        __up.isra.1+0x1c0/0x2a0 kernel/locking/semaphore.c:262
+        up+0x13c/0x1c0 kernel/locking/semaphore.c:187
+        __up_console_sem+0xbe/0x1b0 kernel/printk/printk.c:245
+        console_unlock+0x506/0x10d0 kernel/printk/printk.c:2430
+        con_install+0x34e/0x420 drivers/tty/vt/vt.c:3241
+        tty_driver_install_tty drivers/tty/tty_io.c:1224 [inline]
+        tty_init_dev+0xfd/0x460 drivers/tty/tty_io.c:1324
+        tty_open_by_driver drivers/tty/tty_io.c:1959 [inline]
+        tty_open+0x692/0xb30 drivers/tty/tty_io.c:2007
+        chrdev_open+0x25a/0x770 fs/char_dev.c:417
+        do_dentry_open+0x49c/0x1140 fs/open.c:771
+        vfs_open+0xa0/0xd0 fs/open.c:880
+        do_last fs/namei.c:3418 [inline]
+        path_openat+0x12fb/0x5300 fs/namei.c:3534
+        do_filp_open+0x255/0x380 fs/namei.c:3564
+        do_sys_open+0x584/0x720 fs/open.c:1063
+        __do_sys_open fs/open.c:1081 [inline]
+        __se_sys_open fs/open.c:1076 [inline]
+        __x64_sys_open+0x7e/0xc0 fs/open.c:1076
+        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+-> #0 ((console_sem).lock){-.-.}:
+        lock_acquire+0x1e4/0x4f0 kernel/locking/lockdep.c:3901
+        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+        _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
+        down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
+        __down_trylock_console_sem+0xae/0x200 kernel/printk/printk.c:228
+        console_trylock+0x15/0xa0 kernel/printk/printk.c:2249
+        console_trylock_spinning kernel/printk/printk.c:1651 [inline]
+        vprintk_emit+0x31f/0x910 kernel/printk/printk.c:1926
+        vprintk_default+0x28/0x30 kernel/printk/printk.c:1968
+        vprintk_func+0x7a/0x117 kernel/printk/printk_safe.c:398
+        printk+0xa7/0xcf kernel/printk/printk.c:2001
+        __warn_printk+0x8c/0xe0 kernel/panic.c:590
+        debug_print_object+0x16a/0x210 lib/debugobjects.c:326
+        __debug_check_no_obj_freed lib/debugobjects.c:786 [inline]
+        debug_check_no_obj_freed+0x3b2/0x595 lib/debugobjects.c:818
+        kfree+0xc7/0x210 mm/slab.c:3812
+        f2fs_fill_super+0xe1a/0x8150 fs/f2fs/super.c:3147
+        mount_bdev+0x314/0x3e0 fs/super.c:1347
+        f2fs_mount+0x3c/0x50 fs/f2fs/super.c:3161
+        legacy_get_tree+0x131/0x460 fs/fs_context.c:732
+        vfs_get_tree+0x1cb/0x5c0 fs/super.c:1746
+        do_new_mount fs/namespace.c:2627 [inline]
+        do_mount+0x6f9/0x1e30 fs/namespace.c:2951
+        ksys_mount+0x12d/0x140 fs/namespace.c:3167
+        __do_sys_mount fs/namespace.c:3181 [inline]
+        __se_sys_mount fs/namespace.c:3178 [inline]
+        __x64_sys_mount+0xbe/0x150 fs/namespace.c:3178
+        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+other info that might help us debug this:
+
+Chain exists of:
+   (console_sem).lock --> &rq->lock --> &obj_hash[i].lock
+
+  Possible unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   lock(&obj_hash[i].lock);
+                                lock(&rq->lock);
+                                lock(&obj_hash[i].lock);
+   lock((console_sem).lock);
+
+  *** DEADLOCK ***
+
+2 locks held by syz-executor4/18832:
+  #0: 000000002b55bbcc (&fc->fs_type->s_umount_key#49/1){+.+.}, at:  
+alloc_super+0x25e/0xb20 fs/super.c:225
+  #1: 0000000046ad1dd4 (&obj_hash[i].lock){-.-.}, at:  
+__debug_check_no_obj_freed lib/debugobjects.c:777 [inline]
+  #1: 0000000046ad1dd4 (&obj_hash[i].lock){-.-.}, at:  
+debug_check_no_obj_freed+0x16c/0x595 lib/debugobjects.c:818
+
+stack backtrace:
+CPU: 1 PID: 18832 Comm: syz-executor4 Not tainted 4.18.0-next-20180824+ #47
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  print_circular_bug.isra.34.cold.55+0x1bd/0x27d  
+kernel/locking/lockdep.c:1222
+  check_prev_add kernel/locking/lockdep.c:1862 [inline]
+  check_prevs_add kernel/locking/lockdep.c:1975 [inline]
+  validate_chain kernel/locking/lockdep.c:2416 [inline]
+  __lock_acquire+0x3449/0x5020 kernel/locking/lockdep.c:3412
+  lock_acquire+0x1e4/0x4f0 kernel/locking/lockdep.c:3901
+  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+  _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
+  down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
+  __down_trylock_console_sem+0xae/0x200 kernel/printk/printk.c:228
+  console_trylock+0x15/0xa0 kernel/printk/printk.c:2249
+  console_trylock_spinning kernel/printk/printk.c:1651 [inline]
+  vprintk_emit+0x31f/0x910 kernel/printk/printk.c:1926
+  vprintk_default+0x28/0x30 kernel/printk/printk.c:1968
+  vprintk_func+0x7a/0x117 kernel/printk/printk_safe.c:398
+  printk+0xa7/0xcf kernel/printk/printk.c:2001
+  __warn_printk+0x8c/0xe0 kernel/panic.c:590
+  debug_print_object+0x16a/0x210 lib/debugobjects.c:326
+  __debug_check_no_obj_freed lib/debugobjects.c:786 [inline]
+  debug_check_no_obj_freed+0x3b2/0x595 lib/debugobjects.c:818
+  kfree+0xc7/0x210 mm/slab.c:3812
+  f2fs_fill_super+0xe1a/0x8150 fs/f2fs/super.c:3147
+  mount_bdev+0x314/0x3e0 fs/super.c:1347
+  f2fs_mount+0x3c/0x50 fs/f2fs/super.c:3161
+  legacy_get_tree+0x131/0x460 fs/fs_context.c:732
+  vfs_get_tree+0x1cb/0x5c0 fs/super.c:1746
+  do_new_mount fs/namespace.c:2627 [inline]
+  do_mount+0x6f9/0x1e30 fs/namespace.c:2951
+  ksys_mount+0x12d/0x140 fs/namespace.c:3167
+  __do_sys_mount fs/namespace.c:3181 [inline]
+  __se_sys_mount fs/namespace.c:3178 [inline]
+  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3178
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x459aba
+Code: b8 a6 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 bd 8a fb ff c3 66 2e 0f  
+1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 9a 8a fb ff c3 66 0f 1f 84 00 00 00 00 00
+RSP: 002b:00007f16f9937a88 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f16f9937b30 RCX: 0000000000459aba
+RDX: 00007f16f9937ad0 RSI: 0000000020000100 RDI: 00007f16f9937af0
+RBP: 0000000020000100 R08: 00007f16f9937b30 R09: 00007f16f9937ad0
+R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000003
+R13: 0000000000000000 R14: 00000000004c9c12 R15: 0000000000000000
+Dumping ftrace buffer:
+---------------------------------
+syz-exec-23595   1...2 1079757271us : 0: }D
+syz-exec-23595   1..s3 1079757464us : 0: }D
+---------------------------------
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
 ---
