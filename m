@@ -2,106 +2,69 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDBF4C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 07:26:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE90BC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 07:27:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A12D5208B2
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 07:26:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A12D5208B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 855E021735
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 07:27:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qwVl8OVB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 855E021735
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727226AbeH0LMN (ORCPT
+        id S1727257AbeH0LMq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 07:12:13 -0400
-Received: from smtp2.provo.novell.com ([137.65.250.81]:60028 "EHLO
-        smtp2.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726882AbeH0LMN (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Mon, 27 Aug 2018 07:12:13 -0400
-Received: from Beta.suse.asia (prv-ext-foundry1int.gns.novell.com [137.65.251.240])
-        by smtp2.provo.novell.com with ESMTP (NOT encrypted); Mon, 27 Aug 2018 01:26:44 -0600
-From:   Larry Chen <lchen@suse.com>
-To:     mfasheh@suse.com, jlbec@evilplan.org
-Cc:     linux-kernel@vger.kernel.org, ocfs2-devel@oss.oracle.com,
-        akpm@linux-foundation.org
-Subject: [PATCH V2] fix crash on ocfs2_duplicate_clusters_by_page
-Date:   Mon, 27 Aug 2018 15:26:34 +0800
-Message-Id: <20180827072634.23700-1-lchen@suse.com>
-X-Mailer: git-send-email 2.13.7
+        Mon, 27 Aug 2018 07:12:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58060 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726882AbeH0LMp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 07:12:45 -0400
+Received: from dragon (unknown [45.56.155.152])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F37A6208B2;
+        Mon, 27 Aug 2018 07:27:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535354840;
+        bh=FK16ckoJ4xuoMx3aF7L7RcFxWPZtuC9/QmsnH8Vq6rA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qwVl8OVBBQ392ZUGgVcLv0uJBAb7oyGWTzTOMhEa/rpqOhnQlw3mE+3JNHaJVHveJ
+         jXlPb2U3VDq5wqkw2fTsKmH7qE3rcJdGC9kCVKbmaTEMnxO3j54o7djNGXkqQnlk6N
+         zGYBT+36gffvmeZTyBKM19apQYrO8fSsw5Bd+ghU=
+Date:   Mon, 27 Aug 2018 15:26:27 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Pierre-Jean Texier <texier.pj2@gmail.com>
+Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: imx7s-warp: enable i2c3 device support
+Message-ID: <20180827072625.GI3850@dragon>
+References: <1534540997-20094-1-git-send-email-texier.pj2@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1534540997-20094-1-git-send-email-texier.pj2@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ocfs2_duplicate_clusters_by_page may crash if one of extent's pages is dirty.
-When a page has not been written back, it is still in dirty state. If 
-ocfs2_duplicate_clusters_by_page is called against the
-dirty page, the crash happens.
+On Fri, Aug 17, 2018 at 11:23:17PM +0200, Pierre-Jean Texier wrote:
+> The WaRP7 has one mikroBUS socket on the back to plug click boards.
+> This patch allows to interact with some of these
+> i2c modules (EEPROM, RTC and so on).
+> 
+> Signed-off-by: Pierre-Jean Texier <texier.pj2@gmail.com>
 
-To fix this bug, we can just unlock the page and wait the page until
-it's not dirty.
-
-The following is the buck trace dump:
-
-kernel BUG at /root/code/ocfs2/refcounttree.c:2961!
-[exception RIP: ocfs2_duplicate_clusters_by_page+822]
-__ocfs2_move_extent+0x80/0x450 [ocfs2]
-? __ocfs2_claim_clusters+0x130/0x250 [ocfs2]
-ocfs2_defrag_extent+0x5b8/0x5e0 [ocfs2]
-__ocfs2_move_extents_range+0x2a4/0x470 [ocfs2]
-ocfs2_move_extents+0x180/0x3b0 [ocfs2]
-? ocfs2_wait_for_recovery+0x13/0x70 [ocfs2]
-ocfs2_ioctl_move_extents+0x133/0x2d0 [ocfs2]
-ocfs2_ioctl+0x253/0x640 [ocfs2]
-do_vfs_ioctl+0x90/0x5f0
-SyS_ioctl+0x74/0x80
-do_syscall_64+0x74/0x140
-entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-
-Change-log:
-1. Once we founce the page is dirty, we do not wait until it's clean,
-   but rather we use write_one_page to write it back
-
-Signed-off-by: Larry Chen <lchen@suse.com>
----
- fs/ocfs2/refcounttree.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/fs/ocfs2/refcounttree.c b/fs/ocfs2/refcounttree.c
-index 7869622af22a..380c9ae2f467 100644
---- a/fs/ocfs2/refcounttree.c
-+++ b/fs/ocfs2/refcounttree.c
-@@ -2946,6 +2946,7 @@ int ocfs2_duplicate_clusters_by_page(handle_t *handle,
- 		if (map_end & (PAGE_SIZE - 1))
- 			to = map_end & (PAGE_SIZE - 1);
- 
-+retry:
- 		page = find_or_create_page(mapping, page_index, GFP_NOFS);
- 		if (!page) {
- 			ret = -ENOMEM;
-@@ -2957,8 +2958,15 @@ int ocfs2_duplicate_clusters_by_page(handle_t *handle,
- 		 * In case PAGE_SIZE <= CLUSTER_SIZE, This page
- 		 * can't be dirtied before we CoW it out.
- 		 */
--		if (PAGE_SIZE <= OCFS2_SB(sb)->s_clustersize)
--			BUG_ON(PageDirty(page));
-+		if (PAGE_SIZE <= OCFS2_SB(sb)->s_clustersize) {
-+			if (PageDirty(page)) {
-+				/*
-+				 * write_on_page will unlock the page on return
-+				 */
-+				ret = write_one_page(page, 1);
-+				goto retry;
-+			}
-+		}
- 
- 		if (!PageUptodate(page)) {
- 			ret = block_read_full_page(page, ocfs2_get_block);
--- 
-2.13.7
-
+Applied, thanks.
