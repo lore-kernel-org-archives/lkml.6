@@ -2,90 +2,101 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAF8FC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:47:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36A24C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:47:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9657A2088E
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:47:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9657A2088E
+	by mail.kernel.org (Postfix) with ESMTP id E9687208DC
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:47:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="olAyg7ib"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9687208DC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727281AbeH0Vek (ORCPT
+        id S1727317AbeH0VfD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 17:34:40 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:58318 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726958AbeH0Vek (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 17:34:40 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mailout.easymail.ca (Postfix) with ESMTP id 45A7F21388;
-        Mon, 27 Aug 2018 17:47:06 +0000 (UTC)
-Received: from mailout.easymail.ca ([127.0.0.1])
-        by localhost (emo02-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id CaXPrkDzHIZ6; Mon, 27 Aug 2018 17:47:06 +0000 (UTC)
-Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Mon, 27 Aug 2018 17:35:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60152 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726958AbeH0VfD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 17:35:03 -0400
+Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mailout.easymail.ca (Postfix) with ESMTPSA id 3B6572143A;
-        Mon, 27 Aug 2018 17:46:59 +0000 (UTC)
-Subject: Re: [PATCH] cpupower: remove stringop-truncation waring
-To:     Anders Roxell <anders.roxell@linaro.org>, trenn@suse.com
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Shuah Khan <shuah@kernel.org>
-References: <20180821120225.3516-1-anders.roxell@linaro.org>
-From:   Shuah Khan <shuah@kernel.org>
-Message-ID: <a25c0c8b-10e3-c4c1-fc09-09bd39442b0e@kernel.org>
-Date:   Mon, 27 Aug 2018 11:46:49 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        by mail.kernel.org (Postfix) with ESMTPSA id B95D42088E;
+        Mon, 27 Aug 2018 17:47:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535392049;
+        bh=stasJp9NoRm2uUmjKlaG4njv3WYZRCReSVBHHNz7q+M=;
+        h=From:To:Cc:Subject:Date:From;
+        b=olAyg7ibxoye5b/cbcWOSMbcS48PH+Kpzy00WvYH1PF+oIGUzv8ZKup9u6qp0BT5J
+         JPy3GzaDIPgGiRY3CKLg7pNZthVzHRko3v6nVSEppBKPUStd6w886DwewZVfYseTsz
+         l2lnJio97ykyBuyFbq2K20gYd6oMhG5ijWzwqWpM=
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        =?UTF-8?q?Daniel=20P=20=2E=20Berrang=C3=A9?= <berrange@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 0/3] exec: fix passing of file locks across execve in multithreaded processes
+Date:   Mon, 27 Aug 2018 13:47:19 -0400
+Message-Id: <20180827174722.3723-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <20180821120225.3516-1-anders.roxell@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/21/2018 06:02 AM, Anders Roxell wrote:
-> The strncpy doesn't null terminate the string because the size is too
-> short by one byte.
-> 
-> parse.c: In function ‘prepare_default_config’:
-> parse.c:148:2: warning: ‘strncpy’ output truncated before terminating
->     nul copying 8 bytes from a string of the same length
->     [-Wstringop-truncation]
->   strncpy(config->governor, "ondemand", 8);
->   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> Passing the length of the input argument to strncpy() is almost always
-> wrong and provides no extra benefit over strcpy(), and since 'ondemand'
-> fits within 15 bytes" and it null terminates the string its safe to use
-> strcpy().
-> 
-> Fixes: 7fe2f6399a84 ("cpupowerutils - cpufrequtils extended with quite some features")
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> ---
->  tools/power/cpupower/bench/parse.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/power/cpupower/bench/parse.c b/tools/power/cpupower/bench/parse.c
-> index 9ba8a44ad2a7..91b5b768ffd2 100644
-> --- a/tools/power/cpupower/bench/parse.c
-> +++ b/tools/power/cpupower/bench/parse.c
-> @@ -145,7 +145,7 @@ struct config *prepare_default_config()
->  	config->cpu = 0;
->  	config->prio = SCHED_HIGH;
->  	config->verbose = 0;
-> -	strncpy(config->governor, "ondemand", 8);
-> +	strcpy(config->governor, "ondemand");
-This change is fine, however continuing to use strncpy with sizeof(config->governor).
+A few months ago, Dan reported that when you call execve in process that
+is multithreaded, any traditional POSIX locks are silently dropped.
 
-thanks,
--- Shuah
+The problem is that we end up unsharing the files_struct from the
+process very early during exec, when it looks like it's shared between
+tasks. Eventually, when the other, non-exec'ing tasks are killed, we
+tear down the old files_struct. That ends up tearing down the old
+files_struct, which ends up looking like a close() was issues on each
+open fd and that causes the locks to be dropped.
+
+This patchset is a second stab at fixing this issue, this time following
+the method suggested by Eric Biederman. The idea here is to move the
+unshare_files() call after de_thread(), which helps ensure that we only
+unshare the files_struct when it's truly shared between different
+processes, and not just when the exec'ing process is multithreaded.
+
+This seems to fix the originally reported problem (now known as xfstest
+generic/484), and basic testing doesn't seem to show any issues.
+
+During the original discussion though, Al had mentioned that this could
+be problematic due to the fdtable being modifiable by other threads
+(or even processes) during the binfmt probe. That may make this idea
+non-viable.
+
+I'm also not terribly thrilled with the way this sprinkles the
+files_struct->file_lock all over the place. It may be possible to do
+some of this with atomic ops if the basic approach turns out to be
+reasonable.
+
+Comments and suggestions welcome.
+
+Jeff Layton (3):
+  exec: separate thread_count for files_struct
+  exec: delay clone(CLONE_FILES) if task associated with current
+    files_struct is exec'ing
+  exec: do unshare_files after de_thread
+
+ fs/exec.c               | 29 +++++++++++++++++++----------
+ fs/file.c               | 18 ++++++++++++++++++
+ include/linux/binfmts.h |  1 +
+ include/linux/fdtable.h |  2 ++
+ kernel/fork.c           | 26 ++++++++++++++++++++++----
+ 5 files changed, 62 insertions(+), 14 deletions(-)
+
+-- 
+2.17.1
+
