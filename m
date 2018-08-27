@@ -2,332 +2,536 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1C5BC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:05:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FB3FC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:08:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8456C208B3
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:05:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8456C208B3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id EAC58208D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:08:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vNLQfP57"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAC58208D8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727029AbeH0UxN (ORCPT
+        id S1727058AbeH0Uzh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 16:53:13 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47354 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726809AbeH0UxN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 16:53:13 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Mon, 27 Aug 2018 16:55:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51342 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726809AbeH0Uzh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 16:55:37 -0400
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 32ACB4023ECB;
-        Mon, 27 Aug 2018 17:05:47 +0000 (UTC)
-Received: from krava (ovpn-204-43.brq.redhat.com [10.40.204.43])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 6E7452166B41;
-        Mon, 27 Aug 2018 17:05:45 +0000 (UTC)
-Date:   Mon, 27 Aug 2018 19:05:43 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Stephane Eranian <eranian@google.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>, mingo@elte.hu,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: [PATCHv3] perf tools: Add struct ordered_events_buffer layer
-Message-ID: <20180827170543.GA31347@krava>
-References: <1533767600-7794-1-git-send-email-eranian@google.com>
- <20180809080721.GB19243@krava>
- <CABPqkBQEfoMDEqot1VbgExg1fU3+EEunzZqDFKSGmLKBhxNkwA@mail.gmail.com>
- <20180810115431.GA4162@krava>
- <20180813130446.GA8685@krava>
- <CABPqkBSgYEFFAkddBqZbYXe9tjUY7RbMBjQsZht8ki1iOR6unw@mail.gmail.com>
- <20180815084825.GD3180@krava>
- <20180827092818.GA3725@krava>
- <CABPqkBQS+QG1jjzMU=wpuOJXD5A8iiPj3fNZoHSsPep7rfEQow@mail.gmail.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 03DD3208B3;
+        Mon, 27 Aug 2018 17:08:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535389690;
+        bh=B9/V6gPnvl5QHnSsKa/XsJyONiPJrOWKxJf3hB64IdE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=vNLQfP57Ol9xLMTLJLzzboHlSIkM++1AI+79Ic8VW5flzPiQ1iNFElUG89DQ9lmkM
+         mqr8A9FjlZJodXsbWq2/FqDCF/T27ajIfqhTMgGDHVOzi06ci8rVgahk4u7lomB21c
+         814e+WhWagHZOe8SFtJpFF1UXsxf7QcwBDkO8HUY=
+Date:   Mon, 27 Aug 2018 18:08:05 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Afonso Bordado <afonsobordado@az8.co>
+Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/4] iio: gyro: add support for fxas21002c
+Message-ID: <20180827180805.7d4b9f4e@archlinux>
+In-Reply-To: <20180825211910.22929-1-afonsobordado@az8.co>
+References: <20180825211910.22929-1-afonsobordado@az8.co>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABPqkBQS+QG1jjzMU=wpuOJXD5A8iiPj3fNZoHSsPep7rfEQow@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 27 Aug 2018 17:05:47 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 27 Aug 2018 17:05:47 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 08:24:56AM -0700, Stephane Eranian wrote:
+On Sat, 25 Aug 2018 22:19:07 +0100
+Afonso Bordado <afonsobordado@az8.co> wrote:
 
-SNIP
-
-> > -               /* First entry is abused to maintain the to_free list. */
-> > -               oe->buffer_idx = 2;
-> > -               new = oe->buffer + 1;
-> > +               oe->buffer_idx = 1;
-> > +               new = &oe->buffer->event[0];
-> >         } else {
-> >                 pr("allocation limit reached %" PRIu64 "B\n", oe->max_alloc_size);
+> FXAS21002C is a 3 axis gyroscope with integrated temperature sensor
 > 
+> Signed-off-by: Afonso Bordado <afonsobordado@az8.co>
+
+Hi,
+
+Driver is pretty clean so only a few minor comments inline.
+If we were late in a cycle I'd probably just have taken it and fixed up
+but as we have lots of time and I'm inherently lazy I'll let you do a v2 :)
+
+Good job, thanks!
+
+Jonathan
+
+
+> ---
+>  drivers/iio/gyro/Kconfig      |  11 ++
+>  drivers/iio/gyro/Makefile     |   1 +
+>  drivers/iio/gyro/fxas21002c.c | 363 ++++++++++++++++++++++++++++++++++
+>  3 files changed, 375 insertions(+)
+>  create mode 100644 drivers/iio/gyro/fxas21002c.c
 > 
-> I am wondering about the usefulness of returning a new_event with
-> new_event->event = NULL
-> in this case. Don't you need new_event->event? If so, then you need return NULL.
+> diff --git a/drivers/iio/gyro/Kconfig b/drivers/iio/gyro/Kconfig
+> index 3126cf05e6b9..d71e33ea9fa4 100644
+> --- a/drivers/iio/gyro/Kconfig
+> +++ b/drivers/iio/gyro/Kconfig
+> @@ -73,6 +73,17 @@ config BMG160_SPI
+>  	tristate
+>  	select REGMAP_SPI
+>  
+> +config FXAS21002C
+> +	tristate "Freescale FXAS21002C Gyroscope"
+> +	depends on I2C
+> +	select REGMAP_I2C
+> +	help
+> +	  Say yes here to build support for the Freescale FXAS21002C Gyroscope
+> +	  driver connected via I2C.
+> +
+> +	  This driver can also be built as a module. If so, the module
+> +	  will be called fxas21002c.
+> +
+>  config HID_SENSOR_GYRO_3D
+>  	depends on HID_SENSOR_HUB
+>  	select IIO_BUFFER
+> diff --git a/drivers/iio/gyro/Makefile b/drivers/iio/gyro/Makefile
+> index 295ec780c4eb..ec3e2aeae92a 100644
+> --- a/drivers/iio/gyro/Makefile
+> +++ b/drivers/iio/gyro/Makefile
+> @@ -12,6 +12,7 @@ obj-$(CONFIG_ADXRS450) += adxrs450.o
+>  obj-$(CONFIG_BMG160) += bmg160_core.o
+>  obj-$(CONFIG_BMG160_I2C) += bmg160_i2c.o
+>  obj-$(CONFIG_BMG160_SPI) += bmg160_spi.o
+> +obj-$(CONFIG_FXAS21002C) += fxas21002c.o
+>  
+>  obj-$(CONFIG_HID_SENSOR_GYRO_3D) += hid-sensor-gyro-3d.o
+>  
+> diff --git a/drivers/iio/gyro/fxas21002c.c b/drivers/iio/gyro/fxas21002c.c
+> new file mode 100644
+> index 000000000000..7626b2f88d72
+> --- /dev/null
+> +++ b/drivers/iio/gyro/fxas21002c.c
+> @@ -0,0 +1,363 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * FXAS21002C - Digital Angular Rate Gyroscope driver
+> + *
+> + * Copyright (c) 2018, Afonso Bordado <afonsobordado@az8.co>
+> + *
+> + * IIO driver for FXAS21002C (7-bit I2C slave address 0x20 or 0x21).
+> + * Datasheet: https://www.nxp.com/docs/en/data-sheet/FXAS21002.pdf
+> + * TODO:
+> + *        ODR / Scale Support
+> + *        Devicetree
+> + *        Power management
+> + *        LowPass/HighPass Filters
+> + *        Buffers
+> + *        Interrupts
+> + *        Alarms
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/i2c.h>
+> +#include <linux/iio/iio.h>
+> +#include <linux/iio/sysfs.h>
+> +#include <linux/regmap.h>
+> +
+> +#define FXAS21002C_DRV_NAME "fxas21002c"
+> +
+> +#define FXAS21002C_MAX_TRANSITION_TIME_MS 61
+> +
+> +#define FXAS21002C_CHIP_ID             0xD7
+> +
+> +#define FXAS21002C_REG_STATUS          0x00
+> +#define FXAS21002C_REG_OUT_X_MSB       0x01
+> +#define FXAS21002C_REG_OUT_X_LSB       0x02
+> +#define FXAS21002C_REG_OUT_Y_MSB       0x03
+> +#define FXAS21002C_REG_OUT_Y_LSB       0x04
+> +#define FXAS21002C_REG_OUT_Z_MSB       0x05
+> +#define FXAS21002C_REG_OUT_Z_LSB       0x06
+> +#define FXAS21002C_REG_DR_STATUS       0x07
+> +#define FXAS21002C_REG_F_STATUS        0x08
+> +#define FXAS21002C_REG_F_SETUP         0x09
+> +#define FXAS21002C_REG_F_EVENT         0x0A
+> +#define FXAS21002C_REG_INT_SRC_FLAG    0x0B
+> +#define FXAS21002C_REG_WHO_AM_I        0x0C
+> +#define FXAS21002C_REG_CTRL_REG0       0x0D
+> +#define FXAS21002C_REG_RT_CFG          0x0E
+> +#define FXAS21002C_REG_RT_SRC          0x0F
+> +#define FXAS21002C_REG_RT_THS          0x10
+> +#define FXAS21002C_REG_RT_COUNT        0x11
+> +#define FXAS21002C_REG_TEMP            0x12
+> +
+> +#define FXAS21002C_REG_CTRL_REG1       0x13
+> +#define FXAS21002C_RST_BIT             BIT(6)
+> +#define FXAS21002C_ACTIVE_BIT          BIT(1)
+> +#define FXAS21002C_READY_BIT           BIT(0)
+> +
+> +#define FXAS21002C_REG_CTRL_REG2       0x14
+> +#define FXAS21002C_REG_CTRL_REG3       0x15
+> +
+> +#define FXAS21002C_DEFAULT_ODR_HZ      800
+> +
+> +// 0.0625 deg/s
+/* .. */
+> +#define FXAS21002C_DEFAULT_SENSITIVITY IIO_DEGREE_TO_RAD(62500)
+> +
+> +enum fxas21002c_id {
+> +	ID_FXAS21002C,
+> +};
+> +
+> +enum fxas21002c_operating_mode {
+> +	FXAS21002C_OM_BOOT,
+> +	FXAS21002C_OM_STANDBY,
+> +	FXAS21002C_OM_READY,
+> +	FXAS21002C_OM_ACTIVE,
+> +};
+> +
+> +struct fxas21002c_data {
+> +	struct i2c_client *client;
+> +	struct regmap *regmap;
+> +};
+> +
+> +static const struct regmap_range fxas21002c_writable_ranges[] = {
+> +	regmap_reg_range(FXAS21002C_REG_F_SETUP, FXAS21002C_REG_F_SETUP),
+> +	regmap_reg_range(FXAS21002C_REG_CTRL_REG0, FXAS21002C_REG_RT_CFG),
+> +	regmap_reg_range(FXAS21002C_REG_RT_THS, FXAS21002C_REG_RT_COUNT),
+> +	regmap_reg_range(FXAS21002C_REG_CTRL_REG1, FXAS21002C_REG_CTRL_REG3),
+> +};
+> +
+> +static const struct regmap_access_table fxas21002c_writable_table = {
+> +	.yes_ranges = fxas21002c_writable_ranges,
+> +	.n_yes_ranges = ARRAY_SIZE(fxas21002c_writable_ranges),
+> +};
+> +
+> +static const struct regmap_range fxas21002c_volatile_ranges[] = {
+> +	regmap_reg_range(FXAS21002C_REG_STATUS, FXAS21002C_REG_F_STATUS),
+> +	regmap_reg_range(FXAS21002C_REG_F_EVENT, FXAS21002C_REG_INT_SRC_FLAG),
+> +	regmap_reg_range(FXAS21002C_REG_RT_COUNT, FXAS21002C_REG_CTRL_REG1),
+> +};
+> +
+> +static const struct regmap_access_table fxas21002c_volatile_table = {
+> +	.yes_ranges = fxas21002c_volatile_ranges,
+> +	.n_yes_ranges = ARRAY_SIZE(fxas21002c_volatile_ranges),
+> +};
+> +
+> +const struct regmap_config fxas21002c_regmap_config = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +
+> +	.max_register = FXAS21002C_REG_CTRL_REG3,
+> +	// We don't specify a .rd_table because everything is readable
+/* ... */
 
-yep, that's a bug.. with new being NULL in here,
-we'd get a crash anyway.. so 'return NULL;' it is
+Please run checkpatch as IIRC it complains about this.
 
-SNIP
+> +	.wr_table = &fxas21002c_writable_table,
+> +	.volatile_table = &fxas21002c_volatile_table,
+> +};
+> +EXPORT_SYMBOL(fxas21002c_regmap_config);
+> +
+> +#define FXAS21002C_GYRO_CHAN(_axis) {					\
+> +	.type = IIO_ANGL_VEL,						\
+> +	.modified = 1,							\
+> +	.channel2 = IIO_MOD_ ## _axis,					\
+> +	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),			\
+> +	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |		\
+> +				    BIT(IIO_CHAN_INFO_SAMP_FREQ),	\
+> +	.address = FXAS21002C_REG_OUT_ ## _axis ## _MSB,		\
+> +}
+> +
+> +static const struct iio_chan_spec fxas21002c_channels[] = {
+> +	{
+> +		.type = IIO_TEMP,
+> +		.address = FXAS21002C_REG_TEMP,
+> +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
 
-> > +        * yet, we need to free only allocated ones ...
-> > +        */
-> > +       list_del(&oe->buffer->list);
-> > +       ordered_events_buffer__free(oe->buffer, oe->buffer_idx, oe);
-> > +
-> > +       /* ... and continue with the rest */
-> > +       list_for_each_entry_safe(buffer, tmp, &oe->to_free, list) {
-> > +               list_del(&buffer->list);
-> > +               ordered_events_buffer__free(buffer, MAX_SAMPLE_BUFFER, oe);
-> 
-> 
-> Here you are saying that if it is on the to_free list and not the
-> current buffer, then necessarily
-> all the entries have been used and it is safe to use
-> MAX_SAMPLE_BUFFER. Is that right?
+As it currently stands it is IIO_CHAN_PROCESSED but I'd prefer you provided
+the scale and kept it as _RAW.
 
-yes, at this point they either holds an event or NULL
-so it's free to call __free_dup_event on it
+> +	},
+> +	FXAS21002C_GYRO_CHAN(X),
+> +	FXAS21002C_GYRO_CHAN(Y),
+> +	FXAS21002C_GYRO_CHAN(Z),
+> +	IIO_CHAN_SOFT_TIMESTAMP(3),
+> +};
+> +
+> +static int fxas21002c_set_operating_mode(struct fxas21002c_data *data,
+> +					 enum fxas21002c_operating_mode om)
+> +{
+> +	int ret;
+> +	int mask = 0;
+Might be clearer to not set this here and...
+> +
+> +	switch (om) {
+> +	case FXAS21002C_OM_STANDBY:
+		mask = 0;
+> +		break;
+> +	case FXAS21002C_OM_READY:
+> +		mask |= FXAS21002C_READY_BIT;
+		mask = FXA210002C_READY_BIT;
+> +		break;
+> +	case FXAS21002C_OM_ACTIVE:
+> +		mask |= FXAS21002C_ACTIVE_BIT;
+		mask = FXA21002C_ACTIVE_BIT;
 
-thanks, v3 attached
+Slightly more readable I think...
+> +		break;
+> +
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	ret = regmap_write(data->regmap, FXAS21002C_REG_CTRL_REG1, mask);
+> +	if (ret) {
+> +		dev_err(&data->client->dev,
+> +			"could not switch operating mode\n");
+> +		return ret;
+> +	}
+> +
+> +	msleep(FXAS21002C_MAX_TRANSITION_TIME_MS);
+> +
+> +	return 0;
+> +}
+> +
+> +static int fxas21002c_reset(struct fxas21002c_data *data)
+> +{
+> +	int ret;
+> +
+> +	/*
+> +	 * On issuing a Software Reset command over an I2C interface,
+> +	 * the device immediately resets and does not send any
+> +	 * acknowledgment (ACK) of the written byte to the Master.
+> +	 *
+> +	 * This is documented in table 46 on the datasheet. Due to this
+> +	 * the write will fail with EREMOTEIO.
+> +	 */
+> +	ret = regmap_write(data->regmap,
+> +			   FXAS21002C_REG_CTRL_REG1, FXAS21002C_RST_BIT);
+> +
+> +	if (ret != -EREMOTEIO) {
+> +		dev_err(&data->client->dev, "could not reset device\n");
+> +		return ret;
+> +	}
+> +
+> +	regcache_mark_dirty(data->regmap);
+> +
+> +	// Wait for device to boot up
 
-added also Namhyung's ack, as the 'return NULL' change wasn't
-related to the v2 changes
+/* Wait... */
 
-jirka
+> +	msleep(FXAS21002C_MAX_TRANSITION_TIME_MS);
+> +
+> +	return 0;
+> +}
+> +
+> +static int fxas21002c_verify_chip(struct fxas21002c_data *data)
+> +{
+> +	int ret;
+> +	int chip_id;
+> +
+> +	ret = regmap_read(data->regmap, FXAS21002C_REG_WHO_AM_I, &chip_id);
+> +	if (ret) {
+> +		dev_err(&data->client->dev, "could not read device id\n");
+> +		return ret;
+> +	}
+> +
+> +	if (chip_id != FXAS21002C_CHIP_ID) {
+> +		dev_err(&data->client->dev,
+> +			"unsupported chip id %02x\n", chip_id);
+> +		return -ENODEV;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int fxas21002c_read_oneshot(struct fxas21002c_data *data,
+> +				   struct iio_chan_spec const *chan, int *val)
+> +{
+> +	int ret;
+> +	int raw;
+> +	__be16 bulk_raw;
+> +
+> +	switch (chan->type) {
+> +	case IIO_ANGL_VEL:
+> +		ret = regmap_bulk_read(data->regmap, chan->address,
+> +				       &bulk_raw, sizeof(bulk_raw));
+> +		if (ret)
+> +			return ret;
+> +
+> +		*val = sign_extend32(be16_to_cpu(bulk_raw), 15);
+> +		break;
+
+return IIO_VAL_INT directly here.
+
+> +	case IIO_TEMP:
+> +		ret = regmap_read(data->regmap, chan->address, &raw);
+> +		if (ret)
+> +			return ret;
+> +
+> +		*val = raw * 1000; // Convert to millicelsius
+
+Don't use c++ style comments in kernel code please.
+
+Also I wouldn't do this multiplier in here, I'd provide the scale attribute.
+The reason is that we may later have support for buffered reads from this
+device - at that point we will want to have nice 8 bit data rather than having
+a scaled value that isn't quite a whole number of bits.
 
 
----
-When ordering events, we use preallocated buffers to store separated
-events. Those buffers currently don't have their own struct, but since
-they are basically array of 'struct ordered_event' objects, we use the
-first event to hold buffers data - list head, that holds all buffers
-together:
+> +		break;
+return IIO_VAL_INT; directly here.
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
 
-   struct ordered_events {
-     ...
-     struct ordered_event *buffer;
-     ...
-   };
+With the above two changes in place this return is never reached.
 
-   struct ordered_event {
-     u64               timestamp;
-     u64               file_offset;
-     union perf_event  *event;
-     struct list_head  list;
-   };
+> +	return IIO_VAL_INT;
+> +}
+> +
+> +static int fxas21002c_read_raw(struct iio_dev *indio_dev,
+> +			       struct iio_chan_spec const *chan, int *val,
+> +			       int *val2, long mask)
+> +{
+> +	struct fxas21002c_data *data = iio_priv(indio_dev);
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_RAW:
+> +		return fxas21002c_read_oneshot(data, chan, val);
+> +	case IIO_CHAN_INFO_SCALE:
+> +		if (chan->type != IIO_ANGL_VEL)
+> +			return -EINVAL;
+This check is a bit over paranoid given there is no way
+this would be called in with a different type.
 
-This is quite convoluted and error prone as demonstrated by
-free-ing issue discovered and fixed by Stephane in here [1].
+Doesn't do any real harm though.
 
-This patch adds the 'struct ordered_events_buffer' object,
-that holds the buffer data and frees it up properly.
+> +
+> +		*val = 0;
+> +		*val2 = FXAS21002C_DEFAULT_SENSITIVITY;
+> +
+> +		return IIO_VAL_INT_PLUS_MICRO;
+> +	case IIO_CHAN_INFO_SAMP_FREQ:
+> +		if (chan->type != IIO_ANGL_VEL)
+> +			return -EINVAL;
+> +
+> +		*val = FXAS21002C_DEFAULT_ODR_HZ;
+> +
+> +		return IIO_VAL_INT;
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static const struct iio_info fxas21002c_info = {
+> +	.read_raw		= fxas21002c_read_raw,
+> +};
+> +
+> +static int fxas21002c_probe(struct i2c_client *client,
+> +			    const struct i2c_device_id *id)
+> +{
+> +	int ret;
+> +	struct iio_dev *indio_dev;
+> +	struct fxas21002c_data *data;
+> +
+> +	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*data));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +
+> +	i2c_set_clientdata(client, indio_dev);
+> +	data = iio_priv(indio_dev);
+> +	data->client = client;
+> +
+> +	data->regmap = devm_regmap_init_i2c(client, &fxas21002c_regmap_config);
+> +	if (IS_ERR(data->regmap)) {
+> +		ret = PTR_ERR(data->regmap);
+> +		dev_err(&client->dev,
+> +			"Failed to allocate regmap, err: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	indio_dev->dev.parent = &client->dev;
+> +	indio_dev->channels = fxas21002c_channels;
+> +	indio_dev->num_channels = ARRAY_SIZE(fxas21002c_channels);
+> +	indio_dev->name = id->name;
+> +	indio_dev->modes = INDIO_DIRECT_MODE;
+> +	indio_dev->info = &fxas21002c_info;
+> +
+> +	ret = fxas21002c_verify_chip(data);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = fxas21002c_reset(data);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = fxas21002c_set_operating_mode(data, FXAS21002C_OM_ACTIVE);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = iio_device_register(indio_dev);
+> +	if (ret < 0) {
+> +		dev_err(&client->dev, "Failed to register iio device\n");
+> +		fxas21002c_set_operating_mode(data, FXAS21002C_OM_STANDBY);
+> +		return ret;
 
-[1] - https://marc.info/?l=linux-kernel&m=153376761329335&w=2
+We may potentially get a patch as one of the static analysis tools will point
+out that return ret could be dropped out of the brackets without changing the
+code (ret is 0 in this case as iio_device_register never returns positive)
 
-Reported-by: Stephane Eranian <eranian@google.com>
-Acked-by: Namhyung Kim <namhyung@kernel.org>
-Link: http://lkml.kernel.org/n/tip-qrkcqm5m1sugy4q83pfn5a1r@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/perf/util/ordered-events.c | 83 +++++++++++++++++++++++++++-----
- tools/perf/util/ordered-events.h | 37 ++++++++------
- 2 files changed, 91 insertions(+), 29 deletions(-)
+Really minor though!
 
-diff --git a/tools/perf/util/ordered-events.c b/tools/perf/util/ordered-events.c
-index bad9e0296e9a..87171e8fd70d 100644
---- a/tools/perf/util/ordered-events.c
-+++ b/tools/perf/util/ordered-events.c
-@@ -80,14 +80,20 @@ static union perf_event *dup_event(struct ordered_events *oe,
- 	return oe->copy_on_queue ? __dup_event(oe, event) : event;
- }
- 
--static void free_dup_event(struct ordered_events *oe, union perf_event *event)
-+static void __free_dup_event(struct ordered_events *oe, union perf_event *event)
- {
--	if (event && oe->copy_on_queue) {
-+	if (event) {
- 		oe->cur_alloc_size -= event->header.size;
- 		free(event);
- 	}
- }
- 
-+static void free_dup_event(struct ordered_events *oe, union perf_event *event)
-+{
-+	if (oe->copy_on_queue)
-+		__free_dup_event(oe, event);
-+}
-+
- #define MAX_SAMPLE_BUFFER	(64 * 1024 / sizeof(struct ordered_event))
- static struct ordered_event *alloc_event(struct ordered_events *oe,
- 					 union perf_event *event)
-@@ -100,15 +106,43 @@ static struct ordered_event *alloc_event(struct ordered_events *oe,
- 	if (!new_event)
- 		return NULL;
- 
-+	/*
-+	 * We maintain following scheme of buffers for ordered
-+	 * event allocation:
-+	 *
-+	 *   to_free list -> buffer1 (64K)
-+	 *                   buffer2 (64K)
-+	 *                   ...
-+	 *
-+	 * Each buffer keeps an array of ordered events objects:
-+	 *    buffer -> event[0]
-+	 *              event[1]
-+	 *              ...
-+	 *
-+	 * Each allocated ordered event is linked to one of
-+	 * following lists:
-+	 *   - time ordered list 'events'
-+	 *   - list of currently removed events 'cache'
-+	 *
-+	 * Allocation of the ordered event uses following order
-+	 * to get the memory:
-+	 *   - use recently removed object from 'cache' list
-+	 *   - use available object in current allocation buffer
-+	 *   - allocate new buffer if the current buffer is full
-+	 *
-+	 * Removal of ordered event object moves it from events to
-+	 * the cache list.
-+	 */
- 	if (!list_empty(cache)) {
- 		new = list_entry(cache->next, struct ordered_event, list);
- 		list_del(&new->list);
- 	} else if (oe->buffer) {
--		new = oe->buffer + oe->buffer_idx;
-+		new = &oe->buffer->event[oe->buffer_idx];
- 		if (++oe->buffer_idx == MAX_SAMPLE_BUFFER)
- 			oe->buffer = NULL;
- 	} else if (oe->cur_alloc_size < oe->max_alloc_size) {
--		size_t size = MAX_SAMPLE_BUFFER * sizeof(*new);
-+		size_t size = sizeof(*oe->buffer) +
-+			      MAX_SAMPLE_BUFFER * sizeof(*new);
- 
- 		oe->buffer = malloc(size);
- 		if (!oe->buffer) {
-@@ -122,11 +156,11 @@ static struct ordered_event *alloc_event(struct ordered_events *oe,
- 		oe->cur_alloc_size += size;
- 		list_add(&oe->buffer->list, &oe->to_free);
- 
--		/* First entry is abused to maintain the to_free list. */
--		oe->buffer_idx = 2;
--		new = oe->buffer + 1;
-+		oe->buffer_idx = 1;
-+		new = &oe->buffer->event[0];
- 	} else {
- 		pr("allocation limit reached %" PRIu64 "B\n", oe->max_alloc_size);
-+		return NULL;
- 	}
- 
- 	new->event = new_event;
-@@ -300,15 +334,38 @@ void ordered_events__init(struct ordered_events *oe, ordered_events__deliver_t d
- 	oe->deliver	   = deliver;
- }
- 
-+static void
-+ordered_events_buffer__free(struct ordered_events_buffer *buffer,
-+			    unsigned int max, struct ordered_events *oe)
-+{
-+	if (oe->copy_on_queue) {
-+		unsigned int i;
-+
-+		for (i = 0; i < max; i++)
-+			__free_dup_event(oe, buffer->event[i].event);
-+	}
-+
-+	free(buffer);
-+}
-+
- void ordered_events__free(struct ordered_events *oe)
- {
--	while (!list_empty(&oe->to_free)) {
--		struct ordered_event *event;
-+	struct ordered_events_buffer *buffer, *tmp;
- 
--		event = list_entry(oe->to_free.next, struct ordered_event, list);
--		list_del(&event->list);
--		free_dup_event(oe, event->event);
--		free(event);
-+	if (list_empty(&oe->to_free))
-+		return;
-+
-+	/*
-+	 * Current buffer might not have all the events allocated
-+	 * yet, we need to free only allocated ones ...
-+	 */
-+	list_del(&oe->buffer->list);
-+	ordered_events_buffer__free(oe->buffer, oe->buffer_idx, oe);
-+
-+	/* ... and continue with the rest */
-+	list_for_each_entry_safe(buffer, tmp, &oe->to_free, list) {
-+		list_del(&buffer->list);
-+		ordered_events_buffer__free(buffer, MAX_SAMPLE_BUFFER, oe);
- 	}
- }
- 
-diff --git a/tools/perf/util/ordered-events.h b/tools/perf/util/ordered-events.h
-index 8c7a2948593e..1338d5c345dc 100644
---- a/tools/perf/util/ordered-events.h
-+++ b/tools/perf/util/ordered-events.h
-@@ -25,23 +25,28 @@ struct ordered_events;
- typedef int (*ordered_events__deliver_t)(struct ordered_events *oe,
- 					 struct ordered_event *event);
- 
-+struct ordered_events_buffer {
-+	struct list_head	list;
-+	struct ordered_event	event[0];
-+};
-+
- struct ordered_events {
--	u64			last_flush;
--	u64			next_flush;
--	u64			max_timestamp;
--	u64			max_alloc_size;
--	u64			cur_alloc_size;
--	struct list_head	events;
--	struct list_head	cache;
--	struct list_head	to_free;
--	struct ordered_event	*buffer;
--	struct ordered_event	*last;
--	ordered_events__deliver_t deliver;
--	int			buffer_idx;
--	unsigned int		nr_events;
--	enum oe_flush		last_flush_type;
--	u32			nr_unordered_events;
--	bool                    copy_on_queue;
-+	u64				 last_flush;
-+	u64				 next_flush;
-+	u64				 max_timestamp;
-+	u64				 max_alloc_size;
-+	u64				 cur_alloc_size;
-+	struct list_head		 events;
-+	struct list_head		 cache;
-+	struct list_head		 to_free;
-+	struct ordered_events_buffer	*buffer;
-+	struct ordered_event		*last;
-+	ordered_events__deliver_t	 deliver;
-+	int				 buffer_idx;
-+	unsigned int			 nr_events;
-+	enum oe_flush			 last_flush_type;
-+	u32				 nr_unordered_events;
-+	bool				 copy_on_queue;
- };
- 
- int ordered_events__queue(struct ordered_events *oe, union perf_event *event,
--- 
-2.17.1
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int fxas21002c_remove(struct i2c_client *client)
+> +{
+> +	struct iio_dev *indio_dev = i2c_get_clientdata(client);
+> +	struct fxas21002c_data *data = iio_priv(indio_dev);
+> +
+> +	iio_device_unregister(indio_dev);
+> +
+> +	fxas21002c_set_operating_mode(data, FXAS21002C_OM_STANDBY);
+You could have used the devm_add_action to allow the managed cleanup to handle
+this and hence gotten rid of the remove function.
+
+(minor suggestion and somewhat a matter of personal taste).
+
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct i2c_device_id fxas21002c_id[] = {
+> +	{"fxas21002c", ID_FXAS21002C},
+> +	{}
+> +};
+> +
+> +MODULE_DEVICE_TABLE(i2c, fxas21002c_id);
+> +
+> +static struct i2c_driver fxas21002c_driver = {
+> +	.driver = {
+> +		.name = FXAS21002C_DRV_NAME,
+> +	},
+> +	.probe		= fxas21002c_probe,
+> +	.remove		= fxas21002c_remove,
+> +	.id_table	= fxas21002c_id,
+> +};
+> +
+> +module_i2c_driver(fxas21002c_driver);
+> +
+> +MODULE_AUTHOR("Afonso Bordado <afonsobordado@az8.co>");
+> +MODULE_DESCRIPTION("FXAS21002C Digital Angular Rate Gyroscope driver");
+> +MODULE_LICENSE("GPL v2");
+
