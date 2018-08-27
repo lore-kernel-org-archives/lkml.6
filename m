@@ -2,119 +2,101 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AAC6C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:31:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C2E9C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:38:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF16A208D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:31:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="N5Y/W6ga"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF16A208D5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 0560A208D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:38:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0560A208D5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727234AbeH0USd (ORCPT
+        id S1727206AbeH0UZf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 16:18:33 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:53152 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726956AbeH0USd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 16:18:33 -0400
-Received: by mail-wm0-f66.google.com with SMTP id y139-v6so8633476wmc.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 09:31:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=X8BzcDoIUboAksfxy4r25xzEFsF30Ykwsc4Ce8oEt48=;
-        b=N5Y/W6gaYCzLQrbb7dLJK+f2+ShaQKDU73Vx8+verAhVmBaE6YL5fX8RVXgA0P3C0I
-         iBsmL3Gk5gF/IZHwyy5bH9xvVCi6m/5EmFsg1jiwukjiuXbZbHRvhFayisdWktX94NA/
-         4eJmV7sLNU+AaA/3sziQrIZJ9cEDRLsos3rtY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=X8BzcDoIUboAksfxy4r25xzEFsF30Ykwsc4Ce8oEt48=;
-        b=oxEaJpK+t/I5qAK1lXmmGjmilCuzl+l/Ie8n2YnUgYFMwtCdMBBIrPYwIRo46Z0FFu
-         26KKgSmD83pUv/aG5/kDTWqoZNyxUGugrUdGfUthGy6LbwDHLpxCVZkWjuIhi/5zZHms
-         7WDaEt2/ckZyKSOj97BI2gXQb/T0d68ku7dP8oMi0xFAXGjNBck29QGjYuKzE5mcJXs8
-         kgVp7GDIszvWl66HKLJIhrNwni40smcP/YLtlrmhr0OiPp9ETBdKFd7RuD7OXNbSdKWN
-         oRLMl3myTVHR8sMK8b6q5Fyn7YQfHIYF88YeqVDge9DWKcXaJzTfyj2Ut8380E31HeLm
-         kIyw==
-X-Gm-Message-State: APzg51CdiGvdw9VfSm578OIa5yC9jmMgKeIdmlXQVxGkEKn4NlBCaQVL
-        WcGbxuBB16ykqY2zg7E8QMM6uw==
-X-Google-Smtp-Source: ANB0VdYLOAz0QCdwBh684p9vhZNzHD0p4yaxaj+kzoXjXdAgZWuKbfes2F9kZpNz7wq6JLmOhDpAlQ==
-X-Received: by 2002:a1c:4c0c:: with SMTP id z12-v6mr6389365wmf.57.1535387473623;
-        Mon, 27 Aug 2018 09:31:13 -0700 (PDT)
-Received: from [192.168.0.22] (sju31-1-78-210-255-2.fbx.proxad.net. [78.210.255.2])
-        by smtp.googlemail.com with ESMTPSA id 198-v6sm17846325wmm.0.2018.08.27.09.31.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 Aug 2018 09:31:12 -0700 (PDT)
-Subject: Re: [PATCH v2] drivers/thermal/tegra: Fix a double free on the device
- node
-To:     zhong jiang <zhongjiang@huawei.com>
-Cc:     rui.zhang@intel.com, edubezval@gmail.com, jonathanh@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        ezequiel@collabora.com
-References: <1535376738-14035-1-git-send-email-zhongjiang@huawei.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <b450ad67-ac22-03ea-677c-34b254ffa976@linaro.org>
-Date:   Mon, 27 Aug 2018 18:31:09 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 27 Aug 2018 16:25:35 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46748 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726995AbeH0UZf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 16:25:35 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 15E174021FC6;
+        Mon, 27 Aug 2018 16:38:15 +0000 (UTC)
+Received: from x2.localnet (ovpn-124-39.rdu2.redhat.com [10.10.124.39])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 73C4463532;
+        Mon, 27 Aug 2018 16:38:10 +0000 (UTC)
+From:   Steve Grubb <sgrubb@redhat.com>
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+Cc:     Miroslav Lichvar <mlichvar@redhat.com>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Richard Guy Briggs <rgb@redhat.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH ghak10 v5 1/2] audit: Add functions to log time adjustments
+Date:   Mon, 27 Aug 2018 12:38:09 -0400
+Message-ID: <4819575.TSNxuEWROA@x2>
+Organization: Red Hat
+In-Reply-To: <CAFqZXNvADB-E_fjEaQpUymSVvfP-vXQXtk3K+nJ9DqrScHL8bQ@mail.gmail.com>
+References: <20180824120001.20771-1-omosnace@redhat.com> <20180827075020.GL27091@localhost> <CAFqZXNvADB-E_fjEaQpUymSVvfP-vXQXtk3K+nJ9DqrScHL8bQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1535376738-14035-1-git-send-email-zhongjiang@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 27 Aug 2018 16:38:15 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 27 Aug 2018 16:38:15 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'sgrubb@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/08/2018 15:32, zhong jiang wrote:
-> The function 'for_each_child_of_node' iterates over the node list by
-> dropping the of_node reference of the previous node.
+On Monday, August 27, 2018 5:13:17 AM EDT Ondrej Mosnacek wrote:
+> On Mon, Aug 27, 2018 at 9:50 AM Miroslav Lichvar <mlichvar@redhat.com> 
+wrote:
+> > On Fri, Aug 24, 2018 at 02:00:00PM +0200, Ondrej Mosnacek wrote:
+> > > This patch adds two auxiliary record types that will be used to
+> > > annotate
+> > > the adjtimex SYSCALL records with the NTP/timekeeping values that have
+> > > been changed.
+> > 
+> > It seems the "adjust" function intentionally logs also calls/modes
+> > that don't actually change anything. Can you please explain it a bit
+> > in the message?
+> > 
+> > NTP/PTP daemons typically don't read the adjtimex values in a normal
+> > operation and overwrite them on each update, even if they don't
+> > change. If the audit function checked that oldval != newval, the
+> > number of messages would be reduced and it might be easier to follow.
 > 
-> Calling of_node_put() on the iterator is pointless and leads to an
-> inconsistent refcounting in addition to a double free. Remove it.
+> We actually want to log any attempt to change a value, as even an
+> intention to set/change something could be a hint that the process is
+> trying to do something bad (see discussion at [1]).
+
+One of the problems is that these applications can flood the logs very 
+quickly. An attempt to change is not needed unless it fails for permissions 
+reasons. So, limiting to actual changes is probably a good thing.
+
+-Steve
+
+> There are valid
+> arguments both for and against this choice, but we have to pick one in
+> the end... Anyway, I should explain the reasoning in the commit
+> message better, right now it just states the fact without explanation
+> (in the second patch), thank you for pointing my attention to it.
 > 
-> Acked-by: Jon Hunter <jonathanh@nvidia.com>
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-
-Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-
-> ---
-> v1->v2: According to Daniel's suggestion. I modify the subject and commit log.
+> [1] https://www.redhat.com/archives/linux-audit/2018-July/msg00061.html
 > 
->  drivers/thermal/tegra/soctherm.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-> index ed28110..3aa55c9 100644
-> --- a/drivers/thermal/tegra/soctherm.c
-> +++ b/drivers/thermal/tegra/soctherm.c
-> @@ -980,7 +980,6 @@ static void soctherm_init_hw_throt_cdev(struct platform_device *pdev)
->  		tcd = thermal_of_cooling_device_register(np_stcc,
->  							 (char *)name, ts,
->  							 &throt_cooling_ops);
-> -		of_node_put(np_stcc);
->  		if (IS_ERR_OR_NULL(tcd)) {
->  			dev_err(dev,
->  				"throttle-cfg: %s: failed to register cooling device\n",
-> 
+> --
+> Ondrej Mosnacek <omosnace at redhat dot com>
+> Associate Software Engineer, Security Technologies
+> Red Hat, Inc.
 
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
 
