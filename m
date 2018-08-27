@@ -2,89 +2,63 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1058C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 15:18:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5D02C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 15:20:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 667F4208B6
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 15:18:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XV4nqRIh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 667F4208B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 62F78208B6
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 15:20:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62F78208B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727062AbeH0TFa (ORCPT
+        id S1727110AbeH0THd convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 15:05:30 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:52812 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726972AbeH0TFa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 15:05:30 -0400
-Received: by mail-it0-f68.google.com with SMTP id h3-v6so2180790ita.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 08:18:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to;
-        bh=HxiPezqC0bxVc9IPV1JJdiUGZv8Jk3BJ5gzoJKzjlWU=;
-        b=XV4nqRIhXuchdut2h4wwObX0HCNQVHgB9mIATL27kMEATI+mdLtLUj6UrdzTi7EVwu
-         YiXhokDrMyKvCabENiOunfn8piKu6IwSNm9wh8FHcSNJayUdMAPPOWTDZerfS3g21DdB
-         Guqnm3Pdu7Msv/45dDjMzBxq1ycKXTyYUAH7M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to;
-        bh=HxiPezqC0bxVc9IPV1JJdiUGZv8Jk3BJ5gzoJKzjlWU=;
-        b=dHGitY27wiu88+h/2sDFArTDFfKCnnAJV/WxmpXqOQq/dTrGTJAuLPaZJ6VB6Emgja
-         g3XxTEBBxa1vkg9Wapve1l13Nnn9VR07sQrhntt2I22PEHTpKPP7IZsRKbGQLGjil5B+
-         yjPYsHtar7YBmlhC1eLhmyGrx3HRUWr9hxfGSOjsYbjsJlyNRgE14LI4gnBEkvGX9V5Y
-         Iqmz52L550LTKA+9V/9QJGZC79Ne4V2rMOPxsBgZne6dht2pQdE6Yj32LHPI4NZT3m48
-         xoMLavtAEU/8aqyb5ctTpgcxfboxFCBRu8JXkIAvWcnM/GObYWs69KnZE+my8Qgl8fn+
-         zozA==
-X-Gm-Message-State: APzg51DmZEdHVEJsUiggKW+o5m/vSKZs9lUWyHEv/aQgRcElfiSIUTq5
-        Fn4Q2UZ7Df/tlSgFynQp3KCC7axO/l6+Mu3s10qqwg==
-X-Google-Smtp-Source: ANB0VdZcH1zsn3+PjNxoK3sgtcHJjuGntPUCMSjEX5DM57esqeXRDkoGIEsDlaqu14gPuW0JJAcL5dI3ZWQqxG49zCA=
-X-Received: by 2002:a24:8309:: with SMTP id d9-v6mr7288787ite.123.1535383107092;
- Mon, 27 Aug 2018 08:18:27 -0700 (PDT)
+        Mon, 27 Aug 2018 15:07:33 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:46193 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726946AbeH0THd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 15:07:33 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id AE0C22072C; Mon, 27 Aug 2018 17:20:29 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-53-19.w90-88.abo.wanadoo.fr [90.88.170.19])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 5B42420618;
+        Mon, 27 Aug 2018 17:20:29 +0200 (CEST)
+Date:   Mon, 27 Aug 2018 17:20:28 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     liuxiang <liuxiang_1999@126.com>
+Cc:     "Liu Xiang" <liu.xiang6@zte.com.cn>, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org, han.xu@nxp.com,
+        marek.vasut@gmail.com, dwmw2@infradead.org,
+        computersforpeace@gmail.com, richard@nod.at,
+        "Yogesh Narayan Gaur" <yogeshnarayan.gaur@nxp.com>
+Subject: Re: [PATCH] mtd: spi-nor: fsl-quadspi: fix read error for flash
+ size larger than 16MB
+Message-ID: <20180827172028.0e6e6e41@bbrezillon>
+In-Reply-To: <3571f5ca.c32c.1657be858d1.Coremail.liuxiang_1999@126.com>
+References: <1534583663-2842-1-git-send-email-liu.xiang6@zte.com.cn>
+        <20180827100613.78823993@bbrezillon>
+        <3571f5ca.c32c.1657be858d1.Coremail.liuxiang_1999@126.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Received: by 2002:a6b:ac05:0:0:0:0:0 with HTTP; Mon, 27 Aug 2018 08:18:26
- -0700 (PDT)
-In-Reply-To: <20180827145352.GF2311@thunk.org>
-References: <20180827110245.14812-1-ard.biesheuvel@linaro.org> <20180827145352.GF2311@thunk.org>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 27 Aug 2018 17:18:26 +0200
-Message-ID: <CAKv+Gu_qz+HbU2HQ2ep0cN-9V5hA46sBNVoxvkyjDQ=ZGk8yfw@mail.gmail.com>
-Subject: Re: [PATCH 0/4] arm64: wire CRC32 instructions into core crc32 routines
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Eric Biggers <ebiggers@google.com>,
-        "Suzuki K. Poulose" <suzuki.poulose@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27 August 2018 at 16:53, Theodore Y. Ts'o <tytso@mit.edu> wrote:
-> On Mon, Aug 27, 2018 at 01:02:41PM +0200, Ard Biesheuvel wrote:
->> While this is not known to cause performance issues, calling a table based
->> time variant implementation with a non-negligible D-cache footprint (8 KB)
->> is wasteful in any case, and now that the crc32 instructions have been made
->> mandatory in the architecture, let's wire them up into the core crc routines.
->
-> Stupid question --- are there any arm64 SOC's out there which do *not*
-> have the crc32 instructions?  Presumably there won't be in the future,
-> because it's now mandatory --- but where there any in the past?
->
+On Mon, 27 Aug 2018 23:02:29 +0800 (CST)
+liuxiang  <liuxiang_1999@126.com> wrote:
 
-Yes, the APM Xgene for instance.
+> Fixes:e46ecda764dc37f9fc6279d95ea2c007daef1a71("mtd: spi-nor: Add Freescale QuadSPI driver")
+
+12 digits should be enough for the commit-id.
+
+> Cc: stable@vger.kernel.org
+> 
+> Should I send a V2 patch that adds these above？
+
+Yes please.
