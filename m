@@ -2,241 +2,2254 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.6 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,TVD_SPACE_RATIO,UPPERCASE_75_100,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90571C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 13:37:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9886C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 13:38:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35779208B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 13:37:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="wBWhd2gT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35779208B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	by mail.kernel.org (Postfix) with ESMTP id 3DFFF208B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 13:38:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DFFF208B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727469AbeH0RYG (ORCPT
+        id S1727479AbeH0RZb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 13:24:06 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:33210 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726976AbeH0RYG (ORCPT
+        Mon, 27 Aug 2018 13:25:31 -0400
+Received: from andre.telenet-ops.be ([195.130.132.53]:43490 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727099AbeH0RZb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 13:24:06 -0400
-Received: by mail-it0-f67.google.com with SMTP id j198-v6so11195340ita.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 06:37:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=CFFa2lvF5oaI3bU1emNkaZ6B/T2Hkocyox+4q5Cz66w=;
-        b=wBWhd2gT++Pd9qXQZd8NIB3xeAsZZY4Vq2ZHE1B9C7yt2LOzlRTeE/vx5ul50vgVVG
-         U0QsweS26VJT1lS6VxfiwlTxRdcWATPp72UbeAeHNiIJ+dejxQR/9NuKBLqRJbRgr5tq
-         qgpXwqGcjWYA1y/twRg8eHSDnDKfIthDp8pCEKPmukjhDTzGtHvPwk+ZpOvlajwYIqii
-         vkY4cqrLvdGAPFdQnMYTp5w2AtmOCJkhXaGq+CLorQ8GXl3pTCxTEsz/bIpryv7Tr4T0
-         M5cQP8S3mUn+MTV8doW/IypGMniRItB3sGb0BxkO2epL+MWh2BQ8/x6gLdgLpFP10vkQ
-         U6tQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=CFFa2lvF5oaI3bU1emNkaZ6B/T2Hkocyox+4q5Cz66w=;
-        b=Bk/XFIJl4BaHYuCIVnCBZpYC3d/XOVYBtuWu50L5b/jIdhXOoUlMPnAwi2s2acpD3u
-         UELydkQEWD7M9UvHH0v9G5/DCQ3bREZjTH0myGXDWleHRTq01NX930PRTiJ6ngGAg/HU
-         16HrrOMN4EZVtvJjZAX2jHlA0CIyGFF4hjUmCYZpMzIghEQOW2OHOSTFTlPYbV7HqKQa
-         WZJoWJI4PHs8tzEgrR8ufFXaY8uLnMJ3d7DMpRDMAE0kloYCSsrVY7p1tC6GuyMdakwv
-         MnQynNh5VHBoAQ+JZsQk8awgBO12NNk3mnpsiQEJdMn+uGz2xTcgBZSVCIKVqHFE4+K1
-         RVMg==
-X-Gm-Message-State: APzg51CXk+zTITpNffrSmFXNVl+zd4m02jHJHPttqry/raY8Jb8mDbWT
-        TcjHgVKvyKvtilw5QwAzJ3w9YmCZPNvpc6CRrwVNpw==
-X-Google-Smtp-Source: ANB0VdZGXi0S+dBaf+E9Qn4XNON4YH75TwI9tZGdmfudY03soYUqkN36KAxTBI8yQiiqqstCGCjTw9ubWEpfFduOJ1c=
-X-Received: by 2002:a24:3d02:: with SMTP id n2-v6mr7025530itn.111.1535377044370;
- Mon, 27 Aug 2018 06:37:24 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a5e:9402:0:0:0:0:0 with HTTP; Mon, 27 Aug 2018 06:37:23
- -0700 (PDT)
-In-Reply-To: <20180827110055.122988d0@bbrezillon>
-References: <20180810080526.27207-1-brgl@bgdev.pl> <20180810080526.27207-2-brgl@bgdev.pl>
- <20180824170848.29594318@bbrezillon> <20180824152740.GD27483@lunn.ch>
- <20180825082722.567e8c9a@bbrezillon> <CAMRc=Men-MPk5DGshWcVEc0v=gH2WSpx1j-CawOeydwp59tejw@mail.gmail.com>
- <20180827110055.122988d0@bbrezillon>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Mon, 27 Aug 2018 15:37:23 +0200
-Message-ID: <CAMRc=MfpZJUEAhM4OoLbmJcnX3rTJk8fvdiL6=9BjNkVcsf=SA@mail.gmail.com>
-Subject: Re: [PATCH v2 01/29] nvmem: add support for cell lookups
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        linux-doc <linux-doc@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        Russell King <linux@armlinux.org.uk>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        David Lechner <david@lechnology.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Sven Van Asbroeck <svendev@arcx.com>,
-        "open list:MEMORY TECHNOLOGY..." <linux-mtd@lists.infradead.org>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lukas Wunner <lukas@wunner.de>, Naren <naren.kernel@gmail.com>,
-        netdev <netdev@vger.kernel.org>, Alban Bedel <albeu@free.fr>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "David S . Miller" <davem@davemloft.net>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 27 Aug 2018 13:25:31 -0400
+Received: from ramsan.of.borg ([84.194.111.163])
+        by andre.telenet-ops.be with bizsmtp
+        id UDei1y00w3XaVaC01Deifi; Mon, 27 Aug 2018 15:38:43 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1fuHj8-0000eO-RH; Mon, 27 Aug 2018 15:38:42 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1fuHj8-000264-PI; Mon, 27 Aug 2018 15:38:42 +0200
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+To:     linux-m68k@lists.linux-m68k.org
+Cc:     linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH] m68k/defconfig: Update defconfigs for v4.19-rc1
+Date:   Mon, 27 Aug 2018 15:38:41 +0200
+Message-Id: <20180827133841.8018-1-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-08-27 11:00 GMT+02:00 Boris Brezillon <boris.brezillon@bootlin.com>:
-> On Mon, 27 Aug 2018 10:56:29 +0200
-> Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->
->> 2018-08-25 8:27 GMT+02:00 Boris Brezillon <boris.brezillon@bootlin.com>:
->> > On Fri, 24 Aug 2018 17:27:40 +0200
->> > Andrew Lunn <andrew@lunn.ch> wrote:
->> >
->> >> On Fri, Aug 24, 2018 at 05:08:48PM +0200, Boris Brezillon wrote:
->> >> > Hi Bartosz,
->> >> >
->> >> > On Fri, 10 Aug 2018 10:04:58 +0200
->> >> > Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->> >> >
->> >> > > +struct nvmem_cell_lookup {
->> >> > > + struct nvmem_cell_info  info;
->> >> > > + struct list_head        list;
->> >> > > + const char              *nvmem_name;
->> >> > > +};
->> >> >
->> >> > Hm, maybe I don't get it right, but this looks suspicious. Usually the
->> >> > consumer lookup table is here to attach device specific names to
->> >> > external resources.
->> >> >
->> >> > So what I'd expect here is:
->> >> >
->> >> > struct nvmem_cell_lookup {
->> >> >     /* The nvmem device name. */
->> >> >     const char *nvmem_name;
->> >> >
->> >> >     /* The nvmem cell name */
->> >> >     const char *nvmem_cell_name;
->> >> >
->> >> >     /*
->> >> >      * The local resource name. Basically what you have in the
->> >> >      * nvmem-cell-names prop.
->> >> >      */
->> >> >     const char *conid;
->> >> > };
->> >> >
->> >> > struct nvmem_cell_lookup_table {
->> >> >     struct list_head list;
->> >> >
->> >> >     /* ID of the consumer device. */
->> >> >     const char *devid;
->> >> >
->> >> >     /* Array of cell lookup entries. */
->> >> >     unsigned int ncells;
->> >> >     const struct nvmem_cell_lookup *cells;
->> >> > };
->> >> >
->> >> > Looks like your nvmem_cell_lookup is more something used to attach cells
->> >> > to an nvmem device, which is NVMEM provider's responsibility not the
->> >> > consumer one.
->> >>
->> >> Hi Boris
->> >>
->> >> There are cases where there is not a clear providier/consumer split. I
->> >> have an x86 platform, with a few at24 EEPROMs on it. It uses an off
->> >> the shelf Komtron module, placed on a custom carrier board. One of the
->> >> EEPROMs contains the hardware variant information. Once i know the
->> >> variant, i need to instantiate other I2C, SPI, MDIO devices, all using
->> >> platform devices, since this is x86, no DT available.
->> >>
->> >> So the first thing my x86 platform device does is instantiate the
->> >> first i2c device for the AT24. Once the EEPROM pops into existence, i
->> >> need to add nvmem cells onto it. So at that point, the x86 platform
->> >> driver is playing the provider role. Once the cells are added, i can
->> >> then use nvmem consumer interfaces to get the contents of the cell,
->> >> run a checksum, and instantiate the other devices.
->> >>
->> >> I wish the embedded world was all DT, but the reality is that it is
->> >> not :-(
->> >
->> > Actually, I'm not questioning the need for this feature (being able to
->> > attach NVMEM cells to an NVMEM device on a platform that does not use
->> > DT). What I'm saying is that this functionality is provider related,
->> > not consumer related. Also, I wonder if defining such NVMEM cells
->> > shouldn't go through the provider driver instead of being passed
->> > directly to the NVMEM layer, because nvmem_config already have a fields
->> > to pass cells at registration time, plus, the name of the NVMEM cell
->> > device is sometimes created dynamically and can be hard to guess at
->> > platform_device registration time.
->> >
->>
->> In my use case the provider is at24 EEPROM driver. This is where the
->> nvmem_config lives but I can't image a correct and clean way of
->> passing this cell config to the driver from board files without using
->> new ugly fields in platform_data which this very series is trying to
->> remove. This is why this cell config should live in machine code.
->
-> Okay.
->
->>
->> > I also think non-DT consumers will need a way to reference exiting
->> > NVMEM cells, but this consumer-oriented nvmem cell lookup table should
->> > look like the gpio or pwm lookup table (basically what I proposed in my
->> > previous email).
->>
->> How about introducing two new interfaces to nvmem: one for defining
->> nvmem cells from machine code and the second for connecting these
->> cells with devices?
->
-> Yes, that's basically what I was suggesting: move what you've done in
-> nvmem-provider.h (maybe rename some of the structs to make it clear
-> that this is about defining cells not referencing existing ones), and
-> add a new consumer interface (based on what other subsystems do) in
-> nvmem-consumer.h.
->
-> This way you have both things clearly separated, and if a driver is
-> both a consumer and a provider you'll just have to include both headers.
->
-> Regards,
->
-> Boris
+Actual changes:
+    -CONFIG_BATMAN_ADV_DAT=y
+    -CONFIG_NF_CONNTRACK_IPV4=m
+    -CONFIG_NF_CONNTRACK_IPV6=m
+    +CONFIG_CRC64=m
+    +CONFIG_NFT_OSF=m
+    +CONFIG_NFT_TPROXY=m
+    +CONFIG_NFT_TUNNEL=m
+    +CONFIG_TEST_BITFIELD=m
+    +CONFIG_TEST_IDA=m
 
-I didn't notice it before but there's a global list of nvmem cells
-with each cell referencing its owner nvmem device. I'm wondering if
-this isn't some kind of inversion of ownership. Shouldn't each nvmem
-device have a separate list of nvmem cells owned by it? What happens
-if we have two nvmem providers with the same names for cells? I'm
-asking because dev_id based lookup doesn't make sense if internally
-nvmem_cell_get_from_list() doesn't care about any device names (takes
-only the cell_id as argument).
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+ arch/m68k/configs/amiga_defconfig    |  98 +++++++++++-----------
+ arch/m68k/configs/apollo_defconfig   |  88 ++++++++++----------
+ arch/m68k/configs/atari_defconfig    | 104 ++++++++++++-----------
+ arch/m68k/configs/bvme6000_defconfig |  84 ++++++++++---------
+ arch/m68k/configs/hp300_defconfig    |  86 ++++++++++---------
+ arch/m68k/configs/mac_defconfig      |  88 ++++++++++----------
+ arch/m68k/configs/multi_defconfig    | 118 ++++++++++++++-------------
+ arch/m68k/configs/mvme147_defconfig  |  82 ++++++++++---------
+ arch/m68k/configs/mvme16x_defconfig  |  84 ++++++++++---------
+ arch/m68k/configs/q40_defconfig      |  84 ++++++++++---------
+ arch/m68k/configs/sun3_defconfig     |  76 +++++++++--------
+ arch/m68k/configs/sun3x_defconfig    |  78 ++++++++++--------
+ 12 files changed, 571 insertions(+), 499 deletions(-)
 
-This doesn't cause any trouble now since there are no users defining
-cells in nvmem_config - there are only DT users - but this must be
-clarified before I can advance with correctly implementing nvmem
-lookups.
+diff --git a/arch/m68k/configs/amiga_defconfig b/arch/m68k/configs/amiga_defconfig
+index 1d5483f6e457b0a0..cd846ffb5c553085 100644
+--- a/arch/m68k/configs/amiga_defconfig
++++ b/arch/m68k/configs/amiga_defconfig
+@@ -12,6 +12,20 @@ CONFIG_BLK_DEV_INITRD=y
+ CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+ CONFIG_USERFAULTFD=y
+ CONFIG_SLAB=y
++CONFIG_KEXEC=y
++CONFIG_BOOTINFO_PROC=y
++CONFIG_M68020=y
++CONFIG_M68030=y
++CONFIG_M68040=y
++CONFIG_M68060=y
++CONFIG_AMIGA=y
++CONFIG_ZORRO=y
++CONFIG_AMIGA_PCMCIA=y
++CONFIG_ZORRO_NAMES=y
++CONFIG_HEARTBEAT=y
++CONFIG_PROC_HARDWARE=y
++CONFIG_AMIGA_BUILTIN_SERIAL=y
++CONFIG_SERIAL_CONSOLE=y
+ CONFIG_MODULES=y
+ CONFIG_MODULE_UNLOAD=y
+ CONFIG_PARTITION_ADVANCED=y
+@@ -28,22 +42,12 @@ CONFIG_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_KYBER=m
+ CONFIG_IOSCHED_BFQ=m
+-CONFIG_KEXEC=y
+-CONFIG_BOOTINFO_PROC=y
+-CONFIG_M68020=y
+-CONFIG_M68030=y
+-CONFIG_M68040=y
+-CONFIG_M68060=y
+-CONFIG_AMIGA=y
+-CONFIG_ZORRO=y
+-CONFIG_AMIGA_PCMCIA=y
+-CONFIG_ZORRO_NAMES=y
+-# CONFIG_COMPACTION is not set
+-CONFIG_CLEANCACHE=y
+-CONFIG_ZPOOL=m
+ # CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
+ CONFIG_BINFMT_AOUT=m
+ CONFIG_BINFMT_MISC=m
++# CONFIG_COMPACTION is not set
++CONFIG_CLEANCACHE=y
++CONFIG_ZPOOL=m
+ CONFIG_NET=y
+ CONFIG_PACKET=y
+ CONFIG_PACKET_DIAG=m
+@@ -112,6 +116,7 @@ CONFIG_NFT_LIMIT=m
+ CONFIG_NFT_MASQ=m
+ CONFIG_NFT_REDIR=m
+ CONFIG_NFT_NAT=m
++CONFIG_NFT_TUNNEL=m
+ CONFIG_NFT_OBJREF=m
+ CONFIG_NFT_QUEUE=m
+ CONFIG_NFT_QUOTA=m
+@@ -120,6 +125,8 @@ CONFIG_NFT_COMPAT=m
+ CONFIG_NFT_HASH=m
+ CONFIG_NFT_FIB_INET=m
+ CONFIG_NFT_SOCKET=m
++CONFIG_NFT_OSF=m
++CONFIG_NFT_TPROXY=m
+ CONFIG_NFT_DUP_NETDEV=m
+ CONFIG_NFT_FWD_NETDEV=m
+ CONFIG_NFT_FIB_NETDEV=m
+@@ -197,7 +204,6 @@ CONFIG_IP_SET_HASH_NETNET=m
+ CONFIG_IP_SET_HASH_NETPORT=m
+ CONFIG_IP_SET_HASH_NETIFACE=m
+ CONFIG_IP_SET_LIST_SET=m
+-CONFIG_NF_CONNTRACK_IPV4=m
+ CONFIG_NFT_CHAIN_ROUTE_IPV4=m
+ CONFIG_NFT_DUP_IPV4=m
+ CONFIG_NFT_FIB_IPV4=m
+@@ -227,7 +233,6 @@ CONFIG_IP_NF_RAW=m
+ CONFIG_IP_NF_ARPTABLES=m
+ CONFIG_IP_NF_ARPFILTER=m
+ CONFIG_IP_NF_ARP_MANGLE=m
+-CONFIG_NF_CONNTRACK_IPV6=m
+ CONFIG_NFT_CHAIN_ROUTE_IPV6=m
+ CONFIG_NFT_CHAIN_NAT_IPV6=m
+ CONFIG_NFT_MASQ_IPV6=m
+@@ -297,7 +302,6 @@ CONFIG_6LOWPAN_GHC_EXT_HDR_ROUTE=m
+ CONFIG_DNS_RESOLVER=y
+ CONFIG_BATMAN_ADV=m
+ # CONFIG_BATMAN_ADV_BATMAN_V is not set
+-CONFIG_BATMAN_ADV_DAT=y
+ CONFIG_BATMAN_ADV_NC=y
+ CONFIG_BATMAN_ADV_MCAST=y
+ CONFIG_NETLINK_DIAG=m
+@@ -337,6 +341,7 @@ CONFIG_BLK_DEV_GAYLE=y
+ CONFIG_BLK_DEV_BUDDHA=y
+ CONFIG_RAID_ATTRS=m
+ CONFIG_SCSI=y
++# CONFIG_SCSI_MQ_DEFAULT is not set
+ CONFIG_BLK_DEV_SD=y
+ CONFIG_CHR_DEV_ST=m
+ CONFIG_CHR_DEV_OSST=m
+@@ -400,8 +405,10 @@ CONFIG_A2065=y
+ CONFIG_ARIADNE=y
+ # CONFIG_NET_VENDOR_AQUANTIA is not set
+ # CONFIG_NET_VENDOR_ARC is not set
++# CONFIG_NET_VENDOR_AURORA is not set
+ # CONFIG_NET_VENDOR_BROADCOM is not set
+-# CONFIG_NET_CADENCE is not set
++# CONFIG_NET_VENDOR_CADENCE is not set
++# CONFIG_NET_VENDOR_CAVIUM is not set
+ # CONFIG_NET_VENDOR_CIRRUS is not set
+ # CONFIG_NET_VENDOR_CORTINA is not set
+ # CONFIG_NET_VENDOR_EZCHIP is not set
+@@ -487,10 +494,6 @@ CONFIG_RTC_DRV_RP5C01=m
+ # CONFIG_VIRTIO_MENU is not set
+ # CONFIG_IOMMU_SUPPORT is not set
+ CONFIG_DAX=m
+-CONFIG_HEARTBEAT=y
+-CONFIG_PROC_HARDWARE=y
+-CONFIG_AMIGA_BUILTIN_SERIAL=y
+-CONFIG_SERIAL_CONSOLE=y
+ CONFIG_EXT4_FS=y
+ CONFIG_REISERFS_FS=m
+ CONFIG_JFS_FS=m
+@@ -588,31 +591,6 @@ CONFIG_NLS_MAC_INUIT=m
+ CONFIG_NLS_MAC_ROMANIAN=m
+ CONFIG_NLS_MAC_TURKISH=m
+ CONFIG_DLM=m
+-# CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
+-CONFIG_MAGIC_SYSRQ=y
+-CONFIG_WW_MUTEX_SELFTEST=m
+-CONFIG_TEST_LIST_SORT=m
+-CONFIG_TEST_SORT=m
+-CONFIG_ATOMIC64_SELFTEST=m
+-CONFIG_ASYNC_RAID6_TEST=m
+-CONFIG_TEST_HEXDUMP=m
+-CONFIG_TEST_STRING_HELPERS=m
+-CONFIG_TEST_KSTRTOX=m
+-CONFIG_TEST_PRINTF=m
+-CONFIG_TEST_BITMAP=m
+-CONFIG_TEST_UUID=m
+-CONFIG_TEST_OVERFLOW=m
+-CONFIG_TEST_RHASHTABLE=m
+-CONFIG_TEST_HASH=m
+-CONFIG_TEST_USER_COPY=m
+-CONFIG_TEST_BPF=m
+-CONFIG_FIND_BIT_BENCHMARK=m
+-CONFIG_TEST_FIRMWARE=m
+-CONFIG_TEST_SYSCTL=m
+-CONFIG_TEST_UDELAY=m
+-CONFIG_TEST_STATIC_KEYS=m
+-CONFIG_TEST_KMOD=m
+-CONFIG_EARLY_PRINTK=y
+ CONFIG_ENCRYPTED_KEYS=m
+ CONFIG_HARDENED_USERCOPY=y
+ CONFIG_CRYPTO_RSA=m
+@@ -674,5 +652,33 @@ CONFIG_CRYPTO_USER_API_RNG=m
+ CONFIG_CRYPTO_USER_API_AEAD=m
+ # CONFIG_CRYPTO_HW is not set
+ CONFIG_CRC32_SELFTEST=m
++CONFIG_CRC64=m
+ CONFIG_XZ_DEC_TEST=m
+ CONFIG_STRING_SELFTEST=m
++# CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
++CONFIG_MAGIC_SYSRQ=y
++CONFIG_WW_MUTEX_SELFTEST=m
++CONFIG_TEST_LIST_SORT=m
++CONFIG_TEST_SORT=m
++CONFIG_ATOMIC64_SELFTEST=m
++CONFIG_ASYNC_RAID6_TEST=m
++CONFIG_TEST_HEXDUMP=m
++CONFIG_TEST_STRING_HELPERS=m
++CONFIG_TEST_KSTRTOX=m
++CONFIG_TEST_PRINTF=m
++CONFIG_TEST_BITMAP=m
++CONFIG_TEST_BITFIELD=m
++CONFIG_TEST_UUID=m
++CONFIG_TEST_OVERFLOW=m
++CONFIG_TEST_RHASHTABLE=m
++CONFIG_TEST_HASH=m
++CONFIG_TEST_IDA=m
++CONFIG_TEST_USER_COPY=m
++CONFIG_TEST_BPF=m
++CONFIG_FIND_BIT_BENCHMARK=m
++CONFIG_TEST_FIRMWARE=m
++CONFIG_TEST_SYSCTL=m
++CONFIG_TEST_UDELAY=m
++CONFIG_TEST_STATIC_KEYS=m
++CONFIG_TEST_KMOD=m
++CONFIG_EARLY_PRINTK=y
+diff --git a/arch/m68k/configs/apollo_defconfig b/arch/m68k/configs/apollo_defconfig
+index 52a0af127951f5f0..71f219a88e8c6e91 100644
+--- a/arch/m68k/configs/apollo_defconfig
++++ b/arch/m68k/configs/apollo_defconfig
+@@ -12,6 +12,15 @@ CONFIG_BLK_DEV_INITRD=y
+ CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+ CONFIG_USERFAULTFD=y
+ CONFIG_SLAB=y
++CONFIG_KEXEC=y
++CONFIG_BOOTINFO_PROC=y
++CONFIG_M68020=y
++CONFIG_M68030=y
++CONFIG_M68040=y
++CONFIG_M68060=y
++CONFIG_APOLLO=y
++CONFIG_HEARTBEAT=y
++CONFIG_PROC_HARDWARE=y
+ CONFIG_MODULES=y
+ CONFIG_MODULE_UNLOAD=y
+ CONFIG_PARTITION_ADVANCED=y
+@@ -29,19 +38,12 @@ CONFIG_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_KYBER=m
+ CONFIG_IOSCHED_BFQ=m
+-CONFIG_KEXEC=y
+-CONFIG_BOOTINFO_PROC=y
+-CONFIG_M68020=y
+-CONFIG_M68030=y
+-CONFIG_M68040=y
+-CONFIG_M68060=y
+-CONFIG_APOLLO=y
+-# CONFIG_COMPACTION is not set
+-CONFIG_CLEANCACHE=y
+-CONFIG_ZPOOL=m
+ # CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
+ CONFIG_BINFMT_AOUT=m
+ CONFIG_BINFMT_MISC=m
++# CONFIG_COMPACTION is not set
++CONFIG_CLEANCACHE=y
++CONFIG_ZPOOL=m
+ CONFIG_NET=y
+ CONFIG_PACKET=y
+ CONFIG_PACKET_DIAG=m
+@@ -110,6 +112,7 @@ CONFIG_NFT_LIMIT=m
+ CONFIG_NFT_MASQ=m
+ CONFIG_NFT_REDIR=m
+ CONFIG_NFT_NAT=m
++CONFIG_NFT_TUNNEL=m
+ CONFIG_NFT_OBJREF=m
+ CONFIG_NFT_QUEUE=m
+ CONFIG_NFT_QUOTA=m
+@@ -118,6 +121,8 @@ CONFIG_NFT_COMPAT=m
+ CONFIG_NFT_HASH=m
+ CONFIG_NFT_FIB_INET=m
+ CONFIG_NFT_SOCKET=m
++CONFIG_NFT_OSF=m
++CONFIG_NFT_TPROXY=m
+ CONFIG_NFT_DUP_NETDEV=m
+ CONFIG_NFT_FWD_NETDEV=m
+ CONFIG_NFT_FIB_NETDEV=m
+@@ -195,7 +200,6 @@ CONFIG_IP_SET_HASH_NETNET=m
+ CONFIG_IP_SET_HASH_NETPORT=m
+ CONFIG_IP_SET_HASH_NETIFACE=m
+ CONFIG_IP_SET_LIST_SET=m
+-CONFIG_NF_CONNTRACK_IPV4=m
+ CONFIG_NFT_CHAIN_ROUTE_IPV4=m
+ CONFIG_NFT_DUP_IPV4=m
+ CONFIG_NFT_FIB_IPV4=m
+@@ -225,7 +229,6 @@ CONFIG_IP_NF_RAW=m
+ CONFIG_IP_NF_ARPTABLES=m
+ CONFIG_IP_NF_ARPFILTER=m
+ CONFIG_IP_NF_ARP_MANGLE=m
+-CONFIG_NF_CONNTRACK_IPV6=m
+ CONFIG_NFT_CHAIN_ROUTE_IPV6=m
+ CONFIG_NFT_CHAIN_NAT_IPV6=m
+ CONFIG_NFT_MASQ_IPV6=m
+@@ -295,7 +298,6 @@ CONFIG_6LOWPAN_GHC_EXT_HDR_ROUTE=m
+ CONFIG_DNS_RESOLVER=y
+ CONFIG_BATMAN_ADV=m
+ # CONFIG_BATMAN_ADV_BATMAN_V is not set
+-CONFIG_BATMAN_ADV_DAT=y
+ CONFIG_BATMAN_ADV_NC=y
+ CONFIG_BATMAN_ADV_MCAST=y
+ CONFIG_NETLINK_DIAG=m
+@@ -324,6 +326,7 @@ CONFIG_ATA_OVER_ETH=m
+ CONFIG_DUMMY_IRQ=m
+ CONFIG_RAID_ATTRS=m
+ CONFIG_SCSI=y
++# CONFIG_SCSI_MQ_DEFAULT is not set
+ CONFIG_BLK_DEV_SD=y
+ CONFIG_CHR_DEV_ST=m
+ CONFIG_CHR_DEV_OSST=m
+@@ -378,8 +381,10 @@ CONFIG_VETH=m
+ # CONFIG_NET_VENDOR_AMAZON is not set
+ # CONFIG_NET_VENDOR_AQUANTIA is not set
+ # CONFIG_NET_VENDOR_ARC is not set
++# CONFIG_NET_VENDOR_AURORA is not set
+ # CONFIG_NET_VENDOR_BROADCOM is not set
+-# CONFIG_NET_CADENCE is not set
++# CONFIG_NET_VENDOR_CADENCE is not set
++# CONFIG_NET_VENDOR_CAVIUM is not set
+ # CONFIG_NET_VENDOR_CORTINA is not set
+ # CONFIG_NET_VENDOR_EZCHIP is not set
+ # CONFIG_NET_VENDOR_HUAWEI is not set
+@@ -446,8 +451,6 @@ CONFIG_RTC_DRV_GENERIC=m
+ # CONFIG_VIRTIO_MENU is not set
+ # CONFIG_IOMMU_SUPPORT is not set
+ CONFIG_DAX=m
+-CONFIG_HEARTBEAT=y
+-CONFIG_PROC_HARDWARE=y
+ CONFIG_EXT4_FS=y
+ CONFIG_REISERFS_FS=m
+ CONFIG_JFS_FS=m
+@@ -545,31 +548,6 @@ CONFIG_NLS_MAC_INUIT=m
+ CONFIG_NLS_MAC_ROMANIAN=m
+ CONFIG_NLS_MAC_TURKISH=m
+ CONFIG_DLM=m
+-# CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
+-CONFIG_MAGIC_SYSRQ=y
+-CONFIG_WW_MUTEX_SELFTEST=m
+-CONFIG_TEST_LIST_SORT=m
+-CONFIG_TEST_SORT=m
+-CONFIG_ATOMIC64_SELFTEST=m
+-CONFIG_ASYNC_RAID6_TEST=m
+-CONFIG_TEST_HEXDUMP=m
+-CONFIG_TEST_STRING_HELPERS=m
+-CONFIG_TEST_KSTRTOX=m
+-CONFIG_TEST_PRINTF=m
+-CONFIG_TEST_BITMAP=m
+-CONFIG_TEST_UUID=m
+-CONFIG_TEST_OVERFLOW=m
+-CONFIG_TEST_RHASHTABLE=m
+-CONFIG_TEST_HASH=m
+-CONFIG_TEST_USER_COPY=m
+-CONFIG_TEST_BPF=m
+-CONFIG_FIND_BIT_BENCHMARK=m
+-CONFIG_TEST_FIRMWARE=m
+-CONFIG_TEST_SYSCTL=m
+-CONFIG_TEST_UDELAY=m
+-CONFIG_TEST_STATIC_KEYS=m
+-CONFIG_TEST_KMOD=m
+-CONFIG_EARLY_PRINTK=y
+ CONFIG_ENCRYPTED_KEYS=m
+ CONFIG_HARDENED_USERCOPY=y
+ CONFIG_CRYPTO_RSA=m
+@@ -631,5 +609,33 @@ CONFIG_CRYPTO_USER_API_RNG=m
+ CONFIG_CRYPTO_USER_API_AEAD=m
+ # CONFIG_CRYPTO_HW is not set
+ CONFIG_CRC32_SELFTEST=m
++CONFIG_CRC64=m
+ CONFIG_XZ_DEC_TEST=m
+ CONFIG_STRING_SELFTEST=m
++# CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
++CONFIG_MAGIC_SYSRQ=y
++CONFIG_WW_MUTEX_SELFTEST=m
++CONFIG_TEST_LIST_SORT=m
++CONFIG_TEST_SORT=m
++CONFIG_ATOMIC64_SELFTEST=m
++CONFIG_ASYNC_RAID6_TEST=m
++CONFIG_TEST_HEXDUMP=m
++CONFIG_TEST_STRING_HELPERS=m
++CONFIG_TEST_KSTRTOX=m
++CONFIG_TEST_PRINTF=m
++CONFIG_TEST_BITMAP=m
++CONFIG_TEST_BITFIELD=m
++CONFIG_TEST_UUID=m
++CONFIG_TEST_OVERFLOW=m
++CONFIG_TEST_RHASHTABLE=m
++CONFIG_TEST_HASH=m
++CONFIG_TEST_IDA=m
++CONFIG_TEST_USER_COPY=m
++CONFIG_TEST_BPF=m
++CONFIG_FIND_BIT_BENCHMARK=m
++CONFIG_TEST_FIRMWARE=m
++CONFIG_TEST_SYSCTL=m
++CONFIG_TEST_UDELAY=m
++CONFIG_TEST_STATIC_KEYS=m
++CONFIG_TEST_KMOD=m
++CONFIG_EARLY_PRINTK=y
+diff --git a/arch/m68k/configs/atari_defconfig b/arch/m68k/configs/atari_defconfig
+index b3103e51268a3175..fca976d45bca3483 100644
+--- a/arch/m68k/configs/atari_defconfig
++++ b/arch/m68k/configs/atari_defconfig
+@@ -12,6 +12,23 @@ CONFIG_BLK_DEV_INITRD=y
+ CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+ CONFIG_USERFAULTFD=y
+ CONFIG_SLAB=y
++CONFIG_KEXEC=y
++CONFIG_BOOTINFO_PROC=y
++CONFIG_M68020=y
++CONFIG_M68030=y
++CONFIG_M68040=y
++CONFIG_M68060=y
++CONFIG_ATARI=y
++CONFIG_ATARI_ROM_ISA=y
++CONFIG_HEARTBEAT=y
++CONFIG_PROC_HARDWARE=y
++CONFIG_NATFEAT=y
++CONFIG_NFBLOCK=y
++CONFIG_NFCON=y
++CONFIG_NFETH=y
++CONFIG_ATARI_ETHERNAT=y
++CONFIG_ATARI_ETHERNEC=y
++CONFIG_ATARI_DSP56K=m
+ CONFIG_MODULES=y
+ CONFIG_MODULE_UNLOAD=y
+ CONFIG_PARTITION_ADVANCED=y
+@@ -28,20 +45,12 @@ CONFIG_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_KYBER=m
+ CONFIG_IOSCHED_BFQ=m
+-CONFIG_KEXEC=y
+-CONFIG_BOOTINFO_PROC=y
+-CONFIG_M68020=y
+-CONFIG_M68030=y
+-CONFIG_M68040=y
+-CONFIG_M68060=y
+-CONFIG_ATARI=y
+-CONFIG_ATARI_ROM_ISA=y
+-# CONFIG_COMPACTION is not set
+-CONFIG_CLEANCACHE=y
+-CONFIG_ZPOOL=m
+ # CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
+ CONFIG_BINFMT_AOUT=m
+ CONFIG_BINFMT_MISC=m
++# CONFIG_COMPACTION is not set
++CONFIG_CLEANCACHE=y
++CONFIG_ZPOOL=m
+ CONFIG_NET=y
+ CONFIG_PACKET=y
+ CONFIG_PACKET_DIAG=m
+@@ -110,6 +119,7 @@ CONFIG_NFT_LIMIT=m
+ CONFIG_NFT_MASQ=m
+ CONFIG_NFT_REDIR=m
+ CONFIG_NFT_NAT=m
++CONFIG_NFT_TUNNEL=m
+ CONFIG_NFT_OBJREF=m
+ CONFIG_NFT_QUEUE=m
+ CONFIG_NFT_QUOTA=m
+@@ -118,6 +128,8 @@ CONFIG_NFT_COMPAT=m
+ CONFIG_NFT_HASH=m
+ CONFIG_NFT_FIB_INET=m
+ CONFIG_NFT_SOCKET=m
++CONFIG_NFT_OSF=m
++CONFIG_NFT_TPROXY=m
+ CONFIG_NFT_DUP_NETDEV=m
+ CONFIG_NFT_FWD_NETDEV=m
+ CONFIG_NFT_FIB_NETDEV=m
+@@ -195,7 +207,6 @@ CONFIG_IP_SET_HASH_NETNET=m
+ CONFIG_IP_SET_HASH_NETPORT=m
+ CONFIG_IP_SET_HASH_NETIFACE=m
+ CONFIG_IP_SET_LIST_SET=m
+-CONFIG_NF_CONNTRACK_IPV4=m
+ CONFIG_NFT_CHAIN_ROUTE_IPV4=m
+ CONFIG_NFT_DUP_IPV4=m
+ CONFIG_NFT_FIB_IPV4=m
+@@ -225,7 +236,6 @@ CONFIG_IP_NF_RAW=m
+ CONFIG_IP_NF_ARPTABLES=m
+ CONFIG_IP_NF_ARPFILTER=m
+ CONFIG_IP_NF_ARP_MANGLE=m
+-CONFIG_NF_CONNTRACK_IPV6=m
+ CONFIG_NFT_CHAIN_ROUTE_IPV6=m
+ CONFIG_NFT_CHAIN_NAT_IPV6=m
+ CONFIG_NFT_MASQ_IPV6=m
+@@ -295,7 +305,6 @@ CONFIG_6LOWPAN_GHC_EXT_HDR_ROUTE=m
+ CONFIG_DNS_RESOLVER=y
+ CONFIG_BATMAN_ADV=m
+ # CONFIG_BATMAN_ADV_BATMAN_V is not set
+-CONFIG_BATMAN_ADV_DAT=y
+ CONFIG_BATMAN_ADV_NC=y
+ CONFIG_BATMAN_ADV_MCAST=y
+ CONFIG_NETLINK_DIAG=m
+@@ -332,6 +341,7 @@ CONFIG_BLK_DEV_IDECD=y
+ CONFIG_BLK_DEV_FALCON_IDE=y
+ CONFIG_RAID_ATTRS=m
+ CONFIG_SCSI=y
++# CONFIG_SCSI_MQ_DEFAULT is not set
+ CONFIG_BLK_DEV_SD=y
+ CONFIG_CHR_DEV_ST=m
+ CONFIG_CHR_DEV_OSST=m
+@@ -388,8 +398,10 @@ CONFIG_VETH=m
+ CONFIG_ATARILANCE=y
+ # CONFIG_NET_VENDOR_AQUANTIA is not set
+ # CONFIG_NET_VENDOR_ARC is not set
++# CONFIG_NET_VENDOR_AURORA is not set
+ # CONFIG_NET_VENDOR_BROADCOM is not set
+-# CONFIG_NET_CADENCE is not set
++# CONFIG_NET_VENDOR_CADENCE is not set
++# CONFIG_NET_VENDOR_CAVIUM is not set
+ # CONFIG_NET_VENDOR_CORTINA is not set
+ # CONFIG_NET_VENDOR_EZCHIP is not set
+ # CONFIG_NET_VENDOR_HUAWEI is not set
+@@ -460,15 +472,6 @@ CONFIG_RTC_DRV_GENERIC=m
+ # CONFIG_VIRTIO_MENU is not set
+ # CONFIG_IOMMU_SUPPORT is not set
+ CONFIG_DAX=m
+-CONFIG_HEARTBEAT=y
+-CONFIG_PROC_HARDWARE=y
+-CONFIG_NATFEAT=y
+-CONFIG_NFBLOCK=y
+-CONFIG_NFCON=y
+-CONFIG_NFETH=y
+-CONFIG_ATARI_ETHERNAT=y
+-CONFIG_ATARI_ETHERNEC=y
+-CONFIG_ATARI_DSP56K=m
+ CONFIG_EXT4_FS=y
+ CONFIG_REISERFS_FS=m
+ CONFIG_JFS_FS=m
+@@ -566,31 +569,6 @@ CONFIG_NLS_MAC_INUIT=m
+ CONFIG_NLS_MAC_ROMANIAN=m
+ CONFIG_NLS_MAC_TURKISH=m
+ CONFIG_DLM=m
+-# CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
+-CONFIG_MAGIC_SYSRQ=y
+-CONFIG_WW_MUTEX_SELFTEST=m
+-CONFIG_TEST_LIST_SORT=m
+-CONFIG_TEST_SORT=m
+-CONFIG_ATOMIC64_SELFTEST=m
+-CONFIG_ASYNC_RAID6_TEST=m
+-CONFIG_TEST_HEXDUMP=m
+-CONFIG_TEST_STRING_HELPERS=m
+-CONFIG_TEST_KSTRTOX=m
+-CONFIG_TEST_PRINTF=m
+-CONFIG_TEST_BITMAP=m
+-CONFIG_TEST_UUID=m
+-CONFIG_TEST_OVERFLOW=m
+-CONFIG_TEST_RHASHTABLE=m
+-CONFIG_TEST_HASH=m
+-CONFIG_TEST_USER_COPY=m
+-CONFIG_TEST_BPF=m
+-CONFIG_FIND_BIT_BENCHMARK=m
+-CONFIG_TEST_FIRMWARE=m
+-CONFIG_TEST_SYSCTL=m
+-CONFIG_TEST_UDELAY=m
+-CONFIG_TEST_STATIC_KEYS=m
+-CONFIG_TEST_KMOD=m
+-CONFIG_EARLY_PRINTK=y
+ CONFIG_ENCRYPTED_KEYS=m
+ CONFIG_HARDENED_USERCOPY=y
+ CONFIG_CRYPTO_RSA=m
+@@ -652,5 +630,33 @@ CONFIG_CRYPTO_USER_API_RNG=m
+ CONFIG_CRYPTO_USER_API_AEAD=m
+ # CONFIG_CRYPTO_HW is not set
+ CONFIG_CRC32_SELFTEST=m
++CONFIG_CRC64=m
+ CONFIG_XZ_DEC_TEST=m
+ CONFIG_STRING_SELFTEST=m
++# CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
++CONFIG_MAGIC_SYSRQ=y
++CONFIG_WW_MUTEX_SELFTEST=m
++CONFIG_TEST_LIST_SORT=m
++CONFIG_TEST_SORT=m
++CONFIG_ATOMIC64_SELFTEST=m
++CONFIG_ASYNC_RAID6_TEST=m
++CONFIG_TEST_HEXDUMP=m
++CONFIG_TEST_STRING_HELPERS=m
++CONFIG_TEST_KSTRTOX=m
++CONFIG_TEST_PRINTF=m
++CONFIG_TEST_BITMAP=m
++CONFIG_TEST_BITFIELD=m
++CONFIG_TEST_UUID=m
++CONFIG_TEST_OVERFLOW=m
++CONFIG_TEST_RHASHTABLE=m
++CONFIG_TEST_HASH=m
++CONFIG_TEST_IDA=m
++CONFIG_TEST_USER_COPY=m
++CONFIG_TEST_BPF=m
++CONFIG_FIND_BIT_BENCHMARK=m
++CONFIG_TEST_FIRMWARE=m
++CONFIG_TEST_SYSCTL=m
++CONFIG_TEST_UDELAY=m
++CONFIG_TEST_STATIC_KEYS=m
++CONFIG_TEST_KMOD=m
++CONFIG_EARLY_PRINTK=y
+diff --git a/arch/m68k/configs/bvme6000_defconfig b/arch/m68k/configs/bvme6000_defconfig
+index fb7d651a4cabe203..be09bd6952d03bac 100644
+--- a/arch/m68k/configs/bvme6000_defconfig
++++ b/arch/m68k/configs/bvme6000_defconfig
+@@ -12,6 +12,13 @@ CONFIG_BLK_DEV_INITRD=y
+ CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+ CONFIG_USERFAULTFD=y
+ CONFIG_SLAB=y
++CONFIG_KEXEC=y
++CONFIG_BOOTINFO_PROC=y
++CONFIG_M68040=y
++CONFIG_M68060=y
++CONFIG_VME=y
++CONFIG_BVME6000=y
++CONFIG_PROC_HARDWARE=y
+ CONFIG_MODULES=y
+ CONFIG_MODULE_UNLOAD=y
+ CONFIG_PARTITION_ADVANCED=y
+@@ -28,18 +35,12 @@ CONFIG_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_KYBER=m
+ CONFIG_IOSCHED_BFQ=m
+-CONFIG_KEXEC=y
+-CONFIG_BOOTINFO_PROC=y
+-CONFIG_M68040=y
+-CONFIG_M68060=y
+-CONFIG_VME=y
+-CONFIG_BVME6000=y
+-# CONFIG_COMPACTION is not set
+-CONFIG_CLEANCACHE=y
+-CONFIG_ZPOOL=m
+ # CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
+ CONFIG_BINFMT_AOUT=m
+ CONFIG_BINFMT_MISC=m
++# CONFIG_COMPACTION is not set
++CONFIG_CLEANCACHE=y
++CONFIG_ZPOOL=m
+ CONFIG_NET=y
+ CONFIG_PACKET=y
+ CONFIG_PACKET_DIAG=m
+@@ -108,6 +109,7 @@ CONFIG_NFT_LIMIT=m
+ CONFIG_NFT_MASQ=m
+ CONFIG_NFT_REDIR=m
+ CONFIG_NFT_NAT=m
++CONFIG_NFT_TUNNEL=m
+ CONFIG_NFT_OBJREF=m
+ CONFIG_NFT_QUEUE=m
+ CONFIG_NFT_QUOTA=m
+@@ -116,6 +118,8 @@ CONFIG_NFT_COMPAT=m
+ CONFIG_NFT_HASH=m
+ CONFIG_NFT_FIB_INET=m
+ CONFIG_NFT_SOCKET=m
++CONFIG_NFT_OSF=m
++CONFIG_NFT_TPROXY=m
+ CONFIG_NFT_DUP_NETDEV=m
+ CONFIG_NFT_FWD_NETDEV=m
+ CONFIG_NFT_FIB_NETDEV=m
+@@ -193,7 +197,6 @@ CONFIG_IP_SET_HASH_NETNET=m
+ CONFIG_IP_SET_HASH_NETPORT=m
+ CONFIG_IP_SET_HASH_NETIFACE=m
+ CONFIG_IP_SET_LIST_SET=m
+-CONFIG_NF_CONNTRACK_IPV4=m
+ CONFIG_NFT_CHAIN_ROUTE_IPV4=m
+ CONFIG_NFT_DUP_IPV4=m
+ CONFIG_NFT_FIB_IPV4=m
+@@ -223,7 +226,6 @@ CONFIG_IP_NF_RAW=m
+ CONFIG_IP_NF_ARPTABLES=m
+ CONFIG_IP_NF_ARPFILTER=m
+ CONFIG_IP_NF_ARP_MANGLE=m
+-CONFIG_NF_CONNTRACK_IPV6=m
+ CONFIG_NFT_CHAIN_ROUTE_IPV6=m
+ CONFIG_NFT_CHAIN_NAT_IPV6=m
+ CONFIG_NFT_MASQ_IPV6=m
+@@ -293,7 +295,6 @@ CONFIG_6LOWPAN_GHC_EXT_HDR_ROUTE=m
+ CONFIG_DNS_RESOLVER=y
+ CONFIG_BATMAN_ADV=m
+ # CONFIG_BATMAN_ADV_BATMAN_V is not set
+-CONFIG_BATMAN_ADV_DAT=y
+ CONFIG_BATMAN_ADV_NC=y
+ CONFIG_BATMAN_ADV_MCAST=y
+ CONFIG_NETLINK_DIAG=m
+@@ -322,6 +323,7 @@ CONFIG_ATA_OVER_ETH=m
+ CONFIG_DUMMY_IRQ=m
+ CONFIG_RAID_ATTRS=m
+ CONFIG_SCSI=y
++# CONFIG_SCSI_MQ_DEFAULT is not set
+ CONFIG_BLK_DEV_SD=y
+ CONFIG_CHR_DEV_ST=m
+ CONFIG_CHR_DEV_OSST=m
+@@ -377,8 +379,10 @@ CONFIG_VETH=m
+ # CONFIG_NET_VENDOR_AMAZON is not set
+ # CONFIG_NET_VENDOR_AQUANTIA is not set
+ # CONFIG_NET_VENDOR_ARC is not set
++# CONFIG_NET_VENDOR_AURORA is not set
+ # CONFIG_NET_VENDOR_BROADCOM is not set
+-# CONFIG_NET_CADENCE is not set
++# CONFIG_NET_VENDOR_CADENCE is not set
++# CONFIG_NET_VENDOR_CAVIUM is not set
+ # CONFIG_NET_VENDOR_CORTINA is not set
+ # CONFIG_NET_VENDOR_EZCHIP is not set
+ # CONFIG_NET_VENDOR_HUAWEI is not set
+@@ -439,7 +443,6 @@ CONFIG_RTC_DRV_GENERIC=m
+ # CONFIG_VIRTIO_MENU is not set
+ # CONFIG_IOMMU_SUPPORT is not set
+ CONFIG_DAX=m
+-CONFIG_PROC_HARDWARE=y
+ CONFIG_EXT4_FS=y
+ CONFIG_REISERFS_FS=m
+ CONFIG_JFS_FS=m
+@@ -537,31 +540,6 @@ CONFIG_NLS_MAC_INUIT=m
+ CONFIG_NLS_MAC_ROMANIAN=m
+ CONFIG_NLS_MAC_TURKISH=m
+ CONFIG_DLM=m
+-# CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
+-CONFIG_MAGIC_SYSRQ=y
+-CONFIG_WW_MUTEX_SELFTEST=m
+-CONFIG_TEST_LIST_SORT=m
+-CONFIG_TEST_SORT=m
+-CONFIG_ATOMIC64_SELFTEST=m
+-CONFIG_ASYNC_RAID6_TEST=m
+-CONFIG_TEST_HEXDUMP=m
+-CONFIG_TEST_STRING_HELPERS=m
+-CONFIG_TEST_KSTRTOX=m
+-CONFIG_TEST_PRINTF=m
+-CONFIG_TEST_BITMAP=m
+-CONFIG_TEST_UUID=m
+-CONFIG_TEST_OVERFLOW=m
+-CONFIG_TEST_RHASHTABLE=m
+-CONFIG_TEST_HASH=m
+-CONFIG_TEST_USER_COPY=m
+-CONFIG_TEST_BPF=m
+-CONFIG_FIND_BIT_BENCHMARK=m
+-CONFIG_TEST_FIRMWARE=m
+-CONFIG_TEST_SYSCTL=m
+-CONFIG_TEST_UDELAY=m
+-CONFIG_TEST_STATIC_KEYS=m
+-CONFIG_TEST_KMOD=m
+-CONFIG_EARLY_PRINTK=y
+ CONFIG_ENCRYPTED_KEYS=m
+ CONFIG_HARDENED_USERCOPY=y
+ CONFIG_CRYPTO_RSA=m
+@@ -623,5 +601,33 @@ CONFIG_CRYPTO_USER_API_RNG=m
+ CONFIG_CRYPTO_USER_API_AEAD=m
+ # CONFIG_CRYPTO_HW is not set
+ CONFIG_CRC32_SELFTEST=m
++CONFIG_CRC64=m
+ CONFIG_XZ_DEC_TEST=m
+ CONFIG_STRING_SELFTEST=m
++# CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
++CONFIG_MAGIC_SYSRQ=y
++CONFIG_WW_MUTEX_SELFTEST=m
++CONFIG_TEST_LIST_SORT=m
++CONFIG_TEST_SORT=m
++CONFIG_ATOMIC64_SELFTEST=m
++CONFIG_ASYNC_RAID6_TEST=m
++CONFIG_TEST_HEXDUMP=m
++CONFIG_TEST_STRING_HELPERS=m
++CONFIG_TEST_KSTRTOX=m
++CONFIG_TEST_PRINTF=m
++CONFIG_TEST_BITMAP=m
++CONFIG_TEST_BITFIELD=m
++CONFIG_TEST_UUID=m
++CONFIG_TEST_OVERFLOW=m
++CONFIG_TEST_RHASHTABLE=m
++CONFIG_TEST_HASH=m
++CONFIG_TEST_IDA=m
++CONFIG_TEST_USER_COPY=m
++CONFIG_TEST_BPF=m
++CONFIG_FIND_BIT_BENCHMARK=m
++CONFIG_TEST_FIRMWARE=m
++CONFIG_TEST_SYSCTL=m
++CONFIG_TEST_UDELAY=m
++CONFIG_TEST_STATIC_KEYS=m
++CONFIG_TEST_KMOD=m
++CONFIG_EARLY_PRINTK=y
+diff --git a/arch/m68k/configs/hp300_defconfig b/arch/m68k/configs/hp300_defconfig
+index 6b37f5537c3905c5..c2c6a95ecc6f291d 100644
+--- a/arch/m68k/configs/hp300_defconfig
++++ b/arch/m68k/configs/hp300_defconfig
+@@ -12,6 +12,14 @@ CONFIG_BLK_DEV_INITRD=y
+ CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+ CONFIG_USERFAULTFD=y
+ CONFIG_SLAB=y
++CONFIG_KEXEC=y
++CONFIG_BOOTINFO_PROC=y
++CONFIG_M68020=y
++CONFIG_M68030=y
++CONFIG_M68040=y
++CONFIG_M68060=y
++CONFIG_HP300=y
++CONFIG_PROC_HARDWARE=y
+ CONFIG_MODULES=y
+ CONFIG_MODULE_UNLOAD=y
+ CONFIG_PARTITION_ADVANCED=y
+@@ -29,19 +37,12 @@ CONFIG_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_KYBER=m
+ CONFIG_IOSCHED_BFQ=m
+-CONFIG_KEXEC=y
+-CONFIG_BOOTINFO_PROC=y
+-CONFIG_M68020=y
+-CONFIG_M68030=y
+-CONFIG_M68040=y
+-CONFIG_M68060=y
+-CONFIG_HP300=y
+-# CONFIG_COMPACTION is not set
+-CONFIG_CLEANCACHE=y
+-CONFIG_ZPOOL=m
+ # CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
+ CONFIG_BINFMT_AOUT=m
+ CONFIG_BINFMT_MISC=m
++# CONFIG_COMPACTION is not set
++CONFIG_CLEANCACHE=y
++CONFIG_ZPOOL=m
+ CONFIG_NET=y
+ CONFIG_PACKET=y
+ CONFIG_PACKET_DIAG=m
+@@ -110,6 +111,7 @@ CONFIG_NFT_LIMIT=m
+ CONFIG_NFT_MASQ=m
+ CONFIG_NFT_REDIR=m
+ CONFIG_NFT_NAT=m
++CONFIG_NFT_TUNNEL=m
+ CONFIG_NFT_OBJREF=m
+ CONFIG_NFT_QUEUE=m
+ CONFIG_NFT_QUOTA=m
+@@ -118,6 +120,8 @@ CONFIG_NFT_COMPAT=m
+ CONFIG_NFT_HASH=m
+ CONFIG_NFT_FIB_INET=m
+ CONFIG_NFT_SOCKET=m
++CONFIG_NFT_OSF=m
++CONFIG_NFT_TPROXY=m
+ CONFIG_NFT_DUP_NETDEV=m
+ CONFIG_NFT_FWD_NETDEV=m
+ CONFIG_NFT_FIB_NETDEV=m
+@@ -195,7 +199,6 @@ CONFIG_IP_SET_HASH_NETNET=m
+ CONFIG_IP_SET_HASH_NETPORT=m
+ CONFIG_IP_SET_HASH_NETIFACE=m
+ CONFIG_IP_SET_LIST_SET=m
+-CONFIG_NF_CONNTRACK_IPV4=m
+ CONFIG_NFT_CHAIN_ROUTE_IPV4=m
+ CONFIG_NFT_DUP_IPV4=m
+ CONFIG_NFT_FIB_IPV4=m
+@@ -225,7 +228,6 @@ CONFIG_IP_NF_RAW=m
+ CONFIG_IP_NF_ARPTABLES=m
+ CONFIG_IP_NF_ARPFILTER=m
+ CONFIG_IP_NF_ARP_MANGLE=m
+-CONFIG_NF_CONNTRACK_IPV6=m
+ CONFIG_NFT_CHAIN_ROUTE_IPV6=m
+ CONFIG_NFT_CHAIN_NAT_IPV6=m
+ CONFIG_NFT_MASQ_IPV6=m
+@@ -295,7 +297,6 @@ CONFIG_6LOWPAN_GHC_EXT_HDR_ROUTE=m
+ CONFIG_DNS_RESOLVER=y
+ CONFIG_BATMAN_ADV=m
+ # CONFIG_BATMAN_ADV_BATMAN_V is not set
+-CONFIG_BATMAN_ADV_DAT=y
+ CONFIG_BATMAN_ADV_NC=y
+ CONFIG_BATMAN_ADV_MCAST=y
+ CONFIG_NETLINK_DIAG=m
+@@ -324,6 +325,7 @@ CONFIG_ATA_OVER_ETH=m
+ CONFIG_DUMMY_IRQ=m
+ CONFIG_RAID_ATTRS=m
+ CONFIG_SCSI=y
++# CONFIG_SCSI_MQ_DEFAULT is not set
+ CONFIG_BLK_DEV_SD=y
+ CONFIG_CHR_DEV_ST=m
+ CONFIG_CHR_DEV_OSST=m
+@@ -379,8 +381,10 @@ CONFIG_VETH=m
+ CONFIG_HPLANCE=y
+ # CONFIG_NET_VENDOR_AQUANTIA is not set
+ # CONFIG_NET_VENDOR_ARC is not set
++# CONFIG_NET_VENDOR_AURORA is not set
+ # CONFIG_NET_VENDOR_BROADCOM is not set
+-# CONFIG_NET_CADENCE is not set
++# CONFIG_NET_VENDOR_CADENCE is not set
++# CONFIG_NET_VENDOR_CAVIUM is not set
+ # CONFIG_NET_VENDOR_CORTINA is not set
+ # CONFIG_NET_VENDOR_EZCHIP is not set
+ # CONFIG_NET_VENDOR_HUAWEI is not set
+@@ -449,7 +453,6 @@ CONFIG_RTC_DRV_GENERIC=m
+ # CONFIG_VIRTIO_MENU is not set
+ # CONFIG_IOMMU_SUPPORT is not set
+ CONFIG_DAX=m
+-CONFIG_PROC_HARDWARE=y
+ CONFIG_EXT4_FS=y
+ CONFIG_REISERFS_FS=m
+ CONFIG_JFS_FS=m
+@@ -547,31 +550,6 @@ CONFIG_NLS_MAC_INUIT=m
+ CONFIG_NLS_MAC_ROMANIAN=m
+ CONFIG_NLS_MAC_TURKISH=m
+ CONFIG_DLM=m
+-# CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
+-CONFIG_MAGIC_SYSRQ=y
+-CONFIG_WW_MUTEX_SELFTEST=m
+-CONFIG_TEST_LIST_SORT=m
+-CONFIG_TEST_SORT=m
+-CONFIG_ATOMIC64_SELFTEST=m
+-CONFIG_ASYNC_RAID6_TEST=m
+-CONFIG_TEST_HEXDUMP=m
+-CONFIG_TEST_STRING_HELPERS=m
+-CONFIG_TEST_KSTRTOX=m
+-CONFIG_TEST_PRINTF=m
+-CONFIG_TEST_BITMAP=m
+-CONFIG_TEST_UUID=m
+-CONFIG_TEST_OVERFLOW=m
+-CONFIG_TEST_RHASHTABLE=m
+-CONFIG_TEST_HASH=m
+-CONFIG_TEST_USER_COPY=m
+-CONFIG_TEST_BPF=m
+-CONFIG_FIND_BIT_BENCHMARK=m
+-CONFIG_TEST_FIRMWARE=m
+-CONFIG_TEST_SYSCTL=m
+-CONFIG_TEST_UDELAY=m
+-CONFIG_TEST_STATIC_KEYS=m
+-CONFIG_TEST_KMOD=m
+-CONFIG_EARLY_PRINTK=y
+ CONFIG_ENCRYPTED_KEYS=m
+ CONFIG_HARDENED_USERCOPY=y
+ CONFIG_CRYPTO_RSA=m
+@@ -633,5 +611,33 @@ CONFIG_CRYPTO_USER_API_RNG=m
+ CONFIG_CRYPTO_USER_API_AEAD=m
+ # CONFIG_CRYPTO_HW is not set
+ CONFIG_CRC32_SELFTEST=m
++CONFIG_CRC64=m
+ CONFIG_XZ_DEC_TEST=m
+ CONFIG_STRING_SELFTEST=m
++# CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
++CONFIG_MAGIC_SYSRQ=y
++CONFIG_WW_MUTEX_SELFTEST=m
++CONFIG_TEST_LIST_SORT=m
++CONFIG_TEST_SORT=m
++CONFIG_ATOMIC64_SELFTEST=m
++CONFIG_ASYNC_RAID6_TEST=m
++CONFIG_TEST_HEXDUMP=m
++CONFIG_TEST_STRING_HELPERS=m
++CONFIG_TEST_KSTRTOX=m
++CONFIG_TEST_PRINTF=m
++CONFIG_TEST_BITMAP=m
++CONFIG_TEST_BITFIELD=m
++CONFIG_TEST_UUID=m
++CONFIG_TEST_OVERFLOW=m
++CONFIG_TEST_RHASHTABLE=m
++CONFIG_TEST_HASH=m
++CONFIG_TEST_IDA=m
++CONFIG_TEST_USER_COPY=m
++CONFIG_TEST_BPF=m
++CONFIG_FIND_BIT_BENCHMARK=m
++CONFIG_TEST_FIRMWARE=m
++CONFIG_TEST_SYSCTL=m
++CONFIG_TEST_UDELAY=m
++CONFIG_TEST_STATIC_KEYS=m
++CONFIG_TEST_KMOD=m
++CONFIG_EARLY_PRINTK=y
+diff --git a/arch/m68k/configs/mac_defconfig b/arch/m68k/configs/mac_defconfig
+index c717bf8794492114..fdc3634cd23c2dee 100644
+--- a/arch/m68k/configs/mac_defconfig
++++ b/arch/m68k/configs/mac_defconfig
+@@ -12,6 +12,14 @@ CONFIG_BLK_DEV_INITRD=y
+ CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+ CONFIG_USERFAULTFD=y
+ CONFIG_SLAB=y
++CONFIG_KEXEC=y
++CONFIG_BOOTINFO_PROC=y
++CONFIG_M68020=y
++CONFIG_M68030=y
++CONFIG_M68040=y
++CONFIG_M68KFPU_EMU=y
++CONFIG_MAC=y
++CONFIG_PROC_HARDWARE=y
+ CONFIG_MODULES=y
+ CONFIG_MODULE_UNLOAD=y
+ CONFIG_PARTITION_ADVANCED=y
+@@ -28,19 +36,12 @@ CONFIG_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_KYBER=m
+ CONFIG_IOSCHED_BFQ=m
+-CONFIG_KEXEC=y
+-CONFIG_BOOTINFO_PROC=y
+-CONFIG_M68020=y
+-CONFIG_M68030=y
+-CONFIG_M68040=y
+-CONFIG_M68KFPU_EMU=y
+-CONFIG_MAC=y
+-# CONFIG_COMPACTION is not set
+-CONFIG_CLEANCACHE=y
+-CONFIG_ZPOOL=m
+ # CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
+ CONFIG_BINFMT_AOUT=m
+ CONFIG_BINFMT_MISC=m
++# CONFIG_COMPACTION is not set
++CONFIG_CLEANCACHE=y
++CONFIG_ZPOOL=m
+ CONFIG_NET=y
+ CONFIG_PACKET=y
+ CONFIG_PACKET_DIAG=m
+@@ -109,6 +110,7 @@ CONFIG_NFT_LIMIT=m
+ CONFIG_NFT_MASQ=m
+ CONFIG_NFT_REDIR=m
+ CONFIG_NFT_NAT=m
++CONFIG_NFT_TUNNEL=m
+ CONFIG_NFT_OBJREF=m
+ CONFIG_NFT_QUEUE=m
+ CONFIG_NFT_QUOTA=m
+@@ -117,6 +119,8 @@ CONFIG_NFT_COMPAT=m
+ CONFIG_NFT_HASH=m
+ CONFIG_NFT_FIB_INET=m
+ CONFIG_NFT_SOCKET=m
++CONFIG_NFT_OSF=m
++CONFIG_NFT_TPROXY=m
+ CONFIG_NFT_DUP_NETDEV=m
+ CONFIG_NFT_FWD_NETDEV=m
+ CONFIG_NFT_FIB_NETDEV=m
+@@ -194,7 +198,6 @@ CONFIG_IP_SET_HASH_NETNET=m
+ CONFIG_IP_SET_HASH_NETPORT=m
+ CONFIG_IP_SET_HASH_NETIFACE=m
+ CONFIG_IP_SET_LIST_SET=m
+-CONFIG_NF_CONNTRACK_IPV4=m
+ CONFIG_NFT_CHAIN_ROUTE_IPV4=m
+ CONFIG_NFT_DUP_IPV4=m
+ CONFIG_NFT_FIB_IPV4=m
+@@ -224,7 +227,6 @@ CONFIG_IP_NF_RAW=m
+ CONFIG_IP_NF_ARPTABLES=m
+ CONFIG_IP_NF_ARPFILTER=m
+ CONFIG_IP_NF_ARP_MANGLE=m
+-CONFIG_NF_CONNTRACK_IPV6=m
+ CONFIG_NFT_CHAIN_ROUTE_IPV6=m
+ CONFIG_NFT_CHAIN_NAT_IPV6=m
+ CONFIG_NFT_MASQ_IPV6=m
+@@ -297,7 +299,6 @@ CONFIG_6LOWPAN_GHC_EXT_HDR_ROUTE=m
+ CONFIG_DNS_RESOLVER=y
+ CONFIG_BATMAN_ADV=m
+ # CONFIG_BATMAN_ADV_BATMAN_V is not set
+-CONFIG_BATMAN_ADV_DAT=y
+ CONFIG_BATMAN_ADV_NC=y
+ CONFIG_BATMAN_ADV_MCAST=y
+ CONFIG_NETLINK_DIAG=m
+@@ -331,6 +332,7 @@ CONFIG_BLK_DEV_IDECD=y
+ CONFIG_BLK_DEV_MAC_IDE=y
+ CONFIG_RAID_ATTRS=m
+ CONFIG_SCSI=y
++# CONFIG_SCSI_MQ_DEFAULT is not set
+ CONFIG_BLK_DEV_SD=y
+ CONFIG_CHR_DEV_ST=m
+ CONFIG_CHR_DEV_OSST=m
+@@ -366,8 +368,8 @@ CONFIG_TCM_PSCSI=m
+ CONFIG_ADB=y
+ CONFIG_ADB_MACII=y
+ CONFIG_ADB_IOP=y
+-CONFIG_ADB_PMU=y
+ CONFIG_ADB_CUDA=y
++CONFIG_ADB_PMU=y
+ CONFIG_INPUT_ADBHID=y
+ CONFIG_MAC_EMUMOUSEBTN=y
+ CONFIG_NETDEVICES=y
+@@ -395,8 +397,10 @@ CONFIG_VETH=m
+ CONFIG_MACMACE=y
+ # CONFIG_NET_VENDOR_AQUANTIA is not set
+ # CONFIG_NET_VENDOR_ARC is not set
++# CONFIG_NET_VENDOR_AURORA is not set
+ # CONFIG_NET_VENDOR_BROADCOM is not set
+-# CONFIG_NET_CADENCE is not set
++# CONFIG_NET_VENDOR_CADENCE is not set
++# CONFIG_NET_VENDOR_CAVIUM is not set
+ CONFIG_MAC89x0=y
+ # CONFIG_NET_VENDOR_CORTINA is not set
+ # CONFIG_NET_VENDOR_EZCHIP is not set
+@@ -471,7 +475,6 @@ CONFIG_RTC_DRV_GENERIC=m
+ # CONFIG_VIRTIO_MENU is not set
+ # CONFIG_IOMMU_SUPPORT is not set
+ CONFIG_DAX=m
+-CONFIG_PROC_HARDWARE=y
+ CONFIG_EXT4_FS=y
+ CONFIG_REISERFS_FS=m
+ CONFIG_JFS_FS=m
+@@ -569,31 +572,6 @@ CONFIG_NLS_MAC_INUIT=m
+ CONFIG_NLS_MAC_ROMANIAN=m
+ CONFIG_NLS_MAC_TURKISH=m
+ CONFIG_DLM=m
+-# CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
+-CONFIG_MAGIC_SYSRQ=y
+-CONFIG_WW_MUTEX_SELFTEST=m
+-CONFIG_TEST_LIST_SORT=m
+-CONFIG_TEST_SORT=m
+-CONFIG_ATOMIC64_SELFTEST=m
+-CONFIG_ASYNC_RAID6_TEST=m
+-CONFIG_TEST_HEXDUMP=m
+-CONFIG_TEST_STRING_HELPERS=m
+-CONFIG_TEST_KSTRTOX=m
+-CONFIG_TEST_PRINTF=m
+-CONFIG_TEST_BITMAP=m
+-CONFIG_TEST_UUID=m
+-CONFIG_TEST_OVERFLOW=m
+-CONFIG_TEST_RHASHTABLE=m
+-CONFIG_TEST_HASH=m
+-CONFIG_TEST_USER_COPY=m
+-CONFIG_TEST_BPF=m
+-CONFIG_FIND_BIT_BENCHMARK=m
+-CONFIG_TEST_FIRMWARE=m
+-CONFIG_TEST_SYSCTL=m
+-CONFIG_TEST_UDELAY=m
+-CONFIG_TEST_STATIC_KEYS=m
+-CONFIG_TEST_KMOD=m
+-CONFIG_EARLY_PRINTK=y
+ CONFIG_ENCRYPTED_KEYS=m
+ CONFIG_HARDENED_USERCOPY=y
+ CONFIG_CRYPTO_RSA=m
+@@ -655,5 +633,33 @@ CONFIG_CRYPTO_USER_API_RNG=m
+ CONFIG_CRYPTO_USER_API_AEAD=m
+ # CONFIG_CRYPTO_HW is not set
+ CONFIG_CRC32_SELFTEST=m
++CONFIG_CRC64=m
+ CONFIG_XZ_DEC_TEST=m
+ CONFIG_STRING_SELFTEST=m
++# CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
++CONFIG_MAGIC_SYSRQ=y
++CONFIG_WW_MUTEX_SELFTEST=m
++CONFIG_TEST_LIST_SORT=m
++CONFIG_TEST_SORT=m
++CONFIG_ATOMIC64_SELFTEST=m
++CONFIG_ASYNC_RAID6_TEST=m
++CONFIG_TEST_HEXDUMP=m
++CONFIG_TEST_STRING_HELPERS=m
++CONFIG_TEST_KSTRTOX=m
++CONFIG_TEST_PRINTF=m
++CONFIG_TEST_BITMAP=m
++CONFIG_TEST_BITFIELD=m
++CONFIG_TEST_UUID=m
++CONFIG_TEST_OVERFLOW=m
++CONFIG_TEST_RHASHTABLE=m
++CONFIG_TEST_HASH=m
++CONFIG_TEST_IDA=m
++CONFIG_TEST_USER_COPY=m
++CONFIG_TEST_BPF=m
++CONFIG_FIND_BIT_BENCHMARK=m
++CONFIG_TEST_FIRMWARE=m
++CONFIG_TEST_SYSCTL=m
++CONFIG_TEST_UDELAY=m
++CONFIG_TEST_STATIC_KEYS=m
++CONFIG_TEST_KMOD=m
++CONFIG_EARLY_PRINTK=y
+diff --git a/arch/m68k/configs/multi_defconfig b/arch/m68k/configs/multi_defconfig
+index 226c994ce794f6ac..f611e7077f7db9a5 100644
+--- a/arch/m68k/configs/multi_defconfig
++++ b/arch/m68k/configs/multi_defconfig
+@@ -12,18 +12,6 @@ CONFIG_BLK_DEV_INITRD=y
+ CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+ CONFIG_USERFAULTFD=y
+ CONFIG_SLAB=y
+-CONFIG_MODULES=y
+-CONFIG_MODULE_UNLOAD=y
+-CONFIG_PARTITION_ADVANCED=y
+-CONFIG_BSD_DISKLABEL=y
+-CONFIG_MINIX_SUBPARTITION=y
+-CONFIG_SOLARIS_X86_PARTITION=y
+-CONFIG_UNIXWARE_DISKLABEL=y
+-# CONFIG_EFI_PARTITION is not set
+-CONFIG_IOSCHED_DEADLINE=m
+-CONFIG_MQ_IOSCHED_DEADLINE=m
+-CONFIG_MQ_IOSCHED_KYBER=m
+-CONFIG_IOSCHED_BFQ=m
+ CONFIG_KEXEC=y
+ CONFIG_BOOTINFO_PROC=y
+ CONFIG_M68020=y
+@@ -45,12 +33,35 @@ CONFIG_ZORRO=y
+ CONFIG_AMIGA_PCMCIA=y
+ CONFIG_ATARI_ROM_ISA=y
+ CONFIG_ZORRO_NAMES=y
+-# CONFIG_COMPACTION is not set
+-CONFIG_CLEANCACHE=y
+-CONFIG_ZPOOL=m
++CONFIG_HEARTBEAT=y
++CONFIG_PROC_HARDWARE=y
++CONFIG_NATFEAT=y
++CONFIG_NFBLOCK=y
++CONFIG_NFCON=y
++CONFIG_NFETH=y
++CONFIG_ATARI_ETHERNAT=y
++CONFIG_ATARI_ETHERNEC=y
++CONFIG_ATARI_DSP56K=m
++CONFIG_AMIGA_BUILTIN_SERIAL=y
++CONFIG_SERIAL_CONSOLE=y
++CONFIG_MODULES=y
++CONFIG_MODULE_UNLOAD=y
++CONFIG_PARTITION_ADVANCED=y
++CONFIG_BSD_DISKLABEL=y
++CONFIG_MINIX_SUBPARTITION=y
++CONFIG_SOLARIS_X86_PARTITION=y
++CONFIG_UNIXWARE_DISKLABEL=y
++# CONFIG_EFI_PARTITION is not set
++CONFIG_IOSCHED_DEADLINE=m
++CONFIG_MQ_IOSCHED_DEADLINE=m
++CONFIG_MQ_IOSCHED_KYBER=m
++CONFIG_IOSCHED_BFQ=m
+ # CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
+ CONFIG_BINFMT_AOUT=m
+ CONFIG_BINFMT_MISC=m
++# CONFIG_COMPACTION is not set
++CONFIG_CLEANCACHE=y
++CONFIG_ZPOOL=m
+ CONFIG_NET=y
+ CONFIG_PACKET=y
+ CONFIG_PACKET_DIAG=m
+@@ -119,6 +130,7 @@ CONFIG_NFT_LIMIT=m
+ CONFIG_NFT_MASQ=m
+ CONFIG_NFT_REDIR=m
+ CONFIG_NFT_NAT=m
++CONFIG_NFT_TUNNEL=m
+ CONFIG_NFT_OBJREF=m
+ CONFIG_NFT_QUEUE=m
+ CONFIG_NFT_QUOTA=m
+@@ -127,6 +139,8 @@ CONFIG_NFT_COMPAT=m
+ CONFIG_NFT_HASH=m
+ CONFIG_NFT_FIB_INET=m
+ CONFIG_NFT_SOCKET=m
++CONFIG_NFT_OSF=m
++CONFIG_NFT_TPROXY=m
+ CONFIG_NFT_DUP_NETDEV=m
+ CONFIG_NFT_FWD_NETDEV=m
+ CONFIG_NFT_FIB_NETDEV=m
+@@ -204,7 +218,6 @@ CONFIG_IP_SET_HASH_NETNET=m
+ CONFIG_IP_SET_HASH_NETPORT=m
+ CONFIG_IP_SET_HASH_NETIFACE=m
+ CONFIG_IP_SET_LIST_SET=m
+-CONFIG_NF_CONNTRACK_IPV4=m
+ CONFIG_NFT_CHAIN_ROUTE_IPV4=m
+ CONFIG_NFT_DUP_IPV4=m
+ CONFIG_NFT_FIB_IPV4=m
+@@ -234,7 +247,6 @@ CONFIG_IP_NF_RAW=m
+ CONFIG_IP_NF_ARPTABLES=m
+ CONFIG_IP_NF_ARPFILTER=m
+ CONFIG_IP_NF_ARP_MANGLE=m
+-CONFIG_NF_CONNTRACK_IPV6=m
+ CONFIG_NFT_CHAIN_ROUTE_IPV6=m
+ CONFIG_NFT_CHAIN_NAT_IPV6=m
+ CONFIG_NFT_MASQ_IPV6=m
+@@ -307,7 +319,6 @@ CONFIG_6LOWPAN_GHC_EXT_HDR_ROUTE=m
+ CONFIG_DNS_RESOLVER=y
+ CONFIG_BATMAN_ADV=m
+ # CONFIG_BATMAN_ADV_BATMAN_V is not set
+-CONFIG_BATMAN_ADV_DAT=y
+ CONFIG_BATMAN_ADV_NC=y
+ CONFIG_BATMAN_ADV_MCAST=y
+ CONFIG_NETLINK_DIAG=m
+@@ -354,6 +365,7 @@ CONFIG_BLK_DEV_MAC_IDE=y
+ CONFIG_BLK_DEV_Q40IDE=y
+ CONFIG_RAID_ATTRS=m
+ CONFIG_SCSI=y
++# CONFIG_SCSI_MQ_DEFAULT is not set
+ CONFIG_BLK_DEV_SD=y
+ CONFIG_CHR_DEV_ST=m
+ CONFIG_CHR_DEV_OSST=m
+@@ -400,8 +412,8 @@ CONFIG_TCM_PSCSI=m
+ CONFIG_ADB=y
+ CONFIG_ADB_MACII=y
+ CONFIG_ADB_IOP=y
+-CONFIG_ADB_PMU=y
+ CONFIG_ADB_CUDA=y
++CONFIG_ADB_PMU=y
+ CONFIG_INPUT_ADBHID=y
+ CONFIG_MAC_EMUMOUSEBTN=y
+ CONFIG_NETDEVICES=y
+@@ -436,8 +448,10 @@ CONFIG_SUN3LANCE=y
+ CONFIG_MACMACE=y
+ # CONFIG_NET_VENDOR_AQUANTIA is not set
+ # CONFIG_NET_VENDOR_ARC is not set
++# CONFIG_NET_VENDOR_AURORA is not set
+ # CONFIG_NET_VENDOR_BROADCOM is not set
+-# CONFIG_NET_CADENCE is not set
++# CONFIG_NET_VENDOR_CADENCE is not set
++# CONFIG_NET_VENDOR_CAVIUM is not set
+ CONFIG_MAC89x0=y
+ # CONFIG_NET_VENDOR_CORTINA is not set
+ # CONFIG_NET_VENDOR_EZCHIP is not set
+@@ -543,17 +557,6 @@ CONFIG_RTC_DRV_GENERIC=m
+ # CONFIG_VIRTIO_MENU is not set
+ # CONFIG_IOMMU_SUPPORT is not set
+ CONFIG_DAX=m
+-CONFIG_HEARTBEAT=y
+-CONFIG_PROC_HARDWARE=y
+-CONFIG_NATFEAT=y
+-CONFIG_NFBLOCK=y
+-CONFIG_NFCON=y
+-CONFIG_NFETH=y
+-CONFIG_ATARI_ETHERNAT=y
+-CONFIG_ATARI_ETHERNEC=y
+-CONFIG_ATARI_DSP56K=m
+-CONFIG_AMIGA_BUILTIN_SERIAL=y
+-CONFIG_SERIAL_CONSOLE=y
+ CONFIG_EXT4_FS=y
+ CONFIG_REISERFS_FS=m
+ CONFIG_JFS_FS=m
+@@ -651,31 +654,6 @@ CONFIG_NLS_MAC_INUIT=m
+ CONFIG_NLS_MAC_ROMANIAN=m
+ CONFIG_NLS_MAC_TURKISH=m
+ CONFIG_DLM=m
+-# CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
+-CONFIG_MAGIC_SYSRQ=y
+-CONFIG_WW_MUTEX_SELFTEST=m
+-CONFIG_TEST_LIST_SORT=m
+-CONFIG_TEST_SORT=m
+-CONFIG_ATOMIC64_SELFTEST=m
+-CONFIG_ASYNC_RAID6_TEST=m
+-CONFIG_TEST_HEXDUMP=m
+-CONFIG_TEST_STRING_HELPERS=m
+-CONFIG_TEST_KSTRTOX=m
+-CONFIG_TEST_PRINTF=m
+-CONFIG_TEST_BITMAP=m
+-CONFIG_TEST_UUID=m
+-CONFIG_TEST_OVERFLOW=m
+-CONFIG_TEST_RHASHTABLE=m
+-CONFIG_TEST_HASH=m
+-CONFIG_TEST_USER_COPY=m
+-CONFIG_TEST_BPF=m
+-CONFIG_FIND_BIT_BENCHMARK=m
+-CONFIG_TEST_FIRMWARE=m
+-CONFIG_TEST_SYSCTL=m
+-CONFIG_TEST_UDELAY=m
+-CONFIG_TEST_STATIC_KEYS=m
+-CONFIG_TEST_KMOD=m
+-CONFIG_EARLY_PRINTK=y
+ CONFIG_ENCRYPTED_KEYS=m
+ CONFIG_HARDENED_USERCOPY=y
+ CONFIG_CRYPTO_RSA=m
+@@ -737,5 +715,33 @@ CONFIG_CRYPTO_USER_API_RNG=m
+ CONFIG_CRYPTO_USER_API_AEAD=m
+ # CONFIG_CRYPTO_HW is not set
+ CONFIG_CRC32_SELFTEST=m
++CONFIG_CRC64=m
+ CONFIG_XZ_DEC_TEST=m
+ CONFIG_STRING_SELFTEST=m
++# CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
++CONFIG_MAGIC_SYSRQ=y
++CONFIG_WW_MUTEX_SELFTEST=m
++CONFIG_TEST_LIST_SORT=m
++CONFIG_TEST_SORT=m
++CONFIG_ATOMIC64_SELFTEST=m
++CONFIG_ASYNC_RAID6_TEST=m
++CONFIG_TEST_HEXDUMP=m
++CONFIG_TEST_STRING_HELPERS=m
++CONFIG_TEST_KSTRTOX=m
++CONFIG_TEST_PRINTF=m
++CONFIG_TEST_BITMAP=m
++CONFIG_TEST_BITFIELD=m
++CONFIG_TEST_UUID=m
++CONFIG_TEST_OVERFLOW=m
++CONFIG_TEST_RHASHTABLE=m
++CONFIG_TEST_HASH=m
++CONFIG_TEST_IDA=m
++CONFIG_TEST_USER_COPY=m
++CONFIG_TEST_BPF=m
++CONFIG_FIND_BIT_BENCHMARK=m
++CONFIG_TEST_FIRMWARE=m
++CONFIG_TEST_SYSCTL=m
++CONFIG_TEST_UDELAY=m
++CONFIG_TEST_STATIC_KEYS=m
++CONFIG_TEST_KMOD=m
++CONFIG_EARLY_PRINTK=y
+diff --git a/arch/m68k/configs/mvme147_defconfig b/arch/m68k/configs/mvme147_defconfig
+index b383327fd77a9411..dce71253b200b6bd 100644
+--- a/arch/m68k/configs/mvme147_defconfig
++++ b/arch/m68k/configs/mvme147_defconfig
+@@ -12,6 +12,12 @@ CONFIG_BLK_DEV_INITRD=y
+ CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+ CONFIG_USERFAULTFD=y
+ CONFIG_SLAB=y
++CONFIG_KEXEC=y
++CONFIG_BOOTINFO_PROC=y
++CONFIG_M68030=y
++CONFIG_VME=y
++CONFIG_MVME147=y
++CONFIG_PROC_HARDWARE=y
+ CONFIG_MODULES=y
+ CONFIG_MODULE_UNLOAD=y
+ CONFIG_PARTITION_ADVANCED=y
+@@ -28,17 +34,12 @@ CONFIG_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_KYBER=m
+ CONFIG_IOSCHED_BFQ=m
+-CONFIG_KEXEC=y
+-CONFIG_BOOTINFO_PROC=y
+-CONFIG_M68030=y
+-CONFIG_VME=y
+-CONFIG_MVME147=y
+-# CONFIG_COMPACTION is not set
+-CONFIG_CLEANCACHE=y
+-CONFIG_ZPOOL=m
+ # CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
+ CONFIG_BINFMT_AOUT=m
+ CONFIG_BINFMT_MISC=m
++# CONFIG_COMPACTION is not set
++CONFIG_CLEANCACHE=y
++CONFIG_ZPOOL=m
+ CONFIG_NET=y
+ CONFIG_PACKET=y
+ CONFIG_PACKET_DIAG=m
+@@ -107,6 +108,7 @@ CONFIG_NFT_LIMIT=m
+ CONFIG_NFT_MASQ=m
+ CONFIG_NFT_REDIR=m
+ CONFIG_NFT_NAT=m
++CONFIG_NFT_TUNNEL=m
+ CONFIG_NFT_OBJREF=m
+ CONFIG_NFT_QUEUE=m
+ CONFIG_NFT_QUOTA=m
+@@ -115,6 +117,8 @@ CONFIG_NFT_COMPAT=m
+ CONFIG_NFT_HASH=m
+ CONFIG_NFT_FIB_INET=m
+ CONFIG_NFT_SOCKET=m
++CONFIG_NFT_OSF=m
++CONFIG_NFT_TPROXY=m
+ CONFIG_NFT_DUP_NETDEV=m
+ CONFIG_NFT_FWD_NETDEV=m
+ CONFIG_NFT_FIB_NETDEV=m
+@@ -192,7 +196,6 @@ CONFIG_IP_SET_HASH_NETNET=m
+ CONFIG_IP_SET_HASH_NETPORT=m
+ CONFIG_IP_SET_HASH_NETIFACE=m
+ CONFIG_IP_SET_LIST_SET=m
+-CONFIG_NF_CONNTRACK_IPV4=m
+ CONFIG_NFT_CHAIN_ROUTE_IPV4=m
+ CONFIG_NFT_DUP_IPV4=m
+ CONFIG_NFT_FIB_IPV4=m
+@@ -222,7 +225,6 @@ CONFIG_IP_NF_RAW=m
+ CONFIG_IP_NF_ARPTABLES=m
+ CONFIG_IP_NF_ARPFILTER=m
+ CONFIG_IP_NF_ARP_MANGLE=m
+-CONFIG_NF_CONNTRACK_IPV6=m
+ CONFIG_NFT_CHAIN_ROUTE_IPV6=m
+ CONFIG_NFT_CHAIN_NAT_IPV6=m
+ CONFIG_NFT_MASQ_IPV6=m
+@@ -292,7 +294,6 @@ CONFIG_6LOWPAN_GHC_EXT_HDR_ROUTE=m
+ CONFIG_DNS_RESOLVER=y
+ CONFIG_BATMAN_ADV=m
+ # CONFIG_BATMAN_ADV_BATMAN_V is not set
+-CONFIG_BATMAN_ADV_DAT=y
+ CONFIG_BATMAN_ADV_NC=y
+ CONFIG_BATMAN_ADV_MCAST=y
+ CONFIG_NETLINK_DIAG=m
+@@ -321,6 +322,7 @@ CONFIG_ATA_OVER_ETH=m
+ CONFIG_DUMMY_IRQ=m
+ CONFIG_RAID_ATTRS=m
+ CONFIG_SCSI=y
++# CONFIG_SCSI_MQ_DEFAULT is not set
+ CONFIG_BLK_DEV_SD=y
+ CONFIG_CHR_DEV_ST=m
+ CONFIG_CHR_DEV_OSST=m
+@@ -377,8 +379,10 @@ CONFIG_VETH=m
+ CONFIG_MVME147_NET=y
+ # CONFIG_NET_VENDOR_AQUANTIA is not set
+ # CONFIG_NET_VENDOR_ARC is not set
++# CONFIG_NET_VENDOR_AURORA is not set
+ # CONFIG_NET_VENDOR_BROADCOM is not set
+-# CONFIG_NET_CADENCE is not set
++# CONFIG_NET_VENDOR_CADENCE is not set
++# CONFIG_NET_VENDOR_CAVIUM is not set
+ # CONFIG_NET_VENDOR_CORTINA is not set
+ # CONFIG_NET_VENDOR_EZCHIP is not set
+ # CONFIG_NET_VENDOR_HUAWEI is not set
+@@ -439,7 +443,6 @@ CONFIG_RTC_DRV_GENERIC=m
+ # CONFIG_VIRTIO_MENU is not set
+ # CONFIG_IOMMU_SUPPORT is not set
+ CONFIG_DAX=m
+-CONFIG_PROC_HARDWARE=y
+ CONFIG_EXT4_FS=y
+ CONFIG_REISERFS_FS=m
+ CONFIG_JFS_FS=m
+@@ -537,31 +540,6 @@ CONFIG_NLS_MAC_INUIT=m
+ CONFIG_NLS_MAC_ROMANIAN=m
+ CONFIG_NLS_MAC_TURKISH=m
+ CONFIG_DLM=m
+-# CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
+-CONFIG_MAGIC_SYSRQ=y
+-CONFIG_WW_MUTEX_SELFTEST=m
+-CONFIG_TEST_LIST_SORT=m
+-CONFIG_TEST_SORT=m
+-CONFIG_ATOMIC64_SELFTEST=m
+-CONFIG_ASYNC_RAID6_TEST=m
+-CONFIG_TEST_HEXDUMP=m
+-CONFIG_TEST_STRING_HELPERS=m
+-CONFIG_TEST_KSTRTOX=m
+-CONFIG_TEST_PRINTF=m
+-CONFIG_TEST_BITMAP=m
+-CONFIG_TEST_UUID=m
+-CONFIG_TEST_OVERFLOW=m
+-CONFIG_TEST_RHASHTABLE=m
+-CONFIG_TEST_HASH=m
+-CONFIG_TEST_USER_COPY=m
+-CONFIG_TEST_BPF=m
+-CONFIG_FIND_BIT_BENCHMARK=m
+-CONFIG_TEST_FIRMWARE=m
+-CONFIG_TEST_SYSCTL=m
+-CONFIG_TEST_UDELAY=m
+-CONFIG_TEST_STATIC_KEYS=m
+-CONFIG_TEST_KMOD=m
+-CONFIG_EARLY_PRINTK=y
+ CONFIG_ENCRYPTED_KEYS=m
+ CONFIG_HARDENED_USERCOPY=y
+ CONFIG_CRYPTO_RSA=m
+@@ -623,5 +601,33 @@ CONFIG_CRYPTO_USER_API_RNG=m
+ CONFIG_CRYPTO_USER_API_AEAD=m
+ # CONFIG_CRYPTO_HW is not set
+ CONFIG_CRC32_SELFTEST=m
++CONFIG_CRC64=m
+ CONFIG_XZ_DEC_TEST=m
+ CONFIG_STRING_SELFTEST=m
++# CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
++CONFIG_MAGIC_SYSRQ=y
++CONFIG_WW_MUTEX_SELFTEST=m
++CONFIG_TEST_LIST_SORT=m
++CONFIG_TEST_SORT=m
++CONFIG_ATOMIC64_SELFTEST=m
++CONFIG_ASYNC_RAID6_TEST=m
++CONFIG_TEST_HEXDUMP=m
++CONFIG_TEST_STRING_HELPERS=m
++CONFIG_TEST_KSTRTOX=m
++CONFIG_TEST_PRINTF=m
++CONFIG_TEST_BITMAP=m
++CONFIG_TEST_BITFIELD=m
++CONFIG_TEST_UUID=m
++CONFIG_TEST_OVERFLOW=m
++CONFIG_TEST_RHASHTABLE=m
++CONFIG_TEST_HASH=m
++CONFIG_TEST_IDA=m
++CONFIG_TEST_USER_COPY=m
++CONFIG_TEST_BPF=m
++CONFIG_FIND_BIT_BENCHMARK=m
++CONFIG_TEST_FIRMWARE=m
++CONFIG_TEST_SYSCTL=m
++CONFIG_TEST_UDELAY=m
++CONFIG_TEST_STATIC_KEYS=m
++CONFIG_TEST_KMOD=m
++CONFIG_EARLY_PRINTK=y
+diff --git a/arch/m68k/configs/mvme16x_defconfig b/arch/m68k/configs/mvme16x_defconfig
+index 9783d3deb9e9d852..80a61bea5d96e49e 100644
+--- a/arch/m68k/configs/mvme16x_defconfig
++++ b/arch/m68k/configs/mvme16x_defconfig
+@@ -12,6 +12,13 @@ CONFIG_BLK_DEV_INITRD=y
+ CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+ CONFIG_USERFAULTFD=y
+ CONFIG_SLAB=y
++CONFIG_KEXEC=y
++CONFIG_BOOTINFO_PROC=y
++CONFIG_M68040=y
++CONFIG_M68060=y
++CONFIG_VME=y
++CONFIG_MVME16x=y
++CONFIG_PROC_HARDWARE=y
+ CONFIG_MODULES=y
+ CONFIG_MODULE_UNLOAD=y
+ CONFIG_PARTITION_ADVANCED=y
+@@ -28,18 +35,12 @@ CONFIG_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_KYBER=m
+ CONFIG_IOSCHED_BFQ=m
+-CONFIG_KEXEC=y
+-CONFIG_BOOTINFO_PROC=y
+-CONFIG_M68040=y
+-CONFIG_M68060=y
+-CONFIG_VME=y
+-CONFIG_MVME16x=y
+-# CONFIG_COMPACTION is not set
+-CONFIG_CLEANCACHE=y
+-CONFIG_ZPOOL=m
+ # CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
+ CONFIG_BINFMT_AOUT=m
+ CONFIG_BINFMT_MISC=m
++# CONFIG_COMPACTION is not set
++CONFIG_CLEANCACHE=y
++CONFIG_ZPOOL=m
+ CONFIG_NET=y
+ CONFIG_PACKET=y
+ CONFIG_PACKET_DIAG=m
+@@ -108,6 +109,7 @@ CONFIG_NFT_LIMIT=m
+ CONFIG_NFT_MASQ=m
+ CONFIG_NFT_REDIR=m
+ CONFIG_NFT_NAT=m
++CONFIG_NFT_TUNNEL=m
+ CONFIG_NFT_OBJREF=m
+ CONFIG_NFT_QUEUE=m
+ CONFIG_NFT_QUOTA=m
+@@ -116,6 +118,8 @@ CONFIG_NFT_COMPAT=m
+ CONFIG_NFT_HASH=m
+ CONFIG_NFT_FIB_INET=m
+ CONFIG_NFT_SOCKET=m
++CONFIG_NFT_OSF=m
++CONFIG_NFT_TPROXY=m
+ CONFIG_NFT_DUP_NETDEV=m
+ CONFIG_NFT_FWD_NETDEV=m
+ CONFIG_NFT_FIB_NETDEV=m
+@@ -193,7 +197,6 @@ CONFIG_IP_SET_HASH_NETNET=m
+ CONFIG_IP_SET_HASH_NETPORT=m
+ CONFIG_IP_SET_HASH_NETIFACE=m
+ CONFIG_IP_SET_LIST_SET=m
+-CONFIG_NF_CONNTRACK_IPV4=m
+ CONFIG_NFT_CHAIN_ROUTE_IPV4=m
+ CONFIG_NFT_DUP_IPV4=m
+ CONFIG_NFT_FIB_IPV4=m
+@@ -223,7 +226,6 @@ CONFIG_IP_NF_RAW=m
+ CONFIG_IP_NF_ARPTABLES=m
+ CONFIG_IP_NF_ARPFILTER=m
+ CONFIG_IP_NF_ARP_MANGLE=m
+-CONFIG_NF_CONNTRACK_IPV6=m
+ CONFIG_NFT_CHAIN_ROUTE_IPV6=m
+ CONFIG_NFT_CHAIN_NAT_IPV6=m
+ CONFIG_NFT_MASQ_IPV6=m
+@@ -293,7 +295,6 @@ CONFIG_6LOWPAN_GHC_EXT_HDR_ROUTE=m
+ CONFIG_DNS_RESOLVER=y
+ CONFIG_BATMAN_ADV=m
+ # CONFIG_BATMAN_ADV_BATMAN_V is not set
+-CONFIG_BATMAN_ADV_DAT=y
+ CONFIG_BATMAN_ADV_NC=y
+ CONFIG_BATMAN_ADV_MCAST=y
+ CONFIG_NETLINK_DIAG=m
+@@ -322,6 +323,7 @@ CONFIG_ATA_OVER_ETH=m
+ CONFIG_DUMMY_IRQ=m
+ CONFIG_RAID_ATTRS=m
+ CONFIG_SCSI=y
++# CONFIG_SCSI_MQ_DEFAULT is not set
+ CONFIG_BLK_DEV_SD=y
+ CONFIG_CHR_DEV_ST=m
+ CONFIG_CHR_DEV_OSST=m
+@@ -377,8 +379,10 @@ CONFIG_VETH=m
+ # CONFIG_NET_VENDOR_AMAZON is not set
+ # CONFIG_NET_VENDOR_AQUANTIA is not set
+ # CONFIG_NET_VENDOR_ARC is not set
++# CONFIG_NET_VENDOR_AURORA is not set
+ # CONFIG_NET_VENDOR_BROADCOM is not set
+-# CONFIG_NET_CADENCE is not set
++# CONFIG_NET_VENDOR_CADENCE is not set
++# CONFIG_NET_VENDOR_CAVIUM is not set
+ # CONFIG_NET_VENDOR_CORTINA is not set
+ # CONFIG_NET_VENDOR_EZCHIP is not set
+ # CONFIG_NET_VENDOR_HUAWEI is not set
+@@ -439,7 +443,6 @@ CONFIG_RTC_DRV_GENERIC=m
+ # CONFIG_VIRTIO_MENU is not set
+ # CONFIG_IOMMU_SUPPORT is not set
+ CONFIG_DAX=m
+-CONFIG_PROC_HARDWARE=y
+ CONFIG_EXT4_FS=y
+ CONFIG_REISERFS_FS=m
+ CONFIG_JFS_FS=m
+@@ -537,31 +540,6 @@ CONFIG_NLS_MAC_INUIT=m
+ CONFIG_NLS_MAC_ROMANIAN=m
+ CONFIG_NLS_MAC_TURKISH=m
+ CONFIG_DLM=m
+-# CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
+-CONFIG_MAGIC_SYSRQ=y
+-CONFIG_WW_MUTEX_SELFTEST=m
+-CONFIG_TEST_LIST_SORT=m
+-CONFIG_TEST_SORT=m
+-CONFIG_ATOMIC64_SELFTEST=m
+-CONFIG_ASYNC_RAID6_TEST=m
+-CONFIG_TEST_HEXDUMP=m
+-CONFIG_TEST_STRING_HELPERS=m
+-CONFIG_TEST_KSTRTOX=m
+-CONFIG_TEST_PRINTF=m
+-CONFIG_TEST_BITMAP=m
+-CONFIG_TEST_UUID=m
+-CONFIG_TEST_OVERFLOW=m
+-CONFIG_TEST_RHASHTABLE=m
+-CONFIG_TEST_HASH=m
+-CONFIG_TEST_USER_COPY=m
+-CONFIG_TEST_BPF=m
+-CONFIG_FIND_BIT_BENCHMARK=m
+-CONFIG_TEST_FIRMWARE=m
+-CONFIG_TEST_SYSCTL=m
+-CONFIG_TEST_UDELAY=m
+-CONFIG_TEST_STATIC_KEYS=m
+-CONFIG_TEST_KMOD=m
+-CONFIG_EARLY_PRINTK=y
+ CONFIG_ENCRYPTED_KEYS=m
+ CONFIG_HARDENED_USERCOPY=y
+ CONFIG_CRYPTO_RSA=m
+@@ -623,5 +601,33 @@ CONFIG_CRYPTO_USER_API_RNG=m
+ CONFIG_CRYPTO_USER_API_AEAD=m
+ # CONFIG_CRYPTO_HW is not set
+ CONFIG_CRC32_SELFTEST=m
++CONFIG_CRC64=m
+ CONFIG_XZ_DEC_TEST=m
+ CONFIG_STRING_SELFTEST=m
++# CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
++CONFIG_MAGIC_SYSRQ=y
++CONFIG_WW_MUTEX_SELFTEST=m
++CONFIG_TEST_LIST_SORT=m
++CONFIG_TEST_SORT=m
++CONFIG_ATOMIC64_SELFTEST=m
++CONFIG_ASYNC_RAID6_TEST=m
++CONFIG_TEST_HEXDUMP=m
++CONFIG_TEST_STRING_HELPERS=m
++CONFIG_TEST_KSTRTOX=m
++CONFIG_TEST_PRINTF=m
++CONFIG_TEST_BITMAP=m
++CONFIG_TEST_BITFIELD=m
++CONFIG_TEST_UUID=m
++CONFIG_TEST_OVERFLOW=m
++CONFIG_TEST_RHASHTABLE=m
++CONFIG_TEST_HASH=m
++CONFIG_TEST_IDA=m
++CONFIG_TEST_USER_COPY=m
++CONFIG_TEST_BPF=m
++CONFIG_FIND_BIT_BENCHMARK=m
++CONFIG_TEST_FIRMWARE=m
++CONFIG_TEST_SYSCTL=m
++CONFIG_TEST_UDELAY=m
++CONFIG_TEST_STATIC_KEYS=m
++CONFIG_TEST_KMOD=m
++CONFIG_EARLY_PRINTK=y
+diff --git a/arch/m68k/configs/q40_defconfig b/arch/m68k/configs/q40_defconfig
+index a35d10ee10cb709b..2686efe01f8d4a0f 100644
+--- a/arch/m68k/configs/q40_defconfig
++++ b/arch/m68k/configs/q40_defconfig
+@@ -12,6 +12,13 @@ CONFIG_BLK_DEV_INITRD=y
+ CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+ CONFIG_USERFAULTFD=y
+ CONFIG_SLAB=y
++CONFIG_KEXEC=y
++CONFIG_BOOTINFO_PROC=y
++CONFIG_M68040=y
++CONFIG_M68060=y
++CONFIG_Q40=y
++CONFIG_HEARTBEAT=y
++CONFIG_PROC_HARDWARE=y
+ CONFIG_MODULES=y
+ CONFIG_MODULE_UNLOAD=y
+ CONFIG_PARTITION_ADVANCED=y
+@@ -29,17 +36,12 @@ CONFIG_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_KYBER=m
+ CONFIG_IOSCHED_BFQ=m
+-CONFIG_KEXEC=y
+-CONFIG_BOOTINFO_PROC=y
+-CONFIG_M68040=y
+-CONFIG_M68060=y
+-CONFIG_Q40=y
+-# CONFIG_COMPACTION is not set
+-CONFIG_CLEANCACHE=y
+-CONFIG_ZPOOL=m
+ # CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
+ CONFIG_BINFMT_AOUT=m
+ CONFIG_BINFMT_MISC=m
++# CONFIG_COMPACTION is not set
++CONFIG_CLEANCACHE=y
++CONFIG_ZPOOL=m
+ CONFIG_NET=y
+ CONFIG_PACKET=y
+ CONFIG_PACKET_DIAG=m
+@@ -108,6 +110,7 @@ CONFIG_NFT_LIMIT=m
+ CONFIG_NFT_MASQ=m
+ CONFIG_NFT_REDIR=m
+ CONFIG_NFT_NAT=m
++CONFIG_NFT_TUNNEL=m
+ CONFIG_NFT_OBJREF=m
+ CONFIG_NFT_QUEUE=m
+ CONFIG_NFT_QUOTA=m
+@@ -116,6 +119,8 @@ CONFIG_NFT_COMPAT=m
+ CONFIG_NFT_HASH=m
+ CONFIG_NFT_FIB_INET=m
+ CONFIG_NFT_SOCKET=m
++CONFIG_NFT_OSF=m
++CONFIG_NFT_TPROXY=m
+ CONFIG_NFT_DUP_NETDEV=m
+ CONFIG_NFT_FWD_NETDEV=m
+ CONFIG_NFT_FIB_NETDEV=m
+@@ -193,7 +198,6 @@ CONFIG_IP_SET_HASH_NETNET=m
+ CONFIG_IP_SET_HASH_NETPORT=m
+ CONFIG_IP_SET_HASH_NETIFACE=m
+ CONFIG_IP_SET_LIST_SET=m
+-CONFIG_NF_CONNTRACK_IPV4=m
+ CONFIG_NFT_CHAIN_ROUTE_IPV4=m
+ CONFIG_NFT_DUP_IPV4=m
+ CONFIG_NFT_FIB_IPV4=m
+@@ -223,7 +227,6 @@ CONFIG_IP_NF_RAW=m
+ CONFIG_IP_NF_ARPTABLES=m
+ CONFIG_IP_NF_ARPFILTER=m
+ CONFIG_IP_NF_ARP_MANGLE=m
+-CONFIG_NF_CONNTRACK_IPV6=m
+ CONFIG_NFT_CHAIN_ROUTE_IPV6=m
+ CONFIG_NFT_CHAIN_NAT_IPV6=m
+ CONFIG_NFT_MASQ_IPV6=m
+@@ -293,7 +296,6 @@ CONFIG_6LOWPAN_GHC_EXT_HDR_ROUTE=m
+ CONFIG_DNS_RESOLVER=y
+ CONFIG_BATMAN_ADV=m
+ # CONFIG_BATMAN_ADV_BATMAN_V is not set
+-CONFIG_BATMAN_ADV_DAT=y
+ CONFIG_BATMAN_ADV_NC=y
+ CONFIG_BATMAN_ADV_MCAST=y
+ CONFIG_NETLINK_DIAG=m
+@@ -329,6 +331,7 @@ CONFIG_BLK_DEV_IDECD=y
+ CONFIG_BLK_DEV_Q40IDE=y
+ CONFIG_RAID_ATTRS=m
+ CONFIG_SCSI=y
++# CONFIG_SCSI_MQ_DEFAULT is not set
+ CONFIG_BLK_DEV_SD=y
+ CONFIG_CHR_DEV_ST=m
+ CONFIG_CHR_DEV_OSST=m
+@@ -385,8 +388,10 @@ CONFIG_VETH=m
+ # CONFIG_NET_VENDOR_AMD is not set
+ # CONFIG_NET_VENDOR_AQUANTIA is not set
+ # CONFIG_NET_VENDOR_ARC is not set
++# CONFIG_NET_VENDOR_AURORA is not set
+ # CONFIG_NET_VENDOR_BROADCOM is not set
+-# CONFIG_NET_CADENCE is not set
++# CONFIG_NET_VENDOR_CADENCE is not set
++# CONFIG_NET_VENDOR_CAVIUM is not set
+ # CONFIG_NET_VENDOR_CIRRUS is not set
+ # CONFIG_NET_VENDOR_CORTINA is not set
+ # CONFIG_NET_VENDOR_EZCHIP is not set
+@@ -461,8 +466,6 @@ CONFIG_RTC_DRV_GENERIC=m
+ # CONFIG_VIRTIO_MENU is not set
+ # CONFIG_IOMMU_SUPPORT is not set
+ CONFIG_DAX=m
+-CONFIG_HEARTBEAT=y
+-CONFIG_PROC_HARDWARE=y
+ CONFIG_EXT4_FS=y
+ CONFIG_REISERFS_FS=m
+ CONFIG_JFS_FS=m
+@@ -560,31 +563,6 @@ CONFIG_NLS_MAC_INUIT=m
+ CONFIG_NLS_MAC_ROMANIAN=m
+ CONFIG_NLS_MAC_TURKISH=m
+ CONFIG_DLM=m
+-# CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
+-CONFIG_MAGIC_SYSRQ=y
+-CONFIG_WW_MUTEX_SELFTEST=m
+-CONFIG_TEST_LIST_SORT=m
+-CONFIG_TEST_SORT=m
+-CONFIG_ATOMIC64_SELFTEST=m
+-CONFIG_ASYNC_RAID6_TEST=m
+-CONFIG_TEST_HEXDUMP=m
+-CONFIG_TEST_STRING_HELPERS=m
+-CONFIG_TEST_KSTRTOX=m
+-CONFIG_TEST_PRINTF=m
+-CONFIG_TEST_BITMAP=m
+-CONFIG_TEST_UUID=m
+-CONFIG_TEST_OVERFLOW=m
+-CONFIG_TEST_RHASHTABLE=m
+-CONFIG_TEST_HASH=m
+-CONFIG_TEST_USER_COPY=m
+-CONFIG_TEST_BPF=m
+-CONFIG_FIND_BIT_BENCHMARK=m
+-CONFIG_TEST_FIRMWARE=m
+-CONFIG_TEST_SYSCTL=m
+-CONFIG_TEST_UDELAY=m
+-CONFIG_TEST_STATIC_KEYS=m
+-CONFIG_TEST_KMOD=m
+-CONFIG_EARLY_PRINTK=y
+ CONFIG_ENCRYPTED_KEYS=m
+ CONFIG_HARDENED_USERCOPY=y
+ CONFIG_CRYPTO_RSA=m
+@@ -646,5 +624,33 @@ CONFIG_CRYPTO_USER_API_RNG=m
+ CONFIG_CRYPTO_USER_API_AEAD=m
+ # CONFIG_CRYPTO_HW is not set
+ CONFIG_CRC32_SELFTEST=m
++CONFIG_CRC64=m
+ CONFIG_XZ_DEC_TEST=m
+ CONFIG_STRING_SELFTEST=m
++# CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
++CONFIG_MAGIC_SYSRQ=y
++CONFIG_WW_MUTEX_SELFTEST=m
++CONFIG_TEST_LIST_SORT=m
++CONFIG_TEST_SORT=m
++CONFIG_ATOMIC64_SELFTEST=m
++CONFIG_ASYNC_RAID6_TEST=m
++CONFIG_TEST_HEXDUMP=m
++CONFIG_TEST_STRING_HELPERS=m
++CONFIG_TEST_KSTRTOX=m
++CONFIG_TEST_PRINTF=m
++CONFIG_TEST_BITMAP=m
++CONFIG_TEST_BITFIELD=m
++CONFIG_TEST_UUID=m
++CONFIG_TEST_OVERFLOW=m
++CONFIG_TEST_RHASHTABLE=m
++CONFIG_TEST_HASH=m
++CONFIG_TEST_IDA=m
++CONFIG_TEST_USER_COPY=m
++CONFIG_TEST_BPF=m
++CONFIG_FIND_BIT_BENCHMARK=m
++CONFIG_TEST_FIRMWARE=m
++CONFIG_TEST_SYSCTL=m
++CONFIG_TEST_UDELAY=m
++CONFIG_TEST_STATIC_KEYS=m
++CONFIG_TEST_KMOD=m
++CONFIG_EARLY_PRINTK=y
+diff --git a/arch/m68k/configs/sun3_defconfig b/arch/m68k/configs/sun3_defconfig
+index 573bf922d44823b7..58de9a4ed627b9dd 100644
+--- a/arch/m68k/configs/sun3_defconfig
++++ b/arch/m68k/configs/sun3_defconfig
+@@ -12,6 +12,10 @@ CONFIG_BLK_DEV_INITRD=y
+ CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+ CONFIG_USERFAULTFD=y
+ CONFIG_SLAB=y
++CONFIG_KEXEC=y
++CONFIG_BOOTINFO_PROC=y
++CONFIG_SUN3=y
++CONFIG_PROC_HARDWARE=y
+ CONFIG_MODULES=y
+ CONFIG_MODULE_UNLOAD=y
+ CONFIG_PARTITION_ADVANCED=y
+@@ -28,15 +32,12 @@ CONFIG_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_KYBER=m
+ CONFIG_IOSCHED_BFQ=m
+-CONFIG_KEXEC=y
+-CONFIG_BOOTINFO_PROC=y
+-CONFIG_SUN3=y
+-# CONFIG_COMPACTION is not set
+-CONFIG_CLEANCACHE=y
+-CONFIG_ZPOOL=m
+ # CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
+ CONFIG_BINFMT_AOUT=m
+ CONFIG_BINFMT_MISC=m
++# CONFIG_COMPACTION is not set
++CONFIG_CLEANCACHE=y
++CONFIG_ZPOOL=m
+ CONFIG_NET=y
+ CONFIG_PACKET=y
+ CONFIG_PACKET_DIAG=m
+@@ -105,6 +106,7 @@ CONFIG_NFT_LIMIT=m
+ CONFIG_NFT_MASQ=m
+ CONFIG_NFT_REDIR=m
+ CONFIG_NFT_NAT=m
++CONFIG_NFT_TUNNEL=m
+ CONFIG_NFT_OBJREF=m
+ CONFIG_NFT_QUEUE=m
+ CONFIG_NFT_QUOTA=m
+@@ -113,6 +115,8 @@ CONFIG_NFT_COMPAT=m
+ CONFIG_NFT_HASH=m
+ CONFIG_NFT_FIB_INET=m
+ CONFIG_NFT_SOCKET=m
++CONFIG_NFT_OSF=m
++CONFIG_NFT_TPROXY=m
+ CONFIG_NFT_DUP_NETDEV=m
+ CONFIG_NFT_FWD_NETDEV=m
+ CONFIG_NFT_FIB_NETDEV=m
+@@ -190,7 +194,6 @@ CONFIG_IP_SET_HASH_NETNET=m
+ CONFIG_IP_SET_HASH_NETPORT=m
+ CONFIG_IP_SET_HASH_NETIFACE=m
+ CONFIG_IP_SET_LIST_SET=m
+-CONFIG_NF_CONNTRACK_IPV4=m
+ CONFIG_NFT_CHAIN_ROUTE_IPV4=m
+ CONFIG_NFT_DUP_IPV4=m
+ CONFIG_NFT_FIB_IPV4=m
+@@ -220,7 +223,6 @@ CONFIG_IP_NF_RAW=m
+ CONFIG_IP_NF_ARPTABLES=m
+ CONFIG_IP_NF_ARPFILTER=m
+ CONFIG_IP_NF_ARP_MANGLE=m
+-CONFIG_NF_CONNTRACK_IPV6=m
+ CONFIG_NFT_CHAIN_ROUTE_IPV6=m
+ CONFIG_NFT_CHAIN_NAT_IPV6=m
+ CONFIG_NFT_MASQ_IPV6=m
+@@ -290,7 +292,6 @@ CONFIG_6LOWPAN_GHC_EXT_HDR_ROUTE=m
+ CONFIG_DNS_RESOLVER=y
+ CONFIG_BATMAN_ADV=m
+ # CONFIG_BATMAN_ADV_BATMAN_V is not set
+-CONFIG_BATMAN_ADV_DAT=y
+ CONFIG_BATMAN_ADV_NC=y
+ CONFIG_BATMAN_ADV_MCAST=y
+ CONFIG_NETLINK_DIAG=m
+@@ -319,6 +320,7 @@ CONFIG_ATA_OVER_ETH=m
+ CONFIG_DUMMY_IRQ=m
+ CONFIG_RAID_ATTRS=m
+ CONFIG_SCSI=y
++# CONFIG_SCSI_MQ_DEFAULT is not set
+ CONFIG_BLK_DEV_SD=y
+ CONFIG_CHR_DEV_ST=m
+ CONFIG_CHR_DEV_OSST=m
+@@ -375,7 +377,9 @@ CONFIG_VETH=m
+ CONFIG_SUN3LANCE=y
+ # CONFIG_NET_VENDOR_AQUANTIA is not set
+ # CONFIG_NET_VENDOR_ARC is not set
+-# CONFIG_NET_CADENCE is not set
++# CONFIG_NET_VENDOR_AURORA is not set
++# CONFIG_NET_VENDOR_CADENCE is not set
++# CONFIG_NET_VENDOR_CAVIUM is not set
+ # CONFIG_NET_VENDOR_CORTINA is not set
+ # CONFIG_NET_VENDOR_EZCHIP is not set
+ # CONFIG_NET_VENDOR_HUAWEI is not set
+@@ -441,7 +445,6 @@ CONFIG_RTC_DRV_GENERIC=m
+ # CONFIG_VIRTIO_MENU is not set
+ # CONFIG_IOMMU_SUPPORT is not set
+ CONFIG_DAX=m
+-CONFIG_PROC_HARDWARE=y
+ CONFIG_EXT4_FS=y
+ CONFIG_REISERFS_FS=m
+ CONFIG_JFS_FS=m
+@@ -539,30 +542,6 @@ CONFIG_NLS_MAC_INUIT=m
+ CONFIG_NLS_MAC_ROMANIAN=m
+ CONFIG_NLS_MAC_TURKISH=m
+ CONFIG_DLM=m
+-# CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
+-CONFIG_MAGIC_SYSRQ=y
+-CONFIG_WW_MUTEX_SELFTEST=m
+-CONFIG_TEST_LIST_SORT=m
+-CONFIG_TEST_SORT=m
+-CONFIG_ATOMIC64_SELFTEST=m
+-CONFIG_ASYNC_RAID6_TEST=m
+-CONFIG_TEST_HEXDUMP=m
+-CONFIG_TEST_STRING_HELPERS=m
+-CONFIG_TEST_KSTRTOX=m
+-CONFIG_TEST_PRINTF=m
+-CONFIG_TEST_BITMAP=m
+-CONFIG_TEST_UUID=m
+-CONFIG_TEST_OVERFLOW=m
+-CONFIG_TEST_RHASHTABLE=m
+-CONFIG_TEST_HASH=m
+-CONFIG_TEST_USER_COPY=m
+-CONFIG_TEST_BPF=m
+-CONFIG_FIND_BIT_BENCHMARK=m
+-CONFIG_TEST_FIRMWARE=m
+-CONFIG_TEST_SYSCTL=m
+-CONFIG_TEST_UDELAY=m
+-CONFIG_TEST_STATIC_KEYS=m
+-CONFIG_TEST_KMOD=m
+ CONFIG_ENCRYPTED_KEYS=m
+ CONFIG_HARDENED_USERCOPY=y
+ CONFIG_CRYPTO_RSA=m
+@@ -624,5 +603,32 @@ CONFIG_CRYPTO_USER_API_RNG=m
+ CONFIG_CRYPTO_USER_API_AEAD=m
+ # CONFIG_CRYPTO_HW is not set
+ CONFIG_CRC32_SELFTEST=m
++CONFIG_CRC64=m
+ CONFIG_XZ_DEC_TEST=m
+ CONFIG_STRING_SELFTEST=m
++# CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
++CONFIG_MAGIC_SYSRQ=y
++CONFIG_WW_MUTEX_SELFTEST=m
++CONFIG_TEST_LIST_SORT=m
++CONFIG_TEST_SORT=m
++CONFIG_ATOMIC64_SELFTEST=m
++CONFIG_ASYNC_RAID6_TEST=m
++CONFIG_TEST_HEXDUMP=m
++CONFIG_TEST_STRING_HELPERS=m
++CONFIG_TEST_KSTRTOX=m
++CONFIG_TEST_PRINTF=m
++CONFIG_TEST_BITMAP=m
++CONFIG_TEST_BITFIELD=m
++CONFIG_TEST_UUID=m
++CONFIG_TEST_OVERFLOW=m
++CONFIG_TEST_RHASHTABLE=m
++CONFIG_TEST_HASH=m
++CONFIG_TEST_IDA=m
++CONFIG_TEST_USER_COPY=m
++CONFIG_TEST_BPF=m
++CONFIG_FIND_BIT_BENCHMARK=m
++CONFIG_TEST_FIRMWARE=m
++CONFIG_TEST_SYSCTL=m
++CONFIG_TEST_UDELAY=m
++CONFIG_TEST_STATIC_KEYS=m
++CONFIG_TEST_KMOD=m
+diff --git a/arch/m68k/configs/sun3x_defconfig b/arch/m68k/configs/sun3x_defconfig
+index efb27a7fcc559d5b..930a244c2c702652 100644
+--- a/arch/m68k/configs/sun3x_defconfig
++++ b/arch/m68k/configs/sun3x_defconfig
+@@ -12,6 +12,10 @@ CONFIG_BLK_DEV_INITRD=y
+ CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+ CONFIG_USERFAULTFD=y
+ CONFIG_SLAB=y
++CONFIG_KEXEC=y
++CONFIG_BOOTINFO_PROC=y
++CONFIG_SUN3X=y
++CONFIG_PROC_HARDWARE=y
+ CONFIG_MODULES=y
+ CONFIG_MODULE_UNLOAD=y
+ CONFIG_PARTITION_ADVANCED=y
+@@ -28,15 +32,12 @@ CONFIG_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_DEADLINE=m
+ CONFIG_MQ_IOSCHED_KYBER=m
+ CONFIG_IOSCHED_BFQ=m
+-CONFIG_KEXEC=y
+-CONFIG_BOOTINFO_PROC=y
+-CONFIG_SUN3X=y
+-# CONFIG_COMPACTION is not set
+-CONFIG_CLEANCACHE=y
+-CONFIG_ZPOOL=m
+ # CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
+ CONFIG_BINFMT_AOUT=m
+ CONFIG_BINFMT_MISC=m
++# CONFIG_COMPACTION is not set
++CONFIG_CLEANCACHE=y
++CONFIG_ZPOOL=m
+ CONFIG_NET=y
+ CONFIG_PACKET=y
+ CONFIG_PACKET_DIAG=m
+@@ -105,6 +106,7 @@ CONFIG_NFT_LIMIT=m
+ CONFIG_NFT_MASQ=m
+ CONFIG_NFT_REDIR=m
+ CONFIG_NFT_NAT=m
++CONFIG_NFT_TUNNEL=m
+ CONFIG_NFT_OBJREF=m
+ CONFIG_NFT_QUEUE=m
+ CONFIG_NFT_QUOTA=m
+@@ -113,6 +115,8 @@ CONFIG_NFT_COMPAT=m
+ CONFIG_NFT_HASH=m
+ CONFIG_NFT_FIB_INET=m
+ CONFIG_NFT_SOCKET=m
++CONFIG_NFT_OSF=m
++CONFIG_NFT_TPROXY=m
+ CONFIG_NFT_DUP_NETDEV=m
+ CONFIG_NFT_FWD_NETDEV=m
+ CONFIG_NFT_FIB_NETDEV=m
+@@ -190,7 +194,6 @@ CONFIG_IP_SET_HASH_NETNET=m
+ CONFIG_IP_SET_HASH_NETPORT=m
+ CONFIG_IP_SET_HASH_NETIFACE=m
+ CONFIG_IP_SET_LIST_SET=m
+-CONFIG_NF_CONNTRACK_IPV4=m
+ CONFIG_NFT_CHAIN_ROUTE_IPV4=m
+ CONFIG_NFT_DUP_IPV4=m
+ CONFIG_NFT_FIB_IPV4=m
+@@ -220,7 +223,6 @@ CONFIG_IP_NF_RAW=m
+ CONFIG_IP_NF_ARPTABLES=m
+ CONFIG_IP_NF_ARPFILTER=m
+ CONFIG_IP_NF_ARP_MANGLE=m
+-CONFIG_NF_CONNTRACK_IPV6=m
+ CONFIG_NFT_CHAIN_ROUTE_IPV6=m
+ CONFIG_NFT_CHAIN_NAT_IPV6=m
+ CONFIG_NFT_MASQ_IPV6=m
+@@ -290,7 +292,6 @@ CONFIG_6LOWPAN_GHC_EXT_HDR_ROUTE=m
+ CONFIG_DNS_RESOLVER=y
+ CONFIG_BATMAN_ADV=m
+ # CONFIG_BATMAN_ADV_BATMAN_V is not set
+-CONFIG_BATMAN_ADV_DAT=y
+ CONFIG_BATMAN_ADV_NC=y
+ CONFIG_BATMAN_ADV_MCAST=y
+ CONFIG_NETLINK_DIAG=m
+@@ -319,6 +320,7 @@ CONFIG_ATA_OVER_ETH=m
+ CONFIG_DUMMY_IRQ=m
+ CONFIG_RAID_ATTRS=m
+ CONFIG_SCSI=y
++# CONFIG_SCSI_MQ_DEFAULT is not set
+ CONFIG_BLK_DEV_SD=y
+ CONFIG_CHR_DEV_ST=m
+ CONFIG_CHR_DEV_OSST=m
+@@ -375,8 +377,10 @@ CONFIG_VETH=m
+ CONFIG_SUN3LANCE=y
+ # CONFIG_NET_VENDOR_AQUANTIA is not set
+ # CONFIG_NET_VENDOR_ARC is not set
++# CONFIG_NET_VENDOR_AURORA is not set
+ # CONFIG_NET_VENDOR_BROADCOM is not set
+-# CONFIG_NET_CADENCE is not set
++# CONFIG_NET_VENDOR_CADENCE is not set
++# CONFIG_NET_VENDOR_CAVIUM is not set
+ # CONFIG_NET_VENDOR_CORTINA is not set
+ # CONFIG_NET_VENDOR_EZCHIP is not set
+ # CONFIG_NET_VENDOR_HUAWEI is not set
+@@ -441,7 +445,6 @@ CONFIG_RTC_DRV_GENERIC=m
+ # CONFIG_VIRTIO_MENU is not set
+ # CONFIG_IOMMU_SUPPORT is not set
+ CONFIG_DAX=m
+-CONFIG_PROC_HARDWARE=y
+ CONFIG_EXT4_FS=y
+ CONFIG_REISERFS_FS=m
+ CONFIG_JFS_FS=m
+@@ -539,31 +542,6 @@ CONFIG_NLS_MAC_INUIT=m
+ CONFIG_NLS_MAC_ROMANIAN=m
+ CONFIG_NLS_MAC_TURKISH=m
+ CONFIG_DLM=m
+-# CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
+-CONFIG_MAGIC_SYSRQ=y
+-CONFIG_WW_MUTEX_SELFTEST=m
+-CONFIG_TEST_LIST_SORT=m
+-CONFIG_TEST_SORT=m
+-CONFIG_ATOMIC64_SELFTEST=m
+-CONFIG_ASYNC_RAID6_TEST=m
+-CONFIG_TEST_HEXDUMP=m
+-CONFIG_TEST_STRING_HELPERS=m
+-CONFIG_TEST_KSTRTOX=m
+-CONFIG_TEST_PRINTF=m
+-CONFIG_TEST_BITMAP=m
+-CONFIG_TEST_UUID=m
+-CONFIG_TEST_OVERFLOW=m
+-CONFIG_TEST_RHASHTABLE=m
+-CONFIG_TEST_HASH=m
+-CONFIG_TEST_USER_COPY=m
+-CONFIG_TEST_BPF=m
+-CONFIG_FIND_BIT_BENCHMARK=m
+-CONFIG_TEST_FIRMWARE=m
+-CONFIG_TEST_SYSCTL=m
+-CONFIG_TEST_UDELAY=m
+-CONFIG_TEST_STATIC_KEYS=m
+-CONFIG_TEST_KMOD=m
+-CONFIG_EARLY_PRINTK=y
+ CONFIG_ENCRYPTED_KEYS=m
+ CONFIG_HARDENED_USERCOPY=y
+ CONFIG_CRYPTO_RSA=m
+@@ -625,5 +603,33 @@ CONFIG_CRYPTO_USER_API_RNG=m
+ CONFIG_CRYPTO_USER_API_AEAD=m
+ # CONFIG_CRYPTO_HW is not set
+ CONFIG_CRC32_SELFTEST=m
++CONFIG_CRC64=m
+ CONFIG_XZ_DEC_TEST=m
+ CONFIG_STRING_SELFTEST=m
++# CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
++CONFIG_MAGIC_SYSRQ=y
++CONFIG_WW_MUTEX_SELFTEST=m
++CONFIG_TEST_LIST_SORT=m
++CONFIG_TEST_SORT=m
++CONFIG_ATOMIC64_SELFTEST=m
++CONFIG_ASYNC_RAID6_TEST=m
++CONFIG_TEST_HEXDUMP=m
++CONFIG_TEST_STRING_HELPERS=m
++CONFIG_TEST_KSTRTOX=m
++CONFIG_TEST_PRINTF=m
++CONFIG_TEST_BITMAP=m
++CONFIG_TEST_BITFIELD=m
++CONFIG_TEST_UUID=m
++CONFIG_TEST_OVERFLOW=m
++CONFIG_TEST_RHASHTABLE=m
++CONFIG_TEST_HASH=m
++CONFIG_TEST_IDA=m
++CONFIG_TEST_USER_COPY=m
++CONFIG_TEST_BPF=m
++CONFIG_FIND_BIT_BENCHMARK=m
++CONFIG_TEST_FIRMWARE=m
++CONFIG_TEST_SYSCTL=m
++CONFIG_TEST_UDELAY=m
++CONFIG_TEST_STATIC_KEYS=m
++CONFIG_TEST_KMOD=m
++CONFIG_EARLY_PRINTK=y
+-- 
+2.17.1
 
-BTW: of_nvmem_cell_get() seems to always allocate an nvmem_cell
-instance even if the cell for this node was already added to the nvmem
-device.
-
-Bart
