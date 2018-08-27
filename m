@@ -6,91 +6,87 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 021C0C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:13:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3061C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:13:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D033208B9
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:13:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72BDE208D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:13:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PFWoDJ9x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D033208B9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X+o07Oqv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72BDE208D5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=darnok.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727206AbeH0WAv (ORCPT
+        id S1727361AbeH0WAy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 18:00:51 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34914 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726895AbeH0WAv (ORCPT
+        Mon, 27 Aug 2018 18:00:54 -0400
+Received: from mail-qt0-f180.google.com ([209.85.216.180]:41977 "EHLO
+        mail-qt0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726895AbeH0WAy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 18:00:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=N+yGY5lAfeau7xIMpn+MNIIYVS/C9VlEH63oItTbuW4=; b=PFWoDJ9x2EbPS/QkWhWM6enur
-        IkdHzkeYZW0Kyy5X15UQyR4V4EoYugeWeOnKz39XUxXLOhJjbyAYrKcUaANxIMB3FHfx8YBHdCUxW
-        xoQFzvWVW7jeU3j0Mw2rNAeBpMJwFB5Tn+K/5J31IPL62/6iIfLz/qNjMRdI6PSSPkBqZZZcq5JaH
-        IQpMSXtgT3GqKln8HoqjU4M3GnQAPHb1mN5dAY1SUkIPfcAbrE2cmLLjEhppxkww/eVTktsvpbDUu
-        arU3SYicyEZ6yNNpLF4oJ+h1NKbfBSRykX+YUaRe6iFbx6sYJURrJf1YhzhOMqEBcQsFppJ1ofVrW
-        VckQ9ctqA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fuM0l-0006pQ-AS; Mon, 27 Aug 2018 18:13:11 +0000
-Date:   Mon, 27 Aug 2018 11:13:11 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Linux 4.19-rc1
-Message-ID: <20180827181311.GA24778@infradead.org>
-References: <CA+55aFw9mxNPX6OtOp-aoUMdXSg=gBkQudGGamo__sh_ts_LdQ@mail.gmail.com>
- <20180827134459.GA16094@roeck-us.net>
- <20180827154641.GA17201@infradead.org>
- <20180827171152.GA2705@roeck-us.net>
+        Mon, 27 Aug 2018 18:00:54 -0400
+Received: by mail-qt0-f180.google.com with SMTP id t39-v6so18366714qtc.8
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 11:13:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KVLZ8vAN9XvG1iTfPcq/M/NtTgRNoVJn4MtutliEVJI=;
+        b=X+o07OqvRClk9gR881kOE6nnBOsg0BznjiC5lsWaVMSdi7aZlCtJPthOWT73vnFMbW
+         puRfsEwbCyjryQ3pW0jU3j50F6ThTMnVFeqZNl9J6UTvFYe1TabD4h/NtYqjJluzA+l1
+         maV6nUT7AUtBV9DG/lWoifBW/JcrdSEFyNzMm/ewmuCzxWiV+s5HxrclacaysFvB9C7O
+         vBTT+tRQGLSK7aAsQmcPd0sG0xomhC0cfw421LGEjXZhKfNnydwgkWSwYgKXi42VgYoS
+         RlN+up8JAo0XypWvVlxldb5H0YtZ8h1xABcVvdE/KBnPmD8kdM37l0Pb7LRkYo3vkKIL
+         eImA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KVLZ8vAN9XvG1iTfPcq/M/NtTgRNoVJn4MtutliEVJI=;
+        b=ptvbVNf6W9TBU5HLqBlL7ITLsQVCtX1SJQA9xv8TjPKlzPokSVyzFj3qILWknqSGzj
+         2lvW75KwnncKlXJ7NUPcNEGrKxaE7XYphK92aQ+Q2t6LVC4LiCqysXRvYoCVTcoRQD3i
+         w4rn3MQRCQNlRn1ZxmZLptwoaLZop81W0W3e0UuvfrXyUpN3jdmmBe1fhufHcjNXZxQD
+         DoYPR5v3zsTjqlqgcA/0wQH+oPLu+nVpVVs0Pl8OP54rReUulld1j+AXnWzSSHhzJG5u
+         mmJKrVm6oeGW2QP5E7LHlRVwm6292GF27HIpM+IWvoRIIyvsWXHjfp/MU/cQ4GpPhU0c
+         Ceug==
+X-Gm-Message-State: APzg51AjkVCb+qP+COBQxoPWEHY0aQU1Qgw2zYeHjG3k3V+CgUvl7bGL
+        5NyK0NaOf38p83OyyjJRZoE=
+X-Google-Smtp-Source: ANB0VdbgfjJ+Mx7y09NlbxyjYTG0+QKkt+h0oFG/SBndv97JePahoJoISvU3U9vnOzhDCIpIqQYX5w==
+X-Received: by 2002:ac8:8ad:: with SMTP id v42-v6mr15402965qth.297.1535393594093;
+        Mon, 27 Aug 2018 11:13:14 -0700 (PDT)
+Received: from 0021ccb48c25 (209-6-36-129.s6527.c3-0.smr-cbr2.sbo-smr.ma.cable.rcncustomer.com. [209.6.36.129])
+        by smtp.gmail.com with ESMTPSA id d11-v6sm9638435qkg.14.2018.08.27.11.13.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 27 Aug 2018 11:13:13 -0700 (PDT)
+Date:   Mon, 27 Aug 2018 14:13:11 -0400
+From:   Konrad Rzeszutek Wilk <konrad@darnok.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: swiotlb cleanup (resend)
+Message-ID: <20180827181309.GA3834@0021ccb48c25>
+References: <20180725113802.18943-1-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180827171152.GA2705@roeck-us.net>
+In-Reply-To: <20180725113802.18943-1-hch@lst.de>
 User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 10:11:52AM -0700, Guenter Roeck wrote:
-> When building sparc32 images, this results in the following
-> error.
+On Wed, Jul 25, 2018 at 01:37:56PM +0200, Christoph Hellwig wrote:
+> Hi Konrad,
 > 
-> drivers/base/platform.c: In function 'setup_pdev_archdata':
-> drivers/base/platform.c:235:22: error: assignment from incompatible pointer type [-Werror=incompatible-pointer-types]
->    pdev->dev.dma_mask = &pdev->dma_mask;
+> below are a few swiotlb patches.  Mostly just cleanups, but the removal
+> of the panic option is an actual change in (rarely used) functionality.
 > 
-> pdev->dev.dma_mask is u64 *, pdev->dma_mask is dma_addr_t which in turn
-> is either u32 or u64 depending on the architecture.
+> I'd be happy to pick them up through the dma-mapping tree if you are
+> fine with that.
 
-Yes, I've fixed this up to be a u64.
+Hey,
 
-> 
-> > +++ b/include/linux/platform_device.h
-> > @@ -25,6 +25,7 @@ struct platform_device {
-> >  	int		id;
-> >  	bool		id_auto;
-> >  	struct device	dev;
-> > +	dma_addr_t	dma_mask;
-> 
-> ... so this will have to be u64, or the pointer in struct device would
-> have to be fixed.
-> 
-> However, even changing the definition to u64 does not help: The warnings
-> are still reported. This is because setup_pdev_archdata() is not called
-> for any of the affected devices. That is kind of interesting since it
-> means that arch_setup_pdev_archdata() won't be called for those devices
-> either.
-
-Yeah, this is odd.  I'll need some more time to figure out where
-the platform devices for sbus are allocated.
+I put them in my 'devel/for-linus-4.19' as I would like to make
+sure that they work just fine with Xen-SWIOTLB and some baremetal
+machines.
