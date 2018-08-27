@@ -2,380 +2,344 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8BACC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:54:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02D42C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:55:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 737C7208B9
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:54:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YNIglgB4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 737C7208B9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A6417208D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:55:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6417208D5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727226AbeH0Wme (ORCPT
+        id S1727312AbeH0WnV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 18:42:34 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:37945 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726971AbeH0Wme (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 18:42:34 -0400
-Received: by mail-pf1-f195.google.com with SMTP id x17-v6so2437pfh.5
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 11:54:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=hyRe5Jcla+2Q5XR2humqaLYvp5dROqEHwznUte3/F/k=;
-        b=YNIglgB4BCStq9+j6ibbAmI5n84JwZ0Y08JONi0cvEdIqYvOde7sHhNBpllrvuMMca
-         VYbrAtH6XT36l9HVfxqmsbl/k45r/IOIZeZ6Dja1Wbr1UqHzQg81orDIJAjNtX3M5+Lk
-         TnBF8n/7kAjxpzsGcCiAMtJYVRvhDrctE4eL4g8BiMIuqBcuRKvlBhEUaukJZVpvZHQ+
-         E656puiiSJzcEp+vSZMy1I/NccEttosCeWC87Y+q1e3TlDJTFWGGjSLXVYz0ikKEn0iB
-         XtV/7NVa1Ql/4/VjpOtkYQmoupJhsziv06LX5VYBTCTlD74kMw+Syr7U6ZthssY2RQg0
-         AJZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=hyRe5Jcla+2Q5XR2humqaLYvp5dROqEHwznUte3/F/k=;
-        b=WY0W6OSPKk31EBkr4RjUdW54+wkeC/LeUkYGXzY0SHqzgHOYLkwGxqurFLF2KexsbZ
-         AQprmkd6LQVIqT/S0gcZtc9qWRViUOCnS5DRSoJzuuoz4cKpY4kVflWKHABcQ3jai8Wu
-         jO48WVFd5q1OvqaPOvvBAOSJIifQG6KOpvCHhEQMoOp2n4vE8eGPCQTXRRmRte77Xg3B
-         QOJIhuE/ZViD8CLhT0UhDu5UDYm1u9pimouLzR1v/44fvPDvqBcqIX2mfAZtyA9sV4cM
-         nMjdMDtlpXcis/wHce4JudElOYy+eIUk+4fuGnuWxFepNi7NFP8qlBdAcFeHpOSEh7XW
-         ywFQ==
-X-Gm-Message-State: APzg51BssUyShi+7H1d/lfXqOmM+L3dLux9rz0+jKHeurhwn6XLhNGzx
-        XU214enk6ibrYXlw1684Rdw=
-X-Google-Smtp-Source: ANB0VdbPRkMcAXIbBoe4DsI1Y6qIvVNWbQblKrkvSJxgm5K8EUvv08Ok9dfe/cMnKr6GlT0AP70wXA==
-X-Received: by 2002:a62:b2d3:: with SMTP id z80-v6mr15772761pfl.79.1535396085051;
-        Mon, 27 Aug 2018 11:54:45 -0700 (PDT)
-Received: from [10.33.114.204] ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id a20-v6sm11701pfc.14.2018.08.27.11.54.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 Aug 2018 11:54:44 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
-Subject: Re: TLB flushes on fixmap changes
-From:   Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <CALCETrWxwpr+Xx0mCK1HUkanmCDOSRbw50VmebgoAgeNaaPAKg@mail.gmail.com>
-Date:   Mon, 27 Aug 2018 11:54:42 -0700
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mon, 27 Aug 2018 18:43:21 -0400
+Received: from mga18.intel.com ([134.134.136.126]:13768 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726971AbeH0WnV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 18:43:21 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2018 11:55:32 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,296,1531810800"; 
+   d="scan'208";a="84913301"
+Received: from nitikasi-mobl.ger.corp.intel.com (HELO localhost) ([10.249.36.186])
+  by fmsmga001.fm.intel.com with ESMTP; 27 Aug 2018 11:55:15 -0700
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     x86@kernel.org, platform-driver-x86@vger.kernel.org
+Cc:     dave.hansen@intel.com, sean.j.christopherson@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        linux-sgx@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@suse.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Eric Biggers <ebiggers@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        kvm@vger.kernel.org (open list:KERNEL VIRTUAL MACHINE FOR X86 (KVM/x86)),
+        linux-doc@vger.kernel.org (open list:DOCUMENTATION),
+        linux-kernel@vger.kernel.org (open list),
+        Matt Turner <mattst88@gmail.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Paolo Bonzini <pbonzini@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Will Deacon <will.deacon@arm.com>,
-        Benjamin Herrenschmidt <benh@au1.ibm.com>,
-        Nick Piggin <npiggin@gmail.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Rik van Riel <riel@surriel.com>,
-        Jann Horn <jannh@google.com>,
-        Adin Scannell <ascannell@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        David Miller <davem@davemloft.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <0000D631-FDDF-4273-8F3C-714E6825E59B@gmail.com>
-References: <D74A89DF-0D89-4AB6-8A6B-93BEC9A83595@gmail.com>
- <20180824180438.GS24124@hirez.programming.kicks-ass.net>
- <56A9902F-44BE-4520-A17C-26650FCC3A11@gmail.com>
- <CA+55aFzerzTPm94jugheVmWg8dJre94yu+GyZGT9NNZanNx_qw@mail.gmail.com>
- <9A38D3F4-2F75-401D-8B4D-83A844C9061B@gmail.com>
- <CA+55aFz1KYT7fRRG98wei24spiVg7u1Ec66piWY5359ykFmezw@mail.gmail.com>
- <8E0D8C66-6F21-4890-8984-B6B3082D4CC5@gmail.com>
- <CALCETrWdeKBcEs7zAbpEM1YdYiT2UBXwPtF0mMTvcDX_KRpz1A@mail.gmail.com>
- <20180826112341.f77a528763e297cbc36058fa@kernel.org>
- <CALCETrXPaX-+R6Z9LqZp0uOVmq-TUX_ksPbUL7mnfbdqo6z2AA@mail.gmail.com>
- <20180826090958.GT24124@hirez.programming.kicks-ass.net>
- <20180827120305.01a6f26267c64610cadec5d8@kernel.org>
- <4BF82052-4738-441C-8763-26C85003F2C9@gmail.com>
- <20180827170511.6bafa15cbc102ae135366e86@kernel.org>
- <01DA0BDD-7504-4209-8A8F-20B27CF6A1C7@gmail.com>
- <CALCETrWxwpr+Xx0mCK1HUkanmCDOSRbw50VmebgoAgeNaaPAKg@mail.gmail.com>
-To:     Andy Lutomirski <luto@kernel.org>
-X-Mailer: Apple Mail (2.3445.9.1)
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        Serge Ayoun <serge.ayoun@intel.com>,
+        Shay Katz-zamir <shay.katz-zamir@intel.com>,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Lendacky <thomas.lendacky@amd.com>
+Subject: [PATCH v13 00/13] Intel SGX1 support
+Date:   Mon, 27 Aug 2018 21:53:21 +0300
+Message-Id: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=y
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-at 11:45 AM, Andy Lutomirski <luto@kernel.org> wrote:
+Intel(R) SGX is a set of CPU instructions that can be used by applications
+to set aside private regions of code and data. The code outside the enclave
+is disallowed to access the memory inside the enclave by the CPU access
+control.  In a way you can think that SGX provides inverted sandbox. It
+protects the application from a malicious host.
 
-> On Mon, Aug 27, 2018 at 10:34 AM, Nadav Amit <nadav.amit@gmail.com> =
-wrote:
->> at 1:05 AM, Masami Hiramatsu <mhiramat@kernel.org> wrote:
->>=20
->>> On Sun, 26 Aug 2018 20:26:09 -0700
->>> Nadav Amit <nadav.amit@gmail.com> wrote:
->>>=20
->>>> at 8:03 PM, Masami Hiramatsu <mhiramat@kernel.org> wrote:
->>>>=20
->>>>> On Sun, 26 Aug 2018 11:09:58 +0200
->>>>> Peter Zijlstra <peterz@infradead.org> wrote:
->>>>>=20
->>>>>> On Sat, Aug 25, 2018 at 09:21:22PM -0700, Andy Lutomirski wrote:
->>>>>>> I just re-read text_poke().  It's, um, horrible.  Not only is =
-the
->>>>>>> implementation overcomplicated and probably buggy, but it's =
-SLOOOOOW.
->>>>>>> It's totally the wrong API -- poking one instruction at a time
->>>>>>> basically can't be efficient on x86.  The API should either poke =
-lots
->>>>>>> of instructions at once or should be text_poke_begin(); ...;
->>>>>>> text_poke_end();.
->>>>>>=20
->>>>>> I don't think anybody ever cared about performance here. Only
->>>>>> correctness. That whole text_poke_bp() thing is entirely tricky.
->>>>>=20
->>>>> Agreed. Self modification is a special event.
->>>>>=20
->>>>>> FWIW, before text_poke_bp(), text_poke() would only be used from
->>>>>> stop_machine, so all the other CPUs would be stuck busy-waiting =
-with
->>>>>> IRQs disabled. These days, yeah, that's lots more dodgy, but yes
->>>>>> text_mutex should be serializing all that.
->>>>>=20
->>>>> I'm still not sure that speculative page-table walk can be done
->>>>> over the mutex. Also, if the fixmap area is for aliasing
->>>>> pages (which always mapped to memory), what kind of
->>>>> security issue can happen?
->>>>=20
->>>> The PTE is accessible from other cores, so just as we assume for =
-L1TF that
->>>> the every addressable memory might be cached in L1, we should =
-assume and
->>>> PTE might be cached in the TLB when it is present.
->>>=20
->>> Ok, so other cores can accidentally cache the PTE in TLB, (and no =
-way
->>> to shoot down explicitly?)
->>=20
->> There is way (although current it does not). But it seems that the =
-consensus
->> is that it is better to avoid it being mapped at all in remote cores.
->>=20
->>>> Although the mapping is for an alias, there are a couple of issues =
-here.
->>>> First, this alias mapping is writable, so it might an attacker to =
-change the
->>>> kernel code (following another initial attack).
->>>=20
->>> Combined with some buffer overflow, correct? If the attacker already =
-can
->>> write a kernel data directly, he is in the kernel mode.
->>=20
->> Right.
->>=20
->>>> Second, the alias mapping is
->>>> never explicitly flushed. We may assume that once the original =
-mapping is
->>>> removed/changed, a full TLB flush would take place, but there is no
->>>> guarantee it actually takes place.
->>>=20
->>> Hmm, would this means a full TLB flush will not flush alias mapping?
->>> (or, the full TLB flush just doesn't work?)
->>=20
->> It will flush the alias mapping, but currently there is no such =
-explicit
->> flush.
->>=20
->>>>> Anyway, from the viewpoint of kprobes, either per-cpu fixmap or
->>>>> changing CR3 sounds good to me. I think we don't even need =
-per-cpu,
->>>>> it can call a thread/function on a dedicated core (like the first
->>>>> boot processor) and wait :) This may prevent leakage of pte change
->>>>> to other cores.
->>>>=20
->>>> I implemented per-cpu fixmap, but I think that it makes more sense =
-to take
->>>> peterz approach and set an entry in the PGD level. Per-CPU fixmap =
-either
->>>> requires to pre-populate various levels in the page-table =
-hierarchy, or
->>>> conditionally synchronize whenever module memory is allocated, =
-since they
->>>> can share the same PGD, PUD & PMD. While usually the =
-synchronization is not
->>>> needed, the possibility that synchronization is needed complicates =
-locking.
->>>=20
->>> Could you point which PeterZ approach you said? I guess it will be
->>> make a clone of PGD and use it for local page mapping (as new mm).
->>> If so, yes it sounds perfectly fine to me.
->>=20
->> The thread is too long. What I think is best is having a mapping in =
-the PGD
->> level. I=E2=80=99ll try to give it a shot, and see what I get.
->>=20
->>>> Anyhow, having fixed addresses for the fixmap can be used to =
-circumvent
->>>> KASLR.
->>>=20
->>> I think text_poke doesn't mind using random address :)
->>>=20
->>>> I don=E2=80=99t think a dedicated core is needed. Anyhow there is a =
-lock
->>>> (text_mutex), so use_mm() can be used after acquiring the mutex.
->>>=20
->>> Hmm, use_mm() said;
->>>=20
->>> /*
->>> * use_mm
->>> *      Makes the calling kernel thread take on the specified
->>> *      mm context.
->>> *      (Note: this routine is intended to be called only
->>> *      from a kernel thread context)
->>> */
->>>=20
->>> So maybe we need a dedicated kernel thread for safeness?
->>=20
->> Yes, it says so. But I am not sure it cannot be changed, at least for =
-this
->> specific use-case. Switching kernel threads just for patching seems =
-to me as
->> an overkill.
->>=20
->> Let me see if I can get something half-reasonable doing so...
->=20
-> I don't understand at all how a kernel thread helps.  The useful bit
-> is to have a dedicated mm, which would involve setting up an mm_struct
-> and mapping the kernel and module text, EFI-style, in the user portion
-> of the mm.  But, to do the text_poke(), we'd just use the mm *without
-> calling use_mm*.
->=20
-> In other words, the following sequence should be (almost) just fine:
->=20
-> typedef struct {
->  struct mm_struct *prev;
-> } temporary_mm_state_t;
->=20
-> temporary_mm_state_t use_temporary_mm(struct mm_struct *mm)
-> {
->    temporary_mm_state_t state;
->=20
->    lockdep_assert_irqs_disabled();
->    state.prev =3D this_cpu_read(cpu_tlbstate.loaded_mm);
->    switch_mm_irqs_off(NULL, mm, current);
-> }
->=20
-> void unuse_temporary_mm(temporary_mm_state_t prev)
-> {
->    lockdep_assert_irqs_disabled();
->    switch_mm_irqs_off(NULL, prev.prev, current);
-> }
->=20
-> The only thing wrong with this that I can see is that it interacts
-> poorly with perf.  But perf is *already* busted in this regard.  The
-> following (whitespace damaged, sorry) should fix it:
->=20
-> commit b62bff5a8406d252de752cfe75068d0b73b9cdf0
-> Author: Andy Lutomirski <luto@kernel.org>
-> Date:   Mon Aug 27 11:41:55 2018 -0700
->=20
->    x86/nmi: Fix some races in NMI uaccess
->=20
->    In NMI context, we might be in the middle of context switching or =
-in
->    the middle of switch_mm_irqs_off().  In either case, CR3 might not
->    match current->mm, which could cause copy_from_user_nmi() and
->    friends to read the wrong memory.
->=20
->    Fix it by adding a new nmi_uaccess_okay() helper and checking it in
->    copy_from_user_nmi() and in __copy_from_user_nmi()'s callers.
->=20
->    Signed-off-by: Andy Lutomirski <luto@kernel.org>
->=20
-> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-> index 5f4829f10129..dfb2f7c0d019 100644
-> --- a/arch/x86/events/core.c
-> +++ b/arch/x86/events/core.c
-> @@ -2465,7 +2465,7 @@ perf_callchain_user(struct
-> perf_callchain_entry_ctx *entry, struct pt_regs *regs
->=20
->     perf_callchain_store(entry, regs->ip);
->=20
-> -    if (!current->mm)
-> +    if (!nmi_uaccess_okay())
->         return;
->=20
->     if (perf_callchain_user32(regs, entry))
-> diff --git a/arch/x86/include/asm/tlbflush.h =
-b/arch/x86/include/asm/tlbflush.h
-> index 89a73bc31622..b23b2625793b 100644
-> --- a/arch/x86/include/asm/tlbflush.h
-> +++ b/arch/x86/include/asm/tlbflush.h
-> @@ -230,6 +230,22 @@ struct tlb_state {
-> };
-> DECLARE_PER_CPU_SHARED_ALIGNED(struct tlb_state, cpu_tlbstate);
->=20
-> +/*
-> + * Blindly accessing user memory from NMI context can be dangerous
-> + * if we're in the middle of switching the current user task or
-> + * switching the loaded mm.  It can also be dangerous if we
-> + * interrupted some kernel code that was temporarily using a
-> + * different mm.
-> + */
-> +static inline bool nmi_uaccess_okay(void)
-> +{
-> +    struct mm_struct *loaded_mm =3D =
-this_cpu_read(cpu_tlbstate.loaded_mm);
-> +    struct mm_struct *current_mm =3D current->mm;
-> +
-> +    return current_mm && loaded_mm =3D=3D current_mm &&
-> +        loaded_mm->pgd =3D=3D __va(read_cr3_pa());
-> +}
-> +
-> /* Initialize cr4 shadow for this CPU. */
-> static inline void cr4_init_shadow(void)
-> {
-> diff --git a/arch/x86/lib/usercopy.c b/arch/x86/lib/usercopy.c
-> index c8c6ad0d58b8..c5f758430be2 100644
-> --- a/arch/x86/lib/usercopy.c
-> +++ b/arch/x86/lib/usercopy.c
-> @@ -19,6 +19,9 @@ copy_from_user_nmi(void *to, const void __user
-> *from, unsigned long n)
->     if (__range_not_ok(from, n, TASK_SIZE))
->         return n;
->=20
-> +    if (!nmi_uaccess_okay())
-> +        return n;
-> +
->     /*
->      * Even though this function is typically called from NMI/IRQ =
-context
->      * disable pagefaults so that its behaviour is consistent even =
-when
-> diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-> index 457b281b9339..f4b41d5a93dd 100644
-> --- a/arch/x86/mm/tlb.c
-> +++ b/arch/x86/mm/tlb.c
-> @@ -345,6 +345,9 @@ void switch_mm_irqs_off(struct mm_struct *prev,
-> struct mm_struct *next,
->          */
->         trace_tlb_flush_rcuidle(TLB_FLUSH_ON_TASK_SWITCH, =
-TLB_FLUSH_ALL);
->     } else {
-> +        /* Let NMI code know that CR3 may not match expectations. */
-> +        this_cpu_write(cpu_tlbstate.loaded_mm, NULL);
-> +
->         /* The new ASID is already up to date. */
->         load_new_mm_cr3(next->pgd, new_asid, false);
->=20
-> What do you all think?
+There is a new hardware unit in the processor called Memory Encryption
+Engine (MEE) starting from the Skylake microacrhitecture. BIOS can define
+one or many MEE regions that can hold enclave data by configuring them with
+PRMRR registers.
 
-I agree in general. But I think that current->mm would need to be =
-loaded, as
-otherwise I am afraid it would break switch_mm_irqs_off().
+The MEE automatically encrypts the data leaving the processor package to
+the MEE regions. The data is encrypted using a random key whose life-time
+is exactly one power cycle.
+
+The current implementation requires that the firmware sets
+IA32_SGXLEPUBKEYHASH* MSRs as writable so that ultimately the kernel can
+decide what enclaves it wants run. The implementation does not create
+any bottlenecks to support read-only MSRs later on.
+
+You can tell if your CPU supports SGX by looking into /proc/cpuinfo:
+
+	cat /proc/cpuinfo  | grep sgx
+
+v13:
+* Always use SGX_CPUID constant instead of a hardcoded value.
+* Simplified and documented the macros and functions for ENCLS leaves.
+* Enable sgx_free_page() to free active enclave pages on demand
+  in order to allow sgx_invalidate() to delete enclave pages.
+  It no longer performs EREMOVE if a page is in the process of
+  being reclaimed.
+* Use PM notifier per enclave so that we don't have to traverse
+  the global list of active EPC pages to find enclaves.
+* Removed unused SGX_LE_ROLLBACK constant from uapi/asm/sgx.h
+* Always use ioremap() to map EPC banks as we only support 64-bit kernel.
+* Invalidate IA32_SGXLEPUBKEYHASH cache used by sgx_einit() when going
+  to sleep.
+
+v12:
+* Split to more narrow scoped commits in order to ease the review process and
+  use co-developed-by tag for co-authors of commits instead of listing them in
+  the source files.
+* Removed cruft EXPORT_SYMBOL() declarations and converted to static variables.
+* Removed in-kernel LE i.e. this version of the SGX software stack only
+  supports unlocked IA32_SGXLEPUBKEYHASHx MSRs.
+* Refined documentation on launching enclaves, swapping and enclave
+  construction.
+* Refined sgx_arch.h to include alignment information for every struct that
+  requires it and removed structs that are not needed without an LE.
+* Got rid of SGX_CPUID.
+* SGX detection now prints log messages about firmware configuration issues.
+
+v11:
+* Polished ENCLS wrappers with refined exception handling.
+* ksgxswapd was not stopped (regression in v5) in
+  sgx_page_cache_teardown(), which causes a leaked kthread after driver
+  deinitialization.
+* Shutdown sgx_le_proxy when going to suspend because its EPC pages will be
+  invalidated when resuming, which will cause it not function properly
+  anymore.
+* Set EINITTOKEN.VALID to zero for a token that is passed when
+  SGXLEPUBKEYHASH matches MRSIGNER as alloc_page() does not give a zero
+  page.
+* Fixed the check in sgx_edbgrd() for a TCS page. Allowed to read offsets
+  around the flags field, which causes a #GP. Only flags read is readable.
+* On read access memcpy() call inside sgx_vma_access() had src and dest
+  parameters in wrong order.
+* The build issue with CONFIG_KASAN is now fixed. Added undefined symbols
+  to LE even if “KASAN_SANITIZE := false” was set in the makefile. 
+* Fixed a regression in the #PF handler. If a page has
+  SGX_ENCL_PAGE_RESERVED flag the #PF handler should unconditionally fail.
+  It did not, which caused weird races when trying to change other parts of
+  swapping code.
+* EPC management has been refactored to a flat LRU cache and moved to
+  arch/x86. The swapper thread reads a cluster of EPC pages and swaps all
+  of them. It can now swap from multiple enclaves in the same round.
+* For the sake of consistency with SGX_IOC_ENCLAVE_ADD_PAGE, return -EINVAL
+  when an enclave is already initialized or dead instead of zero.
+
+v10:
+* Cleaned up anon inode based IPC between the ring-0 and ring-3 parts
+  of the driver.
+* Unset the reserved flag from an enclave page if EDBGRD/WR fails
+  (regression in v6).
+* Close the anon inode when LE is stopped (regression in v9).
+* Update the documentation with a more detailed description of SGX.
+
+v9:
+* Replaced kernel-LE IPC based on pipes with an anonymous inode.
+  The driver does not require anymore new exports.
+
+v8:
+* Check that public key MSRs match the LE public key hash in the
+  driver initialization when the MSRs are read-only.
+* Fix the race in VA slot allocation by checking the fullness
+  immediately after succeesful allocation.
+* Fix the race in hash mrsigner calculation between the launch
+  enclave and user enclaves by having a separate lock for hash
+  calculation.
+
+v7:
+* Fixed offset calculation in sgx_edbgr/wr(). Address was masked with PAGE_MASK
+  when it should have been masked with ~PAGE_MASK.
+* Fixed a memory leak in sgx_ioc_enclave_create().
+* Simplified swapping code by using a pointer array for a cluster
+  instead of a linked list.
+* Squeezed struct sgx_encl_page to 32 bytes.
+* Fixed deferencing of an RSA key on OpenSSL 1.1.0.
+* Modified TC's CMAC to use kernel AES-NI. Restructured the code
+  a bit in order to better align with kernel conventions.
+
+v6:
+* Fixed semaphore underrun when accessing /dev/sgx from the launch enclave.
+* In sgx_encl_create() s/IS_ERR(secs)/IS_ERR(encl)/.
+* Removed virtualization chapter from the documentation.
+* Changed the default filename for the signing key as signing_key.pem.
+* Reworked EPC management in a way that instead of a linked list of
+  struct sgx_epc_page instances there is an array of integers that
+  encodes address and bank of an EPC page (the same data as 'pa' field
+  earlier). The locking has been moved to the EPC bank level instead
+  of a global lock.
+* Relaxed locking requirements for EPC management. EPC pages can be
+  released back to the EPC bank concurrently.
+* Cleaned up ptrace() code.
+* Refined commit messages for new architectural constants.
+* Sorted includes in every source file.
+* Sorted local variable declarations according to the line length in
+  every function.
+* Style fixes based on Darren's comments to sgx_le.c.
+
+v5:
+* Described IPC between the Launch Enclave and kernel in the commit messages.
+* Fixed all relevant checkpatch.pl issues that I have forgot fix in earlier
+  versions except those that exist in the imported TinyCrypt code.
+* Fixed spelling mistakes in the documentation.
+* Forgot to check the return value of sgx_drv_subsys_init().
+* Encapsulated properly page cache init and teardown.
+* Collect epc pages to a temp list in sgx_add_epc_bank
+* Removed SGX_ENCLAVE_INIT_ARCH constant.
+
+v4:
+* Tied life-cycle of the sgx_le_proxy process to /dev/sgx.
+* Removed __exit annotation from sgx_drv_subsys_exit().
+* Fixed a leak of a backing page in sgx_process_add_page_req() in the
+  case when vm_insert_pfn() fails.
+* Removed unused symbol exports for sgx_page_cache.c.
+* Updated sgx_alloc_page() to require encl parameter and documented the
+  behavior (Sean Christopherson).
+* Refactored a more lean API for sgx_encl_find() and documented the behavior.
+* Moved #PF handler to sgx_fault.c.
+* Replaced subsys_system_register() with plain bus_register().
+* Retry EINIT 2nd time only if MSRs are not locked.
+
+v3:
+* Check that FEATURE_CONTROL_LOCKED and FEATURE_CONTROL_SGX_ENABLE are set.
+* Return -ERESTARTSYS in __sgx_encl_add_page() when sgx_alloc_page() fails.
+* Use unused bits in epc_page->pa to store the bank number.
+* Removed #ifdef for WQ_NONREENTRANT.
+* If mmu_notifier_register() fails with -EINTR, return -ERESTARTSYS.
+* Added --remove-section=.got.plt to objcopy flags in order to prevent a
+  dummy .got.plt, which will cause an inconsistent size for the LE.
+* Documented sgx_encl_* functions.
+* Added remark about AES implementation used inside the LE.
+* Removed redundant sgx_sys_exit() from le/main.c.
+* Fixed struct sgx_secinfo alignment from 128 to 64 bytes.
+* Validate miscselect in sgx_encl_create().
+* Fixed SSA frame size calculation to take the misc region into account.
+* Implemented consistent exception handling to __encls() and __encls_ret().
+* Implemented a proper device model in order to allow sysfs attributes
+  and in-kernel API.
+* Cleaned up various "find enclave" implementations to the unified
+  sgx_encl_find().
+* Validate that vm_pgoff is zero.
+* Discard backing pages with shmem_truncate_range() after EADD.
+* Added missing EEXTEND operations to LE signing and launch.
+* Fixed SSA size for GPRS region from 168 to 184 bytes.
+* Fixed the checks for TCS flags. Now DBGOPTIN is allowed.
+* Check that TCS addresses are in ELRANGE and not just page aligned.
+* Require kernel to be compiled with X64_64 and CPU_SUP_INTEL.
+* Fixed an incorrect value for SGX_ATTR_DEBUG from 0x01 to 0x02.
+
+v2:
+* get_rand_uint32() changed the value of the pointer instead of value
+  where it is pointing at.
+* Launch enclave incorrectly used sigstruct attributes-field instead of
+  enclave attributes-field.
+* Removed unused struct sgx_add_page_req from sgx_ioctl.c
+* Removed unused sgx_has_sgx2.
+* Updated arch/x86/include/asm/sgx.h so that it provides stub
+  implementations when sgx in not enabled.
+* Removed cruft rdmsr-calls from sgx_set_pubkeyhash_msrs().
+* return -ENOMEM in sgx_alloc_page() when VA pages consume too much space
+* removed unused global sgx_nr_pids
+* moved sgx_encl_release to sgx_encl.c
+* return -ERESTARTSYS instead of -EINTR in sgx_encl_init()
+
+Jarkko Sakkinen (8):
+  x86/sgx: Update MAINTAINERS
+  x86/sgx: Architectural structures
+  x86/sgx: Add data structures for tracking the EPC pages
+  x86/sgx: Add wrappers for ENCLS leaf functions
+  x86/sgx: Enclave Page Cache (EPC) memory manager
+  platform/x86: Intel SGX driver
+  platform/x86: ptrace() support for the SGX driver
+  x86/sgx: Driver documentation
+
+Kai Huang (1):
+  x86/cpufeature: Add SGX and SGX_LC CPU features
+
+Sean Christopherson (4):
+  x86/cpufeatures: Add Intel-defined SGX leaf CPUID_12_EAX
+  x86/msr: Add SGX definitions to msr-index.h
+  x86/sgx: Detect Intel SGX
+  x86/sgx: Add sgx_einit() for initializing enclaves
+
+ Documentation/index.rst                       |    1 +
+ Documentation/x86/intel_sgx.rst               |  185 +++
+ MAINTAINERS                                   |    7 +
+ arch/x86/Kconfig                              |   19 +
+ arch/x86/include/asm/cpufeature.h             |    7 +-
+ arch/x86/include/asm/cpufeatures.h            |   10 +-
+ arch/x86/include/asm/disabled-features.h      |    3 +-
+ arch/x86/include/asm/msr-index.h              |    8 +
+ arch/x86/include/asm/required-features.h      |    3 +-
+ arch/x86/include/asm/sgx.h                    |  359 ++++++
+ arch/x86/include/asm/sgx_arch.h               |  379 ++++++
+ arch/x86/include/asm/sgx_pr.h                 |   13 +
+ arch/x86/include/uapi/asm/sgx.h               |  112 ++
+ arch/x86/include/uapi/asm/sgx_errno.h         |   91 ++
+ arch/x86/kernel/cpu/Makefile                  |    1 +
+ arch/x86/kernel/cpu/common.c                  |    7 +
+ arch/x86/kernel/cpu/intel_sgx.c               |  551 +++++++++
+ arch/x86/kvm/cpuid.h                          |    1 +
+ drivers/platform/x86/Kconfig                  |    2 +
+ drivers/platform/x86/Makefile                 |    1 +
+ drivers/platform/x86/intel_sgx/Kconfig        |   22 +
+ drivers/platform/x86/intel_sgx/Makefile       |   13 +
+ drivers/platform/x86/intel_sgx/sgx.h          |  211 ++++
+ drivers/platform/x86/intel_sgx/sgx_encl.c     | 1016 +++++++++++++++++
+ .../platform/x86/intel_sgx/sgx_encl_page.c    |  288 +++++
+ drivers/platform/x86/intel_sgx/sgx_fault.c    |  157 +++
+ drivers/platform/x86/intel_sgx/sgx_ioctl.c    |  234 ++++
+ drivers/platform/x86/intel_sgx/sgx_main.c     |  257 +++++
+ drivers/platform/x86/intel_sgx/sgx_vma.c      |  167 +++
+ 29 files changed, 4120 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/x86/intel_sgx.rst
+ create mode 100644 arch/x86/include/asm/sgx.h
+ create mode 100644 arch/x86/include/asm/sgx_arch.h
+ create mode 100644 arch/x86/include/asm/sgx_pr.h
+ create mode 100644 arch/x86/include/uapi/asm/sgx.h
+ create mode 100644 arch/x86/include/uapi/asm/sgx_errno.h
+ create mode 100644 arch/x86/kernel/cpu/intel_sgx.c
+ create mode 100644 drivers/platform/x86/intel_sgx/Kconfig
+ create mode 100644 drivers/platform/x86/intel_sgx/Makefile
+ create mode 100644 drivers/platform/x86/intel_sgx/sgx.h
+ create mode 100644 drivers/platform/x86/intel_sgx/sgx_encl.c
+ create mode 100644 drivers/platform/x86/intel_sgx/sgx_encl_page.c
+ create mode 100644 drivers/platform/x86/intel_sgx/sgx_fault.c
+ create mode 100644 drivers/platform/x86/intel_sgx/sgx_ioctl.c
+ create mode 100644 drivers/platform/x86/intel_sgx/sgx_main.c
+ create mode 100644 drivers/platform/x86/intel_sgx/sgx_vma.c
+
+-- 
+2.17.1
 
