@@ -2,211 +2,138 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AE97C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:05:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B431C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:06:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 381952054F
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:05:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b="XCTtvZ24"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 381952054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=pobox.com
+	by mail.kernel.org (Postfix) with ESMTP id BD7DD208B8
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:06:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD7DD208B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=buttersideup.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727434AbeH0XyB (ORCPT
+        id S1727502AbeH0Xy1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 19:54:01 -0400
-Received: from pb-smtp1.pobox.com ([64.147.108.70]:55946 "EHLO
-        pb-smtp1.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727005AbeH0XyB (ORCPT
+        Mon, 27 Aug 2018 19:54:27 -0400
+Received: from relay0.allsecuredomains.com ([78.129.187.18]:40444 "EHLO
+        relay0.allsecuredomains.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727005AbeH0Xy1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 19:54:01 -0400
-Received: from pb-smtp1.pobox.com (unknown [127.0.0.1])
-        by pb-smtp1.pobox.com (Postfix) with ESMTP id 2138D106DFB;
-        Mon, 27 Aug 2018 16:05:49 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=subject:to:cc
-        :references:from:message-id:date:mime-version:in-reply-to
-        :content-type:content-transfer-encoding; s=sasl; bh=eeTrkg15XF4R
-        k+DLcRw7VlE7M3A=; b=XCTtvZ24Vi1lZIETTKDnt3693IfoUFtcQvy8DDy8rVxc
-        +O/8ljvQwdEhEnmAzpNzfh4UnddHseP70JyY4hrxBnu20fQs/1icfue4UXfFEK9E
-        VfDkfnoNemn5nYmqgQDJHssBX12k31onNnshhv0e4rWkxWs3q8PAHJR/6wwPqMM=
-DomainKey-Signature: a=rsa-sha1; c=nofws; d=pobox.com; h=subject:to:cc
-        :references:from:message-id:date:mime-version:in-reply-to
-        :content-type:content-transfer-encoding; q=dns; s=sasl; b=S0tUtf
-        27RZ+p5/H8oW9s0+4oxspYOk/+UmGZMXStOYQmtwVyxQd2wbblPuSUbPzmQi1FMe
-        aVXFeXkhmLGU/1pXpHE9pEC8/oait2OMn4R48sp/m4VkybhghewTfHi08/UVC2RO
-        fn2uQWlQM+8BSA1FHd8ZZIWyRpGVGwlvekScg=
-Received: from pb-smtp1.nyi.icgroup.com (unknown [127.0.0.1])
-        by pb-smtp1.pobox.com (Postfix) with ESMTP id 16D5F106DFA;
-        Mon, 27 Aug 2018 16:05:49 -0400 (EDT)
-Received: from [192.168.1.127] (unknown [76.215.41.237])
+        Mon, 27 Aug 2018 19:54:27 -0400
+X-Greylist: delayed 2134 seconds by postgrey-1.27 at vger.kernel.org; Mon, 27 Aug 2018 19:54:26 EDT
+Received: from [81.174.144.187] (helo=zebedee.buttersideup.com)
+        by relay0.allsecuredomains.com with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tim@buttersideup.com>)
+        id 1fuNDu-0001MV-Jt; Mon, 27 Aug 2018 19:30:50 +0000
+Received: from [IPv6:2001:470:1b4a:0:405:5dff:fe10:5138] (unknown [IPv6:2001:470:1b4a:0:405:5dff:fe10:5138])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by pb-smtp1.pobox.com (Postfix) with ESMTPSA id 1DCB1106DF9;
-        Mon, 27 Aug 2018 16:05:48 -0400 (EDT)
-Subject: Re: [PATCH v2] compiler.h: give up __compiletime_assert_fallback()
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Christopher Li <sparse@chrisli.org>,
-        linux-sparse@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1535220989-27645-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Daniel Santos <daniel.santos@pobox.com>
-Message-ID: <84cf6ae0-97c8-6b73-ca86-b3d3b3daba5b@pobox.com>
-Date:   Mon, 27 Aug 2018 15:05:45 -0500
+        by zebedee.buttersideup.com (Postfix) with ESMTPSA id D9D69A0D03;
+        Mon, 27 Aug 2018 19:30:23 +0000 (UTC)
+Subject: Re: [PATCH] EDAC: Remove the i82443bxgx_edac driver
+To:     Borislav Petkov <bp@alien8.de>, Takashi Iwai <tiwai@suse.de>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180810141520.8993-1-tiwai@suse.de>
+ <20180815155752.GC28669@nazgul.tnic> <s5hh8jv62lk.wl-tiwai@suse.de>
+ <20180815161205.GD28669@nazgul.tnic> <20180827164535.GB22318@nazgul.tnic>
+From:   Tim Small <tim@buttersideup.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tim@buttersideup.com; prefer-encrypt=mutual; keydata=
+ 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 bkUp
+Message-ID: <56b161bc-9b5e-63c9-b815-8b3ff8214887@buttersideup.com>
+Date:   Mon, 27 Aug 2018 20:30:23 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.0
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1535220989-27645-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <20180827164535.GB22318@nazgul.tnic>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-X-Pobox-Relay-ID: 9727DD9A-AA34-11E8-8FC9-063AD72159A7-06139138!pb-smtp1.pobox.com
-Content-Transfer-Encoding: quoted-printable
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Masahiro,
+On 27/08/18 17:45, Borislav Petkov wrote:
+> Actually, looking at this driver more - it has been depending on
+> BROKEN since 2007!
 
 
-On 08/25/2018 01:16 PM, Masahiro Yamada wrote:
-> __compiletime_assert_fallback() is supposed to stop building earlier
-> by using the negative-array-size method in case the compiler does not
-> support "error" attribute, but has never worked like that.
->
-> You can simply try:
->
->     BUILD_BUG_ON(1);
->
-> GCC immediately terminates the build, but Clang does not report
-> anything because Clang does not support the "error" attribute now.
-> It will later fail at link time, but __compiletime_assert_fallback()
-> is not working at least.
->
-> The root cause is commit 1d6a0d19c855 ("bug.h: prevent double evaluatio=
-n
-> of `condition' in BUILD_BUG_ON").
+Hi,
 
-I didn't really think this particular patch was necessary, but it was
-requested that I eliminate double evaluation and I didn't feel like
-arguing it at the time. :)=C2=A0 In my philosophy however, one should *ne=
-ver*
-use an expression with side effects in any type of assert.
+I'd forgotten that it was in BROKEN state.
 
-> Prior to that commit, BUILD_BUG_ON()
-> was checked by the negative-array-size method *and* the link-time trick=
-.
-> Since that commit, the negative-array-size is not effective because
-> '__cond' is no longer constant.
+The issue was that the driver was fully functioning, but it clashed with
+the graphics aperture driver - both use different registers within the
+same PCI device - it was marked broken on the basis that the with the
+kernel PCI device allocation code as it stood at the time, if the
+i82443bxgx_edac driver was loaded first, the graphics aperture
+configuration driver could not also be loaded, and this could break
+existing setups.
 
-Now we're back to the question of "what do you mean by 'constant'"?=C2=A0=
- If
-you mean a C constant expression (as defined in the C standard) than
-almost none of this code fits that criteria.=C2=A0 For these compile-time
-assertions to work, we are concerned with the data flow analysis and
-constant propagation performed by the compiler during optimization.=C2=A0=
- You
-will notice in include/linux/compiler.h that __compiletime_assert is a
-no-op when __OPTIMIZE__ is not defined.
+As far as I remember, it was left was that Greg KH had said that he was
+working on a change to the PCI device allocation code which would allow
+both to coexist.  I don't know if that happened.
 
-> As the comment in <linux/build_bug.h>
-> says, GCC (and Clang as well) only emits the error for obvious cases.
->
-> When '__cond' is a variable,
->
->     ((void)sizeof(char[1 - 2 * __cond]))
->
-> ... is not obvious for the compiler to know the array size is negative.
->
-> Reverting that commit would break BUILD_BUG() because negative-size-arr=
-ay
-> is evaluated before the code is optimized out.
->
-> Let's give up __compiletime_assert_fallback().  This commit does not
-> change the current behavior since it just rips off the useless code.
+The last CPU which used these chipsets (130nm Pentium III) were released
+in 2001.  I don't know when they were produced up until.
 
-Clang is not the only target audience of
-__compiletime_assert_fallback().=C2=A0 Instead of ripping out something t=
-hat
-may benefit builds with gcc 4.2 and earlier, why not override its
-definition in compiler-clang.h with something that will break the build
-for Clang?=C2=A0 It would need an #ifndef __compiletime_error_fallback he=
-re
-though.
+On that basis, I don't see a problem with removing it, but if there's a
+preference for me to fix it, (and if I still have some old hardware
+somewhere that I can test it on), I'll be happy to do that instead.
 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-> ---
->
-> Changes in v2:
->   - Rebase
->
->  include/linux/compiler.h | 17 +----------------
->  1 file changed, 1 insertion(+), 16 deletions(-)
->
-> diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-> index 681d866..87c776c 100644
-> --- a/include/linux/compiler.h
-> +++ b/include/linux/compiler.h
-> @@ -314,29 +314,14 @@ static inline void *offset_to_ptr(const int *off)
->  #endif
->  #ifndef __compiletime_error
->  # define __compiletime_error(message)
-> -/*
-> - * Sparse complains of variable sized arrays due to the temporary vari=
-able in
-> - * __compiletime_assert. Unfortunately we can't just expand it out to =
-make
-> - * sparse see a constant array size without breaking compiletime_asser=
-t on old
-> - * versions of GCC (e.g. 4.2.4), so hide the array from sparse altoget=
-her.
-> - */
-> -# ifndef __CHECKER__
-> -#  define __compiletime_error_fallback(condition) \
-> -	do { ((void)sizeof(char[1 - 2 * condition])); } while (0)
-> -# endif
-> -#endif
-> -#ifndef __compiletime_error_fallback
-> -# define __compiletime_error_fallback(condition) do { } while (0)
->  #endif
-> =20
->  #ifdef __OPTIMIZE__
->  # define __compiletime_assert(condition, msg, prefix, suffix)		\
->  	do {								\
-> -		int __cond =3D !(condition);				\
->  		extern void prefix ## suffix(void) __compiletime_error(msg); \
-> -		if (__cond)						\
-> +		if (!(condition))					\
->  			prefix ## suffix();				\
-> -		__compiletime_error_fallback(__cond);			\
->  	} while (0)
->  #else
->  # define __compiletime_assert(condition, msg, prefix, suffix) do { } w=
-hile (0)
-
-To give any more meaningful feedback I think I will need to experiment
-with Clang, older GCC versions and icc.=C2=A0 It occurred to me that I sh=
-ould
-probably clean up and publish my __builtin_constant_p test program and
-also generate results for more recent compilers.=C2=A0 I can extend it to
-test various negative sized array constructs and it could help inform
-this decision.
-
-IMO, the most ideal solution would be a set of C2x (or future)
-extensions providing something similar to C++'s constexpr, GCC's
-__builtin_constant_p and our BUILD_BUG_ON.=C2=A0 This would cross deeply =
-into
-territory traditionally considered to belong to the implementation, so
-it's no small request.=C2=A0 A lot would have to be resolved for it to wo=
-rk
-in the standard.
-
-Daniel
+Tim.
