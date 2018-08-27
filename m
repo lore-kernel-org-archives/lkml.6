@@ -6,69 +6,67 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 045A2C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 12:59:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0112AC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 13:00:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A355220858
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 12:59:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CBF7208CA
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 13:00:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="m5pxfHEI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A355220858
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="HpwNJFJr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CBF7208CA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727108AbeH0Qq3 (ORCPT
+        id S1727171AbeH0QrJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 12:46:29 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:36790 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726868AbeH0Qq3 (ORCPT
+        Mon, 27 Aug 2018 12:47:09 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:40090 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726883AbeH0QrJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 12:46:29 -0400
-Received: by mail-wr1-f66.google.com with SMTP id m27-v6so13559514wrf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 05:59:55 -0700 (PDT)
+        Mon, 27 Aug 2018 12:47:09 -0400
+Received: by mail-wm0-f67.google.com with SMTP id 207-v6so8183284wme.5
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 06:00:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=message-id:subject:from:to:cc:date:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=UBmxrMJ84Tv3keNT5BHkJ2HwL0p9m2Yyk61SpRtvVTM=;
-        b=m5pxfHEI2InrxsOyP+nWY8F/fOpB0WTIxrDgJXoRxh7JgRZvKmwluNIO8FGloVCBkw
-         06eAEAmY3AhLDJwfKDM3hkmhOQsg5Eltw801uo9gwCKhhpR9rNWMzerG8oHfxGgzPpuf
-         BgBrQzM8MIjcUMfMD2QiQ6dP8qCV/K+WChgyhOvWjEqDCLChTgBwhIHyGTPL9O86B0ss
-         aMEdis28nmeP0VnGUuts5YnnczdP+kxKIPTa3SdPdqI9niAHe6Tgtb97Sn8rZJtYtgXm
-         AeqPMqZCgM8truuK4iHMf6yIPI9H37YhX1HHCkELSRNu4+NQy/1zlKMI236+0/4M8CEm
-         eZqQ==
+        bh=Sb4/AWzdKvM6iRbBBSj3/YDBYT2AMz9P/Ug3Zl18dZM=;
+        b=HpwNJFJr4gkZxIjS6M1LLAdffaELLKRzVAPudHs7wgkWRTqx9AhtOeLycsNVvnQ+Fe
+         HZ10s5H56k1+CUvtLQROtduvfcnMHlaaiZDUomwCGrmdnRaWFFXEh5f2JEa/EhdHEVr3
+         uscRU0D9fTgxC0JU68qMtvah4IymFBrBP2mq5y/RKJ+/iciSWvlKOdAhqJJmcyojqBVz
+         rX4rrp9oFvmF0XDEcmer43mUxGM6Org4a7qOY2nfqykMqYtf1dqP7Yd1JU8axC2R2xmO
+         psIEr2C2n0V4mze1RkYqe/P3u3ffeX9Gp41T7CkB4GhrS2zTvI8c0aqJ29l9hUlFQ3wF
+         ACAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=UBmxrMJ84Tv3keNT5BHkJ2HwL0p9m2Yyk61SpRtvVTM=;
-        b=TYrcwBInXsfpgUbPC+oSD1cjF/3buYkDGREUOKvuW2R+fOwU2tEIxIkMoU/Zx8wgCD
-         zZaW1GHd5MkJ1qpgaUolQlnT5Pod/IUNtRbdYbbCdfmHF2VIwqpZf36ebVNMYDeoEhVP
-         jBGEzqsQTdNXsKUHnIxp9sjEr2nIacLBy+4cbFoqef96Ch/1R1DC9NBRR5Ug+IMe4+5D
-         yHrpWIIs+FBUUFMVP9gpio2ZkWL8+neLE0tzJB8W4aZDDTEWb6/kiWjcpwBE7r7XOIH7
-         V/inFaoS8BEtu4+71QvHCeS0AAiX2MUYrBjBetE2uOV42agCNXlLcoTjlbI7j/jRMRNt
-         ZhtQ==
-X-Gm-Message-State: APzg51DBxG2Zp/A9llu7eyb3Dv2c/06OOTHWHn07HAH1YxDXSARhyqL9
-        9w1rE00Iw/J+lmxOFKcDfbifOA==
-X-Google-Smtp-Source: ANB0VdYCao5UFQstCdEvGX+CRF2DxGdbHwkmPy4/Q2UaQbl1bidxGGPFJZy+1PLvwlmpRMreOKm0LA==
-X-Received: by 2002:adf:9366:: with SMTP id 93-v6mr7996749wro.60.1535374794332;
-        Mon, 27 Aug 2018 05:59:54 -0700 (PDT)
+        bh=Sb4/AWzdKvM6iRbBBSj3/YDBYT2AMz9P/Ug3Zl18dZM=;
+        b=quq67YjDyqh2iD1ygYH2U/R8xUMvIEjBPKwp/2aJczfVf83itC3QC8yrjjd3Dxy00u
+         g52NsE6TXFPo9wM1bpI62Nrc3NsqefM1mTLYjqtxyr45FQKmkQ0Qj2E0goGUxzjBnLJQ
+         e7UHw/3BE9828jwRzDvVgDAvyN4qmD/k7YO20uSjqtpRImyTj3hqQfDdHNUy1MozQRiZ
+         3U/0t5FukTSe4E+ft1bXVqXjFskZJIyafPSyD1sXlntd4giDWFH2b9zDK6AcLAECS540
+         DSW9+xi1NNFSSPCHXUiFtsSKzLVXUF0k8OaL/48DhLeMO00k5falR64DPw5dzZE8wuf7
+         FFhw==
+X-Gm-Message-State: APzg51BKNoaYm2VEelIzHQGcJ8Tdt04b4M/L1XUWBnqEb/5FOqSiJKis
+        AeOpTl71Jzn+94qcdMsTwudvyA==
+X-Google-Smtp-Source: ANB0VdYVlKOIcZu3zn65kJGRJm+japxkUNItOmkKrHJAS9zPax2zkt//i8YTCfi0F9IRe5STd89Wpg==
+X-Received: by 2002:a1c:7915:: with SMTP id l21-v6mr6012418wme.136.1535374833878;
+        Mon, 27 Aug 2018 06:00:33 -0700 (PDT)
 Received: from boomer ([90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id v6-v6sm10853187wro.66.2018.08.27.05.59.53
+        by smtp.gmail.com with ESMTPSA id f132-v6sm8985829wme.24.2018.08.27.06.00.33
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 27 Aug 2018 05:59:53 -0700 (PDT)
-Message-ID: <e6592bd2f2505e30bb27e1cd4cbb031344cc3459.camel@baylibre.com>
-Subject: Re: [PATCH v2 0/4] clk: meson: clk-pll driver update
+        Mon, 27 Aug 2018 06:00:33 -0700 (PDT)
+Message-ID: <fbdc7304e8864ce35f27de2d932ccdc661187dbe.camel@baylibre.com>
+Subject: Re: [PATCH] clk: meson: axg: round audio system master clocks down
 From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, khilman@baylibre.com
-Date:   Mon, 27 Aug 2018 14:59:52 +0200
-In-Reply-To: <CAFBinCCNY3=yo42hQUqJJzeSetLni+whtWaBZCL-MV63DDYQow@mail.gmail.com>
-References: <20180801140053.25899-1-jbrunet@baylibre.com>
-         <CAFBinCCNY3=yo42hQUqJJzeSetLni+whtWaBZCL-MV63DDYQow@mail.gmail.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>
+Date:   Mon, 27 Aug 2018 15:00:32 +0200
+In-Reply-To: <20180801140732.27671-1-jbrunet@baylibre.com>
+References: <20180801140732.27671-1-jbrunet@baylibre.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
 Mime-Version: 1.0
@@ -78,52 +76,16 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-08-12 at 20:26 +0200, Martin Blumenstingl wrote:
-> Hi Jerome,
+On Wed, 2018-08-01 at 16:07 +0200, Jerome Brunet wrote:
+> Some of the master clocks provided by the axg audio clock controller are
+> system clock (spdifin and pdm sysclk). They are used to clock an internal
+> DSP of the related devices. Having them constantly rounded down instead
+> of closest is preferable.
 > 
-> On Wed, Aug 1, 2018 at 4:00 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
-> > 
-> > This patchset is yet another round of update to the amlogic pll driver.
-> > 
-> >  1) Enable bit is added so we don't rely on the bootloader or the init
-> >     value to enable to pll device.
-> >  2) Remove unnecessary CLK_GET_RATE_NOCACHE flags.
-> >  3) OD post dividers are removed from the pll driver. This simplify the
-> >     driver and let us provide the clocks which exist between those
-> >     dividers. Some device are actually using these clocks.
-> >  4) The rates hard coded in parameter tables are remove. Instead, we
-> >     only rely on the parent rate and the parameters to calculate the
-> >     output rate, which is a lot better.
-> > 
-> > This series has been tested on the gxl libretech cc and axg s400.
-> > I did not test it on meson8b yet.
-> > 
-> > Changes since v1: [0]
-> >  - improve commit description of patch 1
-> >  - remove unnecessary CLK_GET_RATE_NOCACHE flags.
-> >  - add missing CLK_SET_RATE_PARENT.
-> > 
-> > [0]: https://lkml.kernel.org/r/20180717095617.12240-1-jbrunet@baylibre.com
-> > 
-> > Jerome Brunet (4):
-> >   clk: meson: clk-pll: add enable bit
-> >   clk: meson: clk-pll: drop CLK_GET_RATE_NOCACHE where unnecessary
-> >   clk: meson: clk-pll: remove od parameters
-> >   clk: meson: clk-pll: drop hard-coded rates from pll tables
-> 
-> for the whole series:
-> Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> 
-> as well as:
-> Tested-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> (tested on Meson8b / Odroid-C1, even CPU frequency scaling still works
-> with my out-of-tree patches)
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  drivers/clk/meson/axg-audio.c | 34 +++++++++++++++++++++++-----------
+>  1 file changed, 23 insertions(+), 11 deletions(-)
 
-Collected tags, rebased and queued for 4.20
-
-> 
-> 
-> Regards
-> Martin
-
+queued for 4.20
 
