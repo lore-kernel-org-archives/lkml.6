@@ -2,145 +2,202 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42CC9C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 08:56:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C2BBC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 08:56:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E955A208D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 08:56:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F95A20835
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 08:56:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="dsEpRVCt";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RvHLSAN9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E955A208D5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="0FtmzQCW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F95A20835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727029AbeH0MmO (ORCPT
+        id S1727193AbeH0MmQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 08:42:14 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39276 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726785AbeH0MmN (ORCPT
+        Mon, 27 Aug 2018 08:42:16 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:41647 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726785AbeH0MmP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 08:42:13 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 34D9C60445; Mon, 27 Aug 2018 08:56:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535360188;
-        bh=QxJwaP/KrF+O0C8LF01JA5WeCpoBGEli8NJjZwuRqg4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=dsEpRVCtYvXc0ZG9iRGdi1a0cMZDfJgbolRBDsuZKTBl2x36/27xKkFPNdxagiEk8
-         6LHiavWOUjwWlrki2aR7VPQQZP4p0Bb+y5tJG1ksjSyZDPF2yi2PVGqguojcwIJV9r
-         cc39dKRTiQUc1758tETAWNoIwAA1/oFUuOvLBS6c=
-Received: from [10.79.40.134] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A68366021A;
-        Mon, 27 Aug 2018 08:56:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535360187;
-        bh=QxJwaP/KrF+O0C8LF01JA5WeCpoBGEli8NJjZwuRqg4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=RvHLSAN9NmPI1rrv/JJYi1F2QreVfIFTw5zrGej/1zMd/xINxyLjDu9OLe9ik+sPF
-         TG8qtr9j3M5tPIMb9O96SklO9cLGKYw1c6U8S5LQy5yuoU1Oe809YzuJAbVNEZ/1ZE
-         zXi48jHHgk8H0JBECCzHQwrJJwkZ2FSUV2LJBpvQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A68366021A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-Subject: Re: [PATCH v2 3/3] dts: arm64/sdm845: Add node for qcom,smmu-v2
-To:     Rob Herring <robh@kernel.org>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        iommu@lists.linux-foundation.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-References: <20180814102740.30222-1-vivek.gautam@codeaurora.org>
- <20180814102740.30222-4-vivek.gautam@codeaurora.org>
- <27372288-447d-6c9a-504a-8b8ef40e3d58@arm.com>
- <CAFp+6iG8HohQ5=gwL37OuykK+R4U407yfrp=WN6pSgOK-mdzzA@mail.gmail.com>
- <20180814225750.GA31263@rob-hp-laptop>
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-Message-ID: <f8d638bd-d0cb-e03d-bac2-3bc2e30c5422@codeaurora.org>
-Date:   Mon, 27 Aug 2018 14:26:21 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 27 Aug 2018 08:42:15 -0400
+Received: by mail-io0-f195.google.com with SMTP id q4-v6so12203988iob.8
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 01:56:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=h4PZMzainKCYUvAYL5kM5LaaqKl+5u8AZLn6hSJrix0=;
+        b=0FtmzQCW1PGXrhMXm6Y7OdfrHTI0+Gc/ahaFiGa2H4XnqrgKjyQ5mxGfT40yx2RaaT
+         smJgKBS8ue1EOq5h3CwnZ47UjCWj1i28rtNn8kaO2c8/bNDO0VKU/9Rl+h9F8lKXBAhk
+         +tRYCEPfE6J8KTVXqF3SypX+8UMVRitchO9YDxGp4as/bkwhbyKtVAoC8srUoi0oce77
+         ezHQNNi7IQqGSj7683HHKFT8YPZ+2YnjXCSbcRyrv0I3FQSHsTgQjTRTn+9VcPBxwuHr
+         tXyze0RfpaHtqfAZwQppqgl6IhSuGHzWjoL0JpbKF0sgT8pN4mF7HSaEYf9gE5HkathW
+         lLOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=h4PZMzainKCYUvAYL5kM5LaaqKl+5u8AZLn6hSJrix0=;
+        b=eL5PYgK6VCGZ6H047zlKdDNBcHo/WAGJ7R3a5T/6Ca6d9rz2baUaEunHB9ft0Ly6Y4
+         xc71pJVvkfLXiBICBdv9sgEY2hDEw8xX7WIVBf6v+WFRtNSC2XT43FHKIjb0k89GXzus
+         2UHnv1tR0L68zx2jYCGnKFq+M94k6M1alAU9DrdEd/aC2Ybzo1LXTZACZ/ctnQBAn3q8
+         vgwiPLNfb+lLfeowE1XuoLZCOQ3MwTrVGyD8FPeOcUV4C6liAErxUlmbsfv8MupBZFn9
+         hM8ETmul4L4I+NgrZEX0uCcjMz/DQl5VpmRKd1RUbBkDO3rZMtfBa+2wsdkoBPd+CTMN
+         lNPA==
+X-Gm-Message-State: APzg51Bf5RVRVHyYeuJgUZ+tkhhGUiRLD+5RClYW6zuFH8+YPtEmkk+K
+        s0NCRQUbolWqfHOnXjC1k+MlGNrBUR5bkN4H6q9f8A==
+X-Google-Smtp-Source: ANB0VdZU1O7YL3J3GW+L5yGErVWtcVknMMAbt3xIXjNATiQ5ffLroUoMphXiVYhg07HumLojqYn5ubFQjWIf10YpXtw=
+X-Received: by 2002:a5e:8d07:: with SMTP id m7-v6mr9209179ioj.258.1535360190362;
+ Mon, 27 Aug 2018 01:56:30 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180814225750.GA31263@rob-hp-laptop>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Received: by 2002:a5e:9402:0:0:0:0:0 with HTTP; Mon, 27 Aug 2018 01:56:29
+ -0700 (PDT)
+In-Reply-To: <20180825082722.567e8c9a@bbrezillon>
+References: <20180810080526.27207-1-brgl@bgdev.pl> <20180810080526.27207-2-brgl@bgdev.pl>
+ <20180824170848.29594318@bbrezillon> <20180824152740.GD27483@lunn.ch> <20180825082722.567e8c9a@bbrezillon>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Mon, 27 Aug 2018 10:56:29 +0200
+Message-ID: <CAMRc=Men-MPk5DGshWcVEc0v=gH2WSpx1j-CawOeydwp59tejw@mail.gmail.com>
+Subject: Re: [PATCH v2 01/29] nvmem: add support for cell lookups
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        linux-doc <linux-doc@vger.kernel.org>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        Russell King <linux@armlinux.org.uk>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        David Lechner <david@lechnology.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Sven Van Asbroeck <svendev@arcx.com>,
+        "open list:MEMORY TECHNOLOGY..." <linux-mtd@lists.infradead.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lukas Wunner <lukas@wunner.de>, Naren <naren.kernel@gmail.com>,
+        netdev <netdev@vger.kernel.org>, Alban Bedel <albeu@free.fr>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "David S . Miller" <davem@davemloft.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob, Robin,
-
-
-On 8/15/2018 4:27 AM, Rob Herring wrote:
-> On Wed, Aug 15, 2018 at 01:09:43AM +0530, Vivek Gautam wrote:
->> Adding Jordan here.
->>
->> On Tue, Aug 14, 2018 at 4:19 PM, Robin Murphy <robin.murphy@arm.com> wrote:
->>> Hi Vivek,
->>>
->>> On 14/08/18 11:27, Vivek Gautam wrote:
->>>> Add device node for qcom,smmu-v2 available on sdm845.
->>>> This smmu is available only to GPU device.
->>>>
->>>> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
->>>> ---
->>>>    arch/arm64/boot/dts/qcom/sdm845.dtsi | 23 +++++++++++++++++++++++
->>>>    1 file changed, 23 insertions(+)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi
->>>> b/arch/arm64/boot/dts/qcom/sdm845.dtsi
->>>> index 1c2be2082f33..bd1ec5fa5146 100644
->>>> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
->>>> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
->>>> @@ -6,6 +6,7 @@
->>>>     */
->>>>      #include <dt-bindings/clock/qcom,gcc-sdm845.h>
->>>> +#include <dt-bindings/clock/qcom,gpucc-sdm845.h>
->>>>    #include <dt-bindings/clock/qcom,rpmh.h>
->>>>    #include <dt-bindings/interrupt-controller/arm-gic.h>
->>>>    #include <dt-bindings/soc/qcom,rpmh-rsc.h>
->>>> @@ -989,6 +990,28 @@
->>>>                          cell-index = <0>;
->>>>                  };
->>>>    +             gpu_smmu: iommu@5040000 {
->>>> +                       compatible = "qcom,sdm845-smmu-v2",
->>>> "qcom,smmu-v2";
->>>
->>> Which of "sdm845" or "msm8996"[1] is the actual SoC name here?
->> Well, the bindings use the SoC prefix with smmu-v2, so it should be
->> sdm845 for this SoC. This is same as I posted in my v1 of the series [2].
->> Using 8996 based string in sdm845 makes things look awful.
-> You need to list valid values of '<soc>' in the binding. Otherwise we
-> get this confusion.
-
-Sorry for delayed response, I was away on vacation.
-I will list down the valid values for '<soc>' as suggested, and respin 
-this series, and
-smmu bindings patch that comes as part of the runtime pm series [1].
-
-[1] https://lore.kernel.org/patchwork/patch/968017/
-
-Best regards
-Vivek
-
+2018-08-25 8:27 GMT+02:00 Boris Brezillon <boris.brezillon@bootlin.com>:
+> On Fri, 24 Aug 2018 17:27:40 +0200
+> Andrew Lunn <andrew@lunn.ch> wrote:
 >
-> Rob
+>> On Fri, Aug 24, 2018 at 05:08:48PM +0200, Boris Brezillon wrote:
+>> > Hi Bartosz,
+>> >
+>> > On Fri, 10 Aug 2018 10:04:58 +0200
+>> > Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>> >
+>> > > +struct nvmem_cell_lookup {
+>> > > + struct nvmem_cell_info  info;
+>> > > + struct list_head        list;
+>> > > + const char              *nvmem_name;
+>> > > +};
+>> >
+>> > Hm, maybe I don't get it right, but this looks suspicious. Usually the
+>> > consumer lookup table is here to attach device specific names to
+>> > external resources.
+>> >
+>> > So what I'd expect here is:
+>> >
+>> > struct nvmem_cell_lookup {
+>> >     /* The nvmem device name. */
+>> >     const char *nvmem_name;
+>> >
+>> >     /* The nvmem cell name */
+>> >     const char *nvmem_cell_name;
+>> >
+>> >     /*
+>> >      * The local resource name. Basically what you have in the
+>> >      * nvmem-cell-names prop.
+>> >      */
+>> >     const char *conid;
+>> > };
+>> >
+>> > struct nvmem_cell_lookup_table {
+>> >     struct list_head list;
+>> >
+>> >     /* ID of the consumer device. */
+>> >     const char *devid;
+>> >
+>> >     /* Array of cell lookup entries. */
+>> >     unsigned int ncells;
+>> >     const struct nvmem_cell_lookup *cells;
+>> > };
+>> >
+>> > Looks like your nvmem_cell_lookup is more something used to attach cells
+>> > to an nvmem device, which is NVMEM provider's responsibility not the
+>> > consumer one.
+>>
+>> Hi Boris
+>>
+>> There are cases where there is not a clear providier/consumer split. I
+>> have an x86 platform, with a few at24 EEPROMs on it. It uses an off
+>> the shelf Komtron module, placed on a custom carrier board. One of the
+>> EEPROMs contains the hardware variant information. Once i know the
+>> variant, i need to instantiate other I2C, SPI, MDIO devices, all using
+>> platform devices, since this is x86, no DT available.
+>>
+>> So the first thing my x86 platform device does is instantiate the
+>> first i2c device for the AT24. Once the EEPROM pops into existence, i
+>> need to add nvmem cells onto it. So at that point, the x86 platform
+>> driver is playing the provider role. Once the cells are added, i can
+>> then use nvmem consumer interfaces to get the contents of the cell,
+>> run a checksum, and instantiate the other devices.
+>>
+>> I wish the embedded world was all DT, but the reality is that it is
+>> not :-(
+>
+> Actually, I'm not questioning the need for this feature (being able to
+> attach NVMEM cells to an NVMEM device on a platform that does not use
+> DT). What I'm saying is that this functionality is provider related,
+> not consumer related. Also, I wonder if defining such NVMEM cells
+> shouldn't go through the provider driver instead of being passed
+> directly to the NVMEM layer, because nvmem_config already have a fields
+> to pass cells at registration time, plus, the name of the NVMEM cell
+> device is sometimes created dynamically and can be hard to guess at
+> platform_device registration time.
+>
 
+In my use case the provider is at24 EEPROM driver. This is where the
+nvmem_config lives but I can't image a correct and clean way of
+passing this cell config to the driver from board files without using
+new ugly fields in platform_data which this very series is trying to
+remove. This is why this cell config should live in machine code.
+
+> I also think non-DT consumers will need a way to reference exiting
+> NVMEM cells, but this consumer-oriented nvmem cell lookup table should
+> look like the gpio or pwm lookup table (basically what I proposed in my
+> previous email).
+
+How about introducing two new interfaces to nvmem: one for defining
+nvmem cells from machine code and the second for connecting these
+cells with devices?
+
+Best regards,
+Bart
