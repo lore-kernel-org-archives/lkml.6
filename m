@@ -2,308 +2,181 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0718C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:47:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 380D0C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:48:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45308208D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:47:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C548E208D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:48:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JPyeiHPP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45308208D5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="b/ni7ktM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C548E208D5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axentia.se
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727408AbeH1AgG (ORCPT
+        id S1727469AbeH1Agh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 20:36:06 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:36760 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726994AbeH1AgG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 20:36:06 -0400
-Received: by mail-oi0-f66.google.com with SMTP id r69-v6so644004oie.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 13:47:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:reply-to:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=Fn1pXpN2U+DN1rHfpjRTaNy+wJdgncIVsmwMjBdUvPU=;
-        b=JPyeiHPPqWBpq+3ZpwGFSoN14LQBdjisKI8fl5HQ0Zsk70dDy3imhqCIuDCAXS9Aj7
-         zKUDGJ0Y/AKF1kNTpaUlfRgjFxKzIzjjF+var0UjxG9j6tNwgBgE2i5di8cl01ZFOcxn
-         GCI1nBIc5DB62cTWu8kPk269lTov2P9mxys0f5razobX9B11uNcCc/KuFwkhc5W/d0+Q
-         ykc560Syaxs3h0+06YCuLb2gAotIeEUno6fEUedtCt0l0FhZhY5AXSHTi5Nq4+edud8z
-         EZl1Z8my68ttftZrRgcTU7JXcvkCTQCe7ndXIuRGqbpSkoBvNoiAO2acL3pBPFVMnOzQ
-         A1jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:reply-to:subject:to:cc:references:from
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-transfer-encoding:content-language;
-        bh=Fn1pXpN2U+DN1rHfpjRTaNy+wJdgncIVsmwMjBdUvPU=;
-        b=cd/Il1Qzvky4wfvvxn14nYOV3A7PUBT1N2B5d2VlU8z38ZT20G/1l9mBcx8hH1i+pj
-         g47GQTMaAymXQ1sEeY0SgZMTGcFAPXWWWT4OJ7DCk5yGySrba9P06lzGcdTIsYWGW6W4
-         mX/hWG75bbtwJBWg6Pzgq4hGVTIYaQ/qibB+EvXUawXudKtoXJgNlzlQefKGq7cXwyzN
-         uQP5VYPVttiIkKAVgPCHO59M0gUVpuF9iXu8G5YOmPqbhI1eqZshW1W+LS5MEVKJFR7K
-         JtAG78ahgYCe8yv738VIrIViJEOR330wwldbnRhNQGM0xEEv1syG6OkMaHZq5Y2vt+TS
-         7o8w==
-X-Gm-Message-State: APzg51A208lmdIJGSvnQs+jLDnjljzP8QKwO7XG6ZK9SRhfnKjEOLnu6
-        UpwS6oRaIMu+/9RYwRWA0cJfiMQ=
-X-Google-Smtp-Source: ANB0VdZw3EfRcR0CCKlkgzG2zu+5qH4Bqlbv/Xe5DjL4PFMtUxpa7KiDUeYL1hA4l7v9GONYeanlBw==
-X-Received: by 2002:aca:b256:: with SMTP id b83-v6mr248953oif.235.1535402871322;
-        Mon, 27 Aug 2018 13:47:51 -0700 (PDT)
-Received: from serve.minyard.net ([47.184.170.128])
-        by smtp.gmail.com with ESMTPSA id x5-v6sm390163oix.3.2018.08.27.13.47.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 Aug 2018 13:47:50 -0700 (PDT)
-Received: from [IPv6:2001:470:b8f6:1b:fcd1:4328:3a3e:96be] (unknown [IPv6:2001:470:b8f6:1b:fcd1:4328:3a3e:96be])
-        by serve.minyard.net (Postfix) with ESMTPSA id 652373A8;
-        Mon, 27 Aug 2018 15:47:49 -0500 (CDT)
-Reply-To: minyard@acm.org
-Subject: Re: [PATCH 1/2] ipmi: Move BT capabilities detection to the detect
- call
-To:     "Banman, Andrew" <abanman@hpe.com>
-Cc:     "openipmi-developer@lists.sourceforge.net" 
-        <openipmi-developer@lists.sourceforge.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Anderson, Russ" <russ.anderson@hpe.com>,
-        "Ramsay, Frank" <frank.ramsay@hpe.com>,
-        "Ernst, Justin" <justin.ernst@hpe.com>,
-        Corey Minyard <cminyard@mvista.com>
-References: <1535056623-26634-1-git-send-email-minyard@acm.org>
- <1535056623-26634-2-git-send-email-minyard@acm.org>
- <TU4PR8401MB0430BCEBB2F6C81611054555A60B0@TU4PR8401MB0430.NAMPRD84.PROD.OUTLOOK.COM>
-From:   Corey Minyard <minyard@acm.org>
-Message-ID: <32b44854-93bd-57cd-2aab-f8cebc1bc0a9@acm.org>
-Date:   Mon, 27 Aug 2018 15:47:48 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Mon, 27 Aug 2018 20:36:37 -0400
+Received: from mail-eopbgr70092.outbound.protection.outlook.com ([40.107.7.92]:44480
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726958AbeH1Agg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 20:36:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=weR8lmgIwZptTj7DNQEQ165vnSX7+ZBynfD81ZfnTT8=;
+ b=b/ni7ktMAB069QqBTdVwGvmAFz8RXGiAKnrplyvYIHu8zE1w13r/+u4pg4sfmgmuQDWE+w3fL1GKsQD5C6HKkzfSmRJmLPpPlr5CS0qMYuEWOv/4TV6a2dgePWb36I9mcsZ9aLQPxBS774Kixkl/QXIiuKbDgeKeytWzA7vaObo=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peda@axentia.se; 
+Received: from [192.168.13.3] (85.226.244.23) by
+ DB6PR0201MB2455.eurprd02.prod.outlook.com (2603:10a6:4:35::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1080.15; Mon, 27 Aug 2018 20:48:17 +0000
+Subject: Re: [PATCH v9 0/4] drm/atmel-hlcdc: bus-width override support
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, Jyri Sarha <jsarha@ti.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Sakari Ailus <sakari.ailus@iki.fi>
+References: <20180825085620.10566-1-peda@axentia.se>
+ <20180827212449.723bdc99@bbrezillon>
+ <ca38bd82-09d2-8e55-a3a2-e0e559abdf7f@axentia.se>
+ <20180827223505.7e2fe6f6@bbrezillon> <20180827224055.3ab63c43@bbrezillon>
+From:   Peter Rosin <peda@axentia.se>
+Organization: Axentia Technologies AB
+Message-ID: <26d4d0c2-b59a-40ad-57d1-ab2677253b71@axentia.se>
+Date:   Mon, 27 Aug 2018 22:48:11 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <TU4PR8401MB0430BCEBB2F6C81611054555A60B0@TU4PR8401MB0430.NAMPRD84.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180827224055.3ab63c43@bbrezillon>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
+X-Originating-IP: [85.226.244.23]
+X-ClientProxiedBy: HE1PR05CA0181.eurprd05.prod.outlook.com
+ (2603:10a6:3:f8::29) To DB6PR0201MB2455.eurprd02.prod.outlook.com
+ (2603:10a6:4:35::7)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 10b71706-a87d-4772-5897-08d60c5e6b1a
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(7021125)(8989137)(4534165)(7022125)(4603075)(4627221)(201702281549075)(8990107)(7048125)(7024125)(7027125)(7028125)(7023125)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:DB6PR0201MB2455;
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0201MB2455;3:SJBK5T61yg3UE5MyQKrDIFFGp7271Pbn9qJRX0N0wbYAALl8Tehy7658CCL4Y198UmUZELkrKqETT6deyTNNH8cDVj0H+Wwp4nxrAkSIL2RubEL9o/X3yCKBlDi9Gk1BwfkJfUNg+u47rzdtbQx7uQjn8ka0bzVS82kxiU1KPWXEVpQiWrCjsPVl26lRrFZgkuhxTIVAmWVdIeNOGHn1dI8A/HXS+OFXUdwGt3Aqov8NprU7HOa38A/mcF3wv8tu;25:Ai1UJo9it0/LfXSch97va9ZGIfAD7QR92egYgrN3IUNiiy78KB88+749+q9Z1Os0RjxUbk+C2Y8ooHPaHxLJh83oKEpzq5P19rvxcJWZBMPAZYgqmLFPmrM82l7lFPVUKYVzPzR0SLaupVdlGa/Ijf9SBS9F9kK5hADpkQtzNO6Zo/NCbNw+gHbLZR4uRog5e3KmsB8hO0701vb0t8mY8iokRvVNnf3vko0iCvClR3fEyqfmdtxn+A6snYZKWkgloABLNZscc3+yZO4Qn0Ra5zVp1xxDZVCy+NMadFBPHo+JPL09orw8WgsLjZIFMJVJQXqPkk2sHlBuJRO0+xtqNw==;31:WT4+h2s2F8dpLW7H3IylRBGfA41LR09XI+9kOaNbYvZB1kHzsH9onBR6abJAlxPArdzQ//CHcc8LENTncsbWvZ6QS1oOW+gyd79dKwxlfG5y2kU4+ZzkcoY/T1w1aDQ1UTPlbzZcvdTTVeHJKRrnGSRaJy+ENkKTy0P9GuozmhjSV2G+knkCB6/mVYcjCA5Bp22erzcfQqXn/Mf02vZkDsRlUskHx1QnqxYfw6NuDKE=
+X-MS-TrafficTypeDiagnostic: DB6PR0201MB2455:
+X-Microsoft-Antispam-PRVS: <DB6PR0201MB2455F2AE68AEC1AF2C9140BBBC0B0@DB6PR0201MB2455.eurprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(166708455590820);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(10201501046)(3231311)(944501410)(52105095)(149027)(150027)(6041310)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(2016111802025)(6043046)(201708071742011)(7699016);SRVR:DB6PR0201MB2455;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0201MB2455;
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0201MB2455;4:nT8TE9St7vUVuNmvbbTT6HE3o75qTuBL4gBXKxNqd9x0G50WRYTJX9E10iwhQtHKkUN+YkJVK0rxt/WKMKt9HG7HN9L9wl5YsRnihZl0qCXUARIDdP/0IAEyZHR8TvArs6fAQ0XkIx74/d//bL6F48pNPfZVtA7aUNZ7KCQzSnVoo2rlm35BXeoz5vufKmARXLYIKcWrJkdir/+GENC/BDLVh1oMD7ywX9bBAIq6OHPpdyliZzgsl3fWJdYz0+Af7w3oKRzH328ZtNYs8cNqurB/ea3T4T+PGgCAiBoxsyiHezfKqEKo0AVK7thyTQ4o
+X-Forefront-PRVS: 07778E4001
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(39830400003)(396003)(376002)(346002)(366004)(136003)(199004)(189003)(4326008)(117156002)(6246003)(65956001)(2616005)(11346002)(54906003)(58126008)(16576012)(3260700006)(25786009)(446003)(956004)(476003)(97736004)(230700001)(486006)(3846002)(64126003)(6116002)(386003)(53546011)(316002)(76176011)(52116002)(52146003)(2486003)(23676004)(36916002)(66066001)(65806001)(47776003)(16526019)(186003)(26005)(77096007)(68736007)(6486002)(229853002)(8936002)(93886005)(105586002)(6306002)(106356001)(65826007)(53936002)(50466002)(14444005)(5660300001)(7416002)(966005)(478600001)(6666003)(6916009)(36756003)(86362001)(31686004)(31696002)(305945005)(81156014)(8676002)(7736002)(74482002)(81166006)(2906002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:DB6PR0201MB2455;H:[192.168.13.3];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: axentia.se does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtEQjZQUjAyMDFNQjI0NTU7MjM6MkVRUWZoaThreVRIblZHQXkvMy9KN3lQ?=
+ =?utf-8?B?bGNISm5CdjhDbFlscFlhajhMWnZGL0ZOWWR6dkRtcFdyY09YQlVxcmNBYkkw?=
+ =?utf-8?B?bmVoZW1jQlEyVTBNNEFCcnh2QmF3TXRIbXd5WjFLQ1BpUUxZUndlZjgydUds?=
+ =?utf-8?B?bHR5ZGF5SHU2by94QmU2YkZOM09sNjE4WDlWeU51RG9aR3VNeTlmbFhDM2NK?=
+ =?utf-8?B?UWt5dHlDY1V5Q0MzaGo5a1JxSWQvRWZpc1lBMHJhM1EwVzBQWmpTSXVUUkNp?=
+ =?utf-8?B?cnQzQitvOVhhbHdiTTlpYTlwZUhMMXZFd3k3elRVaHJ4a01xbWZXK0FZM2xq?=
+ =?utf-8?B?UWF4Y3QzK0w4VmZvcXc4M3BCamlOZi9IY1l2UDJaWEhuQi9tQ1BYN00vemNn?=
+ =?utf-8?B?emhMSnQ5TWorWE1kbm5idFhJaEJsRWV6SEluN0JuMS9tMlQ3NnlPME1ZSkdl?=
+ =?utf-8?B?c0g3YlU1aHQvZGZqWGhvQmJXYzBQUzRhZlVHcDByQ09JM0o4c1lnRVFHcnJp?=
+ =?utf-8?B?bE42M3F4bkRVdGp1WC8vQVZwb09kbUJqN2QzMytZcGkwUlEyODZvWVB5OTV4?=
+ =?utf-8?B?SXdORFdORFpJK1Ava2FmVDFYa3h1NTNZZFpIM0l3WklFUHdhV0RSZWJ2R1U3?=
+ =?utf-8?B?eWZsRW54QkNYcW5qTzhlcUUvYTcxdkE3TS9uTWhlZGlndktEdmd1emNqY1Nv?=
+ =?utf-8?B?V0N4dmNPbVJsMmpFclZqUU16ZnM0dDJVWjZRdkhFKzJ6VTl4U0dyWmk2RmpJ?=
+ =?utf-8?B?OHZzNnBMaHdib0t5VjBwUWxEY0c0dEh3ZVFUR3daUStKYTU0WllYYzZHaGZG?=
+ =?utf-8?B?T3YzYldCamxrcVdCbDdnSlcya3dYUnN0NElCeSt1OGFLTTczcGV1TjJSWWU5?=
+ =?utf-8?B?aE1VTXZSTkR2c2RDVjRCQ1FzelQyR2dhUGpnL3hNdTlPamFCdldIY1RFVWwx?=
+ =?utf-8?B?aWJmd2taZkN6dU9pZ0JJQ2lrMGJza1RWMjZYRlFYeTVGNG15UzJDajEwTXEx?=
+ =?utf-8?B?ek04QjN3S0YvdjVneUw4eGNuWUk5YjlVV29CUXZ3VHBKZmVrYWFGa3NPcVJs?=
+ =?utf-8?B?VDZhVWtsaW1ZU1U2dkRqd0ZQbWZ3VGFuUTRHZ3dzN3A5OHZUZEZZVWVseEU5?=
+ =?utf-8?B?N2c0WEZMNHN3QTUwYmQwUEJhckZaY2hCMjNPenZMS3h1RDFMZklIWTRBcEY3?=
+ =?utf-8?B?QjNzd0dsT051RVdMMklmSTVER2FnQm9rQ2hsWjVPT0xhWG1qNHpKdUxDQTYy?=
+ =?utf-8?B?MHVVWGxBSG5aMW83ckl4L3ZmUzBpUTg2V3dlT3lNQmhtUGlUSyswS2R5UVBG?=
+ =?utf-8?B?eXF5R2c3ck1PbkhwZHRHVndiaFBDU3RrSkJ0blNJUVdEbTZoczZONFYvMldZ?=
+ =?utf-8?B?RDNlZTZCUXVmM1Z4T1JvOEFBbk1reEpsVWttZ2Y5UWxNL0xpaHNKMWJQb2lw?=
+ =?utf-8?B?WjU2NWs2UjU4SU5BcXlOR0l2M3FUZzQ3VkhHdit5K28xbzBRYkZ0WC9ZYi9h?=
+ =?utf-8?B?K2hkSGNGUnpYaG1OSTBvMHJPTFlUcHhFVGNFWmpGVW04QnoxczdkWWtMRWUw?=
+ =?utf-8?B?Vy9QbUNLVFNWOUhrazJCVGZxWHhyWmx6ZmpzQUtsN0FXbVhIZWRZY29wckYz?=
+ =?utf-8?B?QXQ1UjdhM2xySkxhaEVMeEZ6dDYzUnJmZWsrTXNUQXZjRzVLWGh1N2pwQmgw?=
+ =?utf-8?B?eXBlZE9TUnI2U2E0NkxKdnZia0dXMkR5aWk5ZXNwMndVQ2pSczVIaUJzZncv?=
+ =?utf-8?B?c3laWDlUVEtmTFhLRldOcjNoSFViZEdTMkQwTWJZUDdjcDdtRnNwekFGaXlx?=
+ =?utf-8?B?allDVG5ITTJxeTB6cHZGd3VFZWdLMEhqWHZxMTYreUxIMFREb1NVZTZkU1lY?=
+ =?utf-8?B?cDhGRWFiMDVwVzdBQUowR0tMSkNBZ1U2a3NTaUpFZnRPak5QTGFWK09MVndw?=
+ =?utf-8?B?YVJLWFpubmV2ZGhqN0ZJUTZzSGNSWUZHS25peUxlZjdTcDI1NmVnTFMzcnNq?=
+ =?utf-8?B?blR0OStONUE3U2FycDAzL004S1RxMTJwOHBRUlBlVDRzdHlIL2FXRVRpVjVE?=
+ =?utf-8?B?WE82QVBoSHpsN0tvVExCdlB6TnZ5MmxMR1RlcE80VlYwSSt1RkVtYU9sMFpS?=
+ =?utf-8?B?a25jTkJuYVk3M3hzOEVVOW9ZQ0l4QU1QdjhmdWFxNytpRjNJcFE5a1dsNUxy?=
+ =?utf-8?Q?nmXfKy0YkGtEmJJbenxEFuyVqvSxB3CCyRGS3enuDRmM=3D?=
+X-Microsoft-Antispam-Message-Info: iAuieOkniCP1xOsIabxCf/FhThJB+/p9qOAI0EAmremt8mhzGKF2nzyqhuMj0bkXq56NpSrOwBWCOskr4vbAYyInPfsW+bJSSWSPkbS9X+luWGobE/ODz6J0ZN53SpJNxu7pI1hHVnkhknaJ7ahVsSgdg2b+f/Qyh/a0Ay10G6ISnNknCfqBP7A7GuDdoleVW12h8wNEHYypRnQMgKj7tNYwD5QsTleZspRudxih9vmY2/+zxg6OvYYyqbPTAGiHpTokDELcUch5yYnC70wjcwYqY4XnoAztOTBzQzHA3lxSv60DJGILGZtYxASMe3oSIYMNWZrkl3NYUm2q4l22C+TSF6P2OoWrHrGNMaJ1lEo=
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0201MB2455;6:otVCBrQVjqwoqspNkImR8reicbXYq8L4Xf9/Jp7bWSbuqNlXP7IyiDOrDn3UmBkFT5Ibkm/paV7x6W9IdIEmqiSJJ07ec5JgSlsz2oaRraww5gOKJSC7Xmh0ipy6amCYa6SXl20sImEk8eMmdrQC5KnhjVVzuTWazk68jldDVdKx9RMfYzlwZ6BrXQrAClTT8i6p1KHIszRhMGFGxejENnurAhgqO/tGPNJna5nUY5TUb2nU9jdy5jL96kSlzI6ENpJqCVBmflJdswB2uh/97xLMiUcaypZEDRdtjYVGQGkkB3Vw8m5gxhW1+tKzCzIo7Hs1Jrg/4NEGTq37ByQ+aLbN/iuQgL2E1zy9ugYcwNFH2SVvIJwYN1hB3ZrzASjoqH9oEVyqkEKcbPfd3lSTuqdfyVRMaqpA310n2/E6cX+5k2k3n7qLk4TzgRvFSRTy4gIO14/MD6WMQuBZERvJwQ==;5:lU/zYp0dIcCgG07pzRjk/zAHa14IzibEurnEanZrIpe+zdQBYyo+8fd2F6VAuE310nD1dcSTqnHz5UU2QFaZdgJ2pW19SdHymZyRX9bN60pYqYe65xlF7rwUedxBUi8zrntmw/mh47OTuWweUISUlVpsffqdg6cehc/yCxdcnzo=;7:FPugjNxkGhA+MN5Sqs3UYPD2BbqsWusSVIa8TPEbAE/6sY6bdzewEpcncVegLjjFtO3NunyTHgMVbIBx13U7oTR5ijvpfItf4LAzneyRBWO+W7mr1NDI9EblvoQ5OQ/s+zNcXdN2BdLrZmKjpqA8TQQyyT8xN3qIa7uHNhrQk0FLJl2cqi0CzilbOnOBahtFCuGqTuS40jDkwxNjzaIcyA1JM6msfWglEKFwExes+pyCMPX1Mf6geh+e/aVBu9m6
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: axentia.se
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2018 20:48:17.0021 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 10b71706-a87d-4772-5897-08d60c5e6b1a
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0201MB2455
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/27/2018 03:16 PM, Banman, Andrew wrote:
-> Tested-by: Andrew Banman
->
-> Ran through 100+ boots with no error with your 1st patch applied. I don't see any endcases to worry about.
->
+On 2018-08-27 22:40, Boris Brezillon wrote:
+> On Mon, 27 Aug 2018 22:35:05 +0200
+> Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+> 
+>> On Mon, 27 Aug 2018 22:31:22 +0200
+>> Peter Rosin <peda@axentia.se> wrote:
+>>
+>>> On 2018-08-27 21:24, Boris Brezillon wrote:  
+>>>> On Sat, 25 Aug 2018 10:56:16 +0200
+>>>> Peter Rosin <peda@axentia.se> wrote:
+>>>>     
+>>>>> Hi!
+>>>>>
+>>>>> The background for these patches is that our PCB interface between
+>>>>> the SAMA5D3 and the ds90c185 lvds encoder is only using 16 bits, and
+>>>>> this has to be described somewhere, or the atmel-hlcdc driver have no
+>>>>> chance of selecting the correct output mode. Since we have similar
+>>>>> problems with a tda19988 HDMI encoder I added patches to override
+>>>>> the atmel-hlcdc output format via DT properties compatible with the
+>>>>> media video-interface binding and things start to play together.    
+>>>>
+>>>> Queued to drm-misc-next.    
+>>>
+>>> Thanks!
+>>>
+>>> Minute issue, you seem to have some spell-check going on or something,
+>>> because the subject of patch 1/4 has been "corrected" from
+>>> "...add ti,ds90c185" to "...add ti, ds90c185"
+>>>
+>>> You might want to evaluate if that auto-correction "feature" should be
+>>> disabled/tweaked/whatever...  
+>>
+>> Hm, weird. I just downloaded the mbox from dri-devel's patchwork and
+>> passed it to dim apply. dim tends to do a lot of things behind the
+>> scene, so maybe it's also trying to fix typos :-).
+> 
+> Nope, looks like it was already wrong on patchwork [1], don't know what
+> happened, because the version I have in my mailbox is correct.
+> 
+> [1]https://patchwork.freedesktop.org/patch/246039/
 
-Thanks for the testing, it's queued for the next release.
+Apparently a known issue: https://github.com/getpatchwork/patchwork/issues/197
 
--corey
-
-> Thanks Corey!
->
-> Andrew
->
->> -----Original Message-----
->> From: Corey Minyard [mailto:tcminyard@gmail.com] On Behalf Of
->> minyard@acm.org
->> Sent: Thursday, August 23, 2018 3:37 PM
->> To: Banman, Andrew <abanman@hpe.com>
->> Cc: openipmi-developer@lists.sourceforge.net; linux-
->> kernel@vger.kernel.org; Anderson, Russ <russ.anderson@hpe.com>; Ramsay,
->> Frank <frank.ramsay@hpe.com>; Ernst, Justin <justin.ernst@hpe.com>;
->> Corey Minyard <cminyard@mvista.com>
->> Subject: [PATCH 1/2] ipmi: Move BT capabilities detection to the detect
->> call
->>
->> From: Corey Minyard <cminyard@mvista.com>
->>
->> The capabilities detection was being done as part of the normal
->> state machine, but it was possible for it to be running while
->> the upper layers of the IPMI driver were initializing the
->> device, resulting in error and failure to initialize.
->>
->> Move the capabilities detection to the the detect function,
->> so it's done before anything else runs on the device.  This also
->> simplifies the state machine and removes some code, as a bonus.
->>
->> Signed-off-by: Corey Minyard <cminyard@mvista.com>
->> Reported-by: Andrew Banman <abanman@hpe.com>
->> ---
->>   drivers/char/ipmi/ipmi_bt_sm.c | 92 ++++++++++++++++++++++-------------
->> -------
->>   1 file changed, 48 insertions(+), 44 deletions(-)
->>
->> diff --git a/drivers/char/ipmi/ipmi_bt_sm.c
->> b/drivers/char/ipmi/ipmi_bt_sm.c
->> index cbc6126..b4133832e 100644
->> --- a/drivers/char/ipmi/ipmi_bt_sm.c
->> +++ b/drivers/char/ipmi/ipmi_bt_sm.c
->> @@ -59,8 +59,6 @@ enum bt_states {
->>   	BT_STATE_RESET3,
->>   	BT_STATE_RESTART,
->>   	BT_STATE_PRINTME,
->> -	BT_STATE_CAPABILITIES_BEGIN,
->> -	BT_STATE_CAPABILITIES_END,
->>   	BT_STATE_LONG_BUSY	/* BT doesn't get hosed :-) */
->>   };
->>
->> @@ -86,7 +84,6 @@ struct si_sm_data {
->>   	int		error_retries;	/* end of "common" fields */
->>   	int		nonzero_status;	/* hung BMCs stay all 0 */
->>   	enum bt_states	complete;	/* to divert the state machine */
->> -	int		BT_CAP_outreqs;
->>   	long		BT_CAP_req2rsp;
->>   	int		BT_CAP_retries;	/* Recommended retries */
->>   };
->> @@ -137,8 +134,6 @@ static char *state2txt(unsigned char state)
->>   	case BT_STATE_RESET3:		return("RESET3");
->>   	case BT_STATE_RESTART:		return("RESTART");
->>   	case BT_STATE_LONG_BUSY:	return("LONG_BUSY");
->> -	case BT_STATE_CAPABILITIES_BEGIN: return("CAP_BEGIN");
->> -	case BT_STATE_CAPABILITIES_END:	return("CAP_END");
->>   	}
->>   	return("BAD STATE");
->>   }
->> @@ -185,7 +180,6 @@ static unsigned int bt_init_data(struct si_sm_data
->> *bt, struct si_sm_io *io)
->>   	bt->complete = BT_STATE_IDLE;	/* end here */
->>   	bt->BT_CAP_req2rsp = BT_NORMAL_TIMEOUT * USEC_PER_SEC;
->>   	bt->BT_CAP_retries = BT_NORMAL_RETRY_LIMIT;
->> -	/* BT_CAP_outreqs == zero is a flag to read BT Capabilities */
->>   	return 3; /* We claim 3 bytes of space; ought to check SPMI table
->> */
->>   }
->>
->> @@ -447,7 +441,7 @@ static enum si_sm_result error_recovery(struct
->> si_sm_data *bt,
->>
->>   static enum si_sm_result bt_event(struct si_sm_data *bt, long time)
->>   {
->> -	unsigned char status, BT_CAP[8];
->> +	unsigned char status;
->>   	static enum bt_states last_printed = BT_STATE_PRINTME;
->>   	int i;
->>
->> @@ -500,12 +494,6 @@ static enum si_sm_result bt_event(struct si_sm_data
->> *bt, long time)
->>   		if (status & BT_H_BUSY)		/* clear a leftover H_BUSY */
->>   			BT_CONTROL(BT_H_BUSY);
->>
->> -		bt->timeout = bt->BT_CAP_req2rsp;
->> -
->> -		/* Read BT capabilities if it hasn't been done yet */
->> -		if (!bt->BT_CAP_outreqs)
->> -			BT_STATE_CHANGE(BT_STATE_CAPABILITIES_BEGIN,
->> -					SI_SM_CALL_WITHOUT_DELAY);
->>   		BT_SI_SM_RETURN(SI_SM_IDLE);
->>
->>   	case BT_STATE_XACTION_START:
->> @@ -610,37 +598,6 @@ static enum si_sm_result bt_event(struct si_sm_data
->> *bt, long time)
->>   		BT_STATE_CHANGE(BT_STATE_XACTION_START,
->>   				SI_SM_CALL_WITH_DELAY);
->>
->> -	/*
->> -	 * Get BT Capabilities, using timing of upper level state machine.
->> -	 * Set outreqs to prevent infinite loop on timeout.
->> -	 */
->> -	case BT_STATE_CAPABILITIES_BEGIN:
->> -		bt->BT_CAP_outreqs = 1;
->> -		{
->> -			unsigned char GetBT_CAP[] = { 0x18, 0x36 };
->> -			bt->state = BT_STATE_IDLE;
->> -			bt_start_transaction(bt, GetBT_CAP, sizeof(GetBT_CAP));
->> -		}
->> -		bt->complete = BT_STATE_CAPABILITIES_END;
->> -		BT_STATE_CHANGE(BT_STATE_XACTION_START,
->> -				SI_SM_CALL_WITH_DELAY);
->> -
->> -	case BT_STATE_CAPABILITIES_END:
->> -		i = bt_get_result(bt, BT_CAP, sizeof(BT_CAP));
->> -		bt_init_data(bt, bt->io);
->> -		if ((i == 8) && !BT_CAP[2]) {
->> -			bt->BT_CAP_outreqs = BT_CAP[3];
->> -			bt->BT_CAP_req2rsp = BT_CAP[6] * USEC_PER_SEC;
->> -			bt->BT_CAP_retries = BT_CAP[7];
->> -		} else
->> -			pr_warn("IPMI BT: using default values\n");
->> -		if (!bt->BT_CAP_outreqs)
->> -			bt->BT_CAP_outreqs = 1;
->> -		pr_warn("IPMI BT: req2rsp=%ld secs retries=%d\n",
->> -			bt->BT_CAP_req2rsp / USEC_PER_SEC, bt->BT_CAP_retries);
->> -		bt->timeout = bt->BT_CAP_req2rsp;
->> -		return SI_SM_CALL_WITHOUT_DELAY;
->> -
->>   	default:	/* should never occur */
->>   		return error_recovery(bt,
->>   				      status,
->> @@ -651,6 +608,11 @@ static enum si_sm_result bt_event(struct si_sm_data
->> *bt, long time)
->>
->>   static int bt_detect(struct si_sm_data *bt)
->>   {
->> +	unsigned char GetBT_CAP[] = { 0x18, 0x36 };
->> +	unsigned char BT_CAP[8];
->> +	enum si_sm_result smi_result;
->> +	int rv;
->> +
->>   	/*
->>   	 * It's impossible for the BT status and interrupt registers to be
->>   	 * all 1's, (assuming a properly functioning, self-initialized BMC)
->> @@ -661,6 +623,48 @@ static int bt_detect(struct si_sm_data *bt)
->>   	if ((BT_STATUS == 0xFF) && (BT_INTMASK_R == 0xFF))
->>   		return 1;
->>   	reset_flags(bt);
->> +
->> +	/*
->> +	 * Try getting the BT capabilities here.
->> +	 */
->> +	rv = bt_start_transaction(bt, GetBT_CAP, sizeof(GetBT_CAP));
->> +	if (rv) {
->> +		dev_warn(bt->io->dev,
->> +			 "Can't start capabilities transaction: %d\n", rv);
->> +		goto out_no_bt_cap;
->> +	}
->> +
->> +	smi_result = SI_SM_CALL_WITHOUT_DELAY;
->> +	for (;;) {
->> +		if (smi_result == SI_SM_CALL_WITH_DELAY ||
->> +		    smi_result == SI_SM_CALL_WITH_TICK_DELAY) {
->> +			schedule_timeout_uninterruptible(1);
->> +			smi_result = bt_event(bt, jiffies_to_usecs(1));
->> +		} else if (smi_result == SI_SM_CALL_WITHOUT_DELAY) {
->> +			smi_result = bt_event(bt, 0);
->> +		} else
->> +			break;
->> +	}
->> +
->> +	rv = bt_get_result(bt, BT_CAP, sizeof(BT_CAP));
->> +	bt_init_data(bt, bt->io);
->> +	if (rv < 8) {
->> +		dev_warn(bt->io->dev, "bt cap response too short: %d\n", rv);
->> +		goto out_no_bt_cap;
->> +	}
->> +
->> +	if (BT_CAP[2]) {
->> +		dev_warn(bt->io->dev, "Error fetching bt cap: %x\n",
->> BT_CAP[2]);
->> +out_no_bt_cap:
->> +		dev_warn(bt->io->dev, "using default values\n");
->> +	} else {
->> +		bt->BT_CAP_req2rsp = BT_CAP[6] * USEC_PER_SEC;
->> +		bt->BT_CAP_retries = BT_CAP[7];
->> +	}
->> +
->> +	dev_info(bt->io->dev, "req2rsp=%ld secs retries=%d\n",
->> +		 bt->BT_CAP_req2rsp / USEC_PER_SEC, bt->BT_CAP_retries);
->> +
->>   	return 0;
->>   }
->>
->> --
->> 2.7.4
-
-
+Cheers,
+Peter
