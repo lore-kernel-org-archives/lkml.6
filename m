@@ -2,142 +2,166 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=DATE_IN_FUTURE_03_06,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2A9BC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 00:27:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE14CC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 00:56:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D53C2174A
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 00:27:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D53C2174A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
+	by mail.kernel.org (Postfix) with ESMTP id 5FACE2174A
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 00:56:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FACE2174A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726890AbeH0EL2 (ORCPT
+        id S1726927AbeH0Ekf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 00:11:28 -0400
-Received: from ipmail03.adl2.internode.on.net ([150.101.137.141]:8835 "EHLO
-        ipmail03.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725779AbeH0EL1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 00:11:27 -0400
-X-Greylist: delayed 303 seconds by postgrey-1.27 at vger.kernel.org; Mon, 27 Aug 2018 00:11:26 EDT
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail03.adl2.internode.on.net with ESMTP; 27 Aug 2018 09:51:35 +0930
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1fu5Hi-0007Gq-I4; Mon, 27 Aug 2018 10:21:34 +1000
-Date:   Mon, 27 Aug 2018 10:21:34 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Waiman Long <longman@redhat.com>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] xfs: Prevent multiple wakeups of the same log
- space waiter
-Message-ID: <20180827002134.GE2234@dastard>
-References: <1535316795-21560-1-git-send-email-longman@redhat.com>
- <1535316795-21560-3-git-send-email-longman@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1535316795-21560-3-git-send-email-longman@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Mon, 27 Aug 2018 00:40:35 -0400
+Received: from mga17.intel.com ([192.55.52.151]:29318 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725779AbeH0Ekf (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 00:40:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Aug 2018 17:56:18 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,293,1531810800"; 
+   d="scan'208";a="75793336"
+Received: from skl.sh.intel.com ([10.239.161.125])
+  by FMSMGA003.fm.intel.com with ESMTP; 26 Aug 2018 17:56:15 -0700
+From:   Jin Yao <yao.jin@linux.intel.com>
+To:     acme@kernel.org, peterz@infradead.org, mingo@redhat.com,
+        eranian@google.com, kan.liang@intel.com, jolsa@kernel.org
+Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        yao.jin@intel.com, Jin Yao <yao.jin@linux.intel.com>
+Subject: [PATCH] perf/x86/intel/uncore: Provide alias for IIO free-running boxes on SKX
+Date:   Mon, 27 Aug 2018 16:48:53 +0800
+Message-Id: <1535359733-6755-1-git-send-email-yao.jin@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Aug 26, 2018 at 04:53:14PM -0400, Waiman Long wrote:
-> The current log space reservation code allows multiple wakeups of the
-> same sleeping waiter to happen. This is a just a waste of cpu time as
-> well as increasing spin lock hold time. So a new XLOG_TIC_WAKING flag is
-> added to track if a task is being waken up and skip the wake_up_process()
-> call if the flag is set.
-> 
-> Running the AIM7 fserver workload on a 2-socket 24-core 48-thread
-> Broadwell system with a small xfs filesystem on ramfs, the performance
-> increased from 91,486 jobs/min to 192,666 jobs/min with this change.
+For Skylake Server, Linux has supported a number of free running
+counters that collect counts of IO clocks/Bandwidth/Utilization.
 
-Oh, I just noticed you are using a ramfs for this benchmark,
+For example, to collect the inbound bandwidth,
 
-tl; dr: Once you pass a certain point, ramdisks can be *much* slower
-than SSDs on journal intensive workloads like AIM7. Hence it would be
-useful to see if you have the same problems on, say, high
-performance nvme SSDs.
+root@skx /sys/devices# ls | grep uncore_iio
+uncore_iio_0
+uncore_iio_1
+uncore_iio_2
+uncore_iio_3
+uncore_iio_4
+uncore_iio_5
+uncore_iio_free_running_0
+uncore_iio_free_running_1
+uncore_iio_free_running_2
+uncore_iio_free_running_3
+uncore_iio_free_running_4
+uncore_iio_free_running_5
 
------
+root@skx /sys/devices# perf stat -a -e uncore_iio_free_running_2/bw_in_port0/
+^C
+ Performance counter stats for 'system wide':
 
-Ramdisks have substantially different means log IO completion and
-wakeup behaviour compared to real storage on real production
-systems. Basically, ramdisks are synchronous and real storage is
-asynchronous.
+            153.19 MiB  uncore_iio_free_running_2/bw_in_port0/
 
-That is, on a ramdisk the IO completion is run synchronously in the
-same task as the IO submission because the IO is just a memcpy().
-Hence a single dispatch thread can only drive an IO queue depth of 1
-IO - there is no concurrency possible. This serialises large parts
-of the XFS journal - the journal is really an asynchronous IO engine
-that gets it's performance from driving deep IO queues and batching
-commits while IO is in flight.
+       8.037701069 seconds time elapsed
 
-Ramdisks also have very low IO latency, which means there's only a
-very small window for "IO in flight" batching optimisations to be
-made effectively. It effectively stops such algorithms from working
-completely. This means the XFS journal behaves very differently on
-ramdisks when compared to normal storage.
+While it's hard for user to understanding what the box the
+uncore_iio_free_running_N means.
 
-The submission batching techniques reduces log IOs by a factor of
-10-20 under heavy synchrnous transaction loads when there is any
-noticeable journal IO delay - a few tens of microseconds is enough
-for it to function effectively, but a ramdisk doesn't even have this
-delay on journal IO.  The submission batching also has the
-effect of reducing log space wakeups by the same factor there are
-less IO completions signalling that space has been made available.
+This patch provides aliases for the boxes. With this patch,
+for example,
 
-Further, when we get async IO completions from real hardware, they
-get processed in batches by a completion workqueue - this leads to
-there typically only being a single reservation space update from
-all batched IO completions. This tends to reduce log space wakeups
-due to log IO completion by a factor of 6-8 as the log can have up
-to 8 concurrent IOs in flight at a time.
+root@skx /sys/devices# ls | grep uncore_iio
+uncore_iio_0
+uncore_iio_1
+uncore_iio_2
+uncore_iio_3
+uncore_iio_4
+uncore_iio_5
+uncore_iio_cbdma
+uncore_iio_mcp0
+uncore_iio_mcp1
+uncore_iio_pcie0
+uncore_iio_pcie1
+uncore_iio_pcie2
 
-And when we throw in the lack of batching, merging and IO completion
-aggregation of metadata writeback because ramdisks are synchrnous
-and don't queue or merge adjacent IOs, we end up with lots more
-contention on the AIL lock and much more frequent log space wakeups
-(i.e. from log tail movement updates). This futher exacerbates the
-problems the log already has with synchronous IO.
+root@skx ~# perf stat -a -e uncore_iio_pcie1/bw_in_port0/
+^C
+ Performance counter stats for 'system wide':
 
-IOWs, log space wakeups on real storage are likely to be 50-100x
-lower than on a ramdisk for the same metadata and journal intensive
-workload, and as such those workloads often run faster on real
-storage than they do on ramdisks.
+            153.12 MiB  uncore_iio_pcie1/bw_in_port0/
 
-This can be trivially seen with dbench, a simple IO benchmark that
-hammers the journal. On a ramdisk, I can only get 2-2.5GB/s
-throughput from the benchmark before the log bottlenecks at about
-20,000 log tiny IOs per second. In comparison, on an old, badly
-abused Samsung 850EVO SSD, I see 5-6GB/s in 2,000 log IOs per second
-because of the pipelining and IO batching in the XFS journal async
-IO engine and the massive reduction in metadata IO due to merging of
-adjacent IOs in the block layer. i.e. the journal and metadata
-writeback design allows the filesystem to operate at a much higher
-synchronous transaction rate than would otherwise be possible by
-taking advantage of the IO concurrency that storage provides us
-with.
+       8.469790720 seconds time elapsed
 
-So if you use proper storage hardware (e.g. nvme SSD) and/or an
-appropriately sized log, does the slowpath wakeup contention go
-away? Can you please test both of these things and report the
-results so we can properly evaluate the impact of these changes?
+Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+---
+ arch/x86/events/intel/uncore.c       |  9 +++++++--
+ arch/x86/events/intel/uncore.h       |  1 +
+ arch/x86/events/intel/uncore_snbep.c | 10 ++++++++++
+ 3 files changed, 18 insertions(+), 2 deletions(-)
 
-Cheers,
-
-Dave.
+diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
+index 27a4614..6c6615f 100644
+--- a/arch/x86/events/intel/uncore.c
++++ b/arch/x86/events/intel/uncore.c
+@@ -812,8 +812,13 @@ static int uncore_pmu_register(struct intel_uncore_pmu *pmu)
+ 		else
+ 			sprintf(pmu->name, "uncore");
+ 	} else {
+-		sprintf(pmu->name, "uncore_%s_%d", pmu->type->name,
+-			pmu->pmu_idx);
++		if (pmu->type->alias && pmu->pmu_idx < pmu->type->num_boxes) {
++			sprintf(pmu->name, "uncore_%s",
++				pmu->type->alias[pmu->pmu_idx]);
++		} else {
++			sprintf(pmu->name, "uncore_%s_%d", pmu->type->name,
++				pmu->pmu_idx);
++		}
+ 	}
+ 
+ 	ret = perf_pmu_register(&pmu->pmu, pmu->name, -1);
+diff --git a/arch/x86/events/intel/uncore.h b/arch/x86/events/intel/uncore.h
+index e17ab88..db9fd9a 100644
+--- a/arch/x86/events/intel/uncore.h
++++ b/arch/x86/events/intel/uncore.h
+@@ -44,6 +44,7 @@ struct freerunning_counters;
+ 
+ struct intel_uncore_type {
+ 	const char *name;
++	const char **alias;
+ 	int num_counters;
+ 	int num_boxes;
+ 	int perf_ctr_bits;
+diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
+index 51d7c11..9cd7e3d 100644
+--- a/arch/x86/events/intel/uncore_snbep.c
++++ b/arch/x86/events/intel/uncore_snbep.c
+@@ -3596,8 +3596,18 @@ static const struct attribute_group skx_uncore_iio_freerunning_format_group = {
+ 	.attrs = skx_uncore_iio_freerunning_formats_attr,
+ };
+ 
++static const char * const skx_uncore_iio_free_running_aliases[] = {
++	{ "iio_cbdma" },
++	{ "iio_pcie0" },
++	{ "iio_pcie1" },
++	{ "iio_pcie2" },
++	{ "iio_mcp0" },
++	{ "iio_mcp1" },
++};
++
+ static struct intel_uncore_type skx_uncore_iio_free_running = {
+ 	.name			= "iio_free_running",
++	.alias			= skx_uncore_iio_free_running_aliases,
+ 	.num_counters		= 17,
+ 	.num_boxes		= 6,
+ 	.num_freerunning_types	= SKX_IIO_FREERUNNING_TYPE_MAX,
 -- 
-Dave Chinner
-david@fromorbit.com
+2.7.4
+
