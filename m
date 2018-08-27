@@ -5,90 +5,131 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC014C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 09:13:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 359B6C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 09:20:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82E24208DC
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 09:13:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82E24208DC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D89CB208E8
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 09:20:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D89CB208E8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727501AbeH0M7S (ORCPT
+        id S1726934AbeH0NGp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 08:59:18 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:43510 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726809AbeH0M7S (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 08:59:18 -0400
-Received: by mail-oi0-f67.google.com with SMTP id b15-v6so26023248oib.10
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 02:13:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FdyB5L5u+AgNWTGX8hrCvOghcobJpARjDStYBw7uhzI=;
-        b=rUSzwk1jlU/4Khkr4/D9FvTumyZ8wE6oOLLp7mfjS9kDRcX9PBaXzW7qpnw6L/9Pzy
-         tg778vJ7FYXaWWg4cl3Bov8s0cAXL6yemf64ueeBrX1Ol+nOUWK0IMk5+2i3ycDHdo07
-         yd/17RjBbP0lSzKey+IdG4ZVyYuG7xkuoh09hVyw9wU4DwwacRRvscgHFyaOzBWzIZDY
-         +URFHOXoYK+Hi/An71cV1dHwuyotH0Nu4WMmxBBiblsY4FkW/z6l1nKxFyXFot8wtn0e
-         cnCAoVRxC7WqfRATTUZXWYmJHlNJIyW3HVahadsp1AzPws4fEwmuntC+LdQToEfSICA6
-         WFLw==
-X-Gm-Message-State: APzg51B/tLCB3kImDwHq8Yrcbt+5Zh7kh5aKXhxQW5XIah6f+DfYk5AE
-        B9FV5GtZAK55ZeAWVl6UrsVYnDvQxhRY3e1zU4K4FQ==
-X-Google-Smtp-Source: ANB0VdaxAJnh4HVyOQHJZCmNKVNkKXIevdor2oOi8An3LPXxr1y49H2jx9dq48oyZuubD7LqnI9tqnA/AToYSjeOaXE=
-X-Received: by 2002:aca:7c2:: with SMTP id 185-v6mr11917504oih.31.1535361209229;
- Mon, 27 Aug 2018 02:13:29 -0700 (PDT)
+        Mon, 27 Aug 2018 09:06:45 -0400
+Received: from mga03.intel.com ([134.134.136.65]:57710 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726802AbeH0NGo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 09:06:44 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2018 02:20:53 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,294,1531810800"; 
+   d="scan'208";a="83688255"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga004.fm.intel.com with ESMTP; 27 Aug 2018 02:20:53 -0700
+Received: from [10.125.252.155] (abudanko-mobl.ccr.corp.intel.com [10.125.252.155])
+        by linux.intel.com (Postfix) with ESMTP id 25D555803DA;
+        Mon, 27 Aug 2018 02:20:50 -0700 (PDT)
+Subject: Re: [PATCH v1 2/2]: perf record: enable asynchronous trace writing
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-perf-users@vger.kernel.org
+References: <dcd3ee88-57d6-8704-f5e1-7a3c75a17d8d@linux.intel.com>
+ <2db359cc-dc5d-c00e-a42a-12a2e9da80b7@linux.intel.com>
+ <20180826214856.GA24518@krava>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <3a8286ff-124f-fb56-1d1c-5d5e1f3b8512@linux.intel.com>
+Date:   Mon, 27 Aug 2018 12:20:50 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180824120001.20771-1-omosnace@redhat.com> <20180824120001.20771-2-omosnace@redhat.com>
- <20180827075020.GL27091@localhost>
-In-Reply-To: <20180827075020.GL27091@localhost>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Mon, 27 Aug 2018 11:13:17 +0200
-Message-ID: <CAFqZXNvADB-E_fjEaQpUymSVvfP-vXQXtk3K+nJ9DqrScHL8bQ@mail.gmail.com>
-Subject: Re: [PATCH ghak10 v5 1/2] audit: Add functions to log time adjustments
-To:     Miroslav Lichvar <mlichvar@redhat.com>
-Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Richard Guy Briggs <rgb@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180826214856.GA24518@krava>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 9:50 AM Miroslav Lichvar <mlichvar@redhat.com> wrote:
-> On Fri, Aug 24, 2018 at 02:00:00PM +0200, Ondrej Mosnacek wrote:
-> > This patch adds two auxiliary record types that will be used to annotate
-> > the adjtimex SYSCALL records with the NTP/timekeeping values that have
-> > been changed.
->
-> It seems the "adjust" function intentionally logs also calls/modes
-> that don't actually change anything. Can you please explain it a bit
-> in the message?
->
-> NTP/PTP daemons typically don't read the adjtimex values in a normal
-> operation and overwrite them on each update, even if they don't
-> change. If the audit function checked that oldval != newval, the
-> number of messages would be reduced and it might be easier to follow.
+Hi,
 
-We actually want to log any attempt to change a value, as even an
-intention to set/change something could be a hint that the process is
-trying to do something bad (see discussion at [1]). There are valid
-arguments both for and against this choice, but we have to pick one in
-the end... Anyway, I should explain the reasoning in the commit
-message better, right now it just states the fact without explanation
-(in the second patch), thank you for pointing my attention to it.
+On 27.08.2018 0:48, Jiri Olsa wrote:
+> On Tue, Aug 21, 2018 at 11:27:03AM +0300, Alexey Budankov wrote:
+> 
+> SNIP
+> 
+>> -static int record__pushfn(void *to, void *bf, size_t size)
+>> +static int record__pushfn(void *to, void *bf, size_t size, off_t off)
+>>  {
+>>  	struct record *rec = to;
+>> +	struct perf_mmap *map = bf;
+>>  
+>>  	rec->samples++;
+>> -	return record__write(rec, bf, size);
+>> +	return record__aio_write(rec->session->data->file.fd, &map->cblock,
+>> +			map->data, size, off);
+>>  }
+>>  
+>>  static volatile int done;
+>> @@ -528,13 +530,85 @@ static struct perf_event_header finished_round_event = {
+>>  	.type = PERF_RECORD_FINISHED_ROUND,
+>>  };
+>>  
+>> +static int record__mmap_read_sync(int trace_fd, struct aiocb **cblocks,
+>> +		int cblocks_size, struct record *rec)
+>> +{
+>> +	size_t rem;
+>> +	ssize_t size;
+>> +	off_t rem_off;
+>> +	int i, aio_ret, aio_errno, do_suspend;
+>> +	struct perf_mmap *md;
+>> +	struct timespec timeout0 = { 0, 0 };
+>> +	struct timespec timeoutS = { 0, 1000 * 500  * 1 };
+>> +
+>> +	if (!cblocks_size)
+>> +		return 0;
+>> +
+>> +	do {
+>> +		do_suspend = 0;
+>> +		nanosleep(&timeoutS, NULL);
+> 
+> why the extra sleep in here and not sleeping through aio_suspend call?
 
-[1] https://www.redhat.com/archives/linux-audit/2018-July/msg00061.html
+Yep. Good question. That requires explicit explanation:
 
---
-Ondrej Mosnacek <omosnace at redhat dot com>
-Associate Software Engineer, Security Technologies
-Red Hat, Inc.
++               /* aio_suspend() implementation inside glibc (as of v2.27) is
++                * intrusive and not just blocks waiting io requests completion
++                * but polls requests queue inducing context switches in perf
++                * tool process. When profiling in system wide mode with tracing
++                * context switches the trace may be polluted by context switches
++                * from the perf process and the trace size becomes about 3-5
++                * times bigger than that of when writing the trace serially.
++                * To limit the volume of context switches from perf tool
++                * process nonsleep() call limits aio_suspend()
++                * polling till every half of the kernel timer tick which is
++                * usually 1ms (depends on CONFIG_HZ value).
++                */
+
+> 
+> jirka
+> 
+>> +		if (aio_suspend((const struct aiocb**)cblocks, cblocks_size, &timeout0)) {
+>> +			if (errno == EAGAIN || errno == EINTR) {
+>> +				do_suspend = 1;
+>> +				continue;
+>> +			} else {
+>> +				pr_err("failed to sync perf data, error: %m\n");
+> 
+> SNIP
+> 
