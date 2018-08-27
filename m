@@ -3,254 +3,231 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0C44C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 07:41:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BDA1C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 07:42:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 646942084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 07:41:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C493F2084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 07:42:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="NMOyG9b6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 646942084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="nKIxbFmh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C493F2084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=synaptics.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727252AbeH0L1X (ORCPT
+        id S1727298AbeH0L2K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 07:27:23 -0400
-Received: from mail-eopbgr680072.outbound.protection.outlook.com ([40.107.68.72]:5536
-        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
+        Mon, 27 Aug 2018 07:28:10 -0400
+Received: from mail-eopbgr700062.outbound.protection.outlook.com ([40.107.70.62]:2784
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726882AbeH0L1X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 07:27:23 -0400
+        id S1727118AbeH0L2K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 07:28:10 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ d=Synaptics.onmicrosoft.com; s=selector1-synaptics-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QFmcbXk/+f4jQy/M0FsV3c4bqRWfvz4GpdRrsy/qCjs=;
- b=NMOyG9b6wVSbPgrkH4xZ6qynPHjEUloOrkrmrwxUd/w2k5u/3UQXnk58mIClcR6x/jp1P/6sidmzbXwBIfadKUkPlfBh6tBugRLsYh1oShDs7ss4AeBxYLcSj8jE4TIHKirKHHRDKgvX01ai25SayAmhOnNxIwFjFnYgGIeXEfg=
+ bh=kdqa3PzfRkR6UiJWPHs9UyAFe5vW1SBMZGLp0L/ykIo=;
+ b=nKIxbFmhvztQau2jZrOe16r/j7yKl8qloJ+4wu5Ldbz9KjYNN5//tHAh4D2S6+ZeSpWT11AM8NNpDkQltyFMV7yZ5ndFgUFuqs/cZm7Egnp5HqrhOTF0fzFGPcQEvM8PMeQJHI6Hms0JwnLbSf/MlXbuCzibsybcHwgGjMUhPlg=
 Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Christian.Koenig@amd.com; 
-Received: from [IPv6:2a02:908:1257:4460:1ab8:55c1:a639:6740]
- (2a02:908:1257:4460:1ab8:55c1:a639:6740) by
- DM5PR12MB1723.namprd12.prod.outlook.com (2603:10b6:3:10f::12) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1080.17; Mon, 27 Aug 2018 07:41:40 +0000
-Subject: Re: [PATCH] mm, oom: distinguish blockable mode for mmu notifiers
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Michal Hocko <mhocko@kernel.org>
-Cc:     kvm@vger.kernel.org,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Sudeep Dutt <sudeep.dutt@intel.com>,
-        dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Dimitri Sivanich <sivanich@sgi.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        Doug Ledford <dledford@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        xen-devel@lists.xenproject.org, intel-gfx@lists.freedesktop.org,
-        Leon Romanovsky <leonro@mellanox.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ashutosh Dixit <ashutosh.dixit@intel.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Felix Kuehling <felix.kuehling@amd.com>
-References: <20180824120339.GL29735@dhcp22.suse.cz>
- <eb546bcb-9c5f-7d5d-43a7-bfde489f0e7f@amd.com>
- <20180824123341.GN29735@dhcp22.suse.cz>
- <b11df415-baf8-0a41-3c16-60dfe8d32bd3@amd.com>
- <20180824130132.GP29735@dhcp22.suse.cz>
- <23d071d2-82e4-9b78-1000-be44db5f6523@gmail.com>
- <20180824132442.GQ29735@dhcp22.suse.cz>
- <86bd94d5-0ce8-c67f-07a5-ca9ebf399cdd@gmail.com>
- <20180824134009.GS29735@dhcp22.suse.cz>
- <735b0a53-5237-8827-d20e-e57fa24d798f@amd.com>
- <20180824135257.GU29735@dhcp22.suse.cz>
- <b78f8b3a-7bc6-0dea-6752-5ea798eccb6b@i-love.sakura.ne.jp>
-From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-Message-ID: <0e80c531-4e91-fb1d-e7eb-46a7aecc4c9d@amd.com>
-Date:   Mon, 27 Aug 2018 09:41:27 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
+Received: from xhacker.debian (124.74.246.114) by
+ BY2PR0301MB1573.namprd03.prod.outlook.com (2a01:111:e400:526e::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1080.17; Mon, 27 Aug
+ 2018 07:42:35 +0000
+Date:   Mon, 27 Aug 2018 15:39:36 +0800
+From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>, <linux-mmc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v4 3/3] mmc: sdhci-of-dwcmshc: solve 128MB DMA boundary
+ limitation
+Message-ID: <20180827153936.7481ae13@xhacker.debian>
+In-Reply-To: <6302a5a4-35cf-3d8f-fcac-a15141fcf1d0@intel.com>
+References: <20180823180549.78e508db@xhacker.debian>
+        <20180823180926.444b34b5@xhacker.debian>
+        <6302a5a4-35cf-3d8f-fcac-a15141fcf1d0@intel.com>
+X-Mailer: Claws Mail 3.17.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <b78f8b3a-7bc6-0dea-6752-5ea798eccb6b@i-love.sakura.ne.jp>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [2a02:908:1257:4460:1ab8:55c1:a639:6740]
-X-ClientProxiedBy: HE1PR05CA0138.eurprd05.prod.outlook.com
- (2603:10a6:7:28::25) To DM5PR12MB1723.namprd12.prod.outlook.com
- (2603:10b6:3:10f::12)
+X-Originating-IP: [124.74.246.114]
+X-ClientProxiedBy: TYXPR01CA0044.jpnprd01.prod.outlook.com
+ (2603:1096:403:a::14) To BY2PR0301MB1573.namprd03.prod.outlook.com
+ (2a01:111:e400:526e::15)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 8a0b4e90-0dbd-4f2a-d477-08d60bf08b63
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB1723;
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1723;3:06iM0ydyjyM10NMhvMgba9rytzsd+qZvf1vCkl0khqyJJztpCN4iagipzWfIaFgpuMfH+f8oPKQNfjCJBBsPEJQAt7aMar+n40lCAq1JoQflJ6+dTUAjz46tWLr7h+Mp+N1uiLXKiSf+RgwsvWFgj6G1SuL3dbn+SrQsL2aceMsF7jt6hLKAOsUvbO9Jp+ffhKrmgNe9Xe5kC6gCRQ0ff4+RuJLcbe9JzuXmbLhOabfgFfL/HSu/NPShrt7ZFq92;25:Y8skNpKpgzJeMrlG/F3vNbcFb+1k6Msm56r97EgUlSqEo1S5VhBoTr9QfylTrA2hjAWHT16LMeTD8duaM0W54DxD2Cltm/3l8A+6rpSTxmRmk+KTvXr1Q5/Ex/CGqPoq1VQ0R2RNzthtCTSFGjl74MrB4Q1OQoxPOvn5IkNIAcn3zYfTCPKoioucdfsR4Hc/vl3cdyYDmRpSytG4FQlcU/wriy2w7eRD9vOs/cPsvPAOrL9GKAgh6kDZCfoNeLMEUC05E18JVzmxpde8qP/cf7ulne2oQlDyw3PEHIj8jiX84UhzwtjANWv9gIKi2WQeiJF9j2fa4YWyzXZqQtXZTA==;31:3TnEQpFRSprkmHeMrWHxSxIVHe/1F8/WFXKHvD0gWLUSXRC6GVhffLdz9Grz7aKM8NUof4hp5FeTNbEbkwHi2UVWZ3Zup1ab3KhqmoM6Ov4V8UcxJIypgrrQvkUOv7Zj8BTJSjWrQuiGvda7x5Ww7rNlHEXmPL/3z7U7B81yz6y3+dVO4O9x13XlAK4J3yAwLacdjdE/pm3GN2ubCN3b4au49ukLJQk8+ewfeEX0Y9E=
-X-MS-TrafficTypeDiagnostic: DM5PR12MB1723:
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1723;20:y6BaAQX+wSEA2kd01oHrrqkMwdT05+kR7m+ie7WXqO20MNfwOiUK4BtSA3OcnyhjQ+DdsjrBHMqX1YnnqwRpZtCexNECt/hgvhnHOi8ipTSK0MfL6csOyYMevv9ZT9QXiZ0YProVN5JfaFsqueUImlS4UkER3t9MCRtFFTFirLRHUvrccWWIg8q1xcMxphWHPVK2G03sMGEbvcU34he+r3jn7SN+yKF+EEo8o8JSJquBO05oFEpEjIKe0lXc280YVazpDfx1nc0bmQK4L26rHMG3pIQx34ELsfbHuRRq8vnOwXeq5jGOaI7oPItMtnEHgmrh4AW2adgAixbVPnYk1F3qeXzmzIjFvuvXfyoDFBkcgq6Yan9rmTipnoHwg2Sy/cXDvibIvQUJODg5a9+PI20UrTvTpDkX51QkXP1oVRVtlp/8Ck9EhPyJqO54Gn6gBqQPu7PkiXsi5sqaJXx/IYWqoAm3GYbwli/7pD60fihG7OgAcHqt2nD0SOe77Y6G;4:jAy2zR+chTxpfe/HL1fjKPhCQ4aNicEN24U6pcdQAFtDrfuL0X/XIn5wB8wHAGW4R7TkkF4iNI87MRC0d5lDHbb3vBo16KBQbrxGZ6jSv8PPp6PdwCI2lYveyyLwuBePVFBLcbcmEWh3G0BWmHDtABHthpmp1uzh5Pq8+OnUibUp5SDXIJ16m/JP8rLmyWmY6ccwBAsyF6ee/z/+/UoVURM9ekbE1FmgxD8nkfJYGA1mClkBWJ5IZHhx38cvrNGz/ZOesIhMe+wN3WnEBx2rRg==
-X-Microsoft-Antispam-PRVS: <DM5PR12MB17237C4B40CD3FC7AB74C834830B0@DM5PR12MB1723.namprd12.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: ca2ccfe8-08fa-4ec3-0c95-08d60bf0a88a
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BY2PR0301MB1573;
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR0301MB1573;3:aynm/3Wd8sTkmP8a1RflAHUFd8zMb3DU9RfZm033eXLmWVZJBS5SsU2j7s43PRxuMIKSo5GBsSElUycH43K29KS+kbEg62h/PJ+t17HNoiryt/E5g7ZnmaiddmC3PPAzsEy1TEss0CEV0dvqkjjF60e4QsOethOkw+9kIczrtiY/jHP/VmkBGwUQzNbxzVlSiodj2b1h2clEn4JGygGm3Sx4YtrGKI6M3FmciUX/lTutTj5YVZOiL/neX+TBvben;25:TIPCuEABEKmwKDzex+xeAWwdQ8gVxhsOzUpym/p54/+kaDsMLgzrRnqM4gmF3jfR6ljlI1AVi5SdmFA5bv+nBhGIevTKeDcRZSp/OHb9OoJahFBW1p8U3OkrpCK2m839+3ywLZAxiB2eM+K1CuTtxRaCf6TFxXmNARiXS/WuBlzMmIS0oAJEOp9f42FagJ8i0UBo/8ff3f23xOPNZNgwOC/bsvq7/yW/VXHsomVhYMNlQcksPMx+BTs7qLUN434W7dyJal4Dj1BH4KyZ8o78P11GycwxFII7/WIXGJ59ic/mkDTnyWqBlczI2/cs3x3zrMrL/d4H5m1Rnep7zVS28g==;31:qLFnW99rfGS9H7vZ8LRTNZWJaa3cwybqRQzFYjsz/VIdX3vXkcKhQl5R0GsnH6WQYUcca/kDW6WM8dGWuXzjuvhuU1fGx+iJ5eLqRb62o73xrHRfbqHJWaAx1uuzWoyxAZ/Ivb7X3Ijr85/bhgD10ZoE8/iawNX54UXWuBnbhDoicoJ6tHyw/GKBKnWhamlsVnCpiTeGdFXvVUrRnaFSHIbu8BGvzji7kTsoqpQkRZo=
+X-MS-TrafficTypeDiagnostic: BY2PR0301MB1573:
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR0301MB1573;20:cNYXJhFdnTvMJ3o3gzYKxUnxu6SjzflEQS13IEW4+f7RuIw9XcrjkKlYJo1KRxpMyKRqJn+8Kn0Fhk1WUrhcpULNzzIC2xczLvTOiWmGDFoKibtcXJW+Ah1X/S//Ux5lO+8cXHnF/mEpB9URhGsmPR6pRBveSXB2ATk0oF/79TFWmBxIA8r1XFl5EpWTZOpMRoasNxx2z7k4Y7T4YT4ZR++PvTrW9+9OWysko9yQUI3F53Q8BlEI9FFTFzRIOT0oO5hiarGhxxJK5S0cX9nxBx9kkTSX1xi8tfb/uSZhETXW43B6cUNKPYredGBwOf6nD9SMWNYoDzhiAeTyP0u6hsMpYwRyG+kQ+HDYebEM8eZtfguEXv0mXqlQNU73YL9zwC7hQMk0O0lPAybRvV6BY7wNPM6mNjxHmu3v7BccO5gqYEQTki5mVnhXdKqMJ5eB5oaj1wcE9NxsZIQ1cmoFobm4CiI2aANo9E0marWs0V3d3i2H7IBe8kaqNfAE5Lgw;4:BWNcpZVSrgz1acOleO0GU+QbG6vtiSna1kf3YdN5LEgeRlzce8lq23g5tciBfQG/tA1r3vdnmeKL1XfjyTs0ZXucQGbMi7jOCBnFvG+Q1PSk9ypbn3AovAivv3QboKVlVYS4jyR3ubO03+zovrKkuFC9ZlgRpcbwem+hnTr90wlzEFwCNcJLFj2vOcqlXX/jm9QWTf9HVOTAPiUzhJOZRCYSjB8OTPuKxMH8Xs5l9rlbRABa7MxasArQ72q+jgOedl2CqIgm2DJm4dxytMZ5yw==
+X-Microsoft-Antispam-PRVS: <BY2PR0301MB15734A87C1457FA849960826ED0B0@BY2PR0301MB1573.namprd03.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:;
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(10201501046)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123558120)(20161123562045)(201708071742011)(7699016);SRVR:DM5PR12MB1723;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1723;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231311)(944501410)(52105095)(93006095)(93001095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(201708071742011)(7699016);SRVR:BY2PR0301MB1573;BCL:0;PCL:0;RULEID:;SRVR:BY2PR0301MB1573;
 X-Forefront-PRVS: 07778E4001
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39860400002)(376002)(136003)(366004)(396003)(346002)(189003)(199004)(97736004)(64126003)(105586002)(81156014)(316002)(53936002)(72206003)(1706002)(6116002)(81166006)(106356001)(68736007)(46003)(58126008)(8936002)(478600001)(6486002)(36756003)(16526019)(31696002)(86362001)(7736002)(305945005)(53546011)(7416002)(229853002)(8676002)(52116002)(476003)(54906003)(65806001)(67846002)(2486003)(52146003)(76176011)(23676004)(5660300001)(6666003)(65956001)(65826007)(93886005)(230700001)(4326008)(31686004)(25786009)(486006)(52396003)(110136005)(50466002)(14444005)(386003)(6246003)(11346002)(2616005)(47776003)(446003)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1723;H:[IPv6:2a02:908:1257:4460:1ab8:55c1:a639:6740];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(366004)(346002)(376002)(136003)(199004)(189003)(50466002)(54906003)(26005)(25786009)(76176011)(476003)(956004)(7696005)(11346002)(52116002)(230700001)(486006)(50226002)(6916009)(4326008)(6506007)(16526019)(186003)(6116002)(53546011)(386003)(3846002)(47776003)(5660300001)(86362001)(66066001)(575784001)(97736004)(23726003)(8936002)(446003)(6246003)(316002)(1076002)(478600001)(81156014)(55016002)(9686003)(7736002)(305945005)(14444005)(229853002)(8676002)(53936002)(81166006)(106356001)(33896004)(68736007)(72206003)(105586002)(2906002)(133343001)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:BY2PR0301MB1573;H:xhacker.debian;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: synaptics.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtETTVQUjEyTUIxNzIzOzIzOjRhdHhuQ1hWQ0tOYVNGNlU1MHhZWWEvMXgw?=
- =?utf-8?B?QkRzUUlNclVPcGc3TFMxOVlIQkVRUEJuT3YvRGRZNzBDREtkallVRlVkdjU5?=
- =?utf-8?B?NEZjazJvVXpnNFo2UjdFRS9aemlyZDBqbTJDTmVDS0dhT2RXOEQvVXphR3FJ?=
- =?utf-8?B?MGo2dXo4dkozbFlLaU5Dc0NXakZjNVdqTW5LYUwycERuOXpDSFR3SE1GclMr?=
- =?utf-8?B?QUUyeStWNG5IcmRqSU5lV281SjY0dDdFUG5hR0Y3MkprM3d5Q0I4SzAxblQ0?=
- =?utf-8?B?VFRtRXJKNzJBeW1XQ3V4RlBYeldVRU5oUWFmbmFKQTVwL1BaQ3BnS0s0QXd0?=
- =?utf-8?B?QXdKQWhlN24xQmF5Nm1NY0hlVmFqazcrN0E1SG9YZzhtOUxya2tWSjdRTERk?=
- =?utf-8?B?M0E3RFRNOG9lTDNGRnNZVWp3aVd3WWFJRlJKZ2pKTkQ5SStMVWMzb3BqMHRO?=
- =?utf-8?B?a2ROdlBMMnZmQy9VN05FZC9kY25BRHpJU3pxcTZ2SVJPSzhkaVV1R3FaUWQ5?=
- =?utf-8?B?dmNrdzFrd2M3UWx5YjVMRlZlOVVQYUI5bG9SR3BaNTRwNndqaktlVTlxYzAy?=
- =?utf-8?B?d1JDZTJ3aDkzdElZVUJ5K1BIemFtQmJtVXpmTHlzUjdRZEJOY0dJU1dIVlVO?=
- =?utf-8?B?citYYnhNQ1ZXa3M3MzU1YXBCSVZvZGhrSkh5RXBIR08xd3l3ZUhOdVR1SUhy?=
- =?utf-8?B?UGpDRlU4aXFkK2RqNUFnTm81RjdBSENHQThyT0FjVStSMTErNkpEVkxJTmdw?=
- =?utf-8?B?L3cyaUFnMUdWVlptVzNXQ3FjY0VzeEdXQXAvUGNML1BXay9DQkRjcjA3YmdK?=
- =?utf-8?B?emZGZFh0RHAyQWdPS2s4TXp1b2VGamxXMTNoZnBCMWkvZ2J3d0dNLzlWRXd2?=
- =?utf-8?B?aXFPVWFjLzFhUFQrcEtnbjhFK1FCYngwQi9mYXhURU9WR1dFNXZlYThFcDdl?=
- =?utf-8?B?UndHR3dTNHFIWDUyQlcyVVNWNHRtMllsVDh6Z3UxV0lFRGV1dkdRQVh3bUFn?=
- =?utf-8?B?T3MrdkxmNzAxWlZUNVJvcEZLSFBsVnNZYzlmSVZrL01rNUgrOEI5bk9vUGhp?=
- =?utf-8?B?WWczQmxSNEdQYlBScUJZcnVrV0F5dEhFTHF5K1JlZGdTeENWeTJBeGVyeVR6?=
- =?utf-8?B?WTJodjhMTlNsZ05KVmtlb0l6d3U4dFB6NEN6cm02RGd1NWVkc0Y3b0kxNkJL?=
- =?utf-8?B?NEhkaXVBMUdicUFkV215YjNtS1pSY0VoK0NEWDcza0RHS2kvQVBtTlBkMGtI?=
- =?utf-8?B?Slphd3BBWmp6MGZlTXJEdm9mVVVVcmpmVjdsQnYyZmRXYnZLWUI1cEw0YXRq?=
- =?utf-8?B?cW9NQk5QOTdiczl1aFVXQkNuU0g5ai9oOG9QeEJ2ZStCQ0VOOHhiNFltQ1Zt?=
- =?utf-8?B?bUFiWml4ODlYUXFOeUNibEY4TXplYzEwMmg2WnY4aEVwc0JiRkxCS1pEZGNY?=
- =?utf-8?B?WEZuV0NIbWZHT3Q4Y09DZVd3ZVRwNjk1RmRaKzYzWkdPV1hDckRZTGhubFBV?=
- =?utf-8?B?VWM2cUJkRDBnemRYNG1NWjdKbXl6d05tZllNOW5sZ0JnVVZKUm5lMHcrMGVQ?=
- =?utf-8?B?eGhLY3o2NXE1UFNqUk5KNU9mdWpSNExubzZoSkk4Y3NsMElIT21obTA0c21j?=
- =?utf-8?B?amdDbWwyTmNhRXJmRXVoemxXZ0t6eFUrZlU1azNPbUNCNnErSnFtVC9BeHhD?=
- =?utf-8?B?YjZTWFR0cnEvZ1oxZ2NjK05XR1BiMmdiSHVWcno3d3g5YTVGdlJlL1ZLQ25J?=
- =?utf-8?B?emJGc3BCalN5WUFxaGdoTlUyaVlXRTUwVHN1OEdjNkk4TXp2dmpuTVc2eXMy?=
- =?utf-8?B?L0JFNHA2RGVBQkZVWXBTQ3lHa0VGbkR5Ti9DVEd0WDRVTDRIczVJMm8weHhC?=
- =?utf-8?B?TlVSb1Q0bHNldnZEdHg1RTYvUzAzZ0pQUVVnNzBuMkZKVlAvNUFvTzdxclhm?=
- =?utf-8?Q?82PQGOvkM1asChf67p6SFCxK4lMLTk=3D?=
-X-Microsoft-Antispam-Message-Info: +dqVseecARSEVPWbS4Xh0DCm5gxuO2Ao9BgiaaNINlCiLKUSDML4jgVkWbmFKjS6rYnxWRzpTr8Rm4e8pxdykq0ogyT4C1sJLfBd78f7sq4mgzwKHyPVgNOy43xj9882celD7mw1fP7VKziGdU9NYD5z1CZ2k68c4Px7liFK1EFEJwjaXLDHWTp9MO0y38EJ5N3b5WAcCEohC+UMnLDt3jHqSI6HyAA4yoH2uEceFdFjZaNYHXTy6l/QA+6EO3/k0l2rsdHnQzk1qexkUivjw+lzqt9UGQlH6ii8Sewv0S6YY3ZZTDN7qF36fVyJr0aGfOXxefErqCj8bv9gV53ltboAijnpe+SAG1p0b9qtd2c=
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1723;6:/gNO1avvCPIdOTp8vAhkEYBpI5aTNL4x8Nx2MpYol8lE0qWS3X4ajpjMWNI9F08b7683K6NNJyddpIMSLqI2Wwa5sc2UYdTm2EIL09VsjuGZ1GKAKcgMcCUxd2tPHKAphdX0NXYvEJA26BkB+jRjqTcTgW/1JLCUPx8Olp7nLiI1mwQRvXtSUIpdk4ita2ZCUit/AoA3W0iyaGZ9TePDmcTCR1VJ3Srs4B5GOCuneDzFkhXq5iRo22PXRh7Cuxpqlm+f/audyAVg09Iw+qGTI97UpSQQH5pwFZpyC2s7c4fxWdo8l/WHW0SN5LcuKF7/44GbAODVQRAbA2ePFSNeuKt2Hta/EyD9GnR3wSuEp1OCzU28nK4Q3VnzcP+w5tUiG/v4GaZmw7GZkB7f8BBQlzB3vqzJsJYJWtgHEStwF0X0ODfpASoFsRDvsxDQ/EPMI/SbtzXHNZnkNROBzK8e9w==;5:+zETMBEKCqljTBnN/S80X7cnaoZxKDPe91Ba7X+JMDCBPTI2JU97drPukJphBBTqXBixI1pGmAWtqsfmjJ+lmG4upFYhBYrdU41YuUp02Y0WJ3mionmfrnEyzLb8OHsSi4w7/JmoXD+aL4nKZSIZYmzGYlh7IF2O22LGDES8M84=;7:iiOENYdYFMnmrF+s64KGYRqoTwiYu5J5c86gXLdG/u4iswlz+UAfVqHI8l2Gti4r9KB+Yl4U3FGf9/yhYaLO1BEtHodBCDdFnpNiUTikesYiAZjBKgE7WwNA6UHZ09ePfWGhSse1/i3/XLUxd5jYJ9tB2pdrW6lSgYp2YujLkAlBiVZZ1qcQFlGsVWT2xXUcO9y8VszLbiGnfxwakRWz/QcP3Z5ojwBv0qh22tg4Bs8ryczs4T5Q+cWhucteMFuS
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BY2PR0301MB1573;23:ZXAQ3KA7zUsxjIRxgmnG9NwOgIofpt4buHDgis6?=
+ =?us-ascii?Q?91EtMnuZIhiYmSpi1L3YbzgwoJegmzo5nNt9vmq9wU70Nwy9a+leBLhQqeJZ?=
+ =?us-ascii?Q?EuAEoi8cpUu8RFIYxEGkereRJz+UsnIKaUya8di/YnPpaBKsNrbpmSLhKNWg?=
+ =?us-ascii?Q?lvB0tuHCAk7lyBxUudpzgCWPx33/pvr5POaam03m8fA1iBRbebkJDtNAtyc6?=
+ =?us-ascii?Q?rhJDry4MdKvXrtZQxkpKBYc2dwt/CWNaeqYxktHeWESSEWxjeJ4m0Nhu5/Rv?=
+ =?us-ascii?Q?4CpjBVZkT2XNz5jw9C0icsl2bT2VxanZLsju2gpAXRCxWT7r3si7R+ygYYCJ?=
+ =?us-ascii?Q?QrQoYi4TMLXyrcRFhXKB7wSOGC56volZs898QAaKyQgX272mXuAcE7UqsiY2?=
+ =?us-ascii?Q?I5D0pd2FeW+Bi+b+cWeHEe4WzhNOEVtHNMUnws7PGGJJQ4bVlE221HLGmtbB?=
+ =?us-ascii?Q?XfBnm5qxgMziQvcnGmJ0UF4gmCRz8KfKc1kD05nEf5rGrPBwsnJwZG9s9uJd?=
+ =?us-ascii?Q?szvHzL5Ht3T9gT8mtD4efvRR6YZjmALXaxX8TIDOmztWoburKwx+YKicHUVf?=
+ =?us-ascii?Q?3B3kPuhoithFDGOEgx8gX5BGctco5Ias+owNvSbopmhencA8jSHJidzwleMg?=
+ =?us-ascii?Q?ByekM9ajEFAE+hHsqE0ZGfZ1QDQmjw4WwI3zPaigMEWjHPKEr6tnqlEbsl6V?=
+ =?us-ascii?Q?Ag8ciMOD/Hl4ZFfXoct53xFzENk6ohFpQk/iINHHxUdRk0W5DS1QRGAdzs5d?=
+ =?us-ascii?Q?D8QBn8isLT+E3F5IAD94sMHM70U+TN79SkSvk0lD1q/69/En1DDSWI6gyjJ/?=
+ =?us-ascii?Q?kXo5Rzs20RJ5scVoLpwpexSSSy8s2aflccTYs9KD90vIpQz0s0tyqQ07dhYw?=
+ =?us-ascii?Q?YKy1xj/yAhSSkB81mM3GybhSNfQWbTAcLzQNLrJ0qAQzDUnthV+++oP2Wils?=
+ =?us-ascii?Q?YxHBnVAVEXFwKXMOza96LtRHNxijns++Y0Cm3txPMJkKkl+gbO+E47fL+LCc?=
+ =?us-ascii?Q?FE55nq+niL2iICupXSy6a5h1G7JvMbqGVao0xu+UI/N044W9N0cKay/r37Rq?=
+ =?us-ascii?Q?nrenziygckTAMCyllskdm+C5AXlTW+ivtz3FeR2Iq8sI/nwvh1nEd9Wawizn?=
+ =?us-ascii?Q?oa7JeCiDurPyxl2L1hinozHd+9cJjvx8DdlFYQpdeVNrPcA+vY4sELn4Ai9O?=
+ =?us-ascii?Q?FXkavYiFt8dYZjsv2ofHTsI4gkA7UcBOY8Dur4RMVF/hZK6XF1XTzKM4gXiz?=
+ =?us-ascii?Q?tVw+Ppxa+scHlsJYyRAvCksOiWxXSX4HcKkC7Quob9aHcOWgfSIbhtdk2dLV?=
+ =?us-ascii?Q?n992oo4YHkonUfRuirSJ6dMcnbI4Uw+kBj+0+R1gnZX9WtWWZS19bdo0V9gc?=
+ =?us-ascii?Q?G8/NeMQ=3D=3D?=
+X-Microsoft-Antispam-Message-Info: JRxw90sVufKR/MQbHprKEm6KF44be7trbgj3+nBIZcfs5x4KecgZHC6/9yQxQn+RQacypPvgXZ09jR9fv8+dOfMlyxSbnlcTNsjR+CQuMd1kqSYDW/eUWUg4aKg71dnJBdPtowl94zI6ypdvrX80kHEUoW9/7J4VAnTvzDD0BtuCPBmv8gNpkVyevIxzCVPPd2r2NW9+vqBdgkHZaDWuYoYlY/EC3wM8VM4znKOkN7+1K5b3gV9XR8iu1S2KeRNOTlxDTbBrAj1BEiNlQSEYsQPuCgqTFx2dUbI6OwnWIevAQx+LIh4cc1eUT+kqK1VB65HytsW/LWdBORynCrbCijZUGcLS7hlVJhv1E3tKr74=
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR0301MB1573;6:BhJd4D90LCi7bjzRHj1nbnexzVnQrW0lWML+C6OoTYaRkwVrIUhoGJUtPuY2xh2NabXQE15Og2jXCDXLznpenS+3CHrC9oTDOrv+6LmIn211iqA/Ss+TKHFWQgHyoyhx+SKZWUZIdJHEK//j45wR+tnYb3od5MdX14IwUcimzX/52RE35EXx/xBj53BboefL6aMZVwZZsPxnsgQxFhHa4TqeZat2BFal93dmCLEXMZUsTvydjd0fYqOkwkLndg66OiGkAWLbSK6SgAtVohL4PCTY2ZnTpmZLycULzIYX7VXyXp2/HuX1eAntUFJ7zz1KVnzjPQAeuVuu/QsYt0rBxuIrCYuszKYXEkm7IgaCGGJYBEf3BM4YQJ/h7NnEr3Zc3WhQtlaKkrAUr67JdaDyGMu3YFRT2Yu4KUT1NpaCNiRaxoyOX7ikNvrSpomUVYhYBKeTLb55r1yKlLZSnnMsKw==;5:T53rkAc/NoD5GGleaSY1T2YdF6FouNZ1ThROAdOHscGXGdXhBOOWtFCqUwmS2x4XyRI/kdaLyC4qodZSVeAiXB7SCveb53FdCIohsz3OYfYpUOeqddKEYdpqZwwv3GDxEjexSD/G9IVhBkNFWAQ0DUJ2zX+nhOZw5CdkPqC6yGM=;7:lDjSnhiIIOrYwXFp+AxrHTSkqm4PRIIerI33LmBOcnK3p8vY3fgMs0+SO59jVyEkuSLLgxu+WRH+BLylbGIgrZ5GSCVjC+OQbW0RUgpVrse5i2YDA9kfizxeYse5+tVDg60nhxMyyAAyE3olBAF+wLD2sE7/p7HQch1WUuil+5fb/7BtfdrXFU35CfZw4EtkvWYtcdmms1jlYmY/Bk/ZrUyjOVsd17dxz8CjYgO9Dv+u/VDrkFP8KbbEBIaVAfQ/
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1723;20:1pmGR1nKgJPWwVM9aBnzWs+/Xrm8e+mW2Eq1HsG/GBSDjibumFO6BMFoxzkiJeNUmw1pn2QirJvIdKFtqwWymd5QUz5S6zcBiCKHhYsAQ4EJpsxpKl/nUS7u+Pys88/gxYbSwF/CMpLi8zekWDPGYeSW1uQU7EiYCDzYTpLQKWYsREO7hxT3yYZh/u++gaBSMbsCpO6WLlPb/DPZGq5QaYIfNt4Fm/fK19ubsTm/L4GWXsUE9HAqBCe3SxGteRay
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2018 07:41:40.7917 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8a0b4e90-0dbd-4f2a-d477-08d60bf08b63
+X-OriginatorOrg: synaptics.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2018 07:42:35.3669 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ca2ccfe8-08fa-4ec3-0c95-08d60bf0a88a
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1723
+X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR0301MB1573
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 26.08.2018 um 10:40 schrieb Tetsuo Handa:
-> On 2018/08/24 22:52, Michal Hocko wrote:
->> @@ -180,11 +180,15 @@ void amdgpu_mn_unlock(struct amdgpu_mn *mn)
->>    */
->>   static int amdgpu_mn_read_lock(struct amdgpu_mn *amn, bool blockable)
->>   {
->> -	if (blockable)
->> -		mutex_lock(&amn->read_lock);
->> -	else if (!mutex_trylock(&amn->read_lock))
->> -		return -EAGAIN;
->> -
->> +	/*
->> +	 * We can take sleepable lock even on !blockable mode because
->> +	 * read_lock is only ever take from this path and the notifier
->> +	 * lock never really sleeps. In fact the only reason why the
->> +	 * later is sleepable is because the notifier itself might sleep
->> +	 * in amdgpu_mn_invalidate_node but blockable mode is handled
->> +	 * before calling into that path.
->> +	 */
->> +	mutex_lock(&amn->read_lock);
->>   	if (atomic_inc_return(&amn->recursion) == 1)
->>   		down_read_non_owner(&amn->lock);
->>   	mutex_unlock(&amn->read_lock);
->>
-> I'm not following. Why don't we need to do like below (given that
-> nobody except amdgpu_mn_read_lock() holds ->read_lock) because e.g.
-> drm_sched_fence_create() from drm_sched_job_init() from amdgpu_cs_submit()
-> is doing GFP_KERNEL memory allocation with ->lock held for write?
+On Thu, 23 Aug 2018 14:51:26 +0300 Adrian Hunter wrote:
 
-That's a bug which needs to be fixed separately.
+> On 23/08/18 13:09, Jisheng Zhang wrote:
+> > When using DMA, if the DMA addr spans 128MB boundary, we have to split
+> > the DMA transfer into two so that each one doesn't exceed the boundary.
+> > 
+> > Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+> > ---
+> >  drivers/mmc/host/sdhci-of-dwcmshc.c | 39 +++++++++++++++++++++++++++++
+> >  1 file changed, 39 insertions(+)
+> > 
+> > diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
+> > index 1b7cd144fb01..df0a3aeabe19 100644
+> > --- a/drivers/mmc/host/sdhci-of-dwcmshc.c
+> > +++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
+> > @@ -8,21 +8,48 @@
+> >   */
+> >  
+> >  #include <linux/clk.h>
+> > +#include <linux/mm.h>
+> >  #include <linux/module.h>
+> >  #include <linux/of.h>
+> > +#include <linux/sizes.h>
+> >  
+> >  #include "sdhci-pltfm.h"
+> >  
+> > +#define BOUNDARY_OK(addr, len) \
+> > +	((addr | (SZ_128M - 1)) == ((addr + len - 1) | (SZ_128M - 1)))
+> > +
+> >  struct dwcmshc_priv {
+> >  	struct clk	*bus_clk;
+> >  };
+> >  
+> > +/*
+> > + * If DMA addr spans 128MB boundary, we split the DMA transfer into two
+> > + * so that the DMA transfer doesn't exceed the boundary.
+> > + */
+> > +static void dwcmshc_adma_write_desc(struct sdhci_host *host, void **desc,
+> > +				    dma_addr_t addr, int len, unsigned int cmd)
+> > +{
+> > +	int tmplen, offset;
+> > +
+> > +	if (likely(!len || BOUNDARY_OK(addr, len)))
+> > +		sdhci_adma_write_desc(host, desc, addr, len, cmd);  
+> 
+> Doesn't this need a return? i.e.
+> 
+> 		return;
 
-Allocating memory with GFP_KERNEL while holding a lock which is also 
-taken in the reclaim code path is illegal not matter what you do.
+oops, I made a mistake here. Pre v4, there's a return...
+Thanks so much.
 
-Patches to fix this are already on the appropriate mailing list and will 
-be pushed upstream today.
 
-Regards,
-Christian.
+> 	}
+> 
+> > +
+> > +	offset = addr & (SZ_128M - 1);
+> > +	tmplen = SZ_128M - offset;
+> > +	sdhci_adma_write_desc(host, desc, addr, tmplen, cmd);
+> > +
+> > +	addr += tmplen;
+> > +	len -= tmplen;
+> > +	sdhci_adma_write_desc(host, desc, addr, len, cmd);
+> > +}
+> > +
+> >  static const struct sdhci_ops sdhci_dwcmshc_ops = {
+> >  	.set_clock		= sdhci_set_clock,
+> >  	.set_bus_width		= sdhci_set_bus_width,
+> >  	.set_uhs_signaling	= sdhci_set_uhs_signaling,
+> >  	.get_max_clock		= sdhci_pltfm_clk_get_max_clock,
+> >  	.reset			= sdhci_reset,
+> > +	.adma_write_desc	= dwcmshc_adma_write_desc,
+> >  };
+> >  
+> >  static const struct sdhci_pltfm_data sdhci_dwcmshc_pdata = {
+> > @@ -36,12 +63,24 @@ static int dwcmshc_probe(struct platform_device *pdev)
+> >  	struct sdhci_host *host;
+> >  	struct dwcmshc_priv *priv;
+> >  	int err;
+> > +	u32 extra;
+> >  
+> >  	host = sdhci_pltfm_init(pdev, &sdhci_dwcmshc_pdata,
+> >  				sizeof(struct dwcmshc_priv));
+> >  	if (IS_ERR(host))
+> >  		return PTR_ERR(host);
+> >  
+> > +	/*
+> > +	 * The DMA table descriptor count is calculated as the maximum
+> > +	 * number of segments times 2, to allow for an alignment
+> > +	 * descriptor for each segment, plus 1 for a nop end descriptor,
+> > +	 * plus extra number for cross 128M boundary handling.
+> > +	 */
+> > +	extra = DIV_ROUND_UP(totalram_pages, SZ_128M / PAGE_SIZE);  
+> 
+> You are assuming here that totalram_pages gives you the highest physical
+> page number.  Is that true?
 
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-> index e55508b..e1cb344 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-> @@ -64,8 +64,6 @@
->    * @node: hash table node to find structure by adev and mn
->    * @lock: rw semaphore protecting the notifier nodes
->    * @objects: interval tree containing amdgpu_mn_nodes
-> - * @read_lock: mutex for recursive locking of @lock
-> - * @recursion: depth of recursion
->    *
->    * Data for each amdgpu device and process address space.
->    */
-> @@ -85,8 +83,6 @@ struct amdgpu_mn {
->   	/* objects protected by lock */
->   	struct rw_semaphore	lock;
->   	struct rb_root_cached	objects;
-> -	struct mutex		read_lock;
-> -	atomic_t		recursion;
->   };
->   
->   /**
-> @@ -181,14 +177,9 @@ void amdgpu_mn_unlock(struct amdgpu_mn *mn)
->   static int amdgpu_mn_read_lock(struct amdgpu_mn *amn, bool blockable)
->   {
->   	if (blockable)
-> -		mutex_lock(&amn->read_lock);
-> -	else if (!mutex_trylock(&amn->read_lock))
-> +		down_read(&amn->lock);
-> +	else if (!down_read_trylock(&amn->lock))
->   		return -EAGAIN;
-> -
-> -	if (atomic_inc_return(&amn->recursion) == 1)
-> -		down_read_non_owner(&amn->lock);
-> -	mutex_unlock(&amn->read_lock);
-> -
->   	return 0;
->   }
->   
-> @@ -199,8 +190,7 @@ static int amdgpu_mn_read_lock(struct amdgpu_mn *amn, bool blockable)
->    */
->   static void amdgpu_mn_read_unlock(struct amdgpu_mn *amn)
->   {
-> -	if (atomic_dec_return(&amn->recursion) == 0)
-> -		up_read_non_owner(&amn->lock);
-> +	up_read(&amn->lock);
->   }
->   
->   /**
-> @@ -410,8 +400,6 @@ struct amdgpu_mn *amdgpu_mn_get(struct amdgpu_device *adev,
->   	amn->type = type;
->   	amn->mn.ops = &amdgpu_mn_ops[type];
->   	amn->objects = RB_ROOT_CACHED;
-> -	mutex_init(&amn->read_lock);
-> -	atomic_set(&amn->recursion, 0);
->   
->   	r = __mmu_notifier_register(&amn->mn, mm);
->   	if (r)
+Per my understanding, it's true. What I need is the MemTotal/PAGE_SIZE where
+Memtotal is from /proc/meminfo. After reading the code, I found this is
+totalram_pages as shown in si_meminfo()
+
+> 
+> > +	if (extra > SDHCI_MAX_SEGS)
+> > +		extra = SDHCI_MAX_SEGS;
+> > +	host->adma_table_cnt = SDHCI_MAX_SEGS * 2 + 1 + extra;  
+> 
+> That should be:
+> 
+> 	host->adma_table_cnt += extra;
+
+yep, will do in v5
+
+> 
+> > +
+> >  	pltfm_host = sdhci_priv(host);
+> >  	priv = sdhci_pltfm_priv(pltfm_host);
+> >  
+> >   
+> 
 
