@@ -2,343 +2,154 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0831CC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:59:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4B50C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:00:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F349208B4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:59:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F349208B4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 67288208A5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:00:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="htBr7w/z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67288208A5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727547AbeH0XrU (ORCPT
+        id S1727371AbeH0XtA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 19:47:20 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:39627 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726826AbeH0XrU (ORCPT
+        Mon, 27 Aug 2018 19:49:00 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45514 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726826AbeH0Xs7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 19:47:20 -0400
-Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
- (mreue103 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0Li23m-1fZ5cK2Etu-00nD7R; Mon, 27 Aug 2018 21:59:02 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     linux-media@vger.kernel.org
-Cc:     y2038@lists.linaro.org, awalls@md.metrocast.net,
-        hans.verkuil@cisco.com, mchehab@kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 5/5] media: dvb: move compat handlers into drivers
-Date:   Mon, 27 Aug 2018 21:56:25 +0200
-Message-Id: <20180827195649.4170969-5-arnd@arndb.de>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180827195649.4170969-1-arnd@arndb.de>
-References: <20180827195649.4170969-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:Ze3Fi6oCnqWzqCWinKMeBn/hCvpKRm5eJE/FVqmNpZddz+b0wdU
- OxEwqEwGphhAlRsLKacj1/2r4JNV4lj5wU+zsZcstNcreP5rr4BNjoCgKhBAuGe0tszWPNE
- ToHXUMIA+tkmOgWAIcPHrY+BITffHLTKuoS1q0be9YLktJDvmwzQwX9Q3cGfmnrHtzZvCS2
- mlShDy45z/DsLuIYpKhjw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:YPqcsUVoVwc=:QtWRYBzERocYcc6+54c0Mx
- tsMeTv8Ix8UeCitjOi3dBb3LzQKpIneWNYoEPbVQwP8leh+hAuap4avdEZhHQTrTgmhHmyNL4
- POmRR61qiUucel/1sQuM3duEQzjIlStbWoERb3f7xwowZ6JX5dvbpfITDaxyUWI6EVgO61VVc
- t9pFesuMGgfJTWtuC3LGitvVZOTWyUyMStd3s8/ZxkXPFnATbOm2AtHV+vMmu77qNviUYDjNx
- zsxH1hAF127TmIe01JU5NSe7Go5aFsELWdlJG2kzjHEsGDgk2MLK3PrKNU/70l1knHKvWuJKd
- JTc4/Ve1PzszZRaM014iHBsY9YSKsbsb+77T/x7coQuBlN6ZHdnEz4ycB03f0ytIyijGHrVvS
- qcNm1dSsMoNh5UAYorBQ045QYHJ7KnKNlwnuARhYONjPJe7kHdcM60KhtiBPZA6uyULeznWEZ
- ECP7dSTKLzwmrovhbV1rZMH/pVCf3EbxmKEvzLeELMl49aXNbBtPXGkUVZzeox8b1+rmqMaCf
- lRHGIWZ98wSfB1xDjyozsH0ysUBUL8wt4zzh3VWQmL/rYKamAS+0Rey8CR0YmB9VE4t4Xt3TT
- xgBb0jOjdMPXctiRPSkH5TEftk6fcrdQ3Zz7pJbT+HApk78uaoxMw786I8VoU2s81w10hKleH
- a9An13k2ramajW9HbkvvZ8sJSVP2sPMClViLRx3pVBXsQcxa+v82YiE3hOIugGd3xc4M=
+        Mon, 27 Aug 2018 19:48:59 -0400
+Received: by mail-pf1-f195.google.com with SMTP id i26-v6so61775pfo.12
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 13:00:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
+         :references:message-id:user-agent:subject:date;
+        bh=bRC4We4IX5zZjxUTZwYoeC/bCsnsxV59Gv7IWcjBQEE=;
+        b=htBr7w/zcjJ9UuCbLqfPq2FeWEtrR595cVRuxTzBJI9TanFpXbDXnIqZOknNR56TjK
+         JJEmYzXrd3ks1zTxo+uR6CvumZViI+dJjTicQ1bTMqwbOPHKnYU59cv3OeKzmkf6TqfO
+         cesdjK+THm9k1uVhxyd+GwB29j/Pt3Z+Xf8qk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
+         :in-reply-to:cc:references:message-id:user-agent:subject:date;
+        bh=bRC4We4IX5zZjxUTZwYoeC/bCsnsxV59Gv7IWcjBQEE=;
+        b=NXxpaI7mK9KaCgz4yiG4qI1Gv313rH7dE24F6ZZJDemHxDVIopC+guNoybhQfPp8ui
+         UJkf0HVE82joRyU6dU301LLNXB27H2oZecVw/xHnLExdTLt/xBmEtkWLAHoNrK29rkh1
+         48X8OqSz9eLi3m0dlE9dsCtR+kfeiwdAbBEakrLGWbWQvet4xf/zp+x22jcgDI1R8wRP
+         VAl6oCd35sm/9z+t8VpxjYMPoIKV7xCf9wPXPL2Sa/fTzk3G3FPepe8dQl8u2wI4XxCu
+         lCa5igK/8XwfRAhdDDFqTN5/ssvlKJYlbnb93S+o+c0N82xtjlh8TCuRce/XpxspM7Kl
+         Ln5Q==
+X-Gm-Message-State: APzg51CCgjp+dm81QhFgWvR1ihpVXjwy8jtpiwh1tIPTzdwejlof1wU7
+        X/Edf4hWS2UVUvZYcRA1/CgaXg==
+X-Google-Smtp-Source: ANB0VdYJC77WiIr311nfbPJ+KpY3x48yBMND1yU5RgFpEbOOTWqeOZ/xK1C9XCGS/i5NWmVo777ggQ==
+X-Received: by 2002:a62:c8d2:: with SMTP id i79-v6mr15641946pfk.35.1535400054796;
+        Mon, 27 Aug 2018 13:00:54 -0700 (PDT)
+Received: from localhost ([2620:15c:202:201:7e28:b9f3:6afc:5326])
+        by smtp.gmail.com with ESMTPSA id g25-v6sm233910pfd.23.2018.08.27.13.00.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 27 Aug 2018 13:00:54 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+To:     Lina Iyer <ilina@codeaurora.org>
+From:   Stephen Boyd <swboyd@chromium.org>
+In-Reply-To: <20180824171432.GM5081@codeaurora.org>
+Cc:     bjorn.andersson@linaro.org, evgreen@chromium.org,
+        linus.walleij@linaro.org, marc.zyngier@arm.com,
+        rplsssn@codeaurora.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, rnayak@codeaurora.org,
+        devicetree@vger.kernel.org, andy.gross@linaro.org,
+        dianders@chromium.org
+References: <20180817191026.32245-1-ilina@codeaurora.org>
+ <20180817191026.32245-3-ilina@codeaurora.org>
+ <153509896098.28926.3622217918056498792@swboyd.mtv.corp.google.com>
+ <20180824171432.GM5081@codeaurora.org>
+Message-ID: <153540005334.129321.18196967002233663397@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH RESEND v1 2/5] drivers: pinctrl: msm: enable PDC interrupt only
+ during suspend
+Date:   Mon, 27 Aug 2018 13:00:53 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The VIDEO_STILLPICTURE is only implemented by one driver, while
-VIDEO_GET_EVENT has two users in tree. In both cases, it is fairly
-easy to handle the compat ioctls in the native handler rather
-than relying on translation in fs/compat_ioctls.
+Quoting Lina Iyer (2018-08-24 10:14:32)
+> On Fri, Aug 24 2018 at 02:22 -0600, Stephen Boyd wrote:
+> >Quoting Lina Iyer (2018-08-17 12:10:23)
+> >> During suspend the system may power down some of the system rails. As a
+> >> result, the TLMM hw block may not be operational anymore and wakeup
+> >> capable GPIOs will not be detected. The PDC however will be operational
+> >> and the GPIOs that are routed to the PDC as IRQs can wake the system u=
+p.
+> >>
+> >> To avoid being interrupted twice (for TLMM and once for PDC IRQ) when a
+> >> GPIO trips, use TLMM for active and switch to PDC for suspend. When
+> >> entering suspend, disable the TLMM wakeup interrupt and instead enable
+> >> the PDC IRQ and revert upon resume.
+> >
+> >What about idle paths? Don't we want to disable the TLMM interrupt and
+> >enable the PDC interrupt when the whole cluster goes idle so we get
+> >wakeup interrupts?
+> We would need to do this from the idle paths. When we have that support
+> (a patch for cluster power down is in the works), we would need to hook
+> up to TLMM and do the same.
 
-In effect, this means that now the drivers implement both structure
-layouts in both native and compat mode, but I don't see anything
-wrong with that.
+Ok so then this approach doesn't really seem to work for the CPU idle
+paths.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/media/pci/ivtv/ivtv-ioctl.c | 34 ++++++++++++-
- drivers/media/pci/ttpci/av7110_av.c | 56 ++++++++++++++++++++-
- fs/compat_ioctl.c                   | 78 -----------------------------
- 3 files changed, 87 insertions(+), 81 deletions(-)
+> >Because of this complicated dance, it may make sense to always get the
+> >interrupt at the PDC and then replay it into the TLMM chip "manually"
+> >with the irq_set_irqchip_state() APIs. This way the duplicate interrupt
+> >can't happen. The only way for the interrupt handler to run would be by
+> >PDC poking the TLMM hardware to inject the irq into the status register.
+> If the PDC interrupt was always enabled and the interrupt at TLMM was
+> always disabled, all we would need to set the action handler of the PDC
+> interrupt to that of the TLMM. I couldn't find a way to retrieve that
+> nicely.
 
-diff --git a/drivers/media/pci/ivtv/ivtv-ioctl.c b/drivers/media/pci/ivtv/ivtv-ioctl.c
-index 4cdc6d2be85d..785dbd4be420 100644
---- a/drivers/media/pci/ivtv/ivtv-ioctl.c
-+++ b/drivers/media/pci/ivtv/ivtv-ioctl.c
-@@ -36,6 +36,7 @@
- #include <media/tveeprom.h>
- #include <media/v4l2-event.h>
- #ifdef CONFIG_VIDEO_IVTV_DEPRECATED_IOCTLS
-+#include <linux/compat.h>
- #include <linux/dvb/audio.h>
- #include <linux/dvb/video.h>
- #endif
-@@ -1627,6 +1628,21 @@ static __inline__ void warn_deprecated_ioctl(const char *name)
- 	pr_warn_once("warning: the %s ioctl is deprecated. Don't use it, as it will be removed soon\n",
- 		     name);
- }
-+
-+#ifdef CONFIG_COMPAT
-+struct compat_video_event {
-+        __s32 type;
-+        /* unused, make sure to use atomic time for y2038 if it ever gets used */
-+        compat_long_t timestamp;
-+        union {
-+                video_size_t size;
-+                unsigned int frame_rate;        /* in frames per 1000sec */
-+                unsigned char vsync_field;      /* unknown/odd/even/progressive */
-+        } u;
-+};
-+#define VIDEO_GET_EVENT32 _IOR('o', 28, struct compat_video_event)
-+#endif
-+
- #endif
- 
- static int ivtv_decoder_ioctls(struct file *filp, unsigned int cmd, void *arg)
-@@ -1749,7 +1765,13 @@ static int ivtv_decoder_ioctls(struct file *filp, unsigned int cmd, void *arg)
- 		return ivtv_video_command(itv, id, dc, try);
- 	}
- 
-+#ifdef CONFIG_COMPAT
-+	case VIDEO_GET_EVENT32:
-+#endif
- 	case VIDEO_GET_EVENT: {
-+#ifdef CONFIG_COMPAT
-+		struct compat_video_event *ev32 = arg;
-+#endif
- 		struct video_event *ev = arg;
- 		DEFINE_WAIT(wait);
- 
-@@ -1763,14 +1785,22 @@ static int ivtv_decoder_ioctls(struct file *filp, unsigned int cmd, void *arg)
- 			if (test_and_clear_bit(IVTV_F_I_EV_DEC_STOPPED, &itv->i_flags))
- 				ev->type = VIDEO_EVENT_DECODER_STOPPED;
- 			else if (test_and_clear_bit(IVTV_F_I_EV_VSYNC, &itv->i_flags)) {
-+				unsigned char vsync_field;
-+
- 				ev->type = VIDEO_EVENT_VSYNC;
--				ev->u.vsync_field = test_bit(IVTV_F_I_EV_VSYNC_FIELD, &itv->i_flags) ?
-+				vsync_field = test_bit(IVTV_F_I_EV_VSYNC_FIELD, &itv->i_flags) ?
- 					VIDEO_VSYNC_FIELD_ODD : VIDEO_VSYNC_FIELD_EVEN;
- 				if (itv->output_mode == OUT_UDMA_YUV &&
- 					(itv->yuv_info.lace_mode & IVTV_YUV_MODE_MASK) ==
- 								IVTV_YUV_MODE_PROGRESSIVE) {
--					ev->u.vsync_field = VIDEO_VSYNC_FIELD_PROGRESSIVE;
-+					vsync_field = VIDEO_VSYNC_FIELD_PROGRESSIVE;
- 				}
-+#ifdef CONFIG_COMPAT
-+				if (cmd == VIDEO_GET_EVENT32)
-+					ev32->u.vsync_field = vsync_field;
-+				else
-+#endif
-+					ev->u.vsync_field = vsync_field;
- 			}
- 			if (ev->type)
- 				return 0;
-diff --git a/drivers/media/pci/ttpci/av7110_av.c b/drivers/media/pci/ttpci/av7110_av.c
-index e738b2cef6f6..fd49ee5a380a 100644
---- a/drivers/media/pci/ttpci/av7110_av.c
-+++ b/drivers/media/pci/ttpci/av7110_av.c
-@@ -932,7 +932,6 @@ static int dvb_video_get_event (struct av7110 *av7110, struct video_event *event
- 	return 0;
- }
- 
--
- /******************************************************************************
-  * DVB device file operations
-  ******************************************************************************/
-@@ -1095,6 +1094,42 @@ static int play_iframe(struct av7110 *av7110, char __user *buf, unsigned int len
- 		return 0;
- }
- 
-+#ifdef CONFIG_COMPAT
-+struct compat_video_still_picture {
-+        compat_uptr_t iFrame;
-+        int32_t size;
-+};
-+#define VIDEO_STILLPICTURE32 _IOW('o', 30, struct compat_video_still_picture)
-+
-+struct compat_video_event {
-+        __s32 type;
-+        /* unused, make sure to use atomic time for y2038 if it ever gets used */
-+        compat_long_t timestamp;
-+        union {
-+                video_size_t size;
-+                unsigned int frame_rate;        /* in frames per 1000sec */
-+                unsigned char vsync_field;      /* unknown/odd/even/progressive */
-+        } u;
-+};
-+#define VIDEO_GET_EVENT32 _IOR('o', 28, struct compat_video_event)
-+
-+static int dvb_compat_video_get_event(struct av7110 *av7110,
-+				      struct compat_video_event *event, int flags)
-+{
-+	struct video_event ev;
-+	int ret;
-+
-+	ret = dvb_video_get_event(av7110, &ev, flags);
-+
-+	*event = (struct compat_video_event) {
-+		.type = ev.type,
-+		.timestamp = ev.timestamp,
-+		.u.size = ev.u.size,
-+	};
-+
-+	return ret;
-+}
-+#endif
- 
- static int dvb_video_ioctl(struct file *file,
- 			   unsigned int cmd, void *parg)
-@@ -1184,6 +1219,12 @@ static int dvb_video_ioctl(struct file *file,
- 		memcpy(parg, &av7110->videostate, sizeof(struct video_status));
- 		break;
- 
-+#ifdef CONFIG_COMPAT
-+	case VIDEO_GET_EVENT32:
-+		ret = dvb_compat_video_get_event(av7110, parg, file->f_flags);
-+		break;
-+#endif
-+
- 	case VIDEO_GET_EVENT:
- 		ret = dvb_video_get_event(av7110, parg, file->f_flags);
- 		break;
-@@ -1226,6 +1267,19 @@ static int dvb_video_ioctl(struct file *file,
- 				    1, (u16) arg);
- 		break;
- 
-+#ifdef CONFIG_COMPAT
-+	case VIDEO_STILLPICTURE32:
-+	{
-+		struct compat_video_still_picture *pic =
-+			(struct compat_video_still_picture *) parg;
-+		av7110->videostate.stream_source = VIDEO_SOURCE_MEMORY;
-+		dvb_ringbuffer_flush_spinlock_wakeup(&av7110->avout);
-+		ret = play_iframe(av7110, compat_ptr(pic->iFrame),
-+				  pic->size, file->f_flags & O_NONBLOCK);
-+		break;
-+	}
-+#endif
-+
- 	case VIDEO_STILLPICTURE:
- 	{
- 		struct video_still_picture *pic =
-diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
-index 7a1fac9cd1c2..5b2e22e7a316 100644
---- a/fs/compat_ioctl.c
-+++ b/fs/compat_ioctl.c
-@@ -103,11 +103,6 @@
- 
- #include <linux/hiddev.h>
- 
--#define __DVB_CORE__
--#include <linux/dvb/audio.h>
--#include <linux/dvb/dmx.h>
--#include <linux/dvb/frontend.h>
--#include <linux/dvb/video.h>
- 
- #include <linux/sort.h>
- 
-@@ -133,73 +128,6 @@ static int do_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 	return vfs_ioctl(file, cmd, arg);
- }
- 
--struct compat_video_event {
--	int32_t		type;
--	compat_time_t	timestamp;
--	union {
--	        video_size_t size;
--		unsigned int frame_rate;
--	} u;
--};
--#define VIDEO_GET_EVENT32 _IOR('o', 28, struct compat_video_event)
--
--static int do_video_get_event(struct file *file,
--		unsigned int cmd, struct compat_video_event __user *up)
--{
--	struct video_event __user *kevent =
--		compat_alloc_user_space(sizeof(*kevent));
--	int err;
--
--	if (kevent == NULL)
--		return -EFAULT;
--
--	err = do_ioctl(file, VIDEO_GET_EVENT, (unsigned long)kevent);
--	if (!err) {
--		err  = convert_in_user(&kevent->type, &up->type);
--		err |= convert_in_user(&kevent->timestamp, &up->timestamp);
--		err |= convert_in_user(&kevent->u.size.w, &up->u.size.w);
--		err |= convert_in_user(&kevent->u.size.h, &up->u.size.h);
--		err |= convert_in_user(&kevent->u.size.aspect_ratio,
--				&up->u.size.aspect_ratio);
--		if (err)
--			err = -EFAULT;
--	}
--
--	return err;
--}
--
--struct compat_video_still_picture {
--        compat_uptr_t iFrame;
--        int32_t size;
--};
--#define VIDEO_STILLPICTURE32 _IOW('o', 30, struct compat_video_still_picture)
--
--static int do_video_stillpicture(struct file *file,
--		unsigned int cmd, struct compat_video_still_picture __user *up)
--{
--	struct video_still_picture __user *up_native;
--	compat_uptr_t fp;
--	int32_t size;
--	int err;
--
--	err  = get_user(fp, &up->iFrame);
--	err |= get_user(size, &up->size);
--	if (err)
--		return -EFAULT;
--
--	up_native =
--		compat_alloc_user_space(sizeof(struct video_still_picture));
--
--	err =  put_user(compat_ptr(fp), &up_native->iFrame);
--	err |= put_user(size, &up_native->size);
--	if (err)
--		return -EFAULT;
--
--	err = do_ioctl(file, VIDEO_STILLPICTURE, (unsigned long) up_native);
--
--	return err;
--}
--
- #ifdef CONFIG_BLOCK
- typedef struct sg_io_hdr32 {
- 	compat_int_t interface_id;	/* [i] 'S' for SCSI generic (required) */
-@@ -1250,12 +1178,6 @@ static long do_ioctl_trans(unsigned int cmd,
- 	case RTC_EPOCH_READ32:
- 	case RTC_EPOCH_SET32:
- 		return rtc_ioctl(file, cmd, argp);
--
--	/* dvb */
--	case VIDEO_GET_EVENT32:
--		return do_video_get_event(file, cmd, argp);
--	case VIDEO_STILLPICTURE32:
--		return do_video_stillpicture(file, cmd, argp);
- 	}
- 
- 	/*
--- 
-2.18.0
+Can't we just configure a different chained IRQ handler with
+irq_set_chained_handler_and_data() for each of the GPIO IRQs that are
+handled by PDC to be the interrupts provide by the PDC irq controller
+that match the GPIOs? And then set their parent irq with
+irq_set_parent() for completeness? And also move those GPIOs from the
+existing msm_gpio irqchip to a different PDC gpio irqchip that does
+nothing besides push irqchip calls up to the PDC irqchip? Then we don't
+even have to think about resending anything and we can rely on PDC to do
+all the interrupt sensing all the time but still provide the irqs from
+the GPIO controller.
+
+> =
+
+> >I think with the TLMM that's possible if we configure the pin to have
+> >the raw status bit disabled (so that edges on the physical line don't
+> >latch into the GPIO interrupt status register) and the normal status bit
+> >enabled (so that if the status register changes we'll interrupt the
+> >CPU). It needs some testing to make sure that actually works though. If
+> >it does work, then we have a way to inject interrupts on TLMM without
+> >worry that the TLMM hardware will also see the interrupt.
+> =
+
+> >
+> >Is there a good way to test an interrupt to see if it's edge or level
+> >type configured? And is it really a problem to make PDC the hierarchical
+> >parent of TLMM here so that PDC can intercept the type and wake state of
+> >the GPIO irq?
+> Alternately, could we just return the PDC interrupt in gpio_to_irq() and
+> let the driver manipulate only the PDC interrupt ? Ofcourse, drivers
+> that request the GPIO as interrupt in DT, would now have to request the
+> PDC interrupt directly. That could avoid the dance during every
+> idle/suspend. I am not sure how nice it is do this, would like to know
+> your thoughts.
+> =
+
+
+I hope it doesn't come to that.
 
