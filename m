@@ -6,59 +6,81 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A1A6C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:01:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C20D0C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:05:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8F71208B9
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:01:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8F71208B9
+	by mail.kernel.org (Postfix) with ESMTP id 725CE208D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:05:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 725CE208D5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727178AbeH0Vsx (ORCPT
+        id S1727158AbeH0VxT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 17:48:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:40314 "EHLO
+        Mon, 27 Aug 2018 17:53:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40632 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726968AbeH0Vsx (ORCPT
+        with ESMTP id S1726968AbeH0VxS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 17:48:53 -0400
+        Mon, 27 Aug 2018 17:53:18 -0400
 Received: from localhost (unknown [62.119.166.9])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E7605DDC;
-        Mon, 27 Aug 2018 18:01:15 +0000 (UTC)
-Date:   Mon, 27 Aug 2018 19:27:19 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     John Whitmore <johnfwhitmore@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org
-Subject: Re: [PATCH 01/17] staging:rtl8192u: Remove unused defines - Style
-Message-ID: <20180827172719.GA27393@kroah.com>
-References: <20180821171537.9330-1-johnfwhitmore@gmail.com>
- <20180821171537.9330-2-johnfwhitmore@gmail.com>
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 90B1CC7B;
+        Mon, 27 Aug 2018 18:05:40 +0000 (UTC)
+Date:   Mon, 27 Aug 2018 19:33:40 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Nishad Kamdar <nishadkamdar@gmail.com>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        NeilBrown <neil@brown.name>, Joe Perches <joe@perches.com>,
+        Christian =?iso-8859-1?Q?L=FCtke-Stetzkamp?= <christian@lkamp.de>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        John Crispin <blogic@openwrt.org>
+Subject: Re: [PATCH v5 1/4] staging: mt7621-mmc: Remove commented code for
+ N_MSG
+Message-ID: <20180827173340.GA827@kroah.com>
+References: <cover.1535038494.git.nishadkamdar@gmail.com>
+ <21d3ce50f8bba68348c478e4a7520ee22d7b765c.1535038494.git.nishadkamdar@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180821171537.9330-2-johnfwhitmore@gmail.com>
+In-Reply-To: <21d3ce50f8bba68348c478e4a7520ee22d7b765c.1535038494.git.nishadkamdar@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 21, 2018 at 06:15:21PM +0100, John Whitmore wrote:
-> Remove a number of unused constant definitions.
+On Thu, Aug 23, 2018 at 10:58:09PM +0530, Nishad Kamdar wrote:
+> This patch removes the dead code for N_MSG().
 > 
-> This is a coding style change which should have no impact on runtime
-> code execution.
-> 
-> Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
+> Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
 > ---
->  drivers/staging/rtl8192u/ieee80211/rtl819x_BA.h | 5 -----
->  1 file changed, 5 deletions(-)
+> Changes in v5:
+>   - Remove commented code for N_MSG()
+> ---
+>  drivers/staging/mt7621-mmc/dbg.h | 8 --------
+>  1 file changed, 8 deletions(-)
+> 
+> diff --git a/drivers/staging/mt7621-mmc/dbg.h b/drivers/staging/mt7621-mmc/dbg.h
+> index 2f2c56b73987..6f6b4505337f 100644
+> --- a/drivers/staging/mt7621-mmc/dbg.h
+> +++ b/drivers/staging/mt7621-mmc/dbg.h
+> @@ -103,14 +103,6 @@ do { \
+>  #endif /* end of +++ */
+>  
+>  #define N_MSG(evt, fmt, args...)
+> -/*
+> -do {    \
+> -    if ((DBG_EVT_##evt) & sd_debug_zone[host->id]) { \
+> -        printk(KERN_ERR TAG"%d -> "fmt" <- %s() : L<%d> PID<%s><0x%x>\n", \
+> -            host->id,  ##args , __FUNCTION__, __LINE__, current->comm, current->pid);	\
+> -    } \
+> -} while(0)
+> -*/
+>  
 
-Is this series a duplicate of a prebious series?
+So what are we supposed to do with a macro that defines nothing now?
+Please delete it and all users of it at the same time.
 
-it doesn't apply at all to my tree now.
-
-totally confused,
+thanks,
 
 greg k-h
