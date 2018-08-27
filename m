@@ -2,116 +2,163 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 199CAC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:40:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4728FC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:42:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A16B1208D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:40:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E12C1208D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:42:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="phuNN0F4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A16B1208D5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="2VudeFa3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E12C1208D5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727307AbeH0U12 (ORCPT
+        id S1727291AbeH0U3n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 16:27:28 -0400
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:39877 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726995AbeH0U12 (ORCPT
+        Mon, 27 Aug 2018 16:29:43 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:53336 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726995AbeH0U3m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 16:27:28 -0400
-Received: by mail-yb0-f195.google.com with SMTP id c4-v6so6255087ybl.6;
-        Mon, 27 Aug 2018 09:40:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=UvrArh45BLr7dWBLMCweGOwgpp4+m2LYlxRRHm51Jzo=;
-        b=phuNN0F4ps2C5485v2LFVyv4QPgAcc44HNZUyH4veVibq87+zzQadCt9vn8UKN6j/A
-         OeyOWgOQpiXbHIW7L2BZKgWoJAyJk5rRk8LkWO+19ZcIVTM42n8b4if3hTHaDwN91/qD
-         zDFuyAeTJGV/SyfGym+mWhE//yaBjxFU+ochk6dWNwgWljA65lgKcfQ61FMCsVxTbHnc
-         YmxnxfyautknIUs+TKlNOA8CDByHcgR0FBfAeHD9yt5Yw8Adr9pAg36pFAg0RlstopCK
-         q/TzU5Kw+QwRLyahiKaE8dlz0kM3NPXbwqtEIWGqWzSBhpaTo5haNublN9L0L7/bls5A
-         7J9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UvrArh45BLr7dWBLMCweGOwgpp4+m2LYlxRRHm51Jzo=;
-        b=ew+TFc2oqusK0isa4HrPe0PnNdTPRul33HIraE4+DJQVG2MPqlCoA+IT8kHXfb6tYx
-         kLl7EDzuOWwGe1qBaXnqkDq7jNjSfAGFZecYR/m+Xl2+lX4yWoqGPaWYG+wIWwW8lKFX
-         3DAo7RysEwqYH4JR4t2DfH1IndnUDdSz7koGrYwImNhSgx7f6x0+FXO3WTCKcUU7RqNi
-         pdY3OtH4B7DlXL0CFYR2Sqe6ftHAshB7H3cp8kraUUY3eeKwFaDnNwQZkZEZfy7spADf
-         Fejwvt5b4rM3SEYo438igQWmcGHZzCelJVCixUoDfDuRG/7bs3tCCS9tX7FxlXoNApxd
-         QC1w==
-X-Gm-Message-State: APzg51DrmOJsluf5M41+t1lvazVgtjXRKkCutJ7EmPZXOABnm90/l+Re
-        TbGYAoKelXrNxg1/oh9ZibE=
-X-Google-Smtp-Source: ANB0VdbibjDDSiTJtPTXELmox5dMNF+0enhdXx07txC9yphFPfdP3E3aIZPs/3tt+A6wt80uNopuLg==
-X-Received: by 2002:a25:b4b:: with SMTP id 72-v6mr7341982ybl.415.1535388007399;
-        Mon, 27 Aug 2018 09:40:07 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:200::1:2a0f])
-        by smtp.gmail.com with ESMTPSA id 138-v6sm6697388ywj.30.2018.08.27.09.40.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 Aug 2018 09:40:06 -0700 (PDT)
-Date:   Mon, 27 Aug 2018 09:40:04 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
-        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
-        Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-Subject: Re: [PATCH v12 9/9] cpuset: Support forced turning off of partition
- flag
-Message-ID: <20180827164004.GE3978217@devbig004.ftw2.facebook.com>
-References: <1535380884-31308-1-git-send-email-longman@redhat.com>
- <1535380884-31308-10-git-send-email-longman@redhat.com>
+        Mon, 27 Aug 2018 16:29:42 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7RGfLwf172661;
+        Mon, 27 Aug 2018 16:42:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=C4UFNNpoQJ+Vb+BT3ZIXatvlh7s+JlRB2gZ8RrcFw2A=;
+ b=2VudeFa30qhwLjZA4a3h0gu/Legb+Hu+f+EtCYa806d1V5Hi7qrrooaf+dYLzTEht552
+ JqnnMDBJSyN/FT9KxjIFH29hKYdpjpJ38Un/31/4dag8aZhKPHWJk8O3RbLrMlNjGvWC
+ /YA0qD42u1rmcnKWEQnmiEUFCoMbqj/bzd4apKvZ49Xq6hVg/qB9uovtNT4Fiz89qZqw
+ m9mw299K9MMXZnRIWlT8sUHIM0NdUlwiUcqrl2mgqLWjKm4r+l26mvgDfAOz1LkDSr43
+ KXCnBHtj3PplzBZiu90d1QmL3C3nkW3t5iT/TZlQcUwrj6Ozk7vOah13SdrCFjvE1sOG bA== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2m2yrpy03q-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 27 Aug 2018 16:42:08 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7RGg6Zm017365
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 27 Aug 2018 16:42:07 GMT
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7RGg5ci013178;
+        Mon, 27 Aug 2018 16:42:05 GMT
+Received: from [192.168.1.164] (/50.38.38.67)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 27 Aug 2018 09:42:04 -0700
+Subject: Re: [PATCH v6 1/2] mm: migration: fix migration of huge PMD shared
+ pages
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org
+References: <20180823205917.16297-1-mike.kravetz@oracle.com>
+ <20180823205917.16297-2-mike.kravetz@oracle.com>
+ <20180824084157.GD29735@dhcp22.suse.cz>
+ <6063f215-a5c8-2f0c-465a-2c515ddc952d@oracle.com>
+ <20180827074645.GB21556@dhcp22.suse.cz>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <3d9057ef-13ad-7796-ebb0-f86cf7936127@oracle.com>
+Date:   Mon, 27 Aug 2018 09:42:03 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1535380884-31308-10-git-send-email-longman@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180827074645.GB21556@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8998 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808270175
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Waiman.
-
-On Mon, Aug 27, 2018 at 10:41:24AM -0400, Waiman Long wrote:
-> Cpuset allows arbitrary modification of cpu list in "cpuset.cpus"
-> even if the requested CPUs won't be granted in "cpuset.cpus.effective"
-> as restricted by its parent. However, the validate_change() function
-> will inhibit removal of CPUs that have been used in child cpusets.
+On 08/27/2018 12:46 AM, Michal Hocko wrote:
+> On Fri 24-08-18 11:08:24, Mike Kravetz wrote:
+>> On 08/24/2018 01:41 AM, Michal Hocko wrote:
+>>> On Thu 23-08-18 13:59:16, Mike Kravetz wrote:
+>>>
+>>> Acked-by: Michal Hocko <mhocko@suse.com>
+>>>
+>>> One nit below.
+>>>
+>>> [...]
+>>>> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+>>>> index 3103099f64fd..a73c5728e961 100644
+>>>> --- a/mm/hugetlb.c
+>>>> +++ b/mm/hugetlb.c
+>>>> @@ -4548,6 +4548,9 @@ static unsigned long page_table_shareable(struct vm_area_struct *svma,
+>>>>  	return saddr;
+>>>>  }
+>>>>  
+>>>> +#define _range_in_vma(vma, start, end) \
+>>>> +	((vma)->vm_start <= (start) && (end) <= (vma)->vm_end)
+>>>> +
+>>>
+>>> static inline please. Macros and potential side effects on given
+>>> arguments are just not worth the risk. I also think this is something
+>>> for more general use. We have that pattern at many places. So I would
+>>> stick that to linux/mm.h
+>>
+>> Thanks Michal,
+>>
+>> Here is an updated patch which does as you suggest above.
+> [...]
+>> @@ -1409,6 +1419,32 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
+>>  		subpage = page - page_to_pfn(page) + pte_pfn(*pvmw.pte);
+>>  		address = pvmw.address;
+>>  
+>> +		if (PageHuge(page)) {
+>> +			if (huge_pmd_unshare(mm, &address, pvmw.pte)) {
+>> +				/*
+>> +				 * huge_pmd_unshare unmapped an entire PMD
+>> +				 * page.  There is no way of knowing exactly
+>> +				 * which PMDs may be cached for this mm, so
+>> +				 * we must flush them all.  start/end were
+>> +				 * already adjusted above to cover this range.
+>> +				 */
+>> +				flush_cache_range(vma, start, end);
+>> +				flush_tlb_range(vma, start, end);
+>> +				mmu_notifier_invalidate_range(mm, start, end);
+>> +
+>> +				/*
+>> +				 * The ref count of the PMD page was dropped
+>> +				 * which is part of the way map counting
+>> +				 * is done for shared PMDs.  Return 'true'
+>> +				 * here.  When there is no other sharing,
+>> +				 * huge_pmd_unshare returns false and we will
+>> +				 * unmap the actual page and drop map count
+>> +				 * to zero.
+>> +				 */
+>> +				page_vma_mapped_walk_done(&pvmw);
+>> +				break;
+>> +			}
 > 
-> Being a partition root, however, limits the kind of cpu list
-> modification that is allowed. Adding CPUs is not allowed if the new
-> CPUs are not in the parent's effective cpu list that can be put into
-> "cpuset.cpus.reserved". In addition, a child partition cannot exhaust
-> all the parent's effective CPUs.
-> 
-> Because of the implicit cpu exclusive nature of the partition root,
-> cpu changes that break that cpu exclusivity will not be allowed. Other
-> changes that break the conditions of being a partition root is generally
-> allowed. However, the partition flag of the cpuset as well those of
-> the descendant partitions will be forcefully turned off.
+> This still calls into notifier while holding the ptl lock. Either I am
+> missing something or the invalidation is broken in this loop (not also
+> for other invalidations).
 
-First of all, thanks a lot for your persistence.  I'm not necessarily
-against the flag being forced off but wonder whether the same
-config/effective approach can be used as in .cpus and .mems.  Can you
-elaborate a bit on the choice here?
+As Jerome said ...
 
-Thank you.
+When creating this patch, I started by using the same flush/invalidation
+routines used by the existing code.  This is because it is not obvious what
+interfaces can be called in what context, and I didn't want to do anything
+different.  The best 'documentation' are the comments in the mmu_notifier_ops
+definition.
 
 -- 
-tejun
+Mike Kravetz
