@@ -2,86 +2,133 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6124CC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 02:28:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FA39C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 02:34:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0AF021735
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 02:28:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE70A20645
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 02:34:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="xC4uWdk6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0AF021735
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pi9hmmsZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE70A20645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727158AbeH0GN2 (ORCPT
+        id S1727142AbeH0GTI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 02:13:28 -0400
-Received: from conuserg-07.nifty.com ([210.131.2.74]:39332 "EHLO
-        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726926AbeH0GN1 (ORCPT
+        Mon, 27 Aug 2018 02:19:08 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:36717 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726822AbeH0GTI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 02:13:27 -0400
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-07.nifty.com with ESMTP id w7R2SIW7018677;
-        Mon, 27 Aug 2018 11:28:19 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com w7R2SIW7018677
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1535336899;
-        bh=RQt8XGarQHrdI24EZgxunoPdnuXMQ6n80w7QzG/VQNE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=xC4uWdk6reh+QtqUX8OBa1CmsEB+ifAY8L7I+w3suddlItgz74mdUZGWedkrmVyUZ
-         ca2W78b+AG1VN7d/y4m276y9mN2q0qgJE8dL37Mel2I910O4vLG2nV+Fe5JRUfkrX/
-         WEw6auBAz/Q+wZ6ONFtD6V1YT5YyGjP8xdsc00avW1XkHmLe3fq3Co/OZPKqlf4p1w
-         2ygIvwOZOof63GjWaXWYMsY3qqXqY7TObjk2zRw6zcbebkrh/lBYT424ULRvrqLp4o
-         bSsb5l4S20htF7d4VYAkq4h3JENw4sxQidiX7O0inP8zJ55BvGied08O10b/SWSzP9
-         3fYQFxkZj4M8g==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     "James E . J . Bottomley" <jejb@parisc-linux.org>,
-        Helge Deller <deller@gmx.de>, linux-parisc@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] parisc: remove check for minimum required GCC version
-Date:   Mon, 27 Aug 2018 11:28:08 +0900
-Message-Id: <1535336888-12183-1-git-send-email-yamada.masahiro@socionext.com>
+        Mon, 27 Aug 2018 02:19:08 -0400
+Received: by mail-pg1-f194.google.com with SMTP id d1-v6so280728pgo.3
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Aug 2018 19:34:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=69aq2774xmLGSuL+Xi9eBTIF522CDJnQzUDYx4EDrdg=;
+        b=pi9hmmsZN1jZtXpKuuMfu7WFgjxSFR7o64F3ff/Qn9Q+9mDGPWfG0eFOzl1rQkep09
+         PkYTz7jCS2UR8nYWBv/nFUVKO/JHDTtRrnYrVryI1MS2K9Vjq3v0han+BTEAXoD1rxpO
+         gFW+tx7hux0PU0ohC3YXtmj7J/qebqFE5VMjfAZO8kBpu8xeivwyEOU2th5hGTDw8PjP
+         oD5D3jtYfjI3sDW5cnhTD6tIfjAsE4X3fb9rC4AA0whYkKaNiGlJ+RJcOBv/qaQOitZa
+         Vv/3D6s34zOL43TznP7WBPl+CTwm2N5tt8EjMXFzo4+mAvHWKgERAxlyAmmjv8WHGcRM
+         9Y/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=69aq2774xmLGSuL+Xi9eBTIF522CDJnQzUDYx4EDrdg=;
+        b=ZUDDvMGvFYLA/sRiiSojuHF1b6XHYhgYLaNvW5YSrTAIx0vxjTv9PJc2EZC79gQ750
+         VSmu7XdLqtnkVtCtuLOfljY9TGrpuZg+PK15BSyVD+6rzlCLXL+dh6EQkhaL/aZSxeK7
+         x5X7l42XFUeyk+Bv518E52hyH+40ctNPoADwB52/ng5KCCCBRB2lsB72Uq9B7vjI5KNQ
+         0Kc2snkrI1yFw73eqAcvrot5FFtEE9RBAbJ6ycybJ36vzrVqOfJb/rDLcFqH69GAWtiT
+         VkRgzJia4GyfgIR7//UGRFKCK/Z+Dgt1wy2FRTNelgBKta7mp+wPw7WkYkbOtnC1Zbcd
+         P0tw==
+X-Gm-Message-State: APzg51DSl61sfbzscq+wIi3bjwpeSg5bmFysEKnLp7/IR7e2EvVfPCTq
+        1XLdoSNl8zf7PS24OLKr0B0=
+X-Google-Smtp-Source: ANB0VdaFbVNrnbdzkm3lcQw5WaehLw/91m4U0nLwq7o9v5G5SBpG2Z3tzkQnXo2X6wiEt+6ujUg9qg==
+X-Received: by 2002:a63:7e1c:: with SMTP id z28-v6mr10286313pgc.246.1535337273738;
+        Sun, 26 Aug 2018 19:34:33 -0700 (PDT)
+Received: from localhost (45.62.100.246.16clouds.com. [45.62.100.246])
+        by smtp.gmail.com with ESMTPSA id z5-v6sm18117949pfh.83.2018.08.26.19.34.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 26 Aug 2018 19:34:33 -0700 (PDT)
+From:   Lei YU <mine260309@gmail.com>
+To:     Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lei YU <mine260309@gmail.com>, linux-kernel@vger.kernel.org,
+        Joel Stanley <joel@jms.id.au>
+Subject: [PATCH] perf: Fix clean error
+Date:   Mon, 27 Aug 2018 10:34:26 +0800
+Message-Id: <1535337266-114190-1-git-send-email-mine260309@gmail.com>
 X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit cafa0010cd51 ("Raise the minimum required gcc version to 4.6")
-bumped the minimum GCC version to 4.6 for all architectures.
+When make perf with -O, it gets error when make clean with below log:
 
-The version check in arch/parisc/Makefile is obsolete now.
+ $ make -C tools/perf O=<output/dir> # OK
+ $ make -C tools/perf O=<output/dir>
+    find: cannot delete ‘<output/dir>/builtin-script.o’: No such file or directory
+    find: cannot delete ‘<output/dir>/.subcmd-config.o.cmd’: No such file or directory
+    ...
+    Makefile:38: recipe for target 'clean' failed
+    make[2]: *** [clean] Error 1
+    make[1]: *** [fixdep-clean] Error 2
+    Makefile:90: recipe for target 'clean' failed
+    make: *** [clean] Error 2
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+It happens because both fixdep-clean and libsubcmd-clean will delete
+files by `find`, where libsubcmd-clean uses `| xargs $(RM)` and
+fixdep-clean uses `-delete`.
+When a file is find by fixdep-clean, and tries to delete it, it's found
+that the file does not exist because it is deleted by libsubcmd-clean.
+
+This commit changes the delete method of fixdep-clean to use
+`| xargs $(RM)` as well, where RM is defined as `rm -f` so it does not
+return error when file does not exist.
+
+Signed-off-by: Lei YU <mine260309@gmail.com>
 ---
+ tools/build/Makefile | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
- arch/parisc/Makefile | 9 ---------
- 1 file changed, 9 deletions(-)
-
-diff --git a/arch/parisc/Makefile b/arch/parisc/Makefile
-index 5ce0302..d047a09 100644
---- a/arch/parisc/Makefile
-+++ b/arch/parisc/Makefile
-@@ -156,12 +156,3 @@ define archhelp
- 	@echo  '		  copy to $$(INSTALL_PATH)'
- 	@echo  '  zinstall	- Install compressed vmlinuz kernel'
- endef
--
--# we require gcc 3.3 or above to compile the kernel
--archprepare: checkbin
--checkbin:
--	@if test "$(cc-version)" -lt "0303"; then \
--		echo -n "Sorry, GCC v3.3 or above is required to build " ; \
--		echo "the kernel." ; \
--		false ; \
--	fi
+diff --git a/tools/build/Makefile b/tools/build/Makefile
+index 5edf65e..ae38db2 100644
+--- a/tools/build/Makefile
++++ b/tools/build/Makefile
+@@ -18,6 +18,7 @@ $(call allow-override,LD,$(CROSS_COMPILE)ld)
+ HOSTCC ?= gcc
+ HOSTLD ?= ld
+ HOSTAR ?= ar
++RM = rm -f
+ 
+ export HOSTCC HOSTLD HOSTAR
+ 
+@@ -36,7 +37,7 @@ all: $(OUTPUT)fixdep
+ 
+ clean:
+ 	$(call QUIET_CLEAN, fixdep)
+-	$(Q)find $(if $(OUTPUT),$(OUTPUT),.) -name '*.o' -delete -o -name '\.*.cmd' -delete -o -name '\.*.d' -delete
++	$(Q)find $(if $(OUTPUT),$(OUTPUT),.) -name '*.o' -o -name '\.*.cmd' -o -name '\.*.d' | xargs $(RM)
+ 	$(Q)rm -f $(OUTPUT)fixdep
+ 
+ $(OUTPUT)fixdep-in.o: FORCE
 -- 
 2.7.4
 
