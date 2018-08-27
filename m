@@ -2,72 +2,93 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEC7DC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 06:58:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87FD5C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 06:59:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CAD421722
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 06:58:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FaBm3P8T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CAD421722
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 1A5A021722
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 06:59:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A5A021722
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727118AbeH0KoF (ORCPT
+        id S1727159AbeH0KpJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 06:44:05 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40362 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726875AbeH0KoE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 06:44:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=GVWf/+w/sCO2UegASIQHlyTIjUUIEMdy03Or94LtLgk=; b=FaBm3P8TfeAXZTVSWNkGfO3uY
-        Pr3p71rd2iqF6xu1UHTJ6nQQRydb/unVZRz23rnOLgn+DQZTELlf0iX78GtEwjLqAT4w8gDP6vDXs
-        IExfz6y0AFpcdKNeHQ69FkZH+f0XeQabdP5OhwrHX7n7N/2CbHb2aVzrLtmnXGMU6qv+y9DVr3gqZ
-        8K+ZCdzOKejz3CBaSNn33pVkz8cKyjPEM3ujTuZPYj+aDk/sVeqrSNdEgX8du8Fr+x3SFkC4kB7ig
-        F2+VkNTHmOdRZHRe00DVPTg3z7PAkcFYSC+Nj2IEhvAd2eWUgf9uSMcV0OBcFSjNxBUGk7+jQtfx2
-        GRaTsEwFA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fuBU1-0005fh-RB; Mon, 27 Aug 2018 06:58:41 +0000
-Date:   Sun, 26 Aug 2018 23:58:41 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Christoph Hellwig <hch@infradead.org>, murphyt7@tcd.ie,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Changing the AMD IOMMU API path to work in an atomic
- context which is necessary for any custom drivers using the IOMMU API while
- holding a spinlock.
-Message-ID: <20180827065841.GA7053@infradead.org>
-References: <1535120929-5693-1-git-send-email-murphyt7@tcd.ie>
- <20180824145328.GA7996@infradead.org>
- <24d3f04a-e6e2-ed8f-e2bd-b38144f33f26@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <24d3f04a-e6e2-ed8f-e2bd-b38144f33f26@arm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Mon, 27 Aug 2018 06:45:09 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:28784 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726875AbeH0KpJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 06:45:09 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 41zN6h1v41z9ttmB;
+        Mon, 27 Aug 2018 08:59:40 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id I1jt9baKNlhn; Mon, 27 Aug 2018 08:59:40 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 41zN6h1P4Sz9ttlx;
+        Mon, 27 Aug 2018 08:59:40 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 182EF8B7A5;
+        Mon, 27 Aug 2018 08:59:48 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id y2kBnQE0Xfng; Mon, 27 Aug 2018 08:59:48 +0200 (CEST)
+Received: from pc16082vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id E29D98B74B;
+        Mon, 27 Aug 2018 08:59:47 +0200 (CEST)
+Received: by pc16082vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id AD9D4714FC; Mon, 27 Aug 2018 06:59:47 +0000 (UTC)
+Message-Id: <392eeae782302ee8812a3c932a602035deed1609.1535351453.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] checkpatch: remove GCC_BINARY_CONSTANT warning
+To:     Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>
+Cc:     linux-kernel@vger.kernel.org
+Date:   Mon, 27 Aug 2018 06:59:47 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 24, 2018 at 04:24:49PM +0100, Robin Murphy wrote:
-> Although IIRC the AMD driver is in fact the only one whose map/unmap
-> callbacks aren't already spinlock-safe (or at least it was last time I was
-> looking). Stuff like iommu-dma is already relying on this in order to
-> implement streaming DMA API calls (which may be in atomic context) on top of
-> the corresponding IOMMU API operations.
+This warning was there to avoid the use of 0bxxx values
+as they are not supported by gcc prior to v4.3
 
-True.  That should be mentioned in the spinlock, though - and once
-it is done the calling conventions should be documented.
+Since commit cafa0010cd51f ("Raise the minimum required gcc
+version to 4.6"), it's not an issue anymore and using
+such values can increase readability of code.
+
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ scripts/checkpatch.pl | 11 -----------
+ 1 file changed, 11 deletions(-)
+
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 5219280bf7ff..d98650790722 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -4933,17 +4933,6 @@ sub process {
+ 		while ($line =~ m{($Constant|$Lval)}g) {
+ 			my $var = $1;
+ 
+-#gcc binary extension
+-			if ($var =~ /^$Binary$/) {
+-				if (WARN("GCC_BINARY_CONSTANT",
+-					 "Avoid gcc v4.3+ binary constant extension: <$var>\n" . $herecurr) &&
+-				    $fix) {
+-					my $hexval = sprintf("0x%x", oct($var));
+-					$fixed[$fixlinenr] =~
+-					    s/\b$var\b/$hexval/;
+-				}
+-			}
+-
+ #CamelCase
+ 			if ($var !~ /^$Constant$/ &&
+ 			    $var =~ /[A-Z][a-z]|[a-z][A-Z]/ &&
+-- 
+2.13.3
+
