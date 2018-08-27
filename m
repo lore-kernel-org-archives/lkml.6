@@ -2,93 +2,120 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E53C3C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 09:12:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4F39C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 09:12:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1E6A208DC
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 09:12:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1E6A208DC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 77301204EC
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 09:12:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77301204EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727467AbeH0M6c (ORCPT
+        id S1727488AbeH0M6k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 08:58:32 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34164 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727447AbeH0M6b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 08:58:31 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8BB7E4021FC6;
-        Mon, 27 Aug 2018 09:12:41 +0000 (UTC)
-Received: from krava.brq.redhat.com (unknown [10.43.17.209])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 005CF2166B41;
-        Mon, 27 Aug 2018 09:12:39 +0000 (UTC)
-From:   Jiri Olsa <jolsa@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
+        Mon, 27 Aug 2018 08:58:40 -0400
+Received: from mga07.intel.com ([134.134.136.100]:58054 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726809AbeH0M6k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 08:58:40 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2018 02:12:51 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,294,1531810800"; 
+   d="scan'208";a="68389495"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga008.jf.intel.com with ESMTP; 27 Aug 2018 02:12:38 -0700
+Received: from [10.125.252.155] (abudanko-mobl.ccr.corp.intel.com [10.125.252.155])
+        by linux.intel.com (Postfix) with ESMTP id 7C0B95803DA;
+        Mon, 27 Aug 2018 02:12:35 -0700 (PDT)
+Subject: Re: [PATCH v2 2/2]: perf record: enable asynchronous trace writing
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Milind Chabbi <chabbi.milind@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>
-Subject: [PATCH 5/5] perf/hw_breakpoint: Simplify breakpoint enable in perf_event_modify_breakpoint
-Date:   Mon, 27 Aug 2018 11:12:28 +0200
-Message-Id: <20180827091228.2878-6-jolsa@kernel.org>
-In-Reply-To: <20180827091228.2878-1-jolsa@kernel.org>
-References: <20180827091228.2878-1-jolsa@kernel.org>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 27 Aug 2018 09:12:41 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 27 Aug 2018 09:12:41 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@kernel.org' RCPT:''
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-perf-users@vger.kernel.org
+References: <e92805d0-3338-2ce5-5e88-369d406fe0a7@linux.intel.com>
+ <54cc11d7-3ef2-c856-052e-6e2c309ff743@linux.intel.com>
+ <20180827083457.GE24695@krava>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <8afd6aaf-45ec-e477-78bd-83b6c99da713@linux.intel.com>
+Date:   Mon, 27 Aug 2018 12:12:34 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180827083457.GE24695@krava>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We can safely enable the breakpoint back for both the fail
-and success paths by checking only the bp->attr.disabled,
-which either holds the new 'requested' disabled state or
-the original breakpoint state.
+Hi,
 
-Suggested-by: Oleg Nesterov <oleg@redhat.com>
-Acked-by: Oleg Nesterov <oleg@redhat.com>
-Link: http://lkml.kernel.org/n/tip-vo1jm1u2nar6lj6hnd9g73ug@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- kernel/events/core.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+On 27.08.2018 11:34, Jiri Olsa wrote:
+> On Thu, Aug 23, 2018 at 07:47:01PM +0300, Alexey Budankov wrote:
+> 
+> SNIP
+> 
+>> diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
+>> index e71d46cb01cc..c8b921c88a5d 100644
+>> --- a/tools/perf/util/mmap.c
+>> +++ b/tools/perf/util/mmap.c
+>> @@ -292,11 +292,11 @@ int perf_mmap__read_init(struct perf_mmap *map)
+>>  }
+>>  
+>>  int perf_mmap__push(struct perf_mmap *md, void *to,
+>> -		    int push(void *to, void *buf, size_t size))
+>> +		    int push(void *to, void *buf, size_t size, off_t), off_t *off)
+>>  {
+>>  	u64 head = perf_mmap__read_head(md);
+>>  	unsigned char *data = md->base + page_size;
+>> -	unsigned long size;
+>> +	unsigned long size, size0 = 0;
+>>  	void *buf;
+>>  	int rc = 0;
+>>  
+>> @@ -308,23 +308,22 @@ int perf_mmap__push(struct perf_mmap *md, void *to,
+>>  
+>>  	if ((md->start & md->mask) + size != (md->end & md->mask)) {
+>>  		buf = &data[md->start & md->mask];
+>> -		size = md->mask + 1 - (md->start & md->mask);
+>> -		md->start += size;
+>> -
+>> -		if (push(to, buf, size) < 0) {
+>> -			rc = -1;
+>> -			goto out;
+>> -		}
+>> +		size0 = md->mask + 1 - (md->start & md->mask);
+>> +		md->start += size0;
+>> +		memcpy(md->data, buf, size0);
+>>  	}
+>>  
+>>  	buf = &data[md->start & md->mask];
+>>  	size = md->end - md->start;
+>>  	md->start += size;
+>> +	memcpy(md->data + size0, buf, size);
+> 
+> this will need more comments.. and explanation why we copy the data
+> over to another buffer.. it's interesting, it's still faster 
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index f6ea33a9f904..22ede28ec07d 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -2867,16 +2867,11 @@ static int perf_event_modify_breakpoint(struct perf_event *bp,
- 	_perf_event_disable(bp);
- 
- 	err = modify_user_hw_breakpoint_check(bp, attr, true);
--	if (err) {
--		if (!bp->attr.disabled)
--			_perf_event_enable(bp);
- 
--		return err;
--	}
--
--	if (!attr->disabled)
-+	if (!bp->attr.disabled)
- 		_perf_event_enable(bp);
--	return 0;
-+
-+	return err;
- }
- 
- static int perf_event_modify_attr(struct perf_event *event,
--- 
-2.17.1
+Sure. Comments will follow in v3. 
+We copy data into a buffer to release space in the kernel buffer 
+as fast as possible. That lets the kernel to store more data earlier 
+than other per-cpu buffers are handled.
 
+> 
+> jirka
+> 
