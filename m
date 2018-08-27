@@ -5,30 +5,30 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15F61C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 09:12:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12CE8C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 09:12:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2F15204EC
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 09:12:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2F15204EC
+	by mail.kernel.org (Postfix) with ESMTP id CBA69204EC
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 09:12:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBA69204EC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727020AbeH0M6V (ORCPT
+        id S1727317AbeH0M6Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 08:58:21 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49462 "EHLO mx1.redhat.com"
+        Mon, 27 Aug 2018 08:58:25 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49480 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726893AbeH0M6V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 08:58:21 -0400
+        id S1726809AbeH0M6Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 08:58:25 -0400
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 543464023461;
-        Mon, 27 Aug 2018 09:12:32 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1C24E40201BE;
+        Mon, 27 Aug 2018 09:12:36 +0000 (UTC)
 Received: from krava.brq.redhat.com (unknown [10.43.17.209])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E381B2166B41;
-        Mon, 27 Aug 2018 09:12:28 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 84F9B2166B41;
+        Mon, 27 Aug 2018 09:12:34 +0000 (UTC)
 From:   Jiri Olsa <jolsa@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>,
@@ -39,58 +39,87 @@ Cc:     lkml <linux-kernel@vger.kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Milind Chabbi <chabbi.milind@gmail.com>,
         Oleg Nesterov <oleg@redhat.com>
-Subject: [PATCHv4 0/5] perf/hw_breakpoint: Fix breakpoint modify
-Date:   Mon, 27 Aug 2018 11:12:23 +0200
-Message-Id: <20180827091228.2878-1-jolsa@kernel.org>
+Subject: [PATCH 2/5] perf/hw_breakpoint: Modify breakpoint even if the new attr has disabled set
+Date:   Mon, 27 Aug 2018 11:12:25 +0200
+Message-Id: <20180827091228.2878-3-jolsa@kernel.org>
+In-Reply-To: <20180827091228.2878-1-jolsa@kernel.org>
+References: <20180827091228.2878-1-jolsa@kernel.org>
 X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 27 Aug 2018 09:12:32 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 27 Aug 2018 09:12:32 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@kernel.org' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 27 Aug 2018 09:12:36 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 27 Aug 2018 09:12:36 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@kernel.org' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-hi,
-Milind reported that modify_user_hw_breakpoint wouldn't
-allow the breakpoint changing if the new attr had 'disabled'
-set to true.
+We need to change the breakpoint even if the attr with
+new fields has disabled set to true.
 
-I found a case where it actualy prevents ptrace user interface
-to change the breakpoint. It's described in patch 1 as perf test,
-patch 2 is the breakpoint code fix.
+Current code prevents following user code to change
+the breakpoint address:
 
-I ran strace tests, nothing (new) broken there..
+  ptrace(PTRACE_POKEUSER, child, offsetof(struct user, u_debugreg[0]), addr_1)
+  ptrace(PTRACE_POKEUSER, child, offsetof(struct user, u_debugreg[0]), addr_2)
+  ptrace(PTRACE_POKEUSER, child, offsetof(struct user, u_debugreg[7]), dr7)
 
-v4 changes:
-  - added Oleg's and Frederic's acks
+The first PTRACE_POKEUSER creates the breakpoint with
+attr.disabled set to true:
 
-v3 changes:
-  - added Oleg's ack for patch 3
-  - new patches 4,5 based on Oleg's suggestions
-    replacing the v2 fallback approach by enabling
-    the event directly after failed modification
+  ptrace_set_breakpoint_addr(nr = 0)
+    struct perf_event *bp = t->ptrace_bps[nr];
 
-v2 changes:
-  - added Oleg's ack for patch 2
-  - added new changes based on Oleg's questions
-    plus new test code
+    ptrace_register_breakpoint(..., disabled = true)
+      ptrace_fill_bp_fields(..., disabled)
+      register_user_hw_breakpoint
 
-thanks,
-jirka
+So the second PTRACE_POKEUSER will be omitted:
 
+  ptrace_set_breakpoint_addr(nr = 0)
+    struct perf_event *bp = t->ptrace_bps[nr];
+    struct perf_event_attr attr = bp->attr;
+
+    modify_user_hw_breakpoint(bp, &attr)
+      if (!attr->disabled)
+        modify_user_hw_breakpoint_check
+
+Acked-by: Oleg Nesterov <oleg@redhat.com>
+Acked-by: Frederic Weisbecker <frederic@kernel.org>
+Reported-by: Milind Chabbi <chabbi.milind@gmail.com>
+Link: http://lkml.kernel.org/n/tip-yjhgplc28gk5gfzt7ceooe6z@git.kernel.org
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
-Jiri Olsa (5):
-      perf tests: Add breakpoint modify tests
-      perf/hw_breakpoint: Modify breakpoint even if the new attr has disabled set
-      perf/hw_breakpoint: Remove superfluous bp->attr.disabled = 0
-      perf/hw_breakpoint: Enable breakpoint in modify_user_hw_breakpoint
-      perf/hw_breakpoint: Simplify breakpoint enable in perf_event_modify_breakpoint
+ kernel/events/hw_breakpoint.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
- kernel/events/core.c                     |  11 ++-----
- kernel/events/hw_breakpoint.c            |  13 ++++----
- tools/perf/arch/x86/include/arch-tests.h |   1 +
- tools/perf/arch/x86/tests/Build          |   1 +
- tools/perf/arch/x86/tests/arch-tests.c   |   6 ++++
- tools/perf/arch/x86/tests/bp-modify.c    | 213 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 6 files changed, 230 insertions(+), 15 deletions(-)
- create mode 100644 tools/perf/arch/x86/tests/bp-modify.c
+diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
+index b3814fce5ecb..fb229d9c7f3c 100644
+--- a/kernel/events/hw_breakpoint.c
++++ b/kernel/events/hw_breakpoint.c
+@@ -509,6 +509,8 @@ modify_user_hw_breakpoint_check(struct perf_event *bp, struct perf_event_attr *a
+  */
+ int modify_user_hw_breakpoint(struct perf_event *bp, struct perf_event_attr *attr)
+ {
++	int err;
++
+ 	/*
+ 	 * modify_user_hw_breakpoint can be invoked with IRQs disabled and hence it
+ 	 * will not be possible to raise IPIs that invoke __perf_event_disable.
+@@ -520,11 +522,11 @@ int modify_user_hw_breakpoint(struct perf_event *bp, struct perf_event_attr *att
+ 	else
+ 		perf_event_disable(bp);
+ 
+-	if (!attr->disabled) {
+-		int err = modify_user_hw_breakpoint_check(bp, attr, false);
++	err = modify_user_hw_breakpoint_check(bp, attr, false);
++	if (err)
++		return err;
+ 
+-		if (err)
+-			return err;
++	if (!attr->disabled) {
+ 		perf_event_enable(bp);
+ 		bp->attr.disabled = 0;
+ 	}
+-- 
+2.17.1
+
