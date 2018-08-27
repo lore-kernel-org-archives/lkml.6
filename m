@@ -2,384 +2,254 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A879C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 23:01:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81835C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 23:03:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D496C208B8
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 23:01:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E78F208E2
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 23:03:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="I/D5l8pg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D496C208B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mb9PCCrY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E78F208E2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727520AbeH1Cuj (ORCPT
+        id S1727417AbeH1Cwi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 22:50:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60554 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727058AbeH1Cui (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 22:50:38 -0400
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CDD21208B4
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 23:01:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535410915;
-        bh=yBNbRsrm/nIsj/x/P4L7Pnb5oLNw+/dnFbDZg9BDkOY=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=I/D5l8pg5DM+yLgmMITgKjmmatUvqEg2bsLYUW81eqB0KTOD2LgaqGHiaWPA1ZrMN
-         c+aHrlfH/gAxwjl5Mf/OAme0bDISgMH3xN3lWiJoHHOFzeheAbIke56EkhJ0Eczovb
-         sNPzKcI+VBLgt2M1KqRFc82uFHYW6l3WlbFFl7+k=
-Received: by mail-wr1-f47.google.com with SMTP id w11-v6so508091wrc.5
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 16:01:54 -0700 (PDT)
-X-Gm-Message-State: APzg51DLpLh6s2f+64DLT2qTmHEIBEL4KMCZt7gYNq4XALMz03JWT6Ak
-        lK1Dkx6z0gFbCoB9RPug4+f00busXLgg4zon+EOXuw==
-X-Google-Smtp-Source: ANB0Vdak23IhYxZox2A0/KJLtcBSMojTKwf6u1C77vhenCdKI6tLgwytJK2zLOcypiU2J99ndQcrgPLc8mW9J46mQ58=
-X-Received: by 2002:adf:dcc1:: with SMTP id x1-v6mr10311869wrm.21.1535410913345;
- Mon, 27 Aug 2018 16:01:53 -0700 (PDT)
+        Mon, 27 Aug 2018 22:52:38 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:37996 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726994AbeH1Cwh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 22:52:37 -0400
+Received: by mail-it0-f67.google.com with SMTP id p129-v6so855472ite.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 16:03:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Cf/rSBBS1MuOh5Ce3AnoaoD2UFE1tPMZV6K+zD1OOZw=;
+        b=Mb9PCCrYiqMD85Mqr8GrTZ881/BdqWrXqtSmdNywozrsgyUATJB066+HLrT0ZlaCk2
+         m3TLPl2B3v7l5efNWahhakIGTWTKMDqeRCjqBflKllU/8kEnZoq53sAzi0tQTbDLtbTN
+         X2FjGH6R7C1xfW+fuIlchwgzLelXwAffa+9Qn3ncKC4YbFMsLoath28Zwyt/OUxGwnUj
+         WiDdG3t4XBqDN1vCzQT7KuZpakBOzdkwMYERxo+VHdppxdwqr2l0UutP1dzWfxbJKGxe
+         LXQ7MD6dABeOqKYEg4F2BZg1jSdFFR5XauDV0/kT+3+sjjpZwo5rN8FaDGfqdHm5nEch
+         RI3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Cf/rSBBS1MuOh5Ce3AnoaoD2UFE1tPMZV6K+zD1OOZw=;
+        b=niwNseDDw+VcbD0Dt5iHp0cAHqmLjsRdmpp/d8P41JjbHOaigBwhcNFkoeQULZnia+
+         09qVi2DZAjtUWGZ/S/719kcmScTBNgqLKqpfocJbNP0AJjP+LYwx9slUDSK+mSOxXy0r
+         uXFhvKZ0t26/5F/0c1sRAGOhW7JeWWFkzjquiR8WF5icXWCCh178sD7VQLrMYBvkS7Fd
+         KSJptouCfaVH7Bqrqq2t84ylZPTBJyxJjKK0+C2atbUlmvhcq1CmFztsin5FW6p0fATg
+         bvorkkc70x5gYLcF/VY7fv5mwLU4ZQlYSWEPZs/tgW+fBSzNlxjS10bof6Dg4yQlJQ1D
+         V83g==
+X-Gm-Message-State: APzg51BR8iKTqIWb6q397CgTVK6o/lqh4K9+uZwBEkZpmr96k9L/kutz
+        rEwyIU+RGQSUThWL3iDYAO4A25oNn/qsvOoK2zM=
+X-Google-Smtp-Source: ANB0VdYM36U7Tc6AXl+FkYEVGM5zEcsXLQZEWoR9MKd9h4HzuBLdbwbD4VRj5IQASEWKbU1joweFoQAkBd4cZrJEaWk=
+X-Received: by 2002:a24:d6d3:: with SMTP id o202-v6mr8323743itg.115.1535411033571;
+ Mon, 27 Aug 2018 16:03:53 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a1c:548:0:0:0:0:0 with HTTP; Mon, 27 Aug 2018 16:01:32 -0700 (PDT)
-In-Reply-To: <2998E63A-5663-4805-9DE7-829A5870AA6D@gmail.com>
-References: <D74A89DF-0D89-4AB6-8A6B-93BEC9A83595@gmail.com>
- <20180824180438.GS24124@hirez.programming.kicks-ass.net> <56A9902F-44BE-4520-A17C-26650FCC3A11@gmail.com>
- <CA+55aFzerzTPm94jugheVmWg8dJre94yu+GyZGT9NNZanNx_qw@mail.gmail.com>
- <9A38D3F4-2F75-401D-8B4D-83A844C9061B@gmail.com> <CA+55aFz1KYT7fRRG98wei24spiVg7u1Ec66piWY5359ykFmezw@mail.gmail.com>
- <8E0D8C66-6F21-4890-8984-B6B3082D4CC5@gmail.com> <CALCETrWdeKBcEs7zAbpEM1YdYiT2UBXwPtF0mMTvcDX_KRpz1A@mail.gmail.com>
- <20180826112341.f77a528763e297cbc36058fa@kernel.org> <CALCETrXPaX-+R6Z9LqZp0uOVmq-TUX_ksPbUL7mnfbdqo6z2AA@mail.gmail.com>
- <20180826090958.GT24124@hirez.programming.kicks-ass.net> <20180827120305.01a6f26267c64610cadec5d8@kernel.org>
- <4BF82052-4738-441C-8763-26C85003F2C9@gmail.com> <20180827170511.6bafa15cbc102ae135366e86@kernel.org>
- <01DA0BDD-7504-4209-8A8F-20B27CF6A1C7@gmail.com> <CALCETrWxwpr+Xx0mCK1HUkanmCDOSRbw50VmebgoAgeNaaPAKg@mail.gmail.com>
- <0000D631-FDDF-4273-8F3C-714E6825E59B@gmail.com> <CALCETrUoNdwDuNSHb3haw9-fYk+sNC_M4r+5EMVVzJ8HWeSsOQ@mail.gmail.com>
- <823D916E-4056-4A36-BDD8-0FB682A8DCAE@gmail.com> <E5B40DF6-C28A-4EB2-84C3-146BC5B8B312@gmail.com>
- <CALCETrW+nx7kRWov_+hCAxJRUSsUUJuVqvRP7KoVUxvFFTqi5Q@mail.gmail.com>
- <08A6BCB2-66C2-47ED-AEB8-AA8F4D7DBD45@gmail.com> <4F72D40A-25A3-4C64-B8DD-56970CFDE61E@gmail.com>
- <CALCETrWaYgyaGcHYdvbcwXBEwHx61qbX_T99+XGD7qnRpRVGuA@mail.gmail.com> <2998E63A-5663-4805-9DE7-829A5870AA6D@gmail.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 27 Aug 2018 16:01:32 -0700
-X-Gmail-Original-Message-ID: <CALCETrUBGFFf_M4V2dz6Uath18JK0kCNJB=GxXqfybgbsZZkiw@mail.gmail.com>
-Message-ID: <CALCETrUBGFFf_M4V2dz6Uath18JK0kCNJB=GxXqfybgbsZZkiw@mail.gmail.com>
-Subject: Re: TLB flushes on fixmap changes
-To:     Nadav Amit <nadav.amit@gmail.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Will Deacon <will.deacon@arm.com>,
-        Benjamin Herrenschmidt <benh@au1.ibm.com>,
-        Nick Piggin <npiggin@gmail.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Rik van Riel <riel@surriel.com>,
-        Jann Horn <jannh@google.com>,
-        Adin Scannell <ascannell@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        David Miller <davem@davemloft.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
+References: <1533537589-7202-1-git-send-email-Anson.Huang@nxp.com>
+ <1533537589-7202-2-git-send-email-Anson.Huang@nxp.com> <CAHQ1cqGA37RNoo3KcESCOFeYZxAQCOFkuQQhRPRKCTp=gKLdKQ@mail.gmail.com>
+In-Reply-To: <CAHQ1cqGA37RNoo3KcESCOFeYZxAQCOFkuQQhRPRKCTp=gKLdKQ@mail.gmail.com>
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+Date:   Mon, 27 Aug 2018 16:03:42 -0700
+Message-ID: <CAHQ1cqEy0hQg3ByZVx4tW7f6cifzU++ptrV40TcH01GsKmHP3g@mail.gmail.com>
+Subject: Re: [PATCH 2/2] soc: imx: gpcv2: make pgc driver more generic for
+ other i.MX platforms
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, Linux-imx@nxp.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 3:54 PM, Nadav Amit <nadav.amit@gmail.com> wrote:
-> at 3:32 PM, Andy Lutomirski <luto@kernel.org> wrote:
+On Mon, Aug 27, 2018 at 3:51 PM Andrey Smirnov <andrew.smirnov@gmail.com> wrote:
 >
->> On Mon, Aug 27, 2018 at 2:55 PM, Nadav Amit <nadav.amit@gmail.com> wrote=
-:
->>> at 1:16 PM, Nadav Amit <nadav.amit@gmail.com> wrote:
->>>
->>>> at 12:58 PM, Andy Lutomirski <luto@kernel.org> wrote:
->>>>
->>>>> On Mon, Aug 27, 2018 at 12:43 PM, Nadav Amit <nadav.amit@gmail.com> w=
-rote:
->>>>>> at 12:10 PM, Nadav Amit <nadav.amit@gmail.com> wrote:
->>>>>>
->>>>>>> at 11:58 AM, Andy Lutomirski <luto@kernel.org> wrote:
->>>>>>>
->>>>>>>> On Mon, Aug 27, 2018 at 11:54 AM, Nadav Amit <nadav.amit@gmail.com=
-> wrote:
->>>>>>>>>> On Mon, Aug 27, 2018 at 10:34 AM, Nadav Amit <nadav.amit@gmail.c=
-om> wrote:
->>>>>>>>>> What do you all think?
->>>>>>>>>
->>>>>>>>> I agree in general. But I think that current->mm would need to be=
- loaded, as
->>>>>>>>> otherwise I am afraid it would break switch_mm_irqs_off().
->>>>>>>>
->>>>>>>> What breaks?
->>>>>>>
->>>>>>> Actually nothing. I just saw the IBPB stuff regarding tsk, but it s=
-hould not
->>>>>>> matter.
->>>>>>
->>>>>> So here is what I got. It certainly needs some cleanup, but it boots=
-.
->>>>>>
->>>>>> Let me know how crappy you find it...
->>>>>>
->>>>>>
->>>>>> diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/a=
-sm/mmu_context.h
->>>>>> index bbc796eb0a3b..336779650a41 100644
->>>>>> --- a/arch/x86/include/asm/mmu_context.h
->>>>>> +++ b/arch/x86/include/asm/mmu_context.h
->>>>>> @@ -343,4 +343,24 @@ static inline unsigned long __get_current_cr3_f=
-ast(void)
->>>>>>      return cr3;
->>>>>> }
->>>>>>
->>>>>> +typedef struct {
->>>>>> +       struct mm_struct *prev;
->>>>>> +} temporary_mm_state_t;
->>>>>> +
->>>>>> +static inline temporary_mm_state_t use_temporary_mm(struct mm_struc=
-t *mm)
->>>>>> +{
->>>>>> +       temporary_mm_state_t state;
->>>>>> +
->>>>>> +       lockdep_assert_irqs_disabled();
->>>>>> +       state.prev =3D this_cpu_read(cpu_tlbstate.loaded_mm);
->>>>>> +       switch_mm_irqs_off(NULL, mm, current);
->>>>>> +       return state;
->>>>>> +}
->>>>>> +
->>>>>> +static inline void unuse_temporary_mm(temporary_mm_state_t prev)
->>>>>> +{
->>>>>> +       lockdep_assert_irqs_disabled();
->>>>>> +       switch_mm_irqs_off(NULL, prev.prev, current);
->>>>>> +}
->>>>>> +
->>>>>> #endif /* _ASM_X86_MMU_CONTEXT_H */
->>>>>> diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/p=
-gtable.h
->>>>>> index 5715647fc4fe..ef62af9a0ef7 100644
->>>>>> --- a/arch/x86/include/asm/pgtable.h
->>>>>> +++ b/arch/x86/include/asm/pgtable.h
->>>>>> @@ -976,6 +976,10 @@ static inline void __meminit init_trampoline_de=
-fault(void)
->>>>>>      /* Default trampoline pgd value */
->>>>>>      trampoline_pgd_entry =3D init_top_pgt[pgd_index(__PAGE_OFFSET)]=
-;
->>>>>> }
->>>>>> +
->>>>>> +void __init patching_mm_init(void);
->>>>>> +#define patching_mm_init patching_mm_init
->>>>>> +
->>>>>> # ifdef CONFIG_RANDOMIZE_MEMORY
->>>>>> void __meminit init_trampoline(void);
->>>>>> # else
->>>>>> diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/incl=
-ude/asm/pgtable_64_types.h
->>>>>> index 054765ab2da2..9f44262abde0 100644
->>>>>> --- a/arch/x86/include/asm/pgtable_64_types.h
->>>>>> +++ b/arch/x86/include/asm/pgtable_64_types.h
->>>>>> @@ -116,6 +116,9 @@ extern unsigned int ptrs_per_p4d;
->>>>>> #define LDT_PGD_ENTRY          (pgtable_l5_enabled() ? LDT_PGD_ENTRY=
-_L5 : LDT_PGD_ENTRY_L4)
->>>>>> #define LDT_BASE_ADDR          (LDT_PGD_ENTRY << PGDIR_SHIFT)
->>>>>>
->>>>>> +#define TEXT_POKE_PGD_ENTRY    -5UL
->>>>>> +#define TEXT_POKE_ADDR         (TEXT_POKE_PGD_ENTRY << PGDIR_SHIFT)
->>>>>> +
->>>>>> #define __VMALLOC_BASE_L4      0xffffc90000000000UL
->>>>>> #define __VMALLOC_BASE_L5      0xffa0000000000000UL
->>>>>>
->>>>>> diff --git a/arch/x86/include/asm/pgtable_types.h b/arch/x86/include=
-/asm/pgtable_types.h
->>>>>> index 99fff853c944..840c72ec8c4f 100644
->>>>>> --- a/arch/x86/include/asm/pgtable_types.h
->>>>>> +++ b/arch/x86/include/asm/pgtable_types.h
->>>>>> @@ -505,6 +505,9 @@ pgprot_t phys_mem_access_prot(struct file *file,=
- unsigned long pfn,
->>>>>> /* Install a pte for a particular vaddr in kernel space. */
->>>>>> void set_pte_vaddr(unsigned long vaddr, pte_t pte);
->>>>>>
->>>>>> +struct mm_struct;
->>>>>> +void set_mm_pte_vaddr(struct mm_struct *mm, unsigned long vaddr, pt=
-e_t pte);
->>>>>> +
->>>>>> #ifdef CONFIG_X86_32
->>>>>> extern void native_pagetable_init(void);
->>>>>> #else
->>>>>> diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include=
-/asm/text-patching.h
->>>>>> index 2ecd34e2d46c..cb364ea5b19d 100644
->>>>>> --- a/arch/x86/include/asm/text-patching.h
->>>>>> +++ b/arch/x86/include/asm/text-patching.h
->>>>>> @@ -38,4 +38,6 @@ extern void *text_poke(void *addr, const void *opc=
-ode, size_t len);
->>>>>> extern int poke_int3_handler(struct pt_regs *regs);
->>>>>> extern void *text_poke_bp(void *addr, const void *opcode, size_t len=
-, void *handler);
->>>>>>
->>>>>> +extern struct mm_struct *patching_mm;
->>>>>> +
->>>>>> #endif /* _ASM_X86_TEXT_PATCHING_H */
->>>>>> diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alterna=
-tive.c
->>>>>> index a481763a3776..fd8a950b0d62 100644
->>>>>> --- a/arch/x86/kernel/alternative.c
->>>>>> +++ b/arch/x86/kernel/alternative.c
->>>>>> @@ -11,6 +11,7 @@
->>>>>> #include <linux/stop_machine.h>
->>>>>> #include <linux/slab.h>
->>>>>> #include <linux/kdebug.h>
->>>>>> +#include <linux/mmu_context.h>
->>>>>> #include <asm/text-patching.h>
->>>>>> #include <asm/alternative.h>
->>>>>> #include <asm/sections.h>
->>>>>> @@ -701,8 +702,36 @@ void *text_poke(void *addr, const void *opcode,=
- size_t len)
->>>>>>              WARN_ON(!PageReserved(pages[0]));
->>>>>>              pages[1] =3D virt_to_page(addr + PAGE_SIZE);
->>>>>>      }
->>>>>> -       BUG_ON(!pages[0]);
->>>>>> +
->>>>>>      local_irq_save(flags);
->>>>>> +       BUG_ON(!pages[0]);
->>>>>> +
->>>>>> +       /*
->>>>>> +        * During initial boot, it is hard to initialize patching_mm=
- due to
->>>>>> +        * dependencies in boot order.
->>>>>> +        */
->>>>>> +       if (patching_mm) {
->>>>>> +               pte_t pte;
->>>>>> +               temporary_mm_state_t prev;
->>>>>> +
->>>>>> +               prev =3D use_temporary_mm(patching_mm);
->>>>>> +               pte =3D mk_pte(pages[0], PAGE_KERNEL);
->>>>>> +               set_mm_pte_vaddr(patching_mm, TEXT_POKE_ADDR, pte);
->>>>>> +               pte =3D mk_pte(pages[1], PAGE_KERNEL);
->>>>>> +               set_mm_pte_vaddr(patching_mm, TEXT_POKE_ADDR + PAGE_=
-SIZE, pte);
->>>>>> +
->>>>>> +               memcpy((void *)(TEXT_POKE_ADDR | ((unsigned long)add=
-r & ~PAGE_MASK)),
->>>>>> +                      opcode, len);
->>>>>> +
->>>>>> +               set_mm_pte_vaddr(patching_mm, TEXT_POKE_ADDR, __pte(=
-0));
->>>>>> +               set_mm_pte_vaddr(patching_mm, TEXT_POKE_ADDR + PAGE_=
-SIZE, __pte(0));
->>>>>> +               local_flush_tlb();
->>>>>
->>>>> Hmm.  This is stuff busted on SMP, and it's IMO more complicated than
->>>>> needed.  How about getting rid of all the weird TLB flushing stuff an=
-d
->>>>> instead putting the mapping at vaddr - __START_KERNEL_map or whatever
->>>>> it is?  You *might* need to flush_tlb_mm_range() on module unload, bu=
-t
->>>>> that's it.
->>>>
->>>> I don=E2=80=99t see what=E2=80=99s wrong in SMP, since this entire pie=
-ce of code should be
->>>> running under text_mutex.
->>>>
->>>> I don=E2=80=99t quite understand your proposal. I really don=E2=80=99t=
- want to have any
->>>> chance in which the page-tables for the poked address is not prealloca=
-ted.
->>>>
->>>> It is more complicated than needed, and there are redundant TLB flushe=
-s. The
->>>> reason I preferred to do it this way, is in order not to use other fun=
-ctions
->>>> that take locks during the software page-walk and not to duplicate exi=
-sting
->>>> code. Yet, duplication might be the way to go.
->>>>
->>>>>> +               sync_core();
->>>>>
->>>>> I can't think of any case where sync_core() is needed.  The mm switch
->>>>> serializes.
->>>>
->>>> Good point!
->>>>
->>>>> Also, is there any circumstance in which any of this is used before a=
-t
->>>>> least jump table init?  All the early stuff is text_poke_early(),
->>>>> right?
->>>>
->>>> Not before jump_label_init. However, I did not manage to get rid of th=
-e two
->>>> code-patches in text_poke(), since text_poke is used relatively early =
-by
->>>> x86_late_time_init(), and at this stage kmem_cache_alloc() - which is =
-needed
->>>> to duplicate init_mm - still fails.
->>>
->>> Another correction: the populate_extra_pte() is not needed.
->>>
->>> Anyhow, if you want to do this whole thing differently, I obviously wil=
-l not
->>> object, but I think it will end up more complicated.
->>>
->>> I think I finally understood your comment about "vaddr -
->>> __START_KERNEL_map=E2=80=9D. I did something like that before, and it i=
-s not
->>> super-simple. You need not only to conditionally flush the TLB, but als=
-o
->>> to synchronize the PUD/PMD on changes. Don=E2=80=99t forget that module=
- memory
->>> is installed even when BPF programs are installed.
->>>
->>> Let me know if you want me to submit cleaner patches or you want to car=
-ry on
->>> yourself.
->>
->> I think your approach is a good start and should be good enough (with
->> cleanups) as a fix for the bug.  But I think your code has the same
->> bug that we have now!  You're reusing the same address on multiple
->> CPUs without flushing.  You can easily fix it by forcing a flush
->> before loading the mm, which should be as simple as adding
->> flush_tlb_mm() before you load the mm.  (It won't actually flush
->> anything by itself, since the mm isn't loaded, but it will update the
->> bookkeeping so that switch_mm_irqs_off() flushes the mm.)
+> On Sun, Aug 5, 2018 at 11:45 PM Anson Huang <Anson.Huang@nxp.com> wrote:
+> >
+> > i.MX8MQ and i.MX8MM share same gpc module with i.MX7D, they
+> > can reuse gpcv2 pgc driver for power domain control, this
+> > patch renames all functions and structure definitions started
+> > with "imx7" to "imx", and check machine type to pass platform
+> > specific power domain data for power domain driver, thus make
+> > gpcv2 pgc driver more generic for i.MX platforms.
+> >
 >
-> What am I missing?
->
-> We have a lock (text_mutex) which prevents the use of the new page-table
-> hierarchy on multiple CPUs. In addition we have __set_pte_vaddr() which d=
-oes
-> a local TLB flush before the lock is released and before IRQs are enabled=
-.
-> So how can the PTE be cached on multiple CPUs?
->
-> Yes, __set_pte_vaddr() is ugly and flushes too much. I=E2=80=99ll try to =
-remove some
-> redundant TLB flushes, but these flushes are already there.
+> Just for the sake of
 
-I missed that set_pte_vaddr() contained a flush.  It's probably nicer
-to use one of the APIs that doesn't imply a flush.  If you end up with
-vm_insert_pfn() or similar, you can use can use copy_to_user() if
-needed :)
+Oops, forgot to type out the question I had about i.MX8MQ GPC in
+general. I've noticed that vendor tree for i.MX8MQ has a separate
+driver for GPC that relies on code in ARM Trusted Firmware binary blob
+to do the actual switching. Do you by any chances know the relation
+between this code and the driver I describe? Are they mutually
+exclusive or complimentary (I assume the former)? Will the ATF-based
+driver be eventually deprecated?
+
+Thanks,
+Andrey Smirnov
 
 >
->> Also, please at least get rid of TEXT_POKE_ADDR.  If you don't want to
->> do the vaddr - __START_KERNEL_map thing, then at least pick an address
->> in the low half of the address space such as 0 :)  Ideally you'd only
->> use this thing late enough that you could even use the normal
->> insert_pfn (or similar) API for it, but that doesn't really matter.
 >
-> Perhaps the vaddr - __START_KERNEL_map actually makes sense. I was
-> misunderstanding it (again) before, thinking you want me to use vaddr (an=
-d
-> not the delta). I=E2=80=99ll give it a try.
-
-It does prevent easy preallocation of the intermediate tables.
-
-And do we really allow text_poke() / text_poke_bp() on BPF programs?  Hmm.
+> > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> > ---
+> >  drivers/soc/imx/gpcv2.c | 68 +++++++++++++++++++++++++++++--------------------
+> >  1 file changed, 40 insertions(+), 28 deletions(-)
+> >
+> > diff --git a/drivers/soc/imx/gpcv2.c b/drivers/soc/imx/gpcv2.c
+> > index 0e31465..0e33cb5 100644
+> > --- a/drivers/soc/imx/gpcv2.c
+> > +++ b/drivers/soc/imx/gpcv2.c
+> > @@ -53,7 +53,7 @@
+> >
+> >  #define GPC_PGC_CTRL_PCR               BIT(0)
+> >
+> > -struct imx7_pgc_domain {
+> > +struct imx_pgc_domain {
+> >         struct generic_pm_domain genpd;
+> >         struct regmap *regmap;
+> >         struct regulator *regulator;
+> > @@ -69,11 +69,11 @@ struct imx7_pgc_domain {
+> >         struct device *dev;
+> >  };
+> >
+> > -static int imx7_gpc_pu_pgc_sw_pxx_req(struct generic_pm_domain *genpd,
+> > +static int imx_gpc_pu_pgc_sw_pxx_req(struct generic_pm_domain *genpd,
+> >                                       bool on)
+> >  {
+> > -       struct imx7_pgc_domain *domain = container_of(genpd,
+> > -                                                     struct imx7_pgc_domain,
+> > +       struct imx_pgc_domain *domain = container_of(genpd,
+> > +                                                     struct imx_pgc_domain,
+> >                                                       genpd);
+> >         unsigned int offset = on ?
+> >                 GPC_PU_PGC_SW_PUP_REQ : GPC_PU_PGC_SW_PDN_REQ;
+> > @@ -150,17 +150,17 @@ static int imx7_gpc_pu_pgc_sw_pxx_req(struct generic_pm_domain *genpd,
+> >         return ret;
+> >  }
+> >
+> > -static int imx7_gpc_pu_pgc_sw_pup_req(struct generic_pm_domain *genpd)
+> > +static int imx_gpc_pu_pgc_sw_pup_req(struct generic_pm_domain *genpd)
+> >  {
+> > -       return imx7_gpc_pu_pgc_sw_pxx_req(genpd, true);
+> > +       return imx_gpc_pu_pgc_sw_pxx_req(genpd, true);
+> >  }
+> >
+> > -static int imx7_gpc_pu_pgc_sw_pdn_req(struct generic_pm_domain *genpd)
+> > +static int imx_gpc_pu_pgc_sw_pdn_req(struct generic_pm_domain *genpd)
+> >  {
+> > -       return imx7_gpc_pu_pgc_sw_pxx_req(genpd, false);
+> > +       return imx_gpc_pu_pgc_sw_pxx_req(genpd, false);
+> >  }
+> >
+> > -static const struct imx7_pgc_domain imx7_pgc_domains[] = {
+> > +static const struct imx_pgc_domain imx7_pgc_domains[] = {
+> >         [IMX7_POWER_DOMAIN_MIPI_PHY] = {
+> >                 .genpd = {
+> >                         .name      = "mipi-phy",
+> > @@ -198,9 +198,9 @@ static const struct imx7_pgc_domain imx7_pgc_domains[] = {
+> >         },
+> >  };
+> >
+> > -static int imx7_pgc_domain_probe(struct platform_device *pdev)
+> > +static int imx_pgc_domain_probe(struct platform_device *pdev)
+> >  {
+> > -       struct imx7_pgc_domain *domain = pdev->dev.platform_data;
+> > +       struct imx_pgc_domain *domain = pdev->dev.platform_data;
+> >         int ret;
+> >
+> >         domain->dev = &pdev->dev;
+> > @@ -233,9 +233,9 @@ static int imx7_pgc_domain_probe(struct platform_device *pdev)
+> >         return ret;
+> >  }
+> >
+> > -static int imx7_pgc_domain_remove(struct platform_device *pdev)
+> > +static int imx_pgc_domain_remove(struct platform_device *pdev)
+> >  {
+> > -       struct imx7_pgc_domain *domain = pdev->dev.platform_data;
+> > +       struct imx_pgc_domain *domain = pdev->dev.platform_data;
+> >
+> >         of_genpd_del_provider(domain->dev->of_node);
+> >         pm_genpd_remove(&domain->genpd);
+> > @@ -243,23 +243,24 @@ static int imx7_pgc_domain_remove(struct platform_device *pdev)
+> >         return 0;
+> >  }
+> >
+> > -static const struct platform_device_id imx7_pgc_domain_id[] = {
+> > -       { "imx7-pgc-domain", },
+> > +static const struct platform_device_id imx_pgc_domain_id[] = {
+> > +       { "imx-pgc-domain", },
+> >         { },
+> >  };
+> >
+> > -static struct platform_driver imx7_pgc_domain_driver = {
+> > +static struct platform_driver imx_pgc_domain_driver = {
+> >         .driver = {
+> > -               .name = "imx7-pgc",
+> > +               .name = "imx-pgc",
+> >         },
+> > -       .probe    = imx7_pgc_domain_probe,
+> > -       .remove   = imx7_pgc_domain_remove,
+> > -       .id_table = imx7_pgc_domain_id,
+> > +       .probe    = imx_pgc_domain_probe,
+> > +       .remove   = imx_pgc_domain_remove,
+> > +       .id_table = imx_pgc_domain_id,
+> >  };
+> > -builtin_platform_driver(imx7_pgc_domain_driver)
+> > +builtin_platform_driver(imx_pgc_domain_driver)
+> >
+> >  static int imx_gpcv2_probe(struct platform_device *pdev)
+> >  {
+> > +       static const struct imx_pgc_domain *imx_pgc_domains;
+> >         static const struct regmap_range yes_ranges[] = {
+> >                 regmap_reg_range(GPC_LPCR_A_CORE_BSC,
+> >                                  GPC_M4_PU_PDN_FLG),
+> > @@ -287,6 +288,7 @@ static int imx_gpcv2_probe(struct platform_device *pdev)
+> >         struct regmap *regmap;
+> >         struct resource *res;
+> >         void __iomem *base;
+> > +       int pgc_max_index;
+> >         int ret;
+> >
+> >         pgc_np = of_get_child_by_name(dev->of_node, "pgc");
+> > @@ -307,9 +309,19 @@ static int imx_gpcv2_probe(struct platform_device *pdev)
+> >                 return ret;
+> >         }
+> >
+> > +       if (of_machine_is_compatible("fsl,imx7d")) {
+> > +               pgc_max_index = ARRAY_SIZE(imx7_pgc_domains);
+> > +               imx_pgc_domains = imx7_pgc_domains;
+> > +       }
+>
+> Is there any reason to do this explicit call to
+> of_machine_is_compatible() as opposed to passing necessary data via
+> .data in imx_gpcv2_dt_ids[]? The latter seems like a more
+> straightforward way of passing variant specific driver info
+>
+> > +
+> > +       if (!imx_pgc_domains) {
+> > +               dev_err(&pdev->dev, "no device match found\n");
+> > +               return -ENODEV;
+> > +       }
+>
+> And doing so would also allow you to drop the check above.
+>
+> Other that this seems like a reasonable change:
+>
+> Acked-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+>
+> Thanks,
+> Andrey Smirnov
