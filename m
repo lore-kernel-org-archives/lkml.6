@@ -2,83 +2,96 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B254EC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 22:48:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BD4FC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 22:48:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EB32208B4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 22:48:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EB32208B4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C0912208B4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 22:48:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0912208B4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727175AbeH1Cg7 (ORCPT
+        id S1727322AbeH1ChU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 22:36:59 -0400
-Received: from mga18.intel.com ([134.134.136.126]:40140 "EHLO mga18.intel.com"
+        Mon, 27 Aug 2018 22:37:20 -0400
+Received: from nautica.notk.org ([91.121.71.147]:54348 "EHLO nautica.notk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726994AbeH1Cg7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 22:36:59 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2018 15:48:19 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,296,1531810800"; 
-   d="scan'208";a="80679725"
-Received: from megha-z97x-ud7-th.sc.intel.com (HELO [143.183.85.162]) ([143.183.85.162])
-  by fmsmga002.fm.intel.com with ESMTP; 27 Aug 2018 15:48:19 -0700
-Message-ID: <1535411336.3516.2.camel@megha-Z97X-UD7-TH>
-Subject: Re: KASAN: use-after-free Read in sha512_ctx_mgr_resubmit
-From:   Megha Dey <megha.dey@linux.intel.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        syzbot <syzbot+d5455bac3ba1ee9114e5@syzkaller.appspotmail.com>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        the arch/x86 maintainers <x86@kernel.org>
-Date:   Mon, 27 Aug 2018 16:08:56 -0700
-In-Reply-To: <20180822062036.mdq4q5o5zdzuxh7s@gondor.apana.org.au>
-References: <00000000000072d64d05737b6b8c@google.com>
-         <20180820073119.GA14931@sol.localdomain>
-         <CAKv+Gu9Y0TLOuMba43HPihYqy-kk0nttBfPj1_UukiYy1cBcFw@mail.gmail.com>
-         <20180822062036.mdq4q5o5zdzuxh7s@gondor.apana.org.au>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1726994AbeH1ChU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 22:37:20 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id CFB79C009; Tue, 28 Aug 2018 00:48:39 +0200 (CEST)
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     v9fs-developer@lists.sourceforge.net
+Cc:     Dominique Martinet <dominique.martinet@cea.fr>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>
+Subject: [PATCH 1/2] v9fs_dir_readdir: fix double-free on p9stat_read error
+Date:   Tue, 28 Aug 2018 00:48:27 +0200
+Message-Id: <1535410108-20650-1-git-send-email-asmadeus@codewreck.org>
+X-Mailer: git-send-email 1.7.10.4
+In-Reply-To: <000000000000af648b057456e234@google.com>
+References: <000000000000af648b057456e234@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-08-22 at 14:20 +0800, Herbert Xu wrote:
-> On Tue, Aug 21, 2018 at 02:43:56PM +0200, Ard Biesheuvel wrote:
-> >
-> > I agree. The code is obviously broken in a way that would have been
-> > noticed if it were in wide use, and it is too complicated for mere
-> > mortals to fix or maintain. I suggest we simply remove it for now, and
-> > if anyone wants to reintroduce it, we can review the code *and* the
-> > justification for the approach from scratch (in which case we should
-> > consider factoring out the algo agnostics plumbing in a way that
-> > allows it to be reused by other architectures as well)
-> 
-> I agree too.  Could one of you guys send me a patch to remove
-> them?
-> 
+From: Dominique Martinet <dominique.martinet@cea.fr>
 
-Hi,
+p9stat_read will call p9stat_free on error, we should only free the
+struct content on success.
 
-We are working on a fix to solve these corner cases.
+There also is no need to "p9stat_init" st as the read function will
+zero the whole struct for us anyway, so clean up the code a bit while
+we are here.
 
--Megha
-> Thanks,
+Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
+Reported-by: syzbot+d4252148d198410b864f@syzkaller.appspotmail.com
+Cc: Eric Van Hensbergen <ericvh@gmail.com>
+Cc: Latchesar Ionkov <lucho@ionkov.net>
+---
+ fs/9p/vfs_dir.c | 11 -----------
+ 1 file changed, 11 deletions(-)
 
+diff --git a/fs/9p/vfs_dir.c b/fs/9p/vfs_dir.c
+index b0405d6aac85..48db9a9f13f9 100644
+--- a/fs/9p/vfs_dir.c
++++ b/fs/9p/vfs_dir.c
+@@ -76,15 +76,6 @@ static inline int dt_type(struct p9_wstat *mistat)
+ 	return rettype;
+ }
+ 
+-static void p9stat_init(struct p9_wstat *stbuf)
+-{
+-	stbuf->name  = NULL;
+-	stbuf->uid   = NULL;
+-	stbuf->gid   = NULL;
+-	stbuf->muid  = NULL;
+-	stbuf->extension = NULL;
+-}
+-
+ /**
+  * v9fs_alloc_rdir_buf - Allocate buffer used for read and readdir
+  * @filp: opened file structure
+@@ -145,12 +136,10 @@ static int v9fs_dir_readdir(struct file *file, struct dir_context *ctx)
+ 			rdir->tail = n;
+ 		}
+ 		while (rdir->head < rdir->tail) {
+-			p9stat_init(&st);
+ 			err = p9stat_read(fid->clnt, rdir->buf + rdir->head,
+ 					  rdir->tail - rdir->head, &st);
+ 			if (err) {
+ 				p9_debug(P9_DEBUG_VFS, "returned %d\n", err);
+-				p9stat_free(&st);
+ 				return -EIO;
+ 			}
+ 			reclen = st.size+2;
+-- 
+2.17.1
 
