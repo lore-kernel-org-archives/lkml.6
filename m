@@ -2,159 +2,101 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F495C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 05:34:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D39D4C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 05:34:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 360382172F
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 05:34:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WATqEyeS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 360382172F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8C8E32172F
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 05:34:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C8E32172F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726939AbeH0JTY (ORCPT
+        id S1726995AbeH0JTp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 05:19:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49652 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726772AbeH0JTY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 05:19:24 -0400
-Received: from localhost (unknown [106.200.197.151])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F1D22152E;
-        Mon, 27 Aug 2018 05:34:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535348058;
-        bh=gpzxJS/54UNXMXvA2zfkDjZHMlTrIXyTwfj4WyexzjQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WATqEyeSGKMWgh6r3WyLCeZXDZsnnXsRs2zM5FuFyVlzG06vYrZA4u0tdWntX2+QE
-         QIShSsOYx45BRfkWODZF2qg+D8d6o8+GfN5uhjYhI/PPH9Hh78UmSAvIzbTHG97X3X
-         SoM0JwEY59SVMfJ1SEBynrJ0/A0L1uUzSaXI6ZOo=
-Date:   Mon, 27 Aug 2018 11:04:09 +0530
-From:   Vinod <vkoul@kernel.org>
-To:     Andrea Merello <andrea.merello@gmail.com>
-Cc:     dan.j.williams@intel.com, michal.simek@xilinx.com,
-        appana.durga.rao@xilinx.com, dmaengine@vger.kernel.org,
-        v4-000linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        radhey.shyam.pandey@xilinx.com
-Subject: Re: [PATCH v4 5/7] dmaengine: xilinx_dma: autodetect whether the HW
- supports scatter-gather
-Message-ID: <20180827053409.GV2388@vkoul-mobl>
-References: <20180802141012.19970-1-andrea.merello@gmail.com>
- <20180802141012.19970-5-andrea.merello@gmail.com>
+        Mon, 27 Aug 2018 05:19:45 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:35213 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726772AbeH0JTp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 05:19:45 -0400
+Received: by mail-lj1-f194.google.com with SMTP id p10-v6so11281433ljg.2
+        for <linux-kernel@vger.kernel.org>; Sun, 26 Aug 2018 22:34:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JCyIVjn02BCwLfHzoNkeibsbnxSpFtBAsaG9DiieFu4=;
+        b=WTbUMulRrrxSKTb7n5wtW0wsi0plHrqrhceHZmy8FUwL5qG6TzM1qKV6H0a06oY7l4
+         Lhu/NtLXK2uIXiy9mChMAftrwplXWDxFkGJBL9HxqLdJUELSSNozr6K2oXpLeJ9lSDRO
+         CqhtYjBw+XDwdaPqO0kVTcf/WeRlK9a9hk2d8wt8qlqSUdQR2XM7U6RfMzW0gP12uC8U
+         p7ykaaqmlj0ktOrq+ve0FYO2WmGjK7vM1gMD90LIgsn0um/3MghWpha4jGIzjJQy/O00
+         UBGuUBtF8EkBBYWtyOQdDYxIPUuSyzSb4lqNTzmft4fdWFqUHN76VPZ/DM3WZ0f1Yu8d
+         Zvdg==
+X-Gm-Message-State: APzg51ColaUbV1eDk+bGyB9WqfTaYS0LbUMfL87Q2UEE2xaObOwxU87r
+        xGN3sus/TdkdlRvjPgzAxto=
+X-Google-Smtp-Source: ANB0VdZ02rgJyEKjPsJq1JEa6assCH0TAuIbWB089aSCIJviOr7kHuuR0dreNonWoETTFha8RIIsmA==
+X-Received: by 2002:a2e:9698:: with SMTP id q24-v6mr6425313lji.35.1535348078714;
+        Sun, 26 Aug 2018 22:34:38 -0700 (PDT)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id l1-v6sm2539243lji.41.2018.08.26.22.34.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 26 Aug 2018 22:34:37 -0700 (PDT)
+Date:   Mon, 27 Aug 2018 08:34:30 +0300
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Axel Lin <axel.lin@ingics.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] regulator: bd71837: Remove duplicate assignment for
+ n_voltages of LDO2
+Message-ID: <20180827053430.GA2448@localhost.localdomain>
+References: <20180824111612.24622-1-axel.lin@ingics.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180802141012.19970-5-andrea.merello@gmail.com>
+In-Reply-To: <20180824111612.24622-1-axel.lin@ingics.com>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02-08-18, 16:10, Andrea Merello wrote:
-> The AXIDMA and CDMA HW can be either direct-access or scatter-gather
-> version. These are SW incompatible.
-> 
-> The driver can handle both versions: a DT property was used to
-> tell the driver whether to assume the HW is in scatter-gather mode.
-> 
-> This patch makes the driver to autodetect this information. The DT
-> property is not required anymore.
-> 
-> No changes for VDMA.
-> 
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: devicetree@vger.kernel.org
-> Cc: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
-> Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
-> Reviewed-by: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
-> ---
-> Changes in v2:
-> 	- autodetect only in !VDMA case
-> Changes in v3:
-> 	- cc DT maintainers/ML
-> Changes in v4:
-> 	- fix typos in commit message
-> ---
->  drivers/dma/xilinx/xilinx_dma.c | 14 ++++++++++----
+Thanks Axel,
 
-So you are not removing this property from binding document? Or are
-there variants which dont have hw mechanism?
-
->  1 file changed, 10 insertions(+), 4 deletions(-)
+On Fri, Aug 24, 2018 at 07:16:12PM +0800, Axel Lin wrote:
+> Set it once is enough.
+> Also move n_voltages close to volt_table for better readability.
 > 
-> diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_dma.c
-> index b17f24e4ec35..78d0f2f8225e 100644
-> --- a/drivers/dma/xilinx/xilinx_dma.c
-> +++ b/drivers/dma/xilinx/xilinx_dma.c
-> @@ -86,6 +86,7 @@
->  #define XILINX_DMA_DMASR_DMA_DEC_ERR		BIT(6)
->  #define XILINX_DMA_DMASR_DMA_SLAVE_ERR		BIT(5)
->  #define XILINX_DMA_DMASR_DMA_INT_ERR		BIT(4)
-> +#define XILINX_DMA_DMASR_SG_MASK		BIT(3)
->  #define XILINX_DMA_DMASR_IDLE			BIT(1)
->  #define XILINX_DMA_DMASR_HALTED		BIT(0)
->  #define XILINX_DMA_DMASR_DELAY_MASK		GENMASK(31, 24)
-> @@ -407,7 +408,6 @@ struct xilinx_dma_config {
->   * @dev: Device Structure
->   * @common: DMA device structure
->   * @chan: Driver specific DMA channel
-> - * @has_sg: Specifies whether Scatter-Gather is present or not
->   * @mcdma: Specifies whether Multi-Channel is present or not
->   * @flush_on_fsync: Flush on frame sync
->   * @ext_addr: Indicates 64 bit addressing is supported by dma device
-> @@ -427,7 +427,6 @@ struct xilinx_dma_device {
->  	struct device *dev;
->  	struct dma_device common;
->  	struct xilinx_dma_chan *chan[XILINX_DMA_MAX_CHANS_PER_DEVICE];
-> -	bool has_sg;
->  	bool mcdma;
->  	u32 flush_on_fsync;
->  	bool ext_addr;
-> @@ -2400,7 +2399,6 @@ static int xilinx_dma_chan_probe(struct xilinx_dma_device *xdev,
->  
->  	chan->dev = xdev->dev;
->  	chan->xdev = xdev;
-> -	chan->has_sg = xdev->has_sg;
->  	chan->desc_pendingcount = 0x0;
->  	chan->ext_addr = xdev->ext_addr;
->  	/* This variable ensures that descriptors are not
-> @@ -2493,6 +2491,15 @@ static int xilinx_dma_chan_probe(struct xilinx_dma_device *xdev,
->  		chan->stop_transfer = xilinx_dma_stop_transfer;
->  	}
->  
-> +	/* check if SG is enabled (only for AXIDMA and CDMA) */
-> +	if (xdev->dma_config->dmatype != XDMA_TYPE_VDMA) {
-> +		if (dma_ctrl_read(chan, XILINX_DMA_REG_DMASR) &
-> +		    XILINX_DMA_DMASR_SG_MASK)
-> +			chan->has_sg = true;
-> +		dev_dbg(chan->dev, "ch %d: SG %s\n", chan->id,
-> +			chan->has_sg ? "enabled" : "disabled");
-> +	}
-> +
->  	/* Initialize the tasklet */
->  	tasklet_init(&chan->tasklet, xilinx_dma_do_tasklet,
->  			(unsigned long)chan);
-> @@ -2631,7 +2638,6 @@ static int xilinx_dma_probe(struct platform_device *pdev)
->  		return PTR_ERR(xdev->regs);
->  
->  	/* Retrieve the DMA engine properties from the device tree */
-> -	xdev->has_sg = of_property_read_bool(node, "xlnx,include-sg");
->  	xdev->max_buffer_len = GENMASK(XILINX_DMA_MAX_TRANS_LEN_MAX - 1, 0);
->  
->  	if (xdev->dma_config->dmatype == XDMA_TYPE_AXIDMA) {
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> ---
+>  drivers/regulator/bd71837-regulator.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/regulator/bd71837-regulator.c b/drivers/regulator/bd71837-regulator.c
+> index 0f8ac8dec3e1..9b5e1297902f 100644
+> --- a/drivers/regulator/bd71837-regulator.c
+> +++ b/drivers/regulator/bd71837-regulator.c
+> @@ -388,10 +388,9 @@ static const struct regulator_desc bd71837_regulators[] = {
+>  		.ops = &bd71837_ldo_regulator_nolinear_ops,
+>  		.type = REGULATOR_VOLTAGE,
+>  		.volt_table = &ldo_2_volts[0],
+> +		.n_voltages = ARRAY_SIZE(ldo_2_volts),
+>  		.vsel_reg = BD71837_REG_LDO2_VOLT,
+>  		.vsel_mask = LDO2_MASK,
+> -		.n_voltages = ARRAY_SIZE(ldo_2_volts),
+> -		.n_voltages = BD71837_LDO2_VOLTAGE_NUM,
+>  		.enable_reg = BD71837_REG_LDO2_VOLT,
+>  		.enable_mask = BD71837_LDO_EN,
+>  		.owner = THIS_MODULE,
 > -- 
 > 2.17.1
+> 
 
--- 
-~Vinod
+This is how it should have been in the first place!
+
+Br,
+	Matti Vaittinen
