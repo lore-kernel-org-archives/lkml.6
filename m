@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 322B2C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:24:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C6A8C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:24:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D770C208B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:24:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9D50208B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:24:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I+JJjERU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D770C208B7
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XG/K6V21"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9D50208B7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727753AbeH0WLz (ORCPT
+        id S1727781AbeH0WL6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 18:11:55 -0400
-Received: from mail-qt0-f201.google.com ([209.85.216.201]:37280 "EHLO
-        mail-qt0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726895AbeH0WLz (ORCPT
+        Mon, 27 Aug 2018 18:11:58 -0400
+Received: from mail-pg1-f201.google.com ([209.85.215.201]:55268 "EHLO
+        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726895AbeH0WL5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 18:11:55 -0400
-Received: by mail-qt0-f201.google.com with SMTP id b5-v6so15256287qtk.4
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 11:24:13 -0700 (PDT)
+        Mon, 27 Aug 2018 18:11:57 -0400
+Received: by mail-pg1-f201.google.com with SMTP id o16-v6so11498481pgv.21
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 11:24:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=l5kHGX+UokVpJkr3J9HVJHAQtjVzj+xuyS4h6ET9iVA=;
-        b=I+JJjERUVkXRbYvzkG2tS3/MMx6Ej02qOSzQ6G29pEmfcLPlSNyY2FpaZjmW/rXUXY
-         Nr2FrrlAiFqiPBE07vzsC+JZySEooNOYD5zAfMZ2SkL1DnBoRT555ZBMmKF8YsOMXSFP
-         vbMrgU9w7LR9nyKrPg6HuoDYBCF57NIg8BD1lBG5W8Y5XxllmF7X/GcI6SbASl1XeIVQ
-         fQ1A0wlCqYKE7+SVTUtFEUPxRCirdplrCVcznqE/CQ1Ec1DrV9DIIL9ppG0chBP9kdDk
-         RCBZqh/FFriMD/wwufCG8MAlBtgH1yq24TbmLFlSJgEdqBSRczkv/nG90JMCMQBREtNO
-         E8GQ==
+        bh=J4vJO5Ywy8DYy/g0zXHn8P/AyhW+MnXHf1uAvgvYs2I=;
+        b=XG/K6V21bcCAH+9eAbPSFM9BAYjEvHKWdR8xn8epK/EB7Mjbe5UFLevsaLQ5SiVNvd
+         MeYDg7L+/DPnb4yAbEDoLafCCdvI2wn/eLuExPVIaNX+UfmDIY93E+RBnaz69+MwK6lI
+         BL8lf4Cq7sWGb/kvcWUEwrrCUPNGN9M2tofa7onTnsUDxnps5mJQtnq9HMZiMjBxizcd
+         8fOMxW3uuNzFNMNZ4DbQy0rt+wS/cneTV4fJc4jmUxVJMzop4ejJoq4LqEZzYqv4KsPH
+         /13krCm3QCXajfBWjBuu4gD5EUXaTWdi+VmOVfT8Jh4DQabBmztt+HujClOefml7LC4i
+         AKhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=l5kHGX+UokVpJkr3J9HVJHAQtjVzj+xuyS4h6ET9iVA=;
-        b=WEpm3hatU5X5EVJHBmjXP3NZWGhv+jA+yHs8yLh8GSnEhe1rK1bzokSJpjQICxVqA7
-         DYBBHu4oD1xHgcGBjWzgUEC6Wxs4f2/5OUUOeyjKMglOJDl5qBfTg9MHPnxGC90jt3r9
-         yI0y47o1umyEb4IzeOGxsdShHWzA+eyAZy0W0X0jieU93SddbHPzFHVWHdl/KA6y5eRa
-         s8MV0ELNdAEKI4qwIR/T1yAbPSUFoJxsQvH5NqRpPpAD8GSPyzZ4kFllxu8v97Uy8O43
-         MYHKWnoPUY8HlKfbNyy2DEFpChiVB47UQjQMHUGLJNfD3OoJqfMkUHlaewm9Nnbwe3GJ
-         jOZg==
-X-Gm-Message-State: APzg51A0gaaCsieoQZlc1PAbK7NzyjA2nHyCuO4PcnUcTscmPRxmenxZ
-        D3p0VWQBFeUrOZXUSqFO32LVENCf
-X-Google-Smtp-Source: ANB0VdYq0gxtQ0pTeVoNchxuDKAEoxnh/O7jjy0LwrdMkJlOeczdeZ1XBQvqm96JlayD+jkT7F5rWUMW
-X-Received: by 2002:ac8:44d2:: with SMTP id b18-v6mr8712829qto.51.1535394253028;
- Mon, 27 Aug 2018 11:24:13 -0700 (PDT)
-Date:   Mon, 27 Aug 2018 11:23:08 -0700
+        bh=J4vJO5Ywy8DYy/g0zXHn8P/AyhW+MnXHf1uAvgvYs2I=;
+        b=UhPfeGma52MoBGOqZEdXJoyP8cUueHm1QPOnd200UIYl/0MCMeiTJWOlUM2MgIFXsg
+         AnZGeh1i14y3/tjMQ+RaPdDs7uc3oBUczaAcjnMvINzaDYPS2/TyRPWAETqVNxxz0ToG
+         x8a3YxMKsdgsDTyLR9auMkj9HgdMqA8eTSJ9LU8WusvTWSNIVjBOHp2sQBWpkWeG43MP
+         dNuT/jAhjeZ2wH1F/Kgiiy6QZeNUh1dj+7fNbXIukPf3VL1vlmHs0I22puTNc56JC56W
+         ax/NZw64lCheAzIucvFuESyRzLmTGJUr2my4w9Vl4IMF3Nv8VxJ/+NB0+FRjBIaBYWLv
+         /Grw==
+X-Gm-Message-State: APzg51DSknxCo7KrZomNJyScptoVRrWTDcto/Rew7ActDTPnnHmLEFXN
+        p/bWiSAylFQ3QpyYLrJrVhx0eYAw
+X-Google-Smtp-Source: ANB0VdbEQac023wOGg+zIZ9yQ0qry2g03/ilasH/1zPThG7gQeWdpCFfl+6i/SD3S2JX2k2EvWt7xulR
+X-Received: by 2002:a63:e746:: with SMTP id j6-v6mr3343926pgk.83.1535394255839;
+ Mon, 27 Aug 2018 11:24:15 -0700 (PDT)
+Date:   Mon, 27 Aug 2018 11:23:09 -0700
 In-Reply-To: <20180827182315.126345-1-rkir@google.com>
-Message-Id: <20180827182315.126345-13-rkir@google.com>
+Message-Id: <20180827182315.126345-14-rkir@google.com>
 Mime-Version: 1.0
 References: <20180827182315.126345-1-rkir@google.com>
 X-Mailer: git-send-email 2.19.0.rc0.228.g281dcd1b4d0-goog
-Subject: [PATCH 13/20] platform: goldfish: pipe: Remove a blank line before '}'
+Subject: [PATCH 14/20] platform: goldfish: pipe: Rename 'wakeBit' to 'wake_bit'
 From:   rkir@google.com
 To:     gregkh@linuxfoundation.org
 Cc:     linux-kernel@vger.kernel.org, tkjos@google.com,
@@ -74,27 +74,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Roman Kiryanov <rkir@google.com>
 
-checkpatch: Blank lines aren't necessary before a close brace '}'
+checkpatch: Avoid CamelCase
 
 Signed-off-by: Roman Kiryanov <rkir@google.com>
 ---
- drivers/platform/goldfish/goldfish_pipe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/platform/goldfish/goldfish_pipe.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/platform/goldfish/goldfish_pipe.c b/drivers/platform/goldfish/goldfish_pipe.c
-index ff0e150d15d5..14441e7106ba 100644
+index 14441e7106ba..cab1935a04c5 100644
 --- a/drivers/platform/goldfish/goldfish_pipe.c
 +++ b/drivers/platform/goldfish/goldfish_pipe.c
-@@ -272,8 +272,8 @@ static int pin_user_pages(unsigned long first_page, unsigned long last_page,
- 		return -EFAULT;
- 	if (ret < requested_pages)
- 		*iter_last_page_size = PAGE_SIZE;
--	return ret;
+@@ -363,18 +363,18 @@ static int transfer_max_buffers(struct goldfish_pipe *pipe,
  
-+	return ret;
- }
+ static int wait_for_host_signal(struct goldfish_pipe *pipe, int is_write)
+ {
+-	u32 wakeBit = is_write ? BIT_WAKE_ON_WRITE : BIT_WAKE_ON_READ;
++	u32 wake_bit = is_write ? BIT_WAKE_ON_WRITE : BIT_WAKE_ON_READ;
  
- static void release_user_pages(struct page **pages, int pages_count,
+-	set_bit(wakeBit, &pipe->flags);
++	set_bit(wake_bit, &pipe->flags);
+ 
+ 	/* Tell the emulator we're going to wait for a wake event */
+ 	(void)goldfish_cmd(pipe,
+ 		is_write ? PIPE_CMD_WAKE_ON_WRITE : PIPE_CMD_WAKE_ON_READ);
+ 
+-	while (test_bit(wakeBit, &pipe->flags)) {
++	while (test_bit(wake_bit, &pipe->flags)) {
+ 		if (wait_event_interruptible(
+ 				pipe->wake_queue,
+-				!test_bit(wakeBit, &pipe->flags)))
++				!test_bit(wake_bit, &pipe->flags)))
+ 			return -ERESTARTSYS;
+ 
+ 		if (test_bit(BIT_CLOSED_ON_HOST, &pipe->flags))
 -- 
 2.19.0.rc0.228.g281dcd1b4d0-goog
 
