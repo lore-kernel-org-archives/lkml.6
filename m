@@ -6,191 +6,125 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19A67C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D92A0C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:46:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD1FE2088E
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:45:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD1FE2088E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 74687208B4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 17:46:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74687208B4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727167AbeH0VdY (ORCPT
+        id S1727226AbeH0VeD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 17:33:24 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:45550 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726968AbeH0VdX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 17:33:23 -0400
-Received: by mail-qt0-f195.google.com with SMTP id g44-v6so18333880qtb.12
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 10:45:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=k0WvnEBJZv5JjK/q2tu4Fot7jyy3TQljWSq+0IXWu7E=;
-        b=aNpdYmAyxprfeDodn9ONVbRlPCYIAdHdxaboQy+f5N5A365tOeN5qKHbZmx4h8zlIO
-         21dd1lr0E/Vs8N3Bgp2fPyuix7iOsaus6JYuP4fXSOObidRy2C4nmt7W+RH/9PsYFTBM
-         Q+Rcol2waq2RtPBdHA2RjQroK+NPswEOwF4t3k9R6QSPMAJ2uWeLa2v/zfz27ZOdxNCs
-         QwjEBPW+yijx8OtURFE4AViFNP0E9aM52FbUxMfV5AACwE7vahc+C+6K1pFx7Owc4Ahk
-         bSh6723VD70sK9gMe9BxiE2S8Z7unQg5+DWZV/9/frIwu+i0TiSAh9Rbs2fEKGRiSIzh
-         fheQ==
-X-Gm-Message-State: APzg51CoBSSBMIDB0obThsD115DpK2pv5B8cn0mTUu/LxU+OqZflpiP1
-        l9749+UGtYyntBunB8yoZCC+hA==
-X-Google-Smtp-Source: ANB0Vdbxutul1kTkgEMtzulLRmC6cC1ADAakfeiu7kR3D4y7JReTWT19H9+h4bjmDxvM5X97tChO7A==
-X-Received: by 2002:a0c:d4ad:: with SMTP id u42-v6mr14738630qvh.247.1535391949482;
-        Mon, 27 Aug 2018 10:45:49 -0700 (PDT)
-Received: from dhcp-10-20-1-11.bss.redhat.com ([144.121.20.162])
-        by smtp.gmail.com with ESMTPSA id o5-v6sm10446065qtc.63.2018.08.27.10.45.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 27 Aug 2018 10:45:49 -0700 (PDT)
-Message-ID: <d2a170d48fb58d0115898b19765e32cbeceee42c.camel@redhat.com>
-Subject: Re: [Intel-gfx] [PATCH v4] drm/i915: Re-apply "Perform link quality
- check, unconditionally during long pulse"
-From:   Lyude Paul <lyude@redhat.com>
-To:     Ville =?ISO-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-Cc:     intel-gfx@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Jan-Marek Glogowski <glogow@fbihome.de>,
-        stable@vger.kernel.org, Rodrigo Vivi <rodrigo.vivi@intel.com>
-Date:   Mon, 27 Aug 2018 13:45:48 -0400
-In-Reply-To: <20180827120844.GR5565@intel.com>
-References: <20180825191035.3945-1-lyude@redhat.com>
-         <20180827120844.GR5565@intel.com>
-Organization: Red Hat
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 27 Aug 2018 17:34:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59680 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726958AbeH0VeD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 17:34:03 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7364C2088E;
+        Mon, 27 Aug 2018 17:46:28 +0000 (UTC)
+Date:   Mon, 27 Aug 2018 13:46:26 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     syzbot <syzbot+1ec5c5ec949c4adaa0c4@syzkaller.appspotmail.com>
+Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com,
+        syzkaller-bugs@googlegroups.com,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org
+Subject: Re: WARNING in format_decode (2)
+Message-ID: <20180827134626.1b943593@gandalf.local.home>
+In-Reply-To: <000000000000e12d4105746dcb0d@google.com>
+References: <000000000000e12d4105746dcb0d@google.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-08-27 at 15:08 +0300, Ville Syrjälä wrote:
-> On Sat, Aug 25, 2018 at 03:10:35PM -0400, Lyude Paul wrote:
-> > From: Jan-Marek Glogowski <glogow@fbihome.de>
-> > 
-> > This re-applies the workaround for "some DP sinks, [which] are a
-> > little nuts" from commit 1a36147bb939 ("drm/i915: Perform link
-> > quality check unconditionally during long pulse").
-> > It makes the secondary AOC E2460P monitor connected via DP to an
-> > acer Veriton N4640G usable again.
-> > 
-> > This hunk was dropped in commit c85d200e8321 ("drm/i915: Move SST
-> > DP link retraining into the ->post_hotplug() hook")
-> > 
-> > Fixes: c85d200e8321 ("drm/i915: Move SST DP link retraining into the
-> > ->post_hotplug() hook")
-> > [Cleaned up commit message, added stable cc]
-> > Signed-off-by: Lyude Paul <lyude@redhat.com>
-> > Signed-off-by: Jan-Marek Glogowski <glogow@fbihome.de>
-> > Cc: stable@vger.kernel.org
-> > ---
-> > Resending this to update patchwork; will push in a little bit
-> > 
-> >  drivers/gpu/drm/i915/intel_dp.c | 33 +++++++++++++++++++--------------
-> >  1 file changed, 19 insertions(+), 14 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/i915/intel_dp.c
-> > b/drivers/gpu/drm/i915/intel_dp.c
-> > index b3f6f04c3c7d..db8515171270 100644
-> > --- a/drivers/gpu/drm/i915/intel_dp.c
-> > +++ b/drivers/gpu/drm/i915/intel_dp.c
-> > @@ -4333,18 +4333,6 @@ intel_dp_needs_link_retrain(struct intel_dp
-> > *intel_dp)
-> >  	return !drm_dp_channel_eq_ok(link_status, intel_dp->lane_count);
-> >  }
-> >  
-> > -/*
-> > - * If display is now connected check links status,
-> > - * there has been known issues of link loss triggering
-> > - * long pulse.
-> > - *
-> > - * Some sinks (eg. ASUS PB287Q) seem to perform some
-> > - * weird HPD ping pong during modesets. So we can apparently
-> > - * end up with HPD going low during a modeset, and then
-> > - * going back up soon after. And once that happens we must
-> > - * retrain the link to get a picture. That's in case no
-> > - * userspace component reacted to intermittent HPD dip.
-> > - */
-> >  int intel_dp_retrain_link(struct intel_encoder *encoder,
-> >  			  struct drm_modeset_acquire_ctx *ctx)
-> >  {
-> > @@ -5031,7 +5019,8 @@ intel_dp_unset_edid(struct intel_dp *intel_dp)
-> >  }
-> >  
-> >  static int
-> > -intel_dp_long_pulse(struct intel_connector *connector)
-> > +intel_dp_long_pulse(struct intel_connector *connector,
-> > +		    struct drm_modeset_acquire_ctx *ctx)
-> >  {
-> >  	struct drm_i915_private *dev_priv = to_i915(connector->base.dev);
-> >  	struct intel_dp *intel_dp = intel_attached_dp(&connector->base);
-> > @@ -5090,6 +5079,22 @@ intel_dp_long_pulse(struct intel_connector
-> > *connector)
-> >  		 */
-> >  		status = connector_status_disconnected;
-> >  		goto out;
-> > +	} else {
-> > +		/*
-> > +		 * If display is now connected check links status,
-> > +		 * there has been known issues of link loss triggering
-> > +		 * long pulse.
-> > +		 *
-> > +		 * Some sinks (eg. ASUS PB287Q) seem to perform some
-> > +		 * weird HPD ping pong during modesets. So we can apparently
-> > +		 * end up with HPD going low during a modeset, and then
-> > +		 * going back up soon after. And once that happens we must
-> > +		 * retrain the link to get a picture. That's in case no
-> > +		 * userspace component reacted to intermittent HPD dip.
-> > +		 */
-> > +		struct intel_encoder *encoder = &dp_to_dig_port(intel_dp)-
-> > >base;
-> > +
-> > +		intel_dp_retrain_link(encoder, ctx);
-> 
-> We should really have a comment here that this is purely duct tape for
-> sinks that fail to signal a hpd when the link goes bad (either that or
-> we fail to process the hpd correctly).
-I'm fine with adding another patch to clarify that comment as well
+On Mon, 27 Aug 2018 10:10:04 -0700
+syzbot <syzbot+1ec5c5ec949c4adaa0c4@syzkaller.appspotmail.com> wrote:
 
+> Hello,
 > 
-> I suppose a better way to do this hack would be to do the link quality
-> check at the end of modeset, or from a delayed work. As is this depends
-> on userspace/fbdev doing an explicit probe after the modeset which seems
-> pretty fragile.
-I think having that at the end of a modeset in addition to this would be a
-good idea as well, I don't see any harm in having an additional check in the
-long pulse handler in case something causes the link to become unstable at
-some point in the future after the initial modeset
+> syzbot found the following crash on:
+> 
+> HEAD commit:    2ad0d5269970 Merge git://git.kernel.org/pub/scm/linux/kern..
+> git tree:       net-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=15b8efba400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=79e695838ce7a210
+> dashboard link: https://syzkaller.appspot.com/bug?extid=1ec5c5ec949c4adaa0c4
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1626f761400000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+1ec5c5ec949c4adaa0c4@syzkaller.appspotmail.com
+> 
+> **                                                      **
+> **   NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE   **
+> **********************************************************
+> ------------[ cut here ]------------
+> Please remove unsupported %WARNING: CPU: 0 PID: 6453 at lib/vsprintf.c:2149 format_decode+0x8fc/0xaf0  
+> lib/vsprintf.c:2149
+> Kernel panic - not syncing: panic_on_warn set ...
+> 
+> CPU: 0 PID: 6453 Comm: syz-executor7 Not tainted 4.18.0+ #190
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+> Google 01/01/2011
+> Call Trace:
+>   __dump_stack lib/dump_stack.c:77 [inline]
+>   dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+>   panic+0x238/0x4e7 kernel/panic.c:184
+>   __warn.cold.8+0x163/0x1ba kernel/panic.c:536
+>   report_bug+0x252/0x2d0 lib/bug.c:186
+>   fixup_bug arch/x86/kernel/traps.c:178 [inline]
+>   do_error_trap+0x1fc/0x4d0 arch/x86/kernel/traps.c:296
+>   do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:316
+>   invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:993
+> RIP: 0010:format_decode+0x8fc/0xaf0 lib/vsprintf.c:2149
+> Code: e8 59 59 c9 fa 41 c6 04 24 12 e9 94 fd ff ff e8 4a 59 c9 fa 0f be f3  
+> 48 c7 c7 60 bc 89 87 c6 05 28 aa d2 01 01 e8 e4 e9 93 fa <0f> 0b 4d 8b 7d  
+> c0 e9 56 fe ff ff 48 8b bd 68 ff ff ff e8 cd 4f 08
+> RSP: 0018:ffff8801b6b27688 EFLAGS: 00010282
+> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+> RDX: 0000000000000000 RSI: ffffffff816422b1 RDI: ffff8801b6b27378
+> RBP: ffff8801b6b27730 R08: ffff8801b69a0040 R09: 0000000000000006
+> R10: 0000000000000000 R11: 0000000000000000 R12: ffff8801b6b277a8
+> R13: ffff8801b6b27708 R14: 0000000000000000 R15: ffff8801b6b27b04
+>   vsnprintf+0x185/0x1b60 lib/vsprintf.c:2245
+>   vscnprintf+0x2d/0x80 lib/vsprintf.c:2396
+>   __trace_array_vprintk.part.60+0xc7/0x330 kernel/trace/trace.c:2990
+>   __trace_array_vprintk kernel/trace/trace.c:3021 [inline]
+>   trace_array_vprintk kernel/trace/trace.c:3021 [inline]
+>   trace_vprintk+0x5f/0x90 kernel/trace/trace.c:3059
+>   __trace_printk+0xce/0x120 kernel/trace/trace_printk.c:237
+>   ____bpf_trace_printk kernel/trace/bpf_trace.c:274 [inline]
 
-Jan, do you think you could provide some dmesg logs for this issue?
-> 
-> >  	}
-> >  
-> >  	/*
-> > @@ -5151,7 +5156,7 @@ intel_dp_detect(struct drm_connector *connector,
-> >  				return ret;
-> >  		}
-> >  
-> > -		status = intel_dp_long_pulse(intel_dp->attached_connector);
-> > +		status = intel_dp_long_pulse(intel_dp->attached_connector,
-> > ctx);
-> >  	}
-> >  
-> >  	intel_dp->detect_done = false;
-> > -- 
-> > 2.17.1
-> > 
-> > _______________________________________________
-> > Intel-gfx mailing list
-> > Intel-gfx@lists.freedesktop.org
-> > https://lists.freedesktop.org/mailman/listinfo/intel-gfx
+Looks like a bug in the bpf trace printk code.
+
+-- Steve
+
+>   bpf_trace_printk+0xb16/0xc30 kernel/trace/bpf_trace.c:166
+>   bpf_prog_e51deac1441bc083+0x94a/0x1000
+> Dumping ftrace buffer:
+>     (ftrace buffer empty)
+> Kernel Offset: disabled
+> Rebooting in 86400 seconds..
 > 
 > 
--- 
-Cheers,
-	Lyude Paul
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+> syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
 
