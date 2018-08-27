@@ -2,137 +2,158 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31B46C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 12:19:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CBF4C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 12:19:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAEF120858
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 12:19:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAEF120858
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
+	by mail.kernel.org (Postfix) with ESMTP id D914620858
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 12:19:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D914620858
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727005AbeH0QFl (ORCPT
+        id S1727162AbeH0QGE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 12:05:41 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:34662 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726374AbeH0QFk (ORCPT
+        Mon, 27 Aug 2018 12:06:04 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:41384 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726374AbeH0QGD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 12:05:40 -0400
-Received: by mail-lj1-f193.google.com with SMTP id f8-v6so12190090ljk.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 05:19:14 -0700 (PDT)
+        Mon, 27 Aug 2018 12:06:03 -0400
+Received: by mail-qt0-f193.google.com with SMTP id t39-v6so16884707qtc.8
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 05:19:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8C/uEZtd0jxqqt90hw7rrVdqdKNtjxlJxUFzfovqi2o=;
-        b=Lo5IKOlXATLLt/q/7oH38WCg74xdoFpLXVMqiXG+MshqWqZWf7Xh99fN5lBTWzDasw
-         mjsPxeXeVf+kF7RF0MnbossRU1iaxCnxt1Oj+qK3J5CC4vSJa8yH4Rg48JVnLFfaT83L
-         vnshinNzG5o/DnPGSRsRK0NgFwkWAwwKok1T5WAt/RbEwDw355ygIa60nuxOvEBEc9wQ
-         hY8bhOsQmZfMUorGAN0V12Eyn24I7/OlFTGAgK1KQ08Z/L/aqF7GDb5OoC6xCx4WqvIM
-         VDQ97gEeXFoDrvXY/s7unXzTwp3umgAG8/VSYj6ythXYBgHDp67qR/p0XDRIf1w9hKo+
-         DD4Q==
-X-Gm-Message-State: APzg51AqumFc8Nvni44iAp2BLI7gYhcKHp5aZ9SffHxoAG7B1nV8+ks+
-        3DHiw0ly8ZrcJLOovgQwhP8c7+IF
-X-Google-Smtp-Source: ANB0VdaPmzE2nBcJeK9petqMloyCpWzBKser3ArLOa6Hd7ZmlRyWW7OutG5h1dWkmh/84CBX+nQH5A==
-X-Received: by 2002:a2e:55dd:: with SMTP id g90-v6mr8283625lje.4.1535372353636;
-        Mon, 27 Aug 2018 05:19:13 -0700 (PDT)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id m187-v6sm2875227lfe.45.2018.08.27.05.19.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 27 Aug 2018 05:19:12 -0700 (PDT)
-Date:   Mon, 27 Aug 2018 15:19:10 +0300
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     lgirdwood@gmail.com, broonie@kernel.org, mazziesaccount@gmail.com
-Cc:     mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC/PATCH] regulator: Support regulators where voltage ranges
- are selectable
-Message-ID: <20180827121910.GB2448@localhost.localdomain>
-References: <20180822110507.GA6177@localhost.localdomain>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sJlteMXGTeT+AsYsw/xMb1iVkI0dINgLeuvsP8B/rQY=;
+        b=cW1OxnpNKUKMFJucJnKE2uw8joVtJgkBvlYEnvMNybBzQ24idPfFKpPySRlhmFTeJj
+         inCAxFeFydCq5h0PkOck4U7iEosSGJGd7LbXJ76PptCF+Rdm6YaM/rgSQt95Zw7bWhij
+         tn3Cca0zU7zCeiYxSWbJIG2PggGWVn0CGmeEssP+KkK/l5ZokatC5312vN2BMTx7zTp1
+         A+jCaEqPrTMwXpxfYXkMSUE3wHUT7h3cnN0S+0iHNHFStThSkcoa+nS6264xbra3d/ow
+         UAu0L9HqbeFPero7csTHwvbkKFnX3ZXOYX64ZjCvI6zy7xN+F+hXxAnU0anOU+vF+rwI
+         3GPg==
+X-Gm-Message-State: APzg51DBZQnY5/nQM7rZwzWxDG9DczrdulrZNytuT/nO6k2DuUMmml78
+        lHFpEvRiSf7lpE1Rfp7CEqu99ycnuiGqIqBXJzxP3Q==
+X-Google-Smtp-Source: ANB0VdYRRt3GkppeRCedYiQAfpPtu9Tbmy4rgLzshd0LEgVDpEaxyWNHPIDWkCDhTMWKngC3kBqy3t7LfioAP0pdsTQ=
+X-Received: by 2002:a0c:d067:: with SMTP id d36-v6mr13378408qvh.216.1535372376971;
+ Mon, 27 Aug 2018 05:19:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180822110507.GA6177@localhost.localdomain>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <20180823164005.201582-1-seobrien@chromium.org>
+In-Reply-To: <20180823164005.201582-1-seobrien@chromium.org>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Mon, 27 Aug 2018 14:19:25 +0200
+Message-ID: <CAO-hwJLegX7Uuw8WSErg8W7L0jXj7v2RGiABnrujLonHBYRrog@mail.gmail.com>
+Subject: Re: [PATCH] HID: add support for Apple Magic Keyboards
+To:     seobrien@chromium.org
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Dmitry Torokhov <dtor@chromium.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 22, 2018 at 02:05:07PM +0300, Matti Vaittinen wrote:
-> For example ROHM BD71837 and ROHM BD71847 Power management ICs have
-> regulators which provide multiple linear ranges. Ranges can be
-> selected by individual non contagious bit in vsel register. Add
-> regmap helper functions for selecting ranges.
-> 
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-[Snip...]
->  
-> +static int regulator_range_selector_to_index(struct regulator_dev *rdev,
-> +					     unsigned int rval)
-> +{
-> +	int i;
-> +
-> +	if (!rdev->desc->linear_range_selectors)
-> +		return -EINVAL;
-> +
-> +	rval &= rdev->desc->vsel_range_mask;
-> +
-> +	for (i = 0; i < rdev->desc->n_linear_ranges; i++) {
-> +		if (rdev->desc->linear_range_selectors[i] == rval)
-> +			return i;
-> +	}
-> +	return -EINVAL;
-> +}
-> +
-> +/**
-> + * regulator_get_voltage_sel_pickable_regmap - pickable range get_voltage_sel
-> + *
-> + * @rdev: regulator to operate on
-> + *
-> + * Regulators that use regmap for their register I/O and use pickable
-> + * ranges can set the vsel_reg, vsel_mask, vsel_range_reg and vsel_range_mask
-> + * fields in their descriptor and then use this as their get_voltage_vsel
-> + * operation, saving some code.
-> + */
-> +int regulator_get_voltage_sel_pickable_regmap(struct regulator_dev *rdev)
-> +{
-> +	unsigned int r_val;
-> +	unsigned int range;
-> +	unsigned int val;
-> +	int ret, i;
-> +	unsigned int voltages_in_range = 0;
-> +
-> +	if (!rdev->desc->linear_ranges)
-> +		return -EINVAL;
-> +
-> +	ret = regmap_read(rdev->regmap, rdev->desc->vsel_reg, &val);
-> +	if (ret != 0)
-> +		return ret;
-> +
-> +	ret = regmap_read(rdev->regmap, rdev->desc->vsel_range_reg, &r_val);
-> +	if (ret != 0)
-> +		return ret;
-> +
-> +	val &= rdev->desc->vsel_mask;
-> +	val >>= ffs(rdev->desc->vsel_mask) - 1;
-> +
-> +	range = regulator_range_selector_to_index(rdev, r_val);
-> +	if (range < 0)
-> +		return -EINVAL;
+Hi Sean,
 
-Got buildbot warning for checking whether unsigned int is negative.
-I'll fix this one.
+On Thu, Aug 23, 2018 at 6:40 PM Sean O'Brien <seobrien@chromium.org> wrote:
+>
+> USB device
+>         Vendor 05ac (Apple)
+>         Device 026c (Magic Keyboard with Numeric Keypad)
+>
+> Bluetooth devices
+>         Vendor 004c (Apple)
+>         Device 0267 (Magic Keyboard)
+>         Device 026c (Magic Keyboard with Numeric Keypad)
+>
+> Support already exists for the Magic Keyboard over USB connection.
+> This patch adds support for the Magic Keyboard over Bluetooth
+> connection, and for the Magic Keyboard with Numeric Keypad over
+> Bluetooth and USB connection.
+>
+> Signed-off-by: Sean O'Brien <seobrien@chromium.org>
+> ---
+>
+>  drivers/hid/hid-apple.c  | 9 ++++++++-
+>  drivers/hid/hid-ids.h    | 2 ++
+>  drivers/hid/hid-quirks.c | 3 +++
+>  3 files changed, 13 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/hid/hid-apple.c b/drivers/hid/hid-apple.c
+> index 25b7bd56ae11..1cb41992aaa1 100644
+> --- a/drivers/hid/hid-apple.c
+> +++ b/drivers/hid/hid-apple.c
+> @@ -335,7 +335,8 @@ static int apple_input_mapping(struct hid_device *hdev, struct hid_input *hi,
+>                 struct hid_field *field, struct hid_usage *usage,
+>                 unsigned long **bit, int *max)
+>  {
+> -       if (usage->hid == (HID_UP_CUSTOM | 0x0003)) {
+> +       if (usage->hid == (HID_UP_CUSTOM | 0x0003) ||
+> +                       usage->hid == (HID_UP_MSVENDOR | 0x0003)) {
+>                 /* The fn key on Apple USB keyboards */
+>                 set_bit(EV_REP, hi->input->evbit);
+>                 hid_map_usage_clear(hi, usage, bit, max, EV_KEY, KEY_FN);
+> @@ -472,6 +473,12 @@ static const struct hid_device_id apple_devices[] = {
+>                 .driver_data = APPLE_NUMLOCK_EMULATION | APPLE_HAS_FN },
+>         { HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_ANSI),
+>                 .driver_data = APPLE_HAS_FN },
+> +       { HID_BLUETOOTH_DEVICE(BT_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_ANSI),
+> +               .driver_data = APPLE_HAS_FN },
+> +       { HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_ANSI),
+> +               .driver_data = APPLE_HAS_FN },
+> +       { HID_BLUETOOTH_DEVICE(BT_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_ANSI),
+> +               .driver_data = APPLE_HAS_FN },
+>         { HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_WELLSPRING_ANSI),
+>                 .driver_data = APPLE_HAS_FN },
+>         { HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_WELLSPRING_ISO),
+> diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+> index 79bdf0c7e351..5dbe3fb82690 100644
+> --- a/drivers/hid/hid-ids.h
+> +++ b/drivers/hid/hid-ids.h
+> @@ -88,6 +88,7 @@
+>  #define USB_DEVICE_ID_ANTON_TOUCH_PAD  0x3101
+>
+>  #define USB_VENDOR_ID_APPLE            0x05ac
+> +#define BT_VENDOR_ID_APPLE             0x004c
+>  #define USB_DEVICE_ID_APPLE_MIGHTYMOUSE        0x0304
+>  #define USB_DEVICE_ID_APPLE_MAGICMOUSE 0x030d
+>  #define USB_DEVICE_ID_APPLE_MAGICTRACKPAD      0x030e
+> @@ -157,6 +158,7 @@
+>  #define USB_DEVICE_ID_APPLE_ALU_WIRELESS_2011_ISO   0x0256
+>  #define USB_DEVICE_ID_APPLE_ALU_WIRELESS_2011_JIS   0x0257
+>  #define USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_ANSI   0x0267
+> +#define USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_ANSI   0x026c
+>  #define USB_DEVICE_ID_APPLE_WELLSPRING8_ANSI   0x0290
+>  #define USB_DEVICE_ID_APPLE_WELLSPRING8_ISO    0x0291
+>  #define USB_DEVICE_ID_APPLE_WELLSPRING8_JIS    0x0292
+> diff --git a/drivers/hid/hid-quirks.c b/drivers/hid/hid-quirks.c
+> index 249d49b6b16c..a3b3aecf8628 100644
+> --- a/drivers/hid/hid-quirks.c
+> +++ b/drivers/hid/hid-quirks.c
+> @@ -270,6 +270,9 @@ static const struct hid_device_id hid_have_special_driver[] = {
+>         { HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_ALU_WIRELESS_2011_ISO) },
+>         { HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_ALU_WIRELESS_2011_JIS) },
+>         { HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_ANSI) },
+> +       { HID_BLUETOOTH_DEVICE(BT_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_ANSI) },
+> +       { HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_ANSI) },
+> +       { HID_BLUETOOTH_DEVICE(BT_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_ANSI) },
 
-Other than that - I have BD71847 support almost finished - should I
-send this change as part of that patch set as these helpers would be
-used by the BD71847 patch series?
+Unless the device doesn't work without this hunk, please drop this
+from the submission. Since v4.16 this is not required anymore and is
+doomed to be removed.
 
-Br,
-	Matti Vaittinen
+Cheers,
+Benjamin
 
+>         { HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_FOUNTAIN_TP_ONLY) },
+>         { HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_GEYSER1_TP_ONLY) },
+>  #endif
+> --
+> 2.18.0.1017.ga543ac7ca45-goog
+>
