@@ -2,112 +2,79 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96DBCC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 05:46:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 439D0C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 05:47:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 378B721722
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 05:46:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF08421746
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 05:47:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="ZSUyoZnu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 378B721722
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="i/J2F8mV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF08421746
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726921AbeH0Jbr (ORCPT
+        id S1727014AbeH0JcJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 05:31:47 -0400
-Received: from conuserg-10.nifty.com ([210.131.2.77]:25631 "EHLO
-        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726776AbeH0Jbr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 05:31:47 -0400
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-10.nifty.com with ESMTP id w7R5jOeR006032;
-        Mon, 27 Aug 2018 14:45:24 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w7R5jOeR006032
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1535348725;
-        bh=bBFKI8kTgDIYQggsG1Fazeu+zZ+2+IMU5IqP43MfnKY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=ZSUyoZnuBi9Atx3O4LQOjoWezxXh0VQKKhFyRMsjJMOWMsj3ZdXwQS6qUux+PBOGQ
-         zYy/kQeNImLIgpKZ9KPFM61ctw8Q+lY9B6peEY/eF6WdHl/npLvwCo3/SO0xThtay7
-         cpJEGcwXwLaG8SWxJ1Ls2LkxsVpPMtfH9wORBfuAaRXjWvMDxBKQ/EKcYxffo1Wdvv
-         LX5MHDr7/+fxYDUgE2i7SdRC63izZtVQYSaCvyKGe26b3639XreBM5MDMAIEEOWniL
-         69Qx0RiEFecTHVVA9J2Vo5aV2xuQXWzLVyrLR5CRw0FkTc2Pn/5j4DRswnWtNtexI0
-         9mDpA3ygKBjeQ==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kbuild@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        linux-kernel@vger.kernel.org,
-        Michal Marek <michal.lkml@markovi.net>
-Subject: [PATCH] x86/build: remove jump label quirk for GCC older than 4.5.2
-Date:   Mon, 27 Aug 2018 14:45:14 +0900
-Message-Id: <1535348714-25457-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 27 Aug 2018 05:32:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51048 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726776AbeH0JcJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 05:32:09 -0400
+Received: from localhost (unknown [106.200.197.151])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A6FA21722;
+        Mon, 27 Aug 2018 05:47:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535348821;
+        bh=hJ2Hez11lZUQXXRTshl0w0ZtmiAJ4LRd+z3gj/AJJJ8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=i/J2F8mVJhPup511hjddqhDb2Ih3fCKxnc8lYcTQxMS493Ej0SvOVsL1C8aoRMoRn
+         CdcFt8YqZgvr8lvNlYeeARBTbCGol9UdgP06o+CBYWTjfpuCvjguY7QO/Qm/vVMpzd
+         CKd+PNeLGjuNTGJ3mRn/avsiR2uJ46/sDhdxiCuU=
+Date:   Mon, 27 Aug 2018 11:16:53 +0530
+From:   Vinod <vkoul@kernel.org>
+To:     Huang Shijie <sjhuang@iluvatar.ai>
+Cc:     sudeep.dutt@intel.com, ashutosh.dixit@intel.com,
+        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] dma: mic_x100_dma: use devm_kzalloc to fix an issue
+Message-ID: <20180827054652.GW2388@vkoul-mobl>
+References: <20180822024027.8984-1-sjhuang@iluvatar.ai>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180822024027.8984-1-sjhuang@iluvatar.ai>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit cafa0010cd51 ("Raise the minimum required gcc version to 4.6")
-bumped the minimum GCC version to 4.6 for all architectures.
+On 22-08-18, 10:40, Huang Shijie wrote:
+> The following patch introduced an issue.
+>     commit f6206f00d8c5 ("dmaengine: mic_x100_dma: use the new helper to simplify the code")
+> 
+> This issue is :
+> 
+> 	kfree(mic_dma_dev)
+> 	.....
+> 	dma_async_device_unregister(mic_dma_dev->device);
+> 
+> Free the memory, and use it again.
+> 
+> So use devm_kzalloc to allocate mic_dma_dev to fix it.
+> 
+> When the Devres try to release the resources, it will call release at the
+> following order:
+> 
+> 	dma_async_device_unregister(mic_dma_dev->device);
+> 	.....
+> 	kfree(mic_dma_dev)
 
-Remove the workaround code.
-
-It was the only user of cc-if-fullversion.  Remove the macro as well.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
- arch/x86/Makefile      | 12 ------------
- scripts/Kbuild.include |  4 ----
- 2 files changed, 16 deletions(-)
-
-diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-index d6c10f3..a51d5dc 100644
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -175,18 +175,6 @@ ifndef CC_HAVE_ASM_GOTO
-   $(error Compiler lacks asm-goto support.)
- endif
- 
--#
--# Jump labels need '-maccumulate-outgoing-args' for gcc < 4.5.2 to prevent a
--# GCC bug (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=46226).  There's no way
--# to test for this bug at compile-time because the test case needs to execute,
--# which is a no-go for cross compilers.  So check the GCC version instead.
--#
--ifdef CONFIG_JUMP_LABEL
--  ifneq ($(ACCUMULATE_OUTGOING_ARGS), 1)
--	ACCUMULATE_OUTGOING_ARGS = $(call cc-if-fullversion, -lt, 040502, 1)
--  endif
--endif
--
- ifeq ($(ACCUMULATE_OUTGOING_ARGS), 1)
- 	# This compiler flag is not supported by Clang:
- 	KBUILD_CFLAGS += $(call cc-option,-maccumulate-outgoing-args,)
-diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
-index c75413d..ce53639 100644
---- a/scripts/Kbuild.include
-+++ b/scripts/Kbuild.include
-@@ -153,10 +153,6 @@ cc-fullversion = $(shell $(CONFIG_SHELL) \
- # Usage:  EXTRA_CFLAGS += $(call cc-ifversion, -lt, 0402, -O1)
- cc-ifversion = $(shell [ $(cc-version) $(1) $(2) ] && echo $(3) || echo $(4))
- 
--# cc-if-fullversion
--# Usage:  EXTRA_CFLAGS += $(call cc-if-fullversion, -lt, 040502, -O1)
--cc-if-fullversion = $(shell [ $(cc-fullversion) $(1) $(2) ] && echo $(3) || echo $(4))
--
- # cc-ldoption
- # Usage: ldflags += $(call cc-ldoption, -Wl$(comma)--hash-style=both)
- cc-ldoption = $(call try-run,\
+After fixing the subsystem name, applied thanks
 -- 
-2.7.4
-
+~Vinod
