@@ -2,69 +2,68 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82D75C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 23:15:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05EBBC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 23:15:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39645208B3
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 23:15:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0C67208B3
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 23:15:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H2y5rWX1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39645208B3
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bDbkmhRM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0C67208B3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727747AbeH1DEb (ORCPT
+        id S1727719AbeH1DEb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 27 Aug 2018 23:04:31 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:42884 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727558AbeH1DEa (ORCPT
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:40248 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727660AbeH1DEa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 27 Aug 2018 23:04:30 -0400
-Received: by mail-ed1-f67.google.com with SMTP id r10-v6so438590edp.9
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 16:15:43 -0700 (PDT)
+Received: by mail-ed1-f65.google.com with SMTP id e19-v6so444335edq.7
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 16:15:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=6nR0pRfLmUj2PZ5flmuLWsdHEztq2/Q+Stf4rFsnIdw=;
-        b=H2y5rWX1cbcjcAyoLcst6BaSqBAY6jZ/y1GIfHLOt796XhkIcz7knbPGg+5IkCFfj6
-         8FFpwvS0jnLx90nDBXjPA1fRj3crXfeCAoC+rX3lWH6ys4sEIF9We6zNUYvs1RXhk1c2
-         tQOYlTjWYrUl0oB3TH4KYJkznxs2uOAEKBlhmWD5bBuzYrkJW58dW8pp7G8afGUjnZgf
-         kJRskOu8zjk70hWtNEOcLHvS0nyQN+lStlyDRUwXDmagfSGbgJMqIPXo4y9dw9WEszr/
-         ru4W/EkC1aiezvCGXH5Z23kaypHI5arjX/ugLQxvV8x23K7gvIvA5QpWN75r0zJyiERK
-         7fug==
+        bh=Z4wY5SxtbqayXTNKr6tydWliEBo2ImNu84K0iwTVEJ0=;
+        b=bDbkmhRMDJdTfb0iSLX09SNXUQbyQDYWbT2xTDanb/ZG7FkQvP6yBRpOZE5/JS633E
+         BoDcLNHNaO57jdCWrZ+xzKTnGBSsbYcV2i3DkWMPJ1+17xSVi6TAGnUobjOsy0fhusKU
+         L8JmZ1lMeH5p/yQ/eAUnkV/6YSUw0V8n8yjpvmduJ7ReQ31aOuE03iHNuNm/9rVPnk5d
+         NZtMs4ifI9O8rD1k8FgopT4x+SExI5g4GtkKj0hlg1p/VjyTNvO2GiTXebwPRclh/S3X
+         WpNwEn0yDUl8ZEDok5jTTfpu1DIWruLHIiI2QDj8PmxJ8IAUhspBfQ8t/O4Uuw+llfpz
+         fGkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=6nR0pRfLmUj2PZ5flmuLWsdHEztq2/Q+Stf4rFsnIdw=;
-        b=U244Xp8uLHVbn9hY2y1Cbu8c1buE7cJiRtDCNBu4SHic877qsEiCHsYPqvxn65M3Jv
-         Uzu82cIlnZBxZfGFObtnuUh0VMyeo+09hoF8+ihWisgvxAFdQgXlE/ptUmTD4DTpZmsh
-         x/3UHJN7TOs44NNKLwwoGVG6MMcxM5U1J/WQm2wpA+EbM2s/mFxdQYhXAqLdts2/s5Yh
-         BMhkr4ktKclYGZsO9ElxubdzAQRV89T+379eCe8SV/734NmRfmb52raXBD5pT90lORaH
-         ZixpQBFNh85HgCBOyEGWZ2XDzY5WsL6EFhaxB3A0mqvUgCygyBp9VmaaDKtYgYbrVuDn
-         GsVA==
-X-Gm-Message-State: APzg51BV75rQvfxMiGSdXzX/S0HnKwM+wYZUckn52qhfbuoeMqnMuEOz
-        jm030Hwatw+CdR0lAnX+SA==
-X-Google-Smtp-Source: ANB0VdZI40T9w4U1taB8q6TrhuyxyJposKm94GDU6VszjT/kmg1klUIf14stq/VSYtytVzmQpIiQQw==
-X-Received: by 2002:a50:f0c2:: with SMTP id a2-v6mr19510197edm.90.1535411742705;
-        Mon, 27 Aug 2018 16:15:42 -0700 (PDT)
+        bh=Z4wY5SxtbqayXTNKr6tydWliEBo2ImNu84K0iwTVEJ0=;
+        b=HkfgmHfX/lt8Sz3+WW6cwqtfACJAwXTL8sDle9CVw7wVed5pIZ5xqVoqCAU4rR/gx1
+         ZKBrQN2pXSF/F8gBQjfyVEK9g/QXpyIS9+TEvOZJzNzjMgHeuaC31d+NCjcHI6CMCVnV
+         owVxVpZ/rQioDAFNTj84BmH4cObigp4lZyscJiKjMuvkZ8Ij6Mh0sYJvUAGSXfRRO8dD
+         /tmUaHDQeWTza9LVqRb4GxXKNfiGWjAJdWr9kSN4faZO/gVnaMHGFDcSIcCnY1DlHyXc
+         VlhbNDPRdh0An2sEmtrl+91dOTsBeac0WhKZYoo06yZRCHnPpx9mtgytkLGCcwSpFj4O
+         uRMw==
+X-Gm-Message-State: APzg51CiflRY4xu5rWYDkJAcTXr8Zc869we32JKslyff40Ixt4i1NNlw
+        9MsWeKkC2fAa1HrHPmKmfJkuc0Q=
+X-Google-Smtp-Source: ANB0Vdb7eMUSMPsaLCR+5U4267GHc/vXhGD3TM1Kzd9Vcm72vBwplsQc8q0C29TG76Smej0UxiXqeg==
+X-Received: by 2002:a50:9034:: with SMTP id b49-v6mr19704662eda.174.1535411743588;
+        Mon, 27 Aug 2018 16:15:43 -0700 (PDT)
 Received: from localhost.localdomain (nat4-minsk-pool-46-53-177-92.telecom.by. [46.53.177.92])
-        by smtp.gmail.com with ESMTPSA id u3-v6sm173918edo.44.2018.08.27.16.15.41
+        by smtp.gmail.com with ESMTPSA id u3-v6sm173918edo.44.2018.08.27.16.15.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 Aug 2018 16:15:42 -0700 (PDT)
+        Mon, 27 Aug 2018 16:15:43 -0700 (PDT)
 From:   Alexey Dobriyan <adobriyan@gmail.com>
 To:     akpm@linux-foundation.org
 Cc:     linux-kernel@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>
-Subject: [PATCH 12/13] proc: convert /proc/*/statm to _print_integer()
-Date:   Tue, 28 Aug 2018 02:15:02 +0300
-Message-Id: <20180827231503.26899-12-adobriyan@gmail.com>
+Subject: [PATCH 13/13] proc: convert /proc/*/task/*/children to _print_integer()
+Date:   Tue, 28 Aug 2018 02:15:03 +0300
+Message-Id: <20180827231503.26899-13-adobriyan@gmail.com>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180827231503.26899-1-adobriyan@gmail.com>
 References: <20180827231503.26899-1-adobriyan@gmail.com>
@@ -73,65 +72,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Benchmark pread("/proc/self/statm") 2^23 times:
+Benchmark pread /proc/1/task/1/children 2^21 times on the same system:
 
-	6.135596793 seconds time elapsed ( +-  0.11% )
-	5.685442773 seconds time elapsed ( +-  0.11% )
+	6.766400479 s
+	4.328648442
 
-	-7.3%
+	-36%
+
+(need to remeasure on a controlled set of children)
 
 Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 ---
- fs/proc/array.c | 30 +++++++++++++++---------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+ fs/proc/array.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/fs/proc/array.c b/fs/proc/array.c
-index 5016e03a4dba..d0565527166a 100644
+index d0565527166a..045ce2cac1dd 100644
 --- a/fs/proc/array.c
 +++ b/fs/proc/array.c
-@@ -627,27 +627,27 @@ int proc_pid_statm(struct seq_file *m, struct pid_namespace *ns,
+@@ -710,9 +710,11 @@ get_children_pid(struct inode *inode, struct pid *pid_prev, loff_t pos)
+ static int children_seq_show(struct seq_file *seq, void *v)
  {
- 	unsigned long size = 0, resident = 0, shared = 0, text = 0, data = 0;
- 	struct mm_struct *mm = get_task_mm(task);
-+	/* "%lu %lu %lu %lu 0 %lu 0\n" */
-+	char buf[5 * ((sizeof(long) * 5 / 2) + 1) + 2 + 2];
-+	char *p = buf + sizeof(buf);
+ 	struct inode *inode = file_inode(seq->file);
++	char buf[10 + 1], *p = buf + sizeof(buf);
  
- 	if (mm) {
- 		size = task_statm(mm, &shared, &text, &data, &resident);
- 		mmput(mm);
- 	}
--	/*
--	 * For quick read, open code by putting numbers directly
--	 * expected format is
--	 * seq_printf(m, "%lu %lu %lu %lu 0 %lu 0\n",
--	 *               size, resident, shared, text, data);
--	 */
--	seq_put_decimal_ull(m, "", size);
--	seq_put_decimal_ull(m, " ", resident);
--	seq_put_decimal_ull(m, " ", shared);
--	seq_put_decimal_ull(m, " ", text);
--	seq_put_decimal_ull(m, " ", 0);
--	seq_put_decimal_ull(m, " ", data);
--	seq_put_decimal_ull(m, " ", 0);
--	seq_putc(m, '\n');
- 
+-	seq_printf(seq, "%d ", pid_nr_ns(v, proc_pid_ns(inode)));
 -	return 0;
-+	p = memcpy(p - 3, " 0\n", 3);
-+	p = _print_integer_ul(p, data);
-+	p = memcpy(p - 3, " 0 ", 3);
-+	p = _print_integer_ul(p, text);
 +	*--p = ' ';
-+	p = _print_integer_ul(p, shared);
-+	*--p = ' ';
-+	p = _print_integer_ul(p, resident);
-+	*--p = ' ';
-+	p = _print_integer_ul(p, size);
-+
-+	return seq_write(m, p, buf + sizeof(buf) - p);
++	p = _print_integer_u32(p, pid_nr_ns(v, proc_pid_ns(inode)));
++	return seq_write(seq, p, buf + sizeof(buf) - p);
  }
  
- #ifdef CONFIG_PROC_CHILDREN
+ static void *children_seq_start(struct seq_file *seq, loff_t *pos)
 -- 
 2.16.4
 
