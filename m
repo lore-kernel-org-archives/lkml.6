@@ -2,211 +2,218 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE41AC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 12:50:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99F2DC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 12:52:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D453208B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 12:50:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lao52W3s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D453208B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3C87C208B9
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 12:52:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C87C208B9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727510AbeH0Qh0 (ORCPT
+        id S1727134AbeH0QjO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 12:37:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56294 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726851AbeH0QhZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 12:37:25 -0400
-Received: from jouet.infradead.org (unknown [189.112.165.9])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 266F9208B6;
-        Mon, 27 Aug 2018 12:50:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535374252;
-        bh=mcQAdb2aC1RIfglllB18xAd98uOK7Lxjy9PRauqzCOU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lao52W3s58q7IIeamvgPBqqKcu8jnOKgTuJfxeoiNaiaHHNYT7tpdO4ynMgfseOal
-         5W6WutTRXflXpK0GecrIO4SQtrxmQBngsMOk62ngAeztaRwtw7SeZJ1wsIIKY82obj
-         UXVDj09xS8zbMtFiJDxBQqEJ5/OgK6eozW/HoO18=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id B4FA1141C3F; Mon, 27 Aug 2018 09:50:49 -0300 (-03)
-Date:   Mon, 27 Aug 2018 09:50:49 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Kim Phillips <kim.phillips@arm.com>
-Cc:     Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-        Anton Blanchard <anton@samba.org>,
+        Mon, 27 Aug 2018 12:39:14 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59024 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726851AbeH0QjO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 12:39:14 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7RCcZtS006604
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 08:52:40 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m4h7413fv-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 08:52:40 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Mon, 27 Aug 2018 13:52:38 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 27 Aug 2018 13:52:32 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7RCqVwC33357994
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 27 Aug 2018 12:52:31 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A02BEAE058;
+        Mon, 27 Aug 2018 15:52:03 +0100 (BST)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 19B34AE053;
+        Mon, 27 Aug 2018 15:52:02 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.8.97])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon, 27 Aug 2018 15:52:02 +0100 (BST)
+Date:   Mon, 27 Aug 2018 15:52:27 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Arend van Spriel <aspriel@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
         Robin Murphy <robin.murphy@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Taeung Song <treeze.taeung@gmail.com>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        perf group <linux-perf-users@vger.kernel.org>
-Subject: Re: [PATCH] perf annotate: fix parsing aarch64 branch instructions
- after objdump update
-Message-ID: <20180827125049.GD22309@kernel.org>
-References: <20180823191047.9260992844205984b75e6721@arm.com>
+        Joe Perches <joe@perches.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>, Roman Gushchin <guro@fb.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 2/2] clk: pmc-atom: use devm_kstrdup_const()
+References: <20180827082101.5036-1-brgl@bgdev.pl>
+ <20180827082101.5036-2-brgl@bgdev.pl>
+ <20180827103915.GC13848@rapoport-lnx>
+ <CAMRc=MeCRw459ppuVK=w53C2eHOVVHPksF_4hx_dY1J-3fgPsQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180823191047.9260992844205984b75e6721@arm.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CAMRc=MeCRw459ppuVK=w53C2eHOVVHPksF_4hx_dY1J-3fgPsQ@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18082712-4275-0000-0000-000002B091C3
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082712-4276-0000-0000-000037B9950B
+Message-Id: <20180827125226.GD13848@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-27_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808270137
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Aug 23, 2018 at 07:10:47PM -0500, Kim Phillips escreveu:
-> Starting with binutils 2.28, aarch64 objdump adds comments to the
-> disassembly output to show the alternative names of a condition code [1].
+On Mon, Aug 27, 2018 at 02:28:45PM +0200, Bartosz Golaszewski wrote:
+> 2018-08-27 12:39 GMT+02:00 Mike Rapoport <rppt@linux.vnet.ibm.com>:
+> > On Mon, Aug 27, 2018 at 10:21:01AM +0200, Bartosz Golaszewski wrote:
+> >> Use devm_kstrdup_const() in the pmc-atom driver. This mostly serves as
+> >> an example of how to use this new routine to shrink driver code.
+> >>
+> >> While we're at it: replace a call to kcalloc() with devm_kcalloc().
+> >>
+> >> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+> >> ---
+> >>  drivers/clk/x86/clk-pmc-atom.c | 19 ++++---------------
+> >>  1 file changed, 4 insertions(+), 15 deletions(-)
+> >>
+> >> diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
+> >> index 08ef69945ffb..daa2192e6568 100644
+> >> --- a/drivers/clk/x86/clk-pmc-atom.c
+> >> +++ b/drivers/clk/x86/clk-pmc-atom.c
+> >> @@ -253,14 +253,6 @@ static void plt_clk_unregister_fixed_rate_loop(struct clk_plt_data *data,
+> >>               plt_clk_unregister_fixed_rate(data->parents[i]);
+> >>  }
+> >>
+> >> -static void plt_clk_free_parent_names_loop(const char **parent_names,
+> >> -                                        unsigned int i)
+> >> -{
+> >> -     while (i--)
+> >> -             kfree_const(parent_names[i]);
+> >> -     kfree(parent_names);
+> >> -}
+> >> -
+> >>  static void plt_clk_unregister_loop(struct clk_plt_data *data,
+> >>                                   unsigned int i)
+> >>  {
+> >> @@ -286,8 +278,8 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
+> >>       if (!data->parents)
+> >>               return ERR_PTR(-ENOMEM);
+> >>
+> >> -     parent_names = kcalloc(nparents, sizeof(*parent_names),
+> >> -                            GFP_KERNEL);
+> >> +     parent_names = devm_kcalloc(&pdev->dev, nparents,
+> >> +                                 sizeof(*parent_names), GFP_KERNEL);
+> >>       if (!parent_names)
+> >>               return ERR_PTR(-ENOMEM);
+> >>
+> >> @@ -300,7 +292,8 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
+> >>                       err = PTR_ERR(data->parents[i]);
+> >>                       goto err_unreg;
+> >>               }
+> >> -             parent_names[i] = kstrdup_const(clks[i].name, GFP_KERNEL);
+> >> +             parent_names[i] = devm_kstrdup_const(&pdev->dev,
+> >> +                                                  clks[i].name, GFP_KERNEL);
+> >>       }
+> >>
+> >>       data->nparents = nparents;
+> >> @@ -308,7 +301,6 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
+> >>
+> >>  err_unreg:
+> >>       plt_clk_unregister_fixed_rate_loop(data, i);
+> >> -     plt_clk_free_parent_names_loop(parent_names, i);
+> >
+> > What happens if clks[i].name is not a part of RO data? The devm_kstrdup_const
+> > will allocate memory and nothing will ever free it...
+> >
 > 
-> It is assumed that commas in objdump comments could occur in other arches
-> now or in the future, so this fix is arch-independent.
+> I'm looking at it and trying to see if I'm missing something, but
+> AFAIK the whole concept of devm_* is to leave out the resource
+> management part.
 > 
-> The fix could have been done with arm64 specific jump__parse and
-> jump__scnprintf functions, but the jump__scnprintf instruction would
-> have to have its comment character be a literal, since the scnprintf
-> functions cannot receive a struct arch easily.
-> 
-> This inconvenience also applies to the generic jump__scnprintf, which
-> is why we add a raw_comment pointer to struct ins_operands, so the
-> __parse function assigns it to be re-used by its corresponding __scnprintf
-> function.
-> 
-> Example differences in 'perf annotate --stdio2' output on an
-> aarch64 perf.data file:
-> 
-> BEFORE: → b.cs   ffff200008133d1c <unwind_frame+0x18c>  // b.hs, dffff7ecc47b
-> AFTER : ↓ b.cs   18c
-> 
-> BEFORE: → b.cc   ffff200008d8d9cc <get_alloc_profile+0x31c>  // b.lo, b.ul, dffff727295b
-> AFTER : ↓ b.cc   31c
-> 
-> The branch target labels 18c and 31c also now appear in the output:
-> 
-> BEFORE:        add    x26, x29, #0x80
-> AFTER : 18c:   add    x26, x29, #0x80
-> 
-> BEFORE:        add    x21, x21, #0x8
-> AFTER : 31c:   add    x21, x21, #0x8
-> 
-> The Fixes: tag below is added so stable branches will get the update; it
-> doesn't necessarily mean that commit was broken at the time, rather it
-> didn't withstand the aarch64 objdump update.
-> 
-> Tested no difference in output for sample x86_64, power arch perf.data files.
-> 
-> [1] https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;a=commit;h=bb7eff5206e4795ac79c177a80fe9f4630aaf730
-> 
-> Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-> Cc: Anton Blanchard <anton@samba.org>
-> Cc: Robin Murphy <robin.murphy@arm.com>
-> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Cc: Christian Borntraeger <borntraeger@de.ibm.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Taeung Song <treeze.taeung@gmail.com>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Cc: Jiri Olsa <jolsa@redhat.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Fixes: b13bbeee5ee6 ("perf annotate: Fix branch instruction with multiple operands")
-> Signed-off-by: Kim Phillips <kim.phillips@arm.com>
-> ---
->  tools/perf/util/annotate.c | 17 ++++++++++++++++-
->  tools/perf/util/annotate.h |  1 +
->  2 files changed, 17 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-> index e32ead4744bd..b83897dafbb0 100644
-> --- a/tools/perf/util/annotate.c
-> +++ b/tools/perf/util/annotate.c
-> @@ -282,7 +282,8 @@ bool ins__is_call(const struct ins *ins)
->  	return ins->ops == &call_ops || ins->ops == &s390_call_ops;
->  }
->  
-> -static int jump__parse(struct arch *arch __maybe_unused, struct ins_operands *ops, struct map_symbol *ms)
-> +static int jump__parse(struct arch *arch, struct ins_operands *ops,
-> +		       struct map_symbol *ms)
+> devm_kstrdup_const() will internally call devm_kstrdup() for strings
+> that are not in .rodata and once the device is detached, the string
+> will be freed (or not if it's in .rodata).
 
-Try to refrain from reflowing, what you need to do here is just to
-remove that __maybe_unused.
+And when it's going to be freed, how the resource management will know
+whether it's .rodata or not?
+ 
+> BR
+> Bart
+> 
+> > And, please don't drop kfree(parent_names) here.
+> >
+> >>       return ERR_PTR(err);
+> >>  }
+> >>
+> >> @@ -351,15 +343,12 @@ static int plt_clk_probe(struct platform_device *pdev)
+> >>               goto err_unreg_clk_plt;
+> >>       }
+> >>
+> >> -     plt_clk_free_parent_names_loop(parent_names, data->nparents);
+> >> -
+> >>       platform_set_drvdata(pdev, data);
+> >>       return 0;
+> >>
+> >>  err_unreg_clk_plt:
+> >>       plt_clk_unregister_loop(data, i);
+> >>       plt_clk_unregister_parents(data);
+> >> -     plt_clk_free_parent_names_loop(parent_names, data->nparents);
+> >
+> > Ditto.
+> >
+> >>       return err;
+> >>  }
+> >>
+> >> --
+> >> 2.18.0
+> >>
+> >
+> > --
+> > Sincerely yours,
+> > Mike.
+> >
+> 
 
->  {
->  	struct map *map = ms->map;
->  	struct symbol *sym = ms->sym;
-> @@ -291,6 +292,15 @@ static int jump__parse(struct arch *arch __maybe_unused, struct ins_operands *op
->  	};
->  	const char *c = strchr(ops->raw, ',');
->  	u64 start, end;
-> +
-> +	/*
-> +	 * Prevent from matching commas in the comment section, e.g.:
-> +	 * ffff200008446e70:       b.cs    ffff2000084470f4 <generic_exec_single+0x314>  // b.hs, b.nlast
-> +	 */
-> +	ops->raw_comment = strchr(ops->raw, arch->objdump.comment_char);
-> +	if (c && ops->raw_comment && c > ops->raw_comment)
-> +		c = NULL;
-> +
->  	/*
->  	 * Examples of lines to parse for the _cpp_lex_token@@Base
->  	 * function:
-> @@ -367,6 +377,11 @@ static int jump__scnprintf(struct ins *ins, char *bf, size_t size,
->  		return scnprintf(bf, size, "%-6s %s", ins->name, ops->target.sym->name);
->  
->  	c = strchr(ops->raw, ',');
-> +
-> +	/* Prevent from matching commas in the comment section */
-> +	if (ops->raw_comment && c && c > ops->raw_comment)
-> +		c = NULL;
+-- 
+Sincerely yours,
+Mike.
 
-This is equivalent to the previous test, but why do it differently?
-
-Since both are open coded equivalents, why not do something like:
-
-	c = validate_comma(c, ops);
-
-That would translate to:
-
-static inline const char *validate_comma(const char *c, ops)
-{
-	return c > ops->raw_comment ? NULL : c;
-}
-
-Which should be a third equivalent form to check if c, having been
-found, is after ops->raw_comment, if there is a raw_comment?
-
-- Arnaldo
-
-> +
->  	if (c != NULL) {
->  		const char *c2 = strchr(c + 1, ',');
->  
-> diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-> index 005a5fe8a8c6..5399ba2321bb 100644
-> --- a/tools/perf/util/annotate.h
-> +++ b/tools/perf/util/annotate.h
-> @@ -22,6 +22,7 @@ struct ins {
->  
->  struct ins_operands {
->  	char	*raw;
-> +	char	*raw_comment;
->  	struct {
->  		char	*raw;
->  		char	*name;
-> -- 
-> 2.17.1
