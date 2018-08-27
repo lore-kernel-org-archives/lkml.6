@@ -2,124 +2,183 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B534C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 02:02:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27185C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 02:13:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E62112174A
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 02:02:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E62112174A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C21A5216FA
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 02:13:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C21A5216FA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727298AbeH0Fqf (ORCPT
+        id S1727094AbeH0F60 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 01:46:35 -0400
-Received: from mga03.intel.com ([134.134.136.65]:18333 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726406AbeH0Fqf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 01:46:35 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Aug 2018 19:02:06 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,293,1531810800"; 
-   d="scan'208";a="75801307"
-Received: from devel-ww.sh.intel.com ([10.239.48.110])
-  by FMSMGA003.fm.intel.com with ESMTP; 26 Aug 2018 19:01:31 -0700
-From:   Wei Wang <wei.w.wang@intel.com>
-To:     virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-mm@kvack.org, mst@redhat.com, mhocko@kernel.org,
-        akpm@linux-foundation.org, dgilbert@redhat.com
-Cc:     torvalds@linux-foundation.org, pbonzini@redhat.com,
-        wei.w.wang@intel.com, liliang.opensource@gmail.com,
-        yang.zhang.wz@gmail.com, quan.xu0@gmail.com, nilal@redhat.com,
-        riel@redhat.com, peterx@redhat.com, quintela@redhat.com
-Subject: [PATCH v37 0/3] Virtio-balloon: support free page reporting
-Date:   Mon, 27 Aug 2018 09:32:16 +0800
-Message-Id: <1535333539-32420-1-git-send-email-wei.w.wang@intel.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 27 Aug 2018 01:58:26 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57196 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726822AbeH0F6Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 01:58:25 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E105685722;
+        Mon, 27 Aug 2018 02:13:53 +0000 (UTC)
+Received: from localhost (ovpn-8-24.pek2.redhat.com [10.72.8.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 906E284422;
+        Mon, 27 Aug 2018 02:13:52 +0000 (UTC)
+Date:   Mon, 27 Aug 2018 10:13:49 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org,
+        keescook@chromium.org, n-horiguchi@ah.jp.nec.com,
+        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com,
+        douly.fnst@cn.fujitsu.com
+Subject: Re: [PATCH v5 3/4] x86/boot/KASLR: Walk srat tables to filter
+ immovable memory
+Message-ID: <20180827021349.GR29313@MiWiFi-R3L-srv>
+References: <20180807065000.30958-1-fanc.fnst@cn.fujitsu.com>
+ <20180807065000.30958-4-fanc.fnst@cn.fujitsu.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180807065000.30958-4-fanc.fnst@cn.fujitsu.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 27 Aug 2018 02:13:53 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 27 Aug 2018 02:13:53 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The new feature, VIRTIO_BALLOON_F_FREE_PAGE_HINT, implemented by this
-series enables the virtio-balloon driver to report hints of guest free
-pages to host. It can be used to accelerate virtual machine (VM) live
-migration. Here is an introduction of this usage:
+On 08/07/18 at 02:49pm, Chao Fan wrote:
+> If 'CONFIG_MEMORY_HOTREMOVE' specified, walk the acpi srat memory
+> tables, store the immovable memory regions, so that kaslr can get
+> the information abouth where can be selected or not.
+> If 'CONFIG_MEMORY_HOTREMOVE' not specified, go on the old code.
+Just adjust the patch log a little bit, just for your reference.
 
-Live migration needs to transfer the VM's memory from the source machine
-to the destination round by round. For the 1st round, all the VM's memory
-is transferred. From the 2nd round, only the pieces of memory that were
-written by the guest (after the 1st round) are transferred. One method
-that is popularly used by the hypervisor to track which part of memory is
-written is to have the hypervisor write-protect all the guest memory.
+If 'CONFIG_MEMORY_HOTREMOVE' specified, walk through the acpi srat memory
+tables and store those immovable memory regions so that kaslr can get
+where to choose for randomization.
 
-This feature enables the optimization by skipping the transfer of guest
-free pages during VM live migration. It is not concerned that the memory
-pages are used after they are given to the hypervisor as a hint of the
-free pages, because they will be tracked by the hypervisor and transferred
-in the subsequent round if they are used and written.
+> 
+> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+> ---
+>  arch/x86/boot/compressed/kaslr.c | 59 ++++++++++++++++++++++++++++++++
+>  1 file changed, 59 insertions(+)
+> 
+> diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
+> index 302517929932..720878f967a3 100644
+> --- a/arch/x86/boot/compressed/kaslr.c
+> +++ b/arch/x86/boot/compressed/kaslr.c
+> @@ -31,6 +31,7 @@
+>  
+>  #include "misc.h"
+>  #include "error.h"
+> +#include "acpitb.h"
+>  #include "../string.h"
+>  
+>  #include <generated/compile.h>
+> @@ -104,6 +105,14 @@ static bool memmap_too_large;
+>  /* Store memory limit specified by "mem=nn[KMG]" or "memmap=nn[KMG]" */
+>  static unsigned long long mem_limit = ULLONG_MAX;
+>  
+> +#ifdef CONFIG_MEMORY_HOTREMOVE
+> +/* Store the immovable memory regions */
+> +static struct mem_vector immovable_mem[MAX_NUMNODES*2];
+> +
+> +/* Store the amount of immovable memory regions */
+> +static int num_immovable_mem;
+> +#endif
+> +
+>  
+>  enum mem_avoid_index {
+>  	MEM_AVOID_ZO_RANGE = 0,
+> @@ -298,6 +307,51 @@ static int handle_mem_options(void)
+>  	return 0;
+>  }
+>  
+> +#ifdef CONFIG_MEMORY_HOTREMOVE
+> +/*
+> + * According to ACPI table, filter the immvoable memory regions
+> + * and store them in immovable_mem[].
+> + */
+> +static void handle_immovable_mem(void)
 
-* Tests
-1 Test Environment
-    Host: Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
-    Migration setup: migrate_set_speed 100G, migrate_set_downtime 400ms
+Can we change this function like below, passed in the immovable_mem and
+the array lengty, the value of num_immovable_mem will be passed back?
 
-2 Test Results (results are averaged over several repeated runs)
-    2.1 Guest setup: 8G RAM, 4 vCPU
-        2.1.1 Idle guest live migration time
-            Optimization v.s. Legacy = 620ms vs 2970ms
-            --> ~79% reduction
-        2.1.2 Guest live migration with Linux compilation workload
-          (i.e. make bzImage -j4) running
-          1) Live Migration Time:
-             Optimization v.s. Legacy = 2273ms v.s. 4502ms
-             --> ~50% reduction
-          2) Linux Compilation Time:
-             Optimization v.s. Legacy = 8min42s v.s. 8min43s
-             --> no obvious difference
+static void handle_immovable_mem(char* region, int max, int *num)
+{
+}
 
-    2.2 Guest setup: 128G RAM, 4 vCPU
-        2.2.1 Idle guest live migration time
-            Optimization v.s. Legacy = 5294ms vs 41651ms
-            --> ~87% reduction
-        2.2.2 Guest live migration with Linux compilation workload
-          1) Live Migration Time:
-            Optimization v.s. Legacy = 8816ms v.s. 54201ms
-            --> 84% reduction
-          2) Linux Compilation Time:
-             Optimization v.s. Legacy = 8min30s v.s. 8min36s
-             --> no obvious difference
+Like this, you don't need patch 1/4 to make a header file, just put this
+function handle_immovable_mem() into acpitb.c since it's handling acpi
+tables. And its name can be get_immovable_mem().
 
-ChangeLog:
-v36->v37:
-    - free the reported pages to mm when receives a DONE cmd from host.
-      Please see patch 1's commit log for reasons. Please see patch 1's
-      commit for detailed explanations.
 
-For ChangeLogs from v22 to v36, please reference
-https://lkml.org/lkml/2018/7/20/199
-
-For ChangeLogs before v21, please reference
-https://lwn.net/Articles/743660/
-
-Wei Wang (3):
-  virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
-  mm/page_poison: expose page_poisoning_enabled to kernel modules
-  virtio-balloon: VIRTIO_BALLOON_F_PAGE_POISON
-
- drivers/virtio/virtio_balloon.c     | 374 ++++++++++++++++++++++++++++++++----
- include/uapi/linux/virtio_balloon.h |   8 +
- mm/page_poison.c                    |   6 +
- 3 files changed, 355 insertions(+), 33 deletions(-)
-
--- 
-2.7.4
-
+> +{
+> +	char *args = (char *)get_cmd_line_ptr();
+> +	struct acpi_table_header *table_header;
+> +	struct acpi_subtable_header *table;
+> +	struct acpi_srat_mem_affinity *ma;
+> +	unsigned long table_end;
+> +	int i = 0;
+> +
+> +	if (!strstr(args, "movable_node"))
+> +		return;
+> +
+> +	table_header = get_acpi_srat_table();
+> +	if (!table_header)
+> +		return;
+> +
+> +	table_end = (unsigned long)table_header + table_header->length;
+> +
+> +	table = (struct acpi_subtable_header *)
+> +		((unsigned long)table_header + sizeof(struct acpi_table_srat));
+> +
+> +	while (((unsigned long)table) + table->length < table_end) {
+> +		if (table->type == 1) {
+> +			ma = (struct acpi_srat_mem_affinity *)table;
+> +			if (!(ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE)) {
+> +				immovable_mem[i].start = ma->base_address;
+> +				immovable_mem[i].size = ma->length;
+> +				i++;
+> +			}
+> +
+> +			if (i >= MAX_NUMNODES*2)
+> +				break;
+> +		}
+> +		table = (struct acpi_subtable_header *)
+> +			((unsigned long)table + table->length);
+> +	}
+> +	num_immovable_mem = i;
+> +}
+> +#endif
+> +
+>  /*
+>   * In theory, KASLR can put the kernel anywhere in the range of [16M, 64T).
+>   * The mem_avoid array is used to store the ranges that need to be avoided
+> @@ -421,6 +475,11 @@ static void mem_avoid_init(unsigned long input, unsigned long input_size,
+>  	/* Mark the memmap regions we need to avoid */
+>  	handle_mem_options();
+>  
+> +#ifdef CONFIG_MEMORY_HOTREMOVE
+> +	/* Mark the immovable regions we need to choose */
+> +	handle_immovable_mem();
+> +#endif
+> +
+>  #ifdef CONFIG_X86_VERBOSE_BOOTUP
+>  	/* Make sure video RAM can be used. */
+>  	add_identity_map(0, PMD_SIZE);
+> -- 
+> 2.17.1
+> 
+> 
+> 
