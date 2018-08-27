@@ -2,91 +2,83 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D29ABC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 04:04:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7DAEC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 04:06:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 888F921722
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 04:04:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="ndaatIai"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 888F921722
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 3C8BF21722
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 04:06:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C8BF21722
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727079AbeH0Htf (ORCPT
+        id S1726991AbeH0HvP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 03:49:35 -0400
-Received: from conuserg-10.nifty.com ([210.131.2.77]:40458 "EHLO
-        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725878AbeH0Htf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 03:49:35 -0400
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-10.nifty.com with ESMTP id w7R43Sia004053;
-        Mon, 27 Aug 2018 13:03:28 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w7R43Sia004053
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1535342609;
-        bh=QWXSE7/OQHBlT44+TGlqxkRhZ97JeJizcyopsk4jHsY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=ndaatIailO5hoiLFnlwomC10Ew0c2977L3NOi01UukofNBoXEcec/BLZjs4FJByq3
-         h1onO5yIbQQdy4ukmP+kKAfSy85VKqsss7gZ0oyGAw62kfMyn//Y1ERbdmxorFY9n0
-         S45j8ZM+3RPx+oETlh3PD8OryIQODP1HYzeOSrMgbBnPx350RssdP3AYSlUy9EEujP
-         HL3h7T15KEpOBn46UwMQIREh025770ah+sFED4fRIIN0dpP+mhwpWGxF+YK8f/r/DI
-         PWC6WJ1GbsY++E3q/3WgMB5fqybF+QXj4o2onBDwPYFQUZcnvwu7FKTu9JGmo1x9Tv
-         ZqYGcvU5gHTHw==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
-        user-mode-linux-devel@lists.sourceforge.net
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+        Mon, 27 Aug 2018 03:51:15 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:51418 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725878AbeH0HvO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 03:51:14 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id JChjUm-gRYyO; Mon, 27 Aug 2018 06:06:06 +0200 (CEST)
+Received: from nazgul.tnic (79-100-101-223.ip.btc-net.bg [79.100.101.223])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E6F601EC023D;
+        Mon, 27 Aug 2018 06:06:05 +0200 (CEST)
+Date:   Mon, 27 Aug 2018 06:06:20 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Jacek Tomaka <jacek.tomaka@poczta.fm>
+Cc:     Jacek Tomaka <jacekt@dugeo.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>
-Subject: [PATCH] um: remove -fno-unit-at-a-time workaround for pre-4.0 GCC
-Date:   Mon, 27 Aug 2018 13:03:04 +0900
-Message-Id: <1535342584-22174-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/microcode: allow non-root reading of microcode
+ version and processor flags
+Message-ID: <20180827040620.GB14577@nazgul.tnic>
+References: <20180825035039.14409-1-jacekt@dugeo.com>
+ <8DACDEF8-ED0A-42BF-8426-3AAA4BA16317@alien8.de>
+ <CD5DA006-0D28-4CB9-95FA-231F0E20BF44@poczta.fm>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CD5DA006-0D28-4CB9-95FA-231F0E20BF44@poczta.fm>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit cafa0010cd51 ("Raise the minimum required gcc version to 4.6")
-bumped the minimum GCC version to 4.6 for all architectures.
+On Sun, Aug 26, 2018 at 08:23:48PM +0800, Jacek Tomaka wrote:
+> I am trying to get microcode version from user space. Reading it
+> from /proc/cpuinfo requires greping/awking to extract the bits of
+> information that are readily available in microcode/version.
 
-'$(call cc-option,-fno-unit-at-a-time)' is now dead code since
-'$(cc-version) -lt 0400' is always false.
+If the only reason is because you find it hard to grep/awk, I won't
+take it.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+> Any reason why the same piece of information has different access
+> permissions, depending on the way it is accessed?
 
- arch/x86/Makefile.um | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+I don't see any particular reason in the original commit which added it:
 
-diff --git a/arch/x86/Makefile.um b/arch/x86/Makefile.um
-index 91085a0..577976b 100644
---- a/arch/x86/Makefile.um
-+++ b/arch/x86/Makefile.um
-@@ -26,12 +26,8 @@ cflags-y += $(call cc-option,-mpreferred-stack-boundary=2)
- # an unresolved reference.
- cflags-y += -ffreestanding
- 
--# Disable unit-at-a-time mode on pre-gcc-4.0 compilers, it makes gcc use
--# a lot more stack due to the lack of sharing of stacklots.  Also, gcc
--# 4.3.0 needs -funit-at-a-time for extern inline functions.
--KBUILD_CFLAGS += $(shell if [ $(cc-version) -lt 0400 ] ; then \
--			echo $(call cc-option,-fno-unit-at-a-time); \
--			else echo $(call cc-option,-funit-at-a-time); fi ;)
-+# gcc 4.3.0 needs -funit-at-a-time for extern inline functions.
-+KBUILD_CFLAGS += $(call cc-option,-funit-at-a-time)
- 
- KBUILD_CFLAGS += $(cflags-y)
- 
+  9a4b9efa1d39 ("[PATCH] x86 microcode: add sysfs and hotplug support")
+
+except maybe because the reload interface is root-only so making the
+others root-only too, made sense.
+
+However, we've made the microcode revision available to everyone in
+/proc/cpuinfo, in the meantime, so I guess there's no point in keeping
+the version file root-only anymore. And I guess the processor flags too,
+while we're at it.
+
 -- 
-2.7.4
+Regards/Gruss,
+    Boris.
 
+ECO tip #101: Trim your mails when you reply.
+--
