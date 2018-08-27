@@ -2,143 +2,181 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCCDBC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 11:03:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9915AC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 11:05:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 844E6208B9
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 11:03:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 844E6208B9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5306F208B9
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 11:05:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5306F208B9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727382AbeH0Otu (ORCPT
+        id S1727112AbeH0Ov4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 10:49:50 -0400
-Received: from mga18.intel.com ([134.134.136.126]:33931 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726902AbeH0Otu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 10:49:50 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2018 04:03:38 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,295,1531810800"; 
-   d="scan'208";a="66281277"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.137]) ([10.237.72.137])
-  by fmsmga008.fm.intel.com with ESMTP; 27 Aug 2018 04:03:35 -0700
-Subject: Re: [PATCH v2 11/40] mmc: sdhci: Add a quirk to skip clearing the
- transfer mode register on tuning
-To:     Aapo Vienamo <avienamo@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Stefan Agner <stefan@agner.ch>
-Cc:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
-References: <1533924522-1037-1-git-send-email-avienamo@nvidia.com>
- <1533924522-1037-12-git-send-email-avienamo@nvidia.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <d603be8f-986a-80e1-d98a-daea9c9684aa@intel.com>
-Date:   Mon, 27 Aug 2018 14:01:52 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <1533924522-1037-12-git-send-email-avienamo@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 27 Aug 2018 10:51:56 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:44474 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726785AbeH0Ov4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 10:51:56 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 7D504261076
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     kernel@collabora.com, Chanwoo Choi <cw00.choi@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        linux-pm@vger.kernel.org
+Subject: [RESEND PATCH v5] PM / devfreq: Fix devfreq_add_device() when drivers are built as modules.
+Date:   Mon, 27 Aug 2018 13:05:32 +0200
+Message-Id: <20180827110532.28551-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/08/18 21:08, Aapo Vienamo wrote:
-> Add SDHCI_QUIRK2_TUNE_SKIP_XFERRMODE_REG_PROG to skip programming the
-> SDHCI_TRANSFER_MODE in sdhci_set_transfer_mode() if tuning command is
-> being sent.
-> 
-> On Tegra210 and Tegra186 the tuning sequence hangs if the SDHCI
-> transfer mode register is touched.
-> 
-> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-> ---
->  drivers/mmc/host/sdhci.c | 6 ++++++
->  drivers/mmc/host/sdhci.h | 2 ++
->  2 files changed, 8 insertions(+)
-> 
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index a7b5602..04dc443 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -1028,6 +1028,12 @@ static void sdhci_set_transfer_mode(struct sdhci_host *host,
->  
->  	if (data == NULL) {
->  		if (host->quirks2 &
-> +			SDHCI_QUIRK2_TUNE_SKIP_XFERMODE_REG_PROG &&
-> +				(cmd->opcode == MMC_SEND_TUNING_BLOCK ||
-> +				 cmd->opcode == MMC_SEND_TUNING_BLOCK_HS200)) {
-> +			return;
-> +		}
+When the devfreq driver and the governor driver are built as modules,
+the call to devfreq_add_device() or governor_store() fails because the
+governor driver is not loaded at the time the devfreq driver loads. The
+devfreq driver has a build dependency on the governor but also should
+have a runtime dependency. We need to make sure that the governor driver
+is loaded before the devfreq driver.
 
-Rather than introduce a quirk, can't we just dodge the unnecessary write e.g.
+This patch fixes this bug by adding a try_then_request_governor()
+function. First tries to find the governor, and then, if it is not
+found, it requests the module and tries again.
 
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index 1b3fbd9bd5c5..68af6a67e397 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -1033,10 +1033,19 @@ static void sdhci_set_transfer_mode(struct sdhci_host *host,
- 			if (cmd->opcode != MMC_SEND_TUNING_BLOCK_HS200)
- 				sdhci_writew(host, 0x0, SDHCI_TRANSFER_MODE);
- 		} else {
--		/* clear Auto CMD settings for no data CMDs */
-+			u16 orig;
+Fixes: 1b5c1be2c88e (PM / devfreq: map devfreq drivers to governor using name)
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
+
+Changes in v5:
+- Requested by MyungJoo and Chanwoo.
+  - Fix returning without the lock acquired after request_module.
+- Requested by Chanwoo.
+  - In request governor function check if governor name is NULL or not.
+  - Remove some unrelated changes (added/removed some blank lines).
+
+Changes in v4:
+- Kept "locked" devfreq_list from the return of find_devfreq_governor() to
+  the unlock of governor_store(). Requested by MyungJoo Ham.
+
+Changes in v3:
+- Remove unneded change in dev_err message.
+- Fix err returned value in case to not find the governor.
+
+Changes in v2:
+- Add a new function to request the module and call that function from
+  devfreq_add_device and governor_store.
+
+ drivers/devfreq/devfreq.c | 53 ++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 49 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+index 4c49bb1330b5..62ead442a872 100644
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -11,6 +11,7 @@
+  */
+ 
+ #include <linux/kernel.h>
++#include <linux/kmod.h>
+ #include <linux/sched.h>
+ #include <linux/errno.h>
+ #include <linux/err.h>
+@@ -221,6 +222,49 @@ static struct devfreq_governor *find_devfreq_governor(const char *name)
+ 	return ERR_PTR(-ENODEV);
+ }
+ 
++/**
++ * try_then_request_governor() - Try to find the governor and request the
++ *                               module if is not found.
++ * @name:	name of the governor
++ *
++ * Search the list of devfreq governors and request the module and try again
++ * if is not found. This can happen when both drivers (the governor driver
++ * and the driver that call devfreq_add_device) are built as modules.
++ * devfreq_list_lock should be held by the caller. Returns the matched
++ * governor's pointer.
++ */
++static struct devfreq_governor *try_then_request_governor(const char *name)
++{
++	struct devfreq_governor *governor;
++	int err = 0;
 +
-+			/* clear Auto CMD settings for no data CMDs */
- 			mode = sdhci_readw(host, SDHCI_TRANSFER_MODE);
--			sdhci_writew(host, mode & ~(SDHCI_TRNS_AUTO_CMD12 |
--				SDHCI_TRNS_AUTO_CMD23), SDHCI_TRANSFER_MODE);
-+			orig = mode;
-+			mode &= ~(SDHCI_TRNS_AUTO_CMD12 | SDHCI_TRNS_AUTO_CMD23);
-+			/*
-+			 * Do not write transfer mode unnecessarily because it
-+			 * can upset some host controllers (e.g. sdhci-tregra)
-+			 * during tuning.
-+			 */
-+			if (mode != orig)
-+				sdhci_writew(host, new_mode, SDHCI_TRANSFER_MODE);
- 		}
- 		return;
++	if (IS_ERR_OR_NULL(name)) {
++		pr_err("DEVFREQ: %s: Invalid parameters\n", __func__);
++		return ERR_PTR(-EINVAL);
++	}
++	WARN(!mutex_is_locked(&devfreq_list_lock),
++	     "devfreq_list_lock must be locked.");
++
++	governor = find_devfreq_governor(name);
++	if (IS_ERR(governor)) {
++		mutex_unlock(&devfreq_list_lock);
++
++		if (!strncmp(name, DEVFREQ_GOV_SIMPLE_ONDEMAND,
++			     DEVFREQ_NAME_LEN))
++			err = request_module("governor_%s", "simpleondemand");
++		else
++			err = request_module("governor_%s", name);
++		/* Restore previous state before return */
++		mutex_lock(&devfreq_list_lock);
++		if (err)
++			return NULL;
++
++		governor = find_devfreq_governor(name);
++	}
++
++	return governor;
++}
++
+ static int devfreq_notify_transition(struct devfreq *devfreq,
+ 		struct devfreq_freqs *freqs, unsigned int state)
+ {
+@@ -646,9 +690,8 @@ struct devfreq *devfreq_add_device(struct device *dev,
+ 	mutex_unlock(&devfreq->lock);
+ 
+ 	mutex_lock(&devfreq_list_lock);
+-	list_add(&devfreq->node, &devfreq_list);
+ 
+-	governor = find_devfreq_governor(devfreq->governor_name);
++	governor = try_then_request_governor(devfreq->governor_name);
+ 	if (IS_ERR(governor)) {
+ 		dev_err(dev, "%s: Unable to find governor for the device\n",
+ 			__func__);
+@@ -664,12 +707,14 @@ struct devfreq *devfreq_add_device(struct device *dev,
+ 			__func__);
+ 		goto err_init;
  	}
-
-
-Alternatively 
-
-> +		if (host->quirks2 &
->  			SDHCI_QUIRK2_CLEAR_TRANSFERMODE_REG_BEFORE_CMD) {
->  			sdhci_writew(host, 0x0, SDHCI_TRANSFER_MODE);
->  		} else {
-> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-> index 23966f8..0a99008 100644
-> --- a/drivers/mmc/host/sdhci.h
-> +++ b/drivers/mmc/host/sdhci.h
-> @@ -450,6 +450,8 @@ struct sdhci_host {
->   * obtainable timeout.
->   */
->  #define SDHCI_QUIRK2_DISABLE_HW_TIMEOUT			(1<<17)
-> +/* Don't clear the SDHCI_TRANSFER_MODE register on tuning commands */
-> +#define SDHCI_QUIRK2_TUNE_SKIP_XFERMODE_REG_PROG	(1<<18)
->  
->  	int irq;		/* Device IRQ */
->  	void __iomem *ioaddr;	/* Mapped address */
-> 
++
++	list_add(&devfreq->node, &devfreq_list);
++
+ 	mutex_unlock(&devfreq_list_lock);
+ 
+ 	return devfreq;
+ 
+ err_init:
+-	list_del(&devfreq->node);
+ 	mutex_unlock(&devfreq_list_lock);
+ 
+ 	device_unregister(&devfreq->dev);
+@@ -991,7 +1036,7 @@ static ssize_t governor_store(struct device *dev, struct device_attribute *attr,
+ 		return -EINVAL;
+ 
+ 	mutex_lock(&devfreq_list_lock);
+-	governor = find_devfreq_governor(str_governor);
++	governor = try_then_request_governor(str_governor);
+ 	if (IS_ERR(governor)) {
+ 		ret = PTR_ERR(governor);
+ 		goto out;
+-- 
+2.18.0
 
