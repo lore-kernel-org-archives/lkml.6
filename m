@@ -2,120 +2,130 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73F80C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 10:37:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C785EC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 10:38:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22A52208D6
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 10:37:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22A52208D6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 800CE208D6
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 10:38:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 800CE208D6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726934AbeH0OXX (ORCPT
+        id S1727053AbeH0OY3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 10:23:23 -0400
-Received: from lgeamrelo13.lge.com ([156.147.23.53]:52087 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726825AbeH0OXX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 10:23:23 -0400
-Received: from unknown (HELO lgemrelse6q.lge.com) (156.147.1.121)
-        by 156.147.23.53 with ESMTP; 27 Aug 2018 19:37:15 +0900
-X-Original-SENDERIP: 156.147.1.121
-X-Original-MAILFROM: namhyung@kernel.org
-Received: from unknown (HELO sejong) (10.177.227.17)
-        by 156.147.1.121 with ESMTP; 27 Aug 2018 19:37:15 +0900
-X-Original-SENDERIP: 10.177.227.17
-X-Original-MAILFROM: namhyung@kernel.org
-Date:   Mon, 27 Aug 2018 19:37:15 +0900
-From:   Namhyung Kim <namhyung@kernel.org>
-To:     Martin =?utf-8?B?TGnFoWth?= <mliska@suse.cz>
-Cc:     linux-perf-users@vger.kernel.org,
-        lkml <linux-kernel@vger.kernel.org>,
+        Mon, 27 Aug 2018 10:24:29 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54154 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726825AbeH0OY3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 10:24:29 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F41BC87916;
+        Mon, 27 Aug 2018 10:38:21 +0000 (UTC)
+Received: from krava (unknown [10.43.17.209])
+        by smtp.corp.redhat.com (Postfix) with SMTP id C2F862166B41;
+        Mon, 27 Aug 2018 10:38:19 +0000 (UTC)
+Date:   Mon, 27 Aug 2018 12:38:19 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>, kernel-team@lge.com
-Subject: Re: [PATCH] Properly interpret indirect call in perf annotate.
-Message-ID: <20180827103715.GB8065@sejong>
-References: <bd1f3932-be2b-85f9-7582-111ee0a43b07@suse.cz>
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-perf-users@vger.kernel.org, kernel-team@lge.com
+Subject: Re: [PATCH v2 2/2]: perf record: enable asynchronous trace writing
+Message-ID: <20180827103819.GB3725@krava>
+References: <e92805d0-3338-2ce5-5e88-369d406fe0a7@linux.intel.com>
+ <54cc11d7-3ef2-c856-052e-6e2c309ff743@linux.intel.com>
+ <20180827083852.GF24695@krava>
+ <a34aa784-e36c-02fd-3e9d-7df4bc61ffe2@linux.intel.com>
+ <20180827100536.GA8065@sejong>
+ <3c0a8ecc-a68e-7e19-066c-096f7e318e1f@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <bd1f3932-be2b-85f9-7582-111ee0a43b07@suse.cz>
+In-Reply-To: <3c0a8ecc-a68e-7e19-066c-096f7e318e1f@linux.intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 27 Aug 2018 10:38:22 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 27 Aug 2018 10:38:22 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-On Thu, Aug 23, 2018 at 02:29:34PM +0200, Martin Liška wrote:
-> The patch changes interpretation of:
-> callq  *0x8(%rbx)
+On Mon, Aug 27, 2018 at 01:25:35PM +0300, Alexey Budankov wrote:
+> Hi Namhyung,
 > 
-> from:
->   0.26 │     → callq  *8
-> to:
->   0.26 │     → callq  *0x8(%rbx)
+> On 27.08.2018 13:05, Namhyung Kim wrote:
+> > Hello,
+> > 
+> > On Mon, Aug 27, 2018 at 12:33:07PM +0300, Alexey Budankov wrote:
+> >> Hi,
+> >>
+> >> On 27.08.2018 11:38, Jiri Olsa wrote:
+> >>> On Thu, Aug 23, 2018 at 07:47:01PM +0300, Alexey Budankov wrote:
+> >>>
+> >>> SNIP
+> >>>
+> >>>>  static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evlist,
+> >>>>  				    bool overwrite)
+> >>>>  {
+> >>>>  	u64 bytes_written = rec->bytes_written;
+> >>>> -	int i;
+> >>>> -	int rc = 0;
+> >>>> +	int i, rc = 0;
+> >>>>  	struct perf_mmap *maps;
+> >>>> +	int trace_fd = rec->session->data->file.fd;
+> >>>> +	struct aiocb **mmap_aio = rec->evlist->mmap_aio;
+> >>>> +	int mmap_aio_size = 0;
+> >>>> +	off_t off;
+> >>>>  
+> >>>>  	if (!evlist)
+> >>>>  		return 0;
+> >>>> @@ -546,14 +620,17 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
+> >>>>  	if (overwrite && evlist->bkw_mmap_state != BKW_MMAP_DATA_PENDING)
+> >>>>  		return 0;
+> >>>>  
+> >>>> +	off = lseek(trace_fd, 0, SEEK_CUR);
+> >>>> +
+> >>>
+> >>> with async write, do we need to query/set the offset like this
+> >>> all the time?
+> >>
+> >> It looks like we need it this way. Internally glibc AIO implements writes 
+> >> using pwrite64 syscall in our case. The sycall requires offset as a parameter 
+> >> and doesn't update file position on the completion.
+> >>
+> >>>
+> >>> could we just keep/update the offset value in the 'struct perf_data_file'
+> >>> and skip both lseek calls?
+> >>
+> >> Don't see how it is possible. offset is different for every enqeued write 
+> >> operation and write areas don't intersect for the whole writing loop. 
+> >> To know the final file position it is required to iterate thru 
+> >> the loop.
+> > 
+> > But as far as I can see the offset is linearly updated in
+> > perf_mmap__push() and I guess those two lseek() calls will return
+> > a same value as the last updated offset, no?
 > 
-> in this can an address is followed by a register, thus
-> one can't parse only address.
+> Yes, offset is linearly calculated by perf_mmap__push() code for 
+> the next possible write operation, but file position is update by 
+> the kernel only in the second lseek() syscall after the loop. 
+> The first lseek() syscall reads that file position for 
+> the next loop iterations.
 
-Also there's a case with no offset like:  callq  *%rbx
+does the file's offset need to get updated with lseek at all?
+the async write gets offset.. so I'd think as long as we keep
+offset value, we don't need to call lseek at all
 
-
-> 
-> Signed-off-by: Martin Liška <mliska@suse.cz>
-> ---
->  tools/perf/util/annotate.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
-> 
-> 
-
-> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-> index e4268b948e0e..e32ead4744bd 100644
-> --- a/tools/perf/util/annotate.c
-> +++ b/tools/perf/util/annotate.c
-> @@ -246,8 +246,14 @@ static int call__parse(struct arch *arch, struct ins_operands *ops, struct map_s
->  
->  indirect_call:
->  	tok = strchr(endptr, '*');
-> -	if (tok != NULL)
-> -		ops->target.addr = strtoull(tok + 1, NULL, 16);
-> +	if (tok != NULL) {
-> +		endptr++;
-> +
-> +		/* Indirect call can use a non-rip register and offset: callq  *0x8(%rbx).
-> +		 * Do not parse such instruction.  */
-> +		if (strstr(endptr, "(%r") == NULL)
-> +			ops->target.addr = strtoull(endptr, NULL, 16);
-
-It seems too x86-specific, what about this? (not tested)
-
-
-indirect_call:
-	tok = strchr(endptr, '*');
-	if (tok != NULL) {
-		endptr++;
-		if (!isdigit(*endptr))
-			return 0;
-
-		addr = strtoull(endptr, &endptr, 0);
-		if (*endptr != '('))
-			ops->target.addr = addr;
-
-
-Thanks,
-Namhyung
-
-
-> +	}
->  	goto find_target;
->  }
->  
-> 
-
+jirka
