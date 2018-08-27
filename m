@@ -2,170 +2,102 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B78AFC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:59:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAD70C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:01:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FDF5208D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:59:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A8A6208A5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:01:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="fofYOfJU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FDF5208D5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="jbroqMJV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A8A6208A5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727990AbeH0Wqi (ORCPT
+        id S1727501AbeH0WtC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 18:46:38 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:38078 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727965AbeH0Wqg (ORCPT
+        Mon, 27 Aug 2018 18:49:02 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:44532 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727113AbeH0WtC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 18:46:36 -0400
-Received: by mail-pg1-f196.google.com with SMTP id e2-v6so7483pgv.5
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 11:58:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=subject:date:message-id:in-reply-to:references:cc:from:to;
-        bh=VVQ/j669lP7AtKkPCxikGWiRbu6RLArQXHpJiZK3da0=;
-        b=fofYOfJUwER4Wx8jHvjiEK5B+KpWT6ugCf6AmfaUH35XBTRLuU/NyHDsk7gm7CUqL2
-         +9/yBo44jqpjB0vtgOA/CUK6xtPlddDp6zPspAXz4LUreYywnX+jWUX4TSwSGdCkFqkJ
-         AmTY+HvkPGudCniMsOoNUFRH16I93tKYHAxrQqGV/wyLBVh4XeupXOlnx2aOxMpSEZEt
-         PQ8hD9SZfitEpNZ930Z3MSkYjO7gbalSXw1G971z/MbnrS13qyu8rmuQ/tiYgaPLQLMg
-         lMGVLhNg4qpV0xIH3q+sdxtCfphFHzqxNaP1XvPNRZQFZUN9mR69E0403yB/q7p8VwFG
-         vVaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:date:message-id:in-reply-to:references
-         :cc:from:to;
-        bh=VVQ/j669lP7AtKkPCxikGWiRbu6RLArQXHpJiZK3da0=;
-        b=Ow8p5guUhc869FDv4pAAIVSKpTvhP0Ze2lipT/G94ahPSaIJqFup+fYDf6Y8QCQday
-         HmfpMuktFUY1vDld5rf6hcCQe6RhJKDTwOhDKHrSVEHF7DU+z+TPDtM9t6iJ/pQuFdFg
-         3/Y+utOx4scATJ7Mi4Qj9VelveGsnMDu8CxwpLWvOy8aYIsf0kdI8vzo6OJvUFPa8LRV
-         QN8Li98o77l/6as2gQ/QYyDbLZ3VAhUxJqlEdPfWCEp1dBfp908A3TVJ3EnZZsS/c4Rn
-         YBdgqHi8qUFogakxQ992mDw99Lk5Isa2eNkE3xC9lNdC48WQRc/u/KgrigYsiTBNXkYl
-         Vsiw==
-X-Gm-Message-State: APzg51DNYUh7WD7ziV33udlvurLpPHzp8Ccghk6yUMAYsii9QIC7VrbM
-        6y9AGgxV1osaBch3mKgOaO4oHw==
-X-Google-Smtp-Source: ANB0VdY8aB4U8CKjC+8xMkzu3sy+DzXjtSPHp+x8PWQi7coMOKb6zQLwnKR3f+YjSTf7C0RG/P8BsQ==
-X-Received: by 2002:a62:2119:: with SMTP id h25-v6mr15766153pfh.112.1535396326393;
-        Mon, 27 Aug 2018 11:58:46 -0700 (PDT)
-Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id n9-v6sm14946pfg.21.2018.08.27.11.58.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 Aug 2018 11:58:45 -0700 (PDT)
-Subject: [PATCH 4/8] RISC-V: Filter ISA and MMU values in cpuinfo
-Date:   Mon, 27 Aug 2018 11:42:39 -0700
-Message-Id: <20180827184243.25344-5-palmer@sifive.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180827184243.25344-1-palmer@sifive.com>
-References: <20180827184243.25344-1-palmer@sifive.com>
-Cc:     Palmer Dabbelt <palmer@sifive.com>, aou@eecs.berkeley.edu,
-        daniel.lezcano@linaro.org, tglx@linutronix.de,
-        jason@lakedaemon.net, marc.zyngier@arm.com, atish.patra@wdc.com,
-        dmitriy@oss-tech.org, catalin.marinas@arm.com,
-        ard.biesheuvel@linaro.org, Greg KH <gregkh@linuxfoundation.org>,
-        jeremy.linton@arm.com, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:      linux-riscv@lists.infradead.org
+        Mon, 27 Aug 2018 18:49:02 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7RIxUgq097233;
+        Mon, 27 Aug 2018 19:00:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=kuJzdlxHk6CebePCOorWWuX/D/cxPRZXdw5sY3EOwwU=;
+ b=jbroqMJVLjfkIZuLaqUVjqMWkPndTNDGbmdXU7EIbPN4ZRkJtex1pDFg8d1jFoGqzfVd
+ nzasruNLfzVV7KlCXhBy1s2LOYle5KR2C4jAoX61aU3MmwmoZ9r/bplYeqrrS1O32t4N
+ b1wuBBLkItV8WKuUEm1dhaXJ2R7YroF2ujdrfK3XdxINxhHhLrqT7tN+OtFVwouWYop2
+ 2tVc0vaTByM9qJTmxtHGtOjNZPCk80CzxBzYS/LbISvo1jI0SZTOPkw2GwDFKzAMZ0mM
+ 4wV6Sd1nhF66kyQNjT2DJ7KloG+5Ac6+yd27h6jRBL75zzACHOOV7uZ7lVMM/2lxliK7 8w== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2m2yrpypy9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 27 Aug 2018 19:00:56 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7RJ0stC007877
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 27 Aug 2018 19:00:55 GMT
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w7RJ0qRr019601;
+        Mon, 27 Aug 2018 19:00:52 GMT
+Received: from char.us.oracle.com (/10.152.35.101)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 27 Aug 2018 12:00:52 -0700
+Received: by char.us.oracle.com (Postfix, from userid 1000)
+        id 1DE786A0112; Mon, 27 Aug 2018 15:00:51 -0400 (EDT)
+Date:   Mon, 27 Aug 2018 15:00:51 -0400
+From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Konrad Rzeszutek Wilk <konrad@darnok.org>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: swiotlb cleanup (resend)
+Message-ID: <20180827190051.GD14594@char.us.oracle.com>
+References: <20180725113802.18943-1-hch@lst.de>
+ <20180827181309.GA3834@0021ccb48c25>
+ <20180827183308.GA496@lst.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180827183308.GA496@lst.de>
+User-Agent: Mutt/1.8.3 (2017-05-23)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8998 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=974
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808270195
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We shouldn't be directly passing device tree values to userspace, both
-because there could be mistakes in device trees and because the kernel
-doesn't support arbitrary ISAs.
+On Mon, Aug 27, 2018 at 08:33:08PM +0200, Christoph Hellwig wrote:
+> On Mon, Aug 27, 2018 at 02:13:11PM -0400, Konrad Rzeszutek Wilk wrote:
+> > On Wed, Jul 25, 2018 at 01:37:56PM +0200, Christoph Hellwig wrote:
+> > > Hi Konrad,
+> > > 
+> > > below are a few swiotlb patches.  Mostly just cleanups, but the removal
+> > > of the panic option is an actual change in (rarely used) functionality.
+> > > 
+> > > I'd be happy to pick them up through the dma-mapping tree if you are
+> > > fine with that.
+> > 
+> > Hey,
+> > 
+> > I put them in my 'devel/for-linus-4.19' as I would like to make
+> > sure that they work just fine with Xen-SWIOTLB and some baremetal
+> > machines.
+> 
+> I actually have a new version of these combined with merging
+> arm64 support into the main swiotlb ops.  Please hold off a bit for
+> now.
 
-Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
----
- arch/riscv/kernel/cpu.c | 62 +++++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 55 insertions(+), 7 deletions(-)
-
-diff --git a/arch/riscv/kernel/cpu.c b/arch/riscv/kernel/cpu.c
-index 19e98c1710dd..a18b4e3962a1 100644
---- a/arch/riscv/kernel/cpu.c
-+++ b/arch/riscv/kernel/cpu.c
-@@ -58,6 +58,57 @@ int riscv_of_processor_hartid(struct device_node *node)
- 
- #ifdef CONFIG_PROC_FS
- 
-+static void print_isa(struct seq_file *f, const char *orig_isa)
-+{
-+    static const char *ext = "mafdc";
-+    const char *isa = orig_isa;
-+    const char *e;
-+
-+    /* Linux doesn't support rv32e or rv128i, and we only support booting
-+     * kernels on harts with the same ISA that the kernel is compiled for. */
-+#if defined(CONFIG_32BIT)
-+    if (strncmp(isa, "rv32i", 5) != 0)
-+        return;
-+#elif defined(CONFIG_64BIT)
-+    if (strncmp(isa, "rv64i", 5) != 0)
-+        return;
-+#endif
-+
-+    /* Print the base ISA, as we already know it's legal. */
-+    seq_printf(f, "isa\t: ");
-+    seq_write(f, isa, 5);
-+    isa += 5;
-+
-+    /* Check the rest of the ISA string for valid extensions, printing those we
-+     * find.  RISC-V ISA strings define an order, so we only print the
-+     * extension bits when they're in order. */
-+    for (e = ext; *e != '\0'; ++e) {
-+        if (isa[0] == e[0]) {
-+            seq_write(f, isa, 1);
-+            isa++;
-+        }
-+    }
-+
-+    /* If we were given an unsupported ISA in the device tree then print a bit
-+     * of info describing what went wrong. */
-+    if (isa[0] != '\0')
-+        pr_info("unsupported ISA \"%s\" in device tree", orig_isa);
-+}
-+
-+static void print_mmu(struct seq_file *f, const char *mmu_type)
-+{
-+#if defined(CONFIG_32BIT)
-+    if (strcmp(mmu_type, "riscv,sv32") != 0)
-+        return;
-+#elif defined(CONFIG_64BIT)
-+    if ((strcmp(mmu_type, "riscv,sv39") != 0)
-+        && (strcmp(mmu_type, "riscv,sv48") != 0))
-+        return;
-+#endif
-+
-+    seq_printf(f, "mmu\t: %s\n", mmu_type+6);
-+}
-+
- static void *c_start(struct seq_file *m, loff_t *pos)
- {
- 	*pos = cpumask_next(*pos - 1, cpu_online_mask);
-@@ -83,13 +134,10 @@ static int c_show(struct seq_file *m, void *v)
- 	const char *compat, *isa, *mmu;
- 
- 	seq_printf(m, "hart\t: %lu\n", hart_id);
--	if (!of_property_read_string(node, "riscv,isa", &isa)
--	    && isa[0] == 'r'
--	    && isa[1] == 'v')
--		seq_printf(m, "isa\t: %s\n", isa);
--	if (!of_property_read_string(node, "mmu-type", &mmu)
--	    && !strncmp(mmu, "riscv,", 6))
--		seq_printf(m, "mmu\t: %s\n", mmu+6);
-+	if (!of_property_read_string(node, "riscv,isa", &isa))
-+        print_isa(m, isa);
-+	if (!of_property_read_string(node, "mmu-type", &mmu))
-+        print_mmu(m, mmu);
- 	if (!of_property_read_string(node, "compatible", &compat)
- 	    && strcmp(compat, "riscv"))
- 		seq_printf(m, "uarch\t: %s\n", compat);
--- 
-2.16.4
-
+<nods>
