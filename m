@@ -6,97 +6,200 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D39D4C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 05:34:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B91AC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 05:35:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C8E32172F
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 05:34:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C8E32172F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
+	by mail.kernel.org (Postfix) with ESMTP id 14D562064E
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 05:35:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14D562064E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726995AbeH0JTp (ORCPT
+        id S1727043AbeH0JUT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 05:19:45 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:35213 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726772AbeH0JTp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 05:19:45 -0400
-Received: by mail-lj1-f194.google.com with SMTP id p10-v6so11281433ljg.2
-        for <linux-kernel@vger.kernel.org>; Sun, 26 Aug 2018 22:34:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JCyIVjn02BCwLfHzoNkeibsbnxSpFtBAsaG9DiieFu4=;
-        b=WTbUMulRrrxSKTb7n5wtW0wsi0plHrqrhceHZmy8FUwL5qG6TzM1qKV6H0a06oY7l4
-         Lhu/NtLXK2uIXiy9mChMAftrwplXWDxFkGJBL9HxqLdJUELSSNozr6K2oXpLeJ9lSDRO
-         CqhtYjBw+XDwdaPqO0kVTcf/WeRlK9a9hk2d8wt8qlqSUdQR2XM7U6RfMzW0gP12uC8U
-         p7ykaaqmlj0ktOrq+ve0FYO2WmGjK7vM1gMD90LIgsn0um/3MghWpha4jGIzjJQy/O00
-         UBGuUBtF8EkBBYWtyOQdDYxIPUuSyzSb4lqNTzmft4fdWFqUHN76VPZ/DM3WZ0f1Yu8d
-         Zvdg==
-X-Gm-Message-State: APzg51ColaUbV1eDk+bGyB9WqfTaYS0LbUMfL87Q2UEE2xaObOwxU87r
-        xGN3sus/TdkdlRvjPgzAxto=
-X-Google-Smtp-Source: ANB0VdZ02rgJyEKjPsJq1JEa6assCH0TAuIbWB089aSCIJviOr7kHuuR0dreNonWoETTFha8RIIsmA==
-X-Received: by 2002:a2e:9698:: with SMTP id q24-v6mr6425313lji.35.1535348078714;
-        Sun, 26 Aug 2018 22:34:38 -0700 (PDT)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id l1-v6sm2539243lji.41.2018.08.26.22.34.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 26 Aug 2018 22:34:37 -0700 (PDT)
-Date:   Mon, 27 Aug 2018 08:34:30 +0300
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Axel Lin <axel.lin@ingics.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] regulator: bd71837: Remove duplicate assignment for
- n_voltages of LDO2
-Message-ID: <20180827053430.GA2448@localhost.localdomain>
-References: <20180824111612.24622-1-axel.lin@ingics.com>
+        Mon, 27 Aug 2018 05:20:19 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54394 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726771AbeH0JUS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 05:20:18 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 35CB740216F2;
+        Mon, 27 Aug 2018 05:35:12 +0000 (UTC)
+Received: from localhost (ovpn-8-24.pek2.redhat.com [10.72.8.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1C0752166B41;
+        Mon, 27 Aug 2018 05:35:10 +0000 (UTC)
+Date:   Mon, 27 Aug 2018 13:35:07 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org,
+        keescook@chromium.org, n-horiguchi@ah.jp.nec.com,
+        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com,
+        douly.fnst@cn.fujitsu.com
+Subject: Re: [PATCH v5 4/4] x86/boot/KASLR: Limit kaslr to choosing the
+ immovable memory
+Message-ID: <20180827053507.GA1748@MiWiFi-R3L-srv>
+References: <20180807065000.30958-1-fanc.fnst@cn.fujitsu.com>
+ <20180807065000.30958-5-fanc.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180824111612.24622-1-axel.lin@ingics.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180807065000.30958-5-fanc.fnst@cn.fujitsu.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 27 Aug 2018 05:35:12 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 27 Aug 2018 05:35:12 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks Axel,
-
-On Fri, Aug 24, 2018 at 07:16:12PM +0800, Axel Lin wrote:
-> Set it once is enough.
-> Also move n_voltages close to volt_table for better readability.
+On 08/07/18 at 02:50pm, Chao Fan wrote:
+> If 'CONFIG_MEMORY_HOTREMOVE' specified and the account of immovable
+> memory regions is not zero. Calculate the intersection between memory
+> regions from e820/efi memory table and immovable memory regions.
+> Or go on the old code.
 > 
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> Rename process_mem_region to slots_count to match slots_fetch_random,
+> and name new function as process_mem_region.
+> 
+> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
 > ---
->  drivers/regulator/bd71837-regulator.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+>  arch/x86/boot/compressed/kaslr.c | 66 ++++++++++++++++++++++++++------
+>  1 file changed, 55 insertions(+), 11 deletions(-)
 > 
-> diff --git a/drivers/regulator/bd71837-regulator.c b/drivers/regulator/bd71837-regulator.c
-> index 0f8ac8dec3e1..9b5e1297902f 100644
-> --- a/drivers/regulator/bd71837-regulator.c
-> +++ b/drivers/regulator/bd71837-regulator.c
-> @@ -388,10 +388,9 @@ static const struct regulator_desc bd71837_regulators[] = {
->  		.ops = &bd71837_ldo_regulator_nolinear_ops,
->  		.type = REGULATOR_VOLTAGE,
->  		.volt_table = &ldo_2_volts[0],
-> +		.n_voltages = ARRAY_SIZE(ldo_2_volts),
->  		.vsel_reg = BD71837_REG_LDO2_VOLT,
->  		.vsel_mask = LDO2_MASK,
-> -		.n_voltages = ARRAY_SIZE(ldo_2_volts),
-> -		.n_voltages = BD71837_LDO2_VOLTAGE_NUM,
->  		.enable_reg = BD71837_REG_LDO2_VOLT,
->  		.enable_mask = BD71837_LDO_EN,
->  		.owner = THIS_MODULE,
+> diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
+> index 720878f967a3..9c6e24a23a2d 100644
+> --- a/arch/x86/boot/compressed/kaslr.c
+> +++ b/arch/x86/boot/compressed/kaslr.c
+> @@ -635,9 +635,9 @@ static unsigned long slots_fetch_random(void)
+>  	return 0;
+>  }
+>  
+> -static void process_mem_region(struct mem_vector *entry,
+> -			       unsigned long minimum,
+> -			       unsigned long image_size)
+> +static void slots_count(struct mem_vector *entry,
+> +			unsigned long minimum,
+> +			unsigned long image_size)
+>  {
+>  	struct mem_vector region, overlap;
+>  	struct slot_area slot_area;
+> @@ -714,6 +714,56 @@ static void process_mem_region(struct mem_vector *entry,
+>  	}
+>  }
+>  
+> +static bool process_mem_region(struct mem_vector *region,
+> +			       unsigned long long minimum,
+> +			       unsigned long long image_size)
+> +{
+> +#ifdef CONFIG_MEMORY_HOTREMOVE
+> +	/*
+> +	 * If immovable memory found, filter the intersection between
+> +	 * immovable memory and region to slots_count.
+> +	 * Otherwise, go on old code.
+> +	 */
+> +	if (num_immovable_mem > 0) {
+
+Is it possible to take num_immovable_mem out from the #ifdef
+CONFIG_MEMORY_HOTREMOVE region so that you can check it earlier to see
+if the old way need be taken? This way, we can reduce one level of
+indentation in the for loop. Just personal thought.
+
+static bool process_mem_region(struct mem_vector *region,
+                            unsigned long long minimum,
+                            unsigned long long image_size)
+{
+	if (!num_immovable_mem) {
+		slots_count(region, minimum, image_size);
+		
+		if (slot_area_index == MAX_SLOT_AREA) {
+			debug_putstr("Aborted e820/efi memmap scan (slot_areas full)!\n");
+			return 1;
+		}
+		return 0;
+	}
+
+
+#ifdef CONFIG_MEMORY_HOTREMOVE
+	for (i = 0; i < num_immovable_mem; i++) {
+		......
+	}
+#endif
+}
+
+> +		int i;
+> +
+> +		for (i = 0; i < num_immovable_mem; i++) {
+> +			struct mem_vector entry;
+> +			unsigned long long start, end, entry_end, region_end;
+> +
+> +			start = immovable_mem[i].start;
+> +			end = start + immovable_mem[i].size;
+> +			region_end = region->start + region->size;
+> +
+> +			entry.start = clamp(region->start, start, end);
+> +			entry_end = clamp(region_end, start, end);
+> +
+> +			if (entry.start + image_size < entry_end) {
+> +				entry.size = entry_end - entry.start;
+> +				slots_count(&entry, minimum, image_size);
+> +
+> +				if (slot_area_index == MAX_SLOT_AREA) {
+> +					debug_putstr("Aborted e820/efi memmap scan (slot_areas full)!\n");
+> +					return 1;
+> +				}
+> +			}
+> +		}
+> +		return 0;
+> +	}
+> +#endif
+> +	/*
+> +	 * If no immovable memory found, or MEMORY_HOTREMOVE disabled,
+> +	 * walk all the regions, so use region directely.
+> +	 */
+> +	slots_count(region, minimum, image_size);
+> +
+> +	if (slot_area_index == MAX_SLOT_AREA) {
+> +		debug_putstr("Aborted e820/efi memmap scan (slot_areas full)!\n");
+> +		return 1;
+> +	}
+> +	return 0;
+> +}
+> +
+>  #ifdef CONFIG_EFI
+>  /*
+>   * Returns true if mirror region found (and must have been processed
+> @@ -779,11 +829,8 @@ process_efi_entries(unsigned long minimum, unsigned long image_size)
+>  
+>  		region.start = md->phys_addr;
+>  		region.size = md->num_pages << EFI_PAGE_SHIFT;
+> -		process_mem_region(&region, minimum, image_size);
+> -		if (slot_area_index == MAX_SLOT_AREA) {
+> -			debug_putstr("Aborted EFI scan (slot_areas full)!\n");
+> +		if (process_mem_region(&region, minimum, image_size))
+>  			break;
+> -		}
+>  	}
+>  	return true;
+>  }
+> @@ -810,11 +857,8 @@ static void process_e820_entries(unsigned long minimum,
+>  			continue;
+>  		region.start = entry->addr;
+>  		region.size = entry->size;
+> -		process_mem_region(&region, minimum, image_size);
+> -		if (slot_area_index == MAX_SLOT_AREA) {
+> -			debug_putstr("Aborted e820 scan (slot_areas full)!\n");
+> +		if (process_mem_region(&region, minimum, image_size))
+>  			break;
+> -		}
+>  	}
+>  }
+>  
 > -- 
 > 2.17.1
 > 
-
-This is how it should have been in the first place!
-
-Br,
-	Matti Vaittinen
+> 
+> 
