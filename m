@@ -2,192 +2,135 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2E2CC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 10:39:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80F3EC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 10:39:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F32E208D6
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 10:39:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F32E208D6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 38A51208D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 10:39:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q/nZpka7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38A51208D8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727212AbeH0OZh (ORCPT
+        id S1727095AbeH0OZh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 27 Aug 2018 10:25:37 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60864 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726825AbeH0OZh (ORCPT
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:33921 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726847AbeH0OZh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 27 Aug 2018 10:25:37 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7RAXmO5076752
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 06:39:29 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m4dg3d5v5-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 06:39:29 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Mon, 27 Aug 2018 11:39:27 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 27 Aug 2018 11:39:20 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7RAdJeH38666252
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 27 Aug 2018 10:39:19 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9F9F942042;
-        Mon, 27 Aug 2018 13:39:18 +0100 (BST)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0D0B442045;
-        Mon, 27 Aug 2018 13:39:17 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.8.97])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon, 27 Aug 2018 13:39:16 +0100 (BST)
-Date:   Mon, 27 Aug 2018 13:39:16 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Arend van Spriel <aspriel@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joe Perches <joe@perches.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>, Roman Gushchin <guro@fb.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH 2/2] clk: pmc-atom: use devm_kstrdup_const()
-References: <20180827082101.5036-1-brgl@bgdev.pl>
- <20180827082101.5036-2-brgl@bgdev.pl>
+Received: by mail-qk0-f194.google.com with SMTP id d15-v6so10103597qkc.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 03:39:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dZufcLoUvC4E+2WQMHSQ1SqB067pP5or1Y2CBI1fJiQ=;
+        b=Q/nZpka7bcWBiPCTekCW60RXPKeNmg37HToATqs7FmvAKI+oT9u+DnGiV8UBvMg1fb
+         MvOEuic9Z0KnEaY9ieJqZJugo+hwOqqNKWEuSsnSIfxhSVuwelh7FDwdxiWkYcL9Czda
+         W46Oc81ayAYpUzxwuh/UURp/zZkOeuwG7geM9VJHft/rBkT5JJl59m090FgGFgwOpbrJ
+         XJUui8F8tsk78vQQJvzkt/slVVOqpaKIljxXNTzfJqyjgrr8OujsmmChG+HvZldm6Pjr
+         9es0KMEff6hiOTFlvcqcT0Kw78RhqhYaWYrBM4xqUxyOivVWUWTpX+IyJm0ThgvMXuRJ
+         GHbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dZufcLoUvC4E+2WQMHSQ1SqB067pP5or1Y2CBI1fJiQ=;
+        b=eHVf9ObT4nxAF+QULoJrc1TyUovUAHNi6UsUBgH7LPXOA66j+fQ5HbxRlsVdt/Akh4
+         McwsbGc9J9m+Q1tEtOV1+3ephHc7Djm0/KghQ8l1RR6Ie2CWzW8GF6bDY7gwFk3KE3xI
+         4NXTiFsqE9i9ba17kxirDmJpBvL+7rnUxhaX3Gw1MTUOENLqkZ8lG85Agc87eV3ly5fX
+         DkxPnkhZPRKNrjzosf47ACSLy00ImcF9vrluH66fWBxji5JOgGasuEefDSBLtUQ/e7kW
+         bI8+TtFWg6wld5jLIuWNfPjTEcOS0Sp70gpY3IlenHTgvwG5i9wQHaLjHu2AGg13boay
+         6fNg==
+X-Gm-Message-State: APzg51AHovRz4QIXGI7yP3J8Tel91pNYUBF25nYvTCCksc4wC/0Cy4y0
+        Qpdbojw2pGuz9y4/59tQrVji54UEY7nUpN6g/0ei3cfk
+X-Google-Smtp-Source: ANB0VdYsHy45PWRqBnPBgs+15/W0iK9ZfIzKnExxcGXcnw3bxFV+f81Ft7DfxOjiXw3kKXVZdUgTUlt9AKQ3270ga4c=
+X-Received: by 2002:a37:58c3:: with SMTP id m186-v6mr12754932qkb.119.1535366369860;
+ Mon, 27 Aug 2018 03:39:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180827082101.5036-2-brgl@bgdev.pl>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18082710-0012-0000-0000-0000029F4211
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082710-0013-0000-0000-000020D344B7
-Message-Id: <20180827103915.GC13848@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-27_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=891 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808270115
+References: <20180718160956.19864-1-enric.balletbo@collabora.com>
+In-Reply-To: <20180718160956.19864-1-enric.balletbo@collabora.com>
+From:   Enric Balletbo Serra <eballetbo@gmail.com>
+Date:   Mon, 27 Aug 2018 12:39:18 +0200
+Message-ID: <CAFqH_50x-HONi0k1sbztPVQQGtCfuP17W-9+zTr3B=JC_CEBrw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] mfd: platform/chrome: some more cleanups between
+ these subsystems.
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Benson Leung <bleung@chromium.org>, kernel@collabora.com,
+        Lee Jones <lee.jones@linaro.org>,
+        Olof Johansson <olof@lixom.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 10:21:01AM +0200, Bartosz Golaszewski wrote:
-> Use devm_kstrdup_const() in the pmc-atom driver. This mostly serves as
-> an example of how to use this new routine to shrink driver code.
-> 
-> While we're at it: replace a call to kcalloc() with devm_kcalloc().
-> 
-> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-> ---
->  drivers/clk/x86/clk-pmc-atom.c | 19 ++++---------------
->  1 file changed, 4 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
-> index 08ef69945ffb..daa2192e6568 100644
-> --- a/drivers/clk/x86/clk-pmc-atom.c
-> +++ b/drivers/clk/x86/clk-pmc-atom.c
-> @@ -253,14 +253,6 @@ static void plt_clk_unregister_fixed_rate_loop(struct clk_plt_data *data,
->  		plt_clk_unregister_fixed_rate(data->parents[i]);
->  }
-> 
-> -static void plt_clk_free_parent_names_loop(const char **parent_names,
-> -					   unsigned int i)
-> -{
-> -	while (i--)
-> -		kfree_const(parent_names[i]);
-> -	kfree(parent_names);
-> -}
-> -
->  static void plt_clk_unregister_loop(struct clk_plt_data *data,
->  				    unsigned int i)
->  {
-> @@ -286,8 +278,8 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
->  	if (!data->parents)
->  		return ERR_PTR(-ENOMEM);
-> 
-> -	parent_names = kcalloc(nparents, sizeof(*parent_names),
-> -			       GFP_KERNEL);
-> +	parent_names = devm_kcalloc(&pdev->dev, nparents,
-> +				    sizeof(*parent_names), GFP_KERNEL);
->  	if (!parent_names)
->  		return ERR_PTR(-ENOMEM);
-> 
-> @@ -300,7 +292,8 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
->  			err = PTR_ERR(data->parents[i]);
->  			goto err_unreg;
->  		}
-> -		parent_names[i] = kstrdup_const(clks[i].name, GFP_KERNEL);
-> +		parent_names[i] = devm_kstrdup_const(&pdev->dev,
-> +						     clks[i].name, GFP_KERNEL);
->  	}
-> 
->  	data->nparents = nparents;
-> @@ -308,7 +301,6 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
-> 
->  err_unreg:
->  	plt_clk_unregister_fixed_rate_loop(data, i);
-> -	plt_clk_free_parent_names_loop(parent_names, i);
+Lee, Benson,
 
-What happens if clks[i].name is not a part of RO data? The devm_kstrdup_const
-will allocate memory and nothing will ever free it...
 
-And, please don't drop kfree(parent_names) here.
+Missatge de Enric Balletbo i Serra <enric.balletbo@collabora.com> del
+dia dc., 18 de jul. 2018 a les 18:11:
+>
+> Dear Lee, Benson,
+>
+> This is another patchset to try to cleanup a bit more the interaction
+> between the mfd subsystem and platform/chrome.
+>
+> The first patch moves some cros-ec include files from include/linux/mfd to
+> platform/chrome. They are specific to the lpc transport driver and are not
+> related to the mfd subsystem, so, there is no reason to have them living
+> in include/linux/mfd.
+>
+> The second patch tries to cleanup and fix some kerneldoc commments in
+> the remaining mfd/cros-ec include files. For now I only improved a bit
+> the documentation and fixed the warnings reported by kerneldoc. I think
+> that there is still a lot of improvement pending, specially in the
+> cros_ec_commands.h file, but this is something I'd like to have the
+> agreement of the chromeos folks as I know this file is used as interface
+> for the EC firmware. As far as I know the kernel doesn't cares about this,
+> but I know this is source of conflicts for the chromeos folks.
+> Usually, in the chromeos kernel, the cros_ec_commands file is synced
+> with the version available from the EC firmware but maybe we should
+> reconsider this and have a well documented file in the kernel and sync
+> in the other way. I am just thinking out loud.
+>
+> Best regards,
+>  Enric
+>
+>
+> Enric Balletbo i Serra (2):
+>   platform/chrome: Move mfd/cros_ec_lpc* includes to drivers/platform.
+>   mfd: cros_ec: Fix and improve kerneldoc comments.
+>
+>  drivers/mfd/cros_ec_dev.h                     |  13 +-
+>  drivers/platform/chrome/cros_ec_lpc.c         |   3 +-
+>  drivers/platform/chrome/cros_ec_lpc_mec.c     |   3 +-
+>  .../platform/chrome}/cros_ec_lpc_mec.h        |   6 +-
+>  drivers/platform/chrome/cros_ec_lpc_reg.c     |   3 +-
+>  .../platform/chrome}/cros_ec_lpc_reg.h        |   6 +-
+>  include/linux/mfd/cros_ec.h                   | 214 +++++++------
+>  include/linux/mfd/cros_ec_commands.h          | 295 +++++++++++-------
+>  8 files changed, 322 insertions(+), 221 deletions(-)
+>  rename {include/linux/mfd => drivers/platform/chrome}/cros_ec_lpc_mec.h (96%)
+>  rename {include/linux/mfd => drivers/platform/chrome}/cros_ec_lpc_reg.h (94%)
+>
 
->  	return ERR_PTR(err);
->  }
-> 
-> @@ -351,15 +343,12 @@ static int plt_clk_probe(struct platform_device *pdev)
->  		goto err_unreg_clk_plt;
->  	}
-> 
-> -	plt_clk_free_parent_names_loop(parent_names, data->nparents);
-> -
->  	platform_set_drvdata(pdev, data);
->  	return 0;
-> 
->  err_unreg_clk_plt:
->  	plt_clk_unregister_loop(data, i);
->  	plt_clk_unregister_parents(data);
-> -	plt_clk_free_parent_names_loop(parent_names, data->nparents);
+Now that rc1 was released, a gentle ping for if you can take in
+consideration these patches for 4.20.
 
-Ditto.
+Thanks,
+ Enric
 
->  	return err;
->  }
-> 
-> -- 
+> --
 > 2.18.0
-> 
-
--- 
-Sincerely yours,
-Mike.
-
+>
