@@ -2,126 +2,176 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 356EAC433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 08:54:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59042C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 08:55:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D01D3208B2
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 08:54:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ns07fOg+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D01D3208B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1F79020684
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 08:55:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F79020684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727124AbeH0MkA (ORCPT
+        id S1726921AbeH0Mku (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 08:40:00 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:42106 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726802AbeH0MkA (ORCPT
+        Mon, 27 Aug 2018 08:40:50 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:55062 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726785AbeH0Mku (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 08:40:00 -0400
-Received: by mail-pl1-f196.google.com with SMTP id g23-v6so3869386plq.9
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 01:54:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=PWes9+yJLXyfzJUDs2NfoF21GwyqsRsJkXY5CoeM5XU=;
-        b=Ns07fOg+HF/utfgtFo2+qmlRzkqRBUv8uUHcuWAfjT9RnZ0xRzkqCYr7o8ypqOyun2
-         mEnchh6UNv7KLHFRLig2//vEuaTxZ57qvZEnXLsUrsK6ZuEaIgZ66VZxwuczYHuJh053
-         4xlmwE/3avxdk0YVwRuSJKWtmMXVeX4MD868F7PD8eC4Mw6FtPGzQVkui0mf21RGQ+7Y
-         N9AWyXgmcsqehOmd7ec3EQo/k2jg4KMO92RczPsi4HiN8eH/+SKIiFqWNMVEHj2jfK/R
-         jUhvJHJaGXJLVuQ2fn6WWmJsV8uFZQcrLC1uueisbF9GOQ+HBuruFjyk8QXF1a4wo1hk
-         QZtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=PWes9+yJLXyfzJUDs2NfoF21GwyqsRsJkXY5CoeM5XU=;
-        b=kiEA2JPHJLMOMqQFwNXmlDgM1rc72o1bFU1HRABT3Y11r1Eb9n2NrW0l4SSdPbrcT3
-         1Lx5nwXMreH9PW1G26DquV4iVez1NgDn3ZdHxttuwNt6K3qJOtslst9L6BDkFvx/QXOd
-         zD4oZzeMVR5VpGyD5VL0rpa6NizAyupxEYnv/QImQFmTnfICpOTXpZuJ5ry+n7oY7T8r
-         uy6pbjNi3Plt8uCFN9kBY+yV6Vdpq5PCTsHx9i8rmQO4gDH4FukXl2HmV67Wu4Y7r4PJ
-         YdRIrzzB9sB4WNeHWL9duHsX+4x9Y2cHPGjF8WTbfnjBI08QrQPklYQ/av++xe1TePkU
-         zZ8Q==
-X-Gm-Message-State: APzg51CE1z5znXIr+/rRoJcC4Mn3thpuhyv9YcmPsnC3kZ5epbSxo8tz
-        9qntKuwW0ty+CXvf679px9M=
-X-Google-Smtp-Source: ANB0VdYlD2M+TAEHeFKMNWYxGxU6yfuJn8oHVgbPDqO2tQHUY0GARGXDxdWvLMkHRMfCQD7KGjLMiw==
-X-Received: by 2002:a17:902:7884:: with SMTP id q4-v6mr12142747pll.174.1535360055707;
-        Mon, 27 Aug 2018 01:54:15 -0700 (PDT)
-Received: from roar.ozlabs.ibm.com (59-102-83-192.tpgi.com.au. [59.102.83.192])
-        by smtp.gmail.com with ESMTPSA id x23-v6sm19691368pff.9.2018.08.27.01.54.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 27 Aug 2018 01:54:15 -0700 (PDT)
-Date:   Mon, 27 Aug 2018 18:54:03 +1000
-From:   Nicholas Piggin <npiggin@gmail.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Rik van Riel <riel@surriel.com>,
-        Jann Horn <jannh@google.com>,
-        Adin Scannell <ascannell@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        David Miller <davem@davemloft.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: [PATCH 3/4] mm/tlb, x86/mm: Support invalidating TLB caches for
- RCU_TABLE_FREE
-Message-ID: <20180827185403.7b46fae4@roar.ozlabs.ibm.com>
-In-Reply-To: <20180827082045.GA24124@hirez.programming.kicks-ass.net>
-References: <776104d4c8e4fc680004d69e3a4c2594b638b6d1.camel@au1.ibm.com>
-        <CA+55aFzM77G9-Q6LboPLJ=5gHma66ZQKiMGCMqXoKABirdF98w@mail.gmail.com>
-        <20180823133958.GA1496@brain-police>
-        <20180824084717.GK24124@hirez.programming.kicks-ass.net>
-        <20180824113214.GK24142@hirez.programming.kicks-ass.net>
-        <20180824113953.GL24142@hirez.programming.kicks-ass.net>
-        <20180827150008.13bce08f@roar.ozlabs.ibm.com>
-        <20180827074701.GW24124@hirez.programming.kicks-ass.net>
-        <20180827180458.4af9b2ac@roar.ozlabs.ibm.com>
-        <4ef8a2aa44db971340b0bcc4f73d639455dd4282.camel@kernel.crashing.org>
-        <20180827082045.GA24124@hirez.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.17.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 27 Aug 2018 08:40:50 -0400
+Received: from [10.18.16.3] (10.18.16.3) by mail-sh2.amlogic.com (10.18.11.6)
+ with Microsoft SMTP Server (TLS) id 15.0.1320.4; Mon, 27 Aug 2018 16:55:21
+ +0800
+Subject: Re: [PATCH v2 1/2] dt-bindings: PCI: meson: add DT bindings for
+ Amlogic Meson PCIe controller
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+CC:     Yue Wang <yue.wang@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Rob Herring <robh@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>, <devicetree@vger.kernel.org>
+References: <1535096165-45827-1-git-send-email-hanjie.lin@amlogic.com>
+ <1535096165-45827-2-git-send-email-hanjie.lin@amlogic.com>
+ <8c48964151d24758298ba935da336c0829e2b287.camel@baylibre.com>
+From:   Hanjie Lin <hanjie.lin@amlogic.com>
+Message-ID: <11d7547b-feb4-6ecb-cef3-db46ce8ee2ef@amlogic.com>
+Date:   Mon, 27 Aug 2018 16:55:20 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <8c48964151d24758298ba935da336c0829e2b287.camel@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.18.16.3]
+X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
+ (10.18.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 27 Aug 2018 10:20:45 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
 
-> On Mon, Aug 27, 2018 at 06:09:50PM +1000, Benjamin Herrenschmidt wrote:
+
+On 2018/8/24 16:22, Jerome Brunet wrote:
+> On Fri, 2018-08-24 at 15:36 +0800, Hanjie Lin wrote:
+>> From: Yue Wang <yue.wang@amlogic.com>
+>>
+>> The Amlogic Meson PCIe host controller is based on the Synopsys DesignWare
+>> PCI core. This patch adds documentation for the DT bindings in Meson PCIe
+>> controller.
+>>
+>> Signed-off-by: Yue Wang <yue.wang@amlogic.com>
+>> Signed-off-by: Hanjie Lin <hanjie.lin@amlogic.com>
+>> ---
+>>  .../devicetree/bindings/pci/amlogic,meson-pcie.txt | 63 ++++++++++++++++++++++
+>>  1 file changed, 63 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt b/Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt
+>> new file mode 100644
+>> index 0000000..8a831d1
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt
+>> @@ -0,0 +1,63 @@
+>> +Amlogic Meson AXG DWC PCIE SoC controller
+>> +
+>> +Amlogic Meson PCIe host controller is based on the Synopsys DesignWare PCI core.
+>> +It shares common functions with the PCIe DesignWare core driver and
+>> +inherits common properties defined in
+>> +Documentation/devicetree/bindings/pci/designware-pci.txt.
+>> +
+>> +Additional properties are described here:
+>> +
+>> +Required properties:
+>> +- compatible:
+>> +	should contain "amlogic,axg-pcie" to identify the core.
+>> +- reg:
+>> +	Should contain the configuration address space.
+>> +- reg-names: Must be
+>> +	- "elbi"	External local bus interface registers
+>> +	- "cfg"		Meson specific registers
+>> +	- "config"	PCIe configuration space
+>> +- reset-gpios: The GPIO to generate PCIe PERST# assert and deassert signal.
+>> +- clocks: Must contain an entry for each entry in clock-names.
+>> +- clock-names: Must include the following entries:
+>> +	- "pclk"       PCIe GEN 100M PLL clock
+>> +	- "port"       PCIe_x(A or B) RC clock gate
+>> +	- "general"    PCIe Phy clock
+>> +	- "mipi"       PCIe_x(A or B) 100M ref clock gate
+>> +- resets: phandle to the reset lines.
+>> +- reset-names: must contain "phy" and "peripheral"
+>> +       - "port" Port A or B reset
+>> +       - "apb" APB reset
 > 
-> > Sadly our architecture requires a precise match between the page size
-> > specified in the tlbie instruction and the entry in the TLB or it won't
-> > be flushed.  
+> The above description is not coherent (phy <=> port)
 > 
-> Argh.. OK I see. That is rather unfortunate and does seem to require
-> something along the lines of tlb_remove_check_page_size_change().
 
-Or we can do better with some more of our own data in mmu_gather,
-but things that probably few or no other architectures want. I've
-held off trying to put any crap in generic code because there's
-other lower hanging fruit still, but I'd really rather just give
-archs the ability to put their own data in there. I don't really
-see a downside to it (divergence of course, but the existing
-proliferation of code is much harder to follow than some data that
-would be maintained and used purely by the arch, and beats having
-to implement entirely your own mmu_gather).
+Yes, this should be port and apb here.
+We'll integrate phy driver into ctrl driver, and move phy reset to here also.
 
-Thanks,
-Nick
+>> +
+>> +Example configuration:
+>> +
+>> +	pcie: pcie@f9800000 {
+>> +			compatible = "amlogic,axg-pcie", "snps,dw-pcie";
+>> +			reg = <0x0 0xf9800000 0x0 0x400000
+>> +					0x0 0xff646000 0x0 0x2000
+>> +					0x0 0xf9f00000 0x0 0x100000>;
+>> +			reg-names = "elbi", "cfg", "config";
+>> +			reset-gpios = <&gpio GPIOX_19 GPIO_ACTIVE_HIGH>;
+>> +			interrupts = <GIC_SPI 177 IRQ_TYPE_EDGE_RISING>;
+>> +			#interrupt-cells = <1>;
+>> +			interrupt-map-mask = <0 0 0 0>;
+>> +			interrupt-map = <0 0 0 0 &gic GIC_SPI 179 IRQ_TYPE_EDGE_RISING>;
+>> +			bus-range = <0x0 0xff>;
+>> +			#address-cells = <3>;
+>> +			#size-cells = <2>;
+>> +			device_type = "pci";
+> 
+> Not described above - is it even used ?
+> 
+
+It's necessary, specified in designware-pcie.txt:
+ - device_type:
+  Usage: required
+  Value type: <string>
+  Definition: Should be "pci". 
+
+>> +			phys = <&pcie_phy>;
+> 
+> Not documented and not necessary. Please remove this.
+> 
+
+We'll remove phy driver and this also.
+
+>> +			ranges = <0x82000000 0 0 0x0 0xf9c00000 0 0x00300000>;
+>> +
+>> +			clocks = <&clkc CLKID_USB
+>> +					&clkc CLKID_MIPI_ENABLE
+>> +					&clkc CLKID_PCIE_A
+>> +					&clkc CLKID_PCIE_CML_EN0>;
+>> +			clock-names = "general",
+>> +					"mipi",
+>> +					"pclk",
+>> +					"port";
+>> +			resets = <&reset RESET_PCIE_A>,
+>> +				<&reset RESET_PCIE_APB>;
+>> +			reset-names = "port",
+>> +					"apb";
+>> +	};
+> 
+> 
+> .
+> 
