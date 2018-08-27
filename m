@@ -2,131 +2,145 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2157CC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 09:39:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF569C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 09:44:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC7E020B80
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 09:39:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AEF520896
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 09:44:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yuQsF/a0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC7E020B80
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kSpAl3gN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AEF520896
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727021AbeH0NZg (ORCPT
+        id S1726958AbeH0NaW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 09:25:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54052 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726872AbeH0NZg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 09:25:36 -0400
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E45C20A8B;
-        Mon, 27 Aug 2018 09:39:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535362781;
-        bh=NswiXxKUMprlxnabLOVDpx3lhqa9GgiKTYFOXkWSPko=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=yuQsF/a0z1kJOhInlnaDXeTE7nz9Yzpb4NhwWCidra1il7VONNShxx2WAFkbxk33s
-         IDH4bAAsdV8AObh/KI2QUjImRhnaw0bRPPrCM+9EGoWWD53H771S8ITLnG0IQph3QI
-         P2LU823mIG1Td4Ci6mD+2vFRhakAHCPNC3t+u2no=
-Date:   Mon, 27 Aug 2018 18:39:36 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Will Deacon <will.deacon@arm.com>,
-        Benjamin Herrenschmidt <benh@au1.ibm.com>,
-        Nick Piggin <npiggin@gmail.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Rik van Riel <riel@surriel.com>,
-        Jann Horn <jannh@google.com>,
-        Adin Scannell <ascannell@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        David Miller <davem@davemloft.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: TLB flushes on fixmap changes
-Message-Id: <20180827183936.75f4e9bc131cdeac943f44e3@kernel.org>
-In-Reply-To: <20180827081329.GZ24124@hirez.programming.kicks-ass.net>
-References: <56A9902F-44BE-4520-A17C-26650FCC3A11@gmail.com>
-        <CA+55aFzerzTPm94jugheVmWg8dJre94yu+GyZGT9NNZanNx_qw@mail.gmail.com>
-        <9A38D3F4-2F75-401D-8B4D-83A844C9061B@gmail.com>
-        <CA+55aFz1KYT7fRRG98wei24spiVg7u1Ec66piWY5359ykFmezw@mail.gmail.com>
-        <8E0D8C66-6F21-4890-8984-B6B3082D4CC5@gmail.com>
-        <CALCETrWdeKBcEs7zAbpEM1YdYiT2UBXwPtF0mMTvcDX_KRpz1A@mail.gmail.com>
-        <20180826112341.f77a528763e297cbc36058fa@kernel.org>
-        <CALCETrXPaX-+R6Z9LqZp0uOVmq-TUX_ksPbUL7mnfbdqo6z2AA@mail.gmail.com>
-        <20180826090958.GT24124@hirez.programming.kicks-ass.net>
-        <20180827120305.01a6f26267c64610cadec5d8@kernel.org>
-        <20180827081329.GZ24124@hirez.programming.kicks-ass.net>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Mon, 27 Aug 2018 09:30:22 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:46358 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726802AbeH0NaV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 09:30:21 -0400
+Received: by mail-lj1-f196.google.com with SMTP id 203-v6so11777133ljj.13;
+        Mon, 27 Aug 2018 02:44:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=XLQFTafYzMFh2BQ1WlYD2Ng2koSEMQyinUqrNanOj7Y=;
+        b=kSpAl3gNIq9o8RDCN2BkG8pFGKbxoj2p/GPKOh9HHVwmrZO/3W/MRDG/Oo09/+4soz
+         20CHSBvRtdRU459ukQuoxZmNcaEmoLJJ/Fjuvm2LZuEnA7WEdA723Gsfawc4Cw+bk+D6
+         oNkDxv02i1tPhphYYXAYYfrQIPuIBHe6VCrSx9Fa1wqyV7pORvGV12ANKBFhaFh+6yK0
+         NsyaTa8lh8meojkuOZXacf3q0a1eYjdVeMHOENfd+XT12L4l6/SQl2X2gmzpjvWlTD78
+         aUodWb1IZ8/C9u8jX3qe051dCZIMggRrisaz1vp/Eft//qF3ZoSSO9nnExoFeub+6Nxy
+         oIOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XLQFTafYzMFh2BQ1WlYD2Ng2koSEMQyinUqrNanOj7Y=;
+        b=JONAgyefVKxYS+dTXU10pgyUcqIhayBV9MotkN2i1L2bIoAOY05WhN1U1lQzlmJtpS
+         K1kw8Fgf1zYm4FRMwAO9g/UX0q9qLQCieHTs0t7p8nvbsRfpz4ffTLwimPA6QPp0nO8Y
+         nyhc7qfUSqlEurdz6vLXtGKR77oGnkvaEWrZ3+zYZDoZYwqfXJzB4dKxBGBpBANZkHf/
+         N8J/BlvvdzaL0V8NTx1WUS10pHHEivnzr6o6b+2KTJtsaBOas822/RjTlY6Te2ptfH1l
+         neFgrStQOY7ZVhfPoWpHU3BS2h5C2nz2l0yTGWMoU6Ghn697drRCOtSa5XgxHGgoiaC7
+         ZnZQ==
+X-Gm-Message-State: APzg51BNIRZ4SpmGszSeIeoSWLdrrS2E17Xk1GmjQt6c/TyXq5XFbM/q
+        81VE5G2WslxJB19H8QPvPCs=
+X-Google-Smtp-Source: ANB0VdYGmZ9bJRc8Ijat0rr55LutB7q/8R1o+PnZ7uUJRcEFvSH9DujbVgLVRmqVlphqk75CKRnGdQ==
+X-Received: by 2002:a2e:3313:: with SMTP id d19-v6mr7776800ljc.25.1535363064882;
+        Mon, 27 Aug 2018 02:44:24 -0700 (PDT)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id g5-v6sm2715016ljg.54.2018.08.27.02.44.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 27 Aug 2018 02:44:24 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1fuE4N-00067H-72; Mon, 27 Aug 2018 11:44:23 +0200
+Date:   Mon, 27 Aug 2018 11:44:23 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Johan Hovold <johan@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable <stable@vger.kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Josh Wu <rainyfeeling@outlook.com>
+Subject: Re: [PATCH v2 5/9] mtd: nand: atmel: fix OF child-node lookup
+Message-ID: <20180827094423.GA14967@localhost>
+References: <20180827082153.22537-1-johan@kernel.org>
+ <20180827082153.22537-6-johan@kernel.org>
+ <20180827102820.3abf7291@bbrezillon>
+ <20180827084414.GZ14967@localhost>
+ <20180827104842.26bce912@bbrezillon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180827104842.26bce912@bbrezillon>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 27 Aug 2018 10:13:29 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
-
-> On Mon, Aug 27, 2018 at 12:03:05PM +0900, Masami Hiramatsu wrote:
-> > On Sun, 26 Aug 2018 11:09:58 +0200
-> > Peter Zijlstra <peterz@infradead.org> wrote:
+On Mon, Aug 27, 2018 at 10:48:42AM +0200, Boris Brezillon wrote:
+> On Mon, 27 Aug 2018 10:44:14 +0200
+> Johan Hovold <johan@kernel.org> wrote:
 > 
-> > > FWIW, before text_poke_bp(), text_poke() would only be used from
-> > > stop_machine, so all the other CPUs would be stuck busy-waiting with
-> > > IRQs disabled. These days, yeah, that's lots more dodgy, but yes
-> > > text_mutex should be serializing all that.
+> > On Mon, Aug 27, 2018 at 10:28:20AM +0200, Boris Brezillon wrote:
+> > > Hi Johan
+> > > 
+> > > On Mon, 27 Aug 2018 10:21:49 +0200
+> > > Johan Hovold <johan@kernel.org> wrote:
+> > >   
+> > > > Use the new of_get_compatible_child() helper to lookup the nfc child
+> > > > node instead of using of_find_compatible_node(), which searches the
+> > > > entire tree from a given start node and thus can return an unrelated
+> > > > (i.e. non-child) node.
+> > > > 
+> > > > This also addresses a potential use-after-free (e.g. after probe
+> > > > deferral) as the tree-wide helper drops a reference to its first
+> > > > argument (i.e. the node of the device being probed).
+> > > > 
+> > > > While at it, also fix a related nfc-node reference leak.
+> > > > 
+> > > > Fixes: f88fc122cc34 ("mtd: nand: Cleanup/rework the atmel_nand driver")
+> > > > Cc: stable <stable@vger.kernel.org>     # 4.11
+> > > > Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+> > > > Cc: Josh Wu <rainyfeeling@outlook.com>
+> > > > Cc: Boris Brezillon <boris.brezillon@bootlin.com>
+> > > > Signed-off-by: Johan Hovold <johan@kernel.org>  
+> > > 
+> > > Acked-by: Boris Brezillon <boris.brezillon@bootlin.com>  
 > > 
-> > I'm still not sure that speculative page-table walk can be done
-> > over the mutex. Also, if the fixmap area is for aliasing
-> > pages (which always mapped to memory), what kind of
-> > security issue can happen?
+> > Thanks for the ack.
+> > 
+> > > I'll let Miquel queue this patch to the nand/next branch, unless you
+> > > want it to be merged in 4.19, in which case I'll queue it to the
+> > > mtd/fixes branch.  
+> > 
+> > Note that there's a dependency on the first patch of the series which
+> > adds the new helper.
 > 
-> So suppose CPU-A is doing the text_poke (let's say through text_poke_bp,
-> such that other CPUs get to continue with whatever they're doing).
+> I was not Cc-ed on this patch :P.
+
+Yeah, sorry about that. I made sure everyone was CCed on the
+cover letter, but guess I could have reused that list for the helper as
+well.
+
+> > Rob can pick up the entire series if the various
+> > maintainers agree, otherwise I'll try to get at the least the helper
+> > into -rc2.
 > 
-> While at that point, CPU-B gets an interrupt, and the CPU's
-> branch-trace-buffer for the IRET points to / near our fixmap. Then the
-> CPU could do a speculative TLB fill based on the BTB value, either
-> directly or indirectly (through speculative driven fault-ahead) of
-> whatever is in te fixmap at the time.
+> If everything goes in 4.19-rc2 through Rob's tree that's fine, but if
+> it's queued for 4.20 we might need an immutable tag just in case we
+> queue conflicting changes to the NAND tree.
 
-Hmm, but how "near" is it enough? Since text_poke just map a non
-executable alias page in fixmap, it is hard to suppose that IRET points
-there (except for attacker change the IRET address).
+Ok, thanks.
 
-I see that Intel CPU sometimes speculatively read-ahead the page tables,
-but in that case, I guess we just need to keep fixmap area away from
-text area. (Of course, it is hard to estimate how far is enough :( )
-
-Anyway, I agree to introduce new page-table (and kthread?) for fixmap.
-
-> Then CPU-A completes the text_poke and only does a local TLB invalidate
-> on CPU-A, leaving CPU-B with an active translation.
-> 
-> *FAIL*
-
-Ah, I got it. So on CPU-B, it can write-access to fixmap'd pages unless
-the CPU-B shoot down the full TLB...
-
-Thank you,
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Johan
