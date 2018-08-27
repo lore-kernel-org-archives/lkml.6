@@ -6,96 +6,43 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5389EC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 08:38:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEE04C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 08:39:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 173CC20846
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 08:38:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 173CC20846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A550520846
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 08:39:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A550520846
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727110AbeH0MYg (ORCPT
+        id S1727179AbeH0MYu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 08:24:36 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38648 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726802AbeH0MYf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 08:24:35 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 843C88573A;
-        Mon, 27 Aug 2018 08:38:54 +0000 (UTC)
-Received: from krava (unknown [10.43.17.209])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 230112027056;
-        Mon, 27 Aug 2018 08:38:53 +0000 (UTC)
-Date:   Mon, 27 Aug 2018 10:38:52 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v2 2/2]: perf record: enable asynchronous trace writing
-Message-ID: <20180827083852.GF24695@krava>
-References: <e92805d0-3338-2ce5-5e88-369d406fe0a7@linux.intel.com>
- <54cc11d7-3ef2-c856-052e-6e2c309ff743@linux.intel.com>
+        Mon, 27 Aug 2018 08:24:50 -0400
+Received: from verein.lst.de ([213.95.11.211]:33155 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726802AbeH0MYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 08:24:50 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id E67BF68C35; Mon, 27 Aug 2018 10:41:31 +0200 (CEST)
+Date:   Mon, 27 Aug 2018 10:41:31 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Richard Kuo <rkuo@codeaurora.org>
+Cc:     Christoph Hellwig <hch@lst.de>, linux-hexagon@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] hexagon: remove the sync_single_for_cpu DMA
+ operation
+Message-ID: <20180827084131.GA21563@lst.de>
+References: <20180719125635.824-1-hch@lst.de> <20180719125635.824-2-hch@lst.de> <20180725032948.GG12771@codeaurora.org> <20180725043927.GA10827@lst.de> <20180731152229.GA956@lst.de> <20180807070136.GA32634@lst.de> <20180808001927.GA20752@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <54cc11d7-3ef2-c856-052e-6e2c309ff743@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 27 Aug 2018 08:38:54 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 27 Aug 2018 08:38:54 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
+In-Reply-To: <20180808001927.GA20752@codeaurora.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 23, 2018 at 07:47:01PM +0300, Alexey Budankov wrote:
-
-SNIP
-
->  static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evlist,
->  				    bool overwrite)
->  {
->  	u64 bytes_written = rec->bytes_written;
-> -	int i;
-> -	int rc = 0;
-> +	int i, rc = 0;
->  	struct perf_mmap *maps;
-> +	int trace_fd = rec->session->data->file.fd;
-> +	struct aiocb **mmap_aio = rec->evlist->mmap_aio;
-> +	int mmap_aio_size = 0;
-> +	off_t off;
->  
->  	if (!evlist)
->  		return 0;
-> @@ -546,14 +620,17 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
->  	if (overwrite && evlist->bkw_mmap_state != BKW_MMAP_DATA_PENDING)
->  		return 0;
->  
-> +	off = lseek(trace_fd, 0, SEEK_CUR);
-> +
-
-with async write, do we need to query/set the offset like this
-all the time?
-
-could we just keep/update the offset value in the 'struct perf_data_file'
-and skip both lseek calls?
-
-jirka
-
-SNIP
-
->  
-> +	record__mmap_read_sync(trace_fd, mmap_aio, mmap_aio_size, rec);
-> +
-> +	lseek(trace_fd, off, SEEK_SET);
-> +
+Given that it didn't make 4.19-rc1, I'll pull this into the dma-mapping
+tree first thing for 4.20 as I have some other changes that will go on
+top of it.
