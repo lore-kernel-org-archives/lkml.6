@@ -2,110 +2,98 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 572D1C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:22:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00B9FC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:26:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03737208AF
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:22:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03737208AF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lucaceresoli.net
+	by mail.kernel.org (Postfix) with ESMTP id 9ACD4208D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:26:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ACD4208D5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727056AbeH0UJ6 (ORCPT
+        id S1727271AbeH0UNv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 16:09:58 -0400
-Received: from srv-hp10-72.netsons.net ([94.141.22.72]:39576 "EHLO
-        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726731AbeH0UJ5 (ORCPT
+        Mon, 27 Aug 2018 16:13:51 -0400
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:37160 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726731AbeH0UNv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 16:09:57 -0400
-Received: from [109.168.11.45] (port=55498 helo=[192.168.101.125])
-        by srv-hp10.netsons.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1fuKHj-00CWMN-UM; Mon, 27 Aug 2018 18:22:35 +0200
-Subject: Re: [PATCH 1/1] axi-i2s: set period size register
-To:     Lars-Peter Clausen <lars@metafoo.de>, alsa-devel@alsa-project.org
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org,
-        Michal Simek <michal.simek@xilinx.com>
-References: <20180824160430.10222-1-luca@lucaceresoli.net>
- <20180824160430.10222-2-luca@lucaceresoli.net>
- <b87937b6-da7c-76d7-5dd2-24909e648671@metafoo.de>
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-Message-ID: <263e42b4-75a3-183c-894b-e485e387eccf@lucaceresoli.net>
-Date:   Mon, 27 Aug 2018 18:22:37 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 27 Aug 2018 16:13:51 -0400
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7RGIc6k017718;
+        Mon, 27 Aug 2018 11:26:20 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=rf@opensource.cirrus.com
+Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2m33hnjkpg-1;
+        Mon, 27 Aug 2018 11:26:20 -0500
+Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
+        by mail1.cirrus.com (Postfix) with ESMTP id CBCE4611E124;
+        Mon, 27 Aug 2018 11:26:19 -0500 (CDT)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Mon, 27 Aug 2018
+ 17:26:19 +0100
+Received: from edi-sw-dsktp006.ad.cirrus.com (edi-sw-dsktp006.ad.cirrus.com
+ [198.90.251.121])      by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id
+ w7RGQIK9005399;        Mon, 27 Aug 2018 17:26:18 +0100
+From:   Richard Fitzgerald <rf@opensource.cirrus.com>
+To:     <tglx@linutronix.de>, <jason@lakedaemon.net>,
+        <marc.zyngier@arm.com>, <lee.jones@linaro.org>
+CC:     <patches@opensource.cirrus.com>, <linux-kernel@vger.kernel.org>,
+        "Richard Fitzgerald" <rf@opensource.cirrus.com>
+Subject: [PATCH v9 1/2] mfd: madera: Add irqchip data pointer into struct madera
+Date:   Mon, 27 Aug 2018 17:26:17 +0100
+Message-ID: <20180827162618.20503-1-rf@opensource.cirrus.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-In-Reply-To: <b87937b6-da7c-76d7-5dd2-24909e648671@metafoo.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca@lucaceresoli.net
-X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=980 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
+ definitions=main-1808270173
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Put the pointer to struct regmap_irq_chip_data into the parent
+mfd structure so that the child irqchip driver does not need
+a trivial private structure to store only this pointer. As
+the irqchip child driver already has a pointer to the parent
+struct madera it can use that to store the pointer. This also
+means that the irqchip driver does not need a double-indirection
+from its local struct to get at the parent struct madera.
 
-thanks for your feedback.
+Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+---
+ include/linux/mfd/madera/core.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-[Adding Michal Simek (Xilinx maintainer) in Cc]
-
-On 27/08/2018 14:27, Lars-Peter Clausen wrote:
-> On 08/24/2018 06:04 PM, Luca Ceresoli wrote:
->> The default value of the PERIOD_LEN register is 0 and results in
->> axi-i2s keeping TLAST always asserted in its AXI Stream output.
->>
->> When the AXI Stream is sent to a Xilinx AXI-DMA, this results in the
->> DMA generating an interrupt flood and ALSA produce a corrupted
->> recording. This is because AXI-DMA raises an interrupt whenever TLAST
->> is active.
->>
->> Fix by setting the PERIOD_LEN register as soon as the period is
->> known. This way TLAST is emitted once per period, and the DMA raises
->> interrupts correctly.
-> 
-> The patch looks OK. But I'd prefer not to merge it if possible.
-> 
-> We've done some early experiments with the Xilinx AXI-DMA, but it turned out
-> to be to unreliable and we've abandoned support for it. One of the more
-> critical issues was that you can't abort a DMA transfer. That means when
-> audio capture is stopped the DMA will halt, but not complete the current
-> transfer. Then when the next audio capture start the DMA will continue with
-> the previous transfer. The observed effect of this was that the system would
-> just crash randomly (Presumably due to memory corruption).
-
-Strange. I have done many capture experiments with arecord and didn't
-run into such bad issues. I only have a much less serious problem
-(garbage or old samples in the first few buffers), but no crashes.
-
-Michal, are you aware of these problems?
-
-> Have you considered using the ADI AXI-DMAC? That should work just fine.
-
-Not until today, because AXI-DMA is working here.
-
-I'd like to better understand what's going on before changing an IP that
-is working. Do you have additional details about your setup? How do you
-run your tests?
-
-Regards,
+diff --git a/include/linux/mfd/madera/core.h b/include/linux/mfd/madera/core.h
+index c332681848ef..fe69c0f4398f 100644
+--- a/include/linux/mfd/madera/core.h
++++ b/include/linux/mfd/madera/core.h
+@@ -148,6 +148,7 @@ struct snd_soc_dapm_context;
+  * @internal_dcvdd:	true if DCVDD is supplied from the internal LDO1
+  * @pdata:		our pdata
+  * @irq_dev:		the irqchip child driver device
++ * @irq_data:		pointer to irqchip data for the child irqchip driver
+  * @irq:		host irq number from SPI or I2C configuration
+  * @out_clamp:		indicates output clamp state for each analogue output
+  * @out_shorted:	indicates short circuit state for each analogue output
+@@ -175,6 +176,7 @@ struct madera {
+ 	struct madera_pdata pdata;
+ 
+ 	struct device *irq_dev;
++	struct regmap_irq_chip_data *irq_data;
+ 	int irq;
+ 
+ 	unsigned int num_micbias;
 -- 
-Luca
+2.11.0
+
