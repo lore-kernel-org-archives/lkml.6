@@ -6,51 +6,54 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 372F0C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:42:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B107C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:43:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9CC2208D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:42:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40145208D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 16:43:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WrJlO+Mb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9CC2208D8
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1N4YRz4Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40145208D8
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727388AbeH0U3z (ORCPT
+        id S1727412AbeH0UaZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 16:29:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43846 "EHLO mail.kernel.org"
+        Mon, 27 Aug 2018 16:30:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44014 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726995AbeH0U3y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 16:29:54 -0400
-Received: from mail-wm0-f53.google.com (mail-wm0-f53.google.com [74.125.82.53])
+        id S1726995AbeH0UaZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 16:30:25 -0400
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A01A208D5
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 16:42:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 46243208E8
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 16:43:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535388154;
-        bh=EkW0hiQZ5OKFev0lmyzLBkIAsN5gVSdA2fFIZnIfSR0=;
-        h=From:Date:Subject:To:From;
-        b=WrJlO+Mb4Rv0Gs5Drb2SJ6IvRpe3H6HFcqCa5y1O1XNKdajACzYOHMOY2+JTLxuBk
-         4WnuBwG3T+6LITWgh5N+l+us4m/Tld5lGsIQSBIVYXh3os9edTGp7NNKe3KlXh8A23
-         0pSid+9qfUwckpARTig2Fxkn2bp+XAFVlBJaxNG0=
-Received: by mail-wm0-f53.google.com with SMTP id y139-v6so8663614wmc.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 09:42:34 -0700 (PDT)
-X-Gm-Message-State: APzg51BM3MPnmek9R2HuYxiias2bZV7J62ngYXxQCO8uM+nC2qGzIMO9
-        7ShKClboLkzhuDBwuCSY0iDvCdSvwfjtiisAoxHgdw==
-X-Google-Smtp-Source: ANB0VdbmQ+t/AHY8b51NjSuozOvQ5me8lRz9MVFoy3+EUTbZalki+Do+Z+wu0FJMVilgtChWlKx0MzhVXZgV1LuROdU=
-X-Received: by 2002:a1c:8313:: with SMTP id f19-v6mr5798285wmd.144.1535388152587;
- Mon, 27 Aug 2018 09:42:32 -0700 (PDT)
+        s=default; t=1535388184;
+        bh=CeCSVXp1HAq/9DGplbVmiI2vP+liWHZDR7PggkI/Qho=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=1N4YRz4ZMRH598wNS/veTU1KwEE56r1XkbHIjCc9CO8flawqjRKGy1v++qRrUY/Xo
+         tPFUxnglMi6uuhFfhoMVo1Ijp4ys9zO+nbd9CLIrqwRE9vdls6drmJNAsN4eymSs/o
+         X7h1mXx+hSgp0DE+FlhSE2pbRSbpxJiKvZ4DWnHw=
+Received: by mail-wr1-f44.google.com with SMTP id m27-v6so14256246wrf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 09:43:04 -0700 (PDT)
+X-Gm-Message-State: APzg51Ai0InD7AFskyEOd6KxptoN8K5ywc2R7nbjbUQilbuJrgA7tPWc
+        XPVXStt3GIU8Kje++M8lawHQzOooEav0gv1gDENCXg==
+X-Google-Smtp-Source: ANB0VdZHvP483VX8LqzrMZ6E18xyIGm/i/1oDaaFkI+O4cRZCkBkGBmiCp3aox1TNSx11cVkJQCa9Hn51nBeEhsPWus=
+X-Received: by 2002:adf:dcc1:: with SMTP id x1-v6mr9471077wrm.21.1535388182749;
+ Mon, 27 Aug 2018 09:43:02 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a1c:548:0:0:0:0:0 with HTTP; Mon, 27 Aug 2018 09:42:12 -0700 (PDT)
+Received: by 2002:a1c:548:0:0:0:0:0 with HTTP; Mon, 27 Aug 2018 09:42:42 -0700 (PDT)
+In-Reply-To: <CALCETrWqg82HxGEa6Locag=M6ytgOamvRyG96dT+Hqm2QwZ3pg@mail.gmail.com>
+References: <CALCETrWqg82HxGEa6Locag=M6ytgOamvRyG96dT+Hqm2QwZ3pg@mail.gmail.com>
 From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 27 Aug 2018 09:42:12 -0700
-X-Gmail-Original-Message-ID: <CALCETrWqg82HxGEa6Locag=M6ytgOamvRyG96dT+Hqm2QwZ3pg@mail.gmail.com>
-Message-ID: <CALCETrWqg82HxGEa6Locag=M6ytgOamvRyG96dT+Hqm2QwZ3pg@mail.gmail.com>
-Subject: Removing entry trampoline and associated reversions
-To:     Ingo Molnar <mingo@redhat.com>,
+Date:   Mon, 27 Aug 2018 09:42:42 -0700
+X-Gmail-Original-Message-ID: <CALCETrVNUd3YahKEjF3mwNMz-zfp9AdvK+OV8uEvSyrX9TPymA@mail.gmail.com>
+Message-ID: <CALCETrVNUd3YahKEjF3mwNMz-zfp9AdvK+OV8uEvSyrX9TPymA@mail.gmail.com>
+Subject: Re: Removing entry trampoline and associated reversions
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         LKML <linux-kernel@vger.kernel.org>,
         Adrian Hunter <adrian.hunter@intel.com>,
@@ -62,17 +65,24 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all-
+[gah -- accidentally hit send]
 
-We had an unfortunate conflict.  Adrian did all the plumbing to get
-entry_trampoline to play nicelyh with kcore and perf.  Meanwhile, I
-was working on getting rid of the entry trampoline.  Adrian's code is
-merged and mine is finally in good shape, and there's an obvious
-conflict.
+On Mon, Aug 27, 2018 at 9:42 AM, Andy Lutomirski <luto@kernel.org> wrote:
+> Hi all-
+>
+> We had an unfortunate conflict.  Adrian did all the plumbing to get
+> entry_trampoline to play nicelyh with kcore and perf.  Meanwhile, I
+> was working on getting rid of the entry trampoline.  Adrian's code is
+> merged and mine is finally in good shape, and there's an obvious
+> conflict.
+>
+> So I did a bunch of reverts, all but one of which were clean.  The
+> series is here:
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/luto/linux.git/log/?h=x86/pti
+>
+> and the messy revert is here:
 
-So I did a bunch of reverts, all but one of which were clean.  The
-series is here:
+https://git.kernel.org/pub/scm/linux/kernel/git/luto/linux.git/commit/?h=x86/pti&id=50ef6380e448650b48db979d7d1f20a325b0a273
 
-https://git.kernel.org/pub/scm/linux/kernel/git/luto/linux.git/log/?h=x86/pti
-
-and the messy revert is here:
+Is this the right approach?
