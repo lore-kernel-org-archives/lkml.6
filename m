@@ -2,139 +2,93 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD633C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 14:29:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6177C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 14:33:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DEAC208B6
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 14:29:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MPmd+V/2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DEAC208B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 669D7208B6
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 14:33:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 669D7208B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727569AbeH0SQs (ORCPT
+        id S1727635AbeH0SUf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 14:16:48 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34011 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726953AbeH0SQr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 14:16:47 -0400
-Received: by mail-pg1-f196.google.com with SMTP id u10-v6so5803492pgr.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 07:29:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=GVBhwHBl1CC3D1o1VEQKYZ71LbTLesrnDknRLFg++lk=;
-        b=MPmd+V/2XXAj5cBDIHoa2l+jHDcxoBdDDSwnvggmOdm+r2q2hOgxZ3jK4gvsNN8K4P
-         gqE/m6F0HwzCt7gir4di3Q7UJIx1U92NCkn0of/oAmBP7Ozza0b+SSJ9XatUOyQ/m7cL
-         qpI+8d32ELzGiic47LES4sVHmpYnCyAClU+iQUKdCkIb1L0gQZQlTdXmeaXJQUvMzqfF
-         wYPZ6YCj7sPGaEcfDVu4T8S7kpFECPv5sH7KvjSWAG6BdHBGaopRX824vup+9CAR5487
-         4zt6wdSBcqltNk/EqL2C1vWoULrF4zhamobSvBcBHWJ6hbxJ4KqJEENA02Lno7Oas6Aw
-         eMdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=GVBhwHBl1CC3D1o1VEQKYZ71LbTLesrnDknRLFg++lk=;
-        b=ETmnuV4hl7gOA6IcW/HvAmLeHLjZjhB1d15yQybRALIREXcp4gbYPg23naTQWUzoOK
-         Gd3uCiyn2w9W64cqMQQcpO23oZ8LnFVgOoPC87j2qSvPuy/1lP23r8nJcXFGP4GPO/EF
-         Y6xAOgYvNCEkjTgthK+NxuukhKiJNzfTrbrV9lKkyjbkYilHM1aN2XwP7kdtFghNVMgc
-         iAovDU9I9XXMpsp761tRzJ2qpjJFchGDb9obXxCsGrEqBraLgqy/BmpWatgkxZNNFn+2
-         wgpfsl9VUcqfs1aMHh5zt1Lwi6Py8g/3QxSUJLaX6SORVBamJR5hTI9DPMG9kfzwawBn
-         DxYg==
-X-Gm-Message-State: APzg51BiPwqaWmd1rEOG4e0fbMVVWyZj8WXOyVr4K3OrjzcxCrclCWGB
-        SpyoYOcCBX9CwDGlm/FqI3o=
-X-Google-Smtp-Source: ANB0VdYwMWxJVKNo1KR1rt0JQ+QOaMa+odPFoVwIat+xEkgHp5ijaWHzZiD2/aDQmwWe3WU259PeGQ==
-X-Received: by 2002:a63:a35f:: with SMTP id v31-v6mr12609598pgn.261.1535380195938;
-        Mon, 27 Aug 2018 07:29:55 -0700 (PDT)
-Received: from roar.ozlabs.ibm.com (59-102-83-192.tpgi.com.au. [59.102.83.192])
-        by smtp.gmail.com with ESMTPSA id h7-v6sm38215777pfd.155.2018.08.27.07.29.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 27 Aug 2018 07:29:55 -0700 (PDT)
-Date:   Tue, 28 Aug 2018 00:29:47 +1000
-From:   Nicholas Piggin <npiggin@gmail.com>
-To:     Rik van Riel <riel@surriel.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Benjamin Herrenschmidt <benh@au1.ibm.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Borislav Petkov <bp@alien8.de>, Jann Horn <jannh@google.com>,
-        Adin Scannell <ascannell@google.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        David Miller <davem@davemloft.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: [PATCH 3/4] mm/tlb, x86/mm: Support invalidating TLB caches for
- RCU_TABLE_FREE
-Message-ID: <20180828002947.2bdea9b8@roar.ozlabs.ibm.com>
-In-Reply-To: <405ba257e730d4f0ad9007490e7ac47cc343c720.camel@surriel.com>
-References: <20180822155527.GF24124@hirez.programming.kicks-ass.net>
-        <20180823134525.5f12b0d3@roar.ozlabs.ibm.com>
-        <CA+55aFxneZTFxxxAjLZmj92VUJg6z7hERxJ2cHoth-GC0RuELw@mail.gmail.com>
-        <776104d4c8e4fc680004d69e3a4c2594b638b6d1.camel@au1.ibm.com>
-        <CA+55aFzM77G9-Q6LboPLJ=5gHma66ZQKiMGCMqXoKABirdF98w@mail.gmail.com>
-        <20180823133958.GA1496@brain-police>
-        <20180824084717.GK24124@hirez.programming.kicks-ass.net>
-        <20180824113214.GK24142@hirez.programming.kicks-ass.net>
-        <20180824113953.GL24142@hirez.programming.kicks-ass.net>
-        <20180827150008.13bce08f@roar.ozlabs.ibm.com>
-        <20180827074701.GW24124@hirez.programming.kicks-ass.net>
-        <20180827180458.4af9b2ac@roar.ozlabs.ibm.com>
-        <405ba257e730d4f0ad9007490e7ac47cc343c720.camel@surriel.com>
-X-Mailer: Claws Mail 3.17.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Mon, 27 Aug 2018 14:20:35 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50018 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727099AbeH0SUe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 14:20:34 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 32DC8AFE7;
+        Mon, 27 Aug 2018 14:33:41 +0000 (UTC)
+From:   Mian Yousaf Kaukab <ykaukab@suse.de>
+To:     will.deacon@arm.com, marc.zyngier@arm.com
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        robert.richter@cavium.com, cwu@amperecomputing.com,
+        Mian Yousaf Kaukab <ykaukab@suse.de>
+Subject: [PATCH RESEND 2/6] arm64: add sysfs vulnerability show for meltdown
+Date:   Mon, 27 Aug 2018 16:33:06 +0200
+Message-Id: <20180827143310.641-3-ykaukab@suse.de>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180827143310.641-1-ykaukab@suse.de>
+References: <20180827143310.641-1-ykaukab@suse.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 27 Aug 2018 09:36:50 -0400
-Rik van Riel <riel@surriel.com> wrote:
+Checking CSV3 support directly in case CONFIG_UNMAP_KERNEL_AT_EL0
+is not enabled.
 
-> On Mon, 2018-08-27 at 18:04 +1000, Nicholas Piggin wrote:
-> 
-> > It could do that. It requires a tlbie that matches the page size,
-> > so it means 3 sizes. I think possibly even that would be better
-> > than current code, but we could do better if we had a few specific
-> > fields in there.  
-> 
-> Would it cause a noticeable overhead to keep track
-> of which page sizes were removed, and to simply flush
-> the whole TLB in the (unlikely?) event that multiple
-> page sizes were removed in the same munmap?
-> 
-> Once the unmap is so large that multiple page sizes
-> were covered, you may already be looking at so many
-> individual flush operations that a full flush might
-> be faster.
+Signed-off-by: Mian Yousaf Kaukab <ykaukab@suse.de>
+---
+ arch/arm64/kernel/cpu_errata.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-It will take some profiling and measuring. unmapping a small number of
-huge pages plus a small number of surrounding small pages may not be
-uncommon if THP is working well. That could become a lot more expensive.
+diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
+index dec10898d688..996edb4e18ad 100644
+--- a/arch/arm64/kernel/cpu_errata.c
++++ b/arch/arm64/kernel/cpu_errata.c
+@@ -22,6 +22,7 @@
+ #include <asm/cpu.h>
+ #include <asm/cputype.h>
+ #include <asm/cpufeature.h>
++#include <asm/mmu.h>
+ 
+ static bool __maybe_unused
+ is_affected_midr_range(const struct arm64_cpu_capabilities *entry, int scope)
+@@ -683,3 +684,26 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
+ 	{
+ 	}
+ };
++
++#ifdef CONFIG_GENERIC_CPU_VULNERABILITIES
++
++ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr,
++		char *buf)
++{
++	u64 pfr0;
++	u32 csv3;
++
++	if (arm64_kernel_unmapped_at_el0())
++		return sprintf(buf, "Mitigation: KPTI\n");
++
++	pfr0 = read_cpuid(ID_AA64PFR0_EL1);
++	csv3 = cpuid_feature_extract_unsigned_field(pfr0,
++			ID_AA64PFR0_CSV3_SHIFT);
++
++	if (csv3 || is_cpu_meltdown_safe())
++		return sprintf(buf, "Not affected\n");
++
++	return sprintf(buf, "Vulnerable\n");
++}
++
++#endif
+-- 
+2.11.0
 
-> 
-> Is there a point on PPC where simply flushing the
-> whole TLB, and having other things be reloaded later,
-> is faster than flushing every individual page mapping
-> that got unmapped?
-
-There is. For local TLB flushes that point is well over 100 individual
-invalidates though. We're generally better off flushing all page sizes
-for that case.
-
-Thanks,
-Nick
