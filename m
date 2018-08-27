@@ -6,108 +6,203 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3418C43334
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:45:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4FE8C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:45:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A650F208B8
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:45:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A650F208B8
+	by mail.kernel.org (Postfix) with ESMTP id A25AB208B8
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:45:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A25AB208B8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727651AbeH0Xdt (ORCPT
+        id S1727678AbeH0Xdu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 19:33:49 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:35469 "EHLO
+        Mon, 27 Aug 2018 19:33:50 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:39705 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727620AbeH0Xdt (ORCPT
+        with ESMTP id S1727468AbeH0Xdu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 19:33:49 -0400
+        Mon, 27 Aug 2018 19:33:50 -0400
 Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
  (mreue101 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0M1nxq-1ffbh80KlO-00toEj; Mon, 27 Aug 2018 21:45:40 +0200
+ 0M73gb-1fgOuX1pbR-00wp38; Mon, 27 Aug 2018 21:45:40 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     tglx@linutronix.de
 Cc:     y2038@lists.linaro.org, linux-api@vger.kernel.org,
         Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
         torvalds@linux-foundation.org, deepa.kernel@gmail.com,
         linux-arch@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 12/14] y2038: sched: Change sched_rr_get_interval to use __kernel_timespec
-Date:   Mon, 27 Aug 2018 21:45:29 +0200
-Message-Id: <20180827194531.3796559-13-arnd@arndb.de>
+Subject: [PATCH 13/14] y2038: socket: Change recvmmsg to use __kernel_timespec
+Date:   Mon, 27 Aug 2018 21:45:30 +0200
+Message-Id: <20180827194531.3796559-14-arnd@arndb.de>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180827194531.3796559-1-arnd@arndb.de>
 References: <20180827194531.3796559-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:A/PvtBsBqqPBHphqonIzFoco4UcdjHocqMllKaqT0ZBSX1pyyuv
- CI9k4lkIApv0KhEoBjNLqN1I9Q6Y9E/9wuJ2zNhpIDhNW4AkM+A1NnEEXU8x7Kj0ddMuHio
- xj5PFbUKX/1Cokxjq88roCCZe4ZJmhmekFCYsj1oqPvESVUTpwtSrMTU2YyPFDt9HUln1zO
- a0UyZy78YOCAc6msBEXmQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:xKLUZx0V7qM=:ZJT2IOPxulQ8zzcIdMU1bF
- iMjUInVfAjhSZc7+pFYiB05dQmC7RiKjw3/TxrrSHWg8LvBBF+qiG22FhCStK7w9WYBewxh3O
- Ezu2nhmHEXdUPYF+4PVhhZZ70xqHlSkbp1iMMXopl7fNfIusg1Jr6enjY3XEfsLVNBw+Cd/DO
- TrDHWRn0rA0GGZ8oU5ayVF4Sck45RkmQ2mTk7ToqjuoZV2RphbaIohASG8Jz2zg6iexBXzq11
- /e5bKisCU2+WeQAAecrPKOZzkBLwf0y846CyRSZ25QBkZG8pPXLXebhS2zccyz3tr+OOzDQzp
- InlHGQ8Zut9pPafpiUJSig4NXT3eEd5nMZNj9f4MplqdCG4AaSf8GIBQNoINDacztEPL5Dks6
- NTZ+cjZBcAarQGQHFCbDpqt8eRGR5o9+BLp1ilgsxYcO/qOwCOuWM0B23IsPr03RAJcZsXuou
- m0ijpj4/RfGAXXq9+wM1UjLlEY4u72GGVoMpV/VKhteUs2KYZDiOHEtQnNl2UmjWDWRhmWnEL
- y1PRqVDk2DLdFAX9RqmaItTrVTF9LeTmsKuh+SGweY9r/WOiNRUVEYtovY6K80Uf1v4yRGxzG
- UA/Q8zowGzEliVY8f7eLvFfLPwz0JkYCwIp2p4xqjHwgFk22Ofp0+rRDanzRK2aD/68o9imXT
- uVmjww+R6D1nuDTwvtCIhFpDKAEZAMSS0y1ZE8QTC/O9hFpaftYoyYqd1V5XtdD9/hcA=
+X-Provags-ID: V03:K1:V7XQZl/ZW81NfyBSLXtTx6Jd2VYw1T3PcNZLy3/zcKCVKE9TsTG
+ MrL5oHyvdviiYMXRqro6oD2iHv0Qb2gyWygNsKMspFNy3ANSGzQkP9cBBPdtJ+TSV4FOpPD
+ 4Ls+28sfWTuWmtgv57FPhCGvJwE50NF1WtJCvhRVxQOnQH8yUYSu5m2cxeSipJ4O3ZT3uPE
+ 4CtdNnGpaJ3KMEMBlJmYw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:o+GhUvvZZsk=:OAa5iFyoQhNLOLn8C/lsRz
+ IFjuXBxLVZtmtNg4uTzbkPzaahDhamX5EwHybWBJsQHHZOa6sVhqkvxH7Ao20V6DWck9RJN+V
+ 6EF0jQc6UPmPs9wq1BQs8jdvaOrsFF7jbwwz20dMe2UdbRPlJHtdmmrs2hogVhge+tXGZKkqB
+ 64NWTCvli18aep74XbhysCZbW2pdMAehVZqfeeLq7LU2r1tqCLUgo6QrkRsXEfU6dOnjglcyZ
+ zmAtBSo2UHRbBRpCzXgUh1CHH4PRnDT5HWCbG7Ir6J3beru7hTnj7KyT1I07KwatHB+LAeiXb
+ juxcL4kmcV+YN3N7O+K6sATd144roeoYdjN8BNFs2JschtVEojvSpRByqIXvwPUEFVEvyDUoE
+ Po8yAt/MmTsAaEmYZdunQ7OUAuQ6fXB7pcrGl7nGfg2sqSGz30k6YMK71WaeQ9gnhdfEME4Jq
+ L+iV1ZJmdeinSaoI1+L3CQ3vlSCOWcVgCxQRjJc67AMExXDGBY5j+UYF9sw2WYDYxiIALEj6w
+ 0m+rZ3yvy6gWVJtLcjFTDa/zJzBjEBkX4GQ8HS8Mg0n+jfH0c5rO8QjlIIRL43U7f6mhoaGuR
+ DRjmW51iH3U129ahKANVvDcYvgE0zczHEYfxcJB41OE+Quogj8xk/9fB5cPQ7JhYTty81fVB7
+ sF0CFmZI5Whw5E+fvFtMq1cC4EWY4VqQNvdzA6dtzu+yH16dp4AVk9+og/GIrp4/4t68=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a preparation patch for converting sys_sched_rr_get_interval to
-work with 64-bit time_t on 32-bit architectures. The 'interval' argument
-is changed to struct __kernel_timespec, which will be redefined using
-64-bit time_t in the future. The compat version of the system call in
-turn is enabled for compilation with CONFIG_COMPAT_32BIT_TIME so
-the individual 32-bit architectures can share the handling of the
-traditional argument with 64-bit architectures providing it for their
-compat mode.
+This converts the recvmmsg() system call in all its variations to use
+'timespec64' internally for its timeout, and have a __kernel_timespec64
+argument in the native entry point. This lets us change the type to use
+64-bit time_t at a later point while using the 32-bit compat system call
+emulation for existing user space.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- include/linux/syscalls.h | 2 +-
- kernel/sched/core.c      | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ include/linux/socket.h   |  4 ++--
+ include/linux/syscalls.h |  2 +-
+ net/compat.c             |  6 +++---
+ net/socket.c             | 18 ++++++++----------
+ 4 files changed, 14 insertions(+), 16 deletions(-)
 
+diff --git a/include/linux/socket.h b/include/linux/socket.h
+index 7ed4713d5337..8b571e9b9f76 100644
+--- a/include/linux/socket.h
++++ b/include/linux/socket.h
+@@ -348,7 +348,7 @@ struct ucred {
+ extern int move_addr_to_kernel(void __user *uaddr, int ulen, struct sockaddr_storage *kaddr);
+ extern int put_cmsg(struct msghdr*, int level, int type, int len, void *data);
+ 
+-struct timespec;
++struct timespec64;
+ 
+ /* The __sys_...msg variants allow MSG_CMSG_COMPAT iff
+  * forbid_cmsg_compat==false
+@@ -358,7 +358,7 @@ extern long __sys_recvmsg(int fd, struct user_msghdr __user *msg,
+ extern long __sys_sendmsg(int fd, struct user_msghdr __user *msg,
+ 			  unsigned int flags, bool forbid_cmsg_compat);
+ extern int __sys_recvmmsg(int fd, struct mmsghdr __user *mmsg, unsigned int vlen,
+-			  unsigned int flags, struct timespec *timeout);
++			  unsigned int flags, struct timespec64 *timeout);
+ extern int __sys_sendmmsg(int fd, struct mmsghdr __user *mmsg,
+ 			  unsigned int vlen, unsigned int flags,
+ 			  bool forbid_cmsg_compat);
 diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 95e795fb0593..5642016a312d 100644
+index 5642016a312d..fb3a05fab8aa 100644
 --- a/include/linux/syscalls.h
 +++ b/include/linux/syscalls.h
-@@ -614,7 +614,7 @@ asmlinkage long sys_sched_yield(void);
- asmlinkage long sys_sched_get_priority_max(int policy);
- asmlinkage long sys_sched_get_priority_min(int policy);
- asmlinkage long sys_sched_rr_get_interval(pid_t pid,
--					struct timespec __user *interval);
-+				struct __kernel_timespec __user *interval);
+@@ -830,7 +830,7 @@ asmlinkage long sys_perf_event_open(
+ asmlinkage long sys_accept4(int, struct sockaddr __user *, int __user *, int);
+ asmlinkage long sys_recvmmsg(int fd, struct mmsghdr __user *msg,
+ 			     unsigned int vlen, unsigned flags,
+-			     struct timespec __user *timeout);
++			     struct __kernel_timespec __user *timeout);
  
- /* kernel/signal.c */
- asmlinkage long sys_restart_syscall(void);
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 8287b75ed961..39af2bec2b39 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -5243,7 +5243,7 @@ static int sched_rr_get_interval(pid_t pid, struct timespec64 *t)
-  * an error code.
-  */
- SYSCALL_DEFINE2(sched_rr_get_interval, pid_t, pid,
--		struct timespec __user *, interval)
-+		struct __kernel_timespec __user *, interval)
+ asmlinkage long sys_wait4(pid_t pid, int __user *stat_addr,
+ 				int options, struct rusage __user *ru);
+diff --git a/net/compat.c b/net/compat.c
+index 2ef160876bc1..47a614b370cd 100644
+--- a/net/compat.c
++++ b/net/compat.c
+@@ -815,18 +815,18 @@ static int __compat_sys_recvmmsg(int fd, struct compat_mmsghdr __user *mmsg,
+ 				 struct old_timespec32 __user *timeout)
  {
- 	struct timespec64 t;
- 	int retval = sched_rr_get_interval(pid, &t);
-@@ -5254,7 +5254,7 @@ SYSCALL_DEFINE2(sched_rr_get_interval, pid_t, pid,
- 	return retval;
- }
+ 	int datagrams;
+-	struct timespec ktspec;
++	struct timespec64 ktspec;
  
--#ifdef CONFIG_COMPAT
-+#ifdef CONFIG_COMPAT_32BIT_TIME
- COMPAT_SYSCALL_DEFINE2(sched_rr_get_interval,
- 		       compat_pid_t, pid,
- 		       struct old_timespec32 __user *, interval)
+ 	if (timeout == NULL)
+ 		return __sys_recvmmsg(fd, (struct mmsghdr __user *)mmsg, vlen,
+ 				      flags | MSG_CMSG_COMPAT, NULL);
+ 
+-	if (compat_get_timespec(&ktspec, timeout))
++	if (compat_get_timespec64(&ktspec, timeout))
+ 		return -EFAULT;
+ 
+ 	datagrams = __sys_recvmmsg(fd, (struct mmsghdr __user *)mmsg, vlen,
+ 				   flags | MSG_CMSG_COMPAT, &ktspec);
+-	if (datagrams > 0 && compat_put_timespec(&ktspec, timeout))
++	if (datagrams > 0 && compat_put_timespec64(&ktspec, timeout))
+ 		datagrams = -EFAULT;
+ 
+ 	return datagrams;
+diff --git a/net/socket.c b/net/socket.c
+index e6945e318f02..b9d71b503720 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -2340,7 +2340,7 @@ SYSCALL_DEFINE3(recvmsg, int, fd, struct user_msghdr __user *, msg,
+  */
+ 
+ int __sys_recvmmsg(int fd, struct mmsghdr __user *mmsg, unsigned int vlen,
+-		   unsigned int flags, struct timespec *timeout)
++		   unsigned int flags, struct timespec64 *timeout)
+ {
+ 	int fput_needed, err, datagrams;
+ 	struct socket *sock;
+@@ -2405,8 +2405,7 @@ int __sys_recvmmsg(int fd, struct mmsghdr __user *mmsg, unsigned int vlen,
+ 
+ 		if (timeout) {
+ 			ktime_get_ts64(&timeout64);
+-			*timeout = timespec64_to_timespec(
+-					timespec64_sub(end_time, timeout64));
++			*timeout = timespec64_sub(end_time, timeout64);
+ 			if (timeout->tv_sec < 0) {
+ 				timeout->tv_sec = timeout->tv_nsec = 0;
+ 				break;
+@@ -2452,10 +2451,10 @@ int __sys_recvmmsg(int fd, struct mmsghdr __user *mmsg, unsigned int vlen,
+ 
+ static int do_sys_recvmmsg(int fd, struct mmsghdr __user *mmsg,
+ 			   unsigned int vlen, unsigned int flags,
+-			   struct timespec __user *timeout)
++			   struct __kernel_timespec __user *timeout)
+ {
+ 	int datagrams;
+-	struct timespec timeout_sys;
++	struct timespec64 timeout_sys;
+ 
+ 	if (flags & MSG_CMSG_COMPAT)
+ 		return -EINVAL;
+@@ -2463,13 +2462,12 @@ static int do_sys_recvmmsg(int fd, struct mmsghdr __user *mmsg,
+ 	if (!timeout)
+ 		return __sys_recvmmsg(fd, mmsg, vlen, flags, NULL);
+ 
+-	if (copy_from_user(&timeout_sys, timeout, sizeof(timeout_sys)))
++	if (get_timespec64(&timeout_sys, timeout))
+ 		return -EFAULT;
+ 
+ 	datagrams = __sys_recvmmsg(fd, mmsg, vlen, flags, &timeout_sys);
+ 
+-	if (datagrams > 0 &&
+-	    copy_to_user(timeout, &timeout_sys, sizeof(timeout_sys)))
++	if (datagrams > 0 && put_timespec64(&timeout_sys, timeout))
+ 		datagrams = -EFAULT;
+ 
+ 	return datagrams;
+@@ -2477,7 +2475,7 @@ static int do_sys_recvmmsg(int fd, struct mmsghdr __user *mmsg,
+ 
+ SYSCALL_DEFINE5(recvmmsg, int, fd, struct mmsghdr __user *, mmsg,
+ 		unsigned int, vlen, unsigned int, flags,
+-		struct timespec __user *, timeout)
++		struct __kernel_timespec __user *, timeout)
+ {
+ 	return do_sys_recvmmsg(fd, mmsg, vlen, flags, timeout);
+ }
+@@ -2601,7 +2599,7 @@ SYSCALL_DEFINE2(socketcall, int, call, unsigned long __user *, args)
+ 		break;
+ 	case SYS_RECVMMSG:
+ 		err = do_sys_recvmmsg(a0, (struct mmsghdr __user *)a1, a[2],
+-				      a[3], (struct timespec __user *)a[4]);
++				      a[3], (struct __kernel_timespec __user *)a[4]);
+ 		break;
+ 	case SYS_ACCEPT4:
+ 		err = __sys_accept4(a0, (struct sockaddr __user *)a1,
 -- 
 2.18.0
 
