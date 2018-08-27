@@ -3,111 +3,110 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51CE1C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 23:00:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DFA2C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 23:01:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA4AC208B4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 23:00:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E507D208B4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 23:01:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HtXitLMW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA4AC208B4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KQavkR6d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E507D208B4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727457AbeH1CtX (ORCPT
+        id S1727484AbeH1Ctn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 22:49:23 -0400
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:45015 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726994AbeH1CtW (ORCPT
+        Mon, 27 Aug 2018 22:49:43 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:42170 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727238AbeH1Ctn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 22:49:22 -0400
-Received: by mail-ua1-f66.google.com with SMTP id m11-v6so404380uao.11
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 16:00:40 -0700 (PDT)
+        Mon, 27 Aug 2018 22:49:43 -0400
+Received: by mail-io0-f193.google.com with SMTP id n18-v6so521657ioa.9
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 16:01:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=8aArcR8Vt7dJ6QkZNgj3HyIKPsdPwVuSXRBkakVU7ng=;
-        b=HtXitLMWU6BekUCYGjjuV6lusCSRNRrh1jm4xUo1NH+w4ygaYGf2/IXSHntCh+Ft99
-         DtEC66yjB4ETdUfC6ch+lsgbdwAq5hvJ7CAqIVX2ei74J4DGicYHGDH/7SghR33ZP3Xf
-         96CzJHcBnd9wgeHQeRZ+rbxFa/eaXCPC6Umh4=
+        bh=bhkX9BVgN1BJlsxm3QVXZJ7U3zluf/nG4Hj+kDzZpoU=;
+        b=KQavkR6d2JxFwZH9+syItRFChAoH1TguU9X0BBykPEaP2wufnZ1gAs0NvfKt7g+Z96
+         NjM8H7ZTm08Ml3VHrpq/OW38SVpPfVLgN9wOtbrO+p4SKdW7UtYVEMaQKJ0ECpQFN3iL
+         ZkNgBXX8VkFAADmtF02XJU43QWwQU0scyoyAY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=8aArcR8Vt7dJ6QkZNgj3HyIKPsdPwVuSXRBkakVU7ng=;
-        b=LR3xjtND1X/ul7ZqNTQPXUIZbJ0foCVnezhxK98iz6+Gk6QsHmjd0Jw6X3uFT02WEQ
-         A72igROyQ8Vd7jitBYCv+iVZOFtItFcTx7EaJ6V4H7LjyXs7YuxsRrSkg+c3DbBTQaj0
-         JwrIltWBNBT6b2F8CLbbDQc4/WDI92DuiHWJEOB3cN5tztmexZzToOz09IruqY5gIdrA
-         B/N6XCMWWf+DDjD/YdujXTxsPRCcnTBEHhdytZ3brD2qsYHUTdUQHSzTd2k6iqIr0xr8
-         157v/NO17Z9VWnVyMfFbl1qz27Wk8wPsfbMxIsr9I3VZNGV4n1QrxzMPKrCsNkmjLRHf
-         N2LQ==
-X-Gm-Message-State: APzg51BhIC2/yzeUFIHRriClHdi2sbtlk/DLgEQ0xFXP1o+ZnwO0ZKOk
-        MMMPnniFGlgvmp828Ak10Lmv/Qeu9stycw==
-X-Google-Smtp-Source: ANB0VdbTxQqouBWbnM0ENjeJcoYH/b5HXlM7x+dgqREF8sDbLG0sn/TmRFE2HvYgFL7m2bzgWFlw7Q==
-X-Received: by 2002:ab0:4a2:: with SMTP id 31-v6mr9853339uaw.151.1535410839494;
-        Mon, 27 Aug 2018 16:00:39 -0700 (PDT)
-Received: from mail-vk0-f52.google.com (mail-vk0-f52.google.com. [209.85.213.52])
-        by smtp.gmail.com with ESMTPSA id s123-v6sm150717vke.37.2018.08.27.16.00.38
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 Aug 2018 16:00:39 -0700 (PDT)
-Received: by mail-vk0-f52.google.com with SMTP id s6-v6so344754vks.4
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 16:00:38 -0700 (PDT)
-X-Received: by 2002:a1f:a803:: with SMTP id r3-v6mr9143498vke.8.1535410838586;
- Mon, 27 Aug 2018 16:00:38 -0700 (PDT)
+        bh=bhkX9BVgN1BJlsxm3QVXZJ7U3zluf/nG4Hj+kDzZpoU=;
+        b=h7/Qy9FXIMfUtI/pZWDFCTs6Xo/9MUQ9RaPziul/At86/XIWYCajt1NAtgQPf5twNK
+         iccv27vLgNiXopsz7f2v/m0AXxHo/HCl4nNUbq8ZFfHyGaea6ulacMW8puoj+bOwfvh0
+         0yXI6fUHzijlAU+xuzJwvZNfzfEum5oH1rXmMoTzQ9cM1I/YYWE2VX7LMLuWGhTgLDQU
+         xqm5PcbrYvYRU+vBTIqm+3uMuSXmhSv9bvj3zF4Z7EXglbScq1MVfRnYsaVBdT0HDStO
+         bvGCLtwbNb1eO05/RDr1CMQ1Xa9ch4nJmY7LdLn0jmcpuxSaNredLVjPzERGwVh5pA9V
+         H07Q==
+X-Gm-Message-State: APzg51AZ1t0EUUpgznLRrL0DA4BirMpQMxdzUy77e5dn5DuQ/fnaWjJI
+        ZJod4Xx8U3KwhnmzZCQGDMt8H1QdoKqE+8ogvvu8BA==
+X-Google-Smtp-Source: ANB0VdZ5/YYODdqlcJRaGyEV4k9XZ/rbrRp+TSoktsOzdz6yBrVij9H86iQw/YbedU/qW4y2598p1DqPxXso18nrbQ4=
+X-Received: by 2002:a6b:4516:: with SMTP id s22-v6mr3215805ioa.60.1535410860674;
+ Mon, 27 Aug 2018 16:01:00 -0700 (PDT)
 MIME-Version: 1.0
-References: <1534834341-18345-1-git-send-email-akshu.agrawal@amd.com>
-In-Reply-To: <1534834341-18345-1-git-send-email-akshu.agrawal@amd.com>
-From:   Daniel Kurtz <djkurtz@chromium.org>
-Date:   Mon, 27 Aug 2018 17:00:27 -0600
-X-Gmail-Original-Message-ID: <CAGS+omCS3nNke2BVLQtv5LK8xCKrMD6xwiPWajKMphWWfgsC3g@mail.gmail.com>
-Message-ID: <CAGS+omCS3nNke2BVLQtv5LK8xCKrMD6xwiPWajKMphWWfgsC3g@mail.gmail.com>
-Subject: Re: [PATCH] clk: x86: Set default parent to 48Mhz
-To:     Akshu Agrawal <akshu.agrawal@amd.com>
-Cc:     Alexander.Deucher@amd.com,
-        Mike Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-        rafael.j.wysocki@intel.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+Received: by 2002:a6b:ac05:0:0:0:0:0 with HTTP; Mon, 27 Aug 2018 16:01:00
+ -0700 (PDT)
+In-Reply-To: <1535411336.3516.2.camel@megha-Z97X-UD7-TH>
+References: <00000000000072d64d05737b6b8c@google.com> <20180820073119.GA14931@sol.localdomain>
+ <CAKv+Gu9Y0TLOuMba43HPihYqy-kk0nttBfPj1_UukiYy1cBcFw@mail.gmail.com>
+ <20180822062036.mdq4q5o5zdzuxh7s@gondor.apana.org.au> <1535411336.3516.2.camel@megha-Z97X-UD7-TH>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Tue, 28 Aug 2018 01:01:00 +0200
+Message-ID: <CAKv+Gu_oZ0Z37WV1h4opi-cYZT5FWU_bmrkBjx8LXpvKpPoZNA@mail.gmail.com>
+Subject: Re: KASAN: use-after-free Read in sha512_ctx_mgr_resubmit
+To:     Megha Dey <megha.dey@linux.intel.com>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        syzbot <syzbot+d5455bac3ba1ee9114e5@syzkaller.appspotmail.com>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 21, 2018 at 12:53 AM Akshu Agrawal <akshu.agrawal@amd.com> wrote:
+On 28 August 2018 at 01:08, Megha Dey <megha.dey@linux.intel.com> wrote:
+> On Wed, 2018-08-22 at 14:20 +0800, Herbert Xu wrote:
+>> On Tue, Aug 21, 2018 at 02:43:56PM +0200, Ard Biesheuvel wrote:
+>> >
+>> > I agree. The code is obviously broken in a way that would have been
+>> > noticed if it were in wide use, and it is too complicated for mere
+>> > mortals to fix or maintain. I suggest we simply remove it for now, and
+>> > if anyone wants to reintroduce it, we can review the code *and* the
+>> > justification for the approach from scratch (in which case we should
+>> > consider factoring out the algo agnostics plumbing in a way that
+>> > allows it to be reused by other architectures as well)
+>>
+>> I agree too.  Could one of you guys send me a patch to remove
+>> them?
+>>
 >
-> System clk provided in ST soc can be set to:
-> 48Mhz, non-spread
-> 25Mhz, spread
-> To get accurate rate, we need it to set it at non-spread
-> option which is 48Mhz.
+> Hi,
 >
-> Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
+> We are working on a fix to solve these corner cases.
+>
 
-Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
+Great. thanks.
 
-> ---
->  drivers/clk/x86/clk-st.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/x86/clk-st.c b/drivers/clk/x86/clk-st.c
-> index fb62f39..3a0996f 100644
-> --- a/drivers/clk/x86/clk-st.c
-> +++ b/drivers/clk/x86/clk-st.c
-> @@ -46,7 +46,7 @@ static int st_clk_probe(struct platform_device *pdev)
->                 clk_oscout1_parents, ARRAY_SIZE(clk_oscout1_parents),
->                 0, st_data->base + CLKDRVSTR2, OSCOUT1CLK25MHZ, 3, 0, NULL);
->
-> -       clk_set_parent(hws[ST_CLK_MUX]->clk, hws[ST_CLK_25M]->clk);
-> +       clk_set_parent(hws[ST_CLK_MUX]->clk, hws[ST_CLK_48M]->clk);
->
->         hws[ST_CLK_GATE] = clk_hw_register_gate(NULL, "oscout1", "oscout1_mux",
->                 0, st_data->base + MISCCLKCNTL1, OSCCLKENB,
-> --
-> 1.9.1
->
+But it would also be helpful if you could try and answer the questions
+raised by Eric:
+- in which cases does this driver result in a speedup?
+- how should we tune the flush delay to prevent pathological
+performance regressions?
+- is it still safe in the post-Spectre era of computing to aggregate
+hash input from different sources (which may be different users
+altogether) and process them as a single source of input?
