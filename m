@@ -7,61 +7,62 @@ X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA3E2C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:24:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD348C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:24:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C992208B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:24:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 648A4208B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:24:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PFqYcS5E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C992208B7
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e7h0FHmr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 648A4208B7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727820AbeH0WME (ORCPT
+        id S1727838AbeH0WMH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 18:12:04 -0400
-Received: from mail-pg1-f202.google.com ([209.85.215.202]:34797 "EHLO
-        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726895AbeH0WMD (ORCPT
+        Mon, 27 Aug 2018 18:12:07 -0400
+Received: from mail-pf1-f202.google.com ([209.85.210.202]:46937 "EHLO
+        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726895AbeH0WMG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 18:12:03 -0400
-Received: by mail-pg1-f202.google.com with SMTP id w23-v6so11494473pgv.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 11:24:21 -0700 (PDT)
+        Mon, 27 Aug 2018 18:12:06 -0400
+Received: by mail-pf1-f202.google.com with SMTP id x85-v6so12318328pfe.13
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 11:24:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=q2x68N8lrgJfZ6T7hgCccIIuZNvKapdrxrCil2Dgb9w=;
-        b=PFqYcS5EufQ2dHl3dPvBIxcnG2eqxY61wcSLe8CrYAtJHO2auwrTXK7+nikPq7YNl1
-         /9/jjwWOc0s55zUSsl4NPkA3s55/pMFf0uUuAOOz0VOIvIx7R2P5zm4ZAF9hS2Py1Hf0
-         TkWVytlGPCZ2n6RQ3PFtXmCumjR1NVliD6AuiJi+9sgRNdR++C/1+2Z2pATuu0zBxJ3i
-         6WX2dd3VoxoKKBZyyDmTnBsYtdLd6wDoL4hY8g69vZoMRcEPkr8XUGhhKIhgbadlPitW
-         AondWhh7kGEMsqifKG2q+XToqXmlASxfziRMxKDI99Y4v8SU5anK2+c/WLWPBNxatCbO
-         7h2A==
+        bh=2c4GrvMVIN+90M0LSZ+sVRiyBlUKjkTDXgUoXJHIdRc=;
+        b=e7h0FHmrIZhLyT1B1v1NjH3Wujf0m9h3bgjRg1kdvenPa6ospPMk4EnsB2L1pg5X9E
+         6X+Vkl2/PG9TGu9CAMjA1W2iA0Xgsb8dPuQfz3jfNPrwy9gWpFPzauOra+/+iHQrmasg
+         208ANrDzXuoS7V9cITCDpqmgzYxDH+VI96LBCHa09MwuxeQOxDfiKw0hKjHlIM1S9zKI
+         Ozucp1OPqB2fmfhDlNJl62MXMPStMPRz71frrvW09esSTf/GhcQGLmgP2el7FqRF3t3R
+         z/7JJbApzJ7V6woVeB4T4ptUsaK+6IVkj5WqQKahBu+i/kgRxD9aKQzBidgncQms2Nta
+         ONaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=q2x68N8lrgJfZ6T7hgCccIIuZNvKapdrxrCil2Dgb9w=;
-        b=EhlCs+Ekjy0btP6u3okIRTFfE71djcnrM5wswBuJhmowVmuyvee8vOqNPSzBTSAJ8W
-         KFZHYk8K2p/8iiQSvxCJnNFyMIseIolUG9hZflBvhCIauGttsoku54yB3z25prq8k0g4
-         itJ//mg2SF5Zc2AJC7I5RdZwRMLoLOro+Cp45eeIsFgQsPxZh2llGwnggQOA5LFuBHJ8
-         6YMIZXPTA0Y1URA7oNHJWucr0p7b67p0gEvSx5edpd20EwxIc9PSGTI8rKcuQufifNCE
-         AETZDOIc7+kQ78Wjp6Cio38bKZJJPaU5iFjnbS9ZxNc1jiHUBD9Tu1BIZT36m1lb2/4m
-         B2jA==
-X-Gm-Message-State: APzg51CMm9cm3gPxwibFiEM5y6jjE+3SuUS2CSOpFWu9FFOGMxPX59Kj
-        tJpFSo/ayovJ/sATUI0fBybZCkAV
-X-Google-Smtp-Source: ANB0VdZzM20bU3/m/yrk2PYf7w2SVgpxc8W7kyxifQl0lG0jq523Z6kb7Iha1KLby+voON/mYEKx71V2
-X-Received: by 2002:a63:5f15:: with SMTP id t21-v6mr3364486pgb.23.1535394261540;
- Mon, 27 Aug 2018 11:24:21 -0700 (PDT)
-Date:   Mon, 27 Aug 2018 11:23:11 -0700
+        bh=2c4GrvMVIN+90M0LSZ+sVRiyBlUKjkTDXgUoXJHIdRc=;
+        b=WxqPWjC27AOV2N60r3SzD/TGDX26CBivSgV/OJih13EPFilTdk5QKAuaGjIaTmAVu3
+         9j+aiwBE+aaSv6TWGHoIWrnn0nNjSHMTIy74tEgobkuEVlZ+ohBgD3/oEgNP7N72wD5P
+         L5cTTBh3sVmjKfKYwAO+tQdOHqXHZFkPhcgrjPUUz+u7komkfQJSV5lUNqcb93PmS00K
+         OySjrFcPbmak45oWZV886oZYC5+Rd86XZZy0faOSVtZtfiz1FfbCYi9N5tFct71hw7QJ
+         GeUhNzwfAnfkwBr99dJtbu35AOYaMDsGMxFKaroEyFDLn+0/J13U5VbQ9qzGu/EJdcJc
+         yf3Q==
+X-Gm-Message-State: APzg51DZ+k/Ej1iiT9M34UF34qyd8LXGbcf65CrcRoeBsAw87TIGTO63
+        O89PrYlgV0u1GUbTMV1BEY1D95od
+X-Google-Smtp-Source: ANB0VdYmMjtLV7/T6XermCYkSsgaZK1rbJO+CNNfyXSKYea7yqT8QAgb9geXoEwvD2MUkMzwpdFSqd6t
+X-Received: by 2002:a63:a06a:: with SMTP id u42-v6mr3401135pgn.32.1535394264542;
+ Mon, 27 Aug 2018 11:24:24 -0700 (PDT)
+Date:   Mon, 27 Aug 2018 11:23:12 -0700
 In-Reply-To: <20180827182315.126345-1-rkir@google.com>
-Message-Id: <20180827182315.126345-16-rkir@google.com>
+Message-Id: <20180827182315.126345-17-rkir@google.com>
 Mime-Version: 1.0
 References: <20180827182315.126345-1-rkir@google.com>
 X-Mailer: git-send-email 2.19.0.rc0.228.g281dcd1b4d0-goog
-Subject: [PATCH 16/20] platform: goldfish: pipe: Rename goldfish_x to goldfish_pipe_x
+Subject: [PATCH 17/20] platform: goldfish: pipe: Fix lines to not end an
+ opening bracket
 From:   rkir@google.com
 To:     gregkh@linuxfoundation.org
 Cc:     linux-kernel@vger.kernel.org, tkjos@google.com,
@@ -74,88 +75,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Roman Kiryanov <rkir@google.com>
 
-Add "pipe" to the pipe related function names.
+checkpatch: Lines should not end with a '(' or '['
 
 Signed-off-by: Roman Kiryanov <rkir@google.com>
 ---
- drivers/platform/goldfish/goldfish_pipe.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ drivers/platform/goldfish/goldfish_pipe.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/platform/goldfish/goldfish_pipe.c b/drivers/platform/goldfish/goldfish_pipe.c
-index fb37499731a4..95256a5c593c 100644
+index 95256a5c593c..324129879b09 100644
 --- a/drivers/platform/goldfish/goldfish_pipe.c
 +++ b/drivers/platform/goldfish/goldfish_pipe.c
-@@ -213,7 +213,8 @@ struct goldfish_pipe_dev {
+@@ -122,8 +122,8 @@ struct open_command_param {
+ /* Device-level set of buffers shared with the host */
+ struct goldfish_pipe_dev_buffers {
+ 	struct open_command_param open_command_params;
+-	struct signalled_pipe_buffer signalled_pipe_buffers[
+-		MAX_SIGNALLED_PIPES];
++	struct signalled_pipe_buffer
++		signalled_pipe_buffers[MAX_SIGNALLED_PIPES];
+ };
  
- struct goldfish_pipe_dev goldfish_pipe_dev;
- 
--static int goldfish_cmd_locked(struct goldfish_pipe *pipe, enum PipeCmdCode cmd)
-+static int goldfish_pipe_cmd_locked(struct goldfish_pipe *pipe,
-+				    enum PipeCmdCode cmd)
- {
- 	pipe->command_buffer->cmd = cmd;
- 	/* failure by default */
-@@ -222,13 +223,13 @@ static int goldfish_cmd_locked(struct goldfish_pipe *pipe, enum PipeCmdCode cmd)
- 	return pipe->command_buffer->status;
- }
- 
--static int goldfish_cmd(struct goldfish_pipe *pipe, enum PipeCmdCode cmd)
-+static int goldfish_pipe_cmd(struct goldfish_pipe *pipe, enum PipeCmdCode cmd)
- {
- 	int status;
- 
- 	if (mutex_lock_interruptible(&pipe->lock))
- 		return PIPE_ERROR_IO;
--	status = goldfish_cmd_locked(pipe, cmd);
-+	status = goldfish_pipe_cmd_locked(pipe, cmd);
- 	mutex_unlock(&pipe->lock);
- 	return status;
- }
-@@ -349,7 +350,7 @@ static int transfer_max_buffers(struct goldfish_pipe *pipe,
- 		pipe->command_buffer);
- 
- 	/* Transfer the data */
--	*status = goldfish_cmd_locked(pipe,
-+	*status = goldfish_pipe_cmd_locked(pipe,
- 				is_write ? PIPE_CMD_WRITE : PIPE_CMD_READ);
- 
- 	*consumed_size = pipe->command_buffer->rw_params.consumed_size;
-@@ -368,7 +369,7 @@ static int wait_for_host_signal(struct goldfish_pipe *pipe, int is_write)
- 	set_bit(wake_bit, &pipe->flags);
- 
- 	/* Tell the emulator we're going to wait for a wake event */
--	goldfish_cmd(pipe,
-+	goldfish_pipe_cmd(pipe,
+ /* This data type models a given pipe instance */
+@@ -373,8 +373,7 @@ static int wait_for_host_signal(struct goldfish_pipe *pipe, int is_write)
  		is_write ? PIPE_CMD_WAKE_ON_WRITE : PIPE_CMD_WAKE_ON_READ);
  
  	while (test_bit(wake_bit, &pipe->flags)) {
-@@ -490,7 +491,7 @@ static __poll_t goldfish_pipe_poll(struct file *filp, poll_table *wait)
+-		if (wait_event_interruptible(
+-				pipe->wake_queue,
++		if (wait_event_interruptible(pipe->wake_queue,
+ 				!test_bit(wake_bit, &pipe->flags)))
+ 			return -ERESTARTSYS;
  
- 	poll_wait(filp, &pipe->wake_queue, wait);
- 
--	status = goldfish_cmd(pipe, PIPE_CMD_POLL);
-+	status = goldfish_pipe_cmd(pipe, PIPE_CMD_POLL);
- 	if (status < 0)
- 		return -ERESTARTSYS;
- 
-@@ -722,7 +723,7 @@ static int goldfish_pipe_open(struct inode *inode, struct file *file)
- 			MAX_BUFFERS_PER_COMMAND;
- 	dev->buffers->open_command_params.command_buffer_ptr =
- 			(u64)(unsigned long)__pa(pipe->command_buffer);
--	status = goldfish_cmd_locked(pipe, PIPE_CMD_OPEN);
-+	status = goldfish_pipe_cmd_locked(pipe, PIPE_CMD_OPEN);
- 	spin_unlock_irqrestore(&dev->lock, flags);
- 	if (status < 0)
- 		goto err_cmd;
-@@ -748,7 +749,7 @@ static int goldfish_pipe_release(struct inode *inode, struct file *filp)
- 	struct goldfish_pipe_dev *dev = pipe->dev;
- 
- 	/* The guest is closing the channel, so tell the emulator right now */
--	goldfish_cmd(pipe, PIPE_CMD_CLOSE);
-+	goldfish_pipe_cmd(pipe, PIPE_CMD_CLOSE);
- 
- 	spin_lock_irqsave(&dev->lock, flags);
- 	dev->pipes[pipe->id] = NULL;
 -- 
 2.19.0.rc0.228.g281dcd1b4d0-goog
 
