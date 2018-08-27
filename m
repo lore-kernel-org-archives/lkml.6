@@ -2,176 +2,130 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BDD1C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:39:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00907C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:39:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDFBB208B8
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:39:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="v5XFsbXz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDFBB208B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id B97FA208B8
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:39:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B97FA208B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727078AbeH0X12 (ORCPT
+        id S1727367AbeH0X1g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 19:27:28 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:36503 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726826AbeH0X12 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 19:27:28 -0400
-Received: by mail-lf1-f65.google.com with SMTP id c21-v6so122813lfh.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 12:39:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wC5ePYAgfLOKGLVzOO7/GDB1HxkmhVt61ZHB8eyFgCE=;
-        b=v5XFsbXzdR+ZcYOMI26/pskx3tAnhxaBmhescZ36EtWgpHtUPruk80UH8bsZXjH7lN
-         hixQBAB92nMByxxhniAAeNJ1XrcY3vjU1HOHusBFM50PdiFXJ1WCSK9btdbKGXSSo37y
-         vYc0Ayvz/gSao/SRiVSrNhjrck8LB+89WMc4re//rkIeeURAGRPvBhxdHOAoe9g0G9KJ
-         zr1P2mXCphJ9OWpitIUlgcvsmcgip2Nalb3KqliysCnEXepbRxHkPkBegQY97hxgmRxl
-         QbEmRSHM9q78+qgKSD4K8+pCfB3rzGGBZbSJ7772791INQQKE5aX26EUITKzMm44URWv
-         ee5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wC5ePYAgfLOKGLVzOO7/GDB1HxkmhVt61ZHB8eyFgCE=;
-        b=AsMoOs6IdnZukTYu8H2yvIftbx1N3GATvQC1sUHhcHJwQ8LiwgtZw4VWBXvxYj6wkK
-         6NCuSkfyiuLG3OBlZ3NlvOzIT2UV0Q0INPnw1O286H8CKJJbE8lNx2vdSZAdoo9j9ptA
-         5qTIv7JXp4O2On2myV+bDxXspCO1vPelc273Z1LjBAWd1fIT2YYpZefpZ0MFA2gYY0he
-         yUEri4H7We546kD3fnbSgEMIYDCq82qpbD1rlT6OwJuGn44sDcK403YOtxmmlQL+TjL3
-         047WTKTINPLVdjwBqs/y7bXeGrmSbIFO8PS5ALe29j+ssrVjtA1KSoolXj51qyTFtAvo
-         GquA==
-X-Gm-Message-State: APzg51Ck/zBGWiGHIXKGMZE89iOqA628eatiYk2azlGxMdip/Iq5+DV7
-        DsM17qB2APkeka4/XyhXH7VqIlX4F1Ykg1zeCsngEQ==
-X-Google-Smtp-Source: ANB0Vdb/uv4Lux2+GfzcSw/IC3RrZeGWOQELBFm7WloLKgQkDaN5l/cvwKldyarACwgJAtJk+yj5bKyW2XrKDkHqy/E=
-X-Received: by 2002:a19:a5c2:: with SMTP id o185-v6mr9629986lfe.85.1535398766597;
- Mon, 27 Aug 2018 12:39:26 -0700 (PDT)
+        Mon, 27 Aug 2018 19:27:36 -0400
+Received: from mga06.intel.com ([134.134.136.31]:17704 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727110AbeH0X1g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 19:27:36 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2018 12:39:36 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,296,1531810800"; 
+   d="scan'208";a="252346495"
+Received: from ray.jf.intel.com (HELO [10.54.74.168]) ([10.54.74.168])
+  by orsmga005.jf.intel.com with ESMTP; 27 Aug 2018 12:39:36 -0700
+Subject: Re: [PATCH v13 03/13] x86/cpufeatures: Add Intel-defined SGX leaf
+ CPUID_12_EAX
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
+        platform-driver-x86@vger.kernel.org
+References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
+ <20180827185507.17087-4-jarkko.sakkinen@linux.intel.com>
+Cc:     sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, linux-sgx@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@suse.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL VIRTUAL MACHINE FOR X86 (KVM/x86)" 
+        <kvm@vger.kernel.org>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <70dec13f-2182-e4d6-da71-a568d6e9354b@intel.com>
+Date:   Mon, 27 Aug 2018 12:39:36 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180823164005.201582-1-seobrien@chromium.org> <CAO-hwJLegX7Uuw8WSErg8W7L0jXj7v2RGiABnrujLonHBYRrog@mail.gmail.com>
-In-Reply-To: <CAO-hwJLegX7Uuw8WSErg8W7L0jXj7v2RGiABnrujLonHBYRrog@mail.gmail.com>
-From:   "Sean O'Brien" <seobrien@google.com>
-Date:   Mon, 27 Aug 2018 12:39:15 -0700
-Message-ID: <CABBVx+CnSzemH5+o1XMq+aHfymBwh3QEm5mCV3TRTvL0mpxCKQ@mail.gmail.com>
-Subject: Re: [PATCH] HID: add support for Apple Magic Keyboards
-To:     benjamin.tissoires@redhat.com
-Cc:     seobrien@chromium.org, jikos@kernel.org, dtor@chromium.org,
-        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180827185507.17087-4-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 5:19 AM Benjamin Tissoires
-<benjamin.tissoires@redhat.com> wrote:
->
-> Hi Sean,
->
-> On Thu, Aug 23, 2018 at 6:40 PM Sean O'Brien <seobrien@chromium.org> wrote:
-> >
-> > USB device
-> >         Vendor 05ac (Apple)
-> >         Device 026c (Magic Keyboard with Numeric Keypad)
-> >
-> > Bluetooth devices
-> >         Vendor 004c (Apple)
-> >         Device 0267 (Magic Keyboard)
-> >         Device 026c (Magic Keyboard with Numeric Keypad)
-> >
-> > Support already exists for the Magic Keyboard over USB connection.
-> > This patch adds support for the Magic Keyboard over Bluetooth
-> > connection, and for the Magic Keyboard with Numeric Keypad over
-> > Bluetooth and USB connection.
-> >
-> > Signed-off-by: Sean O'Brien <seobrien@chromium.org>
-> > ---
-> >
-> >  drivers/hid/hid-apple.c  | 9 ++++++++-
-> >  drivers/hid/hid-ids.h    | 2 ++
-> >  drivers/hid/hid-quirks.c | 3 +++
-> >  3 files changed, 13 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/hid/hid-apple.c b/drivers/hid/hid-apple.c
-> > index 25b7bd56ae11..1cb41992aaa1 100644
-> > --- a/drivers/hid/hid-apple.c
-> > +++ b/drivers/hid/hid-apple.c
-> > @@ -335,7 +335,8 @@ static int apple_input_mapping(struct hid_device *hdev, struct hid_input *hi,
-> >                 struct hid_field *field, struct hid_usage *usage,
-> >                 unsigned long **bit, int *max)
-> >  {
-> > -       if (usage->hid == (HID_UP_CUSTOM | 0x0003)) {
-> > +       if (usage->hid == (HID_UP_CUSTOM | 0x0003) ||
-> > +                       usage->hid == (HID_UP_MSVENDOR | 0x0003)) {
-> >                 /* The fn key on Apple USB keyboards */
-> >                 set_bit(EV_REP, hi->input->evbit);
-> >                 hid_map_usage_clear(hi, usage, bit, max, EV_KEY, KEY_FN);
-> > @@ -472,6 +473,12 @@ static const struct hid_device_id apple_devices[] = {
-> >                 .driver_data = APPLE_NUMLOCK_EMULATION | APPLE_HAS_FN },
-> >         { HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_ANSI),
-> >                 .driver_data = APPLE_HAS_FN },
-> > +       { HID_BLUETOOTH_DEVICE(BT_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_ANSI),
-> > +               .driver_data = APPLE_HAS_FN },
-> > +       { HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_ANSI),
-> > +               .driver_data = APPLE_HAS_FN },
-> > +       { HID_BLUETOOTH_DEVICE(BT_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_ANSI),
-> > +               .driver_data = APPLE_HAS_FN },
-> >         { HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_WELLSPRING_ANSI),
-> >                 .driver_data = APPLE_HAS_FN },
-> >         { HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_WELLSPRING_ISO),
-> > diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-> > index 79bdf0c7e351..5dbe3fb82690 100644
-> > --- a/drivers/hid/hid-ids.h
-> > +++ b/drivers/hid/hid-ids.h
-> > @@ -88,6 +88,7 @@
-> >  #define USB_DEVICE_ID_ANTON_TOUCH_PAD  0x3101
-> >
-> >  #define USB_VENDOR_ID_APPLE            0x05ac
-> > +#define BT_VENDOR_ID_APPLE             0x004c
-> >  #define USB_DEVICE_ID_APPLE_MIGHTYMOUSE        0x0304
-> >  #define USB_DEVICE_ID_APPLE_MAGICMOUSE 0x030d
-> >  #define USB_DEVICE_ID_APPLE_MAGICTRACKPAD      0x030e
-> > @@ -157,6 +158,7 @@
-> >  #define USB_DEVICE_ID_APPLE_ALU_WIRELESS_2011_ISO   0x0256
-> >  #define USB_DEVICE_ID_APPLE_ALU_WIRELESS_2011_JIS   0x0257
-> >  #define USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_ANSI   0x0267
-> > +#define USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_ANSI   0x026c
-> >  #define USB_DEVICE_ID_APPLE_WELLSPRING8_ANSI   0x0290
-> >  #define USB_DEVICE_ID_APPLE_WELLSPRING8_ISO    0x0291
-> >  #define USB_DEVICE_ID_APPLE_WELLSPRING8_JIS    0x0292
-> > diff --git a/drivers/hid/hid-quirks.c b/drivers/hid/hid-quirks.c
-> > index 249d49b6b16c..a3b3aecf8628 100644
-> > --- a/drivers/hid/hid-quirks.c
-> > +++ b/drivers/hid/hid-quirks.c
-> > @@ -270,6 +270,9 @@ static const struct hid_device_id hid_have_special_driver[] = {
-> >         { HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_ALU_WIRELESS_2011_ISO) },
-> >         { HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_ALU_WIRELESS_2011_JIS) },
-> >         { HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_ANSI) },
-> > +       { HID_BLUETOOTH_DEVICE(BT_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_ANSI) },
-> > +       { HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_ANSI) },
-> > +       { HID_BLUETOOTH_DEVICE(BT_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_ANSI) },
->
-> Unless the device doesn't work without this hunk, please drop this
-> from the submission. Since v4.16 this is not required anymore and is
-> doomed to be removed.
->
+On 08/27/2018 11:53 AM, Jarkko Sakkinen wrote:
+> +	/* Intel SGX features: level 0x00000012 */
+> +	if (c->cpuid_level >= 0x00000012) {
+> +		cpuid(0x00000012, &eax, &ebx, &ecx, &edx);
+> +
+> +		c->x86_capability[CPUID_12_EAX] = eax;
+> +	}
 
-I'll do that.  Thank you.
+I've given this specific bit of feedback at least once in the past.
+These patches are not ordered properly.  You introduce this in the next
+patch:
 
-> Cheers,
-> Benjamin
->
-> >         { HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_FOUNTAIN_TP_ONLY) },
-> >         { HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_GEYSER1_TP_ONLY) },
-> >  #endif
-> > --
-> > 2.18.0.1017.ga543ac7ca45-goog
-> >
++#define SGX_CPUID 0x12
