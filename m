@@ -6,284 +6,209 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5925C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:46:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09A35C433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:47:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FEC8208B4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:46:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FEC8208B4
+	by mail.kernel.org (Postfix) with ESMTP id AFE1A208B4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 19:47:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFE1A208B4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727866AbeH0Xe5 (ORCPT
+        id S1727846AbeH0Xe5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 27 Aug 2018 19:34:57 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:34837 "EHLO
+Received: from mout.kundenserver.de ([217.72.192.75]:38759 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726939AbeH0Xdq (ORCPT
+        with ESMTP id S1726823AbeH0Xdq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 27 Aug 2018 19:33:46 -0400
 Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
  (mreue101 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0M8hqV-1fi3bX47Bj-00wH5E; Mon, 27 Aug 2018 21:45:37 +0200
+ 0Mbyf0-1gBM4l1S7i-00JNUb; Mon, 27 Aug 2018 21:45:37 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     tglx@linutronix.de
 Cc:     y2038@lists.linaro.org, linux-api@vger.kernel.org,
         Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
         torvalds@linux-foundation.org, deepa.kernel@gmail.com,
         linux-arch@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 04/14] y2038: Remove newstat family from default syscall set
-Date:   Mon, 27 Aug 2018 21:45:21 +0200
-Message-Id: <20180827194531.3796559-5-arnd@arndb.de>
+Subject: [PATCH 05/14] y2038: Remove stat64 family from default syscall set
+Date:   Mon, 27 Aug 2018 21:45:22 +0200
+Message-Id: <20180827194531.3796559-6-arnd@arndb.de>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180827194531.3796559-1-arnd@arndb.de>
 References: <20180827194531.3796559-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:1gDZLuElI0G1LKlTL6RoBPSZxFQDRriwbmpfMjfc1KIcskoHnj3
- DGnRdrV0TlSPFQNl7Hmma2IKjo5OwExBnFBBUChYG4uMaNs8j4j+DJd8N59T5dcAN1Ulp2X
- nG/TmYQVpadR1zp2uVitOL61GfR8d+OyReQ/4vfOW9wanJaI+4tEjQcNQJQ263/gwrqLXiT
- XdbYABIlj1feKUxJ2Qo9g==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:oWD6c3hCnlk=:XVxT1XYXy9Sat1zup0e8P+
- stT+Xf0gtJ/aQvym5PaelvLjftQItx5tw8sNJdkiVUiJXv1yn4sdD7INndk2VpaofeiLb4Hms
- AGBoIexeFsK00XQJPtj6CPOIMXcDkmiDse2X8hK48+I/DDvutEbS/5Lv12xDmGQPN/GBi1q8H
- +pMvah1veKruu8+Q7Jmf2LquanfH3IRRpW4eYwNXIF3lipQzuEMF8cUvFH8iDk49L6iYUXsj7
- o8dUBlzoAZR1xMveFhRAf5Riuq7I6zAJOgVVhDMd5mKc33KRHVw8AiuYFNvz12an7Btqcl04q
- aegPOYGghNgHgblhwpecUhwWX7mAjLAZ7NBmGYIxFRlRK1aSRTRa4ccgTOk2vlcedPzGFnHym
- gTuk0j3dHUqjLOSmEM0Y3Ihs47Ml92PvxQrS9j9cdOt2QifRIVHCyNeBrdRw/cp/1nJIU99I5
- 8ESxYal34ofuzZUC0xOw4ZerwHdr1pXWC6Voh8GI1uCbsoZbQ2odVnVoQgEtIyIJRDVaVIcap
- TLBaJz5mLALvA3bihADQbR7ea9K+JLVDDnmiBaoeXpVcTLlv+0h1eQkdgdsPvlsEEB9krPmy+
- xXmemzuBkZihMPaP6dDyhQBppJm3Qhn0gvqZfcY718anRxe2lFJwvu1baeme6KzaWiyMW8FBL
- 7oSsNRINgHe5Syx6upMbMl2RSMa77ek9JnkYJn+I6rtZ3Wbd6FTWxT8PM4Se3+eQTrr4=
+X-Provags-ID: V03:K1:igrE4gERJEo+kEelQStiIqH+Zmx2zakwnV1Y9q8rzHSJSjFzJ34
+ 7hDWUXVcOlpUt6y6OGLsGCdr7vmR23mTNPzsqFlBF1KAEzMvszYTAA649INWGlLwPsE27cg
+ FNy6S7ziri4tY2yXUfgacUtQBiMcjiJQNM6+oAkBSVr5iazMxAr1ueDyyJtu55Shf7bBqKb
+ ixuJg10g7FjAoi5WOu3Dw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:dhyiS7C+TOE=:kJb/Uirr9K9RyDguMmy/BJ
+ QFKaHbiQAJnysouRVE5wYVTjhWV+vmdwF6iXq8I1fiNmtaJc9cIAV4Eb0TkAdVdcobTMAnuFn
+ fmJGB45ceBaiHFGoiipk+tEEisoLQRRZVqLADTZgaKu6FA8xYPSQgpTUkNItYJAFdSg6ZaNzt
+ ItDIrZ/y2Dzr9v/ktHt2Jqcb/kh84BVS3Ephbt4TBEbV1U9/Tn9No4PY7gpkX8lJ55jRAE7RP
+ 7Qgvc0hDfVfTgZ5UlM0c1l7sS8k9SJdhcZfKrJz1iulijQlSp1DKo2DzkV6qhP/RDYoFb10Zu
+ C9BWVx4jPWEATqdknG117Gq5BSqJkYolLDp4bgTQQQOC9n/2JE2HTc9OfLFoFyDUYYdEwYNju
+ W6TZQ8aUmGC6ETecKtNBEPwWhpGNXzT4NlPJNZgDav6LX1xZ25/DBM9a3URRe+gTN1poy8Nhw
+ rt5maDLaPV1AuBtTVJPavrZ6om+Jw4O59Xfloo1fN6nYXBb6PFl0XmmDzB1w+GmpqHgoa5B6D
+ PRUDrkVBVUbdkNjsFbes4DnPxd3lGytYxjSwAvq0xSIbW9GCpm8gknffEHErq5Cd/58mMInJH
+ KqZzi3K18hNQ2hKLHjXk9RTZ2SxEfr1hjJXmuyznh/xHacgHWinpOqEPQvvyIkztJoqeAlqLj
+ IDyt4+ZTi8j+9uis6zHrbzKmJIFxGx/+6W1LqDRx9XC0g2NEx0gL5WmfAgToeSpJGK+4=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We have four generations of stat() syscalls:
-- the oldstat syscalls that are only used on the older architectures
-- the newstat family that is used on all 64-bit architectures but
-  lacked support for large files on 32-bit architectures.
-- the stat64 family that is used mostly on 32-bit architectures to
-  replace newstat
-- statx() to replace all of the above, adding 64-bit timestamps among
-  other things.
+New architectures should no longer need stat64, which is not y2038
+safe and has been replaced by statx(). This removes the 'select
+__ARCH_WANT_STAT64' statement from asm-generic/unistd.h and instead
+moves it into the respective asm/unistd.h UAPI header files for each
+architecture that uses it today.
 
-We already compile stat64 only on those architectures that need it,
-but newstat is always built, including on those that don't reference
-it. This adds a new __ARCH_WANT_NEW_STAT symbol along the lines of
-__ARCH_WANT_OLD_STAT and __ARCH_WANT_STAT64 to control compilation of
-newstat. All architectures that need it use an explict define, the
-others now get a little bit smaller, and future architecture (including
-64-bit targets) won't ever see it.
+In the generic file, the system call number and entry points are now
+made conditional, so newly added architectures (e.g. riscv32 or csky)
+will never need to carry backwards compatiblity for it.
 
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+arm64 is the only 64-bit architecture using the asm-generic/unistd.h
+file, and it already sets __ARCH_WANT_NEW_STAT in its headers, and I
+use the same #ifdef here: future 64-bit architectures therefore won't
+see newstat or stat64 any more. They don't suffer from the y2038 time_t
+overflow, but for consistency it seems best to also let them use statx().
+
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/alpha/include/asm/unistd.h      | 1 +
- arch/arm/include/asm/unistd.h        | 1 +
- arch/arm64/include/uapi/asm/unistd.h | 1 +
- arch/ia64/include/asm/unistd.h       | 2 ++
- arch/m68k/include/asm/unistd.h       | 1 +
- arch/microblaze/include/asm/unistd.h | 1 +
- arch/mips/include/asm/unistd.h       | 1 +
- arch/parisc/include/asm/unistd.h     | 1 +
- arch/powerpc/include/asm/unistd.h    | 1 +
- arch/s390/include/asm/unistd.h       | 1 +
- arch/sh/include/asm/unistd.h         | 1 +
- arch/sparc/include/asm/unistd.h      | 1 +
- arch/x86/include/asm/unistd.h        | 1 +
- arch/xtensa/include/asm/unistd.h     | 1 +
- fs/stat.c                            | 3 +++
- 15 files changed, 18 insertions(+)
+ arch/arc/include/uapi/asm/unistd.h       | 1 +
+ arch/c6x/include/uapi/asm/unistd.h       | 1 +
+ arch/h8300/include/uapi/asm/unistd.h     | 1 +
+ arch/hexagon/include/uapi/asm/unistd.h   | 1 +
+ arch/nds32/include/uapi/asm/unistd.h     | 1 +
+ arch/nios2/include/uapi/asm/unistd.h     | 1 +
+ arch/openrisc/include/uapi/asm/unistd.h  | 1 +
+ arch/unicore32/include/uapi/asm/unistd.h | 1 +
+ include/asm-generic/unistd.h             | 1 -
+ include/uapi/asm-generic/unistd.h        | 2 ++
+ 10 files changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/arch/alpha/include/asm/unistd.h b/arch/alpha/include/asm/unistd.h
-index d6e29a1de4cc..edc090470023 100644
---- a/arch/alpha/include/asm/unistd.h
-+++ b/arch/alpha/include/asm/unistd.h
-@@ -6,6 +6,7 @@
+diff --git a/arch/arc/include/uapi/asm/unistd.h b/arch/arc/include/uapi/asm/unistd.h
+index 517178b1daef..3b3543fd151c 100644
+--- a/arch/arc/include/uapi/asm/unistd.h
++++ b/arch/arc/include/uapi/asm/unistd.h
+@@ -17,6 +17,7 @@
+ #define _UAPI_ASM_ARC_UNISTD_H
  
- #define NR_SYSCALLS			523
- 
-+#define __ARCH_WANT_NEW_STAT
- #define __ARCH_WANT_OLD_READDIR
- #define __ARCH_WANT_STAT64
- #define __ARCH_WANT_SYS_GETHOSTNAME
-diff --git a/arch/arm/include/asm/unistd.h b/arch/arm/include/asm/unistd.h
-index 076090d2dbf5..07e58010d597 100644
---- a/arch/arm/include/asm/unistd.h
-+++ b/arch/arm/include/asm/unistd.h
+ #define __ARCH_WANT_RENAMEAT
++#define __ARCH_WANT_STAT64
+ #define __ARCH_WANT_SYS_EXECVE
+ #define __ARCH_WANT_SYS_CLONE
+ #define __ARCH_WANT_SYS_VFORK
+diff --git a/arch/c6x/include/uapi/asm/unistd.h b/arch/c6x/include/uapi/asm/unistd.h
+index 0d2daf7f9809..6b2fe792de9d 100644
+--- a/arch/c6x/include/uapi/asm/unistd.h
++++ b/arch/c6x/include/uapi/asm/unistd.h
 @@ -16,6 +16,7 @@
- #include <uapi/asm/unistd.h>
- #include <asm/unistd-nr.h>
- 
-+#define __ARCH_WANT_NEW_STAT
- #define __ARCH_WANT_STAT64
- #define __ARCH_WANT_SYS_GETHOSTNAME
- #define __ARCH_WANT_SYS_PAUSE
-diff --git a/arch/arm64/include/uapi/asm/unistd.h b/arch/arm64/include/uapi/asm/unistd.h
-index 5072cbd15c82..dae1584cf017 100644
---- a/arch/arm64/include/uapi/asm/unistd.h
-+++ b/arch/arm64/include/uapi/asm/unistd.h
-@@ -16,5 +16,6 @@
   */
  
  #define __ARCH_WANT_RENAMEAT
-+#define __ARCH_WANT_NEW_STAT
++#define __ARCH_WANT_STAT64
+ #define __ARCH_WANT_SYS_CLONE
+ 
+ /* Use the standard ABI for syscalls. */
+diff --git a/arch/h8300/include/uapi/asm/unistd.h b/arch/h8300/include/uapi/asm/unistd.h
+index 7dd20ef7625a..628195823816 100644
+--- a/arch/h8300/include/uapi/asm/unistd.h
++++ b/arch/h8300/include/uapi/asm/unistd.h
+@@ -1,5 +1,6 @@
+ #define __ARCH_NOMMU
+ 
+ #define __ARCH_WANT_RENAMEAT
++#define __ARCH_WANT_STAT64
  
  #include <asm-generic/unistd.h>
-diff --git a/arch/ia64/include/asm/unistd.h b/arch/ia64/include/asm/unistd.h
-index ffb705dc9c13..c5b2620c4a4c 100644
---- a/arch/ia64/include/asm/unistd.h
-+++ b/arch/ia64/include/asm/unistd.h
-@@ -28,6 +28,8 @@
- #define __IGNORE_vfork		/* clone() */
- #define __IGNORE_umount2	/* umount() */
+diff --git a/arch/hexagon/include/uapi/asm/unistd.h b/arch/hexagon/include/uapi/asm/unistd.h
+index ea181e79162e..c91ca7d02461 100644
+--- a/arch/hexagon/include/uapi/asm/unistd.h
++++ b/arch/hexagon/include/uapi/asm/unistd.h
+@@ -29,6 +29,7 @@
  
-+#define __ARCH_WANT_NEW_STAT
-+
- #if !defined(__ASSEMBLY__) && !defined(ASSEMBLER)
- 
- #include <linux/types.h>
-diff --git a/arch/m68k/include/asm/unistd.h b/arch/m68k/include/asm/unistd.h
-index 30d0d3fbd4ef..db22cdadc38a 100644
---- a/arch/m68k/include/asm/unistd.h
-+++ b/arch/m68k/include/asm/unistd.h
-@@ -7,6 +7,7 @@
- 
- #define NR_syscalls		380
- 
-+#define __ARCH_WANT_NEW_STAT
- #define __ARCH_WANT_OLD_READDIR
- #define __ARCH_WANT_OLD_STAT
- #define __ARCH_WANT_STAT64
-diff --git a/arch/microblaze/include/asm/unistd.h b/arch/microblaze/include/asm/unistd.h
-index a62d09420a47..a28dc770c9b2 100644
---- a/arch/microblaze/include/asm/unistd.h
-+++ b/arch/microblaze/include/asm/unistd.h
-@@ -15,6 +15,7 @@
- 
- /* #define __ARCH_WANT_OLD_READDIR */
- /* #define __ARCH_WANT_OLD_STAT */
-+#define __ARCH_WANT_NEW_STAT
- #define __ARCH_WANT_STAT64
- #define __ARCH_WANT_SYS_ALARM
- #define __ARCH_WANT_SYS_GETHOSTNAME
-diff --git a/arch/mips/include/asm/unistd.h b/arch/mips/include/asm/unistd.h
-index 3c09450908aa..d7878b3e16d8 100644
---- a/arch/mips/include/asm/unistd.h
-+++ b/arch/mips/include/asm/unistd.h
-@@ -24,6 +24,7 @@
- 
- #ifndef __ASSEMBLY__
- 
-+#define __ARCH_WANT_NEW_STAT
- #define __ARCH_WANT_OLD_READDIR
- #define __ARCH_WANT_SYS_ALARM
- #define __ARCH_WANT_SYS_GETHOSTNAME
-diff --git a/arch/parisc/include/asm/unistd.h b/arch/parisc/include/asm/unistd.h
-index 3d507d04eb4c..b36273bacca7 100644
---- a/arch/parisc/include/asm/unistd.h
-+++ b/arch/parisc/include/asm/unistd.h
-@@ -141,6 +141,7 @@ type name(type1 arg1, type2 arg2, type3 arg3, type4 arg4, type5 arg5)	\
-     return K_INLINE_SYSCALL(name, 5, arg1, arg2, arg3, arg4, arg5);	\
- }
- 
-+#define __ARCH_WANT_NEW_STAT
- #define __ARCH_WANT_OLD_READDIR
- #define __ARCH_WANT_STAT64
- #define __ARCH_WANT_SYS_ALARM
-diff --git a/arch/powerpc/include/asm/unistd.h b/arch/powerpc/include/asm/unistd.h
-index c19379f0a32e..8b37e01817be 100644
---- a/arch/powerpc/include/asm/unistd.h
-+++ b/arch/powerpc/include/asm/unistd.h
-@@ -22,6 +22,7 @@
- #include <linux/compiler.h>
- #include <linux/linkage.h>
- 
-+#define __ARCH_WANT_NEW_STAT
- #define __ARCH_WANT_OLD_READDIR
- #define __ARCH_WANT_STAT64
- #define __ARCH_WANT_SYS_ALARM
-diff --git a/arch/s390/include/asm/unistd.h b/arch/s390/include/asm/unistd.h
-index fd79c0d35dc4..1d181373288a 100644
---- a/arch/s390/include/asm/unistd.h
-+++ b/arch/s390/include/asm/unistd.h
-@@ -15,6 +15,7 @@
- #define __IGNORE_pkey_alloc
- #define __IGNORE_pkey_free
- 
-+#define __ARCH_WANT_NEW_STAT
- #define __ARCH_WANT_OLD_READDIR
- #define __ARCH_WANT_SYS_ALARM
- #define __ARCH_WANT_SYS_GETHOSTNAME
-diff --git a/arch/sh/include/asm/unistd.h b/arch/sh/include/asm/unistd.h
-index b36200af9ce7..a845b57eac69 100644
---- a/arch/sh/include/asm/unistd.h
-+++ b/arch/sh/include/asm/unistd.h
-@@ -5,6 +5,7 @@
- #  include <asm/unistd_64.h>
- # endif
- 
-+# define __ARCH_WANT_NEW_STAT
- # define __ARCH_WANT_OLD_READDIR
- # define __ARCH_WANT_OLD_STAT
- # define __ARCH_WANT_STAT64
-diff --git a/arch/sparc/include/asm/unistd.h b/arch/sparc/include/asm/unistd.h
-index b2a6a955113e..3544244685e1 100644
---- a/arch/sparc/include/asm/unistd.h
-+++ b/arch/sparc/include/asm/unistd.h
-@@ -21,6 +21,7 @@
- #else
- #define __NR_time		231 /* Linux sparc32                               */
- #endif
-+#define __ARCH_WANT_NEW_STAT
- #define __ARCH_WANT_OLD_READDIR
- #define __ARCH_WANT_STAT64
- #define __ARCH_WANT_SYS_ALARM
-diff --git a/arch/x86/include/asm/unistd.h b/arch/x86/include/asm/unistd.h
-index 51c4eee00732..35b66bbf8028 100644
---- a/arch/x86/include/asm/unistd.h
-+++ b/arch/x86/include/asm/unistd.h
-@@ -31,6 +31,7 @@
- 
- # endif
- 
-+# define __ARCH_WANT_NEW_STAT
- # define __ARCH_WANT_OLD_READDIR
- # define __ARCH_WANT_OLD_STAT
- # define __ARCH_WANT_SYS_ALARM
-diff --git a/arch/xtensa/include/asm/unistd.h b/arch/xtensa/include/asm/unistd.h
-index ed66db3bc9bb..0d532ab60b37 100644
---- a/arch/xtensa/include/asm/unistd.h
-+++ b/arch/xtensa/include/asm/unistd.h
-@@ -5,6 +5,7 @@
+ #define sys_mmap2 sys_mmap_pgoff
+ #define __ARCH_WANT_RENAMEAT
++#define __ARCH_WANT_STAT64
+ #define __ARCH_WANT_SYS_EXECVE
  #define __ARCH_WANT_SYS_CLONE
- #include <uapi/asm/unistd.h>
+ #define __ARCH_WANT_SYS_VFORK
+diff --git a/arch/nds32/include/uapi/asm/unistd.h b/arch/nds32/include/uapi/asm/unistd.h
+index 6e95901cabe3..603e826e0449 100644
+--- a/arch/nds32/include/uapi/asm/unistd.h
++++ b/arch/nds32/include/uapi/asm/unistd.h
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ // Copyright (C) 2005-2017 Andes Technology Corporation
  
-+#define __ARCH_WANT_NEW_STAT
- #define __ARCH_WANT_STAT64
- #define __ARCH_WANT_SYS_UTIME
++#define __ARCH_WANT_STAT64
+ #define __ARCH_WANT_SYNC_FILE_RANGE2
+ 
+ /* Use the standard ABI for syscalls */
+diff --git a/arch/nios2/include/uapi/asm/unistd.h b/arch/nios2/include/uapi/asm/unistd.h
+index b6bdae04bc84..d9948d88790b 100644
+--- a/arch/nios2/include/uapi/asm/unistd.h
++++ b/arch/nios2/include/uapi/asm/unistd.h
+@@ -19,6 +19,7 @@
+  #define sys_mmap2 sys_mmap_pgoff
+ 
+ #define __ARCH_WANT_RENAMEAT
++#define __ARCH_WANT_STAT64
+ 
+ /* Use the standard ABI for syscalls */
+ #include <asm-generic/unistd.h>
+diff --git a/arch/openrisc/include/uapi/asm/unistd.h b/arch/openrisc/include/uapi/asm/unistd.h
+index 11c5a58ab333..ec37df18d8ed 100644
+--- a/arch/openrisc/include/uapi/asm/unistd.h
++++ b/arch/openrisc/include/uapi/asm/unistd.h
+@@ -20,6 +20,7 @@
+ #define sys_mmap2 sys_mmap_pgoff
+ 
+ #define __ARCH_WANT_RENAMEAT
++#define __ARCH_WANT_STAT64
+ #define __ARCH_WANT_SYS_FORK
+ #define __ARCH_WANT_SYS_CLONE
+ 
+diff --git a/arch/unicore32/include/uapi/asm/unistd.h b/arch/unicore32/include/uapi/asm/unistd.h
+index 65856eaab163..1e8fe5941b8a 100644
+--- a/arch/unicore32/include/uapi/asm/unistd.h
++++ b/arch/unicore32/include/uapi/asm/unistd.h
+@@ -15,4 +15,5 @@
+ 
+ /* Use the standard ABI for syscalls. */
+ #include <asm-generic/unistd.h>
++#define __ARCH_WANT_STAT64
+ #define __ARCH_WANT_SYS_CLONE
+diff --git a/include/asm-generic/unistd.h b/include/asm-generic/unistd.h
+index cdf904265caf..ea74eca8463f 100644
+--- a/include/asm-generic/unistd.h
++++ b/include/asm-generic/unistd.h
+@@ -8,6 +8,5 @@
+  * be selected by default.
+  */
+ #if __BITS_PER_LONG == 32
+-#define __ARCH_WANT_STAT64
  #define __ARCH_WANT_SYS_LLSEEK
-diff --git a/fs/stat.c b/fs/stat.c
-index f8e6fb2c3657..adbfcd86c81b 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -280,6 +280,8 @@ SYSCALL_DEFINE2(fstat, unsigned int, fd, struct __old_kernel_stat __user *, stat
- 
- #endif /* __ARCH_WANT_OLD_STAT */
- 
-+#ifdef __ARCH_WANT_NEW_STAT
-+
- #if BITS_PER_LONG == 32
- #  define choose_32_64(a,b) a
- #else
-@@ -378,6 +380,7 @@ SYSCALL_DEFINE2(newfstat, unsigned int, fd, struct stat __user *, statbuf)
- 
- 	return error;
- }
+ #endif
+diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
+index df4bedb9b01c..538546edbfbd 100644
+--- a/include/uapi/asm-generic/unistd.h
++++ b/include/uapi/asm-generic/unistd.h
+@@ -242,10 +242,12 @@ __SYSCALL(__NR_tee, sys_tee)
+ /* fs/stat.c */
+ #define __NR_readlinkat 78
+ __SYSCALL(__NR_readlinkat, sys_readlinkat)
++#if defined(__ARCH_WANT_NEW_STAT) || defined(__ARCH_WANT_STAT64)
+ #define __NR3264_fstatat 79
+ __SC_3264(__NR3264_fstatat, sys_fstatat64, sys_newfstatat)
+ #define __NR3264_fstat 80
+ __SC_3264(__NR3264_fstat, sys_fstat64, sys_newfstat)
 +#endif
  
- static int do_readlinkat(int dfd, const char __user *pathname,
- 			 char __user *buf, int bufsiz)
+ /* fs/sync.c */
+ #define __NR_sync 81
 -- 
 2.18.0
 
