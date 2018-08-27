@@ -6,72 +6,71 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 383E1C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 08:23:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A977CC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 08:23:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8E6421746
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 08:23:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 671112174A
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 08:23:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MCKdtezP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8E6421746
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sLL+l3Ef"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 671112174A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727397AbeH0MIx (ORCPT
+        id S1727112AbeH0MIL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 08:08:53 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:33963 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726802AbeH0MIM (ORCPT
+        Mon, 27 Aug 2018 08:08:11 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:33133 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726872AbeH0MIL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 08:08:12 -0400
-Received: by mail-lj1-f193.google.com with SMTP id f8-v6so11644545ljk.1;
-        Mon, 27 Aug 2018 01:22:35 -0700 (PDT)
+        Mon, 27 Aug 2018 08:08:11 -0400
+Received: by mail-lj1-f194.google.com with SMTP id s12-v6so11620842ljj.0;
+        Mon, 27 Aug 2018 01:22:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=kMK7vADaYUb3uoA3K0PRlMXBDFYMW3OHjrli6EBxJE4=;
-        b=MCKdtezPpLuUtsbonrbkCwRNnI36hXL3H/YNYt4As9iRpmwfGduA/SlRk1jQQrZrWv
-         pULvUc4Cs1eU4GVqpqlfca4zhHIdADoeXsX+CyaN2r+53/d9Q+4wCzngPZZyic0gOoAF
-         8T7iz1NyM1ee+TsGBcx3/g6NCg3BARZshQ9sUCLRwnJJ+OHXddWp7BjQB/sz9QTAsgdL
-         FVfFxVYMyTEaqSWheTeEuR/3iCxprEFiRBive9ytOJBGCR/yZsWoEkt+isRRgAenNq7g
-         2PYlC2XaCoupiFA07VAmGUQpwkqaCOX1H62kGy+J2Kua75V3kbKdLhCAhAyLdZHu15W2
-         e/VQ==
+        bh=j9TEfnBOgeJPhtnrYYF91KbGFTGsSDrgCHOAcfWP4Mw=;
+        b=sLL+l3Ef7vuu98F2P2T9G3v9ADJLAmn98w8OEIxxEYESoYFK5cdNGA9DogEGtSz3Xq
+         +CFyPZUw8zefxNxcJzNg0VF4B1zRPZ39A/TJQIIWb+aDSbSvblxMWqRMYmNnQv2SxV4q
+         8veoQkdQwpbdI6jE8jmEx37qWmdrEaZvw/F50yugVCN4vgumsh13txKY8kgD8o3g2AEv
+         LkWWJlxQSp6XOuSjJUf54l0C9xNx5WREzC5KR9+3aVuax8fwyhzx5qJVk5IfAc1Os2eT
+         XpkLirc5Pivx85B+HYkKYOO1f1U82eV9azJxH6ioRVz+csr4aWKMa8lx9vnzgBVsGu3L
+         5+Qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references;
-        bh=kMK7vADaYUb3uoA3K0PRlMXBDFYMW3OHjrli6EBxJE4=;
-        b=Y8lS7PRTkRNaEoNTVAXTumoYH6tbn2NlmZhiSBnWewBOE3YSWUz/HZGbpfG0pae0Z6
-         l4E/QYd1SnyR+kOZ4VkuJ1JgTN4mkS6eH3mlQVjKOIayA5qDaj7K0L+poqd2E3cZZWsX
-         wXHVHVFyVznHeBihTIrF3BLIW/hyK7cV0JLfRUNo/meGPHihFXsprY/rY80fzmPCjhXj
-         gM3UO0+1hhPEhYDk3bEAvzYkjLRMW9qSsmEZBTHH51Xi9ytbOpNDnnkQXRIRKKNnqj5w
-         nDImCwblPoG+xHOSdoIHMyTovCPFzNVMakIRmq341GCgyk4+rf2oLHfcBsP+XgO4G04i
-         YomQ==
-X-Gm-Message-State: APzg51Ch2HnD0Bo7/l+9L07cAiM/SZCJcJcsp84UHGO3Xmkt7fGvpWoY
-        sirYeyG3Y80K00onYbFRTyc=
-X-Google-Smtp-Source: ANB0VdYw5PU6PM20Mx43Gf+6+IHOSfmCU8Kg8voG7Kz2muq8NwznNjR1fuptycA5mbugBmONOYLBgA==
-X-Received: by 2002:a2e:1290:: with SMTP id 16-v6mr8186756ljs.94.1535358154357;
-        Mon, 27 Aug 2018 01:22:34 -0700 (PDT)
+        bh=j9TEfnBOgeJPhtnrYYF91KbGFTGsSDrgCHOAcfWP4Mw=;
+        b=GveSClsfch34NhRLXqc0d0N8fIMJ6jjKd07ifhi+onqGXMkS2l12U0JTzGFDEiBk0K
+         2ngTwLbpOw6hinZU65EGfNgY+ti1MTqd3Ubf72ghtpum0thrjDDtx10YNYAgFwJqfJUL
+         /feC7dO8ESHpBZdjKlcJOccYID7tJ7StIrAF9+ZPkwbBP16/6VxIqZztEF6KB3nqkKJs
+         sIajEClYdUJnxu6u0s0ljqs5XdEw3D+gAgiygMOePrAsWz50LNJhu0bACIwmNgjntAfg
+         whc+e65KXRdxjGDMd0z+Avy0UmlVT4dAZBPBDwS2FM19nVHhepcy9yAyoqPic1bOLIcP
+         98vQ==
+X-Gm-Message-State: APzg51CWW0joFxG+Q7G0xbeAY9qrdRJGhbLd2vhDQfOT6zg96WQQn5KK
+        fF/aI0dwU26pBMFoL0FC3lFH5/mA
+X-Google-Smtp-Source: ANB0VdbYSiT8wrUTbV5RHR41HVfH4gnGNwgbuQsVlHYHEAJlSqnKk1hQS5iLmXclyLQFeeWv0OgdKw==
+X-Received: by 2002:a2e:3005:: with SMTP id w5-v6mr7559328ljw.20.1535358153014;
+        Mon, 27 Aug 2018 01:22:33 -0700 (PDT)
 Received: from xi.terra ([85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id u2-v6sm2642547ljg.55.2018.08.27.01.22.31
+        by smtp.gmail.com with ESMTPSA id f9-v6sm2649837ljf.9.2018.08.27.01.22.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
         Mon, 27 Aug 2018 01:22:31 -0700 (PDT)
 Received: from johan by xi.terra with local (Exim 4.91)
         (envelope-from <johan@xi.terra>)
-        id 1fuCn6-0005sc-PS; Mon, 27 Aug 2018 10:22:28 +0200
+        id 1fuCn7-0005t1-83; Mon, 27 Aug 2018 10:22:29 +0200
 From:   Johan Hovold <johan@kernel.org>
 To:     Rob Herring <robh+dt@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>,
         stable <stable@vger.kernel.org>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Rob Clark <robdclark@gmail.com>,
-        David Airlie <airlied@linux.ie>
-Subject: [PATCH v2 3/9] drm/msm: fix OF child-node lookup
-Date:   Mon, 27 Aug 2018 10:21:47 +0200
-Message-Id: <20180827082153.22537-4-johan@kernel.org>
+        Vincent Cuissard <cuissard@marvell.com>,
+        Samuel Ortiz <sameo@linux.intel.com>
+Subject: [PATCH v2 8/9] NFC: nfcmrvl_uart: fix OF child-node lookup
+Date:   Mon, 27 Aug 2018 10:21:52 +0200
+Message-Id: <20180827082153.22537-9-johan@kernel.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180827082153.22537-1-johan@kernel.org>
 References: <20180827082153.22537-1-johan@kernel.org>
@@ -80,50 +79,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the new of_get_compatible_child() helper to lookup the legacy
-pwrlevels child node instead of using of_find_compatible_node(), which
-searches the entire tree from a given start node and thus can return an
-unrelated (i.e.  non-child) node.
+Use the new of_get_compatible_child() helper to lookup the nfc child
+node instead of using of_find_compatible_node(), which searches the
+entire tree from a given start node and thus can return an unrelated
+(i.e. non-child) node.
 
 This also addresses a potential use-after-free (e.g. after probe
 deferral) as the tree-wide helper drops a reference to its first
-argument (i.e. the probed device's node).
+argument (i.e. the parent node).
 
-While at it, also fix the related child-node reference leak.
-
-Fixes: e2af8b6b0ca1 ("drm/msm: gpu: Use OPP tables if we can")
-Cc: stable <stable@vger.kernel.org>     # 4.12
-Cc: Jordan Crouse <jcrouse@codeaurora.org>
-Cc: Rob Clark <robdclark@gmail.com>
-Cc: David Airlie <airlied@linux.ie>
+Fixes: e097dc624f78 ("NFC: nfcmrvl: add UART driver")
+Fixes: d8e018c0b321 ("NFC: nfcmrvl: update device tree bindings for Marvell NFC")
+Cc: stable <stable@vger.kernel.org>     # 4.2
+Cc: Vincent Cuissard <cuissard@marvell.com>
+Cc: Samuel Ortiz <sameo@linux.intel.com>
 Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- drivers/gpu/drm/msm/adreno/adreno_gpu.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/nfc/nfcmrvl/uart.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-index da1363a0c54d..93d70f4a2154 100644
---- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-+++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-@@ -633,8 +633,7 @@ static int adreno_get_legacy_pwrlevels(struct device *dev)
- 	struct device_node *child, *node;
+diff --git a/drivers/nfc/nfcmrvl/uart.c b/drivers/nfc/nfcmrvl/uart.c
+index 91162f8e0366..9a22056e8d9e 100644
+--- a/drivers/nfc/nfcmrvl/uart.c
++++ b/drivers/nfc/nfcmrvl/uart.c
+@@ -73,10 +73,9 @@ static int nfcmrvl_uart_parse_dt(struct device_node *node,
+ 	struct device_node *matched_node;
  	int ret;
  
--	node = of_find_compatible_node(dev->of_node, NULL,
--		"qcom,gpu-pwrlevels");
-+	node = of_get_compatible_child(dev->of_node, "qcom,gpu-pwrlevels");
- 	if (!node) {
- 		dev_err(dev, "Could not find the GPU powerlevels\n");
- 		return -ENXIO;
-@@ -655,6 +654,8 @@ static int adreno_get_legacy_pwrlevels(struct device *dev)
- 			dev_pm_opp_add(dev, val, 0);
+-	matched_node = of_find_compatible_node(node, NULL, "marvell,nfc-uart");
++	matched_node = of_get_compatible_child(node, "marvell,nfc-uart");
+ 	if (!matched_node) {
+-		matched_node = of_find_compatible_node(node, NULL,
+-						       "mrvl,nfc-uart");
++		matched_node = of_get_compatible_child(node, "mrvl,nfc-uart");
+ 		if (!matched_node)
+ 			return -ENODEV;
  	}
- 
-+	of_node_put(node);
-+
- 	return 0;
- }
- 
 -- 
 2.18.0
 
