@@ -2,79 +2,83 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE50CC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:27:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EF47C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:29:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82122208B2
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:27:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82122208B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4C547208B2
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 20:29:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C547208B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727125AbeH1APR (ORCPT
+        id S1727172AbeH1ARf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 20:15:17 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39458 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726826AbeH1APR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 20:15:17 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Mon, 27 Aug 2018 20:17:35 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:43955 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726826AbeH1ARe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 20:17:34 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mailout.easymail.ca (Postfix) with ESMTP id 3B7CCC0754;
+        Mon, 27 Aug 2018 20:29:24 +0000 (UTC)
+Received: from mailout.easymail.ca ([127.0.0.1])
+        by localhost (emo01-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id Hlw-gq9qwWl7; Mon, 27 Aug 2018 20:29:24 +0000 (UTC)
+Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BDD9F40073BE;
-        Mon, 27 Aug 2018 20:27:06 +0000 (UTC)
-Received: from napanee.usersys.redhat.com (dhcp-17-211.bos.redhat.com [10.18.17.211])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AC145202704E;
-        Mon, 27 Aug 2018 20:27:06 +0000 (UTC)
-Received: by napanee.usersys.redhat.com (Postfix, from userid 1000)
-        id 7DCF7C0B2A; Mon, 27 Aug 2018 16:27:06 -0400 (EDT)
-Date:   Mon, 27 Aug 2018 16:27:06 -0400
-From:   Aristeu Rozanski <aris@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH] sysctl: do not allow a 64bit value write in a 32bit knob
-Message-ID: <20180827202706.olt3saqjzzzyax6i@redhat.com>
+        by mailout.easymail.ca (Postfix) with ESMTPSA id A8C31C0665;
+        Mon, 27 Aug 2018 20:29:09 +0000 (UTC)
+Subject: Re: [PATCH 4.4 0/5] 4.4.153-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>
+References: <20180826064102.584749876@linuxfoundation.org>
+From:   Shuah Khan <shuah@kernel.org>
+Message-ID: <d713d159-a123-e8d7-014b-7fb0f66ae21c@kernel.org>
+Date:   Mon, 27 Aug 2018 14:29:08 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: NeoMutt/20180323
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 27 Aug 2018 20:27:06 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 27 Aug 2018 20:27:06 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'aris@redhat.com' RCPT:''
+In-Reply-To: <20180826064102.584749876@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Writing to a sysctl file that uses proc_dointvec_minmax like user/max_uts_namespaces
-a larger than 32 bit value won't cause an error as expected but instead will zero
-its value:
-	# echo 214748364800000 > max_uts_namespaces
-	# cat max_uts_namespaces
-	0
+On 08/26/2018 12:42 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.153 release.
+> There are 5 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Tue Aug 28 06:40:50 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.153-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-This patches fixes it.
+Compiled and booted on my test system. No dmesg regressions.
 
-Signed-off-by: Aristeu Rozanski <aris@redhat.com>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
+thanks,
+-- Shuah
 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 4ac9b9a..243f277 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -2486,7 +2486,8 @@ static int do_proc_dointvec_minmax_conv(bool *negp, unsigned long *lvalp,
- 	if (write) {
- 		int val = *negp ? -*lvalp : *lvalp;
- 		if ((param->min && *param->min > val) ||
--		    (param->max && *param->max < val))
-+		    (param->max && *param->max < val) ||
-+		    *lvalp >> (sizeof(int) * 8))
- 			return -EINVAL;
- 		*valp = val;
- 	} else {
+
