@@ -2,118 +2,180 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 802A1C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 11:50:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 205E9C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 11:52:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46408208B9
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 11:50:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46408208B9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7CE6A208B9
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 11:52:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CE6A208B9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=etezian.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727406AbeH0Pgy (ORCPT
+        id S1727435AbeH0PiW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 11:36:54 -0400
-Received: from mga14.intel.com ([192.55.52.115]:46628 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726931AbeH0Pgy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 11:36:54 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2018 04:50:33 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,295,1531810800"; 
-   d="scan'208";a="66288992"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.137]) ([10.237.72.137])
-  by fmsmga008.fm.intel.com with ESMTP; 27 Aug 2018 04:49:32 -0700
-Subject: Re: [PATCH v2 0/8] Tegra SDHCI support HS400 on Tegra210 and Tegra186
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Aapo Vienamo <avienamo@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1533924845-1466-1-git-send-email-avienamo@nvidia.com>
- <20180827100826.GA18542@ulmo>
- <095142c4-2697-d9e1-4930-a39e27b7ef40@intel.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <aed782d2-9bf1-f750-88eb-3501fab5ecd3@intel.com>
-Date:   Mon, 27 Aug 2018 14:47:49 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 27 Aug 2018 11:38:22 -0400
+Received: from 8.mo68.mail-out.ovh.net ([46.105.74.219]:43658 "EHLO
+        8.mo68.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727233AbeH0PiW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 11:38:22 -0400
+Received: from player792.ha.ovh.net (unknown [10.109.159.222])
+        by mo68.mail-out.ovh.net (Postfix) with ESMTP id CF357F545F
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 13:51:57 +0200 (CEST)
+Received: from etezian.org (unknown [194.136.86.45])
+        (Authenticated sender: andi@etezian.org)
+        by player792.ha.ovh.net (Postfix) with ESMTPSA id 48695A00CF;
+        Mon, 27 Aug 2018 13:51:47 +0200 (CEST)
+Date:   Mon, 27 Aug 2018 14:51:45 +0300
+From:   Andi Shyti <andi@etezian.org>
+To:     "dbasehore ." <dbasehore@chromium.org>
+Cc:     andi@etezian.org, dmitry.torokhov@gmail.com,
+        johnny.chuang@emc.com.tw,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-input@vger.kernel.org, joe@perches.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        james.chen@emc.com.tw, kt.liao@emc.com.tw
+Subject: Re: [PATCH] Input: elants_i2c - Fix sw reset delays
+Message-ID: <20180827115145.GA1567@jack.zhora.eu>
+References: <20180823231013.254037-1-dbasehore@chromium.org>
+ <20180823233028.GC53155@dtor-ws>
+ <20180823233211.GD53155@dtor-ws>
+ <20180823233424.GE53155@dtor-ws>
+ <20180824084933.GA29856@jack.zhora.eu>
+ <CAGAzgsqhTbgB2vAYDLMUFvuJ7F4pqHxRp+Xo+iny8g9ghTYM6g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <095142c4-2697-d9e1-4930-a39e27b7ef40@intel.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGAzgsqhTbgB2vAYDLMUFvuJ7F4pqHxRp+Xo+iny8g9ghTYM6g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Ovh-Tracer-Id: 16563395004698706471
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtjedrgedvgdefiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/08/18 13:26, Adrian Hunter wrote:
-> On 27/08/18 13:08, Thierry Reding wrote:
->> On Fri, Aug 10, 2018 at 09:13:57PM +0300, Aapo Vienamo wrote:
->>> Hi all,
->>> This series implements support for HS400 signaling on Tegra210 and
->>> Tegra186. This includes programming the DQS trimmer values, implementing
->>> enhanced strobe and HS400 delay line calibration.
->>>
->>> This series depends on the "Tegra SDHCI add support for HS200 and UHS
->>> signaling" series.
->>>
->>> Changelog:
->>> v2:
->>> 	- Document in dt-bindings which controllers support HS400
->>> 	- Use val instead of reg in tegra_sdhci_set_dqs_trim()
->>> 	- Change "dt" to "DT" in "mmc: tegra: Parse and program DQS trim
->>> 	  value" commit message
->>> 	- Add spaces around << in tegra_sdhci_set_dqs_trim()
->>> 	- Make the "mmc: tegra: Implement HS400 enhanced strobe" commit
->>> 	  message more detailed
->>> 	- Remove a debug print from tegra_sdhci_hs400_enhanced_strobe()
->>> 	- Add blank lines around if-else-block in
->>> 	  tegra_sdhci_hs400_enhanced_strobe()
->>> 	- Use val instead of reg in tegra_sdhci_hs400_enhanced_strobe()
->>> 	- Make commit message of "mmc: tegra: Implement HS400 delay line
->>> 	  calibration" more detailed
->>>
->>> Aapo Vienamo (8):
->>>   dt-bindings: mmc: Add DQS trim value to Tegra SDHCI
->>>   mmc: tegra: Parse and program DQS trim value
->>>   mmc: tegra: Implement HS400 enhanced strobe
->>>   mmc: tegra: Implement HS400 delay line calibration
->>>   arm64: dts: tegra186: Add SDMMC4 DQS trim value
->>>   arm64: dts: tegra210: Add SDMMC4 DQS trim value
->>>   arm64: dts: tegra186: Enable HS400
->>>   arm64: dts: tegra210: Enable HS400
->>>
->>>  .../bindings/mmc/nvidia,tegra20-sdhci.txt          |  4 ++
->>>  arch/arm64/boot/dts/nvidia/tegra186.dtsi           |  2 +
->>>  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  2 +
->>>  drivers/mmc/host/sdhci-tegra.c                     | 84 +++++++++++++++++++++-
->>>  4 files changed, 89 insertions(+), 3 deletions(-)
->>
->> Adrian,
->>
->> any chance you could take a brief look at these? They are a prerequisite
->> for the 2-patch series ("[PATCH 0/2] Tegra SDHCI rerun pad calibration
->> periodically") that you already acked.
+Hi Derek,
+
+next time, could you please avoid using html mails when replying
+to the mailing list? They are not clear.
+
+On Fri, Aug 24, 2018 at 04:07:41PM -0700, dbasehore . wrote:
 > 
-> Sure, I'll try and have a look today.
 > 
+> On Fri, Aug 24, 2018 at 1:49 AM Andi Shyti <andi@etezian.org> wrote:
+> 
+>     Hi Derek,
+> 
+>     > > > On Thu, Aug 23, 2018 at 04:10:13PM -0700, Derek Basehore wrote:
+>     > > > > We only need to wait 10ms instead of 30ms before starting fastboot
+>     or
+>     > > > > sending IAP on the touchscreen. Also, instead of delaying everytime
+>     > > > > sw_reset is called, this delays 10ms in the function that starts
+>     > > > > fastboot. There's also an explicit 20ms delay before sending IAP
+>     when
+>     > > > > updating the firmware, so no additional delay is needed there. This
+>     > > > > change also has the benefit of not delaying when wakeup is enabled
+>     > > > > during suspend. This is because sw_reset is called, yet fastboot
+>     > > > > isn't.
+> 
+>     ...
+> 
+>     > > > > -       /*
+>     > > > > -        * We should wait at least 10 msec (but no more than 40)
+>     before
+>     > > > > -        * sending fastboot or IAP command to the device.
+>     > > > > -        */
+>     > > > > -       msleep(30);
+>     > > > > -
+> 
+>     moving from 30 to 0 is a bit alarming... what does the datasheet
+>     say?
+> 
+> 
+> We're moving from 30msec to 10msec. We used to do this in an older kernel.
 
-These are fine. For the sdhci-tegra patches (patches 2 - 4):
+That's not what you are saying in your commit message:
 
-	Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+  "... This change also has the benefit of not delaying when
+  wakeup is enabled during suspend... "
 
+and indeed, in resume the "elants_i2c_sw_reset()" function would
+be called without any msleep. Or am I missing something? Would
+it be correct based on the datasheet?
+
+>  
+> 
+> 
+>     Sometimes delays are implicit in the system where you are testing
+>     the driver, so that without any msleep it might work in your
+>     system but it might not on others.
+> 
+>     > +             /*
+>     > +              * We should wait at least 10 msec (but no more than 40)
+>     before
+>     > +              * sending IAP command to the device.
+>     > +              */
+>     >               msleep(20);
+> 
+>     I agree though that it's not nice to wait twice here (even though
+>     as Dmitry says it doesn't hurt so much). Wouldn't it make more
+>     sense to remove this msleep instead?
+>     This way...
+> 
+> 
+> We still need this if the delay is removed from the sw_reset function. We have
+> a total of 20msecs delayed between sw_reset and sending IAP in our old kernel
+> which should be well tested. There seems to be no reason why the delays
+> increased.
+
+Yes, that's what I'm saying, removing this msleep to me looks
+more correct than removing it from sw_reset().
+
+>     > +     /*
+>     > +      * We should wait at least 10 msec (but no more than 40) before
+>     sending
+>     > +      * fastboot command to the device.
+>     > +      */
+>     > +     usleep_range(10 * 1000, 11 * 1000);
+>     > +
+>     >       error = elants_i2c_send(client, boot_cmd, sizeof(boot_cmd));
+> 
+>     ... you do not need to add an extra sleep here.
+> 
+> 
+> I added it here since I removed the 30msec sleep in sw_reset. This prevents us
+> from sleeping on resume when the touch controller is already on for wake up
+> capabilities. This is the same delay that we have in our old 3.8 kernel, so
+> it's pretty well tested and shipped in production.
+
+And here we fall in my first question (and also Dmitry's
+concern), Are we sure we don't need to sleep after resume? Again,
+what does the datasheet say?
+
+I don't know the answer, you might be right, but I need to know
+why you are removing the sleep after resume and why, instead,
+the original developer added it there.
+
+Two more nitpicks on this patch:
+
+1. by adding the usleep_range() outside from the
+elants_i2c_sw_reset() function, to another developer reading the
+code, might not really look clear why we are waiting. The
+comment you copy pasted does not, indeed, refer that we are
+waiting because a reset has been performed and we need to wait
+for the _reset time_ before sending IAP commands.
+
+2. this is a matter of taste: to me "10000" looks more clear than
+"10 * 1000", which doesn't add any better readability of the
+number itself.
+
+Thanks,
+Andi
