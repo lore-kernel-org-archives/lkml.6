@@ -2,98 +2,128 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5DA1C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 15:34:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37D5DC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 15:36:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70720208AF
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 15:34:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70720208AF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D6C0B208AF
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 15:36:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6C0B208AF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727165AbeH0TVU convert rfc822-to-8bit (ORCPT
+        id S1727298AbeH0TXH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 15:21:20 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44922 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727005AbeH0TVU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 15:21:20 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 99ECD40241D8;
-        Mon, 27 Aug 2018 15:34:13 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-8.bos.redhat.com [10.18.17.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5B0EF10EE821;
-        Mon, 27 Aug 2018 15:34:13 +0000 (UTC)
-Subject: Re: [PATCH v2 2/3] xfs: Prevent multiple wakeups of the same log
- space waiter
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1535316795-21560-1-git-send-email-longman@redhat.com>
- <1535316795-21560-3-git-send-email-longman@redhat.com>
- <20180827002134.GE2234@dastard>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <c4ecb0d3-843b-3d9b-d7e0-acda77881f3a@redhat.com>
-Date:   Mon, 27 Aug 2018 11:34:13 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <20180827002134.GE2234@dastard>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 27 Aug 2018 15:34:13 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 27 Aug 2018 15:34:13 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
+        Mon, 27 Aug 2018 15:23:07 -0400
+Received: from mga18.intel.com ([134.134.136.126]:57569 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726920AbeH0TXH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 15:23:07 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2018 08:36:00 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,295,1531810800"; 
+   d="scan'208";a="257606909"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga005.fm.intel.com with ESMTP; 27 Aug 2018 08:35:59 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 9AF161F6; Mon, 27 Aug 2018 18:35:58 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 5/7] extcon: cht-wc: Correct USBID bit field handling
+Date:   Mon, 27 Aug 2018 18:35:55 +0300
+Message-Id: <20180827153557.58363-5-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180827153557.58363-1-andriy.shevchenko@linux.intel.com>
+References: <20180827153557.58363-1-andriy.shevchenko@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/26/2018 08:21 PM, Dave Chinner wrote:
-> On Sun, Aug 26, 2018 at 04:53:14PM -0400, Waiman Long wrote:
->> The current log space reservation code allows multiple wakeups of the
->> same sleeping waiter to happen. This is a just a waste of cpu time as
->> well as increasing spin lock hold time. So a new XLOG_TIC_WAKING flag is
->> added to track if a task is being waken up and skip the wake_up_process()
->> call if the flag is set.
->>
->> Running the AIM7 fserver workload on a 2-socket 24-core 48-thread
->> Broadwell system with a small xfs filesystem on ramfs, the performance
->> increased from 91,486 jobs/min to 192,666 jobs/min with this change.
-> Oh, I just noticed you are using a ramfs for this benchmark,
->
-> tl; dr: Once you pass a certain point, ramdisks can be *much* slower
-> than SSDs on journal intensive workloads like AIM7. Hence it would be
-> useful to see if you have the same problems on, say, high
-> performance nvme SSDs.
+USBID is 2-bit bit field according to specification. Make it clear.
 
-Oh sorry, I made a mistake.
+No functional change intended.
 
-There were some problems with my test configuration. I was actually
-running the test on a regular enterprise-class disk device mount on /.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/extcon/extcon-intel-cht-wc.c | 32 +++++++++++++++++-----------
+ 1 file changed, 19 insertions(+), 13 deletions(-)
 
-Filesystem                              1K-blocks     Used Available
-Use% Mounted on
-/dev/mapper/rhel_hp--xl420gen9--01-root  52403200 11284408  41118792  22% /
-
-It was not an SSD, nor ramdisk. I reran the test on ramdisk, the
-performance of the patched kernel was 679,880 jobs/min which was a bit
-more than double the 285,221 score that I got on a regular disk.
-
-So the filesystem used wasn't tiny, though it is still not very large.
-The test was supposed to create 16 ramdisks and distribute the test
-tasks to the ramdisks. Instead, they were all pounding on the same
-filesystem worsening the spinlock contention problem.
-
-Cheers,
-Longman
+diff --git a/drivers/extcon/extcon-intel-cht-wc.c b/drivers/extcon/extcon-intel-cht-wc.c
+index 71b1126dbb0b..ad1fd70e4023 100644
+--- a/drivers/extcon/extcon-intel-cht-wc.c
++++ b/drivers/extcon/extcon-intel-cht-wc.c
+@@ -62,8 +62,11 @@
+ #define CHT_WC_PWRSRC_VBUS		BIT(0)
+ #define CHT_WC_PWRSRC_DC		BIT(1)
+ #define CHT_WC_PWRSRC_BATT		BIT(2)
+-#define CHT_WC_PWRSRC_ID_GND		BIT(3)
+-#define CHT_WC_PWRSRC_ID_FLOAT		BIT(4)
++#define CHT_WC_PWRSRC_USBID_MASK	GENMASK(4, 3)
++#define CHT_WC_PWRSRC_USBID_SHIFT	3
++#define CHT_WC_PWRSRC_RID_ACA		0
++#define CHT_WC_PWRSRC_RID_GND		1
++#define CHT_WC_PWRSRC_RID_FLOAT		2
+ 
+ #define CHT_WC_VBUS_GPIO_CTLO		0x6e2d
+ #define CHT_WC_VBUS_GPIO_CTLO_OUTPUT	BIT(0)
+@@ -104,16 +107,20 @@ struct cht_wc_extcon_data {
+ 
+ static int cht_wc_extcon_get_id(struct cht_wc_extcon_data *ext, int pwrsrc_sts)
+ {
+-	if (pwrsrc_sts & CHT_WC_PWRSRC_ID_GND)
++	switch ((pwrsrc_sts & CHT_WC_PWRSRC_USBID_MASK) >> CHT_WC_PWRSRC_USBID_SHIFT) {
++	case CHT_WC_PWRSRC_RID_GND:
+ 		return USB_ID_GND;
+-	if (pwrsrc_sts & CHT_WC_PWRSRC_ID_FLOAT)
++	case CHT_WC_PWRSRC_RID_FLOAT:
+ 		return USB_ID_FLOAT;
+-
+-	/*
+-	 * Once we have iio support for the gpadc we should read the USBID
+-	 * gpadc channel here and determine ACA role based on that.
+-	 */
+-	return USB_ID_FLOAT;
++	case CHT_WC_PWRSRC_RID_ACA:
++	default:
++		/*
++		 * Once we have IIO support for the GPADC we should read
++		 * the USBID GPADC channel here and determine ACA role
++		 * based on that.
++		 */
++		return USB_ID_FLOAT;
++	}
+ }
+ 
+ static int cht_wc_extcon_get_charger(struct cht_wc_extcon_data *ext,
+@@ -292,6 +299,7 @@ static int cht_wc_extcon_probe(struct platform_device *pdev)
+ {
+ 	struct intel_soc_pmic *pmic = dev_get_drvdata(pdev->dev.parent);
+ 	struct cht_wc_extcon_data *ext;
++	unsigned long mask = ~(CHT_WC_PWRSRC_VBUS | CHT_WC_PWRSRC_USBID_MASK);
+ 	int irq, ret;
+ 
+ 	irq = platform_get_irq(pdev, 0);
+@@ -352,9 +360,7 @@ static int cht_wc_extcon_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	/* Unmask irqs */
+-	ret = regmap_write(ext->regmap, CHT_WC_PWRSRC_IRQ_MASK,
+-			   (int)~(CHT_WC_PWRSRC_VBUS | CHT_WC_PWRSRC_ID_GND |
+-				  CHT_WC_PWRSRC_ID_FLOAT));
++	ret = regmap_write(ext->regmap, CHT_WC_PWRSRC_IRQ_MASK, mask);
+ 	if (ret) {
+ 		dev_err(ext->dev, "Error writing irq-mask: %d\n", ret);
+ 		goto disable_sw_control;
+-- 
+2.18.0
 
