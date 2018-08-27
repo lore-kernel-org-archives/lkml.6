@@ -2,285 +2,132 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA94AC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 11:07:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDA4BC433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 11:08:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 617EE208B9
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 11:07:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 617EE208B9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 78793208B9
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 11:08:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y8roXGXe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78793208B9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727118AbeH0OyC (ORCPT
+        id S1727234AbeH0OyM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 10:54:02 -0400
-Received: from lgeamrelo13.lge.com ([156.147.23.53]:55285 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726785AbeH0OyC (ORCPT
+        Mon, 27 Aug 2018 10:54:12 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:40832 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726785AbeH0OyM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 10:54:02 -0400
-Received: from unknown (HELO lgeamrelo02.lge.com) (156.147.1.126)
-        by 156.147.23.53 with ESMTP; 27 Aug 2018 20:07:47 +0900
-X-Original-SENDERIP: 156.147.1.126
-X-Original-MAILFROM: namhyung@kernel.org
-Received: from unknown (HELO sejong) (10.177.227.17)
-        by 156.147.1.126 with ESMTP; 27 Aug 2018 20:07:47 +0900
-X-Original-SENDERIP: 10.177.227.17
-X-Original-MAILFROM: namhyung@kernel.org
-Date:   Mon, 27 Aug 2018 20:07:47 +0900
-From:   Namhyung Kim <namhyung@kernel.org>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Stephane Eranian <eranian@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>, mingo@elte.hu,
-        kernel-team@lge.com
-Subject: Re: [PATCHv2] perf tools: Add struct ordered_events_buffer layer
-Message-ID: <20180827110747.GD8065@sejong>
-References: <1533767600-7794-1-git-send-email-eranian@google.com>
- <20180809080721.GB19243@krava>
- <CABPqkBQEfoMDEqot1VbgExg1fU3+EEunzZqDFKSGmLKBhxNkwA@mail.gmail.com>
- <20180810115431.GA4162@krava>
- <20180813130446.GA8685@krava>
- <CABPqkBSgYEFFAkddBqZbYXe9tjUY7RbMBjQsZht8ki1iOR6unw@mail.gmail.com>
- <20180815084825.GD3180@krava>
- <20180827092818.GA3725@krava>
+        Mon, 27 Aug 2018 10:54:12 -0400
+Received: by mail-lj1-f196.google.com with SMTP id j19-v6so11988859ljc.7;
+        Mon, 27 Aug 2018 04:07:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=FHFK6UdD8PFVH46XAqZPV4zSvfmBpRasFTc1Ym4AHt4=;
+        b=Y8roXGXeRZvQyDnnAxjnLODK29H8+fAXVmdqK7mE2LsvXys39AFW20fVaQQbq1knky
+         YPEQj4EJ4EPsQk6ocnwYV5NrDkV3OzY5h3bArcwa8mUSLqXutzVCurGdhmEqCzxHL0f4
+         CxXF1ZR0pet9jdBaXSWOOl4TOJfo522wgdIzMAk9NcFmekI0yWG8rDt7JsO2pp5rdClt
+         oT98R3gUBgWto7LAQ7qZmyrtEnpRmxmGTb9r/O0TJpU2b7MEn7YmrWIEESxAtSZ8ipkd
+         DHCwA7tFOMRHTuI3Mu50+jySKo6b9tULzZ4fEiFk0p397fPJXHI/8043c6ORI9F3RmWA
+         Wteg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=FHFK6UdD8PFVH46XAqZPV4zSvfmBpRasFTc1Ym4AHt4=;
+        b=hT04Pc/wZ/3JDYBByhTnbU4Ab+Tp/ySRRg3by39Srm7QqAkVopkWGFK4j1gj7B5rNW
+         3N1RuCEdEMfjsyqlvAlLJ3Xd1VSVfwpLIV3ie6u2dkZOXHI2dHpW4g09Cv6l91dGQFd3
+         7SDa2J5Nrol/8HmVJDWhRlDmo+cv1gaVxtstq1HRRC0YRYyYUEajGjXtgq2KKWb9+pir
+         zTS1pV7zBW+vbW4ph/m9t0WlA8qHRSO2V2Tk5Sy5/Zdi3fzxNQfjf6kr0uFDb3ksXujr
+         Xgm2AroVcFZfjy5DV71O5IbLRlYGLByFA4sKf8NP8j4nRrRvlL1duAZ/JM37Tv4oQ7Oq
+         QsuA==
+X-Gm-Message-State: APzg51CTf8RKQwS73fXIEPTOmBIvqRzjyqPgvHbEmPs6k9VdSHcW2VWf
+        YldYd+VyKK9ZrPgd/Klj/D//Wl7aArYT/m6e+wA=
+X-Google-Smtp-Source: ANB0Vdbx1o1lG7+K+4B0UG/Bb+Q43S5X4Yhlyr8V4rRsiQmdZGjjUkhYxKJlCeiQUkPIzI4ADas24iwiTWmKV7Oaq7k=
+X-Received: by 2002:a2e:9c0f:: with SMTP id s15-v6mr8741334lji.97.1535368078332;
+ Mon, 27 Aug 2018 04:07:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180827092818.GA3725@krava>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:ab3:6318:0:0:0:0:0 with HTTP; Mon, 27 Aug 2018 04:07:18
+ -0700 (PDT)
+In-Reply-To: <CAPDyKFpL_o2N_yteF=rTH5gy4Mm-HrQU5bL5i8s2dWjpTK_Fng@mail.gmail.com>
+References: <1534406064-10065-1-git-send-email-zhang.chunyan@linaro.org>
+ <1534406064-10065-7-git-send-email-zhang.chunyan@linaro.org>
+ <9de08b30-cb92-01c6-caf3-c4abc3591dcf@intel.com> <CAPDyKFpL_o2N_yteF=rTH5gy4Mm-HrQU5bL5i8s2dWjpTK_Fng@mail.gmail.com>
+From:   Chunyan Zhang <zhang.lyra@gmail.com>
+Date:   Mon, 27 Aug 2018 19:07:18 +0800
+Message-ID: <CAAfSe-s3XvAKo=YtsggVuz0q4S7vFVDnhmpGsKBCMviHQ1o-6w@mail.gmail.com>
+Subject: Re: [PATCH V5 06/10] mmc: sdhci: Disable auto-CMD23 if stuff bits is
+ set in CMD23 argument
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Chunyan Zhang <zhang.chunyan@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Billows Wu <billows.wu@unisoc.com>,
+        Jason Wu <jason.wu@unisoc.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 11:28:18AM +0200, Jiri Olsa wrote:
+On 27 August 2018 at 18:07, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> On 23 August 2018 at 14:50, Adrian Hunter <adrian.hunter@intel.com> wrote:
+>> On 16/08/18 10:54, Chunyan Zhang wrote:
+>>> For version 4.10 and aboves, SDHCI_ARGUMENT2 is also uses to indicate
+>>> 32-bit number of blocks, it doesn't support stuff bits in argument of
+>>> CMD23, but only block count for the following command (CMD18/25).
+>>>
+>>> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
+>>> ---
+>>>  drivers/mmc/host/sdhci.c | 9 +++++++++
+>>>  drivers/mmc/host/sdhci.h | 1 +
+>>>  2 files changed, 10 insertions(+)
+>>>
+>>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+>>> index b3328ee..a72ad0d 100644
+>>> --- a/drivers/mmc/host/sdhci.c
+>>> +++ b/drivers/mmc/host/sdhci.c
+>>> @@ -1729,6 +1729,15 @@ static void sdhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
+>>>               }
+>>>       }
+>>>
+>>> +     /*
+>>> +      * For version 4.10 and above, ARGUMENT2 register is also used as 32-bit
+>>> +      * block count register which don't support stuff bits of CMD23 argument
+>>> +      */
+>>> +     if (host->version >= SDHCI_SPEC_410 &&
+>>> +         mrq->sbc && (mrq->sbc->arg & SDHCI_ARG2_STUFF) &&
+>>> +         (host->flags & SDHCI_AUTO_CMD23))
+>>> +             host->flags &= ~SDHCI_AUTO_CMD23;
+>>
+>> I would prefer this be done in sdhci-sprd.c by hooking ->request().  Someone
+>> sent a patch recently to export sdhci_request().
+>
+> Right. So I have picked up the patch you were referring to.
+> https://lkml.org/lkml/2018/8/20/140
+>
+> Chunyan, you may now preferably base your next version on top of my
+> mmc tree's next branch.
 
-> When ordering events, we use preallocated buffers to store separated
-> events. Those buffers currently don't have their own struct, but since
-> they are basically array of 'struct ordered_event' objects, we use the
-> first event to hold buffers data - list head, that holds all buffers
-> together:
-> 
->    struct ordered_events {
->      ...
->      struct ordered_event *buffer;
->      ...
->    };
-> 
->    struct ordered_event {
->      u64               timestamp;
->      u64               file_offset;
->      union perf_event  *event;
->      struct list_head  list;
->    };
-> 
-> This is quite convoluted and error prone as demonstrated by
-> free-ing issue discovered and fixed by Stephane in here [1].
-> 
-> This patch adds the 'struct ordered_events_buffer' object,
-> that holds the buffer data and frees it up properly.
-> 
-> [1] - https://marc.info/?l=linux-kernel&m=153376761329335&w=2
-> 
-> Reported-by: Stephane Eranian <eranian@google.com>
-> Link: http://lkml.kernel.org/n/tip-qrkcqm5m1sugy4q83pfn5a1r@git.kernel.org
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-
-Acked-by: Namhyung Kim <namhyung@kernel.org>
+Ok, will do.
 
 Thanks,
-Namhyung
+Chunyan
 
-
-> ---
->  tools/perf/util/ordered-events.c | 82 +++++++++++++++++++++++++++-----
->  tools/perf/util/ordered-events.h | 37 +++++++-------
->  2 files changed, 90 insertions(+), 29 deletions(-)
-> 
-> diff --git a/tools/perf/util/ordered-events.c b/tools/perf/util/ordered-events.c
-> index bad9e0296e9a..3672060508a7 100644
-> --- a/tools/perf/util/ordered-events.c
-> +++ b/tools/perf/util/ordered-events.c
-> @@ -80,14 +80,20 @@ static union perf_event *dup_event(struct ordered_events *oe,
->  	return oe->copy_on_queue ? __dup_event(oe, event) : event;
->  }
->  
-> -static void free_dup_event(struct ordered_events *oe, union perf_event *event)
-> +static void __free_dup_event(struct ordered_events *oe, union perf_event *event)
->  {
-> -	if (event && oe->copy_on_queue) {
-> +	if (event) {
->  		oe->cur_alloc_size -= event->header.size;
->  		free(event);
->  	}
->  }
->  
-> +static void free_dup_event(struct ordered_events *oe, union perf_event *event)
-> +{
-> +	if (oe->copy_on_queue)
-> +		__free_dup_event(oe, event);
-> +}
-> +
->  #define MAX_SAMPLE_BUFFER	(64 * 1024 / sizeof(struct ordered_event))
->  static struct ordered_event *alloc_event(struct ordered_events *oe,
->  					 union perf_event *event)
-> @@ -100,15 +106,43 @@ static struct ordered_event *alloc_event(struct ordered_events *oe,
->  	if (!new_event)
->  		return NULL;
->  
-> +	/*
-> +	 * We maintain following scheme of buffers for ordered
-> +	 * event allocation:
-> +	 *
-> +	 *   to_free list -> buffer1 (64K)
-> +	 *                   buffer2 (64K)
-> +	 *                   ...
-> +	 *
-> +	 * Each buffer keeps an array of ordered events objects:
-> +	 *    buffer -> event[0]
-> +	 *              event[1]
-> +	 *              ...
-> +	 *
-> +	 * Each allocated ordered event is linked to one of
-> +	 * following lists:
-> +	 *   - time ordered list 'events'
-> +	 *   - list of currently removed events 'cache'
-> +	 *
-> +	 * Allocation of the ordered event uses following order
-> +	 * to get the memory:
-> +	 *   - use recently removed object from 'cache' list
-> +	 *   - use available object in current allocation buffer
-> +	 *   - allocate new buffer if the current buffer is full
-> +	 *
-> +	 * Removal of ordered event object moves it from events to
-> +	 * the cache list.
-> +	 */
->  	if (!list_empty(cache)) {
->  		new = list_entry(cache->next, struct ordered_event, list);
->  		list_del(&new->list);
->  	} else if (oe->buffer) {
-> -		new = oe->buffer + oe->buffer_idx;
-> +		new = &oe->buffer->event[oe->buffer_idx];
->  		if (++oe->buffer_idx == MAX_SAMPLE_BUFFER)
->  			oe->buffer = NULL;
->  	} else if (oe->cur_alloc_size < oe->max_alloc_size) {
-> -		size_t size = MAX_SAMPLE_BUFFER * sizeof(*new);
-> +		size_t size = sizeof(*oe->buffer) +
-> +			      MAX_SAMPLE_BUFFER * sizeof(*new);
->  
->  		oe->buffer = malloc(size);
->  		if (!oe->buffer) {
-> @@ -122,9 +156,8 @@ static struct ordered_event *alloc_event(struct ordered_events *oe,
->  		oe->cur_alloc_size += size;
->  		list_add(&oe->buffer->list, &oe->to_free);
->  
-> -		/* First entry is abused to maintain the to_free list. */
-> -		oe->buffer_idx = 2;
-> -		new = oe->buffer + 1;
-> +		oe->buffer_idx = 1;
-> +		new = &oe->buffer->event[0];
->  	} else {
->  		pr("allocation limit reached %" PRIu64 "B\n", oe->max_alloc_size);
->  	}
-> @@ -300,15 +333,38 @@ void ordered_events__init(struct ordered_events *oe, ordered_events__deliver_t d
->  	oe->deliver	   = deliver;
->  }
->  
-> +static void
-> +ordered_events_buffer__free(struct ordered_events_buffer *buffer,
-> +			    unsigned int max, struct ordered_events *oe)
-> +{
-> +	if (oe->copy_on_queue) {
-> +		unsigned int i;
-> +
-> +		for (i = 0; i < max; i++)
-> +			__free_dup_event(oe, buffer->event[i].event);
-> +	}
-> +
-> +	free(buffer);
-> +}
-> +
->  void ordered_events__free(struct ordered_events *oe)
->  {
-> -	while (!list_empty(&oe->to_free)) {
-> -		struct ordered_event *event;
-> +	struct ordered_events_buffer *buffer, *tmp;
->  
-> -		event = list_entry(oe->to_free.next, struct ordered_event, list);
-> -		list_del(&event->list);
-> -		free_dup_event(oe, event->event);
-> -		free(event);
-> +	if (list_empty(&oe->to_free))
-> +		return;
-> +
-> +	/*
-> +	 * Current buffer might not have all the events allocated
-> +	 * yet, we need to free only allocated ones ...
-> +	 */
-> +	list_del(&oe->buffer->list);
-> +	ordered_events_buffer__free(oe->buffer, oe->buffer_idx, oe);
-> +
-> +	/* ... and continue with the rest */
-> +	list_for_each_entry_safe(buffer, tmp, &oe->to_free, list) {
-> +		list_del(&buffer->list);
-> +		ordered_events_buffer__free(buffer, MAX_SAMPLE_BUFFER, oe);
->  	}
->  }
->  
-> diff --git a/tools/perf/util/ordered-events.h b/tools/perf/util/ordered-events.h
-> index 8c7a2948593e..1338d5c345dc 100644
-> --- a/tools/perf/util/ordered-events.h
-> +++ b/tools/perf/util/ordered-events.h
-> @@ -25,23 +25,28 @@ struct ordered_events;
->  typedef int (*ordered_events__deliver_t)(struct ordered_events *oe,
->  					 struct ordered_event *event);
->  
-> +struct ordered_events_buffer {
-> +	struct list_head	list;
-> +	struct ordered_event	event[0];
-> +};
-> +
->  struct ordered_events {
-> -	u64			last_flush;
-> -	u64			next_flush;
-> -	u64			max_timestamp;
-> -	u64			max_alloc_size;
-> -	u64			cur_alloc_size;
-> -	struct list_head	events;
-> -	struct list_head	cache;
-> -	struct list_head	to_free;
-> -	struct ordered_event	*buffer;
-> -	struct ordered_event	*last;
-> -	ordered_events__deliver_t deliver;
-> -	int			buffer_idx;
-> -	unsigned int		nr_events;
-> -	enum oe_flush		last_flush_type;
-> -	u32			nr_unordered_events;
-> -	bool                    copy_on_queue;
-> +	u64				 last_flush;
-> +	u64				 next_flush;
-> +	u64				 max_timestamp;
-> +	u64				 max_alloc_size;
-> +	u64				 cur_alloc_size;
-> +	struct list_head		 events;
-> +	struct list_head		 cache;
-> +	struct list_head		 to_free;
-> +	struct ordered_events_buffer	*buffer;
-> +	struct ordered_event		*last;
-> +	ordered_events__deliver_t	 deliver;
-> +	int				 buffer_idx;
-> +	unsigned int			 nr_events;
-> +	enum oe_flush			 last_flush_type;
-> +	u32				 nr_unordered_events;
-> +	bool				 copy_on_queue;
->  };
->  
->  int ordered_events__queue(struct ordered_events *oe, union perf_event *event,
-> -- 
-> 2.17.1
-> 
+>
+> [...]
+>
+> Kind regards
+> Uffe
