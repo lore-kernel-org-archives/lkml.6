@@ -2,165 +2,133 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5F12C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 13:51:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24DC5C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 13:51:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 853F0208B6
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 13:51:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 853F0208B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id CBDCE208B8
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 13:51:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBDCE208B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727255AbeH0Rhw (ORCPT
+        id S1727430AbeH0RiF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 13:37:52 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:36807 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726921AbeH0Rhw (ORCPT
+        Mon, 27 Aug 2018 13:38:05 -0400
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:46822 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726883AbeH0RiE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 13:37:52 -0400
-Received: by mail-ed1-f68.google.com with SMTP id f4-v6so7827524edq.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 06:51:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Vhcm/rGk2kZtLi1XQPv8v7NPVrD8UYtwAM0OUX8x8w4=;
-        b=q077YzcBTOjKuhC/bSJNboyCGYca6HYtsJXbSf0AB3oLqP9bmCQ7xiwHhCxGkQgQ5i
-         Sw0od36XTDYzZTC/SLl/QXwXB7FCuav+98EleddQgigcyAW6AWVT59egZ0M9oRCO4dIC
-         v8oFzfkfnRZtO0zPew0e1+PfiTjP0MYeW44/EbZ2b9gaHyRQSOMKjJ6//dseFxr80yWu
-         xtr0OhG/cPZqK8yBrWN0b5KNPV6e0mLvjz760C6mJ3hmwGKVYCM1rXHvSsRqxmHffTqE
-         NPZvXBa5erOhz4r2OQinhLXEoawA31/1icxQpiSxQN3Lkzlt9ABaMJ9gCViwqL/tzWBt
-         DqtA==
-X-Gm-Message-State: APzg51BPJ+mGhfEvuqL9frlN+sZJ+68QIOsSxQNnC1S1RaINme8yPnVj
-        Ec8C8zeATL1ySgC1omAo5HI=
-X-Google-Smtp-Source: ANB0Vdan5xWGnt2bbdmWlQhFraHHQfEHG5Yo3KKOnWPYdZd2es01DoIQXVUfBiaYCUzeL05Jcwp7ow==
-X-Received: by 2002:a50:afa3:: with SMTP id h32-v6mr16871540edd.129.1535377867812;
-        Mon, 27 Aug 2018 06:51:07 -0700 (PDT)
-Received: from tiehlicka.suse.cz (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id c50-v6sm7851280ede.53.2018.08.27.06.51.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 Aug 2018 06:51:06 -0700 (PDT)
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        David Rientjes <rientjes@google.com>, Tejun Heo <tj@kernel.org>
-Subject: [PATCH] mm,page_alloc: PF_WQ_WORKER threads must sleep at should_reclaim_retry().
-Date:   Mon, 27 Aug 2018 15:51:01 +0200
-Message-Id: <20180827135101.15700-1-mhocko@kernel.org>
-X-Mailer: git-send-email 2.18.0
+        Mon, 27 Aug 2018 13:38:04 -0400
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7RDnZ42022400;
+        Mon, 27 Aug 2018 08:51:19 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=rf@opensource.cirrus.com
+Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2m34h1tc7k-1;
+        Mon, 27 Aug 2018 08:51:19 -0500
+Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
+        by mail1.cirrus.com (Postfix) with ESMTP id 1145B611E126;
+        Mon, 27 Aug 2018 08:51:19 -0500 (CDT)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Mon, 27 Aug 2018
+ 14:51:18 +0100
+Received: from edi-sw-dsktp006.ad.cirrus.com (edi-sw-dsktp006.ad.cirrus.com
+ [198.90.251.121])      by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id
+ w7RDpHoA007537;        Mon, 27 Aug 2018 14:51:18 +0100
+From:   Richard Fitzgerald <rf@opensource.cirrus.com>
+To:     <lee.jones@linaro.org>
+CC:     <patches@opensource.cirrus.com>, <linux-kernel@vger.kernel.org>,
+        "Richard Fitzgerald" <rf@opensource.cirrus.com>
+Subject: [PATCH v2] mfd: madera: Don't use regmap_read_poll_timeout to poll for BOOT_DONE
+Date:   Mon, 27 Aug 2018 14:51:15 +0100
+Message-ID: <20180827135115.24231-1-rf@opensource.cirrus.com>
+X-Mailer: git-send-email 2.11.0
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=841 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
+ definitions=main-1808270148
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Hocko <mhocko@suse.com>
+While polling for BOOT_DONE the chip could NAK a read because it is
+still booting, which would terminate the regmap_read_poll_timeout()
+with an error.
 
-Tetsuo Handa has reported that it is possible to bypass the short sleep
-for PF_WQ_WORKER threads which was introduced by commit 373ccbe5927034b5
-("mm, vmstat: allow WQ concurrency to discover memory reclaim doesn't make
-any progress") and lock up the system if OOM.
+Instead implement a polling loop that ignores read errors so we
+always poll until the chip signals boot or the loop times out.
 
-The primary reason is that WQ_MEM_RECLAIM WQs are not guaranteed to
-run even when they have a rescuer available. Those workers might be
-essential for reclaim to make a forward progress, however. If we are
-too unlucky all the allocations requests can get stuck waiting for a
-WQ_MEM_RECLAIM work item and the system is essentially stuck in an OOM
-condition without much hope to move on. Tetsuo has seen the reclaim
-stuck on drain_local_pages_wq or xlog_cil_push_work (xfs). There might
-be others.
-
-Since should_reclaim_retry() should be a natural reschedule point,
-let's do the short sleep for PF_WQ_WORKER threads unconditionally in
-order to guarantee that other pending work items are started. This will
-workaround this problem and it is less fragile than hunting down when
-the sleep is missed. E.g. we used to have a sleeping point in the oom
-path but this has been removed recently because it caused other issues.
-Having a single sleeping point is more robust.
-
-Reported-and-debugged-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Cc: Roman Gushchin <guro@fb.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Tejun Heo <tj@kernel.org>
+Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
 ---
+ drivers/mfd/madera-core.c | 33 ++++++++++++++++++++-------------
+ 1 file changed, 20 insertions(+), 13 deletions(-)
 
-Hi Andrew,
-this has been previously posted [1] but it took quite some time to
-finally understand the issue [2]. Can we push this to mmotm and
-linux-next? I wouldn't hurry to merge this but the longer we have a
-wider testing exposure the better.
-
-Thanks!
-
-[1] http://lkml.kernel.org/r/ca3da8b8-1bb5-c302-b190-fa6cebab58ca@I-love.SAKURA.ne.jp
-[2] http://lkml.kernel.org/r/20180730145425.GE1206094@devbig004.ftw2.facebook.com
-
- mm/page_alloc.c | 34 ++++++++++++++++++----------------
- 1 file changed, 18 insertions(+), 16 deletions(-)
-
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index e75865d58ba7..5fc5e500b5d0 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -3923,6 +3923,7 @@ should_reclaim_retry(gfp_t gfp_mask, unsigned order,
+diff --git a/drivers/mfd/madera-core.c b/drivers/mfd/madera-core.c
+index 8cfea969b060..440030cecbbd 100644
+--- a/drivers/mfd/madera-core.c
++++ b/drivers/mfd/madera-core.c
+@@ -132,32 +132,39 @@ const char *madera_name_from_type(enum madera_type type)
+ }
+ EXPORT_SYMBOL_GPL(madera_name_from_type);
+ 
+-#define MADERA_BOOT_POLL_MAX_INTERVAL_US  5000
+-#define MADERA_BOOT_POLL_TIMEOUT_US	 25000
++#define MADERA_BOOT_POLL_INTERVAL_USEC		5000
++#define MADERA_BOOT_POLL_TIMEOUT_USEC		25000
+ 
+ static int madera_wait_for_boot(struct madera *madera)
  {
- 	struct zone *zone;
- 	struct zoneref *z;
-+	bool ret = false;
++	ktime_t timeout;
+ 	unsigned int val;
+-	int ret;
++	int ret = 0;
  
  	/*
- 	 * Costly allocations might have made a progress but this doesn't mean
-@@ -3986,25 +3987,26 @@ should_reclaim_retry(gfp_t gfp_mask, unsigned order,
- 				}
- 			}
- 
--			/*
--			 * Memory allocation/reclaim might be called from a WQ
--			 * context and the current implementation of the WQ
--			 * concurrency control doesn't recognize that
--			 * a particular WQ is congested if the worker thread is
--			 * looping without ever sleeping. Therefore we have to
--			 * do a short sleep here rather than calling
--			 * cond_resched().
--			 */
--			if (current->flags & PF_WQ_WORKER)
--				schedule_timeout_uninterruptible(1);
--			else
--				cond_resched();
+ 	 * We can't use an interrupt as we need to runtime resume to do so,
+ 	 * so we poll the status bit. This won't race with the interrupt
+ 	 * handler because it will be blocked on runtime resume.
++	 * The chip could NAK a read request while it is booting so ignore
++	 * errors from regmap_read.
+ 	 */
+-	ret = regmap_read_poll_timeout(madera->regmap,
+-				       MADERA_IRQ1_RAW_STATUS_1,
+-				       val,
+-				       (val & MADERA_BOOT_DONE_STS1),
+-				       MADERA_BOOT_POLL_MAX_INTERVAL_US,
+-				       MADERA_BOOT_POLL_TIMEOUT_US);
 -
--			return true;
-+			ret = true;
-+			goto out;
- 		}
- 	}
+-	if (ret)
+-		dev_err(madera->dev, "Polling BOOT_DONE_STS failed: %d\n", ret);
++	timeout = ktime_add_us(ktime_get(), MADERA_BOOT_POLL_TIMEOUT_USEC);
++	regmap_read(madera->regmap, MADERA_IRQ1_RAW_STATUS_1, &val);
++	while (!(val & MADERA_BOOT_DONE_STS1) &&
++	       !ktime_after(ktime_get(), timeout)) {
++		usleep_range(MADERA_BOOT_POLL_INTERVAL_USEC / 2,
++			     MADERA_BOOT_POLL_INTERVAL_USEC);
++		regmap_read(madera->regmap, MADERA_IRQ1_RAW_STATUS_1, &val);
++	};
++
++	if (!(val & MADERA_BOOT_DONE_STS1)) {
++		dev_err(madera->dev, "Polling BOOT_DONE_STS timed out\n");
++		ret = -ETIMEDOUT;
++	}
  
--	return false;
-+out:
-+	/*
-+	 * Memory allocation/reclaim might be called from a WQ
-+	 * context and the current implementation of the WQ
-+	 * concurrency control doesn't recognize that
-+	 * a particular WQ is congested if the worker thread is
-+	 * looping without ever sleeping. Therefore we have to
-+	 * do a short sleep here rather than calling
-+	 * cond_resched().
-+	 */
-+	if (current->flags & PF_WQ_WORKER)
-+		schedule_timeout_uninterruptible(1);
-+	else
-+		cond_resched();
-+	return ret;
- }
- 
- static inline bool
+ 	/*
+ 	 * BOOT_DONE defaults to unmasked on boot so we must ack it.
+-	 * Do this unconditionally to avoid interrupt storms.
++	 * Do this even after a timeout to avoid interrupt storms.
+ 	 */
+ 	regmap_write(madera->regmap, MADERA_IRQ1_STATUS_1,
+ 		     MADERA_BOOT_DONE_EINT1);
 -- 
-2.18.0
+2.11.0
 
