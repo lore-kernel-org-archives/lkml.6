@@ -2,179 +2,106 @@ Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A50EC433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 11:45:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB946C433F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 11:45:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3AAC20673
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 11:45:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3AAC20673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8375320673
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 11:45:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jwTbfBV1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8375320673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727254AbeH0PbY (ORCPT
+        id S1727370AbeH0Pbf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 11:31:24 -0400
-Received: from mga04.intel.com ([192.55.52.120]:23497 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726931AbeH0PbY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 11:31:24 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2018 04:45:04 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,295,1531810800"; 
-   d="scan'208";a="66288108"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.137]) ([10.237.72.137])
-  by fmsmga008.fm.intel.com with ESMTP; 27 Aug 2018 04:44:57 -0700
-Subject: Re: [PATCH v2 00/40] Tegra SDHCI add support for HS200 and UHS
- signaling
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Aapo Vienamo <avienamo@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Stefan Agner <stefan@agner.ch>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mmc@vger.kernel.org
-References: <1533924522-1037-1-git-send-email-avienamo@nvidia.com>
- <20180827101036.GB18542@ulmo>
- <fca227a3-04f2-ec6a-1287-ae595d14503e@intel.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <3db13fe0-7034-6e90-a43d-6b0389dbd201@intel.com>
-Date:   Mon, 27 Aug 2018 14:43:14 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 27 Aug 2018 11:31:35 -0400
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:39520 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726931AbeH0Pbf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 11:31:35 -0400
+Received: by mail-ua1-f65.google.com with SMTP id g18-v6so9298042uam.6;
+        Mon, 27 Aug 2018 04:45:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vYz82dCxFS/P7Gl7HvchvLLoXhDUYjhwn6gpnwgwNH0=;
+        b=jwTbfBV15ahO4xfnrKUkGZ0r74qh0PUk5P4Y4kf8ZyQResi9RsEWUMdvhfShiZScNj
+         qmEHdKNE3ErtJwYaWAnB9RGwBXVU9Z8CdGPMNTCXQoD95p8EyisEmJlkKkfUFonSEYGV
+         xczKxQhGJH2KUSrbK1oxlPYdB1OKNo4FfiNCaY1myMV9QVzNuBbtg9COoWIDkw2O7cjk
+         harHLCPi4D+bBOBQ/88S5dC083tP1MZrR40sTqeGCr/ZiyYKyvfEDxm5JvsxN5CkEKx2
+         C+vkdfBEAY7Pa1I1vN7T7dBW5DQuSGWjJqqnV811A1W1GzsE4W3731NKUAoo4vFuZbI+
+         nvFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vYz82dCxFS/P7Gl7HvchvLLoXhDUYjhwn6gpnwgwNH0=;
+        b=jA/FNcKcM1zNlWLTWSGScQERcIB/HXpxEgf8kbFobgqkZExcoTSv98GjdaK7Qu0qFg
+         c8pjjYxJ/mQsCwYg2vqv76WCLBViLVnJyUn3J7/4uTt6JMPzMIi2UEbjvH37hWvMaHif
+         rHW9xxp8+CfSO5elQDzLfwsyC2a1A6Yfr4oQk6MkcgtdYcENyzi9rKlJzNK3FQI9Pwxl
+         h/7Xf1+eYxguifImwPLctcMlTvu/IhSaH3ti82j7k6hlm4NEh0JFbxmnfLbWtO8yBSaw
+         3xxgGXGjvLUE/3xvy994DS0Zez/nxPHblRthmeoiJuuYTQDqHbyQr9MUc3kubdd450Mv
+         AqVQ==
+X-Gm-Message-State: APzg51CMQAQM0ym6pig/9hGDbeedZ9Bo9mAzGlcP51hIo3ktzIx0a+Lu
+        h74fXU6cJkTVM0HM0gZ5R2xT6UJF84oNYix/rcw=
+X-Google-Smtp-Source: ANB0VdYVhJhNJ602w4S4RMcw+40Lt8pkHUbO9nQuIMaDtHZOkjBIwZghuNT9PChfcm/sPqN86K4P6UAmUZpRxZwje/U=
+X-Received: by 2002:ab0:7039:: with SMTP id u25-v6mr8085912ual.133.1535370314381;
+ Mon, 27 Aug 2018 04:45:14 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <fca227a3-04f2-ec6a-1287-ae595d14503e@intel.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180823134525.5f12b0d3@roar.ozlabs.ibm.com> <CA+55aFxneZTFxxxAjLZmj92VUJg6z7hERxJ2cHoth-GC0RuELw@mail.gmail.com>
+ <776104d4c8e4fc680004d69e3a4c2594b638b6d1.camel@au1.ibm.com>
+ <CA+55aFzM77G9-Q6LboPLJ=5gHma66ZQKiMGCMqXoKABirdF98w@mail.gmail.com>
+ <20180823133958.GA1496@brain-police> <20180824084717.GK24124@hirez.programming.kicks-ass.net>
+ <20180824113214.GK24142@hirez.programming.kicks-ass.net> <20180824113953.GL24142@hirez.programming.kicks-ass.net>
+ <20180827150008.13bce08f@roar.ozlabs.ibm.com> <20180827074701.GW24124@hirez.programming.kicks-ass.net>
+ <20180827085708.GA27172@infradead.org>
+In-Reply-To: <20180827085708.GA27172@infradead.org>
+From:   Jason Duerstock <evilmoo@gmail.com>
+Date:   Mon, 27 Aug 2018 07:45:03 -0400
+Message-ID: <CAP5F8cK7Yik27YT32EeJi1Hm19HFVA5bRmCbrd8ytnHQWtOEUg@mail.gmail.com>
+Subject: Re: removig ia64, was: Re: [PATCH 3/4] mm/tlb, x86/mm: Support
+ invalidating TLB caches for RCU_TABLE_FREE
+To:     hch@infradead.org
+Cc:     peterz@infradead.org, npiggin@gmail.com, will.deacon@arm.com,
+        torvalds@linux-foundation.org, benh@au1.ibm.com, luto@kernel.org,
+        x86@kernel.org, bp@alien8.de, riel@surriel.com, jannh@google.com,
+        ascannell@google.com, dave.hansen@intel.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        davem@davemloft.net, schwidefsky@de.ibm.com, mpe@ellerman.id.au,
+        tony.luck@intel.com, fenghua.yu@intel.com,
+        linux-ia64@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/08/18 13:26, Adrian Hunter wrote:
-> On 27/08/18 13:10, Thierry Reding wrote:
->> On Fri, Aug 10, 2018 at 09:08:02PM +0300, Aapo Vienamo wrote:
->>> Hi all,
->>>
->>> This series implements support for faster signaling modes on Tegra
->>> SDHCI controllers. This series consist of several parts: changes
->>> requried for 1.8 V signaling and pad control, pad calibration, and
->>> tuning. Following earlies patch sets have been merged into this
->>> larger set: "Tegra PMC pinctrl pad configuration", "Tegra SDHCI enable
->>> 1.8 V signaling on Tegar210 and Tegra186", "Tegra SDHCI update the
->>> padautocal procedure". Also the patches for enabling SDHCI tuning
->>> are added.
->>>
->>> Changelog:
->>> v2:
->>> 	- Fix grammar in PMC device tree bindings docs
->>> 	- Remove a stray line from tegra sdhci bindings
->>> 	- Cosmetic changes to PMC pinctrl driver
->>> 	- Fix a typo in "soc/tegra: pmc: Implement
->>> 	  tegra_io_pad_is_powered()" commit message
->>> 	- Declare mask and value on the same line in
->>> 	  tegra_io_pad_is_powered()
->>> 	- Move the call to tegra_sdhci_is_pad_and_regulator_valid() to
->>> 	  inside the if condition in tegra_sdhci_reset()
->>> 	- Use usleep_range() in tegra_sdhci_configure_cal_pad()
->>> 	- Move sdhci_writel() out of the enable if-else body in
->>> 	  tegra_sdhci_configure_cal_pad()
->>> 	- Add a delay before starting polling in
->>> 	  tegra_sdhci_pad_autocalib()
->>> 	- Use usleep_range() in tegra_sdhci_set_tap()
->>> 	- Rename orig_enabled to status in
->>> 	  tegra_sdhci_configure_card_clk()
->>> 	- Fix if condition wrapping alignment in tegra_sdhci_set_tap()
->>>
->>> v1:
->>> 	- Probe the regulator voltage capabilities to determine whether pinctrl
->>> 	  is needed in tegra_sdhci_r eset
->>> 	- Don't remove tegra_sdhci_voltage_switch()
->>> 	- Use dev_warn() in tegra_sdhci_init_pinctrl_info()
->>> 	- Don't change start_signal_voltage_switch callback if pinctrl info
->>> 	  invalid
->>> 	- Only call udelay(1) on enable in tegra_sdhci_configure_cal_pad()
->>> 	- Add nvidia, prefix to pad autocal offset dt props in the example
->>>
->>> See the original patch sets for earlier changelogs.
->>>
->>> Aapo Vienamo (40):
->>>   dt-bindings: Add Tegra PMC pad configuration bindings
->>>   dt-bindings: mmc: tegra: Add pad voltage control properties
->>>   dt-bindings: Add Tegra SDHCI pad pdpu offset bindings
->>>   dt-bindings: mmc: Add Tegra SDHCI sampling trimmer values
->>>   soc/tegra: pmc: Fix pad voltage configuration for Tegra186
->>>   soc/tegra: pmc: Factor out DPD register bit calculation
->>>   soc/tegra: pmc: Implement tegra_io_pad_is_powered()
->>>   soc/tegra: pmc: Use X macro to generate IO pad tables
->>>   soc/tegra: pmc: Remove public pad voltage APIs
->>>   soc/tegra: pmc: Implement pad configuration via pinctrl
->>>   mmc: sdhci: Add a quirk to skip clearing the transfer mode register on
->>>     tuning
->>>   mmc: tegra: Reconfigure pad voltages during voltage switching
->>>   mmc: tegra: Poll for calibration completion
->>>   mmc: tegra: Set calibration pad voltage reference
->>>   mmc: tegra: Power on the calibration pad
->>>   mmc: tegra: Disable card clock during pad calibration
->>>   mmc: tegra: Program pad autocal offsets from dt
->>>   mmc: tegra: Perform pad calibration after voltage switch
->>>   mmc: tegra: Enable pad calibration on Tegra210 and Tegra186
->>>   mmc: tegra: Add a workaround for tap value change glitch
->>>   mmc: tegra: Parse default trim and tap from dt
->>>   mmc: tegra: Configure default tap values
->>>   mmc: tegra: Configure default trim value on reset
->>>   mmc: tegra: Use standard SDHCI tuning on Tegra210 and Tegra186
->>>   mmc: sdhci: Add a quirk to disable card clock during tuning
->>>   mmc: tegra: Enable workaround for tuning transfer mode bug
->>>   mmc: tegra: Set SDHCI_QUIRK2_TUNE_DIS_CARD_CLK on Tegra210
->>>   mmc: tegra: Enable UHS and HS200 modes for Tegra210
->>>   mmc: tegra: Enable UHS and HS200 modes for Tegra186
->>>   arm64: dts: Add Tegra210 sdmmc pinctrl voltage states
->>>   arm64: dts: Add Tegra186 sdmmc pinctrl voltage states
->>>   arm64: dts: tegra210-p2180: Allow ldo2 to go down to 1.8 V
->>>   arm64: dts: tegra210-p2180: Correct sdmmc4 vqmmc-supply
->>>   arm64: dts: tegra210-p2597: Remove no-1-8-v from sdmmc1
->>>   arm64: dts: tegra186: Add sdmmc pad auto calibration offsets
->>>   arm64: dts: tegra210: Add sdmmc pad auto calibration offsets
->>>   arm64: dts: tegra210: Add SDHCI tap and trim values
->>>   arm64: dts: tegra186: Add SDHCI tap and trim values
->>>   arm64: dts: tegra186: Assign clocks for sdmmc1 and sdmmc4
->>>   arm64: dts: tegra210: Assign clocks for sdmmc1 and sdmmc4
->>>
->>>  .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     |  93 ++++
->>>  .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 103 ++++
->>>  .../bindings/mmc/nvidia,tegra20-sdhci.txt          |  68 +++
->>>  arch/arm64/boot/dts/nvidia/tegra186.dtsi           |  74 +++
->>>  arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi     |  12 +-
->>>  arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     |   1 -
->>>  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  55 ++
->>>  drivers/mmc/host/sdhci-tegra.c                     | 556 +++++++++++++++++++--
->>>  drivers/mmc/host/sdhci.c                           |  21 +
->>>  drivers/mmc/host/sdhci.h                           |   4 +
->>>  drivers/soc/tegra/pmc.c                            | 511 ++++++++++++++-----
->>>  include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h |  18 +
->>>  include/soc/tegra/pmc.h                            |  20 +-
->>>  13 files changed, 1324 insertions(+), 212 deletions(-)
->>>  create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
->>
->> Adrian,
->>
->> these patches are also a prerequisite for the UHS signalling changes in
->> the other two series that Aapo posted. It'd be great if you could take a
->> quick look and weigh in.
-> 
-> Sure, I'll try and have a look today.
+I cannot speak to how widespread it has been adopted, but the linux
+(kernel) package for version 4.17.17 has been successfully built and
+installed for ia64 under Debian ports.  There is clearly more work to
+do to get ia64 rehabilitated, but there are over 10,000 packages
+currently successfully built for ia64 under Debian ports[1].
 
-Apart from the 2 new quirks which I made comments on, the rest seems fine.
+Jason
 
+[1] https://buildd.debian.org/status/architecture.php?a=ia64&suite=sid
+On Mon, Aug 27, 2018 at 4:57 AM Christoph Hellwig <hch@infradead.org> wrote:
+>
+> On Mon, Aug 27, 2018 at 09:47:01AM +0200, Peter Zijlstra wrote:
+> > sh is trivial, arm seems doable, with a bit of luck we can do 'rm -rf
+> > arch/ia64' leaving us with s390.
+>
+> Is removing ia64 a serious plan?  It is the cause for a fair share of
+> oddities in dma lang, and I did not have much luck getting maintainer
+> replies lately, but I didn't know of a plan to get rid of it.
+>
+> What is the state of people still using ia64 mainline kernels vs just
+> old distros in the still existing machines?
