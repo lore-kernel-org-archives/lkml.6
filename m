@@ -1,92 +1,185 @@
 Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3061C433F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:13:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A19EFC433F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:16:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72BDE208D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:13:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X+o07Oqv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72BDE208D5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=darnok.org
+	by mail.kernel.org (Postfix) with ESMTP id 59E5B208B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 18:16:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59E5B208B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727361AbeH0WAy (ORCPT
+        id S1727333AbeH0WEg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 18:00:54 -0400
-Received: from mail-qt0-f180.google.com ([209.85.216.180]:41977 "EHLO
-        mail-qt0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726895AbeH0WAy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 18:00:54 -0400
-Received: by mail-qt0-f180.google.com with SMTP id t39-v6so18366714qtc.8
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 11:13:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=KVLZ8vAN9XvG1iTfPcq/M/NtTgRNoVJn4MtutliEVJI=;
-        b=X+o07OqvRClk9gR881kOE6nnBOsg0BznjiC5lsWaVMSdi7aZlCtJPthOWT73vnFMbW
-         puRfsEwbCyjryQ3pW0jU3j50F6ThTMnVFeqZNl9J6UTvFYe1TabD4h/NtYqjJluzA+l1
-         maV6nUT7AUtBV9DG/lWoifBW/JcrdSEFyNzMm/ewmuCzxWiV+s5HxrclacaysFvB9C7O
-         vBTT+tRQGLSK7aAsQmcPd0sG0xomhC0cfw421LGEjXZhKfNnydwgkWSwYgKXi42VgYoS
-         RlN+up8JAo0XypWvVlxldb5H0YtZ8h1xABcVvdE/KBnPmD8kdM37l0Pb7LRkYo3vkKIL
-         eImA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KVLZ8vAN9XvG1iTfPcq/M/NtTgRNoVJn4MtutliEVJI=;
-        b=ptvbVNf6W9TBU5HLqBlL7ITLsQVCtX1SJQA9xv8TjPKlzPokSVyzFj3qILWknqSGzj
-         2lvW75KwnncKlXJ7NUPcNEGrKxaE7XYphK92aQ+Q2t6LVC4LiCqysXRvYoCVTcoRQD3i
-         w4rn3MQRCQNlRn1ZxmZLptwoaLZop81W0W3e0UuvfrXyUpN3jdmmBe1fhufHcjNXZxQD
-         DoYPR5v3zsTjqlqgcA/0wQH+oPLu+nVpVVs0Pl8OP54rReUulld1j+AXnWzSSHhzJG5u
-         mmJKrVm6oeGW2QP5E7LHlRVwm6292GF27HIpM+IWvoRIIyvsWXHjfp/MU/cQ4GpPhU0c
-         Ceug==
-X-Gm-Message-State: APzg51AjkVCb+qP+COBQxoPWEHY0aQU1Qgw2zYeHjG3k3V+CgUvl7bGL
-        5NyK0NaOf38p83OyyjJRZoE=
-X-Google-Smtp-Source: ANB0VdbgfjJ+Mx7y09NlbxyjYTG0+QKkt+h0oFG/SBndv97JePahoJoISvU3U9vnOzhDCIpIqQYX5w==
-X-Received: by 2002:ac8:8ad:: with SMTP id v42-v6mr15402965qth.297.1535393594093;
-        Mon, 27 Aug 2018 11:13:14 -0700 (PDT)
-Received: from 0021ccb48c25 (209-6-36-129.s6527.c3-0.smr-cbr2.sbo-smr.ma.cable.rcncustomer.com. [209.6.36.129])
-        by smtp.gmail.com with ESMTPSA id d11-v6sm9638435qkg.14.2018.08.27.11.13.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 27 Aug 2018 11:13:13 -0700 (PDT)
-Date:   Mon, 27 Aug 2018 14:13:11 -0400
-From:   Konrad Rzeszutek Wilk <konrad@darnok.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: swiotlb cleanup (resend)
-Message-ID: <20180827181309.GA3834@0021ccb48c25>
-References: <20180725113802.18943-1-hch@lst.de>
+        Mon, 27 Aug 2018 18:04:36 -0400
+Received: from mga02.intel.com ([134.134.136.20]:17285 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726895AbeH0WEg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 Aug 2018 18:04:36 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2018 11:16:56 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,296,1531810800"; 
+   d="scan'208";a="68244170"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga007.jf.intel.com with ESMTP; 27 Aug 2018 11:16:49 -0700
+Received: from [10.252.7.119] (abudanko-mobl.ccr.corp.intel.com [10.252.7.119])
+        by linux.intel.com (Postfix) with ESMTP id A49365803DA;
+        Mon, 27 Aug 2018 11:16:46 -0700 (PDT)
+Subject: [PATCH v3 1/2]: perf util: map data buffer for preserving collected
+ data
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+To:     Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <bdd669cd-a6dc-d592-4655-33b7bfc46cbb@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <c01d8371-2df3-01a2-2bc9-6c7ffd944139@linux.intel.com>
+Date:   Mon, 27 Aug 2018 21:16:45 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180725113802.18943-1-hch@lst.de>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <bdd669cd-a6dc-d592-4655-33b7bfc46cbb@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 25, 2018 at 01:37:56PM +0200, Christoph Hellwig wrote:
-> Hi Konrad,
-> 
-> below are a few swiotlb patches.  Mostly just cleanups, but the removal
-> of the panic option is an actual change in (rarely used) functionality.
-> 
-> I'd be happy to pick them up through the dma-mapping tree if you are
-> fine with that.
 
-Hey,
+The data buffer and accompanying AIO control block are allocated at 
+perf_mmap object and the mapped data buffer size is equal to 
+the kernel one.
 
-I put them in my 'devel/for-linus-4.19' as I would like to make
-sure that they work just fine with Xen-SWIOTLB and some baremetal
-machines.
+The buffer is then used to preserve profiling data ready for dumping 
+and queue it for asynchronous writing into perf trace thru implemented 
+record__aio_write() function.
+
+mmap_aio control structure of the size equal to the number of per-cpu 
+kernel buffers is used to keep pointers to enqueued AIO control 
+blocks for monitoring of completed AIO operations.
+
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+---
+Changes in v2:
+ - converted zalloc() to calloc() for allocation of mmap_aio array,
+ - cleared typo and adjusted fallback branch code;
+---
+ tools/perf/util/evlist.c |  7 +++++++
+ tools/perf/util/evlist.h |  2 ++
+ tools/perf/util/mmap.c   | 12 ++++++++++++
+ tools/perf/util/mmap.h   |  3 +++
+ 4 files changed, 24 insertions(+)
+
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index e7a4b31a84fb..04596f74766c 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -718,6 +718,8 @@ static void perf_evlist__munmap_nofree(struct perf_evlist *evlist)
+ void perf_evlist__munmap(struct perf_evlist *evlist)
+ {
+ 	perf_evlist__munmap_nofree(evlist);
++	if (evlist->mmap_aio)
++		zfree(&evlist->mmap_aio);
+ 	zfree(&evlist->mmap);
+ 	zfree(&evlist->overwrite_mmap);
+ }
+@@ -749,6 +751,11 @@ static struct perf_mmap *perf_evlist__alloc_mmap(struct perf_evlist *evlist,
+ 		 */
+ 		refcount_set(&map[i].refcnt, 0);
+ 	}
++
++	evlist->mmap_aio = calloc(evlist->nr_mmaps, sizeof(struct aiocb *));
++	if (!evlist->mmap_aio)
++		zfree(&map);
++
+ 	return map;
+ }
+ 
+diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
+index dc66436add98..f98b949561fd 100644
+--- a/tools/perf/util/evlist.h
++++ b/tools/perf/util/evlist.h
+@@ -15,6 +15,7 @@
+ #include "util.h"
+ #include <signal.h>
+ #include <unistd.h>
++#include <aio.h>
+ 
+ struct pollfd;
+ struct thread_map;
+@@ -43,6 +44,7 @@ struct perf_evlist {
+ 	} workload;
+ 	struct fdarray	 pollfd;
+ 	struct perf_mmap *mmap;
++	struct aiocb	 **mmap_aio;
+ 	struct perf_mmap *overwrite_mmap;
+ 	struct thread_map *threads;
+ 	struct cpu_map	  *cpus;
+diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
+index fc832676a798..e71d46cb01cc 100644
+--- a/tools/perf/util/mmap.c
++++ b/tools/perf/util/mmap.c
+@@ -155,6 +155,10 @@ void __weak auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp __mayb
+ 
+ void perf_mmap__munmap(struct perf_mmap *map)
+ {
++	if (map->data != NULL) {
++		munmap(map->data, perf_mmap__mmap_len(map));
++		map->data = NULL;
++	}
+ 	if (map->base != NULL) {
+ 		munmap(map->base, perf_mmap__mmap_len(map));
+ 		map->base = NULL;
+@@ -190,6 +194,14 @@ int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd)
+ 		map->base = NULL;
+ 		return -1;
+ 	}
++	map->data = mmap(NULL, perf_mmap__mmap_len(map), PROT_READ | PROT_WRITE,
++			MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
++	if (map->data == MAP_FAILED) {
++		pr_debug2("failed to mmap perf event data buffer, error %d\n",
++				errno);
++		map->data = NULL;
++		return -1;
++	}
+ 	map->fd = fd;
+ 
+ 	if (auxtrace_mmap__mmap(&map->auxtrace_mmap,
+diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
+index d82294db1295..1974e621e36b 100644
+--- a/tools/perf/util/mmap.h
++++ b/tools/perf/util/mmap.h
+@@ -6,6 +6,7 @@
+ #include <linux/types.h>
+ #include <asm/barrier.h>
+ #include <stdbool.h>
++#include <aio.h>
+ #include "auxtrace.h"
+ #include "event.h"
+ 
+@@ -25,6 +26,8 @@ struct perf_mmap {
+ 	bool		 overwrite;
+ 	struct auxtrace_mmap auxtrace_mmap;
+ 	char		 event_copy[PERF_SAMPLE_MAX_SIZE] __aligned(8);
++	void 		 *data;
++	struct aiocb	 cblock;
+ };
+ 
+ /*
+ 
