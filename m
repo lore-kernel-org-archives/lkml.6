@@ -2,179 +2,128 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E54ACC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:34:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C042DC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:37:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 954CE2087F
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:34:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 954CE2087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 428842087D
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:37:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RsspPom5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 428842087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727488AbeH2A1k (ORCPT
+        id S1727255AbeH2Aa2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 20:27:40 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:35864 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726996AbeH2A1k (ORCPT
+        Tue, 28 Aug 2018 20:30:28 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46240 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727125AbeH2Aa2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 20:27:40 -0400
-Received: by mail-oi0-f66.google.com with SMTP id r69-v6so5277060oie.3;
-        Tue, 28 Aug 2018 13:34:20 -0700 (PDT)
+        Tue, 28 Aug 2018 20:30:28 -0400
+Received: by mail-wr1-f65.google.com with SMTP id a108-v6so2733991wrc.13;
+        Tue, 28 Aug 2018 13:37:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=G+A+K40XdK+l9Obs2EooWbLOTs6QBLllS8qbbxu4G+A=;
+        b=RsspPom5cZbeBu8X+Z54eNmu5GFCEu/TK2SeL+3hnhWa0W83vnoqd7qQo+I5bzGEiJ
+         9EV/7dZPwoery+we84VqgBth1jn3XgsO7BpHNwv5u0/LS8Nw/5FPcyT68/TB11pUbhjo
+         JYSVnqRZEv8R9VvRvSWvpOePQfimZkmnVak8qlwFvJSJEkIPtBScpvPs1HZfFoNS7Btn
+         bSedCe3f/cs6gg725cZgq2zuctb1EHgXiUiiXFDOpMoBwG8aeB7hivpiGwDsoqPhRNZF
+         mZPGD7BwI3BJdyGUv1DpUBcn9vZTirI3MXZaQqTUtS0Ml5tRYAhm/XqQOmajrhr77ng7
+         98YA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8DT1IZEKKTQ8xlWEhwxsz1xiiS+Ad5h6kFGT4NSGGXQ=;
-        b=BwnCUXAQ3BhQBFq3iFfpLjQLajVq5YkTLrdnijqK3WHnm9+lNO1ReRJpBTAqSDkuWb
-         bxziYzvl6WXjkDsSsilH/ypH3UN0mG99yyxqFTjDE6JrjeybJSPPy8wkFFqtjmtqMH9H
-         cm6BKjhUMY3LZgLg/XvtAlMvq2OIiUA43ocL6m5sP3i9tzQkwKyMRWmeijQZ1GXFlx52
-         nvOjmrezkXAgHj1cxHzIWP3ZpKLijEdrVtOGkYBLvZWYOYl7sHaIkHcdgYfheruHI7y3
-         XRddLBqhL7dZB+WiJFF+g/WPHixCJH0kY3dQ63Y6j+kJ70hP2ilOnKKkWZQZOMJoDqOD
-         2OZA==
-X-Gm-Message-State: APzg51BkO84oinmGjrlzfPMJm/mSuh8msAdqzzdnEv8eH46cCHOMfbUO
-        XjkXErW3o5KWDgjqojM+Eg==
-X-Google-Smtp-Source: ANB0VdZ9cO+FLX2NecbSo4xoT28bdZz006bCsh4D/Hi25+JJSBnK3F5ucxNTtvJv8gHZ3owhfunJPA==
-X-Received: by 2002:a54:4f88:: with SMTP id g8-v6mr2655661oiy.191.1535488459928;
-        Tue, 28 Aug 2018 13:34:19 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id l204-v6sm986798oia.45.2018.08.28.13.34.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 28 Aug 2018 13:34:19 -0700 (PDT)
-Date:   Tue, 28 Aug 2018 15:34:18 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc:     joro@8bytes.org, robin.murphy@arm.com, will.deacon@arm.com,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, freedreno@lists.freedesktop.org,
-        alex.williamson@redhat.com, mark.rutland@arm.com,
-        rjw@rjwysocki.net, robdclark@gmail.com, andy.gross@linaro.org,
-        linux-pm@vger.kernel.org, sboyd@kernel.org, tfiga@chromium.org,
-        jcrouse@codeaurora.org, sricharan@codeaurora.org,
-        m.szyprowski@samsung.com, architt@codeaurora.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [Patch v15 4/5] dt-bindings: arm-smmu: Add bindings for
- qcom,smmu-v2
-Message-ID: <20180828203418.GA18366@bogus>
-References: <20180827105551.16346-1-vivek.gautam@codeaurora.org>
- <20180827105551.16346-5-vivek.gautam@codeaurora.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=G+A+K40XdK+l9Obs2EooWbLOTs6QBLllS8qbbxu4G+A=;
+        b=evuHitkfiQ82bAALhjmwt3M9HTjyFospVXGzY86+sDdnkHIexLxRD+Mep8LqxzbjMh
+         exqOsBdpdU3B/2xRNS33CXcOIPz50+TBG6KlxJGC/DDlv6rNI2tYq4+xnWCVl37PLroF
+         blDV0Ef5zt0ADu5b80hFj3itVdsgcj8n9xPPkrw71hJea6SPezF7tEx3XPMkPyG4Eoz8
+         YamXdBzdZC63DlqRdQrS/uiBrsd+24cxXdZGzQKSkcwL6BsOG3W1oITkq7HQSZDKwnLg
+         Qgj+mYWYV34WCbOanVol+4gir2HUL2T3F2cpg4dTeubLMa3xrDuNIZH26kCn6IQJoTp0
+         pQfw==
+X-Gm-Message-State: APzg51Apl/3YvDh90O9pJBiN4qMu8twYputOJfA7TXZwshFNUIDfL3ZB
+        vSSTwOhfCq5Rb7mzXjlda9hKgnQE
+X-Google-Smtp-Source: ANB0VdZ5zl4KviJfPmT6tUFZByIQQIIKy1t9TBACv/xfvzcKH0wm05SuIgwkVfOVC8Cg5av9TD1oww==
+X-Received: by 2002:adf:a292:: with SMTP id s18-v6mr2378366wra.100.1535488626443;
+        Tue, 28 Aug 2018 13:37:06 -0700 (PDT)
+Received: from [192.168.1.18] (bla118.neoplus.adsl.tpnet.pl. [83.28.194.118])
+        by smtp.gmail.com with ESMTPSA id u40-v6sm4024420wrc.43.2018.08.28.13.37.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 28 Aug 2018 13:37:05 -0700 (PDT)
+Subject: Re: [PATCH] leds: Convert to using %pOFn instead of device_node.name
+To:     Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org
+Cc:     Sakari Ailus <sakari.ailus@iki.fi>, Pavel Machek <pavel@ucw.cz>,
+        linux-leds@vger.kernel.org
+References: <20180828015252.28511-1-robh@kernel.org>
+ <20180828015252.28511-25-robh@kernel.org>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <5e5ea614-5242-eabc-2e4a-aa20432a4a12@gmail.com>
+Date:   Tue, 28 Aug 2018 22:37:03 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180827105551.16346-5-vivek.gautam@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180828015252.28511-25-robh@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 04:25:50PM +0530, Vivek Gautam wrote:
-> Add bindings doc for Qcom's smmu-v2 implementation.
+Hi Rob,
+
+Thank you for the patch.
+
+On 08/28/2018 03:52 AM, Rob Herring wrote:
+> In preparation to remove the node name pointer from struct device_node,
+> convert printf users to use the %pOFn format specifier.
 > 
-> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
-> Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Cc: Sakari Ailus <sakari.ailus@iki.fi>
+> Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> Cc: Pavel Machek <pavel@ucw.cz>
+> Cc: linux-leds@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
 > ---
+>  drivers/leds/leds-as3645a.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> Changes since v14:
->  - This is a new patch added in v15 after noticing the new
->    checkpatch warning for separate dt-bindings doc.
->  - This patch also addresses comments given by Rob and Robin to add
->    a list of valid values of '<soc>' in "qcom,<soc>-smmu-v2"
->    compatible string.
+> diff --git a/drivers/leds/leds-as3645a.c b/drivers/leds/leds-as3645a.c
+> index f883616d9e60..98a69b1a43f9 100644
+> --- a/drivers/leds/leds-as3645a.c
+> +++ b/drivers/leds/leds-as3645a.c
+> @@ -529,7 +529,7 @@ static int as3645a_parse_node(struct as3645a *flash,
+>  		strlcpy(names->flash, name, sizeof(names->flash));
+>  	else
+>  		snprintf(names->flash, sizeof(names->flash),
+> -			 "%s:flash", node->name);
+> +			 "%pOFn:flash", node);
+>  
+>  	rval = of_property_read_u32(flash->flash_node, "flash-timeout-us",
+>  				    &cfg->flash_timeout_us);
+> @@ -573,7 +573,7 @@ static int as3645a_parse_node(struct as3645a *flash,
+>  		strlcpy(names->indicator, name, sizeof(names->indicator));
+>  	else
+>  		snprintf(names->indicator, sizeof(names->indicator),
+> -			 "%s:indicator", node->name);
+> +			 "%pOFn:indicator", node);
+>  
+>  	rval = of_property_read_u32(flash->indicator_node, "led-max-microamp",
+>  				    &cfg->indicator_max_ua);
 > 
->  .../devicetree/bindings/iommu/arm,smmu.txt         | 47 ++++++++++++++++++++++
->  1 file changed, 47 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-> index 8a6ffce12af5..52198a539606 100644
-> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
-> @@ -17,10 +17,24 @@ conditions.
->                          "arm,mmu-401"
->                          "arm,mmu-500"
->                          "cavium,smmu-v2"
-> +                        "qcom,<soc>-smmu-v2", "qcom,smmu-v2"
 
-The v2 in the compatible string is kind of redundant unless the SoC has 
-other SMMU types.
+Applied.
 
->  
->                    depending on the particular implementation and/or the
->                    version of the architecture implemented.
->  
-> +                  A number of Qcom SoCs use qcom,smmu-v2 version of the IP.
-> +                  "qcom,<soc>-smmu-v2" represents a soc specific compatible
-> +                  string that should be present along with the "qcom,smmu-v2"
-> +                  to facilitate SoC specific clocks/power connections and to
-> +                  address specific bug fixes.
-> +                  '<soc>' string in "qcom,<soc>-smmu-v2" should be one of the
-> +                  following:
-> +                  msm8996 - for msm8996 Qcom SoC.
-> +                  sdm845 - for sdm845 Qcom Soc.
-
-Rather than all this prose, it would be simpler to just add 2 lines with 
-the full compatibles rather than <soc>. The <soc> thing is not going to 
-work when/if we move bindings to json-schema also.
-
-> +
-> +                  An example string would be -
-> +                  "qcom,msm8996-smmu-v2", "qcom,smmu-v2".
-> +
->  - reg           : Base address and size of the SMMU.
->  
->  - #global-interrupts : The number of global interrupts exposed by the
-> @@ -71,6 +85,22 @@ conditions.
->                    or using stream matching with #iommu-cells = <2>, and
->                    may be ignored if present in such cases.
->  
-> +- clock-names:    List of the names of clocks input to the device. The
-> +                  required list depends on particular implementation and
-> +                  is as follows:
-> +                  - for "qcom,smmu-v2":
-> +                    - "bus": clock required for downstream bus access and
-> +                             for the smmu ptw,
-> +                    - "iface": clock required to access smmu's registers
-> +                               through the TCU's programming interface.
-> +                  - unspecified for other implementations.
-> +
-> +- clocks:         Specifiers for all clocks listed in the clock-names property,
-> +                  as per generic clock bindings.
-> +
-> +- power-domains:  Specifiers for power domains required to be powered on for
-> +                  the SMMU to operate, as per generic power domain bindings.
-> +
->  ** Deprecated properties:
->  
->  - mmu-masters (deprecated in favour of the generic "iommus" binding) :
-> @@ -137,3 +167,20 @@ conditions.
->                  iommu-map = <0 &smmu3 0 0x400>;
->                  ...
->          };
-> +
-> +	/* Qcom's arm,smmu-v2 implementation */
-> +	smmu4: iommu {
-
-Needs a unit-address.
-
-> +		compatible = "qcom,msm8996-smmu-v2", "qcom,smmu-v2";
-> +		reg = <0xd00000 0x10000>;
-> +
-> +		#global-interrupts = <1>;
-> +		interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH>;
-> +		#iommu-cells = <1>;
-> +		power-domains = <&mmcc MDSS_GDSC>;
-> +
-> +		clocks = <&mmcc SMMU_MDP_AXI_CLK>,
-> +			 <&mmcc SMMU_MDP_AHB_CLK>;
-> +		clock-names = "bus", "iface";
-> +	};
-> -- 
-> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-> of Code Aurora Forum, hosted by The Linux Foundation
-> 
+-- 
+Best regards,
+Jacek Anaszewski
