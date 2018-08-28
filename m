@@ -6,81 +6,88 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B742C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 16:11:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AA07C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 16:11:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D7CD20896
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 16:11:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D7CD20896
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id E313E20893
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 16:11:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E313E20893
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=softathome.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727524AbeH1UDY (ORCPT
+        id S1727576AbeH1UDh convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 16:03:24 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:55108 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726807AbeH1UDY (ORCPT
+        Tue, 28 Aug 2018 16:03:37 -0400
+Received: from vrout30.yaziba.net ([185.56.204.33]:45989 "EHLO
+        vrout30.yaziba.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727144AbeH1UDg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 16:03:24 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1fugZr-0002Sf-1g; Tue, 28 Aug 2018 16:10:47 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        xen-devel@lists.xenproject.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/xen: remove redundant variable save_pud
-Date:   Tue, 28 Aug 2018 17:10:46 +0100
-Message-Id: <20180828161046.17165-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 28 Aug 2018 16:03:36 -0400
+X-Greylist: delayed 1022 seconds by postgrey-1.27 at vger.kernel.org; Tue, 28 Aug 2018 16:03:35 EDT
+Received: from mtaout20.int.yaziba.net (mtaout20.int.yaziba.net [10.4.20.37])
+        (using TLSv1 with cipher ADH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by vrout30.yaziba.net (mx10.yaziba.net) with ESMTPS id BB284520F6;
+        Tue, 28 Aug 2018 17:54:14 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by mtaout20.int.yaziba.net (Postfix) with ESMTP id B0F6216043D;
+        Tue, 28 Aug 2018 17:54:14 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at mtaout20.int.yaziba.net
+Received: from mtaout20.int.yaziba.net ([127.0.0.1])
+        by localhost (mtaout20.int.yaziba.net [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id xqaux8cbxp4W; Tue, 28 Aug 2018 17:54:14 +0200 (CEST)
+Received: from sahnlpt0333.softathome.com (unknown [149.6.166.170])
+        by mtaout20.int.yaziba.net (Postfix) with ESMTPSA id 9112A1603C0;
+        Tue, 28 Aug 2018 17:54:14 +0200 (CEST)
+From:   Philippe Reynes <philippe.reynes@softathome.com>
+To:     ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org
+Cc:     linux-mips@linux-mips.org, linux-kernel@vger.kernel.org,
+        Philippe Reynes <philippe.reynes@softathome.com>
+Subject: [PATCH] MIPS: Fix computation on entry point
+Date:   Tue, 28 Aug 2018 17:52:50 +0200
+Message-Id: <1535471570-19033-1-git-send-email-philippe.reynes@softathome.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+X-DRWEB-SCAN: ok
+X-VRSPAM-SCORE: 0
+X-VRSPAM-STATE: legit
+X-VRSPAM-CAUSE: gggruggvucftvghtrhhoucdtuddrgedtjedrgeeggdelhecutefuodetggdotefrucfrrhhofhhilhgvmecuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedttdenucenucfjughrpefhvffufffkofggtgfgsehtqhertdertdejnecuhfhrohhmpefrhhhilhhiphhpvgcutfgvhihnvghsuceophhhihhlihhpphgvrdhrvgihnhgvshesshhofhhtrghthhhomhgvrdgtohhmqeenucfkphepudegledriedrudeiiedrudejtdenucfrrghrrghmpehmohguvgepshhmthhpohhuth
+X-VRSPAM-EXTCAUSE: mhhouggvpehsmhhtphhouhht
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Since commit 27c524d17430 ("MIPS: Use the entry point from the ELF
+file header"), the kernel entry point is computed with a grep on
+"start address" on the output of objdump. It works fine when the
+default language is english but it may fail on other language (for
+example in French, the grep should be done on "adresse de départ").
+To fix this computation on most machine, I propose to force the
+language to english with "LC_ALL=C".
 
-Variable save_pud is being assigned but is never used hence it is
-redundant and can be removed.
+Fixes: 27c524d17430 ("MIPS: Use the entry point from the ELF file header")
 
-Cleans up clang warning:
-variable 'save_pud' set but not used [-Wunused-but-set-variable]
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Philippe Reynes <philippe.reynes@softathome.com>
 ---
- arch/x86/xen/mmu_pv.c | 2 --
- 1 file changed, 2 deletions(-)
+ arch/mips/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
-index 06a814d44b9b..2fe5c9b1816b 100644
---- a/arch/x86/xen/mmu_pv.c
-+++ b/arch/x86/xen/mmu_pv.c
-@@ -2060,7 +2060,6 @@ void __init xen_relocate_p2m(void)
- 	pud_t *pud;
- 	pgd_t *pgd;
- 	unsigned long *new_p2m;
--	int save_pud;
+diff --git a/arch/mips/Makefile b/arch/mips/Makefile
+index d74b374..835aa8f 100644
+--- a/arch/mips/Makefile
++++ b/arch/mips/Makefile
+@@ -258,7 +258,7 @@ load-y					= $(CONFIG_PHYSICAL_START)
+ endif
  
- 	size = PAGE_ALIGN(xen_start_info->nr_pages * sizeof(unsigned long));
- 	n_pte = roundup(size, PAGE_SIZE) >> PAGE_SHIFT;
-@@ -2090,7 +2089,6 @@ void __init xen_relocate_p2m(void)
- 
- 	pgd = __va(read_cr3_pa());
- 	new_p2m = (unsigned long *)(2 * PGDIR_SIZE);
--	save_pud = n_pud;
- 	for (idx_pud = 0; idx_pud < n_pud; idx_pud++) {
- 		pud = early_memremap(pud_phys, PAGE_SIZE);
- 		clear_page(pud);
+ # Sign-extend the entry point to 64 bits if retrieved as a 32-bit number.
+-entry-y		= $(shell $(OBJDUMP) -f vmlinux 2>/dev/null \
++entry-y		= $(shell LC_ALL=C $(OBJDUMP) -f vmlinux 2>/dev/null \
+ 			| sed -n '/^start address / { \
+ 				s/^.* //; \
+ 				s/0x\([0-7].......\)$$/0x00000000\1/; \
 -- 
-2.17.1
+2.7.4
 
