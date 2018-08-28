@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0B41C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 07:41:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4043C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 07:41:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45DC4208E1
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 07:41:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45DC4208E1
+	by mail.kernel.org (Postfix) with ESMTP id 6E2E9208E1
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 07:41:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E2E9208E1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727480AbeH1LbE (ORCPT
+        id S1727553AbeH1LbW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 07:31:04 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45368 "EHLO mx1.suse.de"
+        Tue, 28 Aug 2018 07:31:22 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45476 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727072AbeH1LbD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 07:31:03 -0400
+        id S1727414AbeH1LbE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 07:31:04 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 69641AF7D;
-        Tue, 28 Aug 2018 07:40:38 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 2A53CB04C;
+        Tue, 28 Aug 2018 07:40:40 +0000 (UTC)
 From:   Juergen Gross <jgross@suse.com>
 To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
         x86@kernel.org, virtualization@lists.linux-foundation.org
 Cc:     akataria@vmware.com, rusty@rustcorp.com.au,
         boris.ostrovsky@oracle.com, hpa@zytor.com, tglx@linutronix.de,
         mingo@redhat.com, Juergen Gross <jgross@suse.com>
-Subject: [PATCH v3 02/15] xen: move pv specific parts of arch/x86/xen/mmu.c to mmu_pv.c
-Date:   Tue, 28 Aug 2018 09:40:13 +0200
-Message-Id: <20180828074026.820-3-jgross@suse.com>
+Subject: [PATCH v3 12/15] x86/paravirt: move the Xen-only pv_cpu_ops under the PARAVIRT_XXL umbrella
+Date:   Tue, 28 Aug 2018 09:40:23 +0200
+Message-Id: <20180828074026.820-13-jgross@suse.com>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180828074026.820-1-jgross@suse.com>
 References: <20180828074026.820-1-jgross@suse.com>
@@ -43,659 +43,577 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are some PV specific functions in arch/x86/xen/mmu.c which can
-be moved to mmu_pv.c. This in turn enables us to make multicalls.c
-dependent on CONFIG_XEN_PV.
+Most of the paravirt ops defined in pv_cpu_ops are for Xen PV guests
+only. Define them only if CONFIG_PARAVIRT_XXL is set.
 
 Signed-off-by: Juergen Gross <jgross@suse.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 ---
-V3:
-- fix build failure on ARM (Boris Ostrovsky)
----
- arch/arm/xen/enlighten.c       |  34 --------
- arch/x86/xen/Makefile          |   2 +-
- arch/x86/xen/mmu.c             | 186 -----------------------------------------
- arch/x86/xen/mmu_pv.c          | 138 ++++++++++++++++++++++++++++++
- include/xen/interface/memory.h |   6 --
- include/xen/xen-ops.h          | 133 +++++++++++++++++++----------
- 6 files changed, 227 insertions(+), 272 deletions(-)
+ arch/x86/include/asm/debugreg.h       |  2 +-
+ arch/x86/include/asm/desc.h           |  4 ++--
+ arch/x86/include/asm/irqflags.h       | 16 +++++++++++-----
+ arch/x86/include/asm/msr.h            |  4 ++--
+ arch/x86/include/asm/paravirt.h       | 19 +++++++++++++++++--
+ arch/x86/include/asm/paravirt_types.h |  5 ++++-
+ arch/x86/include/asm/pgtable.h        |  6 ++++--
+ arch/x86/include/asm/processor.h      |  4 ++--
+ arch/x86/include/asm/special_insns.h  |  9 +++++++--
+ arch/x86/kernel/asm-offsets.c         |  2 ++
+ arch/x86/kernel/asm-offsets_64.c      |  2 ++
+ arch/x86/kernel/cpu/common.c          |  2 +-
+ arch/x86/kernel/head_64.S             |  2 ++
+ arch/x86/kernel/paravirt.c            | 13 ++++++++++++-
+ arch/x86/kernel/paravirt_patch_32.c   |  4 ++++
+ arch/x86/kernel/paravirt_patch_64.c   |  6 +++++-
+ 16 files changed, 78 insertions(+), 22 deletions(-)
 
-diff --git a/arch/arm/xen/enlighten.c b/arch/arm/xen/enlighten.c
-index 07060e5b5864..17e478928276 100644
---- a/arch/arm/xen/enlighten.c
-+++ b/arch/arm/xen/enlighten.c
-@@ -62,29 +62,6 @@ static __read_mostly unsigned int xen_events_irq;
- uint32_t xen_start_flags;
- EXPORT_SYMBOL(xen_start_flags);
+diff --git a/arch/x86/include/asm/debugreg.h b/arch/x86/include/asm/debugreg.h
+index 4505ac2735ad..9e5ca30738e5 100644
+--- a/arch/x86/include/asm/debugreg.h
++++ b/arch/x86/include/asm/debugreg.h
+@@ -8,7 +8,7 @@
  
--int xen_remap_domain_gfn_array(struct vm_area_struct *vma,
--			       unsigned long addr,
--			       xen_pfn_t *gfn, int nr,
--			       int *err_ptr, pgprot_t prot,
--			       unsigned domid,
--			       struct page **pages)
--{
--	return xen_xlate_remap_gfn_array(vma, addr, gfn, nr, err_ptr,
--					 prot, domid, pages);
--}
--EXPORT_SYMBOL_GPL(xen_remap_domain_gfn_array);
--
--/* Not used by XENFEAT_auto_translated guests. */
--int xen_remap_domain_gfn_range(struct vm_area_struct *vma,
--                              unsigned long addr,
--                              xen_pfn_t gfn, int nr,
--                              pgprot_t prot, unsigned domid,
--                              struct page **pages)
--{
--	return -ENOSYS;
--}
--EXPORT_SYMBOL_GPL(xen_remap_domain_gfn_range);
--
- int xen_unmap_domain_gfn_range(struct vm_area_struct *vma,
- 			       int nr, struct page **pages)
- {
-@@ -92,17 +69,6 @@ int xen_unmap_domain_gfn_range(struct vm_area_struct *vma,
- }
- EXPORT_SYMBOL_GPL(xen_unmap_domain_gfn_range);
+ DECLARE_PER_CPU(unsigned long, cpu_dr7);
  
--/* Not used by XENFEAT_auto_translated guests. */
--int xen_remap_domain_mfn_array(struct vm_area_struct *vma,
--			       unsigned long addr,
--			       xen_pfn_t *mfn, int nr,
--			       int *err_ptr, pgprot_t prot,
--			       unsigned int domid, struct page **pages)
--{
--	return -ENOSYS;
--}
--EXPORT_SYMBOL_GPL(xen_remap_domain_mfn_array);
--
- static void xen_read_wallclock(struct timespec64 *ts)
- {
- 	u32 version;
-diff --git a/arch/x86/xen/Makefile b/arch/x86/xen/Makefile
-index f723b5aa8f74..a964f307a266 100644
---- a/arch/x86/xen/Makefile
-+++ b/arch/x86/xen/Makefile
-@@ -15,7 +15,6 @@ CFLAGS_enlighten_pv.o		:= $(nostackp)
- CFLAGS_mmu_pv.o			:= $(nostackp)
- 
- obj-y				+= enlighten.o
--obj-y				+= multicalls.o
- obj-y				+= mmu.o
- obj-y				+= time.o
- obj-y				+= grant-table.o
-@@ -34,6 +33,7 @@ obj-$(CONFIG_XEN_PV)		+= p2m.o
- obj-$(CONFIG_XEN_PV)		+= enlighten_pv.o
- obj-$(CONFIG_XEN_PV)		+= mmu_pv.o
- obj-$(CONFIG_XEN_PV)		+= irq.o
-+obj-$(CONFIG_XEN_PV)		+= multicalls.o
- obj-$(CONFIG_XEN_PV)		+= xen-asm.o
- obj-$(CONFIG_XEN_PV)		+= xen-asm_$(BITS).o
- 
-diff --git a/arch/x86/xen/mmu.c b/arch/x86/xen/mmu.c
-index 96fc2f0fdbfe..e0e13fe16d37 100644
---- a/arch/x86/xen/mmu.c
-+++ b/arch/x86/xen/mmu.c
-@@ -6,12 +6,6 @@
- #include "multicalls.h"
- #include "mmu.h"
- 
--/*
-- * Protects atomic reservation decrease/increase against concurrent increases.
-- * Also protects non-atomic updates of current_pages and balloon lists.
-- */
--DEFINE_SPINLOCK(xen_reservation_lock);
--
- unsigned long arbitrary_virt_to_mfn(void *vaddr)
- {
- 	xmaddr_t maddr = arbitrary_virt_to_machine(vaddr);
-@@ -42,186 +36,6 @@ xmaddr_t arbitrary_virt_to_machine(void *vaddr)
- }
- EXPORT_SYMBOL_GPL(arbitrary_virt_to_machine);
- 
--static noinline void xen_flush_tlb_all(void)
--{
--	struct mmuext_op *op;
--	struct multicall_space mcs;
--
--	preempt_disable();
--
--	mcs = xen_mc_entry(sizeof(*op));
--
--	op = mcs.args;
--	op->cmd = MMUEXT_TLB_FLUSH_ALL;
--	MULTI_mmuext_op(mcs.mc, op, 1, NULL, DOMID_SELF);
--
--	xen_mc_issue(PARAVIRT_LAZY_MMU);
--
--	preempt_enable();
--}
--
--#define REMAP_BATCH_SIZE 16
--
--struct remap_data {
--	xen_pfn_t *pfn;
--	bool contiguous;
--	bool no_translate;
--	pgprot_t prot;
--	struct mmu_update *mmu_update;
--};
--
--static int remap_area_pfn_pte_fn(pte_t *ptep, pgtable_t token,
--				 unsigned long addr, void *data)
--{
--	struct remap_data *rmd = data;
--	pte_t pte = pte_mkspecial(mfn_pte(*rmd->pfn, rmd->prot));
--
--	/*
--	 * If we have a contiguous range, just update the pfn itself,
--	 * else update pointer to be "next pfn".
--	 */
--	if (rmd->contiguous)
--		(*rmd->pfn)++;
--	else
--		rmd->pfn++;
--
--	rmd->mmu_update->ptr = virt_to_machine(ptep).maddr;
--	rmd->mmu_update->ptr |= rmd->no_translate ?
--		MMU_PT_UPDATE_NO_TRANSLATE :
--		MMU_NORMAL_PT_UPDATE;
--	rmd->mmu_update->val = pte_val_ma(pte);
--	rmd->mmu_update++;
--
--	return 0;
--}
--
--static int do_remap_pfn(struct vm_area_struct *vma,
--			unsigned long addr,
--			xen_pfn_t *pfn, int nr,
--			int *err_ptr, pgprot_t prot,
--			unsigned int domid,
--			bool no_translate,
--			struct page **pages)
--{
--	int err = 0;
--	struct remap_data rmd;
--	struct mmu_update mmu_update[REMAP_BATCH_SIZE];
--	unsigned long range;
--	int mapped = 0;
--
--	BUG_ON(!((vma->vm_flags & (VM_PFNMAP | VM_IO)) == (VM_PFNMAP | VM_IO)));
--
--	rmd.pfn = pfn;
--	rmd.prot = prot;
--	/*
--	 * We use the err_ptr to indicate if there we are doing a contiguous
--	 * mapping or a discontigious mapping.
--	 */
--	rmd.contiguous = !err_ptr;
--	rmd.no_translate = no_translate;
--
--	while (nr) {
--		int index = 0;
--		int done = 0;
--		int batch = min(REMAP_BATCH_SIZE, nr);
--		int batch_left = batch;
--		range = (unsigned long)batch << PAGE_SHIFT;
--
--		rmd.mmu_update = mmu_update;
--		err = apply_to_page_range(vma->vm_mm, addr, range,
--					  remap_area_pfn_pte_fn, &rmd);
--		if (err)
--			goto out;
--
--		/* We record the error for each page that gives an error, but
--		 * continue mapping until the whole set is done */
--		do {
--			int i;
--
--			err = HYPERVISOR_mmu_update(&mmu_update[index],
--						    batch_left, &done, domid);
--
--			/*
--			 * @err_ptr may be the same buffer as @gfn, so
--			 * only clear it after each chunk of @gfn is
--			 * used.
--			 */
--			if (err_ptr) {
--				for (i = index; i < index + done; i++)
--					err_ptr[i] = 0;
--			}
--			if (err < 0) {
--				if (!err_ptr)
--					goto out;
--				err_ptr[i] = err;
--				done++; /* Skip failed frame. */
--			} else
--				mapped += done;
--			batch_left -= done;
--			index += done;
--		} while (batch_left);
--
--		nr -= batch;
--		addr += range;
--		if (err_ptr)
--			err_ptr += batch;
--		cond_resched();
--	}
--out:
--
--	xen_flush_tlb_all();
--
--	return err < 0 ? err : mapped;
--}
--
--int xen_remap_domain_gfn_range(struct vm_area_struct *vma,
--			       unsigned long addr,
--			       xen_pfn_t gfn, int nr,
--			       pgprot_t prot, unsigned domid,
--			       struct page **pages)
--{
--	if (xen_feature(XENFEAT_auto_translated_physmap))
--		return -EOPNOTSUPP;
--
--	return do_remap_pfn(vma, addr, &gfn, nr, NULL, prot, domid, false,
--			    pages);
--}
--EXPORT_SYMBOL_GPL(xen_remap_domain_gfn_range);
--
--int xen_remap_domain_gfn_array(struct vm_area_struct *vma,
--			       unsigned long addr,
--			       xen_pfn_t *gfn, int nr,
--			       int *err_ptr, pgprot_t prot,
--			       unsigned domid, struct page **pages)
--{
--	if (xen_feature(XENFEAT_auto_translated_physmap))
--		return xen_xlate_remap_gfn_array(vma, addr, gfn, nr, err_ptr,
--						 prot, domid, pages);
--
--	/* We BUG_ON because it's a programmer error to pass a NULL err_ptr,
--	 * and the consequences later is quite hard to detect what the actual
--	 * cause of "wrong memory was mapped in".
--	 */
--	BUG_ON(err_ptr == NULL);
--	return do_remap_pfn(vma, addr, gfn, nr, err_ptr, prot, domid,
--			    false, pages);
--}
--EXPORT_SYMBOL_GPL(xen_remap_domain_gfn_array);
--
--int xen_remap_domain_mfn_array(struct vm_area_struct *vma,
--			       unsigned long addr,
--			       xen_pfn_t *mfn, int nr,
--			       int *err_ptr, pgprot_t prot,
--			       unsigned int domid, struct page **pages)
--{
--	if (xen_feature(XENFEAT_auto_translated_physmap))
--		return -EOPNOTSUPP;
--
--	return do_remap_pfn(vma, addr, mfn, nr, err_ptr, prot, domid,
--			    true, pages);
--}
--EXPORT_SYMBOL_GPL(xen_remap_domain_mfn_array);
--
- /* Returns: 0 success */
- int xen_unmap_domain_gfn_range(struct vm_area_struct *vma,
- 			       int nr, struct page **pages)
-diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
-index 45b700ac5fe7..bdfac00b1ec8 100644
---- a/arch/x86/xen/mmu_pv.c
-+++ b/arch/x86/xen/mmu_pv.c
-@@ -98,6 +98,12 @@ static RESERVE_BRK_ARRAY(pte_t, level1_ident_pgt, LEVEL1_IDENT_ENTRIES);
- static pud_t level3_user_vsyscall[PTRS_PER_PUD] __page_aligned_bss;
- #endif /* CONFIG_X86_64 */
- 
-+/*
-+ * Protects atomic reservation decrease/increase against concurrent increases.
-+ * Also protects non-atomic updates of current_pages and balloon lists.
-+ */
-+DEFINE_SPINLOCK(xen_reservation_lock);
-+
+-#ifndef CONFIG_PARAVIRT
++#ifndef CONFIG_PARAVIRT_XXL
  /*
-  * Note about cr3 (pagetable base) values:
-  *
-@@ -2665,6 +2671,138 @@ void xen_destroy_contiguous_region(phys_addr_t pstart, unsigned int order)
+  * These special macros can be used to get or set a debugging register
+  */
+diff --git a/arch/x86/include/asm/desc.h b/arch/x86/include/asm/desc.h
+index 13c5ee878a47..68a99d2a5f33 100644
+--- a/arch/x86/include/asm/desc.h
++++ b/arch/x86/include/asm/desc.h
+@@ -108,7 +108,7 @@ static inline int desc_empty(const void *ptr)
+ 	return !(desc[0] | desc[1]);
  }
- EXPORT_SYMBOL_GPL(xen_destroy_contiguous_region);
  
-+static noinline void xen_flush_tlb_all(void)
-+{
-+	struct mmuext_op *op;
-+	struct multicall_space mcs;
-+
-+	preempt_disable();
-+
-+	mcs = xen_mc_entry(sizeof(*op));
-+
-+	op = mcs.args;
-+	op->cmd = MMUEXT_TLB_FLUSH_ALL;
-+	MULTI_mmuext_op(mcs.mc, op, 1, NULL, DOMID_SELF);
-+
-+	xen_mc_issue(PARAVIRT_LAZY_MMU);
-+
-+	preempt_enable();
-+}
-+
-+#define REMAP_BATCH_SIZE 16
-+
-+struct remap_data {
-+	xen_pfn_t *pfn;
-+	bool contiguous;
-+	bool no_translate;
-+	pgprot_t prot;
-+	struct mmu_update *mmu_update;
-+};
-+
-+static int remap_area_pfn_pte_fn(pte_t *ptep, pgtable_t token,
-+				 unsigned long addr, void *data)
-+{
-+	struct remap_data *rmd = data;
-+	pte_t pte = pte_mkspecial(mfn_pte(*rmd->pfn, rmd->prot));
-+
-+	/*
-+	 * If we have a contiguous range, just update the pfn itself,
-+	 * else update pointer to be "next pfn".
-+	 */
-+	if (rmd->contiguous)
-+		(*rmd->pfn)++;
-+	else
-+		rmd->pfn++;
-+
-+	rmd->mmu_update->ptr = virt_to_machine(ptep).maddr;
-+	rmd->mmu_update->ptr |= rmd->no_translate ?
-+		MMU_PT_UPDATE_NO_TRANSLATE :
-+		MMU_NORMAL_PT_UPDATE;
-+	rmd->mmu_update->val = pte_val_ma(pte);
-+	rmd->mmu_update++;
-+
-+	return 0;
-+}
-+
-+int xen_remap_pfn(struct vm_area_struct *vma, unsigned long addr,
-+		  xen_pfn_t *pfn, int nr, int *err_ptr, pgprot_t prot,
-+		  unsigned int domid, bool no_translate, struct page **pages)
-+{
-+	int err = 0;
-+	struct remap_data rmd;
-+	struct mmu_update mmu_update[REMAP_BATCH_SIZE];
-+	unsigned long range;
-+	int mapped = 0;
-+
-+	BUG_ON(!((vma->vm_flags & (VM_PFNMAP | VM_IO)) == (VM_PFNMAP | VM_IO)));
-+
-+	rmd.pfn = pfn;
-+	rmd.prot = prot;
-+	/*
-+	 * We use the err_ptr to indicate if there we are doing a contiguous
-+	 * mapping or a discontigious mapping.
-+	 */
-+	rmd.contiguous = !err_ptr;
-+	rmd.no_translate = no_translate;
-+
-+	while (nr) {
-+		int index = 0;
-+		int done = 0;
-+		int batch = min(REMAP_BATCH_SIZE, nr);
-+		int batch_left = batch;
-+
-+		range = (unsigned long)batch << PAGE_SHIFT;
-+
-+		rmd.mmu_update = mmu_update;
-+		err = apply_to_page_range(vma->vm_mm, addr, range,
-+					  remap_area_pfn_pte_fn, &rmd);
-+		if (err)
-+			goto out;
-+
-+		/*
-+		 * We record the error for each page that gives an error, but
-+		 * continue mapping until the whole set is done
-+		 */
-+		do {
-+			int i;
-+
-+			err = HYPERVISOR_mmu_update(&mmu_update[index],
-+						    batch_left, &done, domid);
-+
-+			/*
-+			 * @err_ptr may be the same buffer as @gfn, so
-+			 * only clear it after each chunk of @gfn is
-+			 * used.
-+			 */
-+			if (err_ptr) {
-+				for (i = index; i < index + done; i++)
-+					err_ptr[i] = 0;
-+			}
-+			if (err < 0) {
-+				if (!err_ptr)
-+					goto out;
-+				err_ptr[i] = err;
-+				done++; /* Skip failed frame. */
-+			} else
-+				mapped += done;
-+			batch_left -= done;
-+			index += done;
-+		} while (batch_left);
-+
-+		nr -= batch;
-+		addr += range;
-+		if (err_ptr)
-+			err_ptr += batch;
-+		cond_resched();
-+	}
-+out:
-+
-+	xen_flush_tlb_all();
-+
-+	return err < 0 ? err : mapped;
-+}
-+EXPORT_SYMBOL_GPL(xen_remap_pfn);
-+
- #ifdef CONFIG_KEXEC_CORE
- phys_addr_t paddr_vmcoreinfo_note(void)
- {
-diff --git a/include/xen/interface/memory.h b/include/xen/interface/memory.h
-index 4c5751c26f87..447004861f00 100644
---- a/include/xen/interface/memory.h
-+++ b/include/xen/interface/memory.h
-@@ -244,12 +244,6 @@ DEFINE_GUEST_HANDLE_STRUCT(xen_memory_map);
- #define XENMEM_machine_memory_map   10
- 
- 
--/*
-- * Prevent the balloon driver from changing the memory reservation
-- * during a driver critical region.
-- */
--extern spinlock_t xen_reservation_lock;
--
- /*
-  * Unmaps the page appearing at a particular GPFN from the specified guest's
-  * pseudophysical address space.
-diff --git a/include/xen/xen-ops.h b/include/xen/xen-ops.h
-index fd18c974a619..18803ff76e27 100644
---- a/include/xen/xen-ops.h
-+++ b/include/xen/xen-ops.h
-@@ -5,6 +5,7 @@
- #include <linux/percpu.h>
- #include <linux/notifier.h>
- #include <linux/efi.h>
-+#include <xen/features.h>
- #include <asm/xen/interface.h>
- #include <xen/interface/vcpu.h>
- 
-@@ -47,6 +48,10 @@ int xen_create_contiguous_region(phys_addr_t pstart, unsigned int order,
- 				dma_addr_t *dma_handle);
- 
- void xen_destroy_contiguous_region(phys_addr_t pstart, unsigned int order);
-+
-+int xen_remap_pfn(struct vm_area_struct *vma, unsigned long addr,
-+		  xen_pfn_t *pfn, int nr, int *err_ptr, pgprot_t prot,
-+		  unsigned int domid, bool no_translate, struct page **pages);
+-#ifdef CONFIG_PARAVIRT
++#ifdef CONFIG_PARAVIRT_XXL
+ #include <asm/paravirt.h>
  #else
- static inline int xen_create_contiguous_region(phys_addr_t pstart,
- 					       unsigned int order,
-@@ -58,10 +63,50 @@ static inline int xen_create_contiguous_region(phys_addr_t pstart,
+ #define load_TR_desc()				native_load_tr_desc()
+@@ -134,7 +134,7 @@ static inline void paravirt_alloc_ldt(struct desc_struct *ldt, unsigned entries)
+ static inline void paravirt_free_ldt(struct desc_struct *ldt, unsigned entries)
+ {
+ }
+-#endif	/* CONFIG_PARAVIRT */
++#endif	/* CONFIG_PARAVIRT_XXL */
  
- static inline void xen_destroy_contiguous_region(phys_addr_t pstart,
- 						 unsigned int order) { }
+ #define store_ldt(ldt) asm("sldt %0" : "=m"(ldt))
+ 
+diff --git a/arch/x86/include/asm/irqflags.h b/arch/x86/include/asm/irqflags.h
+index 250bcd40d769..c5e74ba2c95e 100644
+--- a/arch/x86/include/asm/irqflags.h
++++ b/arch/x86/include/asm/irqflags.h
+@@ -121,6 +121,16 @@ static inline notrace unsigned long arch_local_irq_save(void)
+ #define ENABLE_INTERRUPTS(x)	sti
+ #define DISABLE_INTERRUPTS(x)	cli
+ 
++#ifdef CONFIG_X86_64
++#ifdef CONFIG_DEBUG_ENTRY
++#define SAVE_FLAGS(x)		pushfq; popq %rax
++#endif
++#endif
++#endif /* __ASSEMBLY__ */
++#endif /* CONFIG_PARAVIRT */
 +
-+static inline int xen_remap_pfn(struct vm_area_struct *vma, unsigned long addr,
-+				xen_pfn_t *pfn, int nr, int *err_ptr,
-+				pgprot_t prot,  unsigned int domid,
-+				bool no_translate, struct page **pages)
-+{
-+	BUG();
-+	return 0;
-+}
++#ifndef CONFIG_PARAVIRT_XXL
++#ifdef __ASSEMBLY__
+ #ifdef CONFIG_X86_64
+ #define SWAPGS	swapgs
+ /*
+@@ -142,16 +152,12 @@ static inline notrace unsigned long arch_local_irq_save(void)
+ 	swapgs;					\
+ 	sysretl
+ 
+-#ifdef CONFIG_DEBUG_ENTRY
+-#define SAVE_FLAGS(x)		pushfq; popq %rax
+-#endif
+ #else
+ #define INTERRUPT_RETURN		iret
  #endif
  
- struct vm_area_struct;
- 
-+#ifdef CONFIG_XEN_AUTO_XLATE
-+int xen_xlate_remap_gfn_array(struct vm_area_struct *vma,
-+			      unsigned long addr,
-+			      xen_pfn_t *gfn, int nr,
-+			      int *err_ptr, pgprot_t prot,
-+			      unsigned int domid,
-+			      struct page **pages);
-+int xen_xlate_unmap_gfn_range(struct vm_area_struct *vma,
-+			      int nr, struct page **pages);
-+#else
-+/*
-+ * These two functions are called from arch/x86/xen/mmu.c and so stubs
-+ * are needed for a configuration not specifying CONFIG_XEN_AUTO_XLATE.
-+ */
-+static inline int xen_xlate_remap_gfn_array(struct vm_area_struct *vma,
-+					    unsigned long addr,
-+					    xen_pfn_t *gfn, int nr,
-+					    int *err_ptr, pgprot_t prot,
-+					    unsigned int domid,
-+					    struct page **pages)
-+{
-+	return -EOPNOTSUPP;
-+}
-+
-+static inline int xen_xlate_unmap_gfn_range(struct vm_area_struct *vma,
-+					    int nr, struct page **pages)
-+{
-+	return -EOPNOTSUPP;
-+}
-+#endif
-+
- /*
-  * xen_remap_domain_gfn_array() - map an array of foreign frames by gfn
-  * @vma:     VMA to map the pages into
-@@ -79,12 +124,25 @@ struct vm_area_struct;
-  * Returns the number of successfully mapped frames, or a -ve error
-  * code.
-  */
--int xen_remap_domain_gfn_array(struct vm_area_struct *vma,
--			       unsigned long addr,
--			       xen_pfn_t *gfn, int nr,
--			       int *err_ptr, pgprot_t prot,
--			       unsigned domid,
--			       struct page **pages);
-+static inline int xen_remap_domain_gfn_array(struct vm_area_struct *vma,
-+					     unsigned long addr,
-+					     xen_pfn_t *gfn, int nr,
-+					     int *err_ptr, pgprot_t prot,
-+					     unsigned int domid,
-+					     struct page **pages)
-+{
-+	if (xen_feature(XENFEAT_auto_translated_physmap))
-+		return xen_xlate_remap_gfn_array(vma, addr, gfn, nr, err_ptr,
-+						 prot, domid, pages);
-+
-+	/* We BUG_ON because it's a programmer error to pass a NULL err_ptr,
-+	 * and the consequences later is quite hard to detect what the actual
-+	 * cause of "wrong memory was mapped in".
-+	 */
-+	BUG_ON(err_ptr == NULL);
-+	return xen_remap_pfn(vma, addr, gfn, nr, err_ptr, prot, domid,
-+			     false, pages);
-+}
- 
- /*
-  * xen_remap_domain_mfn_array() - map an array of foreign frames by mfn
-@@ -103,10 +161,18 @@ int xen_remap_domain_gfn_array(struct vm_area_struct *vma,
-  * Returns the number of successfully mapped frames, or a -ve error
-  * code.
-  */
--int xen_remap_domain_mfn_array(struct vm_area_struct *vma,
--			       unsigned long addr, xen_pfn_t *mfn, int nr,
--			       int *err_ptr, pgprot_t prot,
--			       unsigned int domid, struct page **pages);
-+static inline int xen_remap_domain_mfn_array(struct vm_area_struct *vma,
-+					     unsigned long addr, xen_pfn_t *mfn,
-+					     int nr, int *err_ptr,
-+					     pgprot_t prot, unsigned int domid,
-+					     struct page **pages)
-+{
-+	if (xen_feature(XENFEAT_auto_translated_physmap))
-+		return -EOPNOTSUPP;
-+
-+	return xen_remap_pfn(vma, addr, mfn, nr, err_ptr, prot, domid,
-+			     true, pages);
-+}
- 
- /* xen_remap_domain_gfn_range() - map a range of foreign frames
-  * @vma:     VMA to map the pages into
-@@ -120,44 +186,21 @@ int xen_remap_domain_mfn_array(struct vm_area_struct *vma,
-  * Returns the number of successfully mapped frames, or a -ve error
-  * code.
-  */
--int xen_remap_domain_gfn_range(struct vm_area_struct *vma,
--			       unsigned long addr,
--			       xen_pfn_t gfn, int nr,
--			       pgprot_t prot, unsigned domid,
--			       struct page **pages);
--int xen_unmap_domain_gfn_range(struct vm_area_struct *vma,
--			       int numpgs, struct page **pages);
 -
--#ifdef CONFIG_XEN_AUTO_XLATE
--int xen_xlate_remap_gfn_array(struct vm_area_struct *vma,
--			      unsigned long addr,
--			      xen_pfn_t *gfn, int nr,
--			      int *err_ptr, pgprot_t prot,
--			      unsigned domid,
--			      struct page **pages);
--int xen_xlate_unmap_gfn_range(struct vm_area_struct *vma,
--			      int nr, struct page **pages);
--#else
--/*
-- * These two functions are called from arch/x86/xen/mmu.c and so stubs
-- * are needed for a configuration not specifying CONFIG_XEN_AUTO_XLATE.
-- */
--static inline int xen_xlate_remap_gfn_array(struct vm_area_struct *vma,
--					    unsigned long addr,
--					    xen_pfn_t *gfn, int nr,
--					    int *err_ptr, pgprot_t prot,
--					    unsigned int domid,
--					    struct page **pages)
-+static inline int xen_remap_domain_gfn_range(struct vm_area_struct *vma,
-+					     unsigned long addr,
-+					     xen_pfn_t gfn, int nr,
-+					     pgprot_t prot, unsigned int domid,
-+					     struct page **pages)
- {
--	return -EOPNOTSUPP;
--}
-+	if (xen_feature(XENFEAT_auto_translated_physmap))
-+		return -EOPNOTSUPP;
+ #endif /* __ASSEMBLY__ */
+-#endif /* CONFIG_PARAVIRT */
++#endif /* CONFIG_PARAVIRT_XXL */
  
--static inline int xen_xlate_unmap_gfn_range(struct vm_area_struct *vma,
--					    int nr, struct page **pages)
--{
--	return -EOPNOTSUPP;
-+	return xen_remap_pfn(vma, addr, &gfn, nr, NULL, prot, domid, false,
-+			     pages);
+ #ifndef __ASSEMBLY__
+ static inline int arch_irqs_disabled_flags(unsigned long flags)
+diff --git a/arch/x86/include/asm/msr.h b/arch/x86/include/asm/msr.h
+index 04addd6e0a4a..91e4cf189914 100644
+--- a/arch/x86/include/asm/msr.h
++++ b/arch/x86/include/asm/msr.h
+@@ -242,7 +242,7 @@ static inline unsigned long long native_read_pmc(int counter)
+ 	return EAX_EDX_VAL(val, low, high);
  }
--#endif
-+
-+int xen_unmap_domain_gfn_range(struct vm_area_struct *vma,
-+			       int numpgs, struct page **pages);
  
- int xen_xlate_map_ballooned_pages(xen_pfn_t **pfns, void **vaddr,
- 				  unsigned long nr_grant_frames);
+-#ifdef CONFIG_PARAVIRT
++#ifdef CONFIG_PARAVIRT_XXL
+ #include <asm/paravirt.h>
+ #else
+ #include <linux/errno.h>
+@@ -305,7 +305,7 @@ do {							\
+ 
+ #define rdpmcl(counter, val) ((val) = native_read_pmc(counter))
+ 
+-#endif	/* !CONFIG_PARAVIRT */
++#endif	/* !CONFIG_PARAVIRT_XXL */
+ 
+ /*
+  * 64-bit version of wrmsr_safe():
+diff --git a/arch/x86/include/asm/paravirt.h b/arch/x86/include/asm/paravirt.h
+index dbaedf1ed622..686a68004b5f 100644
+--- a/arch/x86/include/asm/paravirt.h
++++ b/arch/x86/include/asm/paravirt.h
+@@ -17,6 +17,7 @@
+ #include <linux/cpumask.h>
+ #include <asm/frame.h>
+ 
++#ifdef CONFIG_PARAVIRT_XXL
+ static inline void load_sp0(unsigned long sp0)
+ {
+ 	PVOP_VCALL1(cpu.load_sp0, sp0);
+@@ -51,6 +52,7 @@ static inline void write_cr0(unsigned long x)
+ {
+ 	PVOP_VCALL1(cpu.write_cr0, x);
+ }
++#endif
+ 
+ static inline unsigned long read_cr2(void)
+ {
+@@ -72,6 +74,7 @@ static inline void write_cr3(unsigned long x)
+ 	PVOP_VCALL1(mmu.write_cr3, x);
+ }
+ 
++#ifdef CONFIG_PARAVIRT_XXL
+ static inline void __write_cr4(unsigned long x)
+ {
+ 	PVOP_VCALL1(cpu.write_cr4, x);
+@@ -88,6 +91,7 @@ static inline void write_cr8(unsigned long x)
+ 	PVOP_VCALL1(cpu.write_cr8, x);
+ }
+ #endif
++#endif
+ 
+ static inline void arch_safe_halt(void)
+ {
+@@ -99,14 +103,13 @@ static inline void halt(void)
+ 	PVOP_VCALL0(irq.halt);
+ }
+ 
++#ifdef CONFIG_PARAVIRT_XXL
+ static inline void wbinvd(void)
+ {
+ 	PVOP_VCALL0(cpu.wbinvd);
+ }
+ 
+-#ifdef CONFIG_PARAVIRT_XXL
+ #define get_kernel_rpl()  (pv_info.kernel_rpl)
+-#endif
+ 
+ static inline u64 paravirt_read_msr(unsigned msr)
+ {
+@@ -171,6 +174,7 @@ static inline int rdmsrl_safe(unsigned msr, unsigned long long *p)
+ 	*p = paravirt_read_msr_safe(msr, &err);
+ 	return err;
+ }
++#endif
+ 
+ static inline unsigned long long paravirt_sched_clock(void)
+ {
+@@ -186,6 +190,7 @@ static inline u64 paravirt_steal_clock(int cpu)
+ 	return PVOP_CALL1(u64, time.steal_clock, cpu);
+ }
+ 
++#ifdef CONFIG_PARAVIRT_XXL
+ static inline unsigned long long paravirt_read_pmc(int counter)
+ {
+ 	return PVOP_CALL1(u64, cpu.read_pmc, counter);
+@@ -230,6 +235,7 @@ static inline unsigned long paravirt_store_tr(void)
+ {
+ 	return PVOP_CALL0(unsigned long, cpu.store_tr);
+ }
++
+ #define store_tr(tr)	((tr) = paravirt_store_tr())
+ static inline void load_TLS(struct thread_struct *t, unsigned cpu)
+ {
+@@ -263,6 +269,7 @@ static inline void set_iopl_mask(unsigned mask)
+ {
+ 	PVOP_VCALL1(cpu.set_iopl_mask, mask);
+ }
++#endif
+ 
+ /* The paravirtualized I/O functions */
+ static inline void slow_down_io(void)
+@@ -618,6 +625,7 @@ static inline void pmd_clear(pmd_t *pmdp)
+ }
+ #endif	/* CONFIG_X86_PAE */
+ 
++#ifdef CONFIG_PARAVIRT_XXL
+ #define  __HAVE_ARCH_START_CONTEXT_SWITCH
+ static inline void arch_start_context_switch(struct task_struct *prev)
+ {
+@@ -628,6 +636,7 @@ static inline void arch_end_context_switch(struct task_struct *next)
+ {
+ 	PVOP_VCALL1(cpu.end_context_switch, next);
+ }
++#endif
+ 
+ #define  __HAVE_ARCH_ENTER_LAZY_MMU_MODE
+ static inline void arch_enter_lazy_mmu_mode(void)
+@@ -870,10 +879,12 @@ extern void default_banner(void);
+ #define PARA_INDIRECT(addr)	*%cs:addr
+ #endif
+ 
++#ifdef CONFIG_PARAVIRT_XXL
+ #define INTERRUPT_RETURN						\
+ 	PARA_SITE(PARA_PATCH(PV_CPU_iret),				\
+ 		  ANNOTATE_RETPOLINE_SAFE;				\
+ 		  jmp PARA_INDIRECT(pv_ops+PV_CPU_iret);)
++#endif
+ 
+ #define DISABLE_INTERRUPTS(clobbers)					\
+ 	PARA_SITE(PARA_PATCH(PV_IRQ_irq_disable),			\
+@@ -890,6 +901,7 @@ extern void default_banner(void);
+ 		  PV_RESTORE_REGS(clobbers | CLBR_CALLEE_SAVE);)
+ 
+ #ifdef CONFIG_X86_64
++#ifdef CONFIG_PARAVIRT_XXL
+ /*
+  * If swapgs is used while the userspace stack is still current,
+  * there's no way to call a pvop.  The PV replacement *must* be
+@@ -909,15 +921,18 @@ extern void default_banner(void);
+ 		  ANNOTATE_RETPOLINE_SAFE;				\
+ 		  call PARA_INDIRECT(pv_ops+PV_CPU_swapgs);		\
+ 		 )
++#endif
+ 
+ #define GET_CR2_INTO_RAX				\
+ 	ANNOTATE_RETPOLINE_SAFE;				\
+ 	call PARA_INDIRECT(pv_ops+PV_MMU_read_cr2);
+ 
++#ifdef CONFIG_PARAVIRT_XXL
+ #define USERGS_SYSRET64							\
+ 	PARA_SITE(PARA_PATCH(PV_CPU_usergs_sysret64),			\
+ 		  ANNOTATE_RETPOLINE_SAFE;				\
+ 		  jmp PARA_INDIRECT(pv_ops+PV_CPU_usergs_sysret64);)
++#endif
+ 
+ #ifdef CONFIG_DEBUG_ENTRY
+ #define SAVE_FLAGS(clobbers)                                        \
+diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
+index 98e1110354b8..30ee6538442c 100644
+--- a/arch/x86/include/asm/paravirt_types.h
++++ b/arch/x86/include/asm/paravirt_types.h
+@@ -106,6 +106,9 @@ struct pv_time_ops {
+ 
+ struct pv_cpu_ops {
+ 	/* hooks for various privileged instructions */
++	void (*io_delay)(void);
++
++#ifdef CONFIG_PARAVIRT_XXL
+ 	unsigned long (*get_debugreg)(int regno);
+ 	void (*set_debugreg)(int regno, unsigned long value);
+ 
+@@ -143,7 +146,6 @@ struct pv_cpu_ops {
+ 	void (*set_iopl_mask)(unsigned mask);
+ 
+ 	void (*wbinvd)(void);
+-	void (*io_delay)(void);
+ 
+ 	/* cpuid emulation, mostly so that caps bits can be disabled */
+ 	void (*cpuid)(unsigned int *eax, unsigned int *ebx,
+@@ -178,6 +180,7 @@ struct pv_cpu_ops {
+ 
+ 	void (*start_context_switch)(struct task_struct *prev);
+ 	void (*end_context_switch)(struct task_struct *next);
++#endif
+ } __no_randomize_layout;
+ 
+ struct pv_irq_ops {
+diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+index e4ffa565a69f..5bb0fe3b7e00 100644
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -111,10 +111,12 @@ extern pmdval_t early_pmd_flags;
+ #define pte_val(x)	native_pte_val(x)
+ #define __pte(x)	native_make_pte(x)
+ 
+-#define arch_end_context_switch(prev)	do {} while(0)
+-
+ #endif	/* CONFIG_PARAVIRT */
+ 
++#ifndef CONFIG_PARAVIRT_XXL
++#define arch_end_context_switch(prev)	do {} while(0)
++#endif	/* CONFIG_PARAVIRT_XXL */
++
+ /*
+  * The following only work if pte_present() is true.
+  * Undefined behaviour if not..
+diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+index c24297268ebc..a6220620dcf8 100644
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -576,7 +576,7 @@ static inline bool on_thread_stack(void)
+ 			       current_stack_pointer) < THREAD_SIZE;
+ }
+ 
+-#ifdef CONFIG_PARAVIRT
++#ifdef CONFIG_PARAVIRT_XXL
+ #include <asm/paravirt.h>
+ #else
+ #define __cpuid			native_cpuid
+@@ -587,7 +587,7 @@ static inline void load_sp0(unsigned long sp0)
+ }
+ 
+ #define set_iopl_mask native_set_iopl_mask
+-#endif /* CONFIG_PARAVIRT */
++#endif /* CONFIG_PARAVIRT_XXL */
+ 
+ /* Free all resources held by a thread. */
+ extern void release_thread(struct task_struct *);
+diff --git a/arch/x86/include/asm/special_insns.h b/arch/x86/include/asm/special_insns.h
+index 317fc59b512c..2aa6ce4bf159 100644
+--- a/arch/x86/include/asm/special_insns.h
++++ b/arch/x86/include/asm/special_insns.h
+@@ -143,8 +143,9 @@ static inline unsigned long __read_cr4(void)
+ 
+ #ifdef CONFIG_PARAVIRT
+ #include <asm/paravirt.h>
+-#else
++#endif
+ 
++#ifndef CONFIG_PARAVIRT_XXL
+ static inline unsigned long read_cr0(void)
+ {
+ 	return native_read_cr0();
+@@ -154,7 +155,9 @@ static inline void write_cr0(unsigned long x)
+ {
+ 	native_write_cr0(x);
+ }
++#endif
+ 
++#ifndef CONFIG_PARAVIRT
+ static inline unsigned long read_cr2(void)
+ {
+ 	return native_read_cr2();
+@@ -178,7 +181,9 @@ static inline void write_cr3(unsigned long x)
+ {
+ 	native_write_cr3(x);
+ }
++#endif
+ 
++#ifndef CONFIG_PARAVIRT_XXL
+ static inline void __write_cr4(unsigned long x)
+ {
+ 	native_write_cr4(x);
+@@ -208,7 +213,7 @@ static inline void load_gs_index(unsigned selector)
+ 
+ #endif
+ 
+-#endif/* CONFIG_PARAVIRT */
++#endif/* CONFIG_PARAVIRT_XXL */
+ 
+ static inline void clflush(volatile void *__p)
+ {
+diff --git a/arch/x86/kernel/asm-offsets.c b/arch/x86/kernel/asm-offsets.c
+index 37e323f3d8c9..0fe233d98d17 100644
+--- a/arch/x86/kernel/asm-offsets.c
++++ b/arch/x86/kernel/asm-offsets.c
+@@ -68,7 +68,9 @@ void common(void) {
+ 	BLANK();
+ 	OFFSET(PV_IRQ_irq_disable, paravirt_patch_template, irq.irq_disable);
+ 	OFFSET(PV_IRQ_irq_enable, paravirt_patch_template, irq.irq_enable);
++#ifdef CONFIG_PARAVIRT_XXL
+ 	OFFSET(PV_CPU_iret, paravirt_patch_template, cpu.iret);
++#endif
+ 	OFFSET(PV_MMU_read_cr2, paravirt_patch_template, mmu.read_cr2);
+ #endif
+ 
+diff --git a/arch/x86/kernel/asm-offsets_64.c b/arch/x86/kernel/asm-offsets_64.c
+index 3384b03e717f..2a15d420a84d 100644
+--- a/arch/x86/kernel/asm-offsets_64.c
++++ b/arch/x86/kernel/asm-offsets_64.c
+@@ -21,9 +21,11 @@ static char syscalls_ia32[] = {
+ int main(void)
+ {
+ #ifdef CONFIG_PARAVIRT
++#ifdef CONFIG_PARAVIRT_XXL
+ 	OFFSET(PV_CPU_usergs_sysret64, paravirt_patch_template,
+ 	       cpu.usergs_sysret64);
+ 	OFFSET(PV_CPU_swapgs, paravirt_patch_template, cpu.swapgs);
++#endif
+ #ifdef CONFIG_DEBUG_ENTRY
+ 	OFFSET(PV_IRQ_save_fl, paravirt_patch_template, irq.save_fl);
+ #endif
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 1f089e1c79d3..ffe6904eca1c 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1239,7 +1239,7 @@ static void generic_identify(struct cpuinfo_x86 *c)
+ 	 * ESPFIX issue, we can change this.
+ 	 */
+ #ifdef CONFIG_X86_32
+-# ifdef CONFIG_PARAVIRT
++# ifdef CONFIG_PARAVIRT_XXL
+ 	do {
+ 		extern void native_iret(void);
+ 		if (pv_ops.cpu.iret == native_iret)
+diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
+index 15ebc2fc166e..a5bd72a0ee1a 100644
+--- a/arch/x86/kernel/head_64.S
++++ b/arch/x86/kernel/head_64.S
+@@ -31,6 +31,8 @@
+ #define GET_CR2_INTO(reg) GET_CR2_INTO_RAX ; movq %rax, reg
+ #else
+ #define GET_CR2_INTO(reg) movq %cr2, reg
++#endif
++#ifndef CONFIG_PARAVIRT_XXL
+ #define INTERRUPT_RETURN iretq
+ #endif
+ 
+diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
+index ee7da9ec3ea2..d29b46621543 100644
+--- a/arch/x86/kernel/paravirt.c
++++ b/arch/x86/kernel/paravirt.c
+@@ -101,6 +101,7 @@ static unsigned paravirt_patch_call(void *insnbuf, const void *target,
+ 	return 5;
+ }
+ 
++#ifdef CONFIG_PARAVIRT_XXL
+ static unsigned paravirt_patch_jmp(void *insnbuf, const void *target,
+ 				   unsigned long addr, unsigned len)
+ {
+@@ -119,6 +120,7 @@ static unsigned paravirt_patch_jmp(void *insnbuf, const void *target,
+ 
+ 	return 5;
+ }
++#endif
+ 
+ DEFINE_STATIC_KEY_TRUE(virt_spin_lock_key);
+ 
+@@ -150,10 +152,12 @@ unsigned paravirt_patch_default(u8 type, void *insnbuf,
+ 	else if (opfunc == _paravirt_ident_64)
+ 		ret = paravirt_patch_ident_64(insnbuf, len);
+ 
++#ifdef CONFIG_PARAVIRT_XXL
+ 	else if (type == PARAVIRT_PATCH(cpu.iret) ||
+ 		 type == PARAVIRT_PATCH(cpu.usergs_sysret64))
+ 		/* If operation requires a jmp, then jmp */
+ 		ret = paravirt_patch_jmp(insnbuf, opfunc, addr, len);
++#endif
+ 	else
+ 		/* Otherwise call the function. */
+ 		ret = paravirt_patch_call(insnbuf, opfunc, addr, len);
+@@ -262,6 +266,7 @@ void paravirt_flush_lazy_mmu(void)
+ 	preempt_enable();
+ }
+ 
++#ifdef CONFIG_PARAVIRT_XXL
+ void paravirt_start_context_switch(struct task_struct *prev)
+ {
+ 	BUG_ON(preemptible());
+@@ -282,6 +287,7 @@ void paravirt_end_context_switch(struct task_struct *next)
+ 	if (test_and_clear_ti_thread_flag(task_thread_info(next), TIF_LAZY_MMU_UPDATES))
+ 		arch_enter_lazy_mmu_mode();
+ }
++#endif
+ 
+ enum paravirt_lazy_mode paravirt_get_lazy_mode(void)
+ {
+@@ -320,6 +326,9 @@ struct paravirt_patch_template pv_ops = {
+ 	.time.steal_clock = native_steal_clock,
+ 
+ 	/* Cpu ops. */
++	.cpu.io_delay = native_io_delay,
++
++#ifdef CONFIG_PARAVIRT_XXL
+ 	.cpu.cpuid = native_cpuid,
+ 	.cpu.get_debugreg = native_get_debugreg,
+ 	.cpu.set_debugreg = native_set_debugreg,
+@@ -361,10 +370,10 @@ struct paravirt_patch_template pv_ops = {
+ 	.cpu.swapgs = native_swapgs,
+ 
+ 	.cpu.set_iopl_mask = native_set_iopl_mask,
+-	.cpu.io_delay = native_io_delay,
+ 
+ 	.cpu.start_context_switch = paravirt_nop,
+ 	.cpu.end_context_switch = paravirt_nop,
++#endif
+ 
+ 	/* Irq ops. */
+ 	.irq.save_fl = __PV_IS_CALLEE_SAVE(native_save_fl),
+@@ -463,10 +472,12 @@ struct paravirt_patch_template pv_ops = {
+ #endif
+ };
+ 
++#ifdef CONFIG_PARAVIRT_XXL
+ /* At this point, native_get/set_debugreg has real function entries */
+ NOKPROBE_SYMBOL(native_get_debugreg);
+ NOKPROBE_SYMBOL(native_set_debugreg);
+ NOKPROBE_SYMBOL(native_load_idt);
++#endif
+ 
+ EXPORT_SYMBOL_GPL(pv_ops);
+ EXPORT_SYMBOL_GPL(pv_info);
+diff --git a/arch/x86/kernel/paravirt_patch_32.c b/arch/x86/kernel/paravirt_patch_32.c
+index 026fa43e9261..5a20aa56efc0 100644
+--- a/arch/x86/kernel/paravirt_patch_32.c
++++ b/arch/x86/kernel/paravirt_patch_32.c
+@@ -5,7 +5,9 @@ DEF_NATIVE(irq, irq_disable, "cli");
+ DEF_NATIVE(irq, irq_enable, "sti");
+ DEF_NATIVE(irq, restore_fl, "push %eax; popf");
+ DEF_NATIVE(irq, save_fl, "pushf; pop %eax");
++#ifdef CONFIG_PARAVIRT_XXL
+ DEF_NATIVE(cpu, iret, "iret");
++#endif
+ DEF_NATIVE(mmu, read_cr2, "mov %cr2, %eax");
+ DEF_NATIVE(mmu, write_cr3, "mov %eax, %cr3");
+ DEF_NATIVE(mmu, read_cr3, "mov %cr3, %eax");
+@@ -45,7 +47,9 @@ unsigned native_patch(u8 type, void *ibuf, unsigned long addr, unsigned len)
+ 		PATCH_SITE(irq, irq_enable);
+ 		PATCH_SITE(irq, restore_fl);
+ 		PATCH_SITE(irq, save_fl);
++#ifdef CONFIG_PARAVIRT_XXL
+ 		PATCH_SITE(cpu, iret);
++#endif
+ 		PATCH_SITE(mmu, read_cr2);
+ 		PATCH_SITE(mmu, read_cr3);
+ 		PATCH_SITE(mmu, write_cr3);
+diff --git a/arch/x86/kernel/paravirt_patch_64.c b/arch/x86/kernel/paravirt_patch_64.c
+index 582e893728e8..461aba038ada 100644
+--- a/arch/x86/kernel/paravirt_patch_64.c
++++ b/arch/x86/kernel/paravirt_patch_64.c
+@@ -10,10 +10,12 @@ DEF_NATIVE(irq, save_fl, "pushfq; popq %rax");
+ DEF_NATIVE(mmu, read_cr2, "movq %cr2, %rax");
+ DEF_NATIVE(mmu, read_cr3, "movq %cr3, %rax");
+ DEF_NATIVE(mmu, write_cr3, "movq %rdi, %cr3");
++#ifdef CONFIG_PARAVIRT_XXL
+ DEF_NATIVE(cpu, wbinvd, "wbinvd");
+ 
+ DEF_NATIVE(cpu, usergs_sysret64, "swapgs; sysretq");
+ DEF_NATIVE(cpu, swapgs, "swapgs");
++#endif
+ 
+ DEF_NATIVE(, mov32, "mov %edi, %eax");
+ DEF_NATIVE(, mov64, "mov %rdi, %rax");
+@@ -53,12 +55,14 @@ unsigned native_patch(u8 type, void *ibuf, unsigned long addr, unsigned len)
+ 		PATCH_SITE(irq, save_fl);
+ 		PATCH_SITE(irq, irq_enable);
+ 		PATCH_SITE(irq, irq_disable);
++#ifdef CONFIG_PARAVIRT_XXL
+ 		PATCH_SITE(cpu, usergs_sysret64);
+ 		PATCH_SITE(cpu, swapgs);
++		PATCH_SITE(cpu, wbinvd);
++#endif
+ 		PATCH_SITE(mmu, read_cr2);
+ 		PATCH_SITE(mmu, read_cr3);
+ 		PATCH_SITE(mmu, write_cr3);
+-		PATCH_SITE(cpu, wbinvd);
+ #if defined(CONFIG_PARAVIRT_SPINLOCKS)
+ 		case PARAVIRT_PATCH(lock.queued_spin_unlock):
+ 			if (pv_is_native_spin_unlock()) {
 -- 
 2.16.4
 
