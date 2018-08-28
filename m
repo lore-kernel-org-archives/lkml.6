@@ -2,102 +2,73 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 781DFC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 22:54:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A649AC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 22:58:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2068A2087A
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 22:54:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2068A2087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 45E642087E
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 22:58:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rOyOz6p6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45E642087E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727883AbeH2Csh (ORCPT
+        id S1727798AbeH2Cwi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 22:48:37 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52236 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727366AbeH2Csh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 22:48:37 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 28 Aug 2018 22:52:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45996 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727067AbeH2Cwh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 22:52:37 -0400
+Received: from localhost (unknown [104.132.0.94])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3446F40201C3;
-        Tue, 28 Aug 2018 22:54:46 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-123-12.rdu2.redhat.com [10.10.123.12])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DC50F2166B41;
-        Tue, 28 Aug 2018 22:54:44 +0000 (UTC)
-Subject: Re: [PATCH 0/2] fs/dcache: Track # of negative dentries
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org, "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Larry Woodman <lwoodman@redhat.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Wangkai (Kevin C)" <wangkai86@huawei.com>,
-        Michal Hocko <mhocko@kernel.org>
-References: <1535476780-5773-1-git-send-email-longman@redhat.com>
- <20180828155006.a6a94a7ba64ac4ce6b8b190c@linux-foundation.org>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <4284b67f-51bd-88d9-b7c4-8303179127b7@redhat.com>
-Date:   Tue, 28 Aug 2018 18:54:44 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        by mail.kernel.org (Postfix) with ESMTPSA id BF55220868;
+        Tue, 28 Aug 2018 22:58:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535497126;
+        bh=MGKbJG8RPTfJg+ipA++JDY+sxpc9VaWBoR+TriAPhNE=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=rOyOz6p6+giB/JK6KzXlr5N695WkBmTLX+tSLnyMSmaJNEp1e3bLnvW8322d7FBh4
+         35OMUI2F/Sam76bWZsm3fujAXCrcKsA09OjHY25dLNZ+cAyUhwl9nymixyNO2eFydd
+         wPeXhFgCzJKo9pyZfOjuUKGkwddtDgLU9x5cBM3E=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20180828155006.a6a94a7ba64ac4ce6b8b190c@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 28 Aug 2018 22:54:46 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 28 Aug 2018 22:54:46 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
+Content-Transfer-Encoding: quoted-printable
+To:     Douglas Anderson <dianders@chromium.org>, andy.gross@linaro.org
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180724174513.174018-2-dianders@chromium.org>
+Cc:     tdas@codeaurora.org, girishm@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, anischal@codeaurora.org,
+        bjorn.andersson@linaro.org, grahamr@codeaurora.org,
+        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+References: <20180724174513.174018-1-dianders@chromium.org>
+ <20180724174513.174018-2-dianders@chromium.org>
+Message-ID: <153549712610.129321.16004641950033414292@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v3 1/2] clk: qcom: Add qspi (Quad SPI) clock defines for sdm845
+ to header
+Date:   Tue, 28 Aug 2018 15:58:46 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/28/2018 06:50 PM, Andrew Morton wrote:
-> On Tue, 28 Aug 2018 13:19:38 -0400 Waiman Long <longman@redhat.com> wrote:
->
->> This patchset is a reduced scope version of the
->> patchset "fs/dcache: Track & limit # of negative dentries"
->> (https://lkml.org/lkml/2018/7/12/586). Only the first 2 patches are
->> included to track the number of negative dentries in the system as well
->> as making negative dentries more easily reclaimed than positive ones.
->>
->> There are controversies on limiting number of negative dentries as it may
->> make negative dentries special in term of how memory resources are to
->> be managed in the kernel. However, I don't believe I heard any concern
->> about tracking the number of negative dentries in the system. So it is
->> better to separate that out and get it done with. We can deal with the
->> controversial part later on.
-> Seems reasonable.
->
-> It would be nice to see testing results please.  Quite comprehensive
-> ones.
->
-> And again, an apparently permanent feature of this patchset is that the
-> changelogs fail to provide descriptions of real-world problems with the
-> existing code.  Please do provide those (comprehensive) descriptions and
-> demonstrate that these changes resolve those problems.
->
-> Also, a grumpynit: with 100% uniformity, the vfs presently refers to
-> negative dentries with the string "negative" in the identifier.  This
-> patchset abbreviates that to "neg".
->
-Will do.
+Quoting Douglas Anderson (2018-07-24 10:45:12)
+> These clocks will need to be defined in the clock driver and
+> referenced in device tree files.
+> =
 
-Cheers,
-Longman
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> ---
+
+Applied to clk-next
 
