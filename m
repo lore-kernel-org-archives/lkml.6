@@ -2,113 +2,80 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7E9BC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:41:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D913C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:42:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E48E62086A
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:41:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E48E62086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id D71BE2086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:42:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D71BE2086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727175AbeH1Tdw (ORCPT
+        id S1727234AbeH1Te2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 15:33:52 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:4206 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726383AbeH1Tdw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 15:33:52 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5b856d280000>; Tue, 28 Aug 2018 08:41:28 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 28 Aug 2018 08:41:38 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 28 Aug 2018 08:41:38 -0700
-Received: from dhcp-10-21-25-168 (10.21.25.201) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 28 Aug
- 2018 15:41:35 +0000
-Date:   Tue, 28 Aug 2018 18:41:29 +0300
-From:   Aapo Vienamo <avienamo@nvidia.com>
-To:     Adrian Hunter <adrian.hunter@intel.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "Mikko Perttunen" <mperttunen@nvidia.com>,
-        Stefan Agner <stefan@agner.ch>, <devicetree@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mmc@vger.kernel.org>
-Subject: Re: [PATCH v2 25/40] mmc: sdhci: Add a quirk to disable card clock
- during tuning
-Message-ID: <20180828184129.525439ba@dhcp-10-21-25-168>
-In-Reply-To: <b0b761ac-00fb-5a79-7a38-89b08c620c02@intel.com>
-References: <1533924522-1037-1-git-send-email-avienamo@nvidia.com>
-        <1533924522-1037-26-git-send-email-avienamo@nvidia.com>
-        <b0b761ac-00fb-5a79-7a38-89b08c620c02@intel.com>
-X-NVConfidentiality: public
+        Tue, 28 Aug 2018 15:34:28 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53292 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726383AbeH1Te2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 15:34:28 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4A9FFAE6D;
+        Tue, 28 Aug 2018 15:42:13 +0000 (UTC)
+Date:   Tue, 28 Aug 2018 17:42:06 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Jerome Glisse <jglisse@redhat.com>
+Cc:     Zi Yan <zi.yan@cs.rutgers.edu>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: Re: [PATCH 4/7] mm/hmm: properly handle migration pmd
+Message-ID: <20180828154206.GR10223@dhcp22.suse.cz>
+References: <20180824192549.30844-1-jglisse@redhat.com>
+ <20180824192549.30844-5-jglisse@redhat.com>
+ <0560A126-680A-4BAE-8303-F1AB34BE4BA5@cs.rutgers.edu>
+ <20180828152414.GQ10223@dhcp22.suse.cz>
+ <20180828153658.GA4029@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.21.25.201]
-X-ClientProxiedBy: UKMAIL102.nvidia.com (10.26.138.15) To HQMAIL101.nvidia.com
- (172.20.187.10)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180828153658.GA4029@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 27 Aug 2018 14:25:44 +0300
-Adrian Hunter <adrian.hunter@intel.com> wrote:
-
-> On 10/08/18 21:08, Aapo Vienamo wrote:
-> > Add a quirk to disable card clock when the tuning command is sent.
+On Tue 28-08-18 11:36:59, Jerome Glisse wrote:
+> On Tue, Aug 28, 2018 at 05:24:14PM +0200, Michal Hocko wrote:
+> > On Fri 24-08-18 20:05:46, Zi Yan wrote:
+> > [...]
+> > > > +	if (!pmd_present(pmd)) {
+> > > > +		swp_entry_t entry = pmd_to_swp_entry(pmd);
+> > > > +
+> > > > +		if (is_migration_entry(entry)) {
+> > > 
+> > > I think you should check thp_migration_supported() here, since PMD migration is only enabled in x86_64 systems.
+> > > Other architectures should treat PMD migration entries as bad.
 > > 
-> > This has to be done to prevent the SDHCI controller from hanging on
-> > Tegra210. Without the quirk enabled there appears to be around 10%
-> > chance that the tuning sequence will fail and time out due to the
-> > controller locking up.
-> > 
-> > Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-> > ---
-> >  drivers/mmc/host/sdhci.c | 15 +++++++++++++++
-> >  drivers/mmc/host/sdhci.h |  2 ++
-> >  2 files changed, 17 insertions(+)
-> > 
-> > diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> > index 04dc443..166b16f 100644
-> > --- a/drivers/mmc/host/sdhci.c
-> > +++ b/drivers/mmc/host/sdhci.c
-> > @@ -2175,6 +2175,7 @@ static void sdhci_send_tuning(struct sdhci_host *host, u32 opcode)
-> >  	struct mmc_request mrq = {};
-> >  	unsigned long flags;
-> >  	u32 b = host->sdma_boundary;
-> > +	u16 clk;
-> >  
-> >  	spin_lock_irqsave(&host->lock, flags);
-> >  
-> > @@ -2183,6 +2184,13 @@ static void sdhci_send_tuning(struct sdhci_host *host, u32 opcode)
-> >  	cmd.mrq = &mrq;
-> >  
-> >  	mrq.cmd = &cmd;
-> > +
-> > +	if (host->quirks2 & SDHCI_QUIRK2_TUNE_DIS_CARD_CLK) {
-> > +		clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
-> > +		clk &= ~SDHCI_CLOCK_CARD_EN;
-> > +		sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);  
+> > How can we have a migration pmd entry when the migration is not
+> > supported?
 > 
-> Rather than using a quirk, could you use the sdhci I/O accessors to disable
-> the clock before the tuning comment is written, udelay(1), and then enable
-> it again?
+> Not sure i follow here, migration can happen anywhere (assuming
+> that something like compaction is active or numa or ...). So this
+> code can face pmd migration entry on architecture that support
+> it. What is missing here is thp_migration_supported() call to
+> protect the is_migration_entry() to avoid false positive on arch
+> which do not support thp migration.
 
-This was the way it was implemented in the downstream kernel. However,
-doing it in the IO accessor when a tuning command is sent seems to work
-too.
-
- -Aapo
+I mean that architectures which do not support THP migration shouldn't
+ever see any migration entry. So is_migration_entry should be always
+false. Or do I miss something?
+-- 
+Michal Hocko
+SUSE Labs
