@@ -2,110 +2,105 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44BF0C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 09:13:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A1B5C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 09:15:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0833208A1
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 09:13:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S1TWw3Qj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0833208A1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id E1E5F20658
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 09:15:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1E5F20658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lucaceresoli.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727636AbeH1NEX (ORCPT
+        id S1727613AbeH1NF5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 09:04:23 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:40384 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727091AbeH1NEW (ORCPT
+        Tue, 28 Aug 2018 09:05:57 -0400
+Received: from srv-hp10-72.netsons.net ([94.141.22.72]:38162 "EHLO
+        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727091AbeH1NF5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 09:04:22 -0400
-Received: by mail-pg1-f195.google.com with SMTP id z25-v6so468114pgu.7
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 02:13:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references;
-        bh=kjmNryIxbwqbCCdSwgMdVQyiF4PoiPt24SSCjDlqFI4=;
-        b=S1TWw3QjA9e+k6uAEi0C07pb8JFzOms14oVcppKgEE/Y/YXibzU3/ZSWJXG3lq87W1
-         RRK97aPOo9dosXyS9tJfP6rKCNBoZoWhbrsAMuGvI8exNSrZT8caqTd5qm+AzpaFPuIH
-         QsllOgPSGF2LcfJWWr/I842oyGs+7Ono47VRWnBXxAgUr/Kz0jZdtjN8fDFalHVbX+py
-         +FyewmC+XSohWtmSX74nzt9VX8CGu5h63D7ULcfkv5DEXwHJGIk1zRQ5Knb+HP4d//N7
-         K43VVwZ+0tGyWubLHabcKigEx/vFAqW6o4KI2UsbaT5z8itjkvzrU4AQJu1S2ytCAES2
-         0UQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references;
-        bh=kjmNryIxbwqbCCdSwgMdVQyiF4PoiPt24SSCjDlqFI4=;
-        b=UrXTQn0J5JJ8Y4R0woQQAwb5hsbTq9xuDhbnGyzjqYqadkt7tYiGJ0uDDNUOllboq0
-         gogbasbq+i188p1zw5lAWD0LDmkJRljSDUOp1peXK3clXCO5tz3fm8YmSbiOILRCTCjs
-         8i+V0qcCI7kQ69MTmQwxZnDz1ADaWWwij5KBdVX75NKJwf/7GoJKgHkfeXjE09inr95g
-         oSJTZF5DhbF/fmT6cTBH68DX1bIViypN5nIkgXtaZKqnGhKs8yXHz84s80w6CUz9VXyJ
-         pVBNI+Svpu/t00F19ya3tC+YfM8688qYBfYA3vsRK78n5nTaRwahZF/uMxFdcacU4SSn
-         f0ag==
-X-Gm-Message-State: APzg51ACczfnyRwAMsiTR8NGJpMdUFQItrxIwF6rntH21NTDMKSMZTDI
-        97axBffUzEOIqnyeffsF/g68kCJ2
-X-Google-Smtp-Source: ANB0Vdb4/CS30Hltz0iaSkx10uFSdORLizSHKVVDyiM4EFQqyhepVLKiM2dGsH1ozZ+jdK/YJ07RmQ==
-X-Received: by 2002:a62:435c:: with SMTP id q89-v6mr627636pfa.135.1535447618330;
-        Tue, 28 Aug 2018 02:13:38 -0700 (PDT)
-Received: from app09.andestech.com ([118.163.51.199])
-        by smtp.gmail.com with ESMTPSA id l9-v6sm1083027pgg.79.2018.08.28.02.13.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 Aug 2018 02:13:37 -0700 (PDT)
-From:   Greentime Hu <green.hu@gmail.com>
-X-Google-Original-From: Greentime Hu <greentime@andestech.com>
-To:     greentime@andestech.com, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] nds32: fix build error because of wrong semicolon
-Date:   Tue, 28 Aug 2018 17:12:22 +0800
-Message-Id: <20180828091222.31672-3-greentime@andestech.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180828091222.31672-1-greentime@andestech.com>
-References: <20180828091222.31672-1-greentime@andestech.com>
+        Tue, 28 Aug 2018 09:05:57 -0400
+Received: from [109.168.11.45] (port=57182 helo=[192.168.101.125])
+        by srv-hp10.netsons.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1fua5H-00GEy8-MY; Tue, 28 Aug 2018 11:14:47 +0200
+Subject: Re: [PATCH v6 1/2] media: imx274: use regmap_bulk_write to write
+ multybyte registers
+To:     Philippe De Muyter <phdm@macq.eu>
+Cc:     linux-media@vger.kernel.org,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Leon Luo <leonl@leopardimaging.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org
+References: <20180725162455.31381-1-luca@lucaceresoli.net>
+ <20180725162455.31381-2-luca@lucaceresoli.net>
+ <20180828090300.GA23579@frolo.macqel>
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+Message-ID: <9ed69bb8-ff2c-76bb-faef-71c06e96877b@lucaceresoli.net>
+Date:   Tue, 28 Aug 2018 11:14:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180828090300.GA23579@frolo.macqel>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca@lucaceresoli.net
+X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It shall be removed in the define usage. We shall not put a semicolon there.
+Hi Philippe,
 
-/kisskb/src/arch/nds32/include/asm/elf.h:126:29: error: expected '}' before ';' token
- #define ELF_DATA ELFDATA2LSB;
-                             ^
-/kisskb/src/fs/proc/kcore.c:318:17: note: in expansion of macro 'ELF_DATA'
-     [EI_DATA] = ELF_DATA,
-                 ^~~~~~~~
-/kisskb/src/fs/proc/kcore.c:312:15: note: to match this '{'
-    .e_ident = {
-               ^
-/kisskb/src/scripts/Makefile.build:307: recipe for target 'fs/proc/kcore.o' failed
+thanks for you review.
 
-Signed-off-by: Greentime Hu <greentime@andestech.com>
----
- arch/nds32/include/asm/elf.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On 28/08/2018 11:03, Philippe De Muyter wrote:
+> On Wed, Jul 25, 2018 at 06:24:54PM +0200, Luca Ceresoli wrote:
+>> Currently 2-bytes and 3-bytes registers are set by very similar
+>> functions doing the needed shift & mask manipulation, followed by very
+>> similar for loops setting one byte at a time over I2C.
+>>
+>> Replace all of this code by a unique helper function that calls
+>> regmap_bulk_write(), which has two advantages:
+>>  - sets all the bytes in a unique I2C transaction
+>>  - removes lots of now unused code.
+>>
+>> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+>> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+>>
+> ...
+>> +/**
+>> + * Write a multibyte register.
+>> + *
+>> + * Uses a bulk write where possible.
+>> + *
+>> + * @priv: Pointer to device structure
+>> + * @addr: Address of the LSB register.  Other registers must be
+>> + *        consecutive, least-to-most significant.
+>> + * @val: Value to be written to the register (cpu endianness)
+>> + * @nbytes: Number of bits to write (range: [1..3])
+>> + */
+>> +static int imx274_write_mbreg(struct stimx274 *priv, u16 addr, u32 val,
+>> +			      size_t nbytes)
+> 
+> Should nbytes be called nbits, or is nbytes a 'Number of bytes' ?
 
-diff --git a/arch/nds32/include/asm/elf.h b/arch/nds32/include/asm/elf.h
-index 56c479058802..f5f9cf7e0544 100644
---- a/arch/nds32/include/asm/elf.h
-+++ b/arch/nds32/include/asm/elf.h
-@@ -121,9 +121,9 @@ struct elf32_hdr;
-  */
- #define ELF_CLASS	ELFCLASS32
- #ifdef __NDS32_EB__
--#define ELF_DATA	ELFDATA2MSB;
-+#define ELF_DATA	ELFDATA2MSB
- #else
--#define ELF_DATA	ELFDATA2LSB;
-+#define ELF_DATA	ELFDATA2LSB
- #endif
- #define ELF_ARCH	EM_NDS32
- #define USE_ELF_CORE_DUMP
+This patch has already been applied, but I sent a fix:
+https://patchwork.linuxtv.org/patch/51719/
+
 -- 
-2.18.0
-
+Luca
