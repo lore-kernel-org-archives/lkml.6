@@ -2,359 +2,183 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.0 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06817C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:56:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A4D9C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:57:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9222120894
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:56:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9222120894
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id B81EF2087C
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:57:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G+nXpiqF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B81EF2087C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728443AbeH1RsC (ORCPT
+        id S1728109AbeH1Rsx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 13:48:02 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38664 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727379AbeH1Rq7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 13:46:59 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5FF6F174E;
-        Tue, 28 Aug 2018 06:54:27 -0700 (PDT)
-Received: from e110439-lin.Cambridge.arm.com (e110439-lin.emea.arm.com [10.4.12.126])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6EC343F5BD;
-        Tue, 28 Aug 2018 06:54:24 -0700 (PDT)
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: [PATCH v4 09/16] sched/core: uclamp: map TG's clamp values into CPU's clamp groups
-Date:   Tue, 28 Aug 2018 14:53:17 +0100
-Message-Id: <20180828135324.21976-10-patrick.bellasi@arm.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180828135324.21976-1-patrick.bellasi@arm.com>
-References: <20180828135324.21976-1-patrick.bellasi@arm.com>
+        Tue, 28 Aug 2018 13:48:53 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:36798 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727201AbeH1Rsx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 13:48:53 -0400
+Received: by mail-pg1-f196.google.com with SMTP id d1-v6so794984pgo.3;
+        Tue, 28 Aug 2018 06:57:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=nMojAtRwudJSj7DiGIyX0w3/gxVENvX68gtXBn6PaQI=;
+        b=G+nXpiqFb9bKepy9Hr7knocjMIdYAkzcbk5RGJ8xifwu8G3Jt3xAfRfHh6rHojhiK+
+         0apbRRUHVJrusZXgyxElTXEOfP9NmtIT5biFEdjqprrGiNUGzIqwsrtVtxVtn7baFg1b
+         dszYDpKdoHl+Gban08QNIJy9nhxoeB75Dce7xvLrz/FMx6EwjgiZ7qXN8ymi79raiJK9
+         1E2WnUZm5GglSxDcv4BQna5uT8w0ffRnZh+WD+PJ6XB9sQeASVp/TxzQJv0GKHm4t6bB
+         TrEX8gpeexzsPoVJ8q7LBZjr+qWwa7E2jaifZDycV+xi911XTgf5lwUInN77GvF7updu
+         lREg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=nMojAtRwudJSj7DiGIyX0w3/gxVENvX68gtXBn6PaQI=;
+        b=iACkY3XqKnWpAYJzegR3eFqqdTH8sGWGCyRGgCvX/GC1Pmtc8VWYDVng0vYx1UanTE
+         ssY+noA0Uqh04PTg1EsIDp9K0yKXLUGcKMtuicrjE7GIN0KY0YdGKROArmZgBHOJ6vpL
+         +CZGX3gZnx3Aw4Px9dZkZJcAey9bI2BVhoxodb7zmyvy14JP9wMDtD1mrKjHZ2lPpu0u
+         d9+jjEyf+P3+RIpe1N95aiG13afTAiDxlnyp6No5hvQkJ4xb1pI6ZRQzTEjMbTwKonpr
+         5Lo3u2Px1MIdSDioINKLz6WmqyXImi2HFeIZ1uh0GGUS6MZ4xTEbh7yO7BiRszrRL6id
+         xRvw==
+X-Gm-Message-State: APzg51B6xKcZeQfkICyDlzS69cYxXp7QXOEnV1ROfegEKiiLVNC8PmzY
+        p/Oiccg2PhLlY/JN7x9Euhi+kLze
+X-Google-Smtp-Source: ANB0VdZFPfOR0V3h0arH3HG35f74fbcvp4v859NbAT2uSef33DffTFsVPrUbS1wnNU4fKw9gnFXKxA==
+X-Received: by 2002:a63:5d4b:: with SMTP id o11-v6mr1643493pgm.349.1535464624655;
+        Tue, 28 Aug 2018 06:57:04 -0700 (PDT)
+Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id c1-v6sm5407460pfg.25.2018.08.28.06.57.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 28 Aug 2018 06:57:03 -0700 (PDT)
+Subject: Re: [PATCH] hwmon: Convert to using %pOFn instead of device_node.name
+To:     Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org
+Cc:     Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org
+References: <20180828015252.28511-1-robh@kernel.org>
+ <20180828015252.28511-20-robh@kernel.org>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <aa9473ef-61f6-270f-ff7c-284a2789c0a9@roeck-us.net>
+Date:   Tue, 28 Aug 2018 06:57:02 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180828015252.28511-20-robh@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Utilization clamping requires to map each different clamp value
-into one of the available clamp groups used by the scheduler's fast-path
-to account for RUNNABLE tasks. Thus, each time a TG's clamp value
-sysfs attribute is updated via:
-   cpu_util_{min,max}_write_u64()
-we need to get (if possible) a reference to the new value's clamp group
-and release the reference to the previous one.
+On 08/27/2018 06:52 PM, Rob Herring wrote:
+> In preparation to remove the node name pointer from struct device_node,
+> convert printf users to use the %pOFn format specifier.
+> 
+> Cc: Jean Delvare <jdelvare@suse.com>
+> Cc: Guenter Roeck <linux@roeck-us.net>
+> Cc: linux-hwmon@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-Let's ensure that, whenever a task group is assigned a specific
-clamp_value, this is properly translated into a unique clamp group to be
-used in the fast-path (i.e. at enqueue/dequeue time).
-We do that by slightly refactoring uclamp_group_get() to make the
-*task_struct parameter optional. This allows to re-use the code already
-available to support the per-task API.
+The devm_kstrdup((..., "iio_hwmon") is getting a bit ridiculous and is asking
+for a rewrite, but that can be done in a separate patch.
 
-Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Suren Baghdasaryan <surenb@google.com>
-Cc: Todd Kjos <tkjos@google.com>
-Cc: Joel Fernandes <joelaf@google.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: Quentin Perret <quentin.perret@arm.com>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Morten Rasmussen <morten.rasmussen@arm.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-pm@vger.kernel.org
+Other than that, do you want this taken through hwmon or as a series on its own ?
 
----
-Changes in v4:
- Others:
- - rebased on v4.19-rc1
+For the latter case,
 
-Changes in v3:
- Message-ID: <CAJuCfpF6=L=0LrmNnJrTNPazT4dWKqNv+thhN0dwpKCgUzs9sg@mail.gmail.com>
- - add explicit calls to uclamp_group_find(), which is now not more
-   part of uclamp_group_get()
- Others:
- - rebased on tip/sched/core
-Changes in v2:
- - rebased on v4.18-rc4
- - this code has been split from a previous patch to simplify the review
----
- include/linux/sched.h | 11 +++--
- kernel/sched/core.c   | 95 +++++++++++++++++++++++++++++++++++++++----
- 2 files changed, 95 insertions(+), 11 deletions(-)
+Acked-by: Guenter Roeck <linux@roeck-us.net>
 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 2da130d17e70..4e5522ed57e0 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -587,17 +587,22 @@ struct sched_dl_entity {
-  * The same "group_id" can be used by multiple scheduling entities, i.e.
-  * either tasks or task groups, to enforce the same clamp "value" for a given
-  * clamp index.
-+ *
-+ * Scheduling entity's specific clamp group index can be different
-+ * from the effective clamp group index used at enqueue time since
-+ * task groups's clamps can be restricted by their parent task group.
-  */
- struct uclamp_se {
- 	unsigned int value;
- 	unsigned int group_id;
- 	/*
--	 * Effective task (group) clamp value.
--	 * For task groups is the value (eventually) enforced by a parent task
--	 * group.
-+	 * Effective task (group) clamp value and group index.
-+	 * For task groups it's the value (eventually) enforced by a parent
-+	 * task group.
- 	 */
- 	struct {
- 		unsigned int value;
-+		unsigned int group_id;
- 	} effective;
- };
- 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index b2d438b6484b..e617a7b18f2d 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -1250,24 +1250,51 @@ static inline int alloc_uclamp_sched_group(struct task_group *tg,
- 					   struct task_group *parent)
- {
- 	struct uclamp_se *uc_se;
-+	int next_group_id;
- 	int clamp_id;
- 
- 	for (clamp_id = 0; clamp_id < UCLAMP_CNT; ++clamp_id) {
- 		uc_se = &tg->uclamp[clamp_id];
-+
- 		uc_se->effective.value =
- 			parent->uclamp[clamp_id].effective.value;
--		uc_se->value = parent->uclamp[clamp_id].value;
--		uc_se->group_id = parent->uclamp[clamp_id].group_id;
-+		uc_se->effective.group_id =
-+			parent->uclamp[clamp_id].effective.group_id;
-+
-+		next_group_id = parent->uclamp[clamp_id].group_id;
-+		uc_se->group_id = UCLAMP_NOT_VALID;
-+		uclamp_group_get(NULL, clamp_id, next_group_id, uc_se,
-+				 parent->uclamp[clamp_id].value);
- 	}
- 
- 	return 1;
- }
-+
-+/**
-+ * release_uclamp_sched_group: release utilization clamp references of a TG
-+ * @tg: the task group being removed
-+ *
-+ * An empty task group can be removed only when it has no more tasks or child
-+ * groups. This means that we can also safely release all the reference
-+ * counting to clamp groups.
-+ */
-+static inline void free_uclamp_sched_group(struct task_group *tg)
-+{
-+	struct uclamp_se *uc_se;
-+	int clamp_id;
-+
-+	for (clamp_id = 0; clamp_id < UCLAMP_CNT; ++clamp_id) {
-+		uc_se = &tg->uclamp[clamp_id];
-+		uclamp_group_put(clamp_id, uc_se->group_id);
-+	}
-+}
- #else /* CONFIG_UCLAMP_TASK_GROUP */
- static inline int alloc_uclamp_sched_group(struct task_group *tg,
- 					   struct task_group *parent)
- {
- 	return 1;
- }
-+static inline void free_uclamp_sched_group(struct task_group *tg) { }
- #endif /* CONFIG_UCLAMP_TASK_GROUP */
- 
- static inline int __setscheduler_uclamp(struct task_struct *p,
-@@ -1417,9 +1444,18 @@ static void __init init_uclamp(void)
- #ifdef CONFIG_UCLAMP_TASK_GROUP
- 		/* Init root TG's clamp group */
- 		uc_se = &root_task_group.uclamp[clamp_id];
-+
- 		uc_se->effective.value = uclamp_none(clamp_id);
--		uc_se->value = uclamp_none(clamp_id);
--		uc_se->group_id = 0;
-+		uc_se->effective.group_id = 0;
-+
-+		/*
-+		 * The max utilization is always allowed for both clamps.
-+		 * This is required to not force a null minimum utiliation on
-+		 * all child groups.
-+		 */
-+		uc_se->group_id = UCLAMP_NOT_VALID;
-+		uclamp_group_get(NULL, clamp_id, 0, uc_se,
-+				 uclamp_none(UCLAMP_MAX));
- #endif
- 	}
- }
-@@ -1427,6 +1463,7 @@ static void __init init_uclamp(void)
- #else /* CONFIG_UCLAMP_TASK */
- static inline void uclamp_cpu_get(struct rq *rq, struct task_struct *p) { }
- static inline void uclamp_cpu_put(struct rq *rq, struct task_struct *p) { }
-+static inline void free_uclamp_sched_group(struct task_group *tg) { }
- static inline int alloc_uclamp_sched_group(struct task_group *tg,
- 					   struct task_group *parent)
- {
-@@ -6984,6 +7021,7 @@ static DEFINE_SPINLOCK(task_group_lock);
- 
- static void sched_free_group(struct task_group *tg)
- {
-+	free_uclamp_sched_group(tg);
- 	free_fair_sched_group(tg);
- 	free_rt_sched_group(tg);
- 	autogroup_free(tg);
-@@ -7234,6 +7272,7 @@ static void cpu_cgroup_attach(struct cgroup_taskset *tset)
-  * @css: the task group to update
-  * @clamp_id: the clamp index to update
-  * @value: the new task group clamp value
-+ * @group_id: the group index mapping the new task clamp value
-  *
-  * The effective clamp for a TG is expected to track the most restrictive
-  * value between the TG's clamp value and it's parent effective clamp value.
-@@ -7252,9 +7291,12 @@ static void cpu_cgroup_attach(struct cgroup_taskset *tset)
-  * be propagated down to all the descendants. When a subgroup is found which
-  * has already its effective clamp value matching its clamp value, then we can
-  * safely skip all its descendants which are granted to be already in sync.
-+ *
-+ * The TG's group_id is also updated to ensure it tracks the effective clamp
-+ * value.
-  */
- static void cpu_util_update_hier(struct cgroup_subsys_state *css,
--				 int clamp_id, int value)
-+				 int clamp_id, int value, int group_id)
- {
- 	struct cgroup_subsys_state *top_css = css;
- 	struct uclamp_se *uc_se, *uc_parent;
-@@ -7282,24 +7324,30 @@ static void cpu_util_update_hier(struct cgroup_subsys_state *css,
- 		}
- 
- 		/* Propagate the most restrictive effective value */
--		if (uc_parent->effective.value < value)
-+		if (uc_parent->effective.value < value) {
- 			value = uc_parent->effective.value;
-+			group_id = uc_parent->effective.group_id;
-+		}
- 		if (uc_se->effective.value == value)
- 			continue;
- 
- 		uc_se->effective.value = value;
-+		uc_se->effective.group_id = group_id;
- 	}
- }
- 
- static int cpu_util_min_write_u64(struct cgroup_subsys_state *css,
- 				  struct cftype *cftype, u64 min_value)
- {
-+	struct uclamp_se *uc_se;
- 	struct task_group *tg;
- 	int ret = -EINVAL;
-+	int group_id;
- 
- 	if (min_value > SCHED_CAPACITY_SCALE)
- 		return -ERANGE;
- 
-+	mutex_lock(&uclamp_mutex);
- 	rcu_read_lock();
- 
- 	tg = css_tg(css);
-@@ -7310,11 +7358,25 @@ static int cpu_util_min_write_u64(struct cgroup_subsys_state *css,
- 	if (tg->uclamp[UCLAMP_MAX].value < min_value)
- 		goto out;
- 
-+	/* Find a valid group_id */
-+	ret = uclamp_group_find(UCLAMP_MIN, min_value);
-+	if (ret == -ENOSPC) {
-+		pr_err(UCLAMP_ENOSPC_FMT, "MIN");
-+		goto out;
-+	}
-+	group_id = ret;
-+	ret = 0;
-+
- 	/* Update effective clamps to track the most restrictive value */
--	cpu_util_update_hier(css, UCLAMP_MIN, min_value);
-+	cpu_util_update_hier(css, UCLAMP_MIN, min_value, group_id);
-+
-+	/* Update TG's reference count */
-+	uc_se = &tg->uclamp[UCLAMP_MIN];
-+	uclamp_group_get(NULL, UCLAMP_MIN, group_id, uc_se, min_value);
- 
- out:
- 	rcu_read_unlock();
-+	mutex_unlock(&uclamp_mutex);
- 
- 	return ret;
- }
-@@ -7322,12 +7384,15 @@ static int cpu_util_min_write_u64(struct cgroup_subsys_state *css,
- static int cpu_util_max_write_u64(struct cgroup_subsys_state *css,
- 				  struct cftype *cftype, u64 max_value)
- {
-+	struct uclamp_se *uc_se;
- 	struct task_group *tg;
- 	int ret = -EINVAL;
-+	int group_id;
- 
- 	if (max_value > SCHED_CAPACITY_SCALE)
- 		return -ERANGE;
- 
-+	mutex_lock(&uclamp_mutex);
- 	rcu_read_lock();
- 
- 	tg = css_tg(css);
-@@ -7338,11 +7403,25 @@ static int cpu_util_max_write_u64(struct cgroup_subsys_state *css,
- 	if (tg->uclamp[UCLAMP_MIN].value > max_value)
- 		goto out;
- 
-+	/* Find a valid group_id */
-+	ret = uclamp_group_find(UCLAMP_MAX, max_value);
-+	if (ret == -ENOSPC) {
-+		pr_err(UCLAMP_ENOSPC_FMT, "MAX");
-+		goto out;
-+	}
-+	group_id = ret;
-+	ret = 0;
-+
- 	/* Update effective clamps to track the most restrictive value */
--	cpu_util_update_hier(css, UCLAMP_MAX, max_value);
-+	cpu_util_update_hier(css, UCLAMP_MAX, max_value, group_id);
-+
-+	/* Update TG's reference count */
-+	uc_se = &tg->uclamp[UCLAMP_MAX];
-+	uclamp_group_get(NULL, UCLAMP_MAX, group_id, uc_se, max_value);
- 
- out:
- 	rcu_read_unlock();
-+	mutex_unlock(&uclamp_mutex);
- 
- 	return ret;
- }
--- 
-2.18.0
+otherwise please let me know.
+
+Guenter
+
+> ---
+>   drivers/hwmon/aspeed-pwm-tacho.c | 2 +-
+>   drivers/hwmon/ibmpowernv.c       | 4 ++--
+>   drivers/hwmon/iio_hwmon.c        | 9 ++++-----
+>   drivers/hwmon/npcm750-pwm-fan.c  | 2 +-
+>   4 files changed, 8 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/hwmon/aspeed-pwm-tacho.c b/drivers/hwmon/aspeed-pwm-tacho.c
+> index 5e449eac788a..92de8139d398 100644
+> --- a/drivers/hwmon/aspeed-pwm-tacho.c
+> +++ b/drivers/hwmon/aspeed-pwm-tacho.c
+> @@ -852,7 +852,7 @@ static int aspeed_create_pwm_cooling(struct device *dev,
+>   		dev_err(dev, "Property 'cooling-levels' cannot be read.\n");
+>   		return ret;
+>   	}
+> -	snprintf(cdev->name, MAX_CDEV_NAME_LEN, "%s%d", child->name, pwm_port);
+> +	snprintf(cdev->name, MAX_CDEV_NAME_LEN, "%pOFn%d", child, pwm_port);
+>   
+>   	cdev->tcdev = thermal_of_cooling_device_register(child,
+>   							 cdev->name,
+> diff --git a/drivers/hwmon/ibmpowernv.c b/drivers/hwmon/ibmpowernv.c
+> index 83472808c816..4935897f1527 100644
+> --- a/drivers/hwmon/ibmpowernv.c
+> +++ b/drivers/hwmon/ibmpowernv.c
+> @@ -603,8 +603,8 @@ static int create_device_attrs(struct platform_device *pdev)
+>   		if (of_property_read_u32(np, "sensor-id", &sensor_id) &&
+>   		    of_property_read_u32(np, "sensor-data", &sensor_id)) {
+>   			dev_info(&pdev->dev,
+> -				 "'sensor-id' missing in the node '%s'\n",
+> -				 np->name);
+> +				 "'sensor-id' missing in the node '%pOFn'\n",
+> +				 np);
+>   			continue;
+>   		}
+>   
+> diff --git a/drivers/hwmon/iio_hwmon.c b/drivers/hwmon/iio_hwmon.c
+> index 2f3f875c06ac..7566991f1c04 100644
+> --- a/drivers/hwmon/iio_hwmon.c
+> +++ b/drivers/hwmon/iio_hwmon.c
+> @@ -65,13 +65,9 @@ static int iio_hwmon_probe(struct platform_device *pdev)
+>   	int in_i = 1, temp_i = 1, curr_i = 1, humidity_i = 1;
+>   	enum iio_chan_type type;
+>   	struct iio_channel *channels;
+> -	const char *name = "iio_hwmon";
+>   	struct device *hwmon_dev;
+>   	char *sname;
+>   
+> -	if (dev->of_node && dev->of_node->name)
+> -		name = dev->of_node->name;
+> -
+>   	channels = devm_iio_channel_get_all(dev);
+>   	if (IS_ERR(channels)) {
+>   		if (PTR_ERR(channels) == -ENODEV)
+> @@ -141,7 +137,10 @@ static int iio_hwmon_probe(struct platform_device *pdev)
+>   	st->attr_group.attrs = st->attrs;
+>   	st->groups[0] = &st->attr_group;
+>   
+> -	sname = devm_kstrdup(dev, name, GFP_KERNEL);
+> +	if (dev->of_node)
+> +		sname = devm_kasprintf(dev, GFP_KERNEL, "%pOFn", dev->of_node);
+> +	else
+> +		sname = devm_kstrdup(dev, "iio_hwmon", GFP_KERNEL);
+>   	if (!sname)
+>   		return -ENOMEM;
+>   
+> diff --git a/drivers/hwmon/npcm750-pwm-fan.c b/drivers/hwmon/npcm750-pwm-fan.c
+> index 8474d601aa63..96634fd54e0b 100644
+> --- a/drivers/hwmon/npcm750-pwm-fan.c
+> +++ b/drivers/hwmon/npcm750-pwm-fan.c
+> @@ -861,7 +861,7 @@ static int npcm7xx_create_pwm_cooling(struct device *dev,
+>   		dev_err(dev, "Property 'cooling-levels' cannot be read.\n");
+>   		return ret;
+>   	}
+> -	snprintf(cdev->name, THERMAL_NAME_LENGTH, "%s%d", child->name,
+> +	snprintf(cdev->name, THERMAL_NAME_LENGTH, "%pOFn%d", child,
+>   		 pwm_port);
+>   
+>   	cdev->tcdev = thermal_of_cooling_device_register(child,
+> 
 
