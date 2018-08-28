@@ -6,53 +6,80 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18AC8C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:07:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65033C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:07:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B555E205F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:07:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B555E205F4
+	by mail.kernel.org (Postfix) with ESMTP id 26884205F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:07:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26884205F4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727433AbeH2BAq (ORCPT
+        id S1727505AbeH2BBC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 21:00:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57016 "EHLO
+        Tue, 28 Aug 2018 21:01:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57032 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726383AbeH2BAq (ORCPT
+        with ESMTP id S1726383AbeH2BBC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 21:00:46 -0400
+        Tue, 28 Aug 2018 21:01:02 -0400
 Received: from localhost (unknown [104.129.192.188])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8C5B2AF3;
-        Tue, 28 Aug 2018 21:07:19 +0000 (UTC)
-Date:   Tue, 28 Aug 2018 14:07:17 -0700
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C91C192F;
+        Tue, 28 Aug 2018 21:07:35 +0000 (UTC)
+Date:   Tue, 28 Aug 2018 14:07:33 -0700
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     Todd Kjos <tkjos@android.com>
-Cc:     Todd Kjos <tkjos@google.com>, Arve Hj??nnev??g <arve@android.com>,
-        devel@driverdev.osuosl.org, LKML <linux-kernel@vger.kernel.org>,
-        Martijn Coenen <maco@google.com>,
-        Christian Brauner <christian.brauner@canonical.com>,
-        ben@decadent.org.uk
+Cc:     tkjos@google.com, arve@android.com, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, maco@google.com,
+        christian.brauner@canonical.com, ben@decadent.org.uk
 Subject: Re: [PATCH v2] binder: use standard functions to allocate fds
-Message-ID: <20180828210717.GA31143@kroah.com>
-References: <20180828204300.231069-1-tkjos@google.com>
- <CAD0t5oMXgaGNKNbWjFRLmf-O+dd-5Yr0yZs=q1Y07JX0dc9Mbg@mail.gmail.com>
+Message-ID: <20180828210733.GB31143@kroah.com>
+References: <20180828204625.232573-1-tkjos@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAD0t5oMXgaGNKNbWjFRLmf-O+dd-5Yr0yZs=q1Y07JX0dc9Mbg@mail.gmail.com>
+In-Reply-To: <20180828204625.232573-1-tkjos@google.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 01:43:35PM -0700, Todd Kjos wrote:
-> Sorry, forgot to bump the version. Ignore this one.
+On Tue, Aug 28, 2018 at 01:46:25PM -0700, Todd Kjos wrote:
+> Binder uses internal fs interfaces to allocate and install fds:
+> 
+> __alloc_fd
+> __fd_install
+> __close_fd
+> get_files_struct
+> put_files_struct
+> 
+> These were used to support the passing of fds between processes
+> as part of a transaction. The actual allocation and installation
+> of the fds in the target process was handled by the sending
+> process so the standard functions, alloc_fd() and fd_install()
+> which assume task==current couldn't be used.
+> 
+> This patch refactors this mechanism so that the fds are
+> allocated and installed by the target process allowing the
+> standard functions to be used.
+> 
+> The sender now creates a list of fd fixups that contains the
+> struct *file and the address to fixup with the new fd once
+> it is allocated. This list is processed by the target process
+> when the transaction is dequeued.
+> 
+> A new error case is introduced by this change. If an async
+> transaction with file descriptors cannot allocate new
+> fds in the target (probably due to out of file descriptors),
+> the transaction is discarded with a log message. In the old
+> implementation this would have been detected in the sender
+> context and failed prior to sending.
+> 
+> Signed-off-by: Todd Kjos <tkjos@google.com>
+> ---
+> v2: use "%zu" printk format for size_t
 
-Huh?  I see two "v2" patches :(
+Is this really v3?
 
-totally confused.
 
-greg k-h
