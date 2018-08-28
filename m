@@ -2,119 +2,137 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4066CC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:22:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15E5BC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:24:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E016F2084A
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:22:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E016F2084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B72252084A
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:24:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=westbrook.io header.i=@westbrook.io header.b="KPi5BDeA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B72252084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=westbrook.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727430AbeH2BQT (ORCPT
+        id S1727450AbeH2BRr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 21:16:19 -0400
-Received: from mga12.intel.com ([192.55.52.136]:60721 "EHLO mga12.intel.com"
+        Tue, 28 Aug 2018 21:17:47 -0400
+Received: from westbrook.io ([205.159.239.66]:52199 "EHLO mail.westbrook.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726998AbeH2BQT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 21:16:19 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Aug 2018 14:22:49 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,300,1531810800"; 
-   d="scan'208";a="85277502"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.9])
-  by fmsmga001.fm.intel.com with ESMTP; 28 Aug 2018 14:22:44 -0700
-Date:   Tue, 28 Aug 2018 14:22:44 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
-        platform-driver-x86@vger.kernel.org, nhorman@redhat.com,
-        npmccallum@redhat.com, linux-sgx@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        Serge Ayoun <serge.ayoun@intel.com>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v13 09/13] x86/sgx: Enclave Page Cache (EPC) memory
- manager
-Message-ID: <20180828212244.GA29488@linux.intel.com>
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-10-jarkko.sakkinen@linux.intel.com>
- <7c5df14e-3028-46b3-fe93-aa6ba8352317@intel.com>
- <20180828083540.GH15508@linux.intel.com>
- <132d309d-77e2-52ed-7251-abb2c80cdf49@intel.com>
+        id S1727067AbeH2BRr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 21:17:47 -0400
+X-Greylist: delayed 576 seconds by postgrey-1.27 at vger.kernel.org; Tue, 28 Aug 2018 21:17:47 EDT
+Received: from [192.168.29.2] (westbrook.io [192.168.29.2])
+        by mail.westbrook.io (Postfix) with ESMTPSA id 93CF0194C6D;
+        Tue, 28 Aug 2018 21:14:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=westbrook.io; s=io;
+        t=1535490882; bh=FdKcgGlFjVD9QsqkLDdXYDvKSOGF55QVL/+rdjFcYWQ=;
+        h=From:Subject:To:Date;
+        b=KPi5BDeAslSvg7N929JudOwM+54Q8VCMwSMfsGHm2mbqCv9DBDHSn81ifMSSeb/7f
+         N3Yt9jrCq6L6wuopCJhXJxiHV3xTPkNaUWSYDd/YOXONnwZvLPZ3bgW41vJ+zNt8u2
+         gMUcYrZTiwtg0GwnfExBZ/XZWUwBwXvOnygicyt0=
+From:   Eric Westbrook <eric@westbrook.io>
+Subject: [PATCH] netfilter: ipset: actually allow allowable CIDR 0 in
+ hash:net,port,net
+To:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Florian Westphal <fw@strlen.de>,
+        Netfilter Development <netfilter-devel@vger.kernel.org>,
+        Netfilter Core Team <coreteam@netfilter.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Trivial Patch Monkey <trivial@kernel.org>
+Message-ID: <a3d786d6-3608-8575-9901-afcf3a52693a@westbrook.io>
+Date:   Tue, 28 Aug 2018 15:14:42 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <132d309d-77e2-52ed-7251-abb2c80cdf49@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 07:07:33AM -0700, Dave Hansen wrote:
-> On 08/28/2018 01:35 AM, Jarkko Sakkinen wrote:
-> > On Mon, Aug 27, 2018 at 02:15:34PM -0700, Dave Hansen wrote:
-> >> On 08/27/2018 11:53 AM, Jarkko Sakkinen wrote:
-> >>> +struct sgx_epc_page_ops {
-> >>> +	bool (*get)(struct sgx_epc_page *epc_page);
-> >>> +	void (*put)(struct sgx_epc_page *epc_page);
-> >>> +	bool (*reclaim)(struct sgx_epc_page *epc_page);
-> >>> +	void (*block)(struct sgx_epc_page *epc_page);
-> >>> +	void (*write)(struct sgx_epc_page *epc_page);
-> >>> +};
-> >> Why do we need a fancy, slow (retpoline'd) set of function pointers when
-> >> we only have one user of these (the SGX driver)?
-> > KVM has its own implementation for these operations.
-> 
-> That belongs in the changelog.
-> 
-> Also, where is the implementation?  How can we assess this code that was
-> built to create an abstraction without both of the users?
+Allow /0 as advertised for hash:net,port,net sets.
 
-I can provide an early preview of the KVM reclaim code, but honestly
-I think that would do more harm than good.  The VMX architecture for
-EPC reclaim is complex, even for SGX standards.  Opening that can of
-worms would likely derail this discussion.  That being said, this
-abstraction isn't exactly what KVM will need, but it's pretty close
-and gives us something to build on.
+For "hash:net,port,net", ipset(8) says that "either subnet
+is permitted to be a /0 should you wish to match port
+between all destinations."
 
-Regardless, this layer of indirection is justifiable even with a
-single implementation.  Reclaiming an EPC page is not a simple matter
-of copying the data somewhere else and marking the page not present.
-Actual eviction requires a reference to the Secure Enclave Control
-Structure (SECS) of the enclave that owns the page.  Software needs
-to ensure it doesn't violate the hardware-enforced access rules, e.g.
-most reclaim activites need to be done under a per-enclave lock.
-Not all pages have the same reclaim rules, e.g. an SECS can only
-be reclaimed after all its child pages have reclaimed, a VA page
-doesn't need to be blocked, etc...  And the list goes on...
+Make that statement true.
 
-All of the tracking metadata and logic about what can be evicted when
-resides in the driver component[1], e.g. the core SGX code doesn't
-even have a software representation of an enclave.  Alternatively the
-driver could provide a single "do_reclaim" function if we wanted to
-avoid a fancy abstraction layer, and in fact that's how I initially
-implemented the abstraction, but that approach has it's own warts and
-in a lot of ways makes the end result more complex.
+Before:
 
-Ultimately, moving pages in/out of the EPC is so abysmally slow that
-the raw performance of software is almost completely irrelevant.  The
-algorithms certainly matter, but optimizing away things like function
-pointers definitely takes a back seat to just about everything else.
+    # ipset create cidrzero hash:net,port,net
+    # ipset add cidrzero 0.0.0.0/0,12345,0.0.0.0/0
+    ipset v6.34: The value of the CIDR parameter of the IP address is invalid
 
-[1] Early versions of SGX support tried to put all EPC management in
-    the driver, but that approach caused major problems for KVM (even
-    without reclaim support) and received a less than enthusiastic
-    response from the community.
+    # ipset create cidrzero6 hash:net,port,net family inet6
+    # ipset add cidrzero6 ::/0,12345,::/0
+    ipset v6.34: The value of the CIDR parameter of the IP address is invalid
+
+After:
+
+    # ipset create cidrzero hash:net,port,net
+    # ipset add cidrzero 0.0.0.0/0,12345,0.0.0.0/0
+    # ipset test cidrzero 192.168.205.129,12345,172.16.205.129
+    192.168.205.129,tcp:12345,172.16.205.129 is in set cidrzero.
+
+    # ipset create cidrzero6 hash:net,port,net family inet6
+    # ipset add cidrzero6 ::/0,12345,::/0
+    # ipset test cidrzero6 fe80::1,12345,ff00::1
+    fe80::1,tcp:12345,ff00::1 is in set cidrzero6.
+
+See also:
+
+  https://bugzilla.kernel.org/show_bug.cgi?id=200897
+  https://github.com/ewestbrook/linux/commit/df7ff6efb0934ab6acc11f003ff1a7580d6c1d9c
+
+Signed-off-by: Eric Westbrook <linux@westbrook.io>
+---
+ net/netfilter/ipset/ip_set_hash_netportnet.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/net/netfilter/ipset/ip_set_hash_netportnet.c b/net/netfilter/ipset/ip_set_hash_netportnet.c
+index d391485a6acd..613e18e720a4 100644
+--- a/net/netfilter/ipset/ip_set_hash_netportnet.c
++++ b/net/netfilter/ipset/ip_set_hash_netportnet.c
+@@ -213,13 +213,13 @@ hash_netportnet4_uadt(struct ip_set *set, struct nlattr *tb[],
+
+ 	if (tb[IPSET_ATTR_CIDR]) {
+ 		e.cidr[0] = nla_get_u8(tb[IPSET_ATTR_CIDR]);
+-		if (!e.cidr[0] || e.cidr[0] > HOST_MASK)
++		if (e.cidr[0] > HOST_MASK)
+ 			return -IPSET_ERR_INVALID_CIDR;
+ 	}
+
+ 	if (tb[IPSET_ATTR_CIDR2]) {
+ 		e.cidr[1] = nla_get_u8(tb[IPSET_ATTR_CIDR2]);
+-		if (!e.cidr[1] || e.cidr[1] > HOST_MASK)
++		if (e.cidr[1] > HOST_MASK)
+ 			return -IPSET_ERR_INVALID_CIDR;
+ 	}
+
+@@ -493,13 +493,13 @@ hash_netportnet6_uadt(struct ip_set *set, struct nlattr *tb[],
+
+ 	if (tb[IPSET_ATTR_CIDR]) {
+ 		e.cidr[0] = nla_get_u8(tb[IPSET_ATTR_CIDR]);
+-		if (!e.cidr[0] || e.cidr[0] > HOST_MASK)
++		if (e.cidr[0] > HOST_MASK)
+ 			return -IPSET_ERR_INVALID_CIDR;
+ 	}
+
+ 	if (tb[IPSET_ATTR_CIDR2]) {
+ 		e.cidr[1] = nla_get_u8(tb[IPSET_ATTR_CIDR2]);
+-		if (!e.cidr[1] || e.cidr[1] > HOST_MASK)
++		if (e.cidr[1] > HOST_MASK)
+ 			return -IPSET_ERR_INVALID_CIDR;
+ 	}
+
+-- 
+2.18.0
+
