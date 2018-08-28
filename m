@@ -3,65 +3,94 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C07CC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:44:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E19EC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:46:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20A802087D
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:44:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20A802087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ispras.ru
+	by mail.kernel.org (Postfix) with ESMTP id 07EBB2087E
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:46:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07EBB2087E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727495AbeH2AhU (ORCPT
+        id S1727479AbeH2AjV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 20:37:20 -0400
-Received: from mail.ispras.ru ([83.149.199.45]:46144 "EHLO mail.ispras.ru"
+        Tue, 28 Aug 2018 20:39:21 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:60635 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726998AbeH2AhU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 20:37:20 -0400
-Received: from localhost.localdomain (ppp85-140-182-184.pppoe.mtu-net.ru [85.140.182.184])
-        by mail.ispras.ru (Postfix) with ESMTPSA id D6E0954008A;
-        Tue, 28 Aug 2018 23:43:56 +0300 (MSK)
-From:   Alexey Khoroshilov <khoroshilov@ispras.ru>
-To:     Hoan Tran <hotran@apm.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ldv-project@linuxtesting.org
-Subject: [PATCH] gpio: dwapb: Fix error handling in dwapb_gpio_probe()
-Date:   Tue, 28 Aug 2018 23:40:26 +0300
-Message-Id: <1535488826-30200-1-git-send-email-khoroshilov@ispras.ru>
-X-Mailer: git-send-email 2.7.4
+        id S1726998AbeH2AjU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 20:39:20 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 3ADF222A3C; Tue, 28 Aug 2018 22:45:58 +0200 (CEST)
+Received: from localhost (unknown [88.191.26.124])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 105EB20795;
+        Tue, 28 Aug 2018 22:45:48 +0200 (CEST)
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Shawn Guo <shawnguo@kernel.org>
+Cc:     Li Yang <leoyang.li@nxp.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 2/4] arm64: dts: fsl: ls1046a: disable uarts by default
+Date:   Tue, 28 Aug 2018 22:45:42 +0200
+Message-Id: <20180828204544.10815-2-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180828204544.10815-1-alexandre.belloni@bootlin.com>
+References: <20180828204544.10815-1-alexandre.belloni@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If dwapb_gpio_add_port() fails in dwapb_gpio_probe(),
-gpio->clk is left undisabled.
+Disable the UARTs by defaultto avoid registering unused UARTs. This
+effectively change the number of registered UARTS for the RDB and QDS from
+4 to 2 but this seems the right thing to do.
 
-Found by Linux Driver Verification project (linuxtesting.org).
+It is especially useful when connecting other 8250 uart on PCIe for example
+as the default maximum number of 8250 UARTs that can be registered is 4.
 
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- drivers/gpio/gpio-dwapb.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index 28da700f5f52..044888fd96a1 100644
---- a/drivers/gpio/gpio-dwapb.c
-+++ b/drivers/gpio/gpio-dwapb.c
-@@ -728,6 +728,7 @@ static int dwapb_gpio_probe(struct platform_device *pdev)
- out_unregister:
- 	dwapb_gpio_unregister(gpio);
- 	dwapb_irq_teardown(gpio);
-+	clk_disable_unprepare(gpio->clk);
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
+index 2d8122019cd8..62ae3ee19d6f 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
+@@ -423,6 +423,7 @@
+ 			reg = <0x00 0x21c0500 0x0 0x100>;
+ 			interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clockgen 4 1>;
++			status = "disabled";
+ 		};
  
- 	return err;
- }
+ 		duart1: serial@21c0600 {
+@@ -430,6 +431,7 @@
+ 			reg = <0x00 0x21c0600 0x0 0x100>;
+ 			interrupts = <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clockgen 4 1>;
++			status = "disabled";
+ 		};
+ 
+ 		duart2: serial@21d0500 {
+@@ -437,6 +439,7 @@
+ 			reg = <0x0 0x21d0500 0x0 0x100>;
+ 			interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clockgen 4 1>;
++			status = "disabled";
+ 		};
+ 
+ 		duart3: serial@21d0600 {
+@@ -444,6 +447,7 @@
+ 			reg = <0x0 0x21d0600 0x0 0x100>;
+ 			interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&clockgen 4 1>;
++			status = "disabled";
+ 		};
+ 
+ 		gpio0: gpio@2300000 {
 -- 
-2.7.4
+2.18.0
 
