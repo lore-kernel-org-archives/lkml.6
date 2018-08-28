@@ -2,133 +2,82 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55073C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 22:39:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63A12C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 22:39:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F10032087B
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 22:39:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oGsQoo9D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F10032087B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 244472087B
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 22:39:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 244472087B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727659AbeH2Ccy (ORCPT
+        id S1727729AbeH2CdB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 22:32:54 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:47426 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727067AbeH2Ccy (ORCPT
+        Tue, 28 Aug 2018 22:33:01 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:42360 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727067AbeH2CdB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 22:32:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=CHR6yfCTsbi1KAqQ5FwvXn7p1hvi1VuxLule3+VUZFo=; b=oGsQoo9D0+KzsODCVRYhxPKvV8
-        bbcks5a5m+npY7flOAOT3sNY6KQgelwzERdy4PUnwUIdasAmRt6wiIT1/yZEEevvT2IfqsXhwxjG5
-        KzkXYl08CH4XHNbASLHxWS5OtPHL2/oG+c1IhCqSbDpal8s1HyUkYGdqcq/j7H5NvxGJ/lPS/cNKS
-        4QHpEQFe0KgdiZxjULPJoIx7FpLh87way319mJlkeVLFFWQY+nTkvaXuHxIGqpMyR8opdf6bqK/H4
-        ybh7DDFP/eYSTPpYiHjieHh7EAKfd0pAkVVt4mRWh7hJ3ZYWoU2t86Mdb8dHyPmb3gBgYLsc2sN0j
-        pKWFkqxg==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fumdb-0005SY-3a; Tue, 28 Aug 2018 22:39:03 +0000
-Subject: Re: Tagged pointers in the XArray
-To:     Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Cc:     Gao Xiang <gaoxiang25@huawei.com>,
-        zhong jiang <zhongjiang@huawei.com>,
-        Chao Yu <yuchao0@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <20180828222727.GD11400@bombadil.infradead.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <fc15502d-8bf3-b7e3-af82-4645dc84e9cd@infradead.org>
-Date:   Tue, 28 Aug 2018 15:39:01 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 28 Aug 2018 22:33:01 -0400
+Received: by mail-oi0-f68.google.com with SMTP id q204-v6so5779222oig.9;
+        Tue, 28 Aug 2018 15:39:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=E81wVRhpYZEHiV82Ih0yDVONX/uuy3L7JAdDO73DnsA=;
+        b=sT2obsFl1pQeWCA3WwqQe8Ox2XuyaiA8XTMcLLwgQF5OEXokEzStnmq76sw8DbPaQ+
+         0uuMyTLVAh3H0ehQG85ZCiQ3cI6LhMHWY5E+zc5CyV1xpxdDl6v/Ga2Jq1gyGjTvsOii
+         nsdxsIMrVTaLYMDELs4WIewO89TRzB9Xdn9AFFp2bcHgxKtwL3EjpFsVBDobfM9aF46r
+         4BASsNwkxODRK+EBzbXCoAf2dM5o4JOMG271OzaCE4TMaQNjh3o8P7RfuRGVqGLzneUL
+         jV7ghusEDvsdXrshbrkdbMsMCIpGOyfSXWIezFu68P+gNQPQ4JAV2l548q7+1cya1hzD
+         zopg==
+X-Gm-Message-State: APzg51AXQ6wHz0cNCiFW+JLtJaCTjf4WD/HMcrWtie6AJDkSS0j63Y91
+        ssvYFdqvkY/pO9sUq1CdcA==
+X-Google-Smtp-Source: ANB0Vda30Am1BMyfCLrBp2sTNHBOYIA568Y0dGUPh5Rxau+eWv/UHrrWu2sLG2GimYJbwcVxLcXXaA==
+X-Received: by 2002:aca:c141:: with SMTP id r62-v6mr124900oif.179.1535495954765;
+        Tue, 28 Aug 2018 15:39:14 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id x126-v6sm1863685oig.15.2018.08.28.15.39.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 28 Aug 2018 15:39:14 -0700 (PDT)
+Date:   Tue, 28 Aug 2018 17:39:13 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Maxime Jourdan <mjourdan@baylibre.com>
+Cc:     Kevin Hilman <khilman@baylibre.com>,
+        Maxime Jourdan <mjourdan@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] dt-bindings: soc: amlogic: add meson-canvas
+ documentation
+Message-ID: <20180828223913.GA24233@bogus>
+References: <20180823114954.30704-1-mjourdan@baylibre.com>
+ <20180823114954.30704-2-mjourdan@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <20180828222727.GD11400@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180823114954.30704-2-mjourdan@baylibre.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just a question, please...
-
-On 08/28/2018 03:27 PM, Matthew Wilcox wrote:
+On Thu, 23 Aug 2018 13:49:52 +0200, Maxime Jourdan wrote:
+> DT bindings doc for amlogic,meson-canvas
 > 
-> diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-> index c74556ea4258..d1b383f3063f 100644
-> --- a/include/linux/xarray.h
-> +++ b/include/linux/xarray.h
-> @@ -150,6 +150,54 @@ static inline int xa_err(void *entry)
->  	return 0;
->  }
->  
-> +/**
-> + * xa_tag_pointer() - Create an XArray entry for a tagged pointer.
-> + * @p: Plain pointer.
-> + * @tag: Tag value (0, 1 or 3).
-> + *
+> Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
+> Signed-off-by: Maxime Jourdan <mjourdan@baylibre.com>
+> ---
+>  .../bindings/soc/amlogic/amlogic,canvas.txt   | 29 +++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/soc/amlogic/amlogic,canvas.txt
+> 
 
-What's wrong with a tag value of 2?
-
-and what happens when one is used?  [I don't see anything preventing that.]
-
-
-> + * If the user of the XArray prefers, they can tag their pointers instead
-> + * of storing value entries.  Three tags are available (0, 1 and 3).
-> + * These are distinct from the xa_tag_t as they are not replicated up
-> + * through the array and cannot be searched for.
-> + *
-> + * Context: Any context.
-> + * Return: An XArray entry.
-> + */
-> +static inline void *xa_tag_pointer(void *p, unsigned long tag)
-> +{
-> +	return (void *)((unsigned long)p | tag);
-> +}
-> +
-> +/**
-> + * xa_untag_pointer() - Turn an XArray entry into a plain pointer.
-> + * @entry: XArray entry.
-> + *
-> + * If you have stored a tagged pointer in the XArray, call this function
-> + * to get the untagged version of the pointer.
-> + *
-> + * Context: Any context.
-> + * Return: A pointer.
-> + */
-> +static inline void *xa_untag_pointer(void *entry)
-> +{
-> +	return (void *)((unsigned long)entry & ~3UL);
-> +}
-> +
-> +/**
-> + * xa_pointer_tag() - Get the tag stored in an XArray entry.
-> + * @entry: XArray entry.
-> + *
-> + * If you have stored a tagged pointer in the XArray, call this function
-> + * to get the tag of that pointer.
-> + *
-> + * Context: Any context.
-> + * Return: A tag.
-> + */
-> +static inline unsigned int xa_pointer_tag(void *entry)
-> +{
-> +	return (unsigned long)entry & 3UL;
-> +}
-
-thanks,
--- 
-~Randy
+Reviewed-by: Rob Herring <robh@kernel.org>
