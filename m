@@ -2,134 +2,118 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6196CC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 05:35:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53D44C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 05:48:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C467208B6
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 05:35:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8685205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 05:48:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QitC8Qnj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C467208B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qd8gQH7H"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8685205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726666AbeH1JZ0 (ORCPT
+        id S1726781AbeH1Jip (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 05:25:26 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:36323 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725917AbeH1JZ0 (ORCPT
+        Tue, 28 Aug 2018 05:38:45 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:44755 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726096AbeH1Jip (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 05:25:26 -0400
-Received: by mail-pg1-f193.google.com with SMTP id d1-v6so251143pgo.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 22:35:28 -0700 (PDT)
+        Tue, 28 Aug 2018 05:38:45 -0400
+Received: by mail-oi0-f65.google.com with SMTP id l82-v6so696598oih.11;
+        Mon, 27 Aug 2018 22:48:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=bYQ/D9/tqnQHU9s3i/KAkC8ou0C2cPeIRqJSFopFugQ=;
-        b=QitC8QnjJelDSRsHxhFQv82zrT8BI5t1kPx6e2+myIL/i34byyzbBDndmTfS/QRcsx
-         Piz+PhmFDa+q2IItw29Nd525bRiCz3czXu0k70iIZis5f4c8mDjo7aPgVVXebMjhnUMR
-         LO2CjaBNSBCWC1he6NoOfp6jyn4UYvc7Ei1HI=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=I9yaeC8o347H9zCYUCuOeyyGHsohJP8MUFWbscsUaTM=;
+        b=Qd8gQH7HS4ExJ9aYGz6BY5Flj+z1DlD2Av61zrQzCO5TZd7E6L1nmBwx3Td5iApyPO
+         KgMWrPQb+B3Rw/wypOlNY71IQjgKS0nRGIEzTGCXMSupUTVnU6HxRfu0rLw8P607chhR
+         /NJ7xRkwczLvXRjW3OmECRsogrxSPuJNHBkKbUzbKIsfF/Jyjld3mZwuOj1Juv3pydcy
+         8nTSHFANN5ksmKNRuL9TfK5cfmySlmDICUNZIjlbfTgBDfp1yeoH/fXmrw6E5igWloNy
+         HGe9aqcFlpASU5Pze7s3JKEpwT/dCo7iudPee4oQPRsxUuKRAwGacNkqdLz11Xh6DYo4
+         MyNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=bYQ/D9/tqnQHU9s3i/KAkC8ou0C2cPeIRqJSFopFugQ=;
-        b=icUkFr5MquR5Z7HSplGUEz+jmtIwjd/xA2xKeQpFQy1J9aN7uShQVV38e6uVwFpUn5
-         bkXg0D4o4eVs3nvpsw48yQJ45SdIMpnLck7AJ0Z2Cisa4o+Nzq/b/OATfpt1rXCR/+6p
-         shB/webQjrtUhZ+uMx4al2mY0nf/h41DT6dSLC2wXfNQ14Er+2pxa17HBxOkEuu/ayer
-         RDW7YxE3TYHtuzsXrt4+Y+eZB4gAdf5B1IhgB8RJFoQFXZ5USF/0ovCTVzyqDXrV3zDH
-         YA4zI8W7wpMbTHQtQ+ECO1jQ4u0kVxlmdKoXhK4FYBk1aBllY+YstwxwSenWlIPMQNq6
-         ZwCA==
-X-Gm-Message-State: APzg51DyF6XvjVbzaSKN0HBolx1M0wkrBuKjM5f66w7H27kYw55AP7bL
-        zkCOt6fdbNYu+fcrtS8qAeHD9g==
-X-Google-Smtp-Source: ANB0VdZVxQ5H8ZViW9CsvrdBx7YGWPvmEggcgv0YFNNxkmUgjZ0PgftgEOi+AaqkgKjO5D9ByA7EYA==
-X-Received: by 2002:a63:e206:: with SMTP id q6-v6mr14503620pgh.223.1535434528096;
-        Mon, 27 Aug 2018 22:35:28 -0700 (PDT)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id f75-v6sm360124pfk.85.2018.08.27.22.35.27
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=I9yaeC8o347H9zCYUCuOeyyGHsohJP8MUFWbscsUaTM=;
+        b=QGCUKrJtNmzu/0p7r9/sMRmWocK8M5cV9mbkqGJHCsLuluONvoj5e41ZBkoqrbHBRY
+         UbpQ5toqK2+wppHqbgSub0YStOfGB5ZHPLmiJ4lrLNy95DgJJSlg0EL9cvN/wiHO/+lq
+         infL5mPLUWkMTe8zmmBdiW+W1fCgNknV8WCAYzZuWNP8Mmw6Y+MEC2OOgc6i7u4r7L4c
+         AUiYAgRjiF3PUopHO7ddRAdrb14uy/X0erhMbW3mNyf9XxUhGiLLtolQzPIPie2rPg2c
+         1pMTYP0TvsqKk07X4qpXS45wIvf02NzQI5E94t36DfKbqiZxI9uOQb2UyjBr48MVKt1f
+         V66Q==
+X-Gm-Message-State: APzg51BbbkVjPNWbuAvEyMLta9lWFOXLA3AgcJPjF0316AF0XwPb960H
+        qMJJ2O+Jyl4bjNNJbeSt/Ck=
+X-Google-Smtp-Source: ANB0VdYz+yKv6EQ8QQvqLGF0nFMTq8ug6m0VdHDDNfsS40LbEHL+H5D2BzFefp2W5pB2UlbXS49a0g==
+X-Received: by 2002:aca:4fcd:: with SMTP id d196-v6mr38240oib.51.1535435324629;
+        Mon, 27 Aug 2018 22:48:44 -0700 (PDT)
+Received: from localhost.localdomain ([187.247.209.67])
+        by smtp.gmail.com with ESMTPSA id q63-v6sm54307oia.54.2018.08.27.22.48.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 Aug 2018 22:35:27 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: msm8996: Transition smp2p and smd to mailbox
-Date:   Mon, 27 Aug 2018 22:37:05 -0700
-Message-Id: <20180828053705.30882-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.18.0
+        Mon, 27 Aug 2018 22:48:43 -0700 (PDT)
+From:   =?UTF-8?q?Ramses=20Ram=C3=ADrez?= <ramzeto@gmail.com>
+Cc:     ramzeto@gmail.com, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Cameron Gutman <aicommander@gmail.com>,
+        Mark Furneaux <mark@furneaux.ca>,
+        Leo Sperling <leosperling97@gmail.com>,
+        Enno Boland <gottox@voidlinux.eu>,
+        Marcus Folkesson <marcus.folkesson@gmail.com>,
+        Francis Therien <frtherien@gmail.com>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] Input: Support for Xbox1 PDP Camo series gamepad
+Date:   Tue, 28 Aug 2018 00:48:11 -0500
+Message-Id: <20180828054812.14428-1-ramzeto@gmail.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The smd and smp2p drivers now support accessing the APCS GLOBAL IPC
-register through the mailbox framework, so migrate the msm8996 dts to
-use this and remove the syscon based APCS node.
+The "Xbox One PDP Wired Controller - Camo series" has a different
+product-id than the regular PDP controller and the PDP stealth series,
+but it uses the same initialization sequence. This patch adds the
+product-id of the camo series to the structures that handle the other
+PDP Xbox One controllers.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Ramses Ramírez <ramzeto@gmail.com>
 ---
- arch/arm64/boot/dts/qcom/msm8996.dtsi | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+ drivers/input/joystick/xpad.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index cd3865e7a270..21057f957468 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -409,11 +409,6 @@
- 			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
--		apcs: syscon@9820000 {
--			compatible = "syscon";
--			reg = <0x9820000 0x1000>;
--		};
--
- 		apcs_glb: mailbox@9820000 {
- 			compatible = "qcom,msm8996-apcs-hmss-global";
- 			reg = <0x9820000 0x1000>;
-@@ -1140,7 +1135,7 @@
- 			interrupts = <GIC_SPI 156 IRQ_TYPE_EDGE_RISING>;
- 
- 			label = "lpass";
--			qcom,ipc = <&apcs 16 8>;
-+			mboxes = <&apcs_glb 8>;
- 			qcom,smd-edge = <1>;
- 			qcom,remote-pid = <2>;
- 		};
-@@ -1152,7 +1147,7 @@
- 
- 		interrupts = <0 158 IRQ_TYPE_EDGE_RISING>;
- 
--		qcom,ipc = <&apcs 16 10>;
-+		mboxes = <&apcs_glb 10>;
- 
- 		qcom,local-pid = <0>;
- 		qcom,remote-pid = <2>;
-@@ -1176,7 +1171,7 @@
- 
- 		interrupts = <GIC_SPI 451 IRQ_TYPE_EDGE_RISING>;
- 
--		qcom,ipc = <&apcs 16 14>;
-+		mboxes = <&apcs_glb 14>;
- 
- 		qcom,local-pid = <0>;
- 		qcom,remote-pid = <1>;
-@@ -1200,7 +1195,7 @@
- 
- 		interrupts = <GIC_SPI 178 IRQ_TYPE_EDGE_RISING>;
- 
--		qcom,ipc = <&apcs 16 26>;
-+		mboxes = <&apcs_glb 26>;
- 
- 		qcom,local-pid = <0>;
- 		qcom,remote-pid = <3>;
+diff --git a/drivers/input/joystick/xpad.c b/drivers/input/joystick/xpad.c
+index cd620e009bad..d4b9db487b16 100644
+--- a/drivers/input/joystick/xpad.c
++++ b/drivers/input/joystick/xpad.c
+@@ -231,6 +231,7 @@ static const struct xpad_device {
+ 	{ 0x0e6f, 0x0246, "Rock Candy Gamepad for Xbox One 2015", 0, XTYPE_XBOXONE },
+ 	{ 0x0e6f, 0x02ab, "PDP Controller for Xbox One", 0, XTYPE_XBOXONE },
+ 	{ 0x0e6f, 0x02a4, "PDP Wired Controller for Xbox One - Stealth Series", 0, XTYPE_XBOXONE },
++	{ 0x0e6f, 0x02a6, "PDP Wired Controller for Xbox One - Camo Series", 0, XTYPE_XBOXONE },
+ 	{ 0x0e6f, 0x0301, "Logic3 Controller", 0, XTYPE_XBOX360 },
+ 	{ 0x0e6f, 0x0346, "Rock Candy Gamepad for Xbox One 2016", 0, XTYPE_XBOXONE },
+ 	{ 0x0e6f, 0x0401, "Logic3 Controller", 0, XTYPE_XBOX360 },
+@@ -530,6 +531,8 @@ static const struct xboxone_init_packet xboxone_init_packets[] = {
+ 	XBOXONE_INIT_PKT(0x0e6f, 0x02ab, xboxone_pdp_init2),
+ 	XBOXONE_INIT_PKT(0x0e6f, 0x02a4, xboxone_pdp_init1),
+ 	XBOXONE_INIT_PKT(0x0e6f, 0x02a4, xboxone_pdp_init2),
++	XBOXONE_INIT_PKT(0x0e6f, 0x02a6, xboxone_pdp_init1),
++	XBOXONE_INIT_PKT(0x0e6f, 0x02a6, xboxone_pdp_init2),
+ 	XBOXONE_INIT_PKT(0x24c6, 0x541a, xboxone_rumblebegin_init),
+ 	XBOXONE_INIT_PKT(0x24c6, 0x542a, xboxone_rumblebegin_init),
+ 	XBOXONE_INIT_PKT(0x24c6, 0x543a, xboxone_rumblebegin_init),
 -- 
-2.18.0
+2.17.1
 
