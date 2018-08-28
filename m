@@ -2,99 +2,95 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B841C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:00:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE0C2C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:02:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A03FA20878
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:00:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A03FA20878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A04D120878
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:02:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="krMmXwaW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A04D120878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727133AbeH1Sw4 (ORCPT
+        id S1727167AbeH1SyG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 14:52:56 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:47047 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726807AbeH1Sw4 (ORCPT
+        Tue, 28 Aug 2018 14:54:06 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:41128 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726807AbeH1SyG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 14:52:56 -0400
-Received: by mail-lj1-f193.google.com with SMTP id 203-v6so1673906ljj.13
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 08:00:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JTR3gH8z8SC06c4kMY4Fd2WJpM8bsrnkCJ/+KBawQs4=;
-        b=Dzr8fUvpYdpbEGKUTP6eCLE7hXX27l2dCvVPmWdycDvzjg6YswCJEzXaYlw4ynFBM8
-         15Z9v3omzdJoE7KtyiAwIia2T0Z2dHpVr89YD8W9VeRgi+tWZKGf5dy0FQO1EEVMp8Xl
-         pYQcbilIZy0W+gKPOCgXHpQFfSdUkMCDV4BI1LsL3UWuGJiqgMaJXtdlBiOEOSKIp+Kd
-         SUPXDDvS4UZp0OeXq66BC6+4c47DYjbXwUArnO6OJ29cPPeoVoOiUgtSsut64RaasH02
-         QjLFmuA9F/Cf3emFnzZZ8FOnRB5B+OWvatT/1SOv/o+mYG005gMZeIxQ7/6ZHuS9tMxB
-         wiLA==
-X-Gm-Message-State: APzg51DRAWswfR2F8gLsLguOCNewgBn0E6tr5KVKBLYcH/a11FqkALbY
-        SlbDmD0ivqi7R9LS3994aRLUjfmrV//TcT71sJgawA==
-X-Google-Smtp-Source: ANB0VdY77qKFKCcOhMO01YngtdIs/ggfth9myKBfN0pmiKx17axOoRqZTE3IGGsbcIQisgUO6YlryhElnkjQArPsdbk=
-X-Received: by 2002:a2e:9b04:: with SMTP id u4-v6mr1540858lji.78.1535468450561;
- Tue, 28 Aug 2018 08:00:50 -0700 (PDT)
+        Tue, 28 Aug 2018 14:54:06 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7SExhRS047953;
+        Tue, 28 Aug 2018 15:01:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=eQg41StHJKe+k8N5g2WENs3shE0xNUap08VkWAF7aeE=;
+ b=krMmXwaWe7ZUBwwHeidHGk2SbfOrS5hLmTw0R1Sa6L+EHtkeiiCPZJqWZjbaCCu0Rizg
+ B28iUvzkubj1OQZ4Od/h4mh/Ck48yu+l7Ai3t+4mhIc1kB5aw52MBZdrRwagtKTIqw57
+ I83CDoQGgaOyz3X9UfdrXQAyfzvrpdb1649xfZK7U1RKrZsp6k+LljS0YMXfZ51hBzkM
+ RCOpxvMpPS17rOr/4oMpY5J+Wn7jWSDmUg88Cn+QpCVemmBHx5qDLhP4IxaS3gBrepHB
+ u4qWcTxCyhjrFs+Qqb/FxJHZS8ZQowCalfXcm+HYLKGWHIvaeVcODvt3Bu/+u13bbsNf gA== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2m2yrq4bsh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 28 Aug 2018 15:01:40 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w7SF1esb017732
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 28 Aug 2018 15:01:40 GMT
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7SF1dh8027651;
+        Tue, 28 Aug 2018 15:01:39 GMT
+Received: from mwanda (/197.232.248.111)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 28 Aug 2018 08:01:38 -0700
+Date:   Tue, 28 Aug 2018 18:01:30 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Corey Minyard <minyard@acm.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        openipmi-developer@lists.sourceforge.net,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ipmi: msghandler: ensure error value in rv is being
+ returned on error
+Message-ID: <20180828150130.de77knqsfyrvln7c@mwanda>
+References: <20180828143642.11138-1-colin.king@canonical.com>
 MIME-Version: 1.0
-References: <CAGnkfhzjeYU_jmhNkLEayL1FSq5rWkT7T+Nm1ky9QS-vWHUhyw@mail.gmail.com>
- <20180829003539.668e514c@roar.ozlabs.ibm.com>
-In-Reply-To: <20180829003539.668e514c@roar.ozlabs.ibm.com>
-From:   Matteo Croce <mcroce@redhat.com>
-Date:   Tue, 28 Aug 2018 15:00:14 +0000
-Message-ID: <CAGnkfhxhV_4JNhCm2s=XP15sp3bKax9O1R+nFwA+oRJXQ53xsg@mail.gmail.com>
-Subject: Re: VirtIO console hangs
-To:     Nicholas Piggin <npiggin@gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180828143642.11138-1-colin.king@canonical.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8998 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=364
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808280152
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 2:35 PM Nicholas Piggin <npiggin@gmail.com> wrote:
->
-> On Tue, 28 Aug 2018 12:54:08 +0000
-> Matteo Croce <mcroce@redhat.com> wrote:
->
-> > With kernel 4.19.0-rc1 virtio_console hangs very often.
-> > I can always trigger the bug by pasting some characters in the
-> > terminal window, the console will stop receiving keypresses, but I can
-> > still see output from the console.
-> > Stangely, logging in the VM via SSH and sending lot of data to hvc0,
-> > like 'dmesg >/dev/hvc0' will fix the issue until the next paste.
-> >
-> > I did a git bisect and I've found that this is the offending commit,
-> > reverting it fixes it.
-> >
-> > Cheers,
-> >
-> > commit ec97eaad1383ab2500fcf9a07ade6044fbcc67f5
-> > Author: Nicholas Piggin <npiggin@gmail.com>
-> > Date:   Tue May 1 00:55:54 2018 +1000
-> >
-> >     tty: hvc: hvc_poll() break hv read loop
->
-> Thanks for the report. I can't immediately see what the problem
-> is. Can you try get a stack trace of where it is stuck?
->
+On Tue, Aug 28, 2018 at 03:36:42PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Currently ipmi_set_my_LUN returns 0 instead of -EINVAL if the channel
+> is out of range.  Fix this by returning the error return rv instead of 0.
+> 
+> Detected by Clang ("variable 'rv' set but not used")
+> 
+> Fixes: 048f7c3e352e ("ipmi: Properly release srcu locks on error conditions")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-I tried but didn't get one.
+Somebody just sent that some hours ago.
 
-> Perhaps try this patch if you have time (it's a bit of a shot
-> in the dark).
->
+regards,
+dan carpenter
 
-Yes it seems to fix. Thanks!
-
--- 
-Matteo Croce
-per aspera ad upstream
