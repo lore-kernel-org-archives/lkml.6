@@ -5,58 +5,53 @@ X-Spam-Level:
 X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85A33C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 01:57:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B8E4C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 01:57:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C33F20645
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 01:57:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C33F20645
+	by mail.kernel.org (Postfix) with ESMTP id 0A42D20645
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 01:57:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A42D20645
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727381AbeH1Fqn (ORCPT
+        id S1727408AbeH1Fq6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 01:46:43 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:34431 "EHLO
+        Tue, 28 Aug 2018 01:46:58 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:46612 "EHLO
         mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727595AbeH1FoL (ORCPT
+        with ESMTP id S1727561AbeH1FoI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 01:44:11 -0400
-Received: by mail-oi0-f65.google.com with SMTP id 13-v6so46270ois.1;
-        Mon, 27 Aug 2018 18:54:55 -0700 (PDT)
+        Tue, 28 Aug 2018 01:44:08 -0400
+Received: by mail-oi0-f65.google.com with SMTP id y207-v6so1684140oie.13;
+        Mon, 27 Aug 2018 18:54:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=jARr5vDdiLKyGTTcEA/gncPfpeR7VMAYXGGak9iUfrQ=;
-        b=b+zENXBVso0jztwsS7TCp1FZD87p9gsnjnx3BCzsZiDGCzo3KoNT+XaX7wT6EPjNyW
-         kNUfO6262IHXIZSW2QuykDE3JLZwpcb/QgOvnGf2xDMhrMkYtdr6ibavbEOsGt08PbST
-         y8eI4vQXA8ethJynqCln8mAFDJwOBwmO19ykK/Ae2Cb9qUIFny2uDhi1AoqPiF8bdh0b
-         PUuEeiQ8+xRyNoBNZwA9tnK6QdsGk+irJRC8uk3IG0bDgBQj+BQrrToaTw4IwjlTwKHi
-         xqtsrC7Iim8NcPUcyLms/EFykW1UGnIUEq0G5Ztb1QBIB9KfkbmmjvxUrqntpupkiuXX
-         aREA==
-X-Gm-Message-State: APzg51AwJNy1oHUlS6Cwtm3Pq0N2RwlzLhPGzwrKK31xZYfyN/dgvOLd
-        VJ7Kn+P+bAcoYuMUfaA8qkBWrQk=
-X-Google-Smtp-Source: ANB0VdYhCDDHouIhA2plfTg+wndbXSdkypSKtP9phGqTpBB70vLypqGDD7TUZs0xyoLuEfTqtIzP9g==
-X-Received: by 2002:a54:448b:: with SMTP id v11-v6mr1173130oiv.208.1535421294971;
-        Mon, 27 Aug 2018 18:54:54 -0700 (PDT)
+        bh=xICQgXXNh+bEKVkznGau3uNnEHJJPk53QNNxMeb1nrE=;
+        b=OjLaZ7aRcqr9zhF3p6ftwE3+ZMHiUGJ4DXOeWhqrm79rdAVoKi/UvWamGYtqNHUAHO
+         G8gQrO1JBtnqoTcQ8CDCYw0mO5/bNS6/t+7mo1wt8yimRaoQ6ElwNBJ7jYiidReHT388
+         aosHUA5KrsToHdrY5N2Kqvkm0lut/hnAfNeh0RNuABu3jzHcgVVc8lmAcr23uNYS2M4z
+         uB1fhPhxEuNyxR2PrirckFC+9azNQaDtJQX0XY4BTI30jhLXA0wJMZYZ42ZwlQ+8FgKR
+         1/ZhBVINCLTeQWNLbYj/UqVjENHeX7hzHNdyDb1HNQ0tgK4tKuLwez7G6LZkNy76D2tU
+         xxSA==
+X-Gm-Message-State: APzg51BO9C/RbQlq+5mDJxrNCDDukpqQQGUnXXv5oaHfL6O8PHAE+Ybz
+        gnwwDuK/Ksc7jdh7XY54prueCqk=
+X-Google-Smtp-Source: ANB0VdYFFjc4k7jH8D/1Fxk16z3qWPuleCEErB57yC16piQpwLTQzVXzEvv1vVHDQPicQgwyCC+1fA==
+X-Received: by 2002:aca:e350:: with SMTP id a77-v6mr1132597oih.250.1535421291711;
+        Mon, 27 Aug 2018 18:54:51 -0700 (PDT)
 Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id n71-v6sm1652696oig.48.2018.08.27.18.54.53
+        by smtp.googlemail.com with ESMTPSA id n71-v6sm1652696oig.48.2018.08.27.18.54.50
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 Aug 2018 18:54:54 -0700 (PDT)
+        Mon, 27 Aug 2018 18:54:51 -0700 (PDT)
 From:   Rob Herring <robh@kernel.org>
 To:     linux-kernel@vger.kernel.org
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
-        Benoit Parrot <bparrot@ti.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Hyun Kwon <hyun.kwon@xilinx.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-media@vger.kernel.org
-Subject: [PATCH] media: Convert to using %pOFn instead of device_node.name
-Date:   Mon, 27 Aug 2018 20:52:29 -0500
-Message-Id: <20180828015252.28511-28-robh@kernel.org>
+Cc:     Sakari Ailus <sakari.ailus@iki.fi>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org
+Subject: [PATCH] leds: Convert to using %pOFn instead of device_node.name
+Date:   Mon, 27 Aug 2018 20:52:26 -0500
+Message-Id: <20180828015252.28511-25-robh@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180828015252.28511-1-robh@kernel.org>
 References: <20180828015252.28511-1-robh@kernel.org>
@@ -68,128 +63,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 In preparation to remove the node name pointer from struct device_node,
 convert printf users to use the %pOFn format specifier.
 
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Benoit Parrot <bparrot@ti.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Hyun Kwon <hyun.kwon@xilinx.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Michal Simek <michal.simek@xilinx.com>
-Cc: linux-media@vger.kernel.org
+Cc: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: linux-leds@vger.kernel.org
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- drivers/media/i2c/tvp5150.c                   | 8 ++++----
- drivers/media/platform/davinci/vpif_capture.c | 3 +--
- drivers/media/platform/ti-vpe/cal.c           | 8 ++++----
- drivers/media/platform/video-mux.c            | 2 +-
- drivers/media/platform/xilinx/xilinx-dma.c    | 8 ++++----
- 5 files changed, 14 insertions(+), 15 deletions(-)
+ drivers/leds/leds-as3645a.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/i2c/tvp5150.c b/drivers/media/i2c/tvp5150.c
-index 76e6bed5a1da..f337e523821b 100644
---- a/drivers/media/i2c/tvp5150.c
-+++ b/drivers/media/i2c/tvp5150.c
-@@ -1403,8 +1403,8 @@ static int tvp5150_parse_dt(struct tvp5150 *decoder, struct device_node *np)
- 		ret = of_property_read_u32(child, "input", &input_type);
- 		if (ret) {
- 			dev_err(decoder->sd.dev,
--				 "missing type property in node %s\n",
--				 child->name);
-+				 "missing type property in node %pOFn\n",
-+				 child);
- 			goto err_connector;
- 		}
+diff --git a/drivers/leds/leds-as3645a.c b/drivers/leds/leds-as3645a.c
+index f883616d9e60..98a69b1a43f9 100644
+--- a/drivers/leds/leds-as3645a.c
++++ b/drivers/leds/leds-as3645a.c
+@@ -529,7 +529,7 @@ static int as3645a_parse_node(struct as3645a *flash,
+ 		strlcpy(names->flash, name, sizeof(names->flash));
+ 	else
+ 		snprintf(names->flash, sizeof(names->flash),
+-			 "%s:flash", node->name);
++			 "%pOFn:flash", node);
  
-@@ -1439,8 +1439,8 @@ static int tvp5150_parse_dt(struct tvp5150 *decoder, struct device_node *np)
- 		ret = of_property_read_string(child, "label", &name);
- 		if (ret < 0) {
- 			dev_err(decoder->sd.dev,
--				 "missing label property in node %s\n",
--				 child->name);
-+				 "missing label property in node %pOFn\n",
-+				 child);
- 			goto err_connector;
- 		}
+ 	rval = of_property_read_u32(flash->flash_node, "flash-timeout-us",
+ 				    &cfg->flash_timeout_us);
+@@ -573,7 +573,7 @@ static int as3645a_parse_node(struct as3645a *flash,
+ 		strlcpy(names->indicator, name, sizeof(names->indicator));
+ 	else
+ 		snprintf(names->indicator, sizeof(names->indicator),
+-			 "%s:indicator", node->name);
++			 "%pOFn:indicator", node);
  
-diff --git a/drivers/media/platform/davinci/vpif_capture.c b/drivers/media/platform/davinci/vpif_capture.c
-index a96f53ce8088..35fc69591d54 100644
---- a/drivers/media/platform/davinci/vpif_capture.c
-+++ b/drivers/media/platform/davinci/vpif_capture.c
-@@ -1583,8 +1583,7 @@ vpif_capture_get_pdata(struct platform_device *pdev)
- 			goto done;
- 		}
- 
--		dev_dbg(&pdev->dev, "Remote device %s, %pOF found\n",
--			rem->name, rem);
-+		dev_dbg(&pdev->dev, "Remote device %pOF found\n", rem);
- 		sdinfo->name = rem->full_name;
- 
- 		pdata->asd[i] = devm_kzalloc(&pdev->dev,
-diff --git a/drivers/media/platform/ti-vpe/cal.c b/drivers/media/platform/ti-vpe/cal.c
-index d1febe5baa6d..77d755020e78 100644
---- a/drivers/media/platform/ti-vpe/cal.c
-+++ b/drivers/media/platform/ti-vpe/cal.c
-@@ -1712,8 +1712,8 @@ static int of_cal_create_instance(struct cal_ctx *ctx, int inst)
- 	v4l2_fwnode_endpoint_parse(of_fwnode_handle(remote_ep), endpoint);
- 
- 	if (endpoint->bus_type != V4L2_MBUS_CSI2) {
--		ctx_err(ctx, "Port:%d sub-device %s is not a CSI2 device\n",
--			inst, sensor_node->name);
-+		ctx_err(ctx, "Port:%d sub-device %pOFn is not a CSI2 device\n",
-+			inst, sensor_node);
- 		goto cleanup_exit;
- 	}
- 
-@@ -1732,8 +1732,8 @@ static int of_cal_create_instance(struct cal_ctx *ctx, int inst)
- 			endpoint->bus.mipi_csi2.data_lanes[lane]);
- 	ctx_dbg(3, ctx, "\t>\n");
- 
--	ctx_dbg(1, ctx, "Port: %d found sub-device %s\n",
--		inst, sensor_node->name);
-+	ctx_dbg(1, ctx, "Port: %d found sub-device %pOFn\n",
-+		inst, sensor_node);
- 
- 	ctx->asd_list[0] = asd;
- 	ctx->notifier.subdevs = ctx->asd_list;
-diff --git a/drivers/media/platform/video-mux.c b/drivers/media/platform/video-mux.c
-index c01e1592ad0a..61a9bf716a05 100644
---- a/drivers/media/platform/video-mux.c
-+++ b/drivers/media/platform/video-mux.c
-@@ -333,7 +333,7 @@ static int video_mux_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, vmux);
- 
- 	v4l2_subdev_init(&vmux->subdev, &video_mux_subdev_ops);
--	snprintf(vmux->subdev.name, sizeof(vmux->subdev.name), "%s", np->name);
-+	snprintf(vmux->subdev.name, sizeof(vmux->subdev.name), "%pOFn", np);
- 	vmux->subdev.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
- 	vmux->subdev.dev = dev;
- 
-diff --git a/drivers/media/platform/xilinx/xilinx-dma.c b/drivers/media/platform/xilinx/xilinx-dma.c
-index d041f94be832..3c8fcf951c63 100644
---- a/drivers/media/platform/xilinx/xilinx-dma.c
-+++ b/drivers/media/platform/xilinx/xilinx-dma.c
-@@ -506,8 +506,8 @@ xvip_dma_querycap(struct file *file, void *fh, struct v4l2_capability *cap)
- 
- 	strlcpy(cap->driver, "xilinx-vipp", sizeof(cap->driver));
- 	strlcpy(cap->card, dma->video.name, sizeof(cap->card));
--	snprintf(cap->bus_info, sizeof(cap->bus_info), "platform:%s:%u",
--		 dma->xdev->dev->of_node->name, dma->port);
-+	snprintf(cap->bus_info, sizeof(cap->bus_info), "platform:%pOFn:%u",
-+		 dma->xdev->dev->of_node, dma->port);
- 
- 	return 0;
- }
-@@ -693,8 +693,8 @@ int xvip_dma_init(struct xvip_composite_device *xdev, struct xvip_dma *dma,
- 	dma->video.fops = &xvip_dma_fops;
- 	dma->video.v4l2_dev = &xdev->v4l2_dev;
- 	dma->video.queue = &dma->queue;
--	snprintf(dma->video.name, sizeof(dma->video.name), "%s %s %u",
--		 xdev->dev->of_node->name,
-+	snprintf(dma->video.name, sizeof(dma->video.name), "%pOFn %s %u",
-+		 xdev->dev->of_node,
- 		 type == V4L2_BUF_TYPE_VIDEO_CAPTURE ? "output" : "input",
- 		 port);
- 	dma->video.vfl_type = VFL_TYPE_GRABBER;
+ 	rval = of_property_read_u32(flash->indicator_node, "led-max-microamp",
+ 				    &cfg->indicator_max_ua);
 -- 
 2.17.1
 
