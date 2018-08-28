@@ -2,180 +2,160 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BA1CC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 00:59:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6998AC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 01:02:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F2D1208B9
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 00:59:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A4C0208A6
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 01:02:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="VXwb1qIJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F2D1208B9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CLda8ldd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A4C0208A6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727052AbeH1Esq (ORCPT
+        id S1726998AbeH1Ev2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 00:48:46 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:42376 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725724AbeH1Esp (ORCPT
+        Tue, 28 Aug 2018 00:51:28 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:37252 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725198AbeH1Ev2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 00:48:45 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w7S0xPc7057529;
-        Mon, 27 Aug 2018 19:59:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1535417965;
-        bh=IO25pPSBv6KXr/MYJLedbO7tk4i60dfuh04AY61KCNQ=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=VXwb1qIJ204glIdtpCG5d+HtoQqa9Ds8E9YfNqcFKEOrrtyLPYFUe9zNIUKMKlUyr
-         hDXrdetKcDdYCDchql6SWxeNXOiY4639bmabWGC7vdXswygcVNrVphUJBlNh3G3YUu
-         J5DUhWhIt3+ICK6AagA1QJbJMfsVB8lwVRsRFBMY=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7S0xP0e006143;
-        Mon, 27 Aug 2018 19:59:25 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 27
- Aug 2018 19:59:25 -0500
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Mon, 27 Aug 2018 19:59:25 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7S0xPMi012834;
-        Mon, 27 Aug 2018 19:59:25 -0500
-From:   Nishanth Menon <nm@ti.com>
-To:     Santosh Shilimkar <ssantosh@kernel.org>,
-        Tero Kristo <t-kristo@ti.com>
-CC:     Rob Herring <robh+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, Nishanth Menon <nm@ti.com>
-Subject: [PATCH V3 2/2] firmware: ti_sci: Provide host-id as an optional dt parameter
-Date:   Mon, 27 Aug 2018 19:59:24 -0500
-Message-ID: <20180828005924.13092-3-nm@ti.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180828005924.13092-1-nm@ti.com>
-References: <20180828005924.13092-1-nm@ti.com>
+        Tue, 28 Aug 2018 00:51:28 -0400
+Received: by mail-oi0-f67.google.com with SMTP id p84-v6so1617666oic.4
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 18:02:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=UkdkB66DcDKPsx5gPCA60ye2TuaPQTYrquCIowXnBe0=;
+        b=CLda8lddAHpqYWdr0iydv9XVwHhnrkodyCCB1wOTI4+dStrF8ovo9D7zfLzWtYwm/P
+         /fbrAvcvxW5YrqPLMTsCL3S4k9JA1aTAthtUdj28Jv3ffkf1A5NTfXts2hkcVWAbnU/g
+         2mHfDG6TW1x2nBNVubVem3XlLh1OEz7Wq09VOnawKR2ScMBnIfTixlB2p5AlT0muaAHI
+         wG5tfJHaPCcCwzSXkg7I0B6+MHEwYcFDHM+HYI5+joEo4RhlvZdv72mTGtm/R1FR+wWM
+         p2qyEq4AnpqVaFk9gIrk272VwcEQg0Y4H9jT/O7dLLRxCC+0N9sHvCI+Qz4hDjOR8tsQ
+         lzQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=UkdkB66DcDKPsx5gPCA60ye2TuaPQTYrquCIowXnBe0=;
+        b=JcGQ30b19+pa/LGnPqxbcPvb3H2Pu0uaNHRJKuUH2HJ+zCMsDOjBlsAClJ4qpRuoY+
+         j4RcoHH2Add6QKPjbKkl2pjQqIHEmVTAyJ7D/KlldqbY3UByNXR8l3HVTE6rnsMnwFoA
+         D2RXPyPKknpZcIIxr9QX9gRYC1AeiSsP41ON9TIb6et3WAdHTtH3dbNFELfJA82Y/4XU
+         9GoabhM93QIpGqqoqJI3QUO6nfRFFByDCN1Bdy+AmK6yLp3Id2EDmlOxuQAOd1rBdAUu
+         0lm/x0mhiZFI+Nk2AExDsObpb5pqsmjh+9xONcU2GNsB0FPPx7vjD/K9Lw7s8Cr8ybK5
+         cMIw==
+X-Gm-Message-State: APzg51BAZwudsrvC3Z0jVNN2pcZx9cOXY67ow1uiJtCAtQckjZY9BVJP
+        MSCqfKKvbwO0Pi449KGMPb6pJf87
+X-Google-Smtp-Source: ANB0VdYVW8U0d4cpS9KBQDy4dDdaYKp5xRXwEPOrqZH7JJjFeygaVOub63wMqrq2ApsVBr9y3HklwQ==
+X-Received: by 2002:aca:90d:: with SMTP id 13-v6mr853684oij.300.1535418143183;
+        Mon, 27 Aug 2018 18:02:23 -0700 (PDT)
+Received: from JosephdeMacBook-Pro.local ([47.89.83.53])
+        by smtp.gmail.com with ESMTPSA id q204-v6sm415233oih.49.2018.08.27.18.02.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 27 Aug 2018 18:02:22 -0700 (PDT)
+Subject: Re: [Ocfs2-devel] [PATCH] fix dead lock caused by ocfs2_defrag_extent
+To:     Larry Chen <lchen@suse.com>, mfasheh@suse.com, jlbec@evilplan.org
+Cc:     linux-kernel@vger.kernel.org, ocfs2-devel@oss.oracle.com
+References: <20180827080121.31145-1-lchen@suse.com>
+From:   Joseph Qi <jiangqi903@gmail.com>
+Message-ID: <804e11ca-39e3-575b-2e25-a00c95cf1311@gmail.com>
+Date:   Tue, 28 Aug 2018 09:02:17 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20180827080121.31145-1-lchen@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Texas Instrument's System Control Interface (TISCI) permits the
-ability for Operating Systems to running in virtual machines to be
-able to independently communicate with the firmware without the need
-going through an hypervisor.
+Hi Larry,
 
-The "host-id" in effect is the hardware representation of the
-host (example: VMs locked to a core) as identified to the System
-Controller.
+On 18/8/27 16:01, Larry Chen wrote:
+> ocfs2_defrag_extent may fall into dead lock.
+> 
+> ocfs2_ioctl_move_extents
+>   ocfs2_ioctl_move_extents	
+>     ocfs2_move_extents
+>       ocfs2_defrag_extent
+>         ocfs2_lock_allocators_move_extents  
+> 
+>           ocfs2_reserve_clusters
+>             inode_lock GLOBAL_BITMAP_SYSTEM_INODE
+> 
+> 	  __ocfs2_flush_truncate_log
+>             inode_lock GLOBAL_BITMAP_SYSTEM_INODE
+> 
+> As back trace shows above, ocfs2_reserve_clusters will call inode_lock
+> against the global bitmap if local allocator has not sufficient cluters. 
+> Once global bitmap could meet the demand, ocfs2_reserve_cluster will 
+> return success with global bitmap locked.
+> 
+> After ocfs2_reserve_cluster, if truncate log is full, 
+> __ocfs2_flush_truncate_log will definitely fall into dead lock
+> because it needs to inode_lock global bitmap, which has
+> already been locked.
+> 
+> To fix this bug, we could remove from ocfs2_lock_allocators_move_extents 
+> the code which intends to lock global allocator, and put the removed
+> code after __ocfs2_flush_truncate_log
+> 
+> The ocfs2_lock_allocators_move_extents has been refered by 2 places, one
+> is here, the other does not need the data allocator context, which means
+> this patch does not affect the caller so far.
+> 
+After this change, data_ac in ocfs2_lock_allocators_move_extents() is
+no longer used. So I'd prefer we also clean it up.
 
-Provide support as an optional parameter implementation and use the
-compatible data as default if one is not provided by device tree.
+Thanks,
+Joseph
 
-Signed-off-by: Nishanth Menon <nm@ti.com>
----
-Changes since V2:
- * None, just rebase to v4.19-rc1
-
-V2: https://patchwork.kernel.org/patch/10527393/
-V1: https://patchwork.kernel.org/patch/10475309/
-RFC: https://patchwork.kernel.org/patch/10447715/
-
- drivers/firmware/ti_sci.c | 24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
-index 7fa744793bc5..69ed1464175c 100644
---- a/drivers/firmware/ti_sci.c
-+++ b/drivers/firmware/ti_sci.c
-@@ -66,14 +66,14 @@ struct ti_sci_xfers_info {
- 
- /**
-  * struct ti_sci_desc - Description of SoC integration
-- * @host_id:		Host identifier representing the compute entity
-+ * @default_host_id:	Host identifier representing the compute entity
-  * @max_rx_timeout_ms:	Timeout for communication with SoC (in Milliseconds)
-  * @max_msgs: Maximum number of messages that can be pending
-  *		  simultaneously in the system
-  * @max_msg_size: Maximum size of data per message that can be handled.
-  */
- struct ti_sci_desc {
--	u8 host_id;
-+	u8 default_host_id;
- 	int max_rx_timeout_ms;
- 	int max_msgs;
- 	int max_msg_size;
-@@ -94,6 +94,7 @@ struct ti_sci_desc {
-  * @chan_rx:	Receive mailbox channel
-  * @minfo:	Message info
-  * @node:	list head
-+ * @host_id:	Host ID
-  * @users:	Number of users of this instance
-  */
- struct ti_sci_info {
-@@ -110,6 +111,7 @@ struct ti_sci_info {
- 	struct mbox_chan *chan_rx;
- 	struct ti_sci_xfers_info minfo;
- 	struct list_head node;
-+	u8 host_id;
- 	/* protected by ti_sci_list_mutex */
- 	int users;
- 
-@@ -370,7 +372,7 @@ static struct ti_sci_xfer *ti_sci_get_one_xfer(struct ti_sci_info *info,
- 
- 	hdr->seq = xfer_id;
- 	hdr->type = msg_type;
--	hdr->host = info->desc->host_id;
-+	hdr->host = info->host_id;
- 	hdr->flags = msg_flags;
- 
- 	return xfer;
-@@ -1793,7 +1795,7 @@ static int tisci_reboot_handler(struct notifier_block *nb, unsigned long mode,
- 
- /* Description for K2G */
- static const struct ti_sci_desc ti_sci_pmmc_k2g_desc = {
--	.host_id = 2,
-+	.default_host_id = 2,
- 	/* Conservative duration */
- 	.max_rx_timeout_ms = 1000,
- 	/* Limited by MBOX_TX_QUEUE_LEN. K2G can handle upto 128 messages! */
-@@ -1819,6 +1821,7 @@ static int ti_sci_probe(struct platform_device *pdev)
- 	int ret = -EINVAL;
- 	int i;
- 	int reboot = 0;
-+	u32 h_id;
- 
- 	of_id = of_match_device(ti_sci_of_match, dev);
- 	if (!of_id) {
-@@ -1833,6 +1836,19 @@ static int ti_sci_probe(struct platform_device *pdev)
- 
- 	info->dev = dev;
- 	info->desc = desc;
-+	ret = of_property_read_u32(dev->of_node, "ti,host-id", &h_id);
-+	/* if the property is not present in DT, use a default from desc */
-+	if (ret < 0) {
-+		info->host_id = info->desc->default_host_id;
-+	} else {
-+		if (!h_id) {
-+			dev_warn(dev, "Host ID 0 is reserved for firmware\n");
-+			info->host_id = info->desc->default_host_id;
-+		} else {
-+			info->host_id = h_id;
-+		}
-+	}
-+
- 	reboot = of_property_read_bool(dev->of_node,
- 				       "ti,system-reboot-controller");
- 	INIT_LIST_HEAD(&info->node);
--- 
-2.15.1
-
+> 
+> 
+> Signed-off-by: Larry Chen <lchen@suse.com>
+> ---
+>  fs/ocfs2/move_extents.c | 13 ++++++-------
+>  1 file changed, 6 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/ocfs2/move_extents.c b/fs/ocfs2/move_extents.c
+> index 7eb3b0a6347e..064dedf40d74 100644
+> --- a/fs/ocfs2/move_extents.c
+> +++ b/fs/ocfs2/move_extents.c
+> @@ -192,13 +192,6 @@ static int ocfs2_lock_allocators_move_extents(struct inode *inode,
+>  		goto out;
+>  	}
+>  
+> -	if (data_ac) {
+> -		ret = ocfs2_reserve_clusters(osb, clusters_to_move, data_ac);
+> -		if (ret) {
+> -			mlog_errno(ret);
+> -			goto out;
+> -		}
+> -	}
+>  
+>  	*credits += ocfs2_calc_extend_credits(osb->sb, et->et_root_el);
+>  
+> @@ -283,6 +276,12 @@ static int ocfs2_defrag_extent(struct ocfs2_move_extents_context *context,
+>  		}
+>  	}
+>  
+> +	ret = ocfs2_reserve_clusters(osb, *len, &context->data_ac);
+> +	if (ret) {
+> +		mlog_errno(ret);
+> +		goto out_unlock_mutex;
+> +	}
+> +
+>  	handle = ocfs2_start_trans(osb, credits);
+>  	if (IS_ERR(handle)) {
+>  		ret = PTR_ERR(handle);
+> 
