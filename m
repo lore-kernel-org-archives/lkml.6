@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A19FBC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:55:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69CB7C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:55:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 520E22087C
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:55:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 520E22087C
+	by mail.kernel.org (Postfix) with ESMTP id 194362087C
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:55:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 194362087C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728379AbeH1Rrc (ORCPT
+        id S1728186AbeH1Rq7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 13:47:32 -0400
-Received: from foss.arm.com ([217.140.101.70]:38668 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727323AbeH1Rq7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 28 Aug 2018 13:46:59 -0400
+Received: from foss.arm.com ([217.140.101.70]:38460 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727172AbeH1Rq6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 13:46:58 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 931E91993;
-        Tue, 28 Aug 2018 06:54:30 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 896F715BF;
+        Tue, 28 Aug 2018 06:54:14 -0700 (PDT)
 Received: from e110439-lin.Cambridge.arm.com (e110439-lin.emea.arm.com [10.4.12.126])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A1DC93F5BD;
-        Tue, 28 Aug 2018 06:54:27 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 980953F5BD;
+        Tue, 28 Aug 2018 06:54:11 -0700 (PDT)
 From:   Patrick Bellasi <patrick.bellasi@arm.com>
 To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
 Cc:     Ingo Molnar <mingo@redhat.com>,
@@ -45,9 +45,9 @@ Cc:     Ingo Molnar <mingo@redhat.com>,
         Joel Fernandes <joelaf@google.com>,
         Steve Muckle <smuckle@google.com>,
         Suren Baghdasaryan <surenb@google.com>
-Subject: [PATCH v4 10/16] sched/core: uclamp: use TG's clamps to restrict Task's clamps
-Date:   Tue, 28 Aug 2018 14:53:18 +0100
-Message-Id: <20180828135324.21976-11-patrick.bellasi@arm.com>
+Subject: [PATCH v4 05/16] sched/core: uclamp: enforce last task UCLAMP_MAX
+Date:   Tue, 28 Aug 2018 14:53:13 +0100
+Message-Id: <20180828135324.21976-6-patrick.bellasi@arm.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180828135324.21976-1-patrick.bellasi@arm.com>
 References: <20180828135324.21976-1-patrick.bellasi@arm.com>
@@ -56,56 +56,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a task's util_clamp value is configured via sched_setattr(2), this
-value has to be properly accounted in the corresponding clamp group
-every time the task is enqueued and dequeued. When cgroups are also in
-use, per-task clamp values have to be aggregated to those of the CPU's
-controller's Task Group (TG) in which the task is currently living.
+When a util_max clamped task sleeps, its clamp constraints are removed
+from the CPU. However, the blocked utilization on that CPU can still be
+higher than the max clamp value enforced while that task was running.
+This max clamp removal when a CPU is going to be idle could thus allow
+unwanted CPU frequency increases, right while the task is not running.
 
-Let's update uclamp_cpu_get() to provide aggregation between the task
-and the TG clamp values. Every time a task is enqueued, it will be
-accounted in the clamp_group which defines the smaller clamp between the
-task specific value and its TG effective value.
+This can happen, for example, where there is another (smaller) task
+running on a different CPU of the same frequency domain.
+In this case, when we aggregate the utilization of all the CPUs in a
+shared frequency domain, schedutil can still see the full non clamped
+blocked utilization of all the CPUs and thus eventually increase the
+frequency.
 
-This also mimics what already happen for a task's CPU affinity mask when
-the task is also living in a cpuset. The overall idea is that cgroup
-attributes are always used to restrict the per-task attributes.
+Let's fix this by using:
 
-Thus, this implementation allows to:
+   uclamp_cpu_put_id(UCLAMP_MAX)
+      uclamp_cpu_update(last_clamp_value)
 
-1. ensure cgroup clamps are always used to restrict task specific
-   requests, i.e. boosted only up to the effective granted value or
-   clamped at least to a certain value
-2. implements a "nice-like" policy, where tasks are still allowed to
-   request less then what enforced by their current TG
+to detect when a CPU has no more RUNNABLE clamped tasks and to flag this
+condition. Thus, while a CPU is idle, we can still enforce the last used
+clamp value for it.
 
-For this mechanisms to work properly, we exploit the concept of
-"effective" clamp, which is already used by a TG to track parent
-enforced restrictions.
-In this patch we re-use the same variable:
-   task_struct::uclamp::effective::group_id
-to track the currently most restrictive clamp group each task is
-subject to and thus it's also currently refcounted into.
-
-This solution allows also to better decouple the slow-path, where task
-and task group clamp values are updated, from the fast-path, where the
-most appropriate clamp value is tracked by refcounting clamp groups.
-
-For consistency purposes, as well as to properly inform userspace, the
-sched_getattr(2) call is updated to always return the properly
-aggregated constrains as described above. This will also make
-sched_getattr(2) a convenient userspace API to know the utilization
-constraints enforced on a task by the cgroup's CPU controller.
+To the contrary, we do not track any UCLAMP_MIN since, while a CPU is
+idle, we don't want to enforce any minimum frequency
+Indeed, we rely just on blocked load decay to smoothly reduce the
+frequency.
 
 Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Paul Turner <pjt@google.com>
+Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
 Cc: Suren Baghdasaryan <surenb@google.com>
 Cc: Todd Kjos <tkjos@google.com>
 Cc: Joel Fernandes <joelaf@google.com>
-Cc: Steve Muckle <smuckle@google.com>
 Cc: Juri Lelli <juri.lelli@redhat.com>
 Cc: Quentin Perret <quentin.perret@arm.com>
 Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
@@ -115,204 +100,118 @@ Cc: linux-pm@vger.kernel.org
 
 ---
 Changes in v4:
- Message-ID: <20180816140731.GD2960@e110439-lin>
- - reuse already existing:
-     task_struct::uclamp::effective::group_id
-   instead of adding:
-     task_struct::uclamp_group_id
-   to back annotate the effective clamp group in which a task has been
-   refcounted
+ Message-ID: <20180816172016.GG2960@e110439-lin>
+ - ensure to always reset clamp holding on wakeup from IDLE
  Others:
- - small documentation fixes
  - rebased on v4.19-rc1
 
 Changes in v3:
  Message-ID: <CAJuCfpFnj2g3+ZpR4fP4yqfxs0zd=c-Zehr2XM7m_C+WdL9jNA@mail.gmail.com>
  - rename UCLAMP_NONE into UCLAMP_NOT_VALID
- - fix not required override
- - fix typos in changelog
- Others:
- - clean up uclamp_cpu_get_id()/sched_getattr() code by moving task's
-   clamp group_id/value code into dedicated getter functions:
-   uclamp_task_group_id(), uclamp_group_value() and uclamp_task_value()
- - rebased on tip/sched/core
 Changes in v2:
- OSPM discussion:
- - implement a "nice" semantics where cgroup clamp values are always
-   used to restrict task specific clamp values, i.e. tasks running on a
-   TG are only allowed to demote themself.
- Other:
  - rabased on v4.18-rc4
- - this code has been split from a previous patch to simplify the review
+ - new patch to improve a specific issue
 ---
- kernel/sched/core.c  | 86 ++++++++++++++++++++++++++++++++++++++++----
- kernel/sched/sched.h |  2 +-
- 2 files changed, 80 insertions(+), 8 deletions(-)
+ kernel/sched/core.c  | 39 +++++++++++++++++++++++++++++++++++----
+ kernel/sched/sched.h | 11 +++++++++++
+ 2 files changed, 46 insertions(+), 4 deletions(-)
 
 diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index e617a7b18f2d..da0b3bd41e96 100644
+index 64e5c96bfdaf..ba0e7208c65a 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
-@@ -950,14 +950,75 @@ static inline void uclamp_cpu_update(struct rq *rq, int clamp_id,
+@@ -910,7 +910,8 @@ uclamp_group_find(int clamp_id, unsigned int clamp_value)
+  * For the specified clamp index, this method computes the new CPU utilization
+  * clamp to use until the next change on the set of RUNNABLE tasks on that CPU.
+  */
+-static inline void uclamp_cpu_update(struct rq *rq, int clamp_id)
++static inline void uclamp_cpu_update(struct rq *rq, int clamp_id,
++				     unsigned int last_clamp_value)
+ {
+ 	struct uclamp_group *uc_grp = &rq->uclamp.group[clamp_id][0];
+ 	int max_value = UCLAMP_NOT_VALID;
+@@ -928,6 +929,24 @@ static inline void uclamp_cpu_update(struct rq *rq, int clamp_id)
+ 		if (max_value >= SCHED_CAPACITY_SCALE)
+ 			break;
+ 	}
++
++	/*
++	 * Just for the UCLAMP_MAX value, in case there are no RUNNABLE
++	 * task, we want to keep the CPU clamped to the last task's clamp
++	 * value. This is to avoid frequency spikes to MAX when one CPU, with
++	 * an high blocked utilization, sleeps and another CPU, in the same
++	 * frequency domain, do not see anymore the clamp on the first CPU.
++	 *
++	 * The UCLAMP_FLAG_IDLE is set whenever we detect, from the above
++	 * loop, that there are no more RUNNABLE taks on that CPU.
++	 * In this case we enforce the CPU util_max to that of the last
++	 * dequeued task.
++	 */
++	if (clamp_id == UCLAMP_MAX && max_value == UCLAMP_NOT_VALID) {
++		rq->uclamp.flags |= UCLAMP_FLAG_IDLE;
++		max_value = last_clamp_value;
++	}
++
  	rq->uclamp.value[clamp_id] = max_value;
  }
  
-+/**
-+ * uclamp_task_group_id: get the effective clamp group index of a task
-+ *
-+ * The effective clamp group index of a task depends on its status, RUNNABLE
-+ * or SLEEPING, and on:
-+ * - the task specific clamp value, when !UCLAMP_NOT_VALID
-+ * - its task group effective clamp value, for tasks not in the root group
-+ * - the system default clamp value, for tasks in the root group
-+ *
-+ * This method returns the effective group index for a task, depending on its
-+ * status and a proper aggregation of the clamp values listed above.
-+ */
-+static inline int uclamp_task_group_id(struct task_struct *p, int clamp_id)
-+{
-+	struct uclamp_se *uc_se;
-+	int clamp_value;
-+	int group_id;
-+
-+	/* Taks currently accounted into a clamp group */
-+	if (uclamp_task_affects(p, clamp_id))
-+		return p->uclamp[clamp_id].effective.group_id;
-+
-+	/* Task specific clamp value */
-+	uc_se = &p->uclamp[clamp_id];
-+	clamp_value = uc_se->value;
-+	group_id = uc_se->group_id;
-+
-+#ifdef CONFIG_UCLAMP_TASK_GROUP
-+	/* Use TG's clamp value to limit task specific values */
-+	uc_se = &task_group(p)->uclamp[clamp_id];
-+	if (clamp_value > uc_se->effective.value)
-+		group_id = uc_se->effective.group_id;
-+#endif
-+
-+	return group_id;
-+}
-+
-+static inline int uclamp_group_value(int clamp_id, int group_id)
-+{
-+	struct uclamp_map *uc_map = &uclamp_maps[clamp_id][0];
-+
-+	if (group_id == UCLAMP_NOT_VALID)
-+		return uclamp_none(clamp_id);
-+
-+	return uc_map[group_id].value;
-+}
-+
-+static inline int uclamp_task_value(struct task_struct *p, int clamp_id)
-+{
-+	int group_id = uclamp_task_group_id(p, clamp_id);
-+
-+	return uclamp_group_value(clamp_id, group_id);
-+}
-+
- /**
-  * uclamp_cpu_get_id(): increase reference count for a clamp group on a CPU
-  * @p: the task being enqueued on a CPU
-  * @rq: the CPU's rq where the clamp group has to be reference counted
-  * @clamp_id: the utilization clamp (e.g. min or max utilization) to reference
-  *
-- * Once a task is enqueued on a CPU's RQ, the clamp group currently defined by
-- * the task's uclamp.group_id is reference counted on that CPU.
-+ * Once a task is enqueued on a CPU's RQ, the most restrictive clamp group,
-+ * among the task specific and that of the task's cgroup one, is reference
-+ * counted on that CPU.
-+ *
-+ * Since the CPUs reference counted clamp group can be either that of the task
-+ * or of its cgroup, we keep track of the reference counted clamp group by
-+ * storing its index (group_id) into task_struct::uclamp::effective::group_id.
-+ * This group index will then be used at task's dequeue time to release the
-+ * correct refcount.
-  */
- static inline void uclamp_cpu_get_id(struct task_struct *p,
- 				     struct rq *rq, int clamp_id)
-@@ -968,7 +1029,7 @@ static inline void uclamp_cpu_get_id(struct task_struct *p,
- 	int group_id;
- 
- 	/* Every task must reference a clamp group */
--	group_id = p->uclamp[clamp_id].group_id;
-+	group_id = uclamp_task_group_id(p, clamp_id);
- #ifdef CONFIG_SCHED_DEBUG
- 	if (unlikely(group_id == UCLAMP_NOT_VALID)) {
- 		WARN(1, "invalid task [%d:%s] clamp group\n",
-@@ -977,6 +1038,9 @@ static inline void uclamp_cpu_get_id(struct task_struct *p,
- 	}
- #endif
- 
-+	/* Track the effective clamp group */
-+	p->uclamp[clamp_id].effective.group_id = group_id;
-+
- 	/* Reference count the task into its current group_id */
+@@ -962,13 +981,25 @@ static inline void uclamp_cpu_get_id(struct task_struct *p,
  	uc_grp = &rq->uclamp.group[clamp_id][0];
  	uc_grp[group_id].tasks += 1;
-@@ -1025,7 +1089,7 @@ static inline void uclamp_cpu_put_id(struct task_struct *p,
- 	int group_id;
  
- 	/* New tasks don't have a previous clamp group */
--	group_id = p->uclamp[clamp_id].group_id;
-+	group_id = p->uclamp[clamp_id].effective.group_id;
- 	if (group_id == UCLAMP_NOT_VALID)
- 		return;
- 
-@@ -1040,6 +1104,9 @@ static inline void uclamp_cpu_put_id(struct task_struct *p,
++	/* Reset clamp holds on idle exit */
++	uc_cpu = &rq->uclamp;
++	clamp_value = p->uclamp[clamp_id].value;
++	if (unlikely(uc_cpu->flags & UCLAMP_FLAG_IDLE)) {
++		/*
++		 * This function is called for both UCLAMP_MIN (before) and
++		 * UCLAMP_MAX (after). Let's reset the flag only the second
++		 * once we know that UCLAMP_MIN has been already updated.
++		 */
++		if (clamp_id == UCLAMP_MAX)
++			uc_cpu->flags &= ~UCLAMP_FLAG_IDLE;
++		uc_cpu->value[clamp_id] = clamp_value;
++	}
++
+ 	/*
+ 	 * If this is the new max utilization clamp value, then we can update
+ 	 * straight away the CPU clamp value. Otherwise, the current CPU clamp
+ 	 * value is still valid and we are done.
+ 	 */
+-	uc_cpu = &rq->uclamp;
+-	clamp_value = p->uclamp[clamp_id].value;
+ 	if (uc_cpu->value[clamp_id] < clamp_value)
+ 		uc_cpu->value[clamp_id] = clamp_value;
+ }
+@@ -1026,7 +1057,7 @@ static inline void uclamp_cpu_put_id(struct task_struct *p,
  	}
  #endif
+ 	if (clamp_value >= uc_cpu->value[clamp_id])
+-		uclamp_cpu_update(rq, clamp_id);
++		uclamp_cpu_update(rq, clamp_id, clamp_value);
+ }
  
-+	/* Flag the task as not affecting any clamp index */
-+	p->uclamp[clamp_id].effective.group_id = UCLAMP_NOT_VALID;
-+
- 	/* If this is not the last task, no updates are required */
- 	if (uc_grp[group_id].tasks > 0)
- 		return;
-@@ -1402,6 +1469,8 @@ static void uclamp_fork(struct task_struct *p, bool reset)
- 			next_group_id = 0;
- 			p->uclamp[clamp_id].value = uclamp_none(clamp_id);
- 		}
-+		/* Forked tasks are not yet enqueued */
-+		p->uclamp[clamp_id].effective.group_id = UCLAMP_NOT_VALID;
- 
- 		p->uclamp[clamp_id].group_id = UCLAMP_NOT_VALID;
- 		uclamp_group_get(NULL, clamp_id, next_group_id, uc_se,
-@@ -5497,8 +5566,8 @@ SYSCALL_DEFINE4(sched_getattr, pid_t, pid, struct sched_attr __user *, uattr,
- 		attr.sched_nice = task_nice(p);
- 
- #ifdef CONFIG_UCLAMP_TASK
--	attr.sched_util_min = p->uclamp[UCLAMP_MIN].value;
--	attr.sched_util_max = p->uclamp[UCLAMP_MAX].value;
-+	attr.sched_util_min = uclamp_task_value(p, UCLAMP_MIN);
-+	attr.sched_util_max = uclamp_task_value(p, UCLAMP_MAX);
- #endif
- 
- 	rcu_read_unlock();
-@@ -7308,8 +7377,11 @@ static void cpu_util_update_hier(struct cgroup_subsys_state *css,
- 		 * groups we consider their current value.
- 		 */
- 		uc_se = &css_tg(css)->uclamp[clamp_id];
--		if (css != top_css)
-+		if (css != top_css) {
- 			value = uc_se->value;
-+			group_id = uc_se->effective.group_id;
-+		}
-+
- 		/*
- 		 * Skip the whole subtrees if the current effective clamp is
- 		 * alredy matching the TG's clamp value.
+ /**
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 489d7403affe..72b022b9a407 100644
+index 25d1d218ae10..411635c4c09a 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -2240,7 +2240,7 @@ static inline bool uclamp_group_active(struct uclamp_group *uc_grp,
-  */
- static inline bool uclamp_task_affects(struct task_struct *p, int clamp_id)
- {
--	return (p->uclamp[clamp_id].group_id != UCLAMP_NOT_VALID);
-+	return (p->uclamp[clamp_id].effective.group_id != UCLAMP_NOT_VALID);
- }
+@@ -805,6 +805,17 @@ struct uclamp_group {
+ struct uclamp_cpu {
+ 	struct uclamp_group group[UCLAMP_CNT][CONFIG_UCLAMP_GROUPS_COUNT + 1];
+ 	int value[UCLAMP_CNT];
++/*
++ * Idle clamp holding
++ * Whenever a CPU is idle, we enforce the util_max clamp value of the last
++ * task running on that CPU. This bit is used to flag a clamp holding
++ * currently active for a CPU. This flag is:
++ * - set when we update the clamp value of a CPU at the time of dequeuing the
++ *   last before entering idle
++ * - reset when we enqueue the first task after a CPU wakeup from IDLE
++ */
++#define UCLAMP_FLAG_IDLE 0x01
++	int flags;
+ };
  #endif /* CONFIG_UCLAMP_TASK */
  
 -- 
