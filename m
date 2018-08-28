@@ -2,110 +2,92 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B158C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 23:52:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B7C6C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 23:57:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B4912087D
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 23:52:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="giXL20cY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B4912087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id BB40320875
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 23:57:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB40320875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727718AbeH2DqI (ORCPT
+        id S1727680AbeH2DvB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 23:46:08 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:39681 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727216AbeH2DqI (ORCPT
+        Tue, 28 Aug 2018 23:51:01 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39569 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727094AbeH2DvB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 23:46:08 -0400
-Received: by mail-qt0-f195.google.com with SMTP id o15-v6so3833240qtk.6
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 16:52:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=H7DJrGqGJef5RWJ0y5DZALQeh35kEgheLtOZvllkCnc=;
-        b=giXL20cYnifrHmrue3Rshzt+d2Ui6aMF6nY5xkgKCW+18gAmOwkTYjAFTl3Ipq3oAG
-         nFcm+VLAYh6oZUTNf8KNTWtmSdRE4xaAoVAR+Weu6RqD79OP7vYuzF0DZhw60b0V9wNK
-         O3/31wBSBYMiX+WfadYSPNCgDC3ODbwShvRx8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=H7DJrGqGJef5RWJ0y5DZALQeh35kEgheLtOZvllkCnc=;
-        b=AzsJiJ8v6DyKWgXcBZYvJ6BjXXWD/iBYC8Om5eb3YJqROZd8VlmYiTk2fYwPIJxW0b
-         ZdvEoDT9n8DE7njDOsNk/63a68+fBeqv7snpg3UR2t66NaW6rd03pCFHz36Strj++iiR
-         ciP8Nur+1QjvvfzIVjtNsRi9yqmz8F4AwR6/yjHK0r1bpysqOSzsUQ36kFDqZbKG3oBO
-         Wj0XEK7VGpdGFTEdH7W5eJd+AeyQ8QeQm641tbuSdmW4VsweAQg7wq8jvAW3JG7fs+6N
-         IZSJNDxukNBd2ov/fZy4Fqq2s5TuAi40KUOqNGfXs46xSOJFjG5utaYaz3Em4AndicHR
-         SPhg==
-X-Gm-Message-State: APzg51CUaQmDUjErkPQb3Az0Dch0adaxt2dVKEYI4PUagXm6nrrZJNtQ
-        13+2P4RdhzxUDCMiLPVgdubQsA==
-X-Google-Smtp-Source: ANB0VdbrA6dBxyj5c/TVaUtk98KVn/gVOtkITMFkox3ufDprT3Cd5IUypMsh9tKCwCi4QfMcXvIfXQ==
-X-Received: by 2002:ad4:50ce:: with SMTP id e14-v6mr3956825qvq.232.1535500325441;
-        Tue, 28 Aug 2018 16:52:05 -0700 (PDT)
-Received: from xanadu.home (modemcable228.104-82-70.mc.videotron.ca. [70.82.104.228])
-        by smtp.gmail.com with ESMTPSA id w9-v6sm1643608qta.13.2018.08.28.16.52.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 28 Aug 2018 16:52:04 -0700 (PDT)
-Date:   Tue, 28 Aug 2018 19:52:03 -0400 (EDT)
-From:   Nicolas Pitre <nicolas.pitre@linaro.org>
-To:     Matthew Wilcox <willy@infradead.org>
-cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Souptick Joarder <jrdr.linux@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/10] cramfs: Convert to use vmf_insert_mixed
-In-Reply-To: <20180828220427.GA11400@bombadil.infradead.org>
-Message-ID: <nycvar.YSQ.7.76.1808281940360.10215@knanqh.ubzr>
-References: <20180828145728.11873-1-willy@infradead.org> <20180828145728.11873-2-willy@infradead.org> <nycvar.YSQ.7.76.1808281235060.10215@knanqh.ubzr> <20180828220427.GA11400@bombadil.infradead.org>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+        Tue, 28 Aug 2018 23:51:01 -0400
+Received: from ben by shadbolt.decadent.org.uk with local (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1funqz-0000k4-5a; Wed, 29 Aug 2018 00:56:57 +0100
+Date:   Wed, 29 Aug 2018 00:56:57 +0100
+From:   Ben Hutchings <ben@decadent.org.uk>
+To:     Sasha Levin <Alexander.Levin@microsoft.com>
+Cc:     linux-kernel@vger.kernel.org
+Message-ID: <20180828235656.GH18030@decadent.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="GBDnBH7+ZvLx8QD4"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+Subject: [PATCH 0/2] Build fixes for liblockdep
+X-SA-Exim-Version: 4.2.1 (built Mon, 26 Dec 2011 16:24:06 +0000)
+X-SA-Exim-Scanned: Yes (on shadbolt.decadent.org.uk)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 28 Aug 2018, Matthew Wilcox wrote:
 
-> On Tue, Aug 28, 2018 at 01:49:25PM -0400, Nicolas Pitre wrote:
-> > On Tue, 28 Aug 2018, Matthew Wilcox wrote:
-> > > -			ret = vm_insert_mixed(vma, vma->vm_start + off, pfn);
-> > > +			vmf = vmf_insert_mixed(vma, vma->vm_start + off, pfn);
-> > > +			if (vmf & VM_FAULT_ERROR) {
-> > > +				pages = i;
-> > > +				break;
-> > > +			}
-> > 
-> > I'd suggest this to properly deal with errers instead:
-> > 
-> > -			ret = vm_insert_mixed(vma, vma->vm_start + off, pfn);
-> > +			vmf = vmf_insert_mixed(vma, vma->vm_start + off, pfn);
-> > +			if (vmf & VM_FAULT_ERROR)
-> > +				ret = vm_fault_to_errno(vmf, 0);
-> 
-> By my reading of this function, the intent is actually to return 0
-> here and allow demand paging to work.  Of course, I've spent all of
-> twenty minutes staring at this function, so I defer to the maintainer.
+--GBDnBH7+ZvLx8QD4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Demand paging is used when the filesystem layout isn't amenable to a 
-direct mapping.  It is not a fallback for when we're OOM or some other 
-internal errors which ought to be reported immediately.
+In addition to the patch I recently sent for lockdep itself, the
+following fixes are also needed to make liblockdep build.
 
-> I think you'd need to be running a make-memory-allocations-fail fuzzer
-> to hit this, so it's likely never been tested.
+Ben.
 
-Well, it has been tested sort of, e.g. when vm_insert_mixed() returned 
-an error due to misaligned addresses during development.  Normally, 
-vm_insert_mixed() and vmf_insert_mixed() should always succeed, and if 
-they don't we certainly don't want to ignore it.
+Bastian Blank (1):
+  liblockdep: Stub NMI watchdog reset
+
+Ben Hutchings (1):
+  liblockdep: Stub task_struct::state
+
+ tools/include/linux/lockdep.h |  4 ++++
+ tools/include/linux/nmi.h     | 12 ++++++++++++
+ 2 files changed, 16 insertions(+)
+ create mode 100644 tools/include/linux/nmi.h
 
 
-Nicolas
+--GBDnBH7+ZvLx8QD4
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIVAwUBW4XhSOe/yOyVhhEJAQohxg/+ImzjKkx2cAECTR9rcRoT/5erp4tg03rY
+45DkbLxOMW3rEBVqo4e9GRgNSzccWga3bLySTHNzVMU0bdv1tx6bl/aTEmj13Ms2
+mn/8GXrtuif0vv0BmBFD0D4F/ZoHZKtYjsZQ8oC4j9YR+0GC03KikzOyhjPPE9Gi
+1JDC+dgijE22BSZahr+uMhXcGdibDEn01WFb9WElt4kGgNU0wayHDjBRf3AXUsT0
+mY+B4CeW/c8XKCSce21qRPclFSg3rkZN9dUTZxTLm9q7IQK2yygTuxHzH5rHxHIa
+SFgafvEmEVpCKyptEiMRpb+bNI/MO1072Na/Nut/WJPn22zrEKn60fIoBGm1dgF3
+lAjcgSduv3Wkui3b7XLzHo0K3rRZYm8HrIOBO0Z63Xcxc2CLUKFUiuplYpKZc77l
+Rr2E2hI13rdHN079nyknNwny5IQjOs+vr0TN61bUq2E3fL/7bRqHFk/whcqeR+Es
+uJ+rIIezz1wvZwEnqa3T8KIreshZ4y5Zt3vxI9G50PrVLPIpIW0g/2gyYZL69s5J
+BoNsZ9nHnindvdsECnViDZyUGgb4AbPKeR0Xlzea8OtTykp+TSkbOzRErWiOOOxO
+KKDWi8q6AVZjQoK6jjmRuYTT73+Gwlin3go6tAb5svle2m44dh8r4rlU5IICxxSk
+NimFw6k+AqY=
+=fnw9
+-----END PGP SIGNATURE-----
+
+--GBDnBH7+ZvLx8QD4--
