@@ -2,97 +2,110 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9005C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:33:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09362C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:33:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4046720833
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:33:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cos.flag.org header.i=@cos.flag.org header.b="r2sMXTCm";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=cos.flag.org header.i=@cos.flag.org header.b="siGd3CtD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4046720833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cos.flag.org
+	by mail.kernel.org (Postfix) with ESMTP id A98BE20833
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:33:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A98BE20833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727203AbeH1RYx (ORCPT
+        id S1727452AbeH1RZF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 13:24:53 -0400
-Received: from outrelay2.flbmail.net ([12.139.121.108]:57278 "EHLO
-        outrelay2.flbmail.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727020AbeH1RYx (ORCPT
+        Tue, 28 Aug 2018 13:25:05 -0400
+Received: from albert.telenet-ops.be ([195.130.137.90]:36766 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727020AbeH1RZF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 13:24:53 -0400
-Received: from mta1.server.flag.org (mta1.server.flag.org [10.64.251.47])
-        by outrelay2.flbmail.net (Postfix) with ESMTPS id 5063548000
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 09:33:12 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cos.flag.org; s=mail;
-        t=1535463192; bh=bBf0Vvl04j+2jzmXwRprfJcrb//3GWAwlq6wwG9DLLA=;
-        h=Date:From:To:Cc:Subject:From;
-        b=r2sMXTCmWHcrml2rfD0sB55PJ943Ow9Kf4Ec7Ez5Vg5XWWf46+Ebv7IbpLWRzxbo2
-         HgXnFCy9ZZKcYW3BC7lv25ErWt0++b6ldST+QLqOS5Yn0O+MZauCLqMu7JGj56L+f3
-         g7l/vczXUFj6ZJWeeoPulO/KVLCR+KBQylssuKJU=
-Received: from localhost (localhost [127.0.0.1])
-        by mta1.server.flag.org (Postfix) with ESMTP id 494C84A1D14
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 09:33:12 -0400 (EDT)
-Received: from mta1.server.flag.org ([127.0.0.1])
-        by localhost (mta1.server.flag.org [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 4K3Vp5uoeZgM; Tue, 28 Aug 2018 09:33:12 -0400 (EDT)
-Received: from localhost (localhost [127.0.0.1])
-        by mta1.server.flag.org (Postfix) with ESMTP id DF72B4A1CA6;
-        Tue, 28 Aug 2018 09:33:11 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mta1.server.flag.org DF72B4A1CA6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cos.flag.org;
-        s=C82168C8-F236-11E7-AE09-40F562C2D254; t=1535463191;
-        bh=v+7sDrpgI4SZkytIYAbtUw0o1+ebdonYsrxeZ7X4P2w=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=siGd3CtDOuOecrgGFQ7lIcuIrOMZXterJaEYLl31NAhIQCBmeAk4F2bKW2QP4cis4
-         2X5mwtprEUWJudljtOHksXXkptuPmG5DIGalUKwGCr2iR55P7XorBSOv6RE4Xb+l/Q
-         45DsHo/OnnF8Rku5fUgjq3kdubc9bB0aNWL/K8XMEj/SSr2CRPqLsULDMSy9gEf59I
-         XxtLWBAs43dIukIWv7r7hMmhYMzeWGeZGSCAbbnLRlcphkGiF4uF3VbSE6z6+CynX4
-         dNgWyllU4lhXzSWIr3WXRh6li3D+6rpxkbbJ6FWhtnBdam9LL//ZNqc0Af/SFAR7rE
-         vD7OMyiHBaL1A==
-X-Virus-Scanned: amavisd-new at mta1.server.flag.org
-Received: from mta1.server.flag.org ([127.0.0.1])
-        by localhost (mta1.server.flag.org [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 70DDj21bxqtT; Tue, 28 Aug 2018 09:33:11 -0400 (EDT)
-Received: from flbza1.server.flag.org (flbza1.server.flag.org [10.64.251.44])
-        by mta1.server.flag.org (Postfix) with ESMTP id B91AB4A1519;
-        Tue, 28 Aug 2018 09:33:11 -0400 (EDT)
-Date:   Tue, 28 Aug 2018 09:33:11 -0400 (EDT)
-From:   dimitry@cos.flag.org
-To:     linux-kernel <linux-kernel@vger.kernel.org>
-Cc:     dimitry <dimitry@cos.flag.org>
-Message-ID: <314029050.47161.1535463191699.JavaMail.zimbra@cos.flag.org>
-Subject: gpiolib: GPIO_GET_LINEHANDLE_IOCTL and GPIO_GET_LINEEVENT_IOCTL at
- the same time
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [4.35.210.206]
-X-Mailer: Zimbra 8.8.5_GA_1894 (ZimbraWebClient - GC68 (Linux)/8.8.5_GA_1894)
-Thread-Index: uuBz7tFBzPm1TWGesQaqQLvPuDEMDQ==
-Thread-Topic: gpiolib: GPIO_GET_LINEHANDLE_IOCTL and GPIO_GET_LINEEVENT_IOCTL at the same time
+        Tue, 28 Aug 2018 13:25:05 -0400
+Received: from ramsan.of.borg ([84.194.111.163])
+        by albert.telenet-ops.be with bizsmtp
+        id UdZP1y0023XaVaC06dZPcA; Tue, 28 Aug 2018 15:33:23 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1fue7W-0008Ba-V6; Tue, 28 Aug 2018 15:33:22 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1fue7W-0000Uh-Sx; Tue, 28 Aug 2018 15:33:22 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] MAINTAINERS: Move entry for Cirrus Logic Madera codecs
+Date:   Tue, 28 Aug 2018 15:33:20 +0200
+Message-Id: <20180828133320.1831-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It seems gpiolib only allows user to request either the line handle descriptor or the line event descriptor, but not both at the same time. 
+To preserve alphabetical sort order.
 
-gpiohandle_request hr; 
-gpioevent_request er; 
-... 
-ioctl(fd, GPIO_GET_LINEHANDLE_IOCTL, &hr); // so far so good 
-ioctl(fd, GPIO_GET_LINEEVENT_IOCTL, &er); // resource busy 
+Fixes: 97c2b5cba2044f1c ("mfd: madera: Add register definitions for Cirrus Logic Madera codecs")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ MAINTAINERS | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-I have a situation where I am trying to have 1 thread monitor an open drain/source line for events, while another thread writes to it. Not entirely unlike i2c pulse stretching. Is this not possible with the current gpiolib design? Or am I doing something wrong? If not possible, is my only choice to run an endless loop checking for line state? 
-
-NB: I am not subscribed to the list. Please CC me directly in your replies. 
-
-Thank you, 
-Dimitry 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9ad052aeac39be98..4b0ce55dd7c2413d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3557,6 +3557,22 @@ L:	netdev@vger.kernel.org
+ S:	Maintained
+ F:	drivers/net/ethernet/cirrus/ep93xx_eth.c
+ 
++CIRRUS LOGIC MADERA CODEC DRIVERS
++M:	Charles Keepax <ckeepax@opensource.cirrus.com>
++M:	Richard Fitzgerald <rf@opensource.cirrus.com>
++L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
++L:	patches@opensource.cirrus.com
++T:	git https://github.com/CirrusLogic/linux-drivers.git
++W:	https://github.com/CirrusLogic/linux-drivers/wiki
++S:	Supported
++F:	Documentation/devicetree/bindings/mfd/madera.txt
++F:	Documentation/devicetree/bindings/pinctrl/cirrus,madera-pinctrl.txt
++F:	include/linux/mfd/madera/*
++F:	drivers/gpio/gpio-madera*
++F:	drivers/mfd/madera*
++F:	drivers/mfd/cs47l*
++F:	drivers/pinctrl/cirrus/*
++
+ CISCO FCOE HBA DRIVER
+ M:	Satish Kharat <satishkh@cisco.com>
+ M:	Sesidhar Baddela <sebaddel@cisco.com>
+@@ -3584,22 +3600,6 @@ M:	Christian Benvenuti <benve@cisco.com>
+ S:	Supported
+ F:	drivers/infiniband/hw/usnic/
+ 
+-CIRRUS LOGIC MADERA CODEC DRIVERS
+-M:	Charles Keepax <ckeepax@opensource.cirrus.com>
+-M:	Richard Fitzgerald <rf@opensource.cirrus.com>
+-L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
+-L:	patches@opensource.cirrus.com
+-T:	git https://github.com/CirrusLogic/linux-drivers.git
+-W:	https://github.com/CirrusLogic/linux-drivers/wiki
+-S:	Supported
+-F:	Documentation/devicetree/bindings/mfd/madera.txt
+-F:	Documentation/devicetree/bindings/pinctrl/cirrus,madera-pinctrl.txt
+-F:	include/linux/mfd/madera/*
+-F:	drivers/gpio/gpio-madera*
+-F:	drivers/mfd/madera*
+-F:	drivers/mfd/cs47l*
+-F:	drivers/pinctrl/cirrus/*
+-
+ CLANG-FORMAT FILE
+ M:	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+ S:	Maintained
+-- 
+2.17.1
 
