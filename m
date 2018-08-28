@@ -2,138 +2,212 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 006E8C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:01:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E536C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:02:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A456F20880
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:01:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iSfKoFte"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A456F20880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DC67320880
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:02:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC67320880
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727572AbeH1UyZ (ORCPT
+        id S1727587AbeH1Uym (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 16:54:25 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:35716 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727054AbeH1UyZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 16:54:25 -0400
-Received: by mail-qt0-f195.google.com with SMTP id j7-v6so2535608qtp.2;
-        Tue, 28 Aug 2018 10:01:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AG16YByWFJVLXWZ9W3ecTP3OiU3qcAbxM0zp5GnZyNk=;
-        b=iSfKoFteL6MFKMcnfJeYo1Mdu/36HYhrgQyaBJ16N2nUUjcBrUQZSohfsy8xBui6tW
-         9tLM7++4IWDDzdf783Pt+UsYG6oOZUDCZ6WgFP24GKbP0hWWM3pE3LHn73oD1D5VU8Sb
-         OyuH65pD//r8cYA1bq68jBpSu4Lm/fCa4J/+vtqj8hWfALVXn74K+lfSlgBWICHhcCQN
-         hHYJE66kZml6BW7Glz9ZRuFGg5k04VimK4Tp4RKX674lnARj4Q+2SSlutdEGG4EsKjs3
-         1IorW0x0+Dz8eXFYUhOPyIA5iC70qSIHwdeHSTCBgOOQBG/rAlqLttqdu/ud0M+IaPUp
-         v8LQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AG16YByWFJVLXWZ9W3ecTP3OiU3qcAbxM0zp5GnZyNk=;
-        b=idFRk71hT3IcE2pGKFGCxqd6OXaRYsiQOnKGIP1+ZuqtnqNXZ7Od30tEhEO0Lz5ipn
-         VanlkJZ6y1tqAfjonLMxbFNYFq8EkVDX4Z5HM/Ju7tLzbOMG2KftdQ9CcxkA4hM1B71Z
-         AY/1++MQiPs3dEwlYE2jVNlajjZnMEfHkeqoqfJdROMXv1FjiDLv/A0ZfUdbUTgDqRy4
-         Buv0PSwKThFbkrU+0WAxM7c2Rq5zbJIO8Lx5Jj6neGiOYe6HV7U4KgAUxYOoUnZP16Ff
-         eQ03O/ZNCEl70oHKCLY5FQQIoRq0IiVOHZxcmIppfriIXxp/hzhk0yJX7VsUjys8HdME
-         maXQ==
-X-Gm-Message-State: APzg51DMXq51wck5quLuqAUag1Ve5/H9CgM+CscXPfIYhw3EHQRyFxdV
-        FFMlqJC1QYpXHifi3HZDWkIk6xiId+8izMCcSOE=
-X-Google-Smtp-Source: ANB0VdbF5oiYIq2ssNLqLcEdccfklP+gQoTx5m1awYZSxOba0nTTRqG7g6adc9vc1EwpPM/SFScItnMYbKuKr5Bsc/8=
-X-Received: by 2002:a0c:8b11:: with SMTP id q17-v6mr2521899qva.193.1535475710756;
- Tue, 28 Aug 2018 10:01:50 -0700 (PDT)
+        Tue, 28 Aug 2018 16:54:42 -0400
+Received: from mga17.intel.com ([192.55.52.151]:20494 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727054AbeH1Uym (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 16:54:42 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Aug 2018 10:02:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,300,1531810800"; 
+   d="scan'208";a="79043508"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga003.jf.intel.com with ESMTP; 28 Aug 2018 10:02:07 -0700
+Date:   Tue, 28 Aug 2018 10:04:01 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     Auger Eric <eric.auger@redhat.com>
+Cc:     "Liu, Yi L" <yi.l.liu@intel.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        "Liu@mail.linuxfoundation.org" <Liu@mail.linuxfoundation.org>,
+        Yi L <yi.l.liu@linux.intel.com>,
+        Jean Delvare <khali@linux-fr.org>,
+        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>, jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH v5 01/23] iommu: introduce bind_pasid_table API function
+Message-ID: <20180828100401.223c02f8@jacob-builder>
+In-Reply-To: <4adc15a2-111b-e4e3-525e-0091fcb1ec5c@redhat.com>
+References: <1526072055-86990-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1526072055-86990-2-git-send-email-jacob.jun.pan@linux.intel.com>
+        <e9ddb745-9cfb-1d40-05e0-7bd75292a41f@redhat.com>
+        <A2975661238FB949B60364EF0F2C257439CCE9CC@SHSMSX104.ccr.corp.intel.com>
+        <4adc15a2-111b-e4e3-525e-0091fcb1ec5c@redhat.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20180828154727.3589-1-ianwmorrison@gmail.com> <211633e2-a812-d489-e11c-c3f271c465fc@kernel.dk>
- <CAFXWsS_661mkZa1iYEs+8-O-fdFF6bEcqtZrNBzVaNthT2U46w@mail.gmail.com>
- <1cbdba28-3ff5-2bbe-a2cf-b533249c6970@kernel.dk> <CAFXWsS82zi7w81-=4ALwMiFm9iQd=NgF3sSBLfvNdU2czEzxwg@mail.gmail.com>
- <853d7213-c6ce-5de9-6c83-806c3b8f18ca@kernel.dk>
-In-Reply-To: <853d7213-c6ce-5de9-6c83-806c3b8f18ca@kernel.dk>
-From:   Ian W MORRISON <ianwmorrison@gmail.com>
-Date:   Wed, 29 Aug 2018 03:01:37 +1000
-Message-ID: <CAFXWsS_xOKTJk87vQSESQNfdwY1TU0jjS4twEg_+yF3pqbKQ3g@mail.gmail.com>
-Subject: Re: [PATCH] Revert "blk-mq: issue directly if hw queue isn't busy in
- case of 'none'"
-To:     axboe@kernel.dk
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kashyap.desai@broadcom.com, loberman@redhat.com, osandov@fb.com,
-        hch@lst.de, bart.vanassche@wdc.com, hare@suse.de,
-        ming.lei@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 29 Aug 2018 at 02:13, Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 8/28/18 10:10 AM, Ian W MORRISON wrote:
-> > On Wed, 29 Aug 2018 at 02:09, Jens Axboe <axboe@kernel.dk> wrote:
-> >>
-> >> On 8/28/18 10:07 AM, Ian W MORRISON wrote:
-> >>> On Wed, 29 Aug 2018 at 01:48, Jens Axboe <axboe@kernel.dk> wrote:
-> >>>>
-> >>>> On 8/28/18 9:47 AM, Ian W MORRISON wrote:
-> >>>>> Kernel oops when booting on Bay and Cherry Trail devices
-> >>>>> such as Intel Compute Stick. Bisected as:
-> >>>>>
-> >>>>> commit 6ce3dd6eec11 ("blk-mq: issue directly if hw queue isn't busy in case of 'none'")
-> >>>>>
-> >>>>> This patch reverts the above commit.
-> >>>>
-> >>>> Did I miss the posting of that oops? Just curious where this is
-> >>>> going wrong. Not adverse to reverting, but I'd like to try to
-> >>>> understand the issue first.
-> >>>>
-> >>>> --
-> >>>> Jens Axboe
-> >>>>
-> >>>
-> >>> I've not been able to capture it however manually transcribing what is
-> >>> on the screen:
-> >>>
-> >>> mmc0: Got data interrupt 0x00000002 even though no data operation
-> >>>
-> >>> followed by:
-> >>>
-> >>> mmc0: sdhci: ============= SDHCI REGISTER DUMP ==============
-> >>>
-> >>> Do you want any specific register value or should I transcribe each
-> >>> (as I am working from an image taken at boot)?
-> >>
-> >> Just take a picture of the screen, that should be good enough.
-> >>
-> >> --
-> >> Jens Axboe
-> >>
-> >
-> > Attached as requested.
->
-> Can you see if this patch helps?
->
-> https://marc.info/?l=linux-mmc&m=153485326025301&w=2
->
-> --
-> Jens Axboe
->
+On Fri, 24 Aug 2018 15:20:08 +0200
+Auger Eric <eric.auger@redhat.com> wrote:
 
-I confirm that the above patch works with commit 6ce3dd6eec11
-and removes the need for reverting it on eMMC based devices.
+> Hi Yi Liu,
+> 
+> On 08/24/2018 02:47 PM, Liu, Yi L wrote:
+> > Hi Eric,
+> >   
+> >> From: iommu-bounces@lists.linux-foundation.org [mailto:iommu-
+> >> bounces@lists.linux-foundation.org] On Behalf Of Auger Eric
+> >> Sent: Friday, August 24, 2018 12:35 AM
+> >>
+> >> Hi Jacob,
+> >>
+> >> On 05/11/2018 10:53 PM, Jacob Pan wrote:  
+> >>> Virtual IOMMU was proposed to support Shared Virtual Memory (SVM)
+> >>> use in the guest:
+> >>> https://lists.gnu.org/archive/html/qemu-devel/2016-11/msg05311.html
+> >>>
+> >>> As part of the proposed architecture, when an SVM capable PCI
+> >>> device is assigned to a guest, nested mode is turned on. Guest
+> >>> owns the first level page tables (request with PASID) which
+> >>> performs GVA->GPA translation. Second level page tables are owned
+> >>> by the host for GPA->HPA translation for both request with and
+> >>> without PASID.
+> >>>
+> >>> A new IOMMU driver interface is therefore needed to perform tasks
+> >>> as follows:
+> >>> * Enable nested translation and appropriate translation type
+> >>> * Assign guest PASID table pointer (in GPA) and size to host IOMMU
+> >>>
+> >>> This patch introduces new API functions to perform bind/unbind
+> >>> guest PASID tables. Based on common data, model specific IOMMU
+> >>> drivers can be extended to perform the specific steps for binding
+> >>> pasid table of assigned devices.
+> >>>
+> >>> Signed-off-by: Jean-Philippe Brucker
+> >>> <jean-philippe.brucker@arm.com> Signed-off-by: Liu, Yi L
+> >>> <yi.l.liu@linux.intel.com> Signed-off-by: Ashok Raj
+> >>> <ashok.raj@intel.com> Signed-off-by: Jacob Pan
+> >>> <jacob.jun.pan@linux.intel.com> ---  
+> > 
+> > [...]
+> >   
+> >>> +#ifndef _UAPI_IOMMU_H
+> >>> +#define _UAPI_IOMMU_H
+> >>> +
+> >>> +#include <linux/types.h>
+> >>> +
+> >>> +/**
+> >>> + * PASID table data used to bind guest PASID table to the host
+> >>> IOMMU. This will
+> >>> + * enable guest managed first level page tables.
+> >>> + * @version: for future extensions and identification of the
+> >>> data format
+> >>> + * @bytes: size of this structure
+> >>> + * @base_ptr:	PASID table pointer
+> >>> + * @pasid_bits:	number of bits supported in the guest
+> >>> PASID table, must be  
+> >> less  
+> >>> + *		or equal than the host supported PASID size.
+> >>> + */
+> >>> +struct pasid_table_config {
+> >>> +	__u32 version;
+> >>> +#define PASID_TABLE_CFG_VERSION_1 1
+> >>> +	__u32 bytes;
+> >>> +	__u64 base_ptr;
+> >>> +	__u8 pasid_bits;  
+> >>
+> >> As reported in "[RFC 00/13] SMMUv3 Nested Stage Setup" thread,
+> >> this API could be used for ARM SMMUv3 nested stage enablement
+> >> without many changes. Assuming SMMUv3 nested stage is confirmed to
+> >> be interesting for vendors and maintainers, we could try to unify
+> >> the APIs.  
+> > 
+> > Just a quick question on nested stage on SMMUv3. If virtualizer
+> > wants to enable nested stage on SMMUv3, does it link the whole
+> > guest CD table to host or do it in other manner?  
+> Yes that's correct. On ARM SMMUv3 you have Stream Table Entries (STEs,
+> indexed by ReqID=streamid). If stage 1 is used, the STE points to 1 or
+> more contiguous Context Descriptors (CDs).
+> So STE looks like the VTD Context-Entry and CD table looks like the
+> VTD PASID table as far as I understand.
+> >   
+> >> As far as I understand the VTD PASID table is equivalent to the ARM
+> >> SMMUv3 context descriptor table (CD). This corresponds to the
+> >> stage 1 context table with one or more entries, each corresponding
+> >> to one PASID.  
+> > 
+> > PASID table is index by PASID, and have multiple entries. A PASID
+> > table would have 2^PASID_BITS entries.  
+> On ARM SMMUv3 the  number of CDs is 2 ^STE.S1CDMax.
+> >   
+> >> maybe using the s1ctx_table_config terminology instead of
+> >> pasid_table_config would be more generic, the pasid table being
+> >> Intel naming.
+> >>
+> >> on top of pasid_bits, I think an "asid_bits" field may be needed
+> >> too. The guest IOMMU might support a different number of asid bits
+> >> from the host one.  
+> > 
+> > Maybe needed for SMMUv3. I've noticed you've placed it in
+> > struct iommu_smmu_s1_config.
+> >   
+> >>
+> >> Although without having skimmed through the whole series yet, I
+> >> wonder how you handle the case where stage1 is bypassed or
+> >> disabled? The guest may define the S1 context entries but bypass
+> >> or abort stage 1 translations globally. Looks something missing to
+> >> me at first sight.  
+> > 
+> > Sorry, I didn't quite follow here. What usage is case such for?
+> > like stage 1 is bypassed or disabled. IOVA or SVA?  
+> Each STE entry has a config field which tells how S1 and S2 behave
+> 
+> Options are no traffic at all or any combination of the following:
+> 
+> S1        S2
+> bypass    bypass
+> transl    bypass
+> bypass    transl
+> transl    transl
+> 
+> host manages S2 info. guest sets S1 related fields.
+> 
+> To me the guest SET.Config should be passed to the host so that this
+> latter writes the correct global Config field value in the STE,
+> including S1 + S2 info.
+> 
+Global config ( VT-d global command reg) is IOMMU wide, we cannot let
+guest config change to directly modify global settings. I think it is
+up to the vIOMMU emulation code to unbind guest PASID table thus
+disable S1, if the guest is setting S1 to bypass/disabled.
 
-Tested on Bay Trail, Cherry Trail (both now working) and Kaby Lake
-(not affected) devices.
+I am still perplexed by valid use cases of S1 bypass, to me it means no
+SVA nor guest IOVA which means no need for vIOMMU.
 
-Many thanks,
-Ian
+> Thanks
+> 
+> Eric
+> > 
+> > Thanks,
+> > Yi Liu
+> >   
+
+[Jacob Pan]
