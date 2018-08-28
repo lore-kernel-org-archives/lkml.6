@@ -2,160 +2,100 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6998AC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 01:02:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14D37C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 01:03:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A4C0208A6
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 01:02:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C06C6208B9
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 01:03:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CLda8ldd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A4C0208A6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SWLYs87X"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C06C6208B9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726998AbeH1Ev2 (ORCPT
+        id S1727058AbeH1EwW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 00:51:28 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:37252 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725198AbeH1Ev2 (ORCPT
+        Tue, 28 Aug 2018 00:52:22 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:56642 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726275AbeH1EwW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 00:51:28 -0400
-Received: by mail-oi0-f67.google.com with SMTP id p84-v6so1617666oic.4
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 18:02:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=UkdkB66DcDKPsx5gPCA60ye2TuaPQTYrquCIowXnBe0=;
-        b=CLda8lddAHpqYWdr0iydv9XVwHhnrkodyCCB1wOTI4+dStrF8ovo9D7zfLzWtYwm/P
-         /fbrAvcvxW5YrqPLMTsCL3S4k9JA1aTAthtUdj28Jv3ffkf1A5NTfXts2hkcVWAbnU/g
-         2mHfDG6TW1x2nBNVubVem3XlLh1OEz7Wq09VOnawKR2ScMBnIfTixlB2p5AlT0muaAHI
-         wG5tfJHaPCcCwzSXkg7I0B6+MHEwYcFDHM+HYI5+joEo4RhlvZdv72mTGtm/R1FR+wWM
-         p2qyEq4AnpqVaFk9gIrk272VwcEQg0Y4H9jT/O7dLLRxCC+0N9sHvCI+Qz4hDjOR8tsQ
-         lzQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UkdkB66DcDKPsx5gPCA60ye2TuaPQTYrquCIowXnBe0=;
-        b=JcGQ30b19+pa/LGnPqxbcPvb3H2Pu0uaNHRJKuUH2HJ+zCMsDOjBlsAClJ4qpRuoY+
-         j4RcoHH2Add6QKPjbKkl2pjQqIHEmVTAyJ7D/KlldqbY3UByNXR8l3HVTE6rnsMnwFoA
-         D2RXPyPKknpZcIIxr9QX9gRYC1AeiSsP41ON9TIb6et3WAdHTtH3dbNFELfJA82Y/4XU
-         9GoabhM93QIpGqqoqJI3QUO6nfRFFByDCN1Bdy+AmK6yLp3Id2EDmlOxuQAOd1rBdAUu
-         0lm/x0mhiZFI+Nk2AExDsObpb5pqsmjh+9xONcU2GNsB0FPPx7vjD/K9Lw7s8Cr8ybK5
-         cMIw==
-X-Gm-Message-State: APzg51BAZwudsrvC3Z0jVNN2pcZx9cOXY67ow1uiJtCAtQckjZY9BVJP
-        MSCqfKKvbwO0Pi449KGMPb6pJf87
-X-Google-Smtp-Source: ANB0VdYVW8U0d4cpS9KBQDy4dDdaYKp5xRXwEPOrqZH7JJjFeygaVOub63wMqrq2ApsVBr9y3HklwQ==
-X-Received: by 2002:aca:90d:: with SMTP id 13-v6mr853684oij.300.1535418143183;
-        Mon, 27 Aug 2018 18:02:23 -0700 (PDT)
-Received: from JosephdeMacBook-Pro.local ([47.89.83.53])
-        by smtp.gmail.com with ESMTPSA id q204-v6sm415233oih.49.2018.08.27.18.02.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 Aug 2018 18:02:22 -0700 (PDT)
-Subject: Re: [Ocfs2-devel] [PATCH] fix dead lock caused by ocfs2_defrag_extent
-To:     Larry Chen <lchen@suse.com>, mfasheh@suse.com, jlbec@evilplan.org
-Cc:     linux-kernel@vger.kernel.org, ocfs2-devel@oss.oracle.com
-References: <20180827080121.31145-1-lchen@suse.com>
-From:   Joseph Qi <jiangqi903@gmail.com>
-Message-ID: <804e11ca-39e3-575b-2e25-a00c95cf1311@gmail.com>
-Date:   Tue, 28 Aug 2018 09:02:17 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Tue, 28 Aug 2018 00:52:22 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w7S13507121190;
+        Mon, 27 Aug 2018 20:03:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1535418185;
+        bh=Afqp3lXNMmKu9i8Pca0yxG5iRN6JwZGvDg/CLnTIzGs=;
+        h=From:To:CC:Subject:Date;
+        b=SWLYs87X2KEbyIUuHFf3QyJN8lssBhO49gBwoO8X8iwVGTaOTk5VA+gMoB6dEob1I
+         D5vrK6KDTKqfbQPiEcQ2LEPV6faVRS+hslHK+gQ/k9zG3GxuTyRwtW+HAPTUN25CUS
+         vgGDg+NfrfN5gmtr2Y59HAVMsaa0YmW1J/5bMPQU=
+Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7S134fU014394;
+        Mon, 27 Aug 2018 20:03:04 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 27
+ Aug 2018 20:03:03 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Mon, 27 Aug 2018 20:03:03 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7S1338O017308;
+        Mon, 27 Aug 2018 20:03:03 -0500
+From:   Nishanth Menon <nm@ti.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Sekhar Nori <nsekhar@ti.com>, Vignesh R <vigneshr@ti.com>,
+        Nishanth Menon <nm@ti.com>
+Subject: [PATCH] serial: 8250_omap: Make 8250_omap driver driver depend on ARCH_K3
+Date:   Mon, 27 Aug 2018 20:03:02 -0500
+Message-ID: <20180828010302.2751-1-nm@ti.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-In-Reply-To: <20180827080121.31145-1-lchen@suse.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Larry,
+From: Lokesh Vutla <lokeshvutla@ti.com>
 
-On 18/8/27 16:01, Larry Chen wrote:
-> ocfs2_defrag_extent may fall into dead lock.
-> 
-> ocfs2_ioctl_move_extents
->   ocfs2_ioctl_move_extents	
->     ocfs2_move_extents
->       ocfs2_defrag_extent
->         ocfs2_lock_allocators_move_extents  
-> 
->           ocfs2_reserve_clusters
->             inode_lock GLOBAL_BITMAP_SYSTEM_INODE
-> 
-> 	  __ocfs2_flush_truncate_log
->             inode_lock GLOBAL_BITMAP_SYSTEM_INODE
-> 
-> As back trace shows above, ocfs2_reserve_clusters will call inode_lock
-> against the global bitmap if local allocator has not sufficient cluters. 
-> Once global bitmap could meet the demand, ocfs2_reserve_cluster will 
-> return success with global bitmap locked.
-> 
-> After ocfs2_reserve_cluster, if truncate log is full, 
-> __ocfs2_flush_truncate_log will definitely fall into dead lock
-> because it needs to inode_lock global bitmap, which has
-> already been locked.
-> 
-> To fix this bug, we could remove from ocfs2_lock_allocators_move_extents 
-> the code which intends to lock global allocator, and put the removed
-> code after __ocfs2_flush_truncate_log
-> 
-> The ocfs2_lock_allocators_move_extents has been refered by 2 places, one
-> is here, the other does not need the data allocator context, which means
-> this patch does not affect the caller so far.
-> 
-After this change, data_ac in ocfs2_lock_allocators_move_extents() is
-no longer used. So I'd prefer we also clean it up.
+Allow 8250 omap serial driver to be used for K3 platforms.
 
-Thanks,
-Joseph
+Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+Signed-off-by: Nishanth Menon <nm@ti.com>
+---
 
-> 
-> 
-> Signed-off-by: Larry Chen <lchen@suse.com>
-> ---
->  fs/ocfs2/move_extents.c | 13 ++++++-------
->  1 file changed, 6 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/ocfs2/move_extents.c b/fs/ocfs2/move_extents.c
-> index 7eb3b0a6347e..064dedf40d74 100644
-> --- a/fs/ocfs2/move_extents.c
-> +++ b/fs/ocfs2/move_extents.c
-> @@ -192,13 +192,6 @@ static int ocfs2_lock_allocators_move_extents(struct inode *inode,
->  		goto out;
->  	}
->  
-> -	if (data_ac) {
-> -		ret = ocfs2_reserve_clusters(osb, clusters_to_move, data_ac);
-> -		if (ret) {
-> -			mlog_errno(ret);
-> -			goto out;
-> -		}
-> -	}
->  
->  	*credits += ocfs2_calc_extend_credits(osb->sb, et->et_root_el);
->  
-> @@ -283,6 +276,12 @@ static int ocfs2_defrag_extent(struct ocfs2_move_extents_context *context,
->  		}
->  	}
->  
-> +	ret = ocfs2_reserve_clusters(osb, *len, &context->data_ac);
-> +	if (ret) {
-> +		mlog_errno(ret);
-> +		goto out_unlock_mutex;
-> +	}
-> +
->  	handle = ocfs2_start_trans(osb, credits);
->  	if (IS_ERR(handle)) {
->  		ret = PTR_ERR(handle);
-> 
+Now that we have the device tree support merged integrated AND we have ARCH_K3,
+Lets enable the 820 OMAP Driver to build for ARCH_K3 and make it operational.
+
+ drivers/tty/serial/8250/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/tty/serial/8250/Kconfig b/drivers/tty/serial/8250/Kconfig
+index f005eaf8bc57..15c2c5463835 100644
+--- a/drivers/tty/serial/8250/Kconfig
++++ b/drivers/tty/serial/8250/Kconfig
+@@ -375,7 +375,7 @@ config SERIAL_8250_RT288X
+ 
+ config SERIAL_8250_OMAP
+ 	tristate "Support for OMAP internal UART (8250 based driver)"
+-	depends on SERIAL_8250 && ARCH_OMAP2PLUS
++	depends on SERIAL_8250 && (ARCH_OMAP2PLUS || ARCH_K3)
+ 	help
+ 	  If you have a machine based on an Texas Instruments OMAP CPU you
+ 	  can enable its onboard serial ports by enabling this option.
+-- 
+2.15.1
+
