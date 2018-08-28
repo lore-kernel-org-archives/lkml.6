@@ -2,121 +2,112 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56332C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 16:09:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5059CC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 16:10:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04F3920893
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 16:09:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="LW6/k9Ay"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04F3920893
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id 0C12620893
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 16:10:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C12620893
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727494AbeH1UBi (ORCPT
+        id S1727398AbeH1UDI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 16:01:38 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:39084 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726807AbeH1UBi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 16:01:38 -0400
-Received: by mail-it0-f67.google.com with SMTP id h1-v6so1257488itj.4
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 09:09:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=MOD4MooAAgBdlMNHxIRpkxm+GUbz8nH1096W3q30vFE=;
-        b=LW6/k9Ayn8K3H7hju3ZkJ/uoHBKMJWcZv8OMyeUukDupUvUVu+OKklIqbi0nCrzjmf
-         v9A8wsI9MvaB9T05cevEXyb5UoPTbJEnaJ6NeODzrF283DxWVMMRk9DL2M4qtWU3lv+1
-         ZYKeU7rnypOX8qoDplD3ld8/MD73d6hKBAndHgM7Y7Br09X2ZjPoy7FwzQt14fBQ6pJc
-         tDdoqXWnY/aUlMuCIIGJjLur7bqqcb2hYushSmEKkEFvrfCxqh7C5Zsz8FDVPFaAthQP
-         LyPqHSOVhda3s/Y31TpMXBsl30d/gK/NB2dkGSVfCir4t3JqLPUCsLoj4cGcOnrbCqBG
-         iBng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=MOD4MooAAgBdlMNHxIRpkxm+GUbz8nH1096W3q30vFE=;
-        b=kH1zzCPnUam9F/rX1RjWHiZikxBLswY2xJqTZEAWXROYQHExfh0HFLA71v7ieVo+QG
-         ppwSc7Hg+s/Y+4Te7KmBo2GOLfHmxSWZQ4e34kKKBslv3Pm74cUHoGMaQ3rJbsfSUL4w
-         h/U9+hcZDl7HPzH+wOKxSuAnSSWWsa7AxHhSqOMMV0ybkISJ5ULumLzyx2WFdmVlMm0c
-         bdq4RU7L+xeQNWAzd5u21w2wRQsyI+uCVY3UbFq07KASl9Kv28BYyH/gumGePZhy+udO
-         tqj/PinyDAxhHsb4znMPCj1Vj/8gDk2E/i+9dvefM949UG4gOdyH8ytx1FEnOV3L1u9P
-         PFWQ==
-X-Gm-Message-State: APzg51BR4otbF2pdiPC/koL9PgxqueIUklmdM/p8q4LSlZ8ztus5J7L+
-        eApS5UE5hb2N/0/sNuPczoEsNA==
-X-Google-Smtp-Source: ANB0Vdarrf0jDlHP2Sej/S8WoyCNyxeFgblf9JTl5MO20Jf6Cx9EH2Edafdj5doWPUoQSrBbCxtmpQ==
-X-Received: by 2002:a24:dd88:: with SMTP id t130-v6mr2121764itf.129.1535472555910;
-        Tue, 28 Aug 2018 09:09:15 -0700 (PDT)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id r126-v6sm774757iod.7.2018.08.28.09.09.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 Aug 2018 09:09:14 -0700 (PDT)
-Subject: Re: [PATCH] Revert "blk-mq: issue directly if hw queue isn't busy in
- case of 'none'"
-To:     Ian W MORRISON <ianwmorrison@gmail.com>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kashyap.desai@broadcom.com, loberman@redhat.com, osandov@fb.com,
-        hch@lst.de, bart.vanassche@wdc.com, hare@suse.de,
-        ming.lei@redhat.com
-References: <20180828154727.3589-1-ianwmorrison@gmail.com>
- <211633e2-a812-d489-e11c-c3f271c465fc@kernel.dk>
- <CAFXWsS_661mkZa1iYEs+8-O-fdFF6bEcqtZrNBzVaNthT2U46w@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <1cbdba28-3ff5-2bbe-a2cf-b533249c6970@kernel.dk>
-Date:   Tue, 28 Aug 2018 10:09:12 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 28 Aug 2018 16:03:08 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33952 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727069AbeH1UDI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 16:03:08 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AA61CADA9;
+        Tue, 28 Aug 2018 16:10:44 +0000 (UTC)
+Date:   Tue, 28 Aug 2018 18:10:43 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Zi Yan <zi.yan@cs.rutgers.edu>
+Cc:     Jerome Glisse <jglisse@redhat.com>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: Re: [PATCH 4/7] mm/hmm: properly handle migration pmd
+Message-ID: <20180828161043.GT10223@dhcp22.suse.cz>
+References: <20180824192549.30844-1-jglisse@redhat.com>
+ <20180824192549.30844-5-jglisse@redhat.com>
+ <0560A126-680A-4BAE-8303-F1AB34BE4BA5@cs.rutgers.edu>
+ <20180828152414.GQ10223@dhcp22.suse.cz>
+ <20180828153658.GA4029@redhat.com>
+ <20180828154206.GR10223@dhcp22.suse.cz>
+ <20180828154555.GS10223@dhcp22.suse.cz>
+ <44C89854-FE83-492F-B6BB-CF54B77233CF@cs.rutgers.edu>
 MIME-Version: 1.0
-In-Reply-To: <CAFXWsS_661mkZa1iYEs+8-O-fdFF6bEcqtZrNBzVaNthT2U46w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <44C89854-FE83-492F-B6BB-CF54B77233CF@cs.rutgers.edu>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/28/18 10:07 AM, Ian W MORRISON wrote:
-> On Wed, 29 Aug 2018 at 01:48, Jens Axboe <axboe@kernel.dk> wrote:
->>
->> On 8/28/18 9:47 AM, Ian W MORRISON wrote:
->>> Kernel oops when booting on Bay and Cherry Trail devices
->>> such as Intel Compute Stick. Bisected as:
->>>
->>> commit 6ce3dd6eec11 ("blk-mq: issue directly if hw queue isn't busy in case of 'none'")
->>>
->>> This patch reverts the above commit.
->>
->> Did I miss the posting of that oops? Just curious where this is
->> going wrong. Not adverse to reverting, but I'd like to try to
->> understand the issue first.
->>
->> --
->> Jens Axboe
->>
+On Tue 28-08-18 11:54:33, Zi Yan wrote:
+> Hi Michal,
 > 
-> I've not been able to capture it however manually transcribing what is
-> on the screen:
+> On 28 Aug 2018, at 11:45, Michal Hocko wrote:
 > 
-> mmc0: Got data interrupt 0x00000002 even though no data operation
+> > On Tue 28-08-18 17:42:06, Michal Hocko wrote:
+> >> On Tue 28-08-18 11:36:59, Jerome Glisse wrote:
+> >>> On Tue, Aug 28, 2018 at 05:24:14PM +0200, Michal Hocko wrote:
+> >>>> On Fri 24-08-18 20:05:46, Zi Yan wrote:
+> >>>> [...]
+> >>>>>> +	if (!pmd_present(pmd)) {
+> >>>>>> +		swp_entry_t entry = pmd_to_swp_entry(pmd);
+> >>>>>> +
+> >>>>>> +		if (is_migration_entry(entry)) {
+> >>>>>
+> >>>>> I think you should check thp_migration_supported() here, since PMD migration is only enabled in x86_64 systems.
+> >>>>> Other architectures should treat PMD migration entries as bad.
+> >>>>
+> >>>> How can we have a migration pmd entry when the migration is not
+> >>>> supported?
+> >>>
+> >>> Not sure i follow here, migration can happen anywhere (assuming
+> >>> that something like compaction is active or numa or ...). So this
+> >>> code can face pmd migration entry on architecture that support
+> >>> it. What is missing here is thp_migration_supported() call to
+> >>> protect the is_migration_entry() to avoid false positive on arch
+> >>> which do not support thp migration.
+> >>
+> >> I mean that architectures which do not support THP migration shouldn't
+> >> ever see any migration entry. So is_migration_entry should be always
+> >> false. Or do I miss something?
+> >
+> > And just to be clear. thp_migration_supported should be checked only
+> > when we actually _do_ the migration or evaluate migratability of the
+> > page. We definitely do want to sprinkle this check to all places where
+> > is_migration_entry is checked.
 > 
-> followed by:
+> is_migration_entry() is a general check for swp_entry_t, so it can return
+> true even if THP migration is not enabled. is_pmd_migration_entry() always
+> returns false when THP migration is not enabled.
 > 
-> mmc0: sdhci: ============= SDHCI REGISTER DUMP ==============
+> So the code can be changed in two ways, either replacing is_migration_entry()
+> with is_pmd_migration_entry() or adding thp_migration_supported() check
+> like Jerome did.
 > 
-> Do you want any specific register value or should I transcribe each
-> (as I am working from an image taken at boot)?
+> Does this clarify your question?
 
-Just take a picture of the screen, that should be good enough.
+Not really. IIUC the code checks for the pmd. So even though
+is_migration_entry is a more generic check it should never return true
+for thp_migration_supported() == F because we simply never have those
+unless I am missing something.
 
+is_pmd_migration_entry is much more readable of course and I suspect it
+can save few cycles as well.
 -- 
-Jens Axboe
-
+Michal Hocko
+SUSE Labs
