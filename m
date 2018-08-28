@@ -4,130 +4,168 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBF75C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 19:35:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68888C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 19:35:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A99D2087F
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 19:35:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B8082087E
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 19:35:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GAi5XT8T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A99D2087F
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IinMVC6H"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B8082087E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727355AbeH1X2K (ORCPT
+        id S1727388AbeH1X2N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 19:28:10 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:35195 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727130AbeH1X2K (ORCPT
+        Tue, 28 Aug 2018 19:28:13 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:45206 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727130AbeH1X2M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 19:28:10 -0400
-Received: by mail-lj1-f195.google.com with SMTP id p10-v6so2411760ljg.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 12:35:03 -0700 (PDT)
+        Tue, 28 Aug 2018 19:28:12 -0400
+Received: by mail-ed1-f65.google.com with SMTP id p52-v6so2205380eda.12
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 12:35:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-description:content-disposition:in-reply-to:user-agent;
-        bh=G+SbF4JMHfIqKGVVyJD2rQB58vLIuAu1NkXH4XaKNjA=;
-        b=GAi5XT8T8eCySOTKl4X5q7Pc/SrhHMidy1oJwCk6dxSmf4iXEvw5BhN6aAbUdU02or
-         bRfc/FrYk5sD5pW7FHJbbh3BxqQTMHtKUiTcbziNbrpY5jSyDTPQy5bVHG+aNXOjGErN
-         lElSN20SkiZ13Wnm3wD9PQaG5grSDw2QA6Yu3qLE9xv1p+ZrCh2gFgpnAFpWzigFRgIB
-         sgrpiFrKkwCFBJ0Ctf+mQcxAdeA1tmzZgEW7LSmpupnaEnBv8jz9WIjWn+Yn76O5rTx/
-         x+p6x9T6PDXFxV3FBmCCIpQmHazPXW9h1Ebv9oW8+LuGxfJsUCRZldvTrGrRQr6htyLj
-         6DMQ==
+         :content-disposition:in-reply-to:user-agent;
+        bh=AeeABSgOQZA+mcEvaLBu4nLj5jhPDAhkaHbFkjDsJdQ=;
+        b=IinMVC6HCi0U/Lm10MBYofmHBGn99Q+POtI0I6bcW01HizawPIQg+olJZwacxGKCtY
+         363F+cJEctPxItS4czOR3snPeRp4mJo9/HGMDCpdu68oxnbd1cNb6H209+D70j3IseYp
+         /KACzDbj67J4YGXTAQyomcaVyXaV5sXXq8/oMoch1dfEu7R25NDgiJzoHs7A8MDvwYLV
+         BdjR+sN+SWotg7IEYQ+yrGHupdzaHVeb+u4tK4jryfdBdUp5Kx+wRy4/qYRU5E15CO4m
+         SpLOLgoVPqJymysdTa++FP2ssc3Q5T9NwVqhK6+isw/4ImQ6UXMbFA8QBlQ7XfzxW8yQ
+         4s0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-description:content-disposition:in-reply-to
-         :user-agent;
-        bh=G+SbF4JMHfIqKGVVyJD2rQB58vLIuAu1NkXH4XaKNjA=;
-        b=cFqcx1tLtC3sJMvYNGI33QnUxNMKf/EHI9/Egrpy3vGrz8x5pjoOIW35RFIJj2AFlD
-         cLB5CuZ7WONVIInehoEzUW3ZZJAD0w5vZfOxrxasYPSEyQFlgp2H6DYNXL9tUrpftnOf
-         FUOu6g85Xwok0qhHPXipKXmkzjK3HU56X2xykgGCLaxbdnwEYKUFV3iaxixmf6AGCJG/
-         p+WmjuDq91D3CQnzCkwTZftEGO3hJZuwh6NYfMcspVFrNzCNthTnTQYPmjqp8/8l6nJf
-         5ADUbnb2keyTav5oH1ehG3Y7blAfHIkHyXoQWwN1bayFR0OgKUJ1SRF9c0I0pn+o5dwD
-         VbrQ==
-X-Gm-Message-State: APzg51DXwIoCzcoIqPDTQA++uOzq5nZM3t5s4DDLZcfiJ59iJBJWWMmf
-        wSkhC2/ZnOu4Y4hs/haOgf8=
-X-Google-Smtp-Source: ANB0VdYJZc9393TY3FsyqWL8aityiLvMuoQaZ507m0hBsDoxfR+A5eodrkSiETrWFzh8PPgr1Rg8VQ==
-X-Received: by 2002:a2e:4951:: with SMTP id b17-v6mr2255967ljd.31.1535484902376;
-        Tue, 28 Aug 2018 12:35:02 -0700 (PDT)
-Received: from arek-VirtualBox (185.59.110.199.maxnet.net.pl. [185.59.110.199])
-        by smtp.gmail.com with ESMTPSA id l25-v6sm354312lfi.94.2018.08.28.12.35.01
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Tue, 28 Aug 2018 12:35:01 -0700 (PDT)
-Date:   Tue, 28 Aug 2018 21:34:57 +0200
-From:   Arkadiusz Lis <areklis909@gmail.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     jfrederich@gmail.com, jon.nettleton@gmail.com, dsd@laptop.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Staging: One Laptop Per Child: add function argument
- names
-Message-ID: <20180828193457.GA8780@arek-VirtualBox>
-References: <1533831839-7361-1-git-send-email-areklis909@gmail.com>
- <20180827175213.GA27361@kroah.com>
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=AeeABSgOQZA+mcEvaLBu4nLj5jhPDAhkaHbFkjDsJdQ=;
+        b=az2pWAEnxpDyVZ0cm0kA5xZUUzD5CTjolgYm7YfI4IZxytiC8ScAZYlbQclEG19hSK
+         TmcJkhhEK2+uYv+6hA1hK1OaecIsPtlq+YK8mLe4tGtciT5hLGsw2ZAKR6mf7Ktc8v8K
+         b94sbFnkOmfaFizFihl0ypHGzJUn2bu+mRRbr1cydu+gAnNh9of+Qpwb2dTc33qZBNfg
+         gn/2jZiNjDoiqead9dashtlEAbr1xbmPkcusVuSoOlJOmJW17PPc/ioeDU6dpBje12FB
+         LnvstGTAZg2vOoMFP3iet0qYe/LeJse4BrNeV5G2mMTIjQ1n6gTVKgTAD6+25EeCMWaO
+         Equw==
+X-Gm-Message-State: APzg51Bg809cwGmMkkyQfSqPEikX2LdEsmCBR2Q+MLCeIWRPFICVDtRb
+        CF8cabDNc0mvhM1e+ZsaclZ6FV0=
+X-Google-Smtp-Source: ANB0VdYf77Ts+79JTQW4Y0HbnjgvI3lyMiNDzwwQ3A6P90Es1XzNAfy+Fdl7D9ui2YXbUX07gbwP+Q==
+X-Received: by 2002:a50:f69b:: with SMTP id d27-v6mr4073652edn.103.1535484904904;
+        Tue, 28 Aug 2018 12:35:04 -0700 (PDT)
+Received: from avx2 (nat4-minsk-pool-46-53-177-92.telecom.by. [46.53.177.92])
+        by smtp.gmail.com with ESMTPSA id b9-v6sm1005249edk.62.2018.08.28.12.35.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 28 Aug 2018 12:35:04 -0700 (PDT)
+Date:   Tue, 28 Aug 2018 22:35:02 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     "Ahmed S. Darwish" <darwish.07@gmail.com>
+Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 11/13] proc: readdir /proc/*/task
+Message-ID: <20180828193502.GB4847@avx2>
+References: <20180827231503.26899-1-adobriyan@gmail.com>
+ <20180827231503.26899-11-adobriyan@gmail.com>
+ <20180828123622.GA2087@darwi-kernel>
+ <20180828130440.GA6464@darwi-kernel>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Description: sd@laptop.org,
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180827175213.GA27361@kroah.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180828130440.GA6464@darwi-kernel>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 07:52:13PM +0200, Greg KH wrote:
-> On Thu, Aug 09, 2018 at 06:23:59PM +0200, Arkadiusz Lis wrote:
-> > Add function argument names to pointers to functions
-> > in struct dcon_platform_data: init, set_dconload and read_status
-> > This commit removes checkpatch.pl warning.
+On Tue, Aug 28, 2018 at 01:04:40PM +0000, Ahmed S. Darwish wrote:
+> On Tue, Aug 28, 2018 at 12:36:22PM +0000, Ahmed S. Darwish wrote:
+> > On Tue, Aug 28, 2018 at 02:15:01AM +0300, Alexey Dobriyan wrote:
+> > > ---
+> > >  fs/proc/base.c | 8 ++++----
+> > >  1 file changed, 4 insertions(+), 4 deletions(-)
+> > >
 > > 
-> > Signed-off-by: Arkadiusz Lis <areklis909@gmail.com>
-> > ---
-> >  drivers/staging/olpc_dcon/olpc_dcon.h | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > Missing description and S-o-b. Further comments below..
 > > 
-> > diff --git a/drivers/staging/olpc_dcon/olpc_dcon.h b/drivers/staging/olpc_dcon/olpc_dcon.h
-> > index fa89bb9..0ce1a7a 100644
-> > --- a/drivers/staging/olpc_dcon/olpc_dcon.h
-> > +++ b/drivers/staging/olpc_dcon/olpc_dcon.h
-> > @@ -91,10 +91,10 @@ struct dcon_priv {
-> >  };
-> >  
-> >  struct dcon_platform_data {
-> > -	int (*init)(struct dcon_priv *);
-> > +	int (*init)(struct dcon_priv *dcon);
-> >  	void (*bus_stabilize_wiggle)(void);
-> > -	void (*set_dconload)(int);
-> > -	int (*read_status)(u8 *);
-> > +	void (*set_dconload)(int val);
-> > +	int (*read_status)(u8 *status);
-> >  };
-> >  
-> >  #include <linux/interrupt.h>
-> > -- 
-> > 1.9.1
+> > > diff --git a/fs/proc/base.c b/fs/proc/base.c
+> > > index 33f444721965..668e465c86b3 100644
+> > > --- a/fs/proc/base.c
+> > > +++ b/fs/proc/base.c
+> > > @@ -3549,11 +3549,11 @@ static int proc_task_readdir(struct file *file, struct dir_context *ctx)
+> > >  	for (task = first_tid(proc_pid(inode), tid, ctx->pos - 2, ns);
+> > >  	     task;
+> > >  	     task = next_tid(task), ctx->pos++) {
+> > > -		char name[10 + 1];
+> > > -		unsigned int len;
+> > > +		char name[10], *p = name + sizeof(name);
+> > > +
 > > 
-> > _______________________________________________
-> > devel mailing list
-> > devel@linuxdriverproject.org
-> > http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+> > Multiple issues:
+> > 
+> > - len should be 11, as was in the original code
+> >   (0xffffffff = 4294967295, 10 letters)
+> > 
+> > - while we're at it, let's use a constant for the '11' instead of
+> >   mysterious magic numbers
+> > 
+> > - 'p' is clearly overflowing the stack here
+> >
 > 
-> Patch did not apply to my tree at all.  Please rebase against the latest
-> linux-next and resend.
+> See below:
 > 
-> thanks,
+> > >  		tid = task_pid_nr_ns(task, ns);
+> > > -		len = snprintf(name, sizeof(name), "%u", tid);
+> > > -		if (!proc_fill_cache(file, ctx, name, len,
+> > > +		p = _print_integer_u32(p, tid);
+> > > +		if (!proc_fill_cache(file, ctx, p, name + sizeof(name) - p,
+> > 
+> > You're replacing snprintf() code __that did proper len checking__
+> > with code that does not. That's not good.
+> > 
+> > I can't see how the fourth proc_fill_cache() parameter, ``name +
+> > sizeof(name)'' safely ever replace the original 'len' parameter.
+> > It's a pointer value .. (!)
+> >
 > 
-> greg k-h
+> Ok, there's a "- p" in the end, so the length looks to be Ok.
+> 
+> Nonetheless, the whole patch series is introducing funny code
+> like:
+> 
+> +/*
+> + * Print an integer in decimal.
+> + * "p" initially points PAST THE END OF THE BUFFER!
+> + *
+> + * DO NOT USE THESE FUNCTIONS!
+> + *
+> + * Do not copy these functions.
+> + * Do not document these functions.
+> + * Do not move these functions to lib/ or elsewhere.
+> + * Do not export these functions to modules.
+> + * Do not tell anyone about these functions.
+> + */
+> +noinline
+> +char *_print_integer_u32(char *p, u32 x)
+> +{
+> +       do {
+> +               *--p = '0' + (x % 10);
+> +               x /= 10;
+> +       } while (x != 0);
+> +       return p;
+> +}
+> 
+> And thus the code using these functions is throwing invalid
+> past-the-stack pointers and strings with no NULL terminators
+> like there's no tomorrow...
+> 
+> IMHO It's an accident waiting to happen to sprinkle pointers
+> like that everywhere.
 
-Hi Greg,
-It seems this issue was already fixed with commit 9b59883c14267ccf2c3f9d260bd6fb0dc9478fa1, hence the conflict.
-My patch is redundant
+It is not if people will be prohibited from moving this code to lib/ and
+"improving" it by adding more parameters.
 
-Regards,
-Arek
+> Are we really in a super hot path to justify all that?
+
+/proc is very slow, try profiling just about anything involving /proc.
