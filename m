@@ -2,148 +2,452 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E924AC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 11:39:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60BAEC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 11:40:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F4F92087D
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 11:39:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F4F92087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id EB18E2087D
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 11:40:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bTnd7u95";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oEvZrRL9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB18E2087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727502AbeH1Pam (ORCPT
+        id S1727559AbeH1Pb1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 11:30:42 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52870 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727067AbeH1Pam (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 11:30:42 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 605F7ACCF;
-        Tue, 28 Aug 2018 11:39:25 +0000 (UTC)
-Date:   Tue, 28 Aug 2018 13:39:24 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Mikhail Zaslonko <zaslonko@linux.ibm.com>
-Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Pavel Tatashin <Pavel.Tatashin@microsoft.com>
-Subject: Re: [PATCH] memory_hotplug: fix kernel_panic on offline page
- processing
-Message-ID: <20180828113924.GL10223@dhcp22.suse.cz>
-References: <20180828090539.41491-1-zaslonko@linux.ibm.com>
- <20180828112543.GK10223@dhcp22.suse.cz>
+        Tue, 28 Aug 2018 11:31:27 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56270 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727067AbeH1Pb1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 11:31:27 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 0523260541; Tue, 28 Aug 2018 11:40:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535456411;
+        bh=7NIRYv0Vbvsr38caZWlFlw4om/5zrYllql09NsU7Gbk=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=bTnd7u95BMUFAgBIIA2rMjOmFbQylSy5Qa4A9hdNbTtwEz0Q6eSYZe5jea3klSOIb
+         MJ6Y0Cjks3NUWwAEnJnm+TE/IZAw+RzYz4K0uO05o7R8eypQ3yyC8+Rss/qPgiwYX7
+         PvNbcjRvGO2lDqXToLxSt7eNvgYY1dqKgVbJfXig=
+Received: from [10.206.24.101] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sayalil@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9FA1060385;
+        Tue, 28 Aug 2018 11:40:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535456408;
+        bh=7NIRYv0Vbvsr38caZWlFlw4om/5zrYllql09NsU7Gbk=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=oEvZrRL9GC9V0LMe8t+ged2/Iv+dCUIhKB7xNnuJ6WugDxO0+YYLjtZ/6h1ngBFpf
+         bUih20RXjJTI9zHy70O5Xpkch7Ta5LGaaMq/QAVoVeM9CPYIxM9bSSCZLSE/Zeg1wU
+         IwXtuICODdzJ4WMoJPU9XzbLNzCr8Z02Xm3TplT4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9FA1060385
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
+Subject: Re: [PATCH V10 2/2] scsi: ufs: Add configfs support for UFS
+ provisioning
+To:     Adrian Hunter <adrian.hunter@intel.com>, subhashj@codeaurora.org,
+        cang@codeaurora.org, vivek.gautam@codeaurora.org,
+        rnayak@codeaurora.org, vinholikatti@gmail.com,
+        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        asutoshd@codeaurora.org, evgreen@chromium.org,
+        riteshh@codeaurora.org
+Cc:     linux-scsi@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>
+References: <1535088810-20989-1-git-send-email-sayalil@codeaurora.org>
+ <1535088810-20989-3-git-send-email-sayalil@codeaurora.org>
+ <5d2a6dea-e524-fca7-3c4b-a45bc9e6516a@intel.com>
+ <8ee0372b-d930-208d-520b-5a38642a2844@codeaurora.org>
+ <a8405e52-ab28-f7ad-e150-4a633d0ad4bc@intel.com>
+From:   Sayali Lokhande <sayalil@codeaurora.org>
+Message-ID: <49d1be22-b85d-abfb-3b4e-d8b4b7176d14@codeaurora.org>
+Date:   Tue, 28 Aug 2018 17:10:00 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180828112543.GK10223@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <a8405e52-ab28-f7ad-e150-4a633d0ad4bc@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Fixup Pavel's email - the patch is here for your reference
-http://lkml.kernel.org/r/20180828090539.41491-1-zaslonko@linux.ibm.com]
 
-On Tue 28-08-18 13:25:43, Michal Hocko wrote:
-> On Tue 28-08-18 11:05:39, Mikhail Zaslonko wrote:
-> > Within show_valid_zones() the function test_pages_in_a_zone() should be
-> > called for online memory blocks only. Otherwise it might lead to the
-> > VM_BUG_ON due to uninitialized struct pages (when CONFIG_DEBUG_VM_PGFLAGS
-> > kernel option is set):
-> > 
-> >  page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
-> >  ------------[ cut here ]------------
-> >  Call Trace:
-> >  ([<000000000038f91e>] test_pages_in_a_zone+0xe6/0x168)
-> >   [<0000000000923472>] show_valid_zones+0x5a/0x1a8
-> >   [<0000000000900284>] dev_attr_show+0x3c/0x78
-> >   [<000000000046f6f0>] sysfs_kf_seq_show+0xd0/0x150
-> >   [<00000000003ef662>] seq_read+0x212/0x4b8
-> >   [<00000000003bf202>] __vfs_read+0x3a/0x178
-> >   [<00000000003bf3ca>] vfs_read+0x8a/0x148
-> >   [<00000000003bfa3a>] ksys_read+0x62/0xb8
-> >   [<0000000000bc2220>] system_call+0xdc/0x2d8
-> > 
-> > That VM_BUG_ON was triggered by the page poisoning introduced in
-> > mm/sparse.c with the git commit d0dc12e86b31 ("mm/memory_hotplug: optimize
-> > memory hotplug")
-> > With the same commit the new 'nid' field has been added to the struct
-> > memory_block in order to store and later on derive the node id for offline
-> > pages (instead of accessing struct page which might be uninitialized). But
-> > one reference to nid in show_valid_zones() function has been overlooked.
-> > Fixed with current commit.
-> > Also, nr_pages will not be used any more after test_pages_in_a_zone() call,
-> > do not update it.
-> > 
-> > Fixes: d0dc12e86b31 ("mm/memory_hotplug: optimize memory hotplug")
-> > Cc: <stable@vger.kernel.org> # v4.17+
-> > Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
-> > Signed-off-by: Mikhail Zaslonko <zaslonko@linux.ibm.com>
-> 
-> Btw. this land mines which are basically impossible to find during the
-> review are the reason why I was not all that happy about d0dc12e86b31.
-> It added a margninal improvement but opened a can of warms. On the other
-> hand maybe we just had to open that can one day...
-> 
-> Acked-by: Michal Hocko <mhocko@suse.com>
-> 
-> Thanks!
-> 
-> > ---
-> >  drivers/base/memory.c | 20 +++++++++-----------
-> >  1 file changed, 9 insertions(+), 11 deletions(-)
-> > 
-> > diff --git a/drivers/base/memory.c b/drivers/base/memory.c
-> > index f5e560188a18..622ab8edc035 100644
-> > --- a/drivers/base/memory.c
-> > +++ b/drivers/base/memory.c
-> > @@ -416,26 +416,24 @@ static ssize_t show_valid_zones(struct device *dev,
-> >  	struct zone *default_zone;
-> >  	int nid;
-> >  
-> > -	/*
-> > -	 * The block contains more than one zone can not be offlined.
-> > -	 * This can happen e.g. for ZONE_DMA and ZONE_DMA32
-> > -	 */
-> > -	if (!test_pages_in_a_zone(start_pfn, start_pfn + nr_pages, &valid_start_pfn, &valid_end_pfn))
-> > -		return sprintf(buf, "none\n");
-> > -
-> > -	start_pfn = valid_start_pfn;
-> > -	nr_pages = valid_end_pfn - start_pfn;
-> > -
-> >  	/*
-> >  	 * Check the existing zone. Make sure that we do that only on the
-> >  	 * online nodes otherwise the page_zone is not reliable
-> >  	 */
-> >  	if (mem->state == MEM_ONLINE) {
-> > +		/*
-> > +		 * The block contains more than one zone can not be offlined.
-> > +		 * This can happen e.g. for ZONE_DMA and ZONE_DMA32
-> > +		 */
-> > +		if (!test_pages_in_a_zone(start_pfn, start_pfn + nr_pages,
-> > +					  &valid_start_pfn, &valid_end_pfn))
-> > +			return sprintf(buf, "none\n");
-> > +		start_pfn = valid_start_pfn;
-> >  		strcat(buf, page_zone(pfn_to_page(start_pfn))->name);
-> >  		goto out;
-> >  	}
-> >  
-> > -	nid = pfn_to_nid(start_pfn);
-> > +	nid = mem->nid;
-> >  	default_zone = zone_for_pfn_range(MMOP_ONLINE_KEEP, nid, start_pfn, nr_pages);
-> >  	strcat(buf, default_zone->name);
-> >  
-> > -- 
-> > 2.16.4
-> 
-> -- 
-> Michal Hocko
-> SUSE Labs
+On 8/28/2018 4:56 PM, Adrian Hunter wrote:
+> On 28/08/18 13:23, Sayali Lokhande wrote:
+>> Hi Adrian,
+>>
+>> On 8/24/2018 2:15 PM, Adrian Hunter wrote:
+>>> On 24/08/18 08:33, Sayali Lokhande wrote:
+>>>> This patch adds configfs support to provision UFS device at
+>>>> runtime. This feature can be primarily useful in factory or
+>>>> assembly line as some devices may be required to be configured
+>>>> multiple times during initial system development phase.
+>>>> Configuration Descriptors can be written multiple times until
+>>>> bConfigDescrLock attribute is zero.
+>>>>
+>>>> Configuration descriptor buffer consists of Device and Unit
+>>>> descriptor configurable parameters which are parsed from vendor
+>>>> specific provisioning file and then passed via configfs node at
+>>>> runtime to provision ufs device.
+>>>> CONFIG_CONFIGFS_FS needs to be enabled for using this feature.
+>>>>
+>>>> Usage:
+>>>> 1) To read current configuration descriptor :
+>>>>      cat /config/XXXX.ufshc/ufs_provision
+>>>> 2) To provision ufs device:
+>>>>      echo <config_desc_buf> > /config/XXXX.ufshc/ufs_provision
+>>>>
+>>>> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
+>>>> ---
+>>>>    Documentation/ABI/testing/configfs-driver-ufs |  18 +++
+>>>>    drivers/scsi/ufs/Kconfig                      |  10 ++
+>>>>    drivers/scsi/ufs/Makefile                     |   1 +
+>>>>    drivers/scsi/ufs/ufs-configfs.c               | 155
+>>>> ++++++++++++++++++++++++++
+>>>>    drivers/scsi/ufs/ufshcd.c                     |   3 +-
+>>>>    drivers/scsi/ufs/ufshcd.h                     |  17 +++
+>>>>    6 files changed, 203 insertions(+), 1 deletion(-)
+>>>>    create mode 100644 Documentation/ABI/testing/configfs-driver-ufs
+>>>>    create mode 100644 drivers/scsi/ufs/ufs-configfs.c
+>>>>
+>>>> diff --git a/Documentation/ABI/testing/configfs-driver-ufs
+>>>> b/Documentation/ABI/testing/configfs-driver-ufs
+>>>> new file mode 100644
+>>>> index 0000000..eeee499c
+>>>> --- /dev/null
+>>>> +++ b/Documentation/ABI/testing/configfs-driver-ufs
+>>>> @@ -0,0 +1,18 @@
+>>>> +What:        /config/ufshcd/ufs_provision
+>>> You are using the device name as the config subsystem name, so this is
+>>> really:
+>>>
+>>>      What:        /config/*/ufs_provision
+>> Agree. Will update.
+>>>> +Date:        Jun 2018
+>>>> +KernelVersion:    4.14
+>>> 4.19 maybe
+>> Done.
+>>>> +Description:
+>>>> +        This file shows the current ufs configuration descriptor set in
+>>>> device.
+>>> It is only the first config descriptor though isn't it?  There is no support
+>>> for the other 3.  Shouldn't we support config descriptors fully?
+>> Yes, we should support config descriptors fully. My current implementation
+>> only supports config desc (index = 00h).
+>> I m thinking I can add separate "index" field along with "ufs_provision"
+>> field and can use this index (instead of hard coding to 0)
+>> to write repective config_desc. In this way, we should first set the "index"
+>> and then read/write to "ufs_provision".
+>> Let me know if you have any concern with this approach ?
+> One file for each config descriptor would seem more normal.
+I can make separate file for each config descriptor index(say 
+ufs_provision_0/1/2/3), but still show() and store() api's can remain 
+common.
+Will try it out and update.
+>>>> +        This can be used to provision ufs device if bConfigDescrLock is 0.
+>>>> +        For more details, refer 14.1.6.3 Configuration Descriptor and
+>>>> +        Table 14-12 - Unit Descriptor configurable parameters from specs
+>>>> for
+>>>> +        description of each configuration descriptor parameter.
+>>>> +        Configuration descriptor buffer needs to be passed in space
+>>>> separated
+>>>> +        format specificied as below:
+>>> specificied -> specified
+>> Done
+>>>> +        echo <bLength> <bDescriptorIDN> <bConfDescContinue> <bBootEnable>
+>>>> +        <bDescrAccessEn> <bInitPowerMode> <bHighPriorityLUN>
+>>>> +        <bSecureRemovalType> <bInitActiveICCLevel> <wPeriodicRTCUpdate>
+>>>> +        <0Bh:0Fh_ReservedAs_0> <bLUEnable> <bBootLunID> <bLUWriteProtect>
+>>>> +        <bMemoryType> <dNumAllocUnits> <bDataReliability>
+>>>> <bLogicalBlockSize>
+>>>> +        <bProvisioningType> <wContextCapabilities> <0Dh:0Fh_ReservedAs_0>
+>>> This format is not exactly correct anymore because each byte has to be
+>>> represented separately.  Also theoretically it can be change, so maybe
+>>> better just to refer the user to the UFS specification.
+>> Agree. Will update to just refer to UFS spec (for Config_desc format).
+>>
+>>>> +        > /config/XXXX.ufshc/ufs_provision
+>>>> diff --git a/drivers/scsi/ufs/Kconfig b/drivers/scsi/ufs/Kconfig
+>>>> index e27b4d4..a9a0a58 100644
+>>>> --- a/drivers/scsi/ufs/Kconfig
+>>>> +++ b/drivers/scsi/ufs/Kconfig
+>>>> @@ -100,3 +100,13 @@ config SCSI_UFS_QCOM
+>>>>            Select this if you have UFS controller on QCOM chipset.
+>>>>          If unsure, say N.
+>>>> +
+>>>> +config UFS_PROVISION
+>>>> +    tristate "Runtime UFS Provisioning support"
+>>>> +    depends on SCSI_UFSHCD && CONFIGFS_FS
+>>>> +    help
+>>>> +      This enables runtime UFS provisioning support. This can be used
+>>>> +      primarily during assembly line as some devices may be required to
+>>>> +      be configured multiple times during initial development phase.
+>>>> +
+>>>> +      If unsure, say N.
+>>>> diff --git a/drivers/scsi/ufs/Makefile b/drivers/scsi/ufs/Makefile
+>>>> index 918f579..00110ea 100644
+>>>> --- a/drivers/scsi/ufs/Makefile
+>>>> +++ b/drivers/scsi/ufs/Makefile
+>>>> @@ -5,5 +5,6 @@ obj-$(CONFIG_SCSI_UFS_DWC_TC_PLATFORM) +=
+>>>> tc-dwc-g210-pltfrm.o ufshcd-dwc.o tc-d
+>>>>    obj-$(CONFIG_SCSI_UFS_QCOM) += ufs-qcom.o
+>>>>    obj-$(CONFIG_SCSI_UFSHCD) += ufshcd-core.o
+>>>>    ufshcd-core-objs := ufshcd.o ufs-sysfs.o
+>>>> +obj-$(CONFIG_UFS_PROVISION) += ufs-configfs.o
+>>>>    obj-$(CONFIG_SCSI_UFSHCD_PCI) += ufshcd-pci.o
+>>>>    obj-$(CONFIG_SCSI_UFSHCD_PLATFORM) += ufshcd-pltfrm.o
+>>>> diff --git a/drivers/scsi/ufs/ufs-configfs.c
+>>>> b/drivers/scsi/ufs/ufs-configfs.c
+>>>> new file mode 100644
+>>>> index 0000000..74563a4
+>>>> --- /dev/null
+>>>> +++ b/drivers/scsi/ufs/ufs-configfs.c
+>>>> @@ -0,0 +1,155 @@
+>>>> +// SPDX-License-Identifier: GPL-2.0+
+>>>> +// Copyright (c) 2018, Linux Foundation.
+>>>> +
+>>>> +#include <linux/configfs.h>
+>>>> +#include <linux/err.h>
+>>>> +#include <linux/string.h>
+>>>> +
+>>>> +#include "ufs.h"
+>>>> +#include "ufshcd.h"
+>>>> +
+>>>> +static inline struct ufs_hba *config_item_to_hba(struct config_item *item)
+>>>> +{
+>>>> +    struct config_group *group = to_config_group(item);
+>>>> +    struct configfs_subsystem *subsys = to_configfs_subsystem(group);
+>>>> +    struct ufs_hba *hba = container_of(subsys, struct ufs_hba, subsys);
+>>>> +
+>>>> +    return subsys ? hba : NULL;
+>>>> +}
+>>>> +
+>>>> +static ssize_t ufs_provision_show(struct config_item *item, char *buf)
+>>>> +{
+>>>> +    u8 desc_buf[QUERY_DESC_CONFIGURATION_DEF_SIZE] = {0};
+>>> Is it really ok to hard-code the descriptor size?
+>> I will use ufshcd_read_desc_length() api for each index as required. Will
+>> remove this hard-code.
+> Alternatively, I see there is already hba->desc_size.conf_desc
+hba->desc_size.conf_desc is actually size for index 0. I thought what if 
+desc size various per index.
+So better to read for each index. What say ?
+>
+>>>> +    int desc_buf_len = QUERY_DESC_CONFIGURATION_DEF_SIZE;
+>>>> +    int i, ret, curr_len = 0;
+>>>> +    struct ufs_hba *hba = config_item_to_hba(item);
+>>>> +
+>>>> +    ret = ufshcd_query_descriptor_retry(hba, UPIU_QUERY_OPCODE_READ_DESC,
+>>>> +        QUERY_DESC_IDN_CONFIGURATION, 0, 0, desc_buf, &desc_buf_len);
+>>>> +
+>>>> +    if (ret)
+>>>> +        return ret;
+>>>> +
+>>>> +    for (i = 0; i < desc_buf_len; i++)
+>>>> +        curr_len += snprintf((buf + curr_len), (PAGE_SIZE - curr_len),
+>>>> +                "0x%x ", desc_buf[i]);
+>>>> +
+>>>> +    return curr_len;
+>>>> +}
+>>>> +
+>>>> +ssize_t ufshcd_desc_configfs_store(struct ufs_hba *hba,
+>>>> +        const char *buf, size_t count)
+>>>> +{
+>>>> +    char *strbuf;
+>>>> +    char *strbuf_copy;
+>>>> +    u8 desc_buf[QUERY_DESC_CONFIGURATION_DEF_SIZE] = {0};
+>>>> +    int desc_buf_len = QUERY_DESC_CONFIGURATION_DEF_SIZE;
+>>>> +    char *token;
+>>>> +    int i, ret, value;
+>>>> +    u32 config_desc_lock = 0;
+>>>> +
+>>>> +    /* reserve one byte for null termination */
+>>>> +    strbuf = kmalloc(count + 1, GFP_KERNEL);
+>>>> +    if (!strbuf)
+>>>> +        return -ENOMEM;
+>>>> +
+>>>> +    strbuf_copy = strbuf;
+>>>> +    strlcpy(strbuf, buf, count + 1);
+>>>> +
+>>>> +    /* Just return if bConfigDescrLock is already set */
+>>>> +    ret = ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_READ_ATTR,
+>>>> +        QUERY_ATTR_IDN_CONF_DESC_LOCK, 0, 0, &config_desc_lock);
+>>>> +    if (ret)
+>>>> +        goto out;
+>>>> +
+>>>> +    if (config_desc_lock) {
+>>>> +        dev_err(hba->dev, "%s: bConfigDescrLock already set to %u,
+>>>> cannot re-provision device!\n",
+>>>> +        __func__, config_desc_lock);
+>>>> +        ret = -EINVAL;
+>>>> +        goto out;
+>>>> +    }
+>>>> +
+>>>> +    for (i = 0; i < QUERY_DESC_CONFIGURATION_DEF_SIZE; i++) {
+>>>> +        token = strsep(&strbuf, " ");
+>>>> +        if (!token && i)
+>>>> +            break;
+>>>> +
+>>>> +        ret = kstrtoint(token, 0, &value);
+>>>> +        if (ret) {
+>>>> +            dev_err(hba->dev, "%s: kstrtoint failed %d %s\n",
+>>>> +                __func__, ret, token);
+>>>> +            ret = -EINVAL;
+>>>> +            goto out;
+>>>> +        }
+>>>> +        desc_buf[i] = (u8)value;
+>>>> +    }
+>>>> +
+>>>> +    /* Write configuration descriptor to provision ufs */
+>>>> +    ret = ufshcd_query_descriptor_retry(hba, UPIU_QUERY_OPCODE_WRITE_DESC,
+>>>> +        QUERY_DESC_IDN_CONFIGURATION, 0, 0, desc_buf, &desc_buf_len);
+>>>> +
+>>>> +    if (!ret)
+>>>> +        dev_info(hba->dev, "%s: UFS Provisioning done, reboot now!\n",
+>>> That is not necessarily true - bConfDescContinue might have been used or
+>>> bConfigDescrLock might need to be set.  Better just to say that
+>>> configuration descriptor 0 was written.
+>> Agree. Will update.
+>>>> +        __func__);
+>>>> +
+>>>> +out:
+>>>> +    kfree(strbuf_copy);
+>>>> +    if (ret)
+>>>> +        return ret;
+>>>> +    return count;
+>>>> +}
+>>>> +
+>>>> +static ssize_t ufs_provision_store(struct config_item *item,
+>>>> +        const char *buf, size_t count)
+>>>> +{
+>>>> +    struct ufs_hba *hba = config_item_to_hba(item);
+>>>> +
+>>>> +    return ufshcd_desc_configfs_store(hba, buf, count);
+>>>> +}
+>>>> +
+>>>> +static struct configfs_attribute ufshcd_attr_provision = {
+>>>> +    .ca_name    = "ufs_provision",
+>>>> +    .ca_mode    = 0644,
+>>>> +    .ca_owner    = THIS_MODULE,
+>>>> +    .show        = ufs_provision_show,
+>>>> +    .store        = ufs_provision_store,
+>>>> +};
+>>>> +
+>>>> +static struct configfs_attribute *ufshcd_attrs[] = {
+>>>> +    &ufshcd_attr_provision,
+>>>> +    NULL,
+>>>> +};
+>>>> +
+>>>> +static struct config_item_type ufscfg_type = {
+>>>> +    .ct_attrs    = ufshcd_attrs,
+>>>> +    .ct_owner    = THIS_MODULE,
+>>>> +};
+>>>> +
+>>>> +static struct configfs_subsystem ufscfg_subsys = {
+>>>> +    .su_group = {
+>>>> +        .cg_item = {
+>>>> +            .ci_type = &ufscfg_type,
+>>>> +        },
+>>>> +    },
+>>>> +};
+>>>> +
+>>>> +void ufshcd_configfs_init(struct ufs_hba *hba, const char *name)
+>>>> +{
+>>>> +    int ret;
+>>>> +    struct configfs_subsystem *subsys = &hba->subsys;
+>>>> +
+>>>> +    strncpy(ufscfg_subsys.su_group.cg_item.ci_namebuf, name, strlen(name));
+>>>> +    subsys->su_group = ufscfg_subsys.su_group;
+>>> configfs_subsystem cannot share su_group with other configfs_subsystem i.e
+>>> you are not allowing for there being more than 1 hba
+>> Agree. I think I will have to move above
+>> declarations(ufscfg_subsys/ufscfg_type/ufshcd_attrs) in driver .c/.h file
+>> (to make it per ufs hba/probe).
+>> Will check and update.
+>>>> +    config_group_init(&subsys->su_group);
+>>>> +    mutex_init(&subsys->su_mutex);
+>>>> +    ret = configfs_register_subsystem(subsys);
+>>>> +    if (ret)
+>>>> +        pr_err("Error %d while registering subsystem %s\n",
+>>>> +               ret,
+>>>> +               subsys->su_group.cg_item.ci_namebuf);
+>>>> +}
+>>>> +
+>>>> +void ufshcd_configfs_exit(void)
+>>>> +{
+>>>> +    configfs_unregister_subsystem(&ufscfg_subsys);
+>>>> +}
+>>>> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+>>>> index e01cdc0..32a67b0 100644
+>>>> --- a/drivers/scsi/ufs/ufshcd.c
+>>>> +++ b/drivers/scsi/ufs/ufshcd.c
+>>>> @@ -7711,6 +7711,7 @@ int ufshcd_shutdown(struct ufs_hba *hba)
+>>>>    void ufshcd_remove(struct ufs_hba *hba)
+>>>>    {
+>>>>        ufs_sysfs_remove_nodes(hba->dev);
+>>>> +    ufshcd_configfs_exit();
+>>>>        scsi_remove_host(hba->host);
+>>>>        /* disable interrupts */
+>>>>        ufshcd_disable_intr(hba, hba->intr_mask);
+>>>> @@ -7965,7 +7966,7 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem
+>>>> *mmio_base, unsigned int irq)
+>>>>          async_schedule(ufshcd_async_scan, hba);
+>>>>        ufs_sysfs_add_nodes(hba->dev);
+>>>> -
+>>>> +    ufshcd_configfs_init(hba, dev_name(hba->dev));
+>>>>        return 0;
+>>>>      out_remove_scsi_host:
+>>>> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+>>>> index 45013b6..2275032 100644
+>>>> --- a/drivers/scsi/ufs/ufshcd.h
+>>>> +++ b/drivers/scsi/ufs/ufshcd.h
+>>>> @@ -37,6 +37,7 @@
+>>>>    #ifndef _UFSHCD_H
+>>>>    #define _UFSHCD_H
+>>>>    +#include <linux/configfs.h>
+>>>>    #include <linux/module.h>
+>>>>    #include <linux/kernel.h>
+>>>>    #include <linux/init.h>
+>>>> @@ -515,6 +516,9 @@ struct ufs_hba {
+>>>>          struct Scsi_Host *host;
+>>>>        struct device *dev;
+>>>> +#ifdef CONFIG_UFS_PROVISION
+>>>> +    struct configfs_subsystem subsys;
+>>>> +#endif
+>>>>        /*
+>>>>         * This field is to keep a reference to "scsi_device" corresponding to
+>>>>         * "UFS device" W-LU.
+>>>> @@ -868,6 +872,19 @@ int ufshcd_read_string_desc(struct ufs_hba *hba, int
+>>>> desc_index,
+>>>>    int ufshcd_hold(struct ufs_hba *hba, bool async);
+>>>>    void ufshcd_release(struct ufs_hba *hba);
+>>>>    +/* Expose UFS configfs API's */
+>>>> +#ifndef CONFIG_UFS_PROVISION
+>>>> +static inline void ufshcd_configfs_init(struct ufs_hba *hba, const char
+>>>> *name)
+>>>> +{
+>>>> +}
+>>>> +static inline void ufshcd_configfs_exit(void)
+>>>> +{
+>>>> +}
+>>>> +#else
+>>>> +void ufshcd_configfs_init(struct ufs_hba *hba, const char *name);
+>>>> +void ufshcd_configfs_exit(void);
+>>>> +#endif
+>>>> +
+>>>>    int ufshcd_map_desc_id_to_length(struct ufs_hba *hba, enum desc_idn
+>>>> desc_id,
+>>>>        int *desc_length);
+>>>>   
+>>
 
--- 
-Michal Hocko
-SUSE Labs
