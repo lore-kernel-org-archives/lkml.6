@@ -2,124 +2,222 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F112CC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 03:07:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B8D0C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 03:14:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90B9D208B9
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 03:07:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C917208D5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 03:14:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XCHP2Qrn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90B9D208B9
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AnlkNqBH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C917208D5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726954AbeH1G4k (ORCPT
+        id S1727024AbeH1HDl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 02:56:40 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:34635 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725832AbeH1G4k (ORCPT
+        Tue, 28 Aug 2018 03:03:41 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:39882 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726181AbeH1HDl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 02:56:40 -0400
-Received: by mail-pf1-f194.google.com with SMTP id k19-v6so95395pfi.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 20:07:10 -0700 (PDT)
+        Tue, 28 Aug 2018 03:03:41 -0400
+Received: by mail-oi0-f68.google.com with SMTP id c190-v6so267476oig.6
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 20:14:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=zf0DU59//PN8Uftc7ir8k0LJw9loa05rEXH1xtoY6Vk=;
-        b=XCHP2Qrnw2eKULxs3XmJR19BEwmhTcbKzeHttlNC9em5bAjT/555pQS0+OI/0cFuQ5
-         GQSSyF2dOLt2hqT3DKuXkCVBl02JjQDmQ8h1ZjqKzDQ3W3G0rtc20AgvnIzvvyi3rEhO
-         9bHlyPI+UJogwtXYXg18e0EyWQZtr5ScRiMEs=
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=LW6wZj0eMcyZEpEPq3ZHe1Rwr7EK6b/x2V0toy2Rqjs=;
+        b=AnlkNqBH9Ou2pZsSjW+GOTiZVDc4XxJihukUiOgTM3rPE5bgdv+Y+9suemNjhBCYro
+         BpP9i4bR8qz7RqjEcQym0A29DCSps7okuyEo0HBabb1F0xVgNIdxVjJiVhVQiBDJz3lx
+         pj6iIUQiK9rBwSeNilsB/Shj16vD/QU8i6zks=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zf0DU59//PN8Uftc7ir8k0LJw9loa05rEXH1xtoY6Vk=;
-        b=bxz93NXG1VlEam/BaiqES6Ox02z32WA5tvFWtIvGPw0hl3L/OGJbRXomc0zJpMja1G
-         Pfkx11pIUm5zx5BAeRCwifarXR8PTKO9KLnvzLua8VHJnXYv/bJ/XqmMipu/9YmtraFY
-         VF4ATwbZckmHVUShjGDAeyOvHyHoPqcOJuTZ2/9SuSaQholtLTio6PqI1APr4uMDcb0/
-         nm522aFwxH3qeJFaRTrxcGiParI1lvfDDnhSGqQY8suFndf/fk3AkQUt9HgKNtDYywNT
-         f9Nbd8//ZJ0RT4bJzeXGPi0CY5mC6UBXbIMl1OW39qND/eYjFQN5bMRC0f9Ue3xVdW8g
-         qVtA==
-X-Gm-Message-State: APzg51CcY5G5BJvp0RnDnor4QVkYHDO948dvoifyI0Q6mlHqjs8IhnoM
-        3ngVxhzDUfTKr4nZ+l84dXCm+g==
-X-Google-Smtp-Source: ANB0VdaQf1oRXlYYUGTmEFmAiTD/3FP/wjvvh6GC4nH7KCUNvu/81p145C6k/gmENr1frhiSTfI7UA==
-X-Received: by 2002:a63:1d3:: with SMTP id 202-v6mr14614706pgb.136.1535425630410;
-        Mon, 27 Aug 2018 20:07:10 -0700 (PDT)
-Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id z22-v6sm774697pgc.67.2018.08.27.20.07.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 27 Aug 2018 20:07:09 -0700 (PDT)
-Date:   Mon, 27 Aug 2018 20:08:47 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, Ohad Ben-Cohen <ohad@wizery.com>,
-        linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH] rpmsg: Convert to using %pOFn instead of device_node.name
-Message-ID: <20180828030847.GH5090@builder>
-References: <20180828015252.28511-1-robh@kernel.org>
- <20180828015252.28511-42-robh@kernel.org>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=LW6wZj0eMcyZEpEPq3ZHe1Rwr7EK6b/x2V0toy2Rqjs=;
+        b=d1BSCBN7M9Odm4mUMyhdgaKZBeHOvFB9PJ3kYnxhaaw2Qbh7kU/tmVqpiHMjinS49K
+         yOcHE904zzKTvE1f1c+4xvp9OGtqZMvOoIDigVaRlIxT5RslXAY1rJSpdTTnwO/GnY5R
+         CJ9WRh8Sy1N6DR1b+xOi5No+4O6r64phvAIq4kdvuYXygP8aDMmKbcKI6SUV4t1Wli9H
+         p5+dqDudLVjwR7SW15hUopKGwRGgSyHOvBJfoxt38qDBDxrIaSzUd4GTe10mCbJqVw3S
+         qgSvFN2SRIGBNAgDsJbHf288iK6iva5Un6+n8hMJZv4eJSXNCgVueLfBIzstARsE+FXU
+         7ReQ==
+X-Gm-Message-State: APzg51BByZUZhCRnmpIoLr/wZeYubuZPvzuW+mEtn5GvDwIvrVSBHNTy
+        hyF57P38Srcpnwl0LdHW+xPO2IcbI5bjs6r3x5MiQA==
+X-Google-Smtp-Source: ANB0VdZopBU1XaYRRsY/GpGj19saq/snpyweXj//v4HmFlstDc5TRCg3Fq4A9PPe7rT4fGFpqHFC7wrnnMxM7riVbAE=
+X-Received: by 2002:aca:be56:: with SMTP id o83-v6mr1319265oif.301.1535426049993;
+ Mon, 27 Aug 2018 20:14:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180828015252.28511-42-robh@kernel.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a9d:29:0:0:0:0:0 with HTTP; Mon, 27 Aug 2018 20:14:09 -0700 (PDT)
+In-Reply-To: <20180825093841.72a5d099@archlinux>
+References: <4a7e33457617e6f0f7c9627fe20ddd3039e4fe82.1535103920.git.baolin.wang@linaro.org>
+ <20180825093841.72a5d099@archlinux>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Tue, 28 Aug 2018 11:14:09 +0800
+Message-ID: <CAMz4kuJnEg4_hDx75w3md2J6E0gJ_2O+iCMe9W_F+EpxJVj-cw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] iio: adc: sc27xx: Add raw data support
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        freeman.liu@spreadtrum.com, Mark Brown <broonie@kernel.org>,
+        DTML <devicetree@vger.kernel.org>, linux-iio@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 27 Aug 18:52 PDT 2018, Rob Herring wrote:
+Hi Jonathan,
 
-> In preparation to remove the node name pointer from struct device_node,
-> convert printf users to use the %pOFn format specifier.
-> 
-> Cc: Ohad Ben-Cohen <ohad@wizery.com>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: linux-remoteproc@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
+On 25 August 2018 at 16:38, Jonathan Cameron <jic23@kernel.org> wrote:
+> On Fri, 24 Aug 2018 17:53:15 +0800
+> Baolin Wang <baolin.wang@linaro.org> wrote:
+>
+>> The headset device will use channel 20 of ADC controller to detect events,
+>> but it needs the raw ADC data to do conversion according to its own formula.
+>>
+>> Thus we should configure the channel mask separately and configure channel
+>> 20 as IIO_CHAN_INFO_RAW, as well as adding raw data read support.
+>
+> So is this a general thing, i.e. that channel is 'meant' to be used for the
+> headset, or just a one off for a particular board?
+> If it is a general thing, than I'm fine with this (unlikely we'll break any
+> other users), but if not we need to find a nicer way to do it.
 
-Applied
+Yes, it is a general thing. Now channel 20 is always used for the headset.
 
-Thanks,
-Bjorn
+> I am a little unclear on how a channel would provide the voltage on it's pin
+> but that could be wrong when used for a different purpose?
+> If it's just a matter of unusual loading characteristics then perhaps that
+> is valid, but I'd like to understand this a little.
 
-> ---
->  drivers/rpmsg/qcom_glink_smem.c | 2 +-
->  drivers/rpmsg/qcom_smd.c        | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/rpmsg/qcom_glink_smem.c b/drivers/rpmsg/qcom_glink_smem.c
-> index 2b5cf2790954..ab23da3d7131 100644
-> --- a/drivers/rpmsg/qcom_glink_smem.c
-> +++ b/drivers/rpmsg/qcom_glink_smem.c
-> @@ -205,7 +205,7 @@ struct qcom_glink *qcom_glink_smem_register(struct device *parent,
->  	dev->parent = parent;
->  	dev->of_node = node;
->  	dev->release = qcom_glink_smem_release;
-> -	dev_set_name(dev, "%s:%s", node->parent->name, node->name);
-> +	dev_set_name(dev, "%pOFn:%pOFn", node->parent, node);
->  	ret = device_register(dev);
->  	if (ret) {
->  		pr_err("failed to register glink edge\n");
-> diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-> index 8da83a4ebadc..0dae7c9f4a8f 100644
-> --- a/drivers/rpmsg/qcom_smd.c
-> +++ b/drivers/rpmsg/qcom_smd.c
-> @@ -1454,7 +1454,7 @@ struct qcom_smd_edge *qcom_smd_register_edge(struct device *parent,
->  	edge->dev.release = qcom_smd_edge_release;
->  	edge->dev.of_node = node;
->  	edge->dev.groups = qcom_smd_edge_groups;
-> -	dev_set_name(&edge->dev, "%s:%s", dev_name(parent), node->name);
-> +	dev_set_name(&edge->dev, "%s:%pOFn", dev_name(parent), node);
->  	ret = device_register(&edge->dev);
->  	if (ret) {
->  		pr_err("failed to register smd edge\n");
-> -- 
-> 2.17.1
-> 
+On our platform, the headset will use this voltage value reading from
+ADC to check the headset events: headset buttons, headset plugin and
+so on.
+
+>>
+>> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+>> ---
+>>  drivers/iio/adc/sc27xx_adc.c |   80 ++++++++++++++++++++++++------------------
+>>  1 file changed, 45 insertions(+), 35 deletions(-)
+>>
+>> diff --git a/drivers/iio/adc/sc27xx_adc.c b/drivers/iio/adc/sc27xx_adc.c
+>> index 2b60efe..153c311 100644
+>> --- a/drivers/iio/adc/sc27xx_adc.c
+>> +++ b/drivers/iio/adc/sc27xx_adc.c
+>> @@ -273,6 +273,17 @@ static int sc27xx_adc_read_raw(struct iio_dev *indio_dev,
+>>       int ret, tmp;
+>>
+>>       switch (mask) {
+>> +     case IIO_CHAN_INFO_RAW:
+>> +             mutex_lock(&indio_dev->mlock);
+>> +             ret = sc27xx_adc_read(data, chan->channel, scale, &tmp);
+>> +             mutex_unlock(&indio_dev->mlock);
+>> +
+>> +             if (ret)
+>> +                     return ret;
+>> +
+>> +             *val = tmp;
+>> +             return IIO_VAL_INT;
+>> +
+>>       case IIO_CHAN_INFO_PROCESSED:
+>>               mutex_lock(&indio_dev->mlock);
+>>               ret = sc27xx_adc_read_processed(data, chan->channel, scale,
+>> @@ -315,48 +326,47 @@ static int sc27xx_adc_write_raw(struct iio_dev *indio_dev,
+>>       .write_raw = &sc27xx_adc_write_raw,
+>>  };
+>>
+>> -#define SC27XX_ADC_CHANNEL(index) {                          \
+>> +#define SC27XX_ADC_CHANNEL(index, mask) {                    \
+>>       .type = IIO_VOLTAGE,                                    \
+>>       .channel = index,                                       \
+>> -     .info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED) |    \
+>> -                           BIT(IIO_CHAN_INFO_SCALE),         \
+>> +     .info_mask_separate = mask | BIT(IIO_CHAN_INFO_SCALE),  \
+>>       .datasheet_name = "CH##index",                          \
+>>       .indexed = 1,                                           \
+>>  }
+>>
+>>  static const struct iio_chan_spec sc27xx_channels[] = {
+>> -     SC27XX_ADC_CHANNEL(0),
+>> -     SC27XX_ADC_CHANNEL(1),
+>> -     SC27XX_ADC_CHANNEL(2),
+>> -     SC27XX_ADC_CHANNEL(3),
+>> -     SC27XX_ADC_CHANNEL(4),
+>> -     SC27XX_ADC_CHANNEL(5),
+>> -     SC27XX_ADC_CHANNEL(6),
+>> -     SC27XX_ADC_CHANNEL(7),
+>> -     SC27XX_ADC_CHANNEL(8),
+>> -     SC27XX_ADC_CHANNEL(9),
+>> -     SC27XX_ADC_CHANNEL(10),
+>> -     SC27XX_ADC_CHANNEL(11),
+>> -     SC27XX_ADC_CHANNEL(12),
+>> -     SC27XX_ADC_CHANNEL(13),
+>> -     SC27XX_ADC_CHANNEL(14),
+>> -     SC27XX_ADC_CHANNEL(15),
+>> -     SC27XX_ADC_CHANNEL(16),
+>> -     SC27XX_ADC_CHANNEL(17),
+>> -     SC27XX_ADC_CHANNEL(18),
+>> -     SC27XX_ADC_CHANNEL(19),
+>> -     SC27XX_ADC_CHANNEL(20),
+>> -     SC27XX_ADC_CHANNEL(21),
+>> -     SC27XX_ADC_CHANNEL(22),
+>> -     SC27XX_ADC_CHANNEL(23),
+>> -     SC27XX_ADC_CHANNEL(24),
+>> -     SC27XX_ADC_CHANNEL(25),
+>> -     SC27XX_ADC_CHANNEL(26),
+>> -     SC27XX_ADC_CHANNEL(27),
+>> -     SC27XX_ADC_CHANNEL(28),
+>> -     SC27XX_ADC_CHANNEL(29),
+>> -     SC27XX_ADC_CHANNEL(30),
+>> -     SC27XX_ADC_CHANNEL(31),
+>> +     SC27XX_ADC_CHANNEL(0, BIT(IIO_CHAN_INFO_PROCESSED)),
+>> +     SC27XX_ADC_CHANNEL(1, BIT(IIO_CHAN_INFO_PROCESSED)),
+>> +     SC27XX_ADC_CHANNEL(2, BIT(IIO_CHAN_INFO_PROCESSED)),
+>> +     SC27XX_ADC_CHANNEL(3, BIT(IIO_CHAN_INFO_PROCESSED)),
+>> +     SC27XX_ADC_CHANNEL(4, BIT(IIO_CHAN_INFO_PROCESSED)),
+>> +     SC27XX_ADC_CHANNEL(5, BIT(IIO_CHAN_INFO_PROCESSED)),
+>> +     SC27XX_ADC_CHANNEL(6, BIT(IIO_CHAN_INFO_PROCESSED)),
+>> +     SC27XX_ADC_CHANNEL(7, BIT(IIO_CHAN_INFO_PROCESSED)),
+>> +     SC27XX_ADC_CHANNEL(8, BIT(IIO_CHAN_INFO_PROCESSED)),
+>> +     SC27XX_ADC_CHANNEL(9, BIT(IIO_CHAN_INFO_PROCESSED)),
+>> +     SC27XX_ADC_CHANNEL(10, BIT(IIO_CHAN_INFO_PROCESSED)),
+>> +     SC27XX_ADC_CHANNEL(11, BIT(IIO_CHAN_INFO_PROCESSED)),
+>> +     SC27XX_ADC_CHANNEL(12, BIT(IIO_CHAN_INFO_PROCESSED)),
+>> +     SC27XX_ADC_CHANNEL(13, BIT(IIO_CHAN_INFO_PROCESSED)),
+>> +     SC27XX_ADC_CHANNEL(14, BIT(IIO_CHAN_INFO_PROCESSED)),
+>> +     SC27XX_ADC_CHANNEL(15, BIT(IIO_CHAN_INFO_PROCESSED)),
+>> +     SC27XX_ADC_CHANNEL(16, BIT(IIO_CHAN_INFO_PROCESSED)),
+>> +     SC27XX_ADC_CHANNEL(17, BIT(IIO_CHAN_INFO_PROCESSED)),
+>> +     SC27XX_ADC_CHANNEL(18, BIT(IIO_CHAN_INFO_PROCESSED)),
+>> +     SC27XX_ADC_CHANNEL(19, BIT(IIO_CHAN_INFO_PROCESSED)),
+>> +     SC27XX_ADC_CHANNEL(20, BIT(IIO_CHAN_INFO_RAW)),
+>> +     SC27XX_ADC_CHANNEL(21, BIT(IIO_CHAN_INFO_PROCESSED)),
+>> +     SC27XX_ADC_CHANNEL(22, BIT(IIO_CHAN_INFO_PROCESSED)),
+>> +     SC27XX_ADC_CHANNEL(23, BIT(IIO_CHAN_INFO_PROCESSED)),
+>> +     SC27XX_ADC_CHANNEL(24, BIT(IIO_CHAN_INFO_PROCESSED)),
+>> +     SC27XX_ADC_CHANNEL(25, BIT(IIO_CHAN_INFO_PROCESSED)),
+>> +     SC27XX_ADC_CHANNEL(26, BIT(IIO_CHAN_INFO_PROCESSED)),
+>> +     SC27XX_ADC_CHANNEL(27, BIT(IIO_CHAN_INFO_PROCESSED)),
+>> +     SC27XX_ADC_CHANNEL(28, BIT(IIO_CHAN_INFO_PROCESSED)),
+>> +     SC27XX_ADC_CHANNEL(29, BIT(IIO_CHAN_INFO_PROCESSED)),
+>> +     SC27XX_ADC_CHANNEL(30, BIT(IIO_CHAN_INFO_PROCESSED)),
+>> +     SC27XX_ADC_CHANNEL(31, BIT(IIO_CHAN_INFO_PROCESSED)),
+>>  };
+>>
+>>  static int sc27xx_adc_enable(struct sc27xx_adc_data *data)
+>
+
+
+
+-- 
+Baolin Wang
+Best Regards
