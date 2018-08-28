@@ -2,88 +2,109 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9A63C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:00:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13C68C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:01:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89A6F20894
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:00:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LV9YdzBA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89A6F20894
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id C94EF20880
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:01:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C94EF20880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727451AbeH1UxD (ORCPT
+        id S1727449AbeH1Ux7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 16:53:03 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:44886 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727111AbeH1UxD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 16:53:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
-        Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=6OQe5umM4vsr3Ys6LjksuDKcG4Lt0oy+o0PtgpiBdXk=; b=LV9YdzBA8nGqdjbplg1km5UU2f
-        zT6hRSD9j4URp48w8+eJASDOsIUGMToMr2CZ0EzkJ4C17VPyLWbB/Vx9LCmmAHqxPmFNI8lPY9R9D
-        W2w+E6i9K6oBOBZC7+7XVYbUvcn8OFuiwuvxjo94fN8pv/kwWvtLn3Pdiyo0l7yQo4zpueCirMgE5
-        fl0UButOJ/5of4lPX7zkNscZPA+o5FtxKfjqtLYR81Xi45ww7OKt3iE9YCzyphc0c1/Bs7N2tyGpM
-        cOmXSpTQpoiZse4bg3pMwCgSXUbv2T8530rtI9KWSR2p1uWir56/IGPl+3IAL2wYGxY6DtBTRA0t0
-        CJCBNHHw==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fuhLw-0001xQ-LC; Tue, 28 Aug 2018 17:00:28 +0000
-Subject: Re: Bug in /drivers/scsi/3w-9xxx.h
-To:     Frank Kammer <frank.kammer@mni.thm.de>,
-        linux-kernel@vger.kernel.org,
-        linux-scsi <linux-scsi@vger.kernel.org>
-References: <491de4ae-0ba3-0fce-a400-3ebb41e21ac4@mni.thm.de>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <e79d43eb-38cb-8975-08c9-c3937a1276c2@infradead.org>
-Date:   Tue, 28 Aug 2018 10:00:24 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 28 Aug 2018 16:53:59 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42560 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727054AbeH1Ux6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 16:53:58 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D780180D;
+        Tue, 28 Aug 2018 10:01:24 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A8FFB3F5BD;
+        Tue, 28 Aug 2018 10:01:24 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 3E9131AE311D; Tue, 28 Aug 2018 18:01:36 +0100 (BST)
+Date:   Tue, 28 Aug 2018 18:01:36 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+        catalin.marinas@arm.com, herbert@gondor.apana.org.au,
+        ebiggers@google.com, suzuki.poulose@arm.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] arm64: cpufeature: add feature for CRC32 instructions
+Message-ID: <20180828170135.GC19825@arm.com>
+References: <20180827110245.14812-1-ard.biesheuvel@linaro.org>
+ <20180827110245.14812-3-ard.biesheuvel@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <491de4ae-0ba3-0fce-a400-3ebb41e21ac4@mni.thm.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180827110245.14812-3-ard.biesheuvel@linaro.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[add linux-scsi list]
-
-On 08/28/2018 05:23 AM, Frank Kammer wrote:
-> Hello,
+On Mon, Aug 27, 2018 at 01:02:43PM +0200, Ard Biesheuvel wrote:
+> Add a CRC32 feature bit and wire it up to the CPU id register so we
+> will be able to use alternatives patching for CRC32 operations.
 > 
-> I have a 3ware 9650SE RAID-Controller with 20 LUNs. Using an unpachted
-> kernel (no matter which version, e.g., 4.12.14) , only 17 LUNs are shown.
-> 
-> The problem is that the driver was once written for a 3ware 9550SE
-> RAID-Controlle that supports only 16 LUNs.
-> There are some changes in driver to allow 32 LUNs, but one change is
-> forgotten: 
-> 
-> In drivers/scsi/3w-9xxx.h, one must replace the following:
-> 
-> 467c467
-> < #define TW_MAX_LUNS(srl) (srl < TW_FW_SRL_LUNS_SUPPORTED ? 1 : 16)
+> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 > ---
->> #define TW_MAX_LUNS(srl) (srl < TW_FW_SRL_LUNS_SUPPORTED ? 1 : 32)
-> 
-> Best regards,
-> Frank Kammer
-> 
+>  arch/arm64/include/asm/cpucaps.h | 3 ++-
+>  arch/arm64/kernel/cpufeature.c   | 9 +++++++++
+>  2 files changed, 11 insertions(+), 1 deletion(-)
+
+Acked-by: Will Deacon <will.deacon@arm.com>
+
+With the minor caveat below...
+
+> diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
+> index ae1f70450fb2..9932aca9704b 100644
+> --- a/arch/arm64/include/asm/cpucaps.h
+> +++ b/arch/arm64/include/asm/cpucaps.h
+> @@ -51,7 +51,8 @@
+>  #define ARM64_SSBD				30
+>  #define ARM64_MISMATCHED_CACHE_TYPE		31
+>  #define ARM64_HAS_STAGE2_FWB			32
+> +#define ARM64_HAS_CRC32				33
+>  
+> -#define ARM64_NCAPS				33
+> +#define ARM64_NCAPS				34
 
 
--- 
-~Randy
+... if this goes via crypto, you'll almost certainly get a (trivial)
+conflict with arm64, since these numbers get bumped all the time.
+
+Will
+
+>  #endif /* __ASM_CPUCAPS_H */
+> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> index e238b7932096..7626b80128f5 100644
+> --- a/arch/arm64/kernel/cpufeature.c
+> +++ b/arch/arm64/kernel/cpufeature.c
+> @@ -1222,6 +1222,15 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+>  		.cpu_enable = cpu_enable_hw_dbm,
+>  	},
+>  #endif
+> +	{
+> +		.desc = "CRC32 instructions",
+> +		.capability = ARM64_HAS_CRC32,
+> +		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
+> +		.matches = has_cpuid_feature,
+> +		.sys_reg = SYS_ID_AA64ISAR0_EL1,
+> +		.field_pos = ID_AA64ISAR0_CRC32_SHIFT,
+> +		.min_field_value = 1,
+> +	},
+>  	{},
+>  };
+>  
+> -- 
+> 2.18.0
+> 
