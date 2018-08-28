@@ -4,59 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5388C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 09:41:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D65BC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 09:41:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E5812089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 09:41:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9CFB208A6
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 09:41:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="K7DgoVj8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E5812089E
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="aGS7c8/s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9CFB208A6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727453AbeH1Ncf (ORCPT
+        id S1727535AbeH1Ncn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 09:32:35 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44784 "EHLO
+        Tue, 28 Aug 2018 09:32:43 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:33535 "EHLO
         mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727130AbeH1Ncf (ORCPT
+        with ESMTP id S1727130AbeH1Ncm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 09:32:35 -0400
-Received: by mail-wr1-f65.google.com with SMTP id v16-v6so915009wro.11
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 02:41:46 -0700 (PDT)
+        Tue, 28 Aug 2018 09:32:42 -0400
+Received: by mail-wr1-f65.google.com with SMTP id v90-v6so941545wrc.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 02:41:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ZhPS8aKWZHYYGJDbC8vwHCt0WY7YA5vftpevadBx97w=;
-        b=K7DgoVj8B2c94KzxsFLciUUUVbJs9GG+54y9l44xJv0cIGKEsWtmJ6asfgtAuJRNWG
-         3YWTqiKNWfRuzi4MGrLExpWGQh33pnpPC31fZLOE1iAYaZnvNBt/3EJXVAqNj7ZSE+GI
-         BMJhuQNbkhunybgsu80wI2MVHZF+0+S2fKypURC6G8Pc77I+SuMexD717Ca3+aF+LLbe
-         UzJnEY249o+9lwmLaJUX6IZQ3YbgBPFpZpqVHYRbpKuZno3BH9GupI4N9Roz4FVRGDCH
-         96bpEf6CsVsmyV6piYYOMmj0WwEH7xTECiwsKNNBE6PoyKyKGeFQ9Ba7YdipTSodR1f+
-         fs9w==
+        h=from:to:cc:subject:date:message-id;
+        bh=ExI13v1fJqqBjr18SDJMb+h91Mx/RUyY7N4pHJEIe+U=;
+        b=aGS7c8/sWgPucAXuByklIY7H6PxlaOy5dXUXvzraR46pvE1SGdgY7map7lOePJqY8e
+         H4YHI8zVpUPfcIWZgUNxnr9GOChT2mMujMCd9a6BxBHeUsIFJ3uvPFmKNcmQznXO5Dyd
+         DT1lKtveROdAoyAlsA1Ctl7hE1hd1P4nmQ4CRJt8rPjHoSeR8Jly9bAUkPIwaF7E3J+f
+         JiOm2xhpXseoEUY0P9qAksb1wzvLn2Gag/EzucnwLO3M/h4XWcWo+XDX4T8HDDOjjK7x
+         QEILVxDygb9T925HKprjiFKpGLKps9rP2w4LXVtLTXeNuRYzsgdMDwzp85AaDkeBp5Ze
+         pM3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=ZhPS8aKWZHYYGJDbC8vwHCt0WY7YA5vftpevadBx97w=;
-        b=cKzeitQx+SE1LnHQEoSxGL7e6TugKMB0kWREgrskYaWBTEwqhI11CSWj53U4QGfGAl
-         0VAII1bwNnvD17zZHoeEUO/Gjl7FyycOxOr1NPos+YqrMnxHQ7EP/yg0h1jouXL92UHg
-         vrW3RlPwBliIgNIVpjRcNlt35tcfpOi5stxM+NanNWbm5z87AYitEp5I06+lxVtTxtpN
-         GbbO0iQAFEM/HHSkLXZVEED9amb3+XNL48Yd9hpcPnHJlDKayY/mqPW0Oaz0ayLhWpvv
-         +KFcFzbudAm7lkoNetCT7xwtZkkqhPD/Yt4u7s3d9pOXzzlbTHVtFXbVn6MrISBQs1q2
-         WmmA==
-X-Gm-Message-State: APzg51AIFe2bGUEbTppcmSNIT3BcFV4/5rpDT86/yzxlOgC/ITvuHvUM
-        r6WHqLg55baaa8zYUoCy+AGbyA==
-X-Google-Smtp-Source: ANB0VdazQ1b4GJa2MqkcHdXAY4E48XRwkQi/Vh5haOo3iQRppCTAdopcVEtiX1xS13EEr5bEkgPC0A==
-X-Received: by 2002:adf:e8c1:: with SMTP id k1-v6mr539276wrn.43.1535448849697;
-        Tue, 28 Aug 2018 02:34:09 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ExI13v1fJqqBjr18SDJMb+h91Mx/RUyY7N4pHJEIe+U=;
+        b=sYfowR6N/RecIaqTZlB9A+tDryJwMtosZ0XUXyXxui1gk9DUHTDjeq9scmfmIf2FRB
+         q56+3p4+Uvyxcq/JQG23KneIXxcP1WEMnkPUmKDO/SZRHoEbrRWmd1aObQiZkeeEoSyS
+         qQswAbCgjXBAHyiE/FoBmUFbPScGjlyLaq8PwN1ZiVocCGkG+ylmp+WvTrvBgiS+CLWm
+         cnlBRGxIMngFhMbse4NLcQoOc3ctol5Dq3jptj5hztQV0UYgMEQqjPuxhjGVtr9WME24
+         VKWf27cEs9rL6NZYU9UQE0oVkpSDI6bHRgagjJc6w0mTBTIzegLRRlwrXtoj16yrXYDg
+         3SKw==
+X-Gm-Message-State: APzg51AjNiCizvA5lO6LHFsb9U94kbJ/lK2dVOiRX+MDo7Scm0vxvVRW
+        FyCOT4HfJi2gwB40X7rj8aqsxQ==
+X-Google-Smtp-Source: ANB0VdYa5AF38DRseFlTuOWHQN7gTWlFUJ1y07mwmkWFARomcv5Lg5daORMRcRAwRjs0rUdd744RVQ==
+X-Received: by 2002:adf:9b9b:: with SMTP id d27-v6mr568289wrc.240.1535448844824;
+        Tue, 28 Aug 2018 02:34:04 -0700 (PDT)
 Received: from brgl-bgdev.home ([2a01:cb1d:af:5b00:e837:b8d5:48c1:571b])
-        by smtp.gmail.com with ESMTPSA id l18-v6sm952276wru.75.2018.08.28.02.34.08
+        by smtp.gmail.com with ESMTPSA id l18-v6sm952276wru.75.2018.08.28.02.34.02
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 Aug 2018 02:34:09 -0700 (PDT)
+        Tue, 28 Aug 2018 02:34:04 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -80,107 +79,37 @@ To:     Michael Turquette <mturquette@baylibre.com>,
         Arnd Bergmann <arnd@arndb.de>
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v2 3/4] devres: provide devm_kstrdup_const()
-Date:   Tue, 28 Aug 2018 11:33:31 +0200
-Message-Id: <20180828093332.20674-4-brgl@bgdev.pl>
+Subject: [PATCH v2 0/4] devres: provide and use devm_kstrdup_const()
+Date:   Tue, 28 Aug 2018 11:33:28 +0200
+Message-Id: <20180828093332.20674-1-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180828093332.20674-1-brgl@bgdev.pl>
-References: <20180828093332.20674-1-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide a resource managed version of kstrdup_const(). This variant
-internally calls devm_kstrdup() on pointers that are outside of
-.rodata section and returns the string as is otherwise.
+This series implements devm_kstrdup_const() together with some
+prerequisite changes and uses it in pmc-atom driver.
 
-Also provide a corresponding version of devm_kfree().
+v1 -> v2:
+- fixed the changelog in the patch implementing devm_kstrdup_const()
+- fixed the kernel doc
+- moved is_kernel_rodata() to asm-generic/sections.h
+- fixed constness
 
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
----
- drivers/base/devres.c  | 38 ++++++++++++++++++++++++++++++++++++++
- include/linux/device.h |  3 +++
- 2 files changed, 41 insertions(+)
+Bartosz Golaszewski (4):
+  devres: constify p in devm_kfree()
+  mm: move is_kernel_rodata() to asm-generic/sections.h
+  devres: provide devm_kstrdup_const()
+  clk: pmc-atom: use devm_kstrdup_const()
 
-diff --git a/drivers/base/devres.c b/drivers/base/devres.c
-index 438c91a43508..48185d57bc5b 100644
---- a/drivers/base/devres.c
-+++ b/drivers/base/devres.c
-@@ -11,6 +11,8 @@
- #include <linux/slab.h>
- #include <linux/percpu.h>
- 
-+#include <asm/sections.h>
-+
- #include "base.h"
- 
- struct devres_node {
-@@ -822,6 +824,28 @@ char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp)
- }
- EXPORT_SYMBOL_GPL(devm_kstrdup);
- 
-+/**
-+ * devm_kstrdup_const - resource managed conditional string duplication
-+ * @dev: device for which to duplicate the string
-+ * @s: the string to duplicate
-+ * @gfp: the GFP mask used in the kmalloc() call when allocating memory
-+ *
-+ * Strings allocated by devm_kstrdup_const will be automatically freed when
-+ * the associated device is detached.
-+ *
-+ * RETURNS:
-+ * Source string if it is in .rodata section otherwise it falls back to
-+ * devm_kstrdup.
-+ */
-+const char *devm_kstrdup_const(struct device *dev, const char *s, gfp_t gfp)
-+{
-+	if (is_kernel_rodata((unsigned long)s))
-+		return s;
-+
-+	return devm_kstrdup(dev, s, gfp);
-+}
-+EXPORT_SYMBOL(devm_kstrdup_const);
-+
- /**
-  * devm_kvasprintf - Allocate resource managed space and format a string
-  *		     into that.
-@@ -895,6 +919,20 @@ void devm_kfree(struct device *dev, const void *p)
- }
- EXPORT_SYMBOL_GPL(devm_kfree);
- 
-+/**
-+ * devm_kfree_const - Resource managed conditional kfree
-+ * @dev: device this memory belongs to
-+ * @p: memory to free
-+ *
-+ * Function calls devm_kfree only if @p is not in .rodata section.
-+ */
-+void devm_kfree_const(struct device *dev, const void *p)
-+{
-+	if (!is_kernel_rodata((unsigned long)p))
-+		devm_kfree(dev, p);
-+}
-+EXPORT_SYMBOL(devm_kfree_const);
-+
- /**
-  * devm_kmemdup - Resource-managed kmemdup
-  * @dev: Device this memory belongs to
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 33f7cb271fbb..79ccc6eb0975 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -693,7 +693,10 @@ static inline void *devm_kcalloc(struct device *dev,
- 	return devm_kmalloc_array(dev, n, size, flags | __GFP_ZERO);
- }
- extern void devm_kfree(struct device *dev, const void *p);
-+extern void devm_kfree_const(struct device *dev, const void *p);
- extern char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp) __malloc;
-+extern const char *devm_kstrdup_const(struct device *dev,
-+				      const char *s, gfp_t gfp);
- extern void *devm_kmemdup(struct device *dev, const void *src, size_t len,
- 			  gfp_t gfp);
- 
+ drivers/base/devres.c          | 43 ++++++++++++++++++++++++++++++++--
+ drivers/clk/x86/clk-pmc-atom.c | 19 ++++-----------
+ include/asm-generic/sections.h | 14 +++++++++++
+ include/linux/device.h         |  5 +++-
+ mm/util.c                      |  7 ------
+ 5 files changed, 63 insertions(+), 25 deletions(-)
+
 -- 
 2.18.0
 
