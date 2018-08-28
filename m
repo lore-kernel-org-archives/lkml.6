@@ -2,109 +2,177 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13C68C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:01:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AA19C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:01:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C94EF20880
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:01:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C94EF20880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 18DB120894
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:01:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GQJv5OFr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18DB120894
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727449AbeH1Ux7 (ORCPT
+        id S1727529AbeH1UyR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 16:53:59 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42560 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727054AbeH1Ux6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 16:53:58 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D780180D;
-        Tue, 28 Aug 2018 10:01:24 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A8FFB3F5BD;
-        Tue, 28 Aug 2018 10:01:24 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 3E9131AE311D; Tue, 28 Aug 2018 18:01:36 +0100 (BST)
-Date:   Tue, 28 Aug 2018 18:01:36 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-        catalin.marinas@arm.com, herbert@gondor.apana.org.au,
-        ebiggers@google.com, suzuki.poulose@arm.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] arm64: cpufeature: add feature for CRC32 instructions
-Message-ID: <20180828170135.GC19825@arm.com>
-References: <20180827110245.14812-1-ard.biesheuvel@linaro.org>
- <20180827110245.14812-3-ard.biesheuvel@linaro.org>
+        Tue, 28 Aug 2018 16:54:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53016 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727054AbeH1UyR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 16:54:17 -0400
+Received: from localhost (unknown [104.132.1.88])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3610720880;
+        Tue, 28 Aug 2018 17:01:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535475703;
+        bh=gN5z6y+wkGwMx5RrIifkz0+LJb7+v8SmzU1OVEqROjw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GQJv5OFrEKbraI8DiPPy8wAU9G8s6hFHnKjj8Qe3J0CQCdthWWZe+NBFZ/ephAq57
+         NMq/oJzEXBHjZMMCDNmnZ+nRKqmNysCA6y0ac7YYNU5Kt2UVyjsI19GtQlOziVhNWO
+         ZZH27PKlvn92AClcGIM/MCi2/BsyRYgGIjSA/Kuo=
+Date:   Tue, 28 Aug 2018 10:01:42 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     Chao Yu <chao@kernel.org>, Eric Biggers <ebiggers@kernel.org>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Michael Halcrow <mhalcrow@google.com>,
+        linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Victor Hsieh <victorhsieh@google.com>
+Subject: Re: [f2fs-dev] [RFC PATCH 10/10] f2fs: fs-verity support
+Message-ID: <20180828170142.GB62482@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180824161642.1144-1-ebiggers@kernel.org>
+ <20180824161642.1144-11-ebiggers@kernel.org>
+ <b2b6a810-9605-15c8-b905-a4591c0cf3a5@huawei.com>
+ <20180826173507.GC728@sol.localdomain>
+ <dbc20be8-975d-7bd2-002d-a8f30896da4a@kernel.org>
+ <20180828072756.GC29049@jaegeuk-macbookpro.roam.corp.google.com>
+ <63a19512-e938-d239-9e3c-f6ecc479478c@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180827110245.14812-3-ard.biesheuvel@linaro.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <63a19512-e938-d239-9e3c-f6ecc479478c@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 01:02:43PM +0200, Ard Biesheuvel wrote:
-> Add a CRC32 feature bit and wire it up to the CPU id register so we
-> will be able to use alternatives patching for CRC32 operations.
+On 08/28, Chao Yu wrote:
+> On 2018/8/28 15:27, Jaegeuk Kim wrote:
+> > On 08/27, Chao Yu wrote:
+> >> Hi Eric,
+> >>
+> >> On 2018/8/27 1:35, Eric Biggers wrote:
+> >>> Hi Chao,
+> >>>
+> >>> On Sat, Aug 25, 2018 at 01:54:08PM +0800, Chao Yu wrote:
+> >>>> On 2018/8/25 0:16, Eric Biggers wrote:
+> >>>>> From: Eric Biggers <ebiggers@google.com>
+> >>>>>  #ifdef CONFIG_F2FS_CHECK_FS
+> >>>>>  #define f2fs_bug_on(sbi, condition)	BUG_ON(condition)
+> >>>>>  #else
+> >>>>> @@ -146,7 +149,7 @@ struct f2fs_mount_info {
+> >>>>>  #define F2FS_FEATURE_QUOTA_INO		0x0080
+> >>>>>  #define F2FS_FEATURE_INODE_CRTIME	0x0100
+> >>>>>  #define F2FS_FEATURE_LOST_FOUND		0x0200
+> >>>>> -#define F2FS_FEATURE_VERITY		0x0400	/* reserved */
+> >>>>> +#define F2FS_FEATURE_VERITY		0x0400
+> >>>>>  
+> >>>>>  #define F2FS_HAS_FEATURE(sb, mask)					\
+> >>>>>  	((F2FS_SB(sb)->raw_super->feature & cpu_to_le32(mask)) != 0)
+> >>>>> @@ -598,7 +601,7 @@ enum {
+> >>>>>  #define FADVISE_ENC_NAME_BIT	0x08
+> >>>>>  #define FADVISE_KEEP_SIZE_BIT	0x10
+> >>>>>  #define FADVISE_HOT_BIT		0x20
+> >>>>> -#define FADVISE_VERITY_BIT	0x40	/* reserved */
+> >>>>> +#define FADVISE_VERITY_BIT	0x40
+> >>>>
+> >>>> As I suggested before, how about moving f2fs' verity_bit from i_fadvise to more
+> >>>> generic i_flags field like ext4, so we can a) remaining more bits for those
+> >>>> demands which really need file advise fields. b) using i_flags bits keeping line
+> >>>> with ext4. Not sure, if user want to know whether the file is verity one, it
+> >>>> will be easy for f2fs to export the status through FS_IOC_SETFLAGS.
+> >>>>
+> >>>> #define EXT4_VERITY_FL			0x00100000 /* Verity protected inode */
+> >>>>
+> >>>> #define F2FS_VERITY_FL			0x00100000 /* Verity protected inode */
+> >>>>
+> >>>
+> >>> I don't like using i_advise much either, but I actually don't see either
+> >>> location being much better than the other at the moment.  The real problem is an
+> >>> artificial one: the i_flags in f2fs's on-disk format are being assumed to use
+> >>
+> >> Yeah, but since most copied flags from vfs/ext4 are not actually used in f2fs,
+> >> also 0x00100000 bit is not used now, so we can just define it now directly for
+> >> verity bit.
+> >>
+> >> Cleanup and remapping in ioctl interface for those unused flags, we can do it
+> >> latter?
+> > 
+> > No, it was reserved by f2fs-tools, 
 > 
-> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> ---
->  arch/arm64/include/asm/cpucaps.h | 3 ++-
->  arch/arm64/kernel/cpufeature.c   | 9 +++++++++
->  2 files changed, 11 insertions(+), 1 deletion(-)
+> That's not a problem, since we didn't use that reserved bit in any of images
+> now, there is no backward compatibility issue.
 
-Acked-by: Will Deacon <will.deacon@arm.com>
+We're using that.
 
-With the minor caveat below...
-
-> diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
-> index ae1f70450fb2..9932aca9704b 100644
-> --- a/arch/arm64/include/asm/cpucaps.h
-> +++ b/arch/arm64/include/asm/cpucaps.h
-> @@ -51,7 +51,8 @@
->  #define ARM64_SSBD				30
->  #define ARM64_MISMATCHED_CACHE_TYPE		31
->  #define ARM64_HAS_STAGE2_FWB			32
-> +#define ARM64_HAS_CRC32				33
->  
-> -#define ARM64_NCAPS				33
-> +#define ARM64_NCAPS				34
-
-
-... if this goes via crypto, you'll almost certainly get a (trivial)
-conflict with arm64, since these numbers get bumped all the time.
-
-Will
-
->  #endif /* __ASM_CPUCAPS_H */
-> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> index e238b7932096..7626b80128f5 100644
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@ -1222,6 +1222,15 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
->  		.cpu_enable = cpu_enable_hw_dbm,
->  	},
->  #endif
-> +	{
-> +		.desc = "CRC32 instructions",
-> +		.capability = ARM64_HAS_CRC32,
-> +		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
-> +		.matches = has_cpuid_feature,
-> +		.sys_reg = SYS_ID_AA64ISAR0_EL1,
-> +		.field_pos = ID_AA64ISAR0_CRC32_SHIFT,
-> +		.min_field_value = 1,
-> +	},
->  	{},
->  };
->  
-> -- 
-> 2.18.0
 > 
+> > and I think this should be aligned to the encryption bit. 
+> 
+> Alright, we could, but if so, i_advise will run out of space earlier, after that
+> we have to add real advice bit into i_inline or i_flags, that would be a little
+> weird.
+> 
+> For encryption bit, as a common vfs feature flag, in the beginning of encryption
+> development, it will be better to set it into i_flags, IMO, but now, we have to
+> keep it as it was.
+> 
+> > Moreover, we guarantee i_flags less strictly from power-cut than i_advise.
+> 
+> IMO, in power-cut scenario, it needs to keep both i_flags and i_advise being
+> recoverable strictly. Any condition that we can not recover i_flags?
+
+In __f2fs_ioc_setflags, f2fs_mark_inode_dirty_sync(inode, false);
+
+> 
+> Thanks,
+> 
+> > 
+> >>
+> >> Thanks,
+> >>
+> >>> the same numbering scheme as ext4's on-disk format, which makes it seem that
+> >>> they have to be in sync, and that all new ext4 flags (say, EA_INODE) also
+> >>> reserve bits in f2fs and vice versa, when they in fact do not.  Instead, f2fs
+> >>> should use its own numbering for its i_flags, and it should map them to/from
+> >>> whatever is needed for common APIs like FS_IOC_{GET,SET}FLAGS and
+> >>> FS_IOC_FS{GET,SET}XATTR.
+> >>>
+> >>> So putting the verity flag in *either* location (i_advise or i_flags) is just
+> >>> kicking the can down the road.  If I get around to it I will send a patch that
+> >>> cleans up the f2fs flags properly...>
+> >>> Thanks,
+> >>>
+> >>> - Eric
+> >>>
+> >>> ------------------------------------------------------------------------------
+> >>> Check out the vibrant tech community on one of the world's most
+> >>> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> >>> _______________________________________________
+> >>> Linux-f2fs-devel mailing list
+> >>> Linux-f2fs-devel@lists.sourceforge.net
+> >>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> >>>
+> > 
+> > .
+> > 
