@@ -2,102 +2,164 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59ED7C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:57:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE564C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:58:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 154082089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:57:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 154082089E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3AB7B2089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:58:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B1fpCNyz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AB7B2089E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727540AbeH1Mro (ORCPT
+        id S1727546AbeH1Msg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 08:47:44 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50534 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726954AbeH1Mro (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 08:47:44 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 216B28E67D;
-        Tue, 28 Aug 2018 08:57:05 +0000 (UTC)
-Received: from krava (unknown [10.43.17.209])
-        by smtp.corp.redhat.com (Postfix) with SMTP id D2CEF2026E18;
-        Tue, 28 Aug 2018 08:57:03 +0000 (UTC)
-Date:   Tue, 28 Aug 2018 10:57:03 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 2/2]: perf record: enable asynchronous trace writing
-Message-ID: <20180828085703.GG23727@krava>
-References: <bdd669cd-a6dc-d592-4655-33b7bfc46cbb@linux.intel.com>
- <6f83f9cd-263e-b073-487f-4c7570105a7d@linux.intel.com>
+        Tue, 28 Aug 2018 08:48:36 -0400
+Received: from mail-io0-f170.google.com ([209.85.223.170]:40984 "EHLO
+        mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726954AbeH1Msg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 08:48:36 -0400
+Received: by mail-io0-f170.google.com with SMTP id q4-v6so753859iob.8
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 01:57:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:subject:to:cc:message-id:date:user-agent:mime-version
+         :content-transfer-encoding:content-language;
+        bh=kRGWbF5PV5VDlUc4xRxBoDDyYAs513RXkWYqdr5OSQ4=;
+        b=B1fpCNyzknO5YHF7ETrKTJlBPaYX0TYcJiHwXtVd1IpD6t+SVWzSDfvf9hvRms/JLJ
+         rhqhunl1tiyhDkujTH4hmo+pDy/Z6j2r9wresi6IC4SZSH+YSRJ90vHR1j8blrdRrfW0
+         rfWKVyYT8jS2n8aTyWjsCeZxY0xPhiPtrVhKMp1VmJbrwzObS8waNATNM0viaWKp3y43
+         RRP5rfvD0ihhaUEf7AQc4KHURydZnHjaASxjlL3qAqBsy22Qo4SsTKPH0Pzuet+SdbTZ
+         3leysOvm4maMqH/IWAU35FMjSTiQMXn0NcyThkK4qGZlvC/peHl1Yz9YiGTxVnVez1RX
+         ki5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
+         :mime-version:content-transfer-encoding:content-language;
+        bh=kRGWbF5PV5VDlUc4xRxBoDDyYAs513RXkWYqdr5OSQ4=;
+        b=iEaj6Jia/OQHfxs/QEdioKOTCWt/IGo8zJvp7NLSXtTUUA7CRWyi00H7DMl/lWfAEp
+         eqEiTSzM2zzmAcEOCEmklj0qu61ve3Y9CHZmE8EGU2zvRPS7dUkv7OzrXteK3IAi2cnw
+         QEI+eeoNrwJMkSEHA8tcGWrXebW6btiWYVBxkzPa/cfa9wqUPqUOm0RBlp0Lm+peYhHy
+         F0usH3Jw1ptTNvl2gJlK9W2fFcTd+reyloonjfXca5IvOssZb34bksNROj/4P8JlJ63U
+         bbvJLiQYGJGYZWEaMSTlIINz9kqZ8LHT376RHPdvOzFkuTX6OUvo4q6bb4tLRXeovSjy
+         9H0A==
+X-Gm-Message-State: APzg51B8QBuqttjAtjScd+BBfKn20ycMqDF2NFf0WE/+DATBBSf5vDXf
+        glYxzTW+MDmE5r5JfU8VSaNmsobr
+X-Google-Smtp-Source: ANB0VdamsR+Er783mK0asmVStioxAtoIgFhmgFwLsiBPV1nnz3CRHWh1D1Gp3jcgvaVMiypPdZMLDQ==
+X-Received: by 2002:a6b:3902:: with SMTP id g2-v6mr450140ioa.168.1535446676786;
+        Tue, 28 Aug 2018 01:57:56 -0700 (PDT)
+Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.71.15? ([2402:f000:1:1501:200:5efe:a66f:470f])
+        by smtp.gmail.com with ESMTPSA id z13-v6sm255087ioj.51.2018.08.28.01.57.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 28 Aug 2018 01:57:56 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [BUG] Possible sleep-in-atomic-context bugs involving
+ regmap_lock_mutex()
+To:     broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org,
+        songjun.wu@microchip.com, architt@codeaurora.org
+Cc:     linux-kernel@vger.kernel.org
+Message-ID: <ffbd81ae-fd30-dc57-c3ac-463f7fadb9ac@gmail.com>
+Date:   Tue, 28 Aug 2018 16:57:51 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6f83f9cd-263e-b073-487f-4c7570105a7d@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 28 Aug 2018 08:57:05 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 28 Aug 2018 08:57:05 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 09:16:55PM +0300, Alexey Budankov wrote:
+Hello,
 
-SNIP
+My static tool DSAC reports many sleep-in-atomic-context bugs involving 
+regmap_lock_mutex(), so I wonder whether this function is possible to be 
+executed in atomic context.
 
-> +	int trace_fd = rec->session->data->file.fd;
-> +	struct aiocb **mmap_aio = rec->evlist->mmap_aio;
-> +	int mmap_aio_size = 0;
-> +	off_t off;
->  
->  	if (!evlist)
->  		return 0;
-> @@ -528,14 +632,17 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
->  	if (overwrite && evlist->bkw_mmap_state != BKW_MMAP_DATA_PENDING)
->  		return 0;
->  
-> +	off = lseek(trace_fd, 0, SEEK_CUR);
-> +
->  	for (i = 0; i < evlist->nr_mmaps; i++) {
->  		struct auxtrace_mmap *mm = &maps[i].auxtrace_mmap;
->  
->  		if (maps[i].base) {
-> -			if (perf_mmap__push(&maps[i], rec, record__pushfn) != 0) {
-> -				rc = -1;
-> +			rc = perf_mmap__push(&maps[i], rec, record__pushfn, &off);
-> +			if (rc < 0)
->  				goto out;
-> -			}
-> +			else if (rc > 0)
-> +				mmap_aio[mmap_aio_size++] = &maps[i].cblock;
+Here are some example bugs and their call paths in Linux-4.16 (from 
+bottom to top, and [FUNC_PTR] means that there is a function pointer call):
 
-I understand the purpose of mmap_aio array, but I don't see a reason
-to fill it in every time we call record__mmap_read_evlist
+[FUNC] mutex_lock_nested
+drivers/base/regmap/regmap.c, 468:
+     mutex_lock_nested in regmap_lock_mutex
+drivers/base/regmap/regmap.c, 2503:
+     [FUNC_PTR]regmap_lock_mutex in regmap_read
+drivers/clk/clk-aspeed.c, 215:
+     regmap_read in aspeed_clk_is_enabled
+drivers/clk/clk-aspeed.c, 230:
+     aspeed_clk_is_enabled in aspeed_clk_enable
+drivers/clk/clk-aspeed.c, 228:
+     _raw_spin_lock_irqsave in aspeed_clk_enable
 
-the way I see it, when 'pushing the data' it's either all or nothing,
+[FUNC] mutex_lock_nested
+drivers/base/regmap/regmap.c, 468:
+     mutex_lock_nested in regmap_lock_mutex
+drivers/base/regmap/regmap.c, 2821:
+     [FUNC_PTR]regmap_lock_mutex in regmap_update_bits_base
+drivers/clk/clk-aspeed.c, 270:
+     regmap_update_bits_base in aspeed_clk_disable
+drivers/clk/clk-aspeed.c, 267:
+     _raw_spin_lock_irqsave in aspeed_clk_disable
 
-if there's an error in pushing one map, we bail out completely..
-so the mmap_aio array could be preallocated (it is now) and
-pre-filled with cblock pointers
+[FUNC] mutex_lock_nested
+drivers/base/regmap/regmap.c, 468:
+     mutex_lock_nested in regmap_lock_mutex
+drivers/base/regmap/regmap.c, 2503:
+     [FUNC_PTR]regmap_lock_mutex in regmap_read
+drivers/char/ipmi/bt-bmc.c, 385:
+     regmap_read in bt_bmc_irq
 
-that would probably ease up the reference counting I mentioned
-in the previous email
+[FUNC] mutex_lock_nested
+drivers/base/regmap/regmap.c, 468:
+     mutex_lock_nested in regmap_lock_mutex
+drivers/base/regmap/regmap.c, 2821:
+     [FUNC_PTR]regmap_lock_mutex in regmap_update_bits_base
+drivers/gpu/drm/bridge/synopsys/dw-hdmi.c, 213:
+     regmap_update_bits_base in hdmi_modb
+drivers/gpu/drm/bridge/synopsys/dw-hdmi.c, 429:
+     hdmi_modb in hdmi_set_cts_n
+drivers/gpu/drm/bridge/synopsys/dw-hdmi.c, 527:
+     hdmi_set_cts_n in hdmi_set_clk_regenerator
+drivers/gpu/drm/bridge/synopsys/dw-hdmi.c, 524:
+     spin_lock_irq in hdmi_set_clk_regenerator
 
-thanks,
-jirka
+[FUNC] mutex_lock_nested
+drivers/base/regmap/regmap.c, 468:
+     mutex_lock_nested in regmap_lock_mutex
+drivers/base/regmap/regmap.c, 2503:
+     [FUNC_PTR]regmap_lock_mutex in regmap_read
+drivers/media/platform/atmel/atmel-isc.c, 1603:
+     regmap_read in isc_interrupt (interrupt handler)
+
+I find the code about the assignment of regmap_lock_mutex():
+         if ((bus && bus->fast_io) ||
+             config->fast_io) {
+             spin_lock_init(&map->spinlock);
+             map->lock = regmap_lock_spinlock;
+             map->unlock = regmap_unlock_spinlock;
+             lockdep_set_class_and_name(&map->spinlock,
+                            lock_key, lock_name);
+         } else {
+             mutex_init(&map->mutex);
+             map->lock = regmap_lock_mutex;
+             map->unlock = regmap_unlock_mutex;
+             lockdep_set_class_and_name(&map->mutex,
+                            lock_key, lock_name);
+         }
+
+But after reading the code, I cannot find the relationship between the 
+if condition and atomic context.
+
+I am looking forward to your reply, thanks in advance :)
+
+
+Best wishes,
+Jia-Ju Bai
