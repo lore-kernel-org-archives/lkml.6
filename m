@@ -2,75 +2,40 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 079AEC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:29:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B6DDC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:30:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D73C20878
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:29:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TRgAQTK3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D73C20878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DBCE520867
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:30:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBCE520867
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727216AbeH1TVQ (ORCPT
+        id S1727254AbeH1TWJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 15:21:16 -0400
-Received: from mail-qt0-f181.google.com ([209.85.216.181]:39773 "EHLO
-        mail-qt0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727099AbeH1TVP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 15:21:15 -0400
-Received: by mail-qt0-f181.google.com with SMTP id o15-v6so2152066qtk.6
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 08:29:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=DgeHfDk6UafIJWa3eTTdX0ADsnLorcBjAbB4V84+orY=;
-        b=TRgAQTK3a3LCIkMyOY8wtF2RT7ZYmL0zlt4C+jG0cBTpxmR+n/+4AZm+fxn9F1wUsg
-         MH2+D6Fd2Fm0PIVAz7dE0djnKXAHdM365M8p2RclWTZNQorInfHP1VMUOmficNWHcyGQ
-         rCEqwReLvR5f4DOg2+Edv7Jlk8nyvnPP14YEomj85+f7wkuPe+Ts7xdMVutvYOkMMgML
-         jVvskUmCIVtIfSdcfC/6z0Q6h2z7wxNpx5ljL0HIx2B90ME8m950tCbPwSi0X0zKqJVV
-         D6dwt/EvUtZwivsJyoIScuB6leNM1yZfZ3SjImu3esm48WdROQtCgLoCjIAWAs9sWRSY
-         lIxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=DgeHfDk6UafIJWa3eTTdX0ADsnLorcBjAbB4V84+orY=;
-        b=Aa5XAQasLJfhHsLvwwKEhtdG4v9K42zTm7cCNBCMyl8+PP5/Eu/L59AyKuyB/YTxKc
-         XsI22TncfPN+9owPJF5SOlBgEfLVwM+U8IPbLAXyWoJtZLfhvgNz2GXOha+hpfZT+dPb
-         r1xTXP+RusD2mNW+ePFSRvN3kmnvFmLgI9R/fvezEXUlYuXs1EzxJIbtBGbPKbP1+eAB
-         l5aPMr8CRE6nK3rrmvpdJ6njM3hdedglI3dkgODlbK+uxmXUAiMVDV7ed0l+UVAQzz31
-         svhOddjF1nqfHlaoz8Ft5heoawSiVT67vd1PpNn8JXjLErU/uzVzHAvMH2jBSaqis51z
-         26ow==
-X-Gm-Message-State: APzg51BW2WOPwRMjsyCRplnr6nx0BEt2yij24g+WGc/Soea47iSnP7SI
-        f/Pt6n5Bqab4cXPAaTOlcXb6I9cD/KNCcRZG1ifrgxclppI=
-X-Google-Smtp-Source: ANB0VdbyYILPlXyAqLpOWmsO+5MZUvnI6GMo/Y+X04NuEgudyE/j9skdnEjTn+R0ZECSznO7FWLgpaykkHFLvjNmKG0=
-X-Received: by 2002:a0c:aac9:: with SMTP id g9-v6mr2169554qvb.78.1535470144784;
- Tue, 28 Aug 2018 08:29:04 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ac8:471a:0:0:0:0:0 with HTTP; Tue, 28 Aug 2018 08:28:44
- -0700 (PDT)
-In-Reply-To: <57cafda5-d7f4-61a3-7169-38cc2d34abf6@opensource.cirrus.com>
-References: <20180828133320.1831-1-geert+renesas@glider.be> <57cafda5-d7f4-61a3-7169-38cc2d34abf6@opensource.cirrus.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Tue, 28 Aug 2018 17:28:44 +0200
-Message-ID: <CANiq72m-kvANJsrWHXHoEfRBRbFDt+0nWzma3HxBrBo9tP9Ouw@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: Move entry for Cirrus Logic Madera codecs
-To:     Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Lee Jones <lee.jones@linaro.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 28 Aug 2018 15:22:09 -0400
+Received: from foss.arm.com ([217.140.101.70]:40460 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726961AbeH1TWJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 15:22:09 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9767718A;
+        Tue, 28 Aug 2018 08:29:58 -0700 (PDT)
+Received: from e112298-lin.Emea.Arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 650233F557;
+        Tue, 28 Aug 2018 08:29:57 -0700 (PDT)
+From:   Julien Thierry <julien.thierry@arm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de, peterz@infradead.org, marc.zyngier@arm.com,
+        mingo@kernel.org, Julien Thierry <julien.thierry@arm.com>
+Subject: [PATCH v2 0/4] Provide core API for NMIs
+Date:   Tue, 28 Aug 2018 16:29:44 +0100
+Message-Id: <1535470188-38155-1-git-send-email-julien.thierry@arm.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -78,19 +43,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
 
-On Tue, Aug 28, 2018 at 3:57 PM, Richard Fitzgerald
-<rf@opensource.cirrus.com> wrote:
-> Reviewed-by: Richard Fitzgerald <rf@opensource.cirrus.com>
->
-> A maintainer for MAINTAINERS would help avoid these problems, which will
-> tend to happen when changes to the file go through many trees.
->
+This patch series provides a way for irqchips to define some IRQs as NMIs.
 
-A year ago Linus committed 7683e9e52 ("Properly alphabetize
-MAINTAINERS file") which adds scripts/parse-maintainers.pl.
+For this to be possible, the irqchip must:
+- be a root irqchip
+- not require bus locking
+- have the NMI support flag
 
-I guess it could just be run once in a while (e.g. before a kernel is
-released, for instance).
+Once these conditions are met, interrupt lines can be requested as NMIs.
+These lines must not be shared and the IRQ handling must not be threaded.
+Callbacks are added to the irqchip in order to set up (clean up) the
+necessary resources for NMIs before enabling (before releasing) the
+corresponding interrupt line.
+
+I'll soon post a series making use of the API for Arm's GICv3.
+
+Patches 1 & 2 provide functions necessary to request and manage NMIs.
+Patches 3 & 4 provide functions for NMI handling.
+
+Changes since v1[1]:
+- Rebased to v4.19-rc1
+- Fix some coding style issues
+
+Changes since RFC[2]:
+- Rebased to v4.18-rc6
+- Remove disable_nmi, one should call disable_nmi_nosync instead
+- Remove code related to affinity balancing from NMI functions
+- Require PERCPU configuration for NMIs
+
+[1] https://lkml.org/lkml/2018/7/24/321
+[2] https://lkml.org/lkml/2018/7/9/768
 
 Cheers,
-Miguel
+
+Julien
+
+-->
+
+Julien Thierry (4):
+  genirq: Provide basic NMI management for interrupt lines
+  genirq: Provide NMI management for percpu_devid interrupts
+  genirq: Provide NMI handlers
+  irqdesc: Add domain handler for NMIs
+
+ include/linux/interrupt.h |  18 +++
+ include/linux/irq.h       |  10 ++
+ include/linux/irqdesc.h   |   3 +
+ kernel/irq/chip.c         |  54 +++++++
+ kernel/irq/debugfs.c      |   6 +-
+ kernel/irq/internals.h    |   2 +
+ kernel/irq/irqdesc.c      |  33 ++++
+ kernel/irq/manage.c       | 377 +++++++++++++++++++++++++++++++++++++++++++++-
+ 8 files changed, 500 insertions(+), 3 deletions(-)
+
+--
+1.9.1
