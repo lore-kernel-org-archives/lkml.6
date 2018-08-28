@@ -2,112 +2,85 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5059CC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 16:10:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B742C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 16:11:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C12620893
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 16:10:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C12620893
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5D7CD20896
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 16:11:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D7CD20896
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbeH1UDI (ORCPT
+        id S1727524AbeH1UDY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 16:03:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33952 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727069AbeH1UDI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 16:03:08 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AA61CADA9;
-        Tue, 28 Aug 2018 16:10:44 +0000 (UTC)
-Date:   Tue, 28 Aug 2018 18:10:43 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Zi Yan <zi.yan@cs.rutgers.edu>
-Cc:     Jerome Glisse <jglisse@redhat.com>, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH 4/7] mm/hmm: properly handle migration pmd
-Message-ID: <20180828161043.GT10223@dhcp22.suse.cz>
-References: <20180824192549.30844-1-jglisse@redhat.com>
- <20180824192549.30844-5-jglisse@redhat.com>
- <0560A126-680A-4BAE-8303-F1AB34BE4BA5@cs.rutgers.edu>
- <20180828152414.GQ10223@dhcp22.suse.cz>
- <20180828153658.GA4029@redhat.com>
- <20180828154206.GR10223@dhcp22.suse.cz>
- <20180828154555.GS10223@dhcp22.suse.cz>
- <44C89854-FE83-492F-B6BB-CF54B77233CF@cs.rutgers.edu>
+        Tue, 28 Aug 2018 16:03:24 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:55108 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726807AbeH1UDY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 16:03:24 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1fugZr-0002Sf-1g; Tue, 28 Aug 2018 16:10:47 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        xen-devel@lists.xenproject.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/xen: remove redundant variable save_pud
+Date:   Tue, 28 Aug 2018 17:10:46 +0100
+Message-Id: <20180828161046.17165-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <44C89854-FE83-492F-B6BB-CF54B77233CF@cs.rutgers.edu>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 28-08-18 11:54:33, Zi Yan wrote:
-> Hi Michal,
-> 
-> On 28 Aug 2018, at 11:45, Michal Hocko wrote:
-> 
-> > On Tue 28-08-18 17:42:06, Michal Hocko wrote:
-> >> On Tue 28-08-18 11:36:59, Jerome Glisse wrote:
-> >>> On Tue, Aug 28, 2018 at 05:24:14PM +0200, Michal Hocko wrote:
-> >>>> On Fri 24-08-18 20:05:46, Zi Yan wrote:
-> >>>> [...]
-> >>>>>> +	if (!pmd_present(pmd)) {
-> >>>>>> +		swp_entry_t entry = pmd_to_swp_entry(pmd);
-> >>>>>> +
-> >>>>>> +		if (is_migration_entry(entry)) {
-> >>>>>
-> >>>>> I think you should check thp_migration_supported() here, since PMD migration is only enabled in x86_64 systems.
-> >>>>> Other architectures should treat PMD migration entries as bad.
-> >>>>
-> >>>> How can we have a migration pmd entry when the migration is not
-> >>>> supported?
-> >>>
-> >>> Not sure i follow here, migration can happen anywhere (assuming
-> >>> that something like compaction is active or numa or ...). So this
-> >>> code can face pmd migration entry on architecture that support
-> >>> it. What is missing here is thp_migration_supported() call to
-> >>> protect the is_migration_entry() to avoid false positive on arch
-> >>> which do not support thp migration.
-> >>
-> >> I mean that architectures which do not support THP migration shouldn't
-> >> ever see any migration entry. So is_migration_entry should be always
-> >> false. Or do I miss something?
-> >
-> > And just to be clear. thp_migration_supported should be checked only
-> > when we actually _do_ the migration or evaluate migratability of the
-> > page. We definitely do want to sprinkle this check to all places where
-> > is_migration_entry is checked.
-> 
-> is_migration_entry() is a general check for swp_entry_t, so it can return
-> true even if THP migration is not enabled. is_pmd_migration_entry() always
-> returns false when THP migration is not enabled.
-> 
-> So the code can be changed in two ways, either replacing is_migration_entry()
-> with is_pmd_migration_entry() or adding thp_migration_supported() check
-> like Jerome did.
-> 
-> Does this clarify your question?
+From: Colin Ian King <colin.king@canonical.com>
 
-Not really. IIUC the code checks for the pmd. So even though
-is_migration_entry is a more generic check it should never return true
-for thp_migration_supported() == F because we simply never have those
-unless I am missing something.
+Variable save_pud is being assigned but is never used hence it is
+redundant and can be removed.
 
-is_pmd_migration_entry is much more readable of course and I suspect it
-can save few cycles as well.
+Cleans up clang warning:
+variable 'save_pud' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/x86/xen/mmu_pv.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
+index 06a814d44b9b..2fe5c9b1816b 100644
+--- a/arch/x86/xen/mmu_pv.c
++++ b/arch/x86/xen/mmu_pv.c
+@@ -2060,7 +2060,6 @@ void __init xen_relocate_p2m(void)
+ 	pud_t *pud;
+ 	pgd_t *pgd;
+ 	unsigned long *new_p2m;
+-	int save_pud;
+ 
+ 	size = PAGE_ALIGN(xen_start_info->nr_pages * sizeof(unsigned long));
+ 	n_pte = roundup(size, PAGE_SIZE) >> PAGE_SHIFT;
+@@ -2090,7 +2089,6 @@ void __init xen_relocate_p2m(void)
+ 
+ 	pgd = __va(read_cr3_pa());
+ 	new_p2m = (unsigned long *)(2 * PGDIR_SIZE);
+-	save_pud = n_pud;
+ 	for (idx_pud = 0; idx_pud < n_pud; idx_pud++) {
+ 		pud = early_memremap(pud_phys, PAGE_SIZE);
+ 		clear_page(pud);
 -- 
-Michal Hocko
-SUSE Labs
+2.17.1
+
