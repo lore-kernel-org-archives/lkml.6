@@ -2,162 +2,104 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91491C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:46:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5DD7C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:47:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53ADA20833
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:46:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53ADA20833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 9076220833
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:47:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KRtvuYqV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9076220833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728350AbeH1SiC (ORCPT
+        id S1728066AbeH1Sjc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 14:38:02 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:1370 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727761AbeH1SiC (ORCPT
+        Tue, 28 Aug 2018 14:39:32 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:42518 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727841AbeH1Sjc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 14:38:02 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5b85601e0000>; Tue, 28 Aug 2018 07:45:50 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 28 Aug 2018 07:46:00 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 28 Aug 2018 07:46:00 -0700
-Received: from dhcp-10-21-25-168 (10.21.25.201) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 28 Aug
- 2018 14:45:57 +0000
-Date:   Tue, 28 Aug 2018 17:45:51 +0300
-From:   Aapo Vienamo <avienamo@nvidia.com>
-To:     Adrian Hunter <adrian.hunter@intel.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
+        Tue, 28 Aug 2018 14:39:32 -0400
+Received: by mail-wr1-f65.google.com with SMTP id v17-v6so1846061wrr.9;
+        Tue, 28 Aug 2018 07:47:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=5w81+MBP6D/RxL1YeMAc+Drk+izWIG1pVhGppsdjGmc=;
+        b=KRtvuYqVG4CYgM6G0bija3zDeI3YR4J0owqpytNPsT+q2DsbPREz+YtGaOu/IKdWcb
+         BVRvKiiirJEd/ke/aTdoYWxghLthCGKHyTyBLHsgCmqAzWCxtrP9AA7o5uoweGGwuUWY
+         FedAj6SPQhChRyuzma/oEN7Dtt+2yTTT5dfBgRFf3hSDLnxVWSfP4AFVf+ojnilVc0F0
+         MWQEuGLLsaFrRZedH+CxAsofb8x81JR7YSRDScqEN6TaV1vbip7yDFWrN4Or6tOC7dNi
+         c+v0V/xdUV69yXvUd37EaTpcy6nUbimIIGGYPgCrIqUEcFjMereYdA3IgKvrPZuO7XlI
+         gO5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5w81+MBP6D/RxL1YeMAc+Drk+izWIG1pVhGppsdjGmc=;
+        b=E37G2SdWKCZwZ5cg/4rxEr8VYbC+Ie5wtabHpsbvXB1uQ6ErKp53xi7bjhQBzA4Wzx
+         U4s3T0VACW0OqsU/Y5938De1UlG3qiMXmh+T1GJtBoNwlb1rCEYJQEb2JEfYtQYPp9no
+         4RIzU9sR2c0WWKGlNqnhDpQq41dZULKoQAxExGSoupSr4cnbx1fC+dlmWzjEp3vtKnvr
+         VA76TInBeJX3Eu1HT/ZI+hNc17U7Y2m8lBN2J5nEZedXFM6uV91ny/qqWx9vaibkAi9e
+         asGh46cO/4SS1d106g+ey6L0rhVC5FMfDYcosmX4LCNIRe6hh3vco2tC0EYFLPLlUFsW
+         kdGQ==
+X-Gm-Message-State: APzg51CUy7tKMPBPumlztMbsotHdRl8PvlIAEx8ufB2PrMEEy9ODteg/
+        3vuAlAogjxpADhw81ZPb7WU=
+X-Google-Smtp-Source: ANB0Vdb7Yv+9M3QzxdgszIXHN5zxjT/U1eL1zqksH53OyaNtgRUAW0FKSzPbaQXyyvr/0wETLk7ZVA==
+X-Received: by 2002:adf:b583:: with SMTP id c3-v6mr1394503wre.79.1535467650664;
+        Tue, 28 Aug 2018 07:47:30 -0700 (PDT)
+Received: from Red ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id c10-v6sm2883885wrb.17.2018.08.28.07.47.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 28 Aug 2018 07:47:29 -0700 (PDT)
+Date:   Tue, 28 Aug 2018 16:47:27 +0200
+From:   Corentin Labbe <clabbe.montjoie@gmail.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devel@driverdev.osuosl.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "Mikko Perttunen" <mperttunen@nvidia.com>,
-        Stefan Agner <stefan@agner.ch>, <devicetree@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mmc@vger.kernel.org>
-Subject: Re: [PATCH v2 11/40] mmc: sdhci: Add a quirk to skip clearing the
- transfer mode register on tuning
-Message-ID: <20180828174551.12f1d9bf@dhcp-10-21-25-168>
-In-Reply-To: <d603be8f-986a-80e1-d98a-daea9c9684aa@intel.com>
-References: <1533924522-1037-1-git-send-email-avienamo@nvidia.com>
-        <1533924522-1037-12-git-send-email-avienamo@nvidia.com>
-        <d603be8f-986a-80e1-d98a-daea9c9684aa@intel.com>
-X-NVConfidentiality: public
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Randy Li <ayaka@soulik.info>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-sunxi@googlegroups.com
+Subject: Re: [linux-sunxi] [PATCH v8 3/8] dt-bindings: media: Document
+ bindings for the Cedrus VPU driver
+Message-ID: <20180828144727.GB25644@Red>
+References: <20180828073424.30247-1-paul.kocialkowski@bootlin.com>
+ <20180828073424.30247-4-paul.kocialkowski@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.21.25.201]
-X-ClientProxiedBy: UKMAIL101.nvidia.com (10.26.138.13) To HQMAIL101.nvidia.com
- (172.20.187.10)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180828073424.30247-4-paul.kocialkowski@bootlin.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 27 Aug 2018 14:01:52 +0300
-Adrian Hunter <adrian.hunter@intel.com> wrote:
+On Tue, Aug 28, 2018 at 09:34:19AM +0200, Paul Kocialkowski wrote:
+> This adds a device-tree binding document that specifies the properties
+> used by the Cedurs VPU driver, as well as examples.
 
-> On 10/08/18 21:08, Aapo Vienamo wrote:
-> > Add SDHCI_QUIRK2_TUNE_SKIP_XFERRMODE_REG_PROG to skip programming the
-> > SDHCI_TRANSFER_MODE in sdhci_set_transfer_mode() if tuning command is
-> > being sent.
-> > 
-> > On Tegra210 and Tegra186 the tuning sequence hangs if the SDHCI
-> > transfer mode register is touched.
-> > 
-> > Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-> > ---
-> >  drivers/mmc/host/sdhci.c | 6 ++++++
-> >  drivers/mmc/host/sdhci.h | 2 ++
-> >  2 files changed, 8 insertions(+)
-> > 
-> > diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> > index a7b5602..04dc443 100644
-> > --- a/drivers/mmc/host/sdhci.c
-> > +++ b/drivers/mmc/host/sdhci.c
-> > @@ -1028,6 +1028,12 @@ static void sdhci_set_transfer_mode(struct sdhci_host *host,
-> >  
-> >  	if (data == NULL) {
-> >  		if (host->quirks2 &
-> > +			SDHCI_QUIRK2_TUNE_SKIP_XFERMODE_REG_PROG &&
-> > +				(cmd->opcode == MMC_SEND_TUNING_BLOCK ||
-> > +				 cmd->opcode == MMC_SEND_TUNING_BLOCK_HS200)) {
-> > +			return;
-> > +		}  
-> 
-> Rather than introduce a quirk, can't we just dodge the unnecessary write e.g.
-> 
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index 1b3fbd9bd5c5..68af6a67e397 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -1033,10 +1033,19 @@ static void sdhci_set_transfer_mode(struct sdhci_host *host,
->  			if (cmd->opcode != MMC_SEND_TUNING_BLOCK_HS200)
->  				sdhci_writew(host, 0x0, SDHCI_TRANSFER_MODE);
->  		} else {
-> -		/* clear Auto CMD settings for no data CMDs */
-> +			u16 orig;
-> +
-> +			/* clear Auto CMD settings for no data CMDs */
->  			mode = sdhci_readw(host, SDHCI_TRANSFER_MODE);
-> -			sdhci_writew(host, mode & ~(SDHCI_TRNS_AUTO_CMD12 |
-> -				SDHCI_TRNS_AUTO_CMD23), SDHCI_TRANSFER_MODE);
-> +			orig = mode;
-> +			mode &= ~(SDHCI_TRNS_AUTO_CMD12 | SDHCI_TRNS_AUTO_CMD23);
-> +			/*
-> +			 * Do not write transfer mode unnecessarily because it
-> +			 * can upset some host controllers (e.g. sdhci-tregra)
-> +			 * during tuning.
-> +			 */
-> +			if (mode != orig)
-> +				sdhci_writew(host, new_mode, SDHCI_TRANSFER_MODE);
->  		}
->  		return;
->  	}
-> 
-> 
-> Alternatively 
-> 
-> > +		if (host->quirks2 &
-> >  			SDHCI_QUIRK2_CLEAR_TRANSFERMODE_REG_BEFORE_CMD) {
-> >  			sdhci_writew(host, 0x0, SDHCI_TRANSFER_MODE);
-> >  		} else {
-> > diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-> > index 23966f8..0a99008 100644
-> > --- a/drivers/mmc/host/sdhci.h
-> > +++ b/drivers/mmc/host/sdhci.h
-> > @@ -450,6 +450,8 @@ struct sdhci_host {
-> >   * obtainable timeout.
-> >   */
-> >  #define SDHCI_QUIRK2_DISABLE_HW_TIMEOUT			(1<<17)
-> > +/* Don't clear the SDHCI_TRANSFER_MODE register on tuning commands */
-> > +#define SDHCI_QUIRK2_TUNE_SKIP_XFERMODE_REG_PROG	(1<<18)
-> >  
-> >  	int irq;		/* Device IRQ */
-> >  	void __iomem *ioaddr;	/* Mapped address */
-> >   
-> 
+typo Cedurs=>Cedrus
 
-Looks like writes to the transfer mode register are deferred until the
-command register is written by tegra_sdhci_writew(). This code was
-introduced due to a quirk in Tegra114/124. The Tegra114 ops struct was
-probably just copied over when support for Tegra210 was added, so we
-end up with this code also getting run on Tegra210.
-
-The issue with tegra_sdhci_writew() is that it breaks successive
-read-modify-write operations. The value written to the transfer mode
-register isn't returned on read until the command register is also
-touched. Removing the write_w accessor from tegra210_sdhci_ops seems to
-make the issue originally addressed by this patch to go away.
-
- -Aapo
+Regards
