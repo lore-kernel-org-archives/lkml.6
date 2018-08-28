@@ -2,79 +2,99 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B547C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:35:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F315DC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:36:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0FFE2087C
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:35:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0FFE2087C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A89D920893
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:36:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="ZotF9bUY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A89D920893
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727395AbeH1M0R (ORCPT
+        id S1727459AbeH1M0p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 08:26:17 -0400
-Received: from mga01.intel.com ([192.55.52.88]:48039 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726997AbeH1M0R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 08:26:17 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Aug 2018 01:35:43 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,298,1531810800"; 
-   d="scan'208";a="66541762"
-Received: from jsakkine-mobl1.fi.intel.com (HELO localhost) ([10.237.66.39])
-  by fmsmga008.fm.intel.com with ESMTP; 28 Aug 2018 01:35:40 -0700
-Date:   Tue, 28 Aug 2018 11:35:40 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, linux-sgx@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        Serge Ayoun <serge.ayoun@intel.com>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v13 09/13] x86/sgx: Enclave Page Cache (EPC) memory
- manager
-Message-ID: <20180828083540.GH15508@linux.intel.com>
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-10-jarkko.sakkinen@linux.intel.com>
- <7c5df14e-3028-46b3-fe93-aa6ba8352317@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7c5df14e-3028-46b3-fe93-aa6ba8352317@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Tue, 28 Aug 2018 08:26:45 -0400
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:54531 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726997AbeH1M0p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 08:26:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1535445407; x=1566981407;
+  h=from:to:cc:subject:date:message-id;
+  bh=Wykkqqy7tUmxM6aSYALi1eP8zK57QFGS7kw1FeXnjc0=;
+  b=ZotF9bUYzlduGKOK/idFOCf37w79xpzb1AQTXAEShP5QsersFvxgvvXz
+   oTJJRYceivjgUcX9cV0kQIRGWr2Rj0Xv9k8h3+7efmY9n48Mw3EqB+V3Z
+   MEK3Ca2kVEIiZDEXvNd5q1mShXKatuItfeoLxaihl/zFv7JmYVcXyttHv
+   LIvJj6n4r39W7BQb5tDZ3QgycCyKDK2YqRc1/9vHS6S0WieH28MJURCuM
+   Xohyn/bjmnAOgE86e2U4fx0y8TtXX4rkPI5upjbBnO1Z0HB4CBT2QxthW
+   5nVKIkx/sKH5N/YAj9hpXcIOpYggCFczgRrIejKU1IXPmb0Hw1qsWHy13
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.53,298,1531756800"; 
+   d="scan'208";a="185994289"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 28 Aug 2018 16:36:46 +0800
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP; 28 Aug 2018 01:23:08 -0700
+Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
+  by uls-op-cesaip02.wdc.com with ESMTP; 28 Aug 2018 01:36:11 -0700
+From:   Atish Patra <atish.patra@wdc.com>
+To:     palmer@sifive.com, linux-riscv@lists.infradead.org,
+        mark.rutland@arm.com, anup@brainfault.org, hch@infradead.org
+Cc:     atish.patra@wdc.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, damein@vger.kernel.org
+Subject: [PATCH v2 0/3] RISC-V: Add new smp features
+Date:   Tue, 28 Aug 2018 01:36:07 -0700
+Message-Id: <1535445370-19004-1-git-send-email-atish.patra@wdc.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 02:15:34PM -0700, Dave Hansen wrote:
-> On 08/27/2018 11:53 AM, Jarkko Sakkinen wrote:
-> > +struct sgx_epc_page_ops {
-> > +	bool (*get)(struct sgx_epc_page *epc_page);
-> > +	void (*put)(struct sgx_epc_page *epc_page);
-> > +	bool (*reclaim)(struct sgx_epc_page *epc_page);
-> > +	void (*block)(struct sgx_epc_page *epc_page);
-> > +	void (*write)(struct sgx_epc_page *epc_page);
-> > +};
-> 
-> Why do we need a fancy, slow (retpoline'd) set of function pointers when
-> we only have one user of these (the SGX driver)?
+This patch series implements following smp related features.
+Some of the work has been inspired from ARM64.
 
-KVM has its own implementation for these operations.
+1. Decouple linux logical cpu ids from hardware cpu id
+2. Support cpu hotplug.
 
-/Jarkko
+Tested on QEMU & HighFive Unleashed board with/without SMP enabled.
+
+v1->v2:
+
+1. Dropped cpu_ops patch.
+2. Moved back IRQ cause definiations to irq.h
+3. Keep boot cpu hart id and assign zero as the cpu id for boot cpu.
+4. Renamed cpu id and hart id correctly. 
+
+Atish Patra (3):
+  RISC-V: Add logical CPU indexing for RISC-V
+  RISC-V: Use Linux logical cpu number instead of hartid
+  RISC-V: Support cpu hotplug.
+
+ arch/riscv/Kconfig                | 12 +++++-
+ arch/riscv/include/asm/irq.h      |  1 +
+ arch/riscv/include/asm/smp.h      | 33 ++++++++++++++-
+ arch/riscv/include/asm/tlbflush.h | 17 ++++++--
+ arch/riscv/kernel/cpu.c           |  8 ++--
+ arch/riscv/kernel/head.S          | 17 +++++++-
+ arch/riscv/kernel/irq.c           | 27 +++++++++++-
+ arch/riscv/kernel/process.c       |  7 ++++
+ arch/riscv/kernel/setup.c         | 25 ++++++++++-
+ arch/riscv/kernel/smp.c           | 51 +++++++++++++++++++----
+ arch/riscv/kernel/smpboot.c       | 87 +++++++++++++++++++++++++++++++++------
+ arch/riscv/kernel/traps.c         |  6 +--
+ drivers/clocksource/riscv_timer.c | 12 ++++--
+ drivers/irqchip/irq-sifive-plic.c | 11 +++--
+ 14 files changed, 269 insertions(+), 45 deletions(-)
+
+-- 
+2.7.4
+
