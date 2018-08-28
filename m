@@ -2,139 +2,91 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3300C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 18:43:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A58AC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 18:44:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 760152087E
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 18:43:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FDQAjq2a"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 760152087E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id CB3FF2087D
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 18:44:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB3FF2087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727385AbeH1Wgc (ORCPT
+        id S1727476AbeH1Whg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 18:36:32 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:41606 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726807AbeH1Wgc (ORCPT
+        Tue, 28 Aug 2018 18:37:36 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:33332 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726961AbeH1Whg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 18:36:32 -0400
-Received: by mail-io0-f193.google.com with SMTP id q4-v6so2327844iob.8
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 11:43:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=WXbadlXSixBG7bvwOGX1+o9Sbaxov+xhj3QW7icdiAg=;
-        b=FDQAjq2aQ8MPtXnGZQG5lts8PYB4EYNjcWwf2SVwik3qJRoKkLNwizOkNQyi5h8REe
-         vg7rCgw4R+gKRQVttPEfMxUbjzvGXVRY8eXiPWNfpAZkGxU49otxE056VHdBTVc7pl2X
-         nMmyYFLTjD/YCMnnrwbp/JfUODQkvQPpmmbBI=
+        Tue, 28 Aug 2018 18:37:36 -0400
+Received: by mail-ed1-f66.google.com with SMTP id h9-v6so2128665edr.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 11:44:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=WXbadlXSixBG7bvwOGX1+o9Sbaxov+xhj3QW7icdiAg=;
-        b=pZPuMRrbaRZUcqQhpG2sUU2p6HzfItWfvpShon1Re6ldAVbwpNKpiglshBldd0PvJ9
-         hJTHclPkv16911MjJoPWd2LUPB5Za/vj3rdkNPj9/LsacB6TMTeswQVj1qijMgVdlWCh
-         bPgRK3HcQ8QKP943GT9RS9j9WQ0VXwAuzmgGoWI003mtZ4gTfqxHw/qkCqY2ioiFhOXV
-         tPWLn/i0ga+3bfHrozf/Pn6UBHupp8eUES08SAdNoNZfplH3wU/147EPeo+75CCz8Xqi
-         q2RoVWa2FzWSCrIeC76OIw7cCT3xEFTBkyxNVnMYl4qc8bRvr2KqYnR+8/Pz3rtxgyou
-         2+jw==
-X-Gm-Message-State: APzg51CcjUIpU53m8/vEMTxnEwCD15IV290L7dLvr+SxNUNm59JVWS1x
-        2zYuLe9XJUJIOA29/zr/rYAMhePvmgtoshQMQXvc1Q==
-X-Google-Smtp-Source: ANB0VdY8QQQ1uvSdJHrbNDMxi55Orpk83XB5iiGk0LPD5isx5QSpamT9jnmy11EpES/Ho5BJ8aqvV3NJNV3mna4LNGA=
-X-Received: by 2002:a6b:ba86:: with SMTP id k128-v6mr2511132iof.170.1535481815580;
- Tue, 28 Aug 2018 11:43:35 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PBRYW+J0UI/lmKD9xTmQZEnXxzE2i3mwTfLh35X3dzQ=;
+        b=M6SvYzRkd/B12VNnKo4fcUsxxKd+W5SqPVpE3EDX+YUVf0CWxDlrzqM8RmPvKHpnT0
+         mzfeNzCS2ZVkvmKV+j+HfAYx2zcCo92m1jUuE3pCDqhpduCtON5wAAntbtIQTWeFyFjP
+         n1PWfc62C+3pnwUw0K0ys+fuZpKuG4Qu529e0Wv5ctJSdtOf/7PRxtF3Od+Kyw4RaMFd
+         Lr7CREVNe6MsNw0yc6m8MMAimpcRz/pObqnO4/BdbfQKis4Zwuch9uEFomGwyVhS85cE
+         un/Ax9pBRzf5qFvOjlHBZe8aB3OXPpJdPkN2d5D9R5aK5LMsddre96RyHQN+/70gk2ja
+         S0Xw==
+X-Gm-Message-State: APzg51Cb+57/9NIh+sKBYaFCr6IOdItfmYjEKvLr9BONqpA0us5YHNrQ
+        p0W8MIKqAf+h+Ic5ExqM9FpJYHD6X1U=
+X-Google-Smtp-Source: ANB0VdbWornLdzYi5pxL0YeI7S+mvR6JCwWCmxnBQaU/n2HZoEPByeegnA8sRCUIOUneWAPPWrJbOw==
+X-Received: by 2002:a50:b2c6:: with SMTP id p64-v6mr3835558edd.293.1535481879281;
+        Tue, 28 Aug 2018 11:44:39 -0700 (PDT)
+Received: from kozik-lap (xdsl-188-155-58-14.adslplus.ch. [188.155.58.14])
+        by smtp.googlemail.com with ESMTPSA id v14-v6sm1058933edm.97.2018.08.28.11.44.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 28 Aug 2018 11:44:38 -0700 (PDT)
+Date:   Tue, 28 Aug 2018 20:44:37 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Michal Kubecek <mkubecek@suse.cz>
+Cc:     linux-kernel@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: regression: broken ppc64le build with CONFIG_KERNEL_XZ=y
+Message-ID: <20180828184437.nyqtlvswlylbpbfj@kozik-lap>
+References: <20180827113037.gbtnbhcwebcwei57@unicorn.suse.cz>
 MIME-Version: 1.0
-Received: by 2002:a6b:ac05:0:0:0:0:0 with HTTP; Tue, 28 Aug 2018 11:43:35
- -0700 (PDT)
-In-Reply-To: <20180828170135.GC19825@arm.com>
-References: <20180827110245.14812-1-ard.biesheuvel@linaro.org>
- <20180827110245.14812-3-ard.biesheuvel@linaro.org> <20180828170135.GC19825@arm.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Tue, 28 Aug 2018 20:43:35 +0200
-Message-ID: <CAKv+Gu-tM9aKZJ3ppt9yLVP_V5YA_yN8D1j_-NtM+qQCdnc6JA@mail.gmail.com>
-Subject: Re: [PATCH 2/4] arm64: cpufeature: add feature for CRC32 instructions
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Eric Biggers <ebiggers@google.com>,
-        "Suzuki K. Poulose" <suzuki.poulose@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180827113037.gbtnbhcwebcwei57@unicorn.suse.cz>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28 August 2018 at 19:01, Will Deacon <will.deacon@arm.com> wrote:
-> On Mon, Aug 27, 2018 at 01:02:43PM +0200, Ard Biesheuvel wrote:
->> Add a CRC32 feature bit and wire it up to the CPU id register so we
->> will be able to use alternatives patching for CRC32 operations.
->>
->> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
->> ---
->>  arch/arm64/include/asm/cpucaps.h | 3 ++-
->>  arch/arm64/kernel/cpufeature.c   | 9 +++++++++
->>  2 files changed, 11 insertions(+), 1 deletion(-)
->
-> Acked-by: Will Deacon <will.deacon@arm.com>
->
-> With the minor caveat below...
->
->> diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
->> index ae1f70450fb2..9932aca9704b 100644
->> --- a/arch/arm64/include/asm/cpucaps.h
->> +++ b/arch/arm64/include/asm/cpucaps.h
->> @@ -51,7 +51,8 @@
->>  #define ARM64_SSBD                           30
->>  #define ARM64_MISMATCHED_CACHE_TYPE          31
->>  #define ARM64_HAS_STAGE2_FWB                 32
->> +#define ARM64_HAS_CRC32                              33
->>
->> -#define ARM64_NCAPS                          33
->> +#define ARM64_NCAPS                          34
->
->
-> ... if this goes via crypto, you'll almost certainly get a (trivial)
-> conflict with arm64, since these numbers get bumped all the time.
->
+On Mon, Aug 27, 2018 at 01:30:37PM +0200, Michal Kubecek wrote:
+> Building 4.19-rc1 kernel with CONFIG_KERNEL_XZ=y fails with this error:
+> 
+>   BOOTCC  arch/powerpc/boot/decompress.o
+> In file included from arch/powerpc/boot/../../../lib/decompress_unxz.c:233,
+>                  from arch/powerpc/boot/decompress.c:42:
+> arch/powerpc/boot/../../../lib/xz/xz_crc32.c:18:10: fatal error: linux/crc32poly.h: No such file or directory
+>  #include <linux/crc32poly.h>
+>           ^~~~~~~~~~~~~~~~~~~
+> 
+> This is caused by commit faa16bc404d7 ("lib: Use existing define with
+> polynomial") which added include of <linux/crc32poly.h>; when compiling
+> arch/powerpc/boot/decompress.c, the include/ directory is not searched
+> so that the header file is not found.
+> 
+> The solution is probably adding -I directive to some place in
+> arch/powerpc/boot/Makefile but I don't dare to guess where.
 
-I think the first three patches should go through the arm64 tree. The
-last one just removes the now redundant crc32 SIMD driver, and Herbert
-could pick that up separately, i.e., it should be totally independent.
+Hi,
 
+Thanks for letting know. I wonder why kbuild test robot did not catch
+this... I just got back from vacation so I will need few days to look
+into it.
 
->>  #endif /* __ASM_CPUCAPS_H */
->> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
->> index e238b7932096..7626b80128f5 100644
->> --- a/arch/arm64/kernel/cpufeature.c
->> +++ b/arch/arm64/kernel/cpufeature.c
->> @@ -1222,6 +1222,15 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
->>               .cpu_enable = cpu_enable_hw_dbm,
->>       },
->>  #endif
->> +     {
->> +             .desc = "CRC32 instructions",
->> +             .capability = ARM64_HAS_CRC32,
->> +             .type = ARM64_CPUCAP_SYSTEM_FEATURE,
->> +             .matches = has_cpuid_feature,
->> +             .sys_reg = SYS_ID_AA64ISAR0_EL1,
->> +             .field_pos = ID_AA64ISAR0_CRC32_SHIFT,
->> +             .min_field_value = 1,
->> +     },
->>       {},
->>  };
->>
->> --
->> 2.18.0
->>
+Best regards,
+Krzysztof
