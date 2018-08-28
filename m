@@ -2,141 +2,158 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4F52C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 02:02:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1232C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 02:07:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 714D2208A5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 02:02:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 714D2208A5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=live.cn
+	by mail.kernel.org (Postfix) with ESMTP id 7318C208B1
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 02:07:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="KKNr0cCH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7318C208B1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726707AbeH1Fvz (ORCPT
+        id S1726909AbeH1F4Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 01:51:55 -0400
-Received: from mail-oln040092255031.outbound.protection.outlook.com ([40.92.255.31]:20906
-        "EHLO APC01-HK2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725796AbeH1Fvz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 01:51:55 -0400
-Received: from SG2APC01FT015.eop-APC01.prod.protection.outlook.com
- (10.152.250.52) by SG2APC01HT099.eop-APC01.prod.protection.outlook.com
- (10.152.251.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id 15.20.1101.10; Tue, 28
- Aug 2018 02:00:49 +0000
-Received: from HK0PR06MB2561.apcprd06.prod.outlook.com (10.152.250.56) by
- SG2APC01FT015.mail.protection.outlook.com (10.152.250.181) with Microsoft
- SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.20.1101.10 via
- Frontend Transport; Tue, 28 Aug 2018 02:00:49 +0000
-Received: from HK0PR06MB2561.apcprd06.prod.outlook.com
- ([fe80::5902:da9:e907:fe7d]) by HK0PR06MB2561.apcprd06.prod.outlook.com
- ([fe80::5902:da9:e907:fe7d%5]) with mapi id 15.20.1080.015; Tue, 28 Aug 2018
- 02:00:49 +0000
-From:   Changwei Ge <gechangwei@live.cn>
-To:     Larry Chen <lchen@suse.com>, "mfasheh@suse.com" <mfasheh@suse.com>,
-        "jlbec@evilplan.org" <jlbec@evilplan.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>
-Subject: Re: [Ocfs2-devel] [PATCH] fix dead lock caused by ocfs2_defrag_extent
-Thread-Topic: [Ocfs2-devel] [PATCH] fix dead lock caused by
- ocfs2_defrag_extent
-Thread-Index: AQHUPdxasF8xPWW9IUOKXtftZyBTYaTUaimA
-Date:   Tue, 28 Aug 2018 02:00:49 +0000
-Message-ID: <HK0PR06MB2561EFE93735AE62A0F5A559D50A0@HK0PR06MB2561.apcprd06.prod.outlook.com>
-References: <20180827080121.31145-1-lchen@suse.com>
-In-Reply-To: <20180827080121.31145-1-lchen@suse.com>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SG2PR06CA0154.apcprd06.prod.outlook.com
- (2603:1096:1:1f::32) To HK0PR06MB2561.apcprd06.prod.outlook.com
- (2603:1096:203:6f::10)
-x-incomingtopheadermarker: OriginalChecksum:9962FB7E031E912AAEC30418652644DD82E34765A294990D06B9B4EB25DF644F;UpperCasedChecksum:2B339CEE67D86330D6FE5F6D923F17AF4B3B8906D8EF08CAF3D1D4D5DFEB79A4;SizeAsReceived:7611;Count:50
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:  [eDp6XmJiG3iYLK6ReRbOKCgg2r1WPGKr3QR0caOavDY=]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SG2APC01HT099;6:ZPXTKzPQXBJNBzeRA0u45wSeyUykqR6WrF7D9IL01SPzRcgUUYyKUQotpO9RHNORFkvCbifSFfs65F3LPOOrvVffUffI2dwj81jsEI/0QNyF9vsGR7oSRdCPPvCB9ZsckY0nIxZgaIb3QoJC76Z6FkTawIPHOTcp3UTt7PBWJ+DrnnSuEHxHsaqdbxRaN4V5w0XLNaMp9atoBt560Eam+Mrr5M7CoQm8yLCQmpYvlctNyzZXwdZnFb0xvpUHdCEh/E0TGIBEw+bRmVYfWFO9mY9FYElJj92hGZkf+iEoEUEIIt3XfrNnbCQSu/AvdMipYn/yn5CoBanuJtSd3Zp6TynXAyFZxD0NTbbfcXt2ZUl7bDZz7p1G4iHZfzU1vxNvJsX/IywDW3yQEjfDY6lljSbZAKJC/Zk6SdSfEMieSA7gexMcLxHYuoI/40rDEtgmqQ2twTrrG4NE/3pGIjJSdA==;5:xAL5J1bXPCJDBsV6Gerw7n69/VnRhtMa4qOs6gIIWVRcVTd7t44zED+aa4HRZBCDZNgGL5GReet628nBTJuVCGpdzTuPDAuxVDb5rty7ZNNLIHbIQM1nPj5OjT4seXz82QtBf46pIy1pazD6JmjiEmA0XhBAnIwfXpJ66nyaeac=;7:ZH31Lb5ohLnVLI69apdi6sgKNQV4Qnb4GKA9EEM4RDC0N1QajILByVSn50ZesJ4AmyM/h1qfHbP0Yuwwp2GevNpr/Ceo2McglM92wdXHhWYSXJ3CHNTQ2ABCu/Rv4v8I6Bvmg2yE+ir1X5p8LCVTOM4gZT4Al63AaQ0aH+xvECQMdtTJJXde1MlrVlQC1odQ5y/3XkdEUKC+VrrQW14/VWJp331JHJhINtrVogmchTuc+aM0mBOiZ6x2O8AS6Ypv
-x-incomingheadercount: 50
-x-eopattributedmessage: 0
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031324274)(2017031323274)(2017031322404)(1603101475)(1601125500)(1701031045);SRVR:SG2APC01HT099;
-x-ms-traffictypediagnostic: SG2APC01HT099:
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(4566010)(82015058);SRVR:SG2APC01HT099;BCL:0;PCL:0;RULEID:;SRVR:SG2APC01HT099;
-x-forefront-prvs: 077884B8B5
-x-forefront-antispam-report: SFV:NSPM;SFS:(7070007)(189003)(199004)(81156014)(476003)(106356001)(110136005)(105586002)(6246003)(25786009)(74482002)(4326008)(54906003)(14454004)(8936002)(2501003)(15760500003)(229853002)(104016004)(81612004)(97736004)(99286004)(6436002)(7696005)(33656002)(76176011)(9686003)(14444005)(256004)(53546011)(6506007)(102836004)(386003)(56003)(55016002)(11346002)(82202002)(2900100001)(2201001)(575784001)(446003)(86362001)(68736007)(486006)(5660300001)(26005)(74316002)(305945005)(5250100002)(8676002)(6346003);DIR:OUT;SFP:1901;SCL:1;SRVR:SG2APC01HT099;H:HK0PR06MB2561.apcprd06.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: live.cn does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=gechangwei@live.cn; 
-x-microsoft-antispam-message-info: cnbSqkntkxNfe01ClPXRF8VmbSpEVKkBKsqATOuND6dKEUqzhe2ciNefJF5UxqYu7kC4LUxb9gz1EdanGhVpgKZVnh71Teb2uo+YgzLMsNiBWVrzHde4EMzmd4xRPDSRSw2EFSwk6G7VSMt5o+l0AK9oibiA4yNLXiWagYdlY4NvxdUgi8kdMOWpcrbGz9lVburO7xLT/U4o/qXMvWDCLODl7CzTCuqzlRPBBo382ug=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <B456CD6A7A3C1249B67774DFCE9710BA@apcprd06.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: d4d70346-2c10-4f39-8c00-e767963926d9
-X-MS-Exchange-CrossTenant-Network-Message-Id: 21a48b16-5b40-4570-745c-08d60c8a136a
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: d4d70346-2c10-4f39-8c00-e767963926d9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Aug 2018 02:00:49.5981
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Internet
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2APC01HT099
+        Tue, 28 Aug 2018 01:56:25 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:61893 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725796AbeH1F4Z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 01:56:25 -0400
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20180828020702epoutp0438132187ab9e5379370a560730a4889c~O6jG_R4040042400424epoutp044;
+        Tue, 28 Aug 2018 02:07:02 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180828020702epoutp0438132187ab9e5379370a560730a4889c~O6jG_R4040042400424epoutp044
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1535422022;
+        bh=HjKMhSE4M74la7ha9MYYPBkp9gO18sAC7vUDVH7SfII=;
+        h=Date:From:To:Cc:Subject:In-reply-to:References:From;
+        b=KKNr0cCHeMc+uhLCsz03xpNhXvrb5IpDfcu11JTvngpoPC0mm//XpHv4h2zFHnzGz
+         bpszHjsZe5LL0dcuYZeARR257Zovdntf1yi4GccGSQXgquC+cfJ/LBdkQUeIfHi2f4
+         gJ7aIi8JLWx94kKEwWyvRp/nI7edcEVgGRsBOSIg=
+Received: from epsmges1p2.samsung.com (unknown [182.195.40.152]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180828020659epcas1p26dfdfd12594c1d59cb605c80f917bb71~O6jESyRkD2473524735epcas1p2k;
+        Tue, 28 Aug 2018 02:06:59 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        04.0A.04079.04EA48B5; Tue, 28 Aug 2018 11:06:56 +0900 (KST)
+Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20180828020656epcas1p35ae9aa930ff2d18ff83a23c1d195718c~O6jBofygn1511215112epcas1p3i;
+        Tue, 28 Aug 2018 02:06:56 +0000 (GMT)
+X-AuditID: b6c32a36-b83ff70000000fef-18-5b84ae400517
+Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p1new.samsung.com
+        (Symantec Messaging Gateway) with SMTP id 27.39.03702.04EA48B5; Tue, 28 Aug
+        2018 11:06:56 +0900 (KST)
+MIME-version: 1.0
+Content-transfer-encoding: 8BIT
+Content-type: text/plain; charset="UTF-8"
+Received: from [10.113.63.77] by mmp2.samsung.com (Oracle Communications
+        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
+        <0PE500CT8F7KU520@mmp2.samsung.com>; Tue, 28 Aug 2018 11:06:56 +0900 (KST)
+Message-id: <5B84AE40.50305@samsung.com>
+Date:   Tue, 28 Aug 2018 11:06:56 +0900
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
+        Thunderbird/31.6.0
+To:     Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH] devfreq: Convert to using %pOFn instead of
+ device_node.name
+In-reply-to: <20180828015252.28511-15-robh@kernel.org>
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTYRjG+3Z2tjNr+TXTXuy2DkQpqDubs1M0C7IaJCH5T7TMDu6g4m7s
+        zMiszO5J2aIWZRcvSYlh2dQwKyvtRjAFy5K8VKzC0iKyi13AdjxE/fX9vpfneXnfh5ciNJ/J
+        aCrX4eHdDs5GK8LkV9tjEuKWXtpt0fWNGNjDwSGC7eysV7KBncNK1h98SrKPW04r2JFDdxF7
+        orNVxvYW1yjYsRvNyqUqs7/2gMLcUF1kLm2sReYR/6w0+Tp+cQ7PWXm3lndkOa25jmwTvSo9
+        c1mmMUnHxDEL2QW01sHZeROdkpoWtyLXFhqF1m7ibPmhUhonCHRC8mK3M9/Da3OcgsdEWxhG
+        H8/oFsTr9aHXkLFIbwxJNvI5731euSsQtrk0WKPcgZ5RJUhFAU6E7vu/yBIURmlwM4KLZcOE
+        9PmOoPT2SeKvarT1hUxkDa5H0BeYKLIaT4HRowPyEkRRBJ4Nd7vyxDKBY6Dp+mWl1KcfQcXl
+        Vrmknw++r71IZDmeC3XB56TIChwLtwZ7FCKH4znQPRoc10TitXCt/JtS5Kl4CfR/GUFiUwLv
+        kcGFJ93j5gi8Bo6VVoyLVDgJ3o3dVkpD9yog8EgncQoMDO0jJY6A9w8aleLQgKdD1z2T2BPw
+        PgRfBneR0seL4NOjBplkMMDbyhKZtNpk+Pj1ICmZ1bB/r0ZCM5waTpEWbkTwstNPeNHMsv8y
+        KvuXUdl/GVUgohZF8S7Bns0LjEsfL3B2Id+RHZ/ltPvR+L3FJjWjqo7UNoQpRE9Se6ndFg3J
+        bRIK7G0IKIKeqvblhUpqK1ewhXc7M935Nl5oQ8ZQxEeI6MgsZ+h6HZ5Mxqg3GAxsIpNkZBh6
+        mlq/Ot2iwdmch8/jeRfv/uuTUaroHWhCMlPuWykjqwssW8NV8nbvNlvL7N8d7yLHPg1ua/qw
+        PKJq88wzeH/4xobXS+rnnrtfbT2e/LD87IZVdnehUFeoG51Y/KPo1UKH640z3Fe3wnZ9WfH0
+        N8ttPmuVpTLqzHnrz8rt89ZrA1UmQ01rwYyb5bnQ1T6pZ6goIaPHkDJw5wotF3I4JpZwC9wf
+        EheU24UDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrMLMWRmVeSWpSXmKPExsVy+t9jQV2HdS3RBnOXK1v0P37NbHH+/AZ2
+        i7NNb9gtNj2+xmpxedccNovPvUcYLWac38dkcbtxBZvF/z072B04PTat6mTz2Lyk3qNvyypG
+        j8+b5AJYorhsUlJzMstSi/TtErgyXk2dwFJwlqui7/EK9gbG6xxdjJwcEgImEj/23WfqYuTi
+        EBJYxyhx6sdfVpAEr4CgxI/J91i6GDk4mAXkJY5cygYJMwuoS0yat4gZov4+o8TzH28YIeo1
+        JKZ+vQ1mswioSqx9fAtsDpuAlsT+FzfYQGx+AUWJqz8eM4LMFBWIkOg+UQkSFhGwl7j75TMj
+        yExmgVYmiUsTr4PVCwsESNw7850RYtkWRombBz4xgyQ4BcwkXv4/wD6BUWAWkltnIdw6C8mt
+        CxiZVzFKphYU56bnFhsVGOallusVJ+YWl+al6yXn525iBAb9tsNafTsY7y+JP8QowMGoxMM7
+        gaMlWog1say4MvcQowQHs5II79RsoBBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHe23nHIoUE0hNL
+        UrNTUwtSi2CyTBycUg2MAcKx7xoe+wu+fG2lf2X31rQJbBqXTvvZBMzYE7X7a+vnnap/5nsU
+        bWF4LhNwsuf40pSV9bxmxRkbv8tzzZl3eKo0u4/3F+8oplkCDivXTGAK3lMTl/r07Jt3fEec
+        mA/O0by4q7aQTc5VLP9TlmURR+/0RCajao1bTUWNtQ8ShII8j7Smaj1VYinOSDTUYi4qTgQA
+        tyjupHYCAAA=
+X-CMS-MailID: 20180828020656epcas1p35ae9aa930ff2d18ff83a23c1d195718c
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180828015312epcas2p2fdb2ee1d1b292f212ec773dd8fb4bfc7
+References: <20180828015252.28511-1-robh@kernel.org>
+        <CGME20180828015312epcas2p2fdb2ee1d1b292f212ec773dd8fb4bfc7@epcas2p2.samsung.com>
+        <20180828015252.28511-15-robh@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgTGFycnksDQoNCkknZCBsaWtlIHRvIHByb3Bvc2UgYW5vdGhlciB3YXkgdG8gZml4IHRoaXMg
-aXNzdWUsIHdoaWNoIG1pZ2h0IGJlIGVhc2llci4NCkFjdHVhbGx5LCBvY2ZzMl9yZXNlcnZlX2Ns
-dXN0ZXJzKCkgaW5zaWRlIHdpbGwgZmx1c2ggdHJ1bmNhdGUgbG9nIGlmIA0KdGhlcmUgaXMgbm8g
-ZW5vdWdoIGNsdXN0ZXJzIGxlZnQuDQpTbyBob3cgYWJvdXQganVzdCByZW1vdmUgX19vY2ZzMl9m
-bHVzaF90cnVuY2F0ZV9sb2coKSBpbiANCm9jZnMyX2RlZnJhZ19leHRlbnQoKT8NCg0KVGhhbmtz
-LA0KQ2hhbmd3ZWkNCg0KDQpPbiAyMDE4LzgvMjcgMTY6MDEsIExhcnJ5IENoZW4gd3JvdGU6DQo+
-IG9jZnMyX2RlZnJhZ19leHRlbnQgbWF5IGZhbGwgaW50byBkZWFkIGxvY2suDQo+DQo+IG9jZnMy
-X2lvY3RsX21vdmVfZXh0ZW50cw0KPiAgICBvY2ZzMl9pb2N0bF9tb3ZlX2V4dGVudHMJDQo+ICAg
-ICAgb2NmczJfbW92ZV9leHRlbnRzDQo+ICAgICAgICBvY2ZzMl9kZWZyYWdfZXh0ZW50DQo+ICAg
-ICAgICAgIG9jZnMyX2xvY2tfYWxsb2NhdG9yc19tb3ZlX2V4dGVudHMNCj4NCj4gICAgICAgICAg
-ICBvY2ZzMl9yZXNlcnZlX2NsdXN0ZXJzDQo+ICAgICAgICAgICAgICBpbm9kZV9sb2NrIEdMT0JB
-TF9CSVRNQVBfU1lTVEVNX0lOT0RFDQo+DQo+IAkgIF9fb2NmczJfZmx1c2hfdHJ1bmNhdGVfbG9n
-DQo+ICAgICAgICAgICAgICBpbm9kZV9sb2NrIEdMT0JBTF9CSVRNQVBfU1lTVEVNX0lOT0RFDQo+
-DQo+IEFzIGJhY2sgdHJhY2Ugc2hvd3MgYWJvdmUsIG9jZnMyX3Jlc2VydmVfY2x1c3RlcnMgd2ls
-bCBjYWxsIGlub2RlX2xvY2sNCj4gYWdhaW5zdCB0aGUgZ2xvYmFsIGJpdG1hcCBpZiBsb2NhbCBh
-bGxvY2F0b3IgaGFzIG5vdCBzdWZmaWNpZW50IGNsdXRlcnMuDQo+IE9uY2UgZ2xvYmFsIGJpdG1h
-cCBjb3VsZCBtZWV0IHRoZSBkZW1hbmQsIG9jZnMyX3Jlc2VydmVfY2x1c3RlciB3aWxsDQo+IHJl
-dHVybiBzdWNjZXNzIHdpdGggZ2xvYmFsIGJpdG1hcCBsb2NrZWQuDQo+DQo+IEFmdGVyIG9jZnMy
-X3Jlc2VydmVfY2x1c3RlciwgaWYgdHJ1bmNhdGUgbG9nIGlzIGZ1bGwsDQo+IF9fb2NmczJfZmx1
-c2hfdHJ1bmNhdGVfbG9nIHdpbGwgZGVmaW5pdGVseSBmYWxsIGludG8gZGVhZCBsb2NrDQo+IGJl
-Y2F1c2UgaXQgbmVlZHMgdG8gaW5vZGVfbG9jayBnbG9iYWwgYml0bWFwLCB3aGljaCBoYXMNCj4g
-YWxyZWFkeSBiZWVuIGxvY2tlZC4NCj4NCj4gVG8gZml4IHRoaXMgYnVnLCB3ZSBjb3VsZCByZW1v
-dmUgZnJvbSBvY2ZzMl9sb2NrX2FsbG9jYXRvcnNfbW92ZV9leHRlbnRzDQo+IHRoZSBjb2RlIHdo
-aWNoIGludGVuZHMgdG8gbG9jayBnbG9iYWwgYWxsb2NhdG9yLCBhbmQgcHV0IHRoZSByZW1vdmVk
-DQo+IGNvZGUgYWZ0ZXIgX19vY2ZzMl9mbHVzaF90cnVuY2F0ZV9sb2cNCj4NCj4gVGhlIG9jZnMy
-X2xvY2tfYWxsb2NhdG9yc19tb3ZlX2V4dGVudHMgaGFzIGJlZW4gcmVmZXJlZCBieSAyIHBsYWNl
-cywgb25lDQo+IGlzIGhlcmUsIHRoZSBvdGhlciBkb2VzIG5vdCBuZWVkIHRoZSBkYXRhIGFsbG9j
-YXRvciBjb250ZXh0LCB3aGljaCBtZWFucw0KPiB0aGlzIHBhdGNoIGRvZXMgbm90IGFmZmVjdCB0
-aGUgY2FsbGVyIHNvIGZhci4NCj4NCj4NCj4NCj4gU2lnbmVkLW9mZi1ieTogTGFycnkgQ2hlbiA8
-bGNoZW5Ac3VzZS5jb20+DQo+IC0tLQ0KPiAgIGZzL29jZnMyL21vdmVfZXh0ZW50cy5jIHwgMTMg
-KysrKysrLS0tLS0tLQ0KPiAgIDEgZmlsZSBjaGFuZ2VkLCA2IGluc2VydGlvbnMoKyksIDcgZGVs
-ZXRpb25zKC0pDQo+DQo+IGRpZmYgLS1naXQgYS9mcy9vY2ZzMi9tb3ZlX2V4dGVudHMuYyBiL2Zz
-L29jZnMyL21vdmVfZXh0ZW50cy5jDQo+IGluZGV4IDdlYjNiMGE2MzQ3ZS4uMDY0ZGVkZjQwZDc0
-IDEwMDY0NA0KPiAtLS0gYS9mcy9vY2ZzMi9tb3ZlX2V4dGVudHMuYw0KPiArKysgYi9mcy9vY2Zz
-Mi9tb3ZlX2V4dGVudHMuYw0KPiBAQCAtMTkyLDEzICsxOTIsNiBAQCBzdGF0aWMgaW50IG9jZnMy
-X2xvY2tfYWxsb2NhdG9yc19tb3ZlX2V4dGVudHMoc3RydWN0IGlub2RlICppbm9kZSwNCj4gICAJ
-CWdvdG8gb3V0Ow0KPiAgIAl9DQo+ICAgDQo+IC0JaWYgKGRhdGFfYWMpIHsNCj4gLQkJcmV0ID0g
-b2NmczJfcmVzZXJ2ZV9jbHVzdGVycyhvc2IsIGNsdXN0ZXJzX3RvX21vdmUsIGRhdGFfYWMpOw0K
-PiAtCQlpZiAocmV0KSB7DQo+IC0JCQltbG9nX2Vycm5vKHJldCk7DQo+IC0JCQlnb3RvIG91dDsN
-Cj4gLQkJfQ0KPiAtCX0NCj4gICANCj4gICAJKmNyZWRpdHMgKz0gb2NmczJfY2FsY19leHRlbmRf
-Y3JlZGl0cyhvc2ItPnNiLCBldC0+ZXRfcm9vdF9lbCk7DQo+ICAgDQo+IEBAIC0yODMsNiArMjc2
-LDEyIEBAIHN0YXRpYyBpbnQgb2NmczJfZGVmcmFnX2V4dGVudChzdHJ1Y3Qgb2NmczJfbW92ZV9l
-eHRlbnRzX2NvbnRleHQgKmNvbnRleHQsDQo+ICAgCQl9DQo+ICAgCX0NCj4gICANCj4gKwlyZXQg
-PSBvY2ZzMl9yZXNlcnZlX2NsdXN0ZXJzKG9zYiwgKmxlbiwgJmNvbnRleHQtPmRhdGFfYWMpOw0K
-PiArCWlmIChyZXQpIHsNCj4gKwkJbWxvZ19lcnJubyhyZXQpOw0KPiArCQlnb3RvIG91dF91bmxv
-Y2tfbXV0ZXg7DQo+ICsJfQ0KPiArDQo+ICAgCWhhbmRsZSA9IG9jZnMyX3N0YXJ0X3RyYW5zKG9z
-YiwgY3JlZGl0cyk7DQo+ICAgCWlmIChJU19FUlIoaGFuZGxlKSkgew0KPiAgIAkJcmV0ID0gUFRS
-X0VSUihoYW5kbGUpOw0KDQo=
+Dear Rob,
+
+On 2018년 08월 28일 10:52, Rob Herring wrote:
+> In preparation to remove the node name pointer from struct device_node,
+> convert printf users to use the %pOFn format specifier.
+> 
+> Cc: Chanwoo Choi <cw00.choi@samsung.com>
+> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
+> Cc: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: linux-pm@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  drivers/devfreq/event/exynos-ppmu.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/devfreq/event/exynos-ppmu.c b/drivers/devfreq/event/exynos-ppmu.c
+> index a9c64f0d3284..c61de0bdf053 100644
+> --- a/drivers/devfreq/event/exynos-ppmu.c
+> +++ b/drivers/devfreq/event/exynos-ppmu.c
+> @@ -535,8 +535,8 @@ static int of_get_devfreq_events(struct device_node *np,
+>  
+>  		if (i == ARRAY_SIZE(ppmu_events)) {
+>  			dev_warn(dev,
+> -				"don't know how to configure events : %s\n",
+> -				node->name);
+> +				"don't know how to configure events : %pOFn\n",
+> +				node);
+>  			continue;
+>  		}
+>  
+> 
+
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
