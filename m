@@ -2,82 +2,82 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4D48C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 22:39:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09075C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 22:40:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D0932087D
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 22:39:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JSYVvC0P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D0932087D
+	by mail.kernel.org (Postfix) with ESMTP id B53B52087A
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 22:40:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B53B52087A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727765AbeH2Cdf (ORCPT
+        id S1727804AbeH2Cd6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 22:33:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38716 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727067AbeH2Cdf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 22:33:35 -0400
-Received: from localhost (unknown [104.132.0.94])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1FFFB2087B;
-        Tue, 28 Aug 2018 22:39:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535495988;
-        bh=Z8aoeJitO5+RKRAHbp1Tv8rOw0vL93Hjb07SIPgDiNc=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=JSYVvC0PQAQIuw/Kx+QF1biI0YuS/BhvsjLq5Dv/FU3nAkMkfMpb++LJu0g+YnX2G
-         uKlIjXemrzVdLkPfjr5VeTWZRyDTXue7HMGzsYctkLH0AaXoeznJGU4Dt80tbwYNBc
-         3iACSN5fQ8Sopx6PAbwAEjj009m+c2HpXE+KatRs=
-Content-Type: text/plain; charset="utf-8"
+        Tue, 28 Aug 2018 22:33:58 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:38401 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727067AbeH2Cd6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 22:33:58 -0400
+Received: by mail-oi0-f67.google.com with SMTP id x197-v6so5824174oix.5;
+        Tue, 28 Aug 2018 15:40:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1HK/bEjEqyd2Kjix/+/Ps9xE73qY97vLSjQhgmL+lqY=;
+        b=Kk4fhCDTlopp0Vy5p9zXGTOBC9v+J+vbsYp8BY8UfJPhHCMv3RIopIHMo0cI/BbgRm
+         Wl98KY09CTlcKQW66rACCWeSX1HFr8KW1pt2oizeYcejqxa2N0AacgyPcqKtMnAbwu2Q
+         fZRdIsKEI1XsTl3wnPlOnCaJ4RbSqV+lctj7xp/eb40rl53Xn1gnnt74UGCzmeMwkKI0
+         y3WmtLG2m6Y6Rfgq79zj8Xu1MPOjiImvcP2gpUMTB8X7DWSrWUN+HAhB242vKrI7bwRs
+         knosHT1uwz7jbcluVRuMUkD1IdVIN0pwVBluwKmGvQScaerAOOhVqkfT67D4q6ajIOAR
+         tQhw==
+X-Gm-Message-State: APzg51AMbH6ZGRyQkYCLzz4JaYa6oLwSUnz4B0iu6Fa5vxj92Z233x26
+        MhbY5wNsOXrXgjEPofUqrw==
+X-Google-Smtp-Source: ANB0VdY9MfPYujaSzvjp0AlLFtXcct+wDNSSjW+jJVsmfMwsye6V7siDXnPSsREJYcLuLo3Ylchv9w==
+X-Received: by 2002:aca:f488:: with SMTP id s130-v6mr118699oih.269.1535496010631;
+        Tue, 28 Aug 2018 15:40:10 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id m11-v6sm2324806oif.27.2018.08.28.15.40.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 28 Aug 2018 15:40:10 -0700 (PDT)
+Date:   Tue, 28 Aug 2018 17:40:09 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Tony Xie <tony.xie@rock-chips.com>
+Cc:     heiko@sntech.de, broonie@kernel.org, lee.jones@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
+        xsf@rock-chips.com, zhangqing@rock-chips.com,
+        huangtao@rock-chips.com, tony.xie@rock-chips.com
+Subject: Re: [PATCH v3 3/5] dt-bindings: mfd: rk808: Add binding information
+ for RK809 and RK817.
+Message-ID: <20180828224009.GA25643@bogus>
+References: <1535081441-20718-1-git-send-email-tony.xie@rock-chips.com>
+ <1535081441-20718-4-git-send-email-tony.xie@rock-chips.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Vabhav Sharma <vabhav.sharma@nxp.com>, arnd@arndb.de,
-        catalin.marinas@arm.com, devicetree@vger.kernel.org,
-        gregkh@linuxfoundation.org, kstewart@linuxfoundation.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel-owner@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        mark.rutland@arm.com, mturquette@baylibre.com, rjw@rjwysocki.net,
-        robh+dt@kernel.org, viresh.kumar@linaro.org, will.deacon@arm.com,
-        yamada.masahiro@socionext.com
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1534747636-20064-4-git-send-email-vabhav.sharma@nxp.com>
-Cc:     linux@armlinux.org.uk, V.Sethi@nxp.com, udit.kumar@nxp.com,
-        Yogesh Gaur <yogeshnarayan.gaur@nxp.com>,
-        Tang Yuantian <andy.tang@nxp.com>,
-        Vabhav Sharma <vabhav.sharma@nxp.com>
-References: <1534747636-20064-1-git-send-email-vabhav.sharma@nxp.com>
- <1534747636-20064-4-git-send-email-vabhav.sharma@nxp.com>
-Message-ID: <153549598745.129321.12633089552143824401@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH 3/5] drivers: clk-qoriq: Add clockgen support for lx2160a
-Date:   Tue, 28 Aug 2018 15:39:47 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1535081441-20718-4-git-send-email-tony.xie@rock-chips.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Vabhav Sharma (2018-08-19 23:47:14)
-> From: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
-> =
-
-> Add clockgen support for lx2160a.
-> Added entry for compat 'fsl,lx2160a-clockgen'.
-> As LX2160A is 16 core, so modified value for NUM_CMUX
-> =
-
-> Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
-> Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
-> Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
+On Fri, 24 Aug 2018 11:30:39 +0800, Tony Xie wrote:
+> Add device tree bindings documentation for Rockchip's RK809 & RK817 PMIC.
+> 
+> Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
 > ---
+>  Documentation/devicetree/bindings/mfd/rk808.txt | 56 +++++++++++++++++++++++++
+>  1 file changed, 56 insertions(+)
+> 
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-
+Reviewed-by: Rob Herring <robh@kernel.org>
