@@ -2,156 +2,179 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD48EC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:33:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E54ACC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:34:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EA482084D
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:33:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZquVS+/T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EA482084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 954CE2087F
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:34:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 954CE2087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727483AbeH2A0w (ORCPT
+        id S1727488AbeH2A1k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 20:26:52 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:38382 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727233AbeH2A0u (ORCPT
+        Tue, 28 Aug 2018 20:27:40 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:35864 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726996AbeH2A1k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 20:26:50 -0400
-Received: by mail-qk0-f193.google.com with SMTP id g197-v6so1934354qke.5
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 13:33:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=KVglm/7RrnF1zMs3Awdaxp7YI4R/EGlFbfAACEtaaDY=;
-        b=ZquVS+/T2ti7xGivXoNveNwgBpX8/wzwEuB6Q8VEQwmf/0/bMw0AaMUiGzTs8UeUIA
-         4KBBWS7WYDPx/09eT3nyotLgrkvJIGBaRj5li+HIu8WjfTf3OhYXcxMst4h6/OWz8z6X
-         DzaofkDguHoMyZ38UWcnK1PrTQGFz4xaq6a0hqmelAUAJcY+qakOApGrHqbdmKYlpgXS
-         Y3L04EkeRVJmEK3EUMUZzZ7jpHh9tVLpuSiAzbqKBtBwsSkUC1rSCLUe+xFHfdo5Hroz
-         PR3fqnzraDA/RaTGDs3LjeXtsyGemeVZF6B0nXtk8NGie852S4OnUxJjgR85M4Qu4EKz
-         aLCQ==
+        Tue, 28 Aug 2018 20:27:40 -0400
+Received: by mail-oi0-f66.google.com with SMTP id r69-v6so5277060oie.3;
+        Tue, 28 Aug 2018 13:34:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=KVglm/7RrnF1zMs3Awdaxp7YI4R/EGlFbfAACEtaaDY=;
-        b=LWuxx6uS8+StATLfMsrerStcb75ZYZ1MBwMgLXQGqbZ5MbP34fYLYTUHUmEsyDbnvs
-         0wi32VBqv1tSaHrr/bp2lMy4hiJ544+1UFG/XmVZC3ElcIQ3WXNhiwibTpETb8JiU/Qa
-         vltqhiT0IK4NBr7y6tcGb0PNkxja3X3IJV1xeq42KkHzWEZTCVCeSLfvZTh0T6/e9eBd
-         Ou2N5eQmmkt6TkCf8xnb9pxHHwXu3J+r01Tbtjtca8cgXFhtM3KUiSzKUBiR8oeD4eKD
-         g4Mep+maFyevtxR2CT6jeOb8c4QnIIgW3JhCvhTNn8gsc6/xVaY1LIEt8/owxjGbafns
-         gHbQ==
-X-Gm-Message-State: APzg51BuJsS83TjVd9iVdornmg4YoUUp4rOQdw3ENoHdZyPCR2I5fceK
-        5yMbOeEAGWA6bVm5i0gO6aYvdixOj2+7yAkv9K4=
-X-Google-Smtp-Source: ANB0VdY7P4piXW40yzFAB2BmmmLaXQ2V5a0nluzRhIxj+oLVbchI4rlmGBZIUhcLexzX1uDhAqI/ZHPFScKC7+Pn8PY=
-X-Received: by 2002:a37:1204:: with SMTP id c4-v6mr3298287qkh.63.1535488410890;
- Tue, 28 Aug 2018 13:33:30 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8DT1IZEKKTQ8xlWEhwxsz1xiiS+Ad5h6kFGT4NSGGXQ=;
+        b=BwnCUXAQ3BhQBFq3iFfpLjQLajVq5YkTLrdnijqK3WHnm9+lNO1ReRJpBTAqSDkuWb
+         bxziYzvl6WXjkDsSsilH/ypH3UN0mG99yyxqFTjDE6JrjeybJSPPy8wkFFqtjmtqMH9H
+         cm6BKjhUMY3LZgLg/XvtAlMvq2OIiUA43ocL6m5sP3i9tzQkwKyMRWmeijQZ1GXFlx52
+         nvOjmrezkXAgHj1cxHzIWP3ZpKLijEdrVtOGkYBLvZWYOYl7sHaIkHcdgYfheruHI7y3
+         XRddLBqhL7dZB+WiJFF+g/WPHixCJH0kY3dQ63Y6j+kJ70hP2ilOnKKkWZQZOMJoDqOD
+         2OZA==
+X-Gm-Message-State: APzg51BkO84oinmGjrlzfPMJm/mSuh8msAdqzzdnEv8eH46cCHOMfbUO
+        XjkXErW3o5KWDgjqojM+Eg==
+X-Google-Smtp-Source: ANB0VdZ9cO+FLX2NecbSo4xoT28bdZz006bCsh4D/Hi25+JJSBnK3F5ucxNTtvJv8gHZ3owhfunJPA==
+X-Received: by 2002:a54:4f88:: with SMTP id g8-v6mr2655661oiy.191.1535488459928;
+        Tue, 28 Aug 2018 13:34:19 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id l204-v6sm986798oia.45.2018.08.28.13.34.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 28 Aug 2018 13:34:19 -0700 (PDT)
+Date:   Tue, 28 Aug 2018 15:34:18 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc:     joro@8bytes.org, robin.murphy@arm.com, will.deacon@arm.com,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, freedreno@lists.freedesktop.org,
+        alex.williamson@redhat.com, mark.rutland@arm.com,
+        rjw@rjwysocki.net, robdclark@gmail.com, andy.gross@linaro.org,
+        linux-pm@vger.kernel.org, sboyd@kernel.org, tfiga@chromium.org,
+        jcrouse@codeaurora.org, sricharan@codeaurora.org,
+        m.szyprowski@samsung.com, architt@codeaurora.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [Patch v15 4/5] dt-bindings: arm-smmu: Add bindings for
+ qcom,smmu-v2
+Message-ID: <20180828203418.GA18366@bogus>
+References: <20180827105551.16346-1-vivek.gautam@codeaurora.org>
+ <20180827105551.16346-5-vivek.gautam@codeaurora.org>
 MIME-Version: 1.0
-Received: by 2002:ac8:471a:0:0:0:0:0 with HTTP; Tue, 28 Aug 2018 13:33:10
- -0700 (PDT)
-In-Reply-To: <CAKwvOdmSOGRDaCUgsEnEd=uyf83FzrRhJt-E3VnzX4FzDwPFWw@mail.gmail.com>
-References: <20180826175748.GA29525@gmail.com> <CAKwvOdnyHctAYRBOdrkX15MBPX68pOSiKc2P2S_JnDdffdY+OA@mail.gmail.com>
- <CAKwvOdk3PjNtjMcsXxRVvKLNcT+O_=5D1B7DXNWcwxwcMqdV2w@mail.gmail.com>
- <CANiq72nV_sVGgQuZra2gqOXHnbtCYWZDBMRW=EeeLK3qTL99ew@mail.gmail.com> <CAKwvOdmSOGRDaCUgsEnEd=uyf83FzrRhJt-E3VnzX4FzDwPFWw@mail.gmail.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Tue, 28 Aug 2018 22:33:10 +0200
-Message-ID: <CANiq72=0SPHyjQjKXyv1wojFG7R54Y3k7eqbk_66cOqrc-R0bw@mail.gmail.com>
-Subject: Re: [PATCH] include/linux/compiler*.h: Use feature checking instead
- of version checks for attributes
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Eli Friedman <efriedma@codeaurora.org>,
-        Christopher Li <sparse@chrisli.org>,
-        Kees Cook <keescook@chromium.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joe Perches <joe@perches.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180827105551.16346-5-vivek.gautam@codeaurora.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nick,
+On Mon, Aug 27, 2018 at 04:25:50PM +0530, Vivek Gautam wrote:
+> Add bindings doc for Qcom's smmu-v2 implementation.
+> 
+> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+> Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+> 
+> Changes since v14:
+>  - This is a new patch added in v15 after noticing the new
+>    checkpatch warning for separate dt-bindings doc.
+>  - This patch also addresses comments given by Rob and Robin to add
+>    a list of valid values of '<soc>' in "qcom,<soc>-smmu-v2"
+>    compatible string.
+> 
+>  .../devicetree/bindings/iommu/arm,smmu.txt         | 47 ++++++++++++++++++++++
+>  1 file changed, 47 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.txt b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+> index 8a6ffce12af5..52198a539606 100644
+> --- a/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+> +++ b/Documentation/devicetree/bindings/iommu/arm,smmu.txt
+> @@ -17,10 +17,24 @@ conditions.
+>                          "arm,mmu-401"
+>                          "arm,mmu-500"
+>                          "cavium,smmu-v2"
+> +                        "qcom,<soc>-smmu-v2", "qcom,smmu-v2"
 
-On Tue, Aug 28, 2018 at 7:05 PM, Nick Desaulniers
-<ndesaulniers@google.com> wrote:
-> On Tue, Aug 28, 2018 at 8:10 AM Miguel Ojeda
-> <miguel.ojeda.sandonis@gmail.com> wrote:
->>
->> I addressed that in the email I sent afterwards:
->>
->> """
->> Note that:
->>   - assume_aligned came with gcc 4.9
->>   - no_sanitize_address came with gcc 4.8
->>
->> So if we feel it is important to have them there (before gcc 5), we
->> would need here a quick version check here.
->> """
->>
->> The idea is that, in the future, whenever gcc 5 or later is the
->> minimum version, we just get rid of the #ifdef block without touching
->> the rest of the code :-)
->
-> So if __has_attribute came with gcc 5, then that means that this patch
-> will break assume_aligned for gcc-4.9 users and no_sanitize_address
-> for gcc-4.8 and gcc-4.9 users?  The slab allocator uses
-> assume_aligned, and no_sanitize_address for CONFIG_KASAN.  Should this
-> patch ever come back through stable, Android and ChromeOS
-> gcc-4.9/KASAN builds will break.
->
+The v2 in the compatible string is kind of redundant unless the SoC has 
+other SMMU types.
 
-Indeed, KASAN requires it:
+>  
+>                    depending on the particular implementation and/or the
+>                    version of the architecture implemented.
+>  
+> +                  A number of Qcom SoCs use qcom,smmu-v2 version of the IP.
+> +                  "qcom,<soc>-smmu-v2" represents a soc specific compatible
+> +                  string that should be present along with the "qcom,smmu-v2"
+> +                  to facilitate SoC specific clocks/power connections and to
+> +                  address specific bug fixes.
+> +                  '<soc>' string in "qcom,<soc>-smmu-v2" should be one of the
+> +                  following:
+> +                  msm8996 - for msm8996 Qcom SoC.
+> +                  sdm845 - for sdm845 Qcom Soc.
 
-          This is strictly a debugging feature and it requires a gcc version
-          of 4.9.2 or later. Detection of out of bounds accesses to stack or
-          global variables requires gcc 5.0 or later.
+Rather than all this prose, it would be simpler to just add 2 lines with 
+the full compatibles rather than <soc>. The <soc> thing is not going to 
+work when/if we move bindings to json-schema also.
 
-So we should just support it. However, __no_sanitize_address is only
-used when CONFIG_KASAN is enabled (to define __no_kasan_or_inline). So
-I would say it is an attribute for a particular CONFIG (like those of
-sparse). Therefore, I think we should simply remove
-__no_sanitize_address for general use (let's see how it looks).
+> +
+> +                  An example string would be -
+> +                  "qcom,msm8996-smmu-v2", "qcom,smmu-v2".
+> +
+>  - reg           : Base address and size of the SMMU.
+>  
+>  - #global-interrupts : The number of global interrupts exposed by the
+> @@ -71,6 +85,22 @@ conditions.
+>                    or using stream matching with #iommu-cells = <2>, and
+>                    may be ignored if present in such cases.
+>  
+> +- clock-names:    List of the names of clocks input to the device. The
+> +                  required list depends on particular implementation and
+> +                  is as follows:
+> +                  - for "qcom,smmu-v2":
+> +                    - "bus": clock required for downstream bus access and
+> +                             for the smmu ptw,
+> +                    - "iface": clock required to access smmu's registers
+> +                               through the TCU's programming interface.
+> +                  - unspecified for other implementations.
+> +
+> +- clocks:         Specifiers for all clocks listed in the clock-names property,
+> +                  as per generic clock bindings.
+> +
+> +- power-domains:  Specifiers for power domains required to be powered on for
+> +                  the SMMU to operate, as per generic power domain bindings.
+> +
+>  ** Deprecated properties:
+>  
+>  - mmu-masters (deprecated in favour of the generic "iommus" binding) :
+> @@ -137,3 +167,20 @@ conditions.
+>                  iommu-map = <0 &smmu3 0 0x400>;
+>                  ...
+>          };
+> +
+> +	/* Qcom's arm,smmu-v2 implementation */
+> +	smmu4: iommu {
 
-For __assume_aligned, it is "only" an optimization, but I think it is
-a general one, so we should keep it in attributes.h; I will simply add
-the gcc 4.9 support knowledge.
+Needs a unit-address.
 
-On that topic: actually, some of the attributes that we have that are
-"required" are not really "required" in the strict sense: we could
-test for them; but I wanted to minimize the amount of noise for gcc <
-5 since we have to manually write the support table (and anyway most
-compilers support them). Whenever we are past gcc 5 in a few years, we
-could actually test for the non-strictly-required attribute if we want
-to be extra nice to new compilers :-)
-
-> I don't think we should leave that for a follow up; I would like to
-> see it as part of this patch.  It's ok to have explicit version checks
-> for those 2 attributes since it's not possible to feature detect them
-> for the versions of gcc that we support in this code base.  I think
-> you should add them in a v2 of this patch.  Then we can point to this
-> commit as the *shining example* of how to do proper feature detection,
-> falling back to version checks only as a last resort.
-
-Thanks for the kind words!
-
-I also read your other comments in the previous email -- no comments
-on those. I will prepare v2.
-
-Cheers,
-Miguel
+> +		compatible = "qcom,msm8996-smmu-v2", "qcom,smmu-v2";
+> +		reg = <0xd00000 0x10000>;
+> +
+> +		#global-interrupts = <1>;
+> +		interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH>;
+> +		#iommu-cells = <1>;
+> +		power-domains = <&mmcc MDSS_GDSC>;
+> +
+> +		clocks = <&mmcc SMMU_MDP_AXI_CLK>,
+> +			 <&mmcc SMMU_MDP_AHB_CLK>;
+> +		clock-names = "bus", "iface";
+> +	};
+> -- 
+> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+> of Code Aurora Forum, hosted by The Linux Foundation
+> 
