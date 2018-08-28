@@ -2,159 +2,90 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3F0EC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 01:46:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C68C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 01:52:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BF66208B2
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 01:46:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="K8M9DWn/";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="WAvCrM0L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BF66208B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 85921208B2
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 01:52:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85921208B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727052AbeH1FgJ (ORCPT
+        id S1727111AbeH1FmL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 01:36:09 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:37534 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725724AbeH1FgJ (ORCPT
+        Tue, 28 Aug 2018 01:42:11 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:40989 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725832AbeH1FmK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 01:36:09 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 71452604BE; Tue, 28 Aug 2018 01:46:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535420814;
-        bh=oaJgHnfIpOR5sk6Ay/x8VJ0oN7Ql+s8IyzsO1rZEL/s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=K8M9DWn/XNyXLbUoF3C8APgPrDRn13rgHtBOqNGZXWXc/3GxpJUUv4O2SD52cgZU0
-         S7EUmTKD6dSQ6cL4oOg2ITORBZ2eU0679kghW1lLyUAvYG8UpxCCzfl54Eur4Mwnv1
-         MXxI7YZqvEHyNkxa+69Waq+CXa/JOZxRJBWg7SVU=
-Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: ilina@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1301C60271;
-        Tue, 28 Aug 2018 01:46:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535420813;
-        bh=oaJgHnfIpOR5sk6Ay/x8VJ0oN7Ql+s8IyzsO1rZEL/s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WAvCrM0L0vKPZG0W5H0yzx8A26VcUqy2JFgv793dJzz15CvToAs8jsxdi6/Iciuwi
-         1wBEzV8tPYwihWVPz1g8bFL9fQkKKK/qngxI+02sSulS0N8dV7Pb5H+POWKhWCE6yI
-         uXr4LjTpPh+mL2owkQDqxVuwiTlnYmGOMurjrmes=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1301C60271
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date:   Mon, 27 Aug 2018 19:46:52 -0600
-From:   Lina Iyer <ilina@codeaurora.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Stephen Boyd <sboyd@kernel.org>, evgreen@chromium.org,
-        rplsssn@codeaurora.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Andy Gross <andy.gross@linaro.org>,
-        Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v2 1/5] drivers: pinctrl: qcom: add wakeup capability to
- GPIO
-Message-ID: <20180828014652.GB13998@codeaurora.org>
-References: <20180817163849.30750-1-ilina@codeaurora.org>
- <20180817163849.30750-2-ilina@codeaurora.org>
- <CACRpkdb+Opdn1eWZSRydS1Bafpqwcg83xEcT-YJC6D-kSSi1ew@mail.gmail.com>
- <20180827165644.GR5081@codeaurora.org>
- <20180828002641.GC2523@minitux>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20180828002641.GC2523@minitux>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Tue, 28 Aug 2018 01:42:10 -0400
+Received: by mail-oi0-f68.google.com with SMTP id k12-v6so1737797oiw.8;
+        Mon, 27 Aug 2018 18:52:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=wMsoSHrTnqmMHU/afUmBcsyqhLYPvT/ds3GpNPgxRo0=;
+        b=YQg2dxZ7/98O57fNg8A7GPSEmsyVjzAowqZ4ue2hS/btw+yheHcC11vY1zv/9QOQlo
+         22mtzsZmspF1AhVjpdXGpA1dktl3LWzimZ4rPIg0cIcMHqkAh6rHKjicnLOkLVevpenv
+         c/Nz1YxbSrL/KvXE2Ab8w4Hrin+zOStgf/fxRqgnHEOz9KZzTXyShmAD9iiLKEECjFuI
+         fG0saIrjE2P/1HtLn6rRu9zzYq/VSSRj9ktNMfJ5FNIBZzaokxkVAo/KcPprFWdZryZ4
+         zUFrt9twP9mP8pDTPRLfgHdemhRrouZeF0vd/mjfGaVfaQjOqJwWmarEMR8Nx65f5hG2
+         ZHyg==
+X-Gm-Message-State: APzg51BQJOFlIrzTAUESq1xiBVEu+WW/gfsgXJUXLLTFH3D8/KkiCsGV
+        r3SXSUKJGHbDKcfinNPwj98ZqZI=
+X-Google-Smtp-Source: ANB0VdZ1p6mbvjHeaDbr8ExmhxZaMMLb9B8Yb+7R0BUNsh2JI7i2gpk60YbHCkXUS3u1tchYa7sgpw==
+X-Received: by 2002:aca:ea57:: with SMTP id i84-v6mr981770oih.266.1535421175215;
+        Mon, 27 Aug 2018 18:52:55 -0700 (PDT)
+Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.googlemail.com with ESMTPSA id n71-v6sm1652696oig.48.2018.08.27.18.52.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 27 Aug 2018 18:52:54 -0700 (PDT)
+From:   Rob Herring <robh@kernel.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] ARM: shmobile: Convert to using %pOFn instead of device_node.name
+Date:   Mon, 27 Aug 2018 20:52:03 -0500
+Message-Id: <20180828015252.28511-2-robh@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180828015252.28511-1-robh@kernel.org>
+References: <20180828015252.28511-1-robh@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27 2018 at 18:26 -0600, Bjorn Andersson wrote:
->On Mon 27 Aug 09:56 PDT 2018, Lina Iyer wrote:
->
->> On Sun, Aug 26 2018 at 08:33 -0600, Linus Walleij wrote:
->> > On Fri, Aug 17, 2018 at 6:39 PM Lina Iyer <ilina@codeaurora.org> wrote:
->> >
->> > > QCOM SoC's that have Power Domain Controller (PDC) chip in the always-on
->> > > domain can wakeup the SoC, when interrupts and GPIOs are routed to the
->> > > its interrupt controller. Only select GPIOs that are deemed wakeup
->> > > capable are routed to specific PDC pins. During low power state, the
->> > > pinmux interrupt controller may be non-functional but the PDC would be.
->> > > The PDC can detect the wakeup GPIO is triggered and bring the TLMM to an
->> > > operational state.
->> > >
->> > > Interrupts that are level triggered will be detected at the TLMM when
->> > > the controller becomes operational. Edge interrupts however need to be
->> > > replayed again.
->> > >
->> > > Request the corresponding PDC IRQ, when the GPIO is requested as an IRQ,
->> > > but keep it disabled. During suspend, we can enable the PDC IRQ instead
->> > > of the GPIO IRQ, which may or not be detected.
->> > >
->> > > Signed-off-by: Lina Iyer <ilina@codeaurora.org>
->> > > ---
->> > > Changes in v1:
->> > >         - Trigger GPIO in h/w from PDC IRQ handler
->> > >         - Avoid big tables for GPIO-PDC map, pick from DT instead
->> > >         - Use handler_data
->> >
->> > Just for the record this is an impressive and much needed patch
->> > set, no other SoC developer has yet taken on the task of making this
->> > work so I very much appreciate that Qualcomm show the way.
->> >
->> > > +static int msm_gpio_pdc_pin_request(struct irq_data *d)
->> > > +static int msm_gpio_pdc_pin_release(struct irq_data *d)
->> > > +static int msm_gpio_irq_reqres(struct irq_data *d)
->> > > +{
->> > (...)
->> > > +       if (gpiochip_lock_as_irq(gc, irqd_to_hwirq(d))) {
->> > (...)
->> > > +static void msm_gpio_irq_relres(struct irq_data *d)
->> > > +{
->> > > +       gpiochip_unlock_as_irq(gc, irqd_to_hwirq(d));
->> > > +}
->> >
->> > FYI Hans Verkuil is working on a patch set that moves the
->> > lock/unlock as IRQ call to the irqchip request() and release()
->> > functions so we can switch a GPIO irqchip line from IRQ
->> > mode to say output at runtime without too much trouble.
->> > (CEC needs this.)
->> >
->> Thanks, I will look into Hans's RFCv2. But what would help me would be
->> to avoid creating the IRQ for the GPIO itself (I have the latent IRQ),
->> if I could just return that instead in gpio_to_irq(), it might be
->> easier. I understand ->to_irq() is supposed to be a translate function
->> only, I can avoid the dance of enabling and diabling the PDC IRQ on
->> suspend and resume.
->>
->
->I did implement gpio_to_irq() like this in the PMIC gpio/mpp drivers and
->we've since concluded that we need to move this to some hierarchical
->interrupt controller, because people like Linus expect to be able to say
->
->  interrupts = <&gpio_controller 1 IRQ_TYPE_EDGE_RISING>
->
->which is something used all over the place with the TLMM driver today.
+In preparation to remove the node name pointer from struct device_node,
+convert printf users to use the %pOFn format specifier.
 
-Does it have to be &gpio_controller, can it be another interrupt controller?
+Cc: Simon Horman <horms@verge.net.au>
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-renesas-soc@vger.kernel.org
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ arch/arm/mach-shmobile/pm-rmobile.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Say,
-	interrupts-extended = <&pdc 1 IRQ_TYPE_EDGE_RISING>;
-
--- Lina
+diff --git a/arch/arm/mach-shmobile/pm-rmobile.c b/arch/arm/mach-shmobile/pm-rmobile.c
+index e348bcfe389d..9dd6cadcd900 100644
+--- a/arch/arm/mach-shmobile/pm-rmobile.c
++++ b/arch/arm/mach-shmobile/pm-rmobile.c
+@@ -189,7 +189,7 @@ static void __init add_special_pd(struct device_node *np, enum pd_types type)
+ 		return;
+ 	}
+ 
+-	pr_debug("Special PM domain %s type %d for %pOF\n", pd->name, type, np);
++	pr_debug("Special PM domain %pOFn type %d for %pOF\n", pd, type, np);
+ 
+ 	special_pds[num_special_pds].pd = pd;
+ 	special_pds[num_special_pds].type = type;
+-- 
+2.17.1
 
