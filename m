@@ -2,107 +2,118 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57312C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 18:04:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A1ABC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 18:09:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE05520851
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 18:04:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A38A12087C
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 18:09:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="NjAtYyq7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE05520851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="p/uy/vUd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A38A12087C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727397AbeH1V5D (ORCPT
+        id S1727404AbeH1WCm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 17:57:03 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48552 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727040AbeH1V5C (ORCPT
+        Tue, 28 Aug 2018 18:02:42 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:45364 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727130AbeH1WCm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 17:57:02 -0400
+        Tue, 28 Aug 2018 18:02:42 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=zezUPnk3PmDKuvk+ymUEkhjioWYRDmbR5XR9K2Dd7BQ=; b=NjAtYyq7x9fleZeeOSGnUmzzT
-        qISZQGmKrNFHwKApu2y8ubDtGOMNNgtrJJdxHxIMw1eOxtIsfrR2pvghvsytyixxECRZ33HDOuNXv
-        Vd4q+vNFRVOzC8YyLAZNBFtuqUTGQk2d0JgFF1qSQ6Cd8dPP2k511wWTTPvgTYtMAweIo=;
-Received: from 94.197.121.178.threembb.co.uk ([94.197.121.178] helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fuiL8-0006UJ-Pb; Tue, 28 Aug 2018 18:03:43 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 3AF97440078; Tue, 28 Aug 2018 19:03:35 +0100 (BST)
-Date:   Tue, 28 Aug 2018 19:03:35 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Timur Tabi <timur@kernel.org>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Olivier Moysan <olivier.moysan@st.com>,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org
-Subject: Re: [PATCH v2] ASoC: Convert to using %pOFn instead of
- device_node.name
-Message-ID: <20180828180335.GG2414@sirena.org.uk>
-References: <20180828154433.5693-1-robh@kernel.org>
- <20180828154433.5693-2-robh@kernel.org>
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=REEDdhcsjfFTLS48PMY65npoDqqE8e6fTQGykuUYbXo=; b=p/uy/vUdi0Oqsz66KHCHmvsHpp
+        geT3MdCGVHs038pCh7a8uf7tsxlGVaGPkUVuBqjrU91+VBg6iICi4a9RsJUhfl51BMhXO7OhUPRlB
+        sVcMCBY7TteVgrtObcKEecYIvwiAwHA+pE5wOYqz3yU4FCf7QA5HywgDnzAMxyVBvU0e3Q6HodA5P
+        b1iBuv8Wwh9ohWmcFKoA1bWDsvriiUJfCUMhp/ygJB023J4HMB9I7Vu9PgxdaLCBuGxysbXILYj8A
+        iSJCEFHZDrpIqnBL8M+xV/BMTZaesQWSQe7iGtCgBnAGGL1OwoH87BP4ZDBHOEsuNbzoaRWqWqM4e
+        IQj7BFgg==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fuiQv-0002Qh-Jn; Tue, 28 Aug 2018 18:09:44 +0000
+Subject: Re: [PATCH v5 3/3] overlayfs: override_creds=off option bypass
+ creator_cred
+To:     Mark Salyzyn <salyzyn@android.com>, linux-kernel@vger.kernel.org
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-unionfs@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20180828165336.211643-1-salyzyn@android.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <a8dc66c4-4761-4876-abd3-6dc135692404@infradead.org>
+Date:   Tue, 28 Aug 2018 11:09:39 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="8TMLq6GPUuN4DysL"
-Content-Disposition: inline
-In-Reply-To: <20180828154433.5693-2-robh@kernel.org>
-X-Cookie: Many are called, few volunteer.
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180828165336.211643-1-salyzyn@android.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 08/28/2018 09:53 AM, Mark Salyzyn wrote:
+> diff --git a/Documentation/filesystems/overlayfs.txt b/Documentation/filesystems/overlayfs.txt
+> index 72615a2c0752..953e52971eb0 100644
+> --- a/Documentation/filesystems/overlayfs.txt
+> +++ b/Documentation/filesystems/overlayfs.txt
+> @@ -106,6 +106,35 @@ Only the lists of names from directories are merged.  Other content
+>  such as metadata and extended attributes are reported for the upper
+>  directory only.  These attributes of the lower directory are hidden.
+>  
+> +credentials
+> +-----------
+> +
+> +By default, all access to the upper, lower and work directories is the
+> +recorded mounter's MAC and DAC credentials.  The incoming accesses are
+> +checked against the caller's credentials.
+> +
+> +If the principles of least privilege are applied, the mounter's
+> +credentials might not overlap the credentials of the caller's when
+> +accessing the overlayfs filesystem.  For example, a file that a lower
+> +DAC privileged caller can execute, but is MAC denied to the
+> +generally higher DAC privileged mounter, to prevent an attack vector
+> +executing with the increased privileges of the mounter.  One option is
+> +to turn off override_creds in the mount options; all subsequent
+> +operations after mount on the filesystem will be only the caller's
+> +credentials.  This option default is set in the CONFIG
+> +OVERLAY_FS_OVERRIDE_CREDS or in the module option override_creds.
+> +Fundamentally The mounter has privileges, its ability to execute,
 
---8TMLq6GPUuN4DysL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+                 the
 
-On Tue, Aug 28, 2018 at 10:44:28AM -0500, Rob Herring wrote:
-> In preparation to remove the node name pointer from struct device_node,
-> convert printf users to use the %pOFn format specifier.
+but this entire sentence is jumbled and awkward and could use some work.
+I tried to come up with something but I can't quite get what is intended here.
 
-Please don't send new patches in reply to existing threads, it makes it
-harder to follow what the current versions of things are.
 
---8TMLq6GPUuN4DysL
-Content-Type: application/pgp-signature; name="signature.asc"
+> +for example, files and grant them these higher privileges is to be
+> +blocked except to lower privileged and appropriate callers.  This
+> +option turned off permits this kind of security policy.
+> +
+> +With override_creds turned off, several unintended side effects will
+> +occur.  The caller with a lower privilege will not be able to delete
+> +files or directories, create nodes, or search some directories.  The
+> +uneven security model where upperdir and workdir are opened at
+> +privilege, but accessed without, should only be used with strict
+> +understanding of the side effects and of the security policies.
+> +
+>  whiteouts and opaque directories
+>  --------------------------------
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluFjnMACgkQJNaLcl1U
-h9BnyQf/cdl8XKMk/yZXqmTYdTxNvRvHBV00zFsFCpmSB2fxFPQl9u0BC/JZSMSb
-QJ2GfCxUgp1/j2S8iDUSWGCZG6bq/turgrP2m+ZYZeTvA7wsVduGMBYEVqwurAxX
-6XNPCGC2ZrvUV89j1fYc4jxXjTC0vPYWnK6M3sZCKqJKP4CTeRxFDyFdBtGlmHdZ
-taXllc0H3Kpp8xU5P3zmlwBW4kErt8XwBb/yj3cN0pbJbXqwrOOUTIFXTf3XFg+x
-xM3pTAUEZjyhDNQHg+C6yYv8rpf8oqAeu/v7WLj9q4UsQ0y7x3vfxYmlQe7Qt+5Z
-BvxDzb2t7uzOrvhRrEhcRSRs5j+EIg==
-=Bsjk
------END PGP SIGNATURE-----
-
---8TMLq6GPUuN4DysL--
+-- 
+~Randy
