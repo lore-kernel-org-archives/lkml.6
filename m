@@ -2,231 +2,94 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A6A6C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:33:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC595C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:34:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 079652084A
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:33:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HujmMrFi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 079652084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 91F842084A
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:34:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91F842084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727557AbeH2B0f (ORCPT
+        id S1727513AbeH2B2G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 21:26:35 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:43018 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727144AbeH2B0e (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 21:26:34 -0400
-Received: by mail-yb0-f194.google.com with SMTP id k5-v6so1198517ybo.10;
-        Tue, 28 Aug 2018 14:33:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6uU+1czB0xcCLwe5eg+rEV09bRkW/K/kWC734SPQmAk=;
-        b=HujmMrFifjs7dGCQ22dCn2PrGxi4elwzSKjCDXCyh3SbWwuGaCv/gKzlAXi8l0lslQ
-         kMMEJRRvY8zxMLm62wvDrwFjxPYSlcJeHQT3d8YaHGDG8vINkuC7LsroCPCKX8lrZkOn
-         bxj3SD3+J/8+HS78xlvbWnjwQgqpmBaUMLJJ8ZNAZFDfN8C9Pzh97+POZ8Aea2nA6Fkz
-         hxubnJXxsoYTpajcQR98Kna73yJowuba9c5x483J0vJCqnEhZ0iW3xyDd1GG6mL1NvIb
-         hXIr2jE8FfhXaZXfb9uRnT+PgujYIsJlMShunsqE4vG/nEOCAp4WwH1t97AMaPA4/iWY
-         exww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6uU+1czB0xcCLwe5eg+rEV09bRkW/K/kWC734SPQmAk=;
-        b=WPLKCbfzI0342+MwBPDcRyNCM5qwofIQRAcgcUL5c8SIdUkeP7I1TgqO6RnLbqXcJ2
-         yWTcWeqgqS6fh/qG9lL0PUDVaeStJ71s0A/B87qCCz0c6e+IbU67Yd2ml43EyQDH+V59
-         jJlhJrtElir/Wrn+EgqPw60dpVSF5Nrb9u0FHcA7789yYYe2Kd/F70Vq7XOZIG7Pb6ab
-         lCdb5oCV9mXKYJVN27TNLEutawc0UuMXNwDoJk9Qr4+ZHB70FfAPJ1vMs0NerBbQ8Xh9
-         YN21JD7Mi+sSDjUN7x3NUCtfPMGQ2qWpK+bZ8gGGo3Wj0dszTdnth9tE1UyC1gItdoLJ
-         BhfQ==
-X-Gm-Message-State: APzg51BeHFsTteVVWyvJ6LBzslvm18FF3uhQXqCZXnLtU5wVYraygIY7
-        FHAkmQ7KlJItMntJWcKKbk3yM39peOADIxUsVhg=
-X-Google-Smtp-Source: ANB0VdaKY3ELD6H36ot52A9Isj85mYURrHHHuuNaPRQkphGfIgXhLPskLe3PwexozTv2z1zF4Ms8gs9Z9kCocp7aHuM=
-X-Received: by 2002:a25:1a85:: with SMTP id a127-v6mr1874400yba.507.1535491981072;
- Tue, 28 Aug 2018 14:33:01 -0700 (PDT)
+        Tue, 28 Aug 2018 21:28:06 -0400
+Received: from mga05.intel.com ([192.55.52.43]:35055 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727144AbeH2B2G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 21:28:06 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Aug 2018 14:34:32 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,300,1531810800"; 
+   d="scan'208";a="79103921"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.9])
+  by orsmga003.jf.intel.com with ESMTP; 28 Aug 2018 14:34:32 -0700
+Date:   Tue, 28 Aug 2018 14:34:32 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
+        platform-driver-x86@vger.kernel.org, nhorman@redhat.com,
+        npmccallum@redhat.com, linux-sgx@vger.kernel.org,
+        Serge Ayoun <serge.ayoun@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v13 07/13] x86/sgx: Add data structures for tracking the
+ EPC pages
+Message-ID: <20180828213432.GB29488@linux.intel.com>
+References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
+ <20180827185507.17087-8-jarkko.sakkinen@linux.intel.com>
+ <4666cae8-c711-8dd5-cbce-3d97cc19a9e5@intel.com>
+ <20180828103040.GA21326@linux.intel.com>
+ <68d730bc-898c-973f-9506-648fd8a7c610@intel.com>
 MIME-Version: 1.0
-References: <20180828165336.211643-1-salyzyn@android.com>
-In-Reply-To: <20180828165336.211643-1-salyzyn@android.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 29 Aug 2018 00:32:49 +0300
-Message-ID: <CAOQ4uxihQvnMAJUCW2n6DgkVmKP3o84neL+5r4zM-35HKxxc9w@mail.gmail.com>
-Subject: Re: [PATCH v5 3/3] overlayfs: override_creds=off option bypass creator_cred
-To:     Mark Salyzyn <salyzyn@android.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <68d730bc-898c-973f-9506-648fd8a7c610@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 7:53 PM Mark Salyzyn <salyzyn@android.com> wrote:
->
-> By default, all access to the upper, lower and work directories is the
-> recorded mounter's MAC and DAC credentials.  The incoming accesses are
-> checked against the caller's credentials.
->
-> If the principles of least privilege are applied, the mounter's
-> credentials might not overlap the credentials of the caller's when
-> accessing the overlayfs filesystem.  For example, a file that a lower
-> DAC privileged caller can execute, is MAC denied to the generally
-> higher DAC privileged mounter, to prevent an attack vector.
->
-> We add the option to turn off override_creds in the mount options; all
-> subsequent operations after mount on the filesystem will be only the
-> caller's credentials.  This option default is set in the CONFIG
-> OVERLAY_FS_OVERRIDE_CREDS or in the module option override_creds.
->
-> The module boolean parameter and mount option override_creds is also
-> added as a presence check for this "feature" by checking existence of
-> /sys/module/overlay/parameters/overlay_creds.  This will allow user
-> space to determine if the option can be supplied successfully to the
-> mount(2) operation.
->
-> Signed-off-by: Mark Salyzyn <salyzyn@android.com>
-> Cc: Miklos Szeredi <miklos@szeredi.hu>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Vivek Goyal <vgoyal@redhat.com>
-> Cc: Eric W. Biederman <ebiederm@xmission.com>
-> Cc: Amir Goldstein <amir73il@gmail.com>
-> Cc: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Stephen Smalley <sds@tycho.nsa.gov>
-> Cc: linux-unionfs@vger.kernel.org
-> Cc: linux-doc@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
->
-> v2:
-> - Forward port changed attr to stat, resulting in a build error.
-> - altered commit message.
->
-> v3:
-> - Change name from caller_credentials / creator_credentials to the
->   boolean override_creds.
-> - Changed from creator to mounter credentials.
-> - Updated and fortified the documentation.
-> - Added CONFIG_OVERLAY_FS_OVERRIDE_CREDS
->
-> v4:
-> - spelling and grammar errors in text
->
-> v5:
-> - beefed up the caveats in the Documentation
-> - Is dependent on
->   "overlayfs: check CAP_DAC_READ_SEARCH before issuing exportfs_decode_fh"
->   "overlayfs: check CAP_MKNOD before issuing vfs_whiteout"
-> - Added prwarn when override_creds=off
-> ---
->  Documentation/filesystems/overlayfs.txt | 29 +++++++++++++++++++++++++
->  fs/overlayfs/Kconfig                    | 22 +++++++++++++++++++
->  fs/overlayfs/copy_up.c                  |  2 +-
->  fs/overlayfs/dir.c                      |  9 ++++----
->  fs/overlayfs/inode.c                    | 16 +++++++-------
->  fs/overlayfs/namei.c                    |  6 ++---
->  fs/overlayfs/overlayfs.h                |  1 +
->  fs/overlayfs/ovl_entry.h                |  1 +
->  fs/overlayfs/readdir.c                  |  4 ++--
->  fs/overlayfs/super.c                    | 23 ++++++++++++++++++++
->  fs/overlayfs/util.c                     | 12 ++++++++--
->  11 files changed, 105 insertions(+), 20 deletions(-)
->
-> diff --git a/Documentation/filesystems/overlayfs.txt b/Documentation/filesystems/overlayfs.txt
-> index 72615a2c0752..953e52971eb0 100644
-> --- a/Documentation/filesystems/overlayfs.txt
-> +++ b/Documentation/filesystems/overlayfs.txt
-> @@ -106,6 +106,35 @@ Only the lists of names from directories are merged.  Other content
->  such as metadata and extended attributes are reported for the upper
->  directory only.  These attributes of the lower directory are hidden.
->
-> +credentials
-> +-----------
-> +
-> +By default, all access to the upper, lower and work directories is the
-> +recorded mounter's MAC and DAC credentials.  The incoming accesses are
-> +checked against the caller's credentials.
-> +
-> +If the principles of least privilege are applied, the mounter's
-> +credentials might not overlap the credentials of the caller's when
-> +accessing the overlayfs filesystem.  For example, a file that a lower
-> +DAC privileged caller can execute, but is MAC denied to the
-> +generally higher DAC privileged mounter, to prevent an attack vector
-> +executing with the increased privileges of the mounter.  One option is
-> +to turn off override_creds in the mount options; all subsequent
-> +operations after mount on the filesystem will be only the caller's
-> +credentials.  This option default is set in the CONFIG
-> +OVERLAY_FS_OVERRIDE_CREDS or in the module option override_creds.
-> +Fundamentally The mounter has privileges, its ability to execute,
-> +for example, files and grant them these higher privileges is to be
-> +blocked except to lower privileged and appropriate callers.  This
-> +option turned off permits this kind of security policy.
-> +
-> +With override_creds turned off, several unintended side effects will
-> +occur.  The caller with a lower privilege will not be able to delete
-> +files or directories, create nodes, or search some directories.  The
-> +uneven security model where upperdir and workdir are opened at
-> +privilege, but accessed without, should only be used with strict
-> +understanding of the side effects and of the security policies.
-> +
->  whiteouts and opaque directories
->  --------------------------------
->
-> diff --git a/fs/overlayfs/Kconfig b/fs/overlayfs/Kconfig
-> index 9384164253ac..b55bb0d48415 100644
-> --- a/fs/overlayfs/Kconfig
-> +++ b/fs/overlayfs/Kconfig
-> @@ -103,3 +103,25 @@ config OVERLAY_FS_XINO_AUTO
->           For more information, see Documentation/filesystems/overlayfs.txt
->
->           If unsure, say N.
-> +
-> +config OVERLAY_FS_OVERRIDE_CREDS
-> +       bool "Overlay filesystem override credentials"
-> +       depends on OVERLAY_FS
-> +       default y
-> +       help
-> +         If set, all access to the upper, lower and work directories is the
-> +         recorded mounter's MAC and DAC credentials.  The incoming accesses
-> +         are checked against the caller's credentials.
-> +
-> +         If the principles of least privilege are applied, the mounter's
-> +         credentials might not overlap the credentials of the caller's when
-> +         accessing the overlayfs filesystem.  The mount option
-> +         "override_creds=off" drops the mounter's credential check, so that
-> +         all subsequent operations, after mount, on the filesystem will only
-> +         be the caller's credentials.  This option sets the default for the
-> +         module option override_creds, and thus the default for all mounts
-> +         that do not specify this option.
-> +
+On Tue, Aug 28, 2018 at 09:53:11AM -0700, Dave Hansen wrote:
+> >>> +		sgx_nr_epc_banks++;
+> >>> +	}
+> >>> +
+> >>> +	if (!sgx_nr_epc_banks) {
+> >>> +		pr_err("There are zero EPC banks.\n");
+> >>> +		return -ENODEV;
+> >>> +	}
+> >>> +
+> >>> +	return 0;
+> >>> +}
+> >>
+> >> Does this support hot-addition of a bank?  If not, why not?
+> ...
+> > I'm not aware that we would have an ACPI specification for SGX so this
+> > is all I have at the moment (does not show any ACPI event for
+> > hotplugging).
+> 
+> So you're saying the one platform you looked at don't support hotplug.
+> I was looking for a more broad statement about SGX.
 
-Was it me that suggested a config option??
-because I can't thing of a reason to configure this as the default.
-...
+Hardware doesn't support hotplug of EPC as the EPC size and location
+is locked during activation of SGX.  And IIRC, activation of SGX must
+be synchronized across all CPUs in a multi-socket platform, e.g. you
+can't late-enable SGX on a socket and due hotplugging that way.
 
->
->         sb->s_root = root_dentry;
-> +       if (!ofs->config.override_creds)
-> +               pr_warn("overlayfs: override_creds=off, uneven security model where mounter privileges do not overlap caller.\n");
->
-
-This is not what the user needs to be warned about IMO.
-User should be warned about consequences.
-
-Thanks,
-Amir.
+In a virtualized environment there are no such restrictions.  I am not
+aware of any explicit requirements or use cases for supporting hotplug
+of EPC, but that's probably only because virtualization of SGX is
+fairly nascent.
