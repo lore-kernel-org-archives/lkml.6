@@ -2,70 +2,103 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BA71C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 06:55:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E494FC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 06:55:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FBF5208AD
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 06:55:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FBF5208AD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 9FF0C208AD
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 06:55:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FF0C208AD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727166AbeH1KpU (ORCPT
+        id S1727224AbeH1Kp2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 06:45:20 -0400
-Received: from smtprelay0018.hostedemail.com ([216.40.44.18]:44280 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726446AbeH1KpT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 06:45:19 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id B9268181D3417;
-        Tue, 28 Aug 2018 06:55:07 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: bear06_2c9b594a5e147
-X-Filterd-Recvd-Size: 1555
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf09.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 28 Aug 2018 06:55:06 +0000 (UTC)
-Message-ID: <b2d9328b9cd48e768ac8062de60a95195b8ffb58.camel@perches.com>
-Subject: Re: [PATCH] ARM: omap: Convert to using %pOFn instead of
- device_node.name
-From:   Joe Perches <joe@perches.com>
-To:     Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org
-Cc:     =?ISO-8859-1?Q?Beno=EEt?= Cousson <bcousson@baylibre.com>,
-        Paul Walmsley <paul@pwsan.com>,
-        Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Date:   Mon, 27 Aug 2018 23:55:05 -0700
-In-Reply-To: <20180828015252.28511-1-robh@kernel.org>
-References: <20180828015252.28511-1-robh@kernel.org>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 28 Aug 2018 06:45:28 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38142 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726446AbeH1Kp2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 06:45:28 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id CC89AABC1;
+        Tue, 28 Aug 2018 06:55:15 +0000 (UTC)
+Date:   Tue, 28 Aug 2018 08:55:14 +0200 (CEST)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>
+cc:     Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/alternatives: lockdep-enforce text_mutex in
+ text_poke*()
+Message-ID: <nycvar.YFH.7.76.1808280853520.25787@cbobk.fhfr.pm>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-08-27 at 20:52 -0500, Rob Herring wrote:
-> In preparation to remove the node name pointer from struct device_node,
-> convert printf users to use the %pOFn format specifier.
-[]
-> diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
-[]
-> @@ -738,7 +738,7 @@ static int __init _setup_clkctrl_provider(struct device_node *np)
->  	provider->size = size | 0xff;
->  	provider->node = np;
->  
-> -	pr_debug("%s: %s: %x...%x [+%x]\n", __func__, np->parent->name,
-> +	pr_debug("%pOF: %s: %x...%x [+%x]\n", __func__, np->parent,
+From: Jiri Kosina <jkosina@suse.cz>
 
-Wrong argument order
+text_poke() and text_poke_bp() must be called with text_mutex held.
+Let's put proper lockdep anotation in place instead of just mentioning
+the requirement in comment.
 
-I didn't look at the rest.
+Reported-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+---
+ arch/x86/kernel/alternative.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index 014f214da581..b9d5e7c9ef43 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -684,8 +684,6 @@ void *__init_or_module text_poke_early(void *addr, const void *opcode,
+  * It means the size must be writable atomically and the address must be aligned
+  * in a way that permits an atomic write. It also makes sure we fit on a single
+  * page.
+- *
+- * Note: Must be called under text_mutex.
+  */
+ void *text_poke(void *addr, const void *opcode, size_t len)
+ {
+@@ -700,6 +698,8 @@ void *text_poke(void *addr, const void *opcode, size_t len)
+ 	 */
+ 	BUG_ON(!after_bootmem);
+ 
++	lockdep_assert_held(&text_mutex);
++
+ 	if (!core_kernel_text((unsigned long)addr)) {
+ 		pages[0] = vmalloc_to_page(addr);
+ 		pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
+@@ -782,8 +782,6 @@ int poke_int3_handler(struct pt_regs *regs)
+  *	- replace the first byte (int3) by the first byte of
+  *	  replacing opcode
+  *	- sync cores
+- *
+- * Note: must be called under text_mutex.
+  */
+ void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
+ {
+@@ -792,6 +790,9 @@ void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
+ 	bp_int3_handler = handler;
+ 	bp_int3_addr = (u8 *)addr + sizeof(int3);
+ 	bp_patching_in_progress = true;
++
++	lockdep_assert_held(&text_mutex);
++
+ 	/*
+ 	 * Corresponding read barrier in int3 notifier for making sure the
+ 	 * in_progress and handler are correctly ordered wrt. patching.
+
+-- 
+Jiri Kosina
+SUSE Labs
+
