@@ -6,57 +6,57 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3419AC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:37:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92280C43334
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:37:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E24FB20893
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:37:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CFE020894
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:37:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="KDAn5Xks"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E24FB20893
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="UPIArLKA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CFE020894
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728628AbeH1S3I (ORCPT
+        id S1728643AbeH1S3K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 14:29:08 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:38700 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728596AbeH1S3H (ORCPT
+        Tue, 28 Aug 2018 14:29:10 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:44000 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728619AbeH1S3J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 14:29:07 -0400
-Received: by mail-pg1-f196.google.com with SMTP id e2-v6so842878pgv.5
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 07:37:09 -0700 (PDT)
+        Tue, 28 Aug 2018 14:29:09 -0400
+Received: by mail-pf1-f195.google.com with SMTP id j26-v6so791832pfi.10
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 07:37:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=tycho-ws.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=4N5JhkRgF226RrUGxow0Fgcw8yOtLmkY4sHBc8BRVtk=;
-        b=KDAn5XksiUjY/Bd6pfD3cRsJ9saITrnTT7dKlN/2Dxk8XX8n404xGB6Dt8TQGCZOsM
-         /A6W4JN8ycDKz4lxj6e8cBoTL33Tx4qIlpv4oasZXN9Awpw/Psgqpsx8M+NNfCcbjz4j
-         7wKqKA8eyeOAl7HWgnB32T9uZbGU4IlR3UVDDBCRyHk3nH1yDsLN64jXIzN9F7vW4AdI
-         1nMMmPnAN4hkaJad0bxn+2XEUK7WFJdtUG3sn3TGm02V8za3mPmytD46OWUrK+lxoKWE
-         swYnRqKOmRMdceBiQPYuShXFYgGoBqS3jV58N9ZEAM5ty+3eyMOfUeZT8Qxo32CCwZ0o
-         kiqg==
+        bh=XpGZxNn0y0DYUFteV51XQsdIMNKsTfp8zyksPeE7mGY=;
+        b=UPIArLKAbedeOCbKaEudix0nIt4D6O3MShrYMLQcu/5E7V0rSxN0xffx0yiVDjl1p6
+         zl4z9M4mdTvTrUrW8ELZFpxB6MAP9Xrm0DB7V4xAxf1JNOwI4WAmdzIM4OlnO0dwtZBk
+         VY++luoMccoYLYgCWbRAXvGU0UB6U9vxT+Nn2FFWzfI+NIwfmVW2XroMQ9tgxDfH8CPy
+         RBieLnfTlvv37gCiI0G5URDwNzYH5uh1oh2iP56/jZYYens4fN3Nt6mlp1obFqwygPHI
+         Yt8pUz7RdCykoha8nOGALuYbhsoOlnuQ4h4T5x+6mC1qubxrF1os3CXKqE4Psh6AJ5WK
+         0ImA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=4N5JhkRgF226RrUGxow0Fgcw8yOtLmkY4sHBc8BRVtk=;
-        b=mMRKCOGIQQUysIi2Jx0Kzdxhx0m8xA3wwR/8KZDO1Kh8CJ9tkDPjHIdOHjWPsMCw0j
-         Qe+oN4XXDLkI+NMUmscdE+5H2eH8zNQkSHkvKaY+3G0Tt1M7I3aw187CtB/hK5Y9XViL
-         yx2i2wEzq9Fobc7B+NsWfx2G/50XWhO2ikDkB0cA+xkMi52LJBvqmsZmo7DPCsMuZSMx
-         mIkYg/EgbF76GzAljqfq5u8M05hEWl6Dsd4+PsAupnqMy2g5DK3sMvtBxSMzKqmhGRDl
-         W8W0eoxGLnxri3dBoNOkrQT4Mzu2YrvHnqAyRTAuXRSqikodMjV2Lie5Jv/9vzq29Aba
-         PwYA==
-X-Gm-Message-State: APzg51BAAS0K8T97EZ+b2+Rg14lcMrO3vlmvwGlWoF0oFxNmhz+h4Lf3
-        R+/kKJb++iKL5KL9/wn0mX3RLQ==
-X-Google-Smtp-Source: ANB0Vdb6X3duRIqxT/kVYVz7hkIKNzbQhYck4W4KH1B8kINm7WHYauS/15Sn48BcdoOSW0D8jX9CNQ==
-X-Received: by 2002:a63:4606:: with SMTP id t6-v6mr1820876pga.271.1535467029160;
-        Tue, 28 Aug 2018 07:37:09 -0700 (PDT)
+        bh=XpGZxNn0y0DYUFteV51XQsdIMNKsTfp8zyksPeE7mGY=;
+        b=n40znzlshfXM7QOM0k2LFEG7MOIJeTE0i09LQx7xoWrdR+xFBsLvz8dK5r4yjL5C7d
+         q0Tz9h+b4pM0jMM+JoissEMx/OzstWevgbR8MOqRWgZFr8NEZ6dxDg0HoSaK3JZqAf3D
+         4zjIeLguK+zFtEuwy/S4bzdWw1MRP//+TkjKepv7felGBG+mmJjoqsVLmA2C259HCKU9
+         v/qfXjOWeKfb8rMTp4bSWSu2Bu6noTv8JIYmyPJdrP2KwqlSfAP+eZlaC326uFUiA1it
+         iA69rFcUqqLmgtployP3Fh0AecE7hBQTyXDZsuAs+shPfORKvTAWGg4q07I4uuNP7LyY
+         L4ZQ==
+X-Gm-Message-State: APzg51CstXUNqXkchLhWrauVf9RefFWnmrROVqvyQp8sGgIP+0GLIdww
+        zZzFxGAkFM6rq7YZC7GPlHkyHg==
+X-Google-Smtp-Source: ANB0VdY4GsZbYV9uNpE/mmY8uTf9mEz8Jy90jQTc17ngnZGaVWzUJebDsZwebDBqd55z3YTGMFOvjg==
+X-Received: by 2002:a63:ef4f:: with SMTP id c15-v6mr1836207pgk.368.1535467031113;
+        Tue, 28 Aug 2018 07:37:11 -0700 (PDT)
 Received: from cisco.cisco.com ([128.107.241.165])
-        by smtp.gmail.com with ESMTPSA id s16-v6sm1973550pfm.114.2018.08.28.07.37.07
+        by smtp.gmail.com with ESMTPSA id s16-v6sm1973550pfm.114.2018.08.28.07.37.09
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 Aug 2018 07:37:08 -0700 (PDT)
+        Tue, 28 Aug 2018 07:37:10 -0700 (PDT)
 From:   Tycho Andersen <tycho@tycho.ws>
 To:     Kees Cook <keescook@chromium.org>
 Cc:     linux-kernel@vger.kernel.org,
@@ -69,9 +69,9 @@ Cc:     linux-kernel@vger.kernel.org,
         Tyler Hicks <tyhicks@canonical.com>,
         Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
         Tycho Andersen <tycho@tycho.ws>
-Subject: [PATCH v5 2/5] seccomp: make get_nth_filter available outside of CHECKPOINT_RESTORE
-Date:   Tue, 28 Aug 2018 08:36:00 -0600
-Message-Id: <20180828143603.8127-3-tycho@tycho.ws>
+Subject: [PATCH v5 3/5] seccomp: add a way to get a listener fd from ptrace
+Date:   Tue, 28 Aug 2018 08:36:01 -0600
+Message-Id: <20180828143603.8127-4-tycho@tycho.ws>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180828143603.8127-1-tycho@tycho.ws>
 References: <20180828143603.8127-1-tycho@tycho.ws>
@@ -80,15 +80,21 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the next commit we'll use this same mnemonic to get a listener for the
-nth filter, so we need it available outside of CHECKPOINT_RESTORE in the
-USER_NOTIFICATION case as well.
+As an alternative to SECCOMP_FILTER_FLAG_GET_LISTENER, perhaps a ptrace()
+version which can acquire filters is useful. There are at least two reasons
+this is preferable, even though it uses ptrace:
 
-v2: new in v2
-v3: no changes
-v4: no changes
-v5: switch to CHECKPOINT_RESTORE || USER_NOTIFICATION to avoid warning when
-    only CONFIG_SECCOMP_FILTER is enabled.
+1. You can control tasks that aren't cooperating with you
+2. You can control tasks whose filters block sendmsg() and socket(); if the
+   task installs a filter which blocks these calls, there's no way with
+   SECCOMP_FILTER_FLAG_GET_LISTENER to get the fd out to the privileged task.
+
+v2: fix a bug where listener mode was not unset when an unused fd was not
+    available
+v3: fix refcounting bug (Oleg)
+v4: * change the listener's fd flags to be 0
+    * rename GET_LISTENER to NEW_LISTENER (Matthew)
+v5: * add capable(CAP_SYS_ADMIN) requirement
 
 Signed-off-by: Tycho Andersen <tycho@tycho.ws>
 CC: Kees Cook <keescook@chromium.org>
@@ -100,41 +106,189 @@ CC: Christian Brauner <christian.brauner@ubuntu.com>
 CC: Tyler Hicks <tyhicks@canonical.com>
 CC: Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
 ---
- kernel/seccomp.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ include/linux/seccomp.h                       | 11 +++
+ include/uapi/linux/ptrace.h                   |  2 +
+ kernel/ptrace.c                               |  4 ++
+ kernel/seccomp.c                              | 31 +++++++++
+ tools/testing/selftests/seccomp/seccomp_bpf.c | 68 +++++++++++++++++++
+ 5 files changed, 116 insertions(+)
 
+diff --git a/include/linux/seccomp.h b/include/linux/seccomp.h
+index 017444b5efed..c17c7d051af0 100644
+--- a/include/linux/seccomp.h
++++ b/include/linux/seccomp.h
+@@ -112,4 +112,15 @@ static inline long seccomp_get_metadata(struct task_struct *task,
+ 	return -EINVAL;
+ }
+ #endif /* CONFIG_SECCOMP_FILTER && CONFIG_CHECKPOINT_RESTORE */
++
++#ifdef CONFIG_SECCOMP_USER_NOTIFICATION
++extern long seccomp_new_listener(struct task_struct *task,
++				 unsigned long filter_off);
++#else
++static inline long seccomp_new_listener(struct task_struct *task,
++					unsigned long filter_off)
++{
++	return -EINVAL;
++}
++#endif/* CONFIG_SECCOMP_USER_NOTIFICATION */
+ #endif /* _LINUX_SECCOMP_H */
+diff --git a/include/uapi/linux/ptrace.h b/include/uapi/linux/ptrace.h
+index d5a1b8a492b9..e80ecb1bd427 100644
+--- a/include/uapi/linux/ptrace.h
++++ b/include/uapi/linux/ptrace.h
+@@ -73,6 +73,8 @@ struct seccomp_metadata {
+ 	__u64 flags;		/* Output: filter's flags */
+ };
+ 
++#define PTRACE_SECCOMP_NEW_LISTENER	0x420e
++
+ /* Read signals from a shared (process wide) queue */
+ #define PTRACE_PEEKSIGINFO_SHARED	(1 << 0)
+ 
+diff --git a/kernel/ptrace.c b/kernel/ptrace.c
+index 21fec73d45d4..289960ac181b 100644
+--- a/kernel/ptrace.c
++++ b/kernel/ptrace.c
+@@ -1096,6 +1096,10 @@ int ptrace_request(struct task_struct *child, long request,
+ 		ret = seccomp_get_metadata(child, addr, datavp);
+ 		break;
+ 
++	case PTRACE_SECCOMP_NEW_LISTENER:
++		ret = seccomp_new_listener(child, addr);
++		break;
++
+ 	default:
+ 		break;
+ 	}
 diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-index a09eb5c05f68..ed786655186d 100644
+index ed786655186d..580888785324 100644
 --- a/kernel/seccomp.c
 +++ b/kernel/seccomp.c
-@@ -1188,7 +1188,8 @@ long prctl_set_seccomp(unsigned long seccomp_mode, char __user *filter)
- 	return do_seccomp(op, 0, uargs);
- }
+@@ -1787,6 +1787,37 @@ static struct file *init_listener(struct task_struct *task,
  
--#if defined(CONFIG_SECCOMP_FILTER) && defined(CONFIG_CHECKPOINT_RESTORE)
-+#if defined(CONFIG_CHECKPOINT_RESTORE) || \
-+	defined(CONFIG_SECCOMP_USER_NOTIFICATION)
- static struct seccomp_filter *get_nth_filter(struct task_struct *task,
- 					     unsigned long filter_off)
- {
-@@ -1235,6 +1236,7 @@ static struct seccomp_filter *get_nth_filter(struct task_struct *task,
- 	return filter;
- }
- 
-+#if defined(CONFIG_CHECKPOINT_RESTORE)
- long seccomp_get_filter(struct task_struct *task, unsigned long filter_off,
- 			void __user *data)
- {
-@@ -1307,7 +1309,8 @@ long seccomp_get_metadata(struct task_struct *task,
- 	__put_seccomp_filter(filter);
  	return ret;
  }
--#endif
-+#endif /* CONFIG_CHECKPOINT_RESTORE */
-+#endif /* CONFIG_SECCOMP_FILTER */
++
++long seccomp_new_listener(struct task_struct *task,
++			  unsigned long filter_off)
++{
++	struct seccomp_filter *filter;
++	struct file *listener;
++	int fd;
++
++	if (!capable(CAP_SYS_ADMIN))
++		return -EACCES;
++
++	filter = get_nth_filter(task, filter_off);
++	if (IS_ERR(filter))
++		return PTR_ERR(filter);
++
++	fd = get_unused_fd_flags(0);
++	if (fd < 0) {
++		__put_seccomp_filter(filter);
++		return fd;
++	}
++
++	listener = init_listener(task, task->seccomp.filter);
++	__put_seccomp_filter(filter);
++	if (IS_ERR(listener)) {
++		put_unused_fd(fd);
++		return PTR_ERR(listener);
++	}
++
++	fd_install(fd, listener);
++	return fd;
++}
+ #else
+ static struct file *init_listener(struct task_struct *task,
+ 				  struct seccomp_filter *filter)
+diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
+index 89f2c788a06b..61b8e3c5c06b 100644
+--- a/tools/testing/selftests/seccomp/seccomp_bpf.c
++++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
+@@ -193,6 +193,10 @@ int seccomp(unsigned int op, unsigned int flags, void *args)
+ }
+ #endif
  
- #ifdef CONFIG_SYSCTL
++#ifndef PTRACE_SECCOMP_NEW_LISTENER
++#define PTRACE_SECCOMP_NEW_LISTENER 0x420e
++#endif
++
+ #if __BYTE_ORDER == __LITTLE_ENDIAN
+ #define syscall_arg(_n) (offsetof(struct seccomp_data, args[_n]))
+ #elif __BYTE_ORDER == __BIG_ENDIAN
+@@ -3165,6 +3169,70 @@ TEST(get_user_notification_syscall)
+ 	EXPECT_EQ(0, WEXITSTATUS(status));
+ }
  
++TEST(get_user_notification_ptrace)
++{
++	pid_t pid;
++	int status, listener;
++	int sk_pair[2];
++	char c;
++	struct seccomp_notif req = {};
++	struct seccomp_notif_resp resp = {};
++
++	ASSERT_EQ(socketpair(PF_LOCAL, SOCK_SEQPACKET, 0, sk_pair), 0);
++
++	pid = fork();
++	ASSERT_GE(pid, 0);
++
++	if (pid == 0) {
++		EXPECT_EQ(user_trap_syscall(__NR_getpid, 0), 0);
++
++		/* Test that we get ENOSYS while not attached */
++		EXPECT_EQ(syscall(__NR_getpid), -1);
++		EXPECT_EQ(errno, ENOSYS);
++
++		/* Signal we're ready and have installed the filter. */
++		EXPECT_EQ(write(sk_pair[1], "J", 1), 1);
++
++		EXPECT_EQ(read(sk_pair[1], &c, 1), 1);
++		EXPECT_EQ(c, 'H');
++
++		exit(syscall(__NR_getpid) != USER_NOTIF_MAGIC);
++	}
++
++	EXPECT_EQ(read(sk_pair[0], &c, 1), 1);
++	EXPECT_EQ(c, 'J');
++
++	EXPECT_EQ(ptrace(PTRACE_ATTACH, pid), 0);
++	EXPECT_EQ(waitpid(pid, NULL, 0), pid);
++	listener = ptrace(PTRACE_SECCOMP_NEW_LISTENER, pid, 0);
++	EXPECT_GE(listener, 0);
++
++	/* EBUSY for second listener */
++	EXPECT_EQ(ptrace(PTRACE_SECCOMP_NEW_LISTENER, pid, 0), -1);
++	EXPECT_EQ(errno, EBUSY);
++
++	EXPECT_EQ(ptrace(PTRACE_DETACH, pid, NULL, 0), 0);
++
++	/* Now signal we are done and respond with magic */
++	EXPECT_EQ(write(sk_pair[0], "H", 1), 1);
++
++	req.len = sizeof(req);
++	EXPECT_EQ(ioctl(listener, SECCOMP_NOTIF_RECV, &req), sizeof(req));
++
++	resp.len = sizeof(resp);
++	resp.id = req.id;
++	resp.error = 0;
++	resp.val = USER_NOTIF_MAGIC;
++
++	EXPECT_EQ(ioctl(listener, SECCOMP_NOTIF_SEND, &resp), sizeof(resp));
++
++	EXPECT_EQ(waitpid(pid, &status, 0), pid);
++	EXPECT_EQ(true, WIFEXITED(status));
++	EXPECT_EQ(0, WEXITSTATUS(status));
++
++	close(listener);
++}
++
+ /*
+  * Check that a pid in a child namespace still shows up as valid in ours.
+  */
 -- 
 2.17.1
 
