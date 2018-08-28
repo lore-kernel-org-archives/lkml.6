@@ -2,96 +2,117 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99A75C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 02:41:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40A44C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 02:44:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E678208B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 02:41:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E678208B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id D8370208B7
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 02:44:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="LQFL3KcE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8370208B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727074AbeH1Gat convert rfc822-to-8bit (ORCPT
+        id S1727180AbeH1Gd1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 02:30:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56416 "EHLO mail.kernel.org"
+        Tue, 28 Aug 2018 02:33:27 -0400
+Received: from ozlabs.org ([203.11.71.1]:45103 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725796AbeH1Gat (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 02:30:49 -0400
-Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        id S1725976AbeH1Gd0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 02:33:26 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 980B2208B4;
-        Tue, 28 Aug 2018 02:41:23 +0000 (UTC)
-Date:   Mon, 27 Aug 2018 22:41:21 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Bernhard Landauer <oberon@manjaro.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Carsten Emde <C.Emde@osadl.org>,
-        John Kacur <jkacur@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Julia Cartwright <julia@ni.com>,
-        Daniel Wagner <daniel.wagner@siemens.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Philip =?UTF-8?B?TcO8bGxlcg==?= <philm@manjaro.org>
-Subject: Re: [ANNOUNCE] 4.14.63-rt40
-Message-ID: <20180827224121.2dc55b30@vmware.local.home>
-In-Reply-To: <20180824121751.606659c9@gandalf.local.home>
-References: <20180822141458.0b6b6af7@gandalf.local.home>
-        <7e1b2b0a-2e52-8f0d-2e17-c3ba9232f8b7@manjaro.org>
-        <20180824121751.606659c9@gandalf.local.home>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by ozlabs.org (Postfix) with ESMTPSA id 41ztPC5Rdsz9s4V;
+        Tue, 28 Aug 2018 12:43:59 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1535424239;
+        bh=gk3emO6ghejKDB0OYBH0O8XMSlJBuMhIiv8Le+YiPlg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=LQFL3KcEkhJA/w5pIyAucQUTALSnFt2+fXyI1wVOvpwsqvHAMGqtWqrfOr/V4dTYN
+         HzBeTcmmDRZJybdRxq47Gv8Ioa6l0Q3GE6rXVJQRCM9JuF10Jkqn+vn+ShrKtW1Ehb
+         dGB0g8uXQWFi+IOb2E0hoQWXiBiyHtGarlAaUSQzBa7qrgcGyM2RZtu9wteZJNAp1S
+         a2+G+nItEda2KV9KreKN/YY7U6LXNNwH7c531KCWJkG0PbSxqWAOxwBeLmhKOe+yBW
+         XIUn4nzDQviExj9XTynCbUVDOIUNxUwVSEXrou134sDOM7QUGZIod6QBvRE9ql+pME
+         oP0NVOk/NfvXw==
+Date:   Tue, 28 Aug 2018 12:43:58 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Tejun Heo <tj@kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: new maintainer/tree for the libata tree?
+Message-ID: <20180828124358.13c711e4@canb.auug.org.au>
+In-Reply-To: <0ee8b9e0-1576-c8c1-ed22-dd76a8d378ba@kernel.dk>
+References: <20180828071944.02b13db4@canb.auug.org.au>
+        <27ef8afc-c490-5984-5a18-1ee5ce51d556@kernel.dk>
+        <20180828112851.19c64e80@canb.auug.org.au>
+        <0ee8b9e0-1576-c8c1-ed22-dd76a8d378ba@kernel.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/A0L5Tn_dm2+JzCSqsus.SAe"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 24 Aug 2018 12:17:51 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+--Sig_/A0L5Tn_dm2+JzCSqsus.SAe
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> On Fri, 24 Aug 2018 18:14:43 +0200
-> Bernhard Landauer <oberon@manjaro.org> wrote:
-> 
-> > Hello everyone,
-> > 
-> > for some reason I am not able to build 4.14.63-rt40 for Manjarolinux.
-> > Even after removing all our custom patches build fails at
-> > 
-> >   LD [M]  drivers/gpu/drm/drm.o
-> >   AR      drivers/gpu/built-in.o
-> > make: *** [Makefile:1035: drivers] Error 2
-> > 
-> > My config can be found here for information:
-> > https://gitlab.manjaro.org/packages/community/realtime-kernels/linux414-rt/raw/master/config.rt
-> > 
-> > Thank you for any advice!
-> >  
-> 
-> Thanks for the report, I'll take a look.
-> 
+Hi Jens,
 
-This appears to fix it:
+On Mon, 27 Aug 2018 19:30:09 -0600 Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 8/27/18 7:28 PM, Stephen Rothwell wrote:
+> >=20
+> > On Mon, 27 Aug 2018 19:15:23 -0600 Jens Axboe <axboe@kernel.dk> wrote: =
+=20
+> >>
+> >> On 8/27/18 3:20 PM, Stephen Rothwell wrote: =20
+> >>>
+> >>> I noticed the maintaership change - so what shuld I sues for linux-ne=
+xt,
+> >>> now?
+> >>>
+> >>> I currently have
+> >>>
+> >>> git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next =
+  =20
+> >>
+> >> I'll merge into my for-next branch on the block tree, I'm don't plan on
+> >> doing separate trees for this, just separate branches. And everything I
+> >> queue up for the next version will end up in my for-next branch. =20
+> >=20
+> > So I'll just drop the libata tree from linux-next, then? =20
+>=20
+> Yeah, that should be all that's needed.
 
--- Steve
+Done.
 
-diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-index cedf225d4182..7df4cced6ac0 100644
---- a/drivers/hv/vmbus_drv.c
-+++ b/drivers/hv/vmbus_drv.c
-@@ -35,6 +35,7 @@
- #include <linux/clockchips.h>
- #include <linux/cpu.h>
- #include <linux/sched/task_stack.h>
-+#include <linux/irq.h>
- 
- #include <asm/hyperv.h>
- #include <asm/hypervisor.h>
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/A0L5Tn_dm2+JzCSqsus.SAe
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluEtu4ACgkQAVBC80lX
+0GzplQf+Lc4ut/p37idKk+2DV8mZKPpFWIOcTLm2uyuUvYUthWA8viO6B5TOAhYG
+7T2snyGZG5G/Ygdivp6h46iMS4bpoh2jw9wi5MgkVG8C4w6PGcKUaZzjtXU3QQ3E
+vSPqrNOTLrXQ+iYYiveSrrrkMKn6+yeakmG/ThWcFpcZhFmcKgFYghOLch12/KI+
+sMbjdks/SQRa1PR7gxPjOgUAPYL7fmrmSEXJs7EdC6Hf7jkBTc12l7I+mgFjdT3V
+Htl8gbI55PaMDWy67ZovZuBYEvIO+wdSO50SKiXWro+ZGHFXm/RbEyavo50CGuIj
+nhT2ULKeEuo4b/NS5YLCGCEnyEMa+A==
+=xxXv
+-----END PGP SIGNATURE-----
+
+--Sig_/A0L5Tn_dm2+JzCSqsus.SAe--
