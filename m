@@ -5,51 +5,54 @@ X-Spam-Level:
 X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 148E0C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 01:53:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22B1CC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 01:53:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6994208D5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 01:53:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6994208D5
+	by mail.kernel.org (Postfix) with ESMTP id D0E55208D5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 01:53:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0E55208D5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727625AbeH1FnB (ORCPT
+        id S1727678AbeH1FnJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 01:43:01 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:41019 "EHLO
+        Tue, 28 Aug 2018 01:43:09 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:45034 "EHLO
         mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727459AbeH1Fm0 (ORCPT
+        with ESMTP id S1727433AbeH1FmX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 01:42:26 -0400
-Received: by mail-oi0-f67.google.com with SMTP id k12-v6so1738726oiw.8
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 18:53:11 -0700 (PDT)
+        Tue, 28 Aug 2018 01:42:23 -0400
+Received: by mail-oi0-f67.google.com with SMTP id l82-v6so1707053oih.11;
+        Mon, 27 Aug 2018 18:53:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Hg3/aCmTTKeUM5DPz4uRGx9Qz6ER5C2bJUMxpFVPgSE=;
-        b=Efx9igfw5Im1r6YLQEIZdKURmXmFRxgARw/9anivg/q6BVBVSgbxbnDn842qX+qWT7
-         Rtw/UMOE/2Q9OAWIoF8p0a0lqhoqPzGyir1XiWNtZbAN8riMI7LYWNWoAzN4vTJXPlV5
-         JzG601ql87q5zwGQJfZ4F2t0tPqhVJ7UnCBFiCWLdxkrr2ArsN6isyJmHA+4utEJqk00
-         smE7+6Mx+7cOyzHVr2RD1dtdB3d534mp7dHPhmXCVPtwcmk9pIjIlqxJwsiDw6RxOu3N
-         K+/+ioO9v4NiJoovRZwgRWQc4tsoyixEF7GE7YhkZaO6/VIwbiXKJ6Un0q2IqaETPgJk
-         uRlQ==
-X-Gm-Message-State: APzg51CY/oAeZkxwwLVJ6p822bBHnqOZFYmpfX6QyVTvEcFw8PRdnMU/
-        9GVic9TMHGTB0spDDIX64fJxzVc=
-X-Google-Smtp-Source: ANB0VdY+YSK4sW4I4z9trdUENik8RsYBVxy0L8JA+p8cedG+vopV6GsPbIcTH/w4GSEvZLONneS+Pw==
-X-Received: by 2002:aca:3a57:: with SMTP id h84-v6mr1073480oia.336.1535421190729;
-        Mon, 27 Aug 2018 18:53:10 -0700 (PDT)
+        bh=N5bgoqfM5UiblPUohKxewB3I7xGYDLNRVmBHYWF2U/E=;
+        b=WAfUDA4VWMXGFcL3up1tFmRl7UjWYZ2bAMYeFXkpwaOLc1Qh8j0FbRnAQIAL5NAfEY
+         v5wkWHQZh17AbFe4vWCzpzYwxcssXO+04YsvB8X5Uc5jB7ObLWUGy2hd69qTZeQAKHgv
+         eCWgR4JeDuuMhJbA5qQZq/wII0NF8LiG8UDUoZUVI2xWcxjCCzMmbIs4WpCf5xQNH5di
+         LjB7ypYk2hIGpUhqBR2di4pis4yr4x0YMmAjEWF17lqrMt05H5tKgiVYJ5fIAD7X/Kxg
+         599s7SI8ygUGikNUSahk11EMmuYNTsmYKsFDIFqXuK4NuAWYfbn1kgktDUdOJdF3bDSO
+         ouAw==
+X-Gm-Message-State: APzg51BrXLAWBM+Fvoblkb8hfxyAB9JtJOz1am1yOVkwQXPRia01B4EN
+        olGZqk7Cp9HchvmpY+KBG9pnRTo=
+X-Google-Smtp-Source: ANB0VdZTD7AmWtgOFatgXeQB0z+2z7dWWXDZr6UoVlgR9vtj2H2l87rlr03HbjbiT+Uzzfp49dPHsQ==
+X-Received: by 2002:aca:cc90:: with SMTP id c138-v6mr1152461oig.282.1535421187683;
+        Mon, 27 Aug 2018 18:53:07 -0700 (PDT)
 Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id n71-v6sm1652696oig.48.2018.08.27.18.53.09
-        for <linux-kernel@vger.kernel.org>
+        by smtp.googlemail.com with ESMTPSA id n71-v6sm1652696oig.48.2018.08.27.18.53.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 Aug 2018 18:53:09 -0700 (PDT)
+        Mon, 27 Aug 2018 18:53:07 -0700 (PDT)
 From:   Rob Herring <robh@kernel.org>
 To:     linux-kernel@vger.kernel.org
-Subject: [PATCH] firmware: Convert to using %pOFn instead of device_node.name
-Date:   Mon, 27 Aug 2018 20:52:18 -0500
-Message-Id: <20180828015252.28511-17-robh@kernel.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: [PATCH] cpufreq: Convert to using %pOFn instead of device_node.name
+Date:   Mon, 27 Aug 2018 20:52:15 -0500
+Message-Id: <20180828015252.28511-14-robh@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180828015252.28511-1-robh@kernel.org>
 References: <20180828015252.28511-1-robh@kernel.org>
@@ -61,24 +64,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 In preparation to remove the node name pointer from struct device_node,
 convert printf users to use the %pOFn format specifier.
 
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-pm@vger.kernel.org
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- drivers/firmware/scpi_pm_domain.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/cpufreq/s5pv210-cpufreq.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/firmware/scpi_pm_domain.c b/drivers/firmware/scpi_pm_domain.c
-index f395dec27113..390aa13391e4 100644
---- a/drivers/firmware/scpi_pm_domain.c
-+++ b/drivers/firmware/scpi_pm_domain.c
-@@ -121,7 +121,7 @@ static int scpi_pm_domain_probe(struct platform_device *pdev)
- 
- 		scpi_pd->domain = i;
- 		scpi_pd->ops = scpi_ops;
--		sprintf(scpi_pd->name, "%s.%d", np->name, i);
-+		sprintf(scpi_pd->name, "%pOFn.%d", np, i);
- 		scpi_pd->genpd.name = scpi_pd->name;
- 		scpi_pd->genpd.power_off = scpi_pd_power_off;
- 		scpi_pd->genpd.power_on = scpi_pd_power_on;
+diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
+index 5d31c2db12a3..dbecd7667db2 100644
+--- a/drivers/cpufreq/s5pv210-cpufreq.c
++++ b/drivers/cpufreq/s5pv210-cpufreq.c
+@@ -611,8 +611,8 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
+ 	for_each_compatible_node(np, NULL, "samsung,s5pv210-dmc") {
+ 		id = of_alias_get_id(np, "dmc");
+ 		if (id < 0 || id >= ARRAY_SIZE(dmc_base)) {
+-			pr_err("%s: failed to get alias of dmc node '%s'\n",
+-				__func__, np->name);
++			pr_err("%s: failed to get alias of dmc node '%pOFn'\n",
++				__func__, np);
+ 			of_node_put(np);
+ 			return id;
+ 		}
 -- 
 2.17.1
 
