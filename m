@@ -2,113 +2,187 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B22CC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:17:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A947AC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:20:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06FBA20897
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:17:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="UDYNK2Z+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06FBA20897
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 5178D20897
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:20:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5178D20897
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727786AbeH1QIy (ORCPT
+        id S1727875AbeH1QMD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 12:08:54 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46440 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727258AbeH1QIx (ORCPT
+        Tue, 28 Aug 2018 12:12:03 -0400
+Received: from regular1.263xmail.com ([211.150.99.137]:38730 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727120AbeH1QMD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 12:08:53 -0400
-Received: by mail-wr1-f68.google.com with SMTP id a108-v6so1356029wrc.13
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 05:17:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=JQ+58KIOL9krLpYYyKtJqpjQE7I1y4kXR72mwSo4Z7k=;
-        b=UDYNK2Z+VcSC1jr65ZktLDjEJCmI9/p1TC5EBcvAf9OLUcIvEJ5f6zWIcnGeba2XbQ
-         zGdCkLmnCG99x4EzxLxPKglODj5+aAu9Nx+/OHkwIwz1dMbG+hsz0KrEOfgzNmukPplm
-         vz0S8POR8ZqD1+dN0VGJIUhO1ScVA7cCmNRDYW9gkmXpmqTh+4t1UxfZJwv94bt3uhkT
-         7bydCKn7ZX1RIlaMyHi0BGl5TKqJuoxgx1+4sCDX7x7B+5SKzSQ1DREVNJM3EtY+GKBK
-         KOXLj3/QdTo09GBkUlLwIR4lVxDjywGoAcxOMxNg0xrRwkQXN4UJV9IWxQ6xRPVUZCHZ
-         Cvtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=JQ+58KIOL9krLpYYyKtJqpjQE7I1y4kXR72mwSo4Z7k=;
-        b=H9Y5nU3+FozbBKXU1Ee/wKP/kn7l1bnYkf11lNzCuxi6rdXWEoRHqCBZachgnG40rI
-         zmDrojFHXsCNTZQVDaY3j7QZ1uEIzCFmsP2NhgME9VahKnglHpmNwEYZZeenB7lcc1E4
-         KUM7T/X6HixxfRPhzMvoP9ki53453a/6w6qZNLHpZbUV6cYmxyLUQmWSRUL+lhIKhhDY
-         UfHFOAdAGghCE7oCFa4KvKcse5vqK5kIpVaXWaMJi57DW+v9aQfGgCE48SjwaTHPiToX
-         pzOC6VFCCk9hRUgqimdtUeXGKB4WweON3kyVK+qmZTxLsmH0G+IJWem0ON3cd25HdbZu
-         +fBA==
-X-Gm-Message-State: APzg51Bc8UunDORyl+Kjq3z412PPI1Zy1mDh46kYyAUK8TW9mW1m853r
-        K1cw+t8KGRvZirxOx2rSmxpK4A==
-X-Google-Smtp-Source: ANB0VdYNfzNdTl6THhxArKSkakek/PoYZI0HC5u7D7X21VXWL7D5KH/VNq3K0m7yZjuz+Wbuq1e2zg==
-X-Received: by 2002:adf:ae01:: with SMTP id x1-v6mr974255wrc.45.1535458648969;
-        Tue, 28 Aug 2018 05:17:28 -0700 (PDT)
-Received: from boomer.baylibre.local ([90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id k35-v6sm1773992wrc.14.2018.08.28.05.17.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 28 Aug 2018 05:17:28 -0700 (PDT)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>, alsa-devel@alsa-project.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: meson: imply clock and reset controllers
-Date:   Tue, 28 Aug 2018 14:17:21 +0200
-Message-Id: <20180828121721.26488-1-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 28 Aug 2018 12:12:03 -0400
+Received: from hjc?rock-chips.com (unknown [192.168.167.208])
+        by regular1.263xmail.com (Postfix) with ESMTP id 4D3AD2AE;
+        Tue, 28 Aug 2018 20:20:15 +0800 (CST)
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+Received: from [192.168.60.164] (localhost [127.0.0.1])
+        by smtp.263.net (Postfix) with ESMTPA id B404F3A3;
+        Tue, 28 Aug 2018 20:20:11 +0800 (CST)
+X-IP-DOMAINF: 1
+X-RL-SENDER: hjc@rock-chips.com
+X-FST-TO: sandy.huang@rock-chips.com
+X-SENDER-IP: 103.29.142.67
+X-LOGIN-NAME: hjc@rock-chips.com
+X-UNIQUE-TAG: <efea084ff8402b27aa0b3c9b97b091ff>
+X-ATTACHMENT-NUM: 0
+X-SENDER: hjc@rock-chips.com
+X-DNS-TYPE: 0
+Received: from [192.168.60.164] (unknown [103.29.142.67])
+        by smtp.263.net (Postfix) whith ESMTP id 1694BEGV0Z;
+        Tue, 28 Aug 2018 20:20:15 +0800 (CST)
+From:   Sandy Huang <hjc@rock-chips.com>
+Subject: Re: [PATCH v5 2/2] drm/rockchip: Add support for Rockchip Soc RGB
+ output interface
+To:     Heiko Stuebner <heiko@sntech.de>
+Cc:     robh@kernel.org, David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+References: <1535443954-38806-1-git-send-email-hjc@rock-chips.com>
+ <1535443954-38806-3-git-send-email-hjc@rock-chips.com>
+ <2164089.bDJbLuhFGU@phil>
+Message-ID: <c203e409-d2e4-e534-7855-27c3503a78b1@rock-chips.com>
+Date:   Tue, 28 Aug 2018 20:20:13 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <2164089.bDJbLuhFGU@phil>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add audio clock controller and ARB reset controller module
-implication for the device using them
+Hi hieko,
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- sound/soc/meson/Kconfig | 4 ++++
- 1 file changed, 4 insertions(+)
+在 2018/8/28 16:31, Heiko Stuebner 写道:
+> Hi Sandy,
+> 
+> Am Dienstag, 28. August 2018, 10:12:34 CEST schrieb Sandy Huang:
+>> Some Rockchip CRTCs, like rv1108 and px30, can directly output parallel
+>> and serial RGB data to panel or conversion chip, so we add this driver
+>> to probe encoder and connector.
+>>
+>> Signed-off-by: Sandy Huang <hjc@rock-chips.com>
+>> Reviewed-by: Sean Paul <seanpaul@chromium.org>
+>> Reviewed-by: Mark Yao <mark.yao@rock-chips.com>
+>> Link: https://patchwork.freedesktop.org/patch/msgid/1509522851-128181-1-git-send-email-hjc@rock-chips.com
+> 
+> This does not really address, Rob's concern about not being an actual
+> hardware block related to the devicetree node you are using.
+> 
+> I see your reply to my mail, but I guess you didn't see the alternative
+> approach I described a bit below in that mail?
+> 
+> Actual (unfinished) code included below. (2 patches)
+> 
+> Heiko
+> 
+> 
+yes,i didn't see the behind described:(
+As you said devicetree describes hardware blocks,
+I think you implement driver for rgb output interface is more 
+reasonable,  i will adjust this driver refer to your implementation, 
+thanks:)
 
-diff --git a/sound/soc/meson/Kconfig b/sound/soc/meson/Kconfig
-index 8af8bc358a90..2ccbadc387de 100644
---- a/sound/soc/meson/Kconfig
-+++ b/sound/soc/meson/Kconfig
-@@ -4,6 +4,8 @@ menu "ASoC support for Amlogic platforms"
- config SND_MESON_AXG_FIFO
- 	tristate
- 	select REGMAP_MMIO
-+	imply COMMON_CLK_AXG_AUDIO
-+	imply RESET_MESON_AUDIO_ARB
- 
- config SND_MESON_AXG_FRDDR
- 	tristate "Amlogic AXG Playback FIFO support"
-@@ -22,6 +24,7 @@ config SND_MESON_AXG_TODDR
- config SND_MESON_AXG_TDM_FORMATTER
- 	tristate
- 	select REGMAP_MMIO
-+	imply COMMON_CLK_AXG_AUDIO
- 
- config SND_MESON_AXG_TDM_INTERFACE
- 	tristate
-@@ -58,6 +61,7 @@ config SND_MESON_AXG_SPDIFOUT
- 	tristate "Amlogic AXG SPDIF Output Support"
- 	select SND_PCM_IEC958
- 	imply SND_SOC_SPDIF
-+	imply COMMON_CLK_AXG_AUDIO
- 	help
- 	  Select Y or M to add support for SPDIF output serializer embedded
- 	  in the Amlogic AXG SoC family
--- 
-2.17.1
+
+> 
+> ---- 8< -----
+> From: Heiko Stuebner <heiko@sntech.de>
+> Date: Sat, 25 Aug 2018 19:05:21 +0200
+> Subject: [PATCH 1/2] drm/tockchip: add function to check if endpoint is a
+>   subdriver
+> 
+> To be able to have both internal subdrivers and external bridge
+> drivers as output endpoints of vops, add a function to be able
+> to distinguish these.
+> 
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+>   drivers/gpu/drm/rockchip/rockchip_drm_drv.c | 27 +++++++++++++++++++++
+>   drivers/gpu/drm/rockchip/rockchip_drm_drv.h |  1 +
+>   2 files changed, 28 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
+> index 1d9c4a9201c8..d18f7f85aa23 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
+> @@ -24,6 +24,7 @@
+>   #include <linux/pm_runtime.h>
+>   #include <linux/module.h>
+>   #include <linux/of_graph.h>
+> +#include <linux/of_platform.h>
+>   #include <linux/component.h>
+>   #include <linux/console.h>
+>   #include <linux/iommu.h>
+> @@ -267,6 +268,32 @@ static const struct dev_pm_ops rockchip_drm_pm_ops = {
+>   static struct platform_driver *rockchip_sub_drivers[MAX_ROCKCHIP_SUB_DRIVERS];
+>   static int num_rockchip_sub_drivers;
+>   
+> +/*
+> + * check if a vop output-endpoint is a subdriver or bridge.
+> + */
+> +bool rockchip_drm_endpoint_is_subdriver(struct device_node *ep)
+> +{
+> +	struct device_node *node = of_graph_get_remote_port_parent(ep);
+> +	struct platform_device *pdev;
+> +	int i;
+> +
+> +	if (!node)
+> +		return false;
+> +
+> +	pdev = of_find_device_by_node(node);
+> +	if (!pdev)
+> +		return false;
+> +
+> +	for (i = 0; i < num_rockchip_sub_drivers; i++) {
+> +		struct device_driver *drv = pdev->dev.driver;
+> +
+> +		if (rockchip_sub_drivers[i] == to_platform_driver(drv))
+> +			return true;
+> +	}
+> +
+> +	return false;
+> +}
+> +
+>   static int compare_dev(struct device *dev, void *data)
+>   {
+>   	return dev == (struct device *)data;
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.h b/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
+> index d67ad0a3cf36..305b4858c522 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
+> @@ -64,6 +64,7 @@ void rockchip_drm_dma_detach_device(struct drm_device *drm_dev,
+>   				    struct device *dev);
+>   int rockchip_drm_wait_vact_end(struct drm_crtc *crtc, unsigned int mstimeout);
+>   
+> +bool rockchip_drm_endpoint_is_subdriver(struct device_node *ep);
+>   extern struct platform_driver cdn_dp_driver;
+>   extern struct platform_driver dw_hdmi_rockchip_pltfm_driver;
+>   extern struct platform_driver dw_mipi_dsi_driver;
+> 
+> 
+> 
+> _______________________________________________
+> Linux-rockchip mailing list
+> Linux-rockchip@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+> 
 
