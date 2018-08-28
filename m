@@ -2,108 +2,152 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56375C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:08:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1D05C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:10:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED8212087E
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:08:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59CFF2087F
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:10:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NSUP0Xen"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED8212087E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="GfbzSslY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59CFF2087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727206AbeH2ABi (ORCPT
+        id S1727247AbeH2ADg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 20:01:38 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:46528 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727054AbeH2ABh (ORCPT
+        Tue, 28 Aug 2018 20:03:36 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:35362 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726996AbeH2ADf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 20:01:37 -0400
-Received: by mail-oi0-f65.google.com with SMTP id y207-v6so5088627oie.13
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 13:08:24 -0700 (PDT)
+        Tue, 28 Aug 2018 20:03:35 -0400
+Received: by mail-pl1-f194.google.com with SMTP id d9-v6so1208606plr.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 13:10:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=XySq3KwAmm8VeDGS6yQH0DQcTZI8E+bFGFfrCBgDnwk=;
-        b=NSUP0XenYTWf5G9ECO1+J0UxFI1QoV3b2t3SxA/6ttUkSWdIrWBolcYRsT8AaXkB0A
-         +U3Hc0S+v3PlW6zE2b7uzSQzZhreAJnup9IDb4kp3lreGI+O+oJFwisDpxpFvM1Q+qtM
-         hOHbKkZZSPm4+nZY3ak/LTxlCmCQyGTo808styM7oA/vfgFTVdsNrv8IuBO55hJWp0R0
-         A8U7TeEByUVbn1gxDGKR1dfnoTjCpK5rV+a3dn4pJyvG6kv54WfmMEgBzCRgqzcbyXsC
-         raIImkpDS3iP200t1ZC/AKHNIW2JOOMPQ6Bin+6Lk0g7dauLUptdu01CtUpYSX4LfvXz
-         6v1g==
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rvChJWP4unRCLbY7spu4ZAfy9XwoJJc3+7HQGB31KEU=;
+        b=GfbzSslY1jfYYQR5b7MZWhjkvNl9d8R/ASuj8JrNxLXlDDOeeVC3JYI6Gklu7eY/RW
+         IpMKgHmPKIz+pwjvPaesaHMzJgAUr5JjJoX5tbPd4gcEmNhGPJHEy2ZvEx8S7bDZduvf
+         s6RgvlLPNDe+LALuv60LyABOBZrb769S1+dlgZAEFylNJES3zJokVSCuTNhkVRxS3VCl
+         tXO14BQLgTP9NAqmKLfUEAm5jkS0ckhL2M5N0Tyq/smZG8N8nKAAY+Rr6ZtfRZwj9Dh9
+         YHOcICDoyjdO7B86ZuMVymCv3qMKyiFpXGxuBpC8YevEgO+6987lYGc3WlmnZ5zsu1Hq
+         mQ7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=XySq3KwAmm8VeDGS6yQH0DQcTZI8E+bFGFfrCBgDnwk=;
-        b=PD3+zd/VYJtAY1pLo7xP15mNQSlRQG3V1+zZsY6qU5pdkehuqgyF1zkxVMcvusFq5i
-         qOiQs3+2z3XNxuWF9CBQKzKEZytV/URHSWygblP8wJvZZkZG94oXCebu6lyCix+ZWRfl
-         hsXaeXFidCD0x8MDL62Zdv3IADkqPMDx3k9bQoe0romyplZJGpPlM8VSQ7NRa6IFYRA1
-         MYw0/UIWG+7r+MHuQDBha9PG/TTAMqhYo3U4p/iF9HRdVgYGSekmNlsGkpffQlusWn+E
-         LYQ5DKJnLWGdb/6rgsE1yrAVFKc6tQtqejE2uYYNACz0kBw9S/aDppcG+9ZT47J9m/yZ
-         JydA==
-X-Gm-Message-State: APzg51BBPfCGkiHNkeN0C7jcFwpI70xx01cMsYvSiKywa7j9j76pKlXk
-        XsPu5IBvhHQfqJUt93git+iSM5EjTkVAhvCORBw=
-X-Google-Smtp-Source: ANB0VdZz8wW8PRCrVg3/IZJHorvVJwb85DFlQFP7CTggsqOrrBbxZrq+8F80SNcifkESXqMkFESdPIljj9M9Oh510R8=
-X-Received: by 2002:aca:4f44:: with SMTP id d65-v6mr2692313oib.224.1535486904239;
- Tue, 28 Aug 2018 13:08:24 -0700 (PDT)
-MIME-Version: 1.0
-From:   Ray Clinton <mr.ray.clinton@gmail.com>
-Date:   Tue, 28 Aug 2018 16:08:18 -0400
-Message-ID: <CAPMnawu33A5L5a6a00tZ+_9cQxyN97OwXK0sO9Q60+YvR=Yg_A@mail.gmail.com>
-Subject: [PATCH] Trivial numbering change in comments.
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Alistair Strachan <astrachan@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Cc:     trivial@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=rvChJWP4unRCLbY7spu4ZAfy9XwoJJc3+7HQGB31KEU=;
+        b=LedxVMv1wRItkfkRQFRoGqlvocB09THv59PdG2MwgimjVa1GGlvVQNe2Bn0+PE7UK/
+         OyRPo75Ti/dmKFHwmUT6LDv5VCiBbztgJPCYNGgrZxPDh5WNgkwr245OPH1VDa3FnCwl
+         R9fKjBPryVOkh2+qU05AGTlEPzlGCBgk8UmmEEOctSb0uJ32rMSqceTTj/ZTMXKWWlQa
+         0Dy5ekYLC2SIh1K4+9YoPPZuAkYqgNo21Z+xEeWSoL++fYDJgWwxan4kNF2LEP6qAMuz
+         142LkO6qfrZeDJGcW73f078e9SqduI130RqeM+Dmug3x1UxM4vufgIcaIrPcJj0b/5cG
+         GDmg==
+X-Gm-Message-State: APzg51DswDzVTlhrWfdH1t7fPeS2rnsGEBxgC7OvYdBxMJ/SkbVVSzF/
+        814Ea5vXAdlRFu5FVZlSuJTeog==
+X-Google-Smtp-Source: ANB0VdZC7j+0FVh8Ct0riv2LEaGW41b6jdPw0m+4CddNIsnCdvBIbKXuuARBGht7wO1UgKpFJ6tnFw==
+X-Received: by 2002:a17:902:4403:: with SMTP id k3-v6mr2842383pld.243.1535487022012;
+        Tue, 28 Aug 2018 13:10:22 -0700 (PDT)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id v140-v6sm4174308pgb.45.2018.08.28.13.10.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 28 Aug 2018 13:10:20 -0700 (PDT)
+Date:   Tue, 28 Aug 2018 13:10:20 -0700 (PDT)
+X-Google-Original-Date: Tue, 28 Aug 2018 13:10:15 PDT (-0700)
+Subject:     Re: [PATCH] riscv: Drop setup_initrd
+In-Reply-To: <1533874300-17656-1-git-send-email-linux@roeck-us.net>
+CC:     aou@eecs.berkeley.edu, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux@roeck-us.net
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     linux@roeck-us.net
+Message-ID: <mhng-7faee2bb-ee3e-48d1-a016-782ebbbb903d@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I'm trying to get my feet wet in kernel dev and while working on a patch
-I noticed in a lengthy comment block that the number "2" was skipped
-in a description of the steps of a protocol. This patch is simply correcting
-this. This is for 4.18.0.
+On Thu, 09 Aug 2018 21:11:40 PDT (-0700), linux@roeck-us.net wrote:
+> setup_initrd() does not appear to serve a practical purpose other than
+> preventing qemu boots with "-initrd" parameter, so let's drop it.
+>
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> ---
+>  arch/riscv/kernel/setup.c | 39 ---------------------------------------
+>  1 file changed, 39 deletions(-)
+>
+> diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
+> index 2e56af3281f8..579f58a42974 100644
+> --- a/arch/riscv/kernel/setup.c
+> +++ b/arch/riscv/kernel/setup.c
+> @@ -82,41 +82,6 @@ EXPORT_SYMBOL(empty_zero_page);
+>  /* The lucky hart to first increment this variable will boot the other cores */
+>  atomic_t hart_lottery;
+>
+> -#ifdef CONFIG_BLK_DEV_INITRD
+> -static void __init setup_initrd(void)
+> -{
+> -	extern char __initramfs_start[];
+> -	extern unsigned long __initramfs_size;
+> -	unsigned long size;
+> -
+> -	if (__initramfs_size > 0) {
+> -		initrd_start = (unsigned long)(&__initramfs_start);
+> -		initrd_end = initrd_start + __initramfs_size;
+> -	}
+> -
+> -	if (initrd_start >= initrd_end) {
+> -		printk(KERN_INFO "initrd not found or empty");
+> -		goto disable;
+> -	}
+> -	if (__pa(initrd_end) > PFN_PHYS(max_low_pfn)) {
+> -		printk(KERN_ERR "initrd extends beyond end of memory");
+> -		goto disable;
+> -	}
+> -
+> -	size =  initrd_end - initrd_start;
+> -	memblock_reserve(__pa(initrd_start), size);
+> -	initrd_below_start_ok = 1;
+> -
+> -	printk(KERN_INFO "Initial ramdisk at: 0x%p (%lu bytes)\n",
+> -		(void *)(initrd_start), size);
+> -	return;
+> -disable:
+> -	pr_cont(" - disabling initrd\n");
+> -	initrd_start = 0;
+> -	initrd_end = 0;
+> -}
+> -#endif /* CONFIG_BLK_DEV_INITRD */
+> -
+>  pgd_t swapper_pg_dir[PTRS_PER_PGD] __page_aligned_bss;
+>  pgd_t trampoline_pg_dir[PTRS_PER_PGD] __initdata __aligned(PAGE_SIZE);
+>
+> @@ -195,10 +160,6 @@ static void __init setup_bootmem(void)
+>  	set_max_mapnr(PFN_DOWN(mem_size));
+>  	max_low_pfn = pfn_base + PFN_DOWN(mem_size);
+>
+> -#ifdef CONFIG_BLK_DEV_INITRD
+> -	setup_initrd();
+> -#endif /* CONFIG_BLK_DEV_INITRD */
+> -
+>  	early_init_fdt_reserve_self();
+>  	early_init_fdt_scan_reserved_mem();
+>  	memblock_allow_resize();
 
-It is a very trivial patch, but this is my first actual try at one and
-thought I
-might start out small (and I don't think you can get smaller than a single
- character change). Any and all advice (about this patch, email, or
-anything else) is very welcome.
+With this patch I can't boot in QEMU.  It might be something with my setup, 
+though.  I'm testing with a unified BBL+vmlinux, and using QEMU 3.0.0-rc3 (I 
+should probably update that one, but I don't remember anything going by).  Do 
+you have time to take a look?  Here's my QEMU commandline
 
-Thanks so much!
-Ray
+./riscv64-softmmu/qemu-system-riscv64    -nographic    -machine virt    -smp 4    -m 2G    -kernel /home/palmer/work/riscv/riscv-pk/build/bbl -object rng-random,filename=/dev/urandom,id=rng0    -device virtio-rng-device,rng=rng0    -append "console=ttyS0 ro root=/dev/vda"    -device virtio-blk-device,drive=hd0    -drive file=stage4-disk.img,format=raw,id=hd0    -device virtio-net-device,netdev=usernet    -netdev user,id=usernet,hostfwd=tcp::10000-:22
 
-Signed-off-by: Ray Clinton <mr.ray.clinton@gmail.com>
----
- drivers/staging/android/uapi/vsoc_shm.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/android/uapi/vsoc_shm.h
-b/drivers/staging/android/uapi/vsoc_shm.h
-index 6291fb2..0301172 100644
---- a/drivers/staging/android/uapi/vsoc_shm.h
-+++ b/drivers/staging/android/uapi/vsoc_shm.h
-@@ -92,7 +92,7 @@ struct fd_scoped_permission_arg {
-  *    The transmitter can choose any appropriate hashing algorithm, including
-  *    hash = futex_offset & ((1 << num_nodes_lg2) - 1)
-  *
-- * 3. The transmitter should atomically compare and swap futex_offset with 0
-+ * 2. The transmitter should atomically compare and swap futex_offset with 0
-  *    at hash. There are 3 possible outcomes
-  *      a. The swap fails because the futex_offset is already in the table.
-  *         The transmitter should stop.
--- 
-2.7.4
+I just tagged the PR I plan to submit for RC2 tomorrow, so at least it should 
+be easy for everyone to get on the same page.
