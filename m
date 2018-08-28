@@ -2,201 +2,283 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50483C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:30:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A694AC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:30:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0228A206B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:30:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0228A206B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 565D020867
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:30:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 565D020867
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727428AbeH1TWZ (ORCPT
+        id S1727454AbeH1TWh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 15:22:25 -0400
-Received: from mail-io0-f198.google.com ([209.85.223.198]:41096 "EHLO
-        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727308AbeH1TWO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 15:22:14 -0400
-Received: by mail-io0-f198.google.com with SMTP id q24-v6so1662926iog.8
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 08:30:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=f3vvT1ZmBjQIhW7FRy7d1D6KaoYoIgwr2V/UBBZVh+4=;
-        b=ru0jj4PN+fqVgxOgFhDIIhJjnNMZldEvBIVdO/9ujikWZxFagWxpflqaZuABzKT0yS
-         0hXr5l6KE+xDR5SHN28xDKLs6r3baKKCtnfoSPnTLU3Yx+b7a9vNZZ+43YSB8J1aD90w
-         QWhxk/l282uFbFIz45lkb6v1xq1oElHbp0pmHuy5ujugmC/9LLykbwwt9RnHOMgBvlqo
-         whH/wb4XKurwcF7GMzVv+hCSZLCnVS3/qM9++ROyE9HS8eboQRRee0HsyarEYw6pDwES
-         6ESKWGSA73Z3c4rvj/j6TLXDlB7RjOXjbuMg7GM01K6NSlwrdHfRGSMDnSSUt1EYoqdp
-         Vz6Q==
-X-Gm-Message-State: APzg51AtD9KILWmqG+RBwbyZknx0ie1XV9JAi3aLzmRO3kPqd5f7J9pu
-        JagAdt5ptUO3Gd1O6AJkldy/e0vGeN55ingt9FTDN1kDFhvT
-X-Google-Smtp-Source: ANB0VdZWW4ViesDjuFpJE6qxeheFlAB4EIkDKyZ/lmYlbgaoxDAMsVmneo6aFdHNX1UcXi/lFJg5VALYDj89G0WlW+kMXLmMUn+A
-MIME-Version: 1.0
-X-Received: by 2002:a24:43cb:: with SMTP id s194-v6mr995336itb.3.1535470202707;
- Tue, 28 Aug 2018 08:30:02 -0700 (PDT)
-Date:   Tue, 28 Aug 2018 08:30:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000fef39305748083ae@google.com>
-Subject: KASAN: stack-out-of-bounds Read in __schedule
-From:   syzbot <syzbot+45a34334c61a8ecf661d@syzkaller.appspotmail.com>
-To:     jack@suse.com, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        Tue, 28 Aug 2018 15:22:37 -0400
+Received: from foss.arm.com ([217.140.101.70]:40484 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727261AbeH1TWM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 15:22:12 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5FD8315BF;
+        Tue, 28 Aug 2018 08:30:01 -0700 (PDT)
+Received: from e112298-lin.Emea.Arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 51B803F557;
+        Tue, 28 Aug 2018 08:30:00 -0700 (PDT)
+From:   Julien Thierry <julien.thierry@arm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de, peterz@infradead.org, marc.zyngier@arm.com,
+        mingo@kernel.org, Julien Thierry <julien.thierry@arm.com>
+Subject: [PATCH v2 2/4] genirq: Provide NMI management for percpu_devid interrupts
+Date:   Tue, 28 Aug 2018 16:29:46 +0100
+Message-Id: <1535470188-38155-3-git-send-email-julien.thierry@arm.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1535470188-38155-1-git-send-email-julien.thierry@arm.com>
+References: <1535470188-38155-1-git-send-email-julien.thierry@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Add support for percpu_devid interrupts treated as NMIs.
 
-syzbot found the following crash on:
+Percpu_devid NMIs need to be setup/torn down on each CPU they target.
 
-HEAD commit:    5b394b2ddf03 Linux 4.19-rc1
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14f4d8e1400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=49927b422dcf0b29
-dashboard link: https://syzkaller.appspot.com/bug?extid=45a34334c61a8ecf661d
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13127e5a400000
+The same restrictions as for global NMIs still apply for percpu_devid NMIs.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+45a34334c61a8ecf661d@syzkaller.appspotmail.com
-
-IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
-8021q: adding VLAN 0 to HW filter on device team0
-==================================================================
-BUG: KASAN: stack-out-of-bounds in schedule_debug kernel/sched/core.c:3285  
-[inline]
-BUG: KASAN: stack-out-of-bounds in __schedule+0x1977/0x1df0  
-kernel/sched/core.c:3395
-Read of size 8 at addr ffff8801ad090000 by task syz-executor0/4718
-
-CPU: 0 PID: 4718 Comm: syz-executor0 Not tainted 4.19.0-rc1+ #211
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-
-The buggy address belongs to the page:
-page:ffffea0006b42400 count:1 mapcount:-512 mapping:0000000000000000  
-index:0x0
-flags: 0x2fffc0000000000()
-raw: 02fffc0000000000 dead000000000100 dead000000000200 0000000000000000
-raw: 0000000000000000 0000000000000000 00000001fffffdff ffff8801d29544c0
-page dumped because: kasan: bad access detected
-page->mem_cgroup:ffff8801d29544c0
-
-Memory state around the buggy address:
-  ffff8801ad08ff00: f2 f2 f2 f2 f2 00 f2 f2 f2 00 00 00 00 00 00 00
-  ffff8801ad08ff80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 f1
-> ffff8801ad090000: f1 f1 f1 00 f2 f2 f2 f2 f2 f2 f2 04 f2 f2 f2 f2
-                    ^
-  ffff8801ad090080: f2 f2 f2 00 f2 f2 f2 00 00 00 00 00 00 00 00 00
-  ffff8801ad090100: 00 00 00 00 00 00 00 00 00 00 00 00 00 f1 f1 f1
-==================================================================
-Kernel panic - not syncing: panic_on_warn set ...
-
-BUG: unable to handle kernel paging request at 0000000100000007
-PGD 1b34a2067 P4D 1b34a2067 PUD 0
-Oops: 0000 [#1] SMP KASAN
-CPU: 1 PID: 4325 Comm: rs:main Q:Reg Tainted: G    B              
-4.19.0-rc1+ #211
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:find_stack lib/stackdepot.c:188 [inline]
-RIP: 0010:depot_save_stack+0x120/0x470 lib/stackdepot.c:238
-Code: 0f 00 4e 8b 24 f5 e0 db ae 89 4d 85 e4 0f 84 d4 00 00 00 44 8d 47 ff  
-49 c1 e0 03 eb 0d 4d 8b 24 24 4d 85 e4 0f 84 bd 00 00 00 <41> 39 5c 24 08  
-75 ec 41 3b 7c 24 0c 75 e5 48 8b 01 49 39 44 24 18
-RSP: 0018:ffff8801b2636f40 EFLAGS: 00010006
-RAX: 0000000084727a0d RBX: 00000000222ca320 RCX: ffff8801b2636fa0
-RDX: 000000004e510a9d RSI: 0000000000400000 RDI: 0000000000000012
-RBP: ffff8801b2636f78 R08: 0000000000000088 R09: 00000000dcf06c78
-R10: 00000000ecfd654a R11: ffff8801db1236f3 R12: 00000000ffffffff
-R13: ffff8801b2636f88 R14: 00000000000ca320 R15: ffff8801b2a72680
-FS:  00007ff2eb061700(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000100000007 CR3: 00000001b4fdd000 CR4: 00000000001406e0
-Call Trace:
-  save_stack+0xa9/0xd0 mm/kasan/kasan.c:454
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kmem_cache_free+0x86/0x280 mm/slab.c:3756
-  jbd2_free_handle include/linux/jbd2.h:1426 [inline]
-  jbd2_journal_stop+0x443/0x1600 fs/jbd2/transaction.c:1787
-  __ext4_journal_stop+0xde/0x1f0 fs/ext4/ext4_jbd2.c:103
-  ext4_dirty_inode+0xab/0xc0 fs/ext4/inode.c:6027
-  __mark_inode_dirty+0x760/0x1300 fs/fs-writeback.c:2129
-  generic_update_time+0x26a/0x450 fs/inode.c:1651
-  update_time fs/inode.c:1667 [inline]
-  file_update_time+0x390/0x640 fs/inode.c:1877
-  __generic_file_write_iter+0x1dc/0x630 mm/filemap.c:3214
-  ext4_file_write_iter+0x390/0x1450 fs/ext4/file.c:266
-  call_write_iter include/linux/fs.h:1807 [inline]
-  new_sync_write fs/read_write.c:474 [inline]
-  __vfs_write+0x6af/0x9d0 fs/read_write.c:487
-  vfs_write+0x1fc/0x560 fs/read_write.c:549
-  ksys_write+0x101/0x260 fs/read_write.c:598
-  __do_sys_write fs/read_write.c:610 [inline]
-  __se_sys_write fs/read_write.c:607 [inline]
-  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x7ff2ecabf19d
-Code: d1 20 00 00 75 10 b8 01 00 00 00 0f 05 48 3d 01 f0 ff ff 73 31 c3 48  
-83 ec 08 e8 be fa ff ff 48 89 04 24 b8 01 00 00 00 0f 05 <48> 8b 3c 24 48  
-89 c2 e8 07 fb ff ff 48 89 d0 48 83 c4 08 48 3d 01
-RSP: 002b:00007ff2eb05ff90 EFLAGS: 00000293 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000000000400 RCX: 00007ff2ecabf19d
-RDX: 0000000000000400 RSI: 0000000002089a90 RDI: 0000000000000005
-RBP: 0000000002089a90 R08: 00000000020d9e00 R09: 656c6c616b7a7973
-R10: 6c656e72656b2072 R11: 0000000000000293 R12: 0000000000000000
-R13: 00007ff2eb060410 R14: 00000000020d9e00 R15: 0000000002089890
-Modules linked in:
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-CR2: 0000000100000007
----[ end trace fbf1ba842de6c894 ]---
-RIP: 0010:find_stack lib/stackdepot.c:188 [inline]
-RIP: 0010:depot_save_stack+0x120/0x470 lib/stackdepot.c:238
-Code: 0f 00 4e 8b 24 f5 e0 db ae 89 4d 85 e4 0f 84 d4 00 00 00 44 8d 47 ff  
-49 c1 e0 03 eb 0d 4d 8b 24 24 4d 85 e4 0f 84 bd 00 00 00 <41> 39 5c 24 08  
-75 ec 41 3b 7c 24 0c 75 e5 48 8b 01 49 39 44 24 18
-RSP: 0018:ffff8801b2636f40 EFLAGS: 00010006
-RAX: 0000000084727a0d RBX: 00000000222ca320 RCX: ffff8801b2636fa0
-RDX: 000000004e510a9d RSI: 0000000000400000 RDI: 0000000000000012
-RBP: ffff8801b2636f78 R08: 0000000000000088 R09: 00000000dcf06c78
-R10: 00000000ecfd654a R11: ffff8801db1236f3 R12: 00000000ffffffff
-R13: ffff8801b2636f88 R14: 00000000000ca320 R15: ffff8801b2a72680
-FS:  00007ff2eb061700(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000100000007 CR3: 00000001b4fdd000 CR4: 00000000001406e0
-Shutting down cpus with NMI
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
+Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ include/linux/interrupt.h |   9 +++
+ kernel/irq/manage.c       | 149 ++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 158 insertions(+)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
+index 3b1a320..59d3877 100644
+--- a/include/linux/interrupt.h
++++ b/include/linux/interrupt.h
+@@ -168,10 +168,15 @@ struct irqaction {
+ 				    devname, percpu_dev_id);
+ }
+ 
++extern int __must_check
++request_percpu_nmi(unsigned int irq, irq_handler_t handler,
++		   const char *devname, void __percpu *dev);
++
+ extern const void *free_irq(unsigned int, void *);
+ extern void free_percpu_irq(unsigned int, void __percpu *);
+ 
+ extern const void *free_nmi(unsigned int irq, void *dev_id);
++extern void free_percpu_nmi(unsigned int irq, void __percpu *percpu_dev_id);
+ 
+ struct device;
+ 
+@@ -224,7 +229,11 @@ struct irqaction {
+ extern void irq_wake_thread(unsigned int irq, void *dev_id);
+ 
+ extern void disable_nmi_nosync(unsigned int irq);
++extern void disable_percpu_nmi(unsigned int irq);
+ extern void enable_nmi(unsigned int irq);
++extern void enable_percpu_nmi(unsigned int irq, unsigned int type);
++extern int ready_percpu_nmi(unsigned int irq);
++extern void teardown_percpu_nmi(unsigned int irq);
+ 
+ /* The following three functions are for the core kernel use only. */
+ extern void suspend_device_irqs(void);
+diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+index dabcf48..b1dcd39 100644
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -2178,6 +2178,11 @@ void enable_percpu_irq(unsigned int irq, unsigned int type)
+ }
+ EXPORT_SYMBOL_GPL(enable_percpu_irq);
+ 
++void enable_percpu_nmi(unsigned int irq, unsigned int type)
++{
++	enable_percpu_irq(irq, type);
++}
++
+ /**
+  * irq_percpu_is_enabled - Check whether the per cpu irq is enabled
+  * @irq:	Linux irq number to check for
+@@ -2217,6 +2222,11 @@ void disable_percpu_irq(unsigned int irq)
+ }
+ EXPORT_SYMBOL_GPL(disable_percpu_irq);
+ 
++void disable_percpu_nmi(unsigned int irq)
++{
++	disable_percpu_irq(irq);
++}
++
+ /*
+  * Internal function to unregister a percpu irqaction.
+  */
+@@ -2248,6 +2258,8 @@ static struct irqaction *__free_percpu_irq(unsigned int irq, void __percpu *dev_
+ 	/* Found it - now remove it from the list of entries: */
+ 	desc->action = NULL;
+ 
++	desc->istate &= ~IRQS_NMI;
++
+ 	raw_spin_unlock_irqrestore(&desc->lock, flags);
+ 
+ 	unregister_handler_proc(irq, action);
+@@ -2301,6 +2313,19 @@ void free_percpu_irq(unsigned int irq, void __percpu *dev_id)
+ }
+ EXPORT_SYMBOL_GPL(free_percpu_irq);
+ 
++void free_percpu_nmi(unsigned int irq, void __percpu *dev_id)
++{
++	struct irq_desc *desc = irq_to_desc(irq);
++
++	if (!desc || !irq_settings_is_per_cpu_devid(desc))
++		return;
++
++	if (WARN_ON(!(desc->istate & IRQS_NMI)))
++		return;
++
++	kfree(__free_percpu_irq(irq, dev_id));
++}
++
+ /**
+  *	setup_percpu_irq - setup a per-cpu interrupt
+  *	@irq: Interrupt line to setup
+@@ -2391,6 +2416,130 @@ int __request_percpu_irq(unsigned int irq, irq_handler_t handler,
+ EXPORT_SYMBOL_GPL(__request_percpu_irq);
+ 
+ /**
++ *	request_percpu_nmi - allocate a percpu interrupt line for NMI delivery
++ *	@irq: Interrupt line to allocate
++ *	@handler: Function to be called when the IRQ occurs.
++ *	@devname: An ascii name for the claiming device
++ *	@dev_id: A percpu cookie passed back to the handler function
++ *
++ *	This call allocates interrupt resources and enables the
++ *	interrupt on the local CPU. If the interrupt is supposed to be
++ *	enabled on other CPUs, it has to be done on each CPU using
++ *	enable_percpu_nmi().
++ *
++ *	Dev_id must be globally unique. It is a per-cpu variable, and
++ *	the handler gets called with the interrupted CPU's instance of
++ *	that variable.
++ *
++ *	Interrupt lines requested for NMI delivering should have auto enabling
++ *	setting disabled.
++ *
++ *	If the interrupt line cannot be used to deliver NMIs, function
++ *	will fail returning a negative value.
++ */
++int request_percpu_nmi(unsigned int irq, irq_handler_t handler,
++		       const char *name, void __percpu *dev_id)
++{
++	struct irqaction *action;
++	struct irq_desc *desc;
++	unsigned long flags;
++	int retval;
++
++	if (!handler)
++		return -EINVAL;
++
++	desc = irq_to_desc(irq);
++
++	if (!desc || !irq_settings_can_request(desc) ||
++	    !irq_settings_is_per_cpu_devid(desc) ||
++	    irq_settings_can_autoenable(desc) ||
++	    !irq_supports_nmi(desc))
++		return -EINVAL;
++
++	/* The line cannot already be NMI */
++	if (desc->istate & IRQS_NMI)
++		return -EINVAL;
++
++	action = kzalloc(sizeof(struct irqaction), GFP_KERNEL);
++	if (!action)
++		return -ENOMEM;
++
++	action->handler = handler;
++	action->flags = IRQF_PERCPU | IRQF_NO_SUSPEND | IRQF_NO_THREAD
++		| IRQF_NOBALANCING;
++	action->name = name;
++	action->percpu_dev_id = dev_id;
++
++	retval = irq_chip_pm_get(&desc->irq_data);
++	if (retval < 0)
++		goto err_out;
++
++	retval = __setup_irq(irq, desc, action);
++	if (retval)
++		goto err_irq_setup;
++
++	raw_spin_lock_irqsave(&desc->lock, flags);
++	desc->istate |= IRQS_NMI;
++	raw_spin_unlock_irqrestore(&desc->lock, flags);
++
++	return 0;
++
++err_irq_setup:
++	irq_chip_pm_put(&desc->irq_data);
++err_out:
++	kfree(action);
++
++	return retval;
++}
++
++int ready_percpu_nmi(unsigned int irq)
++{
++	unsigned long flags;
++	struct irq_desc *desc = irq_get_desc_lock(irq, &flags,
++						  IRQ_GET_DESC_CHECK_PERCPU);
++	int ret = 0;
++
++	if (!desc) {
++		ret = -EINVAL;
++		goto out;
++	}
++
++	if (WARN(!(desc->istate & IRQS_NMI),
++		 KERN_ERR "ready_percpu_nmi called for a non-NMI interrupt: irq %u\n",
++		 irq)) {
++		ret = -EINVAL;
++		goto out;
++	}
++
++	ret = irq_nmi_setup(desc);
++	if (ret) {
++		pr_err("Failed to setup NMI delivery: irq %u\n", irq);
++		goto out;
++	}
++
++out:
++	irq_put_desc_unlock(desc, flags);
++	return ret;
++}
++
++void teardown_percpu_nmi(unsigned int irq)
++{
++	unsigned long flags;
++	struct irq_desc *desc = irq_get_desc_lock(irq, &flags,
++						  IRQ_GET_DESC_CHECK_PERCPU);
++
++	if (!desc)
++		return;
++
++	if (WARN_ON(!(desc->istate & IRQS_NMI)))
++		goto out;
++
++	irq_nmi_teardown(desc);
++out:
++	irq_put_desc_unlock(desc, flags);
++}
++
++/**
+  *	irq_get_irqchip_state - returns the irqchip state of a interrupt.
+  *	@irq: Interrupt line that is forwarded to a VM
+  *	@which: One of IRQCHIP_STATE_* the caller wants to know about
+-- 
+1.9.1
+
