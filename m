@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BC9CC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:09:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73EA0C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:09:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB2442087D
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:09:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BCC3205F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:09:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="v2wRyF4E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB2442087D
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="tS7Ifdu8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BCC3205F4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727738AbeH2BCF (ORCPT
+        id S1727862AbeH2BCq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 21:02:05 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47888 "EHLO
+        Tue, 28 Aug 2018 21:02:46 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47808 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727285AbeH2BCE (ORCPT
+        with ESMTP id S1727522AbeH2BCD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 21:02:04 -0400
+        Tue, 28 Aug 2018 21:02:03 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=6uB11fIjJAwX7yreMB2AsAJ/bdBVIdEZXjO3SQiq6e4=; b=v2wRyF4E6HsP
-        cr4dQcaDHRmxIMOkNSG7Lcer12snHDrK0MiBDc0W6heLDCbO+xFI1MFdtdVUKLEzZri+1Besy7CMA
-        +PgZd+hRkFrywQelQGssm1LQ+rrTkdHwuwFlbOZUIZAVD40ajh0glBlG0HCJqGYCE244o44ILOkCj
-        PuZmo=;
+        List-Archive; bh=Gb2voWtLqZiPFYynKJGpI+TvLH9T2HSJkY/C8xNMPPs=; b=tS7Ifdu8jtf0
+        usc2sz3tnyVvzMJmgmV9GPm2NnCbnfY6nI18GIiHM4/Uu6DFbJfdqzT+ILg1hO5bHtxDC5/5pHVVk
+        LMUJfoiW/CAkXSd+Xg6UrOcVxX5BMEZa3+iNMzkpcRAtEv5VUPlei4bs+8e+258rWtBHnpdnpnEHJ
+        JidYU=;
 Received: from 94.197.121.204.threembb.co.uk ([94.197.121.204] helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fulE1-0007lv-F1; Tue, 28 Aug 2018 21:08:33 +0000
+        id 1fulE1-0007lr-Ah; Tue, 28 Aug 2018 21:08:33 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 5782344007F; Tue, 28 Aug 2018 21:55:01 +0100 (BST)
+        id 10A1B44007E; Tue, 28 Aug 2018 21:54:59 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Douglas Anderson <dianders@chromium.org>
 Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: regmap helpers - support overlapping linear ranges" to the regulator tree
+Subject: Applied "regulator: core: Add the opmode to regulator_summary" to the regulator tree
 In-Reply-To: 
-Message-Id: <20180828205501.5782344007F@finisterre.ee.mobilebroadband>
-Date:   Tue, 28 Aug 2018 21:55:01 +0100 (BST)
+Message-Id: <20180828205459.10A1B44007E@finisterre.ee.mobilebroadband>
+Date:   Tue, 28 Aug 2018 21:54:59 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -56,7 +56,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: regmap helpers - support overlapping linear ranges
+   regulator: core: Add the opmode to regulator_summary
 
 has been applied to the regulator tree at
 
@@ -81,49 +81,89 @@ to this mail.
 Thanks,
 Mark
 
-From e7d80b6b848b4b5f83d3fbee9fd042d036ede9c6 Mon Sep 17 00:00:00 2001
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Date: Wed, 22 Aug 2018 12:53:27 +0300
-Subject: [PATCH] regulator: regmap helpers - support overlapping linear ranges
+From 01de19d09ce6129740b318687a92c137451d2369 Mon Sep 17 00:00:00 2001
+From: Douglas Anderson <dianders@chromium.org>
+Date: Thu, 16 Aug 2018 13:28:01 -0700
+Subject: [PATCH] regulator: core: Add the opmode to regulator_summary
 
-Don't give up voltage mapping if first range with suitable min/max uV
-does not provide the wanted voltage.
+It's handy to know what opmode a regulator has been configured to in
+the summary.  Add it.
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/helpers.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ drivers/regulator/core.c | 28 +++++++++++++++++-----------
+ 1 file changed, 17 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/regulator/helpers.c b/drivers/regulator/helpers.c
-index 2ae7c3ac5940..ef09021dc46e 100644
---- a/drivers/regulator/helpers.c
-+++ b/drivers/regulator/helpers.c
-@@ -321,17 +321,18 @@ int regulator_map_voltage_linear_range(struct regulator_dev *rdev,
- 
- 		ret += range->min_sel;
- 
--		break;
-+		/*
-+		 * Map back into a voltage to verify we're still in bounds.
-+		 * If we are not, then continue checking rest of the ranges.
-+		 */
-+		voltage = rdev->desc->ops->list_voltage(rdev, ret);
-+		if (voltage >= min_uV && voltage <= max_uV)
-+			break;
- 	}
- 
- 	if (i == rdev->desc->n_linear_ranges)
- 		return -EINVAL;
- 
--	/* Map back into a voltage to verify we're still in bounds */
--	voltage = rdev->desc->ops->list_voltage(rdev, ret);
--	if (voltage < min_uV || voltage > max_uV)
--		return -EINVAL;
--
- 	return ret;
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index bb1324f93143..69b64e5ffc76 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -426,19 +426,24 @@ static ssize_t name_show(struct device *dev, struct device_attribute *attr,
  }
- EXPORT_SYMBOL_GPL(regulator_map_voltage_linear_range);
+ static DEVICE_ATTR_RO(name);
+ 
+-static ssize_t regulator_print_opmode(char *buf, int mode)
++static const char *regulator_opmode_to_str(int mode)
+ {
+ 	switch (mode) {
+ 	case REGULATOR_MODE_FAST:
+-		return sprintf(buf, "fast\n");
++		return "fast";
+ 	case REGULATOR_MODE_NORMAL:
+-		return sprintf(buf, "normal\n");
++		return "normal";
+ 	case REGULATOR_MODE_IDLE:
+-		return sprintf(buf, "idle\n");
++		return "idle";
+ 	case REGULATOR_MODE_STANDBY:
+-		return sprintf(buf, "standby\n");
++		return "standby";
+ 	}
+-	return sprintf(buf, "unknown\n");
++	return "unknown";
++}
++
++static ssize_t regulator_print_opmode(char *buf, int mode)
++{
++	return sprintf(buf, "%s\n", regulator_opmode_to_str(mode));
+ }
+ 
+ static ssize_t regulator_opmode_show(struct device *dev,
+@@ -4674,10 +4679,11 @@ static void regulator_summary_show_subtree(struct seq_file *s,
+ 	if (!rdev)
+ 		return;
+ 
+-	seq_printf(s, "%*s%-*s %3d %4d %6d ",
++	seq_printf(s, "%*s%-*s %3d %4d %6d %7s ",
+ 		   level * 3 + 1, "",
+ 		   30 - level * 3, rdev_get_name(rdev),
+-		   rdev->use_count, rdev->open_count, rdev->bypass_count);
++		   rdev->use_count, rdev->open_count, rdev->bypass_count,
++		   regulator_opmode_to_str(_regulator_get_mode(rdev)));
+ 
+ 	seq_printf(s, "%5dmV ", _regulator_get_voltage(rdev) / 1000);
+ 	seq_printf(s, "%5dmA ", _regulator_get_current_limit(rdev) / 1000);
+@@ -4709,7 +4715,7 @@ static void regulator_summary_show_subtree(struct seq_file *s,
+ 
+ 		switch (rdev->desc->type) {
+ 		case REGULATOR_VOLTAGE:
+-			seq_printf(s, "%37dmV %5dmV",
++			seq_printf(s, "%45dmV %5dmV",
+ 				   consumer->voltage[PM_SUSPEND_ON].min_uV / 1000,
+ 				   consumer->voltage[PM_SUSPEND_ON].max_uV / 1000);
+ 			break;
+@@ -4741,8 +4747,8 @@ static int regulator_summary_show_roots(struct device *dev, void *data)
+ 
+ static int regulator_summary_show(struct seq_file *s, void *data)
+ {
+-	seq_puts(s, " regulator                      use open bypass voltage current     min     max\n");
+-	seq_puts(s, "-------------------------------------------------------------------------------\n");
++	seq_puts(s, " regulator                      use open bypass  opmode voltage current     min     max\n");
++	seq_puts(s, "---------------------------------------------------------------------------------------\n");
+ 
+ 	class_for_each_device(&regulator_class, NULL, s,
+ 			      regulator_summary_show_roots);
 -- 
 2.18.0
 
