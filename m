@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0906BC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 06:02:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8D3AC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 06:03:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5DA8208B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 06:02:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5DA8208B8
+	by mail.kernel.org (Postfix) with ESMTP id 7E0B3208B8
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 06:03:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E0B3208B8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727087AbeH1Jwm (ORCPT
+        id S1727147AbeH1Jxa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 05:52:42 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33286 "EHLO mx1.suse.de"
+        Tue, 28 Aug 2018 05:53:30 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33344 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726379AbeH1Jwl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 05:52:41 -0400
+        id S1726379AbeH1Jxa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 05:53:30 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 26D04B031;
-        Tue, 28 Aug 2018 06:02:38 +0000 (UTC)
-Subject: Re: [PATCH] x86/irqflags: mark native_restore_fl extern inline
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Cc:     tglx@linutronix.de, mingo@redhat.com, stable@vger.kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        linux-kernel@vger.kernel.org
-References: <20180827214011.55428-1-ndesaulniers@google.com>
- <20180828051300.GB2107@kroah.com>
+        by mx1.suse.de (Postfix) with ESMTP id 5B47AB035;
+        Tue, 28 Aug 2018 06:03:26 +0000 (UTC)
+Subject: Re: [PATCH 1/3] xen/gntdev: fix up blockable calls to
+ mn_invl_range_start
+To:     Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+References: <20180827112623.8992-1-mhocko@kernel.org>
+ <20180827112623.8992-2-mhocko@kernel.org>
 From:   Juergen Gross <jgross@suse.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
@@ -68,12 +69,12 @@ Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
  pAd7a7BdsqWC4o+GTm5tnGrCyD+4gfDSpkOT53S/GNO07YkPkm/8J4OBoFfgSaCnQ1izwgJQ
  jIpcG2fPCI2/hxf2oqXPYbKr1v4Z1wthmoyUgGN0LPTIm+B5vdY82wI5qe9uN6UOGyTH2B3p
  hRQUWqCwu2sqkI3LLbTdrnyDZaixT2T0f4tyF5Lfs+Ha8xVMhIyzNb1byDI5FKCb
-Message-ID: <5c949906-ae9d-2848-d5d0-f402aed4b9f3@suse.com>
-Date:   Tue, 28 Aug 2018 08:02:37 +0200
+Message-ID: <234d0dd0-cd42-5ca8-e6bd-cbd12c872d6d@suse.com>
+Date:   Tue, 28 Aug 2018 08:03:24 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180828051300.GB2107@kroah.com>
+In-Reply-To: <20180827112623.8992-2-mhocko@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: de-DE
 Content-Transfer-Encoding: 7bit
@@ -82,43 +83,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28/08/18 07:13, Greg Kroah-Hartman wrote:
-> On Mon, Aug 27, 2018 at 02:40:09PM -0700, Nick Desaulniers wrote:
->> Fixes commit 208cbb325589 ("x86/irqflags: Provide a declaration for
->> native_save_fl")
->>
->> This should have been marked extern inline in order to pick up the out
->> of line definition in arch/x86/kernel/irqflags.S.
->>
->> Cc: stable@vger.kernel.org # 4.18, 4.14, 4.9, 4.4
->> Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
->> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
->> ---
->>  arch/x86/include/asm/irqflags.h | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/x86/include/asm/irqflags.h b/arch/x86/include/asm/irqflags.h
->> index c14f2a74b2be..15450a675031 100644
->> --- a/arch/x86/include/asm/irqflags.h
->> +++ b/arch/x86/include/asm/irqflags.h
->> @@ -33,7 +33,8 @@ extern inline unsigned long native_save_fl(void)
->>  	return flags;
->>  }
->>  
->> -static inline void native_restore_fl(unsigned long flags)
->> +extern inline void native_restore_fl(unsigned long flags);
->> +extern inline void native_restore_fl(unsigned long flags)
+On 27/08/18 13:26, Michal Hocko wrote:
+> From: Michal Hocko <mhocko@suse.com>
 > 
-> This looks odd to me, but my coffee hasn't kicked in yet this morning.
-> Why do you need both lines here?  Shouldn't the actual function be
-> sufficient?  If not, a comment explaining this would be nice.
+> 93065ac753e4 ("mm, oom: distinguish blockable mode for mmu notifiers")
+> has introduced blockable parameter to all mmu_notifiers and the notifier
+> has to back off when called in !blockable case and it could block down
+> the road.
+> 
+> The above commit implemented that for mn_invl_range_start but both
+> in_range checks are done unconditionally regardless of the blockable
+> mode and as such they would fail all the time for regular calls.
+> Fix this by checking blockable parameter as well.
+> 
+> Once we are there we can remove the stale TODO. The lock has to be
+> sleepable because we wait for completion down in gnttab_unmap_refs_sync.
+> 
+> Changes since v1
+> - pull in_range check into mn_invl_range_start - Juergen
+> 
+> Fixes: 93065ac753e4 ("mm, oom: distinguish blockable mode for mmu notifiers")
+> Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+> Cc: Juergen Gross <jgross@suse.com>
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
 
-Look just some lines further up:
-
-/* Declaration required for gcc < 4.9 to prevent
--Werror=missing-prototypes */
-extern inline unsigned long native_save_fl(void);
-extern inline unsigned long native_save_fl(void)
+Reviewed-by: Juergen Gross <jgross@suse.com>
 
 
 Juergen
