@@ -3,107 +3,164 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB12BC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 09:19:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C730C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 09:20:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77E80208A5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 09:19:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77E80208A5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id CBE5F205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 09:20:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBE5F205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727702AbeH1NK2 (ORCPT
+        id S1727736AbeH1NKv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 09:10:28 -0400
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:44727 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727078AbeH1NK2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 09:10:28 -0400
-Received: by mail-ua1-f67.google.com with SMTP id m11-v6so536787uao.11
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 02:19:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VQv9bsU6JACyoK5rD43DDXbRHdVnmeif5CxFa1jmkD0=;
-        b=V3BTBVDaXvhYLMS6z61VVLtYJmk2DAYdTMtLUGJTJ3im3Tcz4c3FCpbARUUsR2tjtZ
-         HBSXWadcQC/EibgpmTDdwAPN3ckUvsvaohS8/VRywtBZiCoX4Eg7QN8NhOyFmWc0Jp8s
-         Gf7GTASwfdh0U/eyqd00X48dtbbvOrPC/Y2HGKJJaV2bJZCyCdiiCwtb80BE4kmHUPJA
-         C3BQdlZ7g1Xy/8wxkqZ8TH/PhCAIgsFNdkzLTkEkAqzgqL20shDzwmlYMRG9G0stbB+R
-         BITkJDE4yyhLgjxONqpaSvjo0zZtcXBj/PR9hCh19iOZd1yWVLb0nhjV9GhLi2hfVwV4
-         1F7A==
-X-Gm-Message-State: APzg51Aq4MqJ3SUy4Okgp1/LF+X3n7RPDceS0FJ5O8d0ROCWzN7FsV70
-        HCpTeR8Css9NKCMA7ieJ9PwbQIQHn4pMD+K29nI=
-X-Google-Smtp-Source: ANB0VdZYmaLc6hAI4bCs33NtynUoOe+5u4zbdVN74WmVLbtqmJ/wnQPB8XzpfscbEKQg9q/bhWyr8+J63JfpsWk3m4Q=
-X-Received: by 2002:ab0:48a4:: with SMTP id x33-v6mr400880uac.138.1535447983173;
- Tue, 28 Aug 2018 02:19:43 -0700 (PDT)
+        Tue, 28 Aug 2018 09:10:51 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:49495 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727052AbeH1NKu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 09:10:50 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 1F9037BD73A7B;
+        Tue, 28 Aug 2018 17:20:02 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.399.0; Tue, 28 Aug 2018
+ 17:20:03 +0800
+Subject: Re: [f2fs-dev] [RFC PATCH 10/10] f2fs: fs-verity support
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+CC:     Eric Biggers <ebiggers@kernel.org>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Michael Halcrow <mhalcrow@google.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-fscrypt@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-integrity@vger.kernel.org>, <linux-ext4@vger.kernel.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Victor Hsieh <victorhsieh@google.com>
+References: <20180824161642.1144-1-ebiggers@kernel.org>
+ <20180824161642.1144-11-ebiggers@kernel.org>
+ <b2b6a810-9605-15c8-b905-a4591c0cf3a5@huawei.com>
+ <20180826173507.GC728@sol.localdomain>
+ <dbc20be8-975d-7bd2-002d-a8f30896da4a@kernel.org>
+ <20180828072756.GC29049@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <63a19512-e938-d239-9e3c-f6ecc479478c@huawei.com>
+Date:   Tue, 28 Aug 2018 17:20:01 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180425203020.594959448@linutronix.de> <20180425203703.650160358@linutronix.de>
- <CAOFm3uGECug6Hr8_UJt5QTGd_=Fae_Hvm_1Y9xyJri008EoHEQ@mail.gmail.com>
-In-Reply-To: <CAOFm3uGECug6Hr8_UJt5QTGd_=Fae_Hvm_1Y9xyJri008EoHEQ@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 28 Aug 2018 11:19:31 +0200
-Message-ID: <CAMuHMdVfFm8-vySaYBPt5J3f_RZcGHDhH+KFyadt=AhikzKaBQ@mail.gmail.com>
-Subject: Re: [patch V2 7/7] scripts: Add SPDX checker script
-To:     Philippe Ombredanne <pombredanne@nexb.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        Christoph Hellwig <hch@lst.de>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180828072756.GC29049@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 4:38 PM Philippe Ombredanne
-<pombredanne@nexb.com> wrote:
-> On Wed, Apr 25, 2018 at 10:30 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> > The SPDX-License-Identifiers are growing in the kernel and so grow
-> > expression failures and license IDs are used which have no corresponding
-> > license text file in the LICENSES directory.
-> >
-> > Add a script which gathers information from the LICENSES directory,
-> > i.e. the various tags in the licenses and exception files and then scans
-> > either input from stdin, which it treats as a single file or if started
-> > without arguments it scans the full kernel tree.
-> >
-> > It checks whether the license expression syntax is correct and also
-> > validates whether the license identifiers used in the expressions are
-> > available in the LICENSES files.
->
-> Looking good to me! And the use of ply is sleek.
+On 2018/8/28 15:27, Jaegeuk Kim wrote:
+> On 08/27, Chao Yu wrote:
+>> Hi Eric,
+>>
+>> On 2018/8/27 1:35, Eric Biggers wrote:
+>>> Hi Chao,
+>>>
+>>> On Sat, Aug 25, 2018 at 01:54:08PM +0800, Chao Yu wrote:
+>>>> On 2018/8/25 0:16, Eric Biggers wrote:
+>>>>> From: Eric Biggers <ebiggers@google.com>
+>>>>>  #ifdef CONFIG_F2FS_CHECK_FS
+>>>>>  #define f2fs_bug_on(sbi, condition)	BUG_ON(condition)
+>>>>>  #else
+>>>>> @@ -146,7 +149,7 @@ struct f2fs_mount_info {
+>>>>>  #define F2FS_FEATURE_QUOTA_INO		0x0080
+>>>>>  #define F2FS_FEATURE_INODE_CRTIME	0x0100
+>>>>>  #define F2FS_FEATURE_LOST_FOUND		0x0200
+>>>>> -#define F2FS_FEATURE_VERITY		0x0400	/* reserved */
+>>>>> +#define F2FS_FEATURE_VERITY		0x0400
+>>>>>  
+>>>>>  #define F2FS_HAS_FEATURE(sb, mask)					\
+>>>>>  	((F2FS_SB(sb)->raw_super->feature & cpu_to_le32(mask)) != 0)
+>>>>> @@ -598,7 +601,7 @@ enum {
+>>>>>  #define FADVISE_ENC_NAME_BIT	0x08
+>>>>>  #define FADVISE_KEEP_SIZE_BIT	0x10
+>>>>>  #define FADVISE_HOT_BIT		0x20
+>>>>> -#define FADVISE_VERITY_BIT	0x40	/* reserved */
+>>>>> +#define FADVISE_VERITY_BIT	0x40
+>>>>
+>>>> As I suggested before, how about moving f2fs' verity_bit from i_fadvise to more
+>>>> generic i_flags field like ext4, so we can a) remaining more bits for those
+>>>> demands which really need file advise fields. b) using i_flags bits keeping line
+>>>> with ext4. Not sure, if user want to know whether the file is verity one, it
+>>>> will be easy for f2fs to export the status through FS_IOC_SETFLAGS.
+>>>>
+>>>> #define EXT4_VERITY_FL			0x00100000 /* Verity protected inode */
+>>>>
+>>>> #define F2FS_VERITY_FL			0x00100000 /* Verity protected inode */
+>>>>
+>>>
+>>> I don't like using i_advise much either, but I actually don't see either
+>>> location being much better than the other at the moment.  The real problem is an
+>>> artificial one: the i_flags in f2fs's on-disk format are being assumed to use
+>>
+>> Yeah, but since most copied flags from vfs/ext4 are not actually used in f2fs,
+>> also 0x00100000 bit is not used now, so we can just define it now directly for
+>> verity bit.
+>>
+>> Cleanup and remapping in ioctl interface for those unused flags, we can do it
+>> latter?
+> 
+> No, it was reserved by f2fs-tools, 
 
-For the record (currently Google doesn't find this issue yet):
+That's not a problem, since we didn't use that reserved bit in any of images
+now, there is no backward compatibility issue.
 
-    ImportError: No module named ply
+> and I think this should be aligned to the encryption bit. 
 
-$ sudo apt-get install python-ply
+Alright, we could, but if so, i_advise will run out of space earlier, after that
+we have to add real advice bit into i_inline or i_flags, that would be a little
+weird.
 
-    ImportError: No module named git
+For encryption bit, as a common vfs feature flag, in the beginning of encryption
+development, it will be better to set it into i_flags, IMO, but now, we have to
+keep it as it was.
 
-$ sudo apt-get install python-git
+> Moreover, we guarantee i_flags less strictly from power-cut than i_advise.
 
-Works!
+IMO, in power-cut scenario, it needs to keep both i_flags and i_advise being
+recoverable strictly. Any condition that we can not recover i_flags?
 
-Apparently I didn't have any of these two packages installed on any of my
-Ubuntu 18.04LTS and 16.04LTS machines...
+Thanks,
 
-Gr{oetje,eeting}s,
+> 
+>>
+>> Thanks,
+>>
+>>> the same numbering scheme as ext4's on-disk format, which makes it seem that
+>>> they have to be in sync, and that all new ext4 flags (say, EA_INODE) also
+>>> reserve bits in f2fs and vice versa, when they in fact do not.  Instead, f2fs
+>>> should use its own numbering for its i_flags, and it should map them to/from
+>>> whatever is needed for common APIs like FS_IOC_{GET,SET}FLAGS and
+>>> FS_IOC_FS{GET,SET}XATTR.
+>>>
+>>> So putting the verity flag in *either* location (i_advise or i_flags) is just
+>>> kicking the can down the road.  If I get around to it I will send a patch that
+>>> cleans up the f2fs flags properly...>
+>>> Thanks,
+>>>
+>>> - Eric
+>>>
+>>> ------------------------------------------------------------------------------
+>>> Check out the vibrant tech community on one of the world's most
+>>> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+>>> _______________________________________________
+>>> Linux-f2fs-devel mailing list
+>>> Linux-f2fs-devel@lists.sourceforge.net
+>>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+>>>
+> 
+> .
+> 
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
