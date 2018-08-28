@@ -2,134 +2,235 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51CE8C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:35:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74E29C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:36:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E545320891
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:35:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V/KNWL1K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E545320891
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 20AFC20894
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:36:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20AFC20894
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727985AbeH1S1o (ORCPT
+        id S1728251AbeH1S20 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 14:27:44 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:44064 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726120AbeH1S1o (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 14:27:44 -0400
-Received: by mail-pl1-f196.google.com with SMTP id ba4-v6so807146plb.11
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 07:35:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=SduLDerDeticx/uXSN4oqXsBUCJithM2FdEsKSBOQmU=;
-        b=V/KNWL1KmyWj2xFlmTd2qNc/MJXP1CmHPF5cNlXVqTx3DjN5/Kauwk8/CIJhBY7Nt9
-         eALunPrZimSqPmx3Nrf0eY/PEXRbCBT+AZBFvyc2WjUiNxQMhlzrbCbzuYZZBtmwRdWq
-         o0YL6Ij+90mDMSZc5vWdNPcMsJUvPTFGyvLaHbOXJc+7/LZ64zHtO/I37T/wPqMwhtUH
-         7A7p6YGZ/3C1IP4FvEYwE1wsSY+90xEha06G1KawP0g+TIgiwCeIn7oGxbVaZ53ugeWR
-         F0Devhnq/3R5Jzj6rN89qKq7j577oazk5m9+afijQkUf8DkjjdbrBID0MZ0u5vQIRI0/
-         JneQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=SduLDerDeticx/uXSN4oqXsBUCJithM2FdEsKSBOQmU=;
-        b=jfwpgZ4eXNJNB9uGQLntKHvKC1GmzOpz7QkA990C/gshjPohugGzBquYTjlb6wqTWY
-         OJ8sfdhrVH0OAvuRr4z+XOrrGH+qXlxkZiao8R6OP4+2JafNN5AGxuLLN+UmizcBqMph
-         MOBB3LyqOWvHuuM6/c/o2iDJREj/jDF/cBlxv+/V+wO+5heuyzuuaBBvRnJEuKEGZ7zO
-         zDruWtEZZlaUwnZ17jeWmHcjEBJfsfsznCViB89CPZdBZZeQdB92WrSZPL334Amu5n9z
-         1LjbJY6tGlJeFVa3mLxU5KDDximjGN2w7Ecbyf/e4II2CstDBZHNtoiyq4mGbHBST2IX
-         /7nQ==
-X-Gm-Message-State: APzg51AAkV5mUEJVLoNRDAT7+cDEzzLwFF64uJqez6aAVCmvsGY+LTUr
-        YWeco+0h4phyu4vM4nAYgSIUcnX6
-X-Google-Smtp-Source: ANB0VdapQYo/8vwmvXSeimLY4Ezt1ROtc/12IcfNdXqcjohJxLjSlDSmlbWQUJhD7dpoEPsEudw+BA==
-X-Received: by 2002:a17:902:e3:: with SMTP id a90-v6mr1789310pla.227.1535466947048;
-        Tue, 28 Aug 2018 07:35:47 -0700 (PDT)
-Received: from roar.ozlabs.ibm.com (59-102-81-67.tpgi.com.au. [59.102.81.67])
-        by smtp.gmail.com with ESMTPSA id j16-v6sm2721797pfk.125.2018.08.28.07.35.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 28 Aug 2018 07:35:46 -0700 (PDT)
-Date:   Wed, 29 Aug 2018 00:35:39 +1000
-From:   Nicholas Piggin <npiggin@gmail.com>
-To:     Matteo Croce <mcroce@redhat.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: VirtIO console hangs
-Message-ID: <20180829003539.668e514c@roar.ozlabs.ibm.com>
-In-Reply-To: <CAGnkfhzjeYU_jmhNkLEayL1FSq5rWkT7T+Nm1ky9QS-vWHUhyw@mail.gmail.com>
-References: <CAGnkfhzjeYU_jmhNkLEayL1FSq5rWkT7T+Nm1ky9QS-vWHUhyw@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 28 Aug 2018 14:28:26 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38794 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726120AbeH1S20 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 14:28:26 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4EB31AEA7;
+        Tue, 28 Aug 2018 14:36:26 +0000 (UTC)
+From:   Petr Mladek <pmladek@suse.com>
+To:     Jiri Kosina <jikos@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Miroslav Benes <mbenes@suse.cz>
+Cc:     Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Jessica Yu <jeyu@kernel.org>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Petr Mladek <pmladek@suse.com>
+Subject: [PATCH v12 00/12] 
+Date:   Tue, 28 Aug 2018 16:35:51 +0200
+Message-Id: <20180828143603.4442-1-pmladek@suse.com>
+X-Mailer: git-send-email 2.13.7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 28 Aug 2018 12:54:08 +0000
-Matteo Croce <mcroce@redhat.com> wrote:
+livepatch: Atomic replace feature
 
-> With kernel 4.19.0-rc1 virtio_console hangs very often.
-> I can always trigger the bug by pasting some characters in the
-> terminal window, the console will stop receiving keypresses, but I can
-> still see output from the console.
-> Stangely, logging in the VM via SSH and sending lot of data to hvc0,
-> like 'dmesg >/dev/hvc0' will fix the issue until the next paste.
-> 
-> I did a git bisect and I've found that this is the offending commit,
-> reverting it fixes it.
-> 
-> Cheers,
-> 
-> commit ec97eaad1383ab2500fcf9a07ade6044fbcc67f5
-> Author: Nicholas Piggin <npiggin@gmail.com>
-> Date:   Tue May 1 00:55:54 2018 +1000
-> 
->     tty: hvc: hvc_poll() break hv read loop
+The atomic replace allows to create cumulative patches. They
+are useful when you maintain many livepatches and want to remove
+one that is lower on the stack. In addition it is very useful when
+more patches touch the same function and there are dependencies
+between them.
 
-Thanks for the report. I can't immediately see what the problem
-is. Can you try get a stack trace of where it is stuck?
+This version does another big refactoring based on feedback against
+v11[*]. In particular, it removes the registration step, changes
+the API and handling of livepatch dependencies. The aim is
+to keep the number of possible variants on a sane level.
+It helps the keep the feature "easy" to use and maintain.
 
-Perhaps try this patch if you have time (it's a bit of a shot
-in the dark).
+[*] https://lkml.kernel.org/r/20180323120028.31451-1-pmladek@suse.com
 
-Thanks,
-Nick
 
-diff --git a/drivers/tty/hvc/hvc_console.c b/drivers/tty/hvc/hvc_console.c
-index 5414c4a87bea..ac45235832f1 100644
---- a/drivers/tty/hvc/hvc_console.c
-+++ b/drivers/tty/hvc/hvc_console.c
-@@ -635,6 +635,7 @@ static int __hvc_poll(struct hvc_struct *hp, bool may_sleep)
- 	int read_total = 0;
- 	int written_total = 0;
- 
-+again:
- 	spin_lock_irqsave(&hp->lock, flags);
- 
- 	/* Push pending writes */
-@@ -721,6 +722,10 @@ static int __hvc_poll(struct hvc_struct *hp, bool may_sleep)
- 		poll_mask |= HVC_POLL_READ;
- 	read_total = n;
- 
-+	spin_unlock_irqrestore(&hp->lock, flags);
-+	cond_resched();
-+	goto again;
-+
-  out:
- 	/* Wakeup write queue if necessary */
- 	if (hp->do_wakeup) {
+Changes against v11:
+
+  + Functional changes:
+
+    + Livepatches get automatically unregistered when disabled.
+      Note that the sysfs interface disappears at this point.
+      It simplifies the API and code. The only drawback is that
+      the patch can be enabled again only by reloading the module.
+
+    + Refuse to load conflicting patches. The same function can
+      be patched again only by a new cumulative patch that
+      replaces all older ones.
+
+    + Non-conflicting patches can be loaded and disabled in any
+      order.
+      
+
+  + API related changes:
+
+     + Change void *new_func -> unsigned long new_addr in
+       struct klp_func.
+
+     + Several new macros to hide implementation details and
+       avoid casting when defining struct klp-func and klp_object.
+
+     + Remove obsolete klp_register_patch() klp_unregister_patch() API
+
+
+  + Change in selftest against v4:
+
+     + Use new macros to define struct klp_func and klp_object.
+
+     + Remove klp_register_patch()/klp_unregister_patch() calls.
+
+     + Replace load_mod() + wait_for_transition() with three
+       variants load_mod(), load_lp(), load_lp_nowait(). IMHO,
+       it is easier to use because we need to detect the end
+       of transaction another way after disable_lp() now.
+
+     + Replaced unload_mod() with two variants unload_mod(),
+       unload_lp() to match the above change.
+
+     + Wait for the end of transition in disable_lp()
+       instead of the unreliable check of the sysfs interface.
+
+     Note that I did not touch the logs with expected result.
+     They stay exactly the same as in v4 posted by Joe.
+     I hope that it is a good sign ;-)
+
+
+Changes against v10:
+
+  + Bug fixes and functional changes:
+    + Handle Nops in klp_ftrace_handled() to avoid infinite loop [Mirek]
+    + Really add dynamically allocated klp_object into the list [Petr]
+    + Clear patch->replace when transition finishes [Josh]
+
+  + Refactoring and clean up [Josh]:
+    + Replace enum types with bools
+    + Avoid using ERR_PTR
+    + Remove too paranoid warnings
+    + Distinguish registered patches by a flag instead of a list
+    + Squash some functions
+    + Update comments, documentation, and commit messages
+    + Squashed and split patches to do more controversial changes later
+
+Changes against v9:
+
+  + Fixed check of valid NOPs for already loaded objects,
+    regression introduced in v9 [Joe, Mirek]
+  + Allow to replace even disabled patches [Evgenii]
+
+Changes against v8:
+
+  + Fixed handling of statically defined struct klp_object
+    with empty array of functions [Joe, Mirek]
+  + Removed redundant func->new_func assignment for NOPs [Mirek]
+  + Improved some wording [Mirek]
+
+Changes against v7:
+
+  + Fixed handling of NOPs for not-yet-loaded modules
+  + Made klp_replaced_patches list static [Mirek]
+  + Made klp_free_object() public later [Mirek]
+  + Fixed several reported typos [Mirek, Joe]
+  + Updated documentation according to the feedback [Joe]
+  + Added some Acks [Mirek]
+
+Changes against v6:
+
+  + used list_move when disabling replaced patches [Jason]
+  + renamed KLP_FUNC_ORIGINAL -> KLP_FUNC_STATIC [Mirek]
+  + used klp_is_func_type() in klp_unpatch_object() [Mirek]
+  + moved static definition of klp_get_or_add_object() [Mirek]
+  + updated comment about synchronization in forced mode [Mirek]
+  + added user documentation
+  + fixed several typos
+
+
+Jason Baron (2):
+  livepatch: Use lists to manage patches, objects and functions
+  livepatch: Add atomic replace
+
+Joe Lawrence (1):
+  selftests/livepatch: introduce tests
+
+Petr Mladek (9):
+  livepatch: Change void *new_func -> unsigned long new_addr in struct
+    klp_func
+  livepatch: Helper macros to define livepatch structures
+  livepatch: Shuffle klp_enable_patch()/klp_disable_patch() code
+  livepatch: Consolidate klp_free functions
+  livepatch: Refuse to unload only livepatches available during a forced
+    transition
+  livepatch: Simplify API by removing registration step
+  livepatch: Remove Nop structures when unused
+  livepatch: Atomic replace and cumulative patches documentation
+  livepatch: Remove ordering and refuse loading conflicting patches
+
+ Documentation/livepatch/callbacks.txt              | 489 +-----------
+ Documentation/livepatch/cumulative-patches.txt     | 105 +++
+ Documentation/livepatch/livepatch.txt              | 131 ++--
+ MAINTAINERS                                        |   1 +
+ include/linux/livepatch.h                          |  84 ++-
+ kernel/livepatch/core.c                            | 833 ++++++++++++++-------
+ kernel/livepatch/core.h                            |   4 +
+ kernel/livepatch/patch.c                           |  41 +-
+ kernel/livepatch/patch.h                           |   1 +
+ kernel/livepatch/transition.c                      |  26 +-
+ lib/Kconfig.debug                                  |  21 +
+ lib/Makefile                                       |   2 +
+ lib/livepatch/Makefile                             |  15 +
+ lib/livepatch/test_klp_atomic_replace.c            |  53 ++
+ lib/livepatch/test_klp_callbacks_busy.c            |  43 ++
+ lib/livepatch/test_klp_callbacks_demo.c            | 109 +++
+ lib/livepatch/test_klp_callbacks_demo2.c           |  89 +++
+ lib/livepatch/test_klp_callbacks_mod.c             |  24 +
+ lib/livepatch/test_klp_livepatch.c                 |  47 ++
+ lib/livepatch/test_klp_shadow_vars.c               | 236 ++++++
+ samples/livepatch/livepatch-callbacks-demo.c       |  68 +-
+ samples/livepatch/livepatch-sample.c               |  26 +-
+ samples/livepatch/livepatch-shadow-fix1.c          |  34 +-
+ samples/livepatch/livepatch-shadow-fix2.c          |  34 +-
+ tools/testing/selftests/Makefile                   |   1 +
+ tools/testing/selftests/livepatch/Makefile         |   8 +
+ tools/testing/selftests/livepatch/README           |  43 ++
+ tools/testing/selftests/livepatch/config           |   1 +
+ tools/testing/selftests/livepatch/functions.sh     | 203 +++++
+ .../testing/selftests/livepatch/test-callbacks.sh  | 587 +++++++++++++++
+ .../testing/selftests/livepatch/test-livepatch.sh  | 168 +++++
+ .../selftests/livepatch/test-shadow-vars.sh        |  60 ++
+ 32 files changed, 2603 insertions(+), 984 deletions(-)
+ create mode 100644 Documentation/livepatch/cumulative-patches.txt
+ create mode 100644 lib/livepatch/Makefile
+ create mode 100644 lib/livepatch/test_klp_atomic_replace.c
+ create mode 100644 lib/livepatch/test_klp_callbacks_busy.c
+ create mode 100644 lib/livepatch/test_klp_callbacks_demo.c
+ create mode 100644 lib/livepatch/test_klp_callbacks_demo2.c
+ create mode 100644 lib/livepatch/test_klp_callbacks_mod.c
+ create mode 100644 lib/livepatch/test_klp_livepatch.c
+ create mode 100644 lib/livepatch/test_klp_shadow_vars.c
+ create mode 100644 tools/testing/selftests/livepatch/Makefile
+ create mode 100644 tools/testing/selftests/livepatch/README
+ create mode 100644 tools/testing/selftests/livepatch/config
+ create mode 100644 tools/testing/selftests/livepatch/functions.sh
+ create mode 100755 tools/testing/selftests/livepatch/test-callbacks.sh
+ create mode 100755 tools/testing/selftests/livepatch/test-livepatch.sh
+ create mode 100755 tools/testing/selftests/livepatch/test-shadow-vars.sh
+
+-- 
+2.13.7
+
