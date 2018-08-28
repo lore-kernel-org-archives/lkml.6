@@ -6,60 +6,60 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0DFDC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:27:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D01DC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:29:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FB522084D
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:27:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F09212084D
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:29:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="mm5bPYLD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FB522084D
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="C92/YoZH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F09212084D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727447AbeH2AUx (ORCPT
+        id S1727294AbeH2AWZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 20:20:53 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35072 "EHLO
+        Tue, 28 Aug 2018 20:22:25 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37648 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727178AbeH2AUw (ORCPT
+        with ESMTP id S1726998AbeH2AWY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 20:20:52 -0400
+        Tue, 28 Aug 2018 20:22:24 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=lpszNMFKtHhOQ+qs7dkmOlu4aHpXBhh0fTzjqB/SvI4=; b=mm5bPYLD9Bs7
-        01BfKjrMFQkCUD1/8esJiBsWrc8KflZDy8RUTspNU8cVeGLvVUklmGzLlq8wC2Li2Y5LNTYnh6gjG
-        JchCMQJt/f5umbaOxeLKH4psKfQdqTQHij3+UU++nWhVeg7mOK2UPNyjUdicN9+viU8dAYZXx1djc
-        rjgwY=;
+        List-Archive; bh=NduzKOHGg1nzT6KgGKGVYMwK9osddAQ9m5TjK7Obv/Q=; b=C92/YoZHejck
+        re/103uYLjqcGi4Kxn8s/+d14qjkgAiNkj2CRJfa9ihAvrCwvckywVcF69O5ApCSg0IL/dhly0nVg
+        kD4xt+pnjfbaoFtPdMT2QbMwSLex7mHX71EBpOu+2y7m0K9EZ74Llg406yEhxIagPTRIioGnjAdPT
+        tFp0c=;
 Received: from 188.29.165.122.threembb.co.uk ([188.29.165.122] helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fukaB-0007gD-EC; Tue, 28 Aug 2018 20:27:23 +0000
+        id 1fukbi-0007ga-FR; Tue, 28 Aug 2018 20:28:58 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 96FA1440078; Tue, 28 Aug 2018 21:27:20 +0100 (BST)
+        id DEDB2440078; Tue, 28 Aug 2018 21:28:56 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Akshu Agrawal <akshu.agrawal@amd.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, djkurtz@chromium.org,
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Mark Brown <broonie@kernel.org>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        "Mukunda, Vijendar" <Vijendar.Mukunda@amd.com>,
-        Alexander.Deucher@amd.com, akshu.agrawal@amd.com,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
         alsa-devel@alsa-project.org
-Subject: Applied "ASoC: AMD: Set constraints for DMIC and MAX98357a codec" to the asoc tree
-In-Reply-To:  <1534834520-18397-1-git-send-email-akshu.agrawal@amd.com>
-Message-Id: <20180828202720.96FA1440078@finisterre.ee.mobilebroadband>
-Date:   Tue, 28 Aug 2018 21:27:20 +0100 (BST)
+Subject: Applied "ASoC: rsnd: Add r8a774a1 support" to the asoc tree
+In-Reply-To:  <1534869748-26661-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Message-Id: <20180828202856.DEDB2440078@finisterre.ee.mobilebroadband>
+Date:   Tue, 28 Aug 2018 21:28:56 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -67,7 +67,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: AMD: Set constraints for DMIC and MAX98357a codec
+   ASoC: rsnd: Add r8a774a1 support
 
 has been applied to the asoc tree at
 
@@ -92,90 +92,39 @@ to this mail.
 Thanks,
 Mark
 
-From c736cbd3a668c3befd3ce08e0fbccac302fbecac Mon Sep 17 00:00:00 2001
-From: Akshu Agrawal <akshu.agrawal@amd.com>
-Date: Tue, 21 Aug 2018 12:25:05 +0530
-Subject: [PATCH] ASoC: AMD: Set constraints for DMIC and MAX98357a codec
+From 6fbf9d8e2793b81dd5f8738999163582ce61dba7 Mon Sep 17 00:00:00 2001
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Date: Tue, 21 Aug 2018 17:42:28 +0100
+Subject: [PATCH] ASoC: rsnd: Add r8a774a1 support
 
-We support dual channel, 48Khz. This constraint was set only for
-da7219. It is being extended to DMIC and MAX98357a.
+Document RZ/G2M (R8A774A1) SoC bindings.
 
-Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
-Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/amd/acp-da7219-max98357a.c | 33 ++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ Documentation/devicetree/bindings/sound/renesas,rsnd.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/amd/acp-da7219-max98357a.c b/sound/soc/amd/acp-da7219-max98357a.c
-index 8e3275a96a82..95c5701e2a30 100644
---- a/sound/soc/amd/acp-da7219-max98357a.c
-+++ b/sound/soc/amd/acp-da7219-max98357a.c
-@@ -162,10 +162,21 @@ static void cz_da7219_shutdown(struct snd_pcm_substream *substream)
- 
- static int cz_max_startup(struct snd_pcm_substream *substream)
- {
-+	struct snd_pcm_runtime *runtime = substream->runtime;
- 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
- 	struct snd_soc_card *card = rtd->card;
- 	struct acp_platform_info *machine = snd_soc_card_get_drvdata(card);
- 
-+	/*
-+	 * On this platform for PCM device we support stereo
-+	 */
-+
-+	runtime->hw.channels_max = DUAL_CHANNEL;
-+	snd_pcm_hw_constraint_list(runtime, 0, SNDRV_PCM_HW_PARAM_CHANNELS,
-+				   &constraints_channels);
-+	snd_pcm_hw_constraint_list(runtime, 0, SNDRV_PCM_HW_PARAM_RATE,
-+				   &constraints_rates);
-+
- 	machine->i2s_instance = I2S_BT_INSTANCE;
- 	return da7219_clk_enable(substream);
- }
-@@ -177,20 +188,42 @@ static void cz_max_shutdown(struct snd_pcm_substream *substream)
- 
- static int cz_dmic0_startup(struct snd_pcm_substream *substream)
- {
-+	struct snd_pcm_runtime *runtime = substream->runtime;
- 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
- 	struct snd_soc_card *card = rtd->card;
- 	struct acp_platform_info *machine = snd_soc_card_get_drvdata(card);
- 
-+	/*
-+	 * On this platform for PCM device we support stereo
-+	 */
-+
-+	runtime->hw.channels_max = DUAL_CHANNEL;
-+	snd_pcm_hw_constraint_list(runtime, 0, SNDRV_PCM_HW_PARAM_CHANNELS,
-+				   &constraints_channels);
-+	snd_pcm_hw_constraint_list(runtime, 0, SNDRV_PCM_HW_PARAM_RATE,
-+				   &constraints_rates);
-+
- 	machine->i2s_instance = I2S_BT_INSTANCE;
- 	return da7219_clk_enable(substream);
- }
- 
- static int cz_dmic1_startup(struct snd_pcm_substream *substream)
- {
-+	struct snd_pcm_runtime *runtime = substream->runtime;
- 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
- 	struct snd_soc_card *card = rtd->card;
- 	struct acp_platform_info *machine = snd_soc_card_get_drvdata(card);
- 
-+	/*
-+	 * On this platform for PCM device we support stereo
-+	 */
-+
-+	runtime->hw.channels_max = DUAL_CHANNEL;
-+	snd_pcm_hw_constraint_list(runtime, 0, SNDRV_PCM_HW_PARAM_CHANNELS,
-+				   &constraints_channels);
-+	snd_pcm_hw_constraint_list(runtime, 0, SNDRV_PCM_HW_PARAM_RATE,
-+				   &constraints_rates);
-+
- 	machine->i2s_instance = I2S_SP_INSTANCE;
- 	machine->capture_channel = CAP_CHANNEL0;
- 	return da7219_clk_enable(substream);
+diff --git a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
+index 9e764270c36b..8083f0d8f263 100644
+--- a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
++++ b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
+@@ -340,10 +340,11 @@ Required properties:
+ - compatible			: "renesas,rcar_sound-<soctype>", fallbacks
+ 				  "renesas,rcar_sound-gen1" if generation1, and
+ 				  "renesas,rcar_sound-gen2" if generation2 (or RZ/G1)
+-				  "renesas,rcar_sound-gen3" if generation3
++				  "renesas,rcar_sound-gen3" if generation3 (or RZ/G2)
+ 				  Examples with soctypes are:
+ 				    - "renesas,rcar_sound-r8a7743" (RZ/G1M)
+ 				    - "renesas,rcar_sound-r8a7745" (RZ/G1E)
++				    - "renesas,rcar_sound-r8a774a1" (RZ/G2M)
+ 				    - "renesas,rcar_sound-r8a7778" (R-Car M1A)
+ 				    - "renesas,rcar_sound-r8a7779" (R-Car H1)
+ 				    - "renesas,rcar_sound-r8a7790" (R-Car H2)
 -- 
 2.18.0
 
