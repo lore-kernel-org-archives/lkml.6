@@ -3,33 +3,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8630FC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 23:48:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08C7CC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 23:48:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 214852087D
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 23:48:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 214852087D
+	by mail.kernel.org (Postfix) with ESMTP id ACCD12087D
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 23:48:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACCD12087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727834AbeH2Dmg (ORCPT
+        id S1727870AbeH2Dmh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 23:42:36 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:56078 "EHLO ale.deltatee.com"
+        Tue, 28 Aug 2018 23:42:37 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:56116 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727234AbeH2Dmf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 23:42:35 -0400
+        id S1727599AbeH2Dmg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 23:42:36 -0400
 Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
         by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1funio-0000TR-Kq; Tue, 28 Aug 2018 17:48:31 -0600
+        id 1funir-0000TW-Pt; Tue, 28 Aug 2018 17:48:34 -0600
 Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1funim-0005n6-MD; Tue, 28 Aug 2018 17:48:28 -0600
+        id 1funim-0005nB-Vm; Tue, 28 Aug 2018 17:48:29 -0600
 From:   Logan Gunthorpe <logang@deltatee.com>
 To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
         linux-ntb@googlegroups.com, linux-crypto@vger.kernel.org,
@@ -38,14 +38,20 @@ Cc:     Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
         =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-        Logan Gunthorpe <logang@deltatee.com>
-Date:   Tue, 28 Aug 2018 17:48:20 -0600
-Message-Id: <20180828234826.22215-1-logang@deltatee.com>
+        Logan Gunthorpe <logang@deltatee.com>,
+        "James E.J. Bottomley" <jejb@parisc-linux.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Date:   Tue, 28 Aug 2018 17:48:22 -0600
+Message-Id: <20180828234826.22215-3-logang@deltatee.com>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180828234826.22215-1-logang@deltatee.com>
+References: <20180828234826.22215-1-logang@deltatee.com>
 X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, akpm@linux-foundation.org, arnd@arndb.de, gregkh@linuxfoundation.org, andy.shevchenko@gmail.com, horia.geanta@nxp.com, logang@deltatee.com
+X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, akpm@linux-foundation.org, arnd@arndb.de, andy.shevchenko@gmail.com, horia.geanta@nxp.com, logang@deltatee.com, jejb@parisc-linux.org, pombredanne@nexb.com, gregkh@linuxfoundation.org, kstewart@linuxfoundation.org, tglx@linutronix.de
 X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v20 0/6] Add io{read|write}64 to io-64-atomic headers
+Subject: [PATCH v20 2/6] parisc: iomap: introduce io{read|write}64
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -53,126 +59,178 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andrew, can you please pick this set up again so it can get into
-linux-next again this cycle?
+Add support for io{read|write}64() functions in parisc architecture.
+These are pretty straightforward copies of similar functions which
+make use of readq and writeq.
 
-Thanks,
+Also, indicate that the lo_hi and hi_lo variants of these functions
+are not provided by this architecture.
 
-Logan
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Acked-by: Helge Deller <deller@gmx.de>
+Cc: "James E.J. Bottomley" <jejb@parisc-linux.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+---
+ arch/parisc/include/asm/io.h |  9 +++++++
+ arch/parisc/lib/iomap.c      | 64 ++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 73 insertions(+)
 
---
-
-Changes since v19:
-- Rebased onto v4.19-rc1 (No Changes)
-
-Changes since v18:
-- Dropped the CAAM patch as it was subtly wrong and broke when people
-  tested it in linux-next. Seeing the code is  much trickier than it
-  appears, we'll leave it to its maintainers to clean it up
-  should they chose.
-- Restored the ioread64/iowrite64 extern prototypes as despite
-  appearing to be unusued, they are in fact used in a rare corner case
-  by the caam driver on 64bit powerpc. This was reported by Guenter testing
-  on linux-next.
-- Rebased onto v4.18-rc4 (No Changes)
-
-Changes since v17:
-- Rebased onto v4.18-rc1 (No Changes)
-
-Changes since v16:
-- Rebased onto v4.17-rc4 (No Changes)
-
-Changes since v15:
-- Rebased onto v4.17-rc1, dropping the powerpc patches which were
-  picked up by Michael
-
-Changes since v14:
-- Rebased onto v4.16-rc7
-- Replace the first two patches so that instead of correcting the
-  endianness annotations we change to using writeX() and readX() with
-  swabX() calls. This makes the big-endian functions more symmetric
-  with the little-endian versions (with respect to barriers that are
-  not included in the raw functions). As a side effect, it also fixes
-  the kbuild warnings that the first two patches tried to address.
-
-Changes since v13:
-- Changed the subject of patch 0001 to correct a nit pointed out by Luc
-
-Changes since v12:
-- Rebased onto v4.16-rc6
-- Split patch 0001 into two and reworked the commit log as requested
-  by Luc Van Oostenryck
-
-Changes since v11:
-- Rebased onto v4.16-rc5
-- Added a patch (0001) to fix some old and new sparse warnings
-  that the kbuild robot warned about this cycle. The latest version
-  of sparse was required to reproduce these.
-- Added a patch (0002) to add io{read|write}64 to parisc which the kbuild
-  robot also found errors for this cycle
-
-Changes since v10:
-- Rebased onto v4.16-rc4, this droped the drm/tilcdc patch which was
-  picked up by that tree and is already in 4.16.
-
-Changes since v9:
-- Rebased onto v4.15-rc6
-- Fixed a couple of issues in the new version of the CAAM patch as
-  pointed out by Horia
-
-Changes since v8:
-- Rebased onto v4.15-rc2, as a result rewrote patch 7 seeing someone did
-  some similar cleanup in that area.
-- Added a patch to clean up the Switchtec NTB driver which landed in
-  v4.15-rc1
-
-Changes since v7:
-- Fix minor nits from Andy Shevchenko
-- Rebased onto v4.14-rc1
-
-Changes since v6:
- ** none **
-
-Changes since v5:
-- Added a fix to the tilcdc driver to ensure it doesn't use the
-  non-atomic operation. (This includes adding io{read|write}64[be]_is_nonatomic
-  defines).
-
-Changes since v4:
-- Add functions so the powerpc implementation of iomap.c compiles. (As
-  noticed by Horia)
-
-Changes since v3:
-
-- I noticed powerpc didn't use the appropriate functions seeing
-  readq/writeq were not defined when iomap.h was included. Thus I've
-  included a patch to adjust this
-- Fixed some mistakes with a couple of the defines in io-64-nonatomic*
-  headers
-- Fixed a typo noticed by Horia.
-
-(earlier versions were drastically different)
-*** BLURB HERE ***
-
-Logan Gunthorpe (6):
-  iomap: Use non-raw io functions for io{read|write}XXbe
-  parisc: iomap: introduce io{read|write}64
-  iomap: introduce io{read|write}64_{lo_hi|hi_lo}
-  io-64-nonatomic: add io{read|write}64[be]{_lo_hi|_hi_lo} macros
-  ntb: ntb_hw_intel: use io-64-nonatomic instead of in-driver hacks
-  ntb: ntb_hw_switchtec: Cleanup 64bit IO defines to use the common
-    header
-
- arch/parisc/include/asm/io.h           |   9 +++
- arch/parisc/lib/iomap.c                |  64 +++++++++++++++
- arch/powerpc/include/asm/io.h          |   2 +
- drivers/ntb/hw/intel/ntb_hw_intel.h    |  30 +------
- drivers/ntb/hw/mscc/ntb_hw_switchtec.c |  36 +--------
- include/asm-generic/iomap.h            |  22 ++++++
- include/linux/io-64-nonatomic-hi-lo.h  |  64 +++++++++++++++
- include/linux/io-64-nonatomic-lo-hi.h  |  64 +++++++++++++++
- lib/iomap.c                            | 140 ++++++++++++++++++++++++++++++++-
- 9 files changed, 366 insertions(+), 65 deletions(-)
-
---
+diff --git a/arch/parisc/include/asm/io.h b/arch/parisc/include/asm/io.h
+index afe493b23d04..30a8315d5c07 100644
+--- a/arch/parisc/include/asm/io.h
++++ b/arch/parisc/include/asm/io.h
+@@ -311,6 +311,15 @@ extern void outsl (unsigned long port, const void *src, unsigned long count);
+  * value for either 32 or 64 bit mode */
+ #define F_EXTEND(x) ((unsigned long)((x) | (0xffffffff00000000ULL)))
+ 
++#define ioread64 ioread64
++#define ioread64be ioread64be
++#define iowrite64 iowrite64
++#define iowrite64be iowrite64be
++extern u64 ioread64(void __iomem *addr);
++extern u64 ioread64be(void __iomem *addr);
++extern void iowrite64(u64 val, void __iomem *addr);
++extern void iowrite64be(u64 val, void __iomem *addr);
++
+ #include <asm-generic/iomap.h>
+ 
+ /*
+diff --git a/arch/parisc/lib/iomap.c b/arch/parisc/lib/iomap.c
+index 4b19e6e64fb7..0195aec657e2 100644
+--- a/arch/parisc/lib/iomap.c
++++ b/arch/parisc/lib/iomap.c
+@@ -48,11 +48,15 @@ struct iomap_ops {
+ 	unsigned int (*read16be)(void __iomem *);
+ 	unsigned int (*read32)(void __iomem *);
+ 	unsigned int (*read32be)(void __iomem *);
++	u64 (*read64)(void __iomem *);
++	u64 (*read64be)(void __iomem *);
+ 	void (*write8)(u8, void __iomem *);
+ 	void (*write16)(u16, void __iomem *);
+ 	void (*write16be)(u16, void __iomem *);
+ 	void (*write32)(u32, void __iomem *);
+ 	void (*write32be)(u32, void __iomem *);
++	void (*write64)(u64, void __iomem *);
++	void (*write64be)(u64, void __iomem *);
+ 	void (*read8r)(void __iomem *, void *, unsigned long);
+ 	void (*read16r)(void __iomem *, void *, unsigned long);
+ 	void (*read32r)(void __iomem *, void *, unsigned long);
+@@ -171,6 +175,16 @@ static unsigned int iomem_read32be(void __iomem *addr)
+ 	return __raw_readl(addr);
+ }
+ 
++static u64 iomem_read64(void __iomem *addr)
++{
++	return readq(addr);
++}
++
++static u64 iomem_read64be(void __iomem *addr)
++{
++	return __raw_readq(addr);
++}
++
+ static void iomem_write8(u8 datum, void __iomem *addr)
+ {
+ 	writeb(datum, addr);
+@@ -196,6 +210,16 @@ static void iomem_write32be(u32 datum, void __iomem *addr)
+ 	__raw_writel(datum, addr);
+ }
+ 
++static void iomem_write64(u64 datum, void __iomem *addr)
++{
++	writel(datum, addr);
++}
++
++static void iomem_write64be(u64 datum, void __iomem *addr)
++{
++	__raw_writel(datum, addr);
++}
++
+ static void iomem_read8r(void __iomem *addr, void *dst, unsigned long count)
+ {
+ 	while (count--) {
+@@ -250,11 +274,15 @@ static const struct iomap_ops iomem_ops = {
+ 	.read16be = iomem_read16be,
+ 	.read32 = iomem_read32,
+ 	.read32be = iomem_read32be,
++	.read64 = iomem_read64,
++	.read64be = iomem_read64be,
+ 	.write8 = iomem_write8,
+ 	.write16 = iomem_write16,
+ 	.write16be = iomem_write16be,
+ 	.write32 = iomem_write32,
+ 	.write32be = iomem_write32be,
++	.write64 = iomem_write64,
++	.write64be = iomem_write64be,
+ 	.read8r = iomem_read8r,
+ 	.read16r = iomem_read16r,
+ 	.read32r = iomem_read32r,
+@@ -304,6 +332,20 @@ unsigned int ioread32be(void __iomem *addr)
+ 	return *((u32 *)addr);
+ }
+ 
++u64 ioread64(void __iomem *addr)
++{
++	if (unlikely(INDIRECT_ADDR(addr)))
++		return iomap_ops[ADDR_TO_REGION(addr)]->read64(addr);
++	return le64_to_cpup((u64 *)addr);
++}
++
++u64 ioread64be(void __iomem *addr)
++{
++	if (unlikely(INDIRECT_ADDR(addr)))
++		return iomap_ops[ADDR_TO_REGION(addr)]->read64be(addr);
++	return *((u64 *)addr);
++}
++
+ void iowrite8(u8 datum, void __iomem *addr)
+ {
+ 	if (unlikely(INDIRECT_ADDR(addr))) {
+@@ -349,6 +391,24 @@ void iowrite32be(u32 datum, void __iomem *addr)
+ 	}
+ }
+ 
++void iowrite64(u64 datum, void __iomem *addr)
++{
++	if (unlikely(INDIRECT_ADDR(addr))) {
++		iomap_ops[ADDR_TO_REGION(addr)]->write64(datum, addr);
++	} else {
++		*((u64 *)addr) = cpu_to_le64(datum);
++	}
++}
++
++void iowrite64be(u64 datum, void __iomem *addr)
++{
++	if (unlikely(INDIRECT_ADDR(addr))) {
++		iomap_ops[ADDR_TO_REGION(addr)]->write64be(datum, addr);
++	} else {
++		*((u64 *)addr) = datum;
++	}
++}
++
+ /* Repeating interfaces */
+ 
+ void ioread8_rep(void __iomem *addr, void *dst, unsigned long count)
+@@ -449,11 +509,15 @@ EXPORT_SYMBOL(ioread16);
+ EXPORT_SYMBOL(ioread16be);
+ EXPORT_SYMBOL(ioread32);
+ EXPORT_SYMBOL(ioread32be);
++EXPORT_SYMBOL(ioread64);
++EXPORT_SYMBOL(ioread64be);
+ EXPORT_SYMBOL(iowrite8);
+ EXPORT_SYMBOL(iowrite16);
+ EXPORT_SYMBOL(iowrite16be);
+ EXPORT_SYMBOL(iowrite32);
+ EXPORT_SYMBOL(iowrite32be);
++EXPORT_SYMBOL(iowrite64);
++EXPORT_SYMBOL(iowrite64be);
+ EXPORT_SYMBOL(ioread8_rep);
+ EXPORT_SYMBOL(ioread16_rep);
+ EXPORT_SYMBOL(ioread32_rep);
+-- 
 2.11.0
+
