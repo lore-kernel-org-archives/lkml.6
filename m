@@ -2,133 +2,143 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D668C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:48:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4630DC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:48:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1664720891
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:48:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="mAzmYI5K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1664720891
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E790A2087D
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:48:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E790A2087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727594AbeH2Al7 (ORCPT
+        id S1727610AbeH2AmD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 20:41:59 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42418 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727162AbeH2Al7 (ORCPT
+        Tue, 28 Aug 2018 20:42:03 -0400
+Received: from smtprelay0224.hostedemail.com ([216.40.44.224]:47691 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727162AbeH2AmC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 20:41:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=QpdPT7snQFijxNobUQaEyUUi7V/9noLCWoVFBUCuZlE=; b=mAzmYI5KhwjR
-        A+xCRU/Gp3uQF/6TJN30aLQkjY45cs5kGFBEgB/b1hUv0QgoYjjNH5N4oq0dlY5CTp5sQc4w9QQfa
-        LDY1mfY/im1kVgjYSQJr+XDPB7ldg/W/zlg3fDHLDdbQKPsRkZDDOSeeIg7xr43w0+8dtoBWZjmBA
-        1I0N8=;
-Received: from 188.29.165.122.threembb.co.uk ([188.29.165.122] helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fukuT-0007jZ-9v; Tue, 28 Aug 2018 20:48:21 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 015EB44007A; Tue, 28 Aug 2018 21:48:19 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        linux-amlogic@lists.infradead.org, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: meson: imply clock and reset controllers" to the asoc tree
-In-Reply-To:  <20180828121721.26488-1-jbrunet@baylibre.com>
-Message-Id: <20180828204820.015EB44007A@finisterre.ee.mobilebroadband>
-Date:   Tue, 28 Aug 2018 21:48:19 +0100 (BST)
+        Tue, 28 Aug 2018 20:42:02 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 7EC0618225657;
+        Tue, 28 Aug 2018 20:48:39 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: grain87_2e4ba5c233342
+X-Filterd-Recvd-Size: 3673
+Received: from XPS-9350 (unknown [172.56.41.215])
+        (Authenticated sender: joe@perches.com)
+        by omf12.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 28 Aug 2018 20:48:37 +0000 (UTC)
+Message-ID: <556a35cbccc36ef4f5a03a82e6f938d283046919.camel@perches.com>
+Subject: Re: [PATCH 01/13] seq_file: rewrite seq_puts() in terms of
+ seq_write()
+From:   Joe Perches <joe@perches.com>
+To:     Alexey Dobriyan <adobriyan@gmail.com>, akpm@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org
+Date:   Tue, 28 Aug 2018 13:48:35 -0700
+In-Reply-To: <9229927125ab9d36bd38cf0c20fb5dfb45802fcb.camel@perches.com>
+References: <20180827231503.26899-1-adobriyan@gmail.com>
+         <9229927125ab9d36bd38cf0c20fb5dfb45802fcb.camel@perches.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Tue, 2018-08-28 at 11:24 -0700, Joe Perches wrote:
+> On Tue, 2018-08-28 at 02:14 +0300, Alexey Dobriyan wrote:
+> > Space savings -- 42 bytes!
+> > 
+> > 	seq_puts	71      29     [-42]
+> > 
+> > Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+> > ---
+> >  fs/seq_file.c | 9 +--------
+> >  1 file changed, 1 insertion(+), 8 deletions(-)
+> > 
+> > diff --git a/fs/seq_file.c b/fs/seq_file.c
+> > index 1dea7a8a5255..0c282a88a896 100644
+> > --- a/fs/seq_file.c
+> > +++ b/fs/seq_file.c
+> > @@ -653,14 +653,7 @@ EXPORT_SYMBOL(seq_putc);
+> >  
+> >  void seq_puts(struct seq_file *m, const char *s)
+> >  {
+> > -	int len = strlen(s);
+> > -
+> > -	if (m->count + len >= m->size) {
+> > -		seq_set_overflow(m);
+> > -		return;
+> > -	}
+> > -	memcpy(m->buf + m->count, s, len);
+> > -	m->count += len;
+> > +	seq_write(m, s, strlen(s));
+> >  }
+> >  EXPORT_SYMBOL(seq_puts);
+> >  
+> 
+> If execution speed is really an issue, as
+> almost all of the uses are for const strings,
+> why not use a #define and avoid the runtime
+> cost of strlen where possible.
 
-   ASoC: meson: imply clock and reset controllers
+fyi: an x86-64 defconfig increases < .5 kb and
+presumably is faster for most all seq_puts uses
 
-has been applied to the asoc tree at
+$ size vmlinux.new vmlinux.old
+   text	   data	    bss	    dec	    hex	
+filename
+17342316	4982128	 999628	23324072	163e5a8	
+vmlinux.new
+17341857	4982128	 999628	23323613	163e3dd	
+vmlinux.old
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From ac16df938e5107a1e08cf0f52818fa6a5f7bba94 Mon Sep 17 00:00:00 2001
-From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Tue, 28 Aug 2018 14:17:21 +0200
-Subject: [PATCH] ASoC: meson: imply clock and reset controllers
-
-Add audio clock controller and ARB reset controller module
-implication for the device using them
-
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+with
 ---
- sound/soc/meson/Kconfig | 4 ++++
- 1 file changed, 4 insertions(+)
+ fs/seq_file.c            | 13 -------------
+ include/linux/seq_file.h |  2 +-
+ 2 files changed, 1 insertion(+), 14 deletions(-)
 
-diff --git a/sound/soc/meson/Kconfig b/sound/soc/meson/Kconfig
-index 8af8bc358a90..2ccbadc387de 100644
---- a/sound/soc/meson/Kconfig
-+++ b/sound/soc/meson/Kconfig
-@@ -4,6 +4,8 @@ menu "ASoC support for Amlogic platforms"
- config SND_MESON_AXG_FIFO
- 	tristate
- 	select REGMAP_MMIO
-+	imply COMMON_CLK_AXG_AUDIO
-+	imply RESET_MESON_AUDIO_ARB
+diff --git a/fs/seq_file.c b/fs/seq_file.c
+index 1dea7a8a5255..97d474b6788e 100644
+--- a/fs/seq_file.c
++++ b/fs/seq_file.c
+@@ -651,19 +651,6 @@ void seq_putc(struct seq_file *m, char c)
+ }
+ EXPORT_SYMBOL(seq_putc);
  
- config SND_MESON_AXG_FRDDR
- 	tristate "Amlogic AXG Playback FIFO support"
-@@ -22,6 +24,7 @@ config SND_MESON_AXG_TODDR
- config SND_MESON_AXG_TDM_FORMATTER
- 	tristate
- 	select REGMAP_MMIO
-+	imply COMMON_CLK_AXG_AUDIO
- 
- config SND_MESON_AXG_TDM_INTERFACE
- 	tristate
-@@ -58,6 +61,7 @@ config SND_MESON_AXG_SPDIFOUT
- 	tristate "Amlogic AXG SPDIF Output Support"
- 	select SND_PCM_IEC958
- 	imply SND_SOC_SPDIF
-+	imply COMMON_CLK_AXG_AUDIO
- 	help
- 	  Select Y or M to add support for SPDIF output serializer embedded
- 	  in the Amlogic AXG SoC family
--- 
-2.18.0
-
+-void seq_puts(struct seq_file *m, const char *s)
+-{
+-	int len = strlen(s);
+-
+-	if (m->count + len >= m->size) {
+-		seq_set_overflow(m);
+-		return;
+-	}
+-	memcpy(m->buf + m->count, s, len);
+-	m->count += len;
+-}
+-EXPORT_SYMBOL(seq_puts);
+-
+ /**
+  * A helper routine for putting decimal numbers without rich format of printf().
+  * only 'unsigned long long' is supported.
+diff --git a/include/linux/seq_file.h b/include/linux/seq_file.h
+index a121982af0f5..722028805df6 100644
+--- a/include/linux/seq_file.h
++++ b/include/linux/seq_file.h
+@@ -117,7 +117,7 @@ void seq_vprintf(struct seq_file *m, const char *fmt, va_list args);
+ __printf(2, 3)
+ void seq_printf(struct seq_file *m, const char *fmt, ...);
+ void seq_putc(struct seq_file *m, char c);
+-void seq_puts(struct seq_file *m, const char *s);
++#define seq_puts(m, s) seq_write(m, s, strlen(s))
+ void seq_put_decimal_ull_width(struct seq_file *m, const char *delimiter,
+ 			       unsigned long long num, unsigned int width);
+ void seq_put_decimal_ull(struct seq_file *m, const char *delimiter,
