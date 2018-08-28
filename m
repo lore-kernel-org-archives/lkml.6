@@ -2,139 +2,172 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66A3AC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 19:43:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0110AC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 19:47:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2902320856
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 19:43:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2902320856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 88CDA20856
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 19:47:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=compulab.co.il header.i=@compulab.co.il header.b="ERZUCpc/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88CDA20856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=compulab.co.il
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727292AbeH1Xg1 (ORCPT
+        id S1727162AbeH1XkT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 19:36:27 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44530 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726807AbeH1Xg0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 19:36:26 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3C01080D;
-        Tue, 28 Aug 2018 12:43:18 -0700 (PDT)
-Received: from dupont (dupont.austin.arm.com [10.118.16.87])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C7B833F557;
-        Tue, 28 Aug 2018 12:43:17 -0700 (PDT)
-Date:   Tue, 28 Aug 2018 14:43:17 -0500
-From:   Kim Phillips <kim.phillips@arm.com>
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 0/2]: perf: reduce data loss when profiling highly
- parallel CPU bound workloads
-Message-Id: <20180828144317.8684910d2b7abc9d6dca70f6@arm.com>
-In-Reply-To: <74fbcac7-80af-fcf0-2666-adefca98c271@linux.intel.com>
-References: <74fbcac7-80af-fcf0-2666-adefca98c271@linux.intel.com>
-Organization: Arm
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Tue, 28 Aug 2018 19:40:19 -0400
+Received: from softlayer.compulab.co.il ([50.23.254.55]:42618 "EHLO
+        compulab.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726807AbeH1XkS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 19:40:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=compulab.co.il; s=default; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=lwb87Jhqu1uE9HzpIkOY4FkFJVP/FN8HaEYUGV8lel8=; b=ERZUCpc/HYHqs2cHsm6DtCgKYl
+        dxDKfVy13I4IfBAhm7W8RBjqmQ62X+1kG/mxwwJazNpR3DPOymmjjKqF93F7R8jwkDY4EdhfVxSGV
+        hnYIIkG35pBM7zF929r0AnEEpXQidDsATbdQRhhjjLfhz113mKy/yyWFeLLjeVBWwV/XsjkYZsxCx
+        13Q1SQOr5NBIMkRYxnjWJ45vzPUCAKpLMFM4YPAtXn0wMMOzs53vb/dlrREl2DoqdJFlyXtgsdp8d
+        GrZ2Y49Vfw63ikOLslKdYQ96p3Dekt2intnP3pC95XT5McQjcnUGmBFWtZJibTSAGJdN2iwJbO1Lg
+        pZoUjilw==;
+Received: from [37.142.126.90] (port=34931 helo=zimbra-mta.compulab.co.il)
+        by softlayer.compulab.co.il with esmtp (Exim 4.87)
+        (envelope-from <kirill.kapranov@compulab.co.il>)
+        id 1fujxD-0005dh-QD; Tue, 28 Aug 2018 22:47:08 +0300
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra-mta.compulab.co.il (Postfix) with ESMTP id 943C6482AF6;
+        Tue, 28 Aug 2018 22:47:06 +0300 (IDT)
+Received: from zimbra-mta.compulab.co.il ([127.0.0.1])
+        by localhost (zimbra-mta.compulab.co.il [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 8Wjb7u8twOET; Tue, 28 Aug 2018 22:47:06 +0300 (IDT)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra-mta.compulab.co.il (Postfix) with ESMTP id 36513482AFF;
+        Tue, 28 Aug 2018 22:47:06 +0300 (IDT)
+X-Virus-Scanned: amavisd-new at zimbra-mta.compulab.co.il
+Received: from zimbra-mta.compulab.co.il ([127.0.0.1])
+        by localhost (zimbra-mta.compulab.co.il [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id YynNUlXvutUZ; Tue, 28 Aug 2018 22:47:06 +0300 (IDT)
+Received: from zimbra01.compulab.co.il (zimbra01.compulab.co.il [192.168.10.66])
+        by zimbra-mta.compulab.co.il (Postfix) with ESMTP id EED20482AF6;
+        Tue, 28 Aug 2018 22:47:05 +0300 (IDT)
+Date:   Tue, 28 Aug 2018 22:47:05 +0300 (IDT)
+From:   Kirill kapranov <kirill.kapranov@compulab.co.il>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, festevam@gmail.com,
+        linux@roeck-us.net
+Message-ID: <2024176715.614.1535485625914.JavaMail.root@compulab.co.il>
+In-Reply-To: <20180826132415.GB2414@sirena.org.uk>
+References: <20180821095303.27664-1-geert+renesas@glider.be> <35fbd3ae-3ac3-f6ef-874b-3d99c4d4d29a@compulab.co.il> <20180823102121.GC5207@sirena.org.uk> <a1bba27e-a287-c162-a238-eeae1e84d63c@compulab.co.il> <20180826132415.GB2414@sirena.org.uk>
+Subject: Re: [PATCH -next] spi: Fix double IDR allocation with DT aliases
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [192.168.11.10]
+X-Mailer: Zimbra 8.0.1_GA_5438 (ZimbraWebClient - FF52 (Linux)/8.0.1_GA_5438)
+Thread-Topic: Fix double IDR allocation with DT aliases
+Thread-Index: sLpuLnC6fKJGIEy7uj/+imKItdx31g==
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - softlayer.compulab.co.il
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - compulab.co.il
+X-Get-Message-Sender-Via: softlayer.compulab.co.il: acl_c_recent_authed_mail_ips_text_entry: kirill.kapranov@compulab.co.il|compulab.co.il
+X-Authenticated-Sender: softlayer.compulab.co.il: kirill.kapranov@compulab.co.il
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 28 Aug 2018 18:44:57 +0300
-Alexey Budankov <alexey.budankov@linux.intel.com> wrote:
+> Right, that clearly wasn't an intended effect, though - should be using
+> the max of the big constant and the maximum static ID.
 
-> Experiment with profiling matrix multiplication code executing 128 
-> threads on Intel Xeon Phi (KNM) with 272 cores, like below,
-> demonstrates data loss metrics value of 98%:
+Due to difficulties of enumeration of all device in a system, I propose
+to assign safe sub-range for dynamic IDs in the upper-half of ID range the following way.
 
-So I took these two patches for a quick test-drive on intel-pt.
+NOTE-0: This patch has to be applied after Geert's patch,
+which fixes double call of idr_alloc. (above in the thread). Many thanks, Geert!
 
-BEFORE (acme's today's perf/core branch):
+NOTE-1: The best solution, IMHO, would be migration to property_get_*
+functions, declared in linux/property.h 
 
-$ sudo perf version
-perf version 4.18.rc7.g55fc647
-$ sudo perf record -e intel_pt//  dd if=/dev/zero of=/dev/null count=100000
-100000+0 records in
-100000+0 records out
-51200000 bytes (51 MB, 49 MiB) copied, 0.0868081 s, 590 MB/s
-[ perf record: Woken up 21 times to write data ]
-[ perf record: Captured and wrote 41.302 MB perf.data ]
-$ 
+[PATCH] Eliminate possibility of conflict between static and dynamic IDs
 
-AFTER (== BEFORE + these two patches):
+For systems without DT support allocate dynamical bus ID in a safe sub-range
+(if given), otherwise in upper half of the range so as to avoid possible
+conflict between statically and dynamically allocated IDs.
 
-$ sudo ./perf version
-perf version 4.18.rc7.gbc1c99
-$ sudo perf record -e intel_pt//  dd if=/dev/zero of=/dev/null count=100000
-100000+0 records in
-100000+0 records out
-51200000 bytes (51 MB, 49 MiB) copied, 0.0931142 s, 550 MB/s
+Signed-off-by: Kirill Kapranov <kirill.kapranov@compulab.co.il>
+---
+ drivers/spi/Kconfig |  8 ++++++++
+ drivers/spi/spi.c   | 22 +++++++++++++++++++++-
+ 2 files changed, 29 insertions(+), 1 deletion(-)
 
-...and it's still running, minutes afterwards.  Before I kill it,
-here's some strace output:
-
-nanosleep({tv_sec=0, tv_nsec=500000}, NULL) = 0
-lseek(3, 332556518, SEEK_SET)           = 332556518
-write(3, "D\0\0\0\0\0\10\0", 8)         = 8
-lseek(3, 0, SEEK_CUR)                   = 332556526
-futex(0x7f221e7252c8, FUTEX_WAKE_PRIVATE, 1) = 1
-futex(0x7f221e725200, FUTEX_WAKE_PRIVATE, 1) = 1
-futex(0x7f221e7252cc, FUTEX_WAKE_PRIVATE, 1) = 1
-futex(0x7f221e725200, FUTEX_WAKE_PRIVATE, 1) = 1
-futex(0x7f221e7252c8, FUTEX_WAKE_PRIVATE, 1) = 1
-futex(0x7f221e725200, FUTEX_WAKE_PRIVATE, 1) = 1
-futex(0x7f221e7252cc, FUTEX_WAKE_PRIVATE, 1) = 1
-futex(0x7f221e725200, FUTEX_WAKE_PRIVATE, 1) = 1
-futex(0x7f221e7252c8, FUTEX_WAKE_PRIVATE, 1) = 1
-futex(0x7f221e725200, FUTEX_WAKE_PRIVATE, 1) = 1
-futex(0x7f221e7252cc, FUTEX_WAKE_PRIVATE, 1) = 1
-futex(0x7f221e725200, FUTEX_WAKE_PRIVATE, 1) = 1
-futex(0x7f221e7252c8, FUTEX_WAKE_PRIVATE, 1) = 1
-futex(0x7f221e725200, FUTEX_WAKE_PRIVATE, 1) = 1
-nanosleep({tv_sec=0, tv_nsec=500000}, NULL) = 0
-lseek(3, 332578462, SEEK_SET)           = 332578462
-write(3, "D\0\0\0\0\0\10\0", 8)         = 8
-lseek(3, 0, SEEK_CUR)                   = 332578470
-futex(0x7f221e7252cc, FUTEX_WAKE_PRIVATE, 1) = 1
-futex(0x7f221e725200, FUTEX_WAKE_PRIVATE, 1) = 1
-nanosleep({tv_sec=0, tv_nsec=500000}, NULL) = 0
-lseek(3, 332598822, SEEK_SET)           = 332598822
-write(3, "D\0\0\0\0\0\10\0", 8)         = 8
-lseek(3, 0, SEEK_CUR)                   = 332598830
-futex(0x7f221e7252c8, FUTEX_WAKE_PRIVATE, 1) = 1
-futex(0x7f221e725200, FUTEX_WAKE_PRIVATE, 1) = 1
-futex(0x7f221e7252cc, FUTEX_WAKE_PRIVATE, 1) = 1
-futex(0x7f221e725200, FUTEX_WAKE_PRIVATE, 1) = 1
-futex(0x7f221e7252c8, FUTEX_WAKE_PRIVATE, 1) = 1
-futex(0x7f221e725200, FUTEX_WAKE_PRIVATE, 1) = 1
-futex(0x7f221e7252cc, FUTEX_WAKE_PRIVATE, 1) = 1
-futex(0x7f221e725200, FUTEX_WAKE_PRIVATE, 1) = 1
-futex(0x7f221e7252c8, FUTEX_WAKE_PRIVATE, 1) = 1
-futex(0x7f221e725200, FUTEX_WAKE_PRIVATE, 1) = 1
-futex(0x7f221e7252cc, FUTEX_WAKE_PRIVATE, 1) = 1
-^Cstrace: Process 3597 detached
-
-I can't prove that it's these two patches that create the hang, but
-this does look like a livelock situation...hm, hitting ^C doesn't stop
-it...had to kill -9 it...erm, does 'perf record -e intel_pt// dd...'
-work for you on a more standard machine?:
-
-$ dmesg | grep Perf
-[    0.044226] Performance Events: PEBS fmt3+, Skylake events, 32-deep LBR, full-width counters, Intel PMU driver.
-
-Thanks,
-
-Kim
+diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+index 671d078349cc..7498fae0113b 100644
+--- a/drivers/spi/Kconfig
++++ b/drivers/spi/Kconfig
+@@ -47,6 +47,14 @@ config SPI_MASTER
+ 
+ if SPI_MASTER
+ 
++config SPI_MASTER_DYN_BUS_NUM_FIRST
++	int "First dynamically assigned SPI bus ID" if EXPERT
++	default 0
++	help
++	  This value can be used as the beginning of sub-range for dynamic
++	  allocation of SPI bus ID in case of absence of DT. If -1 chosen, the
++	  sub-range will be allocated in upper half of the SPI bus ID range.
++
+ config SPI_MEM
+ 	bool "SPI memory extension"
+ 	help
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index 9da0bc5a036c..3ac0cf0ab49c 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -49,6 +49,18 @@
+ 
+ #include "internals.h"
+ 
++#ifndef CHAR_BIT
++#define CHAR_BIT 8	/* Normally in <limits.h> */
++#endif
++#if !defined(CONFIG_SPI_MASTER_DYN_BUS_NUM_FIRST) || \
++	CONFIG_SPI_MASTER_DYN_BUS_NUM_FIRST < 0
++//Half of the biggest signed int of this size
++#define SPI_DYN_FIRST_NUM (((1 << \
++	(sizeof(((struct spi_controller*)0)->bus_num) * CHAR_BIT - 1)) - 1) / 2)
++#else
++#define SPI_DYN_FIRST_NUM CONFIG_SPI_MASTER_DYN_BUS_NUM_FIRST
++#endif
++
+ static DEFINE_IDR(spi_master_idr);
+ 
+ static void spidev_release(struct device *dev)
+@@ -2167,7 +2179,15 @@ int spi_register_controller(struct spi_controller *ctlr)
+ 	}
+ 	if (ctlr->bus_num < 0) {
+ 		first_dynamic = of_alias_get_highest_id("spi");
+-		if (first_dynamic < 0)
++
++		if (first_dynamic == -ENOSYS)
++			/*
++			 * In case of system without DT support, allocate
++			 * dynamic bus ID in safe range, higher than the bound,
++			 * to avoid conflict between static and dynamic ID
++			 */
++			first_dynamic = SPI_DYN_FIRST_NUM;
++		else if (first_dynamic < 0)
+ 			first_dynamic = 0;
+ 		else
+ 			first_dynamic++;
+-- 
+2.11.0
