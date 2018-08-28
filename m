@@ -2,351 +2,282 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1A40C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 07:58:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CD8DC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:00:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5281A208AC
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 07:58:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5281A208AC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 92C6120846
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:00:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZdsHCDyG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92C6120846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbeH1LtX (ORCPT
+        id S1727240AbeH1LvM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 07:49:23 -0400
-Received: from mga02.intel.com ([134.134.136.20]:32857 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726567AbeH1LtW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 07:49:22 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Aug 2018 00:58:57 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,298,1531810800"; 
-   d="scan'208";a="86946985"
-Received: from jsakkine-mobl1.fi.intel.com (HELO localhost) ([10.237.66.39])
-  by orsmga002.jf.intel.com with ESMTP; 28 Aug 2018 00:58:33 -0700
-Date:   Tue, 28 Aug 2018 10:58:32 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        dave.hansen@intel.com, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com,
-        linux-sgx@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v13 13/13] x86/sgx: Driver documentation
-Message-ID: <20180828075832.GC15508@linux.intel.com>
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-14-jarkko.sakkinen@linux.intel.com>
- <291cfdc4-ec45-128c-d101-606dbe89e88b@infradead.org>
+        Tue, 28 Aug 2018 07:51:12 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:50568 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727028AbeH1LvM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 07:51:12 -0400
+Received: by mail-it0-f65.google.com with SMTP id j81-v6so1427718ite.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 01:00:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+jEO7bLxAdwPhrR8NLyo5OidsoH1xCRVgdhKHDO/K2c=;
+        b=ZdsHCDyGM3CFs4GQpq3Sd7nJD5aDjqI+x2oeIWl5dlF2RW5sbciyWyc2Gy0URgBBqG
+         aDqQWoLo7QUTdlAXMrQ+xpHm2xU0OCQrPk7dBLHIxxYSWK++bPciJhO+0kRMiHqGWewd
+         7KBf4OOh9OVWAWfdRtrcumAXZIbEHS6gLTT7KgZlv33Vsj11ALP0lDFsv4AUeXBfsH4e
+         opn3cBx45smRU7k2zn4Y3NdUpvO4EuaM6UgAVAq5kUARBUqXD7l0ZPh5woca3nI3e39q
+         uuBg/qH+m6feYDSu+ELXof4ySii9AU6gxNwsbHd6spFXE0w83cH9cjJZFKKWrNZktnpk
+         NnFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+jEO7bLxAdwPhrR8NLyo5OidsoH1xCRVgdhKHDO/K2c=;
+        b=nmZKmWxKX6UytLFzI8u8MPSabSVBDTR8yyqjFL2Sf+y/b2gB+HghuDFWhFcZtpifsO
+         JfrNCc/K6kiEdhvX7+G3fEZLJ4zA2sg0UPi3+owzZFsYm0VSuBMIWdvRK0nO051hVYE3
+         ZtDL3ggR1pCxI4WjFsB3vdENcOv/mRFsP4Xr9CElwzdcZoDgGGDKQn97chXFTspqr+h8
+         25FgJvv+zQHHEIbGjOE4uuFNRMzPpFMXanJ1GCrxchIxH4XvUZZUAgJUP152qt3YrEaL
+         0re7zOERkhfjkIdYX50xlq2YO1c7ec76exjwIfjRxpg82g4BLIqImbEwRQvzqEw2J6Tg
+         BWxA==
+X-Gm-Message-State: APzg51CPT2ciumxv2AcYqB8aBuyWy4nThiRunuqySuVxjxWBl+qnGfCf
+        s69S12EhBORTn4OsIHJ5rHVm0mel1NBNP5XH//UXK9BH
+X-Google-Smtp-Source: ANB0VdbfVeixUgSHci14fks19U3ujq6KJSX+IACkX9NDiFotbc80NScEStwG0dSdZRac/BRkXXXlvSaX4DTraoH3Es0=
+X-Received: by 2002:a02:7f0a:: with SMTP id r10-v6mr318266jac.3.1535443244998;
+ Tue, 28 Aug 2018 01:00:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <291cfdc4-ec45-128c-d101-606dbe89e88b@infradead.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <1533537589-7202-1-git-send-email-Anson.Huang@nxp.com>
+ <1533537589-7202-2-git-send-email-Anson.Huang@nxp.com> <CAHQ1cqGA37RNoo3KcESCOFeYZxAQCOFkuQQhRPRKCTp=gKLdKQ@mail.gmail.com>
+ <DB3PR0402MB39160F15A078B7FE8BF13105F50A0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+In-Reply-To: <DB3PR0402MB39160F15A078B7FE8BF13105F50A0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+Date:   Tue, 28 Aug 2018 01:00:33 -0700
+Message-ID: <CAHQ1cqGMCxGhsuf=jUOjqqPc46iTT2WKV0xBsrYfdhooBicGGg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] soc: imx: gpcv2: make pgc driver more generic for
+ other i.MX platforms
+To:     Anson Huang <anson.huang@nxp.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, linux-imx@nxp.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 12:40:50PM -0700, Randy Dunlap wrote:
-> On 08/27/2018 11:53 AM, Jarkko Sakkinen wrote:
-> > Documentation of the features of the Software Guard eXtensions used
-> > by the Linux kernel and basic design choices for the core and driver
-> > and functionality.
-> > 
-> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> 
-> Hi,
-> 
-> Comments inline...
-> 
-> > ---
-> >  Documentation/index.rst         |   1 +
-> >  Documentation/x86/intel_sgx.rst | 185 ++++++++++++++++++++++++++++++++
-> >  2 files changed, 186 insertions(+)
-> >  create mode 100644 Documentation/x86/intel_sgx.rst
-> > 
-> > diff --git a/Documentation/index.rst b/Documentation/index.rst
-> > index 5db7e87c7cb1..1cdc139adb40 100644
-> > --- a/Documentation/index.rst
-> > +++ b/Documentation/index.rst
-> > @@ -104,6 +104,7 @@ implementation.
-> >     :maxdepth: 2
-> >  
-> >     sh/index
-> > +   x86/index
-> >  
-> >  Filesystem Documentation
-> >  ------------------------
-> > diff --git a/Documentation/x86/intel_sgx.rst b/Documentation/x86/intel_sgx.rst
-> > new file mode 100644
-> > index 000000000000..f6b7979c41f2
-> > --- /dev/null
-> > +++ b/Documentation/x86/intel_sgx.rst
-> > @@ -0,0 +1,185 @@
-> > +===================
-> > +Intel(R) SGX driver
-> > +===================
-> > +
-> > +Introduction
-> > +============
-> > +
-> > +Intel(R) SGX is a set of CPU instructions that can be used by applications to
-> > +set aside private regions of code and data. The code outside the enclave is
-> 
->    set aside private regions of code and data (which are called enclaves). The ...
-> 
-> > +disallowed to access the memory inside the enclave by the CPU access control.
-> > +In a way you can think that SGX provides inverted sandbox. It protects the
-> 
->                                    provides an inverted sandbox.
-> 
-> > +application from a malicious host.
-> > +
-> > +You can tell if your CPU supports SGX by looking into ``/proc/cpuinfo``:
-> > +
-> > +	``cat /proc/cpuinfo  | grep sgx``
-> 
-> or	``grep sgx /proc/cpuinfo``
-> ?
-> 
-> > +
-> > +Overview of SGX
-> > +===============
-> > +
-> > +SGX has a set of data structures to maintain information about the enclaves and
-> > +their security properties. BIOS reserves a fixed size region of physical memory
-> > +for these structures by setting Processor Reserved Memory Range Registers
-> > +(PRMRR).
-> > +
-> > +This memory range is protected from outside access by the CPU and all the data
-> > +coming in and out of the CPU package is encrypted by a key that is generated for
-> > +each boot cycle.
-> > +
-> > +Enclaves execute in ring-3 in a special enclave submode using pages from the
-> > +reserved memory range. A fixed logical address range for the enclave is reserved
-> > +by ENCLS(ECREATE), a leaf instruction used to create enclaves. It is referred in
-> 
->                                                                   It is referred to in
-> 
-> > +the documentation commonly as the ELRANGE.
-> > +
-> > +Every memory access to the ELRANGE is asserted by the CPU. If the CPU is not
-> > +executing in the enclave mode inside the enclave, #GP is raised. On the other
-> > +hand enclave code can make memory accesses both inside and outside of the
-> > +ELRANGE.
-> > +
-> > +Enclave can only execute code inside the ELRANGE. Instructions that may cause
-> 
->    An enclave can
-> or
->    Enclaves can
-> 
-> > +VMEXIT, IO instructions and instructions that require a privilege change are
-> > +prohibited inside the enclave. Interrupts and exceptions always cause enclave
-> 
->                                                                    cause the enclave
-> 
-> > +to exit and jump to an address outside the enclave given when the enclave is
-> > +entered by using the leaf instruction ENCLS(EENTER).
-> > +
-> > +Data types
-> > +----------
-> > +
-> > +The protected memory range contains the following data:
-> > +
-> > +* **Enclave Page Cache (EPC):** protected pages
-> > +* **Enclave Page Cache Map (EPCM):** a database that describes the state of the
-> > +  pages and link them to an enclave.
-> > +
-> > +EPC has a number of different types of pages:
-> > +
-> > +* **SGX Enclave Control Structure (SECS)**: describes the global
-> > +  properties of an enclave.
-> > +* **Regular (REG):** code and data pages in the ELRANGE.
-> > +* **Thread Control Structure (TCS):** pages that define entry points inside an
-> > +  enclave. The enclave can only be entered through these entry points and each
-> > +  can host a single hardware thread at a time.
-> > +* **Version Array (VA)**: 64-bit version numbers for pages that have been
-> > +  swapped outside the enclave. Each page contains 512 version numbers.
-> > +
-> > +Launch control
-> > +--------------
-> > +
-> > +To launch an enclave, two structures must be provided for ENCLS(EINIT):
-> > +
-> > +1. **SIGSTRUCT:** signed measurement of the enclave binary.
-> 
-> what does "signed measurement" mean?
+On Tue, Aug 28, 2018 at 12:28 AM Anson Huang <anson.huang@nxp.com> wrote:
+>
+>
+>
+> Anson Huang
+> Best Regards!
+>
+>
+> > -----Original Message-----
+> > From: Andrey Smirnov <andrew.smirnov@gmail.com>
+> > Sent: Tuesday, August 28, 2018 6:51 AM
+> > To: Anson Huang <anson.huang@nxp.com>
+> > Cc: Shawn Guo <shawnguo@kernel.org>; Sascha Hauer
+> > <s.hauer@pengutronix.de>; Sascha Hauer <kernel@pengutronix.de>; Fabio
+> > Estevam <fabio.estevam@nxp.com>; linux-arm-kernel
+> > <linux-arm-kernel@lists.infradead.org>; linux-kernel
+> > <linux-kernel@vger.kernel.org>; dl-linux-imx <linux-imx@nxp.com>
+> > Subject: Re: [PATCH 2/2] soc: imx: gpcv2: make pgc driver more generic for
+> > other i.MX platforms
+> >
+> > On Sun, Aug 5, 2018 at 11:45 PM Anson Huang <Anson.Huang@nxp.com>
+> > wrote:
+> > >
+> > > i.MX8MQ and i.MX8MM share same gpc module with i.MX7D, they can reuse
+> > > gpcv2 pgc driver for power domain control, this patch renames all
+> > > functions and structure definitions started with "imx7" to "imx", and
+> > > check machine type to pass platform specific power domain data for
+> > > power domain driver, thus make
+> > > gpcv2 pgc driver more generic for i.MX platforms.
+> > >
+> >
+> > Just for the sake of
+> >
+> >
+> > > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> > > ---
+> > >  drivers/soc/imx/gpcv2.c | 68
+> > > +++++++++++++++++++++++++++++--------------------
+> > >  1 file changed, 40 insertions(+), 28 deletions(-)
+> > >
+> > > diff --git a/drivers/soc/imx/gpcv2.c b/drivers/soc/imx/gpcv2.c index
+> > > 0e31465..0e33cb5 100644
+> > > --- a/drivers/soc/imx/gpcv2.c
+> > > +++ b/drivers/soc/imx/gpcv2.c
+> > > @@ -53,7 +53,7 @@
+> > >
+> > >  #define GPC_PGC_CTRL_PCR               BIT(0)
+> > >
+> > > -struct imx7_pgc_domain {
+> > > +struct imx_pgc_domain {
+> > >         struct generic_pm_domain genpd;
+> > >         struct regmap *regmap;
+> > >         struct regulator *regulator;
+> > > @@ -69,11 +69,11 @@ struct imx7_pgc_domain {
+> > >         struct device *dev;
+> > >  };
+> > >
+> > > -static int imx7_gpc_pu_pgc_sw_pxx_req(struct generic_pm_domain
+> > > *genpd,
+> > > +static int imx_gpc_pu_pgc_sw_pxx_req(struct generic_pm_domain *genpd,
+> > >                                       bool on)  {
+> > > -       struct imx7_pgc_domain *domain = container_of(genpd,
+> > > -                                                     struct
+> > imx7_pgc_domain,
+> > > +       struct imx_pgc_domain *domain = container_of(genpd,
+> > > +                                                     struct
+> > > + imx_pgc_domain,
+> > >                                                       genpd);
+> > >         unsigned int offset = on ?
+> > >                 GPC_PU_PGC_SW_PUP_REQ :
+> > GPC_PU_PGC_SW_PDN_REQ; @@
+> > > -150,17 +150,17 @@ static int imx7_gpc_pu_pgc_sw_pxx_req(struct
+> > generic_pm_domain *genpd,
+> > >         return ret;
+> > >  }
+> > >
+> > > -static int imx7_gpc_pu_pgc_sw_pup_req(struct generic_pm_domain
+> > > *genpd)
+> > > +static int imx_gpc_pu_pgc_sw_pup_req(struct generic_pm_domain *genpd)
+> > >  {
+> > > -       return imx7_gpc_pu_pgc_sw_pxx_req(genpd, true);
+> > > +       return imx_gpc_pu_pgc_sw_pxx_req(genpd, true);
+> > >  }
+> > >
+> > > -static int imx7_gpc_pu_pgc_sw_pdn_req(struct generic_pm_domain
+> > > *genpd)
+> > > +static int imx_gpc_pu_pgc_sw_pdn_req(struct generic_pm_domain *genpd)
+> > >  {
+> > > -       return imx7_gpc_pu_pgc_sw_pxx_req(genpd, false);
+> > > +       return imx_gpc_pu_pgc_sw_pxx_req(genpd, false);
+> > >  }
+> > >
+> > > -static const struct imx7_pgc_domain imx7_pgc_domains[] = {
+> > > +static const struct imx_pgc_domain imx7_pgc_domains[] = {
+> > >         [IMX7_POWER_DOMAIN_MIPI_PHY] = {
+> > >                 .genpd = {
+> > >                         .name      = "mipi-phy",
+> > > @@ -198,9 +198,9 @@ static const struct imx7_pgc_domain
+> > imx7_pgc_domains[] = {
+> > >         },
+> > >  };
+> > >
+> > > -static int imx7_pgc_domain_probe(struct platform_device *pdev)
+> > > +static int imx_pgc_domain_probe(struct platform_device *pdev)
+> > >  {
+> > > -       struct imx7_pgc_domain *domain = pdev->dev.platform_data;
+> > > +       struct imx_pgc_domain *domain = pdev->dev.platform_data;
+> > >         int ret;
+> > >
+> > >         domain->dev = &pdev->dev;
+> > > @@ -233,9 +233,9 @@ static int imx7_pgc_domain_probe(struct
+> > platform_device *pdev)
+> > >         return ret;
+> > >  }
+> > >
+> > > -static int imx7_pgc_domain_remove(struct platform_device *pdev)
+> > > +static int imx_pgc_domain_remove(struct platform_device *pdev)
+> > >  {
+> > > -       struct imx7_pgc_domain *domain = pdev->dev.platform_data;
+> > > +       struct imx_pgc_domain *domain = pdev->dev.platform_data;
+> > >
+> > >         of_genpd_del_provider(domain->dev->of_node);
+> > >         pm_genpd_remove(&domain->genpd); @@ -243,23 +243,24 @@
+> > static
+> > > int imx7_pgc_domain_remove(struct platform_device *pdev)
+> > >         return 0;
+> > >  }
+> > >
+> > > -static const struct platform_device_id imx7_pgc_domain_id[] = {
+> > > -       { "imx7-pgc-domain", },
+> > > +static const struct platform_device_id imx_pgc_domain_id[] = {
+> > > +       { "imx-pgc-domain", },
+> > >         { },
+> > >  };
+> > >
+> > > -static struct platform_driver imx7_pgc_domain_driver = {
+> > > +static struct platform_driver imx_pgc_domain_driver = {
+> > >         .driver = {
+> > > -               .name = "imx7-pgc",
+> > > +               .name = "imx-pgc",
+> > >         },
+> > > -       .probe    = imx7_pgc_domain_probe,
+> > > -       .remove   = imx7_pgc_domain_remove,
+> > > -       .id_table = imx7_pgc_domain_id,
+> > > +       .probe    = imx_pgc_domain_probe,
+> > > +       .remove   = imx_pgc_domain_remove,
+> > > +       .id_table = imx_pgc_domain_id,
+> > >  };
+> > > -builtin_platform_driver(imx7_pgc_domain_driver)
+> > > +builtin_platform_driver(imx_pgc_domain_driver)
+> > >
+> > >  static int imx_gpcv2_probe(struct platform_device *pdev)  {
+> > > +       static const struct imx_pgc_domain *imx_pgc_domains;
+> > >         static const struct regmap_range yes_ranges[] = {
+> > >                 regmap_reg_range(GPC_LPCR_A_CORE_BSC,
+> > >                                  GPC_M4_PU_PDN_FLG), @@
+> > -287,6 +288,7
+> > > @@ static int imx_gpcv2_probe(struct platform_device *pdev)
+> > >         struct regmap *regmap;
+> > >         struct resource *res;
+> > >         void __iomem *base;
+> > > +       int pgc_max_index;
+> > >         int ret;
+> > >
+> > >         pgc_np = of_get_child_by_name(dev->of_node, "pgc"); @@ -307,9
+> > > +309,19 @@ static int imx_gpcv2_probe(struct platform_device *pdev)
+> > >                 return ret;
+> > >         }
+> > >
+> > > +       if (of_machine_is_compatible("fsl,imx7d")) {
+> > > +               pgc_max_index = ARRAY_SIZE(imx7_pgc_domains);
+> > > +               imx_pgc_domains = imx7_pgc_domains;
+> > > +       }
+> >
+> > Is there any reason to do this explicit call to
+> > of_machine_is_compatible() as opposed to passing necessary data via .data in
+> > imx_gpcv2_dt_ids[]? The latter seems like a more straightforward way of
+> > passing variant specific driver info
+>
+> The reason of NOT using .data is that currently gpcv2 driver uses a structure array
+> of imx7_pgc_domains[] which has no fixed length, the .data can ONLY pass the pointer
+> of the starting address of imx7_pgc_domains[], and we need to know the array size of
+> imx7_pgc_domains, how can we know it if we ONLY got the starting address of this array
+> passed from .data. Please advise, thanks.
+>
 
-Right, I admit that this looks complete nonsense.
+Unless I am missing something, you should be able to do something like:
 
-It is SHA256 hash of the construction of the enclave signed with the
-private RSA key of the enclave signer (the public key is part of the
-SIGSTRUCT).
+struct imx_pgc_domain_data {
+    struct imx_pgc_domain *domains;
+    size_t domains_num;
+};
 
-A measurement is constructed by hashing tags for ECREATE, EADD and
-EEXTEND together with those parameters that either define ordinal and
-cardinal properties of the enclave associated with the operation and for
-each EADD the associated data page is also hashed.
+const struct imx_pgc_domain_data imx7_pgc_domain_data = {
+    .domains = imx7_pgc_domains,
+    .domains_num = ARRAY_SIZE(imx7_pgc_domains),
+};
 
-> > +2. **EINITTOKEN:** a cryptographic token CMAC-signed with a AES256-key called
-> > +   *launch key*, which is re-generated for each boot cycle.
-> > +
-> > +The CPU holds a SHA256 hash of a 3072-bit RSA public key inside
-> > +IA32_SGXLEPUBKEYHASHn MSRs. Enclaves with a SIGSTRUCT that is signed with this
-> > +key do not require a valid EINITTOKEN and can be authorized with special
-> > +privileges. One of those privileges is ability to acquire the launch key with
-> > +ENCLS(EGETKEY).
-> > +
-> > +**IA32_FEATURE_CONTROL[17]** is used by the BIOS configure whether
-> 
->                                         by the BIOS to configure whether
-> 
-> > +IA32_SGXLEPUBKEYHASH MSRs are read-only or read-write before locking the
-> > +feature control register and handing over control to the operating system.
-> > +
-> > +Enclave construction
-> > +--------------------
-> > +
-> > +The construction is started by filling out the SECS that contains enclave
-> > +address range, privileged attributes and measurement of TCS and REG pages (pages
-> 
-> what is this "measurement"?  how is it done?
+and then just pass imx7_pgc_domain_data via .data. That's a pretty
+common idiom in kernel driver.
 
-I will update this according the above explanation probably adding
-section just for explaining what measurement means as it is a concept
-that is cuts through the whole stack.
-
-The CPU calculates it to variable inside the SECS page of the enclave
-while you construct the enclave and a signing tool calculates equivalent
-value and signs it with the private key (i.e. the signed measurement).
-
-> > +that will be mapped to the address range) among the other things. This structure
-> > +is passed out to the ENCLS(ECREATE) together with a physical address of a page
-> > +in EPC that will hold the SECS.
-> > +
-> > +The pages are added with ENCLS(EADD) and measured with ENCLS(EEXTEND) i.e.
-> > +SHA256 hash MRENCLAVE residing in the SECS is extended with the page data.
-> > +
-> > +After all of the pages have been added, the enclave is initialized with
-> > +ENCLS(EINIT). ENCLS(INIT) checks that the SIGSTRUCT is signed with the contained
-> > +public key. If the given EINITTOKEN has the valid bit set, the CPU checks that
-> > +the token is valid (CMAC'd with the launch key). If the token is not valid,
-> > +the CPU will check whether the enclave is signed with a key matching to the
-> > +IA32_SGXLEPUBKEYHASHn MSRs.
-> > +
-> > +Swapping pages
-> > +--------------
-> > +
-> > +Enclave pages can be swapped out with ENCLS(EWB) to the unprotected memory. In
-> > +addition to the EPC page, ENCLS(EWB) takes in a VA page and address for PCMD
-> > +structure (Page Crypto MetaData) as input. The VA page will seal a version
-> > +number for the page. PCMD is 128 byte structure that contains tracking
-> > +information for the page, most importantly its MAC. With these structures the
-> > +enclave is sealed and rollback protected while it resides in the unprotected
-> > +memory.
-> > +
-> > +Before the page can be swapped out it must not have any active TLB references.
-> > +ENCLS(EBLOCK) instruction moves a page to the *blocked* state, which means
-> > +that no new TLB entries can be created to it by the hardware threads.
-> > +
-> > +After this a shootdown sequence is started with ENCLS(ETRACK), which sets an
-> > +increased counter value to the entering hardware threads. ENCLS(EWB) will
-> > +return SGX_NOT_TRACKED error while there are still threads with the earlier
-> > +couner value because that means that there might be hardware thread inside
-> 
->    counter
-> 
-> > +the enclave with TLB entries to pages that are to be swapped.
-> > +
-> > +Kernel internals
-> > +================
-> > +
-> > +Requirements
-> > +------------
-> > +
-> > +Because SGX has an ever evolving and expanding feature set, it's possible for
-> > +a BIOS or VMM to configure a system in such a way that not all CPUs are equal,
-> > +e.g. where Launch Control is only enabled on a subset of CPUs.  Linux does
-> > +*not* support such a heterogeneous system configuration, nor does it even
-> > +attempt to play nice in the face of a misconfigured system.  With the exception
-> > +of Launch Control's hash MSRs, which can vary per CPU, Linux assumes that all
-> > +CPUs have a configuration that is identical to the boot CPU.
-> > +
-> > +
-> > +Roles and responsibilities
-> > +--------------------------
-> > +
-> > +SGX introduces system resources, e.g. EPC memory, that must be accessible to
-> > +multiple entities, e.g. the native kernel driver (to expose SGX to userspace)
-> > +and KVM (to expose SGX to VMs), ideally without introducing any dependencies
-> > +between each SGX entity.  To that end, the kernel owns and manages the shared
-> > +system resources, i.e. the EPC and Launch Control MSRs, and defines functions
-> > +that provide appropriate access to the shared resources.  SGX support for
-> > +user space and VMs is left to the SGX platform driver and KVM respectively.
-> 
->    userspace
-> (as on the second line of that same paragraph)
-> 
-> > +
-> > +Launching enclaves
-> > +------------------
-> > +
-> > +The current kernel implementation supports only unlocked MSRs i.e.
-> > +FEATURE_CONTROL_SGX_LE_WR must be set. The launch is performed by setting the
-> > +MSRs to the hash of the public key modulus of the enclave signer, which is one
-> > +f the fields in the SIGSTRUCT.
-> > +
-> > +EPC management
-> > +--------------
-> > +
-> > +Due to the unique requirements for swapping EPC pages, and because EPC pages
-> > +(currently) do not have associated page structures, management of the EPC is
-> > +not handled by the standard Linux swapper.  SGX directly handles swapping
-> > +of EPC pages, including a kthread to initiate reclaim and a rudimentary LRU
-> > +mechanism. The consumers of EPC pages, e.g. the SGX driver, are required to
-> > +implement function callbacks that can be invoked by the kernel to age,
-> > +swap, and/or forcefully reclaim a target EPC page.  In effect, the kernel
-> > +controls what happens and when, while the consumers (driver, KVM, etc..) do
-> > +the actual work.
-> > +
-> > +SGX uapi
-> > +========
-> > +
-> > +.. kernel-doc:: drivers/platform/x86/intel_sgx/sgx_ioctl.c
-> > +   :functions: sgx_ioc_enclave_create
-> > +               sgx_ioc_enclave_add_page
-> > +               sgx_ioc_enclave_init
-> > +
-> > +.. kernel-doc:: arch/x86/include/uapi/asm/sgx.h
-> > +
-> > +References
-> > +==========
-> > +
-> > +* System Programming Manual: 39.1.4 Intel® SGX Launch Control Configuration
-> > 
-> 
-> HTH.
-> -- 
-
-Thank this was really useful feedback.
-
-I've been drowned in SGX long enough to become blind sometimes to what
-is not obvious :-)
-
-> ~Randy
-
-/Jarkko
+Thanks,
+Andrey Smirnov
