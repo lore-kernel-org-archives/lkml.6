@@ -2,100 +2,133 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51D61C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 03:20:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F01C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 03:20:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4626208B4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 03:20:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EF6F208B4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 03:20:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bwg11hbf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4626208B4
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="k1sD4dFd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EF6F208B4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727043AbeH1HJ6 (ORCPT
+        id S1727185AbeH1HKJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 03:09:58 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:44589 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726216AbeH1HJ5 (ORCPT
+        Tue, 28 Aug 2018 03:10:09 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:40155 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727052AbeH1HKJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 03:09:57 -0400
-Received: by mail-oi0-f68.google.com with SMTP id l82-v6so253198oih.11
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 20:20:26 -0700 (PDT)
+        Tue, 28 Aug 2018 03:10:09 -0400
+Received: by mail-pl1-f193.google.com with SMTP id s17-v6so93192plp.7
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 20:20:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=ie//tSW3fDEFPFVtJjiXB1Lff2qCUANoHt8PUElmxJI=;
-        b=bwg11hbfKGhmbEyKFkV1JKSO9WHzihWQeoEM7nPLfxlqXq1UvpG6ThEtzoEIJ9eE5U
-         Y/+bYtXyWG98PwXOQ8lok6fzTMwtFG/9EsbbCqtJ45vfH6LSX2izu3FLjCN8GXe9HEYj
-         OM+j2gXVy5sQ+8N92ueEHT/2InDXD99QkLGuc=
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=XqVY13ctqCmZNLdkXkl0It0wv9BBmcQ2gHNsbE+VX2Y=;
+        b=k1sD4dFdL9pJ4I60PriTd8TGmKgrdXmYrFxd2Stc8uploZ8eiT6wlJkOGBld6SUf++
+         CUaDBSI7+NglKTKJ1pFEe11128aIFH1fzjsUYzqBHChV99aOVzQ8Ol28poIAlBzXNpcC
+         /Savka5gAhxptrAfazpOnBLc4WGUW/gyqu7OE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=ie//tSW3fDEFPFVtJjiXB1Lff2qCUANoHt8PUElmxJI=;
-        b=bLbLqiY3q3AayWOzbhnBkmyXLZz5Os2E2M+6nHi2ZH/aT1MpmEwFyg0f+fQou0FIOR
-         1Oi8TP471abjDdqE+ilJK9cnaWp//5Ix2h+AIDxfOidzc0FdLJ2dyYUxq7hPy1lF8DZN
-         9cpJxYPXo++rNR7u4cUL2b99GtUJJyjNerjVLMivYDZfZcJjo5nZihdENMln8tSJ5uQi
-         N1IlEAIF4KrYJZbOAO3xEssY/WaM5EWpQjUbS4mLtKMRpU5i+eIak5ICBZQe9nC1wRPr
-         f5a5R1yOzlNhoA77ceBS6hvMCWRB7SFTBw2S6itqkvNYhxbqn/9oBFgGAwahpGWTXFjC
-         TsRQ==
-X-Gm-Message-State: APzg51DBGHGG4uGo+FjYAKNQVwl8mqhy4Kykp2mR3XPyz9K8mRDEgzDy
-        4j9wIsimApEAE00XO+CwNRddWRm7vAq77iBwttFxOA==
-X-Google-Smtp-Source: ANB0VdY94g73Hj5Socz/GPsv2cvfv9TSDF113qYbgshBH/M89IM7Hm72lEjKduzHOeYV7nWPEvmHFfMpvza91jrtkwo=
-X-Received: by 2002:aca:50cf:: with SMTP id e198-v6mr1370437oib.332.1535426426229;
- Mon, 27 Aug 2018 20:20:26 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XqVY13ctqCmZNLdkXkl0It0wv9BBmcQ2gHNsbE+VX2Y=;
+        b=iM+k5V4AU184Aq6GN1nhZuC6RNVNUc4uHr2NLXzP/PCC8PX/szX0Wy73XyupdudNn1
+         7V1NjPM3K9+Gz06sPIBzKs4G1ePSBDI7wAOTLhdTjySVujp5EcmI01gA+JxEVWW0jYmS
+         GIy9PKCRrluB4kQcTYCFYSFC0JnxzX6N2L3cxIbjtC4ERH+qB84PcUz5IGOdLYTKq9Lp
+         +Idjk/fHNkvNOB2DIUAwvm8iaWKMETZE/errY1fAlVxUOmMXb5t+q4uXYZLvkfEM1qG9
+         IF9ZWZ1HI2UIhhJktJ9dUhUxhul9ErtzSHKlsNg7ZqtcB+NLF0i/lWY9+igArfmtHJED
+         bJFQ==
+X-Gm-Message-State: APzg51ADNtK31gUiovmUVAVl9oaN03wKTnB38r8ogEEdvxCY73FaqiaN
+        2ABG4SoFT0nEdbxRqZEp+Upd5Q==
+X-Google-Smtp-Source: ANB0VdZUu7rcV1dSSRr1lnIXQc7fiPkIeGakIFUhaz0G8Zm9a41QQKIxE4EM1fLg2s2alxRZdINM9A==
+X-Received: by 2002:a17:902:6b89:: with SMTP id p9-v6mr15412414plk.272.1535426437336;
+        Mon, 27 Aug 2018 20:20:37 -0700 (PDT)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id 87-v6sm884078pfn.103.2018.08.27.20.20.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 27 Aug 2018 20:20:36 -0700 (PDT)
+Date:   Mon, 27 Aug 2018 20:20:34 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Lina Iyer <ilina@codeaurora.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Stephen Boyd <sboyd@kernel.org>, evgreen@chromium.org,
+        rplsssn@codeaurora.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Andy Gross <andy.gross@linaro.org>,
+        Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v2 1/5] drivers: pinctrl: qcom: add wakeup capability to
+ GPIO
+Message-ID: <20180828032034.GG2523@minitux>
+References: <20180817163849.30750-1-ilina@codeaurora.org>
+ <20180817163849.30750-2-ilina@codeaurora.org>
+ <CACRpkdb+Opdn1eWZSRydS1Bafpqwcg83xEcT-YJC6D-kSSi1ew@mail.gmail.com>
+ <20180827165644.GR5081@codeaurora.org>
+ <20180828002641.GC2523@minitux>
+ <20180828014652.GB13998@codeaurora.org>
 MIME-Version: 1.0
-Received: by 2002:a9d:29:0:0:0:0:0 with HTTP; Mon, 27 Aug 2018 20:20:25 -0700 (PDT)
-In-Reply-To: <20180825094357.6425ab4a@archlinux>
-References: <4a7e33457617e6f0f7c9627fe20ddd3039e4fe82.1535103920.git.baolin.wang@linaro.org>
- <cc6b76c5d660818d3ff7833ea5be4f32ed960f54.1535103920.git.baolin.wang@linaro.org>
- <20180825094357.6425ab4a@archlinux>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Tue, 28 Aug 2018 11:20:25 +0800
-Message-ID: <CAMz4kuKdw9EiZ2txKuPJrHt1oeKv7ye6P8GjS=KXuaJYWRs4eQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] iio: adc: sc27xx: Add ADC scale calibration
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        freeman.liu@spreadtrum.com, Mark Brown <broonie@kernel.org>,
-        DTML <devicetree@vger.kernel.org>, linux-iio@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180828014652.GB13998@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jonathan,
+On Mon 27 Aug 18:46 PDT 2018, Lina Iyer wrote:
+> On Mon, Aug 27 2018 at 18:26 -0600, Bjorn Andersson wrote:
+> > On Mon 27 Aug 09:56 PDT 2018, Lina Iyer wrote:
+[..]
+> > > Thanks, I will look into Hans's RFCv2. But what would help me would be
+> > > to avoid creating the IRQ for the GPIO itself (I have the latent IRQ),
+> > > if I could just return that instead in gpio_to_irq(), it might be
+> > > easier. I understand ->to_irq() is supposed to be a translate function
+> > > only, I can avoid the dance of enabling and diabling the PDC IRQ on
+> > > suspend and resume.
+> > > 
+> > 
+> > I did implement gpio_to_irq() like this in the PMIC gpio/mpp drivers and
+> > we've since concluded that we need to move this to some hierarchical
+> > interrupt controller, because people like Linus expect to be able to say
+> > 
+> >  interrupts = <&gpio_controller 1 IRQ_TYPE_EDGE_RISING>
+> > 
+> > which is something used all over the place with the TLMM driver today.
+> 
+> Does it have to be &gpio_controller, can it be another interrupt controller?
+> 
+> Say,
+> 	interrupts-extended = <&pdc 1 IRQ_TYPE_EDGE_RISING>;
+> 
 
-On 25 August 2018 at 16:43, Jonathan Cameron <jic23@kernel.org> wrote:
-> On Fri, 24 Aug 2018 17:53:16 +0800
-> Baolin Wang <baolin.wang@linaro.org> wrote:
->
->> This patch adds support to read calibration values from the eFuse
->> controller to calibrate the ADC channel scales, which can make ADC
->> sample data more accurate.
->>
->> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> This looks good to me.  I'll leave it for now though given open questions
-> on patch 1 and to allow others time to comment on this if they wish -
-> particularly as it includes a binding addition.
+It would require that the GPIO interrupt number space of the PDC matches
+the pin numbering of the TLMM, to be somewhat maintainable.
 
-Thanks for your reviewing. But after more testing, we found one issue
-when reading calibration data from efuse, which is not always 4 bytes
-(sizeof(u32)). So I will change to use nvmem_cell_read() instead of
-nvmem_cell_read_u32() in next version.
+And it would still require DT-writers to know that if the implementation
+of a compatible, that references a TLMM IRQ, wants to mark the IRQ wake
+capable it needs to reference the PDC instead...while still having a
+pinmux/pinconf setting for the TLMM.
 
--- 
-Baolin Wang
-Best Regards
+And for gpio_to_irq() we would need to do the mapping that you suggest,
+so the TLMM still needs to have all these references to the PDC.
+
+
+So I think it would be nice if we could avoid this scenario, but I don't
+have any good ideas of how to do this right now...
+
+Regards,
+Bjorn
