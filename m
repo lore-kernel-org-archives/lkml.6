@@ -2,65 +2,75 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 139CBC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:04:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99EDBC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:05:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C74B62086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:04:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C74B62086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
+	by mail.kernel.org (Postfix) with ESMTP id 505EA2086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:05:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 505EA2086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727284AbeH1S4x (ORCPT
+        id S1727312AbeH1S53 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 14:56:53 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:44570 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1726807AbeH1S4w (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 14:56:52 -0400
-Received: (qmail 3488 invoked by uid 2102); 28 Aug 2018 11:04:47 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 28 Aug 2018 11:04:47 -0400
-Date:   Tue, 28 Aug 2018 11:04:47 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Lubomir Rintel <lkundrak@v3.sk>
-cc:     linux-kernel@vger.kernel.org, <linux-usb@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Eric Miao <eric.y.miao@gmail.com>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH 00/14] Convert ehci-mv to DT
-In-Reply-To: <20180822204307.13251-1-lkundrak@v3.sk>
-Message-ID: <Pine.LNX.4.44L0.1808281104250.1443-100000@iolanthe.rowland.org>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+        Tue, 28 Aug 2018 14:57:29 -0400
+Received: from foss.arm.com ([217.140.101.70]:40000 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726120AbeH1S53 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 14:57:29 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 47ED418A;
+        Tue, 28 Aug 2018 08:05:24 -0700 (PDT)
+Received: from localhost (e105922-lin.emea.arm.com [10.4.13.28])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BC45A3F557;
+        Tue, 28 Aug 2018 08:05:23 -0700 (PDT)
+From:   Punit Agrawal <punit.agrawal@arm.com>
+To:     bhelgaas@google.com
+Cc:     Punit Agrawal <punit.agrawal@arm.com>,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        will.deacon@arm.com, x86@kernel.org,
+        linux-arm-kernel@lists.infradead.org, lorenzo.pieralisi@arm.com
+Subject: [PATCH 0/2] Drop node-local allocation during host controller initialisation
+Date:   Tue, 28 Aug 2018 16:05:11 +0100
+Message-Id: <20180828150513.32458-1-punit.agrawal@arm.com>
+X-Mailer: git-send-email 2.18.0
+X-ARM-No-Footer: FoSSMail
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 22 Aug 2018, Lubomir Rintel wrote:
+Hi Bjorn,
 
-> Hi,
-> 
-> This patch set makes it possible to use the Marvell EHCI driver with
-> DT-based machines.
-> 
-> Tested on a marvell,mmp2-based OLPC XO 1.75 laptop. (With a custom
-> appended DT that will be submitted in a separate patch set. The
-> machine's OpenFirmware provides a device tree, but that one is too
-> buggy to boot a pure marvell,mmp2 FDT kernel.)
+As discussed before[0], here are a couple of patches to drop
+node-local allocations during host contoller initialisation. This set
+covers both arm64 and x86.
 
-For all the EHCI parts of this series:
+I'm posting early to give the patches time on the list as well in next
+in case there are issues we've missed.
 
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+The patches are based on v4.19-rc1 and has been boot tested on arm64
+and compile tested on x86.
+
+Thanks,
+Punit
+
+[0] https://www.spinics.net/lists/arm-kernel/msg669746.html
+
+Punit Agrawal (2):
+  arm64: PCI: Remove node-local allocations when initialising host
+    controller
+  x86/PCI: Remove node-local allocation when initialising host
+    controller
+
+ arch/arm64/kernel/pci.c | 5 ++---
+ arch/x86/pci/acpi.c     | 2 +-
+ 2 files changed, 3 insertions(+), 4 deletions(-)
+
+-- 
+2.18.0
 
