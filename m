@@ -2,112 +2,89 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49EF4C43334
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:55:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B805FC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:55:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0550120836
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:55:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0550120836
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 6E33820867
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:55:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E33820867
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728349AbeH1Src (ORCPT
+        id S1728249AbeH1Sr0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 14:47:32 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:50329 "EHLO mail.bootlin.com"
+        Tue, 28 Aug 2018 14:47:26 -0400
+Received: from foss.arm.com ([217.140.101.70]:39700 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727176AbeH1Src (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 14:47:32 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id A34E622A42; Tue, 28 Aug 2018 16:55:28 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-53-19.w90-88.abo.wanadoo.fr [90.88.170.19])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 709C022A3C;
-        Tue, 28 Aug 2018 16:55:18 +0200 (CEST)
-Date:   Tue, 28 Aug 2018 16:55:17 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devel@driverdev.osuosl.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Randy Li <ayaka@soulik.info>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v8 7/8] ARM: dts: sun8i-a33: Add Video Engine and
- reserved memory nodes
-Message-ID: <20180828145517.p2ijrsfu576xwf7t@flea>
-References: <20180828073424.30247-1-paul.kocialkowski@bootlin.com>
- <20180828073424.30247-8-paul.kocialkowski@bootlin.com>
+        id S1727176AbeH1Sr0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 14:47:26 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 223ED18A;
+        Tue, 28 Aug 2018 07:55:24 -0700 (PDT)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.emea.arm.com [10.4.13.117])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 768833F557;
+        Tue, 28 Aug 2018 07:55:21 -0700 (PDT)
+Date:   Tue, 28 Aug 2018 15:55:11 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Richard Zhu <hongxing.zhu@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+Subject: Re: [RESEND] PCI: imx: Initial imx7d pm support
+Message-ID: <20180828145511.GA32352@e107981-ln.cambridge.arm.com>
+References: <d577303de61fb060aa428898f5df1d0bc9be89b8.1535369231.git.leonard.crestez@nxp.com>
+ <20180828100758.GA27217@e107981-ln.cambridge.arm.com>
+ <efcb160f08bb53620ba0570e55dbb9190275aeb0.camel@nxp.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="fbdscder4rhklhjs"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180828073424.30247-8-paul.kocialkowski@bootlin.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <efcb160f08bb53620ba0570e55dbb9190275aeb0.camel@nxp.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Aug 28, 2018 at 01:00:02PM +0000, Leonard Crestez wrote:
+> On Tue, 2018-08-28 at 11:07 +0100, Lorenzo Pieralisi wrote:
+> > On Mon, Aug 27, 2018 at 02:28:37PM +0300, Leonard Crestez wrote:
+> > > On imx7d the pcie-phy power domain is turned off in suspend and this can
+> > > make the system hang after resume when attempting any read from PCI.
+> > > 
+> > > Fix this by adding minimal suspend/resume code from the nxp internal
+> > > tree. This will prepare for powering down on suspend and reset the block
+> > > on resume.
+> > > 
+> > > Code is only for imx7d but a very similar sequence can be used for
+> > > other socs.
+> > > 
+> > > The original author is mostly Richard Zhu <hongxing.zhu@nxp.com>, this
+> > > patch adjusts the code to the upstream imx7d implemention using reset
+> > > controls and power domains.
+> > 
+> > I will add a Suggested-by: replacing this paragraph, it is always better
+> > to add proper tags rather than credit hidden in commit logs messages.
+> 
+> Isn't "Originally-by:" a better tag for this?
 
---fbdscder4rhklhjs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+We can add that, yes or add Richard as patch author, as you prefer to
+give him credit.
 
-On Tue, Aug 28, 2018 at 09:34:23AM +0200, Paul Kocialkowski wrote:
-> This adds nodes for the Video Engine and the associated reserved memory
-> for the A33. Up to 96 MiB of memory are dedicated to the CMA pool.
->=20
-> The VPU can only map the first 256 MiB of DRAM, so the reserved memory
-> pool has to be located in that area. Following Allwinner's decision in
-> downstream software, the last 96 MiB of the first 256 MiB of RAM are
-> reserved for this purpose.
->=20
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---fbdscder4rhklhjs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluFYlQACgkQ0rTAlCFN
-r3TMPw//eoo4xqYQREx1gDmx1S9VTiUHhbA/6nKaTcvIkks7WWn7Lt2Ygmaf9c8s
-DXFu2i8QUctdlcP0MLO7Tq8+jWkaJ9KVdhERypSQ8bdLxVnKqxCAQFlPkrnZOvIH
-9ZdGhMuCdjZn2lFEP9MLoTgj83l54n7Swwv/yhCK1npfLyhrPls3OS2Ea/519aOw
-tCdkrZtkGKFq9mF+J1dJ0H9WGaqCQ/wND0H2W//N9FaKg30eqV48oUGLzRAMgY1u
-tGmsNTzc3Joa+yLnDlZehbrcmv+yu33frgWtdPB+wBXKftZ129XD32NkaFqou3Yw
-l6EYptSSvFxI5UnrirKegts59NP6zRth1xzM2pPjnb2Fm9sY4s/HpQ04T57YhUAq
-Kc5VBMU3LWtmoQg6szf6Nws5S8IN23VAW8i3TIof0mNFahgRDUVvdtJDMboUvkna
-M6npW9Hf8EDEOjmp1sGFORhoWhiKNVF4duuwkRXMFx4RjCSY3ri4cDEFx/BrKFx2
-2zROchTBpR+RVACcQSVtzNWjbrATZidAhafQALWu4DJNV+IYAHF+uRsVIDDJomgI
-HsDn/z3OlLaPV25sqh2+Bsw+NJ7O4fkyxMno0R+43LvaeQaNBELdN9riIs4mxhTU
-wBMx7Nu7zyNVwDCsIlS3tNmFxYzE0u6GqdmS0UUbaK4IUmmyOVI=
-=vYN0
------END PGP SIGNATURE-----
-
---fbdscder4rhklhjs--
+Lorenzo
