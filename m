@@ -2,151 +2,165 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A92D5C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:58:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFF8DC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 11:00:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58A6B2087D
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:58:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E53wG019"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58A6B2087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 66CBB20842
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 11:00:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66CBB20842
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727862AbeH1OtH (ORCPT
+        id S1727738AbeH1OvZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 10:49:07 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:44769 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727104AbeH1OtE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 10:49:04 -0400
-Received: by mail-pl1-f194.google.com with SMTP id ba4-v6so560206plb.11;
-        Tue, 28 Aug 2018 03:57:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=rTck22z5Fb2QfzdSq16kU7wq0iTR4gwoypzlJecOfhs=;
-        b=E53wG019bO8SmDPDcRw3FM4nHWMnyL9wVxTrtZaXBmNiXmPCmZARMfkJdfFPrx0hYA
-         TuOPg/6dQREYWHCfPw5GRuPZE4yn30txo/+fHzLDhmba0/2+/l5iqU1Fn8bAhyiMDfW1
-         yhBbbPhsHa1AOB2WeiJSM09RTvWH6s109PJ0oJ2yA3rryF4n9urlXPWRCbsjseaWeCCj
-         eFu9kPOqRxBPxZpq24iaSI/uzKxZqIGcgb9Gk5rRVEvfRIMVPDErQVrJAexgbF9zexC/
-         au4HQeNnLb7giGaA+jtZGThWlorGDQ107xQxBc0Ux4dhg9/dUIxsW2XDY3ivfnJMyQGh
-         tLvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=rTck22z5Fb2QfzdSq16kU7wq0iTR4gwoypzlJecOfhs=;
-        b=tQ69LIZjxXnHcVzeC5fDr2Yb7gwZYlLcIvcjl7rTvvYeQqmaAi+fUbBwFmTOl0pRBu
-         TOLeRRLdFwC5N64kqYkzhBnNZfd7MnDY6xxZZoLoLeinpFBJd+g35D47Oa1idhk2qXtX
-         eZ8ss3vg/i02OjUEVslQw0CHNQd97RQT7igSHZQ7tm28xoHQkfySnYxeosbfjLD4EbwJ
-         wjK6lkghvUL1mILtxFYIMVve08aZldiCw5gNoeNi372KpAFIS1mjZClGjI/TrIuLZ3pe
-         eeoM62sYmnee7qDkXdnI1yKXu8GAw38JDEmT9p60KX8zzBLxUmmP9mWbzJrrprl9NmaM
-         QT6Q==
-X-Gm-Message-State: APzg51AuMicxz9a9MTpOCI4QZSUxKxeZLTcvEklQ/49fmAaE/2upJrjD
-        BIc3bBMfdQlKbxsb3lPn2VTv/7xz
-X-Google-Smtp-Source: ANB0VdZAYKDP9ZcV6w59zWmtvex+5jgLTyjlHEP26FcYlGaitIUXALvkc7+gS+Fk9cyT/NufxL+BIA==
-X-Received: by 2002:a17:902:8ec7:: with SMTP id x7-v6mr1032791plo.336.1535453878066;
-        Tue, 28 Aug 2018 03:57:58 -0700 (PDT)
-Received: from machine421.caveonetworks.com ([115.113.156.2])
-        by smtp.googlemail.com with ESMTPSA id n22-v6sm2946798pfj.68.2018.08.28.03.57.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 28 Aug 2018 03:57:57 -0700 (PDT)
-From:   sunil.kovvuri@gmail.com
-To:     linux-kernel@vger.kernel.org, arnd@arndb.de, olof@lixom.net
-Cc:     linux-arm-kernel@lists.infradead.org, linux-soc@vger.kernel.org,
-        Aleksey Makarov <amakarov@marvell.com>
-Subject: [PATCH 06/15] soc: octeontx2: Convert mbox msg id check to a macro
-Date:   Tue, 28 Aug 2018 16:27:09 +0530
-Message-Id: <1535453838-12154-7-git-send-email-sunil.kovvuri@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1535453838-12154-1-git-send-email-sunil.kovvuri@gmail.com>
-References: <1535453838-12154-1-git-send-email-sunil.kovvuri@gmail.com>
+        Tue, 28 Aug 2018 10:51:25 -0400
+Received: from nautica.notk.org ([91.121.71.147]:53805 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727265AbeH1OvZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 10:51:25 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id C84A8C009; Tue, 28 Aug 2018 13:00:14 +0200 (CEST)
+Date:   Tue, 28 Aug 2018 12:59:59 +0200
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Omar Sandoval <osandov@osandov.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        James Morse <james.morse@arm.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>, kernel-team@fb.com
+Subject: KASAN error in [PATCH v3 7/8] proc/kcore: optimize multiple page
+ reads
+Message-ID: <20180828105959.GA29204@nautica>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <fd346c11090cf93d867e01b8d73a6567c5ac6361.1531953780.git.osandov@fb.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aleksey Makarov <amakarov@marvell.com>
 
-With 10's of mailbox messages expected to be handled in future,
-checking for message id could become a lengthy switch case. Hence
-added a macro to auto generate the switch case for each msg id.
+> The current code does a full search of the segment list every time for
+> every page. This is wasteful, since it's almost certain that the next
+> page will be in the same segment. Instead, check if the previous segment
+> covers the current page before doing the list search.
+> 
+> Signed-off-by: Omar Sandoval <osandov@fb.com>
+> ---
+>  fs/proc/kcore.c | 14 +++++++++++---
+>  1 file changed, 11 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
+> index e2ca58d49938..25fefdd05ee5 100644
+> --- a/fs/proc/kcore.c
+> +++ b/fs/proc/kcore.c
+> @@ -428,10 +428,18 @@ read_kcore(struct file *file, char __user *buffer,
+> size_t buflen, loff_t *fpos)
+>  	if ((tsz = (PAGE_SIZE - (start & ~PAGE_MASK))) > buflen)
+>  		tsz = buflen;
+>  
+> +	m = NULL;
+>  	while (buflen) {
+> -		list_for_each_entry(m, &kclist_head, list) {
+> -			if (start >= m->addr && start < (m->addr+m->size))
+> -				break;
+> +		/*
+> +		 * If this is the first iteration or the address is not within
+> +		 * the previous entry, search for a matching entry.
+> +		 */
+> +		if (!m || start < m->addr || start >= m->addr + m->size) {
 
-Signed-off-by: Aleksey Makarov <amakarov@marvell.com>
----
- drivers/soc/marvell/octeontx2/rvu.c | 44 ++++++++++++++++++++++++++++++++-----
- 1 file changed, 38 insertions(+), 6 deletions(-)
+This line apparently triggers a KASAN warning since I rebooted on
+4.19-rc1
 
-diff --git a/drivers/soc/marvell/octeontx2/rvu.c b/drivers/soc/marvell/octeontx2/rvu.c
-index e795c2f..25f79bf 100644
---- a/drivers/soc/marvell/octeontx2/rvu.c
-+++ b/drivers/soc/marvell/octeontx2/rvu.c
-@@ -258,6 +258,12 @@ static int rvu_setup_hw_resources(struct rvu *rvu)
- 	return 0;
- }
- 
-+static int rvu_mbox_handler_READY(struct rvu *rvu, struct msg_req *req,
-+				  struct ready_msg_rsp *rsp)
-+{
-+	return 0;
-+}
-+
- static int rvu_process_mbox_msg(struct rvu *rvu, int devid,
- 				struct mbox_msghdr *req)
- {
-@@ -265,13 +271,39 @@ static int rvu_process_mbox_msg(struct rvu *rvu, int devid,
- 	if (req->sig != OTX2_MBOX_REQ_SIG)
- 		goto bad_message;
- 
--	if (req->id == MBOX_MSG_READY)
--		return 0;
--
-+	switch (req->id) {
-+#define M(_name, _id, _req_type, _rsp_type)				\
-+	case _id: {							\
-+		struct _rsp_type *rsp;					\
-+		int err;						\
-+									\
-+		rsp = (struct _rsp_type *)otx2_mbox_alloc_msg(		\
-+			&rvu->mbox, devid,				\
-+			sizeof(struct _rsp_type));			\
-+		if (rsp) {						\
-+			rsp->hdr.id = _id;				\
-+			rsp->hdr.sig = OTX2_MBOX_RSP_SIG;		\
-+			rsp->hdr.pcifunc = req->pcifunc;		\
-+			rsp->hdr.rc = 0;				\
-+		}							\
-+									\
-+		err = rvu_mbox_handler_ ## _name(rvu,			\
-+						 (struct _req_type *)req, \
-+						 rsp);			\
-+		if (rsp && err)						\
-+			rsp->hdr.rc = err;				\
-+									\
-+		return rsp ? err : -ENOMEM;				\
-+	}
-+MBOX_MESSAGES
-+#undef M
-+		break;
- bad_message:
--	otx2_reply_invalid_msg(&rvu->mbox, devid, req->pcifunc,
--			       req->id);
--	return -ENODEV;
-+	default:
-+		otx2_reply_invalid_msg(&rvu->mbox, devid, req->pcifunc,
-+				       req->id);
-+		return -ENODEV;
-+	}
- }
- 
- static void rvu_mbox_handler(struct work_struct *work)
+This is 100% reproductible on my machine when the kdump service starts
+(fedora28 x86_64 VM), here's the full stack (on 4.19-rc1):
+[   38.161102] BUG: KASAN: global-out-of-bounds in read_kcore+0xd5c/0xf20
+[   38.162123] Read of size 8 at addr ffffffffa6c0f770 by task kexec/6201
+
+[   38.163386] CPU: 16 PID: 6201 Comm: kexec Not tainted 4.19.0-rc1+ #13
+[   38.164374] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.2-0-gf9626ccb91-prebuilt.qemu-project.org 04/01/2014
+[   38.166211] Call Trace:
+[   38.166658]  dump_stack+0x71/0xa9
+[   38.167443]  print_address_description+0x65/0x22e
+[   38.168194]  ? read_kcore+0xd5c/0xf20
+[   38.168778]  kasan_report.cold.6+0x241/0x306
+[   38.169458]  read_kcore+0xd5c/0xf20
+[   38.170018]  ? open_kcore+0x1d0/0x1d0
+[   38.170605]  ? avc_has_perm_noaudit+0x370/0x370
+[   38.171291]  ? kasan_unpoison_shadow+0x30/0x40
+[   38.171973]  ? kasan_kmalloc+0xbf/0xe0
+[   38.172562]  ? kmem_cache_alloc_trace+0x105/0x200
+[   38.173289]  ? open_kcore+0x5f/0x1d0
+[   38.173858]  ? open_kcore+0x5f/0x1d0
+[   38.174428]  ? deref_stack_reg+0xe0/0xe0
+[   38.175038]  proc_reg_read+0x18b/0x220
+[   38.175652]  ? proc_reg_unlocked_ioctl+0x210/0x210
+[   38.176399]  __vfs_read+0xe1/0x6b0
+[   38.176930]  ? __x64_sys_copy_file_range+0x450/0x450
+[   38.177723]  ? do_filp_open+0x190/0x250
+[   38.178313]  ? may_open_dev+0xc0/0xc0
+[   38.178886]  ? __fsnotify_update_child_dentry_flags.part.3+0x330/0x330
+[   38.179883]  ? __fsnotify_inode_delete+0x20/0x20
+[   38.180608]  ? __inode_security_revalidate+0x8e/0xb0
+[   38.181378]  vfs_read+0xde/0x2c0
+[   38.181889]  ksys_read+0xb2/0x160
+[   38.182413]  ? kernel_write+0x130/0x130
+[   38.183000]  ? task_work_run+0x74/0x1c0
+[   38.183621]  do_syscall_64+0xa0/0x2e0
+[   38.184183]  ? async_page_fault+0x8/0x30
+[   38.184802]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[   38.185610] RIP: 0033:0x7fc525d74091
+[   38.186155] Code: fe ff ff 50 48 8d 3d b6 b6 09 00 e8 59 05 02 00 66 0f 1f 84 00 00 00 00 00 48 8d 05 51 39 2d 00 8b 00 85 c0 75 13 31 c0 0f 05 <48> 3d 00 f0 ff ff 77 57 c3 66 0f 1f 44 00 00 41 54 49 89 d4 55 48
+[   38.188980] RSP: 002b:00007fffd6802a28 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+[   38.190153] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fc525d74091
+[   38.191240] RDX: 0000000000010000 RSI: 00000000017f90b0 RDI: 0000000000000004
+[   38.192329] RBP: 0000000000010000 R08: 00007fc526043420 R09: 0000000000000001
+[   38.194593] R10: 00000000017e8010 R11: 0000000000000246 R12: 00000000017f90b0
+[   38.196823] R13: 0000000000000004 R14: 00007fffd6802ac8 R15: 00007fffd6802cb0
+
+[   38.200526] The buggy address belongs to the variable:
+[   38.202539]  kclist_head+0x10/0x440
+
+[   38.205568] Memory state around the buggy address:
+[   38.207411]  ffffffffa6c0f600: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   38.209648]  ffffffffa6c0f680: 00 00 00 00 00 00 00 00 04 fa fa fa fa fa fa fa
+[   38.211812] >ffffffffa6c0f700: 00 00 00 00 00 fa fa fa fa fa fa fa 00 00 fa fa
+[   38.213936]                                                              ^
+[   38.216010]  ffffffffa6c0f780: fa fa fa fa 00 00 00 00 00 00 00 00 00 00 00 00
+[   38.218178]  ffffffffa6c0f800: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[   38.220306] ==================================================================
+
+where
+[   37.636589]  read_kcore+0xd5c/0xf20
+symbolizes to
+[<        none        >] read_kcore+0xd5c/0xf20 fs/proc/kcore.c:454
+, the above check.
+
+
+I haven't checked but I think I am in the first case below:
+                if (&m->list == &kclist_head) {
+meaning no address matched in the list, so you cannot check m->addr and
+m->size in this case -- I'm afraid you will have to run through the list
+just in case if that happens even if there likely won't be any match for
+the next address either.
+
+
+> +			list_for_each_entry(m, &kclist_head, list) {
+> +				if (start >= m->addr &&
+> +				    start < m->addr + m->size)
+> +					break;
+> +			}
+>  		}
+>  
+>  		if (&m->list == &kclist_head) {
+
 -- 
-2.7.4
-
+Dominique Martinet
