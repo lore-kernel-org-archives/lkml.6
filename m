@@ -2,130 +2,117 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C04EC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:49:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B3AFC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:49:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C627C208A6
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:49:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 111182089F
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:49:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PAMiCyTE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C627C208A6
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BPy1UOCv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 111182089F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727488AbeH1MkU (ORCPT
+        id S1727530AbeH1MkX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 08:40:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54704 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726975AbeH1MkU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 08:40:20 -0400
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 809A32089E;
-        Tue, 28 Aug 2018 08:49:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535446182;
-        bh=QkOLfG7p/RGfwfZeVYJ7z2ujo9/HzY9KQ0IPoMQITJg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=PAMiCyTEKvWYW4nKOBgTWegrqZhCGKDAfQ5ZpdG7FD9y9KBwS495aCsZKfKye7zk9
-         uHOxmF9VLkPh2u+BKHyDHj0hEYlWkQt6wYgYa9PAvdKwMn+EVFjVgZqRI1bFA0uu9W
-         bdhScW2Fqg2vCiTHuo/SnGDy/knY9dRBYMHb7ejk=
-Date:   Tue, 28 Aug 2018 17:49:39 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
+        Tue, 28 Aug 2018 08:40:23 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:34855 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726975AbeH1MkW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 08:40:22 -0400
+Received: by mail-lf1-f67.google.com with SMTP id q13-v6so714390lfc.2;
+        Tue, 28 Aug 2018 01:49:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=IAR6tFEcyh/+bOiWvrR54ntpMnCW7Gxlx9YoIuZ+FBU=;
+        b=BPy1UOCvh+RwzrlSD7AMX5UaUSjBycb05g6Icv/Qury1U5rej+e6ObtKmZ4FU1J5jC
+         PXO4nEv27xivDhRtbhHwu2bwYci38lsEjOyPr4VAjt3EPAt2idJb9ATp8txV2IGXOD21
+         4MqCtvMDD4U3Xfpdote9eSLvR95QN8hI0ff1K05EQuW/wK7xhfjjDZ89MbirR0VGKOrC
+         xkIFsqT8uZ53C5wLlHjqTZbIyb7lIFCu+3kHSgRxhfTyzoNRvEqcjOSflRnvjqDHcmza
+         cYyWxioU9cRv1aYut7/o6Ec1HImfIXJvbqFSDd4uxsLgm+nFAp6Fy2sGG/XDc4V5rvjo
+         BIRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=IAR6tFEcyh/+bOiWvrR54ntpMnCW7Gxlx9YoIuZ+FBU=;
+        b=iMUY3ah7vXmL2htYzfz/PfCmGtmn1Y0/Y5Wqqt5lDAkZnDa0RL/pBFskeuQW0XTDv+
+         t6UHcsjOCHrlTnylB15NkePfkwKjoW29sbSQTz6YQ8c5yCnxpFxoXUpKDFV/gZnIi8FQ
+         f2xW8C7fMocVkBE9iqfsSnJLdPzPOqJWF3qUY+gMmkFCGndbSQTrH/IhvnGrTmPjl7lg
+         yTjZ3mpMk3oYYzBFrgVvaKSfCugxjc1iqPCZLLPqg1030Mb6i8/RiV1uPyD2C0GyaJ9w
+         T0KyFRgDbbJzZp6y1APEHKrnD8eXcm4ZEJ5K6egPqaKSOVNV9wU2jpGIe3DvjEdvl3Wo
+         fIDQ==
+X-Gm-Message-State: APzg51BZl7Cn79QeK1QL5y2AiNxokqeMDL8HxlQUj4GLlzbSyAouf3Jp
+        RhxYqOqegJmyeuODNOKMlkU=
+X-Google-Smtp-Source: ANB0VdaGsfOGu4qJDbdNH2RSMzu4hiuik2rS3d1aP/I6mIur9qDawM0qiVRKT7ZGphR06TfXZYUR7A==
+X-Received: by 2002:a19:de50:: with SMTP id v77-v6mr590336lfg.14.1535446183602;
+        Tue, 28 Aug 2018 01:49:43 -0700 (PDT)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id v10-v6sm97054ljg.12.2018.08.28.01.49.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 28 Aug 2018 01:49:42 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1fuZgy-0007ds-AZ; Tue, 28 Aug 2018 10:49:41 +0200
+Date:   Tue, 28 Aug 2018 10:49:40 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Jia-Ju Bai <baijiaju1990@gmail.com>, johan@kernel.org,
+        j-keerthy@ti.com, a.zummo@towertech.it, linux-rtc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/alternatives: lockdep-enforce text_mutex in
- text_poke*()
-Message-Id: <20180828174939.a2f81bd978067a0f93dc5c4a@kernel.org>
-In-Reply-To: <nycvar.YFH.7.76.1808280853520.25787@cbobk.fhfr.pm>
-References: <nycvar.YFH.7.76.1808280853520.25787@cbobk.fhfr.pm>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] rtc: rtc-omap: Replace mdelay() with msleep() in
+ omap_rtc_power_off()
+Message-ID: <20180828084940.GA28861@localhost>
+References: <20180730135314.9336-1-baijiaju1990@gmail.com>
+ <20180827205517.GD24549@piout.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180827205517.GD24549@piout.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 28 Aug 2018 08:55:14 +0200 (CEST)
-Jiri Kosina <jikos@kernel.org> wrote:
-
-> From: Jiri Kosina <jkosina@suse.cz>
+On Mon, Aug 27, 2018 at 10:55:17PM +0200, Alexandre Belloni wrote:
+> Hi,
 > 
-> text_poke() and text_poke_bp() must be called with text_mutex held.
-> Let's put proper lockdep anotation in place instead of just mentioning
-> the requirement in comment.
-
-Thank you!
-
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-
+> On 30/07/2018 21:53:14+0800, Jia-Ju Bai wrote:
+> > omap_rtc_power_off() is never called in atomic context.
+> > It calls mdelay() to busily wait, which is not necessary.
+> > mdelay() can be replaced with msleep().
+> > 
+> > This is found by a static analysis tool named DCNS written by myself.
+> > 
+> > Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+> > ---
+> >  drivers/rtc/rtc-omap.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/rtc/rtc-omap.c b/drivers/rtc/rtc-omap.c
+> > index 39086398833e..ef3d09525d0f 100644
+> > --- a/drivers/rtc/rtc-omap.c
+> > +++ b/drivers/rtc/rtc-omap.c
+> > @@ -476,7 +476,7 @@ static void omap_rtc_power_off(void)
+> >  	 * power off the system. Add a 500 ms margin for external latencies
+> >  	 * (e.g. debounce circuits).
+> >  	 */
+> > -	mdelay(2500);
+> > +	msleep(2500);
 > 
-> Reported-by: Peter Zijlstra <peterz@infradead.org>
-> Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-> ---
->  arch/x86/kernel/alternative.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-> index 014f214da581..b9d5e7c9ef43 100644
-> --- a/arch/x86/kernel/alternative.c
-> +++ b/arch/x86/kernel/alternative.c
-> @@ -684,8 +684,6 @@ void *__init_or_module text_poke_early(void *addr, const void *opcode,
->   * It means the size must be writable atomically and the address must be aligned
->   * in a way that permits an atomic write. It also makes sure we fit on a single
->   * page.
-> - *
-> - * Note: Must be called under text_mutex.
->   */
->  void *text_poke(void *addr, const void *opcode, size_t len)
->  {
-> @@ -700,6 +698,8 @@ void *text_poke(void *addr, const void *opcode, size_t len)
->  	 */
->  	BUG_ON(!after_bootmem);
->  
-> +	lockdep_assert_held(&text_mutex);
-> +
->  	if (!core_kernel_text((unsigned long)addr)) {
->  		pages[0] = vmalloc_to_page(addr);
->  		pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
-> @@ -782,8 +782,6 @@ int poke_int3_handler(struct pt_regs *regs)
->   *	- replace the first byte (int3) by the first byte of
->   *	  replacing opcode
->   *	- sync cores
-> - *
-> - * Note: must be called under text_mutex.
->   */
->  void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
->  {
-> @@ -792,6 +790,9 @@ void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
->  	bp_int3_handler = handler;
->  	bp_int3_addr = (u8 *)addr + sizeof(int3);
->  	bp_patching_in_progress = true;
-> +
-> +	lockdep_assert_held(&text_mutex);
-> +
->  	/*
->  	 * Corresponding read barrier in int3 notifier for making sure the
->  	 * in_progress and handler are correctly ordered wrt. patching.
-> 
-> -- 
-> Jiri Kosina
-> SUSE Labs
-> 
+> I'm not sure about that one because this is a poweroff function so it
+> doesn't really make sense to sleep versus busy waiting (all the drivers
+> in power/reset use mdelay())
 
+This power-off handler is called with interrupts disabled (as mentioned
+in the function header) and must not sleep.
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Johan
