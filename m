@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EAFFC43334
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:36:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9117DC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:36:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0143E20891
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:36:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0143E20891
+	by mail.kernel.org (Postfix) with ESMTP id 534CE20894
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:36:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 534CE20894
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728423AbeH1S2q (ORCPT
+        id S1728442AbeH1S2s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 14:28:46 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38958 "EHLO mx1.suse.de"
+        Tue, 28 Aug 2018 14:28:48 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39008 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726120AbeH1S2q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 14:28:46 -0400
+        id S1728373AbeH1S2r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 14:28:47 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DA5AFAFD5;
-        Tue, 28 Aug 2018 14:36:43 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 586D5B01C;
+        Tue, 28 Aug 2018 14:36:48 +0000 (UTC)
 From:   Petr Mladek <pmladek@suse.com>
 To:     Jiri Kosina <jikos@kernel.org>,
         Josh Poimboeuf <jpoimboe@redhat.com>,
@@ -36,9 +36,9 @@ Cc:     Jason Baron <jbaron@akamai.com>,
         Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
         live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
         Petr Mladek <pmladek@suse.com>
-Subject: [PATCH v12 03/12] livepatch: Shuffle klp_enable_patch()/klp_disable_patch() code
-Date:   Tue, 28 Aug 2018 16:35:54 +0200
-Message-Id: <20180828143603.4442-4-pmladek@suse.com>
+Subject: [PATCH v12 05/12] livepatch: Refuse to unload only livepatches available during a forced transition
+Date:   Tue, 28 Aug 2018 16:35:56 +0200
+Message-Id: <20180828143603.4442-6-pmladek@suse.com>
 X-Mailer: git-send-email 2.13.7
 In-Reply-To: <20180828143603.4442-1-pmladek@suse.com>
 References: <20180828143603.4442-1-pmladek@suse.com>
@@ -47,375 +47,127 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We are going to simplify the API and code by removing the registration
-step. This would require calling init/free functions from enable/disable
-ones.
+module_put() is currently never called in klp_complete_transition() when
+klp_force is set. As a result, we might keep the reference count even when
+klp_enable_patch() fails and klp_cancel_transition() is called.
 
-This patch just moves the code the code to prevent more forward
-declarations.
+This might make an assumption that a module might get blocked in some
+strange init state. Fortunately, it is not the case. The reference count
+is ignored when mod->init fails and erroneous modules are always removed.
 
-This patch does not change the code except of two forward declarations.
+Anyway, this might make some confusion. Instead, this patch moves
+the global klp_forced flag into struct klp_patch. As a result,
+we block only modules that might still be in use after a forced
+transition. Newly loaded livepatches might be eventually completely
+removed later.
+
+It is not a big deal. But the code is at least consistent with
+the reality.
 
 Signed-off-by: Petr Mladek <pmladek@suse.com>
 ---
- kernel/livepatch/core.c | 330 ++++++++++++++++++++++++------------------------
- 1 file changed, 166 insertions(+), 164 deletions(-)
+ include/linux/livepatch.h     |  2 ++
+ kernel/livepatch/core.c       |  4 +++-
+ kernel/livepatch/core.h       |  1 +
+ kernel/livepatch/transition.c | 10 +++++-----
+ 4 files changed, 11 insertions(+), 6 deletions(-)
 
+diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
+index 22e0767d64b0..86b484b39326 100644
+--- a/include/linux/livepatch.h
++++ b/include/linux/livepatch.h
+@@ -138,6 +138,7 @@ struct klp_object {
+  * @list:	list node for global list of registered patches
+  * @kobj:	kobject for sysfs resources
+  * @enabled:	the patch is enabled (but operation may be incomplete)
++ * @forced:	was involved in a forced transition
+  * @wait_free:	wait until the patch is freed
+  * @finish:	for waiting till it is safe to remove the patch module
+  */
+@@ -150,6 +151,7 @@ struct klp_patch {
+ 	struct list_head list;
+ 	struct kobject kobj;
+ 	bool enabled;
++	bool forced;
+ 	bool wait_free;
+ 	struct completion finish;
+ };
 diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-index 577ebeb43024..b3956cce239e 100644
+index 3ca404545150..18af1dc0e199 100644
 --- a/kernel/livepatch/core.c
 +++ b/kernel/livepatch/core.c
-@@ -278,170 +278,6 @@ static int klp_write_object_relocations(struct module *pmod,
- 	return ret;
- }
- 
--static int __klp_disable_patch(struct klp_patch *patch)
--{
--	struct klp_object *obj;
--
--	if (WARN_ON(!patch->enabled))
--		return -EINVAL;
--
--	if (klp_transition_patch)
--		return -EBUSY;
--
--	/* enforce stacking: only the last enabled patch can be disabled */
--	if (!list_is_last(&patch->list, &klp_patches) &&
--	    list_next_entry(patch, list)->enabled)
--		return -EBUSY;
--
--	klp_init_transition(patch, KLP_UNPATCHED);
--
--	klp_for_each_object(patch, obj)
--		if (obj->patched)
--			klp_pre_unpatch_callback(obj);
--
--	/*
--	 * Enforce the order of the func->transition writes in
--	 * klp_init_transition() and the TIF_PATCH_PENDING writes in
--	 * klp_start_transition().  In the rare case where klp_ftrace_handler()
--	 * is called shortly after klp_update_patch_state() switches the task,
--	 * this ensures the handler sees that func->transition is set.
--	 */
--	smp_wmb();
--
--	klp_start_transition();
--	klp_try_complete_transition();
--	patch->enabled = false;
--
--	return 0;
--}
--
--/**
-- * klp_disable_patch() - disables a registered patch
-- * @patch:	The registered, enabled patch to be disabled
-- *
-- * Unregisters the patched functions from ftrace.
-- *
-- * Return: 0 on success, otherwise error
-- */
--int klp_disable_patch(struct klp_patch *patch)
--{
--	int ret;
--
--	mutex_lock(&klp_mutex);
--
--	if (!klp_is_patch_registered(patch)) {
--		ret = -EINVAL;
--		goto err;
--	}
--
--	if (!patch->enabled) {
--		ret = -EINVAL;
--		goto err;
--	}
--
--	ret = __klp_disable_patch(patch);
--
--err:
--	mutex_unlock(&klp_mutex);
--	return ret;
--}
--EXPORT_SYMBOL_GPL(klp_disable_patch);
--
--static int __klp_enable_patch(struct klp_patch *patch)
--{
--	struct klp_object *obj;
--	int ret;
--
--	if (klp_transition_patch)
--		return -EBUSY;
--
--	if (WARN_ON(patch->enabled))
--		return -EINVAL;
--
--	/* enforce stacking: only the first disabled patch can be enabled */
--	if (patch->list.prev != &klp_patches &&
--	    !list_prev_entry(patch, list)->enabled)
--		return -EBUSY;
--
--	/*
--	 * A reference is taken on the patch module to prevent it from being
--	 * unloaded.
--	 */
--	if (!try_module_get(patch->mod))
--		return -ENODEV;
--
--	pr_notice("enabling patch '%s'\n", patch->mod->name);
--
--	klp_init_transition(patch, KLP_PATCHED);
--
--	/*
--	 * Enforce the order of the func->transition writes in
--	 * klp_init_transition() and the ops->func_stack writes in
--	 * klp_patch_object(), so that klp_ftrace_handler() will see the
--	 * func->transition updates before the handler is registered and the
--	 * new funcs become visible to the handler.
--	 */
--	smp_wmb();
--
--	klp_for_each_object(patch, obj) {
--		if (!klp_is_object_loaded(obj))
--			continue;
--
--		ret = klp_pre_patch_callback(obj);
--		if (ret) {
--			pr_warn("pre-patch callback failed for object '%s'\n",
--				klp_is_module(obj) ? obj->name : "vmlinux");
--			goto err;
--		}
--
--		ret = klp_patch_object(obj);
--		if (ret) {
--			pr_warn("failed to patch object '%s'\n",
--				klp_is_module(obj) ? obj->name : "vmlinux");
--			goto err;
--		}
--	}
--
--	klp_start_transition();
--	klp_try_complete_transition();
--	patch->enabled = true;
--
--	return 0;
--err:
--	pr_warn("failed to enable patch '%s'\n", patch->mod->name);
--
--	klp_cancel_transition();
--	return ret;
--}
--
--/**
-- * klp_enable_patch() - enables a registered patch
-- * @patch:	The registered, disabled patch to be enabled
-- *
-- * Performs the needed symbol lookups and code relocations,
-- * then registers the patched functions with ftrace.
-- *
-- * Return: 0 on success, otherwise error
-- */
--int klp_enable_patch(struct klp_patch *patch)
--{
--	int ret;
--
--	mutex_lock(&klp_mutex);
--
--	if (!klp_is_patch_registered(patch)) {
--		ret = -EINVAL;
--		goto err;
--	}
--
--	ret = __klp_enable_patch(patch);
--
--err:
--	mutex_unlock(&klp_mutex);
--	return ret;
--}
--EXPORT_SYMBOL_GPL(klp_enable_patch);
--
- /*
-  * Sysfs Interface
-  *
-@@ -454,6 +290,8 @@ EXPORT_SYMBOL_GPL(klp_enable_patch);
-  * /sys/kernel/livepatch/<patch>/<object>
-  * /sys/kernel/livepatch/<patch>/<object>/<function,sympos>
+@@ -45,7 +45,8 @@
   */
-+static int __klp_disable_patch(struct klp_patch *patch);
-+static int __klp_enable_patch(struct klp_patch *patch);
+ DEFINE_MUTEX(klp_mutex);
  
- static ssize_t enabled_store(struct kobject *kobj, struct kobj_attribute *attr,
- 			     const char *buf, size_t count)
-@@ -904,6 +742,170 @@ int klp_register_patch(struct klp_patch *patch)
- }
- EXPORT_SYMBOL_GPL(klp_register_patch);
+-static LIST_HEAD(klp_patches);
++/* Registered patches */
++LIST_HEAD(klp_patches);
  
-+static int __klp_disable_patch(struct klp_patch *patch)
-+{
-+	struct klp_object *obj;
-+
-+	if (WARN_ON(!patch->enabled))
-+		return -EINVAL;
-+
-+	if (klp_transition_patch)
-+		return -EBUSY;
-+
-+	/* enforce stacking: only the last enabled patch can be disabled */
-+	if (!list_is_last(&patch->list, &klp_patches) &&
-+	    list_next_entry(patch, list)->enabled)
-+		return -EBUSY;
-+
-+	klp_init_transition(patch, KLP_UNPATCHED);
-+
-+	klp_for_each_object(patch, obj)
-+		if (obj->patched)
-+			klp_pre_unpatch_callback(obj);
-+
-+	/*
-+	 * Enforce the order of the func->transition writes in
-+	 * klp_init_transition() and the TIF_PATCH_PENDING writes in
-+	 * klp_start_transition().  In the rare case where klp_ftrace_handler()
-+	 * is called shortly after klp_update_patch_state() switches the task,
-+	 * this ensures the handler sees that func->transition is set.
-+	 */
-+	smp_wmb();
-+
-+	klp_start_transition();
-+	klp_try_complete_transition();
-+	patch->enabled = false;
-+
-+	return 0;
-+}
-+
-+/**
-+ * klp_disable_patch() - disables a registered patch
-+ * @patch:	The registered, enabled patch to be disabled
-+ *
-+ * Unregisters the patched functions from ftrace.
-+ *
-+ * Return: 0 on success, otherwise error
-+ */
-+int klp_disable_patch(struct klp_patch *patch)
-+{
-+	int ret;
-+
-+	mutex_lock(&klp_mutex);
-+
-+	if (!klp_is_patch_registered(patch)) {
-+		ret = -EINVAL;
-+		goto err;
-+	}
-+
-+	if (!patch->enabled) {
-+		ret = -EINVAL;
-+		goto err;
-+	}
-+
-+	ret = __klp_disable_patch(patch);
-+
-+err:
-+	mutex_unlock(&klp_mutex);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(klp_disable_patch);
-+
-+static int __klp_enable_patch(struct klp_patch *patch)
-+{
-+	struct klp_object *obj;
-+	int ret;
-+
-+	if (klp_transition_patch)
-+		return -EBUSY;
-+
-+	if (WARN_ON(patch->enabled))
-+		return -EINVAL;
-+
-+	/* enforce stacking: only the first disabled patch can be enabled */
-+	if (patch->list.prev != &klp_patches &&
-+	    !list_prev_entry(patch, list)->enabled)
-+		return -EBUSY;
-+
-+	/*
-+	 * A reference is taken on the patch module to prevent it from being
-+	 * unloaded.
-+	 */
-+	if (!try_module_get(patch->mod))
-+		return -ENODEV;
-+
-+	pr_notice("enabling patch '%s'\n", patch->mod->name);
-+
-+	klp_init_transition(patch, KLP_PATCHED);
-+
-+	/*
-+	 * Enforce the order of the func->transition writes in
-+	 * klp_init_transition() and the ops->func_stack writes in
-+	 * klp_patch_object(), so that klp_ftrace_handler() will see the
-+	 * func->transition updates before the handler is registered and the
-+	 * new funcs become visible to the handler.
-+	 */
-+	smp_wmb();
-+
-+	klp_for_each_object(patch, obj) {
-+		if (!klp_is_object_loaded(obj))
-+			continue;
-+
-+		ret = klp_pre_patch_callback(obj);
-+		if (ret) {
-+			pr_warn("pre-patch callback failed for object '%s'\n",
-+				klp_is_module(obj) ? obj->name : "vmlinux");
-+			goto err;
-+		}
-+
-+		ret = klp_patch_object(obj);
-+		if (ret) {
-+			pr_warn("failed to patch object '%s'\n",
-+				klp_is_module(obj) ? obj->name : "vmlinux");
-+			goto err;
-+		}
-+	}
-+
-+	klp_start_transition();
-+	klp_try_complete_transition();
-+	patch->enabled = true;
-+
-+	return 0;
-+err:
-+	pr_warn("failed to enable patch '%s'\n", patch->mod->name);
-+
-+	klp_cancel_transition();
-+	return ret;
-+}
-+
-+/**
-+ * klp_enable_patch() - enables a registered patch
-+ * @patch:	The registered, disabled patch to be enabled
-+ *
-+ * Performs the needed symbol lookups and code relocations,
-+ * then registers the patched functions with ftrace.
-+ *
-+ * Return: 0 on success, otherwise error
-+ */
-+int klp_enable_patch(struct klp_patch *patch)
-+{
-+	int ret;
-+
-+	mutex_lock(&klp_mutex);
-+
-+	if (!klp_is_patch_registered(patch)) {
-+		ret = -EINVAL;
-+		goto err;
-+	}
-+
-+	ret = __klp_enable_patch(patch);
-+
-+err:
-+	mutex_unlock(&klp_mutex);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(klp_enable_patch);
-+
+ static struct kobject *klp_root_kobj;
+ 
+@@ -660,6 +661,7 @@ static int klp_init_patch(struct klp_patch *patch)
+ 	mutex_lock(&klp_mutex);
+ 
+ 	patch->enabled = false;
++	patch->forced = false;
+ 	INIT_LIST_HEAD(&patch->list);
+ 	init_completion(&patch->finish);
+ 
+diff --git a/kernel/livepatch/core.h b/kernel/livepatch/core.h
+index 48a83d4364cf..d0cb5390e247 100644
+--- a/kernel/livepatch/core.h
++++ b/kernel/livepatch/core.h
+@@ -5,6 +5,7 @@
+ #include <linux/livepatch.h>
+ 
+ extern struct mutex klp_mutex;
++extern struct list_head klp_patches;
+ 
+ static inline bool klp_is_object_loaded(struct klp_object *obj)
+ {
+diff --git a/kernel/livepatch/transition.c b/kernel/livepatch/transition.c
+index 982a2e4c6120..30a28634c88c 100644
+--- a/kernel/livepatch/transition.c
++++ b/kernel/livepatch/transition.c
+@@ -33,8 +33,6 @@ struct klp_patch *klp_transition_patch;
+ 
+ static int klp_target_state = KLP_UNDEFINED;
+ 
+-static bool klp_forced = false;
+-
  /*
-  * Remove parts of patches that touch a given kernel module. The list of
-  * patches processed might be limited. When limit is NULL, all patches
+  * This work can be performed periodically to finish patching or unpatching any
+  * "straggler" tasks which failed to transition in the first attempt.
+@@ -137,10 +135,10 @@ static void klp_complete_transition(void)
+ 		  klp_target_state == KLP_PATCHED ? "patching" : "unpatching");
+ 
+ 	/*
+-	 * klp_forced set implies unbounded increase of module's ref count if
++	 * patch->forced set implies unbounded increase of module's ref count if
+ 	 * the module is disabled/enabled in a loop.
+ 	 */
+-	if (!klp_forced && klp_target_state == KLP_UNPATCHED)
++	if (!klp_transition_patch->forced && klp_target_state == KLP_UNPATCHED)
+ 		module_put(klp_transition_patch->mod);
+ 
+ 	klp_target_state = KLP_UNDEFINED;
+@@ -620,6 +618,7 @@ void klp_send_signals(void)
+  */
+ void klp_force_transition(void)
+ {
++	struct klp_patch *patch;
+ 	struct task_struct *g, *task;
+ 	unsigned int cpu;
+ 
+@@ -633,5 +632,6 @@ void klp_force_transition(void)
+ 	for_each_possible_cpu(cpu)
+ 		klp_update_patch_state(idle_task(cpu));
+ 
+-	klp_forced = true;
++	list_for_each_entry(patch, &klp_patches, list)
++		patch->forced = true;
+ }
 -- 
 2.13.7
 
