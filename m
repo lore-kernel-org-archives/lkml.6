@@ -7,57 +7,61 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87655C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:14:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD008C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:14:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27B8B2087E
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:14:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75E972087E
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:14:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B4UwTkHZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27B8B2087E
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QqjEy0pa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75E972087E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727270AbeH2AHy (ORCPT
+        id S1727317AbeH2AH6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 20:07:54 -0400
-Received: from mail-yw1-f73.google.com ([209.85.161.73]:51959 "EHLO
-        mail-yw1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727162AbeH2AHy (ORCPT
+        Tue, 28 Aug 2018 20:07:58 -0400
+Received: from mail-vk0-f73.google.com ([209.85.213.73]:38013 "EHLO
+        mail-vk0-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727162AbeH2AH5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 20:07:54 -0400
-Received: by mail-yw1-f73.google.com with SMTP id v14-v6so1236920ywv.18
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 13:14:39 -0700 (PDT)
+        Tue, 28 Aug 2018 20:07:57 -0400
+Received: by mail-vk0-f73.google.com with SMTP id d134-v6so1114570vkf.5
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 13:14:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=DP44jcAgzuzqx7PHBEa6TDm8OXgTeIVsp9I+xoY7/bI=;
-        b=B4UwTkHZTkeDgTmI/PpAKAdNykiSnMgeZ3uKvfRjsi5EFarAXBLfDDEAJf+L9H56gP
-         jyDOJ5QgmXUEs8C+uPejd+E/Qet4PKfA1BIMytlmnjaI6ieklWPMO6ifqtgHYG9DllYx
-         DMKx056VxPH5f3f/AxXb1wSq5CuHYGPqhX6To6BOSvSSu1As52Sj4zqtmiFYskZQAEhP
-         vpEUtMMcW3mirwTgWMxzT11Du4X9qpnEw+daas6oeCn341xK7rUPNYwI/K56HOdLnAXk
-         FqLVGakW9YXy1jvkyWSi8kzH15fGN/Wz3Sa/ZVxukr5Sz8uON7inpUdtSfiCZlKmTg1M
-         PnUQ==
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=uRAKHZlA0btsCxDvC9F6MjjKyQXLUpbtwbnShrkeMs8=;
+        b=QqjEy0paB2ESV8Eq3Z0vETkQyMFWYL7kKtF/GF8hO4P+n/fyNdczSjh4I9yk7VBXvY
+         CdhV263LIrzgGo+MzHtTLUaUlO3nB8ye5f7YrwPgbLec9ND8WyL3TClkV8zWEvQot1QC
+         YDJ2LcFH7fE8hlvgDKcNHj+7L+QFJhbxV3CamRUr3H6aabclbqrGOtUn24Uli6u9w2sB
+         a7qBwt5as4CNh3pVe6VdAO852f5kqRb4+n9ylOd4wZX/6AJILVnzc4TgZ82WUTcCU4Gp
+         n2hdirYGHToTE8Bn1wxoIOSmqmdOPmgPnZRM7ghWxK/zE5SnF0mfpA0Dc2vaU802MtLJ
+         q3tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=DP44jcAgzuzqx7PHBEa6TDm8OXgTeIVsp9I+xoY7/bI=;
-        b=a0EaU29KXOZDM8SPbmTUAhIxEDF/HOJKNjqMxa4txHeO+HC+o4FT6BRPPYq5q6EZ+x
-         +wlIe6jig12xEEk4tjymNeDrQmbRNQXJ7gdzxa+xk56Bn5nZQgaj3KAjTGk94zckH6ae
-         xFlB5WYzKKlDSClOl13Ny3IPnMe1W95B3L9oIILPBsEYte2MMg9WfkLyeVd8YgBpXuu2
-         298L5WS457Pvc+RKrgcU5F1AMJdN2gBrRrbXZ6vxli6uFW/uaGBRmuhh/M7qiPTmu2UF
-         fSycrizRbwSsdoxRTrW8AfNqgDqfWopDVZ6K0JroW1vYAWSCRJZAM6vIlNJrzyAvZStj
-         T1yQ==
-X-Gm-Message-State: APzg51BkkdVBIWxoWlXq3N8j8OaEnZXEECZDeLkcDATF7Y8LP9bJe3tU
-        2dOeugTh766q+OlWHmCtdnrQMKIrVA==
-X-Google-Smtp-Source: ANB0VdYRRKjW6Xy066i0t+5UAUY5Alw2DPai9CaTWVSNQtMc0GQLt2tszvXKov3cosPeKNZMSUEJpKYoXg==
-X-Received: by 2002:a81:4401:: with SMTP id r1-v6mr908847ywa.85.1535487278839;
- Tue, 28 Aug 2018 13:14:38 -0700 (PDT)
-Date:   Tue, 28 Aug 2018 22:14:14 +0200
-Message-Id: <20180828201421.157735-1-jannh@google.com>
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=uRAKHZlA0btsCxDvC9F6MjjKyQXLUpbtwbnShrkeMs8=;
+        b=diP8vp5p4bW2+sei1bYWURKfQR8VBTlODJWWGUCdnSohR+NCB642GeZKgpuLXCCoxm
+         IGXVAGj+1y0mGFpDf6ol1DGgZRG6cQxZbm8V59XTrIwcAT6gYNAcXbtwnriE/hHaE/+f
+         oKPAUdz8peQyaMWiGLun67eg3kARyDJGifzLc6CG0JqjvUjLfDYBWazw+zsVnNKxE0h9
+         N9gKllj/TW/jtmExP0wNbmKtJipZTe3qtXv+DhJEh6St14pzuhAOy10izK+5AngbZY0Q
+         iosK+BEgXqV1Uz+DJCPd3T0RHjU/TxkTzRyMipJu9LqzYw+uIx0n+e8Cib25Z7gv/6s1
+         BFEA==
+X-Gm-Message-State: APzg51DPcS2JtmCv8GsczmGLczo6RpaiT8zuH+gwuCbiH5zqBOVq6byJ
+        dBaMEXI6Aj1dcORXf87pMdzpPAz4mA==
+X-Google-Smtp-Source: ANB0VdZp/YDJc9C/v0lNpho7kK8NpP0tyQo06S1Yg8u9D8Ds1SiTDfbf4uwei9wnD4CvG4s+hIq1EkqCog==
+X-Received: by 2002:a1f:d382:: with SMTP id k124-v6mr1430418vkg.14.1535487281915;
+ Tue, 28 Aug 2018 13:14:41 -0700 (PDT)
+Date:   Tue, 28 Aug 2018 22:14:15 +0200
+In-Reply-To: <20180828201421.157735-1-jannh@google.com>
+Message-Id: <20180828201421.157735-2-jannh@google.com>
 Mime-Version: 1.0
+References: <20180828201421.157735-1-jannh@google.com>
 X-Mailer: git-send-email 2.19.0.rc0.228.g281dcd1b4d0-goog
-Subject: [PATCH v3 0/7] x86: BUG() on #GP / kernel #PF in uaccess
+Subject: [PATCH v3 1/7] x86: refactor kprobes_fault() like kprobe_exceptions_notify()
 From:   Jann Horn <jannh@google.com>
 To:     Kees Cook <keescook@chromium.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -77,89 +81,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the third version of "[RFC PATCH 1/2] x86: WARN() when uaccess
-helpers fault on kernel addresses".
+This is an extension of commit b506a9d08bae ("x86: code clarification patch
+to Kprobes arch code"). As that commit explains, even though
+kprobe_running() can't be called with preemption enabled, you don't have to
+disable preemption - if preemption is on, you can't be in a kprobe.
 
-Changes since v2:
- - patch 1: avoid unnecessary branch on return value and split up the
-   checks (Borislav Petkov)
- - patch 5: really plumb the error code through to the handlers (Andy)
- - patch 6: whitelist exact_copy_from_user(), at least for now - the
-   alternative would be a somewhat complicated refactor (Kees Cook)
+Also, use X86_TRAP_PF instead of 14.
 
-Expanding on the change in patch 6:
-I believe that for now, whitelisting exact_copy_from_user() is
-acceptable, since there aren't many places that call ksys_mount() under
-KERNEL_DS.
-I very much dislike copy_mount_options()/exact_copy_from_user() and want
-to do something about that code at some point - in particular because it
-currently silently truncates mount options, which seems like a bad idea
-security-wise
-(https://github.com/libfuse/libfuse/commit/34c62ee90c69) -, but I don't
-want to block this series on that.
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+v3:
+ - avoid unnecessary branch on return value and split up the checks
+   (Borislav Petkov)
 
-I hope that exact_copy_from_user() was the only place that does this
-kind of thing under KERNEL_DS - if there might be more places like this,
-it may be necessary for now to change the "return true;" in
-bogus_uaccess() to "WARN(1, ...); return false;" for now, and make it a
-"return true" later. Does anyone have opinions on this?
+ arch/x86/mm/fault.c | 24 +++++++++++++-----------
+ 1 file changed, 13 insertions(+), 11 deletions(-)
 
-This time I've actually also boot-tested a build with vmapped stack, not
-just a KASAN build. (It's annoying that those are mutually exclusive...)
-Kees, I hope you can cleanly boot with this series applied now?
-
-
-See patch 6/7 ("x86: BUG() when uaccess helpers fault on kernel
-addresses") for a description of the motivation for this series.
-
-Patches 1 and 2 are cleanups that I did while working on this
-series, but the series doesn't depend on them. (I first thought these
-cleanups were necessary for the rest of the series, then noticed that
-they actually aren't, but decided to keep them since cleanups are good
-anyway.)
-
-Patches 3, 4 and 5 are prep work; 4 and 5 are loosely based on code
-from the v1 patch. They've changed quite a bit though.
-
-Patch 6 is the main semantic change.
-
-Patch 7 is a small testcase for verifying that patch 6 works.
-
-Jann Horn (7):
-  x86: refactor kprobes_fault() like kprobe_exceptions_notify()
-  x86: inline kprobe_exceptions_notify() into do_general_protection()
-  x86: stop calling fixup_exception() from kprobe_fault_handler()
-  x86: introduce _ASM_EXTABLE_UA for uaccess fixups
-  x86: plumb error code and fault address through to fault handlers
-  x86: BUG() when uaccess helpers fault on kernel addresses
-  lkdtm: test copy_to_user() on bad kernel pointer under KERNEL_DS
-
- arch/x86/include/asm/asm.h          |  10 ++-
- arch/x86/include/asm/extable.h      |   3 +-
- arch/x86/include/asm/fpu/internal.h |   2 +-
- arch/x86/include/asm/futex.h        |   6 +-
- arch/x86/include/asm/ptrace.h       |   2 +
- arch/x86/include/asm/uaccess.h      |  22 ++---
- arch/x86/kernel/cpu/mcheck/mce.c    |   2 +-
- arch/x86/kernel/kprobes/core.c      |  38 +--------
- arch/x86/kernel/traps.c             |  16 +++-
- arch/x86/lib/checksum_32.S          |   4 +-
- arch/x86/lib/copy_user_64.S         |  90 ++++++++++----------
- arch/x86/lib/csum-copy_64.S         |   8 +-
- arch/x86/lib/getuser.S              |  12 +--
- arch/x86/lib/putuser.S              |  10 +--
- arch/x86/lib/usercopy_32.c          | 126 ++++++++++++++--------------
- arch/x86/lib/usercopy_64.c          |   4 +-
- arch/x86/mm/extable.c               | 114 +++++++++++++++++++++----
- arch/x86/mm/fault.c                 |  26 +++---
- drivers/misc/lkdtm/core.c           |   1 +
- drivers/misc/lkdtm/lkdtm.h          |   1 +
- drivers/misc/lkdtm/usercopy.c       |  13 +++
- fs/namespace.c                      |   2 +
- include/linux/sched.h               |   6 ++
- mm/maccess.c                        |   6 ++
- 24 files changed, 314 insertions(+), 210 deletions(-)
-
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index b9123c497e0a..bcdaae1d5bf5 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -44,17 +44,19 @@ kmmio_fault(struct pt_regs *regs, unsigned long addr)
+ 
+ static nokprobe_inline int kprobes_fault(struct pt_regs *regs)
+ {
+-	int ret = 0;
+-
+-	/* kprobe_running() needs smp_processor_id() */
+-	if (kprobes_built_in() && !user_mode(regs)) {
+-		preempt_disable();
+-		if (kprobe_running() && kprobe_fault_handler(regs, 14))
+-			ret = 1;
+-		preempt_enable();
+-	}
+-
+-	return ret;
++	if (!kprobes_built_in())
++		return 0;
++	if (user_mode(regs))
++		return 0;
++	/*
++	 * To be potentially processing a kprobe fault and to be allowed to call
++	 * kprobe_running(), we have to be non-preemptible.
++	 */
++	if (preemptible())
++		return 0;
++	if (!kprobe_running())
++		return 0;
++	return kprobe_fault_handler(regs, X86_TRAP_PF);
+ }
+ 
+ /*
 -- 
 2.19.0.rc0.228.g281dcd1b4d0-goog
 
