@@ -2,130 +2,145 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C58DBC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:35:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A811C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:42:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84A5F2087A
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:35:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84A5F2087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 14BF52084C
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:42:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=birdec.tech header.i=@birdec.tech header.b="ZVeDfo82"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14BF52084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=birdec.tech
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727523AbeH2B3G (ORCPT
+        id S1727367AbeH2Bfm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 21:29:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57348 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727176AbeH2B3F (ORCPT
+        Tue, 28 Aug 2018 21:35:42 -0400
+Received: from host.euro-space.net ([87.117.239.2]:48877 "EHLO
+        host.euro-space.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726998AbeH2Bfm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 21:29:05 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 79C9CC77;
-        Tue, 28 Aug 2018 21:35:31 +0000 (UTC)
-Date:   Tue, 28 Aug 2018 14:35:30 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Oscar Salvador <osalvador@techadventures.net>
-Cc:     mhocko@suse.com, vbabka@suse.cz, Pavel.Tatashin@microsoft.com,
-        sfr@canb.auug.org.au, iamjoonsoo.kim@lge.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
-        Lai Jiangshan <laijs@cn.fujitsu.com>
-Subject: Re: [PATCH] mm/page_alloc: Clean up check_for_memory
-Message-Id: <20180828143530.4b681bf9e0b3c03519fbe943@linux-foundation.org>
-In-Reply-To: <20180828210158.4617-1-osalvador@techadventures.net>
-References: <20180828210158.4617-1-osalvador@techadventures.net>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 28 Aug 2018 21:35:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=birdec.tech
+        ; s=default; h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
+        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=OXN7eFTN3RfuR3y3CCBS3jV78rIhRUEtx6L4PzVtbW8=; b=ZVeDfo82zMDbxF//vXyvbpTAPj
+        T/SaWuhwr4JT/Rfwj+gabFt8vkT8Oim7YqIRboIqB3GUmv4HUQwO9cYwESHHubhfm44GFicuYMOKH
+        S8ZIkdAJH/fz1QoQmw1dSlOp+mAaKidhsGzP2dFXKvy4karM5i4xFKV7MQi5KGPEMynd0YS6D3TZQ
+        9tF9PLH15eHAr+ff2oS28yRJ4ImXvyGalVF+3pTb2qGYoXof8WPxx4y3e4ghF1HgLnbB5PgUAfS0V
+        U1Lr1+LLj01DHKF8OGDAsq8z6GNvyQ5+z6NZbxoewbx2F0cH00OerGbgw2/+bKC4WOop9rUemg6M1
+        ZLvOVwAQ==;
+Received: from x55b35620.dyn.telefonica.de ([85.179.86.32]:36818 helo=gentoo0.localdomain)
+        by host.euro-space.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <kmarinushkin@birdec.tech>)
+        id 1fulkS-00052G-B2; Tue, 28 Aug 2018 22:42:04 +0100
+From:   Kirill Marinushkin <kmarinushkin@birdec.tech>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        M R Swami Reddy <mr.swami.reddy@ti.com>,
+        Vishwas A Deshpande <vishwas.a.deshpande@ti.com>,
+        Kevin Cernekee <cernekee@chromium.org>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        Kirill Marinushkin <kmarinushkin@birdec.tech>
+Subject: [PATCH 1/2] ASoC: pcm3060: Improve stylistics of file comments
+Date:   Tue, 28 Aug 2018 23:42:30 +0200
+Message-Id: <20180828214231.10164-1-kmarinushkin@birdec.tech>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20180828194045.GQ2414@sirena.org.uk>
+References: <20180828194045.GQ2414@sirena.org.uk>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - host.euro-space.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - birdec.tech
+X-Get-Message-Sender-Via: host.euro-space.net: authenticated_id: kmarinushkin@birdec.tech
+X-Authenticated-Sender: host.euro-space.net: kmarinushkin@birdec.tech
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 28 Aug 2018 23:01:58 +0200 Oscar Salvador <osalvador@techadventures.net> wrote:
+Modified the complete file comments in C++ style, to make them look more
+intentional
 
-> From: Oscar Salvador <osalvador@suse.de>
-> 
-> check_for_memory looks a bit confusing.
-> First of all, we have this:
-> 
-> if (N_MEMORY == N_NORMAL_MEMORY)
-> 	return;
-> 
-> Checking the ENUM declaration, looks like N_MEMORY canot be equal to
-> N_NORMAL_MEMORY.
-> I could not find where N_MEMORY is set to N_NORMAL_MEMORY, or the other
-> way around either, so unless I am missing something, this condition 
-> will never evaluate to true.
-> It makes sense to get rid of it.
+Signed-off-by: Kirill Marinushkin <kmarinushkin@birdec.tech>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: alsa-devel@alsa-project.org
+Cc: linux-kernel@vger.kernel.org
+---
+ sound/soc/codecs/pcm3060-i2c.c | 9 ++++-----
+ sound/soc/codecs/pcm3060-spi.c | 9 ++++-----
+ sound/soc/codecs/pcm3060.c     | 9 ++++-----
+ 3 files changed, 12 insertions(+), 15 deletions(-)
 
-Added by
-
-commit 4b0ef1fe8a626f0ba7f649764f979d0dc9eab86b
-Author:     Lai Jiangshan <laijs@cn.fujitsu.com>
-AuthorDate: Wed Dec 12 13:51:46 2012 -0800
-Commit:     Linus Torvalds <torvalds@linux-foundation.org>
-CommitDate: Wed Dec 12 17:38:33 2012 -0800
-
-    page_alloc: use N_MEMORY instead N_HIGH_MEMORY change the node_states initia
-lization
-
-Let's cc Lai Jiangshan, see if he can remmeber the reasoning.
-
-But yes, it does look like im-not-sure-whats-going-on-here
-defensiveness.
-
-> Moving forward, the operations whithin the loop look a bit confusing
-> as well.
-> 
-> We set N_HIGH_MEMORY unconditionally, and then we set N_NORMAL_MEMORY
-> in case we have CONFIG_HIGHMEM (N_NORMAL_MEMORY != N_HIGH_MEMORY)
-> and zone <= ZONE_NORMAL.
-> (N_HIGH_MEMORY falls back to N_NORMAL_MEMORY on !CONFIG_HIGHMEM systems,
-> and that is why we can just go ahead and set N_HIGH_MEMORY unconditionally)
-> 
-> Although this works, it is a bit subtle.
-> 
-> I think that this could be easier to follow:
-> 
-> First, we should only set N_HIGH_MEMORY in case we have
-> CONFIG_HIGHMEM.
-
-Why?  Just a teeny optimization?
-
-> And then we should set N_NORMAL_MEMORY in case zone <= ZONE_NORMAL,
-> without further checking whether we have CONFIG_HIGHMEM or not.
-> 
-> Signed-off-by: Oscar Salvador <osalvador@suse.de>
-> ---
->  mm/page_alloc.c | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
-> 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 839e0cc17f2c..6aa947f9e614 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -6819,15 +6819,12 @@ static void check_for_memory(pg_data_t *pgdat, int nid)
->  {
->  	enum zone_type zone_type;
->  
-> -	if (N_MEMORY == N_NORMAL_MEMORY)
-> -		return;
-> -
->  	for (zone_type = 0; zone_type <= ZONE_MOVABLE - 1; zone_type++) {
->  		struct zone *zone = &pgdat->node_zones[zone_type];
->  		if (populated_zone(zone)) {
-> -			node_set_state(nid, N_HIGH_MEMORY);
-> -			if (N_NORMAL_MEMORY != N_HIGH_MEMORY &&
-> -			    zone_type <= ZONE_NORMAL)
-> +			if (IS_ENABLED(CONFIG_HIGHMEM))
-> +				node_set_state(nid, N_HIGH_MEMORY);
-> +			if (zone_type <= ZONE_NORMAL)
->  				node_set_state(nid, N_NORMAL_MEMORY);
->  			break;
->  		}
+diff --git a/sound/soc/codecs/pcm3060-i2c.c b/sound/soc/codecs/pcm3060-i2c.c
+index 03d2b4323626..cdc8314882bc 100644
+--- a/sound/soc/codecs/pcm3060-i2c.c
++++ b/sound/soc/codecs/pcm3060-i2c.c
+@@ -1,9 +1,8 @@
+ // SPDX-License-Identifier: GPL-2.0
+-/*
+- * PCM3060 I2C driver
+- *
+- * Copyright (C) 2018 Kirill Marinushkin <kmarinushkin@birdec.tech>
+- */
++//
++// PCM3060 I2C driver
++//
++// Copyright (C) 2018 Kirill Marinushkin <kmarinushkin@birdec.tech>
+ 
+ #include <linux/i2c.h>
+ #include <linux/module.h>
+diff --git a/sound/soc/codecs/pcm3060-spi.c b/sound/soc/codecs/pcm3060-spi.c
+index 8961e095ae73..f6f19fa80932 100644
+--- a/sound/soc/codecs/pcm3060-spi.c
++++ b/sound/soc/codecs/pcm3060-spi.c
+@@ -1,9 +1,8 @@
+ // SPDX-License-Identifier: GPL-2.0
+-/*
+- * PCM3060 SPI driver
+- *
+- * Copyright (C) 2018 Kirill Marinushkin <kmarinushkin@birdec.tech>
+- */
++//
++// PCM3060 SPI driver
++//
++// Copyright (C) 2018 Kirill Marinushkin <kmarinushkin@birdec.tech>
+ 
+ #include <linux/module.h>
+ #include <linux/spi/spi.h>
+diff --git a/sound/soc/codecs/pcm3060.c b/sound/soc/codecs/pcm3060.c
+index ef7c627c9ac5..5b9718fa766d 100644
+--- a/sound/soc/codecs/pcm3060.c
++++ b/sound/soc/codecs/pcm3060.c
+@@ -1,9 +1,8 @@
+ // SPDX-License-Identifier: GPL-2.0
+-/*
+- * PCM3060 codec driver
+- *
+- * Copyright (C) 2018 Kirill Marinushkin <kmarinushkin@birdec.tech>
+- */
++//
++// PCM3060 codec driver
++//
++// Copyright (C) 2018 Kirill Marinushkin <kmarinushkin@birdec.tech>
+ 
+ #include <linux/module.h>
+ #include <sound/pcm_params.h>
+-- 
+2.13.6
 
