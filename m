@@ -7,65 +7,64 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AF90C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:58:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 917D7C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:58:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 303EB20891
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:58:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E2DE2087D
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:58:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AzVPb+Gv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 303EB20891
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gmOazeFN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E2DE2087D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727990AbeH1OtR (ORCPT
+        id S1728007AbeH1OtU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 10:49:17 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:45329 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727843AbeH1OtR (ORCPT
+        Tue, 28 Aug 2018 10:49:20 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:39596 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727843AbeH1OtU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 10:49:17 -0400
-Received: by mail-pg1-f194.google.com with SMTP id m4-v6so567470pgv.12;
-        Tue, 28 Aug 2018 03:58:11 -0700 (PDT)
+        Tue, 28 Aug 2018 10:49:20 -0400
+Received: by mail-pl1-f196.google.com with SMTP id w14-v6so571920plp.6;
+        Tue, 28 Aug 2018 03:58:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=BShs/B7WbmjGF339oaZcnn6uTeYWtvRJSOdxcgoD9c4=;
-        b=AzVPb+GvYrITOgWhPr3GMeSUDIHQ0oS0z8Mlb+FS2keNEI8KQ8Q2I2+qT6uHAUWNve
-         kO1eOe9mj24wbWUyRMaQot3EYRnFpK2U5Gjk5BYZrUqqCIPG7apguPPd8KRRqJ+Twrk/
-         AcPc5WDeXq6mC8dMkfAU7TGOk/NZuePwOjTnMKgIT9DHHEMq8eeMF1hx6G5qqhnillX/
-         D0NeQrMct7OsBQqfod8AJRYyGce4SBkjlm2WXdpx1IuHZRbl97TMhuJxCBY6Kj5rXVwa
-         GzlklquWRz+YP4kIseo9dDPHUtfqRCxR/FVxjigerbeV+swAWmUtTrOUEDkeDlrn2Qjy
-         crAw==
+        bh=weOadS4lpPoQPgGDTcJ/9TW9J6/Vv9yYEu24IdrbEIs=;
+        b=gmOazeFNGG6maF0uWq9wPRzHK4UEYJEk+KWMJ8BAuy8WswTvgxmEDFX+gSY1cN91Gk
+         NVmvvl+L1+nh+pEk0T7ixyo47f2Z2+YkoNVpnjMn11SGIg4Tq/LwgMNPcKZMLcaVNJsa
+         3RRq7pW2cjMxuYpEit9HeZzJD1hXo6v3meKQunNXd7YNcYutEqseYFn+aYrNUltUnBTg
+         JALlkwVMcv/CYw2qeImLapk/twz9P1L21bGlb0X47eJA6JVNt0GR21Z7i6ViGPuEpP7D
+         ZK6MdIgop53nYE/hdenptl6JyX5YzrB8VPvT9sLij0iydsfJsmXgzHwCOWDE6gI/kGu+
+         ur7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=BShs/B7WbmjGF339oaZcnn6uTeYWtvRJSOdxcgoD9c4=;
-        b=hbXlGYkaaivQ9Ffy+ZbYcuLMsNh4LRxXA1y01OoFOzTy+kfb3H6Dl2eCe6u29n7RAp
-         W3eAILoWhTyfUldSPH8F2znqYfzieBjIrrTXldoIm/uC1ANdscr9KTa4Jtz7+Hj/1vns
-         ZzYXAs3mCbMqwyGW22D+o4sYvaCRKbeX9TsYksyXTnwBSrPg8RE1xLRYa9DFCiqh0i3T
-         buggsaKIzC/AKW+2f2X19gJ8uEPUu3rMiv7o7/fZdUTnSXGDyMcRV+lYQiZ0RmFy2TGt
-         GBnRRAJlOmT4wGvvxYXE/Oo4cAfdCEoDTm3lCuW2OKxDvYw/MbAye6yoUIGFW0KLGbQb
-         3ukw==
-X-Gm-Message-State: APzg51BuEDsYxDGATPKxzYGRl3vLoD5CgAeQOfBPjv4NvesDkhcw/Ywt
-        kbTnyPY7a2bk6GpqEfVNiCtchsN9
-X-Google-Smtp-Source: ANB0VdYe4r9tGq4w9Y0MBdvDYvrBSBr+pYf5wwSWubBePElqxHXUNyvD/9P4T6BeVOyNJ7yIP2oZtA==
-X-Received: by 2002:a65:420c:: with SMTP id c12-v6mr996031pgq.405.1535453890964;
-        Tue, 28 Aug 2018 03:58:10 -0700 (PDT)
+        bh=weOadS4lpPoQPgGDTcJ/9TW9J6/Vv9yYEu24IdrbEIs=;
+        b=Z0MwYTc/WougEKEhAQlXF1lmyCRuQspE1431HEOTsGzv+myLtMKGyQavhZJl83iWk8
+         W/SidOUT893kpIy3FVIixJ2kN5wiISwLyYWSp2Xw1a/SnjiK3Teu4KlMNF0NKCs5w7gy
+         hAqDWCBnstFhwHJz6wDWGa1WKJ2/ixp/Vvmxc5vCfpg7tB7iWzcM6jPukzROB5REKo0n
+         W1jMZIEtmRaowP79SJ/4SQeBgmi1YX+H38hGKVVsE3sI/1/qp+XOdOyNd3ph4EO0O/Pw
+         UOWpiGPah/A8+GFuxXnpRHPyDdOi2OQCBSzJMVXGWqK75GYCDQpff72hFCUu/r5EUj+w
+         j9Uw==
+X-Gm-Message-State: APzg51DLnX3+qMDGrD1wUrsaZ5DLEPifMYhNF5xHEP9Xmq95bqDdsM0k
+        zs7bYqziBu42Q0RBTeVxlkxG80eO
+X-Google-Smtp-Source: ANB0Vdbm8irCtA95hsW10VfU/AhyZ6AiGunYnFTXEK9OJJ+D+CGDWHL0znorJRs2pok36FsLfF4qkg==
+X-Received: by 2002:a17:902:8ec7:: with SMTP id x7-v6mr1033603plo.336.1535453894058;
+        Tue, 28 Aug 2018 03:58:14 -0700 (PDT)
 Received: from machine421.caveonetworks.com ([115.113.156.2])
-        by smtp.googlemail.com with ESMTPSA id n22-v6sm2946798pfj.68.2018.08.28.03.58.07
+        by smtp.googlemail.com with ESMTPSA id n22-v6sm2946798pfj.68.2018.08.28.03.58.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 28 Aug 2018 03:58:10 -0700 (PDT)
+        Tue, 28 Aug 2018 03:58:13 -0700 (PDT)
 From:   sunil.kovvuri@gmail.com
 To:     linux-kernel@vger.kernel.org, arnd@arndb.de, olof@lixom.net
 Cc:     linux-arm-kernel@lists.infradead.org, linux-soc@vger.kernel.org,
-        Geetha sowjanya <gakula@marvell.com>,
         Sunil Goutham <sgoutham@marvell.com>
-Subject: [PATCH 10/15] soc: octeontx2: Reconfig MSIX base with IOVA
-Date:   Tue, 28 Aug 2018 16:27:13 +0530
-Message-Id: <1535453838-12154-11-git-send-email-sunil.kovvuri@gmail.com>
+Subject: [PATCH 11/15] soc: octeontx2: Add Marvell OcteonTX2 CGX driver
+Date:   Tue, 28 Aug 2018 16:27:14 +0530
+Message-Id: <1535453838-12154-12-git-send-email-sunil.kovvuri@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1535453838-12154-1-git-send-email-sunil.kovvuri@gmail.com>
 References: <1535453838-12154-1-git-send-email-sunil.kovvuri@gmail.com>
@@ -74,97 +73,208 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geetha sowjanya <gakula@marvell.com>
+From: Sunil Goutham <sgoutham@marvell.com>
 
-HW interprets RVU_AF_MSIXTR_BASE address as an IOVA, hence
-create a IOMMU mapping for the physcial address configured by
-firmware and reconfig RVU_AF_MSIXTR_BASE with IOVA.
+This patch adds basic template for Marvell OcteonTX2's
+CGX ethernet interface driver. Just the probe.
+RVU AF driver will use APIs exported by this driver
+for various things like PF to physical interface mapping,
+loopback mode, interface stats etc.
 
-Signed-off-by: Geetha sowjanya <gakula@marvell.com>
 Signed-off-by: Sunil Goutham <sgoutham@marvell.com>
 ---
- drivers/soc/marvell/octeontx2/rvu.c | 33 ++++++++++++++++++++++++++++++---
- drivers/soc/marvell/octeontx2/rvu.h |  1 +
- 2 files changed, 31 insertions(+), 3 deletions(-)
+ drivers/soc/marvell/Kconfig            |  10 +++
+ drivers/soc/marvell/octeontx2/Makefile |   2 +
+ drivers/soc/marvell/octeontx2/cgx.c    | 117 +++++++++++++++++++++++++++++++++
+ drivers/soc/marvell/octeontx2/cgx.h    |  20 ++++++
+ 4 files changed, 149 insertions(+)
+ create mode 100644 drivers/soc/marvell/octeontx2/cgx.c
+ create mode 100644 drivers/soc/marvell/octeontx2/cgx.h
 
-diff --git a/drivers/soc/marvell/octeontx2/rvu.c b/drivers/soc/marvell/octeontx2/rvu.c
-index 8ac3524..40684c9 100644
---- a/drivers/soc/marvell/octeontx2/rvu.c
-+++ b/drivers/soc/marvell/octeontx2/rvu.c
-@@ -442,9 +442,10 @@ static int rvu_setup_msix_resources(struct rvu *rvu)
- {
- 	struct rvu_hwinfo *hw = rvu->hw;
- 	int pf, vf, numvfs, hwvf, err;
-+	int nvecs, offset, max_msix;
- 	struct rvu_pfvf *pfvf;
--	int nvecs, offset;
--	u64 cfg;
-+	u64 cfg, phy_addr;
-+	dma_addr_t iova;
+diff --git a/drivers/soc/marvell/Kconfig b/drivers/soc/marvell/Kconfig
+index 4499caf..73c8f8d 100644
+--- a/drivers/soc/marvell/Kconfig
++++ b/drivers/soc/marvell/Kconfig
+@@ -7,7 +7,17 @@ menu "Marvell SoC drivers"
+ config OCTEONTX2_AF
+ 	tristate "OcteonTX2 RVU Admin Function driver"
+ 	depends on ARM64 && PCI
++	select OCTEONTX2_CGX
+ 	help
+ 	  This driver supports Marvell's OcteonTX2 Resource Virtualization
+ 	  Unit's admin function manager which manages all RVU HW resources.
++
++config OCTEONTX2_CGX
++	tristate "OcteonTX2 MAC interface (CGX) driver"
++	depends on ARM64 && PCI
++	select PHYLIB
++	help
++	  This driver supports programming and controlling of MAC
++	  interfaces from RVU Admin Function driver.
++
+ endmenu
+diff --git a/drivers/soc/marvell/octeontx2/Makefile b/drivers/soc/marvell/octeontx2/Makefile
+index 8737ec3..50b8f74 100644
+--- a/drivers/soc/marvell/octeontx2/Makefile
++++ b/drivers/soc/marvell/octeontx2/Makefile
+@@ -3,6 +3,8 @@
+ # Makefile for Marvell's OcteonTX2 RVU Admin Function driver
+ #
  
- 	for (pf = 0; pf < hw->total_pfs; pf++) {
- 		cfg = rvu_read64(rvu, BLKADDR_RVUM, RVU_PRIV_PFX_CFG(pf));
-@@ -523,6 +524,22 @@ static int rvu_setup_msix_resources(struct rvu *rvu)
- 		}
- 	}
++obj-$(CONFIG_OCTEONTX2_CGX) += octeontx2_cgx.o
+ obj-$(CONFIG_OCTEONTX2_AF) += octeontx2_af.o
  
-+	/* HW interprets RVU_AF_MSIXTR_BASE address as an IOVA, hence
-+	 * create a IOMMU mapping for the physcial address configured by
-+	 * firmware and reconfig RVU_AF_MSIXTR_BASE with IOVA.
-+	 */
-+	cfg = rvu_read64(rvu, BLKADDR_RVUM, RVU_PRIV_CONST);
-+	max_msix = cfg & 0xFFFFF;
-+	phy_addr = rvu_read64(rvu, BLKADDR_RVUM, RVU_AF_MSIXTR_BASE);
-+	iova = dma_map_single(rvu->dev, (void *)phy_addr,
-+			      max_msix * PCI_MSIX_ENTRY_SIZE,
-+			      DMA_BIDIRECTIONAL);
-+	if (dma_mapping_error(rvu->dev, iova))
++octeontx2_cgx-y := cgx.o
+ octeontx2_af-y := rvu.o mbox.o
+diff --git a/drivers/soc/marvell/octeontx2/cgx.c b/drivers/soc/marvell/octeontx2/cgx.c
+new file mode 100644
+index 0000000..6f0b6f4
+--- /dev/null
++++ b/drivers/soc/marvell/octeontx2/cgx.c
+@@ -0,0 +1,117 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Marvell OcteonTx2 CGX driver
++ *
++ * Copyright (C) 2018 Marvell International Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/acpi.h>
++#include <linux/module.h>
++#include <linux/interrupt.h>
++#include <linux/pci.h>
++#include <linux/netdevice.h>
++#include <linux/etherdevice.h>
++#include <linux/phy.h>
++#include <linux/of.h>
++#include <linux/of_mdio.h>
++#include <linux/of_net.h>
++
++#include "cgx.h"
++
++#define DRV_NAME	"octeontx2-cgx"
++#define DRV_STRING      "Marvell OcteonTX2 CGX/MAC Driver"
++#define DRV_VERSION	"1.0"
++
++struct cgx {
++	void __iomem		*reg_base;
++	struct pci_dev		*pdev;
++	u8			cgx_id;
++};
++
++/* Supported devices */
++static const struct pci_device_id cgx_id_table[] = {
++	{ PCI_DEVICE(PCI_VENDOR_ID_CAVIUM, PCI_DEVID_OCTEONTX2_CGX) },
++	{ 0, }  /* end of table */
++};
++
++MODULE_AUTHOR("Marvell International Ltd.");
++MODULE_DESCRIPTION(DRV_STRING);
++MODULE_LICENSE("GPL v2");
++MODULE_VERSION(DRV_VERSION);
++MODULE_DEVICE_TABLE(pci, cgx_id_table);
++
++static int cgx_probe(struct pci_dev *pdev, const struct pci_device_id *id)
++{
++	int err;
++	struct device *dev = &pdev->dev;
++	struct cgx *cgx;
++
++	cgx = devm_kzalloc(dev, sizeof(*cgx), GFP_KERNEL);
++	if (!cgx)
 +		return -ENOMEM;
++	cgx->pdev = pdev;
 +
-+	rvu_write64(rvu, BLKADDR_RVUM, RVU_AF_MSIXTR_BASE, (u64)iova);
-+	rvu->msix_base_iova = iova;
++	pci_set_drvdata(pdev, cgx);
 +
- 	return 0;
- }
- 
-@@ -531,7 +548,8 @@ static void rvu_free_hw_resources(struct rvu *rvu)
- 	struct rvu_hwinfo *hw = rvu->hw;
- 	struct rvu_block *block;
- 	struct rvu_pfvf  *pfvf;
--	int id;
-+	int id, max_msix;
-+	u64 cfg;
- 
- 	/* Free block LF bitmaps */
- 	for (id = 0; id < BLK_COUNT; id++) {
-@@ -549,6 +567,15 @@ static void rvu_free_hw_resources(struct rvu *rvu)
- 		pfvf = &rvu->hwvf[id];
- 		kfree(pfvf->msix.bmap);
- 	}
++	err = pci_enable_device(pdev);
++	if (err) {
++		dev_err(dev, "Failed to enable PCI device\n");
++		pci_set_drvdata(pdev, NULL);
++		return err;
++	}
 +
-+	/* Unmap MSIX vector base IOVA mapping */
-+	if (!rvu->msix_base_iova)
-+		return;
-+	cfg = rvu_read64(rvu, BLKADDR_RVUM, RVU_PRIV_CONST);
-+	max_msix = cfg & 0xFFFFF;
-+	dma_unmap_single(rvu->dev, rvu->msix_base_iova,
-+			 max_msix * PCI_MSIX_ENTRY_SIZE,
-+			 DMA_BIDIRECTIONAL);
- }
- 
- static int rvu_setup_hw_resources(struct rvu *rvu)
-diff --git a/drivers/soc/marvell/octeontx2/rvu.h b/drivers/soc/marvell/octeontx2/rvu.h
-index 7435e83..92c2022 100644
---- a/drivers/soc/marvell/octeontx2/rvu.h
-+++ b/drivers/soc/marvell/octeontx2/rvu.h
-@@ -99,6 +99,7 @@ struct rvu {
- 	u16			num_vec;
- 	char			*irq_name;
- 	bool			*irq_allocated;
-+	dma_addr_t		msix_base_iova;
- };
- 
- static inline void rvu_write64(struct rvu *rvu, u64 block, u64 offset, u64 val)
++	err = pci_request_regions(pdev, DRV_NAME);
++	if (err) {
++		dev_err(dev, "PCI request regions failed 0x%x\n", err);
++		goto err_disable_device;
++	}
++
++	/* MAP configuration registers */
++	cgx->reg_base = pcim_iomap(pdev, PCI_CFG_REG_BAR_NUM, 0);
++	if (!cgx->reg_base) {
++		dev_err(dev, "CGX: Cannot map CSR memory space, aborting\n");
++		err = -ENOMEM;
++		goto err_release_regions;
++	}
++
++	return 0;
++
++err_release_regions:
++	pci_release_regions(pdev);
++err_disable_device:
++	pci_disable_device(pdev);
++	pci_set_drvdata(pdev, NULL);
++	return err;
++}
++
++static void cgx_remove(struct pci_dev *pdev)
++{
++	pci_release_regions(pdev);
++	pci_disable_device(pdev);
++	pci_set_drvdata(pdev, NULL);
++}
++
++static struct pci_driver cgx_driver = {
++	.name = DRV_NAME,
++	.id_table = cgx_id_table,
++	.probe = cgx_probe,
++	.remove = cgx_remove,
++};
++
++static int __init cgx_init_module(void)
++{
++	pr_info("%s: %s\n", DRV_NAME, DRV_STRING);
++
++	return pci_register_driver(&cgx_driver);
++}
++
++static void __exit cgx_cleanup_module(void)
++{
++	pci_unregister_driver(&cgx_driver);
++}
++
++module_init(cgx_init_module);
++module_exit(cgx_cleanup_module);
+diff --git a/drivers/soc/marvell/octeontx2/cgx.h b/drivers/soc/marvell/octeontx2/cgx.h
+new file mode 100644
+index 0000000..8056264
+--- /dev/null
++++ b/drivers/soc/marvell/octeontx2/cgx.h
+@@ -0,0 +1,20 @@
++/* SPDX-License-Identifier: GPL-2.0
++ * Marvell OcteonTx2 CGX driver
++ *
++ * Copyright (C) 2018 Marvell International Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#ifndef CGX_H
++#define CGX_H
++
++ /* PCI device IDs */
++#define	PCI_DEVID_OCTEONTX2_CGX			0xA059
++
++/* PCI BAR nos */
++#define PCI_CFG_REG_BAR_NUM			0
++
++#endif /* CGX_H */
 -- 
 2.7.4
 
