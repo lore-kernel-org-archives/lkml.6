@@ -7,113 +7,109 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04EF8C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 18:55:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEB1FC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 18:55:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BC0D20880
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 18:55:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50A6820856
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 18:55:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vXIvRPYm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BC0D20880
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eS/l6slx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50A6820856
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727176AbeH1Wss (ORCPT
+        id S1727236AbeH1Wsu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 18:48:48 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:45507 "EHLO
+        Tue, 28 Aug 2018 18:48:50 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:40830 "EHLO
         mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726961AbeH1Wss (ORCPT
+        with ESMTP id S1726961AbeH1Wst (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 18:48:48 -0400
-Received: by mail-ed1-f66.google.com with SMTP id p52-v6so2126309eda.12
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 11:55:49 -0700 (PDT)
+        Tue, 28 Aug 2018 18:48:49 -0400
+Received: by mail-ed1-f66.google.com with SMTP id e19-v6so2132778edq.7
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 11:55:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=uM0DCHXgGC1ut9Rfcytdnuu0/9NTjUhcAJ6qk5MuKUU=;
-        b=vXIvRPYmCX/spBIOpWT9aCrHr6FMA2ztEQ8BEPVtuT9lUVbypiVAb2ZDUY9l+glrU7
-         fO0cxoQRKHmMHuHhXft9UQtetR6ZlVCqNqJIEe2XPazHjpVNBTrqgyoa4qlnpa5WW85s
-         8yhlL/oitb7GNvq7j+QvByYeG5eTzvw5adVnfuDEIyuQKWYUflzeoO98hl1ZBjAQWl0M
-         ozxMOiFYVCs+jm9kpJCJ6Q3qLWOI1FB0cF5FcJMfmHZs5XqvQEVGL0mhy4kB/WqWDGly
-         Z2Xvwi682CTZ4hAwN2kNtC0enTmTxRW5x6gJ8kraict/WUhCLtOijodMqXvPwP0de8qg
-         8zcw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=8/9KyDkWw/UevIrWG1PjWY5YJUHkIawCXkIPoAOmBFk=;
+        b=eS/l6slxBidHshZroc3jMq7zxwvmxQeMV+17o+czSbs9nS9dK5L3nzTEXAKWz46+Tq
+         oBb51SFHG1uKgrblRL+BJQbczOzA4zcFN+heqp8btA5UGepNCEyr/UBbdzagpeC+/Gkk
+         VXBeqi6m/Bc5FhMPMuJ6aTQdJ9ZghrA8kGwD8jIxtdlQ8HT91oOvUfmxuR2LaYQNj0CS
+         GF3KJo4GYv3KIZciKsaAkhupNqIWWFGsNg+0gStIdUGeaDN+bRC7HudsZWxcTxmnYz3g
+         0cxeqtNIDiIH/mxK2fyLrLKnGCyhJowkU1r7r6TMhPMDmVBYzNk9IXCee3fvU1srYFcW
+         tugg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=uM0DCHXgGC1ut9Rfcytdnuu0/9NTjUhcAJ6qk5MuKUU=;
-        b=cfW79JCKe8atEG9XpGsE4khg1FdPvmL4gVrux9cLYWoSKbQjYQNcaECdT6n7qEo2zm
-         AYFEdzx+MKG2TfDNencK2ggKEcBYcevxlSgxhs4akDiXYzn+j21C9cumym/KdAaOgnPz
-         b0mi+KVdsPYGdvHZH7lVbhmLDMXPxgo1k9RR9xm8mwVBYF0/i1EWuIJmePyGy7T22Sjf
-         alDeHGmlPj2B9pGYc+sKUNpIxw669GnydTNxCDV1xP6IcEy4N7eN/dos+fYvdwFtbLh2
-         1yBWpcI1xvQFhReowJd09JRstMd/JlObh8OuhwBCxpYdAr02eyw6Q3uTO92YEXus6eRx
-         3cxQ==
-X-Gm-Message-State: APzg51BXaMPUVdJkDg4MIjZmr5d/4YJO6dyjNU65CxGDSkdaeIUyqaqs
-        0tF8Q5BzGcS4adR0DRrN/Z/yP9Gp
-X-Google-Smtp-Source: ANB0VdZvNAJx5fkqUEDurN06XrEgDK6wO4dYdY85Tw0EFg5xA2SqGbmANOK2LVVD5BgzSeoTGFKHhw==
-X-Received: by 2002:aa7:c5cd:: with SMTP id h13-v6mr3854979eds.27.1535482548501;
-        Tue, 28 Aug 2018 11:55:48 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=8/9KyDkWw/UevIrWG1PjWY5YJUHkIawCXkIPoAOmBFk=;
+        b=KpFSy7iVhk4DLlmkeCNbDhF+7uWVtfyAv+a9FNTSCJbPpxdCz+GF6zPRQtjVcXr7M2
+         oyPzgo0/FC1lj5Up5dVo/tcmnrCHuXN/SgU2UvRH4kBzjt4piO0J6LJuEaCM7Lqflo92
+         w3KvgoANNc7gdnquXwptBIyq1Jk7afdPDqBxt997Bmw5GqaN3FwA7STPh/HceZeIK+ko
+         fAydxEtZEBosGOO1veBqauJF4rEfpOePfdOFzKHq7F4z7a7nvk+aQNpsroWnw3DJ3ZYe
+         wW+G+7j2BCXDdgI1XKKVQH9BGwpKyBCYjXDfFPmeOD8kNTFbYqLwlMy5EYFGKsmnuXaS
+         Cccw==
+X-Gm-Message-State: APzg51AdxACfjt1vZDEbAK5aBgpcpzWmdO/ATRR2K/1ZmtZcNO7ZcBBs
+        XyUYgBKAv88RMNL6w2LA18e6N0uh
+X-Google-Smtp-Source: ANB0VdYAHgd3aeMde86h4AmwEEe/ibQkFmbHv/tZ/JbmHvmAdNanNNzOXuIKmQ/J1UvMOEcwGy6Wjg==
+X-Received: by 2002:a50:fc90:: with SMTP id f16-v6mr3948643edq.149.1535482550030;
+        Tue, 28 Aug 2018 11:55:50 -0700 (PDT)
 Received: from localhost.localdomain ([109.79.175.209])
-        by smtp.gmail.com with ESMTPSA id o24-v6sm742975edr.64.2018.08.28.11.55.46
+        by smtp.gmail.com with ESMTPSA id o24-v6sm742975edr.64.2018.08.28.11.55.48
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 Aug 2018 11:55:47 -0700 (PDT)
+        Tue, 28 Aug 2018 11:55:49 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 0/4] staging:rtl8192u: Style and a question?
-Date:   Tue, 28 Aug 2018 19:55:31 +0100
-Message-Id: <20180828185535.28808-1-johnfwhitmore@gmail.com>
+Subject: [PATCH 1/4] staging:rtl8192u: Remove unused definitions - Style
+Date:   Tue, 28 Aug 2018 19:55:32 +0100
+Message-Id: <20180828185535.28808-2-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180828185535.28808-1-johnfwhitmore@gmail.com>
+References: <20180828185535.28808-1-johnfwhitmore@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This short series of coding style changes clears the remaining checkpatch
-issues in the files r8180_93cx6.h and dot11d.h. The file dot11d.h does
-still contain lines over the 80 character limit, but most of these lines
-are MACRO definitions, and I'm not sure splitting them will add anything
-to the style and readability of the code.
+Remove unused definitions from the file r8180_93cx6.h.
 
-My question is with respect to the member variable 'enabled' which has
-been refactored in the third patch of the series. I've renamed the
-variable to 'dot11d_enabled', (in addition to changing it's type as
-suggested by checkpatch), so that it is easier to search for in code.
-Now that it is easier to search for 'dot11d_enabled' and it's associated
-macro IS_DOT11D_ENABLE(ieee) it becomes apparent that the variable is
-initialised to FALSE, (and elsewhere '0'), but appears never to be set.
+This is a coding style change which should have no impact on runtime
+code execution.
 
-The function dot11d_update_country_ie(), in file dot11d.c, states in its
-header block comment that it assumes that the value of dot11d_enabled is
-true.
+Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
+---
+ drivers/staging/rtl8192u/r8180_93cx6.h | 18 ------------------
+ 1 file changed, 18 deletions(-)
 
-The dot11d_info structure is allocated:
-
-ieee->dot11d_info = kzalloc(sizeof(struct rt_dot11d_info), GFP_KERNEL);
-
-And dot11d_enabled could be set with a memcopy or a memset, but if it
-is being set I've missed it completely. There may be a kernel specific
-mechanism which I'm not yet familiar with?
-
-In my ignorance I'd be tempted to remove all code which relies on the
-variable being True, but then that function dot11d_update_country_ie()
-specifically assumes it's true and is an exported symbol.
-
-John Whitmore (4):
-  staging:rtl8192u: Remove unused definitions - Style
-  staging:rtl8192u: Add required SPDX-License-Identifier - Style
-  staging:rtl8192u: Refactor member variable enabled - Style
-  staging:rtl8192u: Rename member pDot11dInfo - Style
-
- drivers/staging/rtl8192u/ieee80211/dot11d.c   | 66 +++++++++----------
- drivers/staging/rtl8192u/ieee80211/dot11d.h   |  6 +-
- .../staging/rtl8192u/ieee80211/ieee80211.h    |  2 +-
- .../rtl8192u/ieee80211/ieee80211_softmac.c    |  8 +--
- drivers/staging/rtl8192u/r8180_93cx6.h        | 19 +-----
- drivers/staging/rtl8192u/r8192U_core.c        |  2 +-
- 6 files changed, 43 insertions(+), 60 deletions(-)
-
+diff --git a/drivers/staging/rtl8192u/r8180_93cx6.h b/drivers/staging/rtl8192u/r8180_93cx6.h
+index 643d465e7105..bfbef1a16159 100644
+--- a/drivers/staging/rtl8192u/r8180_93cx6.h
++++ b/drivers/staging/rtl8192u/r8180_93cx6.h
+@@ -21,22 +21,4 @@
+ 
+ #define EPROM_DELAY 10
+ 
+-#define EPROM_ANAPARAM_ADDRLWORD 0xd
+-#define EPROM_ANAPARAM_ADDRHWORD 0xe
+-
+-#define EPROM_RFCHIPID 0x6
+-#define EPROM_TXPW_BASE 0x05
+-#define EPROM_RFCHIPID_RTL8225U 5
+-#define EPROM_RF_PARAM 0x4
+-#define EPROM_CONFIG2 0xc
+-
+-#define EPROM_VERSION 0x1E
+-#define MAC_ADR 0x7
+-
+-#define CIS 0x18
+-
+-#define EPROM_TXPW0 0x16
+-#define EPROM_TXPW2 0x1b
+-#define EPROM_TXPW1 0x3d
+-
+ int eprom_read(struct net_device *dev, u32 addr); /* reads a 16 bits word */
 -- 
 2.18.0
 
