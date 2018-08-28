@@ -2,117 +2,81 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B77FC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:33:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2166EC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:39:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 567BF20659
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:33:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jaMBoxKo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 567BF20659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C9B4E20850
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:39:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9B4E20850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727490AbeH1VZ4 (ORCPT
+        id S1727228AbeH1VcX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 17:25:56 -0400
-Received: from mail-oi0-f42.google.com ([209.85.218.42]:45015 "EHLO
-        mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727410AbeH1VZ4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 17:25:56 -0400
-Received: by mail-oi0-f42.google.com with SMTP id l82-v6so4271178oih.11;
-        Tue, 28 Aug 2018 10:33:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6KHj26thhLWnTnN0kqmNe6Pxj35RlnR0t7bphORu3Po=;
-        b=jaMBoxKoDygfIiGKkChECTPhVVFXj37FPwzLfp0auscw9E4bUEJ5FnRly20iHEJv0F
-         3l3SoAsw8X6NTHkVnbMJrnfcci+wQogOUEJBvtK1Sc0YZPWIVKyq9piW8RcpoX9FuVTL
-         S+IxBgr7IEAptyJeyn1PQs2Jh6CIQbLLp5/ju7hPuPvjtAcB27TGcC+4T619uhBAQdIV
-         hdBs4phbZk4rbN1L1LA/ixFyaCBuOehdnUyYRXCdln8Zwi+xUKDtHkd6Jg4KpKmolGJN
-         FSoFY2xGx30AolliHs0FC2zl5x6Q7JU2+3VFfYN+lrfsp6Hs1DP6SBMDBHdB/bRBzjKD
-         36UA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6KHj26thhLWnTnN0kqmNe6Pxj35RlnR0t7bphORu3Po=;
-        b=P0aIqd/H01IqU5vznU/ZscwMlWUm8S/WPIpAf1BgDg7Zd9vDZoShrgMCIW5jAKYHoN
-         ae3lelsXOvx0VD1Hq5vb3szj5zdBsqxtKLGprUS3pOJAphysxJEO9Fs5YCI2XLH8lkBb
-         /hZi3GHp19rsS0nQlkNJsVCcYjbi5OSB9d+OvhfEAIon2SmX2rQan2eH+B7Mh+DyZoK+
-         2pETBUNjM/Gq9ntgMMnXJT2hfzcHPIN6Ljylm+ruLb41rOwgMAzTdwEEKqLOnP6MtFhz
-         M+yiG5sUmG48BrQJ3QvAOzLKvAGhkTL9I9obK+R+qwIAxYk8Dph0dBzHjaBbelHR6a3i
-         Pykg==
-X-Gm-Message-State: APzg51BzRAayGPNcyddULAGgIiyC3LiuYRXR0g4oNPoqkjGX1tD4Mrrk
-        BY+nWKwhbAFPrfhN+Xpv/6+c9hE66u7ssvGZkz+fYA==
-X-Google-Smtp-Source: ANB0VdaG28yH+SMzsntH4g0UcCDQ6R4RX7Slq/PLeFLME+76AXWxZRSZnYPZ86qaZ67xVSxkANK8ZadJYLRO3+h5IH8=
-X-Received: by 2002:aca:1112:: with SMTP id 18-v6mr2167408oir.79.1535477594349;
- Tue, 28 Aug 2018 10:33:14 -0700 (PDT)
+        Tue, 28 Aug 2018 17:32:23 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43160 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726383AbeH1VcX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 17:32:23 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A631E18A;
+        Tue, 28 Aug 2018 10:39:40 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 77A0E3F5BD;
+        Tue, 28 Aug 2018 10:39:40 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 0F6F91AE3413; Tue, 28 Aug 2018 18:39:52 +0100 (BST)
+Date:   Tue, 28 Aug 2018 18:39:52 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] locking/ww_mutex: fix spelling mistake "cylic" ->
+ "cyclic"
+Message-ID: <20180828173951.GB20375@arm.com>
+References: <20180824112235.8842-1-colin.king@canonical.com>
 MIME-Version: 1.0
-References: <491de4ae-0ba3-0fce-a400-3ebb41e21ac4@mni.thm.de> <e79d43eb-38cb-8975-08c9-c3937a1276c2@infradead.org>
-In-Reply-To: <e79d43eb-38cb-8975-08c9-c3937a1276c2@infradead.org>
-From:   adam radford <aradford@gmail.com>
-Date:   Tue, 28 Aug 2018 10:33:03 -0700
-Message-ID: <CAHtARFHovpNRx-hdZCAYD9zjUf0WWdRvQ8PkqPNjNpbUwPRqow@mail.gmail.com>
-Subject: Re: Bug in /drivers/scsi/3w-9xxx.h
-To:     rdunlap@infradead.org
-Cc:     frank.kammer@mni.thm.de,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180824112235.8842-1-colin.king@canonical.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Frank,
+On Fri, Aug 24, 2018 at 12:22:35PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Trivial fix to spelling mistake in pr_err error message
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  kernel/locking/test-ww_mutex.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-host->max_id (max scsi target ID's) is set to TW_MAX_UNITS_9650SE for
-your adapter, which is 32.
+Given that this is part of an error message, I agree it's worth fixing.
 
-The firmware srl (spec revision level) for your 9650 adapter doesn't
-support luns > (0 .. 16).
+Will
 
-You could run in this mode but it hasn't been tested, and I don't
-recall what the ramifications may be (if any).
-
--Adam
-
-
-
-On Tue, Aug 28, 2018 at 10:02 AM Randy Dunlap <rdunlap@infradead.org> wrote:
->
-> [add linux-scsi list]
->
-> On 08/28/2018 05:23 AM, Frank Kammer wrote:
-> > Hello,
-> >
-> > I have a 3ware 9650SE RAID-Controller with 20 LUNs. Using an unpachted
-> > kernel (no matter which version, e.g., 4.12.14) , only 17 LUNs are shown.
-> >
-> > The problem is that the driver was once written for a 3ware 9550SE
-> > RAID-Controlle that supports only 16 LUNs.
-> > There are some changes in driver to allow 32 LUNs, but one change is
-> > forgotten:
-> >
-> > In drivers/scsi/3w-9xxx.h, one must replace the following:
-> >
-> > 467c467
-> > < #define TW_MAX_LUNS(srl) (srl < TW_FW_SRL_LUNS_SUPPORTED ? 1 : 16)
-> > ---
-> >> #define TW_MAX_LUNS(srl) (srl < TW_FW_SRL_LUNS_SUPPORTED ? 1 : 32)
-> >
-> > Best regards,
-> > Frank Kammer
-> >
->
->
-> --
-> ~Randy
+> diff --git a/kernel/locking/test-ww_mutex.c b/kernel/locking/test-ww_mutex.c
+> index 5b915b370d5a..0be047dbd897 100644
+> --- a/kernel/locking/test-ww_mutex.c
+> +++ b/kernel/locking/test-ww_mutex.c
+> @@ -324,7 +324,7 @@ static int __test_cycle(unsigned int nthreads)
+>  		if (!cycle->result)
+>  			continue;
+>  
+> -		pr_err("cylic deadlock not resolved, ret[%d/%d] = %d\n",
+> +		pr_err("cyclic deadlock not resolved, ret[%d/%d] = %d\n",
+>  		       n, nthreads, cycle->result);
+>  		ret = -EINVAL;
+>  		break;
+> -- 
+> 2.17.1
+> 
