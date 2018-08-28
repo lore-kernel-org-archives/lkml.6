@@ -6,123 +6,148 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9DDCC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 07:47:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8021C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 07:52:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62005208AC
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 07:47:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62005208AC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
+	by mail.kernel.org (Postfix) with ESMTP id 7B7CD208AC
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 07:52:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B7CD208AC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727434AbeH1Lhr (ORCPT
+        id S1727221AbeH1LnM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 07:37:47 -0400
-Received: from regular1.263xmail.com ([211.150.99.140]:58918 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727245AbeH1Lhr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 07:37:47 -0400
-Received: from hjc?rock-chips.com (unknown [192.168.167.204])
-        by regular1.263xmail.com (Postfix) with ESMTP id 6C379403;
-        Tue, 28 Aug 2018 15:47:21 +0800 (CST)
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-Received: from [172.16.10.60] (localhost [127.0.0.1])
-        by smtp.263.net (Postfix) with ESMTPA id EBFC7399;
-        Tue, 28 Aug 2018 15:47:14 +0800 (CST)
-X-IP-DOMAINF: 1
-X-RL-SENDER: hjc@rock-chips.com
-X-FST-TO: sandy.huang@rock-chips.com
-X-SENDER-IP: 58.22.7.114
-X-LOGIN-NAME: hjc@rock-chips.com
-X-UNIQUE-TAG: <2101aedacd5fe366a2a688ba1025f484>
-X-ATTACHMENT-NUM: 0
-X-SENDER: hjc@rock-chips.com
-X-DNS-TYPE: 0
-Received: from [172.16.10.60] (unknown [58.22.7.114])
-        by smtp.263.net (Postfix) whith ESMTP id 218206KC8MU;
-        Tue, 28 Aug 2018 15:47:17 +0800 (CST)
-From:   Sandy Huang <hjc@rock-chips.com>
-To:     Enric Balletbo Serra <eballetbo@gmail.com>
-Cc:     =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
-        David Airlie <airlied@linux.ie>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drm/rockchip: fix coding style and incorrect description
-References: <1535351378-128643-1-git-send-email-hjc@rock-chips.com>
- <CAFqH_514pyvKTNHYM=wDab6yAPB+cDCNy8shHPpOP5aeLkyafg@mail.gmail.com>
-Message-ID: <ec6f41f5-dc3f-0c5f-e2d4-22e12e8d7e39@rock-chips.com>
-Date:   Tue, 28 Aug 2018 15:47:17 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+        Tue, 28 Aug 2018 07:43:12 -0400
+Received: from mga11.intel.com ([192.55.52.93]:42515 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726567AbeH1LnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 07:43:12 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Aug 2018 00:52:47 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,298,1531810800"; 
+   d="scan'208";a="66534065"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.137]) ([10.237.72.137])
+  by fmsmga008.fm.intel.com with ESMTP; 28 Aug 2018 00:52:46 -0700
+Subject: Re: [PATCH v5 3/3] mmc: sdhci-of-dwcmshc: solve 128MB DMA boundary
+ limitation
+To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20180827162026.3901de27@xhacker.debian>
+ <20180827162419.61afe238@xhacker.debian>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <9739a083-cb2f-1cba-19c1-1c4e0d03eedd@intel.com>
+Date:   Tue, 28 Aug 2018 10:51:02 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <CAFqH_514pyvKTNHYM=wDab6yAPB+cDCNy8shHPpOP5aeLkyafg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180827162419.61afe238@xhacker.debian>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi enric,
-     thanks, this will be upated at v2 patch.
+On 27/08/18 11:24, Jisheng Zhang wrote:
+> When using DMA, if the DMA addr spans 128MB boundary, we have to split
+> the DMA transfer into two so that each one doesn't exceed the boundary.
+> 
+> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+> ---
+>  drivers/mmc/host/sdhci-of-dwcmshc.c | 41 +++++++++++++++++++++++++++++
+>  1 file changed, 41 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
+> index 1b7cd144fb01..cfbdae8703a1 100644
+> --- a/drivers/mmc/host/sdhci-of-dwcmshc.c
+> +++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
+> @@ -8,21 +8,50 @@
+>   */
+>  
+>  #include <linux/clk.h>
+> +#include <linux/mm.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+> +#include <linux/sizes.h>
+>  
+>  #include "sdhci-pltfm.h"
+>  
+> +#define BOUNDARY_OK(addr, len) \
+> +	((addr | (SZ_128M - 1)) == ((addr + len - 1) | (SZ_128M - 1)))
+> +
+>  struct dwcmshc_priv {
+>  	struct clk	*bus_clk;
+>  };
+>  
+> +/*
+> + * If DMA addr spans 128MB boundary, we split the DMA transfer into two
+> + * so that each DMA transfer doesn't exceed the boundary.
+> + */
+> +static void dwcmshc_adma_write_desc(struct sdhci_host *host, void **desc,
+> +				    dma_addr_t addr, int len, unsigned int cmd)
+> +{
+> +	int tmplen, offset;
+> +
+> +	if (likely(!len || BOUNDARY_OK(addr, len))) {
+> +		sdhci_adma_write_desc(host, desc, addr, len, cmd);
+> +		return;
+> +	}
+> +
+> +	offset = addr & (SZ_128M - 1);
+> +	tmplen = SZ_128M - offset;
+> +	sdhci_adma_write_desc(host, desc, addr, tmplen, cmd);
+> +
+> +	addr += tmplen;
+> +	len -= tmplen;
+> +	sdhci_adma_write_desc(host, desc, addr, len, cmd);
+> +}
+> +
+>  static const struct sdhci_ops sdhci_dwcmshc_ops = {
+>  	.set_clock		= sdhci_set_clock,
+>  	.set_bus_width		= sdhci_set_bus_width,
+>  	.set_uhs_signaling	= sdhci_set_uhs_signaling,
+>  	.get_max_clock		= sdhci_pltfm_clk_get_max_clock,
+>  	.reset			= sdhci_reset,
+> +	.adma_write_desc	= dwcmshc_adma_write_desc,
+>  };
+>  
+>  static const struct sdhci_pltfm_data sdhci_dwcmshc_pdata = {
+> @@ -36,12 +65,24 @@ static int dwcmshc_probe(struct platform_device *pdev)
+>  	struct sdhci_host *host;
+>  	struct dwcmshc_priv *priv;
+>  	int err;
+> +	u32 extra;
+>  
+>  	host = sdhci_pltfm_init(pdev, &sdhci_dwcmshc_pdata,
+>  				sizeof(struct dwcmshc_priv));
+>  	if (IS_ERR(host))
+>  		return PTR_ERR(host);
+>  
+> +	/*
+> +	 * The DMA table descriptor count is calculated as the maximum
+> +	 * number of segments times 2, to allow for an alignment
+> +	 * descriptor for each segment, plus 1 for a nop end descriptor,
+> +	 * plus extra number for cross 128M boundary handling.
+> +	 */
+> +	extra = DIV_ROUND_UP(totalram_pages, SZ_128M / PAGE_SIZE);
 
-在 2018/8/27 15:02, Enric Balletbo Serra 写道:
-> Hi Sandy,
->
-> Just noticed a typo that I think will be good fix also
-> Missatge de Sandy Huang <hjc@rock-chips.com> del dia dl., 27 d’ag.
-> 2018 a les 8:31:
-> >
-> > Align with other drivers, tab + 2 space key for description.
-> > and this option should be enabled on both rk3288 and rk3399.
-> >
-> > Signed-off-by: Sandy Huang <hjc@rock-chips.com>
-> > ---
-> >   drivers/gpu/drm/rockchip/Kconfig | 8 ++++----
-> >   1 file changed, 4 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/rockchip/Kconfig b/drivers/gpu/drm/rockchip/Kconfig
-> > index 0ccc762..601234b 100644
-> > --- a/drivers/gpu/drm/rockchip/Kconfig
-> > +++ b/drivers/gpu/drm/rockchip/Kconfig
-> > @@ -45,10 +45,10 @@ config ROCKCHIP_DW_HDMI
-> >   config ROCKCHIP_DW_MIPI_DSI
-> >          bool "Rockchip specific extensions for Synopsys DW MIPI DSI"
-> >          help
-> > -        This selects support for Rockchip SoC specific extensions
-> > -        for the Synopsys DesignWare HDMI driver. If you want to
-> > -        enable MIPI DSI on RK3288 based SoC, you should selet this
-> > -        option.
-> > +         This selects support for Rockchip SoC specific extensions
-> > +         for the Synopsys DesignWare HDMI driver. If you want to
-> > +         enable MIPI DSI on RK3288 or RK3399 based SoC, you should
-> > +         selet this option.
->
-> s/selet/select/
->
-> Cheers,
->   Enric
->
-> >
-> >   config ROCKCHIP_INNO_HDMI
-> >          bool "Rockchip specific extensions for Innosilicon HDMI"
-> > --
-> > 2.7.4
-> >
-> >
-> > _______________________________________________
-> > dri-devel mailing list
-> > dri-devel@lists.freedesktop.org
-> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
->
->
->
+The amount of RAM is not necessarily the same as the highest physical
+address.  I think what you really want is max_pfn or max_possible_pfn
 
+> +	if (extra > SDHCI_MAX_SEGS)
+> +		extra = SDHCI_MAX_SEGS;
+> +	host->adma_table_cnt += extra;
+> +
+>  	pltfm_host = sdhci_priv(host);
+>  	priv = sdhci_pltfm_priv(pltfm_host);
+>  
+> 
 
