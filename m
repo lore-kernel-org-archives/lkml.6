@@ -6,38 +6,40 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A9EEC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:52:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31672C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:52:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBE182084A
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:52:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBE182084A
+	by mail.kernel.org (Postfix) with ESMTP id E18C12084A
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:52:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E18C12084A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727745AbeH1Ton (ORCPT
+        id S1727781AbeH1Top (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 15:44:43 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41076 "EHLO
+        Tue, 28 Aug 2018 15:44:45 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41092 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726383AbeH1Tom (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 15:44:42 -0400
+        id S1726383AbeH1Too (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 15:44:44 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CC74915BF;
-        Tue, 28 Aug 2018 08:52:25 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4C9B980D;
+        Tue, 28 Aug 2018 08:52:28 -0700 (PDT)
 Received: from e112298-lin.Emea.Arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id DE7143F557;
-        Tue, 28 Aug 2018 08:52:23 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 17EFC3F557;
+        Tue, 28 Aug 2018 08:52:25 -0700 (PDT)
 From:   Julien Thierry <julien.thierry@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
         joel@joelfernandes.org, marc.zyngier@arm.com, mark.rutland@arm.com,
         christoffer.dall@arm.com, james.morse@arm.com,
         catalin.marinas@arm.com, will.deacon@arm.com,
-        Julien Thierry <julien.thierry@arm.com>
-Subject: [PATCH v5 16/27] arm64: daifflags: Include PMR in daifflags restore operations
-Date:   Tue, 28 Aug 2018 16:51:26 +0100
-Message-Id: <1535471497-38854-17-git-send-email-julien.thierry@arm.com>
+        Julien Thierry <julien.thierry@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+Subject: [PATCH v5 17/27] irqchip/gic-v3: Factor group0 detection into functions
+Date:   Tue, 28 Aug 2018 16:51:27 +0100
+Message-Id: <1535471497-38854-18-git-send-email-julien.thierry@arm.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1535471497-38854-1-git-send-email-julien.thierry@arm.com>
 References: <1535471497-38854-1-git-send-email-julien.thierry@arm.com>
@@ -46,54 +48,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The addition of PMR should not bypass the semantics of daifflags.
+The code to detect whether Linux has access to group0 interrupts can
+prove useful in other parts of the driver.
 
-When DA_F are set, I bit is also set as no interrupts (even of higher
-priority) is allowed.
+Provide a separate function to do this.
 
-When DA_F are cleared, I bit is cleared and interrupt enabling/disabling
-goes through ICC_PMR_EL1.
-
+Tested-by: Daniel Thompson <daniel.thompson@linaro.org>
 Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: James Morse <james.morse@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
 ---
- arch/arm64/include/asm/daifflags.h | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ drivers/irqchip/irq-gic-v3.c | 55 +++++++++++++++++++++++++++++---------------
+ 1 file changed, 36 insertions(+), 19 deletions(-)
 
-diff --git a/arch/arm64/include/asm/daifflags.h b/arch/arm64/include/asm/daifflags.h
-index 8d91f22..ccd95e8 100644
---- a/arch/arm64/include/asm/daifflags.h
-+++ b/arch/arm64/include/asm/daifflags.h
-@@ -18,8 +18,14 @@
- 
- #include <linux/irqflags.h>
- 
--#define DAIF_PROCCTX		0
--#define DAIF_PROCCTX_NOIRQ	PSR_I_BIT
-+#include <asm/arch_gicv3.h>
-+
-+#define DAIF_PROCCTX	MAKE_ARCH_FLAGS(0, ICC_PMR_EL1_UNMASKED)
-+
-+#define DAIF_PROCCTX_NOIRQ						\
-+	(gic_prio_masking_enabled() ?					\
-+		MAKE_ARCH_FLAGS(0, ICC_PMR_EL1_MASKED) :		\
-+		MAKE_ARCH_FLAGS(PSR_I_BIT, ICC_PMR_EL1_UNMASKED))
- 
- /* mask/save/unmask/restore all exceptions, including interrupts. */
- static inline void local_daif_mask(void)
-@@ -51,6 +57,10 @@ static inline void local_daif_unmask(void)
- 		:
- 		:
- 		: "memory");
-+
-+	/* Unmask IRQs in PMR if needed */
-+	if (gic_prio_masking_enabled())
-+		arch_local_irq_enable();
+diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+index d5912f1..fef6688 100644
+--- a/drivers/irqchip/irq-gic-v3.c
++++ b/drivers/irqchip/irq-gic-v3.c
+@@ -392,6 +392,39 @@ static asmlinkage void __exception_irq_entry gic_handle_irq(struct pt_regs *regs
+ 	} while (irqnr != ICC_IAR1_EL1_SPURIOUS);
  }
- 
- static inline void local_daif_restore(unsigned long flags)
--- 
-1.9.1
 
++static u32 gic_get_pribits(void)
++{
++	u32 pribits;
++
++	pribits = gic_read_ctlr();
++	pribits &= ICC_CTLR_EL1_PRI_BITS_MASK;
++	pribits >>= ICC_CTLR_EL1_PRI_BITS_SHIFT;
++	pribits++;
++
++	return pribits;
++}
++
++static bool gic_has_group0(void)
++{
++	u32 val;
++
++	/*
++	 * Let's find out if Group0 is under control of EL3 or not by
++	 * setting the highest possible, non-zero priority in PMR.
++	 *
++	 * If SCR_EL3.FIQ is set, the priority gets shifted down in
++	 * order for the CPU interface to set bit 7, and keep the
++	 * actual priority in the non-secure range. In the process, it
++	 * looses the least significant bit and the actual priority
++	 * becomes 0x80. Reading it back returns 0, indicating that
++	 * we're don't have access to Group0.
++	 */
++	gic_write_pmr(BIT(8 - gic_get_pribits()));
++	val = gic_read_pmr();
++
++	return val != 0;
++}
++
+ static void __init gic_dist_init(void)
+ {
+ 	unsigned int i;
+@@ -533,7 +566,7 @@ static void gic_cpu_sys_reg_init(void)
+ 	u64 mpidr = cpu_logical_map(cpu);
+ 	u64 need_rss = MPIDR_RS(mpidr);
+ 	bool group0;
+-	u32 val, pribits;
++	u32 pribits;
+
+ 	/*
+ 	 * Need to check that the SRE bit has actually been set. If
+@@ -545,25 +578,9 @@ static void gic_cpu_sys_reg_init(void)
+ 	if (!gic_enable_sre())
+ 		pr_err("GIC: unable to set SRE (disabled at EL2), panic ahead\n");
+
+-	pribits = gic_read_ctlr();
+-	pribits &= ICC_CTLR_EL1_PRI_BITS_MASK;
+-	pribits >>= ICC_CTLR_EL1_PRI_BITS_SHIFT;
+-	pribits++;
++	pribits = gic_get_pribits();
+
+-	/*
+-	 * Let's find out if Group0 is under control of EL3 or not by
+-	 * setting the highest possible, non-zero priority in PMR.
+-	 *
+-	 * If SCR_EL3.FIQ is set, the priority gets shifted down in
+-	 * order for the CPU interface to set bit 7, and keep the
+-	 * actual priority in the non-secure range. In the process, it
+-	 * looses the least significant bit and the actual priority
+-	 * becomes 0x80. Reading it back returns 0, indicating that
+-	 * we're don't have access to Group0.
+-	 */
+-	write_gicreg(BIT(8 - pribits), ICC_PMR_EL1);
+-	val = read_gicreg(ICC_PMR_EL1);
+-	group0 = val != 0;
++	group0 = gic_has_group0();
+
+ 	/* Set priority mask register */
+ 	write_gicreg(DEFAULT_PMR_VALUE, ICC_PMR_EL1);
+--
+1.9.1
