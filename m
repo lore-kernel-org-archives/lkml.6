@@ -2,103 +2,110 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE92AC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:23:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5E78C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:24:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EF5620878
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:23:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EF5620878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+	by mail.kernel.org (Postfix) with ESMTP id 8032020851
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:24:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RBQT1Wl3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8032020851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728128AbeH1SPK (ORCPT
+        id S1728180AbeH1SQU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 14:15:10 -0400
-Received: from michel.telenet-ops.be ([195.130.137.88]:55212 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726998AbeH1SPK (ORCPT
+        Tue, 28 Aug 2018 14:16:20 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:39004 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727373AbeH1SQT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 14:15:10 -0400
-Received: from ramsan.of.borg ([84.194.111.163])
-        by michel.telenet-ops.be with bizsmtp
-        id UePE1y00M3XaVaC06ePEH0; Tue, 28 Aug 2018 16:23:15 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtp (Exim 4.86_2)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1fuetm-0008NS-Lg; Tue, 28 Aug 2018 16:23:14 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1fuetm-00027A-KC; Tue, 28 Aug 2018 16:23:14 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Guan Xuetao <gxt@pku.edu.cn>
-Cc:     Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] unicore32: Stop printing the virtual memory layout
-Date:   Tue, 28 Aug 2018 16:23:13 +0200
-Message-Id: <20180828142313.8085-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Tue, 28 Aug 2018 14:16:19 -0400
+Received: by mail-lj1-f195.google.com with SMTP id l15-v6so1583272lji.6
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 07:24:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=KcFzbcYOQ1xiLMaN/Eh0sKOGIuSv1gy9/LNssarYENM=;
+        b=RBQT1Wl3bFurHVO5Ruk+fKm+zAVK02EKXodRYHFuZ1lzVO/GdcQkOHvCAukziVpfuH
+         LdaKV8yyX7cQx2u/PZ5S2CCZdmDapX36VUPZNw1sGlBN/uzuZVs7zEqF8EIzrC/QHgrm
+         kAqqshq3yAUWVEnk6QRgIWBz4QbwYWic6w9qw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=KcFzbcYOQ1xiLMaN/Eh0sKOGIuSv1gy9/LNssarYENM=;
+        b=JebKJFzMaMwZQbVVOF72sDHqugJXRiLW5gv1DW5zl3P3kPwG2BTWc9dK1Bc8GJPBPT
+         CNBvdmUfA6vgyd2UlKQXbZFeHbrbzXMSReq/MnT9ShPhGwVajqAIzdwKBp0OcnSX/La0
+         wcuQkQ28r3mw9VKOsSv+llNrB6ZeK3U+okBjlZWP0RBibuWPICZVgUBd/NY215GasNjZ
+         zypu4SgO8RiHuNPbZOyJiPKLfoZVhbjjnpjxevvimvA4dFJXB58aiQSbSeJ6tEnbqAlR
+         6qzY4iCN/S9JoNVNTSanJXK1iXbLEXWfLNpkc038X9SAU2pf5HsoAqsvCVKOSNnhEgNf
+         5uDw==
+X-Gm-Message-State: APzg51ALx4I21efDfEHRqyDh+MiEZxhYpJ665E7c9/fg8BqcryfzUb1q
+        WZ/L/v72Vw5migJ+uHxS5T2rBSXZqqE=
+X-Google-Smtp-Source: ANB0VdYL3Q8+oJXSsHeG19vSPbqRIMAO6cfVj3GpoBwBlAGmjHnF1Fune8jLicFLGIwDznEcE5QH3g==
+X-Received: by 2002:a2e:3005:: with SMTP id w5-v6mr1463002ljw.20.1535466263478;
+        Tue, 28 Aug 2018 07:24:23 -0700 (PDT)
+Received: from localhost ([195.238.92.132])
+        by smtp.gmail.com with ESMTPSA id c5-v6sm229607lff.65.2018.08.28.07.24.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 28 Aug 2018 07:24:22 -0700 (PDT)
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+To:     linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+        codalist@coda.cs.cmu.edu, coda@cs.cmu.edu
+Cc:     Jan Harkes <jaharkes@cs.cmu.edu>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Praneeth Bajjuri <praneeth@ti.com>,
+        Paul Sokolovsky <paul.sokolovsky@linaro.org>,
+        Miklos Szeredi <mszeredi@suse.cz>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Ruslan Bilovol <ruslan.bilovol@gmail.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: [PATCH 0/2] Fix allmodconfig build with bare-metal toolchain
+Date:   Tue, 28 Aug 2018 17:24:19 +0300
+Message-Id: <20180828142421.15335-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit ad67b74d2469d9b8 ("printk: hash addresses printed with
-%p"), the virtual memory layout printed during boot up contains "ptrval"
-instead of actual addresses.
+Attempt to build allmodconfig (for ARM platforms) using bare-metal
+toolchain fails with errors related to __linux__ definition. It's only
+defined on Linux toolchains, but not defined on bare-metal toolchains.
+This patch series fixes that.
 
-Instead of changing the printing to "%px", and leaking virtual memory
-layout information again, just remove the printing completely, cfr. e.g.
-commits 071929dbdd865f77 ("arm64: Stop printing the virtual memory
-layout") and  31833332f7987636 ("m68k/mm: Stop printing the virtual
-memory layout").
+Some similar patches (for different files) were applied previously:
+  - commit 4c82456eeb4d ("fuse: fix type definitions in uapi header")
+  - commit b6330548383c ("drm.h: Fix DRM compilation with bare-metal
+toolchain.")
 
-All interesting information (actual section sizes) is already printed by
-mem_init_print_info() just above anyway.
+Sam Protsenko (2):
+  codafs: Fix build using bare-metal toolchain
+  scsi: aic7xxx: Fix build using bare-metal toolchain
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/unicore32/mm/init.c | 24 ------------------------
- 1 file changed, 24 deletions(-)
+ drivers/scsi/aic7xxx/aic7770.c                  |  2 +-
+ drivers/scsi/aic7xxx/aic79xx.h                  |  4 ++--
+ drivers/scsi/aic7xxx/aic79xx_core.c             | 12 ++++++------
+ drivers/scsi/aic7xxx/aic79xx_pci.c              |  2 +-
+ drivers/scsi/aic7xxx/aic7xxx.h                  |  4 ++--
+ drivers/scsi/aic7xxx/aic7xxx_93cx6.c            |  2 +-
+ drivers/scsi/aic7xxx/aic7xxx_core.c             | 12 ++++++------
+ drivers/scsi/aic7xxx/aic7xxx_pci.c              |  2 +-
+ drivers/scsi/aic7xxx/aicasm/aicasm.h            |  2 +-
+ drivers/scsi/aic7xxx/aicasm/aicasm_gram.y       |  2 +-
+ drivers/scsi/aic7xxx/aicasm/aicasm_macro_gram.y |  2 +-
+ drivers/scsi/aic7xxx/aicasm/aicasm_macro_scan.l |  2 +-
+ drivers/scsi/aic7xxx/aicasm/aicasm_scan.l       |  2 +-
+ drivers/scsi/aic7xxx/aicasm/aicasm_symbol.c     |  2 +-
+ drivers/scsi/aic7xxx/aicasm/aicasm_symbol.h     |  2 +-
+ include/uapi/linux/coda.h                       |  5 +++++
+ 16 files changed, 32 insertions(+), 27 deletions(-)
 
-diff --git a/arch/unicore32/mm/init.c b/arch/unicore32/mm/init.c
-index f4950fbfe57493c7..1662058c272a5917 100644
---- a/arch/unicore32/mm/init.c
-+++ b/arch/unicore32/mm/init.c
-@@ -344,30 +344,6 @@ void __init mem_init(void)
- 	free_all_bootmem();
- 
- 	mem_init_print_info(NULL);
--	printk(KERN_NOTICE "Virtual kernel memory layout:\n"
--		"    vector  : 0x%08lx - 0x%08lx   (%4ld kB)\n"
--		"    vmalloc : 0x%08lx - 0x%08lx   (%4ld MB)\n"
--		"    lowmem  : 0x%08lx - 0x%08lx   (%4ld MB)\n"
--		"    modules : 0x%08lx - 0x%08lx   (%4ld MB)\n"
--		"      .init : 0x%p" " - 0x%p" "   (%4d kB)\n"
--		"      .text : 0x%p" " - 0x%p" "   (%4d kB)\n"
--		"      .data : 0x%p" " - 0x%p" "   (%4d kB)\n",
--
--		VECTORS_BASE, VECTORS_BASE + PAGE_SIZE,
--		DIV_ROUND_UP(PAGE_SIZE, SZ_1K),
--		VMALLOC_START, VMALLOC_END,
--		DIV_ROUND_UP((VMALLOC_END - VMALLOC_START), SZ_1M),
--		PAGE_OFFSET, (unsigned long)high_memory,
--		DIV_ROUND_UP(((unsigned long)high_memory - PAGE_OFFSET), SZ_1M),
--		MODULES_VADDR, MODULES_END,
--		DIV_ROUND_UP((MODULES_END - MODULES_VADDR), SZ_1M),
--
--		__init_begin, __init_end,
--		DIV_ROUND_UP((__init_end - __init_begin), SZ_1K),
--		_stext, _etext,
--		DIV_ROUND_UP((_etext - _stext), SZ_1K),
--		_sdata, _edata,
--		DIV_ROUND_UP((_edata - _sdata), SZ_1K));
- 
- 	BUILD_BUG_ON(TASK_SIZE				> MODULES_VADDR);
- 	BUG_ON(TASK_SIZE				> MODULES_VADDR);
 -- 
-2.17.1
+2.18.0
 
