@@ -6,67 +6,67 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EED4BC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:42:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4799EC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:43:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E3072087D
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:42:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C31302087D
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:43:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="DL89LBF+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E3072087D
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="YMi3wlGf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C31302087D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727372AbeH2Afw (ORCPT
+        id S1727394AbeH2Agk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 20:35:52 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:36126 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726998AbeH2Afw (ORCPT
+        Tue, 28 Aug 2018 20:36:40 -0400
+Received: from mail-pl1-f169.google.com ([209.85.214.169]:37853 "EHLO
+        mail-pl1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726998AbeH2Agk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 20:35:52 -0400
-Received: by mail-pg1-f193.google.com with SMTP id d1-v6so1277860pgo.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 13:42:31 -0700 (PDT)
+        Tue, 28 Aug 2018 20:36:40 -0400
+Received: by mail-pl1-f169.google.com with SMTP id d12-v6so1242022pls.4
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 13:43:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=android.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
         bh=2d+IR6+4wUC/4R2FfaS1O0vOpDhs3VJvlZHPYspuhos=;
-        b=DL89LBF+gBecdbQWzj9iuWeckOqtYYqlnf1Vl5Hbl/5p1otn4FFqboT0WDJvpClX0C
-         GvX2/7jUaDcpNAFaFhdgX0fTkcML1l3v5XaxTVeivFgobZsB/mXb8FrSRG6R1q2vWAMB
-         3d1Uwbs+BWcLTDQhw7h8HHvUndz7N4wnw0NKzsDqp/qy7Y0MLtar72N2diJF8BMGaBTN
-         29NxzCMVaS06/6+/RJBfsY173wLVaTRzj1lZI4WDjP9LI7LAGg/ze7I3Oe05z4OuwMcc
-         idwt20yRd5Za3C+vLYUGzZToPype+y5kJ7wScvhIu/tjbpulnl0AvuDfIymG08BFM+/1
-         qCeA==
+        b=YMi3wlGf6Hs/A5eksc3CCy4gzZJHD0buwCPrc9zTskg5yizKtAh5LODvw+83FzVo8+
+         vf8K6x2RlDbti1LYlsZ69Pg6ioHaUXRJzbf8pSQNr3TUnb2QxvrBd9BqgWCc/o+qiV1b
+         w0nyKbrBQsWEiOZ8jXFKaNrD8FHkRWlHQq72eErPcw/W/pMuVOGIS8QpSRHIcHCG4zZ1
+         SYuXQIEJiZbI+5iNlpK8mGFozYTWXlA8pqXxfMJjdhlOQi7mFi31LKYw/m6cKAjeHop2
+         bpHwW/iK2saliQGfIHjBuHeR9aBCJwL3j2NCoWZ2gFibZQMCIjbS1tpTJ3HDdn68rGTq
+         Tfhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
         bh=2d+IR6+4wUC/4R2FfaS1O0vOpDhs3VJvlZHPYspuhos=;
-        b=TO+kDkmtQFgR8ZF+nVExCgpBT1eaaa6JQ8ILSMSPqgyrsd+6buXjZzdIMycI5lJRIt
-         CHyJwSwcMrN9ZH9kZ2hpc+a3UK4L6Bkxmd1iI4lecTVaN4w4l92iKsQmk3+pryZ8Q2EW
-         hiRb1P5Z2lp+vEvYroQ0juF4dPH7bFajDp+wCBwcxNomB+6anvzhd0qJpz3xJx4SkwIv
-         aI+fXnCoRRXFhGwjFUuGPyey6xfe/pRpW2zK3UVbTf5kDByPpftjVGzHbzIa7iJbMRB8
-         PEt80E/zKNJJPts49SdxZYoMbTuCu0FpvDEnpukQwCH8IfJ0bnLdcyVg+6hh9e+CQDjT
-         /s0A==
-X-Gm-Message-State: APzg51Al/ifjhwCq5l3Fc6y6NhS2HAYeXGkdWZX+8Shp39SQ9qrImavI
-        nabdiRYEw1SEPDswryzeto0vzw==
-X-Google-Smtp-Source: ANB0VdZoRucO+TmK1gpOQvRy0sQQCB02SXV78obZD0o5fzQlruyoTwBuf8dxqTVradTQ991Pxnlh4A==
-X-Received: by 2002:a62:404e:: with SMTP id n75-v6mr3007288pfa.232.1535488950741;
-        Tue, 28 Aug 2018 13:42:30 -0700 (PDT)
+        b=I2uXNHZxuyrf3kpORoF5YV9oJMgOni+Ag1FyA6eASZKmTTXlbgZMTPuUyRKeW2Ucb+
+         A+8hXF9z6cseU8iAGFleYxJHDB+rM/geBluUsHNzLukxYOUHoU7JKudKfJKJUR1aUe2n
+         /h1O5h7HtNq9nPvKKR4Pef6NzQBXwgYi1FTWTQoUN9RcjHwqFkYCSEaVTGrT7CAPFwUa
+         fkZTviNa1/Q8g4heh/7//Ejy0MgtJngWv+ukCT+b451Li7dVkCoLIUwKqgU+PeTmgY3M
+         UCpGA21l9YpFEOZGBu8hYJeKN/1i/PCY+xV8MwEmQkKJAyJBiTr/x0kHC+Xu7CGrI7w5
+         E8NQ==
+X-Gm-Message-State: APzg51B/KUX8LT9OjlJ45Jxtv/SF6sJ/7j6uaEfxQPwNQR+Om2luZWHQ
+        c2IAOajzy9NnHT1HP0Cg9WAhGg==
+X-Google-Smtp-Source: ANB0VdYbxV4cj//GodSeIsQe9/5yKCmbeLeO2jrEZ4uqChEJv1KhDt5r7vz8yieOgdaz+ufkZ5cwzA==
+X-Received: by 2002:a17:902:7845:: with SMTP id e5-v6mr2982842pln.197.1535488998108;
+        Tue, 28 Aug 2018 13:43:18 -0700 (PDT)
 Received: from ava-linux2.mtv.corp.google.com ([2620:0:1000:1601:f5a1:2b8d:9c84:99b])
-        by smtp.googlemail.com with ESMTPSA id b1-v6sm7102765pgi.91.2018.08.28.13.42.29
+        by smtp.googlemail.com with ESMTPSA id n4-v6sm2782384pga.83.2018.08.28.13.43.17
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 Aug 2018 13:42:30 -0700 (PDT)
+        Tue, 28 Aug 2018 13:43:17 -0700 (PDT)
 From:   Todd Kjos <tkjos@android.com>
 X-Google-Original-From: Todd Kjos <tkjos@google.com>
 To:     tkjos@google.com, gregkh@linuxfoundation.org, arve@android.com,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         maco@google.com
 Cc:     christian.brauner@canonical.com, ben@decadent.org.uk
-Subject: [PATCH] binder: use standard functions to allocate fds
-Date:   Tue, 28 Aug 2018 13:42:19 -0700
-Message-Id: <20180828204219.230868-1-tkjos@google.com>
+Subject: [PATCH v2] binder: use standard functions to allocate fds
+Date:   Tue, 28 Aug 2018 13:43:00 -0700
+Message-Id: <20180828204300.231069-1-tkjos@google.com>
 X-Mailer: git-send-email 2.19.0.rc0.228.g281dcd1b4d0-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
