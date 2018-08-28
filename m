@@ -4,121 +4,160 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D364AC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:39:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1120C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:39:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72E7E20896
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:39:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64DAE20896
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:39:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ElitlSXu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72E7E20896
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SOGRxD30"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64DAE20896
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727309AbeH1Ran (ORCPT
+        id S1727597AbeH1Rat (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 13:30:43 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:37215 "EHLO
+        Tue, 28 Aug 2018 13:30:49 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:38158 "EHLO
         mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727072AbeH1Ran (ORCPT
+        with ESMTP id S1727379AbeH1Rat (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 13:30:43 -0400
-Received: by mail-ed1-f66.google.com with SMTP id b10-v6so1401028eds.4
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 06:39:00 -0700 (PDT)
+        Tue, 28 Aug 2018 13:30:49 -0400
+Received: by mail-ed1-f66.google.com with SMTP id h33-v6so1403744edb.5
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 06:39:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=9L2+wm4Vw+O3wK6PJcZeEwdHckNDeo9RTUumAVxVvrI=;
-        b=ElitlSXut2yyFgsQXB7SKsy2WiREa31GaIxv1gBWjF5yAGUhKtvyKEYXZSHTnIZeMv
-         76yUOT3lD2wEVMb5mqvqvTZp8TR+B0LL8LAsCW80JPFJoWVoBkMMQwQIfyUlSDeNqd+r
-         VZmk14gt/m8kmP2PLLqdZgm7lVH3WaV5GnbNQ=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :in-reply-to:references;
+        bh=68+Vu+lQWHojtoyEFuI2o+33g2Xv3HxIF7ejjTszY6c=;
+        b=SOGRxD30exOWpoDV2OGbRamp96wEPhPVG/dSE0/Rhpw1p3uWDu0VB1TU2fztYQduUa
+         NicRk8TODj2x0Sy0bWFRWZLmUm+0RJLKO/Diavtim7ZEBkbSW+5EJ0f4iPqFOm27YJV5
+         jORaVpjrGWycYExZu6NIsRBFlLOoKcdSaJk5s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=9L2+wm4Vw+O3wK6PJcZeEwdHckNDeo9RTUumAVxVvrI=;
-        b=O5Opgo72iHGxGmPPdyYCkFp4Jjf1F0KDCyzUzC8SuVzJfX0EkDAMo5jzj7gUsGKGsm
-         kCf3of+4UoM4wOoWNt20f/DGdcQs5xRF01q4EbHjc2RxHh7ineiq57lItgHFq3T+TgA5
-         C8HprYEEm87J32slTYbBMivbdhXwqZ6HzQjCnN0Rg1DyLXNqe/aNNwgFglKnvpYxJYr2
-         8+1RQab2Bf2yu9zBYEeDzw3UVOV2jd1asQ7hNWHeth3GvGuS2uRyRNX3cYOn641Wb3HP
-         AB2fx+YxY7uLTw9BUzjyGgkE2W8Wi6v2jciYINTPBP7Oy1NxCn4CrfsJQ1mt9TIew4Uh
-         zs8g==
-X-Gm-Message-State: APzg51DnG/P0mu6d7LvTK46aiwSAtPqKnFD/JlZg+TpzeFZmNBlUY18/
-        Jiti2bsw8Tz+RA1ZONg6RHAwViPP0/s=
-X-Google-Smtp-Source: ANB0Vdazvy5+Y9S+kMz1LU3d8oz16e/Q6biPuqLWAUcCNe6fOam6pWAG82hAtTOGD1hWtCJ1VlrkgQ==
-X-Received: by 2002:a50:a3cb:: with SMTP id t11-v6mr2461246edb.238.1535463539269;
-        Tue, 28 Aug 2018 06:38:59 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:in-reply-to:references;
+        bh=68+Vu+lQWHojtoyEFuI2o+33g2Xv3HxIF7ejjTszY6c=;
+        b=GH2Ehryi0GFejttEPv8llJjmJIXiR+mEfeYs8/euxWyjH5XoqpkUOXP2lIbwsy08tY
+         axMIlhBn8Oxf5wA0r9wqypYYHYtfaE/m9ypjf8qPcoC1ztqNa6dzIVqVIzfmdt2kB94O
+         t21bB0v/bcdVMOl95gVCjthIbRqn8oNxfeg0YQG30U5GnsJsYImDN1ATyE1KPPUeEU4U
+         TgvJHYFqf0+u/IQLYCw1Xi3xxmQ50WhiA+8LLkHrC/XHJXF8NCOswJI8FchLA2LQ2kE2
+         LQnyxld1rbPmMwxhRdeWwuU6kmeI3I5F41YesEABbszylji4u85/wCBE5mBA4yW5BArB
+         AfJA==
+X-Gm-Message-State: APzg51CXs6swNbcceyonRcDF6xhWhFUdC8ljGEKrGdZUaKK3k2eTZxyD
+        vEWCaLg9rX5uReAp7DMhpQj1S4ovywM=
+X-Google-Smtp-Source: ANB0Vdbb0mdwSuMa1geeg2/eIPAnh8IV/7v4r98vlrxZ/oI8AE/ocpw1Xg9TEssGffc3M8Va4A6I2A==
+X-Received: by 2002:a50:8ee4:: with SMTP id x33-v6mr2488157edx.252.1535463545430;
+        Tue, 28 Aug 2018 06:39:05 -0700 (PDT)
 Received: from localhost ([49.248.200.109])
-        by smtp.gmail.com with ESMTPSA id o22-v6sm693563edc.90.2018.08.28.06.38.57
+        by smtp.gmail.com with ESMTPSA id c28-v6sm722599edc.52.2018.08.28.06.39.03
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 28 Aug 2018 06:38:58 -0700 (PDT)
+        Tue, 28 Aug 2018 06:39:04 -0700 (PDT)
 From:   Amit Kucheria <amit.kucheria@linaro.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     rnayak@codeaurora.org, linux-arm-msm@vger.kernel.org,
         bjorn.andersson@linaro.org, edubezval@gmail.com,
         smohanad@codeaurora.org, andy.gross@linaro.org,
         dianders@chromium.org, mka@chromium.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Zhang Rui <rui.zhang@intel.com>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-soc@vger.kernel.org
-Subject: [PATCH v2 00/11] Another round of tsens cleanups
-Date:   Tue, 28 Aug 2018 19:08:29 +0530
-Message-Id: <cover.1535462942.git.amit.kucheria@linaro.org>
+        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: [PATCH v2 01/11] arm/arm64: dts: msm8974/msm8916: thermal: Split address space into two
+Date:   Tue, 28 Aug 2018 19:08:30 +0530
+Message-Id: <882739b10bd0a3b655baef9b7ee1958680aa0b04.1535462942.git.amit.kucheria@linaro.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <cover.1535462942.git.amit.kucheria@linaro.org>
+References: <cover.1535462942.git.amit.kucheria@linaro.org>
+In-Reply-To: <cover.1535462942.git.amit.kucheria@linaro.org>
+References: <cover.1535462942.git.amit.kucheria@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is another series of tsens cleanups before we add interrupt support. This applies on top of 4.19-rc1.
+We've earlier added support to split the register address space into TM
+and SROT regions.
 
-In this series, we have the following:
-- splitup 8916 and 8974 register address spaces for SROT and TM
-- cleanups: move to spdx, dead code removal, removal of id field
-- Add support to map the SROT address space for DTs that list it separately
-- Check if TSENS IP is enabled in firmware by querying the SROT space
-- Add reg-names property to get more readable outputs in /proc/iomem
-- Add myself as maintainer of tsens
+Split up the regmap address space into two for the remaining platforms
+that have a similar register layout and make corresponding changes to
+the get_temp_common() function used by these platforms.
 
-Changes since v1:
-- Split up changes that split the address space and added qcom,sensors
-  property into two separate patches
-- Remove brackets in typo correction patch
+Since tsens-common.c/init_common() currently only registers one address
+space, the order is important (TM before SROT).  This is OK since the
+code doesn't really use the SROT functionality yet.
 
-Amit Kucheria (11):
-  arm/arm64: dts: msm8974/msm8916: thermal: Split address space into two
-  arm/arm64: dts: msm8974/msm8916: thermal: Add "qcom,sensors" property
-  dt-bindings: thermal: Fix a typo in documentation
-  thermal: tsens: Add SPDX license identifiers
-  thermal: tsens: Get rid of dead code
-  thermal: tsens: Rename map field in order to add a second address map
-  thermal: tsens: Add the SROT address map
-  thermal: tsens: Check if the IP is correctly enabled by firmware
-  thermal: tsens: Get rid of 'id' field
-  arm64: dts: qcom: Add reg-names for all tsens nodes
-  MAINTAINERS: Add entry for Qualcomm TSENS thermal drivers
+Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+---
+ arch/arm/boot/dts/qcom-msm8974.dtsi   | 5 +++--
+ arch/arm64/boot/dts/qcom/msm8916.dtsi | 5 +++--
+ drivers/thermal/qcom/tsens-common.c   | 5 +++--
+ 3 files changed, 9 insertions(+), 6 deletions(-)
 
- .../devicetree/bindings/thermal/thermal.txt   |  2 +-
- MAINTAINERS                                   |  7 +++
- arch/arm/boot/dts/qcom-msm8974.dtsi           |  7 ++-
- arch/arm64/boot/dts/qcom/msm8916.dtsi         |  7 ++-
- arch/arm64/boot/dts/qcom/msm8996.dtsi         |  2 +
- arch/arm64/boot/dts/qcom/sdm845.dtsi          |  2 +
- drivers/thermal/qcom/tsens-8916.c             | 11 +---
- drivers/thermal/qcom/tsens-8960.c             | 41 +++++-------
- drivers/thermal/qcom/tsens-8974.c             | 11 +---
- drivers/thermal/qcom/tsens-common.c           | 62 ++++++++++++-------
- drivers/thermal/qcom/tsens-v2.c               |  6 +-
- drivers/thermal/qcom/tsens.c                  | 21 +------
- drivers/thermal/qcom/tsens.h                  | 24 +++----
- 13 files changed, 99 insertions(+), 104 deletions(-)
-
+diff --git a/arch/arm/boot/dts/qcom-msm8974.dtsi b/arch/arm/boot/dts/qcom-msm8974.dtsi
+index d9019a49b292..56dbbf788d15 100644
+--- a/arch/arm/boot/dts/qcom-msm8974.dtsi
++++ b/arch/arm/boot/dts/qcom-msm8974.dtsi
+@@ -427,9 +427,10 @@
+ 			};
+ 		};
+ 
+-		tsens: thermal-sensor@fc4a8000 {
++		tsens: thermal-sensor@fc4a9000 {
+ 			compatible = "qcom,msm8974-tsens";
+-			reg = <0xfc4a8000 0x2000>;
++			reg = <0xfc4a9000 0x1000>, /* TM */
++			      <0xfc4a8000 0x1000>; /* SROT */
+ 			nvmem-cells = <&tsens_calib>, <&tsens_backup>;
+ 			nvmem-cell-names = "calib", "calib_backup";
+ 			#thermal-sensor-cells = <1>;
+diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+index 7b32b8990d62..6a277fce3333 100644
+--- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+@@ -761,9 +761,10 @@
+ 			};
+ 		};
+ 
+-		tsens: thermal-sensor@4a8000 {
++		tsens: thermal-sensor@4a9000 {
+ 			compatible = "qcom,msm8916-tsens";
+-			reg = <0x4a8000 0x2000>;
++			reg = <0x4a9000 0x1000>, /* TM */
++			      <0x4a8000 0x1000>; /* SROT */
+ 			nvmem-cells = <&tsens_caldata>, <&tsens_calsel>;
+ 			nvmem-cell-names = "calib", "calib_sel";
+ 			#thermal-sensor-cells = <1>;
+diff --git a/drivers/thermal/qcom/tsens-common.c b/drivers/thermal/qcom/tsens-common.c
+index 6207d8d92351..478739543bbc 100644
+--- a/drivers/thermal/qcom/tsens-common.c
++++ b/drivers/thermal/qcom/tsens-common.c
+@@ -21,7 +21,7 @@
+ #include <linux/regmap.h>
+ #include "tsens.h"
+ 
+-#define S0_ST_ADDR		0x1030
++#define STATUS_OFFSET		0x30
+ #define SN_ADDR_OFFSET		0x4
+ #define SN_ST_TEMP_MASK		0x3ff
+ #define CAL_DEGC_PT1		30
+@@ -107,8 +107,9 @@ int get_temp_common(struct tsens_device *tmdev, int id, int *temp)
+ 	unsigned int status_reg;
+ 	int last_temp = 0, ret;
+ 
+-	status_reg = S0_ST_ADDR + s->hw_id * SN_ADDR_OFFSET;
++	status_reg = tmdev->tm_offset + STATUS_OFFSET + s->hw_id * SN_ADDR_OFFSET;
+ 	ret = regmap_read(tmdev->map, status_reg, &code);
++
+ 	if (ret)
+ 		return ret;
+ 	last_temp = code & SN_ST_TEMP_MASK;
 -- 
 2.17.1
 
