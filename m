@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1C1FC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:48:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D668C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:48:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A20942087D
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:48:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1664720891
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:48:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="V7674Cfj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A20942087D
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="mAzmYI5K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1664720891
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727586AbeH2All (ORCPT
+        id S1727594AbeH2Al7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 20:41:41 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41900 "EHLO
+        Tue, 28 Aug 2018 20:41:59 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42418 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727179AbeH2All (ORCPT
+        with ESMTP id S1727162AbeH2Al7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 20:41:41 -0400
+        Tue, 28 Aug 2018 20:41:59 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=VDE33UMemg5b5HpUNMV6wY/CyYLFvHISmk9FIYQSf14=; b=V7674Cfja6K5
-        jfcdRajhXjyp/CJUgJLrkFx6lS4WNB8mYdPulsdNHHdts++AHjCymjTk+WWjV3WVP14fap/ysXp+e
-        vJJQRAnWA8l4+YL3KSfTfNT8HIV5IHb0DnJXTnMqHpNPD1QQFFRrEYLUawApxXhIRD2Ta74/dIxD4
-        JDBII=;
+        List-Archive; bh=QpdPT7snQFijxNobUQaEyUUi7V/9noLCWoVFBUCuZlE=; b=mAzmYI5KhwjR
+        A+xCRU/Gp3uQF/6TJN30aLQkjY45cs5kGFBEgB/b1hUv0QgoYjjNH5N4oq0dlY5CTp5sQc4w9QQfa
+        LDY1mfY/im1kVgjYSQJr+XDPB7ldg/W/zlg3fDHLDdbQKPsRkZDDOSeeIg7xr43w0+8dtoBWZjmBA
+        1I0N8=;
 Received: from 188.29.165.122.threembb.co.uk ([188.29.165.122] helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fuku7-0007jL-SZ; Tue, 28 Aug 2018 20:48:03 +0000
+        id 1fukuT-0007jZ-9v; Tue, 28 Aug 2018 20:48:21 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 2BCB144007A; Tue, 28 Aug 2018 21:47:29 +0100 (BST)
+        id 015EB44007A; Tue, 28 Aug 2018 21:48:19 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Jerome Brunet <jbrunet@baylibre.com>
 Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
@@ -50,10 +50,10 @@ Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
         Carlo Caione <carlo@caione.org>,
         linux-amlogic@lists.infradead.org, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: meson: axg-fifo: report interrupt request failure" to the asoc tree
-In-Reply-To:  <20180827141529.6497-1-jbrunet@baylibre.com>
-Message-Id: <20180828204729.2BCB144007A@finisterre.ee.mobilebroadband>
-Date:   Tue, 28 Aug 2018 21:47:29 +0100 (BST)
+Subject: Applied "ASoC: meson: imply clock and reset controllers" to the asoc tree
+In-Reply-To:  <20180828121721.26488-1-jbrunet@baylibre.com>
+Message-Id: <20180828204820.015EB44007A@finisterre.ee.mobilebroadband>
+Date:   Tue, 28 Aug 2018 21:48:19 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,7 +61,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: meson: axg-fifo: report interrupt request failure
+   ASoC: meson: imply clock and reset controllers
 
 has been applied to the asoc tree at
 
@@ -86,34 +86,49 @@ to this mail.
 Thanks,
 Mark
 
-From dadfab7272b13ca441efdb9aa9117bc669680b05 Mon Sep 17 00:00:00 2001
+From ac16df938e5107a1e08cf0f52818fa6a5f7bba94 Mon Sep 17 00:00:00 2001
 From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Mon, 27 Aug 2018 16:15:29 +0200
-Subject: [PATCH] ASoC: meson: axg-fifo: report interrupt request failure
+Date: Tue, 28 Aug 2018 14:17:21 +0200
+Subject: [PATCH] ASoC: meson: imply clock and reset controllers
 
-Return value of request_irq() was irgnored. Fix this and report
-the failure if any
+Add audio clock controller and ARB reset controller module
+implication for the device using them
 
-Fixes: 6dc4fa179fb8 ("ASoC: meson: add axg fifo base driver")
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/meson/axg-fifo.c | 2 ++
- 1 file changed, 2 insertions(+)
+ sound/soc/meson/Kconfig | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/sound/soc/meson/axg-fifo.c b/sound/soc/meson/axg-fifo.c
-index 30262550e37b..0e4f65e654c4 100644
---- a/sound/soc/meson/axg-fifo.c
-+++ b/sound/soc/meson/axg-fifo.c
-@@ -203,6 +203,8 @@ static int axg_fifo_pcm_open(struct snd_pcm_substream *ss)
+diff --git a/sound/soc/meson/Kconfig b/sound/soc/meson/Kconfig
+index 8af8bc358a90..2ccbadc387de 100644
+--- a/sound/soc/meson/Kconfig
++++ b/sound/soc/meson/Kconfig
+@@ -4,6 +4,8 @@ menu "ASoC support for Amlogic platforms"
+ config SND_MESON_AXG_FIFO
+ 	tristate
+ 	select REGMAP_MMIO
++	imply COMMON_CLK_AXG_AUDIO
++	imply RESET_MESON_AUDIO_ARB
  
- 	ret = request_irq(fifo->irq, axg_fifo_pcm_irq_block, 0,
- 			  dev_name(dev), ss);
-+	if (ret)
-+		return ret;
+ config SND_MESON_AXG_FRDDR
+ 	tristate "Amlogic AXG Playback FIFO support"
+@@ -22,6 +24,7 @@ config SND_MESON_AXG_TODDR
+ config SND_MESON_AXG_TDM_FORMATTER
+ 	tristate
+ 	select REGMAP_MMIO
++	imply COMMON_CLK_AXG_AUDIO
  
- 	/* Enable pclk to access registers and clock the fifo ip */
- 	ret = clk_prepare_enable(fifo->pclk);
+ config SND_MESON_AXG_TDM_INTERFACE
+ 	tristate
+@@ -58,6 +61,7 @@ config SND_MESON_AXG_SPDIFOUT
+ 	tristate "Amlogic AXG SPDIF Output Support"
+ 	select SND_PCM_IEC958
+ 	imply SND_SOC_SPDIF
++	imply COMMON_CLK_AXG_AUDIO
+ 	help
+ 	  Select Y or M to add support for SPDIF output serializer embedded
+ 	  in the Amlogic AXG SoC family
 -- 
 2.18.0
 
