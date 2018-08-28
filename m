@@ -2,94 +2,93 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FDBEC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:35:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BABE2C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:36:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0951C2089B
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:35:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0951C2089B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lio96.de
+	by mail.kernel.org (Postfix) with ESMTP id 7B7B22088E
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:36:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B7B22088E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727605AbeH1Q0u (ORCPT
+        id S1727842AbeH1Q1u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 12:26:50 -0400
-Received: from er-systems.de ([148.251.68.21]:32992 "EHLO er-systems.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726120AbeH1Q0u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 12:26:50 -0400
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        by er-systems.de (Postfix) with ESMTP id 2F738D60115;
-        Tue, 28 Aug 2018 14:35:19 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by er-systems.de (Postfix) with ESMTPS id E9836D60106;
-        Tue, 28 Aug 2018 14:35:18 +0200 (CEST)
-Date:   Tue, 28 Aug 2018 14:35:18 +0200 (CEST)
-From:   Thomas Voegtle <tv@lio96.de>
-X-X-Sender: thomas@er-systems.de
-To:     Thomas Gleixner <tglx@linutronix.de>
-cc:     x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Subject: Re: Apollo Lake with newer microcode: not affected by meltdown
- anymore?
-In-Reply-To: <alpine.DEB.2.21.1808281234260.2816@nanos.tec.linutronix.de>
-Message-ID: <alpine.LSU.2.21.1808281435050.31480@er-systems.de>
-References: <alpine.LSU.2.21.1808281225550.27853@er-systems.de> <alpine.DEB.2.21.1808281234260.2816@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Tue, 28 Aug 2018 12:27:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34938 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726120AbeH1Q1u (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 12:27:50 -0400
+Received: from localhost (unknown [104.153.224.167])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DD549E3E;
+        Tue, 28 Aug 2018 12:36:18 +0000 (UTC)
+Date:   Tue, 28 Aug 2018 14:36:07 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     "Ahmed S. Darwish" <darwish.07@gmail.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        John Joseph <jnjoseph@google.com>,
+        linux-kernel@vger.kernel.org, Simon Que <sque@chromium.org>,
+        Rob Springer <rspringer@google.com>,
+        devel@linuxdriverproject.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Todd Poynor <toddpoynor@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [GIT PULL] Staging/IIO driver patches for 4.19-rc1
+Message-ID: <20180828123607.GB13441@kroah.com>
+References: <20180818155724.GA22569@kroah.com>
+ <20180828103817.GB1397@do-kernel>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
-X-Virus-Status: No
-X-Virus-Checker-Version: clamassassin 1.2.4 with clamdscan / ClamAV 0.100.1/24880/Tue Aug 28 06:46:22 2018 signatures 58.
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180828103817.GB1397@do-kernel>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 28 Aug 2018, Thomas Gleixner wrote:
+On Tue, Aug 28, 2018 at 10:38:17AM +0000, Ahmed S. Darwish wrote:
+> [ re-send; forgotten lkml CC added; sorry ]
+> 
+> Hi,
+> 
+> On Sat, 18 Aug 2018 17:57:24 +0200, Greg KH wrote:
+> [...]
+> > addition of some new IIO drivers.  Also added was a "gasket" driver from
+> > Google that needs loads of work and the erofs filesystem.
+> > 
+> 
+> Why are we adding __a whole new in-kernel framework__ for
+> developing basic user-space drivers?
+> 
+> We already have a frameowrk for that, and it's UIO. [1] The UIO
+> code is a very stable and simple subsystem; it's also heavily used
+> in the embedded industry..
 
-> On Tue, 28 Aug 2018, Thomas Voegtle wrote:
->> Kernel 4.18.5 with old microcode:
->>
->> [    0.000000] microcode: microcode updated early to revision 0x2c, date =
->> 2017-03-25
->> cat /sys/devices/system/cpu/vulnerabilities/meltdown
->> Mitigation: PTI
->>
->>
->> Kernel 4.18.5 with new microcode (microcode-20180807.tgz), same config:
->>
->> [    0.000000] microcode: microcode updated early to revision 0x32, date =
->> 2018-05-11
->> cat /sys/devices/system/cpu/vulnerabilities/meltdown
->> Not affected
->>
->>
->> This happens with 4.14.y and 4.9.y as well.
->>
->> The same with ssb:
->> old microcode: spec_store_bypass:Vulnerable
->> new microcode: spec_store_bypass:Not affected
->>
->> Is this intentional behavior? I have never seen this on other CPUs, such
->> as Gemini Lake or Baytrail, Haswell etc.
->
-> Looks like the micro code update has the relevant bits set in the
-> IA32_ARCH_CAPABILITIES MSR, which tell the kernel that the CPU is not
-> vulnerable. So it seems Intel was able to mitigate the mess in micro code
-> for this particular CPU model.
+As Todd said, the code will end up being a simple UIO driver, if even
+that big, in th end.  It is just going to take him a while to constantly
+refactor things until he achieves that goal...
 
-Ah, ok.
-Didn't think of the most obvious.
-But yes RDCL_NO is set to 1 with the new microcode. Wow.
+> I've looked at the gasket documentation [2], and the first user
+> of this new in-kernel API [3], and this is almost replicating UIO
+> it's not funny. [4] True, the gasket APIs adds some extra new
+> conveniences (PCI BAR re-mapping, MSI, ..), but there's no
+> technical reason this cannot be added to the UIO code instead.
 
-Thanks and sorry for the noise,
+{shh} That's my plan :)
 
-   Thomas
+> More-over, the exposed user-space API is just some ioctls. So if
+> google hase some shipped user-space code that is using this,
+> hopefully the driver can still be re-implemented through UIO
+> without changing these bits..
 
+Odds are there is shipped code with that, which is why it will evolve
+over time this way and could not all happen at once.
+
+thanks for reviewing it,
+
+greg k-h
