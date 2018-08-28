@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD008C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:14:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27044C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:14:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75E972087E
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:14:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D67882087E
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:14:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QqjEy0pa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75E972087E
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MRO1epmG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D67882087E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727317AbeH2AH6 (ORCPT
+        id S1727352AbeH2AIB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 20:07:58 -0400
-Received: from mail-vk0-f73.google.com ([209.85.213.73]:38013 "EHLO
-        mail-vk0-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727162AbeH2AH5 (ORCPT
+        Tue, 28 Aug 2018 20:08:01 -0400
+Received: from mail-ua1-f73.google.com ([209.85.222.73]:44318 "EHLO
+        mail-ua1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727162AbeH2AIB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 20:07:57 -0400
-Received: by mail-vk0-f73.google.com with SMTP id d134-v6so1114570vkf.5
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 13:14:42 -0700 (PDT)
+        Tue, 28 Aug 2018 20:08:01 -0400
+Received: by mail-ua1-f73.google.com with SMTP id d22-v6so1103845uaq.11
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 13:14:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=uRAKHZlA0btsCxDvC9F6MjjKyQXLUpbtwbnShrkeMs8=;
-        b=QqjEy0paB2ESV8Eq3Z0vETkQyMFWYL7kKtF/GF8hO4P+n/fyNdczSjh4I9yk7VBXvY
-         CdhV263LIrzgGo+MzHtTLUaUlO3nB8ye5f7YrwPgbLec9ND8WyL3TClkV8zWEvQot1QC
-         YDJ2LcFH7fE8hlvgDKcNHj+7L+QFJhbxV3CamRUr3H6aabclbqrGOtUn24Uli6u9w2sB
-         a7qBwt5as4CNh3pVe6VdAO852f5kqRb4+n9ylOd4wZX/6AJILVnzc4TgZ82WUTcCU4Gp
-         n2hdirYGHToTE8Bn1wxoIOSmqmdOPmgPnZRM7ghWxK/zE5SnF0mfpA0Dc2vaU802MtLJ
-         q3tw==
+        bh=uJWoCGq+dC+kv6D5HnpJpcUVVj9VCc0+wlPJZZu58Ic=;
+        b=MRO1epmGNwUCnHbU0i4f57VR08as3uyxoIBp5RmzwmlCtcWAZJpI/2we+TaZa0z2Ln
+         3CrQkFyomt9BxMQNrkOBsV/YeVZN7p0iSiAehzruglhiG7k0hmVwlAzkxmiXtor6HVR8
+         aT9r5T4hsK7PawtQzM7IesKSESdyb3FO4V3bFN+gYo6L0zwP7B6OWqaAqB3ZiYh7lXJb
+         7SPdAY3RQ/DIrZb/kkiP/6f/txQyJ+f2WxkbINoeft9TbTBfUC1EdzbX8XJhMSldC4iT
+         WK0q9e7si8qmOK7RWk5k4lF0hwIfI9BwmmORBhUTIGJTbB9v7RMieIa30NrxStXHDa45
+         SubQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=uRAKHZlA0btsCxDvC9F6MjjKyQXLUpbtwbnShrkeMs8=;
-        b=diP8vp5p4bW2+sei1bYWURKfQR8VBTlODJWWGUCdnSohR+NCB642GeZKgpuLXCCoxm
-         IGXVAGj+1y0mGFpDf6ol1DGgZRG6cQxZbm8V59XTrIwcAT6gYNAcXbtwnriE/hHaE/+f
-         oKPAUdz8peQyaMWiGLun67eg3kARyDJGifzLc6CG0JqjvUjLfDYBWazw+zsVnNKxE0h9
-         N9gKllj/TW/jtmExP0wNbmKtJipZTe3qtXv+DhJEh6St14pzuhAOy10izK+5AngbZY0Q
-         iosK+BEgXqV1Uz+DJCPd3T0RHjU/TxkTzRyMipJu9LqzYw+uIx0n+e8Cib25Z7gv/6s1
-         BFEA==
-X-Gm-Message-State: APzg51DPcS2JtmCv8GsczmGLczo6RpaiT8zuH+gwuCbiH5zqBOVq6byJ
-        dBaMEXI6Aj1dcORXf87pMdzpPAz4mA==
-X-Google-Smtp-Source: ANB0VdZp/YDJc9C/v0lNpho7kK8NpP0tyQo06S1Yg8u9D8Ds1SiTDfbf4uwei9wnD4CvG4s+hIq1EkqCog==
-X-Received: by 2002:a1f:d382:: with SMTP id k124-v6mr1430418vkg.14.1535487281915;
- Tue, 28 Aug 2018 13:14:41 -0700 (PDT)
-Date:   Tue, 28 Aug 2018 22:14:15 +0200
+        bh=uJWoCGq+dC+kv6D5HnpJpcUVVj9VCc0+wlPJZZu58Ic=;
+        b=YxYVNKoFo8+62MaOZzoXGkMAT+u0JS8ixY80X+6haPcuxU9SQZx0AT8AUyDZqh0TAE
+         5FJgZiNrpoIribP8Hi+jTA/yotJXMDS9NZUQ63pRX6MNStpYs9yQlQ0rPz7icfrhu4Wr
+         THZI0JJr5WZpTZpkaeDxNRG5EWXnCYZuDAoz6HX9XkW1oHVqEQTbsIi/01MUgaFSQQO7
+         UfAqA79A3oH2HdylQM+iLd21UBYYXUkEsLmnrcEazgfvxF/I8ZZgTnhs8IgaQZUvqhNz
+         ku1nulm4TD2fTqE96fVGc9vDto+PRa/B/Nr3zBgO0Tf3UDmjef2CqTiOhtzE3D3pgD5p
+         jJJA==
+X-Gm-Message-State: APzg51CPHuEaPSnMOzB3l8zlVgGdysdfPY5+zZxURCMnDE2/ofFJU866
+        SM2DCH6IUZ5P1JCF05lAJVUg3gsDDQ==
+X-Google-Smtp-Source: ANB0VdbkegCsYkP9pgf34tu1wuFJg7i0BU53xS/AZqQ1qT0piv2l5bWT4weTcWV+ofjP9fz0MVA73wFxiQ==
+X-Received: by 2002:a67:341d:: with SMTP id b29-v6mr901vsa.53.1535487285116;
+ Tue, 28 Aug 2018 13:14:45 -0700 (PDT)
+Date:   Tue, 28 Aug 2018 22:14:16 +0200
 In-Reply-To: <20180828201421.157735-1-jannh@google.com>
-Message-Id: <20180828201421.157735-2-jannh@google.com>
+Message-Id: <20180828201421.157735-3-jannh@google.com>
 Mime-Version: 1.0
 References: <20180828201421.157735-1-jannh@google.com>
 X-Mailer: git-send-email 2.19.0.rc0.228.g281dcd1b4d0-goog
-Subject: [PATCH v3 1/7] x86: refactor kprobes_fault() like kprobe_exceptions_notify()
+Subject: [PATCH v3 2/7] x86: inline kprobe_exceptions_notify() into do_general_protection()
 From:   Jann Horn <jannh@google.com>
 To:     Kees Cook <keescook@chromium.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -81,57 +81,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an extension of commit b506a9d08bae ("x86: code clarification patch
-to Kprobes arch code"). As that commit explains, even though
-kprobe_running() can't be called with preemption enabled, you don't have to
-disable preemption - if preemption is on, you can't be in a kprobe.
+The opaque plumbing of #GP from do_general_protection() through
+notify_die() into kprobe_exceptions_notify() makes it hard to understand
+what's going on.
 
-Also, use X86_TRAP_PF instead of 14.
-
+Suggested-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Jann Horn <jannh@google.com>
 ---
-v3:
- - avoid unnecessary branch on return value and split up the checks
-   (Borislav Petkov)
+ arch/x86/kernel/kprobes/core.c | 31 +------------------------------
+ arch/x86/kernel/traps.c        | 10 ++++++++++
+ 2 files changed, 11 insertions(+), 30 deletions(-)
 
- arch/x86/mm/fault.c | 24 +++++++++++++-----------
- 1 file changed, 13 insertions(+), 11 deletions(-)
-
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index b9123c497e0a..bcdaae1d5bf5 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -44,17 +44,19 @@ kmmio_fault(struct pt_regs *regs, unsigned long addr)
+diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
+index b0d1e81c96bb..467ac22691b0 100644
+--- a/arch/x86/kernel/kprobes/core.c
++++ b/arch/x86/kernel/kprobes/core.c
+@@ -1028,42 +1028,13 @@ int kprobe_fault_handler(struct pt_regs *regs, int trapnr)
+ 		if (fixup_exception(regs, trapnr))
+ 			return 1;
  
- static nokprobe_inline int kprobes_fault(struct pt_regs *regs)
- {
--	int ret = 0;
--
--	/* kprobe_running() needs smp_processor_id() */
--	if (kprobes_built_in() && !user_mode(regs)) {
--		preempt_disable();
--		if (kprobe_running() && kprobe_fault_handler(regs, 14))
--			ret = 1;
--		preempt_enable();
--	}
--
--	return ret;
-+	if (!kprobes_built_in())
-+		return 0;
-+	if (user_mode(regs))
-+		return 0;
-+	/*
-+	 * To be potentially processing a kprobe fault and to be allowed to call
-+	 * kprobe_running(), we have to be non-preemptible.
-+	 */
-+	if (preemptible())
-+		return 0;
-+	if (!kprobe_running())
-+		return 0;
-+	return kprobe_fault_handler(regs, X86_TRAP_PF);
+-		/*
+-		 * fixup routine could not handle it,
+-		 * Let do_page_fault() fix it.
+-		 */
++		/* fixup routine could not handle it. */
+ 	}
+ 
+ 	return 0;
  }
+ NOKPROBE_SYMBOL(kprobe_fault_handler);
  
- /*
+-/*
+- * Wrapper routine for handling exceptions.
+- */
+-int kprobe_exceptions_notify(struct notifier_block *self, unsigned long val,
+-			     void *data)
+-{
+-	struct die_args *args = data;
+-	int ret = NOTIFY_DONE;
+-
+-	if (args->regs && user_mode(args->regs))
+-		return ret;
+-
+-	if (val == DIE_GPF) {
+-		/*
+-		 * To be potentially processing a kprobe fault and to
+-		 * trust the result from kprobe_running(), we have
+-		 * be non-preemptible.
+-		 */
+-		if (!preemptible() && kprobe_running() &&
+-		    kprobe_fault_handler(args->regs, args->trapnr))
+-			ret = NOTIFY_STOP;
+-	}
+-	return ret;
+-}
+-NOKPROBE_SYMBOL(kprobe_exceptions_notify);
+-
+ bool arch_within_kprobe_blacklist(unsigned long addr)
+ {
+ 	bool is_in_entry_trampoline_section = false;
+diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+index e6db475164ed..bf9ab1aaa175 100644
+--- a/arch/x86/kernel/traps.c
++++ b/arch/x86/kernel/traps.c
+@@ -556,6 +556,16 @@ do_general_protection(struct pt_regs *regs, long error_code)
+ 
+ 		tsk->thread.error_code = error_code;
+ 		tsk->thread.trap_nr = X86_TRAP_GP;
++
++		/*
++		 * To be potentially processing a kprobe fault and to
++		 * trust the result from kprobe_running(), we have to
++		 * be non-preemptible.
++		 */
++		if (!preemptible() && kprobe_running() &&
++		    kprobe_fault_handler(regs, X86_TRAP_GP))
++			return;
++
+ 		if (notify_die(DIE_GPF, "general protection fault", regs, error_code,
+ 			       X86_TRAP_GP, SIGSEGV) != NOTIFY_STOP)
+ 			die("general protection fault", regs, error_code);
 -- 
 2.19.0.rc0.228.g281dcd1b4d0-goog
 
