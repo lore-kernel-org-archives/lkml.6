@@ -2,168 +2,154 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65414C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 06:08:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75732C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 06:15:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D5CF208E1
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 06:08:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ftxvTb9r";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hUYWbgMt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D5CF208E1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 22E81208E1
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 06:15:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22E81208E1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727172AbeH1J6b (ORCPT
+        id S1726909AbeH1KFZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 05:58:31 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:43702 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726379AbeH1J6b (ORCPT
+        Tue, 28 Aug 2018 06:05:25 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35758 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726432AbeH1KFZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 05:58:31 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 726796055B; Tue, 28 Aug 2018 06:08:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535436507;
-        bh=CwCr5IWIB7Op2Pz2bM3u7X4KdxC7Hkazhj93ZnN9Ne4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ftxvTb9r0fdiQanUqYumsxBNFfhX9GMk18YER8rBfqlaI4opju3Z6DNIlQftuKP3P
-         tyZUKc0vmKoXA+Cnwr4F4DUTuuZX9mS8lq4SQrzCh3I9DaT+9qSjPFAFNFCFxI9bIl
-         v4nmHyJYZhP5UlTkH47BJatlWnoUn/PaBgUUpFqY=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 7B288601DA;
-        Tue, 28 Aug 2018 06:08:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535436506;
-        bh=CwCr5IWIB7Op2Pz2bM3u7X4KdxC7Hkazhj93ZnN9Ne4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=hUYWbgMtCRCf5ZWBKFAYW8EFk2ioOAqXEMXBR5w8NkurWJ5AEqEIBkcYtg8vDuOzK
-         5JSu3GiuSRN9sKGXxRVf1usHnHqjV0oW1j9CKTIbDIw4FAvdHs5Ij8oQ8TQFqjldmy
-         IyanX8FFElxfO56CsYhpCsM8i2C/4WwG61D6C0j0=
+        Tue, 28 Aug 2018 06:05:25 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7S6EUvi138756
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 02:15:20 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m4y51v095-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 02:15:20 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Tue, 28 Aug 2018 07:15:18 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 28 Aug 2018 07:15:14 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7S6FDMh34078944
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 28 Aug 2018 06:15:13 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 792EB4C046;
+        Tue, 28 Aug 2018 09:15:12 +0100 (BST)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E87F64C06A;
+        Tue, 28 Aug 2018 09:15:11 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.8.97])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue, 28 Aug 2018 09:15:11 +0100 (BST)
+Date:   Tue, 28 Aug 2018 09:15:11 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shuah Khan <shuah@kernel.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Prakash Sangappa <prakash.sangappa@oracle.com>
+Subject: Re: [PATCH v2 4/4] userfaultfd: selftest: Cope if shmem doesn't
+ support zeropage
+References: <20180803220046.4019-1-bauerman@linux.ibm.com>
+ <20180803220046.4019-5-bauerman@linux.ibm.com>
+ <20180807065642.GD20140@rapoport-lnx>
+ <87zhx7rywm.fsf@morokweng.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 28 Aug 2018 11:38:26 +0530
-From:   sibis@codeaurora.org
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     bjorn.andersson@linaro.org, p.zabel@pengutronix.de,
-        robh+dt@kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        ohad@wizery.com, mark.rutland@arm.com, sricharan@codeaurora.org,
-        akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        tsoni@codeaurora.org
-Subject: Re: [PATCH v2 1/6] dt-bindings: reset: Add PDC Global binding for
- SDM845 SoCs
-In-Reply-To: <20180828003823.GY160295@google.com>
-References: <20180824131900.5353-1-sibis@codeaurora.org>
- <20180824131900.5353-2-sibis@codeaurora.org>
- <20180828003823.GY160295@google.com>
-Message-ID: <c675b609fcd0d243e4db2e6637c70902@codeaurora.org>
-X-Sender: sibis@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87zhx7rywm.fsf@morokweng.localdomain>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18082806-0012-0000-0000-0000029FA9DB
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082806-0013-0000-0000-000020D3AFB8
+Message-Id: <20180828061510.GA25317@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-28_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808280064
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matthias,
-Thanks for the review
+On Mon, Aug 27, 2018 at 11:46:33PM -0300, Thiago Jung Bauermann wrote:
+> 
+> Hello Mike,
+> 
+> Mike Rapoport <rppt@linux.vnet.ibm.com> writes:
+> 
+> > Hi,
+> >
+> > On Fri, Aug 03, 2018 at 07:00:46PM -0300, Thiago Jung Bauermann wrote:
+> >> If userfaultfd runs on a system that doesn't support UFFDIO_ZEROPAGE for
+> >> shared memory, it currently ends with error code 1 which indicates test
+> >> failure:
+> >>
+> >>   # ./userfaultfd shmem 10 10
+> >>   nr_pages: 160, nr_pages_per_cpu: 80
+> >>   bounces: 9, mode: rnd poll, unexpected missing ioctl for anon memory
+> >>   # echo $?
+> >>   1
+> >>
+> >> Change userfaultfd_zeropage_test() to return KSFT_SKIP to indicate that
+> >> the test is being skipped.
+> >
+> > I took a deeper look at what userfaultfd_zeropage_test() does and,
+> > apparently, I've mislead you. The test checks if the range has
+> > UFFDIO_ZEROPAGE and verifies that it works if yes; otherwise the test
+> > verifies that EINVAL is returned.
+> >
+> > Can you please check if the patch below works in your environment?
+> >
+> > From 7a34c84c0461b5073742275638c44b6535d19166 Mon Sep 17 00:00:00 2001
+> > From: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> > Date: Tue, 7 Aug 2018 09:44:19 +0300
+> > Subject: [PATCH] userfaultfd: selftest: make supported range ioctl
+> >  verification more robust
+> >
+> > When userfaultfd tests runs on older kernel that does not support
+> > UFFDIO_ZEROPAGE for shared memory it fails at the ioctl verification.
+> >
+> > Split out the verification that supported ioctls are superset of the
+> > expected ioctls and relax the checks for UFFDIO_ZEROPAGE for shared memory
+> > areas.
+> >
+> > Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> > ---
+> >  tools/testing/selftests/vm/userfaultfd.c | 63 +++++++++++++++++---------------
+> >  1 file changed, 34 insertions(+), 29 deletions(-)
+> 
+> I'm sorry to take this long to respond, I was only able to get back to
+> this today.
 
-On 2018-08-28 06:08, Matthias Kaehlcke wrote:
-> Hi Sibi,
-> 
-> On Fri, Aug 24, 2018 at 06:48:55PM +0530, Sibi Sankar wrote:
->> Add PDC Global(Power Domain Controller) binding for SDM845 SoCs.
-> 
-> nit: missing blank before the opening parenthesis.
-> 
+No problem :)
 
-Will fix it
+> Your patch does solve my problem. Thank you very much!
+> 
+> It has a trivial conflict in the second hunk with patch 3 in my series.
+> Should I repost the series with your patch in place of patch 4?
 
->> 
->> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
->> ---
->>  .../bindings/reset/qcom,pdc-global.txt        | 52 
->> +++++++++++++++++++
->>  include/dt-bindings/reset/qcom,sdm845-pdc.h   | 20 +++++++
->>  2 files changed, 72 insertions(+)
->>  create mode 100644 
->> Documentation/devicetree/bindings/reset/qcom,pdc-global.txt
->>  create mode 100644 include/dt-bindings/reset/qcom,sdm845-pdc.h
->> 
->> diff --git 
->> a/Documentation/devicetree/bindings/reset/qcom,pdc-global.txt 
->> b/Documentation/devicetree/bindings/reset/qcom,pdc-global.txt
->> new file mode 100644
->> index 000000000000..69f9edca9503
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/reset/qcom,pdc-global.txt
->> @@ -0,0 +1,52 @@
->> +PDC Global
->> +======================================
->> +
->> +This binding describes a reset-controller found on PDC-Global(Power 
->> Domain
->> +Controller) block for Qualcomm Technologies Inc SDM845 SoCs.
-> 
-> Are there other PDC reset controllers that aren't 'global'? Otherwise
-> I'd suggest to use 'pdc-reset' instead of 'pdc-global', which is more
-> specific and in line with the name of the driver added by this series.
-> Or something like 'pdc-reset-global/main' if there are other
-> controllers?
-> 
+Yep.
+ 
+> --
+> Thiago Jung Bauermann
+> IBM Linux Technology Center
 
-These are the only reset lines found in the pdc-global register space. 
-But as
-explained by Bjorn, wouldn't it be better to leave it as such since 
-pdc-global
-best describes the hardware without being limited by the current 
-functionality
-it is being used for?
+-- 
+Sincerely yours,
+Mike.
 
->> +Required properties:
->> +- compatible:
->> +	Usage: required
->> +	Value type: <string>
->> +	Definition: must be:
->> +		    "qcom,sdm845-pdc-global"
->> +
->> +- reg:
->> +	Usage: required
->> +	Value type: <prop-encoded-array>
->> +	Definition: must specify the base address and size of the register
->> +	            space.
->> +
->> +- #reset-cells:
->> +	Usage: required
->> +	Value type: <uint>
->> +	Definition: must be 1; cell entry represents the reset index.
->> +
->> +Example:
->> +
->> +pdc_reset: reset-controller@b2e0000 {
->> +	compatible = "qcom,sdm845-pdc-global";
->> +	reg = <0xb2e0000 0x20000>;
->> +	#reset-cells = <1>;
->> +};
->> +
->> +PDC reset clients
->> +======================================
->> +
->> +Device nodes that need access to reset lines should
->> +specify them as a reset phandle in their corresponding node as
->> +specified in reset.txt.
->> +
->> +For list of all valid reset indicies see
-> 
-> s/indicies/indices/ (or s/indicies/lines/ ?)
-> 
-> Cheers
-> 
-> Matthias
