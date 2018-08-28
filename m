@@ -2,177 +2,138 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AA19C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:01:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 006E8C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:01:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18DB120894
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:01:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A456F20880
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:01:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GQJv5OFr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18DB120894
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iSfKoFte"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A456F20880
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727529AbeH1UyR (ORCPT
+        id S1727572AbeH1UyZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 16:54:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53016 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727054AbeH1UyR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 16:54:17 -0400
-Received: from localhost (unknown [104.132.1.88])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3610720880;
-        Tue, 28 Aug 2018 17:01:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535475703;
-        bh=gN5z6y+wkGwMx5RrIifkz0+LJb7+v8SmzU1OVEqROjw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GQJv5OFrEKbraI8DiPPy8wAU9G8s6hFHnKjj8Qe3J0CQCdthWWZe+NBFZ/ephAq57
-         NMq/oJzEXBHjZMMCDNmnZ+nRKqmNysCA6y0ac7YYNU5Kt2UVyjsI19GtQlOziVhNWO
-         ZZH27PKlvn92AClcGIM/MCi2/BsyRYgGIjSA/Kuo=
-Date:   Tue, 28 Aug 2018 10:01:42 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     Chao Yu <chao@kernel.org>, Eric Biggers <ebiggers@kernel.org>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Michael Halcrow <mhalcrow@google.com>,
-        linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-ext4@vger.kernel.org,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Victor Hsieh <victorhsieh@google.com>
-Subject: Re: [f2fs-dev] [RFC PATCH 10/10] f2fs: fs-verity support
-Message-ID: <20180828170142.GB62482@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180824161642.1144-1-ebiggers@kernel.org>
- <20180824161642.1144-11-ebiggers@kernel.org>
- <b2b6a810-9605-15c8-b905-a4591c0cf3a5@huawei.com>
- <20180826173507.GC728@sol.localdomain>
- <dbc20be8-975d-7bd2-002d-a8f30896da4a@kernel.org>
- <20180828072756.GC29049@jaegeuk-macbookpro.roam.corp.google.com>
- <63a19512-e938-d239-9e3c-f6ecc479478c@huawei.com>
+        Tue, 28 Aug 2018 16:54:25 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:35716 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727054AbeH1UyZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 16:54:25 -0400
+Received: by mail-qt0-f195.google.com with SMTP id j7-v6so2535608qtp.2;
+        Tue, 28 Aug 2018 10:01:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AG16YByWFJVLXWZ9W3ecTP3OiU3qcAbxM0zp5GnZyNk=;
+        b=iSfKoFteL6MFKMcnfJeYo1Mdu/36HYhrgQyaBJ16N2nUUjcBrUQZSohfsy8xBui6tW
+         9tLM7++4IWDDzdf783Pt+UsYG6oOZUDCZ6WgFP24GKbP0hWWM3pE3LHn73oD1D5VU8Sb
+         OyuH65pD//r8cYA1bq68jBpSu4Lm/fCa4J/+vtqj8hWfALVXn74K+lfSlgBWICHhcCQN
+         hHYJE66kZml6BW7Glz9ZRuFGg5k04VimK4Tp4RKX674lnARj4Q+2SSlutdEGG4EsKjs3
+         1IorW0x0+Dz8eXFYUhOPyIA5iC70qSIHwdeHSTCBgOOQBG/rAlqLttqdu/ud0M+IaPUp
+         v8LQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AG16YByWFJVLXWZ9W3ecTP3OiU3qcAbxM0zp5GnZyNk=;
+        b=idFRk71hT3IcE2pGKFGCxqd6OXaRYsiQOnKGIP1+ZuqtnqNXZ7Od30tEhEO0Lz5ipn
+         VanlkJZ6y1tqAfjonLMxbFNYFq8EkVDX4Z5HM/Ju7tLzbOMG2KftdQ9CcxkA4hM1B71Z
+         AY/1++MQiPs3dEwlYE2jVNlajjZnMEfHkeqoqfJdROMXv1FjiDLv/A0ZfUdbUTgDqRy4
+         Buv0PSwKThFbkrU+0WAxM7c2Rq5zbJIO8Lx5Jj6neGiOYe6HV7U4KgAUxYOoUnZP16Ff
+         eQ03O/ZNCEl70oHKCLY5FQQIoRq0IiVOHZxcmIppfriIXxp/hzhk0yJX7VsUjys8HdME
+         maXQ==
+X-Gm-Message-State: APzg51DMXq51wck5quLuqAUag1Ve5/H9CgM+CscXPfIYhw3EHQRyFxdV
+        FFMlqJC1QYpXHifi3HZDWkIk6xiId+8izMCcSOE=
+X-Google-Smtp-Source: ANB0VdbF5oiYIq2ssNLqLcEdccfklP+gQoTx5m1awYZSxOba0nTTRqG7g6adc9vc1EwpPM/SFScItnMYbKuKr5Bsc/8=
+X-Received: by 2002:a0c:8b11:: with SMTP id q17-v6mr2521899qva.193.1535475710756;
+ Tue, 28 Aug 2018 10:01:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <63a19512-e938-d239-9e3c-f6ecc479478c@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+References: <20180828154727.3589-1-ianwmorrison@gmail.com> <211633e2-a812-d489-e11c-c3f271c465fc@kernel.dk>
+ <CAFXWsS_661mkZa1iYEs+8-O-fdFF6bEcqtZrNBzVaNthT2U46w@mail.gmail.com>
+ <1cbdba28-3ff5-2bbe-a2cf-b533249c6970@kernel.dk> <CAFXWsS82zi7w81-=4ALwMiFm9iQd=NgF3sSBLfvNdU2czEzxwg@mail.gmail.com>
+ <853d7213-c6ce-5de9-6c83-806c3b8f18ca@kernel.dk>
+In-Reply-To: <853d7213-c6ce-5de9-6c83-806c3b8f18ca@kernel.dk>
+From:   Ian W MORRISON <ianwmorrison@gmail.com>
+Date:   Wed, 29 Aug 2018 03:01:37 +1000
+Message-ID: <CAFXWsS_xOKTJk87vQSESQNfdwY1TU0jjS4twEg_+yF3pqbKQ3g@mail.gmail.com>
+Subject: Re: [PATCH] Revert "blk-mq: issue directly if hw queue isn't busy in
+ case of 'none'"
+To:     axboe@kernel.dk
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kashyap.desai@broadcom.com, loberman@redhat.com, osandov@fb.com,
+        hch@lst.de, bart.vanassche@wdc.com, hare@suse.de,
+        ming.lei@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/28, Chao Yu wrote:
-> On 2018/8/28 15:27, Jaegeuk Kim wrote:
-> > On 08/27, Chao Yu wrote:
-> >> Hi Eric,
+On Wed, 29 Aug 2018 at 02:13, Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 8/28/18 10:10 AM, Ian W MORRISON wrote:
+> > On Wed, 29 Aug 2018 at 02:09, Jens Axboe <axboe@kernel.dk> wrote:
 > >>
-> >> On 2018/8/27 1:35, Eric Biggers wrote:
-> >>> Hi Chao,
-> >>>
-> >>> On Sat, Aug 25, 2018 at 01:54:08PM +0800, Chao Yu wrote:
-> >>>> On 2018/8/25 0:16, Eric Biggers wrote:
-> >>>>> From: Eric Biggers <ebiggers@google.com>
-> >>>>>  #ifdef CONFIG_F2FS_CHECK_FS
-> >>>>>  #define f2fs_bug_on(sbi, condition)	BUG_ON(condition)
-> >>>>>  #else
-> >>>>> @@ -146,7 +149,7 @@ struct f2fs_mount_info {
-> >>>>>  #define F2FS_FEATURE_QUOTA_INO		0x0080
-> >>>>>  #define F2FS_FEATURE_INODE_CRTIME	0x0100
-> >>>>>  #define F2FS_FEATURE_LOST_FOUND		0x0200
-> >>>>> -#define F2FS_FEATURE_VERITY		0x0400	/* reserved */
-> >>>>> +#define F2FS_FEATURE_VERITY		0x0400
-> >>>>>  
-> >>>>>  #define F2FS_HAS_FEATURE(sb, mask)					\
-> >>>>>  	((F2FS_SB(sb)->raw_super->feature & cpu_to_le32(mask)) != 0)
-> >>>>> @@ -598,7 +601,7 @@ enum {
-> >>>>>  #define FADVISE_ENC_NAME_BIT	0x08
-> >>>>>  #define FADVISE_KEEP_SIZE_BIT	0x10
-> >>>>>  #define FADVISE_HOT_BIT		0x20
-> >>>>> -#define FADVISE_VERITY_BIT	0x40	/* reserved */
-> >>>>> +#define FADVISE_VERITY_BIT	0x40
+> >> On 8/28/18 10:07 AM, Ian W MORRISON wrote:
+> >>> On Wed, 29 Aug 2018 at 01:48, Jens Axboe <axboe@kernel.dk> wrote:
 > >>>>
-> >>>> As I suggested before, how about moving f2fs' verity_bit from i_fadvise to more
-> >>>> generic i_flags field like ext4, so we can a) remaining more bits for those
-> >>>> demands which really need file advise fields. b) using i_flags bits keeping line
-> >>>> with ext4. Not sure, if user want to know whether the file is verity one, it
-> >>>> will be easy for f2fs to export the status through FS_IOC_SETFLAGS.
+> >>>> On 8/28/18 9:47 AM, Ian W MORRISON wrote:
+> >>>>> Kernel oops when booting on Bay and Cherry Trail devices
+> >>>>> such as Intel Compute Stick. Bisected as:
+> >>>>>
+> >>>>> commit 6ce3dd6eec11 ("blk-mq: issue directly if hw queue isn't busy in case of 'none'")
+> >>>>>
+> >>>>> This patch reverts the above commit.
 > >>>>
-> >>>> #define EXT4_VERITY_FL			0x00100000 /* Verity protected inode */
+> >>>> Did I miss the posting of that oops? Just curious where this is
+> >>>> going wrong. Not adverse to reverting, but I'd like to try to
+> >>>> understand the issue first.
 > >>>>
-> >>>> #define F2FS_VERITY_FL			0x00100000 /* Verity protected inode */
+> >>>> --
+> >>>> Jens Axboe
 > >>>>
 > >>>
-> >>> I don't like using i_advise much either, but I actually don't see either
-> >>> location being much better than the other at the moment.  The real problem is an
-> >>> artificial one: the i_flags in f2fs's on-disk format are being assumed to use
-> >>
-> >> Yeah, but since most copied flags from vfs/ext4 are not actually used in f2fs,
-> >> also 0x00100000 bit is not used now, so we can just define it now directly for
-> >> verity bit.
-> >>
-> >> Cleanup and remapping in ioctl interface for those unused flags, we can do it
-> >> latter?
-> > 
-> > No, it was reserved by f2fs-tools, 
-> 
-> That's not a problem, since we didn't use that reserved bit in any of images
-> now, there is no backward compatibility issue.
-
-We're using that.
-
-> 
-> > and I think this should be aligned to the encryption bit. 
-> 
-> Alright, we could, but if so, i_advise will run out of space earlier, after that
-> we have to add real advice bit into i_inline or i_flags, that would be a little
-> weird.
-> 
-> For encryption bit, as a common vfs feature flag, in the beginning of encryption
-> development, it will be better to set it into i_flags, IMO, but now, we have to
-> keep it as it was.
-> 
-> > Moreover, we guarantee i_flags less strictly from power-cut than i_advise.
-> 
-> IMO, in power-cut scenario, it needs to keep both i_flags and i_advise being
-> recoverable strictly. Any condition that we can not recover i_flags?
-
-In __f2fs_ioc_setflags, f2fs_mark_inode_dirty_sync(inode, false);
-
-> 
-> Thanks,
-> 
-> > 
-> >>
-> >> Thanks,
-> >>
-> >>> the same numbering scheme as ext4's on-disk format, which makes it seem that
-> >>> they have to be in sync, and that all new ext4 flags (say, EA_INODE) also
-> >>> reserve bits in f2fs and vice versa, when they in fact do not.  Instead, f2fs
-> >>> should use its own numbering for its i_flags, and it should map them to/from
-> >>> whatever is needed for common APIs like FS_IOC_{GET,SET}FLAGS and
-> >>> FS_IOC_FS{GET,SET}XATTR.
+> >>> I've not been able to capture it however manually transcribing what is
+> >>> on the screen:
 > >>>
-> >>> So putting the verity flag in *either* location (i_advise or i_flags) is just
-> >>> kicking the can down the road.  If I get around to it I will send a patch that
-> >>> cleans up the f2fs flags properly...>
-> >>> Thanks,
+> >>> mmc0: Got data interrupt 0x00000002 even though no data operation
 > >>>
-> >>> - Eric
+> >>> followed by:
 > >>>
-> >>> ------------------------------------------------------------------------------
-> >>> Check out the vibrant tech community on one of the world's most
-> >>> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
-> >>> _______________________________________________
-> >>> Linux-f2fs-devel mailing list
-> >>> Linux-f2fs-devel@lists.sourceforge.net
-> >>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> >>> mmc0: sdhci: ============= SDHCI REGISTER DUMP ==============
 > >>>
-> > 
-> > .
-> > 
+> >>> Do you want any specific register value or should I transcribe each
+> >>> (as I am working from an image taken at boot)?
+> >>
+> >> Just take a picture of the screen, that should be good enough.
+> >>
+> >> --
+> >> Jens Axboe
+> >>
+> >
+> > Attached as requested.
+>
+> Can you see if this patch helps?
+>
+> https://marc.info/?l=linux-mmc&m=153485326025301&w=2
+>
+> --
+> Jens Axboe
+>
+
+I confirm that the above patch works with commit 6ce3dd6eec11
+and removes the need for reverting it on eMMC based devices.
+
+Tested on Bay Trail, Cherry Trail (both now working) and Kaby Lake
+(not affected) devices.
+
+Many thanks,
+Ian
