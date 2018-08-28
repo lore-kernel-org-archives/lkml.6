@@ -2,137 +2,146 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C05CC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:57:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 989A9C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 22:00:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C07D620835
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:57:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C07D620835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2563020835
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 22:00:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O6a1lshE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2563020835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727193AbeH2Bug (ORCPT
+        id S1727273AbeH2Bxl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 21:50:36 -0400
-Received: from mga06.intel.com ([134.134.136.31]:55245 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726961AbeH2Bug (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 21:50:36 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Aug 2018 14:56:58 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,300,1531810800"; 
-   d="scan'208";a="69851103"
-Received: from megha-z97x-ud7-th.sc.intel.com (HELO [143.183.85.162]) ([143.183.85.162])
-  by orsmga006.jf.intel.com with ESMTP; 28 Aug 2018 14:56:40 -0700
-Message-ID: <1535494636.15041.15.camel@megha-Z97X-UD7-TH>
-Subject: Re: KASAN: use-after-free Read in sha512_ctx_mgr_resubmit
-From:   Megha Dey <megha.dey@linux.intel.com>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        syzbot <syzbot+d5455bac3ba1ee9114e5@syzkaller.appspotmail.com>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        the arch/x86 maintainers <x86@kernel.org>
-Date:   Tue, 28 Aug 2018 15:17:16 -0700
-In-Reply-To: <CAKv+Gu_oZ0Z37WV1h4opi-cYZT5FWU_bmrkBjx8LXpvKpPoZNA@mail.gmail.com>
-References: <00000000000072d64d05737b6b8c@google.com>
-         <20180820073119.GA14931@sol.localdomain>
-         <CAKv+Gu9Y0TLOuMba43HPihYqy-kk0nttBfPj1_UukiYy1cBcFw@mail.gmail.com>
-         <20180822062036.mdq4q5o5zdzuxh7s@gondor.apana.org.au>
-         <1535411336.3516.2.camel@megha-Z97X-UD7-TH>
-         <CAKv+Gu_oZ0Z37WV1h4opi-cYZT5FWU_bmrkBjx8LXpvKpPoZNA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 28 Aug 2018 21:53:41 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:43905 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726383AbeH2Bxl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 21:53:41 -0400
+Received: by mail-pg1-f196.google.com with SMTP id v66-v6so1348429pgb.10
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 15:00:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=9XrLbb6tmalPVT45yux6sPLcBQjpkAuvKpcSsE2gIo8=;
+        b=O6a1lshEB6SbQBIqx8krXBSEDfsDHysVJcp5HLzhs7KL3s/YOOdh8ZENsOEcg7hR9I
+         WilEF7ySpLkjz3l7ZPFsTtNtN1artDX6NzQqKZdF+Ag+YoHIonzKK1a2yFdk9kRATpuH
+         tNQoQLmmo5rDN31nhA5mjbu1EzGbKrVR9Yb91qcCswzE8FLklffn2frInBRbsmfUNDdI
+         IfqLx+T8T88nf4XdElqv8CvEWqfD6J1e4oVQPze8+Th+BF7zaHxcqlpnUGY+9/w+BIV7
+         QRDntu9kDZ3+6YqMMQ70Xi1r3zoUf9zI57w9t1LoOCXlY6FT48HStI6IPKCD4i+OpEiU
+         J0lQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9XrLbb6tmalPVT45yux6sPLcBQjpkAuvKpcSsE2gIo8=;
+        b=aGH3kIjhCRRfF/NKSM2Na/bIERc1V+JlN5iBkFETvXCqlQ3U1qGYkqFc1paXMk6cEc
+         qsbhQ9oyYZ0wT9GlQkUPscCRQoIPRgT2psqS5cYw9wSrukpKVzpW+nOB7ugvrRUUSvtc
+         rjY/dgazZnqlxui923wOH9rPEoW/eo18JjfBzN+hM4xdA8y/Bbk+qjHhAnOW7yCb+DFm
+         cYGmsOAS5QnRICNJgHamW5aH2tejdtNLggssDAnXHHv6VWbc1M/nZorCgFjiv0LjP/Fn
+         TShJDvkMa8AcGRXISi0kGLuurwVojRaXWk6qqsw2bcKNgOL1CH8G/yZK70o3WbLP4uLt
+         dMnA==
+X-Gm-Message-State: APzg51AekQP7hs5nycqTMndpFVXTbbXrJSr1zv+DEK6cLYDjpsCe13G4
+        3D6agxjgBeWCTvISDY4VmsY=
+X-Google-Smtp-Source: ANB0VdYrB75rpWqfqTbJS7nnXD29fENd69nysWjlj0pHkZsxvSpH6Tm+xaLD+sHPhvDtKk5o55zL5w==
+X-Received: by 2002:a63:d002:: with SMTP id z2-v6mr3252351pgf.262.1535493602149;
+        Tue, 28 Aug 2018 15:00:02 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id h190-v6sm8582183pge.18.2018.08.28.15.00.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 28 Aug 2018 15:00:01 -0700 (PDT)
+Date:   Tue, 28 Aug 2018 14:59:59 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Andreas Schwab <schwab@linux-m68k.org>
+Cc:     Palmer Dabbelt <palmer@sifive.com>, aou@eecs.berkeley.edu,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] riscv: Drop setup_initrd
+Message-ID: <20180828215959.GA6279@roeck-us.net>
+References: <1533874300-17656-1-git-send-email-linux@roeck-us.net>
+ <mhng-7faee2bb-ee3e-48d1-a016-782ebbbb903d@palmer-si-x1c4>
+ <20180828212505.GA24238@roeck-us.net>
+ <87mut6b1we.fsf@igel.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87mut6b1we.fsf@igel.home>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-08-28 at 01:01 +0200, Ard Biesheuvel wrote:
-> On 28 August 2018 at 01:08, Megha Dey <megha.dey@linux.intel.com> wrote:
-> > On Wed, 2018-08-22 at 14:20 +0800, Herbert Xu wrote:
-> >> On Tue, Aug 21, 2018 at 02:43:56PM +0200, Ard Biesheuvel wrote:
+On Tue, Aug 28, 2018 at 11:46:09PM +0200, Andreas Schwab wrote:
+> On Aug 28 2018, Guenter Roeck <linux@roeck-us.net> wrote:
+> 
+> > On Tue, Aug 28, 2018 at 01:10:20PM -0700, Palmer Dabbelt wrote:
+> >> On Thu, 09 Aug 2018 21:11:40 PDT (-0700), linux@roeck-us.net wrote:
+> >> >setup_initrd() does not appear to serve a practical purpose other than
+> >> >preventing qemu boots with "-initrd" parameter, so let's drop it.
 > >> >
-> >> > I agree. The code is obviously broken in a way that would have been
-> >> > noticed if it were in wide use, and it is too complicated for mere
-> >> > mortals to fix or maintain. I suggest we simply remove it for now, and
-> >> > if anyone wants to reintroduce it, we can review the code *and* the
-> >> > justification for the approach from scratch (in which case we should
-> >> > consider factoring out the algo agnostics plumbing in a way that
-> >> > allows it to be reused by other architectures as well)
-> >>
-> >> I agree too.  Could one of you guys send me a patch to remove
-> >> them?
-> >>
+> >> >Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> >> >---
+> >> > arch/riscv/kernel/setup.c | 39 ---------------------------------------
+> >> > 1 file changed, 39 deletions(-)
+> >> >
+> >> >diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
+> >> >index 2e56af3281f8..579f58a42974 100644
+> >> >--- a/arch/riscv/kernel/setup.c
+> >> >+++ b/arch/riscv/kernel/setup.c
+> >> >@@ -82,41 +82,6 @@ EXPORT_SYMBOL(empty_zero_page);
+> >> > /* The lucky hart to first increment this variable will boot the other cores */
+> >> > atomic_t hart_lottery;
+> >> >
+> >> >-#ifdef CONFIG_BLK_DEV_INITRD
+> >> >-static void __init setup_initrd(void)
+> >> >-{
+> >> >-	extern char __initramfs_start[];
+> >> >-	extern unsigned long __initramfs_size;
+> >> >-	unsigned long size;
+> >> >-
+> >> >-	if (__initramfs_size > 0) {
+> >> >-		initrd_start = (unsigned long)(&__initramfs_start);
+> >> >-		initrd_end = initrd_start + __initramfs_size;
+> >> >-	}
 > >
-> > Hi,
+> > The underlying problem is probably that __initramfs_size == 512 even
+> > if there is no embedded initrd. Result is that initrd_start and initrd_end
+> > are always overwritten, even if provided and even if there is no embedded
+> > initrd. Result is that initrd_start and initrd_end are always overwritten,
+> > and -initrd from the qemu command line is always ignored.
 > >
-> > We are working on a fix to solve these corner cases.
+> > A less invasive fix than mine would be
 > >
+> > -	if (__initramfs_size > 0) {
+> > +	if (__initramfs_size > 0 && !initrd_start) {
+> >
+> > Any chance you can test that with your setup ?
 > 
-> Great. thanks.
+> You should just delete the last four lines above.  They serve no purpose.
 > 
-> But it would also be helpful if you could try and answer the questions
-> raised by Eric:
-> - in which cases does this driver result in a speedup?
 
-The multibuffer algorithm approach results in a speedup only when there
-are a large number of independent jobs. Similarly if there is a steady
-stream of independent jobs, multibuffer works well. So another way of
-looking at this is that if there are a lot of flushes, then one
-shouldn't be using multibuffer algorithms.
- 
-> - how should we tune the flush delay to prevent pathological
-> performance regressions?
+You mean the entire if() statement plus the variable declarations ?
 
-We have not optimized the flush delay on the ground that it should not
-be occurring often. If this seems to be happening a lot, then perhaps we
-could optimize it along the lines that if more than N "lanes" are full,
-we will continue to use the present flush algorithm, else we could
-switch to an optimized single buffer code for one of the lanes. Any
-other suggestions are welcome too.
- 
-> - is it still safe in the post-Spectre era of computing to aggregate
-> hash input from different sources (which may be different users
-> altogether) and process them as a single source of input?
-
-hmmm, I am not sure how one could do side-channel attack, could you
-maybe give an example? One could do a denial of service attack, by
-flooding it with too many requests.
-
-Also Eric had raised the issue whether we need AVX2 multibuffer now that
-we have SHA instructions. However, for cases where jobs come in fast
-enough, sha1-mb is seen to perform better than sha-ni algorithm.
-
-Since, we already have lowered the priority of the multibuffer
-algorithms, users who know that they would have a consistent inflow of
-jobs should only opt for the multibuffer algorithm.
-
-From Herbert's suggestion, I am also working on removing the mcryptd
-layer for the multibuffer algorithms, and follow the simd model to
-simplify the multibuffer model.
-
-Hence, instead of removing these algorithms, I would like to suggest the
-following:
-1. Find a fix for the corner cases of memory corruption
-2. Remove mcryptd layer, add simd interface for hash 
-3. try to reuse code for hash multibuffer algorithms instead of
-duplicating the same code 3 times.
+That works for me, for both embedded initrd and initrd specified with
+-initrd option, but we still need someone to test if it works for 
+Palmer's use case, ie with vmlinux (and possibly initrd) embedded in
+bbl.
 
 Thanks,
-Megha 
+Guenter
 
+> Andreas.
+> 
+> -- 
+> Andreas Schwab, schwab@linux-m68k.org
+> GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
+> "And now for something completely different."
