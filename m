@@ -2,156 +2,167 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEDBEC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:39:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BED85C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:39:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60D1B20878
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:39:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DEedLcOS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60D1B20878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 72E7220878
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:39:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72E7220878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axis.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727718AbeH1OaW (ORCPT
+        id S1727755AbeH1OaW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 28 Aug 2018 10:30:22 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:45711 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727085AbeH1OaV (ORCPT
+Received: from bastet.se.axis.com ([195.60.68.11]:35172 "EHLO
+        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727067AbeH1OaW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 10:30:21 -0400
-Received: by mail-oi0-f68.google.com with SMTP id t68-v6so1904791oie.12
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 03:39:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Cn4s7kS6/J9j3wJ4Av4ReO0Zm+XNdNZmMNfDq8aENl8=;
-        b=DEedLcOS1TNm9LbGP9QNwwGI2R5VROsW10wdRcWNsg+0taKmoLivDNe6IwpQP/+qV7
-         OOd0qQKvXoJODGhs9hKeN8Ud/Cm6b5rcHBZRuyzZyv+YmHxdDb7JiCixd3PRoS+C5uN2
-         vvoVmuNfzrsY1zM9ivF6pecBw6yBfjtG5RY9YQmMXS6gCIswQnZqCpmuTVY5Bb9md5xA
-         eYJ4zj+wzBweUq/2pY1iaGmfoJGMuDV2s1dAaH5/WDK3yD8JS5vm0Ber7mFnKsQsnRWZ
-         QU2K10QVhDG4jegCqtWUjT1SkJtj/4rReTxqn3k7KbdLEIUmLXQXtArGfe4GaeePIeWu
-         oP+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Cn4s7kS6/J9j3wJ4Av4ReO0Zm+XNdNZmMNfDq8aENl8=;
-        b=Tlivt2iRH2j0nzXyOhhETX8SUfVnpAOIpR8qQqA/JZrgc0Uts1tyJ3zq4khfA6CZZN
-         0vXxYhaARli2Kvrs7F9/zlnKGvH82aUSqNb5/ar8wLUgRMQpnvvT18XT4DeKLsWpwMus
-         cWGM8damjIhyRjZQ49oU4ce3TviUmMZK/tyJqxG6bdhEcFvuq+V0brvlFFvi0X4bXePK
-         riCAFjNiwoRJQrS40uUGUqxeWzlSmTSJOmHyVhAjw4F1oJKlvQCqoYF5qJrBy2ukP3ZN
-         F0A8TtElCTQwfNsUF3PuOhAXSMlip892zT8tspaCfkqIb8Qy6wSR0U/SIQ4HRUAXtz2R
-         7YEQ==
-X-Gm-Message-State: APzg51Dsa0L33TrulCANWIcn5nZqmdRJ0IpJyIPhdoNvRNm/GLtW+C+E
-        hiesSzrtk6ogH/P4K7vvB6eyAL2qGtxYNk/MfhNEbg==
-X-Google-Smtp-Source: ANB0VdaWoHy/4UBrMr26a3xcTXYevsHCW9VhnvV5sCFIDXY+QwHh9/eKJqvytQ8YqGRQvd6vao2eULJ93RvdCeAcXxk=
-X-Received: by 2002:aca:a94c:: with SMTP id s73-v6mr813579oie.68.1535452759712;
- Tue, 28 Aug 2018 03:39:19 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180824235826.62741-1-jannh@google.com> <0897d173-6a30-09df-f16a-76322384fe0d@virtuozzo.com>
-In-Reply-To: <0897d173-6a30-09df-f16a-76322384fe0d@virtuozzo.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Tue, 28 Aug 2018 12:38:53 +0200
-Message-ID: <CAG48ez1zYqx8-1We3JkDBmYREksUMoUe7VBeAOv2JH98gVWcKw@mail.gmail.com>
-Subject: Re: [PATCH] x86/entry/64: wipe KASAN stack shadow in rewind_stack_do_exit()
-To:     Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
-        Alexander Potapenko <glider@google.com>,
-        Kees Cook <keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 28 Aug 2018 10:30:22 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bastet.se.axis.com (Postfix) with ESMTP id E11D6183A0;
+        Tue, 28 Aug 2018 12:39:18 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at bastet.se.axis.com
+Received: from bastet.se.axis.com ([IPv6:::ffff:127.0.0.1])
+        by localhost (bastet.se.axis.com [::ffff:127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id BAoW5Ap7omb3; Tue, 28 Aug 2018 12:39:18 +0200 (CEST)
+Received: from boulder03.se.axis.com (boulder03.se.axis.com [10.0.8.17])
+        by bastet.se.axis.com (Postfix) with ESMTPS id 076BF1839E;
+        Tue, 28 Aug 2018 12:39:17 +0200 (CEST)
+Received: from boulder03.se.axis.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DBB271E07E;
+        Tue, 28 Aug 2018 12:39:17 +0200 (CEST)
+Received: from boulder03.se.axis.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D07521E07C;
+        Tue, 28 Aug 2018 12:39:17 +0200 (CEST)
+Received: from thoth.se.axis.com (unknown [10.0.2.173])
+        by boulder03.se.axis.com (Postfix) with ESMTP;
+        Tue, 28 Aug 2018 12:39:17 +0200 (CEST)
+Received: from lnxartpec.se.axis.com (lnxartpec.se.axis.com [10.88.4.9])
+        by thoth.se.axis.com (Postfix) with ESMTP id C44F02150;
+        Tue, 28 Aug 2018 12:39:17 +0200 (CEST)
+Received: by lnxartpec.se.axis.com (Postfix, from userid 10564)
+        id BEE958016F; Tue, 28 Aug 2018 12:39:17 +0200 (CEST)
+From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
+To:     catalin.marinas@arm.com, akpm@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Vincent Whitchurch <rabinv@axis.com>
+Subject: [PATCH 1/2] kmemleak: dump all objects for slab usage analysis
+Date:   Tue, 28 Aug 2018 12:39:13 +0200
+Message-Id: <20180828103914.30434-1-vincent.whitchurch@axis.com>
+X-Mailer: git-send-email 2.11.0
+X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 11:04 AM Andrey Ryabinin
-<aryabinin@virtuozzo.com> wrote:
->
-> On 08/25/2018 02:58 AM, Jann Horn wrote:
-> > Reset the KASAN shadow state of the task stack when rewinding RSP.
-> > Without this, a kernel oops will leave parts of the stack poisoned, and
-> > code running under do_exit() can trip over such poisoned regions and cause
-> > nonsensical false-positive KASAN reports about stack-out-of-bounds bugs.
-> >
-> > This patch is 64-bit only because KASAN doesn't exist on 32-bit.
-> >
-> > This patch does not wipe exception stacks; if you oops on an exception
-> > stack, you might get random KASAN false-positives from other tasks
-> > afterwards. This is probably relatively uninteresting, since if you're
-> > oopsing on an exception stack, you likely have bigger things to worry
-> > about. It'd be more interesting if vmapped stacks and KASAN were
-> > compatible, since then handle_stack_overflow() would oops from exception
-> > stack context.
-> >
-> > Fixes: 2deb4be28077 ("x86/dumpstack: When OOPSing, rewind the stack before do_exit()")
-> > Signed-off-by: Jann Horn <jannh@google.com>
-> > ---
-> > I have manually tested that an oops that previously triggered this bug
-> > doesn't trigger it anymore.
-> >
-> > It would be possible to rewrite this assembly to use fewer instructions
-> > in non-KASAN builds, but I think it's clearer this way.
-> >
-> > If anyone thinks that this thing should also be wiping exception stacks:
-> > I did write some (entirely untested) code that should take care of that
-> > (before realizing that it's rather unlikely to occur in practice because
-> > vmapped stacks and KASAN are mutually exclusive), but I'm not sure
-> > whether it's worth complicating this code for that.
-> > In case anyone's curious how that would look:
-> > https://gist.github.com/thejh/c91f9b4e3cc4c58659bb3cd056c4fa40
-> >
-> >  arch/x86/entry/entry_64.S | 18 +++++++++++++++++-
-> >  1 file changed, 17 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-> > index 957dfb693ecc..92d3ad5bd365 100644
-> > --- a/arch/x86/entry/entry_64.S
-> > +++ b/arch/x86/entry/entry_64.S
-> > @@ -1673,9 +1673,25 @@ ENTRY(rewind_stack_do_exit)
-> >       /* Prevent any naive code from trying to unwind to our caller. */
-> >       xorl    %ebp, %ebp
-> >
-> > +     movq    %rdi, %r14
-> > +
-> >       movq    PER_CPU_VAR(cpu_current_top_of_stack), %rax
-> > -     leaq    -PTREGS_SIZE(%rax), %rsp
-> > +     leaq    -PTREGS_SIZE(%rax), %r15
-> > +
-> > +#ifdef CONFIG_KASAN
-> > +     /*
-> > +      * Remove stack poisons left behind by our old stack.
-> > +      * Do this before updating RSP to avoid problems in case we get some
-> > +      * interrupt that is not handled on an exception stack before we're done
-> > +      * with the unpoisoning.
-> > +      */
-> > +     movq    %r15, %rdi
-> > +     call    kasan_unpoison_task_stack_below
-> > +#endif
->
->
-> Why this has to be done in the rewind_stack_do_exit()?
-> Are there any problems with calling the kasan_unpoison_task_stack(current) from oops_end(), before the rewind_stack_do_exit()?
+In order to be able to analyse the kernel's slab usage, we'd need a list
+of allocated objects and their allocation stacks.  Kmemleak already
+maintains such a list internally, so we expose it via debugfs file.
 
-Ooh, good point! I didn't see that KASAN instrumentation is disabled
-for dumpstack.c. So I guess I'll send a new patch that does it from
-oops_end().
+This file can be post-processed in userspace and converted to a suitable
+format for slab usage analysis.
 
-> > +
-> > +     movq    %r15, %rsp
-> >       UNWIND_HINT_FUNC sp_offset=PTREGS_SIZE
-> >
-> > +     movq    %r14, %rdi
-> >       call    do_exit
-> >  END(rewind_stack_do_exit)
-> >
+Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
+---
+ mm/kmemleak.c | 53 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 53 insertions(+)
+
+diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+index 17dd883198ae..7bef05c690d6 100644
+--- a/mm/kmemleak.c
++++ b/mm/kmemleak.c
+@@ -1759,6 +1759,34 @@ static int kmemleak_seq_show(struct seq_file *seq, void *v)
+ 	return 0;
+ }
+ 
++static void kmemleak_print_object(struct seq_file *seq,
++				  struct kmemleak_object *object)
++{
++	int i;
++
++	seq_printf(seq, "object 0x%08lx (size %zu):\n",
++		   object->pointer, object->size);
++	seq_printf(seq, "  comm \"%s\", pid %d, jiffies %lu\n",
++		   object->comm, object->pid, object->jiffies);
++
++	for (i = 0; i < object->trace_len; i++) {
++		void *ptr = (void *)object->trace[i];
++
++		seq_printf(seq, "    [<%p>] %pS\n", ptr, ptr);
++	}
++}
++
++static int kmemleak_all_seq_show(struct seq_file *seq, void *v)
++{
++	struct kmemleak_object *object = v;
++	unsigned long flags;
++
++	spin_lock_irqsave(&object->lock, flags);
++	kmemleak_print_object(seq, object);
++	spin_unlock_irqrestore(&object->lock, flags);
++	return 0;
++}
++
+ static const struct seq_operations kmemleak_seq_ops = {
+ 	.start = kmemleak_seq_start,
+ 	.next  = kmemleak_seq_next,
+@@ -1766,11 +1794,23 @@ static const struct seq_operations kmemleak_seq_ops = {
+ 	.show  = kmemleak_seq_show,
+ };
+ 
++static const struct seq_operations kmemleak_all_seq_ops = {
++	.start = kmemleak_seq_start,
++	.next  = kmemleak_seq_next,
++	.stop  = kmemleak_seq_stop,
++	.show  = kmemleak_all_seq_show,
++};
++
+ static int kmemleak_open(struct inode *inode, struct file *file)
+ {
+ 	return seq_open(file, &kmemleak_seq_ops);
+ }
+ 
++static int kmemleak_all_open(struct inode *inode, struct file *file)
++{
++	return seq_open(file, &kmemleak_all_seq_ops);
++}
++
+ static int dump_str_object_info(const char *str)
+ {
+ 	unsigned long flags;
+@@ -1911,6 +1951,14 @@ static const struct file_operations kmemleak_fops = {
+ 	.release	= seq_release,
+ };
+ 
++static const struct file_operations kmemleak_all_fops = {
++	.owner		= THIS_MODULE,
++	.open		= kmemleak_all_open,
++	.read		= seq_read,
++	.llseek		= seq_lseek,
++	.release	= seq_release,
++};
++
+ static void __kmemleak_do_cleanup(void)
+ {
+ 	struct kmemleak_object *object;
+@@ -2102,6 +2150,11 @@ static int __init kmemleak_late_init(void)
+ 	if (!dentry)
+ 		pr_warn("Failed to create the debugfs kmemleak file\n");
+ 
++	dentry = debugfs_create_file("kmemleak_all", 0400, NULL, NULL,
++				     &kmemleak_all_fops);
++	if (!dentry)
++		pr_warn("Failed to create the debugfs kmemleak_all file\n");
++
+ 	if (kmemleak_error) {
+ 		/*
+ 		 * Some error occurred and kmemleak was disabled. There is a
+-- 
+2.11.0
+
