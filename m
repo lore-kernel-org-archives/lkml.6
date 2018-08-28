@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C307C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:01:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD8CC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:01:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 161EE20869
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:01:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 161EE20869
+	by mail.kernel.org (Postfix) with ESMTP id 9729B20897
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:01:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9729B20897
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728067AbeH1QxO (ORCPT
+        id S1728097AbeH1QxS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 12:53:14 -0400
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:4683 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726998AbeH1QxN (ORCPT
+        Tue, 28 Aug 2018 12:53:18 -0400
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:37723 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726998AbeH1QxR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 12:53:13 -0400
+        Tue, 28 Aug 2018 12:53:17 -0400
 X-IronPort-AV: E=Sophos;i="5.53,299,1531810800"; 
-   d="scan'208";a="16756364"
+   d="scan'208";a="19626744"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 28 Aug 2018 06:01:40 -0700
+  by esa1.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 28 Aug 2018 06:01:42 -0700
 Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.76.4) by
  chn-sv-exch04.mchp-main.com (10.10.76.105) with Microsoft SMTP Server id
- 14.3.352.0; Tue, 28 Aug 2018 06:01:38 -0700
+ 14.3.352.0; Tue, 28 Aug 2018 06:01:42 -0700
 From:   Claudiu Beznea <claudiu.beznea@microchip.com>
 To:     <thierry.reding@gmail.com>, <shc_work@mail.ru>,
         <robh+dt@kernel.org>, <mark.rutland@arm.com>, <corbet@lwn.net>,
@@ -38,10 +38,12 @@ CC:     <linux-pwm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <devicetree@vger.kernel.org>, <linux-doc@vger.kernel.org>,
         Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [RESEND PATCH v5 0/9] extend PWM framework to support PWM modes
-Date:   Tue, 28 Aug 2018 16:01:17 +0300
-Message-ID: <1535461286-12308-1-git-send-email-claudiu.beznea@microchip.com>
+Subject: [RESEND PATCH v5 1/9] pwm: extend PWM framework with PWM modes
+Date:   Tue, 28 Aug 2018 16:01:18 +0300
+Message-ID: <1535461286-12308-2-git-send-email-claudiu.beznea@microchip.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1535461286-12308-1-git-send-email-claudiu.beznea@microchip.com>
+References: <1535461286-12308-1-git-send-email-claudiu.beznea@microchip.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
@@ -49,173 +51,452 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Add basic PWM modes: normal and complementary. These modes should
+differentiate the single output PWM channels from two outputs PWM
+channels. These modes could be set as follow:
+1. PWM channels with one output per channel:
+- normal mode
+2. PWM channels with two outputs per channel:
+- normal mode
+- complementary mode
+Since users could use a PWM channel with two output as one output PWM
+channel, the PWM normal mode is allowed to be set for PWM channels with
+two outputs; in fact PWM normal mode should be supported by all PWMs.
 
-Please give feedback on these patches which extends the PWM framework in
-order to support multiple PWM modes of operations. This series is a rework
-of [1] and [2].
+The PWM capabilities were implemented per PWM channel. Every PWM controller
+will register a function to get PWM capabilities. If this is not explicitly
+set by the driver a default function will be used to retrieve the PWM
+capabilities (in this case the PWM capabilities will contain only PWM
+normal mode). This function is set in pwmchip_add_with_polarity() as a
+member of "struct pwm_chip". To retrieve capabilities the pwm_get_caps()
+function could be used.
 
-The current patch series add the following PWM modes:
-- PWM mode normal
-- PWM mode complementary
-- PWM mode push-pull
+Every PWM channel have associated a mode in the PWM state. Proper
+support was added to get/set PWM mode. The mode could also be set
+from DT via flag cells. The valid DT modes are located in
+include/dt-bindings/pwm/pwm.h. Only modes supported by PWM channel could be
+set. If nothing is specified for a PWM channel, via DT, the first available
+mode will be used (normally, this will be PWM normal mode).
 
-Normal mode - for PWM channels with one output; output waveforms looks like
-this:
-             __    __    __    __
-    PWM   __|  |__|  |__|  |__|  |__
-            <--T-->
+Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+---
+ drivers/pwm/core.c  | 124 ++++++++++++++++++++++++++++++++++++++++++++++++++--
+ drivers/pwm/sysfs.c |  61 ++++++++++++++++++++++++++
+ include/linux/pwm.h |  39 +++++++++++++++++
+ 3 files changed, 221 insertions(+), 3 deletions(-)
 
-    Where T is the signal period
-
-Since PWMs with more than one output per channel could be used as one
-output PWM the normal mode is the default mode for all PWMs (if not
-specified otherwise).
-
-Complementary mode - for PWM channels with two outputs; output waveforms
-for a PWM channel in complementary mode looks line this:
-             __    __    __    __
-    PWMH1 __|  |__|  |__|  |__|  |__
-          __    __    __    __    __
-    PWML1   |__|  |__|  |__|  |__|
-            <--T-->
-
-    Where T is the signal period.
-
-Push-pull mode - for PWM channels with two outputs; output waveforms for a
-PWM channel in push-pull mode with normal polarity looks like this:
-            __          __
-    PWMH __|  |________|  |________
-                  __          __
-    PWML ________|  |________|  |__
-           <--T-->
-
-    If polarity is inversed:
-         __    ________    ________
-    PWMH   |__|        |__|
-         ________    ________    __
-    PWML         |__|        |__|
-           <--T-->
-
-    Where T is the signal period.
-
-The PWM working modes are per PWM channel registered as PWM's capabilities.
-The driver registers itself to PWM core a get_caps() function, in
-struct pwm_ops, that will be used by PWM core to retrieve PWM capabilities.
-If this function is not registered in driver's probe, a default function
-will be used to retrieve PWM capabilities. Currently, the default
-capabilities includes only PWM normal mode.
-
-PWM state has been updated to keep PWM mode. PWM mode could be configured
-via sysfs or via DT. pwm_apply_state() will do the preliminary validation
-for PWM mode to be applied.
-
-In sysfs, user could get PWM modes by reading mode file of PWM device:
-root@sama5d2-xplained:/sys/class/pwm/pwmchip0/pwm2# ls -l
-total 0
--r--r--r-- 1 root root 4096 Oct  9 09:07 capture
-lrwxrwxrwx 1 root root    0 Oct  9 09:07 device -> ../../pwmchip0
--rw-r--r-- 1 root root 4096 Oct  9 08:42 duty_cycle
--rw-r--r-- 1 root root 4096 Oct  9 08:44 enable
---w------- 1 root root 4096 Oct  9 09:07 export
--rw-r--r-- 1 root root 4096 Oct  9 08:43 mode
--r--r--r-- 1 root root 4096 Oct  9 09:07 npwm
--rw-r--r-- 1 root root 4096 Oct  9 08:42 period
--rw-r--r-- 1 root root 4096 Oct  9 08:44 polarity
-drwxr-xr-x 2 root root    0 Oct  9 09:07 power
-lrwxrwxrwx 1 root root    0 Oct  9 09:07 subsystem -> ../../../../../../../../class/pwm
--rw-r--r-- 1 root root 4096 Oct  9 08:42 uevent
---w------- 1 root root 4096 Oct  9 09:07 unexport
-root@sama5d2-xplained:/sys/class/pwm/pwmchip0/pwm2# cat mode
-normal complementary [push-pull]
-
-The mode enclosed in bracket is the currently active mode.
-
-The mode could be set, via sysfs, by writing to mode file one of the modes
-displayed at read:
-root@sama5d2-xplained:/sys/class/pwm/pwmchip0/pwm2# echo normal > mode
-root@sama5d2-xplained:/sys/class/pwm/pwmchip0/pwm2# cat mode
-[normal] complementary push-pull 
-
-The PWM push-pull mode could be usefull in applications like half bridge
-converters.
-
-This series also add PWM modes support for Atmel/Microchip SoCs.
-
-Thank you,
-Claudiu Beznea
-
-[1] https://www.spinics.net/lists/arm-kernel/msg580275.html
-[2] https://lkml.org/lkml/2018/1/12/359
-
-Changes in v5:
-- solved kbuild errors by removing dummy functions for case where
-  CONFIG_PWM is not defined; adopted this approach since the removed
-  function are used only when CONFIG_PWM is defined (in PWM core
-  and few drivers from drivers/pwm/ directory)
-
-Changes in v4:
-- removed changes related to pwm_config() as per maintainer proposals
-- added pwm_mode_get_valid() to retrieve a valid PWM mode fror PWM device
-  instead of using BIT(ffs(caps.mode) - 1) and changed drivers to use
-  pwm_mode_get_valid() instead of pwm_get_caps() + BIT(ffs(caps.mode) - 1)
-  (patches 2, 3, 4 from this series)
-- renamed PWM_MODE() macro in PWMC_MODE() to avoid conflicts with
-  pwm-sun4i.c driver ('C' stands for capability)
-- removed pwm_caps_valid() function
-- renamed PWM_DTMODE_COMPLEMENTARY and PWM_DTMODE_PUSH_PULL macros in
-  PWM_MODE_COMPLEMENTARY and PWM_MODE_PUSH_PULL
-
-Changes in v3:
-- removed changes related to only one of_xlate function for all PWM drivers
-- switch to PWM capabilities per PWM channel nor per PWM chip
-- squash documentation and bindings patches as requeted by reviewer
-- introduced PWM_MODE(name) macro and used a bit enum for pwm modes
-- related to DT bindings, used flags cell also for PWM modes
-- updated of_xlate specific functions with "state->mode = mode;"
-  instructions to avoid pwm_apply_state() failures
-- use available modes for PWM channel in pwm_config() by first calling
-  pwm_get_caps() to get caps.modes
-- use loops through available modes in mode_store()/mode_show() and also in
-  of_pwm_xlate_with_flags() instead of "if else" instructions; in this way,
-  the addition of a new mode is independent of this code sections
-- use DTLI=1, DTHI=0 register settings to obtain push-pull mode waveforms
-  for Atmel/Microchip PWM controller.
-
-Changes in v2:
-- remove of_xlate and of_pwm_n_cells and use generic functions to pharse DT
-  inputs; this is done in patches 1, 2, 3, 4, 5, 6, 7 of this series; this will
-  make easy the addition of PWM mode support from DT
-- add PWM mode normal
-- register PWM modes as capabilities of PWM chips at driver probe and, in case
-  driver doesn't provide these capabilities use default ones
-- change the way PWM mode is pharsed via DT by using a new input for pwms
-  binding property
-
-
-Claudiu Beznea (9):
-  pwm: extend PWM framework with PWM modes
-  pwm: clps711x: populate PWM mode in of_xlate function
-  pwm: cros-ec: populate PWM mode in of_xlate function
-  pwm: pxa: populate PWM mode in of_xlate function
-  pwm: add PWM modes
-  pwm: atmel: add pwm capabilities
-  pwm: add push-pull mode support
-  pwm: add documentation for pwm push-pull mode
-  pwm: atmel: add push-pull mode support
-
- Documentation/devicetree/bindings/pwm/pwm.txt |  11 ++-
- Documentation/pwm.txt                         |  42 ++++++++-
- drivers/pwm/core.c                            | 125 +++++++++++++++++++++++++-
- drivers/pwm/pwm-atmel.c                       | 118 +++++++++++++++++-------
- drivers/pwm/pwm-clps711x.c                    |  10 ++-
- drivers/pwm/pwm-cros-ec.c                     |   1 +
- drivers/pwm/pwm-pxa.c                         |   1 +
- drivers/pwm/sysfs.c                           |  61 +++++++++++++
- include/dt-bindings/pwm/pwm.h                 |   2 +
- include/linux/pwm.h                           |  64 +++++++++++++
- 10 files changed, 395 insertions(+), 40 deletions(-)
-
+diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+index 1581f6ab1b1f..59a9df9120de 100644
+--- a/drivers/pwm/core.c
++++ b/drivers/pwm/core.c
+@@ -136,6 +136,7 @@ struct pwm_device *
+ of_pwm_xlate_with_flags(struct pwm_chip *pc, const struct of_phandle_args *args)
+ {
+ 	struct pwm_device *pwm;
++	int modebit;
+ 
+ 	/* check, whether the driver supports a third cell for flags */
+ 	if (pc->of_pwm_n_cells < 3)
+@@ -154,9 +155,23 @@ of_pwm_xlate_with_flags(struct pwm_chip *pc, const struct of_phandle_args *args)
+ 
+ 	pwm->args.period = args->args[1];
+ 	pwm->args.polarity = PWM_POLARITY_NORMAL;
++	pwm->args.mode = pwm_mode_get_valid(pc, pwm);
+ 
+-	if (args->args_count > 2 && args->args[2] & PWM_POLARITY_INVERTED)
+-		pwm->args.polarity = PWM_POLARITY_INVERSED;
++	if (args->args_count > 2) {
++		if (args->args[2] & PWM_POLARITY_INVERTED)
++			pwm->args.polarity = PWM_POLARITY_INVERSED;
++
++		for (modebit = PWMC_MODE_COMPLEMENTARY_BIT;
++		     modebit < PWMC_MODE_CNT; modebit++) {
++			unsigned long mode = BIT(modebit);
++
++			if ((args->args[2] & mode) &&
++			    pwm_mode_valid(pwm, mode)) {
++				pwm->args.mode = mode;
++				break;
++			}
++		}
++	}
+ 
+ 	return pwm;
+ }
+@@ -183,6 +198,7 @@ of_pwm_simple_xlate(struct pwm_chip *pc, const struct of_phandle_args *args)
+ 		return pwm;
+ 
+ 	pwm->args.period = args->args[1];
++	pwm->args.mode = pwm_mode_get_valid(pc, pwm);
+ 
+ 	return pwm;
+ }
+@@ -250,6 +266,97 @@ static bool pwm_ops_check(const struct pwm_ops *ops)
+ }
+ 
+ /**
++ * pwm_get_caps() - get PWM capabilities of a PWM device
++ * @chip: PWM chip
++ * @pwm: PWM device to get the capabilities for
++ * @caps: returned capabilities
++ *
++ * Returns: 0 on success or a negative error code on failure
++ */
++int pwm_get_caps(struct pwm_chip *chip, struct pwm_device *pwm,
++		 struct pwm_caps *caps)
++{
++	if (!chip || !pwm || !caps)
++		return -EINVAL;
++
++	if (chip->ops && chip->ops->get_caps)
++		pwm->chip->ops->get_caps(chip, pwm, caps);
++	else if (chip->get_default_caps)
++		chip->get_default_caps(caps);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(pwm_get_caps);
++
++static void pwmchip_get_default_caps(struct pwm_caps *caps)
++{
++	static const struct pwm_caps default_caps = {
++		.modes = PWMC_MODE(NORMAL),
++	};
++
++	if (!caps)
++		return;
++
++	*caps = default_caps;
++}
++
++/**
++ * pwm_mode_get_valid() - get the first available valid mode for PWM
++ * @chip: PWM chip
++ * @pwm: PWM device to get the valid mode for
++ *
++ * Returns: first valid mode for PWM device
++ */
++unsigned long pwm_mode_get_valid(struct pwm_chip *chip, struct pwm_device *pwm)
++{
++	struct pwm_caps caps;
++
++	if (pwm_get_caps(chip, pwm, &caps))
++		return PWMC_MODE(NORMAL);
++
++	return BIT(ffs(caps.modes) - 1);
++}
++EXPORT_SYMBOL_GPL(pwm_mode_get_valid);
++
++/**
++ * pwm_mode_valid() - check if mode is valid for PWM device
++ * @pwm: PWM device
++ * @mode: PWM mode to check if valid
++ *
++ * Returns: true if mode is valid and false otherwise
++ */
++bool pwm_mode_valid(struct pwm_device *pwm, unsigned long mode)
++{
++	struct pwm_caps caps;
++
++	if (!pwm || !mode)
++		return false;
++
++	if (hweight_long(mode) != 1 || ffs(mode) - 1 >= PWMC_MODE_CNT)
++		return false;
++
++	if (pwm_get_caps(pwm->chip, pwm, &caps))
++		return false;
++
++	return (caps.modes & mode);
++}
++EXPORT_SYMBOL_GPL(pwm_mode_valid);
++
++const char *pwm_mode_desc(struct pwm_device *pwm, unsigned long mode)
++{
++	static const char * const modes[] = {
++		"invalid",
++		"normal",
++		"complementary",
++	};
++
++	if (!pwm_mode_valid(pwm, mode))
++		return modes[0];
++
++	return modes[ffs(mode)];
++}
++
++/**
+  * pwmchip_add_with_polarity() - register a new PWM chip
+  * @chip: the PWM chip to add
+  * @polarity: initial polarity of PWM channels
+@@ -275,6 +382,8 @@ int pwmchip_add_with_polarity(struct pwm_chip *chip,
+ 
+ 	mutex_lock(&pwm_lock);
+ 
++	chip->get_default_caps = pwmchip_get_default_caps;
++
+ 	ret = alloc_pwms(chip->base, chip->npwm);
+ 	if (ret < 0)
+ 		goto out;
+@@ -294,6 +403,7 @@ int pwmchip_add_with_polarity(struct pwm_chip *chip,
+ 		pwm->pwm = chip->base + i;
+ 		pwm->hwpwm = i;
+ 		pwm->state.polarity = polarity;
++		pwm->state.mode = pwm_mode_get_valid(chip, pwm);
+ 
+ 		if (chip->ops->get_state)
+ 			chip->ops->get_state(chip, pwm, &pwm->state);
+@@ -469,7 +579,8 @@ int pwm_apply_state(struct pwm_device *pwm, struct pwm_state *state)
+ 	int err;
+ 
+ 	if (!pwm || !state || !state->period ||
+-	    state->duty_cycle > state->period)
++	    state->duty_cycle > state->period ||
++	    !pwm_mode_valid(pwm, state->mode))
+ 		return -EINVAL;
+ 
+ 	if (!memcmp(state, &pwm->state, sizeof(*state)))
+@@ -530,6 +641,9 @@ int pwm_apply_state(struct pwm_device *pwm, struct pwm_state *state)
+ 
+ 			pwm->state.enabled = state->enabled;
+ 		}
++
++		/* No mode support for non-atomic PWM. */
++		pwm->state.mode = state->mode;
+ 	}
+ 
+ 	return 0;
+@@ -579,6 +693,8 @@ int pwm_adjust_config(struct pwm_device *pwm)
+ 	pwm_get_args(pwm, &pargs);
+ 	pwm_get_state(pwm, &state);
+ 
++	state.mode = pargs.mode;
++
+ 	/*
+ 	 * If the current period is zero it means that either the PWM driver
+ 	 * does not support initial state retrieval or the PWM has not yet
+@@ -850,6 +966,7 @@ struct pwm_device *pwm_get(struct device *dev, const char *con_id)
+ 
+ 	pwm->args.period = chosen->period;
+ 	pwm->args.polarity = chosen->polarity;
++	pwm->args.mode = pwm_mode_get_valid(chip, pwm);
+ 
+ 	return pwm;
+ }
+@@ -999,6 +1116,7 @@ static void pwm_dbg_show(struct pwm_chip *chip, struct seq_file *s)
+ 		seq_printf(s, " duty: %u ns", state.duty_cycle);
+ 		seq_printf(s, " polarity: %s",
+ 			   state.polarity ? "inverse" : "normal");
++		seq_printf(s, " mode: %s", pwm_mode_desc(pwm, state.mode));
+ 
+ 		seq_puts(s, "\n");
+ 	}
+diff --git a/drivers/pwm/sysfs.c b/drivers/pwm/sysfs.c
+index 83f2b0b15712..785eda0b1e67 100644
+--- a/drivers/pwm/sysfs.c
++++ b/drivers/pwm/sysfs.c
+@@ -223,11 +223,71 @@ static ssize_t capture_show(struct device *child,
+ 	return sprintf(buf, "%u %u\n", result.period, result.duty_cycle);
+ }
+ 
++static ssize_t mode_show(struct device *child,
++			 struct device_attribute *attr,
++			 char *buf)
++{
++	struct pwm_device *pwm = child_to_pwm_device(child);
++	struct pwm_state state;
++	unsigned long mode;
++	int modebit, len = 0;
++
++	pwm_get_state(pwm, &state);
++
++	for (modebit = PWMC_MODE_NORMAL_BIT;
++	     modebit < PWMC_MODE_CNT; modebit++) {
++		mode = BIT(modebit);
++		if (pwm_mode_valid(pwm, mode)) {
++			if (state.mode == mode)
++				len += scnprintf(buf + len,
++						 PAGE_SIZE - len, "[%s] ",
++						 pwm_mode_desc(pwm, mode));
++			else
++				len += scnprintf(buf + len,
++						 PAGE_SIZE - len, "%s ",
++						 pwm_mode_desc(pwm, mode));
++		}
++	}
++
++	len += scnprintf(buf + len, PAGE_SIZE - len, "\n");
++	return len;
++}
++
++static ssize_t mode_store(struct device *child,
++			  struct device_attribute *attr,
++			  const char *buf, size_t size)
++{
++	struct pwm_export *export = child_to_pwm_export(child);
++	struct pwm_device *pwm = export->pwm;
++	struct pwm_state state;
++	unsigned long mode;
++	int modebit, ret;
++
++	for (modebit = PWMC_MODE_NORMAL_BIT;
++	     modebit < PWMC_MODE_CNT; modebit++) {
++		mode = BIT(modebit);
++		if (sysfs_streq(buf, pwm_mode_desc(pwm, mode)))
++			break;
++	}
++
++	if (modebit == PWMC_MODE_CNT)
++		return -EINVAL;
++
++	mutex_lock(&export->lock);
++	pwm_get_state(pwm, &state);
++	state.mode = mode;
++	ret = pwm_apply_state(pwm, &state);
++	mutex_unlock(&export->lock);
++
++	return ret ? : size;
++}
++
+ static DEVICE_ATTR_RW(period);
+ static DEVICE_ATTR_RW(duty_cycle);
+ static DEVICE_ATTR_RW(enable);
+ static DEVICE_ATTR_RW(polarity);
+ static DEVICE_ATTR_RO(capture);
++static DEVICE_ATTR_RW(mode);
+ 
+ static struct attribute *pwm_attrs[] = {
+ 	&dev_attr_period.attr,
+@@ -235,6 +295,7 @@ static struct attribute *pwm_attrs[] = {
+ 	&dev_attr_enable.attr,
+ 	&dev_attr_polarity.attr,
+ 	&dev_attr_capture.attr,
++	&dev_attr_mode.attr,
+ 	NULL
+ };
+ ATTRIBUTE_GROUPS(pwm);
+diff --git a/include/linux/pwm.h b/include/linux/pwm.h
+index 56518adc31dd..a4ce4ad7edf0 100644
+--- a/include/linux/pwm.h
++++ b/include/linux/pwm.h
+@@ -26,9 +26,32 @@ enum pwm_polarity {
+ };
+ 
+ /**
++ * PWM modes capabilities
++ * @PWMC_MODE_NORMAL_BIT: PWM has one output
++ * @PWMC_MODE_COMPLEMENTARY_BIT: PWM has 2 outputs with opposite polarities
++ * @PWMC_MODE_CNT: PWM modes count
++ */
++enum {
++	PWMC_MODE_NORMAL_BIT,
++	PWMC_MODE_COMPLEMENTARY_BIT,
++	PWMC_MODE_CNT,
++};
++
++#define PWMC_MODE(name)		BIT(PWMC_MODE_##name##_BIT)
++
++/**
++ * struct pwm_caps - PWM capabilities
++ * @modes: PWM modes
++ */
++struct pwm_caps {
++	unsigned long modes;
++};
++
++/**
+  * struct pwm_args - board-dependent PWM arguments
+  * @period: reference period
+  * @polarity: reference polarity
++ * @mode: reference mode
+  *
+  * This structure describes board-dependent arguments attached to a PWM
+  * device. These arguments are usually retrieved from the PWM lookup table or
+@@ -41,6 +64,7 @@ enum pwm_polarity {
+ struct pwm_args {
+ 	unsigned int period;
+ 	enum pwm_polarity polarity;
++	unsigned long mode;
+ };
+ 
+ enum {
+@@ -53,12 +77,14 @@ enum {
+  * @period: PWM period (in nanoseconds)
+  * @duty_cycle: PWM duty cycle (in nanoseconds)
+  * @polarity: PWM polarity
++ * @mode: PWM mode
+  * @enabled: PWM enabled status
+  */
+ struct pwm_state {
+ 	unsigned int period;
+ 	unsigned int duty_cycle;
+ 	enum pwm_polarity polarity;
++	unsigned long mode;
+ 	bool enabled;
+ };
+ 
+@@ -181,6 +207,7 @@ static inline void pwm_init_state(const struct pwm_device *pwm,
+ 	state->period = args.period;
+ 	state->polarity = args.polarity;
+ 	state->duty_cycle = 0;
++	state->mode = args.mode;
+ }
+ 
+ /**
+@@ -254,6 +281,7 @@ pwm_set_relative_duty_cycle(struct pwm_state *state, unsigned int duty_cycle,
+  * @get_state: get the current PWM state. This function is only
+  *	       called once per PWM device when the PWM chip is
+  *	       registered.
++ * @get_caps: get PWM capabilities.
+  * @dbg_show: optional routine to show contents in debugfs
+  * @owner: helps prevent removal of modules exporting active PWMs
+  */
+@@ -272,6 +300,8 @@ struct pwm_ops {
+ 		     struct pwm_state *state);
+ 	void (*get_state)(struct pwm_chip *chip, struct pwm_device *pwm,
+ 			  struct pwm_state *state);
++	void (*get_caps)(struct pwm_chip *chip, struct pwm_device *pwm,
++			 struct pwm_caps *caps);
+ #ifdef CONFIG_DEBUG_FS
+ 	void (*dbg_show)(struct pwm_chip *chip, struct seq_file *s);
+ #endif
+@@ -287,6 +317,7 @@ struct pwm_ops {
+  * @npwm: number of PWMs controlled by this chip
+  * @pwms: array of PWM devices allocated by the framework
+  * @of_xlate: request a PWM device given a device tree PWM specifier
++ * @get_default_caps: get default PWM capabilities
+  * @of_pwm_n_cells: number of cells expected in the device tree PWM specifier
+  */
+ struct pwm_chip {
+@@ -300,6 +331,7 @@ struct pwm_chip {
+ 
+ 	struct pwm_device * (*of_xlate)(struct pwm_chip *pc,
+ 					const struct of_phandle_args *args);
++	void (*get_default_caps)(struct pwm_caps *caps);
+ 	unsigned int of_pwm_n_cells;
+ };
+ 
+@@ -438,6 +470,12 @@ struct pwm_device *pwm_request_from_chip(struct pwm_chip *chip,
+ 					 unsigned int index,
+ 					 const char *label);
+ 
++int pwm_get_caps(struct pwm_chip *chip, struct pwm_device *pwm,
++		 struct pwm_caps *caps);
++unsigned long pwm_mode_get_valid(struct pwm_chip *chip,
++				 struct pwm_device *pwm);
++bool pwm_mode_valid(struct pwm_device *pwm, unsigned long mode);
++const char *pwm_mode_desc(struct pwm_device *pwm, unsigned long mode);
+ struct pwm_device *of_pwm_xlate_with_flags(struct pwm_chip *pc,
+ 		const struct of_phandle_args *args);
+ 
+@@ -592,6 +630,7 @@ static inline void pwm_apply_args(struct pwm_device *pwm)
+ 	state.enabled = false;
+ 	state.polarity = pwm->args.polarity;
+ 	state.period = pwm->args.period;
++	state.mode = pwm->args.mode;
+ 
+ 	pwm_apply_state(pwm, &state);
+ }
 -- 
 2.7.4
 
