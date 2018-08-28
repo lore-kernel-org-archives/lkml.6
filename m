@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 738EEC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 23:19:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52A3FC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 23:19:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3221C2087B
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 23:19:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3221C2087B
+	by mail.kernel.org (Postfix) with ESMTP id 12C6B2087B
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 23:19:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12C6B2087B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727975AbeH2DNq (ORCPT
+        id S1727997AbeH2DNq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 28 Aug 2018 23:13:46 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:43984 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727258AbeH2DNp (ORCPT
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:38022 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727067AbeH2DNq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 23:13:45 -0400
-Received: by mail-pl1-f194.google.com with SMTP id x6-v6so1395600plv.10;
-        Tue, 28 Aug 2018 16:19:50 -0700 (PDT)
+        Tue, 28 Aug 2018 23:13:46 -0400
+Received: by mail-pg1-f194.google.com with SMTP id e2-v6so1439977pgv.5;
+        Tue, 28 Aug 2018 16:19:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=xjvQ5JHXADHQ707i5zH8d6ltCg7wJu3ZloFnrlMojEY=;
-        b=RR3CUKneZHdRZquohegQsul8lqnhnVf+WQi/VVDylSpfD6uDvWaNOvqkOXkitn/wjV
-         YS4nIzG8w/CitDB+lTGOxobOh1sD5mh4zWJmBVQGqEcAz2I5B8u98e5OIJi7x3UjoI4Y
-         USYGJ97C5Ur/jqSYz+GW47PzfRHpdPdK0nJYUHdYo3hFXWu8LeNgsNvUeceNjxQklNtU
-         ahLUmG3roOr1i9WxHkJgBWCvTyRyzPWSzprsq84yOhMZerdXUUXQUFHjX4IfXiNgIxuh
-         RmIaPTaLf/5L8o0W3nCJ94mVzUOERRVo5sfR/jmbflp4K6A7alVwFXBi/BXQ2lP6je/+
-         TSmg==
-X-Gm-Message-State: APzg51CvCcPUJic6b1RRi7FlFAkrgeH8oJeYiUmU3GkKYD1Rsavjy7CW
-        0seePKlALl29d/4Aa9Olbz4+Hz7jnD6mTA==
-X-Google-Smtp-Source: ANB0VdYYxaUvIhbLGKzmuLsmjP+ljWbsbreLdGY65yPTY8CSc8cU/MVe3fK0WXVmm4eMUpBGt4gaYw==
-X-Received: by 2002:a17:902:3a3:: with SMTP id d32-v6mr3497462pld.294.1535498389849;
-        Tue, 28 Aug 2018 16:19:49 -0700 (PDT)
+        bh=XqzziXXF3hYtBWJ2NxnhkBzTH8osK2x4YWGyi9jb6RA=;
+        b=fTTDp4EEj0p7Pp3DCCxzY25HxnXf9TaxpH83Dl8X+TT033sFadCHMeg8+wYGkewxV4
+         iDesM+TBtf0dvWgmOy37raEU5szeGReC0C8bJsOs9U8UIKReosDFq3SMWedKcRHrSJsI
+         Xk5BT856OAyRVyHZt2NBG4tIGyu3rz3c3G2FKE/rlXKTSSsAHipm8AAqvQNWhAGdFsv+
+         kdrsptrwYVWCdn9LTf9KbKqnuldMt336olRYQ+fyuGY8UPuVhvQF0DHsO3HAT1ULqKQU
+         i0fHvg5G0uKoxqfbQmVn8X6l3CrnMMnzkn9oVuhtHklj339SnqxQR8hghIardZHWjJYq
+         xBkA==
+X-Gm-Message-State: APzg51Drr+t57EqJ3CIZq6oa/8+OcNynCBRwE2mScw+SsjUn2bWylv6z
+        UUMMhLouF4geTfMcQwf7M//IinLMNUy7DQ==
+X-Google-Smtp-Source: ANB0VdbDaapedRZv+JZxgDNSF/ls74DA3vnNyLivGpjOGle+CPCycyQzq6Vhnqydq2c3mYDa+MdfHA==
+X-Received: by 2002:a63:d04f:: with SMTP id s15-v6mr3441525pgi.42.1535498390854;
+        Tue, 28 Aug 2018 16:19:50 -0700 (PDT)
 Received: from localhost.localdomain ([72.28.92.217])
         by smtp.gmail.com with ESMTPSA id q6-v6sm4217354pgq.19.2018.08.28.16.19.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 Aug 2018 16:19:49 -0700 (PDT)
+        Tue, 28 Aug 2018 16:19:50 -0700 (PDT)
 From:   Christian Brauner <christian@brauner.io>
 To:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
@@ -53,9 +53,9 @@ Cc:     davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
         ktkhai@virtuozzo.com, lucien.xin@gmail.com,
         jakub.kicinski@netronome.com, jbenc@redhat.com,
         nicolas.dichtel@6wind.com, Christian Brauner <christian@brauner.io>
-Subject: [PATCH net-next 1/5] rtnetlink: add rtnl_get_net_ns_capable()
-Date:   Wed, 29 Aug 2018 01:18:55 +0200
-Message-Id: <20180828231859.29758-2-christian@brauner.io>
+Subject: [PATCH net-next 2/5] if_addr: add IFA_IF_NETNSID
+Date:   Wed, 29 Aug 2018 01:18:56 +0200
+Message-Id: <20180828231859.29758-3-christian@brauner.io>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180828231859.29758-1-christian@brauner.io>
 References: <20180828231859.29758-1-christian@brauner.io>
@@ -64,75 +64,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-get_target_net() will be used in follow-up patches in ipv{4,6} codepaths to
-retrieve network namespaces based on network namespace identifiers. So
-remove the static declaration and export in the rtnetlink header. Also,
-rename it to rtnl_get_net_ns_capable() to make it obvious what this
-function is doing.
+This adds a new IFA_IF_NETNSID property to be used by address families such
+as PF_INET and PF_INET6.
+The IFA_IF_NETNSID property can be used to send a network namespace
+identifier as part of a request. If a IFA_IF_NETNSID property is identified
+it will be used to retrieve the target network namespace in which the
+request is to be made.
 
 Signed-off-by: Christian Brauner <christian@brauner.io>
 ---
- include/net/rtnetlink.h |  1 +
- net/core/rtnetlink.c    | 13 +++++++++----
- 2 files changed, 10 insertions(+), 4 deletions(-)
+ include/uapi/linux/if_addr.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/net/rtnetlink.h b/include/net/rtnetlink.h
-index 0bbaa5488423..cf26e5aacac4 100644
---- a/include/net/rtnetlink.h
-+++ b/include/net/rtnetlink.h
-@@ -165,6 +165,7 @@ int rtnl_configure_link(struct net_device *dev, const struct ifinfomsg *ifm);
+diff --git a/include/uapi/linux/if_addr.h b/include/uapi/linux/if_addr.h
+index ebaf5701c9db..0e0cd588cac0 100644
+--- a/include/uapi/linux/if_addr.h
++++ b/include/uapi/linux/if_addr.h
+@@ -34,6 +34,7 @@ enum {
+ 	IFA_MULTICAST,
+ 	IFA_FLAGS,
+ 	IFA_RT_PRIORITY,  /* u32, priority/metric for prefix route */
++	IFA_IF_NETNSID,
+ 	__IFA_MAX,
+ };
  
- int rtnl_nla_parse_ifla(struct nlattr **tb, const struct nlattr *head, int len,
- 			struct netlink_ext_ack *exterr);
-+struct net *rtnl_get_net_ns_capable(struct sock *sk, int netnsid);
- 
- #define MODULE_ALIAS_RTNL_LINK(kind) MODULE_ALIAS("rtnl-link-" kind)
- 
-diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
-index e3f743c141b3..c6c6f93cd195 100644
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -1795,7 +1795,12 @@ static bool link_dump_filtered(struct net_device *dev,
- 	return false;
- }
- 
--static struct net *get_target_net(struct sock *sk, int netnsid)
-+/**
-+ * rtnl_get_net_ns_capable - Get a network namespace based on a netnsid.
-+ *
-+ * Returns the network namespace on success or a error pointer on failure.
-+ */
-+struct net *rtnl_get_net_ns_capable(struct sock *sk, int netnsid)
- {
- 	struct net *net;
- 
-@@ -1847,7 +1852,7 @@ static int rtnl_dump_ifinfo(struct sk_buff *skb, struct netlink_callback *cb)
- 			ifla_policy, NULL) >= 0) {
- 		if (tb[IFLA_IF_NETNSID]) {
- 			netnsid = nla_get_s32(tb[IFLA_IF_NETNSID]);
--			tgt_net = get_target_net(skb->sk, netnsid);
-+			tgt_net = rtnl_get_net_ns_capable(skb->sk, netnsid);
- 			if (IS_ERR(tgt_net)) {
- 				tgt_net = net;
- 				netnsid = -1;
-@@ -2715,7 +2720,7 @@ static int rtnl_dellink(struct sk_buff *skb, struct nlmsghdr *nlh,
- 
- 	if (tb[IFLA_IF_NETNSID]) {
- 		netnsid = nla_get_s32(tb[IFLA_IF_NETNSID]);
--		tgt_net = get_target_net(NETLINK_CB(skb).sk, netnsid);
-+		tgt_net = rtnl_get_net_ns_capable(NETLINK_CB(skb).sk, netnsid);
- 		if (IS_ERR(tgt_net))
- 			return PTR_ERR(tgt_net);
- 	}
-@@ -3125,7 +3130,7 @@ static int rtnl_getlink(struct sk_buff *skb, struct nlmsghdr *nlh,
- 
- 	if (tb[IFLA_IF_NETNSID]) {
- 		netnsid = nla_get_s32(tb[IFLA_IF_NETNSID]);
--		tgt_net = get_target_net(NETLINK_CB(skb).sk, netnsid);
-+		tgt_net = rtnl_get_net_ns_capable(NETLINK_CB(skb).sk, netnsid);
- 		if (IS_ERR(tgt_net))
- 			return PTR_ERR(tgt_net);
- 	}
 -- 
 2.17.1
 
