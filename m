@@ -7,70 +7,65 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7427C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:23:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E634C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:24:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1D5B2087E
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:23:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47BBF20897
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:24:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WLXweYn6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1D5B2087E
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dP5tkFfb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47BBF20897
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728151AbeH1RPg (ORCPT
+        id S1728185AbeH1RQM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 13:15:36 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:38877 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727212AbeH1RPg (ORCPT
+        Tue, 28 Aug 2018 13:16:12 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44177 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727212AbeH1RQM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 13:15:36 -0400
-Received: by mail-wm0-f65.google.com with SMTP id t25-v6so2009232wmi.3;
-        Tue, 28 Aug 2018 06:23:56 -0700 (PDT)
+        Tue, 28 Aug 2018 13:16:12 -0400
+Received: by mail-wr1-f68.google.com with SMTP id v16-v6so1568772wro.11;
+        Tue, 28 Aug 2018 06:24:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=KDB5UGECM9fpAuGLlbmJ1QkkSPVv+HvJdEBGQ/7Vm7M=;
-        b=WLXweYn6urpyz4X/tAoNpw5nwvra7cWNt4iAPYJhIq4f5pBcmap+kZkWF+UjMPUZs/
-         2SIlpirD3nulJgog9IlIdPNaKcalo5EKrMJYlPy8Y6NZ+6fnxQkvigHMOod6ormo2fXu
-         ACDwfvsj8QrezxFfi4nNXhy0Zmvb/LTHxG5UVGu85m8xqUyU/MVSEo25UUfijxut4Gj6
-         OBnz9+KUQb41nSYkvQLqii+BuZ6K8z9Wfgh7P8u/gdIEqWfD+PrgvUbQdG6uTEBJYCDB
-         qZ1hK3XeSpd5zfEGpcGo6iFh+t4p2FLddZpCb+m/tk7CpleXEcGhsQLn82Dc/mm60wl/
-         Xt3A==
+        bh=tmNeqcQRBIWKANQgmgxzHwAzaBjSSTABgwGfO9UYits=;
+        b=dP5tkFfbGNOCRnNFvAe47Nv7uATGEh1sA/BulQnEyEoNJwQSqi5PZHm+XwOJDXZMQR
+         yos0XsxFn7MxoRm0tbMmlMJP3+jxN8KAKFDc6oSt6v9Ln3mlYaZeJLphgAkDMu3VcRKE
+         XRSt0zry1nD9A52TYHIa1pEPUDhhUO87i2uVs8RfNoDajmzTkbcuuUpwyqphXaQYFku3
+         oS84YU4qdA/Ftb6R2V9XajnKz7/nv6hp4U7gUYYCQ5UQrEEuZ3YD937aS0bBy0MlRqmf
+         ur8Fps/UJ9doXiRVz8uG2lVpiKtK+jvR/nNO85Pkue/MG3MI6zfbNux6lMxI47ty7X+r
+         +gtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=KDB5UGECM9fpAuGLlbmJ1QkkSPVv+HvJdEBGQ/7Vm7M=;
-        b=iAuqr1x1M++aQPrcOr9FXQ74fvn2EWagFYH2bTj4bnob9+X4uIjOeUmLDgqJlQed8Q
-         /0TANOgn9zg+jzgoTJG+ESlM9W1rZ8ZsCWcSVIeOchSRrXFndVvUleRrmrEg+Pn+br8e
-         /i0rz032hePxljnlhycS/3o4hXz98CY+ifNcS/cB39VrpjpO7jNMJAbz1EuMzmmbCXfy
-         i8hvKUpbuIFxj7KuGdY9qVVfjvmRaxzB8VEPvESh7DG1rvAisRBNv87O1qK/mGV2v1Xt
-         oiFSKq4aTyS/7J8b8ubJIzxbJ56VUORv+1z1n7i8q3Kf42Hq3bClhcT511Kf81ICOW4R
-         AJDQ==
-X-Gm-Message-State: APzg51BKF/Vnx6dPBKniFmw8plz/RPN1qI+Ep3Z7+s4SwraRqDrJ8mo9
-        ehY8indcLQsCMWwV8MCEMHNzx7gFG4VFUTbzkOOAYg==
-X-Google-Smtp-Source: ANB0VdZLlIvOfdzZZNGbz4r4NjhU3rmHWY0Jzd7YCVaRADdMcRKCBfHY62L10dBkNj4DDSWwtaAknfqLJd1qBbd9+r0=
-X-Received: by 2002:a1c:1d87:: with SMTP id d129-v6mr1342228wmd.34.1535462635340;
- Tue, 28 Aug 2018 06:23:55 -0700 (PDT)
+        bh=tmNeqcQRBIWKANQgmgxzHwAzaBjSSTABgwGfO9UYits=;
+        b=th+PlGeh2KPTqrBC1+quRUQFvmWJu0I3vIDUYiTXq7daCW5wD0Ptc0MOr428KW9Fxy
+         +PP6QqxVv2Fj5ytzJlDi4xHc/2Kd6v7yaJHvGtXjUVnujVG+UWujwKi9LAfoQjetjCI/
+         HCMSs4m2Mb4Vw8hjOzBzfsKE8msZjMLyagLQDcLliUoVgKQKPM2LdtQwtGrEQcJTq9ER
+         gD2LHBZyuhz+vIXOnS64q+TgsCMHlPzGFJj+WZ4KSPxZapfhim8sZnxUCYaudxmRp88o
+         MdcshBZdmw/tGMUdbaylJidew2R/lxa2ni8UjyODp8yZR8tEarTNaw/PTdxnOanU10yn
+         VLMg==
+X-Gm-Message-State: APzg51DLnyGyLJ1MO0cwJ63DlEjFyun29MM1+5Z4b6dB0+5ljAT6ye51
+        BndLhsgFz5IHmCTxILdg5B9wpSsSLxWalNwNisU=
+X-Google-Smtp-Source: ANB0VdaAgKmYlNMd06cHt3su0AmzudWYq/HCbT1OcV2wz2dpqVJT4JnP/21FulGBtB094ZYGSbqILBBCMH8FDxdzu8E=
+X-Received: by 2002:adf:9051:: with SMTP id h75-v6mr1242885wrh.65.1535462671550;
+ Tue, 28 Aug 2018 06:24:31 -0700 (PDT)
 MIME-Version: 1.0
-References: <1535453838-12154-1-git-send-email-sunil.kovvuri@gmail.com>
- <1535453838-12154-5-git-send-email-sunil.kovvuri@gmail.com>
- <CAK8P3a2fgAVB0+uns9f5MH+2OyZbwvReo9j-=u3=30QoK=2Ksw@mail.gmail.com>
- <CA+sq2CeyQ8r7bj3vK=cfriif=HhUu36ZUPWqxXm1e0DktHG+Fg@mail.gmail.com> <CAK8P3a1CvX1V8h20s_=XUUYfR-zYNwETg5p6dCtpVUqZ89K-tg@mail.gmail.com>
-In-Reply-To: <CAK8P3a1CvX1V8h20s_=XUUYfR-zYNwETg5p6dCtpVUqZ89K-tg@mail.gmail.com>
+References: <1535453838-12154-1-git-send-email-sunil.kovvuri@gmail.com> <CAK8P3a1xC6XjwDAmocpE5TZO7j6uVGtvBtWLPVcYwKqN6Z+seQ@mail.gmail.com>
+In-Reply-To: <CAK8P3a1xC6XjwDAmocpE5TZO7j6uVGtvBtWLPVcYwKqN6Z+seQ@mail.gmail.com>
 From:   Sunil Kovvuri <sunil.kovvuri@gmail.com>
-Date:   Tue, 28 Aug 2018 18:53:43 +0530
-Message-ID: <CA+sq2Cdn6ut3kdTWoOgCayO2evQrD9TjBaUpVUR3_rWZFxYeig@mail.gmail.com>
-Subject: Re: [PATCH 04/15] soc: octeontx2: Add mailbox support infra
+Date:   Tue, 28 Aug 2018 18:54:20 +0530
+Message-ID: <CA+sq2Cd3R0V5hcaF+ESfkOEBHgBwOB6b8Uwx7K+CeUN6gLFTOg@mail.gmail.com>
+Subject: Re: [PATCH 00/15] soc: octeontx2: Add RVU admin function driver
 To:     Arnd Bergmann <arnd@arndb.de>
 Cc:     LKML <linux-kernel@vger.kernel.org>, olof@lixom.net,
         LAKML <linux-arm-kernel@lists.infradead.org>,
-        linux-soc@vger.kernel.org, Aleksey Makarov <amakarov@marvell.com>,
-        Sunil Goutham <sgoutham@marvell.com>,
-        Lukasz Bartosik <lbartosik@marvell.com>,
+        linux-soc@vger.kernel.org, Sunil Goutham <sgoutham@marvell.com>,
         Linux Netdev List <netdev@vger.kernel.org>,
         "David S. Miller" <davem@davemloft.net>
 Content-Type: text/plain; charset="UTF-8"
@@ -79,59 +74,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 6:22 PM Arnd Bergmann <arnd@arndb.de> wrote:
+On Tue, Aug 28, 2018 at 5:53 PM Arnd Bergmann <arnd@arndb.de> wrote:
 >
-> On Tue, Aug 28, 2018 at 2:48 PM Sunil Kovvuri <sunil.kovvuri@gmail.com> wrote:
+> On Tue, Aug 28, 2018 at 12:57 PM <sunil.kovvuri@gmail.com> wrote:
 > >
-> > On Tue, Aug 28, 2018 at 5:33 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> > >
-> > > On Tue, Aug 28, 2018 at 12:57 PM <sunil.kovvuri@gmail.com> wrote:
-> > > >
-> > > > From: Aleksey Makarov <amakarov@marvell.com>
-> > > >
-> > > > This patch adds mailbox support infrastructure APIs.
-> > > > Each RVU device has a dedicated 64KB mailbox region
-> > > > shared with it's peer for communication. RVU AF has
-> > > > a separate mailbox region shared with each of RVU PFs
-> > > > and a RVU PF has a separate region shared with each of
-> > > > it's VF.
-> > > >
-> > > > These set of APIs are used by this driver (RVU AF) and
-> > > > other RVU PF/VF drivers eg netdev, crypto e.t.c.
-> > > >
-> > > > Signed-off-by: Aleksey Makarov <amakarov@marvell.com>
-> > > > Signed-off-by: Sunil Goutham <sgoutham@marvell.com>
-> > > > Signed-off-by: Lukasz Bartosik <lbartosik@marvell.com>
-> > >
-> > > Why does this driver not use the drivers/mailbox/ infrastructure?
-> > >
-> > This is a common administrative software driver which will be handling requests
-> > from kernel drivers and as well as drivers in userspace applications.
-> > We had to keep mailbox communication infrastructure same across all usages.
+> > From: Sunil Goutham <sgoutham@marvell.com>
+> >
+> > Resource virtualization unit (RVU) on Marvell's OcteonTX2 SOC supports
+> > multiple PCIe SRIOV physical functions (PFs) and virtual functions (VFs).
+> > PF0 is called administrative / admin function (AF) and has privilege access
+> > to registers to provision different RVU functional blocks to each of
+> > PF/VF.
+> >
+> > This admin function (AF) driver acts as a configuration / administrative
+> > software which provisions functional blocks to a PF/VF on demand for them
+> > to work as one of the following
+> >  - A basic network controller (i.e NIC).
+> >  - NIC with packet filtering, shaping and scheduling capabilities.
+> >  - A crypto device.
+> >  - A combination of above etc.
+> >
+> > PF/VFs communicate with admin function via a shared memory region.
+> > This patch series adds logic for the following
+> >  - RVU AF driver with functional blocks provisioning support
+> >  - Mailbox infrastructure for communication between AF and PFs.
+> >  - CGX driver which provides information about physcial network
+> >    interfaces which AF processes and forwards required info to
+> >    PF/VF drivers.
+> >
+> > This is the first set of patches out of 70 odd patches.
+> >
+> > Note: This driver neither receives any data nor processes it i.e no I/O,
+> >       just does the hardware configuration.
 >
-> Can you explain more about the usage of userspace applications
-> and what interface you plan to use into the kernel?
+> Hi Sunil,
+>
+> Thanks for posting this first series, I'm glad we're seeing support for this
+> chip family making some progress.
 
-Any PCI device here irrespective in what domain (kernel or userspace)
-they are in
-use common mailbox communication. Which is
-# Write a mailbox msg (format is agreed between all parties) into
-shared (between AF and other PF/VFs)
-   memory region and trigger a interrupt to admin function.
-# Admin function processes the msg and puts reply in the same memory
-region and trigger
-   IRQ to the requesting device. If the device has a driver instance
-in kernel then it uses
-   IRQ and userspace applications does polling on the IRQ status bit.
+Thanks.
 
 >
-> Do you things like AF_XDP and virtual machines, or something else?
+> My feeling overall is that we need a review from the network driver
+> folks more than the arm-soc team etc, and that maybe the driver
+> as a whole should go into drivers/net/ethernet.
 
-I meant drivers in DPDK which may or may not use AF_XDP.
-And yes if a PCI device is attached to a virtual machine then that
-also uses the same mailbox communication.
-
-Sunil.
+This driver doesn't handle any network IO and moreever this driver has to handle
+configuration requests from crypto driver as well. There will be
+separate network and
+crypto drivers which will be upstreamed into drivers/net/ethernet and
+drivers/crypto.
+And in future silicons there will be different types of functional
+blocks which will be
+added into this resource virtualization unit (RVU). Hence i thought
+this driver is not a
+right fit in drivers/net/ethernet.
 
 >
->         Arnd
+> We support some couple of similar hardware already that has
+> both support for virtual functions and for crypto offload, including
+> the Chelsio cxgb4, Mellanox mlx5, NXP DPAA and probably others,
+
+I agree, but i guess that is done to support inline crypto.
+Here this driver has to handle requests from normal crypto driver
+(drivers/crypto) as well.
+
+> and we need to ensure that the exposed interfaces are all
+> compatible, and that you use the correct subsystems and
+> in-kernel abstractions for thing that are common.
+>
+>       Arnd
