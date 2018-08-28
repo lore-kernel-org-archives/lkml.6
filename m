@@ -2,121 +2,134 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4252AC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:19:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE18CC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:21:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED2EC208B9
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:19:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED2EC208B9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4FB28208B8
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:21:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jbRFXmGb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FB28208B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727308AbeH1MJn (ORCPT
+        id S1727098AbeH1MLb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 08:09:43 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37082 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726979AbeH1MJn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 08:09:43 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 053CB87A82;
-        Tue, 28 Aug 2018 08:19:13 +0000 (UTC)
-Received: from krava (unknown [10.43.17.209])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 972EA2026E18;
-        Tue, 28 Aug 2018 08:19:11 +0000 (UTC)
-Date:   Tue, 28 Aug 2018 10:19:11 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH] perf/x86/intel: Export mem events only if there's PEBs
- support
-Message-ID: <20180828081911.GC23727@krava>
-References: <20180813154820.16991-1-jolsa@kernel.org>
- <20180827090624.GI24695@krava>
- <20180828081232.GI24124@hirez.programming.kicks-ass.net>
+        Tue, 28 Aug 2018 08:11:31 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:46921 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726979AbeH1MLb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 08:11:31 -0400
+Received: by mail-qt0-f196.google.com with SMTP id d4-v6so696572qtn.13
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 01:21:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=1GFtWDxGPcH77vTCYpdGncHlyo6QmqcJomO3HobbEJo=;
+        b=jbRFXmGbyj9i/IVdNrezyIzXci/R/24RXdsc8+q4iqJ/7d8y9doy7784yanrKSumDP
+         j8pxTvnAy2eBUVhzkUCIQypXIQ9FXzKps6EDGQ3R7TEMspJQ9HosmYN97gOD/ZSD6dre
+         k+vRnzmxPNVB6GaNbT2nbsqyO11ejzlHc4bApryektSlC6OrvRCPY/G8bVziItd417UK
+         MXTI3sCqbXCU6ZH8XXcV/jzqe7gXJP3CpxtI19W6EBNchVbRq6w2XoIiCSuw32o1bo37
+         SMOmErfGWkk3OZM2oNh3zS0BqroA760p0+ACEdMAPKDI0293oEIGYpjjfwWTochYH8Dp
+         ht2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=1GFtWDxGPcH77vTCYpdGncHlyo6QmqcJomO3HobbEJo=;
+        b=K7PSBBmExJ1Bh9+P+2hVnmuq9hzdM7A2863WZWxS6/LeLqJbBt5BdIcdm4BlX6u41n
+         imEq4N2Y7c61q3jVFLH5Eo05RAz076ZLINVFPQDkhw5gkcmoN+BxbzFr4fCc8Ra5y22/
+         oULleXwiNoJHQeLxVczZFSYP3FjiAo96Cl6lzKCe2mUrONGL2k7yG4/WOElTPMI50DGd
+         3vQMG009/sJLMNcttOToHrVyqNQG8wPDxuWtJE9aSMihHVLp4mTCY7pyw5/r7zQiwbeh
+         cXIPB0KTfMw8Sp30xCuQlGi1k5Dsbmf3KNwVsXOja6EV+3wFqIPN/d/xaRhy2iJrPCsl
+         iepQ==
+X-Gm-Message-State: APzg51CNlhcepqRnddmXHNaSV45mDY6r+0HJTCl9N8zULhQZxJX2qw5F
+        XDg56H3nImZ9uUcKVy8htfDlzSOBvkt3XZkYa8eG8A==
+X-Google-Smtp-Source: ANB0VdbTo95kPeQHK5rBkRD8oByJAntilRTMPApop1cdtYrlv21vJ1YEAjR0SNVgH/LPj7i9YRKFukp4fD85O2nNP00=
+X-Received: by 2002:a0c:cdd1:: with SMTP id a17-v6mr411415qvn.205.1535444459603;
+ Tue, 28 Aug 2018 01:20:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180828081232.GI24124@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 28 Aug 2018 08:19:13 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 28 Aug 2018 08:19:13 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
+References: <1535442295-4007-1-git-send-email-hjc@rock-chips.com>
+In-Reply-To: <1535442295-4007-1-git-send-email-hjc@rock-chips.com>
+From:   Enric Balletbo Serra <eballetbo@gmail.com>
+Date:   Tue, 28 Aug 2018 10:20:48 +0200
+Message-ID: <CAFqH_53aJX=n_kzvf=xjWGTSu2ak8q8wJ3nGM94e_OGLYAKWAQ@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/rockchip: fix coding style and incorrect description
+To:     hjc@rock-chips.com
+Cc:     =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 10:12:32AM +0200, Peter Zijlstra wrote:
-> On Mon, Aug 27, 2018 at 11:06:24AM +0200, Jiri Olsa wrote:
-> > +static __init struct attribute **get_hsw_events_attrs(bool *alloc)
-> >  {
-> > +	if (boot_cpu_has(X86_FEATURE_RTM)) {
-> > +		*alloc = true;
-> > +		return merge_attr(hsw_events_attrs, hsw_tsx_events_attrs);
-> > +	}
-> > +	return hsw_events_attrs;
-> >  }
-> 
-> 
-> 
-> > @@ -4357,6 +4374,15 @@ __init int intel_pmu_init(void)
-> >  		WARN_ON(!x86_pmu.format_attrs);
-> >  	}
-> >  
-> > +	if (x86_pmu.pebs && mem_attr) {
-> > +		struct attribute **attr = x86_pmu.cpu_events;
-> > +
-> > +		x86_pmu.cpu_events = merge_attr(x86_pmu.cpu_events, mem_attr);
-> > +
-> > +		if (alloc_events)
-> > +			kfree(attr);
-> > +	}
-> > +
-> >  	if (x86_pmu.num_counters > INTEL_PMC_MAX_GENERIC) {
-> >  		WARN(1, KERN_ERR "hw perf events %d > max(%d), clipping!",
-> >  		     x86_pmu.num_counters, INTEL_PMC_MAX_GENERIC);
-> 
-> 
-> static __init struct attribute **
-> get_events_attrs(struct attribute **base,
-> 		 struct attribute **mem,
-> 		 struct attribute **tsx)
-> {
-> 	struct attribute **attrs = base;
-> 	struct attribute **old;
-> 
-> 	if (mem) {
-> 		old = attrs;
-> 		attrs = merge_attrs(attrs, mem);
-> 		if (old != base)
-> 			kfree(old);
-> 	}
-> 
-> 	if (tsx && boot_cpu_has(X86_FEATURE_RTM)) {
-> 		old = attrs;
-> 		attrs = merge_attrs(attrs, tsx);
-> 		if (old != base)
-> 			kfree(old);
-> 	}
-> 
-> 	return attrs;
-> }
-> 
-> Would that not help to concentrate things a little more?
+Missatge de Sandy Huang <hjc@rock-chips.com> del dia dt., 28 d=E2=80=99ag.
+2018 a les 9:45:
+>
+> Align with other drivers, tab + 2 space key for description.
+> and edp/hdmi/dsi can be used on both rk3288 and rk3399.
+>
+> Signed-off-by: Sandy Huang <hjc@rock-chips.com>
+> ---
+>  drivers/gpu/drm/rockchip/Kconfig | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/rockchip/Kconfig b/drivers/gpu/drm/rockchip/=
+Kconfig
+> index 0ccc762..0534dc1 100644
+> --- a/drivers/gpu/drm/rockchip/Kconfig
+> +++ b/drivers/gpu/drm/rockchip/Kconfig
+> @@ -23,7 +23,7 @@ config ROCKCHIP_ANALOGIX_DP
+>         help
+>           This selects support for Rockchip SoC specific extensions
+>           for the Analogix Core DP driver. If you want to enable DP
+> -         on RK3288 based SoC, you should selet this option.
+> +         on RK3288 or RK3399 based SoC, you should select this option.
+>
+>  config ROCKCHIP_CDN_DP
+>          bool "Rockchip cdn DP"
+> @@ -39,16 +39,16 @@ config ROCKCHIP_DW_HDMI
+>          help
+>           This selects support for Rockchip SoC specific extensions
+>           for the Synopsys DesignWare HDMI driver. If you want to
+> -         enable HDMI on RK3288 based SoC, you should selet this
+> -         option.
+> +         enable HDMI on RK3288 or RK3399 based SoC, you should select
+> +         this option.
+>
+>  config ROCKCHIP_DW_MIPI_DSI
+>         bool "Rockchip specific extensions for Synopsys DW MIPI DSI"
+>         help
+> -        This selects support for Rockchip SoC specific extensions
+> -        for the Synopsys DesignWare HDMI driver. If you want to
+> -        enable MIPI DSI on RK3288 based SoC, you should selet this
+> -        option.
+> +         This selects support for Rockchip SoC specific extensions
+> +         for the Synopsys DesignWare HDMI driver. If you want to
+> +         enable MIPI DSI on RK3288 or RK3399 based SoC, you should
+> +         select this option.
+>
+>  config ROCKCHIP_INNO_HDMI
+>         bool "Rockchip specific extensions for Innosilicon HDMI"
+> --
+> 2.7.4
 
-looks like it would ;-) will check and repost
+If it helps...
 
-thanks,
-jirka
+Reviewed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+
+>
+>
