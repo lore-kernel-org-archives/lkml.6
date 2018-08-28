@@ -2,128 +2,162 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11A71C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:45:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91491C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:46:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A932C20833
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:45:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LqFOvshg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A932C20833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 53ADA20833
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:46:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53ADA20833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728406AbeH1ShQ (ORCPT
+        id S1728350AbeH1SiC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 14:37:16 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:45755 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727284AbeH1ShQ (ORCPT
+        Tue, 28 Aug 2018 14:38:02 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:1370 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727761AbeH1SiC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 14:37:16 -0400
-Received: by mail-lj1-f194.google.com with SMTP id u83-v6so1630796lje.12
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 07:45:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7aD7y8HEmqSRSbl6Rqo91KmIvIJgDy/amWk/KbSw9hE=;
-        b=LqFOvshgkDgGPiD3VwWZ9zVJsrhL2tMegX4Sd6jzCYCTop3odCwV9mMgR6qEL03iPx
-         k0SiZiRqDqzj1rov8hcV+Q/q51zshVpq4zN/fjFml30e4eMigQL4nv3HeTdh1/Q1L2UN
-         k2nDdG3Pn1pUD+1aYO+mV6gySsK5vZs2fMC9R2u6CZ8GloXKYXrjri9FsFDTNvh54mlK
-         aljIWxtCpWxSeNMeaZrZnNKuW2qlHy4HnCad78fnUZLOybziwRcDl4w0+NAjy1fsrSzF
-         VSack95UCx+FXayFt7w738+v7RrUGevwcmqZCC3/Geg/0vAs4AQ9OGgFpedIUDfB8aPV
-         lrfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7aD7y8HEmqSRSbl6Rqo91KmIvIJgDy/amWk/KbSw9hE=;
-        b=N54Z7NSU9icGSQEcGlIvFZbGnrnFKstjmVYDlxRC0Z85jm9nRXOwLfle8h1iZ4FzhY
-         Ih7eKxxcQN3MaAfqvdeMichExtRqkfNSCUDPTca3D0c2QsZcpM7IDAf6kKHx+5M3zLIs
-         iy6LmFzAjcSn4Ms4dXkYHF2NV7XhuTiTodhVjmX2q20VKSPaFViTAWoGsgfU/QxKtLyI
-         rLYN+eG5GzoTJGUS523OxXvGviLAhX4sF6CT1SuW3+p3gA5YXOdakj3yT17LCZEULfBs
-         o2H9jKd7/uJy9iSvE7BX5AvwPfpaT0nzAClx9dEe41QCIv1Z0J96nK0zOuVoEBilAcQQ
-         anKQ==
-X-Gm-Message-State: APzg51A82JuC7gQLzXQG2Aa29YXKw3kEi2i3f+U5pVh2FUlRxGl5QDc2
-        Qp2IcIQXd3vN/4OgiteNLihbo2x459RMaSENLnk=
-X-Google-Smtp-Source: ANB0VdbjuEXMa7xH1Fk7qVtK1V1gTTcVPS81T1+BBl60mSSZyhUnQsnLBPZfmlDt6A0owlov25sVINzok9JydJj9JLo=
-X-Received: by 2002:a2e:4782:: with SMTP id u124-v6mr1611758lja.40.1535467514290;
- Tue, 28 Aug 2018 07:45:14 -0700 (PDT)
+        Tue, 28 Aug 2018 14:38:02 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5b85601e0000>; Tue, 28 Aug 2018 07:45:50 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 28 Aug 2018 07:46:00 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 28 Aug 2018 07:46:00 -0700
+Received: from dhcp-10-21-25-168 (10.21.25.201) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 28 Aug
+ 2018 14:45:57 +0000
+Date:   Tue, 28 Aug 2018 17:45:51 +0300
+From:   Aapo Vienamo <avienamo@nvidia.com>
+To:     Adrian Hunter <adrian.hunter@intel.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "Mikko Perttunen" <mperttunen@nvidia.com>,
+        Stefan Agner <stefan@agner.ch>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mmc@vger.kernel.org>
+Subject: Re: [PATCH v2 11/40] mmc: sdhci: Add a quirk to skip clearing the
+ transfer mode register on tuning
+Message-ID: <20180828174551.12f1d9bf@dhcp-10-21-25-168>
+In-Reply-To: <d603be8f-986a-80e1-d98a-daea9c9684aa@intel.com>
+References: <1533924522-1037-1-git-send-email-avienamo@nvidia.com>
+        <1533924522-1037-12-git-send-email-avienamo@nvidia.com>
+        <d603be8f-986a-80e1-d98a-daea9c9684aa@intel.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-References: <20180821143152.32293-1-ricardo.ribalda@gmail.com>
- <20180821143152.32293-3-ricardo.ribalda@gmail.com> <20180828162611.2f45e5c9@bbrezillon>
-In-Reply-To: <20180828162611.2f45e5c9@bbrezillon>
-From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Date:   Tue, 28 Aug 2018 16:44:57 +0200
-Message-ID: <CAPybu_0yRQunWVoTKffm4NZaCNbiHpBQV11tJ3z62TpDGo1rVw@mail.gmail.com>
-Subject: Re: [PATCH 2/8] mtd: maps: gpio-addr-flash: Fix ioremapped size
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Zhouyang Jia <jiazhouyang09@gmail.com>,
-        linux-mtd@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.21.25.201]
+X-ClientProxiedBy: UKMAIL101.nvidia.com (10.26.138.13) To HQMAIL101.nvidia.com
+ (172.20.187.10)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris
-On Tue, Aug 28, 2018 at 4:26 PM Boris Brezillon
-<boris.brezillon@bootlin.com> wrote:
->
-> On Tue, 21 Aug 2018 16:31:46 +0200
-> Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com> wrote:
->
-> > We should only iomap the area of the chip that is memory mapped.
-> > Otherwise we could be mapping devices beyond the memory space or that
-> > belong to other devices.
-> >
->
-> Can you add
->
-> Fixes: ebd71e3a4861 ("mtd: maps: gpio-addr-flash: fix warnings and make more portable")
+On Mon, 27 Aug 2018 14:01:52 +0300
+Adrian Hunter <adrian.hunter@intel.com> wrote:
 
-
-Sure, I have some other changes for the patchset at
-https://github.com/ribalda/linux/tree/gpio-addr-flash-v2
-
-I will wait a couple of days for more reviews and I will resend the patches
-
-
->
-> and in case you want to backport the fix:
->
-> Cc: <stable@vger.kernel.org>
->
-> > Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+> On 10/08/18 21:08, Aapo Vienamo wrote:
+> > Add SDHCI_QUIRK2_TUNE_SKIP_XFERRMODE_REG_PROG to skip programming the
+> > SDHCI_TRANSFER_MODE in sdhci_set_transfer_mode() if tuning command is
+> > being sent.
+> > 
+> > On Tegra210 and Tegra186 the tuning sequence hangs if the SDHCI
+> > transfer mode register is touched.
+> > 
+> > Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
 > > ---
-> >  drivers/mtd/maps/gpio-addr-flash.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/mtd/maps/gpio-addr-flash.c b/drivers/mtd/maps/gpio-addr-flash.c
-> > index 17be47f72973..6de16e81994c 100644
-> > --- a/drivers/mtd/maps/gpio-addr-flash.c
-> > +++ b/drivers/mtd/maps/gpio-addr-flash.c
-> > @@ -234,7 +234,7 @@ static int gpio_flash_probe(struct platform_device *pdev)
-> >       state->map.copy_to    = gf_copy_to;
-> >       state->map.bankwidth  = pdata->width;
-> >       state->map.size       = state->win_size * (1 << state->gpio_count);
-> > -     state->map.virt       = ioremap_nocache(memory->start, state->map.size);
-> > +     state->map.virt       = ioremap_nocache(memory->start, state->win_size);
-> >       if (!state->map.virt)
-> >               return -ENOMEM;
-> >
->
+> >  drivers/mmc/host/sdhci.c | 6 ++++++
+> >  drivers/mmc/host/sdhci.h | 2 ++
+> >  2 files changed, 8 insertions(+)
+> > 
+> > diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> > index a7b5602..04dc443 100644
+> > --- a/drivers/mmc/host/sdhci.c
+> > +++ b/drivers/mmc/host/sdhci.c
+> > @@ -1028,6 +1028,12 @@ static void sdhci_set_transfer_mode(struct sdhci_host *host,
+> >  
+> >  	if (data == NULL) {
+> >  		if (host->quirks2 &
+> > +			SDHCI_QUIRK2_TUNE_SKIP_XFERMODE_REG_PROG &&
+> > +				(cmd->opcode == MMC_SEND_TUNING_BLOCK ||
+> > +				 cmd->opcode == MMC_SEND_TUNING_BLOCK_HS200)) {
+> > +			return;
+> > +		}  
+> 
+> Rather than introduce a quirk, can't we just dodge the unnecessary write e.g.
+> 
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 1b3fbd9bd5c5..68af6a67e397 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -1033,10 +1033,19 @@ static void sdhci_set_transfer_mode(struct sdhci_host *host,
+>  			if (cmd->opcode != MMC_SEND_TUNING_BLOCK_HS200)
+>  				sdhci_writew(host, 0x0, SDHCI_TRANSFER_MODE);
+>  		} else {
+> -		/* clear Auto CMD settings for no data CMDs */
+> +			u16 orig;
+> +
+> +			/* clear Auto CMD settings for no data CMDs */
+>  			mode = sdhci_readw(host, SDHCI_TRANSFER_MODE);
+> -			sdhci_writew(host, mode & ~(SDHCI_TRNS_AUTO_CMD12 |
+> -				SDHCI_TRNS_AUTO_CMD23), SDHCI_TRANSFER_MODE);
+> +			orig = mode;
+> +			mode &= ~(SDHCI_TRNS_AUTO_CMD12 | SDHCI_TRNS_AUTO_CMD23);
+> +			/*
+> +			 * Do not write transfer mode unnecessarily because it
+> +			 * can upset some host controllers (e.g. sdhci-tregra)
+> +			 * during tuning.
+> +			 */
+> +			if (mode != orig)
+> +				sdhci_writew(host, new_mode, SDHCI_TRANSFER_MODE);
+>  		}
+>  		return;
+>  	}
+> 
+> 
+> Alternatively 
+> 
+> > +		if (host->quirks2 &
+> >  			SDHCI_QUIRK2_CLEAR_TRANSFERMODE_REG_BEFORE_CMD) {
+> >  			sdhci_writew(host, 0x0, SDHCI_TRANSFER_MODE);
+> >  		} else {
+> > diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> > index 23966f8..0a99008 100644
+> > --- a/drivers/mmc/host/sdhci.h
+> > +++ b/drivers/mmc/host/sdhci.h
+> > @@ -450,6 +450,8 @@ struct sdhci_host {
+> >   * obtainable timeout.
+> >   */
+> >  #define SDHCI_QUIRK2_DISABLE_HW_TIMEOUT			(1<<17)
+> > +/* Don't clear the SDHCI_TRANSFER_MODE register on tuning commands */
+> > +#define SDHCI_QUIRK2_TUNE_SKIP_XFERMODE_REG_PROG	(1<<18)
+> >  
+> >  	int irq;		/* Device IRQ */
+> >  	void __iomem *ioaddr;	/* Mapped address */
+> >   
+> 
 
+Looks like writes to the transfer mode register are deferred until the
+command register is written by tegra_sdhci_writew(). This code was
+introduced due to a quirk in Tegra114/124. The Tegra114 ops struct was
+probably just copied over when support for Tegra210 was added, so we
+end up with this code also getting run on Tegra210.
 
--- 
-Ricardo Ribalda
+The issue with tegra_sdhci_writew() is that it breaks successive
+read-modify-write operations. The value written to the transfer mode
+register isn't returned on read until the command register is also
+touched. Removing the write_w accessor from tegra210_sdhci_ops seems to
+make the issue originally addressed by this patch to go away.
+
+ -Aapo
