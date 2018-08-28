@@ -2,396 +2,129 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F0A7C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:24:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E184C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:26:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E01342088E
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:24:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="FFHoCX7f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E01342088E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
+	by mail.kernel.org (Postfix) with ESMTP id D80CD2088E
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:26:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D80CD2088E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727433AbeH1VQA (ORCPT
+        id S1727294AbeH1VTI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 17:16:00 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:42787 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727099AbeH1VQA (ORCPT
+        Tue, 28 Aug 2018 17:19:08 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44622 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726996AbeH1VTH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 17:16:00 -0400
-Received: by mail-yw1-f67.google.com with SMTP id n207-v6so879007ywn.9
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 10:23:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=TAkWgY7MuoMymn40LXKxFTjy2mkfffbOzrD8VXMQT8M=;
-        b=FFHoCX7f0Z78+YjbBwz63J34GJP6Bk1HEWY2U6Aqf/biS02uCiDQU59qJDMtg9C2a+
-         aVgBpr1KamGRVml2Jx+alFu+uCsNo9dNd2Sla6off1OFO86/vhScIAJ941wVTJp1i+OY
-         vUq9bFEhIjGJ/tO/xiFGrvBJloCTA5F1R4vaN4PHkMmQAvJ4wlBj+Ad9kj0/fdDByeiF
-         o9oIGMSpFaQTkHeOjoRYd/H3XhDCLairVwNcPMoJIRhviRc831U+ALVsOaB49737b4IV
-         5VOGhij+vzkQFWCV6PMX1s2dOQrhHgeOt6pOqyDyMN4HyjrhLaKMmLG/cDDekUdmy1NN
-         0qwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=TAkWgY7MuoMymn40LXKxFTjy2mkfffbOzrD8VXMQT8M=;
-        b=Z2mTp8jIdWoeN7mJrbGzDhqmDFpdLxiazKcJYrEYfyypg9plTK4b2hU+SGofNlMoCF
-         /VOjACMKIkAnZzeRrB1GMAiQx/dVuQ9Q1qLWtAw0W2s7KZv4VBEFG9roa0bxWibRsNiI
-         JJlVe9Tlz2zyvmeRG9gTOF+FMvQu3eYdX0O1Ruilu3HcTcwJeGu+K+nzjHvUCeL8hElT
-         38uDxWeXYKgmEUHMKRLxGH353M6VmT/F9HBThqV9lKaQlkk/HWn63zMLIllpul2prCBS
-         K2t0GV/Y3itqONqDGkfnTxns4TFGsKq8LzcH0oRQqrDnRic7TGWMb76amizVLX4xT5Uv
-         nQbA==
-X-Gm-Message-State: APzg51CEBXqqvoeoozAsqIkXgb5tbh0Npt/uanA5fXv9/NSfuCS3hL21
-        c8gR4JAzR6C0TH+CNjGov8UnVg==
-X-Google-Smtp-Source: ANB0VdZcYWRMJjEuHzCwetGlTl1sFDCOy7T561RjuiO5nUUkDaVDZrToDZuPB79kRIjCCEUbgWm6Qg==
-X-Received: by 2002:a81:a195:: with SMTP id y143-v6mr1412215ywg.200.1535476999294;
-        Tue, 28 Aug 2018 10:23:19 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:200::1:de86])
-        by smtp.gmail.com with ESMTPSA id p190-v6sm621156ywg.95.2018.08.28.10.23.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 28 Aug 2018 10:23:17 -0700 (PDT)
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Tejun Heo <tj@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
-        Daniel Drake <drake@endlessm.com>,
-        Vinayak Menon <vinmenon@codeaurora.org>,
-        Christopher Lameter <cl@linux.com>,
-        Peter Enderborg <peter.enderborg@sony.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Mike Galbraith <efault@gmx.de>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: [PATCH 0/9] psi: pressure stall information for CPU, memory, and IO v4
-Date:   Tue, 28 Aug 2018 13:22:49 -0400
-Message-Id: <20180828172258.3185-1-hannes@cmpxchg.org>
-X-Mailer: git-send-email 2.18.0
+        Tue, 28 Aug 2018 17:19:07 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7SHJp0H097671
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 13:26:26 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2m57a21guc-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 13:26:26 -0400
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <bauerman@linux.ibm.com>;
+        Tue, 28 Aug 2018 13:26:25 -0400
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 28 Aug 2018 13:26:23 -0400
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7SHQMbK52494508
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 28 Aug 2018 17:26:22 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 166A8112064;
+        Tue, 28 Aug 2018 13:25:57 -0400 (EDT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 28F1D112066;
+        Tue, 28 Aug 2018 13:25:55 -0400 (EDT)
+Received: from morokweng.localdomain.com (unknown [9.80.236.98])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 28 Aug 2018 13:25:54 -0400 (EDT)
+From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
+To:     linux-kselftest@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Prakash Sangappa <prakash.sangappa@oracle.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Subject: [PATCH v3 0/4] userfaultfd: selftest: Improve behavior with older kernels
+Date:   Tue, 28 Aug 2018 14:26:04 -0300
+X-Mailer: git-send-email 2.14.4
+X-TM-AS-GCONF: 00
+x-cbid: 18082817-0040-0000-0000-000004668D7E
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009628; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01080161; UDB=6.00557147; IPR=6.00860145;
+ MB=3.00022981; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-28 17:26:25
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082817-0041-0000-0000-0000086DA63B
+Message-Id: <20180828172608.30075-1-bauerman@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-28_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808280173
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This version 4 of the PSI series incorporates feedback from Peter and
-fixes two races in the lockless aggregator that Suren found in his
-testing and which caused the sample calculation to sometimes underflow
-and record bogusly large samples; details at the bottom of this email.
+Hello,
 
-		Overview
+This version of the series is unchanged from v2 except for the last patch
+which is completely new, and is provided by Mike Rapoport.
 
-PSI reports the overall wallclock time in which the tasks in a system
-(or cgroup) wait for (contended) hardware resources.
+Original series description:
 
-This helps users understand the resource pressure their workloads are
-under, which allows them to rootcause and fix throughput and latency
-problems caused by overcommitting, underprovisioning, suboptimal job
-placement in a grid; as well as anticipate major disruptions like OOM.
+> A tester ran the upstream selftest on a distro kernel and sounded the
+> alarm when it reported failures for features which aren't included in
+> that kernel.
+> 
+> This patch set improves the test behavior in that scenario.
 
-		Real-world applications
+Changes since v2:
 
-We're using the data collected by PSI (and its previous incarnation,
-memdelay) quite extensively at Facebook, and with several success
-stories.
+- Added Mike Rapoport's Reviewed-by's and Acked-by's to patches 1-3. 
+- Replaced patch 4/4 by the one provided by Mike Rapoport.
 
-One usecase is avoiding OOM hangs/livelocks. The reason these happen
-is because the OOM killer is triggered by reclaim not being able to
-free pages, but with fast flash devices there is *always* some clean
-and uptodate cache to reclaim; the OOM killer never kicks in, even as
-tasks spend 90% of the time thrashing the cache pages of their own
-executables. There is no situation where this ever makes sense in
-practice. We wrote a <100 line POC python script to monitor memory
-pressure and kill stuff way before such pathological thrashing leads
-to full system losses that would require forcible hard resets.
+Changes since v1:
 
-We've since extended and deployed this code into other places to
-guarantee latency and throughput SLAs, since they're usually violated
-way before the kernel OOM killer would ever kick in.
+- Patch "userfaultfd: selftest: Skip test if userfaultfd() syscall
+  not supported"
+  - New patch, suggested by Mike Rapoport.
 
-It is available here: https://github.com/facebookincubator/oomd
+- Patch "userfaultfd: selftest: Skip test if a feature isn't supported"
+  - Try running other tests even if one (or more) of them returns KSFT_SKIP.
 
-Eventually we probably want to trigger the in-kernel OOM killer based
-on extreme sustained pressure as well, so that Linux can avoid memory
-livelocks - which technically aren't deadlocks, but to the user
-indistinguishable from them - out of the box. We'd continue using OOMD
-as the first line of defense to ensure workload health and implement
-complex kill policies that are beyond the scope of the kernel.
+- Patch "userfaultfd: selftest: Cope if shmem doesn't support zeropage"
+  - Ignore lack of UFFDIO_ZEROPAGE in userfaultfd_events_test() and
+    userfaultfd_stress().
+  - Make userfaultfd_zeropage_test() return KSFT_SKIP if UFFDIO_ZEROPAGE
+    isn't supported.
 
-We also use PSI memory pressure for loadshedding. Our batch job
-infrastructure used to use heuristics based on various VM stats to
-anticipate OOM situations, with lackluster success. We switched it to
-PSI and managed to anticipate and avoid OOM kills and lockups fairly
-reliably. The reduction of OOM outages in the worker pool raised the
-pool's aggregate productivity, and we were able to switch that service
-to smaller machines.
+Mike Rapoport (1):
+  userfaultfd: selftest: make supported range ioctl verification more
+    robust
 
-Lastly, we use cgroups to isolate a machine's main workload from
-maintenance crap like package upgrades, logging, configuration, as
-well as to prevent multiple workloads on a machine from stepping on
-each others' toes. We were not able to configure this properly without
-the pressure metrics; we would see latency or bandwidth drops, but it
-would often be hard to impossible to rootcause it post-mortem.
+Thiago Jung Bauermann (3):
+  userfaultfd: selftest: Fix checking of userfaultfd_open() result
+  userfaultfd: selftest: Skip test if userfaultfd() syscall not
+    supported
+  userfaultfd: selftest: Skip test if a feature isn't supported
 
-We now log and graph pressure for the containers in our fleet and can
-trivially link latency spikes and throughput drops to shortages of
-specific resources after the fact, and fix the job config/scheduling.
-
-PSI has also received testing, feedback, and feature requests from
-Android and EndlessOS for the purpose of low-latency OOM killing, to
-intervene in pressure situations before the UI starts hanging.
-
-		How do you use this feature?
-
-A kernel with CONFIG_PSI=y will create a /proc/pressure directory with
-3 files: cpu, memory, and io. If using cgroup2, cgroups will also have
-cpu.pressure, memory.pressure and io.pressure files, which simply
-aggregate task stalls at the cgroup level instead of system-wide.
-
-The cpu file contains one line:
-
-	some avg10=2.04 avg60=0.75 avg300=0.40 total=157656722
-
-The averages give the percentage of walltime in which one or more
-tasks are delayed on the runqueue while another task has the
-CPU. They're recent averages over 10s, 1m, 5m windows, so you can tell
-short term trends from long term ones, similarly to the load average.
-
-The total= value gives the absolute stall time in microseconds. This
-allows detecting latency spikes that might be too short to sway the
-running averages. It also allows custom time averaging in case the
-10s/1m/5m windows aren't adequate for the usecase (or are too coarse
-with future hardware).
-
-What to make of this "some" metric? If CPU utilization is at 100% and
-CPU pressure is 0, it means the system is perfectly utilized, with one
-runnable thread per CPU and nobody waiting. At two or more runnable
-tasks per CPU, the system is 100% overcommitted and the pressure
-average will indicate as much. From a utilization perspective this is
-a great state of course: no CPU cycles are being wasted, even when 50%
-of the threads were to go idle (as most workloads do vary). From the
-perspective of the individual job it's not great, however, and they
-would do better with more resources. Depending on what your priority
-and options are, raised "some" numbers may or may not require action.
-
-The memory file contains two lines:
-
-some avg10=70.24 avg60=68.52 avg300=69.91 total=3559632828
-full avg10=57.59 avg60=58.06 avg300=60.38 total=3300487258
-
-The some line is the same as for cpu, the time in which at least one
-task is stalled on the resource. In the case of memory, this includes
-waiting on swap-in, page cache refaults and page reclaim.
-
-The full line, however, indicates time in which *nobody* is using the
-CPU productively due to pressure: all non-idle tasks are waiting for
-memory in one form or another. Significant time spent in there is a
-good trigger for killing things, moving jobs to other machines, or
-dropping incoming requests, since neither the jobs nor the machine
-overall are making too much headway.
-
-The io file is similar to memory. Because the block layer doesn't have
-a concept of hardware contention right now (how much longer is my IO
-request taking due to other tasks?), it reports CPU potential lost on
-all IO delays, not just the potential lost due to competition.
-
-		FAQ
-
-Q: How is PSI's CPU component different from the load average?
-
-A: There are several quirks in the load average that make it hard to
-   impossible to tell how overcommitted the CPU really is.
-
-   1. The load average is reported as a raw number of active tasks.
-      You need to know how many CPUs there are in the system, how many
-      CPUs the workload is allowed to use, then think about what the
-      proportion between load and the number of CPUs mean for the
-      tasks trying to run.
-
-      PSI reports the percentage of wallclock time in which tasks are
-      waiting for a CPU to run on. It doesn't matter how many CPUs are
-      present or usable. The number always tells the quality of life
-      of tasks in the system or in a particular cgroup.
-
-   2. The shortest averaging window is 1m, which is extremely coarse,
-      and it's sampled in 5s intervals. A *lot* can happen on a CPU in
-      5 seconds. This *may* be able to identify persistent long-term
-      trends and very clear and obvious overloads, but it's unusable
-      for latency spikes and more subtle overutilization.
-
-      PSI's shortest window is 10s. It also exports the cumulative
-      stall times (in microseconds) of synchronously recorded events.
-
-   3. On Linux, the load average for historical reasons includes all
-      TASK_UNINTERRUPTIBLE tasks. This gives a broader sense of how
-      busy the system is, but on the flipside it doesn't distinguish
-      whether tasks are likely to contend over the CPU or IO - which
-      obviously requires very different interventions from a sys admin
-      or a job scheduler.
-
-      PSI reports independent metrics for CPU and IO. You can tell
-      which resource is making the tasks wait, but in conjunction
-      still see how overloaded the system is overall.
-
-Q: What's the cost / performance impact of this feature?
-
-A: PSI's primary cost is in the scheduler, in particular task wakeups
-   and sleeps.
-
-   I benchmarked this code using Facebook's two most scheduling
-   sensitive workloads: memcache and webserver. They handle a ton of
-   small requests - lots of wakeups and sleeps with little actual work
-   in between - so they tend to be canaries for scheduler regressions.
-
-   In the tests, the boxes were handling live traffic over the course
-   of several hours. Half the machines, the control, ran with
-   CONFIG_PSI=n.
-
-   For memcache I used eight machines total. They're 2-socket, 14
-   core, 56 thread boxes. The test runs for half the test period,
-   flips the test and control kernels on the hardware to rule out HW
-   factors, DC location etc., then runs the other half of the test.
-
-   For the webservers, I used 32 machines total. They're single
-   socket, 16 core, 32 thread machines.
-
-   During the memcache test, CPU load was nopsi=78.05% psi=78.98% in
-   the first half and nopsi=77.52% psi=78.25%, so PSI added between
-   0.7 and 0.9 percentage points to the CPU load, a difference of
-   about 1%.
-
-   UPDATE: I re-ran this test with the v3 version of this patch set
-   and the CPU utilization was equivalent between test and control.
-
-   UPDATE: v4 is on par with v3.
-
-   As far as end-to-end request latency from the client perspective
-   goes, we don't sample those finely enough to capture the requests
-   going to those particular machines during the test, but we know the
-   p50 turnaround time in this workload is 54us, and perf bench sched
-   pipe on those machines show nopsi=5.232666 us/op and psi=5.587347
-   us/op, so this doesn't add much here either.
-
-   The profile for the pipe benchmark shows:
-
-        0.87%  sched-pipe  [kernel.vmlinux]    [k] psi_group_change
-        0.83%  perf.real   [kernel.vmlinux]    [k] psi_group_change
-        0.82%  perf.real   [kernel.vmlinux]    [k] psi_task_change
-        0.58%  sched-pipe  [kernel.vmlinux]    [k] psi_task_change
-
-
-   The webserver load is running inside 4 nested cgroup levels. The
-   CPU load with both nopsi and psi kernels was indistinguishable at
-   81%.
-
-   For comparison, we had to disable the cgroup cpu controller on the
-   webservers because it added 4 percentage points to the CPU% during
-   this same exact test.
-
-   Versions of this accounting code now run on 80% of our fleet. None
-   of our workloads have reported regressions during the rollout.
-
-These patches are against v4.18. They're maintained against upstream
-here as well: http://git.cmpxchg.org/cgit.cgi/linux-psi.git
-
- Documentation/accounting/psi.txt                |  73 +++
- Documentation/admin-guide/cgroup-v2.rst         |  18 +
- arch/powerpc/platforms/cell/cpufreq_spudemand.c |   2 +-
- arch/powerpc/platforms/cell/spufs/sched.c       |   9 +-
- arch/s390/appldata/appldata_os.c                |   4 -
- drivers/cpuidle/governors/menu.c                |   4 -
- fs/proc/loadavg.c                               |   3 -
- include/linux/cgroup-defs.h                     |   4 +
- include/linux/cgroup.h                          |  15 +
- include/linux/delayacct.h                       |  23 +
- include/linux/mmzone.h                          |   1 +
- include/linux/page-flags.h                      |   5 +-
- include/linux/psi.h                             |  53 ++
- include/linux/psi_types.h                       |  92 +++
- include/linux/sched.h                           |  10 +
- include/linux/sched/loadavg.h                   |  24 +-
- include/linux/swap.h                            |   2 +-
- include/trace/events/mmflags.h                  |   1 +
- include/uapi/linux/taskstats.h                  |   6 +-
- init/Kconfig                                    |  19 +
- kernel/cgroup/cgroup.c                          |  45 +-
- kernel/debug/kdb/kdb_main.c                     |   7 +-
- kernel/delayacct.c                              |  15 +
- kernel/fork.c                                   |   4 +
- kernel/sched/Makefile                           |   1 +
- kernel/sched/core.c                             |  16 +-
- kernel/sched/loadavg.c                          | 139 ++--
- kernel/sched/psi.c                              | 752 ++++++++++++++++++++++
- kernel/sched/sched.h                            | 178 ++---
- kernel/sched/stats.h                            |  86 +++
- mm/compaction.c                                 |   5 +
- mm/filemap.c                                    |  27 +-
- mm/huge_memory.c                                |   1 +
- mm/memcontrol.c                                 |   2 +
- mm/migrate.c                                    |   2 +
- mm/page_alloc.c                                 |   9 +
- mm/swap_state.c                                 |   1 +
- mm/vmscan.c                                     |  10 +
- mm/vmstat.c                                     |   1 +
- mm/workingset.c                                 | 113 ++--
- tools/accounting/getdelays.c                    |   8 +-
- 41 files changed, 1543 insertions(+), 247 deletions(-)
-
-Changes in v2:
-- Extensive documentation and comment update. Per everybody.
-  In particular, I've added a much more detailed explanation
-  of the SMP model, which caused some misunderstandings last time.
-- Uninlined calc_load_n(), as it was just too fat. Per Peter.
-- Split kernel/sched/stats.h churn into its own commit to
-  avoid noise in the main patch and explain the reshuffle. Per Peter.
-- Abstracted this_rq_lock_irq(). Per Peter.
-- Eliminated cumulative clock drift error. Per Peter.
-- Packed the per-cpu datastructure. Per Peter.
-- Fixed 64-bit divisions on 32 bit. Per Peter.
-- Added outer-most psi_disabled checks. Per Peter.
-- Fixed some coding style issues. Per Peter.
-- Fixed a bug in the lazy clock. Per Suren.
-- On-demand stat aggregation when user reads. Per Suren.
-- Fixed task state corruption on preemption race. Per Suren.
-- Fixed a CONFIG_PSI=n build error.
-- Minor cleanups, optimizations.
-
-Changes in v3:
-- Packed scheduler hotpath data into one cacheline, as per Peter and Linus
-- Implemented live state aggregation without the rq lock, as per Peter
-- do_div -> div64_ul and some other cleanups, as per Peter
-- Dropped unnecessary SCHED_INFO dependency, as per Peter
-- Realtime sampling period and slipped sample handling, as per Tejun
-- Fixed 64-bit divsion on 32 bit & checkpatch warnings, as per Andrew
-
-Changes in v4:
-- Fixed an unsafe cpu_curr() dereference from the live aggregator.
-  This was there to detect active reclaimers on a CPU. Instead of
-  adding an expensive task switching callback, sample that state
-  from scheduler_tick(). As per Peter.
-- Use for_each_possible_cpu() instead of the online mask when aggregating
-  per-cpu samples, to avoid rare artifacts from CPU hotplugging. As per Peter
-- Refactor the aggregation loop to be more explicit about extracting nonidle
-  time - the coefficient for all other state times - first. As per Peter.
-- Fixed a race condition between the scheduler and the live aggregator
-  in which the aggregator misses a previously observed live state that
-  is no longer live but hasn't made it into the recorded time bucket
-  yet. In this case the 'times - times_prev' sampling will underflow and
-  cause us to record a bogusly large time sample. This isn't fixable
-  with memory barriers, since we also need to avoid seeing the delta
-  simultaneously in the live state and in the recorded time buckets. Added a
-  seqcount to ensure a coherent view from the aggregator. As per Suren.
-- Fixed a related problem where the clock of the state change (rq_clock)
-  is behind that of the aggregator (cpu_clock). A race between the two
-  can cause the aggregator to observe a longer live state time than what
-  the scheduler ends up recording - again leading to the same delta
-  detection underflow and bogus sample recording. The state changer has
-  to use cpu_clock from within the seqcount section. As per Suren.
-- Note that these changes didn't affect the memcache benchmark results.
-
+ tools/testing/selftests/vm/userfaultfd.c | 113 +++++++++++++++++++------------
+ 1 file changed, 69 insertions(+), 44 deletions(-)
 
