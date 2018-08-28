@@ -2,102 +2,151 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 398E3C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 06:47:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E049C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 06:55:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C926F208AD
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 06:47:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37DC4208AD
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 06:55:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="YJkcRigO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C926F208AD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="G7tEdrT/";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="knypuHw0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37DC4208AD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727074AbeH1Khq (ORCPT
+        id S1727061AbeH1KpQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 06:37:46 -0400
-Received: from mail-ed1-f54.google.com ([209.85.208.54]:45682 "EHLO
-        mail-ed1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726567AbeH1Khq (ORCPT
+        Tue, 28 Aug 2018 06:45:16 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:38632 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726446AbeH1KpQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 06:37:46 -0400
-Received: by mail-ed1-f54.google.com with SMTP id p52-v6so522838eda.12
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 23:47:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:mime-version:thread-index:date:message-id:subject:to:cc;
-        bh=qu2vyL1J9ZOyYa2iMrvTGdovkv9TEWup7sxfj4Kv52A=;
-        b=YJkcRigOIgDpSO+Pc10MVogrlHfKYupLA9qXAlk3lNwLQl2qjyEIz9NvX1ZrMkoDtF
-         nzLXPEmBBUF3LXg13vTlJBG6FvYha36tUef2hRw51MYVvMy0eODsL+6K5K5m/5QoMuwT
-         BdE9e6RgR/P01ookH2McBpNi0zn/CEKr0PEo8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:mime-version:thread-index:date:message-id
-         :subject:to:cc;
-        bh=qu2vyL1J9ZOyYa2iMrvTGdovkv9TEWup7sxfj4Kv52A=;
-        b=I/p8FNVpIFvfe3hlO4/xYBiIH+gEabriysIrutxrZqf/IAWAkltNJ21Mdje+XIuJYN
-         B0QLM3X80nfJYSNYQzQL3moc4F5El2oeWvUm60mE8CY6oDGkQhjeXPvCP/5HHeFv4ptI
-         kYYPIbdPqr+VMAoUypScGTBjSsu7NAgFtkn7E53il9mv7EbgTyiMy50Dp1H5m2ag3elQ
-         IECxQ5R4b/uH+armXOKblET8peJgcf+6uacQygIUkXw3ftNMdCyxNK5U2LnBBBgVtCyu
-         NS9zQh9WEdMoT8ZqoG4Z2uMEOWI56bXjc2y7rWgeJlnw+GIhADH6rR5Opq+5pyvFd6Uz
-         Y1lQ==
-X-Gm-Message-State: APzg51DWW8dDN77Qi94TAMXW2+JW0nRXyGcVUAnHUWBNHTCxuc6YmqsO
-        2LL51OSp9BERb+exM9P6HmhhndUpKSsgeymrob4Ejw==
-X-Google-Smtp-Source: ANB0VdYW8kUg25mOwzuCbDIVQxwaxJfpA/LoA97Mq/pZ0zZUClq1SE0tsLsna39N3DBMbt6UDwI3kART0O0HjED3S0w=
-X-Received: by 2002:a50:d75d:: with SMTP id i29-v6mr818080edj.17.1535438855326;
- Mon, 27 Aug 2018 23:47:35 -0700 (PDT)
-From:   Sumit Saxena <sumit.saxena@broadcom.com>
-MIME-Version: 1.0
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AdQ+miVPsihcmATkRfqx0GqsuSXgZg==
-Date:   Tue, 28 Aug 2018 12:17:33 +0530
-Message-ID: <453338ab43d43c0bf24acf1aeba95251@mail.gmail.com>
-Subject: Affinity managed interrupts vs non-managed interrupts
-To:     tglx@linutronix.de
-Cc:     Ming Lei <ming.lei@redhat.com>, hch@lst.de,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 28 Aug 2018 06:45:16 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 6850460159; Tue, 28 Aug 2018 06:55:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535439304;
+        bh=Kc12Ub6HL4r6hwWD8QO/fMnv81Dlaik6oLw7c43M2nw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=G7tEdrT/+WPVIabjWfNAGJHvsjUF2YvPkG8FvhhzGng4XW/onAXL6PcsXkB33+uR4
+         Y/ZgnJACrBLH3AaonBBGhPmWPqbjelLqYRJ6SfsPgHgJrg8t5Chai9IEAnS0ZsuTNh
+         DQvZ0w0/hU6mwR4ItgnyadZZ4A7xyr0wN76kqxnQ=
+Received: from mojha-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: mojha@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id DE8D360159;
+        Tue, 28 Aug 2018 06:55:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535439303;
+        bh=Kc12Ub6HL4r6hwWD8QO/fMnv81Dlaik6oLw7c43M2nw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=knypuHw0hZ+UjRMt9ZqvrsryFHMxte+s/fX0HurMFEg94MO1JJ9R7PgOhtku+S+fz
+         4cvTv6kaac/1CW+dTV6AVFdrAt05EhzxOdK5Y/TPs2yt9cJcQNtSzAwUEg2Z3scT/4
+         Maz9ghAPzoDa/php57wXiN6dx79AvAcv4zuq69UI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DE8D360159
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mojha@codeaurora.org
+From:   Mukesh Ojha <mojha@codeaurora.org>
+To:     tglx@linutronix.de, linux-kernel@vger.kernel.org
+Cc:     Mukesh Ojha <mojha@codeaurora.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH] cpu/hotplug: Remove skip_onerr field from cpuhp_step structure
+Date:   Tue, 28 Aug 2018 12:24:54 +0530
+Message-Id: <1535439294-31426-1-git-send-email-mojha@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
+When notifiers were there, we were using `skip_onerr` to avoid
+calling particular step startup/teardown callback in CPU up/down
+rollback path, which made the hotplug a bit asymmetric.
 
-We are working on next generation MegaRAID product where requirement is-
-to allocate additional 16 MSI-x vectors in addition to number of MSI-x
-vectors megaraid_sas driver usually allocates.  MegaRAID adapter supports
-128 MSI-x vectors.
+As notifiers are gone now after state machine introduction. So,
+`skip_onerr` field is no longer valid.
 
-To explain the requirement and solution, consider that we have 2 socket
-system (each socket having 36 logical CPUs). Current driver will allocate
-total 72 MSI-x vectors by calling API- pci_alloc_irq_vectors(with flag-
-PCI_IRQ_AFFINITY).  All 72 MSI-x vectors will have affinity across NUMA
-nodes and interrupts are affinity managed.
+Remove it from the structure and its usage.
 
-If driver calls- pci_alloc_irq_vectors_affinity() with pre_vectors = 16
-and, driver can allocate 16 + 72 MSI-x vectors.
-All pre_vectors (16) will be mapped to all available online CPUs but
-effective affinity of each vector is to CPU 0. Our requirement is to have
-pre_vectors 16 reply queues to be mapped to local NUMA node with effective
-CPU should be spread within local node cpu mask. Without changing kernel
-code, we can achieve this by driver calling pci_enable_msix_range()
-(requesting to allocate 16 + 72 MSI-x vectors) instead of
-pci_alloc_irq_vectors() API. If we use pci_enable_msix_range(), it also
-requires MSI-x to CPU affinity handled by driver and these interrupts will
-be non-managed.
+Signed-off-by: Mukesh Ojha <mojha@codeaurora.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>
 
-Question is-
-Is there any restriction or preference of using
-pci_alloc_irq_vectors{/_affinity} vs pci_enable_msix_range in low level
-driver?
-If driver uses non-managed interrupt, all cases are handled correctly
-through irqbalancer. Is there any plan in future to migrate to managed
-interrupts entirely or it is a choice based call for driver maintainers?
+---
+ kernel/cpu.c | 25 ++++---------------------
+ 1 file changed, 4 insertions(+), 21 deletions(-)
 
-Thanks,
-Sumit
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index ed44d7d..c544baf 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -102,8 +102,6 @@ static inline void cpuhp_lock_release(bool bringup) { }
+  * @name:	Name of the step
+  * @startup:	Startup function of the step
+  * @teardown:	Teardown function of the step
+- * @skip_onerr:	Do not invoke the functions on error rollback
+- *		Will go away once the notifiers	are gone
+  * @cant_stop:	Bringup/teardown can't be stopped at this step
+  */
+ struct cpuhp_step {
+@@ -119,7 +117,6 @@ struct cpuhp_step {
+ 					 struct hlist_node *node);
+ 	} teardown;
+ 	struct hlist_head	list;
+-	bool			skip_onerr;
+ 	bool			cant_stop;
+ 	bool			multi_instance;
+ };
+@@ -550,12 +547,8 @@ static int bringup_cpu(unsigned int cpu)
+ 
+ static void undo_cpu_up(unsigned int cpu, struct cpuhp_cpu_state *st)
+ {
+-	for (st->state--; st->state > st->target; st->state--) {
+-		struct cpuhp_step *step = cpuhp_get_step(st->state);
+-
+-		if (!step->skip_onerr)
+-			cpuhp_invoke_callback(cpu, st->state, false, NULL, NULL);
+-	}
++	for (st->state--; st->state > st->target; st->state--)
++		cpuhp_invoke_callback(cpu, st->state, false, NULL, NULL);
+ }
+ 
+ static int cpuhp_up_callbacks(unsigned int cpu, struct cpuhp_cpu_state *st,
+@@ -644,12 +637,6 @@ static void cpuhp_thread_fun(unsigned int cpu)
+ 
+ 	WARN_ON_ONCE(!cpuhp_is_ap_state(state));
+ 
+-	if (st->rollback) {
+-		struct cpuhp_step *step = cpuhp_get_step(state);
+-		if (step->skip_onerr)
+-			goto next;
+-	}
+-
+ 	if (cpuhp_is_atomic_state(state)) {
+ 		local_irq_disable();
+ 		st->result = cpuhp_invoke_callback(cpu, state, bringup, st->node, &st->last);
+@@ -916,12 +903,8 @@ void cpuhp_report_idle_dead(void)
+ 
+ static void undo_cpu_down(unsigned int cpu, struct cpuhp_cpu_state *st)
+ {
+-	for (st->state++; st->state < st->target; st->state++) {
+-		struct cpuhp_step *step = cpuhp_get_step(st->state);
+-
+-		if (!step->skip_onerr)
+-			cpuhp_invoke_callback(cpu, st->state, true, NULL, NULL);
+-	}
++	for (st->state++; st->state < st->target; st->state++)
++		cpuhp_invoke_callback(cpu, st->state, true, NULL, NULL);
+ }
+ 
+ static int cpuhp_down_callbacks(unsigned int cpu, struct cpuhp_cpu_state *st,
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
+Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project
+
