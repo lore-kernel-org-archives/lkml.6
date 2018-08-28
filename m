@@ -2,157 +2,126 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2889FC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 09:05:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7588C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 09:06:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D31712089F
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 09:05:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D31712089F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7FD7F2089F
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 09:06:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JTGBbbkO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FD7F2089F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727522AbeH1M4d (ORCPT
+        id S1727612AbeH1M4q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 08:56:33 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45018 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727087AbeH1M4d (ORCPT
+        Tue, 28 Aug 2018 08:56:46 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:45883 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726954AbeH1M4q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 08:56:33 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7S94CZY110734
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 05:05:51 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2m51j2db82-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 05:05:51 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zaslonko@linux.ibm.com>;
-        Tue, 28 Aug 2018 10:05:43 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 28 Aug 2018 10:05:40 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7S95eLw26214496
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 28 Aug 2018 09:05:40 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D41FC4C050;
-        Tue, 28 Aug 2018 12:05:38 +0100 (BST)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 98D284C046;
-        Tue, 28 Aug 2018 12:05:38 +0100 (BST)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Tue, 28 Aug 2018 12:05:38 +0100 (BST)
-From:   Mikhail Zaslonko <zaslonko@linux.ibm.com>
-To:     akpm@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        pasha.tatashin@oracle.com, mhocko@kernel.org,
-        zaslonko@linux.ibm.com
-Subject: [PATCH] memory_hotplug: fix kernel_panic on offline page processing
-Date:   Tue, 28 Aug 2018 11:05:39 +0200
-X-Mailer: git-send-email 2.16.4
-X-TM-AS-GCONF: 00
-x-cbid: 18082809-0016-0000-0000-000001FCB903
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082809-0017-0000-0000-0000325328A0
-Message-Id: <20180828090539.41491-1-zaslonko@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-28_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808280094
+        Tue, 28 Aug 2018 08:56:46 -0400
+Received: by mail-io0-f196.google.com with SMTP id e12-v6so763733iok.12;
+        Tue, 28 Aug 2018 02:06:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=SuRpIrdCE6fFlmTlu/FK2z56JrIrqY8rAiUGQVt2q8w=;
+        b=JTGBbbkOqmC5bDe01hCUse90F+0Hxoa7ZllXRaxd/3KDwZYYNeJMPBMth8NjnPvbOD
+         79UMPN+fsNQUjilBH4HNcutE1EceTvGiDpx4wtKam18H8xYq+9g9nlOQCC8Dj71R4YWd
+         p5YTybAWiAxP5Geo58WLUo7CwFkLYya1tVqLzSULF7HiqvAEddHnlWOu/DtqCcCR9rEL
+         UFqiFyA0zhPWoD2pzthzGpwfD6crvDs8K1GaD9y80xFQZATNUhv4hDk2tENJeuviqMr5
+         c8qa4eKbaAXQamiBEwasvILgwy4UVN5TrLjbLefioPncfs0axPRXeAxqN0Xmojw7ATPw
+         v31Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=SuRpIrdCE6fFlmTlu/FK2z56JrIrqY8rAiUGQVt2q8w=;
+        b=VLvgFV9TJiRcAAg86YFsfA7HMxKYEYi519MRlkyQueXM0PDCgA1Bq3djNm3NJXdSGq
+         BqrJUYOrr0VTs7kQVNwi10qV5BptCkXOt/Tq9dM0lC8mxwNQVVBZc8ZHnukDc87JMsZI
+         NCpYRR+iNvvzvI4g6tM6qawQ+Z1vOLtSTRaB/Ga1yhigQRTSvnYpmfbOT38FCfUha0du
+         1Az7of5yNae0fUv9Ywb4MF6QRWLx3OdG29wdrq40RucQNKGEnOZsYlVMIcnu3CEsvi5B
+         B/yYSTVYxQIy6n7f1a+jkFGSx+tLD1jkzyFznTx4YPddomxU013LvDh1h7+qL9mWu/Zg
+         q/7g==
+X-Gm-Message-State: APzg51D743sXHMvui5wpcQkH7Mh9ICiN6GQ6MJXvSCmqjK1+tisdKnx/
+        z+CY+sqgBlyLHw4vUtBaBRV1jAV+
+X-Google-Smtp-Source: ANB0VdZ7W43Hy6P9QQLdcvOwhKdkgcnMO0+k+iC2OvlzA2yTtdWRsm1ZBwISuDLBnhZRXhGScaSNMg==
+X-Received: by 2002:a6b:2147:: with SMTP id h68-v6mr469824ioh.192.1535447164496;
+        Tue, 28 Aug 2018 02:06:04 -0700 (PDT)
+Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.71.15? ([2402:f000:1:1501:200:5efe:a66f:470f])
+        by smtp.gmail.com with ESMTPSA id f8-v6sm296416ioq.10.2018.08.28.02.06.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 28 Aug 2018 02:06:04 -0700 (PDT)
+Subject: Re: [PATCH] rtc: rtc-omap: Replace mdelay() with msleep() in
+ omap_rtc_power_off()
+To:     Johan Hovold <johan@kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     j-keerthy@ti.com, a.zummo@towertech.it, linux-rtc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180730135314.9336-1-baijiaju1990@gmail.com>
+ <20180827205517.GD24549@piout.net> <20180828084940.GA28861@localhost>
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+Message-ID: <72f42d57-90d1-83d5-3d1d-e82a2250a8ff@gmail.com>
+Date:   Tue, 28 Aug 2018 17:06:00 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
+MIME-Version: 1.0
+In-Reply-To: <20180828084940.GA28861@localhost>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Within show_valid_zones() the function test_pages_in_a_zone() should be
-called for online memory blocks only. Otherwise it might lead to the
-VM_BUG_ON due to uninitialized struct pages (when CONFIG_DEBUG_VM_PGFLAGS
-kernel option is set):
 
- page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
- ------------[ cut here ]------------
- Call Trace:
- ([<000000000038f91e>] test_pages_in_a_zone+0xe6/0x168)
-  [<0000000000923472>] show_valid_zones+0x5a/0x1a8
-  [<0000000000900284>] dev_attr_show+0x3c/0x78
-  [<000000000046f6f0>] sysfs_kf_seq_show+0xd0/0x150
-  [<00000000003ef662>] seq_read+0x212/0x4b8
-  [<00000000003bf202>] __vfs_read+0x3a/0x178
-  [<00000000003bf3ca>] vfs_read+0x8a/0x148
-  [<00000000003bfa3a>] ksys_read+0x62/0xb8
-  [<0000000000bc2220>] system_call+0xdc/0x2d8
 
-That VM_BUG_ON was triggered by the page poisoning introduced in
-mm/sparse.c with the git commit d0dc12e86b31 ("mm/memory_hotplug: optimize
-memory hotplug")
-With the same commit the new 'nid' field has been added to the struct
-memory_block in order to store and later on derive the node id for offline
-pages (instead of accessing struct page which might be uninitialized). But
-one reference to nid in show_valid_zones() function has been overlooked.
-Fixed with current commit.
-Also, nr_pages will not be used any more after test_pages_in_a_zone() call,
-do not update it.
+On 2018/8/28 16:49, Johan Hovold wrote:
+> On Mon, Aug 27, 2018 at 10:55:17PM +0200, Alexandre Belloni wrote:
+>> Hi,
+>>
+>> On 30/07/2018 21:53:14+0800, Jia-Ju Bai wrote:
+>>> omap_rtc_power_off() is never called in atomic context.
+>>> It calls mdelay() to busily wait, which is not necessary.
+>>> mdelay() can be replaced with msleep().
+>>>
+>>> This is found by a static analysis tool named DCNS written by myself.
+>>>
+>>> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+>>> ---
+>>>   drivers/rtc/rtc-omap.c | 2 +-
+>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/rtc/rtc-omap.c b/drivers/rtc/rtc-omap.c
+>>> index 39086398833e..ef3d09525d0f 100644
+>>> --- a/drivers/rtc/rtc-omap.c
+>>> +++ b/drivers/rtc/rtc-omap.c
+>>> @@ -476,7 +476,7 @@ static void omap_rtc_power_off(void)
+>>>   	 * power off the system. Add a 500 ms margin for external latencies
+>>>   	 * (e.g. debounce circuits).
+>>>   	 */
+>>> -	mdelay(2500);
+>>> +	msleep(2500);
+>> I'm not sure about that one because this is a poweroff function so it
+>> doesn't really make sense to sleep versus busy waiting (all the drivers
+>> in power/reset use mdelay())
+> This power-off handler is called with interrupts disabled (as mentioned
+> in the function header) and must not sleep.
 
-Fixes: d0dc12e86b31 ("mm/memory_hotplug: optimize memory hotplug")
-Cc: <stable@vger.kernel.org> # v4.17+
-Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
-Signed-off-by: Mikhail Zaslonko <zaslonko@linux.ibm.com>
----
- drivers/base/memory.c | 20 +++++++++-----------
- 1 file changed, 9 insertions(+), 11 deletions(-)
+Thanks for your reply :)
 
-diff --git a/drivers/base/memory.c b/drivers/base/memory.c
-index f5e560188a18..622ab8edc035 100644
---- a/drivers/base/memory.c
-+++ b/drivers/base/memory.c
-@@ -416,26 +416,24 @@ static ssize_t show_valid_zones(struct device *dev,
- 	struct zone *default_zone;
- 	int nid;
- 
--	/*
--	 * The block contains more than one zone can not be offlined.
--	 * This can happen e.g. for ZONE_DMA and ZONE_DMA32
--	 */
--	if (!test_pages_in_a_zone(start_pfn, start_pfn + nr_pages, &valid_start_pfn, &valid_end_pfn))
--		return sprintf(buf, "none\n");
--
--	start_pfn = valid_start_pfn;
--	nr_pages = valid_end_pfn - start_pfn;
--
- 	/*
- 	 * Check the existing zone. Make sure that we do that only on the
- 	 * online nodes otherwise the page_zone is not reliable
- 	 */
- 	if (mem->state == MEM_ONLINE) {
-+		/*
-+		 * The block contains more than one zone can not be offlined.
-+		 * This can happen e.g. for ZONE_DMA and ZONE_DMA32
-+		 */
-+		if (!test_pages_in_a_zone(start_pfn, start_pfn + nr_pages,
-+					  &valid_start_pfn, &valid_end_pfn))
-+			return sprintf(buf, "none\n");
-+		start_pfn = valid_start_pfn;
- 		strcat(buf, page_zone(pfn_to_page(start_pfn))->name);
- 		goto out;
- 	}
- 
--	nid = pfn_to_nid(start_pfn);
-+	nid = mem->nid;
- 	default_zone = zone_for_pfn_range(MMOP_ONLINE_KEEP, nid, start_pfn, nr_pages);
- 	strcat(buf, default_zone->name);
- 
--- 
-2.16.4
+I check the code again, and find that you are right.
+Sorry for my incorrect report.
 
+
+Best wishes,
+Jia-Ju Bai
