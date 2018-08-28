@@ -2,99 +2,159 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B8C1C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:53:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57F04C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:56:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54C0A2089F
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:53:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54C0A2089F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 037752089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:56:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 037752089E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727512AbeH1MoY (ORCPT
+        id S1727466AbeH1Mrc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 08:44:24 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56946 "EHLO mx1.redhat.com"
+        Tue, 28 Aug 2018 08:47:32 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:11608 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726975AbeH1MoY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 08:44:24 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 61A2F402332F;
-        Tue, 28 Aug 2018 08:53:45 +0000 (UTC)
-Received: from krava (unknown [10.43.17.209])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 1AF7410EE6D1;
-        Tue, 28 Aug 2018 08:53:43 +0000 (UTC)
-Date:   Tue, 28 Aug 2018 10:53:43 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 2/2]: perf record: enable asynchronous trace writing
-Message-ID: <20180828085343.GF23727@krava>
-References: <bdd669cd-a6dc-d592-4655-33b7bfc46cbb@linux.intel.com>
- <6f83f9cd-263e-b073-487f-4c7570105a7d@linux.intel.com>
+        id S1726954AbeH1Mrc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 08:47:32 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 785C5B40973A3;
+        Tue, 28 Aug 2018 16:56:50 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.399.0; Tue, 28 Aug 2018
+ 16:56:44 +0800
+Subject: Re: [PATCH] Revert "staging: erofs: disable compiling temporarile"
+To:     Gao Xiang <gaoxiang25@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <devel@driverdev.osuosl.org>, LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "David Howells" <dhowells@redhat.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        "Miao Xie" <miaoxie@huawei.com>, <weidu.du@huawei.com>
+References: <1535427588-69630-1-git-send-email-gaoxiang25@huawei.com>
+ <20180828054444.GA4453@kroah.com>
+ <0c701b3c-5553-cf4c-c0b3-ad151b84662c@huawei.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <f12ae5df-3130-f293-5863-3d9ff0802e92@huawei.com>
+Date:   Tue, 28 Aug 2018 16:56:43 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6f83f9cd-263e-b073-487f-4c7570105a7d@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 28 Aug 2018 08:53:45 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 28 Aug 2018 08:53:45 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
+In-Reply-To: <0c701b3c-5553-cf4c-c0b3-ad151b84662c@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 09:16:55PM +0300, Alexey Budankov wrote:
+Hi Greg,
 
-SNIP
+On 2018/8/28 14:28, Gao Xiang wrote:
+> Hi Greg,
+> 
+> On 2018/8/28 13:44, Greg Kroah-Hartman wrote:
+>> On Tue, Aug 28, 2018 at 11:39:48AM +0800, Gao Xiang wrote:
+>>> This reverts commit 156c3df8d4db4e693c062978186f44079413d74d.
+>>>
+>>> Since XArray and the new mount apis aren't merged in 4.19-rc1
+>>> merge window, the BROKEN mark can be reverted directly without
+>>> any problems.
+>>>
+>>> Fixes: 156c3df8d4db ("staging: erofs: disable compiling temporarile")
+>>> Cc: Matthew Wilcox <willy@infradead.org>
+>>> Cc: David Howells <dhowells@redhat.com>
+>>> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+>>> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+>>> ---
+>>>
+>>> Hi Greg,
+>>>
+>>>  Could you please apply this patch to enable EROFS from 4.19-rc2, thanks...
+>>>
+>>>  p.s. We would like to provide a more stable EROFS when linux-4.19 is out,
+>>>       and there are also two patchsets (the one is already sent out by Chao
+>>>       and me, the other is previewing in linux-erofs mailing list and it will
+>>>       be sent out after gathering enough testdata and feedback from community
+>>>       and carefully reviewed), could you also please consider applying these
+>>>       two patchsets in the later 4.19-rc (both >2, or the first patchset
+>>>       could be in rc2 in advance) if it is convenient to do so, or the next
+>>>       4.20 is also ok...
+>>>
+>>>  LINK: https://lore.kernel.org/lkml/20180821144937.20555-1-chao@kernel.org/
+>>>        https://lore.kernel.org/lkml/1535076160-99466-1-git-send-email-gaoxiang25@huawei.com/
+>>
+>> I applied those patch sets to my -next branch already, right?  So those
+> 
+> Yes, Thank you for applying those patches. :)
+> 
+>> would be going into 4.20-rc1, it is time now for "bugfixes only" for
+>> 4.19-final.
+>>
+>> So perhaps we should just leave it as "BROKEN" for now for 4.19 and add
+>> this to my tree now and let people work on it for the next few months in
 
->  	if ((md->start & md->mask) + size != (md->end & md->mask)) {
->  		buf = &data[md->start & md->mask];
-> -		size = md->mask + 1 - (md->start & md->mask);
-> -		md->start += size;
-> -
-> -		if (push(to, buf, size) < 0) {
-> -			rc = -1;
-> -			goto out;
-> -		}
-> +		size0 = md->mask + 1 - (md->start & md->mask);
-> +		md->start += size0;
-> +		memcpy(md->data, buf, size0);
->  	}
->  
->  	buf = &data[md->start & md->mask];
->  	size = md->end - md->start;
->  	md->start += size;
-> +	memcpy(md->data + size0, buf, size);
->  
-> -	if (push(to, buf, size) < 0) {
-> -		rc = -1;
-> +	rc = push(to, md, size0 + size, *off) < 0 ? -1 : 1;
-> +	if (rc == -1)
->  		goto out;
-> -	}
-> +
-> +	perf_mmap__get(md);
-> +	*off += size0 + size;
+I'm worry about that once we plan to reenable erofs in next x.xx-rc1, in the
+merge window, if there are any other features change common api or structure in
+vfs/mm/block, but related patch didn't cover erofs, that would make conflict
+with erofs.
 
-this get is for the perf_mmap pointer storage in the mmap_aio array right?
+So if that happens, we can just reminder them to cover erofs? or we should
+handle this by just delay removing 'BROKEN' state?
 
-I see it's released in record__mmap_read_sync, which might also return
-without releasing it.. this needs to be fixed and explained in here,
-why we take the reference in the first place
+Thanks,
 
-thanks,
-jirka
+>> linux-next so that 4.20 has a solid base to start with?
+>>
+> 
+> EROFS is be marked as "BROKEN" just because of conflict with
+> XArray and the new mount apis, as Stephen Rothwell suggested in
+> 
+> https://lore.kernel.org/lkml/20180802010705.24a72730@canb.auug.org.au/
+> 
+>> It might be easiest for Greg to add the disabling CONFIG_EROFS_FS patch
+>> to the staging tree itself for his first pull request during the merge
+>> window and then send a second pull request (after the vfs and maybe the
+>> Xarray stuff has been merged by Linus) with these patches followed by a
+>> revert of the disabling patch.
+> 
+> But these two features was still discussing in the mailing list even at the
+> last time of 4.19-rc1 merge window. I cannot decide whether they were eventually
+> get merged in 4.19 or not. But it seems that it is regretful that linux-4.19
+> is out without XArray and the new mount apis.
+> 
+> Therefore, I think EROFS should work for linux-4.19 without any modification
+> if just revert the BROKEN mark.
+> 
+> EROFS works fine with the 4.19-rc1 code except that it has some __GFP_NOFAIL
+> and BUG_ONs on error handling paths and very rarely race between memory
+> reclaiming and decompression... :( I personally think it is complete enough
+> for people to test since it is an independent and staging filesystem driver (no
+> other influence...) Anyway, removing EROFS BROKEN mark at 4.20 is also ok of course...
+> 
+> On the other head, if XArray and the new mount apis is still pending for 4.20,
+> should EROFS uses the same policy as Stephen suggested? I have no idea how to do next...
+> 
+> 
+> I would like to hear your and Chao's suggestions....Thanks in advance...
+> 
+> Thanks,
+> Gao Xiang
+> 
+>> thanks,
+>>
+>> greg k-h
+>>
+> 
+> .
+> 
+
