@@ -2,67 +2,90 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8703CC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 09:02:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCF70C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 09:03:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 463382088E
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 09:02:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 463382088E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 771DC208A6
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 09:03:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 771DC208A6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=macq.eu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727602AbeH1MxD (ORCPT
+        id S1727616AbeH1Mxn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 08:53:03 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57202 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726979AbeH1MxC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 08:53:02 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 58C55AF6C;
-        Tue, 28 Aug 2018 09:02:21 +0000 (UTC)
-Date:   Tue, 28 Aug 2018 11:02:20 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-cc:     Matthew Wilcox <willy@infradead.org>,
-        Harry Cutts <hcutts@chromium.org>,
-        linux-input <linux-input@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jiri Kosina <jiri.kosina@suse.cz>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH 1/3] Add the `REL_WHEEL_HI_RES` event code
-In-Reply-To: <20180823190124.GB53155@dtor-ws>
-Message-ID: <nycvar.YFH.7.76.1808281101500.25787@cbobk.fhfr.pm>
-References: <20180823183057.247630-1-hcutts@chromium.org> <20180823183057.247630-2-hcutts@chromium.org> <20180823185722.GA24777@bombadil.infradead.org> <20180823190124.GB53155@dtor-ws>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Tue, 28 Aug 2018 08:53:43 -0400
+Received: from smtp2.macqel.be ([109.135.2.61]:51680 "EHLO smtp2.macqel.be"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726954AbeH1Mxn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 08:53:43 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smtp2.macqel.be (Postfix) with ESMTP id 55E9C130D3E;
+        Tue, 28 Aug 2018 11:03:02 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at macqel.be
+Received: from smtp2.macqel.be ([127.0.0.1])
+        by localhost (mail.macqel.be [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id rcDiRL6LUPKO; Tue, 28 Aug 2018 11:03:00 +0200 (CEST)
+Received: from frolo.macqel.be (frolo.macqel [10.1.40.73])
+        by smtp2.macqel.be (Postfix) with ESMTP id AF221130D0E;
+        Tue, 28 Aug 2018 11:03:00 +0200 (CEST)
+Received: by frolo.macqel.be (Postfix, from userid 1000)
+        id 905B1DF007A; Tue, 28 Aug 2018 11:03:00 +0200 (CEST)
+Date:   Tue, 28 Aug 2018 11:03:00 +0200
+From:   Philippe De Muyter <phdm@macq.eu>
+To:     Luca Ceresoli <luca@lucaceresoli.net>
+Cc:     linux-media@vger.kernel.org,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Leon Luo <leonl@leopardimaging.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 1/2] media: imx274: use regmap_bulk_write to write
+        multybyte registers
+Message-ID: <20180828090300.GA23579@frolo.macqel>
+References: <20180725162455.31381-1-luca@lucaceresoli.net> <20180725162455.31381-2-luca@lucaceresoli.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180725162455.31381-2-luca@lucaceresoli.net>
+User-Agent: Mutt/1.5.16 (2007-06-09)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 23 Aug 2018, Dmitry Torokhov wrote:
-
-> > > +  - If a vertical scroll wheel supports high-resolution scrolling, this code
-> > > +    will be emitted in addition to REL_WHEEL. The value is the (approximate)
-> > > +    distance travelled by the user's finger, in 256ths of a millimeter.
-> > 
-> > Is it too late to change this to an actual unit like micrometres?
+On Wed, Jul 25, 2018 at 06:24:54PM +0200, Luca Ceresoli wrote:
+> Currently 2-bytes and 3-bytes registers are set by very similar
+> functions doing the needed shift & mask manipulation, followed by very
+> similar for loops setting one byte at a time over I2C.
 > 
-> No love for imperial roots? Sure, micrometers would work too I think.
+> Replace all of this code by a unique helper function that calls
+> regmap_bulk_write(), which has two advantages:
+>  - sets all the bytes in a unique I2C transaction
+>  - removes lots of now unused code.
+> 
+> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+> 
+...
+> +/**
+> + * Write a multibyte register.
+> + *
+> + * Uses a bulk write where possible.
+> + *
+> + * @priv: Pointer to device structure
+> + * @addr: Address of the LSB register.  Other registers must be
+> + *        consecutive, least-to-most significant.
+> + * @val: Value to be written to the register (cpu endianness)
+> + * @nbytes: Number of bits to write (range: [1..3])
+> + */
+> +static int imx274_write_mbreg(struct stimx274 *priv, u16 addr, u32 val,
+> +			      size_t nbytes)
 
-I don't really care strongly :) Is either of you going to update the 
-patch? Otherwise I'll just apply as-is.
+Should nbytes be called nbits, or is nbytes a 'Number of bytes' ?
 
-Thanks,
-
+Philippe
 -- 
-Jiri Kosina
-SUSE Labs
-
+Philippe De Muyter +32 2 6101532 Macq SA rue de l'Aeronef 2 B-1140 Bruxelles
