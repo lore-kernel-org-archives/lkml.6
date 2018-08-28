@@ -6,244 +6,141 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2FC8C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:08:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 007B7C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:10:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F28220878
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:08:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F28220878
+	by mail.kernel.org (Postfix) with ESMTP id 9E53020878
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:10:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E53020878
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727672AbeH1N7B (ORCPT
+        id S1727611AbeH1OBG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 09:59:01 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34812 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727094AbeH1N7A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 09:59:00 -0400
+        Tue, 28 Aug 2018 10:01:06 -0400
+Received: from foss.arm.com ([217.140.101.70]:34864 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727094AbeH1OBF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 10:01:05 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5537E18A;
-        Tue, 28 Aug 2018 03:08:06 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4ABAC18A;
+        Tue, 28 Aug 2018 03:10:11 -0700 (PDT)
 Received: from e107981-ln.cambridge.arm.com (e107981-ln.emea.arm.com [10.4.13.117])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A97033F5BC;
-        Tue, 28 Aug 2018 03:08:03 -0700 (PDT)
-Date:   Tue, 28 Aug 2018 11:07:58 +0100
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E8A193F557;
+        Tue, 28 Aug 2018 03:10:09 -0700 (PDT)
+Date:   Tue, 28 Aug 2018 11:10:07 +0100
 From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Lucas Stach <l.stach@pengutronix.de>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
+To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+Cc:     Jingoo Han <jingoohan1@gmail.com>,
         Joao Pinto <Joao.Pinto@synopsys.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>, linux-imx@nxp.com,
-        kernel@pengutronix.de, linux-pci@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND] PCI: imx: Initial imx7d pm support
-Message-ID: <20180828100758.GA27217@e107981-ln.cambridge.arm.com>
-References: <d577303de61fb060aa428898f5df1d0bc9be89b8.1535369231.git.leonard.crestez@nxp.com>
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2] PCI: dwc: fix scheduling while atomic issues
+Message-ID: <20180828101007.GB27217@e107981-ln.cambridge.arm.com>
+References: <20180821141512.368e3df2@xhacker.debian>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d577303de61fb060aa428898f5df1d0bc9be89b8.1535369231.git.leonard.crestez@nxp.com>
+In-Reply-To: <20180821141512.368e3df2@xhacker.debian>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 02:28:37PM +0300, Leonard Crestez wrote:
-> On imx7d the pcie-phy power domain is turned off in suspend and this can
-> make the system hang after resume when attempting any read from PCI.
+On Tue, Aug 21, 2018 at 02:15:12PM +0800, Jisheng Zhang wrote:
+> When programming inbound/outbound atu, we call usleep_range() after
+> each checking PCIE_ATU_ENABLE bit. Unfortunately, the atu programming
+> can be called in atomic context:
 > 
-> Fix this by adding minimal suspend/resume code from the nxp internal
-> tree. This will prepare for powering down on suspend and reset the block
-> on resume.
+> inbound atu programming could be called through
+> pci_epc_write_header()
+>   =>dw_pcie_ep_write_header()
+>     =>dw_pcie_prog_inbound_atu()
 > 
-> Code is only for imx7d but a very similar sequence can be used for
-> other socs.
+> outbound atu programming could be called through
+> pci_bus_read_config_dword()
+>   =>dw_pcie_rd_conf()
+>     =>dw_pcie_prog_outbound_atu()
 > 
-> The original author is mostly Richard Zhu <hongxing.zhu@nxp.com>, this
-> patch adjusts the code to the upstream imx7d implemention using reset
-> controls and power domains.
+> Fix this issue by calling mdelay() instead.
+> 
+> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
 
-I will add a Suggested-by: replacing this paragraph, it is always better
-to add proper tags rather than credit hidden in commit logs messages.
+Mind adding a Fixes: tag please ?
 
-> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-> Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
-> ---
->  drivers/pci/controller/dwc/pci-imx6.c | 97 +++++++++++++++++++++++++--
->  1 file changed, 92 insertions(+), 5 deletions(-)
-> 
-> Resending after RC1 as suggested here: https://lkml.org/lkml/2018/8/8/496
-> 
-> This was initially sent together with a dts fix, that was already
-> accepted by Shawn: https://lkml.org/lkml/2018/8/21/529
-> 
-> Some dependencies in this area are complicated but as far as I know
-> including this patch without others should not break anything that was
-> not already broken. Since this is a patch for something that has never
-> worked before it should be treated as a feature not a bugfix.
+Is:
 
-Ok, so I consider this v4.20 material, please shout if it has to be
-sent as a fix, I do not think so given what we discussed above.
+commit f8aed6ec624f ("PCI: dwc: designware: Add EP mode support")
 
+the commit you are fixing ?
+
+Thanks,
 Lorenzo
 
-> I have a few other patches for imx pci but it's better to deal with them
-> separately. This initial patch adding suspend support is useful by
-> itself.
+> ---
 > 
-> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-> index 4a9a673b4777..65b6d1015723 100644
-> --- a/drivers/pci/controller/dwc/pci-imx6.c
-> +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> @@ -540,10 +540,28 @@ static int imx6_pcie_wait_for_speed_change(struct imx6_pcie *imx6_pcie)
+> Since v1
+>  - use mdelay() instead of udelay() to avoid __bad_udelay()
+> 
+>  drivers/pci/controller/dwc/pcie-designware.c | 8 ++++----
+>  drivers/pci/controller/dwc/pcie-designware.h | 3 +--
+>  2 files changed, 5 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+> index 778c4f76a884..2153956a0b20 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware.c
+> @@ -135,7 +135,7 @@ static void dw_pcie_prog_outbound_atu_unroll(struct dw_pcie *pci, int index,
+>  		if (val & PCIE_ATU_ENABLE)
+>  			return;
 >  
->  	dev_err(dev, "Speed change timeout\n");
->  	return -EINVAL;
+> -		usleep_range(LINK_WAIT_IATU_MIN, LINK_WAIT_IATU_MAX);
+> +		mdelay(LINK_WAIT_IATU);
+>  	}
+>  	dev_err(pci->dev, "Outbound iATU is not being enabled\n");
 >  }
+> @@ -178,7 +178,7 @@ void dw_pcie_prog_outbound_atu(struct dw_pcie *pci, int index, int type,
+>  		if (val & PCIE_ATU_ENABLE)
+>  			return;
 >  
-> +static void imx6_pcie_ltssm_enable(struct device *dev)
-> +{
-> +	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
-> +
-> +	switch (imx6_pcie->variant) {
-> +	case IMX6Q:
-> +	case IMX6SX:
-> +	case IMX6QP:
-> +		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
-> +				   IMX6Q_GPR12_PCIE_CTL_2,
-> +				   IMX6Q_GPR12_PCIE_CTL_2);
-> +		break;
-> +	case IMX7D:
-> +		reset_control_deassert(imx6_pcie->apps_reset);
-> +		break;
-> +	}
-> +}
-> +
->  static int imx6_pcie_establish_link(struct imx6_pcie *imx6_pcie)
->  {
->  	struct dw_pcie *pci = imx6_pcie->pci;
->  	struct device *dev = pci->dev;
->  	u32 tmp;
-> @@ -558,15 +576,11 @@ static int imx6_pcie_establish_link(struct imx6_pcie *imx6_pcie)
->  	tmp &= ~PCIE_RC_LCR_MAX_LINK_SPEEDS_MASK;
->  	tmp |= PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN1;
->  	dw_pcie_writel_dbi(pci, PCIE_RC_LCR, tmp);
+> -		usleep_range(LINK_WAIT_IATU_MIN, LINK_WAIT_IATU_MAX);
+> +		mdelay(LINK_WAIT_IATU);
+>  	}
+>  	dev_err(pci->dev, "Outbound iATU is not being enabled\n");
+>  }
+> @@ -236,7 +236,7 @@ static int dw_pcie_prog_inbound_atu_unroll(struct dw_pcie *pci, int index,
+>  		if (val & PCIE_ATU_ENABLE)
+>  			return 0;
 >  
->  	/* Start LTSSM. */
-> -	if (imx6_pcie->variant == IMX7D)
-> -		reset_control_deassert(imx6_pcie->apps_reset);
-> -	else
-> -		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
-> -				   IMX6Q_GPR12_PCIE_CTL_2, 1 << 10);
-> +	imx6_pcie_ltssm_enable(dev);
+> -		usleep_range(LINK_WAIT_IATU_MIN, LINK_WAIT_IATU_MAX);
+> +		mdelay(LINK_WAIT_IATU);
+>  	}
+>  	dev_err(pci->dev, "Inbound iATU is not being enabled\n");
 >  
->  	ret = imx6_pcie_wait_for_link(imx6_pcie);
->  	if (ret)
->  		goto err_reset_phy;
+> @@ -282,7 +282,7 @@ int dw_pcie_prog_inbound_atu(struct dw_pcie *pci, int index, int bar,
+>  		if (val & PCIE_ATU_ENABLE)
+>  			return 0;
 >  
-> @@ -680,10 +694,82 @@ static int imx6_add_pcie_port(struct imx6_pcie *imx6_pcie,
+> -		usleep_range(LINK_WAIT_IATU_MIN, LINK_WAIT_IATU_MAX);
+> +		mdelay(LINK_WAIT_IATU);
+>  	}
+>  	dev_err(pci->dev, "Inbound iATU is not being enabled\n");
 >  
->  static const struct dw_pcie_ops dw_pcie_ops = {
->  	.link_up = imx6_pcie_link_up,
->  };
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+> index 96126fd8403c..9f1a5e399b70 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.h
+> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> @@ -26,8 +26,7 @@
 >  
-> +#ifdef CONFIG_PM_SLEEP
-> +static void imx6_pcie_ltssm_disable(struct device *dev)
-> +{
-> +	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
-> +
-> +	switch (imx6_pcie->variant) {
-> +	case IMX6SX:
-> +	case IMX6QP:
-> +		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
-> +				   IMX6Q_GPR12_PCIE_CTL_2, 0);
-> +		break;
-> +	case IMX7D:
-> +		reset_control_assert(imx6_pcie->apps_reset);
-> +		break;
-> +	default:
-> +		dev_err(dev, "ltssm_disable not supported\n");
-> +	}
-> +}
-> +
-> +static void imx6_pcie_clk_disable(struct imx6_pcie *imx6_pcie)
-> +{
-> +	clk_disable_unprepare(imx6_pcie->pcie);
-> +	clk_disable_unprepare(imx6_pcie->pcie_phy);
-> +	clk_disable_unprepare(imx6_pcie->pcie_bus);
-> +
-> +	if (imx6_pcie->variant == IMX7D) {
-> +		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
-> +				   IMX7D_GPR12_PCIE_PHY_REFCLK_SEL,
-> +				   IMX7D_GPR12_PCIE_PHY_REFCLK_SEL);
-> +	}
-> +}
-> +
-> +static int imx6_pcie_suspend_noirq(struct device *dev)
-> +{
-> +	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
-> +
-> +	if (imx6_pcie->variant != IMX7D)
-> +		return 0;
-> +
-> +	imx6_pcie_clk_disable(imx6_pcie);
-> +	imx6_pcie_ltssm_disable(dev);
-> +
-> +	return 0;
-> +}
-> +
-> +static int imx6_pcie_resume_noirq(struct device *dev)
-> +{
-> +	int ret;
-> +	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
-> +	struct pcie_port *pp = &imx6_pcie->pci->pp;
-> +
-> +	if (imx6_pcie->variant != IMX7D)
-> +		return 0;
-> +
-> +	imx6_pcie_assert_core_reset(imx6_pcie);
-> +	imx6_pcie_init_phy(imx6_pcie);
-> +	imx6_pcie_deassert_core_reset(imx6_pcie);
-> +	dw_pcie_setup_rc(pp);
-> +
-> +	ret = imx6_pcie_establish_link(imx6_pcie);
-> +	if (ret < 0)
-> +		dev_info(dev, "pcie link is down after resume.\n");
-> +
-> +	return 0;
-> +}
-> +#endif
-> +
-> +static const struct dev_pm_ops imx6_pcie_pm_ops = {
-> +	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(imx6_pcie_suspend_noirq,
-> +				      imx6_pcie_resume_noirq)
-> +};
-> +
->  static int imx6_pcie_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
->  	struct dw_pcie *pci;
->  	struct imx6_pcie *imx6_pcie;
-> @@ -846,10 +932,11 @@ static const struct of_device_id imx6_pcie_of_match[] = {
->  static struct platform_driver imx6_pcie_driver = {
->  	.driver = {
->  		.name	= "imx6q-pcie",
->  		.of_match_table = imx6_pcie_of_match,
->  		.suppress_bind_attrs = true,
-> +		.pm = &imx6_pcie_pm_ops,
->  	},
->  	.probe    = imx6_pcie_probe,
->  	.shutdown = imx6_pcie_shutdown,
->  };
+>  /* Parameters for the waiting for iATU enabled routine */
+>  #define LINK_WAIT_MAX_IATU_RETRIES	5
+> -#define LINK_WAIT_IATU_MIN		9000
+> -#define LINK_WAIT_IATU_MAX		10000
+> +#define LINK_WAIT_IATU			9
 >  
+>  /* Synopsys-specific PCIe configuration registers */
+>  #define PCIE_PORT_LINK_CONTROL		0x710
 > -- 
-> 2.17.1
+> 2.18.0
 > 
