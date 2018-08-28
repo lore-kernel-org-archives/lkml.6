@@ -2,105 +2,125 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 028B3C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:48:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF5DEC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:49:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 990E320869
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:48:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B38520869
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:49:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P0zCjUAQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 990E320869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TkuS7n/x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B38520869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727271AbeH1Vlk (ORCPT
+        id S1727433AbeH1VmM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 17:41:40 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:33870 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726383AbeH1Vlj (ORCPT
+        Tue, 28 Aug 2018 17:42:12 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:44051 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726383AbeH1VmM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 17:41:39 -0400
-Received: by mail-pl1-f193.google.com with SMTP id f6-v6so1054579plo.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 10:48:55 -0700 (PDT)
+        Tue, 28 Aug 2018 17:42:12 -0400
+Received: by mail-qt0-f193.google.com with SMTP id k38-v6so2680773qtk.11
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 10:49:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=Y89RT5RnFdgrye4tLJgA+W6LvpY53Ng+T0eneSDYVus=;
-        b=P0zCjUAQhom6iQ6XkiRdVcWkdSkQAgBQk1BLxRODbTkK1Onb+N2tLoVC5rqBB309EM
-         5GJSjazrcbRXv+Z61glaqDliV3nEUazCiwJoNxo7QLGae/AF9y5Be3+8ENZP8/glDn1M
-         vRBhmF4nV0wBC/eoYMEtMIVHiV+5nG6QEx060/bAJCoQbdkG/FNboLSVmbMyozvHWar9
-         QAhHlcQLKDznfZLs78pmM1uD20Ulu7Wqd3GJ+snDdGMifEH1o+pKEnUcbkv9UFdJecDn
-         Jgz3Ex1CPRwpfetwHrs5U8Iva1YECAx2ZTmq+9XNk+qkG4BXgLaEa+CHDaSdioCL1CUQ
-         +drw==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=fkLBf0mt6rIUOjKi+HyEd3CtJE9o4jMq+rTZDSd//zs=;
+        b=TkuS7n/x4pGRXb/Xvy51eyXadOFdycKF6X3V8ce31ypZg1SzA1cKPT5e9SQQIGN/gl
+         ykibjzaFqAYkedS9Il/Az2/uteGVseUuis0Q9LWJJ6k9J0BOh5VnQvbFX8l6qEav5z0m
+         lx5sU9OKJB5k1OXhQwrwskFGxaSn/sgsb0X6k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=Y89RT5RnFdgrye4tLJgA+W6LvpY53Ng+T0eneSDYVus=;
-        b=rwfXlm5v5YkrDIpoL7XcQWeFk8Xo9xoXdMkJNtIgZp0vGmUrK30cuWUrdvKIqVXu6d
-         u5ts00nycPrfsI1Ge/LkD1U0liyOY+SvKOosKa7rZcIKzi1UBCFXqP1skAL8L9Gv3JN1
-         jq8p2MfD3p/fFFr4YCoyxCLSf6YQ9xuZ8Dp8/Atr821p1s+TzkrBGXXiqEAv6pFVEIqk
-         bkuxgs7ci2TPe+FLP7LUUH2K6oTE8CtmPckDM1/ysaxmGlnujP+2NgFkY1d+vsX2tw2U
-         R3hQzUS57ROhhTHACKpqc2o8bVKyqFKn+gEFI8f2rPrq/5C/5TDb79OuvNa3pQTTsNly
-         7H5g==
-X-Gm-Message-State: APzg51CbmJedbD7onJtJdvM0sdmtRNl7lfprX/WV6u7ill6477y3j2Kd
-        n43OKn56s8IbTgwm/insDs/kY19h
-X-Google-Smtp-Source: ANB0Vdb2SqAkTycW01aclb0z/q9gh4M1iRc4gH9arO9xXt4IuL2NjZaJo5jsP82P0rEGXLXn59iZuQ==
-X-Received: by 2002:a17:902:5a02:: with SMTP id q2-v6mr2508676pli.253.1535478534592;
-        Tue, 28 Aug 2018 10:48:54 -0700 (PDT)
-Received: from jordon-HP-15-Notebook-PC ([2405:204:560d:9e3:a1d1:bce6:673e:c4b3])
-        by smtp.gmail.com with ESMTPSA id f184-v6sm3553808pfc.88.2018.08.28.10.48.52
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 28 Aug 2018 10:48:53 -0700 (PDT)
-Date:   Tue, 28 Aug 2018 23:21:54 +0530
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-To:     akpm@linux-foundation.org, jack@suse.cz,
-        mgorman@techsingularity.net, ak@linux.intel.com,
-        mawilcox@microsoft.com, tim.c.chen@linux.intel.com,
-        ross.zwisler@linux.intel.com
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mm: Conveted to use vm_fault_t
-Message-ID: <20180828174952.GA29229@jordon-HP-15-Notebook-PC>
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=fkLBf0mt6rIUOjKi+HyEd3CtJE9o4jMq+rTZDSd//zs=;
+        b=iPRSiZtg0KkLf6yhNPSxkl+kVh3tXZKdi73MwbQPU5wNhke084q3ZX+ad9BxCmDjCf
+         aXPXkwWr0JMsh3f4udBiT4W8ZVstbbOvcT6KkA3fEKYbWEv64yvfu1Vxs8xqmhOC75M1
+         /b9V/7JzgGWfpH2m56VLBaGnPv6oGguvSePbUUxT9JfJt7S8VboJHByNrH1InUh7XSYH
+         MW345T7UsFj7elZnULn2yyJ6gJiEz4B87lY86rTuitTpyULCYXbTFKgFYQ2ST2G1R0zS
+         pg+CNGPPlHV+yKSm8+uPfUG/c0CH/DfPCEUhkPL8a3HfviVfbgmgkc2Q/OHEDNvbgCO5
+         WVEw==
+X-Gm-Message-State: APzg51Boaz9HG94uAKgGjiZEe3YBhYhRDdg8D2XFvlFQgkyV+0shAGSk
+        ll+xfPn7a6o3N3q8D5xAdghfpr1qEgU=
+X-Google-Smtp-Source: ANB0VdaOBH90CDAqym2DIeAo0nrfZ67mkaltkFDl2/RBasw+okmYYhXnVB7aFs+pRZUXKwhQ+KpEJw==
+X-Received: by 2002:ac8:7311:: with SMTP id x17-v6mr2877274qto.204.1535478567127;
+        Tue, 28 Aug 2018 10:49:27 -0700 (PDT)
+Received: from xanadu.home (modemcable228.104-82-70.mc.videotron.ca. [70.82.104.228])
+        by smtp.gmail.com with ESMTPSA id a26-v6sm1023194qtc.74.2018.08.28.10.49.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 28 Aug 2018 10:49:26 -0700 (PDT)
+Date:   Tue, 28 Aug 2018 13:49:25 -0400 (EDT)
+From:   Nicolas Pitre <nicolas.pitre@linaro.org>
+To:     Matthew Wilcox <willy@infradead.org>
+cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Souptick Joarder <jrdr.linux@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/10] cramfs: Convert to use vmf_insert_mixed
+In-Reply-To: <20180828145728.11873-2-willy@infradead.org>
+Message-ID: <nycvar.YSQ.7.76.1808281235060.10215@knanqh.ubzr>
+References: <20180828145728.11873-1-willy@infradead.org> <20180828145728.11873-2-willy@infradead.org>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As part of vm_fault_t conversion filemap_page_mkwrite()
-for NOMMU case was missed. Now converted.
+On Tue, 28 Aug 2018, Matthew Wilcox wrote:
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
----
- mm/filemap.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> cramfs is the only remaining user of vm_insert_mixed; convert it.
+> 
+> Signed-off-by: Matthew Wilcox <willy@infradead.org>
+> ---
+>  fs/cramfs/inode.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/cramfs/inode.c b/fs/cramfs/inode.c
+> index f408994fc632..b72449c19cd1 100644
+> --- a/fs/cramfs/inode.c
+> +++ b/fs/cramfs/inode.c
+> @@ -417,10 +417,15 @@ static int cramfs_physmem_mmap(struct file *file, struct vm_area_struct *vma)
+>  		 */
+>  		int i;
+>  		vma->vm_flags |= VM_MIXEDMAP;
+> -		for (i = 0; i < pages && !ret; i++) {
+> +		for (i = 0; i < pages; i++) {
+> +			vm_fault_t vmf;
+>  			unsigned long off = i * PAGE_SIZE;
+>  			pfn_t pfn = phys_to_pfn_t(address + off, PFN_DEV);
+> -			ret = vm_insert_mixed(vma, vma->vm_start + off, pfn);
+> +			vmf = vmf_insert_mixed(vma, vma->vm_start + off, pfn);
+> +			if (vmf & VM_FAULT_ERROR) {
+> +				pages = i;
+> +				break;
+> +			}
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 52517f2..de6fed2 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2748,9 +2748,9 @@ int generic_file_readonly_mmap(struct file *file, struct vm_area_struct *vma)
- 	return generic_file_mmap(file, vma);
- }
- #else
--int filemap_page_mkwrite(struct vm_fault *vmf)
-+vm_fault_t filemap_page_mkwrite(struct vm_fault *vmf)
- {
--	return -ENOSYS;
-+	return VM_FAULT_SIGBUS;
- }
- int generic_file_mmap(struct file * file, struct vm_area_struct * vma)
- {
--- 
-1.9.1
+I'd suggest this to properly deal with errers instead:
 
+diff --git a/fs/cramfs/inode.c b/fs/cramfs/inode.c
+index f408994fc6..0c35e62f10 100644
+--- a/fs/cramfs/inode.c
++++ b/fs/cramfs/inode.c
+@@ -418,9 +418,12 @@ static int cramfs_physmem_mmap(struct file *file, struct vm_area_struct *vma)
+ 		int i;
+ 		vma->vm_flags |= VM_MIXEDMAP;
+ 		for (i = 0; i < pages && !ret; i++) {
++			vm_fault_t vmf;
+ 			unsigned long off = i * PAGE_SIZE;
+ 			pfn_t pfn = phys_to_pfn_t(address + off, PFN_DEV);
+-			ret = vm_insert_mixed(vma, vma->vm_start + off, pfn);
++			vmf = vmf_insert_mixed(vma, vma->vm_start + off, pfn);
++			if (vmf & VM_FAULT_ERROR)
++				ret = vm_fault_to_errno(vmf, 0);
+ 		}
+ 	}
+ 
+
+Nicolas
