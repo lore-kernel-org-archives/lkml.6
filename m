@@ -2,109 +2,137 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAA33C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:39:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 217C3C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:42:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C7AE20878
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:39:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C7AE20878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
+	by mail.kernel.org (Postfix) with ESMTP id B6F4420878
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:42:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JvTpDpJM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6F4420878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727809AbeH1Oac (ORCPT
+        id S1727606AbeH1OdS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 10:30:32 -0400
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:53602 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727172AbeH1Oab (ORCPT
+        Tue, 28 Aug 2018 10:33:18 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:53764 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727299AbeH1OdS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 10:30:31 -0400
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7SAcfaN020001;
-        Tue, 28 Aug 2018 05:39:14 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail4.cirrus.com ([87.246.98.35])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2m34h1ukwp-1;
-        Tue, 28 Aug 2018 05:39:14 -0500
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail4.cirrus.com (Postfix) with ESMTP id 055E9611C8B3;
-        Tue, 28 Aug 2018 05:41:15 -0500 (CDT)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Tue, 28 Aug 2018
- 11:39:13 +0100
-Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w7SAdBfw012289; Tue,
- 28 Aug 2018 11:39:11 +0100
-Date:   Tue, 28 Aug 2018 11:39:11 +0100
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Jon Hunter <jonathanh@nvidia.com>
-CC:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, <linux-tegra@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [alsa-devel] [PATCH] ASoC: core: Don't schedule DAPM work if
- already in target state
-Message-ID: <20180828103911.GX32322@imbe.wolfsonmicro.main>
-References: <1534520143-29266-1-git-send-email-jonathanh@nvidia.com>
+        Tue, 28 Aug 2018 10:33:18 -0400
+Received: by mail-wm0-f65.google.com with SMTP id b19-v6so1401972wme.3;
+        Tue, 28 Aug 2018 03:42:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=qV0hKK/dUbu61P4otQB5ogNK2MgyyiVAHKcJXZTG6hU=;
+        b=JvTpDpJM5txROb8KO+rFKpDpFf3DN74P1R6C2JR8De2S+rNAVPfkttiWkywjL8G/eJ
+         yKQZwm87m2GpUmSxoH2c0PgZx9LHyqhnUM8vZjhXDJF9FCBJiIoJ7CoQHBfmXlxQ2sIP
+         98zOVzcvRbEP8U3Roj/7HRmuq+LX84V5NsZUK/sL6AyVXIbOfX7wx7mmREgxtZWsdSTn
+         xpvoTLRrtEitPwdq/jnxmcGDaKq5gRe2X/6sW7wUVeZE+KAEzNdLRT8vo9ihCrtnvfbH
+         LJnnmE8/CeswdbmSliZ/iC1vydqnPqXg7rXecRgxHZu8DWHD7N92J7va+U/W6ZA8Vk7M
+         tVBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qV0hKK/dUbu61P4otQB5ogNK2MgyyiVAHKcJXZTG6hU=;
+        b=Q6p48k1fYcxv44cbMDdgGlpfFqX8z5zMrtkLb/oKprMgsn6Mu0hhysa6ahf3mrc9hr
+         O7AjI8gAvR1+iB1munbFS3+hkjou9PFzzH2WkLjWD7PsFzLcf5Erac2RXT/Prz/pUsPk
+         vZmjpRywAtDKA/zKTCy7abBGVXQnVqLrvAuRg/vgnlGpDJhysJktGQM13sm2Sky/4NxP
+         hOSMfqA9il0IveYlaWVtrbX++WzD2gRwlEyItnbBaqTvYaGQAsP4Fv3HLfVGjg0vcx/q
+         TM1DEVovnUHkzCdke1TlIrVF3mzgD+wrfNtGKJIsNiCtvTPtxVTX2z0wkHcqpCqoUj3N
+         tiSQ==
+X-Gm-Message-State: APzg51DqgreJ016WvwotJt5kNk1usi+lFYuVyTTyPIrOTIHQP5pM4m9H
+        nCgn2SgA2El5jNS2m+sXW3o=
+X-Google-Smtp-Source: ANB0VdZGtjSkC46TuB8dWjYM9HEbrEtuE4DU/BaVDqs7DoRrJEoPMOxzMe9ED06SXcuMPs6/ZsGNHQ==
+X-Received: by 2002:a1c:e3d5:: with SMTP id a204-v6mr968366wmh.20.1535452933811;
+        Tue, 28 Aug 2018 03:42:13 -0700 (PDT)
+Received: from localhost (pD9E51C80.dip0.t-ipconnect.de. [217.229.28.128])
+        by smtp.gmail.com with ESMTPSA id t9-v6sm1465104wra.91.2018.08.28.03.42.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 28 Aug 2018 03:42:12 -0700 (PDT)
+Date:   Tue, 28 Aug 2018 12:42:11 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, Roger Quadros <rogerq@ti.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] memory: Convert to using %pOFn instead of
+ device_node.name
+Message-ID: <20180828104211.GA9386@ulmo>
+References: <20180828015252.28511-1-robh@kernel.org>
+ <20180828015252.28511-29-robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ibTvN161/egqYuK8"
 Content-Disposition: inline
-In-Reply-To: <1534520143-29266-1-git-send-email-jonathanh@nvidia.com>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
- definitions=main-1808280110
+In-Reply-To: <20180828015252.28511-29-robh@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 17, 2018 at 04:35:43PM +0100, Jon Hunter wrote:
-> When dapm_power_widgets() is called, the dapm_pre_sequence_async() and
-> dapm_post_sequence_async() functions are scheduled for all DAPM contexts
-> (apart from the card DAPM context) regardless of whether the DAPM
-> context is already in the desired state. The overhead of this is not
-> insignificant and the more DAPM contexts there are the more overhead
-> there is.
-> 
-> For example, on the Tegra124 Jetson TK1, when profiling the time taken
-> to execute the dapm_power_widgets() the following times were observed.
-> 
->   Times for function dapm_power_widgets() are (us):
->      Min 23, Ave 190, Max 434, Count 39
-> 
-> Here 'Count' is the number of times that dapm_power_widgets() has been
-> called. Please note that the above time were measured using ktime_get()
-> to log the time on entry and exit from dapm_power_widgets(). So it
-> should be noted that these times may not be purely the time take to
-> execute this function if it is preempted. However, after applying this
-> patch and measuring the time taken to execute dapm_power_widgets() again
-> a significant improvement is seen as shown below.
-> 
->   Times for function dapm_power_widgets() are (us):
->      Min 4, Ave 16, Max 82, Count 39
-> 
-> Therefore, optimise the dapm_power_widgets() function by only scheduling
-> the dapm_pre/post_sequence_async() work if the DAPM context is not in
-> the desired state.
-> 
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+
+--ibTvN161/egqYuK8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Aug 27, 2018 at 08:52:30PM -0500, Rob Herring wrote:
+> In preparation to remove the node name pointer from struct device_node,
+> convert printf users to use the %pOFn format specifier.
+>=20
+> Cc: Roger Quadros <rogerq@ti.com>
+> Cc: Tony Lindgren <tony@atomide.com>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: linux-omap@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-tegra@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
 > ---
+>  drivers/memory/omap-gpmc.c           | 18 +++++++-----------
+>  drivers/memory/samsung/exynos-srom.c |  4 ++--
+>  drivers/memory/tegra/mc.c            |  6 +++---
+>  drivers/memory/tegra/tegra124-emc.c  | 12 ++++++------
+>  4 files changed, 18 insertions(+), 22 deletions(-)
 
-Looks ok to me:
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+--ibTvN161/egqYuK8
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Although that said the performance increase is pretty hard to
-measure on my systems.
+-----BEGIN PGP SIGNATURE-----
 
-Thanks,
-Charles
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAluFJwEACgkQ3SOs138+
+s6EBJA/+LbK0Pndw2X6MqTI5f05rIP/mKjhRkiqnK05yE7yN2wp0Cnw9ojCsz3Rs
+sRlxaNQp5l8FtnZm9UYmzLIidjOS9AACtrkR8uYaOQK0JyGUIhH9EssjN9tzZr7o
+1akD1NR8NeGsJQxpc/vnw7rx6rVjWwmYrPNE8O5osXqrin3/RQeBm93Wk9Pi/OLK
+UP7A/CUXNFMGM43jqThk4C6k3scA6f8OPVPeYosqlMyyMkuiKjGN2sgF19wjKlV7
+5kXzqDPAoEMKYVuXnzYapQYBRaFzvrouvFDGbg/EOzwFyKjz0ZJM5XIs/4gj9mNO
+RmysJ6nR1057ff0zL1wERQUlaV+/FXq7iU9G0Gr9o4wWDKkA36AKN0kFMCFgF+RR
+NQdNhjtyayt5vmp9IQsa8KulbEYLdRGamO+fS2Q3ZB4qtmVQuxQwtBSirpE3dPUR
+cgyoonqPmV/D8wjCvX0LQqlCcAsTwnzrPuPg+48UCYWgxFRXbtxugPzCfKierbUP
+IXbc9uiUxAB09K8Xgqa9zRIQaoe+Q1KQWpl2GvCrz8sneyUpC/eujui0BbEDBXtV
+8w9uYypfKMy0Ij2JQN5/brd/HdsNP3ssfjG6S7d2oDWxCroyYyHiygAdPFU9u7c5
+bdquQEHSIOZffLL/ymOZ+87WjfKxT6NizWI57CMC0MXOR3JsQ44=
+=vAak
+-----END PGP SIGNATURE-----
+
+--ibTvN161/egqYuK8--
