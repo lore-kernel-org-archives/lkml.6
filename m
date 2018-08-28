@@ -2,139 +2,102 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 776B1C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 11:25:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B065C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 11:27:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25A432089D
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 11:25:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25A432089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id A9FEC2087C
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 11:27:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="G2j6AlXr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9FEC2087C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727729AbeH1PQ5 (ORCPT
+        id S1727768AbeH1PSk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 11:16:57 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50938 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727201AbeH1PQ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 11:16:57 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DA266AEA5;
-        Tue, 28 Aug 2018 11:25:43 +0000 (UTC)
-Date:   Tue, 28 Aug 2018 13:25:43 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Mikhail Zaslonko <zaslonko@linux.ibm.com>
-Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, pasha.tatashin@oracle.com
-Subject: Re: [PATCH] memory_hotplug: fix kernel_panic on offline page
- processing
-Message-ID: <20180828112543.GK10223@dhcp22.suse.cz>
-References: <20180828090539.41491-1-zaslonko@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180828090539.41491-1-zaslonko@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 28 Aug 2018 11:18:40 -0400
+Received: from smtprelay4.synopsys.com ([198.182.47.9]:33112 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727201AbeH1PSk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 11:18:40 -0400
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 7D15624E23D2;
+        Tue, 28 Aug 2018 04:27:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1535455648; bh=aN8zzZQ0BA2ndzTYT0yp7g0qhluSBS46Vc+R4A/Cl8U=;
+        h=From:To:Cc:Subject:Date:From;
+        b=G2j6AlXrkeMCw3DZEhpm+moqe2kfzG2jxGK7QhgVQ7/TORSjQgpDB1tR0AA2EszZY
+         KJpQtlEcoLZFR+vypuzd/z0TAGQan+WL3TNmus+GNhEBhTEbz3klYUK8KHcE6YujDH
+         nrFhix+o6BZEzd1HnkaL+iW1ABxSIi9VV/fWNhnslhUh+UuapSTFn6IUy/bUUsNxBx
+         Txjcl2AEHo1vZ8CMg3uI7Nx3AU9QvnFhc3Z2CcKvOpFA69XC29MleB3fMus/06MwF2
+         d+tbEqaBezWy/r1+lKza8AREwUp3CMsgp6F56KjjRXO9Jf43/uXx7kBMYLLBFuvN2+
+         fZrQoc85zefxA==
+Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.3.36])
+        by mailhost.synopsys.com (Postfix) with ESMTP id E83B65F93;
+        Tue, 28 Aug 2018 04:27:24 -0700 (PDT)
+From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+To:     linux-snps-arc@lists.infradead.org, linux-gpio@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Subject: [PATCH v2 0/2] GPIO: add single-register GPIO via CREG driver
+Date:   Tue, 28 Aug 2018 14:27:19 +0300
+Message-Id: <20180828112721.28178-1-Eugeniy.Paltsev@synopsys.com>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 28-08-18 11:05:39, Mikhail Zaslonko wrote:
-> Within show_valid_zones() the function test_pages_in_a_zone() should be
-> called for online memory blocks only. Otherwise it might lead to the
-> VM_BUG_ON due to uninitialized struct pages (when CONFIG_DEBUG_VM_PGFLAGS
-> kernel option is set):
-> 
->  page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
->  ------------[ cut here ]------------
->  Call Trace:
->  ([<000000000038f91e>] test_pages_in_a_zone+0xe6/0x168)
->   [<0000000000923472>] show_valid_zones+0x5a/0x1a8
->   [<0000000000900284>] dev_attr_show+0x3c/0x78
->   [<000000000046f6f0>] sysfs_kf_seq_show+0xd0/0x150
->   [<00000000003ef662>] seq_read+0x212/0x4b8
->   [<00000000003bf202>] __vfs_read+0x3a/0x178
->   [<00000000003bf3ca>] vfs_read+0x8a/0x148
->   [<00000000003bfa3a>] ksys_read+0x62/0xb8
->   [<0000000000bc2220>] system_call+0xdc/0x2d8
-> 
-> That VM_BUG_ON was triggered by the page poisoning introduced in
-> mm/sparse.c with the git commit d0dc12e86b31 ("mm/memory_hotplug: optimize
-> memory hotplug")
-> With the same commit the new 'nid' field has been added to the struct
-> memory_block in order to store and later on derive the node id for offline
-> pages (instead of accessing struct page which might be uninitialized). But
-> one reference to nid in show_valid_zones() function has been overlooked.
-> Fixed with current commit.
-> Also, nr_pages will not be used any more after test_pages_in_a_zone() call,
-> do not update it.
-> 
-> Fixes: d0dc12e86b31 ("mm/memory_hotplug: optimize memory hotplug")
-> Cc: <stable@vger.kernel.org> # v4.17+
-> Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
-> Signed-off-by: Mikhail Zaslonko <zaslonko@linux.ibm.com>
+Add single-register MMIO GPIO driver for complex cases where
+only several fields in register belong to GPIO lines and each GPIO line
+owns a field with different length and on/off value.
 
-Btw. this land mines which are basically impossible to find during the
-review are the reason why I was not all that happy about d0dc12e86b31.
-It added a margninal improvement but opened a can of warms. On the other
-hand maybe we just had to open that can one day...
+Here is the example:
 
-Acked-by: Michal Hocko <mhocko@suse.com>
+31            11        8         7        5         0   < bit number
+|              |        |         |        |         |
+[   not used   | gpio-1 | shift-1 | gpio-0 | shift-0 ]   < 32 bit MMIO
+                   ^                  ^                     register
+                (3 bit)            (2 bit)
+                   |                  |
+                   |                  |
+                   |           write 0x2 == set output to "1" (on)
+                   |           write 0x3 == set output to "0" (off)
+                   |
+            write 0x1 == set output to "1" (on)
+            write 0x4 == set output to "0" (off)
 
-Thanks!
+This is different from gpio-reg, gpio-mmio and gpio-74xx-mmio:
+* They all don't support cases when GPIO output register have
+  more than one bit per GPIO line.
+* They don't support holes in MMIO register.
+* They don't support cases when GPIO lines have different on/off
+  values.
 
-> ---
->  drivers/base/memory.c | 20 +++++++++-----------
->  1 file changed, 9 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/base/memory.c b/drivers/base/memory.c
-> index f5e560188a18..622ab8edc035 100644
-> --- a/drivers/base/memory.c
-> +++ b/drivers/base/memory.c
-> @@ -416,26 +416,24 @@ static ssize_t show_valid_zones(struct device *dev,
->  	struct zone *default_zone;
->  	int nid;
->  
-> -	/*
-> -	 * The block contains more than one zone can not be offlined.
-> -	 * This can happen e.g. for ZONE_DMA and ZONE_DMA32
-> -	 */
-> -	if (!test_pages_in_a_zone(start_pfn, start_pfn + nr_pages, &valid_start_pfn, &valid_end_pfn))
-> -		return sprintf(buf, "none\n");
-> -
-> -	start_pfn = valid_start_pfn;
-> -	nr_pages = valid_end_pfn - start_pfn;
-> -
->  	/*
->  	 * Check the existing zone. Make sure that we do that only on the
->  	 * online nodes otherwise the page_zone is not reliable
->  	 */
->  	if (mem->state == MEM_ONLINE) {
-> +		/*
-> +		 * The block contains more than one zone can not be offlined.
-> +		 * This can happen e.g. for ZONE_DMA and ZONE_DMA32
-> +		 */
-> +		if (!test_pages_in_a_zone(start_pfn, start_pfn + nr_pages,
-> +					  &valid_start_pfn, &valid_end_pfn))
-> +			return sprintf(buf, "none\n");
-> +		start_pfn = valid_start_pfn;
->  		strcat(buf, page_zone(pfn_to_page(start_pfn))->name);
->  		goto out;
->  	}
->  
-> -	nid = pfn_to_nid(start_pfn);
-> +	nid = mem->nid;
->  	default_zone = zone_for_pfn_range(MMOP_ONLINE_KEEP, nid, start_pfn, nr_pages);
->  	strcat(buf, default_zone->name);
->  
-> -- 
-> 2.16.4
+This driver supports GPIOs via CREG on various Synopsys SoCs/boards.
+
+Eugeniy Paltsev (2):
+  GPIO: add single-register GPIO via CREG driver
+  dt-bindings: Document the Synopsys GPIO via CREG bindings
+
+ .../devicetree/bindings/gpio/snps,creg-gpio.txt    |  49 +++++
+ MAINTAINERS                                        |   6 +
+ drivers/gpio/Kconfig                               |   9 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-creg-snps.c                      | 242 +++++++++++++++++++++
+ 5 files changed, 307 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/snps,creg-gpio.txt
+ create mode 100644 drivers/gpio/gpio-creg-snps.c
 
 -- 
-Michal Hocko
-SUSE Labs
+2.14.4
