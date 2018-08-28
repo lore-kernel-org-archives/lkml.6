@@ -2,156 +2,90 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2962C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:42:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6856C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:44:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C11520891
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:42:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C11520891
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 503B020891
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:44:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="jBTfCsKg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 503B020891
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728275AbeH1SeK (ORCPT
+        id S1728374AbeH1SgF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 14:34:10 -0400
-Received: from foss.arm.com ([217.140.101.70]:39454 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727176AbeH1SeK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 14:34:10 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 41F9B18A;
-        Tue, 28 Aug 2018 07:42:11 -0700 (PDT)
-Received: from localhost (e105922-lin.emea.arm.com [10.4.13.28])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D93A43F557;
-        Tue, 28 Aug 2018 07:42:10 -0700 (PDT)
-From:   Punit Agrawal <punit.agrawal@arm.com>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list\:THERMAL" <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH] dt-binding: arm/cpus.txt: fix dynamic-power-coefficient unit
-References: <1534869685-22221-1-git-send-email-vincent.guittot@linaro.org>
-        <87ftz6ww1h.fsf@e105922-lin.cambridge.arm.com>
-        <CAKfTPtBGJf3tPgUXwVGbQBxgCwuW4TKhLtyeXYp5SZZxmyXEsg@mail.gmail.com>
-Date:   Tue, 28 Aug 2018 15:42:09 +0100
-In-Reply-To: <CAKfTPtBGJf3tPgUXwVGbQBxgCwuW4TKhLtyeXYp5SZZxmyXEsg@mail.gmail.com>
-        (Vincent Guittot's message of "Wed, 22 Aug 2018 16:32:39 +0200")
-Message-ID: <87k1oaa6ym.fsf@e105922-lin.cambridge.arm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        Tue, 28 Aug 2018 14:36:05 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:34424 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727406AbeH1SgE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 14:36:04 -0400
+Received: by mail-io0-f193.google.com with SMTP id c22-v6so1677600iob.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 07:44:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Nbw1BnyzKqEYfX3lhL65PuPn+ieNkfENnVIvzrXn2gU=;
+        b=jBTfCsKg7UlN66OXpj4ertWGb2ZxpNqZ4pRjseEC+9LJoI/PwFQUETMvePik+SS5hi
+         Q/NiBpZUCl7LpoGKwxzQH/3plsQVOOoycEdyVPo713VwG5kc997zWtHGf+6fTcrJAL1A
+         hgnGQmcBK97wg7Hs7co3I4nuNcnH8TTM3VPfPYadxPiZ6Qx3qzrC7D8Sj0CRjiezQ+cN
+         qwIIDoxB71pQTlocfIGWw8di+X9eE9qYJJCmog9g8pbLjR9wA97bIPc0SLYMHvK+ay1J
+         L7QuY63cUKwc0VuflourK/x2ELwX4eQ/oRQywYLFUbrJkzHDb0L14m8RXCKLAr2nVFoh
+         TnAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Nbw1BnyzKqEYfX3lhL65PuPn+ieNkfENnVIvzrXn2gU=;
+        b=rPZbbcrZn17PSzfNJUfC8F+iKE7MSE7DS9FBiMuk6LNCZ81TwPTSHlw3zKt/9RoNKu
+         7K2uhiuQdK0IEI0etSUC6pxhMrM/62uPWiCV10h/dz2ZSUILIUHq4fJj/Ri7CYGpvglh
+         6jpO1z2YvR4H6XuEQfLUO3QqaBmF30yVNDku7JjQAJk5tcPnytiR4mnZzZ3OILQPoMOF
+         bjSKpixwqDnvuy0k/t5bZIkIdm7ygjvGJOcCYCSARKn6SLHO1AIoF/+uvr5YbdJSW3LV
+         EV1wEisGm10aNQmB6+o4CA2SmG3YyAI0p76gogtION38WtnmrK7sdZs4Mll3KbLw3AVW
+         E6mA==
+X-Gm-Message-State: APzg51DsZdnWBZRocX6OBbmO3fDy5EIKu7XEgE8Cai6P1CQtPNBFslBX
+        tnEz4lhx16Lhq6ezcA+LVIpXcA==
+X-Google-Smtp-Source: ANB0VdZ1aBhz9W7GywLDvRtnvuBHTcVNMuxmOd3CaK4gTBviB5A8EdFfYzMJkhOJEcEHX01QwCe6sQ==
+X-Received: by 2002:a6b:410f:: with SMTP id n15-v6mr1589368ioa.3.1535467444863;
+        Tue, 28 Aug 2018 07:44:04 -0700 (PDT)
+Received: from [192.168.1.56] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id c141-v6sm786556itc.42.2018.08.28.07.44.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 28 Aug 2018 07:44:03 -0700 (PDT)
+Subject: Re: [PATCH] ata: ahci: Convert to using %pOFn instead of
+ device_node.name
+To:     Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org
+Cc:     Hans de Goede <hdegoede@redhat.com>, linux-ide@vger.kernel.org
+References: <20180828015252.28511-1-robh@kernel.org>
+ <20180828015252.28511-9-robh@kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <111e6704-49fc-621a-036e-e659ebe08519@kernel.dk>
+Date:   Tue, 28 Aug 2018 08:44:02 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180828015252.28511-9-robh@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Vincent Guittot <vincent.guittot@linaro.org> writes:
+On 8/27/18 7:52 PM, Rob Herring wrote:
+> In preparation to remove the node name pointer from struct device_node,
+> convert printf users to use the %pOFn format specifier.
 
-> Hi Amit,
->
-> On Wed, 22 Aug 2018 at 12:11, Punit Agrawal <punit.agrawal@arm.com> wrote:
->>
->> Hi Vincent,
->>
->> Thanks for the patch. One comment about the choice of units below.
->>
->> Vincent Guittot <vincent.guittot@linaro.org> writes:
->>
->> > The unit of dynamic-power-coefficient is described as mW/MHz/uV^2 whereas
->> > its usage in the code assumes that unit is mW/GHz/V^2
->>
->> Instead of choosing GHz as the base, I'd prefer to use uW/MHz/V^2. It'll
->> avoid introducing fractional GHz value for frequency calculations.
->
-> I don't understand your concern about fractional Ghz value for
-> frequency calculation ?
-> I mean, why it's a problem for frequency with Ghz vs Mhz but not a
-> problem for voltage with V vs mV ?
-> Don't we have the same "problem" in both case ?
+Applied for 4.20, thanks.
 
-You're right. It's the same problem in both cases.
+-- 
+Jens Axboe
 
->>
->> > In drivers/thermal/cpu_cooling.c, the code is :
->> >
->> > power = (u64)capacitance * freq_mhz * voltage_mv * voltage_mv;
->> > do_div(power, 1000000000);
->> >
->> > which can be summarized as :
->> > power (mW) = capacitance * freq_mhz/1000 * (voltage_mv/1000)^2
->>
->> Which would then translate to -
->>
->> power (mW) = power (uW) / 1000 = capacitance * freq_mhz * (voltage_mv/1000)^2
->
-> Not sure that the equation above is correct. If we consider uW/MHz/V^2
-> for the unit, the equation becomes :
-> power (mW) = power (uW) / 1000 = capacitance * freq_mhz *
-> (voltage_mv/1000)^2 / 1000
-
-Yes, I missed the "/ 1000" at the end.
-
-> which can be rearranged as
-> power (mW) = power (uW) / 1000 = capacitance * freq_mhz/ 1000 *
-> (voltage_mv/1000)^2
->
-> TBH, I don't really mind between  mW/GHz/V^2 or uW/MHz/V^2 as they are
-> the same at the end
-> but I don't catch your reasoning
-
-The problem I was thinking of doesn't hold as it's the same issue with
-voltage.
-
-One benefit to go with uW/MHz/V^2 might be the extra resolution that it
-provides. I'd prefer to go with uW/MHz/V^2 if there's no compelling
-reason to go with anything else.
-
-
-[...]
-
->> >
->> > Furthermore, if we test basic values like :
->> > voltage_mv = 1000mV = 1V
->> > freq_mhz = 1000Mhz = 1Ghz
->> >
->> > The minimum possible power, when dynamic-power-coefficient equals 1, will
->> > be :
->> > min power = 1 * 1000  * (1000000)^2 = 10^15 mW
->> > which is not realistic
->> >
->> > With the unit used by the code, the min power is
->> > min power =  1 * 1 * 1^2 = 1mW which is far more realistic
->> >
->> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
->> > ---
->> >  Documentation/devicetree/bindings/arm/cpus.txt | 4 ++--
->> >  1 file changed, 2 insertions(+), 2 deletions(-)
->> >
->> > diff --git a/Documentation/devicetree/bindings/arm/cpus.txt b/Documentation/devicetree/bindings/arm/cpus.txt
->> > index 29e1dc5..0148d7d 100644
->> > --- a/Documentation/devicetree/bindings/arm/cpus.txt
->> > +++ b/Documentation/devicetree/bindings/arm/cpus.txt
->> > @@ -274,7 +274,7 @@ described below.
->> >               Usage: optional
->> >               Value type: <prop-encoded-array>
->> >               Definition: A u32 value that represents the running time dynamic
->> > -                         power coefficient in units of mW/MHz/uV^2. The
->> > +                         power coefficient in units of mW/GHz/V^2. The
->> >                           coefficient can either be calculated from power
->> >                           measurements or derived by analysis.
->> >
->> > @@ -285,7 +285,7 @@ described below.
->> >
->> >                           Pdyn = dynamic-power-coefficient * V^2 * f
->> >
->> > -                         where voltage is in uV, frequency is in MHz.
->> > +                         where voltage is in V, frequency is in GHz.
->> >
->> >  Example 1 (dual-cluster big.LITTLE system 32-bit):
