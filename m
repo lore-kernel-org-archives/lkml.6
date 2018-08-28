@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAA92C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:01:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1CEDC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:02:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CC9A20897
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:01:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CC9A20897
+	by mail.kernel.org (Postfix) with ESMTP id 841A520897
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:02:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 841A520897
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728183AbeH1Qx3 (ORCPT
+        id S1728206AbeH1Qxd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 12:53:29 -0400
+        Tue, 28 Aug 2018 12:53:33 -0400
 Received: from esa5.microchip.iphmx.com ([216.71.150.166]:4699 "EHLO
         esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726998AbeH1Qx2 (ORCPT
+        with ESMTP id S1726998AbeH1Qxc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 12:53:28 -0400
+        Tue, 28 Aug 2018 12:53:32 -0400
 X-IronPort-AV: E=Sophos;i="5.53,299,1531810800"; 
-   d="scan'208";a="16756376"
+   d="scan'208";a="16756381"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 28 Aug 2018 06:01:55 -0700
+  by esa5.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 28 Aug 2018 06:01:59 -0700
 Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.76.4) by
  chn-sv-exch04.mchp-main.com (10.10.76.105) with Microsoft SMTP Server id
- 14.3.352.0; Tue, 28 Aug 2018 06:01:53 -0700
+ 14.3.352.0; Tue, 28 Aug 2018 06:01:58 -0700
 From:   Claudiu Beznea <claudiu.beznea@microchip.com>
 To:     <thierry.reding@gmail.com>, <shc_work@mail.ru>,
         <robh+dt@kernel.org>, <mark.rutland@arm.com>, <corbet@lwn.net>,
@@ -38,9 +38,9 @@ CC:     <linux-pwm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <devicetree@vger.kernel.org>, <linux-doc@vger.kernel.org>,
         Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [RESEND PATCH v5 4/9] pwm: pxa: populate PWM mode in of_xlate function
-Date:   Tue, 28 Aug 2018 16:01:21 +0300
-Message-ID: <1535461286-12308-5-git-send-email-claudiu.beznea@microchip.com>
+Subject: [RESEND PATCH v5 5/9] pwm: add PWM modes
+Date:   Tue, 28 Aug 2018 16:01:22 +0300
+Message-ID: <1535461286-12308-6-git-send-email-claudiu.beznea@microchip.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1535461286-12308-1-git-send-email-claudiu.beznea@microchip.com>
 References: <1535461286-12308-1-git-send-email-claudiu.beznea@microchip.com>
@@ -51,25 +51,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Populate PWM mode in of_xlate function to avoid pwm_apply_state() failure.
+Add PWM normal and complementary modes.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 ---
- drivers/pwm/pwm-pxa.c | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/pwm/pwm.txt |  9 +++++++--
+ Documentation/pwm.txt                         | 26 +++++++++++++++++++++++---
+ include/dt-bindings/pwm/pwm.h                 |  1 +
+ 3 files changed, 31 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pwm/pwm-pxa.c b/drivers/pwm/pwm-pxa.c
-index 4143a46684d2..4c88cb47d6ba 100644
---- a/drivers/pwm/pwm-pxa.c
-+++ b/drivers/pwm/pwm-pxa.c
-@@ -161,6 +161,7 @@ pxa_pwm_of_xlate(struct pwm_chip *pc, const struct of_phandle_args *args)
- 		return pwm;
+diff --git a/Documentation/devicetree/bindings/pwm/pwm.txt b/Documentation/devicetree/bindings/pwm/pwm.txt
+index 8556263b8502..7c8aaac43f92 100644
+--- a/Documentation/devicetree/bindings/pwm/pwm.txt
++++ b/Documentation/devicetree/bindings/pwm/pwm.txt
+@@ -46,11 +46,16 @@ period in nanoseconds.
+ Optionally, the pwm-specifier can encode a number of flags (defined in
+ <dt-bindings/pwm/pwm.h>) in a third cell:
+ - PWM_POLARITY_INVERTED: invert the PWM signal polarity
++- PWM_MODE_COMPLEMENTARY: PWM complementary working mode (for PWM channels
++with two outputs); if not specified, the default for PWM channel will be
++used
  
- 	pwm->args.period = args->args[0];
-+	pwm->args.mode = pwm_mode_get_valid(pc, pwm);
+-Example with optional PWM specifier for inverse polarity
++Example with optional PWM specifier for inverse polarity and complementary
++mode:
  
- 	return pwm;
- }
+ 	bl: backlight {
+-		pwms = <&pwm 0 5000000 PWM_POLARITY_INVERTED>;
++		pwms = <&pwm 0 5000000
++			(PWM_MODE_COMPLEMENTARY | PWM_POLARITY_INVERTED)>;
+ 		pwm-names = "backlight";
+ 	};
+ 
+diff --git a/Documentation/pwm.txt b/Documentation/pwm.txt
+index 8fbf0aa3ba2d..912c43da8b48 100644
+--- a/Documentation/pwm.txt
++++ b/Documentation/pwm.txt
+@@ -61,9 +61,9 @@ In addition to the PWM state, the PWM API also exposes PWM arguments, which
+ are the reference PWM config one should use on this PWM.
+ PWM arguments are usually platform-specific and allows the PWM user to only
+ care about dutycycle relatively to the full period (like, duty = 50% of the
+-period). struct pwm_args contains 2 fields (period and polarity) and should
+-be used to set the initial PWM config (usually done in the probe function
+-of the PWM user). PWM arguments are retrieved with pwm_get_args().
++period). struct pwm_args contains 3 fields (period, polarity and mode) and
++should be used to set the initial PWM config (usually done in the probe
++function of the PWM user). PWM arguments are retrieved with pwm_get_args().
+ 
+ Using PWMs with the sysfs interface
+ -----------------------------------
+@@ -110,6 +110,26 @@ channel that was exported. The following properties will then be available:
+ 	- 0 - disabled
+ 	- 1 - enabled
+ 
++  mode
++    Get/set PWM channel working mode.
++
++    Normal mode - for PWM channels with one output; this should be the
++        default working mode for every PWM channel; output waveforms looks
++        like this:
++             __    __    __    __
++    PWM   __|  |__|  |__|  |__|  |__
++            <--T-->
++
++    Complementary mode - for PWM channels with two outputs; output waveforms
++        looks line this:
++             __    __    __    __
++    PWMH1 __|  |__|  |__|  |__|  |__
++          __    __    __    __    __
++    PWML1   |__|  |__|  |__|  |__|
++            <--T-->
++
++    Where T is the signal period.
++
+ Implementing a PWM driver
+ -------------------------
+ 
+diff --git a/include/dt-bindings/pwm/pwm.h b/include/dt-bindings/pwm/pwm.h
+index ab9a077e3c7d..b82279cc1787 100644
+--- a/include/dt-bindings/pwm/pwm.h
++++ b/include/dt-bindings/pwm/pwm.h
+@@ -11,5 +11,6 @@
+ #define _DT_BINDINGS_PWM_PWM_H
+ 
+ #define PWM_POLARITY_INVERTED			(1 << 0)
++#define PWM_MODE_COMPLEMENTARY			(1 << 1)
+ 
+ #endif
 -- 
 2.7.4
 
