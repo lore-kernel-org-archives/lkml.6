@@ -3,221 +3,127 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA9CDC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:53:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 044DBC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:54:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BC4C20867
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:53:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BC4C20867
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id B23A12087B
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:54:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B23A12087B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728029AbeH1SpY (ORCPT
+        id S1728083AbeH1SqB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 14:45:24 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:50167 "EHLO mail.bootlin.com"
+        Tue, 28 Aug 2018 14:46:01 -0400
+Received: from foss.arm.com ([217.140.101.70]:39664 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727176AbeH1SpY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 14:45:24 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 4F67E207AD; Tue, 28 Aug 2018 16:53:21 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-53-19.w90-88.abo.wanadoo.fr [90.88.170.19])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 863052079D;
-        Tue, 28 Aug 2018 16:53:10 +0200 (CEST)
-Date:   Tue, 28 Aug 2018 16:53:09 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        linux-doc <linux-doc@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        Russell King <linux@armlinux.org.uk>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        David Lechner <david@lechnology.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Sven Van Asbroeck <svendev@arcx.com>,
-        "open list:MEMORY TECHNOLOGY..." <linux-mtd@lists.infradead.org>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lukas Wunner <lukas@wunner.de>, Naren <naren.kernel@gmail.com>,
-        netdev <netdev@vger.kernel.org>, Alban Bedel <albeu@free.fr>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "David S . Miller" <davem@davemloft.net>
-Subject: Re: [PATCH v2 01/29] nvmem: add support for cell lookups
-Message-ID: <20180828165309.0594ae13@bbrezillon>
-In-Reply-To: <CAMRc=MeALxpyBQhWxGPt9BubO_ZwKGih1d8zhRzFYZ0+3kHFAA@mail.gmail.com>
-References: <20180810080526.27207-1-brgl@bgdev.pl>
-        <20180810080526.27207-2-brgl@bgdev.pl>
-        <20180824170848.29594318@bbrezillon>
-        <20180824152740.GD27483@lunn.ch>
-        <20180825082722.567e8c9a@bbrezillon>
-        <CAMRc=Men-MPk5DGshWcVEc0v=gH2WSpx1j-CawOeydwp59tejw@mail.gmail.com>
-        <20180827110055.122988d0@bbrezillon>
-        <CAMRc=MfpZJUEAhM4OoLbmJcnX3rTJk8fvdiL6=9BjNkVcsf=SA@mail.gmail.com>
-        <8cb75723-dc87-f127-2aab-54dd0b08eee8@linaro.org>
-        <CAMRc=Mex5WAm8uiV4T=0+bLduBBdj18iekuYT55W9gA_rzQ_sg@mail.gmail.com>
-        <916e3e89-82b3-0d52-2b77-4374261a9d0f@linaro.org>
-        <CAMRc=MeALxpyBQhWxGPt9BubO_ZwKGih1d8zhRzFYZ0+3kHFAA@mail.gmail.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1727176AbeH1SqB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 14:46:01 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 819EA18A;
+        Tue, 28 Aug 2018 07:53:59 -0700 (PDT)
+Received: from [10.1.37.73] (deggeman-mac.cambridge.arm.com [10.1.37.73])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5C1063F557;
+        Tue, 28 Aug 2018 07:53:57 -0700 (PDT)
+Subject: Re: [PATCH] sched/fair: vruntime should normalize when switching from
+ fair
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Steve Muckle <smuckle@google.com>
+Cc:     Miguel de Dios <migueldedios@google.com>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        kernel-team@android.com, Todd Kjos <tkjos@google.com>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Patrick Bellasi <Patrick.Bellasi@arm.com>,
+        Chris Redpath <Chris.Redpath@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        John Dias <joaodias@google.com>
+References: <20180817182728.76129-1-smuckle@google.com>
+ <dcd2fa21-7fef-d648-017d-9d42d11793e0@google.com>
+ <20180824093227.GN24124@hirez.programming.kicks-ass.net>
+ <20180824094742.GJ24142@hirez.programming.kicks-ass.net>
+ <ae94fb88-646b-1d82-b61d-103792965dbf@google.com>
+ <20180827111458.GB24124@hirez.programming.kicks-ass.net>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <2ed346fa-dbe8-4928-928b-a34338b2d8c9@arm.com>
+Date:   Tue, 28 Aug 2018 15:53:53 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180827111458.GB24124@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 28 Aug 2018 16:41:04 +0200
-Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-
-> 2018-08-28 15:45 GMT+02:00 Srinivas Kandagatla <srinivas.kandagatla@linaro.org>:
-> >
-> >
-> > On 28/08/18 12:56, Bartosz Golaszewski wrote:  
-> >>
-> >> 2018-08-28 12:15 GMT+02:00 Srinivas Kandagatla
-> >> <srinivas.kandagatla@linaro.org>:  
-> >>>
-> >>>
-> >>> On 27/08/18 14:37, Bartosz Golaszewski wrote:  
-> >>>>
-> >>>>
-> >>>> I didn't notice it before but there's a global list of nvmem cells  
-> >>>
-> >>>
-> >>>
-> >>> Bit of history here.
-> >>>
-> >>> The global list of nvmem_cell is to assist non device tree based cell
-> >>> lookups. These cell entries come as part of the non-dt providers
-> >>> nvmem_config.
-> >>>
-> >>> All the device tree based cell lookup happen dynamically on
-> >>> request/demand,
-> >>> and all the cell definition comes from DT.
-> >>>  
-> >>
-> >> Makes perfect sense.
-> >>  
-> >>> As of today NVMEM supports both DT and non DT usecase, this is much
-> >>> simpler.
-> >>>
-> >>> Non dt cases have various consumer usecases.
-> >>>  
-> >>> 1> Consumer is aware of provider name and cell details.  
-> >>>          This is probably simple usecase where it can just use device
-> >>> based
-> >>> apis.
-> >>>  
-> >>> 2> Consumer is not aware of provider name, its just aware of cell name.  
-> >>>          This is the case where global list of cells are used.
-> >>>  
-> >>
-> >> I would like to support an additional use case here: the provider is
-> >> generic and is not aware of its cells at all. Since the only way of
-> >> defining nvmem cells is through DT or nvmem_config, we lack a way to
-> >> allow machine code to define cells without the provider code being
-> >> aware.  
-> >
-> >
-> > machine driver should be able to do
-> > nvmem_device_get()
-> > nvmem_add_cells()
-> >  
+On 08/27/2018 12:14 PM, Peter Zijlstra wrote:
+> On Fri, Aug 24, 2018 at 02:24:48PM -0700, Steve Muckle wrote:
+>> On 08/24/2018 02:47 AM, Peter Zijlstra wrote:
+>>>>> On 08/17/2018 11:27 AM, Steve Muckle wrote:
+>>>
+>>>>>> When rt_mutex_setprio changes a task's scheduling class to RT,
+>>>>>> we're seeing cases where the task's vruntime is not updated
+>>>>>> correctly upon return to the fair class.
+>>>
+>>>>>> Specifically, the following is being observed:
+>>>>>> - task is deactivated while still in the fair class
+>>>>>> - task is boosted to RT via rt_mutex_setprio, which changes
+>>>>>>      the task to RT and calls check_class_changed.
+>>>>>> - check_class_changed leads to detach_task_cfs_rq, at which point
+>>>>>>      the vruntime_normalized check sees that the task's state is TASK_WAKING,
+>>>>>>      which results in skipping the subtraction of the rq's min_vruntime
+>>>>>>      from the task's vruntime
+>>>>>> - later, when the prio is deboosted and the task is moved back
+>>>>>>      to the fair class, the fair rq's min_vruntime is added to
+>>>>>>      the task's vruntime, even though it wasn't subtracted earlier.
+>>>
+>>> I'm thinking that is an incomplete scenario; where do we get to
+>>> TASK_WAKING.
+>>
+>> Yes there's a missing bit of context here at the beginning that the task to
+>> be boosted had already been put into TASK_WAKING.
 > 
-> Indeed, I missed the fact that you can retrieve the nvmem device by
-> name. Except that we cannot know that the nvmem provider has been
-> registered yet when calling nvmem_device_get(). This could potentially
-> be solved by my other patch that adds notifiers to nvmem, but it would
-> require much more boilerplate code in every board file. I think that
-> removing nvmem_cell_info from nvmem_config and having external cell
-> definitions would be cleaner.
-
-I also vote for this option.
-
-> >
-> >  static struct nvmem_cell *nvmem_find_cell(const char *cell_id)
-
-Can we get rid of this function and just have the the version that
-takes an nvmem_name and a cell_id.
-
-> >> Yes, I would like to rework nvmem a bit. I don't see any non-DT users
-> >> defining nvmem-cells using nvmem_config. I think that what we need is
-> >> a way of specifying cell config outside of nvmem providers in some
-> >> kind of structures. These tables would reference the provider by name
-> >> and define the cells. Then we would have an additional lookup
-> >> structure which would associate the consumer (by dev_id and con_id,
-> >> where dev_id could optionally be NULL and where we would fall back to
-> >> using con_id only) and the nvmem provider + cell together. Similarly
-> >> to how GPIO consumers are associated with the gpiochip and hwnum. How
-> >> does it sound?  
-> >
-> > Yes, sounds good.
-> >
-> > Correct me if am wrong!
-> > You should be able to add the new cells using struct nvmem_cell_info and add
-> > them to particular provider using nvmem_add_cells().
-> >
-> > Sounds like thats exactly what nvmem_add_lookup_table() would look like.
-> >
-> > We should add new nvmem_device_cell_get(nvmem, conn_id) which would return
-> > nvmem cell which is specific to the provider. This cell can be used by the
-> > machine driver to read/write.  
+> See, I'm confused...
 > 
-> Except that we could do it lazily - when the nvmem provider actually
-> gets registered instead of doing it right away and risking that the
-> device isn't even there yet.
-
-And again, I agree with you. That's basically what lookup tables are
-meant for: defining resources that are supposed to be attached to a
-device when it's registered to a subsystem.
-
+> The only time TASK_WAKING is visible, is if we've done a remote wakeup
+> and it's 'stuck' on the remote wake_list. And in that case we've done
+> migrate_task_rq_fair() on it.
 > 
-> >  
-> >>>>
-> >>>> BTW: of_nvmem_cell_get() seems to always allocate an nvmem_cell
-> >>>> instance even if the cell for this node was already added to the nvmem
-> >>>> device.  
-> >>>
-> >>>
-> >>> I hope you got the reason why of_nvmem_cell_get() always allocates new
-> >>> instance for every get!!  
-> >>
-> >>
-> >>
-> >> I admit I didn't test it, but just from reading the code it seems like
-> >> in nvmem_cell_get() for DT-users we'll always get to
-> >> of_nvmem_cell_get() and in there we always end up calling line 873:
-> >> cell = kzalloc(sizeof(*cell), GFP_KERNEL);
-> >>  
-> > That is correct, this cell is created when we do a get and release when we
-> > do a put().
-> >  
+> So by the time either rt_mutex_setprio() or __sched_setscheduler() get
+> to calling check_class_changed(), under both pi_lock and rq->lock, the
+> vruntime_normalized() thing should be right.
 > 
-> Shouldn't we add the cell to the list, and check first if it's there
-> and only create it if not?
+> So please detail the exact scenario. Because I'm not seeing it.
 
-Or even better: create the cells at registration time so that the
-search code is the same for both DT and non-DT cases. Only the
-registration would differ (with one path parsing the DT, and the other
-one searching for nvmem cells defined with a nvmem-provider-lookup
-table).
+Using Steve's test program (https://lkml.org/lkml/2018/8/24/686) I see the
+issue but only if the two tasks (rt_task, fair_task) run on 2 cpus which
+don't share LLC (e.g. CPU0 and CPU4 on hikey960).
+
+So the wakeup goes the TTWU_QUEUE && !share_cache (ttwu_queue_remote) path.
+
+...
+rt_task-3579  [000] 35.391573: sched_waking:     comm=fair_task pid=3580 prio=120 target_cpu=004
+rt_task-3579  [000] 35.391580: bprint:           try_to_wake_up: try_to_wake_up: task=fair_task pid=3580 task_cpu(p)=4 p->on_rq=0
+rt_task-3579  [000] 35.391584: bprint:           try_to_wake_up: ttwu_queue: task=fair_task pid=3580
+rt_task-3579  [000] 35.391588: bprint:           try_to_wake_up: ttwu_queue_remote: task=fair_task pid=3580
+rt_task-3579  [000] 35.391591: bprint:           try_to_wake_up: ttwu_queue_remote: cpu=4 smp_send_reschedule
+rt_task-3579  [000] 35.391627: sched_pi_setprio: comm=fair_task pid=3580 oldprio=120 newprio=19
+rt_task-3579  [000] 35.391635: bprint:           rt_mutex_setprio: task=fair_task pid=3580 prio=120->19 queued=0 running=0 state=0x200 vruntime=46922871 cpu=4 cfs_rq->min_vruntime=7807420844
+rt_task-3579  [000] 35.391641: bprint:           rt_mutex_setprio: p->prio set: task=fair_task pid=3580 prio=19 queued=0 running=0 state=0x200 vruntime=46922871
+rt_task-3579  [000] 35.391646: bprint:           rt_mutex_setprio: queued checked: task=fair_task pid=3580 prio=19 queued=0 running=0 state=0x200 vruntime=46922871
+rt_task-3579  [000] 35.391652: bprint:           rt_mutex_setprio: running checked: task=fair_task pid=3580 prio=19 queued=0 running=0 state=0x200 vruntime=46922871
+rt_task-3579  [000] 35.391657: bprint:           rt_mutex_setprio: fair_class=0xffff000008da2c80 rt_class=0xffff000008da2d70 prev_class=0xffff000008da2c80 p->sched_class=0xffff000008da2d70 oldprio=120 p->prio=19
+rt_task-3579  [000] 35.391661: bprint:           detach_task_cfs_rq: task=fair_task pid=3580 cpu=4 vruntime_normalized=1
+rt_task-3579  [000] 35.391706: sched_switch:     rt_task:3579 [19] D ==> swapper/0:0 [120] 
+ <idle>-0     [004] 35.391828: bprint:           ttwu_do_activate: ttwu_do_activate: task=fair_task pid=3580
+ <idle>-0     [004] 35.391832: bprint:           ttwu_do_activate: ttwu_activate: task=fair_task pid=3580
+ <idle>-0     [004] 35.391833: bprint:           ttwu_do_wakeup: ttwu_do_wakeup: task=fair_task pid=3580
+ <idle>-0     [004] 35.391834: sched_wakeup:     fair_task:3580 [19] success=1 CPU:004
+
+It doesn't happen on hikey960 when I use two cpus of the same LLC or on my
+laptop (i7-4750HQ).
