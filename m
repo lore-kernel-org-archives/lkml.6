@@ -2,98 +2,189 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA308C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 19:53:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1E8DC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 19:56:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 519AA2087B
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 19:53:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6119C2087B
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 19:56:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="BtuvPBo0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 519AA2087B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Y0fmdz40"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6119C2087B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727130AbeH1Xq7 (ORCPT
+        id S1727181AbeH1Xt1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 19:46:59 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:45412 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726833AbeH1Xq7 (ORCPT
+        Tue, 28 Aug 2018 19:49:27 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:46170 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726975AbeH1Xt1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 19:46:59 -0400
-Received: by mail-pg1-f195.google.com with SMTP id m4-v6so1205344pgv.12
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 12:53:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=23K7ZZ9Kt4B3pyDyOBIQU3RWNsZlD/5s/HVCC++bsGE=;
-        b=BtuvPBo0L9YY31hFvq4CwynBH7/3XfDxFmXP2pPpxmd2BRI0AbW6giTX8T5VQM5xbc
-         9OHNQAuaOANNk7hAET+rW9yg3WbB7ZJIJ/1uxWv2cazgLsJr5OgXCYZr72YuaywSfzJX
-         2L44ODQLZH8Azoqf1W2pCeNt3GmvbRGIJYCq4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=23K7ZZ9Kt4B3pyDyOBIQU3RWNsZlD/5s/HVCC++bsGE=;
-        b=WppEghjmlHx1we+gg0r1bMCuYn7YbcMWCjh/YghA5cFMB3xZDHIJG+T2aAfR1ZXrKM
-         tUjp/K8sNC35+7/TNUYfjpCLSdrJlQg+JkmkQc2HtA3/04yECUJuINfBY1eFg5Dw9d6s
-         iiuyxx601VLlLI+aWvV1eE2j36nZp1Jf+i8UtNR2E3038pi5ZEAwG48R6vBniLOt3+i2
-         TPmCHZgFxYg2v0dlKAT5RnZHrn8aB0gfZw84jrvSo4p6asT7AjMXM60rFNDJ2AV/Lby/
-         PfQ3IGKJIMCWed5RniEE0Sfj0jws5ApUj2X93jxdgeep+CtWjMWXBLUGlldDkCXU+b0R
-         1nqg==
-X-Gm-Message-State: APzg51AjL0AJV+PvnEkTqYHkDgaHOopUfxKPoXsGm6BDz26EtV94QNdO
-        IDNdeisNKj29nxyOcEvfWOtxsrRy9Qg=
-X-Google-Smtp-Source: ANB0VdYgLjeTjolyyeslBASEqh24Ky2+BfT9OV44o3/nqEfQ1tSOMGgxArjT1R/xL3XZIDmjTWfMbA==
-X-Received: by 2002:a63:d443:: with SMTP id i3-v6mr2770301pgj.216.1535486028458;
-        Tue, 28 Aug 2018 12:53:48 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
-        by smtp.gmail.com with ESMTPSA id 1-v6sm3786105pfk.134.2018.08.28.12.53.47
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 28 Aug 2018 12:53:47 -0700 (PDT)
-Date:   Tue, 28 Aug 2018 12:53:47 -0700
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     kernel test robot <rong.a.chen@intel.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, lkp@01.org
-Subject: Re: [lkp-robot] [tracing]  c3bc8fd637:
- WARNING:at_kernel/rcu/tree.c:#rcu_irq_enter
-Message-ID: <20180828195347.GA228832@joelaf.mtv.corp.google.com>
-References: <20180823023839.GA13343@shao2-debian>
+        Tue, 28 Aug 2018 19:49:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=TGxruCtIGC7lNOti6xCrQl6albp2BM4KRA2nlWn4cuA=; b=Y0fmdz40wlGoaj5wv/OlOcYXDW
+        UlsoEtH4HClkcpUfi1SbIPKBuTEvAtFcVSUJ55eG5MsAg7KCFUY0Xp5WOv4vW9ETm2HJ2vESTYduP
+        BMG5OyuitQKVbA5Q8g4duuU3nZDrS8G3Px8ZO6H5EhVO7K19a337tERgnAtvGn7vk25TZQIjrkNRA
+        Ww9xH157OZBuq84dxKFhE28B5upULHNVYuXx4CtMgWHKrw7glxloltaBUyJO8WHal+2fROgSXH343
+        1cQm81o4o3hr0vgy82l2ZHGMI+ijsKJN1jNycbfZRvhY4ZW7Sk42vSlQ0vZyOSzJ0MyX0so98vaXs
+        XVVN/3hQ==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fuk5h-0004jG-Ss; Tue, 28 Aug 2018 19:55:54 +0000
+Subject: Re: [PATCH v3] modules_install: make missing $DEPMOD a warning
+ instead of an error
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-kbuild <linux-kbuild@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable <stable@vger.kernel.org>,
+        Lucas De Marchi <lucas.demarchi@profusion.mobi>,
+        Lucas De Marchi <lucas.de.marchi@gmail.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Jessica Yu <jeyu@kernel.org>,
+        Chih-Wei Huang <cwhuang@linux.org.tw>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>
+References: <4449cd91-fae5-caf1-a917-82e0c5f0aba8@infradead.org>
+ <CAK7LNASyhKFp+AWQr-RWTRbMu78=G7Uj=350xrjq_Lht8MVYzQ@mail.gmail.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <c9066b61-6666-5adc-1f34-f8cea91864c5@infradead.org>
+Date:   Tue, 28 Aug 2018 12:55:50 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180823023839.GA13343@shao2-debian>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CAK7LNASyhKFp+AWQr-RWTRbMu78=G7Uj=350xrjq_Lht8MVYzQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 23, 2018 at 10:38:39AM +0800, kernel test robot wrote:
-> FYI, we noticed the following commit (built with gcc-6):
+On 08/23/2018 09:20 PM, Masahiro Yamada wrote:
+> Hi Randy,
 > 
-> commit: c3bc8fd637a9623f5c507bd18f9677effbddf584 ("tracing: Centralize preemptirq tracepoints and unify their usage")
-> https://git.kernel.org/cgit/linux/kernel/git/rostedt/linux-trace.git ftrace/core
 > 
-> in testcase: trinity
-> with following parameters:
+> 2018-08-24 3:13 GMT+09:00 Randy Dunlap <rdunlap@infradead.org>:
+>> From: Randy Dunlap <rdunlap@infradead.org>
+>>
+>> When $DEPMOD is not found, only print a warning instead of exiting
+>> with an error message and error status.
 > 
-> 	runtime: 300s
 > 
-> test-description: Trinity is a linux system call fuzz tester.
-> test-url: http://codemonkey.org.uk/projects/trinity/
+> Could you add the motivation of this change
+> (as Nikolaus reported) ?
+> 
+> Without the reason recorded in git-log,
+> somebody may wonder why this commit is useful.
+> 
 
-This appears to not be testing the tip of ftrace/core or Linus's tree which
-contains several other patches/fixes ontop.
+Added for v4.
+
+> 
+>> Warning: 'make modules_install' requires /sbin/depmod. Please install it.
+>> This is probably in the kmod package.
+>>
+>> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+>> Fixes: 934193a654c1 ("kbuild: verify that $DEPMOD is installed")
+>> Cc: stable@vger.kernel.org
+>> Cc: Lucas De Marchi <lucas.demarchi@profusion.mobi>
+>> Cc: Lucas De Marchi <lucas.de.marchi@gmail.com>
+>> Cc: Michal Marek <michal.lkml@markovi.net>
+>> Cc: Jessica Yu <jeyu@kernel.org>
+>> Cc: Chih-Wei Huang <cwhuang@linux.org.tw>
+>> Cc: H. Nikolaus Schaller <hns@goldelico.com>
+> 
+> Reported-by: H. Nikolaus Schaller <hns@goldelico.com>
+> 
+> 
+
+Added for v4.
+
+> 
+> 
+>> ---
+>> v2: add missing "exit 0" and update the commit message (no Error).
+>> v3: add Fixes: and Cc: stable
+>>
+>>  scripts/depmod.sh |    4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> --- lnx-418.orig/scripts/depmod.sh
+>> +++ lnx-418/scripts/depmod.sh
+>> @@ -15,9 +15,9 @@ if ! test -r System.map ; then
+>>  fi
+>>
+>>  if [ -z $(command -v $DEPMOD) ]; then
+>> -       echo "'make modules_install' requires $DEPMOD. Please install it." >&2
+>> +       echo "Warning: 'make modules_install' requires $DEPMOD. Please install it." >&2
+>>         echo "This is probably in the kmod package." >&2
+>> -       exit 1
+>> +       exit 0
+>>  fi
+>>
+>>  # older versions of depmod require the version string to start with three
+> 
+> 
+> 
+> BTW, if System.map is missing, depmod is silently skipped.
+> 
+> 
+> I think if System.map is missing, a user is doing something wrong,
+> but you could do like this:
+> 
+> $ make mrproper
+>    [snip]
+> $ make defconfig
+>    [snip]
+> $ make modules
+>    [snip]
+> $ make modules_install
+>   INSTALL drivers/thermal/x86_pkg_temp_thermal.ko
+>   INSTALL fs/efivarfs/efivarfs.ko
+>   INSTALL net/ipv4/netfilter/ipt_MASQUERADE.ko
+>   INSTALL net/ipv4/netfilter/iptable_nat.ko
+>   INSTALL net/ipv4/netfilter/nf_log_arp.ko
+>   INSTALL net/ipv4/netfilter/nf_log_ipv4.ko
+>   INSTALL net/ipv4/netfilter/nf_nat_ipv4.ko
+>   INSTALL net/ipv6/netfilter/nf_log_ipv6.ko
+>   INSTALL net/netfilter/nf_log_common.ko
+>   INSTALL net/netfilter/nf_nat.ko
+>   INSTALL net/netfilter/nf_nat_ftp.ko
+>   INSTALL net/netfilter/nf_nat_irc.ko
+>   INSTALL net/netfilter/nf_nat_sip.ko
+>   INSTALL net/netfilter/xt_LOG.ko
+>   INSTALL net/netfilter/xt_addrtype.ko
+>   INSTALL net/netfilter/xt_mark.ko
+>   INSTALL net/netfilter/xt_nat.ko
+>   DEPMOD  4.18.0+
+> 
+> 
+> The log looks like all the process went well,
+> but depmod is actually skipped because System.map is
+> generated by "make vmlinux"
+> 
+> 
+> What do you think we should do about this case?
+> 
+> Skip depmod silently?
+> Make it fail?
+> Print noisy warning like missing depmod case?
+
+Since this shouldn't be happening, I prefer the noisy warning message
+like the missing depmod case.
+
+Do you want a separate patch for that?
 
 thanks,
-
-- Joel
-
+-- 
+~Randy
