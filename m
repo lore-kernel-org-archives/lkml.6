@@ -2,263 +2,156 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ACEEC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:27:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7D99C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:31:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF9372088E
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:27:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 830AA20659
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:31:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="exggDbUF";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="WTFr1zVp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF9372088E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="EE5estAc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 830AA20659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727684AbeH1VTr (ORCPT
+        id S1727306AbeH1VXp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 17:19:47 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:37310 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726998AbeH1VTr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 17:19:47 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 0187D606FA; Tue, 28 Aug 2018 17:27:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535477227;
-        bh=RRM+tZX53lXhQbLYIXhCCrECQaBNQh6nsgFHXUf3ecQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=exggDbUFw/YfDpJUTU/PrefxJpCIdMS6reHybtbssRjW87VXONiUNkM3U1WSKVj+V
-         aQPEeyI8yIJV4U/u00+sR0xrEX3taiwO/KBOb2RJHKYLTps4bSaix2ZlJdvZ03xzS0
-         QahoMW9nonix1zTw49LGkpCGaQQjm0QSAkC5h0Sc=
-Received: from [192.168.31.254] (unknown [103.66.79.37])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 87936601A0;
-        Tue, 28 Aug 2018 17:26:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535477224;
-        bh=RRM+tZX53lXhQbLYIXhCCrECQaBNQh6nsgFHXUf3ecQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=WTFr1zVpLT2DNPoFEcSz/cFTzkClKQrk/NOZZIqwtDOfWvbTG+h87OTX5Li+zqJ+3
-         RQno3fjpilPrcw1u3k34w2SffcSc9eCRbJVPmD6PjR2TdKTfoReVwU+Ur2aVxwUtxO
-         oRAxBpUDehwOJEMcYdW71of+RvoLCehmsTOC5DA0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 87936601A0
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-Subject: Re: [RFC PATCH v2 2/3] pstore: Add register read/write{b,w,l,q}
- tracing support
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Kees Cook <keescook@chromium.org>, Ingo Molnar <mingo@redhat.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Tony Luck <tony.luck@intel.com>, Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Joe Perches <joe@perches.com>,
-        Jim Cromie <jim.cromie@gmail.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-References: <cover.1535119710.git.saiprakash.ranjan@codeaurora.org>
- <65985f8df55b037283746559c1718a54d56e7ec4.1535119711.git.saiprakash.ranjan@codeaurora.org>
- <CAGXu5jL6tGu9U_ANrZSfWREtySqFAJ+CQa3v5YRihZ2oHNMGGw@mail.gmail.com>
- <7b212c02-d7ce-4309-155f-22b36963e41c@codeaurora.org>
- <20180827121530.525299e3@gandalf.local.home>
- <369f384b-c419-99d8-c0a4-3ed38f1dd0f4@codeaurora.org>
- <20180828120224.381d406a@gandalf.local.home>
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Message-ID: <e5f541ff-21f9-639f-5619-1c6df6db873d@codeaurora.org>
-Date:   Tue, 28 Aug 2018 22:56:56 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 28 Aug 2018 17:23:45 -0400
+Received: from mail-co1nam03on0094.outbound.protection.outlook.com ([104.47.40.94]:49514
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727040AbeH1VXp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 17:23:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zhAt41GkKE/dfAvTVeAeOr0Z1O/NNzeP0Sb8YPzRpjQ=;
+ b=EE5estAc33j07shULFqvtm/XY4snFnoglYDYGftCjFlHjB9CrL0Y5BfU5FFnYZWanpnCfLI7DdEpfcmH3aFrS5ch/7SydWiz2LezNrHXSStQ9ovZF0s/d5dpUX4GsZ7/409TkfGYxA8o5+NlkoQTm0j9i6XtaBl38+KAwn30ex8=
+Received: from localhost (4.16.204.77) by
+ BYAPR08MB4933.namprd08.prod.outlook.com (2603:10b6:a03:6a::14) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1080.15; Tue, 28 Aug 2018 17:30:58 +0000
+Date:   Tue, 28 Aug 2018 10:30:54 -0700
+From:   Paul Burton <paul.burton@mips.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Paul Cercueil <paul@crapouillou.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Jonathan Corbet <corbet@lwn.net>, od@zcrc.me,
+        Mathieu Malaterre <malat@debian.org>,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v7 12/24] pwm: jz4740: Use regmap and clocks from TCU
+ driver
+Message-ID: <20180828173054.jlzczfxwjipdwntt@pburton-laptop>
+References: <20180821171635.22740-1-paul@crapouillou.net>
+ <20180821171635.22740-13-paul@crapouillou.net>
 MIME-Version: 1.0
-In-Reply-To: <20180828120224.381d406a@gandalf.local.home>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180821171635.22740-13-paul@crapouillou.net>
+User-Agent: NeoMutt/20180716
+X-Originating-IP: [4.16.204.77]
+X-ClientProxiedBy: BN6PR1001CA0032.namprd10.prod.outlook.com
+ (2603:10b6:405:28::45) To BYAPR08MB4933.namprd08.prod.outlook.com
+ (2603:10b6:a03:6a::14)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 3fa05353-eef0-42ec-a5b2-08d60d0c0487
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR08MB4933;
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR08MB4933;3:Tf5CY40xRp/tVsXK8bHyKGBe8S9cihp+8CAObBMPmCLLYmOTOLWOzvPYd3qj5ZclWzKBcQi7lF6xwpFVng3NF7fWsU1BsvsP4ebL+/Jz5eWb2m3BNIs1/ESOhRrC23gW2YkNxllBbifP2WMvlw2oM2H8n3lw+hrkY3j5jv542ZimKEUrI0RIRpsF4P4zhS/76MDLZe7N/GP5LvbbEW8AZz7eENSmxe3gSb+xHx+mBiWtOXujhKWrKK3jGTl2k+aF;25:UG1a1HZRHMv+5p9NOBXXlv1FUYnPp+4h5xFlZjvH38FhBHy1afubUhDlvvE+573nr5N65XVOQFxHG5g/N+Iw0vHjz5smucKNP1A6wofzYpGSg38r1D8Rq3G2mrpHx/eooDbXGplh/a3nXFpiGjNkS9eWfzdgSgWIW6p92zVk5lv8nm4pBLUtqBgI86QxhRKxH57nauSXuijW7NHtP1ykcDykWuQL2cKK9rY1VVdCt+b7kSn7oIbK0MqU6u66w9y83rnWVALDyRPp0E2TXhG91YrOewd44oxV1M6BWVnLicG6dpBegV7siIJnhRFO7qr1ZWuHuj5hF8A6q4qz8TElsA==;31:QfsxoRLjF7tuFMcQNGaYw+crQlAMalwucrudcL0IHUvL+fv8u+G3wmnXLvlzPxSLwMebkBWDBaxt9PfwjbDaY8rUbCU8BqDFz9abS+yfkZK+1ZsQ9mEkXmvuqjS8K73qDCNBsjCcXL4KL/+soGyzaRNx9O8N+0miRyJ7nf3ep/kgDSq+xE7u2RJQk2ApQ7E11YhxjxAd20KRHCVf59FbAB+ik+psN5roqmjULmZ7Oy4=
+X-MS-TrafficTypeDiagnostic: BYAPR08MB4933:
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR08MB4933;20:VC5hlrQduLLniHm1c2jAipxdrQ25isMfvBPFvBE4PhSDwX/8mNlQYBUqyeIxOY69Wo5uyqIHlxjhYJz4DEXZJW2N4AaR8Ece+vKdiUbIymL9dp8YN/vY19lyUej4r48cGPLb9fZqoruAC5IgLNPJsMckKSo1G7nC0DeOLsJHRUQk9W5S4k6KjadM4o3Igac7Y9cl7IGFoowkML+4PTvg0iue022UZ2+IEkGCebHA/E2UshZ/1CdagaG8ONO8Jiht;4:fT8PZciN0XaGXC4VZ00h8tNpmXfrmo9yASrKwqhSzyomFRcjXTEpLn8yf53ncofy0wi7zex7OJ662nAov76ei99MVEosvHrE8p5AVpFqzgvCpP+ZAx8j7VltOCmRhTRw86g3/TwyeTNWPgtVLizuT25VNx52cXjhbC5wzBgIi83iXdLUsx5h3PqZrVGse8Grmseb2hgFrc2wfxIDZ4ndwB/uzKJVX4A4C7rQjozqzd97DC4iWcl7PCTnsLehmJowgYFQz6bgYkX4COffLa1ULw==
+X-Microsoft-Antispam-PRVS: <BYAPR08MB4933EF29DE9C4F27E58BD141C10A0@BYAPR08MB4933.namprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(93006095)(3002001)(10201501046)(3231311)(944501410)(52105095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(201708071742011)(7699016);SRVR:BYAPR08MB4933;BCL:0;PCL:0;RULEID:;SRVR:BYAPR08MB4933;
+X-Forefront-PRVS: 077884B8B5
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(7916004)(366004)(376002)(396003)(346002)(39850400004)(136003)(199004)(189003)(229853002)(23726003)(9686003)(76176011)(6486002)(305945005)(386003)(6496006)(47776003)(66066001)(14444005)(4326008)(7736002)(5660300001)(486006)(1076002)(44832011)(25786009)(956004)(53936002)(50466002)(52116002)(6246003)(97736004)(68736007)(476003)(33896004)(6346003)(33716001)(16526019)(16586007)(58126008)(54906003)(186003)(11346002)(76506005)(6666003)(446003)(7416002)(8676002)(6916009)(3716004)(478600001)(39060400002)(2906002)(3846002)(106356001)(316002)(105586002)(6116002)(81166006)(42882007)(8936002)(26005)(81156014);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR08MB4933;H:localhost;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: wavecomp.com does not designate
+ permitted sender hosts)
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=pburton@wavecomp.com; 
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BYAPR08MB4933;23:P1+DoDszfukMNIdHiDvTpytffkw9FcgUF10qnFeVK?=
+ =?us-ascii?Q?6Qr/0IXbszrXGTxmeOWk9N+7Yzzu/muFjiDBGKYCdXZatvoOAX8r+78fNJc8?=
+ =?us-ascii?Q?KVGteA/WLOzagXTWQwKE97PGRKmLDcmEcRVfweUCoIvKwVqRF6PfWEqmdl2F?=
+ =?us-ascii?Q?2xyDO57GBSWg26LZUurgQvuiEm41WvAUfcBPoBxPuzI2E48FwGvW8SVEeo1R?=
+ =?us-ascii?Q?tCe1vESF6/6m+keVyBwN5gPqrZJmH39JacGt8HjVwf1+2rlf7yjWJCqfaP54?=
+ =?us-ascii?Q?JZ9HWL2VeefDN+ajy1o+ob6uMw/9ZfmNG/kI8jVDleVB3w1hcMLnYExOc8h2?=
+ =?us-ascii?Q?Z4KRZLwqBJWdY36K2Nt1Blfjrs3/Vqsp7X1tbFlCRodafWyokjCFvInYspbU?=
+ =?us-ascii?Q?4kxQrI0AROwBeTvNmH2wrnssbiY1DOPPyPiNuQXaaw9fOR3PD6lXs6H72LxQ?=
+ =?us-ascii?Q?FOyMya8/ZkZwv78eoKBiMzRwm6z+zdEViJLIiQvBBlOb1RyYcpQl7KPr9QKo?=
+ =?us-ascii?Q?Hd93A2ucj+UsWQpGYBTKF0uBdYCk6BBmy1ed+tm79t5ZaCKIUy+p0DdtlCfx?=
+ =?us-ascii?Q?N1ONVHHYre6ZtGWHyRH66fTMLTDBrf/imCdkjBUAg3qu6E0bbzzFXaMCulX/?=
+ =?us-ascii?Q?LV7ZiCXgiDHXSyTXOubGJNwH4n2Q7wzhZSJAPbUNtfTjfJOJtfjR7NVoMkOj?=
+ =?us-ascii?Q?kg2lxslP4Sn2+ew0tRrfH0Jw+c5/sVtmGDRpmphKYipe4VgTOSp1TkETGOzf?=
+ =?us-ascii?Q?WYgxoIq9JAQ1FWPaKp4MYX6rRL8LumnnaFUrdWxQtxEavabpC2NROe1uWcPM?=
+ =?us-ascii?Q?sDT1/UyRgbVQKHmehsTiuSeAQJzerwFcJTepquyndvhK32pfInkzEaU4qH4f?=
+ =?us-ascii?Q?+coPliEU7qlJ8pyq5ygtnGRdhTAFEWyKlOBfcXJE0g1ea/YGe6UIkPavFNIN?=
+ =?us-ascii?Q?aceYV3xXYb0PYb9eUoF2pzseop327dUhq7IaB3dhO2L3HaWwpaEzrr1toQ2L?=
+ =?us-ascii?Q?/d9ldwL+GQkt6qzW2pCwoyOqI5/jAGzW9ZLBiTT6al1AXcIxFMFcpp7zhYxE?=
+ =?us-ascii?Q?XD+2T3DJSVYSySan6V2obaN/I2UuTzITKq+xStXz+aP/HISNGUQnqhD3rp0w?=
+ =?us-ascii?Q?0EpR04bleEoxvOzZ/j1jCyLg1BPCm8ss5MAb6KRmyE7xlyP8u3yytM9OxUVh?=
+ =?us-ascii?Q?JW624hU8tD1mPybTCXR6TSR5oqV+mTzzFYpPjjDCjv8r7+L6Aekmo5F/2NfU?=
+ =?us-ascii?Q?Bp88Ft/0d2vLiqcp/2tOoOe95ILv2de+M5WbxUmKeaHZnV69yNUWqBAAUaxc?=
+ =?us-ascii?Q?NnEjL0il1Kb9r9vaLcx9OzXTdLkfsTyQEdgmsXP3h8irVjA6l8ql7pGIXfNW?=
+ =?us-ascii?Q?t/XyrIHGDz8eRBZhVluyvv03i/3JTk1w87ckQZzJSF0+oPpeH39J2bzQESpZ?=
+ =?us-ascii?Q?TWwELENTg=3D=3D?=
+X-Microsoft-Antispam-Message-Info: rGRlCVIYBc/8dEx8O6xkvi/N9rMcO4c3kqx5M6Vv0VfU/dmok8YQEA3kpB8JqaG6DMxvoHfcHptzp81vjtR2ZNVFwo+Qh2Rh77gnK4NRRaEEZ/J7A9qjInfL7pC0kbMcbeCxhRAf1F9MuU9VxNl34EMQcyRBLBdSvHlMDtQQtGBpUAyBYTUBnKucaJtYt80DAun3lCx3fb415XxQqXY9EwR7BccgAzjzKqlm6WQvL+6Szo4KSrQL67sYRvYdN7JhGxJcVHoNKBUpG7hzbfE1Xc6LKNgOgPsynsGehB4GsNx6O3fxvyi2n/mMrvs/Ksmcl57bz87O4Yk6ElL7YmzX12d9Kmz7VRiwV/W+LIvSBew=
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR08MB4933;6:BCcQUqucGWQOoS6Vj0I3oLEP9kWEmsuKPNwjlT0SknwE2aT/Rjtpmousb3xKfP3Svli2WK4SsjdM4XJVmgLK27w3CD6ujsoDWXbR62urTr3zxyGs9BJxr23BI/+IGO4J8pVXjUhb3EXSPns7v36m4odJ9YTqxmdndyrjTOG2UBLvNCSzlXZtwNta+cIynFbw4dIRVpVPwSthLHbIMdR6Oht/8P3lZwIXTSiSTB1OMLEKKC6LdpY5bsR/Bq9gZMOsMXj/DkDwLD52hN6LuEndKSHWSRoE/gmKERRYDsxx4WpBjh2oVhLSaQHIhOJUTNa/OG0cxqVjWkR+dRozWzFyBHjxPfEK+MFbZVmnOE8Cj4Jc08SEzIowvrWLwUaPPXDE91NfYPRP77iagFURzCDGDNC8173MTG6n35w5sJlWKw6H8MCigUm0i/qilLFWaLvHIvdRdIQWc8dWcNG/FYwY0g==;5:xCegXTYwfdqyZpGqGJW6IHWUlWjw5aVDuhpunUAlKcL3iEIp6Z4tBGe6+qCxw7RsNrizR0wVTiXhWtTMsK66DBKYMzkC5ddw3H4h9nPyE7teHyHppDDEjq6Y4GOFk1NHkMBGXsqqR/4zhnu8x4/CLdfRciiGASIRm9oTN7y52ZE=;7:KW2Ojl44CVUeGsDGH1wSHSvMWg4IRwNxSFcq5K0MQsBFIMrecODMknJ4zebPjhPdwKenIer3hkmfvIUWdXJd5uHGRKN4aTyllr9FQJBiJ1ZtBaqVZTekDqr61Fonjl+iClk8NB9kWGiWQI7HHrfdx0itBmXRp/s9bsh+2o1kv8+PMbBJq9uV+qAj8+2W+LaHn65NerYcNHEsbMt7HyI0HU1z25fAKoIYdhpbdbOwENnfWg/Zyn2O4HFNSECqXLpK
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: mips.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2018 17:30:58.3146 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3fa05353-eef0-42ec-a5b2-08d60d0c0487
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 463607d3-1db3-40a0-8a29-970c56230104
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR08MB4933
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/28/2018 9:32 PM, Steven Rostedt wrote:
-> On Tue, 28 Aug 2018 18:47:33 +0530
-> Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org> wrote:
-> 
->> On 8/27/2018 9:45 PM, Steven Rostedt wrote:
->>> On Sat, 25 Aug 2018 12:54:07 +0530
->>> Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org> wrote:
->>>
->>>    
->>>> Ftrace does not trace __raw{read,write}{b,l,w,q}() functions. I am not
->>>> sure why and how it is filtered out because I do not see any notrace
->>>> flag in those functions, maybe that whole directory is filtered out.
->>>> So adding this functionality to ftrace would mean removing the notrace
->>>> for these functions i.e., something like using
->>>> __raw{read,write}{b,l,w,q}() as the available filter functions. Also
->>>> pstore ftrace does not filter functions to trace I suppose?
->>>
->>> It's not traced because it is inlined. Simply make the __raw_read
->>> function a normal function and it will be traced. And then you could
->>> use ftrace to read the function.
->>>
->>> If this has to be per arch, you can register your callback with the
->>> REGS flags, and pt_regs will be passed to your callback function you
->>> attached to __raw_read*() as if you inserted a break point at that
->>> location, and you can get any reg data you want there.
->>>
->>>   
->>
->> Thank you very much for the information Steven. Ok so we can get
->> function parameters with pt_regs.
-> 
-> Yes.
-> 
->>
->>>>
->>>> Coming to the reason as to why it would be good to keep this separate
->>>> from ftrace would be:
->>>> * Ftrace can get ip and parent ip, but suppose we need extra data (field
->>>> data) as in above sample output we would not be able to get through ftrace.
->>>
->>> As mentioned above, you can get regs (and ftrace is being expanded now
->>> to get parameters of functions).
->>>    
->> You mean there is another way to get parameters other than regs?
-> 
-> No, but you could register a callback function to be called when a
-> function is hit, and the pt_regs are passed to it. We are working on
-> getting parameters from the pt_regs (see this patch:
->   http://lkml.kernel.org/r/152465885737.26224.2822487520472783854.stgit@devbox)
-> 
-Cool, thanks for the link.
->>
->>>>
->>>> * Although this patch is for tracing register read/write, we can easily
->>>> add more functionality since we have dynamic_rtb api which can be hooked
->>>> to functions and start tracing events(IRQ, Context ID) something similar
->>>> to tracepoints.
->>>> Initially thought of having tracepoints for logging register read/write
->>>> but I do not know if we can export tracepoint data to pstore since the
->>>> main usecase is to debug unknown resets and hangs.
->>>
->>> I don't know why not? We have read/write tracepoints for
->>> read/write_msr() calls in x86.
->>>
->>> Anything can add a hook to the callback of the tracepoints, and use
->>> that infrastructure instead of creating yet another dynamic code
->>> modification infrastructure.
->>>    
->> Thanks for pointing out to read/write_msr, I checked it and was able to
->> implement something similar for arm64. But still can we export
->> tracepoint data to pstore because we need to debug reset cases and for
->> that pstore is of real importance?. If so then it would be great to have
->> various events logged into pstore which can be a lot of help for debugging.
->>
->> Also with the current dynamic filtering of read/write(PATCH 3/3), it is
->> a lot easier to filter register read/write since we use dynamic debug
->> framework which provides file, function and line level filtering
->> capacity. Maybe if we can add something like this to trace events it
->> would be better?
-> 
-> I would recommend using the tracepoint infrastructure. Note,
-> tracepoints and trace events are two different things. Trace events use
-> tracepoints, and you use trace events to create tracepoints, thus they
-> are tightly coupled. But once a tracepoint exists, anything can connect
-> to them without needing to use the trace event.
-> 
-> Let's look at the read_msr trace event. Because it is in a header, to
-> avoid "include hell" we open code some of it:
-> 
-> static inline unsigned long long native_read_msr(unsigned int msr)
-> {
-> 	unsigned long long val;
-> 
-> 	val = __rdmsr(msr);
-> 
-> 	if (msr_tracepoint_active(__tracepoint_read_msr))
-> 		do_trace_read_msr(msr, val, 0);
-> 
-> 	return val;
-> }
-> 
-> Where:
-> 
-> #ifdef CONFIG_TRACEPOINTS
-> #define msr_tracepoint_active(t) static_key_false(&(t).key)
-> #else
-> #define msr_tracepoint_active(t) false
-> #endif
-> 
-> We have to open code the access to the tracepoint.key because msr.h is
-> used in a lot of critical headers, we couldn't use the normal
-> tracepoint.h header here.
-> 
-> The "static_key_false()" is a jump label that is just a nop. When the
-> static_key is enabled, the nop is converted to a static "jmp" to the
-> code that calls "do_trace_read_msr()". This is a function call to a
-> function defined in msr.c (where we can do proper includes), and all
-> that does is call the tracepoint "trace_read_msr()", which is also a
-> static key that, when enabled, will iterate over a list of functions it
-> should call with the defined parameters (msr, val, failed).
-> 
-> When defining the trace event for "read_msr", it creates the tracepoint
-> "trace_read_msr()" and we place it in this do_trace_read_msr()
-> function. The TRACE_EVENT() macros creates everything that is needed to
-> connect the trace event "read_msr" to the tracepoint
-> "trace_read_msr()", and you can enable this via the tracefs subsystem
-> or via perf.
-> 
-> But you can also add your own hook to that tracepoint. If you have code
-> that does:
-> 
-> register_trace_read_msr(func, data);
-> 
-> The "func" gets called when trace_read_msr() is hit. Thus you could
-> have:
-> 
-> static void my_func(void *data, unsigned msr, u64 val, int failed)
-> {
-> 	struct my_struct *my_data = data;
-> 
-> 	do_something_with(my_data, msr, val, failed);
-> }
-> 
-> {
-> 	struct my_struct *my_data;
-> 
-> 	my_data = kzalloc(sizeof(*my_data)), GFP_KERNEL);
-> 
-> 	register_trace_read_msr(my_func, my_data);
-> }
-> 
-> 
-> And then your function "my_func" will be called with any data you
-> registered with it (you may register "NULL" if you don't need to pass
-> in data), and it will also get the parameters passed to trace_read_msr()
-> 
-> If you want to have you "my_func" record into pstore, then it will
-> happen at runtime, and if the system resets, you have your data where
-> you want it.
-> 
+Hi Thierry,
 
-Wow, thank you so much for the detailed explanation, it helps a lot. I 
-will try to use this and post next version soon.
+On Tue, Aug 21, 2018 at 07:16:23PM +0200, Paul Cercueil wrote:
+> The ingenic-timer "TCU" driver provides us with a regmap, that we can
+> use to safely access the TCU registers.
+> 
+> It also provides us with clocks, that can be (un)gated, reparented or
+> reclocked from devicetree, instead of having these settings hardcoded in
+> this driver.
+> 
+> While this driver is devicetree-compatible, it is never (as of now)
+> probed from devicetree, so this change does not introduce a ABI problem
+> with current devicetree files.
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+> 
+> Notes:
+>      v5: New patch
+>     
+>      v6: Drop requirement of probing from devicetree
+>     
+>      v7: No change
+> 
+>  drivers/pwm/Kconfig      |   2 +
+>  drivers/pwm/pwm-jz4740.c | 124 +++++++++++++++++++++++++++++++----------------
+>  2 files changed, 83 insertions(+), 43 deletions(-)
 
-- Sai Prakash
+How do patches 12-16 of this series look to you from a drivers/pwm
+perspective?
+
+If you're happy with them it'd be great to get an ack so I can take this
+through the MIPS tree along with the rest of the series.
+
+Thanks,
+    Paul
