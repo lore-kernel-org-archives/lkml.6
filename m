@@ -2,145 +2,157 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 007B7C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:10:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04EB1C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:15:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E53020878
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:10:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E53020878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9EE4720647
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:15:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EE4720647
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axis.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727611AbeH1OBG (ORCPT
+        id S1727457AbeH1OGI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 10:01:06 -0400
-Received: from foss.arm.com ([217.140.101.70]:34864 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727094AbeH1OBF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 10:01:05 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4ABAC18A;
-        Tue, 28 Aug 2018 03:10:11 -0700 (PDT)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.emea.arm.com [10.4.13.117])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E8A193F557;
-        Tue, 28 Aug 2018 03:10:09 -0700 (PDT)
-Date:   Tue, 28 Aug 2018 11:10:07 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-Cc:     Jingoo Han <jingoohan1@gmail.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] PCI: dwc: fix scheduling while atomic issues
-Message-ID: <20180828101007.GB27217@e107981-ln.cambridge.arm.com>
-References: <20180821141512.368e3df2@xhacker.debian>
+        Tue, 28 Aug 2018 10:06:08 -0400
+Received: from bastet.se.axis.com ([195.60.68.11]:32944 "EHLO
+        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727120AbeH1OGI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 10:06:08 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bastet.se.axis.com (Postfix) with ESMTP id DDDA41814A;
+        Tue, 28 Aug 2018 12:14:13 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at bastet.se.axis.com
+Received: from bastet.se.axis.com ([IPv6:::ffff:127.0.0.1])
+        by localhost (bastet.se.axis.com [::ffff:127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id tCvUjuVtkcov; Tue, 28 Aug 2018 12:14:13 +0200 (CEST)
+Received: from boulder03.se.axis.com (boulder03.se.axis.com [10.0.8.17])
+        by bastet.se.axis.com (Postfix) with ESMTPS id BC2591807C;
+        Tue, 28 Aug 2018 12:14:12 +0200 (CEST)
+Received: from boulder03.se.axis.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A7DF21E07D;
+        Tue, 28 Aug 2018 12:14:12 +0200 (CEST)
+Received: from boulder03.se.axis.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 999101E07C;
+        Tue, 28 Aug 2018 12:14:12 +0200 (CEST)
+Received: from seth.se.axis.com (unknown [10.0.2.172])
+        by boulder03.se.axis.com (Postfix) with ESMTP;
+        Tue, 28 Aug 2018 12:14:12 +0200 (CEST)
+Received: from lnxartpec.se.axis.com (lnxartpec.se.axis.com [10.88.4.9])
+        by seth.se.axis.com (Postfix) with ESMTP id 8D18B2147;
+        Tue, 28 Aug 2018 12:14:12 +0200 (CEST)
+Received: by lnxartpec.se.axis.com (Postfix, from userid 10564)
+        id 850AE8016F; Tue, 28 Aug 2018 12:14:12 +0200 (CEST)
+Date:   Tue, 28 Aug 2018 12:14:12 +0200
+From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     catalin.marinas@arm.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCHv2] kmemleak: Add option to print warnings to dmesg
+Message-ID: <20180828101412.mb7t562roqbhsbjw@axis.com>
+References: <20180827083821.7706-1-vincent.whitchurch@axis.com>
+ <20180827151641.59bdca4e1ea2e532b10cd9fd@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180821141512.368e3df2@xhacker.debian>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180827151641.59bdca4e1ea2e532b10cd9fd@linux-foundation.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 21, 2018 at 02:15:12PM +0800, Jisheng Zhang wrote:
-> When programming inbound/outbound atu, we call usleep_range() after
-> each checking PCIE_ATU_ENABLE bit. Unfortunately, the atu programming
-> can be called in atomic context:
+On Mon, Aug 27, 2018 at 03:16:41PM -0700, Andrew Morton wrote:
+> On Mon, 27 Aug 2018 10:38:21 +0200 Vincent Whitchurch <vincent.whitchurch@axis.com> wrote:
 > 
-> inbound atu programming could be called through
-> pci_epc_write_header()
->   =>dw_pcie_ep_write_header()
->     =>dw_pcie_prog_inbound_atu()
+> > Currently, kmemleak only prints the number of suspected leaks to dmesg
+> > but requires the user to read a debugfs file to get the actual stack
+> > traces of the objects' allocation points.  Add an option to print the
+> > full object information to dmesg too.  This allows easier integration of
+> > kmemleak into automated test systems since those kind of systems
+> > presumably already save kernel logs.
 > 
-> outbound atu programming could be called through
-> pci_bus_read_config_dword()
->   =>dw_pcie_rd_conf()
->     =>dw_pcie_prog_outbound_atu()
-> 
-> Fix this issue by calling mdelay() instead.
-> 
-> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+> "presumably" is a bit rubbery.  Are you sure this change is sufficienty
+> useful to justify including it?  Do you have use-cases for it?
 
-Mind adding a Fixes: tag please ?
+We (like every one else) have automated test infrastructure which test
+our Linux systems.  With this option, running our tests with kmemleak is
+as simple as enabling kmemleak and this option; the test infrastructure
+knows how to save kernel logs, which will now include kmemleak reports.
+Without this option, the test infrastructure needs to be specifically
+taught to read out the kmemleak debugfs file.  Removing this need for
+special handling makes kmemleak more similar to other kernel debug
+options (slab debugging, debug objects, etc).
 
-Is:
-
-commit f8aed6ec624f ("PCI: dwc: designware: Add EP mode support")
-
-the commit you are fixing ?
-
-Thanks,
-Lorenzo
-
-> ---
 > 
-> Since v1
->  - use mdelay() instead of udelay() to avoid __bad_udelay()
+> > --- a/lib/Kconfig.debug
+> > +++ b/lib/Kconfig.debug
+> > @@ -593,6 +593,15 @@ config DEBUG_KMEMLEAK_DEFAULT_OFF
+> >  	  Say Y here to disable kmemleak by default. It can then be enabled
+> >  	  on the command line via kmemleak=on.
+> >  
+> > +config DEBUG_KMEMLEAK_WARN
+> > +	bool "Print kmemleak object warnings to log buffer"
+> > +	depends on DEBUG_KMEMLEAK
+> > +	help
+> > +	  Say Y here to make kmemleak print information about unreferenced
+> > +	  objects (including stacktraces) as warnings to the kernel log buffer.
+> > +	  Otherwise this information is only available by reading the kmemleak
+> > +	  debugfs file.
 > 
->  drivers/pci/controller/dwc/pcie-designware.c | 8 ++++----
->  drivers/pci/controller/dwc/pcie-designware.h | 3 +--
->  2 files changed, 5 insertions(+), 6 deletions(-)
+> Why add the config option?  Why not simply make the change for all
+> configs?
+
+No particular reason other than preserving the current behaviour for
+existing users.  I can remove the config option if Catalin is fine with
+it.
+
 > 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-> index 778c4f76a884..2153956a0b20 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware.c
-> @@ -135,7 +135,7 @@ static void dw_pcie_prog_outbound_atu_unroll(struct dw_pcie *pci, int index,
->  		if (val & PCIE_ATU_ENABLE)
->  			return;
->  
-> -		usleep_range(LINK_WAIT_IATU_MIN, LINK_WAIT_IATU_MAX);
-> +		mdelay(LINK_WAIT_IATU);
->  	}
->  	dev_err(pci->dev, "Outbound iATU is not being enabled\n");
->  }
-> @@ -178,7 +178,7 @@ void dw_pcie_prog_outbound_atu(struct dw_pcie *pci, int index, int type,
->  		if (val & PCIE_ATU_ENABLE)
->  			return;
->  
-> -		usleep_range(LINK_WAIT_IATU_MIN, LINK_WAIT_IATU_MAX);
-> +		mdelay(LINK_WAIT_IATU);
->  	}
->  	dev_err(pci->dev, "Outbound iATU is not being enabled\n");
->  }
-> @@ -236,7 +236,7 @@ static int dw_pcie_prog_inbound_atu_unroll(struct dw_pcie *pci, int index,
->  		if (val & PCIE_ATU_ENABLE)
->  			return 0;
->  
-> -		usleep_range(LINK_WAIT_IATU_MIN, LINK_WAIT_IATU_MAX);
-> +		mdelay(LINK_WAIT_IATU);
->  	}
->  	dev_err(pci->dev, "Inbound iATU is not being enabled\n");
->  
-> @@ -282,7 +282,7 @@ int dw_pcie_prog_inbound_atu(struct dw_pcie *pci, int index, int bar,
->  		if (val & PCIE_ATU_ENABLE)
->  			return 0;
->  
-> -		usleep_range(LINK_WAIT_IATU_MIN, LINK_WAIT_IATU_MAX);
-> +		mdelay(LINK_WAIT_IATU);
->  	}
->  	dev_err(pci->dev, "Inbound iATU is not being enabled\n");
->  
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> index 96126fd8403c..9f1a5e399b70 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.h
-> +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> @@ -26,8 +26,7 @@
->  
->  /* Parameters for the waiting for iATU enabled routine */
->  #define LINK_WAIT_MAX_IATU_RETRIES	5
-> -#define LINK_WAIT_IATU_MIN		9000
-> -#define LINK_WAIT_IATU_MAX		10000
-> +#define LINK_WAIT_IATU			9
->  
->  /* Synopsys-specific PCIe configuration registers */
->  #define PCIE_PORT_LINK_CONTROL		0x710
-> -- 
-> 2.18.0
+> >  config DEBUG_STACK_USAGE
+> >  	bool "Stack utilization instrumentation"
+> >  	depends on DEBUG_KERNEL && !IA64
+> > diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+> > index 9a085d525bbc..22662715a3dc 100644
+> > --- a/mm/kmemleak.c
+> > +++ b/mm/kmemleak.c
+> > @@ -181,6 +181,7 @@ struct kmemleak_object {
+> >  /* flag set to not scan the object */
+> >  #define OBJECT_NO_SCAN		(1 << 2)
+> >  
+> > +#define HEX_PREFIX		"    "
+> >  /* number of bytes to print per line; must be 16 or 32 */
+> >  #define HEX_ROW_SIZE		16
+> >  /* number of bytes to print at a time (1, 2, 4, 8) */
+> > @@ -299,6 +300,25 @@ static void kmemleak_disable(void);
+> >  	kmemleak_disable();		\
+> >  } while (0)
+> >  
+> > +#define warn_or_seq_printf(seq, fmt, ...)	do {	\
+> > +	if (seq)					\
+> > +		seq_printf(seq, fmt, ##__VA_ARGS__);	\
+> > +	else						\
+> > +		pr_warn(fmt, ##__VA_ARGS__);		\
+> > +} while (0)
+> > +
+> > +static void warn_or_seq_hex_dump(struct seq_file *seq, int prefix_type,
+> > +				 int rowsize, int groupsize, const void *buf,
+> > +				 size_t len, bool ascii)
+> > +{
+> > +	if (seq)
+> > +		seq_hex_dump(seq, HEX_PREFIX, prefix_type, rowsize, groupsize,
+> > +			     buf, len, ascii);
+> > +	else
+> > +		print_hex_dump(KERN_WARNING, pr_fmt(HEX_PREFIX), prefix_type,
+> > +			       rowsize, groupsize, buf, len, ascii);
+> > +}
 > 
+> This will print to the logs OR to the debugfs file, won't it?
+
+No, the information is always available in the debugfs file, even after
+this patch.  The dmesg printing is in addition to that.  The code is
+called with and without seq == NULL in different code paths.
