@@ -2,93 +2,70 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3A37C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 22:29:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED070C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 22:32:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85C262087B
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 22:29:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85C262087B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 920E12087B
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 22:32:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="p9OmKrTf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 920E12087B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727782AbeH2CXS (ORCPT
+        id S1727628AbeH2CZu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 22:23:18 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35050 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727067AbeH2CXR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 22:23:17 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 28 Aug 2018 22:25:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36790 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727318AbeH2CZu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 22:25:50 -0400
+Received: from localhost (unknown [104.132.0.94])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 11EE640241C9;
-        Tue, 28 Aug 2018 22:29:32 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-123-12.rdu2.redhat.com [10.10.123.12])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 86ED82026D6B;
-        Tue, 28 Aug 2018 22:29:30 +0000 (UTC)
-Subject: Re: [PATCH 2/2] fs/dcache: Make negative dentries easier to be
- reclaimed
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org, "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Larry Woodman <lwoodman@redhat.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Wangkai (Kevin C)" <wangkai86@huawei.com>,
-        Michal Hocko <mhocko@kernel.org>
-References: <1535476780-5773-1-git-send-email-longman@redhat.com>
- <1535476780-5773-3-git-send-email-longman@redhat.com>
- <20180828221352.GC11400@bombadil.infradead.org>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <6873378b-3202-e738-2366-5fb818b4a013@redhat.com>
-Date:   Tue, 28 Aug 2018 18:29:29 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        by mail.kernel.org (Postfix) with ESMTPSA id 875292087B;
+        Tue, 28 Aug 2018 22:32:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535495524;
+        bh=KNDE63myee7q7naAlBxUf1fdJwePm2cQnRXiGEHjZaw=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=p9OmKrTfqUp5qEo5YGUJ+lP4VSYtlDBUX01aju3bQjaJ7qRgYBgE9OB8XlMxybCU7
+         5KPAybps7LaW+uhh1tEa045vNuQcnZaHLPHlTBz+QZxmG4wwJwr03AB/1g0HFetQMw
+         O/3aSJQ368Dazzgku8pdXTHU9Eb2kfS1pw0NLHqE=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20180828221352.GC11400@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 28 Aug 2018 22:29:32 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 28 Aug 2018 22:29:32 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
+Content-Transfer-Encoding: quoted-printable
+To:     Johan Hovold <johan@kernel.org>, Tero Kristo <t-kristo@ti.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180822090319.29167-1-johan@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>
+References: <20180822090319.29167-1-johan@kernel.org>
+Message-ID: <153549552398.129321.2521954503276443182@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH] clk: ti: fix OF child-node lookup
+Date:   Tue, 28 Aug 2018 15:32:03 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/28/2018 06:13 PM, Matthew Wilcox wrote:
-> On Tue, Aug 28, 2018 at 01:19:40PM -0400, Waiman Long wrote:
->> @@ -134,7 +135,7 @@ bool list_lru_add(struct list_lru *lru, struct list_head *item)
->>  	spin_lock(&nlru->lock);
->>  	if (list_empty(item)) {
->>  		l = list_lru_from_kmem(nlru, item, &memcg);
->> -		list_add_tail(item, &l->list);
->> +		(add_tail ? list_add_tail : list_add)(item, &l->list);
->>  		/* Set shrinker bit if the first element was added */
->>  		if (!l->nr_items++)
->>  			memcg_set_shrinker_bit(memcg, nid,
-> That's not OK.  Write it out properly, ie:
->
-> 		if (add_tail)
-> 			list_add_tail(item, &l->list);
-> 		else
-> 			list_add(item, &l->list);
->
-Yes, I can rewrite it. What is the problem with the abbreviated form?
+Quoting Johan Hovold (2018-08-22 02:03:19)
+> Fix child-node lookup which by using the wrong OF helper was searching
+> the whole tree depth-first, something which could end up matching an
+> unrelated node.
+> =
 
-Cheers,
-Longman
+> Also fix the related node-reference leaks.
+> =
+
+> Fixes: 5b385a45e001 ("clk: ti: add support for clkctrl aliases")
+
+Found by inspection? Or it's actively causing problems? I'm thinking
+it's the former so this can bake in clk-next for a while.
 
