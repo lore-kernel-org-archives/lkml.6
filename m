@@ -5,48 +5,42 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 539F9C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 18:16:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DADCEC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 18:24:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16C562087E
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 18:16:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16C562087E
+	by mail.kernel.org (Postfix) with ESMTP id 929DA2087D
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 18:24:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 929DA2087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727336AbeH1WJ3 (ORCPT
+        id S1727166AbeH1WRb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 18:09:29 -0400
-Received: from smtprelay0080.hostedemail.com ([216.40.44.80]:54074 "EHLO
+        Tue, 28 Aug 2018 18:17:31 -0400
+Received: from smtprelay0126.hostedemail.com ([216.40.44.126]:34081 "EHLO
         smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726383AbeH1WJ3 (ORCPT
+        by vger.kernel.org with ESMTP id S1726383AbeH1WRb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 18:09:29 -0400
+        Tue, 28 Aug 2018 18:17:31 -0400
 Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay08.hostedemail.com (Postfix) with ESMTP id BD541182CF66E;
-        Tue, 28 Aug 2018 18:16:37 +0000 (UTC)
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id CABAC181D341D;
+        Tue, 28 Aug 2018 18:24:37 +0000 (UTC)
 X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: kite47_1c72fc8396542
-X-Filterd-Recvd-Size: 2632
+X-HE-Tag: rub94_626d1bed7d363
+X-Filterd-Recvd-Size: 1722
 Received: from XPS-9350 (unknown [172.56.41.215])
         (Authenticated sender: joe@perches.com)
-        by omf04.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 28 Aug 2018 18:16:35 +0000 (UTC)
-Message-ID: <b160878ca73bb0dac9592cfd0440b66dc5244b1d.camel@perches.com>
-Subject: Re: [PATCH] MAINTAINERS: Move entry for Cirrus Logic Madera codecs
+        by omf11.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 28 Aug 2018 18:24:36 +0000 (UTC)
+Message-ID: <9229927125ab9d36bd38cf0c20fb5dfb45802fcb.camel@perches.com>
+Subject: Re: [PATCH 01/13] seq_file: rewrite seq_puts() in terms of
+ seq_write()
 From:   Joe Perches <joe@perches.com>
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Lee Jones <lee.jones@linaro.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Date:   Tue, 28 Aug 2018 11:16:33 -0700
-In-Reply-To: <CANiq72m-kvANJsrWHXHoEfRBRbFDt+0nWzma3HxBrBo9tP9Ouw@mail.gmail.com>
-References: <20180828133320.1831-1-geert+renesas@glider.be>
-         <57cafda5-d7f4-61a3-7169-38cc2d34abf6@opensource.cirrus.com>
-         <CANiq72m-kvANJsrWHXHoEfRBRbFDt+0nWzma3HxBrBo9tP9Ouw@mail.gmail.com>
+To:     Alexey Dobriyan <adobriyan@gmail.com>, akpm@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org
+Date:   Tue, 28 Aug 2018 11:24:34 -0700
+In-Reply-To: <20180827231503.26899-1-adobriyan@gmail.com>
+References: <20180827231503.26899-1-adobriyan@gmail.com>
 Content-Type: text/plain; charset="ISO-8859-1"
 X-Mailer: Evolution 3.28.1-2 
 Mime-Version: 1.0
@@ -56,45 +50,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-08-28 at 17:28 +0200, Miguel Ojeda wrote:
-> Hi,
+On Tue, 2018-08-28 at 02:14 +0300, Alexey Dobriyan wrote:
+> Space savings -- 42 bytes!
 > 
-> On Tue, Aug 28, 2018 at 3:57 PM, Richard Fitzgerald
-> <rf@opensource.cirrus.com> wrote:
-> > Reviewed-by: Richard Fitzgerald <rf@opensource.cirrus.com>
-> > 
-> > A maintainer for MAINTAINERS would help avoid these problems, which will
-> > tend to happen when changes to the file go through many trees.
-> > 
+> 	seq_puts	71      29     [-42]
 > 
-> A year ago Linus committed 7683e9e52 ("Properly alphabetize
-> MAINTAINERS file") which adds scripts/parse-maintainers.pl.
+> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+> ---
+>  fs/seq_file.c | 9 +--------
+>  1 file changed, 1 insertion(+), 8 deletions(-)
 > 
-> I guess it could just be run once in a while (e.g. before a kernel is
-> released, for instance).
+> diff --git a/fs/seq_file.c b/fs/seq_file.c
+> index 1dea7a8a5255..0c282a88a896 100644
+> --- a/fs/seq_file.c
+> +++ b/fs/seq_file.c
+> @@ -653,14 +653,7 @@ EXPORT_SYMBOL(seq_putc);
+>  
+>  void seq_puts(struct seq_file *m, const char *s)
+>  {
+> -	int len = strlen(s);
+> -
+> -	if (m->count + len >= m->size) {
+> -		seq_set_overflow(m);
+> -		return;
+> -	}
+> -	memcpy(m->buf + m->count, s, len);
+> -	m->count += len;
+> +	seq_write(m, s, strlen(s));
+>  }
+>  EXPORT_SYMBOL(seq_puts);
+>  
 
-And a few patches for parse-maintainers.pl were
-added after that.
-
-The latest version also reorders and alphabetizes
-the subfields of each section to a preferred order.
-
-So running that latest version would produce quite
-a large diff.
-
-That large a diff should only occur once though.
-
-$ perl ./scripts/parse-maintainers.pl --output MAINTAINERS
-$ git diff --stat MAINTAINERS
- MAINTAINERS | 4014 +++++++++++++++++++++++++++++------------------------------
- 1 file changed, 2007 insertions(+), 2007 deletions(-)
-
-vs
-
-$ git checkout 7683e9e52 -- scripts/parse-maintainers.pl
-$ perl ./scripts/parse-maintainers.pl < MAINTAINERS > MAINTAINERS.new
-$ mv MAINTAINERS.new MAINTAINERS
-$ git diff --stat MAINTAINERS
- MAINTAINERS | 574 ++++++++++++++++++++++++++++++------------------------------
- 1 file changed, 287 insertions(+), 287 deletions(-)
+If execution speed is really an issue, as
+almost all of the uses are for const strings,
+why not use a #define and avoid the runtime
+cost of strlen where possible.
 
