@@ -2,164 +2,100 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE564C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:58:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74B63C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:58:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AB7B2089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:58:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B1fpCNyz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AB7B2089E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 31BE22089F
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:58:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31BE22089F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727546AbeH1Msg (ORCPT
+        id S1727576AbeH1Msr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 08:48:36 -0400
-Received: from mail-io0-f170.google.com ([209.85.223.170]:40984 "EHLO
-        mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726954AbeH1Msg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 08:48:36 -0400
-Received: by mail-io0-f170.google.com with SMTP id q4-v6so753859iob.8
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 01:57:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:subject:to:cc:message-id:date:user-agent:mime-version
-         :content-transfer-encoding:content-language;
-        bh=kRGWbF5PV5VDlUc4xRxBoDDyYAs513RXkWYqdr5OSQ4=;
-        b=B1fpCNyzknO5YHF7ETrKTJlBPaYX0TYcJiHwXtVd1IpD6t+SVWzSDfvf9hvRms/JLJ
-         rhqhunl1tiyhDkujTH4hmo+pDy/Z6j2r9wresi6IC4SZSH+YSRJ90vHR1j8blrdRrfW0
-         rfWKVyYT8jS2n8aTyWjsCeZxY0xPhiPtrVhKMp1VmJbrwzObS8waNATNM0viaWKp3y43
-         RRP5rfvD0ihhaUEf7AQc4KHURydZnHjaASxjlL3qAqBsy22Qo4SsTKPH0Pzuet+SdbTZ
-         3leysOvm4maMqH/IWAU35FMjSTiQMXn0NcyThkK4qGZlvC/peHl1Yz9YiGTxVnVez1RX
-         ki5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
-         :mime-version:content-transfer-encoding:content-language;
-        bh=kRGWbF5PV5VDlUc4xRxBoDDyYAs513RXkWYqdr5OSQ4=;
-        b=iEaj6Jia/OQHfxs/QEdioKOTCWt/IGo8zJvp7NLSXtTUUA7CRWyi00H7DMl/lWfAEp
-         eqEiTSzM2zzmAcEOCEmklj0qu61ve3Y9CHZmE8EGU2zvRPS7dUkv7OzrXteK3IAi2cnw
-         QEI+eeoNrwJMkSEHA8tcGWrXebW6btiWYVBxkzPa/cfa9wqUPqUOm0RBlp0Lm+peYhHy
-         F0usH3Jw1ptTNvl2gJlK9W2fFcTd+reyloonjfXca5IvOssZb34bksNROj/4P8JlJ63U
-         bbvJLiQYGJGYZWEaMSTlIINz9kqZ8LHT376RHPdvOzFkuTX6OUvo4q6bb4tLRXeovSjy
-         9H0A==
-X-Gm-Message-State: APzg51B8QBuqttjAtjScd+BBfKn20ycMqDF2NFf0WE/+DATBBSf5vDXf
-        glYxzTW+MDmE5r5JfU8VSaNmsobr
-X-Google-Smtp-Source: ANB0VdamsR+Er783mK0asmVStioxAtoIgFhmgFwLsiBPV1nnz3CRHWh1D1Gp3jcgvaVMiypPdZMLDQ==
-X-Received: by 2002:a6b:3902:: with SMTP id g2-v6mr450140ioa.168.1535446676786;
-        Tue, 28 Aug 2018 01:57:56 -0700 (PDT)
-Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.71.15? ([2402:f000:1:1501:200:5efe:a66f:470f])
-        by smtp.gmail.com with ESMTPSA id z13-v6sm255087ioj.51.2018.08.28.01.57.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 Aug 2018 01:57:56 -0700 (PDT)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [BUG] Possible sleep-in-atomic-context bugs involving
- regmap_lock_mutex()
-To:     broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org,
-        songjun.wu@microchip.com, architt@codeaurora.org
-Cc:     linux-kernel@vger.kernel.org
-Message-ID: <ffbd81ae-fd30-dc57-c3ac-463f7fadb9ac@gmail.com>
-Date:   Tue, 28 Aug 2018 16:57:51 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Tue, 28 Aug 2018 08:48:47 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33654 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726954AbeH1Msq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 08:48:46 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 61754ED1;
+        Tue, 28 Aug 2018 01:58:07 -0700 (PDT)
+Received: from big-swifty.misterjones.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 61AAA3F721;
+        Tue, 28 Aug 2018 01:58:05 -0700 (PDT)
+Date:   Tue, 28 Aug 2018 09:58:02 +0100
+Message-ID: <865zzuyijp.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Jia He <hejianet@gmail.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc:     Jason Cooper <jason@lakedaemon.net>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Jia He <jia.he@hxt-semitech.com>
+Subject: Re: [PATCH] irqchip/gic-v3-its: cap lpi_id_bits to reduce memory footprint
+In-Reply-To: <1535432006-2304-1-git-send-email-jia.he@hxt-semitech.com>
+References: <1535432006-2304-1-git-send-email-jia.he@hxt-semitech.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Tue, 28 Aug 2018 05:53:26 +0100,
+Jia He <hejianet@gmail.com> wrote:
+> 
+> In commit fe8e93504ce8 ("irqchip/gic-v3-its: Use full range of LPIs"),
+> it removes the cap for lpi_id_bits. But it will cause more pointless
+> memory footprint.
+> 
+> There is a WARN_ON when my QDF2400 server boots up (pagesize is 4k)
+> ============begin===============
 
-My static tool DSAC reports many sleep-in-atomic-context bugs involving 
-regmap_lock_mutex(), so I wonder whether this function is possible to be 
-executed in atomic context.
+[trimming not-so-useful trace]
 
-Here are some example bugs and their call paths in Linux-4.16 (from 
-bottom to top, and [FUNC_PTR] means that there is a function pointer call):
+> ============end============
+> 
+> In its_alloc_lpi_tables, lpi_id_bits is 24 in QDF2400. Then
+> its_allocate_prop_table will try to allocate 16M(order 12 if
+> pagesize=4k). Thus it causes the WARN_ON.
+> 
+> As said by Marc,
+> Capping lpi_id_bits at 16 (which is what we had before) is plenty,
+> will save a some memory, and gives some margin before we need to push
+> it up again.
+> 
+> This patch re-caps the lpi_id_bits.
+> 
+> Fixes: fe8e93504ce8 ("irqchip/gic-v3-its: Use full range of LPIs")
+> Signed-off-by: Jia He <jia.he@hxt-semitech.com>
+> Suggested-by: Marc Zyngier <marc.zyngier@arm.com>
 
-[FUNC] mutex_lock_nested
-drivers/base/regmap/regmap.c, 468:
-     mutex_lock_nested in regmap_lock_mutex
-drivers/base/regmap/regmap.c, 2503:
-     [FUNC_PTR]regmap_lock_mutex in regmap_read
-drivers/clk/clk-aspeed.c, 215:
-     regmap_read in aspeed_clk_is_enabled
-drivers/clk/clk-aspeed.c, 230:
-     aspeed_clk_is_enabled in aspeed_clk_enable
-drivers/clk/clk-aspeed.c, 228:
-     _raw_spin_lock_irqsave in aspeed_clk_enable
+Thanks for doing this. Small problem with this patch:
 
-[FUNC] mutex_lock_nested
-drivers/base/regmap/regmap.c, 468:
-     mutex_lock_nested in regmap_lock_mutex
-drivers/base/regmap/regmap.c, 2821:
-     [FUNC_PTR]regmap_lock_mutex in regmap_update_bits_base
-drivers/clk/clk-aspeed.c, 270:
-     regmap_update_bits_base in aspeed_clk_disable
-drivers/clk/clk-aspeed.c, 267:
-     _raw_spin_lock_irqsave in aspeed_clk_disable
+The email comes from hejianet@gmail.com, while the sign off is by
+jia.he@hxt-semitech.com. Your email should start with a:
 
-[FUNC] mutex_lock_nested
-drivers/base/regmap/regmap.c, 468:
-     mutex_lock_nested in regmap_lock_mutex
-drivers/base/regmap/regmap.c, 2503:
-     [FUNC_PTR]regmap_lock_mutex in regmap_read
-drivers/char/ipmi/bt-bmc.c, 385:
-     regmap_read in bt_bmc_irq
+	From: Jia He <jia.he@hxt-semitech.com>
 
-[FUNC] mutex_lock_nested
-drivers/base/regmap/regmap.c, 468:
-     mutex_lock_nested in regmap_lock_mutex
-drivers/base/regmap/regmap.c, 2821:
-     [FUNC_PTR]regmap_lock_mutex in regmap_update_bits_base
-drivers/gpu/drm/bridge/synopsys/dw-hdmi.c, 213:
-     regmap_update_bits_base in hdmi_modb
-drivers/gpu/drm/bridge/synopsys/dw-hdmi.c, 429:
-     hdmi_modb in hdmi_set_cts_n
-drivers/gpu/drm/bridge/synopsys/dw-hdmi.c, 527:
-     hdmi_set_cts_n in hdmi_set_clk_regenerator
-drivers/gpu/drm/bridge/synopsys/dw-hdmi.c, 524:
-     spin_lock_irq in hdmi_set_clk_regenerator
+Other than that:
 
-[FUNC] mutex_lock_nested
-drivers/base/regmap/regmap.c, 468:
-     mutex_lock_nested in regmap_lock_mutex
-drivers/base/regmap/regmap.c, 2503:
-     [FUNC_PTR]regmap_lock_mutex in regmap_read
-drivers/media/platform/atmel/atmel-isc.c, 1603:
-     regmap_read in isc_interrupt (interrupt handler)
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
 
-I find the code about the assignment of regmap_lock_mutex():
-         if ((bus && bus->fast_io) ||
-             config->fast_io) {
-             spin_lock_init(&map->spinlock);
-             map->lock = regmap_lock_spinlock;
-             map->unlock = regmap_unlock_spinlock;
-             lockdep_set_class_and_name(&map->spinlock,
-                            lock_key, lock_name);
-         } else {
-             mutex_init(&map->mutex);
-             map->lock = regmap_lock_mutex;
-             map->unlock = regmap_unlock_mutex;
-             lockdep_set_class_and_name(&map->mutex,
-                            lock_key, lock_name);
-         }
+Thomas, would you mind picking this up so that it gets into the next
+convenient -rc?
 
-But after reading the code, I cannot find the relationship between the 
-if condition and atomic context.
+Thanks,
 
-I am looking forward to your reply, thanks in advance :)
+	M. (/me goes back hiking...)
+	
 
-
-Best wishes,
-Jia-Ju Bai
+-- 
+Jazz is not dead, it just smell funny.
