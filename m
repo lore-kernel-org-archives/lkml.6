@@ -2,117 +2,177 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 075C8C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:57:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01E9AC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:57:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B27F820847
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:57:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="f7pFSfkj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B27F820847
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id BA76520851
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:57:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA76520851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727865AbeH1Vtw (ORCPT
+        id S1727942AbeH1Vty (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 17:49:52 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:36482 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727040AbeH1Vtv (ORCPT
+        Tue, 28 Aug 2018 17:49:54 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:35546 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727853AbeH1Vtx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 17:49:51 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w7SHurXd098737;
-        Tue, 28 Aug 2018 12:56:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1535479013;
-        bh=ymoxweu15qYLc0XC1BN6g3wkvIP5PlSgfwg7BtU28BM=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=f7pFSfkjurrjLn1YELLnaxeFXPKn3Nv+yfbdv4YZnKv8aHKVBhKAWaHM0B/z69URz
-         C75UhIBS4liuhxTJwtleNcWAs6e+we/rQgDCQgZWFIHLsiGsxC1FMjVwy0+eccI/6B
-         4zygvDRRQcoJ0+zaf4wuwDNgDGkfSM+dpcgcknDc=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7SHurWM031428;
-        Tue, 28 Aug 2018 12:56:53 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 28
- Aug 2018 12:56:53 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 28 Aug 2018 12:56:53 -0500
-Received: from [128.247.59.147] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7SHur9p000680;
-        Tue, 28 Aug 2018 12:56:53 -0500
-Subject: Re: [PATCH] nohz: Fix missing tick reprog while interrupting inline
- timer softirq
-To:     Frederic Weisbecker <frederic@kernel.org>
-CC:     Thomas Gleixner <tglx@linutronix.de>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        <stable@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>
-References: <1533077570-9169-1-git-send-email-frederic@kernel.org>
- <8ecb9229-4c14-6967-0863-15b47cefd251@ti.com>
- <20180824061750.GA20523@kroah.com>
- <alpine.DEB.2.21.1808240851420.1668@nanos.tec.linutronix.de>
- <0d63c2bb-f75d-3f79-c19d-bb4ac9a00cd5@ti.com> <20180824184103.GD2730@lerouge>
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-Message-ID: <47d2416d-6359-1f48-311d-404fb5bfa3a8@ti.com>
-Date:   Tue, 28 Aug 2018 12:56:53 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 28 Aug 2018 17:49:53 -0400
+Received: from [2603:3005:d05:2b00:6e0b:84ff:fee2:98bb] (helo=imladris.surriel.com)
+        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <riel@shelob.surriel.com>)
+        id 1fuiEb-0002mq-LD; Tue, 28 Aug 2018 13:56:57 -0400
+Date:   Tue, 28 Aug 2018 13:56:47 -0400
+From:   Rik van Riel <riel@surriel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     x86@kernel.org, Borislav Petkov <bp@alien8.de>,
+        Jann Horn <jannh@google.com>,
+        LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Nadav Amit <nadav.amit@gmail.com>
+Subject: [PATCH v2] x86/nmi: Fix some races in NMI uaccess
+Message-ID: <20180828135647.6d516048@imladris.surriel.com>
+In-Reply-To: <c7ee1ee7a1b8d17743f7c3680ea5d2c32bf3e897.1535410956.git.luto@kernel.org>
+References: <c7ee1ee7a1b8d17743f7c3680ea5d2c32bf3e897.1535410956.git.luto@kernel.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180824184103.GD2730@lerouge>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 27 Aug 2018 16:04:16 -0700
+Andy Lutomirski <luto@kernel.org> wrote:
 
+> The 0day bot is still chewing on this, but I've tested it a bit locally
+> and it seems to do the right thing.
 
-On 08/24/2018 01:41 PM, Frederic Weisbecker wrote:
-> On Fri, Aug 24, 2018 at 11:10:44AM -0500, Grygorii Strashko wrote:
->> Yes. i do not see local_softirq_pending messages any more
->>
->> But one question, just to clarify, after patch "nohz: Fix missing tick reprog while interrupting inline timer softirq"
->> the tick_nohz_irq_exit() will be called few times in case of nested interrupts (min 2):
->> gic_handle_irq
->>   |- irq_exit
->>      |- preempt_count_sub(HARDIRQ_OFFSET);
->>      |-__do_softirq
->> 	<irqs enabled>
->> 	|- gic_handle_irq()
->> 	   |- irq_exit()
->> 		|- tick_irq_exit()
->> 		   if (!in_irq())
->> 			tick_nohz_irq_exit(); <-- [1]
->>      |- tick_irq_exit()
->> 	if (!in_irq())
->> 		tick_nohz_irq_exit(); <-- [2]
->>
->> Is it correct? in 4.14 tick_nohz_irq_exit() is much more complex then in LKML now,
->> and this is hot path.
-> 
-> That's correct and it's indeed more costly in 4.14 as then the tick is going to be programmed
-> twice.
-> 
+Hi Andy,
 
-Sry, that disturbing you all, but what are the conclusion here for 4.14.y?
-- take Thomas's patch https://lore.kernel.org/patchwork/patch/969521/#1162900
-- revert commit 2d898915ccf4838c04531c51a598469e921a5eb5
+the version of the patch below should fix the bug we talked about
+in email yesterday.  It should automatically cover kernel threads
+in lazy TLB mode, because current->mm will be NULL, while the
+cpu_tlbstate.loaded_mm should never be NULL.
 
+---8<---
+From: Andy Lutomirski <luto@kernel.org>
+Subject: x86/nmi: Fix some races in NMI uaccess
 
--- 
-regards,
--grygorii
+In NMI context, we might be in the middle of context switching or in
+the middle of switch_mm_irqs_off().  In either case, CR3 might not
+match current->mm, which could cause copy_from_user_nmi() and
+friends to read the wrong memory.
+
+Fix it by adding a new nmi_uaccess_okay() helper and checking it in
+copy_from_user_nmi() and in __copy_from_user_nmi()'s callers.
+
+Cc: stable@vger.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Nadav Amit <nadav.amit@gmail.com>
+Signed-off-by: Rik van Riel <riel@surriel.com>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+---
+ arch/x86/events/core.c          |  2 +-
+ arch/x86/include/asm/tlbflush.h | 15 +++++++++++++++
+ arch/x86/lib/usercopy.c         |  5 +++++
+ arch/x86/mm/tlb.c               |  9 ++++++++-
+ 4 files changed, 29 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index 5f4829f10129..dfb2f7c0d019 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -2465,7 +2465,7 @@ perf_callchain_user(struct perf_callchain_entry_ctx *entry, struct pt_regs *regs
+ 
+ 	perf_callchain_store(entry, regs->ip);
+ 
+-	if (!current->mm)
++	if (!nmi_uaccess_okay())
+ 		return;
+ 
+ 	if (perf_callchain_user32(regs, entry))
+diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
+index 29c9da6c62fc..dafe649b18e1 100644
+--- a/arch/x86/include/asm/tlbflush.h
++++ b/arch/x86/include/asm/tlbflush.h
+@@ -246,6 +246,21 @@ struct tlb_state {
+ };
+ DECLARE_PER_CPU_SHARED_ALIGNED(struct tlb_state, cpu_tlbstate);
+ 
++/*
++ * Blindly accessing user memory from NMI context can be dangerous
++ * if we're in the middle of switching the current user task or
++ * switching the loaded mm.  It can also be dangerous if we
++ * interrupted some kernel code that was temporarily using a
++ * different mm.
++ */
++static inline bool nmi_uaccess_okay(void)
++{
++	struct mm_struct *loaded_mm = this_cpu_read(cpu_tlbstate.loaded_mm);
++	struct mm_struct *current_mm = current->mm;
++
++	return (loaded_mm == current_mm);
++}
++
+ /* Initialize cr4 shadow for this CPU. */
+ static inline void cr4_init_shadow(void)
+ {
+diff --git a/arch/x86/lib/usercopy.c b/arch/x86/lib/usercopy.c
+index c8c6ad0d58b8..3f435d7fca5e 100644
+--- a/arch/x86/lib/usercopy.c
++++ b/arch/x86/lib/usercopy.c
+@@ -7,6 +7,8 @@
+ #include <linux/uaccess.h>
+ #include <linux/export.h>
+ 
++#include <asm/tlbflush.h>
++
+ /*
+  * We rely on the nested NMI work to allow atomic faults from the NMI path; the
+  * nested NMI paths are careful to preserve CR2.
+@@ -19,6 +21,9 @@ copy_from_user_nmi(void *to, const void __user *from, unsigned long n)
+ 	if (__range_not_ok(from, n, TASK_SIZE))
+ 		return n;
+ 
++	if (!nmi_uaccess_okay())
++		return n;
++
+ 	/*
+ 	 * Even though this function is typically called from NMI/IRQ context
+ 	 * disable pagefaults so that its behaviour is consistent even when
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index 9517d1b2a281..5b75e2fed2b6 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -305,6 +305,14 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ 
+ 		choose_new_asid(next, next_tlb_gen, &new_asid, &need_flush);
+ 
++		/*
++		 * Ensure cpu_tlbstate.loaded_mm differs from current.mm
++		 * until the context switch is complete, so NMI handlers
++		 * do not try to access userspace. See nmi_uaccess_okay.
++		 */
++		this_cpu_write(cpu_tlbstate.loaded_mm, next);
++		smp_wmb();
++
+ 		if (need_flush) {
+ 			this_cpu_write(cpu_tlbstate.ctxs[new_asid].ctx_id, next->context.ctx_id);
+ 			this_cpu_write(cpu_tlbstate.ctxs[new_asid].tlb_gen, next_tlb_gen);
+@@ -335,7 +343,6 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ 		if (next != &init_mm)
+ 			this_cpu_write(cpu_tlbstate.last_ctx_id, next->context.ctx_id);
+ 
+-		this_cpu_write(cpu_tlbstate.loaded_mm, next);
+ 		this_cpu_write(cpu_tlbstate.loaded_mm_asid, new_asid);
+ 	}
+ 
+
