@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D1E6C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 23:48:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08E0EC43334
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 23:49:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CA832087D
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 23:48:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CA832087D
+	by mail.kernel.org (Postfix) with ESMTP id BB4C72087D
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 23:48:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB4C72087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727739AbeH2Dmf (ORCPT
+        id S1727983AbeH2Dm6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 23:42:35 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:56086 "EHLO ale.deltatee.com"
+        Tue, 28 Aug 2018 23:42:58 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:56106 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727228AbeH2Dme (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 23:42:34 -0400
+        id S1727216AbeH2Dmf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 23:42:35 -0400
 Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
         by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1funio-0000Ta-Rh; Tue, 28 Aug 2018 17:48:32 -0600
+        id 1funir-0000TV-Q4; Tue, 28 Aug 2018 17:48:34 -0600
 Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1funin-0005nN-Bt; Tue, 28 Aug 2018 17:48:29 -0600
+        id 1funim-0005n8-Qg; Tue, 28 Aug 2018 17:48:28 -0600
 From:   Logan Gunthorpe <logang@deltatee.com>
 To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
         linux-ntb@googlegroups.com, linux-crypto@vger.kernel.org,
@@ -39,16 +39,18 @@ Cc:     Arnd Bergmann <arnd@arndb.de>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
         =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
         Logan Gunthorpe <logang@deltatee.com>,
-        Jon Mason <jdmason@kudzu.us>
-Date:   Tue, 28 Aug 2018 17:48:26 -0600
-Message-Id: <20180828234826.22215-7-logang@deltatee.com>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>
+Date:   Tue, 28 Aug 2018 17:48:21 -0600
+Message-Id: <20180828234826.22215-2-logang@deltatee.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180828234826.22215-1-logang@deltatee.com>
 References: <20180828234826.22215-1-logang@deltatee.com>
 X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, akpm@linux-foundation.org, arnd@arndb.de, gregkh@linuxfoundation.org, andy.shevchenko@gmail.com, horia.geanta@nxp.com, logang@deltatee.com, jdmason@kudzu.us
+X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, akpm@linux-foundation.org, arnd@arndb.de, andy.shevchenko@gmail.com, horia.geanta@nxp.com, logang@deltatee.com, tglx@linutronix.de, gregkh@linuxfoundation.org, kstewart@linuxfoundation.org, pombredanne@nexb.com
 X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v20 6/6] ntb: ntb_hw_switchtec: Cleanup 64bit IO defines to use the common header
+Subject: [PATCH v20 1/6] iomap: Use non-raw io functions for io{read|write}XXbe
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -56,77 +58,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clean up the ifdefs which conditionally defined the io{read|write}64
-functions in favour of the new common io-64-nonatomic-lo-hi header.
+Fix an asymmetry in the io{read|write}XXbe functions in that the
+big-endian variants make use of the raw io accessors while the
+little-endian variants use the regular accessors. Some architectures
+implement barriers to order against both spinlocks and DMA accesses
+and for these case, the big-endian variant of the API would not be
+protected.
 
-Per a nit from Andy Shevchenko, the include list is also made
-alphabetical.
+Thus, change the mmio_XXXXbe macros to use the appropriate swab() function
+wrapping the regular accessor. This is similar to what was done for PIO.
+
+When this code was originally written, barriers in the IO accessors were
+not common and the accessors simply wrapped the raw functions in a
+conversion to CPU endianness. Since then, barriers have been added in
+some architectures and are now missing in the big endian variant of the
+API.
+
+This also manages to silence a few sparse warnings that check
+for using the correct endian types which the original code did
+not annotate correctly.
 
 Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Jon Mason <jdmason@kudzu.us>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Link: http://lkml.kernel.org/r/CAK8P3a25zQDxyaY3iVv+JmSSzs7F6ssGc+HdBkGs54ZfViX+Fg@mail.gmail.com
 ---
- drivers/ntb/hw/mscc/ntb_hw_switchtec.c | 36 ++++------------------------------
- 1 file changed, 4 insertions(+), 32 deletions(-)
+ lib/iomap.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-index 5ee5f40b4dfc..c0b97699169d 100644
---- a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-+++ b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-@@ -13,13 +13,14 @@
-  *
-  */
+diff --git a/lib/iomap.c b/lib/iomap.c
+index 541d926da95e..2c293b22569f 100644
+--- a/lib/iomap.c
++++ b/lib/iomap.c
+@@ -65,8 +65,8 @@ static void bad_io_access(unsigned long port, const char *access)
+ #endif
  
--#include <linux/switchtec.h>
--#include <linux/module.h>
-+#include <linux/interrupt.h>
-+#include <linux/io-64-nonatomic-lo-hi.h>
- #include <linux/delay.h>
- #include <linux/kthread.h>
--#include <linux/interrupt.h>
-+#include <linux/module.h>
- #include <linux/ntb.h>
- #include <linux/pci.h>
-+#include <linux/switchtec.h>
+ #ifndef mmio_read16be
+-#define mmio_read16be(addr) be16_to_cpu(__raw_readw(addr))
+-#define mmio_read32be(addr) be32_to_cpu(__raw_readl(addr))
++#define mmio_read16be(addr) swab16(readw(addr))
++#define mmio_read32be(addr) swab32(readl(addr))
+ #endif
  
- MODULE_DESCRIPTION("Microsemi Switchtec(tm) NTB Driver");
- MODULE_VERSION("0.1");
-@@ -36,35 +37,6 @@ module_param(use_lut_mws, bool, 0644);
- MODULE_PARM_DESC(use_lut_mws,
- 		 "Enable the use of the LUT based memory windows");
+ unsigned int ioread8(void __iomem *addr)
+@@ -106,8 +106,8 @@ EXPORT_SYMBOL(ioread32be);
+ #endif
  
--#ifndef ioread64
--#ifdef readq
--#define ioread64 readq
--#else
--#define ioread64 _ioread64
--static inline u64 _ioread64(void __iomem *mmio)
--{
--	u64 low, high;
--
--	low = ioread32(mmio);
--	high = ioread32(mmio + sizeof(u32));
--	return low | (high << 32);
--}
--#endif
--#endif
--
--#ifndef iowrite64
--#ifdef writeq
--#define iowrite64 writeq
--#else
--#define iowrite64 _iowrite64
--static inline void _iowrite64(u64 val, void __iomem *mmio)
--{
--	iowrite32(val, mmio);
--	iowrite32(val >> 32, mmio + sizeof(u32));
--}
--#endif
--#endif
--
- #define SWITCHTEC_NTB_MAGIC 0x45CC0001
- #define MAX_MWS     128
+ #ifndef mmio_write16be
+-#define mmio_write16be(val,port) __raw_writew(be16_to_cpu(val),port)
+-#define mmio_write32be(val,port) __raw_writel(be32_to_cpu(val),port)
++#define mmio_write16be(val,port) writew(swab16(val),port)
++#define mmio_write32be(val,port) writel(swab32(val),port)
+ #endif
  
+ void iowrite8(u8 val, void __iomem *addr)
 -- 
 2.11.0
 
