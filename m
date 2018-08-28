@@ -2,475 +2,143 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C6B5C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 22:25:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDA3BC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 22:26:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11C4A2087B
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 22:25:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11C4A2087B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8A32A2087D
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 22:26:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="lhesuFy1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A32A2087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727546AbeH2CTW (ORCPT
+        id S1727593AbeH2CTs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 22:19:22 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36067 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727067AbeH2CTW (ORCPT
+        Tue, 28 Aug 2018 22:19:48 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:35818 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727067AbeH2CTs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 22:19:22 -0400
-Received: by mail-pf1-f194.google.com with SMTP id b11-v6so1321064pfo.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 15:25:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=/dUTcJN01XKHF20K6MJvxbrAFNjDGhXtLgkUMB15fL4=;
-        b=WT6MnErneXzl8oW4iHLFFFDbQJoMrKDjVeJTrKB0UGsVXpS+ZRlzkDPSm914HkgYNx
-         F0nky04Sc0aGdZoVZbJUVLDHTScjYtUbniigvsshPH2vJSpw7AveSThbkOrFbER26OvE
-         GeU2REC9UD8eK4z1NFSuWSsl4sE8mS64ONa6gC4mY8+ykiHf8gX9QL25/I3bfaZ27H1g
-         1XtZ6Sea0m4yJFAm4h4r+tgD1fjGgTf1IVXqjysQ2kcnPIyOr7EP4/g7Z1cLuHTrCk9z
-         46d9L/naDMx2h6yy+JD4WRcHchuW5f71iRAyBQ7LKLrjihX8olyvwqRzz5GKg8HNX4L2
-         km+A==
-X-Gm-Message-State: APzg51C0Vwf0GsJZBStHWxoxNRP4kEHPUBokvg7t7mxfZHInLZisCR9V
-        +alNEzA33En0l5fWPeoWZWxWTZzzz8g=
-X-Google-Smtp-Source: ANB0VdYvVawyrX+PSYTJcRklILODThY0Ciu5vB+g2sOQIOQDChL2as0dvSdhnQi99enaxtuzAClxyQ==
-X-Received: by 2002:a63:d74f:: with SMTP id w15-v6mr3269662pgi.306.1535495137945;
-        Tue, 28 Aug 2018 15:25:37 -0700 (PDT)
-Received: from localhost ([207.114.172.147])
-        by smtp.gmail.com with ESMTPSA id l127-v6sm3211800pfc.55.2018.08.28.15.25.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 28 Aug 2018 15:25:37 -0700 (PDT)
-From:   Moritz Fischer <mdf@kernel.org>
-To:     davem@davemloft.net
-Cc:     keescook@chromium.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alex.williams@ni.com,
-        Moritz Fischer <mdf@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>
-Subject: [PATCH net-next] net: nixge: Add support for 64-bit platforms
-Date:   Tue, 28 Aug 2018 15:16:31 -0700
-Message-Id: <20180828221631.14573-1-mdf@kernel.org>
-X-Mailer: git-send-email 2.18.0
+        Tue, 28 Aug 2018 22:19:48 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7SMOBnC043654;
+        Tue, 28 Aug 2018 22:25:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=C6pgq9ReVU6x3FmIqQ0tiP5WZHGPdjKN+sEPj0ttAZY=;
+ b=lhesuFy15dZzBAmVkBXAWjByVnFv7Ez3e/sUhnvHn0yVxSu/k1HwrGxjM3HhDm1nV6rE
+ /RpERX9QEwP7A+o7WI0CV9Ly1YnaEDYiiT9CjFPLuJhr2zW0MO9tqJUXMxHUp48VRGA5
+ w9xB6DCgB/KpyKa48eZYyLGuz5mIqTcosA9390EyAbwtmc7hw1risDBmWndukfBEINni
+ Ds/d0VLLMta8jKolY7wlo7cMQzVwywdRasDCw3O4/m/egDf2C3SF/yAhtqiaLvjdlfd9
+ V3ZcPO+XLnwqNudLPEChA7Gkvr6/MIYTylhmf2hlOhpDxIJa4D4FXYu1ALFGup73Hrpx bQ== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2m2xhtpnaf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 28 Aug 2018 22:25:45 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w7SMPipL029394
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 28 Aug 2018 22:25:44 GMT
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w7SMPhZD026629;
+        Tue, 28 Aug 2018 22:25:43 GMT
+Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 28 Aug 2018 15:25:43 -0700
+Subject: Re: [PATCH] x86/xen: remove redundant variable save_pud
+To:     Colin King <colin.king@canonical.com>,
+        Juergen Gross <jgross@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        xen-devel@lists.xenproject.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180828161046.17165-1-colin.king@canonical.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <3057bad8-cea8-d72f-d83c-88e34c281d22@oracle.com>
+Date:   Tue, 28 Aug 2018 18:27:06 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180828161046.17165-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8999 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=722
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808280216
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for 64-bit platforms to driver.
+On 08/28/2018 12:10 PM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Variable save_pud is being assigned but is never used hence it is
+> redundant and can be removed.
+>
+> Cleans up clang warning:
+> variable 'save_pud' set but not used [-Wunused-but-set-variable]
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-The hardware only supports 32-bit register accesses
-so the accesses need to be split up into two writes
-when setting the current and tail descriptor values.
 
-Signed-off-by: Moritz Fischer <mdf@kernel.org>
-Cc: Florian Fainelli <f.fainelli@gmail.com>
----
-Hi Dave,
 
-I'll submit the other changes for fixed_phy / non MDIO support
-as a separate series since I'm ironing out some issues on ARM
-with devicetree overlays.
+Applied to for-linus-19b.
 
-Thanks,
-Moritz
----
- drivers/net/ethernet/ni/Kconfig |   3 +-
- drivers/net/ethernet/ni/nixge.c | 168 ++++++++++++++++++++++----------
- 2 files changed, 116 insertions(+), 55 deletions(-)
-
-diff --git a/drivers/net/ethernet/ni/Kconfig b/drivers/net/ethernet/ni/Kconfig
-index aa41e5f6e437..04e315704f71 100644
---- a/drivers/net/ethernet/ni/Kconfig
-+++ b/drivers/net/ethernet/ni/Kconfig
-@@ -18,8 +18,9 @@ if NET_VENDOR_NI
- 
- config NI_XGE_MANAGEMENT_ENET
- 	tristate "National Instruments XGE management enet support"
--	depends on ARCH_ZYNQ
-+	depends on HAS_IOMEM && HAS_DMA
- 	select PHYLIB
-+	select OF_MDIO
- 	help
- 	  Simple LAN device for debug or management purposes. Can
- 	  support either 10G or 1G PHYs via SFP+ ports.
-diff --git a/drivers/net/ethernet/ni/nixge.c b/drivers/net/ethernet/ni/nixge.c
-index 76efed058f33..74cf52e3fb09 100644
---- a/drivers/net/ethernet/ni/nixge.c
-+++ b/drivers/net/ethernet/ni/nixge.c
-@@ -106,10 +106,10 @@
- 	(NIXGE_JUMBO_MTU + NIXGE_HDR_SIZE + NIXGE_TRL_SIZE)
- 
- struct nixge_hw_dma_bd {
--	u32 next;
--	u32 reserved1;
--	u32 phys;
--	u32 reserved2;
-+	u32 next_lo;
-+	u32 next_hi;
-+	u32 phys_lo;
-+	u32 phys_hi;
- 	u32 reserved3;
- 	u32 reserved4;
- 	u32 cntrl;
-@@ -119,11 +119,39 @@ struct nixge_hw_dma_bd {
- 	u32 app2;
- 	u32 app3;
- 	u32 app4;
--	u32 sw_id_offset;
--	u32 reserved5;
-+	u32 sw_id_offset_lo;
-+	u32 sw_id_offset_hi;
- 	u32 reserved6;
- };
- 
-+#ifdef CONFIG_PHYS_ADDR_T_64BIT
-+#define nixge_hw_dma_bd_set_addr(bd, field, addr) \
-+	do { \
-+		(bd)->field##_lo = lower_32_bits(((u64)addr)); \
-+		(bd)->field##_hi = upper_32_bits(((u64)addr)); \
-+	} while (0)
-+#else
-+#define nixge_hw_dma_bd_set_addr(bd, field, addr) \
-+	((bd)->field##_lo = lower_32_bits((addr)))
-+#endif
-+
-+#define nixge_hw_dma_bd_set_phys(bd, addr) \
-+	nixge_hw_dma_bd_set_addr((bd), phys, (addr))
-+
-+#define nixge_hw_dma_bd_set_next(bd, addr) \
-+	nixge_hw_dma_bd_set_addr((bd), next, (addr))
-+
-+#define nixge_hw_dma_bd_set_offset(bd, addr) \
-+	nixge_hw_dma_bd_set_addr((bd), sw_id_offset, (addr))
-+
-+#ifdef CONFIG_PHYS_ADDR_T_64BIT
-+#define nixge_hw_dma_bd_get_addr(bd, field) \
-+	(dma_addr_t)((((u64)(bd)->field##_hi) << 32) | ((bd)->field##_lo))
-+#else
-+#define nixge_hw_dma_bd_get_addr(bd, field) \
-+	(dma_addr_t)((bd)->field##_lo)
-+#endif
-+
- struct nixge_tx_skb {
- 	struct sk_buff *skb;
- 	dma_addr_t mapping;
-@@ -176,6 +204,15 @@ static void nixge_dma_write_reg(struct nixge_priv *priv, off_t offset, u32 val)
- 	writel(val, priv->dma_regs + offset);
- }
- 
-+static void nixge_dma_write_desc_reg(struct nixge_priv *priv, off_t offset,
-+				     dma_addr_t addr)
-+{
-+	writel(lower_32_bits(addr), priv->dma_regs + offset);
-+#ifdef CONFIG_PHYS_ADDR_T_64BIT
-+	writel(upper_32_bits(addr), priv->dma_regs + offset + 4);
-+#endif
-+}
-+
- static u32 nixge_dma_read_reg(const struct nixge_priv *priv, off_t offset)
- {
- 	return readl(priv->dma_regs + offset);
-@@ -202,13 +239,22 @@ static u32 nixge_ctrl_read_reg(struct nixge_priv *priv, off_t offset)
- static void nixge_hw_dma_bd_release(struct net_device *ndev)
- {
- 	struct nixge_priv *priv = netdev_priv(ndev);
-+	dma_addr_t phys_addr;
-+	struct sk_buff *skb;
- 	int i;
- 
- 	for (i = 0; i < RX_BD_NUM; i++) {
--		dma_unmap_single(ndev->dev.parent, priv->rx_bd_v[i].phys,
--				 NIXGE_MAX_JUMBO_FRAME_SIZE, DMA_FROM_DEVICE);
--		dev_kfree_skb((struct sk_buff *)
--			      (priv->rx_bd_v[i].sw_id_offset));
-+		phys_addr = nixge_hw_dma_bd_get_addr(&priv->rx_bd_v[i],
-+						     phys);
-+
-+		dma_unmap_single(ndev->dev.parent, phys_addr,
-+				 NIXGE_MAX_JUMBO_FRAME_SIZE,
-+				 DMA_FROM_DEVICE);
-+
-+		skb = (struct sk_buff *)
-+			nixge_hw_dma_bd_get_addr(&priv->rx_bd_v[i],
-+						 sw_id_offset);
-+		dev_kfree_skb(skb);
- 	}
- 
- 	if (priv->rx_bd_v)
-@@ -231,6 +277,7 @@ static int nixge_hw_dma_bd_init(struct net_device *ndev)
- {
- 	struct nixge_priv *priv = netdev_priv(ndev);
- 	struct sk_buff *skb;
-+	dma_addr_t phys;
- 	u32 cr;
- 	int i;
- 
-@@ -259,27 +306,30 @@ static int nixge_hw_dma_bd_init(struct net_device *ndev)
- 		goto out;
- 
- 	for (i = 0; i < TX_BD_NUM; i++) {
--		priv->tx_bd_v[i].next = priv->tx_bd_p +
--				      sizeof(*priv->tx_bd_v) *
--				      ((i + 1) % TX_BD_NUM);
-+		nixge_hw_dma_bd_set_next(&priv->tx_bd_v[i],
-+					 priv->tx_bd_p +
-+					 sizeof(*priv->tx_bd_v) *
-+					 ((i + 1) % TX_BD_NUM));
- 	}
- 
- 	for (i = 0; i < RX_BD_NUM; i++) {
--		priv->rx_bd_v[i].next = priv->rx_bd_p +
--				      sizeof(*priv->rx_bd_v) *
--				      ((i + 1) % RX_BD_NUM);
-+		nixge_hw_dma_bd_set_next(&priv->rx_bd_v[i],
-+					 priv->rx_bd_p
-+					 + sizeof(*priv->rx_bd_v) *
-+					 ((i + 1) % RX_BD_NUM));
- 
- 		skb = netdev_alloc_skb_ip_align(ndev,
- 						NIXGE_MAX_JUMBO_FRAME_SIZE);
- 		if (!skb)
- 			goto out;
- 
--		priv->rx_bd_v[i].sw_id_offset = (u32)skb;
--		priv->rx_bd_v[i].phys =
--			dma_map_single(ndev->dev.parent,
--				       skb->data,
--				       NIXGE_MAX_JUMBO_FRAME_SIZE,
--				       DMA_FROM_DEVICE);
-+		nixge_hw_dma_bd_set_offset(&priv->rx_bd_v[i], skb);
-+		phys = dma_map_single(ndev->dev.parent, skb->data,
-+				      NIXGE_MAX_JUMBO_FRAME_SIZE,
-+				      DMA_FROM_DEVICE);
-+
-+		nixge_hw_dma_bd_set_phys(&priv->rx_bd_v[i], phys);
-+
- 		priv->rx_bd_v[i].cntrl = NIXGE_MAX_JUMBO_FRAME_SIZE;
- 	}
- 
-@@ -312,18 +362,18 @@ static int nixge_hw_dma_bd_init(struct net_device *ndev)
- 	/* Populate the tail pointer and bring the Rx Axi DMA engine out of
- 	 * halted state. This will make the Rx side ready for reception.
- 	 */
--	nixge_dma_write_reg(priv, XAXIDMA_RX_CDESC_OFFSET, priv->rx_bd_p);
-+	nixge_dma_write_desc_reg(priv, XAXIDMA_RX_CDESC_OFFSET, priv->rx_bd_p);
- 	cr = nixge_dma_read_reg(priv, XAXIDMA_RX_CR_OFFSET);
- 	nixge_dma_write_reg(priv, XAXIDMA_RX_CR_OFFSET,
- 			    cr | XAXIDMA_CR_RUNSTOP_MASK);
--	nixge_dma_write_reg(priv, XAXIDMA_RX_TDESC_OFFSET, priv->rx_bd_p +
-+	nixge_dma_write_desc_reg(priv, XAXIDMA_RX_TDESC_OFFSET, priv->rx_bd_p +
- 			    (sizeof(*priv->rx_bd_v) * (RX_BD_NUM - 1)));
- 
- 	/* Write to the RS (Run-stop) bit in the Tx channel control register.
- 	 * Tx channel is now ready to run. But only after we write to the
- 	 * tail pointer register that the Tx channel will start transmitting.
- 	 */
--	nixge_dma_write_reg(priv, XAXIDMA_TX_CDESC_OFFSET, priv->tx_bd_p);
-+	nixge_dma_write_desc_reg(priv, XAXIDMA_TX_CDESC_OFFSET, priv->tx_bd_p);
- 	cr = nixge_dma_read_reg(priv, XAXIDMA_TX_CR_OFFSET);
- 	nixge_dma_write_reg(priv, XAXIDMA_TX_CR_OFFSET,
- 			    cr | XAXIDMA_CR_RUNSTOP_MASK);
-@@ -451,7 +501,7 @@ static int nixge_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- 	struct nixge_priv *priv = netdev_priv(ndev);
- 	struct nixge_hw_dma_bd *cur_p;
- 	struct nixge_tx_skb *tx_skb;
--	dma_addr_t tail_p;
-+	dma_addr_t tail_p, cur_phys;
- 	skb_frag_t *frag;
- 	u32 num_frag;
- 	u32 ii;
-@@ -466,15 +516,16 @@ static int nixge_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- 		return NETDEV_TX_OK;
- 	}
- 
--	cur_p->phys = dma_map_single(ndev->dev.parent, skb->data,
--				     skb_headlen(skb), DMA_TO_DEVICE);
--	if (dma_mapping_error(ndev->dev.parent, cur_p->phys))
-+	cur_phys = dma_map_single(ndev->dev.parent, skb->data,
-+				  skb_headlen(skb), DMA_TO_DEVICE);
-+	if (dma_mapping_error(ndev->dev.parent, cur_phys))
- 		goto drop;
-+	nixge_hw_dma_bd_set_phys(cur_p, cur_phys);
- 
- 	cur_p->cntrl = skb_headlen(skb) | XAXIDMA_BD_CTRL_TXSOF_MASK;
- 
- 	tx_skb->skb = NULL;
--	tx_skb->mapping = cur_p->phys;
-+	tx_skb->mapping = cur_phys;
- 	tx_skb->size = skb_headlen(skb);
- 	tx_skb->mapped_as_page = false;
- 
-@@ -485,16 +536,17 @@ static int nixge_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- 		tx_skb = &priv->tx_skb[priv->tx_bd_tail];
- 		frag = &skb_shinfo(skb)->frags[ii];
- 
--		cur_p->phys = skb_frag_dma_map(ndev->dev.parent, frag, 0,
--					       skb_frag_size(frag),
--					       DMA_TO_DEVICE);
--		if (dma_mapping_error(ndev->dev.parent, cur_p->phys))
-+		cur_phys = skb_frag_dma_map(ndev->dev.parent, frag, 0,
-+					    skb_frag_size(frag),
-+					    DMA_TO_DEVICE);
-+		if (dma_mapping_error(ndev->dev.parent, cur_phys))
- 			goto frag_err;
-+		nixge_hw_dma_bd_set_phys(cur_p, cur_phys);
- 
- 		cur_p->cntrl = skb_frag_size(frag);
- 
- 		tx_skb->skb = NULL;
--		tx_skb->mapping = cur_p->phys;
-+		tx_skb->mapping = cur_phys;
- 		tx_skb->size = skb_frag_size(frag);
- 		tx_skb->mapped_as_page = true;
- 	}
-@@ -506,7 +558,7 @@ static int nixge_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- 
- 	tail_p = priv->tx_bd_p + sizeof(*priv->tx_bd_v) * priv->tx_bd_tail;
- 	/* Start the transfer */
--	nixge_dma_write_reg(priv, XAXIDMA_TX_TDESC_OFFSET, tail_p);
-+	nixge_dma_write_desc_reg(priv, XAXIDMA_TX_TDESC_OFFSET, tail_p);
- 	++priv->tx_bd_tail;
- 	priv->tx_bd_tail %= TX_BD_NUM;
- 
-@@ -537,7 +589,7 @@ static int nixge_recv(struct net_device *ndev, int budget)
- 	struct nixge_priv *priv = netdev_priv(ndev);
- 	struct sk_buff *skb, *new_skb;
- 	struct nixge_hw_dma_bd *cur_p;
--	dma_addr_t tail_p = 0;
-+	dma_addr_t tail_p = 0, cur_phys = 0;
- 	u32 packets = 0;
- 	u32 length = 0;
- 	u32 size = 0;
-@@ -549,13 +601,15 @@ static int nixge_recv(struct net_device *ndev, int budget)
- 		tail_p = priv->rx_bd_p + sizeof(*priv->rx_bd_v) *
- 			 priv->rx_bd_ci;
- 
--		skb = (struct sk_buff *)(cur_p->sw_id_offset);
-+		skb = (struct sk_buff *)nixge_hw_dma_bd_get_addr(cur_p,
-+								 sw_id_offset);
- 
- 		length = cur_p->status & XAXIDMA_BD_STS_ACTUAL_LEN_MASK;
- 		if (length > NIXGE_MAX_JUMBO_FRAME_SIZE)
- 			length = NIXGE_MAX_JUMBO_FRAME_SIZE;
- 
--		dma_unmap_single(ndev->dev.parent, cur_p->phys,
-+		dma_unmap_single(ndev->dev.parent,
-+				 nixge_hw_dma_bd_get_addr(cur_p, phys),
- 				 NIXGE_MAX_JUMBO_FRAME_SIZE,
- 				 DMA_FROM_DEVICE);
- 
-@@ -579,16 +633,17 @@ static int nixge_recv(struct net_device *ndev, int budget)
- 		if (!new_skb)
- 			return packets;
- 
--		cur_p->phys = dma_map_single(ndev->dev.parent, new_skb->data,
--					     NIXGE_MAX_JUMBO_FRAME_SIZE,
--					     DMA_FROM_DEVICE);
--		if (dma_mapping_error(ndev->dev.parent, cur_p->phys)) {
-+		cur_phys = dma_map_single(ndev->dev.parent, new_skb->data,
-+					  NIXGE_MAX_JUMBO_FRAME_SIZE,
-+					  DMA_FROM_DEVICE);
-+		if (dma_mapping_error(ndev->dev.parent, cur_phys)) {
- 			/* FIXME: bail out and clean up */
- 			netdev_err(ndev, "Failed to map ...\n");
- 		}
-+		nixge_hw_dma_bd_set_phys(cur_p, cur_phys);
- 		cur_p->cntrl = NIXGE_MAX_JUMBO_FRAME_SIZE;
- 		cur_p->status = 0;
--		cur_p->sw_id_offset = (u32)new_skb;
-+		nixge_hw_dma_bd_set_offset(cur_p, new_skb);
- 
- 		++priv->rx_bd_ci;
- 		priv->rx_bd_ci %= RX_BD_NUM;
-@@ -599,7 +654,7 @@ static int nixge_recv(struct net_device *ndev, int budget)
- 	ndev->stats.rx_bytes += size;
- 
- 	if (tail_p)
--		nixge_dma_write_reg(priv, XAXIDMA_RX_TDESC_OFFSET, tail_p);
-+		nixge_dma_write_desc_reg(priv, XAXIDMA_RX_TDESC_OFFSET, tail_p);
- 
- 	return packets;
- }
-@@ -637,6 +692,7 @@ static irqreturn_t nixge_tx_irq(int irq, void *_ndev)
- 	struct nixge_priv *priv = netdev_priv(_ndev);
- 	struct net_device *ndev = _ndev;
- 	unsigned int status;
-+	dma_addr_t phys;
- 	u32 cr;
- 
- 	status = nixge_dma_read_reg(priv, XAXIDMA_TX_SR_OFFSET);
-@@ -650,9 +706,11 @@ static irqreturn_t nixge_tx_irq(int irq, void *_ndev)
- 		return IRQ_NONE;
- 	}
- 	if (status & XAXIDMA_IRQ_ERROR_MASK) {
-+		phys = nixge_hw_dma_bd_get_addr(&priv->tx_bd_v[priv->tx_bd_ci],
-+						phys);
-+
- 		netdev_err(ndev, "DMA Tx error 0x%x\n", status);
--		netdev_err(ndev, "Current BD is at: 0x%x\n",
--			   (priv->tx_bd_v[priv->tx_bd_ci]).phys);
-+		netdev_err(ndev, "Current BD is at: 0x%llx\n", (u64)phys);
- 
- 		cr = nixge_dma_read_reg(priv, XAXIDMA_TX_CR_OFFSET);
- 		/* Disable coalesce, delay timer and error interrupts */
-@@ -678,6 +736,7 @@ static irqreturn_t nixge_rx_irq(int irq, void *_ndev)
- 	struct nixge_priv *priv = netdev_priv(_ndev);
- 	struct net_device *ndev = _ndev;
- 	unsigned int status;
-+	dma_addr_t phys;
- 	u32 cr;
- 
- 	status = nixge_dma_read_reg(priv, XAXIDMA_RX_SR_OFFSET);
-@@ -697,9 +756,10 @@ static irqreturn_t nixge_rx_irq(int irq, void *_ndev)
- 		return IRQ_NONE;
- 	}
- 	if (status & XAXIDMA_IRQ_ERROR_MASK) {
-+		phys = nixge_hw_dma_bd_get_addr(&priv->rx_bd_v[priv->rx_bd_ci],
-+						phys);
- 		netdev_err(ndev, "DMA Rx error 0x%x\n", status);
--		netdev_err(ndev, "Current BD is at: 0x%x\n",
--			   (priv->rx_bd_v[priv->rx_bd_ci]).phys);
-+		netdev_err(ndev, "Current BD is at: 0x%llx\n", (u64)phys);
- 
- 		cr = nixge_dma_read_reg(priv, XAXIDMA_TX_CR_OFFSET);
- 		/* Disable coalesce, delay timer and error interrupts */
-@@ -735,10 +795,10 @@ static void nixge_dma_err_handler(unsigned long data)
- 		tx_skb = &lp->tx_skb[i];
- 		nixge_tx_skb_unmap(lp, tx_skb);
- 
--		cur_p->phys = 0;
-+		nixge_hw_dma_bd_set_phys(cur_p, 0);
- 		cur_p->cntrl = 0;
- 		cur_p->status = 0;
--		cur_p->sw_id_offset = 0;
-+		nixge_hw_dma_bd_set_offset(cur_p, 0);
- 	}
- 
- 	for (i = 0; i < RX_BD_NUM; i++) {
-@@ -779,18 +839,18 @@ static void nixge_dma_err_handler(unsigned long data)
- 	/* Populate the tail pointer and bring the Rx Axi DMA engine out of
- 	 * halted state. This will make the Rx side ready for reception.
- 	 */
--	nixge_dma_write_reg(lp, XAXIDMA_RX_CDESC_OFFSET, lp->rx_bd_p);
-+	nixge_dma_write_desc_reg(lp, XAXIDMA_RX_CDESC_OFFSET, lp->rx_bd_p);
- 	cr = nixge_dma_read_reg(lp, XAXIDMA_RX_CR_OFFSET);
- 	nixge_dma_write_reg(lp, XAXIDMA_RX_CR_OFFSET,
- 			    cr | XAXIDMA_CR_RUNSTOP_MASK);
--	nixge_dma_write_reg(lp, XAXIDMA_RX_TDESC_OFFSET, lp->rx_bd_p +
-+	nixge_dma_write_desc_reg(lp, XAXIDMA_RX_TDESC_OFFSET, lp->rx_bd_p +
- 			    (sizeof(*lp->rx_bd_v) * (RX_BD_NUM - 1)));
- 
- 	/* Write to the RS (Run-stop) bit in the Tx channel control register.
- 	 * Tx channel is now ready to run. But only after we write to the
- 	 * tail pointer register that the Tx channel will start transmitting
- 	 */
--	nixge_dma_write_reg(lp, XAXIDMA_TX_CDESC_OFFSET, lp->tx_bd_p);
-+	nixge_dma_write_desc_reg(lp, XAXIDMA_TX_CDESC_OFFSET, lp->tx_bd_p);
- 	cr = nixge_dma_read_reg(lp, XAXIDMA_TX_CR_OFFSET);
- 	nixge_dma_write_reg(lp, XAXIDMA_TX_CR_OFFSET,
- 			    cr | XAXIDMA_CR_RUNSTOP_MASK);
--- 
-2.18.0
+-boris
 
