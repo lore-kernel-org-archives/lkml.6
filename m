@@ -3,141 +3,150 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E222C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 16:50:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8313C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 16:51:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E05BC2087A
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 16:50:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DE642087A
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 16:51:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U7qsOhj8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E05BC2087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="bERC36OE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DE642087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727195AbeH1UnN (ORCPT
+        id S1727233AbeH1Un6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 16:43:13 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:37523 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726128AbeH1UnN (ORCPT
+        Tue, 28 Aug 2018 16:43:58 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:40666 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726128AbeH1Un6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 16:43:13 -0400
-Received: by mail-lf1-f65.google.com with SMTP id j8-v6so1949398lfb.4
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 09:50:41 -0700 (PDT)
+        Tue, 28 Aug 2018 16:43:58 -0400
+Received: by mail-pf1-f194.google.com with SMTP id s13-v6so971297pfi.7
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 09:51:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0OvWrUFoHNp/TwO+3fUI5+xkJvgY3UK6qh0BgbdHdO8=;
-        b=U7qsOhj8FSrsp/+mqx2DKb7KsxPM5iA1aWpTtf5UuyA2NxMugK/1OdFUFKsLSnrVT6
-         POwuPo3YaXaT49OtZ0cekC6iJN281EhPCniFbJyAewWO40Qd3jFCHNKgEqPcW690VaJW
-         x/StGbW7PWvIR/WZGH1rVHUc8Nu+d6WPFgvhV7G+q5AlHwjMEV4kjS5sfxYqt36vtVX6
-         3zJu8W/Lrq8YL/7cZApuwcciH+F6d12Qbg9pQxfbqCV7ROCsnO9v2N0lrp7bLX40QXwH
-         ZHEtdK3Uf7JXknbgPlKb7YptrzkRFF21/kDF4k8dR9m+Le9I3CCZ7Be2Vxiwn0T2DwW2
-         fyiw==
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+5OzEVheTPrXM1UrnfzO3M0cz2qMU0nrsN+pFLYL2To=;
+        b=bERC36OEyMBeps5LqWhC+dZRpDckJWozy78r7V/fNP5j582RZTipL3N2LW1ZSyG115
+         Neq8tvWWpRCizfDgUsL/Ls3gIeWvwhiTcvzIyPGIYs8yDgWTorBnYwTdziAu3ip0+KTV
+         gaSlT8DYRPAQPvnOfwZ5CRVlrYBMWnJo5q0cpyQBcYfn3ICuf+rNUw60gYnmsED3pxHO
+         fw0+IKexQacgeV02dVEFmBwLOipNmqXhzYp07e24zSKcS7N67ecM/w6Lj+dn4ud3Xssh
+         Jg1zZSj+55Wu6+cglIDZrgfDcpJozNV/rluvMg3Cdy8kGoFMAAxXnlit/EJTJT4sUC+Y
+         fvbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0OvWrUFoHNp/TwO+3fUI5+xkJvgY3UK6qh0BgbdHdO8=;
-        b=hyx0FkQUZcxwd9PAUIqGbsvvo+E/JgW7qR5lpolbfPaYKN4+eBI82tW5O8CdkuqZeA
-         LL2kymT49yDx6bzJ/mYR1IMudmZs9v9QvitBVWvPjY8k1MV9zmt9TKarpL/Zc+zpHN9a
-         +SMD07u81icfbj+QYXR752HeFnD66lbU795ZdFi6s0JQypFIQQpnm5HMCLeezqMrLd0h
-         wkR1+CHUsxvTVqwMqNZY0hwWfA2k0qoeM3ZcJCH84GlDl8KdcKgL4KxyBvOK+S8+tLNd
-         pGppNxLMTGr6LXP6GiNkVi3BQasr/VC9/V6IJ/kZyCJi3+pl1Kps1vSswypmPbgbLkg+
-         jgFw==
-X-Gm-Message-State: APzg51DFwB+AZzviQ5TBd8XOqXofcaBR0dYHVRFguqrv5CRoKyJYwnx+
-        D1u4FSVlhFP6DQlhw9iCDCa2W8PfFAhHPTMb566ySg==
-X-Google-Smtp-Source: ANB0Vdafk1yR2XLYSBrOBBvMemCH+oJPz71uB5LzaUZf0pJvC0xOxOCjIURFMinHv4gh7lYXL/LSQkKTZ8wWdqAp22Q=
-X-Received: by 2002:a19:5c57:: with SMTP id q84-v6mr1755150lfb.51.1535475040695;
- Tue, 28 Aug 2018 09:50:40 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180726144549.GA9434@jordon-HP-15-Notebook-PC> <20180730183454.GA5400@juma>
-In-Reply-To: <20180730183454.GA5400@juma>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Tue, 28 Aug 2018 22:23:32 +0530
-Message-ID: <CAFqt6zbbEi3F7FUaM=CH5R-eT0Ap5fbt3c-AqLgg4J9BOWOZaQ@mail.gmail.com>
-Subject: Re: [PATCH v2] drm/vkms: Use new return type vm_fault_t
-To:     Gustavo Padovan <gustavo@padovan.org>
-Cc:     Matthew Wilcox <willy@infradead.org>, airlied@linux.ie,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-        gustavo.padovan@collabora.com,
-        Haneen Mohammed <hamohammed.sa@gmail.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=+5OzEVheTPrXM1UrnfzO3M0cz2qMU0nrsN+pFLYL2To=;
+        b=heuBk5iftvHAbRwVBeO966l5/8uofWqk1Azn0dN6ylP/yckmR3mGXU34LeOBKhq6OC
+         SzI5Q+ZTMaEvJIRm9vESD7PwdLz2T19/HhvCMEsfqxi5Po5NK5hvAAxilsZgCi5WEUJM
+         gqdpLdNON13jbK2jbcwWp7OSA3lhOA6CBVD7q4TbUxsQ/bRWT3jV8uDiU/JrsYO6gLsA
+         Hyj5sPEHvOt5c9nFOPyXrpCzovQnt5Q6qhCQlCo4WE00EKwJQubFtCar6Zd1PqvrWx/a
+         GBVxviA3UfdqSM0gc0WXk+Q7d06newdfazHmjrGXxPZZQdbQb/WuSuLwmpC72ZRldomU
+         P05w==
+X-Gm-Message-State: APzg51BiIgQzEX/yKfeJZorau3K2cTLVjKOvRnn/ZaqPUwoq7OQ3O9v6
+        mPmKYIcFc52z3upRbgQBYhVAwnEQ6AI=
+X-Google-Smtp-Source: ANB0VdbNDFvmKhMDDFUqNH03KzRLU0Act3v1pHGNf/ENQfNy8H0ULwVS5ZJfZN3nznfNPviAENcuwA==
+X-Received: by 2002:a65:448a:: with SMTP id l10-v6mr2345699pgq.382.1535475086813;
+        Tue, 28 Aug 2018 09:51:26 -0700 (PDT)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id n79-v6sm7836808pfh.2.2018.08.28.09.51.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 28 Aug 2018 09:51:25 -0700 (PDT)
+Date:   Tue, 28 Aug 2018 09:51:25 -0700 (PDT)
+X-Google-Original-Date: Tue, 28 Aug 2018 09:41:29 PDT (-0700)
+Subject:     Re: [PATCH] RISC-V: Mask out the F extension on systems without D
+In-Reply-To: <20180828071032.GA16806@andestech.com>
+CC:     linux-riscv@lists.infradead.org, aou@eecs.berkeley.edu,
+        linux-kernel@vger.kernel.org, greentime@andestech.com
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     alankao@andestech.com
+Message-ID: <mhng-0c98c74e-8a51-435a-ae29-b95a56075dee@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 12:05 AM Gustavo Padovan <gustavo@padovan.org> wrote:
+On Tue, 28 Aug 2018 00:10:32 PDT (-0700), alankao@andestech.com wrote:
+> Hi Palmer,
 >
-> Hi Souptick,
+> On Mon, Aug 27, 2018 at 03:03:52PM -0700, Palmer Dabbelt wrote:
+>> The RISC-V Linux port doesn't support systems that have the F extension
+>> but don't have the D extension -- we actually don't support systems
+>> without D either, but Alan's patch set is rectifying that soon.  For now
+>> I think we can leave this in a semi-broken state and just wait for
+>> Alan's patch set to get merged for proper non-FPU support -- the patch
+>> set is starting to look good, so doing something in-between doesn't seem
+>> like it's worth the work.
+>>
+>> I don't think it's worth fretting about support for systems with F but
+>> not D for now: our glibc ABIs are IMAC and IMAFDC so they probably won't
+>> end up being popular.  We can always extend this in the future.
+>>
+>> CC: Alan Kao <alankao@andestech.com>
+>> Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+>> ---
+>>  arch/riscv/kernel/cpufeature.c | 7 +++++++
+>>  1 file changed, 7 insertions(+)
+>>
+>> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
+>> index 17011a870044..652d102ffa06 100644
+>> --- a/arch/riscv/kernel/cpufeature.c
+>> +++ b/arch/riscv/kernel/cpufeature.c
+>> @@ -57,5 +57,12 @@ void riscv_fill_hwcap(void)
+>>  	for (i = 0; i < strlen(isa); ++i)
+>>  		elf_hwcap |= isa2hwcap[(unsigned char)(isa[i])];
+>>
+>> +	/* We don't support systems with F but without D, so mask those out
+>> +	 * here. */
+>> +	if ((elf_hwcap & COMPAT_HWCAP_ISA_F) && !(elf_hwcap & COMPAT_HWCAP_ISA_D)) {
+>> +		pr_info("This kernel does not support systems with F but not D");
+>> +		elf_hwcap &= ~COMPAT_HWCAP_ISA_F;
+>> +	}
+>> +
 >
-> On Thu, Jul 26, 2018 at 08:15:49PM +0530, Souptick Joarder wrote:
-> > Use new return type vm_fault_t for fault handler.
-> >
-> > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> > ---
-> > v2: Updated patch title
-> >
-> >  drivers/gpu/drm/vkms/vkms_drv.h | 2 +-
-> >  drivers/gpu/drm/vkms/vkms_gem.c | 5 ++---
-> >  2 files changed, 3 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
-> > index 07be29f..d5d04a8 100644
-> > --- a/drivers/gpu/drm/vkms/vkms_drv.h
-> > +++ b/drivers/gpu/drm/vkms/vkms_drv.h
-> > @@ -65,7 +65,7 @@ struct drm_gem_object *vkms_gem_create(struct drm_device *dev,
-> >                                      u32 *handle,
-> >                                      u64 size);
-> >
-> > -int vkms_gem_fault(struct vm_fault *vmf);
-> > +vm_fault_t vkms_gem_fault(struct vm_fault *vmf);
-> >
-> >  int vkms_dumb_create(struct drm_file *file, struct drm_device *dev,
-> >                    struct drm_mode_create_dumb *args);
-> > diff --git a/drivers/gpu/drm/vkms/vkms_gem.c b/drivers/gpu/drm/vkms/vkms_gem.c
-> > index c7e3836..62e05dc 100644
-> > --- a/drivers/gpu/drm/vkms/vkms_gem.c
-> > +++ b/drivers/gpu/drm/vkms/vkms_gem.c
-> > @@ -43,14 +43,14 @@ void vkms_gem_free_object(struct drm_gem_object *obj)
-> >       kfree(gem);
-> >  }
-> >
-> > -int vkms_gem_fault(struct vm_fault *vmf)
-> > +vm_fault_t vkms_gem_fault(struct vm_fault *vmf)
-> >  {
-> >       struct vm_area_struct *vma = vmf->vma;
-> >       struct vkms_gem_object *obj = vma->vm_private_data;
-> >       unsigned long vaddr = vmf->address;
-> >       pgoff_t page_offset;
-> >       loff_t num_pages;
-> > -     int ret;
-> > +     vm_fault_t ret = VM_FAULT_SIGBUS;
-> >
-> >       page_offset = (vaddr - vma->vm_start) >> PAGE_SHIFT;
-> >       num_pages = DIV_ROUND_UP(obj->gem.size, PAGE_SIZE);
-> > @@ -58,7 +58,6 @@ int vkms_gem_fault(struct vm_fault *vmf)
-> >       if (page_offset > num_pages)
-> >               return VM_FAULT_SIGBUS;
-> >
-> > -     ret = -ENOENT;
-> >       mutex_lock(&obj->pages_lock);
-> >       if (obj->pages) {
-> >               get_page(obj->pages[page_offset]);
-> > --
-> > 1.9.1
+> The commit message does address the problem and this patch does provide checks
+> and helpful information to users, but I wonder if we really need this patch, for
+> two reasons:
 >
-> Patch pushed to drm-misc-next. vkms is still experimental so I'm not
-> queueing this for 4.19. Thanks.
+> * Just as you mentioned, current glibc ABI does not support such a thing as
+>   IMAFC, so probably no one has had trouble with this.  To be honest, I suppose
+>   that anybody (RISC-V enthusiasts or vendors) who really need F-only support
+>   in kernel should get themself involved in the development by sending patches
+>   to improve.
 >
-> Gustavo
+> * There are corner cases to let a F-only machine to pass the check in this
+>   patch.  For instance, a vendor decides to name her extension ISA as doom,
+>   and supports single-precision FP only, so her ISA string would be
+>
+>     IMAFCXdoom.
+>
+>   The variable elf_hwcap is calculated at the loop in line 57,58, the 'd'
+>   from Xdoom would bypass the check, while the underlying machine does not
+>   support double-precision FP.
 
-Gustavo, can we get this patch into 4.19-rc-x ?
+Ah, yes, that makes sense.  I'd go the other way here and just be strict about 
+parsing the ISA string: it's defined to be listed in a particular order, so we 
+should really only be accepting legal ISA strings.
+
+I'll submit a second patch to fix this behavior.
+
+>
+>>  	pr_info("elf_hwcap is 0x%lx", elf_hwcap);
+>>  }
+>> --
+>> 2.16.4
+>>
+>
+> I don't know if the reasons make sense to you, but anyway that's all I
+> would like to say about this patch.
+>
+> Alan
