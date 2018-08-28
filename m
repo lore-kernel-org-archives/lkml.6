@@ -3,60 +3,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C617BC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:11:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A008C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:11:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7614620894
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:11:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7614620894
+	by mail.kernel.org (Postfix) with ESMTP id D2EFC2088E
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:11:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2EFC2088E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727632AbeH1VDf (ORCPT
+        id S1727611AbeH1VDf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 28 Aug 2018 17:03:35 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56280 "EHLO mx1.redhat.com"
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56294 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726998AbeH1VDf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 17:03:35 -0400
+        id S1727490AbeH1VDe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 17:03:34 -0400
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4E86987A82;
+        by mx1.redhat.com (Postfix) with ESMTPS id D044FC7C3;
         Tue, 28 Aug 2018 17:10:57 +0000 (UTC)
 Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7625310DCF48;
-        Tue, 28 Aug 2018 17:10:56 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7D5FE1049469;
+        Tue, 28 Aug 2018 17:10:57 +0000 (UTC)
 From:   Lyude Paul <lyude@redhat.com>
 To:     dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
-Cc:     Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Daniel Stone <daniel@fooishbar.org>,
         Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Sean Paul <seanpaul@chromium.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        "Jerry (Fangzhi) Zuo" <Jerry.Zuo@amd.com>,
-        Roman Li <Roman.Li@amd.com>, Tony Cheng <Tony.Cheng@amd.com>,
-        Andrey Grodzovsky <Andrey.Grodzovsky@amd.com>,
-        Shirish S <shirish.s@amd.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>,
-        Thierry Reding <treding@nvidia.com>,
-        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org
-Subject: [PATCH v2 2/4] drm/dp_mst: Pass entire connector to drm_dp_mst_topology_mgr_init()
-Date:   Tue, 28 Aug 2018 13:10:28 -0400
-Message-Id: <20180828171036.25943-3-lyude@redhat.com>
+        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 3/4] drm/dp_mst: Add dp_mst_status debugfs node for all drivers
+Date:   Tue, 28 Aug 2018 13:10:29 -0400
+Message-Id: <20180828171036.25943-4-lyude@redhat.com>
 In-Reply-To: <20180828171036.25943-1-lyude@redhat.com>
 References: <20180828171036.25943-1-lyude@redhat.com>
 X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
@@ -67,180 +50,189 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There's no actual reason we pass the connector ID instead of a pointer
-to the connector itself, and we're going to need the entire connector
-(but only temporarily) in order to name MST debugfs folders properly
-since connector IDs can't be looked up until the driver has been
-registered with userspace which happens after debugfs init.
-
-So, just pass the entire drm_connector struct instead of just its id.
+Originally I was just going to be adding dp_mst_status for nouveau until
+Daniel Stone pointed out that we should probably just make this so it's
+magically added for every DRM driver that's using the DRM DP MST
+helpers. So, let's do that!
 
 Signed-off-by: Lyude Paul <lyude@redhat.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Daniel Stone <daniel@fooishbar.org>
 ---
- .../drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c    |  2 +-
- drivers/gpu/drm/drm_dp_mst_topology.c                  | 10 ++++++----
- drivers/gpu/drm/i915/intel_dp.c                        |  2 +-
- drivers/gpu/drm/i915/intel_dp_mst.c                    |  6 ++++--
- drivers/gpu/drm/i915/intel_drv.h                       |  3 ++-
- drivers/gpu/drm/nouveau/dispnv50/disp.c                |  6 +++---
- drivers/gpu/drm/radeon/radeon_dp_mst.c                 |  2 +-
- include/drm/drm_dp_mst_helper.h                        |  3 ++-
- 8 files changed, 20 insertions(+), 14 deletions(-)
+ drivers/gpu/drm/drm_dp_mst_topology.c | 106 ++++++++++++++++++++++++++
+ include/drm/drm_dp_mst_helper.h       |  14 ++++
+ 2 files changed, 120 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-index 9a300732ba37..60da7e8fcca7 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-@@ -503,6 +503,6 @@ void amdgpu_dm_initialize_dp_connector(struct amdgpu_display_manager *dm,
- 		&aconnector->dm_dp_aux.aux,
- 		16,
- 		4,
--		aconnector->connector_id);
-+		&aconnector->base);
- }
- 
 diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
-index 7780567aa669..acb7633f3f70 100644
+index acb7633f3f70..a6a2c03af62a 100644
 --- a/drivers/gpu/drm/drm_dp_mst_topology.c
 +++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-@@ -3161,14 +3161,16 @@ EXPORT_SYMBOL(drm_atomic_get_mst_topology_state);
-  * @aux: DP helper aux channel to talk to this device
-  * @max_dpcd_transaction_bytes: hw specific DPCD transaction limit
-  * @max_payloads: maximum number of payloads this GPU can source
-- * @conn_base_id: the connector object ID the MST device is connected to.
-+ * @connector: the &struct drm_connector the MST device is connected to.
-  *
-  * Return 0 for success, or negative error code on failure
+@@ -27,6 +27,7 @@
+ #include <linux/sched.h>
+ #include <linux/seq_file.h>
+ #include <linux/i2c.h>
++#include <linux/debugfs.h>
+ #include <drm/drm_dp_mst_helper.h>
+ #include <drm/drmP.h>
+ 
+@@ -3154,6 +3155,104 @@ struct drm_dp_mst_topology_state *drm_atomic_get_mst_topology_state(struct drm_a
+ }
+ EXPORT_SYMBOL(drm_atomic_get_mst_topology_state);
+ 
++#ifdef CONFIG_DEBUG_FS
++static int drm_dp_mst_debugfs_state_show(struct seq_file *m, void *data)
++{
++	drm_dp_mst_dump_topology(m, m->private);
++	return 0;
++}
++
++static int drm_dp_mst_debugfs_state_open(struct inode *inode,
++					 struct file *file)
++{
++	struct drm_dp_mst_topology_mgr *mgr = inode->i_private;
++
++	return single_open(file, drm_dp_mst_debugfs_state_show, mgr);
++}
++
++static const struct file_operations drm_dp_mst_debugfs_state_fops = {
++	.owner = THIS_MODULE,
++	.open = drm_dp_mst_debugfs_state_open,
++	.read = seq_read,
++	.llseek = seq_lseek,
++	.release = single_release,
++};
++
++struct drm_dp_mst_debugfs_init_data {
++	struct drm_dp_mst_topology_mgr *mgr;
++	char *connector_name;
++};
++
++static void
++drm_dp_mst_debugfs_init(void *data)
++{
++	struct drm_dp_mst_debugfs_init_data *init_data = data;
++	struct drm_dp_mst_topology_mgr *mgr = init_data->mgr;
++	struct drm_minor *minor = mgr->dev->primary;
++	struct dentry *root;
++	bool put_ref = false;
++
++	/* Create the dp_mst directory for this device if it doesn't exist
++	 * already
++	 */
++	root = debugfs_lookup("dp_mst", minor->debugfs_root);
++	if (root) {
++		put_ref = true;
++	} else {
++		root = debugfs_create_dir("dp_mst", minor->debugfs_root);
++		if (!root || IS_ERR(root))
++			return;
++	}
++
++	mgr->debugfs = debugfs_create_dir(init_data->connector_name, root);
++	if (!mgr->debugfs)
++		goto out_dput;
++
++	debugfs_create_file("state", 0444, mgr->debugfs, mgr,
++			    &drm_dp_mst_debugfs_state_fops);
++
++out_dput:
++	if (put_ref)
++		dput(root);
++}
++
++static void
++drm_dp_mst_debugfs_cleanup_cb(void *data)
++{
++	struct drm_dp_mst_debugfs_init_data *init_data = data;
++
++	init_data->mgr->debugfs_init_cb = NULL;
++	kfree(init_data->connector_name);
++	kfree(init_data);
++}
++
++static void
++drm_dp_mst_debugfs_register(struct drm_dp_mst_topology_mgr *mgr,
++			    struct drm_connector *connector)
++{
++	struct drm_dp_mst_debugfs_init_data *init_data;
++
++	if (!connector)
++		return;
++
++	init_data = kmalloc(sizeof(*init_data), GFP_KERNEL);
++	if (!init_data)
++		return;
++
++	init_data->mgr = mgr;
++	init_data->connector_name = kstrdup(connector->name, GFP_KERNEL);
++	if (!init_data->connector_name) {
++		kfree(init_data);
++		return;
++	}
++
++	drm_debugfs_register_callback(mgr->dev->primary,
++				      drm_dp_mst_debugfs_init,
++				      drm_dp_mst_debugfs_cleanup_cb,
++				      init_data, &mgr->debugfs_init_cb);
++}
++#endif
++
+ /**
+  * drm_dp_mst_topology_mgr_init - initialise a topology manager
+  * @mgr: manager struct to initialise
+@@ -3214,6 +3313,9 @@ int drm_dp_mst_topology_mgr_init(struct drm_dp_mst_topology_mgr *mgr,
+ 	drm_atomic_private_obj_init(&mgr->base,
+ 				    &mst_state->base,
+ 				    &mst_state_funcs);
++#ifdef CONFIG_DEBUG_FS
++	drm_dp_mst_debugfs_register(mgr, connector);
++#endif
+ 
+ 	return 0;
+ }
+@@ -3225,6 +3327,10 @@ EXPORT_SYMBOL(drm_dp_mst_topology_mgr_init);
   */
- int drm_dp_mst_topology_mgr_init(struct drm_dp_mst_topology_mgr *mgr,
--				 struct drm_device *dev, struct drm_dp_aux *aux,
-+				 struct drm_device *dev,
-+				 struct drm_dp_aux *aux,
- 				 int max_dpcd_transaction_bytes,
--				 int max_payloads, int conn_base_id)
-+				 int max_payloads,
-+				 struct drm_connector *connector)
+ void drm_dp_mst_topology_mgr_destroy(struct drm_dp_mst_topology_mgr *mgr)
  {
- 	struct drm_dp_mst_topology_state *mst_state;
- 
-@@ -3186,7 +3188,7 @@ int drm_dp_mst_topology_mgr_init(struct drm_dp_mst_topology_mgr *mgr,
- 	mgr->aux = aux;
- 	mgr->max_dpcd_transaction_bytes = max_dpcd_transaction_bytes;
- 	mgr->max_payloads = max_payloads;
--	mgr->conn_base_id = conn_base_id;
-+	mgr->conn_base_id = connector->base.id;
- 	if (max_payloads + 1 > sizeof(mgr->payload_mask) * 8 ||
- 	    max_payloads + 1 > sizeof(mgr->vcpi_mask) * 8)
- 		return -EINVAL;
-diff --git a/drivers/gpu/drm/i915/intel_dp.c b/drivers/gpu/drm/i915/intel_dp.c
-index cd0f649b57a5..3688df38dbe7 100644
---- a/drivers/gpu/drm/i915/intel_dp.c
-+++ b/drivers/gpu/drm/i915/intel_dp.c
-@@ -6247,7 +6247,7 @@ intel_dp_init_connector(struct intel_digital_port *intel_dig_port,
- 	    (port == PORT_B || port == PORT_C ||
- 	     port == PORT_D || port == PORT_F))
- 		intel_dp_mst_encoder_init(intel_dig_port,
--					  intel_connector->base.base.id);
-+					  &intel_connector->base);
- 
- 	if (!intel_edp_init_connector(intel_dp, intel_connector)) {
- 		intel_dp_aux_fini(intel_dp);
-diff --git a/drivers/gpu/drm/i915/intel_dp_mst.c b/drivers/gpu/drm/i915/intel_dp_mst.c
-index 7e3e01607643..6c07c29235df 100644
---- a/drivers/gpu/drm/i915/intel_dp_mst.c
-+++ b/drivers/gpu/drm/i915/intel_dp_mst.c
-@@ -583,7 +583,8 @@ intel_dp_create_fake_mst_encoders(struct intel_digital_port *intel_dig_port)
- }
- 
- int
--intel_dp_mst_encoder_init(struct intel_digital_port *intel_dig_port, int conn_base_id)
-+intel_dp_mst_encoder_init(struct intel_digital_port *intel_dig_port,
-+			  struct drm_connector *connector)
- {
- 	struct intel_dp *intel_dp = &intel_dig_port->dp;
- 	struct drm_device *dev = intel_dig_port->base.base.dev;
-@@ -595,7 +596,8 @@ intel_dp_mst_encoder_init(struct intel_digital_port *intel_dig_port, int conn_ba
- 	/* create encoders */
- 	intel_dp_create_fake_mst_encoders(intel_dig_port);
- 	ret = drm_dp_mst_topology_mgr_init(&intel_dp->mst_mgr, dev,
--					   &intel_dp->aux, 16, 3, conn_base_id);
-+					   &intel_dp->aux, 16, 3,
-+					   connector);
- 	if (ret) {
- 		intel_dp->can_mst = false;
- 		return ret;
-diff --git a/drivers/gpu/drm/i915/intel_drv.h b/drivers/gpu/drm/i915/intel_drv.h
-index 8fc61e96754f..af7a6111ff74 100644
---- a/drivers/gpu/drm/i915/intel_drv.h
-+++ b/drivers/gpu/drm/i915/intel_drv.h
-@@ -1749,7 +1749,8 @@ bool intel_digital_port_connected(struct intel_encoder *encoder);
- int intel_dp_aux_init_backlight_funcs(struct intel_connector *intel_connector);
- 
- /* intel_dp_mst.c */
--int intel_dp_mst_encoder_init(struct intel_digital_port *intel_dig_port, int conn_id);
-+int intel_dp_mst_encoder_init(struct intel_digital_port *intel_dig_port,
-+			      struct drm_connector *connector);
- void intel_dp_mst_encoder_cleanup(struct intel_digital_port *intel_dig_port);
- /* vlv_dsi.c */
- void vlv_dsi_init(struct drm_i915_private *dev_priv);
-diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.c b/drivers/gpu/drm/nouveau/dispnv50/disp.c
-index 7139b962c6fd..918f2519859b 100644
---- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
-+++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
-@@ -1226,7 +1226,7 @@ nv50_mstm_del(struct nv50_mstm **pmstm)
- 
- static int
- nv50_mstm_new(struct nouveau_encoder *outp, struct drm_dp_aux *aux, int aux_max,
--	      int conn_base_id, struct nv50_mstm **pmstm)
-+	      struct drm_connector *connector, struct nv50_mstm **pmstm)
- {
- 	const int max_payloads = hweight8(outp->dcb->heads);
- 	struct drm_device *dev = outp->base.base.dev;
-@@ -1250,7 +1250,7 @@ nv50_mstm_new(struct nouveau_encoder *outp, struct drm_dp_aux *aux, int aux_max,
- 	mstm->mgr.cbs = &nv50_mstm;
- 
- 	ret = drm_dp_mst_topology_mgr_init(&mstm->mgr, dev, aux, aux_max,
--					   max_payloads, conn_base_id);
-+					   max_payloads, connector);
- 	if (ret)
- 		return ret;
- 
-@@ -1496,7 +1496,7 @@ nv50_sor_create(struct drm_connector *connector, struct dcb_output *dcbe)
- 		if ((data = nvbios_dp_table(bios, &ver, &hdr, &cnt, &len)) &&
- 		    ver >= 0x40 && (nvbios_rd08(bios, data + 0x08) & 0x04)) {
- 			ret = nv50_mstm_new(nv_encoder, &nv_connector->aux, 16,
--					    nv_connector->base.base.id,
-+					    &nv_connector->base,
- 					    &nv_encoder->dp.mstm);
- 			if (ret)
- 				return ret;
-diff --git a/drivers/gpu/drm/radeon/radeon_dp_mst.c b/drivers/gpu/drm/radeon/radeon_dp_mst.c
-index f920be236cc9..3c66b1d26f88 100644
---- a/drivers/gpu/drm/radeon/radeon_dp_mst.c
-+++ b/drivers/gpu/drm/radeon/radeon_dp_mst.c
-@@ -664,7 +664,7 @@ radeon_dp_mst_init(struct radeon_connector *radeon_connector)
- 	radeon_connector->mst_mgr.cbs = &mst_cbs;
- 	return drm_dp_mst_topology_mgr_init(&radeon_connector->mst_mgr, dev,
- 					    &radeon_connector->ddc_bus->aux, 16, 6,
--					    radeon_connector->base.base.id);
-+					    &radeon_connector->base);
- }
- 
- int
++#ifdef CONFIG_DEBUG_FS
++	drm_debugfs_unregister_callback(mgr->dev->primary,
++					mgr->debugfs_init_cb);
++#endif
+ 	flush_work(&mgr->work);
+ 	flush_work(&mgr->destroy_connector_work);
+ 	mutex_lock(&mgr->payload_lock);
 diff --git a/include/drm/drm_dp_mst_helper.h b/include/drm/drm_dp_mst_helper.h
-index 7f78d26a0766..ef8ba093ae8a 100644
+index ef8ba093ae8a..c70b81cd78b1 100644
 --- a/include/drm/drm_dp_mst_helper.h
 +++ b/include/drm/drm_dp_mst_helper.h
-@@ -573,7 +573,8 @@ struct drm_dp_mst_topology_mgr {
+@@ -25,6 +25,7 @@
+ #include <linux/types.h>
+ #include <drm/drm_dp_helper.h>
+ #include <drm/drm_atomic.h>
++#include <drm/drm_debugfs.h>
+ 
+ struct drm_dp_mst_branch;
+ 
+@@ -568,6 +569,19 @@ struct drm_dp_mst_topology_mgr {
+ 	 * avoid locking inversion.
+ 	 */
+ 	struct work_struct destroy_connector_work;
++#ifdef CONFIG_DEBUG_FS
++	/**
++	 * @debugfs_init_cb: Pending debugfs callback for initializing the
++	 * debugfs files for this topology.
++	 */
++	struct drm_debugfs_callback *debugfs_init_cb;
++
++	/**
++	 * @debugfs_entry: dentry for dp_mst_status located in connector's
++	 * debugfs directory.
++	 */
++	struct dentry *debugfs;
++#endif
+ };
+ 
  int drm_dp_mst_topology_mgr_init(struct drm_dp_mst_topology_mgr *mgr,
- 				 struct drm_device *dev, struct drm_dp_aux *aux,
- 				 int max_dpcd_transaction_bytes,
--				 int max_payloads, int conn_base_id);
-+				 int max_payloads,
-+				 struct drm_connector *connector);
- 
- void drm_dp_mst_topology_mgr_destroy(struct drm_dp_mst_topology_mgr *mgr);
- 
 -- 
 2.17.1
 
