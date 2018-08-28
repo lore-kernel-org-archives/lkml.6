@@ -2,103 +2,77 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E494FC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 06:55:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45AA9C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 06:57:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FF0C208AD
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 06:55:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FF0C208AD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E61A9208AD
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 06:56:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E61A9208AD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727224AbeH1Kp2 (ORCPT
+        id S1727137AbeH1KrJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 06:45:28 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38142 "EHLO mx1.suse.de"
+        Tue, 28 Aug 2018 06:47:09 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:56391 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726446AbeH1Kp2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 06:45:28 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CC89AABC1;
-        Tue, 28 Aug 2018 06:55:15 +0000 (UTC)
-Date:   Tue, 28 Aug 2018 08:55:14 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>
-cc:     Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/alternatives: lockdep-enforce text_mutex in
- text_poke*()
-Message-ID: <nycvar.YFH.7.76.1808280853520.25787@cbobk.fhfr.pm>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1726446AbeH1KrJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 06:47:09 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 7224EC429A3F2;
+        Tue, 28 Aug 2018 14:56:54 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
+ 14.3.399.0; Tue, 28 Aug 2018 14:56:47 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     Corey Minyard <minyard@acm.org>, Arnd Bergmann <arnd@arndb.de>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+CC:     YueHaibing <yuehaibing@huawei.com>,
+        <openipmi-developer@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: [PATCH] ipmi: fix return value of ipmi_set_my_LUN
+Date:   Tue, 28 Aug 2018 07:07:36 +0000
+Message-ID: <1535440056-100270-1-git-send-email-yuehaibing@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Kosina <jkosina@suse.cz>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-text_poke() and text_poke_bp() must be called with text_mutex held.
-Let's put proper lockdep anotation in place instead of just mentioning
-the requirement in comment.
+drivers/char/ipmi/ipmi_msghandler.c: In function 'ipmi_set_my_LUN':
+drivers/char/ipmi/ipmi_msghandler.c:1335:13: warning:
+ variable 'rv' set but not used [-Wunused-but-set-variable]
+  int index, rv = 0;
+  
+'rv' should be the correct return value.
 
-Reported-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Fixes: 048f7c3e352e ("ipmi: Properly release srcu locks on error conditions")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- arch/x86/kernel/alternative.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/char/ipmi/ipmi_msghandler.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index 014f214da581..b9d5e7c9ef43 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -684,8 +684,6 @@ void *__init_or_module text_poke_early(void *addr, const void *opcode,
-  * It means the size must be writable atomically and the address must be aligned
-  * in a way that permits an atomic write. It also makes sure we fit on a single
-  * page.
-- *
-- * Note: Must be called under text_mutex.
-  */
- void *text_poke(void *addr, const void *opcode, size_t len)
- {
-@@ -700,6 +698,8 @@ void *text_poke(void *addr, const void *opcode, size_t len)
- 	 */
- 	BUG_ON(!after_bootmem);
+diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
+index 04f64c5..a74ce88 100644
+--- a/drivers/char/ipmi/ipmi_msghandler.c
++++ b/drivers/char/ipmi/ipmi_msghandler.c
+@@ -1344,7 +1344,7 @@ int ipmi_set_my_LUN(struct ipmi_user *user,
+ 		user->intf->addrinfo[channel].lun = LUN & 0x3;
+ 	release_ipmi_user(user, index);
  
-+	lockdep_assert_held(&text_mutex);
-+
- 	if (!core_kernel_text((unsigned long)addr)) {
- 		pages[0] = vmalloc_to_page(addr);
- 		pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
-@@ -782,8 +782,6 @@ int poke_int3_handler(struct pt_regs *regs)
-  *	- replace the first byte (int3) by the first byte of
-  *	  replacing opcode
-  *	- sync cores
-- *
-- * Note: must be called under text_mutex.
-  */
- void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
- {
-@@ -792,6 +790,9 @@ void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
- 	bp_int3_handler = handler;
- 	bp_int3_addr = (u8 *)addr + sizeof(int3);
- 	bp_patching_in_progress = true;
-+
-+	lockdep_assert_held(&text_mutex);
-+
- 	/*
- 	 * Corresponding read barrier in int3 notifier for making sure the
- 	 * in_progress and handler are correctly ordered wrt. patching.
-
--- 
-Jiri Kosina
-SUSE Labs
+-	return 0;
++	return rv;
+ }
+ EXPORT_SYMBOL(ipmi_set_my_LUN);
 
