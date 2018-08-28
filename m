@@ -2,149 +2,151 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD8CAC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 01:21:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86521C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 01:23:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7858C208B9
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 01:21:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19E8820897
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 01:23:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kRAI1Gbd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7858C208B9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="gsDMn9nJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19E8820897
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726567AbeH1FKk (ORCPT
+        id S1726903AbeH1FMG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 01:10:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46112 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725796AbeH1FKk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 01:10:40 -0400
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 19F9A20897;
-        Tue, 28 Aug 2018 01:21:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535419290;
-        bh=FLw8UacBBmlHJAg9fbkt/vhIpeGZCkXXIYsllFKfuHg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=kRAI1Gbd0YUKPHDm+I15DFQVcMYFk8tP2yto24EiGbtxRBd21RFwv20uYXjb5Gwt3
-         e0emX4+zlo0uACOIV1VfTJWnc8pDvH1U7SNb/CUGaCBFRaQJHAGFm2l09hKlktcIkJ
-         IuJ8wBiO2E57T7QliQOQmnd7TfxDnQnx4V/ZPgRk=
-Date:   Tue, 28 Aug 2018 10:21:26 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Jann Horn <jannh@google.com>
-Cc:     Andy Lutomirski <luto@kernel.org>, mhiramat@kernel.org,
-        naveen.n.rao@linux.vnet.ibm.com, anil.s.keshavamurthy@intel.com,
-        "David S. Miller" <davem@davemloft.net>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        tony.luck@intel.com, Borislav Petkov <bp@alien8.de>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>, linux-edac@vger.kernel.org
-Subject: Re: [PATCH v2 3/7] x86: stop calling fixup_exception() from
- kprobe_fault_handler()
-Message-Id: <20180828102126.2cd006bc5c5893422761fc6b@kernel.org>
-In-Reply-To: <CAG48ez0=-nDmQVQiJtD_6ingdWWVJE+y+5_oWQrggQ9Eqg-UKQ@mail.gmail.com>
-References: <20180827185631.163506-1-jannh@google.com>
-        <20180827185631.163506-4-jannh@google.com>
-        <CALCETrUeRA63Vt_LBOGmUHc_M9gc3J7+ewK6j+sB8P=9ijk7ag@mail.gmail.com>
-        <CAG48ez0=-nDmQVQiJtD_6ingdWWVJE+y+5_oWQrggQ9Eqg-UKQ@mail.gmail.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 28 Aug 2018 01:12:06 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:44266 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725724AbeH1FMG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 01:12:06 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w7S1MOWV061842;
+        Mon, 27 Aug 2018 20:22:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1535419344;
+        bh=uV0tq9E2dkvt29IrRBbmjjgxW7tRmaF1Ow/e1FFMGJU=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=gsDMn9nJxI8M4t+OZ6OlQ9qFA+DNcG7z5L7H+ORI5JgaH55NoPNfQiwFqREUkkl5J
+         pmORXZPqENADgFr+zEvxpKLQTQg5RzgfXj10l776kS2M+CLsSIxcvUcmMG2+OLT53M
+         qsBoSdKvH3ek38g4EzlllThW7m+KQc3h9PQDRGpM=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7S1MOdl017060;
+        Mon, 27 Aug 2018 20:22:24 -0500
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 27
+ Aug 2018 20:22:24 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Mon, 27 Aug 2018 20:22:24 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7S1MOFo006259;
+        Mon, 27 Aug 2018 20:22:24 -0500
+Date:   Mon, 27 Aug 2018 20:22:24 -0500
+From:   Nishanth Menon <nm@ti.com>
+To:     Tony Lindgren <tony@atomide.com>
+CC:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Vignesh R <vigneshr@ti.com>, Tero Kristo <t-kristo@ti.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [RFC PATCH 5/6] arm64: dts: ti: Add Support for AM654 SoC
+Message-ID: <20180828012224.fbmcmwfhfuwhcm53@kahuna>
+References: <20180605060510.32473-1-nm@ti.com>
+ <CAL_JsqJusWTvr4A_-Bk81meYddMHBMJ4=Fch6L0MFoF7HfBW2w@mail.gmail.com>
+ <454c277e-8a63-81cb-b341-a50f4e25cbea@ti.com>
+ <20180820143153.GD7523@atomide.com>
+ <40cecb47-bd32-04aa-b7cd-ff16c1eb28f3@ti.com>
+ <20180827155535.GJ7523@atomide.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180827155535.GJ7523@atomide.com>
+User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 27 Aug 2018 21:22:19 +0200
-Jann Horn <jannh@google.com> wrote:
-
-> On Mon, Aug 27, 2018 at 9:02 PM Andy Lutomirski <luto@kernel.org> wrote:
-> >
-> > On Mon, Aug 27, 2018 at 11:56 AM, Jann Horn <jannh@google.com> wrote:
-> > > This removes the call into exception fixup that was added in
-> > > commit c28f896634f2 ("[PATCH] kprobes: fix broken fault handling for
-> > > x86_64").
-> > >
-> > > On X86, kprobe_fault_handler() is called from two places:
-> > > do_general_protection() (for #GP) and kprobes_fault() (for #PF).
-> > > In both paths, the fixup_exception() call in the kprobe fault handler is
-> > > redundant.
-> > >
-> > > For #GP, fixup_exception() is called immediately before
-> > > kprobe_fault_handler() is invoked - if someone wanted to fix up our #GP,
-> > > they've already done so, no need to try again. (This assumes that the
-> > > kprobe's fault handler isn't going to do something crazy like changing RIP
-> > > so that it suddenly points to an instruction that does userspace access.)
-> >
-> > This needs review by someone who understands kprobes better than I do.
-> > What happens if someone puts a kprobe on a uaccess instruction and the
-> > uaccess subsequently faults?
+On 15:55-20180827, Tony Lindgren wrote:
+> * Kishon Vijay Abraham I <kishon@ti.com> [180827 03:06]:
+> > Hi Tony,
+> > 
+> > On Monday 20 August 2018 08:01 PM, Tony Lindgren wrote:
+> > > * Kishon Vijay Abraham I <kishon@ti.com> [180808 06:35]:
+> > >> On Tuesday 05 June 2018 07:35 PM, Rob Herring wrote:
+> > >>> Really need 64-bit addresses and sizes? Use ranges to limit the
+> > >>> address space if possible.
+> > >>
+> > >> We now have address-cells as <1>,
+> > >> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/arch/arm64/boot/dts/ti/k3-am65.dtsi#n49
+> > >>
+> > >> However each PCIe instance has 2 data regions and one of the regions
+> > >> (PCIE0_CORE_CORE_DAT_SLV_PCIE_DAT1/PCIE1_CORE_CORE_DAT_SLV_PCIE_DAT1 specified
+> > >> in the "MAIN Domain Memory Map" table of TRM http://www.ti.com/lit/pdf/spruid7)
+> > >> is above the 32bit region and requires 2 cells to specify the start address.
+> > >> This region is used to access MEM_SPACE of PCIe endpoint when operating in root
+> > >> complex mode and access memory of PCI root complex when operating in endpoint mode.
+> > >>
+> > >> In order to describe this, should we change the address-cells back to <2> or do
+> > >> you suggest any other alternatives?
+> > > 
+> > > It's probably best to have the top level cbass interconnect use
+> > > #size-cells = <2> and then have it's child interconnects have
+> > > #size-cells = <1> if they don't need ranges above 4GB.
+> > 
+> > PCIe has a region starting at 0x40_00000000 and size 4GB. We need 2 address
+> > cells and 2 size cells to describe this no?
 > 
-> Ugh, good point. I'll admit to not having thought about that properly.
+> Yes.
 > 
-> I think that's the "if (unlikely(regs->ip == (unsigned
-> long)cur->ainsn.insn))" branch in kprobe_fault_handler(), which I'm
-> not touching.
-
-Correct, probing on uaccess is handled by that block.
-So this fixup_exception() is just for safeness.
-As Jann said, no_context() handles it correctly, we don't need it.
-
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-
-Thank you!
-
+> > > BTW, what's the difference between all these three similar PCIE
+> > > ranges?
+> > > 
+> > > PCIE0_CORE_CORE_DAT_SLV_PCIE_CORE 0x0005500000 0x0005600000 1 MB
+> > > PCIE1_CORE_CORE_DAT_SLV_PCIE_CORE 0x0005600000 0x0005700000 1 MB
+> > 
+> > This is the register space for the two instances of PCIe controller.
+> > > 
+> > > PCIE0_CORE_CORE_DAT_SLV_PCIE_DAT0 0x0010000000 0x0018000000 128 MB
+> > > PCIE1_CORE_CORE_DAT_SLV_PCIE_DAT0 0x0018000000 0x0020000000 128 MB
+> > > 
+> > > PCIE0_CORE_CORE_DAT_SLV_PCIE_DAT1 0x4000000000 0x4100000000 4 GB
+> > > PCIE1_CORE_CORE_DAT_SLV_PCIE_DAT1 0x4100000000 0x4200000000 4 GB
+> > 
+> > The above are regions which can be used by CPU/DMA to access the PCIe address
+> > space. The mapping from the above regions to the PCIe address space will be
+> > programmed in the PCIe controller.
 > 
-> For #PF, both without and with my patch, stuff should get fixed up by
-> the normal pagefault handler, since the fixup happens after the kprobe
-> handler has fiddled with the exception state.
+> OK so not just somethng for dma-ranges but also accessible by
+> the CPU.
 > 
-> For #GP, we're already past the fixup call, and I think both without
-> and with my patch, nothing will catch it - so I think that's a bug,
-> but I don't think it's one I'm introducing.
-> 
-> > > For #PF on a kernel address from kernel space, after the kprobe fault
-> > > handler has run, we'll go into no_context(), which calls fixup_exception().
-> > >
-> > > Signed-off-by: Jann Horn <jannh@google.com>
-> > > ---
-> > >  arch/x86/kernel/kprobes/core.c | 7 -------
-> > >  1 file changed, 7 deletions(-)
-> > >
-> > > diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
-> > > index 467ac22691b0..7315ac202aad 100644
-> > > --- a/arch/x86/kernel/kprobes/core.c
-> > > +++ b/arch/x86/kernel/kprobes/core.c
-> > > @@ -1021,13 +1021,6 @@ int kprobe_fault_handler(struct pt_regs *regs, int trapnr)
-> > >                 if (cur->fault_handler && cur->fault_handler(cur, regs, trapnr))
-> > >                         return 1;
-> > >
-> > > -               /*
-> > > -                * In case the user-specified fault handler returned
-> > > -                * zero, try to fix up.
-> > > -                */
-> > > -               if (fixup_exception(regs, trapnr))
-> > > -                       return 1;
-> > > -
-> > >                 /* fixup routine could not handle it. */
-> > >         }
-> > >
-> > > --
-> > > 2.19.0.rc0.228.g281dcd1b4d0-goog
-> > >
 
+Kishon, Sekhar:
+
+Can you guys post patches based on v4.19-rc1 for fixing this? I do have
+a bunch of dts nodes to build as well for v4.20, once Tony / Rob acks the
+changes.
 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Regards,
+Nishanth Menon
