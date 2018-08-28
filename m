@@ -2,62 +2,52 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A1ABC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 18:09:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBB63C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 18:10:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A38A12087C
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 18:09:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="p/uy/vUd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A38A12087C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id A3DDF20644
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 18:10:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3DDF20644
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727404AbeH1WCm (ORCPT
+        id S1727510AbeH1WDD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 18:02:42 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:45364 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727130AbeH1WCm (ORCPT
+        Tue, 28 Aug 2018 18:03:03 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:52647 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727130AbeH1WDC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 18:02:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=REEDdhcsjfFTLS48PMY65npoDqqE8e6fTQGykuUYbXo=; b=p/uy/vUdi0Oqsz66KHCHmvsHpp
-        geT3MdCGVHs038pCh7a8uf7tsxlGVaGPkUVuBqjrU91+VBg6iICi4a9RsJUhfl51BMhXO7OhUPRlB
-        sVcMCBY7TteVgrtObcKEecYIvwiAwHA+pE5wOYqz3yU4FCf7QA5HywgDnzAMxyVBvU0e3Q6HodA5P
-        b1iBuv8Wwh9ohWmcFKoA1bWDsvriiUJfCUMhp/ygJB023J4HMB9I7Vu9PgxdaLCBuGxysbXILYj8A
-        iSJCEFHZDrpIqnBL8M+xV/BMTZaesQWSQe7iGtCgBnAGGL1OwoH87BP4ZDBHOEsuNbzoaRWqWqM4e
-        IQj7BFgg==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fuiQv-0002Qh-Jn; Tue, 28 Aug 2018 18:09:44 +0000
-Subject: Re: [PATCH v5 3/3] overlayfs: override_creds=off option bypass
- creator_cred
-To:     Mark Salyzyn <salyzyn@android.com>, linux-kernel@vger.kernel.org
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        linux-unionfs@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20180828165336.211643-1-salyzyn@android.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <a8dc66c4-4761-4876-abd3-6dc135692404@infradead.org>
-Date:   Tue, 28 Aug 2018 11:09:39 -0700
+        Tue, 28 Aug 2018 18:03:02 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mailout.easymail.ca (Postfix) with ESMTP id 488BCC0789;
+        Tue, 28 Aug 2018 18:10:12 +0000 (UTC)
+Received: from mailout.easymail.ca ([127.0.0.1])
+        by localhost (emo01-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id BKL55wMDwa1W; Tue, 28 Aug 2018 18:10:12 +0000 (UTC)
+Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailout.easymail.ca (Postfix) with ESMTPSA id 85257C066A;
+        Tue, 28 Aug 2018 18:10:00 +0000 (UTC)
+Subject: Re: [PATCH] arm64: add NUMA emulation support
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     catalin.marinas@arm.com, sudeep.holla@arm.com,
+        ganapatrao.kulkarni@cavium.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Shuah Khan <shuah@kernel.org>
+References: <20180824230559.32336-1-shuah@kernel.org>
+ <20180828174011.GE20375@arm.com>
+From:   Shuah Khan <shuah@kernel.org>
+Message-ID: <a58ad11f-3c22-ed7f-a0cd-938aabc4adaf@kernel.org>
+Date:   Tue, 28 Aug 2018 12:09:53 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180828165336.211643-1-salyzyn@android.com>
+In-Reply-To: <20180828174011.GE20375@arm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -66,54 +56,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/28/2018 09:53 AM, Mark Salyzyn wrote:
-> diff --git a/Documentation/filesystems/overlayfs.txt b/Documentation/filesystems/overlayfs.txt
-> index 72615a2c0752..953e52971eb0 100644
-> --- a/Documentation/filesystems/overlayfs.txt
-> +++ b/Documentation/filesystems/overlayfs.txt
-> @@ -106,6 +106,35 @@ Only the lists of names from directories are merged.  Other content
->  such as metadata and extended attributes are reported for the upper
->  directory only.  These attributes of the lower directory are hidden.
->  
-> +credentials
-> +-----------
-> +
-> +By default, all access to the upper, lower and work directories is the
-> +recorded mounter's MAC and DAC credentials.  The incoming accesses are
-> +checked against the caller's credentials.
-> +
-> +If the principles of least privilege are applied, the mounter's
-> +credentials might not overlap the credentials of the caller's when
-> +accessing the overlayfs filesystem.  For example, a file that a lower
-> +DAC privileged caller can execute, but is MAC denied to the
-> +generally higher DAC privileged mounter, to prevent an attack vector
-> +executing with the increased privileges of the mounter.  One option is
-> +to turn off override_creds in the mount options; all subsequent
-> +operations after mount on the filesystem will be only the caller's
-> +credentials.  This option default is set in the CONFIG
-> +OVERLAY_FS_OVERRIDE_CREDS or in the module option override_creds.
-> +Fundamentally The mounter has privileges, its ability to execute,
+On 08/28/2018 11:40 AM, Will Deacon wrote:
+> On Fri, Aug 24, 2018 at 05:05:59PM -0600, Shuah Khan (Samsung OSG) wrote:
+>> Add NUMA emulation support to emulate NUMA on non-NUMA platforms. A new
+>> CONFIG_NUMA_EMU option enables NUMA emulation and a new kernel command
+>> line option "numa=fake=N" allows users to specify the configuration for
+>> emulation.
+>>
+>> When NUMA emulation is enabled, a flat (non-NUMA) machine will be split
+>> into virtual NUMA nodes when booted with "numa=fake=N", where N is the
+>> number of nodes, the system RAM will be split into N equal chunks and
+>> assigned to each node.
+>>
+>> Emulated nodes are bounded by MAX_NUMNODES and the number of memory block
+>> count to avoid splitting memory blocks across NUMA nodes.
+>>
+>> If NUMA emulation init fails, it will fall back to dummy NUMA init.
+>>
+>> This is tested on Raspberry Pi3b+ with ltp NUMA test suite, numactl, and
+>> numastat tools. In addition, tested in conjunction with cpuset cgroup to
+>> verify cpuset.cpus and cpuset.mems assignments.
+>>
+>> Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+>> ---
+>>  arch/arm64/Kconfig            |   9 +++
+>>  arch/arm64/include/asm/numa.h |   8 +++
+>>  arch/arm64/mm/Makefile        |   1 +
+>>  arch/arm64/mm/numa.c          |   4 ++
+>>  arch/arm64/mm/numa_emu.c      | 109 ++++++++++++++++++++++++++++++++++
+>>  5 files changed, 131 insertions(+)
+>>  create mode 100644 arch/arm64/mm/numa_emu.c
+> 
+> Hmm, is this just for debugging and kernel development? If so, it's quite a
+> lot of code just for that. Can't you achieve the same thing by faking up the
+> firmware tables?
+> 
+> Will
+> 
 
-                 the
+The main intent is to use numa emulation in conjunction with cpusets for coarse
+memory management similar to x86_64 use-case for the same.
 
-but this entire sentence is jumbled and awkward and could use some work.
-I tried to come up with something but I can't quite get what is intended here.
+I verified the restricted/unrestricted using cpuset cgroup to verify cpuset.cpus
+and cpuset.mems assignments. I could see the Restricted/Unrestricted case memory
+usage differences. Using this it will be possible to restrict memory usage by a
+class of processes or a workload or set aside memory for a workload.
 
+This adds the same feature supported by x86_64 as described in
 
-> +for example, files and grant them these higher privileges is to be
-> +blocked except to lower privileged and appropriate callers.  This
-> +option turned off permits this kind of security policy.
-> +
-> +With override_creds turned off, several unintended side effects will
-> +occur.  The caller with a lower privilege will not be able to delete
-> +files or directories, create nodes, or search some directories.  The
-> +uneven security model where upperdir and workdir are opened at
-> +privilege, but accessed without, should only be used with strict
-> +understanding of the side effects and of the security policies.
-> +
->  whiteouts and opaque directories
->  --------------------------------
+x86/x86_64/fake-numa-for-cpusets
+Using numa=fake and CPUSets for Resource Management
 
+I could see the Restricted/Unrestricted case memory usage differences with this
+patch on Raspberry Pi3b+.
 
--- 
-~Randy
+This can also be used to regression test higher level NUMA changes on non-NUMA
+as well without firmware changes. This will also provide a way to expand NUMA
+regression testing in kernel rings.
+
+I was able to run ltp NUMA tests on this and verify NUMA policy code on non-NUMA
+platform. Results below.
+
+numa01 1 TINFO: The system contains 4 nodes: 
+numa01 1 TPASS: NUMA local node and memory affinity
+numa01 2 TPASS: NUMA preferred node policy
+numa01 3 TPASS: NUMA share memory allocated in preferred node
+numa01 4 TPASS: NUMA interleave policy
+numa01 5 TPASS: NUMA interleave policy on shared memory
+numa01 6 TPASS: NUMA phycpubind policy
+numa01 7 TPASS: NUMA local node allocation
+numa01 8 TPASS: NUMA MEMHOG policy
+numa01 9 TPASS: NUMA policy on lib NUMA_NODE_SIZE API
+numa01 10 TPASS: NUMA MIGRATEPAGES policy
+numa01 11 TCONF: hugepage is not supported
+grep: /sys/kernel/mm/transparent_hugepage/enabled: No such file or directory
+numa01 12 TCONF: THP is not supported/enabled
+
+Summary:
+passed   10
+failed   0
+skipped  2
+warnings 0
+
+thanks,
+-- Shuah
