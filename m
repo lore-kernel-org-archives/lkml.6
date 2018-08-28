@@ -2,116 +2,107 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21A6DC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:02:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7E91C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:03:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7F1220869
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:02:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7F1220869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id 8D19E20897
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:03:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D19E20897
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728281AbeH1Qx7 (ORCPT
+        id S1728087AbeH1Qyu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 12:53:59 -0400
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:4736 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726998AbeH1Qx6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 12:53:58 -0400
-X-IronPort-AV: E=Sophos;i="5.53,299,1531810800"; 
-   d="scan'208";a="16756411"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 28 Aug 2018 06:02:11 -0700
-Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.76.4) by
- chn-sv-exch04.mchp-main.com (10.10.76.105) with Microsoft SMTP Server id
- 14.3.352.0; Tue, 28 Aug 2018 06:02:10 -0700
-From:   Claudiu Beznea <claudiu.beznea@microchip.com>
-To:     <thierry.reding@gmail.com>, <shc_work@mail.ru>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>, <corbet@lwn.net>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>
-CC:     <linux-pwm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [RESEND PATCH v5 8/9] pwm: add documentation for pwm push-pull mode
-Date:   Tue, 28 Aug 2018 16:01:25 +0300
-Message-ID: <1535461286-12308-9-git-send-email-claudiu.beznea@microchip.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1535461286-12308-1-git-send-email-claudiu.beznea@microchip.com>
-References: <1535461286-12308-1-git-send-email-claudiu.beznea@microchip.com>
+        Tue, 28 Aug 2018 12:54:50 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37424 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726998AbeH1Qyu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 12:54:50 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EB88C80D;
+        Tue, 28 Aug 2018 06:03:15 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id BC4F43F721;
+        Tue, 28 Aug 2018 06:03:15 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 42FB21AE31F5; Tue, 28 Aug 2018 14:03:27 +0100 (BST)
+Date:   Tue, 28 Aug 2018 14:03:27 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, benh@au1.ibm.com,
+        torvalds@linux-foundation.org, npiggin@gmail.com,
+        catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org
+Subject: Re: [RFC PATCH 02/11] arm64: tlb: Add DSB ISHST prior to TLBI in
+ __flush_tlb_[kernel_]pgtable()
+Message-ID: <20180828130326.GB26727@arm.com>
+References: <1535125966-7666-1-git-send-email-will.deacon@arm.com>
+ <1535125966-7666-3-git-send-email-will.deacon@arm.com>
+ <20180824175609.GR24124@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180824175609.GR24124@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add documentation for PWM push-pull mode.
+On Fri, Aug 24, 2018 at 07:56:09PM +0200, Peter Zijlstra wrote:
+> On Fri, Aug 24, 2018 at 04:52:37PM +0100, Will Deacon wrote:
+> > __flush_tlb_[kernel_]pgtable() rely on set_pXd() having a DSB after
+> > writing the new table entry and therefore avoid the barrier prior to the
+> > TLBI instruction.
+> > 
+> > In preparation for delaying our walk-cache invalidation on the unmap()
+> > path, move the DSB into the TLB invalidation routines.
+> > 
+> > Signed-off-by: Will Deacon <will.deacon@arm.com>
+> > ---
+> >  arch/arm64/include/asm/tlbflush.h | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
+> > index 7e2a35424ca4..e257f8655b84 100644
+> > --- a/arch/arm64/include/asm/tlbflush.h
+> > +++ b/arch/arm64/include/asm/tlbflush.h
+> > @@ -213,6 +213,7 @@ static inline void __flush_tlb_pgtable(struct mm_struct *mm,
+> >  {
+> >  	unsigned long addr = __TLBI_VADDR(uaddr, ASID(mm));
+> >  
+> > +	dsb(ishst);
+> >  	__tlbi(vae1is, addr);
+> >  	__tlbi_user(vae1is, addr);
+> >  	dsb(ish);
+> > @@ -222,6 +223,7 @@ static inline void __flush_tlb_kernel_pgtable(unsigned long kaddr)
+> >  {
+> >  	unsigned long addr = __TLBI_VADDR(kaddr, 0);
+> >  
+> > +	dsb(ishst);
+> >  	__tlbi(vaae1is, addr);
+> >  	dsb(ish);
+> >  }
+> 
+> I would suggest these barrier -- like any other barriers, carry a
+> comment that explain the required ordering.
+> 
+> I think this here reads like:
+> 
+> 	STORE: unhook page
+> 
+> 	DSB-ishst: wait for all stores to complete
+> 	TLBI: invalidate broadcast
+> 	DSB-ish: wait for TLBI to complete
+> 
+> And the 'newly' placed DSB-ishst ensures the page is observed unlinked
+> before we issue the invalidate.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/pwm/pwm.txt |  2 ++
- Documentation/pwm.txt                         | 16 ++++++++++++++++
- include/dt-bindings/pwm/pwm.h                 |  1 +
- 3 files changed, 19 insertions(+)
+Yeah, not a bad idea. We already have a big block comment in this file but
+it's desperately out of date, so lemme rewrite that and justify the barriers
+at the same time.
 
-diff --git a/Documentation/devicetree/bindings/pwm/pwm.txt b/Documentation/devicetree/bindings/pwm/pwm.txt
-index 7c8aaac43f92..6a60c0fca112 100644
---- a/Documentation/devicetree/bindings/pwm/pwm.txt
-+++ b/Documentation/devicetree/bindings/pwm/pwm.txt
-@@ -49,6 +49,8 @@ Optionally, the pwm-specifier can encode a number of flags (defined in
- - PWM_MODE_COMPLEMENTARY: PWM complementary working mode (for PWM channels
- with two outputs); if not specified, the default for PWM channel will be
- used
-+- PWM_MODE_PUSH_PULL: PWM push-pull working modes (for PWM channels with
-+two outputs); if not specified the default for PWM channel will be used
- 
- Example with optional PWM specifier for inverse polarity and complementary
- mode:
-diff --git a/Documentation/pwm.txt b/Documentation/pwm.txt
-index 912c43da8b48..675f9351fed1 100644
---- a/Documentation/pwm.txt
-+++ b/Documentation/pwm.txt
-@@ -128,6 +128,22 @@ channel that was exported. The following properties will then be available:
-     PWML1   |__|  |__|  |__|  |__|
-             <--T-->
- 
-+    Push-pull mode - for PWM channels with two outputs; output waveforms
-+        for a PWM channel in push-pull mode, with normal polarity looks like
-+        this:
-+            __          __
-+    PWMH __|  |________|  |________
-+                  __          __
-+    PWML ________|  |________|  |__
-+           <--T-->
-+
-+    If polarity is inversed:
-+         __    ________    ________
-+    PWMH   |__|        |__|
-+         ________    ________    __
-+    PWML         |__|        |__|
-+           <--T-->
-+
-     Where T is the signal period.
- 
- Implementing a PWM driver
-diff --git a/include/dt-bindings/pwm/pwm.h b/include/dt-bindings/pwm/pwm.h
-index b82279cc1787..cd4265bce968 100644
---- a/include/dt-bindings/pwm/pwm.h
-+++ b/include/dt-bindings/pwm/pwm.h
-@@ -12,5 +12,6 @@
- 
- #define PWM_POLARITY_INVERTED			(1 << 0)
- #define PWM_MODE_COMPLEMENTARY			(1 << 1)
-+#define PWM_MODE_PUSH_PULL			(1 << 2)
- 
- #endif
--- 
-2.7.4
-
+Will
