@@ -2,142 +2,119 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8F31C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:20:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4066CC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:22:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D5702087B
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:20:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bO7jS46p"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D5702087B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id E016F2084A
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:22:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E016F2084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727177AbeH2BNt (ORCPT
+        id S1727430AbeH2BQT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 21:13:49 -0400
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:33741 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726383AbeH2BNt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 21:13:49 -0400
-Received: by mail-yb0-f193.google.com with SMTP id d4-v6so1199125ybl.0;
-        Tue, 28 Aug 2018 14:20:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3i+Gc+ZMhFWjbnaxJBzhzEqRzTgiVvoqz22Cr+5S3tE=;
-        b=bO7jS46pRs3jZnRMJ85tTGAFPbV/w9lLAO7+E3pHaR6fQF4ZEBEBEfCU5P5bg6l6mh
-         +KhvChzsm9DNYeUOFdMQyLkGfdJVB4oq2GnBmH9zXSKm7hqpgs/2qHwQPCIQrUD/+nAv
-         F7MREe9TPU81sMyCd94WxEd8GV/bgBkNzx1jSmox7XX3ysVfE8zdsAZzcDZky9gIINIR
-         gqtzo61AVdvmFtqphUQD2mGF5Uci7RphBLi7CuoN10Pk542h9m/v1B6YXeiMrlSa2TOs
-         ubwRkhQ5qJzhP82tt2VA7zut72tzUrnUtuWhwowF9qX4ohVPJJpdty3zCWiGlvclcmC0
-         ji7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3i+Gc+ZMhFWjbnaxJBzhzEqRzTgiVvoqz22Cr+5S3tE=;
-        b=MMCkG1asc3xSgFVWy/r2LUsR8pi4ry0T/bk4rSVp6FjwODwW7IT6ttvokmLwcTW1XU
-         Tmm4rqLG0rMkzcpjSAi9XX9s5nzp2Fwk+iHzcwbV3w1x6fjVdo6Jb6PD+bA9aAYqvMo6
-         ZpWWVu4jFL2HG58m1wtOlQg+vaMKIm1xRFg8PQVtvhDn2sP0/TzMzymFElkw7WPaEaQf
-         qwUBqazMzudNApI9AjEde2pNn+mcHqND6kcvLzCQnivYpK11YojIZA41/8rAnGMC74rW
-         mjP2+wnGCno3f7cV9mQ4oHQt2+W9RO2NLS+XPiRkvCrz2ZhK92QPWY9GhYQVL63BU3HM
-         V9cA==
-X-Gm-Message-State: APzg51A147ax8shTuL0HmkeGs9Ah5ml04F5Tws7SjxVI2jEyq3FEfwcW
-        WAso05BonMajFnxtJOBdnKk7fEQliZy2f1jj78Q=
-X-Google-Smtp-Source: ANB0VdbBbs6V0Pe3MAPkOWYQ8RKGuaKDY3vuPHHvXZIphJLtSmEFINOjzERUbSr8zYJejZRNVKk9BpIgoCuPFvyr0mY=
-X-Received: by 2002:a25:ea0e:: with SMTP id p14-v6mr1859068ybd.397.1535491218770;
- Tue, 28 Aug 2018 14:20:18 -0700 (PDT)
+        Tue, 28 Aug 2018 21:16:19 -0400
+Received: from mga12.intel.com ([192.55.52.136]:60721 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726998AbeH2BQT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 21:16:19 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Aug 2018 14:22:49 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,300,1531810800"; 
+   d="scan'208";a="85277502"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.9])
+  by fmsmga001.fm.intel.com with ESMTP; 28 Aug 2018 14:22:44 -0700
+Date:   Tue, 28 Aug 2018 14:22:44 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
+        platform-driver-x86@vger.kernel.org, nhorman@redhat.com,
+        npmccallum@redhat.com, linux-sgx@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Serge Ayoun <serge.ayoun@intel.com>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v13 09/13] x86/sgx: Enclave Page Cache (EPC) memory
+ manager
+Message-ID: <20180828212244.GA29488@linux.intel.com>
+References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
+ <20180827185507.17087-10-jarkko.sakkinen@linux.intel.com>
+ <7c5df14e-3028-46b3-fe93-aa6ba8352317@intel.com>
+ <20180828083540.GH15508@linux.intel.com>
+ <132d309d-77e2-52ed-7251-abb2c80cdf49@intel.com>
 MIME-Version: 1.0
-References: <20180828165336.211643-1-salyzyn@android.com> <a8dc66c4-4761-4876-abd3-6dc135692404@infradead.org>
-In-Reply-To: <a8dc66c4-4761-4876-abd3-6dc135692404@infradead.org>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 29 Aug 2018 00:20:06 +0300
-Message-ID: <CAOQ4uxg5chFxo5wM-qtBYW0TPcsemtdh4WdRrtJDW_VvsAbtAQ@mail.gmail.com>
-Subject: Re: [PATCH v5 3/3] overlayfs: override_creds=off option bypass creator_cred
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Mark Salyzyn <salyzyn@android.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <132d309d-77e2-52ed-7251-abb2c80cdf49@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 9:09 PM Randy Dunlap <rdunlap@infradead.org> wrote:
->
-> On 08/28/2018 09:53 AM, Mark Salyzyn wrote:
-> > diff --git a/Documentation/filesystems/overlayfs.txt b/Documentation/filesystems/overlayfs.txt
-> > index 72615a2c0752..953e52971eb0 100644
-> > --- a/Documentation/filesystems/overlayfs.txt
-> > +++ b/Documentation/filesystems/overlayfs.txt
-> > @@ -106,6 +106,35 @@ Only the lists of names from directories are merged.  Other content
-> >  such as metadata and extended attributes are reported for the upper
-> >  directory only.  These attributes of the lower directory are hidden.
-> >
-> > +credentials
-> > +-----------
-> > +
-> > +By default, all access to the upper, lower and work directories is the
-> > +recorded mounter's MAC and DAC credentials.  The incoming accesses are
-> > +checked against the caller's credentials.
-> > +
-> > +If the principles of least privilege are applied, the mounter's
-> > +credentials might not overlap the credentials of the caller's when
-> > +accessing the overlayfs filesystem.  For example, a file that a lower
-> > +DAC privileged caller can execute, but is MAC denied to the
-> > +generally higher DAC privileged mounter, to prevent an attack vector
-> > +executing with the increased privileges of the mounter.  One option is
-> > +to turn off override_creds in the mount options; all subsequent
-> > +operations after mount on the filesystem will be only the caller's
-> > +credentials.  This option default is set in the CONFIG
-> > +OVERLAY_FS_OVERRIDE_CREDS or in the module option override_creds.
-> > +Fundamentally The mounter has privileges, its ability to execute,
->
->                  the
->
-> but this entire sentence is jumbled and awkward and could use some work.
-> I tried to come up with something but I can't quite get what is intended here.
->
+On Tue, Aug 28, 2018 at 07:07:33AM -0700, Dave Hansen wrote:
+> On 08/28/2018 01:35 AM, Jarkko Sakkinen wrote:
+> > On Mon, Aug 27, 2018 at 02:15:34PM -0700, Dave Hansen wrote:
+> >> On 08/27/2018 11:53 AM, Jarkko Sakkinen wrote:
+> >>> +struct sgx_epc_page_ops {
+> >>> +	bool (*get)(struct sgx_epc_page *epc_page);
+> >>> +	void (*put)(struct sgx_epc_page *epc_page);
+> >>> +	bool (*reclaim)(struct sgx_epc_page *epc_page);
+> >>> +	void (*block)(struct sgx_epc_page *epc_page);
+> >>> +	void (*write)(struct sgx_epc_page *epc_page);
+> >>> +};
+> >> Why do we need a fancy, slow (retpoline'd) set of function pointers when
+> >> we only have one user of these (the SGX driver)?
+> > KVM has its own implementation for these operations.
+> 
+> That belongs in the changelog.
+> 
+> Also, where is the implementation?  How can we assess this code that was
+> built to create an abstraction without both of the users?
 
-I have a very similar feeling - I do not feel any more knowledgeable after
-reading the above.
-My 2 cents - don't try to explain your reasoning for using this feature
-the use case is too awkward. You may need to rationalize your use
-case to get the feature merged, but spare the poor user who reads the
-manual.
-Explaining what  override_creds=off does is simple - stick to that
-with a disclaimer about things that may not work well.
+I can provide an early preview of the KVM reclaim code, but honestly
+I think that would do more harm than good.  The VMX architecture for
+EPC reclaim is complex, even for SGX standards.  Opening that can of
+worms would likely derail this discussion.  That being said, this
+abstraction isn't exactly what KVM will need, but it's pretty close
+and gives us something to build on.
 
->
-> > +for example, files and grant them these higher privileges is to be
-> > +blocked except to lower privileged and appropriate callers.  This
-> > +option turned off permits this kind of security policy.
-> > +
-> > +With override_creds turned off, several unintended side effects will
-> > +occur.  The caller with a lower privilege will not be able to delete
-> > +files or directories, create nodes, or search some directories.  The
-> > +uneven security model where upperdir and workdir are opened at
-> > +privilege, but accessed without, should only be used with strict
-> > +understanding of the side effects and of the security policies.
-> > +
+Regardless, this layer of indirection is justifiable even with a
+single implementation.  Reclaiming an EPC page is not a simple matter
+of copying the data somewhere else and marking the page not present.
+Actual eviction requires a reference to the Secure Enclave Control
+Structure (SECS) of the enclave that owns the page.  Software needs
+to ensure it doesn't violate the hardware-enforced access rules, e.g.
+most reclaim activites need to be done under a per-enclave lock.
+Not all pages have the same reclaim rules, e.g. an SECS can only
+be reclaimed after all its child pages have reclaimed, a VA page
+doesn't need to be blocked, etc...  And the list goes on...
 
-I like the ending ;-)
-Let's go with "The user may not be able to delete..."
+All of the tracking metadata and logic about what can be evicted when
+resides in the driver component[1], e.g. the core SGX code doesn't
+even have a software representation of an enclave.  Alternatively the
+driver could provide a single "do_reclaim" function if we wanted to
+avoid a fancy abstraction layer, and in fact that's how I initially
+implemented the abstraction, but that approach has it's own warts and
+in a lot of ways makes the end result more complex.
 
-Thanks,
-Amir.
+Ultimately, moving pages in/out of the EPC is so abysmally slow that
+the raw performance of software is almost completely irrelevant.  The
+algorithms certainly matter, but optimizing away things like function
+pointers definitely takes a back seat to just about everything else.
+
+[1] Early versions of SGX support tried to put all EPC management in
+    the driver, but that approach caused major problems for KVM (even
+    without reclaim support) and received a less than enthusiastic
+    response from the community.
