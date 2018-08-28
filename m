@@ -4,59 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 835E7C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:23:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 359D8C43334
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:23:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 179802088E
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:23:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE2E820897
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:23:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="HcoPUr8P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 179802088E
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="rv6b+n5M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE2E820897
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727514AbeH1VQE (ORCPT
+        id S1727562AbeH1VQH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 17:16:04 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:34540 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727468AbeH1VQE (ORCPT
+        Tue, 28 Aug 2018 17:16:07 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:41977 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727518AbeH1VQF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 17:16:04 -0400
-Received: by mail-yw1-f68.google.com with SMTP id y134-v6so892720ywg.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 10:23:24 -0700 (PDT)
+        Tue, 28 Aug 2018 17:16:05 -0400
+Received: by mail-yb0-f194.google.com with SMTP id z3-v6so894391ybm.8
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 10:23:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=9pv5Yc7BWzaFaIbPzHYAa3fodLWKuUPKvT2vF5h02lw=;
-        b=HcoPUr8PHMfUHdeOw/5VKojeZV10/HTF/gZoWe7rUTw2WZ/OyM2TGlABoV3SUL9HRK
-         NjEgXfW33IipYougb030Dhrxwufdlnh6OS5iOAUq/HBiQ2nYRXoVJwhBjpsbuy4zcfKY
-         AeK2pqqkESjx3Es9OR18dXQv8UqkxgRx8Iy72Dz2VoA1PRc1AYWA4Eqen8YMNH02O+PO
-         xYYkSWg6+F0a5kNSlpim69nvS2488U1b2qZI3EDaSW70mgRvgAIKeT4Bo4gNqULmHP1T
-         XhAt/nlYj/aLYsoeeQpydjbSapllqJeAi9ZM+YZWDxicHCR+6crsjFaSqA6cvC6Q8WQu
-         bzPA==
+        bh=rYqRJD/Nn/mjyDEIlHij4Nq2ZQJyQDLbJcRnxwRjma8=;
+        b=rv6b+n5M5/s6153mcQJP8vb8uQTvc0ZkerEzMVY/d84AUjep2LMXmRZe1FWs1qjyXF
+         s0y0Ha0UgpGEJTASxmj542o50DJGU1z1eH3au+YA4fExeolwZJJ5hJBuH4Tau6DKmtxx
+         SB/JZUuFL9anXIHerqONyisv6lsGmSnn8vJfn9deTIyTgidwM+3hGJm/z0JA81qWhsLf
+         4dQgA3HjMEuD/3l6gkLH4TFX8U1/eJUq+MNxqI91DS/OI9iF6jUKjBz/OpVN5l1ziDrn
+         Kfirj7wk4y8q/udRMCGkLXNyJgUVZKh3tY/O/DLXkJkib73qxfeUKXRcAxGoSLAH2RbV
+         hRgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=9pv5Yc7BWzaFaIbPzHYAa3fodLWKuUPKvT2vF5h02lw=;
-        b=pEb8vd0qOUF5mYVmLuOgkOVc2odgOGY5SFY4xoj7tSIxN0xhG2kYlS2gGw9HOzUmRB
-         4c/+pujf6qtbMzCVBnVGd5ibf6uzRdIOwBvVcCXGSI/rQzPeMel2YcD/XRhjxBZ3iQZB
-         p0AfP8xuc475CEcJMUm548osHTKT5JKk3509vB+umn6wlrJt3tairE4o/uqc2Tmdrrio
-         J0MFBlvPsgO8BpP1vA7kVLXg9c3UpkX14DClmHkWNO25yJQkVNhVwvOEtUlcNNZTtkLa
-         F3EjJH/reBkV7f2yl1vSOsNXEITqROT7C+TyqVfKB7gE/Xls20g1YMJ9DnmR5bc665Og
-         fC5A==
-X-Gm-Message-State: APzg51D4NkdD/oJZwWGgM6LQeK/1B6TSIsCdSSAsoYgbUGTC/Bzqmluk
-        uZDgQbxmXJNQPd9okmLhZNJtjg==
-X-Google-Smtp-Source: ANB0VdYDXsGdBjEXimXVRGOZ+hARrhb765ZjxtaBorm8cRcesp+cpspcJ1jYhzdD8mRhQBcCd7dmJQ==
-X-Received: by 2002:a81:138e:: with SMTP id 136-v6mr1379201ywt.485.1535477003293;
-        Tue, 28 Aug 2018 10:23:23 -0700 (PDT)
+        bh=rYqRJD/Nn/mjyDEIlHij4Nq2ZQJyQDLbJcRnxwRjma8=;
+        b=V3q36fbXv1tgUH+HU62cGSqHT2c/viwM96U9A6gXaiZSxWLk77xfZ8Eu4iwJUf8MRw
+         TJHn3X6RUyomRzb0nqpmHMhHHe+kkiJPgyJbZAEP/tGs2o1wyIC6oWNSmecmBoId7PpV
+         61eWtmWC0MqfQyN1PVuD9sCOK1HpOBm9LZZ7pMtOsnuoE1/RjnYsZ92T14H7dgvJWOgV
+         xXQlTMkhfqS45AT+oxbD06V+yj6DVcCFYCyeSjTNIwh/fcQdgL1BCVE9stcHCSTJZTiM
+         yV3cawicDDDME0wSyykR7MBGlwYXrBrsN/p2mmODdTTLOoxoVig4MYkDXCs7HphfWYvH
+         vf+g==
+X-Gm-Message-State: APzg51Dhnu22PrQe2TmBlOV0POBvhbILBHOL9qFD0fhLJCe25GC5+e0W
+        gywsYm6R3QpTjJD34g/NNw+pfg==
+X-Google-Smtp-Source: ANB0VdYcmdWXjf09BCqTnjZc3KIcNh2/avH9YSJ2USJIxkxAPyEpIv0mY9KySK7FjbOWOTftW3VZAQ==
+X-Received: by 2002:a25:103:: with SMTP id 3-v6mr1411840ybb.421.1535477005285;
+        Tue, 28 Aug 2018 10:23:25 -0700 (PDT)
 Received: from localhost ([2620:10d:c091:200::1:de86])
-        by smtp.gmail.com with ESMTPSA id r126-v6sm585624ywb.92.2018.08.28.10.23.22
+        by smtp.gmail.com with ESMTPSA id c126-v6sm1609448ywa.104.2018.08.28.10.23.23
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 28 Aug 2018 10:23:22 -0700 (PDT)
+        Tue, 28 Aug 2018 10:23:24 -0700 (PDT)
 From:   Johannes Weiner <hannes@cmpxchg.org>
 To:     Ingo Molnar <mingo@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
@@ -71,9 +71,9 @@ Cc:     Tejun Heo <tj@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
         Mike Galbraith <efault@gmx.de>, linux-mm@kvack.org,
         cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-team@fb.com
-Subject: [PATCH 2/9] mm: workingset: tell cache transitions from workingset thrashing
-Date:   Tue, 28 Aug 2018 13:22:51 -0400
-Message-Id: <20180828172258.3185-3-hannes@cmpxchg.org>
+Subject: [PATCH 3/9] delayacct: track delays from thrashing cache pages
+Date:   Tue, 28 Aug 2018 13:22:52 -0400
+Message-Id: <20180828172258.3185-4-hannes@cmpxchg.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180828172258.3185-1-hannes@cmpxchg.org>
 References: <20180828172258.3185-1-hannes@cmpxchg.org>
@@ -82,426 +82,218 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Refaults happen during transitions between workingsets as well as
-in-place thrashing. Knowing the difference between the two has a range
-of applications, including measuring the impact of memory shortage on
-the system performance, as well as the ability to smarter balance
-pressure between the filesystem cache and the swap-backed workingset.
+Delay accounting already measures the time a task spends in direct
+reclaim and waiting for swapin, but in low memory situations tasks
+spend can spend a significant amount of their time waiting on
+thrashing page cache. This isn't tracked right now.
 
-During workingset transitions, inactive cache refaults and pushes out
-established active cache. When that active cache isn't stale, however,
-and also ends up refaulting, that's bonafide thrashing.
+To know the full impact of memory contention on an individual task,
+measure the delay when waiting for a recently evicted active cache
+page to read back into memory.
 
-Introduce a new page flag that tells on eviction whether the page has
-been active or not in its lifetime. This bit is then stored in the
-shadow entry, to classify refaults as transitioning or thrashing.
+Also update tools/accounting/getdelays.c:
 
-How many page->flags does this leave us with on 32-bit?
+     [hannes@computer accounting]$ sudo ./getdelays -d -p 1
+     print delayacct stats ON
+     PID     1
 
-	20 bits are always page flags
-
-	21 if you have an MMU
-
-	23 with the zone bits for DMA, Normal, HighMem, Movable
-
-	29 with the sparsemem section bits
-
-	30 if PAE is enabled
-
-	31 with this patch.
-
-So on 32-bit PAE, that leaves 1 bit for distinguishing two NUMA
-nodes. If that's not enough, the system can switch to discontigmem and
-re-gain the 6 or 7 sparsemem section bits.
-
-v4:
-- fix a typo in the comments, as per Suren
+     CPU             count     real total  virtual total    delay total  delay average
+                     50318      745000000      847346785      400533713          0.008ms
+     IO              count    delay total  delay average
+                       435      122601218              0ms
+     SWAP            count    delay total  delay average
+                         0              0              0ms
+     RECLAIM         count    delay total  delay average
+                         0              0              0ms
+     THRASHING       count    delay total  delay average
+                        19       12621439              0ms
 
 Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
 ---
- include/linux/mmzone.h         |  1 +
- include/linux/page-flags.h     |  5 +-
- include/linux/swap.h           |  2 +-
- include/trace/events/mmflags.h |  1 +
- mm/filemap.c                   |  9 ++--
- mm/huge_memory.c               |  1 +
- mm/memcontrol.c                |  2 +
- mm/migrate.c                   |  2 +
- mm/swap_state.c                |  1 +
- mm/vmscan.c                    |  1 +
- mm/vmstat.c                    |  1 +
- mm/workingset.c                | 95 ++++++++++++++++++++++------------
- 12 files changed, 79 insertions(+), 42 deletions(-)
+ include/linux/delayacct.h      | 23 +++++++++++++++++++++++
+ include/uapi/linux/taskstats.h |  6 +++++-
+ kernel/delayacct.c             | 15 +++++++++++++++
+ mm/filemap.c                   | 11 +++++++++++
+ tools/accounting/getdelays.c   |  8 +++++++-
+ 5 files changed, 61 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 32699b2dc52a..6af87946d241 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -163,6 +163,7 @@ enum node_stat_item {
- 	NR_ISOLATED_FILE,	/* Temporary isolated pages from file lru */
- 	WORKINGSET_REFAULT,
- 	WORKINGSET_ACTIVATE,
-+	WORKINGSET_RESTORE,
- 	WORKINGSET_NODERECLAIM,
- 	NR_ANON_MAPPED,	/* Mapped anonymous pages */
- 	NR_FILE_MAPPED,	/* pagecache pages mapped into pagetables.
-diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index 901943e4754b..79346bc1da7a 100644
---- a/include/linux/page-flags.h
-+++ b/include/linux/page-flags.h
-@@ -69,13 +69,14 @@
+diff --git a/include/linux/delayacct.h b/include/linux/delayacct.h
+index 31c865d1842e..577d1b25fccd 100644
+--- a/include/linux/delayacct.h
++++ b/include/linux/delayacct.h
+@@ -57,7 +57,12 @@ struct task_delay_info {
+ 
+ 	u64 freepages_start;
+ 	u64 freepages_delay;	/* wait for memory reclaim */
++
++	u64 thrashing_start;
++	u64 thrashing_delay;	/* wait for thrashing page */
++
+ 	u32 freepages_count;	/* total count of memory reclaim */
++	u32 thrashing_count;	/* total count of thrash waits */
+ };
+ #endif
+ 
+@@ -76,6 +81,8 @@ extern int __delayacct_add_tsk(struct taskstats *, struct task_struct *);
+ extern __u64 __delayacct_blkio_ticks(struct task_struct *);
+ extern void __delayacct_freepages_start(void);
+ extern void __delayacct_freepages_end(void);
++extern void __delayacct_thrashing_start(void);
++extern void __delayacct_thrashing_end(void);
+ 
+ static inline int delayacct_is_task_waiting_on_io(struct task_struct *p)
+ {
+@@ -156,6 +163,18 @@ static inline void delayacct_freepages_end(void)
+ 		__delayacct_freepages_end();
+ }
+ 
++static inline void delayacct_thrashing_start(void)
++{
++	if (current->delays)
++		__delayacct_thrashing_start();
++}
++
++static inline void delayacct_thrashing_end(void)
++{
++	if (current->delays)
++		__delayacct_thrashing_end();
++}
++
+ #else
+ static inline void delayacct_set_flag(int flag)
+ {}
+@@ -182,6 +201,10 @@ static inline void delayacct_freepages_start(void)
+ {}
+ static inline void delayacct_freepages_end(void)
+ {}
++static inline void delayacct_thrashing_start(void)
++{}
++static inline void delayacct_thrashing_end(void)
++{}
+ 
+ #endif /* CONFIG_TASK_DELAY_ACCT */
+ 
+diff --git a/include/uapi/linux/taskstats.h b/include/uapi/linux/taskstats.h
+index b7aa7bb2349f..5e8ca16a9079 100644
+--- a/include/uapi/linux/taskstats.h
++++ b/include/uapi/linux/taskstats.h
+@@ -34,7 +34,7 @@
   */
- enum pageflags {
- 	PG_locked,		/* Page is locked. Don't touch. */
--	PG_error,
- 	PG_referenced,
- 	PG_uptodate,
- 	PG_dirty,
- 	PG_lru,
- 	PG_active,
-+	PG_workingset,
- 	PG_waiters,		/* Page has waiters, check its waitqueue. Must be bit #7 and in the same byte as "PG_locked" */
-+	PG_error,
- 	PG_slab,
- 	PG_owner_priv_1,	/* Owner use. If pagecache, fs may use*/
- 	PG_arch_1,
-@@ -280,6 +281,8 @@ PAGEFLAG(Dirty, dirty, PF_HEAD) TESTSCFLAG(Dirty, dirty, PF_HEAD)
- PAGEFLAG(LRU, lru, PF_HEAD) __CLEARPAGEFLAG(LRU, lru, PF_HEAD)
- PAGEFLAG(Active, active, PF_HEAD) __CLEARPAGEFLAG(Active, active, PF_HEAD)
- 	TESTCLEARFLAG(Active, active, PF_HEAD)
-+PAGEFLAG(Workingset, workingset, PF_HEAD)
-+	TESTCLEARFLAG(Workingset, workingset, PF_HEAD)
- __PAGEFLAG(Slab, slab, PF_NO_TAIL)
- __PAGEFLAG(SlobFree, slob_free, PF_NO_TAIL)
- PAGEFLAG(Checked, checked, PF_NO_COMPOUND)	   /* Used by some filesystems */
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index c063443d8638..d8822365782b 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -296,7 +296,7 @@ struct vma_swap_readahead {
  
- /* linux/mm/workingset.c */
- void *workingset_eviction(struct address_space *mapping, struct page *page);
--bool workingset_refault(void *shadow);
-+void workingset_refault(struct page *page, void *shadow);
- void workingset_activation(struct page *page);
  
- /* Do not use directly, use workingset_lookup_update */
-diff --git a/include/trace/events/mmflags.h b/include/trace/events/mmflags.h
-index a81cffb76d89..a1675d43777e 100644
---- a/include/trace/events/mmflags.h
-+++ b/include/trace/events/mmflags.h
-@@ -88,6 +88,7 @@
- 	{1UL << PG_dirty,		"dirty"		},		\
- 	{1UL << PG_lru,			"lru"		},		\
- 	{1UL << PG_active,		"active"	},		\
-+	{1UL << PG_workingset,		"workingset"	},		\
- 	{1UL << PG_slab,		"slab"		},		\
- 	{1UL << PG_owner_priv_1,	"owner_priv_1"	},		\
- 	{1UL << PG_arch_1,		"arch_1"	},		\
+-#define TASKSTATS_VERSION	8
++#define TASKSTATS_VERSION	9
+ #define TS_COMM_LEN		32	/* should be >= TASK_COMM_LEN
+ 					 * in linux/sched.h */
+ 
+@@ -164,6 +164,10 @@ struct taskstats {
+ 	/* Delay waiting for memory reclaim */
+ 	__u64	freepages_count;
+ 	__u64	freepages_delay_total;
++
++	/* Delay waiting for thrashing page */
++	__u64	thrashing_count;
++	__u64	thrashing_delay_total;
+ };
+ 
+ 
+diff --git a/kernel/delayacct.c b/kernel/delayacct.c
+index ca8ac2824f0b..2a12b988c717 100644
+--- a/kernel/delayacct.c
++++ b/kernel/delayacct.c
+@@ -135,9 +135,12 @@ int __delayacct_add_tsk(struct taskstats *d, struct task_struct *tsk)
+ 	d->swapin_delay_total = (tmp < d->swapin_delay_total) ? 0 : tmp;
+ 	tmp = d->freepages_delay_total + tsk->delays->freepages_delay;
+ 	d->freepages_delay_total = (tmp < d->freepages_delay_total) ? 0 : tmp;
++	tmp = d->thrashing_delay_total + tsk->delays->thrashing_delay;
++	d->thrashing_delay_total = (tmp < d->thrashing_delay_total) ? 0 : tmp;
+ 	d->blkio_count += tsk->delays->blkio_count;
+ 	d->swapin_count += tsk->delays->swapin_count;
+ 	d->freepages_count += tsk->delays->freepages_count;
++	d->thrashing_count += tsk->delays->thrashing_count;
+ 	raw_spin_unlock_irqrestore(&tsk->delays->lock, flags);
+ 
+ 	return 0;
+@@ -169,3 +172,15 @@ void __delayacct_freepages_end(void)
+ 		&current->delays->freepages_count);
+ }
+ 
++void __delayacct_thrashing_start(void)
++{
++	current->delays->thrashing_start = ktime_get_ns();
++}
++
++void __delayacct_thrashing_end(void)
++{
++	delayacct_end(&current->delays->lock,
++		      &current->delays->thrashing_start,
++		      &current->delays->thrashing_delay,
++		      &current->delays->thrashing_count);
++}
 diff --git a/mm/filemap.c b/mm/filemap.c
-index 52517f28e6f4..5e53424d9097 100644
+index 5e53424d9097..ca895ebe43ac 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -915,12 +915,9 @@ int add_to_page_cache_lru(struct page *page, struct address_space *mapping,
- 		 * data from the working set, only to cache data that will
- 		 * get overwritten with something else, is a waste of memory.
- 		 */
--		if (!(gfp_mask & __GFP_WRITE) &&
--		    shadow && workingset_refault(shadow)) {
--			SetPageActive(page);
--			workingset_activation(page);
--		} else
--			ClearPageActive(page);
-+		WARN_ON_ONCE(PageActive(page));
-+		if (!(gfp_mask & __GFP_WRITE) && shadow)
-+			workingset_refault(page, shadow);
- 		lru_cache_add(page);
- 	}
- 	return ret;
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 25346bd99364..04d663c58bbe 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2369,6 +2369,7 @@ static void __split_huge_page_tail(struct page *head, int tail,
- 			 (1L << PG_mlocked) |
- 			 (1L << PG_uptodate) |
- 			 (1L << PG_active) |
-+			 (1L << PG_workingset) |
- 			 (1L << PG_locked) |
- 			 (1L << PG_unevictable) |
- 			 (1L << PG_dirty)));
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index b2173f7e5164..84824b775470 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -5329,6 +5329,8 @@ static int memory_stat_show(struct seq_file *m, void *v)
- 		   stat[WORKINGSET_REFAULT]);
- 	seq_printf(m, "workingset_activate %lu\n",
- 		   stat[WORKINGSET_ACTIVATE]);
-+	seq_printf(m, "workingset_restore %lu\n",
-+		   stat[WORKINGSET_RESTORE]);
- 	seq_printf(m, "workingset_nodereclaim %lu\n",
- 		   stat[WORKINGSET_NODERECLAIM]);
+@@ -36,6 +36,7 @@
+ #include <linux/cleancache.h>
+ #include <linux/shmem_fs.h>
+ #include <linux/rmap.h>
++#include <linux/delayacct.h>
+ #include "internal.h"
  
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 8c0af0f7cab1..a6a9114e62dc 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -682,6 +682,8 @@ void migrate_page_states(struct page *newpage, struct page *page)
- 		SetPageActive(newpage);
- 	} else if (TestClearPageUnevictable(page))
- 		SetPageUnevictable(newpage);
-+	if (PageWorkingset(page))
-+		SetPageWorkingset(newpage);
- 	if (PageChecked(page))
- 		SetPageChecked(newpage);
- 	if (PageMappedToDisk(page))
-diff --git a/mm/swap_state.c b/mm/swap_state.c
-index ecee9c6c4cc1..0d6a7f268d2e 100644
---- a/mm/swap_state.c
-+++ b/mm/swap_state.c
-@@ -448,6 +448,7 @@ struct page *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
- 			/*
- 			 * Initiate read into locked page and return.
- 			 */
-+			SetPageWorkingset(new_page);
- 			lru_cache_add_anon(new_page);
- 			*new_page_allocated = true;
- 			return new_page;
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 03822f86f288..7fdbc18fea6f 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1976,6 +1976,7 @@ static void shrink_active_list(unsigned long nr_to_scan,
- 		}
- 
- 		ClearPageActive(page);	/* we are de-activating */
-+		SetPageWorkingset(page);
- 		list_add(&page->lru, &l_inactive);
- 	}
- 
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index 8ba0870ecddd..28f2faad95d4 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1145,6 +1145,7 @@ const char * const vmstat_text[] = {
- 	"nr_isolated_file",
- 	"workingset_refault",
- 	"workingset_activate",
-+	"workingset_restore",
- 	"workingset_nodereclaim",
- 	"nr_anon_pages",
- 	"nr_mapped",
-diff --git a/mm/workingset.c b/mm/workingset.c
-index 53759a3cf99a..f1bbce55ea60 100644
---- a/mm/workingset.c
-+++ b/mm/workingset.c
-@@ -121,7 +121,7 @@
-  * the only thing eating into inactive list space is active pages.
-  *
-  *
-- *		Activating refaulting pages
-+ *		Refaulting inactive pages
-  *
-  * All that is known about the active list is that the pages have been
-  * accessed more than once in the past.  This means that at any given
-@@ -134,6 +134,10 @@
-  * used less frequently than the refaulting page - or even not used at
-  * all anymore.
-  *
-+ * That means if inactive cache is refaulting with a suitable refault
-+ * distance, we assume the cache workingset is transitioning and put
-+ * pressure on the current active list.
-+ *
-  * If this is wrong and demotion kicks in, the pages which are truly
-  * used more frequently will be reactivated while the less frequently
-  * used once will be evicted from memory.
-@@ -141,6 +145,14 @@
-  * But if this is right, the stale pages will be pushed out of memory
-  * and the used pages get to stay in cache.
-  *
-+ *		Refaulting active pages
-+ *
-+ * If on the other hand the refaulting pages have recently been
-+ * deactivated, it means that the active list is no longer protecting
-+ * actively used cache from reclaim. The cache is NOT transitioning to
-+ * a different workingset; the existing workingset is thrashing in the
-+ * space allocated to the page cache.
-+ *
-  *
-  *		Implementation
-  *
-@@ -156,8 +168,7 @@
-  */
- 
- #define EVICTION_SHIFT	(RADIX_TREE_EXCEPTIONAL_ENTRY + \
--			 NODES_SHIFT +	\
--			 MEM_CGROUP_ID_SHIFT)
-+			 1 + NODES_SHIFT + MEM_CGROUP_ID_SHIFT)
- #define EVICTION_MASK	(~0UL >> EVICTION_SHIFT)
- 
- /*
-@@ -170,23 +181,28 @@
-  */
- static unsigned int bucket_order __read_mostly;
- 
--static void *pack_shadow(int memcgid, pg_data_t *pgdat, unsigned long eviction)
-+static void *pack_shadow(int memcgid, pg_data_t *pgdat, unsigned long eviction,
-+			 bool workingset)
+ #define CREATE_TRACE_POINTS
+@@ -1073,8 +1074,15 @@ static inline int wait_on_page_bit_common(wait_queue_head_t *q,
  {
- 	eviction >>= bucket_order;
- 	eviction = (eviction << MEM_CGROUP_ID_SHIFT) | memcgid;
- 	eviction = (eviction << NODES_SHIFT) | pgdat->node_id;
-+	eviction = (eviction << 1) | workingset;
- 	eviction = (eviction << RADIX_TREE_EXCEPTIONAL_SHIFT);
+ 	struct wait_page_queue wait_page;
+ 	wait_queue_entry_t *wait = &wait_page.wait;
++	bool thrashing = false;
+ 	int ret = 0;
  
- 	return (void *)(eviction | RADIX_TREE_EXCEPTIONAL_ENTRY);
- }
- 
- static void unpack_shadow(void *shadow, int *memcgidp, pg_data_t **pgdat,
--			  unsigned long *evictionp)
-+			  unsigned long *evictionp, bool *workingsetp)
- {
- 	unsigned long entry = (unsigned long)shadow;
- 	int memcgid, nid;
-+	bool workingset;
- 
- 	entry >>= RADIX_TREE_EXCEPTIONAL_SHIFT;
-+	workingset = entry & 1;
-+	entry >>= 1;
- 	nid = entry & ((1UL << NODES_SHIFT) - 1);
- 	entry >>= NODES_SHIFT;
- 	memcgid = entry & ((1UL << MEM_CGROUP_ID_SHIFT) - 1);
-@@ -195,6 +211,7 @@ static void unpack_shadow(void *shadow, int *memcgidp, pg_data_t **pgdat,
- 	*memcgidp = memcgid;
- 	*pgdat = NODE_DATA(nid);
- 	*evictionp = entry << bucket_order;
-+	*workingsetp = workingset;
- }
- 
- /**
-@@ -207,8 +224,8 @@ static void unpack_shadow(void *shadow, int *memcgidp, pg_data_t **pgdat,
-  */
- void *workingset_eviction(struct address_space *mapping, struct page *page)
- {
--	struct mem_cgroup *memcg = page_memcg(page);
- 	struct pglist_data *pgdat = page_pgdat(page);
-+	struct mem_cgroup *memcg = page_memcg(page);
- 	int memcgid = mem_cgroup_id(memcg);
- 	unsigned long eviction;
- 	struct lruvec *lruvec;
-@@ -220,30 +237,30 @@ void *workingset_eviction(struct address_space *mapping, struct page *page)
- 
- 	lruvec = mem_cgroup_lruvec(pgdat, memcg);
- 	eviction = atomic_long_inc_return(&lruvec->inactive_age);
--	return pack_shadow(memcgid, pgdat, eviction);
-+	return pack_shadow(memcgid, pgdat, eviction, PageWorkingset(page));
- }
- 
- /**
-  * workingset_refault - evaluate the refault of a previously evicted page
-+ * @page: the freshly allocated replacement page
-  * @shadow: shadow entry of the evicted page
-  *
-  * Calculates and evaluates the refault distance of the previously
-  * evicted page in the context of the node it was allocated in.
-- *
-- * Returns %true if the page should be activated, %false otherwise.
-  */
--bool workingset_refault(void *shadow)
-+void workingset_refault(struct page *page, void *shadow)
- {
- 	unsigned long refault_distance;
-+	struct pglist_data *pgdat;
- 	unsigned long active_file;
- 	struct mem_cgroup *memcg;
- 	unsigned long eviction;
- 	struct lruvec *lruvec;
- 	unsigned long refault;
--	struct pglist_data *pgdat;
-+	bool workingset;
- 	int memcgid;
- 
--	unpack_shadow(shadow, &memcgid, &pgdat, &eviction);
-+	unpack_shadow(shadow, &memcgid, &pgdat, &eviction, &workingset);
- 
- 	rcu_read_lock();
- 	/*
-@@ -263,41 +280,51 @@ bool workingset_refault(void *shadow)
- 	 * configurations instead.
- 	 */
- 	memcg = mem_cgroup_from_id(memcgid);
--	if (!mem_cgroup_disabled() && !memcg) {
--		rcu_read_unlock();
--		return false;
--	}
-+	if (!mem_cgroup_disabled() && !memcg)
-+		goto out;
- 	lruvec = mem_cgroup_lruvec(pgdat, memcg);
- 	refault = atomic_long_read(&lruvec->inactive_age);
- 	active_file = lruvec_lru_size(lruvec, LRU_ACTIVE_FILE, MAX_NR_ZONES);
- 
- 	/*
--	 * The unsigned subtraction here gives an accurate distance
--	 * across inactive_age overflows in most cases.
-+	 * Calculate the refault distance
- 	 *
--	 * There is a special case: usually, shadow entries have a
--	 * short lifetime and are either refaulted or reclaimed along
--	 * with the inode before they get too old.  But it is not
--	 * impossible for the inactive_age to lap a shadow entry in
--	 * the field, which can then can result in a false small
--	 * refault distance, leading to a false activation should this
--	 * old entry actually refault again.  However, earlier kernels
--	 * used to deactivate unconditionally with *every* reclaim
--	 * invocation for the longest time, so the occasional
--	 * inappropriate activation leading to pressure on the active
--	 * list is not a problem.
-+	 * The unsigned subtraction here gives an accurate distance
-+	 * across inactive_age overflows in most cases. There is a
-+	 * special case: usually, shadow entries have a short lifetime
-+	 * and are either refaulted or reclaimed along with the inode
-+	 * before they get too old.  But it is not impossible for the
-+	 * inactive_age to lap a shadow entry in the field, which can
-+	 * then result in a false small refault distance, leading to a
-+	 * false activation should this old entry actually refault
-+	 * again.  However, earlier kernels used to deactivate
-+	 * unconditionally with *every* reclaim invocation for the
-+	 * longest time, so the occasional inappropriate activation
-+	 * leading to pressure on the active list is not a problem.
- 	 */
- 	refault_distance = (refault - eviction) & EVICTION_MASK;
- 
- 	inc_lruvec_state(lruvec, WORKINGSET_REFAULT);
- 
--	if (refault_distance <= active_file) {
--		inc_lruvec_state(lruvec, WORKINGSET_ACTIVATE);
--		rcu_read_unlock();
--		return true;
-+	/*
-+	 * Compare the distance to the existing workingset size. We
-+	 * don't act on pages that couldn't stay resident even if all
-+	 * the memory was available to the page cache.
-+	 */
-+	if (refault_distance > active_file)
-+		goto out;
++	if (bit_nr == PG_locked && !PageSwapBacked(page) &&
++	    !PageUptodate(page) && PageWorkingset(page)) {
++		delayacct_thrashing_start();
++		thrashing = true;
++	}
 +
-+	SetPageActive(page);
-+	atomic_long_inc(&lruvec->inactive_age);
-+	inc_lruvec_state(lruvec, WORKINGSET_ACTIVATE);
+ 	init_wait(wait);
+ 	wait->flags = lock ? WQ_FLAG_EXCLUSIVE : 0;
+ 	wait->func = wake_page_function;
+@@ -1113,6 +1121,9 @@ static inline int wait_on_page_bit_common(wait_queue_head_t *q,
+ 
+ 	finish_wait(q, wait);
+ 
++	if (thrashing)
++		delayacct_thrashing_end();
 +
-+	/* Page was active prior to eviction */
-+	if (workingset) {
-+		SetPageWorkingset(page);
-+		inc_lruvec_state(lruvec, WORKINGSET_RESTORE);
- 	}
-+out:
- 	rcu_read_unlock();
--	return false;
+ 	/*
+ 	 * A signal could leave PageWaiters set. Clearing it here if
+ 	 * !waitqueue_active would be possible (by open-coding finish_wait),
+diff --git a/tools/accounting/getdelays.c b/tools/accounting/getdelays.c
+index 9f420d98b5fb..8cb504d30384 100644
+--- a/tools/accounting/getdelays.c
++++ b/tools/accounting/getdelays.c
+@@ -203,6 +203,8 @@ static void print_delayacct(struct taskstats *t)
+ 	       "SWAP  %15s%15s%15s\n"
+ 	       "      %15llu%15llu%15llums\n"
+ 	       "RECLAIM  %12s%15s%15s\n"
++	       "      %15llu%15llu%15llums\n"
++	       "THRASHING%12s%15s%15s\n"
+ 	       "      %15llu%15llu%15llums\n",
+ 	       "count", "real total", "virtual total",
+ 	       "delay total", "delay average",
+@@ -222,7 +224,11 @@ static void print_delayacct(struct taskstats *t)
+ 	       "count", "delay total", "delay average",
+ 	       (unsigned long long)t->freepages_count,
+ 	       (unsigned long long)t->freepages_delay_total,
+-	       average_ms(t->freepages_delay_total, t->freepages_count));
++	       average_ms(t->freepages_delay_total, t->freepages_count),
++	       "count", "delay total", "delay average",
++	       (unsigned long long)t->thrashing_count,
++	       (unsigned long long)t->thrashing_delay_total,
++	       average_ms(t->thrashing_delay_total, t->thrashing_count));
  }
  
- /**
+ static void task_context_switch_counts(struct taskstats *t)
 -- 
 2.18.0
 
