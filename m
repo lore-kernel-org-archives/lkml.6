@@ -2,108 +2,97 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5250C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:26:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9005C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:33:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62CD320894
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:26:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62CD320894
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 4046720833
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:33:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=cos.flag.org header.i=@cos.flag.org header.b="r2sMXTCm";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=cos.flag.org header.i=@cos.flag.org header.b="siGd3CtD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4046720833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cos.flag.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728015AbeH1RS2 (ORCPT
+        id S1727203AbeH1RYx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 13:18:28 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:46365 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727716AbeH1RS2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 13:18:28 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 9A6B820797; Tue, 28 Aug 2018 15:26:47 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-53-19.w90-88.abo.wanadoo.fr [90.88.170.19])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 2B645206A6;
-        Tue, 28 Aug 2018 15:26:47 +0200 (CEST)
-Date:   Tue, 28 Aug 2018 15:26:45 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Liang Yang <liang.yang@amlogic.com>
-Cc:     Yixun Lan <yixun.lan@amlogic.com>, <linux-mtd@lists.infradead.org>,
-        Rob Herring <robh@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Richard Weinberger <richard@nod.at>,
-        <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        <linux-amlogic@lists.infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Jerome Brunet <jbrunet@baylibre.com>
-Subject: Re: [RFC PATCH v2 2/2] mtd: rawnand: meson: add support for Amlogic
- NAND flash controller
-Message-ID: <20180828152645.457dab5c@bbrezillon>
-In-Reply-To: <fdea2d54-7a68-64ec-8bb4-4a94677a3293@amlogic.com>
-References: <20180719094612.5833-1-yixun.lan@amlogic.com>
-        <20180719094612.5833-3-yixun.lan@amlogic.com>
-        <20180801235045.5b4d8211@bbrezillon>
-        <42877a0d-9830-0626-3f64-e49a326eaa3c@amlogic.com>
-        <20180817155608.5929b37a@bbrezillon>
-        <96e538a5-1232-11f2-8b9e-5ddb09dcc2de@amlogic.com>
-        <20180824144810.31c929a5@bbrezillon>
-        <fdea2d54-7a68-64ec-8bb4-4a94677a3293@amlogic.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Tue, 28 Aug 2018 13:24:53 -0400
+Received: from outrelay2.flbmail.net ([12.139.121.108]:57278 "EHLO
+        outrelay2.flbmail.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727020AbeH1RYx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 13:24:53 -0400
+Received: from mta1.server.flag.org (mta1.server.flag.org [10.64.251.47])
+        by outrelay2.flbmail.net (Postfix) with ESMTPS id 5063548000
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 09:33:12 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cos.flag.org; s=mail;
+        t=1535463192; bh=bBf0Vvl04j+2jzmXwRprfJcrb//3GWAwlq6wwG9DLLA=;
+        h=Date:From:To:Cc:Subject:From;
+        b=r2sMXTCmWHcrml2rfD0sB55PJ943Ow9Kf4Ec7Ez5Vg5XWWf46+Ebv7IbpLWRzxbo2
+         HgXnFCy9ZZKcYW3BC7lv25ErWt0++b6ldST+QLqOS5Yn0O+MZauCLqMu7JGj56L+f3
+         g7l/vczXUFj6ZJWeeoPulO/KVLCR+KBQylssuKJU=
+Received: from localhost (localhost [127.0.0.1])
+        by mta1.server.flag.org (Postfix) with ESMTP id 494C84A1D14
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 09:33:12 -0400 (EDT)
+Received: from mta1.server.flag.org ([127.0.0.1])
+        by localhost (mta1.server.flag.org [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 4K3Vp5uoeZgM; Tue, 28 Aug 2018 09:33:12 -0400 (EDT)
+Received: from localhost (localhost [127.0.0.1])
+        by mta1.server.flag.org (Postfix) with ESMTP id DF72B4A1CA6;
+        Tue, 28 Aug 2018 09:33:11 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mta1.server.flag.org DF72B4A1CA6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cos.flag.org;
+        s=C82168C8-F236-11E7-AE09-40F562C2D254; t=1535463191;
+        bh=v+7sDrpgI4SZkytIYAbtUw0o1+ebdonYsrxeZ7X4P2w=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=siGd3CtDOuOecrgGFQ7lIcuIrOMZXterJaEYLl31NAhIQCBmeAk4F2bKW2QP4cis4
+         2X5mwtprEUWJudljtOHksXXkptuPmG5DIGalUKwGCr2iR55P7XorBSOv6RE4Xb+l/Q
+         45DsHo/OnnF8Rku5fUgjq3kdubc9bB0aNWL/K8XMEj/SSr2CRPqLsULDMSy9gEf59I
+         XxtLWBAs43dIukIWv7r7hMmhYMzeWGeZGSCAbbnLRlcphkGiF4uF3VbSE6z6+CynX4
+         dNgWyllU4lhXzSWIr3WXRh6li3D+6rpxkbbJ6FWhtnBdam9LL//ZNqc0Af/SFAR7rE
+         vD7OMyiHBaL1A==
+X-Virus-Scanned: amavisd-new at mta1.server.flag.org
+Received: from mta1.server.flag.org ([127.0.0.1])
+        by localhost (mta1.server.flag.org [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 70DDj21bxqtT; Tue, 28 Aug 2018 09:33:11 -0400 (EDT)
+Received: from flbza1.server.flag.org (flbza1.server.flag.org [10.64.251.44])
+        by mta1.server.flag.org (Postfix) with ESMTP id B91AB4A1519;
+        Tue, 28 Aug 2018 09:33:11 -0400 (EDT)
+Date:   Tue, 28 Aug 2018 09:33:11 -0400 (EDT)
+From:   dimitry@cos.flag.org
+To:     linux-kernel <linux-kernel@vger.kernel.org>
+Cc:     dimitry <dimitry@cos.flag.org>
+Message-ID: <314029050.47161.1535463191699.JavaMail.zimbra@cos.flag.org>
+Subject: gpiolib: GPIO_GET_LINEHANDLE_IOCTL and GPIO_GET_LINEEVENT_IOCTL at
+ the same time
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [4.35.210.206]
+X-Mailer: Zimbra 8.8.5_GA_1894 (ZimbraWebClient - GC68 (Linux)/8.8.5_GA_1894)
+Thread-Index: uuBz7tFBzPm1TWGesQaqQLvPuDEMDQ==
+Thread-Topic: gpiolib: GPIO_GET_LINEHANDLE_IOCTL and GPIO_GET_LINEEVENT_IOCTL at the same time
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 28 Aug 2018 21:21:48 +0800
-Liang Yang <liang.yang@amlogic.com> wrote:
+It seems gpiolib only allows user to request either the line handle descriptor or the line event descriptor, but not both at the same time. 
 
-> Hi Boris,
-> 
-> On 8/24/2018 8:48 PM, Boris Brezillon wrote:
-> > On Wed, 22 Aug 2018 22:08:42 +0800
-> > Liang Yang <liang.yang@amlogic.com> wrote:
-> >   
-> >>> You have to wait tWB, that's for sure.
-> >>>      
-> >> we have a maximum 32 commands fifo. when command is written into
-> >> NFC_REG_CMD, it doesn't mean that command is executing right now, maybe
-> >> it is buffering on the queue.Assume one ERASE operation, when 2nd
-> >> command(0xd0) is written into NFC_REG_CMD and then come into
-> >> NAND_OP_WAITRDY_INSTR, if I read the RB status by register, it may be
-> >> wrong because 0xd0 may not being executed. it is unusual unless
-> >> buffering two many command.  
-> > 
-> > You should flush the queue and wait for it to empty at the end of  
-> > ->exec_op().  
-> >   
-> >> so it seems that i still need to use nand_soft_waitrdy or wait cmd is
-> >> executed somewhere.  
-> > 
-> > Don't you have a WAIT_FOR_RB instruction? What is NFC_CMD_RB for? Also,
-> > NFC_CMD_IDLE seems to allow you to add an arbitrary delay, and that's
-> > probably what you should use for tWB.
-> > 
-> > em, I can wait for RB by reading the status from register now. but when   
-> calling nand_soft_waitrdy, i really met a problem. One *jiffies* is 
-> about 4ms. When programming, it pass 1ms to 
-> instr->ctx.waitrdy.timeout_ms and nand_soft_waitrdy will be only one 
-> *jiffies* to reach timeout. And then calling nand_soft_waitrdy maybe at 
-> the tail of 4ms interval, it may only wait 100us and next jiffies 
-> arrive. Is it correct?
+gpiohandle_request hr; 
+gpioevent_request er; 
+... 
+ioctl(fd, GPIO_GET_LINEHANDLE_IOCTL, &hr); // so far so good 
+ioctl(fd, GPIO_GET_LINEEVENT_IOCTL, &er); // resource busy 
 
-Hm, no. If you initialize the time you compare to (using time_before()
-or time_after()) correctly it should not happen. Anyway, I keep thinking
-this is not how it should be done. Did you try NFC_CMD_RB? Did you ask
-HW designers what it was created for?
+I have a situation where I am trying to have 1 thread monitor an open drain/source line for events, while another thread writes to it. Not entirely unlike i2c pulse stretching. Is this not possible with the current gpiolib design? Or am I doing something wrong? If not possible, is my only choice to run an endless loop checking for line state? 
+
+NB: I am not subscribed to the list. Please CC me directly in your replies. 
+
+Thank you, 
+Dimitry 
+
