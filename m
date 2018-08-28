@@ -2,59 +2,59 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.2 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D062C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 01:55:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E18C6C43334
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 01:55:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E23BC20658
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 01:55:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E23BC20658
+	by mail.kernel.org (Postfix) with ESMTP id A45D9208E2
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 01:55:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A45D9208E2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728164AbeH1Foc (ORCPT
+        id S1728179AbeH1Fod (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 01:44:32 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:41122 "EHLO
+        Tue, 28 Aug 2018 01:44:33 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:38045 "EHLO
         mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728135AbeH1Fob (ORCPT
+        with ESMTP id S1728135AbeH1Fod (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 01:44:31 -0400
-Received: by mail-oi0-f67.google.com with SMTP id k12-v6so1555oiw.8;
-        Mon, 27 Aug 2018 18:55:15 -0700 (PDT)
+        Tue, 28 Aug 2018 01:44:33 -0400
+Received: by mail-oi0-f67.google.com with SMTP id x197-v6so22063oix.5;
+        Mon, 27 Aug 2018 18:55:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=NZktRJlPfF/Z+FbZBVB7Rm97KZRfYNx+6jHhruSk10Y=;
-        b=DcbhxfOsyOVRVf2uGHWIxQfNGa8NQWkYoQcV//aI9NlqdJSzudyxDgIVUI7HSEFjHO
-         IT4BwzIKdsLosBvjshR+5DaJYVcT4V2iHX5nww9H170QmQNOw1LgYmoNjgacZrY4+2ZH
-         YdfoqDKQn9tfeGbEX3ZWT8oWhl2YPKCNgyIwAIhTdLmltSx6ebRjzjrfKH+QFfDNU5Lg
-         1g/Ial4yoZBQX6Cy7WVFHz+UMRhpfxZi5yuA0fNzwOOJL6TGyk2cS200VWXCDOl4TBd9
-         ysMl6+f/VArT6VV1Be5o3IxNbqEsRt2rZ/NpqdgikbY2vqDlzhzYmnvByZDBmAC0u8mo
-         yWug==
-X-Gm-Message-State: APzg51CDFavmJIArZsc7/gWhrG/VLZOOUugf4pTDqVS7R5n7qAUBO4rz
-        XnqBFZBeIFhchWWkH2bduFwJTjQ=
-X-Google-Smtp-Source: ANB0VdZh9nynkNZmbboRVnKlpyen6fVhMf0UVVMig7iPC45snRM2PKOMNMsSlQvQmP5UfOC/D1xOqA==
-X-Received: by 2002:aca:5905:: with SMTP id n5-v6mr1202898oib.232.1535421314964;
-        Mon, 27 Aug 2018 18:55:14 -0700 (PDT)
+        bh=jTa+u2rLU64NAA1Mli/IvknEIrrX9W/VQjvhlHArq/Y=;
+        b=hfQX6sOtF1+T/7B9wfzZxV6VIxs7m5P5ewe80NS9FJvhJiaLI8g5KPI5GZ4+Q+i4KI
+         KwOKkqxHo9bb9xCzDrhRxJZO/cVbWLOwa+du1lhgHzoyeymyUF3NDWSr0X2LQoNjGxlf
+         zmSPFrPRvF/ob8YlXYPG3APsolECU8swgPwN7e6JJsK28yW18BFCt4Bia1jYROsEVYBb
+         0rz4GGfu68y/9yRkoRdIT8zAByT6egaySIYuOqXrWYlJP9ZxvAfZRjRJrNUwLw5aBBmj
+         vilKPFf8A9GMUvcOabLYiNsuZwRqWZrY0S+15HdcQ13+KAqafYdxJ7rUYOg1RIZv+uwJ
+         WfrA==
+X-Gm-Message-State: APzg51Cxng1kFKgfJQYXjeeIpz/kitqgyyWA2EzO0rUw7pGoPY1+VVfj
+        8oReXtU4/hmpgEByqIje/dfGWcg=
+X-Google-Smtp-Source: ANB0VdYPFSIzd4zwIp046usWhNz3sNef89OWt6XDAcStLlwT2a2cDnbwARAy8WksvdWEvLnpOKB9tg==
+X-Received: by 2002:aca:3003:: with SMTP id w3-v6mr360462oiw.231.1535421316868;
+        Mon, 27 Aug 2018 18:55:16 -0700 (PDT)
 Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id n71-v6sm1652696oig.48.2018.08.27.18.55.13
+        by smtp.googlemail.com with ESMTPSA id n71-v6sm1652696oig.48.2018.08.27.18.55.15
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 Aug 2018 18:55:14 -0700 (PDT)
+        Mon, 27 Aug 2018 18:55:16 -0700 (PDT)
 From:   Rob Herring <robh@kernel.org>
 To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-serial@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH] tty: Convert to using %pOFn instead of device_node.name
-Date:   Mon, 27 Aug 2018 20:52:47 -0500
-Message-Id: <20180828015252.28511-46-robh@kernel.org>
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
+Subject: [PATCH] backlight: pm8941: Convert to using %pOFn instead of device_node.name
+Date:   Mon, 27 Aug 2018 20:52:49 -0500
+Message-Id: <20180828015252.28511-48-robh@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180828015252.28511-1-robh@kernel.org>
 References: <20180828015252.28511-1-robh@kernel.org>
@@ -66,99 +66,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 In preparation to remove the node name pointer from struct device_node,
 convert printf users to use the %pOFn format specifier.
 
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-serial@vger.kernel.org
-Cc: linuxppc-dev@lists.ozlabs.org
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: Jingoo Han <jingoohan1@gmail.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-fbdev@vger.kernel.org
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- drivers/tty/ehv_bytechan.c                  | 12 ++++++------
- drivers/tty/serial/cpm_uart/cpm_uart_core.c |  8 ++++----
- drivers/tty/serial/pmac_zilog.c             |  4 ++--
- 3 files changed, 12 insertions(+), 12 deletions(-)
+ drivers/video/backlight/pm8941-wled.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/tty/ehv_bytechan.c b/drivers/tty/ehv_bytechan.c
-index eea4049b5dcc..769e0a5d1dfc 100644
---- a/drivers/tty/ehv_bytechan.c
-+++ b/drivers/tty/ehv_bytechan.c
-@@ -128,8 +128,8 @@ static int find_console_handle(void)
- 	 */
- 	iprop = of_get_property(np, "hv-handle", NULL);
- 	if (!iprop) {
--		pr_err("ehv-bc: no 'hv-handle' property in %s node\n",
--		       np->name);
-+		pr_err("ehv-bc: no 'hv-handle' property in %pOFn node\n",
-+		       np);
- 		return 0;
- 	}
- 	stdout_bc = be32_to_cpu(*iprop);
-@@ -661,8 +661,8 @@ static int ehv_bc_tty_probe(struct platform_device *pdev)
+diff --git a/drivers/video/backlight/pm8941-wled.c b/drivers/video/backlight/pm8941-wled.c
+index 0b6d21955d91..da6aab20fdcb 100644
+--- a/drivers/video/backlight/pm8941-wled.c
++++ b/drivers/video/backlight/pm8941-wled.c
+@@ -330,7 +330,7 @@ static int pm8941_wled_configure(struct pm8941_wled *wled, struct device *dev)
  
- 	iprop = of_get_property(np, "hv-handle", NULL);
- 	if (!iprop) {
--		dev_err(&pdev->dev, "no 'hv-handle' property in %s node\n",
--			np->name);
-+		dev_err(&pdev->dev, "no 'hv-handle' property in %pOFn node\n",
-+			np);
- 		return -ENODEV;
- 	}
+ 	rc = of_property_read_string(dev->of_node, "label", &wled->name);
+ 	if (rc)
+-		wled->name = dev->of_node->name;
++		wled->name = devm_kasprintf(dev, GFP_KERNEL, "%pOFn", dev->of_node);
  
-@@ -682,8 +682,8 @@ static int ehv_bc_tty_probe(struct platform_device *pdev)
- 	bc->rx_irq = irq_of_parse_and_map(np, 0);
- 	bc->tx_irq = irq_of_parse_and_map(np, 1);
- 	if ((bc->rx_irq == NO_IRQ) || (bc->tx_irq == NO_IRQ)) {
--		dev_err(&pdev->dev, "no 'interrupts' property in %s node\n",
--			np->name);
-+		dev_err(&pdev->dev, "no 'interrupts' property in %pOFn node\n",
-+			np);
- 		ret = -ENODEV;
- 		goto error;
- 	}
-diff --git a/drivers/tty/serial/cpm_uart/cpm_uart_core.c b/drivers/tty/serial/cpm_uart/cpm_uart_core.c
-index 24a5f05e769b..ea7204d75022 100644
---- a/drivers/tty/serial/cpm_uart/cpm_uart_core.c
-+++ b/drivers/tty/serial/cpm_uart/cpm_uart_core.c
-@@ -1151,8 +1151,8 @@ static int cpm_uart_init_port(struct device_node *np,
- 	if (!pinfo->clk) {
- 		data = of_get_property(np, "fsl,cpm-brg", &len);
- 		if (!data || len != 4) {
--			printk(KERN_ERR "CPM UART %s has no/invalid "
--			                "fsl,cpm-brg property.\n", np->name);
-+			printk(KERN_ERR "CPM UART %pOFn has no/invalid "
-+			                "fsl,cpm-brg property.\n", np);
- 			return -EINVAL;
- 		}
- 		pinfo->brg = *data;
-@@ -1160,8 +1160,8 @@ static int cpm_uart_init_port(struct device_node *np,
- 
- 	data = of_get_property(np, "fsl,cpm-command", &len);
- 	if (!data || len != 4) {
--		printk(KERN_ERR "CPM UART %s has no/invalid "
--		                "fsl,cpm-command property.\n", np->name);
-+		printk(KERN_ERR "CPM UART %pOFn has no/invalid "
-+		                "fsl,cpm-command property.\n", np);
- 		return -EINVAL;
- 	}
- 	pinfo->command = *data;
-diff --git a/drivers/tty/serial/pmac_zilog.c b/drivers/tty/serial/pmac_zilog.c
-index 3d21790d961e..a4ec22d1f214 100644
---- a/drivers/tty/serial/pmac_zilog.c
-+++ b/drivers/tty/serial/pmac_zilog.c
-@@ -1566,9 +1566,9 @@ static int pmz_attach(struct macio_dev *mdev, const struct of_device_id *match)
- 	 * to work around bugs in ancient Apple device-trees
- 	 */
- 	if (macio_request_resources(uap->dev, "pmac_zilog"))
--		printk(KERN_WARNING "%s: Failed to request resource"
-+		printk(KERN_WARNING "%pOFn: Failed to request resource"
- 		       ", port still active\n",
--		       uap->node->name);
-+		       uap->node);
- 	else
- 		uap->flags |= PMACZILOG_FLAG_RSRC_REQUESTED;
- 
+ 	*cfg = pm8941_wled_config_defaults;
+ 	for (i = 0; i < ARRAY_SIZE(u32_opts); ++i) {
 -- 
 2.17.1
 
