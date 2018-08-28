@@ -2,173 +2,139 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCFE8C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 11:20:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 776B1C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 11:25:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C8512086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 11:20:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JwRKkOpx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C8512086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 25A432089D
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 11:25:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25A432089D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728117AbeH1PMI (ORCPT
+        id S1727729AbeH1PQ5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 11:12:08 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:38105 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727579AbeH1PMH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 11:12:07 -0400
-Received: by mail-pl1-f195.google.com with SMTP id u11-v6so592929plq.5;
-        Tue, 28 Aug 2018 04:20:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=u5LLVwzqsd0W3khip77eczbmhBS8m0M7MliDfum5fbo=;
-        b=JwRKkOpxwjV2ovQ7J2Ho5+UlDBygiVUre+hfgsY9ifuXf7lMftdoyq0EjG5Y4wV9jI
-         edNRMwartMVSqXKLDu9KmlMzCUzsjm1SEnGMe2GKjqwu5rEkfsiRHxxqwBpQMsqp84uM
-         61qFr8Q4SUNZ52mt4/gmik+I7401vIvRBgcknLsZKC4trEXjn7k+zwZSc1V1G9+jFkyv
-         BoW03rpPR4WSm6aaQuOxSQqpT2H0MJDPANu/Bs7ctr23p5f5jUTAAiVEgXGHIM0Ktpv1
-         1j6HNaUmy1Rnx0kpiaEMO7Ut3drfbl2yP3OpVKcWN5uUo30RDYFEChjPVH3nS0A+Qxzg
-         7TOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=u5LLVwzqsd0W3khip77eczbmhBS8m0M7MliDfum5fbo=;
-        b=TJ/ntPND7E8ovbwtdJymlsKtLNWfe2xAv16fDyokxtJTWZR8tbF0oanE5Vt8Q5BUcp
-         Fc7jOCOoLvApw4yjO98qYGK3lStHROoB1EsYkiUAR6YBuL54pUAi2lwU8TAY4wJvrRzI
-         BMRQKAwYrv/qZXNfQQEWKOAgzhnCDgU5M6O/LJw3sZL/k6k+93YMtFULNJbkrt9TW/n3
-         voV9FN9TYTiZ9yBjeSAuZSFz+UltsJaPV8rrvLEuqQ5iizGK29PoxsmqPS6uWdswyGZI
-         xdqAcaqF81NSAUHumuDveM1f3/SgcxSOt8gtG4tNGgTWyDCiU6MFnIMvnCFn88BJnyff
-         MpBg==
-X-Gm-Message-State: APzg51Aq5yFoc4z73fSF7V+ly8xudVd9wnqCBp3UrWwXsjL/zt4S8ksT
-        8vv9Hzs2VGS8WMPyf5o9ERZY6bcK
-X-Google-Smtp-Source: ANB0VdYR8Iq6a5/JlwAWF9iIuyrZ3FY50H+M9B7BfYKPAMTl0ScSRzxrBp5pb47wFpOFK+WGxxiTKg==
-X-Received: by 2002:a17:902:6845:: with SMTP id f5-v6mr1121540pln.17.1535455257066;
-        Tue, 28 Aug 2018 04:20:57 -0700 (PDT)
-Received: from roar.au.ibm.com (59-102-81-67.tpgi.com.au. [59.102.81.67])
-        by smtp.gmail.com with ESMTPSA id s3-v6sm3287917pgj.84.2018.08.28.04.20.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 Aug 2018 04:20:56 -0700 (PDT)
-From:   Nicholas Piggin <npiggin@gmail.com>
-To:     linux-mm@kvack.org
-Cc:     Nicholas Piggin <npiggin@gmail.com>, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 3/3] mm: optimise pte dirty/accessed bit setting by demand based pte insertion
-Date:   Tue, 28 Aug 2018 21:20:34 +1000
-Message-Id: <20180828112034.30875-4-npiggin@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180828112034.30875-1-npiggin@gmail.com>
-References: <20180828112034.30875-1-npiggin@gmail.com>
+        Tue, 28 Aug 2018 11:16:57 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50938 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727201AbeH1PQ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 11:16:57 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id DA266AEA5;
+        Tue, 28 Aug 2018 11:25:43 +0000 (UTC)
+Date:   Tue, 28 Aug 2018 13:25:43 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Mikhail Zaslonko <zaslonko@linux.ibm.com>
+Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, pasha.tatashin@oracle.com
+Subject: Re: [PATCH] memory_hotplug: fix kernel_panic on offline page
+ processing
+Message-ID: <20180828112543.GK10223@dhcp22.suse.cz>
+References: <20180828090539.41491-1-zaslonko@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180828090539.41491-1-zaslonko@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Similarly to the previous patch, this tries to optimise dirty/accessed
-bits in ptes to avoid access costs of hardware setting them.
+On Tue 28-08-18 11:05:39, Mikhail Zaslonko wrote:
+> Within show_valid_zones() the function test_pages_in_a_zone() should be
+> called for online memory blocks only. Otherwise it might lead to the
+> VM_BUG_ON due to uninitialized struct pages (when CONFIG_DEBUG_VM_PGFLAGS
+> kernel option is set):
+> 
+>  page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
+>  ------------[ cut here ]------------
+>  Call Trace:
+>  ([<000000000038f91e>] test_pages_in_a_zone+0xe6/0x168)
+>   [<0000000000923472>] show_valid_zones+0x5a/0x1a8
+>   [<0000000000900284>] dev_attr_show+0x3c/0x78
+>   [<000000000046f6f0>] sysfs_kf_seq_show+0xd0/0x150
+>   [<00000000003ef662>] seq_read+0x212/0x4b8
+>   [<00000000003bf202>] __vfs_read+0x3a/0x178
+>   [<00000000003bf3ca>] vfs_read+0x8a/0x148
+>   [<00000000003bfa3a>] ksys_read+0x62/0xb8
+>   [<0000000000bc2220>] system_call+0xdc/0x2d8
+> 
+> That VM_BUG_ON was triggered by the page poisoning introduced in
+> mm/sparse.c with the git commit d0dc12e86b31 ("mm/memory_hotplug: optimize
+> memory hotplug")
+> With the same commit the new 'nid' field has been added to the struct
+> memory_block in order to store and later on derive the node id for offline
+> pages (instead of accessing struct page which might be uninitialized). But
+> one reference to nid in show_valid_zones() function has been overlooked.
+> Fixed with current commit.
+> Also, nr_pages will not be used any more after test_pages_in_a_zone() call,
+> do not update it.
+> 
+> Fixes: d0dc12e86b31 ("mm/memory_hotplug: optimize memory hotplug")
+> Cc: <stable@vger.kernel.org> # v4.17+
+> Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
+> Signed-off-by: Mikhail Zaslonko <zaslonko@linux.ibm.com>
 
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
----
- mm/huge_memory.c | 12 +++++++-----
- mm/memory.c      |  8 +++++---
- 2 files changed, 12 insertions(+), 8 deletions(-)
+Btw. this land mines which are basically impossible to find during the
+review are the reason why I was not all that happy about d0dc12e86b31.
+It added a margninal improvement but opened a can of warms. On the other
+hand maybe we just had to open that can one day...
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 5fb1a43e12e0..2c169041317f 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1197,6 +1197,7 @@ static vm_fault_t do_huge_pmd_wp_page_fallback(struct vm_fault *vmf,
- 	for (i = 0; i < HPAGE_PMD_NR; i++, haddr += PAGE_SIZE) {
- 		pte_t entry;
- 		entry = mk_pte(pages[i], vma->vm_page_prot);
-+		entry = pte_mkyoung(entry);
- 		entry = maybe_mkwrite(pte_mkdirty(entry), vma);
- 		memcg = (void *)page_private(pages[i]);
- 		set_page_private(pages[i], 0);
-@@ -2067,7 +2068,7 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
- 	struct page *page;
- 	pgtable_t pgtable;
- 	pmd_t old_pmd, _pmd;
--	bool young, write, soft_dirty, pmd_migration = false;
-+	bool young, write, dirty, soft_dirty, pmd_migration = false;
- 	unsigned long addr;
- 	int i;
- 
-@@ -2145,8 +2146,7 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
- 		page = pmd_page(old_pmd);
- 	VM_BUG_ON_PAGE(!page_count(page), page);
- 	page_ref_add(page, HPAGE_PMD_NR - 1);
--	if (pmd_dirty(old_pmd))
--		SetPageDirty(page);
-+	dirty = pmd_dirty(old_pmd);
- 	write = pmd_write(old_pmd);
- 	young = pmd_young(old_pmd);
- 	soft_dirty = pmd_soft_dirty(old_pmd);
-@@ -2176,8 +2176,10 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
- 			entry = maybe_mkwrite(entry, vma);
- 			if (!write)
- 				entry = pte_wrprotect(entry);
--			if (!young)
--				entry = pte_mkold(entry);
-+			if (young)
-+				entry = pte_mkyoung(entry);
-+			if (dirty)
-+				entry = pte_mkdirty(entry);
- 			if (soft_dirty)
- 				entry = pte_mksoft_dirty(entry);
- 		}
-diff --git a/mm/memory.c b/mm/memory.c
-index 3d8bf8220bd0..d205ba69918c 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -1830,10 +1830,9 @@ static int insert_pfn(struct vm_area_struct *vma, unsigned long addr,
- 		entry = pte_mkspecial(pfn_t_pte(pfn, prot));
- 
- out_mkwrite:
--	if (mkwrite) {
--		entry = pte_mkyoung(entry);
-+	entry = pte_mkyoung(entry);
-+	if (mkwrite)
- 		entry = maybe_mkwrite(pte_mkdirty(entry), vma);
--	}
- 
- 	set_pte_at(mm, addr, pte, entry);
- 	update_mmu_cache(vma, addr, pte); /* XXX: why not for insert_page? */
-@@ -2560,6 +2559,7 @@ static vm_fault_t wp_page_copy(struct vm_fault *vmf)
- 		}
- 		flush_cache_page(vma, vmf->address, pte_pfn(vmf->orig_pte));
- 		entry = mk_pte(new_page, vma->vm_page_prot);
-+		entry = pte_mkyoung(entry);
- 		entry = maybe_mkwrite(pte_mkdirty(entry), vma);
- 		/*
- 		 * Clear the pte entry and flush it first, before updating the
-@@ -3069,6 +3069,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
- 	inc_mm_counter_fast(vma->vm_mm, MM_ANONPAGES);
- 	dec_mm_counter_fast(vma->vm_mm, MM_SWAPENTS);
- 	pte = mk_pte(page, vma->vm_page_prot);
-+	pte = pte_mkyoung(pte);
- 	if ((vmf->flags & FAULT_FLAG_WRITE) && reuse_swap_page(page, NULL)) {
- 		pte = maybe_mkwrite(pte_mkdirty(pte), vma);
- 		vmf->flags &= ~FAULT_FLAG_WRITE;
-@@ -3479,6 +3480,7 @@ vm_fault_t alloc_set_pte(struct vm_fault *vmf, struct mem_cgroup *memcg,
- 
- 	flush_icache_page(vma, page);
- 	entry = mk_pte(page, vma->vm_page_prot);
-+	entry = pte_mkyoung(entry);
- 	if (write)
- 		entry = maybe_mkwrite(pte_mkdirty(entry), vma);
- 	/* copy-on-write page */
+Acked-by: Michal Hocko <mhocko@suse.com>
+
+Thanks!
+
+> ---
+>  drivers/base/memory.c | 20 +++++++++-----------
+>  1 file changed, 9 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/base/memory.c b/drivers/base/memory.c
+> index f5e560188a18..622ab8edc035 100644
+> --- a/drivers/base/memory.c
+> +++ b/drivers/base/memory.c
+> @@ -416,26 +416,24 @@ static ssize_t show_valid_zones(struct device *dev,
+>  	struct zone *default_zone;
+>  	int nid;
+>  
+> -	/*
+> -	 * The block contains more than one zone can not be offlined.
+> -	 * This can happen e.g. for ZONE_DMA and ZONE_DMA32
+> -	 */
+> -	if (!test_pages_in_a_zone(start_pfn, start_pfn + nr_pages, &valid_start_pfn, &valid_end_pfn))
+> -		return sprintf(buf, "none\n");
+> -
+> -	start_pfn = valid_start_pfn;
+> -	nr_pages = valid_end_pfn - start_pfn;
+> -
+>  	/*
+>  	 * Check the existing zone. Make sure that we do that only on the
+>  	 * online nodes otherwise the page_zone is not reliable
+>  	 */
+>  	if (mem->state == MEM_ONLINE) {
+> +		/*
+> +		 * The block contains more than one zone can not be offlined.
+> +		 * This can happen e.g. for ZONE_DMA and ZONE_DMA32
+> +		 */
+> +		if (!test_pages_in_a_zone(start_pfn, start_pfn + nr_pages,
+> +					  &valid_start_pfn, &valid_end_pfn))
+> +			return sprintf(buf, "none\n");
+> +		start_pfn = valid_start_pfn;
+>  		strcat(buf, page_zone(pfn_to_page(start_pfn))->name);
+>  		goto out;
+>  	}
+>  
+> -	nid = pfn_to_nid(start_pfn);
+> +	nid = mem->nid;
+>  	default_zone = zone_for_pfn_range(MMOP_ONLINE_KEEP, nid, start_pfn, nr_pages);
+>  	strcat(buf, default_zone->name);
+>  
+> -- 
+> 2.16.4
+
 -- 
-2.18.0
-
+Michal Hocko
+SUSE Labs
