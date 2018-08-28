@@ -2,103 +2,85 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D36DC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:21:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A40E7C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:21:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F39D62087E
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:21:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F39D62087E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id 48D812087E
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:21:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48D812087E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728139AbeH1RNJ (ORCPT
+        id S1728173AbeH1RNS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 13:13:09 -0400
-Received: from mail-sz2.amlogic.com ([211.162.65.114]:56048 "EHLO
-        mail-sz2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727209AbeH1RNJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 13:13:09 -0400
-Received: from [10.28.18.79] (10.28.18.79) by mail-sz2.amlogic.com
- (10.28.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Tue, 28 Aug
- 2018 21:21:48 +0800
-Subject: Re: [RFC PATCH v2 2/2] mtd: rawnand: meson: add support for Amlogic
- NAND flash controller
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-CC:     Yixun Lan <yixun.lan@amlogic.com>, <linux-mtd@lists.infradead.org>,
-        Rob Herring <robh@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Richard Weinberger <richard@nod.at>,
-        <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        <linux-amlogic@lists.infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Jerome Brunet <jbrunet@baylibre.com>
-References: <20180719094612.5833-1-yixun.lan@amlogic.com>
- <20180719094612.5833-3-yixun.lan@amlogic.com>
- <20180801235045.5b4d8211@bbrezillon>
- <42877a0d-9830-0626-3f64-e49a326eaa3c@amlogic.com>
- <20180817155608.5929b37a@bbrezillon>
- <96e538a5-1232-11f2-8b9e-5ddb09dcc2de@amlogic.com>
- <20180824144810.31c929a5@bbrezillon>
-From:   Liang Yang <liang.yang@amlogic.com>
-Message-ID: <fdea2d54-7a68-64ec-8bb4-4a94677a3293@amlogic.com>
-Date:   Tue, 28 Aug 2018 21:21:48 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <20180824144810.31c929a5@bbrezillon>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.28.18.79]
-X-ClientProxiedBy: mail-sz2.amlogic.com (10.28.11.6) To mail-sz2.amlogic.com
- (10.28.11.6)
+        Tue, 28 Aug 2018 13:13:18 -0400
+Received: from smtprz15.163.net ([106.3.154.248]:63521 "EHLO smtp.tom.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728142AbeH1RNR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 13:13:17 -0400
+Received: from antispam1.tom.com (unknown [172.25.16.55])
+        by freemail01.tom.com (Postfix) with ESMTP id 861901C80E2C
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 21:21:22 +0800 (CST)
+Received: from antispam1.tom.com (antispam1.tom.com [127.0.0.1])
+        by antispam1.tom.com (Postfix) with ESMTP id 842AD1001349
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 21:21:22 +0800 (CST)
+X-Virus-Scanned: Debian amavisd-new at antispam1.tom.com
+Received: from antispam1.tom.com ([127.0.0.1])
+        by antispam1.tom.com (antispam1.tom.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id CM8JIxksNRtJ for <linux-kernel@vger.kernel.org>;
+        Tue, 28 Aug 2018 21:21:21 +0800 (CST)
+Received: from localhost (unknown [110.184.152.116])
+        by antispam1.tom.com (Postfix) with ESMTPA id DF82F10012D0;
+        Tue, 28 Aug 2018 21:21:20 +0800 (CST)
+From:   Liu Xiang <liu.xiang6@zte.com.cn>
+To:     linux-mtd@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        han.xu@nxp.com, marek.vasut@gmail.com, dwmw2@infradead.org,
+        computersforpeace@gmail.com, boris.brezillon@bootlin.com,
+        richard@nod.at, liuxiang_1999@126.com,
+        Liu Xiang <liu.xiang6@zte.com.cn>
+Subject: [PATCH v2] mtd: spi-nor: fsl-quadspi: fix read error for flash size  larger than 16MB
+Date:   Tue, 28 Aug 2018 21:21:16 +0800
+Message-Id: <1535462476-3540-1-git-send-email-liu.xiang6@zte.com.cn>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
+If the size of spi-nor flash is larger than 16MB, the read_opcode
+is set to SPINOR_OP_READ_1_1_4_4B, and fsl_qspi_get_seqid() will
+return -EINVAL when cmd is SPINOR_OP_READ_1_1_4_4B. This can
+cause read operation fail.
 
-On 8/24/2018 8:48 PM, Boris Brezillon wrote:
-> On Wed, 22 Aug 2018 22:08:42 +0800
-> Liang Yang <liang.yang@amlogic.com> wrote:
-> 
->>> You have to wait tWB, that's for sure.
->>>    
->> we have a maximum 32 commands fifo. when command is written into
->> NFC_REG_CMD, it doesn't mean that command is executing right now, maybe
->> it is buffering on the queue.Assume one ERASE operation, when 2nd
->> command(0xd0) is written into NFC_REG_CMD and then come into
->> NAND_OP_WAITRDY_INSTR, if I read the RB status by register, it may be
->> wrong because 0xd0 may not being executed. it is unusual unless
->> buffering two many command.
-> 
-> You should flush the queue and wait for it to empty at the end of
-> ->exec_op().
-> 
->> so it seems that i still need to use nand_soft_waitrdy or wait cmd is
->> executed somewhere.
-> 
-> Don't you have a WAIT_FOR_RB instruction? What is NFC_CMD_RB for? Also,
-> NFC_CMD_IDLE seems to allow you to add an arbitrary delay, and that's
-> probably what you should use for tWB.
-> 
-> em, I can wait for RB by reading the status from register now. but when 
-calling nand_soft_waitrdy, i really met a problem. One *jiffies* is 
-about 4ms. When programming, it pass 1ms to 
-instr->ctx.waitrdy.timeout_ms and nand_soft_waitrdy will be only one 
-*jiffies* to reach timeout. And then calling nand_soft_waitrdy maybe at 
-the tail of 4ms interval, it may only wait 100us and next jiffies 
-arrive. Is it correct?
-> 
+---
+v2:
+  add Fixes tag and CC stable suggested by Boris.
+---
+
+Fixes: e46ecda764dc ("mtd: spi-nor: Add Freescale QuadSPI driver")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Liu Xiang <liu.xiang6@zte.com.cn>
+---
+ drivers/mtd/spi-nor/fsl-quadspi.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/mtd/spi-nor/fsl-quadspi.c b/drivers/mtd/spi-nor/fsl-quadspi.c
+index 7d9620c..64304a3 100644
+--- a/drivers/mtd/spi-nor/fsl-quadspi.c
++++ b/drivers/mtd/spi-nor/fsl-quadspi.c
+@@ -478,6 +478,7 @@ static int fsl_qspi_get_seqid(struct fsl_qspi *q, u8 cmd)
+ {
+ 	switch (cmd) {
+ 	case SPINOR_OP_READ_1_1_4:
++	case SPINOR_OP_READ_1_1_4_4B:
+ 		return SEQID_READ;
+ 	case SPINOR_OP_WREN:
+ 		return SEQID_WREN;
+-- 
+1.9.1
+
