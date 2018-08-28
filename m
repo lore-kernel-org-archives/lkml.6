@@ -2,175 +2,136 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 667D3C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:03:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24E5DC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:04:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07C9F2084C
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:03:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6C9420894
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:04:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="1WQhfgkt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07C9F2084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="gBgR6c/M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6C9420894
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728110AbeH1RzX (ORCPT
+        id S1728162AbeH1R4N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 13:55:23 -0400
-Received: from mail-by2nam01on0054.outbound.protection.outlook.com ([104.47.34.54]:38000
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        Tue, 28 Aug 2018 13:56:13 -0400
+Received: from mail-sn1nam01on0120.outbound.protection.outlook.com ([104.47.32.120]:52256
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726567AbeH1RzX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 13:55:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+        id S1726567AbeH1R4M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 13:56:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Sime/CpHTGdrzjcSQJYDl+VDi3Iv/p7g3DMb9rOcFIY=;
- b=1WQhfgkt/QpVIe08Cfviz1uSv9wzng5RwQehF6io9UABTS9i7GMLvfrL5VGiuu7K4+G6hr5/Zzp6NnjP5ztuorofepLMN2np6bDU0vZSNWkJElU9YgAEKNTPa7KC+H26X5eQULiDQf9aZRHwaUvGBB7VifF42YYaMiySZUn3lY4=
-Received: from MWHPR0201MB3628.namprd02.prod.outlook.com (10.167.162.139) by
- MWHPR0201MB3530.namprd02.prod.outlook.com (10.167.162.15) with Microsoft SMTP
+ bh=L1HHZmErkYz73Po6qKc3T/bTU8PD6OO2fgF1TFLeguI=;
+ b=gBgR6c/MyalGZLNF7DhVCWiuIgKVpnoNGnJX3b+1aaQY6kuf1X6b6CRoRP+QGfIvY5O1ww5+5UIemOflBokdCJLl4UY0ypP/2jXLkJvWFDcTdE8qlvbKpRWPjep2XKBpRbpSI0KKLvGUwRpJcouLYE90oJHmrlDwdHM25ScPp2s=
+Received: from DM5PR21MB0508.namprd21.prod.outlook.com (10.172.91.142) by
+ DM5PR21MB0122.namprd21.prod.outlook.com (10.173.173.9) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1080.17; Tue, 28 Aug 2018 14:03:31 +0000
-Received: from MWHPR0201MB3628.namprd02.prod.outlook.com
- ([fe80::fd25:7ec:f442:f9b5]) by MWHPR0201MB3628.namprd02.prod.outlook.com
- ([fe80::fd25:7ec:f442:f9b5%4]) with mapi id 15.20.1080.015; Tue, 28 Aug 2018
- 14:03:30 +0000
-From:   Radhey Shyam Pandey <radheys@xilinx.com>
-To:     Vinod <vkoul@kernel.org>
-CC:     "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        Michal Simek <michals@xilinx.com>,
-        Appana Durga Kedareswara Rao <appanad@xilinx.com>,
-        "lars@metafoo.de" <lars@metafoo.de>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 3/3] dmaengine: xilinx_dma: Fix 64-bit simple CDMA
- transfer
-Thread-Topic: [PATCH 3/3] dmaengine: xilinx_dma: Fix 64-bit simple CDMA
- transfer
-Thread-Index: AQHUJZfEjDnYw63wzE+wSwsRCwPdMKTKg7GAgArgSpA=
-Date:   Tue, 28 Aug 2018 14:03:30 +0000
-Message-ID: <MWHPR0201MB362803E975383398B361330FC70A0@MWHPR0201MB3628.namprd02.prod.outlook.com>
-References: <1532688639-32230-1-git-send-email-radhey.shyam.pandey@xilinx.com>
- <1532688639-32230-4-git-send-email-radhey.shyam.pandey@xilinx.com>
- <20180821155553.GI2388@vkoul-mobl>
-In-Reply-To: <20180821155553.GI2388@vkoul-mobl>
+ 15.20.1122.1; Tue, 28 Aug 2018 14:04:18 +0000
+Received: from DM5PR21MB0508.namprd21.prod.outlook.com
+ ([fe80::65dd:b17f:eb0d:2eee]) by DM5PR21MB0508.namprd21.prod.outlook.com
+ ([fe80::65dd:b17f:eb0d:2eee%8]) with mapi id 15.20.1122.000; Tue, 28 Aug 2018
+ 14:04:18 +0000
+From:   Pasha Tatashin <Pavel.Tatashin@microsoft.com>
+To:     Oscar Salvador <osalvador@techadventures.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+CC:     "mhocko@suse.com" <mhocko@suse.com>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "yasu.isimatu@gmail.com" <yasu.isimatu@gmail.com>,
+        "jonathan.cameron@huawei.com" <jonathan.cameron@huawei.com>,
+        "david@redhat.com" <david@redhat.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Oscar Salvador <osalvador@suse.de>
+Subject: Re: [PATCH v4 3/4] mm/memory_hotplug: Define nodemask_t as a stack
+ variable
+Thread-Topic: [PATCH v4 3/4] mm/memory_hotplug: Define nodemask_t as a stack
+ variable
+Thread-Index: AQHUNgi+2c4UtTpI3UKBrMq93dNlBaTVQ/KA
+Date:   Tue, 28 Aug 2018 14:04:18 +0000
+Message-ID: <cc7e1bac-2efb-b23f-bd76-8e836abeba0e@microsoft.com>
+References: <20180817090017.17610-1-osalvador@techadventures.net>
+ <20180817090017.17610-4-osalvador@techadventures.net>
+In-Reply-To: <20180817090017.17610-4-osalvador@techadventures.net>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
 X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=radheys@xilinx.com; 
-x-originating-ip: [183.83.222.44]
+x-originating-ip: [137.117.57.82]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR0201MB3530;6:pv9NNUxLIyp+H5vwlreMy3w7sOej2XBXWWcKOWNlRxuU4eIBnxqcY+5OkjZJ8b911jOMMZwXwVObtNk/K0KIZ82ekPW2k7sruKtcGY3NEvqjw7GWC1Pyu/oMDURHIxTJBQqwCAgBZMghukr9FMwAaGp+SbpUFZJU9kKTxwEonn3ADdPYYKWBxn+Dcu8m+shOLCt1aJI7bFxczr5khUqes5ZnkROwnk0L3OlYSnSQfY95uyRPNfpx4UAerhZWeMkeY4XakVyz8kqsn8igdvE4UmRdqQ8r3wFDqcJZo5XAR2sko1RiLloQgel8hbHCo/wP4Ufesh6f+BOpoIMEnN2yJBoqXs82XsnbgmCpt5QPxa/DUsXvDTwrTH6/Uc4hzIAN1uFJtjS36LLWWRFaO72FfPxhr66GqCCxevuW7BiRiC8GG+l3mM6Zloim4qj0hCEMzH4li10+GQTxQgyYInT1OQ==;5:sZEY1qLk9qQWcrB6pIjs/MjAk0I6rWP3UKPfmszxaTf+4y7Y8QUcFbyV4QCd1xYVmcMRPiNjFKqNdWe9qrPYZv90Wi6PQjdBHKEPUEj1vJ+2dzhRTBSmZSoZIWrDhLwXS4/Xfh75i+eZq3o0ZJG2drNLkR3yWKQfSmtevJpkU6k=;7:JOdILOv6q3orcvUgdyrsS/OuvNhtp5HogakUncINUe7ulpf3agMyEQUVV92DRb/IcbPmfvYtLilE9J5nv9LZu6+KrdTSMAkxtuXAQpMvN6Y0b8xAttdH42irgrBjbUsKHNE5ahwZmWY3IuiA5QbQOmw3WiNWzGJP+0ID4MMRg5hrP2l5ckhtPE3fVnP0b6Y09s3fh5Cqna+G0rsUzcyQXvxT5R5Qh10vUT6hDlEqKs8x8lJTVgfUzLVz3kCJlVGq
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(136003)(39860400002)(366004)(376002)(396003)(346002)(199004)(189003)(13464003)(66066001)(316002)(74316002)(106356001)(26005)(5250100002)(55016002)(6116002)(14454004)(305945005)(478600001)(3846002)(6916009)(6436002)(11346002)(99286004)(446003)(966005)(86362001)(9686003)(2900100001)(97736004)(8936002)(229853002)(76176011)(53936002)(68736007)(486006)(14444005)(256004)(102836004)(476003)(7696005)(2906002)(186003)(81156014)(81166006)(8676002)(6306002)(53546011)(4326008)(105586002)(7736002)(6506007)(25786009)(5660300001)(6246003)(33656002)(54906003);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR0201MB3530;H:MWHPR0201MB3628.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-office365-filtering-correlation-id: 69f7de5c-3fe9-4f75-b61f-08d60cef090f
+x-microsoft-exchange-diagnostics: 1;DM5PR21MB0122;6:VUKyCalszhmCKXVJNFbG/cZgy2Xo658ww9GqjRV10oRwHCTysnUGvoY8kJXaLycDZXm5g72uWv6shVCc3Gm9tjovhNVWpA9pGheU8H1rKxGI++LTFG3SYP6kYFLaYDdbaM4oiLBXlJkUC25T9gOCMiyRnaNfuLoGPdw154a8xMqV22vnzEYqdhIWPGsXsOPikO4kGqtULHSlWC0+fb57O8KbD3UadtijOaCkI0yscXnqkftducXYAMotNkV7Z8oXoba6D194l2ajEneysPU0ChqLaZgO4iQhjBi5Ov0iVEugtk+16EG1FARpwJWB4DDohuGOHH4bQiV+aJdTUPzliTOs8fVIdrr2sdiCBQUggzcNfFxoeW1OwIHhduVuc9Bt3QG0agK9cd3z4qPU8qeo9ZUgF4x+M8gLBvfVE9LmEv1NEIJSNZrR3bivPO6QMSzxVmzXqAWrjs08o9XMnloNMw==;5:tNupC+tKpzfVdJV/2IripulaT2Uv1bDcZFIUM2QmWrM0QWkArrPtkxfRGiEJ8AFR+kJzibc6ng9NWaFetSa5ObVMoSNBigP5zmQNB0mjSzcmkOUAlKl+A8xiQYWocFwFbzqQ0KoSKVEoXvKMCnK2cBdeenaUIvQrQZQZvtddo5g=;7:w8/sC5O33tYYxux82Xk7Oej4/sNAP+uDxtEssAYBHG3v3ywWuCHrGjzsJRwTlVmODZ9C/oJo2/qq7VWrhZBi7AoxVDUMkDR4gBF5dEMjbd2Duf3QCB7lKXYa0+lFmjxjrmM+pletCEM39MwSI5+kUoHMHQjRZ/k7We+0bTRBnQBvWvy5wezcy6IO0K7xa4yw6cDAzqs9C6WmQ2FPLYWoVDXIfr7DpWBEieKJhpqp2W9FzW7vMUsukLQXtGW+7P2q
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 8f483829-8ccc-409c-b211-08d60cef25ad
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:MWHPR0201MB3530;
-x-ms-traffictypediagnostic: MWHPR0201MB3530:
-x-microsoft-antispam-prvs: <MWHPR0201MB3530CE7444F57BC69E306A8AC70A0@MWHPR0201MB3530.namprd02.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(258649278758335)(192813158149592)(163750095850)(228905959029699);
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:DM5PR21MB0122;
+x-ms-traffictypediagnostic: DM5PR21MB0122:
+x-microsoft-antispam-prvs: <DM5PR21MB01225B4A91296A7C57CC993F9D0A0@DM5PR21MB0122.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(823301075)(93006095)(93001095)(10201501046)(3002001)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(201708071742011)(7699016);SRVR:MWHPR0201MB3530;BCL:0;PCL:0;RULEID:;SRVR:MWHPR0201MB3530;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231336)(944501410)(52105095)(2018427008)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123558120)(20161123562045)(201708071742011)(7699049)(76991033);SRVR:DM5PR21MB0122;BCL:0;PCL:0;RULEID:;SRVR:DM5PR21MB0122;
 x-forefront-prvs: 077884B8B5
-received-spf: None (protection.outlook.com: xilinx.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(396003)(376002)(346002)(366004)(136003)(189003)(199004)(99286004)(446003)(10290500003)(229853002)(5660300001)(305945005)(97736004)(7736002)(2616005)(11346002)(6116002)(3846002)(6486002)(10090500001)(186003)(7416002)(25786009)(81166006)(81156014)(39060400002)(476003)(486006)(14454004)(66066001)(478600001)(54906003)(106356001)(76176011)(72206003)(4326008)(2906002)(53936002)(68736007)(26005)(31686004)(105586002)(8936002)(86612001)(2900100001)(36756003)(31696002)(2501003)(102836004)(256004)(86362001)(6346003)(6436002)(22452003)(110136005)(6506007)(6246003)(6512007)(316002)(14444005)(5250100002)(8676002)(53546011);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR21MB0122;H:DM5PR21MB0508.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: Y7XAEfuW2ry1Gyfhs1iqoNbMnGcRc6/MdUUJAKKLyEZ36YsUzjcLiQD0AmXzn8hvKCfxphKZRSVYrJNk9NtFxoZkRrRmEHN7oicrjrf3TUxrt5zICAMggKVpFN9ErLCu/c/EJKO4JsYj6WdUxRtMe38wha7GBgCQC07DzdZOUGCJAaYy3ebdIgV/sSO7T7Y0sTPabm3Mhf2w1Raz5TAC78A2El+rbSxwWolyOdfzRgzLbZQFJs5KcBCp9XXbxVvuuFRWWUjgmgjLEJ1qwtetv+efF2C/luUa0FV5juo2lrw/s3Y5GUOApu46kzT+0sdh52Vr8s9BgJ88+9m4/Gsee9aVgQ+H2YoTIxOH8NN+Xmc=
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Pavel.Tatashin@microsoft.com; 
+x-microsoft-antispam-message-info: 3uRbAMGU6YIQ4o3FdnbWL3pPNZujepbQtAEKDqi3feO2avB4wOaLyz2LtHgO8NlI/8OJ1SL6B2vIEJMRKb7M03rT+2NdActjV8qxO1pP3rIirmUv1aT6r472idTX8cM5NdnBQQ3ODLZs5B1oqbf3lPssMosPUtrvkxQSKx4KXOtWcGD+MpHxerCddpdj7S7ATKQAd57VcwR3x8EXoyL+GFYRhFUu92sTxg7spCH+srGhAn3dkenOvG6pJEY8QpjpgFI0RxDF0lw/zwPYey0R1jtLkgn+bC/fuZAAJMkGFVF1ubLKcfdbS34uBEnpKereon0Y8706DkuNqEXNp+ICi715e+yWSNJAzTi7H9dHBCs=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <4625BC5878357146B66649E77C2C3028@namprd21.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 69f7de5c-3fe9-4f75-b61f-08d60cef090f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Aug 2018 14:03:30.6684
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8f483829-8ccc-409c-b211-08d60cef25ad
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Aug 2018 14:04:18.6910
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR0201MB3530
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR21MB0122
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Vinod <vkoul@kernel.org>
-> Sent: Tuesday, August 21, 2018 9:26 PM
-> To: Radhey Shyam Pandey <radheys@xilinx.com>
-> Cc: dan.j.williams@intel.com; Michal Simek <michals@xilinx.com>; Appana
-> Durga Kedareswara Rao <appanad@xilinx.com>; lars@metafoo.de;
-> dmaengine@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
-> kernel@vger.kernel.org
-> Subject: Re: [PATCH 3/3] dmaengine: xilinx_dma: Fix 64-bit simple CDMA
-> transfer
->=20
-> On 27-07-18, 16:20, Radhey Shyam Pandey wrote:
-> > In AXI CDMA simple mode also pass MSB bits of source and destination
-> > address to xilinx_write function. This fixes simple CDMA operation
-> > mode using 64-bit addressing.
-> >
-> > Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
-> > Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-> > ---
-> >  drivers/dma/xilinx/xilinx_dma.c |    6 ++++--
-> >  1 files changed, 4 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilin=
-x_dma.c
-> > index a37871e..2e15d86 100644
-> > --- a/drivers/dma/xilinx/xilinx_dma.c
-> > +++ b/drivers/dma/xilinx/xilinx_dma.c
-> > @@ -1245,8 +1245,10 @@ static void xilinx_cdma_start_transfer(struct
-> xilinx_dma_chan *chan)
-> >
-> >  		hw =3D &segment->hw;
-> >
-> > -		xilinx_write(chan, XILINX_CDMA_REG_SRCADDR, hw-
-> >src_addr);
-> > -		xilinx_write(chan, XILINX_CDMA_REG_DSTADDR, hw-
-> >dest_addr);
-> > +		xilinx_write(chan, XILINX_CDMA_REG_SRCADDR,
-> (dma_addr_t)
-> > +			     ((u64)hw->src_addr_msb << 32 | hw->src_addr));
->=20
-> so this is:
->         (dma_addr_t)((u64)hw->src_addr_msb << 32 | hw->src_addr)
->=20
-> what is src_addr data type? I think its u32. It would be better to
-> update xilinx_write() to take u64 and not dma_addr_t.
-
-Yes, src_addr_msb and src_addr BD fields are u32. To explain: There is no
-prob in xilinx_write it takes dma_addr_t as an arg which is 32/64 bit=20
-depending on _DMA_ADDR_T_64BIT. In 64bit CDMA transfer, there was a bug
-i.e in the call to xilinx_write src_addr_msb 32 bits were not passed. To fi=
-x
-that combine MSB and LSB 32 bits before passing it to xilinx_write.
-
-Thanks,
-Radhey
->=20
->=20
-> > +		xilinx_write(chan, XILINX_CDMA_REG_DSTADDR,
-> (dma_addr_t)
-> > +			     ((u64)hw->dest_addr_msb << 32 | hw-
-> >dest_addr));
-> >
-> >  		/* Start the transfer */
-> >  		dma_ctrl_write(chan, XILINX_DMA_REG_BTT,
-> > --
-> > 1.7.1
-> >
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe dmaengine" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
->=20
-> --
-> ~Vinod
+DQoNCk9uIDgvMTcvMTggNTowMCBBTSwgT3NjYXIgU2FsdmFkb3Igd3JvdGU6DQo+IEZyb206IE9z
+Y2FyIFNhbHZhZG9yIDxvc2FsdmFkb3JAc3VzZS5kZT4NCj4gDQo+IEN1cnJlbnRseSwgdW5yZWdp
+c3Rlcl9tZW1fc2VjdF91bmRlcl9ub2RlcygpIHRyaWVzIHRvIGFsbG9jYXRlIGEgbm9kZW1hc2tf
+dA0KPiBpbiBvcmRlciB0byBjaGVjayB3aGl0aGluIHRoZSBsb29wIHdoaWNoIG5vZGVzIGhhdmUg
+YWxyZWFkeSBiZWVuIHVubGlua2VkLA0KPiBzbyB3ZSBkbyBub3QgcmVwZWF0IHRoZSBvcGVyYXRp
+b24gb24gdGhlbS4NCj4gDQo+IE5PREVNQVNLX0FMTE9DIGNhbGxzIGttYWxsb2MoKSBpZiBOT0RF
+U19TSElGVCA+IDgsIG90aGVyd2lzZQ0KPiBpdCBqdXN0IGRlY2xhcmVzIGEgbm9kZW1hc2tfdCB2
+YXJpYWJsZSB3aGl0aGluIHRoZSBzdGFjay4NCj4gDQo+IFNpbmNlIGttYWxsb2MoKSBjYW4gZmFp
+bCwgd2UgYWN0dWFsbHkgY2hlY2sgd2hldGhlciBOT0RFTUFTS19BTExPQyBmYWlsZWQNCj4gb3Ig
+bm90LCBhbmQgd2UgcmV0dXJuIC1FTk9NRU0gYWNjb3JkaW5nbHkuDQo+IHJlbW92ZV9tZW1vcnlf
+c2VjdGlvbigpIGRvZXMgbm90IGNoZWNrIGZvciB0aGUgcmV0dXJuIHZhbHVlIHRob3VnaC4NCj4g
+SXQgaXMgcHJldHR5IHJhcmUgdGhhdCBzdWNoIGEgdGlueSBhbGxvY2F0aW9uIGNhbiBmYWlsLCBi
+dXQgaWYgaXQgZG9lcywNCj4gd2Ugd2lsbCBiZSBsZWZ0IHdpdGggZGFuZ2xlZCBzeW1saW5rcyB1
+bmRlciAvc3lzL2RldmljZXMvc3lzdGVtL25vZGUvLA0KPiBzaW5jZSB0aGUgbWVtX2JsaydzIGRp
+cmVjdG9yaWVzIHdpbGwgYmUgcmVtb3ZlZCBubyBtYXR0ZXIgd2hhdA0KPiB1bnJlZ2lzdGVyX21l
+bV9zZWN0X3VuZGVyX25vZGVzKCkgcmV0dXJucy4NCj4gDQo+IE9uZSB3YXkgdG8gc29sdmUgdGhp
+cyBpcyB0byBjaGVjayB3aGV0aGVyIHVubGlua2VkX25vZGVzIGlzIE5VTEwgb3Igbm90Lg0KPiBJ
+biB0aGUgY2FzZSBpdCBpcyBub3QsIHdlIGNhbiBqdXN0IHVzZSBpdCBhcyBiZWZvcmUsIGJ1dCBp
+ZiBpdCBpcyBOVUxMLA0KPiB3ZSBjYW4ganVzdCBza2lwIHRoZSBub2RlX3Rlc3RfYW5kX3NldCBj
+aGVjaywgYW5kIGNhbGwgc3lzZnNfcmVtb3ZlX2xpbmsoKQ0KPiB1bmNvbmRpdGlvbmFsbHkuDQo+
+IFRoaXMgaXMgaGFybWxlc3MgYXMgc3lzZnNfcmVtb3ZlX2xpbmsoKSBiYWNrcyBvZmYgc29tZXdo
+ZXJlIGRvd24gdGhlIGNoYWluDQo+IGluIGNhc2UgdGhlIGxpbmsgaGFzIGFscmVhZHkgYmVlbiBy
+ZW1vdmVkLg0KPiBUaGlzIG1ldGhvZCB3YXMgcHJlc2VudGVkIGluIHYzIG9mIHRoZSBwYXRoIFsx
+XS4NCj4gDQo+IEJ1dCBzaW5jZSB0aGUgbWF4aW11bSBudW1iZXIgb2Ygbm9kZXMgd2UgY2FuIGhh
+dmUgaXMgMTAyNCwNCj4gd2hlbiBOT0RFU19TSElGVCA9IDEwLCB0aGF0IGdpdmVzIHVzIGEgbm9k
+ZW1hc2tfdCBvZiAxMjggYnl0ZXMuDQo+IEFsdGhvdWdoIGV2ZXJ5dGhpbmcgZGVwZW5kcyBvbiBo
+b3cgZGVlcCB0aGUgc3RhY2sgaXMsIEkgdGhpbmsgd2UgY2FuIGFmZm9yZA0KPiB0byBkZWZpbmUg
+dGhlIG5vZGVtYXNrX3QgdmFyaWFibGUgd2hpdGhpbiB0aGUgc3RhY2suDQo+IA0KPiBUaGF0IHNp
+bXBsaWZpZXMgdGhlIGNvZGUsIGFuZCB3ZSBkbyBub3QgbmVlZCB0byB3b3JyeSBhYm91dCB1bnRl
+c3RlZCBlcnJvcg0KPiBjb2RlIHBhdGhzLg0KPiANCj4gSWYgd2Ugc2VlIHRoYXQgdGhpcyBjYXVz
+ZXMgdHJvdWJsZXMgd2l0aCB0aGUgc3RhY2ssIHdlIGNhbiBhbHdheXMgcmV0dXJuIHRvIFsxXS4N
+Cj4gDQo+IFNpZ25lZC1vZmYtYnk6IE9zY2FyIFNhbHZhZG9yIDxvc2FsdmFkb3JAc3VzZS5kZT4N
+Cg0KTEdUTToNCg0KUmV2aWV3ZWQtYnk6IFBhdmVsIFRhdGFzaGluIDxwYXZlbC50YXRhc2hpbkBt
+aWNyb3NvZnQuY29tPg0KDQpUaGFuayB5b3UsDQpQYXZlbA==
