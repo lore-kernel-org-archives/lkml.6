@@ -3,63 +3,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B8D0C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 03:14:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51D61C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 03:20:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C917208D5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 03:14:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4626208B4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 03:20:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AnlkNqBH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C917208D5
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bwg11hbf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4626208B4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727024AbeH1HDl (ORCPT
+        id S1727043AbeH1HJ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 03:03:41 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:39882 "EHLO
+        Tue, 28 Aug 2018 03:09:58 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:44589 "EHLO
         mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726181AbeH1HDl (ORCPT
+        with ESMTP id S1726216AbeH1HJ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 03:03:41 -0400
-Received: by mail-oi0-f68.google.com with SMTP id c190-v6so267476oig.6
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 20:14:10 -0700 (PDT)
+        Tue, 28 Aug 2018 03:09:57 -0400
+Received: by mail-oi0-f68.google.com with SMTP id l82-v6so253198oih.11
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 20:20:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=LW6wZj0eMcyZEpEPq3ZHe1Rwr7EK6b/x2V0toy2Rqjs=;
-        b=AnlkNqBH9Ou2pZsSjW+GOTiZVDc4XxJihukUiOgTM3rPE5bgdv+Y+9suemNjhBCYro
-         BpP9i4bR8qz7RqjEcQym0A29DCSps7okuyEo0HBabb1F0xVgNIdxVjJiVhVQiBDJz3lx
-         pj6iIUQiK9rBwSeNilsB/Shj16vD/QU8i6zks=
+        bh=ie//tSW3fDEFPFVtJjiXB1Lff2qCUANoHt8PUElmxJI=;
+        b=bwg11hbfKGhmbEyKFkV1JKSO9WHzihWQeoEM7nPLfxlqXq1UvpG6ThEtzoEIJ9eE5U
+         Y/+bYtXyWG98PwXOQ8lok6fzTMwtFG/9EsbbCqtJ45vfH6LSX2izu3FLjCN8GXe9HEYj
+         OM+j2gXVy5sQ+8N92ueEHT/2InDXD99QkLGuc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=LW6wZj0eMcyZEpEPq3ZHe1Rwr7EK6b/x2V0toy2Rqjs=;
-        b=d1BSCBN7M9Odm4mUMyhdgaKZBeHOvFB9PJ3kYnxhaaw2Qbh7kU/tmVqpiHMjinS49K
-         yOcHE904zzKTvE1f1c+4xvp9OGtqZMvOoIDigVaRlIxT5RslXAY1rJSpdTTnwO/GnY5R
-         CJ9WRh8Sy1N6DR1b+xOi5No+4O6r64phvAIq4kdvuYXygP8aDMmKbcKI6SUV4t1Wli9H
-         p5+dqDudLVjwR7SW15hUopKGwRGgSyHOvBJfoxt38qDBDxrIaSzUd4GTe10mCbJqVw3S
-         qgSvFN2SRIGBNAgDsJbHf288iK6iva5Un6+n8hMJZv4eJSXNCgVueLfBIzstARsE+FXU
-         7ReQ==
-X-Gm-Message-State: APzg51BByZUZhCRnmpIoLr/wZeYubuZPvzuW+mEtn5GvDwIvrVSBHNTy
-        hyF57P38Srcpnwl0LdHW+xPO2IcbI5bjs6r3x5MiQA==
-X-Google-Smtp-Source: ANB0VdZopBU1XaYRRsY/GpGj19saq/snpyweXj//v4HmFlstDc5TRCg3Fq4A9PPe7rT4fGFpqHFC7wrnnMxM7riVbAE=
-X-Received: by 2002:aca:be56:: with SMTP id o83-v6mr1319265oif.301.1535426049993;
- Mon, 27 Aug 2018 20:14:09 -0700 (PDT)
+        bh=ie//tSW3fDEFPFVtJjiXB1Lff2qCUANoHt8PUElmxJI=;
+        b=bLbLqiY3q3AayWOzbhnBkmyXLZz5Os2E2M+6nHi2ZH/aT1MpmEwFyg0f+fQou0FIOR
+         1Oi8TP471abjDdqE+ilJK9cnaWp//5Ix2h+AIDxfOidzc0FdLJ2dyYUxq7hPy1lF8DZN
+         9cpJxYPXo++rNR7u4cUL2b99GtUJJyjNerjVLMivYDZfZcJjo5nZihdENMln8tSJ5uQi
+         N1IlEAIF4KrYJZbOAO3xEssY/WaM5EWpQjUbS4mLtKMRpU5i+eIak5ICBZQe9nC1wRPr
+         f5a5R1yOzlNhoA77ceBS6hvMCWRB7SFTBw2S6itqkvNYhxbqn/9oBFgGAwahpGWTXFjC
+         TsRQ==
+X-Gm-Message-State: APzg51DBGHGG4uGo+FjYAKNQVwl8mqhy4Kykp2mR3XPyz9K8mRDEgzDy
+        4j9wIsimApEAE00XO+CwNRddWRm7vAq77iBwttFxOA==
+X-Google-Smtp-Source: ANB0VdY94g73Hj5Socz/GPsv2cvfv9TSDF113qYbgshBH/M89IM7Hm72lEjKduzHOeYV7nWPEvmHFfMpvza91jrtkwo=
+X-Received: by 2002:aca:50cf:: with SMTP id e198-v6mr1370437oib.332.1535426426229;
+ Mon, 27 Aug 2018 20:20:26 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a9d:29:0:0:0:0:0 with HTTP; Mon, 27 Aug 2018 20:14:09 -0700 (PDT)
-In-Reply-To: <20180825093841.72a5d099@archlinux>
+Received: by 2002:a9d:29:0:0:0:0:0 with HTTP; Mon, 27 Aug 2018 20:20:25 -0700 (PDT)
+In-Reply-To: <20180825094357.6425ab4a@archlinux>
 References: <4a7e33457617e6f0f7c9627fe20ddd3039e4fe82.1535103920.git.baolin.wang@linaro.org>
- <20180825093841.72a5d099@archlinux>
+ <cc6b76c5d660818d3ff7833ea5be4f32ed960f54.1535103920.git.baolin.wang@linaro.org>
+ <20180825094357.6425ab4a@archlinux>
 From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Tue, 28 Aug 2018 11:14:09 +0800
-Message-ID: <CAMz4kuJnEg4_hDx75w3md2J6E0gJ_2O+iCMe9W_F+EpxJVj-cw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] iio: adc: sc27xx: Add raw data support
+Date:   Tue, 28 Aug 2018 11:20:25 +0800
+Message-ID: <CAMz4kuKdw9EiZ2txKuPJrHt1oeKv7ye6P8GjS=KXuaJYWRs4eQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] iio: adc: sc27xx: Add ADC scale calibration
 To:     Jonathan Cameron <jic23@kernel.org>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -77,146 +78,23 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi Jonathan,
 
-On 25 August 2018 at 16:38, Jonathan Cameron <jic23@kernel.org> wrote:
-> On Fri, 24 Aug 2018 17:53:15 +0800
+On 25 August 2018 at 16:43, Jonathan Cameron <jic23@kernel.org> wrote:
+> On Fri, 24 Aug 2018 17:53:16 +0800
 > Baolin Wang <baolin.wang@linaro.org> wrote:
 >
->> The headset device will use channel 20 of ADC controller to detect events,
->> but it needs the raw ADC data to do conversion according to its own formula.
->>
->> Thus we should configure the channel mask separately and configure channel
->> 20 as IIO_CHAN_INFO_RAW, as well as adding raw data read support.
->
-> So is this a general thing, i.e. that channel is 'meant' to be used for the
-> headset, or just a one off for a particular board?
-> If it is a general thing, than I'm fine with this (unlikely we'll break any
-> other users), but if not we need to find a nicer way to do it.
-
-Yes, it is a general thing. Now channel 20 is always used for the headset.
-
-> I am a little unclear on how a channel would provide the voltage on it's pin
-> but that could be wrong when used for a different purpose?
-> If it's just a matter of unusual loading characteristics then perhaps that
-> is valid, but I'd like to understand this a little.
-
-On our platform, the headset will use this voltage value reading from
-ADC to check the headset events: headset buttons, headset plugin and
-so on.
-
+>> This patch adds support to read calibration values from the eFuse
+>> controller to calibrate the ADC channel scales, which can make ADC
+>> sample data more accurate.
 >>
 >> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
->> ---
->>  drivers/iio/adc/sc27xx_adc.c |   80 ++++++++++++++++++++++++------------------
->>  1 file changed, 45 insertions(+), 35 deletions(-)
->>
->> diff --git a/drivers/iio/adc/sc27xx_adc.c b/drivers/iio/adc/sc27xx_adc.c
->> index 2b60efe..153c311 100644
->> --- a/drivers/iio/adc/sc27xx_adc.c
->> +++ b/drivers/iio/adc/sc27xx_adc.c
->> @@ -273,6 +273,17 @@ static int sc27xx_adc_read_raw(struct iio_dev *indio_dev,
->>       int ret, tmp;
->>
->>       switch (mask) {
->> +     case IIO_CHAN_INFO_RAW:
->> +             mutex_lock(&indio_dev->mlock);
->> +             ret = sc27xx_adc_read(data, chan->channel, scale, &tmp);
->> +             mutex_unlock(&indio_dev->mlock);
->> +
->> +             if (ret)
->> +                     return ret;
->> +
->> +             *val = tmp;
->> +             return IIO_VAL_INT;
->> +
->>       case IIO_CHAN_INFO_PROCESSED:
->>               mutex_lock(&indio_dev->mlock);
->>               ret = sc27xx_adc_read_processed(data, chan->channel, scale,
->> @@ -315,48 +326,47 @@ static int sc27xx_adc_write_raw(struct iio_dev *indio_dev,
->>       .write_raw = &sc27xx_adc_write_raw,
->>  };
->>
->> -#define SC27XX_ADC_CHANNEL(index) {                          \
->> +#define SC27XX_ADC_CHANNEL(index, mask) {                    \
->>       .type = IIO_VOLTAGE,                                    \
->>       .channel = index,                                       \
->> -     .info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED) |    \
->> -                           BIT(IIO_CHAN_INFO_SCALE),         \
->> +     .info_mask_separate = mask | BIT(IIO_CHAN_INFO_SCALE),  \
->>       .datasheet_name = "CH##index",                          \
->>       .indexed = 1,                                           \
->>  }
->>
->>  static const struct iio_chan_spec sc27xx_channels[] = {
->> -     SC27XX_ADC_CHANNEL(0),
->> -     SC27XX_ADC_CHANNEL(1),
->> -     SC27XX_ADC_CHANNEL(2),
->> -     SC27XX_ADC_CHANNEL(3),
->> -     SC27XX_ADC_CHANNEL(4),
->> -     SC27XX_ADC_CHANNEL(5),
->> -     SC27XX_ADC_CHANNEL(6),
->> -     SC27XX_ADC_CHANNEL(7),
->> -     SC27XX_ADC_CHANNEL(8),
->> -     SC27XX_ADC_CHANNEL(9),
->> -     SC27XX_ADC_CHANNEL(10),
->> -     SC27XX_ADC_CHANNEL(11),
->> -     SC27XX_ADC_CHANNEL(12),
->> -     SC27XX_ADC_CHANNEL(13),
->> -     SC27XX_ADC_CHANNEL(14),
->> -     SC27XX_ADC_CHANNEL(15),
->> -     SC27XX_ADC_CHANNEL(16),
->> -     SC27XX_ADC_CHANNEL(17),
->> -     SC27XX_ADC_CHANNEL(18),
->> -     SC27XX_ADC_CHANNEL(19),
->> -     SC27XX_ADC_CHANNEL(20),
->> -     SC27XX_ADC_CHANNEL(21),
->> -     SC27XX_ADC_CHANNEL(22),
->> -     SC27XX_ADC_CHANNEL(23),
->> -     SC27XX_ADC_CHANNEL(24),
->> -     SC27XX_ADC_CHANNEL(25),
->> -     SC27XX_ADC_CHANNEL(26),
->> -     SC27XX_ADC_CHANNEL(27),
->> -     SC27XX_ADC_CHANNEL(28),
->> -     SC27XX_ADC_CHANNEL(29),
->> -     SC27XX_ADC_CHANNEL(30),
->> -     SC27XX_ADC_CHANNEL(31),
->> +     SC27XX_ADC_CHANNEL(0, BIT(IIO_CHAN_INFO_PROCESSED)),
->> +     SC27XX_ADC_CHANNEL(1, BIT(IIO_CHAN_INFO_PROCESSED)),
->> +     SC27XX_ADC_CHANNEL(2, BIT(IIO_CHAN_INFO_PROCESSED)),
->> +     SC27XX_ADC_CHANNEL(3, BIT(IIO_CHAN_INFO_PROCESSED)),
->> +     SC27XX_ADC_CHANNEL(4, BIT(IIO_CHAN_INFO_PROCESSED)),
->> +     SC27XX_ADC_CHANNEL(5, BIT(IIO_CHAN_INFO_PROCESSED)),
->> +     SC27XX_ADC_CHANNEL(6, BIT(IIO_CHAN_INFO_PROCESSED)),
->> +     SC27XX_ADC_CHANNEL(7, BIT(IIO_CHAN_INFO_PROCESSED)),
->> +     SC27XX_ADC_CHANNEL(8, BIT(IIO_CHAN_INFO_PROCESSED)),
->> +     SC27XX_ADC_CHANNEL(9, BIT(IIO_CHAN_INFO_PROCESSED)),
->> +     SC27XX_ADC_CHANNEL(10, BIT(IIO_CHAN_INFO_PROCESSED)),
->> +     SC27XX_ADC_CHANNEL(11, BIT(IIO_CHAN_INFO_PROCESSED)),
->> +     SC27XX_ADC_CHANNEL(12, BIT(IIO_CHAN_INFO_PROCESSED)),
->> +     SC27XX_ADC_CHANNEL(13, BIT(IIO_CHAN_INFO_PROCESSED)),
->> +     SC27XX_ADC_CHANNEL(14, BIT(IIO_CHAN_INFO_PROCESSED)),
->> +     SC27XX_ADC_CHANNEL(15, BIT(IIO_CHAN_INFO_PROCESSED)),
->> +     SC27XX_ADC_CHANNEL(16, BIT(IIO_CHAN_INFO_PROCESSED)),
->> +     SC27XX_ADC_CHANNEL(17, BIT(IIO_CHAN_INFO_PROCESSED)),
->> +     SC27XX_ADC_CHANNEL(18, BIT(IIO_CHAN_INFO_PROCESSED)),
->> +     SC27XX_ADC_CHANNEL(19, BIT(IIO_CHAN_INFO_PROCESSED)),
->> +     SC27XX_ADC_CHANNEL(20, BIT(IIO_CHAN_INFO_RAW)),
->> +     SC27XX_ADC_CHANNEL(21, BIT(IIO_CHAN_INFO_PROCESSED)),
->> +     SC27XX_ADC_CHANNEL(22, BIT(IIO_CHAN_INFO_PROCESSED)),
->> +     SC27XX_ADC_CHANNEL(23, BIT(IIO_CHAN_INFO_PROCESSED)),
->> +     SC27XX_ADC_CHANNEL(24, BIT(IIO_CHAN_INFO_PROCESSED)),
->> +     SC27XX_ADC_CHANNEL(25, BIT(IIO_CHAN_INFO_PROCESSED)),
->> +     SC27XX_ADC_CHANNEL(26, BIT(IIO_CHAN_INFO_PROCESSED)),
->> +     SC27XX_ADC_CHANNEL(27, BIT(IIO_CHAN_INFO_PROCESSED)),
->> +     SC27XX_ADC_CHANNEL(28, BIT(IIO_CHAN_INFO_PROCESSED)),
->> +     SC27XX_ADC_CHANNEL(29, BIT(IIO_CHAN_INFO_PROCESSED)),
->> +     SC27XX_ADC_CHANNEL(30, BIT(IIO_CHAN_INFO_PROCESSED)),
->> +     SC27XX_ADC_CHANNEL(31, BIT(IIO_CHAN_INFO_PROCESSED)),
->>  };
->>
->>  static int sc27xx_adc_enable(struct sc27xx_adc_data *data)
->
+> This looks good to me.  I'll leave it for now though given open questions
+> on patch 1 and to allow others time to comment on this if they wish -
+> particularly as it includes a binding addition.
 
-
+Thanks for your reviewing. But after more testing, we found one issue
+when reading calibration data from efuse, which is not always 4 bytes
+(sizeof(u32)). So I will change to use nvmem_cell_read() instead of
+nvmem_cell_read_u32() in next version.
 
 -- 
 Baolin Wang
