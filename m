@@ -2,212 +2,248 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57D0AC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:06:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2FC8C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:08:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0C0E208AC
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:06:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="K0SDNhUY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0C0E208AC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	by mail.kernel.org (Postfix) with ESMTP id 5F28220878
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:08:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F28220878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727557AbeH1N5h (ORCPT
+        id S1727672AbeH1N7B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 09:57:37 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:40596 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727094AbeH1N5h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 09:57:37 -0400
-Received: from avalon.localnet (rec54-5-78-202-243-150.fbx.proxad.net [78.202.243.150])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id B7401B92;
-        Tue, 28 Aug 2018 12:06:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1535450801;
-        bh=+Kh1TGHDH7p3jDfFl2D3yQc5sMrdImeqZD9zV10qX6w=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K0SDNhUYFIfLC+thllSbxD1XKIgEKEkp2wcMK8nYTUkzl5tgAywDCSOZKygzVcWKO
-         ElUYOveH5uB0AfwD6R0BqDlQPnXvvh3au8jo2efiqejrRGWz3GyF9UAuowGqPONmCW
-         NP6zc/brr/Ve0a9V2CnVPO0skADVkdcdOta6M/sQ=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
-        Benoit Parrot <bparrot@ti.com>,
+        Tue, 28 Aug 2018 09:59:01 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34812 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727094AbeH1N7A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 09:59:00 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5537E18A;
+        Tue, 28 Aug 2018 03:08:06 -0700 (PDT)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.emea.arm.com [10.4.13.117])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A97033F5BC;
+        Tue, 28 Aug 2018 03:08:03 -0700 (PDT)
+Date:   Tue, 28 Aug 2018 11:07:58 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Lucas Stach <l.stach@pengutronix.de>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
         Philipp Zabel <p.zabel@pengutronix.de>,
-        Hyun Kwon <hyun.kwon@xilinx.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-media@vger.kernel.org
-Subject: Re: [PATCH] media: Convert to using %pOFn instead of device_node.name
-Date:   Tue, 28 Aug 2018 13:06:42 +0300
-Message-ID: <2863201.EMhOTYQe29@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20180828015252.28511-28-robh@kernel.org>
-References: <20180828015252.28511-1-robh@kernel.org> <20180828015252.28511-28-robh@kernel.org>
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>, linux-imx@nxp.com,
+        kernel@pengutronix.de, linux-pci@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [RESEND] PCI: imx: Initial imx7d pm support
+Message-ID: <20180828100758.GA27217@e107981-ln.cambridge.arm.com>
+References: <d577303de61fb060aa428898f5df1d0bc9be89b8.1535369231.git.leonard.crestez@nxp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d577303de61fb060aa428898f5df1d0bc9be89b8.1535369231.git.leonard.crestez@nxp.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
-
-Thank you for the patch.
-
-On Tuesday, 28 August 2018 04:52:29 EEST Rob Herring wrote:
-> In preparation to remove the node name pointer from struct device_node,
-> convert printf users to use the %pOFn format specifier.
+On Mon, Aug 27, 2018 at 02:28:37PM +0300, Leonard Crestez wrote:
+> On imx7d the pcie-phy power domain is turned off in suspend and this can
+> make the system hang after resume when attempting any read from PCI.
 > 
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-> Cc: Benoit Parrot <bparrot@ti.com>
-> Cc: Philipp Zabel <p.zabel@pengutronix.de>
-> Cc: Hyun Kwon <hyun.kwon@xilinx.com>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: Michal Simek <michal.simek@xilinx.com>
-> Cc: linux-media@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
+> Fix this by adding minimal suspend/resume code from the nxp internal
+> tree. This will prepare for powering down on suspend and reset the block
+> on resume.
+> 
+> Code is only for imx7d but a very similar sequence can be used for
+> other socs.
+> 
+> The original author is mostly Richard Zhu <hongxing.zhu@nxp.com>, this
+> patch adjusts the code to the upstream imx7d implemention using reset
+> controls and power domains.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+I will add a Suggested-by: replacing this paragraph, it is always better
+to add proper tags rather than credit hidden in commit logs messages.
 
-Which tree would you like to merge this through ?
-
+> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+> Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
 > ---
->  drivers/media/i2c/tvp5150.c                   | 8 ++++----
->  drivers/media/platform/davinci/vpif_capture.c | 3 +--
->  drivers/media/platform/ti-vpe/cal.c           | 8 ++++----
->  drivers/media/platform/video-mux.c            | 2 +-
->  drivers/media/platform/xilinx/xilinx-dma.c    | 8 ++++----
->  5 files changed, 14 insertions(+), 15 deletions(-)
+>  drivers/pci/controller/dwc/pci-imx6.c | 97 +++++++++++++++++++++++++--
+>  1 file changed, 92 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/media/i2c/tvp5150.c b/drivers/media/i2c/tvp5150.c
-> index 76e6bed5a1da..f337e523821b 100644
-> --- a/drivers/media/i2c/tvp5150.c
-> +++ b/drivers/media/i2c/tvp5150.c
-> @@ -1403,8 +1403,8 @@ static int tvp5150_parse_dt(struct tvp5150 *decoder,
-> struct device_node *np) ret = of_property_read_u32(child, "input",
-> &input_type);
->  		if (ret) {
->  			dev_err(decoder->sd.dev,
-> -				 "missing type property in node %s\n",
-> -				 child->name);
-> +				 "missing type property in node %pOFn\n",
-> +				 child);
->  			goto err_connector;
->  		}
+> Resending after RC1 as suggested here: https://lkml.org/lkml/2018/8/8/496
 > 
-> @@ -1439,8 +1439,8 @@ static int tvp5150_parse_dt(struct tvp5150 *decoder,
-> struct device_node *np) ret = of_property_read_string(child, "label",
-> &name);
->  		if (ret < 0) {
->  			dev_err(decoder->sd.dev,
-> -				 "missing label property in node %s\n",
-> -				 child->name);
-> +				 "missing label property in node %pOFn\n",
-> +				 child);
->  			goto err_connector;
->  		}
+> This was initially sent together with a dts fix, that was already
+> accepted by Shawn: https://lkml.org/lkml/2018/8/21/529
 > 
-> diff --git a/drivers/media/platform/davinci/vpif_capture.c
-> b/drivers/media/platform/davinci/vpif_capture.c index
-> a96f53ce8088..35fc69591d54 100644
-> --- a/drivers/media/platform/davinci/vpif_capture.c
-> +++ b/drivers/media/platform/davinci/vpif_capture.c
-> @@ -1583,8 +1583,7 @@ vpif_capture_get_pdata(struct platform_device *pdev)
->  			goto done;
->  		}
+> Some dependencies in this area are complicated but as far as I know
+> including this patch without others should not break anything that was
+> not already broken. Since this is a patch for something that has never
+> worked before it should be treated as a feature not a bugfix.
+
+Ok, so I consider this v4.20 material, please shout if it has to be
+sent as a fix, I do not think so given what we discussed above.
+
+Lorenzo
+
+> I have a few other patches for imx pci but it's better to deal with them
+> separately. This initial patch adding suspend support is useful by
+> itself.
 > 
-> -		dev_dbg(&pdev->dev, "Remote device %s, %pOF found\n",
-> -			rem->name, rem);
-> +		dev_dbg(&pdev->dev, "Remote device %pOF found\n", rem);
->  		sdinfo->name = rem->full_name;
-> 
->  		pdata->asd[i] = devm_kzalloc(&pdev->dev,
-> diff --git a/drivers/media/platform/ti-vpe/cal.c
-> b/drivers/media/platform/ti-vpe/cal.c index d1febe5baa6d..77d755020e78
-> 100644
-> --- a/drivers/media/platform/ti-vpe/cal.c
-> +++ b/drivers/media/platform/ti-vpe/cal.c
-> @@ -1712,8 +1712,8 @@ static int of_cal_create_instance(struct cal_ctx *ctx,
-> int inst) v4l2_fwnode_endpoint_parse(of_fwnode_handle(remote_ep),
-> endpoint);
-> 
->  	if (endpoint->bus_type != V4L2_MBUS_CSI2) {
-> -		ctx_err(ctx, "Port:%d sub-device %s is not a CSI2 device\n",
-> -			inst, sensor_node->name);
-> +		ctx_err(ctx, "Port:%d sub-device %pOFn is not a CSI2 device\n",
-> +			inst, sensor_node);
->  		goto cleanup_exit;
->  	}
-> 
-> @@ -1732,8 +1732,8 @@ static int of_cal_create_instance(struct cal_ctx *ctx,
-> int inst) endpoint->bus.mipi_csi2.data_lanes[lane]);
->  	ctx_dbg(3, ctx, "\t>\n");
-> 
-> -	ctx_dbg(1, ctx, "Port: %d found sub-device %s\n",
-> -		inst, sensor_node->name);
-> +	ctx_dbg(1, ctx, "Port: %d found sub-device %pOFn\n",
-> +		inst, sensor_node);
-> 
->  	ctx->asd_list[0] = asd;
->  	ctx->notifier.subdevs = ctx->asd_list;
-> diff --git a/drivers/media/platform/video-mux.c
-> b/drivers/media/platform/video-mux.c index c01e1592ad0a..61a9bf716a05
-> 100644
-> --- a/drivers/media/platform/video-mux.c
-> +++ b/drivers/media/platform/video-mux.c
-> @@ -333,7 +333,7 @@ static int video_mux_probe(struct platform_device *pdev)
-> platform_set_drvdata(pdev, vmux);
-> 
->  	v4l2_subdev_init(&vmux->subdev, &video_mux_subdev_ops);
-> -	snprintf(vmux->subdev.name, sizeof(vmux->subdev.name), "%s", np->name);
-> +	snprintf(vmux->subdev.name, sizeof(vmux->subdev.name), "%pOFn", np);
->  	vmux->subdev.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
->  	vmux->subdev.dev = dev;
-> 
-> diff --git a/drivers/media/platform/xilinx/xilinx-dma.c
-> b/drivers/media/platform/xilinx/xilinx-dma.c index
-> d041f94be832..3c8fcf951c63 100644
-> --- a/drivers/media/platform/xilinx/xilinx-dma.c
-> +++ b/drivers/media/platform/xilinx/xilinx-dma.c
-> @@ -506,8 +506,8 @@ xvip_dma_querycap(struct file *file, void *fh, struct
-> v4l2_capability *cap)
-> 
->  	strlcpy(cap->driver, "xilinx-vipp", sizeof(cap->driver));
->  	strlcpy(cap->card, dma->video.name, sizeof(cap->card));
-> -	snprintf(cap->bus_info, sizeof(cap->bus_info), "platform:%s:%u",
-> -		 dma->xdev->dev->of_node->name, dma->port);
-> +	snprintf(cap->bus_info, sizeof(cap->bus_info), "platform:%pOFn:%u",
-> +		 dma->xdev->dev->of_node, dma->port);
-> 
->  	return 0;
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index 4a9a673b4777..65b6d1015723 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -540,10 +540,28 @@ static int imx6_pcie_wait_for_speed_change(struct imx6_pcie *imx6_pcie)
+>  
+>  	dev_err(dev, "Speed change timeout\n");
+>  	return -EINVAL;
 >  }
-> @@ -693,8 +693,8 @@ int xvip_dma_init(struct xvip_composite_device *xdev,
-> struct xvip_dma *dma, dma->video.fops = &xvip_dma_fops;
->  	dma->video.v4l2_dev = &xdev->v4l2_dev;
->  	dma->video.queue = &dma->queue;
-> -	snprintf(dma->video.name, sizeof(dma->video.name), "%s %s %u",
-> -		 xdev->dev->of_node->name,
-> +	snprintf(dma->video.name, sizeof(dma->video.name), "%pOFn %s %u",
-> +		 xdev->dev->of_node,
->  		 type == V4L2_BUF_TYPE_VIDEO_CAPTURE ? "output" : "input",
->  		 port);
->  	dma->video.vfl_type = VFL_TYPE_GRABBER;
-
-
--- 
-Regards,
-
-Laurent Pinchart
-
-
-
+>  
+> +static void imx6_pcie_ltssm_enable(struct device *dev)
+> +{
+> +	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
+> +
+> +	switch (imx6_pcie->variant) {
+> +	case IMX6Q:
+> +	case IMX6SX:
+> +	case IMX6QP:
+> +		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
+> +				   IMX6Q_GPR12_PCIE_CTL_2,
+> +				   IMX6Q_GPR12_PCIE_CTL_2);
+> +		break;
+> +	case IMX7D:
+> +		reset_control_deassert(imx6_pcie->apps_reset);
+> +		break;
+> +	}
+> +}
+> +
+>  static int imx6_pcie_establish_link(struct imx6_pcie *imx6_pcie)
+>  {
+>  	struct dw_pcie *pci = imx6_pcie->pci;
+>  	struct device *dev = pci->dev;
+>  	u32 tmp;
+> @@ -558,15 +576,11 @@ static int imx6_pcie_establish_link(struct imx6_pcie *imx6_pcie)
+>  	tmp &= ~PCIE_RC_LCR_MAX_LINK_SPEEDS_MASK;
+>  	tmp |= PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN1;
+>  	dw_pcie_writel_dbi(pci, PCIE_RC_LCR, tmp);
+>  
+>  	/* Start LTSSM. */
+> -	if (imx6_pcie->variant == IMX7D)
+> -		reset_control_deassert(imx6_pcie->apps_reset);
+> -	else
+> -		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
+> -				   IMX6Q_GPR12_PCIE_CTL_2, 1 << 10);
+> +	imx6_pcie_ltssm_enable(dev);
+>  
+>  	ret = imx6_pcie_wait_for_link(imx6_pcie);
+>  	if (ret)
+>  		goto err_reset_phy;
+>  
+> @@ -680,10 +694,82 @@ static int imx6_add_pcie_port(struct imx6_pcie *imx6_pcie,
+>  
+>  static const struct dw_pcie_ops dw_pcie_ops = {
+>  	.link_up = imx6_pcie_link_up,
+>  };
+>  
+> +#ifdef CONFIG_PM_SLEEP
+> +static void imx6_pcie_ltssm_disable(struct device *dev)
+> +{
+> +	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
+> +
+> +	switch (imx6_pcie->variant) {
+> +	case IMX6SX:
+> +	case IMX6QP:
+> +		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
+> +				   IMX6Q_GPR12_PCIE_CTL_2, 0);
+> +		break;
+> +	case IMX7D:
+> +		reset_control_assert(imx6_pcie->apps_reset);
+> +		break;
+> +	default:
+> +		dev_err(dev, "ltssm_disable not supported\n");
+> +	}
+> +}
+> +
+> +static void imx6_pcie_clk_disable(struct imx6_pcie *imx6_pcie)
+> +{
+> +	clk_disable_unprepare(imx6_pcie->pcie);
+> +	clk_disable_unprepare(imx6_pcie->pcie_phy);
+> +	clk_disable_unprepare(imx6_pcie->pcie_bus);
+> +
+> +	if (imx6_pcie->variant == IMX7D) {
+> +		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
+> +				   IMX7D_GPR12_PCIE_PHY_REFCLK_SEL,
+> +				   IMX7D_GPR12_PCIE_PHY_REFCLK_SEL);
+> +	}
+> +}
+> +
+> +static int imx6_pcie_suspend_noirq(struct device *dev)
+> +{
+> +	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
+> +
+> +	if (imx6_pcie->variant != IMX7D)
+> +		return 0;
+> +
+> +	imx6_pcie_clk_disable(imx6_pcie);
+> +	imx6_pcie_ltssm_disable(dev);
+> +
+> +	return 0;
+> +}
+> +
+> +static int imx6_pcie_resume_noirq(struct device *dev)
+> +{
+> +	int ret;
+> +	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
+> +	struct pcie_port *pp = &imx6_pcie->pci->pp;
+> +
+> +	if (imx6_pcie->variant != IMX7D)
+> +		return 0;
+> +
+> +	imx6_pcie_assert_core_reset(imx6_pcie);
+> +	imx6_pcie_init_phy(imx6_pcie);
+> +	imx6_pcie_deassert_core_reset(imx6_pcie);
+> +	dw_pcie_setup_rc(pp);
+> +
+> +	ret = imx6_pcie_establish_link(imx6_pcie);
+> +	if (ret < 0)
+> +		dev_info(dev, "pcie link is down after resume.\n");
+> +
+> +	return 0;
+> +}
+> +#endif
+> +
+> +static const struct dev_pm_ops imx6_pcie_pm_ops = {
+> +	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(imx6_pcie_suspend_noirq,
+> +				      imx6_pcie_resume_noirq)
+> +};
+> +
+>  static int imx6_pcie_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+>  	struct dw_pcie *pci;
+>  	struct imx6_pcie *imx6_pcie;
+> @@ -846,10 +932,11 @@ static const struct of_device_id imx6_pcie_of_match[] = {
+>  static struct platform_driver imx6_pcie_driver = {
+>  	.driver = {
+>  		.name	= "imx6q-pcie",
+>  		.of_match_table = imx6_pcie_of_match,
+>  		.suppress_bind_attrs = true,
+> +		.pm = &imx6_pcie_pm_ops,
+>  	},
+>  	.probe    = imx6_pcie_probe,
+>  	.shutdown = imx6_pcie_shutdown,
+>  };
+>  
+> -- 
+> 2.17.1
+> 
