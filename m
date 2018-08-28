@@ -2,134 +2,185 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE18CC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:21:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D06A2C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:28:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FB28208B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:21:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jbRFXmGb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FB28208B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7F6532088E
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:28:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F6532088E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727098AbeH1MLb (ORCPT
+        id S1727174AbeH1MSu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 08:11:31 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:46921 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726979AbeH1MLb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 08:11:31 -0400
-Received: by mail-qt0-f196.google.com with SMTP id d4-v6so696572qtn.13
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 01:21:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=1GFtWDxGPcH77vTCYpdGncHlyo6QmqcJomO3HobbEJo=;
-        b=jbRFXmGbyj9i/IVdNrezyIzXci/R/24RXdsc8+q4iqJ/7d8y9doy7784yanrKSumDP
-         j8pxTvnAy2eBUVhzkUCIQypXIQ9FXzKps6EDGQ3R7TEMspJQ9HosmYN97gOD/ZSD6dre
-         k+vRnzmxPNVB6GaNbT2nbsqyO11ejzlHc4bApryektSlC6OrvRCPY/G8bVziItd417UK
-         MXTI3sCqbXCU6ZH8XXcV/jzqe7gXJP3CpxtI19W6EBNchVbRq6w2XoIiCSuw32o1bo37
-         SMOmErfGWkk3OZM2oNh3zS0BqroA760p0+ACEdMAPKDI0293oEIGYpjjfwWTochYH8Dp
-         ht2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=1GFtWDxGPcH77vTCYpdGncHlyo6QmqcJomO3HobbEJo=;
-        b=K7PSBBmExJ1Bh9+P+2hVnmuq9hzdM7A2863WZWxS6/LeLqJbBt5BdIcdm4BlX6u41n
-         imEq4N2Y7c61q3jVFLH5Eo05RAz076ZLINVFPQDkhw5gkcmoN+BxbzFr4fCc8Ra5y22/
-         oULleXwiNoJHQeLxVczZFSYP3FjiAo96Cl6lzKCe2mUrONGL2k7yG4/WOElTPMI50DGd
-         3vQMG009/sJLMNcttOToHrVyqNQG8wPDxuWtJE9aSMihHVLp4mTCY7pyw5/r7zQiwbeh
-         cXIPB0KTfMw8Sp30xCuQlGi1k5Dsbmf3KNwVsXOja6EV+3wFqIPN/d/xaRhy2iJrPCsl
-         iepQ==
-X-Gm-Message-State: APzg51CNlhcepqRnddmXHNaSV45mDY6r+0HJTCl9N8zULhQZxJX2qw5F
-        XDg56H3nImZ9uUcKVy8htfDlzSOBvkt3XZkYa8eG8A==
-X-Google-Smtp-Source: ANB0VdbTo95kPeQHK5rBkRD8oByJAntilRTMPApop1cdtYrlv21vJ1YEAjR0SNVgH/LPj7i9YRKFukp4fD85O2nNP00=
-X-Received: by 2002:a0c:cdd1:: with SMTP id a17-v6mr411415qvn.205.1535444459603;
- Tue, 28 Aug 2018 01:20:59 -0700 (PDT)
+        Tue, 28 Aug 2018 08:18:50 -0400
+Received: from mga04.intel.com ([192.55.52.120]:35159 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726954AbeH1MSu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 08:18:50 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Aug 2018 01:28:18 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,298,1531810800"; 
+   d="scan'208";a="76138005"
+Received: from jsakkine-mobl1.fi.intel.com (HELO localhost) ([10.237.66.39])
+  by FMSMGA003.fm.intel.com with ESMTP; 28 Aug 2018 01:28:11 -0700
+Date:   Tue, 28 Aug 2018 11:28:11 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, linux-sgx@vger.kernel.org,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Serge Ayoun <serge.ayoun@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Borislav Petkov <bp@suse.de>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v13 06/13] x86/sgx: Detect Intel SGX
+Message-ID: <20180828082811.GG15508@linux.intel.com>
+References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
+ <20180827185507.17087-7-jarkko.sakkinen@linux.intel.com>
+ <50c199b6-e8eb-9120-0d2a-5e60ac0139b4@intel.com>
 MIME-Version: 1.0
-References: <1535442295-4007-1-git-send-email-hjc@rock-chips.com>
-In-Reply-To: <1535442295-4007-1-git-send-email-hjc@rock-chips.com>
-From:   Enric Balletbo Serra <eballetbo@gmail.com>
-Date:   Tue, 28 Aug 2018 10:20:48 +0200
-Message-ID: <CAFqH_53aJX=n_kzvf=xjWGTSu2ak8q8wJ3nGM94e_OGLYAKWAQ@mail.gmail.com>
-Subject: Re: [PATCH v2] drm/rockchip: fix coding style and incorrect description
-To:     hjc@rock-chips.com
-Cc:     =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <50c199b6-e8eb-9120-0d2a-5e60ac0139b4@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Missatge de Sandy Huang <hjc@rock-chips.com> del dia dt., 28 d=E2=80=99ag.
-2018 a les 9:45:
->
-> Align with other drivers, tab + 2 space key for description.
-> and edp/hdmi/dsi can be used on both rk3288 and rk3399.
->
-> Signed-off-by: Sandy Huang <hjc@rock-chips.com>
-> ---
->  drivers/gpu/drm/rockchip/Kconfig | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/gpu/drm/rockchip/Kconfig b/drivers/gpu/drm/rockchip/=
-Kconfig
-> index 0ccc762..0534dc1 100644
-> --- a/drivers/gpu/drm/rockchip/Kconfig
-> +++ b/drivers/gpu/drm/rockchip/Kconfig
-> @@ -23,7 +23,7 @@ config ROCKCHIP_ANALOGIX_DP
->         help
->           This selects support for Rockchip SoC specific extensions
->           for the Analogix Core DP driver. If you want to enable DP
-> -         on RK3288 based SoC, you should selet this option.
-> +         on RK3288 or RK3399 based SoC, you should select this option.
->
->  config ROCKCHIP_CDN_DP
->          bool "Rockchip cdn DP"
-> @@ -39,16 +39,16 @@ config ROCKCHIP_DW_HDMI
->          help
->           This selects support for Rockchip SoC specific extensions
->           for the Synopsys DesignWare HDMI driver. If you want to
-> -         enable HDMI on RK3288 based SoC, you should selet this
-> -         option.
-> +         enable HDMI on RK3288 or RK3399 based SoC, you should select
-> +         this option.
->
->  config ROCKCHIP_DW_MIPI_DSI
->         bool "Rockchip specific extensions for Synopsys DW MIPI DSI"
->         help
-> -        This selects support for Rockchip SoC specific extensions
-> -        for the Synopsys DesignWare HDMI driver. If you want to
-> -        enable MIPI DSI on RK3288 based SoC, you should selet this
-> -        option.
-> +         This selects support for Rockchip SoC specific extensions
-> +         for the Synopsys DesignWare HDMI driver. If you want to
-> +         enable MIPI DSI on RK3288 or RK3399 based SoC, you should
-> +         select this option.
->
->  config ROCKCHIP_INNO_HDMI
->         bool "Rockchip specific extensions for Innosilicon HDMI"
-> --
-> 2.7.4
+On Mon, Aug 27, 2018 at 12:53:59PM -0700, Dave Hansen wrote:
+> > +config INTEL_SGX_CORE
+> > +	prompt "Intel SGX core functionality"
+> > +	def_bool n
+> > +	depends on X86_64 && CPU_SUP_INTEL
+> > +	help
+> > +	Intel Software Guard eXtensions (SGX) is a set of CPU instructions
+> > +	that allows ring 3 applications to create enclaves, private regions
+> > +	of memory that are protected, by hardware, from unauthorized access
+> > +	and/or modification.
+> 
+> This is a bit comma-crazy.  Also, considering some of our recent CVE
+> fun, I'd probably not claim hardware protection. :)
 
-If it helps...
+Agreed :)
 
-Reviewed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> Maybe:
+> 
+> 	Intel Software Guard eXtensions (SGX) CPU feature that allows
+> 	ring 3 applications to create enclaves: private regions
+> 	of memory that are architecturally protected from unauthorized
+> 	access and/or modification.
 
->
->
+Yeah, looks way more better structured.
+
+> > +	This option enables kernel recognition of SGX, high-level management
+> > +	of the Enclave Page Cache (EPC), tracking and writing of SGX Launch
+> > +	Enclave Hash MSRs, and allows for virtualization of SGX via KVM. By
+> > +	iteslf, this option does not provide SGX support to userspace.
+> 
+> itself
+> 
+> 
+> > diff --git a/arch/x86/include/asm/sgx_pr.h b/arch/x86/include/asm/sgx_pr.h
+> > new file mode 100644
+> > index 000000000000..c68578127620
+> > --- /dev/null
+> > +++ b/arch/x86/include/asm/sgx_pr.h
+> > @@ -0,0 +1,13 @@
+> > +// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+> > +// Copyright(c) 2016-17 Intel Corporation.
+> > +
+> > +#ifndef _ASM_X86_SGX_PR_H
+> > +#define _ASM_X86_SGX_PR_H
+> > +
+> > +#include <linux/printk.h>
+> > +#include <linux/ratelimit.h>
+> > +
+> > +#undef pr_fmt
+> > +#define pr_fmt(fmt) "sgx: " fmt
+> > +
+> > +#endif /* _ASM_X86_SGX_PR_H */
+> 
+> I don't think this belongs in a generic header.  Generally, we do the
+> pr_fmt stuff in .c files, not in headers.  If someone includes this
+> header directly or indirectly, they'll get a big surprise.
+> 
+> If you *must* have this in a .h file, put it in
+> arch/x86/kernel/cpu/intel_sgx.h or something and #include "intel_sgx.h"
+> in all the .c files where you want this.
+
+I think for intel_sgx.c (the core part) we could just manually add the
+"sgx:" prefix because there are only few log messages. I would move the
+definition to drivers/platform/x86/intel_sgx/sgx.h because the prefix
+makes sense for all .c files there AFAIK.
+
+> > +static __init int sgx_init(void)
+> > +{
+> > +	unsigned long fc;
+> > +
+> > +	if (!boot_cpu_has(X86_FEATURE_SGX))
+> > +		return false;
+> > +
+> > +	if (!boot_cpu_has(X86_FEATURE_SGX1))
+> > +		return false;
+> > +
+> > +	rdmsrl(MSR_IA32_FEATURE_CONTROL, fc);
+> > +	if (!(fc & FEATURE_CONTROL_LOCKED)) {
+> > +		pr_info("IA32_FEATURE_CONTROL MSR is not locked\n");
+> > +		return false;
+> > +	}
+> 
+> This is a rather crummy error message.  Doesn't this keep sgx from
+> initializing?  Would something like this be more informative?
+> 
+> 	pr_info("failed init: IA32_FEATURE_CONTROL MSR not locked\n");
+
+What about:
+
+pr_err(FW_BUG "IA32_FEATURE_CONTROL MSR not locked\n");
+
+> > +	if (!(fc & FEATURE_CONTROL_SGX_ENABLE)) {
+> > +		pr_info("disabled by the firmware\n");
+> > +		return false;
+> > +	}
+> > +
+> > +	if (!(fc & FEATURE_CONTROL_SGX_LE_WR))
+> > +		pr_info("IA32_SGXLEPUBKEYHASHn MSRs are not writable\n");
+> 
+> How about something that might help an end user?  Perhaps:
+> 
+> 	pr_warn("launch configuration not available\n");
+
+I think this message is a false flag here in the first place as KVM does
+not require writable MSRs. It really should be moved to the driver.
+
+> > +	sgx_enabled = true;
+> > +	sgx_lc_enabled = !!(fc & FEATURE_CONTROL_SGX_LE_WR);
+> > +	return 0;
+> > +}
+> > +
+> > +arch_initcall(sgx_init);
+> > 
+> 
+> 
+
+/Jarkko
