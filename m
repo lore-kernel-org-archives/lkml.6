@@ -5,35 +5,35 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF342C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:06:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7691C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:07:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5514F2064E
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:06:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5514F2064E
+	by mail.kernel.org (Postfix) with ESMTP id 593D12064E
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:07:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 593D12064E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727520AbeH1P6K (ORCPT
+        id S1727680AbeH1P67 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 11:58:10 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56746 "EHLO mx1.suse.de"
+        Tue, 28 Aug 2018 11:58:59 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56838 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727067AbeH1P6K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 11:58:10 -0400
+        id S1727067AbeH1P67 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 11:58:59 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 76098AF7E;
-        Tue, 28 Aug 2018 12:06:47 +0000 (UTC)
-Date:   Tue, 28 Aug 2018 14:06:46 +0200 (CEST)
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id EB87CAF7E;
+        Tue, 28 Aug 2018 12:07:36 +0000 (UTC)
+Date:   Tue, 28 Aug 2018 14:07:35 +0200 (CEST)
 From:   Jiri Kosina <jikos@kernel.org>
 To:     Stefan Agner <stefan@agner.ch>
 cc:     benjamin.tissoires@redhat.com, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] HID: input: fix leaking custom input node name
-In-Reply-To: <20180828112955.11318-2-stefan@agner.ch>
-Message-ID: <nycvar.YFH.7.76.1808281406360.25787@cbobk.fhfr.pm>
-References: <20180828112955.11318-1-stefan@agner.ch> <20180828112955.11318-2-stefan@agner.ch>
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] HID: core: fix memory leak on probe
+In-Reply-To: <20180828112955.11318-1-stefan@agner.ch>
+Message-ID: <nycvar.YFH.7.76.1808281407170.25787@cbobk.fhfr.pm>
+References: <20180828112955.11318-1-stefan@agner.ch>
 User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -44,52 +44,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Tue, 28 Aug 2018, Stefan Agner wrote:
 
-> Make sure to free the custom input node name on disconnect.
+> The dynamically allocted collection stack does not get freed in
+> all situations. Make sure to also free the collection stack when
+> using the parser in hid_open_report().
 > 
-> Cc: stable@vger.kernel.org # v4.18+
-> Fixes: c554bb045511 ("HID: input: append a suffix matching the application")
+> Fixes: 08a8a7cf1459 ("HID: core: do not upper bound the collection stack")
 > Signed-off-by: Stefan Agner <stefan@agner.ch>
 > ---
-> Found with kmemleak, after unplugging a Logitech Unifying receiver:
+> Found with kmemleak:
 > 
-> unreferenced object 0xc2345b80 (size 64):
->   comm "kworker/0:1", pid 20, jiffies 4294955181 (age 320.740s)
+> unreferenced object 0xc57f0700 (size 64):
+>   comm "kworker/0:1", pid 20, jiffies 131383 (age 28.750s)
 >   hex dump (first 32 bytes):
->     4c 6f 67 69 74 65 63 68 20 55 53 42 20 52 65 63  Logitech USB Rec
->     65 69 76 65 72 20 53 79 73 74 65 6d 20 43 6f 6e  eiver System Con
+>     02 00 00 00 00 02 00 00 00 00 00 00 00 68 80 c5  .............h..
+>     80 07 7f c5 01 00 00 00 08 48 80 c5 08 48 80 c5  .........H...H..
 >   backtrace:
->     [<8fec5a71>] __kmalloc_track_caller+0x1dc/0x300
->     [<5b926275>] kvasprintf+0x60/0xcc
->     [<21fc360f>] kasprintf+0x38/0x54
->     [<3b6ce9f0>] hidinput_connect+0x23a8/0x4c60
->     [<deaab707>] hid_connect+0x30c/0x38c
->     [<5a28f7c9>] hid_hw_start+0x44/0x64
->     [<267d70e8>] hid_generic_probe+0x34/0x38
->     [<d68c31b1>] hid_device_probe+0xdc/0x13c
->     [<09414e91>] really_probe+0x1d8/0x2c4
->     [<f9d7157f>] driver_probe_device+0x68/0x184
->     [<1def17c8>] __device_attach_driver+0xa0/0xd4
->     [<d3b2081b>] bus_for_each_drv+0x60/0xc0
->     [<379d02f8>] __device_attach+0xdc/0x144
->     [<7026ace5>] device_initial_probe+0x14/0x18
->     [<44527d01>] bus_probe_device+0x90/0x98
->     [<cf58bf2f>] device_add+0x424/0x62c
-> 
->  drivers/hid/hid-input.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
-> index 4e94ea3e280a..ac201817a2dd 100644
-> --- a/drivers/hid/hid-input.c
-> +++ b/drivers/hid/hid-input.c
-> @@ -1815,6 +1815,7 @@ void hidinput_disconnect(struct hid_device *hid)
->  			input_unregister_device(hidinput->input);
->  		else
->  			input_free_device(hidinput->input);
-> +		kfree(hidinput->name);
->  		kfree(hidinput);
+>     [<1b437483>] __kmalloc_track_caller+0x1dc/0x300
+>     [<ecd3baad>] krealloc+0x54/0xc0
+>     [<c565bd75>] hid_parser_main+0x258/0x2c8
+>     [<210b9aaa>] hid_open_report+0x134/0x2ac
+>     [<61cd8964>] hid_generic_probe+0x20/0x38
+>     [<e02107d6>] hid_device_probe+0xdc/0x13c
+>     [<334f035e>] really_probe+0x1d8/0x2c4
+>     [<351dc2c0>] driver_probe_device+0x68/0x184
+>     [<7e3e3d3c>] __device_attach_driver+0xa0/0xd4
+>     [<1b053a89>] bus_for_each_drv+0x60/0xc0
+>     [<732716d8>] __device_attach+0xdc/0x144
+>     [<dd3a0e76>] device_initial_probe+0x14/0x18
+>     [<f3a47b76>] bus_probe_device+0x90/0x98
+>     [<d5a1f0b4>] device_add+0x424/0x62c
+>     [<46595a15>] hid_add_device+0x108/0x2b8
+>     [<a0e2824c>] usbhid_probe+0x2d4/0x3bc
 
-Applied for 4.19, thanks.
+Also queued for 4.19. Thank you Stefan,
 
 -- 
 Jiri Kosina
