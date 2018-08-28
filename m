@@ -4,60 +4,62 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD4BEC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 00:47:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55CAEC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 00:51:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 755BB208B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 00:47:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9B41208B7
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 00:51:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="aKvmZbyO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 755BB208B7
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="e5uzcbnB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9B41208B7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727024AbeH1Ega (ORCPT
+        id S1726514AbeH1Ekf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 00:36:30 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:36740 "EHLO
+        Tue, 28 Aug 2018 00:40:35 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:36988 "EHLO
         fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725796AbeH1Ega (ORCPT
+        with ESMTP id S1725198AbeH1Ekf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 00:36:30 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w7S0kx6m017914;
-        Mon, 27 Aug 2018 19:46:59 -0500
+        Tue, 28 Aug 2018 00:40:35 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w7S0p0Sb018613;
+        Mon, 27 Aug 2018 19:51:00 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1535417219;
-        bh=NtOWRFWTsomFEL5SgMUqxoZHadbUztBm41L1mMrybkU=;
+        s=ti-com-17Q1; t=1535417460;
+        bh=CbrxiMJK6QPOdoVkUZCH4GqdGA9cpeNw2W9tDbs/KLQ=;
         h=From:To:CC:Subject:Date;
-        b=aKvmZbyOG0TFTcF54HtB7rTSdoJrvXqBPlKMAKm/vBrpeXzQJi7DmSw3Yi9BhJOZ+
-         bBGQl2JAhPF5RQA2x/VBu+rBi+r7cFcXbUod5SB56JAw6MatI+YSSANALD7ySjrlBG
-         iXC+VPa5iQX78K4Fx1FymALSHZvGYLu2GBUnxC7M=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7S0kx12022229;
-        Mon, 27 Aug 2018 19:46:59 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+        b=e5uzcbnBjnt4hl5pEBnorxHX2pD1ytc4tclDRHiWHVfm6evmiYJxKghfeyL5cTpFc
+         Og/KWoqbguf5n+gLCf60YVWSM7KilrSTGmXeZRmW6QnXDszb2cj9e9NCJv7qOs/bfB
+         HE9DMUa8yzz2ugYVzml0zPnAlySZYSW02G9yChbc=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7S0p07l026197;
+        Mon, 27 Aug 2018 19:51:00 -0500
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 27
- Aug 2018 19:46:58 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_0,
+ Aug 2018 19:50:59 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Mon, 27 Aug 2018 19:46:58 -0500
+ Mon, 27 Aug 2018 19:50:59 -0500
 Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7S0kw0I012230;
-        Mon, 27 Aug 2018 19:46:58 -0500
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7S0oxIC005283;
+        Mon, 27 Aug 2018 19:50:59 -0500
 From:   Nishanth Menon <nm@ti.com>
-To:     Olof Johansson <olof@lixom.net>, <arm@kernel.org>
+To:     Santosh Shilimkar <ssantosh@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
 CC:     <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <t-kristo@ti.com>,
-        <tony@atomide.com>, Nishanth Menon <nm@ti.com>
-Subject: [PATCH] arm64: defconfig: Enable TI's AM6 SoC platform
-Date:   Mon, 27 Aug 2018 19:46:50 -0500
-Message-ID: <20180828004650.2184-1-nm@ti.com>
+        <tony@atomide.com>, <linux-clk@vger.kernel.org>,
+        Nishanth Menon <nm@ti.com>
+Subject: [PATCH] clk: keystone: Enable TISCI clocks if K3_ARCH
+Date:   Mon, 27 Aug 2018 19:50:56 -0500
+Message-ID: <20180828005056.27326-1-nm@ti.com>
 X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -67,39 +69,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable K3 SoC platform for TI's AM6 SoC.
+K3_ARCH uses TISCI for clocks as well. Enable the same
+for the driver support.
 
 Signed-off-by: Nishanth Menon <nm@ti.com>
 ---
-Ref: https://www.spinics.net/lists/arm-kernel/msg667805.html
 
-Unfortunately, Kconfig changes did'nt hit v4.19-rc1 window.
-So, as promised, patch based off v4.19-rc1 tag.
+Ref: https://patchwork.kernel.org/patch/10447677/
 
- arch/arm64/configs/defconfig | 3 +++
- 1 file changed, 3 insertions(+)
+Since ARCH_K3 only got integrated in v4.19-rc1, rebased to v4.19-rc1 tag..
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index f67e8d5e93ad..db8d364f8476 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -38,6 +38,7 @@ CONFIG_ARCH_BCM_IPROC=y
- CONFIG_ARCH_BERLIN=y
- CONFIG_ARCH_BRCMSTB=y
- CONFIG_ARCH_EXYNOS=y
-+CONFIG_ARCH_K3=y
- CONFIG_ARCH_LAYERSCAPE=y
- CONFIG_ARCH_LG1K=y
- CONFIG_ARCH_HISI=y
-@@ -605,6 +606,8 @@ CONFIG_ARCH_TEGRA_132_SOC=y
- CONFIG_ARCH_TEGRA_210_SOC=y
- CONFIG_ARCH_TEGRA_186_SOC=y
- CONFIG_ARCH_TEGRA_194_SOC=y
-+CONFIG_ARCH_K3_AM6_SOC=y
-+CONFIG_SOC_TI=y
- CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND=y
- CONFIG_EXTCON_USB_GPIO=y
- CONFIG_EXTCON_USBC_CROS_EC=y
+ drivers/clk/Makefile         | 1 +
+ drivers/clk/keystone/Kconfig | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index a84c5573cabe..ed344eb717cc 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -73,6 +73,7 @@ obj-$(CONFIG_ARCH_HISI)			+= hisilicon/
+ obj-y					+= imgtec/
+ obj-$(CONFIG_ARCH_MXC)			+= imx/
+ obj-$(CONFIG_MACH_INGENIC)		+= ingenic/
++obj-$(CONFIG_ARCH_K3)			+= keystone/
+ obj-$(CONFIG_ARCH_KEYSTONE)		+= keystone/
+ obj-$(CONFIG_MACH_LOONGSON32)		+= loongson1/
+ obj-y					+= mediatek/
+diff --git a/drivers/clk/keystone/Kconfig b/drivers/clk/keystone/Kconfig
+index 7e9f0176578a..b04927d06cd1 100644
+--- a/drivers/clk/keystone/Kconfig
++++ b/drivers/clk/keystone/Kconfig
+@@ -7,7 +7,7 @@ config COMMON_CLK_KEYSTONE
+ 
+ config TI_SCI_CLK
+ 	tristate "TI System Control Interface clock drivers"
+-	depends on (ARCH_KEYSTONE || COMPILE_TEST) && OF
++	depends on (ARCH_KEYSTONE || ARCH_K3 || COMPILE_TEST) && OF
+ 	depends on TI_SCI_PROTOCOL
+ 	default ARCH_KEYSTONE
+ 	---help---
 -- 
 2.15.1
 
