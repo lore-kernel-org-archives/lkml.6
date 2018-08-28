@@ -2,196 +2,222 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB560C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 09:51:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 839CBC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 09:56:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56C45208A6
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 09:51:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03EA2208A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 09:56:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="uJA+TuLi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56C45208A6
+	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="Ly2Pv/JP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03EA2208A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=synaptics.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727497AbeH1NmM (ORCPT
+        id S1727443AbeH1NrS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 09:42:12 -0400
-Received: from mail-eopbgr680044.outbound.protection.outlook.com ([40.107.68.44]:26720
+        Tue, 28 Aug 2018 09:47:18 -0400
+Received: from mail-eopbgr680088.outbound.protection.outlook.com ([40.107.68.88]:60107
         "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727101AbeH1NmM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 09:42:12 -0400
+        id S1727094AbeH1NrS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 09:47:18 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=Synaptics.onmicrosoft.com; s=selector1-synaptics-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4vaoEQz1IWgRSirqSCG2jo2WQ2A8ou5Ebi6qEcnTlmU=;
- b=uJA+TuLi/7PRsa/t6vjEpXQL/LaIUI0LnoYSVXUA7L9ACVyKJuMKDS/C7Qq7avcAKshsOsgip1Dnw7fGYGMAquotSPamH5DqVq6F5O8AxTVEUNkgTj5774RuJSOU+QTdlTpUhowdTgZ68KOCGs2v68qH8fZXDEiFOdVvX/HaLMk=
+ bh=zH5hKhqVs0j8SXPewubs8e5s93NefK1fJh86NLkM4dc=;
+ b=Ly2Pv/JP5M3QrqMMXORSUgO682ogDwXUMdVYNM1Lw4jCHNiq+2W0IqS/yfX88zCWxUsRXJ5mWknyTiaqBIJSttIuedCGR9jFSXHRzl6F9Sc3S9V1eLOVIL6v99mSVAiSyAl5qDJ0zh0cIyIKuSQJQaVwWKQwaOWa2jO9tKIIyN8=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
 Received: from xhacker.debian (124.74.246.114) by
- BY2PR0301MB1574.namprd03.prod.outlook.com (2a01:111:e400:526e::16) with
+ BLUPR0301MB1569.namprd03.prod.outlook.com (2a01:111:e400:52a9::15) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1080.17; Tue, 28 Aug
- 2018 09:51:14 +0000
-Date:   Tue, 28 Aug 2018 17:48:14 +0800
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1080.15; Tue, 28 Aug
+ 2018 09:56:20 +0000
+Date:   Tue, 28 Aug 2018 17:53:19 +0800
 From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-To:     Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>, <linux-mmc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v6 3/3] mmc: sdhci-of-dwcmshc: solve 128MB DMA boundary
+Subject: Re: [PATCH v5 3/3] mmc: sdhci-of-dwcmshc: solve 128MB DMA boundary
  limitation
-Message-ID: <20180828174814.40dfa48f@xhacker.debian>
-In-Reply-To: <20180828174534.00fb5e24@xhacker.debian>
-References: <20180828174534.00fb5e24@xhacker.debian>
+Message-ID: <20180828175319.7ff35889@xhacker.debian>
+In-Reply-To: <9739a083-cb2f-1cba-19c1-1c4e0d03eedd@intel.com>
+References: <20180827162026.3901de27@xhacker.debian>
+        <20180827162419.61afe238@xhacker.debian>
+        <9739a083-cb2f-1cba-19c1-1c4e0d03eedd@intel.com>
 X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [124.74.246.114]
-X-ClientProxiedBy: TYAPR01CA0018.jpnprd01.prod.outlook.com (2603:1096:404::30)
- To BY2PR0301MB1574.namprd03.prod.outlook.com (2a01:111:e400:526e::16)
+X-ClientProxiedBy: KAWPR01CA0091.jpnprd01.prod.outlook.com
+ (2603:1096:402:c::27) To BLUPR0301MB1569.namprd03.prod.outlook.com
+ (2a01:111:e400:52a9::15)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: d283c4ca-d006-48d4-f874-08d60ccbcbf6
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(5600074)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:BY2PR0301MB1574;
-X-Microsoft-Exchange-Diagnostics: 1;BY2PR0301MB1574;3:Dt3GKAF0Vm19dsz+NkFK3JWNCCaUQEpMUdCZwA0eKmzmAO/88Kaesdi+pnt4lFpD1GjU3kDt+ejoIlPgH3BBq6SeU5DaR3xJ/AaM81UmkE9//PTpKFn9tfgrAFOdEAr2cbJOhcM9s+5e5V/cbVmyK07rW2NPpDmUEXU30uTbeGRFSLleOD0/QhkoeipnVkJI+2XvdDzOr2M725KMsNy0RpjDDQKxlo10l9Qf2LsFhApRHAhmmepz+9rGw6/tS2K9;25:9lxI9ehjlBmSVPoffC0+eLDkRrufB1pPshl6jec+64cKkFuUnGttOUVLfWU3KzArPyU0HC4jSx+QoZhoLidlBfFI1IIBikVyHd3rZhY3TO/cX2qzf5ksIIH510sGCYE7QTB0Iqb3Cw/C9+OJEh3/tBYiaRSFjp7+3YKm0hEBnOTV+WdAigFR9q6uB00sPE/NFjGwZAWmwxdXgr8F61qpgAnYQhugHmV9J+5dYiua6sdmokNuo4WjZIMSBhgt6hpZf8J/5ahzgy7wWYLQd1hJHsGEdzuMoiHJ2mEoulh2pi9/bstg2/Kwe9J6xFpyUfgE+HEu6DCFf8utOXYpUXW5zA==;31:hqnVoWqR0FkxMXH+lwP6SsthWnm2UL41XjxpZr5oeETmYXc9BdhBUJb4gMD5lOO3rY5ExGZAM3zgWQvsgrucFYQWDaX2kZ/TS66LDWbSzyxmakU0ev1EkTs2qOi/Fx7TDkgoerXdzwrcG3O0otm649zf/N+l7sZ6JgiMJmOq5We6dVBCX1YSJusdYMqbMOupR8KDKuBRsOP7hkEbtxp3kukyGUBLMM18cYGdkQUpCcQ=
-X-MS-TrafficTypeDiagnostic: BY2PR0301MB1574:
-X-Microsoft-Exchange-Diagnostics: 1;BY2PR0301MB1574;20:mBuK4NMoWmgLwK1T5QYNQwcBcEu6GoMQ8pJPwKnqZvng5uw9KVGXWW6bhz+OvKeHeP1RdU6EytSOOLeAXJ1jm0nG5/bblD0tUnsUTECFqdgPc3kFhWgTVaKbeG8RrZS/ARlFSu7ODy7aEN3nAjrNFbNGCWNp5xYVzR+dD4acvRYREN+Oo5DesAON+yxXVuNcCJa6AHXc8woCm+3zB4LqcuhI3tiF8fVG3HxRvkwJFuiPW/rRuw3v76rYMW5mTNgeL8OlrJUgLsPMPsIxUawYtcwAcNMarVnTavIKIC0lBwGaKKWh4MQ5Rw4y6d4SBQg869QgbWNEVXTgMJ9rVc1kfjatSroRPrZZd4PATs9DhIkvybwxEG/szW1t5A3tLGzRLlJS4BWMJ/Y/h1SdjeJtAIgy1OwgtW1sgGoCRrC1GtXz8VjmREd0HbsIks5gDh90MfF+sfrpb4JTJYc7aiV4vJRSyDaVvAq/4I92uUcj3kGgnlHNsHy8QGcIwKIHCumu;4:r3d7kzKRoJb4Z85Qd+sg0Rfg8npHm2xQt/mYB6jFGQU6KSJWmheFmLhIhcTyxecTXvh8Eck1q9d6fbAoohLDwQpjjeEl4SUdFwEJwudB9PArFqxR2X3GQD08Wt6C/s2STUkQgDSAGcYitOtmSUKL78B09sF4zlcNTzbYuaJIYRF7ewxTNC1idTH4RNhDus883hsgTP8wzY7UksH8ydOvBS/i6ZJHBh677D61I2bSm32V8C4nDksI67jI24lPtiyl63apIJxqtbs00sI5NojFpg==
-X-Microsoft-Antispam-PRVS: <BY2PR0301MB1574DA931CEA70B38CA19F07ED0A0@BY2PR0301MB1574.namprd03.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: c516ca92-41e6-4fd1-1fc4-08d60ccc82b3
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BLUPR0301MB1569;
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR0301MB1569;3:e2EvRyK/VWWhKE/lC3m7GEz0r2fWuIyJHl//DAEW9iChm1dL2KuaHIZ8Lk6VKQpzx2hnbarMe5V2HT3ImFbaBCsRq5hKkhV/0Sxh0/fTY7ATjECdn5yNNoP13X+79Cu1+8fsV3F9zLXP5RGQyJEOgMApbDzjO+HmDVsPvCrhWZqqhF1fEW/ybcBrQ9vRtK1sn1TjBN/k5a9IGe6D+sLd3+fByBUF7GqbTOisDio4j5ru//seHSgEiVk3ldln2hAa;25:vAT7JQofWL7qiLRHyBRJL2pxuRmsVNS4lp7h1MeMPMOb42jYc7fC99ruc2hWA5ptJkk59qYusCtFboqY6uZGFTC5NH2tt00EEVTvEsQzvbYKIY5m99pH0QY8OdUZGMCvpyZ/LeeCE5HircjM0YU+8wwqzyhT+YWvvZ5MlcR4QZq8or3csFgbf7RDWanlaVsH4myTpEuEw36wOCaa+xkDn00FR18hdWJwlIbxfGyaWZ205oy6KPfwVHekl2tP/R8KPhpnhrr3hb/HqC178fEx+KCrjh6Ajd2bjT6nMrYlAJmQFUyc+0hbAgMlsZf1g3JYtUVxUfOy2gUy5pLNlMmCIg==;31:0cL1g6Jf/1+VqyuMII5iONZEzBCcf6zuRFm2v4VxO43k41LU3LYo8UgxEqneSq+rq3do4G0V6bq3/EToxUKu//id2wO3g4KfBMy6MWN5xns6xwDtepz7x0VC1JbeKHvDtYE+4kegkffKiSukayOCUlmpAwkzjJydgVdd2akNjmb4x2cOcbzjg/5oZMsnN1KntIQk3XJseI+25UOiig5t/0BHI5sSoJG+XpccExP68Ms=
+X-MS-TrafficTypeDiagnostic: BLUPR0301MB1569:
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR0301MB1569;20:YdLn29tS9YKdT6NThMudMk8z3Iw1iw7ezYAhOF9Zq8a3aWLbRadlIHNX8o3WmDwFQ9BvjYWphgjvHwoyex0BcFG3uSbjFIzvJw5iDGY6QNuHd0pAErLhSLOofA8DUBdK3qO9EIvQwTQHg44XkU5x6BQ0o+eFlDssuXHyKKD8lKZC3cKtJgR8Qm4N2RLNE9siAOFPRNaCw3mF8aBRUquNZbh1AULI8Fp4BzyoaE/WiekNWoutWLyrUtwQmXyMUgEz6mnI8PJvEU0Pe6CSqLVV5qbSMaROkgyDcayXIhh11GnigNm4TGXmjpyfITZUGjzroftCQERF4GQIqw7pT66gJSE05c7NW750pQeuwKcLvlWsGAVrEvfKBinwhpzIGRAvE/g0EpSlPlLzinSDWe4RudadA+N5wci1xQhqJVDNdQ4FL629OhNPgYTSW5RLaxGjR/9ZUuztEYQ5fkq4Lyd9ZEw+M2qrTVrMPJxPduOE6dQqH2/N+wy7LJeOjwj6P1JT;4:cwL8WUF/1Pjomh/auFByx5ZjkDYPj1saSpP+MTKEBg98UfS/vfMHEYD/Fal92X4VYFzsYTdP2xMxg2TTM+r1I2KWFZiGq4oGVVg6ac6fMI7s1XyqeKLA90fDY30GonMtgQcKJsc7GWGK9sae52bKjqZ3vkD0HshbUeYdNSZohy2vwX6abHlEoN41X2pSmd7FEWjw1VVNaf0Sqbk2tHsw6/sEGzIt5sBUlAs7xmbbW17E+dDdgOqb1HgQKGurN5ElapFEkvlTX1DLmPZulSlgLw==
+X-Microsoft-Antispam-PRVS: <BLUPR0301MB1569B5685ADEACA944CF119FED0A0@BLUPR0301MB1569.namprd03.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:;
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(3231311)(944501410)(52105095)(10201501046)(149027)(150027)(6041310)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(201708071742011)(7699016);SRVR:BY2PR0301MB1574;BCL:0;PCL:0;RULEID:;SRVR:BY2PR0301MB1574;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231311)(944501410)(52105095)(149027)(150027)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123564045)(201708071742011)(7699016);SRVR:BLUPR0301MB1569;BCL:0;PCL:0;RULEID:;SRVR:BLUPR0301MB1569;
 X-Forefront-PRVS: 077884B8B5
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(136003)(346002)(39860400002)(396003)(376002)(366004)(189003)(199004)(54906003)(25786009)(4326008)(16526019)(186003)(66066001)(72206003)(476003)(14444005)(86362001)(26005)(11346002)(6506007)(446003)(386003)(478600001)(956004)(5660300001)(81166006)(8676002)(97736004)(50226002)(8936002)(81156014)(486006)(47776003)(316002)(230700001)(1076002)(3846002)(105586002)(23726003)(7736002)(50466002)(68736007)(52116002)(106356001)(53936002)(33896004)(2906002)(76176011)(305945005)(7696005)(9686003)(110136005)(55016002)(6116002)(133343001)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:BY2PR0301MB1574;H:xhacker.debian;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(136003)(366004)(346002)(376002)(189003)(199004)(14444005)(81166006)(23726003)(66066001)(956004)(5660300001)(446003)(47776003)(11346002)(105586002)(55016002)(1076002)(9686003)(72206003)(68736007)(229853002)(476003)(305945005)(6916009)(6116002)(86362001)(3846002)(6246003)(106356001)(2906002)(4326008)(81156014)(7736002)(486006)(26005)(16526019)(54906003)(97736004)(8676002)(50466002)(53546011)(6506007)(386003)(230700001)(478600001)(33896004)(316002)(52116002)(7696005)(25786009)(8936002)(53936002)(50226002)(186003)(76176011)(133343001)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:BLUPR0301MB1569;H:xhacker.debian;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 Received-SPF: None (protection.outlook.com: synaptics.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BY2PR0301MB1574;23:7y0KM2oALmFHHJhfBFHd2Mb7zskJDZy+wFwb5HK?=
- =?us-ascii?Q?BZ/55anAaGpP/Ciu3tr7FYUwRlOdjO0eqXU5waP4F7h5B4taYtDjIi9/lJB8?=
- =?us-ascii?Q?E/LTzpaEfPCkBfpK8xgH64EN9pG8MKkppEAuVXVVDrNeOS0islDK0ErVFgDr?=
- =?us-ascii?Q?pgUNa8dtnhp5KZxEDU27WJd5TT0o0p0ckrukrvemRWzELGrPDv2NydxBMLyB?=
- =?us-ascii?Q?VTcRUCDrHb8QdVeiRl5oLyx88EtBgl0QFWT2VRuU+8cDMzMBR2UGsETTO5lq?=
- =?us-ascii?Q?ecKacJijKAFixlIgeqC1JH5la7EmQ12+1tit1taeKpYGsHggCeJQ8wUQ0fy9?=
- =?us-ascii?Q?d6tjB+5sfZYwXQFDWvs5ZxOs01sCgmmP3Dp0TrxiRzap2KCiq5IFdUXRwrcU?=
- =?us-ascii?Q?Rc/59xHIdNrGHgQGtb+gICPxmB0/bIH2bZWgziVCfOLan2q6iDH8s/JVzgwy?=
- =?us-ascii?Q?i6KsH9+et+JWJxaxSR9crkn923r70xephr4XXaEMib2aM4zxJFyc9+pe0Pe6?=
- =?us-ascii?Q?gzCXgub+HWV0RxgQSQmAzfP+DxZjN6yRgGMpSkZWGXpfztbsYXlsexwOlO++?=
- =?us-ascii?Q?tiuO3bX2j6V7cxm0gUetVOQqBX6a6SKmBfvyHe+aF5P3W6V/tzraTEMoY+7c?=
- =?us-ascii?Q?OIDYwHQd/ZaDLWiQYaieId0PdjzbDimoZ7rLnB7rQ/ovTVTi5fdYmooekNWh?=
- =?us-ascii?Q?5q469EbVq1BEF4AP7kMWWAB9nARvsijR6vaGv2Ko7F2QoxtqfXzb3N+HXESD?=
- =?us-ascii?Q?Lh30YOt/huWkwU07lnxtyjfwrjFqcT9qyAC5cSg5CMezE/LtjzmF+UAurq0K?=
- =?us-ascii?Q?W5uYVCY8881IL9v0I/LakxtZYnlRy3Re1PDb1AmP5l0+he51Ru0gJCqMG2UP?=
- =?us-ascii?Q?u5uZc5HA1xPrnoUC0ZTX6Z6xQg6GXKkGR+bhoBy7FeAeZGJg5jkQfkO7uldu?=
- =?us-ascii?Q?rvi2iRreK6xlNeA3c6BSDG2uPwToWFWxOXC3aVrJNm/tjhJTh2OeIb9BOc9y?=
- =?us-ascii?Q?So71puVPook+cnf/SS6XjeTZO8sCvMdiBhD3jKtjPq4J08L0Nk4J7lvJ2SMx?=
- =?us-ascii?Q?cIz50EzDJwQrAvyqCrRCbFkswq6Wp+IWtMX+ZS4S0jPl+92Wxp6S97h4EQxv?=
- =?us-ascii?Q?JOAyOoBwuq6gwtIM08lfjL553UmPAjyO13Nb3Q1AEecyxWA6GF9B0AjEOEQ/?=
- =?us-ascii?Q?+wiBVO8YzZGCFhNCTLYNBIrFd0oTf64Bl1BoW87Nk5cBTGXQvNs2fc8YueuW?=
- =?us-ascii?Q?11am6hUgqcmVEEm2xmTkzjVH9F3mUoXOWOmavBweu?=
-X-Microsoft-Antispam-Message-Info: maEKreeX3ReNoIGTo4Dk0Hwfpwyx6wsd3WgofZQ/XW3QwwWyi5zMWBeHpWCGxxbIrpaAyPtXUD33rIFym4f1HU4JiGhF4prw1IPw114zIpuEDq3tY2UTITf+Dga2fhANGGYI7Xpj+asSEfSWeSfeWvb9txUEjxQ4PbHGYJ7v0rsfT5sXs4DYf9RRWurpxmTPdSOkFn+xCHfOopVwS7HvSVBNw5/tJB+5sLSDJm4RVH8qlWqYc9XuqKu7zjQ7PNRwWUtRXn6ly32gvLiJ7kNFyomnoi2kLl5HwCVdW9SLLlcKXr8Qe0wmBzfGUxe1W6MrVO8vKXHIjKyoBi1OTIaRGHWxVlzp6254///njI7C1FM=
-X-Microsoft-Exchange-Diagnostics: 1;BY2PR0301MB1574;6:uDnoKG/BUmx7zdvy8tzNsKO8H4q6NkDtjs+nshagrVqoe5We2SP+5+s6j/vXqtMGUJCufZdbcU0DcD5oOnewZUPb+5epuytHgw7vV+FEAD3jiNo/2KAl3y8OBjAtzUKIVgyal5tdUkX7oS+BAXa8fZ6FfrCkvMLkh6Jwe3fNzw+Tb2aVwjHMh6JCrCBirC+WMwZ9uuWcD/rgrTNRa1JgFa5nvnloaH2JRiODqzbg1iSS1MnCMKzY42ES78XY6z6hkBnqpQr7S9C632nDLcJTghCJ9jdF3f3EacZNMBeOJbHPYG9TI+wrDbrs8yssObg9BJquMaunoWrJfsej8rADKl+7ft2JYbdCLCr5us9Beyi5oIgZWVsuQAu1D8aKGQy5/6to31VoqQYtuMeZrGkMtQ+0pnjo8y7C5iN/nL/89Pthx4HZeCdDgL+LiUKZ0H/AgvSv0qL3Tl/cr28agt60Sw==;5:o2kUE8YeCPv15/L8srQWMkV7DkVVu6X26E4tEU/fgn66u1fi8t7SXr6wgDCFXPbdeM6S9KHGf5wNvjjE62Iu8PzG60+xp+hEwYgZpkgPa8GiMiQVtgsjZPUfMVL4ve7uq6c1Yo/SBVIY8uK1LRtzPhhhm58jzkn4gbIiUteW/uo=;7:PG7uOMx4BPcBK7yNL1a3vMIQZNarf3ekfdUzkeeGxpSlmz40R1yPkRO66OQB3305pP1t+LCSJc0aWS5uoyOLhFTAkKKyNKBRepdJ2SzkQs6+5+XzQagnEj8P1ZX7kuHqDEdaRGMwosoAEdUkWuuLi6JBXIxiGOThQOIp4nm+V4HLr5mN0UHYSx0Vkd23cRDQRz3y1eekz+7EQ9g+XYvu7sza9uqcVz+vKnn9JEGj4pWjdy7OuwR3u2ZTZbMB7LRo
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BLUPR0301MB1569;23:P6bjrLkmGwUP0R2ko/OKlm8jHTsKO6voqu3kYUz?=
+ =?us-ascii?Q?mUw2yuA7mq3OT3/HZ/PblBO5Ntndze/d2eMhjkrjUpQhp7aG5A5AIeY+Q6uG?=
+ =?us-ascii?Q?bX0l1nMsvV8+Uf929+770FFj/E9nvo3cpOlQn8KPhXNlSqYleYoaNE/NmiIB?=
+ =?us-ascii?Q?d+CZZ73dlgCp6oK2NAliwvDTvS0OFDoGriS1WP9q94sApl4l7wcF9a1DWUcO?=
+ =?us-ascii?Q?Q8qSDZ88tTPbfV9JfyBpCIjPQVE1WmK7VeYxOe6LAX7KyGs3oIaV1U9FVAdF?=
+ =?us-ascii?Q?cWUhcvIE2TJ5SyUsfbkm1UgWTNnalyYx3sgidGLK5MQCZtBrlrazp8NpClMY?=
+ =?us-ascii?Q?WMXn7tqIqxrx1NJAQRfqVa+5dk5TsDwS5pFIk3XNqs3Lv5Vg/F3Z+mUTtR0V?=
+ =?us-ascii?Q?cNUza7ooi72VZ9EgLPbzSy7Rjir/qXBKL/0SUdZLVBJUyJb+bEGqE3NGrdsh?=
+ =?us-ascii?Q?Q+zlvjVjNPSwSfLbwzVwyV+ByRIf6nyjbT/f1YCY0Xpbbi4gsd1N0eXAtF1K?=
+ =?us-ascii?Q?lOy/eLUOp4AYiZvC3q3ekon04rPwU4M9Stc6QHj10z9mN2XX5SypbscOr72f?=
+ =?us-ascii?Q?dx+CVODLlfbPlrqvWvJgziXLAzGMkYEBGa2rSCpJLzOBN5OW/VfoY73HGQi2?=
+ =?us-ascii?Q?yXrJwJd6qEuTrJ7WOLUZ+wWCba9KqoJfpRHoaCUtOkfCZaRGtogqUy79QF9Q?=
+ =?us-ascii?Q?aKOCQFnL5sBHUuESCWKV0WZ0shHsYATJx2w8FpXSd9ht+HAg7KARs5FZl4iV?=
+ =?us-ascii?Q?Om0SFk3hOAQwQmHOOLIRKS+lDIF8kUF0ILM1iZ/FcowLmRGkdeeTCh6sgiPL?=
+ =?us-ascii?Q?o/XTD7XET3Ncnsq3LkqK0Aa3z/6+4LzuvNvwtkWwEcagKEnrMAc2Q0x+AZpt?=
+ =?us-ascii?Q?za3wLGbpElRDSlpE6pNhq2lzaqqstOu2aBUkKw/Qa2XZKIj2s10PtbaKs8Fa?=
+ =?us-ascii?Q?8G2JW4FgO+6ucIKK0YCZuSNxwnwRoAKMh/WDIT07iB6olruPxkM6ciIpmP8P?=
+ =?us-ascii?Q?0w4tNK6k6GXcnUyfqvO5V/JRNAuGRByp7Z0dlyipLiLXrTIKnDtKPbqIvBLM?=
+ =?us-ascii?Q?fpkUzJ4oY5SfxE0LphoF09ddVM+ddFFxhWaHf0TedQEyydUtvoInJM+NYL15?=
+ =?us-ascii?Q?OlzRbUFmO7sCH+R3z0cIaB9nKMQVO31FsfJgCQL1aSmTRIaESdOfBhx+wwre?=
+ =?us-ascii?Q?lZ+5zBe1IH748Min9SwTxJbDxcG+2gsR3KcVmV4/bLyN3IPd4YIh+rwU1xHW?=
+ =?us-ascii?Q?8ChavOvi5axVeexy62Xu/ZVM39ie+xZ4pJfTGQryyJtvfPUXMYbqDU1tVmoY?=
+ =?us-ascii?Q?hZHfXqAUt3Pk6parlyF4ners=3D?=
+X-Microsoft-Antispam-Message-Info: 73xstnSOltd7DTXgUcamEQU5EL1pYTbfJcjcJAwEJ/VU0ODoLruS7H/5kl1wHdF7k/bX63J/kkr8W8hCDPhOABB1wH+nEQ63A2bRazunx02XqVbkKJsORPl6tHiin+2q81S1xV2fHnDND9tCLg6E1O4ihPDN1Jrh3chAVBV1aD/gCkLFibYm3B98n1zW4E7BEAhB3nfaF4hIOp3JhlmmozhNUIQAfw2lsEJdBz3SKgu+JiXRDkdj3oLVtfvhcbmkTG1lNSKzs3GgO64CPcc8nYC/Bslf0J5xNhAZGlFhrPo13f/tNjLOLVBAkGbkYb+wtmGJvoFAdvvFMta6Fn7YtV4Zb+2jlCGuMGcpyxvqUQU=
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR0301MB1569;6:yiYfWYbHs9uU9PquQf5tkj9PaGQq6OS0mpQchSf20hZhHBA5fSQOBU2nFzaPK3Hqt+FPMZiMjsI7Nl8lZhM5zS7UsXGg7DAl9u40tOyT7mEFtN17+zMYnTRhvbr8t3lZStcWYBJ1mqfdVOBYGz3/elrVLFbkO3nWlvpfhzw8NZq+9pxoQ4cFIGS6Gy/TfaD/DVFvLtAf7Vj2zT2OeKdqD3FUJjDfajeVD40ioKsnq7LIsoMyIy3GYIHSunpAbl4v7c/YSn+IS6rm4I74hmNd8A317XcbQrkFzUulcb8fMM4oP5xBVoMaf3A8Ty8bUYoEk2kBOWhhnrHNuZQwoOsO0rIplabjHhxXBr0Z01010nkxUg+0JnfuvdVRxY03Ao6Q17wuAiiW7l2r3bGkaGEkKX5zTVVHaNe8ejqksz+YQRnQTdzCNHr+SeLrszT2SwYow20gP8fVeOMHBe9yaFkhdw==;5:0Ln8nh/r9hh3hSPIt7sR95IDO2WsMWpuDkd+Ajg67WgmNz59TZ1HhPALVLj0iFFk36HczlhOiQhWlpKR3CzXEVkzsJzgOgS3Ybavz8tTWRuEgvNA8Crr2ufdjhBaMhmRByF3iHBXLY0ZvUyIaxkNRHpKCCPFB0CpGgh+X/82+I8=;7:wZp6W0Lyf2thYP+j01zCkcb4HB7yXOWegoHhI4unhRX/XAB+85AKgyrXbr4a2BmwRmKHN48I9gl81reflT4MmtheN+zO6Wg6zKViZ2fssMuUAPCTReEx5RB+o3XkNf4XBtpSK+34ULf+kv1e7EDzra1jQZzpkcL1U4NcHHj7Y83OdJzXC+11y18IQaCfHYeAWZUknov7w8Hhs4GvXiMqFizgevpWDkC7G/tOKntuy2BJqn7imyZRDo9ARa3fDOSb
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: synaptics.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2018 09:51:14.5947 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d283c4ca-d006-48d4-f874-08d60ccbcbf6
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2018 09:56:20.8858 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c516ca92-41e6-4fd1-1fc4-08d60ccc82b3
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR0301MB1574
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLUPR0301MB1569
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When using DMA, if the DMA addr spans 128MB boundary, we have to split
-the DMA transfer into two so that each one doesn't exceed the boundary.
+On Tue, 28 Aug 2018 10:51:02 +0300 Adrian Hunter wrote:
 
-Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
----
- drivers/mmc/host/sdhci-of-dwcmshc.c | 39 +++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+> On 27/08/18 11:24, Jisheng Zhang wrote:
+> > When using DMA, if the DMA addr spans 128MB boundary, we have to split
+> > the DMA transfer into two so that each one doesn't exceed the boundary.
+> > 
+> > Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+> > ---
+> >  drivers/mmc/host/sdhci-of-dwcmshc.c | 41 +++++++++++++++++++++++++++++
+> >  1 file changed, 41 insertions(+)
+> > 
+> > diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
+> > index 1b7cd144fb01..cfbdae8703a1 100644
+> > --- a/drivers/mmc/host/sdhci-of-dwcmshc.c
+> > +++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
+> > @@ -8,21 +8,50 @@
+> >   */
+> >  
+> >  #include <linux/clk.h>
+> > +#include <linux/mm.h>
+> >  #include <linux/module.h>
+> >  #include <linux/of.h>
+> > +#include <linux/sizes.h>
+> >  
+> >  #include "sdhci-pltfm.h"
+> >  
+> > +#define BOUNDARY_OK(addr, len) \
+> > +	((addr | (SZ_128M - 1)) == ((addr + len - 1) | (SZ_128M - 1)))
+> > +
+> >  struct dwcmshc_priv {
+> >  	struct clk	*bus_clk;
+> >  };
+> >  
+> > +/*
+> > + * If DMA addr spans 128MB boundary, we split the DMA transfer into two
+> > + * so that each DMA transfer doesn't exceed the boundary.
+> > + */
+> > +static void dwcmshc_adma_write_desc(struct sdhci_host *host, void **desc,
+> > +				    dma_addr_t addr, int len, unsigned int cmd)
+> > +{
+> > +	int tmplen, offset;
+> > +
+> > +	if (likely(!len || BOUNDARY_OK(addr, len))) {
+> > +		sdhci_adma_write_desc(host, desc, addr, len, cmd);
+> > +		return;
+> > +	}
+> > +
+> > +	offset = addr & (SZ_128M - 1);
+> > +	tmplen = SZ_128M - offset;
+> > +	sdhci_adma_write_desc(host, desc, addr, tmplen, cmd);
+> > +
+> > +	addr += tmplen;
+> > +	len -= tmplen;
+> > +	sdhci_adma_write_desc(host, desc, addr, len, cmd);
+> > +}
+> > +
+> >  static const struct sdhci_ops sdhci_dwcmshc_ops = {
+> >  	.set_clock		= sdhci_set_clock,
+> >  	.set_bus_width		= sdhci_set_bus_width,
+> >  	.set_uhs_signaling	= sdhci_set_uhs_signaling,
+> >  	.get_max_clock		= sdhci_pltfm_clk_get_max_clock,
+> >  	.reset			= sdhci_reset,
+> > +	.adma_write_desc	= dwcmshc_adma_write_desc,
+> >  };
+> >  
+> >  static const struct sdhci_pltfm_data sdhci_dwcmshc_pdata = {
+> > @@ -36,12 +65,24 @@ static int dwcmshc_probe(struct platform_device *pdev)
+> >  	struct sdhci_host *host;
+> >  	struct dwcmshc_priv *priv;
+> >  	int err;
+> > +	u32 extra;
+> >  
+> >  	host = sdhci_pltfm_init(pdev, &sdhci_dwcmshc_pdata,
+> >  				sizeof(struct dwcmshc_priv));
+> >  	if (IS_ERR(host))
+> >  		return PTR_ERR(host);
+> >  
+> > +	/*
+> > +	 * The DMA table descriptor count is calculated as the maximum
+> > +	 * number of segments times 2, to allow for an alignment
+> > +	 * descriptor for each segment, plus 1 for a nop end descriptor,
+> > +	 * plus extra number for cross 128M boundary handling.
+> > +	 */
+> > +	extra = DIV_ROUND_UP(totalram_pages, SZ_128M / PAGE_SIZE);  
+> 
+> The amount of RAM is not necessarily the same as the highest physical
+> address.  I think what you really want is max_pfn or max_possible_pfn
 
-diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
-index 1b7cd144fb01..a5137845a1c7 100644
---- a/drivers/mmc/host/sdhci-of-dwcmshc.c
-+++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
-@@ -8,21 +8,51 @@
-  */
- 
- #include <linux/clk.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/sizes.h>
- 
- #include "sdhci-pltfm.h"
- 
-+#define BOUNDARY_OK(addr, len) \
-+	((addr | (SZ_128M - 1)) == ((addr + len - 1) | (SZ_128M - 1)))
-+
- struct dwcmshc_priv {
- 	struct clk	*bus_clk;
- };
- 
-+/*
-+ * If DMA addr spans 128MB boundary, we split the DMA transfer into two
-+ * so that each DMA transfer doesn't exceed the boundary.
-+ */
-+static void dwcmshc_adma_write_desc(struct sdhci_host *host, void **desc,
-+				    dma_addr_t addr, int len, unsigned int cmd)
-+{
-+	int tmplen, offset;
-+
-+	if (likely(!len || BOUNDARY_OK(addr, len))) {
-+		sdhci_adma_write_desc(host, desc, addr, len, cmd);
-+		return;
-+	}
-+
-+	offset = addr & (SZ_128M - 1);
-+	tmplen = SZ_128M - offset;
-+	sdhci_adma_write_desc(host, desc, addr, tmplen, cmd);
-+
-+	addr += tmplen;
-+	len -= tmplen;
-+	sdhci_adma_write_desc(host, desc, addr, len, cmd);
-+}
-+
- static const struct sdhci_ops sdhci_dwcmshc_ops = {
- 	.set_clock		= sdhci_set_clock,
- 	.set_bus_width		= sdhci_set_bus_width,
- 	.set_uhs_signaling	= sdhci_set_uhs_signaling,
- 	.get_max_clock		= sdhci_pltfm_clk_get_max_clock,
- 	.reset			= sdhci_reset,
-+	.adma_write_desc	= dwcmshc_adma_write_desc,
- };
- 
- static const struct sdhci_pltfm_data sdhci_dwcmshc_pdata = {
-@@ -36,12 +66,21 @@ static int dwcmshc_probe(struct platform_device *pdev)
- 	struct sdhci_host *host;
- 	struct dwcmshc_priv *priv;
- 	int err;
-+	u32 extra;
- 
- 	host = sdhci_pltfm_init(pdev, &sdhci_dwcmshc_pdata,
- 				sizeof(struct dwcmshc_priv));
- 	if (IS_ERR(host))
- 		return PTR_ERR(host);
- 
-+	/*
-+	 * extra adma table cnt for cross 128M boundary handling.
-+	 */
-+	extra = DIV_ROUND_UP_ULL(dma_get_required_mask(&pdev->dev), SZ_128M);
-+	if (extra > SDHCI_MAX_SEGS)
-+		extra = SDHCI_MAX_SEGS;
-+	host->adma_table_cnt += extra;
-+
- 	pltfm_host = sdhci_priv(host);
- 	priv = sdhci_pltfm_priv(pltfm_host);
- 
--- 
-2.18.0
+oh, yeah! But these two vars are not exported, I have two solutions:
+
+1. use the dma_get_required_mask(), this is what I did in v6
+
+2. always let extra = SDHCI_MAX_SEGS, although we may waste, but the
+waste is small -- at most we waste 128*12 = 1536 Byte.
+
+But it seems solution 1 could do its job ;)
+
+Thanks,
+Jisheng
+
+> 
+> > +	if (extra > SDHCI_MAX_SEGS)
+> > +		extra = SDHCI_MAX_SEGS;
+> > +	host->adma_table_cnt += extra;
+> > +
+> >  	pltfm_host = sdhci_priv(host);
+> >  	priv = sdhci_pltfm_priv(pltfm_host);
+> >  
+> >   
+> 
 
