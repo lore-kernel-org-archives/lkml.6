@@ -2,133 +2,107 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F01C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 03:20:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E4EEC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 03:35:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EF6F208B4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 03:20:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="k1sD4dFd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EF6F208B4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 285BB2087D
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 03:35:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 285BB2087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727185AbeH1HKJ (ORCPT
+        id S1727091AbeH1HY4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 03:10:09 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:40155 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727052AbeH1HKJ (ORCPT
+        Tue, 28 Aug 2018 03:24:56 -0400
+Received: from mail-sz2.amlogic.com ([211.162.65.114]:19194 "EHLO
+        mail-sz2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725832AbeH1HY4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 03:10:09 -0400
-Received: by mail-pl1-f193.google.com with SMTP id s17-v6so93192plp.7
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 20:20:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=XqVY13ctqCmZNLdkXkl0It0wv9BBmcQ2gHNsbE+VX2Y=;
-        b=k1sD4dFdL9pJ4I60PriTd8TGmKgrdXmYrFxd2Stc8uploZ8eiT6wlJkOGBld6SUf++
-         CUaDBSI7+NglKTKJ1pFEe11128aIFH1fzjsUYzqBHChV99aOVzQ8Ol28poIAlBzXNpcC
-         /Savka5gAhxptrAfazpOnBLc4WGUW/gyqu7OE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XqVY13ctqCmZNLdkXkl0It0wv9BBmcQ2gHNsbE+VX2Y=;
-        b=iM+k5V4AU184Aq6GN1nhZuC6RNVNUc4uHr2NLXzP/PCC8PX/szX0Wy73XyupdudNn1
-         7V1NjPM3K9+Gz06sPIBzKs4G1ePSBDI7wAOTLhdTjySVujp5EcmI01gA+JxEVWW0jYmS
-         GIy9PKCRrluB4kQcTYCFYSFC0JnxzX6N2L3cxIbjtC4ERH+qB84PcUz5IGOdLYTKq9Lp
-         +Idjk/fHNkvNOB2DIUAwvm8iaWKMETZE/errY1fAlVxUOmMXb5t+q4uXYZLvkfEM1qG9
-         IF9ZWZ1HI2UIhhJktJ9dUhUxhul9ErtzSHKlsNg7ZqtcB+NLF0i/lWY9+igArfmtHJED
-         bJFQ==
-X-Gm-Message-State: APzg51ADNtK31gUiovmUVAVl9oaN03wKTnB38r8ogEEdvxCY73FaqiaN
-        2ABG4SoFT0nEdbxRqZEp+Upd5Q==
-X-Google-Smtp-Source: ANB0VdZUu7rcV1dSSRr1lnIXQc7fiPkIeGakIFUhaz0G8Zm9a41QQKIxE4EM1fLg2s2alxRZdINM9A==
-X-Received: by 2002:a17:902:6b89:: with SMTP id p9-v6mr15412414plk.272.1535426437336;
-        Mon, 27 Aug 2018 20:20:37 -0700 (PDT)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id 87-v6sm884078pfn.103.2018.08.27.20.20.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 27 Aug 2018 20:20:36 -0700 (PDT)
-Date:   Mon, 27 Aug 2018 20:20:34 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Lina Iyer <ilina@codeaurora.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Stephen Boyd <sboyd@kernel.org>, evgreen@chromium.org,
-        rplsssn@codeaurora.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Andy Gross <andy.gross@linaro.org>,
-        Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v2 1/5] drivers: pinctrl: qcom: add wakeup capability to
- GPIO
-Message-ID: <20180828032034.GG2523@minitux>
-References: <20180817163849.30750-1-ilina@codeaurora.org>
- <20180817163849.30750-2-ilina@codeaurora.org>
- <CACRpkdb+Opdn1eWZSRydS1Bafpqwcg83xEcT-YJC6D-kSSi1ew@mail.gmail.com>
- <20180827165644.GR5081@codeaurora.org>
- <20180828002641.GC2523@minitux>
- <20180828014652.GB13998@codeaurora.org>
+        Tue, 28 Aug 2018 03:24:56 -0400
+Received: from [10.28.16.194] (10.28.16.194) by mail-sz2.amlogic.com
+ (10.28.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Tue, 28 Aug
+ 2018 11:35:32 +0800
+Subject: Re: [PATCH 2/2] clk: meson-g12a: Add AO Clock controller driver
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+CC:     Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <1533894868-85815-1-git-send-email-jian.hu@amlogic.com>
+ <1533894868-85815-3-git-send-email-jian.hu@amlogic.com>
+ <6c855dc62fe6ed1a01216bd708d401a280f8762c.camel@baylibre.com>
+ <fff1f982-c9f3-8aa4-b108-6c0998827e79@amlogic.com>
+ <89b058a7bba26058fab95dea01155221dbb642ce.camel@baylibre.com>
+From:   Jian Hu <jian.hu@amlogic.com>
+Message-ID: <977d8010-6d82-5eac-5da5-6dbe0f73971a@amlogic.com>
+Date:   Tue, 28 Aug 2018 11:35:32 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180828014652.GB13998@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <89b058a7bba26058fab95dea01155221dbb642ce.camel@baylibre.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.28.16.194]
+X-ClientProxiedBy: mail-sz2.amlogic.com (10.28.11.6) To mail-sz2.amlogic.com
+ (10.28.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 27 Aug 18:46 PDT 2018, Lina Iyer wrote:
-> On Mon, Aug 27 2018 at 18:26 -0600, Bjorn Andersson wrote:
-> > On Mon 27 Aug 09:56 PDT 2018, Lina Iyer wrote:
-[..]
-> > > Thanks, I will look into Hans's RFCv2. But what would help me would be
-> > > to avoid creating the IRQ for the GPIO itself (I have the latent IRQ),
-> > > if I could just return that instead in gpio_to_irq(), it might be
-> > > easier. I understand ->to_irq() is supposed to be a translate function
-> > > only, I can avoid the dance of enabling and diabling the PDC IRQ on
-> > > suspend and resume.
-> > > 
-> > 
-> > I did implement gpio_to_irq() like this in the PMIC gpio/mpp drivers and
-> > we've since concluded that we need to move this to some hierarchical
-> > interrupt controller, because people like Linus expect to be able to say
-> > 
-> >  interrupts = <&gpio_controller 1 IRQ_TYPE_EDGE_RISING>
-> > 
-> > which is something used all over the place with the TLMM driver today.
+Hi: Jerome
+
+On 2018/8/27 21:07, Jerome Brunet wrote:
+> On Fri, 2018-08-24 at 21:34 +0800, Jian Hu wrote:
+>>>
+>>
+>> I am confued about aoclk81's parent clocks.
+>>
+>> I can not get the example of axg audio clock driver, Could you provide
+>> the link? Had it merged into clk-meson.git?
 > 
-> Does it have to be &gpio_controller, can it be another interrupt controller?
+> Yes and mainline as well : drivers/clk/meson/axg-audio.c
 > 
-> Say,
-> 	interrupts-extended = <&pdc 1 IRQ_TYPE_EDGE_RISING>;
+> Basically this driver is creating bypass input clocks (audio_pclk, mst_in[0-9],
+> etc...) .
 > 
+> This allows to collect input clocks from DT (like any consumer should) will
+> keeping constant in the controller clock tree.
+> 
+>>From what I've seen of your controller drivers, the EE controller should have
+> one input, the AO should have 3.
+> 
+> 
+> 
+> .
+> 
+I still can not get the example meaning in axg audio driver.
 
-It would require that the GPIO interrupt number space of the PDC matches
-the pin numbering of the TLMM, to be somewhat maintainable.
+In 26 page of A113D_Datasheet V0.7 20170725-Baylibre.pdf,We can see the 
+aoclk81 has two parents. clk81 and ao_slow_clk. I can not get 3 parents.
 
-And it would still require DT-writers to know that if the implementation
-of a compatible, that references a TLMM IRQ, wants to mark the IRQ wake
-capable it needs to reference the PDC instead...while still having a
-pinmux/pinconf setting for the TLMM.
+                          clk81|\
+                        -------| \        aoclk81
+src0 |\                       |  |-------------------
+-----| \     ao_slow_clk      |  |
+      |  |---------------------| /
+-----| /                      |/
+  src1|/
 
-And for gpio_to_irq() we would need to do the mapping that you suggest,
-so the TLMM still needs to have all these references to the PDC.
 
+src0 is from xtal, if can generate 32k clock, but it is never used.
+src1 is from gpio clock, It is never used. If necessary， the ao_slow_clk 
+maybe described.
 
-So I think it would be nice if we could avoid this scenario, but I don't
-have any good ideas of how to do this right now...
-
-Regards,
-Bjorn
+So why aoclk81 has 3 parents?
