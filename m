@@ -2,187 +2,109 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A947AC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:20:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9482DC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:21:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5178D20897
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:20:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5178D20897
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
+	by mail.kernel.org (Postfix) with ESMTP id 4FA9320898
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:21:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FA9320898
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727875AbeH1QMD (ORCPT
+        id S1727879AbeH1QMn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 12:12:03 -0400
-Received: from regular1.263xmail.com ([211.150.99.137]:38730 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727120AbeH1QMD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 12:12:03 -0400
-Received: from hjc?rock-chips.com (unknown [192.168.167.208])
-        by regular1.263xmail.com (Postfix) with ESMTP id 4D3AD2AE;
-        Tue, 28 Aug 2018 20:20:15 +0800 (CST)
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-Received: from [192.168.60.164] (localhost [127.0.0.1])
-        by smtp.263.net (Postfix) with ESMTPA id B404F3A3;
-        Tue, 28 Aug 2018 20:20:11 +0800 (CST)
-X-IP-DOMAINF: 1
-X-RL-SENDER: hjc@rock-chips.com
-X-FST-TO: sandy.huang@rock-chips.com
-X-SENDER-IP: 103.29.142.67
-X-LOGIN-NAME: hjc@rock-chips.com
-X-UNIQUE-TAG: <efea084ff8402b27aa0b3c9b97b091ff>
-X-ATTACHMENT-NUM: 0
-X-SENDER: hjc@rock-chips.com
-X-DNS-TYPE: 0
-Received: from [192.168.60.164] (unknown [103.29.142.67])
-        by smtp.263.net (Postfix) whith ESMTP id 1694BEGV0Z;
-        Tue, 28 Aug 2018 20:20:15 +0800 (CST)
-From:   Sandy Huang <hjc@rock-chips.com>
-Subject: Re: [PATCH v5 2/2] drm/rockchip: Add support for Rockchip Soc RGB
- output interface
-To:     Heiko Stuebner <heiko@sntech.de>
-Cc:     robh@kernel.org, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-References: <1535443954-38806-1-git-send-email-hjc@rock-chips.com>
- <1535443954-38806-3-git-send-email-hjc@rock-chips.com>
- <2164089.bDJbLuhFGU@phil>
-Message-ID: <c203e409-d2e4-e534-7855-27c3503a78b1@rock-chips.com>
-Date:   Tue, 28 Aug 2018 20:20:13 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 28 Aug 2018 12:12:43 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57248 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727085AbeH1QMn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 12:12:43 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 79F872634A;
+        Tue, 28 Aug 2018 12:21:18 +0000 (UTC)
+Received: from krava (unknown [10.43.17.209])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 35F1B2026D6B;
+        Tue, 28 Aug 2018 12:21:17 +0000 (UTC)
+Date:   Tue, 28 Aug 2018 14:21:16 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 2/2]: perf record: enable asynchronous trace writing
+Message-ID: <20180828122116.GJ23727@krava>
+References: <bdd669cd-a6dc-d592-4655-33b7bfc46cbb@linux.intel.com>
+ <6f83f9cd-263e-b073-487f-4c7570105a7d@linux.intel.com>
+ <20180828085703.GG23727@krava>
+ <38f9158b-dca5-2b09-99cb-f12bb62ad5dc@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <2164089.bDJbLuhFGU@phil>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <38f9158b-dca5-2b09-99cb-f12bb62ad5dc@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 28 Aug 2018 12:21:18 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 28 Aug 2018 12:21:18 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi hieko,
+On Tue, Aug 28, 2018 at 02:31:04PM +0300, Alexey Budankov wrote:
+> Hi,
+> 
+> On 28.08.2018 11:57, Jiri Olsa wrote:
+> > On Mon, Aug 27, 2018 at 09:16:55PM +0300, Alexey Budankov wrote:
+> > 
+> > SNIP
+> > 
+> >> +	int trace_fd = rec->session->data->file.fd;
+> >> +	struct aiocb **mmap_aio = rec->evlist->mmap_aio;
+> >> +	int mmap_aio_size = 0;
+> >> +	off_t off;
+> >>  
+> >>  	if (!evlist)
+> >>  		return 0;
+> >> @@ -528,14 +632,17 @@ static int record__mmap_read_evlist(struct record *rec, struct perf_evlist *evli
+> >>  	if (overwrite && evlist->bkw_mmap_state != BKW_MMAP_DATA_PENDING)
+> >>  		return 0;
+> >>  
+> >> +	off = lseek(trace_fd, 0, SEEK_CUR);
+> >> +
+> >>  	for (i = 0; i < evlist->nr_mmaps; i++) {
+> >>  		struct auxtrace_mmap *mm = &maps[i].auxtrace_mmap;
+> >>  
+> >>  		if (maps[i].base) {
+> >> -			if (perf_mmap__push(&maps[i], rec, record__pushfn) != 0) {
+> >> -				rc = -1;
+> >> +			rc = perf_mmap__push(&maps[i], rec, record__pushfn, &off);
+> >> +			if (rc < 0)
+> >>  				goto out;
+> >> -			}
+> >> +			else if (rc > 0)
+> >> +				mmap_aio[mmap_aio_size++] = &maps[i].cblock;
+> > 
+> > I understand the purpose of mmap_aio array, but I don't see a reason
+> > to fill it in every time we call record__mmap_read_evlist
+> 
+> The cycle trips the same number of iterations over kernel buffers 
+> for every call of record__mmap_read_evlist(). Called perf_mmap__push() 
+> checks if there is data ready for spill in the corresponding buffer 
+> and if there is no such data returns 0. So every time we execute 
+> the cycle we get different set of buffers to spill and in this 
+> circumstances dynamic filling of mmap_aio looks preferable.
+> Lifetime management of perf_mmap object and referenced memory 
+> is not related another thing.
 
-在 2018/8/28 16:31, Heiko Stuebner 写道:
-> Hi Sandy,
-> 
-> Am Dienstag, 28. August 2018, 10:12:34 CEST schrieb Sandy Huang:
->> Some Rockchip CRTCs, like rv1108 and px30, can directly output parallel
->> and serial RGB data to panel or conversion chip, so we add this driver
->> to probe encoder and connector.
->>
->> Signed-off-by: Sandy Huang <hjc@rock-chips.com>
->> Reviewed-by: Sean Paul <seanpaul@chromium.org>
->> Reviewed-by: Mark Yao <mark.yao@rock-chips.com>
->> Link: https://patchwork.freedesktop.org/patch/msgid/1509522851-128181-1-git-send-email-hjc@rock-chips.com
-> 
-> This does not really address, Rob's concern about not being an actual
-> hardware block related to the devicetree node you are using.
-> 
-> I see your reply to my mail, but I guess you didn't see the alternative
-> approach I described a bit below in that mail?
-> 
-> Actual (unfinished) code included below. (2 patches)
-> 
-> Heiko
-> 
-> 
-yes,i didn't see the behind described:(
-As you said devicetree describes hardware blocks,
-I think you implement driver for rgb output interface is more 
-reasonable,  i will adjust this driver refer to your implementation, 
-thanks:)
+argh.. the perf_mmap__push returns 0 for empty buffer, ok
 
-
-> 
-> ---- 8< -----
-> From: Heiko Stuebner <heiko@sntech.de>
-> Date: Sat, 25 Aug 2018 19:05:21 +0200
-> Subject: [PATCH 1/2] drm/tockchip: add function to check if endpoint is a
->   subdriver
-> 
-> To be able to have both internal subdrivers and external bridge
-> drivers as output endpoints of vops, add a function to be able
-> to distinguish these.
-> 
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
->   drivers/gpu/drm/rockchip/rockchip_drm_drv.c | 27 +++++++++++++++++++++
->   drivers/gpu/drm/rockchip/rockchip_drm_drv.h |  1 +
->   2 files changed, 28 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-> index 1d9c4a9201c8..d18f7f85aa23 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-> @@ -24,6 +24,7 @@
->   #include <linux/pm_runtime.h>
->   #include <linux/module.h>
->   #include <linux/of_graph.h>
-> +#include <linux/of_platform.h>
->   #include <linux/component.h>
->   #include <linux/console.h>
->   #include <linux/iommu.h>
-> @@ -267,6 +268,32 @@ static const struct dev_pm_ops rockchip_drm_pm_ops = {
->   static struct platform_driver *rockchip_sub_drivers[MAX_ROCKCHIP_SUB_DRIVERS];
->   static int num_rockchip_sub_drivers;
->   
-> +/*
-> + * check if a vop output-endpoint is a subdriver or bridge.
-> + */
-> +bool rockchip_drm_endpoint_is_subdriver(struct device_node *ep)
-> +{
-> +	struct device_node *node = of_graph_get_remote_port_parent(ep);
-> +	struct platform_device *pdev;
-> +	int i;
-> +
-> +	if (!node)
-> +		return false;
-> +
-> +	pdev = of_find_device_by_node(node);
-> +	if (!pdev)
-> +		return false;
-> +
-> +	for (i = 0; i < num_rockchip_sub_drivers; i++) {
-> +		struct device_driver *drv = pdev->dev.driver;
-> +
-> +		if (rockchip_sub_drivers[i] == to_platform_driver(drv))
-> +			return true;
-> +	}
-> +
-> +	return false;
-> +}
-> +
->   static int compare_dev(struct device *dev, void *data)
->   {
->   	return dev == (struct device *)data;
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_drv.h b/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
-> index d67ad0a3cf36..305b4858c522 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
-> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.h
-> @@ -64,6 +64,7 @@ void rockchip_drm_dma_detach_device(struct drm_device *drm_dev,
->   				    struct device *dev);
->   int rockchip_drm_wait_vact_end(struct drm_crtc *crtc, unsigned int mstimeout);
->   
-> +bool rockchip_drm_endpoint_is_subdriver(struct device_node *ep);
->   extern struct platform_driver cdn_dp_driver;
->   extern struct platform_driver dw_hdmi_rockchip_pltfm_driver;
->   extern struct platform_driver dw_mipi_dsi_driver;
-> 
-> 
-> 
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
-> 
-
+jirka
