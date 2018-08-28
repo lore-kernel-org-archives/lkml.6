@@ -6,58 +6,139 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFB27C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 16:02:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65EA8C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 16:03:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2C8920894
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 16:02:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2C8920894
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 265C22087A
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 16:03:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 265C22087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=macq.eu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727423AbeH1TzQ (ORCPT
+        id S1727456AbeH1TzT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 15:55:16 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:53736 "EHLO mail.bootlin.com"
+        Tue, 28 Aug 2018 15:55:19 -0400
+Received: from smtp2.macqel.be ([109.135.2.61]:53130 "EHLO smtp2.macqel.be"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727039AbeH1TzQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 15:55:16 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id DD71320797; Tue, 28 Aug 2018 18:02:55 +0200 (CEST)
-Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id B25D320618;
-        Tue, 28 Aug 2018 18:02:55 +0200 (CEST)
-Date:   Tue, 28 Aug 2018 18:02:54 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     James Hogan <jhogan@kernel.org>
-Cc:     Paul Burton <paul.burton@mips.com>, linux-mips@linux-mips.org,
-        linux-kernel@vger.kernel.org
-Subject: VDSO and dcache aliasing
-Message-ID: <20180828160254.GC16561@piout.net>
+        id S1727039AbeH1TzT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 15:55:19 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smtp2.macqel.be (Postfix) with ESMTP id D8E1E130D3E;
+        Tue, 28 Aug 2018 18:02:57 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at macqel.be
+Received: from smtp2.macqel.be ([127.0.0.1])
+        by localhost (mail.macqel.be [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 4J4XgxxGHjFd; Tue, 28 Aug 2018 18:02:56 +0200 (CEST)
+Received: from frolo.macqel.be (frolo.macqel [10.1.40.73])
+        by smtp2.macqel.be (Postfix) with ESMTP id 35637130D0F;
+        Tue, 28 Aug 2018 18:02:56 +0200 (CEST)
+Received: by frolo.macqel.be (Postfix, from userid 1000)
+        id 16E36DF0078; Tue, 28 Aug 2018 18:02:55 +0200 (CEST)
+Date:   Tue, 28 Aug 2018 18:02:55 +0200
+From:   Philippe De Muyter <phdm@macq.eu>
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        linux-media@vger.kernel.org, Leon Luo <leonl@leopardimaging.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-kernel@vger.kernel.org, laurent.pinchart@ideasonboard.com
+Subject: Re: [PATCH 3/7] media: imx274: don't hard-code the subdev name to
+        DRIVER_NAME
+Message-ID: <20180828160255.GA9763@frolo.macqel>
+References: <20180824163525.12694-1-luca@lucaceresoli.net> <20180824163525.12694-4-luca@lucaceresoli.net> <20180825144915.tq7m5jlikwndndzq@valkosipuli.retiisi.org.uk> <799f4d1a-b91d-0404-7ef0-965d123319da@lucaceresoli.net> <113d3e05-9331-bd54-0e49-46c5e132339f@xs4all.nl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <113d3e05-9331-bd54-0e49-46c5e132339f@xs4all.nl>
+User-Agent: Mutt/1.5.16 (2007-06-09)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello James,
+Hi Hans, Sakari and Luca
 
-A year ago, you wrote that patch:
+On Tue, Aug 28, 2018 at 11:22:28AM +0200, Hans Verkuil wrote:
+> On 26/08/18 22:41, Luca Ceresoli wrote:
+> > Hi Sakari,
+> > 
+> > On 25/08/2018 16:49, Sakari Ailus wrote:
+> >> Hi Luca,
+> >>
+> >> On Fri, Aug 24, 2018 at 06:35:21PM +0200, Luca Ceresoli wrote:
+> >>> Forcibly setting the subdev name to DRIVER_NAME (i.e. "IMX274") makes
+> >>> it non-unique and less informative.
+> >>>
+> >>> Let the driver use the default name from i2c, e.g. "IMX274 2-001a".
+> >>>
+> >>> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+> >>> ---
+> >>>  drivers/media/i2c/imx274.c | 1 -
+> >>>  1 file changed, 1 deletion(-)
+> >>>
+> >>> diff --git a/drivers/media/i2c/imx274.c b/drivers/media/i2c/imx274.c
+> >>> index 9b524de08470..570706695ca7 100644
+> >>> --- a/drivers/media/i2c/imx274.c
+> >>> +++ b/drivers/media/i2c/imx274.c
+> >>> @@ -1885,7 +1885,6 @@ static int imx274_probe(struct i2c_client *client,
+> >>>  	imx274->client = client;
+> >>>  	sd = &imx274->sd;
+> >>>  	v4l2_i2c_subdev_init(sd, client, &imx274_subdev_ops);
+> >>> -	strlcpy(sd->name, DRIVER_NAME, sizeof(sd->name));
+> >>>  	sd->flags |= V4L2_SUBDEV_FL_HAS_DEVNODE | V4L2_SUBDEV_FL_HAS_EVENTS;
+> >>>  
+> >>>  	/* initialize subdev media pad */
+> >>
+> >> This ends up changing the entity as well as the sub-device name which may
+> >> well break applications.
+> > 
+> > Right, unfortunately.
+> > 
+> >> On the other hand, you currently can't have more
+> >> than one of these devices on a media device complex due to the name being
+> >> specific to a driver, not the device.
+> >>
+> >> An option avoiding that would be to let the user choose by e.g. through a
+> >> Kconfig option would avoid having to address that, but I really hate adding
+> >> such options.
+> > 
+> > I agree adding a Kconfig option just for this would be very annoying.
+> > However I think the issue affects a few other drivers (sr030pc30.c and
+> > s5c73m3-core.c apparently), thus maybe one option could serve them all.
+> > 
+> >> I wonder what others think. If anyone ever needs to add another on a board
+> >> so that it ends up being the part of the same media device complex
+> >> (likely), then changing the name now rather than later would be the least
+> >> pain. In this case I'd be leaning (slightly) towards accepting the patch
+> >> and hoping there wouldn't be any fallout... I don't see any board (DT)
+> >> containing imx274, at least not in the upstream kernel.
+> > 
+> > I'll be OK with either decision. Should we keep it as is, then I think a
+> > comment before that line would be appropriate to clarify it's not
+> > correct but it is kept for backward userspace compatibility. This would
+> > help avoid new driver writers doing the same mistake, and prevent other
+> > people to send another patch like mine.
+> 
+> In this end, this is a driver bug. I would just fix this, but add a comment
+> that states the old name and why it was changed. No need for a dev_info
+> IMHO.
+> 
+> It would be nice if you can check if the same mistake is made in other drivers,
+> and update those as well. It's easier if this is all done at the same time.
+> 
 
-https://www.linux-mips.org/archives/linux-mips/2017-06/msg00658.html
+Then we should probably also apply the following patch I submitted :
 
-You called it a hack but it has been used since then. As you will
-certainly realize by now, Ocelot is one of the affected SoC so we would
-pretty much like to see this going upstream.
+"media: v4l2-common: v4l2_spi_subdev_init : generate unique name"
+	https://patchwork.kernel.org/patch/10553035/
 
-What would be the way forward?
+and perhaps
 
-Regards,
+"media: v4l2-common: simplify v4l2_i2c_subdev_init name generation"
+	https://patchwork.kernel.org/patch/10553037/
+
+Philippe
 
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Philippe De Muyter +32 2 6101532 Macq SA rue de l'Aeronef 2 B-1140 Bruxelles
