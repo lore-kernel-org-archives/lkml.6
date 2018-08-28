@@ -3,142 +3,121 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65EA8C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 16:03:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCEEFC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 16:06:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 265C22087A
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 16:03:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 265C22087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=macq.eu
+	by mail.kernel.org (Postfix) with ESMTP id 94B0920894
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 16:06:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94B0920894
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727456AbeH1TzT (ORCPT
+        id S1727544AbeH1T61 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 15:55:19 -0400
-Received: from smtp2.macqel.be ([109.135.2.61]:53130 "EHLO smtp2.macqel.be"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727039AbeH1TzT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 15:55:19 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smtp2.macqel.be (Postfix) with ESMTP id D8E1E130D3E;
-        Tue, 28 Aug 2018 18:02:57 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at macqel.be
-Received: from smtp2.macqel.be ([127.0.0.1])
-        by localhost (mail.macqel.be [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 4J4XgxxGHjFd; Tue, 28 Aug 2018 18:02:56 +0200 (CEST)
-Received: from frolo.macqel.be (frolo.macqel [10.1.40.73])
-        by smtp2.macqel.be (Postfix) with ESMTP id 35637130D0F;
-        Tue, 28 Aug 2018 18:02:56 +0200 (CEST)
-Received: by frolo.macqel.be (Postfix, from userid 1000)
-        id 16E36DF0078; Tue, 28 Aug 2018 18:02:55 +0200 (CEST)
-Date:   Tue, 28 Aug 2018 18:02:55 +0200
-From:   Philippe De Muyter <phdm@macq.eu>
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        linux-media@vger.kernel.org, Leon Luo <leonl@leopardimaging.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-kernel@vger.kernel.org, laurent.pinchart@ideasonboard.com
-Subject: Re: [PATCH 3/7] media: imx274: don't hard-code the subdev name to
-        DRIVER_NAME
-Message-ID: <20180828160255.GA9763@frolo.macqel>
-References: <20180824163525.12694-1-luca@lucaceresoli.net> <20180824163525.12694-4-luca@lucaceresoli.net> <20180825144915.tq7m5jlikwndndzq@valkosipuli.retiisi.org.uk> <799f4d1a-b91d-0404-7ef0-965d123319da@lucaceresoli.net> <113d3e05-9331-bd54-0e49-46c5e132339f@xs4all.nl>
+        Tue, 28 Aug 2018 15:58:27 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50906 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726961AbeH1T61 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 15:58:27 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 74665401EF0A;
+        Tue, 28 Aug 2018 16:06:05 +0000 (UTC)
+Received: from redhat.com (ovpn-125-14.rdu2.redhat.com [10.10.125.14])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id DA20A2166B41;
+        Tue, 28 Aug 2018 16:06:04 +0000 (UTC)
+Date:   Tue, 28 Aug 2018 12:06:03 -0400
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Zi Yan <zi.yan@cs.rutgers.edu>
+Cc:     Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: Re: [PATCH 4/7] mm/hmm: properly handle migration pmd
+Message-ID: <20180828160602.GB4029@redhat.com>
+References: <20180824192549.30844-1-jglisse@redhat.com>
+ <20180824192549.30844-5-jglisse@redhat.com>
+ <0560A126-680A-4BAE-8303-F1AB34BE4BA5@cs.rutgers.edu>
+ <20180828152414.GQ10223@dhcp22.suse.cz>
+ <20180828153658.GA4029@redhat.com>
+ <20180828154206.GR10223@dhcp22.suse.cz>
+ <20180828154555.GS10223@dhcp22.suse.cz>
+ <44C89854-FE83-492F-B6BB-CF54B77233CF@cs.rutgers.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <113d3e05-9331-bd54-0e49-46c5e132339f@xs4all.nl>
-User-Agent: Mutt/1.5.16 (2007-06-09)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <44C89854-FE83-492F-B6BB-CF54B77233CF@cs.rutgers.edu>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 28 Aug 2018 16:06:05 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 28 Aug 2018 16:06:05 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jglisse@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Hans, Sakari and Luca
-
-On Tue, Aug 28, 2018 at 11:22:28AM +0200, Hans Verkuil wrote:
-> On 26/08/18 22:41, Luca Ceresoli wrote:
-> > Hi Sakari,
-> > 
-> > On 25/08/2018 16:49, Sakari Ailus wrote:
-> >> Hi Luca,
-> >>
-> >> On Fri, Aug 24, 2018 at 06:35:21PM +0200, Luca Ceresoli wrote:
-> >>> Forcibly setting the subdev name to DRIVER_NAME (i.e. "IMX274") makes
-> >>> it non-unique and less informative.
-> >>>
-> >>> Let the driver use the default name from i2c, e.g. "IMX274 2-001a".
-> >>>
-> >>> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-> >>> ---
-> >>>  drivers/media/i2c/imx274.c | 1 -
-> >>>  1 file changed, 1 deletion(-)
-> >>>
-> >>> diff --git a/drivers/media/i2c/imx274.c b/drivers/media/i2c/imx274.c
-> >>> index 9b524de08470..570706695ca7 100644
-> >>> --- a/drivers/media/i2c/imx274.c
-> >>> +++ b/drivers/media/i2c/imx274.c
-> >>> @@ -1885,7 +1885,6 @@ static int imx274_probe(struct i2c_client *client,
-> >>>  	imx274->client = client;
-> >>>  	sd = &imx274->sd;
-> >>>  	v4l2_i2c_subdev_init(sd, client, &imx274_subdev_ops);
-> >>> -	strlcpy(sd->name, DRIVER_NAME, sizeof(sd->name));
-> >>>  	sd->flags |= V4L2_SUBDEV_FL_HAS_DEVNODE | V4L2_SUBDEV_FL_HAS_EVENTS;
-> >>>  
-> >>>  	/* initialize subdev media pad */
-> >>
-> >> This ends up changing the entity as well as the sub-device name which may
-> >> well break applications.
-> > 
-> > Right, unfortunately.
-> > 
-> >> On the other hand, you currently can't have more
-> >> than one of these devices on a media device complex due to the name being
-> >> specific to a driver, not the device.
-> >>
-> >> An option avoiding that would be to let the user choose by e.g. through a
-> >> Kconfig option would avoid having to address that, but I really hate adding
-> >> such options.
-> > 
-> > I agree adding a Kconfig option just for this would be very annoying.
-> > However I think the issue affects a few other drivers (sr030pc30.c and
-> > s5c73m3-core.c apparently), thus maybe one option could serve them all.
-> > 
-> >> I wonder what others think. If anyone ever needs to add another on a board
-> >> so that it ends up being the part of the same media device complex
-> >> (likely), then changing the name now rather than later would be the least
-> >> pain. In this case I'd be leaning (slightly) towards accepting the patch
-> >> and hoping there wouldn't be any fallout... I don't see any board (DT)
-> >> containing imx274, at least not in the upstream kernel.
-> > 
-> > I'll be OK with either decision. Should we keep it as is, then I think a
-> > comment before that line would be appropriate to clarify it's not
-> > correct but it is kept for backward userspace compatibility. This would
-> > help avoid new driver writers doing the same mistake, and prevent other
-> > people to send another patch like mine.
+On Tue, Aug 28, 2018 at 11:54:33AM -0400, Zi Yan wrote:
+> Hi Michal,
 > 
-> In this end, this is a driver bug. I would just fix this, but add a comment
-> that states the old name and why it was changed. No need for a dev_info
-> IMHO.
+> On 28 Aug 2018, at 11:45, Michal Hocko wrote:
 > 
-> It would be nice if you can check if the same mistake is made in other drivers,
-> and update those as well. It's easier if this is all done at the same time.
+> > On Tue 28-08-18 17:42:06, Michal Hocko wrote:
+> >> On Tue 28-08-18 11:36:59, Jerome Glisse wrote:
+> >>> On Tue, Aug 28, 2018 at 05:24:14PM +0200, Michal Hocko wrote:
+> >>>> On Fri 24-08-18 20:05:46, Zi Yan wrote:
+> >>>> [...]
+> >>>>>> +	if (!pmd_present(pmd)) {
+> >>>>>> +		swp_entry_t entry = pmd_to_swp_entry(pmd);
+> >>>>>> +
+> >>>>>> +		if (is_migration_entry(entry)) {
+> >>>>>
+> >>>>> I think you should check thp_migration_supported() here, since PMD migration is only enabled in x86_64 systems.
+> >>>>> Other architectures should treat PMD migration entries as bad.
+> >>>>
+> >>>> How can we have a migration pmd entry when the migration is not
+> >>>> supported?
+> >>>
+> >>> Not sure i follow here, migration can happen anywhere (assuming
+> >>> that something like compaction is active or numa or ...). So this
+> >>> code can face pmd migration entry on architecture that support
+> >>> it. What is missing here is thp_migration_supported() call to
+> >>> protect the is_migration_entry() to avoid false positive on arch
+> >>> which do not support thp migration.
+> >>
+> >> I mean that architectures which do not support THP migration shouldn't
+> >> ever see any migration entry. So is_migration_entry should be always
+> >> false. Or do I miss something?
+> >
+> > And just to be clear. thp_migration_supported should be checked only
+> > when we actually _do_ the migration or evaluate migratability of the
+> > page. We definitely do want to sprinkle this check to all places where
+> > is_migration_entry is checked.
+> 
+> is_migration_entry() is a general check for swp_entry_t, so it can return
+> true even if THP migration is not enabled. is_pmd_migration_entry() always
+> returns false when THP migration is not enabled.
+> 
+> So the code can be changed in two ways, either replacing is_migration_entry()
+> with is_pmd_migration_entry() or adding thp_migration_supported() check
+> like Jerome did.
+> 
+> Does this clarify your question?
 > 
 
-Then we should probably also apply the following patch I submitted :
+Well looking back at code is_migration_entry() will return false on arch
+which do not have thp migration because pmd_to_swp_entry() will return
+swp_entry(0,0) which is can not be a valid migration entry.
 
-"media: v4l2-common: v4l2_spi_subdev_init : generate unique name"
-	https://patchwork.kernel.org/patch/10553035/
+Maybe using is_pmd_migration_entry() would be better here ? It seems
+that is_pmd_migration_entry() is more common then the open coded
+thp_migration_supported() && is_migration_entry()
 
-and perhaps
-
-"media: v4l2-common: simplify v4l2_i2c_subdev_init name generation"
-	https://patchwork.kernel.org/patch/10553037/
-
-Philippe
-
--- 
-Philippe De Muyter +32 2 6101532 Macq SA rue de l'Aeronef 2 B-1140 Bruxelles
+Cheers,
+Jérôme
