@@ -2,90 +2,100 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCF70C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 09:03:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 855FCC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 09:03:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 771DC208A6
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 09:03:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 771DC208A6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=macq.eu
+	by mail.kernel.org (Postfix) with ESMTP id 3D0C72089F
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 09:03:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XvLZ/yf/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D0C72089F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727616AbeH1Mxn (ORCPT
+        id S1727633AbeH1MyG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 08:53:43 -0400
-Received: from smtp2.macqel.be ([109.135.2.61]:51680 "EHLO smtp2.macqel.be"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726954AbeH1Mxn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 08:53:43 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smtp2.macqel.be (Postfix) with ESMTP id 55E9C130D3E;
-        Tue, 28 Aug 2018 11:03:02 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at macqel.be
-Received: from smtp2.macqel.be ([127.0.0.1])
-        by localhost (mail.macqel.be [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id rcDiRL6LUPKO; Tue, 28 Aug 2018 11:03:00 +0200 (CEST)
-Received: from frolo.macqel.be (frolo.macqel [10.1.40.73])
-        by smtp2.macqel.be (Postfix) with ESMTP id AF221130D0E;
-        Tue, 28 Aug 2018 11:03:00 +0200 (CEST)
-Received: by frolo.macqel.be (Postfix, from userid 1000)
-        id 905B1DF007A; Tue, 28 Aug 2018 11:03:00 +0200 (CEST)
-Date:   Tue, 28 Aug 2018 11:03:00 +0200
-From:   Philippe De Muyter <phdm@macq.eu>
-To:     Luca Ceresoli <luca@lucaceresoli.net>
-Cc:     linux-media@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Leon Luo <leonl@leopardimaging.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 1/2] media: imx274: use regmap_bulk_write to write
-        multybyte registers
-Message-ID: <20180828090300.GA23579@frolo.macqel>
-References: <20180725162455.31381-1-luca@lucaceresoli.net> <20180725162455.31381-2-luca@lucaceresoli.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180725162455.31381-2-luca@lucaceresoli.net>
-User-Agent: Mutt/1.5.16 (2007-06-09)
+        Tue, 28 Aug 2018 08:54:06 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:45221 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726997AbeH1MyG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 08:54:06 -0400
+Received: by mail-pl1-f193.google.com with SMTP id j8-v6so441310pll.12
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 02:03:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=nAwmOnrb0wdKODUtZHJ2nYT/GWx0JLB/qBAyXK4vPaE=;
+        b=XvLZ/yf/S1NpIdIvg7DyWMqWVkzTjZR7LNwqCJbvW2mgtFrjzKZSVOdS1ZO/Q/M3da
+         /oEJbx4gqYsKV/vzogons50By4TEjqogZ+4wT+mcTC7UeK8NZDCcBWQpPq+VdbCPseJL
+         Co1wOYY7EPPKOTLe9O1TdVPnEecikUZH34UFg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=nAwmOnrb0wdKODUtZHJ2nYT/GWx0JLB/qBAyXK4vPaE=;
+        b=QRu6fwEM/axrvy6N3vtL14SGJNB8vd898fW2f/xt8K52nmqxwmQt0vb6mhC1iwgp0s
+         KWQamo1y4yKJw7CxKZPUQn0qt8iXomz4ml+dtR7j9y8B9c7D0NoXluuErHq5mZAXGEep
+         NzFAGBJSSHhnvcSUPDALkP1r401wW5z4go/ACyjExkSdar5UF9eVSWAj7HV1IIMCgrIn
+         WRRn10AJPRBC/96pZthxYWOL1xn/J+CwhsEUewb2GTjich7nGnWI0GFXmALYGrwvOsMq
+         mxJLrr5zLREvheG9C0zEk9FkowJRolOtanpS+qIOQM49RtPzhWV+azrYCY4wWfjoFaUc
+         MGzw==
+X-Gm-Message-State: APzg51DqxALxiDOf4YT7EcI+vf/ufRfDaiiKGnShAvr+8DZqJj/nL4M8
+        0NC8C7YBzHjSnP66wrGAgtCh0w==
+X-Google-Smtp-Source: ANB0Vda37dO5PJ853cBMLizm4OiFSWhqN9emGQCevT1ZtsfG0ObgYAGfbkOdk6i2MqdWDL/nNbQtyQ==
+X-Received: by 2002:a17:902:26:: with SMTP id 35-v6mr626409pla.276.1535447006041;
+        Tue, 28 Aug 2018 02:03:26 -0700 (PDT)
+Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
+        by smtp.gmail.com with ESMTPSA id v140-v6sm1979292pgb.45.2018.08.28.02.03.23
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 28 Aug 2018 02:03:25 -0700 (PDT)
+From:   Baolin Wang <baolin.wang@linaro.org>
+To:     sre@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, yuanjiang.yu@unisoc.com,
+        baolin.wang@linaro.org, broonie@kernel.org
+Subject: [PATCH 1/2] dt-bindings: power: Add Spreadtrum SC2731 charger documentation
+Date:   Tue, 28 Aug 2018 17:02:22 +0800
+Message-Id: <5fcd93bbbcd55a5c23f1c75effdc3670ce7a811b.1535446321.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 25, 2018 at 06:24:54PM +0200, Luca Ceresoli wrote:
-> Currently 2-bytes and 3-bytes registers are set by very similar
-> functions doing the needed shift & mask manipulation, followed by very
-> similar for loops setting one byte at a time over I2C.
-> 
-> Replace all of this code by a unique helper function that calls
-> regmap_bulk_write(), which has two advantages:
->  - sets all the bytes in a unique I2C transaction
->  - removes lots of now unused code.
-> 
-> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
-> 
-...
-> +/**
-> + * Write a multibyte register.
-> + *
-> + * Uses a bulk write where possible.
-> + *
-> + * @priv: Pointer to device structure
-> + * @addr: Address of the LSB register.  Other registers must be
-> + *        consecutive, least-to-most significant.
-> + * @val: Value to be written to the register (cpu endianness)
-> + * @nbytes: Number of bits to write (range: [1..3])
-> + */
-> +static int imx274_write_mbreg(struct stimx274 *priv, u16 addr, u32 val,
-> +			      size_t nbytes)
+This patch adds the binding documentation for Spreadtrum SC2731 charger
+device.
 
-Should nbytes be called nbits, or is nbytes a 'Number of bytes' ?
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+---
+ .../bindings/power/supply/sc2731_charger.txt       |   14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/power/supply/sc2731_charger.txt
 
-Philippe
+diff --git a/Documentation/devicetree/bindings/power/supply/sc2731_charger.txt b/Documentation/devicetree/bindings/power/supply/sc2731_charger.txt
+new file mode 100644
+index 0000000..02b616c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/power/supply/sc2731_charger.txt
+@@ -0,0 +1,14 @@
++Spreadtrum SC2731 PMIC battery charger binding
++
++Required properties:
++ - compatible: Should be "sprd,sc2731-charger".
++ - reg: Address offset of charger register.
++ - phys: Contains a phandle to the USB phy.
++
++Example:
++
++	charger@0 {
++		compatible = "sprd,sc2731-charger";
++		reg = <0x0>;
++		phys = <&ssphy>;
++	};
 -- 
-Philippe De Muyter +32 2 6101532 Macq SA rue de l'Aeronef 2 B-1140 Bruxelles
+1.7.9.5
+
