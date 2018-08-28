@@ -2,73 +2,84 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC14AC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:30:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6164EC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:31:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FA9D2087D
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:30:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 194572084A
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:31:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="E1FZCN+W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FA9D2087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="PsQd8scv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 194572084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727490AbeH2BYC (ORCPT
+        id S1727529AbeH2BYj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 21:24:02 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:47016 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726998AbeH2BYC (ORCPT
+        Tue, 28 Aug 2018 21:24:39 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:40355 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726383AbeH2BYj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 21:24:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=2oozRIhTdlGdOAU31T3EpY+oY+ftJ81J4AUJbdF4rPM=; b=E1FZCN+WEVHEmMHoKx+objzW+4
-        fPrmCzkbFpKOaCs1FxZzHbnRSDDyKUh+bxQ4ggrZYp+TeSJwIqkp05rC1BHSqufQxk4xG6knIUbJg
-        B0tLp2EPoHS9K5hDuNCAxgnq/jmOpXpWRVSflzGC+9DfedOevY82dgssqePUoD+OvTR/8DWjqn/M5
-        fotJhOC4Z9qjxxOSIZY6KVcSFPQ4WGcGyCTAbnAodjKwIzSXS4gONjG+CWqRbYjG9BT3iz+l521zx
-        jFooFK2/g2hS1P1U5m+Dk88OINcxfiFAaoDxKGIs7+Y22uwPhanHEdbbNvNdRN3DzN9rv4B0mMIb8
-        y40EqvTQ==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fulZ6-0005Ay-3U; Tue, 28 Aug 2018 21:30:20 +0000
-Subject: Re: [PATCH 8/9] psi: pressure stall information for CPU, memory, and
- IO
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Daniel Drake <drake@endlessm.com>,
-        Vinayak Menon <vinmenon@codeaurora.org>,
-        Christopher Lameter <cl@linux.com>,
-        Peter Enderborg <peter.enderborg@sony.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Mike Galbraith <efault@gmx.de>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-References: <20180828172258.3185-1-hannes@cmpxchg.org>
- <20180828172258.3185-9-hannes@cmpxchg.org>
- <6ff71c29-3b6a-4849-6f2a-3d829bbd43e2@infradead.org>
- <20180828205625.GA14030@cmpxchg.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <b0880165-9bc1-5eb4-bf6b-8e853879d463@infradead.org>
-Date:   Tue, 28 Aug 2018 14:30:17 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Tue, 28 Aug 2018 21:24:39 -0400
+Received: by mail-qk0-f195.google.com with SMTP id c126-v6so2038955qkd.7
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 14:31:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=bp5C8dkkEKoS+jRu9dkXcGIDmvHsqyq3UGcDLqMeaR0=;
+        b=PsQd8scvEy2Ze5fk0NuAEYFZmY7vj9as/U60zVnd2f5fvvKxH6SHJWI0GydD6Jipob
+         BuDTg6+bQLbFbPIHMAXg84AKQm75Nde2B3jiHbYSV91NUJ2e7NY7q2NGMqVOuMvOgqh5
+         BRyZQq+CKvTH9K3Zv4WLmDxbzibkgnAbZa5y4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=bp5C8dkkEKoS+jRu9dkXcGIDmvHsqyq3UGcDLqMeaR0=;
+        b=fxGoK1Y+p68c/jgFqdU4qKzTwT2CeU8pFEKGD5CxS+xA45rh4dgyhaUvzbq0cC0iQE
+         y5Xc/hSqJzOucVLUkchF3vFlw8hhAKj1Rmx53Gu1nxfxBsAIyDTHY3TfnuGCjwliXmXt
+         YjVBkX/t5ZZ8WX8RgYPsKdCXmYc/ItKEWb49Ob1XAZYXF5J5ZUWPtF+O5gmhoTSRaGUq
+         jZ15nFSxOOmy2JBy8wldMXI02/vu+4rDXLVSMeO3pJIRB7ar0iKL/PDomzAapsTLHYLj
+         af9T54f3SXD70yN5ABzxXHCihl5rrwRIx3WxdB6M9FJ60gv6OKiT8ExYD/ZwFFh0wKWB
+         3LCg==
+X-Gm-Message-State: APzg51A1ECOyI9yHkcymzfZAoshkMOdcLtjhUoIXutMAxXRDi1Bqoeny
+        2csplVGb3kgDofgSakVnsXzU2Q==
+X-Google-Smtp-Source: ANB0VdYsMrXaL+OripN6JePH6FRPqd0w4kux6ZFN8VaqFzXcN0T53hd8Ajj3Xp3k6C657NEkmXHkYg==
+X-Received: by 2002:a37:98c1:: with SMTP id a184-v6mr3600833qke.328.1535491866199;
+        Tue, 28 Aug 2018 14:31:06 -0700 (PDT)
+Received: from [10.136.8.248] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id u7-v6sm1435390qtc.76.2018.08.28.14.31.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 28 Aug 2018 14:31:05 -0700 (PDT)
+Subject: Re: [PATCH v2 1/3] ARM: dts: NSP: Enable SFP on bcm958625hr
+To:     Florian Fainelli <f.fainelli@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Jon Mason <jonmason@broadcom.com>,
+        "maintainer:BROADCOM IPROC ARM ARCHITECTURE" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>, andrew@lunn.ch,
+        rmk+kernel@armlinux.org.uk
+References: <20180828175420.7992-1-f.fainelli@gmail.com>
+ <20180828175420.7992-2-f.fainelli@gmail.com>
+From:   Ray Jui <ray.jui@broadcom.com>
+Message-ID: <b1c97c3e-ae7f-8948-5146-df27e38da961@broadcom.com>
+Date:   Tue, 28 Aug 2018 14:31:02 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180828205625.GA14030@cmpxchg.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180828175420.7992-2-f.fainelli@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -76,81 +87,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/28/2018 01:56 PM, Johannes Weiner wrote:
-> On Tue, Aug 28, 2018 at 01:11:11PM -0700, Randy Dunlap wrote:
->> On 08/28/2018 10:22 AM, Johannes Weiner wrote:
->>> diff --git a/Documentation/accounting/psi.txt b/Documentation/accounting/psi.txt
->>> new file mode 100644
->>> index 000000000000..51e7ef14142e
->>> --- /dev/null
->>> +++ b/Documentation/accounting/psi.txt
->>> @@ -0,0 +1,64 @@
->>> +================================
->>> +PSI - Pressure Stall Information
->>> +================================
->>> +
->>> +:Date: April, 2018
->>> +:Author: Johannes Weiner <hannes@cmpxchg.org>
->>> +
->>> +When CPU, memory or IO devices are contended, workloads experience
->>> +latency spikes, throughput losses, and run the risk of OOM kills.
->>> +
->>> +Without an accurate measure of such contention, users are forced to
->>> +either play it safe and under-utilize their hardware resources, or
->>> +roll the dice and frequently suffer the disruptions resulting from
->>> +excessive overcommit.
->>> +
->>> +The psi feature identifies and quantifies the disruptions caused by
->>> +such resource crunches and the time impact it has on complex workloads
->>> +or even entire systems.
->>> +
->>> +Having an accurate measure of productivity losses caused by resource
->>> +scarcity aids users in sizing workloads to hardware--or provisioning
->>> +hardware according to workload demand.
->>> +
->>> +As psi aggregates this information in realtime, systems can be managed
->>> +dynamically using techniques such as load shedding, migrating jobs to
->>> +other systems or data centers, or strategically pausing or killing low
->>> +priority or restartable batch jobs.
->>> +
->>> +This allows maximizing hardware utilization without sacrificing
->>> +workload health or risking major disruptions such as OOM kills.
->>> +
->>> +Pressure interface
->>> +==================
->>> +
->>> +Pressure information for each resource is exported through the
->>> +respective file in /proc/pressure/ -- cpu, memory, and io.
->>> +
->>
->> Hi,
->>
->>> +In both cases, the format for CPU is as such:
->>
->> I don't see what "In both cases" refers to here.  It seems that you could
->> just remove it.
+
+
+On 8/28/2018 10:54 AM, Florian Fainelli wrote:
+> Enable the SFP connected to port 5 of the switch and wire up all GPIOs
+> to the SFP cage. Because of a hardware limitation of the i2c controller
+> on the iProc SoCs which prevents large i2c (> 63 bytes) transactions to
+> work, we use the i2c-gpio interface instead, which does not have that
+> limitation. This allows us to read the SFP module EEPROM, which would
+> not be possible otherwise since it exceeds that size during a single
+> read transfer.
 > 
-> You're right, that must be a left-over from when I described CPU
-> separately; "both cases" referred to memory and IO which have
-> identical formats. It needs to be removed:
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> ---
+>   arch/arm/boot/dts/bcm958625hr.dts | 26 ++++++++++++++++++++++++++
+>   1 file changed, 26 insertions(+)
 > 
-> diff --git a/Documentation/accounting/psi.txt b/Documentation/accounting/psi.txt
-> index e051810d5127..b8ca28b60215 100644
-> --- a/Documentation/accounting/psi.txt
-> +++ b/Documentation/accounting/psi.txt
-> @@ -35,7 +35,7 @@ Pressure interface
->  Pressure information for each resource is exported through the
->  respective file in /proc/pressure/ -- cpu, memory, and io.
->  
-> -In both cases, the format for CPU is as such:
-> +The format for CPU is as such:
->  
->  some avg10=0.00 avg60=0.00 avg300=0.00 total=0
+> diff --git a/arch/arm/boot/dts/bcm958625hr.dts b/arch/arm/boot/dts/bcm958625hr.dts
+> index ea3fc194f8f3..6fa0d8d1a218 100644
+> --- a/arch/arm/boot/dts/bcm958625hr.dts
+> +++ b/arch/arm/boot/dts/bcm958625hr.dts
+> @@ -58,6 +58,24 @@
+>   		open-source;
+>   		priority = <200>;
+>   	};
+> +
+> +	/* Hardware I2C block cannot do more than 63 bytes per transfer,
+> +	 * which would prevent reading from a SFP's EEPROM (256 byte).
+> +	 */
+> +	i2c1: i2c1 {
 
+nit, "i2c1: i2c {" ?
 
-OK.  However, after reading patch 9/9, I thought that the "both cases"
-could possibly mean the files in /proc/pressure/ and the files in
-cgroup ({cpu,io,memory}.pressure).
-
--- 
-~Randy
+> +		compatible = "i2c-gpio";
+> +		sda-gpios = <&gpioa 5 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+> +		scl-gpios = <&gpioa 4 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+> +	};
+> +
+> +	sfp: sfp {
+> +		compatible = "sff,sfp";
+> +		i2c-bus = <&i2c1>;
+> +		mod-def0-gpios = <&gpioa 28 GPIO_ACTIVE_LOW>;
+> +		los-gpios = <&gpioa 24 GPIO_ACTIVE_HIGH>;
+> +		tx-fault-gpios = <&gpioa 30 GPIO_ACTIVE_HIGH>;
+> +		tx-disable-gpios = <&gpioa 26 GPIO_ACTIVE_HIGH>;
+> +	};
+>   };
+>   
+>   &amac0 {
+> @@ -210,6 +228,14 @@
+>   			reg = <4>;
+>   		};
+>   
+> +		port@5 {
+> +			label = "sfp";
+> +			phy-mode = "sgmii";
+> +			reg = <5>;
+> +			sfp = <&sfp>;
+> +			managed = "in-band-status";
+> +		};
+> +
+>   		port@8 {
+>   			ethernet = <&amac2>;
+>   			label = "cpu";
+> 
