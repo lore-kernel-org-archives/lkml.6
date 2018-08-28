@@ -2,111 +2,106 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F88FC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:40:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D13A7C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:43:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB7D420834
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:40:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EF9B20834
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:43:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="W12t1uPK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB7D420834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CyhFfz7k";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QWjY/xEq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EF9B20834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728288AbeH1RcC (ORCPT
+        id S1727977AbeH1RfE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 13:32:02 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:45452 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728204AbeH1RcC (ORCPT
+        Tue, 28 Aug 2018 13:35:04 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56980 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727716AbeH1RfE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 13:32:02 -0400
-Received: by mail-ed1-f65.google.com with SMTP id p52-v6so1391546eda.12
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 06:40:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=dOIHmNDNib+rD5vz/dIrQhyM0hJLtwPoCOQ75FCLGyI=;
-        b=W12t1uPKBxj5FBiei2C4V+G8XUfnGLGJEoSRf4Mr9+2oj4Gbj9D5P8y9L0btCKzAkP
-         GeSzvhO9vckBntwnlqKMdTU6p1IVXApFXpf0PdKqQwNqcwFhXmi0zcOL7HexrIKUi/qv
-         BcOyoCCB6uTdWNCY+5WgbMne9bX3FUWSvXnDQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=dOIHmNDNib+rD5vz/dIrQhyM0hJLtwPoCOQ75FCLGyI=;
-        b=S2v7HQrL8DML2pTCNrDoJS9M4DLjP6R+EtOfiFmHU8XcQ8KbuWr8qlt4C4h+qe55Nf
-         LxBTVa15olIJZ8gn0KAjP413ry7+kEJNSIvKz4b4jBmIQbamuWOhD1pbJWxcU6vrFREx
-         vFrF5fiRgrZuaTLi8WvTEgkgRTJtQBrLSgLiOT7HJaLe4zgHWCz26bU5cbdddbRz6AJq
-         ToTBHT67VHPGYJWrvujcd+ADPHhB3sf/iVwjGmrIY7Zbiyqs5M60UrKK3Z6z79JNcQrg
-         TJO0vIPE8/PjzRmPM3KCQ66MdPL9EJC1hBK18HezM9qb2Etm0yJfYLWK2DDsgauSe5pf
-         Q6Uw==
-X-Gm-Message-State: APzg51AnI6lc4cgQXFepOjz21Eqlmp1NYn/ui2jtOvKZClp4mLLe/CC8
-        wnmAv9c8RCezmbnTKGKp/YYnhXxo7Po=
-X-Google-Smtp-Source: ANB0Vda7xMbNCW9iAo/0xeONk2+CSIseLNQpN4MDrWJ06r0d21+3bftDqYlFUlLtab5qsQPAP85H1g==
-X-Received: by 2002:a50:bdc5:: with SMTP id z5-v6mr2464195edh.46.1535463618168;
-        Tue, 28 Aug 2018 06:40:18 -0700 (PDT)
-Received: from localhost ([49.248.200.109])
-        by smtp.gmail.com with ESMTPSA id p10-v6sm525756edh.9.2018.08.28.06.40.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 28 Aug 2018 06:40:17 -0700 (PDT)
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     rnayak@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        bjorn.andersson@linaro.org, edubezval@gmail.com,
-        smohanad@codeaurora.org, andy.gross@linaro.org,
-        dianders@chromium.org, mka@chromium.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v2 11/11] MAINTAINERS: Add entry for Qualcomm TSENS thermal drivers
-Date:   Tue, 28 Aug 2018 19:08:40 +0530
-Message-Id: <72c63bc617acdaddd0a420ceac1914acdf4c720f.1535462942.git.amit.kucheria@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1535462942.git.amit.kucheria@linaro.org>
-References: <cover.1535462942.git.amit.kucheria@linaro.org>
-In-Reply-To: <cover.1535462942.git.amit.kucheria@linaro.org>
-References: <cover.1535462942.git.amit.kucheria@linaro.org>
+        Tue, 28 Aug 2018 13:35:04 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 5E6726044E; Tue, 28 Aug 2018 13:43:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535463800;
+        bh=pVRUYsnuAE5Wxt8x7tdMia8H7NeEF2LLmh4i7JumbsI=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=CyhFfz7k0hH6ecv9+d3rnF9+y2b0i4MApHbsNnYFE4xR2uK43X1SqtLYtlUDj3tsO
+         pE8fEjiJaPdHFizbb3CY6fPPJLmcA6t5jdQKO2tCZJRweGJ1fxT+JwLsFhEf5VzogB
+         PLdO/gYY78BiNuH5XBaPB43UyW9idnvJFoTX1q/U=
+Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3A23160388;
+        Tue, 28 Aug 2018 13:43:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535463800;
+        bh=pVRUYsnuAE5Wxt8x7tdMia8H7NeEF2LLmh4i7JumbsI=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=QWjY/xEqpfDiwK5Uca+va1NG/di8dZtp8nsXl57wR8uuK1qvGy9TEns/KfDWYKEiN
+         rAoa3PRy3ouCyEmnPRt6rKWP+pvfRFDVReJ2ZpOLzf4G4OMJta2ZslOWKndz7OkOjO
+         PdZgm49O7oockOLEkZqeBC/UKxqmBmpSJbntWg9E=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3A23160388
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] ath10k: use struct_size() in kzalloc()
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20180824011247.GA25648@embeddedor.com>
+References: <20180824011247.GA25648@embeddedor.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20180828134320.5E6726044E@smtp.codeaurora.org>
+Date:   Tue, 28 Aug 2018 13:43:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Create an entry for the TSENS drivers and mark them as maintained
+"Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
 
-Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-Acked-by: Rajendra Nayak <rnayak@codeaurora.org>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+> One of the more common cases of allocation size calculations is finding
+> the size of a structure that has a zero-sized array at the end, along
+> with memory for some number of elements for that array. For example:
+> 
+> struct foo {
+> 	int stuff;
+>         void *entry[];
+> };
+> 
+> instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
+> 
+> Instead of leaving these open-coded and prone to type mistakes, we can
+> now use the new struct_size() helper:
+> 
+> instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
+> 
+> This issue was detected with the help of Coccinelle.
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a5b256b25905..b8c96e0699c9 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12076,6 +12076,13 @@ L:	linux-arm-msm@vger.kernel.org
- S:	Maintained
- F:	drivers/iommu/qcom_iommu.c
- 
-+QUALCOMM TSENS THERMAL DRIVER
-+M:	Amit Kucheria <amit.kucheria@linaro.org>
-+L:	linux-pm@vger.kernel.org
-+L:	linux-arm-msm@vger.kernel.org
-+S:	Maintained
-+F:	drivers/thermal/qcom/
-+
- QUALCOMM VENUS VIDEO ACCELERATOR DRIVER
- M:	Stanimir Varbanov <stanimir.varbanov@linaro.org>
- L:	linux-media@vger.kernel.org
+Patch applied to ath-next branch of ath.git, thanks.
+
+06ae8dc00433 ath10k: use struct_size() in kzalloc()
+
 -- 
-2.17.1
+https://patchwork.kernel.org/patch/10574741/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
