@@ -2,115 +2,123 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A344C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 06:29:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A2A3C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 06:30:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F02A208AC
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 06:29:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F02A208AC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id D3E1820878
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 06:30:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3E1820878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727228AbeH1KTK (ORCPT
+        id S1727185AbeH1KUs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 06:19:10 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:38399 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726979AbeH1KTJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 06:19:09 -0400
-X-UUID: 925edb777be34548b88cb7a9f5e19138-20180828
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <leilk.liu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 596432030; Tue, 28 Aug 2018 14:28:52 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Tue, 28 Aug 2018 14:28:49 +0800
-Received: from localhost.localdomain (10.17.3.153) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Tue, 28 Aug 2018 14:28:48 +0800
-From:   Leilk Liu <leilk.liu@mediatek.com>
-To:     Mark Brown <broonie@kernel.org>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-spi@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <mengqi.zhang@mediatek.com>, <yt.shen@mediatek.com>,
-        Leilk Liu <leilk.liu@mediatek.com>
-Subject: [PATCH 1/3] spis: mediatek: add bindings for Mediatek MT2712 soc platform
-Date:   Tue, 28 Aug 2018 14:28:03 +0800
-Message-ID: <1535437685-30230-2-git-send-email-leilk.liu@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1535437685-30230-1-git-send-email-leilk.liu@mediatek.com>
-References: <1535437685-30230-1-git-send-email-leilk.liu@mediatek.com>
+        Tue, 28 Aug 2018 06:20:48 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35820 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726432AbeH1KUs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 06:20:48 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D3F34ADF2;
+        Tue, 28 Aug 2018 06:30:39 +0000 (UTC)
+Subject: Re: [PATCH] xen: export device state to sysfs
+To:     Joe Jin <joe.jin@oracle.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>
+References: <030d112d-991f-4591-7eeb-94432a277c71@oracle.com>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <9a908520-0c53-075a-947d-de7741a8e29c@suse.com>
+Date:   Tue, 28 Aug 2018 08:30:38 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+In-Reply-To: <030d112d-991f-4591-7eeb-94432a277c71@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds a DT binding documentation for the MT2712 soc.
+On 27/08/18 20:44, Joe Jin wrote:
+> Export device state to sysfs to allow for easier get device state.
+> 
+> Signed-off-by: Joe Jin <joe.jin@oracle.com>
+> Boris Ostrovsky <boris.ostrovsky@oracle.com>
+> Juergen Gross <jgross@suse.com>
 
-Signed-off-by: Leilk Liu <leilk.liu@mediatek.com>
----
- .../devicetree/bindings/spi/spi-slave-mt27xx.txt   |   39 ++++++++++++++++++++
- 1 file changed, 39 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/spi/spi-slave-mt27xx.txt
+Please add the related documentation to
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-slave-mt27xx.txt b/Documentation/devicetree/bindings/spi/spi-slave-mt27xx.txt
-new file mode 100644
-index 0000000..dcb8934
---- /dev/null
-+++ b/Documentation/devicetree/bindings/spi/spi-slave-mt27xx.txt
-@@ -0,0 +1,39 @@
-+Binding for MTK SPI Slave controller
-+
-+Required properties:
-+- compatible: should be one of the following.
-+    - mediatek,mt2712-spi: for mt2712 platforms
-+
-+- reg: Address and length of the register set for the device
-+
-+- interrupts: Should contain spi interrupt
-+
-+- clocks: phandles to input clocks.
-+  The first should be one of the following. It's PLL.
-+   -  <&topckgen CLK_TOP_UNIVPLL1_D2>: specify parent clock 312MHZ.
-+				      It's the default one.
-+   -  <&topckgen CLK_TOP_UNIVPLL1_D4>: specify parent clock 156MHZ.
-+   -  <&topckgen CLK_TOP_UNIVPLL2_D4>: specify parent clock 104MHZ.
-+   -  <&topckgen CLK_TOP_UNIVPLL1_D8>: specify parent clock 78MHZ.
-+  The second should be <&topckgen CLK_TOP_SPISLV_SEL>. It's clock mux.
-+  The third is <&infracfg CLK_INFRA_AO_SPI1>. It's clock gate.
-+
-+- clock-names: shall be "parent-clk" for the parent clock, "sel-clk" for the
-+  muxes clock, and "spi-clk" for the clock gate.
-+
-+- spi-slave: Empty property indicating the SPI controller is used in slave mode.
-+
-+Example:
-+
-+- SoC Specific Portion:
-+spis: spi@10013000 {
-+	compatible = "mediatek,mt2712-spi-slave";
-+	reg = <0 0x10013000 0 0x100>;
-+	interrupts = <GIC_SPI 283 IRQ_TYPE_LEVEL_LOW>;
-+	clocks = <&topckgen CLK_TOP_UNIVPLL1_D2>,
-+		<&topckgen CLK_TOP_SPISLV_SEL>,
-+		<&infracfg CLK_INFRA_AO_SPI1>;
-+	clock-names = "parent-clk", "sel-clk", "spi-clk";
-+	spi-slave;
-+	status = "disabled";
-+};
--- 
-1.7.9.5
+Documentation/ABI/stable/sysfs-bus-xen-backend
+
+
+Juergen
+
+> ---
+>  drivers/xen/xenbus/xenbus_probe.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/xen/xenbus/xenbus_probe.c b/drivers/xen/xenbus/xenbus_probe.c
+> index 74888cacd0b0..52f99b80a1c0 100644
+> --- a/drivers/xen/xenbus/xenbus_probe.c
+> +++ b/drivers/xen/xenbus/xenbus_probe.c
+> @@ -402,10 +402,19 @@ static ssize_t modalias_show(struct device *dev,
+>  }
+>  static DEVICE_ATTR_RO(modalias);
+>  
+> +static ssize_t state_show(struct device *dev,
+> +			    struct device_attribute *attr, char *buf)
+> +{
+> +	return sprintf(buf, "%s\n",
+> +			xenbus_strstate(to_xenbus_device(dev)->state));
+> +}
+> +static DEVICE_ATTR_RO(state);
+> +
+>  static struct attribute *xenbus_dev_attrs[] = {
+>  	&dev_attr_nodename.attr,
+>  	&dev_attr_devtype.attr,
+>  	&dev_attr_modalias.attr,
+> +	&dev_attr_state.attr,
+>  	NULL,
+>  };
+>  
+> 
 
