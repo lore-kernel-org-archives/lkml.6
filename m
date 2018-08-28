@@ -2,126 +2,148 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12DCCC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 11:38:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E924AC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 11:39:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0CA42087D
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 11:38:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0CA42087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 9F4F92087D
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 11:39:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F4F92087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727433AbeH1P3b (ORCPT
+        id S1727502AbeH1Pam (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 11:29:31 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:33086 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727067AbeH1P3b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 11:29:31 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id rcQ7ZrI5rsLJ; Tue, 28 Aug 2018 13:37:57 +0200 (CEST)
-Received: from nazgul.tnic (46-10-68-224.ip.btc-net.bg [46.10.68.224])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 439051EC02D1;
-        Tue, 28 Aug 2018 13:37:57 +0200 (CEST)
-Date:   Tue, 28 Aug 2018 13:36:11 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jann Horn <jannh@google.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        kernel-hardening@lists.openwall.com,
-        Tony Luck <tony.luck@intel.com>, linux-kernel@vger.kernel.org,
-        dvyukov@google.com, linux-edac@vger.kernel.org
-Subject: Re: [PATCH v2 1/7] x86: refactor kprobes_fault() like
- kprobe_exceptions_notify()
-Message-ID: <20180828113611.GC32231@nazgul.tnic>
-References: <20180827185631.163506-1-jannh@google.com>
- <20180827185631.163506-2-jannh@google.com>
+        Tue, 28 Aug 2018 11:30:42 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52870 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727067AbeH1Pam (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 11:30:42 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 605F7ACCF;
+        Tue, 28 Aug 2018 11:39:25 +0000 (UTC)
+Date:   Tue, 28 Aug 2018 13:39:24 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Mikhail Zaslonko <zaslonko@linux.ibm.com>
+Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Pavel Tatashin <Pavel.Tatashin@microsoft.com>
+Subject: Re: [PATCH] memory_hotplug: fix kernel_panic on offline page
+ processing
+Message-ID: <20180828113924.GL10223@dhcp22.suse.cz>
+References: <20180828090539.41491-1-zaslonko@linux.ibm.com>
+ <20180828112543.GK10223@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180827185631.163506-2-jannh@google.com>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+In-Reply-To: <20180828112543.GK10223@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 08:56:25PM +0200, Jann Horn wrote:
-> This is an extension of commit b506a9d08bae ("x86: code clarification patch
-> to Kprobes arch code"). As that commit explains, even though
-> kprobe_running() can't be called with preemption enabled, you don't have to
-> disable preemption - if preemption is on, you can't be in a kprobe.
+[Fixup Pavel's email - the patch is here for your reference
+http://lkml.kernel.org/r/20180828090539.41491-1-zaslonko@linux.ibm.com]
+
+On Tue 28-08-18 13:25:43, Michal Hocko wrote:
+> On Tue 28-08-18 11:05:39, Mikhail Zaslonko wrote:
+> > Within show_valid_zones() the function test_pages_in_a_zone() should be
+> > called for online memory blocks only. Otherwise it might lead to the
+> > VM_BUG_ON due to uninitialized struct pages (when CONFIG_DEBUG_VM_PGFLAGS
+> > kernel option is set):
+> > 
+> >  page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
+> >  ------------[ cut here ]------------
+> >  Call Trace:
+> >  ([<000000000038f91e>] test_pages_in_a_zone+0xe6/0x168)
+> >   [<0000000000923472>] show_valid_zones+0x5a/0x1a8
+> >   [<0000000000900284>] dev_attr_show+0x3c/0x78
+> >   [<000000000046f6f0>] sysfs_kf_seq_show+0xd0/0x150
+> >   [<00000000003ef662>] seq_read+0x212/0x4b8
+> >   [<00000000003bf202>] __vfs_read+0x3a/0x178
+> >   [<00000000003bf3ca>] vfs_read+0x8a/0x148
+> >   [<00000000003bfa3a>] ksys_read+0x62/0xb8
+> >   [<0000000000bc2220>] system_call+0xdc/0x2d8
+> > 
+> > That VM_BUG_ON was triggered by the page poisoning introduced in
+> > mm/sparse.c with the git commit d0dc12e86b31 ("mm/memory_hotplug: optimize
+> > memory hotplug")
+> > With the same commit the new 'nid' field has been added to the struct
+> > memory_block in order to store and later on derive the node id for offline
+> > pages (instead of accessing struct page which might be uninitialized). But
+> > one reference to nid in show_valid_zones() function has been overlooked.
+> > Fixed with current commit.
+> > Also, nr_pages will not be used any more after test_pages_in_a_zone() call,
+> > do not update it.
+> > 
+> > Fixes: d0dc12e86b31 ("mm/memory_hotplug: optimize memory hotplug")
+> > Cc: <stable@vger.kernel.org> # v4.17+
+> > Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
+> > Signed-off-by: Mikhail Zaslonko <zaslonko@linux.ibm.com>
 > 
-> Also, use X86_TRAP_PF instead of 14.
+> Btw. this land mines which are basically impossible to find during the
+> review are the reason why I was not all that happy about d0dc12e86b31.
+> It added a margninal improvement but opened a can of warms. On the other
+> hand maybe we just had to open that can one day...
 > 
-> Signed-off-by: Jann Horn <jannh@google.com>
-> ---
->  arch/x86/mm/fault.c | 19 ++++++++-----------
->  1 file changed, 8 insertions(+), 11 deletions(-)
+> Acked-by: Michal Hocko <mhocko@suse.com>
 > 
-> diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-> index b9123c497e0a..2254a30533b9 100644
-> --- a/arch/x86/mm/fault.c
-> +++ b/arch/x86/mm/fault.c
-> @@ -44,17 +44,14 @@ kmmio_fault(struct pt_regs *regs, unsigned long addr)
->  
->  static nokprobe_inline int kprobes_fault(struct pt_regs *regs)
->  {
-> -	int ret = 0;
-> -
-> -	/* kprobe_running() needs smp_processor_id() */
-> -	if (kprobes_built_in() && !user_mode(regs)) {
-> -		preempt_disable();
-> -		if (kprobe_running() && kprobe_fault_handler(regs, 14))
-> -			ret = 1;
-> -		preempt_enable();
-> -	}
-> -
-> -	return ret;
-> +	/*
-> +	 * To be potentially processing a kprobe fault and to be allowed to call
-> +	 * kprobe_running(), we have to be non-preemptible.
-> +	 */
-> +	if (kprobes_built_in() && !user_mode(regs) && !preemptible() &&
-> +	    kprobe_running() && kprobe_fault_handler(regs, X86_TRAP_PF))
-> +		return 1;
-> +	return 0;
-
-Maybe even:
-
-	return (kprobes_built_in() &&
-		!user_mode(regs) &&
-		!preemptible() &&
-		kprobe_running() &&
-		kprobe_fault_handler(regs, X86_TRAP_PF));
-
-Although I'd do it a bit more readable by flipping the checks and
-splitting them:
-
-	if (!kprobes_built_in())
-		return 0;
-
-	if (user_mode(regs))
-		return 0;
-
-	...
-
-	return kprobe_fault_handler(regs, X86_TRAP_PF);
-}
+> Thanks!
+> 
+> > ---
+> >  drivers/base/memory.c | 20 +++++++++-----------
+> >  1 file changed, 9 insertions(+), 11 deletions(-)
+> > 
+> > diff --git a/drivers/base/memory.c b/drivers/base/memory.c
+> > index f5e560188a18..622ab8edc035 100644
+> > --- a/drivers/base/memory.c
+> > +++ b/drivers/base/memory.c
+> > @@ -416,26 +416,24 @@ static ssize_t show_valid_zones(struct device *dev,
+> >  	struct zone *default_zone;
+> >  	int nid;
+> >  
+> > -	/*
+> > -	 * The block contains more than one zone can not be offlined.
+> > -	 * This can happen e.g. for ZONE_DMA and ZONE_DMA32
+> > -	 */
+> > -	if (!test_pages_in_a_zone(start_pfn, start_pfn + nr_pages, &valid_start_pfn, &valid_end_pfn))
+> > -		return sprintf(buf, "none\n");
+> > -
+> > -	start_pfn = valid_start_pfn;
+> > -	nr_pages = valid_end_pfn - start_pfn;
+> > -
+> >  	/*
+> >  	 * Check the existing zone. Make sure that we do that only on the
+> >  	 * online nodes otherwise the page_zone is not reliable
+> >  	 */
+> >  	if (mem->state == MEM_ONLINE) {
+> > +		/*
+> > +		 * The block contains more than one zone can not be offlined.
+> > +		 * This can happen e.g. for ZONE_DMA and ZONE_DMA32
+> > +		 */
+> > +		if (!test_pages_in_a_zone(start_pfn, start_pfn + nr_pages,
+> > +					  &valid_start_pfn, &valid_end_pfn))
+> > +			return sprintf(buf, "none\n");
+> > +		start_pfn = valid_start_pfn;
+> >  		strcat(buf, page_zone(pfn_to_page(start_pfn))->name);
+> >  		goto out;
+> >  	}
+> >  
+> > -	nid = pfn_to_nid(start_pfn);
+> > +	nid = mem->nid;
+> >  	default_zone = zone_for_pfn_range(MMOP_ONLINE_KEEP, nid, start_pfn, nr_pages);
+> >  	strcat(buf, default_zone->name);
+> >  
+> > -- 
+> > 2.16.4
+> 
+> -- 
+> Michal Hocko
+> SUSE Labs
 
 -- 
-Regards/Gruss,
-    Boris.
-
-ECO tip #101: Trim your mails when you reply.
---
+Michal Hocko
+SUSE Labs
