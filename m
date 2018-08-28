@@ -4,124 +4,183 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8345CC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:10:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33DCCC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:11:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BE9020897
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:10:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7D1A2087C
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:11:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P5SGM5bp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BE9020897
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="PWrj2PHk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7D1A2087C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=aol.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728145AbeH1RBm (ORCPT
+        id S1728154AbeH1RCn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 13:01:42 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:51072 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727215AbeH1RBm (ORCPT
+        Tue, 28 Aug 2018 13:02:43 -0400
+Received: from sonic306-20.consmr.mail.ir2.yahoo.com ([77.238.176.206]:46055
+        "EHLO sonic306-20.consmr.mail.ir2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727853AbeH1RCm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 13:01:42 -0400
-Received: by mail-wm0-f66.google.com with SMTP id s12-v6so1882060wmc.0;
-        Tue, 28 Aug 2018 06:10:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=N4RaJg2+OXHYnQivrqN7FZQFg9ukF+dMUNqAIMmjRKQ=;
-        b=P5SGM5bpCxPrfFGqvF+SiVnpNFLkXIEYchKtb8yf5FAFMG8lFpnuwnBw1X6wccPEc5
-         smGXSmILHx54HTlM4d8w0a105V9sL3x2hrsK0lpDu819Zp9UXq9BzUDp3ekOkMGBWr+o
-         /hNKo4331mgBhei5w+a7+42QOHDm1VcgkEvnH7IfxGh44aXTg7EuRDUbrxu31yPHPMm/
-         DnyGxmDx1IXMe9G8xH11y6yaPo7rUvO9UQPO3gwmeEOtk7g2PbmMx/ZVvKNEhsB0HzcR
-         rsdkAs77FrSnOSxHr3Opgrgsq6Fav/NSIc3e+Exqugk4x1lNjxLFif415GUC/VXffqdS
-         9B5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=N4RaJg2+OXHYnQivrqN7FZQFg9ukF+dMUNqAIMmjRKQ=;
-        b=o5OH+N+cpvEcAAw/bDN6IJtJvownB30mGNGZLL6kyYhydIUC/XE9C5hXAA9oBtNSsH
-         B1iiRaLoAmE2f+kc0MUZO5v29v+Hte3qAOYN1saJVPOkxojqcN5Bw53IS/lTCmoWNxDa
-         AHhxr6UR3B1wruQExg0IwxveD3FFtX++YiQT7uGl2VdkaB26HuViKhWRgdn6ejx7XFGb
-         EvQO+1PG9su8KK8gtqMe9ssQDy0vQw2rImd+9x9mGg83pxEdKzbRdy6ZEF/hSn6PCeSH
-         hUH7BSE6UE26qvKW/zG0MuiQ5XGnju2AhXQjuOiOCW6qp3KiP8+JMS+uKOaksscImSoZ
-         YEsQ==
-X-Gm-Message-State: APzg51BquRq7jnAZrWU6/nU/ZijS/FzO5G5iPKgfdfD8wrstPxQdwUGT
-        DAjG5EBiLi4aXDuRDIC66Tv3QtaHInPWKgdRXDh1RQ==
-X-Google-Smtp-Source: ANB0VdZ4NVchxUJ2QKo+dwMy+EJNNqnR2LpMUv2BYM+r4rwdLVOxM+r6UgccXVIW+Qq2lm0+p+ytuQyBbWB5n+SaUNM=
-X-Received: by 2002:a1c:1dc9:: with SMTP id d192-v6mr1438474wmd.140.1535461804505;
- Tue, 28 Aug 2018 06:10:04 -0700 (PDT)
+        Tue, 28 Aug 2018 13:02:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1535461864; bh=LJ818FOFnnGoFeYTjrHES8uDLFpcPatjg2oq7Gg/ybA=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=PWrj2PHkGpm1CV8q9GKO+apFa5IGnyBtPzi1v4wBPcO5RIRCc4M1sJUCBRPr9CFxLyEwuPw5L78p0CSYrn7fHeRKEj6t0kGId9q6OWWsJoFdyrc0UxNY+sAiyJg9duV0ZRXDD8NieKisTLXtRNjzfSp11U0r+Ts/fv8ckUQ3iPG3FkOsaU36AoGpueakdpwwUqklryQ749u4Rw/8WK2rvkLlC8CaF/ZcVJFYkFyO7b9OrWElJLsN1dMaufoODVBek87BGM/2U9V3aQLSwIs2k50Ut4dyk+JFEn/mSTgvd95i4LaOrh+2KbS6z3YuUbKMUlFQAYBfEU7xxcFlHV3k6g==
+X-YMail-OSG: eenw3nIVM1nsrpZuSc0S3fK4GV9iF6X1eucnxI5ccOM2D2xKuRMeyqARTqZfhW9
+ mVPF9Q0mH_PEnucXjbapGdB8XrvcsIdA0qo79OVl9SzcBYb3iDJUjnqPle0T6hkWD2Nf_7yQXYaB
+ pC7iNXJjU_UwBJngqxaDzHR6qbXSYAOxvZLEeRio1_ppQsr_gtQgAB19lEaxjmzISkjMpltu7Jq9
+ _yhc4hXEYmWX1zJ7IFz.sQ1J2P3Mp9PgMwbBwzzorXYVAj.f6CejpTMnJAl_Qktc55CfP53d_ADJ
+ LS3oFOfaLLPmft5YrldtJFxc4rSiz0sN4QoDAeNwN7WoLdyxisGe404_OKtkxES.r8uHjHlIkjr7
+ Ku1KjqrTJmbqnz9htkzvgbgQu4hagY1OQTAREi1ekFxWxernmtSe1pLOlQxIZrr6EHx2gOpZcCLM
+ JS8qkq4y9Vy2SA5Y6md4yLUFum69TE7J4kvW8t4jM7jvfn.8YRc_vHI_jZ4Qoey4qnMn4.SnKVtu
+ L4t9PWnloPh_zLir56NlUZcBaWFxOjC0aNc3d9_L_ZXoOwzMfuwyh9do8wTVtPUCGdaU7F7KvPY9
+ PvKAJNiIQJy9MW4u9Fb.lDYCEG6VkHhqtXl4fzoYzGtE6AYRpRF49x.vbHZRlEjuNlZKbj2j4cat
+ B9XcwXTdWdUr0tKPCtIu0spyFYwOSpPIrpaX58ZACXjy6.66Bg.COAU7oZxRf4xaQ24pSpeQY2zs
+ fnYwhLkzXDoT8Icd1I3OGQAp5pk3upIFZyT9G7WtEjWAYo6Dv3PVc8_H3.oaVaFL_yylfnoYO2rJ
+ AjmFk3szQHuunLhXuJIWfEvBU1gNNRZrGsr4Bm9eofVNZwdNqF.49RrVSh5b0O3WgQP3roDnaw5y
+ KrhK9nmBBUY5krMD9guNG0SqE9xYxnqxiIB_FjrlIyA.aR68j923ARhu83YTM2Xj75txMGxAeaT5
+ 3S6EA6NHQop0UQyAkGHlexj4NxXbR0QHSrlffoS0x.0D1JqwpM8zJVYzzOn_yFfku9gtUx4_Az_e
+ 00BdyX.zDEic-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ir2.yahoo.com with HTTP; Tue, 28 Aug 2018 13:11:04 +0000
+Received: from 116.226.251.211 (EHLO [192.168.1.7]) ([116.226.251.211])
+          by smtp416.mail.ir2.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID a6a6276edd10934b2724508b71c8a3a1;
+          Tue, 28 Aug 2018 13:11:02 +0000 (UTC)
+Subject: Re: [PATCH] Revert "staging: erofs: disable compiling temporarile"
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Chao Yu <yuchao0@huawei.com>
+Cc:     devel@driverdev.osuosl.org,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Howells <dhowells@redhat.com>, weidu.du@huawei.com,
+        Miao Xie <miaoxie@huawei.com>
+References: <1535427588-69630-1-git-send-email-gaoxiang25@huawei.com>
+ <20180828054444.GA4453@kroah.com>
+ <0c701b3c-5553-cf4c-c0b3-ad151b84662c@huawei.com>
+ <f12ae5df-3130-f293-5863-3d9ff0802e92@huawei.com>
+ <20180828130559.GA5427@kroah.com>
+From:   Gao Xiang <hsiangkao@aol.com>
+Message-ID: <12034d69-befb-7981-0ebb-97a3015c01da@aol.com>
+Date:   Tue, 28 Aug 2018 21:10:55 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <1535453838-12154-1-git-send-email-sunil.kovvuri@gmail.com>
- <1535453838-12154-12-git-send-email-sunil.kovvuri@gmail.com>
- <CAK8P3a0q0P-FuG6cTgMNkeZbtXE4pMk1iJq36_x20WRddtwaDg@mail.gmail.com>
- <CA+sq2Cc1CSKmuEjKt8psR7Zyv9PzLkN10hzy8mrai136SF4-qA@mail.gmail.com> <CAK8P3a2CMcYg6vMmRAc4N80BpFwczGiPnaLNCDZYXCsRydtPQw@mail.gmail.com>
-In-Reply-To: <CAK8P3a2CMcYg6vMmRAc4N80BpFwczGiPnaLNCDZYXCsRydtPQw@mail.gmail.com>
-From:   Sunil Kovvuri <sunil.kovvuri@gmail.com>
-Date:   Tue, 28 Aug 2018 18:39:53 +0530
-Message-ID: <CA+sq2Ce3ew0X+RMm7fQ+iUZF0HKptzBr1dBk3NuRL8o82wBTjg@mail.gmail.com>
-Subject: Re: [PATCH 11/15] soc: octeontx2: Add Marvell OcteonTX2 CGX driver
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, olof@lixom.net,
-        LAKML <linux-arm-kernel@lists.infradead.org>,
-        linux-soc@vger.kernel.org, Sunil Goutham <sgoutham@marvell.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180828130559.GA5427@kroah.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > > If this is a regular PCI ethernet driver, why do you put it into driver/soc
-> > > rather than drivers/net/ethernet/ ?
-> >
-> > No, this is not a ethernet driver, as mentioned in the cover letter
-> > this driver and AF driver doesn't
-> > handle any IO. There will be a separate ethernet driver (will submit
-> > that as well in future) which will
-> > communicate with these drivers for configuring hardware.
-> >
-> > The driver in question here is for a serdes controller which handles
-> > physical ethernet interfaces.
-> > Admin function driver gathers info w.r.t current state of physical
-> > ethernet interfaces from this driver
-> > and notifies actual ethernet driver about changes, if any.
->
-> Ok. Can you describe the structure that the PCI devices appear
-> in? It might help to be make the connection between the differnet
-> patches to understand how things fit together. In the final
-> picture, how many different pci_driver instances do you have,
-> and what part are they for?
+Hi Greg,
 
-List of PCI devices are CGX, RVU PF0-PFn SRIOV physical functions
-and RVU VF0-VFn SRIOV virtual functions. No of VFs per PF is configurable
-and done by low level firmware.
+On 2018/8/28 21:05, Greg Kroah-Hartman wrote:
+> On Tue, Aug 28, 2018 at 04:56:43PM +0800, Chao Yu wrote:
+>> Hi Greg,
+>>
+>> On 2018/8/28 14:28, Gao Xiang wrote:
+>>> Hi Greg,
+>>>
+>>> On 2018/8/28 13:44, Greg Kroah-Hartman wrote:
+>>>> On Tue, Aug 28, 2018 at 11:39:48AM +0800, Gao Xiang wrote:
+>>>>> This reverts commit 156c3df8d4db4e693c062978186f44079413d74d.
+>>>>>
+>>>>> Since XArray and the new mount apis aren't merged in 4.19-rc1
+>>>>> merge window, the BROKEN mark can be reverted directly without
+>>>>> any problems.
+>>>>>
+>>>>> Fixes: 156c3df8d4db ("staging: erofs: disable compiling temporarile")
+>>>>> Cc: Matthew Wilcox <willy@infradead.org>
+>>>>> Cc: David Howells <dhowells@redhat.com>
+>>>>> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+>>>>> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+>>>>> ---
+>>>>>
+>>>>> Hi Greg,
+>>>>>
+>>>>>  Could you please apply this patch to enable EROFS from 4.19-rc2, thanks...
+>>>>>
+>>>>>  p.s. We would like to provide a more stable EROFS when linux-4.19 is out,
+>>>>>       and there are also two patchsets (the one is already sent out by Chao
+>>>>>       and me, the other is previewing in linux-erofs mailing list and it will
+>>>>>       be sent out after gathering enough testdata and feedback from community
+>>>>>       and carefully reviewed), could you also please consider applying these
+>>>>>       two patchsets in the later 4.19-rc (both >2, or the first patchset
+>>>>>       could be in rc2 in advance) if it is convenient to do so, or the next
+>>>>>       4.20 is also ok...
+>>>>>
+>>>>>  LINK: https://lore.kernel.org/lkml/20180821144937.20555-1-chao@kernel.org/
+>>>>>        https://lore.kernel.org/lkml/1535076160-99466-1-git-send-email-gaoxiang25@huawei.com/
+>>>>
+>>>> I applied those patch sets to my -next branch already, right?  So those
+>>>
+>>> Yes, Thank you for applying those patches. :)
+>>>
+>>>> would be going into 4.20-rc1, it is time now for "bugfixes only" for
+>>>> 4.19-final.
+>>>>
+>>>> So perhaps we should just leave it as "BROKEN" for now for 4.19 and add
+>>>> this to my tree now and let people work on it for the next few months in
+>>
+>> I'm worry about that once we plan to reenable erofs in next x.xx-rc1, in the
+>> merge window, if there are any other features change common api or structure in
+>> vfs/mm/block, but related patch didn't cover erofs, that would make conflict
+>> with erofs.
+>>
+>> So if that happens, we can just reminder them to cover erofs? or we should
+>> handle this by just delay removing 'BROKEN' state?
+>>
+>> Thanks,
+>>
+>>>> linux-next so that 4.20 has a solid base to start with?
+>>>>
+>>>
+>>> EROFS is be marked as "BROKEN" just because of conflict with
+>>> XArray and the new mount apis, as Stephen Rothwell suggested in
+>>>
+>>> https://lore.kernel.org/lkml/20180802010705.24a72730@canb.auug.org.au/
+>>>
+>>>> It might be easiest for Greg to add the disabling CONFIG_EROFS_FS patch
+>>>> to the staging tree itself for his first pull request during the merge
+>>>> window and then send a second pull request (after the vfs and maybe the
+>>>> Xarray stuff has been merged by Linus) with these patches followed by a
+>>>> revert of the disabling patch.
+>>>
+>>> But these two features was still discussing in the mailing list even at the
+>>> last time of 4.19-rc1 merge window. I cannot decide whether they were eventually
+>>> get merged in 4.19 or not. But it seems that it is regretful that linux-4.19
+>>> is out without XArray and the new mount apis.
+>>>
+>>> Therefore, I think EROFS should work for linux-4.19 without any modification
+>>> if just revert the BROKEN mark.
+> 
+> Ok, you are right, I'll go apply this.
 
-List of PCI driver instances would be CGX driver, RVU PF0 (i.e admin
-function) driver,
-PF1-PFn either netdev driver or crypto driver, VF0-VFn functionality would be
-same as their PF.
+I am so happy to see that, thanks for understanding :)
 
-The current plan is to have CGX driver, Admin function driver, PF
-netdev driver,
-VF netdev driver and PF/VF crypto drivers.
+> 
+>>> EROFS works fine with the 4.19-rc1 code except that it has some __GFP_NOFAIL
+>>> and BUG_ONs on error handling paths and very rarely race between memory
+>>> reclaiming and decompression... :( I personally think it is complete enough
+>>> for people to test since it is an independent and staging filesystem driver (no
+>>> other influence...) Anyway, removing EROFS BROKEN mark at 4.20 is also ok of course...
+>>>
+>>> On the other head, if XArray and the new mount apis is still pending for 4.20,
+>>> should EROFS uses the same policy as Stephen suggested? I have no idea how to do next...
+> 
+> As the code is now part of the common tree that everyone works off of,
+> any filesystem changes that happen will normally cover erofs as well.
+> So this shouldn't be an issue anymore.
+> 
+That is so helpful for us... :)
 
->
-> Is the idea that an ethernet device driver always attaches to a
-> virtual function that gets created by the main driver, and that
-> the two drivers share no interfaces on the kernel side, or do
-> you have multiple drivers linking to each other?
+Thanks,
+Gao Xiang
 
-Ethernet device driver can attach to both physical function and virtual function
-whose HW resources are provisioned by admin function driver.
-
-Yes the PF/VF ethernet drivers and these drivers won't share any
-kernel interfaces.
-Physical ethernet interface is owned by ethernet driver only, this driver just
-configures which ethernet driver instance uses which physcial interface.
-
->
->       Arnd
+> thanks,
+> 
+> greg k-h
+> 
