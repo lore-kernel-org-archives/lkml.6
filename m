@@ -2,109 +2,104 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D599C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:23:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFA19C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:27:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC8542089B
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:23:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC8542089B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 4A50220897
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:27:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="SQMsaVu9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A50220897
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727968AbeH1QOq (ORCPT
+        id S1727835AbeH1QTH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 12:14:46 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:34956 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727101AbeH1QOq (ORCPT
+        Tue, 28 Aug 2018 12:19:07 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:40186 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727162AbeH1QTH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 12:14:46 -0400
-Received: by mail-qt0-f194.google.com with SMTP id j7-v6so1380394qtp.2;
-        Tue, 28 Aug 2018 05:23:21 -0700 (PDT)
+        Tue, 28 Aug 2018 12:19:07 -0400
+Received: by mail-wm0-f65.google.com with SMTP id 207-v6so1792167wme.5
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 05:27:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=1bWk57vJ2/NRaLDaBlmuyzPfFua+8fuTr7SjvElztx4=;
+        b=SQMsaVu9GglAt+KayjZhBlmha+uowDRqqymDUslJw/UdhJ8qgLmksNANQYp9l7oZUx
+         0mTq6wcAkVmYMpJoL/Zmpye7v8l3fUxxoMWK6tYVt8DnycaiFIvgkX7gDP9moNYS/T84
+         9EzkHhXyeCoqKES3QHNuvqnZNJI6L4w9qHMBm66Xve6W2WZEp0Xr9Gb+wEJLmfbnPbQh
+         AFyows6wuhIIHQqx+UFQa+/iyS5ewSir7bMZVmyl5Wkf8bXTk1XgHrQ4G6g4czfUBibM
+         ais26saeeCvwYGkvhDdPLzrUvWzIRm/bNtLzSqVgu668kI7H5Ma5EsbEokcNbck4KZgh
+         B7MA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xMg9ce79d1E413VsXHxHA9Y6xAQwPV+OITyJvWM1yOw=;
-        b=S10H5bMve/OwPsxHMjE5pmRKB7iLcRvZTMD8qCPf1F7dxQoS5u3u3P7C+zuNaLKTLW
-         5kOdX+5TwubDNJIRDEalhgoyXKUHJhKEtMPRZ8rJnLAg8bg4q+Cj5MSLQ2qDkDLRrmP0
-         u6FoySjljgBN01NWf+dufC9/SOvfRriXWz3UxkkO9gAol551CYUsBaapuekO/e8xLYYg
-         CmoU+vnyvu4+ICCbLALLPTu+79ClJiOPVFsQC97n56M1FyULHKsiXweDdfjYfUKAvAfp
-         4GsLR3RJ1JUaVDl2uJIbTrxO8HovyR9osjjweFwcmc5OQMYrodgUxbxyUgXoYDAhGu3r
-         7WYA==
-X-Gm-Message-State: APzg51D3SwRW0IcMSjlO5NHw6/TSwFYPEk/udXs5muXJjCnBhWNFjyPc
-        EPzYPrHw+tp2ENFktiLDI8FziQGyU+Vx9Q0uWC4=
-X-Google-Smtp-Source: ANB0VdbX1ShKI6iyMLxsZdVueEgeQkA4LZAWJvUfOOnL0QrDEIPAoPOD2hRM8SsL1oWTNKs6I3H3uUrpcE4Vo85eBdg=
-X-Received: by 2002:ac8:6959:: with SMTP id n25-v6mr1342898qtr.9.1535459000970;
- Tue, 28 Aug 2018 05:23:20 -0700 (PDT)
-MIME-Version: 1.0
-References: <1535453838-12154-1-git-send-email-sunil.kovvuri@gmail.com>
-In-Reply-To: <1535453838-12154-1-git-send-email-sunil.kovvuri@gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 28 Aug 2018 14:23:04 +0200
-Message-ID: <CAK8P3a1xC6XjwDAmocpE5TZO7j6uVGtvBtWLPVcYwKqN6Z+seQ@mail.gmail.com>
-Subject: Re: [PATCH 00/15] soc: octeontx2: Add RVU admin function driver
-To:     Sunil Kovvuri <sunil.kovvuri@gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-soc@vger.kernel.org, sgoutham@marvell.com,
-        Networking <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=1bWk57vJ2/NRaLDaBlmuyzPfFua+8fuTr7SjvElztx4=;
+        b=IJnNUWCx3Iln1ZJbxtI5MGhBEZe6sdpcSu/LdsHD/wDo88iGI43VHCjaBuOBdDdeMw
+         ZIaNI/TpbkTr0XOvxLdadlXFsNe+QnuEK7m/z/s9kCmmYmfCXRhF7Tbayb6aB2sXoaSA
+         sNFQfkoaCup8kkDClr/V6p2sdt5fo/KUpy2beR3D+epSfqxJhge/EFrUIM8qtURrhY76
+         lUOCParyVn8f8pmJaTnJj/tlZmgaceNEnJfNClVd09f0h1eXtO5ZbKjf4KdrNsOKved5
+         ys1lliJZV10LUAEQaiDFqUXv7Y4yW3TY2OS6Bx8yJbGA/99U8RjgnvY01q0ljRzPb+Hl
+         H/Aw==
+X-Gm-Message-State: APzg51DkOS5DPF5Cr+k8205YVJSDzoNIh9A8BsWJNeT3DVrGV65OV5bD
+        G1I3mphMKvhzoq60CCQGeGICBw==
+X-Google-Smtp-Source: ANB0VdaafbyJaCCcd8f8L31pizhFSOEbj7+HhomwIrBn5Heoit4UTPs/J4XyeSBZgPCaKXgRh0ErDg==
+X-Received: by 2002:a1c:7e92:: with SMTP id z140-v6mr1192585wmc.48.1535459260209;
+        Tue, 28 Aug 2018 05:27:40 -0700 (PDT)
+Received: from boomer.baylibre.local ([90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id 184-v6sm2105685wmv.6.2018.08.28.05.27.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 28 Aug 2018 05:27:39 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Kevin Hilman <khilman@baylibre.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, linux-kernel@vger.kernel.org,
+        linux-amlogic@lists.infradead.org
+Subject: [PATCH] arm64: defconfig: enable modules for amlogic s400 sound card
+Date:   Tue, 28 Aug 2018 14:27:35 +0200
+Message-Id: <20180828122735.28919-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 12:57 PM <sunil.kovvuri@gmail.com> wrote:
->
-> From: Sunil Goutham <sgoutham@marvell.com>
->
-> Resource virtualization unit (RVU) on Marvell's OcteonTX2 SOC supports
-> multiple PCIe SRIOV physical functions (PFs) and virtual functions (VFs).
-> PF0 is called administrative / admin function (AF) and has privilege access
-> to registers to provision different RVU functional blocks to each of
-> PF/VF.
->
-> This admin function (AF) driver acts as a configuration / administrative
-> software which provisions functional blocks to a PF/VF on demand for them
-> to work as one of the following
->  - A basic network controller (i.e NIC).
->  - NIC with packet filtering, shaping and scheduling capabilities.
->  - A crypto device.
->  - A combination of above etc.
->
-> PF/VFs communicate with admin function via a shared memory region.
-> This patch series adds logic for the following
->  - RVU AF driver with functional blocks provisioning support
->  - Mailbox infrastructure for communication between AF and PFs.
->  - CGX driver which provides information about physcial network
->    interfaces which AF processes and forwards required info to
->    PF/VF drivers.
->
-> This is the first set of patches out of 70 odd patches.
->
-> Note: This driver neither receives any data nor processes it i.e no I/O,
->       just does the hardware configuration.
+Compile the necessary drivers as modules, including codecs, for the
+s400 sound card.
 
-Hi Sunil,
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ arch/arm64/configs/defconfig | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Thanks for posting this first series, I'm glad we're seeing support for this
-chip family making some progress.
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index f67e8d5e93ad..6b1daea53bd3 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -464,6 +464,7 @@ CONFIG_SND_SOC_ROCKCHIP_I2S=m
+ CONFIG_SND_SOC_ROCKCHIP_SPDIF=m
+ CONFIG_SND_SOC_ROCKCHIP_RT5645=m
+ CONFIG_SND_SOC_RK3399_GRU_SOUND=m
++CONFIG_SND_MESON_AXG_SOUND_CARD=m
+ CONFIG_SND_SOC_SAMSUNG=y
+ CONFIG_SND_SOC_RCAR=m
+ CONFIG_SND_SOC_AK4613=m
+@@ -475,6 +476,9 @@ CONFIG_SND_SOC_RT5514_SPI=m
+ CONFIG_SND_SOC_RT5645=m
+ CONFIG_SND_SIMPLE_CARD=m
+ CONFIG_SND_AUDIO_GRAPH_CARD=m
++CONFIG_SND_SOC_ES7134=m
++CONFIG_SND_SOC_ES7241=m
++CONFIG_SND_SOC_TAS571X=m
+ CONFIG_I2C_HID=m
+ CONFIG_USB=y
+ CONFIG_USB_OTG=y
+-- 
+2.17.1
 
-My feeling overall is that we need a review from the network driver
-folks more than the arm-soc team etc, and that maybe the driver
-as a whole should go into drivers/net/ethernet.
-
-We support some couple of similar hardware already that has
-both support for virtual functions and for crypto offload, including
-the Chelsio cxgb4, Mellanox mlx5, NXP DPAA and probably others,
-and we need to ensure that the exposed interfaces are all
-compatible, and that you use the correct subsystems and
-in-kernel abstractions for thing that are common.
-
-      Arnd
