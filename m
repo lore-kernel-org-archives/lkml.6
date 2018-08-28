@@ -2,123 +2,134 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5022C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 23:31:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B39FC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 23:32:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74F0D2087D
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 23:31:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8BFF2088E
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 23:32:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="I3Ab/6I7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74F0D2087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=aol.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0ebp22GA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8BFF2088E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727512AbeH2DZH (ORCPT
+        id S1727535AbeH2D01 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 23:25:07 -0400
-Received: from sonic302-49.consmr.mail.gq1.yahoo.com ([98.137.68.175]:42008
-        "EHLO sonic302-49.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727104AbeH2DZH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 23:25:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1535499069; bh=C5y5Dw5LjULoWZSGgYUGZo8p0zWgNIBw2Lg2kTfNvng=; h=From:Subject:To:Cc:References:Date:In-Reply-To:From:Subject; b=I3Ab/6I7/v47KTZA3sgN/u1Y8Z27dowvXQOLeNzsLdc7xyU9QtDhm/Hu/WH0UGV4wyLZWA1TxBxmigP04oC++ktouID2xRxL9nlhceviJd19n3wnNqbbSwkYoX6EXZxaPT8n4EzCe/jImZpN4EgjGZV26Xi/aPxDwfYdD5Sqg88C9chjyl/xL79T0NfLa5dccowlQgY2KuJ9NS1ki7WqrKntOYxp1Qy1mr/b1LcNb5gMAo+vHcyq7/VyYuCIS29T3J8xbpz+RVr6sEMjIwbc3IG640w3k+1fNXVNfAf25usoGPI1Qm7qtSLQ15GHtF00zlf4qcViYb4KRyfWo0Ma4Q==
-X-YMail-OSG: 9WyBONAVM1mURjOcgWcsk5nODfa51rX.NAhIgtZsWhPfqbgQAralJlp7a.xheQd
- YDOjW6uE4wrg1hiOm1p03cr7tlzqFRbH0vOPO2soV2emK.Izi2iCU56Di6l8fsLH8GHK2mQPZ8uR
- NvtiM9eU5Ys.XoMsRRx4pWl2t6piIVwSPcBC6BTYqdmqoxPIBFoL09Qc3QBimdJG6Bc5TkDM5lLM
- jq6q2CTdb0k5f9A37TnURFedpf18XX9ExBI9ltTcz.mYnkSgAv4Ex9ueFl99M53XtndihhKygJ40
- pDWKXQkvCzD0CMcEDjewtKRnLly1ZnXy259WjvwXwkh49R9azLcmgERZtMFK1Tv6Ch0IS1Y3TS4Z
- 8kT0fPKcqkcZ0Hl10rXblx5SvqNm7ZXIzEmRknYz2BEz4SiOSHBtHE7EVDsBI0B9ENVAoaf8L_Fa
- A4BB45lp7fhouAeiT.pOmHmd84_vRdq2lrkmUBIkXHAENfJXKUs1U0ZQBGhFxkeU3CkG3_AicdmN
- mBdk9dslkcqJVKaYo6.62hMDErFnb3AAwqV7Cex5lS1VdNtWntE_MUlSGdOVHHcCpfXZ_fXTUqnE
- t5mFL6tADWFfZuM4edJzuaixJkWDcvNWXv.g9.3scKVPlsoZkTvuKrdwvGlAHHFlrifesREoVK.t
- N.NB5es.pEzJBuvE6__ktCc9ec_1Q_2Jk.f69n43gSD0OH1z14Xh_FTYjlEcgG9bxCkYJN1ggPGS
- LF3elW9FCjPZGj7PRmVkMUQDHiLqDEFt2lxYDnMkFNyiu2GMUm8X638UwyWsqqUZZeUeun1VNKAo
- 9JRasmzNCQqLO5d1n7S1ti61JEDJAEBbW2GxvTBs97yVG_IgiS1s7AREpQpWX0tE87s8Nt2Gf9MD
- TTU1Heem_qEf_BiEmPQzOdpVXZ.9ONCd9Lh.dURzy9JQV0CWv3Icxvv9LHm3IpM9zP1Iz2XPWde5
- TTP7J9OhtLlSgZSoeQkUPH.gcCBb2RldZjWS4kebMl96DlSK3xZB5V_ESQUhwaPJR6udofDhB6u0
- 1Sn96Ud68EdUuuJ2.JeqZOXYjWyJfGrg-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.gq1.yahoo.com with HTTP; Tue, 28 Aug 2018 23:31:09 +0000
-Received: from 112.96.253.137 (EHLO [192.168.24.100]) ([112.96.253.137])
-          by smtp422.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 1fd94944c5d6bb4665f1de0362da0504;
-          Tue, 28 Aug 2018 23:27:08 +0000 (UTC)
-From:   Gao Xiang <hsiangkao@aol.com>
-Subject: Re: Tagged pointers in the XArray
-To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Gao Xiang <gaoxiang25@huawei.com>,
-        zhong jiang <zhongjiang@huawei.com>,
-        Chao Yu <yuchao0@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <20180828222727.GD11400@bombadil.infradead.org>
-Message-ID: <8f565135-ffe4-e8a6-8a6f-4b74cedd4209@aol.com>
-Date:   Wed, 29 Aug 2018 07:26:57 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180828222727.GD11400@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8
+        Tue, 28 Aug 2018 23:26:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54170 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727104AbeH2D01 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 23:26:27 -0400
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE9E52087D;
+        Tue, 28 Aug 2018 23:32:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535499149;
+        bh=UmL00Yaksy0hl3YcTc1u6uHjx3BKzGNCkF9oYb2qTP4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=0ebp22GABwKs8oiiujqXRy0aA2rFh9cVP2ZbGmhHRF+cJ7Gp2MVqISPZDmALjopBH
+         ZVJE5Dlz7N2m5LfdiIkFwm9QHA9yz0RfViCJKtrpMn513GsKkmymgd/9PANXCEUki+
+         +kotR/dPM/GitAB1YZJGBqzkvQeygoe9QRgo7U48=
+Date:   Wed, 29 Aug 2018 08:32:24 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Jann Horn <jannh@google.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org,
+        dvyukov@google.com, Masami Hiramatsu <mhiramat@kernel.org>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Borislav Petkov <bp@alien8.de>
+Subject: Re: [PATCH v3 1/7] x86: refactor kprobes_fault() like
+ kprobe_exceptions_notify()
+Message-Id: <20180829083224.6b01b8f04872855d90c4786a@kernel.org>
+In-Reply-To: <20180828201421.157735-2-jannh@google.com>
+References: <20180828201421.157735-1-jannh@google.com>
+        <20180828201421.157735-2-jannh@google.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, 28 Aug 2018 22:14:15 +0200
+Jann Horn <jannh@google.com> wrote:
 
-On 2018/8/29 6:27, Matthew Wilcox wrote:
-> I find myself caught between two traditions.
->
-> On the one hand, the radix tree has been calling the page cache dirty &
-> writeback bits "tags" for over a decade.
->
-> On the other hand, using some of the bits _in a pointer_ as a tag has been
-> common practice since at least the 1960s.
-> https://en.wikipedia.org/wiki/Tagged_pointer and
-> https://en.wikipedia.org/wiki/31-bit
+> This is an extension of commit b506a9d08bae ("x86: code clarification patch
+> to Kprobes arch code"). As that commit explains, even though
+> kprobe_running() can't be called with preemption enabled, you don't have to
+> disable preemption - if preemption is on, you can't be in a kprobe.
+> 
+> Also, use X86_TRAP_PF instead of 14.
+> 
+> Signed-off-by: Jann Horn <jannh@google.com>
+> ---
+> v3:
+>  - avoid unnecessary branch on return value and split up the checks
+>    (Borislav Petkov)
+> 
+>  arch/x86/mm/fault.c | 24 +++++++++++++-----------
+>  1 file changed, 13 insertions(+), 11 deletions(-)
+> 
+> diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+> index b9123c497e0a..bcdaae1d5bf5 100644
+> --- a/arch/x86/mm/fault.c
+> +++ b/arch/x86/mm/fault.c
+> @@ -44,17 +44,19 @@ kmmio_fault(struct pt_regs *regs, unsigned long addr)
+>  
+>  static nokprobe_inline int kprobes_fault(struct pt_regs *regs)
+>  {
+> -	int ret = 0;
+> -
+> -	/* kprobe_running() needs smp_processor_id() */
+> -	if (kprobes_built_in() && !user_mode(regs)) {
+> -		preempt_disable();
+> -		if (kprobe_running() && kprobe_fault_handler(regs, 14))
+> -			ret = 1;
+> -		preempt_enable();
+> -	}
+> -
+> -	return ret;
+> +	if (!kprobes_built_in())
+> +		return 0;
+> +	if (user_mode(regs))
+> +		return 0;
+> +	/*
+> +	 * To be potentially processing a kprobe fault and to be allowed to call
+> +	 * kprobe_running(), we have to be non-preemptible.
 
-Personally I think this topic makes sense. These two `tags' are totally
-different actually.
+Good catch!
 
-> EROFS wants to use tagged pointers in the radix tree / xarray.  Right now,
-> they're building them by hand, which is predictably grotty-looking.
-> I think it's reasonable to provide this functionality as part of the
-> XArray API, _but_ it's confusing to have two different things called tags.
->
-> I've done my best to document my way around this, but if we want to rename
-> the things that the radix tree called tags to avoid the problem entirely,
-> now is the time to do it.  Anybody got a Good Idea?
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
 
-As Matthew pointed out, it is a good chance to rename one of them.
+Thanks!
 
-
-In addition to that, I am also looking forward to a better general
-tagged pointer
-implementation to wrap up operations for all these tags and restrict the
-number of tag bits
-at compile time. It is also useful to mark its usage and clean up these
-magic masks
-though the implementation could look a bit simple.
-
-If you folks think the general tagged pointer is meaningless, please
-ignore my words....
-However according to my EROFS coding experience, code with different
-kind of tagged
-pointers by hand (directly use magic masks) will be in a mess, but it
-also seems
-unnecessary to introduce independent operations for each kind of tagged
-pointers.
+> +	 */
+> +	if (preemptible())
+> +		return 0;
+> +	if (!kprobe_running())
+> +		return 0;
+> +	return kprobe_fault_handler(regs, X86_TRAP_PF);
+>  }
+>  
+>  /*
+> -- 
+> 2.19.0.rc0.228.g281dcd1b4d0-goog
+> 
 
 
-In the end, I also hope someone interested in this topic and thanks in
-advance... :)
-
-
-Thanks,
-Gao Xiang
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
