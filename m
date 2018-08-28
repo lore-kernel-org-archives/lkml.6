@@ -2,721 +2,139 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE57DC43334
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 06:29:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C827DC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 06:29:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D106208B9
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 06:29:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D106208B9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id A5A56208E1
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 06:29:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5A56208E1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727255AbeH1KTM (ORCPT
+        id S1727195AbeH1KTJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 06:19:12 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:32800 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727067AbeH1KTM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 06:19:12 -0400
-X-UUID: ec7d9d84b2624ddaa43786e596858485-20180828
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <leilk.liu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1966027127; Tue, 28 Aug 2018 14:28:52 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Tue, 28 Aug 2018 14:28:49 +0800
-Received: from localhost.localdomain (10.17.3.153) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Tue, 28 Aug 2018 14:28:49 +0800
-From:   Leilk Liu <leilk.liu@mediatek.com>
-To:     Mark Brown <broonie@kernel.org>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-spi@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <mengqi.zhang@mediatek.com>, <yt.shen@mediatek.com>,
-        Leilk Liu <leilk.liu@mediatek.com>
-Subject: [PATCH 2/3] spis: mediatek: add spi slave for Mediatek MT2712
-Date:   Tue, 28 Aug 2018 14:28:04 +0800
-Message-ID: <1535437685-30230-3-git-send-email-leilk.liu@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1535437685-30230-1-git-send-email-leilk.liu@mediatek.com>
-References: <1535437685-30230-1-git-send-email-leilk.liu@mediatek.com>
+        Tue, 28 Aug 2018 06:19:09 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:45983 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726994AbeH1KTJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 06:19:09 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id CD7FFE721F9DD;
+        Tue, 28 Aug 2018 14:28:59 +0800 (CST)
+Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server (TLS) id 14.3.399.0; Tue, 28 Aug
+ 2018 14:28:51 +0800
+Subject: Re: [PATCH] Revert "staging: erofs: disable compiling temporarile"
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <devel@driverdev.osuosl.org>, LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "David Howells" <dhowells@redhat.com>,
+        Chao Yu <yuchao0@huawei.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>
+References: <1535427588-69630-1-git-send-email-gaoxiang25@huawei.com>
+ <20180828054444.GA4453@kroah.com>
+From:   Gao Xiang <gaoxiang25@huawei.com>
+Message-ID: <0c701b3c-5553-cf4c-c0b3-ad151b84662c@huawei.com>
+Date:   Tue, 28 Aug 2018 14:28:02 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+In-Reply-To: <20180828054444.GA4453@kroah.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.151.23.176]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchs add basic spi slave for MT2712.
+Hi Greg,
 
-Signed-off-by: Leilk Liu <leilk.liu@mediatek.com>
----
- drivers/spi/Kconfig            |    8 +
- drivers/spi/Makefile           |    1 +
- drivers/spi/spi-slave-mt27xx.c |  613 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 622 insertions(+)
- create mode 100644 drivers/spi/spi-slave-mt27xx.c
+On 2018/8/28 13:44, Greg Kroah-Hartman wrote:
+> On Tue, Aug 28, 2018 at 11:39:48AM +0800, Gao Xiang wrote:
+>> This reverts commit 156c3df8d4db4e693c062978186f44079413d74d.
+>>
+>> Since XArray and the new mount apis aren't merged in 4.19-rc1
+>> merge window, the BROKEN mark can be reverted directly without
+>> any problems.
+>>
+>> Fixes: 156c3df8d4db ("staging: erofs: disable compiling temporarile")
+>> Cc: Matthew Wilcox <willy@infradead.org>
+>> Cc: David Howells <dhowells@redhat.com>
+>> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+>> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+>> ---
+>>
+>> Hi Greg,
+>>
+>>  Could you please apply this patch to enable EROFS from 4.19-rc2, thanks...
+>>
+>>  p.s. We would like to provide a more stable EROFS when linux-4.19 is out,
+>>       and there are also two patchsets (the one is already sent out by Chao
+>>       and me, the other is previewing in linux-erofs mailing list and it will
+>>       be sent out after gathering enough testdata and feedback from community
+>>       and carefully reviewed), could you also please consider applying these
+>>       two patchsets in the later 4.19-rc (both >2, or the first patchset
+>>       could be in rc2 in advance) if it is convenient to do so, or the next
+>>       4.20 is also ok...
+>>
+>>  LINK: https://lore.kernel.org/lkml/20180821144937.20555-1-chao@kernel.org/
+>>        https://lore.kernel.org/lkml/1535076160-99466-1-git-send-email-gaoxiang25@huawei.com/
+> 
+> I applied those patch sets to my -next branch already, right?  So those
 
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index 671d078..86ef6a5 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -802,6 +802,14 @@ config SPI_SLAVE
- 	  slave protocol handlers.
- 
- if SPI_SLAVE
-+config SPI_SLAVE_MT27XX
-+	tristate "MediaTek SPI slave device"
-+	depends on ARCH_MEDIATEK || COMPILE_TEST
-+	help
-+	  This selects the MediaTek(R) SPI slave device driver.
-+	  If you want to use MediaTek(R) SPI slave interface,
-+	  say Y or M here.If you are not sure, say N.
-+	  SPI slave drivers for Mediatek MT27XX series ARM SoCs.
- 
- config SPI_SLAVE_TIME
- 	tristate "SPI slave handler reporting boot up time"
-diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
-index a90d559..a5e7b3c 100644
---- a/drivers/spi/Makefile
-+++ b/drivers/spi/Makefile
-@@ -109,5 +109,6 @@ obj-$(CONFIG_SPI_XTENSA_XTFPGA)		+= spi-xtensa-xtfpga.o
- obj-$(CONFIG_SPI_ZYNQMP_GQSPI)		+= spi-zynqmp-gqspi.o
- 
- # SPI slave protocol handlers
-+obj-$(CONFIG_SPI_SLAVE_MT27XX)		+= spi-slave-mt27xx.o
- obj-$(CONFIG_SPI_SLAVE_TIME)		+= spi-slave-time.o
- obj-$(CONFIG_SPI_SLAVE_SYSTEM_CONTROL)	+= spi-slave-system-control.o
-diff --git a/drivers/spi/spi-slave-mt27xx.c b/drivers/spi/spi-slave-mt27xx.c
-new file mode 100644
-index 0000000..2aa12f3
---- /dev/null
-+++ b/drivers/spi/spi-slave-mt27xx.c
-@@ -0,0 +1,613 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// Copyright (c) 2018 MediaTek Inc.
-+// Author: Leilk Liu <leilk.liu@mediatek.com>
-+//
-+// This program is free software; you can redistribute it and/or modify
-+// it under the terms of the GNU General Public License version 2 as
-+// published by the Free Software Foundation.
-+//
-+// This program is distributed in the hope that it will be useful,
-+// but WITHOUT ANY WARRANTY; without even the implied warranty of
-+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+// GNU General Public License for more details.
-+
-+#include <linux/clk.h>
-+#include <linux/device.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/err.h>
-+#include <linux/interrupt.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/spi/spi.h>
-+
-+#define SPIS_IRQ_EN_REG		0x0
-+#define SPIS_IRQ_CLR_REG	0x4
-+#define SPIS_IRQ_ST_REG		0x8
-+#define SPIS_IRQ_MASK_REG	0xc
-+#define SPIS_CFG_REG		0x10
-+#define SPIS_RX_DATA_REG	0x14
-+#define SPIS_TX_DATA_REG	0x18
-+#define SPIS_RX_DST_REG		0x1c
-+#define SPIS_TX_SRC_REG		0x20
-+#define SPIS_RX_CMD_REG		0x24
-+#define SPIS_FIFO_ST_REG	0x28
-+#define SPIS_MON_SEL_REG	0x2c
-+#define SPIS_DMA_CFG_REG	0x30
-+#define SPIS_FIFO_THR_REG	0x34
-+#define SPIS_DEBUG_ST_REG	0x38
-+#define SPIS_BYTE_CNT_REG	0x3c
-+#define SPIS_SOFT_RST_REG	0x40
-+
-+/* SPIS_IRQ_EN_REG */
-+#define DMA_DONE_EN		BIT(7)
-+#define TX_FIFO_EMPTY_EN	BIT(6)
-+#define TX_FIFO_FULL_EN		BIT(5)
-+#define RX_FIFO_EMPTY_EN	BIT(4)
-+#define RX_FIFO_FULL_EN		BIT(3)
-+#define DATA_DONE_EN		BIT(2)
-+#define RSTA_DONE_EN		BIT(1)
-+#define CMD_INVALID_EN		BIT(0)
-+
-+/* SPIS_IRQ_CLR_REG */
-+#define DMA_DONE_CLR		BIT(7)
-+#define TX_FIFO_EMPTY_CLR	BIT(6)
-+#define TX_FIFO_FULL_CLR	BIT(5)
-+#define RX_FIFO_EMPTY_CLR	BIT(4)
-+#define RX_FIFO_FULL_CLR	BIT(3)
-+#define DATA_DONE_CLR		BIT(2)
-+#define RSTA_DONE_CLR		BIT(1)
-+#define CMD_INVALID_CLR		BIT(0)
-+
-+/* SPIS_IRQ_ST_REG */
-+#define DMA_DONE_ST		BIT(7)
-+#define TX_FIFO_EMPTY_ST	BIT(6)
-+#define TX_FIFO_FULL_ST		BIT(5)
-+#define RX_FIFO_EMPTY_ST	BIT(4)
-+#define RX_FIFO_FULL_ST		BIT(3)
-+#define DATA_DONE_ST		BIT(2)
-+#define RSTA_DONE_ST		BIT(1)
-+#define CMD_INVALID_ST		BIT(0)
-+
-+/* SPIS_IRQ_MASK_REG */
-+#define DMA_DONE_MASK		BIT(7)
-+#define DATA_DONE_MASK		BIT(2)
-+#define RSTA_DONE_MASK		BIT(1)
-+#define CMD_INVALID_MASK	BIT(0)
-+
-+/* SPIS_CFG_REG */
-+#define SPIS_TX_ENDIAN		BIT(7)
-+#define SPIS_RX_ENDIAN		BIT(6)
-+#define SPIS_TXMSBF		BIT(5)
-+#define SPIS_RXMSBF		BIT(4)
-+#define SPIS_CPHA		BIT(3)
-+#define SPIS_CPOL		BIT(2)
-+#define SPIS_TX_EN		BIT(1)
-+#define SPIS_RX_EN		BIT(0)
-+
-+/* SPIS_DMA_CFG_REG */
-+#define TX_DMA_TRIG_EN		BIT(31)
-+#define TX_DMA_EN		BIT(30)
-+#define RX_DMA_EN		BIT(29)
-+#define TX_DMA_LEN		0xfffff
-+
-+/* SPIS_SOFT_RST_REG */
-+#define SPIS_DMA_ADDR_EN	BIT(1)
-+#define SPIS_SOFT_RST		BIT(0)
-+
-+#define MTK_SPI_SLAVE_MAX_FIFO_SIZE 512U
-+
-+struct mtk_spi_slave {
-+	struct device *dev;
-+	void __iomem *base;
-+	struct clk *parent_clk, *sel_clk, *spi_clk;
-+	struct completion xfer_done;
-+	struct spi_transfer *cur_transfer;
-+	bool slave_aborted;
-+};
-+
-+static const struct of_device_id mtk_spi_slave_of_match[] = {
-+	{ .compatible = "mediatek,mt2712-spi-slave", },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, mtk_spi_slave_of_match);
-+
-+static void mtk_spi_slave_disable_dma(struct mtk_spi_slave *mdata)
-+{
-+	u32 reg_val;
-+
-+	reg_val = readl(mdata->base + SPIS_DMA_CFG_REG);
-+	reg_val &= ~RX_DMA_EN;
-+	reg_val &= ~TX_DMA_EN;
-+	writel(reg_val, mdata->base + SPIS_DMA_CFG_REG);
-+}
-+
-+static void mtk_spi_slave_disable_xfer(struct mtk_spi_slave *mdata)
-+{
-+	u32 reg_val;
-+
-+	reg_val = readl(mdata->base + SPIS_CFG_REG);
-+	reg_val &= ~SPIS_TX_EN;
-+	reg_val &= ~SPIS_RX_EN;
-+	writel(reg_val, mdata->base + SPIS_CFG_REG);
-+}
-+
-+static int mtk_spi_slave_wait_for_completion(struct mtk_spi_slave *mdata)
-+{
-+	if (wait_for_completion_interruptible(&mdata->xfer_done) ||
-+	    mdata->slave_aborted) {
-+		pr_err("interrupted\n");
-+		return -EINTR;
-+	}
-+
-+	return 0;
-+}
-+
-+static int mtk_spi_slave_prepare_message(struct spi_controller *ctlr,
-+					 struct spi_message *msg)
-+{
-+	u16 cpha, cpol;
-+	u32 reg_val;
-+	struct spi_device *spi = msg->spi;
-+	struct mtk_spi_slave *mdata = spi_controller_get_devdata(ctlr);
-+
-+	cpha = spi->mode & SPI_CPHA ? 1 : 0;
-+	cpol = spi->mode & SPI_CPOL ? 1 : 0;
-+
-+	reg_val = readl(mdata->base + SPIS_CFG_REG);
-+	if (cpha)
-+		reg_val |= SPIS_CPHA;
-+	else
-+		reg_val &= ~SPIS_CPHA;
-+	if (cpol)
-+		reg_val |= SPIS_CPOL;
-+	else
-+		reg_val &= ~SPIS_CPOL;
-+
-+	if (spi->mode & SPI_LSB_FIRST)
-+		reg_val &= ~(SPIS_TXMSBF | SPIS_RXMSBF);
-+	else
-+		reg_val |= SPIS_TXMSBF | SPIS_RXMSBF;
-+
-+	/* set the tx/rx endian */
-+#ifdef __LITTLE_ENDIAN
-+	reg_val &= ~SPIS_TX_ENDIAN;
-+	reg_val &= ~SPIS_RX_ENDIAN;
-+#else
-+	reg_val |= SPIS_TX_ENDIAN;
-+	reg_val |= SPIS_RX_ENDIAN;
-+#endif
-+	writel(reg_val, mdata->base + SPIS_CFG_REG);
-+
-+	return 0;
-+}
-+
-+static int mtk_spi_slave_fifo_transfer(struct spi_controller *ctlr,
-+				       struct spi_device *spi,
-+				       struct spi_transfer *xfer)
-+{
-+	int reg_val, cnt, remainder, ret;
-+	struct mtk_spi_slave *mdata = spi_controller_get_devdata(ctlr);
-+
-+	writel(SPIS_SOFT_RST, mdata->base + SPIS_SOFT_RST_REG);
-+
-+	reg_val = readl(mdata->base + SPIS_CFG_REG);
-+	if (xfer->rx_buf)
-+		reg_val |= SPIS_RX_EN;
-+	if (xfer->tx_buf)
-+		reg_val |= SPIS_TX_EN;
-+	writel(reg_val, mdata->base + SPIS_CFG_REG);
-+
-+	cnt = xfer->len / 4;
-+	if (xfer->tx_buf)
-+		iowrite32_rep(mdata->base + SPIS_TX_DATA_REG,
-+			      xfer->tx_buf, cnt);
-+
-+	remainder = xfer->len % 4;
-+	if (xfer->tx_buf && remainder > 0) {
-+		reg_val = 0;
-+		memcpy(&reg_val, xfer->tx_buf + (cnt * 4), remainder);
-+		writel(reg_val, mdata->base + SPIS_TX_DATA_REG);
-+	}
-+
-+	ret = mtk_spi_slave_wait_for_completion(mdata);
-+	if (ret) {
-+		mtk_spi_slave_disable_xfer(mdata);
-+		writel(SPIS_SOFT_RST, mdata->base + SPIS_SOFT_RST_REG);
-+	}
-+
-+	return ret;
-+}
-+
-+static int mtk_spi_slave_dma_transfer(struct spi_controller *ctlr,
-+				      struct spi_device *spi,
-+				      struct spi_transfer *xfer)
-+{
-+	int reg_val, ret;
-+	struct mtk_spi_slave *mdata = spi_controller_get_devdata(ctlr);
-+	struct device *dev = mdata->dev;
-+
-+	writel(SPIS_SOFT_RST, mdata->base + SPIS_SOFT_RST_REG);
-+
-+	if (xfer->tx_buf) {
-+		xfer->tx_dma = dma_map_single(dev, (void *)xfer->tx_buf,
-+					      xfer->len, DMA_TO_DEVICE);
-+		if (dma_mapping_error(dev, xfer->tx_dma)) {
-+			ret = -ENOMEM;
-+			goto disable_transfer;
-+		}
-+	}
-+
-+	if (xfer->rx_buf) {
-+		xfer->rx_dma = dma_map_single(dev, (void *)xfer->rx_buf,
-+					      xfer->len, DMA_FROM_DEVICE);
-+		if (dma_mapping_error(dev, xfer->rx_dma)) {
-+			ret = -ENOMEM;
-+			goto unmap_txdma;
-+		}
-+	}
-+
-+	writel(xfer->tx_dma, mdata->base + SPIS_TX_SRC_REG);
-+	writel(xfer->rx_dma, mdata->base + SPIS_RX_DST_REG);
-+
-+	writel(SPIS_DMA_ADDR_EN, mdata->base + SPIS_SOFT_RST_REG);
-+
-+	/* enable config reg tx rx_enable */
-+	reg_val = readl(mdata->base + SPIS_CFG_REG);
-+	if (xfer->tx_buf)
-+		reg_val |= SPIS_TX_EN;
-+	if (xfer->rx_buf)
-+		reg_val |= SPIS_RX_EN;
-+	writel(reg_val, mdata->base + SPIS_CFG_REG);
-+
-+	/* config dma */
-+	reg_val = 0;
-+	reg_val &= ~TX_DMA_LEN;
-+	reg_val |= (xfer->len - 1) & TX_DMA_LEN;
-+	writel(reg_val, mdata->base + SPIS_DMA_CFG_REG);
-+
-+	reg_val = readl(mdata->base + SPIS_DMA_CFG_REG);
-+	if (xfer->tx_buf)
-+		reg_val |= TX_DMA_EN;
-+	if (xfer->rx_buf)
-+		reg_val |= RX_DMA_EN;
-+	reg_val |= TX_DMA_TRIG_EN;
-+	writel(reg_val, mdata->base + SPIS_DMA_CFG_REG);
-+
-+	ret = mtk_spi_slave_wait_for_completion(mdata);
-+	if (ret)
-+		goto unmap_rxdma;
-+
-+	return 0;
-+
-+unmap_rxdma:
-+	if (xfer->rx_buf)
-+		dma_unmap_single(dev, xfer->rx_dma,
-+				 xfer->len, DMA_FROM_DEVICE);
-+
-+unmap_txdma:
-+	if (xfer->tx_buf)
-+		dma_unmap_single(dev, xfer->tx_dma,
-+				 xfer->len, DMA_TO_DEVICE);
-+
-+disable_transfer:
-+	mtk_spi_slave_disable_dma(mdata);
-+	mtk_spi_slave_disable_xfer(mdata);
-+	writel(SPIS_SOFT_RST, mdata->base + SPIS_SOFT_RST_REG);
-+
-+	return ret;
-+}
-+
-+static int mtk_spi_slave_transfer_one(struct spi_controller *ctlr,
-+				      struct spi_device *spi,
-+				      struct spi_transfer *xfer)
-+{
-+	struct mtk_spi_slave *mdata = spi_controller_get_devdata(ctlr);
-+
-+	reinit_completion(&mdata->xfer_done);
-+	mdata->slave_aborted = false;
-+	mdata->cur_transfer = xfer;
-+
-+	if (xfer->len > MTK_SPI_SLAVE_MAX_FIFO_SIZE)
-+		return mtk_spi_slave_dma_transfer(ctlr, spi, xfer);
-+	else
-+		return mtk_spi_slave_fifo_transfer(ctlr, spi, xfer);
-+}
-+
-+static int mtk_spi_slave_setup(struct spi_device *spi)
-+{
-+	u32 reg_val;
-+	struct mtk_spi_slave *mdata = spi_controller_get_devdata(spi->master);
-+
-+	reg_val = DMA_DONE_EN | DATA_DONE_EN |
-+		  RSTA_DONE_EN | CMD_INVALID_EN;
-+	writel(reg_val, mdata->base + SPIS_IRQ_EN_REG);
-+
-+	reg_val = DMA_DONE_MASK | DATA_DONE_MASK |
-+		  RSTA_DONE_MASK | CMD_INVALID_MASK;
-+	writel(reg_val, mdata->base + SPIS_IRQ_MASK_REG);
-+
-+	mtk_spi_slave_disable_dma(mdata);
-+	mtk_spi_slave_disable_xfer(mdata);
-+
-+	return 0;
-+}
-+
-+static int mtk_slave_abort(struct spi_controller *ctlr)
-+{
-+	struct mtk_spi_slave *mdata = spi_controller_get_devdata(ctlr);
-+
-+	mdata->slave_aborted = true;
-+	complete(&mdata->xfer_done);
-+
-+	return 0;
-+}
-+
-+static irqreturn_t mtk_spi_slave_interrupt(int irq, void *dev_id)
-+{
-+	u32 cmd, int_status, reg_val, cnt, remainder;
-+	struct spi_controller *ctlr = dev_id;
-+	struct mtk_spi_slave *mdata = spi_controller_get_devdata(ctlr);
-+	struct spi_transfer *trans = mdata->cur_transfer;
-+
-+	int_status = readl(mdata->base + SPIS_IRQ_ST_REG);
-+	writel(int_status, mdata->base + SPIS_IRQ_CLR_REG);
-+
-+	if (!trans)
-+		return IRQ_HANDLED;
-+
-+	if ((int_status & DMA_DONE_ST) &&
-+	    ((int_status & DATA_DONE_ST) ||
-+	    (int_status & RSTA_DONE_ST))) {
-+		writel(SPIS_SOFT_RST, mdata->base + SPIS_SOFT_RST_REG);
-+
-+		mtk_spi_slave_disable_dma(mdata);
-+		mtk_spi_slave_disable_xfer(mdata);
-+
-+		if (trans->tx_buf)
-+			dma_unmap_single(mdata->dev, trans->tx_dma,
-+					 trans->len, DMA_TO_DEVICE);
-+		if (trans->rx_buf)
-+			dma_unmap_single(mdata->dev, trans->rx_dma,
-+					 trans->len, DMA_FROM_DEVICE);
-+	}
-+
-+	if ((!(int_status & DMA_DONE_ST)) &&
-+	    ((int_status & DATA_DONE_ST) ||
-+	    (int_status & RSTA_DONE_ST))) {
-+		cnt = trans->len / 4;
-+		if (trans->rx_buf)
-+			ioread32_rep(mdata->base + SPIS_RX_DATA_REG,
-+				     trans->rx_buf, cnt);
-+		remainder = trans->len % 4;
-+		if (trans->rx_buf && remainder > 0) {
-+			reg_val = readl(mdata->base + SPIS_RX_DATA_REG);
-+			memcpy(trans->rx_buf + (cnt * 4),
-+			       &reg_val, remainder);
-+		}
-+
-+		mtk_spi_slave_disable_xfer(mdata);
-+	}
-+
-+	if (int_status & CMD_INVALID_ST)
-+		dev_err(&ctlr->dev, "cmd invalid\n");
-+
-+	mdata->cur_transfer = NULL;
-+	complete(&mdata->xfer_done);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int mtk_spi_slave_probe(struct platform_device *pdev)
-+{
-+	struct spi_controller *ctlr;
-+	struct mtk_spi_slave *mdata;
-+	const struct of_device_id *of_id;
-+	struct resource *res;
-+	int i, irq, ret;
-+
-+	ctlr = spi_alloc_slave(&pdev->dev, sizeof(*mdata));
-+	if (!ctlr) {
-+		dev_err(&pdev->dev, "failed to alloc spi slave\n");
-+		return -ENOMEM;
-+	}
-+
-+	ctlr->auto_runtime_pm = true;
-+	ctlr->dev.of_node = pdev->dev.of_node;
-+	ctlr->mode_bits = SPI_CPOL | SPI_CPHA;
-+	ctlr->mode_bits |= SPI_LSB_FIRST;
-+
-+	ctlr->prepare_message = mtk_spi_slave_prepare_message;
-+	ctlr->transfer_one = mtk_spi_slave_transfer_one;
-+	ctlr->setup = mtk_spi_slave_setup;
-+	ctlr->slave_abort = mtk_slave_abort;
-+
-+	mdata = spi_controller_get_devdata(ctlr);
-+
-+	platform_set_drvdata(pdev, ctlr);
-+
-+	init_completion(&mdata->xfer_done);
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!res) {
-+		ret = -ENODEV;
-+		dev_err(&pdev->dev, "failed to determine base address\n");
-+		goto err_put_ctlr;
-+	}
-+
-+	mdata->dev = &pdev->dev;
-+
-+	mdata->base = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(mdata->base)) {
-+		ret = PTR_ERR(mdata->base);
-+		goto err_put_ctlr;
-+	}
-+
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq < 0) {
-+		dev_err(&pdev->dev, "failed to get irq (%d)\n", irq);
-+		ret = irq;
-+		goto err_put_ctlr;
-+	}
-+
-+	ret = devm_request_irq(&pdev->dev, irq, mtk_spi_slave_interrupt,
-+			       IRQF_TRIGGER_NONE, dev_name(&pdev->dev), ctlr);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to register irq (%d)\n", ret);
-+		goto err_put_ctlr;
-+	}
-+
-+	mdata->parent_clk = devm_clk_get(&pdev->dev, "parent-clk");
-+	if (IS_ERR(mdata->parent_clk)) {
-+		ret = PTR_ERR(mdata->parent_clk);
-+		dev_err(&pdev->dev, "failed to get parent-clk: %d\n", ret);
-+		goto err_put_ctlr;
-+	}
-+
-+	mdata->sel_clk = devm_clk_get(&pdev->dev, "sel-clk");
-+	if (IS_ERR(mdata->sel_clk)) {
-+		ret = PTR_ERR(mdata->sel_clk);
-+		dev_err(&pdev->dev, "failed to get sel-clk: %d\n", ret);
-+		goto err_put_ctlr;
-+	}
-+
-+	mdata->spi_clk = devm_clk_get(&pdev->dev, "spi-clk");
-+	if (IS_ERR(mdata->spi_clk)) {
-+		ret = PTR_ERR(mdata->spi_clk);
-+		dev_err(&pdev->dev, "failed to get spi-clk: %d\n", ret);
-+		goto err_put_ctlr;
-+	}
-+
-+	ret = clk_prepare_enable(mdata->spi_clk);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "failed to enable spi_clk (%d)\n", ret);
-+		goto err_put_ctlr;
-+	}
-+
-+	ret = clk_set_parent(mdata->sel_clk, mdata->parent_clk);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "failed to clk_set_parent (%d)\n", ret);
-+		goto err_disable_clk;
-+	}
-+
-+	pm_runtime_enable(&pdev->dev);
-+
-+	ret = devm_spi_register_controller(&pdev->dev, ctlr);
-+	if (ret) {
-+		dev_err(&pdev->dev,
-+			"failed to register slave controller(%d)\n", ret);
-+		goto err_disable_runtime_pm;
-+	}
-+
-+	clk_disable_unprepare(mdata->spi_clk);
-+
-+	return 0;
-+
-+err_disable_runtime_pm:
-+	pm_runtime_disable(&pdev->dev);
-+err_disable_clk:
-+	clk_disable_unprepare(mdata->spi_clk);
-+err_put_ctlr:
-+	spi_controller_put(ctlr);
-+
-+	return ret;
-+}
-+
-+static int mtk_spi_slave_remove(struct platform_device *pdev)
-+{
-+	struct spi_controller *ctlr = platform_get_drvdata(pdev);
-+
-+	pm_runtime_disable(&pdev->dev);
-+
-+	return 0;
-+}
-+
-+#ifdef CONFIG_PM_SLEEP
-+static int mtk_spi_slave_suspend(struct device *dev)
-+{
-+	int ret;
-+	struct spi_controller *ctlr = dev_get_drvdata(dev);
-+	struct mtk_spi_slave *mdata = spi_controller_get_devdata(ctlr);
-+
-+	ret = spi_controller_suspend(ctlr);
-+	if (ret)
-+		return ret;
-+
-+	if (!pm_runtime_suspended(dev))
-+		clk_disable_unprepare(mdata->spi_clk);
-+
-+	return ret;
-+}
-+
-+static int mtk_spi_slave_resume(struct device *dev)
-+{
-+	int ret;
-+	struct spi_controller *ctlr = dev_get_drvdata(dev);
-+	struct mtk_spi_slave *mdata = spi_controller_get_devdata(ctlr);
-+
-+	if (!pm_runtime_suspended(dev)) {
-+		ret = clk_prepare_enable(mdata->spi_clk);
-+		if (ret < 0) {
-+			dev_err(dev, "failed to enable spi_clk (%d)\n", ret);
-+			return ret;
-+		}
-+	}
-+
-+	ret = spi_controller_resume(ctlr);
-+	if (ret < 0)
-+		clk_disable_unprepare(mdata->spi_clk);
-+
-+	return ret;
-+}
-+#endif /* CONFIG_PM_SLEEP */
-+
-+#ifdef CONFIG_PM
-+static int mtk_spi_slave_runtime_suspend(struct device *dev)
-+{
-+	struct spi_controller *ctlr = dev_get_drvdata(dev);
-+	struct mtk_spi_slave *mdata = spi_controller_get_devdata(ctlr);
-+
-+	clk_disable_unprepare(mdata->spi_clk);
-+
-+	return 0;
-+}
-+
-+static int mtk_spi_slave_runtime_resume(struct device *dev)
-+{
-+	struct spi_controller *ctlr = dev_get_drvdata(dev);
-+	struct mtk_spi_slave *mdata = spi_controller_get_devdata(ctlr);
-+	int ret;
-+
-+	ret = clk_prepare_enable(mdata->spi_clk);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to enable spi_clk (%d)\n", ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+#endif /* CONFIG_PM */
-+
-+static const struct dev_pm_ops mtk_spi_slave_pm = {
-+	SET_SYSTEM_SLEEP_PM_OPS(mtk_spi_slave_suspend, mtk_spi_slave_resume)
-+	SET_RUNTIME_PM_OPS(mtk_spi_slave_runtime_suspend,
-+			   mtk_spi_slave_runtime_resume, NULL)
-+};
-+
-+static struct platform_driver mtk_spi_slave_driver = {
-+	.driver = {
-+		.name = "mtk-spi-slave",
-+		.pm	= &mtk_spi_slave_pm,
-+		.of_match_table = mtk_spi_slave_of_match,
-+	},
-+	.probe = mtk_spi_slave_probe,
-+	.remove = mtk_spi_slave_remove,
-+};
-+
-+module_platform_driver(mtk_spi_slave_driver);
-+
-+MODULE_DESCRIPTION("MTK SPI Slave Controller driver");
-+MODULE_AUTHOR("Leilk Liu <leilk.liu@mediatek.com>");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:mtk-spi-slave");
--- 
-1.7.9.5
+Yes, Thank you for applying those patches. :)
 
+> would be going into 4.20-rc1, it is time now for "bugfixes only" for
+> 4.19-final.
+> 
+> So perhaps we should just leave it as "BROKEN" for now for 4.19 and add
+> this to my tree now and let people work on it for the next few months in
+> linux-next so that 4.20 has a solid base to start with?
+> 
+
+EROFS is be marked as "BROKEN" just because of conflict with
+XArray and the new mount apis, as Stephen Rothwell suggested in
+
+https://lore.kernel.org/lkml/20180802010705.24a72730@canb.auug.org.au/
+
+> It might be easiest for Greg to add the disabling CONFIG_EROFS_FS patch
+> to the staging tree itself for his first pull request during the merge
+> window and then send a second pull request (after the vfs and maybe the
+> Xarray stuff has been merged by Linus) with these patches followed by a
+> revert of the disabling patch.
+
+But these two features was still discussing in the mailing list even at the
+last time of 4.19-rc1 merge window. I cannot decide whether they were eventually
+get merged in 4.19 or not. But it seems that it is regretful that linux-4.19
+is out without XArray and the new mount apis.
+
+Therefore, I think EROFS should work for linux-4.19 without any modification
+if just revert the BROKEN mark.
+
+EROFS works fine with the 4.19-rc1 code except that it has some __GFP_NOFAIL
+and BUG_ONs on error handling paths and very rarely race between memory
+reclaiming and decompression... :( I personally think it is complete enough
+for people to test since it is an independent and staging filesystem driver (no
+other influence...) Anyway, removing EROFS BROKEN mark at 4.20 is also ok of course...
+
+On the other head, if XArray and the new mount apis is still pending for 4.20,
+should EROFS uses the same policy as Stephen suggested? I have no idea how to do next...
+
+
+I would like to hear your and Chao's suggestions....Thanks in advance...
+
+Thanks,
+Gao Xiang
+
+> thanks,
+> 
+> greg k-h
+> 
