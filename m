@@ -1,143 +1,174 @@
-Return-Path: <SRS0=ekB2=LK=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B1C5C433F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 23:34:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 305F1C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 00:03:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA121208B4
-	for <linux-kernel@archiver.kernel.org>; Mon, 27 Aug 2018 23:34:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Yjcp6TpP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA121208B4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 856E0208B9
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 00:03:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 856E0208B9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727234AbeH1DXn (ORCPT
+        id S1727199AbeH1DwK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 27 Aug 2018 23:23:43 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:33370 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727021AbeH1DXm (ORCPT
+        Mon, 27 Aug 2018 23:52:10 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:39378 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726994AbeH1DwJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 Aug 2018 23:23:42 -0400
-Received: by mail-oi0-f68.google.com with SMTP id 8-v6so1375520oip.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 16:34:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NQAZoDUdDICPMtjrPU4kKGmlSTIoMBB+bmXKKFvwp4k=;
-        b=Yjcp6TpP0Ha6f2rJB7xDQeSu2yVcQc/yHqhj8AA/D6LMedp84HYZC6Ae3UbFgQbX+L
-         H56H8MAHF8W1G+hd0MbxsQAmA3cbIR3Ti5Y3nCTyyfCqyViSMD9Aj7MXFjtYPUNHjGMq
-         N9sj9fyuP8eKgSHIbbZyoalV3HrKJijWUgljANy0/EK+v15rGGzW1z6bT4dRQ16yM/P4
-         ggFyHggar8lCArQ+l8GVv+vqn5FaUKZPahxo5AonEwncNTw7VMRC1KMZ6rZTZTQvKMFj
-         TM8d3MBKvnZdHVrtKREpKpFC16vqmGwBcV4j/FY9RAJzoUep31LC03/Qzr+dVvuBbwfG
-         /jVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NQAZoDUdDICPMtjrPU4kKGmlSTIoMBB+bmXKKFvwp4k=;
-        b=N11fPqX3+Lor66Lki9jQj0vmtbh97+IPGE91bI7cVWx9imvJcQcPtpBDJV3+ycSdnb
-         xJfP0vcfLwA0JoCBjP9+YhEWRyGmFalo28bzWB65RlX3se3EqYM8Ib1E7KW1O8p5LwF/
-         eEDQguoxaUC7nIjJ88cHJmP3w2AyojPMPyQan/BBsKYo2kH2BXevnXrwkHk6Y90uOYlf
-         T56UoXmb6LJSQU7fjvJZlDWDoHNrr3+PF2op4tY/wyL/I01LsQE0DDhj15/A7B5/1sqe
-         s33ukCIz9AtEhcRz5Lxa0NJFblQeVAif4q+PNO8IE8uitAbcD+UvY/82KyQBGXeNpCfJ
-         X8LQ==
-X-Gm-Message-State: APzg51Bt070MqSdf+iu17syALNF6tsN9poLBmJKrchZEDF0seXlUPcZ1
-        pIX5Y/tYtB+HQDRE7OuMktex8yQkL137EzPH5KS//w==
-X-Google-Smtp-Source: ANB0VdaGmvw1UMqpFIK3WcgSM322Va2iKqRPAjBt/j/kWAHEagBEs1p++FL6wctbKD1FB/vi9ORhbv2fHNjsoIcLS3M=
-X-Received: by 2002:aca:4784:: with SMTP id u126-v6mr711788oia.229.1535412891856;
- Mon, 27 Aug 2018 16:34:51 -0700 (PDT)
+        Mon, 27 Aug 2018 23:52:09 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1fuRTS-0000kN-Kd; Tue, 28 Aug 2018 00:03:10 +0000
+Date:   Tue, 28 Aug 2018 01:03:10 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     Cong Wang <xiyou.wangcong@gmail.com>
+Cc:     Jamal Hadi Salim <jhs@mojatatu.com>,
+        Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jiri Pirko <jiri@resnulli.us>,
+        David Miller <davem@davemloft.net>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>
+Subject: Re: [PATCH] net: sched: Fix memory exposure from short TCA_U32_SEL
+Message-ID: <20180828000310.GE6515@ZenIV.linux.org.uk>
+References: <20180826055801.GA42063@beast>
+ <20180826061534.GT6515@ZenIV.linux.org.uk>
+ <CAGXu5jK7VzayzZTcxgZBf-+YHWO+Hv7s8utj2rzTc3gFtA8pFQ@mail.gmail.com>
+ <20180826173236.GU6515@ZenIV.linux.org.uk>
+ <20180826225749.GY6515@ZenIV.linux.org.uk>
+ <cb9d4e74-3498-48bd-45e0-05e925dbdb5b@mojatatu.com>
+ <CAM_iQpVEyq9hR3bbOtLFKoLo6nHCtiL6A__uEz3JdDO79GF_8A@mail.gmail.com>
 MIME-Version: 1.0
-References: <c7ee1ee7a1b8d17743f7c3680ea5d2c32bf3e897.1535410956.git.luto@kernel.org>
- <CAG48ez2DkjrvmP57JvbC+4ee0qCXCEXEyYuA4YApWGX_k29y_w@mail.gmail.com> <CALCETrXHaAFARQ4Gq2ku1DMbD+78cx1JjWDpTenbNns4OWT+FA@mail.gmail.com>
-In-Reply-To: <CALCETrXHaAFARQ4Gq2ku1DMbD+78cx1JjWDpTenbNns4OWT+FA@mail.gmail.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Tue, 28 Aug 2018 01:34:25 +0200
-Message-ID: <CAG48ez3+HLOhyXY64wt4_LKv4qKq8A0KQmuSg05945ZrDjgowQ@mail.gmail.com>
-Subject: Re: [PATCH] x86/nmi: Fix some races in NMI uaccess
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Rik van Riel <riel@surriel.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        stable@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Nadav Amit <nadav.amit@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAM_iQpVEyq9hR3bbOtLFKoLo6nHCtiL6A__uEz3JdDO79GF_8A@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 1:26 AM Andy Lutomirski <luto@kernel.org> wrote:
->
-> On Mon, Aug 27, 2018 at 4:12 PM, Jann Horn <jannh@google.com> wrote:
-> > On Tue, Aug 28, 2018 at 1:04 AM Andy Lutomirski <luto@kernel.org> wrote:
-> >>
-> >> In NMI context, we might be in the middle of context switching or in
-> >> the middle of switch_mm_irqs_off().  In either case, CR3 might not
-> >> match current->mm, which could cause copy_from_user_nmi() and
-> >> friends to read the wrong memory.
-> >>
-> >> Fix it by adding a new nmi_uaccess_okay() helper and checking it in
-> >> copy_from_user_nmi() and in __copy_from_user_nmi()'s callers.
-> >
-> > What about eBPF probes (which I think can be attached to kprobe points
-> > / tracepoints / perf events) that perform userspace reads / userspace
-> > writes / kernel reads? Can those run in NMI context, and if so, do
-> > they also need special handling?
->
-> I assume they can run in NMI context, which might be problematic in
-> and of themselves.  For example, does BPF adequately protect against a
-> BPF program accessing a map while bpf(2) is modifying it?  It seems
-> like bpf_prog_active is intended to serve this purpose.
->
-> But I don't see any obvious mechanism for eBPF programs to read user memory.
+On Mon, Aug 27, 2018 at 02:31:41PM -0700, Cong Wang wrote:
+> > I cant think of any challenges. Cong/Jiri? Would it require development
+> > time classifiers/actions/qdiscs to sit in that directory (I suspect you
+> > dont want them in include/net).
+> > BTW, the idea of improving grep-ability of the code by prefixing the
+> > ops appropriately makes sense. i.e we should have ops->cls_init,
+> > ops->act_init etc.
+> 
+> Hmm? Isn't struct tcf_proto_ops used and must be provided
+> by each tc filter module? How does it work if you move it into
+> net/sched/* for out-of-tree modules? Are they supposed to
+> include "..../net/sched/tcf_proto.h"?? Or something else?
 
-Look in kernel/trace/bpf_trace.c, which defines a bunch of eBPF
-helpers that can only be called from privileged eBPF code. Ah, but I
-misremembered, the userspace write helper does have a guard against
-interrupts, just the arbitrary read helper doesn't.
+If you care about out-of-tree modules, that could easily live in
+include/net/tcf_proto.h, provided that it's not pulled by indirect
+includes into hell knows how many places.  Try
+make allmodconfig
+make >/dev/null 2>&1
+find -name '.*.cmd'|xargs grep sch_generic.h
 
-BPF_CALL_3(bpf_probe_read, void *, dst, u32, size, const void *, unsafe_ptr)
-{
-    int ret;
+That finds 2977 files here, most of them having nothing to do with
+net/sched.
 
-    ret = probe_kernel_read(dst, unsafe_ptr, size);
-    if (unlikely(ret < 0))
-        memset(dst, 0, size);
+> BTW, we need some grep tool that really understands C syntax,
+> not making each variable friendly to plain grep.
 
-    return ret;
-}
-[...]
-BPF_CALL_3(bpf_probe_write_user, void *, unsafe_ptr, const void *, src,
-       u32, size)
-{
-    /*
-     * Ensure we're in user context which is safe for the helper to
-     * run. This helper has no business in a kthread.
-     *
-     * access_ok() should prevent writing to non-user memory, but in
-     * some situations (nommu, temporary switch, etc) access_ok() does
-     * not provide enough validation, hence the check on KERNEL_DS.
-     */
+This isn't the matter of C syntax; it needs to handle C typization,
+and you really can't do that anywhere near reliably without looking
+at preprocessor output.  Which very much depends upon .config...
 
-    if (unlikely(in_interrupt() ||
-             current->flags & (PF_KTHREAD | PF_EXITING)))
-        return -EPERM;
-    if (unlikely(uaccess_kernel()))
-        return -EPERM;
-    if (!access_ok(VERIFY_WRITE, unsafe_ptr, size))
-        return -EPERM;
+BTW, something odd in cls_u32.c: what happens if we have the following
+graph:
+tcf_proto <tp>, it's ->data being <c0> and ->root - <ht0>
+tc_u_common <c0>, in its ->hlist
+	<ht1>, in its ->ht[0]
+		<knode>
+	<ht0>
+and set ->ht_down in <knode> to the <ht0>?  AFAICS,
+there's nothing to prevent that - TCA_U32_LINK being
+0x80000000 will do just that.  What happens upon u32_destroy()
+in that case?  Unless I'm misreading that code, refcounts will be
+	<c0>:	1
+	<ht0>:	2
+	<ht1>:	1
+and in u32_destroy() we'll get this:
+	root_ht = <ht0>
+	tp_c = <c0>
+        if (root_ht && --root_ht->refcnt == 0)
+                u32_destroy_hnode(tp, root_ht, extack);
+decrements refcnt to 1 and does nothing else.
+        if (--tp_c->refcnt == 0) {
+is satisfied
+                hlist_del(&tp_c->hnode);
+<c0> unhashed
+                while ((ht = rtnl_dereference(tp_c->hlist)) != NULL) {
+we take ht = <ht1>
+                        u32_clear_hnode(tp, ht, extack);
+which does
+        for (h = 0; h <= ht->divisor; h++) {
+                while ((n = rtnl_dereference(ht->ht[h])) != NULL) {
+n = <knode>
+                        RCU_INIT_POINTER(ht->ht[h],
+                                         rtnl_dereference(n->next));
+remove <knode> from <ht1>->ht[0]
+                        tcf_unbind_filter(tp, &n->res);
+                        u32_remove_hw_knode(tp, n, extack);
+                        idr_remove(&ht->handle_idr, n->handle);
+                        if (tcf_exts_get_net(&n->exts))
+                                tcf_queue_work(&n->rwork, u32_delete_key_freepf_work);
+                        else
+                                u32_destroy_key(n->tp, n, true);
+... and we hit u32_destroy_key(<tp>, <knode>, true), which does
+        struct tc_u_hnode *ht = rtnl_dereference(n->ht_down);
+ht = <ht0>
+        tcf_exts_destroy(&n->exts);
+        tcf_exts_put_net(&n->exts);
+        if (ht && --ht->refcnt == 0)
+                kfree(ht);
+*NOW* <ht0>->refcnt is 0, and we free the damn thing.
+	....
+	kfree(n);
+<knode> is freed and we return to u32_destroy_hnode() where we
+see that there's nothing else left in <ht1>->ht[...] and return
+to u32_destroy().  Where
+                        RCU_INIT_POINTER(tp_c->hlist, ht->next);
+sets <c0>->hlist to <ht1>->next, aka <h0>.  Which is already freed.
 
-    return probe_kernel_write(unsafe_ptr, src, size);
-}
+                        /* u32_destroy_key() will later free ht for us, if it's
+                         * still referenced by some knode
+                         */
+                        if (--ht->refcnt == 0)
+                                kfree_rcu(ht, rcu);
+<ht1>->refcnt reaches 0 and we free it (RCU-delayed)
+                }
+... and we go for the next iteration, this time with ht = <ht0>.
+Doing all kinds of unsanitary things to the memory it used to occupy...
+
+Incidentally, if we hit
+                                tcf_queue_work(&n->rwork, u32_delete_key_freepf_work);
+instead of u32_destroy_key(), the things don't seem to be any better - we
+won't do anything to <knode> until rtnl is dropped, so u32_destroy() won't
+break on the second pass through the loop - it'll free <ht0> there and
+return.  Setting us up for trouble, since when u32_delete_key_freepf_work()
+finally gets to u32_destroy_key() we'll have <knode>->ht_down pointing
+to freed memory and decrementing its contents...
+
+What am I missing in there?  Is it just "we should never have ->ht_down
+pointing to anyone's ->root"?  If so, I'm not sure how to detect that;
+if not... what should happen to the orphaned root_ht?  Should it
+remain on the list?  We might have two tcf_proto sharing tp->data,
+so tp_c and its list might very well survive the u32_destroy()...
+
+Note, BTW, that if we do leave the orphan on the list and later
+change the tc_u_knode so that ->ht_down doesn't point to that
+thing anymore, we'll get its refcount incremented to 2 in
+u32_init_knode(), then decremented to 1 by u32_set_parms() and
+then arrange for u32_delete_key_work() to be run.  Which will 
+drive the refcount to 0 and free the damn thing.  While it's
+still in the middle of ->hlist...
