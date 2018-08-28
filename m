@@ -2,90 +2,123 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE40BC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:11:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6CC4C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:12:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EEA220846
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:11:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EEA220846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8B3D520893
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:12:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OcHBK9DR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B3D520893
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727195AbeH1MB7 (ORCPT
+        id S1727236AbeH1MDF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 08:01:59 -0400
-Received: from mga05.intel.com ([192.55.52.43]:6674 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726806AbeH1MB7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 08:01:59 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Aug 2018 01:11:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,298,1531810800"; 
-   d="scan'208";a="66537614"
-Received: from jsakkine-mobl1.fi.intel.com (HELO localhost) ([10.237.66.39])
-  by fmsmga008.fm.intel.com with ESMTP; 28 Aug 2018 01:11:24 -0700
-Date:   Tue, 28 Aug 2018 11:11:23 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, linux-sgx@vger.kernel.org,
-        Haim Cohen <haim.cohen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@suse.de>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
-        Matt Turner <mattst88@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v13 05/13] x86/msr: Add SGX definitions to msr-index.h
-Message-ID: <20180828081123.GF15508@linux.intel.com>
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-6-jarkko.sakkinen@linux.intel.com>
- <c4c85a47-6de4-1171-4fd5-4a4bdd4d31db@intel.com>
+        Tue, 28 Aug 2018 08:03:05 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:39092 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726954AbeH1MDE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 08:03:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=B6fWduFSQCgqId81pfl7WtO6bKBuyx39MuqTrgl5G6s=; b=OcHBK9DRGgm4CpP10XwCTCJeh
+        1VytTEEovJ/NGZSP8tnvA/CD8nG+TLvY0/uiSqMUlHEqhtd1ZqKeWsIEeoA8WAHF8D0lvaRMUeG9X
+        tZIzOCr0ayizbche54kEtgjSjpMXSTHmiMbFy1MzsJUgPQVjHf4qB9tIMCk5qavu0CilK1qEcrx1w
+        CVtgL6+RGeFgqebshK4xossLdIvkvBUXt3nKKHQb+YxOPjL3SbqN6d/+7ECt4EeK723MxlQuQu9aI
+        CKVox7tCh/mpTN4rKfgNnX9xKhJSDx+PGt/CJW4HYCYSVIdYZcmuAkW6bU4HQrfM8ldME6BMbhj/9
+        s7X3pXywA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fuZ73-0007I7-Bz; Tue, 28 Aug 2018 08:12:33 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 1C99C2024D705; Tue, 28 Aug 2018 10:12:32 +0200 (CEST)
+Date:   Tue, 28 Aug 2018 10:12:32 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Michael Petlan <mpetlan@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH] perf/x86/intel: Export mem events only if there's PEBs
+ support
+Message-ID: <20180828081232.GI24124@hirez.programming.kicks-ass.net>
+References: <20180813154820.16991-1-jolsa@kernel.org>
+ <20180827090624.GI24695@krava>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c4c85a47-6de4-1171-4fd5-4a4bdd4d31db@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180827090624.GI24695@krava>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 12:42:32PM -0700, Dave Hansen wrote:
-> On 08/27/2018 11:53 AM, Jarkko Sakkinen wrote:
-> > @@ -866,10 +867,9 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
-> >  		}
-> >  	}
-> >  
-> > -	/* Intel SGX features: level 0x00000012 */
-> > -	if (c->cpuid_level >= 0x00000012) {
-> > -		cpuid(0x00000012, &eax, &ebx, &ecx, &edx);
-> > -
-> > +	/* Intel SGX features */
-> > +	if (c->cpuid_level >= SGX_CPUID) {
-> > +		cpuid(SGX_CPUID,  &eax, &ebx, &ecx, &edx);
-> >  		c->x86_capability[CPUID_12_EAX] = eax;
-> >  	}
-> 
-> This hunk has no apparent connection to the changelog.
+On Mon, Aug 27, 2018 at 11:06:24AM +0200, Jiri Olsa wrote:
+> +static __init struct attribute **get_hsw_events_attrs(bool *alloc)
+>  {
+> +	if (boot_cpu_has(X86_FEATURE_RTM)) {
+> +		*alloc = true;
+> +		return merge_attr(hsw_events_attrs, hsw_tsx_events_attrs);
+> +	}
+> +	return hsw_events_attrs;
+>  }
 
-Thanks for catching this, the same squashing mistake :-)
 
-/Jarkko
+
+> @@ -4357,6 +4374,15 @@ __init int intel_pmu_init(void)
+>  		WARN_ON(!x86_pmu.format_attrs);
+>  	}
+>  
+> +	if (x86_pmu.pebs && mem_attr) {
+> +		struct attribute **attr = x86_pmu.cpu_events;
+> +
+> +		x86_pmu.cpu_events = merge_attr(x86_pmu.cpu_events, mem_attr);
+> +
+> +		if (alloc_events)
+> +			kfree(attr);
+> +	}
+> +
+>  	if (x86_pmu.num_counters > INTEL_PMC_MAX_GENERIC) {
+>  		WARN(1, KERN_ERR "hw perf events %d > max(%d), clipping!",
+>  		     x86_pmu.num_counters, INTEL_PMC_MAX_GENERIC);
+
+
+static __init struct attribute **
+get_events_attrs(struct attribute **base,
+		 struct attribute **mem,
+		 struct attribute **tsx)
+{
+	struct attribute **attrs = base;
+	struct attribute **old;
+
+	if (mem) {
+		old = attrs;
+		attrs = merge_attrs(attrs, mem);
+		if (old != base)
+			kfree(old);
+	}
+
+	if (tsx && boot_cpu_has(X86_FEATURE_RTM)) {
+		old = attrs;
+		attrs = merge_attrs(attrs, tsx);
+		if (old != base)
+			kfree(old);
+	}
+
+	return attrs;
+}
+
+Would that not help to concentrate things a little more?
