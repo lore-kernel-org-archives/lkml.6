@@ -2,178 +2,103 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DDEBC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:27:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 950C9C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:27:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C7D320878
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:27:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="xTJ/5OHR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C7D320878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 56C4D20878
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:27:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56C4D20878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728321AbeH1STP (ORCPT
+        id S1728341AbeH1STj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 14:19:15 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:40255 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726439AbeH1STP (ORCPT
+        Tue, 28 Aug 2018 14:19:39 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:40079 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727460AbeH1STj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 14:19:15 -0400
-Received: from mail-vk0-f49.google.com (mail-vk0-f49.google.com [209.85.213.49]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id w7SEREkk012569;
-        Tue, 28 Aug 2018 23:27:15 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w7SEREkk012569
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1535466435;
-        bh=D3ULHv5bPVeqWgGb88g44JdF/TPn6HJpcPVZWX6hXOE=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=xTJ/5OHRFKoIn9HRwiDA6Hb/2uASGh+92Un7VUj5R41W2qGk0Tfj933hfbfE6VrcV
-         n1X2D3sbZgxKbnpc8Dta8uRh7XOt69c1FBNCKuJ/ZZZVj6HemMxLWqUKB3K/im+5ka
-         ukMUe4CWytHsjnveV+GuhG5RGfnb2vHChe+lp2fVwmy0e5TfeMpPg0JixS7hMv3YPT
-         6OZNcZIMAiOn+mSwy8jaujcSQ0c/gJmBMwSQ2o4BhZ7OqzWuxS2QDo107BzHo3Zicg
-         YIxm8x+Q6PVAb9TS5qZ+mgPOCtuvnbLo28oCqX5PaMA7BP6+P1GE0BOJxJVdp6OhPp
-         mV1BZ1gOGQX8A==
-X-Nifty-SrcIP: [209.85.213.49]
-Received: by mail-vk0-f49.google.com with SMTP id j14-v6so868114vke.8;
-        Tue, 28 Aug 2018 07:27:14 -0700 (PDT)
-X-Gm-Message-State: APzg51AeLIhgTyME6fH7ULThaW9xrv4DPyQJbJgroc56XvLE/s5oUl/5
-        5N7q+OsFLjY5nlVz2sYASHArJC6H0fEGd3Uc3JA=
-X-Google-Smtp-Source: ANB0VdYOYRre2cD6LI2y5BLRHuC/ojHfNbDBW7ptDCS1DMZLu/f65dFHeOgXBQW1Pd0lMZZ8yJJlugGwA+/ySyT7x2Y=
-X-Received: by 2002:a1f:3e47:: with SMTP id l68-v6mr1177905vka.42.1535466433728;
- Tue, 28 Aug 2018 07:27:13 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ab0:2642:0:0:0:0:0 with HTTP; Tue, 28 Aug 2018 07:26:33
- -0700 (PDT)
-In-Reply-To: <1532076645-10769-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1532076645-10769-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 28 Aug 2018 23:26:33 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAS6YZeM5s=kxYFKfCDKHEmArqG-+R3Hoy20rX165iqMBA@mail.gmail.com>
-Message-ID: <CAK7LNAS6YZeM5s=kxYFKfCDKHEmArqG-+R3Hoy20rX165iqMBA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ARM: uniphier: dts: add more clocks to Denali NAND
- controller node
-To:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 28 Aug 2018 14:19:39 -0400
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue004 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 0LpiwE-1fPQwz3sBi-00fTIF; Tue, 28 Aug 2018 16:27:28 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     linux-rtc@vger.kernel.org
+Cc:     a.zummo@towertech.it, alexandre.belloni@bootlin.com,
+        keguang.zhang@gmail.com, y2038@lists.linaro.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Matt Redfearn <matt.redfearn@mips.com>,
+        Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>,
+        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] rtc: mips: default to rtc-cmos on mips
+Date:   Tue, 28 Aug 2018 16:26:30 +0200
+Message-Id: <20180828142724.4067857-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.18.0
+X-Provags-ID: V03:K1:DmjXOi4/gJR2KnJwod3hWwHoDox+Y29gAUi3IYfc8UHwkVPajxY
+ B6crdUCfMGVsn5WsMRO9snGl5u+SWAv5fNi0Hb2Me2emXh8lofVX06RIu0k8SZXugAp+xOU
+ yfFyomLDPGY6qi4WUKxomKX6KGDoPjS7+/WgMjsIl0HEytGgBmqZRGQHCY1WYCvyne//2FM
+ CikQb1SKhD3tChAuQpZ8A==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:iE5WrV4a8O0=:v+nti9amxgnZBwOPU9RL9C
+ mzHOjgaX2Wzk0tGsmZVblac5fnMWdl9Xc/PlwHkuhw97oCLamrdLDyZkHK1pKZKP87yMXbwIi
+ vFzrDtIZuM492miLk7AoDGPaRaMELfkGRlvKf3BT4j1gSS3UTirs115I4ceBb17glWxdcQCQ7
+ uH1DhkkoceNSrXP91RDdqNnSQiwmm20NADZaI/Srb0AE8hF4P4CLxQS19lajNUEkVCURq1X26
+ x7RZA2R1pL9D20BaUIMsz8s/h5gT9viwDhq1xNjhwBhi2E53UsEJ+hblzsVvKUL0HNxoLF6yA
+ cS7mmcfbYU11Q8DGf0eyf+xDN7uJAKezpGfP1MDpLM/Q/N/fdi5mkuuuUMd0+QOJsM4ryx5yV
+ fZOqerY4yUK7a4Gy+CN51+QlUBLTDLRFydatCdQ8ityufEOJV9x2qGl+qCufW917dlzDXmFke
+ BMd9yaXhF346/HqYn7bGg5wALEM62R3XvY3QaesY2fkwE1iaa5XWGvRS5yWnGCAj7Qgf7EDAy
+ 19QFB0ArsybuxLEh8Fs9NcO4mULf7p93OfQFtm2QTzUrxS2i72bDVxBIy7lkBfkPa1twP2+rb
+ 5wkBj6rP6bXcx30mZcWskNIk03P55aJr25bQ7W/buue4cASIFlNOV3+LRb6AlAOyZByeb54ST
+ RQ59FuMXIHwGJ2OUKLu3b5SyyA0is92klbTBUnoq7K5EwZnS5uqPPUwYMo9tCzvi1S0g=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-07-20 17:50 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
-> Catch up with the new binding of the Denali IP where three clocks,
-> "nand", "nand_x", "ecc" are required.
->
-> For UniPhier SoCs, the "nand_x" and "ecc" are tied up because they
-> are both 200MHz.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
+The old rtc driver is getting in the way of some compat_ioctl
+simplification. Looking up the loongson64 git history, it seems
+that everyone uses the more modern but compatible RTC_CMOS driver
+anyway, so let's remove the special case for loongson64.
 
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/mips/Kconfig    | 2 +-
+ drivers/char/Kconfig | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Both applied.
-
-
->  arch/arm/boot/dts/uniphier-ld4.dtsi  | 3 ++-
->  arch/arm/boot/dts/uniphier-pro4.dtsi | 3 ++-
->  arch/arm/boot/dts/uniphier-pro5.dtsi | 3 ++-
->  arch/arm/boot/dts/uniphier-pxs2.dtsi | 3 ++-
->  arch/arm/boot/dts/uniphier-sld8.dtsi | 3 ++-
->  5 files changed, 10 insertions(+), 5 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/uniphier-ld4.dtsi b/arch/arm/boot/dts/uniphier-ld4.dtsi
-> index 37950ad..2a17066 100644
-> --- a/arch/arm/boot/dts/uniphier-ld4.dtsi
-> +++ b/arch/arm/boot/dts/uniphier-ld4.dtsi
-> @@ -347,7 +347,8 @@
->                         interrupts = <0 65 4>;
->                         pinctrl-names = "default";
->                         pinctrl-0 = <&pinctrl_nand2cs>;
-> -                       clocks = <&sys_clk 2>;
-> +                       clock-names = "nand", "nand_x", "ecc";
-> +                       clocks = <&sys_clk 2>, <&sys_clk 3>, <&sys_clk 3>;
->                         resets = <&sys_rst 2>;
->                 };
->         };
-> diff --git a/arch/arm/boot/dts/uniphier-pro4.dtsi b/arch/arm/boot/dts/uniphier-pro4.dtsi
-> index 49539f0..da88ccc 100644
-> --- a/arch/arm/boot/dts/uniphier-pro4.dtsi
-> +++ b/arch/arm/boot/dts/uniphier-pro4.dtsi
-> @@ -394,7 +394,8 @@
->                         interrupts = <0 65 4>;
->                         pinctrl-names = "default";
->                         pinctrl-0 = <&pinctrl_nand>;
-> -                       clocks = <&sys_clk 2>;
-> +                       clock-names = "nand", "nand_x", "ecc";
-> +                       clocks = <&sys_clk 2>, <&sys_clk 3>, <&sys_clk 3>;
->                         resets = <&sys_rst 2>;
->                 };
->         };
-> diff --git a/arch/arm/boot/dts/uniphier-pro5.dtsi b/arch/arm/boot/dts/uniphier-pro5.dtsi
-> index 06c2cef..40a84f2 100644
-> --- a/arch/arm/boot/dts/uniphier-pro5.dtsi
-> +++ b/arch/arm/boot/dts/uniphier-pro5.dtsi
-> @@ -439,7 +439,8 @@
->                         interrupts = <0 65 4>;
->                         pinctrl-names = "default";
->                         pinctrl-0 = <&pinctrl_nand2cs>;
-> -                       clocks = <&sys_clk 2>;
-> +                       clock-names = "nand", "nand_x", "ecc";
-> +                       clocks = <&sys_clk 2>, <&sys_clk 3>, <&sys_clk 3>;
->                         resets = <&sys_rst 2>;
->                 };
->         };
-> diff --git a/arch/arm/boot/dts/uniphier-pxs2.dtsi b/arch/arm/boot/dts/uniphier-pxs2.dtsi
-> index 641d961..1903752 100644
-> --- a/arch/arm/boot/dts/uniphier-pxs2.dtsi
-> +++ b/arch/arm/boot/dts/uniphier-pxs2.dtsi
-> @@ -528,7 +528,8 @@
->                         interrupts = <0 65 4>;
->                         pinctrl-names = "default";
->                         pinctrl-0 = <&pinctrl_nand2cs>;
-> -                       clocks = <&sys_clk 2>;
-> +                       clock-names = "nand", "nand_x", "ecc";
-> +                       clocks = <&sys_clk 2>, <&sys_clk 3>, <&sys_clk 3>;
->                         resets = <&sys_rst 2>;
->                 };
->         };
-> diff --git a/arch/arm/boot/dts/uniphier-sld8.dtsi b/arch/arm/boot/dts/uniphier-sld8.dtsi
-> index e9b9b4f..dc723bf 100644
-> --- a/arch/arm/boot/dts/uniphier-sld8.dtsi
-> +++ b/arch/arm/boot/dts/uniphier-sld8.dtsi
-> @@ -351,7 +351,8 @@
->                         interrupts = <0 65 4>;
->                         pinctrl-names = "default";
->                         pinctrl-0 = <&pinctrl_nand2cs>;
-> -                       clocks = <&sys_clk 2>;
-> +                       clock-names = "nand", "nand_x", "ecc";
-> +                       clocks = <&sys_clk 2>, <&sys_clk 3>, <&sys_clk 3>;
->                         resets = <&sys_rst 2>;
->                 };
->         };
-> --
-> 2.7.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index 35511999156a..c695825d9377 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -75,7 +75,7 @@ config MIPS
+ 	select MODULES_USE_ELF_RELA if MODULES && 64BIT
+ 	select MODULES_USE_ELF_REL if MODULES
+ 	select PERF_USE_VMALLOC
+-	select RTC_LIB if !MACH_LOONGSON64
++	select RTC_LIB
+ 	select SYSCTL_EXCEPTION_TRACE
+ 	select VIRT_TO_BUS
+ 
+diff --git a/drivers/char/Kconfig b/drivers/char/Kconfig
+index ce277ee0a28a..131b4c300050 100644
+--- a/drivers/char/Kconfig
++++ b/drivers/char/Kconfig
+@@ -268,7 +268,7 @@ if RTC_LIB=n
+ 
+ config RTC
+ 	tristate "Enhanced Real Time Clock Support (legacy PC RTC driver)"
+-	depends on ALPHA || (MIPS && MACH_LOONGSON64)
++	depends on ALPHA
+ 	---help---
+ 	  If you say Y here and create a character special file /dev/rtc with
+ 	  major number 10 and minor number 135 using mknod ("man mknod"), you
 -- 
-Best Regards
-Masahiro Yamada
+2.18.0
+
