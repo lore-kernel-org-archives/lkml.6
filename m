@@ -2,129 +2,111 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23741C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:36:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B0B9C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:37:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C31682088E
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:36:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rPUU7utf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C31682088E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3C7942088E
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:37:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C7942088E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727947AbeH1Q15 (ORCPT
+        id S1727808AbeH1Q3Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 12:27:57 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:36406 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726120AbeH1Q14 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 12:27:56 -0400
-Received: by mail-wm0-f66.google.com with SMTP id j192-v6so1853572wmj.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 05:36:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=05kE+rEM/SVtQM4ag8xkAlkFSh7FQJHB6Uzw1ymvp0M=;
-        b=rPUU7utfP1hYg11HbjT52vZr6DX3B9lEkMKS69kqAV8E+jkaEeurohKTKCVe1soYG/
-         Ui0zr/+/1bgk1Af+0grt4jB3l8fgBxskvWxsp5Q7nDe9Ne6ypag42/I3gVbBJUQ9t0+E
-         9XAEfFp2skDkO1M/DYHjGTaGok4kYBxeemOoJDrH1VGvwaOGfIXi/6U+4nNc0Vydw3Ui
-         GRkDhNJyXM6xVmjDaMaVpAFjT4GWjNcQHr3gpSkJKwITs73tA+jKpY08VoBF2R5h2Iqw
-         WS9W2d4pbXnDlGSroRg8CAV44jJcUVJZOn3BB7q11iVu9p7GdUal4twMgCGj/JdKawBY
-         eGIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=05kE+rEM/SVtQM4ag8xkAlkFSh7FQJHB6Uzw1ymvp0M=;
-        b=ftqKr2kNs0ipefZVdKwGAiE88yqh7zmJ6bCHvaOkiEUAG6Z0chcP8HNEoeWbjRf1+b
-         pV6GYJNiX2m+khRONj50zhYPu9d4b+JVxJsoi1R4cgwrNNIza5OSp1RZmeaRFDDDu+90
-         YdWxUU4Noy9IFnv4Mb6KF0qz7oeUmUoLWtuJdn8F9HJIaP/w/djB7TwM+aiZnYnaW0CO
-         erueIJcAvYualL+kOJH00o9crS6CefS0pXRgWEM0NXGSIRN1JVrM8UqknixhVT4ToXTO
-         sdTBEQIDI9AmeepazhuRpucEJBLkXkhWk4AE6ZtLlXtPEJmh3FQAlJTrPnz4gm3hGSj/
-         tXAA==
-X-Gm-Message-State: APzg51Bhyt/qKEDkjHaXYPRnbqZp1QVBlkt/dtX6qBqlqkQCZL1Uu3bI
-        r11tfegr2s2J3xL7YfhuVGU=
-X-Google-Smtp-Source: ANB0VdbwTg8JNwFmzN6lS7pSyEi8mXS5LEv/6xgIRloGXEeBWkU5WCywwXZ6aqBhTlFGtFLBRFXTZA==
-X-Received: by 2002:a1c:c64c:: with SMTP id w73-v6mr1166257wmf.98.1535459787681;
-        Tue, 28 Aug 2018 05:36:27 -0700 (PDT)
-Received: from darwi-kernel ([142.93.171.10])
-        by smtp.gmail.com with ESMTPSA id b144-v6sm922718wmd.23.2018.08.28.05.36.26
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 28 Aug 2018 05:36:26 -0700 (PDT)
-Date:   Tue, 28 Aug 2018 12:36:22 +0000
-From:   "Ahmed S. Darwish" <darwish.07@gmail.com>
-To:     Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/13] proc: readdir /proc/*/task
-Message-ID: <20180828123622.GA2087@darwi-kernel>
-References: <20180827231503.26899-1-adobriyan@gmail.com>
- <20180827231503.26899-11-adobriyan@gmail.com>
+        Tue, 28 Aug 2018 12:29:16 -0400
+Received: from mga07.intel.com ([134.134.136.100]:25032 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726120AbeH1Q3Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 12:29:16 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Aug 2018 05:37:48 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,299,1531810800"; 
+   d="scan'208";a="87004472"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga002.jf.intel.com with ESMTP; 28 Aug 2018 05:37:48 -0700
+Received: from [10.125.252.157] (abudanko-mobl.ccr.corp.intel.com [10.125.252.157])
+        by linux.intel.com (Postfix) with ESMTP id 37E835802AD;
+        Tue, 28 Aug 2018 05:37:45 -0700 (PDT)
+Subject: Re: [PATCH v3 2/2]: perf record: enable asynchronous trace writing
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <bdd669cd-a6dc-d592-4655-33b7bfc46cbb@linux.intel.com>
+ <6f83f9cd-263e-b073-487f-4c7570105a7d@linux.intel.com>
+ <20180828090145.GI23727@krava>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <2ed75413-4a8a-ee0c-be27-b3fbbfa000c6@linux.intel.com>
+Date:   Tue, 28 Aug 2018 15:37:45 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180827231503.26899-11-adobriyan@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180828090145.GI23727@krava>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 02:15:01AM +0300, Alexey Dobriyan wrote:
-> ---
->  fs/proc/base.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
+Hi,
 
-Missing description and S-o-b. Further comments below..
+On 28.08.2018 12:01, Jiri Olsa wrote:
+> On Mon, Aug 27, 2018 at 09:16:55PM +0300, Alexey Budankov wrote:
+> 
+> SNIP
+> 
+>> +static int record__mmap_read_sync(int trace_fd, struct aiocb **cblocks,
+>> +		int cblocks_size, struct record *rec)
+>> +{
+>> +	size_t rem;
+>> +	ssize_t size;
+>> +	off_t rem_off;
+>> +	int i, aio_ret, aio_errno, do_suspend;
+>> +	struct perf_mmap *md;
+>> +	struct timespec timeout0 = { 0, 0 };
+>> +	struct timespec timeoutS = { 0, 1000 * 500  * 1 }; // 0.5ms
+>> +
+>> +	if (!cblocks_size)
+>> +		return 0;
+>> +
+>> +	do {
+>> +		do_suspend = 0;
+>> +		/* aio_suspend() implementation inside glibc (as of v2.27) is
+>> +		 * intrusive and not just blocks waiting io requests completion
+>> +		 * but polls requests queue inducing context switches in perf
+>> +		 * tool process. When profiling in system wide mode with tracing
+>> +		 * context switches the trace may be polluted by context switches
+>> +		 * from the perf process and the trace size becomes about 3-5
+>> +		 * times bigger than that of when writing the trace serially.
+>> +		 * To limit the volume of context switches from perf tool
+>> +		 * process nanosleep() call below is added prior aio_suspend()
+>> +		 * calling till every half of the kernel timer tick which is
+>> +		 * usually 1ms (depends on CONFIG_HZ value).
+> 
+> nice, any idea this is intentional for some reason?
+> 
+> was there some impact on the overall performance or
+> this is purely for the sanity of the trace size?
 
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index 33f444721965..668e465c86b3 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -3549,11 +3549,11 @@ static int proc_task_readdir(struct file *file, struct dir_context *ctx)
->  	for (task = first_tid(proc_pid(inode), tid, ctx->pos - 2, ns);
->  	     task;
->  	     task = next_tid(task), ctx->pos++) {
-> -		char name[10 + 1];
-> -		unsigned int len;
-> +		char name[10], *p = name + sizeof(name);
-> +
+Initially we noticed the trace size increase only. However if you look at 
+the data using perf report you see that Perf tool process gets considerable 
+volume of new context switches and that is what caused by switching 
+to AIO streaming, specifically frequent calls of aio_suspend().
 
-Multiple issues:
-
-- len should be 11, as was in the original code
-  (0xffffffff = 4294967295, 10 letters)
-
-- while we're at it, let's use a constant for the '11' instead of
-  mysterious magic numbers
-
-- 'p' is clearly overflowing the stack here
-
->  		tid = task_pid_nr_ns(task, ns);
-> -		len = snprintf(name, sizeof(name), "%u", tid);
-> -		if (!proc_fill_cache(file, ctx, name, len,
-> +		p = _print_integer_u32(p, tid);
-> +		if (!proc_fill_cache(file, ctx, p, name + sizeof(name) - p,
-
-You're replacing snprintf() code __that did proper len checking__
-with code that does not. That's not good.
-
-I can't see how the fourth proc_fill_cache() parameter, ``name +
-sizeof(name)'' safely ever replace the original 'len' parameter.
-It's a pointer value .. (!)
-
-Overall this looks like a broken patch submitted by mistake.
-
-Thanks,
-
--- 
-Darwish
-http://darwish.chasingpointers.com
+> 
+> thanks,
+> jirka
+> 
