@@ -2,103 +2,406 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55490C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:51:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CF77C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:53:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E45592087C
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:51:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E45592087C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+	by mail.kernel.org (Postfix) with ESMTP id 9F0FF2087C
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:53:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F0FF2087C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728244AbeH1Rmt (ORCPT
+        id S1727843AbeH1Rpc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 13:42:49 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:34262 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728157AbeH1Rms (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 13:42:48 -0400
-Received: from imladris.surriel.com ([96.67.55.152])
-        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <riel@shelob.surriel.com>)
-        id 1fueOT-0000pk-UR; Tue, 28 Aug 2018 09:50:53 -0400
-Message-ID: <9f09dcbfa27004fc69dccf8039857f06438018f5.camel@surriel.com>
-Subject: Re: [PATCH] x86/nmi: Fix some races in NMI uaccess
-From:   Rik van Riel <riel@surriel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     X86 ML <x86@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        Jann Horn <jannh@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
+        Tue, 28 Aug 2018 13:45:32 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38360 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726439AbeH1Rpc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 13:45:32 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7421818A;
+        Tue, 28 Aug 2018 06:53:45 -0700 (PDT)
+Received: from e110439-lin.Cambridge.arm.com (e110439-lin.emea.arm.com [10.4.12.126])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2F67F3F5BD;
+        Tue, 28 Aug 2018 06:53:42 -0700 (PDT)
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc:     Ingo Molnar <mingo@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Nadav Amit <nadav.amit@gmail.com>
-Date:   Tue, 28 Aug 2018 09:50:53 -0400
-In-Reply-To: <CALCETrUMeV=P89msPuVuiWEw-MdZQZ9t0rTMgY8P91Q8tQvnXQ@mail.gmail.com>
-References: <c7ee1ee7a1b8d17743f7c3680ea5d2c32bf3e897.1535410956.git.luto@kernel.org>
-         <7e33326ecf792c1a2297d162735b3e63ac185ad0.camel@surriel.com>
-         <CALCETrUMeV=P89msPuVuiWEw-MdZQZ9t0rTMgY8P91Q8tQvnXQ@mail.gmail.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-OAcaxnDOmS6hudnrMKu0"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        linux-api@vger.kernel.org
+Subject: [PATCH v4 00/16] Add utilization clamping support
+Date:   Tue, 28 Aug 2018 14:53:08 +0100
+Message-Id: <20180828135324.21976-1-patrick.bellasi@arm.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This is a respin of:
 
---=-OAcaxnDOmS6hudnrMKu0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+   https://lore.kernel.org/lkml/20180806163946.28380-1-patrick.bellasi@arm.com/
 
-On Mon, 2018-08-27 at 19:10 -0700, Andy Lutomirski wrote:
-> On Mon, Aug 27, 2018 at 6:31 PM, Rik van Riel <riel@surriel.com>
-> wrote:
->=20
-> > What is special about this path wrt nmi_uaccess_ok that is
-> > not also true for the need_flush branch right above it?
-> >=20
-> > What am I missing?
->=20
-> Nothing.  My patch is buggy.  ETOLITTLESLEEP.
->=20
-> I could drop this part of the patch entirely.  Or I could drop the
-> loaded_mm->pgd =3D=3D __va(read_cr3_pa() check and instead make sure that
-> loaded_mm is NULL at any point at which loaded_mm might not match
-> CR3.
-> The latter will be faster in any (hypothetical) virtualization
-> environment where CR3 reads trap.  I don't know if we have any such
-> cases where perf works and we care about performance, though.
+Which has been rebased on v4.19-rc1.
 
-Moving that loaded_mm =3D NULL assignment up a few
-lines, so it comes before the "if (need_flush)"
-test and covers both branches should cover that,
-indeed.
+Thanks for all the valuable comments collected so far!
+Further comments and feedbacks are more than welcome!
 
---=20
-All Rights Reversed.
+Cheers Patrick
 
---=-OAcaxnDOmS6hudnrMKu0
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
 
------BEGIN PGP SIGNATURE-----
+Main changes in v4
+==================
 
-iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAluFUz0ACgkQznnekoTE
-3oN0Owf+JJ9jlT2DA8XLamyAx9KuCURmyabM/XvQzYRGVsGHOiIpGB5zwZWJkW5V
-ba2mtnQ1d+R4rTLFOxvc3YZkphmef+bw7YtVSQ0luYgsFBjLiU+4IXS3wEvUv7sj
-9MgwM6kqmDZdHEGgbH2XBpe9i4ybSYzHBA1Vwd5SgLQeWaUXlGvsKQQjSEBl++Qm
-+Ss++oZ4k7HNDs8AigN5Y6XKlXTykfYpdjBIb6OnfhO8ih6X8/ys/uN0ADrKCFku
-0tR/4ER/jSEq+02okEBxJ2DCuV8foeV6bOro3ceFQ6qAWBLO/4n6qN8OLSTQ0qdz
-MFxdGH1MnrIpRmCLBlDeCFHUcoYxBg==
-=Nr4X
------END PGP SIGNATURE-----
+.:: Fix issues due to limited number of clamp groups
+----------------------------------------------------
 
---=-OAcaxnDOmS6hudnrMKu0--
+As Juri pointed out in:
+
+   https://lore.kernel.org/lkml/20180807123550.GA3062@localhost.localdomain/
+
+we had an issue related to the limited number of supported clamp groups, which
+could have affected both normal users as well as cgroups users.
+
+This problem has been fixed by a couple of new patches:
+
+   [PATCH v4 14/16] sched/core: uclamp: request CAP_SYS_ADMIN by default
+   [PATCH v4 15/16] sched/core: uclamp: add clamp group discretization support
+
+which allows to ensure that only privileged tasks can create clamp groups
+and/or the clamps groups are transformed into buckets to always ensure a
+mapping for each possible userspace request.
+
+
+.:: Better integrate RT tasks
+-----------------------------
+
+Quentin pointed out a change in behavior for RT task in:
+
+   https://lore.kernel.org/lkml/20180809155551.bp46sixk4u3ilcnh@queper01-lin/
+
+which has been fixed by improving this patch:
+
+   [PATCH v4 16/16] sched/cpufreq: uclamp: add utilization clamping for RT tasks
+
+This patch has also been moved to the end of the series since the solution is
+partially based on some bits already added by other patches of this series.
+
+
+.:: Improved refcounting code
+-----------------------------
+
+Pavan reported some code paths not covered by refcounting:
+
+   https://lore.kernel.org/lkml/20180816091348.GD2661@codeaurora.org/
+
+Which translated into a complete review and improvement of the slow-path code
+where we refcount clamp groups availability.
+
+We now properly refcount clamp groups usage for all the main entities, i.e.
+init_task, root_task_group and sysfs defaults.
+The same refcounting code has been properly integrated with fork/exit as well
+as cgroups creation/release code paths.
+
+
+.:: Series Organization
+-----------------------
+
+The series is organized into these main sections:
+
+- Patches [01-05]: Per task (primary) API
+- Patches [06]   : Schedutil integration for CFS tasks
+- Patches [07-13]: Per task group (secondary) API
+- Patches [14-15]: Fix issues related to limited clamp groups
+- Patches [16]   : Schedutil integration for RT tasks
+
+
+Newcomer's Short Abstract (Updated)
+===================================
+
+The Linux scheduler tracks a "utilization" signal for each scheduling entity
+(SE), e.g. tasks, to know how much CPU time they use. This signal allows the
+scheduler to know how "big" a task is and, in principle, it can support
+advanced task placement strategies by selecting the best CPU to run a task.
+Some of these strategies are represented by the Energy Aware scheduler
+extension [1].
+
+When the schedutil cpufreq's governor is in use, the utilization signal allows
+also the Linux scheduler to drive frequency selection. The CPU utilization
+signal, which represents the aggregated utilization of tasks scheduled on that
+CPU, is used to select the frequency which best fits the task's generated
+workload.
+
+However, the current translation of utilization values into a frequency
+selection is pretty simple: we just go to max for RT tasks or to the minimum
+frequency which can accommodate the utilization of DL+FAIR tasks. Regarding
+task placement instead utilization is of limited usage since its value alone is
+not enough to properly describe what's the expected power/performance behaviors
+of each task.
+
+In general, for both RT and FAIR tasks we can aim at better tasks placement and
+frequency selection policies if take into consideration hints coming from
+user-space.
+
+Utilization clamping is a mechanism which allows to "clamp" (i.e. filter) the
+utilization generated by RT and FAIR tasks within a range defined from
+user-space. The clamped utilization value can then be used, for example, to
+enforce a minimum and/or maximum frequency depending on which tasks are
+currently active on a CPU.
+
+The main use-cases for utilization clamping are:
+
+ - boosting: better interactive response for small tasks which
+   are affecting the user experience.
+
+   Consider for example the case of a small control thread for an external
+   accelerator (e.g. GPU, DSP, other devices). In this case, from its
+   utilization the scheduler does not have a complete view of what are the task
+   requirements and, if it's a small utilization task, schedutil will keep
+   selecting a more energy efficient CPU, with smaller capacity and lower
+   frequency, thus affecting the overall time required to complete the task
+   activations.
+
+ - capping: increase energy efficiency for background tasks not directly
+   affecting the user experience.
+
+   Since running on a lower capacity CPU at a lower frequency is in general
+   more energy efficient, when the completion time is not a main goal, then
+   capping the utilization considered for certain (maybe big) tasks can have
+   positive effects, both on energy consumption and thermal stress.
+   Moreover, this last support allows also to make RT tasks more energy
+   friendly on mobile systems, where running them on high capacity CPUs and at
+   the maximum frequency is not strictly required.
+
+From these two use-cases, it's worth to notice that frequency selection
+biasing, introduced by patches 6 and 16 of this series, is just one possible
+usage of utilization clamping. Another compelling extension of utilization
+clamping is in helping the scheduler on tasks placement decisions.
+
+Utilization is a task specific property which is used by the scheduler to know
+how much CPU bandwidth a task requires (under certain conditions).
+Thus, the utilization clamp values, defined either per-task or via the CPU
+controller, can be used to represent tasks to the scheduler as being bigger
+(or smaller) than what they really are.
+
+Utilization clamping thus ultimately enable interesting additional
+optimizations, especially on asymmetric capacity systems like Arm
+big.LITTLE and DynamIQ CPUs, where:
+
+ - boosting: small tasks are preferably scheduled on higher-capacity CPUs
+   where, despite being less energy efficient, they can complete faster
+
+ - capping: big/background tasks are preferably scheduled on low-capacity CPUs
+   where, being more energy efficient, they can still run but save power and
+   thermal headroom for more important tasks.
+
+This additional usage of the utilization clamping is not presented in this
+series but it's an integral part of the Energy Aware Scheduler (EAS) feature
+set, where [1] is one of its main components. A solution similar to utilization
+clamping, namely SchedTune, is already used on Android kernels to biasing of
+both 'frequency selection' and 'task placement'.
+This series provides the foundation bits to add a similar features to mainline
+by focusing just on schedutil integration.
+
+[1] https://lore.kernel.org/lkml/20180820094420.26590-1-quentin.perret@arm.com/
+
+
+Detailed Changelog
+==================
+
+Changes in v4:
+ Message-ID: <20180809152313.lewfhufidhxb2qrk@darkstar>
+ - implements the idea discussed in this thread
+ Message-ID: <87897157-0b49-a0be-f66c-81cc2942b4dd@infradead.org>
+ - remove not required default setting
+ - fixed some tabs/spaces
+ Message-ID: <20180807095905.GB2288@localhost.localdomain>
+ - replace/rephrase "bandwidth" references to use "capacity"
+ - better stress that this do not enforce any bandwidth requirement
+   but "just" give hints to the scheduler
+ - fixed some typos
+ Message-ID: <20180814112509.GB2661@codeaurora.org>
+ - add uclamp_exit_task() to release clamp refcount from do_exit()
+ Message-ID: <20180816133249.GA2964@e110439-lin>
+ - keep the WARN but beautify a bit that code
+ - keep the WARN in uclamp_cpu_put_id() but beautify a bit that code
+ - add another WARN on the unexpected condition of releasing a refcount
+   from a CPU which has a lower clamp value active
+ Message-ID: <20180413082648.GP4043@hirez.programming.kicks-ass.net>
+ - move uclamp_enabled at the top of sched_class to keep it on the same
+   cache line of other main wakeup time callbacks
+ Message-ID: <20180816132249.GA2960@e110439-lin>
+ - inline uclamp_task_active() code into uclamp_task_update_active()
+ - get rid of the now unused uclamp_task_active()
+ Message-ID: <20180816172016.GG2960@e110439-lin>
+ - ensure to always reset clamp holding on wakeup from IDLE
+ Message-ID: <CAKfTPtC2adLupg7wy1JU9zxKx1466Sza6fSCcr92wcawm1OYkg@mail.gmail.com>
+ - use *rq instead of cpu for both uclamp_util() and uclamp_value()
+ Message-ID: <20180816135300.GC2960@e110439-lin>
+ - remove uclamp_value() which is never used outside CONFIG_UCLAMP_TASK
+ Message-ID: <20180816140731.GD2960@e110439-lin>
+ - add ".effective" attributes to the default hierarchy
+ - reuse already existing:
+     task_struct::uclamp::effective::group_id
+   instead of adding:
+     task_struct::uclamp_group_id
+   to back annotate the effective clamp group in which a task has been
+   refcounted
+ Message-ID: <20180820122728.GM2960@e110439-lin>
+ - fix unwanted reset of clamp values on refcount success
+ Other:
+ - by default all tasks have a UCLAMP_NOT_VALID task specific clamp
+ - always use:
+      p->uclamp[clamp_id].effective.value
+   to track the actual clamp value the task has been refcounted into.
+   This matches with the usage of
+      p->uclamp[clamp_id].effective.group_id
+ - allow to call uclamp_group_get() without a task pointer, which is
+   used to refcount the initial clamp group for all the global objects
+   (init_task, root_task_group and system_defaults)
+ - ensure (and check) that all tasks have a valid group_id at
+   uclamp_cpu_get_id()
+ - rework uclamp_cpu layout to better fit into just 2x64B cache lines
+ - fix some s/SCHED_DEBUG/CONFIG_SCHED_DEBUG/
+ - init uclamp for the init_task and refcount its clamp groups
+ - add uclamp specific fork time code into uclamp_fork
+ - add support for SCHED_FLAG_RESET_ON_FORK
+   default clamps are now set for init_task and inherited/reset at
+   fork time (when then flag is set for the parent)
+ - enable uclamp only for FAIR tasks, RT class will be enabled only
+   by a following patch which also integrate the class to schedutil
+ - define uclamp_maps ____cacheline_aligned_in_smp
+ - in uclamp_group_get() ensure to include uclamp_group_available() and
+   uclamp_group_init() into the atomic section defined by:
+      uc_map[next_group_id].se_lock
+ - do not use mutex_lock(&uclamp_mutex) in uclamp_exit_task
+   which is also not needed since refcounting is already guarded by
+   the uc_map[group_id].se_lock spinlock
+ - consolidate init_uclamp_sched_group() into init_uclamp()
+ - refcount root_task_group's clamp groups from init_uclamp()
+ - small documentation fixes
+ - rebased on v4.19-rc1
+
+Changes in v3:
+ Message-ID: <CAJuCfpF6=L=0LrmNnJrTNPazT4dWKqNv+thhN0dwpKCgUzs9sg@mail.gmail.com>
+ - removed UCLAMP_NONE not used by this patch
+ - remove not necessary checks in uclamp_group_find()
+ - add WARN on unlikely un-referenced decrement in uclamp_group_put()
+ - add WARN on unlikely un-referenced decrement in uclamp_cpu_put_id()
+ - make __setscheduler_uclamp() able to set just one clamp value
+ - make __setscheduler_uclamp() failing if both clamps are required but
+   there is no clamp groups available for one of them
+ - remove uclamp_group_find() from uclamp_group_get() which now takes a
+   group_id as a parameter
+ - add explicit calls to uclamp_group_find()
+   which is now not more part of uclamp_group_get()
+ - fixed a not required override
+ - fixed some typos in comments and changelog
+ Message-ID: <CAJuCfpGaKvxKcO=RLcmveHRB9qbMrvFs2yFVrk=k-v_m7JkxwQ@mail.gmail.com>
+ - few typos fixed
+ Message-ID: <20180409222417.GK3126663@devbig577.frc2.facebook.com>
+ - use "." notation for attributes naming
+   i.e. s/util_{min,max}/util.{min,max}/
+ - added new patches: 09 and 12
+ Other changes:
+ - rebased on tip/sched/core
+
+Changes in v2:
+ Message-ID: <20180413093822.GM4129@hirez.programming.kicks-ass.net>
+ - refactored struct rq::uclamp_cpu to be more cache efficient
+   no more holes, re-arranged vectors to match cache lines with expected
+   data locality
+ Message-ID: <20180413094615.GT4043@hirez.programming.kicks-ass.net>
+ - use *rq as parameter whenever already available
+ - add scheduling class's uclamp_enabled marker
+ - get rid of the "confusing" single callback uclamp_task_update()
+   and use uclamp_cpu_{get,put}() directly from {en,de}queue_task()
+ - fix/remove "bad" comments
+ Message-ID: <20180413113337.GU14248@e110439-lin>
+ - remove inline from init_uclamp, flag it __init
+ Message-ID: <20180413111900.GF4082@hirez.programming.kicks-ass.net>
+ - get rid of the group_id back annotation
+   which is not requires at this stage where we have only per-task
+   clamping support. It will be introduce later when cgroup support is
+   added.
+ Message-ID: <20180409222417.GK3126663@devbig577.frc2.facebook.com>
+ - make attributes available only on non-root nodes
+   a system wide API seems of not immediate interest and thus it's not
+   supported anymore
+ - remove implicit parent-child constraints and dependencies
+ Message-ID: <20180410200514.GA793541@devbig577.frc2.facebook.com>
+ - add some cgroup-v2 documentation for the new attributes
+ - (hopefully) better explain intended use-cases
+   the changelog above has been extended to better justify the naming
+   proposed by the new attributes
+ Other changes:
+ - improved documentation to make more explicit some concepts
+ - set UCLAMP_GROUPS_COUNT=2 by default
+   which allows to fit all the hot-path CPU clamps data into a single cache
+   line while still supporting up to 2 different {min,max}_utiql clamps.
+ - use -ERANGE as range violation error
+ - add attributes to the default hierarchy as well as the legacy one
+ - implement a "nice" semantics where cgroup clamp values are always
+   used to restrict task specific clamp values,
+   i.e. tasks running on a TG are only allowed to demote themself.
+ - patches re-ordering in top-down way
+ - rebased on v4.18-rc4
+
+Patrick Bellasi (16):
+  sched/core: uclamp: extend sched_setattr to support utilization
+    clamping
+  sched/core: uclamp: map TASK's clamp values into CPU's clamp groups
+  sched/core: uclamp: add CPU's clamp groups accounting
+  sched/core: uclamp: update CPU's refcount on clamp changes
+  sched/core: uclamp: enforce last task UCLAMP_MAX
+  sched/cpufreq: uclamp: add utilization clamping for FAIR tasks
+  sched/core: uclamp: extend cpu's cgroup controller
+  sched/core: uclamp: propagate parent clamps
+  sched/core: uclamp: map TG's clamp values into CPU's clamp groups
+  sched/core: uclamp: use TG's clamps to restrict Task's clamps
+  sched/core: uclamp: add system default clamps
+  sched/core: uclamp: update CPU's refcount on TG's clamp changes
+  sched/core: uclamp: use percentage clamp values
+  sched/core: uclamp: request CAP_SYS_ADMIN by default
+  sched/core: uclamp: add clamp group discretization support
+  sched/cpufreq: uclamp: add utilization clamping for RT tasks
+
+ Documentation/admin-guide/cgroup-v2.rst       |   46 +
+ .../admin-guide/kernel-parameters.txt         |    3 +
+ include/linux/sched.h                         |   65 +
+ include/linux/sched/sysctl.h                  |   11 +
+ include/linux/sched/task.h                    |    6 +
+ include/uapi/linux/sched.h                    |    8 +-
+ include/uapi/linux/sched/types.h              |   68 +-
+ init/Kconfig                                  |   63 +
+ init/init_task.c                              |    1 +
+ kernel/exit.c                                 |    1 +
+ kernel/sched/core.c                           | 1368 ++++++++++++++++-
+ kernel/sched/cpufreq_schedutil.c              |   31 +-
+ kernel/sched/fair.c                           |    4 +
+ kernel/sched/features.h                       |   10 +
+ kernel/sched/rt.c                             |    4 +
+ kernel/sched/sched.h                          |  177 ++-
+ kernel/sysctl.c                               |   16 +
+ 17 files changed, 1863 insertions(+), 19 deletions(-)
+
+-- 
+2.18.0
 
