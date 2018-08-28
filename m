@@ -2,82 +2,96 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78F2CC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:03:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF342C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:06:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 357882087E
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:03:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 357882087E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 5514F2064E
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:06:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5514F2064E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727551AbeH1Pyy (ORCPT
+        id S1727520AbeH1P6K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 11:54:54 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:43110 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727085AbeH1Pyy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 11:54:54 -0400
-Received: by mail-lj1-f195.google.com with SMTP id m84-v6so1157893lje.10;
-        Tue, 28 Aug 2018 05:03:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4EgT/WMdYZcgWYmvvlWIFIfJFo9IvVRaDpJGKK7WU9k=;
-        b=DE0ud3ZO2on1H2RVymmX2c8hpiul08bw08K4N6ZHTLX0JGvM5iZ96oX8IvhPV2SDMM
-         gQIxBx05G6UQizPKjCm633T38X7f+zv9SVnfqMnOqmPaPQDyhq9q8JBMKem3ORL1MeTC
-         DIWpOCaddLuYG4Mt0D1BaEooj+fhrRzyo5EOnSQH4AlJWDoE3Hx1jT0PL5BO1AD/K+T8
-         w4dJo6qlAijkV9rrlYVUXDBdYry9FJauHIMQcO7wAAl4g9CTsuNlNOyYjPU3fjprlj52
-         C82cRE57RDYxW/SmDWIRJEWZOgff+yJ1OQ7Poz0JJVaTOUWJbD2P3BZvFrflSOqU0FSv
-         Sz2w==
-X-Gm-Message-State: APzg51C4aT/iPFqHaq4MBkO2u8YH7sC2u4WtGkwHeoaejZ53cU4hUQy4
-        pFKX3z2guif2D6Cu/ddxlzjuzOSfAkYZ97nTllM=
-X-Google-Smtp-Source: ANB0VdYNMi9nQaVvYtfXdtQPqinuKJsCtsp+1NjHSEn884boVtbgebjx+FRoYWsPHWkGD5rXm98eQioZGPjUeXG9P8w=
-X-Received: by 2002:a2e:3005:: with SMTP id w5-v6mr1078112ljw.20.1535457812141;
- Tue, 28 Aug 2018 05:03:32 -0700 (PDT)
+        Tue, 28 Aug 2018 11:58:10 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56746 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727067AbeH1P6K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 11:58:10 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 76098AF7E;
+        Tue, 28 Aug 2018 12:06:47 +0000 (UTC)
+Date:   Tue, 28 Aug 2018 14:06:46 +0200 (CEST)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Stefan Agner <stefan@agner.ch>
+cc:     benjamin.tissoires@redhat.com, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] HID: input: fix leaking custom input node name
+In-Reply-To: <20180828112955.11318-2-stefan@agner.ch>
+Message-ID: <nycvar.YFH.7.76.1808281406360.25787@cbobk.fhfr.pm>
+References: <20180828112955.11318-1-stefan@agner.ch> <20180828112955.11318-2-stefan@agner.ch>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-References: <1535453838-12154-1-git-send-email-sunil.kovvuri@gmail.com> <1535453838-12154-5-git-send-email-sunil.kovvuri@gmail.com>
-In-Reply-To: <1535453838-12154-5-git-send-email-sunil.kovvuri@gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 28 Aug 2018 14:03:14 +0200
-Message-ID: <CAK8P3a2fgAVB0+uns9f5MH+2OyZbwvReo9j-=u3=30QoK=2Ksw@mail.gmail.com>
-Subject: Re: [PATCH 04/15] soc: octeontx2: Add mailbox support infra
-To:     sunil.kovvuri@gmail.com
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-soc@vger.kernel.org, amakarov@marvell.com,
-        sgoutham@marvell.com, lbartosik@marvell.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 12:57 PM <sunil.kovvuri@gmail.com> wrote:
->
-> From: Aleksey Makarov <amakarov@marvell.com>
->
-> This patch adds mailbox support infrastructure APIs.
-> Each RVU device has a dedicated 64KB mailbox region
-> shared with it's peer for communication. RVU AF has
-> a separate mailbox region shared with each of RVU PFs
-> and a RVU PF has a separate region shared with each of
-> it's VF.
->
-> These set of APIs are used by this driver (RVU AF) and
-> other RVU PF/VF drivers eg netdev, crypto e.t.c.
->
-> Signed-off-by: Aleksey Makarov <amakarov@marvell.com>
-> Signed-off-by: Sunil Goutham <sgoutham@marvell.com>
-> Signed-off-by: Lukasz Bartosik <lbartosik@marvell.com>
+On Tue, 28 Aug 2018, Stefan Agner wrote:
 
-Why does this driver not use the drivers/mailbox/ infrastructure?
+> Make sure to free the custom input node name on disconnect.
+> 
+> Cc: stable@vger.kernel.org # v4.18+
+> Fixes: c554bb045511 ("HID: input: append a suffix matching the application")
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
+> Found with kmemleak, after unplugging a Logitech Unifying receiver:
+> 
+> unreferenced object 0xc2345b80 (size 64):
+>   comm "kworker/0:1", pid 20, jiffies 4294955181 (age 320.740s)
+>   hex dump (first 32 bytes):
+>     4c 6f 67 69 74 65 63 68 20 55 53 42 20 52 65 63  Logitech USB Rec
+>     65 69 76 65 72 20 53 79 73 74 65 6d 20 43 6f 6e  eiver System Con
+>   backtrace:
+>     [<8fec5a71>] __kmalloc_track_caller+0x1dc/0x300
+>     [<5b926275>] kvasprintf+0x60/0xcc
+>     [<21fc360f>] kasprintf+0x38/0x54
+>     [<3b6ce9f0>] hidinput_connect+0x23a8/0x4c60
+>     [<deaab707>] hid_connect+0x30c/0x38c
+>     [<5a28f7c9>] hid_hw_start+0x44/0x64
+>     [<267d70e8>] hid_generic_probe+0x34/0x38
+>     [<d68c31b1>] hid_device_probe+0xdc/0x13c
+>     [<09414e91>] really_probe+0x1d8/0x2c4
+>     [<f9d7157f>] driver_probe_device+0x68/0x184
+>     [<1def17c8>] __device_attach_driver+0xa0/0xd4
+>     [<d3b2081b>] bus_for_each_drv+0x60/0xc0
+>     [<379d02f8>] __device_attach+0xdc/0x144
+>     [<7026ace5>] device_initial_probe+0x14/0x18
+>     [<44527d01>] bus_probe_device+0x90/0x98
+>     [<cf58bf2f>] device_add+0x424/0x62c
+> 
+>  drivers/hid/hid-input.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
+> index 4e94ea3e280a..ac201817a2dd 100644
+> --- a/drivers/hid/hid-input.c
+> +++ b/drivers/hid/hid-input.c
+> @@ -1815,6 +1815,7 @@ void hidinput_disconnect(struct hid_device *hid)
+>  			input_unregister_device(hidinput->input);
+>  		else
+>  			input_free_device(hidinput->input);
+> +		kfree(hidinput->name);
+>  		kfree(hidinput);
 
-       Arnd
+Applied for 4.19, thanks.
+
+-- 
+Jiri Kosina
+SUSE Labs
+
