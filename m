@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF158C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:57:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DE5DC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:58:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7248E2087D
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:57:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C622920891
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:58:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g2AtqBwR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7248E2087D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MbDP93ut"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C622920891
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727839AbeH1OtC (ORCPT
+        id S1727880AbeH1OtH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 10:49:02 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:38170 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727104AbeH1OtB (ORCPT
+        Tue, 28 Aug 2018 10:49:07 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44770 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727841AbeH1OtH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 10:49:01 -0400
-Received: by mail-pf1-f193.google.com with SMTP id x17-v6so544924pfh.5;
-        Tue, 28 Aug 2018 03:57:55 -0700 (PDT)
+        Tue, 28 Aug 2018 10:49:07 -0400
+Received: by mail-pl1-f193.google.com with SMTP id ba4-v6so560249plb.11;
+        Tue, 28 Aug 2018 03:58:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=280EP+QgaX/l+BzeVZuKBc4Hv62//0y2K3uoqdg3hqA=;
-        b=g2AtqBwRuMeSJygzbbLzKsq8xngELzy7uIngvQqrG2K5cdYOS48zA0xNscGeQcmVW/
-         Sx054apwNV7qLUAojxPrSIGmEVgBijUyQWQon8ygnNbrvoyZMBp4DsjXOm7c4rWul9gs
-         Frlo9bnlmh0M7EO1eY7Pki7KD7SvSF42p16wcR2vUQYJ2Nb6UBNLh462lhizcyM4+iMH
-         5brElcttRgzksLbXIn/Kn01PJQVsi7DK3sT5upg2ZJkzcUz/BcsDPCsCCbg6TI8T85VX
-         aniXb3NChARyziJUvS/8oOQ4ocjM7rJluGe7cqWxL8qHXA2Kqp7QckT49VAxCAACOfO6
-         o93g==
+        bh=sh7WgnBkNpjBKi7k7Mnms1wYXtEZwZu4p6CKItdpI0g=;
+        b=MbDP93ut/MNGxiWt1K6R5CY/c6VaRLkwhXnorMgWt3j1vr28nm87zJwuU2HAkL9FwM
+         4fNWRuewORMv7B/XRkfETyZEQ++w81alp9wX4iU/ofZtvA9YhThZvzmx2KpMbBIjgY1o
+         MkAMCnpc9Zyo+k/HhcMkvq0sunbb78zr2McJ8iM+48Pi09yc3k/kawqFG8gY9Y2tftIj
+         GkDiqMMR7LW6GYIRNvcDM1zSg4VT/mx24z+aw8pNRX/PXR0vqaOAsHqwHmURCClX3GwQ
+         /qCMxnEsE/FIo6M29GqLvFRzshmZNUG/g8edmSCxUZFUw+pX9y1B15mINwq3QOSrHDQf
+         XlJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=280EP+QgaX/l+BzeVZuKBc4Hv62//0y2K3uoqdg3hqA=;
-        b=nBRk+Lyge0+pNTS6zs4OF63gkwk7DhWbOGJ4CRMTbDv+MzdXFSLNxGPftJvtjPCTEA
-         ZlIGLgH+Dm7x30kh4q27KZEWDLIhiMLV5oa3za+gTfJlEIW4R6Vf7zXqwFkwA+Ns9ZG4
-         R1yMjbN9vYozMK6lrClbNKmhTw/EJTKG3PP7PZRJOWTvRTVZ6RnF4MNOfBc97LFhuFoL
-         mQDAFN/nIYzionS08DeycT1u8E6JL9qNSUcvq4xopJKIJ8kkXccHwQGDd2XCfGKE9yaC
-         Nv2KbUJV83swhn6N3K/iEM3eGEOEeWa+LJL1kBdI+MxC2Rt/ESBAiP1MXvFgqJIsSzGQ
-         hKpw==
-X-Gm-Message-State: APzg51DLMCh4Aj+AxzFL16W0HYXyu8jss17NTclI+qwOysHC6mNk3jr8
-        ZUi7FQS7BFYvw4vDRrJlEgDQQtzx
-X-Google-Smtp-Source: ANB0VdZ7I1YZplD5nDVpdnta9IPH7fSqKdtzOx+3tAM83vvT5FavwoXSzW4C0r/8OJPBxWnNmTR/aw==
-X-Received: by 2002:a63:4a09:: with SMTP id x9-v6mr1000661pga.34.1535453875025;
-        Tue, 28 Aug 2018 03:57:55 -0700 (PDT)
+        bh=sh7WgnBkNpjBKi7k7Mnms1wYXtEZwZu4p6CKItdpI0g=;
+        b=s2xHMHPd5mtaI1c7jP/7n/SSVptYmARiX1sbUskNGPXbqmE0WhJC0YdfPu1946HE/0
+         QWEPRBsClA4q/Dvg7QTbWunFVvcCraHdKmJVnuDO5+ufqNPIVafTt/7JUciydx1iKDa7
+         E+fQcmVc2SVFpZBbM44yv+jhaPAnPuL3d+u/j3ODpIWlefN5gWEsCrx04nuZvwkO81kQ
+         EWb+hzq4D4DvTlRHzUeDWFa5mcjek7SJDR7nsEVZx/nbHvFB5RL5QKG0nekMG6B5JWC5
+         K8Lh6tCfKHYMCTzQU47wf3f1bgn1pkHXZm3MvJXJEGQUVdL1NmtuYQe82mF5A/yECq08
+         gMbw==
+X-Gm-Message-State: APzg51BqztJpeuo2NYlC77AcbqRkCjEZUfdmtyqctD26AT0jD3gKIwBq
+        uIv/o0eVelZEIiuxsdjcVOlmH5j6
+X-Google-Smtp-Source: ANB0VdYqnSq0atrNBoBJNhdAWSr3SL0sieJcB/voALcI7+o8TmszGlN5yoYQMlonTwnrfQCF+AxsLg==
+X-Received: by 2002:a17:902:7145:: with SMTP id u5-v6mr871099plm.259.1535453881138;
+        Tue, 28 Aug 2018 03:58:01 -0700 (PDT)
 Received: from machine421.caveonetworks.com ([115.113.156.2])
-        by smtp.googlemail.com with ESMTPSA id n22-v6sm2946798pfj.68.2018.08.28.03.57.52
+        by smtp.googlemail.com with ESMTPSA id n22-v6sm2946798pfj.68.2018.08.28.03.57.58
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 28 Aug 2018 03:57:54 -0700 (PDT)
+        Tue, 28 Aug 2018 03:58:00 -0700 (PDT)
 From:   sunil.kovvuri@gmail.com
 To:     linux-kernel@vger.kernel.org, arnd@arndb.de, olof@lixom.net
 Cc:     linux-arm-kernel@lists.infradead.org, linux-soc@vger.kernel.org,
         Sunil Goutham <sgoutham@marvell.com>
-Subject: [PATCH 05/15] soc: octeontx2: Add mailbox IRQ and msg handlers
-Date:   Tue, 28 Aug 2018 16:27:08 +0530
-Message-Id: <1535453838-12154-6-git-send-email-sunil.kovvuri@gmail.com>
+Subject: [PATCH 07/15] soc: octeontx2: Scan blocks for LFs provisioned to PF/VF
+Date:   Tue, 28 Aug 2018 16:27:10 +0530
+Message-Id: <1535453838-12154-8-git-send-email-sunil.kovvuri@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1535453838-12154-1-git-send-email-sunil.kovvuri@gmail.com>
 References: <1535453838-12154-1-git-send-email-sunil.kovvuri@gmail.com>
@@ -75,423 +75,330 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sunil Goutham <sgoutham@marvell.com>
 
-This patch adds support for mailbox interrupt and message
-handling. Mapped mailbox region and registered a workqueue
-for message handling. Enabled mailbox IRQ of RVU PFs
-and registered a interrupt handler. When IRQ is triggered
-work is added to the mbox workqueue for msgs to get processed.
+Scan all RVU blocks to find any 'LF to RVU PF/VF' mapping done by
+low level firmware. If found any, mark them as used in respective
+block's LF bitmap and also save mapped PF/VF's PF_FUNC info.
+
+This is done to avoid reattaching a block LF to a different RVU PF/VF.
 
 Signed-off-by: Sunil Goutham <sgoutham@marvell.com>
 ---
- drivers/soc/marvell/octeontx2/mbox.h       |  14 +-
- drivers/soc/marvell/octeontx2/rvu.c        | 254 +++++++++++++++++++++++++++++
- drivers/soc/marvell/octeontx2/rvu.h        |  22 +++
- drivers/soc/marvell/octeontx2/rvu_struct.h |  22 +++
- 4 files changed, 309 insertions(+), 3 deletions(-)
+ drivers/soc/marvell/octeontx2/rvu.c        | 148 ++++++++++++++++++++++++++++-
+ drivers/soc/marvell/octeontx2/rvu.h        |  16 ++++
+ drivers/soc/marvell/octeontx2/rvu_struct.h |  18 ++++
+ 3 files changed, 180 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/soc/marvell/octeontx2/mbox.h b/drivers/soc/marvell/octeontx2/mbox.h
-index 8e205fd..fc593f0 100644
---- a/drivers/soc/marvell/octeontx2/mbox.h
-+++ b/drivers/soc/marvell/octeontx2/mbox.h
-@@ -33,6 +33,8 @@
- # error "incorrect mailbox area sizes"
- #endif
- 
-+#define INTR_MASK(pfvfs) ((pfvfs < 64) ? (BIT_ULL(pfvfs) - 1) : (~0ull))
-+
- #define MBOX_RSP_TIMEOUT	1000 /* in ms, Time to wait for mbox response */
- 
- #define MBOX_MSG_ALIGN		16  /* Align mbox msg start to 16bytes */
-@@ -90,8 +92,9 @@ struct mbox_msghdr {
- 
- void otx2_mbox_reset(struct otx2_mbox *mbox, int devid);
- void otx2_mbox_destroy(struct otx2_mbox *mbox);
--int otx2_mbox_init(struct otx2_mbox *mbox, void *hwbase, struct pci_dev *pdev,
--		   void *reg_base, int direction, int ndevs);
-+int otx2_mbox_init(struct otx2_mbox *mbox, void __force *hwbase,
-+		   struct pci_dev *pdev, void __force *reg_base,
-+		   int direction, int ndevs);
- void otx2_mbox_msg_send(struct otx2_mbox *mbox, int devid);
- int otx2_mbox_wait_for_rsp(struct otx2_mbox *mbox, int devid);
- int otx2_mbox_busy_poll_for_rsp(struct otx2_mbox *mbox, int devid);
-@@ -115,7 +118,7 @@ static inline struct mbox_msghdr *otx2_mbox_alloc_msg(struct otx2_mbox *mbox,
- #define MBOX_MSG_MAX				0xFFFF
- 
- #define MBOX_MESSAGES							\
--M(READY,		0x001, msg_req, msg_rsp)
-+M(READY,		0x001, msg_req, ready_msg_rsp)
- 
- enum {
- #define M(_name, _id, _1, _2) MBOX_MSG_ ## _name = _id,
-@@ -139,4 +142,9 @@ struct msg_rsp {
- 	struct mbox_msghdr hdr;
- };
- 
-+struct ready_msg_rsp {
-+	struct mbox_msghdr hdr;
-+	u16    sclk_feq;	/* SCLK frequency */
-+};
-+
- #endif /* MBOX_H */
 diff --git a/drivers/soc/marvell/octeontx2/rvu.c b/drivers/soc/marvell/octeontx2/rvu.c
-index fa5f40b..e795c2f 100644
+index 25f79bf..9539ab9 100644
 --- a/drivers/soc/marvell/octeontx2/rvu.c
 +++ b/drivers/soc/marvell/octeontx2/rvu.c
-@@ -258,6 +258,245 @@ static int rvu_setup_hw_resources(struct rvu *rvu)
+@@ -22,6 +22,8 @@
+ #define DRV_STRING      "Marvell OcteonTX2 RVU Admin Function Driver"
+ #define DRV_VERSION	"1.0"
+ 
++static int rvu_get_hwvf(struct rvu *rvu, int pcifunc);
++
+ /* Supported devices */
+ static const struct pci_device_id rvu_id_table[] = {
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_CAVIUM, PCI_DEVID_OCTEONTX2_RVU_AF) },
+@@ -66,6 +68,91 @@ int rvu_alloc_bitmap(struct rsrc_bmap *rsrc)
  	return 0;
  }
  
-+static int rvu_process_mbox_msg(struct rvu *rvu, int devid,
-+				struct mbox_msghdr *req)
++static void rvu_update_rsrc_map(struct rvu *rvu, struct rvu_pfvf *pfvf,
++				struct rvu_block *block, u16 pcifunc,
++				u16 lf, bool attach)
 +{
-+	/* Check if valid, if not reply with a invalid msg */
-+	if (req->sig != OTX2_MBOX_REQ_SIG)
-+		goto bad_message;
++	int devnum, num_lfs = 0;
++	bool is_pf;
++	u64 reg;
 +
-+	if (req->id == MBOX_MSG_READY)
-+		return 0;
-+
-+bad_message:
-+	otx2_reply_invalid_msg(&rvu->mbox, devid, req->pcifunc,
-+			       req->id);
-+	return -ENODEV;
-+}
-+
-+static void rvu_mbox_handler(struct work_struct *work)
-+{
-+	struct rvu_work *mwork = container_of(work, struct rvu_work, work);
-+	struct rvu *rvu = mwork->rvu;
-+	struct otx2_mbox_dev *mdev;
-+	struct mbox_hdr *req_hdr;
-+	struct mbox_msghdr *msg;
-+	struct otx2_mbox *mbox;
-+	int offset, id, err;
-+	u16 pf;
-+
-+	mbox = &rvu->mbox;
-+	pf = mwork - rvu->mbox_wrk;
-+	mdev = &mbox->dev[pf];
-+
-+	/* Process received mbox messages */
-+	req_hdr = (struct mbox_hdr *)(mdev->mbase + mbox->rx_start);
-+	if (req_hdr->num_msgs == 0)
++	if (lf >= block->lf.max) {
++		dev_err(&rvu->pdev->dev,
++			"%s: FATAL: LF %d is >= %s's max lfs i.e %d\n",
++			__func__, lf, block->name, block->lf.max);
 +		return;
-+
-+	offset = mbox->rx_start + ALIGN(sizeof(*req_hdr), MBOX_MSG_ALIGN);
-+
-+	for (id = 0; id < req_hdr->num_msgs; id++) {
-+		msg = (struct mbox_msghdr *)(mdev->mbase + offset);
-+
-+		/* Set which PF sent this message based on mbox IRQ */
-+		msg->pcifunc &= ~(RVU_PFVF_PF_MASK << RVU_PFVF_PF_SHIFT);
-+		msg->pcifunc |= (pf << RVU_PFVF_PF_SHIFT);
-+		err = rvu_process_mbox_msg(rvu, pf, msg);
-+		if (!err) {
-+			offset = mbox->rx_start + msg->next_msgoff;
-+			continue;
-+		}
-+
-+		if (msg->pcifunc & RVU_PFVF_FUNC_MASK)
-+			dev_warn(rvu->dev, "Error %d when processing message %s (0x%x) from PF%d:VF%d\n",
-+				 err, otx2_mbox_id2name(msg->id), msg->id, pf,
-+				 (msg->pcifunc & RVU_PFVF_FUNC_MASK) - 1);
-+		else
-+			dev_warn(rvu->dev, "Error %d when processing message %s (0x%x) from PF%d\n",
-+				 err, otx2_mbox_id2name(msg->id), msg->id, pf);
 +	}
 +
-+	/* Send mbox responses to PF */
-+	otx2_mbox_msg_send(mbox, pf);
++	/* Check if this is for a RVU PF or VF */
++	if (pcifunc & RVU_PFVF_FUNC_MASK) {
++		is_pf = false;
++		devnum = rvu_get_hwvf(rvu, pcifunc);
++	} else {
++		is_pf = true;
++		devnum = rvu_get_pf(pcifunc);
++	}
++
++	block->fn_map[lf] = attach ? pcifunc : 0;
++
++	switch (block->type) {
++	case BLKTYPE_NPA:
++		pfvf->npalf = attach ? true : false;
++		num_lfs = pfvf->npalf;
++		break;
++	case BLKTYPE_NIX:
++		pfvf->nixlf = attach ? true : false;
++		num_lfs = pfvf->nixlf;
++		break;
++	case BLKTYPE_SSO:
++		attach ? pfvf->sso++ : pfvf->sso--;
++		num_lfs = pfvf->sso;
++		break;
++	case BLKTYPE_SSOW:
++		attach ? pfvf->ssow++ : pfvf->ssow--;
++		num_lfs = pfvf->ssow;
++		break;
++	case BLKTYPE_TIM:
++		attach ? pfvf->timlfs++ : pfvf->timlfs--;
++		num_lfs = pfvf->timlfs;
++		break;
++	case BLKTYPE_CPT:
++		attach ? pfvf->cptlfs++ : pfvf->cptlfs--;
++		num_lfs = pfvf->cptlfs;
++		break;
++	}
++
++	reg = is_pf ? block->pf_lfcnt_reg : block->vf_lfcnt_reg;
++	rvu_write64(rvu, BLKADDR_RVUM, reg | (devnum << 16), num_lfs);
 +}
 +
-+static int rvu_mbox_init(struct rvu *rvu)
++inline int rvu_get_pf(u16 pcifunc)
 +{
-+	struct rvu_hwinfo *hw = rvu->hw;
-+	struct rvu_work *mwork;
-+	void __iomem *hwbase = NULL;
-+	u64 bar4_addr;
-+	int err, pf;
-+
-+	rvu->mbox_wq = alloc_workqueue("rvu_afpf_mailbox",
-+				       WQ_UNBOUND | WQ_HIGHPRI | WQ_MEM_RECLAIM,
-+				       hw->total_pfs);
-+	if (!rvu->mbox_wq)
-+		return -ENOMEM;
-+
-+	rvu->mbox_wrk = devm_kcalloc(rvu->dev, hw->total_pfs,
-+				     sizeof(struct rvu_work), GFP_KERNEL);
-+	if (!rvu->mbox_wrk) {
-+		err = -ENOMEM;
-+		goto exit;
-+	}
-+
-+	/* Map mbox region shared with PFs */
-+	bar4_addr = rvu_read64(rvu, BLKADDR_RVUM, RVU_AF_PF_BAR4_ADDR);
-+	/* Mailbox is a reserved memory (in RAM) region shared between
-+	 * RVU devices, shouldn't be mapped as device memory to allow
-+	 * unaligned accesses.
-+	 */
-+	hwbase = ioremap_wc(bar4_addr, MBOX_SIZE * hw->total_pfs);
-+	if (!hwbase) {
-+		dev_err(rvu->dev, "Unable to map mailbox region\n");
-+		err = -ENOMEM;
-+		goto exit;
-+	}
-+
-+	err = otx2_mbox_init(&rvu->mbox, hwbase, rvu->pdev, rvu->afreg_base,
-+			     MBOX_DIR_AFPF, hw->total_pfs);
-+	if (err)
-+		goto exit;
-+
-+	for (pf = 0; pf < hw->total_pfs; pf++) {
-+		mwork = &rvu->mbox_wrk[pf];
-+		mwork->rvu = rvu;
-+		INIT_WORK(&mwork->work, rvu_mbox_handler);
-+	}
-+
-+	return 0;
-+exit:
-+	if (hwbase)
-+		iounmap((void __iomem *)hwbase);
-+	destroy_workqueue(rvu->mbox_wq);
-+	return err;
++	return (pcifunc >> RVU_PFVF_PF_SHIFT) & RVU_PFVF_PF_MASK;
 +}
 +
-+static void rvu_mbox_destroy(struct rvu *rvu)
++static int rvu_get_hwvf(struct rvu *rvu, int pcifunc)
 +{
-+	if (rvu->mbox_wq) {
-+		flush_workqueue(rvu->mbox_wq);
-+		destroy_workqueue(rvu->mbox_wq);
-+		rvu->mbox_wq = NULL;
-+	}
++	int pf, func;
++	u64 cfg;
 +
-+	if (rvu->mbox.hwbase)
-+		iounmap((void __iomem *)rvu->mbox.hwbase);
++	pf = rvu_get_pf(pcifunc);
++	func = pcifunc & RVU_PFVF_FUNC_MASK;
 +
-+	otx2_mbox_destroy(&rvu->mbox);
++	/* Get first HWVF attached to this PF */
++	cfg = rvu_read64(rvu, BLKADDR_RVUM, RVU_PRIV_PFX_CFG(pf));
++
++	return ((cfg & 0xFFF) + func - 1);
 +}
 +
-+static irqreturn_t rvu_mbox_intr_handler(int irq, void *rvu_irq)
++struct rvu_pfvf *rvu_get_pfvf(struct rvu *rvu, int pcifunc)
 +{
-+	struct rvu *rvu = (struct rvu *)rvu_irq;
-+	struct otx2_mbox_dev *mdev;
-+	struct otx2_mbox *mbox;
-+	struct mbox_hdr *hdr;
-+	u64 intr;
-+	u8  pf;
-+
-+	intr = rvu_read64(rvu, BLKADDR_RVUM, RVU_AF_PFAF_MBOX_INT);
-+	/* Clear interrupts */
-+	rvu_write64(rvu, BLKADDR_RVUM, RVU_AF_PFAF_MBOX_INT, intr);
-+
-+	/* Sync with mbox memory region */
-+	smp_wmb();
-+
-+	for (pf = 0; pf < rvu->hw->total_pfs; pf++) {
-+		if (intr & (1ULL << pf)) {
-+			mbox = &rvu->mbox;
-+			mdev = &mbox->dev[pf];
-+			hdr = (struct mbox_hdr *)(mdev->mbase + mbox->rx_start);
-+			if (hdr->num_msgs)
-+				queue_work(rvu->mbox_wq,
-+					   &rvu->mbox_wrk[pf].work);
-+		}
-+	}
-+
-+	return IRQ_HANDLED;
++	/* Check if it is a PF or VF */
++	if (pcifunc & RVU_PFVF_FUNC_MASK)
++		return &rvu->hwvf[rvu_get_hwvf(rvu, pcifunc)];
++	else
++		return &rvu->pf[rvu_get_pf(pcifunc)];
 +}
 +
-+static void rvu_enable_mbox_intr(struct rvu *rvu)
-+{
-+	struct rvu_hwinfo *hw = rvu->hw;
-+
-+	/* Clear spurious irqs, if any */
-+	rvu_write64(rvu, BLKADDR_RVUM,
-+		    RVU_AF_PFAF_MBOX_INT, INTR_MASK(hw->total_pfs));
-+
-+	/* Enable mailbox interrupt for all PFs except PF0 i.e AF itself */
-+	rvu_write64(rvu, BLKADDR_RVUM, RVU_AF_PFAF_MBOX_INT_ENA_W1S,
-+		    INTR_MASK(hw->total_pfs) & ~1ULL);
-+}
-+
-+static void rvu_unregister_interrupts(struct rvu *rvu)
-+{
-+	int irq;
-+
-+	/* Disable the Mbox interrupt */
-+	rvu_write64(rvu, BLKADDR_RVUM, RVU_AF_PFAF_MBOX_INT_ENA_W1C,
-+		    INTR_MASK(rvu->hw->total_pfs) & ~1ULL);
-+
-+	for (irq = 0; irq < rvu->num_vec; irq++) {
-+		if (rvu->irq_allocated[irq])
-+			free_irq(pci_irq_vector(rvu->pdev, irq), rvu);
-+	}
-+
-+	pci_free_irq_vectors(rvu->pdev);
-+	rvu->num_vec = 0;
-+}
-+
-+static int rvu_register_interrupts(struct rvu *rvu)
-+{
-+	int ret;
-+
-+	rvu->num_vec = pci_msix_vec_count(rvu->pdev);
-+
-+	rvu->irq_name = devm_kmalloc_array(rvu->dev, rvu->num_vec,
-+					   NAME_SIZE, GFP_KERNEL);
-+	if (!rvu->irq_name)
-+		return -ENOMEM;
-+
-+	rvu->irq_allocated = devm_kcalloc(rvu->dev, rvu->num_vec,
-+					  sizeof(bool), GFP_KERNEL);
-+	if (!rvu->irq_allocated)
-+		return -ENOMEM;
-+
-+	/* Enable MSI-X */
-+	ret = pci_alloc_irq_vectors(rvu->pdev, rvu->num_vec,
-+				    rvu->num_vec, PCI_IRQ_MSIX);
-+	if (ret < 0) {
-+		dev_err(rvu->dev,
-+			"RVUAF: Request for %d msix vectors failed, ret %d\n",
-+			rvu->num_vec, ret);
-+		return ret;
-+	}
-+
-+	/* Register mailbox interrupt handler */
-+	sprintf(&rvu->irq_name[RVU_AF_INT_VEC_MBOX * NAME_SIZE], "RVUAF Mbox");
-+	ret = request_irq(pci_irq_vector(rvu->pdev, RVU_AF_INT_VEC_MBOX),
-+			  rvu_mbox_intr_handler, 0,
-+			  &rvu->irq_name[RVU_AF_INT_VEC_MBOX * NAME_SIZE], rvu);
-+	if (ret) {
-+		dev_err(rvu->dev,
-+			"RVUAF: IRQ registration failed for mbox irq\n");
-+		goto fail;
-+	}
-+
-+	rvu->irq_allocated[RVU_AF_INT_VEC_MBOX] = true;
-+
-+	/* Enable mailbox interrupts from all PFs */
-+	rvu_enable_mbox_intr(rvu);
-+
-+	return 0;
-+
-+fail:
-+	pci_free_irq_vectors(rvu->pdev);
-+	return ret;
-+}
-+
- static int rvu_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ static void rvu_check_block_implemented(struct rvu *rvu)
  {
- 	struct device *dev = &pdev->dev;
-@@ -320,8 +559,21 @@ static int rvu_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	if (err)
- 		goto err_release_regions;
+ 	struct rvu_hwinfo *hw = rvu->hw;
+@@ -107,6 +194,28 @@ static void rvu_reset_all_blocks(struct rvu *rvu)
+ 	rvu_block_reset(rvu, BLKADDR_NDC2, NDC_AF_BLK_RST);
+ }
  
-+	err = rvu_mbox_init(rvu);
-+	if (err)
-+		goto err_hwsetup;
++static void rvu_scan_block(struct rvu *rvu, struct rvu_block *block)
++{
++	struct rvu_pfvf *pfvf;
++	u64 cfg;
++	int lf;
 +
-+	err = rvu_register_interrupts(rvu);
-+	if (err)
-+		goto err_mbox;
++	for (lf = 0; lf < block->lf.max; lf++) {
++		cfg = rvu_read64(rvu, block->addr,
++				 block->lfcfg_reg | (lf << block->lfshift));
++		if (!(cfg & BIT_ULL(63)))
++			continue;
++
++		/* Set this resource as being used */
++		__set_bit(lf, block->lf.bmap);
++
++		/* Get, to whom this LF is attached */
++		pfvf = rvu_get_pfvf(rvu, (cfg >> 8) & 0xFFFF);
++		rvu_update_rsrc_map(rvu, pfvf, block,
++				    (cfg >> 8) & 0xFFFF, lf, true);
++	}
++}
++
+ static void rvu_free_hw_resources(struct rvu *rvu)
+ {
+ 	struct rvu_hwinfo *hw = rvu->hw;
+@@ -124,7 +233,7 @@ static int rvu_setup_hw_resources(struct rvu *rvu)
+ {
+ 	struct rvu_hwinfo *hw = rvu->hw;
+ 	struct rvu_block *block;
+-	int err;
++	int blkid, err;
+ 	u64 cfg;
+ 
+ 	/* Get HW supported max RVU PF & VF count */
+@@ -140,6 +249,7 @@ static int rvu_setup_hw_resources(struct rvu *rvu)
+ 	cfg = rvu_read64(rvu, BLKADDR_NPA, NPA_AF_CONST);
+ 	block->lf.max = (cfg >> 16) & 0xFFF;
+ 	block->addr = BLKADDR_NPA;
++	block->type = BLKTYPE_NPA;
+ 	block->lfshift = 8;
+ 	block->lookup_reg = NPA_AF_RVU_LF_CFG_DEBUG;
+ 	block->pf_lfcnt_reg = RVU_PRIV_PFX_NPA_CFG;
+@@ -160,6 +270,7 @@ static int rvu_setup_hw_resources(struct rvu *rvu)
+ 	cfg = rvu_read64(rvu, BLKADDR_NIX0, NIX_AF_CONST2);
+ 	block->lf.max = cfg & 0xFFF;
+ 	block->addr = BLKADDR_NIX0;
++	block->type = BLKTYPE_NIX;
+ 	block->lfshift = 8;
+ 	block->lookup_reg = NIX_AF_RVU_LF_CFG_DEBUG;
+ 	block->pf_lfcnt_reg = RVU_PRIV_PFX_NIX_CFG;
+@@ -180,6 +291,7 @@ static int rvu_setup_hw_resources(struct rvu *rvu)
+ 	cfg = rvu_read64(rvu, BLKADDR_SSO, SSO_AF_CONST);
+ 	block->lf.max = cfg & 0xFFFF;
+ 	block->addr = BLKADDR_SSO;
++	block->type = BLKTYPE_SSO;
+ 	block->multislot = true;
+ 	block->lfshift = 3;
+ 	block->lookup_reg = SSO_AF_RVU_LF_CFG_DEBUG;
+@@ -200,6 +312,7 @@ static int rvu_setup_hw_resources(struct rvu *rvu)
+ 		goto tim;
+ 	block->lf.max = (cfg >> 56) & 0xFF;
+ 	block->addr = BLKADDR_SSOW;
++	block->type = BLKTYPE_SSOW;
+ 	block->multislot = true;
+ 	block->lfshift = 3;
+ 	block->lookup_reg = SSOW_AF_RVU_LF_HWS_CFG_DEBUG;
+@@ -221,6 +334,7 @@ static int rvu_setup_hw_resources(struct rvu *rvu)
+ 	cfg = rvu_read64(rvu, BLKADDR_TIM, TIM_AF_CONST);
+ 	block->lf.max = cfg & 0xFFFF;
+ 	block->addr = BLKADDR_TIM;
++	block->type = BLKTYPE_TIM;
+ 	block->multislot = true;
+ 	block->lfshift = 3;
+ 	block->lookup_reg = TIM_AF_RVU_LF_CFG_DEBUG;
+@@ -238,10 +352,11 @@ static int rvu_setup_hw_resources(struct rvu *rvu)
+ 	/* Init CPT LF's bitmap */
+ 	block = &hw->block[BLKADDR_CPT0];
+ 	if (!block->implemented)
+-		return 0;
++		goto init;
+ 	cfg = rvu_read64(rvu, BLKADDR_CPT0, CPT_AF_CONSTANTS0);
+ 	block->lf.max = cfg & 0xFF;
+ 	block->addr = BLKADDR_CPT0;
++	block->type = BLKTYPE_CPT;
+ 	block->multislot = true;
+ 	block->lfshift = 3;
+ 	block->lookup_reg = CPT_AF_RVU_LF_CFG_DEBUG;
+@@ -255,6 +370,35 @@ static int rvu_setup_hw_resources(struct rvu *rvu)
+ 	if (err)
+ 		return err;
+ 
++init:
++	/* Allocate memory for PFVF data */
++	rvu->pf = devm_kcalloc(rvu->dev, hw->total_pfs,
++			       sizeof(struct rvu_pfvf), GFP_KERNEL);
++	if (!rvu->pf)
++		return -ENOMEM;
++
++	rvu->hwvf = devm_kcalloc(rvu->dev, hw->total_vfs,
++				 sizeof(struct rvu_pfvf), GFP_KERNEL);
++	if (!rvu->hwvf)
++		return -ENOMEM;
++
++	for (blkid = 0; blkid < BLK_COUNT; blkid++) {
++		block = &hw->block[blkid];
++		if (!block->lf.bmap)
++			continue;
++
++		/* Allocate memory for block LF/slot to pcifunc mapping info */
++		block->fn_map = devm_kcalloc(rvu->dev, block->lf.max,
++					     sizeof(u16), GFP_KERNEL);
++		if (!block->fn_map)
++			return -ENOMEM;
++
++		/* Scan all blocks to check if low level firmware has
++		 * already provisioned any of the resources to a PF/VF.
++		 */
++		rvu_scan_block(rvu, block);
++	}
 +
  	return 0;
- 
-+err_mbox:
-+	rvu_mbox_destroy(rvu);
-+err_hwsetup:
-+	rvu_reset_all_blocks(rvu);
-+	rvu_free_hw_resources(rvu);
- err_release_regions:
- 	pci_release_regions(pdev);
- err_disable_device:
-@@ -337,6 +589,8 @@ static void rvu_remove(struct pci_dev *pdev)
- {
- 	struct rvu *rvu = pci_get_drvdata(pdev);
- 
-+	rvu_unregister_interrupts(rvu);
-+	rvu_mbox_destroy(rvu);
- 	rvu_reset_all_blocks(rvu);
- 	rvu_free_hw_resources(rvu);
+ }
  
 diff --git a/drivers/soc/marvell/octeontx2/rvu.h b/drivers/soc/marvell/octeontx2/rvu.h
-index 592b820..2fb9407 100644
+index 2fb9407..ce9897b 100644
 --- a/drivers/soc/marvell/octeontx2/rvu.h
 +++ b/drivers/soc/marvell/octeontx2/rvu.h
-@@ -12,6 +12,7 @@
- #define RVU_H
+@@ -42,9 +42,11 @@ struct rsrc_bmap {
  
- #include "rvu_struct.h"
-+#include "mbox.h"
+ struct rvu_block {
+ 	struct rsrc_bmap lf;
++	u16  *fn_map; /* LF to pcifunc mapping */
+ 	bool multislot;
+ 	bool implemented;
+ 	u8   addr;  /* RVU_BLOCK_ADDR_E */
++	u8   type;  /* RVU_BLOCK_TYPE_E */
+ 	u8   lfshift;
+ 	u64  lookup_reg;
+ 	u64  pf_lfcnt_reg;
+@@ -55,6 +57,16 @@ struct rvu_block {
+ 	unsigned char name[NAME_SIZE];
+ };
  
- /* PCI device IDs */
- #define	PCI_DEVID_OCTEONTX2_RVU_AF		0xA065
-@@ -23,6 +24,17 @@
- 
- #define NAME_SIZE				32
- 
-+/* PF_FUNC */
-+#define RVU_PFVF_PF_SHIFT	10
-+#define RVU_PFVF_PF_MASK	0x3F
-+#define RVU_PFVF_FUNC_SHIFT	0
-+#define RVU_PFVF_FUNC_MASK	0x3FF
-+
-+struct rvu_work {
-+	struct	work_struct work;
-+	struct	rvu *rvu;
++/* Structure for per RVU func info ie PF/VF */
++struct rvu_pfvf {
++	bool		npalf; /* Only one NPALF per RVU_FUNC */
++	bool		nixlf; /* Only one NIXLF per RVU_FUNC */
++	u16		sso;
++	u16		ssow;
++	u16		cptlfs;
++	u16		timlfs;
 +};
 +
- struct rsrc_bmap {
- 	unsigned long *bmap;	/* Pointer to resource bitmap */
- 	u16  max;		/* Max resource id or count */
-@@ -57,6 +69,16 @@ struct rvu {
+ struct rvu_hwinfo {
+ 	u8	total_pfs;   /* MAX RVU PFs HW supports */
+ 	u16	total_vfs;   /* Max RVU VFs HW supports */
+@@ -69,6 +81,8 @@ struct rvu {
  	struct pci_dev		*pdev;
  	struct device		*dev;
  	struct rvu_hwinfo       *hw;
-+
-+	/* Mbox */
-+	struct otx2_mbox	mbox;
-+	struct rvu_work		*mbox_wrk;
-+	struct workqueue_struct *mbox_wq;
-+
-+	/* MSI-X */
-+	u16			num_vec;
-+	char			*irq_name;
-+	bool			*irq_allocated;
- };
++	struct rvu_pfvf		*pf;
++	struct rvu_pfvf		*hwvf;
  
- static inline void rvu_write64(struct rvu *rvu, u64 block, u64 offset, u64 val)
+ 	/* Mbox */
+ 	struct otx2_mbox	mbox;
+@@ -107,5 +121,7 @@ static inline u64 rvupf_read64(struct rvu *rvu, u64 offset)
+ 
+ int rvu_alloc_bitmap(struct rsrc_bmap *rsrc);
+ int rvu_poll_reg(struct rvu *rvu, u64 block, u64 offset, u64 mask, bool zero);
++int rvu_get_pf(u16 pcifunc);
++struct rvu_pfvf *rvu_get_pfvf(struct rvu *rvu, int pcifunc);
+ 
+ #endif /* RVU_H */
 diff --git a/drivers/soc/marvell/octeontx2/rvu_struct.h b/drivers/soc/marvell/octeontx2/rvu_struct.h
-index 4122559..1dc1518 100644
+index 1dc1518..77ac751 100644
 --- a/drivers/soc/marvell/octeontx2/rvu_struct.h
 +++ b/drivers/soc/marvell/octeontx2/rvu_struct.h
-@@ -33,4 +33,26 @@ enum rvu_block_addr_e {
+@@ -33,6 +33,24 @@ enum rvu_block_addr_e {
  	BLK_COUNT	= 0xfULL,
  };
  
-+/* RVU Admin function Interrupt Vector Enumeration */
-+enum rvu_af_int_vec_e {
-+	RVU_AF_INT_VEC_POISON = 0x0,
-+	RVU_AF_INT_VEC_PFFLR  = 0x1,
-+	RVU_AF_INT_VEC_PFME   = 0x2,
-+	RVU_AF_INT_VEC_GEN    = 0x3,
-+	RVU_AF_INT_VEC_MBOX   = 0x4,
-+};
-+
-+/**
-+ * RVU PF Interrupt Vector Enumeration
++/*
++ * RVU Block Type Enumeration
 + */
-+enum rvu_pf_int_vec_e {
-+	RVU_PF_INT_VEC_VFFLR0     = 0x0,
-+	RVU_PF_INT_VEC_VFFLR1     = 0x1,
-+	RVU_PF_INT_VEC_VFME0      = 0x2,
-+	RVU_PF_INT_VEC_VFME1      = 0x3,
-+	RVU_PF_INT_VEC_VFPF_MBOX0 = 0x4,
-+	RVU_PF_INT_VEC_VFPF_MBOX1 = 0x5,
-+	RVU_PF_INT_VEC_AFPF_MBOX  = 0x6,
++enum rvu_block_type_e {
++	BLKTYPE_RVUM = 0x0,
++	BLKTYPE_MSIX = 0x1,
++	BLKTYPE_LMT  = 0x2,
++	BLKTYPE_NIX  = 0x3,
++	BLKTYPE_NPA  = 0x4,
++	BLKTYPE_NPC  = 0x5,
++	BLKTYPE_SSO  = 0x6,
++	BLKTYPE_SSOW = 0x7,
++	BLKTYPE_TIM  = 0x8,
++	BLKTYPE_CPT  = 0x9,
++	BLKTYPE_NDC  = 0xa,
++	BLKTYPE_MAX  = 0xa,
 +};
 +
- #endif /* RVU_STRUCT_H */
+ /* RVU Admin function Interrupt Vector Enumeration */
+ enum rvu_af_int_vec_e {
+ 	RVU_AF_INT_VEC_POISON = 0x0,
 -- 
 2.7.4
 
