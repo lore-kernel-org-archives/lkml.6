@@ -4,57 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1C08C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:39:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E436DC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:39:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B4D32089E
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:39:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89B442084C
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:39:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JyzwBTUz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B4D32089E
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="O5OkVRG0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89B442084C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728001AbeH1RbC (ORCPT
+        id S1728106AbeH1RbJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 13:31:02 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:37239 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727860AbeH1RbC (ORCPT
+        Tue, 28 Aug 2018 13:31:09 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:32986 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728011AbeH1RbI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 13:31:02 -0400
-Received: by mail-ed1-f67.google.com with SMTP id b10-v6so1401823eds.4
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 06:39:18 -0700 (PDT)
+        Tue, 28 Aug 2018 13:31:08 -0400
+Received: by mail-ed1-f68.google.com with SMTP id h9-v6so1415952edr.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 06:39:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=PbQjEup6XpRnvv+UBO/q/f3xZ3V6EwBkXW9c9eUdpL8=;
-        b=JyzwBTUztWfCDNMkxGrOPshebCX2whfQketX4WNvaVOeetlill0VGCXoiiH+B8sxt6
-         2/byLEObvVdAzuXDPHK80ys2hllPfqUQbeVtrKRu6Y91a+ZIS4chVzOVpdGZKxXzAd8t
-         9Cy2IzzaPoGueerYjichhMPjlWdPxyMsYOu8Q=
+        bh=yevtQkgsCioqMEb9KDEpyOqOMEC2bkGaMloPV72ufdI=;
+        b=O5OkVRG0LulDbp4RB6XhPlVpvtuIJAawEnDIiyd6E1ad2CJbAUHQHgMQgwsGJfZ70a
+         ffqrqU3WdF9ktkPcZDfmlxEBmtBzaClVrjQ9ieaHmr88AAkTytbcQ8tWq4Knagg9raqG
+         DY+dNWOHIq+kSOt3woWDXFLpdXqQNFrNdumig=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=PbQjEup6XpRnvv+UBO/q/f3xZ3V6EwBkXW9c9eUdpL8=;
-        b=jR1C9fdAK+RzAcRH/fnq2vlDeMl3w38GE8VHBoS+hT8aAykbqiEvO6IpCTAUXf7j+l
-         M1iJmyewhULGhR0hjyXiS9RAek631barVjNLKPnrkfaufRNlxfaxX6nldsc7jNdHrm76
-         uRym4IacAYtk9HJBr46B3JflxptLmAesxZz6cE3eo4ox5Q/1ONYd6F0RG631RwwXx+Fc
-         y11wAns/xyDQ96zeco2xOzyAcQA4LeJBVn1rZ5iKROyPiss4VSmFhuOdB3C957gEMJ7X
-         yocSmN0TwG4I1LSrG/x/XJGcr8CRQ2NLIxItLqKs1G4S5YYjhOEiczG41rQjVRzQGlYZ
-         yPFw==
-X-Gm-Message-State: APzg51B5Pm96W7/j/ynzMtIL4evkx1aIhJ3qL0m5DMDAh0IxMIyx96km
-        plFOUcdiFPOOrdQ8WLYm+JKEm3Rr+EY=
-X-Google-Smtp-Source: ANB0Vda+X4CmlZd2m9vsdzAnt5mrTCIJ1aKiMjNKrXvwr1+8ViFJmBjIMKextR8edDFmIfyKstM6RA==
-X-Received: by 2002:aa7:d6da:: with SMTP id x26-v6mr2545421edr.209.1535463557845;
-        Tue, 28 Aug 2018 06:39:17 -0700 (PDT)
+        bh=yevtQkgsCioqMEb9KDEpyOqOMEC2bkGaMloPV72ufdI=;
+        b=uT67TE5keheAWTUNr24kWItiJ+bAr+J737pf6MiTL5l5W8NFIHt0j48gwiFmNnXgOT
+         Ijdd6VT81teyackzUq+BdtdU1rOjbeR3YTLwWb+66voqAdg34wBqiLmeJTJfjTjfChLT
+         52/dOiAJF4poikJbQOLQh3Xxfz3QXEoKeagqXRgbUhnNVTqFeP5bRe/wUJvicrj/0qlm
+         KbexF2clMn5/6t2ZvcskOlHj9xjcShafCUwSlGn3+mpb1KsTlgF/go96Sj5ejnvZulqm
+         bibX3TQLaeXhyX+XYsgU8tMdCfp3y+pNB3M8P+HAos3J8J8biZRgwcZ01/MCs9LlacAl
+         Bk+A==
+X-Gm-Message-State: APzg51C9xwTa0KhOYDdZiyar4xo6PpRzLNd1d3y/5d1M96ongGN6Qt8R
+        AQUS1P43P7JSWb6ArjL8PKVUWeV6AHw=
+X-Google-Smtp-Source: ANB0Vda0l/veYtd6+2M7og98KGwdrAkqiPPRX4qxygtgZHzMcWQHxlZzMfcDaUTjKCqMNlbCjrKANA==
+X-Received: by 2002:a50:a7a2:: with SMTP id i31-v6mr2609936edc.296.1535463564110;
+        Tue, 28 Aug 2018 06:39:24 -0700 (PDT)
 Received: from localhost ([49.248.200.109])
-        by smtp.gmail.com with ESMTPSA id f16-v6sm595597edq.36.2018.08.28.06.39.15
+        by smtp.gmail.com with ESMTPSA id d12-v6sm651102ede.78.2018.08.28.06.39.22
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 28 Aug 2018 06:39:17 -0700 (PDT)
+        Tue, 28 Aug 2018 06:39:23 -0700 (PDT)
 From:   Amit Kucheria <amit.kucheria@linaro.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     rnayak@codeaurora.org, linux-arm-msm@vger.kernel.org,
@@ -63,12 +63,10 @@ Cc:     rnayak@codeaurora.org, linux-arm-msm@vger.kernel.org,
         dianders@chromium.org, mka@chromium.org,
         Zhang Rui <rui.zhang@intel.com>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH v2 03/11] dt-bindings: thermal: Fix a typo in documentation
-Date:   Tue, 28 Aug 2018 19:08:32 +0530
-Message-Id: <8480b996596184a478fe74dfdb97ead7dba6fb11.1535462942.git.amit.kucheria@linaro.org>
+        linux-pm@vger.kernel.org
+Subject: [PATCH v2 04/11] thermal: tsens: Add SPDX license identifiers
+Date:   Tue, 28 Aug 2018 19:08:33 +0530
+Message-Id: <ed1481a7c4b2c557a7825bf1f92506323ddaa328.1535462942.git.amit.kucheria@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1535462942.git.amit.kucheria@linaro.org>
 References: <cover.1535462942.git.amit.kucheria@linaro.org>
@@ -79,28 +77,147 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-c(1) + x(1) was actually meant to be c(1) * x(1).
+The TSENS drivers use a GPL-2.0 license. Replace with equivalent SPDX
+tags and delete the full license text.
 
 Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
 Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-Acked-by: Rob Herring <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/thermal/thermal.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/thermal/qcom/tsens-8916.c   | 11 +----------
+ drivers/thermal/qcom/tsens-8960.c   | 11 +----------
+ drivers/thermal/qcom/tsens-8974.c   | 11 +----------
+ drivers/thermal/qcom/tsens-common.c | 11 +----------
+ drivers/thermal/qcom/tsens.c        | 11 +----------
+ drivers/thermal/qcom/tsens.h        | 11 ++---------
+ 6 files changed, 7 insertions(+), 59 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/thermal/thermal.txt b/Documentation/devicetree/bindings/thermal/thermal.txt
-index eb7ee91556a5..ca14ba959e0d 100644
---- a/Documentation/devicetree/bindings/thermal/thermal.txt
-+++ b/Documentation/devicetree/bindings/thermal/thermal.txt
-@@ -152,7 +152,7 @@ Optional property:
-   Elem size: one cell	the sensors listed in the thermal-sensors property.
-   Elem type: signed	Coefficients defaults to 1, in case this property
- 			is not specified. A simple linear polynomial is used:
--			Z = c0 * x0 + c1 + x1 + ... + c(n-1) * x(n-1) + cn.
-+			Z = c0 * x0 + c1 * x1 + ... + c(n-1) * x(n-1) + cn.
+diff --git a/drivers/thermal/qcom/tsens-8916.c b/drivers/thermal/qcom/tsens-8916.c
+index fdf561b8b81d..c4955c85e922 100644
+--- a/drivers/thermal/qcom/tsens-8916.c
++++ b/drivers/thermal/qcom/tsens-8916.c
+@@ -1,15 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright (c) 2015, The Linux Foundation. All rights reserved.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 and
+- * only version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+  */
  
- 			The coefficients are ordered and they match with sensors
- 			by means of sensor ID. Additional coefficients are
+ #include <linux/platform_device.h>
+diff --git a/drivers/thermal/qcom/tsens-8960.c b/drivers/thermal/qcom/tsens-8960.c
+index 0451277d3a8f..4af76de7dc2e 100644
+--- a/drivers/thermal/qcom/tsens-8960.c
++++ b/drivers/thermal/qcom/tsens-8960.c
+@@ -1,15 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright (c) 2015, The Linux Foundation. All rights reserved.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 and
+- * only version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+  */
+ 
+ #include <linux/platform_device.h>
+diff --git a/drivers/thermal/qcom/tsens-8974.c b/drivers/thermal/qcom/tsens-8974.c
+index 9baf77e8cbe3..7e149edbfeb6 100644
+--- a/drivers/thermal/qcom/tsens-8974.c
++++ b/drivers/thermal/qcom/tsens-8974.c
+@@ -1,15 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright (c) 2015, The Linux Foundation. All rights reserved.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 and
+- * only version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+  */
+ 
+ #include <linux/platform_device.h>
+diff --git a/drivers/thermal/qcom/tsens-common.c b/drivers/thermal/qcom/tsens-common.c
+index 478739543bbc..303e3fdaca98 100644
+--- a/drivers/thermal/qcom/tsens-common.c
++++ b/drivers/thermal/qcom/tsens-common.c
+@@ -1,15 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright (c) 2015, The Linux Foundation. All rights reserved.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 and
+- * only version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+  */
+ 
+ #include <linux/err.h>
+diff --git a/drivers/thermal/qcom/tsens.c b/drivers/thermal/qcom/tsens.c
+index a2c9bfae3d86..90bb431cf740 100644
+--- a/drivers/thermal/qcom/tsens.c
++++ b/drivers/thermal/qcom/tsens.c
+@@ -1,15 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright (c) 2015, The Linux Foundation. All rights reserved.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 and
+- * only version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+  */
+ 
+ #include <linux/err.h>
+diff --git a/drivers/thermal/qcom/tsens.h b/drivers/thermal/qcom/tsens.h
+index 14331eb45a86..8207610f326a 100644
+--- a/drivers/thermal/qcom/tsens.h
++++ b/drivers/thermal/qcom/tsens.h
+@@ -1,15 +1,8 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright (c) 2015, The Linux Foundation. All rights reserved.
+- *
+- * This software is licensed under the terms of the GNU General Public
+- * License version 2, as published by the Free Software Foundation, and
+- * may be copied, distributed, and modified under those terms.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
++
+ #ifndef __QCOM_TSENS_H__
+ #define __QCOM_TSENS_H__
+ 
 -- 
 2.17.1
 
