@@ -2,113 +2,92 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16E4CC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 23:34:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94FD7C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 23:36:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B25752087D
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 23:34:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WxTMF9qF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B25752087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 475012087F
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 23:36:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 475012087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727577AbeH2D2K (ORCPT
+        id S1727568AbeH2DaH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 23:28:10 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:47730 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727146AbeH2D2K (ORCPT
+        Tue, 28 Aug 2018 23:30:07 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:39525 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727072AbeH2DaH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 23:28:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:Date:Message-ID:Cc:To:Subject:From:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=ch37FjB/2HtlITQvCWYTMQcaJohMsL9lzagYvks6G7w=; b=WxTMF9qFDRGjcx4lvljsW1zCjz
-        JTqyjC0wGNSAJckjb2h1sJY8lrV8GjlRNuztRu8aYo2RmER8DDJBmCTFQp2zji0XzTLacwYJtLVtv
-        KCi5zgAln4W90kulixm0vvmfwNxoFzHwS1OTxzIUo/UqMbg+LzhtxVvBfX0YPzFuqtRsMZvrkvoLk
-        MGv+lNdFu3Lot3H0n5Ia0X0D8hL/czvaUrF1SFS9SdNEyNsuS3AZ8nifwQtBYzEJnCQUTl2Jfnhgn
-        Wbqgci1toGAYZrg9tneUECMPHe88ucypx+SjMWsx8uLD/tsS7ZSMmb4WQ9ANPff4xcYGOJLPKwLLF
-        san3d+xg==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1funUt-0005gK-2O; Tue, 28 Aug 2018 23:34:07 +0000
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH resend] uapi/linux/keyctl.h: don't use C++ reserved keyword as
- a struct member name
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Mat Martineau <mathew.j.martineau@linux.intel.com>,
-        stable <stable@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Message-ID: <0db6c314-1ef4-9bfa-1baa-7214dd2ee061@infradead.org>
-Date:   Tue, 28 Aug 2018 16:34:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 28 Aug 2018 23:30:07 -0400
+Received: from ben by shadbolt.decadent.org.uk with local (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1funWo-0008BS-DO; Wed, 29 Aug 2018 00:36:06 +0100
+Date:   Wed, 29 Aug 2018 00:36:06 +0100
+From:   Ben Hutchings <ben@decadent.org.uk>
+To:     Sasha Levin <alexander.levin@verizon.com>
+Cc:     linux-kernel@vger.kernel.org
+Message-ID: <20180828233606.GE18030@decadent.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="gDGSpKKIBgtShtf+"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+Subject: [PATCH 0/2] Build fixes for liblockdep
+X-SA-Exim-Version: 4.2.1 (built Mon, 26 Dec 2011 16:24:06 +0000)
+X-SA-Exim-Scanned: Yes (on shadbolt.decadent.org.uk)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
 
-Since this header is in "include/uapi/linux/", apparently people
-want to use it in userspace programs -- even in C++ ones.
-However, the header uses a C++ reserved keyword ("private"),
-so change that to "dh_private" instead to allow the header file
-to be used in C++ userspace.
+--gDGSpKKIBgtShtf+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Fixes https://bugzilla.kernel.org/show_bug.cgi?id=191051
-Fixes: ddbb41148724 ("KEYS: Add KEYCTL_DH_COMPUTE command")
+In addition to the patch I recently sent for lockdep itself, the
+following fixes are also needed to make liblockdep build.
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: David Howells <dhowells@redhat.com>
-Cc: James Morris <jmorris@namei.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: keyrings@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org
-Cc: Mat Martineau <mathew.j.martineau@linux.intel.com>
-Cc: stable@vger.kernel.org
----
- include/uapi/linux/keyctl.h |    2 +-
- security/keys/dh.c          |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Ben.
 
---- lnx-416.orig/include/uapi/linux/keyctl.h
-+++ lnx-416/include/uapi/linux/keyctl.h
-@@ -65,7 +65,7 @@
- 
- /* keyctl structures */
- struct keyctl_dh_params {
--	__s32 private;
-+	__s32 dh_private;
- 	__s32 prime;
- 	__s32 base;
- };
---- lnx-416.orig/security/keys/dh.c
-+++ lnx-416/security/keys/dh.c
-@@ -307,7 +307,7 @@ long __keyctl_dh_compute(struct keyctl_d
- 	}
- 	dh_inputs.g_size = dlen;
- 
--	dlen = dh_data_from_key(pcopy.private, &dh_inputs.key);
-+	dlen = dh_data_from_key(pcopy.dh_private, &dh_inputs.key);
- 	if (dlen < 0) {
- 		ret = dlen;
- 		goto out2;
+Bastian Blank (1):
+  liblockdep: Stub NMI watchdog reset
+
+Ben Hutchings (1):
+  liblockdep: Stub task_struct::state
+
+ tools/include/linux/lockdep.h |  4 ++++
+ tools/include/linux/nmi.h     | 12 ++++++++++++
+ 2 files changed, 16 insertions(+)
+ create mode 100644 tools/include/linux/nmi.h
 
 
+--gDGSpKKIBgtShtf+
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIVAwUBW4XcZee/yOyVhhEJAQrZFg//RN81S7D1GXnkWfrNVL8x7o2mSn2lCQRz
+IS0JlkIQWbT4eO4OdubW5+IDWQS8xk1w1PyHzgj91RkxZsZCL/IWfBsG8SDneVQP
+2kK2HWaWeeWMEUzEYb9S/p4K/y4soC3UM7/pwRCia9jIkeQ0Kvo0S+hWfZfoRYMl
+nVXlw9ATxjWAJdkGbEgYYNERGCEZtco+7eoQCD6HGHuihaqEb02jWG8SfGiWT065
+1rIAQva+RCnNqUfgnPpKlON5mkIjz5ckINliFUWbLvv48a0DbsDLpaJCOEqBi6tE
+42oHc4zd8g25Ch41DRhRu5terXQGk3+Jx6YBrW7pJjhauJ2Aw35AQLOUWD61wCUL
+KNwexP3kj6/KlimO6RwRZjC58jogLhUf222db/7ryvaYitZGgMIKNppvf+OW0Ysh
+OPc3UNIFQwvlC+5eiHgMJgeyH/A96HpHS1jxdTXQxduTcOst87PySQCijhlrP1dT
+bH6jKuVfnBzwgTEmZDjJZW97TEK5O2ZFw1ex61g1ieXgQ3FEh0tFU3e8QzAQ1iM/
+muIFMT86g29EXy9jgWWqNks/vA+dHCFf0/jCbMg9zKB/bVk0xlU/zyL9Ndttr7lk
+wv935JJkPa5h3EmXtubhMWLlsX22XfopDHJ9okJ7OhENORHjyfqbuyJg9C6h+dSC
+a0icw3ph1lw=
+=O+d0
+-----END PGP SIGNATURE-----
+
+--gDGSpKKIBgtShtf+--
