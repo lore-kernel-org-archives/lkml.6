@@ -2,99 +2,157 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C43DEC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:56:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B34BCC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:57:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 730AC2087D
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:56:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 730AC2087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 52CA82087D
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:57:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WMT2ZhV6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52CA82087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727525AbeH1OrE (ORCPT
+        id S1727601AbeH1Oso (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 10:47:04 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:44323 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727104AbeH1OrE (ORCPT
+        Tue, 28 Aug 2018 10:48:44 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:33377 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727104AbeH1Oso (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 10:47:04 -0400
-Received: by mail-qk0-f195.google.com with SMTP id d131-v6so634434qke.11;
-        Tue, 28 Aug 2018 03:55:59 -0700 (PDT)
+        Tue, 28 Aug 2018 10:48:44 -0400
+Received: by mail-pf1-f193.google.com with SMTP id d4-v6so558202pfn.0;
+        Tue, 28 Aug 2018 03:57:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=0idqYE5mDtRb6CtXggIsTt4h0MJ6qyXNFB/uGYU69VQ=;
+        b=WMT2ZhV6FOPgPp/+YaopftXxLm8AqV8ngiHAirwQKfOSaeuumv9PtMEwmK2P8+ZBvN
+         2MmOMtSleVlICb2Z6LBofPhuc0O+oIQJCf085J3iJQBkwNxzmle0cx+4cvxJ/xpbkVU4
+         Pz7GmZUtq+CE6iyhg8rkhbqO1HVP/CLKMGNjff4byKH2XMR+voEyaR1RfqEyJuEQeei9
+         +RQzMS+G12sA32RxCF8fSi0JgfhmamA8V+wQY6Up1CZgpzUVa6+n9iWoWJT1doCS5lFo
+         Ui46DaBTQwfBq3z+BY65fWVJTWMMbIDwS6nBJrvKdbS8U7olq8EpPF7V0ZPQzbuydSHM
+         OUfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6EyVnGzEXtmHDUZNpeAAbtRg/nqDNiWg+/uLUN1sf70=;
-        b=OmdgsBrUPcnhOWHwmCDOWp8ob1Vkwh+l+hyXFqpCjl4677Z9o9HhK+uZl9sqdQY75L
-         HG30QNNhaiJSusIb9X2YWSIGZNjUwNGEBgTfHZaH1jIayxcX52UDVyo88V20zoKri+wE
-         GePa2biaqxItfpKULd+38IoxmEbhcU+RvoyDWPpUVlID8BljKWNTdV6e5Xohy7kM1eCA
-         0S64H4w98I66+tMba6sg1rgi81Nhs5NIfUimitDwtSilpE7OWS99Nzy/G6FTYIIQwix6
-         odki9ic6LwbvkWrJTkuyzZuz6+EibAEX1L8Y14Peopce/gwSnyVmA7KsFfguEu0VgL7+
-         ASjQ==
-X-Gm-Message-State: APzg51DeDZcLbpERc7h0cJA8jBu+aMIPzoG/c7ISwEgWmDLKv+C3u4Jd
-        AykX5vwlqDGLKE6Cr4P53FRSmwkvjg46zRXT7tM=
-X-Google-Smtp-Source: ANB0VdbSIhdAZGZZ6LQt2ChhQBRNGm0ZUrixWHAIVQr83OMA8TMhfhYyGWVgPPChE630VILoXSiqDuogqXLIbQJzld0=
-X-Received: by 2002:a37:6b03:: with SMTP id g3-v6mr868366qkc.107.1535453758926;
- Tue, 28 Aug 2018 03:55:58 -0700 (PDT)
-MIME-Version: 1.0
-References: <1535220989-27645-1-git-send-email-yamada.masahiro@socionext.com>
- <84cf6ae0-97c8-6b73-ca86-b3d3b3daba5b@pobox.com> <CAKwvOdm7RrGpwk4LMFhsKx=5QMDoFAF8JX=RMZ9YXwOptDfhCg@mail.gmail.com>
- <8d5cf8c6-556a-96a1-610d-c92355783a9f@pobox.com>
-In-Reply-To: <8d5cf8c6-556a-96a1-610d-c92355783a9f@pobox.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 28 Aug 2018 12:55:42 +0200
-Message-ID: <CAK8P3a2NgqV6fnQSaTFKWdBpwp656L9Kp4NB=bwTwRb8ojZAuQ@mail.gmail.com>
-Subject: Re: [PATCH v2] compiler.h: give up __compiletime_assert_fallback()
-To:     daniel.santos@pobox.com
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Christopher Li <sparse@chrisli.org>,
-        linux-sparse@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=0idqYE5mDtRb6CtXggIsTt4h0MJ6qyXNFB/uGYU69VQ=;
+        b=IDh6TVTbF7Do6SAdVS94TGp1/WbvnXyAK4jIfKNEPgwMQ4Hkzy9kzC9ilBjRX4UKwb
+         Ck5pfZj13RL/aOkV8Yrl93xvRG5WjlgDr4qgUcunJhsf6gDMyc5gbxpMPP2VSX9RmMTm
+         6kncCSAbX+6BGis/DSIndZSeMcNCtM7oF6iD91Lqz+0xyGhYJUFJTAbLiLZY1Uzk2OJV
+         MHzdgXgu6JnkQXMf6I5gEpsC5riA6Ns45PJ/l0XPiA69cpEQpvtSQM5o//0vHt0k4CJS
+         4NZHMs2HQzseJr0skxL8qXI7unHgH5djslZunKIrfZ4tBV75g66fBBJ0QSZdzQVrAU1Q
+         RFGw==
+X-Gm-Message-State: APzg51Dw3WJRUhiHyyCiqfhTLssBg10Yuax4BQPmXnqqmivzu45XK9dN
+        nqVzQbJ+e4hhCJ219qkFR90v4dm3
+X-Google-Smtp-Source: ANB0VdaIzCDKmBCqnCjzvPQS+mp5zSIUEyy/saKwHABmqXX2xAT7hZThEJ5Afs/Wck8lQbWFbqYVBQ==
+X-Received: by 2002:a63:e206:: with SMTP id q6-v6mr958060pgh.223.1535453858491;
+        Tue, 28 Aug 2018 03:57:38 -0700 (PDT)
+Received: from machine421.caveonetworks.com ([115.113.156.2])
+        by smtp.googlemail.com with ESMTPSA id n22-v6sm2946798pfj.68.2018.08.28.03.57.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 28 Aug 2018 03:57:37 -0700 (PDT)
+From:   sunil.kovvuri@gmail.com
+To:     linux-kernel@vger.kernel.org, arnd@arndb.de, olof@lixom.net
+Cc:     linux-arm-kernel@lists.infradead.org, linux-soc@vger.kernel.org,
+        Sunil Goutham <sgoutham@marvell.com>
+Subject: [PATCH 00/15] soc: octeontx2: Add RVU admin function driver
+Date:   Tue, 28 Aug 2018 16:27:03 +0530
+Message-Id: <1535453838-12154-1-git-send-email-sunil.kovvuri@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 10:44 PM Daniel Santos <daniel.santos@pobox.com> wrote:
->
-> On 08/27/2018 03:09 PM, Nick Desaulniers wrote:
-> >> Now we're back to the question of "what do you mean by 'constant'"?  If
-> >> you mean a C constant expression (as defined in the C standard) than
-> >> almost none of this code fits that criteria.  For these compile-time
-> >> assertions to work, we are concerned with the data flow analysis and
-> >> constant propagation performed by the compiler during optimization.  You
-> >> will notice in include/linux/compiler.h that __compiletime_assert is a
-> >> no-op when __OPTIMIZE__ is not defined.
-> > Depending on optimizations for static assertions sounds problematic.
->
-> (with my best Palpatine voice) It is unavoidable.
->
-> Actually it's theoretically possible, but the compiler would have to do
-> something akin to copying it's control flow graph et. al, run -O2-ish
-> optimizations, perform the static assertions and then throw away the
-> optimized control flow graph and emit code based upon the original.
+From: Sunil Goutham <sgoutham@marvell.com>
 
-In the context of the kernel, compiling with anything less than -O2 or
--Os is not an issue, we don't do it anyway. -O0 never worked, and
-AFAICT we only build one file with -O1, but that is something we can do
-away with as well:
+Resource virtualization unit (RVU) on Marvell's OcteonTX2 SOC supports
+multiple PCIe SRIOV physical functions (PFs) and virtual functions (VFs).
+PF0 is called administrative / admin function (AF) and has privilege access
+to registers to provision different RVU functional blocks to each of
+PF/VF. 
 
-from fs/reiserfs/Makefile:
-# gcc -O2 (the kernel default)  is overaggressive on ppc32 when many inline
-# functions are used.  This causes the compiler to advance the stack
-# pointer out of the available stack space, corrupting kernel space,
-# and causing a panic. Since this behavior only affects ppc32, this ifeq
-# will work around it. If any other architecture displays this behavior,
-# add it here.
-ccflags-$(CONFIG_PPC32) := $(call cc-ifversion, -lt, 0400, -O1)
+This admin function (AF) driver acts as a configuration / administrative
+software which provisions functional blocks to a PF/VF on demand for them
+to work as one of the following
+ - A basic network controller (i.e NIC).
+ - NIC with packet filtering, shaping and scheduling capabilities.
+ - A crypto device.
+ - A combination of above etc.
 
-     Arnd
+PF/VFs communicate with admin function via a shared memory region.
+This patch series adds logic for the following
+ - RVU AF driver with functional blocks provisioning support
+ - Mailbox infrastructure for communication between AF and PFs.
+ - CGX driver which provides information about physcial network
+   interfaces which AF processes and forwards required info to
+   PF/VF drivers.
+
+This is the first set of patches out of 70 odd patches.
+
+Note: This driver neither receives any data nor processes it i.e no I/O,
+      just does the hardware configuration.
+
+Aleksey Makarov (2):
+  soc: octeontx2: Add mailbox support infra
+  soc: octeontx2: Convert mbox msg id check to a macro
+
+Geetha sowjanya (1):
+  soc: octeontx2: Reconfig MSIX base with IOVA
+
+Linu Cherian (3):
+  soc: octeontx2: Set RVU PFs to CGX LMACs mapping
+  soc: octeontx2: Add support for CGX link management
+  soc: octeontx2: Register for CGX lmac events
+
+Sunil Goutham (9):
+  soc: octeontx2: Add Marvell OcteonTX2 RVU AF driver
+  soc: octeontx2: Reset all RVU blocks
+  soc: octeontx2: Gather RVU blocks HW info
+  soc: octeontx2: Add mailbox IRQ and msg handlers
+  soc: octeontx2: Scan blocks for LFs provisioned to PF/VF
+  soc: octeontx2: Add RVU block LF provisioning support
+  soc: octeontx2: Configure block LF's MSIX vector offset
+  soc: octeontx2: Add Marvell OcteonTX2 CGX driver
+  MAINTAINERS: Add entry for Marvell OcteonTX2 Admin Function driver
+
+ MAINTAINERS                                |   10 +
+ drivers/soc/Kconfig                        |    1 +
+ drivers/soc/Makefile                       |    1 +
+ drivers/soc/marvell/Kconfig                |   23 +
+ drivers/soc/marvell/Makefile               |    2 +
+ drivers/soc/marvell/octeontx2/Makefile     |   10 +
+ drivers/soc/marvell/octeontx2/cgx.c        |  529 +++++++++
+ drivers/soc/marvell/octeontx2/cgx.h        |   63 ++
+ drivers/soc/marvell/octeontx2/cgx_fw_if.h  |  225 ++++
+ drivers/soc/marvell/octeontx2/mbox.c       |  300 +++++
+ drivers/soc/marvell/octeontx2/mbox.h       |  211 ++++
+ drivers/soc/marvell/octeontx2/rvu.c        | 1625 ++++++++++++++++++++++++++++
+ drivers/soc/marvell/octeontx2/rvu.h        |  158 +++
+ drivers/soc/marvell/octeontx2/rvu_cgx.c    |  194 ++++
+ drivers/soc/marvell/octeontx2/rvu_reg.h    |  442 ++++++++
+ drivers/soc/marvell/octeontx2/rvu_struct.h |   78 ++
+ 16 files changed, 3872 insertions(+)
+ create mode 100644 drivers/soc/marvell/Kconfig
+ create mode 100644 drivers/soc/marvell/Makefile
+ create mode 100644 drivers/soc/marvell/octeontx2/Makefile
+ create mode 100644 drivers/soc/marvell/octeontx2/cgx.c
+ create mode 100644 drivers/soc/marvell/octeontx2/cgx.h
+ create mode 100644 drivers/soc/marvell/octeontx2/cgx_fw_if.h
+ create mode 100644 drivers/soc/marvell/octeontx2/mbox.c
+ create mode 100644 drivers/soc/marvell/octeontx2/mbox.h
+ create mode 100644 drivers/soc/marvell/octeontx2/rvu.c
+ create mode 100644 drivers/soc/marvell/octeontx2/rvu.h
+ create mode 100644 drivers/soc/marvell/octeontx2/rvu_cgx.c
+ create mode 100644 drivers/soc/marvell/octeontx2/rvu_reg.h
+ create mode 100644 drivers/soc/marvell/octeontx2/rvu_struct.h
+
+-- 
+2.7.4
+
