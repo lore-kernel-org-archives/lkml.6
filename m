@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A811C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:42:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CAB1C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:42:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14BF52084C
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:42:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01A942087E
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:42:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=birdec.tech header.i=@birdec.tech header.b="ZVeDfo82"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14BF52084C
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=birdec.tech header.i=@birdec.tech header.b="nQfktLIu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01A942087E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=birdec.tech
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727367AbeH2Bfm (ORCPT
+        id S1727457AbeH2Bfu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 21:35:42 -0400
-Received: from host.euro-space.net ([87.117.239.2]:48877 "EHLO
+        Tue, 28 Aug 2018 21:35:50 -0400
+Received: from host.euro-space.net ([87.117.239.2]:42720 "EHLO
         host.euro-space.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726998AbeH2Bfm (ORCPT
+        with ESMTP id S1726998AbeH2Bfu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 21:35:42 -0400
+        Tue, 28 Aug 2018 21:35:50 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=birdec.tech
         ; s=default; h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=OXN7eFTN3RfuR3y3CCBS3jV78rIhRUEtx6L4PzVtbW8=; b=ZVeDfo82zMDbxF//vXyvbpTAPj
-        T/SaWuhwr4JT/Rfwj+gabFt8vkT8Oim7YqIRboIqB3GUmv4HUQwO9cYwESHHubhfm44GFicuYMOKH
-        S8ZIkdAJH/fz1QoQmw1dSlOp+mAaKidhsGzP2dFXKvy4karM5i4xFKV7MQi5KGPEMynd0YS6D3TZQ
-        9tF9PLH15eHAr+ff2oS28yRJ4ImXvyGalVF+3pTb2qGYoXof8WPxx4y3e4ghF1HgLnbB5PgUAfS0V
-        U1Lr1+LLj01DHKF8OGDAsq8z6GNvyQ5+z6NZbxoewbx2F0cH00OerGbgw2/+bKC4WOop9rUemg6M1
-        ZLvOVwAQ==;
+        bh=a2yC7/xN5e6r2EKsm4v+K36IC7YFL66cp1N1jflwIj8=; b=nQfktLIu2+w3XWtBEaVP0HVtKr
+        CMrFVh+CWoUXlNTxzuPP5LhX8W28T3caApWyG0mvuphRBLRxCCMt3o5aiC8F4Y6pjTWbcs8I3QwZb
+        lZSzAOY72W1Kgw38tQhcw6cuXF8BZBOBM64sLtr9uhRbYFND/jMExCvsR9wA7hRE5mgUVG63U3FTi
+        cVWxwpHzZGo40X6kd3M/5n04Evdetx8pwAqnw082+cIwea6JoKGmvLh3LXYMTLejOyqF8L5F7yYmT
+        UkXRs7s+mBGFDl9L5qpaGbICsbtZNLPIkw5FYNSMxcY+LB3W1K0WSG8cGJ2wlBWjvX9vR+ockSZ/0
+        Oux0Amfw==;
 Received: from x55b35620.dyn.telefonica.de ([85.179.86.32]:36818 helo=gentoo0.localdomain)
         by host.euro-space.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
         (Exim 4.91)
         (envelope-from <kmarinushkin@birdec.tech>)
-        id 1fulkS-00052G-B2; Tue, 28 Aug 2018 22:42:04 +0100
+        id 1fulkZ-00052G-Ib; Tue, 28 Aug 2018 22:42:11 +0100
 From:   Kirill Marinushkin <kmarinushkin@birdec.tech>
 To:     Mark Brown <broonie@kernel.org>
 Cc:     Liam Girdwood <lgirdwood@gmail.com>,
@@ -53,12 +53,13 @@ Cc:     Liam Girdwood <lgirdwood@gmail.com>,
         Peter Ujfalusi <peter.ujfalusi@ti.com>,
         alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
         Kirill Marinushkin <kmarinushkin@birdec.tech>
-Subject: [PATCH 1/2] ASoC: pcm3060: Improve stylistics of file comments
-Date:   Tue, 28 Aug 2018 23:42:30 +0200
-Message-Id: <20180828214231.10164-1-kmarinushkin@birdec.tech>
+Subject: [PATCH 2/2] ASoC: pcm3060: Improve legibility of if-statements
+Date:   Tue, 28 Aug 2018 23:42:31 +0200
+Message-Id: <20180828214231.10164-2-kmarinushkin@birdec.tech>
 X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20180828194045.GQ2414@sirena.org.uk>
+In-Reply-To: <20180828214231.10164-1-kmarinushkin@birdec.tech>
 References: <20180828194045.GQ2414@sirena.org.uk>
+ <20180828214231.10164-1-kmarinushkin@birdec.tech>
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
 X-AntiAbuse: Primary Hostname - host.euro-space.net
 X-AntiAbuse: Original Domain - vger.kernel.org
@@ -74,73 +75,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Modified the complete file comments in C++ style, to make them look more
-intentional
+Modified some if-statements to make them more clear
 
 Signed-off-by: Kirill Marinushkin <kmarinushkin@birdec.tech>
 Cc: Mark Brown <broonie@kernel.org>
 Cc: alsa-devel@alsa-project.org
 Cc: linux-kernel@vger.kernel.org
 ---
- sound/soc/codecs/pcm3060-i2c.c | 9 ++++-----
- sound/soc/codecs/pcm3060-spi.c | 9 ++++-----
- sound/soc/codecs/pcm3060.c     | 9 ++++-----
- 3 files changed, 12 insertions(+), 15 deletions(-)
+ sound/soc/codecs/pcm3060.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/codecs/pcm3060-i2c.c b/sound/soc/codecs/pcm3060-i2c.c
-index 03d2b4323626..cdc8314882bc 100644
---- a/sound/soc/codecs/pcm3060-i2c.c
-+++ b/sound/soc/codecs/pcm3060-i2c.c
-@@ -1,9 +1,8 @@
- // SPDX-License-Identifier: GPL-2.0
--/*
-- * PCM3060 I2C driver
-- *
-- * Copyright (C) 2018 Kirill Marinushkin <kmarinushkin@birdec.tech>
-- */
-+//
-+// PCM3060 I2C driver
-+//
-+// Copyright (C) 2018 Kirill Marinushkin <kmarinushkin@birdec.tech>
- 
- #include <linux/i2c.h>
- #include <linux/module.h>
-diff --git a/sound/soc/codecs/pcm3060-spi.c b/sound/soc/codecs/pcm3060-spi.c
-index 8961e095ae73..f6f19fa80932 100644
---- a/sound/soc/codecs/pcm3060-spi.c
-+++ b/sound/soc/codecs/pcm3060-spi.c
-@@ -1,9 +1,8 @@
- // SPDX-License-Identifier: GPL-2.0
--/*
-- * PCM3060 SPI driver
-- *
-- * Copyright (C) 2018 Kirill Marinushkin <kmarinushkin@birdec.tech>
-- */
-+//
-+// PCM3060 SPI driver
-+//
-+// Copyright (C) 2018 Kirill Marinushkin <kmarinushkin@birdec.tech>
- 
- #include <linux/module.h>
- #include <linux/spi/spi.h>
 diff --git a/sound/soc/codecs/pcm3060.c b/sound/soc/codecs/pcm3060.c
-index ef7c627c9ac5..5b9718fa766d 100644
+index 5b9718fa766d..494d9d662be8 100644
 --- a/sound/soc/codecs/pcm3060.c
 +++ b/sound/soc/codecs/pcm3060.c
-@@ -1,9 +1,8 @@
- // SPDX-License-Identifier: GPL-2.0
--/*
-- * PCM3060 codec driver
-- *
-- * Copyright (C) 2018 Kirill Marinushkin <kmarinushkin@birdec.tech>
-- */
-+//
-+// PCM3060 codec driver
-+//
-+// Copyright (C) 2018 Kirill Marinushkin <kmarinushkin@birdec.tech>
+@@ -68,7 +68,10 @@ static int pcm3060_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+ 		return -EINVAL;
+ 	}
  
- #include <linux/module.h>
- #include <sound/pcm_params.h>
+-	reg = (dai->id == PCM3060_DAI_ID_DAC ? PCM3060_REG67 : PCM3060_REG72);
++	if (dai->id == PCM3060_DAI_ID_DAC)
++		reg = PCM3060_REG67;
++	else
++		reg = PCM3060_REG72;
+ 
+ 	regmap_update_bits(priv->regmap, reg, PCM3060_REG_MASK_FMT, val);
+ 
+@@ -124,7 +127,10 @@ static int pcm3060_hw_params(struct snd_pcm_substream *substream,
+ 	}
+ 
+ val_ready:
+-	reg = (dai->id == PCM3060_DAI_ID_DAC ? PCM3060_REG67 : PCM3060_REG72);
++	if (dai->id == PCM3060_DAI_ID_DAC)
++		reg = PCM3060_REG67;
++	else
++		reg = PCM3060_REG72;
+ 
+ 	regmap_update_bits(priv->regmap, reg, PCM3060_REG_MASK_MS, val);
+ 
 -- 
 2.13.6
 
