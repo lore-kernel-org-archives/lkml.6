@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4278C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:54:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06285C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:54:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F19A206B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:54:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B51522064A
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:54:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uvlb8zPp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F19A206B8
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rg/ZQe2p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B51522064A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727611AbeH1VrW (ORCPT
+        id S1727659AbeH1VrZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 17:47:22 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:37982 "EHLO
+        Tue, 28 Aug 2018 17:47:25 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:37839 "EHLO
         mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727040AbeH1VrW (ORCPT
+        with ESMTP id S1727040AbeH1VrY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 17:47:22 -0400
-Received: by mail-pg1-f195.google.com with SMTP id e2-v6so1084881pgv.5;
-        Tue, 28 Aug 2018 10:54:36 -0700 (PDT)
+        Tue, 28 Aug 2018 17:47:24 -0400
+Received: by mail-pg1-f195.google.com with SMTP id 2-v6so559666pgo.4;
+        Tue, 28 Aug 2018 10:54:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=kp4evUltoBqieY7M4Vu6/pYXWKfkGOFsqIZplVj17zU=;
-        b=Uvlb8zPpCOIIFXAPIGEhCHFLDd+XaX/LsCGyoAjyezp7svv5V6KFbYQCGEzgReDdJ+
-         FwnMhFpl966anHSdnDg8lSipfmvb9aNTGPadSX+P/H515OMuKzhlWROLXJ+XJvNs7D83
-         3UJH4HJ/CXSkuFuDNNzxyyK8tZX/VtiV5peR4snMfqhAJqljX2x+YhAMHxTXiRMR3gF9
-         ahNl24euK4mdgNqRMYkfBxZBTUY6/JAqWO4ApMS5Pzvtstxp/xBG+YlpCEBxVfUC/uUR
-         cf2vtiAUas6lqGEy7jxr4GU6N1bjShuWOjmTqU1ibTVkm7IqXJm2z9qXwq00BBccE2fI
-         8bkg==
+        bh=n4ZJEGZnhqrGdVeWYMnTCHn9LIITEWAYG3JkHNaGGr8=;
+        b=Rg/ZQe2pZyAOS8GfdnClXiNb78hmrxrU61r3a4m3bTnZToh5+aC2roDUvbao3SjOLX
+         AL6CWZyeD/onj+dNxtHysAyKIQtdGEyI20TUty6fCKom8UIIb30Z5vA3R2cWBhMZv3/b
+         sMnVunwUfgjibBpneObNg6+imJKOtHfuLJ2E2brzTritA0Gyq2Rpuhxfg2rXpp23BM9P
+         IrOX9SumkDJ/87CBrHmXT+7HFdyr2DrRtIjd1UFAsMWxNYK8DUOMmZEBksAcsloEwQlx
+         8D3pmxSQUz1Mp95Wybr2c4fLwSZT5/CVl0KHxwdmvCqWqyJnOGlQW/HDBUnVFdHIrzSh
+         bynA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=kp4evUltoBqieY7M4Vu6/pYXWKfkGOFsqIZplVj17zU=;
-        b=Jt/tY/IjGUCHBclK9xm+e/cKAOeF0AR6Mo8em5R2tXgYmSABeA7na80+nQzt/hywpn
-         C6VECySFd1TdSriYIZcb+O3edrgWSwWBq9Hb/HksBGXjQmw2MmXUW7W9yeldXll/V8nd
-         J1pNCB7lKcePFH9+sfQmScB78sqNBNKR+6EP+et581zLAn9ZbFcKutwHE5aVA3BVIOsf
-         QOnfoDn4JtzPKZT+CRIM9OXVkLBHYrpfYK+8qkKVu915Izassu3iHcX8FXrZ+0Qs3b+X
-         4XMSdNIfI8sTRtoDHOw6onFN8Z5sjHc6J5zvAUS6PBlRrqsQQ0tIA9kU5fxrCMbNF0a8
-         DQoA==
-X-Gm-Message-State: APzg51DYqtO9+iasSmhklREY+bxxrGotwDumMcc1RMY5kTPtT3LJ0jcT
-        hSwsKjiY6OP1yhQqomSRr8M=
-X-Google-Smtp-Source: ANB0Vda5asV7IDgy7/xolwKT/TaVvsEwFU1Vymari7cgD8PJS6bkn1Cp6FV6MC0DE4OBJzH2uGFChw==
-X-Received: by 2002:a63:5964:: with SMTP id j36-v6mr2498273pgm.222.1535478876008;
-        Tue, 28 Aug 2018 10:54:36 -0700 (PDT)
+        bh=n4ZJEGZnhqrGdVeWYMnTCHn9LIITEWAYG3JkHNaGGr8=;
+        b=kp29bEfufuUakEd7iHdc9M0DIkErVswBSWoGqNJTh+60KdhXo4uFilT/R6NSZGMbu7
+         4xQhbGsEUv6nmFDye689XUe0GH63PbbXhVdIs+IKAFX7LPTophdN0p9+dCNKYhhLaTVo
+         ptRnQuDsWkEBBOH7h1Suf5F1j+8e1JraKvHYq0aKqJ21MUqM6FyhHgxowTealeLffVhC
+         yyEziWx/MbiOcBm6Aky7ZPR2b0bOShC8XOMxJRXhoO2aek0yBEwBBXnsUFizZBQfj4Ih
+         1sXIA58OX/yJqt2eAhiuNP1aFDDfbFAslecwgP8MI6R4gFwnKKRHiml2J72R3FxeWBGi
+         iLDg==
+X-Gm-Message-State: APzg51D/8HEUuTD3plvMoPg4J+pIKZq4Y8NVJuTQvRkhvmBcoXoh3BKm
+        szKS675gl6ByPx5y7OSxCck=
+X-Google-Smtp-Source: ANB0VdYt8xXoCEBCnrZP4l/uYl8MUG2/xjhEyih1j9TZCAcHItGtwBbW0ovz2NczhiV40ZKSEtZZNA==
+X-Received: by 2002:a65:520d:: with SMTP id o13-v6mr2553172pgp.282.1535478878008;
+        Tue, 28 Aug 2018 10:54:38 -0700 (PDT)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id v23-v6sm2664465pfm.80.2018.08.28.10.54.34
+        by smtp.gmail.com with ESMTPSA id v23-v6sm2664465pfm.80.2018.08.28.10.54.36
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 Aug 2018 10:54:34 -0700 (PDT)
+        Tue, 28 Aug 2018 10:54:36 -0700 (PDT)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -71,9 +71,9 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
         DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list),
         andrew@lunn.ch, rmk+kernel@armlinux.org.uk
-Subject: [PATCH v2 2/3] dt-bindings: net: dsa: Document B53 SRAB interrupts and registers
-Date:   Tue, 28 Aug 2018 10:54:19 -0700
-Message-Id: <20180828175420.7992-3-f.fainelli@gmail.com>
+Subject: [PATCH v2 3/3] ARM: dts: NSP: Wire up switch interrupts
+Date:   Tue, 28 Aug 2018 10:54:20 -0700
+Message-Id: <20180828175420.7992-4-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180828175420.7992-1-f.fainelli@gmail.com>
 References: <20180828175420.7992-1-f.fainelli@gmail.com>
@@ -82,48 +82,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document the Broadcom roboswitch Switch Register Access Block interrupt
-lines and additional register base addresses for port mux configuration
-and SGMII status/configuration registers.
+The Switch Register Access Block (SRAB) has one interrupt for link state
+change on each ports (0-5, 7-8) a PHY interrupt, timestamping interrupt
+and sleep timer interrupts for each management ports (5,7,8). Wire those
+up so we can utilize them to speed up link resolution.
 
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- .../devicetree/bindings/net/dsa/b53.txt       | 23 +++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ arch/arm/boot/dts/bcm-nsp.dtsi | 31 ++++++++++++++++++++++++++++++-
+ 1 file changed, 30 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/net/dsa/b53.txt b/Documentation/devicetree/bindings/net/dsa/b53.txt
-index 1811e1972a7a..5f1029e853b8 100644
---- a/Documentation/devicetree/bindings/net/dsa/b53.txt
-+++ b/Documentation/devicetree/bindings/net/dsa/b53.txt
-@@ -46,6 +46,29 @@ Required properties:
-       "brcm,bcm6328-switch"
-       "brcm,bcm6368-switch" and the mandatory "brcm,bcm63xx-switch"
+diff --git a/arch/arm/boot/dts/bcm-nsp.dtsi b/arch/arm/boot/dts/bcm-nsp.dtsi
+index 09ba85046322..ec869a80f9ba 100644
+--- a/arch/arm/boot/dts/bcm-nsp.dtsi
++++ b/arch/arm/boot/dts/bcm-nsp.dtsi
+@@ -377,7 +377,36 @@
  
-+Required properties for BCM585xx/586xx/88312 SoCs:
-+
-+ - reg: a total of 3 register base addresses, the first one must be the
-+   Switch Register Access block base, the second is the port 5/4 mux
-+   configuration register and the third one is the SGMII configuration
-+   and status register base address.
-+
-+ - interrupts: a total of 13 interrupts must be specified, in the following
-+   order: port 0-5, 7-8 link status change, then the integrated PHY interrupt,
-+   then the timestamping interrupt and the sleep timer interrupts for ports
-+   5,7,8.
-+
-+Optional properties for BCM585xx/586xx/88312 SoCs:
-+
-+  - reg-names: a total of 3 names matching the 3 base register address, must
-+    be "srab", "mux_config" and "sgmii_config";
-+
-+  - interrupt-names: a total of 13 names matching the 13 interrupts specified
-+    must be: "link_state_p0", "link_state_p1", "link_state_p2",
-+    "link_state_p3", "link_state_p4", "link_state_p5", "link_state_p7",
-+    "link_state_p8", "phy", "ts", "imp_sleep_timer_p5", "imp_sleep_timer_p7",
-+    "imp_sleep_timer_p8"
-+
- See Documentation/devicetree/bindings/net/dsa/dsa.txt for a list of additional
- required and optional properties.
+ 		srab: srab@36000 {
+ 			compatible = "brcm,nsp-srab";
+-			reg = <0x36000 0x1000>;
++			reg = <0x36000 0x1000>,
++			      <0x3f308 0x8>,
++			      <0x3f410 0xc>;
++			reg-names = "srab", "mux_config", "sgmii";
++			interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "link_state_p0",
++					  "link_state_p1",
++					  "link_state_p2",
++					  "link_state_p3",
++					  "link_state_p4",
++					  "link_state_p5",
++					  "link_state_p7",
++					  "link_state_p8",
++					  "phy",
++					  "ts",
++					  "imp_sleep_timer_p5",
++					  "imp_sleep_timer_p7",
++					  "imp_sleep_timer_p8";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
  
 -- 
 2.17.1
