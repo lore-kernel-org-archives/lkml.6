@@ -3,120 +3,92 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A3FCC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 22:29:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3A37C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 22:29:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A1A42087B
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 22:29:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A1A42087B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 85C262087B
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 22:29:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85C262087B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727742AbeH2CXO (ORCPT
+        id S1727782AbeH2CXS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 22:23:14 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:55959 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727067AbeH2CXO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 22:23:14 -0400
-Received: by mail-it0-f67.google.com with SMTP id d10-v6so4950794itj.5;
-        Tue, 28 Aug 2018 15:29:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+SHayacjPEeTDEIBZW3fV5Pjo8NNq1X3v8fS5KU2EBQ=;
-        b=AGhJCScQQEPqJ/xJvsLC1k0OoeTYuzUz1+skFW7gRK99U77FRO+HN8H7JWVIJ4lXno
-         ZpT3tXkCO/ARdi6qUL6FWM4wJDHDuB4Snu5ZosDM9iA6xfQkyiSfSUUZqElkKWezC/kB
-         JeTwzUspZRx6JruUDl+cAaVdWqkl2dGu4xeA/H3E/8Ow4hInSNyTq15muNuy5w0jcFM2
-         a7iZYHrQzTf9hNa5OnFxSXhCVdeeREbCrEbLZ8Bb5ij+MF0qKZaiFoA18kcVmtVU3g3y
-         3KfSOYU+XBM6gT5tpMTDhE9mxM3qeOgVTLdDrwRQUFTz9adqdC2HW3eZYuMni3h5/FW7
-         rnoA==
-X-Gm-Message-State: APzg51AkIM+shgB9IfQJWmtgU/sUdBdC+f+z3X6tP1tPcsy0xEjor5tL
-        Aamlan/PAiLsubGFkcX0WvwmLIEJr0k=
-X-Google-Smtp-Source: ANB0VdaFdO6mJ6amqnA0sJGi0I8SyTfJSccf7TpgJ53FDqMXbeJ9c0T8fconmASDPEzP3J2WuFwsbw==
-X-Received: by 2002:a24:7dd5:: with SMTP id b204-v6mr3346470itc.96.1535495368842;
-        Tue, 28 Aug 2018 15:29:28 -0700 (PDT)
-Received: from mail-io0-f172.google.com (mail-io0-f172.google.com. [209.85.223.172])
-        by smtp.gmail.com with ESMTPSA id 14-v6sm1260108itu.20.2018.08.28.15.29.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 Aug 2018 15:29:28 -0700 (PDT)
-Received: by mail-io0-f172.google.com with SMTP id l14-v6so2832068iob.7;
-        Tue, 28 Aug 2018 15:29:27 -0700 (PDT)
-X-Received: by 2002:a5e:8408:: with SMTP id h8-v6mr3115440ioj.171.1535495367632;
- Tue, 28 Aug 2018 15:29:27 -0700 (PDT)
+        Tue, 28 Aug 2018 22:23:18 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35050 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727067AbeH2CXR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 22:23:17 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 11EE640241C9;
+        Tue, 28 Aug 2018 22:29:32 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-123-12.rdu2.redhat.com [10.10.123.12])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 86ED82026D6B;
+        Tue, 28 Aug 2018 22:29:30 +0000 (UTC)
+Subject: Re: [PATCH 2/2] fs/dcache: Make negative dentries easier to be
+ reclaimed
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-doc@vger.kernel.org, "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jan Kara <jack@suse.cz>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Larry Woodman <lwoodman@redhat.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "Wangkai (Kevin C)" <wangkai86@huawei.com>,
+        Michal Hocko <mhocko@kernel.org>
+References: <1535476780-5773-1-git-send-email-longman@redhat.com>
+ <1535476780-5773-3-git-send-email-longman@redhat.com>
+ <20180828221352.GC11400@bombadil.infradead.org>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <6873378b-3202-e738-2366-5fb818b4a013@redhat.com>
+Date:   Tue, 28 Aug 2018 18:29:29 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-References: <20180828015252.28511-1-robh@kernel.org> <20180828015252.28511-43-robh@kernel.org>
- <CADRPPNRvRKEuV=ZzH6yq6_7COvFSWy2ibAKoEt4YrzES2m9x2Q@mail.gmail.com> <a8594a1c-0d10-74c6-0e40-15d49ff876a3@linux.vnet.ibm.com>
-In-Reply-To: <a8594a1c-0d10-74c6-0e40-15d49ff876a3@linux.vnet.ibm.com>
-From:   Li Yang <leoyang.li@nxp.com>
-Date:   Tue, 28 Aug 2018 17:29:15 -0500
-X-Gmail-Original-Message-ID: <CADRPPNSoP5K79wCr5QdJ-OR_W9aZrEkBiPqCXU7EWCfZsvaeuQ@mail.gmail.com>
-Message-ID: <CADRPPNSoP5K79wCr5QdJ-OR_W9aZrEkBiPqCXU7EWCfZsvaeuQ@mail.gmail.com>
-Subject: Re: [PATCH] soc: Convert to using %pOFn instead of device_node.name
-To:     tyreld@linux.vnet.ibm.com
-Cc:     Rob Herring <robh@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        David Brown <david.brown@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Andy Gross <andy.gross@linaro.org>, linux-soc@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Zhao Qiang <qiang.zhao@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180828221352.GC11400@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 28 Aug 2018 22:29:32 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 28 Aug 2018 22:29:32 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 5:16 PM Tyrel Datwyler
-<tyreld@linux.vnet.ibm.com> wrote:
+On 08/28/2018 06:13 PM, Matthew Wilcox wrote:
+> On Tue, Aug 28, 2018 at 01:19:40PM -0400, Waiman Long wrote:
+>> @@ -134,7 +135,7 @@ bool list_lru_add(struct list_lru *lru, struct list_head *item)
+>>  	spin_lock(&nlru->lock);
+>>  	if (list_empty(item)) {
+>>  		l = list_lru_from_kmem(nlru, item, &memcg);
+>> -		list_add_tail(item, &l->list);
+>> +		(add_tail ? list_add_tail : list_add)(item, &l->list);
+>>  		/* Set shrinker bit if the first element was added */
+>>  		if (!l->nr_items++)
+>>  			memcg_set_shrinker_bit(memcg, nid,
+> That's not OK.  Write it out properly, ie:
 >
-> On 08/28/2018 11:48 AM, Li Yang wrote:
-> > On Mon, Aug 27, 2018 at 8:57 PM Rob Herring <robh@kernel.org> wrote:
-> >>
-> >> In preparation to remove the node name pointer from struct device_node,
-> >> convert printf users to use the %pOFn format specifier.
-> >
-> > Please forgive my ignorance, but what is this format specifier do
-> > exactly?   I cannot find anything listed in the printf specification
-> > matching this.  Is this something newly introduced?
-> >
-> > Leo
-> >
+> 		if (add_tail)
+> 			list_add_tail(item, &l->list);
+> 		else
+> 			list_add(item, &l->list);
 >
-> From Documentation/core-api/printk-formats.rst:
+Yes, I can rewrite it. What is the problem with the abbreviated form?
 
-I was trying to find it in the standard c format specifier.  :(
-Thanks a lot for the pointer.
+Cheers,
+Longman
 
->
-> kobjects
-> --------
->
-> ::
->
->         %pOF[fnpPcCF]
->
->
-> For printing kobject based structs (device nodes). Default behaviour is
-> equivalent to %pOFf.
->
->         - f - device node full_name
->         - n - device node name
->         - p - device node phandle
->         - P - device node path spec (name + @unit)
->         - F - device node flags
->         - c - major compatible string
->         - C - full compatible string
->
->
-> -Tyrel
->
