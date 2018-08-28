@@ -2,264 +2,109 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B137C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:39:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAA33C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:39:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 316AD2087D
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:39:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 316AD2087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axis.com
+	by mail.kernel.org (Postfix) with ESMTP id 8C7AE20878
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:39:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C7AE20878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727782AbeH1OaX (ORCPT
+        id S1727809AbeH1Oac (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 10:30:23 -0400
-Received: from bastet.se.axis.com ([195.60.68.11]:35182 "EHLO
-        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727172AbeH1OaX (ORCPT
+        Tue, 28 Aug 2018 10:30:32 -0400
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:53602 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727172AbeH1Oab (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 10:30:23 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bastet.se.axis.com (Postfix) with ESMTP id 256CF183AC;
-        Tue, 28 Aug 2018 12:39:20 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at bastet.se.axis.com
-Received: from bastet.se.axis.com ([IPv6:::ffff:127.0.0.1])
-        by localhost (bastet.se.axis.com [::ffff:127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id 2PcsWGhX8zer; Tue, 28 Aug 2018 12:39:18 +0200 (CEST)
-Received: from boulder03.se.axis.com (boulder03.se.axis.com [10.0.8.17])
-        by bastet.se.axis.com (Postfix) with ESMTPS id 076A7180D2;
-        Tue, 28 Aug 2018 12:39:17 +0200 (CEST)
-Received: from boulder03.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DD2EE1E080;
-        Tue, 28 Aug 2018 12:39:17 +0200 (CEST)
-Received: from boulder03.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D19BC1E07D;
-        Tue, 28 Aug 2018 12:39:17 +0200 (CEST)
-Received: from seth.se.axis.com (unknown [10.0.2.172])
-        by boulder03.se.axis.com (Postfix) with ESMTP;
-        Tue, 28 Aug 2018 12:39:17 +0200 (CEST)
-Received: from lnxartpec.se.axis.com (lnxartpec.se.axis.com [10.88.4.9])
-        by seth.se.axis.com (Postfix) with ESMTP id C51872012;
-        Tue, 28 Aug 2018 12:39:17 +0200 (CEST)
-Received: by lnxartpec.se.axis.com (Postfix, from userid 10564)
-        id C14D08016D; Tue, 28 Aug 2018 12:39:17 +0200 (CEST)
-From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
-To:     catalin.marinas@arm.com, akpm@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Vincent Whitchurch <rabinv@axis.com>
-Subject: [PATCH 2/2] scripts: add kmemleak2pprof.py for slab usage analysis
-Date:   Tue, 28 Aug 2018 12:39:14 +0200
-Message-Id: <20180828103914.30434-2-vincent.whitchurch@axis.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180828103914.30434-1-vincent.whitchurch@axis.com>
-References: <20180828103914.30434-1-vincent.whitchurch@axis.com>
-X-TM-AS-GCONF: 00
+        Tue, 28 Aug 2018 10:30:31 -0400
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7SAcfaN020001;
+        Tue, 28 Aug 2018 05:39:14 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail4.cirrus.com ([87.246.98.35])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2m34h1ukwp-1;
+        Tue, 28 Aug 2018 05:39:14 -0500
+Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
+        by mail4.cirrus.com (Postfix) with ESMTP id 055E9611C8B3;
+        Tue, 28 Aug 2018 05:41:15 -0500 (CDT)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Tue, 28 Aug 2018
+ 11:39:13 +0100
+Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w7SAdBfw012289; Tue,
+ 28 Aug 2018 11:39:11 +0100
+Date:   Tue, 28 Aug 2018 11:39:11 +0100
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Jon Hunter <jonathanh@nvidia.com>
+CC:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, <linux-tegra@vger.kernel.org>,
+        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [alsa-devel] [PATCH] ASoC: core: Don't schedule DAPM work if
+ already in target state
+Message-ID: <20180828103911.GX32322@imbe.wolfsonmicro.main>
+References: <1534520143-29266-1-git-send-email-jonathanh@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1534520143-29266-1-git-send-email-jonathanh@nvidia.com>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
+ definitions=main-1808280110
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a script which converts /sys/kernel/debug/kmemleak_all to the pprof
-format, which can be used for analysing memory usage.  See
-https://github.com/google/pprof.
+On Fri, Aug 17, 2018 at 04:35:43PM +0100, Jon Hunter wrote:
+> When dapm_power_widgets() is called, the dapm_pre_sequence_async() and
+> dapm_post_sequence_async() functions are scheduled for all DAPM contexts
+> (apart from the card DAPM context) regardless of whether the DAPM
+> context is already in the desired state. The overhead of this is not
+> insignificant and the more DAPM contexts there are the more overhead
+> there is.
+> 
+> For example, on the Tegra124 Jetson TK1, when profiling the time taken
+> to execute the dapm_power_widgets() the following times were observed.
+> 
+>   Times for function dapm_power_widgets() are (us):
+>      Min 23, Ave 190, Max 434, Count 39
+> 
+> Here 'Count' is the number of times that dapm_power_widgets() has been
+> called. Please note that the above time were measured using ktime_get()
+> to log the time on entry and exit from dapm_power_widgets(). So it
+> should be noted that these times may not be purely the time take to
+> execute this function if it is preempted. However, after applying this
+> patch and measuring the time taken to execute dapm_power_widgets() again
+> a significant improvement is seen as shown below.
+> 
+>   Times for function dapm_power_widgets() are (us):
+>      Min 4, Ave 16, Max 82, Count 39
+> 
+> Therefore, optimise the dapm_power_widgets() function by only scheduling
+> the dapm_pre/post_sequence_async() work if the DAPM context is not in
+> the desired state.
+> 
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
 
- $ ./kmemleak2pprof.py kmemleak_all
- $ pprof -text -ignore free_area_init_node -compact_labels -nodecount 10 prof
- Showing nodes accounting for 4.85MB, 34.05% of 14.23MB total
- Dropped 3989 nodes (cum <= 0.07MB)
- Showing top 10 nodes out of 190
-       flat  flat%   sum%        cum   cum%
-     1.39MB  9.78%  9.78%     1.61MB 11.29%  new_inode_pseudo+0x8/0x4c
-     0.75MB  5.27% 15.04%     0.75MB  5.27%  alloc_large_system_hash+0x19c/0x2b8
-     0.73MB  5.12% 20.17%     0.86MB  6.07%  kernfs_new_node+0x30/0x50
-     0.66MB  4.62% 24.79%     0.66MB  4.62%  __vmalloc_node.constprop.9+0x48/0x50
-     0.61MB  4.28% 29.06%     0.61MB  4.28%  d_alloc+0x10/0x78
-     0.22MB  1.52% 30.58%     0.22MB  1.52%  alloc_inode+0x1c/0xa4
-     0.18MB  1.28% 31.86%     0.20MB  1.42%  _do_fork+0xb0/0x41c
-     0.13MB  0.88% 32.74%     0.13MB  0.88%  early_trace_init+0x16c/0x374
-     0.09MB  0.66% 33.40%     0.17MB  1.17%  inet_init+0x128/0x24c
-     0.09MB  0.65% 34.05%     0.09MB  0.65%  __kernfs_new_node+0x34/0x1a8
+Looks ok to me:
 
-Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
----
- scripts/kmemleak2pprof.py | 164 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 164 insertions(+)
- create mode 100755 scripts/kmemleak2pprof.py
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-diff --git a/scripts/kmemleak2pprof.py b/scripts/kmemleak2pprof.py
-new file mode 100755
-index 000000000000..1295d3ca9a9d
---- /dev/null
-+++ b/scripts/kmemleak2pprof.py
-@@ -0,0 +1,164 @@
-+#!/usr/bin/env python3
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Copyright (C) 2018 Axis Communications AB
-+#
-+# Converts /sys/kernel/debug/kmemleak_all to the pprof format, see
-+# https://github.com/google/pprof.
-+#
-+# profile_pb2.py can be generated with the following commands.  protoc is
-+# packaged as protobuf-compiler in Debian:
-+#
-+#  wget https://raw.githubusercontent.com/google/pprof/master/proto/profile.proto
-+#  protoc -I. --python_out=. profile.proto
-+
-+import argparse
-+
-+from collections import defaultdict
-+
-+import profile_pb2
-+
-+
-+# object 0xee0243b0 (size 464):
-+#   comm "swapper/0", pid 0, jiffies 4294937296
-+#     [<80220673>] alloc_inode+0x13/0x60
-+#     [<80221cc5>] new_inode_pseudo+0xd/0x38
-+#     [<802568a3>] proc_setup_thread_self+0x37/0xc4
-+#     [<8020e8c1>] mount_ns+0x55/0x94
-+#     [<8024f2e1>] proc_mount+0x45/0x48
-+#     [<8020ee9b>] mount_fs+0x1f/0x104
-+#     [<80224785>] vfs_kern_mount.part.3+0x35/0xbc
-+#     [<80224833>] kern_mount_data+0x17/0x2c
-+#     [<8024f44b>] pid_ns_prepare_proc+0x13/0x24
-+#     [<8012ed0d>] alloc_pid+0x309/0x338
-+#     [<80118e2b>] copy_process.part.5+0xa2b/0x1308
-+#     [<80119807>] _do_fork+0x77/0x2f0
-+#     [<80119abf>] kernel_thread+0x23/0x28
-+#     [<8053517f>] rest_init+0x27/0xb4
-+#     [<80900afb>] start_kernel+0x369/0x372
-+#     [<0000807b>] 0x807b
-+class KmemleakAll(object):
-+    def __init__(self):
-+        pass
-+
-+    def analyze(self, f):
-+        allocs = defaultdict(int)
-+        stack = []
-+        size = 0
-+
-+        while True:
-+            line = f.readline()
-+            if not line:
-+                break
-+
-+            line = line.strip()
-+
-+            if line.startswith('['):
-+                # (null) is in the address part so later parsing steps fail.
-+                # Don't bother fixing it up since it's clearly bogus.
-+                if '(null)' in line:
-+                    continue
-+
-+                stack.append(line)
-+                continue
-+            elif line.startswith('comm'):
-+                continue
-+
-+            if size:
-+                allocs[(tuple(stack), size)] += 1
-+                size = 0
-+
-+            stack = []
-+            size = int(line.split('(size ')[1].strip('):'))
-+
-+        return sorted(allocs.items(), key=lambda x: x[0][1] * x[1], reverse=True)
-+
-+
-+class ProfileWriter(object):
-+    def __init__(self, allocs):
-+        self.profile = profile_pb2.Profile()
-+        self.strings = ['']
-+        self.allocs = allocs
-+        self.locations = {}
-+        self.functions = {}
-+
-+    def stridx(self, s):
-+        try:
-+            idx = self.strings.index(s)
-+        except ValueError:
-+            idx = len(self.strings)
-+            self.strings.append(s)
-+
-+        return idx
-+
-+    def get_function_id(self, funcname, filename):
-+        try:
-+            return self.functions[(funcname, filename)].id
-+        except KeyError:
-+            pass
-+
-+        function = self.profile.function.add()
-+        function.id = len(self.functions) + 1
-+        function.name = self.stridx(funcname)
-+        function.filename = self.stridx(filename)
-+
-+        self.functions[(funcname, filename)] = function
-+
-+        return function.id
-+
-+    def get_location_id(self, addr):
-+        if addr.startswith('['):
-+            _, func = addr.split(' ', maxsplit=1)
-+
-+        try:
-+            return self.locations[addr].id
-+        except KeyError:
-+            pass
-+
-+        location = self.profile.location.add()
-+        location.id = len(self.locations) + 1
-+
-+        # We don't have access to the file or line information.
-+        locline = location.line.add()
-+        locline.function_id = self.get_function_id(func, 'dummy.c')
-+
-+        self.locations[addr] = location
-+
-+        return location.id
-+
-+    def write(self, fn):
-+        valuetype = self.profile.sample_type.add()
-+        valuetype.type = self.stridx('slab')
-+        valuetype.unit = self.stridx('bytes')
-+
-+        for i, alloc in enumerate(self.allocs):
-+            stacksize, count = alloc
-+            stack, size = stacksize
-+
-+            for instance in range(count):
-+                sample = self.profile.sample.add()
-+                sample.value.append(size)
-+
-+                for addr in stack:
-+                    sample.location_id.append(self.get_location_id(addr))
-+
-+        self.profile.string_table.extend(self.strings)
-+
-+        with open(fn, 'wb') as f:
-+            f.write(self.profile.SerializeToString())
-+
-+
-+def main():
-+    parser = argparse.ArgumentParser()
-+    parser.add_argument('--output', default='prof')
-+    parser.add_argument('data')
-+    args = parser.parse_args()
-+
-+    with open(args.data) as f:
-+        allocs = KmemleakAll().analyze(f)
-+
-+    ProfileWriter(allocs).write(args.output)
-+
-+
-+if __name__ == '__main__':
-+    main()
--- 
-2.11.0
+Although that said the performance increase is pretty hard to
+measure on my systems.
 
+Thanks,
+Charles
