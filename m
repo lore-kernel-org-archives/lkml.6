@@ -2,97 +2,149 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A60DFC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 01:15:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD8CAC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 01:21:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A46F208B9
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 01:15:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7858C208B9
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 01:21:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="Ik6LwdHU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A46F208B9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kRAI1Gbd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7858C208B9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726610AbeH1FEe (ORCPT
+        id S1726567AbeH1FKk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 01:04:34 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:37741 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725980AbeH1FEe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 01:04:34 -0400
-Received: by mail-it0-f68.google.com with SMTP id h20-v6so309382itf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 18:15:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=M3ez6hCMhPojy3f9MIT2QuThBmSKud9oU0cbUmYzwcI=;
-        b=Ik6LwdHUu7vHckH3oaBCw1tnT5A9t4uOMCEfW9v1xn/tNSwWgDp8d81NeCC5v8VOe3
-         K5zZKlfjsuHY9ap/l+Bp+4b3Eu56/Cia7j50j7Da0Xagn8vyUMZQ1iPZXJczqq96UgCU
-         Hk3vQH+4sdXs3+3eUEhZKaelvUF5J6GYwGz+w6xG33RbABWsHX2s0N2Qd4dDOq0Z2iOO
-         Hlv4n0KgdGv+t4sAsZOvqgNc0SSz7tBVboTMnH19EYwuAg9u5wTJPghTPaXVjwnwyiMK
-         9PyLZ35MRf/ISUNk2HvEVPPGew9+VG+UZ9hKqto+/3G7KVC+ZalvdeY6ojzwYI4YrKm4
-         OzUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=M3ez6hCMhPojy3f9MIT2QuThBmSKud9oU0cbUmYzwcI=;
-        b=ec2LytaGJzh9PI6DZ+M6NCqilR46kOBi3M9akgHMppYyiS9GKEO4q8iNCVj4b+JsPw
-         C+bLVOrH0/VitGtD7WxQ0afBuaEHElJ9Ol0SZX4nR1DmNd3F5bkcHC/JBgMsUeQAmprh
-         7nRBLeNpdqcdibB5JKnHQQ0Iitr6wPiNjUP6J2UpYr6CaUR+8fTKCyK6x1cYOkbrmvHR
-         5bC0RG+8Dip+sWwyEa3b9MILrwCTYskhC8CxlDA/e89vRg5FSkaI/2yUH/pim/wI3+o9
-         eixkh9VRyEvwWoZKUfOuc+Yft8F2B6b8x/Vpi8zek+CC5iyO6Z35QWQRuDz2Kkr6MqRv
-         YQ7w==
-X-Gm-Message-State: APzg51Cq2ykw8U9MYVS/wBwqIkkAJP8ATK/eE93a9zDdo7WAg3PHYQLw
-        9PA8Z1ag8zvuzFzwRGrzXe+o7CIHC98=
-X-Google-Smtp-Source: ANB0VdY23vZ2rveKPhV3B+9lk0Qhoe0lX+26U9NQMiJ7TZRL2K0wBL3iDf7M/6dtfooBG1Jtyk6Wag==
-X-Received: by 2002:a24:a20f:: with SMTP id j15-v6mr9080187itf.125.1535418926002;
-        Mon, 27 Aug 2018 18:15:26 -0700 (PDT)
-Received: from [192.168.1.212] (107.191.0.22.static.utbb.net. [107.191.0.22])
-        by smtp.gmail.com with ESMTPSA id h123-v6sm331787itb.32.2018.08.27.18.15.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 Aug 2018 18:15:24 -0700 (PDT)
-Subject: Re: linux-next: new maintainer/tree for the libata tree?
-To:     Stephen Rothwell <sfr@canb.auug.org.au>, Tejun Heo <tj@kernel.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180828071944.02b13db4@canb.auug.org.au>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <27ef8afc-c490-5984-5a18-1ee5ce51d556@kernel.dk>
-Date:   Mon, 27 Aug 2018 19:15:23 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <20180828071944.02b13db4@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
+        Tue, 28 Aug 2018 01:10:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46112 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725796AbeH1FKk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 01:10:40 -0400
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 19F9A20897;
+        Tue, 28 Aug 2018 01:21:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535419290;
+        bh=FLw8UacBBmlHJAg9fbkt/vhIpeGZCkXXIYsllFKfuHg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=kRAI1Gbd0YUKPHDm+I15DFQVcMYFk8tP2yto24EiGbtxRBd21RFwv20uYXjb5Gwt3
+         e0emX4+zlo0uACOIV1VfTJWnc8pDvH1U7SNb/CUGaCBFRaQJHAGFm2l09hKlktcIkJ
+         IuJ8wBiO2E57T7QliQOQmnd7TfxDnQnx4V/ZPgRk=
+Date:   Tue, 28 Aug 2018 10:21:26 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Jann Horn <jannh@google.com>
+Cc:     Andy Lutomirski <luto@kernel.org>, mhiramat@kernel.org,
+        naveen.n.rao@linux.vnet.ibm.com, anil.s.keshavamurthy@intel.com,
+        "David S. Miller" <davem@davemloft.net>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        tony.luck@intel.com, Borislav Petkov <bp@alien8.de>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>, linux-edac@vger.kernel.org
+Subject: Re: [PATCH v2 3/7] x86: stop calling fixup_exception() from
+ kprobe_fault_handler()
+Message-Id: <20180828102126.2cd006bc5c5893422761fc6b@kernel.org>
+In-Reply-To: <CAG48ez0=-nDmQVQiJtD_6ingdWWVJE+y+5_oWQrggQ9Eqg-UKQ@mail.gmail.com>
+References: <20180827185631.163506-1-jannh@google.com>
+        <20180827185631.163506-4-jannh@google.com>
+        <CALCETrUeRA63Vt_LBOGmUHc_M9gc3J7+ewK6j+sB8P=9ijk7ag@mail.gmail.com>
+        <CAG48ez0=-nDmQVQiJtD_6ingdWWVJE+y+5_oWQrggQ9Eqg-UKQ@mail.gmail.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/27/18 3:20 PM, Stephen Rothwell wrote:
-> Hi Tejun, Jens,
-> 
-> I noticed the maintaership change - so what shuld I sues for linux-next,
-> now?
-> 
-> I currently have
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next
+On Mon, 27 Aug 2018 21:22:19 +0200
+Jann Horn <jannh@google.com> wrote:
 
-I'll merge into my for-next branch on the block tree, I'm don't plan on
-doing separate trees for this, just separate branches. And everything I
-queue up for the next version will end up in my for-next branch.
+> On Mon, Aug 27, 2018 at 9:02 PM Andy Lutomirski <luto@kernel.org> wrote:
+> >
+> > On Mon, Aug 27, 2018 at 11:56 AM, Jann Horn <jannh@google.com> wrote:
+> > > This removes the call into exception fixup that was added in
+> > > commit c28f896634f2 ("[PATCH] kprobes: fix broken fault handling for
+> > > x86_64").
+> > >
+> > > On X86, kprobe_fault_handler() is called from two places:
+> > > do_general_protection() (for #GP) and kprobes_fault() (for #PF).
+> > > In both paths, the fixup_exception() call in the kprobe fault handler is
+> > > redundant.
+> > >
+> > > For #GP, fixup_exception() is called immediately before
+> > > kprobe_fault_handler() is invoked - if someone wanted to fix up our #GP,
+> > > they've already done so, no need to try again. (This assumes that the
+> > > kprobe's fault handler isn't going to do something crazy like changing RIP
+> > > so that it suddenly points to an instruction that does userspace access.)
+> >
+> > This needs review by someone who understands kprobes better than I do.
+> > What happens if someone puts a kprobe on a uaccess instruction and the
+> > uaccess subsequently faults?
+> 
+> Ugh, good point. I'll admit to not having thought about that properly.
+> 
+> I think that's the "if (unlikely(regs->ip == (unsigned
+> long)cur->ainsn.insn))" branch in kprobe_fault_handler(), which I'm
+> not touching.
+
+Correct, probing on uaccess is handled by that block.
+So this fixup_exception() is just for safeness.
+As Jann said, no_context() handles it correctly, we don't need it.
+
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+
+Thank you!
+
+> 
+> For #PF, both without and with my patch, stuff should get fixed up by
+> the normal pagefault handler, since the fixup happens after the kprobe
+> handler has fiddled with the exception state.
+> 
+> For #GP, we're already past the fixup call, and I think both without
+> and with my patch, nothing will catch it - so I think that's a bug,
+> but I don't think it's one I'm introducing.
+> 
+> > > For #PF on a kernel address from kernel space, after the kprobe fault
+> > > handler has run, we'll go into no_context(), which calls fixup_exception().
+> > >
+> > > Signed-off-by: Jann Horn <jannh@google.com>
+> > > ---
+> > >  arch/x86/kernel/kprobes/core.c | 7 -------
+> > >  1 file changed, 7 deletions(-)
+> > >
+> > > diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
+> > > index 467ac22691b0..7315ac202aad 100644
+> > > --- a/arch/x86/kernel/kprobes/core.c
+> > > +++ b/arch/x86/kernel/kprobes/core.c
+> > > @@ -1021,13 +1021,6 @@ int kprobe_fault_handler(struct pt_regs *regs, int trapnr)
+> > >                 if (cur->fault_handler && cur->fault_handler(cur, regs, trapnr))
+> > >                         return 1;
+> > >
+> > > -               /*
+> > > -                * In case the user-specified fault handler returned
+> > > -                * zero, try to fix up.
+> > > -                */
+> > > -               if (fixup_exception(regs, trapnr))
+> > > -                       return 1;
+> > > -
+> > >                 /* fixup routine could not handle it. */
+> > >         }
+> > >
+> > > --
+> > > 2.19.0.rc0.228.g281dcd1b4d0-goog
+> > >
+
 
 -- 
-Jens Axboe
-
+Masami Hiramatsu <mhiramat@kernel.org>
