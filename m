@@ -2,129 +2,102 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EE57C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 19:32:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 947A4C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 19:32:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE56D2088E
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 19:32:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 491A92087F
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 19:32:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AqycH65M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE56D2088E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="czitbLm8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 491A92087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727185AbeH1XZE (ORCPT
+        id S1727247AbeH1XZJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 19:25:04 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:41001 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726807AbeH1XZE (ORCPT
+        Tue, 28 Aug 2018 19:25:09 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54748 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726807AbeH1XZJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 19:25:04 -0400
-Received: by mail-ed1-f66.google.com with SMTP id f38-v6so2205479edd.8
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 12:31:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2QaO0uIgbLsrFdfJ2kZm/STVp1yxqwRwLt4j60URw+8=;
-        b=AqycH65MohoeO3aU6lLx15ixIkNpEp1PJvSWX3wiUq3BSnzuJVx0/VuP0qkmEUAP0E
-         qJXhvAdt4dZYAXSvAKc4GV0VkZ62khpQi9Kwr3+oMpg0GorTxzRNA7aD61NZgWYflmaH
-         HhJ5RS0fWLbLB+RS2UUnbs4iDAUfYSAClvFeKSkkwdaVXXEhLZRwjWbx4Ovl7QQ9Mwpy
-         jr+zQm62zP+1mR+Vb1/etkU2zP01fGHLr88FtBJUszkx0dAGuGO+vo6dShqvPlcfUkBH
-         zjMZLDDqc+8Us4izAI+ROHAj5nrQU+wiDWL3g6qd9ae93FIFww+nBQ9gUAKx1MJm35Ne
-         jqLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2QaO0uIgbLsrFdfJ2kZm/STVp1yxqwRwLt4j60URw+8=;
-        b=SEGkBRmwlBaaMjnixZEDWd7PjstIMW4GlbCnV8Csj7dM2e32gkkKDpMhBaPHUXniG6
-         Hqu8XvJJExCxhFnDYfjuGzzD+jyuG5uw/ek3M3UmMp2+PoyEBxzS+qVfebhoIRlIRulK
-         WaKBPVsTIFdV3XNvXCzHm/ISR4vtN4ncSMUTdqXBoqBoUMPay4FcEZ2B552H6fduJdFV
-         8lctfbjbAUmwfOFarxMP1M7Ik62Vet8E0i8DCAJbX3fq6u+qCRW8XS0GNxb2LDMr0t+q
-         Kpjgc/nJxYgiuNbQzPDvFvXsZKbL9NfzK6b/XzPneHDceJFsqUTpX29fSq1LUWI4CHUR
-         sNAQ==
-X-Gm-Message-State: APzg51A1Ee37AtSs0T+atKSQbQfaz3ze4WslaHYi/OH5fRM76UHSOA1s
-        N0rH+YrLESdkcX3Rd6SVKA==
-X-Google-Smtp-Source: ANB0VdYC5g5mr8TRMUfPE73fHUpRB+S+LRiD83W1GD0ARUcKmXsb0NTweBvvPF0TS6gpkA845+Hfyg==
-X-Received: by 2002:a50:e40d:: with SMTP id d13-v6mr4065459edm.263.1535484717658;
-        Tue, 28 Aug 2018 12:31:57 -0700 (PDT)
-Received: from avx2 (nat4-minsk-pool-46-53-177-92.telecom.by. [46.53.177.92])
-        by smtp.gmail.com with ESMTPSA id p28-v6sm2156936eda.85.2018.08.28.12.31.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 Aug 2018 12:31:56 -0700 (PDT)
-Date:   Tue, 28 Aug 2018 22:31:54 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     "Ahmed S. Darwish" <darwish.07@gmail.com>
-Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/13] proc: readdir /proc/*/task
-Message-ID: <20180828193154.GA4847@avx2>
-References: <20180827231503.26899-1-adobriyan@gmail.com>
- <20180827231503.26899-11-adobriyan@gmail.com>
- <20180828123622.GA2087@darwi-kernel>
+        Tue, 28 Aug 2018 19:25:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=YKW1SWav7pSNvb+GKt9MadCJJ/82EVjb2DL1EmLdKKg=; b=czitbLm8HCkndFiBTXFM1Q7eG
+        uylOgY7aRkY/SLHbbPUOqHC+588SS8YCfHR5/hq1S/WCuXrsxY3uXQyhRbFCmNIKSaK2AASrfkkW3
+        rBk7rxt5hcXwfKhMPfoZGhINkM4XEurUYfrCr/8nL3z02YTnsCVYospdEUAj3IBCh/8u0=;
+Received: from 94.197.121.178.threembb.co.uk ([94.197.121.178] helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fujhm-0007e1-MM; Tue, 28 Aug 2018 19:31:18 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id 6CF68440078; Tue, 28 Aug 2018 20:31:01 +0100 (BST)
+Date:   Tue, 28 Aug 2018 20:31:01 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Kirill Marinushkin <kmarinushkin@birdec.tech>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        M R Swami Reddy <mr.swami.reddy@ti.com>,
+        Vishwas A Deshpande <vishwas.a.deshpande@ti.com>,
+        Kevin Cernekee <cernekee@chromium.org>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/1] ASoC: pcm3060: Add codec driver
+Message-ID: <20180828193101.GP2414@sirena.org.uk>
+References: <20180821165246.9479-1-kmarinushkin@birdec.tech>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="OoKXXPSaVc/Wpb6N"
 Content-Disposition: inline
-In-Reply-To: <20180828123622.GA2087@darwi-kernel>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180821165246.9479-1-kmarinushkin@birdec.tech>
+X-Cookie: Many are called, few volunteer.
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 12:36:22PM +0000, Ahmed S. Darwish wrote:
-> On Tue, Aug 28, 2018 at 02:15:01AM +0300, Alexey Dobriyan wrote:
-> > ---
-> >  fs/proc/base.c | 8 ++++----
-> >  1 file changed, 4 insertions(+), 4 deletions(-)
-> >
-> 
-> Missing description and S-o-b. Further comments below..
-> 
-> > diff --git a/fs/proc/base.c b/fs/proc/base.c
-> > index 33f444721965..668e465c86b3 100644
-> > --- a/fs/proc/base.c
-> > +++ b/fs/proc/base.c
-> > @@ -3549,11 +3549,11 @@ static int proc_task_readdir(struct file *file, struct dir_context *ctx)
-> >  	for (task = first_tid(proc_pid(inode), tid, ctx->pos - 2, ns);
-> >  	     task;
-> >  	     task = next_tid(task), ctx->pos++) {
-> > -		char name[10 + 1];
-> > -		unsigned int len;
-> > +		char name[10], *p = name + sizeof(name);
-> > +
-> 
-> Multiple issues:
-> 
-> - len should be 11, as was in the original code
->   (0xffffffff = 4294967295, 10 letters)
 
-len should be 10.
+--OoKXXPSaVc/Wpb6N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> - while we're at it, let's use a constant for the '11' instead of
->   mysterious magic numbers
-> 
-> - 'p' is clearly overflowing the stack here
-> 
-> >  		tid = task_pid_nr_ns(task, ns);
-> > -		len = snprintf(name, sizeof(name), "%u", tid);
-> > -		if (!proc_fill_cache(file, ctx, name, len,
-> > +		p = _print_integer_u32(p, tid);
-> > +		if (!proc_fill_cache(file, ctx, p, name + sizeof(name) - p,
-> 
-> You're replacing snprintf() code __that did proper len checking__
-> with code that does not. That's not good.
+On Tue, Aug 21, 2018 at 06:52:45PM +0200, Kirill Marinushkin wrote:
+> Hello Mark,
+>=20
+> I am developing sound support for a Linux-based device, with playback and
+> capture through the TI PCM3060 codec.
 
-Yes, the whole point of the patch is to skip length checking.
+Please don't send cover letters for single patches, if there is anything
+that needs saying put it in the changelog of the patch or after the ---
+if it's administrative stuff.  This reduces mail volume and ensures that=20
+any important information is recorded in the changelog rather than being
+lost.=20
 
-> I can't see how the fourth proc_fill_cache() parameter, ``name +
-> sizeof(name)'' safely ever replace the original 'len' parameter.
-> It's a pointer value .. (!)
-> 
-> Overall this looks like a broken patch submitted by mistake.
+--OoKXXPSaVc/Wpb6N
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluFovQACgkQJNaLcl1U
+h9BjNwf/e9TwY5s3mEHxlDdtMsox6KLef85PAw7X2y3gffpMrlVVAd7QqnccmemK
+JvHSYSStVjb5d5AYgv9L4dk/CVHl1F4j8aBmD8OhOizecWece7A9YRVJaPrmb2HN
+ZB202BQDGYTMNKImx3y/yLUeXdb1bXsy+tDT8DnyXm47CqxtIPst9KlakX6xNX3J
+urIpOCy52d/lpui5x8oDBxCEjwVozeg2MZFS76jSVshQbq5nhXqkjzf+GeCX6cUd
+eJ5rqEhQDrbIAX2/B4SJrK5lnErCTNmX3pW1TDQtWKTVN5eBrDD+aZCsLH43/OkA
+oHOvCgMt6+TFxu8pwj5sgGI8GBLYCQ==
+=xsta
+-----END PGP SIGNATURE-----
+
+--OoKXXPSaVc/Wpb6N--
