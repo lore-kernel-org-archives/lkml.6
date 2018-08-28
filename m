@@ -7,123 +7,159 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C042DC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:37:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5077FC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:41:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 428842087D
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:37:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECEA62087D
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 20:41:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RsspPom5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 428842087D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DQ3wE8aE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECEA62087D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727255AbeH2Aa2 (ORCPT
+        id S1727227AbeH2AfJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 20:30:28 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:46240 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727125AbeH2Aa2 (ORCPT
+        Tue, 28 Aug 2018 20:35:09 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:34209 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726998AbeH2AfJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 20:30:28 -0400
-Received: by mail-wr1-f65.google.com with SMTP id a108-v6so2733991wrc.13;
-        Tue, 28 Aug 2018 13:37:07 -0700 (PDT)
+        Tue, 28 Aug 2018 20:35:09 -0400
+Received: by mail-qk0-f193.google.com with SMTP id d15-v6so1966741qkc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 13:41:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=G+A+K40XdK+l9Obs2EooWbLOTs6QBLllS8qbbxu4G+A=;
-        b=RsspPom5cZbeBu8X+Z54eNmu5GFCEu/TK2SeL+3hnhWa0W83vnoqd7qQo+I5bzGEiJ
-         9EV/7dZPwoery+we84VqgBth1jn3XgsO7BpHNwv5u0/LS8Nw/5FPcyT68/TB11pUbhjo
-         JYSVnqRZEv8R9VvRvSWvpOePQfimZkmnVak8qlwFvJSJEkIPtBScpvPs1HZfFoNS7Btn
-         bSedCe3f/cs6gg725cZgq2zuctb1EHgXiUiiXFDOpMoBwG8aeB7hivpiGwDsoqPhRNZF
-         mZPGD7BwI3BJdyGUv1DpUBcn9vZTirI3MXZaQqTUtS0Ml5tRYAhm/XqQOmajrhr77ng7
-         98YA==
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=EjMNBEUhX2l/wwWJFcNVCSAiRNbsY2g0FGQRFaq1W3E=;
+        b=DQ3wE8aEYFXTeKcpFqOaq97/w95WyQ7zULg31BQ/YCCcEfWsqhM3cvDTlsjUIYi8+3
+         xwyguoFIqkaMH4elZkDzJz3JVNRO6u6clUAugawtxw7teB/Ba/d/N5BhT/vdkjL/yFUH
+         2of1x8CO38rXoM7gcggFFPhp7zTw4RyOZCGdqhxlmz62cqOIbEFUKD1Z+74jaSQB01zg
+         TWsRyUKrY89fXuQcx/tViDywzIm4/3H9k9JJy/T0TfpZA5PJ6Cy4iTnTi+mxl1A4y9Zq
+         KHQz25M8mIZJubUiXNq3jOKQ9P9BbaDE5/5CXKrVe/OAVFSaZ7Thuols/LGS8jX9sP5w
+         IeeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=G+A+K40XdK+l9Obs2EooWbLOTs6QBLllS8qbbxu4G+A=;
-        b=evuHitkfiQ82bAALhjmwt3M9HTjyFospVXGzY86+sDdnkHIexLxRD+Mep8LqxzbjMh
-         exqOsBdpdU3B/2xRNS33CXcOIPz50+TBG6KlxJGC/DDlv6rNI2tYq4+xnWCVl37PLroF
-         blDV0Ef5zt0ADu5b80hFj3itVdsgcj8n9xPPkrw71hJea6SPezF7tEx3XPMkPyG4Eoz8
-         YamXdBzdZC63DlqRdQrS/uiBrsd+24cxXdZGzQKSkcwL6BsOG3W1oITkq7HQSZDKwnLg
-         Qgj+mYWYV34WCbOanVol+4gir2HUL2T3F2cpg4dTeubLMa3xrDuNIZH26kCn6IQJoTp0
-         pQfw==
-X-Gm-Message-State: APzg51Apl/3YvDh90O9pJBiN4qMu8twYputOJfA7TXZwshFNUIDfL3ZB
-        vSSTwOhfCq5Rb7mzXjlda9hKgnQE
-X-Google-Smtp-Source: ANB0VdZ5zl4KviJfPmT6tUFZByIQQIIKy1t9TBACv/xfvzcKH0wm05SuIgwkVfOVC8Cg5av9TD1oww==
-X-Received: by 2002:adf:a292:: with SMTP id s18-v6mr2378366wra.100.1535488626443;
-        Tue, 28 Aug 2018 13:37:06 -0700 (PDT)
-Received: from [192.168.1.18] (bla118.neoplus.adsl.tpnet.pl. [83.28.194.118])
-        by smtp.gmail.com with ESMTPSA id u40-v6sm4024420wrc.43.2018.08.28.13.37.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 Aug 2018 13:37:05 -0700 (PDT)
-Subject: Re: [PATCH] leds: Convert to using %pOFn instead of device_node.name
-To:     Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org
-Cc:     Sakari Ailus <sakari.ailus@iki.fi>, Pavel Machek <pavel@ucw.cz>,
-        linux-leds@vger.kernel.org
-References: <20180828015252.28511-1-robh@kernel.org>
- <20180828015252.28511-25-robh@kernel.org>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <5e5ea614-5242-eabc-2e4a-aa20432a4a12@gmail.com>
-Date:   Tue, 28 Aug 2018 22:37:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=EjMNBEUhX2l/wwWJFcNVCSAiRNbsY2g0FGQRFaq1W3E=;
+        b=Lc5gKNgteP9NbG0i/0l6CbgessCMK5JRziDZUAXRBgzN6UbNjQVo235Oof0NRwraW2
+         0WIvVZJswWi9KdzRwrUbXRJIJhTe2Dtty08QARG3PLXY/ZOQyPuQmU1xGa+87b9HOps/
+         t8VdiQwlthrIT3/fG4v3eXFY5Vq8STFjG1VW48bhuPAcBkmXNwmRq6eQ51BSacHEJjxq
+         +3kjTBM+OjvM8TBOniHJiaTatO9S83Nq2yiAKM9U8JLLtQt1CWHSytJmvTy5QindUnen
+         6dev07x++K9pKGtqokQy4tVjcPsVtLSqcQTzAMgPTZYvbGi4WPesIVwRDE3G7KsAwerg
+         dwBg==
+X-Gm-Message-State: APzg51B2oiYcWzYC9nm5wcFaCUfuLPhA3/w4EPKNZix3IF0MfQGLdFj2
+        iTi/ti/O88AnvdGtV/zxYC08SAb3lAdg2a0Dn3Q=
+X-Google-Smtp-Source: ANB0VdZEfKK+vgE6gf9fiyG+lu8+bTli0CIi9+in9ptp4kaU/MHZcKGLXch5uswEsCbIWx+o6Bz4hKWczbobpXT6bxA=
+X-Received: by 2002:a37:1383:: with SMTP id 3-v6mr3348063qkt.129.1535488907763;
+ Tue, 28 Aug 2018 13:41:47 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180828015252.28511-25-robh@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:ac8:471a:0:0:0:0:0 with HTTP; Tue, 28 Aug 2018 13:41:27
+ -0700 (PDT)
+In-Reply-To: <CAKwvOdkPrKYyBsdv-FMD5pBc5TQr=cTTYb0hvLJ4Cyz7FU1qwg@mail.gmail.com>
+References: <20180826175748.GA29525@gmail.com> <CAKwvOdnyHctAYRBOdrkX15MBPX68pOSiKc2P2S_JnDdffdY+OA@mail.gmail.com>
+ <CANiq72=DmREZ=1mjFU5PAjQ+WYVOqerP0odFYbiNRjpyrwiNmQ@mail.gmail.com> <CAKwvOdkPrKYyBsdv-FMD5pBc5TQr=cTTYb0hvLJ4Cyz7FU1qwg@mail.gmail.com>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Tue, 28 Aug 2018 22:41:27 +0200
+Message-ID: <CANiq72nJemek_uo16P2KhyfKNgrUQOmi+495SGGWW+QzLDfTsw@mail.gmail.com>
+Subject: Re: [PATCH] include/linux/compiler*.h: Use feature checking instead
+ of version checks for attributes
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Eli Friedman <efriedma@codeaurora.org>,
+        Christopher Li <sparse@chrisli.org>,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Joe Perches <joe@perches.com>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+Hi Nick,
 
-Thank you for the patch.
+Actually, to acknowledge the comments to the other email...
 
-On 08/28/2018 03:52 AM, Rob Herring wrote:
-> In preparation to remove the node name pointer from struct device_node,
-> convert printf users to use the %pOFn format specifier.
-> 
-> Cc: Sakari Ailus <sakari.ailus@iki.fi>
-> Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> Cc: Pavel Machek <pavel@ucw.cz>
-> Cc: linux-leds@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  drivers/leds/leds-as3645a.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/leds/leds-as3645a.c b/drivers/leds/leds-as3645a.c
-> index f883616d9e60..98a69b1a43f9 100644
-> --- a/drivers/leds/leds-as3645a.c
-> +++ b/drivers/leds/leds-as3645a.c
-> @@ -529,7 +529,7 @@ static int as3645a_parse_node(struct as3645a *flash,
->  		strlcpy(names->flash, name, sizeof(names->flash));
->  	else
->  		snprintf(names->flash, sizeof(names->flash),
-> -			 "%s:flash", node->name);
-> +			 "%pOFn:flash", node);
->  
->  	rval = of_property_read_u32(flash->flash_node, "flash-timeout-us",
->  				    &cfg->flash_timeout_us);
-> @@ -573,7 +573,7 @@ static int as3645a_parse_node(struct as3645a *flash,
->  		strlcpy(names->indicator, name, sizeof(names->indicator));
->  	else
->  		snprintf(names->indicator, sizeof(names->indicator),
-> -			 "%s:indicator", node->name);
-> +			 "%pOFn:indicator", node);
->  
->  	rval = of_property_read_u32(flash->indicator_node, "led-max-microamp",
->  				    &cfg->indicator_max_ua);
-> 
+On Tue, Aug 28, 2018 at 6:53 PM, Nick Desaulniers
+<ndesaulniers@google.com> wrote:
+> On Tue, Aug 28, 2018 at 8:04 AM Miguel Ojeda
+> <miguel.ojeda.sandonis@gmail.com> wrote:
+>>
+>> Hi Nick,
+>>
+>> On Mon, Aug 27, 2018 at 7:43 PM, Nick Desaulniers
+>> <ndesaulniers@google.com> wrote:
+>> > On Sun, Aug 26, 2018 at 10:58 AM Miguel Ojeda
+>> > <miguel.ojeda.sandonis@gmail.com> wrote:
+>> >>
+>> >> Instead of using version checks per-compiler to define (or not) each attribute,
+>> >> use __has_attribute to test for them, following the cleanup started with
+>> >> commit 815f0ddb346c ("include/linux/compiler*.h: make compiler-*.h mutually exclusive").
+>> >>
+>> >> All the attributes that are fairly common/standard (i.e. those that do not
+>> >> require extra logic to define them) have been moved to a new file
+>> >> include/linux/compiler_attributes.h. The attributes have been sorted
+>> >> and divided between "required" and "optional".
+>> >
+>> > Nice! Thanks Miguel.  Regarding sorting, I'm happy with that.  In
+>> > fact, some of the comments can be removed IMO, as the attributes have
+>> > common definitions in the docs (maybe an added link to the gcc and
+>> > clang attribute docs at the top of the file rather than per attribute
+>> > comments).
+>>
+>> Thanks for the review!
+>>
+>> I thought about that, although there isn't a single page with them in
+>> GCC (we could group them by type though: function ones, variable
+>> ones... and then link to those).
+>> On the other hand, maybe writing a
+>> Doc/ file is better and allows us to write as much as one would like
+>> about each of them (and a link to each page compiler's page about it,
+>> etc.). I think in the end the Doc/ file might be the best, in order
+>> not to crowd the header.
+>
+> A comment is closer to the source, but I guess that's bytes for each
+> inclusion for every file.  I don't feel passionate about this point
+> one way or the other.
+>
 
-Applied.
+I think I will write a simple Doc/ file, link to it from the source,
+and see if people like it.
 
--- 
-Best regards,
-Jacek Anaszewski
+>>
+>> >
+>> >>
+>> >> Further, attributes that are already supported in gcc >= 4.6 and recent clang
+>> >> were simply made to be required (instead of testing for them):
+>> >>   * always_inline
+>> >>   * const (pure was already "required", by the way)
+>> >>   * gnu_inline
+>> >
+>> > There's an important test for gnu_inline that isn't checking that it's
+>> > supported, but rather what the implicit behavior is depending on which
+>> > C standard is being used.  It's important not to remove that.
+>>
+>> Hm... I actually thought it was not available at some point before 4.6
+>> and removed the #ifdef. The comment even says it is featuring
+>> detecting it so that the old GCC inlining is used; but it shouldn't
+>> matter if you always use it, no?
+>
+> Good point.  Rather than defining it only if GNU inline is not the
+> current behavior is a bit more verbose than just always defining it.
+> This seems to confirm that that should work:
+> https://godbolt.org/z/igwh32.
+>
+
+Great then! Thanks for confirming!
+
+Cheers,
+Miguel
