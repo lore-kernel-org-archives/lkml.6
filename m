@@ -2,92 +2,88 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B54DDC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:43:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87E67C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:44:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64E802088E
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:43:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64E802088E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 33A0C20898
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:44:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ICkFaQjS";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ICkFaQjS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33A0C20898
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727744AbeH1QfL (ORCPT
+        id S1727961AbeH1QgN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 12:35:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37480 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726120AbeH1QfL (ORCPT
+        Tue, 28 Aug 2018 12:36:13 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48850 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726120AbeH1QgN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 12:35:11 -0400
-Received: from localhost (unknown [104.153.224.167])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 74527CDD;
-        Tue, 28 Aug 2018 12:43:39 +0000 (UTC)
-Date:   Tue, 28 Aug 2018 14:43:29 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Juergen Gross <jgross@suse.com>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>, tglx@linutronix.de,
-        mingo@redhat.com, stable@vger.kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Tue, 28 Aug 2018 12:36:13 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 80C4860227; Tue, 28 Aug 2018 12:44:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535460283;
+        bh=MugCxOfDVGECnv7/F5OC1VUqoYDDpbsdeMXDYVxk/HY=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=ICkFaQjSfPP8KO9xT8RWBowk4Ayhjoh1CP7tRxZdsowU+QK98Vu1cRejmgpPi2CUi
+         wVmBFCItnqTda7DeD9EgxdWa+dfBocKvZv/BdtlrPQrS+BRpjkGdrkEBOdC+79YFfX
+         e89U/BD9Y9CFZCYgM5YnneeMGLgKfe+b+Ren7bR0=
+Received: from purkki.adurom.net (purkki.adurom.net [80.68.90.206])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 16D7960227;
+        Tue, 28 Aug 2018 12:44:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535460283;
+        bh=MugCxOfDVGECnv7/F5OC1VUqoYDDpbsdeMXDYVxk/HY=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=ICkFaQjSfPP8KO9xT8RWBowk4Ayhjoh1CP7tRxZdsowU+QK98Vu1cRejmgpPi2CUi
+         wVmBFCItnqTda7DeD9EgxdWa+dfBocKvZv/BdtlrPQrS+BRpjkGdrkEBOdC+79YFfX
+         e89U/BD9Y9CFZCYgM5YnneeMGLgKfe+b+Ren7bR0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 16D7960227
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     Yuan-Chi Pang <fu3mo6goo@gmail.com>
+Cc:     johannes@sipsolutions.net, davem@davemloft.net,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/irqflags: mark native_restore_fl extern inline
-Message-ID: <20180828124329.GB14243@kroah.com>
-References: <20180827214011.55428-1-ndesaulniers@google.com>
- <20180828051300.GB2107@kroah.com>
- <5c949906-ae9d-2848-d5d0-f402aed4b9f3@suse.com>
+Subject: Re: [PATCH] mac80211: fix to follow standard
+References: <1535423074-130862-1-git-send-email-fu3mo6goo@gmail.com>
+Date:   Tue, 28 Aug 2018 15:44:39 +0300
+In-Reply-To: <1535423074-130862-1-git-send-email-fu3mo6goo@gmail.com>
+        (Yuan-Chi Pang's message of "Tue, 28 Aug 2018 10:24:34 +0800")
+Message-ID: <87ftyyu0co.fsf@purkki.adurom.net>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5c949906-ae9d-2848-d5d0-f402aed4b9f3@suse.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 08:02:37AM +0200, Juergen Gross wrote:
-> On 28/08/18 07:13, Greg Kroah-Hartman wrote:
-> > On Mon, Aug 27, 2018 at 02:40:09PM -0700, Nick Desaulniers wrote:
-> >> Fixes commit 208cbb325589 ("x86/irqflags: Provide a declaration for
-> >> native_save_fl")
-> >>
-> >> This should have been marked extern inline in order to pick up the out
-> >> of line definition in arch/x86/kernel/irqflags.S.
-> >>
-> >> Cc: stable@vger.kernel.org # 4.18, 4.14, 4.9, 4.4
-> >> Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-> >> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-> >> ---
-> >>  arch/x86/include/asm/irqflags.h | 3 ++-
-> >>  1 file changed, 2 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/arch/x86/include/asm/irqflags.h b/arch/x86/include/asm/irqflags.h
-> >> index c14f2a74b2be..15450a675031 100644
-> >> --- a/arch/x86/include/asm/irqflags.h
-> >> +++ b/arch/x86/include/asm/irqflags.h
-> >> @@ -33,7 +33,8 @@ extern inline unsigned long native_save_fl(void)
-> >>  	return flags;
-> >>  }
-> >>  
-> >> -static inline void native_restore_fl(unsigned long flags)
-> >> +extern inline void native_restore_fl(unsigned long flags);
-> >> +extern inline void native_restore_fl(unsigned long flags)
-> > 
-> > This looks odd to me, but my coffee hasn't kicked in yet this morning.
-> > Why do you need both lines here?  Shouldn't the actual function be
-> > sufficient?  If not, a comment explaining this would be nice.
-> 
-> Look just some lines further up:
-> 
-> /* Declaration required for gcc < 4.9 to prevent
-> -Werror=missing-prototypes */
-> extern inline unsigned long native_save_fl(void);
-> extern inline unsigned long native_save_fl(void)
+Yuan-Chi Pang <fu3mo6goo@gmail.com> writes:
 
-Ugh, my fault, I'll go shut up now...
+> IEEE 802.11-2016 14.10.8.3 HWMP sequence numbering says:
+> If it is a target mesh STA, it shall update its own HWMP SN to
+> maximum (current HWMP SN, target HWMP SN in the PREQ element) + 1
+> immediately before it generates a PREP element in response to a
+> PREQ element.
+>
+> Signed-off-by: Yuan-Chi Pang <fu3mo6goo@gmail.com>
 
-stupid gcc...
+The patch title is quite generic, you could make it a bit more
+informative and unique. For example:
+
+mac80211: fix HWMP sequence numbering to follow standard
+
+-- 
+Kalle Valo
