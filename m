@@ -3,67 +3,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98792C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:44:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F4068C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:44:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 432CB2086A
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:44:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 432CB2086A
+	by mail.kernel.org (Postfix) with ESMTP id 9F93A2086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:44:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F93A2086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727452AbeH1Tgz (ORCPT
+        id S1727479AbeH1Tg5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 15:36:55 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:40616 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726383AbeH1Tgy (ORCPT
+        Tue, 28 Aug 2018 15:36:57 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:32910 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726383AbeH1Tg4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 15:36:54 -0400
-Received: by mail-oi0-f68.google.com with SMTP id l202-v6so3645251oig.7;
-        Tue, 28 Aug 2018 08:44:39 -0700 (PDT)
+        Tue, 28 Aug 2018 15:36:56 -0400
+Received: by mail-oi0-f67.google.com with SMTP id 8-v6so3697167oip.0;
+        Tue, 28 Aug 2018 08:44:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to;
-        bh=yQtwLwhl7Ka+3sr6BOinI3DUEJVApNtmVCuk1VaSgxw=;
-        b=C84d7tLSMXH1XyRSSPoRbrU9iysXUegaCCGopAir6FKaGk0QGuzlCfqmK6h7ZENS04
-         +mcpXTmLdsLilbH5+ceSsDEKfBa15Re8sGS6sWcLAMmVMoaMAKmVzvXCq3J4SV5FkvQk
-         OZe0o9lzwzqsubICmsmGkfBVRK51KriI9k75YFfKaWsf8LHZIJtPsGb68Btg5gdvQjcZ
-         Ji5AH8S9O0JkGZq6NUH1zZ1cYZJDO8XqB9CjyR9Y7bSjYGkEjQ9YI9T4Bhsj0d9V5ri3
-         sXiQpAvutBBEQk3FCJSq3aO4qTeXn9YWtEU3UfEgIeNOUcPvtqyzKAzZdniE5wV2UMxN
-         Dr8w==
-X-Gm-Message-State: APzg51CrsLfd5AgRxpAB8bs0TbW6oOLP+1kiIsRD+YuyqCpbL/3pySNP
-        izVnmYVeH7+o2SbDo0VebVj7gTI=
-X-Google-Smtp-Source: ANB0VdZNQMq6ceD+IV3mHB4zeSsrUDV3jeRVe0QRZyzW5WQqgwXQBQ1MtBiTjqZf6UudzugTlobx2w==
-X-Received: by 2002:aca:c0c1:: with SMTP id q184-v6mr1778157oif.61.1535471079211;
-        Tue, 28 Aug 2018 08:44:39 -0700 (PDT)
+        bh=89b9w7zzqpXeIRaut3kilMIAVuwepwExKBnxj95Io4A=;
+        b=tPel89QO18qizR6fsdTfX0ILi8S+WHPVG8sRySUuXvxIC0SElev9K0kjKpxUqlu1QC
+         JgZR/PLpwNqqyKOkzNRhwk8jVGyuUaaS9Jpu/eZoABIxJlsqgabtMO7poswCHbOlc5Bu
+         wsgsJegJrE5ylzJkAMxF2YztHn8ygLZy5Q0qYVMXgJDgYoNNRUGDVDqcLSWh3csAwkCi
+         hM4lCcvxmdhzcX6xtFgSYM6YuQXf7wlW7NKbT8hdUacEENhHxQpYjhA6Zc0izdfQwyGj
+         ecUeJH5zDR/FJz5gOipTv/vUNf6l/vX6j0IRNy0GWPiXzVJwT3a9vPkNC65/9OI46GVs
+         Xo+Q==
+X-Gm-Message-State: APzg51DTDPj/icrGcyK66ns4XKg0QULCFl1OEPqBgSQFVhxMDl9xb5iH
+        S1W7wfwzvz6gve6rhhi2zDjqRNw=
+X-Google-Smtp-Source: ANB0VdYhZDWEFW1hLmSw5rouh+/2BVJ68l3YauodEA7tHBYD8YNigGWN3ZStYcCv9m9FHdJt86TJKg==
+X-Received: by 2002:aca:a815:: with SMTP id r21-v6mr1880620oie.64.1535471081176;
+        Tue, 28 Aug 2018 08:44:41 -0700 (PDT)
 Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id f4-v6sm1808331oic.52.2018.08.28.08.44.37
+        by smtp.googlemail.com with ESMTPSA id f4-v6sm1808331oic.52.2018.08.28.08.44.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 Aug 2018 08:44:38 -0700 (PDT)
+        Tue, 28 Aug 2018 08:44:40 -0700 (PDT)
 From:   Rob Herring <robh@kernel.org>
 To:     linux-kernel@vger.kernel.org
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Yisen Zhuang <yisen.zhuang@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Felix Fietkau <nbd@openwrt.org>,
-        John Crispin <john@phrozen.org>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Nelson Chang <nelson.chang@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Wingman Kwok <w-kwok2@ti.com>,
-        Murali Karicheri <m-karicheri2@ti.com>, netdev@vger.kernel.org
-Subject: [PATCH v2] net: ethernet: Convert to using %pOFn instead of device_node.name
-Date:   Tue, 28 Aug 2018 10:44:30 -0500
-Message-Id: <20180828154433.5693-4-robh@kernel.org>
+Cc:     "David S. Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org
+Subject: [PATCH v2] sparc: Convert to using %pOFn instead of device_node.name
+Date:   Tue, 28 Aug 2018 10:44:32 -0500
+Message-Id: <20180828154433.5693-6-robh@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180828154433.5693-1-robh@kernel.org>
 References: <20180828154433.5693-1-robh@kernel.org>
-In-Reply-To: <20180828015252.28511-34-robh@kernel.org>
+In-Reply-To: <20180828015252.28511-7-robh@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -73,292 +63,295 @@ In preparation to remove the node name pointer from struct device_node,
 convert printf users to use the %pOFn format specifier.
 
 Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Yisen Zhuang <yisen.zhuang@huawei.com>
-Cc: Salil Mehta <salil.mehta@huawei.com>
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Felix Fietkau <nbd@openwrt.org>
-Cc: John Crispin <john@phrozen.org>
-Cc: Sean Wang <sean.wang@mediatek.com>
-Cc: Nelson Chang <nelson.chang@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Wingman Kwok <w-kwok2@ti.com>
-Cc: Murali Karicheri <m-karicheri2@ti.com>
-Cc: netdev@vger.kernel.org
-
+Cc: sparclinux@vger.kernel.org
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
 v2:
-- fix missing brackets in netcp
+- snprint -> snprintf typo fix
 
- drivers/net/ethernet/freescale/fsl_pq_mdio.c  |  4 +-
- .../net/ethernet/hisilicon/hns/hns_dsaf_mac.c |  8 ++--
- drivers/net/ethernet/marvell/mv643xx_eth.c    |  6 +--
- drivers/net/ethernet/mediatek/mtk_eth_soc.c   |  2 +-
- drivers/net/ethernet/sun/sunhme.c             |  2 +-
- drivers/net/ethernet/ti/netcp_core.c          | 22 ++++------
- drivers/net/ethernet/ti/netcp_ethss.c         | 42 +++++++++----------
- 7 files changed, 40 insertions(+), 46 deletions(-)
+ arch/sparc/kernel/auxio_64.c |  4 +--
+ arch/sparc/kernel/power.c    |  4 +--
+ arch/sparc/kernel/prom_32.c  | 26 +++++++-------
+ arch/sparc/kernel/prom_64.c  | 68 ++++++++++++++++++------------------
+ 4 files changed, 51 insertions(+), 51 deletions(-)
 
-diff --git a/drivers/net/ethernet/freescale/fsl_pq_mdio.c b/drivers/net/ethernet/freescale/fsl_pq_mdio.c
-index ac2c3f6a12bc..82722d05fedb 100644
---- a/drivers/net/ethernet/freescale/fsl_pq_mdio.c
-+++ b/drivers/net/ethernet/freescale/fsl_pq_mdio.c
-@@ -446,8 +446,8 @@ static int fsl_pq_mdio_probe(struct platform_device *pdev)
- 		goto error;
+diff --git a/arch/sparc/kernel/auxio_64.c b/arch/sparc/kernel/auxio_64.c
+index 4e8f56c3793c..cc42225c20f3 100644
+--- a/arch/sparc/kernel/auxio_64.c
++++ b/arch/sparc/kernel/auxio_64.c
+@@ -115,8 +115,8 @@ static int auxio_probe(struct platform_device *dev)
+ 		auxio_devtype = AUXIO_TYPE_SBUS;
+ 		size = 1;
+ 	} else {
+-		printk("auxio: Unknown parent bus type [%s]\n",
+-		       dp->parent->name);
++		printk("auxio: Unknown parent bus type [%pOFn]\n",
++		       dp->parent);
+ 		return -ENODEV;
  	}
+ 	auxio_register = of_ioremap(&dev->resource[0], 0, size, "auxio");
+diff --git a/arch/sparc/kernel/power.c b/arch/sparc/kernel/power.c
+index 92627abce311..d941875dd718 100644
+--- a/arch/sparc/kernel/power.c
++++ b/arch/sparc/kernel/power.c
+@@ -41,8 +41,8 @@ static int power_probe(struct platform_device *op)
 
--	snprintf(new_bus->id, MII_BUS_ID_SIZE, "%s@%llx", np->name,
--		(unsigned long long)res.start);
-+	snprintf(new_bus->id, MII_BUS_ID_SIZE, "%pOFn@%llx", np,
-+		 (unsigned long long)res.start);
+ 	power_reg = of_ioremap(res, 0, 0x4, "power");
 
- 	priv->map = of_iomap(np, 0);
- 	if (!priv->map) {
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c
-index 1c2326bd76e2..6521d8d53745 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c
-@@ -807,8 +807,8 @@ static int hns_mac_get_info(struct hns_mac_cb *mac_cb)
- 			 */
- 			put_device(&mac_cb->phy_dev->mdio.dev);
+-	printk(KERN_INFO "%s: Control reg at %llx\n",
+-	       op->dev.of_node->name, res->start);
++	printk(KERN_INFO "%pOFn: Control reg at %llx\n",
++	       op->dev.of_node, res->start);
 
--			dev_dbg(mac_cb->dev, "mac%d phy_node: %s\n",
--				mac_cb->mac_id, np->name);
-+			dev_dbg(mac_cb->dev, "mac%d phy_node: %pOFn\n",
-+				mac_cb->mac_id, np);
- 		}
- 		of_node_put(np);
+ 	if (has_button_interrupt(irq, op->dev.of_node)) {
+ 		if (request_irq(irq,
+diff --git a/arch/sparc/kernel/prom_32.c b/arch/sparc/kernel/prom_32.c
+index b51cbb9e87dc..17c87d29ff20 100644
+--- a/arch/sparc/kernel/prom_32.c
++++ b/arch/sparc/kernel/prom_32.c
+@@ -68,8 +68,8 @@ static void __init sparc32_path_component(struct device_node *dp, char *tmp_buf)
+ 		return;
 
-@@ -825,8 +825,8 @@ static int hns_mac_get_info(struct hns_mac_cb *mac_cb)
- 			 * if the phy_dev is found
- 			 */
- 			put_device(&mac_cb->phy_dev->mdio.dev);
--			dev_dbg(mac_cb->dev, "mac%d phy_node: %s\n",
--				mac_cb->mac_id, np->name);
-+			dev_dbg(mac_cb->dev, "mac%d phy_node: %pOFn\n",
-+				mac_cb->mac_id, np);
- 		}
- 		of_node_put(np);
-
-diff --git a/drivers/net/ethernet/marvell/mv643xx_eth.c b/drivers/net/ethernet/marvell/mv643xx_eth.c
-index 62f204f32316..1e9bcbdc6a90 100644
---- a/drivers/net/ethernet/marvell/mv643xx_eth.c
-+++ b/drivers/net/ethernet/marvell/mv643xx_eth.c
-@@ -2733,17 +2733,17 @@ static int mv643xx_eth_shared_of_add_port(struct platform_device *pdev,
-
- 	memset(&res, 0, sizeof(res));
- 	if (of_irq_to_resource(pnp, 0, &res) <= 0) {
--		dev_err(&pdev->dev, "missing interrupt on %s\n", pnp->name);
-+		dev_err(&pdev->dev, "missing interrupt on %pOFn\n", pnp);
- 		return -EINVAL;
- 	}
-
- 	if (of_property_read_u32(pnp, "reg", &ppd.port_number)) {
--		dev_err(&pdev->dev, "missing reg property on %s\n", pnp->name);
-+		dev_err(&pdev->dev, "missing reg property on %pOFn\n", pnp);
- 		return -EINVAL;
- 	}
-
- 	if (ppd.port_number >= 3) {
--		dev_err(&pdev->dev, "invalid reg property on %s\n", pnp->name);
-+		dev_err(&pdev->dev, "invalid reg property on %pOFn\n", pnp);
- 		return -EINVAL;
- 	}
-
-diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-index 6e6abdc399de..b44bcfd85b05 100644
---- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-+++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-@@ -405,7 +405,7 @@ static int mtk_mdio_init(struct mtk_eth *eth)
- 	eth->mii_bus->priv = eth;
- 	eth->mii_bus->parent = eth->dev;
-
--	snprintf(eth->mii_bus->id, MII_BUS_ID_SIZE, "%s", mii_np->name);
-+	snprintf(eth->mii_bus->id, MII_BUS_ID_SIZE, "%pOFn", mii_np);
- 	ret = of_mdiobus_register(eth->mii_bus, mii_np);
-
- err_put_node:
-diff --git a/drivers/net/ethernet/sun/sunhme.c b/drivers/net/ethernet/sun/sunhme.c
-index 06da2f59fcbf..863fd602fd33 100644
---- a/drivers/net/ethernet/sun/sunhme.c
-+++ b/drivers/net/ethernet/sun/sunhme.c
-@@ -2999,7 +2999,7 @@ static int happy_meal_pci_probe(struct pci_dev *pdev,
- 	/* Now make sure pci_dev cookie is there. */
- #ifdef CONFIG_SPARC
- 	dp = pci_device_to_OF_node(pdev);
--	strcpy(prom_name, dp->name);
-+	snprintf(prom_name, sizeof(prom_name), "%pOFn", dp);
- #else
- 	if (is_quattro_p(pdev))
- 		strcpy(prom_name, "SUNW,qfe");
-diff --git a/drivers/net/ethernet/ti/netcp_core.c b/drivers/net/ethernet/ti/netcp_core.c
-index a1d335a3c5e4..1f612268c998 100644
---- a/drivers/net/ethernet/ti/netcp_core.c
-+++ b/drivers/net/ethernet/ti/netcp_core.c
-@@ -225,17 +225,6 @@ static int emac_arch_get_mac_addr(char *x, void __iomem *efuse_mac, u32 swap)
- 	return 0;
+ 	regs = rprop->value;
+-	sprintf(tmp_buf, "%s@%x,%x",
+-		dp->name,
++	sprintf(tmp_buf, "%pOFn@%x,%x",
++		dp,
+ 		regs->which_io, regs->phys_addr);
  }
 
--static const char *netcp_node_name(struct device_node *node)
--{
--	const char *name;
--
--	if (of_property_read_string(node, "label", &name) < 0)
--		name = node->name;
--	if (!name)
--		name = "unknown";
--	return name;
--}
--
- /* Module management routines */
- static int netcp_register_interface(struct netcp_intf *netcp)
- {
-@@ -267,8 +256,13 @@ static int netcp_module_probe(struct netcp_device *netcp_device,
- 	}
+@@ -84,8 +84,8 @@ static void __init sbus_path_component(struct device_node *dp, char *tmp_buf)
+ 		return;
 
- 	for_each_available_child_of_node(devices, child) {
--		const char *name = netcp_node_name(child);
-+		const char *name;
-+		char node_name[32];
-
-+		if (of_property_read_string(node, "label", &name) < 0) {
-+			snprintf(node_name, sizeof(node_name), "%pOFn", child);
-+			name = node_name;
-+		}
- 		if (!strcasecmp(module->name, name))
- 			break;
- 	}
-@@ -2209,8 +2203,8 @@ static int netcp_probe(struct platform_device *pdev)
- 	for_each_available_child_of_node(interfaces, child) {
- 		ret = netcp_create_interface(netcp_device, child);
- 		if (ret) {
--			dev_err(dev, "could not create interface(%s)\n",
--				child->name);
-+			dev_err(dev, "could not create interface(%pOFn)\n",
-+				child);
- 			goto probe_quit_interface;
- 		}
- 	}
-diff --git a/drivers/net/ethernet/ti/netcp_ethss.c b/drivers/net/ethernet/ti/netcp_ethss.c
-index 72b98e27c992..0397ccb6597e 100644
---- a/drivers/net/ethernet/ti/netcp_ethss.c
-+++ b/drivers/net/ethernet/ti/netcp_ethss.c
-@@ -3137,15 +3137,15 @@ static void init_secondary_ports(struct gbe_priv *gbe_dev,
- 	for_each_child_of_node(node, port) {
- 		slave = devm_kzalloc(dev, sizeof(*slave), GFP_KERNEL);
- 		if (!slave) {
--			dev_err(dev, "memory alloc failed for secondary port(%s), skipping...\n",
--				port->name);
-+			dev_err(dev, "memory alloc failed for secondary port(%pOFn), skipping...\n",
-+				port);
- 			continue;
- 		}
-
- 		if (init_slave(gbe_dev, slave, port)) {
- 			dev_err(dev,
--				"Failed to initialize secondary port(%s), skipping...\n",
--				port->name);
-+				"Failed to initialize secondary port(%pOFn), skipping...\n",
-+				port);
- 			devm_kfree(dev, slave);
- 			continue;
- 		}
-@@ -3239,8 +3239,8 @@ static int set_xgbe_ethss10_priv(struct gbe_priv *gbe_dev,
- 	ret = of_address_to_resource(node, XGBE_SS_REG_INDEX, &res);
- 	if (ret) {
- 		dev_err(gbe_dev->dev,
--			"Can't xlate xgbe of node(%s) ss address at %d\n",
--			node->name, XGBE_SS_REG_INDEX);
-+			"Can't xlate xgbe of node(%pOFn) ss address at %d\n",
-+			node, XGBE_SS_REG_INDEX);
- 		return ret;
- 	}
-
-@@ -3254,8 +3254,8 @@ static int set_xgbe_ethss10_priv(struct gbe_priv *gbe_dev,
- 	ret = of_address_to_resource(node, XGBE_SM_REG_INDEX, &res);
- 	if (ret) {
- 		dev_err(gbe_dev->dev,
--			"Can't xlate xgbe of node(%s) sm address at %d\n",
--			node->name, XGBE_SM_REG_INDEX);
-+			"Can't xlate xgbe of node(%pOFn) sm address at %d\n",
-+			node, XGBE_SM_REG_INDEX);
- 		return ret;
- 	}
-
-@@ -3269,8 +3269,8 @@ static int set_xgbe_ethss10_priv(struct gbe_priv *gbe_dev,
- 	ret = of_address_to_resource(node, XGBE_SERDES_REG_INDEX, &res);
- 	if (ret) {
- 		dev_err(gbe_dev->dev,
--			"Can't xlate xgbe serdes of node(%s) address at %d\n",
--			node->name, XGBE_SERDES_REG_INDEX);
-+			"Can't xlate xgbe serdes of node(%pOFn) address at %d\n",
-+			node, XGBE_SERDES_REG_INDEX);
- 		return ret;
- 	}
-
-@@ -3347,8 +3347,8 @@ static int get_gbe_resource_version(struct gbe_priv *gbe_dev,
- 	ret = of_address_to_resource(node, GBE_SS_REG_INDEX, &res);
- 	if (ret) {
- 		dev_err(gbe_dev->dev,
--			"Can't translate of node(%s) of gbe ss address at %d\n",
--			node->name, GBE_SS_REG_INDEX);
-+			"Can't translate of node(%pOFn) of gbe ss address at %d\n",
-+			node, GBE_SS_REG_INDEX);
- 		return ret;
- 	}
-
-@@ -3372,8 +3372,8 @@ static int set_gbe_ethss14_priv(struct gbe_priv *gbe_dev,
- 	ret = of_address_to_resource(node, GBE_SGMII34_REG_INDEX, &res);
- 	if (ret) {
- 		dev_err(gbe_dev->dev,
--			"Can't translate of gbe node(%s) address at index %d\n",
--			node->name, GBE_SGMII34_REG_INDEX);
-+			"Can't translate of gbe node(%pOFn) address at index %d\n",
-+			node, GBE_SGMII34_REG_INDEX);
- 		return ret;
- 	}
-
-@@ -3388,8 +3388,8 @@ static int set_gbe_ethss14_priv(struct gbe_priv *gbe_dev,
- 	ret = of_address_to_resource(node, GBE_SM_REG_INDEX, &res);
- 	if (ret) {
- 		dev_err(gbe_dev->dev,
--			"Can't translate of gbe node(%s) address at index %d\n",
--			node->name, GBE_SM_REG_INDEX);
-+			"Can't translate of gbe node(%pOFn) address at index %d\n",
-+			node, GBE_SM_REG_INDEX);
- 		return ret;
- 	}
-
-@@ -3498,8 +3498,8 @@ static int set_gbenu_ethss_priv(struct gbe_priv *gbe_dev,
- 	ret = of_address_to_resource(node, GBENU_SM_REG_INDEX, &res);
- 	if (ret) {
- 		dev_err(gbe_dev->dev,
--			"Can't translate of gbenu node(%s) addr at index %d\n",
--			node->name, GBENU_SM_REG_INDEX);
-+			"Can't translate of gbenu node(%pOFn) addr at index %d\n",
-+			node, GBENU_SM_REG_INDEX);
- 		return ret;
- 	}
-
-@@ -3642,7 +3642,7 @@ static int gbe_probe(struct netcp_device *netcp_device, struct device *dev,
- 		ret = netcp_xgbe_serdes_init(gbe_dev->xgbe_serdes_regs,
- 					     gbe_dev->ss_regs);
+ 	regs = prop->value;
+-	sprintf(tmp_buf, "%s@%x,%x",
+-		dp->name,
++	sprintf(tmp_buf, "%pOFn@%x,%x",
++		dp,
+ 		regs->which_io,
+ 		regs->phys_addr);
+ }
+@@ -104,13 +104,13 @@ static void __init pci_path_component(struct device_node *dp, char *tmp_buf)
+ 	regs = prop->value;
+ 	devfn = (regs->phys_hi >> 8) & 0xff;
+ 	if (devfn & 0x07) {
+-		sprintf(tmp_buf, "%s@%x,%x",
+-			dp->name,
++		sprintf(tmp_buf, "%pOFn@%x,%x",
++			dp,
+ 			devfn >> 3,
+ 			devfn & 0x07);
  	} else {
--		dev_err(dev, "unknown GBE node(%s)\n", node->name);
-+		dev_err(dev, "unknown GBE node(%pOFn)\n", node);
- 		ret = -ENODEV;
+-		sprintf(tmp_buf, "%s@%x",
+-			dp->name,
++		sprintf(tmp_buf, "%pOFn@%x",
++			dp,
+ 			devfn >> 3);
  	}
+ }
+@@ -127,8 +127,8 @@ static void __init ebus_path_component(struct device_node *dp, char *tmp_buf)
 
-@@ -3667,8 +3667,8 @@ static int gbe_probe(struct netcp_device *netcp_device, struct device *dev,
- 	for_each_child_of_node(interfaces, interface) {
- 		ret = of_property_read_u32(interface, "slave-port", &slave_num);
- 		if (ret) {
--			dev_err(dev, "missing slave-port parameter, skipping interface configuration for %s\n",
--				interface->name);
-+			dev_err(dev, "missing slave-port parameter, skipping interface configuration for %pOFn\n",
-+				interface);
- 			continue;
- 		}
- 		gbe_dev->num_slaves++;
+ 	regs = prop->value;
+
+-	sprintf(tmp_buf, "%s@%x,%x",
+-		dp->name,
++	sprintf(tmp_buf, "%pOFn@%x,%x",
++		dp,
+ 		regs->which_io, regs->phys_addr);
+ }
+
+@@ -167,8 +167,8 @@ static void __init ambapp_path_component(struct device_node *dp, char *tmp_buf)
+ 		return;
+ 	device = prop->value;
+
+-	sprintf(tmp_buf, "%s:%d:%d@%x,%x",
+-		dp->name, *vendor, *device,
++	sprintf(tmp_buf, "%pOFn:%d:%d@%x,%x",
++		dp, *vendor, *device,
+ 		*intr, reg0);
+ }
+
+@@ -201,7 +201,7 @@ char * __init build_path_component(struct device_node *dp)
+ 	tmp_buf[0] = '\0';
+ 	__build_path_component(dp, tmp_buf);
+ 	if (tmp_buf[0] == '\0')
+-		strcpy(tmp_buf, dp->name);
++		snprintf(tmp_buf, sizeof(tmp_buf), "%pOFn", dp);
+
+ 	n = prom_early_alloc(strlen(tmp_buf) + 1);
+ 	strcpy(n, tmp_buf);
+diff --git a/arch/sparc/kernel/prom_64.c b/arch/sparc/kernel/prom_64.c
+index baeaeed64993..6220411ce8fc 100644
+--- a/arch/sparc/kernel/prom_64.c
++++ b/arch/sparc/kernel/prom_64.c
+@@ -82,8 +82,8 @@ static void __init sun4v_path_component(struct device_node *dp, char *tmp_buf)
+
+ 	regs = rprop->value;
+ 	if (!of_node_is_root(dp->parent)) {
+-		sprintf(tmp_buf, "%s@%x,%x",
+-			dp->name,
++		sprintf(tmp_buf, "%pOFn@%x,%x",
++			dp,
+ 			(unsigned int) (regs->phys_addr >> 32UL),
+ 			(unsigned int) (regs->phys_addr & 0xffffffffUL));
+ 		return;
+@@ -97,17 +97,17 @@ static void __init sun4v_path_component(struct device_node *dp, char *tmp_buf)
+ 		const char *prefix = (type == 0) ? "m" : "i";
+
+ 		if (low_bits)
+-			sprintf(tmp_buf, "%s@%s%x,%x",
+-				dp->name, prefix,
++			sprintf(tmp_buf, "%pOFn@%s%x,%x",
++				dp, prefix,
+ 				high_bits, low_bits);
+ 		else
+-			sprintf(tmp_buf, "%s@%s%x",
+-				dp->name,
++			sprintf(tmp_buf, "%pOFn@%s%x",
++				dp,
+ 				prefix,
+ 				high_bits);
+ 	} else if (type == 12) {
+-		sprintf(tmp_buf, "%s@%x",
+-			dp->name, high_bits);
++		sprintf(tmp_buf, "%pOFn@%x",
++			dp, high_bits);
+ 	}
+ }
+
+@@ -122,8 +122,8 @@ static void __init sun4u_path_component(struct device_node *dp, char *tmp_buf)
+
+ 	regs = prop->value;
+ 	if (!of_node_is_root(dp->parent)) {
+-		sprintf(tmp_buf, "%s@%x,%x",
+-			dp->name,
++		sprintf(tmp_buf, "%pOFn@%x,%x",
++			dp,
+ 			(unsigned int) (regs->phys_addr >> 32UL),
+ 			(unsigned int) (regs->phys_addr & 0xffffffffUL));
+ 		return;
+@@ -138,8 +138,8 @@ static void __init sun4u_path_component(struct device_node *dp, char *tmp_buf)
+ 		if (tlb_type >= cheetah)
+ 			mask = 0x7fffff;
+
+-		sprintf(tmp_buf, "%s@%x,%x",
+-			dp->name,
++		sprintf(tmp_buf, "%pOFn@%x,%x",
++			dp,
+ 			*(u32 *)prop->value,
+ 			(unsigned int) (regs->phys_addr & mask));
+ 	}
+@@ -156,8 +156,8 @@ static void __init sbus_path_component(struct device_node *dp, char *tmp_buf)
+ 		return;
+
+ 	regs = prop->value;
+-	sprintf(tmp_buf, "%s@%x,%x",
+-		dp->name,
++	sprintf(tmp_buf, "%pOFn@%x,%x",
++		dp,
+ 		regs->which_io,
+ 		regs->phys_addr);
+ }
+@@ -176,13 +176,13 @@ static void __init pci_path_component(struct device_node *dp, char *tmp_buf)
+ 	regs = prop->value;
+ 	devfn = (regs->phys_hi >> 8) & 0xff;
+ 	if (devfn & 0x07) {
+-		sprintf(tmp_buf, "%s@%x,%x",
+-			dp->name,
++		sprintf(tmp_buf, "%pOFn@%x,%x",
++			dp,
+ 			devfn >> 3,
+ 			devfn & 0x07);
+ 	} else {
+-		sprintf(tmp_buf, "%s@%x",
+-			dp->name,
++		sprintf(tmp_buf, "%pOFn@%x",
++			dp,
+ 			devfn >> 3);
+ 	}
+ }
+@@ -203,8 +203,8 @@ static void __init upa_path_component(struct device_node *dp, char *tmp_buf)
+ 	if (!prop)
+ 		return;
+
+-	sprintf(tmp_buf, "%s@%x,%x",
+-		dp->name,
++	sprintf(tmp_buf, "%pOFn@%x,%x",
++		dp,
+ 		*(u32 *) prop->value,
+ 		(unsigned int) (regs->phys_addr & 0xffffffffUL));
+ }
+@@ -221,7 +221,7 @@ static void __init vdev_path_component(struct device_node *dp, char *tmp_buf)
+
+ 	regs = prop->value;
+
+-	sprintf(tmp_buf, "%s@%x", dp->name, *regs);
++	sprintf(tmp_buf, "%pOFn@%x", dp, *regs);
+ }
+
+ /* "name@addrhi,addrlo" */
+@@ -236,8 +236,8 @@ static void __init ebus_path_component(struct device_node *dp, char *tmp_buf)
+
+ 	regs = prop->value;
+
+-	sprintf(tmp_buf, "%s@%x,%x",
+-		dp->name,
++	sprintf(tmp_buf, "%pOFn@%x,%x",
++		dp,
+ 		(unsigned int) (regs->phys_addr >> 32UL),
+ 		(unsigned int) (regs->phys_addr & 0xffffffffUL));
+ }
+@@ -257,8 +257,8 @@ static void __init i2c_path_component(struct device_node *dp, char *tmp_buf)
+ 	/* This actually isn't right... should look at the #address-cells
+ 	 * property of the i2c bus node etc. etc.
+ 	 */
+-	sprintf(tmp_buf, "%s@%x,%x",
+-		dp->name, regs[0], regs[1]);
++	sprintf(tmp_buf, "%pOFn@%x,%x",
++		dp, regs[0], regs[1]);
+ }
+
+ /* "name@reg0[,reg1]" */
+@@ -274,11 +274,11 @@ static void __init usb_path_component(struct device_node *dp, char *tmp_buf)
+ 	regs = prop->value;
+
+ 	if (prop->length == sizeof(u32) || regs[1] == 1) {
+-		sprintf(tmp_buf, "%s@%x",
+-			dp->name, regs[0]);
++		sprintf(tmp_buf, "%pOFn@%x",
++			dp, regs[0]);
+ 	} else {
+-		sprintf(tmp_buf, "%s@%x,%x",
+-			dp->name, regs[0], regs[1]);
++		sprintf(tmp_buf, "%pOFn@%x,%x",
++			dp, regs[0], regs[1]);
+ 	}
+ }
+
+@@ -295,11 +295,11 @@ static void __init ieee1394_path_component(struct device_node *dp, char *tmp_buf
+ 	regs = prop->value;
+
+ 	if (regs[2] || regs[3]) {
+-		sprintf(tmp_buf, "%s@%08x%08x,%04x%08x",
+-			dp->name, regs[0], regs[1], regs[2], regs[3]);
++		sprintf(tmp_buf, "%pOFn@%08x%08x,%04x%08x",
++			dp, regs[0], regs[1], regs[2], regs[3]);
+ 	} else {
+-		sprintf(tmp_buf, "%s@%08x%08x",
+-			dp->name, regs[0], regs[1]);
++		sprintf(tmp_buf, "%pOFn@%08x%08x",
++			dp, regs[0], regs[1]);
+ 	}
+ }
+
+@@ -361,7 +361,7 @@ char * __init build_path_component(struct device_node *dp)
+ 	tmp_buf[0] = '\0';
+ 	__build_path_component(dp, tmp_buf);
+ 	if (tmp_buf[0] == '\0')
+-		strcpy(tmp_buf, dp->name);
++		snprintf(tmp_buf, sizeof(tmp_buf), "%pOFn", dp);
+
+ 	n = prom_early_alloc(strlen(tmp_buf) + 1);
+ 	strcpy(n, tmp_buf);
 --
 2.17.1
