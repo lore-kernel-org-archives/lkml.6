@@ -2,100 +2,147 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1EC7C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:03:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B46D3C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:05:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A476A20880
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:03:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57BB02088E
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 17:05:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="n2M/bn5z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A476A20880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="crE0+sbh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57BB02088E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727605AbeH1U4J (ORCPT
+        id S1727423AbeH1U6R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 16:56:09 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:41255 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727054AbeH1U4J (ORCPT
+        Tue, 28 Aug 2018 16:58:17 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:47046 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727054AbeH1U6R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 16:56:09 -0400
-Received: by mail-qt0-f193.google.com with SMTP id t39-v6so2515189qtc.8;
-        Tue, 28 Aug 2018 10:03:35 -0700 (PDT)
+        Tue, 28 Aug 2018 16:58:17 -0400
+Received: by mail-pf1-f196.google.com with SMTP id u24-v6so972836pfn.13
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 10:05:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ys7wvYaSXuwi7sUXLIGNM2d8k5hkjFf+MKWgy5jUKRk=;
-        b=n2M/bn5zd6sCujSSaVVp3om/4QVcTPPBqXWGdN0BGN3WihLSj77KcUrarzPzTjKtCy
-         sUhpUeWClaJ5lhDBqVZ2mtlVO/icf9IJ/d3E85Sk02e2zdNVeXvqfIC4L47LjmLCSZ8l
-         6uJ/3BcPSLYoyVinByp723Zv50+r5AO6OkKPDdK+PIh1x+0VNR/fIjzvBlC0/LoOUlc+
-         4hQ/U0Nv5lUdxJNQJyEcyv0QHHoq5RzhX90AK8fPUyg9DhTXaKToZpEYrOW265bLLKMy
-         cy96MZcOxQ1XI6zvCze04kLsF9fLEFFNYuvD+H7vrkjH/TsgnR47DYBkICtfBvhDAMmB
-         t5+Q==
+        bh=JoL4N8OCkOj8w0qAasgdXp7m3UaUC5/Cfk5FPAXwvfQ=;
+        b=crE0+sbhNh+oo8ZP4a2k9aDPQ14L0kni5L5Ylt+99HKIEBD4mUsvxjmX7jBefHrMeg
+         wekT4DGXmgjQjoxaMcKHT+HE8q6Gb+WJ8fxfKim5gbB4scAwwKP2ThCjKug/pICZnBwh
+         Y9T3sM54h8jrgpVHaH1udMvTIEZi9FT3nIq21vpPld8mq9S3vN3ykIbzKZNQ86PKOH9d
+         Z/gKqcZ98IEZWsNmDcfjC+FQkYTdgGCm7osGDbqlzEP3UlVn9PhYii23OA9awu5RMEo8
+         dssp00qU3VXzvSv0enz/aVG9OmQU/TPkJ0UbtWsrrMD1D89oDtqCFfw9GfbwBVsp0RDI
+         MrIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ys7wvYaSXuwi7sUXLIGNM2d8k5hkjFf+MKWgy5jUKRk=;
-        b=ee4Ss9NxBZOOOCZqOLw7ESa2OS+UERSpi0KtgPdNr+TyFOjKJ6DlR+3i6oY+PnUwFW
-         R75tToc6THl2N4lEqhSXBLXoAGbKKGlsZTSf6ukC+Al8UeZx+I3ZC7CrQgxNcqWdAg6G
-         AvF4hMLeDlL1zskj+yECDxPoz6w/ONghV2sXArDTPvL/aj/S760OvPbd0zU2jxnFpefj
-         IIO1yqgX8t+Rvvv+CpyiQYpa8b6Ye1bBISuEsnie1Fh9cZkRmKUWHgqfLvwjoQzun11s
-         6AYkH+KDzCUK7mnSndEATmZeQ57BCrnhlpqcwdCp8ajFVuwiw+D2yii9QFX8Ib1Cgu5Y
-         9XnA==
-X-Gm-Message-State: APzg51BZymSMDTd7ANcpCbb9wDCklxWUrl7CCE0XJv/rPgrW81mxnVDd
-        Q8vu6ML/PmJrepM0i0T1A72INs5xf/fsE6cgasaNG9cSh88=
-X-Google-Smtp-Source: ANB0Vda4hcLmuksdzaB9iK9jjKcAJsUjfAgAyh4Ns47qN3LfJoYDBDWq1b+JKVcH1SXPmyygoy2uRCvwYD81Fm8Ff/o=
-X-Received: by 2002:a0c:8b67:: with SMTP id d39-v6mr2496755qvc.180.1535475814958;
- Tue, 28 Aug 2018 10:03:34 -0700 (PDT)
+        bh=JoL4N8OCkOj8w0qAasgdXp7m3UaUC5/Cfk5FPAXwvfQ=;
+        b=JFxHwvEIaKm/yLbWN8M5PlnhYfPTrJLOnVrvhrH2w+O3BrtvE9HVlm6J+li/osa1+a
+         SlH52OgQIQe+fGEM9bc9UVesdlOO9BtNbKIrzC73c+mPDftGaCEVB9mRsl1ko7gbqP59
+         n4BZAVWmVb1sjX3/XwnOQYkq/zujm/XaPGj4aUdqekOYj10zpNdJ+UT9KYkNGvJzymEw
+         cvQMz4yABpqv7yH+IfR7poQx6gC92IbeGVmIi8kzXM/YzLIbhEwwGHgaXnv43lQOIC6B
+         1IncFiqI4b1gV/hIL03tf3dnhdX1irQN1eh8bYphnazEhSj6tY7Q9jXbpo5E9gaD5u0T
+         dSRg==
+X-Gm-Message-State: APzg51CDJ64EkF0C6l80UJnp8kiKM5J2xQBmOzhJI69+GY777GiRgztF
+        8TlHe6IV7bxT/Xcx5uUAE5Lj69g9h8kd65L0J6MThg==
+X-Google-Smtp-Source: ANB0VdZwgl0I5lZXe8/T/GtL/j5XCbin3iXPkftPXU8haL1SbNmqD/WEzQUARNInA/3LbyztIsUGQltpFSwyjEpj8m8=
+X-Received: by 2002:a63:190e:: with SMTP id z14-v6mr2420065pgl.302.1535475942192;
+ Tue, 28 Aug 2018 10:05:42 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180828142421.15335-1-semen.protsenko@linaro.org> <20180828142421.15335-2-semen.protsenko@linaro.org>
-In-Reply-To: <20180828142421.15335-2-semen.protsenko@linaro.org>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 28 Aug 2018 20:03:23 +0300
-Message-ID: <CAHp75VdiRH_J8QUALDNufdWh0eNnKsTmp5q+RGBassFdMcpEmw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] codafs: Fix build using bare-metal toolchain
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        codalist@coda.cs.cmu.edu, coda@cs.cmu.edu, jaharkes@cs.cmu.edu,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Praneeth Bajjuri <praneeth@ti.com>, paul.sokolovsky@linaro.org,
-        mszeredi@suse.cz, sumit.semwal@linaro.org,
-        Ruslan Bilovol <ruslan.bilovol@gmail.com>
+References: <20180826175748.GA29525@gmail.com> <CAKwvOdnyHctAYRBOdrkX15MBPX68pOSiKc2P2S_JnDdffdY+OA@mail.gmail.com>
+ <CAKwvOdk3PjNtjMcsXxRVvKLNcT+O_=5D1B7DXNWcwxwcMqdV2w@mail.gmail.com> <CANiq72nV_sVGgQuZra2gqOXHnbtCYWZDBMRW=EeeLK3qTL99ew@mail.gmail.com>
+In-Reply-To: <CANiq72nV_sVGgQuZra2gqOXHnbtCYWZDBMRW=EeeLK3qTL99ew@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Tue, 28 Aug 2018 10:05:30 -0700
+Message-ID: <CAKwvOdmSOGRDaCUgsEnEd=uyf83FzrRhJt-E3VnzX4FzDwPFWw@mail.gmail.com>
+Subject: Re: [PATCH] include/linux/compiler*.h: Use feature checking instead
+ of version checks for attributes
+To:     miguel.ojeda.sandonis@gmail.com
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        efriedma@codeaurora.org, sparse@chrisli.org,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        joe@perches.com, asmadeus@codewreck.org,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 5:24 PM Sam Protsenko
-<semen.protsenko@linaro.org> wrote:
+On Tue, Aug 28, 2018 at 8:10 AM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
 >
-> The kernel is self-contained project and can be built with bare-metal
-> toolchain. But bare-metal toolchain doesn't define u_quad_t type.
-> Because of this codafs build fails when building with bare-metal
-> toolchain. This patch fixes it by defining u_quad_t type in case when
-> non-Linux toolchain is used.
+> Hi Nick,
+>
+> On Mon, Aug 27, 2018 at 7:48 PM, Nick Desaulniers
+> <ndesaulniers@google.com> wrote:
+> > On Mon, Aug 27, 2018 at 10:43 AM Nick Desaulniers
+> >> > +
+> >> > +/*
+> >> > + * Optional attributes: your compiler may or may not support them.
+> >> > + *
+> >> > + * To check for them, we use __has_attribute, which is supported on gcc >= 5,
+> >> > + * clang >= 2.9 and icc >= 17. In the meantime, to support 4.6 <= gcc < 5,
+> >> > + * we implement it by hand.
+> >> > + */
+> >> > +#ifndef __has_attribute
+> >> > +#define __has_attribute(x) __GCC46_has_attribute_##x
+> >> > +#define __GCC46_has_attribute_assume_aligned 0
+> >> > +#define __GCC46_has_attribute_designated_init 0
+> >> > +#define __GCC46_has_attribute_externally_visible 1
+> >> > +#define __GCC46_has_attribute_noclone 1
+> >> > +#define __GCC46_has_attribute_optimize 1
+> >> > +#define __GCC46_has_attribute_no_sanitize_address 0
+> >> > +#endif
+> >
+> > And a follow up; I'm trying to understand what will happen in the case
+> > of say gcc 4.9 here.  Were any of these supported between gcc 4.6 and
+> > 5.0?  If so, then this code will not use them.  It's simpler than
+> > explicit version checks, but it won't use features that are supported.
+> >
+>
+> I addressed that in the email I sent afterwards:
+>
+> """
+> Note that:
+>   - assume_aligned came with gcc 4.9
+>   - no_sanitize_address came with gcc 4.8
+>
+> So if we feel it is important to have them there (before gcc 5), we
+> would need here a quick version check here.
+> """
+>
+> The idea is that, in the future, whenever gcc 5 or later is the
+> minimum version, we just get rid of the #ifdef block without touching
+> the rest of the code :-)
 
->  #endif /* !KERNEL */
+So if __has_attribute came with gcc 5, then that means that this patch
+will break assume_aligned for gcc-4.9 users and no_sanitize_address
+for gcc-4.8 and gcc-4.9 users?  The slab allocator uses
+assume_aligned, and no_sanitize_address for CONFIG_KASAN.  Should this
+patch ever come back through stable, Android and ChromeOS
+gcc-4.9/KASAN builds will break.
 
-I'm wondering what the heck KERNEL is doing in UAPI header.
-Looks like this header is split wrongly in the first place.
+I don't think we should leave that for a follow up; I would like to
+see it as part of this patch.  It's ok to have explicit version checks
+for those 2 attributes since it's not possible to feature detect them
+for the versions of gcc that we support in this code base.  I think
+you should add them in a v2 of this patch.  Then we can point to this
+commit as the *shining example* of how to do proper feature detection,
+falling back to version checks only as a last resort.
 
-> +#if defined(__KERNEL__) && !defined(__linux__) && !defined(_UQUAD_T_) && \
-
-P.S. Actually it's the only header which uses KERNEL in UAPI.
-Definitely it should be fixed first.
-
---
-With Best Regards,
-Andy Shevchenko
+-- 
+Thanks,
+~Nick Desaulniers
