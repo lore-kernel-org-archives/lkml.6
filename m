@@ -2,113 +2,92 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDFB7C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:42:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B54DDC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:43:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A907120898
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:42:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QK2hWoW0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A907120898
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 64E802088E
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:43:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64E802088E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727874AbeH1Qdw (ORCPT
+        id S1727744AbeH1QfL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 12:33:52 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:42378 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727067AbeH1Qdw (ORCPT
+        Tue, 28 Aug 2018 12:35:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37480 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726120AbeH1QfL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 12:33:52 -0400
-Received: by mail-wr1-f65.google.com with SMTP id v17-v6so1439979wrr.9;
-        Tue, 28 Aug 2018 05:42:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=frWhn4S9KCm1DSyV4+IQkgu7JU6rC2gg4yQa9wCMVrY=;
-        b=QK2hWoW05SUggMhvfEkmKpBC0vDdlKj+wqRPoHh5btR1Nq+sDfQdAh69hpb4ahWMqK
-         ip4vYFxqiFYqVaAwdzkdw7wCQyGfwx9iqPz4oe+Cr4XRw2EjPUBKWmx38qT5NlZ/Ijjz
-         dEY0kRZeq8EjcP3ULvOaHOJTNvDNE0n/5SN8tRRuXUJximhPnnNNB2+iFKmTuJvyzx4I
-         4AyGX7Jg/0Sa+zfWHTxLWVy+uu987Nl5djd/erRcekC/TaeyxEJkSazqzJA7aYQWmdMk
-         6W7nMTAxlBTWncq2oOgbpvG+K16+7/6srxHu6GqL+a8FUt6FUSYdylT3MzrLk4YDVRpL
-         W2Gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=frWhn4S9KCm1DSyV4+IQkgu7JU6rC2gg4yQa9wCMVrY=;
-        b=K8dadmehWS342cYKYGKJJ+SoHno5Cpm9aeTIJwp4hgOhzXgHwsYXzQScN+Nb6RqSK6
-         4qkcDVFgsy4Q49s06Dg/sXCNIDZx8VrTl7WuIJkxAXNy69kC6ZdbfcaMSURkVDksWahj
-         Twgk0cZv47m/4u7m4q/LiKqJ1f8hQs1D1re1gKxAItHI430s8urzH5aSSFKHUtjJGEGC
-         nwjub0ejLor5NhTd1yjv2hM8tMDxae1DxQp8/iVQOIeV4cil1eEeJ/kBaoxIcY6ZCC9w
-         5QAyT8CQ30SltfQmHmECvIfhCHZ9xVFUhJimlLv7fWCWmyDI7BF9+Er9/2dL+ljCM6io
-         NLLQ==
-X-Gm-Message-State: APzg51AYkdZZ8gyfT2qPq+o/qwIpqiUcnip7LyDkBGlhhvTJK8bQkDkb
-        3FivZkLFY+ocWhzJTygZn25cKwUHw+ko6edyQ2fFsggQ
-X-Google-Smtp-Source: ANB0VdbgzIYiwZpB69DlNr+Vns0IEiRkSgbCpKa7eN35+1BMVEKDm0X21+X+aNj0ssyH/zKaCcdqmkP7DVSoj41wzQs=
-X-Received: by 2002:a5d:61c1:: with SMTP id q1-v6mr1087855wrv.33.1535460141840;
- Tue, 28 Aug 2018 05:42:21 -0700 (PDT)
+        Tue, 28 Aug 2018 12:35:11 -0400
+Received: from localhost (unknown [104.153.224.167])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 74527CDD;
+        Tue, 28 Aug 2018 12:43:39 +0000 (UTC)
+Date:   Tue, 28 Aug 2018 14:43:29 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Juergen Gross <jgross@suse.com>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>, tglx@linutronix.de,
+        mingo@redhat.com, stable@vger.kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/irqflags: mark native_restore_fl extern inline
+Message-ID: <20180828124329.GB14243@kroah.com>
+References: <20180827214011.55428-1-ndesaulniers@google.com>
+ <20180828051300.GB2107@kroah.com>
+ <5c949906-ae9d-2848-d5d0-f402aed4b9f3@suse.com>
 MIME-Version: 1.0
-References: <1535453838-12154-1-git-send-email-sunil.kovvuri@gmail.com>
- <1535453838-12154-11-git-send-email-sunil.kovvuri@gmail.com> <CAK8P3a1Vdy-VsLWJMer-Z96E4Trhi0WJXJ3fTzyOGny2Mn6RAA@mail.gmail.com>
-In-Reply-To: <CAK8P3a1Vdy-VsLWJMer-Z96E4Trhi0WJXJ3fTzyOGny2Mn6RAA@mail.gmail.com>
-From:   Sunil Kovvuri <sunil.kovvuri@gmail.com>
-Date:   Tue, 28 Aug 2018 18:12:10 +0530
-Message-ID: <CA+sq2Cf2BLKsV=gY-MPnygV1ufpvmnw6ETh90JX_uKQBk3Sduw@mail.gmail.com>
-Subject: Re: [PATCH 10/15] soc: octeontx2: Reconfig MSIX base with IOVA
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, olof@lixom.net,
-        LAKML <linux-arm-kernel@lists.infradead.org>,
-        linux-soc@vger.kernel.org, Geetha sowjanya <gakula@marvell.com>,
-        Sunil Goutham <sgoutham@marvell.com>, tglx@linutronix.de,
-        Marc Zyngier <marc.zyngier@arm.com>, jason@lakedaemon.net,
-        linux-pci <linux-pci@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5c949906-ae9d-2848-d5d0-f402aed4b9f3@suse.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 5:39 PM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Tue, Aug 28, 2018 at 12:58 PM <sunil.kovvuri@gmail.com> wrote:
-> >
-> > From: Geetha sowjanya <gakula@marvell.com>
-> >
-> > HW interprets RVU_AF_MSIXTR_BASE address as an IOVA, hence
-> > create a IOMMU mapping for the physcial address configured by
-> > firmware and reconfig RVU_AF_MSIXTR_BASE with IOVA.
-> >
-> > Signed-off-by: Geetha sowjanya <gakula@marvell.com>
-> > Signed-off-by: Sunil Goutham <sgoutham@marvell.com>
->
-> I think this needs some more explanation. What is the difference between
-> the MSI-X support in this driver and every other one? Are you working
-> around a hardware bug, or is there something odd in the implementation
-> of your irqchip driver? Do you use a GIC to handle the MSI interrupts
-> or something else?
->
->        Arnd
+On Tue, Aug 28, 2018 at 08:02:37AM +0200, Juergen Gross wrote:
+> On 28/08/18 07:13, Greg Kroah-Hartman wrote:
+> > On Mon, Aug 27, 2018 at 02:40:09PM -0700, Nick Desaulniers wrote:
+> >> Fixes commit 208cbb325589 ("x86/irqflags: Provide a declaration for
+> >> native_save_fl")
+> >>
+> >> This should have been marked extern inline in order to pick up the out
+> >> of line definition in arch/x86/kernel/irqflags.S.
+> >>
+> >> Cc: stable@vger.kernel.org # 4.18, 4.14, 4.9, 4.4
+> >> Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+> >> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+> >> ---
+> >>  arch/x86/include/asm/irqflags.h | 3 ++-
+> >>  1 file changed, 2 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/arch/x86/include/asm/irqflags.h b/arch/x86/include/asm/irqflags.h
+> >> index c14f2a74b2be..15450a675031 100644
+> >> --- a/arch/x86/include/asm/irqflags.h
+> >> +++ b/arch/x86/include/asm/irqflags.h
+> >> @@ -33,7 +33,8 @@ extern inline unsigned long native_save_fl(void)
+> >>  	return flags;
+> >>  }
+> >>  
+> >> -static inline void native_restore_fl(unsigned long flags)
+> >> +extern inline void native_restore_fl(unsigned long flags);
+> >> +extern inline void native_restore_fl(unsigned long flags)
+> > 
+> > This looks odd to me, but my coffee hasn't kicked in yet this morning.
+> > Why do you need both lines here?  Shouldn't the actual function be
+> > sufficient?  If not, a comment explaining this would be nice.
+> 
+> Look just some lines further up:
+> 
+> /* Declaration required for gcc < 4.9 to prevent
+> -Werror=missing-prototypes */
+> extern inline unsigned long native_save_fl(void);
+> extern inline unsigned long native_save_fl(void)
 
-This admin function is a PCI device which is capable of provisioning
-HW blocks to other PCIe SRIOV devices in the system. Each HW block
-(eg memory buffer pools, NIC dewscriptors, crypto engines e.t.c) needs
-certain no of MSIX vectors. Admin function has a set of 32K MSIX vectors
-in memory (not on-chip) which based on HW block provisioning to a PCI device
-attaches the required number of vectors to that device. Some part of this
-configuration is done by low level firmware.
+Ugh, my fault, I'll go shut up now...
 
-RVU_AF_MSIXTR_BASE points to the memory region allocated for 32K MSIX
-vectors. If kernel is booted with IOMMU enabled and admin function device
-is attached to SMMU, HW will go through translation to access this MSIX
-vector memory region. Hence the mapping done in this patch.
-
-Thanks,
-Sunil.
+stupid gcc...
