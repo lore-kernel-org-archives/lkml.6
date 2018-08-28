@@ -2,110 +2,137 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 642E2C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:52:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C05CC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:57:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24DD52087B
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:52:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24DD52087B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C07D620835
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:57:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C07D620835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727417AbeH2Bqc (ORCPT
+        id S1727193AbeH2Bug (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 21:46:32 -0400
-Received: from mga14.intel.com ([192.55.52.115]:6038 "EHLO mga14.intel.com"
+        Tue, 28 Aug 2018 21:50:36 -0400
+Received: from mga06.intel.com ([134.134.136.31]:55245 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727216AbeH2Bqb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 21:46:31 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1726961AbeH2Bug (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 21:50:36 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Aug 2018 14:52:54 -0700
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Aug 2018 14:56:58 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.53,300,1531810800"; 
-   d="scan'208";a="258843158"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.9])
-  by fmsmga006.fm.intel.com with ESMTP; 28 Aug 2018 14:52:40 -0700
-Date:   Tue, 28 Aug 2018 14:52:40 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
-        platform-driver-x86@vger.kernel.org, nhorman@redhat.com,
-        npmccallum@redhat.com, linux-sgx@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        Serge Ayoun <serge.ayoun@intel.com>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v13 09/13] x86/sgx: Enclave Page Cache (EPC) memory
- manager
-Message-ID: <20180828215240.GA29684@linux.intel.com>
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-10-jarkko.sakkinen@linux.intel.com>
- <7c5df14e-3028-46b3-fe93-aa6ba8352317@intel.com>
- <20180828083540.GH15508@linux.intel.com>
- <132d309d-77e2-52ed-7251-abb2c80cdf49@intel.com>
- <20180828212244.GA29488@linux.intel.com>
- <81adf7e1-b9c2-e906-95a3-c6e08cbcc52a@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <81adf7e1-b9c2-e906-95a3-c6e08cbcc52a@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+   d="scan'208";a="69851103"
+Received: from megha-z97x-ud7-th.sc.intel.com (HELO [143.183.85.162]) ([143.183.85.162])
+  by orsmga006.jf.intel.com with ESMTP; 28 Aug 2018 14:56:40 -0700
+Message-ID: <1535494636.15041.15.camel@megha-Z97X-UD7-TH>
+Subject: Re: KASAN: use-after-free Read in sha512_ctx_mgr_resubmit
+From:   Megha Dey <megha.dey@linux.intel.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        syzbot <syzbot+d5455bac3ba1ee9114e5@syzkaller.appspotmail.com>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        the arch/x86 maintainers <x86@kernel.org>
+Date:   Tue, 28 Aug 2018 15:17:16 -0700
+In-Reply-To: <CAKv+Gu_oZ0Z37WV1h4opi-cYZT5FWU_bmrkBjx8LXpvKpPoZNA@mail.gmail.com>
+References: <00000000000072d64d05737b6b8c@google.com>
+         <20180820073119.GA14931@sol.localdomain>
+         <CAKv+Gu9Y0TLOuMba43HPihYqy-kk0nttBfPj1_UukiYy1cBcFw@mail.gmail.com>
+         <20180822062036.mdq4q5o5zdzuxh7s@gondor.apana.org.au>
+         <1535411336.3516.2.camel@megha-Z97X-UD7-TH>
+         <CAKv+Gu_oZ0Z37WV1h4opi-cYZT5FWU_bmrkBjx8LXpvKpPoZNA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 02:26:36PM -0700, Dave Hansen wrote:
-> On 08/28/2018 02:22 PM, Sean Christopherson wrote:
-> > On Tue, Aug 28, 2018 at 07:07:33AM -0700, Dave Hansen wrote:
-> >> On 08/28/2018 01:35 AM, Jarkko Sakkinen wrote:
-> >>> On Mon, Aug 27, 2018 at 02:15:34PM -0700, Dave Hansen wrote:
-> >>>> On 08/27/2018 11:53 AM, Jarkko Sakkinen wrote:
-> >>>>> +struct sgx_epc_page_ops {
-> >>>>> +	bool (*get)(struct sgx_epc_page *epc_page);
-> >>>>> +	void (*put)(struct sgx_epc_page *epc_page);
-> >>>>> +	bool (*reclaim)(struct sgx_epc_page *epc_page);
-> >>>>> +	void (*block)(struct sgx_epc_page *epc_page);
-> >>>>> +	void (*write)(struct sgx_epc_page *epc_page);
-> >>>>> +};
-> >>>> Why do we need a fancy, slow (retpoline'd) set of function pointers when
-> >>>> we only have one user of these (the SGX driver)?
-> >>> KVM has its own implementation for these operations.
+On Tue, 2018-08-28 at 01:01 +0200, Ard Biesheuvel wrote:
+> On 28 August 2018 at 01:08, Megha Dey <megha.dey@linux.intel.com> wrote:
+> > On Wed, 2018-08-22 at 14:20 +0800, Herbert Xu wrote:
+> >> On Tue, Aug 21, 2018 at 02:43:56PM +0200, Ard Biesheuvel wrote:
+> >> >
+> >> > I agree. The code is obviously broken in a way that would have been
+> >> > noticed if it were in wide use, and it is too complicated for mere
+> >> > mortals to fix or maintain. I suggest we simply remove it for now, and
+> >> > if anyone wants to reintroduce it, we can review the code *and* the
+> >> > justification for the approach from scratch (in which case we should
+> >> > consider factoring out the algo agnostics plumbing in a way that
+> >> > allows it to be reused by other architectures as well)
 > >>
-> >> That belongs in the changelog.
+> >> I agree too.  Could one of you guys send me a patch to remove
+> >> them?
 > >>
-> >> Also, where is the implementation?  How can we assess this code that was
-> >> built to create an abstraction without both of the users?
-> > 
-> > I can provide an early preview of the KVM reclaim code, but honestly
-> > I think that would do more harm than good.  The VMX architecture for
-> > EPC reclaim is complex, even for SGX standards.  Opening that can of
-> > worms would likely derail this discussion.  That being said, this
-> > abstraction isn't exactly what KVM will need, but it's pretty close
-> > and gives us something to build on.
+> >
+> > Hi,
+> >
+> > We are working on a fix to solve these corner cases.
+> >
 > 
-> Please remove the abstraction code.  We don't introduce infrastructure
-> which no one will use.
+> Great. thanks.
+> 
+> But it would also be helpful if you could try and answer the questions
+> raised by Eric:
+> - in which cases does this driver result in a speedup?
 
-The infrastructure is used in the sense that it allows us to split the
-userspace-facing code, i.e. the driver, into a separate module.  This
-in turn allows virtualization of SGX without having to load the driver
-or building it in the first place, e.g. to virtualize SGX on a system
-that doesn't meet the driver's requirements.
+The multibuffer algorithm approach results in a speedup only when there
+are a large number of independent jobs. Similarly if there is a steady
+stream of independent jobs, multibuffer works well. So another way of
+looking at this is that if there are a lot of flushes, then one
+shouldn't be using multibuffer algorithms.
+ 
+> - how should we tune the flush delay to prevent pathological
+> performance regressions?
 
-We could eliminate the abstraction by moving the EPC management code
-into the driver, but that would directly conflict with past feedback
-and would need to be completely undone to enable KVM.  The abstraction
-could be dumbed down to a single function, but as mentioned earlier,
-that comes with its own costs.  I can dive into exactly what we lose
-with a single function approach if this is a sticking point.
+We have not optimized the flush delay on the ground that it should not
+be occurring often. If this seems to be happening a lot, then perhaps we
+could optimize it along the lines that if more than N "lanes" are full,
+we will continue to use the present flush algorithm, else we could
+switch to an optimized single buffer code for one of the lanes. Any
+other suggestions are welcome too.
+ 
+> - is it still safe in the post-Spectre era of computing to aggregate
+> hash input from different sources (which may be different users
+> altogether) and process them as a single source of input?
+
+hmmm, I am not sure how one could do side-channel attack, could you
+maybe give an example? One could do a denial of service attack, by
+flooding it with too many requests.
+
+Also Eric had raised the issue whether we need AVX2 multibuffer now that
+we have SHA instructions. However, for cases where jobs come in fast
+enough, sha1-mb is seen to perform better than sha-ni algorithm.
+
+Since, we already have lowered the priority of the multibuffer
+algorithms, users who know that they would have a consistent inflow of
+jobs should only opt for the multibuffer algorithm.
+
+From Herbert's suggestion, I am also working on removing the mcryptd
+layer for the multibuffer algorithms, and follow the simd model to
+simplify the multibuffer model.
+
+Hence, instead of removing these algorithms, I would like to suggest the
+following:
+1. Find a fix for the corner cases of memory corruption
+2. Remove mcryptd layer, add simd interface for hash 
+3. try to reuse code for hash multibuffer algorithms instead of
+duplicating the same code 3 times.
+
+Thanks,
+Megha 
+
