@@ -2,117 +2,143 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40A44C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 02:44:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 287DBC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 02:46:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8370208B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 02:44:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="LQFL3KcE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8370208B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 9F596208B9
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 02:46:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F596208B9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727180AbeH1Gd1 (ORCPT
+        id S1727146AbeH1GgL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 02:33:27 -0400
-Received: from ozlabs.org ([203.11.71.1]:45103 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725976AbeH1Gd0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 02:33:26 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41ztPC5Rdsz9s4V;
-        Tue, 28 Aug 2018 12:43:59 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1535424239;
-        bh=gk3emO6ghejKDB0OYBH0O8XMSlJBuMhIiv8Le+YiPlg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=LQFL3KcEkhJA/w5pIyAucQUTALSnFt2+fXyI1wVOvpwsqvHAMGqtWqrfOr/V4dTYN
-         HzBeTcmmDRZJybdRxq47Gv8Ioa6l0Q3GE6rXVJQRCM9JuF10Jkqn+vn+ShrKtW1Ehb
-         dGB0g8uXQWFi+IOb2E0hoQWXiBiyHtGarlAaUSQzBa7qrgcGyM2RZtu9wteZJNAp1S
-         a2+G+nItEda2KV9KreKN/YY7U6LXNNwH7c531KCWJkG0PbSxqWAOxwBeLmhKOe+yBW
-         XIUn4nzDQviExj9XTynCbUVDOIUNxUwVSEXrou134sDOM7QUGZIod6QBvRE9ql+pME
-         oP0NVOk/NfvXw==
-Date:   Tue, 28 Aug 2018 12:43:58 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Tejun Heo <tj@kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: new maintainer/tree for the libata tree?
-Message-ID: <20180828124358.13c711e4@canb.auug.org.au>
-In-Reply-To: <0ee8b9e0-1576-c8c1-ed22-dd76a8d378ba@kernel.dk>
-References: <20180828071944.02b13db4@canb.auug.org.au>
-        <27ef8afc-c490-5984-5a18-1ee5ce51d556@kernel.dk>
-        <20180828112851.19c64e80@canb.auug.org.au>
-        <0ee8b9e0-1576-c8c1-ed22-dd76a8d378ba@kernel.dk>
+        Tue, 28 Aug 2018 02:36:11 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58276 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725980AbeH1GgK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 02:36:10 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7S2i5vv081288
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 22:46:44 -0400
+Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m4wcprvd3-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 22:46:44 -0400
+Received: from localhost
+        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <bauerman@linux.ibm.com>;
+        Mon, 27 Aug 2018 20:46:43 -0600
+Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
+        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 27 Aug 2018 20:46:40 -0600
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7S2kd8m49610790
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 27 Aug 2018 19:46:39 -0700
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BC118BE058;
+        Mon, 27 Aug 2018 20:46:39 -0600 (MDT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C589EBE054;
+        Mon, 27 Aug 2018 20:46:37 -0600 (MDT)
+Received: from morokweng.localdomain (unknown [9.85.152.225])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTPS;
+        Mon, 27 Aug 2018 20:46:37 -0600 (MDT)
+References: <20180803220046.4019-1-bauerman@linux.ibm.com> <20180803220046.4019-5-bauerman@linux.ibm.com> <20180807065642.GD20140@rapoport-lnx>
+User-agent: mu4e 1.0; emacs 25.3.1
+From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
+To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shuah Khan <shuah@kernel.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Prakash Sangappa <prakash.sangappa@oracle.com>
+Subject: Re: [PATCH v2 4/4] userfaultfd: selftest: Cope if shmem doesn't support zeropage
+In-reply-to: <20180807065642.GD20140@rapoport-lnx>
+Date:   Mon, 27 Aug 2018 23:46:33 -0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/A0L5Tn_dm2+JzCSqsus.SAe"; protocol="application/pgp-signature"
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+x-cbid: 18082802-0012-0000-0000-000016A82749
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009624; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01079868; UDB=6.00556971; IPR=6.00859852;
+ MB=3.00022966; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-28 02:46:42
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082802-0013-0000-0000-00005432CCCE
+Message-Id: <87zhx7rywm.fsf@morokweng.localdomain>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-28_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808280025
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/A0L5Tn_dm2+JzCSqsus.SAe
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi Jens,
+Hello Mike,
 
-On Mon, 27 Aug 2018 19:30:09 -0600 Jens Axboe <axboe@kernel.dk> wrote:
+Mike Rapoport <rppt@linux.vnet.ibm.com> writes:
+
+> Hi,
 >
-> On 8/27/18 7:28 PM, Stephen Rothwell wrote:
-> >=20
-> > On Mon, 27 Aug 2018 19:15:23 -0600 Jens Axboe <axboe@kernel.dk> wrote: =
-=20
-> >>
-> >> On 8/27/18 3:20 PM, Stephen Rothwell wrote: =20
-> >>>
-> >>> I noticed the maintaership change - so what shuld I sues for linux-ne=
-xt,
-> >>> now?
-> >>>
-> >>> I currently have
-> >>>
-> >>> git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next =
-  =20
-> >>
-> >> I'll merge into my for-next branch on the block tree, I'm don't plan on
-> >> doing separate trees for this, just separate branches. And everything I
-> >> queue up for the next version will end up in my for-next branch. =20
-> >=20
-> > So I'll just drop the libata tree from linux-next, then? =20
->=20
-> Yeah, that should be all that's needed.
+> On Fri, Aug 03, 2018 at 07:00:46PM -0300, Thiago Jung Bauermann wrote:
+>> If userfaultfd runs on a system that doesn't support UFFDIO_ZEROPAGE for
+>> shared memory, it currently ends with error code 1 which indicates test
+>> failure:
+>>
+>>   # ./userfaultfd shmem 10 10
+>>   nr_pages: 160, nr_pages_per_cpu: 80
+>>   bounces: 9, mode: rnd poll, unexpected missing ioctl for anon memory
+>>   # echo $?
+>>   1
+>>
+>> Change userfaultfd_zeropage_test() to return KSFT_SKIP to indicate that
+>> the test is being skipped.
+>
+> I took a deeper look at what userfaultfd_zeropage_test() does and,
+> apparently, I've mislead you. The test checks if the range has
+> UFFDIO_ZEROPAGE and verifies that it works if yes; otherwise the test
+> verifies that EINVAL is returned.
+>
+> Can you please check if the patch below works in your environment?
+>
+> From 7a34c84c0461b5073742275638c44b6535d19166 Mon Sep 17 00:00:00 2001
+> From: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> Date: Tue, 7 Aug 2018 09:44:19 +0300
+> Subject: [PATCH] userfaultfd: selftest: make supported range ioctl
+>  verification more robust
+>
+> When userfaultfd tests runs on older kernel that does not support
+> UFFDIO_ZEROPAGE for shared memory it fails at the ioctl verification.
+>
+> Split out the verification that supported ioctls are superset of the
+> expected ioctls and relax the checks for UFFDIO_ZEROPAGE for shared memory
+> areas.
+>
+> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> ---
+>  tools/testing/selftests/vm/userfaultfd.c | 63 +++++++++++++++++---------------
+>  1 file changed, 34 insertions(+), 29 deletions(-)
 
-Done.
+I'm sorry to take this long to respond, I was only able to get back to
+this today.
 
---=20
-Cheers,
-Stephen Rothwell
+Your patch does solve my problem. Thank you very much!
 
---Sig_/A0L5Tn_dm2+JzCSqsus.SAe
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+It has a trivial conflict in the second hunk with patch 3 in my series.
+Should I repost the series with your patch in place of patch 4?
 
------BEGIN PGP SIGNATURE-----
+--
+Thiago Jung Bauermann
+IBM Linux Technology Center
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAluEtu4ACgkQAVBC80lX
-0GzplQf+Lc4ut/p37idKk+2DV8mZKPpFWIOcTLm2uyuUvYUthWA8viO6B5TOAhYG
-7T2snyGZG5G/Ygdivp6h46iMS4bpoh2jw9wi5MgkVG8C4w6PGcKUaZzjtXU3QQ3E
-vSPqrNOTLrXQ+iYYiveSrrrkMKn6+yeakmG/ThWcFpcZhFmcKgFYghOLch12/KI+
-sMbjdks/SQRa1PR7gxPjOgUAPYL7fmrmSEXJs7EdC6Hf7jkBTc12l7I+mgFjdT3V
-Htl8gbI55PaMDWy67ZovZuBYEvIO+wdSO50SKiXWro+ZGHFXm/RbEyavo50CGuIj
-nhT2ULKeEuo4b/NS5YLCGCEnyEMa+A==
-=xxXv
------END PGP SIGNATURE-----
-
---Sig_/A0L5Tn_dm2+JzCSqsus.SAe--
