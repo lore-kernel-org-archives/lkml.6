@@ -2,140 +2,99 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF3AFC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:43:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17A8BC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:45:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DE6F20893
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:43:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="D+WwJIeE";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="D+WwJIeE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DE6F20893
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id C48532089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:45:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C48532089E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727476AbeH1Me1 (ORCPT
+        id S1727450AbeH1MgB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 08:34:27 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:55450 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726975AbeH1Me1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 08:34:27 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 67D10604BE; Tue, 28 Aug 2018 08:43:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535445830;
-        bh=VGfYb3FvuRPruvjz2FMTMkWu4HQjcmcp2lBxwHhBz4M=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=D+WwJIeEb/KEzRcsHroq6SEifa8CmIkg6UUDSJetfzspodbpiUfpMusOFOL+Em+pT
-         J1NRymog06wDYwo6wazUl6qxQWqlcJfhTOxKRWru/P08DlNrA1BYVEDtOS7c0Ok/5V
-         JQlu1B4UOrtGdXpE1dBvGsgDubqYlXPJ24yHx9p0=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 0703460241;
-        Tue, 28 Aug 2018 08:43:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535445830;
-        bh=VGfYb3FvuRPruvjz2FMTMkWu4HQjcmcp2lBxwHhBz4M=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=D+WwJIeEb/KEzRcsHroq6SEifa8CmIkg6UUDSJetfzspodbpiUfpMusOFOL+Em+pT
-         J1NRymog06wDYwo6wazUl6qxQWqlcJfhTOxKRWru/P08DlNrA1BYVEDtOS7c0Ok/5V
-         JQlu1B4UOrtGdXpE1dBvGsgDubqYlXPJ24yHx9p0=
+        Tue, 28 Aug 2018 08:36:01 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37706 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726975AbeH1MgB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 08:36:01 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BCD7D26A3D;
+        Tue, 28 Aug 2018 08:45:24 +0000 (UTC)
+Received: from krava (unknown [10.43.17.209])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 54FA8A9E7A;
+        Tue, 28 Aug 2018 08:45:23 +0000 (UTC)
+Date:   Tue, 28 Aug 2018 10:45:22 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v2 1/2]: perf util: map data buffer for preserving
+ collected data
+Message-ID: <20180828084522.GD23727@krava>
+References: <e92805d0-3338-2ce5-5e88-369d406fe0a7@linux.intel.com>
+ <e5591d27-5386-1d41-b09b-421316f75d07@linux.intel.com>
+ <20180827083303.GD24695@krava>
+ <2284a8e8-d90e-bd99-89c1-0b125ba2e205@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 28 Aug 2018 14:13:49 +0530
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel-owner@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: qcom: adsp: Add SDM845 ADSP and CDSP support
-In-Reply-To: <20180828071458.26858-1-bjorn.andersson@linaro.org>
-References: <20180828071458.26858-1-bjorn.andersson@linaro.org>
-Message-ID: <bc66f41f8e96e92af424af473cd746d5@codeaurora.org>
-X-Sender: sibis@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2284a8e8-d90e-bd99-89c1-0b125ba2e205@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 28 Aug 2018 08:45:24 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 28 Aug 2018 08:45:24 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tested-by: Sibi Sankar <sibis@codeaurora.org>
+On Mon, Aug 27, 2018 at 12:02:35PM +0300, Alexey Budankov wrote:
+> Hi,
+> 
+> On 27.08.2018 11:33, Jiri Olsa wrote:
+> > On Thu, Aug 23, 2018 at 07:42:09PM +0300, Alexey Budankov wrote:
+> > 
+> > SNIP
+> > 
+> >> diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
+> >> index fc832676a798..e71d46cb01cc 100644
+> >> --- a/tools/perf/util/mmap.c
+> >> +++ b/tools/perf/util/mmap.c
+> >> @@ -155,6 +155,10 @@ void __weak auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp __mayb
+> >>  
+> >>  void perf_mmap__munmap(struct perf_mmap *map)
+> >>  {
+> >> +	if (map->data != NULL) {
+> >> +		munmap(map->data, perf_mmap__mmap_len(map));
+> >> +		map->data = NULL;
+> >> +	}
+> >>  	if (map->base != NULL) {
+> >>  		munmap(map->base, perf_mmap__mmap_len(map));
+> >>  		map->base = NULL;
+> >> @@ -190,6 +194,14 @@ int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd)
+> >>  		map->base = NULL;
+> >>  		return -1;
+> >>  	}
+> >> +	map->data = mmap(NULL, perf_mmap__mmap_len(map), PROT_READ | PROT_WRITE,
+> >> +			MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+> > 
+> > hum, why does map->data need to be mmap-ed?
+> 
+> The same way as for kernel buffers. If you see better alternatives it could be applied.
 
-On 2018-08-28 12:44, Bjorn Andersson wrote:
-> Add support for booting the Audio and Compute DSPs found in Qualcomm's
-> SDM845 platform.
-> 
-> As with the previous platforms the power rail handling needs to be
-> updated once the appropriate support lands upstream.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  .../devicetree/bindings/remoteproc/qcom,adsp.txt     |  2 ++
->  drivers/remoteproc/qcom_q6v5_pas.c                   | 12 ++++++++++++
->  2 files changed, 14 insertions(+)
-> 
-> diff --git
-> a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-> b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-> index 728e4193f7a6..b7d058228185 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
-> @@ -10,6 +10,8 @@ on the Qualcomm ADSP Hexagon core.
->  		    "qcom,msm8974-adsp-pil"
->  		    "qcom,msm8996-adsp-pil"
->  		    "qcom,msm8996-slpi-pil"
-> +		    "qcom,sdm845-adsp-pas"
-> +		    "qcom,sdm845-cdsp-pas"
-> 
->  - interrupts-extended:
->  	Usage: required
-> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c
-> b/drivers/remoteproc/qcom_q6v5_pas.c
-> index 2478ef3cd519..53eff2afda06 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> @@ -342,6 +342,16 @@ static const struct adsp_data adsp_resource_init = 
-> {
->  		.ssctl_id = 0x14,
->  };
-> 
-> +static const struct adsp_data cdsp_resource_init = {
-> +	.crash_reason_smem = 601,
-> +	.firmware_name = "cdsp.mdt",
-> +	.pas_id = 18,
-> +	.has_aggre2_clk = false,
-> +	.ssr_name = "cdsp",
-> +	.sysmon_name = "cdsp",
-> +	.ssctl_id = 0x17,
-> +};
-> +
->  static const struct adsp_data slpi_resource_init = {
->  		.crash_reason_smem = 424,
->  		.firmware_name = "slpi.mdt",
-> @@ -355,6 +365,8 @@ static const struct adsp_data slpi_resource_init = 
-> {
->  static const struct of_device_id adsp_of_match[] = {
->  	{ .compatible = "qcom,msm8974-adsp-pil", .data = 
-> &adsp_resource_init},
->  	{ .compatible = "qcom,msm8996-adsp-pil", .data = 
-> &adsp_resource_init},
->  	{ .compatible = "qcom,msm8996-slpi-pil", .data = 
-> &slpi_resource_init},
-> +	{ .compatible = "qcom,sdm845-adsp-pas", .data = &adsp_resource_init},
-> +	{ .compatible = "qcom,sdm845-cdsp-pas", .data = &cdsp_resource_init},
->  	{ },
->  };
+I meant why not just allocate them with mmaloc?
 
--- 
--- Sibi Sankar --
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+jirka
