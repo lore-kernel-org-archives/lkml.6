@@ -2,152 +2,95 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8021C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 07:52:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C22E9C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 07:55:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B7CD208AC
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 07:52:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B7CD208AC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 52E7120896
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 07:55:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gHfDJdph"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52E7120896
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727221AbeH1LnM (ORCPT
+        id S1727290AbeH1Lph (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 07:43:12 -0400
-Received: from mga11.intel.com ([192.55.52.93]:42515 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726567AbeH1LnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 07:43:12 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Aug 2018 00:52:47 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,298,1531810800"; 
-   d="scan'208";a="66534065"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.137]) ([10.237.72.137])
-  by fmsmga008.fm.intel.com with ESMTP; 28 Aug 2018 00:52:46 -0700
-Subject: Re: [PATCH v5 3/3] mmc: sdhci-of-dwcmshc: solve 128MB DMA boundary
- limitation
-To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20180827162026.3901de27@xhacker.debian>
- <20180827162419.61afe238@xhacker.debian>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <9739a083-cb2f-1cba-19c1-1c4e0d03eedd@intel.com>
-Date:   Tue, 28 Aug 2018 10:51:02 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 28 Aug 2018 07:45:37 -0400
+Received: from mail-qt0-f169.google.com ([209.85.216.169]:34375 "EHLO
+        mail-qt0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727086AbeH1Lph (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 07:45:37 -0400
+Received: by mail-qt0-f169.google.com with SMTP id m13-v6so687838qth.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 00:54:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=R0Thc8fN8jp/Nz8iU+oF4R3DCkKHl45UoMRkB4ZTU7U=;
+        b=gHfDJdphCOeP/SSz6wA+oE7otPut2/6w6MOZG411CRweTv/B/C7xvFJ2Rd957hIEIl
+         8QnFXnP4RIdnSHk2dEW8q/xDet6TP02YCxlFFzCFmJyOh3hUcTGgNP5jVTogT4jwVRqL
+         fgBvwJF1y/XHnbI5OKILjHV9fl7wdamPznVbzdFnvLgnv++WJwb+NRohlo19o5BoJSJf
+         pL+EEBv4s4Ql1hQE+4Ij5NdB3GtcwdxRz/UnvOyUEOQYgJwtGA1+vH6w4CACHVH2fdSl
+         K8N3NJqMYp29TwPF1hK3wwvpEuahQgN6Ri/6FeNGBgmmv9d7/IyrHLID9RbqOr2I4mGd
+         Dl/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=R0Thc8fN8jp/Nz8iU+oF4R3DCkKHl45UoMRkB4ZTU7U=;
+        b=OIKp/mJKfQevU4YfNyluEXvhHeDFeEiBRUnsuWGfktkUmUQyzP+/WdW56129+b9P5O
+         0gFoMASf4CCbUN+ddZNG1eBBsVDngUeYDqmymZtscxP0maXZgdqm6vQUuAUTz7DQcznt
+         zeJqbvttRAD1eDnqjQPKTn/o/887DUNHZLkyUyw4gPyZUw1VeFQc710QeIj+YE3/8hFT
+         Kv/hD5FxsmVwrcIXuSuCEpRfa7wViKyTVIwzi1GzW2IPDb1dESe1YwYbDNuzJOwpGlg4
+         /inWpALqZLaXng0KjWqsf1AydbLQE2T2UUkiqWfr9VvVn1uxUDx+hdzNUWJH7N5qlMXA
+         XTIw==
+X-Gm-Message-State: APzg51ALMz5WPqeMh56Nw6tGVl3BEmBv1U5fZMa8ke47hMHGBYrb47Xu
+        mLUe+VqyJuGUYSdMU/noAXMfrYK6lLpKBQyxFsk=
+X-Google-Smtp-Source: ANB0VdbTmgSNvL/qofFMBTZuOw8imB5EkVKXMeBZP4xnm1hU7b0+Fhp8YH52vSPLOxSysVZUM1UJS5+v11+Dr8oXo1o=
+X-Received: by 2002:a0c:e985:: with SMTP id z5-v6mr386989qvn.136.1535442890220;
+ Tue, 28 Aug 2018 00:54:50 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180827162419.61afe238@xhacker.debian>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180828015252.28511-1-robh@kernel.org> <20180828015252.28511-50-robh@kernel.org>
+In-Reply-To: <20180828015252.28511-50-robh@kernel.org>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 28 Aug 2018 10:54:39 +0300
+Message-ID: <CAHp75VeBTdugxXeM9wj=x-JarLqRcmZzwDLav71RM66FcP-xjQ@mail.gmail.com>
+Subject: Re: [PATCH] sound: Convert to using %pOFn instead of device_node.name
+To:     Rob Herring <robh@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        "open list:LINUX FOR POWERPC PA SEMI PWRFICIENT" 
+        <linuxppc-dev@lists.ozlabs.org>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/08/18 11:24, Jisheng Zhang wrote:
-> When using DMA, if the DMA addr spans 128MB boundary, we have to split
-> the DMA transfer into two so that each one doesn't exceed the boundary.
-> 
-> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-> ---
->  drivers/mmc/host/sdhci-of-dwcmshc.c | 41 +++++++++++++++++++++++++++++
->  1 file changed, 41 insertions(+)
-> 
-> diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
-> index 1b7cd144fb01..cfbdae8703a1 100644
-> --- a/drivers/mmc/host/sdhci-of-dwcmshc.c
-> +++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
-> @@ -8,21 +8,50 @@
->   */
->  
->  #include <linux/clk.h>
-> +#include <linux/mm.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> +#include <linux/sizes.h>
->  
->  #include "sdhci-pltfm.h"
->  
-> +#define BOUNDARY_OK(addr, len) \
-> +	((addr | (SZ_128M - 1)) == ((addr + len - 1) | (SZ_128M - 1)))
-> +
->  struct dwcmshc_priv {
->  	struct clk	*bus_clk;
->  };
->  
-> +/*
-> + * If DMA addr spans 128MB boundary, we split the DMA transfer into two
-> + * so that each DMA transfer doesn't exceed the boundary.
-> + */
-> +static void dwcmshc_adma_write_desc(struct sdhci_host *host, void **desc,
-> +				    dma_addr_t addr, int len, unsigned int cmd)
-> +{
-> +	int tmplen, offset;
-> +
-> +	if (likely(!len || BOUNDARY_OK(addr, len))) {
-> +		sdhci_adma_write_desc(host, desc, addr, len, cmd);
-> +		return;
-> +	}
-> +
-> +	offset = addr & (SZ_128M - 1);
-> +	tmplen = SZ_128M - offset;
-> +	sdhci_adma_write_desc(host, desc, addr, tmplen, cmd);
-> +
-> +	addr += tmplen;
-> +	len -= tmplen;
-> +	sdhci_adma_write_desc(host, desc, addr, len, cmd);
-> +}
-> +
->  static const struct sdhci_ops sdhci_dwcmshc_ops = {
->  	.set_clock		= sdhci_set_clock,
->  	.set_bus_width		= sdhci_set_bus_width,
->  	.set_uhs_signaling	= sdhci_set_uhs_signaling,
->  	.get_max_clock		= sdhci_pltfm_clk_get_max_clock,
->  	.reset			= sdhci_reset,
-> +	.adma_write_desc	= dwcmshc_adma_write_desc,
->  };
->  
->  static const struct sdhci_pltfm_data sdhci_dwcmshc_pdata = {
-> @@ -36,12 +65,24 @@ static int dwcmshc_probe(struct platform_device *pdev)
->  	struct sdhci_host *host;
->  	struct dwcmshc_priv *priv;
->  	int err;
-> +	u32 extra;
->  
->  	host = sdhci_pltfm_init(pdev, &sdhci_dwcmshc_pdata,
->  				sizeof(struct dwcmshc_priv));
->  	if (IS_ERR(host))
->  		return PTR_ERR(host);
->  
-> +	/*
-> +	 * The DMA table descriptor count is calculated as the maximum
-> +	 * number of segments times 2, to allow for an alignment
-> +	 * descriptor for each segment, plus 1 for a nop end descriptor,
-> +	 * plus extra number for cross 128M boundary handling.
-> +	 */
-> +	extra = DIV_ROUND_UP(totalram_pages, SZ_128M / PAGE_SIZE);
+On Tue, Aug 28, 2018 at 4:56 AM Rob Herring <robh@kernel.org> wrote:
+>
+> In preparation to remove the node name pointer from struct device_node,
+> convert printf users to use the %pOFn format specifier.
 
-The amount of RAM is not necessarily the same as the highest physical
-address.  I think what you really want is max_pfn or max_possible_pfn
+> +       if (snprintf(node_name, sizeof(node_name), "%pOFn", np) != 5)
+>                 return 0;
 
-> +	if (extra > SDHCI_MAX_SEGS)
-> +		extra = SDHCI_MAX_SEGS;
-> +	host->adma_table_cnt += extra;
-> +
->  	pltfm_host = sdhci_priv(host);
->  	priv = sdhci_pltfm_priv(pltfm_host);
->  
-> 
+> +       if (strncmp(np, "i2s-", 4))
+>                 return 0;
 
+Shouldn't be node_name here?
+
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
