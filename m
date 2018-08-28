@@ -5,71 +5,65 @@ X-Spam-Level:
 X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EC59C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:44:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98792C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:44:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 388E52086A
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:44:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 388E52086A
+	by mail.kernel.org (Postfix) with ESMTP id 432CB2086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:44:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 432CB2086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727385AbeH1Tgx (ORCPT
+        id S1727452AbeH1Tgz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 15:36:53 -0400
-Received: from mail-oi0-f44.google.com ([209.85.218.44]:47069 "EHLO
-        mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726383AbeH1Tgw (ORCPT
+        Tue, 28 Aug 2018 15:36:55 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:40616 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726383AbeH1Tgy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 15:36:52 -0400
-Received: by mail-oi0-f44.google.com with SMTP id y207-v6so3617264oie.13
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 08:44:37 -0700 (PDT)
+        Tue, 28 Aug 2018 15:36:54 -0400
+Received: by mail-oi0-f68.google.com with SMTP id l202-v6so3645251oig.7;
+        Tue, 28 Aug 2018 08:44:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to;
-        bh=xiuxQdP6s+Tq5IPOSJJx7r94IM2H7aQMfWi0PAGfZSE=;
-        b=J/Mw5ITbN+0PMSbj67NAC0sb63wVpL+aFP5hEOM+ucpihTFxJhPS6dADEbIoi0AS1i
-         6Rt2bc+G12IYphKz+zQv8GGUF9/en1VUe5C0LAfB/+04rlimCBEr5oxVL9HSYuP+WrJO
-         sq0IWry689VQVDBpwbhpJChH8C4ufne3acu+5EVV/flPBj+Wm1B9GJA5OiZLG5osMDbf
-         K5IOzel7x/Y5lncGHXQTAvgSB+JAODizG3bfGuwfUFmyUFcAnzS0qsM3NQbAl54PtBOE
-         W2MtB52Wt1WePZPkixc3SuG9yeBbVMUoYASzG/DIEtBfOzS3rWenv2GMxN04eAYlc3yh
-         zs3A==
-X-Gm-Message-State: APzg51ACCXtJY6bZCI+fWH/BTYm6KGEyA10PRfh+gbWejdwrmVTAN0So
-        awJRi8KkdhzzFCoGUAtdSPxNUAY=
-X-Google-Smtp-Source: ANB0VdZyUOa4pDM2jANstMCfYUj2TZdPPHbZdL/Yp0ZIzobXZQW0tLxBRpXPtAYXF6IN+ejhh5SUBw==
-X-Received: by 2002:aca:acc8:: with SMTP id v191-v6mr1586463oie.354.1535471076622;
-        Tue, 28 Aug 2018 08:44:36 -0700 (PDT)
+        bh=yQtwLwhl7Ka+3sr6BOinI3DUEJVApNtmVCuk1VaSgxw=;
+        b=C84d7tLSMXH1XyRSSPoRbrU9iysXUegaCCGopAir6FKaGk0QGuzlCfqmK6h7ZENS04
+         +mcpXTmLdsLilbH5+ceSsDEKfBa15Re8sGS6sWcLAMmVMoaMAKmVzvXCq3J4SV5FkvQk
+         OZe0o9lzwzqsubICmsmGkfBVRK51KriI9k75YFfKaWsf8LHZIJtPsGb68Btg5gdvQjcZ
+         Ji5AH8S9O0JkGZq6NUH1zZ1cYZJDO8XqB9CjyR9Y7bSjYGkEjQ9YI9T4Bhsj0d9V5ri3
+         sXiQpAvutBBEQk3FCJSq3aO4qTeXn9YWtEU3UfEgIeNOUcPvtqyzKAzZdniE5wV2UMxN
+         Dr8w==
+X-Gm-Message-State: APzg51CrsLfd5AgRxpAB8bs0TbW6oOLP+1kiIsRD+YuyqCpbL/3pySNP
+        izVnmYVeH7+o2SbDo0VebVj7gTI=
+X-Google-Smtp-Source: ANB0VdZNQMq6ceD+IV3mHB4zeSsrUDV3jeRVe0QRZyzW5WQqgwXQBQ1MtBiTjqZf6UudzugTlobx2w==
+X-Received: by 2002:aca:c0c1:: with SMTP id q184-v6mr1778157oif.61.1535471079211;
+        Tue, 28 Aug 2018 08:44:39 -0700 (PDT)
 Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id f4-v6sm1808331oic.52.2018.08.28.08.44.35
+        by smtp.googlemail.com with ESMTPSA id f4-v6sm1808331oic.52.2018.08.28.08.44.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 Aug 2018 08:44:36 -0700 (PDT)
+        Tue, 28 Aug 2018 08:44:38 -0700 (PDT)
 From:   Rob Herring <robh@kernel.org>
 To:     linux-kernel@vger.kernel.org
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Timur Tabi <timur@kernel.org>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Olivier Moysan <olivier.moysan@st.com>,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org
-Subject: [PATCH v2] ASoC: Convert to using %pOFn instead of device_node.name
-Date:   Tue, 28 Aug 2018 10:44:28 -0500
-Message-Id: <20180828154433.5693-2-robh@kernel.org>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Yisen Zhuang <yisen.zhuang@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Felix Fietkau <nbd@openwrt.org>,
+        John Crispin <john@phrozen.org>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Nelson Chang <nelson.chang@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Wingman Kwok <w-kwok2@ti.com>,
+        Murali Karicheri <m-karicheri2@ti.com>, netdev@vger.kernel.org
+Subject: [PATCH v2] net: ethernet: Convert to using %pOFn instead of device_node.name
+Date:   Tue, 28 Aug 2018 10:44:30 -0500
+Message-Id: <20180828154433.5693-4-robh@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180828154433.5693-1-robh@kernel.org>
 References: <20180828154433.5693-1-robh@kernel.org>
-In-Reply-To: <20180828015252.28511-51-robh@kernel.org>
+In-Reply-To: <20180828015252.28511-34-robh@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -78,113 +72,293 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 In preparation to remove the node name pointer from struct device_node,
 convert printf users to use the %pOFn format specifier.
 
-Cc: Timur Tabi <timur@kernel.org>
-Cc: Nicolin Chen <nicoleotsuka@gmail.com>
-Cc: Xiubo Li <Xiubo.Lee@gmail.com>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.com>
-Cc: Carlo Caione <carlo@caione.org>
-Cc: Kevin Hilman <khilman@baylibre.com>
-Cc: Olivier Moysan <olivier.moysan@st.com>
-Cc: Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
-Cc: alsa-devel@alsa-project.org
-Cc: linuxppc-dev@lists.ozlabs.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-amlogic@lists.infradead.org
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Yisen Zhuang <yisen.zhuang@huawei.com>
+Cc: Salil Mehta <salil.mehta@huawei.com>
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Felix Fietkau <nbd@openwrt.org>
+Cc: John Crispin <john@phrozen.org>
+Cc: Sean Wang <sean.wang@mediatek.com>
+Cc: Nelson Chang <nelson.chang@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Wingman Kwok <w-kwok2@ti.com>
+Cc: Murali Karicheri <m-karicheri2@ti.com>
+Cc: netdev@vger.kernel.org
+
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
 v2:
-- stm32_sai_sub: Unwrap now shorter line
+- fix missing brackets in netcp
 
- sound/soc/fsl/fsl_esai.c      | 2 +-
- sound/soc/fsl/fsl_utils.c     | 4 ++--
- sound/soc/meson/axg-card.c    | 2 +-
- sound/soc/stm/stm32_sai.c     | 2 +-
- sound/soc/stm/stm32_sai_sub.c | 7 +++----
- 5 files changed, 8 insertions(+), 9 deletions(-)
+ drivers/net/ethernet/freescale/fsl_pq_mdio.c  |  4 +-
+ .../net/ethernet/hisilicon/hns/hns_dsaf_mac.c |  8 ++--
+ drivers/net/ethernet/marvell/mv643xx_eth.c    |  6 +--
+ drivers/net/ethernet/mediatek/mtk_eth_soc.c   |  2 +-
+ drivers/net/ethernet/sun/sunhme.c             |  2 +-
+ drivers/net/ethernet/ti/netcp_core.c          | 22 ++++------
+ drivers/net/ethernet/ti/netcp_ethss.c         | 42 +++++++++----------
+ 7 files changed, 40 insertions(+), 46 deletions(-)
 
-diff --git a/sound/soc/fsl/fsl_esai.c b/sound/soc/fsl/fsl_esai.c
-index c1d1d06783e5..57b484768a58 100644
---- a/sound/soc/fsl/fsl_esai.c
-+++ b/sound/soc/fsl/fsl_esai.c
-@@ -807,7 +807,7 @@ static int fsl_esai_probe(struct platform_device *pdev)
- 		return -ENOMEM;
+diff --git a/drivers/net/ethernet/freescale/fsl_pq_mdio.c b/drivers/net/ethernet/freescale/fsl_pq_mdio.c
+index ac2c3f6a12bc..82722d05fedb 100644
+--- a/drivers/net/ethernet/freescale/fsl_pq_mdio.c
++++ b/drivers/net/ethernet/freescale/fsl_pq_mdio.c
+@@ -446,8 +446,8 @@ static int fsl_pq_mdio_probe(struct platform_device *pdev)
+ 		goto error;
+ 	}
 
- 	esai_priv->pdev = pdev;
--	strncpy(esai_priv->name, np->name, sizeof(esai_priv->name) - 1);
-+	snprintf(esai_priv->name, sizeof(esai_priv->name), "%pOFn", np);
+-	snprintf(new_bus->id, MII_BUS_ID_SIZE, "%s@%llx", np->name,
+-		(unsigned long long)res.start);
++	snprintf(new_bus->id, MII_BUS_ID_SIZE, "%pOFn@%llx", np,
++		 (unsigned long long)res.start);
 
- 	/* Get the addresses and IRQ */
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-diff --git a/sound/soc/fsl/fsl_utils.c b/sound/soc/fsl/fsl_utils.c
-index 7f0fa4b52223..9981668ab590 100644
---- a/sound/soc/fsl/fsl_utils.c
-+++ b/sound/soc/fsl/fsl_utils.c
-@@ -57,8 +57,8 @@ int fsl_asoc_get_dma_channel(struct device_node *ssi_np,
- 		of_node_put(dma_channel_np);
+ 	priv->map = of_iomap(np, 0);
+ 	if (!priv->map) {
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c
+index 1c2326bd76e2..6521d8d53745 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c
+@@ -807,8 +807,8 @@ static int hns_mac_get_info(struct hns_mac_cb *mac_cb)
+ 			 */
+ 			put_device(&mac_cb->phy_dev->mdio.dev);
+
+-			dev_dbg(mac_cb->dev, "mac%d phy_node: %s\n",
+-				mac_cb->mac_id, np->name);
++			dev_dbg(mac_cb->dev, "mac%d phy_node: %pOFn\n",
++				mac_cb->mac_id, np);
+ 		}
+ 		of_node_put(np);
+
+@@ -825,8 +825,8 @@ static int hns_mac_get_info(struct hns_mac_cb *mac_cb)
+ 			 * if the phy_dev is found
+ 			 */
+ 			put_device(&mac_cb->phy_dev->mdio.dev);
+-			dev_dbg(mac_cb->dev, "mac%d phy_node: %s\n",
+-				mac_cb->mac_id, np->name);
++			dev_dbg(mac_cb->dev, "mac%d phy_node: %pOFn\n",
++				mac_cb->mac_id, np);
+ 		}
+ 		of_node_put(np);
+
+diff --git a/drivers/net/ethernet/marvell/mv643xx_eth.c b/drivers/net/ethernet/marvell/mv643xx_eth.c
+index 62f204f32316..1e9bcbdc6a90 100644
+--- a/drivers/net/ethernet/marvell/mv643xx_eth.c
++++ b/drivers/net/ethernet/marvell/mv643xx_eth.c
+@@ -2733,17 +2733,17 @@ static int mv643xx_eth_shared_of_add_port(struct platform_device *pdev,
+
+ 	memset(&res, 0, sizeof(res));
+ 	if (of_irq_to_resource(pnp, 0, &res) <= 0) {
+-		dev_err(&pdev->dev, "missing interrupt on %s\n", pnp->name);
++		dev_err(&pdev->dev, "missing interrupt on %pOFn\n", pnp);
+ 		return -EINVAL;
+ 	}
+
+ 	if (of_property_read_u32(pnp, "reg", &ppd.port_number)) {
+-		dev_err(&pdev->dev, "missing reg property on %s\n", pnp->name);
++		dev_err(&pdev->dev, "missing reg property on %pOFn\n", pnp);
+ 		return -EINVAL;
+ 	}
+
+ 	if (ppd.port_number >= 3) {
+-		dev_err(&pdev->dev, "invalid reg property on %s\n", pnp->name);
++		dev_err(&pdev->dev, "invalid reg property on %pOFn\n", pnp);
+ 		return -EINVAL;
+ 	}
+
+diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+index 6e6abdc399de..b44bcfd85b05 100644
+--- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
++++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+@@ -405,7 +405,7 @@ static int mtk_mdio_init(struct mtk_eth *eth)
+ 	eth->mii_bus->priv = eth;
+ 	eth->mii_bus->parent = eth->dev;
+
+-	snprintf(eth->mii_bus->id, MII_BUS_ID_SIZE, "%s", mii_np->name);
++	snprintf(eth->mii_bus->id, MII_BUS_ID_SIZE, "%pOFn", mii_np);
+ 	ret = of_mdiobus_register(eth->mii_bus, mii_np);
+
+ err_put_node:
+diff --git a/drivers/net/ethernet/sun/sunhme.c b/drivers/net/ethernet/sun/sunhme.c
+index 06da2f59fcbf..863fd602fd33 100644
+--- a/drivers/net/ethernet/sun/sunhme.c
++++ b/drivers/net/ethernet/sun/sunhme.c
+@@ -2999,7 +2999,7 @@ static int happy_meal_pci_probe(struct pci_dev *pdev,
+ 	/* Now make sure pci_dev cookie is there. */
+ #ifdef CONFIG_SPARC
+ 	dp = pci_device_to_OF_node(pdev);
+-	strcpy(prom_name, dp->name);
++	snprintf(prom_name, sizeof(prom_name), "%pOFn", dp);
+ #else
+ 	if (is_quattro_p(pdev))
+ 		strcpy(prom_name, "SUNW,qfe");
+diff --git a/drivers/net/ethernet/ti/netcp_core.c b/drivers/net/ethernet/ti/netcp_core.c
+index a1d335a3c5e4..1f612268c998 100644
+--- a/drivers/net/ethernet/ti/netcp_core.c
++++ b/drivers/net/ethernet/ti/netcp_core.c
+@@ -225,17 +225,6 @@ static int emac_arch_get_mac_addr(char *x, void __iomem *efuse_mac, u32 swap)
+ 	return 0;
+ }
+
+-static const char *netcp_node_name(struct device_node *node)
+-{
+-	const char *name;
+-
+-	if (of_property_read_string(node, "label", &name) < 0)
+-		name = node->name;
+-	if (!name)
+-		name = "unknown";
+-	return name;
+-}
+-
+ /* Module management routines */
+ static int netcp_register_interface(struct netcp_intf *netcp)
+ {
+@@ -267,8 +256,13 @@ static int netcp_module_probe(struct netcp_device *netcp_device,
+ 	}
+
+ 	for_each_available_child_of_node(devices, child) {
+-		const char *name = netcp_node_name(child);
++		const char *name;
++		char node_name[32];
+
++		if (of_property_read_string(node, "label", &name) < 0) {
++			snprintf(node_name, sizeof(node_name), "%pOFn", child);
++			name = node_name;
++		}
+ 		if (!strcasecmp(module->name, name))
+ 			break;
+ 	}
+@@ -2209,8 +2203,8 @@ static int netcp_probe(struct platform_device *pdev)
+ 	for_each_available_child_of_node(interfaces, child) {
+ 		ret = netcp_create_interface(netcp_device, child);
+ 		if (ret) {
+-			dev_err(dev, "could not create interface(%s)\n",
+-				child->name);
++			dev_err(dev, "could not create interface(%pOFn)\n",
++				child);
+ 			goto probe_quit_interface;
+ 		}
+ 	}
+diff --git a/drivers/net/ethernet/ti/netcp_ethss.c b/drivers/net/ethernet/ti/netcp_ethss.c
+index 72b98e27c992..0397ccb6597e 100644
+--- a/drivers/net/ethernet/ti/netcp_ethss.c
++++ b/drivers/net/ethernet/ti/netcp_ethss.c
+@@ -3137,15 +3137,15 @@ static void init_secondary_ports(struct gbe_priv *gbe_dev,
+ 	for_each_child_of_node(node, port) {
+ 		slave = devm_kzalloc(dev, sizeof(*slave), GFP_KERNEL);
+ 		if (!slave) {
+-			dev_err(dev, "memory alloc failed for secondary port(%s), skipping...\n",
+-				port->name);
++			dev_err(dev, "memory alloc failed for secondary port(%pOFn), skipping...\n",
++				port);
+ 			continue;
+ 		}
+
+ 		if (init_slave(gbe_dev, slave, port)) {
+ 			dev_err(dev,
+-				"Failed to initialize secondary port(%s), skipping...\n",
+-				port->name);
++				"Failed to initialize secondary port(%pOFn), skipping...\n",
++				port);
+ 			devm_kfree(dev, slave);
+ 			continue;
+ 		}
+@@ -3239,8 +3239,8 @@ static int set_xgbe_ethss10_priv(struct gbe_priv *gbe_dev,
+ 	ret = of_address_to_resource(node, XGBE_SS_REG_INDEX, &res);
+ 	if (ret) {
+ 		dev_err(gbe_dev->dev,
+-			"Can't xlate xgbe of node(%s) ss address at %d\n",
+-			node->name, XGBE_SS_REG_INDEX);
++			"Can't xlate xgbe of node(%pOFn) ss address at %d\n",
++			node, XGBE_SS_REG_INDEX);
  		return ret;
  	}
--	snprintf((char *)dai->platform_name, DAI_NAME_SIZE, "%llx.%s",
--		 (unsigned long long) res.start, dma_channel_np->name);
-+	snprintf((char *)dai->platform_name, DAI_NAME_SIZE, "%llx.%pOFn",
-+		 (unsigned long long) res.start, dma_channel_np);
 
- 	iprop = of_get_property(dma_channel_np, "cell-index", NULL);
- 	if (!iprop) {
-diff --git a/sound/soc/meson/axg-card.c b/sound/soc/meson/axg-card.c
-index 2914ba0d965b..b76a5f4f1785 100644
---- a/sound/soc/meson/axg-card.c
-+++ b/sound/soc/meson/axg-card.c
-@@ -478,7 +478,7 @@ static int axg_card_set_be_link(struct snd_soc_card *card,
-
- 	ret = axg_card_set_link_name(card, link, "be");
- 	if (ret)
--		dev_err(card->dev, "error setting %s link name\n", np->name);
-+		dev_err(card->dev, "error setting %pOFn link name\n", np);
-
- 	return ret;
- }
-diff --git a/sound/soc/stm/stm32_sai.c b/sound/soc/stm/stm32_sai.c
-index f22654253c43..d597eba61992 100644
---- a/sound/soc/stm/stm32_sai.c
-+++ b/sound/soc/stm/stm32_sai.c
-@@ -104,7 +104,7 @@ static int stm32_sai_set_sync(struct stm32_sai_data *sai_client,
-
- 	if (!pdev) {
- 		dev_err(&sai_client->pdev->dev,
--			"Device not found for node %s\n", np_provider->name);
-+			"Device not found for node %pOFn\n", np_provider);
- 		return -ENODEV;
+@@ -3254,8 +3254,8 @@ static int set_xgbe_ethss10_priv(struct gbe_priv *gbe_dev,
+ 	ret = of_address_to_resource(node, XGBE_SM_REG_INDEX, &res);
+ 	if (ret) {
+ 		dev_err(gbe_dev->dev,
+-			"Can't xlate xgbe of node(%s) sm address at %d\n",
+-			node->name, XGBE_SM_REG_INDEX);
++			"Can't xlate xgbe of node(%pOFn) sm address at %d\n",
++			node, XGBE_SM_REG_INDEX);
+ 		return ret;
  	}
 
-diff --git a/sound/soc/stm/stm32_sai_sub.c b/sound/soc/stm/stm32_sai_sub.c
-index 06fba9650ac4..56a227e0bd71 100644
---- a/sound/soc/stm/stm32_sai_sub.c
-+++ b/sound/soc/stm/stm32_sai_sub.c
-@@ -1124,16 +1124,15 @@ static int stm32_sai_sub_parse_of(struct platform_device *pdev,
- 	sai->sync = SAI_SYNC_NONE;
- 	if (args.np) {
- 		if (args.np == np) {
--			dev_err(&pdev->dev, "%s sync own reference\n",
--				np->name);
-+			dev_err(&pdev->dev, "%pOFn sync own reference\n", np);
- 			of_node_put(args.np);
- 			return -EINVAL;
- 		}
+@@ -3269,8 +3269,8 @@ static int set_xgbe_ethss10_priv(struct gbe_priv *gbe_dev,
+ 	ret = of_address_to_resource(node, XGBE_SERDES_REG_INDEX, &res);
+ 	if (ret) {
+ 		dev_err(gbe_dev->dev,
+-			"Can't xlate xgbe serdes of node(%s) address at %d\n",
+-			node->name, XGBE_SERDES_REG_INDEX);
++			"Can't xlate xgbe serdes of node(%pOFn) address at %d\n",
++			node, XGBE_SERDES_REG_INDEX);
+ 		return ret;
+ 	}
 
- 		sai->np_sync_provider  = of_get_parent(args.np);
- 		if (!sai->np_sync_provider) {
--			dev_err(&pdev->dev, "%s parent node not found\n",
--				np->name);
-+			dev_err(&pdev->dev, "%pOFn parent node not found\n",
-+				np);
- 			of_node_put(args.np);
- 			return -ENODEV;
+@@ -3347,8 +3347,8 @@ static int get_gbe_resource_version(struct gbe_priv *gbe_dev,
+ 	ret = of_address_to_resource(node, GBE_SS_REG_INDEX, &res);
+ 	if (ret) {
+ 		dev_err(gbe_dev->dev,
+-			"Can't translate of node(%s) of gbe ss address at %d\n",
+-			node->name, GBE_SS_REG_INDEX);
++			"Can't translate of node(%pOFn) of gbe ss address at %d\n",
++			node, GBE_SS_REG_INDEX);
+ 		return ret;
+ 	}
+
+@@ -3372,8 +3372,8 @@ static int set_gbe_ethss14_priv(struct gbe_priv *gbe_dev,
+ 	ret = of_address_to_resource(node, GBE_SGMII34_REG_INDEX, &res);
+ 	if (ret) {
+ 		dev_err(gbe_dev->dev,
+-			"Can't translate of gbe node(%s) address at index %d\n",
+-			node->name, GBE_SGMII34_REG_INDEX);
++			"Can't translate of gbe node(%pOFn) address at index %d\n",
++			node, GBE_SGMII34_REG_INDEX);
+ 		return ret;
+ 	}
+
+@@ -3388,8 +3388,8 @@ static int set_gbe_ethss14_priv(struct gbe_priv *gbe_dev,
+ 	ret = of_address_to_resource(node, GBE_SM_REG_INDEX, &res);
+ 	if (ret) {
+ 		dev_err(gbe_dev->dev,
+-			"Can't translate of gbe node(%s) address at index %d\n",
+-			node->name, GBE_SM_REG_INDEX);
++			"Can't translate of gbe node(%pOFn) address at index %d\n",
++			node, GBE_SM_REG_INDEX);
+ 		return ret;
+ 	}
+
+@@ -3498,8 +3498,8 @@ static int set_gbenu_ethss_priv(struct gbe_priv *gbe_dev,
+ 	ret = of_address_to_resource(node, GBENU_SM_REG_INDEX, &res);
+ 	if (ret) {
+ 		dev_err(gbe_dev->dev,
+-			"Can't translate of gbenu node(%s) addr at index %d\n",
+-			node->name, GBENU_SM_REG_INDEX);
++			"Can't translate of gbenu node(%pOFn) addr at index %d\n",
++			node, GBENU_SM_REG_INDEX);
+ 		return ret;
+ 	}
+
+@@ -3642,7 +3642,7 @@ static int gbe_probe(struct netcp_device *netcp_device, struct device *dev,
+ 		ret = netcp_xgbe_serdes_init(gbe_dev->xgbe_serdes_regs,
+ 					     gbe_dev->ss_regs);
+ 	} else {
+-		dev_err(dev, "unknown GBE node(%s)\n", node->name);
++		dev_err(dev, "unknown GBE node(%pOFn)\n", node);
+ 		ret = -ENODEV;
+ 	}
+
+@@ -3667,8 +3667,8 @@ static int gbe_probe(struct netcp_device *netcp_device, struct device *dev,
+ 	for_each_child_of_node(interfaces, interface) {
+ 		ret = of_property_read_u32(interface, "slave-port", &slave_num);
+ 		if (ret) {
+-			dev_err(dev, "missing slave-port parameter, skipping interface configuration for %s\n",
+-				interface->name);
++			dev_err(dev, "missing slave-port parameter, skipping interface configuration for %pOFn\n",
++				interface);
+ 			continue;
  		}
+ 		gbe_dev->num_slaves++;
 --
 2.17.1
