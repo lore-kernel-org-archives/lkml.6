@@ -2,134 +2,113 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B39FC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 23:32:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16E4CC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 23:34:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8BFF2088E
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 23:32:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B25752087D
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 23:34:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0ebp22GA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8BFF2088E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WxTMF9qF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B25752087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727535AbeH2D01 (ORCPT
+        id S1727577AbeH2D2K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 23:26:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54170 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727104AbeH2D01 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 23:26:27 -0400
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE9E52087D;
-        Tue, 28 Aug 2018 23:32:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535499149;
-        bh=UmL00Yaksy0hl3YcTc1u6uHjx3BKzGNCkF9oYb2qTP4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=0ebp22GABwKs8oiiujqXRy0aA2rFh9cVP2ZbGmhHRF+cJ7Gp2MVqISPZDmALjopBH
-         ZVJE5Dlz7N2m5LfdiIkFwm9QHA9yz0RfViCJKtrpMn513GsKkmymgd/9PANXCEUki+
-         +kotR/dPM/GitAB1YZJGBqzkvQeygoe9QRgo7U48=
-Date:   Wed, 29 Aug 2018 08:32:24 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Jann Horn <jannh@google.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org,
-        dvyukov@google.com, Masami Hiramatsu <mhiramat@kernel.org>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Borislav Petkov <bp@alien8.de>
-Subject: Re: [PATCH v3 1/7] x86: refactor kprobes_fault() like
- kprobe_exceptions_notify()
-Message-Id: <20180829083224.6b01b8f04872855d90c4786a@kernel.org>
-In-Reply-To: <20180828201421.157735-2-jannh@google.com>
-References: <20180828201421.157735-1-jannh@google.com>
-        <20180828201421.157735-2-jannh@google.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Tue, 28 Aug 2018 23:28:10 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:47730 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727146AbeH2D2K (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 23:28:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Date:Message-ID:Cc:To:Subject:From:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=ch37FjB/2HtlITQvCWYTMQcaJohMsL9lzagYvks6G7w=; b=WxTMF9qFDRGjcx4lvljsW1zCjz
+        JTqyjC0wGNSAJckjb2h1sJY8lrV8GjlRNuztRu8aYo2RmER8DDJBmCTFQp2zji0XzTLacwYJtLVtv
+        KCi5zgAln4W90kulixm0vvmfwNxoFzHwS1OTxzIUo/UqMbg+LzhtxVvBfX0YPzFuqtRsMZvrkvoLk
+        MGv+lNdFu3Lot3H0n5Ia0X0D8hL/czvaUrF1SFS9SdNEyNsuS3AZ8nifwQtBYzEJnCQUTl2Jfnhgn
+        Wbqgci1toGAYZrg9tneUECMPHe88ucypx+SjMWsx8uLD/tsS7ZSMmb4WQ9ANPff4xcYGOJLPKwLLF
+        san3d+xg==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1funUt-0005gK-2O; Tue, 28 Aug 2018 23:34:07 +0000
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH resend] uapi/linux/keyctl.h: don't use C++ reserved keyword as
+ a struct member name
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Mat Martineau <mathew.j.martineau@linux.intel.com>,
+        stable <stable@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Message-ID: <0db6c314-1ef4-9bfa-1baa-7214dd2ee061@infradead.org>
+Date:   Tue, 28 Aug 2018 16:34:04 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 28 Aug 2018 22:14:15 +0200
-Jann Horn <jannh@google.com> wrote:
+From: Randy Dunlap <rdunlap@infradead.org>
 
-> This is an extension of commit b506a9d08bae ("x86: code clarification patch
-> to Kprobes arch code"). As that commit explains, even though
-> kprobe_running() can't be called with preemption enabled, you don't have to
-> disable preemption - if preemption is on, you can't be in a kprobe.
-> 
-> Also, use X86_TRAP_PF instead of 14.
-> 
-> Signed-off-by: Jann Horn <jannh@google.com>
-> ---
-> v3:
->  - avoid unnecessary branch on return value and split up the checks
->    (Borislav Petkov)
-> 
->  arch/x86/mm/fault.c | 24 +++++++++++++-----------
->  1 file changed, 13 insertions(+), 11 deletions(-)
-> 
-> diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-> index b9123c497e0a..bcdaae1d5bf5 100644
-> --- a/arch/x86/mm/fault.c
-> +++ b/arch/x86/mm/fault.c
-> @@ -44,17 +44,19 @@ kmmio_fault(struct pt_regs *regs, unsigned long addr)
->  
->  static nokprobe_inline int kprobes_fault(struct pt_regs *regs)
->  {
-> -	int ret = 0;
-> -
-> -	/* kprobe_running() needs smp_processor_id() */
-> -	if (kprobes_built_in() && !user_mode(regs)) {
-> -		preempt_disable();
-> -		if (kprobe_running() && kprobe_fault_handler(regs, 14))
-> -			ret = 1;
-> -		preempt_enable();
-> -	}
-> -
-> -	return ret;
-> +	if (!kprobes_built_in())
-> +		return 0;
-> +	if (user_mode(regs))
-> +		return 0;
-> +	/*
-> +	 * To be potentially processing a kprobe fault and to be allowed to call
-> +	 * kprobe_running(), we have to be non-preemptible.
+Since this header is in "include/uapi/linux/", apparently people
+want to use it in userspace programs -- even in C++ ones.
+However, the header uses a C++ reserved keyword ("private"),
+so change that to "dh_private" instead to allow the header file
+to be used in C++ userspace.
 
-Good catch!
+Fixes https://bugzilla.kernel.org/show_bug.cgi?id=191051
+Fixes: ddbb41148724 ("KEYS: Add KEYCTL_DH_COMPUTE command")
 
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: David Howells <dhowells@redhat.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: keyrings@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+Cc: Mat Martineau <mathew.j.martineau@linux.intel.com>
+Cc: stable@vger.kernel.org
+---
+ include/uapi/linux/keyctl.h |    2 +-
+ security/keys/dh.c          |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Thanks!
-
-> +	 */
-> +	if (preemptible())
-> +		return 0;
-> +	if (!kprobe_running())
-> +		return 0;
-> +	return kprobe_fault_handler(regs, X86_TRAP_PF);
->  }
->  
->  /*
-> -- 
-> 2.19.0.rc0.228.g281dcd1b4d0-goog
-> 
+--- lnx-416.orig/include/uapi/linux/keyctl.h
++++ lnx-416/include/uapi/linux/keyctl.h
+@@ -65,7 +65,7 @@
+ 
+ /* keyctl structures */
+ struct keyctl_dh_params {
+-	__s32 private;
++	__s32 dh_private;
+ 	__s32 prime;
+ 	__s32 base;
+ };
+--- lnx-416.orig/security/keys/dh.c
++++ lnx-416/security/keys/dh.c
+@@ -307,7 +307,7 @@ long __keyctl_dh_compute(struct keyctl_d
+ 	}
+ 	dh_inputs.g_size = dlen;
+ 
+-	dlen = dh_data_from_key(pcopy.private, &dh_inputs.key);
++	dlen = dh_data_from_key(pcopy.dh_private, &dh_inputs.key);
+ 	if (dlen < 0) {
+ 		ret = dlen;
+ 		goto out2;
 
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
