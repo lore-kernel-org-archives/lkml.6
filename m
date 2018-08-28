@@ -2,236 +2,119 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63FF2C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:37:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45464C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:37:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C97020893
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:37:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C97020893
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id F164C20891
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:37:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="oS/J1fTh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F164C20891
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728560AbeH1S3A (ORCPT
+        id S1728578AbeH1S3E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 14:29:00 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39198 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727344AbeH1S27 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 14:28:59 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 78FF8B01D;
-        Tue, 28 Aug 2018 14:36:59 +0000 (UTC)
-From:   Petr Mladek <pmladek@suse.com>
-To:     Jiri Kosina <jikos@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Miroslav Benes <mbenes@suse.cz>
-Cc:     Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Jessica Yu <jeyu@kernel.org>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Petr Mladek <pmladek@suse.com>
-Subject: [PATCH v12 11/12] livepatch: Remove ordering and refuse loading conflicting patches
-Date:   Tue, 28 Aug 2018 16:36:02 +0200
-Message-Id: <20180828143603.4442-12-pmladek@suse.com>
-X-Mailer: git-send-email 2.13.7
-In-Reply-To: <20180828143603.4442-1-pmladek@suse.com>
-References: <20180828143603.4442-1-pmladek@suse.com>
+        Tue, 28 Aug 2018 14:29:04 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:33742 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728562AbeH1S3D (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 14:29:03 -0400
+Received: by mail-pg1-f196.google.com with SMTP id t14-v6so856605pgf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 07:37:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=AcrZoWuPg9/ZorKZOrctybLAjTuChmzL5RQBybjz/UY=;
+        b=oS/J1fThU9PwfQsLCzmo5f7fnzrpHCy9pd2B/GZyc8Fvc3zUJlwmS3IKHSU87aU9Uf
+         9dvZrYbzRmBkZAuLCbspOw7FL2rLeTmr67TclrTGkl691B1knH9IN6l7y0kSakbfUImI
+         U9d2/6o/CnGmuWWa7mte7txSWvpQEsT8/nZFxf5OdZGwxu8OWwVP9/w9C6QiwT5RNoW3
+         0RklqiU7inU/tCYjVOQrQfaSCuELWLTgko0SdxPQF/NGEkkB4HCuwKVjf+TtAczPT2z4
+         thhqS0bSLDu2gmRA+/TapEnRjy+WtSzbB14yNgvhem56NEazLX6jnBH5ZhqPvpR1I/kL
+         wSNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=AcrZoWuPg9/ZorKZOrctybLAjTuChmzL5RQBybjz/UY=;
+        b=DIhZ6eAPtUzTfGk6bmqTdDoaRIo4yUXi4ZOQoNYLgSVSaXA7kOmGFmsWPZMLPTGMcN
+         wl6lvXFYA+NQ37f0BTOEuKj4vwIBRZYENA24V5+D8wjtkVdG4V1YmnOfeBGe/jdO7q4s
+         A4vqTZI7k8U5Xws3lGpb8YCn3GFIo6/h7ImYxojNM6P0RRuCvaQqBe8MafWzKBU8pLba
+         xmF1Qj3SSTqUwkskMPSKZT2ZRen3ZvYyD6B1TBRbat/wIg9Dl/gJUQOeqcHY384YYRlt
+         ZcHXaBEdKTixuQ+yEmjx02V6JDxHHj6obuHibGAsfXXj6EbgTXkoIfHP8thLPQXcC403
+         cNdw==
+X-Gm-Message-State: APzg51BH2ftfnfZt5eme/GBNt67cp+0FKNKco4dNnqvws7xBJg1CxYc7
+        0CTVwt2PraNod0fIlx9KhIgkoQ==
+X-Google-Smtp-Source: ANB0VdagYIkrENywxWzLdqmg/2KoYlrIBtnUGTVup8eksYS6XMZwSxRoTifUmU6aUatYXRPjjR3WcA==
+X-Received: by 2002:a63:91:: with SMTP id 139-v6mr1842653pga.389.1535467025086;
+        Tue, 28 Aug 2018 07:37:05 -0700 (PDT)
+Received: from cisco.cisco.com ([128.107.241.165])
+        by smtp.gmail.com with ESMTPSA id s16-v6sm1973550pfm.114.2018.08.28.07.37.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 28 Aug 2018 07:37:03 -0700 (PDT)
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     linux-kernel@vger.kernel.org,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        Andy Lutomirski <luto@amacapital.net>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
+        Tycho Andersen <tycho@tycho.ws>
+Subject: [PATCH v5 0/5] seccomp trap to userspace
+Date:   Tue, 28 Aug 2018 08:35:58 -0600
+Message-Id: <20180828143603.8127-1-tycho@tycho.ws>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The atomic replace and cumulative patches were introduced as a more secure
-way to handle dependent patches. They simplify the logic:
+Hi all,
 
-  + Any new cumulative patch is supposed to take over shadow variables
-    and changes made by callbacks from previous livepatches.
+Here's v5 of the seccomp user set. Major changes from v4 include:
 
-  + All replaced patches are discarded and the modules can be unloaded.
-    As a result, there is only one scenario when a cumulative livepatch
-    gets disabled.
+* switching to ioctl vs read/write
+* adding a way to query whether a notification id is valid
+* added a sample program that shows a complete usage of the API w/ notes
+  about various TOCTOUs
 
-The different handling of "normal" and cumulative patches might cause
-confusion. It would make sense to keep only one mode. On the other hand,
-it would be rude to enforce using the cumulative livepatches even for
-trivial and independent (hot) fixes.
+as well as a bunch of smaller fixes. See individual patch notes for
+details.
 
-This patch removes the stack of patches. The list of enabled patches
-is still needed but the ordering is not longer enforced.
+Thanks,
 
-Note that it is not possible to catch all possible dependencies. It is
-the responsibility of the livepatch authors to decide.
+Tycho
 
-Nevertheless this patch prevents having two patches for the same function
-enabled at the same time after the transition finishes. It might help
-to catch obvious mistakes. But more importantly, we do not need to
-handle situation when a patch in the middle of the function stack
-(ops->func_stack) is being removed.
+Tycho Andersen (5):
+  seccomp: add a return code to trap to userspace
+  seccomp: make get_nth_filter available outside of CHECKPOINT_RESTORE
+  seccomp: add a way to get a listener fd from ptrace
+  seccomp: add support for passing fds via USER_NOTIF
+  samples: add an example of seccomp user trap
 
-Signed-off-by: Petr Mladek <pmladek@suse.com>
----
- Documentation/livepatch/livepatch.txt | 30 +++++++++++--------
- kernel/livepatch/core.c               | 56 +++++++++++++++++++++++++++++++----
- 2 files changed, 68 insertions(+), 18 deletions(-)
+ Documentation/ioctl/ioctl-number.txt          |   1 +
+ .../userspace-api/seccomp_filter.rst          |  80 +++
+ arch/Kconfig                                  |   9 +
+ include/linux/seccomp.h                       |  18 +-
+ include/uapi/linux/ptrace.h                   |   2 +
+ include/uapi/linux/seccomp.h                  |  36 +-
+ kernel/ptrace.c                               |   4 +
+ kernel/seccomp.c                              | 538 +++++++++++++++-
+ samples/seccomp/.gitignore                    |   1 +
+ samples/seccomp/Makefile                      |   9 +-
+ samples/seccomp/user-trap.c                   | 312 ++++++++++
+ tools/testing/selftests/seccomp/seccomp_bpf.c | 587 +++++++++++++++++-
+ 12 files changed, 1584 insertions(+), 13 deletions(-)
+ create mode 100644 samples/seccomp/user-trap.c
 
-diff --git a/Documentation/livepatch/livepatch.txt b/Documentation/livepatch/livepatch.txt
-index 7fb01d27d81d..8d985cab0a21 100644
---- a/Documentation/livepatch/livepatch.txt
-+++ b/Documentation/livepatch/livepatch.txt
-@@ -141,9 +141,9 @@ without HAVE_RELIABLE_STACKTRACE are not considered fully supported by
- the kernel livepatching.
- 
- The /sys/kernel/livepatch/<patch>/transition file shows whether a patch
--is in transition.  Only a single patch (the topmost patch on the stack)
--can be in transition at a given time.  A patch can remain in transition
--indefinitely, if any of the tasks are stuck in the initial patch state.
-+is in transition.  Only a single patch can be in transition at a given
-+time.  A patch can remain in transition indefinitely, if any of the tasks
-+are stuck in the initial patch state.
- 
- A transition can be reversed and effectively canceled by writing the
- opposite value to the /sys/kernel/livepatch/<patch>/enabled file while
-@@ -327,9 +327,10 @@ successfully disabled via the sysfs interface.
- Livepatch modules have to call klp_enable_patch() in module_init() callback.
- This function is rather complex and might even fail in the early phase.
- 
--First, the addresses of the patched functions are found according to their
--names. The special relocations, mentioned in the section "New functions",
--are applied. The relevant entries are created under
-+First, possible conflicts are checked for non-cummulative patches with
-+disabled replace flag. The addresses of the patched functions are found
-+according to their names. The special relocations, mentioned in the section
-+"New functions", are applied. The relevant entries are created under
- /sys/kernel/livepatch/<name>. The patch is rejected when any above
- operation fails.
- 
-@@ -343,11 +344,11 @@ this process, see the "Consistency model" section.
- Finally, once all tasks have been patched, the 'transition' value changes
- to '0'.
- 
--[*] Note that functions might be patched multiple times. The ftrace handler
--    is registered only once for a given function. Further patches just add
--    an entry to the list (see field `func_stack`) of the struct klp_ops.
--    The right implementation is selected by the ftrace handler, see
--    the "Consistency model" section.
-+[*] Note that two patches might modify the same function during the transition
-+    to a new cumulative patch. The ftrace handler is registered only once
-+    for a given function. The new patch just adds an entry to the list
-+    (see field `func_stack`) of the struct klp_ops. The right implementation
-+    is selected by the ftrace handler, see the "Consistency model" section.
- 
- 
- 5.2. Disabling
-@@ -374,8 +375,11 @@ Third, the sysfs interface is destroyed.
- Finally, the module can be removed if the transition was not forced and the
- last sysfs entry has gone.
- 
--Note that patches must be disabled in exactly the reverse order in which
--they were enabled. It makes the problem and the implementation much easier.
-+Note that any patch dependencies have to be handled by the atomic replace
-+and cumulative patches, see Documentation/livepatch/cumulative-patches.txt.
-+Therefore there is usually only one patch enabled on the system. There is
-+still possibility to have more trivial and independent livepatches enabled
-+at the same time. These can be enabled and disabled in any order.
- 
- 
- 6. Sysfs
-diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-index 695d565f23c1..f3e199e8b767 100644
---- a/kernel/livepatch/core.c
-+++ b/kernel/livepatch/core.c
-@@ -137,6 +137,47 @@ static struct klp_object *klp_find_object(struct klp_patch *patch,
- 	return NULL;
- }
- 
-+static int klp_check_obj_conflict(struct klp_patch *patch,
-+				  struct klp_object *old_obj)
-+{
-+	struct klp_object *obj;
-+	struct klp_func *func, *old_func;
-+
-+	obj = klp_find_object(patch, old_obj);
-+	if (!obj)
-+		return 0;
-+
-+	klp_for_each_func(old_obj, old_func) {
-+		func = klp_find_func(obj, old_func);
-+		if (!func)
-+			continue;
-+
-+		pr_err("Function '%s,%lu' in object '%s' has already been livepatched.\n",
-+		       func->old_name, func->old_sympos ? func->old_sympos : 1,
-+		       obj->name ? obj->name : "vmlinux");
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int klp_check_patch_conflict(struct klp_patch *patch)
-+{
-+	struct klp_patch *old_patch;
-+	struct klp_object *old_obj;
-+	int ret;
-+
-+	list_for_each_entry(old_patch, &klp_patches, list) {
-+		klp_for_each_object(old_patch, old_obj) {
-+			ret = klp_check_obj_conflict(patch, old_obj);
-+			if (ret)
-+				return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- struct klp_find_arg {
- 	const char *objname;
- 	const char *name;
-@@ -888,7 +929,6 @@ static int klp_init_patch(struct klp_patch *patch)
- 	patch->module_put = false;
- 	INIT_LIST_HEAD(&patch->list);
- 	init_completion(&patch->finish);
--	klp_init_lists(patch);
- 
- 	if (!patch->objs)
- 		return -EINVAL;
-@@ -934,10 +974,6 @@ static int __klp_disable_patch(struct klp_patch *patch)
- 	if (klp_transition_patch)
- 		return -EBUSY;
- 
--	/* enforce stacking: only the last enabled patch can be disabled */
--	if (!list_is_last(&patch->list, &klp_patches))
--		return -EBUSY;
--
- 	klp_init_transition(patch, KLP_UNPATCHED);
- 
- 	klp_for_each_object(patch, obj)
-@@ -1052,8 +1088,18 @@ int klp_enable_patch(struct klp_patch *patch)
- 		return -ENOSYS;
- 	}
- 
-+
- 	mutex_lock(&klp_mutex);
- 
-+	/* Allow to use the dynamic lists in the check for conflicts. */
-+	klp_init_lists(patch);
-+
-+	if (!patch->replace && klp_check_patch_conflict(patch)) {
-+		pr_err("Use cumulative livepatches for dependent changes.\n");
-+		mutex_unlock(&klp_mutex);
-+		return -EINVAL;
-+	}
-+
- 	ret = klp_init_patch(patch);
- 	if (ret)
- 		goto err;
 -- 
-2.13.7
+2.17.1
 
