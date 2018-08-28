@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 328CDC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:52:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 984ABC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:52:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED1D12084A
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:52:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED1D12084A
+	by mail.kernel.org (Postfix) with ESMTP id 545452084A
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 15:52:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 545452084A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727590AbeH1To3 (ORCPT
+        id S1727611AbeH1Toc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 15:44:29 -0400
-Received: from foss.arm.com ([217.140.101.70]:41012 "EHLO foss.arm.com"
+        Tue, 28 Aug 2018 15:44:32 -0400
+Received: from foss.arm.com ([217.140.101.70]:41018 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726383AbeH1To2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 15:44:28 -0400
+        id S1726383AbeH1Toa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 15:44:30 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E6C861684;
-        Tue, 28 Aug 2018 08:52:11 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 705EE80D;
+        Tue, 28 Aug 2018 08:52:14 -0700 (PDT)
 Received: from e112298-lin.Emea.Arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D56483F557;
-        Tue, 28 Aug 2018 08:52:09 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 322193F557;
+        Tue, 28 Aug 2018 08:52:12 -0700 (PDT)
 From:   Julien Thierry <julien.thierry@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
@@ -35,10 +35,11 @@ Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
         christoffer.dall@arm.com, james.morse@arm.com,
         catalin.marinas@arm.com, will.deacon@arm.com,
         Julien Thierry <julien.thierry@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v5 10/27] arm64: cpufeature: Add cpufeature for IRQ priority masking
-Date:   Tue, 28 Aug 2018 16:51:20 +0100
-Message-Id: <1535471497-38854-11-git-send-email-julien.thierry@arm.com>
+        Oleg Nesterov <oleg@redhat.com>,
+        Dave Martin <Dave.Martin@arm.com>
+Subject: [PATCH v5 11/27] arm64: Make PMR part of task context
+Date:   Tue, 28 Aug 2018 16:51:21 +0100
+Message-Id: <1535471497-38854-12-git-send-email-julien.thierry@arm.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1535471497-38854-1-git-send-email-julien.thierry@arm.com>
 References: <1535471497-38854-1-git-send-email-julien.thierry@arm.com>
@@ -47,99 +48,128 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a cpufeature indicating whether a cpu supports masking interrupts
-by priority.
+If ICC_PMR_EL1 is used to mask interrupts, its value should be
+saved/restored whenever a task is context switched out/in or
+gets an exception.
 
-Add command line option to disable that feature at runtime.
+Add PMR to the registers to save in the pt_regs struct upon kernel entry,
+and restore it before ERET. Also, initialize it to a sane value when
+creating new tasks.
 
+Tested-by: Daniel Thompson <daniel.thompson@linaro.org>
 Signed-off-by: Julien Thierry <julien.thierry@arm.com>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Dave Martin <Dave.Martin@arm.com>
 ---
- Documentation/admin-guide/kernel-parameters.txt |  3 +++
- arch/arm64/include/asm/cpucaps.h                |  3 ++-
- arch/arm64/kernel/cpufeature.c                  | 31 +++++++++++++++++++++++++
- 3 files changed, 36 insertions(+), 1 deletion(-)
+ arch/arm64/include/asm/processor.h |  1 +
+ arch/arm64/include/asm/ptrace.h    |  5 ++++-
+ arch/arm64/kernel/asm-offsets.c    |  1 +
+ arch/arm64/kernel/entry.S          | 16 ++++++++++++++++
+ arch/arm64/kernel/process.c        |  2 ++
+ 5 files changed, 24 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 9871e64..d3e1170 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2764,6 +2764,9 @@
- 			noexec=on: enable non-executable mappings (default)
- 			noexec=off: disable non-executable mappings
- 
-+	nogicprios	[ARM64]
-+			Disable usage of GIC priorities to toggle interrupt status.
-+
- 	nosmap		[X86]
- 			Disable SMAP (Supervisor Mode Access Prevention)
- 			even if it is supported by processor.
-diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
-index ae1f704..8cc2ae5 100644
---- a/arch/arm64/include/asm/cpucaps.h
-+++ b/arch/arm64/include/asm/cpucaps.h
-@@ -51,7 +51,8 @@
- #define ARM64_SSBD				30
- #define ARM64_MISMATCHED_CACHE_TYPE		31
- #define ARM64_HAS_STAGE2_FWB			32
-+#define ARM64_HAS_IRQ_PRIO_MASKING		33
- 
--#define ARM64_NCAPS				33
-+#define ARM64_NCAPS				34
- 
- #endif /* __ASM_CPUCAPS_H */
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index 0d1e41e..2f2c557 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -1046,6 +1046,22 @@ static void cpu_has_fwb(const struct arm64_cpu_capabilities *__unused)
- 	WARN_ON(val & (7 << 27 | 7 << 21));
+diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
+index 79657ad..45a2e08 100644
+--- a/arch/arm64/include/asm/processor.h
++++ b/arch/arm64/include/asm/processor.h
+@@ -167,6 +167,7 @@ static inline void start_thread_common(struct pt_regs *regs, unsigned long pc)
+ 	memset(regs, 0, sizeof(*regs));
+ 	forget_syscall(regs);
+ 	regs->pc = pc;
++	regs->pmr_save = ICC_PMR_EL1_UNMASKED;
  }
- 
-+#ifdef CONFIG_USE_ICC_SYSREGS_FOR_IRQFLAGS
-+static bool nogicprios = false;
-+
-+static int __init early_nogicprios(char *p)
-+{
-+	nogicprios = true;
-+	return 0;
-+}
-+early_param("nogicprios", early_nogicprios);
-+
-+static bool can_use_gic_priorities(const struct arm64_cpu_capabilities *entry, int scope)
-+{
-+	return !nogicprios && has_useable_gicv3_cpuif(entry, scope);
-+}
-+#endif
-+
- static const struct arm64_cpu_capabilities arm64_features[] = {
- 	{
- 		.desc = "GIC system register CPU interface",
-@@ -1233,6 +1249,21 @@ static void cpu_has_fwb(const struct arm64_cpu_capabilities *__unused)
- 		.cpu_enable = cpu_enable_hw_dbm,
- 	},
- #endif
-+#ifdef CONFIG_USE_ICC_SYSREGS_FOR_IRQFLAGS
-+	{
-+		/*
-+		 * Depends on having GICv3
-+		 */
-+		.desc = "IRQ priority masking",
-+		.capability = ARM64_HAS_IRQ_PRIO_MASKING,
-+		.type = ARM64_CPUCAP_STRICT_BOOT_CPU_FEATURE,
-+		.matches = can_use_gic_priorities,
-+		.sys_reg = SYS_ID_AA64PFR0_EL1,
-+		.field_pos = ID_AA64PFR0_GIC_SHIFT,
-+		.sign = FTR_UNSIGNED,
-+		.min_field_value = 1,
-+	},
-+#endif
- 	{},
- };
- 
--- 
-1.9.1
 
+ static inline void start_thread(struct pt_regs *regs, unsigned long pc,
+diff --git a/arch/arm64/include/asm/ptrace.h b/arch/arm64/include/asm/ptrace.h
+index 177b851..29ec217 100644
+--- a/arch/arm64/include/asm/ptrace.h
++++ b/arch/arm64/include/asm/ptrace.h
+@@ -25,6 +25,9 @@
+ #define CurrentEL_EL1		(1 << 2)
+ #define CurrentEL_EL2		(2 << 2)
+
++/* PMR value use to unmask interrupts */
++#define ICC_PMR_EL1_UNMASKED    0xf0
++
+ /* AArch32-specific ptrace requests */
+ #define COMPAT_PTRACE_GETREGS		12
+ #define COMPAT_PTRACE_SETREGS		13
+@@ -163,7 +166,7 @@ struct pt_regs {
+ #endif
+
+ 	u64 orig_addr_limit;
+-	u64 unused;	// maintain 16 byte alignment
++	u64 pmr_save;
+ 	u64 stackframe[2];
+ };
+
+diff --git a/arch/arm64/kernel/asm-offsets.c b/arch/arm64/kernel/asm-offsets.c
+index 323aeb5..bab4122 100644
+--- a/arch/arm64/kernel/asm-offsets.c
++++ b/arch/arm64/kernel/asm-offsets.c
+@@ -78,6 +78,7 @@ int main(void)
+   DEFINE(S_ORIG_X0,		offsetof(struct pt_regs, orig_x0));
+   DEFINE(S_SYSCALLNO,		offsetof(struct pt_regs, syscallno));
+   DEFINE(S_ORIG_ADDR_LIMIT,	offsetof(struct pt_regs, orig_addr_limit));
++  DEFINE(S_PMR_SAVE,		offsetof(struct pt_regs, pmr_save));
+   DEFINE(S_STACKFRAME,		offsetof(struct pt_regs, stackframe));
+   DEFINE(S_FRAME_SIZE,		sizeof(struct pt_regs));
+   BLANK();
+diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
+index 85ce06ac..79b06af 100644
+--- a/arch/arm64/kernel/entry.S
++++ b/arch/arm64/kernel/entry.S
+@@ -249,6 +249,15 @@ alternative_else_nop_endif
+ 	msr	sp_el0, tsk
+ 	.endif
+
++	/* Save pmr */
++alternative_if ARM64_HAS_IRQ_PRIO_MASKING
++	mrs_s	x20, SYS_ICC_PMR_EL1
++alternative_else
++	/* Keep a sane value in the task context */
++	mov	x20, ICC_PMR_EL1_UNMASKED
++alternative_endif
++	str	x20, [sp, #S_PMR_SAVE]
++
+ 	/*
+ 	 * Registers that may be useful after this macro is invoked:
+ 	 *
+@@ -269,6 +278,13 @@ alternative_else_nop_endif
+ 	/* No need to restore UAO, it will be restored from SPSR_EL1 */
+ 	.endif
+
++	/* Restore pmr */
++alternative_if ARM64_HAS_IRQ_PRIO_MASKING
++	ldr	x20, [sp, #S_PMR_SAVE]
++	msr_s	SYS_ICC_PMR_EL1, x20
++	dsb	sy
++alternative_else_nop_endif
++
+ 	ldp	x21, x22, [sp, #S_PC]		// load ELR, SPSR
+ 	.if	\el == 0
+ 	ct_user_enter
+diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
+index 7f1628e..1f6a4d5 100644
+--- a/arch/arm64/kernel/process.c
++++ b/arch/arm64/kernel/process.c
+@@ -230,6 +230,7 @@ void __show_regs(struct pt_regs *regs)
+ 	}
+
+ 	printk("sp : %016llx\n", sp);
++	printk("pmr_save: %08llx\n", regs->pmr_save);
+
+ 	i = top_reg;
+
+@@ -355,6 +356,7 @@ int copy_thread(unsigned long clone_flags, unsigned long stack_start,
+ 	} else {
+ 		memset(childregs, 0, sizeof(struct pt_regs));
+ 		childregs->pstate = PSR_MODE_EL1h;
++		childregs->pmr_save = ICC_PMR_EL1_UNMASKED;
+ 		if (IS_ENABLED(CONFIG_ARM64_UAO) &&
+ 		    cpus_have_const_cap(ARM64_HAS_UAO))
+ 			childregs->pstate |= PSR_UAO_BIT;
+--
+1.9.1
