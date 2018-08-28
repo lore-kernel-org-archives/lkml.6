@@ -2,96 +2,109 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F6BEC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:22:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D599C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:23:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAAC120897
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:22:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JbwvFBQO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAAC120897
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id BC8542089B
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 12:23:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC8542089B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727948AbeH1QNY (ORCPT
+        id S1727968AbeH1QOq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 12:13:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59488 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727085AbeH1QNX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 12:13:23 -0400
-Received: from mail-qt0-f177.google.com (mail-qt0-f177.google.com [209.85.216.177])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB2AD20897;
-        Tue, 28 Aug 2018 12:21:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535458918;
-        bh=fJrF1BpFBl5bpC10bZUH4R0D9z4oA/aIY+VNWYbM1XI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=JbwvFBQO+MxKC3+3PLOiwirEKkjTq3fqF/x8XZdMGUPIUNjvRGIMHzlEdqfoMk+zA
-         rxeAkEOxnzilESNTrXH6v9B75WVarUsoeInmJmZpjD6WCWNfAK0C2R7MF0MPh0bhSZ
-         8pFzH/qc/3ZcOEMSxzg/yxDqDgL2qQ0v/zMBaJuE=
-Received: by mail-qt0-f177.google.com with SMTP id g44-v6so1332700qtb.12;
-        Tue, 28 Aug 2018 05:21:58 -0700 (PDT)
-X-Gm-Message-State: APzg51BI7LIrLUnrWTY5GFdA/7VBJLWTM6hCXtFX4JekaBw5hS7xSQPQ
-        6vD3qBswA/aFVf1w+AC0YxplUi4Dunc/8Z9H4Q==
-X-Google-Smtp-Source: ANB0VdbJHrfdMmwVod7x8b5fgwSzVMPtS5/7SQrJC9iRTBSilEeIF1bHhTmi2sLy7LaxV3zLcAQz+ySyPAB32irwqPY=
-X-Received: by 2002:a0c:e9ce:: with SMTP id q14-v6mr1250401qvo.106.1535458918014;
- Tue, 28 Aug 2018 05:21:58 -0700 (PDT)
+        Tue, 28 Aug 2018 12:14:46 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:34956 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727101AbeH1QOq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 12:14:46 -0400
+Received: by mail-qt0-f194.google.com with SMTP id j7-v6so1380394qtp.2;
+        Tue, 28 Aug 2018 05:23:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xMg9ce79d1E413VsXHxHA9Y6xAQwPV+OITyJvWM1yOw=;
+        b=S10H5bMve/OwPsxHMjE5pmRKB7iLcRvZTMD8qCPf1F7dxQoS5u3u3P7C+zuNaLKTLW
+         5kOdX+5TwubDNJIRDEalhgoyXKUHJhKEtMPRZ8rJnLAg8bg4q+Cj5MSLQ2qDkDLRrmP0
+         u6FoySjljgBN01NWf+dufC9/SOvfRriXWz3UxkkO9gAol551CYUsBaapuekO/e8xLYYg
+         CmoU+vnyvu4+ICCbLALLPTu+79ClJiOPVFsQC97n56M1FyULHKsiXweDdfjYfUKAvAfp
+         4GsLR3RJ1JUaVDl2uJIbTrxO8HovyR9osjjweFwcmc5OQMYrodgUxbxyUgXoYDAhGu3r
+         7WYA==
+X-Gm-Message-State: APzg51D3SwRW0IcMSjlO5NHw6/TSwFYPEk/udXs5muXJjCnBhWNFjyPc
+        EPzYPrHw+tp2ENFktiLDI8FziQGyU+Vx9Q0uWC4=
+X-Google-Smtp-Source: ANB0VdbX1ShKI6iyMLxsZdVueEgeQkA4LZAWJvUfOOnL0QrDEIPAoPOD2hRM8SsL1oWTNKs6I3H3uUrpcE4Vo85eBdg=
+X-Received: by 2002:ac8:6959:: with SMTP id n25-v6mr1342898qtr.9.1535459000970;
+ Tue, 28 Aug 2018 05:23:20 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180828015252.28511-1-robh@kernel.org> <20180828015252.28511-28-robh@kernel.org>
- <2863201.EMhOTYQe29@avalon>
-In-Reply-To: <2863201.EMhOTYQe29@avalon>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 28 Aug 2018 07:21:46 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKdLoH9X_ThSr45NOqijWRBJgC7eV_iCrCXf5Jhu-dpkQ@mail.gmail.com>
-Message-ID: <CAL_JsqKdLoH9X_ThSr45NOqijWRBJgC7eV_iCrCXf5Jhu-dpkQ@mail.gmail.com>
-Subject: Re: [PATCH] media: Convert to using %pOFn instead of device_node.name
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Prabhakar Lad <prabhakar.csengg@gmail.com>,
-        Benoit Parrot <bparrot@ti.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Hyun Kwon <hyun.kwon@xilinx.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>
+References: <1535453838-12154-1-git-send-email-sunil.kovvuri@gmail.com>
+In-Reply-To: <1535453838-12154-1-git-send-email-sunil.kovvuri@gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 28 Aug 2018 14:23:04 +0200
+Message-ID: <CAK8P3a1xC6XjwDAmocpE5TZO7j6uVGtvBtWLPVcYwKqN6Z+seQ@mail.gmail.com>
+Subject: Re: [PATCH 00/15] soc: octeontx2: Add RVU admin function driver
+To:     Sunil Kovvuri <sunil.kovvuri@gmail.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-soc@vger.kernel.org, sgoutham@marvell.com,
+        Networking <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 5:06 AM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
+On Tue, Aug 28, 2018 at 12:57 PM <sunil.kovvuri@gmail.com> wrote:
 >
-> Hi Rob,
+> From: Sunil Goutham <sgoutham@marvell.com>
 >
-> Thank you for the patch.
+> Resource virtualization unit (RVU) on Marvell's OcteonTX2 SOC supports
+> multiple PCIe SRIOV physical functions (PFs) and virtual functions (VFs).
+> PF0 is called administrative / admin function (AF) and has privilege access
+> to registers to provision different RVU functional blocks to each of
+> PF/VF.
 >
-> On Tuesday, 28 August 2018 04:52:29 EEST Rob Herring wrote:
-> > In preparation to remove the node name pointer from struct device_node,
-> > convert printf users to use the %pOFn format specifier.
-> >
-> > Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> > Cc: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-> > Cc: Benoit Parrot <bparrot@ti.com>
-> > Cc: Philipp Zabel <p.zabel@pengutronix.de>
-> > Cc: Hyun Kwon <hyun.kwon@xilinx.com>
-> > Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > Cc: Michal Simek <michal.simek@xilinx.com>
-> > Cc: linux-media@vger.kernel.org
-> > Signed-off-by: Rob Herring <robh@kernel.org>
+> This admin function (AF) driver acts as a configuration / administrative
+> software which provisions functional blocks to a PF/VF on demand for them
+> to work as one of the following
+>  - A basic network controller (i.e NIC).
+>  - NIC with packet filtering, shaping and scheduling capabilities.
+>  - A crypto device.
+>  - A combination of above etc.
 >
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> PF/VFs communicate with admin function via a shared memory region.
+> This patch series adds logic for the following
+>  - RVU AF driver with functional blocks provisioning support
+>  - Mailbox infrastructure for communication between AF and PFs.
+>  - CGX driver which provides information about physcial network
+>    interfaces which AF processes and forwards required info to
+>    PF/VF drivers.
 >
-> Which tree would you like to merge this through ?
+> This is the first set of patches out of 70 odd patches.
+>
+> Note: This driver neither receives any data nor processes it i.e no I/O,
+>       just does the hardware configuration.
 
-Media tree. There's no dependency.
+Hi Sunil,
 
-Rob
+Thanks for posting this first series, I'm glad we're seeing support for this
+chip family making some progress.
+
+My feeling overall is that we need a review from the network driver
+folks more than the arm-soc team etc, and that maybe the driver
+as a whole should go into drivers/net/ethernet.
+
+We support some couple of similar hardware already that has
+both support for virtual functions and for crypto offload, including
+the Chelsio cxgb4, Mellanox mlx5, NXP DPAA and probably others,
+and we need to ensure that the exposed interfaces are all
+compatible, and that you use the correct subsystems and
+in-kernel abstractions for thing that are common.
+
+      Arnd
