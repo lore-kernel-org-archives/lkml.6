@@ -2,116 +2,155 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CEAFC433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 00:37:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FEB5C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 00:38:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1F0E208DC
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 00:37:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1F0E208DC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id BFBC920867
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 00:38:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DAlVArFJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFBC920867
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727133AbeH1E0F (ORCPT
+        id S1727050AbeH1E1Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 00:26:05 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55170 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725976AbeH1E0F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 00:26:05 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id F21F8401EF38;
-        Tue, 28 Aug 2018 00:37:04 +0000 (UTC)
-Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9BD7A10EE6C6;
-        Tue, 28 Aug 2018 00:37:04 +0000 (UTC)
-From:   Lyude Paul <lyude@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Daniel Stone <daniel@fooishbar.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] drm/i915: Remove i915_drm_dp_mst_status
-Date:   Mon, 27 Aug 2018 20:36:27 -0400
-Message-Id: <20180828003635.8200-5-lyude@redhat.com>
-In-Reply-To: <20180828003635.8200-1-lyude@redhat.com>
-References: <20180828003635.8200-1-lyude@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 28 Aug 2018 00:37:05 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 28 Aug 2018 00:37:05 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
+        Tue, 28 Aug 2018 00:27:25 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:39546 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725198AbeH1E1Y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 00:27:24 -0400
+Received: by mail-pl1-f195.google.com with SMTP id w14-v6so347442plp.6
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Aug 2018 17:38:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=s1Kcn2RxgQBav06NVFJwHLmOaM70bf01iu5qIC0YZPs=;
+        b=DAlVArFJDqD8OuTVLo17hJvpssxa/8lYZuYScgZb/V/EHT/Ft0/oIJlg3nu24U27or
+         5lK/VfR+zSQ1FiZkTTENLx6GP/XWmoVDTPdNnGEjWCOpbi4mb1hN3YvGUr+g/JyDb/8f
+         ijlm339XXMsCKiL3D3HkGPSpzF+A+x71/u+B8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=s1Kcn2RxgQBav06NVFJwHLmOaM70bf01iu5qIC0YZPs=;
+        b=bQ7dHLPbbfAWEtNKHRpAZDE03PmG1gJTNg9DhdKSozmqqx+gLFZ4hVe8z8mtZU/f77
+         1T0obhNLnwWG8ongl83VUpjVV/1KtOdIThfqqcLVDpfmKue+rOskEGUOWaKa09kphB/u
+         ++qb48MfT1be2ppd7EWhc2/aL2SdcSi6qAHvzrVLw+GbkaytyaMHVrSkz6zhcNqpdiSt
+         Fb5b7k5DEzV6ETIJGbesFzsbnIfh2K9aEV2ocfJrhSM91Qg5kB5lng2JLxyxrtud/PqA
+         7U5swDT+mhGfiHgREFMl331SNtrFL221BHaAQQ/PEVF7AWAImb4VXcy0t69w24HTjdEz
+         Gl7w==
+X-Gm-Message-State: APzg51BdR7vZNiUinPsEyG6T+4E1c6ybE4GG92eRU3Cap5hPDnAqfneK
+        50MzTMVtJBWLTZ3UMdw2/qx5aQ==
+X-Google-Smtp-Source: ANB0VdZFs0jk3dnIssZvCUsL9y55TXfTJNYNyEki5WumKMP2I5pS9deDcPlhhQfyLlgWzGLmwlN0Sw==
+X-Received: by 2002:a17:902:6115:: with SMTP id t21-v6mr15300668plj.92.1535416704337;
+        Mon, 27 Aug 2018 17:38:24 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
+        by smtp.gmail.com with ESMTPSA id l127-v6sm516690pfc.55.2018.08.27.17.38.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 27 Aug 2018 17:38:23 -0700 (PDT)
+Date:   Mon, 27 Aug 2018 17:38:23 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Sibi Sankar <sibis@codeaurora.org>
+Cc:     bjorn.andersson@linaro.org, p.zabel@pengutronix.de,
+        robh+dt@kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        ohad@wizery.com, mark.rutland@arm.com, sricharan@codeaurora.org,
+        akdwived@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        tsoni@codeaurora.org
+Subject: Re: [PATCH v2 1/6] dt-bindings: reset: Add PDC Global binding for
+ SDM845 SoCs
+Message-ID: <20180828003823.GY160295@google.com>
+References: <20180824131900.5353-1-sibis@codeaurora.org>
+ <20180824131900.5353-2-sibis@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180824131900.5353-2-sibis@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that DRM can create these debugfs nodes automatically; this isn't
-needed.
+Hi Sibi,
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Daniel Stone <daniel@fooishbar.org>
----
- drivers/gpu/drm/i915/i915_debugfs.c | 32 -----------------------------
- 1 file changed, 32 deletions(-)
+On Fri, Aug 24, 2018 at 06:48:55PM +0530, Sibi Sankar wrote:
+> Add PDC Global(Power Domain Controller) binding for SDM845 SoCs.
 
-diff --git a/drivers/gpu/drm/i915/i915_debugfs.c b/drivers/gpu/drm/i915/i915_debugfs.c
-index f9ce35da4123..5014828ca022 100644
---- a/drivers/gpu/drm/i915/i915_debugfs.c
-+++ b/drivers/gpu/drm/i915/i915_debugfs.c
-@@ -3534,37 +3534,6 @@ static int i915_drrs_status(struct seq_file *m, void *unused)
- 	return 0;
- }
- 
--static int i915_dp_mst_info(struct seq_file *m, void *unused)
--{
--	struct drm_i915_private *dev_priv = node_to_i915(m->private);
--	struct drm_device *dev = &dev_priv->drm;
--	struct intel_encoder *intel_encoder;
--	struct intel_digital_port *intel_dig_port;
--	struct drm_connector *connector;
--	struct drm_connector_list_iter conn_iter;
--
--	drm_connector_list_iter_begin(dev, &conn_iter);
--	drm_for_each_connector_iter(connector, &conn_iter) {
--		if (connector->connector_type != DRM_MODE_CONNECTOR_DisplayPort)
--			continue;
--
--		intel_encoder = intel_attached_encoder(connector);
--		if (!intel_encoder || intel_encoder->type == INTEL_OUTPUT_DP_MST)
--			continue;
--
--		intel_dig_port = enc_to_dig_port(&intel_encoder->base);
--		if (!intel_dig_port->dp.can_mst)
--			continue;
--
--		seq_printf(m, "MST Source Port %c\n",
--			   port_name(intel_dig_port->base.port));
--		drm_dp_mst_dump_topology(m, &intel_dig_port->dp.mst_mgr);
--	}
--	drm_connector_list_iter_end(&conn_iter);
--
--	return 0;
--}
--
- static ssize_t i915_displayport_test_active_write(struct file *file,
- 						  const char __user *ubuf,
- 						  size_t len, loff_t *offp)
-@@ -4733,7 +4702,6 @@ static const struct drm_info_list i915_debugfs_list[] = {
- 	{"i915_rcs_topology", i915_rcs_topology, 0},
- 	{"i915_shrinker_info", i915_shrinker_info, 0},
- 	{"i915_shared_dplls_info", i915_shared_dplls_info, 0},
--	{"i915_dp_mst_info", i915_dp_mst_info, 0},
- 	{"i915_wa_registers", i915_wa_registers, 0},
- 	{"i915_ddb_info", i915_ddb_info, 0},
- 	{"i915_sseu_status", i915_sseu_status, 0},
--- 
-2.17.1
+nit: missing blank before the opening parenthesis.
 
+> 
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+> ---
+>  .../bindings/reset/qcom,pdc-global.txt        | 52 +++++++++++++++++++
+>  include/dt-bindings/reset/qcom,sdm845-pdc.h   | 20 +++++++
+>  2 files changed, 72 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/reset/qcom,pdc-global.txt
+>  create mode 100644 include/dt-bindings/reset/qcom,sdm845-pdc.h
+> 
+> diff --git a/Documentation/devicetree/bindings/reset/qcom,pdc-global.txt b/Documentation/devicetree/bindings/reset/qcom,pdc-global.txt
+> new file mode 100644
+> index 000000000000..69f9edca9503
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/reset/qcom,pdc-global.txt
+> @@ -0,0 +1,52 @@
+> +PDC Global
+> +======================================
+> +
+> +This binding describes a reset-controller found on PDC-Global(Power Domain
+> +Controller) block for Qualcomm Technologies Inc SDM845 SoCs.
+
+Are there other PDC reset controllers that aren't 'global'? Otherwise
+I'd suggest to use 'pdc-reset' instead of 'pdc-global', which is more
+specific and in line with the name of the driver added by this series.
+Or something like 'pdc-reset-global/main' if there are other
+controllers?
+
+> +Required properties:
+> +- compatible:
+> +	Usage: required
+> +	Value type: <string>
+> +	Definition: must be:
+> +		    "qcom,sdm845-pdc-global"
+> +
+> +- reg:
+> +	Usage: required
+> +	Value type: <prop-encoded-array>
+> +	Definition: must specify the base address and size of the register
+> +	            space.
+> +
+> +- #reset-cells:
+> +	Usage: required
+> +	Value type: <uint>
+> +	Definition: must be 1; cell entry represents the reset index.
+> +
+> +Example:
+> +
+> +pdc_reset: reset-controller@b2e0000 {
+> +	compatible = "qcom,sdm845-pdc-global";
+> +	reg = <0xb2e0000 0x20000>;
+> +	#reset-cells = <1>;
+> +};
+> +
+> +PDC reset clients
+> +======================================
+> +
+> +Device nodes that need access to reset lines should
+> +specify them as a reset phandle in their corresponding node as
+> +specified in reset.txt.
+> +
+> +For list of all valid reset indicies see
+
+s/indicies/indices/ (or s/indicies/lines/ ?)
+
+Cheers
+
+Matthias
