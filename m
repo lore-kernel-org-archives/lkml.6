@@ -2,145 +2,108 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E634C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:24:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5250C433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:26:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47BBF20897
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:24:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dP5tkFfb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47BBF20897
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 62CD320894
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 13:26:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62CD320894
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728185AbeH1RQM (ORCPT
+        id S1728015AbeH1RS2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 13:16:12 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44177 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727212AbeH1RQM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 13:16:12 -0400
-Received: by mail-wr1-f68.google.com with SMTP id v16-v6so1568772wro.11;
-        Tue, 28 Aug 2018 06:24:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tmNeqcQRBIWKANQgmgxzHwAzaBjSSTABgwGfO9UYits=;
-        b=dP5tkFfbGNOCRnNFvAe47Nv7uATGEh1sA/BulQnEyEoNJwQSqi5PZHm+XwOJDXZMQR
-         yos0XsxFn7MxoRm0tbMmlMJP3+jxN8KAKFDc6oSt6v9Ln3mlYaZeJLphgAkDMu3VcRKE
-         XRSt0zry1nD9A52TYHIa1pEPUDhhUO87i2uVs8RfNoDajmzTkbcuuUpwyqphXaQYFku3
-         oS84YU4qdA/Ftb6R2V9XajnKz7/nv6hp4U7gUYYCQ5UQrEEuZ3YD937aS0bBy0MlRqmf
-         ur8Fps/UJ9doXiRVz8uG2lVpiKtK+jvR/nNO85Pkue/MG3MI6zfbNux6lMxI47ty7X+r
-         +gtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tmNeqcQRBIWKANQgmgxzHwAzaBjSSTABgwGfO9UYits=;
-        b=th+PlGeh2KPTqrBC1+quRUQFvmWJu0I3vIDUYiTXq7daCW5wD0Ptc0MOr428KW9Fxy
-         +PP6QqxVv2Fj5ytzJlDi4xHc/2Kd6v7yaJHvGtXjUVnujVG+UWujwKi9LAfoQjetjCI/
-         HCMSs4m2Mb4Vw8hjOzBzfsKE8msZjMLyagLQDcLliUoVgKQKPM2LdtQwtGrEQcJTq9ER
-         gD2LHBZyuhz+vIXOnS64q+TgsCMHlPzGFJj+WZ4KSPxZapfhim8sZnxUCYaudxmRp88o
-         MdcshBZdmw/tGMUdbaylJidew2R/lxa2ni8UjyODp8yZR8tEarTNaw/PTdxnOanU10yn
-         VLMg==
-X-Gm-Message-State: APzg51DLnyGyLJ1MO0cwJ63DlEjFyun29MM1+5Z4b6dB0+5ljAT6ye51
-        BndLhsgFz5IHmCTxILdg5B9wpSsSLxWalNwNisU=
-X-Google-Smtp-Source: ANB0VdaAgKmYlNMd06cHt3su0AmzudWYq/HCbT1OcV2wz2dpqVJT4JnP/21FulGBtB094ZYGSbqILBBCMH8FDxdzu8E=
-X-Received: by 2002:adf:9051:: with SMTP id h75-v6mr1242885wrh.65.1535462671550;
- Tue, 28 Aug 2018 06:24:31 -0700 (PDT)
+        Tue, 28 Aug 2018 13:18:28 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:46365 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727716AbeH1RS2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 13:18:28 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 9A6B820797; Tue, 28 Aug 2018 15:26:47 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-53-19.w90-88.abo.wanadoo.fr [90.88.170.19])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 2B645206A6;
+        Tue, 28 Aug 2018 15:26:47 +0200 (CEST)
+Date:   Tue, 28 Aug 2018 15:26:45 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Liang Yang <liang.yang@amlogic.com>
+Cc:     Yixun Lan <yixun.lan@amlogic.com>, <linux-mtd@lists.infradead.org>,
+        Rob Herring <robh@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Richard Weinberger <richard@nod.at>,
+        <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        <linux-amlogic@lists.infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Jerome Brunet <jbrunet@baylibre.com>
+Subject: Re: [RFC PATCH v2 2/2] mtd: rawnand: meson: add support for Amlogic
+ NAND flash controller
+Message-ID: <20180828152645.457dab5c@bbrezillon>
+In-Reply-To: <fdea2d54-7a68-64ec-8bb4-4a94677a3293@amlogic.com>
+References: <20180719094612.5833-1-yixun.lan@amlogic.com>
+        <20180719094612.5833-3-yixun.lan@amlogic.com>
+        <20180801235045.5b4d8211@bbrezillon>
+        <42877a0d-9830-0626-3f64-e49a326eaa3c@amlogic.com>
+        <20180817155608.5929b37a@bbrezillon>
+        <96e538a5-1232-11f2-8b9e-5ddb09dcc2de@amlogic.com>
+        <20180824144810.31c929a5@bbrezillon>
+        <fdea2d54-7a68-64ec-8bb4-4a94677a3293@amlogic.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <1535453838-12154-1-git-send-email-sunil.kovvuri@gmail.com> <CAK8P3a1xC6XjwDAmocpE5TZO7j6uVGtvBtWLPVcYwKqN6Z+seQ@mail.gmail.com>
-In-Reply-To: <CAK8P3a1xC6XjwDAmocpE5TZO7j6uVGtvBtWLPVcYwKqN6Z+seQ@mail.gmail.com>
-From:   Sunil Kovvuri <sunil.kovvuri@gmail.com>
-Date:   Tue, 28 Aug 2018 18:54:20 +0530
-Message-ID: <CA+sq2Cd3R0V5hcaF+ESfkOEBHgBwOB6b8Uwx7K+CeUN6gLFTOg@mail.gmail.com>
-Subject: Re: [PATCH 00/15] soc: octeontx2: Add RVU admin function driver
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, olof@lixom.net,
-        LAKML <linux-arm-kernel@lists.infradead.org>,
-        linux-soc@vger.kernel.org, Sunil Goutham <sgoutham@marvell.com>,
-        Linux Netdev List <netdev@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 5:53 PM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Tue, Aug 28, 2018 at 12:57 PM <sunil.kovvuri@gmail.com> wrote:
-> >
-> > From: Sunil Goutham <sgoutham@marvell.com>
-> >
-> > Resource virtualization unit (RVU) on Marvell's OcteonTX2 SOC supports
-> > multiple PCIe SRIOV physical functions (PFs) and virtual functions (VFs).
-> > PF0 is called administrative / admin function (AF) and has privilege access
-> > to registers to provision different RVU functional blocks to each of
-> > PF/VF.
-> >
-> > This admin function (AF) driver acts as a configuration / administrative
-> > software which provisions functional blocks to a PF/VF on demand for them
-> > to work as one of the following
-> >  - A basic network controller (i.e NIC).
-> >  - NIC with packet filtering, shaping and scheduling capabilities.
-> >  - A crypto device.
-> >  - A combination of above etc.
-> >
-> > PF/VFs communicate with admin function via a shared memory region.
-> > This patch series adds logic for the following
-> >  - RVU AF driver with functional blocks provisioning support
-> >  - Mailbox infrastructure for communication between AF and PFs.
-> >  - CGX driver which provides information about physcial network
-> >    interfaces which AF processes and forwards required info to
-> >    PF/VF drivers.
-> >
-> > This is the first set of patches out of 70 odd patches.
-> >
-> > Note: This driver neither receives any data nor processes it i.e no I/O,
-> >       just does the hardware configuration.
->
-> Hi Sunil,
->
-> Thanks for posting this first series, I'm glad we're seeing support for this
-> chip family making some progress.
+On Tue, 28 Aug 2018 21:21:48 +0800
+Liang Yang <liang.yang@amlogic.com> wrote:
 
-Thanks.
+> Hi Boris,
+> 
+> On 8/24/2018 8:48 PM, Boris Brezillon wrote:
+> > On Wed, 22 Aug 2018 22:08:42 +0800
+> > Liang Yang <liang.yang@amlogic.com> wrote:
+> >   
+> >>> You have to wait tWB, that's for sure.
+> >>>      
+> >> we have a maximum 32 commands fifo. when command is written into
+> >> NFC_REG_CMD, it doesn't mean that command is executing right now, maybe
+> >> it is buffering on the queue.Assume one ERASE operation, when 2nd
+> >> command(0xd0) is written into NFC_REG_CMD and then come into
+> >> NAND_OP_WAITRDY_INSTR, if I read the RB status by register, it may be
+> >> wrong because 0xd0 may not being executed. it is unusual unless
+> >> buffering two many command.  
+> > 
+> > You should flush the queue and wait for it to empty at the end of  
+> > ->exec_op().  
+> >   
+> >> so it seems that i still need to use nand_soft_waitrdy or wait cmd is
+> >> executed somewhere.  
+> > 
+> > Don't you have a WAIT_FOR_RB instruction? What is NFC_CMD_RB for? Also,
+> > NFC_CMD_IDLE seems to allow you to add an arbitrary delay, and that's
+> > probably what you should use for tWB.
+> > 
+> > em, I can wait for RB by reading the status from register now. but when   
+> calling nand_soft_waitrdy, i really met a problem. One *jiffies* is 
+> about 4ms. When programming, it pass 1ms to 
+> instr->ctx.waitrdy.timeout_ms and nand_soft_waitrdy will be only one 
+> *jiffies* to reach timeout. And then calling nand_soft_waitrdy maybe at 
+> the tail of 4ms interval, it may only wait 100us and next jiffies 
+> arrive. Is it correct?
 
->
-> My feeling overall is that we need a review from the network driver
-> folks more than the arm-soc team etc, and that maybe the driver
-> as a whole should go into drivers/net/ethernet.
-
-This driver doesn't handle any network IO and moreever this driver has to handle
-configuration requests from crypto driver as well. There will be
-separate network and
-crypto drivers which will be upstreamed into drivers/net/ethernet and
-drivers/crypto.
-And in future silicons there will be different types of functional
-blocks which will be
-added into this resource virtualization unit (RVU). Hence i thought
-this driver is not a
-right fit in drivers/net/ethernet.
-
->
-> We support some couple of similar hardware already that has
-> both support for virtual functions and for crypto offload, including
-> the Chelsio cxgb4, Mellanox mlx5, NXP DPAA and probably others,
-
-I agree, but i guess that is done to support inline crypto.
-Here this driver has to handle requests from normal crypto driver
-(drivers/crypto) as well.
-
-> and we need to ensure that the exposed interfaces are all
-> compatible, and that you use the correct subsystems and
-> in-kernel abstractions for thing that are common.
->
->       Arnd
+Hm, no. If you initialize the time you compare to (using time_before()
+or time_after()) correctly it should not happen. Anyway, I keep thinking
+this is not how it should be done. Did you try NFC_CMD_RB? Did you ask
+HW designers what it was created for?
