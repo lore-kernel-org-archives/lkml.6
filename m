@@ -6,89 +6,72 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63C8FC433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:59:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D85CC433F5
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 09:01:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13DE42089F
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 08:59:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13DE42089F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4502B2088E
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 09:01:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4502B2088E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727514AbeH1Mtq (ORCPT
+        id S1727442AbeH1MwL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 08:49:46 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57074 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726954AbeH1Mtq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 08:49:46 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 28 Aug 2018 08:52:11 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:55570 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727078AbeH1MwK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 08:52:10 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 5VBf1axGpcu1; Tue, 28 Aug 2018 11:01:12 +0200 (CEST)
+Received: from nazgul.tnic (46-10-68-224.ip.btc-net.bg [46.10.68.224])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6A18A40006EC;
-        Tue, 28 Aug 2018 08:59:06 +0000 (UTC)
-Received: from krava (unknown [10.43.17.209])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 147B92166B41;
-        Tue, 28 Aug 2018 08:59:04 +0000 (UTC)
-Date:   Tue, 28 Aug 2018 10:59:04 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 0/2]: perf: reduce data loss when profiling highly
- parallel CPU bound workloads
-Message-ID: <20180828085904.GH23727@krava>
-References: <bdd669cd-a6dc-d592-4655-33b7bfc46cbb@linux.intel.com>
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 250D61EC02DD;
+        Tue, 28 Aug 2018 11:01:02 +0200 (CEST)
+Date:   Tue, 28 Aug 2018 10:59:03 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Tim Small <tim@buttersideup.com>
+Cc:     Takashi Iwai <tiwai@suse.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] EDAC: Remove the i82443bxgx_edac driver
+Message-ID: <20180828085903.GA32231@nazgul.tnic>
+References: <20180810141520.8993-1-tiwai@suse.de>
+ <20180815155752.GC28669@nazgul.tnic>
+ <s5hh8jv62lk.wl-tiwai@suse.de>
+ <20180815161205.GD28669@nazgul.tnic>
+ <20180827164535.GB22318@nazgul.tnic>
+ <56b161bc-9b5e-63c9-b815-8b3ff8214887@buttersideup.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <bdd669cd-a6dc-d592-4655-33b7bfc46cbb@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 28 Aug 2018 08:59:06 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 28 Aug 2018 08:59:06 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
+In-Reply-To: <56b161bc-9b5e-63c9-b815-8b3ff8214887@buttersideup.com>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 08:03:21PM +0300, Alexey Budankov wrote:
-> 
-> Currently in record mode the tool implements trace writing serially. 
-> The algorithm loops over mapped per-cpu data buffers and stores ready 
-> data chunks into a trace file using write() system call.
-> 
-> At some circumstances the kernel may lack free space in a buffer 
-> because the other buffer's half is not yet written to disk due to 
-> some other buffer's data writing by the tool at the moment.
-> 
-> Thus serial trace writing implementation may cause the kernel 
-> to loose profiling data and that is what observed when profiling 
-> highly parallel CPU bound workloads on machines with big number 
-> of cores.
-> 
-> Experiment with profiling matrix multiplication code executing 128 
-> threads on Intel Xeon Phi (KNM) with 272 cores, like below,
-> demonstrates data loss metrics value of 98%:
-> 
-> /usr/bin/time perf record -o /tmp/perf-ser.data -a -N -B -T -R -g \
->     --call-graph dwarf,1024 --user-regs=IP,SP,BP \
->     --switch-events -e cycles,instructions,ref-cycles,software/period=1,name=cs,config=0x3/Duk -- \
->     matrix.gcc
-> 
-> Data loss metrics is the ratio lost_time/elapsed_time where 
-> lost_time is the sum of time intervals containing PERF_RECORD_LOST 
-> records and elapsed_time is the elapsed application run time 
-> under profiling.
+On Mon, Aug 27, 2018 at 08:30:23PM +0100, Tim Small wrote:
+> On that basis, I don't see a problem with removing it, but if there's a
+> preference for me to fix it, (and if I still have some old hardware
+> somewhere that I can test it on), I'll be happy to do that instead.
 
-I like the idea and I think it's good direction to go, but could
-you please share some from perf stat or whatever you used to meassure
-the new performance?
+Well, if you don't have the hardware anymore, fixing it would be moot
+and the only thing we can do is remove it. So, the question is, do you
+still have a functioning box and you want to waste your time with it?
 
-thanks,
-jirka
+I mean, this is pentium III, it probably takes forever to build the
+latest kernel on it and if it were me, I'd simply buy new hardware.
+Because IMO, it is not worth the energy to even power such ancient crap
+and waste money on the electricity it is going to consume...
+
+-- 
+Regards/Gruss,
+    Boris.
+
+ECO tip #101: Trim your mails when you reply.
+--
