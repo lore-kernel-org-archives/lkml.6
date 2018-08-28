@@ -3,52 +3,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 460A1C433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82337C43334
 	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:08:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0145A208A2
+	by mail.kernel.org (Postfix) with ESMTP id 3AD2D2089F
 	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 21:08:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="xfYSEXgk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0145A208A2
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="IyvKZvBF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AD2D2089F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727591AbeH2BCC (ORCPT
+        id S1727617AbeH2BCC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 28 Aug 2018 21:02:02 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47782 "EHLO
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47784 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727199AbeH2BCB (ORCPT
+        with ESMTP id S1727285AbeH2BCC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 21:02:01 -0400
+        Tue, 28 Aug 2018 21:02:02 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=J0VdibBmrXSeqAQMa1qNkktcA6keB0VuwzCYmlrsnxY=; b=xfYSEXgkgFos
-        rkqC8SBxN50w4s3GHQcihu2V4YgOSS1rlKDO2i9BGXgrh9W1j/s1DKwPTjB6zJ/5dom/fsOkHCrbw
-        HpAm0e+Z/1UbEn76TLHUYzCmYEQ6sQ7kd/8b/rlRcjUeeBEQlXBCumN6OVo+T6jZEs4rqtO64qGNu
-        r5cVU=;
+        List-Archive; bh=hTdYlKGbZ17mcOK0t8F5/quv5zVccrlHt/ub9a4P5/g=; b=IyvKZvBFv8MS
+        R03tkoBuRg9pieuDsv9P7lK4BAF7gtwi5lttiMRS9VlnRNv5vmER9kMzC1OAMZapk+/r8otgnzfIB
+        0rpQzSZIFU2I6dT3svK2YHCdCzIpjXhRu1ZIaDw1LXWAX1dLXsMQRqDMHP0eP0utufz09QFYW/2Rf
+        IRuHE=;
 Received: from 94.197.121.204.threembb.co.uk ([94.197.121.204] helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fulE1-0007ll-1G; Tue, 28 Aug 2018 21:08:33 +0000
+        id 1fulE1-0007lk-1G; Tue, 28 Aug 2018 21:08:33 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 1AD74440079; Tue, 28 Aug 2018 21:54:54 +0100 (BST)
+        id 1FF04440080; Tue, 28 Aug 2018 21:55:03 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Douglas Anderson <dianders@chromium.org>
+To:     Axel Lin <axel.lin@ingics.com>
 Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: core: Add locking to debugfs regulator_summary" to the regulator tree
+Subject: Applied "regulator: bd71837: Remove duplicate assignment for n_voltages of LDO2" to the regulator tree
 In-Reply-To: 
-Message-Id: <20180828205454.1AD74440079@finisterre.ee.mobilebroadband>
-Date:   Tue, 28 Aug 2018 21:54:54 +0100 (BST)
+Message-Id: <20180828205503.1FF04440080@finisterre.ee.mobilebroadband>
+Date:   Tue, 28 Aug 2018 21:55:03 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -56,7 +56,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: core: Add locking to debugfs regulator_summary
+   regulator: bd71837: Remove duplicate assignment for n_voltages of LDO2
 
 has been applied to the regulator tree at
 
@@ -81,129 +81,37 @@ to this mail.
 Thanks,
 Mark
 
-From 7e4d9683d6a716533f5c5026795b7b1ebdbcb2ed Mon Sep 17 00:00:00 2001
-From: Douglas Anderson <dianders@chromium.org>
-Date: Thu, 16 Aug 2018 13:28:03 -0700
-Subject: [PATCH] regulator: core: Add locking to debugfs regulator_summary
+From 61b2e6741e81226c29a5ed92fd886f11efb78e98 Mon Sep 17 00:00:00 2001
+From: Axel Lin <axel.lin@ingics.com>
+Date: Fri, 24 Aug 2018 19:16:12 +0800
+Subject: [PATCH] regulator: bd71837: Remove duplicate assignment for
+ n_voltages of LDO2
 
-Most functions that access the rdev lock the rdev mutex before looking
-at data.  ...but not the code that implements the debugfs
-regulator_summary.  It probably should though, so let's do it.
+Set it once is enough.
+Also move n_voltages close to volt_table for better readability.
 
-Note: this fixes no known issues.  The problem was found only by code
-inspection.
-
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/core.c | 51 ++++++++++++++++++++++++----------------
- 1 file changed, 31 insertions(+), 20 deletions(-)
+ drivers/regulator/bd71837-regulator.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index df55cf8f09f0..f686f2311317 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -3475,21 +3475,23 @@ int regulator_set_current_limit(struct regulator *regulator,
- }
- EXPORT_SYMBOL_GPL(regulator_set_current_limit);
- 
-+static int _regulator_get_current_limit_unlocked(struct regulator_dev *rdev)
-+{
-+	/* sanity check */
-+	if (!rdev->desc->ops->get_current_limit)
-+		return -EINVAL;
-+
-+	return rdev->desc->ops->get_current_limit(rdev);
-+}
-+
- static int _regulator_get_current_limit(struct regulator_dev *rdev)
- {
- 	int ret;
- 
- 	regulator_lock(rdev);
--
--	/* sanity check */
--	if (!rdev->desc->ops->get_current_limit) {
--		ret = -EINVAL;
--		goto out;
--	}
--
--	ret = rdev->desc->ops->get_current_limit(rdev);
--out:
-+	ret = _regulator_get_current_limit_unlocked(rdev);
- 	regulator_unlock(rdev);
-+
- 	return ret;
- }
- 
-@@ -3554,21 +3556,23 @@ int regulator_set_mode(struct regulator *regulator, unsigned int mode)
- }
- EXPORT_SYMBOL_GPL(regulator_set_mode);
- 
-+static unsigned int _regulator_get_mode_unlocked(struct regulator_dev *rdev)
-+{
-+	/* sanity check */
-+	if (!rdev->desc->ops->get_mode)
-+		return -EINVAL;
-+
-+	return rdev->desc->ops->get_mode(rdev);
-+}
-+
- static unsigned int _regulator_get_mode(struct regulator_dev *rdev)
- {
- 	int ret;
- 
- 	regulator_lock(rdev);
--
--	/* sanity check */
--	if (!rdev->desc->ops->get_mode) {
--		ret = -EINVAL;
--		goto out;
--	}
--
--	ret = rdev->desc->ops->get_mode(rdev);
--out:
-+	ret = _regulator_get_mode_unlocked(rdev);
- 	regulator_unlock(rdev);
-+
- 	return ret;
- }
- 
-@@ -4675,18 +4679,23 @@ static void regulator_summary_show_subtree(struct seq_file *s,
- 	struct regulation_constraints *c;
- 	struct regulator *consumer;
- 	struct summary_data summary_data;
-+	unsigned int opmode;
- 
- 	if (!rdev)
- 		return;
- 
-+	regulator_lock_nested(rdev, level);
-+
-+	opmode = _regulator_get_mode_unlocked(rdev);
- 	seq_printf(s, "%*s%-*s %3d %4d %6d %7s ",
- 		   level * 3 + 1, "",
- 		   30 - level * 3, rdev_get_name(rdev),
- 		   rdev->use_count, rdev->open_count, rdev->bypass_count,
--		   regulator_opmode_to_str(_regulator_get_mode(rdev)));
-+		   regulator_opmode_to_str(opmode));
- 
- 	seq_printf(s, "%5dmV ", _regulator_get_voltage(rdev) / 1000);
--	seq_printf(s, "%5dmA ", _regulator_get_current_limit(rdev) / 1000);
-+	seq_printf(s, "%5dmA ",
-+		   _regulator_get_current_limit_unlocked(rdev) / 1000);
- 
- 	c = rdev->constraints;
- 	if (c) {
-@@ -4733,6 +4742,8 @@ static void regulator_summary_show_subtree(struct seq_file *s,
- 
- 	class_for_each_device(&regulator_class, NULL, &summary_data,
- 			      regulator_summary_show_children);
-+
-+	regulator_unlock(rdev);
- }
- 
- static int regulator_summary_show_roots(struct device *dev, void *data)
+diff --git a/drivers/regulator/bd71837-regulator.c b/drivers/regulator/bd71837-regulator.c
+index 0f8ac8dec3e1..9b5e1297902f 100644
+--- a/drivers/regulator/bd71837-regulator.c
++++ b/drivers/regulator/bd71837-regulator.c
+@@ -388,10 +388,9 @@ static const struct regulator_desc bd71837_regulators[] = {
+ 		.ops = &bd71837_ldo_regulator_nolinear_ops,
+ 		.type = REGULATOR_VOLTAGE,
+ 		.volt_table = &ldo_2_volts[0],
++		.n_voltages = ARRAY_SIZE(ldo_2_volts),
+ 		.vsel_reg = BD71837_REG_LDO2_VOLT,
+ 		.vsel_mask = LDO2_MASK,
+-		.n_voltages = ARRAY_SIZE(ldo_2_volts),
+-		.n_voltages = BD71837_LDO2_VOLTAGE_NUM,
+ 		.enable_reg = BD71837_REG_LDO2_VOLT,
+ 		.enable_mask = BD71837_LDO_EN,
+ 		.owner = THIS_MODULE,
 -- 
 2.18.0
 
