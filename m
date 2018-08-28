@@ -2,80 +2,114 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 370E9C433F5
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:13:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18811C433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:17:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAA0F2088E
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:13:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pu1Nt7YX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAA0F2088E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B64B42083C
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 14:17:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B64B42083C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728229AbeH1SFU (ORCPT
+        id S1727780AbeH1SJh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 14:05:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46542 "EHLO mail.kernel.org"
+        Tue, 28 Aug 2018 14:09:37 -0400
+Received: from mga01.intel.com ([192.55.52.88]:20693 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726998AbeH1SFT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 14:05:19 -0400
-Received: from mail-qk0-f182.google.com (mail-qk0-f182.google.com [209.85.220.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E14D720894;
-        Tue, 28 Aug 2018 14:13:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535465608;
-        bh=JK8G/NIMr71xk49X+FD6nwoHurpR4/oiyqQlKm2kiYA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=pu1Nt7YX3O2VhXW5AdiqR2EeEtcvrKe71bvnQTO1FYu6EW03trGTqxiCYNh5zrVmc
-         4QlQDoZi8SYQc0l7lBGOfbw9toMSfHLdGH6wsqE+WcnbIjutwKV71k5rfVrnAjKS/e
-         jUrbel6bxvAnJKATshT01zFdyYJb6juzUUD80pYM=
-Received: by mail-qk0-f182.google.com with SMTP id z125-v6so1047720qkb.12;
-        Tue, 28 Aug 2018 07:13:27 -0700 (PDT)
-X-Gm-Message-State: APzg51B7P35po7El8cPLnKR50Qta04XhR7uyTU0TpUcyhXwab+6WCESp
-        GLE4CVAib1NKJwPyyShg9Tp9mi0LUpphjgq1jg==
-X-Google-Smtp-Source: ANB0VdYBTrDRIrdCQRrUWeCPPfFBvIRxGcxH4HU1RUbNvqcXfR1FKqlIjZdwP0Ueyg0NI8PvVXcKfpqoupzRzty55Fg=
-X-Received: by 2002:a37:bec4:: with SMTP id o187-v6mr1702155qkf.326.1535465607128;
- Tue, 28 Aug 2018 07:13:27 -0700 (PDT)
+        id S1727247AbeH1SJg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 14:09:36 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Aug 2018 07:17:44 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,299,1531810800"; 
+   d="scan'208";a="65801918"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga007.fm.intel.com with ESMTP; 28 Aug 2018 07:17:44 -0700
+Received: from [10.125.252.157] (abudanko-mobl.ccr.corp.intel.com [10.125.252.157])
+        by linux.intel.com (Postfix) with ESMTP id 02EC35802AD;
+        Tue, 28 Aug 2018 07:17:42 -0700 (PDT)
+Subject: Re: [PATCH v3 0/2]: perf: reduce data loss when profiling highly
+ parallel CPU bound workloads
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+To:     Andi Kleen <ak@linux.intel.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <bdd669cd-a6dc-d592-4655-33b7bfc46cbb@linux.intel.com>
+ <20180828085904.GH23727@krava>
+ <d250a62d-8dcc-4309-3c7d-38f6d9900da4@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <b7451edc-8261-a75d-226c-c8d419c5a8b4@linux.intel.com>
+Date:   Tue, 28 Aug 2018 17:17:42 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20180828015252.28511-1-robh@kernel.org> <20180828015252.28511-7-robh@kernel.org>
-In-Reply-To: <20180828015252.28511-7-robh@kernel.org>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 28 Aug 2018 09:13:15 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqK-U02dwj8H5KW9uF06NuK7AgCfAVeatsB-F-GGsxafvg@mail.gmail.com>
-Message-ID: <CAL_JsqK-U02dwj8H5KW9uF06NuK7AgCfAVeatsB-F-GGsxafvg@mail.gmail.com>
-Subject: Re: [PATCH] sparc: Convert to using %pOFn instead of device_node.name
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     David Miller <davem@davemloft.net>, sparclinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <d250a62d-8dcc-4309-3c7d-38f6d9900da4@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 27, 2018 at 8:52 PM Rob Herring <robh@kernel.org> wrote:
->
-> In preparation to remove the node name pointer from struct device_node,
-> convert printf users to use the %pOFn format specifier.
->
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: sparclinux@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
+Hi,
 
-> @@ -201,7 +201,7 @@ char * __init build_path_component(struct device_node *dp)
->         tmp_buf[0] = '\0';
->         __build_path_component(dp, tmp_buf);
->         if (tmp_buf[0] == '\0')
-> -               strcpy(tmp_buf, dp->name);
-> +               snprint(tmp_buf, sizeof(tmp_buf), "%pOFn", dp);
+On 28.08.2018 14:58, Alexey Budankov wrote:
+> Hi Andi,
+> 
+> On 28.08.2018 11:59, Jiri Olsa wrote:
+>> On Mon, Aug 27, 2018 at 08:03:21PM +0300, Alexey Budankov wrote:
+>>>
+>>> Currently in record mode the tool implements trace writing serially. 
+>>> The algorithm loops over mapped per-cpu data buffers and stores ready 
+>>> data chunks into a trace file using write() system call.
+>>>
+>>> At some circumstances the kernel may lack free space in a buffer 
+>>> because the other buffer's half is not yet written to disk due to 
+>>> some other buffer's data writing by the tool at the moment.
+>>>
+>>> Thus serial trace writing implementation may cause the kernel 
+>>> to loose profiling data and that is what observed when profiling 
+>>> highly parallel CPU bound workloads on machines with big number 
+>>> of cores.
+>>>
+>>> Experiment with profiling matrix multiplication code executing 128 
+>>> threads on Intel Xeon Phi (KNM) with 272 cores, like below,
+>>> demonstrates data loss metrics value of 98%:
+>>>
+>>> /usr/bin/time perf record -o /tmp/perf-ser.data -a -N -B -T -R -g \
+>>>     --call-graph dwarf,1024 --user-regs=IP,SP,BP \
+>>>     --switch-events -e cycles,instructions,ref-cycles,software/period=1,name=cs,config=0x3/Duk -- \
+>>>     matrix.gcc
+>>>
+>>> Data loss metrics is the ratio lost_time/elapsed_time where 
+>>> lost_time is the sum of time intervals containing PERF_RECORD_LOST 
+>>> records and elapsed_time is the elapsed application run time 
+>>> under profiling.
+>>
+>> I like the idea and I think it's good direction to go, but could
+>> you please share some from perf stat or whatever you used to meassure
+>> the new performance?
+> 
+> Is it ok to share VTune GUI screenshots I sent you the last time 
+> to demonstrate the advantage of AIO trace streaming?
 
-Ugg, v2 coming soon.
+VTune release manager permitted to share it, well, sorry for bothering.
 
-Rob
+> 
+> Thanks,
+> Alexey
+> 
+> 
+>>
+>> thanks,
+>> jirka
+>>
+> 
