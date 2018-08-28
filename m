@@ -2,431 +2,229 @@ Return-Path: <SRS0=TO5I=LL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02289C433F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:23:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 641ADC433F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:26:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8150420842
-	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:23:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F23D720842
+	for <linux-kernel@archiver.kernel.org>; Tue, 28 Aug 2018 10:26:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HVjQSZad";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="R1qh71Of"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8150420842
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="CyU075je"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F23D720842
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727230AbeH1OOs (ORCPT
+        id S1727281AbeH1ORG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 28 Aug 2018 10:14:48 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49152 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727099AbeH1OOs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 Aug 2018 10:14:48 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id CAB0C602AE; Tue, 28 Aug 2018 10:23:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535451829;
-        bh=pjcjAi5Z0JmBkMYrwViZbFmyyGVJDQWfEwAe8NDTVuM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=HVjQSZadlOdy5Pi7/VSfASVcu7gPh0YH1+LwBe+fSHtxKwZx+LqM7wSCPqU4kAl6Z
-         v/SkESHzR0AybunWSZyfewyMEzrPCcotfvOMNPpGiv79BYOZWbT7ue256ma5Sc6wyn
-         dBk/XCqZumQx20PMqm4uJF8gvZLkkOzgaxsibMSk=
-Received: from [10.206.24.101] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sayalil@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 356C5602AE;
-        Tue, 28 Aug 2018 10:23:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535451827;
-        bh=pjcjAi5Z0JmBkMYrwViZbFmyyGVJDQWfEwAe8NDTVuM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=R1qh71Of/AVUn1BmBe6T1fXw6YMVK392gDLCpHDmH2DPtTyNBZ1ZuJU1PUmrh4UPN
-         1d570AtmOu4MsYu2V0KgqjpufusVWD2T7tDMjdxAcML58BkQjqbWErNiMJ72EVqoAu
-         E8/QejtkXqj5nk5DncWe1jgaGQbmvwJUe2eWvnAU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 356C5602AE
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
-Subject: Re: [PATCH V10 2/2] scsi: ufs: Add configfs support for UFS
- provisioning
-To:     Adrian Hunter <adrian.hunter@intel.com>, subhashj@codeaurora.org,
-        cang@codeaurora.org, vivek.gautam@codeaurora.org,
-        rnayak@codeaurora.org, vinholikatti@gmail.com,
-        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
-        asutoshd@codeaurora.org, evgreen@chromium.org,
-        riteshh@codeaurora.org
-Cc:     linux-scsi@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>
-References: <1535088810-20989-1-git-send-email-sayalil@codeaurora.org>
- <1535088810-20989-3-git-send-email-sayalil@codeaurora.org>
- <5d2a6dea-e524-fca7-3c4b-a45bc9e6516a@intel.com>
-From:   Sayali Lokhande <sayalil@codeaurora.org>
-Message-ID: <8ee0372b-d930-208d-520b-5a38642a2844@codeaurora.org>
-Date:   Tue, 28 Aug 2018 15:53:40 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 28 Aug 2018 10:17:06 -0400
+Received: from mail-sn1nam02on0059.outbound.protection.outlook.com ([104.47.36.59]:40496
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726982AbeH1ORG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 Aug 2018 10:17:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=d4xH2LKW6XBp4drkPfpojDkjDzALI3QVzJU11Tg88dc=;
+ b=CyU075jei0IiYjsuQ4ucDDOycBkSLgVDKRYOXUViCsilN3Ms2HmyMWYVCSbL8qeDRmanRmWiiuEm843wv6EPwpgEw+yxwmduC5Ay460Qywx5Cb4aGQaNB1YdgUdbtc5kY0rJhZZWsWkQkeWsnvuhF/PS3CrVmb292INV8gCTG4w=
+Received: from CY1PR07CA0021.namprd07.prod.outlook.com
+ (2a01:111:e400:c60a::31) by DM5PR07MB2953.namprd07.prod.outlook.com
+ (2603:10b6:3:a::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1080.14; Tue, 28 Aug
+ 2018 10:26:00 +0000
+Received: from DM3NAM05FT014.eop-nam05.prod.protection.outlook.com
+ (2a01:111:f400:7e51::203) by CY1PR07CA0021.outlook.office365.com
+ (2a01:111:e400:c60a::31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1080.13 via Frontend
+ Transport; Tue, 28 Aug 2018 10:25:59 +0000
+Authentication-Results: spf=softfail (sender IP is 158.140.1.28)
+ smtp.mailfrom=cadence.com; ideasonboard.com; dkim=none (message not signed)
+ header.d=none;ideasonboard.com; dmarc=fail action=none
+ header.from=cadence.com;
+Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
+ cadence.com discourages use of 158.140.1.28 as permitted sender)
+Received: from sjmaillnx1.cadence.com (158.140.1.28) by
+ DM3NAM05FT014.mail.protection.outlook.com (10.152.98.123) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256) id
+ 15.20.1122.2 via Frontend Transport; Tue, 28 Aug 2018 10:25:58 +0000
+Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
+        by sjmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id w7SAPsBV018582
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
+        Tue, 28 Aug 2018 03:25:55 -0700
+X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
+Received: from maileu3.global.cadence.com (10.160.88.99) by
+ maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3; Tue, 28 Aug 2018 12:25:45 +0200
+Received: from lvloginb.cadence.com (10.165.177.11) by
+ maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server id
+ 15.0.1367.3 via Frontend Transport; Tue, 28 Aug 2018 12:25:44 +0200
+Received: from lvloginb.cadence.com (localhost [127.0.0.1])
+        by lvloginb.cadence.com (8.14.4/8.14.4) with ESMTP id w7SAPVik003716;
+        Tue, 28 Aug 2018 11:25:31 +0100
+Received: (from dkos@localhost)
+        by lvloginb.cadence.com (8.14.4/8.14.4/Submit) id w7SAPO59003551;
+        Tue, 28 Aug 2018 11:25:24 +0100
+From:   Damian Kos <dkos@cadence.com>
+To:     David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>, Sandy Huang <hjc@rock-chips.com>,
+        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+        Damian Kos <dkos@cadence.com>,
+        Quentin Schulz <quentin.schulz@bootlin.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-rockchip@lists.infradead.org>
+CC:     <pgaj@cadence.com>, <ltyrala@cadence.com>, <stelford@cadence.com>,
+        <jartur@cadence.com>, <piotrs@cadence.com>
+Subject: [PATCH v3 0/5] drm: add support for Cadence MHDP DPI/DP bridge.
+Date:   Tue, 28 Aug 2018 11:24:43 +0100
+Message-ID: <1535451894-2518-1-git-send-email-dkos@cadence.com>
+X-Mailer: git-send-email 1.9.0
 MIME-Version: 1.0
-In-Reply-To: <5d2a6dea-e524-fca7-3c4b-a45bc9e6516a@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain
+X-OrganizationHeadersPreserved: maileu3.global.cadence.com
+X-EOPAttributedMessage: 0
+X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(39860400002)(346002)(136003)(396003)(2980300002)(199004)(189003)(36092001)(305945005)(336012)(50226002)(86362001)(4326008)(105596002)(106466001)(356003)(186003)(47776003)(8676002)(14444005)(2906002)(107886003)(7636002)(36756003)(246002)(2201001)(8936002)(26005)(48376002)(54906003)(51416003)(486006)(42186006)(316002)(87636003)(478600001)(26826003)(5660300001)(16586007)(50466002)(7416002)(6666003)(476003)(110136005)(426003)(126002)(2616005)(21314002)(921003)(2101003)(1121003)(83996005);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR07MB2953;H:sjmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:corp.cadence.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;DM3NAM05FT014;1:EKhyjrgb11wEYCuAy5hTgSUF1C8jnjEkcIKE/VQx9Z2yrWLUz9tjjFMymwsbl7AqIMiy/ql/hWR0s1CZnCnn+o6PHOqqnarK5plEGmEWQ+/Tqkses1/k7mZTlXWWi2lO
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 194b2b19-4579-4909-4ad3-08d60cd0a5ce
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060);SRVR:DM5PR07MB2953;
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR07MB2953;3:lMG4EwXIijF/tSDmQoq3vpQBZUoYTSz1B0n7kiFoBJp1rGi/DIohDi0PooR6BpBvoTAyXzWO8pvNrqvBQdjsvqBkXlIgTURBUPf/sy+sKyzz3Us3z2+d0iXFhUybzu20VwAnzp0pb3xRTw6VKJ5owZ+ufZwNx2IrCCDIiKbEKW0FH1EeCTxF9OWL7BDyO04WSEJWSdO2eDuQ4a6gB7i2b5bbjDwtrH5xeeBwgK/yWt+kdmWLUgxB8YMnvakl9ARa7BYX+ftovFiX4IKAZJUeejyKsh+Bj4YPw9LtzUng6OEUPVSnJH3N6+ihz6DPK1yZ6vWeiBZ2eyURLGT/ym0j/A==;25:XopZDoUePAllE78LBfUXvyv/poeL6YgiwaMDX8MFJzSgOA4xRyHFSaorSRJc/+ZVq/xNkstthtbqElcX5McBzQnX4f6FzpDW92u1htNPwlgpdgi9rMViMdTg14iqJgTma7geeNXiqrXlpM36ShWeT0bcHHJAkU1VtnP/jINWhP/4wiwbRWOl/LwVTMsw53CoYiyTbe9dHJyBcX9Iqf1MNcx6Qyv9igbfZbPwjcOWs94AgrBllvsKw/AaS3fbasJSwwzcXCJImck5vqBzSN2tVArLNNpdLzXooEVskcMM6U/dAPOYVbSuxAwzlyn9eI+Y1i6DpDO9RN3bkuN3OYfDxg==;31:/BcOPEloGgA4PHFYmbE2nz5pJ14q3xas2FHA/RaNzfKkPx/+LEkUlAuC+3Rln+G+hPyxj/LAQjGsnfxYxsmc7J4s3OrIQ1ou1ZPOQKAdotM0EUEy3kT82qKW4BWBZIrT/BZqYDiLtCUMq+MImWpCeJ1wgwFUVWvqSA6snrxZD8BoMlsUIEmW6xUOXCnhrTczTt5KIk5T4+0NW83uburA5UT/U/ikdmnDglqcvFGoOIA=
+X-MS-TrafficTypeDiagnostic: DM5PR07MB2953:
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR07MB2953;20:ZApg5hZLAqVWOjkhkp0DD11SAjXtLerheXqhD4if/ndu46weiSXFZHsHYcre88GJXycgz5sC/XrKrpXcfoVVB64uEXd0BOEaDG8HYWnxU0drjvgGzNElFV+5TIPvyop96f41NYM8Pq9ZKbx+AMomPN2sO0UATPwqvWw6FZhz72CXnlUs7IS3xsV1TMhTIl9bE3AD+o/qn3JJTWPmvvJUFONhsZi3X/o/vQeJxURhZ+4Hq+yuBM40k3bJgA/nWSnn4RksNQfcaijsPZWAXJo3p7vD8lzrm+YGealEOIqMtNkxM/sJ8kEZKc14YpXL94zP5g4A4AyLbLZ7wQf4gmtuV86pkQx3vvL6gWemdK0plSHz+ahBzSJn9DV4UEkgwoMOnZA290ywGPC+N2OZk/DcDHMVO285Dh40UC/EeQ28ww0FnDcuqcztwikVYCA5TL/P75tFLz+GEEfsR5sr7TNzhsQ6IdObLKM6eNWXNMPRLQWfKpXkPEFgqct49ig1WY21;4:qRcNQACYVhf+49g9XY2t2Of6vUWuH8/zZvDz9DMjAAX9pdtRm3KO9Ucg7jAivl3BigE4HhNlfcaTkBvnX8ghqtSLnT8TwN1styETCEOZAYtOma5fozqHB2IebVlj6wivPIcC4Pcp3OYc7bchc+1s4vPWVAkA9+rWfPOCVv+MU8VW1FtD05nm6c1Yj+XwOPfxsswrqcm2vJTsKkeM6tge44NOWorz/ciNzsgJ2o1BYXcQPZo90rumLTM2ZVtj+PSVi2lnKlE8XyYRWPO05FD0YQ==
+X-Microsoft-Antispam-PRVS: <DM5PR07MB295342C74F18498E1603FF1BCD0A0@DM5PR07MB2953.namprd07.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93003095)(3231311)(944501410)(52105095)(10201501046)(3002001)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699016);SRVR:DM5PR07MB2953;BCL:0;PCL:0;RULEID:;SRVR:DM5PR07MB2953;
+X-Forefront-PRVS: 077884B8B5
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM5PR07MB2953;23:uonroncZXU9QWo/9bUsbW5hgeudXnf2fy4EAZ915a?=
+ =?us-ascii?Q?75az3RZJmx2V/OmS4Q5LJbiUQl9W1ZcFwqCLO3MXizPphMe1D9DskQfBg3fz?=
+ =?us-ascii?Q?kRLq/KoW9ZWItIffeXWuWARyMXgD+lDLIfQYU0T7Pc4XXpi70GS+in2aVEWy?=
+ =?us-ascii?Q?tZ0xNcUyp8aau+n0p4JkBiUg1QDGf730CgAohuOzlWSg6+E2S2+zY85q+jlF?=
+ =?us-ascii?Q?WBtZ2BGJgbwztqvKapsvOYd/f4VgsoYEmotW/zKHwQHzF7w8NcaVmhavVun9?=
+ =?us-ascii?Q?8ow5Rw2y0XgamA9eF009zEUGQVgG6eYg34Tys2OMgTOIyLsf72UXYCufSWOG?=
+ =?us-ascii?Q?P7KZnaIMtDSNBwtIFnz4lboXNk0lgQCY5xA/MB4dLvKbxMeLFtBTvHg0d/eA?=
+ =?us-ascii?Q?jnElrkuPw+0aC8/Y+dzaHewHf9aIK5lfpmAs/mpVqDE4ehuC4yMDIzxqy5xx?=
+ =?us-ascii?Q?mOeQ5Cus4dB/ltdpRqnoXR4AFAFc/8Y51Asy57bpA/vbrmCgwHqCpebbtIFt?=
+ =?us-ascii?Q?BB3te7fy1aGl5QBCKMD9AG6x5qsCWvUFxWF+D8h9QPKBeCZo2KyU/AkUImbh?=
+ =?us-ascii?Q?lBCvUNIBiV92Bzo6JuWeILCr26N0OTO9umWQYZsR1/kKrGCA/8ih0UdGwxTN?=
+ =?us-ascii?Q?FY6ILJ5+nlSyeYtGIwg6yv2Krsmk5Tp5bf7pN4wgYZVWuDyBhRRDZC8NeLlu?=
+ =?us-ascii?Q?n13wV20a7i3DQw4nNceu80VVzYNnzhqzhrDJu/8ympdtnWCNSxLD6dc5ksr4?=
+ =?us-ascii?Q?utBLmCpCj9lu1uVA00t8EH3LdwEtcHZhvigbXozgsvdMCX6lqEHHc+1BBQvJ?=
+ =?us-ascii?Q?iN67SftETv9HBIt35ryJXKtSV61Z3NdEDNRKWLqI2PhZnAhzQKQ6661QJxtE?=
+ =?us-ascii?Q?q40QGZIQvde558U/wwZ90Pi8wSPWesw+nvsqTgmIoZolxNF8rp56rmj4L0u/?=
+ =?us-ascii?Q?VObQi69CgJSZGvUPJJAF4PsLw/Sh72HJ9ReF1wMxke5XiGU3mnlT+RaBkmEI?=
+ =?us-ascii?Q?U9cDg5syMU0hr18uD9XrYdlrhakd2wEIBXYPI5tWVKW0vMomwKHNCLTb/sqj?=
+ =?us-ascii?Q?8pqSMkQDhJUNEZZWooiG24RvuO21gRPNaeyYIhENTou/EIhPoOD8sEgXIq4E?=
+ =?us-ascii?Q?HBWNNGobdkFbUdHYIgq0KQFaKGS0tFPQlkFSahYQSSRTF4HLpylIQ=3D=3D?=
+X-Microsoft-Antispam-Message-Info: mkwHTOKXsxN1RyT0n3uuFbDuNlPub3kpezA4H2dZHfqC6Woz88a8rNj3jx79U2Z0tig8Yk7UpFRQ8Imh8cavJJCH3ihg9hTE6HXiC33J0vTBXYF2Mpo/8kfH9e2h+uBT9dbjgZ+hI8ek+xnOHBPofpXg6CJ/E9gjaIvt3Kk7M6TuFqjvKr7UqB5lhnU0dUdlogGtHdO+ajmLgbNllqdB2iWI5OL9Ppa2BlaoOhPMfJ+aP/JtWRcww56cINXZNxVuw00kLuss/1AHpRPE3UfDiJcIuB2aGk37O4HlZMnDpxI+04YCy+z16yYkR+nQ5emoNI7bAm0n/C/DOX7KHeSIEgHbqaRFKh5vaJyTfX90WT5DPsXLQRKlDQCPCfi/E4h11+WxjCTe0irGtUS+ZQTgTA==
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR07MB2953;6:AlNoAZ8TGdSwYAum6ufVwWV9J3RDbBJkNPM0187UU54XNeDUPaWcFwFT+JT25UieDcaxj7BlYLWsKbQJME0LGX1eKOLUuEtLgu/fzF0yMDZyzegvsOomovazvpQzj0p8bfILhOvRcZeTnKx5zqJsMnbcD1DdQXLAlv57zyEuT9EjaDPLhiNP4HDYbr6Rgq/Y36nE5gDxaTH6SBwpNEjI7bIOEMlNb8MYOQ3txjaAGBQ4aia03bj/lBQWuCHQ4Gd88pqfd8D84lYOPkP1COVZsB3ZDCNduK9GioTZ0sNuuS32ODiLjzPBPzlJOrLBBuI2gF0qu2fwdXZfII0oHyjsq4dJ5oerX85BL7gMU4sbhyT/q2rao1EiaJCO1pwk+9QDoqPeMa4sHv9t5lyWpk2opNeaVcI9ls1vu6k6rsRYolvKi5sEZvFR6VjBJMBK4SH8wxpHC50TsAICzsUJhIez2w==;5:DvCSaHQRdyuvzqcH7c35rKvtSDlO91a9pbl4ndhXiK7ha9eDb5pDxcLvk54zvYIbLv69en8yL7+LDZ8OslcdcHqhvh0/JreWcBtYEjXcBTwgq2lPxRWx1RfxksUyTN1D+jjH390oSjpGDZHs0AvQboYNmURxqdKgAE/5+dDTeLc=;7:v5oyfHwkaA1iOVBrTyaq1TQt4eNqczBSLnJ6I43AJUTqMFyH9wsf13ZRjGkog21X16cNkjKuygshT6qDw3py+HPSI7VKe+UsENNQx5QnnVRhcyC3X8OcXJ01lSKTOeH4v7uVrj46z+vFsLPiF78IGgHI8WCmMUFq+uwxlrEfmeUKCm4ONhbMC2id3B+ndcykC6bOnOq8XCOyvfFCi1FLgfPaXXnNkMrE/cPQ8O2L1kczHj5yi2lYYIeDWvfyd/Mq
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR07MB2953;20:Gj7C5SGpd/M/0U5E5UIXIJM2TVYq3Au/4Gr5VHQAyX7eicluOH9CVo/quEQoojGnbv+Wtn9nEe8gbdTXAvTllaiuPR778jXf7F7Fi/+U84qP145PlBry0eDCgD34SQU4+qPhweDZo7OvTkxisIcXunP3IP0pHHa9dWunPisqBmWdD5h6VmcijzvA/FYWcbxyxmrWmCjRckg3hP6xB5Pr7qSncCSRNaPPu8O0VR76kPuRuET1tZjyOyCc4tWjwfDt
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2018 10:25:58.6338
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 194b2b19-4579-4909-4ad3-08d60cd0a5ce
+X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[158.140.1.28];Helo=[sjmaillnx1.cadence.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR07MB2953
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Adrian,
+Hello!
 
-On 8/24/2018 2:15 PM, Adrian Hunter wrote:
-> On 24/08/18 08:33, Sayali Lokhande wrote:
->> This patch adds configfs support to provision UFS device at
->> runtime. This feature can be primarily useful in factory or
->> assembly line as some devices may be required to be configured
->> multiple times during initial system development phase.
->> Configuration Descriptors can be written multiple times until
->> bConfigDescrLock attribute is zero.
->>
->> Configuration descriptor buffer consists of Device and Unit
->> descriptor configurable parameters which are parsed from vendor
->> specific provisioning file and then passed via configfs node at
->> runtime to provision ufs device.
->> CONFIG_CONFIGFS_FS needs to be enabled for using this feature.
->>
->> Usage:
->> 1) To read current configuration descriptor :
->>     cat /config/XXXX.ufshc/ufs_provision
->> 2) To provision ufs device:
->>     echo <config_desc_buf> > /config/XXXX.ufshc/ufs_provision
->>
->> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
->> ---
->>   Documentation/ABI/testing/configfs-driver-ufs |  18 +++
->>   drivers/scsi/ufs/Kconfig                      |  10 ++
->>   drivers/scsi/ufs/Makefile                     |   1 +
->>   drivers/scsi/ufs/ufs-configfs.c               | 155 ++++++++++++++++++++++++++
->>   drivers/scsi/ufs/ufshcd.c                     |   3 +-
->>   drivers/scsi/ufs/ufshcd.h                     |  17 +++
->>   6 files changed, 203 insertions(+), 1 deletion(-)
->>   create mode 100644 Documentation/ABI/testing/configfs-driver-ufs
->>   create mode 100644 drivers/scsi/ufs/ufs-configfs.c
->>
->> diff --git a/Documentation/ABI/testing/configfs-driver-ufs b/Documentation/ABI/testing/configfs-driver-ufs
->> new file mode 100644
->> index 0000000..eeee499c
->> --- /dev/null
->> +++ b/Documentation/ABI/testing/configfs-driver-ufs
->> @@ -0,0 +1,18 @@
->> +What:		/config/ufshcd/ufs_provision
-> You are using the device name as the config subsystem name, so this is really:
->
-> 	What:		/config/*/ufs_provision
-Agree. Will update.
->> +Date:		Jun 2018
->> +KernelVersion:	4.14
-> 4.19 maybe
-Done.
->> +Description:
->> +		This file shows the current ufs configuration descriptor set in device.
-> It is only the first config descriptor though isn't it?  There is no support
-> for the other 3.  Shouldn't we support config descriptors fully?
-Yes, we should support config descriptors fully. My current 
-implementation only supports config desc (index = 00h).
-I m thinking I can add separate "index" field along with "ufs_provision" 
-field and can use this index (instead of hard coding to 0)
-to write repective config_desc. In this way, we should first set the 
-"index" and then read/write to "ufs_provision".
-Let me know if you have any concern with this approach ?
+This is the series of patches that will add support for the Cadence's DPI/DP
+bridge. Please note that this is a preliminary version of the driver and there
+will be more patches in the future with updates, fixes and improvements.
+Please keep that in mind when looking at FIXME/TODO/XXX comments.
 
->> +		This can be used to provision ufs device if bConfigDescrLock is 0.
->> +		For more details, refer 14.1.6.3 Configuration Descriptor and
->> +		Table 14-12 - Unit Descriptor configurable parameters from specs for
->> +		description of each configuration descriptor parameter.
->> +		Configuration descriptor buffer needs to be passed in space separated
->> +		format specificied as below:
-> specificied -> specified
-Done
->> +		echo <bLength> <bDescriptorIDN> <bConfDescContinue> <bBootEnable>
->> +		<bDescrAccessEn> <bInitPowerMode> <bHighPriorityLUN>
->> +		<bSecureRemovalType> <bInitActiveICCLevel> <wPeriodicRTCUpdate>
->> +		<0Bh:0Fh_ReservedAs_0> <bLUEnable> <bBootLunID> <bLUWriteProtect>
->> +		<bMemoryType> <dNumAllocUnits> <bDataReliability> <bLogicalBlockSize>
->> +		<bProvisioningType> <wContextCapabilities> <0Dh:0Fh_ReservedAs_0>
-> This format is not exactly correct anymore because each byte has to be
-> represented separately.  Also theoretically it can be change, so maybe
-> better just to refer the user to the UFS specification.
-Agree. Will update to just refer to UFS spec (for Config_desc format).
+Initially, MHDP driver was developed as a DRM bridge driver and was planed to
+be placed in drivers/gpu/drm/bridge/mhdp.c.  However, there was already
+a driver for Cadence's DP controller developed by RockChip, but that driver
+uses the different DRM framework and looks like a part of a bigger system.
+Both controllers (including firmware) are quite different internally
+(MST/FEC/DSC support, link training done by driver, additional commands, IRQ's
+etc.) but they have similar register map, except for Framer/Streamer (which is
+noticeably different), so they appear similar.
 
->> +		> /config/XXXX.ufshc/ufs_provision
->> diff --git a/drivers/scsi/ufs/Kconfig b/drivers/scsi/ufs/Kconfig
->> index e27b4d4..a9a0a58 100644
->> --- a/drivers/scsi/ufs/Kconfig
->> +++ b/drivers/scsi/ufs/Kconfig
->> @@ -100,3 +100,13 @@ config SCSI_UFS_QCOM
->>   
->>   	  Select this if you have UFS controller on QCOM chipset.
->>   	  If unsure, say N.
->> +
->> +config UFS_PROVISION
->> +	tristate "Runtime UFS Provisioning support"
->> +	depends on SCSI_UFSHCD && CONFIGFS_FS
->> +	help
->> +	  This enables runtime UFS provisioning support. This can be used
->> +	  primarily during assembly line as some devices may be required to
->> +	  be configured multiple times during initial development phase.
->> +
->> +	  If unsure, say N.
->> diff --git a/drivers/scsi/ufs/Makefile b/drivers/scsi/ufs/Makefile
->> index 918f579..00110ea 100644
->> --- a/drivers/scsi/ufs/Makefile
->> +++ b/drivers/scsi/ufs/Makefile
->> @@ -5,5 +5,6 @@ obj-$(CONFIG_SCSI_UFS_DWC_TC_PLATFORM) += tc-dwc-g210-pltfrm.o ufshcd-dwc.o tc-d
->>   obj-$(CONFIG_SCSI_UFS_QCOM) += ufs-qcom.o
->>   obj-$(CONFIG_SCSI_UFSHCD) += ufshcd-core.o
->>   ufshcd-core-objs := ufshcd.o ufs-sysfs.o
->> +obj-$(CONFIG_UFS_PROVISION) += ufs-configfs.o
->>   obj-$(CONFIG_SCSI_UFSHCD_PCI) += ufshcd-pci.o
->>   obj-$(CONFIG_SCSI_UFSHCD_PLATFORM) += ufshcd-pltfrm.o
->> diff --git a/drivers/scsi/ufs/ufs-configfs.c b/drivers/scsi/ufs/ufs-configfs.c
->> new file mode 100644
->> index 0000000..74563a4
->> --- /dev/null
->> +++ b/drivers/scsi/ufs/ufs-configfs.c
->> @@ -0,0 +1,155 @@
->> +// SPDX-License-Identifier: GPL-2.0+
->> +// Copyright (c) 2018, Linux Foundation.
->> +
->> +#include <linux/configfs.h>
->> +#include <linux/err.h>
->> +#include <linux/string.h>
->> +
->> +#include "ufs.h"
->> +#include "ufshcd.h"
->> +
->> +static inline struct ufs_hba *config_item_to_hba(struct config_item *item)
->> +{
->> +	struct config_group *group = to_config_group(item);
->> +	struct configfs_subsystem *subsys = to_configfs_subsystem(group);
->> +	struct ufs_hba *hba = container_of(subsys, struct ufs_hba, subsys);
->> +
->> +	return subsys ? hba : NULL;
->> +}
->> +
->> +static ssize_t ufs_provision_show(struct config_item *item, char *buf)
->> +{
->> +	u8 desc_buf[QUERY_DESC_CONFIGURATION_DEF_SIZE] = {0};
-> Is it really ok to hard-code the descriptor size?
-I will use ufshcd_read_desc_length() api for each index as required. 
-Will remove this hard-code.
->> +	int desc_buf_len = QUERY_DESC_CONFIGURATION_DEF_SIZE;
->> +	int i, ret, curr_len = 0;
->> +	struct ufs_hba *hba = config_item_to_hba(item);
->> +
->> +	ret = ufshcd_query_descriptor_retry(hba, UPIU_QUERY_OPCODE_READ_DESC,
->> +		QUERY_DESC_IDN_CONFIGURATION, 0, 0, desc_buf, &desc_buf_len);
->> +
->> +	if (ret)
->> +		return ret;
->> +
->> +	for (i = 0; i < desc_buf_len; i++)
->> +		curr_len += snprintf((buf + curr_len), (PAGE_SIZE - curr_len),
->> +				"0x%x ", desc_buf[i]);
->> +
->> +	return curr_len;
->> +}
->> +
->> +ssize_t ufshcd_desc_configfs_store(struct ufs_hba *hba,
->> +		const char *buf, size_t count)
->> +{
->> +	char *strbuf;
->> +	char *strbuf_copy;
->> +	u8 desc_buf[QUERY_DESC_CONFIGURATION_DEF_SIZE] = {0};
->> +	int desc_buf_len = QUERY_DESC_CONFIGURATION_DEF_SIZE;
->> +	char *token;
->> +	int i, ret, value;
->> +	u32 config_desc_lock = 0;
->> +
->> +	/* reserve one byte for null termination */
->> +	strbuf = kmalloc(count + 1, GFP_KERNEL);
->> +	if (!strbuf)
->> +		return -ENOMEM;
->> +
->> +	strbuf_copy = strbuf;
->> +	strlcpy(strbuf, buf, count + 1);
->> +
->> +	/* Just return if bConfigDescrLock is already set */
->> +	ret = ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_READ_ATTR,
->> +		QUERY_ATTR_IDN_CONF_DESC_LOCK, 0, 0, &config_desc_lock);
->> +	if (ret)
->> +		goto out;
->> +
->> +	if (config_desc_lock) {
->> +		dev_err(hba->dev, "%s: bConfigDescrLock already set to %u, cannot re-provision device!\n",
->> +		__func__, config_desc_lock);
->> +		ret = -EINVAL;
->> +		goto out;
->> +	}
->> +
->> +	for (i = 0; i < QUERY_DESC_CONFIGURATION_DEF_SIZE; i++) {
->> +		token = strsep(&strbuf, " ");
->> +		if (!token && i)
->> +			break;
->> +
->> +		ret = kstrtoint(token, 0, &value);
->> +		if (ret) {
->> +			dev_err(hba->dev, "%s: kstrtoint failed %d %s\n",
->> +				__func__, ret, token);
->> +			ret = -EINVAL;
->> +			goto out;
->> +		}
->> +		desc_buf[i] = (u8)value;
->> +	}
->> +
->> +	/* Write configuration descriptor to provision ufs */
->> +	ret = ufshcd_query_descriptor_retry(hba, UPIU_QUERY_OPCODE_WRITE_DESC,
->> +		QUERY_DESC_IDN_CONFIGURATION, 0, 0, desc_buf, &desc_buf_len);
->> +
->> +	if (!ret)
->> +		dev_info(hba->dev, "%s: UFS Provisioning done, reboot now!\n",
-> That is not necessarily true - bConfDescContinue might have been used or
-> bConfigDescrLock might need to be set.  Better just to say that
-> configuration descriptor 0 was written.
-Agree. Will update.
->
->> +		__func__);
->> +
->> +out:
->> +	kfree(strbuf_copy);
->> +	if (ret)
->> +		return ret;
->> +	return count;
->> +}
->> +
->> +static ssize_t ufs_provision_store(struct config_item *item,
->> +		const char *buf, size_t count)
->> +{
->> +	struct ufs_hba *hba = config_item_to_hba(item);
->> +
->> +	return ufshcd_desc_configfs_store(hba, buf, count);
->> +}
->> +
->> +static struct configfs_attribute ufshcd_attr_provision = {
->> +	.ca_name	= "ufs_provision",
->> +	.ca_mode	= 0644,
->> +	.ca_owner	= THIS_MODULE,
->> +	.show		= ufs_provision_show,
->> +	.store		= ufs_provision_store,
->> +};
->> +
->> +static struct configfs_attribute *ufshcd_attrs[] = {
->> +	&ufshcd_attr_provision,
->> +	NULL,
->> +};
->> +
->> +static struct config_item_type ufscfg_type = {
->> +	.ct_attrs	= ufshcd_attrs,
->> +	.ct_owner	= THIS_MODULE,
->> +};
->> +
->> +static struct configfs_subsystem ufscfg_subsys = {
->> +	.su_group = {
->> +		.cg_item = {
->> +			.ci_type = &ufscfg_type,
->> +		},
->> +	},
->> +};
->> +
->> +void ufshcd_configfs_init(struct ufs_hba *hba, const char *name)
->> +{
->> +	int ret;
->> +	struct configfs_subsystem *subsys = &hba->subsys;
->> +
->> +	strncpy(ufscfg_subsys.su_group.cg_item.ci_namebuf, name, strlen(name));
->> +	subsys->su_group = ufscfg_subsys.su_group;
-> configfs_subsystem cannot share su_group with other configfs_subsystem i.e
-> you are not allowing for there being more than 1 hba
-Agree. I think I will have to move above 
-declarations(ufscfg_subsys/ufscfg_type/ufshcd_attrs) in driver .c/.h 
-file (to make it per ufs hba/probe).
-Will check and update.
->> +	config_group_init(&subsys->su_group);
->> +	mutex_init(&subsys->su_mutex);
->> +	ret = configfs_register_subsystem(subsys);
->> +	if (ret)
->> +		pr_err("Error %d while registering subsystem %s\n",
->> +		       ret,
->> +		       subsys->su_group.cg_item.ci_namebuf);
->> +}
->> +
->> +void ufshcd_configfs_exit(void)
->> +{
->> +	configfs_unregister_subsystem(&ufscfg_subsys);
->> +}
->> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
->> index e01cdc0..32a67b0 100644
->> --- a/drivers/scsi/ufs/ufshcd.c
->> +++ b/drivers/scsi/ufs/ufshcd.c
->> @@ -7711,6 +7711,7 @@ int ufshcd_shutdown(struct ufs_hba *hba)
->>   void ufshcd_remove(struct ufs_hba *hba)
->>   {
->>   	ufs_sysfs_remove_nodes(hba->dev);
->> +	ufshcd_configfs_exit();
->>   	scsi_remove_host(hba->host);
->>   	/* disable interrupts */
->>   	ufshcd_disable_intr(hba, hba->intr_mask);
->> @@ -7965,7 +7966,7 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
->>   
->>   	async_schedule(ufshcd_async_scan, hba);
->>   	ufs_sysfs_add_nodes(hba->dev);
->> -
->> +	ufshcd_configfs_init(hba, dev_name(hba->dev));
->>   	return 0;
->>   
->>   out_remove_scsi_host:
->> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
->> index 45013b6..2275032 100644
->> --- a/drivers/scsi/ufs/ufshcd.h
->> +++ b/drivers/scsi/ufs/ufshcd.h
->> @@ -37,6 +37,7 @@
->>   #ifndef _UFSHCD_H
->>   #define _UFSHCD_H
->>   
->> +#include <linux/configfs.h>
->>   #include <linux/module.h>
->>   #include <linux/kernel.h>
->>   #include <linux/init.h>
->> @@ -515,6 +516,9 @@ struct ufs_hba {
->>   
->>   	struct Scsi_Host *host;
->>   	struct device *dev;
->> +#ifdef CONFIG_UFS_PROVISION
->> +	struct configfs_subsystem subsys;
->> +#endif
->>   	/*
->>   	 * This field is to keep a reference to "scsi_device" corresponding to
->>   	 * "UFS device" W-LU.
->> @@ -868,6 +872,19 @@ int ufshcd_read_string_desc(struct ufs_hba *hba, int desc_index,
->>   int ufshcd_hold(struct ufs_hba *hba, bool async);
->>   void ufshcd_release(struct ufs_hba *hba);
->>   
->> +/* Expose UFS configfs API's */
->> +#ifndef CONFIG_UFS_PROVISION
->> +static inline void ufshcd_configfs_init(struct ufs_hba *hba, const char *name)
->> +{
->> +}
->> +static inline void ufshcd_configfs_exit(void)
->> +{
->> +}
->> +#else
->> +void ufshcd_configfs_init(struct ufs_hba *hba, const char *name);
->> +void ufshcd_configfs_exit(void);
->> +#endif
->> +
->>   int ufshcd_map_desc_id_to_length(struct ufs_hba *hba, enum desc_idn desc_id,
->>   	int *desc_length);
->>   
->>
+The following patches contain:
+- Moving common code to drivers/gpu/drm/bridge/cdns-mhdp-common.* and
+  modifying it a bit (mostly new prefixes for functions and data types) so it
+  can be used by two, higher level, drivers.
+- Modifying existing RockChip's DP driver to use the common code after changes
+  made to it (use the new cdns_mhdp_device structure and new function names).
+- Modifying DRM helpers a bit. Some are required for new driver, some are
+  updates from DP 1.2 to 1.3 or 1.4.
+- Adding documentation for device tree bindings.
+- Adding preliminary Cadence DPI/DP bridge driver.
+
+Some of the things that will be added later on include (but are not limited
+to):
+- Support for Cadence SD0801 PHY (PHY's driver should be on the way by now)
+- MST support
+- DSC support
+- FEC support
+- HDCP support
+
+Changes in v2:
+- Added actual description of what the patch contains, what is it for and
+  what's going on here in general.
+- New structure. Now we have one common low level driver + two high level
+  drivers - one for RockChip with minimum changes and one, more general, for
+  Cadence.
+- Dropped some changes made to DRM helpers.
+- Updated the device tree bindings document.
+
+Changes in v3:
+- Corrected dt-bindings document
+- Enabled some clocks at startup (since FW doesn't do that anymore).
+- Changed Firmware file name to match the file on Linux Firmware repo.
+- Added SST audio support
+- Made common functions (in cdns-mhdp-common.*) public.
+
+Damian Kos (1):
+  drm/rockchip: prepare common code for cdns and rk dpi/dp driver
+
+Quentin Schulz (4):
+  drm/dp: fix link probing for devices supporting DP 1.4+
+  drm/dp: make dp_link_status and dp_get_lane_status usable from outside
+    of the core
+  dt-bindings: drm/bridge Document Cadence MHDP DPI/DP bridge bindings
+  drm/bridge: add preliminary driver for cadence dpi/dp bridge
+
+ .../bindings/display/bridge/cdns,mhdp.txt     |   43 +
+ drivers/gpu/drm/bridge/Kconfig                |    9 +
+ drivers/gpu/drm/bridge/Makefile               |    3 +
+ drivers/gpu/drm/bridge/cdns-mhdp-common.c     | 1108 ++++++++++++++
+ .../cdns-mhdp-common.h}                       |  135 +-
+ drivers/gpu/drm/bridge/cdns-mhdp.c            | 1308 +++++++++++++++++
+ drivers/gpu/drm/drm_dp_helper.c               |   50 +-
+ drivers/gpu/drm/rockchip/Kconfig              |    1 +
+ drivers/gpu/drm/rockchip/Makefile             |    4 +-
+ drivers/gpu/drm/rockchip/cdn-dp-core.c        |  234 +--
+ drivers/gpu/drm/rockchip/cdn-dp-core.h        |   42 +-
+ drivers/gpu/drm/rockchip/cdn-dp-reg.c         |  969 ------------
+ include/drm/drm_dp_helper.h                   |    5 +-
+ 13 files changed, 2756 insertions(+), 1155 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/cdns,mhdp.txt
+ create mode 100644 drivers/gpu/drm/bridge/cdns-mhdp-common.c
+ rename drivers/gpu/drm/{rockchip/cdn-dp-reg.h => bridge/cdns-mhdp-common.h} (81%)
+ create mode 100644 drivers/gpu/drm/bridge/cdns-mhdp.c
+ delete mode 100644 drivers/gpu/drm/rockchip/cdn-dp-reg.c
+
+-- 
+2.17.1
 
