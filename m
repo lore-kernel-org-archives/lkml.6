@@ -2,134 +2,160 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA3BBC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:46:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A751C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:47:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DF6F2064A
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:46:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="hffAn+U4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DF6F2064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	by mail.kernel.org (Postfix) with ESMTP id 1EB712064A
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:47:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EB712064A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728264AbeH2Omo (ORCPT
+        id S1728274AbeH2Onk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 10:42:44 -0400
-Received: from mail-ed1-f41.google.com ([209.85.208.41]:45414 "EHLO
-        mail-ed1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726858AbeH2Omo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 10:42:44 -0400
-Received: by mail-ed1-f41.google.com with SMTP id p52-v6so3557447eda.12
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 03:46:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:references:in-reply-to:mime-version:thread-index:date
-         :message-id:subject:to:cc;
-        bh=dCPgzwY5E8r4rznxW5IcZSLsQxkGu4EWlnNdSTnPyic=;
-        b=hffAn+U4lO0wE+7bNOK2AwS78M7qhpB9I4tw7508/h+jz5Vgjdw8yn4q0vdKyfIjGv
-         IG3DhZ1mIG4NSuaAuwUAf8qJG7W29EEYESEPgh6pLnSseE16EXRgo4ttjE6JDq799Im3
-         lCBd3Wb7brfDrKcA1HVBV734wY4XC/twmyxeg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:references:in-reply-to:mime-version
-         :thread-index:date:message-id:subject:to:cc;
-        bh=dCPgzwY5E8r4rznxW5IcZSLsQxkGu4EWlnNdSTnPyic=;
-        b=L7EOvpqHzE+2EaMsqKgToS+5fPZGeTK7hEiN6VyPkSgVAYa1gg0mc8w907iQtRQilF
-         nnmvDGGmO+jBL23RvQT8cJze9gwFLjQU6T6yEAFAv9sZCsnwYi3b3WAEBXck++Ig4jiK
-         vi547P4lO3mVTDShcNUojgkWYKBGwF19LdZmY37n9yTrGV8cSsyVT4eBtgta3C4MKAY9
-         /Uz8rQXJ6LTqhhhK1pRJ2u9wmOQKljwTqySEZOCQPBkz3qRvyfVm3zflwbCx4Vz3k4oe
-         Mcd+i071nPBkzaVT5mlljanOqHQhAwMHkn3FqMBIuRHDSAcJwiYVcLADtjX8dz/bU3UL
-         9h8A==
-X-Gm-Message-State: APzg51CyuTK9dbe/+3reQ4j1TTrZs8+v44zmr9eKHC36S88/9zkb+UoF
-        xFLIP79Tsj1ES+xdrqYc08ZO+47goLNmkWlZHAdCcA==
-X-Google-Smtp-Source: ANB0VdYkvhO5QXFZj5GpyA4jhIPXgWFiuhBzykVONz48/pEGyZobn9+YKJPyE2QIF7l2Bn0uX351HWbM0+awRsH+U3M=
-X-Received: by 2002:a50:9d4f:: with SMTP id j15-v6mr6750974edk.74.1535539585926;
- Wed, 29 Aug 2018 03:46:25 -0700 (PDT)
-From:   Sumit Saxena <sumit.saxena@broadcom.com>
-References: <eccc46e12890a1d033d9003837012502@mail.gmail.com> <20180829084618.GA24765@ming.t460p>
-In-Reply-To: <20180829084618.GA24765@ming.t460p>
+        Wed, 29 Aug 2018 10:43:40 -0400
+Received: from mga12.intel.com ([192.55.52.136]:22379 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727099AbeH2Onj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 10:43:39 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2018 03:47:20 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,301,1531810800"; 
+   d="scan'208";a="66029304"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.98]) ([10.237.72.98])
+  by fmsmga007.fm.intel.com with ESMTP; 29 Aug 2018 03:45:54 -0700
+Subject: Re: [PATCH V7 2/9] mmc: sdhci: Add sd host v4 mode
+To:     Chunyan Zhang <zhang.chunyan@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Billows Wu <billows.wu@unisoc.com>,
+        Jason Wu <jason.wu@unisoc.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+References: <1535526184-32718-1-git-send-email-zhang.chunyan@linaro.org>
+ <1535526184-32718-3-git-send-email-zhang.chunyan@linaro.org>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <9e5ea176-1d13-3ac6-ad09-3b748a398f17@intel.com>
+Date:   Wed, 29 Aug 2018 13:44:13 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQL9fTS7902n0VSYivL2AMCzXDd9xwGQx87UondyhZA=
-Date:   Wed, 29 Aug 2018 16:16:23 +0530
-Message-ID: <300d6fef733ca76ced581f8c6304bac6@mail.gmail.com>
-Subject: RE: Affinity managed interrupts vs non-managed interrupts
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     tglx@linutronix.de, hch@lst.de, linux-kernel@vger.kernel.org,
-        Kashyap Desai <kashyap.desai@broadcom.com>,
-        Shivasharan Srikanteshwara 
-        <shivasharan.srikanteshwara@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1535526184-32718-3-git-send-email-zhang.chunyan@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Ming Lei [mailto:ming.lei@redhat.com]
-> Sent: Wednesday, August 29, 2018 2:16 PM
-> To: Sumit Saxena <sumit.saxena@broadcom.com>
-> Cc: tglx@linutronix.de; hch@lst.de; linux-kernel@vger.kernel.org
-> Subject: Re: Affinity managed interrupts vs non-managed interrupts
->
-> Hello Sumit,
-Hi Ming,
-Thanks for response.
->
-> On Tue, Aug 28, 2018 at 12:04:52PM +0530, Sumit Saxena wrote:
-> >  Affinity managed interrupts vs non-managed interrupts
-> >
-> > Hi Thomas,
-> >
-> > We are working on next generation MegaRAID product where requirement
-> > is- to allocate additional 16 MSI-x vectors in addition to number of
-> > MSI-x vectors megaraid_sas driver usually allocates.  MegaRAID adapter
-> > supports 128 MSI-x vectors.
-> >
-> > To explain the requirement and solution, consider that we have 2
-> > socket system (each socket having 36 logical CPUs). Current driver
-> > will allocate total 72 MSI-x vectors by calling API-
-> > pci_alloc_irq_vectors(with flag- PCI_IRQ_AFFINITY).  All 72 MSI-x
-> > vectors will have affinity across NUMA node s and interrupts are
-affinity
-> managed.
-> >
-> > If driver calls- pci_alloc_irq_vectors_affinity() with pre_vectors =
-> > 16 and, driver can allocate 16 + 72 MSI-x vectors.
->
-> Could you explain a bit what the specific use case the extra 16 vectors
-is?
-We are trying to avoid the penalty due to one interrupt per IO completion
-and decided to coalesce interrupts on these extra 16 reply queues.
-For regular 72 reply queues, we will not coalesce interrupts as for low IO
-workload, interrupt coalescing may take more time due to less IO
-completions.
-In IO submission path, driver will decide which set of reply queues
-(either extra 16 reply queues or regular 72 reply queues) to be picked
-based on IO workload.
->
-> >
-> > All pre_vectors (16) will be mapped to all available online CPUs but e
-> > ffective affinity of each vector is to CPU 0. Our requirement is to
-> > have pre _vectors 16 reply queues to be mapped to local NUMA node with
-> > effective CPU should be spread within local node cpu mask. Without
-> > changing kernel code, we can
->
-> If all CPUs in one NUMA node is offline, can this use case work as
-expected?
-> Seems we have to understand what the use case is and how it works.
+On 29/08/18 10:02, Chunyan Zhang wrote:
+> For SD host controller version 4.00 or later ones, there're two
+> modes of implementation - Version 3.00 compatible mode or
+> Version 4 mode.  This patch introduced an interface to enable
+> v4 mode.
+> 
+> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
 
-Yes, if all CPUs of the NUMA node is offlined, IRQ-CPU affinity will be
-broken and irqbalancer takes care of migrating affected IRQs to online
-CPUs of different NUMA node.
-When offline CPUs are onlined again, irqbalancer restores affinity.
->
->
-> Thanks,
-> Ming
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+
+> ---
+>  drivers/mmc/host/sdhci.c | 29 +++++++++++++++++++++++++++++
+>  drivers/mmc/host/sdhci.h |  3 +++
+>  2 files changed, 32 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 01bf88c..0c61105 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -123,6 +123,29 @@ EXPORT_SYMBOL_GPL(sdhci_dumpregs);
+>   *                                                                           *
+>  \*****************************************************************************/
+>  
+> +static void sdhci_do_enable_v4_mode(struct sdhci_host *host)
+> +{
+> +	u16 ctrl2;
+> +
+> +	ctrl2 = sdhci_readb(host, SDHCI_HOST_CONTROL2);
+> +	if (ctrl2 & SDHCI_CTRL_V4_MODE)
+> +		return;
+> +
+> +	ctrl2 |= SDHCI_CTRL_V4_MODE;
+> +	sdhci_writeb(host, ctrl2, SDHCI_HOST_CONTROL);
+> +}
+> +
+> +/*
+> + * This can be called before sdhci_add_host() by Vendor's host controller
+> + * driver to enable v4 mode if supported.
+> + */
+> +void sdhci_enable_v4_mode(struct sdhci_host *host)
+> +{
+> +	host->v4_mode = true;
+> +	sdhci_do_enable_v4_mode(host);
+> +}
+> +EXPORT_SYMBOL_GPL(sdhci_enable_v4_mode);
+> +
+>  static inline bool sdhci_data_line_cmd(struct mmc_command *cmd)
+>  {
+>  	return cmd->data || cmd->flags & MMC_RSP_BUSY;
+> @@ -252,6 +275,9 @@ static void sdhci_init(struct sdhci_host *host, int soft)
+>  	else
+>  		sdhci_do_reset(host, SDHCI_RESET_ALL);
+>  
+> +	if (host->v4_mode)
+> +		sdhci_do_enable_v4_mode(host);
+> +
+>  	sdhci_set_default_irqs(host);
+>  
+>  	host->cqe_on = false;
+> @@ -3378,6 +3404,9 @@ void __sdhci_read_caps(struct sdhci_host *host, u16 *ver, u32 *caps, u32 *caps1)
+>  
+>  	sdhci_do_reset(host, SDHCI_RESET_ALL);
+>  
+> +	if (host->v4_mode)
+> +		sdhci_do_enable_v4_mode(host);
+> +
+>  	of_property_read_u64(mmc_dev(host->mmc)->of_node,
+>  			     "sdhci-caps-mask", &dt_caps_mask);
+>  	of_property_read_u64(mmc_dev(host->mmc)->of_node,
+> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> index dbd48a8..61611e3 100644
+> --- a/drivers/mmc/host/sdhci.h
+> +++ b/drivers/mmc/host/sdhci.h
+> @@ -184,6 +184,7 @@
+>  #define   SDHCI_CTRL_DRV_TYPE_D		0x0030
+>  #define  SDHCI_CTRL_EXEC_TUNING		0x0040
+>  #define  SDHCI_CTRL_TUNED_CLK		0x0080
+> +#define  SDHCI_CTRL_V4_MODE		0x1000
+>  #define  SDHCI_CTRL_PRESET_VAL_ENABLE	0x8000
+>  
+>  #define SDHCI_CAPABILITIES	0x40
+> @@ -504,6 +505,7 @@ struct sdhci_host {
+>  	bool preset_enabled;	/* Preset is enabled */
+>  	bool pending_reset;	/* Cmd/data reset is pending */
+>  	bool irq_wake_enabled;	/* IRQ wakeup is enabled */
+> +	bool v4_mode;		/* Host Version 4 Enable */
+>  
+>  	struct mmc_request *mrqs_done[SDHCI_MAX_MRQS];	/* Requests done */
+>  	struct mmc_command *cmd;	/* Current command */
+> @@ -752,6 +754,7 @@ bool sdhci_cqe_irq(struct sdhci_host *host, u32 intmask, int *cmd_error,
+>  		   int *data_error);
+>  
+>  void sdhci_dumpregs(struct sdhci_host *host);
+> +void sdhci_enable_v4_mode(struct sdhci_host *host);
+>  
+>  void sdhci_start_tuning(struct sdhci_host *host);
+>  void sdhci_end_tuning(struct sdhci_host *host);
+> 
+
