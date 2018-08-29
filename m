@@ -2,142 +2,120 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C582C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:19:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA434C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:20:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6F1E2083C
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:19:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XlRSNLkR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6F1E2083C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 6EB812083C
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:20:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EB812083C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728201AbeH2OPz (ORCPT
+        id S1728112AbeH2ORD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 10:15:55 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:35658 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727172AbeH2OPy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 10:15:54 -0400
-Received: by mail-io0-f194.google.com with SMTP id w11-v6so4022199iob.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 03:19:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Fb1c9G+2Z7Eb/LHsM72s2v2VMyfTPPK5sD2QVtu7bD0=;
-        b=XlRSNLkRdedirUpxm9Ig613opdEjxA53i+QLztDD0zfwISWWrsya8wv0jLbcgdxXgf
-         aIcoXdlibk47CFNqz2JJANtxlFTVVL+ud7bEjqmIy72UKYtvov9OeQUfJBvBPQ4yKkfh
-         Zerq6XngGvgijuN4oI+g5XYbjOQWnsiVf9FAU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Fb1c9G+2Z7Eb/LHsM72s2v2VMyfTPPK5sD2QVtu7bD0=;
-        b=gPcxGTNy0LOTdjcYmiOCARo7TWv4Zf1+c0xE/Wnhddn0mvTn/87YTkd5rt/3amBLS9
-         yKRcPbGuBbgAyiSDGHU7rpt0hTyUniB+WVZ50iOMtzmY4reMrEoVb2Jkpfn/T4V2iKbu
-         YM10/zl3o5KDECWUHk358UW5NPz2sWr1fUteuVX2gaezKj1eHQjsoUHN1viLpsYv5Nev
-         xJiwU4s9vCgYhqfUQEE51kEkJV78S+0KmHD2PHgFu8qMNno7WdY6t4UaefjDomh16eRz
-         B/24z/hxY+xndIRnP6utFsiEKb7szhlUQEiPsZPYbzUFm8XzXUK8sTLe6/pxaPsRNSHl
-         Os4A==
-X-Gm-Message-State: APzg51ASwA1H0XQzgpVokjMZlLYvPky47Ml+12DvqPfBX/ywWX1Mdfk4
-        ve6sfGF3nwxlnclySlNnyuo6FyEmM0v1DHhmLBwtEQ==
-X-Google-Smtp-Source: ANB0Vda2gHwN2j4A/R+Om0XUo8yGk2JTaK3RhGGjq0qfL4cie1M0gtLQGf5dJIBLv/cNj07C1riLBv78I5WWJ9yisTc=
-X-Received: by 2002:a6b:1416:: with SMTP id 22-v6mr4490032iou.218.1535537981989;
- Wed, 29 Aug 2018 03:19:41 -0700 (PDT)
+        Wed, 29 Aug 2018 10:17:03 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51730 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727172AbeH2ORD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 10:17:03 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6BD2F80D;
+        Wed, 29 Aug 2018 03:20:51 -0700 (PDT)
+Received: from [10.4.12.81] (melchizedek.Emea.Arm.com [10.4.12.81])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CA6B23F5BD;
+        Wed, 29 Aug 2018 03:20:49 -0700 (PDT)
+Subject: Re: [RFC PATCH] EDAC, ghes: Enable per-layer error reporting for ARM
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Tyler Baicar <baicar.tyler@gmail.com>,
+        Tyler Baicar <tbaicar@codeaurora.org>, wufan@codeaurora.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        harba@qti.qualcomm.com, mchehab@kernel.org,
+        arm-mail-list <linux-arm-kernel@lists.infradead.org>,
+        linux-edac@vger.kernel.org
+References: <1531762009-15112-1-git-send-email-tbaicar@codeaurora.org>
+ <20180719140102.GB25185@nazgul.tnic>
+ <94e3a0fb-9b7d-045f-733b-9f063dcb39e4@arm.com>
+ <45fefe7d-c6ea-5791-4477-13ecce39ce48@codeaurora.org>
+ <b568fdcc-ca39-67ea-2799-8ed246c8ffb6@arm.com>
+ <CABo9ajA7SPrVE-oiG=RicH+nL9_pp7fVATCdMugY5fuNAPzHaQ@mail.gmail.com>
+ <68a800c7-446e-9b6b-1847-6e45a1d17262@arm.com>
+ <20180824120102.GB29751@nazgul.tnic>
+ <0a94db2a-2569-ac46-1a79-a05f46a4ea6f@arm.com>
+ <20180829073804.GA6843@nazgul.tnic>
+From:   James Morse <james.morse@arm.com>
+Message-ID: <2e7b984a-8f8f-dad7-4ee5-043dd236a9b1@arm.com>
+Date:   Wed, 29 Aug 2018 11:20:48 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a02:2b03:0:0:0:0:0 with HTTP; Wed, 29 Aug 2018 03:19:41
- -0700 (PDT)
-In-Reply-To: <20180820234341.5271-1-jmkrzyszt@gmail.com>
-References: <20180813223448.21316-1-jmkrzyszt@gmail.com> <20180820234341.5271-1-jmkrzyszt@gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 29 Aug 2018 12:19:41 +0200
-Message-ID: <CAPDyKFoWrsq9Qu3AOM=6xmpqOGU8XwaAmKZr9_xD-dpAzwWENg@mail.gmail.com>
-Subject: Re: [RFC RFT PATCH 0/4] gpiolib: speed up GPIO array processing
-To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>,
-        Peter Korsgaard <peter.korsgaard@barco.com>,
-        Peter Rosin <peda@axentia.se>, Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-gpio@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        netdev@vger.kernel.org, linux-iio@vger.kernel.org,
-        driverdevel <devel@driverdev.osuosl.org>,
-        linux-serial@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180829073804.GA6843@nazgul.tnic>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21 August 2018 at 01:43, Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
->
-> This series is a follow up of the former "mtd: rawnand: ams-delta: Use
-> gpio-omap accessors for data I/O" which already contained some changes
-> to gpiolib.  Those previous attempts were commented by Borris Brezillon
-> who suggested using GPIO API modified to accept bitmaps, and by Linus
-> Walleij who suggested still more great ideas for further immprovement
-> of the proposed API changes - thanks!
->
-> The goal is to boost performans of get/set array functions while
-> processing GPIO arrays which represent pins of a signle chip in
-> hardware order.  If resulting performance is close to PIO, GPIO API
-> can be used for data I/O without much loss of speed.
->
-> Created and tested on a low end Amstrad Delta board with NAND driver
-> updated to use GPIO API for data I/O.  Performance degrade compared to
-> PIO is much better than before the optimization but still not quite
-> satisfactory.
->
->
-> Janusz Krzysztofik (4):
->       gpiolib: Pass bitmaps, not integer arrays, to get/set array
->       gpiolib: Identify arrays matching GPIO hardware
->       gpiolib: Pass array info to get/set array functions
->       gpiolib: Implement fast processing path in get/set array
->
->
->  Documentation/driver-api/gpio/board.rst     |   15 +
->  Documentation/driver-api/gpio/consumer.rst  |   48 +++-
->  drivers/auxdisplay/hd44780.c                |   64 +++---
->  drivers/bus/ts-nbus.c                       |   25 --
->  drivers/gpio/gpio-max3191x.c                |   23 +-
->  drivers/gpio/gpiolib.c                      |  279 ++++++++++++++++++++++------
->  drivers/gpio/gpiolib.h                      |   15 +
->  drivers/i2c/muxes/i2c-mux-gpio.c            |    5
->  drivers/mmc/core/pwrseq_simple.c            |   15 -
->  drivers/mux/gpio.c                          |    7
->  drivers/net/phy/mdio-mux-gpio.c             |    5
->  drivers/pcmcia/soc_common.c                 |   14 -
->  drivers/phy/motorola/phy-mapphone-mdm6600.c |   21 +-
->  drivers/staging/iio/adc/ad7606.c            |   12 -
->  drivers/tty/serial/serial_mctrl_gpio.c      |    9
->  include/linux/gpio/consumer.h               |   35 ++-
->  16 files changed, 410 insertions(+), 182 deletions(-)
->
+Hi Boris,
 
-For the mmc related changes:
+On 29/08/18 08:38, Borislav Petkov wrote:
+> On Tue, Aug 28, 2018 at 06:09:24PM +0100, James Morse wrote:
+>> Does x86 have another source of memory-topology information it needs to
+>> correlate smbios with?
+> 
+> Bah, pinpointing the DIMM on x86 is a mess. There's no reliable way to
+> say which DIMM it is in certain cases (interleaving, mirrorring, ...)
+> and it is all platform-dependent. So we do the layers to dump a memory
+> location (node, memory controller, ....) so that we can at least limit
+> the number of DIMMs the user needs to replace/try.
 
-Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+Right. I'd like ghes-edac to work in the same way for both architectures.
 
-Kind regards
-Uffe
+I think this is best done by stuffing the dmi-handle in struct dimm_info during
+ghes_edac_dmidecode(), then populating the struct edac_raw_error_desc layers
+from the matching mci->dimms 'location'.
+
+For EDAC_MC_LAYER_ALL_MEM this boils down to a flat index, so pointer arithmetic
+on mci->dimms is an appropriate short cut.
+
+(We should probably 'FIXME: It shouldn't be hard to also fill the DIMM labels'
+at the same time so that no-one is tempted to interpret the edac:dimm-idx)
+
+
+> In an ideal world, I'd like to be able to query the SPD chips on the
+
+(oh, that can be done?)
+
+
+> DIMMs and build the topology and then when an error happens to say,
+> "error in DIMM <silkscreen>" where silkscreen is what is written on the
+> motherboard under the DIMM socket.
+> 
+> But I don't see that happening any time soon...
+
+>> For arm there is nothing else describing the memory-topology, so as long as we
+>> can correlate the smbios table and ghes:cper records through the handles, we can
+>> get this working for all systems.
+> 
+> And then make sure vendors fill in the proper info in smbios. Because that's
+> also a mess on x86.
+
+I got educated by the people who look after specifications last time I touched
+this [0]. SMBIOS tables are required by Arm's 'Server Base Boot Requirements',
+It lists the memory-device and physical-memory-array as required.
+
+I will drop them a note that we will be depending on the handle, and it should
+go on the list too... if its not populated on today's systems we can fall back
+to !e->enable_per_layer_report as we do today.
+
+
+Thanks,
+
+James
+
+[0] https://www.spinics.net/lists/arm-kernel/msg653133.html
