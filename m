@@ -2,110 +2,106 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23AFCC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:09:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83AD9C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:09:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD15920846
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:09:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD15920846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=emtrion.com
+	by mail.kernel.org (Postfix) with ESMTP id 3E91220846
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:09:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=javigon-com.20150623.gappssmtp.com header.i=@javigon-com.20150623.gappssmtp.com header.b="kQ1MsPyl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E91220846
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=javigon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728229AbeH2OFY (ORCPT
+        id S1728259AbeH2OF7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 10:05:24 -0400
-Received: from mail3.emtrion.de ([80.150.99.69]:3127 "EHLO mail3.emtrion.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726858AbeH2OFX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 10:05:23 -0400
-Received: from tuelinux-v3.emtrion.local (2003:5a:a012:1:20c:29ff:fecb:7426)
- by bmk019s01.emtrion.local (2003:5a:a012:1:d9c:d045:28a7:5f84) with Microsoft
- SMTP Server (TLS) id 8.3.485.1; Wed, 29 Aug 2018 12:09:13 +0200
-From:   Jan Tuerk <jan.tuerk@emtrion.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "GitAuthor: Jan Tuerk" <jan.tuerk@emtrion.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v7 4/4] ARM: imx_v6_v7_defconfig: Enable DA9063 PMIC support.
-Date:   Wed, 29 Aug 2018 12:08:00 +0200
-Message-ID: <20180829100811.55836-4-jan.tuerk@emtrion.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180829100811.55836-1-jan.tuerk@emtrion.com>
-References: <20180824132617.43975-1-jan.tuerk@emtrion.com>
- <20180829100811.55836-1-jan.tuerk@emtrion.com>
+        Wed, 29 Aug 2018 10:05:59 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:56070 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728242AbeH2OF7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 10:05:59 -0400
+Received: by mail-it0-f67.google.com with SMTP id d10-v6so6842890itj.5
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 03:09:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=javigon-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jHY1u6vtCbAE4lV4L2cBKtvB1ns8sSlx5vp2Kn8HND4=;
+        b=kQ1MsPyljKKYOm3zuzIwtIj22o/TAt5bPTtLLEHseCJqOB4UuQDtvsQM/aivjM09IC
+         RwMhsM9k8+5n8uMNCv3f6z3hKpRURcO3amgYUaJu1bOtGUzboZFT7btHquICl0rpBq5G
+         yKmmK6w66o/Nqfx3pRWcblqUpaCcTzl2gJaASn/cJnvIeeEr7gnXzaXksc+coUyCn4i1
+         f9PlbI13/2tAbKqiea/ABxvQdfEFP8tOhmZp+KsQ6V+06aH7EhHeFp09xouJPLSk9WJz
+         Q58hogtv9hPUBuWG5aCRzx4zYh6YDxifAQEqBiagPnLHXhY8/cSkfsSPwQleX/WwM9J+
+         uB8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jHY1u6vtCbAE4lV4L2cBKtvB1ns8sSlx5vp2Kn8HND4=;
+        b=WpBUUArJK/erDxXqRgKhOFp5xi0GaLCzCBRoozpqxnrjHizun5AISnHjtrrgjsIpSN
+         oDY0iNJyIY7roz+RjBfPcXXgrt0Ep5PDwPeXW4FnZKN9iMUH4CWTFElfKDbDT7f8wHsF
+         pynE9psOYcBe+qKDB+/KcNMiqo8hSZwMXavQG0rUn9HxEvAPql6yqVnLkr1GAOoceULN
+         TydQ7nYTfyewMMAEkQIfXev2NyyM5tbDJDg2c5PWt09QDRhWX5PYrIguOLQLHhsI5iSK
+         XJzOb0/IvrUyD1aE1NX+CDVS1TmlwPs8pwO59lLj975x4u418+D/Kx2D/++KxQU9F5BV
+         gA5A==
+X-Gm-Message-State: APzg51AsJEsA4SFGjaa5DaaD2+/NdMP3byAWs0NMZ8/xBMGPRCWSpuRZ
+        mHhjvEve0Jc6IT4XJkpIHqKf7w==
+X-Google-Smtp-Source: ANB0VdZAARNI8aCo4O42YkU04WaAIxeGr7DMbQHd+letw6vJFMo4vicYU5817d/S3yKtzzrEyiq1cQ==
+X-Received: by 2002:a24:e142:: with SMTP id n63-v6mr4429594ith.94.1535537390134;
+        Wed, 29 Aug 2018 03:09:50 -0700 (PDT)
+Received: from ch-wrk-javier.cnexlabs.com (6164211-cl69.boa.fiberby.dk. [193.106.164.211])
+        by smtp.gmail.com with ESMTPSA id v14-v6sm1721501iog.42.2018.08.29.03.09.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 29 Aug 2018 03:09:49 -0700 (PDT)
+From:   "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <javier@javigon.com>
+X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
+To:     mb@lightnvm.io
+Cc:     igor.j.konopko@intel.com, marcin.dziegielewski@intel.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
+Subject: [PATCH 0/3] lightnvm: pblk: support variable OOB size
+Date:   Wed, 29 Aug 2018 12:09:27 +0200
+Message-Id: <1535537370-10729-1-git-send-email-javier@cnexlabs.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-TM-AS-Product-Ver: SMEX-11.0.0.4283-8.100.1062-24060.006
-X-TM-AS-Result: No-2.342300-8.000000-31
-X-TM-AS-MatchedID: 701762-702358-704171-702898-703523-703720-701016-188019-7
-        00624-701274-139703-780058-850095-851079-148004-148133-42000-42003
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All recent emtrion modules based on i.mx6 make use of the DA9063.
-Therefore enable it with the following defaults:
-	- CONFIG_MFD_DA9063=y
-	- CONFIG_REGULATOR_DA9063=y
-	- CONFIG_DA9063_WATCHDOG=m
-MFD and REGULATOR are built-in to have it at Kernel boot-time.
-The WATCHDOG is optional and could be loaded from userspace.
+This patchset adds pblk support for variable metadata sizes on the out
+of bound area.
 
-Signed-off-by: Jan Tuerk <jan.tuerk@emtrion.com>
----
- arch/arm/configs/imx_v6_v7_defconfig | 3 +++
- 1 file changed, 3 insertions(+)
+Igor, Marcin, you sent a patch some time ago implementing a similar
+functionality, but it never got re-posted after review. Can you test
+this and see if it works for your case? I did not implement support for
+outlined metadata for the case where the reported OOB area is 0. It
+should be pretty simple to do that on top of these patches though.
 
-Unchanged since v6
+Thanks,
+Javier
 
-diff --git a/arch/arm/configs/imx_v6_v7_defconfig b/arch/arm/configs/imx_v6_v7_defconfig
-index e2c127608bcc..445e493d69d7 100644
---- a/arch/arm/configs/imx_v6_v7_defconfig
-+++ b/arch/arm/configs/imx_v6_v7_defconfig
-@@ -218,10 +218,12 @@ CONFIG_CPU_THERMAL=y
- CONFIG_IMX_THERMAL=y
- CONFIG_WATCHDOG=y
- CONFIG_DA9062_WATCHDOG=y
-+CONFIG_DA9063_WATCHDOG=m
- CONFIG_RN5T618_WATCHDOG=y
- CONFIG_IMX2_WDT=y
- CONFIG_MFD_DA9052_I2C=y
- CONFIG_MFD_DA9062=y
-+CONFIG_MFD_DA9063=y
- CONFIG_MFD_MC13XXX_SPI=y
- CONFIG_MFD_MC13XXX_I2C=y
- CONFIG_MFD_RN5T618=y
-@@ -231,6 +233,7 @@ CONFIG_REGULATOR_FIXED_VOLTAGE=y
- CONFIG_REGULATOR_ANATOP=y
- CONFIG_REGULATOR_DA9052=y
- CONFIG_REGULATOR_DA9062=y
-+CONFIG_REGULATOR_DA9063=y
- CONFIG_REGULATOR_GPIO=y
- CONFIG_REGULATOR_MC13783=y
- CONFIG_REGULATOR_MC13892=y
+Javier González (3):
+  lightnvm: use internal allocation for chunk log page
+  lightnvm: do no update csecs and sos on 1.2
+  lightnvm: pblk: support variable OOB size
+
+ drivers/lightnvm/pblk-core.c     | 60 ++++++++++++++++++++++++++++++----------
+ drivers/lightnvm/pblk-init.c     | 16 ++++++++++-
+ drivers/lightnvm/pblk-map.c      | 19 +++++++++----
+ drivers/lightnvm/pblk-read.c     | 55 ++++++++++++++++++++++--------------
+ drivers/lightnvm/pblk-recovery.c | 34 ++++++++++++++++-------
+ drivers/lightnvm/pblk.h          | 18 +++++++++---
+ drivers/nvme/host/lightnvm.c     | 26 +++++++++++------
+ 7 files changed, 164 insertions(+), 64 deletions(-)
+
 -- 
-emtrion GmbH
-Alter Schlachthof 45
-76131 Karlsruhe
-GERMANY
-https://www.emtrion.de
-
-Amtsgericht Mannheim
-HRB 110 300
-Geschäftsführer: Dieter Baur, Ramona Maurer
+2.7.4
 
