@@ -4,147 +4,128 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABDE4C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 16:56:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 577A1C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 16:59:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 643052064A
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 16:56:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBE792064E
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 16:59:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PhjZpU9E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 643052064A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JxUwaW71"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBE792064E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728251AbeH2UyX (ORCPT
+        id S1728181AbeH2U5Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 16:54:23 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:34676 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727245AbeH2UyX (ORCPT
+        Wed, 29 Aug 2018 16:57:25 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:46312 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727245AbeH2U5Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 16:54:23 -0400
-Received: by mail-qk0-f196.google.com with SMTP id d15-v6so3831832qkc.1;
-        Wed, 29 Aug 2018 09:56:34 -0700 (PDT)
+        Wed, 29 Aug 2018 16:57:24 -0400
+Received: by mail-oi0-f66.google.com with SMTP id y207-v6so10341123oie.13;
+        Wed, 29 Aug 2018 09:59:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vmIbtjAa00TEXUIYaWJLR/nL1Ol4/ueJIOEvAYtM4W0=;
-        b=PhjZpU9EiVaM5+cfe2f3R52rWOuJgQQJn+lySHIQooYr/LGNHnN9aDHciWSzvrMM0o
-         USlIeJ56r31NwwiUx2pf5yM9UnYOtgd8/6nuB25dpFe7u0i/6nr6noALMkwgDuCy/mis
-         N8glUuNGD5uEIzu9l+hg8yWoWnY5PGA2pxFcsQskVwIv9/yRjLQrPEJJCuvBKeukHBeh
-         2IwZ/ZymWEq6g0WwVmfpi2ZoZsjNiaLX3TDIyLJaVTEH8i0gPp9/C/SkYHAX+Az3NLxi
-         UugeFYDCiOj95jQe1PM16yPMypJwRZHmA9ZT/VRnUEoEC95qsdoVqLyrjG/F1sWLuyx3
-         v2pQ==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=XXO5gIdr3OjiR6S02XZJ6gMS+ckd4hcKuNUkjOa1fwE=;
+        b=JxUwaW71WdVrgrTBVzC9Mo5SkUCYkuNhc/16uCJvTodsmOedv0HWDze1b/elk8MkEP
+         VaDVBlaLmfGSAxD+xjgGHh/rlIThlCpPrbJOCwlp7gd5u8bRVmLk53APEzL8bm0nVZa3
+         7Nigk2/L+80sQ2a5wxfgWY+z9f7+GsjAUOMf72t7l9NNmQLPbCdyU7Y4CaApRS/Hi9p4
+         CXdMC2dH+aCInN5kT1Kr3jcpzIA9S72y0wH9fZ4YrvvXY4Q6yyBqz4R78QrZMDF9oYCb
+         G/FB4RHFto6pHjddR95uc35GyDNyr8hFboQl6PmfdZPLWYRKPmLjhmy1KHe4FVvoe4Oe
+         1oTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vmIbtjAa00TEXUIYaWJLR/nL1Ol4/ueJIOEvAYtM4W0=;
-        b=g0k002e5dXlyWs4LuW9ntEqiPVrlCVbzU4OA6vU0LnC5jmsgu/yRcrZm3c8UIirYS1
-         1stn4c9oEGTBQMqzIVDOHRJKoUbstMr6PXi6VDk8jSvQFBDKPc5KuU0Cc92BqoecPNPg
-         HNf2rNrPVYk+NMDM8NmUhK3jxqp0u1ab/8xALzI47yId7fc/VMDM+Rm8m7wt/mTftVVd
-         Jz/fFkeUp+BBWVxm+QQ3kQcvvpsrF8T3HYpMGk94vA0DAuwWbsXM9rkzAPkSjAvWIdml
-         SjMdycJGe5wWtH8QI+32Lrh36FhEoqWoJHHsAsEr6+XFxTcUlsGE5oeUjVGz1PQ5RkX6
-         JJSg==
-X-Gm-Message-State: APzg51DUnMkjB3bsymbltBa+yZ2JGScI4TdVh+ZqWqdgGNouEX5jleYG
-        wXYxgbkiAPuHjb20QWQIzHT+aMjT8JFvCaANyU0dmhxTNkk=
-X-Google-Smtp-Source: ANB0VdZme+k3zob8JfTF49D7Wmc27y6535oKoV+eQafx4XfAgID7SviCi7GUqMmRg+5OmX4U4lElVALnUitJ4mRwSxE=
-X-Received: by 2002:ae9:e50d:: with SMTP id w13-v6mr7296391qkf.137.1535561793904;
- Wed, 29 Aug 2018 09:56:33 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=XXO5gIdr3OjiR6S02XZJ6gMS+ckd4hcKuNUkjOa1fwE=;
+        b=Sjw2y6usLusi/Tsu0ELPJEUXTcJac+k+XvsCrVOsDCai1VdntZpKwkQSaxIbHSmNSS
+         gIHY/VgrrqjZMYBq5l+z8PH+ReFbRgB8FGbleqtfuJM6jiN71+7dgYbDRZdpmtSiIiIb
+         Vtv/WaaUHXccIXqZiXoUHWTH94RWrN7fcqxaqQ1wWG03QWxYSmWCMHc3iUtyOYHh1wIb
+         d9/cWVTNBYm9YK0os2nBOcNgTH4idIn2y3/SgRM6AxSge9BKP6S6F9VFs3T4mlNH3FRj
+         +w7uu8KBb8vHYgQ02ENex0kdjGSrj02bAjX46TydJgfXjm5F3bOXDNokjfEiFd2Qdkcl
+         HFpg==
+X-Gm-Message-State: APzg51A2iEA6vwJPL4+cVwFx+9qhHa47lHES6NGek1Oz5NgTK2XfO2Pd
+        fN4+LzsDSgrIQ8qGjjLUFxPC+6UXmNY=
+X-Google-Smtp-Source: ANB0VdYLpHDBqa6AUCFo66hL5V+K0VrolL9VyIDcVs8to9qM+9tU3hLs0wcyJoegO20TDx9vg3j57Q==
+X-Received: by 2002:aca:d44a:: with SMTP id l71-v6mr3757597oig.199.1535561975304;
+        Wed, 29 Aug 2018 09:59:35 -0700 (PDT)
+Received: from nuclearis2-1.gtech (c-98-195-139-126.hsd1.tx.comcast.net. [98.195.139.126])
+        by smtp.gmail.com with ESMTPSA id t141-v6sm6141987oif.18.2018.08.29.09.59.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 Aug 2018 09:59:34 -0700 (PDT)
+Subject: Re: [PATCH] PCI/MSI: Don't touch MSI bits when the PCI device is
+ disconnected
+To:     linux-pci@vger.kernel.org, bhelgaas@google.com
+Cc:     keith.busch@intel.com, alex_gagniuc@dellteam.com,
+        austin_bolen@dell.com, shyam_iyer@dell.com, Narendra_K@Dell.com,
+        Stuart_Hayes@Dell.com, lukas@wunner.de,
+        linux-kernel@vger.kernel.org
+References: <20180730212146.31909-1-mr.nuke.me@gmail.com>
+From:   "Alex G." <mr.nuke.me@gmail.com>
+Message-ID: <d0b5fa66-e16d-8686-79e2-4d7177cd4806@gmail.com>
+Date:   Wed, 29 Aug 2018 11:59:33 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <1535557096-1324-1-git-send-email-george.kennedy@oracle.com>
-In-Reply-To: <1535557096-1324-1-git-send-email-george.kennedy@oracle.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 29 Aug 2018 19:56:22 +0300
-Message-ID: <CAHp75Vc=Fg165nL+SFDXXDzBvtba+C7CLK24gyz3EaAb8QdjNQ@mail.gmail.com>
-Subject: Re: [PATCH] sym53c8xx: fix NULL pointer dereference panic in
- sym_int_sir() in sym_hipd.c
-To:     george.kennedy@oracle.com
-Cc:     matthew@wil.cx,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180730212146.31909-1-mr.nuke.me@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 29, 2018 at 6:42 PM George Kennedy
-<george.kennedy@oracle.com> wrote:
->
-> sym_int_sir() in sym_hipd.c does not check the command pointer for NULL
-> before using it in debug message prints.
->
-> Suggested-by: Matthew Wilcox <matthew.wilcox@oracle.com>
-> Signed-off-by: George Kennedy <george.kennedy@oracle.com>
-> Reviewed-by: Mark Kanda <mark.kanda@oracle.com>
+Should I resubmit this rebased on 4.19-rc*, or just leave this patch as is?
 
-> +#define sym_printk(lvl, tp, cp, fmt, v...) do { \
+Alex
 
-Since all users are KERN_WARNING level, perhaps
-
-sym_pr_warn(tp, ...) ... \
-... \
-..._printk(KERN_WARNING ...
-
-?
-
-> +       if (cp)                                                 \
-> +               scmd_printk(lvl, cp->cmd, fmt, ##v);            \
-> +       else                                                    \
-> +               starget_printk(lvl, tp->starget, fmt, ##v);     \
-> +} while (0)
+On 07/30/2018 04:21 PM, Alexandru Gagniuc wrote:
+> When a PCI device is gone, we don't want to send IO to it if we can
+> avoid it. We expose functionality via the irq_chip structure. As
+> users of that structure may not know about the underlying PCI device,
+> it's our responsibility to guard against removed devices.
+> 
+> irq_write_msi_msg is already guarded. pci_msi_(un)mask_irq are not.
+> Guard them for completeness.
+> 
+> For example, surprise removal of a PCIe device triggers teardown. This
+> touches the irq_chips ops some point to disable the interrupts. I/O
+> generated here can crash the system on machines with buggy firmware.
+> Not triggering the IO in the first place eliminates the problem.
+> 
+> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+> ---
+> 
+> There's another patch by Lukas Wunner that is needed (not yet published)
+> in order to fully block IO on SURPRISE!!! removal. The existing code only
+> sets the PCI_DEV_DISCONNECTED bit in an unreasonably narrow set of
+> circumstances. Lukas' patch fixes that.
+> 
+> However, this change is otherwise fully independent, and enjoy!
+> 
+>   drivers/pci/msi.c | 3 +++
+>   1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
+> index 4d88afdfc843..5f47b5cb0401 100644
+> --- a/drivers/pci/msi.c
+> +++ b/drivers/pci/msi.c
+> @@ -227,6 +227,9 @@ static void msi_set_mask_bit(struct irq_data *data, u32 flag)
+>   {
+>   	struct msi_desc *desc = irq_data_get_msi_desc(data);
+>   
+> +	if (pci_dev_is_disconnected(msi_desc_to_pci_dev(desc)))
+> +		return;
 > +
->  /*
->   *  chip exception handler for programmed interrupts.
->   */
-> @@ -4415,7 +4422,7 @@ static void sym_int_sir(struct sym_hcb *np)
->          *  been selected with ATN.  We do not want to handle that.
->          */
->         case SIR_SEL_ATN_NO_MSG_OUT:
-> -               scmd_printk(KERN_WARNING, cp->cmd,
-> +               sym_printk(KERN_WARNING, tp, cp,
->                                 "No MSG OUT phase after selection with ATN\n");
->                 goto out_stuck;
->         /*
-> @@ -4423,7 +4430,7 @@ static void sym_int_sir(struct sym_hcb *np)
->          *  having reselected the initiator.
->          */
->         case SIR_RESEL_NO_MSG_IN:
-> -               scmd_printk(KERN_WARNING, cp->cmd,
-> +               sym_printk(KERN_WARNING, tp, cp,
->                                 "No MSG IN phase after reselection\n");
->                 goto out_stuck;
->         /*
-> @@ -4431,7 +4438,7 @@ static void sym_int_sir(struct sym_hcb *np)
->          *  an IDENTIFY.
->          */
->         case SIR_RESEL_NO_IDENTIFY:
-> -               scmd_printk(KERN_WARNING, cp->cmd,
-> +               sym_printk(KERN_WARNING, tp, cp,
->                                 "No IDENTIFY after reselection\n");
->                 goto out_stuck;
->         /*
-> @@ -4460,7 +4467,7 @@ static void sym_int_sir(struct sym_hcb *np)
->         case SIR_RESEL_ABORTED:
->                 np->lastmsg = np->msgout[0];
->                 np->msgout[0] = M_NOOP;
-> -               scmd_printk(KERN_WARNING, cp->cmd,
-> +               sym_printk(KERN_WARNING, tp, cp,
->                         "message %x sent on bad reselection\n", np->lastmsg);
->                 goto out;
->         /*
-> --
-> 1.8.3.1
->
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+>   	if (desc->msi_attrib.is_msix) {
+>   		msix_mask_irq(desc, flag);
+>   		readl(desc->mask_base);		/* Flush write to device */
+> 
