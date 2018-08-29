@@ -2,112 +2,328 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97702C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:15:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E354FC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:16:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F5762054F
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:15:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 785472054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:16:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="bIGLi4cD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F5762054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PND6VoAS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 785472054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729073AbeH2TMb (ORCPT
+        id S1729066AbeH2TN6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 15:12:31 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36314 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728911AbeH2TMb (ORCPT
+        Wed, 29 Aug 2018 15:13:58 -0400
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:37359 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728738AbeH2TN6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 15:12:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=/inR5By6OFUMZuoZPwhEZeBPZZMVYMW7NEHO+WVOSUg=; b=bIGLi4cDRCH2m0pS1WFXEby1l
-        9cUA6mllb1zbd5bLhYGPKUbeIPDB3a+oIc6vDfUSgorc7fdfEN7pPw2+liC/tSzzwX/WKJ0+Rq0kz
-        B13p3/QodvW6Cyk8ZvHECEkj3y1lj3l3QkVrIDAegXPAxEBXXd74DT0mK5RXu/sRG12ok=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fv2BS-0000RR-FS; Wed, 29 Aug 2018 15:15:02 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 0BF1A112486B; Wed, 29 Aug 2018 16:15:02 +0100 (BST)
-Date:   Wed, 29 Aug 2018 16:15:02 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Allan Nielsen <allan.nielsen@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: Re: [andriy.shevchenko@linux.intel.com: Re: [PATCH] spi: dw-mmio:
- add MSCC Jaguar2 support]
-Message-ID: <20180829151501.GE27808@sirena.org.uk>
-References: <20180829150955.GB7459@smile.fi.intel.com>
+        Wed, 29 Aug 2018 15:13:58 -0400
+Received: by mail-qk0-f194.google.com with SMTP id f17-v6so3591692qkh.4
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 08:16:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=gqaMS3yKKYqm5rOGp313tLkvsQ1lCBiXmTtsX6Yq/EI=;
+        b=PND6VoASrg7wtSwk7gk0Odd90AKcVFKDcmwuJGIFf55stMqDllEGyhg+H0GwKVSrHY
+         QSipOXjPfCTHnwN8l8XkARQRW3R1o57WSXNDnvO4cKArzCvIEgB535XQvPl+WJGegWCc
+         2hJC862b7ynTEZ7+4GAw2SmwoXXpz8QCtFa8MHnoFqVIrrsAMlTntPw8NALWgbMo4hHU
+         zLufNDeqnZvVMPsc8rzgbSK3TPnNWRDi+d87li3DwpPGmwTprgF09XLJUnOE2TwtQVjI
+         fbkBfiiyQs/ZJhgWxcdqf3IHqIgemwlPljrczjywEgNaeMYcQd9Pyr7RtVIedQMCKtWR
+         hNOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=gqaMS3yKKYqm5rOGp313tLkvsQ1lCBiXmTtsX6Yq/EI=;
+        b=P5AIWGK3JB5hs8Mh8ynMLBtswiM8dlUlIdD5YNAZao1RMLzWfpIhNveFe/4TVQuP3c
+         YiLbofPF1n9OP5MEjryxIMErEFr24hw0ZApA9tENEjXqpP6OQvlBpSLqCErrI1wdUh8k
+         tGek4Oy/cW/U4PRMec5TqOccbNkoYf10z3KOHGAS0nwVbR0Kq2j0q286SIgWrlLsnLlN
+         rFzF29cGoti0tfkBXqJlf+2lbRlSlVwJU7OlyhnjSBBob/kKnzCVjjqEiETCPykgn+7q
+         Ht6v73aawzwbiYvMKwIDFoKXUHHcOY2u/VUxLl7FQAzLkXWsjSBc8on0RCp7fPuicqQI
+         xOfQ==
+X-Gm-Message-State: APzg51Bn2mMruef2cVu2SWJcl/7WVtAhPMFzjgaS13GyRB0mniXRMsIG
+        lRV5cW++cOI0k6zIG4WYfg==
+X-Google-Smtp-Source: ANB0VdadXAt8JT6dSbXgiQmHk++KKxQ0lFG7/sy6rJlSfSbfdZcE8EXFU3cq9ejvr/AeO+2PqUskrw==
+X-Received: by 2002:a37:a0c2:: with SMTP id j185-v6mr6927554qke.67.1535555792944;
+        Wed, 29 Aug 2018 08:16:32 -0700 (PDT)
+Received: from [10.18.17.172] (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id j5-v6sm2368077qtb.34.2018.08.29.08.16.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 Aug 2018 08:16:32 -0700 (PDT)
+Subject: Re: [PATCH 2/2] mm: zero remaining unavailable struct pages
+To:     Pavel.Tatashin@microsoft.com, linux-mm@kvack.org,
+        n-horiguchi@ah.jp.nec.com, mhocko@kernel.org
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org
+References: <20180823182513.8801-1-msys.mizuma@gmail.com>
+ <20180823182513.8801-2-msys.mizuma@gmail.com>
+ <7c773dec-ded0-7a1e-b3ad-6c6826851015@microsoft.com>
+From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
+Message-ID: <484388a7-1e75-0782-fdfb-20345e1bda0d@gmail.com>
+Date:   Wed, 29 Aug 2018 11:16:30 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ZInfyf7laFu/Kiw7"
-Content-Disposition: inline
-In-Reply-To: <20180829150955.GB7459@smile.fi.intel.com>
-X-Cookie: Not every question deserves an answer.
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <7c773dec-ded0-7a1e-b3ad-6c6826851015@microsoft.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Horiguchi-san and Pavel
 
---ZInfyf7laFu/Kiw7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thank you for your comments!
+The Pavel's additional patch looks good to me, so I will add it to this series.
 
-On Wed, Aug 29, 2018 at 06:09:55PM +0300, Andy Shevchenko wrote:
-> ----- Forwarded message from Andy Shevchenko <andriy.shevchenko@linux.int=
-el.com> -----
->=20
-> Date: Wed, 29 Aug 2018 18:08:31 +0300
-> From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> Subject: Re: [PATCH] spi: dw-mmio: add MSCC Jaguar2 support
-> User-Agent: Mutt/1.10.1 (2018-07-13)
->=20
-> On Wed, Aug 29, 2018 at 02:45:48PM +0200, Alexandre Belloni wrote:
-> > Unfortunately, the Jaguar2 CPU_SYSTEM_CTRL register set has a different
-> > layout than the Ocelot one. Handle that while keeping most of the code
-> > common.
->=20
-> > -#define OCELOT_IF_SI_OWNER_MASK			GENMASK(5, 4)
->=20
-> > +			   0x3 << if_si_owner_offset,
->=20
-> Perhaps,
->=20
-> #define MSCC_IF_SI_OWNER_MASK		GENMASK(1, 0)
+However, unfortunately, the movable_node option has something wrong yet...
+When I offline the memory which belongs to movable zone, I got the following
+warning. I'm trying to debug it.
 
-Oops, sorry - that seems to have been eaten somewhere.  :(
+I try to describe the issue as following. 
+If you have any comments, please let me know.
 
---ZInfyf7laFu/Kiw7
-Content-Type: application/pgp-signature; name="signature.asc"
+WARNING: CPU: 156 PID: 25611 at mm/page_alloc.c:7730 has_unmovable_pages+0x1bf/0x200
+RIP: 0010:has_unmovable_pages+0x1bf/0x200
+...
+Call Trace:
+ is_mem_section_removable+0xd3/0x160
+ show_mem_removable+0x8e/0xb0
+ dev_attr_show+0x1c/0x50
+ sysfs_kf_seq_show+0xb3/0x110
+ seq_read+0xee/0x480
+ __vfs_read+0x36/0x190
+ vfs_read+0x89/0x130
+ ksys_read+0x52/0xc0
+ do_syscall_64+0x5b/0x180
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x7fe7b7823f70
+...
 
------BEGIN PGP SIGNATURE-----
+I added a printk to catch the unmovable page.
+---
+@@ -7713,8 +7719,12 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
+                 * is set to both of a memory hole page and a _used_ kernel
+                 * page at boot.
+                 */
+-               if (found > count)
++               if (found > count) {
++                       pr_info("DEBUG: %s zone: %lx page: %lx pfn: %lx flags: %lx found: %ld count: %ld \n",
++                               __func__, zone, page, page_to_pfn(page), page->flags, found, count);
+                        goto unmovable;
++               }
+---
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluGuHUACgkQJNaLcl1U
-h9A3Wgf9FGUxQNQ9H6VkM/ASsULfuvIMMQP/kUf0mCRd/HvsxZaaS8AeWq74/xZW
-EF1NoUrPIca/Gq+Xrrp6cOsKxIuQPorfne96wdJYuY0t5M6BogiWIxF5OIQuGjV1
-EQIgDANDMI9SpYP8KYFMZ9+yc6Cp48F/UM6DUjtzKLAMw1NHAsosCwutZX7rCuoY
-fKqOY14cwgzsDNCjIVPJjzbuxaW0zcKWY4cDmtZeytRuZpgVnp3nPtTxyvKwHURt
-3k063gA7Y+x+pUbhCF8tolkCIUVc5y1wv64xQuaKB/t+VDiHL+rAQWpzPOCxF9aM
-P5G2CcA0+J29YvyM5Go9Ghp1pGaSHg==
-=bH0e
------END PGP SIGNATURE-----
+Then I got the following. The page (PFN: 0x1c0ff130d) flag is 
+0xdfffffc0040048 (uptodate|active|swapbacked)
 
---ZInfyf7laFu/Kiw7--
+---
+DEBUG: has_unmovable_pages zone: 0xffff8c0ffff80380 page: 0xffffea703fc4c340 pfn: 0x1c0ff130d flags: 0xdfffffc0040048 found: 1 count: 0 
+---
+
+And I got the owner from /sys/kernel/debug/page_owner.
+
+Page allocated via order 0, mask 0x6280ca(GFP_HIGHUSER_MOVABLE|__GFP_ZERO)
+PFN 7532909325 type Movable Block 14712713 type Movable Flags 0xdfffffc0040048(uptodate|active|swapbacked)
+ __alloc_pages_nodemask+0xfc/0x270
+ alloc_pages_vma+0x7c/0x1e0
+ handle_pte_fault+0x399/0xe50
+ __handle_mm_fault+0x38e/0x520
+ handle_mm_fault+0xdc/0x210
+ __do_page_fault+0x243/0x4c0
+ do_page_fault+0x31/0x130
+ page_fault+0x1e/0x30
+
+The page is allocated as anonymous page via page fault.
+I'm not sure, but lru flag should be added to the page...?
+
+Thanks,
+Masa
+
+On 08/27/2018 07:33 PM, Pasha Tatashin wrote:
+> On 8/23/18 2:25 PM, Masayoshi Mizuma wrote:
+>> From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+>>
+>> There is a kernel panic that is triggered when reading /proc/kpageflags
+>> on the kernel booted with kernel parameter 'memmap=nn[KMG]!ss[KMG]':
+>>
+>>   BUG: unable to handle kernel paging request at fffffffffffffffe
+>>   PGD 9b20e067 P4D 9b20e067 PUD 9b210067 PMD 0
+>>   Oops: 0000 [#1] SMP PTI
+>>   CPU: 2 PID: 1728 Comm: page-types Not tainted 4.17.0-rc6-mm1-v4.17-rc6-180605-0816-00236-g2dfb086ef02c+ #160
+>>   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-2.fc28 04/01/2014
+>>   RIP: 0010:stable_page_flags+0x27/0x3c0
+>>   Code: 00 00 00 0f 1f 44 00 00 48 85 ff 0f 84 a0 03 00 00 41 54 55 49 89 fc 53 48 8b 57 08 48 8b 2f 48 8d 42 ff 83 e2 01 48 0f 44 c7 <48> 8b 00 f6 c4 01 0f 84 10 03 00 00 31 db 49 8b 54 24 08 4c 89 e7
+>>   RSP: 0018:ffffbbd44111fde0 EFLAGS: 00010202
+>>   RAX: fffffffffffffffe RBX: 00007fffffffeff9 RCX: 0000000000000000
+>>   RDX: 0000000000000001 RSI: 0000000000000202 RDI: ffffed1182fff5c0
+>>   RBP: ffffffffffffffff R08: 0000000000000001 R09: 0000000000000001
+>>   R10: ffffbbd44111fed8 R11: 0000000000000000 R12: ffffed1182fff5c0
+>>   R13: 00000000000bffd7 R14: 0000000002fff5c0 R15: ffffbbd44111ff10
+>>   FS:  00007efc4335a500(0000) GS:ffff93a5bfc00000(0000) knlGS:0000000000000000
+>>   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>   CR2: fffffffffffffffe CR3: 00000000b2a58000 CR4: 00000000001406e0
+>>   Call Trace:
+>>    kpageflags_read+0xc7/0x120
+>>    proc_reg_read+0x3c/0x60
+>>    __vfs_read+0x36/0x170
+>>    vfs_read+0x89/0x130
+>>    ksys_pread64+0x71/0x90
+>>    do_syscall_64+0x5b/0x160
+>>    entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>>   RIP: 0033:0x7efc42e75e23
+>>   Code: 09 00 ba 9f 01 00 00 e8 ab 81 f4 ff 66 2e 0f 1f 84 00 00 00 00 00 90 83 3d 29 0a 2d 00 00 75 13 49 89 ca b8 11 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 34 c3 48 83 ec 08 e8 db d3 01 00 48 89 04 24
+>>
+>> According to kernel bisection, this problem became visible due to commit
+>> f7f99100d8d9 which changes how struct pages are initialized.
+>>
+>> Memblock layout affects the pfn ranges covered by node/zone. Consider
+>> that we have a VM with 2 NUMA nodes and each node has 4GB memory, and
+>> the default (no memmap= given) memblock layout is like below:
+>>
+>>   MEMBLOCK configuration:
+>>    memory size = 0x00000001fff75c00 reserved size = 0x000000000300c000
+>>    memory.cnt  = 0x4
+>>    memory[0x0]     [0x0000000000001000-0x000000000009efff], 0x000000000009e000 bytes on node 0 flags: 0x0
+>>    memory[0x1]     [0x0000000000100000-0x00000000bffd6fff], 0x00000000bfed7000 bytes on node 0 flags: 0x0
+>>    memory[0x2]     [0x0000000100000000-0x000000013fffffff], 0x0000000040000000 bytes on node 0 flags: 0x0
+>>    memory[0x3]     [0x0000000140000000-0x000000023fffffff], 0x0000000100000000 bytes on node 1 flags: 0x0
+>>    ...
+>>
+>> If you give memmap=1G!4G (so it just covers memory[0x2]),
+>> the range [0x100000000-0x13fffffff] is gone:
+>>
+>>   MEMBLOCK configuration:
+>>    memory size = 0x00000001bff75c00 reserved size = 0x000000000300c000
+>>    memory.cnt  = 0x3
+>>    memory[0x0]     [0x0000000000001000-0x000000000009efff], 0x000000000009e000 bytes on node 0 flags: 0x0
+>>    memory[0x1]     [0x0000000000100000-0x00000000bffd6fff], 0x00000000bfed7000 bytes on node 0 flags: 0x0
+>>    memory[0x2]     [0x0000000140000000-0x000000023fffffff], 0x0000000100000000 bytes on node 1 flags: 0x0
+>>    ...
+>>
+>> This causes shrinking node 0's pfn range because it is calculated by
+>> the address range of memblock.memory. So some of struct pages in the
+>> gap range are left uninitialized.
+>>
+>> We have a function zero_resv_unavail() which does zeroing the struct
+>> pages outside memblock.memory, but currently it covers only the reserved
+>> unavailable range (i.e. memblock.memory && !memblock.reserved).
+>> This patch extends it to cover all unavailable range, which fixes
+>> the reported issue.
+>>
+>> Fixes: f7f99100d8d9 ("mm: stop zeroing memory during allocation in vmemmap")
+>> Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+>> Tested-by: Oscar Salvador <osalvador@suse.de>
+>> Tested-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+> 
+> Reviewed-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
+> 
+> Also, please review and add the following patch to this series:
+> 
+> From 6d23e66e979244734a06c1b636742c2568121b39 Mon Sep 17 00:00:00 2001
+> From: Pavel Tatashin <pavel.tatashin@microsoft.com>
+> Date: Mon, 27 Aug 2018 19:10:35 -0400
+> Subject: [PATCH] mm: return zero_resv_unavail optimization
+> 
+> When checking for valid pfns in zero_resv_unavail(), it is not necessary to
+> verify that pfns within pageblock_nr_pages ranges are valid, only the first
+> one needs to be checked. This is because memory for pages are allocated in
+> contiguous chunks that contain pageblock_nr_pages struct pages.
+> 
+> Signed-off-by: Pavel Tatashin <pavel.tatashin@microsoft.com>
+> ---
+>  mm/page_alloc.c | 46 ++++++++++++++++++++++++++--------------------
+>  1 file changed, 26 insertions(+), 20 deletions(-)
+> 
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 650d8f16a67e..5dfc206db40e 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -6441,6 +6441,29 @@ void __init free_area_init_node(int nid, unsigned long *zones_size,
+>  }
+>  
+>  #if defined(CONFIG_HAVE_MEMBLOCK) && !defined(CONFIG_FLAT_NODE_MEM_MAP)
+> +
+> +/*
+> + * Zero all valid struct pages in range [spfn, epfn), return number of struct
+> + * pages zeroed
+> + */
+> +static u64 zero_pfn_range(unsigned long spfn, unsigned long epfn)
+> +{
+> +	unsigned long pfn;
+> +	u64 pgcnt = 0;
+> +
+> +	for (pfn = spfn; pfn < epfn; pfn++) {
+> +		if (!pfn_valid(ALIGN_DOWN(pfn, pageblock_nr_pages))) {
+> +			pfn = ALIGN_DOWN(pfn, pageblock_nr_pages)
+> +				+ pageblock_nr_pages - 1;
+> +			continue;
+> +		}
+> +		mm_zero_struct_page(pfn_to_page(pfn));
+> +		pgcnt++;
+> +	}
+> +
+> +	return pgcnt;
+> +}
+> +
+>  /*
+>   * Only struct pages that are backed by physical memory are zeroed and
+>   * initialized by going through __init_single_page(). But, there are some
+> @@ -6456,7 +6479,6 @@ void __init free_area_init_node(int nid, unsigned long *zones_size,
+>  void __init zero_resv_unavail(void)
+>  {
+>  	phys_addr_t start, end;
+> -	unsigned long pfn;
+>  	u64 i, pgcnt;
+>  	phys_addr_t next = 0;
+>  
+> @@ -6466,34 +6488,18 @@ void __init zero_resv_unavail(void)
+>  	pgcnt = 0;
+>  	for_each_mem_range(i, &memblock.memory, NULL,
+>  			NUMA_NO_NODE, MEMBLOCK_NONE, &start, &end, NULL) {
+> -		if (next < start) {
+> -			for (pfn = PFN_DOWN(next); pfn < PFN_UP(start); pfn++) {
+> -				if (!pfn_valid(ALIGN_DOWN(pfn, pageblock_nr_pages)))
+> -					continue;
+> -				mm_zero_struct_page(pfn_to_page(pfn));
+> -				pgcnt++;
+> -			}
+> -		}
+> +		if (next < start)
+> +			pgcnt += zero_pfn_range(PFN_DOWN(next), PFN_UP(start));
+>  		next = end;
+>  	}
+> -	for (pfn = PFN_DOWN(next); pfn < max_pfn; pfn++) {
+> -		if (!pfn_valid(ALIGN_DOWN(pfn, pageblock_nr_pages)))
+> -			continue;
+> -		mm_zero_struct_page(pfn_to_page(pfn));
+> -		pgcnt++;
+> -	}
+> -
+> +	pgcnt += zero_pfn_range(PFN_DOWN(next), max_pfn);
+>  
+>  	/*
+>  	 * Struct pages that do not have backing memory. This could be because
+>  	 * firmware is using some of this memory, or for some other reasons.
+> -	 * Once memblock is changed so such behaviour is not allowed: i.e.
+> -	 * list of "reserved" memory must be a subset of list of "memory", then
+> -	 * this code can be removed.
+>  	 */
+>  	if (pgcnt)
+>  		pr_info("Zeroed struct page in unavailable ranges: %lld pages", pgcnt);
+> -
+>  }
+>  #endif /* CONFIG_HAVE_MEMBLOCK && !CONFIG_FLAT_NODE_MEM_MAP */
+>  
+> 
