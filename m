@@ -6,59 +6,60 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F542C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:43:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A60A4C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:44:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E305820898
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:43:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F5902089B
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:44:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hgtRBHSD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E305820898
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EreYEoLA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F5902089B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727767AbeH2LjO (ORCPT
+        id S1727842AbeH2LkA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 07:39:14 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:38637 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727304AbeH2LjN (ORCPT
+        Wed, 29 Aug 2018 07:40:00 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:40801 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727304AbeH2LkA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 07:39:13 -0400
-Received: by mail-it0-f67.google.com with SMTP id p129-v6so6014918ite.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 00:43:39 -0700 (PDT)
+        Wed, 29 Aug 2018 07:40:00 -0400
+Received: by mail-io0-f193.google.com with SMTP id l14-v6so3671264iob.7
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 00:44:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=4DDAKbSLrjPXiyeHhBKSLKKCWbarsLJa9tjcfedxeyo=;
-        b=hgtRBHSDoKByIjcU5mivSShK1XfMgmRNlQ2yds1Q0yKt+OKOwnyoIYHEcOO+RcH90a
-         Ln8CogLcPV3IMBQYYBMgR0xaHr6runmahyAUeC8iT1LVVcpzcmt0T//Dn8ShGjfTRMC3
-         5UYYidjPhyIxGKz8Vu8Hu36v9pOxbFmNtFd2g=
+        bh=WVGoiy5ps+LXUqLk9pSyAcvmhvlvutGB4Y/3fKHmAxM=;
+        b=EreYEoLAprMzIW6q7EX2JhN/GgJ4LY++xdfLYqI+5fAy3HtcrXPIq0mseDzxAFegWo
+         gbMmZg8dHRm2r+6Hqs4UYE9JFJP989afOG0MNOe4j3ppa3n0u11/XFLuNYov7DyztfzU
+         LkHnc30xSx5SVTyhDoQKiwbiBl9KUy76zDXU0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=4DDAKbSLrjPXiyeHhBKSLKKCWbarsLJa9tjcfedxeyo=;
-        b=Q9wVPBiUglkhKM4xXl/dxsmS3sCSq65Nzbm2+TjmSUzoy6/VqSk8hLct1BAr2QYikr
-         S7tIWl609bgaIPCfaS9aWdr+A1vVoI7S6opUdHqmw1nH/Y0fqXu0yO+7eFcFCJSQCN/6
-         G2IQ9QW431uMCaKd4IyfVHlkKrORA+kP28/rs3Bi3M0swqoymsmpLx/bxFkGoFYk1NTd
-         8PYQI2/2bCo+vbIQ8b4q5zYwqF9ClPYNjLyHwSeD5MEvk/hnkvF+76YsRWJHZuWpiiE7
-         0RUPQr1YGzy099f8aqZTzztrBYCkfkXNv5gzWrUEDKChOrxHrWtVzX1ZpC6je/gkyXd8
-         sDYg==
-X-Gm-Message-State: APzg51BcFuycvmdX///Johk1h2+K7pc5XwURf+x+fR3yHfQsRlW6Lwvx
-        dhiLmfe1GGGTlcByGnRR2wIXg5+E6Gui6MU7FFcSxA==
-X-Google-Smtp-Source: ANB0VdaZjcyijibOq9OBqQoFcNNUdN76mON+47u9PB4dPN5QnH8v275kK+i+VS4xRz0hhLW4A3/xzBWrkEe0m/91jlc=
-X-Received: by 2002:a24:144:: with SMTP id 65-v6mr4089951itk.62.1535528619556;
- Wed, 29 Aug 2018 00:43:39 -0700 (PDT)
+        bh=WVGoiy5ps+LXUqLk9pSyAcvmhvlvutGB4Y/3fKHmAxM=;
+        b=O6xie4etE2owyvImTczVyHJVjcz53m7btMRGYhWZSilyOmctnd5pkEZpfWpPjtjpb4
+         koWQCBmWn5gp+P62J1gphs2lIPmKvcC92vF28isEMkeGluRTZNSqP+Rh7kva6KNDa+Uy
+         tWsYZwGW6SiRCo5XPrGwKmVeOSVQbten4YfIZp9G+Wx29t5S7k6V+ng5PYbtLAFu61IT
+         lqb2IUhQCXJQ5vUYlc6ZvH5iD84yPun+lYYvBoQwuMhYBni/jc6j/yyplOgmZZ12YqRU
+         xpw/Fou8HwqcHYUVK2YAC//zzGEiV8j3NsdOuhtWbzkMWqZ0n5iEmieDduWuSYosb4t3
+         WFKg==
+X-Gm-Message-State: APzg51DRMzKykEEeceLI7LWKDdJLjzKKbx6JIq8bH4upb7W0Oy5/y99i
+        ifsUFiXeGhIwQIlRViLttlRkqRC4y9XZ+o5NoBobKQ==
+X-Google-Smtp-Source: ANB0VdaRv/nLzDwt5YqrgvZdOdq/5UsDCIXrs590mF3aafxXcsynm45HUynjn+YC+1sBaR+9MdnDQPtQE2R35tLCmoc=
+X-Received: by 2002:a6b:630a:: with SMTP id p10-v6mr4162987iog.175.1535528666082;
+ Wed, 29 Aug 2018 00:44:26 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180816200648.90458-1-swboyd@chromium.org> <20180816200648.90458-4-swboyd@chromium.org>
-In-Reply-To: <20180816200648.90458-4-swboyd@chromium.org>
+References: <20180816200648.90458-1-swboyd@chromium.org> <20180816200648.90458-2-swboyd@chromium.org>
+ <CACRpkdbGUPpwEbGqg3Q3780DiEG2fts2WRkjkuQ2kmJR1HiftA@mail.gmail.com>
+In-Reply-To: <CACRpkdbGUPpwEbGqg3Q3780DiEG2fts2WRkjkuQ2kmJR1HiftA@mail.gmail.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 29 Aug 2018 09:43:27 +0200
-Message-ID: <CACRpkdau5Wnsq3NO2-HY_XSZ3TJHcX9hYU-W46ng+_BwOviqGA@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] pinctrl: msm: Configure interrupts as input and
- gpio mode
+Date:   Wed, 29 Aug 2018 09:44:14 +0200
+Message-ID: <CACRpkdbQ2i1jPe=hodgsAjKtbtiqCX9G5nGhN8YmoRqGAxHGWA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] pinctrl: msm: Really mask level interrupts to
+ prevent latching
 To:     Stephen Boyd <swboyd@chromium.org>
 Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
@@ -71,20 +72,15 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 16, 2018 at 10:06 PM Stephen Boyd <swboyd@chromium.org> wrote:
+On Wed, Aug 29, 2018 at 9:40 AM Linus Walleij <linus.walleij@linaro.org> wrote:
 
-> When requesting a gpio as an interrupt, we should make sure to mux the
-> pin as the GPIO function and configure it to be an input so that various
-> functions or output signals don't affect the interrupt state of the pin.
-> So far, we've relied on pinmux configurations in DT to handle this, but
-> let's explicitly configure this in the code so that DT implementers
-> don't have to get this part right.
+> This patch applied for fixes with Doug and Bjorn's ACKs.
 >
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Doug Anderson <dianders@chromium.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> I suppose you will respin the two others and obtain buy-in from
+> the same people for these.
 
-Patch applied for v4.20 with Bjorn's ACK.
+Scrap that. I saw Bjorn has ACKed the two others so applied them for
+next (v4.20).
 
 Yours,
 Linus Walleij
