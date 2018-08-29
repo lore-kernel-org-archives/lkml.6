@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC040C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:54:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E739FC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:55:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87DAB20647
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:54:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87DAB20647
+	by mail.kernel.org (Postfix) with ESMTP id A0ACF20647
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:55:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0ACF20647
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727843AbeH3CxZ (ORCPT
+        id S1728044AbeH3CyH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 22:53:25 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44482 "EHLO
+        Wed, 29 Aug 2018 22:54:07 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34136 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727599AbeH3CxX (ORCPT
+        by vger.kernel.org with ESMTP id S1727722AbeH3CxZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 22:53:23 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7TMs27r047561
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:54:15 -0400
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m64f00chy-1
+        Wed, 29 Aug 2018 22:53:25 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7TMs1Rq118975
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:54:16 -0400
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m61g7xnuu-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:54:15 -0400
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:54:16 -0400
 Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 29 Aug 2018 18:54:12 -0400
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Wed, 29 Aug 2018 18:54:15 -0400
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 29 Aug 2018 18:54:08 -0400
+        Wed, 29 Aug 2018 18:54:09 -0400
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7TMs7Gq1180042
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7TMs8m727852962
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 29 Aug 2018 22:54:07 GMT
+        Wed, 29 Aug 2018 22:54:08 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6D3D9B2072;
-        Wed, 29 Aug 2018 18:53:03 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id BE6D8B2066;
+        Wed, 29 Aug 2018 18:53:04 -0400 (EDT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3B584B2068;
-        Wed, 29 Aug 2018 18:53:03 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id 980E1B2065;
+        Wed, 29 Aug 2018 18:53:04 -0400 (EDT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 29 Aug 2018 18:53:03 -0400 (EDT)
+        Wed, 29 Aug 2018 18:53:04 -0400 (EDT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 6CF7316C91CB; Wed, 29 Aug 2018 15:54:07 -0700 (PDT)
+        id BADA816C91B7; Wed, 29 Aug 2018 15:54:07 -0700 (PDT)
 From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -61,24 +61,24 @@ Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tip/core/rcu 07/24] rcutorture: Remove the "rcu_bh" and "sched" torture types
-Date:   Wed, 29 Aug 2018 15:53:48 -0700
+Subject: [PATCH tip/core/rcu 20/24] rcu: Clean up flavor-related definitions and comments in tree_plugin.h
+Date:   Wed, 29 Aug 2018 15:54:01 -0700
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180829225340.GA7019@linux.vnet.ibm.com>
 References: <20180829225340.GA7019@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18082922-0068-0000-0000-00000331BA5B
+x-cbid: 18082922-0052-0000-0000-0000032821BC
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009636; HX=3.00000242; KW=3.00000007;
  PH=3.00000004; SC=3.00000266; SDB=6.01080749; UDB=6.00557500; IPR=6.00860734;
- MB=3.00023002; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-29 22:54:12
+ MB=3.00023002; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-29 22:54:13
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082922-0069-0000-0000-0000458F1C57
-Message-Id: <20180829225405.7275-7-paulmck@linux.vnet.ibm.com>
+x-cbparentid: 18082922-0053-0000-0000-00005DE60102
+Message-Id: <20180829225405.7275-20-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-29_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1807170000 definitions=main-1808290223
@@ -87,137 +87,121 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that the RCU-bh and RCU-sched update-side functions are simple
-wrappers around their RCU counterparts, there isn't a whole lot of point
-in testing them.  This commit therefore removes the "rcu_bh" and "sched"
-torture types from rcutorture.
-
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 ---
- kernel/rcu/rcutorture.c | 89 ++---------------------------------------
- 1 file changed, 3 insertions(+), 86 deletions(-)
+ kernel/rcu/tree_plugin.h | 36 +++++++++++++++++-------------------
+ 1 file changed, 17 insertions(+), 19 deletions(-)
 
-diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index 1bc0e37dffa8..a228ad762fba 100644
---- a/kernel/rcu/rcutorture.c
-+++ b/kernel/rcu/rcutorture.c
-@@ -128,7 +128,7 @@ torture_param(int, verbose, 1,
+diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+index cd276c46bc14..cd4c1b979446 100644
+--- a/kernel/rcu/tree_plugin.h
++++ b/kernel/rcu/tree_plugin.h
+@@ -38,8 +38,7 @@
+ #include "../locking/rtmutex_common.h"
  
- static char *torture_type = "rcu";
- module_param(torture_type, charp, 0444);
--MODULE_PARM_DESC(torture_type, "Type of RCU to torture (rcu, rcu_bh, ...)");
-+MODULE_PARM_DESC(torture_type, "Type of RCU to torture (rcu, srcu, ...)");
- 
- static int nrealreaders;
- static int ncbflooders;
-@@ -438,47 +438,6 @@ static struct rcu_torture_ops rcu_ops = {
- 	.name		= "rcu"
- };
- 
--/*
-- * Definitions for rcu_bh torture testing.
-- */
--
--static int rcu_bh_torture_read_lock(void) __acquires(RCU_BH)
--{
--	rcu_read_lock_bh();
--	return 0;
--}
--
--static void rcu_bh_torture_read_unlock(int idx) __releases(RCU_BH)
--{
--	rcu_read_unlock_bh();
--}
--
--static void rcu_bh_torture_deferred_free(struct rcu_torture *p)
--{
--	call_rcu_bh(&p->rtort_rcu, rcu_torture_cb);
--}
--
--static struct rcu_torture_ops rcu_bh_ops = {
--	.ttype		= RCU_BH_FLAVOR,
--	.init		= rcu_sync_torture_init,
--	.readlock	= rcu_bh_torture_read_lock,
--	.read_delay	= rcu_read_delay,  /* just reuse rcu's version. */
--	.readunlock	= rcu_bh_torture_read_unlock,
--	.get_gp_seq	= rcu_bh_get_gp_seq,
--	.gp_diff	= rcu_seq_diff,
--	.deferred_free	= rcu_bh_torture_deferred_free,
--	.sync		= synchronize_rcu_bh,
--	.exp_sync	= synchronize_rcu_bh_expedited,
--	.call		= call_rcu_bh,
--	.cb_barrier	= rcu_barrier_bh,
--	.fqs		= rcu_bh_force_quiescent_state,
--	.stats		= NULL,
--	.irq_capable	= 1,
--	.extendables	= (RCUTORTURE_RDR_BH | RCUTORTURE_RDR_IRQ),
--	.ext_irq_conflict = RCUTORTURE_RDR_RCU,
--	.name		= "rcu_bh"
--};
--
  /*
-  * Don't even think about trying any of these in real life!!!
-  * The names includes "busted", and they really means it!
-@@ -666,48 +625,6 @@ static struct rcu_torture_ops busted_srcud_ops = {
- 	.name		= "busted_srcud"
- };
- 
--/*
-- * Definitions for sched torture testing.
-- */
--
--static int sched_torture_read_lock(void)
--{
--	preempt_disable();
--	return 0;
--}
--
--static void sched_torture_read_unlock(int idx)
--{
--	preempt_enable();
--}
--
--static void rcu_sched_torture_deferred_free(struct rcu_torture *p)
--{
--	call_rcu_sched(&p->rtort_rcu, rcu_torture_cb);
--}
--
--static struct rcu_torture_ops sched_ops = {
--	.ttype		= RCU_SCHED_FLAVOR,
--	.init		= rcu_sync_torture_init,
--	.readlock	= sched_torture_read_lock,
--	.read_delay	= rcu_read_delay,  /* just reuse rcu's version. */
--	.readunlock	= sched_torture_read_unlock,
--	.get_gp_seq	= rcu_sched_get_gp_seq,
--	.gp_diff	= rcu_seq_diff,
--	.deferred_free	= rcu_sched_torture_deferred_free,
--	.sync		= synchronize_sched,
--	.exp_sync	= synchronize_sched_expedited,
--	.get_state	= get_state_synchronize_sched,
--	.cond_sync	= cond_synchronize_sched,
--	.call		= call_rcu_sched,
--	.cb_barrier	= rcu_barrier_sched,
--	.fqs		= rcu_sched_force_quiescent_state,
--	.stats		= NULL,
--	.irq_capable	= 1,
--	.extendables	= RCUTORTURE_MAX_EXTEND,
--	.name		= "sched"
--};
--
- /*
-  * Definitions for RCU-tasks torture testing.
+- * Control variables for per-CPU and per-rcu_node kthreads.  These
+- * handle all flavors of RCU.
++ * Control variables for per-CPU and per-rcu_node kthreads.
   */
-@@ -1956,8 +1873,8 @@ rcu_torture_init(void)
- 	int cpu;
- 	int firsterr = 0;
- 	static struct rcu_torture_ops *torture_ops[] = {
--		&rcu_ops, &rcu_bh_ops, &rcu_busted_ops, &srcu_ops, &srcud_ops,
--		&busted_srcud_ops, &sched_ops, &tasks_ops,
-+		&rcu_ops, &rcu_busted_ops, &srcu_ops, &srcud_ops,
-+		&busted_srcud_ops, &tasks_ops,
- 	};
+ static DEFINE_PER_CPU(struct task_struct *, rcu_cpu_kthread_task);
+ DEFINE_PER_CPU(unsigned int, rcu_cpu_kthread_status);
+@@ -826,8 +825,8 @@ static void rcu_flavor_check_callbacks(int user)
+  *
+  * Note that this guarantee implies further memory-ordering guarantees.
+  * On systems with more than one CPU, when synchronize_rcu() returns,
+- * each CPU is guaranteed to have executed a full memory barrier since the
+- * end of its last RCU-sched read-side critical section whose beginning
++ * each CPU is guaranteed to have executed a full memory barrier since
++ * the end of its last RCU read-side critical section whose beginning
+  * preceded the call to synchronize_rcu().  In addition, each CPU having
+  * an RCU read-side critical section that extends beyond the return from
+  * synchronize_rcu() is guaranteed to have executed a full memory barrier
+@@ -1069,7 +1068,7 @@ void synchronize_rcu(void)
+ 	RCU_LOCKDEP_WARN(lock_is_held(&rcu_bh_lock_map) ||
+ 			 lock_is_held(&rcu_lock_map) ||
+ 			 lock_is_held(&rcu_sched_lock_map),
+-			 "Illegal synchronize_rcu() in RCU-sched read-side critical section");
++			 "Illegal synchronize_rcu() in RCU read-side critical section");
+ 	if (rcu_blocking_is_gp())
+ 		return;
+ 	if (rcu_gp_is_expedited())
+@@ -1341,9 +1340,9 @@ static int rcu_cpu_kthread_should_run(unsigned int cpu)
+ }
  
- 	if (!torture_init_begin(torture_type, verbose))
+ /*
+- * Per-CPU kernel thread that invokes RCU callbacks.  This replaces the
+- * RCU softirq used in flavors and configurations of RCU that do not
+- * support RCU priority boosting.
++ * Per-CPU kernel thread that invokes RCU callbacks.  This replaces
++ * the RCU softirq used in configurations of RCU that do not support RCU
++ * priority boosting.
+  */
+ static void rcu_cpu_kthread(unsigned int cpu)
+ {
+@@ -1484,8 +1483,8 @@ static void rcu_prepare_kthreads(int cpu)
+  * 1 if so.  This function is part of the RCU implementation; it is -not-
+  * an exported member of the RCU API.
+  *
+- * Because we not have RCU_FAST_NO_HZ, just check whether this CPU needs
+- * any flavor of RCU.
++ * Because we not have RCU_FAST_NO_HZ, just check whether or not this
++ * CPU has RCU callbacks queued.
+  */
+ int rcu_needs_cpu(u64 basemono, u64 *nextevt)
+ {
+@@ -1551,9 +1550,9 @@ static int rcu_idle_lazy_gp_delay = RCU_IDLE_LAZY_GP_DELAY;
+ module_param(rcu_idle_lazy_gp_delay, int, 0644);
+ 
+ /*
+- * Try to advance callbacks for all flavors of RCU on the current CPU, but
+- * only if it has been awhile since the last time we did so.  Afterwards,
+- * if there are any callbacks ready for immediate invocation, return true.
++ * Try to advance callbacks on the current CPU, but only if it has been
++ * awhile since the last time we did so.  Afterwards, if there are any
++ * callbacks ready for immediate invocation, return true.
+  */
+ static bool __maybe_unused rcu_try_advance_all_cbs(void)
+ {
+@@ -1808,7 +1807,7 @@ static void print_cpu_stall_info_end(void)
+ 	pr_err("\t");
+ }
+ 
+-/* Zero ->ticks_this_gp for all flavors of RCU. */
++/* Zero ->ticks_this_gp and snapshot the number of RCU softirq handlers. */
+ static void zero_cpu_stall_ticks(struct rcu_data *rdp)
+ {
+ 	rdp->ticks_this_gp = 0;
+@@ -1939,7 +1938,7 @@ static void wake_nocb_leader_defer(struct rcu_data *rdp, int waketype,
+ }
+ 
+ /*
+- * Does the specified CPU need an RCU callback for the specified flavor
++ * Does the specified CPU need an RCU callback for this invocation
+  * of rcu_barrier()?
+  */
+ static bool rcu_nocb_cpu_needs_barrier(int cpu)
+@@ -2419,9 +2418,8 @@ static void __init rcu_boot_init_nocb_percpu_data(struct rcu_data *rdp)
+ 
+ /*
+  * If the specified CPU is a no-CBs CPU that does not already have its
+- * rcuo kthread for the specified RCU flavor, spawn it.  If the CPUs are
+- * brought online out of order, this can require re-organizing the
+- * leader-follower relationships.
++ * rcuo kthread, spawn it.  If the CPUs are brought online out of order,
++ * this can require re-organizing the leader-follower relationships.
+  */
+ static void rcu_spawn_one_nocb_kthread(int cpu)
+ {
+@@ -2458,7 +2456,7 @@ static void rcu_spawn_one_nocb_kthread(int cpu)
+ 		rdp_spawn->nocb_next_follower = rdp_old_leader;
+ 	}
+ 
+-	/* Spawn the kthread for this CPU and RCU flavor. */
++	/* Spawn the kthread for this CPU. */
+ 	t = kthread_run(rcu_nocb_kthread, rdp_spawn,
+ 			"rcuo%c/%d", rcu_state.abbr, cpu);
+ 	BUG_ON(IS_ERR(t));
 -- 
 2.17.1
 
