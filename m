@@ -2,193 +2,231 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UPPERCASE_50_75,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24274C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 06:04:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD477C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 06:04:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B324120897
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 06:04:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 788042084D
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 06:04:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jitoRuGs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B324120897
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KJ9gNWIr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 788042084D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727288AbeH2J7d (ORCPT
+        id S1727462AbeH2J7h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 05:59:33 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:36568 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726188AbeH2J7c (ORCPT
+        Wed, 29 Aug 2018 05:59:37 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:38205 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727322AbeH2J7h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 05:59:32 -0400
-Received: by mail-pl1-f195.google.com with SMTP id e11-v6so1836340plb.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 23:04:19 -0700 (PDT)
+        Wed, 29 Aug 2018 05:59:37 -0400
+Received: by mail-pg1-f195.google.com with SMTP id e2-v6so1857258pgv.5
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 23:04:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=u5rNulQQzSqP+YIFhXxyPRU7lX/Luw3DBF25RsEiU4Y=;
-        b=jitoRuGsNcPWWcCu4rRtM4NvUpeNMziDP+0B69vCiSWNUsQWI0Z+PUJ6CSscMvNKvT
-         qsbvMbBeGnFHg/VXXSLprNxpMVX3VIrTTjXrEHTS7h0VtKUSpOg1XOfkkrv7aIjkjlpB
-         Fns6gt08XXn7avWYv4fjOkgV+QLdpAosbhrqs=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :in-reply-to:references;
+        bh=QYs/+wtywkNmEn4RKbGv+95uUTJD4f+z+ToiDyC70jw=;
+        b=KJ9gNWIrTIbnMM84F7GPQrOdUeQ5Vd7OUPBeDIOV1lnn5zgJO5OQkXcaED86nWEQYh
+         uMhDaq8MLcLSyDZ2Vjfok8mT579dEtFIwIjJFrVY55vxtKmgc9/nzU+yuLL4Ct1WCbgY
+         agnZQE2Sx91wEhIw4iyvkdIzInWgKDYuW77ms=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=u5rNulQQzSqP+YIFhXxyPRU7lX/Luw3DBF25RsEiU4Y=;
-        b=rdnEXfqXbuHHRDya6zB3mbtB5lREPjQ8zIp/Lxy9p449mwKjdGARrFUK4kWPvxlMCw
-         BgnMQioYJwSqC4MrdpE4GkchQeJx3oEpc2FidcQdjx8v9i4KVFz1QzRB5Xlg/rNtOPJK
-         yl5CukSR7DO95UWxFsaAhwjiqiwLRGzwG1uOwvDOVlHsuIQc0ma5u59u6w0ShMp/Q/Wl
-         HHbZ85NCtAuTGfCfRvIqGJl1AruCVTt4ZoHzY3JlQS63dmTDg8AWnvIng8N217ebkP0c
-         Oj/OKsLObWHvM1kEmZ458q3P6eGeCe/4FkhmHDpfmefFVTQu5LjoZTHcLTy07IJQL1DH
-         xw/g==
-X-Gm-Message-State: APzg51ABYpHICLMIKLMHWPBSBWYlDN5xqyoyRPIva7j5yqAx/RHlB9zq
-        pCr1E1gVSYCwsXjvSxkHmEbrag==
-X-Google-Smtp-Source: ANB0VdZiogBKvVlDXXPw0ESfQfq7E9aNHaNz1/y8p1ZbNWDGgtY9e53f3+zaHdze25nAs5YSbg2CaQ==
-X-Received: by 2002:a17:902:27e6:: with SMTP id i35-v6mr4539188plg.187.1535522659172;
-        Tue, 28 Aug 2018 23:04:19 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:in-reply-to:references;
+        bh=QYs/+wtywkNmEn4RKbGv+95uUTJD4f+z+ToiDyC70jw=;
+        b=UIhEHB3KQjtIbqCA5P1AoWGkmLzuNJYDKkeDjQqFMydIumcsIkA2U8OPGGf5+mmddZ
+         RLpDneYZZdZlSz4WhEFqQ4CV0WiikSmPpLPO9nXYhao6l4XiSirFwwYMXKHiWPHpet1k
+         LLGbnElizj0bWSNXSY+eeQOwHgM8MuyPdOTitUkwecrdM9W1FIKM/liA3fz0sDlOlQSM
+         Suo+jx6mev12MzQ3JK/HUU3NecW21sd1MWp4d5iHlI/uYnN1NdBQtcwWPe0dyM9qT2gi
+         MblYBaWrwOW3u/Ob9H0MrztAbp+SBdVzM1WXdkXGEUKsc1DgkbItrT34YQ5/wK/ZOrqX
+         XaNg==
+X-Gm-Message-State: APzg51CPm/bquJCYDPTBfMYBNRcd1jgtKxeLGuyQ68iehU0d7Ltz2LyG
+        aJku9/qQTLqQc2JgzouKoMGXQw==
+X-Google-Smtp-Source: ANB0Vdbr+AVE7wAQ92tG1qes9It7RAP29McPzD05xKhxyS33BRYppudeai0ryygB6sMf3VsBhBJK1A==
+X-Received: by 2002:a63:1618:: with SMTP id w24-v6mr4489155pgl.43.1535522663479;
+        Tue, 28 Aug 2018 23:04:23 -0700 (PDT)
 Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id c85-v6sm5188729pfd.110.2018.08.28.23.04.15
+        by smtp.gmail.com with ESMTPSA id c85-v6sm5188729pfd.110.2018.08.28.23.04.19
         (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 28 Aug 2018 23:04:18 -0700 (PDT)
+        Tue, 28 Aug 2018 23:04:23 -0700 (PDT)
 From:   Baolin Wang <baolin.wang@linaro.org>
 To:     jic23@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
 Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
         freeman.liu@spreadtrum.com, broonie@kernel.org,
         baolin.wang@linaro.org, devicetree@vger.kernel.org,
         linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] iio: adc: sc27xx: Add raw data support
-Date:   Wed, 29 Aug 2018 14:04:04 +0800
-Message-Id: <0adef2f9eafa913eb9f4bc1ed3dc643d09bf02a2.1535434262.git.baolin.wang@linaro.org>
+Subject: [PATCH v2 2/2] iio: adc: sc27xx: Add ADC scale calibration
+Date:   Wed, 29 Aug 2018 14:04:05 +0800
+Message-Id: <61cad47d5d10c771d3cc371744533e87d192ee96.1535434262.git.baolin.wang@linaro.org>
 X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <0adef2f9eafa913eb9f4bc1ed3dc643d09bf02a2.1535434262.git.baolin.wang@linaro.org>
+References: <0adef2f9eafa913eb9f4bc1ed3dc643d09bf02a2.1535434262.git.baolin.wang@linaro.org>
+In-Reply-To: <0adef2f9eafa913eb9f4bc1ed3dc643d09bf02a2.1535434262.git.baolin.wang@linaro.org>
+References: <0adef2f9eafa913eb9f4bc1ed3dc643d09bf02a2.1535434262.git.baolin.wang@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The headset device will use channel 20 of ADC controller to detect events,
-but it needs the raw ADC data to do conversion according to its own formula.
-
-Thus we should configure the channel mask separately and configure channel
-20 as IIO_CHAN_INFO_RAW, as well as adding raw data read support.
+This patch adds support to read calibration values from the eFuse
+controller to calibrate the ADC channel scales, which can make ADC
+sample data more accurate.
 
 Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
 Changes from v1:
- - None.
-
+ - Use nvmem_cell_read() instead of nvmem_cell_read_u32().
 ---
- drivers/iio/adc/sc27xx_adc.c |   80 ++++++++++++++++++++++++------------------
- 1 file changed, 45 insertions(+), 35 deletions(-)
+ .../bindings/iio/adc/sprd,sc27xx-adc.txt           |    4 ++
+ drivers/iio/adc/sc27xx_adc.c                       |   74 +++++++++++++++++++-
+ 2 files changed, 75 insertions(+), 3 deletions(-)
 
+diff --git a/Documentation/devicetree/bindings/iio/adc/sprd,sc27xx-adc.txt b/Documentation/devicetree/bindings/iio/adc/sprd,sc27xx-adc.txt
+index 8aad960..b4daa15 100644
+--- a/Documentation/devicetree/bindings/iio/adc/sprd,sc27xx-adc.txt
++++ b/Documentation/devicetree/bindings/iio/adc/sprd,sc27xx-adc.txt
+@@ -12,6 +12,8 @@ Required properties:
+ - interrupts: The interrupt number for the ADC device.
+ - #io-channel-cells: Number of cells in an IIO specifier.
+ - hwlocks: Reference to a phandle of a hwlock provider node.
++- nvmem-cells: A phandle to the calibration cells provided by eFuse device.
++- nvmem-cell-names: Should be "big_scale_calib", "small_scale_calib".
+ 
+ Example:
+ 
+@@ -32,5 +34,7 @@ Example:
+ 			interrupts = <0 IRQ_TYPE_LEVEL_HIGH>;
+ 			#io-channel-cells = <1>;
+ 			hwlocks = <&hwlock 4>;
++			nvmem-cells = <&adc_big_scale>, <&adc_small_scale>;
++			nvmem-cell-names = "big_scale_calib", "small_scale_calib";
+ 		};
+ 	};
 diff --git a/drivers/iio/adc/sc27xx_adc.c b/drivers/iio/adc/sc27xx_adc.c
-index 2b60efe..153c311 100644
+index 153c311..7940b23 100644
 --- a/drivers/iio/adc/sc27xx_adc.c
 +++ b/drivers/iio/adc/sc27xx_adc.c
-@@ -273,6 +273,17 @@ static int sc27xx_adc_read_raw(struct iio_dev *indio_dev,
- 	int ret, tmp;
+@@ -5,10 +5,12 @@
+ #include <linux/iio/iio.h>
+ #include <linux/interrupt.h>
+ #include <linux/module.h>
++#include <linux/nvmem-consumer.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
++#include <linux/slab.h>
  
- 	switch (mask) {
-+	case IIO_CHAN_INFO_RAW:
-+		mutex_lock(&indio_dev->mlock);
-+		ret = sc27xx_adc_read(data, chan->channel, scale, &tmp);
-+		mutex_unlock(&indio_dev->mlock);
-+
-+		if (ret)
-+			return ret;
-+
-+		*val = tmp;
-+		return IIO_VAL_INT;
-+
- 	case IIO_CHAN_INFO_PROCESSED:
- 		mutex_lock(&indio_dev->mlock);
- 		ret = sc27xx_adc_read_processed(data, chan->channel, scale,
-@@ -315,48 +326,47 @@ static int sc27xx_adc_write_raw(struct iio_dev *indio_dev,
- 	.write_raw = &sc27xx_adc_write_raw,
+ /* PMIC global registers definition */
+ #define SC27XX_MODULE_EN		0xc08
+@@ -87,16 +89,73 @@ struct sc27xx_adc_linear_graph {
+  * should use the small-scale graph, and if more than 1.2v, we should use the
+  * big-scale graph.
+  */
+-static const struct sc27xx_adc_linear_graph big_scale_graph = {
++static struct sc27xx_adc_linear_graph big_scale_graph = {
+ 	4200, 3310,
+ 	3600, 2832,
  };
  
--#define SC27XX_ADC_CHANNEL(index) {				\
-+#define SC27XX_ADC_CHANNEL(index, mask) {			\
- 	.type = IIO_VOLTAGE,					\
- 	.channel = index,					\
--	.info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED) |	\
--			      BIT(IIO_CHAN_INFO_SCALE),		\
-+	.info_mask_separate = mask | BIT(IIO_CHAN_INFO_SCALE),	\
- 	.datasheet_name = "CH##index",				\
- 	.indexed = 1,						\
+-static const struct sc27xx_adc_linear_graph small_scale_graph = {
++static struct sc27xx_adc_linear_graph small_scale_graph = {
+ 	1000, 3413,
+ 	100, 341,
+ };
+ 
++static const struct sc27xx_adc_linear_graph big_scale_graph_calib = {
++	4200, 856,
++	3600, 733,
++};
++
++static const struct sc27xx_adc_linear_graph small_scale_graph_calib = {
++	1000, 833,
++	100, 80,
++};
++
++static int sc27xx_adc_get_calib_data(u32 calib_data, int calib_adc)
++{
++	return ((calib_data & 0xff) + calib_adc - 128) * 4;
++}
++
++static int sc27xx_adc_scale_calibration(struct sc27xx_adc_data *data,
++					bool big_scale)
++{
++	const struct sc27xx_adc_linear_graph *calib_graph;
++	struct sc27xx_adc_linear_graph *graph;
++	struct nvmem_cell *cell;
++	const char *cell_name;
++	u32 calib_data = 0;
++	void *buf;
++	size_t len;
++
++	if (big_scale) {
++		calib_graph = &big_scale_graph_calib;
++		graph = &big_scale_graph;
++		cell_name = "big_scale_calib";
++	} else {
++		calib_graph = &small_scale_graph_calib;
++		graph = &small_scale_graph;
++		cell_name = "small_scale_calib";
++	}
++
++	cell = nvmem_cell_get(data->dev, cell_name);
++	if (IS_ERR(cell))
++		return PTR_ERR(cell);
++
++	buf = nvmem_cell_read(cell, &len);
++	nvmem_cell_put(cell);
++
++	if (IS_ERR(buf))
++		return PTR_ERR(buf);
++
++	memcpy(&calib_data, buf, min(len, sizeof(u32)));
++
++	/* Only need to calibrate the adc values in the linear graph. */
++	graph->adc0 = sc27xx_adc_get_calib_data(calib_data, calib_graph->adc0);
++	graph->adc1 = sc27xx_adc_get_calib_data(calib_data >> 8,
++						calib_graph->adc1);
++
++	kfree(buf);
++	return 0;
++}
++
+ static int sc27xx_adc_get_ratio(int channel, int scale)
+ {
+ 	switch (channel) {
+@@ -209,7 +268,7 @@ static void sc27xx_adc_volt_ratio(struct sc27xx_adc_data *data,
+ 	*div_denominator = ratio & SC27XX_RATIO_DENOMINATOR_MASK;
  }
  
- static const struct iio_chan_spec sc27xx_channels[] = {
--	SC27XX_ADC_CHANNEL(0),
--	SC27XX_ADC_CHANNEL(1),
--	SC27XX_ADC_CHANNEL(2),
--	SC27XX_ADC_CHANNEL(3),
--	SC27XX_ADC_CHANNEL(4),
--	SC27XX_ADC_CHANNEL(5),
--	SC27XX_ADC_CHANNEL(6),
--	SC27XX_ADC_CHANNEL(7),
--	SC27XX_ADC_CHANNEL(8),
--	SC27XX_ADC_CHANNEL(9),
--	SC27XX_ADC_CHANNEL(10),
--	SC27XX_ADC_CHANNEL(11),
--	SC27XX_ADC_CHANNEL(12),
--	SC27XX_ADC_CHANNEL(13),
--	SC27XX_ADC_CHANNEL(14),
--	SC27XX_ADC_CHANNEL(15),
--	SC27XX_ADC_CHANNEL(16),
--	SC27XX_ADC_CHANNEL(17),
--	SC27XX_ADC_CHANNEL(18),
--	SC27XX_ADC_CHANNEL(19),
--	SC27XX_ADC_CHANNEL(20),
--	SC27XX_ADC_CHANNEL(21),
--	SC27XX_ADC_CHANNEL(22),
--	SC27XX_ADC_CHANNEL(23),
--	SC27XX_ADC_CHANNEL(24),
--	SC27XX_ADC_CHANNEL(25),
--	SC27XX_ADC_CHANNEL(26),
--	SC27XX_ADC_CHANNEL(27),
--	SC27XX_ADC_CHANNEL(28),
--	SC27XX_ADC_CHANNEL(29),
--	SC27XX_ADC_CHANNEL(30),
--	SC27XX_ADC_CHANNEL(31),
-+	SC27XX_ADC_CHANNEL(0, BIT(IIO_CHAN_INFO_PROCESSED)),
-+	SC27XX_ADC_CHANNEL(1, BIT(IIO_CHAN_INFO_PROCESSED)),
-+	SC27XX_ADC_CHANNEL(2, BIT(IIO_CHAN_INFO_PROCESSED)),
-+	SC27XX_ADC_CHANNEL(3, BIT(IIO_CHAN_INFO_PROCESSED)),
-+	SC27XX_ADC_CHANNEL(4, BIT(IIO_CHAN_INFO_PROCESSED)),
-+	SC27XX_ADC_CHANNEL(5, BIT(IIO_CHAN_INFO_PROCESSED)),
-+	SC27XX_ADC_CHANNEL(6, BIT(IIO_CHAN_INFO_PROCESSED)),
-+	SC27XX_ADC_CHANNEL(7, BIT(IIO_CHAN_INFO_PROCESSED)),
-+	SC27XX_ADC_CHANNEL(8, BIT(IIO_CHAN_INFO_PROCESSED)),
-+	SC27XX_ADC_CHANNEL(9, BIT(IIO_CHAN_INFO_PROCESSED)),
-+	SC27XX_ADC_CHANNEL(10, BIT(IIO_CHAN_INFO_PROCESSED)),
-+	SC27XX_ADC_CHANNEL(11, BIT(IIO_CHAN_INFO_PROCESSED)),
-+	SC27XX_ADC_CHANNEL(12, BIT(IIO_CHAN_INFO_PROCESSED)),
-+	SC27XX_ADC_CHANNEL(13, BIT(IIO_CHAN_INFO_PROCESSED)),
-+	SC27XX_ADC_CHANNEL(14, BIT(IIO_CHAN_INFO_PROCESSED)),
-+	SC27XX_ADC_CHANNEL(15, BIT(IIO_CHAN_INFO_PROCESSED)),
-+	SC27XX_ADC_CHANNEL(16, BIT(IIO_CHAN_INFO_PROCESSED)),
-+	SC27XX_ADC_CHANNEL(17, BIT(IIO_CHAN_INFO_PROCESSED)),
-+	SC27XX_ADC_CHANNEL(18, BIT(IIO_CHAN_INFO_PROCESSED)),
-+	SC27XX_ADC_CHANNEL(19, BIT(IIO_CHAN_INFO_PROCESSED)),
-+	SC27XX_ADC_CHANNEL(20, BIT(IIO_CHAN_INFO_RAW)),
-+	SC27XX_ADC_CHANNEL(21, BIT(IIO_CHAN_INFO_PROCESSED)),
-+	SC27XX_ADC_CHANNEL(22, BIT(IIO_CHAN_INFO_PROCESSED)),
-+	SC27XX_ADC_CHANNEL(23, BIT(IIO_CHAN_INFO_PROCESSED)),
-+	SC27XX_ADC_CHANNEL(24, BIT(IIO_CHAN_INFO_PROCESSED)),
-+	SC27XX_ADC_CHANNEL(25, BIT(IIO_CHAN_INFO_PROCESSED)),
-+	SC27XX_ADC_CHANNEL(26, BIT(IIO_CHAN_INFO_PROCESSED)),
-+	SC27XX_ADC_CHANNEL(27, BIT(IIO_CHAN_INFO_PROCESSED)),
-+	SC27XX_ADC_CHANNEL(28, BIT(IIO_CHAN_INFO_PROCESSED)),
-+	SC27XX_ADC_CHANNEL(29, BIT(IIO_CHAN_INFO_PROCESSED)),
-+	SC27XX_ADC_CHANNEL(30, BIT(IIO_CHAN_INFO_PROCESSED)),
-+	SC27XX_ADC_CHANNEL(31, BIT(IIO_CHAN_INFO_PROCESSED)),
- };
+-static int sc27xx_adc_to_volt(const struct sc27xx_adc_linear_graph *graph,
++static int sc27xx_adc_to_volt(struct sc27xx_adc_linear_graph *graph,
+ 			      int raw_adc)
+ {
+ 	int tmp;
+@@ -390,6 +449,15 @@ static int sc27xx_adc_enable(struct sc27xx_adc_data *data)
+ 	if (ret)
+ 		goto disable_clk;
  
- static int sc27xx_adc_enable(struct sc27xx_adc_data *data)
++	/* ADC channel scales' calibration from nvmem device */
++	ret = sc27xx_adc_scale_calibration(data, true);
++	if (ret)
++		goto disable_clk;
++
++	ret = sc27xx_adc_scale_calibration(data, false);
++	if (ret)
++		goto disable_clk;
++
+ 	return 0;
+ 
+ disable_clk:
 -- 
 1.7.9.5
 
