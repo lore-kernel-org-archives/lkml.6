@@ -2,100 +2,148 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4865AC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:29:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45208C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:31:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9BB420658
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:29:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D81ED20657
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:31:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h0tCdq8Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9BB420658
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HDhcul1R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D81ED20657
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729104AbeH2T1R (ORCPT
+        id S1729114AbeH2T3K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 15:27:17 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:41010 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727204AbeH2T1R (ORCPT
+        Wed, 29 Aug 2018 15:29:10 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44107 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727204AbeH2T3K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 15:27:17 -0400
-Received: by mail-qt0-f193.google.com with SMTP id t39-v6so6178625qtc.8
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 08:29:49 -0700 (PDT)
+        Wed, 29 Aug 2018 15:29:10 -0400
+Received: by mail-pg1-f193.google.com with SMTP id r1-v6so2473157pgp.11
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 08:31:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=sHrpU9/Qk3D0ZVudXq4fSrkqH/oWI0SWLGVfSUJkZBA=;
-        b=h0tCdq8QWbpgoou2RfXocHK68owKUe0sGLruPgf30Jkun4T12w61syV5lDxyp1DyCB
-         hY6Xth5B74IAD4jZiHeXyxIqXRu2XSdRy1ru8W+O0V/8BIKjMiUmWxO2eBn6ldtERnKe
-         +gcHpE3JSfB6W4PWCSqRi1UquDo0QAEbW27Dwr4nwEkhMHhXoIzOg6Ts3g3nyyfpC7uT
-         WJFK2sqkotIoJUsApIs2lsKLWfTWiwtB4ruzIfCCvvSaMSYftBd+XYDrHp1g8nR8b9Fd
-         qOwKjf76+n7vksmi7Z/5xd2a44EXs3GcY9VXQsmnAfkW18XGzRzMdvTVfQEKhCD6DdZt
-         COLQ==
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=i5dYOjhNG2gndHKxV80oE9viUYgIRkmhBFBmqtZPAJg=;
+        b=HDhcul1RbwbyJbhynWAT3OdcinA3cb31SmG/ImOugmzK/Zh/MYVOdOHDKgQjPe2mo3
+         3oFr3AsMRZTA0xLEHnkZPl8/58HE0LANxb5nRWMnBvwu6VB0G0zl7dfMLJl6bPT+EtKW
+         +cceivbowM6zxk4v2E3c6E2N/Iq2WXNgVczfcoA4OI6Gv+pm0atD6RLlytEGu3Hl6i8V
+         bcHzxsEFxJ2Iye/k+Mpy+nSkmnhWm1wY4MjqOFNNCpC2sFDyTqN7d53onSmfJ1vYvqIp
+         Yw5vBr2mLSPG31mJSTWpmAJ8ROt559XYXZs6hDhKy6hk2G4cklTGQ6hoyHEEZlJUWFTx
+         pW4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=sHrpU9/Qk3D0ZVudXq4fSrkqH/oWI0SWLGVfSUJkZBA=;
-        b=ZvNkRWkrCZOIox8qHBcedGY8fhU+zirndLDMoyCTXUa9liDwwPtZDT9jJwmb0moXI8
-         kIVkR9iP9QhN7Su8IPfXTy6QsJ4RgY4PoTKrbnieNr8QzaTwtGSvg8W2vS63c53MU530
-         Rue7HG49ndRxp0ht+R5XHQuK20wYn+2IxP1JJwUpztlVeo3MAI8P/59lWsYRitj3pdd/
-         AxvO7laEPoisFwIfZilg8LutUUfwSX1oQBQspc33Jeao5OT+0LgmGpKuFadgEZ/A8J3l
-         mPXGNoFCDB4n8085ly51gfV0VcR07Edyxr+tzfpAXvBbUyOI/9S0nLr8AivlgtVgGPuh
-         uIJg==
-X-Gm-Message-State: APzg51DI8A0aGf2d2LlPSkUdoK16n/l0M3pvEIqtDOzFT+XN3y7xvWU8
-        5agak9SSDsgIM57jgM5LSw==
-X-Google-Smtp-Source: ANB0VdZwLDm6bLAP+dwX9iETfZpDvOWtLkFHe1Wh7jkbm8NHk3H+o8KE4og4N4yRdQ17VMB4d/nIjg==
-X-Received: by 2002:ac8:36c3:: with SMTP id b3-v6mr7198802qtc.240.1535556589025;
-        Wed, 29 Aug 2018 08:29:49 -0700 (PDT)
-Received: from gabell.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id o18-v6sm2166251qtm.84.2018.08.29.08.29.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 Aug 2018 08:29:48 -0700 (PDT)
-From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Cc:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] perf/x86/intel/uncore: Use boot_cpu_data.phys_proc_id instead of hardcorded phy id 0
-Date:   Wed, 29 Aug 2018 11:29:23 -0400
-Message-Id: <20180829152923.6020-1-msys.mizuma@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=i5dYOjhNG2gndHKxV80oE9viUYgIRkmhBFBmqtZPAJg=;
+        b=QXSnziMMoCLA6ITpikBbFJXvcQVNI+5Km0erRLCD+OLEye5zSGZu/PsQQo2ZC/YsBN
+         ZtgymgbZaFb6mP0BprLOssmXJ4D9+Soonq09/A5jg33IZ52DSQpPbikKgqqujxGAzjXq
+         yFJXBD9TiWWR0kh/5ouKQX1U8NudMndYEGwcTK0jtNmpZjHl5FfZd5k/Vh9WSEfyoU/8
+         ZPmZ/JYehEdylkuehClJPIR5CzPhsWp22UxAqqQ2wQMmd48CDAsBIVHXAQPCBXeH+zXp
+         QytjoDewTrE3syzORO+8Y4iEY9SYRMpq2H/8Ok19oWVCLobtmdltxIpPBhNflnzAXAxr
+         9U2Q==
+X-Gm-Message-State: APzg51AFj/QM7OuxL0ssGtFMGdE3NYeIOHvaAIKlPg2jGnAsYtzS6xK2
+        ry5+nG33/OZZa+DvaStbEfaixkaB
+X-Google-Smtp-Source: ANB0VdY5bI4TQ2D1HTxUckkbR5wNueSPuHI62pXDImCdZW061GcfsgD8mgWUPc0rOqaDfM+ZT5xPjw==
+X-Received: by 2002:a63:e056:: with SMTP id n22-v6mr6081050pgj.205.1535556702232;
+        Wed, 29 Aug 2018 08:31:42 -0700 (PDT)
+Received: from jordon-HP-15-Notebook-PC ([117.219.202.211])
+        by smtp.gmail.com with ESMTPSA id f19-v6sm6828581pfd.147.2018.08.29.08.31.39
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 29 Aug 2018 08:31:40 -0700 (PDT)
+Date:   Wed, 29 Aug 2018 21:04:40 +0530
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     akpm@linux-foundation.org
+Cc:     airlied@linux.ie, kraxel@redhat.com,
+        dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, willy@infradead.org
+Subject: [PATCH v2] gpu: drm: virtio: code cleanup
+Message-ID: <20180829153440.GA30850@jordon-HP-15-Notebook-PC>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+The fault handler code is commented since v4.2.
+If there is no plan to enable the fault handler
+code in future, we can remove this dead code.
 
-Physical package id 0 is not always exists. We should use
-boot_cpu_data.phys_proc_id here.
-
-Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 ---
- arch/x86/events/intel/uncore_snbep.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2: corrected subject line
 
-diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
-index 51d7c11..53b981d 100644
---- a/arch/x86/events/intel/uncore_snbep.c
-+++ b/arch/x86/events/intel/uncore_snbep.c
-@@ -3061,7 +3061,7 @@ static struct event_constraint bdx_uncore_pcu_constraints[] = {
+ drivers/gpu/drm/virtio/virtgpu_ttm.c | 36 +-----------------------------------
+ 1 file changed, 1 insertion(+), 35 deletions(-)
+
+diff --git a/drivers/gpu/drm/virtio/virtgpu_ttm.c b/drivers/gpu/drm/virtio/virtgpu_ttm.c
+index 11f8ae5..b6f021c 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_ttm.c
++++ b/drivers/gpu/drm/virtio/virtgpu_ttm.c
+@@ -106,29 +106,6 @@ static void virtio_gpu_ttm_global_fini(struct virtio_gpu_device *vgdev)
+ 	}
+ }
  
- void bdx_uncore_cpu_init(void)
+-#if 0
+-/*
+- * Hmm, seems to not do anything useful.  Leftover debug hack?
+- * Something like printing pagefaults to kernel log?
+- */
+-static struct vm_operations_struct virtio_gpu_ttm_vm_ops;
+-static const struct vm_operations_struct *ttm_vm_ops;
+-
+-static int virtio_gpu_ttm_fault(struct vm_fault *vmf)
+-{
+-	struct ttm_buffer_object *bo;
+-	struct virtio_gpu_device *vgdev;
+-	int r;
+-
+-	bo = (struct ttm_buffer_object *)vmf->vma->vm_private_data;
+-	if (bo == NULL)
+-		return VM_FAULT_NOPAGE;
+-	vgdev = virtio_gpu_get_vgdev(bo->bdev);
+-	r = ttm_vm_ops->fault(vmf);
+-	return r;
+-}
+-#endif
+-
+ int virtio_gpu_mmap(struct file *filp, struct vm_area_struct *vma)
  {
--	int pkg = topology_phys_to_logical_pkg(0);
-+	int pkg = topology_phys_to_logical_pkg(boot_cpu_data.phys_proc_id);
+ 	struct drm_file *file_priv;
+@@ -143,19 +120,8 @@ int virtio_gpu_mmap(struct file *filp, struct vm_area_struct *vma)
+ 		return -EINVAL;
+ 	}
+ 	r = ttm_bo_mmap(filp, vma, &vgdev->mman.bdev);
+-#if 0
+-	if (unlikely(r != 0))
+-		return r;
+-	if (unlikely(ttm_vm_ops == NULL)) {
+-		ttm_vm_ops = vma->vm_ops;
+-		virtio_gpu_ttm_vm_ops = *ttm_vm_ops;
+-		virtio_gpu_ttm_vm_ops.fault = &virtio_gpu_ttm_fault;
+-	}
+-	vma->vm_ops = &virtio_gpu_ttm_vm_ops;
+-	return 0;
+-#else
++
+ 	return r;
+-#endif
+ }
  
- 	if (bdx_uncore_cbox.num_boxes > boot_cpu_data.x86_max_cores)
- 		bdx_uncore_cbox.num_boxes = boot_cpu_data.x86_max_cores;
+ static int virtio_gpu_invalidate_caches(struct ttm_bo_device *bdev,
 -- 
-2.18.0
+1.9.1
 
