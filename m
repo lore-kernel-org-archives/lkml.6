@@ -2,110 +2,570 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A565C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:40:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B48FEC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:43:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F19F520868
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:40:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F19F520868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
+	by mail.kernel.org (Postfix) with ESMTP id 4EA7020867
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:43:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EA7020867
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728436AbeH2Qgx (ORCPT
+        id S1728083AbeH2QkE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 12:36:53 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:42151 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727204AbeH2Qgx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 12:36:53 -0400
-Received: by mail-lj1-f194.google.com with SMTP id f1-v6so4229054ljc.9;
-        Wed, 29 Aug 2018 05:40:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LyoU4bQEGudsJlLrwE1nHlFKHoOx2W5+y2PvgatmyhU=;
-        b=MA+SM4fMEwgYAWzUvn4NdgWxtX7nfPFg0MfwoqKBcrn2Sv2pWT8QFnWKJHB18gtMNd
-         M8rEQefl8rvSlzJhn19pV1HqSniJ/XhVwqFctQWCuLpgdVL087moftRCZBLlPwsoLBum
-         dQAutZz8POw55y1nbpigeb6DINVQaXeBsdoalE6go1swoxufUmanJ4sRgKGTCz+CE3h9
-         TNynjU8tL4OhIaq1ZEawTfnOLY/bzEM1GYA7c5bAde4pkm/SlJLFlKc2w8i4r8PVH0s/
-         UjlaQks8xSxc30u2J0SDIyu2KCkYUpTBPUnLGogJMNxGJPEe9kfkmVuHm86jtgiJjley
-         kqQg==
-X-Gm-Message-State: APzg51BD+Ipvkcx00WCGcMlJYO0vj+mbaRt77j4XkchzOx79/+L0E3v3
-        gUdLQxePITrdBtoHPMYIuHo=
-X-Google-Smtp-Source: ANB0VdZXFy+NSIOPNYlaPc8f2xx8AjsROkWf+M8Pdh2MHPiRU3N7q0BgseYUyV0mFWTVKpqFDvQJeA==
-X-Received: by 2002:a2e:9d0c:: with SMTP id t12-v6mr4171536lji.75.1535546407173;
-        Wed, 29 Aug 2018 05:40:07 -0700 (PDT)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id f14-v6sm753491lfm.29.2018.08.29.05.40.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 29 Aug 2018 05:40:06 -0700 (PDT)
-Date:   Wed, 29 Aug 2018 15:39:54 +0300
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        lgirdwood@gmail.com, broonie@kernel.org, mazziesaccount@gmail.com,
-        matti.vaittinen@fi.rohmeurope.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, heikki.haikola@fi.rohmeurope.com,
-        mikko.mutanen@fi.rohmeurope.com
-Subject: [PATCH 8/8] regulator: bd718xx: renme bd71837 to 718xx
-Message-ID: <9b442ffad56fad12a726dc9c0e4b07985adb8b8d.1535545377.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1535545377.git.matti.vaittinen@fi.rohmeurope.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1535545377.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Wed, 29 Aug 2018 12:40:04 -0400
+Received: from smtp17.cstnet.cn ([159.226.251.17]:47099 "EHLO cstnet.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727254AbeH2QkE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 12:40:04 -0400
+Received: from pw-vbox.higon.com (unknown [182.150.46.145])
+        by APP-09 (Coremail) with SMTP id swCowABnb5POlIZbKXz_BA--.8S2;
+        Wed, 29 Aug 2018 20:42:58 +0800 (CST)
+From:   Pu Wen <puwen@hygon.cn>
+To:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, thomas.lendacky@amd.com, bp@alien8.de,
+        pbonzini@redhat.com
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        Pu Wen <puwen@hygon.cn>
+Subject: [PATCH v5 01/16] x86/cpu: create Dhyana init file and register new cpu_dev to system
+Date:   Wed, 29 Aug 2018 20:42:49 +0800
+Message-Id: <c4610c537e5e5774d8d7486e0867ced8ebf0fba1.1535459012.git.puwen@hygon.cn>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1535459012.git.puwen@hygon.cn>
+References: <cover.1535459012.git.puwen@hygon.cn>
+X-CM-TRANSID: swCowABnb5POlIZbKXz_BA--.8S2
+X-Coremail-Antispam: 1UD129KBjvAXoW3CF4xCrWrur1rKw1rCF45Jrb_yoW8GFyxJo
+        WrAr4Fgr1FyrZrZws5u3WrGr1UWFyUKFs5ArWrJrsIvF1xXF1jvry2kws8AF1fArWfWrW7
+        ZwnxXr92va1aqr93n29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+        AaLaJ3UjIYCTnIWjp_UUUY27AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20EY4v20xva
+        j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2
+        x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8
+        JVWxJwA2z4x0Y4vEx4A2jsIE14v26r1j6r4UM28EF7xvwVC2z280aVCY1x0267AKxVW8JV
+        W8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+        2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r4UJVWxJr1lOx8S6xCaFVCjc4AY6r
+        1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02
+        628vn2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
+        02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_
+        GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
+        CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r4j6FyUMIIF0xvEx4A2jsIE14v2
+        6r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0J
+        UXF4iUUUUU=
+X-Originating-IP: [182.150.46.145]
+X-CM-SenderInfo: psxzv046klw03qof0z/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-rename bd71837-regulator.c to bd718x7-regulator.c to reflect the
-fact that also BD71847 is now supported by the driver.
+Add x86 architecture support for new processor Hygon Dhyana Family 18h.
+Rework to create a separated file(arch/x86/kernel/cpu/hygon.c) from the
+AMD init one(arch/x86/kernel/cpu/amd.c) to initialize Dhyana CPU. In
+this way we can remove old AMD architecture support codes from Hygon
+code path and generate a clear initialization flow for Hygon processors.
+It also reduce long-term maintenance effort.
+Also add Maintainer information for hygon.c in accordance.
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To identify Hygon processors, add a new vendor type X86_VENDOR_HYGON(9)
+for system recognition.
+
+To enable Hygon processor config, add a separated Kconfig entry
+(CPU_SUP_HYGON) for Dhyana CPU in kernel config setup.
+
+Signed-off-by: Pu Wen <puwen@hygon.cn>
 ---
- drivers/regulator/Kconfig                                      | 2 +-
- drivers/regulator/Makefile                                     | 2 +-
- drivers/regulator/{bd71837-regulator.c => bd718x7-regulator.c} | 0
- 3 files changed, 2 insertions(+), 2 deletions(-)
- rename drivers/regulator/{bd71837-regulator.c => bd718x7-regulator.c} (100%)
+ MAINTAINERS                      |   6 +
+ arch/x86/Kconfig.cpu             |  13 ++
+ arch/x86/include/asm/processor.h |   3 +-
+ arch/x86/kernel/cpu/Makefile     |   1 +
+ arch/x86/kernel/cpu/hygon.c      | 408 +++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 430 insertions(+), 1 deletion(-)
+ create mode 100644 arch/x86/kernel/cpu/hygon.c
 
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index 329cdd33ed62..6e96ef1bd74a 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -189,7 +189,7 @@ config REGULATOR_BD718XX
- 	  and LDO regulators.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a5b256b..9c1d920 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6759,6 +6759,12 @@ S:	Maintained
+ F:	mm/memory-failure.c
+ F:	mm/hwpoison-inject.c
  
- 	  This driver can also be built as a module. If so, the module
--	  will be called bd71837-regulator.
-+	  will be called bd718x7-regulator.
++HYGON PROCESSOR SUPPORT
++M:	Pu Wen <puwen@hygon.cn>
++L:	linux-arch@vger.kernel.org
++S:	Supported
++F:	arch/x86/kernel/cpu/hygon.c
++
+ Hyper-V CORE AND DRIVERS
+ M:	"K. Y. Srinivasan" <kys@microsoft.com>
+ M:	Haiyang Zhang <haiyangz@microsoft.com>
+diff --git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
+index 638411f..2e92267 100644
+--- a/arch/x86/Kconfig.cpu
++++ b/arch/x86/Kconfig.cpu
+@@ -426,6 +426,19 @@ config CPU_SUP_AMD
  
- config REGULATOR_BD9571MWV
- 	tristate "ROHM BD9571MWV Regulators"
-diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
-index 801d9a34a203..eac4d794f3b8 100644
---- a/drivers/regulator/Makefile
-+++ b/drivers/regulator/Makefile
-@@ -27,7 +27,7 @@ obj-$(CONFIG_REGULATOR_AS3711) += as3711-regulator.o
- obj-$(CONFIG_REGULATOR_AS3722) += as3722-regulator.o
- obj-$(CONFIG_REGULATOR_AXP20X) += axp20x-regulator.o
- obj-$(CONFIG_REGULATOR_BCM590XX) += bcm590xx-regulator.o
--obj-$(CONFIG_REGULATOR_BD718XX) += bd71837-regulator.o
-+obj-$(CONFIG_REGULATOR_BD718XX) += bd718x7-regulator.o
- obj-$(CONFIG_REGULATOR_BD9571MWV) += bd9571mwv-regulator.o
- obj-$(CONFIG_REGULATOR_DA903X)	+= da903x.o
- obj-$(CONFIG_REGULATOR_DA9052)	+= da9052-regulator.o
-diff --git a/drivers/regulator/bd71837-regulator.c b/drivers/regulator/bd718x7-regulator.c
-similarity index 100%
-rename from drivers/regulator/bd71837-regulator.c
-rename to drivers/regulator/bd718x7-regulator.c
+ 	  If unsure, say N.
+ 
++config CPU_SUP_HYGON
++	default y
++	bool "Support Hygon processors" if PROCESSOR_SELECT
++	help
++	  This enables detection, tunings and quirks for Hygon processors
++
++	  You need this enabled if you want your kernel to run on an
++	  Hygon CPU. Disabling this option on other types of CPUs
++	  makes the kernel a tiny bit smaller. Disabling it on an Hygon
++	  CPU might render the kernel unbootable.
++
++	  If unsure, say N.
++
+ config CPU_SUP_CENTAUR
+ 	default y
+ 	bool "Support Centaur processors" if PROCESSOR_SELECT
+diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+index c242972..9f18cdb 100644
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -153,7 +153,8 @@ enum cpuid_regs_idx {
+ #define X86_VENDOR_CENTAUR	5
+ #define X86_VENDOR_TRANSMETA	7
+ #define X86_VENDOR_NSC		8
+-#define X86_VENDOR_NUM		9
++#define X86_VENDOR_HYGON	9
++#define X86_VENDOR_NUM		10
+ 
+ #define X86_VENDOR_UNKNOWN	0xff
+ 
+diff --git a/arch/x86/kernel/cpu/Makefile b/arch/x86/kernel/cpu/Makefile
+index 347137e..1f5d229 100644
+--- a/arch/x86/kernel/cpu/Makefile
++++ b/arch/x86/kernel/cpu/Makefile
+@@ -30,6 +30,7 @@ obj-$(CONFIG_X86_FEATURE_NAMES) += capflags.o powerflags.o
+ 
+ obj-$(CONFIG_CPU_SUP_INTEL)		+= intel.o intel_pconfig.o
+ obj-$(CONFIG_CPU_SUP_AMD)		+= amd.o
++obj-$(CONFIG_CPU_SUP_HYGON)		+= hygon.o
+ obj-$(CONFIG_CPU_SUP_CYRIX_32)		+= cyrix.o
+ obj-$(CONFIG_CPU_SUP_CENTAUR)		+= centaur.o
+ obj-$(CONFIG_CPU_SUP_TRANSMETA_32)	+= transmeta.o
+diff --git a/arch/x86/kernel/cpu/hygon.c b/arch/x86/kernel/cpu/hygon.c
+new file mode 100644
+index 0000000..ae90d1f
+--- /dev/null
++++ b/arch/x86/kernel/cpu/hygon.c
+@@ -0,0 +1,408 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Hygon Processor Support for Linux
++ *
++ * Copyright (c) Chengdu Haiguang IC Design Co., Ltd.
++ *
++ * Author: 2018 Pu Wen <puwen@hygon.cn>
++ *
++ * This file is licensed under the terms of the GNU General
++ * License v2.0 or later. See file COPYING for details.
++ */
++#include <linux/io.h>
++
++#include <asm/cpu.h>
++#include <asm/smp.h>
++#include <asm/cacheinfo.h>
++#include <asm/spec-ctrl.h>
++#include <asm/delay.h>
++#ifdef CONFIG_X86_64
++# include <asm/set_memory.h>
++#endif
++
++#include "cpu.h"
++
++/*
++ * nodes_per_socket: Stores the number of nodes per socket.
++ * Refer to CPUID Fn8000_001E_ECX Node Identifiers[10:8]
++ */
++static u32 nodes_per_socket = 1;
++
++#ifdef CONFIG_NUMA
++/*
++ * To workaround broken NUMA config.  Read the comment in
++ * srat_detect_node().
++ */
++static int nearby_node(int apicid)
++{
++	int i, node;
++
++	for (i = apicid - 1; i >= 0; i--) {
++		node = __apicid_to_node[i];
++		if (node != NUMA_NO_NODE && node_online(node))
++			return node;
++	}
++	for (i = apicid + 1; i < MAX_LOCAL_APIC; i++) {
++		node = __apicid_to_node[i];
++		if (node != NUMA_NO_NODE && node_online(node))
++			return node;
++	}
++	return first_node(node_online_map); /* Shouldn't happen */
++}
++#endif
++
++static void hygon_get_topology_early(struct cpuinfo_x86 *c)
++{
++	if (cpu_has(c, X86_FEATURE_TOPOEXT))
++		smp_num_siblings = ((cpuid_ebx(0x8000001e) >> 8) & 0xff) + 1;
++}
++
++/*
++ * Fixup core topology information for
++ * (1) Hygon multi-node processors
++ *     Assumption: Number of cores in each internal node is the same.
++ * (2) Hygon processors supporting compute units
++ */
++static void hygon_get_topology(struct cpuinfo_x86 *c)
++{
++	u8 node_id;
++	int cpu = smp_processor_id();
++
++	/* get information required for multi-node processors */
++	if (boot_cpu_has(X86_FEATURE_TOPOEXT)) {
++		int err;
++		u32 eax, ebx, ecx, edx;
++
++		cpuid(0x8000001e, &eax, &ebx, &ecx, &edx);
++
++		node_id  = ecx & 0xff;
++
++		c->cpu_core_id = ebx & 0xff;
++
++		if (smp_num_siblings > 1)
++			c->x86_max_cores /= smp_num_siblings;
++
++		/*
++		 * In case leaf B is available, use it to derive
++		 * topology information.
++		 */
++		err = detect_extended_topology(c);
++		if (!err)
++			c->x86_coreid_bits = get_count_order(c->x86_max_cores);
++
++	} else if (cpu_has(c, X86_FEATURE_NODEID_MSR)) {
++		u64 value;
++
++		rdmsrl(MSR_FAM10H_NODE_ID, value);
++		node_id = value & 7;
++
++		per_cpu(cpu_llc_id, cpu) = node_id;
++	} else
++		return;
++
++	if (nodes_per_socket > 1)
++		set_cpu_cap(c, X86_FEATURE_AMD_DCM);
++}
++
++/*
++ * On Hygon setup the lower bits of the APIC id distinguish the cores.
++ * Assumes number of cores is a power of two.
++ */
++static void hygon_detect_cmp(struct cpuinfo_x86 *c)
++{
++	unsigned int bits;
++	int cpu = smp_processor_id();
++
++	bits = c->x86_coreid_bits;
++	/* Low order bits define the core id (index of core in socket) */
++	c->cpu_core_id = c->initial_apicid & ((1 << bits)-1);
++	/* Convert the initial APIC ID into the socket ID */
++	c->phys_proc_id = c->initial_apicid >> bits;
++	/* use socket ID also for last level cache */
++	per_cpu(cpu_llc_id, cpu) = c->phys_proc_id;
++}
++
++static void srat_detect_node(struct cpuinfo_x86 *c)
++{
++#ifdef CONFIG_NUMA
++	int cpu = smp_processor_id();
++	int node;
++	unsigned int apicid = c->apicid;
++
++	node = numa_cpu_node(cpu);
++	if (node == NUMA_NO_NODE)
++		node = per_cpu(cpu_llc_id, cpu);
++
++	/*
++	 * On multi-fabric platform (e.g. Numascale NumaChip) a
++	 * platform-specific handler needs to be called to fixup some
++	 * IDs of the CPU.
++	 */
++	if (x86_cpuinit.fixup_cpu_id)
++		x86_cpuinit.fixup_cpu_id(c, node);
++
++	if (!node_online(node)) {
++		/*
++		 * Two possibilities here:
++		 *
++		 * - The CPU is missing memory and no node was created.  In
++		 *   that case try picking one from a nearby CPU.
++		 *
++		 * - The APIC IDs differ from the HyperTransport node IDs.
++		 *   Assume they are all increased by a constant offset, but
++		 *   in the same order as the HT nodeids.  If that doesn't
++		 *   result in a usable node fall back to the path for the
++		 *   previous case.
++		 *
++		 * This workaround operates directly on the mapping between
++		 * APIC ID and NUMA node, assuming certain relationship
++		 * between APIC ID, HT node ID and NUMA topology.  As going
++		 * through CPU mapping may alter the outcome, directly
++		 * access __apicid_to_node[].
++		 */
++		int ht_nodeid = c->initial_apicid;
++
++		if (__apicid_to_node[ht_nodeid] != NUMA_NO_NODE)
++			node = __apicid_to_node[ht_nodeid];
++		/* Pick a nearby node */
++		if (!node_online(node))
++			node = nearby_node(apicid);
++	}
++	numa_set_node(cpu, node);
++#endif
++}
++
++static void early_init_hygon_mc(struct cpuinfo_x86 *c)
++{
++#ifdef CONFIG_SMP
++	unsigned int bits, ecx;
++
++	/* Multi core CPU? */
++	if (c->extended_cpuid_level < 0x80000008)
++		return;
++
++	ecx = cpuid_ecx(0x80000008);
++
++	c->x86_max_cores = (ecx & 0xff) + 1;
++
++	/* CPU telling us the core id bits shift? */
++	bits = (ecx >> 12) & 0xF;
++
++	/* Otherwise recompute */
++	if (bits == 0) {
++		while ((1 << bits) < c->x86_max_cores)
++			bits++;
++	}
++
++	c->x86_coreid_bits = bits;
++#endif
++}
++
++static void bsp_init_hygon(struct cpuinfo_x86 *c)
++{
++#ifdef CONFIG_X86_64
++	unsigned long long tseg;
++
++	/*
++	 * Split up direct mapping around the TSEG SMM area.
++	 * Don't do it for gbpages because there seems very little
++	 * benefit in doing so.
++	 */
++	if (!rdmsrl_safe(MSR_K8_TSEG_ADDR, &tseg)) {
++		unsigned long pfn = tseg >> PAGE_SHIFT;
++
++		pr_debug("tseg: %010llx\n", tseg);
++		if (pfn_range_is_mapped(pfn, pfn + 1))
++			set_memory_4k((unsigned long)__va(tseg), 1);
++	}
++#endif
++
++	if (cpu_has(c, X86_FEATURE_CONSTANT_TSC)) {
++		u64 val;
++
++		rdmsrl(MSR_K7_HWCR, val);
++		if (!(val & BIT(24)))
++			pr_warn(FW_BUG "TSC doesn't count with P0 frequency!\n");
++	}
++
++	if (cpu_has(c, X86_FEATURE_MWAITX))
++		use_mwaitx_delay();
++
++	if (boot_cpu_has(X86_FEATURE_TOPOEXT)) {
++		u32 ecx;
++
++		ecx = cpuid_ecx(0x8000001e);
++		nodes_per_socket = ((ecx >> 8) & 7) + 1;
++	} else if (boot_cpu_has(X86_FEATURE_NODEID_MSR)) {
++		u64 value;
++
++		rdmsrl(MSR_FAM10H_NODE_ID, value);
++		nodes_per_socket = ((value >> 3) & 7) + 1;
++	}
++
++	if (!boot_cpu_has(X86_FEATURE_AMD_SSBD) &&
++	    !boot_cpu_has(X86_FEATURE_VIRT_SSBD)) {
++		/*
++		 * Try to cache the base value so further operations can
++		 * avoid RMW. If that faults, do not enable SSBD.
++		 */
++		if (!rdmsrl_safe(MSR_AMD64_LS_CFG, &x86_amd_ls_cfg_base)) {
++			setup_force_cpu_cap(X86_FEATURE_LS_CFG_SSBD);
++			setup_force_cpu_cap(X86_FEATURE_SSBD);
++			x86_amd_ls_cfg_ssbd_mask = 1ULL << 10;
++		}
++	}
++}
++
++static void early_init_hygon(struct cpuinfo_x86 *c)
++{
++	u32 dummy;
++
++	early_init_hygon_mc(c);
++
++	set_cpu_cap(c, X86_FEATURE_K8);
++
++	rdmsr_safe(MSR_AMD64_PATCH_LEVEL, &c->microcode, &dummy);
++
++	/*
++	 * c->x86_power is 8000_0007 edx. Bit 8 is TSC runs at constant rate
++	 * with P/T states and does not stop in deep C-states
++	 */
++	if (c->x86_power & (1 << 8)) {
++		set_cpu_cap(c, X86_FEATURE_CONSTANT_TSC);
++		set_cpu_cap(c, X86_FEATURE_NONSTOP_TSC);
++	}
++
++	/* Bit 12 of 8000_0007 edx is accumulated power mechanism. */
++	if (c->x86_power & BIT(12))
++		set_cpu_cap(c, X86_FEATURE_ACC_POWER);
++
++#ifdef CONFIG_X86_64
++	set_cpu_cap(c, X86_FEATURE_SYSCALL32);
++#endif
++
++#if defined(CONFIG_X86_LOCAL_APIC) && defined(CONFIG_PCI)
++	/*
++	 * ApicID can always be treated as an 8-bit value for Hygon APIC So, we
++	 * can safely set X86_FEATURE_EXTD_APICID unconditionally.
++	 */
++	if (boot_cpu_has(X86_FEATURE_APIC))
++		set_cpu_cap(c, X86_FEATURE_EXTD_APICID);
++#endif
++
++	/*
++	 * This is only needed to tell the kernel whether to use VMCALL
++	 * and VMMCALL.  VMMCALL is never executed except under virt, so
++	 * we can set it unconditionally.
++	 */
++	set_cpu_cap(c, X86_FEATURE_VMMCALL);
++
++	hygon_get_topology_early(c);
++}
++
++static void init_hygon(struct cpuinfo_x86 *c)
++{
++	early_init_hygon(c);
++
++	/*
++	 * Bit 31 in normal CPUID used for nonstandard 3DNow ID;
++	 * 3DNow is IDd by bit 31 in extended CPUID (1*32+31) anyway
++	 */
++	clear_cpu_cap(c, 0*32+31);
++
++	set_cpu_cap(c, X86_FEATURE_REP_GOOD);
++
++	/* get apicid instead of initial apic id from cpuid */
++	c->apicid = hard_smp_processor_id();
++
++	set_cpu_cap(c, X86_FEATURE_ZEN);
++	set_cpu_cap(c, X86_FEATURE_CPB);
++
++	cpu_detect_cache_sizes(c);
++
++	hygon_detect_cmp(c);
++	hygon_get_topology(c);
++	srat_detect_node(c);
++
++	if (cpu_has(c, X86_FEATURE_XMM2)) {
++		unsigned long long val;
++		int ret;
++
++		/*
++		 * A serializing LFENCE has less overhead than MFENCE, so
++		 * use it for execution serialization.  On families which
++		 * don't have that MSR, LFENCE is already serializing.
++		 * msr_set_bit() uses the safe accessors, too, even if the MSR
++		 * is not present.
++		 */
++		msr_set_bit(MSR_F10H_DECFG,
++			    MSR_F10H_DECFG_LFENCE_SERIALIZE_BIT);
++
++		/*
++		 * Verify that the MSR write was successful (could be running
++		 * under a hypervisor) and only then assume that LFENCE is
++		 * serializing.
++		 */
++		ret = rdmsrl_safe(MSR_F10H_DECFG, &val);
++		if (!ret && (val & MSR_F10H_DECFG_LFENCE_SERIALIZE)) {
++			/* A serializing LFENCE stops RDTSC speculation */
++			set_cpu_cap(c, X86_FEATURE_LFENCE_RDTSC);
++		} else {
++			/* MFENCE stops RDTSC speculation */
++			set_cpu_cap(c, X86_FEATURE_MFENCE_RDTSC);
++		}
++	}
++
++	/*
++	 * Hygon processors have APIC timer running in deep C states.
++	 */
++	set_cpu_cap(c, X86_FEATURE_ARAT);
++
++	/* Hygon CPUs don't reset SS attributes on SYSRET, Xen does. */
++	if (!cpu_has(c, X86_FEATURE_XENPV))
++		set_cpu_bug(c, X86_BUG_SYSRET_SS_ATTRS);
++}
++
++static void cpu_detect_tlb_hygon(struct cpuinfo_x86 *c)
++{
++	u32 ebx, eax, ecx, edx;
++	u16 mask = 0xfff;
++
++	if (c->extended_cpuid_level < 0x80000006)
++		return;
++
++	cpuid(0x80000006, &eax, &ebx, &ecx, &edx);
++
++	tlb_lld_4k[ENTRIES] = (ebx >> 16) & mask;
++	tlb_lli_4k[ENTRIES] = ebx & mask;
++
++	/* Handle DTLB 2M and 4M sizes, fall back to L1 if L2 is disabled */
++	if (!((eax >> 16) & mask))
++		tlb_lld_2m[ENTRIES] = (cpuid_eax(0x80000005) >> 16) & 0xff;
++	else
++		tlb_lld_2m[ENTRIES] = (eax >> 16) & mask;
++
++	/* a 4M entry uses two 2M entries */
++	tlb_lld_4m[ENTRIES] = tlb_lld_2m[ENTRIES] >> 1;
++
++	/* Handle ITLB 2M and 4M sizes, fall back to L1 if L2 is disabled */
++	if (!(eax & mask)) {
++		cpuid(0x80000005, &eax, &ebx, &ecx, &edx);
++		tlb_lli_2m[ENTRIES] = eax & 0xff;
++	} else
++		tlb_lli_2m[ENTRIES] = eax & mask;
++
++	tlb_lli_4m[ENTRIES] = tlb_lli_2m[ENTRIES] >> 1;
++}
++
++static const struct cpu_dev hygon_cpu_dev = {
++	.c_vendor	= "Hygon",
++	.c_ident	= { "HygonGenuine" },
++	.c_early_init   = early_init_hygon,
++	.c_detect_tlb	= cpu_detect_tlb_hygon,
++	.c_bsp_init	= bsp_init_hygon,
++	.c_init		= init_hygon,
++	.c_x86_vendor	= X86_VENDOR_HYGON,
++};
++
++cpu_dev_register(hygon_cpu_dev);
 -- 
-2.14.3
+2.7.4
 
