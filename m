@@ -2,86 +2,97 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5426BC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 17:11:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30884C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 17:11:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17CF2205C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 17:11:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17CF2205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id DDD542064E
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 17:11:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="T+z6mlZV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDD542064E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728426AbeH2VJR (ORCPT
+        id S1728472AbeH2VJf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 17:09:17 -0400
-Received: from mga06.intel.com ([134.134.136.31]:59466 "EHLO mga06.intel.com"
+        Wed, 29 Aug 2018 17:09:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33134 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728042AbeH2VJR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 17:09:17 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2018 10:11:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,303,1531810800"; 
-   d="scan'208";a="84419589"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by fmsmga004.fm.intel.com with ESMTP; 29 Aug 2018 10:11:23 -0700
-Received: from andy by smile with local (Exim 4.91)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1fv401-00039m-PK; Wed, 29 Aug 2018 20:11:21 +0300
-Date:   Wed, 29 Aug 2018 20:11:21 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Phil Edworthy <phil.edworthy@renesas.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms@verge.net.au>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 0/2] clk: Add functions to get optional clocks
-Message-ID: <20180829171121.GE11447@smile.fi.intel.com>
-References: <1533039060-18779-1-git-send-email-phil.edworthy@renesas.com>
+        id S1727856AbeH2VJf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 17:09:35 -0400
+Received: from localhost (unknown [171.76.77.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80EA1205C9;
+        Wed, 29 Aug 2018 17:11:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535562703;
+        bh=oYI/XNaIVT+J0P9al//OL+TiuWt27DAlKg/m/F2yoEI=;
+        h=Date:From:To:Cc:Subject:From;
+        b=T+z6mlZVl7re8X8ghae0EtVCC58oADWlSBaSf95H5IRxohzgjjV0qyGfOwsydjII8
+         w13TJIv/OybyNTcm3qvPx0XP7fh0Dvw/nFnLBOH4kZXxJiaWe4gExl8FUxxTBtm50m
+         y79Tyb5jUAoGBgAZOOS0Hpw/yWnIdWx4IHY5w9Pc=
+Date:   Wed, 29 Aug 2018 22:41:33 +0530
+From:   Vinod <vkoul@kernel.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux-Next <linux-next@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>
+Subject: Add SoundWire tree to linux-next
+Message-ID: <20180829171133.GL2388@vkoul-mobl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="pWyiEgJYm5f9v55/"
 Content-Disposition: inline
-In-Reply-To: <1533039060-18779-1-git-send-email-phil.edworthy@renesas.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 01:10:58PM +0100, Phil Edworthy wrote:
-> Quite a few drivers get an optional clock, e.g. a bus clock required to 
-> access peripheral's registers that is always enabled on some devices.
-> 
 
-Didn't see any updates so far.
-Anyway, this one LGTM,
+--pWyiEgJYm5f9v55/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Hi Stephen,
 
-> Phil Edworthy (2):
->   clk: Add of_clk_get_by_name_optional() function
->   clk: Add functions to get optional clocks
-> 
->  drivers/clk/clk-devres.c | 18 +++++++++++++--
->  drivers/clk/clkdev.c     | 58 +++++++++++++++++++++++++++++++++++++++++++-----
->  include/linux/clk.h      | 35 +++++++++++++++++++++++++++++
->  3 files changed, 104 insertions(+), 7 deletions(-)
-> 
-> -- 
-> 2.7.4
-> 
+I maintain the SoundWire subsystem which get merged to Linus thru Greg's
+char-misc tree. I would now like this to be added to Linux-next and after
+the Greg's char-misc tree.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Please include next and fixes branches of the soundwire tree located at
+git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/soundwire.git
 
+Let me know if you need more details.
 
+Thanks
+--=20
+~Vinod
+
+--pWyiEgJYm5f9v55/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJbhtPFAAoJEHwUBw8lI4NHQiAQAM+gZfW5IsogaNnH7EKT1RYE
+2qVt6LanUCjwlyAKwUIah12pY4hZHasxY5JBBTBUZZSk/EhyRs8y/qVE76mjgOvj
+QBA7xJKPt6ua5DKcWFQUoNbDMnJ+ot20XYnnj6F6LIgDwSCBWC9ZZRC9Bm1gccnV
+cJWle/LjShd2h6+87b7zVIOg2Ht1A+2eP333xmxbMN3iJR8SZfPRr2FjLXmpH/yC
+qRsQ6qmEhpka/+loflYm4k0jP2e23BdTgC6OJGFzfYWcuxJv+NK2YstuJX6coFx8
+IhuLWYq3yj00uDmLasWYee5X8vFTkCdADTKO4fqgc9QZXWqbkRLd0IFUvr2M+5wt
+76RLPMuDMSd9kwogeeukccCAD0VWC+y0SlRn0WHzaLyQjvdPjsX3vxmDyiWAEH+U
+HtphDTuf0X9bIinOPQqAZiI9Odklx0FbmXZHrDTSfRegCCpcZ67bSkfCzzoMNDAT
+OM1zewlZEi0rkeZkHwOFHtMVTDFkVargdQ5YAQ4gC5oSAQPsNTM5AExquQjRY//W
+0LrJ6eL++szEhVyrvBghybC2KCNOmOroj6MMPIlE9qhPwbeOxY4upd5GncVAv8F+
+LiBEjMHunNuoz2Y2pYQj2DdAoedMDa2DVMped8k8dQ34J/yEeKOMvQPBpJNDKcZ6
+GCTf3t8b9nyWyeziys+S
+=kCip
+-----END PGP SIGNATURE-----
+
+--pWyiEgJYm5f9v55/--
