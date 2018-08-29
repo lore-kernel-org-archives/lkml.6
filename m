@@ -2,193 +2,137 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D581BC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 23:00:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6842EC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 23:00:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8295620647
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 23:00:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="arl1sqYW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8295620647
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	by mail.kernel.org (Postfix) with ESMTP id 1D40520647
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 23:00:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D40520647
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727616AbeH3C7A (ORCPT
+        id S1727743AbeH3C7x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 22:59:00 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:32190 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727316AbeH3C67 (ORCPT
+        Wed, 29 Aug 2018 22:59:53 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51574 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727367AbeH3C7x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 22:58:59 -0400
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20180829225946epoutp04e4dec61ae9d42851ec3a9f17e626153c~PfSLdj3ea3085330853epoutp04V;
-        Wed, 29 Aug 2018 22:59:46 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180829225946epoutp04e4dec61ae9d42851ec3a9f17e626153c~PfSLdj3ea3085330853epoutp04V
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1535583586;
-        bh=DXUsN0+1Mi5Fs3WOb11J9M6iS/wrB5xRBrKds3KMtjY=;
-        h=Date:From:To:Cc:Subject:In-reply-to:References:From;
-        b=arl1sqYWgjOi5Qo5n+9L4alClA2qKKEaIPhjfy/ZQDe2nk1elKqFgvCFXJ8qK97N2
-         zc1t1YLRRGbZxqJmJxcfQeJRzFVYwsNmYe+IbibyFGU+UPExUC4Ycldmar0RwSNiTx
-         yqlunHC3oMobsMxadZ7Uivvwp5rboXpXG/FfPk1o=
-Received: from epsmges2p1.samsung.com (unknown [182.195.40.156]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20180829225944epcas1p3f7a04d3a4d728e255f06b477862adeaf~PfSJJkRVL3191831918epcas1p3H;
-        Wed, 29 Aug 2018 22:59:44 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-        epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        60.78.04218.F55278B5; Thu, 30 Aug 2018 07:59:44 +0900 (KST)
-Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
-        epcas2p3.samsung.com (KnoxPortal) with ESMTP id
-        20180829225943epcas2p3f799ee197d6c5aa7d3379761dcea8dd3~PfSIjDd9f2202822028epcas2p3r;
-        Wed, 29 Aug 2018 22:59:43 +0000 (GMT)
-X-AuditID: b6c32a45-253ff7000000107a-1f-5b87255f56fd
-Received: from epmmp1.local.host ( [203.254.227.16]) by
-        epsmgms2p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        E5.06.03703.F55278B5; Thu, 30 Aug 2018 07:59:43 +0900 (KST)
-MIME-version: 1.0
-Content-transfer-encoding: 8BIT
-Content-type: text/plain; charset="UTF-8"
-Received: from [10.113.63.77] by mmp1.samsung.com (Oracle Communications
-        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
-        <0PE800I9RVVJK090@mmp1.samsung.com>; Thu, 30 Aug 2018 07:59:43 +0900 (KST)
-Message-id: <5B87255F.80207@samsung.com>
-Date:   Thu, 30 Aug 2018 07:59:43 +0900
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
-        Thunderbird/31.6.0
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
-        rafael.j.wysocki@intel.com, chanwoo@kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] PM / devfreq: Add new name attribute for sysfs
-In-reply-to: <3263263.FggQa7iA9D@amdc3058>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrIKsWRmVeSWpSXmKPExsWy7bCmqW6Canu0wa//TBYbZ6xntZh44wqL
-        xdmmN+wWl3fNYbP43HuE0eJ24wo2i8cr3rJbLNj4iNGBw2PxnpdMHptWdbJ59G1ZxejxeZNc
-        AEtUqk1GamJKapFCal5yfkpmXrqtkndwvHO8qZmBoa6hpYW5kkJeYm6qrZKLT4CuW2YO0BlK
-        CmWJOaVAoYDE4mIlfTubovzSklSFjPziElulaENDIz1DA3M9IyMgbRxrZWQKVJKQmnHjziSW
-        greCFQ8Of2BrYNzI18XIwSEhYCLReCW+i5GLQ0hgB6PE/eUvmCGc74wSaydtYu1i5AQr+j75
-        KytEYjejxNeO7ywgCV4BQYkfk++xgExiFpCXOHIpGyTMLKApsXX3enaI+ruMEpv33WaCqNeQ
-        mHp3GzOIzSKgKvFg1jOwBWwCWhL7X9xgA7H5BRQlrv54zAhiiwpESOyc/40dxBYRsJBYu+It
-        C8hQZpAjVp69DVYkLOAsMXH5e7CDOIEGTZ99BmyzhMBlNolJi/exQLzgIrHx4wtmCFtY4tXx
-        LewQtrTEs1UbGSEa2hklvrxoZoVwJjBKfDi1mQmiylji2cIuJojn+CQ6Dv9lh4Qer0RHmxBE
-        iYdE1/pGJoifdzJKLHn+nXUCo+wspGCahQimWUjBtICReRWjWGpBcW56arFRgaFecWJucWle
-        ul5yfu4mRnBy03LdwTjjnM8hRgEORiUe3gsz2qKFWBPLiitzDzFKcDArifBynQMK8aYkVlal
-        FuXHF5XmpBYfYjQFhvJEZinR5Hxg4s0riTc0NTI2NrYwNbc0NrBUEuet9guOFhJITyxJzU5N
-        LUgtgulj4uCUamCsZdO4nfYmxjtofrFq3rI9fxsyAqptEt3c+zcfsMr/vsi1/t379FDLyYl7
-        qg5Ec93gXJzLGdd67sEhlneiXz7Jp5m/KlkqfXN5do+QZ967ea8bzqjVuLdMO+Ymm5Lr9S3o
-        0f/yi24Kr7rzLde++8q5JPL4B9cJmTvD2o/zxzV2H0/y/6PwoUSJpTgj0VCLuag4EQClR06t
-        hAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPLMWRmVeSWpSXmKPExsVy+t9jAd141fZogzeTpS02zljPajHxxhUW
-        i7NNb9gtLu+aw2bxufcIo8XtxhVsFo9XvGW3WLDxEaMDh8fiPS+ZPDat6mTz6NuyitHj8ya5
-        AJYoLpuU1JzMstQifbsErowbdyaxFLwVrHhw+ANbA+NGvi5GTg4JAROJ75O/snYxcnEICexk
-        lJj69hUbSIJXQFDix+R7LF2MHBzMAvISRy5lg4SZBdQlJs1bxAxRf59R4sex/SwQ9RoSU+9u
-        YwaxWQRUJR7MesYKYrMJaEnsf3EDbCa/gKLE1R+PGUFmigpESHSfqAQJiwhYSKxd8ZYFZCaz
-        wG5Gibv/f4HNFBZwlpi4/D0LxDKgxLpl/8EWcAINnT77DPsERoFZSG6dhXDrLCS3LmBkXsUo
-        mVpQnJueW2xUYJSXWq5XnJhbXJqXrpecn7uJERjs2w5r9e9gfLwk/hCjAAejEg/vhRlt0UKs
-        iWXFlbmHGCU4mJVEeLnOAYV4UxIrq1KL8uOLSnNSiw8xSnOwKInz8ucfixQSSE8sSc1OTS1I
-        LYLJMnFwSjUwqpe8388XqXo0eOVniRdO3TP5Xh6e9jPR6Ne5dWv+BS/srQvbLfFonVq/JHef
-        XKFMU2X34R+lPmtnqC6cqWBfn2jcsubIi33HrcNu+K0OvthyMXiF6tYlD066LT4bG/IzWe+2
-        zY9w3j9h60X4Pay4a0/mfnPL+T9zPW/rrYM7zbsitdvT2m79VGIpzkg01GIuKk4EAIAVd0dy
-        AgAA
-X-CMS-MailID: 20180829225943epcas2p3f799ee197d6c5aa7d3379761dcea8dd3
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180829073410epcas1p2f314e6c4c29eacfe3ebd5fb4f7f2f122
-References: <CGME20180829073410epcas1p2f314e6c4c29eacfe3ebd5fb4f7f2f122@epcas1p2.samsung.com>
-        <1535528046-18835-1-git-send-email-cw00.choi@samsung.com>
-        <3263263.FggQa7iA9D@amdc3058>
+        Wed, 29 Aug 2018 22:59:53 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7TMxFab038957
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 19:00:42 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m627rd1mb-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 19:00:42 -0400
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 29 Aug 2018 19:00:41 -0400
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 29 Aug 2018 19:00:36 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7TN0ZnX25231490
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 29 Aug 2018 23:00:35 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 59E18B2064;
+        Wed, 29 Aug 2018 18:59:31 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3A167B205F;
+        Wed, 29 Aug 2018 18:59:31 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 29 Aug 2018 18:59:31 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id B3A7B16C91C5; Wed, 29 Aug 2018 16:00:35 -0700 (PDT)
+Date:   Wed, 29 Aug 2018 16:00:35 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
+        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org
+Subject: [PATCH tip/core/rcu 0/10] Forward-progress changes for v4.20/v5.0
+Reply-To: paulmck@linux.vnet.ibm.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18082923-0060-0000-0000-000002A6658D
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009636; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01080751; UDB=6.00557502; IPR=6.00860737;
+ MB=3.00023002; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-29 23:00:39
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082923-0061-0000-0000-00004655BF76
+Message-Id: <20180829230035.GA7751@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-29_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=685 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808290224
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bartlomiej,
+Hello!
 
-On 2018년 08월 29일 21:50, Bartlomiej Zolnierkiewicz wrote:
-> 
-> Hi Chanwoo,
-> 
-> On Wednesday, August 29, 2018 04:34:06 PM Chanwoo Choi wrote:
->> commit 4585fbcb5331 ("PM / devfreq: Modify the device name as devfreq(X) for
->> sysfs") changed the node name to devfreq(x). After this commit, it is not
->> possible to get the device name through /sys/class/devfreq/devfreq(X)/*.
->>
->> Add new name attribute in order to get device name.
-> 
-> Could you please describe the issue encountered in more detail
-> (what the old device name is needed for)?
+This series includes changes that improve RCU's forward-progress
+guarantees for normal grace periods, with a few stray RCU-consolidation
+cleanups thrown in for good measure.
 
-You can check it on mail thread[1].
-[1] https://lkml.org/lkml/2018/5/8/1042
+1.	Make need_resched() respond to urgent RCU-QS needs.
 
->  
->> Cc: stable@vger.kernel.org
->> Fixes: 4585fbcb5331 ("PM / devfreq: Modify the device name as devfreq(X) for sysfs")
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->> ---
->>  drivers/devfreq/devfreq.c | 11 +++++++++++
->>  include/linux/devfreq.h   |  3 +++
->>  2 files changed, 14 insertions(+)
->>
->> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
->> index 4c49bb1330b5..2145563d5ee5 100644
->> --- a/drivers/devfreq/devfreq.c
->> +++ b/drivers/devfreq/devfreq.c
->> @@ -620,6 +620,9 @@ struct devfreq *devfreq_add_device(struct device *dev,
->>  	}
->>  	devfreq->max_freq = devfreq->scaling_max_freq;
->>
->> +	devfreq->name = dev_name(devfreq->dev.parent);
-> 
-> It seems that 'dev' can be used instead of 'devfreq->dev.parent'.
+2.	Provide improved interrupt-from-idle check in rcu_check_callbacks().
 
-devfreq->dev.parent is same with dev. it doesn't matter.
+3.	Make rcutorture dump out the reader protection sequence when
+	an RCU failures or close calls occurs.
 
-> 
->> +	if (IS_ERR_OR_NULL(devfreq->name))
-> 
-> Error values are not encoded into pointer returned by dev_name()
-> (drivers/base/ code is only checking for pointer being NULL).
+4.	Motivate Tiny RCU forward progress.
 
-OK. I'll just check whether NULL or not.
+5.	Eliminate ->rcu_qs_ctr from the rcu_dynticks structure on account
+	of its no longer being used.  And let that be a lesson to the
+	rest of that structure's fields!!!
 
-> 
->> +		return -EINVAL;
-> 
-> This leaks 'devfreq' object and doesn't encode return value into
-> pointer returned by devfreq_add_device(), it should be replaced by:
+6.	Provide functions for determining if call_rcu() has been invoked
+	for debugging purposes by the users of call_rcu().
 
-Right. I'll fix it.
+7.	Compute jiffies_till_sched_qs from other kernel parameters,
+	because one size simply does not fit all.
 
-> 
-> 	err = -EINVAL;
-> 	goto err_dev;
-> 
->>  	dev_set_name(&devfreq->dev, "devfreq%d",
->>  				atomic_inc_return(&devfreq_no));
->>  	err = device_register(&devfreq->dev);
-> 
-> Best regards,
-> --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
-> 
-> 
-> 
+8.	More aggressively enlist scheduler aid for nohz_full CPUs.
+	After all, they might never see a scheduler-clock interrupt.
 
+9.	Avoid resched_cpu() when rescheduling the current CPU.
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+10.	Convert "1UL << x" to "BIT(x)" to save a few characters.
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+ Documentation/admin-guide/kernel-parameters.txt |    9 +
+ include/linux/rcupdate.h                        |   40 +++++
+ include/trace/events/rcu.h                      |    5 
+ kernel/rcu/rcu.h                                |    5 
+ kernel/rcu/rcutorture.c                         |  119 +++++++++++++---
+ kernel/rcu/tiny.c                               |    6 
+ kernel/rcu/tree.c                               |  171 ++++++++++++++----------
+ kernel/rcu/tree.h                               |    6 
+ kernel/rcu/tree_exp.h                           |   17 +-
+ kernel/rcu/tree_plugin.h                        |   14 +
+ 10 files changed, 280 insertions(+), 112 deletions(-)
+
