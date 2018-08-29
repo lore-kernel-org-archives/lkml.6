@@ -6,65 +6,65 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2F3FC43334
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:24:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D55FC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:24:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8461D2083B
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:24:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D315820868
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:24:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=owltronix-com.20150623.gappssmtp.com header.i=@owltronix-com.20150623.gappssmtp.com header.b="sYIkLWnC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8461D2083B
+	dkim=pass (2048-bit key) header.d=owltronix-com.20150623.gappssmtp.com header.i=@owltronix-com.20150623.gappssmtp.com header.b="Db6RH/OS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D315820868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=owltronix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728390AbeH2QUk (ORCPT
+        id S1728099AbeH2QUj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 12:20:40 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:42000 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728242AbeH2QUk (ORCPT
+        Wed, 29 Aug 2018 12:20:39 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:38144 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728165AbeH2QUi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 12:20:40 -0400
-Received: by mail-ed1-f65.google.com with SMTP id l5so1132026edw.9
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 05:23:59 -0700 (PDT)
+        Wed, 29 Aug 2018 12:20:38 -0400
+Received: by mail-ed1-f68.google.com with SMTP id h33-v6so3777692edb.5
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 05:23:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=owltronix-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=lfyMZlbjbi+SYjhMjZnTgdIpBeV8AHl05jO2l5sWcXY=;
-        b=sYIkLWnCVWGpFIbCk/wCWULMG4wXn798HYm6CEGy/nmnWGgONpOOwLBVaDEkiywptB
-         OPCxvyQAjEm8oIRIWYHDj09K2BODTqTBw3lXrwdQ1SwTPTVx9NWdaW6kn8OsooKi+CbN
-         qiuGVly//MVu3sieDFpQN5XcqCAkTMuO9UxCxc5lmyMX4KJFPad8BcRcty6RUEipWw/4
-         Whtl8evBPM8fvW0+L/xdAkmWwuN0kO+K7qChzcdzlB1ebjaH57I/aWTZ0kYvUhtKHCgq
-         aVUxz+dPid4bckQtSYO86OREvy3DVMOsLOxWlf3N894Mps/wutI1jmtV4G+aZe3MQ4Qu
-         cq9A==
+        bh=lzDu+omVFir9hg9tJTLksPTFQvlNgd9rJmmR2DmzXbg=;
+        b=Db6RH/OSi8kcRputTXCYNlu0oSblIVQhK+xt4Yk4qbOWWRaK8saQIGC8zvZBiJnrTS
+         B1Jtegz9LuB4ayek/bCe3cfNUzfow5RRBi5fsUQ5yHsrqxxRvweK707GZ8YxKKM+eAFY
+         6rWxOH/ld/uufEDduKaMQrmSHm69EWnhhXP25AeM9HyGdyewUTjSCubfnISY3u7jIN8Q
+         o4aRvuhhuHmddrXjKHGazXJdjgD43bDy7i2ewNBFjYp5uJ0PhOWpTcQyYQIBmqZHVRFg
+         DCraqzLhxYT82fMfQZngw7+3eKf5EtDDt69UvxslLuwQhp9eFE7rg6X+wad8I1JptQwp
+         qXOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=lfyMZlbjbi+SYjhMjZnTgdIpBeV8AHl05jO2l5sWcXY=;
-        b=VgDZKjPJioZPQUBwGhNzqmvGCT+1ZHmU0SABx5nro+NoZhOUPkZqpcGd65jAxPHzCX
-         nBf+OEt9gUmorAwz4ftmqNMD25cjxONKiTDB/N4vkFgSlHD4wDKDoUqljYCba1ONw7wP
-         8K+JAzEbrsz+5zeRMfe28kYpQ/dZb1ntouW4NBoCBmUJFyv+IZk+PdNHzBS2pLDFFdqi
-         k6VmhGUx8OqM9pxua5hMT+06FeTic2a61aD0NnafujLQPUX/Jgl9KR0Xc4e+/tLZA0Rh
-         WB5Sa3btVY9PMKZjPaarq5jSxEjUf8Wmaevsf7/omd8xb/g/lYuz12sV1ZHfUOkofCOA
-         hieQ==
-X-Gm-Message-State: APzg51BEiNoy/21J2IVarDC173dybkz07vL7om/Hzr2svtT/iDrg2d+1
-        ZAbsbDlERyPBW2/55xAkEuKGgA==
-X-Google-Smtp-Source: ANB0VdYAQ+RjHI27Vgvn+uBh+ixA2+fz4NDdj+pxYu+jFIJP1CAvy4FAM85CyiANDIdz9SL5yVxUkw==
-X-Received: by 2002:a50:c05a:: with SMTP id u26-v6mr7258923edd.107.1535545439305;
-        Wed, 29 Aug 2018 05:23:59 -0700 (PDT)
+        bh=lzDu+omVFir9hg9tJTLksPTFQvlNgd9rJmmR2DmzXbg=;
+        b=q5Wn44YkIEOo3iQ92bXDg8pkjtXeXFM7H9WIOTEq2UlAKTsWymUQNaWQ9jCeKLAr7J
+         5gg7CkPTi1jQEEjB70gQWrOHnOvNR0woa8PdYA+G8eFFGhsMD5wPpJx/gDI23KqkwQWb
+         9uMf8mQIdCG+OxHpp73u+o/AI2ZgOLII5ooJaZPyVdX6tBX+borTyPQeqB1rTuBLLtFh
+         fd24pKKv+0dcjq1JTIbZ21RZxfBr18/1RYVgMjNObfRqnjFB6kpjeHYmmGZiAIM0gEoU
+         Pc4OAME1mjcm+/xcnS15eQFJKfUBfEvG5HWJFhFhEI5ZnRzkgNIm7SMP+R270RVoq6WO
+         kMvw==
+X-Gm-Message-State: APzg51AYcl0Vaks6mKjlrgjqHVfrYZkP5wLQe7u2hpL2hWIJ9A+BtSGQ
+        VXTcfaPaUKmchh//QQ9tD8SO6A==
+X-Google-Smtp-Source: ANB0VdZcF+Wlv4LdALKD/btw46rWUaPA4qVFqJrRiAWOpRYK67A6Wq1DR5SAg1KjnJ0khZViIYHzOA==
+X-Received: by 2002:a50:b8c5:: with SMTP id l63-v6mr7182646ede.80.1535545437349;
+        Wed, 29 Aug 2018 05:23:57 -0700 (PDT)
 Received: from titan.cnexlabs.com (6164211-cl69.boa.fiberby.dk. [193.106.164.211])
-        by smtp.gmail.com with ESMTPSA id f26-v6sm1752068edb.28.2018.08.29.05.23.58
+        by smtp.gmail.com with ESMTPSA id f26-v6sm1752068edb.28.2018.08.29.05.23.56
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 29 Aug 2018 05:23:58 -0700 (PDT)
+        Wed, 29 Aug 2018 05:23:56 -0700 (PDT)
 From:   Hans Holmberg <hans.ml.holmberg@owltronix.com>
 To:     Matias Bjorling <mb@lightnvm.io>
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         Javier Gonzales <javier@cnexlabs.com>,
         Hans Holmberg <hans.holmberg@cnexlabs.com>
-Subject: [PATCH 7/7] lightnvm: pblk: fix write amplificiation calculation
-Date:   Wed, 29 Aug 2018 14:23:34 +0200
-Message-Id: <1535545414-550-8-git-send-email-hans.ml.holmberg@owltronix.com>
+Subject: [PATCH 5/7] lightnvm: pblk: remove unused parameters in pblk_up_rq
+Date:   Wed, 29 Aug 2018 14:23:32 +0200
+Message-Id: <1535545414-550-6-git-send-email-hans.ml.holmberg@owltronix.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1535545414-550-1-git-send-email-hans.ml.holmberg@owltronix.com>
 References: <1535545414-550-1-git-send-email-hans.ml.holmberg@owltronix.com>
@@ -75,38 +75,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Hans Holmberg <hans.holmberg@cnexlabs.com>
 
-When the user data counter exceeds 32 bits, the write amplification
-calculation does not provide the right value. Fix this by using
-div64_u64 in stead of div64.
-
-Fixes: 76758390f83e ("lightnvm: pblk: export write amplification counters to sysfs")
+The parameters nr_ppas and ppa_list are not used, so remove them.
 
 Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
 ---
- drivers/lightnvm/pblk-sysfs.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/lightnvm/pblk-core.c  | 3 +--
+ drivers/lightnvm/pblk-write.c | 5 ++---
+ drivers/lightnvm/pblk.h       | 3 +--
+ 3 files changed, 4 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/lightnvm/pblk-sysfs.c b/drivers/lightnvm/pblk-sysfs.c
-index 9fc3dfa168b4..e56eeeeb914e 100644
---- a/drivers/lightnvm/pblk-sysfs.c
-+++ b/drivers/lightnvm/pblk-sysfs.c
-@@ -337,7 +337,6 @@ static ssize_t pblk_get_write_amp(u64 user, u64 gc, u64 pad,
+diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
+index a1033d82b9cc..f7bff3ae52ac 100644
+--- a/drivers/lightnvm/pblk-core.c
++++ b/drivers/lightnvm/pblk-core.c
+@@ -1920,8 +1920,7 @@ void pblk_up_page(struct pblk *pblk, struct ppa_addr *ppa_list, int nr_ppas)
+ 	up(&rlun->wr_sem);
+ }
+ 
+-void pblk_up_rq(struct pblk *pblk, struct ppa_addr *ppa_list, int nr_ppas,
+-		unsigned long *lun_bitmap)
++void pblk_up_rq(struct pblk *pblk, unsigned long *lun_bitmap)
  {
- 	int sz;
- 
+ 	struct nvm_tgt_dev *dev = pblk->dev;
+ 	struct nvm_geo *geo = &dev->geo;
+diff --git a/drivers/lightnvm/pblk-write.c b/drivers/lightnvm/pblk-write.c
+index fd67325f6e54..8aa4b9ee5092 100644
+--- a/drivers/lightnvm/pblk-write.c
++++ b/drivers/lightnvm/pblk-write.c
+@@ -81,8 +81,7 @@ static void pblk_complete_write(struct pblk *pblk, struct nvm_rq *rqd,
+ #ifdef CONFIG_NVM_PBLK_DEBUG
+ 	atomic_long_sub(c_ctx->nr_valid, &pblk->inflight_writes);
+ #endif
 -
- 	sz = snprintf(page, PAGE_SIZE,
- 			"user:%lld gc:%lld pad:%lld WA:",
- 			user, gc, pad);
-@@ -349,7 +348,7 @@ static ssize_t pblk_get_write_amp(u64 user, u64 gc, u64 pad,
- 		u32 wa_frac;
+-	pblk_up_rq(pblk, rqd->ppa_list, rqd->nr_ppas, c_ctx->lun_bitmap);
++	pblk_up_rq(pblk, c_ctx->lun_bitmap);
  
- 		wa_int = (user + gc + pad) * 100000;
--		wa_int = div_u64(wa_int, user);
-+		wa_int = div64_u64(wa_int, user);
- 		wa_int = div_u64_rem(wa_int, 100000, &wa_frac);
+ 	pos = pblk_rb_sync_init(&pblk->rwb, &flags);
+ 	if (pos == c_ctx->sentry) {
+@@ -242,7 +241,7 @@ static void pblk_submit_rec(struct work_struct *work)
+ 	pblk_map_remaining(pblk, ppa_list);
+ 	pblk_queue_resubmit(pblk, c_ctx);
  
- 		sz += snprintf(page + sz, PAGE_SIZE - sz, "%llu.%05u\n",
+-	pblk_up_rq(pblk, rqd->ppa_list, rqd->nr_ppas, c_ctx->lun_bitmap);
++	pblk_up_rq(pblk, c_ctx->lun_bitmap);
+ 	if (c_ctx->nr_padded)
+ 		pblk_bio_free_pages(pblk, rqd->bio, c_ctx->nr_valid,
+ 							c_ctx->nr_padded);
+diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
+index 1a31fda3a9f2..1bdac22e7897 100644
+--- a/drivers/lightnvm/pblk.h
++++ b/drivers/lightnvm/pblk.h
+@@ -827,8 +827,7 @@ void pblk_up_page(struct pblk *pblk, struct ppa_addr *ppa_list, int nr_ppas);
+ void pblk_down_rq(struct pblk *pblk, struct ppa_addr *ppa_list, int nr_ppas,
+ 		  unsigned long *lun_bitmap);
+ void pblk_down_page(struct pblk *pblk, struct ppa_addr *ppa_list, int nr_ppas);
+-void pblk_up_rq(struct pblk *pblk, struct ppa_addr *ppa_list, int nr_ppas,
+-		unsigned long *lun_bitmap);
++void pblk_up_rq(struct pblk *pblk, unsigned long *lun_bitmap);
+ int pblk_bio_add_pages(struct pblk *pblk, struct bio *bio, gfp_t flags,
+ 		       int nr_pages);
+ void pblk_bio_free_pages(struct pblk *pblk, struct bio *bio, int off,
 -- 
 2.7.4
 
