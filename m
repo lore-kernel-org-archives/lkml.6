@@ -2,169 +2,132 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27D80C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 11:38:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92949C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 11:40:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1CBB20858
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 11:38:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1CBB20858
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
+	by mail.kernel.org (Postfix) with ESMTP id 38F7E20897
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 11:40:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IN4XQDqe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38F7E20897
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728549AbeH2PfO (ORCPT
+        id S1728452AbeH2PhA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 11:35:14 -0400
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:52424 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728198AbeH2PfO (ORCPT
+        Wed, 29 Aug 2018 11:37:00 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:44878 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727312AbeH2Pg7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 11:35:14 -0400
-Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 790D1634C83;
-        Wed, 29 Aug 2018 14:38:43 +0300 (EEST)
-Received: from sakke by valkosipuli.localdomain with local (Exim 4.89)
-        (envelope-from <sakari.ailus@retiisi.org.uk>)
-        id 1fuyo7-0000q0-9a; Wed, 29 Aug 2018 14:38:43 +0300
-Date:   Wed, 29 Aug 2018 14:38:43 +0300
-From:   Sakari Ailus <sakari.ailus@iki.fi>
-To:     Philippe De Muyter <phdm@macq.eu>
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Luca Ceresoli <luca@lucaceresoli.net>,
-        linux-media@vger.kernel.org, Leon Luo <leonl@leopardimaging.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-kernel@vger.kernel.org, laurent.pinchart@ideasonboard.com
-Subject: Re: [PATCH 3/7] media: imx274: don't hard-code the subdev name to
- DRIVER_NAME
-Message-ID: <20180829113843.4v63cxf3clvbzbtd@valkosipuli.retiisi.org.uk>
-References: <20180824163525.12694-1-luca@lucaceresoli.net>
- <20180824163525.12694-4-luca@lucaceresoli.net>
- <20180825144915.tq7m5jlikwndndzq@valkosipuli.retiisi.org.uk>
- <799f4d1a-b91d-0404-7ef0-965d123319da@lucaceresoli.net>
- <113d3e05-9331-bd54-0e49-46c5e132339f@xs4all.nl>
- <20180828160255.GA9763@frolo.macqel>
- <20180829110721.zlpqfmusaw4nh7et@valkosipuli.retiisi.org.uk>
- <20180829112936.GA15244@frolo.macqel>
+        Wed, 29 Aug 2018 11:36:59 -0400
+Received: by mail-lf1-f66.google.com with SMTP id g6-v6so4000010lfb.11;
+        Wed, 29 Aug 2018 04:40:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=O6nPK4MQRv489teoD6NAtY0Cincq038TN6BWCgLw7dI=;
+        b=IN4XQDqevk5NgZ1FtUoE5C6xHGaJcjIIr1tzoWok7bHqq3YqR+weVaKDGmrqQub/oG
+         qJ5My3EuL6/+Pl25K3FBWmcss5KVD4WRIqEWtf1vfMENgK7k5U1NuqGsfD9a1dpylOiA
+         Hgx+Kv1GudoFM4cTKgHz+soBNHZNyVz2tdaqlGit7kUn5vcWU21iSKvaYLSbZ9gwp6Me
+         IkLY6ttjOAuEoTholf2htvnwprDPh/RR3N4cGz9YHK1KrNw7+EgUGKzn7O++M9y4mQBu
+         2t9XtH1c57TXwBulwY5RyIZasn4i0qndNvE9yLB7gMsaF6X2YEq6Zv/1gB0RiHmwmJs9
+         LTwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=O6nPK4MQRv489teoD6NAtY0Cincq038TN6BWCgLw7dI=;
+        b=ht1YyAR4ZxASw1LNHOTgEZyvuOJjGMSx6BjxCRmhPCMSSsndIRg5B8qR2fRlV+k/1D
+         hYM4UWcxwcYjREi/OXVYttFje7WXP2ZUJfy8zVCbsYRidN8DiDWG18CBpvDSdwXZYbi1
+         FaSt5XYuc900/iC9tZGEOHl88UBc/upEQG7R/WqUCaYQNX+cYFisaU4QLe22zzuCjBoY
+         7Ofg0uu5+Op5q5YVN+oKiyDKRy8Hie/8Lyv67VqyhQXawVE1ppRp8dU1HKfdJgMMQ1Y/
+         EFh5rAo7ab2yYjQzBZ8YNXUB5lFOU+M1ONwZdWysbfVoQGtQBVW4Zkoytt6KFgRuWTQ/
+         HLww==
+X-Gm-Message-State: APzg51BjNNTRJGy3n6NJSUOJKiZqP0NVtkM1exfxEfFUNsJUE38JC/MJ
+        1X2DaHPG06ZpEBwCQoYqvAk2I8IxnQuu9YeyQs4=
+X-Google-Smtp-Source: ANB0VdYs9DKVpN1sF78T67LWlAvPgi1Uf8saI8CFjdENHtu6eNqWuQw1YWrLiG0fLnuHz/S5lCVrom169uteQqfPGJ4=
+X-Received: by 2002:a19:9355:: with SMTP id v82-v6mr4038700lfd.134.1535542828071;
+ Wed, 29 Aug 2018 04:40:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180829112936.GA15244@frolo.macqel>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Received: by 2002:ab3:6318:0:0:0:0:0 with HTTP; Wed, 29 Aug 2018 04:39:47
+ -0700 (PDT)
+In-Reply-To: <a38f8d87-a373-5de4-c3b5-bba68f8ffeec@intel.com>
+References: <1535526184-32718-1-git-send-email-zhang.chunyan@linaro.org>
+ <1535526184-32718-8-git-send-email-zhang.chunyan@linaro.org> <a38f8d87-a373-5de4-c3b5-bba68f8ffeec@intel.com>
+From:   Chunyan Zhang <zhang.lyra@gmail.com>
+Date:   Wed, 29 Aug 2018 19:39:47 +0800
+Message-ID: <CAAfSe-s-W467D2dk-_7AWQz9ZaysROf5otoN-o-yu3Eu5ZVC4g@mail.gmail.com>
+Subject: Re: [PATCH V7 7/9] mmc: sdhci: SDMA may use Auto-CMD23 in v4 mode
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Chunyan Zhang <zhang.chunyan@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Billows Wu <billows.wu@unisoc.com>,
+        Jason Wu <jason.wu@unisoc.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 29, 2018 at 01:29:36PM +0200, Philippe De Muyter wrote:
-> Hi Sakari,
-> 
-> On Wed, Aug 29, 2018 at 02:07:21PM +0300, Sakari Ailus wrote:
-> > Hi Philippe,
-> > 
-> > On Tue, Aug 28, 2018 at 06:02:55PM +0200, Philippe De Muyter wrote:
-> > > Hi Hans, Sakari and Luca
-> > > 
-> > > On Tue, Aug 28, 2018 at 11:22:28AM +0200, Hans Verkuil wrote:
-> > > > On 26/08/18 22:41, Luca Ceresoli wrote:
-> > > > > Hi Sakari,
-> > > > > 
-> > > > > On 25/08/2018 16:49, Sakari Ailus wrote:
-> > > > >> Hi Luca,
-> > > > >>
-> > > > >> On Fri, Aug 24, 2018 at 06:35:21PM +0200, Luca Ceresoli wrote:
-> > > > >>> Forcibly setting the subdev name to DRIVER_NAME (i.e. "IMX274") makes
-> > > > >>> it non-unique and less informative.
-> > > > >>>
-> > > > >>> Let the driver use the default name from i2c, e.g. "IMX274 2-001a".
-> > > > >>>
-> > > > >>> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-> > > > >>> ---
-> > > > >>>  drivers/media/i2c/imx274.c | 1 -
-> > > > >>>  1 file changed, 1 deletion(-)
-> > > > >>>
-> > > > >>> diff --git a/drivers/media/i2c/imx274.c b/drivers/media/i2c/imx274.c
-> > > > >>> index 9b524de08470..570706695ca7 100644
-> > > > >>> --- a/drivers/media/i2c/imx274.c
-> > > > >>> +++ b/drivers/media/i2c/imx274.c
-> > > > >>> @@ -1885,7 +1885,6 @@ static int imx274_probe(struct i2c_client *client,
-> > > > >>>  	imx274->client = client;
-> > > > >>>  	sd = &imx274->sd;
-> > > > >>>  	v4l2_i2c_subdev_init(sd, client, &imx274_subdev_ops);
-> > > > >>> -	strlcpy(sd->name, DRIVER_NAME, sizeof(sd->name));
-> > > > >>>  	sd->flags |= V4L2_SUBDEV_FL_HAS_DEVNODE | V4L2_SUBDEV_FL_HAS_EVENTS;
-> > > > >>>  
-> > > > >>>  	/* initialize subdev media pad */
-> > > > >>
-> > > > >> This ends up changing the entity as well as the sub-device name which may
-> > > > >> well break applications.
-> > > > > 
-> > > > > Right, unfortunately.
-> > > > > 
-> > > > >> On the other hand, you currently can't have more
-> > > > >> than one of these devices on a media device complex due to the name being
-> > > > >> specific to a driver, not the device.
-> > > > >>
-> > > > >> An option avoiding that would be to let the user choose by e.g. through a
-> > > > >> Kconfig option would avoid having to address that, but I really hate adding
-> > > > >> such options.
-> > > > > 
-> > > > > I agree adding a Kconfig option just for this would be very annoying.
-> > > > > However I think the issue affects a few other drivers (sr030pc30.c and
-> > > > > s5c73m3-core.c apparently), thus maybe one option could serve them all.
-> > > > > 
-> > > > >> I wonder what others think. If anyone ever needs to add another on a board
-> > > > >> so that it ends up being the part of the same media device complex
-> > > > >> (likely), then changing the name now rather than later would be the least
-> > > > >> pain. In this case I'd be leaning (slightly) towards accepting the patch
-> > > > >> and hoping there wouldn't be any fallout... I don't see any board (DT)
-> > > > >> containing imx274, at least not in the upstream kernel.
-> > > > > 
-> > > > > I'll be OK with either decision. Should we keep it as is, then I think a
-> > > > > comment before that line would be appropriate to clarify it's not
-> > > > > correct but it is kept for backward userspace compatibility. This would
-> > > > > help avoid new driver writers doing the same mistake, and prevent other
-> > > > > people to send another patch like mine.
-> > > > 
-> > > > In this end, this is a driver bug. I would just fix this, but add a comment
-> > > > that states the old name and why it was changed. No need for a dev_info
-> > > > IMHO.
-> > > > 
-> > > > It would be nice if you can check if the same mistake is made in other drivers,
-> > > > and update those as well. It's easier if this is all done at the same time.
-> > > > 
-> > > 
-> > > Then we should probably also apply the following patch I submitted :
-> > > 
-> > > "media: v4l2-common: v4l2_spi_subdev_init : generate unique name"
-> > > 	https://patchwork.kernel.org/patch/10553035/
-> > > 
-> > > and perhaps
-> > > 
-> > > "media: v4l2-common: simplify v4l2_i2c_subdev_init name generation"
-> > > 	https://patchwork.kernel.org/patch/10553037/
-> > 
-> > The problem with this patch is that the existing naming scheme is very
-> > similar while the new one offers no tangible benefits apart from being in
-> > line with the rest of the kernel. That's still not a benefit for uAPI:
-> > changing the name is certain to break user space applications.
-> 
-> I agree with you on the patch for v4l2_i2c_subdev_init (I wrote 'perhaps'),
-> but you don't say anything on the one about v4l2_spi_subdev_init :), which
-> fixes an actual bug.  I have 2 identical SPI-controlled sensors on the
-> same board, and without my patch they get the same subdev name.  Of course,
-> I could fix that in the sensor driver itself, but that's not what we want,
-> or do we ?
+On 29 August 2018 at 18:59, Adrian Hunter <adrian.hunter@intel.com> wrote:
+> On 29/08/18 10:03, Chunyan Zhang wrote:
+>> When Host Version 4 Enable is set to 1, SDMA uses ADMA System Address
+>> register (05Fh-058h) instead of using register (000h-004h) to indicate
+>> its system address of data location. The register (000h-004h) is
+>> re-assigned to 32-bit Block Count and Auto CMD23 argument, so then SDMA
+>> may use Auto CMD23.
+>>
+>> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
+>> ---
+>>  drivers/mmc/host/sdhci.c | 8 ++++++--
+>>  1 file changed, 6 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+>> index 62d843ac90..ac92e0f 100644
+>> --- a/drivers/mmc/host/sdhci.c
+>> +++ b/drivers/mmc/host/sdhci.c
+>> @@ -3834,10 +3834,14 @@ int sdhci_setup_host(struct sdhci_host *host)
+>>       if (host->quirks & SDHCI_QUIRK_MULTIBLOCK_READ_ACMD12)
+>>               host->flags |= SDHCI_AUTO_CMD12;
+>>
+>> -     /* Auto-CMD23 stuff only works in ADMA or PIO. */
+>> +     /*
+>> +      * For v3 mode, Auto-CMD23 stuff only works in ADMA or PIO;
+>
+> ; -> .
+>
+>> +      * For v4 mode, SDMA may use Auto-CMD23 as well.
+>> +      */
+>>       if ((host->version >= SDHCI_SPEC_300) &&
+>>           ((host->flags & SDHCI_USE_ADMA) ||
+>> -          !(host->flags & SDHCI_USE_SDMA)) &&
+>> +          (!host->v4_mode && !(host->flags & SDHCI_USE_SDMA)) ||
+>> +          (host->v4_mode && (host->flags & SDHCI_USE_SDMA))) &&
+>>            !(host->quirks2 & SDHCI_QUIRK2_ACMD23_BROKEN)) {
+>
+> This is over complicated.  We can use auto-CMD23 if not using SDMA or if in
+> v4_mode i.e.
+>
+>         if (host->version >= SDHCI_SPEC_300 &&
+>             (!(host->flags & SDHCI_USE_SDMA) || host->v4_mode) &&
+>             !(host->quirks2 & SDHCI_QUIRK2_ACMD23_BROKEN)) {
+>
 
-Good point. I missed the naming of the SPI devices ignored any bus
-information there. I'm rather inclined towards taking the SPI patch. Hans,
-Mauro, Laurent; any opinion on that?
+So no matter whether SDHCI_USE_ADMA is selected, right?
 
--- 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+>>               host->flags |= SDHCI_AUTO_CMD23;
+>>               DBG("Auto-CMD23 available\n");
+>>
+>
