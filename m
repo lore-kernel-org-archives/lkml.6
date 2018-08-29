@@ -6,64 +6,79 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C0E7C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:37:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B152C43334
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:37:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E348F20652
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:37:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E348F20652
+	by mail.kernel.org (Postfix) with ESMTP id 00563205F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:37:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00563205F4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727248AbeH3Bfy (ORCPT
+        id S1727334AbeH3Bfz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 21:35:54 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53194 "EHLO mx1.redhat.com"
+        Wed, 29 Aug 2018 21:35:55 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55068 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
         id S1726592AbeH3Bfy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 29 Aug 2018 21:35:54 -0400
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 381388077103;
+        by mx1.redhat.com (Postfix) with ESMTPS id D062C738F1;
         Wed, 29 Aug 2018 21:37:05 +0000 (UTC)
 Received: from whitewolf.lyude.net.com (ovpn-121-246.rdu2.redhat.com [10.10.121.246])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 12A751006EDA;
-        Wed, 29 Aug 2018 21:37:02 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 70DCE1006EDA;
+        Wed, 29 Aug 2018 21:37:05 +0000 (UTC)
 From:   Lyude Paul <lyude@redhat.com>
 To:     nouveau@lists.freedesktop.org
-Cc:     "David Airlie" <airlied@linux.ie>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, "Ben Skeggs" <bskeggs@redhat.com>
-Subject: [PATCH v2 0/5] drm/nouveau: Backlight fixes and cleanup
-Date:   Wed, 29 Aug 2018 17:36:45 -0400
-Message-Id: <20180829213651.20874-1-lyude@redhat.com>
+Cc:     stable@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/5] drm/nouveau: Check backlight IDs are >= 0, not > 0
+Date:   Wed, 29 Aug 2018 17:36:46 -0400
+Message-Id: <20180829213651.20874-2-lyude@redhat.com>
+In-Reply-To: <20180829213651.20874-1-lyude@redhat.com>
+References: <20180829213651.20874-1-lyude@redhat.com>
 X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 29 Aug 2018 21:37:05 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 29 Aug 2018 21:37:05 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 29 Aug 2018 21:37:05 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 29 Aug 2018 21:37:05 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Next version of https://patchwork.freedesktop.org/series/48596/ . Made
-some important changes to the refactoring patch, but everything else is
-the same.
+Remember, ida IDs start at 0, not 1!
 
-Lyude Paul (5):
-  drm/nouveau: Check backlight IDs are >= 0, not > 0
-  drm/nouveau: Move backlight device into nouveau_connector
-  drm/nouveau: s/nouveau_backlight_exit/nouveau_backlight_fini/
-  drm/nouveau: Cleanup indenting in nouveau_backlight.c
-  drm/nouveau: Refactor nvXX_backlight_init()
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Reviewed-by: Karol Herbst <kherbst@redhat.com>
+Cc: stable@vger.kernel.org
+---
+ drivers/gpu/drm/nouveau/nouveau_backlight.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- drivers/gpu/drm/nouveau/nouveau_backlight.c | 218 ++++++++++----------
- drivers/gpu/drm/nouveau/nouveau_connector.c |  20 ++
- drivers/gpu/drm/nouveau/nouveau_connector.h |  33 +++
- drivers/gpu/drm/nouveau/nouveau_display.c   |   2 -
- drivers/gpu/drm/nouveau/nouveau_display.h   |  25 ---
- drivers/gpu/drm/nouveau/nouveau_drv.h       |   2 -
- 6 files changed, 159 insertions(+), 141 deletions(-)
-
+diff --git a/drivers/gpu/drm/nouveau/nouveau_backlight.c b/drivers/gpu/drm/nouveau/nouveau_backlight.c
+index 408b955e5c39..6dd72bc32897 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_backlight.c
++++ b/drivers/gpu/drm/nouveau/nouveau_backlight.c
+@@ -116,7 +116,7 @@ nv40_backlight_init(struct drm_connector *connector)
+ 				       &nv40_bl_ops, &props);
+ 
+ 	if (IS_ERR(bd)) {
+-		if (bl_connector.id > 0)
++		if (bl_connector.id >= 0)
+ 			ida_simple_remove(&bl_ida, bl_connector.id);
+ 		return PTR_ERR(bd);
+ 	}
+@@ -249,7 +249,7 @@ nv50_backlight_init(struct drm_connector *connector)
+ 				       nv_encoder, ops, &props);
+ 
+ 	if (IS_ERR(bd)) {
+-		if (bl_connector.id > 0)
++		if (bl_connector.id >= 0)
+ 			ida_simple_remove(&bl_ida, bl_connector.id);
+ 		return PTR_ERR(bd);
+ 	}
 -- 
 2.17.1
 
