@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D53D9C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:54:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30185C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:54:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CF1020647
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:54:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CF1020647
+	by mail.kernel.org (Postfix) with ESMTP id E4D5B20644
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:54:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4D5B20644
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727568AbeH3CxW (ORCPT
+        id S1727822AbeH3CxZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 22:53:22 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54822 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727316AbeH3CxV (ORCPT
+        Wed, 29 Aug 2018 22:53:25 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34060 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727591AbeH3CxX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 22:53:21 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7TMs1ix076067
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:54:12 -0400
+        Wed, 29 Aug 2018 22:53:23 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7TMs0od118879
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:54:15 -0400
 Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2m62u3kh7h-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m61g7xntm-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:54:12 -0400
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:54:14 -0400
 Received: from localhost
         by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 29 Aug 2018 18:54:12 -0400
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        Wed, 29 Aug 2018 18:54:13 -0400
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
         by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 29 Aug 2018 18:54:08 -0400
+        Wed, 29 Aug 2018 18:54:07 -0400
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7TMs7Wq38076558
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7TMs7xd1180038
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
         Wed, 29 Aug 2018 22:54:07 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0E645B2066;
-        Wed, 29 Aug 2018 18:53:03 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id E3712B2064;
+        Wed, 29 Aug 2018 18:53:02 -0400 (EDT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D0DBDB2067;
+        by IMSVA (Postfix) with ESMTP id C4494B205F;
         Wed, 29 Aug 2018 18:53:02 -0400 (EDT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
         Wed, 29 Aug 2018 18:53:02 -0400 (EDT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 59D4216C91C6; Wed, 29 Aug 2018 15:54:07 -0700 (PDT)
+        id 4E89916C91B7; Wed, 29 Aug 2018 15:54:07 -0700 (PDT)
 From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -61,20 +61,20 @@ Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tip/core/rcu 03/24] rcu: Consolidate RCU-bh update-side function definitions
-Date:   Wed, 29 Aug 2018 15:53:44 -0700
+Subject: [PATCH tip/core/rcu 01/24] rcu: Inline increment_cpu_stall_ticks() into its sole caller
+Date:   Wed, 29 Aug 2018 15:53:42 -0700
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180829225340.GA7019@linux.vnet.ibm.com>
 References: <20180829225340.GA7019@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18082922-0040-0000-0000-00000467593A
+x-cbid: 18082922-0040-0000-0000-00000467593B
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009636; HX=3.00000242; KW=3.00000007;
  PH=3.00000004; SC=3.00000266; SDB=6.01080749; UDB=6.00557500; IPR=6.00860735;
  MB=3.00023002; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-29 22:54:12
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082922-0041-0000-0000-0000086E7318
-Message-Id: <20180829225405.7275-3-paulmck@linux.vnet.ibm.com>
+x-cbparentid: 18082922-0041-0000-0000-0000086E7317
+Message-Id: <20180829225405.7275-1-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-29_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -87,143 +87,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit saves a few lines by consolidating the RCU-bh function
-definitions at the end of include/linux/rcupdate.h.  This consolidation
-also makes it easier to remove them all when the time comes.
+Consolidation of the RCU flavors into one makes increment_cpu_stall_ticks()
+a trivial one-line function with only one caller.  This commit therefore
+inlines it.
 
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 ---
- include/linux/rcupdate.h | 27 ++++++++++++++++++++++-----
- include/linux/rcutiny.h  | 15 ---------------
- include/linux/rcutree.h  | 17 -----------------
- kernel/rcu/tree.c        |  9 ---------
- 4 files changed, 22 insertions(+), 46 deletions(-)
+ kernel/rcu/tree.c        | 2 +-
+ kernel/rcu/tree.h        | 1 -
+ kernel/rcu/tree_plugin.h | 6 ------
+ 3 files changed, 1 insertion(+), 8 deletions(-)
 
-diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-index 1207c6c9bd8b..e530f5739033 100644
---- a/include/linux/rcupdate.h
-+++ b/include/linux/rcupdate.h
-@@ -58,11 +58,6 @@ void call_rcu(struct rcu_head *head, rcu_callback_t func);
- void rcu_barrier_tasks(void);
- void synchronize_rcu(void);
- 
--static inline void call_rcu_bh(struct rcu_head *head, rcu_callback_t func)
--{
--	call_rcu(head, func);
--}
--
- #ifdef CONFIG_PREEMPT_RCU
- 
- void __rcu_read_lock(void);
-@@ -875,4 +870,26 @@ static inline notrace void rcu_read_unlock_sched_notrace(void)
- #endif /* #else #ifdef CONFIG_ARCH_WEAK_RELEASE_ACQUIRE */
- 
- 
-+/* Transitional pre-consolidation compatibility definitions. */
-+
-+static inline void synchronize_rcu_bh(void)
-+{
-+	synchronize_rcu();
-+}
-+
-+static inline void synchronize_rcu_bh_expedited(void)
-+{
-+	synchronize_rcu_expedited();
-+}
-+
-+static inline void call_rcu_bh(struct rcu_head *head, rcu_callback_t func)
-+{
-+	call_rcu(head, func);
-+}
-+
-+static inline void rcu_barrier_bh(void)
-+{
-+	rcu_barrier();
-+}
-+
- #endif /* __LINUX_RCUPDATE_H */
-diff --git a/include/linux/rcutiny.h b/include/linux/rcutiny.h
-index e66fb8bc2127..df82bada9b19 100644
---- a/include/linux/rcutiny.h
-+++ b/include/linux/rcutiny.h
-@@ -68,21 +68,6 @@ static inline void rcu_barrier_sched(void)
- 	rcu_barrier();  /* Only one CPU, so only one list of callbacks! */
- }
- 
--static inline void rcu_barrier_bh(void)
--{
--	rcu_barrier();
--}
--
--static inline void synchronize_rcu_bh(void)
--{
--	synchronize_sched();
--}
--
--static inline void synchronize_rcu_bh_expedited(void)
--{
--	synchronize_sched();
--}
--
- static inline void synchronize_rcu_expedited(void)
- {
- 	synchronize_sched();
-diff --git a/include/linux/rcutree.h b/include/linux/rcutree.h
-index 6d30a0809300..94820156aa62 100644
---- a/include/linux/rcutree.h
-+++ b/include/linux/rcutree.h
-@@ -45,11 +45,6 @@ static inline void rcu_virt_note_context_switch(int cpu)
- 	rcu_note_context_switch(false);
- }
- 
--static inline void synchronize_rcu_bh(void)
--{
--	synchronize_rcu();
--}
--
- void synchronize_rcu_expedited(void);
- 
- static inline void synchronize_sched_expedited(void)
-@@ -59,19 +54,7 @@ static inline void synchronize_sched_expedited(void)
- 
- void kfree_call_rcu(struct rcu_head *head, rcu_callback_t func);
- 
--/**
-- * synchronize_rcu_bh_expedited - Brute-force RCU-bh grace period
-- *
-- * This is a transitional API and will soon be removed, with all
-- * callers converted to synchronize_rcu_expedited().
-- */
--static inline void synchronize_rcu_bh_expedited(void)
--{
--	synchronize_rcu_expedited();
--}
--
- void rcu_barrier(void);
--void rcu_barrier_bh(void);
- void rcu_barrier_sched(void);
- bool rcu_eqs_special_set(int cpu);
- unsigned long get_state_synchronize_rcu(void);
 diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index bfb6b15bc27c..f1e8a4431ebd 100644
+index 91f5d612502a..35a4346c7cce 100644
 --- a/kernel/rcu/tree.c
 +++ b/kernel/rcu/tree.c
-@@ -3251,15 +3251,6 @@ static void _rcu_barrier(void)
- 	mutex_unlock(&rcu_state.barrier_mutex);
+@@ -2554,7 +2554,7 @@ static void rcu_do_batch(struct rcu_data *rdp)
+ void rcu_check_callbacks(int user)
+ {
+ 	trace_rcu_utilization(TPS("Start scheduler-tick"));
+-	increment_cpu_stall_ticks();
++	raw_cpu_inc(rcu_data.ticks_this_gp);
+ 	rcu_flavor_check_callbacks(user);
+ 	if (rcu_pending())
+ 		invoke_rcu_core();
+diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
+index 8abc15c42d84..46452d3d0fad 100644
+--- a/kernel/rcu/tree.h
++++ b/kernel/rcu/tree.h
+@@ -466,7 +466,6 @@ static void print_cpu_stall_info_begin(void);
+ static void print_cpu_stall_info(int cpu);
+ static void print_cpu_stall_info_end(void);
+ static void zero_cpu_stall_ticks(struct rcu_data *rdp);
+-static void increment_cpu_stall_ticks(void);
+ static bool rcu_nocb_cpu_needs_barrier(int cpu);
+ static struct swait_queue_head *rcu_nocb_gp_get(struct rcu_node *rnp);
+ static void rcu_nocb_gp_cleanup(struct swait_queue_head *sq);
+diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+index 878a1d2cd465..cd276c46bc14 100644
+--- a/kernel/rcu/tree_plugin.h
++++ b/kernel/rcu/tree_plugin.h
+@@ -1815,12 +1815,6 @@ static void zero_cpu_stall_ticks(struct rcu_data *rdp)
+ 	rdp->softirq_snap = kstat_softirqs_cpu(RCU_SOFTIRQ, smp_processor_id());
  }
  
--/**
-- * rcu_barrier_bh - Wait until all in-flight call_rcu_bh() callbacks complete.
-- */
--void rcu_barrier_bh(void)
+-/* Increment ->ticks_this_gp for all flavors of RCU. */
+-static void increment_cpu_stall_ticks(void)
 -{
--	_rcu_barrier();
+-	raw_cpu_inc(rcu_data.ticks_this_gp);
 -}
--EXPORT_SYMBOL_GPL(rcu_barrier_bh);
 -
- /**
-  * rcu_barrier - Wait until all in-flight call_rcu() callbacks complete.
-  *
+ #ifdef CONFIG_RCU_NOCB_CPU
+ 
+ /*
 -- 
 2.17.1
 
