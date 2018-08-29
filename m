@@ -2,96 +2,118 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7367CC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:21:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E6EBC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:22:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FF0020647
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:21:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84D2420647
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:21:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="dKPibXp8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FF0020647
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SYsQSbv4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84D2420647
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwfinger.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728757AbeH3BUR (ORCPT
+        id S1728828AbeH3BUl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 21:20:17 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43706 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727507AbeH3BUR (ORCPT
+        Wed, 29 Aug 2018 21:20:41 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:39704 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727507AbeH3BUl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 21:20:17 -0400
-Received: by mail-pg1-f193.google.com with SMTP id v66-v6so2865630pgb.10
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 14:21:31 -0700 (PDT)
+        Wed, 29 Aug 2018 21:20:41 -0400
+Received: by mail-oi0-f65.google.com with SMTP id c190-v6so11766499oig.6
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 14:21:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=hvoRhU+Xie14lLYlUOhHMZUhbjCC2zc5xXra9GCVlak=;
-        b=dKPibXp85SkXYThsJOo60e5/+rve+9q3uqGdYyGsh7BoAkr7/4L2WkQAEqYQ/kptgg
-         fu/9Yc6yPzuQpzqRnQ6FFgTJn2ENBuzRNIANaSVsDsNasnJS+nqp7DBZ/IrL+tJnvAuN
-         M+LjlQXUArziSPbW5yJrrWlM9SXVUcAtBCg1xUEbNN7J3QJmdFgaNrhudCuVA/fR8Gc6
-         S3ulfl2c9x6H9e3rxX8U9H9KZd1/Hs68NV3uXv5KHMzgJVmY0jSY5JU/tl/TatO+c3Lb
-         Rnamfp6KrJBFPJ5rdAoWoiKD1HI+zZJX/TU6Bk3bJ/usEyNCmRwV89FQ9Q4mOC+UUZ/V
-         fTAg==
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=wX0nuwUZtm0jJXab0RxJZIp0hiccVva3PnVH1mmKBOY=;
+        b=SYsQSbv46nemQKz3myLf0I1CtlElbpRZKMggRhgeGLf7EUSkzXlX+O6XayfiEjLA8R
+         Ylxvpbvse7BgmmjJSITi/u7PAxcIHh5IBl54g1RLb1Ze5hacOjVFd60Vg0BdKQDaqbGm
+         +B7KcrucOlyctDXqQpGpb1kBQt3A/4jEwpAeQkQhox3/jXg35iH9ZuSacou4Gl5FIB4r
+         j3976GU6MCoCltiizT1DygxipULJ+o3bvASLTpvJqwcLfLuaEp9Xu8pIdODNBasnP/34
+         xSv73Ep7LrJ5OocTTf4SmJMCIsJ7/87R8XBk1uvyM+hyRLsUjj0Qm02y/Asq6aik6Lvi
+         xidQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hvoRhU+Xie14lLYlUOhHMZUhbjCC2zc5xXra9GCVlak=;
-        b=hMM/H6Q7Tev577RSrBMT6qq5jBPzl2aaV1QCZz/yE0pqXeN9kWCw8ZiYlnD8H8G8N1
-         8jZ6JapRYXYKTd1vDJvL5wX/lkz97YSxb9O4nsBfY8CFbSWp7g2HTe4/iTUetv28V9cr
-         DrDzTQA81Snz9/Aud2oTlhyUG6t0ORj3s7G49s7CaaHvzPEEzDQ/bED08qjYoK1RISUw
-         OPYugw26F0hevt6gPQGumgbDKO+hN+XmpelWx7AmFHs2fgMs+Z9J93o7Ou5W5nfZIDhM
-         CEoaniLNeAmjRbovRyRri1kqNwIVEzVbexcSxe1/USCxD0XjOnvGcT5J1p4+Yx6CEVwG
-         4McQ==
-X-Gm-Message-State: APzg51B7+wK7Lu6SMdXCcHf81TBxSjP370KJEp+L1U4e3dh0FhJGSNC3
-        RQIXdw3h+3piVW7QNtth0sGpXQ==
-X-Google-Smtp-Source: ANB0VdbtY5gt8w2O0ghUBY+Iiby5Q1h0Kqd2umHk0vk9z92gQ6WzDc3b74vIxFpb/IEXpeMnk0/Qfw==
-X-Received: by 2002:a63:144b:: with SMTP id 11-v6mr6886400pgu.219.1535577690450;
-        Wed, 29 Aug 2018 14:21:30 -0700 (PDT)
-Received: from cisco.cisco.com ([128.107.241.191])
-        by smtp.gmail.com with ESMTPSA id 143-v6sm7020647pfy.156.2018.08.29.14.21.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 29 Aug 2018 14:21:29 -0700 (PDT)
-Date:   Wed, 29 Aug 2018 15:21:27 -0600
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Christian Brauner <christian@brauner.io>
-Cc:     Kees Cook <keescook@chromium.org>, linux-api@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Oleg Nesterov <oleg@redhat.com>, linux-kernel@vger.kernel.org,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Andy Lutomirski <luto@amacapital.net>
-Subject: Re: [PATCH v5 1/5] seccomp: add a return code to trap to userspace
-Message-ID: <20180829212127.GA15213@cisco.cisco.com>
-References: <20180828143603.8127-1-tycho@tycho.ws>
- <20180828143603.8127-2-tycho@tycho.ws>
- <20180829185917.zj3gqyn6qf62sx66@mailbox.org>
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=wX0nuwUZtm0jJXab0RxJZIp0hiccVva3PnVH1mmKBOY=;
+        b=ctnd1N90D5fpm5lKmmPMO1DJ5DidCqk1ZTXaB82arjcnQGA9lF7R+B53bKELFc8OTE
+         J8Ow42OlAykpR9q1Zrm4R1UHqZ3ZSN92b/7nw8M+D97ouXO5q++Pqjf7NwrXQh/OqIS1
+         RmNX38tijm+4ABnIw2PPTPMymzHOEHrKQZ3sW13nPgMFia95xG+DpeHwdlpG9NAmdoi4
+         4HpsjaSHJxkN8DEOH8YEvzhMBoYWrYM3oVhFDoMtqWRZAauupnWlACejtirrvw462rlF
+         L97A3FRP0TmjveDA8XC4Y5mMge1HVHAwXVUwWfnd13Hc8/dDoDgJ7CPOpFz3NjdhC5Mg
+         VaOA==
+X-Gm-Message-State: APzg51CZMAb6J5BfYe4R1KJ27eo9An8+bcsVTi90vgA36DKEKmUt6INh
+        WDIxjh//x6lapI68Xy/rZDg=
+X-Google-Smtp-Source: ANB0VdbCp+Hu3Q0hvVtflDnVF3QjcVO5MBq7OGrxxpqvZyjLtpbmfBH8fw8RXHI9BOdxCXCSQ9m6eg==
+X-Received: by 2002:aca:310b:: with SMTP id x11-v6mr4567022oix.74.1535577716615;
+        Wed, 29 Aug 2018 14:21:56 -0700 (PDT)
+Received: from [192.168.1.107] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
+        by smtp.gmail.com with ESMTPSA id c9-v6sm4243959oia.1.2018.08.29.14.21.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 Aug 2018 14:21:55 -0700 (PDT)
+Subject: Re: [PATCH 01/21] staging:rtl8192u: Rename AdvCoding - Style
+To:     Joe Perches <joe@perches.com>,
+        John Whitmore <johnfwhitmore@gmail.com>,
+        linux-kernel@vger.kernel.org
+Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org
+References: <20180829203547.15650-1-johnfwhitmore@gmail.com>
+ <20180829203547.15650-2-johnfwhitmore@gmail.com>
+ <b621a12258c3f0d0a9fcb61ac454af4822814e67.camel@perches.com>
+From:   Larry Finger <Larry.Finger@lwfinger.net>
+Message-ID: <e302edd8-4b00-8c28-8375-2a781877f019@lwfinger.net>
+Date:   Wed, 29 Aug 2018 16:21:54 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180829185917.zj3gqyn6qf62sx66@mailbox.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <b621a12258c3f0d0a9fcb61ac454af4822814e67.camel@perches.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 29, 2018 at 08:59:18PM +0200, Christian Brauner wrote:
-> On Tue, Aug 28, 2018 at 08:35:59AM -0600, Tycho Andersen wrote:
-> > +Users can ``read()`` or ``poll()`` on a seccomp notification fd to receive a
+On 08/29/2018 04:14 PM, Joe Perches wrote:
+> On Wed, 2018-08-29 at 21:35 +0100, John Whitmore wrote:
+>> Rename the bit field element AdvCoding, as it causes a checkpatch issue
+>> with CamelCase naming. As the element is not actually used in code it
+>> has been renamed to 'not_used_adv_coding'.
+>>
+>> The single line of code which initialises the bit has been removed,
+>> as the  field is unused.
+>>
+>> This is a purely coding style change which should have no impact
+>> on runtime code execution.
 > 
-> You have changed this from read() to ioctl(), right?
+> Hi John.
+> 
+> Other than the somewhat useful code style cleanups, is there
+> a point at which you will feel comfortable doing actual code
+> changes to this driver?
+> 
+> Perhaps support for the chipset could be converted to use
+> mac80211 and moved into the directory with the other realtek
+> drivers in drivers/net/wireless/realtek/rtl8xxxu/...
+> 
+> Larry?  What do you think?
 
-Derp, yes. I'll re-write this bit. Thanks for the others, I'll fix
-them too. It's not bike shedding if it's incorrect :)
+First of all, if a variable is not used, then it should be removed, not merely 
+renamed to satisfy checkpatch.
 
-Thanks,
+All the Realtek USB devices should be added to rtl8xxxu, not merely moved into 
+that directory. Jes Sorensen created a well-designed driver the is structured to 
+permit addition of different initialization routines, etc. That said, the 
+conversion will not be easy. In addition, it will require having your hands on a 
+real device - a requirement that I cannot meet for the RTL8192U.
 
-Tycho
+Larry
+
