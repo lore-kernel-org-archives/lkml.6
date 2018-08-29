@@ -2,468 +2,138 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C655C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 01:08:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39AF2C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 01:12:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B53EF2087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 01:08:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B53EF2087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id CACF12087C
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 01:12:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="h/cuyjOH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CACF12087C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727263AbeH2FCe (ORCPT
+        id S1727181AbeH2FG2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 01:02:34 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:54238 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725723AbeH2FCe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 01:02:34 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: ezequiel)
-        with ESMTPSA id 0370C263A3F
-Message-ID: <f15e355ece0b250a252347ec22f1433dd786bb5b.camel@collabora.com>
-Subject: Re: [PATCH v8 4/8] media: platform: Add Cedrus VPU decoder driver
-From:   Ezequiel Garcia <ezequiel@collabora.com>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devel@driverdev.osuosl.org
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Randy Li <ayaka@soulik.info>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-sunxi@googlegroups.com
-Date:   Tue, 28 Aug 2018 22:08:00 -0300
-In-Reply-To: <20180828073424.30247-5-paul.kocialkowski@bootlin.com>
-References: <20180828073424.30247-1-paul.kocialkowski@bootlin.com>
-         <20180828073424.30247-5-paul.kocialkowski@bootlin.com>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.2-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 29 Aug 2018 01:06:28 -0400
+Received: from mail-eopbgr60087.outbound.protection.outlook.com ([40.107.6.87]:6324
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725723AbeH2FG1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 01:06:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bA1i2lC9ZESOKjAOB6/9bJ9nkj6ESStfA/0dcYBLSmk=;
+ b=h/cuyjOH6ip67KZT3NoybFU5BP++1YFOpZfrkl2LceSo0MW/7W62WHt5iij2kH3SOL/+t4AJvXuRoBKh40g2VIYHOwzMmJ6bD7H/V5aFy1GNKUiHPXMSNt+F9YZvt50a5sa1SuSouCsOJQ6SkuJRDrbhOmkf22SL+m2BKDUE0Ds=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.71.159) by
+ DB3PR0402MB3724.eurprd04.prod.outlook.com (52.134.70.143) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1080.17; Wed, 29 Aug 2018 01:12:05 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::c0c1:51f1:411f:f13c]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::c0c1:51f1:411f:f13c%3]) with mapi id 15.20.1080.015; Wed, 29 Aug 2018
+ 01:12:05 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     Shawn Guo <shawnguo@kernel.org>
+CC:     "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "A.s. Dong" <aisheng.dong@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: RE: [PATCH 2/2] ARM: dts: imx6sll: add gpio clocks
+Thread-Topic: [PATCH 2/2] ARM: dts: imx6sll: add gpio clocks
+Thread-Index: AQHUCfNqgHerPL2lL02bDQWxnzpjF6SLArkAgEtTOzA=
+Date:   Wed, 29 Aug 2018 01:12:04 +0000
+Message-ID: <DB3PR0402MB39163FACD5AE40052010B390F5090@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+References: <1529649154-5724-1-git-send-email-Anson.Huang@nxp.com>
+ <1529649154-5724-2-git-send-email-Anson.Huang@nxp.com>
+ <20180712025203.GQ6959@dragon>
+In-Reply-To: <20180712025203.GQ6959@dragon>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB3PR0402MB3724;6:eEZHhFTjfbrlZUTuVJ/fuAqizdK44dr/q4Rhz9YmfdhStHqJ98soNMimqhQSYfWb5c+yNbzgXgZgJnxnzwxi4fgJ0RyX/EvDfI4I9HB3ICo0A9qbiay8x+uwk5n9pc6T/FwMPEE/ggyQYzW/6eOUgqrGIJehjpX2tzROQD3JFC+3XR+QrNmHFjZkRTzZXNeYuGbGKrIGdI2Soqd483Z+1lS8AZLslxX0EDEftjo8OTpprPndNra0X/FkB8j+KEpYpdTzlZ7RjxLVEukVPsUupkQizVhc2gGxbqqYHAGZj3YFQA8NOBEDfsoYdYDjNNGUDma6zzWVyOW3x90vTJIOpNDIb7wKO93Kw910+dRwsR/EaV/7zi0gjhQykJtQZ3r/AIHblLgYARc69KYtNxemwonZRNYaCZGNDBdet5AgeEewz2PPu4hcf2PCAn8QLxw8W8ku9vDlQSyZ2XlnRQgj9Q==;5:0cZ6oW6x7GQlr2b5QJQ788sPPO8atJv2FYGrRe7fL9e1QMT+oqTfGx/nHyjqaF8lP5q/+BjQDH/IZdO4V42RDS2aZTqLG62JEcxW++I22LdL1mKHo/fhsYQSMkNh2S9qh9bj8ZOIPWP4ejU4pEtmhGcOEZSt124m7FcAhICV8Mw=;7:V7TA8yvOAtmFRaQIgM8KkjjPEPDYD8yUdS8Q0MUjFIB8PtrlkuAYGU702uxElCMdAsEQQHNqIO9mpLYpPKVHb+vohLx/kYLZkRcAz5llNtupAFyGsNxCHqQFyicOibXHOODq6NxS6R9McfVyxv1MfI3EUk5YhxItlinF+B9eYjp3/26/uYnD87wzdEqA4W4RGUn0xrh6rvfYnYMw9GPg7Dy1CjAmTZzEqNa8U1cuSU/NZg1tCQ9mb49FEHSrzTb5
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: e2330c12-7b3f-47fd-dc08-08d60d4c6f0e
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3724;
+x-ms-traffictypediagnostic: DB3PR0402MB3724:
+x-microsoft-antispam-prvs: <DB3PR0402MB372478D28D453FE56C63D6BAF5090@DB3PR0402MB3724.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(185117386973197)(258649278758335);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(823301075)(93006095)(93001095)(3002001)(3231311)(944501410)(52105095)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123562045)(20161123560045)(201708071742011)(7699016);SRVR:DB3PR0402MB3724;BCL:0;PCL:0;RULEID:;SRVR:DB3PR0402MB3724;
+x-forefront-prvs: 077929D941
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(396003)(39860400002)(346002)(376002)(136003)(13464003)(189003)(199004)(446003)(8936002)(6436002)(53936002)(476003)(2900100001)(229853002)(7696005)(66066001)(105586002)(106356001)(55016002)(5250100002)(33656002)(81166006)(74316002)(81156014)(25786009)(2906002)(486006)(8676002)(7416002)(68736007)(54906003)(14454004)(3846002)(478600001)(6506007)(102836004)(26005)(186003)(316002)(7736002)(305945005)(6916009)(53546011)(97736004)(44832011)(6246003)(4326008)(11346002)(86362001)(9686003)(76176011)(6116002)(256004)(5660300001)(99286004)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3724;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: Z4m+zbRxMTrt7v0yCl2rtMS/iRv6X5Mid+JkThKTDMSrZysI5HOZjjSVasOaRrgTi/KwKXBF+GJL2V9fgvKs6DYP4nsOjZklM3mSE3HMkS7mhksUFidRlfN5OFwizSeo5xUKQEUHMXiSkN21P9vGK2jYUUtg0SHmY2gKm5I0U4mr7meGjKPdUsZk/hPTL7B8JCkt9PzmRXp1mPf2JEvmAUo6TwAII8DOtFPOeD+vT/xEn8J9t1B7e3S+nL14Dt4K85DGn6S4zDQjZLTvawECsgTkIaLqj4uOFVvT83gwTnl1KKH4EwDfcmwE3y7mSKP5F3GixkHreWi0oE6GgFksN44Fmrx4c61pwJENiY4eUcE=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e2330c12-7b3f-47fd-dc08-08d60d4c6f0e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Aug 2018 01:12:05.0173
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3724
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-08-28 at 09:34 +0200, Paul Kocialkowski wrote:
-> This introduces the Cedrus VPU driver that supports the VPU found in
-> Allwinner SoCs, also known as Video Engine. It is implemented through
-> a v4l2 m2m decoder device and a media device (used for media requests).
-> So far, it only supports MPEG2 decoding.
-> 
-> Since this VPU is stateless, synchronization with media requests is
-> required in order to ensure consistency between frame headers that
-> contain metadata about the frame to process and the raw slice data that
-> is used to generate the frame.
-> 
-> This driver was made possible thanks to the long-standing effort
-> carried out by the linux-sunxi community in the interest of reverse
-> engineering, documenting and implementing support for Allwinner VPU.
-> 
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> ---
->  MAINTAINERS                                   |   7 +
->  drivers/staging/media/Kconfig                 |   2 +
->  drivers/staging/media/Makefile                |   1 +
->  drivers/staging/media/sunxi/Kconfig           |  15 +
->  drivers/staging/media/sunxi/Makefile          |   1 +
->  drivers/staging/media/sunxi/cedrus/Kconfig    |  14 +
->  drivers/staging/media/sunxi/cedrus/Makefile   |   3 +
->  drivers/staging/media/sunxi/cedrus/cedrus.c   | 420 +++++++++++++
->  drivers/staging/media/sunxi/cedrus/cedrus.h   | 167 +++++
->  .../staging/media/sunxi/cedrus/cedrus_dec.c   | 116 ++++
->  .../staging/media/sunxi/cedrus/cedrus_dec.h   |  28 +
->  .../staging/media/sunxi/cedrus/cedrus_hw.c    | 322 ++++++++++
->  .../staging/media/sunxi/cedrus/cedrus_hw.h    |  30 +
->  .../staging/media/sunxi/cedrus/cedrus_mpeg2.c | 235 +++++++
->  .../staging/media/sunxi/cedrus/cedrus_regs.h  | 233 +++++++
->  .../staging/media/sunxi/cedrus/cedrus_video.c | 574 ++++++++++++++++++
->  .../staging/media/sunxi/cedrus/cedrus_video.h |  32 +
->  17 files changed, 2200 insertions(+)
->  create mode 100644 drivers/staging/media/sunxi/Kconfig
->  create mode 100644 drivers/staging/media/sunxi/Makefile
->  create mode 100644 drivers/staging/media/sunxi/cedrus/Kconfig
->  create mode 100644 drivers/staging/media/sunxi/cedrus/Makefile
->  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus.c
->  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus.h
->  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_dec.c
->  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_dec.h
->  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_hw.c
->  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_hw.h
->  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c
->  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_regs.h
->  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_video.c
->  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_video.h
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 435e6c08c694..08065d53c69d 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -656,6 +656,13 @@ L:	linux-crypto@vger.kernel.org
->  S:	Maintained
->  F:	drivers/crypto/sunxi-ss/
->  
-> +ALLWINNER VPU DRIVER
-> +M:	Maxime Ripard <maxime.ripard@bootlin.com>
-> +M:	Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> +L:	linux-media@vger.kernel.org
-> +S:	Maintained
-> +F:	drivers/staging/media/sunxi/cedrus/
-> +
->  ALPHA PORT
->  M:	Richard Henderson <rth@twiddle.net>
->  M:	Ivan Kokshaysky <ink@jurassic.park.msu.ru>
-> diff --git a/drivers/staging/media/Kconfig b/drivers/staging/media/Kconfig
-> index db5cf67047ad..b3620a8f2d9f 100644
-> --- a/drivers/staging/media/Kconfig
-> +++ b/drivers/staging/media/Kconfig
-> @@ -31,6 +31,8 @@ source "drivers/staging/media/mt9t031/Kconfig"
->  
->  source "drivers/staging/media/omap4iss/Kconfig"
->  
-> +source "drivers/staging/media/sunxi/Kconfig"
-> +
->  source "drivers/staging/media/tegra-vde/Kconfig"
->  
->  source "drivers/staging/media/zoran/Kconfig"
-> diff --git a/drivers/staging/media/Makefile b/drivers/staging/media/Makefile
-> index 503fbe47fa58..42948f805548 100644
-> --- a/drivers/staging/media/Makefile
-> +++ b/drivers/staging/media/Makefile
-> @@ -5,5 +5,6 @@ obj-$(CONFIG_SOC_CAMERA_IMX074)	+= imx074/
->  obj-$(CONFIG_SOC_CAMERA_MT9T031)	+= mt9t031/
->  obj-$(CONFIG_VIDEO_DM365_VPFE)	+= davinci_vpfe/
->  obj-$(CONFIG_VIDEO_OMAP4)	+= omap4iss/
-> +obj-$(CONFIG_VIDEO_SUNXI)	+= sunxi/
->  obj-$(CONFIG_TEGRA_VDE)		+= tegra-vde/
->  obj-$(CONFIG_VIDEO_ZORAN)	+= zoran/
-> diff --git a/drivers/staging/media/sunxi/Kconfig b/drivers/staging/media/sunxi/Kconfig
-> new file mode 100644
-> index 000000000000..c78d92240ceb
-> --- /dev/null
-> +++ b/drivers/staging/media/sunxi/Kconfig
-> @@ -0,0 +1,15 @@
-> +config VIDEO_SUNXI
-> +	bool "Allwinner sunXi family Video Devices"
-> +	depends on ARCH_SUNXI || COMPILE_TEST
-> +	help
-> +	  If you have an Allwinner SoC based on the sunXi family, say Y.
-> +
-> +	  Note that this option doesn't include new drivers in the
-> +	  kernel: saying N will just cause Kconfig to skip all the
-> +	  questions about Allwinner media devices.
-> +
-> +if VIDEO_SUNXI
-> +
-> +source "drivers/staging/media/sunxi/cedrus/Kconfig"
-> +
-> +endif
-> diff --git a/drivers/staging/media/sunxi/Makefile b/drivers/staging/media/sunxi/Makefile
-> new file mode 100644
-> index 000000000000..cee2846c3ecf
-> --- /dev/null
-> +++ b/drivers/staging/media/sunxi/Makefile
-> @@ -0,0 +1 @@
-> +obj-$(CONFIG_VIDEO_SUNXI_CEDRUS)	+= cedrus/
-> diff --git a/drivers/staging/media/sunxi/cedrus/Kconfig b/drivers/staging/media/sunxi/cedrus/Kconfig
-> new file mode 100644
-> index 000000000000..afd7d7ee0388
-> --- /dev/null
-> +++ b/drivers/staging/media/sunxi/cedrus/Kconfig
-> @@ -0,0 +1,14 @@
-> +config VIDEO_SUNXI_CEDRUS
-> +	tristate "Allwinner Cedrus VPU driver"
-> +	depends on VIDEO_DEV && VIDEO_V4L2 && MEDIA_CONTROLLER
-> +	depends on HAS_DMA
-> +	depends on OF
-> +	select VIDEOBUF2_DMA_CONTIG
-> +	select MEDIA_REQUEST_API
-> +	select V4L2_MEM2MEM_DEV
-> +	help
-> +	  Support for the VPU found in Allwinner SoCs, also known as the Cedar
-> +	  video engine.
-> +
-> +	  To compile this driver as a module, choose M here: the module
-> +	  will be called sunxi-cedrus.
-> diff --git a/drivers/staging/media/sunxi/cedrus/Makefile b/drivers/staging/media/sunxi/cedrus/Makefile
-> new file mode 100644
-> index 000000000000..e9dc68b7bcb6
-> --- /dev/null
-> +++ b/drivers/staging/media/sunxi/cedrus/Makefile
-> @@ -0,0 +1,3 @@
-> +obj-$(CONFIG_VIDEO_SUNXI_CEDRUS) += sunxi-cedrus.o
-> +
-> +sunxi-cedrus-y = cedrus.o cedrus_video.o cedrus_hw.o cedrus_dec.o cedrus_mpeg2.o
-> diff --git a/drivers/staging/media/sunxi/cedrus/cedrus.c b/drivers/staging/media/sunxi/cedrus/cedrus.c
-> new file mode 100644
-> index 000000000000..7c0f90253135
-> --- /dev/null
-> +++ b/drivers/staging/media/sunxi/cedrus/cedrus.c
-> @@ -0,0 +1,420 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Cedrus VPU driver
-> + *
-> + * Copyright (C) 2016 Florent Revest <florent.revest@free-electrons.com>
-> + * Copyright (C) 2018 Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> + * Copyright (C) 2018 Bootlin
-> + *
-> + * Based on the vim2m driver, that is:
-> + *
-> + * Copyright (c) 2009-2010 Samsung Electronics Co., Ltd.
-> + * Pawel Osciak, <pawel@osciak.com>
-> + * Marek Szyprowski, <m.szyprowski@samsung.com>
-> + */
-> +
-> +#include <linux/platform_device.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +
-> +#include <media/v4l2-device.h>
-> +#include <media/v4l2-ioctl.h>
-> +#include <media/v4l2-ctrls.h>
-> +#include <media/v4l2-mem2mem.h>
-> +
-> +#include "cedrus.h"
-> +#include "cedrus_video.h"
-> +#include "cedrus_dec.h"
-> +#include "cedrus_hw.h"
-> +
-> +static const struct cedrus_control cedrus_controls[] = {
-> +	{
-> +		.id		= V4L2_CID_MPEG_VIDEO_MPEG2_SLICE_PARAMS,
-> +		.elem_size	= sizeof(struct v4l2_ctrl_mpeg2_slice_params),
-> +		.codec		= CEDRUS_CODEC_MPEG2,
-> +		.required	= true,
-> +	},
-> +	{
-> +		.id		= V4L2_CID_MPEG_VIDEO_MPEG2_QUANTIZATION,
-> +		.elem_size	= sizeof(struct v4l2_ctrl_mpeg2_quantization),
-> +		.codec		= CEDRUS_CODEC_MPEG2,
-> +		.required	= false,
-> +	},
-> +};
-> +
-> +#define CEDRUS_CONTROLS_COUNT	ARRAY_SIZE(cedrus_controls)
-> +
-> +void *cedrus_find_control_data(struct cedrus_ctx *ctx, u32 id)
-> +{
-> +	unsigned int i;
-> +
-> +	for (i = 0; ctx->ctrls[i] != NULL; i++)
-> +		if (ctx->ctrls[i]->id == id)
-> +			return ctx->ctrls[i]->p_cur.p;
-> +
-> +	return NULL;
-> +}
-> +
-> +static int cedrus_init_ctrls(struct cedrus_dev *dev, struct cedrus_ctx *ctx)
-> +{
-> +	struct v4l2_ctrl_handler *hdl = &ctx->hdl;
-> +	struct v4l2_ctrl *ctrl;
-> +	unsigned int ctrl_size;
-> +	unsigned int i;
-> +
-> +	v4l2_ctrl_handler_init(hdl, CEDRUS_CONTROLS_COUNT);
-> +	if (hdl->error) {
-> +		v4l2_err(&dev->v4l2_dev,
-> +			 "Failed to initialize control handler\n");
-> +		return hdl->error;
-> +	}
-> +
-> +	ctrl_size = sizeof(ctrl) * CEDRUS_CONTROLS_COUNT + 1;
-> +
-> +	ctx->ctrls = kzalloc(ctrl_size, GFP_KERNEL);
-> +	memset(ctx->ctrls, 0, ctrl_size);
-> +
-> +	for (i = 0; i < CEDRUS_CONTROLS_COUNT; i++) {
-> +		struct v4l2_ctrl_config cfg = { 0 };
-> +
-> +		cfg.elem_size = cedrus_controls[i].elem_size;
-> +		cfg.id = cedrus_controls[i].id;
-> +
-> +		ctrl = v4l2_ctrl_new_custom(hdl, &cfg, NULL);
-> +		if (hdl->error) {
-> +			v4l2_err(&dev->v4l2_dev,
-> +				 "Failed to create new custom control\n");
-> +
-> +			v4l2_ctrl_handler_free(hdl);
-> +			kfree(ctx->ctrls);
-> +			return hdl->error;
-> +		}
-> +
-> +		ctx->ctrls[i] = ctrl;
-> +	}
-> +
-> +	ctx->fh.ctrl_handler = hdl;
-> +	v4l2_ctrl_handler_setup(hdl);
-> +
-> +	return 0;
-> +}
-> +
-> +static int cedrus_request_validate(struct media_request *req)
-> +{
-> +	struct media_request_object *obj, *obj_safe;
-> +	struct v4l2_ctrl_handler *parent_hdl, *hdl;
-> +	struct cedrus_ctx *ctx = NULL;
-> +	struct v4l2_ctrl *ctrl_test;
-> +	unsigned int i;
-> +
-> +	list_for_each_entry_safe(obj, obj_safe, &req->objects, list) {
-> +		struct vb2_buffer *vb;
-> +
-> +		if (vb2_request_object_is_buffer(obj)) {
-> +			vb = container_of(obj, struct vb2_buffer, req_obj);
-> +			ctx = vb2_get_drv_priv(vb->vb2_queue);
-> +
-> +			break;
-> +		}
-> +	}
-> +
-> +	if (!ctx)
-> +		return -ENOENT;
-> +
-> +	parent_hdl = &ctx->hdl;
-> +
-> +	hdl = v4l2_ctrl_request_hdl_find(req, parent_hdl);
-> +	if (!hdl) {
-> +		v4l2_err(&ctx->dev->v4l2_dev, "Missing codec control(s)\n");
-> +		return -ENOENT;
-> +	}
-> +
-> +	for (i = 0; i < CEDRUS_CONTROLS_COUNT; i++) {
-> +		if (cedrus_controls[i].codec != ctx->current_codec ||
-> +		    !cedrus_controls[i].required)
-> +			continue;
-> +
-> +		ctrl_test = v4l2_ctrl_request_hdl_ctrl_find(hdl,
-> +			cedrus_controls[i].id);
-> +		if (!ctrl_test) {
-> +			v4l2_err(&ctx->dev->v4l2_dev,
-> +				 "Missing required codec control\n");
-> +			return -ENOENT;
-> +		}
-> +	}
-> +
-> +	v4l2_ctrl_request_hdl_put(hdl);
-> +
-> +	return vb2_request_validate(req);
-> +}
-> +
-> +static int cedrus_open(struct file *file)
-> +{
-> +	struct cedrus_dev *dev = video_drvdata(file);
-> +	struct cedrus_ctx *ctx = NULL;
-> +	int ret;
-> +
-> +	if (mutex_lock_interruptible(&dev->dev_mutex))
-> +		return -ERESTARTSYS;
-> +
-> +	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
-> +	if (!ctx) {
-> +		mutex_unlock(&dev->dev_mutex);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	v4l2_fh_init(&ctx->fh, video_devdata(file));
-> +	file->private_data = &ctx->fh;
-> +	ctx->dev = dev;
-> +
-> +	ret = cedrus_init_ctrls(dev, ctx);
-> +	if (ret)
-> +		goto err_free;
-> +
-> +	ctx->fh.m2m_ctx = v4l2_m2m_ctx_init(dev->m2m_dev, ctx,
-> +					    &cedrus_queue_init);
-> +	if (IS_ERR(ctx->fh.m2m_ctx)) {
-> +		ret = PTR_ERR(ctx->fh.m2m_ctx);
-> +		goto err_ctrls;
-> +	}
-> +
-> +	v4l2_fh_add(&ctx->fh);
-> +
-> +	mutex_unlock(&dev->dev_mutex);
-> +
-> +	return 0;
-> +
-> +err_ctrls:
-> +	v4l2_ctrl_handler_free(&ctx->hdl);
-> +err_free:
-> +	kfree(ctx);
-> +	mutex_unlock(&dev->dev_mutex);
-> +
-> +	return ret;
-> +}
-> +
-> +static int cedrus_release(struct file *file)
-> +{
-> +	struct cedrus_dev *dev = video_drvdata(file);
-> +	struct cedrus_ctx *ctx = container_of(file->private_data,
-> +					      struct cedrus_ctx, fh);
-> +
-> +	mutex_lock(&dev->dev_mutex);
-> +
-> +	v4l2_fh_del(&ctx->fh);
-> +	v4l2_m2m_ctx_release(ctx->fh.m2m_ctx);
-> +
-> +	v4l2_ctrl_handler_free(&ctx->hdl);
-> +	kfree(ctx->ctrls);
-> +
-> +	v4l2_fh_exit(&ctx->fh);
-> +
-> +	kfree(ctx);
-> +
-> +	mutex_unlock(&dev->dev_mutex);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct v4l2_file_operations cedrus_fops = {
-> +	.owner		= THIS_MODULE,
-> +	.open		= cedrus_open,
-> +	.release	= cedrus_release,
-> +	.poll		= v4l2_m2m_fop_poll,
-> +	.unlocked_ioctl	= video_ioctl2,
-> +	.mmap		= v4l2_m2m_fop_mmap,
-> +};
-> +
-> +static const struct video_device cedrus_video_device = {
-> +	.name		= CEDRUS_NAME,
-> +	.vfl_dir	= VFL_DIR_M2M,
-> +	.fops		= &cedrus_fops,
-> +	.ioctl_ops	= &cedrus_ioctl_ops,
-> +	.minor		= -1,
-> +	.release	= video_device_release_empty,
-> +	.device_caps	= V4L2_CAP_VIDEO_M2M_MPLANE | V4L2_CAP_STREAMING,
-> +};
-> +
-> +static const struct v4l2_m2m_ops cedrus_m2m_ops = {
-> +	.device_run	= cedrus_device_run,
-> +	.job_abort	= cedrus_job_abort,
-> +};
-> +
+Hi, Shawn
+	I saw v4.19-rc1 is created, can you please apply this patch?
 
-I think you can get rid of this .job_abort. It should
-simplify your .device_run quite a bit.
+Anson Huang
+Best Regards!
 
-.job_abort is optional now since 5525b8314389a0c558d15464e86f438974b94e32.
 
-Regards,
-Ezequiel
+> -----Original Message-----
+> From: Shawn Guo <shawnguo@kernel.org>
+> Sent: Thursday, July 12, 2018 10:52 AM
+> To: Anson Huang <anson.huang@nxp.com>
+> Cc: s.hauer@pengutronix.de; kernel@pengutronix.de; Fabio Estevam
+> <fabio.estevam@nxp.com>; robh+dt@kernel.org; mark.rutland@arm.com;
+> mturquette@baylibre.com; sboyd@kernel.org; A.s. Dong
+> <aisheng.dong@nxp.com>; Jacky Bai <ping.bai@nxp.com>; dl-linux-imx
+> <linux-imx@nxp.com>; linux-arm-kernel@lists.infradead.org;
+> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org;
+> linux-clk@vger.kernel.org
+> Subject: Re: [PATCH 2/2] ARM: dts: imx6sll: add gpio clocks
+>=20
+> On Fri, Jun 22, 2018 at 02:32:34PM +0800, Anson Huang wrote:
+> > i.MX6SLL has GPIO clock gates in CCM CCGR, add clock property for GPIO
+> > driver to make sure all GPIO banks work as expected.
+> >
+> > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+>=20
+> I tried to create a topic branch for this patch with dependent clk branch=
+ merged
+> in.  But it turns out to be difficult and not worth the effort, because t=
+oo many
+> imx6sll patches need to be moved out from imx/dt branch, and some imx6sll
+> changes are mixed with other SoCs.
+> Let's apply this in next cycle.  Ping me when 4.19-rc1 is available.
+>=20
+> Shawn
