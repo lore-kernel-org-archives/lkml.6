@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3630CC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:55:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F260BC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:55:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC6F820647
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:55:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC6F820647
+	by mail.kernel.org (Postfix) with ESMTP id AA87A2064E
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:55:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA87A2064E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727654AbeH3CxX (ORCPT
+        id S1728195AbeH3Cy5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 22:53:23 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47150 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727363AbeH3CxW (ORCPT
+        Wed, 29 Aug 2018 22:54:57 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34008 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727316AbeH3CxX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 22:53:22 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7TMs2P4111821
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:54:13 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2m62g7v4c2-1
+        Wed, 29 Aug 2018 22:53:23 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7TMs15R118945
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:54:14 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m61g7xntq-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:54:13 -0400
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:54:14 -0400
 Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 29 Aug 2018 18:54:12 -0400
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Wed, 29 Aug 2018 18:54:13 -0400
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
         Wed, 29 Aug 2018 18:54:08 -0400
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7TMs73s26017882
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7TMs8xq24969376
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 29 Aug 2018 22:54:07 GMT
+        Wed, 29 Aug 2018 22:54:08 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8824FB2068;
+        by IMSVA (Postfix) with ESMTP id D8508B2067;
         Wed, 29 Aug 2018 18:53:03 -0400 (EDT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 667F4B206C;
+        by IMSVA (Postfix) with ESMTP id B930BB2065;
         Wed, 29 Aug 2018 18:53:03 -0400 (EDT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
         Wed, 29 Aug 2018 18:53:03 -0400 (EDT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 9417416C91D4; Wed, 29 Aug 2018 15:54:07 -0700 (PDT)
+        id B66F316C91DA; Wed, 29 Aug 2018 15:54:07 -0700 (PDT)
 From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -61,20 +61,20 @@ Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tip/core/rcu 13/24] rcu: Clean up flavor-related definitions and comments in Kconfig
-Date:   Wed, 29 Aug 2018 15:53:54 -0700
+Subject: [PATCH tip/core/rcu 19/24] rcu: Clean up flavor-related definitions and comments in tree_exp.h
+Date:   Wed, 29 Aug 2018 15:54:00 -0700
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180829225340.GA7019@linux.vnet.ibm.com>
 References: <20180829225340.GA7019@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18082922-0072-0000-0000-0000039969A8
+x-cbid: 18082922-0040-0000-0000-00000467593C
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009636; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01080749; UDB=6.00557500; IPR=6.00860734;
- MB=3.00023002; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-29 22:54:12
+ PH=3.00000004; SC=3.00000266; SDB=6.01080749; UDB=6.00557500; IPR=6.00860735;
+ MB=3.00023002; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-29 22:54:13
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082922-0073-0000-0000-0000493EB97F
-Message-Id: <20180829225405.7275-13-paulmck@linux.vnet.ibm.com>
+x-cbparentid: 18082922-0041-0000-0000-0000086E731B
+Message-Id: <20180829225405.7275-19-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-29_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -89,47 +89,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 ---
- kernel/rcu/Kconfig | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ kernel/rcu/tree_exp.h | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/kernel/rcu/Kconfig b/kernel/rcu/Kconfig
-index a0b7f0103ca9..939a2056c87a 100644
---- a/kernel/rcu/Kconfig
-+++ b/kernel/rcu/Kconfig
-@@ -196,7 +196,7 @@ config RCU_BOOST
- 	  This option boosts the priority of preempted RCU readers that
- 	  block the current preemptible RCU grace period for too long.
- 	  This option also prevents heavy loads from blocking RCU
--	  callback invocation for all flavors of RCU.
-+	  callback invocation.
+diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
+index 060bdb45cd95..78553a8fa3c6 100644
+--- a/kernel/rcu/tree_exp.h
++++ b/kernel/rcu/tree_exp.h
+@@ -601,8 +601,8 @@ static void wait_rcu_exp_gp(struct work_struct *wp)
+ }
  
- 	  Say Y here if you are working with real-time apps or heavy loads
- 	  Say N here if you are unsure.
-@@ -225,15 +225,15 @@ config RCU_NOCB_CPU
- 	  callback invocation to energy-efficient CPUs in battery-powered
- 	  asymmetric multiprocessors.
+ /*
+- * Given an rcu_state pointer and a smp_call_function() handler, kick
+- * off the specified flavor of expedited grace period.
++ * Given a smp_call_function() handler, kick off the specified
++ * implementation of expedited grace period.
+  */
+ static void _synchronize_rcu_expedited(smp_call_func_t func)
+ {
+@@ -721,7 +721,7 @@ static void sync_rcu_exp_handler(void *unused)
+ 		resched_cpu(rdp->cpu);
+ }
  
--	  This option offloads callback invocation from the set of
--	  CPUs specified at boot time by the rcu_nocbs parameter.
--	  For each such CPU, a kthread ("rcuox/N") will be created to
--	  invoke callbacks, where the "N" is the CPU being offloaded,
--	  and where the "p" for RCU-preempt and "s" for RCU-sched.
--	  Nothing prevents this kthread from running on the specified
--	  CPUs, but (1) the kthreads may be preempted between each
--	  callback, and (2) affinity or cgroups can be used to force
--	  the kthreads to run on whatever set of CPUs is desired.
-+	  This option offloads callback invocation from the set of CPUs
-+	  specified at boot time by the rcu_nocbs parameter.  For each
-+	  such CPU, a kthread ("rcuox/N") will be created to invoke
-+	  callbacks, where the "N" is the CPU being offloaded, and where
-+	  the "p" for RCU-preempt (PREEMPT kernels) and "s" for RCU-sched
-+	  (!PREEMPT kernels).  Nothing prevents this kthread from running
-+	  on the specified CPUs, but (1) the kthreads may be preempted
-+	  between each callback, and (2) affinity or cgroups can be used
-+	  to force the kthreads to run on whatever set of CPUs is desired.
+-/* PREEMPT=y, so no RCU-sched to clean up after. */
++/* PREEMPT=y, so no PREEMPT=n expedited grace period to clean up after. */
+ static void sync_sched_exp_online_cleanup(int cpu)
+ {
+ }
+@@ -798,13 +798,13 @@ static void sync_sched_exp_online_cleanup(int cpu)
+ }
  
- 	  Say Y here if you want to help to debug reduced OS jitter.
- 	  Say N here if you are unsure.
+ /*
+- * Because a context switch is a grace period for RCU-sched, any blocking
+- * grace-period wait automatically implies a grace period if there
+- * is only one CPU online at any point time during execution of either
+- * synchronize_sched() or synchronize_rcu_bh().  It is OK to occasionally
+- * incorrectly indicate that there are multiple CPUs online when there
+- * was in fact only one the whole time, as this just adds some overhead:
+- * RCU still operates correctly.
++ * Because a context switch is a grace period for !PREEMPT, any
++ * blocking grace-period wait automatically implies a grace period if
++ * there is only one CPU online at any point time during execution of
++ * either synchronize_rcu() or synchronize_rcu_expedited().  It is OK to
++ * occasionally incorrectly indicate that there are multiple CPUs online
++ * when there was in fact only one the whole time, as this just adds some
++ * overhead: RCU still operates correctly.
+  */
+ static int rcu_blocking_is_gp(void)
+ {
+@@ -823,7 +823,7 @@ void synchronize_rcu_expedited(void)
+ 	RCU_LOCKDEP_WARN(lock_is_held(&rcu_bh_lock_map) ||
+ 			 lock_is_held(&rcu_lock_map) ||
+ 			 lock_is_held(&rcu_sched_lock_map),
+-			 "Illegal synchronize_sched_expedited() in RCU read-side critical section");
++			 "Illegal synchronize_rcu_expedited() in RCU read-side critical section");
+ 
+ 	/* If only one CPU, this is automatically a grace period. */
+ 	if (rcu_blocking_is_gp())
 -- 
 2.17.1
 
