@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C318C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:14:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BA4CC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:14:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D10C2086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:14:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D10C2086B
+	by mail.kernel.org (Postfix) with ESMTP id 30F6120897
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:14:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30F6120897
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728298AbeH2MKZ (ORCPT
+        id S1728321AbeH2MK3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 08:10:25 -0400
-Received: from mout.perfora.net ([74.208.4.196]:53287 "EHLO mout.perfora.net"
+        Wed, 29 Aug 2018 08:10:29 -0400
+Received: from mout.perfora.net ([74.208.4.196]:55443 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728265AbeH2MKZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 08:10:25 -0400
+        id S1728289AbeH2MK2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 08:10:28 -0400
 Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
  mrelay.perfora.net (mreueus001 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0MAvmU-1g2eqW22Tc-009vne; Wed, 29 Aug 2018 10:14:37 +0200
+ 0M6DOO-1fjRNk2dcQ-00yBbQ; Wed, 29 Aug 2018 10:14:39 +0200
 From:   Marcel Ziswiler <marcel@ziswiler.com>
 To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -33,27 +33,27 @@ Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 11/31] ARM: tegra: colibri_t20: remove phy-reset-gpio from controller node
-Date:   Wed, 29 Aug 2018 10:13:47 +0200
-Message-Id: <20180829081407.11304-12-marcel@ziswiler.com>
+Subject: [PATCH 12/31] ARM: tegra: colibri_t20: indentation/line-feed/white-space clean-up
+Date:   Wed, 29 Aug 2018 10:13:48 +0200
+Message-Id: <20180829081407.11304-13-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180829081407.11304-1-marcel@ziswiler.com>
 References: <20180829081407.11304-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K1:xDuubFumASrTMFIDGq/vkGgJiRHY35iS8O/eF6V1Dv5HJmo80Iy
- ZofKhtYVwjQFBmBySW/w1ZZs1WRN+RBnzvLp5e+wFCshGe5NisrHSHB1f7BguZtlkQKd3rc
- 4E0GHa2FjAf2pIkrbSVIPtsQdS3Ii0nR+i4/su8sPJxOQQH9Y53snac8VdtFZ8Y4guurryx
- DKNz+Cv+GemGGlynyP2MA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:cEUo5pDYxMI=:O9WALGgIrmsNBgoO9eJpd8
- upkScVVyl+RAlAe+41qyyThE0hZENpRVI5W2UEYjoh4GbzHxe/p+BfZnuETfMMVvupdmcBS5a
- KQqHRZUiBiWLBDzGgXQNEJp9bA+GNyXBdPrL2VVa68wuKrhjJEaDR1vxLEs+M5cjTGjln0+Sl
- FrFmf/9Ut8da/HTe+8o5uGjFedADgoIO9CGYl3f5ewgjVMUl9h8ab0T1V6CZ3k8SISlQecLcG
- i802iuj84mZu67yAb3SE6h5qARCL1TA+qVCUGMpGkY1RBQrxIealDju/7XDXgy7bxXO3Jp9u4
- 0L2s9D9veMJ4N9OsbK+N95nEE0vQj3lBVgxPC1SgXCh+ob9y1cO3H6ULa1H+DJ52LK8mUdYbr
- BKCJtA7XdxMOk9eeOu+nbHkb6iFX+NnuMHyvYtiGQTog2JOd5jqeOs4hvDBo3GA2dKXGPxP1j
- nwqFkuNxJX2NawHxRMMCl7BmBAhvum4sQpaX2OkU5mUjW7hBsckTFj4vM6zSbASCWYB+jWOGK
- AsmI5zrlC9jiGmmbTUHcv/lzevvTFqTIsD00rsIRuyufumZSB2ezWPE1nFnPTn1A3mTTzwMQ4
- Mp2scBeLwCOwa4SlOO1yU7qVlFbYOgzaK93qy4aJY4f3oEDWbFuYfjmqhx4AYnWy7Y+2GUrdT
- EXnjur+TC33qJ/uBsMBMPSmo565Gk8uNXQXkGYqx1hKpXCy3szFGVoeZSxkEMwuyCCAk=
+X-Provags-ID: V03:K1:K9GHaMQXdU7bPSVyF3LWWbH/UgsHDZMjH2LQRJwbw6bx8CDW4Rz
+ jOJ4rfH7K6wxlb3PMQ6b7SamKnVVLtQI+nRNkk6miWNmRjbXQBI87K8h8NPlPHC/Vna8Mja
+ VV1h7I5yFmq3HoCdiO4gFXAvAv3Hr7LVxmU5pP5SdAK78NyWiJxLKInMxR7EgnJEVTreUgk
+ ewjZvfh7z11l4aqR6/4eA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:ZH7MKC3nRVk=:eBIiusYvPPTZyQjzpr+1pY
+ Nm7dtluVzX5VdhhyCEIGNXaeqTuvEW5gN7re4wG6bA/DnFbHw/sp4zxQLtzR31I4BZFMuC/k3
+ JdmM8gqGyBDcNIue8GvRN1z45m3f1cHw0iSeBkIJERtml9rNkpctaWpBuE9rXpuljf9N3klAX
+ bDaYNyGp3tLD94EzB3rfKe7a4FeSeLmult4vWZBPApVs+RLe0f+JUPlsq2cP6RNzwKIiuAIS4
+ JF2V1q5pnUAR52chzpEXN6IBuD0ARvl4uQePQXrKVHirOHwwnn6coUsjNAwtogg5LBoGnwGS3
+ OHc4nVeP/wqYXPdZGSGN3C1H86Jb5zMbBliiH6Gd3lpqzusXUFDrhXxZbgefeHGevrpnXOvmF
+ ubx6snfLM/AtNirNVHZYFLiWgSyb3rGWKefMA7B4FHiQLFBSpDrgG51PitmX+StWuSp3eSp2D
+ xnucTnLUeMC8SH4auxXnyaJedMAuV0FvLjDemaTzuf8qVAFLrzy2QDIgtDaJH6B8Z9/VqZeEG
+ HOT35YJeduapZw9DrIqCq3O+MR2DzkBnsEO6JeVCHUTdOiO3py3MbpbO1gL4AyFzDTO497dXY
+ HWvlzfYWIEqVzfnsD4rPa0skl5akApJVJYR0sI3Jvk8g+uSc5e93bhDY19i7Pg/hOc7jEpTDF
+ NPr0ZSabDFfHvBsnyD3lrlzh1APY0b/WhjQxgkrY1WqxI984mJ80LK4NWQIykwsy1LcY=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,29 +61,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Remove the phy-reset-gpio from the USB controller node as it is already
-specified in the PHY node.
+Cleaning up indentation, line-feed and white-space.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra20-colibri.dtsi | 2 --
- 1 file changed, 2 deletions(-)
+ arch/arm/boot/dts/tegra20-colibri.dtsi | 18 ++++++------------
+ 1 file changed, 6 insertions(+), 12 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
-index 77e99caf5606..06d0be29c0b4 100644
+index 06d0be29c0b4..5559008efc5f 100644
 --- a/arch/arm/boot/dts/tegra20-colibri.dtsi
 +++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
-@@ -457,8 +457,6 @@
- 	/* EHCI instance 1: ULPI PHY -> AX88772B (On-module) */
- 	usb@c5004000 {
+@@ -206,10 +206,10 @@
+ 
+ 	ac97: ac97@70002000 {
+ 		status = "okay";
+-		nvidia,codec-reset-gpio = <&gpio TEGRA_GPIO(V, 0)
+-			GPIO_ACTIVE_HIGH>;
+-		nvidia,codec-sync-gpio = <&gpio TEGRA_GPIO(P, 0)
+-			GPIO_ACTIVE_HIGH>;
++		nvidia,codec-reset-gpio =
++			<&gpio TEGRA_GPIO(V, 0) GPIO_ACTIVE_HIGH>;
++		nvidia,codec-sync-gpio =
++			<&gpio TEGRA_GPIO(P, 0) GPIO_ACTIVE_HIGH>;
+ 	};
+ 
+ 	nand-controller@70008000 {
+@@ -254,12 +254,9 @@
+ 			compatible = "ti,tps6586x";
+ 			reg = <0x34>;
+ 			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
+-
+ 			ti,system-power-controller;
+-
+ 			#gpio-cells = <2>;
+ 			gpio-controller;
+-
+ 			sys-supply = <&reg_module_3v3>;
+ 			vin-sm0-supply = <&reg_3v3_vsys>;
+ 			vin-sm1-supply = <&reg_3v3_vsys>;
+@@ -468,8 +465,8 @@
+ 
+ 	usb-phy@c5004000 {
  		status = "okay";
 -		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 1)
 -			GPIO_ACTIVE_LOW>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
++		nvidia,phy-reset-gpio =
++			<&gpio TEGRA_GPIO(V, 1) GPIO_ACTIVE_LOW>;
+ 		vbus-supply = <&reg_lan_v_bus>;
+ 	};
  
+@@ -511,16 +508,13 @@
+ 		compatible = "nvidia,tegra-audio-wm9712-colibri_t20",
+ 			     "nvidia,tegra-audio-wm9712";
+ 		nvidia,model = "Colibri T20 AC97 Audio";
+-
+ 		nvidia,audio-routing =
+ 			"Headphone", "HPOUTL",
+ 			"Headphone", "HPOUTR",
+ 			"LineIn", "LINEINL",
+ 			"LineIn", "LINEINR",
+ 			"Mic", "MIC1";
+-
+ 		nvidia,ac97-controller = <&ac97>;
+-
+ 		clocks = <&tegra_car TEGRA20_CLK_PLL_A>,
+ 			 <&tegra_car TEGRA20_CLK_PLL_A_OUT0>,
+ 			 <&tegra_car TEGRA20_CLK_CDEV1>;
 -- 
 2.14.4
 
