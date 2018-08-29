@@ -2,408 +2,321 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65CE6C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:32:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4015C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:32:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04F1220657
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:32:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04F1220657
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lip6.fr
+	by mail.kernel.org (Postfix) with ESMTP id 5BEC020658
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:32:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BOT/RNQW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BEC020658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729123AbeH2T3u (ORCPT
+        id S1729139AbeH2T3y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 15:29:50 -0400
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:54897
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727204AbeH2T3t (ORCPT
+        Wed, 29 Aug 2018 15:29:54 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:44159 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729088AbeH2T3y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 15:29:49 -0400
-X-IronPort-AV: E=Sophos;i="5.53,303,1531778400"; 
-   d="scan'208";a="277119373"
-Received: from unknown (HELO hadrien) ([208.181.63.202])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2018 17:32:09 +0200
-Date:   Wed, 29 Aug 2018 08:32:08 -0700 (PDT)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To:     Xin Long <lucien.xin@gmail.com>
-cc:     linux-kernel@vger.kernel.org, kbuild-all@01.org
-Subject: net/sctp/socket.c:2681:6-11: ERROR: invalid reference to the index
- variable of the iterator on line 2661 (fwd)
-Message-ID: <alpine.DEB.2.21.1808290829360.2280@hadrien>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 29 Aug 2018 15:29:54 -0400
+Received: by mail-pg1-f196.google.com with SMTP id r1-v6so2474032pgp.11
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 08:32:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=sImJ+lABjlmCiG9UVJvsZV9U4AYO+RNp3EC7jjB9htQ=;
+        b=BOT/RNQWIKE3+63phLRldJNpVgtknmo2ijcvUuaLj4nZl7ZqlPTqYntzbZXIAv0U9Z
+         DqLfXPXAMGQ+m5by2HNvUVGGs6tdiVkCUo9C1zy9DBZrwjjR8eVhLWRT7IfSsd+HJ03y
+         H3iKVdVt7N7xryGjrLxzCwrRrTu8QmV4FZQlE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=sImJ+lABjlmCiG9UVJvsZV9U4AYO+RNp3EC7jjB9htQ=;
+        b=Bbxad4cfCvqA+r8vD31R59vQxlyEKFMIlybFzYIEXb4QPq+UoinQukkzBsq8Yidc7h
+         ehaxednjgQFZf5B2tK3ncaU2bNppr0iPTD7KLzbB4XlMDHwePT6YA2qvXB2OuvpKBawN
+         id429QS5Vcfp+ilUzIQYx61G1zcTxxWMh7abm9UJbh7/4Ez1l+/7wSzoyN7Qt1hOyMPY
+         hdiSX5R/Afokr06Wg39CvVuLWoG3oPodVJQmwSZH20S3IOgJTnuy1R07Lu1DV+5pw0qI
+         biMV1aAxWrJATZIrcbr2CnLE8cbCahsii2JwG2t/Pvmv2YzDYG47pZ8RqKdijaRcNd8L
+         DBBQ==
+X-Gm-Message-State: APzg51DBt7mzqiOlz03vhuOcfh4RrYoqzcINkQI8W1IFZtD2CgMDP5n9
+        mIT53/U1OXf2XPfZX/Qxakz/
+X-Google-Smtp-Source: ANB0VdY6jXkxq9uAwkxTnzjNoDySfa5R2ehNPjk4rbOCmEC2dbgBB7HJqCVbHtNrEtvixUqTQojq6A==
+X-Received: by 2002:a65:6398:: with SMTP id h24-v6mr6248534pgv.245.1535556745079;
+        Wed, 29 Aug 2018 08:32:25 -0700 (PDT)
+Received: from Mani-XPS-13-9360 ([2409:4072:6384:6a6:70b9:a288:9cdc:3e44])
+        by smtp.gmail.com with ESMTPSA id r19-v6sm20440368pgo.43.2018.08.29.08.32.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 29 Aug 2018 08:32:24 -0700 (PDT)
+Date:   Wed, 29 Aug 2018 21:02:14 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Saravanan Sekar <sravanhome@gmail.com>
+Cc:     linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        afaerber@suse.de, catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        pn@denx.de, mp-cs@actions-semi.com, jeff.chen@actions-semi.com,
+        thomas.liau@actions-semi.com, linux@cubietech.com
+Subject: Re: [PATCH v5 2/5] pinctrl: actions: define pad control configurtion
+ to SoC specific
+Message-ID: <20180829153214.GB21136@Mani-XPS-13-9360>
+References: <20180829082413.2512005-1-sravanhome@gmail.com>
+ <20180829082413.2512005-3-sravanhome@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180829082413.2512005-3-sravanhome@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Wed, Aug 29, 2018 at 10:24:10AM +0200, Saravanan Sekar wrote:
+> pad control for s900 and s700 are differs in number of
+> pull control configuraions
+> s900 has 4 pull controls - high impedence, pull up, pull down, repeater
+> s700, s500 has 2 pull controls - pull up and pull down
+> 
+> so pad control configuration has to SoC specific, moved out from pinctrl
+> common to s700, s900 specific.
+>
 
-Are the ifs starting on lines 2655 and 2680 mutually exclusive?  If so,
-perhaps add an else.  If not, and if the trans on line 2681 can come from
-the trans initialized by the loop on line 2661, then there is a problem.
+This patch is not adding anything for S700 so no need to mention it in
+last line.
 
-julia
+> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
+> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
+> ---
+>  drivers/pinctrl/actions/pinctrl-owl.c  | 64 +++++----------------------------
+>  drivers/pinctrl/actions/pinctrl-owl.h  | 13 ++++---
+>  drivers/pinctrl/actions/pinctrl-s900.c | 66 +++++++++++++++++++++++++++++++++-
+>  3 files changed, 79 insertions(+), 64 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/actions/pinctrl-owl.c b/drivers/pinctrl/actions/pinctrl-owl.c
+> index 9d18c02f192b..cc242d6a47c3 100644
+> --- a/drivers/pinctrl/actions/pinctrl-owl.c
+> +++ b/drivers/pinctrl/actions/pinctrl-owl.c
+> @@ -246,60 +246,6 @@ static int owl_pad_pinconf_reg(const struct owl_padinfo *info,
+>  	return 0;
+>  }
+>  
+> -static int owl_pad_pinconf_arg2val(const struct owl_padinfo *info,
+> -				unsigned int param,
+> -				u32 *arg)
+> -{
+> -	switch (param) {
+> -	case PIN_CONFIG_BIAS_BUS_HOLD:
+> -		*arg = OWL_PINCONF_PULL_HOLD;
+> -		break;
+> -	case PIN_CONFIG_BIAS_HIGH_IMPEDANCE:
+> -		*arg = OWL_PINCONF_PULL_HIZ;
+> -		break;
+> -	case PIN_CONFIG_BIAS_PULL_DOWN:
+> -		*arg = OWL_PINCONF_PULL_DOWN;
+> -		break;
+> -	case PIN_CONFIG_BIAS_PULL_UP:
+> -		*arg = OWL_PINCONF_PULL_UP;
+> -		break;
+> -	case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
+> -		*arg = (*arg >= 1 ? 1 : 0);
+> -		break;
+> -	default:
+> -		return -ENOTSUPP;
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+> -static int owl_pad_pinconf_val2arg(const struct owl_padinfo *padinfo,
+> -				unsigned int param,
+> -				u32 *arg)
+> -{
+> -	switch (param) {
+> -	case PIN_CONFIG_BIAS_BUS_HOLD:
+> -		*arg = *arg == OWL_PINCONF_PULL_HOLD;
+> -		break;
+> -	case PIN_CONFIG_BIAS_HIGH_IMPEDANCE:
+> -		*arg = *arg == OWL_PINCONF_PULL_HIZ;
+> -		break;
+> -	case PIN_CONFIG_BIAS_PULL_DOWN:
+> -		*arg = *arg == OWL_PINCONF_PULL_DOWN;
+> -		break;
+> -	case PIN_CONFIG_BIAS_PULL_UP:
+> -		*arg = *arg == OWL_PINCONF_PULL_UP;
+> -		break;
+> -	case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
+> -		*arg = *arg == 1;
+> -		break;
+> -	default:
+> -		return -ENOTSUPP;
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+>  static int owl_pin_config_get(struct pinctrl_dev *pctrldev,
+>  				unsigned int pin,
+>  				unsigned long *config)
+> @@ -318,7 +264,10 @@ static int owl_pin_config_get(struct pinctrl_dev *pctrldev,
+>  
+>  	arg = owl_read_field(pctrl, reg, bit, width);
+>  
+> -	ret = owl_pad_pinconf_val2arg(info, param, &arg);
+> +	if (!pctrl->soc->padctl_val2arg)
+> +		return -ENOTSUPP;
+> +
+> +	ret = pctrl->soc->padctl_val2arg(info, param, &arg);
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -349,7 +298,10 @@ static int owl_pin_config_set(struct pinctrl_dev *pctrldev,
+>  		if (ret)
+>  			return ret;
+>  
+> -		ret = owl_pad_pinconf_arg2val(info, param, &arg);
+> +		if (!pctrl->soc->padctl_arg2val)
+> +			return -ENOTSUPP;
+> +
+> +		ret = pctrl->soc->padctl_arg2val(info, param, &arg);
+>  		if (ret)
+>  			return ret;
+>  
+> diff --git a/drivers/pinctrl/actions/pinctrl-owl.h b/drivers/pinctrl/actions/pinctrl-owl.h
+> index 31cc33d7c4a5..dae2e8363fd5 100644
+> --- a/drivers/pinctrl/actions/pinctrl-owl.h
+> +++ b/drivers/pinctrl/actions/pinctrl-owl.h
+> @@ -145,13 +145,6 @@
+>  		.shared_ctl_offset = _share,			\
+>  	}
+>  
+> -enum owl_pinconf_pull {
+> -	OWL_PINCONF_PULL_HIZ,
+> -	OWL_PINCONF_PULL_DOWN,
+> -	OWL_PINCONF_PULL_UP,
+> -	OWL_PINCONF_PULL_HOLD,
+> -};
+> -
+>  enum owl_pinconf_drv {
+>  	OWL_PINCONF_DRV_2MA,
+>  	OWL_PINCONF_DRV_4MA,
+> @@ -305,6 +298,12 @@ struct owl_pinctrl_soc_data {
+>  	unsigned int ngpios;
+>  	const struct owl_gpio_port *ports;
+>  	unsigned int nports;
+> +	int (*padctl_val2arg)(const struct owl_padinfo *padinfo,
+> +				unsigned int param,
+> +				u32 *arg);
+> +	int (*padctl_arg2val)(const struct owl_padinfo *info,
+> +				unsigned int param,
+> +				u32 *arg);
+>  };
+>  
+>  int owl_pinctrl_probe(struct platform_device *pdev,
+> diff --git a/drivers/pinctrl/actions/pinctrl-s900.c b/drivers/pinctrl/actions/pinctrl-s900.c
+> index 0597009d8369..2e19fecbe5e9 100644
+> --- a/drivers/pinctrl/actions/pinctrl-s900.c
+> +++ b/drivers/pinctrl/actions/pinctrl-s900.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pinctrl/pinctrl.h>
+> +#include <linux/pinctrl/pinconf-generic.h>
+>  #include "pinctrl-owl.h"
+>  
+>  /* Pinctrl registers offset */
+> @@ -1717,6 +1718,67 @@ static const struct owl_gpio_port s900_gpio_ports[] = {
+>  	OWL_GPIO_PORT(F, 0x00F0, 8, 0x0, 0x4, 0x8, 0x460, 0x140, 0x144, 0x178, 0)
+>  };
+>  
+> +enum owl_pinconf_pull {
 
----------- Forwarded message ----------
-Date: Wed, 29 Aug 2018 22:02:39 +0800
-From: kbuild test robot <lkp@intel.com>
-To: kbuild@01.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>
-Subject: net/sctp/socket.c:2681:6-11: ERROR: invalid reference to the index
-    variable of the iterator on line 2661
+Since this enum is SoC specific, it could be s900_pinconf_pull.
 
-CC: kbuild-all@01.org
-CC: linux-kernel@vger.kernel.org
-TO: Xin Long <lucien.xin@gmail.com>
+Regards,
+Mani
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   3f16503b7d2274ac8cbab11163047ac0b4c66cfe
-commit: 0b0dce7a36fb9f1a9dd8245ea82d3a268c6943fe sctp: add spp_ipv6_flowlabel and spp_dscp for sctp_paddrparams
-date:   8 weeks ago
-:::::: branch date: 15 hours ago
-:::::: commit date: 8 weeks ago
-
->> net/sctp/socket.c:2681:6-11: ERROR: invalid reference to the index variable of the iterator on line 2661
-
-# https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=0b0dce7a36fb9f1a9dd8245ea82d3a268c6943fe
-git remote add linus https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-git remote update linus
-git checkout 0b0dce7a36fb9f1a9dd8245ea82d3a268c6943fe
-vim +2681 net/sctp/socket.c
-
-^1da177e4 Linus Torvalds          2005-04-16  2378
-^1da177e4 Linus Torvalds          2005-04-16  2379  /* 7.1.13 Peer Address Parameters (SCTP_PEER_ADDR_PARAMS)
-^1da177e4 Linus Torvalds          2005-04-16  2380   *
-^1da177e4 Linus Torvalds          2005-04-16  2381   * Applications can enable or disable heartbeats for any peer address of
-^1da177e4 Linus Torvalds          2005-04-16  2382   * an association, modify an address's heartbeat interval, force a
-^1da177e4 Linus Torvalds          2005-04-16  2383   * heartbeat to be sent immediately, and adjust the address's maximum
-^1da177e4 Linus Torvalds          2005-04-16  2384   * number of retransmissions sent before an address is considered
-^1da177e4 Linus Torvalds          2005-04-16  2385   * unreachable.  The following structure is used to access and modify an
-^1da177e4 Linus Torvalds          2005-04-16  2386   * address's parameters:
-^1da177e4 Linus Torvalds          2005-04-16  2387   *
-^1da177e4 Linus Torvalds          2005-04-16  2388   *  struct sctp_paddrparams {
-^1da177e4 Linus Torvalds          2005-04-16  2389   *     sctp_assoc_t            spp_assoc_id;
-^1da177e4 Linus Torvalds          2005-04-16  2390   *     struct sockaddr_storage spp_address;
-^1da177e4 Linus Torvalds          2005-04-16  2391   *     uint32_t                spp_hbinterval;
-^1da177e4 Linus Torvalds          2005-04-16  2392   *     uint16_t                spp_pathmaxrxt;
-52ccb8e90 Frank Filz              2005-12-22  2393   *     uint32_t                spp_pathmtu;
-52ccb8e90 Frank Filz              2005-12-22  2394   *     uint32_t                spp_sackdelay;
-52ccb8e90 Frank Filz              2005-12-22  2395   *     uint32_t                spp_flags;
-0b0dce7a3 Xin Long                2018-07-02  2396   *     uint32_t                spp_ipv6_flowlabel;
-0b0dce7a3 Xin Long                2018-07-02  2397   *     uint8_t                 spp_dscp;
-^1da177e4 Linus Torvalds          2005-04-16  2398   * };
-^1da177e4 Linus Torvalds          2005-04-16  2399   *
-52ccb8e90 Frank Filz              2005-12-22  2400   *   spp_assoc_id    - (one-to-many style socket) This is filled in the
-52ccb8e90 Frank Filz              2005-12-22  2401   *                     application, and identifies the association for
-52ccb8e90 Frank Filz              2005-12-22  2402   *                     this query.
-^1da177e4 Linus Torvalds          2005-04-16  2403   *   spp_address     - This specifies which address is of interest.
-^1da177e4 Linus Torvalds          2005-04-16  2404   *   spp_hbinterval  - This contains the value of the heartbeat interval,
-52ccb8e90 Frank Filz              2005-12-22  2405   *                     in milliseconds.  If a  value of zero
-52ccb8e90 Frank Filz              2005-12-22  2406   *                     is present in this field then no changes are to
-52ccb8e90 Frank Filz              2005-12-22  2407   *                     be made to this parameter.
-^1da177e4 Linus Torvalds          2005-04-16  2408   *   spp_pathmaxrxt  - This contains the maximum number of
-^1da177e4 Linus Torvalds          2005-04-16  2409   *                     retransmissions before this address shall be
-52ccb8e90 Frank Filz              2005-12-22  2410   *                     considered unreachable. If a  value of zero
-52ccb8e90 Frank Filz              2005-12-22  2411   *                     is present in this field then no changes are to
-52ccb8e90 Frank Filz              2005-12-22  2412   *                     be made to this parameter.
-52ccb8e90 Frank Filz              2005-12-22  2413   *   spp_pathmtu     - When Path MTU discovery is disabled the value
-52ccb8e90 Frank Filz              2005-12-22  2414   *                     specified here will be the "fixed" path mtu.
-52ccb8e90 Frank Filz              2005-12-22  2415   *                     Note that if the spp_address field is empty
-52ccb8e90 Frank Filz              2005-12-22  2416   *                     then all associations on this address will
-52ccb8e90 Frank Filz              2005-12-22  2417   *                     have this fixed path mtu set upon them.
-52ccb8e90 Frank Filz              2005-12-22  2418   *
-52ccb8e90 Frank Filz              2005-12-22  2419   *   spp_sackdelay   - When delayed sack is enabled, this value specifies
-52ccb8e90 Frank Filz              2005-12-22  2420   *                     the number of milliseconds that sacks will be delayed
-52ccb8e90 Frank Filz              2005-12-22  2421   *                     for. This value will apply to all addresses of an
-52ccb8e90 Frank Filz              2005-12-22  2422   *                     association if the spp_address field is empty. Note
-52ccb8e90 Frank Filz              2005-12-22  2423   *                     also, that if delayed sack is enabled and this
-52ccb8e90 Frank Filz              2005-12-22  2424   *                     value is set to 0, no change is made to the last
-52ccb8e90 Frank Filz              2005-12-22  2425   *                     recorded delayed sack timer value.
-52ccb8e90 Frank Filz              2005-12-22  2426   *
-52ccb8e90 Frank Filz              2005-12-22  2427   *   spp_flags       - These flags are used to control various features
-52ccb8e90 Frank Filz              2005-12-22  2428   *                     on an association. The flag field may contain
-52ccb8e90 Frank Filz              2005-12-22  2429   *                     zero or more of the following options.
-52ccb8e90 Frank Filz              2005-12-22  2430   *
-52ccb8e90 Frank Filz              2005-12-22  2431   *                     SPP_HB_ENABLE  - Enable heartbeats on the
-52ccb8e90 Frank Filz              2005-12-22  2432   *                     specified address. Note that if the address
-52ccb8e90 Frank Filz              2005-12-22  2433   *                     field is empty all addresses for the association
-52ccb8e90 Frank Filz              2005-12-22  2434   *                     have heartbeats enabled upon them.
-52ccb8e90 Frank Filz              2005-12-22  2435   *
-52ccb8e90 Frank Filz              2005-12-22  2436   *                     SPP_HB_DISABLE - Disable heartbeats on the
-52ccb8e90 Frank Filz              2005-12-22  2437   *                     speicifed address. Note that if the address
-52ccb8e90 Frank Filz              2005-12-22  2438   *                     field is empty all addresses for the association
-52ccb8e90 Frank Filz              2005-12-22  2439   *                     will have their heartbeats disabled. Note also
-52ccb8e90 Frank Filz              2005-12-22  2440   *                     that SPP_HB_ENABLE and SPP_HB_DISABLE are
-52ccb8e90 Frank Filz              2005-12-22  2441   *                     mutually exclusive, only one of these two should
-52ccb8e90 Frank Filz              2005-12-22  2442   *                     be specified. Enabling both fields will have
-52ccb8e90 Frank Filz              2005-12-22  2443   *                     undetermined results.
-52ccb8e90 Frank Filz              2005-12-22  2444   *
-52ccb8e90 Frank Filz              2005-12-22  2445   *                     SPP_HB_DEMAND - Request a user initiated heartbeat
-52ccb8e90 Frank Filz              2005-12-22  2446   *                     to be made immediately.
-52ccb8e90 Frank Filz              2005-12-22  2447   *
-bdf3092af Vlad Yasevich           2007-03-23  2448   *                     SPP_HB_TIME_IS_ZERO - Specify's that the time for
-bdf3092af Vlad Yasevich           2007-03-23  2449   *                     heartbeat delayis to be set to the value of 0
-bdf3092af Vlad Yasevich           2007-03-23  2450   *                     milliseconds.
-bdf3092af Vlad Yasevich           2007-03-23  2451   *
-52ccb8e90 Frank Filz              2005-12-22  2452   *                     SPP_PMTUD_ENABLE - This field will enable PMTU
-52ccb8e90 Frank Filz              2005-12-22  2453   *                     discovery upon the specified address. Note that
-52ccb8e90 Frank Filz              2005-12-22  2454   *                     if the address feild is empty then all addresses
-52ccb8e90 Frank Filz              2005-12-22  2455   *                     on the association are effected.
-52ccb8e90 Frank Filz              2005-12-22  2456   *
-52ccb8e90 Frank Filz              2005-12-22  2457   *                     SPP_PMTUD_DISABLE - This field will disable PMTU
-52ccb8e90 Frank Filz              2005-12-22  2458   *                     discovery upon the specified address. Note that
-52ccb8e90 Frank Filz              2005-12-22  2459   *                     if the address feild is empty then all addresses
-52ccb8e90 Frank Filz              2005-12-22  2460   *                     on the association are effected. Not also that
-52ccb8e90 Frank Filz              2005-12-22  2461   *                     SPP_PMTUD_ENABLE and SPP_PMTUD_DISABLE are mutually
-52ccb8e90 Frank Filz              2005-12-22  2462   *                     exclusive. Enabling both will have undetermined
-52ccb8e90 Frank Filz              2005-12-22  2463   *                     results.
-52ccb8e90 Frank Filz              2005-12-22  2464   *
-52ccb8e90 Frank Filz              2005-12-22  2465   *                     SPP_SACKDELAY_ENABLE - Setting this flag turns
-52ccb8e90 Frank Filz              2005-12-22  2466   *                     on delayed sack. The time specified in spp_sackdelay
-52ccb8e90 Frank Filz              2005-12-22  2467   *                     is used to specify the sack delay for this address. Note
-52ccb8e90 Frank Filz              2005-12-22  2468   *                     that if spp_address is empty then all addresses will
-52ccb8e90 Frank Filz              2005-12-22  2469   *                     enable delayed sack and take on the sack delay
-52ccb8e90 Frank Filz              2005-12-22  2470   *                     value specified in spp_sackdelay.
-52ccb8e90 Frank Filz              2005-12-22  2471   *                     SPP_SACKDELAY_DISABLE - Setting this flag turns
-52ccb8e90 Frank Filz              2005-12-22  2472   *                     off delayed sack. If the spp_address field is blank then
-52ccb8e90 Frank Filz              2005-12-22  2473   *                     delayed sack is disabled for the entire association. Note
-52ccb8e90 Frank Filz              2005-12-22  2474   *                     also that this field is mutually exclusive to
-52ccb8e90 Frank Filz              2005-12-22  2475   *                     SPP_SACKDELAY_ENABLE, setting both will have undefined
-52ccb8e90 Frank Filz              2005-12-22  2476   *                     results.
-0b0dce7a3 Xin Long                2018-07-02  2477   *
-0b0dce7a3 Xin Long                2018-07-02  2478   *                     SPP_IPV6_FLOWLABEL:  Setting this flag enables the
-0b0dce7a3 Xin Long                2018-07-02  2479   *                     setting of the IPV6 flow label value.  The value is
-0b0dce7a3 Xin Long                2018-07-02  2480   *                     contained in the spp_ipv6_flowlabel field.
-0b0dce7a3 Xin Long                2018-07-02  2481   *                     Upon retrieval, this flag will be set to indicate that
-0b0dce7a3 Xin Long                2018-07-02  2482   *                     the spp_ipv6_flowlabel field has a valid value returned.
-0b0dce7a3 Xin Long                2018-07-02  2483   *                     If a specific destination address is set (in the
-0b0dce7a3 Xin Long                2018-07-02  2484   *                     spp_address field), then the value returned is that of
-0b0dce7a3 Xin Long                2018-07-02  2485   *                     the address.  If just an association is specified (and
-0b0dce7a3 Xin Long                2018-07-02  2486   *                     no address), then the association's default flow label
-0b0dce7a3 Xin Long                2018-07-02  2487   *                     is returned.  If neither an association nor a destination
-0b0dce7a3 Xin Long                2018-07-02  2488   *                     is specified, then the socket's default flow label is
-0b0dce7a3 Xin Long                2018-07-02  2489   *                     returned.  For non-IPv6 sockets, this flag will be left
-0b0dce7a3 Xin Long                2018-07-02  2490   *                     cleared.
-0b0dce7a3 Xin Long                2018-07-02  2491   *
-0b0dce7a3 Xin Long                2018-07-02  2492   *                     SPP_DSCP:  Setting this flag enables the setting of the
-0b0dce7a3 Xin Long                2018-07-02  2493   *                     Differentiated Services Code Point (DSCP) value
-0b0dce7a3 Xin Long                2018-07-02  2494   *                     associated with either the association or a specific
-0b0dce7a3 Xin Long                2018-07-02  2495   *                     address.  The value is obtained in the spp_dscp field.
-0b0dce7a3 Xin Long                2018-07-02  2496   *                     Upon retrieval, this flag will be set to indicate that
-0b0dce7a3 Xin Long                2018-07-02  2497   *                     the spp_dscp field has a valid value returned.  If a
-0b0dce7a3 Xin Long                2018-07-02  2498   *                     specific destination address is set when called (in the
-0b0dce7a3 Xin Long                2018-07-02  2499   *                     spp_address field), then that specific destination
-0b0dce7a3 Xin Long                2018-07-02  2500   *                     address's DSCP value is returned.  If just an association
-0b0dce7a3 Xin Long                2018-07-02  2501   *                     is specified, then the association's default DSCP is
-0b0dce7a3 Xin Long                2018-07-02  2502   *                     returned.  If neither an association nor a destination is
-0b0dce7a3 Xin Long                2018-07-02  2503   *                     specified, then the socket's default DSCP is returned.
-0b0dce7a3 Xin Long                2018-07-02  2504   *
-0b0dce7a3 Xin Long                2018-07-02  2505   *   spp_ipv6_flowlabel
-0b0dce7a3 Xin Long                2018-07-02  2506   *                   - This field is used in conjunction with the
-0b0dce7a3 Xin Long                2018-07-02  2507   *                     SPP_IPV6_FLOWLABEL flag and contains the IPv6 flow label.
-0b0dce7a3 Xin Long                2018-07-02  2508   *                     The 20 least significant bits are used for the flow
-0b0dce7a3 Xin Long                2018-07-02  2509   *                     label.  This setting has precedence over any IPv6-layer
-0b0dce7a3 Xin Long                2018-07-02  2510   *                     setting.
-0b0dce7a3 Xin Long                2018-07-02  2511   *
-0b0dce7a3 Xin Long                2018-07-02  2512   *   spp_dscp        - This field is used in conjunction with the SPP_DSCP flag
-0b0dce7a3 Xin Long                2018-07-02  2513   *                     and contains the DSCP.  The 6 most significant bits are
-0b0dce7a3 Xin Long                2018-07-02  2514   *                     used for the DSCP.  This setting has precedence over any
-0b0dce7a3 Xin Long                2018-07-02  2515   *                     IPv4- or IPv6- layer setting.
-52ccb8e90 Frank Filz              2005-12-22  2516   */
-161643660 Adrian Bunk             2006-09-18  2517  static int sctp_apply_peer_addr_params(struct sctp_paddrparams *params,
-52ccb8e90 Frank Filz              2005-12-22  2518  				       struct sctp_transport   *trans,
-52ccb8e90 Frank Filz              2005-12-22  2519  				       struct sctp_association *asoc,
-52ccb8e90 Frank Filz              2005-12-22  2520  				       struct sctp_sock        *sp,
-52ccb8e90 Frank Filz              2005-12-22  2521  				       int                      hb_change,
-52ccb8e90 Frank Filz              2005-12-22  2522  				       int                      pmtud_change,
-52ccb8e90 Frank Filz              2005-12-22  2523  				       int                      sackdelay_change)
-52ccb8e90 Frank Filz              2005-12-22  2524  {
-52ccb8e90 Frank Filz              2005-12-22  2525  	int error;
-52ccb8e90 Frank Filz              2005-12-22  2526
-52ccb8e90 Frank Filz              2005-12-22  2527  	if (params->spp_flags & SPP_HB_DEMAND && trans) {
-55e26eb95 Eric W. Biederman       2012-08-07  2528  		struct net *net = sock_net(trans->asoc->base.sk);
-55e26eb95 Eric W. Biederman       2012-08-07  2529
-55e26eb95 Eric W. Biederman       2012-08-07  2530  		error = sctp_primitive_REQUESTHEARTBEAT(net, trans->asoc, trans);
-52ccb8e90 Frank Filz              2005-12-22  2531  		if (error)
-52ccb8e90 Frank Filz              2005-12-22  2532  			return error;
-52ccb8e90 Frank Filz              2005-12-22  2533  	}
-52ccb8e90 Frank Filz              2005-12-22  2534
-bdf3092af Vlad Yasevich           2007-03-23  2535  	/* Note that unless the spp_flag is set to SPP_HB_ENABLE the value of
-bdf3092af Vlad Yasevich           2007-03-23  2536  	 * this field is ignored.  Note also that a value of zero indicates
-bdf3092af Vlad Yasevich           2007-03-23  2537  	 * the current setting should be left unchanged.
-bdf3092af Vlad Yasevich           2007-03-23  2538  	 */
-bdf3092af Vlad Yasevich           2007-03-23  2539  	if (params->spp_flags & SPP_HB_ENABLE) {
-bdf3092af Vlad Yasevich           2007-03-23  2540
-bdf3092af Vlad Yasevich           2007-03-23  2541  		/* Re-zero the interval if the SPP_HB_TIME_IS_ZERO is
-bdf3092af Vlad Yasevich           2007-03-23  2542  		 * set.  This lets us use 0 value when this flag
-bdf3092af Vlad Yasevich           2007-03-23  2543  		 * is set.
-bdf3092af Vlad Yasevich           2007-03-23  2544  		 */
-bdf3092af Vlad Yasevich           2007-03-23  2545  		if (params->spp_flags & SPP_HB_TIME_IS_ZERO)
-bdf3092af Vlad Yasevich           2007-03-23  2546  			params->spp_hbinterval = 0;
-bdf3092af Vlad Yasevich           2007-03-23  2547
-bdf3092af Vlad Yasevich           2007-03-23  2548  		if (params->spp_hbinterval ||
-bdf3092af Vlad Yasevich           2007-03-23  2549  		    (params->spp_flags & SPP_HB_TIME_IS_ZERO)) {
-52ccb8e90 Frank Filz              2005-12-22  2550  			if (trans) {
-bdf3092af Vlad Yasevich           2007-03-23  2551  				trans->hbinterval =
-bdf3092af Vlad Yasevich           2007-03-23  2552  				    msecs_to_jiffies(params->spp_hbinterval);
-52ccb8e90 Frank Filz              2005-12-22  2553  			} else if (asoc) {
-bdf3092af Vlad Yasevich           2007-03-23  2554  				asoc->hbinterval =
-bdf3092af Vlad Yasevich           2007-03-23  2555  				    msecs_to_jiffies(params->spp_hbinterval);
-52ccb8e90 Frank Filz              2005-12-22  2556  			} else {
-52ccb8e90 Frank Filz              2005-12-22  2557  				sp->hbinterval = params->spp_hbinterval;
-52ccb8e90 Frank Filz              2005-12-22  2558  			}
-52ccb8e90 Frank Filz              2005-12-22  2559  		}
-bdf3092af Vlad Yasevich           2007-03-23  2560  	}
-52ccb8e90 Frank Filz              2005-12-22  2561
-52ccb8e90 Frank Filz              2005-12-22  2562  	if (hb_change) {
-52ccb8e90 Frank Filz              2005-12-22  2563  		if (trans) {
-52ccb8e90 Frank Filz              2005-12-22  2564  			trans->param_flags =
-52ccb8e90 Frank Filz              2005-12-22  2565  				(trans->param_flags & ~SPP_HB) | hb_change;
-52ccb8e90 Frank Filz              2005-12-22  2566  		} else if (asoc) {
-52ccb8e90 Frank Filz              2005-12-22  2567  			asoc->param_flags =
-52ccb8e90 Frank Filz              2005-12-22  2568  				(asoc->param_flags & ~SPP_HB) | hb_change;
-52ccb8e90 Frank Filz              2005-12-22  2569  		} else {
-52ccb8e90 Frank Filz              2005-12-22  2570  			sp->param_flags =
-52ccb8e90 Frank Filz              2005-12-22  2571  				(sp->param_flags & ~SPP_HB) | hb_change;
-52ccb8e90 Frank Filz              2005-12-22  2572  		}
-52ccb8e90 Frank Filz              2005-12-22  2573  	}
-52ccb8e90 Frank Filz              2005-12-22  2574
-bdf3092af Vlad Yasevich           2007-03-23  2575  	/* When Path MTU discovery is disabled the value specified here will
-bdf3092af Vlad Yasevich           2007-03-23  2576  	 * be the "fixed" path mtu (i.e. the value of the spp_flags field must
-bdf3092af Vlad Yasevich           2007-03-23  2577  	 * include the flag SPP_PMTUD_DISABLE for this field to have any
-bdf3092af Vlad Yasevich           2007-03-23  2578  	 * effect).
-bdf3092af Vlad Yasevich           2007-03-23  2579  	 */
-bdf3092af Vlad Yasevich           2007-03-23  2580  	if ((params->spp_flags & SPP_PMTUD_DISABLE) && params->spp_pathmtu) {
-52ccb8e90 Frank Filz              2005-12-22  2581  		if (trans) {
-52ccb8e90 Frank Filz              2005-12-22  2582  			trans->pathmtu = params->spp_pathmtu;
-3ebfdf082 Xin Long                2017-04-04  2583  			sctp_assoc_sync_pmtu(asoc);
-52ccb8e90 Frank Filz              2005-12-22  2584  		} else if (asoc) {
-c4b2893da Marcelo Ricardo Leitner 2018-04-26  2585  			sctp_assoc_set_pmtu(asoc, params->spp_pathmtu);
-52ccb8e90 Frank Filz              2005-12-22  2586  		} else {
-52ccb8e90 Frank Filz              2005-12-22  2587  			sp->pathmtu = params->spp_pathmtu;
-52ccb8e90 Frank Filz              2005-12-22  2588  		}
-52ccb8e90 Frank Filz              2005-12-22  2589  	}
-52ccb8e90 Frank Filz              2005-12-22  2590
-52ccb8e90 Frank Filz              2005-12-22  2591  	if (pmtud_change) {
-52ccb8e90 Frank Filz              2005-12-22  2592  		if (trans) {
-52ccb8e90 Frank Filz              2005-12-22  2593  			int update = (trans->param_flags & SPP_PMTUD_DISABLE) &&
-52ccb8e90 Frank Filz              2005-12-22  2594  				(params->spp_flags & SPP_PMTUD_ENABLE);
-52ccb8e90 Frank Filz              2005-12-22  2595  			trans->param_flags =
-52ccb8e90 Frank Filz              2005-12-22  2596  				(trans->param_flags & ~SPP_PMTUD) | pmtud_change;
-52ccb8e90 Frank Filz              2005-12-22  2597  			if (update) {
-9914ae3ca Vlad Yasevich           2011-04-26  2598  				sctp_transport_pmtu(trans, sctp_opt2sk(sp));
-3ebfdf082 Xin Long                2017-04-04  2599  				sctp_assoc_sync_pmtu(asoc);
-52ccb8e90 Frank Filz              2005-12-22  2600  			}
-52ccb8e90 Frank Filz              2005-12-22  2601  		} else if (asoc) {
-52ccb8e90 Frank Filz              2005-12-22  2602  			asoc->param_flags =
-52ccb8e90 Frank Filz              2005-12-22  2603  				(asoc->param_flags & ~SPP_PMTUD) | pmtud_change;
-52ccb8e90 Frank Filz              2005-12-22  2604  		} else {
-52ccb8e90 Frank Filz              2005-12-22  2605  			sp->param_flags =
-52ccb8e90 Frank Filz              2005-12-22  2606  				(sp->param_flags & ~SPP_PMTUD) | pmtud_change;
-52ccb8e90 Frank Filz              2005-12-22  2607  		}
-52ccb8e90 Frank Filz              2005-12-22  2608  	}
-52ccb8e90 Frank Filz              2005-12-22  2609
-bdf3092af Vlad Yasevich           2007-03-23  2610  	/* Note that unless the spp_flag is set to SPP_SACKDELAY_ENABLE the
-bdf3092af Vlad Yasevich           2007-03-23  2611  	 * value of this field is ignored.  Note also that a value of zero
-bdf3092af Vlad Yasevich           2007-03-23  2612  	 * indicates the current setting should be left unchanged.
-bdf3092af Vlad Yasevich           2007-03-23  2613  	 */
-bdf3092af Vlad Yasevich           2007-03-23  2614  	if ((params->spp_flags & SPP_SACKDELAY_ENABLE) && params->spp_sackdelay) {
-52ccb8e90 Frank Filz              2005-12-22  2615  		if (trans) {
-52ccb8e90 Frank Filz              2005-12-22  2616  			trans->sackdelay =
-52ccb8e90 Frank Filz              2005-12-22  2617  				msecs_to_jiffies(params->spp_sackdelay);
-52ccb8e90 Frank Filz              2005-12-22  2618  		} else if (asoc) {
-52ccb8e90 Frank Filz              2005-12-22  2619  			asoc->sackdelay =
-52ccb8e90 Frank Filz              2005-12-22  2620  				msecs_to_jiffies(params->spp_sackdelay);
-52ccb8e90 Frank Filz              2005-12-22  2621  		} else {
-52ccb8e90 Frank Filz              2005-12-22  2622  			sp->sackdelay = params->spp_sackdelay;
-52ccb8e90 Frank Filz              2005-12-22  2623  		}
-52ccb8e90 Frank Filz              2005-12-22  2624  	}
-52ccb8e90 Frank Filz              2005-12-22  2625
-52ccb8e90 Frank Filz              2005-12-22  2626  	if (sackdelay_change) {
-52ccb8e90 Frank Filz              2005-12-22  2627  		if (trans) {
-52ccb8e90 Frank Filz              2005-12-22  2628  			trans->param_flags =
-52ccb8e90 Frank Filz              2005-12-22  2629  				(trans->param_flags & ~SPP_SACKDELAY) |
-52ccb8e90 Frank Filz              2005-12-22  2630  				sackdelay_change;
-52ccb8e90 Frank Filz              2005-12-22  2631  		} else if (asoc) {
-52ccb8e90 Frank Filz              2005-12-22  2632  			asoc->param_flags =
-52ccb8e90 Frank Filz              2005-12-22  2633  				(asoc->param_flags & ~SPP_SACKDELAY) |
-52ccb8e90 Frank Filz              2005-12-22  2634  				sackdelay_change;
-52ccb8e90 Frank Filz              2005-12-22  2635  		} else {
-52ccb8e90 Frank Filz              2005-12-22  2636  			sp->param_flags =
-52ccb8e90 Frank Filz              2005-12-22  2637  				(sp->param_flags & ~SPP_SACKDELAY) |
-52ccb8e90 Frank Filz              2005-12-22  2638  				sackdelay_change;
-52ccb8e90 Frank Filz              2005-12-22  2639  		}
-52ccb8e90 Frank Filz              2005-12-22  2640  	}
-52ccb8e90 Frank Filz              2005-12-22  2641
-37051f738 Andrei Pelinescu-Onciul 2009-11-23  2642  	/* Note that a value of zero indicates the current setting should be
-37051f738 Andrei Pelinescu-Onciul 2009-11-23  2643  	   left unchanged.
-bdf3092af Vlad Yasevich           2007-03-23  2644  	 */
-37051f738 Andrei Pelinescu-Onciul 2009-11-23  2645  	if (params->spp_pathmaxrxt) {
-52ccb8e90 Frank Filz              2005-12-22  2646  		if (trans) {
-52ccb8e90 Frank Filz              2005-12-22  2647  			trans->pathmaxrxt = params->spp_pathmaxrxt;
-52ccb8e90 Frank Filz              2005-12-22  2648  		} else if (asoc) {
-52ccb8e90 Frank Filz              2005-12-22  2649  			asoc->pathmaxrxt = params->spp_pathmaxrxt;
-52ccb8e90 Frank Filz              2005-12-22  2650  		} else {
-52ccb8e90 Frank Filz              2005-12-22  2651  			sp->pathmaxrxt = params->spp_pathmaxrxt;
-52ccb8e90 Frank Filz              2005-12-22  2652  		}
-52ccb8e90 Frank Filz              2005-12-22  2653  	}
-52ccb8e90 Frank Filz              2005-12-22  2654
-0b0dce7a3 Xin Long                2018-07-02  2655  	if (params->spp_flags & SPP_IPV6_FLOWLABEL) {
-0b0dce7a3 Xin Long                2018-07-02  2656  		if (trans && trans->ipaddr.sa.sa_family == AF_INET6) {
-0b0dce7a3 Xin Long                2018-07-02  2657  			trans->flowlabel = params->spp_ipv6_flowlabel &
-0b0dce7a3 Xin Long                2018-07-02  2658  					   SCTP_FLOWLABEL_VAL_MASK;
-0b0dce7a3 Xin Long                2018-07-02  2659  			trans->flowlabel |= SCTP_FLOWLABEL_SET_MASK;
-0b0dce7a3 Xin Long                2018-07-02  2660  		} else if (asoc) {
-0b0dce7a3 Xin Long                2018-07-02 @2661  			list_for_each_entry(trans,
-0b0dce7a3 Xin Long                2018-07-02  2662  					    &asoc->peer.transport_addr_list,
-0b0dce7a3 Xin Long                2018-07-02  2663  					    transports) {
-0b0dce7a3 Xin Long                2018-07-02  2664  				if (trans->ipaddr.sa.sa_family != AF_INET6)
-0b0dce7a3 Xin Long                2018-07-02  2665  					continue;
-0b0dce7a3 Xin Long                2018-07-02  2666  				trans->flowlabel = params->spp_ipv6_flowlabel &
-0b0dce7a3 Xin Long                2018-07-02  2667  						   SCTP_FLOWLABEL_VAL_MASK;
-0b0dce7a3 Xin Long                2018-07-02  2668  				trans->flowlabel |= SCTP_FLOWLABEL_SET_MASK;
-0b0dce7a3 Xin Long                2018-07-02  2669  			}
-0b0dce7a3 Xin Long                2018-07-02  2670  			asoc->flowlabel = params->spp_ipv6_flowlabel &
-0b0dce7a3 Xin Long                2018-07-02  2671  					  SCTP_FLOWLABEL_VAL_MASK;
-0b0dce7a3 Xin Long                2018-07-02  2672  			asoc->flowlabel |= SCTP_FLOWLABEL_SET_MASK;
-0b0dce7a3 Xin Long                2018-07-02  2673  		} else if (sctp_opt2sk(sp)->sk_family == AF_INET6) {
-0b0dce7a3 Xin Long                2018-07-02  2674  			sp->flowlabel = params->spp_ipv6_flowlabel &
-0b0dce7a3 Xin Long                2018-07-02  2675  					SCTP_FLOWLABEL_VAL_MASK;
-0b0dce7a3 Xin Long                2018-07-02  2676  			sp->flowlabel |= SCTP_FLOWLABEL_SET_MASK;
-0b0dce7a3 Xin Long                2018-07-02  2677  		}
-0b0dce7a3 Xin Long                2018-07-02  2678  	}
-0b0dce7a3 Xin Long                2018-07-02  2679
-0b0dce7a3 Xin Long                2018-07-02  2680  	if (params->spp_flags & SPP_DSCP) {
-0b0dce7a3 Xin Long                2018-07-02 @2681  		if (trans) {
-0b0dce7a3 Xin Long                2018-07-02  2682  			trans->dscp = params->spp_dscp & SCTP_DSCP_VAL_MASK;
-0b0dce7a3 Xin Long                2018-07-02  2683  			trans->dscp |= SCTP_DSCP_SET_MASK;
-0b0dce7a3 Xin Long                2018-07-02  2684  		} else if (asoc) {
-0b0dce7a3 Xin Long                2018-07-02  2685  			list_for_each_entry(trans,
-0b0dce7a3 Xin Long                2018-07-02  2686  					    &asoc->peer.transport_addr_list,
-0b0dce7a3 Xin Long                2018-07-02  2687  					    transports) {
-0b0dce7a3 Xin Long                2018-07-02  2688  				trans->dscp = params->spp_dscp &
-0b0dce7a3 Xin Long                2018-07-02  2689  					      SCTP_DSCP_VAL_MASK;
-0b0dce7a3 Xin Long                2018-07-02  2690  				trans->dscp |= SCTP_DSCP_SET_MASK;
-0b0dce7a3 Xin Long                2018-07-02  2691  			}
-0b0dce7a3 Xin Long                2018-07-02  2692  			asoc->dscp = params->spp_dscp & SCTP_DSCP_VAL_MASK;
-0b0dce7a3 Xin Long                2018-07-02  2693  			asoc->dscp |= SCTP_DSCP_SET_MASK;
-0b0dce7a3 Xin Long                2018-07-02  2694  		} else {
-0b0dce7a3 Xin Long                2018-07-02  2695  			sp->dscp = params->spp_dscp & SCTP_DSCP_VAL_MASK;
-0b0dce7a3 Xin Long                2018-07-02  2696  			sp->dscp |= SCTP_DSCP_SET_MASK;
-0b0dce7a3 Xin Long                2018-07-02  2697  		}
-0b0dce7a3 Xin Long                2018-07-02  2698  	}
-0b0dce7a3 Xin Long                2018-07-02  2699
-52ccb8e90 Frank Filz              2005-12-22  2700  	return 0;
-52ccb8e90 Frank Filz              2005-12-22  2701  }
-52ccb8e90 Frank Filz              2005-12-22  2702
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> +	OWL_PINCONF_PULL_HIZ,
+> +	OWL_PINCONF_PULL_DOWN,
+> +	OWL_PINCONF_PULL_UP,
+> +	OWL_PINCONF_PULL_HOLD,
+> +};
+> +
+> +static int s900_pad_pinconf_arg2val(const struct owl_padinfo *info,
+> +				unsigned int param,
+> +				u32 *arg)
+> +{
+> +	switch (param) {
+> +	case PIN_CONFIG_BIAS_BUS_HOLD:
+> +		*arg = OWL_PINCONF_PULL_HOLD;
+> +		break;
+> +	case PIN_CONFIG_BIAS_HIGH_IMPEDANCE:
+> +		*arg = OWL_PINCONF_PULL_HIZ;
+> +		break;
+> +	case PIN_CONFIG_BIAS_PULL_DOWN:
+> +		*arg = OWL_PINCONF_PULL_DOWN;
+> +		break;
+> +	case PIN_CONFIG_BIAS_PULL_UP:
+> +		*arg = OWL_PINCONF_PULL_UP;
+> +		break;
+> +	case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
+> +		*arg = (*arg >= 1 ? 1 : 0);
+> +		break;
+> +	default:
+> +		return -ENOTSUPP;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int s900_pad_pinconf_val2arg(const struct owl_padinfo *padinfo,
+> +				unsigned int param,
+> +				u32 *arg)
+> +{
+> +	switch (param) {
+> +	case PIN_CONFIG_BIAS_BUS_HOLD:
+> +		*arg = *arg == OWL_PINCONF_PULL_HOLD;
+> +		break;
+> +	case PIN_CONFIG_BIAS_HIGH_IMPEDANCE:
+> +		*arg = *arg == OWL_PINCONF_PULL_HIZ;
+> +		break;
+> +	case PIN_CONFIG_BIAS_PULL_DOWN:
+> +		*arg = *arg == OWL_PINCONF_PULL_DOWN;
+> +		break;
+> +	case PIN_CONFIG_BIAS_PULL_UP:
+> +		*arg = *arg == OWL_PINCONF_PULL_UP;
+> +		break;
+> +	case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
+> +		*arg = *arg == 1;
+> +		break;
+> +	default:
+> +		return -ENOTSUPP;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static struct owl_pinctrl_soc_data s900_pinctrl_data = {
+>  	.padinfo = s900_padinfo,
+>  	.pins = (const struct pinctrl_pin_desc *)s900_pads,
+> @@ -1727,7 +1789,9 @@ static struct owl_pinctrl_soc_data s900_pinctrl_data = {
+>  	.ngroups = ARRAY_SIZE(s900_groups),
+>  	.ngpios = NUM_GPIOS,
+>  	.ports = s900_gpio_ports,
+> -	.nports = ARRAY_SIZE(s900_gpio_ports)
+> +	.nports = ARRAY_SIZE(s900_gpio_ports),
+> +	.padctl_arg2val = s900_pad_pinconf_arg2val,
+> +	.padctl_val2arg = s900_pad_pinconf_val2arg,
+>  };
+>  
+>  static int s900_pinctrl_probe(struct platform_device *pdev)
+> -- 
+> 2.14.4
+> 
