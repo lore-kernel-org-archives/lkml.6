@@ -2,263 +2,187 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5060AC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:06:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 822E2C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:09:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DABC52054F
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:06:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B5B52054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:09:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=owltronix-com.20150623.gappssmtp.com header.i=@owltronix-com.20150623.gappssmtp.com header.b="WubPT8lm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DABC52054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=owltronix.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="DasO5J01"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B5B52054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728932AbeH2TDx (ORCPT
+        id S1728958AbeH2TGd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 15:03:53 -0400
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:46682 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727508AbeH2TDx (ORCPT
+        Wed, 29 Aug 2018 15:06:33 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54560 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727668AbeH2TGd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 15:03:53 -0400
-Received: by mail-ua1-f67.google.com with SMTP id u11-v6so3428262uan.13
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 08:06:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=owltronix-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=78pjEZQS1+PNTKvBKoFDhXCkODqIpHElefJbRIToyv0=;
-        b=WubPT8lm2i2RgtyEE87evUm1+sgd89N1mNszV7WUabtgJx8aklqC9yNW1dc/B50lCN
-         Q1cFV002wsMPYR5qFTIhMTR8uoW4uJH3fkBvyacLumfkoNY5QA6pxMfmX93J5yYiCvCb
-         ukhHyPMYyQHMiBKlwfNwVqNoNhgvE8O9WKb2O7CrEnCmVsy0MA2nM6xAWCcin+DCxUR/
-         njG53OCIMZ10q0VoCrxAZ+i3belE3/7xpXuFwIptDyYd70fFrSoALdLXOzKcWK3aMBv4
-         vyPxcVtoXmv+rwo+ZqT44Mg2goTNZTmP2lEUi86U+xdTEAi2mAkhwA5JHn/h5MLrCkPP
-         T7CQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=78pjEZQS1+PNTKvBKoFDhXCkODqIpHElefJbRIToyv0=;
-        b=bZCenE+u6vne+X7N5xctEHWZMnsgdyHqej6oRgDp2nb45UDj1+Pm1alORdkAki2PXL
-         jZWD6Qoant7CbSO0sQyyTyuCxMk+nsl+u0gYEaZCyqb0p7S5xKgO43N7azARdROa8Vjc
-         NnHoIo/u9pxNMjT7hl3bP3kvvSp+njsEQvDfqnRoU5/YxXXNaqHvAAPgSwevAfYFNN2t
-         argKHcDUTvDN9ZPcm0/VFGPxDKNjCtZv1ceXBncCCuLDcZX24XAeX5LcTf5uuSW15LDu
-         EtqhmsEizny5PuXHPa2dLu9Ae/DiLhGgLYPJ7sBflQiXDRiz3ArgCrZ+iJ2RqC6yipG4
-         wL4Q==
-X-Gm-Message-State: APzg51Ccfn3AsjokA0zRz/t23ZTqt24w/dqT2pLEuc6HhIDHC3r/2HWb
-        CKzR3cvgaQCrE3weRpFDfS2nGSKoOYzOU+Rj/l3Kxw==
-X-Google-Smtp-Source: ANB0VdY+L+wHSguG155zy4xXMKZjwyEzL0TWofbbyfoJvjDorcUmHCTraR0y4cIE2A6Y9HCxjFTz1x4BSFPeibs3Ogc=
-X-Received: by 2002:a9f:3acc:: with SMTP id q12-v6mr4403669uag.178.1535555189634;
- Wed, 29 Aug 2018 08:06:29 -0700 (PDT)
-MIME-Version: 1.0
-References: <1535545414-550-1-git-send-email-hans.ml.holmberg@owltronix.com>
- <1535545414-550-5-git-send-email-hans.ml.holmberg@owltronix.com> <92a2b562-c485-47ff-7aa9-5aa82b992e40@lightnvm.io>
-In-Reply-To: <92a2b562-c485-47ff-7aa9-5aa82b992e40@lightnvm.io>
-From:   Hans Holmberg <hans.ml.holmberg@owltronix.com>
-Date:   Wed, 29 Aug 2018 17:06:18 +0200
-Message-ID: <CANr-nt1yygevsNUELoaN6tC1N+emiuz+QtqmynKha18_AZP2Rg@mail.gmail.com>
-Subject: Re: [PATCH 4/7] lightnvm: pblk: move global caches to module init/exit
-To:     Matias Bjorling <mb@lightnvm.io>
-Cc:     linux-block@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Javier Gonzalez <javier@cnexlabs.com>,
-        Hans Holmberg <hans.holmberg@cnexlabs.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 29 Aug 2018 15:06:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=W1kFCM+UVn2VYnFzZuCFenW/onMu0fuDSplYhOLzSjI=; b=DasO5J01sGos
+        //zmuVNT5JZPAsjY6JbTn7U2FllDqQZAUjCiPpj769YnwkV6lfIorf1Hge4TdOOgO1ErkIgFB81W2
+        5DGTh9EXY9QjtnRMyfSayRGx30knFzXUnLSZymC5VfPXn2TLncZr7U0xxts0EfIUgF6eD5ZNLyf6G
+        UkyUA=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fv25i-0000Q3-AS; Wed, 29 Aug 2018 15:09:06 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 13352112486B; Wed, 29 Aug 2018 16:09:06 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     Mark Brown <broonie@kernel.org>, stable@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Applied "regulator: bd71837: Disable voltage monitoring for LDO3/4" to the regulator tree
+In-Reply-To: 
+Message-Id: <20180829150906.13352112486B@debutante.sirena.org.uk>
+Date:   Wed, 29 Aug 2018 16:09:06 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 29, 2018 at 3:29 PM Matias Bj=C3=B8rling <mb@lightnvm.io> wrote=
-:
->
-> On 08/29/2018 02:23 PM, Hans Holmberg wrote:
-> > From: Hans Holmberg <hans.holmberg@cnexlabs.com>
-> >
-> > Pblk's global caches should not be initialized every time
-> > a pblk instance is created, so move the creation and destruction
-> > of the caches to module init/exit.
-> >
-> > Also remove the global pblk lock as it is no longer needed after
-> > the move.
-> >
->
-> The original goal was to not allocate memory for the caches unless a
-> pblk instance was initialized. This instead uses up memory without pblk
-> being used, which I don't think is a good idea.
+The patch
 
-You're right, i'll rework the patch with reference counting of pblk instanc=
-es.
-The global caches only need to exist when there is at least one pblk instan=
-ce.
+   regulator: bd71837: Disable voltage monitoring for LDO3/4
+
+has been applied to the regulator tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
 Thanks,
-Hans
+Mark
 
->
-> > Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
-> > ---
-> >   drivers/lightnvm/pblk-init.c | 42 ++++++++++++++++++++---------------=
--------
-> >   1 file changed, 20 insertions(+), 22 deletions(-)
-> >
-> > diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.=
-c
-> > index 76a4a271b9cf..0be64220b5d8 100644
-> > --- a/drivers/lightnvm/pblk-init.c
-> > +++ b/drivers/lightnvm/pblk-init.c
-> > @@ -27,7 +27,6 @@ MODULE_PARM_DESC(write_buffer_size, "number of entrie=
-s in a write buffer");
-> >
-> >   static struct kmem_cache *pblk_ws_cache, *pblk_rec_cache, *pblk_g_rq_=
-cache,
-> >                               *pblk_w_rq_cache;
-> > -static DECLARE_RWSEM(pblk_lock);
-> >   struct bio_set pblk_bio_set;
-> >
-> >   static int pblk_rw_io(struct request_queue *q, struct pblk *pblk,
-> > @@ -306,21 +305,17 @@ static int pblk_set_addrf(struct pblk *pblk)
-> >       return 0;
-> >   }
-> >
-> > -static int pblk_init_global_caches(struct pblk *pblk)
-> > +static int pblk_init_global_caches(void)
-> >   {
-> > -     down_write(&pblk_lock);
-> >       pblk_ws_cache =3D kmem_cache_create("pblk_blk_ws",
-> >                               sizeof(struct pblk_line_ws), 0, 0, NULL);
-> > -     if (!pblk_ws_cache) {
-> > -             up_write(&pblk_lock);
-> > +     if (!pblk_ws_cache)
-> >               return -ENOMEM;
-> > -     }
-> >
-> >       pblk_rec_cache =3D kmem_cache_create("pblk_rec",
-> >                               sizeof(struct pblk_rec_ctx), 0, 0, NULL);
-> >       if (!pblk_rec_cache) {
-> >               kmem_cache_destroy(pblk_ws_cache);
-> > -             up_write(&pblk_lock);
-> >               return -ENOMEM;
-> >       }
-> >
-> > @@ -329,7 +324,6 @@ static int pblk_init_global_caches(struct pblk *pbl=
-k)
-> >       if (!pblk_g_rq_cache) {
-> >               kmem_cache_destroy(pblk_ws_cache);
-> >               kmem_cache_destroy(pblk_rec_cache);
-> > -             up_write(&pblk_lock);
-> >               return -ENOMEM;
-> >       }
-> >
-> > @@ -339,15 +333,13 @@ static int pblk_init_global_caches(struct pblk *p=
-blk)
-> >               kmem_cache_destroy(pblk_ws_cache);
-> >               kmem_cache_destroy(pblk_rec_cache);
-> >               kmem_cache_destroy(pblk_g_rq_cache);
-> > -             up_write(&pblk_lock);
-> >               return -ENOMEM;
-> >       }
-> > -     up_write(&pblk_lock);
-> >
-> >       return 0;
-> >   }
-> >
-> > -static void pblk_free_global_caches(struct pblk *pblk)
-> > +static void pblk_free_global_caches(void)
-> >   {
-> >       kmem_cache_destroy(pblk_ws_cache);
-> >       kmem_cache_destroy(pblk_rec_cache);
-> > @@ -381,13 +373,10 @@ static int pblk_core_init(struct pblk *pblk)
-> >       if (!pblk->pad_dist)
-> >               return -ENOMEM;
-> >
-> > -     if (pblk_init_global_caches(pblk))
-> > -             goto fail_free_pad_dist;
-> > -
-> >       /* Internal bios can be at most the sectors signaled by the devic=
-e. */
-> >       ret =3D mempool_init_page_pool(&pblk->page_bio_pool, NVM_MAX_VLBA=
-, 0);
-> >       if (ret)
-> > -             goto free_global_caches;
-> > +             goto free_pad_dist;
-> >
-> >       ret =3D mempool_init_slab_pool(&pblk->gen_ws_pool, PBLK_GEN_WS_PO=
-OL_SIZE,
-> >                                    pblk_ws_cache);
-> > @@ -455,9 +444,7 @@ static int pblk_core_init(struct pblk *pblk)
-> >       mempool_exit(&pblk->gen_ws_pool);
-> >   free_page_bio_pool:
-> >       mempool_exit(&pblk->page_bio_pool);
-> > -free_global_caches:
-> > -     pblk_free_global_caches(pblk);
-> > -fail_free_pad_dist:
-> > +free_pad_dist:
-> >       kfree(pblk->pad_dist);
-> >       return -ENOMEM;
-> >   }
-> > @@ -480,7 +467,6 @@ static void pblk_core_free(struct pblk *pblk)
-> >       mempool_exit(&pblk->e_rq_pool);
-> >       mempool_exit(&pblk->w_rq_pool);
-> >
-> > -     pblk_free_global_caches(pblk);
-> >       kfree(pblk->pad_dist);
-> >   }
-> >
-> > @@ -1067,7 +1053,6 @@ static void pblk_exit(void *private, bool gracefu=
-l)
-> >   {
-> >       struct pblk *pblk =3D private;
-> >
-> > -     down_write(&pblk_lock);
-> >       pblk_gc_exit(pblk, graceful);
-> >       pblk_tear_down(pblk, graceful);
-> >
-> > @@ -1076,7 +1061,6 @@ static void pblk_exit(void *private, bool gracefu=
-l)
-> >   #endif
-> >
-> >       pblk_free(pblk);
-> > -     up_write(&pblk_lock);
-> >   }
-> >
-> >   static sector_t pblk_capacity(void *private)
-> > @@ -1237,9 +1221,22 @@ static int __init pblk_module_init(void)
-> >       ret =3D bioset_init(&pblk_bio_set, BIO_POOL_SIZE, 0, 0);
-> >       if (ret)
-> >               return ret;
-> > +
-> >       ret =3D nvm_register_tgt_type(&tt_pblk);
-> >       if (ret)
-> > -             bioset_exit(&pblk_bio_set);
-> > +             goto fail_exit_bioset;
-> > +
-> > +     ret =3D pblk_init_global_caches();
-> > +     if (ret)
-> > +             goto fail_unregister_tgt_type;
-> > +
-> > +     return 0;
-> > +
-> > +fail_unregister_tgt_type:
-> > +     nvm_unregister_tgt_type(&tt_pblk);
-> > +fail_exit_bioset:
-> > +     bioset_exit(&pblk_bio_set);
-> > +
-> >       return ret;
-> >   }
-> >
-> > @@ -1247,6 +1244,7 @@ static void pblk_module_exit(void)
-> >   {
-> >       bioset_exit(&pblk_bio_set);
-> >       nvm_unregister_tgt_type(&tt_pblk);
-> > +     pblk_free_global_caches();
-> >   }
-> >
-> >   module_init(pblk_module_init);
-> >
->
+From 823f18f8b860526fc099c222619a126d57d2ad8c Mon Sep 17 00:00:00 2001
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Date: Wed, 29 Aug 2018 15:36:10 +0300
+Subject: [PATCH] regulator: bd71837: Disable voltage monitoring for LDO3/4
+
+There is a HW quirk in BD71837. The shutdown sequence timings for
+bucks/LDOs which are enabled via register interface are changed.
+At PMIC poweroff the voltage for BUCK6/7 is cut immediately at the
+beginning of shut-down sequence. This causes LDO5/6 voltage
+monitoring to detect under voltage and force PMIC to emergency
+state instead of poweroff. Disable voltage monitoring for LDO5 and
+LDO6 at probe to avoid this.
+
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
+---
+ drivers/regulator/bd71837-regulator.c | 19 +++++++++++++++
+ include/linux/mfd/rohm-bd718x7.h      | 33 ++++++++++++++++++++++++---
+ 2 files changed, 49 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/regulator/bd71837-regulator.c b/drivers/regulator/bd71837-regulator.c
+index 0f8ac8dec3e1..a1bd8aaf4d98 100644
+--- a/drivers/regulator/bd71837-regulator.c
++++ b/drivers/regulator/bd71837-regulator.c
+@@ -569,6 +569,25 @@ static int bd71837_probe(struct platform_device *pdev)
+ 			BD71837_REG_REGLOCK);
+ 	}
+ 
++	/*
++	 * There is a HW quirk in BD71837. The shutdown sequence timings for
++	 * bucks/LDOs which are controlled via register interface are changed.
++	 * At PMIC poweroff the voltage for BUCK6/7 is cut immediately at the
++	 * beginning of shut-down sequence. As bucks 6 and 7 are parent
++	 * supplies for LDO5 and LDO6 - this causes LDO5/6 voltage
++	 * monitoring to errorneously detect under voltage and force PMIC to
++	 * emergency state instead of poweroff. In order to avoid this we
++	 * disable voltage monitoring for LDO5 and LDO6
++	 */
++	err = regmap_update_bits(pmic->mfd->regmap, BD718XX_REG_MVRFLTMASK2,
++				 BD718XX_LDO5_VRMON80 | BD718XX_LDO6_VRMON80,
++				 BD718XX_LDO5_VRMON80 | BD718XX_LDO6_VRMON80);
++	if (err) {
++		dev_err(&pmic->pdev->dev,
++			"Failed to disable voltage monitoring\n");
++		goto err;
++	}
++
+ 	for (i = 0; i < ARRAY_SIZE(pmic_regulator_inits); i++) {
+ 
+ 		struct regulator_desc *desc;
+diff --git a/include/linux/mfd/rohm-bd718x7.h b/include/linux/mfd/rohm-bd718x7.h
+index a528747f8aed..e8338e5dc10b 100644
+--- a/include/linux/mfd/rohm-bd718x7.h
++++ b/include/linux/mfd/rohm-bd718x7.h
+@@ -78,9 +78,9 @@ enum {
+ 	BD71837_REG_TRANS_COND0        = 0x1F,
+ 	BD71837_REG_TRANS_COND1        = 0x20,
+ 	BD71837_REG_VRFAULTEN          = 0x21,
+-	BD71837_REG_MVRFLTMASK0        = 0x22,
+-	BD71837_REG_MVRFLTMASK1        = 0x23,
+-	BD71837_REG_MVRFLTMASK2        = 0x24,
++	BD718XX_REG_MVRFLTMASK0        = 0x22,
++	BD718XX_REG_MVRFLTMASK1        = 0x23,
++	BD718XX_REG_MVRFLTMASK2        = 0x24,
+ 	BD71837_REG_RCVCFG             = 0x25,
+ 	BD71837_REG_RCVNUM             = 0x26,
+ 	BD71837_REG_PWRONCONFIG0       = 0x27,
+@@ -159,6 +159,33 @@ enum {
+ #define BUCK8_MASK		0x3F
+ #define BUCK8_DEFAULT		0x1E
+ 
++/* BD718XX Voltage monitoring masks */
++#define BD718XX_BUCK1_VRMON80           0x1
++#define BD718XX_BUCK1_VRMON130          0x2
++#define BD718XX_BUCK2_VRMON80           0x4
++#define BD718XX_BUCK2_VRMON130          0x8
++#define BD718XX_1ST_NODVS_BUCK_VRMON80  0x1
++#define BD718XX_1ST_NODVS_BUCK_VRMON130 0x2
++#define BD718XX_2ND_NODVS_BUCK_VRMON80  0x4
++#define BD718XX_2ND_NODVS_BUCK_VRMON130 0x8
++#define BD718XX_3RD_NODVS_BUCK_VRMON80  0x10
++#define BD718XX_3RD_NODVS_BUCK_VRMON130 0x20
++#define BD718XX_4TH_NODVS_BUCK_VRMON80  0x40
++#define BD718XX_4TH_NODVS_BUCK_VRMON130 0x80
++#define BD718XX_LDO1_VRMON80            0x1
++#define BD718XX_LDO2_VRMON80            0x2
++#define BD718XX_LDO3_VRMON80            0x4
++#define BD718XX_LDO4_VRMON80            0x8
++#define BD718XX_LDO5_VRMON80            0x10
++#define BD718XX_LDO6_VRMON80            0x20
++
++/* BD71837 specific voltage monitoring masks */
++#define BD71837_BUCK3_VRMON80           0x10
++#define BD71837_BUCK3_VRMON130          0x20
++#define BD71837_BUCK4_VRMON80           0x40
++#define BD71837_BUCK4_VRMON130          0x80
++#define BD71837_LDO7_VRMON80            0x40
++
+ /* BD71837_REG_IRQ bits */
+ #define IRQ_SWRST		0x40
+ #define IRQ_PWRON_S		0x20
+-- 
+2.18.0
+
