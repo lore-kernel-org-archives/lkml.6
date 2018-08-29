@@ -2,94 +2,118 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45EC1C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:13:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAD3CC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:13:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A73B2086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:13:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A73B2086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 75FC92089D
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:13:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75FC92089D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727813AbeH2MIs convert rfc822-to-8bit (ORCPT
+        id S1727940AbeH2MJH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 08:08:48 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:42369 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726858AbeH2MIs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 08:08:48 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 571FB20795; Wed, 29 Aug 2018 10:13:06 +0200 (CEST)
-Received: from localhost (unknown [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 206C4206EE;
-        Wed, 29 Aug 2018 10:13:06 +0200 (CEST)
-From:   Gregory CLEMENT <gregory.clement@bootlin.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     aditya@kobol.io,
-        "thierry.reding\@gmail.com" <thierry.reding@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        "open list\:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Richard Genoud <richard.genoud@gmail.com>, gauthier@kobol.io,
-        Alban Browaeys <alban.browaeys@gmail.com>,
-        linux-pwm@vger.kernel.org,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dennis@ausil.us, Ralph Sennhauser <ralph.sennhauser@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH RESEND 1/2] gpio: mvebu: Add support for multiple PWM lines per GPIO chip
-References: <1533522556-55055-1-git-send-email-aditya@kobol.io>
-        <1533522556-55055-2-git-send-email-aditya@kobol.io>
-        <CACRpkda2qXxyEj+y8DaZ-_PWcj3pBGtvVAac8qaFCnC0LTNkNA@mail.gmail.com>
-Date:   Wed, 29 Aug 2018 10:13:05 +0200
-In-Reply-To: <CACRpkda2qXxyEj+y8DaZ-_PWcj3pBGtvVAac8qaFCnC0LTNkNA@mail.gmail.com>
-        (Linus Walleij's message of "Wed, 29 Aug 2018 09:54:04 +0200")
-Message-ID: <87in3tk2um.fsf@bootlin.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        Wed, 29 Aug 2018 08:09:07 -0400
+Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:26867 "EHLO
+        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727477AbeH2MJH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 08:09:07 -0400
+Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
+ EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
+ 15.0.1156.6; Wed, 29 Aug 2018 01:13:02 -0700
+Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 2DC8E40DEE;
+        Wed, 29 Aug 2018 01:13:26 -0700 (PDT)
+From:   Nadav Amit <namit@vmware.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+CC:     <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        <x86@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        <linux-arch@vger.kernel.org>, Andy Lutomirski <luto@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Nadav Amit <namit@vmware.com>
+Subject: [RFC PATCH 2/6] x86/mm: temporary mm struct
+Date:   Wed, 29 Aug 2018 01:11:43 -0700
+Message-ID: <20180829081147.184610-3-namit@vmware.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180829081147.184610-1-namit@vmware.com>
+References: <20180829081147.184610-1-namit@vmware.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
+Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
+ designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+From: Andy Lutomirski <luto@kernel.org>
+
+Sometimes we want to set a temporary page-table entries (PTEs) in one of
+the cores, without allowing other cores to use - even speculatively -
+these mappings. There are two benefits for doing so:
+
+(1) Security: if sensitive PTEs are set, temporary mm prevents their use
+in other cores. This hardens the security as it prevents exploding a
+dangling pointer to overwrite sensitive data using the sensitive PTE.
+
+(2) Avoiding TLB shootdowns: the PTEs do not need to be flushed in
+remote page-tables.
+
+To do so a temporary mm_struct can be used. Mappings which are private
+for this mm can be set in the userspace part of the address-space.
+During the whole time in which the temporary mm is loaded, interrupts
+must be disabled.
+
+The first use-case for temporary PTEs, which will follow, is for poking
+the kernel text.
+
+[ Commit message was written by Nadav ]
+
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Nadav Amit <namit@vmware.com>
+---
+ arch/x86/include/asm/mmu_context.h | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
+index eeeb9289c764..96afc8c0cf15 100644
+--- a/arch/x86/include/asm/mmu_context.h
++++ b/arch/x86/include/asm/mmu_context.h
+@@ -338,4 +338,24 @@ static inline unsigned long __get_current_cr3_fast(void)
+ 	return cr3;
+ }
  
- On mer., août 29 2018, Linus Walleij <linus.walleij@linaro.org> wrote:
-
-> On Mon, Aug 6, 2018 at 4:31 AM Aditya Prayoga <aditya@kobol.io> wrote:
->
->> Allow more than 1 PWM request (eg. PWM fan) on the same GPIO chip.
->>
->> based on initial work on LK4.4 by Alban Browaeys.
->> URL: https://github.com/helios-4/linux-marvell/commit/743ae97
->> [Aditya Prayoga: forward port, cleanup]
->> Signed-off-by: Aditya Prayoga <aditya@kobol.io>
->
-> It would be awesome to get some feedback from the MVEBU maintainers
-> on this patch set.
-
-There already has been reviewed from Andrew and also from Richard who
-worked on the PWM part too. There were many questions raised, but no
-feedback yet, so for now this patch set is clearly not ready to be
-merged. We are waiting for answers and a new version.
-
-Gregory
-
->
-> Who are most active on Marvell stuff these days? Thomas?
->
-> Likewise I'd be very grateful for a nod from the PWM maintainer that
-> this is OK with him.
->
-> Yours,
-> Linus Walleij
-
++typedef struct {
++	struct mm_struct *prev;
++} temporary_mm_state_t;
++
++static inline temporary_mm_state_t use_temporary_mm(struct mm_struct *mm)
++{
++	temporary_mm_state_t state;
++
++	lockdep_assert_irqs_disabled();
++	state.prev = this_cpu_read(cpu_tlbstate.loaded_mm);
++	switch_mm_irqs_off(NULL, mm, current);
++	return state;
++}
++
++static inline void unuse_temporary_mm(temporary_mm_state_t prev)
++{
++	lockdep_assert_irqs_disabled();
++	switch_mm_irqs_off(NULL, prev.prev, current);
++}
++
+ #endif /* _ASM_X86_MMU_CONTEXT_H */
 -- 
-Gregory Clement, Bootlin
-Embedded Linux and Kernel engineering
-http://bootlin.com
+2.17.1
+
