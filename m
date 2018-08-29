@@ -7,107 +7,113 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A81D9C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 20:36:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF434C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 20:36:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EC68205C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 20:36:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 949D1205C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 20:36:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nlk2tTWq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EC68205C9
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pnxricDw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 949D1205C9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728630AbeH3Aeb (ORCPT
+        id S1728724AbeH3Aee (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 20:34:31 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:36762 "EHLO
+        Wed, 29 Aug 2018 20:34:34 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:34885 "EHLO
         mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727392AbeH3Aeb (ORCPT
+        with ESMTP id S1727392AbeH3Aed (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 20:34:31 -0400
-Received: by mail-wr1-f67.google.com with SMTP id m27-v6so6033259wrf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 13:35:57 -0700 (PDT)
+        Wed, 29 Aug 2018 20:34:33 -0400
+Received: by mail-wr1-f67.google.com with SMTP id j26-v6so6025701wre.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 13:35:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=arbiJAhsTu0YO9qD1ED4+vwK6ERvJo4dindujakL9lM=;
-        b=Nlk2tTWqD5810c1v2Fn8zMBrTwFo9XiEVb9IMk2nAglSM1ocYXHKJ9jKQYTS2HrWhx
-         Nif1+v3xR3ZS96DnawUMitSk/glzjBwRG0wc3HrCz533Ekjvdj9wgMDWQFzGuySqLFRM
-         1THU843tK1RvrzOZ8RDS5NbXvtPpFRwFB3bYRmhEXsIKs57zIxO9Wy+TUT7C1CdrpLVm
-         XiV9mp1puD/y4mBv+4jL5phcPP8qrRA1m6b1ope0oRO/+vezey3ByN4V4b8JmscpCnGb
-         o+OueQyzjhZepoykjWZyAHjGNmW45+gKZ86YM5sfuYzbISKBprQRq0RYKBqmtPc4Riqr
-         LFcA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=+gHeebErSNXSjl5+WIlqNIEpgw2eqtRv+MI8ZWddzIM=;
+        b=pnxricDw3KZl0+oMCm3fFKmEVkXS7PU/2g3aVh+y7bQ1Et7Av0NF8zU7q3TC94jlBZ
+         1bdpoNQfQziM6H2wqR3zjSJOckIGqJJyGZzpzgVyOfo3SkrWlllSWgfJRfi9uWpgRHTm
+         UfNc7tHXubEDF9ZwV6nBUSg+Wr4i/P8wwTYcTwd+uf4GI0FiSxl5SRZ3U54jfckYZS37
+         Txgn+3gG6CDJjKP1UFCYkLeyZMorx+H7bgAeW46EJb5FyyxzJGuoSrc6zKoWwEUEDJxD
+         eQ7RmbcR1blPQ4WnOrQu4twZBiuoJnF+ZMeoOw2xjzKoRyJDllKWqBj/grtm390VApHn
+         jNJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=arbiJAhsTu0YO9qD1ED4+vwK6ERvJo4dindujakL9lM=;
-        b=HFlacs+MJNvBeo1Uj7SRQGJCPGTqKFUXIEZJJwxfJUpdAUcf7gjxu5V9FbZMdDe8IV
-         aTap3QFwRuwIt8QyJdXi7DVWmCl2lE9j6S4wjMmrpP8qmCrCKFJpXu8yAw76STMKlmsa
-         hvy4HRzzLAS7XpjY6CB7G4iGDxrkNLeEpMtkf9OZxntcov2dgka0LySZyB2XsM7wR06U
-         By++rpzowmfhxjHpWN2kpcRyuUnbrdLA0XpguxWbPlk+B12j7zKcscJsTyevZ+W7AwEP
-         7a9GRItQai8uc9nxkQ+9HNQwOKneS4K2nhBZRTKX5jL9oAw/J5Q64sDtykAZNnxpjdke
-         gRCQ==
-X-Gm-Message-State: APzg51AK9HDf9TrAoIm2s5rlwNchn/aO0EUs/8dY7CXeXhurLNoCains
-        zrX1uZgePicf2Zqgu8zSB93+GzA5xhY=
-X-Google-Smtp-Source: ANB0VdZ2f5MhpwPAVruOxIZ4qfs1vrcqi+Qp+Y/PIA7ZHvPliEXKVD9NPp3q3G5lNs0mZD2TIqimkA==
-X-Received: by 2002:adf:a292:: with SMTP id s18-v6mr5759618wra.100.1535574956167;
-        Wed, 29 Aug 2018 13:35:56 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=+gHeebErSNXSjl5+WIlqNIEpgw2eqtRv+MI8ZWddzIM=;
+        b=E1f/6g5oLpdJCHNol6Zm08nZRybZFLdDWNh1nhOrVz57MyPO7dwb3CBFXudfQP2ylM
+         3fb7Be9/g6JHsl3NLLeyWnHDZcZYa8ecaYirE0kjN+dxiU3rbS70iYWeOpz8p4Q2p6u4
+         lD1AbI/BQfrVsa836AYDygmxG2IaNrWp3uqWGAIBF+m5B4baiIC2rAP6/LPt+qBa5Jri
+         fYs4Ko60GciRAB7uaBH0FR1zaSYnWlzVP2FNhxZlfovfNPuh4QWCCAaRNw3HGkcKZ3NJ
+         6/oz+pJW8jgp9hbi9ZIAVvBbRV7zrH+Lh32hwxDUZmFbr65B4oNbj1KN2nb+E+umwJ8D
+         jpVg==
+X-Gm-Message-State: APzg51BFgEPkr9xOnDDc7RvCLFFR49XK2Zdz1GVGAZd59i9MfsQSHFks
+        8YfFWlrMbkG2qi5ZqAXjghBdLnlL4S4=
+X-Google-Smtp-Source: ANB0VdaXPBw/FSYUrcB0+D8sV4AKiXjtfq3H+znMTUUrjf/ecEUW9u8Z86y/L6cojNjcW4k1/RxK7w==
+X-Received: by 2002:a5d:68c9:: with SMTP id p9-v6mr5412115wrw.108.1535574957994;
+        Wed, 29 Aug 2018 13:35:57 -0700 (PDT)
 Received: from localhost.localdomain (host86-148-21-150.range86-148.btcentralplus.com. [86.148.21.150])
-        by smtp.gmail.com with ESMTPSA id e133-v6sm10625519wma.33.2018.08.29.13.35.53
+        by smtp.gmail.com with ESMTPSA id e133-v6sm10625519wma.33.2018.08.29.13.35.56
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 Aug 2018 13:35:55 -0700 (PDT)
+        Wed, 29 Aug 2018 13:35:57 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 00/21] staging:rtl8192u: Refactor ht_capability_ele - Style
-Date:   Wed, 29 Aug 2018 21:35:26 +0100
-Message-Id: <20180829203547.15650-1-johnfwhitmore@gmail.com>
+Subject: [PATCH 01/21] staging:rtl8192u: Rename AdvCoding - Style
+Date:   Wed, 29 Aug 2018 21:35:27 +0100
+Message-Id: <20180829203547.15650-2-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180829203547.15650-1-johnfwhitmore@gmail.com>
+References: <20180829203547.15650-1-johnfwhitmore@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series of patchs is a coding style clean up of the structure
-ht_capability_ele. The changes are all simply changes of the member
-names, to remove the CamelCase naming.
+Rename the bit field element AdvCoding, as it causes a checkpatch issue
+with CamelCase naming. As the element is not actually used in code it
+has been renamed to 'not_used_adv_coding'.
 
-A number of the member have been renamed with the prefix 'not_used...'
-to emphasise the fact that member is not used in code. At a future
-time the structure might be stripped of these member variables, but
-for the moment they have been left, as I'm not sure that the size
-of the structure is not significant, and possibly mapped to Hardware.
+The single line of code which initialises the bit has been removed,
+as the  field is unused.
 
-John Whitmore (21):
-  staging:rtl8192u: Rename AdvCoding - Style
-  staging:rtl8192u: Rename ChlWidth - Style
-  staging:rtl8192u: Rename MimoPwrSave - Style
-  staging:rtl8192u: Rename GreenField - Style
-  staging:rtl8192u: Rename ShortGI20Mhz - Style
-  staging:rtl8192u: Rename ShortGI40Mhz - Style
-  staging:rtl8192u: Rename TxSTBC - Style
-  staging:rtl8192u: Rename RxSTBC - Style
-  staging:rtl8192u: Rename DelayBA - Style
-  staging:rtl8192u: Rename MaxAMSDUSize - Style
-  staging:rtl8192u: Rename DssCCk - Style
-  staging:rtl8192u: Rename PSMP - Style
-  staging:rtl8192u: Rename Rsvd1 - Style
-  staging:rtl8192u: Rename LSigTxopProtect - Style
-  staging:rtl8192u: Rename MaxRxAMPDUFactor - Style
-  staging:rtl8192u: Rename MPDUDensity - Style
-  staging:rtl8192u: Rename Rsvd2 - Style
-  staging:rtl8192u: Rename MCS - Style
-  staging:rtl8192u: Rename ExtHTCapInfo - Style
-  staging:rtl8192u: Rename TxBFCap - Style
-  staging:rtl8192u: Rename ASCap - Style
+This is a purely coding style change which should have no impact
+on runtime code execution.
 
- .../staging/rtl8192u/ieee80211/ieee80211_wx.c |  10 +-
- .../staging/rtl8192u/ieee80211/rtl819x_HT.h   |  42 +++----
- .../rtl8192u/ieee80211/rtl819x_HTProc.c       | 115 ++++++++----------
- 3 files changed, 75 insertions(+), 92 deletions(-)
+Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
+---
+ drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h     | 2 +-
+ drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c | 1 -
+ 2 files changed, 1 insertion(+), 2 deletions(-)
 
+diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h b/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h
+index 64d5359cf7e2..66a0274077d3 100644
+--- a/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h
++++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_HT.h
+@@ -39,7 +39,7 @@ enum ht_extension_chan_offset {
+ 
+ struct ht_capability_ele {
+ 	//HT capability info
+-	u8	AdvCoding:1;
++	u8	not_used_adv_coding:1;
+ 	u8	ChlWidth:1;
+ 	u8	MimoPwrSave:2;
+ 	u8	GreenField:1;
+diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
+index 9bf52cebe4cd..d7f73a5831da 100644
+--- a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
++++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
+@@ -550,7 +550,6 @@ void HTConstructCapabilityElement(struct ieee80211_device *ieee, u8 *posHTCap, u
+ 	}
+ 
+ 	//HT capability info
+-	pCapELE->AdvCoding		= 0; // This feature is not supported now!!
+ 	if (ieee->GetHalfNmodeSupportByAPsHandler(ieee->dev))
+ 		pCapELE->ChlWidth = 0;
+ 	else
 -- 
 2.18.0
 
