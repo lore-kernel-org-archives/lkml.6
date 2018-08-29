@@ -6,169 +6,86 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA287C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 20:33:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F0A2C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 20:34:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C3CB2064E
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 20:33:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C3CB2064E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2F13620658
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 20:34:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F13620658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728636AbeH3Ac2 (ORCPT
+        id S1728684AbeH3AdI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 20:32:28 -0400
-Received: from mga14.intel.com ([192.55.52.115]:58914 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727392AbeH3Ac1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 20:32:27 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2018 13:33:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,304,1531810800"; 
-   d="scan'208";a="79384461"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.20])
-  by orsmga003.jf.intel.com with ESMTP; 29 Aug 2018 13:33:51 -0700
-Date:   Wed, 29 Aug 2018 13:33:51 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     "Huang, Kai" <kai.huang@intel.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "platform-driver-x86@vger.kernel.org" 
-        <platform-driver-x86@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "suresh.b.siddha@intel.com" <suresh.b.siddha@intel.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>
-Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
- enclaves
-Message-ID: <20180829203351.GB7142@linux.intel.com>
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
- <1535406078.3416.9.camel@intel.com>
- <20180828070129.GA5301@linux.intel.com>
- <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com>
+        Wed, 29 Aug 2018 20:33:08 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33044 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727392AbeH3AdI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 20:33:08 -0400
+Received: by mail-wr1-f66.google.com with SMTP id v90-v6so6029946wrc.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 13:34:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5KdLqEy/lMlUJABiqnnQ+7Qa0Gbn0qySS//fRdbw8zM=;
+        b=j7OQ/n7mvBK8I3jpZr9PX4Y1G+fyc9Z39ufKrxnZRf5JrOAdu96VnuJurklD5KCaaN
+         j5qk2VbBJMxunOuQa70Jcd46o3/290AcD8Rb0QGoO1bA+XBxoGI7hGDKjXQwvpGQNdJq
+         mer39MQO+7lHQVuFvBM+TytYSJAhWpWwcnZkLzxsurVbaLXMB2RkAclzYHv/kLAlTju5
+         bUXDF3AlJE8nKRXpdyPybFp+liRkYAGMwImrLplRFGp0Hv0sUo+42klRls3vrehn8TJu
+         DGuu1wOwvgMwRLi4o9+99qW8sPutAJ9BNhjdVBoM1/NboB89ZmUoEtFgpOfLzxr33EKg
+         t2uA==
+X-Gm-Message-State: APzg51AJqDa2gIv09XezY7yyRLF3HC8dI3Uuuw//POO4c8aa5FRRi6zG
+        kMu/RJv13io0NShpcPqxnOo=
+X-Google-Smtp-Source: ANB0VdYNDX/C18GKNqwuNCSthsd1ubReGIhx+FbzpINurJPZ0uVoQVUoLshe4l0ydRCyCL23/eTGwQ==
+X-Received: by 2002:adf:e1c5:: with SMTP id l5-v6mr5448698wri.36.1535574873993;
+        Wed, 29 Aug 2018 13:34:33 -0700 (PDT)
+Received: from techadventures.net (techadventures.net. [62.201.165.239])
+        by smtp.gmail.com with ESMTPSA id j16-v6sm3439345wmc.25.2018.08.29.13.34.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 Aug 2018 13:34:33 -0700 (PDT)
+Received: by techadventures.net (Postfix, from userid 1000)
+        id 6E908124C52; Wed, 29 Aug 2018 22:34:32 +0200 (CEST)
+Date:   Wed, 29 Aug 2018 22:34:32 +0200
+From:   Oscar Salvador <osalvador@techadventures.net>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     mhocko@suse.com, vbabka@suse.cz, Pavel.Tatashin@microsoft.com,
+        sfr@canb.auug.org.au, iamjoonsoo.kim@lge.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
+        Lai Jiangshan <laijs@cn.fujitsu.com>
+Subject: Re: [PATCH] mm/page_alloc: Clean up check_for_memory
+Message-ID: <20180829203432.GA24978@techadventures.net>
+References: <20180828210158.4617-1-osalvador@techadventures.net>
+ <20180828143530.4b681bf9e0b3c03519fbe943@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180828143530.4b681bf9e0b3c03519fbe943@linux-foundation.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 29, 2018 at 12:33:54AM -0700, Huang, Kai wrote:
-> [snip..]
+On Tue, Aug 28, 2018 at 02:35:30PM -0700, Andrew Morton wrote:
+> > First, we should only set N_HIGH_MEMORY in case we have
+> > CONFIG_HIGHMEM.
 > 
-> > > >
-> > > > @@ -38,6 +39,18 @@ static LIST_HEAD(sgx_active_page_list);  static
-> > > > DEFINE_SPINLOCK(sgx_active_page_list_lock);
-> > > >  static struct task_struct *ksgxswapd_tsk;  static
-> > > > DECLARE_WAIT_QUEUE_HEAD(ksgxswapd_waitq);
-> > > > +static struct notifier_block sgx_pm_notifier; static u64
-> > > > +sgx_pm_cnt;
-> > > > +
-> > > > +/* The cache for the last known values of IA32_SGXLEPUBKEYHASHx
-> > > > +MSRs
-> > > > for each
-> > > > + * CPU. The entries are initialized when they are first used by
-> > > > sgx_einit().
-> > > > + */
-> > > > +struct sgx_lepubkeyhash {
-> > > > +	u64 msrs[4];
-> > > > +	u64 pm_cnt;
-> > >
-> > > May I ask why do we need pm_cnt here? In fact why do we need suspend
-> > > staff (namely, sgx_pm_cnt above, and related code in this patch) here
-> > > in this patch? From the patch commit message I don't see why we need
-> > > PM staff here. Please give comment why you need PM staff, or you may
-> > > consider to split the PM staff to another patch.
-> > 
-> > Refining the commit message probably makes more sense because without PM
-> > code sgx_einit() would be broken. The MSRs have been reset after waking up.
-> > 
-> > Some kind of counter is required to keep track of the power cycle. When going
-> > to sleep the sgx_pm_cnt is increased. sgx_einit() compares the current value of
-> > the global count to the value in the cache entry to see whether we are in a new
-> > power cycle.
-> 
-> You mean reset to Intel default? I think we can also just reset the cached MSR
-> values on each power cycle, which would be simpler, IMHO?
+> Why?  Just a teeny optimization?
 
-Refresh my brain, does hardware reset the MSRs on a transition to S3 or lower?
+Hi Andrew,
 
-> I think we definitely need some code to handle S3-S5, but should be in
-> separate patches, since I think the major impact of S3-S5 is entire EPC
-> being destroyed. I think keeping pm_cnt is not sufficient enough to handle
-> such case?
-> > 
-> > This brings up one question though: how do we deal with VM host going to sleep?
-> > VM guest would not be aware of this.
-> 
-> IMO VM just gets "sudden loss of EPC" after suspend & resume in host. SGX driver
-> and SDK should be able to handle "sudden loss of EPC", ie, co-working together to
-> re-establish the missing enclaves.
-> 
-> Actually supporting "sudden loss of EPC" is a requirement to support live migration
-> of VM w/ SGX. Internally long time ago we had a discussion and the decision was we
-> should support SGX live migration given two facts:
-> 
-> 1) losing platform-dependent is not important. For example, losing sealing key is
-> not a problem, as we could get secrets provisioned again from remote. 2) Both windows
-> & linux driver commit to support "sudden loss of EPC".
-> 
-> I don't think we have to support in very first upstream driver, but I think we need
-> to support someday.
+Optimization was not really my point here, my point was to make
+the code less subtle and more clear.
+One may wonder why we set N_HIGH_MEMORY unconditionally when
+__only__ CONFIG_HIGHMEM matters for this case, and why we set 
+N_NORMAL_MEMORY __only__ for CONFIG_HIGHMEM when we should not care
+about that at all.
 
-Actually, we can easily support this in the driver, at least for SGX1
-hardware.  SGX2 isn't difficult to handle, but we've intentionally
-postponed those patches until SGX1 support is in mainline[1].
-Accesses to the EPC after it is lost will cause faults.  Userspace
-EPC accesses, e.g. ERESUME, will get a SIGSEGV that the process
-should interpret as an "I should restart my enclave" event.  The
-SDK already does this.  In the driver, we just need to be aware of
-this potential behavior and not freak out.  Specifically, SGX_INVD
-needs to not WARN on faults that may have been due to a the EPC
-being nuked.  I think we can even remove the sgx_encl_pm_notifier()
-code altogether.
+I do not really expect a big impact here, mainly because check_for_memory
+is only being used during boot.
 
-[1] SGX1 hardware signals a #GP on an access to an invalid EPC page.
-    SGX2 signals a #PF with the PF_SGX error code bit set.  This is
-    problematic because the kernel looks at the PTEs for CR2 and sees
-    nothing wrong, so it thinks it should just restart the
-    instruction, leading to an infinite fault loop.  Resolving this
-    is fairly straightforward, but a complete fix requires propagating
-    PF_SGX down to the ENCLS fixup handler, which means plumbing the
-    error code through the fixup handlers or smushing PF_SGX into
-    trapnr.  Since there is a parallel effort to plumb the error code
-    through the handlers, https://lkml.org/lkml/2018/8/6/924, we opted
-    to do this in a separate series.
-
-> Sean, 
-> 
-> Would you be able to comment here?
-> 
-> > 
-> > I think the best measure would be to add a new parameter to sgx_einit() that
-> > enforces update of the MSRs. The driver can then set this parameter in the case
-> > when sgx_einit() returns SGX_INVALID_LICENSE. This is coherent because the
-> > driver requires writable MSRs. It would not be coherent to do it directly in the
-> > core because KVM does not require writable MSRs.
-> 
-> IMHO this is not required, as I mentioned above.
-> 
-> And 
-> [snip...]
-> 
-> Thanks,
-> -Kai
+-- 
+Oscar Salvador
+SUSE L3
