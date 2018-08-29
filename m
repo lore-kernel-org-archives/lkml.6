@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9AC4C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:13:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2779C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:13:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54F8C2089D
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:13:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54F8C2089D
+	by mail.kernel.org (Postfix) with ESMTP id 85E9C2086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:13:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85E9C2086D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728071AbeH2MJN (ORCPT
+        id S1728002AbeH2MJJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 08:09:13 -0400
-Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:26867 "EHLO
-        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727477AbeH2MJK (ORCPT
+        Wed, 29 Aug 2018 08:09:09 -0400
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:43187 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727198AbeH2MJH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 08:09:10 -0400
+        Wed, 29 Aug 2018 08:09:07 -0400
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
- EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
- 15.0.1156.6; Wed, 29 Aug 2018 01:13:02 -0700
+ EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
+ 15.0.1156.6; Wed, 29 Aug 2018 01:13:09 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 569D940DD7;
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 23B5540B4D;
         Wed, 29 Aug 2018 01:13:26 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Thomas Gleixner <tglx@linutronix.de>
@@ -38,63 +38,72 @@ CC:     <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Kees Cook <keescook@chromium.org>,
         Peter Zijlstra <peterz@infradead.org>
-Subject: [RFC PATCH 6/6] x86/alternatives: remove text_poke() return value
-Date:   Wed, 29 Aug 2018 01:11:47 -0700
-Message-ID: <20180829081147.184610-7-namit@vmware.com>
+Subject: [RFC PATCH 0/6] x86: text_poke() fixes
+Date:   Wed, 29 Aug 2018 01:11:41 -0700
+Message-ID: <20180829081147.184610-1-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180829081147.184610-1-namit@vmware.com>
-References: <20180829081147.184610-1-namit@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
+Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
  designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The return value of text_poke() is meaningless - it is one of the
-function inputs. One day someone may allow the callers to deal with
-text_poke() failures, if those actually happen.
+This patch-set addresses some issues that were raised in the recent
+correspondence and might affect the security and the correctness of code
+patching. (Note that patching performance is not addressed by this
+patch-set).
 
-In the meanwhile, remove the return value.
+The main issue that the patches deal with is the fact that the fixmap
+PTEs that are used for patching are available for access from other
+cores and might be exploited. They are not even flushed from the TLB in
+remote cores, so the risk is even higher. Address this issue by
+introducing a temporary mm that is only used during patching.
+Unfortunately, due to init ordering, fixmap is still used during
+boot-time patching. Future patches can eliminate the need for it.
+
+The second issue is the missing lockdep assertion to ensure text_mutex
+is taken. It is actually not always taken, so fix the instances that
+were found not to take the lock (although they should be safe even
+without taking the lock).
+
+Finally, try to be more conservative and to map a single page, instead
+of two, when possible. This helps both security and performance.
+
+In addition, there is some cleanup of the patching code to make it more
+readable.
+
+[ Andy: please provide your SOB for your patch ]
 
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Nadav Amit <namit@vmware.com>
----
- arch/x86/include/asm/text-patching.h | 2 +-
- arch/x86/kernel/alternative.c        | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
-index ffe7902cc326..1f73f71b4de2 100644
---- a/arch/x86/include/asm/text-patching.h
-+++ b/arch/x86/include/asm/text-patching.h
-@@ -34,7 +34,7 @@ extern void *text_poke_early(void *addr, const void *opcode, size_t len);
-  * On the local CPU you need to be protected again NMI or MCE handlers seeing an
-  * inconsistent instruction while you patch.
-  */
--extern void *text_poke(void *addr, const void *opcode, size_t len);
-+extern void text_poke(void *addr, const void *opcode, size_t len);
- extern int poke_int3_handler(struct pt_regs *regs);
- extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
- extern int after_bootmem;
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index 0feac3dfabe9..45b7fdeaed90 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -795,7 +795,7 @@ static void text_poke_safe(void *addr, const void *opcode, size_t len,
-  *
-  * Note: Must be called under text_mutex.
-  */
--void *text_poke(void *addr, const void *opcode, size_t len)
-+void text_poke(void *addr, const void *opcode, size_t len)
- {
- 	bool cross_page_boundary = offset_in_page(addr) + len > PAGE_SIZE;
- 	struct page *pages[2] = {0};
+Andy Lutomirski (1):
+  x86/mm: temporary mm struct
+
+Nadav Amit (5):
+  x86/alternative: assert text_mutex is taken
+  fork: provide a function for copying init_mm
+  x86/alternatives: initializing temporary mm for patching
+  x86/alternatives: use temporary mm for text poking
+  x86/alternatives: remove text_poke() return value
+
+ arch/x86/include/asm/mmu_context.h   |  20 ++++
+ arch/x86/include/asm/pgtable.h       |   4 +
+ arch/x86/include/asm/text-patching.h |   4 +-
+ arch/x86/kernel/alternative.c        | 157 +++++++++++++++++++++++----
+ arch/x86/kernel/kgdb.c               |   9 ++
+ arch/x86/mm/init_64.c                |  35 ++++++
+ include/asm-generic/pgtable.h        |   4 +
+ include/linux/sched/task.h           |   1 +
+ init/main.c                          |   1 +
+ kernel/fork.c                        |  24 +++-
+ 10 files changed, 230 insertions(+), 29 deletions(-)
+
 -- 
 2.17.1
 
