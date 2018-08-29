@@ -2,184 +2,148 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8692CC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 19:56:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81DD6C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 19:57:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FCC920647
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 19:56:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FCC920647
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id AB92820647
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 19:57:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=cnexlabs.onmicrosoft.com header.i=@cnexlabs.onmicrosoft.com header.b="ZSH9Jl80"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB92820647
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cnexlabs.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728151AbeH2Xyd (ORCPT
+        id S1728318AbeH2Xz4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 19:54:33 -0400
-Received: from mga18.intel.com ([134.134.136.126]:26602 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727245AbeH2Xyd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 19:54:33 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2018 12:56:07 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,304,1531810800"; 
-   d="scan'208";a="85570799"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.20])
-  by fmsmga001.fm.intel.com with ESMTP; 29 Aug 2018 12:56:07 -0700
-Date:   Wed, 29 Aug 2018 12:56:07 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Brijesh Singh <brijesh.singh@amd.com>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Subject: Re: [PATCH v3 4/4] x86/kvm: use __decrypted attribute in shared
- variables
-Message-ID: <20180829195558.GA6801@linux.intel.com>
-References: <1535567040-1370-1-git-send-email-brijesh.singh@amd.com>
- <1535567040-1370-5-git-send-email-brijesh.singh@amd.com>
+        Wed, 29 Aug 2018 19:55:56 -0400
+Received: from mail-cys01nam02on0083.outbound.protection.outlook.com ([104.47.37.83]:20150
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727245AbeH2Xz4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 19:55:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=cnexlabs.onmicrosoft.com; s=selector1-cnexlabs-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QhoGBYWtSE07hfKAZPc3+l+ossDrhhYGq8iOYeHWHI8=;
+ b=ZSH9Jl802ML0AMeOXr/cLJomNwWLeMQa0vEDnTHsgrnO73iLXlI15Hktu/I4s2BLe4Ie0Qlvav09N9EWxdblp/KjKtTCetAdmxr09sxcTr+kUNPj1JA3T8/3T2G1VkI7lxZdLTncJ8PI0iVzuxUWXwhc2LSNbWQAlJuQOhV3gqU=
+Received: from CO2PR06MB538.namprd06.prod.outlook.com (10.141.199.23) by
+ CO2PR06MB619.namprd06.prod.outlook.com (10.141.228.153) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1080.17; Wed, 29 Aug 2018 19:57:26 +0000
+Received: from CO2PR06MB538.namprd06.prod.outlook.com
+ ([fe80::2131:a303:c149:1150]) by CO2PR06MB538.namprd06.prod.outlook.com
+ ([fe80::2131:a303:c149:1150%3]) with mapi id 15.20.1080.015; Wed, 29 Aug 2018
+ 19:57:26 +0000
+From:   Javier Gonzalez <javier@cnexlabs.com>
+To:     "Konopko, Igor J" <igor.j.konopko@intel.com>
+CC:     =?utf-8?B?TWF0aWFzIEJqw7hybGluZw==?= <mb@lightnvm.io>,
+        "marcin.dziegielewski@intel.com" <marcin.dziegielewski@intel.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/3] lightnvm: pblk: support variable OOB size
+Thread-Topic: [PATCH 0/3] lightnvm: pblk: support variable OOB size
+Thread-Index: AQHUP4Buf89JhzLZRkGfGLO3MMbYTKTW0GwAgABVk4A=
+Date:   Wed, 29 Aug 2018 19:57:25 +0000
+Message-ID: <26B5331A-D040-4AB7-BB7C-5752A76F5515@cnexlabs.com>
+References: <1535537370-10729-1-git-send-email-javier@cnexlabs.com>
+ <106d492e-4f09-7af5-d89a-75c204f3da38@intel.com>
+In-Reply-To: <106d492e-4f09-7af5-d89a-75c204f3da38@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=javier@cnexlabs.com; 
+x-originating-ip: [193.106.164.211]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CO2PR06MB619;6:sBtu0NY6HIdezltqze/fY5rZORJ/sE4a3uqRazh7XM7cpdq1+XkQSrTdpwXwM5ago9UxSQQr2mIqcpBMVb64bs15+MiQu1irbbT0nsHImujfIim4MKNkwI85k+EcNS2vHgFmUVq6lEr3x9eaAt8JH7ndUxuuxlypz/4SvhrB+KeheR6opuHjbvEa/jvZLLLDq/L9MwLnEOY18Lxo2QGJBCNPkR2BFrTTVsJjRiDfKZhM806kf6qf8Q1E6xnPM89AMeYh4mbSwuwf9vKWbKveRKWRq1VGhXU2yoyGVrmSYFyhIlVXR8cTOIDqBqWg7AUjuGUJb612RHFXym98HRbaANzKmHHgjP6xCbJ857lo64TVw9ffUZ7cpj3zIb0Kyr1CABYqfRyPI+YEwaZ0C8EqxlS+xd/L0+730AamS/5FmR9zXOVFOJat/+91eIu5KEg3sCr+T9yrxcuwagea4C2Lug==;5:/ffrCwubAfiJVMBBavLa41cm1UVIsYFDJmIwweH6clxlY7zKuAB4uaAQIgN6zltqBgDGOSrLzf8qIsU4Jb9JeWDxHGVJ7FGD2sAwNAObdd00UZsseQEgFZ6cAKgKT7VVI5gwOmVWXSrNIVDrcu/qLLTJHneftwk0VKcQdOidrZY=;7:2DtZmv93YJVQkDE8zTOOeeWu5gwjrTVr+MovmXqlpafeVGhQ6oUcuhvZ8I/L1ppVRWw1LmlV9agiYGtsGIbpfevcvrN0OyfmOS5ssx26+JJAYvziTfljK8ut4f8/DoW1RNl50h6/GqKCkjv+OgAsQYvIqxD4vesLG6/7VthsCASD85uxTUqJRMSJfQpoEQ2LEgexf4ko2SlM3QNhBe0/+Gv/UxAflKSB73tq1OCy0Jk9bz8bM0WwH/pN91Z1c893
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: fcf23bbd-b156-4080-14db-08d60de9a4a1
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(49563074)(7193020);SRVR:CO2PR06MB619;
+x-ms-traffictypediagnostic: CO2PR06MB619:
+x-microsoft-antispam-prvs: <CO2PR06MB61909F97C73E1ECD9A3EE6ABA090@CO2PR06MB619.namprd06.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(228905959029699);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(102415395)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231311)(944501410)(52105095)(93006095)(93001095)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699016);SRVR:CO2PR06MB619;BCL:0;PCL:0;RULEID:;SRVR:CO2PR06MB619;
+x-forefront-prvs: 077929D941
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(346002)(376002)(396003)(39840400004)(199004)(189003)(81166006)(11346002)(53936002)(7736002)(82746002)(54906003)(446003)(2906002)(305945005)(4326008)(25786009)(6512007)(81156014)(66066001)(6436002)(476003)(76176011)(8676002)(86362001)(14454004)(478600001)(6486002)(99936001)(6246003)(99286004)(6506007)(6916009)(256004)(102836004)(486006)(5660300001)(53546011)(229853002)(83716003)(68736007)(33656002)(105586002)(106356001)(186003)(5250100002)(8936002)(2900100001)(26005)(6116002)(3846002)(97736004)(2616005)(36756003)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:CO2PR06MB619;H:CO2PR06MB538.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: cnexlabs.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: slMIgbMIocM43IUx3RKlLehPfyudNzzUSG37dEEzRn80q2LdwamV0bWuNVsZU0jPEqkHN/SQV3ogA/6kfoaYbIM5c7xeuSX7V4LTuo0p1dmvuTcWVwqIRJaWI/VShWd6xpwGGnE0LOL7rLDDEWqkJUdmJqvoGQNkOCh6dQ8mjfjj1NadDEX4j89fKbxY4bAHN4bPSc3X0pmIvUBq+vj7Df9+QIfzYL8aOFSLs51eq/5Zy3nTM5LpCjRpkxta11yg8knjxTrkK9Zs9fwbV7yYR4pR/DCZHG3Cn2Govs8CVNIYtz6tf6fRrnoB95jq3s1raHEZO/2UN6wM5A/nflQVNUAKIc7dwpNabtnyjWHXxKw=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: multipart/signed;
+        boundary="Apple-Mail=_4CECD028-685F-4020-98D7-91CACBD021B3";
+        protocol="application/pgp-signature";
+        micalg=pgp-sha512
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1535567040-1370-5-git-send-email-brijesh.singh@amd.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-OriginatorOrg: cnexlabs.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fcf23bbd-b156-4080-14db-08d60de9a4a1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Aug 2018 19:57:25.8673
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: e40dfc2e-c6c1-463a-a598-38602b2c3cff
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO2PR06MB619
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 29, 2018 at 01:24:00PM -0500, Brijesh Singh wrote:
-> The following commit:
-> 
->   368a540e0232 (x86/kvmclock: Remove memblock dependency)
+--Apple-Mail=_4CECD028-685F-4020-98D7-91CACBD021B3
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=utf-8
 
-Checkpatch prefers:
+> On 29 Aug 2018, at 16.51, Igor Konopko <igor.j.konopko@intel.com> =
+wrote:
+>=20
+>=20
+>=20
+> On 29.08.2018 12:09, Javier Gonz=C3=A1lez wrote:
+>> This patchset adds pblk support for variable metadata sizes on the =
+out
+>> of bound area.
+>> Igor, Marcin, you sent a patch some time ago implementing a similar
+>> functionality, but it never got re-posted after review. Can you test
+>> this and see if it works for your case? I did not implement support =
+for
+>> outlined metadata for the case where the reported OOB area is 0. It
+>> should be pretty simple to do that on top of these patches though.
+>=20
+> Sure, we will test that and let you know. I was busy last time and due
+> to that I never repost it. I will do this on top of your patches,
+> hopefully soon.
+>=20
 
-    Commit 368a540e0232 ("x86/kvmclock: Remove memblock dependency")
+Thanks Igor, this would be great.
 
-That'll also save three lines in the commit message.
- 
-> caused SEV guest regression. When SEV is active, we map the shared
-> variables (wall_clock and hv_clock_boot) with C=0 to ensure that both
-> the guest and the hypervisor is able to access the data. To map the
+--Apple-Mail=_4CECD028-685F-4020-98D7-91CACBD021B3
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
 
-Nit: s/is/are
+-----BEGIN PGP SIGNATURE-----
 
-> variables we use kernel_physical_mapping_init() to split the large pages,
-> but this routine fails to allocate a new page. Before the above commit,
-> kvmclock initialization was called after memory allocator was available
-> but now its called early during boot.
+iQIzBAEBCgAdFiEE+ws7Qq+qZPG1bJoyIX4xUKFRnnQFAluG+qMACgkQIX4xUKFR
+nnR0NxAAiVQXJKYU17Nm6QtFwZyBfRovomCllDAImTjYLcJ7hMwyj0WOuiJkR4wl
+vovKkkrf75h66FP3eDWdkLMFBR2WcFig+W0VXXZKY7UhNrH4acoKyVgeph7Q9wB+
+vgw7v6w56dqXsQC2Uca1k+9q/zgEaK0Z9dLAVmGbtqnBPTSnbstaUDnaFaYfq5S+
+mEeNowMY5z1lcFPwhGUkl93eQuy7MdyaMDYBPKdXDHAmkEh5VY8FPmBjUk5zPMD6
+0q7xuR/qZByky05pndKTJArHgvsSTKu3Gb7HaHQvUl9EzmuGel8BScHH0xd/Pup5
+2MsQiD4FdnjZJmF37E7arLXbWwlQq1f3oCl99Er60KgEzQ8T6Q4zRJpAvoeLopfy
+DPOwUmqgDKe0RqOzb2jhPdB5ZaibswfEfi8RSequFDGNXRjikWWnkThZt/wmc/jC
+bmCawhhQ3lrM7bI+htOmNVWBitNaL0Vr4Y4U4OiQ7NebUPGEeO8s0+2sQm1mWGbv
+K+5QIAgDIzdqPtLTblvhgZFRA7WKVj7z8lMR1cUeZ3IOmI6NqEKEbe0SssriXcNK
+PxjUX8QiZ94awBXRTOr5s0wgtmQtU0uSwWMYOqhiqcMBVlhLFEYThDzQTAoImpTI
+OBof8SGdnmB2vgy4/xC5y8i+RgxanyUD6twwfXBN0Qzp/VoZA4A=
+=zYZi
+-----END PGP SIGNATURE-----
 
-What about something like this to make the issue a bit clearer:
-
-  variables we use kernel_physical_mapping_init() to split the large pages,
-  but splitting large pages requires allocating a new PMD, which fails now
-  that kvmclock initialization is called early during boot.
-
-> Recently we added a special .data..decrypted section to hold the shared
-> variables. This section is mapped with C=0 early during boot. Use
-> __decrypted attribute to put the wall_clock and hv_clock_boot in
-> .data..decrypted section so that they are mapped with C=0.
-> 
-> Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
-> Fixes: 368a540e0232 ("x86/kvmclock: Remove memblock dependency")
-> Cc: Tom Lendacky <thomas.lendacky@amd.com>
-> Cc: kvm@vger.kernel.org
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Borislav Petkov <bp@suse.de>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Sean Christopherson <sean.j.christopherson@intel.com>
-> Cc: kvm@vger.kernel.org
-> Cc: "Radim Krčmář" <rkrcmar@redhat.com>
-> ---
->  arch/x86/kernel/kvmclock.c | 30 +++++++++++++++++++++++++-----
->  1 file changed, 25 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/kvmclock.c b/arch/x86/kernel/kvmclock.c
-> index 1e67646..08f5f8a 100644
-> --- a/arch/x86/kernel/kvmclock.c
-> +++ b/arch/x86/kernel/kvmclock.c
-> @@ -28,6 +28,7 @@
->  #include <linux/sched/clock.h>
->  #include <linux/mm.h>
->  #include <linux/slab.h>
-> +#include <linux/set_memory.h>
->  
->  #include <asm/hypervisor.h>
->  #include <asm/mem_encrypt.h>
-> @@ -61,8 +62,8 @@ early_param("no-kvmclock-vsyscall", parse_no_kvmclock_vsyscall);
->  	(PAGE_SIZE / sizeof(struct pvclock_vsyscall_time_info))
->  
->  static struct pvclock_vsyscall_time_info
-> -			hv_clock_boot[HVC_BOOT_ARRAY_SIZE] __aligned(PAGE_SIZE);
-> -static struct pvclock_wall_clock wall_clock;
-> +			hv_clock_boot[HVC_BOOT_ARRAY_SIZE] __decrypted __aligned(PAGE_SIZE);
-> +static struct pvclock_wall_clock wall_clock __decrypted;
->  static DEFINE_PER_CPU(struct pvclock_vsyscall_time_info *, hv_clock_per_cpu);
->  
->  static inline struct pvclock_vcpu_time_info *this_cpu_pvti(void)
-> @@ -267,10 +268,29 @@ static int kvmclock_setup_percpu(unsigned int cpu)
->  		return 0;
->  
->  	/* Use the static page for the first CPUs, allocate otherwise */
-> -	if (cpu < HVC_BOOT_ARRAY_SIZE)
-> +	if (cpu < HVC_BOOT_ARRAY_SIZE) {
->  		p = &hv_clock_boot[cpu];
-> -	else
-> -		p = kzalloc(sizeof(*p), GFP_KERNEL);
-> +	} else {
-> +		int rc;
-> +		unsigned int sz = sizeof(*p);
-> +
-> +		if (sev_active())
-> +			sz = PAGE_ALIGN(sz);
-
-This is a definite downside to the section approach.  Unless I missed
-something, the section padding goes to waste since we don't have a
-mechanism in place to allocate into that section, e.g. as is we're
-burning nearly 2mb of data since we're only using 4k of the 2mb page.
-And every decrypted allocation can potentially fracture a large page
-since the allocator is unaware of the decrypted requirement.  Might
-not be an issue for kvmclock since it's a one-time allocation, but
-we could suffer death by a thousand cuts if there are scenarios where
-a decrypted allocation isn't be persistent (VirtIO queues maybe?).
-
-Duplicating the full kernel tables for C=0 accesses doesn't suffer
-from these issues.  And I think potential corruption issues due to
-mis-{aligned,size} objects can be detected through static analysis,
-build assertions and/or runtime checks.
-
-> +		p = kzalloc(sz, GFP_KERNEL);
-
-For the SEV case, can't we do a straight kmalloc() since we zero
-out the page after decrypting it?
-
-> +
-> +		/*
-> +		 * The physical address of per-cpu variable will be shared with
-> +		 * the hypervisor. Let's clear the C-bit before we assign the
-> +		 * memory to per_cpu variable.
-> +		 */
-> +		if (p && sev_active()) {
-> +			rc = set_memory_decrypted((unsigned long)p, sz >> PAGE_SHIFT);
-> +			if (rc)
-> +				return rc;
-> +			memset(p, 0, sz);
-> +		}
-> +	}
->  
->  	per_cpu(hv_clock_per_cpu, cpu) = p;
->  	return p ? 0 : -ENOMEM;
-> -- 
-> 2.7.4
-> 
+--Apple-Mail=_4CECD028-685F-4020-98D7-91CACBD021B3--
