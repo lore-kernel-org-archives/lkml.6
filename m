@@ -3,100 +3,198 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D3DCC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 18:45:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93F5EC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 18:56:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1865D204FD
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 18:45:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2994C2064E
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 18:56:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="oZq4v44R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1865D204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bw7L1YkL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2994C2064E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727661AbeH2WnM (ORCPT
+        id S1727939AbeH2WyM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 18:43:12 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:46489 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726279AbeH2WnM (ORCPT
+        Wed, 29 Aug 2018 18:54:12 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:40588 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727335AbeH2WyL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 18:43:12 -0400
-Received: by mail-lj1-f196.google.com with SMTP id 203-v6so5178799ljj.13
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 11:44:59 -0700 (PDT)
+        Wed, 29 Aug 2018 18:54:11 -0400
+Received: by mail-wr1-f67.google.com with SMTP id n2-v6so5782889wrw.7;
+        Wed, 29 Aug 2018 11:55:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=vaD+mFxM4LZn4eEf20P0UuDNQjJ+LELHU1q0AUBil+g=;
-        b=oZq4v44R1EZnHk5EL4W8ZpfMqNsfl4rGSBgp6Mc0r3v6FKOJIc/JnPNwR2MZvEjZh7
-         iT5zA8YRHsqUZBYTtVgjCD600xVWN0C3NEnBJU2jIMDyLTK0MpScEawMqQTUjXEmwPeC
-         +cG7pFjKx0YORF+2JF+7UsG37XkW6OE6tqILuVYOC9OGN0vliBY4HAQvajhcajvZPEP+
-         X5hsfc9u+O6aO8AJJF3wEWw3c+HjnjQ6A2sZDkBVwrAfuDAeU9or4vZVAacRzsFHbJs2
-         8ho2MtOLtFO2Yt/3f9B0uFg4JPQhRaxM0SS8QyN/sP6mWjWGqYAc0wjUal5T4jxd+16b
-         9kWg==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=jrVnkk74ldmRMlSZTQnEn84eKYHk4HRLhSd4OxKqPq4=;
+        b=Bw7L1YkLdLsc4HvHky5AvKbtKWUV6gnBMNBP8Cq7/pMZuEP4Pg5eISByhu9QOhisrV
+         cqt511l0jMSWnT8UhuC0thljNL/HoUMc1pkL2rLCI8gnqNO+Vo/JSytdXcWgpToFhiXl
+         wKR/vUPdepnLTKD5s7rOwIcZXbYnxdWZdWJolJwZi2F7aStEtpcHwM877lG5C5d3Un8x
+         ZljWZpyTnO4b4nQvQWdGBQ/ol5/8wLWJuHZHxxy3gfZ4QbaE1sG+sglLcOTW0tUPpP2V
+         lXLK56GIX9No3+1w6NrU4svZuANgq+kSHh8uMKBnjDKWkMZ3QNMN27x2RLk+4yFt/fS+
+         uWuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=vaD+mFxM4LZn4eEf20P0UuDNQjJ+LELHU1q0AUBil+g=;
-        b=Wx0Rc3NrznF9CS1BdExO9T3BU3KW6LvkROebfC13EoDUX7Ld2un2NhgRJa8UogHmni
-         vK6nOTSzkYGXt55E53s4yps0scutxNtlvOmMyIWZRn9TQBREivMlkwFVlTe2R2414ef0
-         kzu2NhbkZgQsDCbe0kPWF2C3LlnBlL7MZtnPAeu7P/HGUbGPujlN4uXAhmvx/RWkTmq1
-         jXx2WozMKshIAi/5OMrn8yrRoum1kz1BVWKcXw8fQn+OmuvYVQ0fXUXl6fZaDwtVO5U5
-         SdCqgSmWf+5M3+e1E3OCIf2oOWvmedHworrLo7A7124yBBheMo9UmoE1rX8W71OvPc7J
-         49sg==
-X-Gm-Message-State: APzg51C1xkwpJ8ohaxpclZSoou9tWVvCFUp8mS3GMrGcqrZq54LO6f3P
-        UvCGGs4eq1NmeehHe7mbuHtAVbbBXXvXjgFYg/ckQA==
-X-Google-Smtp-Source: ANB0VdZZPg+b/gXLlou5T/5ttWJabL5aFy3IHpTpW21PwpNW5Hs83KP1pdvEdMm0XoP/Es7dNFfOx2aO9stMkeG/ScY=
-X-Received: by 2002:a2e:9d0c:: with SMTP id t12-v6mr5051484lji.75.1535568298958;
- Wed, 29 Aug 2018 11:44:58 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jrVnkk74ldmRMlSZTQnEn84eKYHk4HRLhSd4OxKqPq4=;
+        b=sJLtY3vgrRx0cS29+PE/MmSqD3ae+n5+JYIOsgwc1vfjAoJ+P/jYadKuHRXs9BUPIn
+         iXE7YyifuocIPy8SI+XMZhDdv6TL0KAG9/ooAl4EY+xhCM6SQSZrl8i0y5laHdz/QeqC
+         G8nEU/Vn+JJEAYU8yHYAXigQtKqTzOSNKbCgASGbQAMtg+L2In380ioXU8DGGaqZ1zxh
+         vIvFOYuFusEDBsB4XPH/JwT9rSWOrnidYfP7lFLjJhfw3p45sEhqH+rpm7jMllCWVfwW
+         tx/diWWnmnloiDhxfVHHGvatCZx65KXK3VdM+RAUdZTg2OZbUQEC9r3Zqj03rC3Z72ib
+         mazg==
+X-Gm-Message-State: APzg51Bs5LMAjQiw1Be97DH2jSWmk1iYN3w5JKzwCpwIyp0ipfBTCZst
+        lchgIk/WuPwACp+TwkJVqFmG1kM+
+X-Google-Smtp-Source: ANB0VdYJPI0q0FWpdq4o4jEVL0K8WIVdWTqN32WZUmcg+opwwTyd0tg7En+JvEfIBXmoOizyr+Xtbg==
+X-Received: by 2002:adf:ae01:: with SMTP id x1-v6mr5162831wrc.45.1535568956415;
+        Wed, 29 Aug 2018 11:55:56 -0700 (PDT)
+Received: from [192.168.1.18] (bkz141.neoplus.adsl.tpnet.pl. [83.28.193.141])
+        by smtp.gmail.com with ESMTPSA id p89-v6sm8635500wrc.97.2018.08.29.11.55.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 Aug 2018 11:55:55 -0700 (PDT)
+Subject: Re: [PATCH v5 1/2] leds: core: Introduce LED pattern trigger
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Baolin Wang <baolin.wang@linaro.org>, Pavel Machek <pavel@ucw.cz>,
+        rteysseyre@gmail.com, Mark Brown <broonie@kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <1dc5d394324b2bf1ffe229b8e42691fab6d749e0.1533556992.git.baolin.wang@linaro.org>
+ <c18fd41f-831c-ab74-57e5-d4151f4b47cc@gmail.com> <20180824101145.GA1510@amd>
+ <9bb7ac19-36a6-d11a-6d46-fc65c2026201@gmail.com> <20180824201227.GB17146@amd>
+ <f5046e2d-9f15-4b7e-083e-e97f7ca0693c@gmail.com>
+ <CAMz4kuLubD6v1+zmjuKtBL4geBk4ofBdkMy+v8x0K5g_L0otqQ@mail.gmail.com>
+ <52eb7b5f-a405-06d1-2758-f27401a3ce3b@gmail.com>
+ <20180828211326.GI2523@minitux>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <ba3c46dd-cfa3-6df3-7f30-dc604ea1d511@gmail.com>
+Date:   Wed, 29 Aug 2018 20:55:53 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a19:dd41:0:0:0:0:0 with HTTP; Wed, 29 Aug 2018 11:44:58
- -0700 (PDT)
-X-Originating-IP: [2620:10d:c090:200::5:903a]
-In-Reply-To: <1535563287-24803-1-git-send-email-scott.branden@broadcom.com>
-References: <1535563287-24803-1-git-send-email-scott.branden@broadcom.com>
-From:   Olof Johansson <olof@lixom.net>
-Date:   Wed, 29 Aug 2018 11:44:58 -0700
-Message-ID: <CAOesGMhjcJ1p3QcEYb9fsx3fMXAOsgR2njOq=VKgEbWGwJi36g@mail.gmail.com>
-Subject: Re: [PATCH] arm64: defconfig: enable EFI_ARMSTUB_DTB_LOADER
-To:     Scott Branden <scott.branden@broadcom.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180828211326.GI2523@minitux>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 08/28/2018 11:13 PM, Bjorn Andersson wrote:
+> On Tue 28 Aug 13:25 PDT 2018, Jacek Anaszewski wrote:
+> 
+>> On 08/25/2018 09:51 AM, Baolin Wang wrote:
+>>> On 25 August 2018 at 04:44, Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
+>>>> On 08/24/2018 10:12 PM, Pavel Machek wrote:
+>>>>> On Fri 2018-08-24 21:49:50, Jacek Anaszewski wrote:
+>>>>>> Hi Pavel,
+>>>>>>
+>>>>>> On 08/24/2018 12:11 PM, Pavel Machek wrote:
+>>>>>>> Hi!
+>>>>>>>
+>>>>>>>> I think that it would be more flexible if software pattern fallback
+>>>>>>>> was applied in case of pattern_set failure. Otherwise, it would
+>>>>>>>> lead to the situation where LED class devices that support hardware
+>>>>>>>> blinking couldn't be applied the same set of patterns as LED class
+>>>>>>>> devices that don't implement pattern_set. The latter will always have to
+>>>>>>>> resort to using software pattern engine which will accept far greater
+>>>>>>>> amount of pattern combinations.
+>>>>>>>>
+>>>>>>>> In this case we need to discuss on what basis the decision will be
+>>>>>>>> made on whether hardware or software engine will be used.
+>>>>>>>>
+>>>>>>>> Possible options coming to mind:
+>>>>>>>> - an interface will be provided to determine max difference between
+>>>>>>>>   the settings supported by the hardware and the settings requested by
+>>>>>>>>   the user, that will result in aligning user's setting to the hardware
+>>>>>>>>   capabilities
+>>>>>>>> - the above alignment rate will be predefined instead
+>>>>>>>> - hardware engine will be used only if user requests supported settings
+>>>>>>>>   on the whole span of the requested pattern
+>>>>>>>> - in each of the above cases it would be worth to think of the
+>>>>>>>>   interface to show the scope of the settings supported by hardware
+>>>>>>>
+>>>>>>> I'd recommend keeping it simple. We use hardware engine if driver
+>>>>>>> author thinks pattern is "close enough".
+>>>>>>
+>>>>>> The thing is that in the ledtrig-pattern v5 implementation there
+>>>>>> is no option of using software fallback if pattern_set op
+>>>>>> is initialized:
+>>>>>>
+>>>>>> +    if (led_cdev->pattern_set) {
+>>>>>> +            return led_cdev->pattern_set(led_cdev, data->patterns,
+>>>>>> +                                         data->npatterns, data->repeat);
+>>>>>> +    }
+>>>>>
+>>>>> Yeah, that sounds wrong. (Sorry I did not pay enough attention).
+>>>>>
+>>>>> It pattern_set() returns special error code, it should just continue
+>>>>> and use software pattern fallback.
+>>>>
+>>>> And now we can get back to the issue I was concerned about in the
+>>>> email you replied to, i.e. what series of [brightness delta_t] tuples
+>>>> should be written to the pattern file to enable hardware breathing
+>>>> engine.
+>>>
+>>> OK. So now we've made a consensus to use the software pattern fallback
+>>> if failed to set hardware pattern. How about introduce one interface
+>>> to convert hardware patterns to software patterns if necessary?
+>>>
+>>> diff --git a/drivers/leds/trigger/ledtrig-pattern.c
+>>> b/drivers/leds/trigger/ledtrig-pattern.c
+>>> index 63b94a2..d46a641 100644
+>>> --- a/drivers/leds/trigger/ledtrig-pattern.c
+>>> +++ b/drivers/leds/trigger/ledtrig-pattern.c
+>>> @@ -66,8 +66,15 @@ static int pattern_trig_start_pattern(struct
+>>> pattern_trig_data *data,
+>>>                 return 0;
+>>>
+>>>         if (led_cdev->pattern_set) {
+>>> -               return led_cdev->pattern_set(led_cdev, data->patterns,
+>>> -                                            data->npatterns, data->repeat);
+>>> +               ret = led_cdev->pattern_set(led_cdev, data->patterns,
+>>> +                                           data->npatterns, data->repeat);
+>>> +               if (!ret)
+>>> +                       return 0;
+>>> +
+>>> +               dev_warn(led_cdev->dev, "Failed to set hardware pattern\n");
+>>> +
+>>> +               if (led_cdev->pattern_convert)
+>>> +                       led_cdev->pattern_convert(led_cdev,
+>>
+>> I can't see how it could help to assess if hw pattern
+>> engine can launch given pattern, and with what accuracy.
+>>
+>> Instead, I propose to add a means for defining whether the pattern
+>> to be set is intended for hardware pattern engine or for software
+>> fallback. It could be either separate sysfs file e.g. hw_pattern,
+>> or a modifier to the pattern written to the pattern file, e,g,
+>>
+>> echo "hw 100 2 200 3 100 2" > pattern
+>>
+>> hw format expected by given driver would have to be described
+>> in the per-driver ABI documentation. All patterns without
+>> "hw" prefix would enable software pattern engine.
+>>
+> 
+> We started this discussion with the suggestion that rather than
+> introducing a new Qualcomm specific sysfs interface for controlling the
+> pattern engine we should have a common one, but if I understand your
+> suggestion we should not have a common interface, just a common sysfs
+> file name?
 
-On Wed, Aug 29, 2018 at 10:21 AM, Scott Branden
-<scott.branden@broadcom.com> wrote:
-> Enable EFI_ARMSTUB_DTB_LOADER to add support for the dtb= command line
-> parameter to function with efi loader.
->
-> Required to boot on existing bootloaders that do not support devicetree
-> provided by the platform or by the bootloader.
->
-> Fixes: 3d7ee348aa41 ("efi/libstub/arm: Add opt-in Kconfig option for the DTB loader")
-> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+True, when it is related to hardware pattern. Software pattern would
+have common both file and interface. Alternatively, we could have two
+separate files for setting software and hardware pattern.
 
-Why did Ard create an option for this if it's just going be turned on
-in default configs? Doesn't make sense to me.
-
-It would help to know what firmware still is crippled and how common
-it is, since it's been a few years that this has been a requirement by
-now.
-
-
--Olof
+-- 
+Best regards,
+Jacek Anaszewski
