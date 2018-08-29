@@ -2,106 +2,157 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED896C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 09:29:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 016B6C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 09:31:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A5CF20868
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 09:29:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A5CF20868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id AA0762086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 09:31:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA0762086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727955AbeH2NZe (ORCPT
+        id S1727881AbeH2N1I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 09:25:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51652 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727236AbeH2NZe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 09:25:34 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BD753AE0B;
-        Wed, 29 Aug 2018 09:29:31 +0000 (UTC)
-Subject: Re: [PATCH] xen-blkback: Switch to closed state after releasing the
- backing device
-To:     Valentin Vidic <Valentin.Vidic@CARNet.hr>
-Cc:     =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Jens Axboe <axboe@kernel.dk>, xen-devel@lists.xenproject.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-References: <20180829065214.23546-1-Valentin.Vidic@CARNet.hr>
- <1701ccef-3ebb-973b-de32-059a8816d31c@suse.com>
- <20180829082731.GX26705@gavran.carpriv.carnet.hr>
- <b67866fc-13b7-ef88-c8db-2745127e5f6a@suse.com>
- <20180829092329.GY26705@gavran.carpriv.carnet.hr>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <7afb803f-a2d2-73c8-f2d3-8b866dc89e87@suse.com>
-Date:   Wed, 29 Aug 2018 11:29:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 29 Aug 2018 09:27:08 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:59751 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727198AbeH2N1I (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 09:27:08 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 466CD803CC; Wed, 29 Aug 2018 11:31:05 +0200 (CEST)
+Date:   Wed, 29 Aug 2018 11:31:04 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
+        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org,
+        lee.jones@linaro.org
+Subject: [PATCH] mfd: motorola-cpcap: Add audio-codec support
+Message-ID: <20180829093104.GA22065@amd>
 MIME-Version: 1.0
-In-Reply-To: <20180829092329.GY26705@gavran.carpriv.carnet.hr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="y0ulUmNC+osPPQO6"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/08/18 11:23, Valentin Vidic wrote:
-> On Wed, Aug 29, 2018 at 10:43:48AM +0200, Juergen Gross wrote:
->> I think this should be an action triggered by the frontend, not by dom0
->> (xen tools will always set "online" to 0 when removing a device, AFAIK).
->>
->> I'm not sure this is relevant, but I realized this behavior is changed
->> by your patch.
-> 
-> Can't find any place in xen-blkfront.c (or the rest of the kernel) where
-> the "online" value gets set, so it seems xen tools in dom0 is the only
-> thing that modifies this Xenbus node?
-> 
 
-I think so, yes.
+--y0ulUmNC+osPPQO6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It will be set to "1" at device creation and to "0" when removing the
-device, both times by Xen tools.
+=46rom: Sebastian Reichel <sre@kernel.org>
+   =20
+Add support for the audio-codec node by converting from
+devm_of_platform_populate() to devm_mfd_add_devices().
+  =20
+Tested-by: Pavel Machek <pavel@ucw.cz>
+Acked-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Signed-off-by: Pavel Machek <pavel@ucw.cz>
 
+diff --git a/drivers/mfd/motorola-cpcap.c b/drivers/mfd/motorola-cpcap.c
+index 5276911..20d9692 100644
+--- a/drivers/mfd/motorola-cpcap.c
++++ b/drivers/mfd/motorola-cpcap.c
+@@ -18,6 +18,7 @@
+ #include <linux/regmap.h>
+ #include <linux/sysfs.h>
+=20
++#include <linux/mfd/core.h>
+ #include <linux/mfd/motorola-cpcap.h>
+ #include <linux/spi/spi.h>
+=20
+@@ -216,6 +217,53 @@ static const struct regmap_config cpcap_regmap_config =
+=3D {
+ 	.val_format_endian =3D REGMAP_ENDIAN_LITTLE,
+ };
+=20
++static const struct mfd_cell cpcap_mfd_devices[] =3D {
++	{
++		.name          =3D "cpcap_adc",
++		.of_compatible =3D "motorola,mapphone-cpcap-adc",
++	}, {
++		.name          =3D "cpcap_battery",
++		.of_compatible =3D "motorola,cpcap-battery",
++	}, {
++		.name          =3D "cpcap-charger",
++		.of_compatible =3D "motorola,mapphone-cpcap-charger",
++	}, {
++		.name          =3D "cpcap-regulator",
++		.of_compatible =3D "motorola,mapphone-cpcap-regulator",
++	}, {
++		.name          =3D "cpcap-rtc",
++		.of_compatible =3D "motorola,cpcap-rtc",
++	}, {
++		.name          =3D "cpcap-pwrbutton",
++		.of_compatible =3D "motorola,cpcap-pwrbutton",
++	}, {
++		.name          =3D "cpcap-usb-phy",
++		.of_compatible =3D "motorola,mapphone-cpcap-usb-phy",
++	}, {
++		.name          =3D "cpcap-led",
++		.id            =3D 0,
++		.of_compatible =3D "motorola,cpcap-led-red",
++	}, {
++		.name          =3D "cpcap-led",
++		.id            =3D 1,
++		.of_compatible =3D "motorola,cpcap-led-green",
++	}, {
++		.name          =3D "cpcap-led",
++		.id            =3D 2,
++		.of_compatible =3D "motorola,cpcap-led-blue",
++	}, {
++		.name          =3D "cpcap-led",
++		.id            =3D 3,
++		.of_compatible =3D "motorola,cpcap-led-adl",
++	}, {
++		.name          =3D "cpcap-led",
++		.id            =3D 4,
++		.of_compatible =3D "motorola,cpcap-led-cp",
++	}, {
++		.name          =3D "cpcap-codec",
++	}
++};
++
+ static int cpcap_probe(struct spi_device *spi)
+ {
+ 	const struct of_device_id *match;
+@@ -260,7 +308,8 @@ static int cpcap_probe(struct spi_device *spi)
+ 	if (ret)
+ 		return ret;
+=20
+-	return devm_of_platform_populate(&cpcap->spi->dev);
++	return devm_mfd_add_devices(&spi->dev, 0, cpcap_mfd_devices,
++				    ARRAY_SIZE(cpcap_mfd_devices), NULL, 0, NULL);
+ }
+=20
+ static struct spi_driver cpcap_driver =3D {
 
-Juergen
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--y0ulUmNC+osPPQO6
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAluGZ9gACgkQMOfwapXb+vKiNwCeLKzTh3gLXV5XlGB6ldV0+8Yw
+hxYAoKf6f4J4Dheg2ZRYexoOoMV9fmgw
+=OsPN
+-----END PGP SIGNATURE-----
+
+--y0ulUmNC+osPPQO6--
