@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BF35C43334
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:54:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5255EC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:54:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8EB420644
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:54:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8EB420644
+	by mail.kernel.org (Postfix) with ESMTP id 007FE20644
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:54:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 007FE20644
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728018AbeH3Cx1 (ORCPT
+        id S1727981AbeH3Cx1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 29 Aug 2018 22:53:27 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52892 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727597AbeH3CxZ (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38730 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727659AbeH3CxY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 22:53:25 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7TMs0Ax122059
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:54:16 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m64a28kr9-1
+        Wed, 29 Aug 2018 22:53:24 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7TMs3Mk133547
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:54:15 -0400
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2m615dfm60-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:54:16 -0400
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:54:15 -0400
 Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 29 Aug 2018 18:54:15 -0400
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Wed, 29 Aug 2018 18:54:14 -0400
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 29 Aug 2018 18:54:09 -0400
+        Wed, 29 Aug 2018 18:54:08 -0400
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7TMs9oc18415710
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7TMs78025362640
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 29 Aug 2018 22:54:09 GMT
+        Wed, 29 Aug 2018 22:54:07 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D1445B2067;
-        Wed, 29 Aug 2018 18:53:04 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id 8E3DDB2076;
+        Wed, 29 Aug 2018 18:53:03 -0400 (EDT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AA5FDB206B;
-        Wed, 29 Aug 2018 18:53:04 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id 5A28DB206B;
+        Wed, 29 Aug 2018 18:53:03 -0400 (EDT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 29 Aug 2018 18:53:04 -0400 (EDT)
+        Wed, 29 Aug 2018 18:53:03 -0400 (EDT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id C80AF16C91DE; Wed, 29 Aug 2018 15:54:07 -0700 (PDT)
+        id 7FDC916C91D1; Wed, 29 Aug 2018 15:54:07 -0700 (PDT)
 From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -61,20 +61,20 @@ Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tip/core/rcu 23/24] rcu: Define rcu_all_qs() only in !PREEMPT builds
-Date:   Wed, 29 Aug 2018 15:54:04 -0700
+Subject: [PATCH tip/core/rcu 10/24] rcu: Clean up flavor-related definitions and comments in rcupdate.h
+Date:   Wed, 29 Aug 2018 15:53:51 -0700
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180829225340.GA7019@linux.vnet.ibm.com>
 References: <20180829225340.GA7019@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18082922-0072-0000-0000-0000039969A9
+x-cbid: 18082922-0052-0000-0000-0000032821B9
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009636; HX=3.00000242; KW=3.00000007;
  PH=3.00000004; SC=3.00000266; SDB=6.01080749; UDB=6.00557500; IPR=6.00860734;
- MB=3.00023002; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-29 22:54:13
+ MB=3.00023002; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-29 22:54:12
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082922-0073-0000-0000-0000493EB981
-Message-Id: <20180829225405.7275-23-paulmck@linux.vnet.ibm.com>
+x-cbparentid: 18082922-0053-0000-0000-00005DE600FF
+Message-Id: <20180829225405.7275-10-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-29_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -87,142 +87,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that rcu_all_qs() is used only in !PREEMPT builds, move it to
-tree_plugin.h so that it is defined only in those builds.  This in
-turn means that rcu_momentary_dyntick_idle() is only used in !PREEMPT
-builds, but it is simply marked __maybe_unused in order to keep it
-near the rest of the dyntick-idle code.
-
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 ---
- include/linux/rcutree.h  |  2 ++
- kernel/rcu/tree.c        | 41 +---------------------------------------
- kernel/rcu/tree_plugin.h | 39 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 42 insertions(+), 40 deletions(-)
+ include/linux/rcupdate.h | 27 ++++++++++++---------------
+ 1 file changed, 12 insertions(+), 15 deletions(-)
 
-diff --git a/include/linux/rcutree.h b/include/linux/rcutree.h
-index d09a9abe9440..7f83179177d1 100644
---- a/include/linux/rcutree.h
-+++ b/include/linux/rcutree.h
-@@ -66,7 +66,9 @@ void rcu_scheduler_starting(void);
- extern int rcu_scheduler_active __read_mostly;
- void rcu_end_inkernel_boot(void);
- bool rcu_is_watching(void);
-+#ifndef CONFIG_PREEMPT
- void rcu_all_qs(void);
-+#endif
- 
- /* RCUtree hotplug events */
- int rcutree_prepare_cpu(unsigned int cpu);
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index e8fbb7ee76cc..5f2a12a65b42 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -356,7 +356,7 @@ bool rcu_eqs_special_set(int cpu)
+diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+index 12103e1bbe67..d6d543b60a9f 100644
+--- a/include/linux/rcupdate.h
++++ b/include/linux/rcupdate.h
+@@ -119,11 +119,10 @@ static inline void rcu_init_nohz(void) { }
+  * RCU_NONIDLE - Indicate idle-loop code that needs RCU readers
+  * @a: Code that RCU needs to pay attention to.
   *
-  * The caller must have disabled interrupts and must not be idle.
+- * RCU, RCU-bh, and RCU-sched read-side critical sections are forbidden
+- * in the inner idle loop, that is, between the rcu_idle_enter() and
+- * the rcu_idle_exit() -- RCU will happily ignore any such read-side
+- * critical sections.  However, things like powertop need tracepoints
+- * in the inner idle loop.
++ * RCU read-side critical sections are forbidden in the inner idle loop,
++ * that is, between the rcu_idle_enter() and the rcu_idle_exit() -- RCU
++ * will happily ignore any such read-side critical sections.  However,
++ * things like powertop need tracepoints in the inner idle loop.
+  *
+  * This macro provides the way out:  RCU_NONIDLE(do_something_with_RCU())
+  * will tell RCU that it needs to pay attention, invoke its argument
+@@ -163,7 +162,7 @@ void exit_tasks_rcu_finish(void);
+ #else /* #ifdef CONFIG_TASKS_RCU */
+ #define rcu_tasks_qs(t)	do { } while (0)
+ #define rcu_note_voluntary_context_switch(t)		rcu_all_qs()
+-#define call_rcu_tasks call_rcu_sched
++#define call_rcu_tasks call_rcu
+ #define synchronize_rcu_tasks synchronize_rcu
+ static inline void exit_tasks_rcu_start(void) { }
+ static inline void exit_tasks_rcu_finish(void) { }
+@@ -309,8 +308,8 @@ static inline void rcu_preempt_sleep_check(void) { }
+  * Helper functions for rcu_dereference_check(), rcu_dereference_protected()
+  * and rcu_assign_pointer().  Some of these could be folded into their
+  * callers, but they are left separate in order to ease introduction of
+- * multiple flavors of pointers to match the multiple flavors of RCU
+- * (e.g., __rcu_sched, and __srcu), should this make sense in the future.
++ * multiple pointers markings to match different RCU implementations
++ * (e.g., __srcu), should this make sense in the future.
   */
--static void rcu_momentary_dyntick_idle(void)
-+static void __maybe_unused rcu_momentary_dyntick_idle(void)
- {
- 	struct rcu_dynticks *rdtp = this_cpu_ptr(&rcu_dynticks);
- 	int special;
-@@ -381,45 +381,6 @@ static int rcu_is_cpu_rrupt_from_idle(void)
- 	       __this_cpu_read(rcu_dynticks.dynticks_nmi_nesting) <= 1;
- }
  
--/*
-- * Register an urgently needed quiescent state.  If there is an
-- * emergency, invoke rcu_momentary_dyntick_idle() to do a heavy-weight
-- * dyntick-idle quiescent state visible to other CPUs, which will in
-- * some cases serve for expedited as well as normal grace periods.
-- * Either way, register a lightweight quiescent state.
-- *
-- * The barrier() calls are redundant in the common case when this is
-- * called externally, but just in case this is called from within this
-- * file.
-- *
-- */
--void rcu_all_qs(void)
--{
--	unsigned long flags;
--
--	if (!raw_cpu_read(rcu_dynticks.rcu_urgent_qs))
--		return;
--	preempt_disable();
--	/* Load rcu_urgent_qs before other flags. */
--	if (!smp_load_acquire(this_cpu_ptr(&rcu_dynticks.rcu_urgent_qs))) {
--		preempt_enable();
--		return;
--	}
--	this_cpu_write(rcu_dynticks.rcu_urgent_qs, false);
--	barrier(); /* Avoid RCU read-side critical sections leaking down. */
--	if (unlikely(raw_cpu_read(rcu_dynticks.rcu_need_heavy_qs))) {
--		local_irq_save(flags);
--		rcu_momentary_dyntick_idle();
--		local_irq_restore(flags);
--	}
--	if (unlikely(raw_cpu_read(rcu_data.cpu_no_qs.b.exp)))
--		rcu_qs();
--	this_cpu_inc(rcu_dynticks.rcu_qs_ctr);
--	barrier(); /* Avoid RCU read-side critical sections leaking up. */
--	preempt_enable();
--}
--EXPORT_SYMBOL_GPL(rcu_all_qs);
--
- #define DEFAULT_RCU_BLIMIT 10     /* Maximum callbacks per rcu_do_batch. */
- static long blimit = DEFAULT_RCU_BLIMIT;
- #define DEFAULT_RCU_QHIMARK 10000 /* If this many pending, ignore blimit. */
-diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index cd4c1b979446..7add1c297500 100644
---- a/kernel/rcu/tree_plugin.h
-+++ b/kernel/rcu/tree_plugin.h
-@@ -947,6 +947,45 @@ static void rcu_qs(void)
- 	rcu_report_exp_rdp(this_cpu_ptr(&rcu_data));
- }
- 
-+/*
-+ * Register an urgently needed quiescent state.  If there is an
-+ * emergency, invoke rcu_momentary_dyntick_idle() to do a heavy-weight
-+ * dyntick-idle quiescent state visible to other CPUs, which will in
-+ * some cases serve for expedited as well as normal grace periods.
-+ * Either way, register a lightweight quiescent state.
-+ *
-+ * The barrier() calls are redundant in the common case when this is
-+ * called externally, but just in case this is called from within this
-+ * file.
-+ *
-+ */
-+void rcu_all_qs(void)
-+{
-+	unsigned long flags;
-+
-+	if (!raw_cpu_read(rcu_dynticks.rcu_urgent_qs))
-+		return;
-+	preempt_disable();
-+	/* Load rcu_urgent_qs before other flags. */
-+	if (!smp_load_acquire(this_cpu_ptr(&rcu_dynticks.rcu_urgent_qs))) {
-+		preempt_enable();
-+		return;
-+	}
-+	this_cpu_write(rcu_dynticks.rcu_urgent_qs, false);
-+	barrier(); /* Avoid RCU read-side critical sections leaking down. */
-+	if (unlikely(raw_cpu_read(rcu_dynticks.rcu_need_heavy_qs))) {
-+		local_irq_save(flags);
-+		rcu_momentary_dyntick_idle();
-+		local_irq_restore(flags);
-+	}
-+	if (unlikely(raw_cpu_read(rcu_data.cpu_no_qs.b.exp)))
-+		rcu_qs();
-+	this_cpu_inc(rcu_dynticks.rcu_qs_ctr);
-+	barrier(); /* Avoid RCU read-side critical sections leaking up. */
-+	preempt_enable();
-+}
-+EXPORT_SYMBOL_GPL(rcu_all_qs);
-+
- /*
-  * Note a PREEMPT=n context switch.  The caller must have disabled interrupts.
-  */
+ #ifdef __CHECKER__
+@@ -670,9 +669,8 @@ static inline void rcu_read_unlock(void)
+  * rcu_read_lock_bh() - mark the beginning of an RCU-bh critical section
+  *
+  * This is equivalent of rcu_read_lock(), but also disables softirqs.
+- * Note that synchronize_rcu() and friends may be used for the update
+- * side, although synchronize_rcu_bh() is available as a wrapper in the
+- * short term.  Longer term, the _bh update-side API will be eliminated.
++ * Note that anything else that disables softirqs can also serve as
++ * an RCU read-side critical section.
+  *
+  * Note that rcu_read_lock_bh() and the matching rcu_read_unlock_bh()
+  * must occur in the same context, for example, it is illegal to invoke
+@@ -705,10 +703,9 @@ static inline void rcu_read_unlock_bh(void)
+ /**
+  * rcu_read_lock_sched() - mark the beginning of a RCU-sched critical section
+  *
+- * This is equivalent of rcu_read_lock(), but to be used when updates
+- * are being done using call_rcu_sched() or synchronize_rcu_sched().
+- * Read-side critical sections can also be introduced by anything that
+- * disables preemption, including local_irq_disable() and friends.
++ * This is equivalent of rcu_read_lock(), but disables preemption.
++ * Read-side critical sections can also be introduced by anything else
++ * that disables preemption, including local_irq_disable() and friends.
+  *
+  * Note that rcu_read_lock_sched() and the matching rcu_read_unlock_sched()
+  * must occur in the same context, for example, it is illegal to invoke
 -- 
 2.17.1
 
