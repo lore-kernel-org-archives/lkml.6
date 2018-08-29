@@ -6,49 +6,51 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 499D6C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 18:24:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E787BC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 18:25:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D325320658
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 18:24:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CE2520652
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 18:25:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="clXlo60i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D325320658
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="oOomz6Nk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CE2520652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728232AbeH2WWZ (ORCPT
+        id S1728353AbeH2WXc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 18:22:25 -0400
+        Wed, 29 Aug 2018 18:23:32 -0400
 Received: from mail-cys01nam02on0069.outbound.protection.outlook.com ([104.47.37.69]:40616
         "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727399AbeH2WWZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 18:22:25 -0400
+        id S1727698AbeH2WXc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 18:23:32 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jqN4uFLS7ec9SHBb91Uw5xUkDkLZCW9DVaC83lns6/Q=;
- b=clXlo60iYEr5zfQtjGKjjp8SBs5ajUlb0jZcbOp28Ap7NGYqiMSMfbNG0uBJnn0hHoD9bwh/W9EjQmgKDgV2mvtRBKjkXrWm4/7S27K5K3CEiyzYFrl0G9e1ux7pXef63RvYrZyxkxzwNEyqO1qq+2RnOExFQDAIAnRBq+2Vmt8=
+ bh=nX4LbIK0sGaMzSdq9U2Kk6bncbqQs9X3wYZKgzNPqfI=;
+ b=oOomz6NkQgZulIg/I/rJlaKnMDJEZI4Mfli94MWtvFm7HVL7ZydP6m29Pzm/3uRFPefdcLRhXi31w2wmNnyzZri7b++rnhsRyDj+xp5MaQ1kLFiWuMUnRAPiTEnzRfHrPVXDS+vyM3CEHHuufWB15KU6+iLgaAlSd7Gr/tG65OA=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=brijesh.singh@amd.com; 
 Received: from sbrijesh-desktop.amd.com (165.204.77.1) by
  BYAPR12MB2678.namprd12.prod.outlook.com (2603:10b6:a03:69::27) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1101.14; Wed, 29 Aug 2018 18:24:12 +0000
+ 15.20.1101.14; Wed, 29 Aug 2018 18:24:13 +0000
 From:   Brijesh Singh <brijesh.singh@amd.com>
 To:     x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
 Cc:     Brijesh Singh <brijesh.singh@amd.com>,
         Tom Lendacky <thomas.lendacky@amd.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@suse.de>,
+        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
         Paolo Bonzini <pbonzini@redhat.com>,
         Sean Christopherson <sean.j.christopherson@intel.com>,
         =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Subject: [PATCH v3 0/4] x86: Fix SEV guest regression
-Date:   Wed, 29 Aug 2018 13:23:56 -0500
-Message-Id: <1535567040-1370-1-git-send-email-brijesh.singh@amd.com>
+Subject: [PATCH v3 1/4] x86/mm: Restructure sme_encrypt_kernel()
+Date:   Wed, 29 Aug 2018 13:23:57 -0500
+Message-Id: <1535567040-1370-2-git-send-email-brijesh.singh@amd.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1535567040-1370-1-git-send-email-brijesh.singh@amd.com>
+References: <1535567040-1370-1-git-send-email-brijesh.singh@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -57,55 +59,56 @@ X-ClientProxiedBy: CY4PR1801CA0020.namprd18.prod.outlook.com
  (2603:10b6:910:74::33) To BYAPR12MB2678.namprd12.prod.outlook.com
  (2603:10b6:a03:69::27)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 764c8a60-8eea-4b01-472a-08d60ddc9f1b
+X-MS-Office365-Filtering-Correlation-Id: ee44659f-17a1-4fb3-52d7-08d60ddc9fe8
 X-MS-Office365-Filtering-HT: Tenant
 X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BYAPR12MB2678;
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR12MB2678;3:RKanTWm18ufmsj9gYfcuPjfRpy/O+8cdskB3J0IQoAqvm/f/Cnp7M/VCjyX80S6MFcc7bGFbf79NPQrTC8GQW3Dl29CvMNKDgC8PJzLH01N6yejpTyWFYZTMkl1YQfWpoiXQ7jwxHkLR102ryx+9AMUdyPaWbeheSWldVdkJi+AItbf+Fsyn1qauZDS1GbYzWesuzAjDK48MLfxcMgw53k4tL0nvw7yuYvodUEOh2msvy/KTT3oeDkYVQuJqZZPO;25:y4g0sktxsS9ow4E6IMp44r9yEJR7TU8zHAqYYNYjsjD1G33pxBUXvRkuLalxDjSxCQyYL+1ALVva/YrlHnyG4C6DBs3jk9V2WJfT5k8zYLB5z/GWpQuWPjxwDPG1Y/dlth1s3zQ5t9sRkvzgLIXJt3ZdvD56qgfjJlJCt6EAT6kWAaLzQepVGk3wu7bMNyetWz5cNFgUsQ6Zsou0tf0UUZujZNgRjac9egZSNIbhahoCYjTY+lZHOPPSSlsyQNo+YDlmHb6eGm0+ic7CbaYu9lt3AF4gxoEjnhSN+zUfwBquT2nHfmM4tKPLM/SY22MZ2Era565ziWvZRjwKNxTo8g==;31:IwqPVeOBOtQg0kdu/Ooor89UV8eFZiBtmwzFYFqUvCehfKNJuJd/Wmhb6KeyoASeqHbRGEJJUWyaGkAAxtvIBWYz6xI+60isgeGY97vhmM1vHcgbYRid4f8Kx3eiATXKujYcZj+ihmvr+UM4qYecoPhsQ1jc0Bi2gwzTmnnUGSOvdIuMn+w5LAcQ0BSfaP2YQVWjKYZjIIiu3rK94YcA7FnWE8prK3w8Kxcipi0+scg=
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR12MB2678;3:f6Jb6iF3rqdye7o7kQ3IsLHMYLcQe08YO10mTKtPYH1mM2Gtd1EdABuDaOJARBdpnpripILmLwttbON/h56x4s2wfZ7GzB3KsR3nPSxS/71JwsZgnfshwbq6sWPvZFzsvqZhJ+ISN/4NRjKrnbROm7GDztjs8xULZrXrLOiAmuKIVThV8mcd+n1yg1kAPNSlmIauYGLzmMv1Ib/XfwuRE+V4fekGrDq6PGuz70PO6z9J7JZEaNg4GHTLImZ+VPJy;25:IXwOYhQAsjbMVNurp034YhVbpN0N/GwfzvfOuavEmJRPKaqb0palPk14wYQwzKr2LwOdffNzY+igDu+QCmMSdNVNlOyAeG5K9C7UHg0XE794Gwj0KmlF9L77k+lRR5bXTbwv4FblJOeo9h+AiNYdjMxntY+WgLrXxHtJAi2CtmNEI66cH7UzsdQIwF3yBH2oh1z6RUb+bl6cdcAp3zTfLwoqJebqVNZK8IIVFaVXeqFEM8SHsRveDiIj3f1GBavjJrnYdd/JrawMlJzpvNvEKZcpQUOs39QfJFZGTdxqgmzVm06utCh1Id9U+1CLy4DA3q9OVexO6iBMlIHKPSIVTQ==;31:gNN7m21JeMtvovkTBWrCiz0XuG/aUP2/lHBI9o+qGkAgHfkzBH9kmxL/Dus765FJA//SCSJOHyypBxrsGJBk9I1+20iwPCPu7DnkGxEs64ekm8Gj5HLvFZqR9OeXJBdAIqpzXuJn9g29iKti79NZwXso4y0aryyj4Q20qL7i8ZJficREIjuUPL5EVhEIQ9oU970T6l76J6n7Yhora7dFiJbaLQ9A+dYsXumcHvHgQFo=
 X-MS-TrafficTypeDiagnostic: BYAPR12MB2678:
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR12MB2678;20:8yRE9yhsDzWFDzzMaZcLEQsTMwWQxvYJd3nhu//kfaAs9QyKzAGdB7pDfOUMFZBor6zt0GWjOuz7fq2RdnLCRr8YnBkIXZ/sFylvgsmINlX0rJdMbYj0ZrR2vzdNwFpcY8VnNaycz4L+2ZVEl4a3SHACpnn/yPyHkEq6HTSWYsct1i1AAVi5h+yeUMoWe2JvfkDZ/D4JUkqMSj4sjcPtMCGeDMgFkQIh7z9vFx6dl3n4DB7VOuthZPFF4+GUPcRwqU/cR6CO0dUugdul7ohQuLfjMsKgQar94/1rK6Gcssj194BcoDA9ojGII4wV1m0muShbSQw5V0sZ8GvazSJlNAUU/ySDZYROGnB54MAynCl7HxDCo1atrFcq/UBxenD2/ITLOZ++YaghyVKL97vJKIS0X0DfImcXisdpCFUFs9gLHB+FfwUHttS/m6lqzzmdpbP82T2onW71l5YLp2tYPet46HfDA+NkB4w59lxMU+zQNf49HsCndoO5YHVdIS8Y;4:PGfPMtgFuJuViBG5zyB+1L22OIKbNvTeXGNYo778e4REt8BGOB78ub95Gg8b8JKyyrBq7LS+S/WOdIRAe2GBetqgEU8JhTRWO7nHvBsdQhw0RR/GECWRNJ3RKp9DN/2SsiADUsfu0ANIS+aHAePxOCF4l9Q08ddXoRl5rl2RZreIYX+8kXAq4JQpBNlgB1QKJCPZQ5HfrIMdnmF5JULgbade79NMzi4rDR5OMrMBxj1224VK0o2XWRk8ZtR56C7XxKXijF5iT7/Ba4O1fYjQiNYQnWazPvNL4s21bsUbBDMgWi2GCrfY0Ar9CKf2farDAmqwMWKb5KzzgEaP3CeYJd88Rm0iwX9h081oZ6cYur7Cz3QrQFoH2SNpWvAnqEAI
-X-Microsoft-Antispam-PRVS: <BYAPR12MB26784C32A35E6E22BE357F30E5090@BYAPR12MB2678.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(767451399110)(84791874153150)(228905959029699);
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR12MB2678;20:0Y4sRPNCfielccncY9725fDXxSz/SmT1po5niZCzATt4PrT1bkuqWqvLzt9IRSLwhvssAea6JUc0qEc6UScWsqDGf9anGn5zqzQe9eJ13xiPqe0BjI4UC7fyHwJtjJivlgnGk4skwZqa6dJrkxCveCjoItE1eWfPJX1DVbDN4y5d474z6zVlEg3qc2bJY+yWmRpfVmxaPAn5vfR6x8iPQsrar3gbCLx4ersXPQIAq6HevR+JvmQ9bcLvSuD3cP1xQTWISq0GBXIrmFRkWHwncDvjqhdi/6Z3ivXSgoqUfeA4158UGyUr5zNjtWkSsqfUtw9SPgs11ZYnTT3obzppzzjdhgTp2KkPGB74NKnXhc7AoE5ETb7ux6F4fX1HDwDm/xWBrOfT+VkwiRnmYvhXIPIr/Hf7Xd1Gdb0mujTFv6JV0KR8teywc2AwoS4a8+3Wt/0fT+6hCXjt3W4nleXKXbIMVcZsloH4npfoCIoQMT37BDYwL5f5FbBGNqUCf6nS;4:rW0pb+khw9BU5qkpE6TnSVyoRYlP3siFMvJ3Owwsho0673c4g1Hy4higuM3szsRvMyymSCTYVUpiNQUcHalFwIqFKdkG3Q6Kbr8o7F3MgtZ0ZDluJfTSAlIVAna2CoJrAQJb2eGBU+TvZ/z3ER8hvpylohMlvSllpS9qt1DX8YifNaFDhG66N7787Bb2kQXnezdMX8AxAqlGA8W0Mjh1a6aZ3KYw2TWvufLR5tB0Z+n51mQwnRQgRaiQCn5Rpw6GGTMAUlnschpWHguyiCWAoNZx/wH0B4ad9v/LA4g1CfZ4uZNN/DMAgy38dh0VEFZhDmwFz45wToO19yFVwiCP31pSg5tSETNX5TQdcY6dK0XWJFlW4WoiDTgR8Oux692l
+X-Microsoft-Antispam-PRVS: <BYAPR12MB26787F86FD945842FCB35DFFE5090@BYAPR12MB2678.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(9452136761055)(767451399110)(228905959029699);
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823301075)(93006095)(93001095)(3231311)(944501410)(52105095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699016);SRVR:BYAPR12MB2678;BCL:0;PCL:0;RULEID:;SRVR:BYAPR12MB2678;
 X-Forefront-PRVS: 077929D941
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(346002)(366004)(376002)(136003)(189003)(199004)(478600001)(386003)(6486002)(53936002)(5660300001)(6306002)(14444005)(54906003)(4326008)(6666003)(966005)(97736004)(25786009)(23676004)(7736002)(52116002)(7696005)(305945005)(50466002)(50226002)(53416004)(36756003)(81156014)(81166006)(8936002)(106356001)(2616005)(956004)(476003)(3846002)(6116002)(86362001)(2870700001)(2906002)(47776003)(68736007)(186003)(16526019)(486006)(66066001)(316002)(105586002)(26005)(8676002)(44832011);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB2678;H:sbrijesh-desktop.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(346002)(366004)(376002)(136003)(189003)(199004)(478600001)(386003)(6486002)(53936002)(5660300001)(14444005)(54906003)(4326008)(6666003)(97736004)(25786009)(23676004)(7736002)(52116002)(7696005)(305945005)(76176011)(50466002)(50226002)(53416004)(36756003)(81156014)(81166006)(8936002)(106356001)(2616005)(956004)(476003)(3846002)(6116002)(86362001)(2870700001)(2906002)(47776003)(446003)(68736007)(186003)(16526019)(486006)(66066001)(316002)(105586002)(26005)(8676002)(11346002)(44832011);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB2678;H:sbrijesh-desktop.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 Received-SPF: None (protection.outlook.com: amd.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtCWUFQUjEyTUIyNjc4OzIzOlkvelE1UGhra2trYUVNY0VYL2JIRDB1bjNJ?=
- =?utf-8?B?TjN6MTZVMXdkcGdja0h5SDY2SThuRU83eFdmWFR4czJjN1FKVDdESGM1S2hy?=
- =?utf-8?B?V2NhV2ZkcjFlc0FSVDNFNkRtZy9uK0lOQXlBZW1ZbU1CV3RwRWtXVXFJTDVP?=
- =?utf-8?B?NTVvUHVBYysyTFRwWmwxK3B5U1pXY0s1ZDZQUUpva3dVR3J4UWZLSGhHVURP?=
- =?utf-8?B?eS9RZW9iU2FRZllrTHc3ZVVIbS9TYVhBbUUxNzBTQXJRUUJreFZUbE1PQTFR?=
- =?utf-8?B?L3p6UThuNE5VWkVJL2ZiUWRrOU5FbUNRQXRZQ3g0aHl2U1FoQ0xnc1BYK1Nj?=
- =?utf-8?B?djY1d1V1Z0NHTTl1RW85dFROQ0RIV2FyRXA5VlVhQUs1clNiUUdJTnhPY3lH?=
- =?utf-8?B?S2Z3RGQzdFRnZDlNMW9HZVl5RGg3azlPM3pTLy9SZS82ejY3WWNFZm45cG9Z?=
- =?utf-8?B?U3lIM1dsN245dTJndmlnYzYyVDVVbEYrNFpFY1gxYytDbWRieUVFSnZReG1o?=
- =?utf-8?B?ckpwQVpVQm1yckN2Zm9HbzJVZVc1K0VlMXVuc0JlVXdGYjREcWRsUXlGRGh0?=
- =?utf-8?B?VWxKYjFzMU9yMzdKSlhHRnFoczY5ZU1BUG9DZGI3RTJXVzVPQXowQjRwMDI0?=
- =?utf-8?B?QTZYOXJzNEduNTZGdjJnUlZTNE54UkJGMkl0NHBVc1laMlRHN2xsaVRGTUsw?=
- =?utf-8?B?MC9yeUxKelZUOC8xbEpkTldLNFdwQmpNNE1SV0N4SkVVRGVkNld5RWtaVjJS?=
- =?utf-8?B?bExaREY2WGVQb1VpeWJGY2NYTWpVWGxXWUFjTEMwMUg5bWM4WUlLTW9qcHZQ?=
- =?utf-8?B?WXYyRGdCMnhyYjRvclhXOWJoeFR5L044NmVNRG1aZzFMelRqMEFpZkZKbXJR?=
- =?utf-8?B?ODhMYU9PM0tCbFNCdTBLUkpwdUdaLzlOK1JxblBybHpGVDZUZTEzNGR6UG5a?=
- =?utf-8?B?YmJ0RENLWjBxbTh3SWZycHRDS29BYlRhNm9odXdYYStmclB4cnhVVE9Kbk1r?=
- =?utf-8?B?Yy94b2RBOU56MThFY08zU1UzcWExaHU2V0VvR2NYZGNLazNwMXlwM2NLZ3RP?=
- =?utf-8?B?RE5HZHJQRlRmbEFJZVRaWTN0Vi9vdElLd3QyY0kwTEFieXpYY0Q1NFlCSlM2?=
- =?utf-8?B?akhPS2N2ekp1dFhzeHFUeVlvR1MwditVSGV0UGx0a2IzbEhZbERjNVgzNTA3?=
- =?utf-8?B?K0NLZ1pkNldOeXFmZHVaWWFkbE9GY0RZb29lUjcyYkc2RjE1N2lhTUhzeGYr?=
- =?utf-8?B?cHJnTU9lZXoxNG5ySEZkcXV3c0Y2dTVOSDZXK0RKYjhzeVZOOVlSaWRpUGxO?=
- =?utf-8?B?UHhiRmw5V0tLVTZ1ejdGOVhOTGVodEplREhOeE1tRHRYcDNNT1BLSDhrbGtU?=
- =?utf-8?B?Zm5OM25HZ2dMSVZ2RjE1ejNOZ3VCUlVad0E3TGNSY3h4SGhNYlJkRWZyK2t1?=
- =?utf-8?B?WEFRNndhTFhoZFcxMTZ3WTRieURkY0I0MWpZZWdwS2FxcmxNUnpxVGovVmhy?=
- =?utf-8?B?aFdVS2xiS1RPdFpuS1Y5TWxrVGcyMkpybllydG0rNjVqMUY2SUthRmc1d2NM?=
- =?utf-8?Q?B9MtT9COseahOwSKs4UvYHaKdtPQF6XZJPPJwrvD5zuo=3D?=
-X-Microsoft-Antispam-Message-Info: WmKcozGK2U/ZRGSeT24s5JQOXStPbe3ERLFIjPDBDdX8yiONjPkW0F4MONtAgzRMpR0up1CgKKgZaZ6iy+ZzvNXn7YPYQYyTfy+1+OejdfLdL+nAQVAojNkGnhZf7mOGo2QZz6E1AlreCBW9BKu03frn0dVTeWSJlY9razT4xU2o/78Jy1PWcZzO1cbzox0Jyi7qsizcNFa6ifj+uVDZRWY8uYFOAqi63d6/ULL0NDB86dvwPW8NltM/euzTn47ihVVl8YUzdW2nj2y0rtvDQaccYmncvs/FHouMz4/w6nhHOxE5BStBc5BKbsjG+4yMj/0QGPjDvNRsz/LSKJv7suCwoliIHZPUUaJP/WGLKYo=
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR12MB2678;6:ew+bUHAhDQmcWP4yjFRHo0VXO2SUyVZXv0euN0IksagmohtVaQvHcrmDBsYpETJ0aMFR873f7Zg9b8AgUwHNsSMQ0zxQRhwAbttdOfddlpmPxO6XM16EzReUt8MrZFuShA9iVNLyp/gPkCLvvmO3uUoisDqDeIESdCg10BQKjvQilRoc/HeKoHskzJmMNGOG5h/2OeMVHTnVudO7MdVbWr5poIbc+pBBQpdUNEDXGVRS0mZeu2ZFcIf5+BSSYwoSj476Q2iqy7nqkgrhwWJtkprEaUMeWtUpABil05wfAAZ2WFHxot29TYwP1skiIaoaKDDFIKlxaeHH30nEYzCHO3YcL/sf472wYCRjvb4hribRyhxrT3BOC05+lHxAujWvkravUbp50OfeMYdrK4s/XEg4ByNqUemHw6blw0imb/PEXshf6nixKydfz365eFeyGHjYokqCt4Y80BZslU/cOw==;5:iiUGjSGWv+vatRCAvYa7WJJ//7qCbSqD01sMXbiCr/uxkZlAqyZgDZ7olBoce3XhOHxpYSxL7F30ppVPATy+ETBEqP+LxM3cjoP5HSjwuKYtC8uB2wOzwNTei6tfzJig/hzegxsYHqR2p7DgKOfaxq72j0DArapGnLrr4iaQPJc=;7:g42TPz6i0kzZlRVTdCOlTVfp0myEmn9zKDA18HjDPW0RtMErYNSMINu/YD1DIvWZMtJwYviO2JDa/Hit5BQXc+jWBSbt8hTsZs88VPl2SXR6mkcMpOvi9oOFB+ffhWBSoH387VIJBl1fluMVLn12MQlQCYajxctoeaHc3y6MUFvx1E5PjQ6Utv5I3/D91romVnUfxSl03za2wuJjXaBgTf0luWj9N1CfkJSx/m87j0YimlqhIATpvIgXotSteklS
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtCWUFQUjEyTUIyNjc4OzIzOmhlQk40YmQ3SjBFS2Z1ZWFtT0FVamQxSEpQ?=
+ =?utf-8?B?UEx3aFVIZGJtWUo0bTh1UDJmY2xFQjVPc0VwWWxWWGpiRjYxTlh2OE1UVGJi?=
+ =?utf-8?B?dmZ6Y3l6djFjd3FTL3pEZVNXOTlGM2QwQlAzNWhHUllaMjJSajE3MzdMOHR3?=
+ =?utf-8?B?REk1ODAzQUNvUWd1OXlWMHI0WFhLVGdRdEIxaWlIbFpuRS9oWnREb0dEM3gw?=
+ =?utf-8?B?eTdvTTNCd1lSbEM3VjJkNGVPUHpMSnBSNCtNYm1HL3ZiNnZvYTFwbHlVQW9M?=
+ =?utf-8?B?UWpXQ3NCaDkxK2JlWFFmTTVxSG15dTBxQ0Q5OGZ1SEdOb3Rwb1l4eGtaLzZa?=
+ =?utf-8?B?M01RRGRtdC9HdmFjeHpCMG9JMG1LRUdNOGlpZEMwN0Z1M2R6YkcrVnAwQXBs?=
+ =?utf-8?B?bGg3ZDVGaTFWaWdnK3ljUDhtVWlZRWRhSTBVdEJaZGRjd1NtTGQzYWFvekJw?=
+ =?utf-8?B?bElDQlVlT2lVd2dhSjJRNVFaNU1pbVh0WlNyYXBYQ0w5TlA3RnlKb0pHb0I2?=
+ =?utf-8?B?Rnk5UkhGVlJTejVHbXRIamZSdTlwVTJFOGY3OFU3ZWJ2dzJzakVncS9RUnh6?=
+ =?utf-8?B?K1dzTUpaZDFwald3ak91ZWc0cWxUenF0T3grVjlsdnFYSlROaEc0aUxjWk5W?=
+ =?utf-8?B?N05Lc0hPdEtZY2FheUVoRXBVam5aKzVQZS9yd2dLNjZFajMwNjJERGp3bHhp?=
+ =?utf-8?B?UmtFbjlHS0ZiV2tYdjZTZlFxYzJ0K0VWczBMWUlvOFFYdk9DTjZxang2M0pK?=
+ =?utf-8?B?bDlxS0xPR0ZTdjY4YUs0WkNzYlZwYXVNS1dWSDBRUlAwbFBBdXo1UGVRMjhz?=
+ =?utf-8?B?NTV1UEY1azRSbnEyeHpsK3NFNmN5dlhQVEhRQUJLaVJyQkdjeDJyT04zb2N6?=
+ =?utf-8?B?WGx5STFaUWR5ZWdqWXFYaGFkalplUkthTnV4S1BzRzc3L3NtQ0lLUUpvRW5l?=
+ =?utf-8?B?WG5nRmZiaVlCZDlFa0ZDUVB1ZjhCU1B1WHhkVXQ3WlJoVHFDdWV2RkhuMVg5?=
+ =?utf-8?B?REJiM3oyNjJSenZxbTVVMjZyMWk4Sno1VUlNSW5EOGtmNzZLSlRPbVpLMWll?=
+ =?utf-8?B?U253Ti9FazRxbGNlL1pvNkpuM0pJbHQ1V3VhcEcyV1JDUzlWMThTK0gzeGVW?=
+ =?utf-8?B?RkE4Y3BIcjAvL05VQXErcTRuQ3JhR3NZeU90SWg0ZHpWZnF4VjVZTGlRUCs3?=
+ =?utf-8?B?ZktJdVhRbFEzWjlRdGdSaXk1anl2YktITEZyZnNUQkR4ZlgveHlGRHZrWFdI?=
+ =?utf-8?B?bWpuU01BRSszamgwSlpkbmhYOWhSWFd2bzFHMFVvVXo1TlZOTW5BS0g0WEcv?=
+ =?utf-8?B?dlZrYUpXQXpaK2ZRLzFLZFlXd2NLUXpoeWR3dWRqRC8xc0U0Y0YyTmRveWxO?=
+ =?utf-8?B?RVZKRHMwZGF3K3AweEFqL2l3NmJ4VTRlZDQ1SkN4cDJVYzY3WHJqSmF0L1lt?=
+ =?utf-8?B?SFdpZVJvUGNHSk84aE4vTmtlaDAvM0ptdXExUzhWTVJaaituN244alBuamN1?=
+ =?utf-8?B?Y2ZmUmJINmF6c2FyelNlQ0dPWlpmSkN6dHRkakJRdHNZdDBrVEhXT2VYbFE0?=
+ =?utf-8?B?MEdnZ3Q0d0pZSTZFM05wRS9IUk00S0ptRm9xVVQyaU9McXNTSjBBYzJMZ1hp?=
+ =?utf-8?Q?slKaVETfQSch1Z04yiEm?=
+X-Microsoft-Antispam-Message-Info: LUtQsaj3AbCb74JRzM6HJZUyCJrF/8bvYM3Phkp/2VAj57YqlUneBTyl3cmxtfWissUkqG3msBE7fkkLsnZwjNIyEsw/BDCNNctrVhp1diPYvf9r7fwm7Fbm4ZUc7+i6nJn99MpNfeUefgn02xvP8kdR/HPDnZhnsPAMth1EgCi1xDtHToXboG5uCXl07z7kULqBtcu4lgkS781WnLPZyN0LunjRDL+WbeRA/4TwjNSDEUXsTRPLSA10xPY5TwPfrwcJsTPHiESKfafwzEgbPt2wg96CytUmenGK57an0fe87QBYB21qun0nYB0Nkq4yayZMXmGEvIE2z+MQauEBOZ6jEyV6Bx+suAi4MJUg0Ow=
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR12MB2678;6:ZKAN9nS76Y8AbR/9FrkZdvLGP991qXuji88Fth8YJVrf+px1WZKVfR2sMKEcfscEPv/0/pZe3JrHP/4Vuxd1v/rjtwfBzdgatgOT9DHt9tcy12h4IH4gWU3DwU0ahXOFuxPJGV7zna6rLp39B/0QjNMOp/D32XxL2h6oEnq6WYUc0v0lUmB5Rxg8ofyafovQuYpLuhHfnOLneh6+NcdbFLASdbdaBEkMsX95h5pWn2P5leAEOm4rlO+dGHPEKe9U87UW4Nhe4Q9jpHSuec4Wt+TodDJfPCIC4nTUWBddO/4fnI7WAJ2AaQHIXTS24qwutQtjSR+jFJgPGo6IAF5ZSZGzMwY7UD1PdIGD1DFCSHpbQvoyV1TQcyrHp7kJ9Ccde7MiIkZnGXPpYxSGS40tNwMPaylnmCefx9cVzYbfepe9J5OnbbIM+0IZM46oxSh7axw1BiiUF7FSshMsQw62gw==;5:W2H26iEuNMO9+0ISNd2n8N7+dsWS/XdXpUryiOW6c2d2Rqng/uOi7HiiIInupdp9rWX6lejz803nnv3odFgxeQboAbc3IK/byT7AhvqVHcQAbLfji1ewPdwyhZusrv0XOPqrNPQrQqT0Tx74t5fYayQbgCzwLWttjjDnt90CozU=;7:yDWQDev7gxv39EjXspvGla4OaXq3vUwXibj6aP5pcsIH+6rXg3/NnFyD4aROWTgsFWdXSKNZ+nYnAy+GDGs28di5xpTjCKc/0enaWCWIiasfp95+ev0rb1BarM032gKPP3zRG5cF7sccZrcEpXBzYuHD8oIraDZySCgMNZfz6DYUeTOzblFunDnpQJ1Ii17NYJggjNwc6sZ4E8gbdrUyE2GyBYPxgoDUMMJhIAWjYVpOi6W2ysntuI7A4TOWBlxB
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR12MB2678;20:DfJA8PKKFeQ1czWW288RwMdC60Cfxem0TuXOf0TKC0nVgzGe0FN/g0L1VJi3cumQ+QNPSX+mB0WXNZ0tqc+ZxMsux8uILl/U3imZ3uX0YI5jHK5V0mdHDcq8UrDFO9eucga3gh0s0alLCAbxAe9oKarxhzxwkBxJ8RiA9WPQ27u0zEduEd5Apnl+Xt1+HpI8TUjF0I8PJ+3LGX/J1hA02YAeW+m5HieL13QFj5B1G5a9TMBHoCbvRdeGutBwOrav
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR12MB2678;20:0HV56jxf1q2vZQXfANzvcJdKZKH355/vOA2SXqzpqtPgtSRgR9NCFfsAdevL9Ldp85KUqtaBPIyiWOqLou23g4cuQhNlLQPdFKzc2xL41a259aPr8RwXHfJhUZ3U/KO8drmzHwW1F4QIPffYHdiTHBOCBSkMQ8uo7owIE5SF9yFpz3l+ImD5iiJPa1Ir+oxY1CRUiMynSSyf0xstX9PLZiR7/omA4Sxldif/mRyj+ddGCVI/oiShVELFVXUo5rM9
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2018 18:24:12.4084 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 764c8a60-8eea-4b01-472a-08d60ddc9f1b
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2018 18:24:13.6897 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ee44659f-17a1-4fb3-52d7-08d60ddc9fe8
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB2678
@@ -114,60 +117,265 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit
+Re-arrange the sme_encrypt_kernel() by moving the workarea map/unmap
+logic in a separate static function. There are no logical changes in this
+patch. The restructuring will allow us to expand the sme_encrypt_kernel
+in future.
 
-"
-x86/kvmclock: Remove memblock dependency
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=368a540e0232ad446931f5a4e8a5e06f69f21343
-"
-
-introduced SEV guest regression.
-
-The guest physical address holding the wall_clock and hv_clock_boot
-are shared with the hypervisor must be mapped with C=0 when SEV
-is active. To clear the C-bit we use  kernel_physical_mapping_init() to
-split the large pages. The above commit moved the kvmclock initialization
-very early and kernel_physical_mapping_init() fails to allocate memory
-while spliting the large page.
-
-To solve it, we add a special .data..decrypted section, this section can be
-used to hold the shared variables. Early boot code maps this section with
-C=0. The section is pmd aligned and sized to avoid the need to split the pages.
-Caller can use __decrypted attribute to add the variables in .data..decrypted
-section. 
-
+Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
 Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: kvm@vger.kernel.org
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Borislav Petkov <bp@suse.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-kernel@vger.kernel.org
 Cc: Paolo Bonzini <pbonzini@redhat.com>
 Cc: Sean Christopherson <sean.j.christopherson@intel.com>
+Cc: kvm@vger.kernel.org
 Cc: "Radim Krčmář" <rkrcmar@redhat.com>
+---
+ arch/x86/mm/mem_encrypt_identity.c | 160 ++++++++++++++++++++++++-------------
+ 1 file changed, 104 insertions(+), 56 deletions(-)
 
-Changes since v2:
- - commit message and code comment improvements (based on Boris feedback)
- - move sme_populate_pgd fixes in new patch.
- - drop stable Cc - will submit to stable after patch is upstreamed.
-
-Changes since v1:
- - move the logic to re-arrange mapping in new patch
- - move the definition of __start_data_* in mem_encrypt.h
- - map the workarea buffer as encrypted when SEV is enabled
- - enhance the sme_populate_pgd to update the pte/pmd flags when mapping exist
-
-Brijesh Singh (4):
-  x86/mm: Restructure sme_encrypt_kernel()
-  x86/mm: fix sme_populate_pgd() to update page flags
-  x86/mm: add .data..decrypted section to hold shared variables
-  x86/kvm: use __decrypted attribute in shared variables
-
- arch/x86/include/asm/mem_encrypt.h |   6 +
- arch/x86/kernel/head64.c           |  11 ++
- arch/x86/kernel/kvmclock.c         |  30 ++++-
- arch/x86/kernel/vmlinux.lds.S      |  17 +++
- arch/x86/mm/mem_encrypt_identity.c | 232 +++++++++++++++++++++++++++----------
- 5 files changed, 229 insertions(+), 67 deletions(-)
-
+diff --git a/arch/x86/mm/mem_encrypt_identity.c b/arch/x86/mm/mem_encrypt_identity.c
+index 7ae3686..92265d3 100644
+--- a/arch/x86/mm/mem_encrypt_identity.c
++++ b/arch/x86/mm/mem_encrypt_identity.c
+@@ -72,6 +72,22 @@ struct sme_populate_pgd_data {
+ 	unsigned long vaddr_end;
+ };
+ 
++struct sme_workarea_data {
++	unsigned long kernel_start;
++	unsigned long kernel_end;
++	unsigned long kernel_len;
++
++	unsigned long initrd_start;
++	unsigned long initrd_end;
++	unsigned long initrd_len;
++
++	unsigned long workarea_start;
++	unsigned long workarea_end;
++	unsigned long workarea_len;
++
++	unsigned long decrypted_base;
++};
++
+ static char sme_cmdline_arg[] __initdata = "mem_encrypt";
+ static char sme_cmdline_on[]  __initdata = "on";
+ static char sme_cmdline_off[] __initdata = "off";
+@@ -266,19 +282,17 @@ static unsigned long __init sme_pgtable_calc(unsigned long len)
+ 	return entries + tables;
+ }
+ 
+-void __init sme_encrypt_kernel(struct boot_params *bp)
++static void __init build_workarea_map(struct boot_params *bp,
++				      struct sme_workarea_data *wa,
++				      struct sme_populate_pgd_data *ppd)
+ {
+ 	unsigned long workarea_start, workarea_end, workarea_len;
+ 	unsigned long execute_start, execute_end, execute_len;
+ 	unsigned long kernel_start, kernel_end, kernel_len;
+ 	unsigned long initrd_start, initrd_end, initrd_len;
+-	struct sme_populate_pgd_data ppd;
+ 	unsigned long pgtable_area_len;
+ 	unsigned long decrypted_base;
+ 
+-	if (!sme_active())
+-		return;
+-
+ 	/*
+ 	 * Prepare for encrypting the kernel and initrd by building new
+ 	 * pagetables with the necessary attributes needed to encrypt the
+@@ -358,17 +372,17 @@ void __init sme_encrypt_kernel(struct boot_params *bp)
+ 	 * pagetables and when the new encrypted and decrypted kernel
+ 	 * mappings are populated.
+ 	 */
+-	ppd.pgtable_area = (void *)execute_end;
++	ppd->pgtable_area = (void *)execute_end;
+ 
+ 	/*
+ 	 * Make sure the current pagetable structure has entries for
+ 	 * addressing the workarea.
+ 	 */
+-	ppd.pgd = (pgd_t *)native_read_cr3_pa();
+-	ppd.paddr = workarea_start;
+-	ppd.vaddr = workarea_start;
+-	ppd.vaddr_end = workarea_end;
+-	sme_map_range_decrypted(&ppd);
++	ppd->pgd = (pgd_t *)native_read_cr3_pa();
++	ppd->paddr = workarea_start;
++	ppd->vaddr = workarea_start;
++	ppd->vaddr_end = workarea_end;
++	sme_map_range_decrypted(ppd);
+ 
+ 	/* Flush the TLB - no globals so cr3 is enough */
+ 	native_write_cr3(__native_read_cr3());
+@@ -379,9 +393,9 @@ void __init sme_encrypt_kernel(struct boot_params *bp)
+ 	 * then be populated with new PUDs and PMDs as the encrypted and
+ 	 * decrypted kernel mappings are created.
+ 	 */
+-	ppd.pgd = ppd.pgtable_area;
+-	memset(ppd.pgd, 0, sizeof(pgd_t) * PTRS_PER_PGD);
+-	ppd.pgtable_area += sizeof(pgd_t) * PTRS_PER_PGD;
++	ppd->pgd = ppd->pgtable_area;
++	memset(ppd->pgd, 0, sizeof(pgd_t) * PTRS_PER_PGD);
++	ppd->pgtable_area += sizeof(pgd_t) * PTRS_PER_PGD;
+ 
+ 	/*
+ 	 * A different PGD index/entry must be used to get different
+@@ -399,75 +413,109 @@ void __init sme_encrypt_kernel(struct boot_params *bp)
+ 	decrypted_base <<= PGDIR_SHIFT;
+ 
+ 	/* Add encrypted kernel (identity) mappings */
+-	ppd.paddr = kernel_start;
+-	ppd.vaddr = kernel_start;
+-	ppd.vaddr_end = kernel_end;
+-	sme_map_range_encrypted(&ppd);
++	ppd->paddr = kernel_start;
++	ppd->vaddr = kernel_start;
++	ppd->vaddr_end = kernel_end;
++	sme_map_range_encrypted(ppd);
+ 
+ 	/* Add decrypted, write-protected kernel (non-identity) mappings */
+-	ppd.paddr = kernel_start;
+-	ppd.vaddr = kernel_start + decrypted_base;
+-	ppd.vaddr_end = kernel_end + decrypted_base;
+-	sme_map_range_decrypted_wp(&ppd);
++	ppd->paddr = kernel_start;
++	ppd->vaddr = kernel_start + decrypted_base;
++	ppd->vaddr_end = kernel_end + decrypted_base;
++	sme_map_range_decrypted_wp(ppd);
+ 
+ 	if (initrd_len) {
+ 		/* Add encrypted initrd (identity) mappings */
+-		ppd.paddr = initrd_start;
+-		ppd.vaddr = initrd_start;
+-		ppd.vaddr_end = initrd_end;
+-		sme_map_range_encrypted(&ppd);
++		ppd->paddr = initrd_start;
++		ppd->vaddr = initrd_start;
++		ppd->vaddr_end = initrd_end;
++		sme_map_range_encrypted(ppd);
+ 		/*
+ 		 * Add decrypted, write-protected initrd (non-identity) mappings
+ 		 */
+-		ppd.paddr = initrd_start;
+-		ppd.vaddr = initrd_start + decrypted_base;
+-		ppd.vaddr_end = initrd_end + decrypted_base;
+-		sme_map_range_decrypted_wp(&ppd);
++		ppd->paddr = initrd_start;
++		ppd->vaddr = initrd_start + decrypted_base;
++		ppd->vaddr_end = initrd_end + decrypted_base;
++		sme_map_range_decrypted_wp(ppd);
+ 	}
+ 
+ 	/* Add decrypted workarea mappings to both kernel mappings */
+-	ppd.paddr = workarea_start;
+-	ppd.vaddr = workarea_start;
+-	ppd.vaddr_end = workarea_end;
+-	sme_map_range_decrypted(&ppd);
++	ppd->paddr = workarea_start;
++	ppd->vaddr = workarea_start;
++	ppd->vaddr_end = workarea_end;
++	sme_map_range_decrypted(ppd);
+ 
+-	ppd.paddr = workarea_start;
+-	ppd.vaddr = workarea_start + decrypted_base;
+-	ppd.vaddr_end = workarea_end + decrypted_base;
+-	sme_map_range_decrypted(&ppd);
++	ppd->paddr = workarea_start;
++	ppd->vaddr = workarea_start + decrypted_base;
++	ppd->vaddr_end = workarea_end + decrypted_base;
++	sme_map_range_decrypted(ppd);
+ 
+-	/* Perform the encryption */
+-	sme_encrypt_execute(kernel_start, kernel_start + decrypted_base,
+-			    kernel_len, workarea_start, (unsigned long)ppd.pgd);
++	wa->kernel_start = kernel_start;
++	wa->kernel_end = kernel_end;
++	wa->kernel_len = kernel_len;
+ 
+-	if (initrd_len)
+-		sme_encrypt_execute(initrd_start, initrd_start + decrypted_base,
+-				    initrd_len, workarea_start,
+-				    (unsigned long)ppd.pgd);
++	wa->initrd_start = initrd_start;
++	wa->initrd_end = initrd_end;
++	wa->initrd_len = initrd_len;
++
++	wa->workarea_start = workarea_start;
++	wa->workarea_end = workarea_end;
++	wa->workarea_len = workarea_len;
++
++	wa->decrypted_base = decrypted_base;
++}
+ 
++static void __init teardown_workarea_map(struct sme_workarea_data *wa,
++				         struct sme_populate_pgd_data *ppd)
++{
+ 	/*
+ 	 * At this point we are running encrypted.  Remove the mappings for
+ 	 * the decrypted areas - all that is needed for this is to remove
+ 	 * the PGD entry/entries.
+ 	 */
+-	ppd.vaddr = kernel_start + decrypted_base;
+-	ppd.vaddr_end = kernel_end + decrypted_base;
+-	sme_clear_pgd(&ppd);
+-
+-	if (initrd_len) {
+-		ppd.vaddr = initrd_start + decrypted_base;
+-		ppd.vaddr_end = initrd_end + decrypted_base;
+-		sme_clear_pgd(&ppd);
++	ppd->vaddr = wa->kernel_start + wa->decrypted_base;
++	ppd->vaddr_end = wa->kernel_end + wa->decrypted_base;
++	sme_clear_pgd(ppd);
++
++	if (wa->initrd_len) {
++		ppd->vaddr = wa->initrd_start + wa->decrypted_base;
++		ppd->vaddr_end = wa->initrd_end + wa->decrypted_base;
++		sme_clear_pgd(ppd);
+ 	}
+ 
+-	ppd.vaddr = workarea_start + decrypted_base;
+-	ppd.vaddr_end = workarea_end + decrypted_base;
+-	sme_clear_pgd(&ppd);
++	ppd->vaddr = wa->workarea_start + wa->decrypted_base;
++	ppd->vaddr_end = wa->workarea_end + wa->decrypted_base;
++	sme_clear_pgd(ppd);
+ 
+ 	/* Flush the TLB - no globals so cr3 is enough */
+ 	native_write_cr3(__native_read_cr3());
+ }
+ 
++void __init sme_encrypt_kernel(struct boot_params *bp)
++{
++	struct sme_populate_pgd_data ppd;
++	struct sme_workarea_data wa;
++
++	if (!sme_active())
++		return;
++
++	build_workarea_map(bp, &wa, &ppd);
++
++	/* When SEV is active, encrypt kernel and initrd */
++	sme_encrypt_execute(wa.kernel_start,
++			    wa.kernel_start + wa.decrypted_base,
++			    wa.kernel_len, wa.workarea_start,
++			    (unsigned long)ppd.pgd);
++
++	if (wa.initrd_len)
++		sme_encrypt_execute(wa.initrd_start,
++				    wa.initrd_start + wa.decrypted_base,
++				    wa.initrd_len, wa.workarea_start,
++				    (unsigned long)ppd.pgd);
++
++	teardown_workarea_map(&wa, &ppd);
++}
++
+ void __init sme_enable(struct boot_params *bp)
+ {
+ 	const char *cmdline_ptr, *cmdline_arg, *cmdline_on, *cmdline_off;
 -- 
 2.7.4
 
