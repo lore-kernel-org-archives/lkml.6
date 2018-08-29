@@ -6,100 +6,185 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AEF7C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 01:19:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08740C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 01:22:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D4D72087B
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 01:19:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D4D72087B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A0FD32084A
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 01:22:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0FD32084A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727318AbeH2FNS (ORCPT
+        id S1727261AbeH2FRH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 01:13:18 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38740 "EHLO mx1.redhat.com"
+        Wed, 29 Aug 2018 01:17:07 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:11203 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725723AbeH2FNS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 01:13:18 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 18AF940241C3;
-        Wed, 29 Aug 2018 01:18:58 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-123-12.rdu2.redhat.com [10.10.123.12])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F35192166B41;
-        Wed, 29 Aug 2018 01:18:56 +0000 (UTC)
-Subject: Re: [PATCH 2/2] fs/dcache: Make negative dentries easier to be
- reclaimed
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>, Jan Kara <jack@suse.cz>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Larry Woodman <lwoodman@redhat.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        "Wangkai (Kevin,C)" <wangkai86@huawei.com>,
-        Michal Hocko <mhocko@kernel.org>
-References: <1535476780-5773-1-git-send-email-longman@redhat.com>
- <1535476780-5773-3-git-send-email-longman@redhat.com>
- <20180828221352.GC11400@bombadil.infradead.org>
- <6873378b-3202-e738-2366-5fb818b4a013@redhat.com>
- <CA+55aFxy1vH2CamZ_pdFohKgSJgi1i2MkeaY1qX8NdFK8Xu8Ww@mail.gmail.com>
- <20180828162207.52240d3442fbe65166f9d604@linux-foundation.org>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <a7c7150f-9e8e-62d3-6dac-0b86a2f69876@redhat.com>
-Date:   Tue, 28 Aug 2018 21:18:56 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1725723AbeH2FRG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 01:17:06 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 7C641820A5934;
+        Wed, 29 Aug 2018 09:22:43 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.399.0; Wed, 29 Aug 2018
+ 09:22:43 +0800
+Subject: Re: [f2fs-dev] [RFC PATCH 10/10] f2fs: fs-verity support
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+CC:     Chao Yu <chao@kernel.org>, Eric Biggers <ebiggers@kernel.org>,
+        "Dmitry Kasatkin" <dmitry.kasatkin@gmail.com>,
+        Michael Halcrow <mhalcrow@google.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-fscrypt@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-integrity@vger.kernel.org>, <linux-ext4@vger.kernel.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Victor Hsieh <victorhsieh@google.com>
+References: <20180824161642.1144-1-ebiggers@kernel.org>
+ <20180824161642.1144-11-ebiggers@kernel.org>
+ <b2b6a810-9605-15c8-b905-a4591c0cf3a5@huawei.com>
+ <20180826173507.GC728@sol.localdomain>
+ <dbc20be8-975d-7bd2-002d-a8f30896da4a@kernel.org>
+ <20180828072756.GC29049@jaegeuk-macbookpro.roam.corp.google.com>
+ <63a19512-e938-d239-9e3c-f6ecc479478c@huawei.com>
+ <20180828170142.GB62482@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <8b7f83db-810a-bdd6-85b0-1248dc14f8d7@huawei.com>
+Date:   Wed, 29 Aug 2018 09:22:42 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180828162207.52240d3442fbe65166f9d604@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180828170142.GB62482@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 29 Aug 2018 01:18:58 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 29 Aug 2018 01:18:58 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/28/2018 07:22 PM, Andrew Morton wrote:
-> On Tue, 28 Aug 2018 16:10:24 -0700 Linus Torvalds <torvalds@linux-foundation.org> wrote:
->
->> On Tue, Aug 28, 2018 at 3:29 PM Waiman Long <longman@redhat.com> wrote:
->>> Yes, I can rewrite it. What is the problem with the abbreviated form?
->> Either gcc rewrites it for you, or you end up _actually_ using a
->> function pointer and calling through it.
+On 2018/8/29 1:01, Jaegeuk Kim wrote:
+> On 08/28, Chao Yu wrote:
+>> On 2018/8/28 15:27, Jaegeuk Kim wrote:
+>>> On 08/27, Chao Yu wrote:
+>>>> Hi Eric,
+>>>>
+>>>> On 2018/8/27 1:35, Eric Biggers wrote:
+>>>>> Hi Chao,
+>>>>>
+>>>>> On Sat, Aug 25, 2018 at 01:54:08PM +0800, Chao Yu wrote:
+>>>>>> On 2018/8/25 0:16, Eric Biggers wrote:
+>>>>>>> From: Eric Biggers <ebiggers@google.com>
+>>>>>>>  #ifdef CONFIG_F2FS_CHECK_FS
+>>>>>>>  #define f2fs_bug_on(sbi, condition)	BUG_ON(condition)
+>>>>>>>  #else
+>>>>>>> @@ -146,7 +149,7 @@ struct f2fs_mount_info {
+>>>>>>>  #define F2FS_FEATURE_QUOTA_INO		0x0080
+>>>>>>>  #define F2FS_FEATURE_INODE_CRTIME	0x0100
+>>>>>>>  #define F2FS_FEATURE_LOST_FOUND		0x0200
+>>>>>>> -#define F2FS_FEATURE_VERITY		0x0400	/* reserved */
+>>>>>>> +#define F2FS_FEATURE_VERITY		0x0400
+>>>>>>>  
+>>>>>>>  #define F2FS_HAS_FEATURE(sb, mask)					\
+>>>>>>>  	((F2FS_SB(sb)->raw_super->feature & cpu_to_le32(mask)) != 0)
+>>>>>>> @@ -598,7 +601,7 @@ enum {
+>>>>>>>  #define FADVISE_ENC_NAME_BIT	0x08
+>>>>>>>  #define FADVISE_KEEP_SIZE_BIT	0x10
+>>>>>>>  #define FADVISE_HOT_BIT		0x20
+>>>>>>> -#define FADVISE_VERITY_BIT	0x40	/* reserved */
+>>>>>>> +#define FADVISE_VERITY_BIT	0x40
+>>>>>>
+>>>>>> As I suggested before, how about moving f2fs' verity_bit from i_fadvise to more
+>>>>>> generic i_flags field like ext4, so we can a) remaining more bits for those
+>>>>>> demands which really need file advise fields. b) using i_flags bits keeping line
+>>>>>> with ext4. Not sure, if user want to know whether the file is verity one, it
+>>>>>> will be easy for f2fs to export the status through FS_IOC_SETFLAGS.
+>>>>>>
+>>>>>> #define EXT4_VERITY_FL			0x00100000 /* Verity protected inode */
+>>>>>>
+>>>>>> #define F2FS_VERITY_FL			0x00100000 /* Verity protected inode */
+>>>>>>
+>>>>>
+>>>>> I don't like using i_advise much either, but I actually don't see either
+>>>>> location being much better than the other at the moment.  The real problem is an
+>>>>> artificial one: the i_flags in f2fs's on-disk format are being assumed to use
+>>>>
+>>>> Yeah, but since most copied flags from vfs/ext4 are not actually used in f2fs,
+>>>> also 0x00100000 bit is not used now, so we can just define it now directly for
+>>>> verity bit.
+>>>>
+>>>> Cleanup and remapping in ioctl interface for those unused flags, we can do it
+>>>> latter?
+>>>
+>>> No, it was reserved by f2fs-tools, 
 >>
->> The latter would be absolutely horribly bad for something like
->> "list_add()", which should expand to just a couple of instructions.
+>> That's not a problem, since we didn't use that reserved bit in any of images
+>> now, there is no backward compatibility issue.
+> 
+> We're using that.
+
+Oops, if it was in production, I agree to keep it in i_advice, otherwise, we
+still can discuss its location.
+
+> 
 >>
->> And the former would be ok, except for the "you wrote code the garbage
->> way, and then depended on the compiler fixing it up". Which we
->> generally try to avoid in the kernel.
+>>> and I think this should be aligned to the encryption bit. 
 >>
->> (Don't get me wrong - we definitely depend on the compiler doing a
->> good job at CSE and dead code elimination etc, but generally we try to
->> avoid the whole "compiler has to rewrite code to be good" model).
+>> Alright, we could, but if so, i_advise will run out of space earlier, after that
+>> we have to add real advice bit into i_inline or i_flags, that would be a little
+>> weird.
 >>
-> And the "abbreviated form" will surely explode if one or both of those
-> "functions" happens to be implemented (or later reimplemented) as a macro.
-> It's best not to unnecessarily make such assumptions.
->
-Yes,  that is true.
+>> For encryption bit, as a common vfs feature flag, in the beginning of encryption
+>> development, it will be better to set it into i_flags, IMO, but now, we have to
+>> keep it as it was.
+>>
+>>> Moreover, we guarantee i_flags less strictly from power-cut than i_advise.
+>>
+>> IMO, in power-cut scenario, it needs to keep both i_flags and i_advise being
+>> recoverable strictly. Any condition that we can not recover i_flags?
+> 
+> In __f2fs_ioc_setflags, f2fs_mark_inode_dirty_sync(inode, false);
+
+Ah, that's right, do you remember why we treat them with different recoverable
+level?
 
 Thanks,
-Longman
+
+> 
+>>
+>> Thanks,
+>>
+>>>
+>>>>
+>>>> Thanks,
+>>>>
+>>>>> the same numbering scheme as ext4's on-disk format, which makes it seem that
+>>>>> they have to be in sync, and that all new ext4 flags (say, EA_INODE) also
+>>>>> reserve bits in f2fs and vice versa, when they in fact do not.  Instead, f2fs
+>>>>> should use its own numbering for its i_flags, and it should map them to/from
+>>>>> whatever is needed for common APIs like FS_IOC_{GET,SET}FLAGS and
+>>>>> FS_IOC_FS{GET,SET}XATTR.
+>>>>>
+>>>>> So putting the verity flag in *either* location (i_advise or i_flags) is just
+>>>>> kicking the can down the road.  If I get around to it I will send a patch that
+>>>>> cleans up the f2fs flags properly...>
+>>>>> Thanks,
+>>>>>
+>>>>> - Eric
+>>>>>
+>>>>> ------------------------------------------------------------------------------
+>>>>> Check out the vibrant tech community on one of the world's most
+>>>>> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+>>>>> _______________________________________________
+>>>>> Linux-f2fs-devel mailing list
+>>>>> Linux-f2fs-devel@lists.sourceforge.net
+>>>>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+>>>>>
+>>>
+>>> .
+>>>
+> 
+> .
+> 
 
