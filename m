@@ -2,96 +2,129 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80CADC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:10:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C66FC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:10:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 419832054F
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:10:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 419832054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id BC4E82054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:10:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC4E82054F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729043AbeH2TH2 (ORCPT
+        id S1729071AbeH2THn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 15:07:28 -0400
-Received: from mga12.intel.com ([192.55.52.136]:53437 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727668AbeH2TH2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 15:07:28 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2018 08:10:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,303,1531810800"; 
-   d="scan'208";a="258217213"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by fmsmga005.fm.intel.com with ESMTP; 29 Aug 2018 08:09:56 -0700
-Received: from andy by smile with local (Exim 4.91)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1fv26V-00024y-Pw; Wed, 29 Aug 2018 18:09:55 +0300
-Date:   Wed, 29 Aug 2018 18:09:55 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Allan Nielsen <allan.nielsen@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [andriy.shevchenko@linux.intel.com: Re: [PATCH] spi: dw-mmio: add
- MSCC Jaguar2 support]
-Message-ID: <20180829150955.GB7459@smile.fi.intel.com>
+        Wed, 29 Aug 2018 15:07:43 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:34277 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727668AbeH2THn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 15:07:43 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id B6DEC86985F9;
+        Wed, 29 Aug 2018 23:10:16 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.75) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.399.0; Wed, 29 Aug 2018 23:10:08 +0800
+From:   John Garry <john.garry@huawei.com>
+To:     <gregkh@linuxfoundation.org>
+CC:     <alexander.sverdlin@nokia.com>, <jslaby@suse.com>,
+        <robh@kernel.org>, <joel@jms.id.au>, <kurt@linutronix.de>,
+        <yamada.masahiro@socionext.com>, <linux-serial@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
+        John Garry <john.garry@huawei.com>
+Subject: [PATCH] serial: 8250_of: Fix for lack of interrupt support
+Date:   Wed, 29 Aug 2018 23:07:57 +0800
+Message-ID: <1535555277-102256-1-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ Forwarded message from Andy Shevchenko <andriy.shevchenko@linux.intel.com> -----
+In commit c58caaab3bf8 ("serial: 8250: of: Defer probe on missing IRQ"), a
+check was added for the UART driver being probed prior to the parent IRQ
+controller.
 
-Date: Wed, 29 Aug 2018 18:08:31 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: Re: [PATCH] spi: dw-mmio: add MSCC Jaguar2 support
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Unfortunately this breaks certain boards which have no interrupt support,
+like Huawei D03.
 
-On Wed, Aug 29, 2018 at 02:45:48PM +0200, Alexandre Belloni wrote:
-> Unfortunately, the Jaguar2 CPU_SYSTEM_CTRL register set has a different
-> layout than the Ocelot one. Handle that while keeping most of the code
-> common.
+Indeed, the 8250 DT bindings state that interrupts should be supported -
+not must.
 
-> -#define OCELOT_IF_SI_OWNER_MASK			GENMASK(5, 4)
+To fix, switch from irq_of_parse_and_map() to of_irq_get(), which
+does relay whether the IRQ host controller domain is not ready, i.e.
+defer probe, instead of assuming it.
 
-> +			   0x3 << if_si_owner_offset,
+Fixes: c58caaab3bf8 ("serial: 8250: of: Defer probe on missing IRQ")
+Signed-off-by: John Garry <john.garry@huawei.com>
+---
+Note: I think that it would better if we could try to get the interrupt
+	  before clk+pm enabling, so we don't need to disable later when
+	  deferring, but this is not a fix.
 
-Perhaps,
-
-#define MSCC_IF_SI_OWNER_MASK		GENMASK(1, 0)
-
-...
-
-	MSCC_IF_SI_OWNER_MASK << if_si_owner_offset,
-
-
+diff --git a/drivers/tty/serial/8250/8250_of.c b/drivers/tty/serial/8250/8250_of.c
+index af8beef..c370e776 100644
+--- a/drivers/tty/serial/8250/8250_of.c
++++ b/drivers/tty/serial/8250/8250_of.c
+@@ -58,7 +58,7 @@ static int of_platform_serial_setup(struct platform_device *ofdev,
+ 	struct resource resource;
+ 	struct device_node *np = ofdev->dev.of_node;
+ 	u32 clk, spd, prop;
+-	int ret;
++	int ret, irq;
+ 
+ 	memset(port, 0, sizeof *port);
+ 
+@@ -143,21 +143,27 @@ static int of_platform_serial_setup(struct platform_device *ofdev,
+ 	if (ret >= 0)
+ 		port->line = ret;
+ 
+-	port->irq = irq_of_parse_and_map(np, 0);
+-	if (!port->irq) {
+-		ret = -EPROBE_DEFER;
+-		goto err_unprepare;
++	irq = of_irq_get(np, 0);
++	if (irq < 0) {
++		if (port->irq == -EPROBE_DEFER) {
++			ret = -EPROBE_DEFER;
++			goto err_unprepare;
++		}
++		/* IRQ support not mandatory */
++		irq = 0;
+ 	}
+ 
++	port->irq = irq;
++
+ 	info->rst = devm_reset_control_get_optional_shared(&ofdev->dev, NULL);
+ 	if (IS_ERR(info->rst)) {
+ 		ret = PTR_ERR(info->rst);
+-		goto err_dispose;
++		goto err_unprepare;
+ 	}
+ 
+ 	ret = reset_control_deassert(info->rst);
+ 	if (ret)
+-		goto err_dispose;
++		goto err_unprepare;
+ 
+ 	port->type = type;
+ 	port->uartclk = clk;
+@@ -184,8 +190,6 @@ static int of_platform_serial_setup(struct platform_device *ofdev,
+ 		port->handle_irq = fsl8250_handle_irq;
+ 
+ 	return 0;
+-err_dispose:
+-	irq_dispose_mapping(port->irq);
+ err_unprepare:
+ 	clk_disable_unprepare(info->clk);
+ err_pmruntime:
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
-
------ End forwarded message -----
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+1.9.1
 
