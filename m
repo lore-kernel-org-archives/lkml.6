@@ -4,61 +4,61 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3868BC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 11:36:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23FE0C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 11:36:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC48E20867
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 11:36:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B02F920858
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 11:36:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="poTOiZ7O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC48E20867
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WTz2QY2H"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B02F920858
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728756AbeH2Pc6 (ORCPT
+        id S1728606AbeH2PcP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 11:32:58 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:51232 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728618AbeH2PcT (ORCPT
+        Wed, 29 Aug 2018 11:32:15 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45382 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728563AbeH2PcN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 11:32:19 -0400
-Received: by mail-wm0-f66.google.com with SMTP id y2-v6so4935351wma.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 04:35:47 -0700 (PDT)
+        Wed, 29 Aug 2018 11:32:13 -0400
+Received: by mail-wr1-f68.google.com with SMTP id 20-v6so4474594wrb.12
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 04:35:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=QE7zu/J6JpHtjxjbj5eyHg3o6vc4NUhXiKZMTLxkjT8=;
-        b=poTOiZ7OEJDvRXqnW6M11CljhGrcvxa6MB8NNDTuden3Y9qpIq+g3QXXKrK3tpMXIU
-         Xx5qX4G3tZy6VjbhFNGGa3l9wwSYgxFUBnke/Xw4MVD5Xp/TfGNMsGh9kG82HVgZPtCJ
-         F3XioOwutDCy3fGRanaHVRYYSHTu+N2woqrSzUO26GhsuSi9w4DRLccTijKVQIBIoFT8
-         Xweewr2hAoWwQdXAolEPidw9AYzvJc7EglK4uN8jONYu3Flf3RP7se0dvA6s/9NCIwWn
-         52Y+pVpH1/KUIZuUwTpbPOk7Ca2uM8jJ2SeUP6H7gqVddJnCSqwJxfw40snOOXpL2AcF
-         BMzg==
+        bh=OrkXoXQH/F+TSi0uzJOTsE67Q+iABNFRWIJoC0xEk4I=;
+        b=WTz2QY2HKqYf+swr0X7Ae2YyC/6YPEZ7qJCGjn+gto47vutHzDmySwPeJpJN11E0ZE
+         5/N+Lf5FI2i9lD6qnaIKa8vC/iEgp6tV3xlwZxOCsUOpRsPK5x8OxbGPeHqoaLRnz3tl
+         9y2MSALdGNvdhBDLQvs0+f/FvlAZbS/GTFpeuBXd0Di7KJovjN8/Xes0AHrVObh18/kk
+         l3VioLZaGqerA6Z1z05WFImABwS9LljXfzhrpinvyCSxMUXJUyb6Mgz0x0wZN2PV/gRR
+         k8/pJKOTpSsY6SdKFgIhYeExLmV+9l/hayV09vG0Ai1tN5FuaJADVtrnzjbraHGluFQU
+         kEgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=QE7zu/J6JpHtjxjbj5eyHg3o6vc4NUhXiKZMTLxkjT8=;
-        b=srgL0i4CMXv9rRRXVxWMwBRQ6HyJczXTHBPcGzfyPYjwSyOA+HXsdW66COcFo8dbza
-         jEYxjVveuJynYvSEkJPArUc0KNhoj1MCcN6Yt5wE85FufQPg82u4JEvsOD9+j4Xoe/Xi
-         DcFRwTTtZkV7XRNzatyz53RfybTDOEe5t9lAZjsRzHgiJd43gJ/NLF0TMPPNYzc3YBkD
-         LRaXbHubxN5fovWtWOt1drhGn/Mdm7JKweTHnwcX9lilrbeSUp9OrBxnqwMtswM5MrqU
-         uxhFVkM24vFg0ddykgnLFsKiUMrv61po8f695deB6rQoB4+0x+oGPGDgFq3pp1VATEVf
-         AEWw==
-X-Gm-Message-State: APzg51DVnM2/ekKA0l/TUWtQ4K7nWayfBr5ZD5wv+lxKhFztxqUcCokV
-        vnPIkKmZQokRs/wpUCJpJRaJeQ==
-X-Google-Smtp-Source: ANB0VdY7lfZmikPKZfbmgvOqeer3iRdA2rG9AgDe8U1fHtiwKkC/+fBVEuUZi1JjrGIyrrNWDpcHRA==
-X-Received: by 2002:a1c:f03:: with SMTP id 3-v6mr3949734wmp.129.1535542546650;
-        Wed, 29 Aug 2018 04:35:46 -0700 (PDT)
+        bh=OrkXoXQH/F+TSi0uzJOTsE67Q+iABNFRWIJoC0xEk4I=;
+        b=oma8zG3zkGvUuHgLtyRNjA1exXNT0a3cqk7IQ3rzyYHSuCw06WMZnDP6vDJ6dNElHC
+         rE8IirJCzBhcFqbPnIVWc+gOt9nwE8nxTF6OxR4S7AUmCrSTc9Ox/2W0p93ZNlEfVlKI
+         PR8q1Z83bgMbBnQJ1CRlmeQf2DAVAENBFu/hu14hExn8ekYMSOtBsB/1dnz6TK/sqPid
+         IRKB6MakRIQ5S1ohsLIfVrFQ1V9x7IEfPixRTkNQ7BW2XjXqEw6B/vRI1eRxf8TTycT+
+         S8tgDqFqLdNPk1jfcRt8Fcg0qFmSDl61xfv0UlDZJWBqmX07JHLQXNoHXMccOPxpm6mD
+         UBSA==
+X-Gm-Message-State: APzg51DYdO9RlJcuHvqWXA49MegLS/PUQtPvAcNZvq4lrO1rLLNatmpu
+        TyxJotXPao7iO9qzr73Dyr3K1g==
+X-Google-Smtp-Source: ANB0Vdb/wq3vWEnItljvIkYES5qFH6+aaA3t/puEBlFbr7sKQYhGOPxWZqcCP6CtYnWV4cowVJ+NpA==
+X-Received: by 2002:adf:a512:: with SMTP id i18-v6mr4050713wrb.220.1535542543576;
+        Wed, 29 Aug 2018 04:35:43 -0700 (PDT)
 Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:84be:a42a:826d:c530])
-        by smtp.gmail.com with ESMTPSA id s10-v6sm7800454wmd.22.2018.08.29.04.35.45
+        by smtp.gmail.com with ESMTPSA id s10-v6sm7800454wmd.22.2018.08.29.04.35.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 Aug 2018 04:35:45 -0700 (PDT)
+        Wed, 29 Aug 2018 04:35:43 -0700 (PDT)
 From:   Andrey Konovalov <andreyknvl@google.com>
 To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
         Alexander Potapenko <glider@google.com>,
@@ -96,9 +96,9 @@ Cc:     Kostya Serebryany <kcc@google.com>,
         Chintan Pandya <cpandya@codeaurora.org>,
         Vishwath Mohan <vishwath@google.com>,
         Andrey Konovalov <andreyknvl@google.com>
-Subject: [PATCH v6 12/18] khwasan: split out kasan_report.c from report.c
-Date:   Wed, 29 Aug 2018 13:35:16 +0200
-Message-Id: <ecd557ae22f4f0108ffc5637f3ec9de3bf81c2fc.1535462971.git.andreyknvl@google.com>
+Subject: [PATCH v6 10/18] khwasan, arm64: enable top byte ignore for the kernel
+Date:   Wed, 29 Aug 2018 13:35:14 +0200
+Message-Id: <d34bd1004c8789729228d8bd38aaf08a65c94032.1535462971.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.19.0.rc0.228.g281dcd1b4d0-goog
 In-Reply-To: <cover.1535462971.git.andreyknvl@google.com>
 References: <cover.1535462971.git.andreyknvl@google.com>
@@ -109,593 +109,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch moves KASAN specific error reporting routines to kasan_report.c
-without any functional changes, leaving common error reporting code in
-report.c to be later reused by KHWASAN.
+KHWASAN uses the Top Byte Ignore feature of arm64 CPUs to store a pointer
+tag in the top byte of each pointer. This commit enables the TCR_TBI1 bit,
+which enables Top Byte Ignore for the kernel, when KHWASAN is used.
 
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- mm/kasan/Makefile         |   4 +-
- mm/kasan/kasan.h          |   7 ++
- mm/kasan/kasan_report.c   | 158 +++++++++++++++++++++++++
- mm/kasan/khwasan_report.c |  39 +++++++
- mm/kasan/report.c         | 234 +++++++++-----------------------------
- 5 files changed, 257 insertions(+), 185 deletions(-)
- create mode 100644 mm/kasan/kasan_report.c
- create mode 100644 mm/kasan/khwasan_report.c
+ arch/arm64/include/asm/pgtable-hwdef.h | 1 +
+ arch/arm64/mm/proc.S                   | 8 +++++++-
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/mm/kasan/Makefile b/mm/kasan/Makefile
-index 14955add96d3..7ef536390365 100644
---- a/mm/kasan/Makefile
-+++ b/mm/kasan/Makefile
-@@ -14,5 +14,5 @@ CFLAGS_kasan.o := $(call cc-option, -fno-conserve-stack -fno-stack-protector)
- CFLAGS_khwasan.o := $(call cc-option, -fno-conserve-stack -fno-stack-protector)
+diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
+index fd208eac9f2a..483aceedad76 100644
+--- a/arch/arm64/include/asm/pgtable-hwdef.h
++++ b/arch/arm64/include/asm/pgtable-hwdef.h
+@@ -289,6 +289,7 @@
+ #define TCR_A1			(UL(1) << 22)
+ #define TCR_ASID16		(UL(1) << 36)
+ #define TCR_TBI0		(UL(1) << 37)
++#define TCR_TBI1		(UL(1) << 38)
+ #define TCR_HA			(UL(1) << 39)
+ #define TCR_HD			(UL(1) << 40)
+ #define TCR_NFD1		(UL(1) << 54)
+diff --git a/arch/arm64/mm/proc.S b/arch/arm64/mm/proc.S
+index 03646e6a2ef4..c5175e098d02 100644
+--- a/arch/arm64/mm/proc.S
++++ b/arch/arm64/mm/proc.S
+@@ -47,6 +47,12 @@
+ /* PTWs cacheable, inner/outer WBWA */
+ #define TCR_CACHE_FLAGS	TCR_IRGN_WBWA | TCR_ORGN_WBWA
  
- obj-$(CONFIG_KASAN) := common.o kasan_init.o report.o
--obj-$(CONFIG_KASAN_GENERIC) += kasan.o quarantine.o
--obj-$(CONFIG_KASAN_HW) += khwasan.o
-+obj-$(CONFIG_KASAN_GENERIC) += kasan.o kasan_report.o quarantine.o
-+obj-$(CONFIG_KASAN_HW) += khwasan.o khwasan_report.o
-diff --git a/mm/kasan/kasan.h b/mm/kasan/kasan.h
-index a7cc27d96608..82672473740c 100644
---- a/mm/kasan/kasan.h
-+++ b/mm/kasan/kasan.h
-@@ -109,11 +109,18 @@ static inline const void *kasan_shadow_to_mem(const void *shadow_addr)
- 		<< KASAN_SHADOW_SCALE_SHIFT);
- }
++#ifdef CONFIG_KASAN_HW
++#define TCR_KASAN_FLAGS TCR_TBI1
++#else
++#define TCR_KASAN_FLAGS 0
++#endif
++
+ #define MAIR(attr, mt)	((attr) << ((mt) * 8))
  
-+static inline bool addr_has_shadow(const void *addr)
-+{
-+	return (addr >= kasan_shadow_to_mem((void *)KASAN_SHADOW_START));
-+}
-+
- void kasan_poison_shadow(const void *address, size_t size, u8 value);
- 
- void check_memory_region(unsigned long addr, size_t size, bool write,
- 				unsigned long ret_ip);
- 
-+const char *get_bug_type(struct kasan_access_info *info);
-+
- void kasan_report(unsigned long addr, size_t size,
- 		bool is_write, unsigned long ip);
- void kasan_report_invalid_free(void *object, unsigned long ip);
-diff --git a/mm/kasan/kasan_report.c b/mm/kasan/kasan_report.c
-new file mode 100644
-index 000000000000..2d8decbecbd5
---- /dev/null
-+++ b/mm/kasan/kasan_report.c
-@@ -0,0 +1,158 @@
-+/*
-+ * This file contains KASAN specific error reporting code.
-+ *
-+ * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-+ * Author: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-+ *
-+ * Some code borrowed from https://github.com/xairy/kasan-prototype by
-+ *        Andrey Konovalov <andreyknvl@gmail.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/ftrace.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/mm.h>
-+#include <linux/printk.h>
-+#include <linux/sched.h>
-+#include <linux/slab.h>
-+#include <linux/stackdepot.h>
-+#include <linux/stacktrace.h>
-+#include <linux/string.h>
-+#include <linux/types.h>
-+#include <linux/kasan.h>
-+#include <linux/module.h>
-+
-+#include <asm/sections.h>
-+
-+#include "kasan.h"
-+#include "../slab.h"
-+
-+static const void *find_first_bad_addr(const void *addr, size_t size)
-+{
-+	u8 shadow_val = *(u8 *)kasan_mem_to_shadow(addr);
-+	const void *first_bad_addr = addr;
-+
-+	while (!shadow_val && first_bad_addr < addr + size) {
-+		first_bad_addr += KASAN_SHADOW_SCALE_SIZE;
-+		shadow_val = *(u8 *)kasan_mem_to_shadow(first_bad_addr);
-+	}
-+	return first_bad_addr;
-+}
-+
-+static const char *get_shadow_bug_type(struct kasan_access_info *info)
-+{
-+	const char *bug_type = "unknown-crash";
-+	u8 *shadow_addr;
-+
-+	info->first_bad_addr = find_first_bad_addr(info->access_addr,
-+						info->access_size);
-+
-+	shadow_addr = (u8 *)kasan_mem_to_shadow(info->first_bad_addr);
-+
-+	/*
-+	 * If shadow byte value is in [0, KASAN_SHADOW_SCALE_SIZE) we can look
-+	 * at the next shadow byte to determine the type of the bad access.
-+	 */
-+	if (*shadow_addr > 0 && *shadow_addr <= KASAN_SHADOW_SCALE_SIZE - 1)
-+		shadow_addr++;
-+
-+	switch (*shadow_addr) {
-+	case 0 ... KASAN_SHADOW_SCALE_SIZE - 1:
-+		/*
-+		 * In theory it's still possible to see these shadow values
-+		 * due to a data race in the kernel code.
-+		 */
-+		bug_type = "out-of-bounds";
-+		break;
-+	case KASAN_PAGE_REDZONE:
-+	case KASAN_KMALLOC_REDZONE:
-+		bug_type = "slab-out-of-bounds";
-+		break;
-+	case KASAN_GLOBAL_REDZONE:
-+		bug_type = "global-out-of-bounds";
-+		break;
-+	case KASAN_STACK_LEFT:
-+	case KASAN_STACK_MID:
-+	case KASAN_STACK_RIGHT:
-+	case KASAN_STACK_PARTIAL:
-+		bug_type = "stack-out-of-bounds";
-+		break;
-+	case KASAN_FREE_PAGE:
-+	case KASAN_KMALLOC_FREE:
-+		bug_type = "use-after-free";
-+		break;
-+	case KASAN_USE_AFTER_SCOPE:
-+		bug_type = "use-after-scope";
-+		break;
-+	case KASAN_ALLOCA_LEFT:
-+	case KASAN_ALLOCA_RIGHT:
-+		bug_type = "alloca-out-of-bounds";
-+		break;
-+	}
-+
-+	return bug_type;
-+}
-+
-+static const char *get_wild_bug_type(struct kasan_access_info *info)
-+{
-+	const char *bug_type = "unknown-crash";
-+
-+	if ((unsigned long)info->access_addr < PAGE_SIZE)
-+		bug_type = "null-ptr-deref";
-+	else if ((unsigned long)info->access_addr < TASK_SIZE)
-+		bug_type = "user-memory-access";
-+	else
-+		bug_type = "wild-memory-access";
-+
-+	return bug_type;
-+}
-+
-+const char *get_bug_type(struct kasan_access_info *info)
-+{
-+	if (addr_has_shadow(info->access_addr))
-+		return get_shadow_bug_type(info);
-+	return get_wild_bug_type(info);
-+}
-+
-+#define DEFINE_ASAN_REPORT_LOAD(size)                     \
-+void __asan_report_load##size##_noabort(unsigned long addr) \
-+{                                                         \
-+	kasan_report(addr, size, false, _RET_IP_);	  \
-+}                                                         \
-+EXPORT_SYMBOL(__asan_report_load##size##_noabort)
-+
-+#define DEFINE_ASAN_REPORT_STORE(size)                     \
-+void __asan_report_store##size##_noabort(unsigned long addr) \
-+{                                                          \
-+	kasan_report(addr, size, true, _RET_IP_);	   \
-+}                                                          \
-+EXPORT_SYMBOL(__asan_report_store##size##_noabort)
-+
-+DEFINE_ASAN_REPORT_LOAD(1);
-+DEFINE_ASAN_REPORT_LOAD(2);
-+DEFINE_ASAN_REPORT_LOAD(4);
-+DEFINE_ASAN_REPORT_LOAD(8);
-+DEFINE_ASAN_REPORT_LOAD(16);
-+DEFINE_ASAN_REPORT_STORE(1);
-+DEFINE_ASAN_REPORT_STORE(2);
-+DEFINE_ASAN_REPORT_STORE(4);
-+DEFINE_ASAN_REPORT_STORE(8);
-+DEFINE_ASAN_REPORT_STORE(16);
-+
-+void __asan_report_load_n_noabort(unsigned long addr, size_t size)
-+{
-+	kasan_report(addr, size, false, _RET_IP_);
-+}
-+EXPORT_SYMBOL(__asan_report_load_n_noabort);
-+
-+void __asan_report_store_n_noabort(unsigned long addr, size_t size)
-+{
-+	kasan_report(addr, size, true, _RET_IP_);
-+}
-+EXPORT_SYMBOL(__asan_report_store_n_noabort);
-diff --git a/mm/kasan/khwasan_report.c b/mm/kasan/khwasan_report.c
-new file mode 100644
-index 000000000000..2edbc3c76be5
---- /dev/null
-+++ b/mm/kasan/khwasan_report.c
-@@ -0,0 +1,39 @@
-+/*
-+ * This file contains KHWASAN specific error reporting code.
-+ *
-+ * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-+ * Author: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-+ *
-+ * Some code borrowed from https://github.com/xairy/kasan-prototype by
-+ *        Andrey Konovalov <andreyknvl@gmail.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/ftrace.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/mm.h>
-+#include <linux/printk.h>
-+#include <linux/sched.h>
-+#include <linux/slab.h>
-+#include <linux/stackdepot.h>
-+#include <linux/stacktrace.h>
-+#include <linux/string.h>
-+#include <linux/types.h>
-+#include <linux/kasan.h>
-+#include <linux/module.h>
-+
-+#include <asm/sections.h>
-+
-+#include "kasan.h"
-+#include "../slab.h"
-+
-+const char *get_bug_type(struct kasan_access_info *info)
-+{
-+	return "invalid-access";
-+}
-diff --git a/mm/kasan/report.c b/mm/kasan/report.c
-index 5c169aa688fd..155247a6f8a8 100644
---- a/mm/kasan/report.c
-+++ b/mm/kasan/report.c
-@@ -1,5 +1,5 @@
  /*
-- * This file contains error reporting code.
-+ * This file contains common KASAN and KHWASAN error reporting code.
-  *
-  * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-  * Author: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-@@ -39,103 +39,34 @@
- #define SHADOW_BYTES_PER_ROW (SHADOW_BLOCKS_PER_ROW * SHADOW_BYTES_PER_BLOCK)
- #define SHADOW_ROWS_AROUND_ADDR 2
+@@ -440,7 +446,7 @@ ENTRY(__cpu_setup)
+ 	 */
+ 	ldr	x10, =TCR_TxSZ(VA_BITS) | TCR_CACHE_FLAGS | TCR_SMP_FLAGS | \
+ 			TCR_TG_FLAGS | TCR_KASLR_FLAGS | TCR_ASID16 | \
+-			TCR_TBI0 | TCR_A1
++			TCR_TBI0 | TCR_A1 | TCR_KASAN_FLAGS
+ 	tcr_set_idmap_t0sz	x10, x9
  
--static const void *find_first_bad_addr(const void *addr, size_t size)
--{
--	u8 shadow_val = *(u8 *)kasan_mem_to_shadow(addr);
--	const void *first_bad_addr = addr;
--
--	while (!shadow_val && first_bad_addr < addr + size) {
--		first_bad_addr += KASAN_SHADOW_SCALE_SIZE;
--		shadow_val = *(u8 *)kasan_mem_to_shadow(first_bad_addr);
--	}
--	return first_bad_addr;
--}
-+static unsigned long kasan_flags;
- 
--static bool addr_has_shadow(struct kasan_access_info *info)
--{
--	return (info->access_addr >=
--		kasan_shadow_to_mem((void *)KASAN_SHADOW_START));
--}
-+#define KASAN_BIT_REPORTED	0
-+#define KASAN_BIT_MULTI_SHOT	1
- 
--static const char *get_shadow_bug_type(struct kasan_access_info *info)
-+bool kasan_save_enable_multi_shot(void)
- {
--	const char *bug_type = "unknown-crash";
--	u8 *shadow_addr;
--
--	info->first_bad_addr = find_first_bad_addr(info->access_addr,
--						info->access_size);
--
--	shadow_addr = (u8 *)kasan_mem_to_shadow(info->first_bad_addr);
--
--	/*
--	 * If shadow byte value is in [0, KASAN_SHADOW_SCALE_SIZE) we can look
--	 * at the next shadow byte to determine the type of the bad access.
--	 */
--	if (*shadow_addr > 0 && *shadow_addr <= KASAN_SHADOW_SCALE_SIZE - 1)
--		shadow_addr++;
--
--	switch (*shadow_addr) {
--	case 0 ... KASAN_SHADOW_SCALE_SIZE - 1:
--		/*
--		 * In theory it's still possible to see these shadow values
--		 * due to a data race in the kernel code.
--		 */
--		bug_type = "out-of-bounds";
--		break;
--	case KASAN_PAGE_REDZONE:
--	case KASAN_KMALLOC_REDZONE:
--		bug_type = "slab-out-of-bounds";
--		break;
--	case KASAN_GLOBAL_REDZONE:
--		bug_type = "global-out-of-bounds";
--		break;
--	case KASAN_STACK_LEFT:
--	case KASAN_STACK_MID:
--	case KASAN_STACK_RIGHT:
--	case KASAN_STACK_PARTIAL:
--		bug_type = "stack-out-of-bounds";
--		break;
--	case KASAN_FREE_PAGE:
--	case KASAN_KMALLOC_FREE:
--		bug_type = "use-after-free";
--		break;
--	case KASAN_USE_AFTER_SCOPE:
--		bug_type = "use-after-scope";
--		break;
--	case KASAN_ALLOCA_LEFT:
--	case KASAN_ALLOCA_RIGHT:
--		bug_type = "alloca-out-of-bounds";
--		break;
--	}
--
--	return bug_type;
-+	return test_and_set_bit(KASAN_BIT_MULTI_SHOT, &kasan_flags);
- }
-+EXPORT_SYMBOL_GPL(kasan_save_enable_multi_shot);
- 
--static const char *get_wild_bug_type(struct kasan_access_info *info)
-+void kasan_restore_multi_shot(bool enabled)
- {
--	const char *bug_type = "unknown-crash";
--
--	if ((unsigned long)info->access_addr < PAGE_SIZE)
--		bug_type = "null-ptr-deref";
--	else if ((unsigned long)info->access_addr < TASK_SIZE)
--		bug_type = "user-memory-access";
--	else
--		bug_type = "wild-memory-access";
--
--	return bug_type;
-+	if (!enabled)
-+		clear_bit(KASAN_BIT_MULTI_SHOT, &kasan_flags);
- }
-+EXPORT_SYMBOL_GPL(kasan_restore_multi_shot);
- 
--static const char *get_bug_type(struct kasan_access_info *info)
-+static int __init kasan_set_multi_shot(char *str)
- {
--	if (addr_has_shadow(info))
--		return get_shadow_bug_type(info);
--	return get_wild_bug_type(info);
-+	set_bit(KASAN_BIT_MULTI_SHOT, &kasan_flags);
-+	return 1;
- }
-+__setup("kasan_multi_shot", kasan_set_multi_shot);
- 
--static void print_error_description(struct kasan_access_info *info)
-+static void print_error_description(struct kasan_access_info *info,
-+					const char *bug_type)
- {
--	const char *bug_type = get_bug_type(info);
--
- 	pr_err("BUG: KASAN: %s in %pS\n",
- 		bug_type, (void *)info->ip);
- 	pr_err("%s of size %zu at addr %px by task %s/%d\n",
-@@ -143,25 +74,9 @@ static void print_error_description(struct kasan_access_info *info)
- 		info->access_addr, current->comm, task_pid_nr(current));
- }
- 
--static inline bool kernel_or_module_addr(const void *addr)
--{
--	if (addr >= (void *)_stext && addr < (void *)_end)
--		return true;
--	if (is_module_address((unsigned long)addr))
--		return true;
--	return false;
--}
--
--static inline bool init_task_stack_addr(const void *addr)
--{
--	return addr >= (void *)&init_thread_union.stack &&
--		(addr <= (void *)&init_thread_union.stack +
--			sizeof(init_thread_union.stack));
--}
--
- static DEFINE_SPINLOCK(report_lock);
- 
--static void kasan_start_report(unsigned long *flags)
-+static void start_report(unsigned long *flags)
- {
  	/*
- 	 * Make sure we don't end up in loop.
-@@ -171,7 +86,7 @@ static void kasan_start_report(unsigned long *flags)
- 	pr_err("==================================================================\n");
- }
- 
--static void kasan_end_report(unsigned long *flags)
-+static void end_report(unsigned long *flags)
- {
- 	pr_err("==================================================================\n");
- 	add_taint(TAINT_BAD_PAGE, LOCKDEP_NOW_UNRELIABLE);
-@@ -249,6 +164,22 @@ static void describe_object(struct kmem_cache *cache, void *object,
- 	describe_object_addr(cache, object, addr);
- }
- 
-+static inline bool kernel_or_module_addr(const void *addr)
-+{
-+	if (addr >= (void *)_stext && addr < (void *)_end)
-+		return true;
-+	if (is_module_address((unsigned long)addr))
-+		return true;
-+	return false;
-+}
-+
-+static inline bool init_task_stack_addr(const void *addr)
-+{
-+	return addr >= (void *)&init_thread_union.stack &&
-+		(addr <= (void *)&init_thread_union.stack +
-+			sizeof(init_thread_union.stack));
-+}
-+
- static void print_address_description(void *addr)
- {
- 	struct page *page = addr_to_page(addr);
-@@ -326,29 +257,38 @@ static void print_shadow_for_address(const void *addr)
- 	}
- }
- 
-+static bool report_enabled(void)
-+{
-+	if (current->kasan_depth)
-+		return false;
-+	if (test_bit(KASAN_BIT_MULTI_SHOT, &kasan_flags))
-+		return true;
-+	return !test_and_set_bit(KASAN_BIT_REPORTED, &kasan_flags);
-+}
-+
- void kasan_report_invalid_free(void *object, unsigned long ip)
- {
- 	unsigned long flags;
- 
--	kasan_start_report(&flags);
-+	start_report(&flags);
- 	pr_err("BUG: KASAN: double-free or invalid-free in %pS\n", (void *)ip);
- 	pr_err("\n");
- 	print_address_description(object);
- 	pr_err("\n");
- 	print_shadow_for_address(object);
--	kasan_end_report(&flags);
-+	end_report(&flags);
- }
- 
- static void kasan_report_error(struct kasan_access_info *info)
- {
- 	unsigned long flags;
- 
--	kasan_start_report(&flags);
-+	start_report(&flags);
- 
--	print_error_description(info);
-+	print_error_description(info, get_bug_type(info));
- 	pr_err("\n");
- 
--	if (!addr_has_shadow(info)) {
-+	if (!addr_has_shadow(info->access_addr)) {
- 		dump_stack();
- 	} else {
- 		print_address_description((void *)info->access_addr);
-@@ -356,41 +296,7 @@ static void kasan_report_error(struct kasan_access_info *info)
- 		print_shadow_for_address(info->first_bad_addr);
- 	}
- 
--	kasan_end_report(&flags);
--}
--
--static unsigned long kasan_flags;
--
--#define KASAN_BIT_REPORTED	0
--#define KASAN_BIT_MULTI_SHOT	1
--
--bool kasan_save_enable_multi_shot(void)
--{
--	return test_and_set_bit(KASAN_BIT_MULTI_SHOT, &kasan_flags);
--}
--EXPORT_SYMBOL_GPL(kasan_save_enable_multi_shot);
--
--void kasan_restore_multi_shot(bool enabled)
--{
--	if (!enabled)
--		clear_bit(KASAN_BIT_MULTI_SHOT, &kasan_flags);
--}
--EXPORT_SYMBOL_GPL(kasan_restore_multi_shot);
--
--static int __init kasan_set_multi_shot(char *str)
--{
--	set_bit(KASAN_BIT_MULTI_SHOT, &kasan_flags);
--	return 1;
--}
--__setup("kasan_multi_shot", kasan_set_multi_shot);
--
--static inline bool kasan_report_enabled(void)
--{
--	if (current->kasan_depth)
--		return false;
--	if (test_bit(KASAN_BIT_MULTI_SHOT, &kasan_flags))
--		return true;
--	return !test_and_set_bit(KASAN_BIT_REPORTED, &kasan_flags);
-+	end_report(&flags);
- }
- 
- void kasan_report(unsigned long addr, size_t size,
-@@ -398,7 +304,7 @@ void kasan_report(unsigned long addr, size_t size,
- {
- 	struct kasan_access_info info;
- 
--	if (likely(!kasan_report_enabled()))
-+	if (likely(!report_enabled()))
- 		return;
- 
- 	disable_trace_on_warning();
-@@ -411,41 +317,3 @@ void kasan_report(unsigned long addr, size_t size,
- 
- 	kasan_report_error(&info);
- }
--
--
--#define DEFINE_ASAN_REPORT_LOAD(size)                     \
--void __asan_report_load##size##_noabort(unsigned long addr) \
--{                                                         \
--	kasan_report(addr, size, false, _RET_IP_);	  \
--}                                                         \
--EXPORT_SYMBOL(__asan_report_load##size##_noabort)
--
--#define DEFINE_ASAN_REPORT_STORE(size)                     \
--void __asan_report_store##size##_noabort(unsigned long addr) \
--{                                                          \
--	kasan_report(addr, size, true, _RET_IP_);	   \
--}                                                          \
--EXPORT_SYMBOL(__asan_report_store##size##_noabort)
--
--DEFINE_ASAN_REPORT_LOAD(1);
--DEFINE_ASAN_REPORT_LOAD(2);
--DEFINE_ASAN_REPORT_LOAD(4);
--DEFINE_ASAN_REPORT_LOAD(8);
--DEFINE_ASAN_REPORT_LOAD(16);
--DEFINE_ASAN_REPORT_STORE(1);
--DEFINE_ASAN_REPORT_STORE(2);
--DEFINE_ASAN_REPORT_STORE(4);
--DEFINE_ASAN_REPORT_STORE(8);
--DEFINE_ASAN_REPORT_STORE(16);
--
--void __asan_report_load_n_noabort(unsigned long addr, size_t size)
--{
--	kasan_report(addr, size, false, _RET_IP_);
--}
--EXPORT_SYMBOL(__asan_report_load_n_noabort);
--
--void __asan_report_store_n_noabort(unsigned long addr, size_t size)
--{
--	kasan_report(addr, size, true, _RET_IP_);
--}
--EXPORT_SYMBOL(__asan_report_store_n_noabort);
 -- 
 2.19.0.rc0.228.g281dcd1b4d0-goog
 
