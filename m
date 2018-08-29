@@ -2,199 +2,154 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F251C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:04:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ED06C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:08:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A7BA20847
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:04:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A7BA20847
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id B49BF2084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:08:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="u9DdSZLc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B49BF2084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728594AbeH2RBs (ORCPT
+        id S1728378AbeH2RFI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 13:01:48 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:40593 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726848AbeH2RBr (ORCPT
+        Wed, 29 Aug 2018 13:05:08 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:44671 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727537AbeH2RFI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 13:01:47 -0400
-Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
- (mreue103 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0MNvNj-1g1IkR1e27-007WRz; Wed, 29 Aug 2018 15:04:36 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     netdev@vger.kernel.org, "David S . Miller" <davem@davemloft.net>
-Cc:     linux-arch@vger.kernel.org, y2038@lists.linaro.org,
-        Arnd Bergmann <arnd@arndb.de>, Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        "James E.J. Bottomley" <jejb@parisc-linux.org>,
-        Helge Deller <deller@gmx.de>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
-        sparclinux@vger.kernel.org
-Subject: [PATCH net-next 2/3] asm-generic: generalize asm/sockios.h
-Date:   Wed, 29 Aug 2018 14:59:11 +0200
-Message-Id: <20180829130308.3504560-2-arnd@arndb.de>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180829130308.3504560-1-arnd@arndb.de>
-References: <20180829130308.3504560-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:hYNj9qlYrG7wffQwQ11kkhNczSOtyzhmsG0cQmDZVsMZFwTtPPp
- u5THBJlqZDetbco7RCXHgfwWBJuivvSe+sgD/W+VMzvp/qXTLsvMutcBYb++5WpF1IlMXIh
- 10myQQS18INRmj4/BSUg4YjF2VDSTZHaax3OksgK4G92iatoeAW0d+ZfkfBnuaKd+s3hRYT
- LCIK4N1MD2C2xGOGMpFOg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:9z4T3+qheSo=:qZb1MXHiPuJ6QTL4OktLsi
- V2psAz6hUqoF896lfsPJ+mDP35GpZwqqpAWaOEULGd90p6ppFNGkvSjbXfVtoE2sH2pvPiwfh
- FBgCWAWQcX+7Y+ZCVTaoxrdsAMigj3pXY3lBhxr7bV7NpB45HlspuGrOE1IAE5fFHcSX6My2c
- 0jztUenc+ugWsm9Ga54qgzec7msYKDwPX6x4xt/2DoIbkMO5aAPCBhb6J1RowF+EnizVkNHlu
- 4BYLwVFWUFy8fQ4phNDFxLXxPiArEv5KXnEMO24l1RU16aYiTqhwWe+r/T9sIQTVPUidlTokB
- XVS1ZciWk6h4OVGJY0hjhKrCWanuoPjAjEYya3ll9WETMmY/xR1v81TdBprqR3IXGSWH9etIJ
- HABj8ZPb8v0er+pjWEsdIU4heDnR7J5DQVpNBtlYjnSTaIbT1mtCcbHEfm3LKe9QT6gU2FNTP
- RgV89dSz9larFIzeK5lNQPztMUv6+YCMK0mNruXWY7O7uMK1ZGAr/R3o6MNpZHEz0gRcfEdYt
- UY4e4rS6BcwUNyV6kF6x/p72R84lDDH0ImP589+PskrottzATG2aMbFPiOqOAoQqbVWd+RzVP
- KcJxeyP+F5JNpSnFTe+Mahph/Y/eQ/V7bXOcCawJHzJrDY6/YtbqYM3TZSALIjv9r8TRKFn6S
- PS70tnNnM1+aOlOtoqtIAKWJtgjnx67+YLzhuGKOKb4gbSBjLveoW7vuXT4I7gvjXAT0=
+        Wed, 29 Aug 2018 13:05:08 -0400
+Received: by mail-pf1-f195.google.com with SMTP id k21-v6so2239323pff.11
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 06:08:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=n2gm/tJ8cTXqdvjAAS276cszFYzzc12+QuZ1BNfGWD8=;
+        b=u9DdSZLc9S8ta+xQqVH3nTqV/dvir8IBPH6lN2om7RCjwdZH5ouEiHs3k4nh4yFERB
+         xML3+Yhql0Kul6I2J6eAzAhNOvsqsySM56hDEbf8ZnkRT03n6otxhmoWEpZSr7kW1dxb
+         huEXbDBC/M9/WhmBa2L0OHH/BeLBlLwvoylTLz9YhR5joC7a8b7qDuS2/E1b14HNF0ga
+         F76qQJMxCrrgj0Dy9fe3cnFhLqERAVAF1/b0JhGL7rj3wfSRMantvU/WapMPRC+P6Ndu
+         MOhXd3pE5ysKQ0cOxcA2XQF2W5dqE0GVRZov8AVYNHlIwrp7qgtMHC5AXEmM/+j0M5L6
+         GaLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=n2gm/tJ8cTXqdvjAAS276cszFYzzc12+QuZ1BNfGWD8=;
+        b=PegQ7cAqS46fuHWKWbj+GireLel957zDg4K/+VFlxfiYBr20XroG4BoLvjKnJDvbc3
+         mkc5L8osuod0/vn0ajPOxHUO/2u6tyB6YyG6lIy/PNXQ8tsbjhvEuDyE0e6X9K9ZEaqI
+         i1utkSuQAfQ/EytyQjt/LcdRGMBSgFFRP6k9imhoQpYBaFAkiS4gz7NOe2auotNKhDZ2
+         hp6S7pL2kiw33ijKof7P7iR/5noU4GEaOnwLtyd0M4O3xm5N9Q3OMMjMfOCOBXKds5Ks
+         uwxXTWCNCjGc0q7iSCgBkAXsXrc+w7hJIfOIYN+hmsl9Hm9a8ZxdFeR8VlfQ64r/0ph9
+         3TUw==
+X-Gm-Message-State: APzg51Bzn8YuGpxCilpDLOAa2Ck1W8TltPpRfUymQf6eY1YOnu9irJG1
+        ugCChamtwrIp6POUIP3OLLxf5w==
+X-Google-Smtp-Source: ANB0Vda8ZrHTIJCbflBsyOP0q+AQXqJRjpEs1Jw4aMWMQFqUDA6EF2sMqhoZXi0U6/V0AsXijsEDBw==
+X-Received: by 2002:a63:7107:: with SMTP id m7-v6mr5625809pgc.73.1535548095656;
+        Wed, 29 Aug 2018 06:08:15 -0700 (PDT)
+Received: from [10.86.62.45] (rap-us.hgst.com. [199.255.44.250])
+        by smtp.googlemail.com with ESMTPSA id n18-v6sm7127931pfa.50.2018.08.29.06.08.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 Aug 2018 06:08:14 -0700 (PDT)
+Subject: Re: [PATCH 3/3] lightnvm: pblk: take write semaphore on metadata
+To:     javier@javigon.com
+Cc:     axboe@kernel.dk, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, javier@cnexlabs.com
+References: <1535532980-27672-1-git-send-email-javier@cnexlabs.com>
+ <1535532980-27672-4-git-send-email-javier@cnexlabs.com>
+From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <f4f8c276-0269-5aa5-39fc-42aecc7bb309@lightnvm.io>
+Date:   Wed, 29 Aug 2018 15:08:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
+MIME-Version: 1.0
+In-Reply-To: <1535532980-27672-4-git-send-email-javier@cnexlabs.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ia64, parisc and sparc just use a copy of the generic version
-of asm/sockios.h, and x86 is a redirect to the same file, so we
-can just let the header file be generated.
+On 08/29/2018 10:56 AM, Javier González wrote:
+> pblk guarantees write ordering at a chunk level through a per open chunk
+> semaphore. At this point, since we only have an open I/O stream for both
+> user and GC data, the semaphore is per parallel unit.
+> 
+> For the metadata I/O that is synchronous, the semaphore is not needed as
+> ordering is guaranteed. However, if the metadata scheme changes or
+> multiple streams are open, this guarantee might not be preserved.
+> 
+> This patch makes sure that all writes go through the semaphore, even for
+> synchronous I/O. This is consistent with pblk's write I/O model. It also
+> simplifies maintenance since changes in the metadata scheme could cause
+> ordering issues.
+> 
+> Signed-off-by: Javier González <javier@cnexlabs.com>
+> ---
+>   drivers/lightnvm/pblk-core.c | 16 +++++++++++++++-
+>   drivers/lightnvm/pblk.h      |  1 +
+>   2 files changed, 16 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
+> index 767178185f19..1e4dc0c1ed88 100644
+> --- a/drivers/lightnvm/pblk-core.c
+> +++ b/drivers/lightnvm/pblk-core.c
+> @@ -558,6 +558,20 @@ int pblk_submit_io_sync(struct pblk *pblk, struct nvm_rq *rqd)
+>   	return ret;
+>   }
+>   
+> +int pblk_submit_io_sync_sem(struct pblk *pblk, struct nvm_rq *rqd)
+> +{
+> +	struct ppa_addr *ppa_list;
+> +	int ret;
+> +
+> +	ppa_list = (rqd->nr_ppas > 1) ? rqd->ppa_list : &rqd->ppa_addr;
+> +
+> +	pblk_down_page(pblk, ppa_list, rqd->nr_ppas);
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/ia64/include/uapi/asm/Kbuild      |  1 +
- arch/ia64/include/uapi/asm/sockios.h   | 21 ---------------------
- arch/parisc/include/uapi/asm/Kbuild    |  1 +
- arch/parisc/include/uapi/asm/sockios.h | 14 --------------
- arch/sparc/include/uapi/asm/Kbuild     |  1 +
- arch/sparc/include/uapi/asm/sockios.h  | 15 ---------------
- arch/x86/include/uapi/asm/Kbuild       |  1 +
- arch/x86/include/uapi/asm/sockios.h    |  1 -
- 8 files changed, 4 insertions(+), 51 deletions(-)
- delete mode 100644 arch/ia64/include/uapi/asm/sockios.h
- delete mode 100644 arch/parisc/include/uapi/asm/sockios.h
- delete mode 100644 arch/sparc/include/uapi/asm/sockios.h
- delete mode 100644 arch/x86/include/uapi/asm/sockios.h
+If the debug stuff is killed inside __pblk_down_page, then ppa_list and 
+rqd->nr_ppas does not need to be passed, and this function can be 
+inlined in its caller. Can we kill it? I'll make the patch if you like.
 
-diff --git a/arch/ia64/include/uapi/asm/Kbuild b/arch/ia64/include/uapi/asm/Kbuild
-index 3982e673e967..a6377ad3ba1c 100644
---- a/arch/ia64/include/uapi/asm/Kbuild
-+++ b/arch/ia64/include/uapi/asm/Kbuild
-@@ -8,3 +8,4 @@ generic-y += msgbuf.h
- generic-y += poll.h
- generic-y += sembuf.h
- generic-y += shmbuf.h
-+generic-y += sockios.h
-diff --git a/arch/ia64/include/uapi/asm/sockios.h b/arch/ia64/include/uapi/asm/sockios.h
-deleted file mode 100644
-index f27a12f95d20..000000000000
---- a/arch/ia64/include/uapi/asm/sockios.h
-+++ /dev/null
-@@ -1,21 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
--#ifndef _ASM_IA64_SOCKIOS_H
--#define _ASM_IA64_SOCKIOS_H
--
--/*
-- * Socket-level I/O control calls.
-- *
-- * Based on <asm-i386/sockios.h>.
-- *
-- * Modified 1998, 1999
-- *	David Mosberger-Tang <davidm@hpl.hp.com>, Hewlett-Packard Co
-- */
--#define FIOSETOWN 	0x8901
--#define SIOCSPGRP	0x8902
--#define FIOGETOWN	0x8903
--#define SIOCGPGRP	0x8904
--#define SIOCATMARK	0x8905
--#define SIOCGSTAMP	0x8906		/* Get stamp (timeval) */
--#define SIOCGSTAMPNS	0x8907		/* Get stamp (timespec) */
--
--#endif /* _ASM_IA64_SOCKIOS_H */
-diff --git a/arch/parisc/include/uapi/asm/Kbuild b/arch/parisc/include/uapi/asm/Kbuild
-index 286ef5a5904b..be6c171f57f7 100644
---- a/arch/parisc/include/uapi/asm/Kbuild
-+++ b/arch/parisc/include/uapi/asm/Kbuild
-@@ -7,3 +7,4 @@ generic-y += kvm_para.h
- generic-y += param.h
- generic-y += poll.h
- generic-y += resource.h
-+generic-y += sockios.h
-diff --git a/arch/parisc/include/uapi/asm/sockios.h b/arch/parisc/include/uapi/asm/sockios.h
-deleted file mode 100644
-index 66a3ba64d53f..000000000000
---- a/arch/parisc/include/uapi/asm/sockios.h
-+++ /dev/null
-@@ -1,14 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
--#ifndef __ARCH_PARISC_SOCKIOS__
--#define __ARCH_PARISC_SOCKIOS__
--
--/* Socket-level I/O control calls. */
--#define FIOSETOWN 	0x8901
--#define SIOCSPGRP	0x8902
--#define FIOGETOWN	0x8903
--#define SIOCGPGRP	0x8904
--#define SIOCATMARK	0x8905
--#define SIOCGSTAMP	0x8906		/* Get stamp (timeval) */
--#define SIOCGSTAMPNS	0x8907		/* Get stamp (timespec) */
--
--#endif
-diff --git a/arch/sparc/include/uapi/asm/Kbuild b/arch/sparc/include/uapi/asm/Kbuild
-index 4680ba246b55..8fdae51d0eae 100644
---- a/arch/sparc/include/uapi/asm/Kbuild
-+++ b/arch/sparc/include/uapi/asm/Kbuild
-@@ -2,4 +2,5 @@
- include include/uapi/asm-generic/Kbuild.asm
- 
- generic-y += bpf_perf_event.h
-+generic-y += sockios.h
- generic-y += types.h
-diff --git a/arch/sparc/include/uapi/asm/sockios.h b/arch/sparc/include/uapi/asm/sockios.h
-deleted file mode 100644
-index 18a3ec14a847..000000000000
---- a/arch/sparc/include/uapi/asm/sockios.h
-+++ /dev/null
-@@ -1,15 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
--#ifndef _ASM_SPARC_SOCKIOS_H
--#define _ASM_SPARC_SOCKIOS_H
--
--/* Socket-level I/O control calls. */
--#define FIOSETOWN 	0x8901
--#define SIOCSPGRP	0x8902
--#define FIOGETOWN	0x8903
--#define SIOCGPGRP	0x8904
--#define SIOCATMARK	0x8905
--#define SIOCGSTAMP	0x8906		/* Get stamp (timeval) */
--#define SIOCGSTAMPNS	0x8907		/* Get stamp (timespec) */
--
--#endif /* !(_ASM_SPARC_SOCKIOS_H) */
--
-diff --git a/arch/x86/include/uapi/asm/Kbuild b/arch/x86/include/uapi/asm/Kbuild
-index 322681622d1e..1d489e6b237e 100644
---- a/arch/x86/include/uapi/asm/Kbuild
-+++ b/arch/x86/include/uapi/asm/Kbuild
-@@ -6,3 +6,4 @@ generated-y += unistd_32.h
- generated-y += unistd_64.h
- generated-y += unistd_x32.h
- generic-y += poll.h
-+generic-y += sockios.h
-diff --git a/arch/x86/include/uapi/asm/sockios.h b/arch/x86/include/uapi/asm/sockios.h
-deleted file mode 100644
-index def6d4746ee7..000000000000
---- a/arch/x86/include/uapi/asm/sockios.h
-+++ /dev/null
-@@ -1 +0,0 @@
--#include <asm-generic/sockios.h>
--- 
-2.18.0
+> +	ret = pblk_submit_io_sync(pblk, rqd);
+> +	pblk_up_page(pblk, ppa_list, rqd->nr_ppas);
+> +
+> +	return ret;
+> +}
+> +
+>   static void pblk_bio_map_addr_endio(struct bio *bio)
+>   {
+>   	bio_put(bio);
+> @@ -788,7 +802,7 @@ static int pblk_line_smeta_write(struct pblk *pblk, struct pblk_line *line,
+>   		meta_list[i].lba = lba_list[paddr] = addr_empty;
+>   	}
+>   
+> -	ret = pblk_submit_io_sync(pblk, &rqd);
+> +	ret = pblk_submit_io_sync_sem(pblk, &rqd);
+>   	if (ret) {
+>   		pblk_err(pblk, "smeta I/O submission failed: %d\n", ret);
+>   		bio_put(bio);
+> diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
+> index c0d9eddd344b..54f937c1fb62 100644
+> --- a/drivers/lightnvm/pblk.h
+> +++ b/drivers/lightnvm/pblk.h
+> @@ -793,6 +793,7 @@ void pblk_log_write_err(struct pblk *pblk, struct nvm_rq *rqd);
+>   void pblk_log_read_err(struct pblk *pblk, struct nvm_rq *rqd);
+>   int pblk_submit_io(struct pblk *pblk, struct nvm_rq *rqd);
+>   int pblk_submit_io_sync(struct pblk *pblk, struct nvm_rq *rqd);
+> +int pblk_submit_io_sync_sem(struct pblk *pblk, struct nvm_rq *rqd);
+>   int pblk_submit_meta_io(struct pblk *pblk, struct pblk_line *meta_line);
+>   void pblk_check_chunk_state_update(struct pblk *pblk, struct nvm_rq *rqd);
+>   struct bio *pblk_bio_map_addr(struct pblk *pblk, void *data,
+> 
 
