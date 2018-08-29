@@ -2,94 +2,98 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7AFFC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:49:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08F77C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:49:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6586420659
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:49:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6586420659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id B8BC020850
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:49:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8BC020850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728361AbeH2RqV (ORCPT
+        id S1728642AbeH2Rqs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 13:46:21 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:56225 "EHLO mail.bootlin.com"
+        Wed, 29 Aug 2018 13:46:48 -0400
+Received: from foss.arm.com ([217.140.101.70]:55008 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727428AbeH2RqV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 13:46:21 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id EADC320789; Wed, 29 Aug 2018 15:49:17 +0200 (CEST)
-Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id BAC4B203EC;
-        Wed, 29 Aug 2018 15:49:07 +0200 (CEST)
-Date:   Wed, 29 Aug 2018 15:49:07 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Eugen Hristev <eugen.hristev@microchip.com>
-Cc:     nicolas.ferre@microchip.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: configs: add generic resistive touchscreen
-Message-ID: <20180829134907.GF16561@piout.net>
-References: <1535525577-21148-1-git-send-email-eugen.hristev@microchip.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1535525577-21148-1-git-send-email-eugen.hristev@microchip.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1727428AbeH2Rqr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 13:46:47 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9FED380D;
+        Wed, 29 Aug 2018 06:49:45 -0700 (PDT)
+Received: from dupont (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A011E3F721;
+        Wed, 29 Aug 2018 06:49:44 -0700 (PDT)
+Date:   Wed, 29 Aug 2018 08:49:43 -0500
+From:   Kim Phillips <kim.phillips@arm.com>
+To:     Robert Walker <robert.walker@arm.com>
+Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>, <mike.leach@linaro.org>,
+        Kim Phillips <Kim.Phillips@arm.com>,
+        <coresight@lists.linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] perf: Support for Arm A32/T32 instruction sets in
+ CoreSight trace
+Message-Id: <20180829084943.eca3716eb2a2141e5eb8e6ee@arm.com>
+In-Reply-To: <1535535863-1818-1-git-send-email-robert.walker@arm.com>
+References: <1535535863-1818-1-git-send-email-robert.walker@arm.com>
+Organization: Arm
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 29 Aug 2018 10:44:23 +0100
+Robert Walker <robert.walker@arm.com> wrote:
 
-Hello Eugen,
-
-On 29/08/2018 09:52:57+0300, Eugen Hristev wrote:
-> Add generic resistive touchscreen CONFIG_TOUCHSCREEN_ADC to defconfigs
+> This patch adds support for generating instruction samples from trace of
+> AArch32 programs using the A32 and T32 instruction sets.
 > 
-> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+> T32 has variable 2 or 4 byte instruction size, so the conversion between
+> addresses and instruction counts requires extra information from the trace
+> decoder, requiring version 0.9.1 of OpenCSD.  A check for the new struct
+> member has been added to the feature check for OpenCSD.
+> 
+> Signed-off-by: Robert Walker <robert.walker@arm.com>
 > ---
->  arch/arm/configs/multi_v7_defconfig | 1 +
->  arch/arm/configs/sama5_defconfig    | 1 +
+...
+> +++ b/tools/build/feature/test-libopencsd.c
+> @@ -3,6 +3,13 @@
+>  
+>  int main(void)
+>  {
+> +	/*
+> +	 * Requires ocsd_generic_trace_elem.num_instr_range introduced in
+> +	 * OpenCSD 0.9
 
-I would make two separate patches because multi_v7 has a high chance of
-conflicting while sama5_defconfig will not.
+0.9 != 0.9.1 in the above commit text: which is it?
 
->  2 files changed, 2 insertions(+)
-> 
-> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-> index fc33444..a1b2cfa 100644
-> --- a/arch/arm/configs/multi_v7_defconfig
-> +++ b/arch/arm/configs/multi_v7_defconfig
-> @@ -282,6 +282,7 @@ CONFIG_MOUSE_PS2_ELANTECH=y
->  CONFIG_MOUSE_CYAPA=m
->  CONFIG_MOUSE_ELAN_I2C=y
->  CONFIG_INPUT_TOUCHSCREEN=y
-> +CONFIG_TOUCHSCREEN_ADC=m
->  CONFIG_TOUCHSCREEN_ATMEL_MXT=m
->  CONFIG_TOUCHSCREEN_MMS114=m
->  CONFIG_TOUCHSCREEN_WM97XX=m
-> diff --git a/arch/arm/configs/sama5_defconfig b/arch/arm/configs/sama5_defconfig
-> index 2080025..ead6826 100644
-> --- a/arch/arm/configs/sama5_defconfig
-> +++ b/arch/arm/configs/sama5_defconfig
-> @@ -116,6 +116,7 @@ CONFIG_KEYBOARD_QT1070=y
->  CONFIG_KEYBOARD_GPIO=y
->  # CONFIG_INPUT_MOUSE is not set
->  CONFIG_INPUT_TOUCHSCREEN=y
-> +CONFIG_TOUCHSCREEN_ADC=y
->  CONFIG_TOUCHSCREEN_ATMEL_MXT=y
->  # CONFIG_SERIO is not set
->  CONFIG_LEGACY_PTY_COUNT=4
-> -- 
-> 2.7.4
-> 
+> +	 */
+> +	ocsd_generic_trace_elem elem;
+> +	(void)elem.num_instr_range;
+> +
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+This breaks building against older versions of OpenCSD, right?
+
+>  	(void)ocsd_get_version();
+
+Why don't we maintain building against older versions of the library,
+and use the version information to make the decision on whether to use
+the new feature being introduced in this patch?
+
+Thanks,
+
+Kim
