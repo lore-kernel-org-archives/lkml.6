@@ -2,103 +2,128 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E567EC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:17:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E256FC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:17:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 605932054F
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:17:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="K5K5TN7l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 605932054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id A4D672054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:17:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4D672054F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729079AbeH2TPI (ORCPT
+        id S1729096AbeH2TPL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 15:15:08 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:52014 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728701AbeH2TPI (ORCPT
+        Wed, 29 Aug 2018 15:15:11 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:37314 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728738AbeH2TPL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 15:15:08 -0400
-Received: by mail-wm0-f66.google.com with SMTP id y2-v6so5681175wma.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 08:17:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=k5vp2QWmWGDZnmvP3St72L04RTxHEk/ByvJ/UzqoLOM=;
-        b=K5K5TN7lqq0UtUPEqQQCGp0qMpta52hvGCQ6uUtql7WN32O546L1DaFhB8X9itTvTG
-         eG+boEz97nsl2UhM/yHeMwARz5AzVTkdOWgEi/rEFme1GjCkJ+eM6j9tzoWgFm/DTa2P
-         fUTi0NYmHq9DH3Yw0GlvMyliZzO67dcuIq3Yc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=k5vp2QWmWGDZnmvP3St72L04RTxHEk/ByvJ/UzqoLOM=;
-        b=UWUjIehr2na7NdBmc/9MTvl8XZSTfWNluvKkeWahzGlOQsheZjdAX9PBsEsUv8Bw30
-         XAfE2mTsKA0tQTLKFaQNG/CQy778UanHkwwlqKW9MuoPsXNV26mcQPypZhmn6ITntODc
-         RB8hE5ysyJrK4eWPYagCJDc8UdhI84ccY2vXu5db7Yhj7+B5566cDkhqOU9WRuRz66za
-         fkC8TA3iJS9axS+ilxPw+CGKyIf0okRR60epDsf5w+GPfZlsqRCnHVr6GRPGC6BaD44s
-         bznajGh4VMZVmXkSYvuKuX1pJOC1XtDacwC+48RB3g0FjCe/Yvn8bCrNdmLZ0Usfo1fv
-         6eMw==
-X-Gm-Message-State: APzg51AV5L9F19moD9VemFfllnL0rnZNafOsOLpOVDafcW6V0WsyBlu5
-        GO7RsdWS5AF501VWxTvchlZU0Q==
-X-Google-Smtp-Source: ANB0VdaDslWqGy/SZG03jBs1Pvzh6ozOhPbqgYyiuD+Ix0Ij77MiV6/QDA4cjftP3PPBkrrVOcE5ZQ==
-X-Received: by 2002:a1c:b84e:: with SMTP id i75-v6mr4264956wmf.158.1535555862447;
-        Wed, 29 Aug 2018 08:17:42 -0700 (PDT)
-Received: from [192.168.0.22] (sju31-1-78-210-255-2.fbx.proxad.net. [78.210.255.2])
-        by smtp.googlemail.com with ESMTPSA id r1-v6sm4025395wmg.9.2018.08.29.08.17.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 Aug 2018 08:17:41 -0700 (PDT)
-Subject: Re: [PATCH v2] clocksource: ti-32k: Add CLOCK_SOURCE_SUSPEND_NONSTOP
- flag for non-am43 SoCs
-To:     Keerthy <j-keerthy@ti.com>, tglx@linutronix.de
-Cc:     lokeshvutla@ti.com, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, baolin.wang@linaro.org,
-        d-gerlach@ti.com, tony@atomide.com, grygorii.strashko@ti.com,
-        t-kristo@ti.com
-References: <1533734099-1398-1-git-send-email-j-keerthy@ti.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <f9d76b45-99c4-577a-64ff-7d4a0183af37@linaro.org>
-Date:   Wed, 29 Aug 2018 17:17:38 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <1533734099-1398-1-git-send-email-j-keerthy@ti.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Wed, 29 Aug 2018 15:15:11 -0400
+Received: from imladris.surriel.com ([96.67.55.152])
+        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <riel@shelob.surriel.com>)
+        id 1fv2Dx-000056-Q6; Wed, 29 Aug 2018 11:17:37 -0400
+Message-ID: <e9d62b33d43f99570b14c73e1519b13021ea3a95.camel@surriel.com>
+Subject: Re: [PATCH v2] x86/nmi: Fix some races in NMI uaccess
+From:   Rik van Riel <riel@surriel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     X86 ML <x86@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        Jann Horn <jannh@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Nadav Amit <nadav.amit@gmail.com>
+Date:   Wed, 29 Aug 2018 11:17:37 -0400
+In-Reply-To: <CALCETrX2v_g_+TpX1DEZasHGi=8Y3w3ka=yYEaTxgFDnPy67nw@mail.gmail.com>
+References: <c7ee1ee7a1b8d17743f7c3680ea5d2c32bf3e897.1535410956.git.luto@kernel.org>
+         <20180828135647.6d516048@imladris.surriel.com>
+         <CALCETrX2v_g_+TpX1DEZasHGi=8Y3w3ka=yYEaTxgFDnPy67nw@mail.gmail.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-nQ3BFmGlEsXzGK2XeTic"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/08/2018 15:14, Keerthy wrote:
-> The 32k clocksource is NONSTOP for non-am43 SoCs. Hence
-> add the flag for all the other SoCs.
-> 
-> Reported-by: Tony Lindgren <tony@atomide.com>
-> Signed-off-by: Keerthy <j-keerthy@ti.com> 
-> Acked-by: Tony Lindgren <tony@atomide.com>
-> ---
 
-Applied for 4.19-rc2
+--=-nQ3BFmGlEsXzGK2XeTic
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks
+On Tue, 2018-08-28 at 20:46 -0700, Andy Lutomirski wrote:
+> On Tue, Aug 28, 2018 at 10:56 AM, Rik van Riel <riel@surriel.com>
+> wrote:
+> > On Mon, 27 Aug 2018 16:04:16 -0700
+> > Andy Lutomirski <luto@kernel.org> wrote:
+> >=20
+> > > The 0day bot is still chewing on this, but I've tested it a bit
+> > > locally
+> > > and it seems to do the right thing.
+> >=20
+> > Hi Andy,
+> >=20
+> > the version of the patch below should fix the bug we talked about
+> > in email yesterday.  It should automatically cover kernel threads
+> > in lazy TLB mode, because current->mm will be NULL, while the
+> > cpu_tlbstate.loaded_mm should never be NULL.
+> >=20
+>=20
+> That's better than mine.  I tweaked it a bit and added some
+> debugging,
+> and I got this:
+>=20
+>=20
+https://git.kernel.org/pub/scm/linux/kernel/git/luto/linux.git/commit/?h=3D=
+x86/fixes&id=3Ddd956eba16646fd0b15c3c0741269dfd84452dac
+>=20
+> I made the loaded_mm handling a little more conservative to make it
+> more obvious that switch_mm_irqs_off() is safe regardless of exactly
+> when it gets called relative to switching current.
 
-  -- Daniel
+I am not convinced that the dance of writing
+cpu_tlbstate.loaded_mm twice, with a barrier on
+each end, is useful or necessary.
 
+At the time switch_mm_irqs_off returns, nmi_uaccess_ok()
+will still return false, because we have not switched
+"current" to the task that owns the next mm_struct yet.
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+We just have to make sure to:
+1) Change cpu_tlbstate.loaded_mm before we manipulate
+   CR3, and
+2) Change "current" only once enough of the mm stuff has
+   been switched, __switch_to seems to get that right.
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Between the time switch_mm_irqs_off() sets cpu_tlbstate
+to the next mm, and __switch_to moves() over current,
+nmi_uaccess_ok() will return false.
+
+--=20
+All Rights Reversed.
+
+--=-nQ3BFmGlEsXzGK2XeTic
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAluGuREACgkQznnekoTE
+3oNHxgf/fMOKljECrqIqz+mcdgJd/L88eMzgQOldU1ptheYLGqsOhR2r7NkOQ21/
+XaXKbLuV6BqEaWeWTVDuZU7HdfEekXw1XhmRra7XNbCv1ODV8u2ALWUSvD+vzdYS
+dGkkQeQ10UNo0+7gbpZbwhY5WaEO3xK4Z0gyKYJMH6Pz0Z2ooN2HogZvlWA+UVf+
+oQd8QPYqnn6z3F4oKqq/vCaTHD0XwW471JJGgQ6aIr1rvj2wBBnrtL0i32of10cg
+Ch1Hm3RpJaJgXkv3x2sPk1k8KCscMYwV2N7c64t/Fhk8DJMftAWFVNzstVJ7g9B7
+nylLDGuN3uy/hQ7GLDNhRZjs505H6w==
+=zik5
+-----END PGP SIGNATURE-----
+
+--=-nQ3BFmGlEsXzGK2XeTic--
 
