@@ -2,187 +2,98 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDCDDC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 17:20:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 801C1C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 17:21:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 998A6205C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 17:20:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 998A6205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 26BBC20644
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 17:21:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="X6f5zqeo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26BBC20644
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727944AbeH2VSG (ORCPT
+        id S1728052AbeH2VTn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 17:18:06 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58650 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727444AbeH2VSG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 17:18:06 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2F39C18A;
-        Wed, 29 Aug 2018 10:20:12 -0700 (PDT)
-Received: from queper01-lin (queper01-lin.emea.arm.com [10.4.13.27])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 399223F721;
-        Wed, 29 Aug 2018 10:20:08 -0700 (PDT)
-Date:   Wed, 29 Aug 2018 18:20:06 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     peterz@infradead.org, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        gregkh@linuxfoundation.org, mingo@redhat.com,
-        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
-        chris.redpath@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
-        smuckle@google.com, adharmap@codeaurora.org,
-        skannan@codeaurora.org, pkondeti@codeaurora.org,
-        juri.lelli@redhat.com, edubezval@gmail.com,
-        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
-        javi.merino@kernel.org
-Subject: Re: [PATCH v6 07/14] sched/topology: Introduce sched_energy_present
- static key
-Message-ID: <20180829172004.afbe2oukprvptqs2@queper01-lin>
-References: <20180820094420.26590-1-quentin.perret@arm.com>
- <20180820094420.26590-8-quentin.perret@arm.com>
- <20180829165058.GR2960@e110439-lin>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180829165058.GR2960@e110439-lin>
-User-Agent: NeoMutt/20171215
+        Wed, 29 Aug 2018 17:19:43 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:33368 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727508AbeH2VTn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 17:19:43 -0400
+Received: by mail-qk0-f195.google.com with SMTP id z78-v6so3885311qka.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 10:21:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=ZPYZr3HEv6RRDoFl9ff97XTjIiPi8FHoza0Nzjknvuo=;
+        b=X6f5zqeoX5wvJf3jZ+CF2JGs4nQ5x9BZHO5JJYSQ0UnrP3eXw4sMXZ2dcZWW/uMRDX
+         iAGKzWroqI8OHY4y1arJ30PZXyW/yKpSAJD9mQb/zgRx7hYjEfql0QromCotxKst0Pf6
+         SF9AztDiqEW3NvGhf7VSW837f4ZpBVXLp8+38=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ZPYZr3HEv6RRDoFl9ff97XTjIiPi8FHoza0Nzjknvuo=;
+        b=pSF5F8YuZ47eLSxa474sec5mweYovfE2LKX8BA3kS596RyD1thbyvBz5d3A3IwmlWu
+         6FJLxLheotCyPHekvIcuhmXJDXRU9PXmL/laoXqdv4NtQZjoG06B7n6DlMTkZS4U/hXE
+         pIYEcgg/xW88WBQOVDa/4VjsqqES46qlg9FRgSGg4EdA/40zCMpbWSqzPNE3iNft3Sfi
+         mpwWKekayghgtFHoD2CIJlGWSRMvGIhW69ll61ZhvwMrjcO2tuNPQahswM3Llt8Ibh2N
+         O7ZNxbHPFI6f+aRv9qtJ6GyM8vzZEp1orNVsH05bC5D+jx/AVhOqVNqv88WJu+fLmWNC
+         499A==
+X-Gm-Message-State: APzg51DtD7vqPhz0L2vfpo1i3nVEl9MpU6Tu6pTZKavQ6GqaSTmO3iQ0
+        dsJOQDu6zMJ2Uk6arQgxazjs/w==
+X-Google-Smtp-Source: ANB0Vdbx5pqdQVtw6ROxtUcHQ8Hs3BypVQCIqrOXGi1XxP+O+0lyke5r2kpNk/zEQTySBxW4yhpZTw==
+X-Received: by 2002:a37:9404:: with SMTP id w4-v6mr7474560qkd.50.1535563307928;
+        Wed, 29 Aug 2018 10:21:47 -0700 (PDT)
+Received: from lbrmn-lnxub113.ric.broadcom.com ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id v72-v6sm2630083qkb.84.2018.08.29.10.21.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 29 Aug 2018 10:21:47 -0700 (PDT)
+From:   Scott Branden <scott.branden@broadcom.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+Cc:     BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Scott Branden <scott.branden@broadcom.com>
+Subject: [PATCH] arm64: defconfig: enable EFI_ARMSTUB_DTB_LOADER
+Date:   Wed, 29 Aug 2018 10:21:27 -0700
+Message-Id: <1535563287-24803-1-git-send-email-scott.branden@broadcom.com>
+X-Mailer: git-send-email 2.5.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday 29 Aug 2018 at 17:50:58 (+0100), Patrick Bellasi wrote:
-> > +/*
-> > + * The complexity of the Energy Model is defined as: nr_pd * (nr_cpus + nr_cs)
-> > + * with: 'nr_pd' the number of performance domains; 'nr_cpus' the number of
-> > + * CPUs; and 'nr_cs' the sum of the capacity states numbers of all performance
-> > + * domains.
-> > + *
-> > + * It is generally not a good idea to use such a model in the wake-up path on
-> > + * very complex platforms because of the associated scheduling overheads. The
-> > + * arbitrary constraint below prevents that. It makes EAS usable up to 16 CPUs
-> > + * with per-CPU DVFS and less than 8 capacity states each, for example.
-> 
-> According to the formula above, that should give a "complexity value" of:
-> 
->   16 * (16 + 9) = 384
-> 
-> while, 2K complexity seems more like a 40xCPUs system with 8 OPPs.
-> 
-> Maybe we should update either the example or the constant below ?
+Enable EFI_ARMSTUB_DTB_LOADER to add support for the dtb= command line
+parameter to function with efi loader.
 
-Hmm I guess the example isn't really clear. 'nr_cs' is the _sum_ of the
-number of OPPs of all perf. domains. So, in the example above, if you
-have 16 CPUs with per-CPU DVFS, and each DVFS island has 8 OPPs, then
-nr_cs = 16 * 8 = 128.
+Required to boot on existing bootloaders that do not support devicetree
+provided by the platform or by the bootloader.
 
-So if you apply the formula you get C = 16 * (16 + 128) = 2304, which is
-more than EM_MAX_COMPLEXITY, so EAS cannot start.
+Fixes: 3d7ee348aa41 ("efi/libstub/arm: Add opt-in Kconfig option for the DTB loader")
+Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+---
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-If the DVFS island had 7 OPPs instead of 8 (for example) you would get
-nr_cs = 112, C = 2048, and so EAS could start.
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index f67e8d5..157cac9 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -114,6 +114,7 @@ CONFIG_ARM_ARMADA_37XX_CPUFREQ=y
+ CONFIG_ARM_BIG_LITTLE_CPUFREQ=y
+ CONFIG_ARM_SCPI_CPUFREQ=y
+ CONFIG_ARM_TEGRA186_CPUFREQ=y
++CONFIG_EFI_ARMSTUB_DTB_LOADER=y
+ CONFIG_NET=y
+ CONFIG_PACKET=y
+ CONFIG_UNIX=y
+-- 
+2.5.0
 
-I can try to re-work that comment to explain things a bit better ...
-
-> 
-> > + */
-> > +#define EM_MAX_COMPLEXITY 2048
-> > +
-> >  static void build_perf_domains(const struct cpumask *cpu_map)
-> >  {
-> > +	int i, nr_pd = 0, nr_cs = 0, nr_cpus = cpumask_weight(cpu_map);
-> >  	struct perf_domain *pd = NULL, *tmp;
-> >  	int cpu = cpumask_first(cpu_map);
-> >  	struct root_domain *rd = cpu_rq(cpu)->rd;
-> > -	int i;
-> > +
-> > +	/* EAS is enabled for asymmetric CPU capacity topologies. */
-> > +	if (!per_cpu(sd_asym_cpucapacity, cpu)) {
-> > +		if (sched_debug()) {
-> > +			pr_info("rd %*pbl: CPUs do not have asymmetric capacities\n",
-> > +					cpumask_pr_args(cpu_map));
-> > +		}
-> > +		goto free;
-> > +	}
-> >  
-> >  	for_each_cpu(i, cpu_map) {
-> >  		/* Skip already covered CPUs. */
-> > @@ -288,6 +318,21 @@ static void build_perf_domains(const struct cpumask *cpu_map)
-> >  			goto free;
-> >  		tmp->next = pd;
-> >  		pd = tmp;
-> > +
-> > +		/*
-> > +		 * Count performance domains and capacity states for the
-> > +		 * complexity check.
-> > +		 */
-> > +		nr_pd++;
-> 
-> A special case where EAS is not going to be used is for systems where
-> nr_pd matches the number of online CPUs, isn't it ?
-
-Well, it depends. Say you have only 4 CPUs with 3 OPPs each. Even with
-per-CPU DVFS the complexity is low enough to start EAS. I don't really
-see a good reason for not doing so no ?
-
-> 
-> If that's the case, then, by caching this nr_pd you can probably check
-> this condition in the sched_energy_start() and bail out even faster by
-> avoiding to scan all the doms_new's pd ?
-> 
-> 
-> > +		nr_cs += em_pd_nr_cap_states(pd->obj);
-> > +	}
-> > +
-> > +	/* Bail out if the Energy Model complexity is too high. */
-> > +	if (nr_pd * (nr_cs + nr_cpus) > EM_MAX_COMPLEXITY) {
-> > +		if (sched_debug())
-> > +			pr_info("rd %*pbl: EM complexity is too high\n ",
-> > +						cpumask_pr_args(cpu_map));
-> > +		goto free;
-> >  	}
-> >  
-> >  	perf_domain_debug(cpu_map, pd);
-> > @@ -307,6 +352,35 @@ static void build_perf_domains(const struct cpumask *cpu_map)
-> >  	if (tmp)
-> >  		call_rcu(&tmp->rcu, destroy_perf_domain_rcu);
-> >  }
-> > +
-> > +static void sched_energy_start(int ndoms_new, cpumask_var_t doms_new[])
-> > +{
-> > +	/*
-> > +	 * The conditions for EAS to start are checked during the creation of
-> > +	 * root domains. If one of them meets all conditions, it will have a
-> > +	 * non-null list of performance domains.
-> > +	 */
-> > +	while (ndoms_new) {
-> > +		if (cpu_rq(cpumask_first(doms_new[ndoms_new - 1]))->rd->pd)
-> > +			goto enable;
-> > +		ndoms_new--;
-> > +	}
-> > +
-> > +	if (static_branch_unlikely(&sched_energy_present)) {
->                           ^^^^^^^^
-> Is this defined unlikely to reduce overheads on systems which never
-> satisfy all the conditions above while still rebuild SDs from time to
-> time ?
-
-Something like that. I just thought that the case where EAS needs to be
-disabled after being enabled isn't very common. I mean, the most typical
-use-case is, EAS is enabled at boot and stays enabled forever, or EAS
-never gets enabled.
-
-Enabling/disabling EAS because of hotplug (for example) can definitely
-happen, but that shouldn't be the case very often in practice, I think.
-So we can optimize things out a bit I suppose.
-
-Thanks !
-Quentin
