@@ -2,105 +2,116 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D92AC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:35:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C87EDC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:36:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C04F20897
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:35:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jt9xvvH9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C04F20897
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 8AE632089B
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:36:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AE632089B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727703AbeH2LbW (ORCPT
+        id S1727778AbeH2Lby convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 07:31:22 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:36315 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727054AbeH2LbW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 07:31:22 -0400
-Received: by mail-io0-f194.google.com with SMTP id q5-v6so3666386iop.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 00:35:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sUh5/n9m7nIas5VHE8Dj7jGI3lq1/PBuRKihJpGUNkI=;
-        b=jt9xvvH9COAVyA40fgnD1rJVo5dIIJz54Gvq72ed3E25Td9a6uImzqM8N8rr91NTv1
-         ShWhdd0RU6Tmh3xbxJJZXMIM7XGpDtLYXBnJqZxy6R5LL/DFx7Xkn2DFPoXup3ggHTaG
-         MYKSQCujk67OyeNLtuLPUy+sIJZmbVx+FIFrk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sUh5/n9m7nIas5VHE8Dj7jGI3lq1/PBuRKihJpGUNkI=;
-        b=Z4iwXt+Ncnt9fAqwrmaB2Csa3CF1S4+H6M5mYsgkCaerCNyOJwH1Tuo1yOoyjAi/+6
-         t7cnPEZKYq2yb7TBw8RLcQSNR9YsnLcxBCXUzvIihxPIILSlyar1D/QQ/cU6mX7S6LOF
-         zwD40Ssrv2xW9iZtM+xol1s2UAXz9vET88ar7ITtrTz98Xl2A/sHocCMyXJe+a++gEV6
-         foMMhzngUvV/ITVpspjLh5mZdYE5cGE3e3RO+yt5llpaxkF7qkCZnl8DK0SCgcU1eEEC
-         LBwhj8E3kTKay9AYoC32wu0jpN+nK2CLjeiVw5uErJcdOEHWpFPR1cYz60/JOT8gt8XV
-         4F6w==
-X-Gm-Message-State: APzg51DswqkLzqoGTwbzfSLo6l5KHx+NBcJi+4XS7VrBRrIToRjU1BVe
-        UzgKDcPLmI9Jx/6Cy2d7UpNRz7qwzDdh1X80MXq9Uw==
-X-Google-Smtp-Source: ANB0VdYPm48n+v4xlpf4yu4iln1VDtdEu5/fA300/RIKs34w+VJYQ2bm1/wmSkx5vBwjtcMmTscfl0aMvB9hwfNf5tE=
-X-Received: by 2002:a6b:c3c4:: with SMTP id t187-v6mr4139485iof.304.1535528150331;
- Wed, 29 Aug 2018 00:35:50 -0700 (PDT)
+        Wed, 29 Aug 2018 07:31:54 -0400
+Received: from mga02.intel.com ([134.134.136.20]:50902 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727054AbeH2Lbx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 07:31:53 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2018 00:36:20 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,301,1531810800"; 
+   d="scan'208";a="68695142"
+Received: from pgsmsx104.gar.corp.intel.com ([10.221.44.91])
+  by orsmga007.jf.intel.com with ESMTP; 29 Aug 2018 00:36:14 -0700
+Received: from pgsmsx112.gar.corp.intel.com ([169.254.3.58]) by
+ PGSMSX104.gar.corp.intel.com ([169.254.3.57]) with mapi id 14.03.0319.002;
+ Wed, 29 Aug 2018 15:36:14 +0800
+From:   "Huang, Kai" <kai.huang@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC:     "x86@kernel.org" <x86@kernel.org>,
+        "platform-driver-x86@vger.kernel.org" 
+        <platform-driver-x86@vger.kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Kai Huang <kai.huang@linux.intel.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@suse.de>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v13 02/13] x86/cpufeature: Add SGX and SGX_LC CPU
+ features
+Thread-Topic: [PATCH v13 02/13] x86/cpufeature: Add SGX and SGX_LC CPU
+ features
+Thread-Index: AQHUPjeYRx2wMmEsxEKLT9SJazBQeaTUSTXA///ylICAAh0zAA==
+Date:   Wed, 29 Aug 2018 07:36:13 +0000
+Message-ID: <105F7BF4D0229846AF094488D65A0989354103A9@PGSMSX112.gar.corp.intel.com>
+References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
+ <20180827185507.17087-3-jarkko.sakkinen@linux.intel.com>
+ <105F7BF4D0229846AF094488D65A09893540B623@PGSMSX112.gar.corp.intel.com>
+ <20180828071723.GA15508@linux.intel.com>
+In-Reply-To: <20180828071723.GA15508@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNmIyZmJlZGQtNGEwYy00M2RiLWI4ZDItYTgyMDQ2ZmZmNTY1IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiandnZThmUENNaEhXVCtKMEpveGFFUWtzV1wvVUg0WGdzR3pBUGt4dGJpYWFDQkoxaVdpckVaSCtlSXIwSWxPY3kifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [172.30.20.205]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <0180729200038.11795-1-sravanhome@gmail.com> <20180731194743.13678-1-sravanhome@gmail.com>
-In-Reply-To: <20180731194743.13678-1-sravanhome@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 29 Aug 2018 09:35:38 +0200
-Message-ID: <CACRpkda=q+LZMUN5xJ777ZGWxYRBdZTvG0naNqr5BoLnVQ1=aA@mail.gmail.com>
-Subject: Re: [PATCH v4 0/5] Add Actions Semi S700 pinctrl support
-To:     sravanhome@gmail.com
-Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>, pn@denx.de,
-        mp-cs@actions-semi.com, Jeff Chen <jeff.chen@actions-semi.com>,
-        "Thomas C. Liau" <thomas.liau@actions-semi.com>,
-        linux@cubietech.com
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 31, 2018 at 9:48 PM Saravanan Sekar <sravanhome@gmail.com> wrote:
+> -----Original Message-----
+> From: Jarkko Sakkinen [mailto:jarkko.sakkinen@linux.intel.com]
+> Sent: Tuesday, August 28, 2018 7:17 PM
+> To: Huang, Kai <kai.huang@intel.com>
+> Cc: x86@kernel.org; platform-driver-x86@vger.kernel.org; Hansen, Dave
+> <dave.hansen@intel.com>; Christopherson, Sean J
+> <sean.j.christopherson@intel.com>; nhorman@redhat.com;
+> npmccallum@redhat.com; linux-sgx@vger.kernel.org; Kai Huang
+> <kai.huang@linux.intel.com>; Thomas Gleixner <tglx@linutronix.de>; Ingo
+> Molnar <mingo@redhat.com>; H. Peter Anvin <hpa@zytor.com>; Borislav
+> Petkov <bp@suse.de>; Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>;
+> David Woodhouse <dwmw@amazon.co.uk>; open list:X86 ARCHITECTURE (32-
+> BIT AND 64-BIT) <linux-kernel@vger.kernel.org>
+> Subject: Re: [PATCH v13 02/13] x86/cpufeature: Add SGX and SGX_LC CPU
+> features
+> 
+> On Tue, Aug 28, 2018 at 12:07:41AM +0000, Huang, Kai wrote:
+> > > +#define X86_FEATURE_SGX_LC		(16*32+30) /* supports SGX
+> launch
+> > > configuration */
+> >
+> > Sorry if it was me who wrote the comment "SGX launch configuration". I
+> > think we should just use "SGX launch control". :)
+> 
+> Not sure if we should change though. The former is more self-explaining, the
+> latter is "more official".
 
-> This patchset adds pinctrl support for Actions Semi S700 SoC.
-> Pinmux functions are only accessible for pin groups while pinconf
-> parameters are available for both pin groups and individual pins.
->
-> pinctrl driver is verified using the Cubieboard7.
->
-> common functionalities from s900 is moved for all Actions Semi
-> SoC's usage.
-> Common pad control configurations are moved to SoC specific
->
-> dts entry for pinctrl depends on clock driver which is still under review:
-> https://patchwork.kernel.org/patch/10533959/
+I'll let you decide.  To me the comment should explain what does "LC" mean, and to me it means "launch control". :)
 
-So what is the status of this patch set?
-
-I am happy to apply it once you have the right buildtime dependencies
-and Manivannan's ACK on the patch set! (Looks good to me.)
-
-Maybe you want to rebase on v4.19-rc1 and resend as v5 before
-I do that though?
-
-Yours,
-Linus Walleij
+Thanks,
+-Kai
+> 
+> /Jarkko
