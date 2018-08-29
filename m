@@ -3,52 +3,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 822E2C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:09:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3F7EC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:09:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B5B52054F
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:09:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 906672054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:09:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="DasO5J01"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B5B52054F
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="WG+lBtuw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 906672054F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728958AbeH2TGd (ORCPT
+        id S1729007AbeH2TGm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 15:06:33 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54560 "EHLO
+        Wed, 29 Aug 2018 15:06:42 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54822 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727668AbeH2TGd (ORCPT
+        with ESMTP id S1727668AbeH2TGm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 15:06:33 -0400
+        Wed, 29 Aug 2018 15:06:42 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=W1kFCM+UVn2VYnFzZuCFenW/onMu0fuDSplYhOLzSjI=; b=DasO5J01sGos
-        //zmuVNT5JZPAsjY6JbTn7U2FllDqQZAUjCiPpj769YnwkV6lfIorf1Hge4TdOOgO1ErkIgFB81W2
-        5DGTh9EXY9QjtnRMyfSayRGx30knFzXUnLSZymC5VfPXn2TLncZr7U0xxts0EfIUgF6eD5ZNLyf6G
-        UkyUA=;
+        List-Archive; bh=OxbIuPZfUy35SIgoOaIMpO1fn7+evcytPWvkSNefY8U=; b=WG+lBtuwC9Pl
+        XMERYIh7I/XnD6ObFVJiqs2U0g0cDhFFMQJ6v0J9CSqvYNkIrOhVcj+cbIVCbEBfA3IQrtx0qAaFH
+        zuKCqrzThbGAoL+lXgRKqh04Iat400uVQ/vG0J94bi/Ok9jxOuanQ5KYRHxr1pcwGfCIkMrKxt44h
+        tdBmo=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fv25i-0000Q3-AS; Wed, 29 Aug 2018 15:09:06 +0000
+        id 1fv25q-0000QA-Ez; Wed, 29 Aug 2018 15:09:14 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 13352112486B; Wed, 29 Aug 2018 16:09:06 +0100 (BST)
+        id 30C5B112486B; Wed, 29 Aug 2018 16:09:14 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     Mark Brown <broonie@kernel.org>, stable@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Applied "regulator: bd71837: Disable voltage monitoring for LDO3/4" to the regulator tree
-In-Reply-To: 
-Message-Id: <20180829150906.13352112486B@debutante.sirena.org.uk>
-Date:   Wed, 29 Aug 2018 16:09:06 +0100 (BST)
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Allan Nielsen <allan.nielsen@microchip.com>,
+        linux-spi@vger.kernel.org
+Subject: Applied "spi: dw-mmio: add MSCC Jaguar2 support" to the spi tree
+In-Reply-To:  <20180829124548.4703-1-alexandre.belloni@bootlin.com>
+Message-Id: <20180829150914.30C5B112486B@debutante.sirena.org.uk>
+Date:   Wed, 29 Aug 2018 16:09:14 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -56,11 +61,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: bd71837: Disable voltage monitoring for LDO3/4
+   spi: dw-mmio: add MSCC Jaguar2 support
 
-has been applied to the regulator tree at
+has been applied to the spi tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -81,108 +86,97 @@ to this mail.
 Thanks,
 Mark
 
-From 823f18f8b860526fc099c222619a126d57d2ad8c Mon Sep 17 00:00:00 2001
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Date: Wed, 29 Aug 2018 15:36:10 +0300
-Subject: [PATCH] regulator: bd71837: Disable voltage monitoring for LDO3/4
+From be17ee0da35a5fe75813adb8e2c110c5541c8456 Mon Sep 17 00:00:00 2001
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Date: Wed, 29 Aug 2018 14:45:48 +0200
+Subject: [PATCH] spi: dw-mmio: add MSCC Jaguar2 support
 
-There is a HW quirk in BD71837. The shutdown sequence timings for
-bucks/LDOs which are enabled via register interface are changed.
-At PMIC poweroff the voltage for BUCK6/7 is cut immediately at the
-beginning of shut-down sequence. This causes LDO5/6 voltage
-monitoring to detect under voltage and force PMIC to emergency
-state instead of poweroff. Disable voltage monitoring for LDO5 and
-LDO6 at probe to avoid this.
+Unfortunately, the Jaguar2 CPU_SYSTEM_CTRL register set has a different
+layout than the Ocelot one. Handle that while keeping most of the code
+common.
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Reviewed-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
 ---
- drivers/regulator/bd71837-regulator.c | 19 +++++++++++++++
- include/linux/mfd/rohm-bd718x7.h      | 33 ++++++++++++++++++++++++---
- 2 files changed, 49 insertions(+), 3 deletions(-)
+ drivers/spi/spi-dw-mmio.c | 28 ++++++++++++++++++++++------
+ 1 file changed, 22 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/regulator/bd71837-regulator.c b/drivers/regulator/bd71837-regulator.c
-index 0f8ac8dec3e1..a1bd8aaf4d98 100644
---- a/drivers/regulator/bd71837-regulator.c
-+++ b/drivers/regulator/bd71837-regulator.c
-@@ -569,6 +569,25 @@ static int bd71837_probe(struct platform_device *pdev)
- 			BD71837_REG_REGLOCK);
+diff --git a/drivers/spi/spi-dw-mmio.c b/drivers/spi/spi-dw-mmio.c
+index e80f60ed6fdf..351f49976161 100644
+--- a/drivers/spi/spi-dw-mmio.c
++++ b/drivers/spi/spi-dw-mmio.c
+@@ -34,8 +34,8 @@ struct dw_spi_mmio {
+ };
+ 
+ #define MSCC_CPU_SYSTEM_CTRL_GENERAL_CTRL	0x24
+-#define OCELOT_IF_SI_OWNER_MASK			GENMASK(5, 4)
+ #define OCELOT_IF_SI_OWNER_OFFSET		4
++#define JAGUAR2_IF_SI_OWNER_OFFSET		6
+ #define MSCC_IF_SI_OWNER_SISL			0
+ #define MSCC_IF_SI_OWNER_SIBM			1
+ #define MSCC_IF_SI_OWNER_SIMC			2
+@@ -76,7 +76,8 @@ static void dw_spi_mscc_set_cs(struct spi_device *spi, bool enable)
+ }
+ 
+ static int dw_spi_mscc_init(struct platform_device *pdev,
+-			    struct dw_spi_mmio *dwsmmio)
++			    struct dw_spi_mmio *dwsmmio,
++			    const char *cpu_syscon, u32 if_si_owner_offset)
+ {
+ 	struct dw_spi_mscc *dwsmscc;
+ 	struct resource *res;
+@@ -92,7 +93,7 @@ static int dw_spi_mscc_init(struct platform_device *pdev,
+ 		return PTR_ERR(dwsmscc->spi_mst);
  	}
  
-+	/*
-+	 * There is a HW quirk in BD71837. The shutdown sequence timings for
-+	 * bucks/LDOs which are controlled via register interface are changed.
-+	 * At PMIC poweroff the voltage for BUCK6/7 is cut immediately at the
-+	 * beginning of shut-down sequence. As bucks 6 and 7 are parent
-+	 * supplies for LDO5 and LDO6 - this causes LDO5/6 voltage
-+	 * monitoring to errorneously detect under voltage and force PMIC to
-+	 * emergency state instead of poweroff. In order to avoid this we
-+	 * disable voltage monitoring for LDO5 and LDO6
-+	 */
-+	err = regmap_update_bits(pmic->mfd->regmap, BD718XX_REG_MVRFLTMASK2,
-+				 BD718XX_LDO5_VRMON80 | BD718XX_LDO6_VRMON80,
-+				 BD718XX_LDO5_VRMON80 | BD718XX_LDO6_VRMON80);
-+	if (err) {
-+		dev_err(&pmic->pdev->dev,
-+			"Failed to disable voltage monitoring\n");
-+		goto err;
-+	}
-+
- 	for (i = 0; i < ARRAY_SIZE(pmic_regulator_inits); i++) {
+-	dwsmscc->syscon = syscon_regmap_lookup_by_compatible("mscc,ocelot-cpu-syscon");
++	dwsmscc->syscon = syscon_regmap_lookup_by_compatible(cpu_syscon);
+ 	if (IS_ERR(dwsmscc->syscon))
+ 		return PTR_ERR(dwsmscc->syscon);
  
- 		struct regulator_desc *desc;
-diff --git a/include/linux/mfd/rohm-bd718x7.h b/include/linux/mfd/rohm-bd718x7.h
-index a528747f8aed..e8338e5dc10b 100644
---- a/include/linux/mfd/rohm-bd718x7.h
-+++ b/include/linux/mfd/rohm-bd718x7.h
-@@ -78,9 +78,9 @@ enum {
- 	BD71837_REG_TRANS_COND0        = 0x1F,
- 	BD71837_REG_TRANS_COND1        = 0x20,
- 	BD71837_REG_VRFAULTEN          = 0x21,
--	BD71837_REG_MVRFLTMASK0        = 0x22,
--	BD71837_REG_MVRFLTMASK1        = 0x23,
--	BD71837_REG_MVRFLTMASK2        = 0x24,
-+	BD718XX_REG_MVRFLTMASK0        = 0x22,
-+	BD718XX_REG_MVRFLTMASK1        = 0x23,
-+	BD718XX_REG_MVRFLTMASK2        = 0x24,
- 	BD71837_REG_RCVCFG             = 0x25,
- 	BD71837_REG_RCVNUM             = 0x26,
- 	BD71837_REG_PWRONCONFIG0       = 0x27,
-@@ -159,6 +159,33 @@ enum {
- #define BUCK8_MASK		0x3F
- #define BUCK8_DEFAULT		0x1E
+@@ -101,8 +102,8 @@ static int dw_spi_mscc_init(struct platform_device *pdev,
  
-+/* BD718XX Voltage monitoring masks */
-+#define BD718XX_BUCK1_VRMON80           0x1
-+#define BD718XX_BUCK1_VRMON130          0x2
-+#define BD718XX_BUCK2_VRMON80           0x4
-+#define BD718XX_BUCK2_VRMON130          0x8
-+#define BD718XX_1ST_NODVS_BUCK_VRMON80  0x1
-+#define BD718XX_1ST_NODVS_BUCK_VRMON130 0x2
-+#define BD718XX_2ND_NODVS_BUCK_VRMON80  0x4
-+#define BD718XX_2ND_NODVS_BUCK_VRMON130 0x8
-+#define BD718XX_3RD_NODVS_BUCK_VRMON80  0x10
-+#define BD718XX_3RD_NODVS_BUCK_VRMON130 0x20
-+#define BD718XX_4TH_NODVS_BUCK_VRMON80  0x40
-+#define BD718XX_4TH_NODVS_BUCK_VRMON130 0x80
-+#define BD718XX_LDO1_VRMON80            0x1
-+#define BD718XX_LDO2_VRMON80            0x2
-+#define BD718XX_LDO3_VRMON80            0x4
-+#define BD718XX_LDO4_VRMON80            0x8
-+#define BD718XX_LDO5_VRMON80            0x10
-+#define BD718XX_LDO6_VRMON80            0x20
+ 	/* Select the owner of the SI interface */
+ 	regmap_update_bits(dwsmscc->syscon, MSCC_CPU_SYSTEM_CTRL_GENERAL_CTRL,
+-			   OCELOT_IF_SI_OWNER_MASK,
+-			   MSCC_IF_SI_OWNER_SIMC << OCELOT_IF_SI_OWNER_OFFSET);
++			   0x3 << if_si_owner_offset,
++			   MSCC_IF_SI_OWNER_SIMC << if_si_owner_offset);
+ 
+ 	dwsmmio->dws.set_cs = dw_spi_mscc_set_cs;
+ 	dwsmmio->priv = dwsmscc;
+@@ -110,6 +111,20 @@ static int dw_spi_mscc_init(struct platform_device *pdev,
+ 	return 0;
+ }
+ 
++static int dw_spi_mscc_ocelot_init(struct platform_device *pdev,
++				   struct dw_spi_mmio *dwsmmio)
++{
++	return dw_spi_mscc_init(pdev, dwsmmio, "mscc,ocelot-cpu-syscon",
++				OCELOT_IF_SI_OWNER_OFFSET);
++}
 +
-+/* BD71837 specific voltage monitoring masks */
-+#define BD71837_BUCK3_VRMON80           0x10
-+#define BD71837_BUCK3_VRMON130          0x20
-+#define BD71837_BUCK4_VRMON80           0x40
-+#define BD71837_BUCK4_VRMON130          0x80
-+#define BD71837_LDO7_VRMON80            0x40
++static int dw_spi_mscc_jaguar2_init(struct platform_device *pdev,
++				    struct dw_spi_mmio *dwsmmio)
++{
++	return dw_spi_mscc_init(pdev, dwsmmio, "mscc,jaguar2-cpu-syscon",
++				JAGUAR2_IF_SI_OWNER_OFFSET);
++}
 +
- /* BD71837_REG_IRQ bits */
- #define IRQ_SWRST		0x40
- #define IRQ_PWRON_S		0x20
+ static int dw_spi_mmio_probe(struct platform_device *pdev)
+ {
+ 	int (*init_func)(struct platform_device *pdev,
+@@ -212,7 +227,8 @@ static int dw_spi_mmio_remove(struct platform_device *pdev)
+ 
+ static const struct of_device_id dw_spi_mmio_of_match[] = {
+ 	{ .compatible = "snps,dw-apb-ssi", },
+-	{ .compatible = "mscc,ocelot-spi", .data = dw_spi_mscc_init},
++	{ .compatible = "mscc,ocelot-spi", .data = dw_spi_mscc_ocelot_init},
++	{ .compatible = "mscc,jaguar2-spi", .data = dw_spi_mscc_jaguar2_init},
+ 	{ /* end of table */}
+ };
+ MODULE_DEVICE_TABLE(of, dw_spi_mmio_of_match);
 -- 
 2.18.0
 
