@@ -2,149 +2,147 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C252C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 18:14:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C3D8C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 18:15:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DA5220657
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 18:14:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DA5220657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id CC54020652
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 18:15:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U0zIZOjs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC54020652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728165AbeH2WMd (ORCPT
+        id S1728367AbeH2WNO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 18:12:33 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48640 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727530AbeH2WMd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 18:12:33 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B928E87A81;
-        Wed, 29 Aug 2018 18:14:27 +0000 (UTC)
-Received: from redhat.com (ovpn-126-69.rdu2.redhat.com [10.10.126.69])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9C59E2026D6D;
-        Wed, 29 Aug 2018 18:14:26 +0000 (UTC)
-Date:   Wed, 29 Aug 2018 14:14:25 -0400
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Mike Kravetz <mike.kravetz@oracle.com>
-Cc:     Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v6 1/2] mm: migration: fix migration of huge PMD shared
- pages
-Message-ID: <20180829181424.GB3784@redhat.com>
-References: <20180823205917.16297-1-mike.kravetz@oracle.com>
- <20180823205917.16297-2-mike.kravetz@oracle.com>
- <20180824084157.GD29735@dhcp22.suse.cz>
- <6063f215-a5c8-2f0c-465a-2c515ddc952d@oracle.com>
- <20180827074645.GB21556@dhcp22.suse.cz>
- <20180827134633.GB3930@redhat.com>
- <9209043d-3240-105b-72a3-b4cd30f1b1f1@oracle.com>
+        Wed, 29 Aug 2018 18:13:14 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:36159 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727399AbeH2WNO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 18:13:14 -0400
+Received: by mail-lj1-f195.google.com with SMTP id v26-v6so5143794ljj.3;
+        Wed, 29 Aug 2018 11:15:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=aCazvnBEpnm0Gyw6GCjF0KHSnNzsP+NrH/ddpIW4/7M=;
+        b=U0zIZOjse7NTlkw8aL1Xf79IgHi5J6GzaD7VdAcm5GcPzTlIfhqyAPHBu6dGbRAnKd
+         3oZrCFUXOn27H5zbcjg3e4vxdQEP9GQ2IQ5QbrgUiYYSOgFuFI9sKoQUSa5u45NqE4Q9
+         CpcWfQ/Zycm3FXRug6ou3jUZAvvjXqDGdGPU7d/zgDgBJRgCRrbllyZWzvL+MXDteDeG
+         f1JPhJOVcBAYf5fHUGBmZwhrbac62d1ZJJW613XeO2uvZaXGkrhq83yVVlNzqUfbr0oz
+         1RssNhfaCVr6z6O5wzyHWfaFo1QFdPvlRsFsUzwfWXmd0ao+6cS3FbrdfO5dUWkNFHGe
+         64Hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=aCazvnBEpnm0Gyw6GCjF0KHSnNzsP+NrH/ddpIW4/7M=;
+        b=jG0AsTcaJvg2xjgGIMGR6kleJl2+ppRl+myZXqUQtahDs7NpG5yGKXO2Bl4ljVf4/Y
+         8kr66+m5c1QVy1fmxY8RthGSu8O7/9vRFx7m1Xsk9ALzrVDQVR3iJsLY3zO1phzcNDTq
+         48wMCaegU8HmENHWmTFXA4ofJA0u7iEyy0hn+PH4lndbXJ1moPtVTPWRTxXGxb8C187w
+         Uz6e6+y40cW/WfTc3b6/K8ujYSHma1vgFEBmxqTZCRSBQWz+mb3Q0YLxVoQg9NzM1UFW
+         ivXiMTUh8LDiXC2koE5R9GYQXkKV2XZ9HYDe/7h0LE7oukdVeX500InXRjXO9E86C18/
+         x6Ug==
+X-Gm-Message-State: APzg51Dqf2NNVzVBZ0kNMpsTFYICALcFaAWrue5g459YVSBZwgJI7yc3
+        QF1us+AnCaeveqH7w6FK0no=
+X-Google-Smtp-Source: ANB0VdYjHmuSri0MpxQ5WAvP8Nkj7cnPlw8jEXXy1dbEnl0A06ypglmgF1MmXL/s1/shdOzE2FEudg==
+X-Received: by 2002:a2e:9f4d:: with SMTP id v13-v6mr4896917ljk.42.1535566506354;
+        Wed, 29 Aug 2018 11:15:06 -0700 (PDT)
+Received: from z50.localnet (93-181-165-181.internetia.net.pl. [93.181.165.181])
+        by smtp.gmail.com with ESMTPSA id n3-v6sm799786lji.96.2018.08.29.11.15.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 Aug 2018 11:15:05 -0700 (PDT)
+From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>,
+        Peter Korsgaard <peter.korsgaard@barco.com>,
+        Peter Rosin <peda@axentia.se>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dominik Brodowski <linux@dominikbrodowski.net>, kishon@ti.com,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald <pmeerw@pmeerw.net>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-doc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>, linux-iio@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-serial@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Subject: Re: [RFC RFT PATCH 0/4] gpiolib: speed up GPIO array processing
+Date:   Wed, 29 Aug 2018 20:16:20 +0200
+Message-ID: <1595423.PPW7Q1vFt0@z50>
+In-Reply-To: <CACRpkdbgY6VNP-K-c5ErQtmO7E83D6c=49TN5siF8VTNh_66Jg@mail.gmail.com>
+References: <20180813223448.21316-1-jmkrzyszt@gmail.com> <20180820234341.5271-1-jmkrzyszt@gmail.com> <CACRpkdbgY6VNP-K-c5ErQtmO7E83D6c=49TN5siF8VTNh_66Jg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9209043d-3240-105b-72a3-b4cd30f1b1f1@oracle.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 29 Aug 2018 18:14:27 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 29 Aug 2018 18:14:27 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jglisse@redhat.com' RCPT:''
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 29, 2018 at 10:24:44AM -0700, Mike Kravetz wrote:
-> On 08/27/2018 06:46 AM, Jerome Glisse wrote:
-> > On Mon, Aug 27, 2018 at 09:46:45AM +0200, Michal Hocko wrote:
-> >> On Fri 24-08-18 11:08:24, Mike Kravetz wrote:
-> >>> Here is an updated patch which does as you suggest above.
-> >> [...]
-> >>> @@ -1409,6 +1419,32 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
-> >>>  		subpage = page - page_to_pfn(page) + pte_pfn(*pvmw.pte);
-> >>>  		address = pvmw.address;
-> >>>  
-> >>> +		if (PageHuge(page)) {
-> >>> +			if (huge_pmd_unshare(mm, &address, pvmw.pte)) {
-> >>> +				/*
-> >>> +				 * huge_pmd_unshare unmapped an entire PMD
-> >>> +				 * page.  There is no way of knowing exactly
-> >>> +				 * which PMDs may be cached for this mm, so
-> >>> +				 * we must flush them all.  start/end were
-> >>> +				 * already adjusted above to cover this range.
-> >>> +				 */
-> >>> +				flush_cache_range(vma, start, end);
-> >>> +				flush_tlb_range(vma, start, end);
-> >>> +				mmu_notifier_invalidate_range(mm, start, end);
-> >>> +
-> >>> +				/*
-> >>> +				 * The ref count of the PMD page was dropped
-> >>> +				 * which is part of the way map counting
-> >>> +				 * is done for shared PMDs.  Return 'true'
-> >>> +				 * here.  When there is no other sharing,
-> >>> +				 * huge_pmd_unshare returns false and we will
-> >>> +				 * unmap the actual page and drop map count
-> >>> +				 * to zero.
-> >>> +				 */
-> >>> +				page_vma_mapped_walk_done(&pvmw);
-> >>> +				break;
-> >>> +			}
-> >>
-> >> This still calls into notifier while holding the ptl lock. Either I am
-> >> missing something or the invalidation is broken in this loop (not also
-> >> for other invalidations).
-> > 
-> > mmu_notifier_invalidate_range() is done with pt lock held only the start
-> > and end versions need to happen outside pt lock.
-> 
-> Hi Jérôme (and anyone else having good understanding of mmu notifier API),
-> 
-> Michal and I have been looking at backports to stable releases.  If you look
-> at the v4.4 version of try_to_unmap_one(), it does not use the
-> mmu_notifier_invalidate_range_start/end interfaces. Rather, it uses the
-> mmu_notifier_invalidate_page(), passing in the address of the page it
-> unmapped.  This is done after releasing the ptl lock.  I'm not even sure if
-> this works for huge pages, as it appears some THP supporting code was added
-> to try_to_unmap_one() after v4.4.
-> 
-> But, we were wondering what mmu notifier interface to use in the case where
-> try_to_unmap_one() unmaps a shared pmd huge page as addressed in the patch
-> above.  In this case, a PUD sized area is effectively unmapped.  In the
-> code/patch above we have the invalidate range (start and end as well) take
-> the PUD sized area into account.
-> 
-> What would be the best mmu notifier interface to use where there are no
-> start/end calls?
-> Or, is the best solution to add the start/end calls as is done in later
-> versions of the code?  If that is the suggestion, has there been any change
-> in invalidate start/end semantics that we should take into account?
+Hi Linus,
 
-start/end would be the one to add, 4.4 seems broken in respect to THP
-and mmu notification. Another solution is to fix user of mmu notifier,
-they were only a handful back then. For instance properly adjust the
-address to match first address covered by pmd or pud and passing down
-correct page size to mmu_notifier_invalidate_page() would allow to fix
-this easily.
+On Wednesday, August 29, 2018 11:06:21 AM CEST Linus Walleij wrote:
+> On Tue, Aug 21, 2018 at 1:42 AM Janusz Krzysztofik <jmkrzyszt@gmail.com> 
+wrote:
+> 
+> > This series is a follow up of the former "mtd: rawnand: ams-delta: Use
+> > gpio-omap accessors for data I/O" which already contained some changes
+> > to gpiolib.  Those previous attempts were commented by Borris Brezillon
+> > who suggested using GPIO API modified to accept bitmaps, and by Linus
+> > Walleij who suggested still more great ideas for further immprovement
+> > of the proposed API changes - thanks!
+> >
+> > The goal is to boost performans of get/set array functions while
+> > processing GPIO arrays which represent pins of a signle chip in
+> > hardware order.  If resulting performance is close to PIO, GPIO API
+> > can be used for data I/O without much loss of speed.
+> 
+> Hands down, this is a very pretty patch set. I'm a big fan already.
+> 
+> This is mainly because it fulfills the requirement for libraries
+> to be narrow and deep, which is what we want.
+> This refers to John Ousterhouts software design philosophy,
+> here is a great lecture if you haven't seen it already:
+> https://www.youtube.com/watch?v=bmSAYlu0NcY
+> 
+> Let's get this into v1 and get some testing and merge it for v4.20
+> ASAP
 
-This is ok because user of try_to_unmap_one() replace the pte/pmd/pud
-with an invalid one (either poison, migration or swap) inside the
-function. So anyone racing would synchronize on those special entry
-hence why it is fine to delay mmu_notifier_invalidate_page() to after
-dropping the page table lock.
+Please hold on for a while, I'm going to resubmit soon, with the comment from 
+Peter Rosin on i2c-mux-gpio addressed and the error discovered by Miguel Ojeda 
+in hd44780 fixed.
 
-Adding start/end might the solution with less code churn as you would
-only need to change try_to_unmap_one().
+Thanks,
+Janusz
 
-Cheers,
-Jérôme
+> so we get some proper testing before the v4.20 merge
+> window. It would be excellent if some of the current users of
+> the array API could provide tested-by's or at least ACKs.
+> 
+> For example ts-nbus.c must be a big benefactor.
+> 
+> Yours,
+> Linus Walleij
+> 
+
+
+
+
