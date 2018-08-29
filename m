@@ -6,41 +6,42 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AD9CC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:45:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC7D0C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:45:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5706B20845
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:45:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5706B20845
+	by mail.kernel.org (Postfix) with ESMTP id 5916D2083D
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:45:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5916D2083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728700AbeH2QmI (ORCPT
+        id S1728713AbeH2QmY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 12:42:08 -0400
-Received: from smtp17.cstnet.cn ([159.226.251.17]:49743 "EHLO cstnet.cn"
+        Wed, 29 Aug 2018 12:42:24 -0400
+Received: from smtp17.cstnet.cn ([159.226.251.17]:50214 "EHLO cstnet.cn"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727452AbeH2QmI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 12:42:08 -0400
+        id S1728144AbeH2QmY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 12:42:24 -0400
 Received: from pw-vbox.higon.com (unknown [182.150.46.145])
-        by APP-09 (Coremail) with SMTP id swCowACnq49SlYZbvZ3_BA--.102S2;
-        Wed, 29 Aug 2018 20:45:10 +0800 (CST)
+        by APP-09 (Coremail) with SMTP id swCowACHjJBblYZbTqD_BA--.100S2;
+        Wed, 29 Aug 2018 20:45:19 +0800 (CST)
 From:   Pu Wen <puwen@hygon.cn>
 To:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
         x86@kernel.org, thomas.lendacky@amd.com, bp@alien8.de,
-        pbonzini@redhat.com, rkrcmar@redhat.com
+        pbonzini@redhat.com, boris.ostrovsky@oracle.com, jgross@suse.com,
+        JBeulich@suse.com
 Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        kvm@vger.kernel.org, Pu Wen <puwen@hygon.cn>
-Subject: [PATCH v5 11/16] x86/kvm: enable Hygon support to KVM infrastructure
-Date:   Wed, 29 Aug 2018 20:45:05 +0800
-Message-Id: <37fd42bcf50eccfc3aad18051492144056e2f0fb.1535459013.git.puwen@hygon.cn>
+        xen-devel@lists.xenproject.org, Pu Wen <puwen@hygon.cn>
+Subject: [PATCH v5 12/16] x86/xen: enable Hygon support to Xen
+Date:   Wed, 29 Aug 2018 20:45:14 +0800
+Message-Id: <e281da9e1b9c55747ad05a182d0517d1a9501f92.1535459013.git.puwen@hygon.cn>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1535459012.git.puwen@hygon.cn>
 References: <cover.1535459012.git.puwen@hygon.cn>
-X-CM-TRANSID: swCowACnq49SlYZbvZ3_BA--.102S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7CFWUCw1Duw13Xr4UJF15twb_yoW5Jr17pF
-        ZrGFs7XFs5KFsIk34DJrs7Zw1UZFs8Kw18Kry5uw1SvF4jvayxXr4Fkw15Ja17Aa95u34r
-        KFy8W3WkJrWfZaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: swCowACHjJBblYZbTqD_BA--.100S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Zr48XFW7ur4DAry7Ww43trb_yoW8tFy3pr
+        W3AF4IqFWvqwn7X3s5X3y8XryrZw1qqa1rKrW3Ka1fXFs5Z3Z8XrWUCw1rJr1I9348ur10
+        va4093WUCFZYvFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
         9KBjDU0xBIdaVrnRJUUUvS14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
         rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
         1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
@@ -51,7 +52,7 @@ X-Coremail-Antispam: 1UD129KBjvJXoW7CFWUCw1Duw13Xr4UJF15twb_yoW5Jr17pF
         7I0E8cxan2IY04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
         0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWU
         tVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcV
-        CY1x0267AKxVW8Jr0_Cr1UMIIF0xvE42xK8VAvwI8IcIk0rVW8JVW3JwCI42IY6I8E87Iv
+        CY1x0267AKxVW8Jr0_Cr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUCVW8JwCI42IY6I8E87Iv
         67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43
         ZEXa7VUbKLvtUUUUU==
 X-Originating-IP: [182.150.46.145]
@@ -61,70 +62,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hygon Dhyana CPU has the SVM feature as AMD family 17h does.
-Add Hygon support in the KVM infrastructure.
+To make Xen works functionly on Hygon platforms, reuse AMD's Xen support
+code path for Hygon.
 
+There are six core performance events counters per thread, so there are
+six MSRs for these counters(0-5). Also there are four legacy PMC MSRs,
+they are alias of the counters(0-3).
+
+In this version of kernel Hygon use the lagacy and safe versions of MSR
+access. It works fine when VPMU enabled in Xen on Hygon platforms by
+testing with perf.
+
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Pu Wen <puwen@hygon.cn>
 ---
- arch/x86/include/asm/kvm_emulate.h |  4 ++++
- arch/x86/include/asm/virtext.h     |  5 +++--
- arch/x86/kvm/emulate.c             | 11 ++++++++++-
- 3 files changed, 17 insertions(+), 3 deletions(-)
+ arch/x86/xen/pmu.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/include/asm/kvm_emulate.h b/arch/x86/include/asm/kvm_emulate.h
-index 0f82cd9..93c4bf5 100644
---- a/arch/x86/include/asm/kvm_emulate.h
-+++ b/arch/x86/include/asm/kvm_emulate.h
-@@ -364,6 +364,10 @@ struct x86_emulate_ctxt {
- #define X86EMUL_CPUID_VENDOR_AMDisbetterI_ecx 0x21726574
- #define X86EMUL_CPUID_VENDOR_AMDisbetterI_edx 0x74656273
+diff --git a/arch/x86/xen/pmu.c b/arch/x86/xen/pmu.c
+index 7d00d4a..9403854 100644
+--- a/arch/x86/xen/pmu.c
++++ b/arch/x86/xen/pmu.c
+@@ -90,6 +90,12 @@ static void xen_pmu_arch_init(void)
+ 			k7_counters_mirrored = 0;
+ 			break;
+ 		}
++	} else if (boot_cpu_data.x86_vendor == X86_VENDOR_HYGON) {
++		amd_num_counters = F10H_NUM_COUNTERS;
++		amd_counters_base = MSR_K7_PERFCTR0;
++		amd_ctrls_base = MSR_K7_EVNTSEL0;
++		amd_msr_step = 1;
++		k7_counters_mirrored = 0;
+ 	} else {
+ 		uint32_t eax, ebx, ecx, edx;
  
-+#define X86EMUL_CPUID_VENDOR_HygonGenuine_ebx 0x6f677948
-+#define X86EMUL_CPUID_VENDOR_HygonGenuine_ecx 0x656e6975
-+#define X86EMUL_CPUID_VENDOR_HygonGenuine_edx 0x6e65476e
-+
- #define X86EMUL_CPUID_VENDOR_GenuineIntel_ebx 0x756e6547
- #define X86EMUL_CPUID_VENDOR_GenuineIntel_ecx 0x6c65746e
- #define X86EMUL_CPUID_VENDOR_GenuineIntel_edx 0x49656e69
-diff --git a/arch/x86/include/asm/virtext.h b/arch/x86/include/asm/virtext.h
-index 0116b2e..e05e0d3 100644
---- a/arch/x86/include/asm/virtext.h
-+++ b/arch/x86/include/asm/virtext.h
-@@ -83,9 +83,10 @@ static inline void cpu_emergency_vmxoff(void)
-  */
- static inline int cpu_has_svm(const char **msg)
+@@ -285,7 +291,7 @@ static bool xen_amd_pmu_emulate(unsigned int msr, u64 *val, bool is_read)
+ 
+ bool pmu_msr_read(unsigned int msr, uint64_t *val, int *err)
  {
--	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD) {
-+	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD &&
-+	    boot_cpu_data.x86_vendor != X86_VENDOR_HYGON) {
- 		if (msg)
--			*msg = "not amd";
-+			*msg = "not amd or hygon";
- 		return 0;
- 	}
+-	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD) {
++	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL) {
+ 		if (is_amd_pmu_msr(msr)) {
+ 			if (!xen_amd_pmu_emulate(msr, val, 1))
+ 				*val = native_read_msr_safe(msr, err);
+@@ -308,7 +314,7 @@ bool pmu_msr_write(unsigned int msr, uint32_t low, uint32_t high, int *err)
+ {
+ 	uint64_t val = ((uint64_t)high << 32) | low;
  
-diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
-index 106482d..34edf19 100644
---- a/arch/x86/kvm/emulate.c
-+++ b/arch/x86/kvm/emulate.c
-@@ -2711,7 +2711,16 @@ static bool em_syscall_is_enabled(struct x86_emulate_ctxt *ctxt)
- 	    edx == X86EMUL_CPUID_VENDOR_AMDisbetterI_edx)
- 		return true;
+-	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD) {
++	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL) {
+ 		if (is_amd_pmu_msr(msr)) {
+ 			if (!xen_amd_pmu_emulate(msr, &val, 0))
+ 				*err = native_write_msr_safe(msr, low, high);
+@@ -379,7 +385,7 @@ static unsigned long long xen_intel_read_pmc(int counter)
  
--	/* default: (not Intel, not AMD), apply Intel's stricter rules... */
-+	/* Hygon ("HygonGenuine") */
-+	if (ebx == X86EMUL_CPUID_VENDOR_HygonGenuine_ebx &&
-+	    ecx == X86EMUL_CPUID_VENDOR_HygonGenuine_ecx &&
-+	    edx == X86EMUL_CPUID_VENDOR_HygonGenuine_edx)
-+		return true;
-+
-+	/*
-+	 * default: (not Intel, not AMD, not Hygon), apply Intel's
-+	 * stricter rules...
-+	 */
- 	return false;
- }
- 
+ unsigned long long xen_read_pmc(int counter)
+ {
+-	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
++	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL)
+ 		return xen_amd_read_pmc(counter);
+ 	else
+ 		return xen_intel_read_pmc(counter);
 -- 
 2.7.4
 
