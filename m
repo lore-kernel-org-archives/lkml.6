@@ -2,89 +2,293 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39B94C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 14:03:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1F9BC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 14:03:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB55420850
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 14:03:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43A8920658
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 14:03:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PuDNub3B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB55420850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SGzXXfPA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43A8920658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728507AbeH2SAw (ORCPT
+        id S1728788AbeH2SA4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 14:00:52 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:46200 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727642AbeH2SAv (ORCPT
+        Wed, 29 Aug 2018 14:00:56 -0400
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:38703 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728221AbeH2SAz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 14:00:51 -0400
-Received: by mail-io0-f196.google.com with SMTP id y12-v6so4556977ioj.13
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 07:03:45 -0700 (PDT)
+        Wed, 29 Aug 2018 14:00:55 -0400
+Received: by mail-vk0-f66.google.com with SMTP id h200-v6so2571888vke.5
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 07:03:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=niFlAg978/cG3aKriwxHa3PJfLick0FP6+ZwOoBkEnc=;
-        b=PuDNub3B78CmP/8LZvYVuN6OArQF4o/5PK77Dj8iTS5sABXLMC3p2WqX9dFal1cq4+
-         ALChYygGs5zg9+hlWgc+wH9C10MQfxjzMidy4fsYZ1cBeFcOOAuh5UNHbonDRJHeRdeq
-         d3kMmoUQ3w2HVt9bvvzeR4tqGSGNYsBPOslTg=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=iQeLVZ1WkQTf/wICfPqqYQ6YO4frkm3PvHb1wxrRLPE=;
+        b=SGzXXfPAXnhs8ZPIKAHXMTIb/P6ibvzpXu7HrfR+vEy3t2j96JfC9M3i67O2koBRQO
+         Xgqc8JlzyRgqYAANNz8B2JELJ14JByuaP9QgFFqqkKrvnjwo2n1f2kAK/rWZ0VLKCFzX
+         rGXUrorOEV/EI2naE+CLk7rE6VyP7jG8aFramcOX0E4Lx82jK9VfPUU3ypvHzMRtZaQK
+         SNu/yTJLiyouAzIMefzh30Ei/qXWVoPtNo3BGqkWj+agSXpVZrrXa7shxSSNqZMZ99QH
+         uUXeVI0KbcniugzigpoRUOZuIWYVVCSQ+KhuKnMbTPsDEhdFvyXKgGKQDPbn03kDcc8E
+         FKMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=niFlAg978/cG3aKriwxHa3PJfLick0FP6+ZwOoBkEnc=;
-        b=JqnHX3GPucqVC99GfhBQQzku+xXfkMrwwmaPq2kI34rgVY4BYC3J7v1+kaxJL/xXPV
-         An2osxhIRZjdWRFYwtF5E6wWodypWwTwXDr3H+TLbtMFn+4IIqSewfHRCzVNNvjmeeS1
-         TkxDmTW4rVx8EmIKlIF5nPeSR9bXJPdRCxrR4ajOaPoJ6nlDAeyKBhrTXGGwQ43/f0ua
-         UtE+4nzxJfIa3eni+lsNiXLJLrTj13QaREJBHCIN7QNKh/YYRCTWogbja+Zy4pzeXK7+
-         owH252ABxBy4aoIQ9CUXgVAnCCRvFzl3zbGHhmvnrGMRoJnE+y+MJephr33t3GAQfDoJ
-         mxgg==
-X-Gm-Message-State: APzg51Dqf1IyWmHERtlxqM7mk5u0VBjPk57sy5vqddQ7BqUiJPBXY4O8
-        9YfS7jl5ldu8CpDC0sB3MzRwR8I2Wujis+1Fn/53xg==
-X-Google-Smtp-Source: ANB0VdYi0DpM1im0wrCbfaB2eRDWg3lPX5ezzDOhg9n+8mp+Djt+SkGjPNuW7jsSnUfUGksPujW7VaJkHiYZtKkS9Fs=
-X-Received: by 2002:a6b:7f0c:: with SMTP id l12-v6mr5224376ioq.16.1535551425405;
- Wed, 29 Aug 2018 07:03:45 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=iQeLVZ1WkQTf/wICfPqqYQ6YO4frkm3PvHb1wxrRLPE=;
+        b=Kp/FvPV6K2h8G1utNyFJrAQz/vnd85XljLqfu+IIFzRdj35ZwSkdGgAC96OmF0mCtE
+         mp5FRPLCiHKp3w5yYEw/QdPNA6pNsnLXiY36av+4fk0wnNP3SfQC6dhUGCZtezub7Kmw
+         rkM42DOzvLcu3/Nn2wieuXVNYEVHYVSwcy98u1Utr/pDU6Tcvj2HBMzvhLAvryQ0QvNY
+         JKBkIVbwEzNJEt8FWkJxPNTRzgwMrK/CHJItldcgWF9y5R1i6mZDSO8AXtqNbqQbSkor
+         U674nHjxpLoUAHJEVSfuNuu3PLfCboZvmKaiGJ+EIDwSuiOLsVv2gzKMauVV7pTxHFjt
+         /xLw==
+X-Gm-Message-State: APzg51ByI2PIX4WdrOiZdJlrNaMKIZrkElpwOXRYCkQr2hzM5o3IyTl+
+        FzaBmMZAq/vv/8rXbQzuaAJM8BVIHDXpYnX56znWkQ==
+X-Google-Smtp-Source: ANB0VdYNd+1gRTc6vjaOkVixOpnuxnX4WSBdPOGwcmvQbx6i6aFV+mXO+yNSyXXZ2bn/T0zjfHDNiFnRD2n4kySwNjk=
+X-Received: by 2002:a1f:5347:: with SMTP id h68-v6mr895425vkb.141.1535551427184;
+ Wed, 29 Aug 2018 07:03:47 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a6b:c046:0:0:0:0:0 with HTTP; Wed, 29 Aug 2018 07:03:44
- -0700 (PDT)
-In-Reply-To: <20180829063347.GB32392@infradead.org>
-References: <20180828142421.15335-1-semen.protsenko@linaro.org>
- <20180828142421.15335-2-semen.protsenko@linaro.org> <20180829063347.GB32392@infradead.org>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Wed, 29 Aug 2018 17:03:44 +0300
-Message-ID: <CAKaJLVvhGGoVnWxaDGN60ySiZ_y4xOUkamNQRnad3V7SNsNL-A@mail.gmail.com>
-Subject: Re: [PATCH 1/2] codafs: Fix build using bare-metal toolchain
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
-        codalist@coda.cs.cmu.edu, coda@cs.cmu.edu,
-        Jan Harkes <jaharkes@cs.cmu.edu>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Praneeth Bajjuri <praneeth@ti.com>,
-        Paul Sokolovsky <paul.sokolovsky@linaro.org>,
-        Miklos Szeredi <mszeredi@suse.cz>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Ruslan Bilovol <ruslan.bilovol@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
+References: <000000000000fef39305748083ae@google.com> <20180829134620.GD7369@quack2.suse.cz>
+In-Reply-To: <20180829134620.GD7369@quack2.suse.cz>
+From:   Alexander Potapenko <glider@google.com>
+Date:   Wed, 29 Aug 2018 16:03:35 +0200
+Message-ID: <CAG_fn=VMcHaGrFs_YvtBttmfuz8Rr1C_dfmKRibvPrbqeKFGCA@mail.gmail.com>
+Subject: Re: KASAN: stack-out-of-bounds Read in __schedule
+To:     jack@suse.cz
+Cc:     syzbot+45a34334c61a8ecf661d@syzkaller.appspotmail.com,
+        Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com, "Theodore Ts'o" <tytso@mit.edu>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 29, 2018 at 9:33 AM, Christoph Hellwig <hch@infradead.org> wrote:
-> Please just drop the ifdef entirely.  The file is part of the kernel
-> tree and can't be used for anything non-Linux.
+On Wed, Aug 29, 2018 at 3:46 PM Jan Kara <jack@suse.cz> wrote:
+>
+> On Tue 28-08-18 08:30:02, syzbot wrote:
+> > Hello,
+> >
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    5b394b2ddf03 Linux 4.19-rc1
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D14f4d8e1400=
+000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D49927b422dc=
+f0b29
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D45a34334c61a8=
+ecf661d
+> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D13127e5a4=
+00000
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the comm=
+it:
+> > Reported-by: syzbot+45a34334c61a8ecf661d@syzkaller.appspotmail.com
+> >
+> > IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
+> > IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
+> > IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
+> > 8021q: adding VLAN 0 to HW filter on device team0
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > BUG: KASAN: stack-out-of-bounds in schedule_debug kernel/sched/core.c:3=
+285
+> > [inline]
+> > BUG: KASAN: stack-out-of-bounds in __schedule+0x1977/0x1df0
+> > kernel/sched/core.c:3395
+> > Read of size 8 at addr ffff8801ad090000 by task syz-executor0/4718
+>
+> Weird, can you please help me decipher this? So here KASAN complains abou=
+t
+> wrong memory access in the scheduler.
+Most certainly the following code:
 
-I have better idea :) We can modify include/linux/coda.h instead, by
-checking for __KERNEL__ (along with existing check for __linux__).
-This way we can leave user-space API header alone. Don't know how come
-I didn't notice that in the first place... Anyway, will send v2
-shortly. Thanks for the review.
+  #ifdef CONFIG_SCHED_STACK_END_CHECK
+    if (task_stack_end_corrupted(prev))
+      panic("corrupted stack end detected inside scheduler\n");
+  #endif
+
+in schedule_debug() triggers the KASAN report.
+I guess we must disable CONFIG_SCHED_STACK_END_CHECK for KASAN builds.
+
+> However the stacktrace below shows a
+> problem in find_stack() function called by KASAN?
+For some reason the stackdepot hash table is corrupted. Looks like a
+separate issue.
+> And this does not seem to
+> be fs related at all? Also the reproducer has no sign of any filesystem
+> related activity...
+>
+>                                                                 Honza
+>
+> > CPU: 0 PID: 4718 Comm: syz-executor0 Not tainted 4.19.0-rc1+ #211
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> > Google 01/01/2011
+> > Call Trace:
+> >
+> > The buggy address belongs to the page:
+> > page:ffffea0006b42400 count:1 mapcount:-512 mapping:0000000000000000
+> > index:0x0
+> > flags: 0x2fffc0000000000()
+> > raw: 02fffc0000000000 dead000000000100 dead000000000200 000000000000000=
+0
+> > raw: 0000000000000000 0000000000000000 00000001fffffdff ffff8801d29544c=
+0
+> > page dumped because: kasan: bad access detected
+> > page->mem_cgroup:ffff8801d29544c0
+> >
+> > Memory state around the buggy address:
+> >  ffff8801ad08ff00: f2 f2 f2 f2 f2 00 f2 f2 f2 00 00 00 00 00 00 00
+> >  ffff8801ad08ff80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 f1
+> > > ffff8801ad090000: f1 f1 f1 00 f2 f2 f2 f2 f2 f2 f2 04 f2 f2 f2 f2
+> >                    ^
+> >  ffff8801ad090080: f2 f2 f2 00 f2 f2 f2 00 00 00 00 00 00 00 00 00
+> >  ffff8801ad090100: 00 00 00 00 00 00 00 00 00 00 00 00 00 f1 f1 f1
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > Kernel panic - not syncing: panic_on_warn set ...
+> >
+> > BUG: unable to handle kernel paging request at 0000000100000007
+> > PGD 1b34a2067 P4D 1b34a2067 PUD 0
+> > Oops: 0000 [#1] SMP KASAN
+> > CPU: 1 PID: 4325 Comm: rs:main Q:Reg Tainted: G    B             4.19.0=
+-rc1+
+> > #211
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> > Google 01/01/2011
+> > RIP: 0010:find_stack lib/stackdepot.c:188 [inline]
+> > RIP: 0010:depot_save_stack+0x120/0x470 lib/stackdepot.c:238
+> > Code: 0f 00 4e 8b 24 f5 e0 db ae 89 4d 85 e4 0f 84 d4 00 00 00 44 8d 47=
+ ff
+> > 49 c1 e0 03 eb 0d 4d 8b 24 24 4d 85 e4 0f 84 bd 00 00 00 <41> 39 5c 24 =
+08 75
+> > ec 41 3b 7c 24 0c 75 e5 48 8b 01 49 39 44 24 18
+> > RSP: 0018:ffff8801b2636f40 EFLAGS: 00010006
+> > RAX: 0000000084727a0d RBX: 00000000222ca320 RCX: ffff8801b2636fa0
+> > RDX: 000000004e510a9d RSI: 0000000000400000 RDI: 0000000000000012
+> > RBP: ffff8801b2636f78 R08: 0000000000000088 R09: 00000000dcf06c78
+> > R10: 00000000ecfd654a R11: ffff8801db1236f3 R12: 00000000ffffffff
+> > R13: ffff8801b2636f88 R14: 00000000000ca320 R15: ffff8801b2a72680
+> > FS:  00007ff2eb061700(0000) GS:ffff8801db100000(0000) knlGS:00000000000=
+00000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 0000000100000007 CR3: 00000001b4fdd000 CR4: 00000000001406e0
+> > Call Trace:
+> >  save_stack+0xa9/0xd0 mm/kasan/kasan.c:454
+> >  set_track mm/kasan/kasan.c:460 [inline]
+> >  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
+> >  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+> >  __cache_free mm/slab.c:3498 [inline]
+> >  kmem_cache_free+0x86/0x280 mm/slab.c:3756
+> >  jbd2_free_handle include/linux/jbd2.h:1426 [inline]
+> >  jbd2_journal_stop+0x443/0x1600 fs/jbd2/transaction.c:1787
+> >  __ext4_journal_stop+0xde/0x1f0 fs/ext4/ext4_jbd2.c:103
+> >  ext4_dirty_inode+0xab/0xc0 fs/ext4/inode.c:6027
+> >  __mark_inode_dirty+0x760/0x1300 fs/fs-writeback.c:2129
+> >  generic_update_time+0x26a/0x450 fs/inode.c:1651
+> >  update_time fs/inode.c:1667 [inline]
+> >  file_update_time+0x390/0x640 fs/inode.c:1877
+> >  __generic_file_write_iter+0x1dc/0x630 mm/filemap.c:3214
+> >  ext4_file_write_iter+0x390/0x1450 fs/ext4/file.c:266
+> >  call_write_iter include/linux/fs.h:1807 [inline]
+> >  new_sync_write fs/read_write.c:474 [inline]
+> >  __vfs_write+0x6af/0x9d0 fs/read_write.c:487
+> >  vfs_write+0x1fc/0x560 fs/read_write.c:549
+> >  ksys_write+0x101/0x260 fs/read_write.c:598
+> >  __do_sys_write fs/read_write.c:610 [inline]
+> >  __se_sys_write fs/read_write.c:607 [inline]
+> >  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
+> >  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+> >  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > RIP: 0033:0x7ff2ecabf19d
+> > Code: d1 20 00 00 75 10 b8 01 00 00 00 0f 05 48 3d 01 f0 ff ff 73 31 c3=
+ 48
+> > 83 ec 08 e8 be fa ff ff 48 89 04 24 b8 01 00 00 00 0f 05 <48> 8b 3c 24 =
+48 89
+> > c2 e8 07 fb ff ff 48 89 d0 48 83 c4 08 48 3d 01
+> > RSP: 002b:00007ff2eb05ff90 EFLAGS: 00000293 ORIG_RAX: 0000000000000001
+> > RAX: ffffffffffffffda RBX: 0000000000000400 RCX: 00007ff2ecabf19d
+> > RDX: 0000000000000400 RSI: 0000000002089a90 RDI: 0000000000000005
+> > RBP: 0000000002089a90 R08: 00000000020d9e00 R09: 656c6c616b7a7973
+> > R10: 6c656e72656b2072 R11: 0000000000000293 R12: 0000000000000000
+> > R13: 00007ff2eb060410 R14: 00000000020d9e00 R15: 0000000002089890
+> > Modules linked in:
+> > Dumping ftrace buffer:
+> >    (ftrace buffer empty)
+> > CR2: 0000000100000007
+> > ---[ end trace fbf1ba842de6c894 ]---
+> > RIP: 0010:find_stack lib/stackdepot.c:188 [inline]
+> > RIP: 0010:depot_save_stack+0x120/0x470 lib/stackdepot.c:238
+> > Code: 0f 00 4e 8b 24 f5 e0 db ae 89 4d 85 e4 0f 84 d4 00 00 00 44 8d 47=
+ ff
+> > 49 c1 e0 03 eb 0d 4d 8b 24 24 4d 85 e4 0f 84 bd 00 00 00 <41> 39 5c 24 =
+08 75
+> > ec 41 3b 7c 24 0c 75 e5 48 8b 01 49 39 44 24 18
+> > RSP: 0018:ffff8801b2636f40 EFLAGS: 00010006
+> > RAX: 0000000084727a0d RBX: 00000000222ca320 RCX: ffff8801b2636fa0
+> > RDX: 000000004e510a9d RSI: 0000000000400000 RDI: 0000000000000012
+> > RBP: ffff8801b2636f78 R08: 0000000000000088 R09: 00000000dcf06c78
+> > R10: 00000000ecfd654a R11: ffff8801db1236f3 R12: 00000000ffffffff
+> > R13: ffff8801b2636f88 R14: 00000000000ca320 R15: ffff8801b2a72680
+> > FS:  00007ff2eb061700(0000) GS:ffff8801db100000(0000) knlGS:00000000000=
+00000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 0000000100000007 CR3: 00000001b4fdd000 CR4: 00000000001406e0
+> > Shutting down cpus with NMI
+> > Dumping ftrace buffer:
+> >    (ftrace buffer empty)
+> > Kernel Offset: disabled
+> > Rebooting in 86400 seconds..
+> >
+> >
+> > ---
+> > This bug is generated by a bot. It may contain errors.
+> > See https://goo.gl/tpsmEJ for more information about syzbot.
+> > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> >
+> > syzbot will keep track of this bug report. See:
+> > https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> > syzbot.
+> > syzbot can test patches for this bug, for details see:
+> > https://goo.gl/tpsmEJ#testing-patches
+> >
+> --
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
+>
+> --
+> You received this message because you are subscribed to the Google Groups=
+ "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgi=
+d/syzkaller-bugs/20180829134620.GD7369%40quack2.suse.cz.
+> For more options, visit https://groups.google.com/d/optout.
+
+
+
+--=20
+Alexander Potapenko
+Software Engineer
+
+Google Germany GmbH
+Erika-Mann-Stra=C3=9Fe, 33
+80636 M=C3=BCnchen
+
+Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
+Registergericht und -nummer: Hamburg, HRB 86891
+Sitz der Gesellschaft: Hamburg
