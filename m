@@ -2,64 +2,63 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0549C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 19:36:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B512C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 19:36:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CE382064E
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 19:36:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CE382064E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0E04B2064E
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 19:36:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E04B2064E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728375AbeH2Xe3 (ORCPT
+        id S1728493AbeH2Xen (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 19:34:29 -0400
-Received: from mga11.intel.com ([192.55.52.93]:34795 "EHLO mga11.intel.com"
+        Wed, 29 Aug 2018 19:34:43 -0400
+Received: from muru.com ([72.249.23.125]:54944 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727392AbeH2Xe3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 19:34:29 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2018 12:36:07 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,304,1531810800"; 
-   d="scan'208";a="66959349"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
-  by fmsmga008.fm.intel.com with ESMTP; 29 Aug 2018 12:35:59 -0700
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 112E2301B8B; Wed, 29 Aug 2018 12:35:59 -0700 (PDT)
-From:   Andi Kleen <ak@linux.intel.com>
-To:     Pu Wen <puwen@hygon.cn>
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, thomas.lendacky@amd.com, bp@alien8.de,
-        pbonzini@redhat.com, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org
-Subject: Re: [PATCH v5 01/16] x86/cpu: create Dhyana init file and register new cpu_dev to system
-References: <cover.1535459012.git.puwen@hygon.cn>
-        <c4610c537e5e5774d8d7486e0867ced8ebf0fba1.1535459012.git.puwen@hygon.cn>
-Date:   Wed, 29 Aug 2018 12:35:59 -0700
-In-Reply-To: <c4610c537e5e5774d8d7486e0867ced8ebf0fba1.1535459012.git.puwen@hygon.cn>
-        (Pu Wen's message of "Wed, 29 Aug 2018 20:42:49 +0800")
-Message-ID: <87mut52cf4.fsf@linux.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        id S1727399AbeH2Xem (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 19:34:42 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id DD4038027;
+        Wed, 29 Aug 2018 19:40:12 +0000 (UTC)
+Date:   Wed, 29 Aug 2018 12:36:16 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc:     Ladislav Michl <ladis@linux-mips.org>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Marek Belisko <marek@goldelico.com>,
+        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org
+Subject: Re: [PATCH v2 00/32] Device Tree Updates for GTA04 (A3/A4/A5
+ variants)
+Message-ID: <20180829193616.GS7523@atomide.com>
+References: <cover.1533021093.git.hns@goldelico.com>
+ <25356247-C081-4B9E-9CE2-2D10EFE56F6C@goldelico.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <25356247-C081-4B9E-9CE2-2D10EFE56F6C@goldelico.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pu Wen <puwen@hygon.cn> writes:
+* H. Nikolaus Schaller <hns@goldelico.com> [180829 07:24]:
+> Hi OMAP3 DTS Maintainers,
+> is there any progress in merging this patch series?
 
-> Add x86 architecture support for new processor Hygon Dhyana Family 18h.
-> Rework to create a separated file(arch/x86/kernel/cpu/hygon.c) from the
-> AMD init one(arch/x86/kernel/cpu/amd.c) to initialize Dhyana CPU.
+Looks good to me in general, I'll be getting into applying
+patches for v4.20 in few days.
 
-Standard approach would be to move the shared code into a different
-file and call it from both amd.c and hygon.c instead of duplicating.
+Regards,
 
--Andi
+Tony
