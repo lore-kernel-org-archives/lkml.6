@@ -3,33 +3,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3F9FC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 14:31:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EC20C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 14:31:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 610E820868
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 14:31:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 610E820868
+	by mail.kernel.org (Postfix) with ESMTP id 45F2420867
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 14:31:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45F2420867
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728820AbeH2S3E (ORCPT
+        id S1728860AbeH2S3H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 14:29:04 -0400
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:6449 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727999AbeH2S3E (ORCPT
+        Wed, 29 Aug 2018 14:29:07 -0400
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:38397 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727590AbeH2S3H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 14:29:04 -0400
+        Wed, 29 Aug 2018 14:29:07 -0400
 X-IronPort-AV: E=Sophos;i="5.53,303,1531810800"; 
-   d="scan'208";a="18915829"
+   d="scan'208";a="18999099"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 29 Aug 2018 07:31:51 -0700
+  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 29 Aug 2018 07:31:53 -0700
 Received: from tenerife.corp.atmel.com (10.10.76.4) by
  chn-sv-exch03.mchp-main.com (10.10.76.49) with Microsoft SMTP Server id
- 14.3.352.0; Wed, 29 Aug 2018 07:31:50 -0700
+ 14.3.352.0; Wed, 29 Aug 2018 07:31:53 -0700
 From:   Nicolas Ferre <nicolas.ferre@microchip.com>
 To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
         <miquel.raynal@bootlin.com>,
@@ -42,10 +42,12 @@ CC:     Claudiu Beznea <claudiu.beznea@microchip.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>,
         Nicolas Ferre <nicolas.ferre@microchip.com>
-Subject: [PATCH 00/11] MAINTAINERS: update of of some Microchip entries
-Date:   Wed, 29 Aug 2018 16:31:36 +0200
-Message-ID: <cover.1535552609.git.nicolas.ferre@microchip.com>
+Subject: [PATCH 01/11] MAINTAINERS: ARM: at91: add co-maintainer for ARM/Microchip
+Date:   Wed, 29 Aug 2018 16:31:37 +0200
+Message-ID: <8c4937512d9535441b9f0aa4c27aeb4edf526489.1535552609.git.nicolas.ferre@microchip.com>
 X-Mailer: git-send-email 2.15.1
+In-Reply-To: <cover.1535552609.git.nicolas.ferre@microchip.com>
+References: <cover.1535552609.git.nicolas.ferre@microchip.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
@@ -53,34 +55,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Add Ludovic as a new co-maintainer for the AT91 Microchip ARM
+sub-architecture.
+Add the newly created kernel.org group git tree that we will use
+from now on.
 
-This is an update of most of Microchip MAINTAINERS' entries. I took advantage
-of the addition of Ludovic as co-maintainer to go through some of the entries
-that were outdated.
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+---
+ MAINTAINERS | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-There are moves of entries in the 3 last patches of this series. You can drop
-them if they introduce too much headaches while updating this MAINTAINERS
-file.
-
-Series based on v4.19-rc1.
-
-Nicolas Ferre (11):
-  MAINTAINERS: ARM: at91: add co-maintainer for ARM/Microchip
-  MAINTAINERS: update entry for Microchip NAND driver support
-  MAINTAINERS: media: change Microchip ISI, ISC maintainers
-  MAINTAINERS: ASoC: change maintainer for Microchip ALSA drivers
-  MAINTAINERS: USB: change maintainer for Microchip USBA gadget driver
-  MAINTAINERS: dmaengine: add files to Microchip dma entry
-  MAINTAINERS: pwm: add entry for Microchip pwm driver
-  MAINTAINERS: iio: add co-maintainer to SAMA5D2-compatible ADC driver
-  MAINTAINERS: remove the / ATMEL string from MICROCHIP entries
-  MAINTAINERS: move former ATMEL entries to proper MICROCHIP location
-  MAINTAINERS: sdhci: move the Microchip entry to proper location
-
- MAINTAINERS | 196 ++++++++++++++++++++++++++++------------------------
- 1 file changed, 105 insertions(+), 91 deletions(-)
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a5b256b25905..7f97f1f83398 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1703,9 +1703,10 @@ S:	Odd Fixes
+ ARM/Microchip (AT91) SoC support
+ M:	Nicolas Ferre <nicolas.ferre@microchip.com>
+ M:	Alexandre Belloni <alexandre.belloni@bootlin.com>
++M:	Ludovic Desroches <ludovic.desroches@microchip.com>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ W:	http://www.linux4sam.org
+-T:	git git://git.kernel.org/pub/scm/linux/kernel/git/nferre/linux-at91.git
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git
+ S:	Supported
+ N:	at91
+ N:	atmel
 -- 
 2.17.1
 
