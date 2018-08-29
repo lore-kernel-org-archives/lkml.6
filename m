@@ -6,124 +6,94 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E256FC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:17:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25E0BC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:19:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4D672054F
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:17:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4D672054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+	by mail.kernel.org (Postfix) with ESMTP id D0079205F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:19:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0079205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729096AbeH2TPL (ORCPT
+        id S1729027AbeH2TQf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 15:15:11 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:37314 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728738AbeH2TPL (ORCPT
+        Wed, 29 Aug 2018 15:16:35 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:29445 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728701AbeH2TQf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 15:15:11 -0400
-Received: from imladris.surriel.com ([96.67.55.152])
-        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <riel@shelob.surriel.com>)
-        id 1fv2Dx-000056-Q6; Wed, 29 Aug 2018 11:17:37 -0400
-Message-ID: <e9d62b33d43f99570b14c73e1519b13021ea3a95.camel@surriel.com>
-Subject: Re: [PATCH v2] x86/nmi: Fix some races in NMI uaccess
-From:   Rik van Riel <riel@surriel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     X86 ML <x86@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        Jann Horn <jannh@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Nadav Amit <nadav.amit@gmail.com>
-Date:   Wed, 29 Aug 2018 11:17:37 -0400
-In-Reply-To: <CALCETrX2v_g_+TpX1DEZasHGi=8Y3w3ka=yYEaTxgFDnPy67nw@mail.gmail.com>
-References: <c7ee1ee7a1b8d17743f7c3680ea5d2c32bf3e897.1535410956.git.luto@kernel.org>
-         <20180828135647.6d516048@imladris.surriel.com>
-         <CALCETrX2v_g_+TpX1DEZasHGi=8Y3w3ka=yYEaTxgFDnPy67nw@mail.gmail.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-nQ3BFmGlEsXzGK2XeTic"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
+        Wed, 29 Aug 2018 15:16:35 -0400
+Received: from fsav301.sakura.ne.jp (fsav301.sakura.ne.jp [153.120.85.132])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w7TFJ8Q1046750;
+        Thu, 30 Aug 2018 00:19:08 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav301.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp);
+ Thu, 30 Aug 2018 00:19:08 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w7TFJ8Am046742
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Thu, 30 Aug 2018 00:19:08 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Subject: Re: [PATCH 2/4] tty: Hold tty_ldisc_lock() during tty_reopen()
+To:     Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org
+Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
+        Daniel Axtens <dja@axtens.net>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Michael Neuling <mikey@neuling.org>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        =?UTF-8?B?UGFzaSBLw6Rya2vDpGluZW4=?= <pasik@iki.fi>,
+        Peter Hurley <peter@hurleysoftware.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Tan Xiaojun <tanxiaojun@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, stable@vger.kernel.org
+References: <20180829022353.23568-1-dima@arista.com>
+ <20180829022353.23568-3-dima@arista.com>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <0cb6bb7c-776b-28d6-65a6-f5b496e32344@I-love.SAKURA.ne.jp>
+Date:   Thu, 30 Aug 2018 00:19:04 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180829022353.23568-3-dima@arista.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2018/08/29 11:23, Dmitry Safonov wrote:
+> tty_ldisc_reinit() doesn't race with neither tty_ldisc_hangup()
+> nor set_ldisc() nor tty_ldisc_release() as they use tty lock.
+> But it races with anyone who expects line discipline to be the same
+> after hoding read semaphore in tty_ldisc_ref().
+> 
+> We've seen the following crash on v4.9.108 stable:
+> 
+> BUG: unable to handle kernel paging request at 0000000000002260
+> IP: [..] n_tty_receive_buf_common+0x5f/0x86d
+> Workqueue: events_unbound flush_to_ldisc
+> Call Trace:
+>  [..] n_tty_receive_buf2
+>  [..] tty_ldisc_receive_buf
+>  [..] flush_to_ldisc
+>  [..] process_one_work
+>  [..] worker_thread
+>  [..] kthread
+>  [..] ret_from_fork
+> 
+> I think, tty_ldisc_reinit() should be called with ldisc_sem hold for
+> writing, which will protect any reader against line discipline changes.
+> 
+> Note: I failed to reproduce the described crash, so obiviously can't
+> guarantee that this is the place where line discipline was switched.
 
---=-nQ3BFmGlEsXzGK2XeTic
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+This will be same with a report at
+https://syzkaller.appspot.com/bug?id=f08670354701fa64cc0dd3c0128a491bdb16adcc .
 
-On Tue, 2018-08-28 at 20:46 -0700, Andy Lutomirski wrote:
-> On Tue, Aug 28, 2018 at 10:56 AM, Rik van Riel <riel@surriel.com>
-> wrote:
-> > On Mon, 27 Aug 2018 16:04:16 -0700
-> > Andy Lutomirski <luto@kernel.org> wrote:
-> >=20
-> > > The 0day bot is still chewing on this, but I've tested it a bit
-> > > locally
-> > > and it seems to do the right thing.
-> >=20
-> > Hi Andy,
-> >=20
-> > the version of the patch below should fix the bug we talked about
-> > in email yesterday.  It should automatically cover kernel threads
-> > in lazy TLB mode, because current->mm will be NULL, while the
-> > cpu_tlbstate.loaded_mm should never be NULL.
-> >=20
->=20
-> That's better than mine.  I tweaked it a bit and added some
-> debugging,
-> and I got this:
->=20
->=20
-https://git.kernel.org/pub/scm/linux/kernel/git/luto/linux.git/commit/?h=3D=
-x86/fixes&id=3Ddd956eba16646fd0b15c3c0741269dfd84452dac
->=20
-> I made the loaded_mm handling a little more conservative to make it
-> more obvious that switch_mm_irqs_off() is safe regardless of exactly
-> when it gets called relative to switching current.
-
-I am not convinced that the dance of writing
-cpu_tlbstate.loaded_mm twice, with a barrier on
-each end, is useful or necessary.
-
-At the time switch_mm_irqs_off returns, nmi_uaccess_ok()
-will still return false, because we have not switched
-"current" to the task that owns the next mm_struct yet.
-
-We just have to make sure to:
-1) Change cpu_tlbstate.loaded_mm before we manipulate
-   CR3, and
-2) Change "current" only once enough of the mm stuff has
-   been switched, __switch_to seems to get that right.
-
-Between the time switch_mm_irqs_off() sets cpu_tlbstate
-to the next mm, and __switch_to moves() over current,
-nmi_uaccess_ok() will return false.
-
---=20
-All Rights Reversed.
-
---=-nQ3BFmGlEsXzGK2XeTic
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAluGuREACgkQznnekoTE
-3oNHxgf/fMOKljECrqIqz+mcdgJd/L88eMzgQOldU1ptheYLGqsOhR2r7NkOQ21/
-XaXKbLuV6BqEaWeWTVDuZU7HdfEekXw1XhmRra7XNbCv1ODV8u2ALWUSvD+vzdYS
-dGkkQeQ10UNo0+7gbpZbwhY5WaEO3xK4Z0gyKYJMH6Pz0Z2ooN2HogZvlWA+UVf+
-oQd8QPYqnn6z3F4oKqq/vCaTHD0XwW471JJGgQ6aIr1rvj2wBBnrtL0i32of10cg
-Ch1Hm3RpJaJgXkv3x2sPk1k8KCscMYwV2N7c64t/Fhk8DJMftAWFVNzstVJ7g9B7
-nylLDGuN3uy/hQ7GLDNhRZjs505H6w==
-=zik5
------END PGP SIGNATURE-----
-
---=-nQ3BFmGlEsXzGK2XeTic--
-
+syzbot is now testing a patch from Jiri Slaby.
