@@ -2,123 +2,107 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A555C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:53:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E118C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:54:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F64F2084D
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:53:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JBTpf3Da"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F64F2084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 11FE22084D
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:54:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11FE22084D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727865AbeH2MtA (ORCPT
+        id S1727980AbeH2Mt4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 08:49:00 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:37899 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727530AbeH2MtA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 08:49:00 -0400
-Received: by mail-io0-f193.google.com with SMTP id y3-v6so3827181ioc.5
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 01:53:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0k4jr4FBzca5jWQm4p0IqphPVgUnL3faQmSv/TK/1vs=;
-        b=JBTpf3DalA3Hsc97np9RkwdqW75yQ/mbTdRXol3yxIirCGetjiyfTsy6QmC8xI/bFO
-         3gkr8diuc0Gvi9/aDtMHcGTKQ6TTC7UWIxvgHvYEjQ+ZLPh7DBEOQzs1+yQWprczZ6dG
-         LjhVYNa93LNk4u2c+9izUHXg1f3F1PBxcTrug=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0k4jr4FBzca5jWQm4p0IqphPVgUnL3faQmSv/TK/1vs=;
-        b=MAVi8uTFK3+co7XoqCNXo84qDg4zSPxN9rtOAKdnC5K8/64JnCoizzEcw0Vv8rYynA
-         X7o2bv3K/9aZxX72HJkpQKrAUI8JziIQajr40+EVUeMbEMuiKe4lN2H5ISpJyfdVogfN
-         hbKF8FP6uRKhdwLdDEtoh0d6JRVYmvvcxEIGuUTS1xQewrWrFk705merbyRzHl3oXVBo
-         blmNezN+7o31jHAcsF0F6kYF6Z39fZILdxy/8S7waLns407hTfm6EyKo51UKK7bsSxLF
-         xSLOthbqtbmcnqiB6/OuO0AK7cm+Z9v/RfQ5X3/BVSrCX2gOOh+GsJNyFP472GzUD8G3
-         5HjQ==
-X-Gm-Message-State: APzg51AYNUvbXqKi8GVy9cWRFriMDGMepQu8aQ2HmR1z2TzTp39XynWQ
-        Q8P47hkcxZ6ASZc6QYk+KgQ8hRpX3JDihCGYnJVSSA==
-X-Google-Smtp-Source: ANB0VdaAYt0ZOcN+5JLsEV/g7ZQ7RgP9vcADaMoAX0Bj3NVgVO3iq4yCXKNqyfYgG0Z3vn4k3KOIqDK3+/Qj870qJ7A=
-X-Received: by 2002:a6b:c3c4:: with SMTP id t187-v6mr4306378iof.304.1535532787511;
- Wed, 29 Aug 2018 01:53:07 -0700 (PDT)
+        Wed, 29 Aug 2018 08:49:56 -0400
+Received: from foss.arm.com ([217.140.101.70]:50532 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727492AbeH2Mtz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 08:49:55 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C0A9918A;
+        Wed, 29 Aug 2018 01:54:03 -0700 (PDT)
+Received: from e110439-lin (e110439-lin.Emea.Arm.com [10.4.12.126])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CFF7E3F5BC;
+        Wed, 29 Aug 2018 01:54:00 -0700 (PDT)
+Date:   Wed, 29 Aug 2018 09:53:58 +0100
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v4 07/16] sched/core: uclamp: extend cpu's cgroup
+ controller
+Message-ID: <20180829085358.GO2960@e110439-lin>
+References: <20180828135324.21976-1-patrick.bellasi@arm.com>
+ <20180828135324.21976-8-patrick.bellasi@arm.com>
+ <ad7a1f15-d1ad-84f2-6b4d-cbfc4560a7a4@infradead.org>
 MIME-Version: 1.0
-References: <c4904283-37d1-08d7-feb3-4dc7ef0bea0a@gmail.com>
-In-Reply-To: <c4904283-37d1-08d7-feb3-4dc7ef0bea0a@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 29 Aug 2018 10:52:55 +0200
-Message-ID: <CACRpkdYhSdO1etL=PwE09zYYdRN+W_vzUqRiiCpUjfv8-jKQJg@mail.gmail.com>
-Subject: Re: [BUG] gpio: gpiolib: possible sleep-in-atomic-context bugs in gpiochip_lock_as_irq()
-To:     baijiaju1990@gmail.com, Hans Verkuil <hans.verkuil@cisco.com>
-Cc:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ad7a1f15-d1ad-84f2-6b4d-cbfc4560a7a4@infradead.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jia-Ju,
+On 28-Aug 11:29, Randy Dunlap wrote:
+> On 08/28/2018 06:53 AM, Patrick Bellasi wrote:
+> > +config UCLAMP_TASK_GROUP
+> > +	bool "Utilization clamping per group of tasks"
+> > +	depends on CGROUP_SCHED
+> > +	depends on UCLAMP_TASK
+> > +	default n
+> > +	help
+> > +	  This feature enables the scheduler to track the clamped utilization
+> > +	  of each CPU based on RUNNABLE tasks currently scheduled on that CPU.
+> > +
+> > +	  When this option is enabled, the user can specify a min and max
+> > +	  CPU bandwidth which is allowed for each single task in a group.
+> > +	  The max bandwidth allows to clamp the maximum frequency a task
+> > +	  can use, while the min bandwidth allows to define a minimum
+> > +	  frequency a task will always use.
+> > +
+> > +	  When task group based utilization clamping is enabled, an eventually
+> > +          specified task-specific clamp value is constrained by the cgroup
+> > +	  specified clamp value. Both minimum and maximum task clamping cannot
+> > +          be bigger than the corresponding clamping defined at task group level.
+> 
+> The 4 lines above should all be indented the same (one tab + 2 spaces).
 
-Hans Verkuil is working on revamping the IRQ locking API for GPIO,
-and I think these semantic problems will simply disappear when that
-is done.
+Right... then there's definitively something broken with my vim
+reformat shortcut, which sometimes uses spaces instead of tabs :(
 
-Yours,
-Linus Walleij
+Unfortunately this pattern is not covered by checkpatch, which
+returns not errors/warnings on this patch.
 
-On Sat, Aug 11, 2018 at 4:22 AM Jia-Ju Bai <baijiaju1990@gmail.com> wrote:
->
-> The driver may sleep with holding a spinlock.
->
-> The function call paths (from bottom to top) in Linux-4.16 are:
->
-> [FUNC] mutex_lock_nested
-> drivers/gpio/gpio-exar.c, 69: mutex_lock_nested in exar_get
-> drivers/gpio/gpio-exar.c, 83: exar_get in exar_get_direction
-> drivers/gpio/gpiolib.c, 3103: [FUNC_PTR]exar_get_direction in gpiochip_lock_as_irq
-> drivers/gpio/gpio-tegra.c, 326: gpiochip_lock_as_irq in tegra_gpio_irq_set_type
-> kernel/irq/chip.c, 1335: [FUNC_PTR]tegra_gpio_irq_set_type in irq_chip_set_type_parent
-> kernel/irq/manage.c, 686: [FUNC_PTR]irq_chip_set_type_parent in __irq_set_trigger
-> kernel/irq/manage.c, 1350: __irq_set_trigger in __setup_irq
-> kernel/irq/manage.c, 1238: _raw_spin_lock_irqsave in __setup_irq
->
-> [FUNC] mutex_lock_nested
-> drivers/gpio/gpio-pca953x.c, 372: mutex_lock_nested in pca953x_gpio_get_direction
-> drivers/gpio/gpiolib.c, 3103: [FUNC_PTR]pca953x_gpio_get_direction in gpiochip_lock_as_irq
-> drivers/gpio/gpio-tegra.c, 326: gpiochip_lock_as_irq in tegra_gpio_irq_set_type
-> kernel/irq/chip.c, 1335: [FUNC_PTR]tegra_gpio_irq_set_type in irq_chip_set_type_parent
-> kernel/irq/manage.c, 686: [FUNC_PTR]irq_chip_set_type_parent in __irq_set_trigger
-> kernel/irq/manage.c, 1350: __irq_set_trigger in __setup_irq
-> kernel/irq/manage.c, 1238: _raw_spin_lock_irqsave in __setup_irq
->
-> [FUNC] mutex_lock_nested
-> drivers/mfd/stmpe.c, 170: mutex_lock_nested in stmpe_reg_read
-> drivers/gpio/gpio-stmpe.c, 83: stmpe_reg_read in stmpe_gpio_get_direction
-> drivers/gpio/gpiolib.c, 3103: [FUNC_PTR]stmpe_gpio_get_direction in gpiochip_lock_as_irq
-> drivers/gpio/gpio-tegra.c, 326: gpiochip_lock_as_irq in tegra_gpio_irq_set_type
-> kernel/irq/chip.c, 1335: [FUNC_PTR]tegra_gpio_irq_set_type in irq_chip_set_type_parent
-> kernel/irq/manage.c, 686: [FUNC_PTR]irq_chip_set_type_parent in __irq_set_trigger
-> kernel/irq/manage.c, 1350: __irq_set_trigger in __setup_irq
-> kernel/irq/manage.c, 1238: _raw_spin_lock_irqsave in __setup_irq
->
-> Note that [FUNC_PTR] means a function pointer call is used.
->
-> I do not find a good way to fix, so I only report.
-> This is found by my static analysis tool (DSAC).
->
->
-> Best wishes,
-> Jia-Ju Bai
+> > +
+> > +	  If in doubt, say N.
+> > +
+
+Anyway, thanks for spotting it... easy fix for the next respin.
+
+Best,
+Patrick
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
