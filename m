@@ -2,116 +2,73 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C87EDC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:36:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4CB0C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:36:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AE632089B
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:36:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AE632089B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 815C920897
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:36:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 815C920897
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727778AbeH2Lby convert rfc822-to-8bit (ORCPT
+        id S1727821AbeH2LcD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 07:31:54 -0400
-Received: from mga02.intel.com ([134.134.136.20]:50902 "EHLO mga02.intel.com"
+        Wed, 29 Aug 2018 07:32:03 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:38626 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727054AbeH2Lbx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 07:31:53 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2018 00:36:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,301,1531810800"; 
-   d="scan'208";a="68695142"
-Received: from pgsmsx104.gar.corp.intel.com ([10.221.44.91])
-  by orsmga007.jf.intel.com with ESMTP; 29 Aug 2018 00:36:14 -0700
-Received: from pgsmsx112.gar.corp.intel.com ([169.254.3.58]) by
- PGSMSX104.gar.corp.intel.com ([169.254.3.57]) with mapi id 14.03.0319.002;
- Wed, 29 Aug 2018 15:36:14 +0800
-From:   "Huang, Kai" <kai.huang@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     "x86@kernel.org" <x86@kernel.org>,
-        "platform-driver-x86@vger.kernel.org" 
-        <platform-driver-x86@vger.kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Kai Huang <kai.huang@linux.intel.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@suse.de>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v13 02/13] x86/cpufeature: Add SGX and SGX_LC CPU
- features
-Thread-Topic: [PATCH v13 02/13] x86/cpufeature: Add SGX and SGX_LC CPU
- features
-Thread-Index: AQHUPjeYRx2wMmEsxEKLT9SJazBQeaTUSTXA///ylICAAh0zAA==
-Date:   Wed, 29 Aug 2018 07:36:13 +0000
-Message-ID: <105F7BF4D0229846AF094488D65A0989354103A9@PGSMSX112.gar.corp.intel.com>
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-3-jarkko.sakkinen@linux.intel.com>
- <105F7BF4D0229846AF094488D65A09893540B623@PGSMSX112.gar.corp.intel.com>
- <20180828071723.GA15508@linux.intel.com>
-In-Reply-To: <20180828071723.GA15508@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNmIyZmJlZGQtNGEwYy00M2RiLWI4ZDItYTgyMDQ2ZmZmNTY1IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiandnZThmUENNaEhXVCtKMEpveGFFUWtzV1wvVUg0WGdzR3pBUGt4dGJpYWFDQkoxaVdpckVaSCtlSXIwSWxPY3kifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [172.30.20.205]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
+        id S1727054AbeH2LcC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 07:32:02 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 21C1220003A;
+        Wed, 29 Aug 2018 09:36:29 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 37DDD20002E;
+        Wed, 29 Aug 2018 09:36:24 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id BD5B8402D2;
+        Wed, 29 Aug 2018 15:36:17 +0800 (SGT)
+From:   Yinbo Zhu <yinbo.zhu@nxp.com>
+To:     yinbo.zhu@nxp.com, Shawn Guo <shawnguo@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     xiaobo.xie@nxp.com, Ran Wang <ran.wang_1@nxp.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, festevam@gmail.com
+Subject: [PATCH v1] arm64: dts: dwc3: Add description of 'configure-gfladj'
+Date:   Wed, 29 Aug 2018 15:33:24 +0800
+Message-Id: <20180829073324.36866-1-yinbo.zhu@nxp.com>
+X-Mailer: git-send-email 2.14.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Jarkko Sakkinen [mailto:jarkko.sakkinen@linux.intel.com]
-> Sent: Tuesday, August 28, 2018 7:17 PM
-> To: Huang, Kai <kai.huang@intel.com>
-> Cc: x86@kernel.org; platform-driver-x86@vger.kernel.org; Hansen, Dave
-> <dave.hansen@intel.com>; Christopherson, Sean J
-> <sean.j.christopherson@intel.com>; nhorman@redhat.com;
-> npmccallum@redhat.com; linux-sgx@vger.kernel.org; Kai Huang
-> <kai.huang@linux.intel.com>; Thomas Gleixner <tglx@linutronix.de>; Ingo
-> Molnar <mingo@redhat.com>; H. Peter Anvin <hpa@zytor.com>; Borislav
-> Petkov <bp@suse.de>; Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>;
-> David Woodhouse <dwmw@amazon.co.uk>; open list:X86 ARCHITECTURE (32-
-> BIT AND 64-BIT) <linux-kernel@vger.kernel.org>
-> Subject: Re: [PATCH v13 02/13] x86/cpufeature: Add SGX and SGX_LC CPU
-> features
-> 
-> On Tue, Aug 28, 2018 at 12:07:41AM +0000, Huang, Kai wrote:
-> > > +#define X86_FEATURE_SGX_LC		(16*32+30) /* supports SGX
-> launch
-> > > configuration */
-> >
-> > Sorry if it was me who wrote the comment "SGX launch configuration". I
-> > think we should just use "SGX launch control". :)
-> 
-> Not sure if we should change though. The former is more self-explaining, the
-> latter is "more official".
+This patch is to add description of 'configure-gfladj' to binding
+so that configuring devicetree
 
-I'll let you decide.  To me the comment should explain what does "LC" mean, and to me it means "launch control". :)
+Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
+---
+ Documentation/devicetree/bindings/usb/dwc3.txt |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-Thanks,
--Kai
-> 
-> /Jarkko
+diff --git a/Documentation/devicetree/bindings/usb/dwc3.txt b/Documentation/devicetree/bindings/usb/dwc3.txt
+index 3e4c38b..40c6568 100644
+--- a/Documentation/devicetree/bindings/usb/dwc3.txt
++++ b/Documentation/devicetree/bindings/usb/dwc3.txt
+@@ -101,6 +101,7 @@ Optional properties:
+ 			When just one value, which means INCRX burst mode enabled. When
+ 			more than one value, which means undefined length INCR burst type
+ 			enabled. The values can be 1, 4, 8, 16, 32, 64, 128 and 256.
++ - configure-gfladj: determine whether frame length adjustment is required or not.
+ 
+  - in addition all properties from usb-xhci.txt from the current directory are
+    supported as well
+-- 
+1.7.1
+
