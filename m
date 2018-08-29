@@ -2,98 +2,154 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 801C1C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 17:21:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC668C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 17:25:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26BBC20644
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 17:21:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62DC320644
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 17:25:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="X6f5zqeo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26BBC20644
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cICWqh6N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62DC320644
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728052AbeH2VTn (ORCPT
+        id S1727808AbeH2VXB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 17:19:43 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:33368 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727508AbeH2VTn (ORCPT
+        Wed, 29 Aug 2018 17:23:01 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:38232 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727204AbeH2VXB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 17:19:43 -0400
-Received: by mail-qk0-f195.google.com with SMTP id z78-v6so3885311qka.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 10:21:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=ZPYZr3HEv6RRDoFl9ff97XTjIiPi8FHoza0Nzjknvuo=;
-        b=X6f5zqeoX5wvJf3jZ+CF2JGs4nQ5x9BZHO5JJYSQ0UnrP3eXw4sMXZ2dcZWW/uMRDX
-         iAGKzWroqI8OHY4y1arJ30PZXyW/yKpSAJD9mQb/zgRx7hYjEfql0QromCotxKst0Pf6
-         SF9AztDiqEW3NvGhf7VSW837f4ZpBVXLp8+38=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ZPYZr3HEv6RRDoFl9ff97XTjIiPi8FHoza0Nzjknvuo=;
-        b=pSF5F8YuZ47eLSxa474sec5mweYovfE2LKX8BA3kS596RyD1thbyvBz5d3A3IwmlWu
-         6FJLxLheotCyPHekvIcuhmXJDXRU9PXmL/laoXqdv4NtQZjoG06B7n6DlMTkZS4U/hXE
-         pIYEcgg/xW88WBQOVDa/4VjsqqES46qlg9FRgSGg4EdA/40zCMpbWSqzPNE3iNft3Sfi
-         mpwWKekayghgtFHoD2CIJlGWSRMvGIhW69ll61ZhvwMrjcO2tuNPQahswM3Llt8Ibh2N
-         O7ZNxbHPFI6f+aRv9qtJ6GyM8vzZEp1orNVsH05bC5D+jx/AVhOqVNqv88WJu+fLmWNC
-         499A==
-X-Gm-Message-State: APzg51DtD7vqPhz0L2vfpo1i3nVEl9MpU6Tu6pTZKavQ6GqaSTmO3iQ0
-        dsJOQDu6zMJ2Uk6arQgxazjs/w==
-X-Google-Smtp-Source: ANB0Vdbx5pqdQVtw6ROxtUcHQ8Hs3BypVQCIqrOXGi1XxP+O+0lyke5r2kpNk/zEQTySBxW4yhpZTw==
-X-Received: by 2002:a37:9404:: with SMTP id w4-v6mr7474560qkd.50.1535563307928;
-        Wed, 29 Aug 2018 10:21:47 -0700 (PDT)
-Received: from lbrmn-lnxub113.ric.broadcom.com ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id v72-v6sm2630083qkb.84.2018.08.29.10.21.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 29 Aug 2018 10:21:47 -0700 (PDT)
-From:   Scott Branden <scott.branden@broadcom.com>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-Cc:     BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Scott Branden <scott.branden@broadcom.com>
-Subject: [PATCH] arm64: defconfig: enable EFI_ARMSTUB_DTB_LOADER
-Date:   Wed, 29 Aug 2018 10:21:27 -0700
-Message-Id: <1535563287-24803-1-git-send-email-scott.branden@broadcom.com>
-X-Mailer: git-send-email 2.5.0
+        Wed, 29 Aug 2018 17:23:01 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7THNuxS158637;
+        Wed, 29 Aug 2018 17:24:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=9PWUiGkbTOyGy5NBYV1CROY6X9aEQwuLVY1CeA2bfJs=;
+ b=cICWqh6Nh+fZqTdRN5ibro4SoE67eBnuqDMRIeU6Q61zrf8MiR2yLL6/y+lPrdO/kGqO
+ Tfzyf58MAsx9kA8DMfC+Ec+xAAFRVvoCe9mRBRnExyrGK9RMUlp1dnQOuJyhwxep2BjS
+ OUUzXBHVrBT6nYHS1HNNztBPAt6nOqUATv/hpSz8v5jrjdEFcvupyoivG7+RhkSXjHkh
+ 9BFWyW8EIYihQ6UROlta5t7iqjXr+Ydnzp7RWjFxh/Yookfcb9nMhwlfeWd+I9R9GFfF
+ gAG2DOZoeQVTqvq9JeoS1X+0aPPt0EWNQwZVKcORW75LTkIQ25Rg/BRlqWcbDMXSXcEP tA== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2m2xhtu8gw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 29 Aug 2018 17:24:47 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w7THOkwH003529
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 29 Aug 2018 17:24:46 GMT
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7THOjIH001072;
+        Wed, 29 Aug 2018 17:24:45 GMT
+Received: from [192.168.1.164] (/50.38.38.67)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 29 Aug 2018 10:24:45 -0700
+Subject: Re: [PATCH v6 1/2] mm: migration: fix migration of huge PMD shared
+ pages
+To:     Jerome Glisse <jglisse@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org
+References: <20180823205917.16297-1-mike.kravetz@oracle.com>
+ <20180823205917.16297-2-mike.kravetz@oracle.com>
+ <20180824084157.GD29735@dhcp22.suse.cz>
+ <6063f215-a5c8-2f0c-465a-2c515ddc952d@oracle.com>
+ <20180827074645.GB21556@dhcp22.suse.cz> <20180827134633.GB3930@redhat.com>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <9209043d-3240-105b-72a3-b4cd30f1b1f1@oracle.com>
+Date:   Wed, 29 Aug 2018 10:24:44 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180827134633.GB3930@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9000 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808290176
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable EFI_ARMSTUB_DTB_LOADER to add support for the dtb= command line
-parameter to function with efi loader.
+On 08/27/2018 06:46 AM, Jerome Glisse wrote:
+> On Mon, Aug 27, 2018 at 09:46:45AM +0200, Michal Hocko wrote:
+>> On Fri 24-08-18 11:08:24, Mike Kravetz wrote:
+>>> Here is an updated patch which does as you suggest above.
+>> [...]
+>>> @@ -1409,6 +1419,32 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
+>>>  		subpage = page - page_to_pfn(page) + pte_pfn(*pvmw.pte);
+>>>  		address = pvmw.address;
+>>>  
+>>> +		if (PageHuge(page)) {
+>>> +			if (huge_pmd_unshare(mm, &address, pvmw.pte)) {
+>>> +				/*
+>>> +				 * huge_pmd_unshare unmapped an entire PMD
+>>> +				 * page.  There is no way of knowing exactly
+>>> +				 * which PMDs may be cached for this mm, so
+>>> +				 * we must flush them all.  start/end were
+>>> +				 * already adjusted above to cover this range.
+>>> +				 */
+>>> +				flush_cache_range(vma, start, end);
+>>> +				flush_tlb_range(vma, start, end);
+>>> +				mmu_notifier_invalidate_range(mm, start, end);
+>>> +
+>>> +				/*
+>>> +				 * The ref count of the PMD page was dropped
+>>> +				 * which is part of the way map counting
+>>> +				 * is done for shared PMDs.  Return 'true'
+>>> +				 * here.  When there is no other sharing,
+>>> +				 * huge_pmd_unshare returns false and we will
+>>> +				 * unmap the actual page and drop map count
+>>> +				 * to zero.
+>>> +				 */
+>>> +				page_vma_mapped_walk_done(&pvmw);
+>>> +				break;
+>>> +			}
+>>
+>> This still calls into notifier while holding the ptl lock. Either I am
+>> missing something or the invalidation is broken in this loop (not also
+>> for other invalidations).
+> 
+> mmu_notifier_invalidate_range() is done with pt lock held only the start
+> and end versions need to happen outside pt lock.
 
-Required to boot on existing bootloaders that do not support devicetree
-provided by the platform or by the bootloader.
+Hi Jérôme (and anyone else having good understanding of mmu notifier API),
 
-Fixes: 3d7ee348aa41 ("efi/libstub/arm: Add opt-in Kconfig option for the DTB loader")
-Signed-off-by: Scott Branden <scott.branden@broadcom.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Michal and I have been looking at backports to stable releases.  If you look
+at the v4.4 version of try_to_unmap_one(), it does not use the
+mmu_notifier_invalidate_range_start/end interfaces. Rather, it uses the
+mmu_notifier_invalidate_page(), passing in the address of the page it
+unmapped.  This is done after releasing the ptl lock.  I'm not even sure if
+this works for huge pages, as it appears some THP supporting code was added
+to try_to_unmap_one() after v4.4.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index f67e8d5..157cac9 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -114,6 +114,7 @@ CONFIG_ARM_ARMADA_37XX_CPUFREQ=y
- CONFIG_ARM_BIG_LITTLE_CPUFREQ=y
- CONFIG_ARM_SCPI_CPUFREQ=y
- CONFIG_ARM_TEGRA186_CPUFREQ=y
-+CONFIG_EFI_ARMSTUB_DTB_LOADER=y
- CONFIG_NET=y
- CONFIG_PACKET=y
- CONFIG_UNIX=y
+But, we were wondering what mmu notifier interface to use in the case where
+try_to_unmap_one() unmaps a shared pmd huge page as addressed in the patch
+above.  In this case, a PUD sized area is effectively unmapped.  In the
+code/patch above we have the invalidate range (start and end as well) take
+the PUD sized area into account.
+
+What would be the best mmu notifier interface to use where there are no
+start/end calls?
+Or, is the best solution to add the start/end calls as is done in later
+versions of the code?  If that is the suggestion, has there been any change
+in invalidate start/end semantics that we should take into account?
+
 -- 
-2.5.0
-
+Mike Kravetz
