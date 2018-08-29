@@ -2,159 +2,208 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28BB0C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:11:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 567A1C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:12:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D814B20647
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:11:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D814B20647
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id CF56F20647
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:12:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NjEn0Ca/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF56F20647
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729076AbeH3BJo (ORCPT
+        id S1728875AbeH3BK5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 21:09:44 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41806 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728586AbeH3BJo (ORCPT
+        Wed, 29 Aug 2018 21:10:57 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39154 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728262AbeH3BK5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 21:09:44 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7TL95ui108310
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 17:11:02 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m60fgph6b-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 17:11:02 -0400
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 29 Aug 2018 17:11:01 -0400
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 29 Aug 2018 17:10:57 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7TLAuni38535312
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 29 Aug 2018 21:10:56 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 74BA8B2066;
-        Wed, 29 Aug 2018 17:09:52 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5605FB2068;
-        Wed, 29 Aug 2018 17:09:52 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 29 Aug 2018 17:09:52 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 6390616C91CB; Wed, 29 Aug 2018 14:10:56 -0700 (PDT)
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        mingo@kernel.org
-Cc:     stern@rowland.harvard.edu, parri.andrea@gmail.com,
-        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
-        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, akiyks@gmail.com,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH RFC LKMM 7/7] EXP tools/memory-model: Add .cfg and .cat files for s390
-Date:   Wed, 29 Aug 2018 14:10:53 -0700
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180829211018.GA19646@linux.vnet.ibm.com>
-References: <20180829211018.GA19646@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18082921-0072-0000-0000-0000039960A5
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009636; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01080715; UDB=6.00557479; IPR=6.00860700;
- MB=3.00023001; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-29 21:11:00
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082921-0073-0000-0000-0000493E89F8
-Message-Id: <20180829211053.20531-7-paulmck@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-29_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=808 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808290206
+        Wed, 29 Aug 2018 21:10:57 -0400
+Received: by mail-pf1-f196.google.com with SMTP id j8-v6so2832855pff.6
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 14:12:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=HqBEHDIZc7MZ98yoWs4L5iipffBfsFQPEDX0QFvgE98=;
+        b=NjEn0Ca/Yp2+W0EcvxA/SV+3yn/+F1g8yEE9ZMk3ZXFML87uBOWxIEOKn6MlURyWzL
+         VhQP+44C3SMyUdcWlEl/Hb4d7+kQd3/umK2mJBupOfdBk97XND1VzuMfMaJe54egz9Hr
+         LWPaDPDmDVrs9LNW8cM74Ud56R9iL6pNPppCiAoTY8y46NL5GMvWyFbopMs63L5QCHHF
+         RDf/l6wRIwJHEhJ95hkWOEuGl1rDGLVZ3HFf6EEey1Sgz8FLpjfsBNQHkIqLYK+djkrM
+         yS+LYgoTE2rNnsozsrsfDZKg4gFEQv3PsBp88LUgIX4zqk2wp7A4ONn0PdYEz545J1Hr
+         2GTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HqBEHDIZc7MZ98yoWs4L5iipffBfsFQPEDX0QFvgE98=;
+        b=ODX0GwZlmIOow1OZ3Papwu7yRzLcRS+kAJPqz/0ecsfzAEmyGrKYyHiyIIe+43XHK/
+         uqtadQHGyoDRXmhxctzjcNJsj16DY2sY6SONFOcDTlvfE2Yqv/oVbDfNZqwXI58346Wj
+         RD+FZY8zb2SiAz8deSBTlnF5zlLUg/s2y56xitLsRDFdpe4eShy4r7znVhsMOr0OImFd
+         1jtDPiPcMy6eXeZInAYpxcewt/15H1ani3zsczrdF5t1zo8raNf+J4Uau5vim6M+Y9xV
+         WKtG0YWtx4PwGlcY303VuSwc9hUztP3AGJnPWCJdUfboz1LYUkK83EXSE/nXFk2t8HXb
+         EELQ==
+X-Gm-Message-State: APzg51B9yFT+XdVhEXv4RWt6BCZt0WMHh49bTFbHyz3Jkggf0L+d/f6/
+        5d8nWB6J1AzCcd0UbmOpYhQ=
+X-Google-Smtp-Source: ANB0Vdbdn4sX6624YTAnJCqgnXGyJ8opAkUzvUrsMS9EXAG2xbt/wltxWc3kw/qK4RqvarIb2+sRoA==
+X-Received: by 2002:a62:45d2:: with SMTP id n79-v6mr7500165pfi.137.1535577134478;
+        Wed, 29 Aug 2018 14:12:14 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id n83-v6sm9343267pfk.19.2018.08.29.14.12.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 Aug 2018 14:12:13 -0700 (PDT)
+Date:   Wed, 29 Aug 2018 14:12:12 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Michal Hocko <mhocko@suse.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+        Joerg Roedel <jroedel@suse.de>, Pavel Machek <pavel@ucw.cz>
+Subject: Re: efi boot failures due to PTI with 32 bit builds and Intel CPUs
+Message-ID: <20180829211212.GA18036@roeck-us.net>
+References: <20180829201659.GA29801@roeck-us.net>
+ <cd62e6b9-aec4-b8a5-be71-7edc10734955@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cd62e6b9-aec4-b8a5-be71-7edc10734955@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit adds s390.cat and s390.cfg files to allow users to check
-litmus tests for s390-specific code.  Note that this change only enables
-herd7 checking of C-language litmus tests.  Larger changes are required
-to enable the litmus7 and klitmus7 tools to check litmus tests on real
-hardare.
+On Wed, Aug 29, 2018 at 01:28:16PM -0700, Dave Hansen wrote:
+> On 08/29/2018 01:16 PM, Guenter Roeck wrote:
+> > 
+> > I see boot failures on mainline when trying to boot x86 images with an efi
+> > bios on Intel CPUs in qemu. Behavior is quite unusual: qemu dies silently
+> > after the kernel displays "Run /sbin/init as init process". With debugging
+> > enabled, qemu reports a CR3 update followed by a triple fault.
+> 
+> My first thought would be that the EFI pgd is broken somehow.
+> 
+> Is 0e39b000 in your kernel binary, or was it dynamically allocated?
+> 
+No idea. In the log below (taken after I recompiled with the latest upstream
+kernel) the CR3 value is completely different. Where is the value expected
+to come from ?
 
-Suggested-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Suggested-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-[ paulmck: Add fixes suggested by Alan Stern. ]
+> What was CR2 when things went bad?  Could you just share a full register
+> dump?
+
+Here you are. I have a complete log file, but its size is about 1.7GB
+(21MB compressed). Let me know if you need it, and I'll publish it
+somewhere.
+
+Thanks,
+Guenter
+
 ---
- tools/memory-model/s390.cat | 18 ++++++++++++++++++
- tools/memory-model/s390.cfg | 21 +++++++++++++++++++++
- 2 files changed, 39 insertions(+)
- create mode 100644 tools/memory-model/s390.cat
- create mode 100644 tools/memory-model/s390.cfg
+0xce1f1cd9:  66 90                    nop      
+0xce1f1cdb:  8b 44 24 38              movl     0x38(%esp), %eax
+0xce1f1cdf:  8a 64 24 40              movb     0x40(%esp), %ah
+0xce1f1ce3:  8a 44 24 34              movb     0x34(%esp), %al
+0xce1f1ce7:  25 03 04 02 00           andl     $0x20403, %eax
+0xce1f1cec:  3d 03 04 00 00           cmpl     $0x403, %eax
+0xce1f1cf1:  75 27                    jne      0xce1f1d1a
 
-diff --git a/tools/memory-model/s390.cat b/tools/memory-model/s390.cat
-new file mode 100644
-index 000000000000..216bf33d3ffe
---- /dev/null
-+++ b/tools/memory-model/s390.cat
-@@ -0,0 +1,18 @@
-+s390
-+
-+include "fences.cat"
-+include "cos.cat"
-+
-+(* Fundamental coherence ordering *)
-+let com = rf | co | fr
-+acyclic po-loc | com as coherence
-+
-+(* Atomic *)
-+empty rmw & (fre;coe) as atom
-+
-+(* Fences *)
-+let mb = [M] ; fencerel(Mb) ; [M]
-+
-+(* TSO with multicopy atomicity (tso-mca) *)
-+let po-ghb = ([R] ; po ; [M]) | ([M] ; po ; [W])
-+acyclic mb | po-ghb | fr | rf | co as tso-mca
-diff --git a/tools/memory-model/s390.cfg b/tools/memory-model/s390.cfg
-new file mode 100644
-index 000000000000..d77e05d2395c
---- /dev/null
-+++ b/tools/memory-model/s390.cfg
-@@ -0,0 +1,21 @@
-+macros linux-kernel.def
-+bell linux-kernel.bell
-+model s390.cat
-+graph columns
-+squished true
-+showevents noregs
-+movelabel true
-+fontsize 8
-+xscale 2.0
-+yscale 1.5
-+arrowsize 0.8
-+showinitrf false
-+showfinalrf false
-+showinitwrites false
-+splines spline
-+pad 0.1
-+edgeattr hb,color,indigo
-+edgeattr co,color,blue
-+edgeattr mb,color,darkgreen
-+edgeattr wmb,color,darkgreen
-+edgeattr rmb,color,darkgreen
--- 
-2.17.1
+EAX=f60b8000 EBX=ff8020bc ECX=00000000 EDX=00000000
+ESI=f60c1ff8 EDI=ff802100 EBP=00000000 ESP=f60c1fb4
+EIP=ce1f1cd7 EFL=00200006 [-----P-] CPL=0 II=0 A20=1 SMM=0 HLT=0
+ES =007b 00000000 ffffffff 00cff300 DPL=3 DS   [-WA]
+CS =0060 00000000 ffffffff 00cf9a00 DPL=0 CS32 [-R-]
+SS =0068 00000000 ffffffff 00cf9300 DPL=0 DS   [-WA]
+DS =007b 00000000 ffffffff 00cff300 DPL=3 DS   [-WA]
+FS =00d8 2819b000 ffffffff 008f9300 DPL=0 DS16 [-WA]
+GS =00e0 f67f29c0 00000018 00409100 DPL=0 DS   [--A]
+LDT=0000 00000000 00000000 00008200 DPL=0 LDT
+TR =0080 ff803000 0000206b 00008900 DPL=0 TSS32-avl
+GDT=     f67e2000 000000ff
+IDT=     ff800000 000007ff
+CR0=80050033 CR2=b7f30854 CR3=35402000 CR4=000006d0
+DR0=00000000 DR1=00000000 DR2=00000000 DR3=00000000 
+DR6=ffff0ff0 DR7=00000400
+CCS=00000022 CCD=00000011 CCO=SARL    
+EFER=0000000000000000
+----------------
+IN: 
+0xce1f1d1a:  66 90                    nop      
+0xce1f1d1c:  0f 20 d8                 movl     %cr3, %eax
+0xce1f1d1f:  0d 00 10 00 00           orl      $0x1000, %eax
+0xce1f1d24:  0f 22 d8                 movl     %eax, %cr3
 
+EAX=00000003 EBX=ff8020bc ECX=00000000 EDX=00000000
+ESI=f60c1ff8 EDI=ff802100 EBP=00000000 ESP=ff8020bc
+EIP=ce1f1d1a EFL=00200087 [--S--PC] CPL=0 II=0 A20=1 SMM=0 HLT=0
+ES =007b 00000000 ffffffff 00cff300 DPL=3 DS   [-WA]
+CS =0060 00000000 ffffffff 00cf9a00 DPL=0 CS32 [-R-]
+SS =0068 00000000 ffffffff 00cf9300 DPL=0 DS   [-WA]
+DS =007b 00000000 ffffffff 00cff300 DPL=3 DS   [-WA]
+FS =00d8 2819b000 ffffffff 008f9300 DPL=0 DS16 [-WA]
+GS =00e0 f67f29c0 00000018 00409100 DPL=0 DS   [--A]
+LDT=0000 00000000 00000000 00008200 DPL=0 LDT
+TR =0080 ff803000 0000206b 00008900 DPL=0 TSS32-avl
+GDT=     f67e2000 000000ff
+IDT=     ff800000 000007ff
+CR0=80050033 CR2=b7f30854 CR3=35402000 CR4=000006d0
+DR0=00000000 DR1=00000000 DR2=00000000 DR3=00000000 
+DR6=ffff0ff0 DR7=00000400
+CCS=00000403 CCD=fffffc00 CCO=SUBL    
+EFER=0000000000000000
+CR3 update: CR3=35403000
+----------------
+IN: 
+0xce1f1d27:  5b                       popl     %ebx
+0xce1f1d28:  59                       popl     %ecx
+0xce1f1d29:  5a                       popl     %edx
+0xce1f1d2a:  5e                       popl     %esi
+0xce1f1d2b:  5f                       popl     %edi
+0xce1f1d2c:  5d                       popl     %ebp
+0xce1f1d2d:  58                       popl     %eax
+0xce1f1d2e:  1f                       popl     %ds
+
+EAX=35403000 EBX=ff8020bc ECX=00000000 EDX=00000000
+ESI=f60c1ff8 EDI=ff802100 EBP=00000000 ESP=ff8020bc
+EIP=ce1f1d27 EFL=00200006 [-----P-] CPL=0 II=0 A20=1 SMM=0 HLT=0
+ES =007b 00000000 ffffffff 00cff300 DPL=3 DS   [-WA]
+CS =0060 00000000 ffffffff 00cf9a00 DPL=0 CS32 [-R-]
+SS =0068 00000000 ffffffff 00cf9300 DPL=0 DS   [-WA]
+DS =007b 00000000 ffffffff 00cff300 DPL=3 DS   [-WA]
+FS =00d8 2819b000 ffffffff 008f9300 DPL=0 DS16 [-WA]
+GS =00e0 f67f29c0 00000018 00409100 DPL=0 DS   [--A]
+LDT=0000 00000000 00000000 00008200 DPL=0 LDT
+TR =0080 ff803000 0000206b 00008900 DPL=0 TSS32-avl
+GDT=     f67e2000 000000ff
+IDT=     ff800000 000007ff
+CR0=80050033 CR2=b7f30854 CR3=35403000 CR4=000006d0
+DR0=00000000 DR1=00000000 DR2=00000000 DR3=00000000 
+DR6=ffff0ff0 DR7=00000400
+CCS=00000403 CCD=35403000 CCO=LOGICL  
+EFER=0000000000000000
+EAX=35403000 EBX=ff8020bc ECX=00000000 EDX=00000000
+ESI=f60c1ff8 EDI=ff802100 EBP=00000000 ESP=ff8020bc
+EIP=ce1f1d27 EFL=00200006 [-----P-] CPL=0 II=0 A20=1 SMM=0 HLT=0
+ES =007b 00000000 ffffffff 00cff300 DPL=3 DS   [-WA]
+CS =0060 00000000 ffffffff 00cf9a00 DPL=0 CS32 [-R-]
+SS =0068 00000000 ffffffff 00cf9300 DPL=0 DS   [-WA]
+DS =007b 00000000 ffffffff 00cff300 DPL=3 DS   [-WA]
+FS =00d8 2819b000 ffffffff 008f9300 DPL=0 DS16 [-WA]
+GS =00e0 f67f29c0 00000018 00409100 DPL=0 DS   [--A]
+LDT=0000 00000000 00000000 00008200 DPL=0 LDT
+TR =0080 ff803000 0000206b 00008900 DPL=0 TSS32-avl
+GDT=     f67e2000 000000ff
+IDT=     ff800000 000007ff
+CR0=80050033 CR2=b7f30854 CR3=35403000 CR4=000006d0
+DR0=00000000 DR1=00000000 DR2=00000000 DR3=00000000 
+DR6=ffff0ff0 DR7=00000400
+CCS=00000004 CCD=35403000 CCO=EFLAGS  
+EFER=0000000000000000
+Triple fault
