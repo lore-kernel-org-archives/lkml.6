@@ -2,81 +2,80 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86091C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:20:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0905C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:20:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2752E2064E
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:20:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2752E2064E
+	by mail.kernel.org (Postfix) with ESMTP id 4B86C20658
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:20:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B86C20658
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727273AbeH3CT0 (ORCPT
+        id S1727336AbeH3CTx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 22:19:26 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49294 "EHLO
+        Wed, 29 Aug 2018 22:19:53 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50800 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727104AbeH3CT0 (ORCPT
+        by vger.kernel.org with ESMTP id S1727104AbeH3CTx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 22:19:26 -0400
+        Wed, 29 Aug 2018 22:19:53 -0400
 Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7TMIiXP094419
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:20:27 -0400
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m627rc0se-1
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7TMIhVq094360
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:20:54 -0400
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m627rc12r-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:20:27 -0400
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:20:54 -0400
 Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 29 Aug 2018 18:20:26 -0400
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Wed, 29 Aug 2018 18:20:53 -0400
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 29 Aug 2018 18:20:22 -0400
+        Wed, 29 Aug 2018 18:20:49 -0400
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7TMKLf745023308
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7TMKmr336831374
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 29 Aug 2018 22:20:21 GMT
+        Wed, 29 Aug 2018 22:20:48 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1EA50B2067;
-        Wed, 29 Aug 2018 18:19:17 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id B6D43B2073;
+        Wed, 29 Aug 2018 18:19:44 -0400 (EDT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E0481B2065;
-        Wed, 29 Aug 2018 18:19:16 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id 8E17FB2065;
+        Wed, 29 Aug 2018 18:19:44 -0400 (EDT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 29 Aug 2018 18:19:16 -0400 (EDT)
+        Wed, 29 Aug 2018 18:19:44 -0400 (EDT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 5885116C91B7; Wed, 29 Aug 2018 15:20:21 -0700 (PDT)
-Date:   Wed, 29 Aug 2018 15:20:21 -0700
+        id 06A9716C91B7; Wed, 29 Aug 2018 15:20:49 -0700 (PDT)
 From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
         josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org
-Subject: [PATCH tip/core/rcu 0/19] RCU flavor-consolidation changes for
- v4.20/v5.0
-Reply-To: paulmck@linux.vnet.ibm.com
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
+        Byungchul Park <byungchul.park@lge.com>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: [PATCH tip/core/rcu 01/19] rcu: Refactor rcu_{nmi,irq}_{enter,exit}()
+Date:   Wed, 29 Aug 2018 15:20:29 -0700
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180829222021.GA29944@linux.vnet.ibm.com>
+References: <20180829222021.GA29944@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18082922-0068-0000-0000-00000331B7A7
+x-cbid: 18082922-0072-0000-0000-000003996711
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009636; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01080738; UDB=6.00557494; IPR=6.00860723;
- MB=3.00023001; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-29 22:20:26
+ PH=3.00000004; SC=3.00000266; SDB=6.01080738; UDB=6.00557494; IPR=6.00860724;
+ MB=3.00023001; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-29 22:20:53
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082922-0069-0000-0000-0000458F0DCD
-Message-Id: <20180829222021.GA29944@linux.vnet.ibm.com>
+x-cbparentid: 18082922-0073-0000-0000-0000493EAB54
+Message-Id: <20180829222047.319-1-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-29_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -89,84 +88,233 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
+From: Byungchul Park <byungchul.park@lge.com>
 
-This series contains the RCU flavor consolidation, along with some initial
-cleanup work enabled by that consolidation (and some that became apparent
-while cleaning up):
+When entering or exiting irq or NMI handlers, the current code uses
+->dynticks_nmi_nesting to detect if it is in the outermost handler,
+that is, the one interrupting or returning to an RCU-idle context (the
+idle loop or nohz_full usermode execution).  When entering the outermost
+handler via an interrupt (as opposed to NMI), it is necessary to invoke
+rcu_dynticks_task_exit() just before the CPU is marked non-idle from an
+RCU perspective and to invoke rcu_cleanup_after_idle() just after the
+CPU is marked non-idle.  Similarly, when exiting the outermost handler
+via an interrupt, it is necessary to invoke rcu_prepare_for_idle() just
+before marking the CPU idle and to invoke rcu_dynticks_task_enter()
+just after marking the CPU idle.
 
-1.	Refactor rcu_{nmi,irq}_{enter,exit}(), saving a branch on the
-	idle entry/exit hotpaths, courtesy of Byungchul Park,
+The decision to execute these four functions is currently taken in
+rcu_irq_enter() and rcu_irq_exit() as follows:
 
-2.	Defer reporting RCU-preempt quiescent states when disabled.
-	This is the key commit that consolidates the RCU-bh and RCU-sched
-	flavors into RCU, however, the RCU-bh and RCU-sched flavors
-	still exist independently as well at this point.
+   rcu_irq_enter()
+      /* A conditional branch with ->dynticks_nmi_nesting */
+      rcu_nmi_enter()
+         /* A conditional branch with ->dynticks */
+      /* A conditional branch with ->dynticks_nmi_nesting */
 
-3.	Test extended "rcu" read-side critical sections.  This commit
-	causes rcutorture to test RCU's new-found ability to act as
-	the combination of RCU, RCU-bh, and RCU-sched.
+   rcu_irq_exit()
+      /* A conditional branch with ->dynticks_nmi_nesting */
+      rcu_nmi_exit()
+         /* A conditional branch with ->dynticks_nmi_nesting */
+      /* A conditional branch with ->dynticks_nmi_nesting */
 
-4.	Allow processing deferred QSes for exiting RCU-preempt readers.
-	This is a optimization.
+   rcu_nmi_enter()
+      /* A conditional branch with ->dynticks */
 
-5.	Remove now-unused ->b.exp_need_qs field from the rcu_special union.
+   rcu_nmi_exit()
+      /* A conditional branch with ->dynticks_nmi_nesting */
 
-6.	Add warning to detect half-interrupts.  Test the claim that
-	the Linux kernel no longer does half-interrupts.
+This works, but the conditional branches in rcu_irq_enter() and
+rcu_irq_exit() are redundant with those in rcu_nmi_enter() and
+rcu_nmi_exit(), respectively.  Redundant branches are not something
+we want in the to/from-idle fastpaths, so this commit refactors
+rcu_{nmi,irq}_{enter,exit}() so they use a common inlined function passed
+a constant argument as follows:
 
-7.	Apply RCU-bh QSes to RCU-sched and RCU-preempt when safe, that is,
-	make the consolidated RCU inherit RCU-bh's denial-of-service
-	avoidance mechanism.
+   rcu_irq_enter() inlining rcu_nmi_enter_common(irq=true)
+      /* A conditional branch with ->dynticks */
 
-8.	Report expedited grace periods at context-switch time.  This is
-	an optimization enabled by the RCU flavor consolidation.
+   rcu_irq_exit() inlining rcu_nmi_exit_common(irq=true)
+      /* A conditional branch with ->dynticks_nmi_nesting */
 
-9.	Define RCU-bh update API in terms of RCU.  This commit gets rid
-	of the RCU-bh update mechanism.
+   rcu_nmi_enter() inlining rcu_nmi_enter_common(irq=false)
+      /* A conditional branch with ->dynticks */
 
-10.	Update comments and help text to account for the removal of
-	the RCU-bh update mechanism.
+   rcu_nmi_exit() inlining rcu_nmi_exit_common(irq=false)
+      /* A conditional branch with ->dynticks_nmi_nesting */
 
-11.	Drop "wake" parameter from rcu_report_exp_rdp().
+The combination of the constant function argument and the inlining allows
+the compiler to discard the conditionals that previously controlled
+execution of rcu_dynticks_task_exit(), rcu_cleanup_after_idle(),
+rcu_prepare_for_idle(), and rcu_dynticks_task_enter().  This reduces both
+the to-idle and from-idle path lengths by two conditional branches each,
+and improves readability as well.
 
-12.	Fix typo in rcu_get_gp_kthreads_prio() header comment.
+This commit also changes order of execution from this:
 
-13.	Define RCU-sched API in terms of RCU for Tree RCU PREEMPT builds.
-	Although this commit gets rid of the RCU-sched update mechanism
-	from PREEMPT builds, it of course remains as the sole RCU flavor
-	for !PREEMPT && !SMP builds.
+	rcu_dynticks_task_exit();
+	rcu_dynticks_eqs_exit();
+	trace_rcu_dyntick();
+	rcu_cleanup_after_idle();
 
-14.	Express Tiny RCU updates in terms of RCU rather than RCU-sched.
-	This will enable additional cleanups and code savings.
+To this:
 
-15.	Remove RCU_STATE_INITIALIZER() in favor of just using an open-coded
-	initializer for the sole remaining rcu_state structure.
+	rcu_dynticks_task_exit();
+	rcu_dynticks_eqs_exit();
+	rcu_cleanup_after_idle();
+	trace_rcu_dyntick();
 
-16.	Eliminate rcu_state structure's ->call field, as it is now always
-	just call_rcu().
+In other words, the calls to trace_rcu_dyntick() and trace_rcu_dyntick()
+are reversed.  This has no functional effect because the real
+concern is whether a given call is before or after the call to
+rcu_dynticks_eqs_exit(), and this patch does not change that.  Before the
+call to rcu_dynticks_eqs_exit(), RCU is not yet watching the current
+CPU and after that call RCU is watching.
 
-17.	Remove rcu_state structure's ->rda field, as there is now only one
-	set of per-CPU rcu_data structures.
+A similar switch in calling order happens on the idle-entry path, with
+similar lack of effect for the same reasons.
 
-							Thanx, Paul
+Suggested-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Signed-off-by: Byungchul Park <byungchul.park@lge.com>
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+---
+ kernel/rcu/tree.c | 61 +++++++++++++++++++++++++++++++----------------
+ 1 file changed, 41 insertions(+), 20 deletions(-)
 
-------------------------------------------------------------------------
-
- Documentation/RCU/Design/Requirements/Requirements.html |   50 -
- include/linux/rcupdate.h                                |   48 -
- include/linux/rcupdate_wait.h                           |    6 
- include/linux/rcutiny.h                                 |   61 +
- include/linux/rcutree.h                                 |   31 
- include/linux/sched.h                                   |    6 
- kernel/rcu/Kconfig                                      |   10 
- kernel/rcu/rcutorture.c                                 |    1 
- kernel/rcu/tiny.c                                       |  163 +--
- kernel/rcu/tree.c                                       |  655 +++++-----------
- kernel/rcu/tree.h                                       |   44 -
- kernel/rcu/tree_exp.h                                   |  256 +++---
- kernel/rcu/tree_plugin.h                                |  523 ++++++------
- kernel/rcu/update.c                                     |    2 
- kernel/softirq.c                                        |    3 
- 15 files changed, 836 insertions(+), 1023 deletions(-)
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 0b760c1369f7..0adf77923e8b 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -771,17 +771,18 @@ void rcu_user_enter(void)
+ #endif /* CONFIG_NO_HZ_FULL */
+ 
+ /**
+- * rcu_nmi_exit - inform RCU of exit from NMI context
++ * rcu_nmi_exit_common - inform RCU of exit from NMI context
++ * @irq: Is this call from rcu_irq_exit?
+  *
+  * If we are returning from the outermost NMI handler that interrupted an
+  * RCU-idle period, update rdtp->dynticks and rdtp->dynticks_nmi_nesting
+  * to let the RCU grace-period handling know that the CPU is back to
+  * being RCU-idle.
+  *
+- * If you add or remove a call to rcu_nmi_exit(), be sure to test
++ * If you add or remove a call to rcu_nmi_exit_common(), be sure to test
+  * with CONFIG_RCU_EQS_DEBUG=y.
+  */
+-void rcu_nmi_exit(void)
++static __always_inline void rcu_nmi_exit_common(bool irq)
+ {
+ 	struct rcu_dynticks *rdtp = this_cpu_ptr(&rcu_dynticks);
+ 
+@@ -807,7 +808,22 @@ void rcu_nmi_exit(void)
+ 	/* This NMI interrupted an RCU-idle CPU, restore RCU-idleness. */
+ 	trace_rcu_dyntick(TPS("Startirq"), rdtp->dynticks_nmi_nesting, 0, rdtp->dynticks);
+ 	WRITE_ONCE(rdtp->dynticks_nmi_nesting, 0); /* Avoid store tearing. */
++
++	if (irq)
++		rcu_prepare_for_idle();
++
+ 	rcu_dynticks_eqs_enter();
++
++	if (irq)
++		rcu_dynticks_task_enter();
++}
++
++/**
++ * rcu_nmi_exit - inform RCU of exit from NMI context
++ */
++void rcu_nmi_exit(void)
++{
++	rcu_nmi_exit_common(false);
+ }
+ 
+ /**
+@@ -831,14 +847,8 @@ void rcu_nmi_exit(void)
+  */
+ void rcu_irq_exit(void)
+ {
+-	struct rcu_dynticks *rdtp = this_cpu_ptr(&rcu_dynticks);
+-
+ 	lockdep_assert_irqs_disabled();
+-	if (rdtp->dynticks_nmi_nesting == 1)
+-		rcu_prepare_for_idle();
+-	rcu_nmi_exit();
+-	if (rdtp->dynticks_nmi_nesting == 0)
+-		rcu_dynticks_task_enter();
++	rcu_nmi_exit_common(true);
+ }
+ 
+ /*
+@@ -921,7 +931,8 @@ void rcu_user_exit(void)
+ #endif /* CONFIG_NO_HZ_FULL */
+ 
+ /**
+- * rcu_nmi_enter - inform RCU of entry to NMI context
++ * rcu_nmi_enter_common - inform RCU of entry to NMI context
++ * @irq: Is this call from rcu_irq_enter?
+  *
+  * If the CPU was idle from RCU's viewpoint, update rdtp->dynticks and
+  * rdtp->dynticks_nmi_nesting to let the RCU grace-period handling know
+@@ -929,10 +940,10 @@ void rcu_user_exit(void)
+  * long as the nesting level does not overflow an int.  (You will probably
+  * run out of stack space first.)
+  *
+- * If you add or remove a call to rcu_nmi_enter(), be sure to test
++ * If you add or remove a call to rcu_nmi_enter_common(), be sure to test
+  * with CONFIG_RCU_EQS_DEBUG=y.
+  */
+-void rcu_nmi_enter(void)
++static __always_inline void rcu_nmi_enter_common(bool irq)
+ {
+ 	struct rcu_dynticks *rdtp = this_cpu_ptr(&rcu_dynticks);
+ 	long incby = 2;
+@@ -949,7 +960,15 @@ void rcu_nmi_enter(void)
+ 	 * period (observation due to Andy Lutomirski).
+ 	 */
+ 	if (rcu_dynticks_curr_cpu_in_eqs()) {
++
++		if (irq)
++			rcu_dynticks_task_exit();
++
+ 		rcu_dynticks_eqs_exit();
++
++		if (irq)
++			rcu_cleanup_after_idle();
++
+ 		incby = 1;
+ 	}
+ 	trace_rcu_dyntick(incby == 1 ? TPS("Endirq") : TPS("++="),
+@@ -960,6 +979,14 @@ void rcu_nmi_enter(void)
+ 	barrier();
+ }
+ 
++/**
++ * rcu_nmi_enter - inform RCU of entry to NMI context
++ */
++void rcu_nmi_enter(void)
++{
++	rcu_nmi_enter_common(false);
++}
++
+ /**
+  * rcu_irq_enter - inform RCU that current CPU is entering irq away from idle
+  *
+@@ -984,14 +1011,8 @@ void rcu_nmi_enter(void)
+  */
+ void rcu_irq_enter(void)
+ {
+-	struct rcu_dynticks *rdtp = this_cpu_ptr(&rcu_dynticks);
+-
+ 	lockdep_assert_irqs_disabled();
+-	if (rdtp->dynticks_nmi_nesting == 0)
+-		rcu_dynticks_task_exit();
+-	rcu_nmi_enter();
+-	if (rdtp->dynticks_nmi_nesting == 1)
+-		rcu_cleanup_after_idle();
++	rcu_nmi_enter_common(true);
+ }
+ 
+ /*
+-- 
+2.17.1
 
