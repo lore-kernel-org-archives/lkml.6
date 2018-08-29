@@ -2,128 +2,243 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B9F4C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 17:58:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7792C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 17:59:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC85F2064A
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 17:57:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 715412064E
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 17:59:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="A25QUA4b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC85F2064A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="agigNKJj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 715412064E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727868AbeH2Vz6 (ORCPT
+        id S1728148AbeH2V5x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 17:55:58 -0400
-Received: from mail-sn1nam02on0101.outbound.protection.outlook.com ([104.47.36.101]:47168
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726633AbeH2Vz6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 17:55:58 -0400
+        Wed, 29 Aug 2018 17:57:53 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:45062 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726633AbeH2V5x (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 17:57:53 -0400
+Received: by mail-lj1-f193.google.com with SMTP id u83-v6so5081648lje.12;
+        Wed, 29 Aug 2018 10:59:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=go2rqPbkbxmKPGN+sE7/ypo8eWu8AoFpF9F5icLtB8c=;
- b=A25QUA4bSC1fq3wGmqu4eT9GU7BXgKg0f8OHuzzXRo+dl6o38/7wQI/Dvogd2B+dCzO2t7ahHYRZqXiBc/DqfiTsZPPcrVmAh20MLmZtm+BYNCwqekfAzYYvJMt/NGr0urBbE6MXQDES0W0bxDTe1ghuLwcJB3Tq2hlUhKVtwzk=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=pburton@wavecomp.com; 
-Received: from localhost (4.16.204.77) by
- BYAPR08MB4934.namprd08.prod.outlook.com (2603:10b6:a03:6a::15) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1080.15; Wed, 29 Aug 2018 17:57:51 +0000
-Date:   Wed, 29 Aug 2018 10:57:47 -0700
-From:   Paul Burton <paul.burton@mips.com>
-To:     Philippe Reynes <philippe.reynes@softathome.com>
-Cc:     ralf@linux-mips.org, jhogan@kernel.org, linux-mips@linux-mips.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MIPS: Fix computation on entry point
-Message-ID: <20180829175747.bo4l36aptncduyuc@pburton-laptop>
-References: <1535471570-19033-1-git-send-email-philippe.reynes@softathome.com>
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=MYip9AbOVCQgzEPXolEh51dBtI4CiIkZBSQPky4ecn4=;
+        b=agigNKJjS8dB2aFfLGNADSTn+0JLzQYB07CkbSmeMBWx4BOPO8ybWk9tvjGQSRl9dH
+         ZfkWMOWjaNHs/ne+WEcxR3TmGvdx9G1qYZtnjdp5gPr0tajZDDM8zszWZDRaMUtjydod
+         6f6dJP37AJnKSnO64NBFETSvpwtfdNWi4tru1vKy4mDu72eliTxjjbLjPnuziGMtrs86
+         ad5wdnNty3vEAvyuvo68HtyjYVTGszZFgIVt7oFHCpgI2nddVWwDTYD98UcgdhHQTH60
+         JOfiRynYp5cr+CC9MpCqT2V5H0zCI4FdtfxBW9YH+ebXl/+tgnfDM5Ff4O395Ov8aLBh
+         vvyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=MYip9AbOVCQgzEPXolEh51dBtI4CiIkZBSQPky4ecn4=;
+        b=Rv9IfGAiy4rcePh6R8pjaOSu4/rqUDg+pQ7fEfOEYvu6eM27YzJ5Zu5/ZDxEandWnN
+         1qvlkflIt+XtG2KFy5ZP5m6SIasGH7pUl9qOjju9lbRbn2ni5G5WdnEbN6FxkxAfcPJd
+         5clbfLCUZRjCLx742pwkFzYOHOmo7mZOoGRR+YTtJw4TIx3xXiUH6pBg5nMslifyYwun
+         HmUlvtRFUQGskn/VeQWwgdijHmUnYorspW5tT4CYOK2KeHkuu2VEN+VNVczlfWH1922m
+         6YGkDqs/i+fL9EkU3EsjSeIJFJwr81aJDGGzixX48MxlzRhIsg2UqzbY394RM5FcluS9
+         aSCw==
+X-Gm-Message-State: APzg51C97F6aDd0UVmV5QfrMRFUQtkUMmd1Dr513yJAp5rmNJCfioCRZ
+        DHyLwauMQ9VGm0gjTQs/Oy0=
+X-Google-Smtp-Source: ANB0VdbupMqoF339jwiN7cehTpN+3p+1Lv3klNTnCV/qDkPvJb2gkHmzZMVvnJIXySfRnj4NDV8Y2w==
+X-Received: by 2002:a2e:1301:: with SMTP id 1-v6mr1094029ljt.56.1535565587710;
+        Wed, 29 Aug 2018 10:59:47 -0700 (PDT)
+Received: from z50.localnet (93-181-165-181.internetia.net.pl. [93.181.165.181])
+        by smtp.gmail.com with ESMTPSA id j10-v6sm860262ljb.33.2018.08.29.10.59.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 Aug 2018 10:59:46 -0700 (PDT)
+From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Peter Korsgaard <peter.korsgaard@barco.com>,
+        Peter Rosin <peda@axentia.se>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-gpio@vger.kernel.org,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-i2c@vger.kernel.org, linux-mmc@vger.kernel.org,
+        Network Development <netdev@vger.kernel.org>,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-serial@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Willy Tarreau <w@1wt.eu>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Subject: Re: [RFC RFT PATCH v4 1/4] gpiolib: Pass bitmaps, not integer arrays, to get/set array
+Date:   Wed, 29 Aug 2018 20:01:01 +0200
+Message-ID: <21039309.e3MgZOjmZl@z50>
+In-Reply-To: <CANiq72kM9bYJ1Q+dbLumjfQLZW223ZTrYEFqfQ2Jv2SAjrD1NA@mail.gmail.com>
+References: <20180813223448.21316-1-jmkrzyszt@gmail.com> <20180820234341.5271-2-jmkrzyszt@gmail.com> <CANiq72kM9bYJ1Q+dbLumjfQLZW223ZTrYEFqfQ2Jv2SAjrD1NA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1535471570-19033-1-git-send-email-philippe.reynes@softathome.com>
-User-Agent: NeoMutt/20180716
-X-Originating-IP: [4.16.204.77]
-X-ClientProxiedBy: BN6PR1001CA0011.namprd10.prod.outlook.com
- (2603:10b6:405:28::24) To BYAPR08MB4934.namprd08.prod.outlook.com
- (2603:10b6:a03:6a::15)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 91512ba1-c1b1-41f7-8519-08d60dd8f087
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR08MB4934;
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR08MB4934;3:6OxTkkQz9w1i8X5is01AA47yOUnu+QtGcBgcjPTFo1Zw7vsAANHZwQHmmudQgV89lTna8cBUoPaJAjMEMVNkwZTOPgb45Qv+jEf7n9xM98gPioLIW8v64PfPiM26TMmjffFbHXEgVSrNXtOMqVfSYVnTrsrnzTOJ42gnUfwY6nKcNfYh7B7zGJLIHEC9tK5YHCGj9mfuQ7MBU8kfDmKBK/DdSRFNV9fjeidqyIqNDKkbt70IQ821fJF1VmhplO11;25:5KYx1vnbcQ3GtXZkcs5n7sDUmfREemBBWkPKGyCSk7QcrmiQDnhVdOui6ZN8CZW6lSP/kOHYLO8LRtv1v5DwYNVQBYl5oliYYfOKl4xWTEJS4yOosaQuFHpgn5pAYLw/LQLbODXjhMPDoXJ9L5B5oOW7a17pNTc55dymN+82ssBK2XXDFulVhxx+jIGdsEOdDcm03s8yTjOm5+7ldzJBvlRUuGEgnQ77jQDi2a3aML4MPnr+TeJkR3lVhXCF0GEi2r53B4RmYDrqJIeKQWLqjv8PlPB+z9elYsD8JdELMUIcPfM0z8dmSG1cWdEK6evT/o/Z1nHBK8pnkAb4R8gVvQ==;31:VHo2STxQmWF/z6+IxxVJ8jWtB66x1mlCEaZKfKCxe8YBhR2HAvvHFMSPTa9fwK+keRhQ4wr6uZVS7y1HHf0cLThs2op6R5JlOicyurxHi/ES8gJf59kRbLWA8spMcnbRqU/hLXU5xeVVPi+VeJ2gRjEHMBvrW3tIGoTuVbG+PK08cE0vdyCiPV2p7jpafeYrs7y9iG9OWpAB+XKF4rfn1FWo7+LH6TBa76ZAQA7W//Q=
-X-MS-TrafficTypeDiagnostic: BYAPR08MB4934:
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR08MB4934;20:J/wTHQJGbPh1gzwPE7H/74kedc68Iv+7WMTKu8a6wWP21ApJi5qWegG+N/tfRRbGoZiMk+20rRaCSORLG6Vr7w4+zDzpI76Lfqrz15g0MlEvHrhDmem72UYBbuuU9c7ujSXrDy6JwYcX2iHZFYfdsgjN0zLa+RHwppUJDH//bW5SBn+gJd36K9QTXK9Wdb2NmzPRbWkgJu/4bW0S5LyJBTBYtXplEaJE0KyWsdpANVxh3qwpIkcWlV0ulSE3ckme;4:VKe19i4dDHEkNAPBcobWGk4SoCYG1bnyQL0tAq4uPdZ2gamQHkL2qJeh+aGE6Vu/UxmYVadaRScXnuS1+BcR1z79kyEqwpZ1XWxl8dyBOmzFZDjNnITMgp/9C/X8+bOt1uOuPgZafaWRznaWi+aUge7IsY2Nh8mwqTR/N5P4KeNhnYr2VeOk3MM2wAR0y2KpsMpUcOik3tgWraa7fNJ83BlGcE9lKc5Tn5M0kczfAMPDH6cNuwY/wx0INwUKJ7Rdr6KMKStrxT51s/gjtK7H1A==
-X-Microsoft-Antispam-PRVS: <BYAPR08MB4934DC034B4C55AEEAEC3EB6C1090@BYAPR08MB4934.namprd08.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231311)(944501410)(52105095)(93006095)(149027)(150027)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123562045)(201708071742011)(7699016);SRVR:BYAPR08MB4934;BCL:0;PCL:0;RULEID:;SRVR:BYAPR08MB4934;
-X-Forefront-PRVS: 077929D941
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(7916004)(136003)(366004)(39850400004)(346002)(376002)(396003)(199004)(189003)(54094003)(8676002)(81166006)(44832011)(9686003)(33896004)(305945005)(446003)(316002)(11346002)(25786009)(4326008)(6246003)(39060400002)(42882007)(956004)(476003)(486006)(478600001)(6496006)(52116002)(76176011)(6486002)(1076002)(8936002)(81156014)(7736002)(3846002)(6116002)(58126008)(229853002)(53936002)(76506005)(97736004)(26005)(6916009)(47776003)(106356001)(105586002)(68736007)(5660300001)(33716001)(66066001)(50466002)(2906002)(2870700001)(16526019)(386003)(23756003)(186003)(6666003);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR08MB4934;H:localhost;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: wavecomp.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?iso-8859-1?Q?1;BYAPR08MB4934;23:xKqwTyN/H1gx7RD0r+i9g72zxP2fmcZoBFtYyct?=
- =?iso-8859-1?Q?MEHJEWMv+vG0EK9jBaEUYv1hGN0Qvkn2MBAe2oCqvHJuHM0g/Tr/r7EriH?=
- =?iso-8859-1?Q?/XGgTqyDhY4pRJWrIro3FAAaI4JZLDcbkxkN8SLW+ybHXTBXdv9d/iX2yw?=
- =?iso-8859-1?Q?m/oL2VDWj/YxEtmebOfYBqmdJYIJX8WKP7ce4ouU3fgQ8jTgsJpB/9mEef?=
- =?iso-8859-1?Q?NEO61Nz5gqIjknbufmcZj5Co4t+olgDf9c7w8MZWo4Jp6hKnL//QDDCrpe?=
- =?iso-8859-1?Q?HSkas4Kw5J1dc/sxlZwOc0N3DPIWbKQcFr08DhsdIBlevxmKcZYhy670Si?=
- =?iso-8859-1?Q?EUoWHvU5R+jmCc0OIg2aouAHWR6VX7Ff/bWHumIeWLAq/Xgi/sSTViE7+m?=
- =?iso-8859-1?Q?vQI8KDluwvYai528Txdv4pLX+D5Az7R7jDPaGijEq7ju9jta08r9AHGNNI?=
- =?iso-8859-1?Q?XbiaKPbzPz/wdlXo3C+Hu99LhViAFBNyGMlfZk4pdbNrQsy7b6u2se93ck?=
- =?iso-8859-1?Q?Mc4xCx9VxFEvICrnbVd8VMBgIKzeF4Aj5XNWHPkp8mFVm3Tz0Zt8qy9Qhl?=
- =?iso-8859-1?Q?ra3eGgw7ZHKZUMuACbkRI17RYBqDeC8HJAF+lZABB+6PjSQEen4K8W1Aw+?=
- =?iso-8859-1?Q?XegktN/xCkvN7JlYXvv3dNoHmRpBEWiC5Jir2ncdqbUrbfWFgn7UhkoTNF?=
- =?iso-8859-1?Q?593h63mTxMl2sBB+HMBcRVQ7YiThcXLc27rbvcSl/v4+wgNa/W9W5nbL7f?=
- =?iso-8859-1?Q?2jJjgu4+DIyyszCd5WPVRB1cwiRWdRAvXqJtEAwyKIf8OaJCUSY47C02hk?=
- =?iso-8859-1?Q?C9335mtv79GfWRHIpBC0aR87Djqe++ELqh65jjzb5aA/hF9I6d1NcxBpjR?=
- =?iso-8859-1?Q?nMz/lq7F5ifz6aFw6eIg3L7nB1MfrCFFz0wk2IcBaW6AmkcCKK/s8DP3+3?=
- =?iso-8859-1?Q?Lv4p6RNUy+CkviXzCIVMu22FRqI4kFqWfVG+483cKH+EOo5SYbgLHmLLEL?=
- =?iso-8859-1?Q?0F+joOZeyo8/nIv2Br4oxaoH9aU3rWBB2d/FAvy2xEdjYomzM4hmSfUkqa?=
- =?iso-8859-1?Q?Z3Dtn7wSTPjB1X5WEywRhSLcOEdlP7bu7b6yt/5i9wSxbQXj8+ErwW8V6k?=
- =?iso-8859-1?Q?M450UvJqrlNy8zyM/4LImpiTTh5PxM8zOSLwbmjrXtaYZbBet6zvMtu9Zo?=
- =?iso-8859-1?Q?SWA4t1NbEOa30fR5HHXkFS/VjjXq7EevUJtH9s/FRFx7KCmRLKj5E/R/fO?=
- =?iso-8859-1?Q?rqFDmxTRt80C9vd8FkxjfOv7K765n4ulv4HacKEJbltYUQcoCmqFJgnEFe?=
- =?iso-8859-1?Q?RO/mD6u78eTWjn7D3MUNbZyLsT+p6R2vyhpWa9qb46Hza+U3eOumxQvfk5?=
- =?iso-8859-1?Q?GDdgPFn5n/FpEAm3SEDfPp5d0VkCL?=
-X-Microsoft-Antispam-Message-Info: 4UP0IPrN+2XgFym4X8Hiz7A4E+Ry21+TxXWqM6bhEXEhFEJpvC0XkSfjWfq0XBg+eoeA3suY+8UInR69kf9L1rlcyrswDP0IVbGncfUqE5B2lUjbH11tKhi90q6Rx/JR/t2Vd/wHeWGZtSm5Oc4K90KVnJxSWD/zYaipt2T1jZc5ZIhLcQYTDjgsTIFglwcT/5ok2qPlHSPZDyot/eR6kBUmIhEIj2PymWzOI/RVaE0eRzzMqTYewhqv5tX+rV17AhMbUWIQ3cZzU1YQl9mQ/3ymtoNRbJUh3enFqSBHDAwTsK8FatfpchtS7JwfeqHNACGoVsI+H7wiL3/78OhBSQOtGMFP1cOvOOWUyoFDI/M=
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR08MB4934;6:Jo51ZKy5gQl8K2sN05kvDVhBWLrJOBNk9Dg0n4k8o9I9NQfCmgTgjDIR2YCowupaVYKPO2ygffgsATdZK4ejylLEH2DxKb+OY+TMaCi+Tu4zqJ5gLO/OD3F8a8idqISHUBZ2putdnCQlLEFjihRPoR77/HcmJdqRhH+HKsfKqR14nVluOJKQKDTRFmadBwls+/SlEjZuoEU/BhAuI95BBeLPCk8QXwAZS2AM1LiMjOVgmR5vqQtmWL3VR0bKFeJnOaXBG1tcSVKdTSxQFbPZ6hD/+ZwtW84R0K775dX3SwVthgN17iQBiFHs6jE7JN64OBMhWGAElrDE2t+Pf6Jd3SH3o9+IY7wPDn+33qHUtSh2ZjvohlS+Jas3YoGsftEwzj83Q/3kjL4xPbgNo89KCznJKdW9WkbSyldujg3fF1dv8gEQEmjFvctYlJXwKXVEyZFvRptgvv1/ebl50JifOA==;5:BWCD1egZWI91KRM0aIBq1L/EeJlVZAquDby/J3VdZYHcBdnH7bURd4IDNpuHBxgDUfMw1wL+9Scaa7kn+SqJbTFQKKVBDYVGRv+vRSzdU3+voFMQRGEAgLJJV7wGMWRvUQsQjFXmFFbQMI+QDr4e95NpKrPVNXjXXi2ICYT6bOw=;7:L2+gKkDZQqIQqyiYb+a0kQgV/+NPAW3pn+vSAtn07+WzJECDXQ0eA6WgEZYfx+at/sO142BozUf9TcRir7A7XxEoOf30VvU2iZ66Zg+B5D9qhkAmiUEHv+3yqF0POrD5P0nyOnIJO3thISkHUqHmsw+YAKvXiMkapk319ATjdJ+BIk6atS+D1laXiB3nxhWU8IMTqWax+nTqjf6tcwqWSbacoppnrTL/xPYpNWGReu/oUzbUQ0kVuSE53DzBMP7N
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: mips.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2018 17:57:51.5931 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 91512ba1-c1b1-41f7-8519-08d60dd8f087
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 463607d3-1db3-40a0-8a29-970c56230104
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR08MB4934
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Philippe,
+On Wednesday, August 29, 2018 2:03:18 PM CEST Miguel Ojeda wrote:
+> Hi Janusz,
+> 
+> On Tue, Aug 21, 2018 at 1:43 AM, Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
+> > Most users of get/set array functions iterate consecutive bits of data,
+> > usually a single integer, while or processing array of results obtained
+> > from or building an array of values to be passed to those functions.
+> > Save time wasted on those iterations by changing the functions' API to
+> > accept bitmaps.
+> >
+> > All current users are updated as well.
+> >
+> > More benefits from the change are expected as soon as planned support
+> > for accepting/passing those bitmaps directly from/to respective GPIO
+> > chip callbacks if applicable is implemented.
+> >
+> > Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+> > ---
+> >  Documentation/driver-api/gpio/consumer.rst  | 22 ++++----
+> >  drivers/auxdisplay/hd44780.c                | 52 +++++++++--------
+> 
+> [CC'ing Willy and Geert for hd44780]
+> 
+> > diff --git a/drivers/auxdisplay/hd44780.c b/drivers/auxdisplay/hd44780.c
+> > index f1a42f0f1ded..d340473aa142 100644
+> > --- a/drivers/auxdisplay/hd44780.c
+> > +++ b/drivers/auxdisplay/hd44780.c
+> > @@ -62,20 +62,19 @@ static void hd44780_strobe_gpio(struct hd44780 *hd)
+> >  /* write to an LCD panel register in 8 bit GPIO mode */
+> >  static void hd44780_write_gpio8(struct hd44780 *hd, u8 val, unsigned int rs)
+> >  {
+> > -       int values[10]; /* for DATA[0-7], RS, RW */
+> > -       unsigned int i, n;
+> > +       unsigned long value_bitmap[1];  /* for DATA[0-7], RS, RW */
+> 
+> Why [1]? I understand it is because in other cases it may be more than
+> one,
 
-On Tue, Aug 28, 2018 at 05:52:50PM +0200, Philippe Reynes wrote:
-> Since commit 27c524d17430 ("MIPS: Use the entry point from the ELF
-> file header"), the kernel entry point is computed with a grep on
-> "start address" on the output of objdump. It works fine when the
-> default language is english but it may fail on other language (for
-> example in French, the grep should be done on "adresse de départ").
+Yes, I tried to point out the fact the new API accepts a bitmap of an arbitrary 
+length, and I tried to use the same code pattern across changes to the API 
+users.
 
-D'oh!
+> but...
+> 
+> > +       unsigned int n;
+> >
+> > -       for (i = 0; i < 8; i++)
+> > -               values[PIN_DATA0 + i] = !!(val & BIT(i));
+> > -       values[PIN_CTRL_RS] = rs;
+> > +       value_bitmap[0] = val;
+> > +       __assign_bit(PIN_CTRL_RS, value_bitmap, rs);
+> >         n = 9;
+> >         if (hd->pins[PIN_CTRL_RW]) {
+> > -               values[PIN_CTRL_RW] = 0;
+> > +               __clear_bit(PIN_CTRL_RW, value_bitmap);
+> >                 n++;
+> >         }
+> >
+> >         /* Present the data to the port */
+> > -       gpiod_set_array_value_cansleep(n, &hd->pins[PIN_DATA0], values);
+> > +       gpiod_set_array_value_cansleep(n, &hd->pins[PIN_DATA0], value_bitmap);
+> >
+> >         hd44780_strobe_gpio(hd);
+> >  }
+> > @@ -83,32 +82,31 @@ static void hd44780_write_gpio8(struct hd44780 *hd, u8 val, unsigned int rs)
+> >  /* write to an LCD panel register in 4 bit GPIO mode */
+> >  static void hd44780_write_gpio4(struct hd44780 *hd, u8 val, unsigned int rs)
+> >  {
+> > -       int values[10]; /* for DATA[0-7], RS, RW, but DATA[0-3] is unused */
+> > -       unsigned int i, n;
+> > +       /* for DATA[0-7], RS, RW, but DATA[0-3] is unused */
+> > +       unsigned long value_bitmap[0];
+> 
+> This one is even more strange... :-)
 
-> To fix this computation on most machine, I propose to force the
-> language to english with "LC_ALL=C".
+This one is an error, should be 1 of course :-), thanks.
 
-I wonder if it's time to bite the bullet & just write a little custom
-program to do what we need, rather than trying to wrangle standard tools
-that *almost* do what we need but not quite... Patch incoming.
+> > +       unsigned int n;
+> >
+> >         /* High nibble + RS, RW */
+> > -       for (i = 4; i < 8; i++)
+> > -               values[PIN_DATA0 + i] = !!(val & BIT(i));
+> > -       values[PIN_CTRL_RS] = rs;
+> > +       value_bitmap[0] = val;
+> > +       __assign_bit(PIN_CTRL_RS, value_bitmap, rs);
+> >         n = 5;
+> >         if (hd->pins[PIN_CTRL_RW]) {
+> > -               values[PIN_CTRL_RW] = 0;
+> > +               __clear_bit(PIN_CTRL_RW, value_bitmap);
+> >                 n++;
+> >         }
+> > +       value_bitmap[0] = value_bitmap[0] >> PIN_DATA4;
+> 
+> Maybe >>=?
+
+OK.
+
+Answering you question below:
+To make my changes as clear as I could imagine, I decided to use the same indexing as in the original code, i.e., assign high nibble of val to bits 4-7 and two other values - rs and an optional 0 - to bits 8 and 9, respectively.
+Unlike in case of array of integers, where for the high nibble part you could just pass a pointer to a sub-array starting at the 5th value (i.e., &values[PIN_DATA4]), it was not possible to do the same for and arbitrary bit of a bitmap, e.g., pass a pointer to the 5th bit of *value_bitmap as an argument pointing to bit 0 of a bitmap to be processed. That's why I shifted the bitmap right by 4 bits.
+Then, ...
+
+> >
+> >         /* Present the data to the port */
+> > -       gpiod_set_array_value_cansleep(n, &hd->pins[PIN_DATA4],
+> > -                                      &values[PIN_DATA4]);
+> > +       gpiod_set_array_value_cansleep(n, &hd->pins[PIN_DATA4], value_bitmap);
+> >
+> >         hd44780_strobe_gpio(hd);
+> >
+> >         /* Low nibble */
+> > -       for (i = 0; i < 4; i++)
+> > -               values[PIN_DATA4 + i] = !!(val & BIT(i));
+> > +       value_bitmap[0] &= ~((1 << PIN_DATA4) - 1);
+> > +       value_bitmap[0] |= val & ~((1 << PIN_DATA4) - 1);
+> 
+> Are you sure this is correct? You are basically doing an or of
+> value_bitmap and val and clearing the low-nibble.
+
+having the rs and optional 0 already assigned to bits 4 and 5 of the bitmap, I just cleared bits 0-3 still containing the high nibble of val and assigned the low nibble of it to those bits, getting a result ready to be passed as an argument to gpiod_set_array_value_cansleep() below.
+
+I hope I didn't miss anything.
 
 Thanks,
-    Paul
+Janusz
+
+> >
+> >         /* Present the data to the port */
+> > -       gpiod_set_array_value_cansleep(n, &hd->pins[PIN_DATA4],
+> > -                                      &values[PIN_DATA4]);
+> > +       gpiod_set_array_value_cansleep(n, &hd->pins[PIN_DATA4], value_bitmap);
+> >
+> >         hd44780_strobe_gpio(hd);
+> >  }
+> 
+> Cheers,
+> Miguel
+> 
+
+
+
+
