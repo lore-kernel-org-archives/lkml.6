@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E280C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:17:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27393C43334
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:17:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 157E620652
+	by mail.kernel.org (Postfix) with ESMTP id C3CFE20647
 	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:17:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 157E620652
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3CFE20647
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729046AbeH3BQP (ORCPT
+        id S1729129AbeH3BQV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 21:16:15 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37830 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728449AbeH3BQO (ORCPT
+        Wed, 29 Aug 2018 21:16:21 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57778 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728754AbeH3BQP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 21:16:14 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7TL8oTf038279
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 17:17:29 -0400
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2m615dd2kr-1
+        Wed, 29 Aug 2018 21:16:15 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7TL9Ewq047067
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 17:17:31 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m61rcuj37-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 17:17:29 -0400
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 17:17:31 -0400
 Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 29 Aug 2018 17:17:28 -0400
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Wed, 29 Aug 2018 17:17:30 -0400
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
         Wed, 29 Aug 2018 17:17:24 -0400
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7TLHNZ621495904
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7TLHN1Y59244720
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
         Wed, 29 Aug 2018 21:17:23 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7747BB205F;
+        by IMSVA (Postfix) with ESMTP id DD049B2065;
         Wed, 29 Aug 2018 17:16:19 -0400 (EDT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4CC8BB206C;
+        by IMSVA (Postfix) with ESMTP id AB5E7B205F;
         Wed, 29 Aug 2018 17:16:19 -0400 (EDT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
         Wed, 29 Aug 2018 17:16:19 -0400 (EDT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id A9AA816C91C7; Wed, 29 Aug 2018 14:17:23 -0700 (PDT)
+        id B264C16C91CA; Wed, 29 Aug 2018 14:17:23 -0700 (PDT)
 From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -61,24 +61,24 @@ Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tip/core/rcu 4/6] doc: Update documentation for removal of RCU-bh update machinery
-Date:   Wed, 29 Aug 2018 14:17:20 -0700
+Subject: [PATCH tip/core/rcu 6/6] doc: Update documentation for removal of RCU-sched update machinery
+Date:   Wed, 29 Aug 2018 14:17:22 -0700
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180829211637.GA20980@linux.vnet.ibm.com>
 References: <20180829211637.GA20980@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18082921-0068-0000-0000-00000331B283
+x-cbid: 18082921-0040-0000-0000-000004675197
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009636; HX=3.00000242; KW=3.00000007;
  PH=3.00000004; SC=3.00000266; SDB=6.01080717; UDB=6.00557481; IPR=6.00860703;
- MB=3.00023001; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-29 21:17:27
+ MB=3.00023001; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-29 21:17:28
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082921-0069-0000-0000-0000458EF0E7
-Message-Id: <20180829211722.21694-4-paulmck@linux.vnet.ibm.com>
+x-cbparentid: 18082921-0041-0000-0000-0000086E6B64
+Message-Id: <20180829211722.21694-6-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-29_04:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1807170000 definitions=main-1808290206
@@ -87,164 +87,206 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The RCU-bh update API is now defined in terms of that of RCU-bh and
-RCU-sched, so this commit updates the documentation accordingly.
+Although RCU-sched persists in !PREEMPT kernels, in the PREEMPT case its
+update API is now defined in terms of that of RCU-preempt, so this commit
+updates the documentation accordingly.  While in the area, this commit
+removes the documentation for the now-obsolete synchronize_rcu_mult()
+and clarifies the Tasks RCU documentation.
 
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 ---
- .../Expedited-Grace-Periods.html                 |  7 +++----
- .../RCU/Design/Requirements/Requirements.html    | 16 ++++++++++++++--
- Documentation/RCU/stallwarn.txt                  | 13 +++++--------
- Documentation/RCU/whatisRCU.txt                  |  3 ++-
- Documentation/admin-guide/kernel-parameters.txt  | 16 ++++++++--------
- Documentation/kernel-per-CPU-kthreads.txt        |  2 +-
- 6 files changed, 33 insertions(+), 24 deletions(-)
+ .../RCU/Design/Requirements/Requirements.html | 133 +++---------------
+ 1 file changed, 21 insertions(+), 112 deletions(-)
 
-diff --git a/Documentation/RCU/Design/Expedited-Grace-Periods/Expedited-Grace-Periods.html b/Documentation/RCU/Design/Expedited-Grace-Periods/Expedited-Grace-Periods.html
-index 7394f034be65..ffd612bfa436 100644
---- a/Documentation/RCU/Design/Expedited-Grace-Periods/Expedited-Grace-Periods.html
-+++ b/Documentation/RCU/Design/Expedited-Grace-Periods/Expedited-Grace-Periods.html
-@@ -12,10 +12,9 @@ high efficiency and minimal disturbance, expedited grace periods accept
- lower efficiency and significant disturbance to attain shorter latencies.
- 
- <p>
--There are three flavors of RCU (RCU-bh, RCU-preempt, and RCU-sched),
--but only two flavors of expedited grace periods because the RCU-bh
--expedited grace period maps onto the RCU-sched expedited grace period.
--Each of the remaining two implementations is covered in its own section.
-+There are two flavors of RCU (RCU-preempt and RCU-sched), with an earlier
-+third RCU-bh flavor having been implemented in terms of the other two.
-+Each of the two implementations is covered in its own section.
- 
- <ol>
- <li>	<a href="#Expedited Grace Period Design">
 diff --git a/Documentation/RCU/Design/Requirements/Requirements.html b/Documentation/RCU/Design/Requirements/Requirements.html
-index 51f39f65002d..68bedbe8da76 100644
+index 68bedbe8da76..701b5c53607f 100644
 --- a/Documentation/RCU/Design/Requirements/Requirements.html
 +++ b/Documentation/RCU/Design/Requirements/Requirements.html
-@@ -2861,7 +2861,7 @@ The other four flavors are listed below, with requirements for each
- described in a separate section.
+@@ -1306,8 +1306,6 @@ doing so would degrade real-time response.
+ 
+ <p>
+ This non-requirement appeared with preemptible RCU.
+-If you need a grace period that waits on non-preemptible code regions, use
+-<a href="#Sched Flavor">RCU-sched</a>.
+ 
+ <h2><a name="Parallelism Facts of Life">Parallelism Facts of Life</a></h2>
+ 
+@@ -2165,14 +2163,9 @@ however, this is not a panacea because there would be severe restrictions
+ on what operations those callbacks could invoke.
+ 
+ <p>
+-Perhaps surprisingly, <tt>synchronize_rcu()</tt>,
+-<a href="#Bottom-Half Flavor"><tt>synchronize_rcu_bh()</tt></a>
+-(<a href="#Bottom-Half Flavor">discussed below</a>),
+-<a href="#Sched Flavor"><tt>synchronize_sched()</tt></a>,
++Perhaps surprisingly, <tt>synchronize_rcu()</tt> and
+ <tt>synchronize_rcu_expedited()</tt>,
+-<tt>synchronize_rcu_bh_expedited()</tt>, and
+-<tt>synchronize_sched_expedited()</tt>
+-will all operate normally
++will operate normally
+ during very early boot, the reason being that there is only one CPU
+ and preemption is disabled.
+ This means that the call <tt>synchronize_rcu()</tt> (or friends)
+@@ -2862,11 +2855,9 @@ described in a separate section.
  
  <ol>
--<li>	<a href="#Bottom-Half Flavor">Bottom-Half Flavor</a>
-+<li>	<a href="#Bottom-Half Flavor">Bottom-Half Flavor (Historical)</a>
- <li>	<a href="#Sched Flavor">Sched Flavor</a>
+ <li>	<a href="#Bottom-Half Flavor">Bottom-Half Flavor (Historical)</a>
+-<li>	<a href="#Sched Flavor">Sched Flavor</a>
++<li>	<a href="#Sched Flavor">Sched Flavor (Historical)</a>
  <li>	<a href="#Sleepable RCU">Sleepable RCU</a>
  <li>	<a href="#Tasks RCU">Tasks RCU</a>
-@@ -2869,7 +2869,16 @@ described in a separate section.
- 	Waiting for Multiple Grace Periods</a>
+-<li>	<a href="#Waiting for Multiple Grace Periods">
+-	Waiting for Multiple Grace Periods</a>
  </ol>
  
--<h3><a name="Bottom-Half Flavor">Bottom-Half Flavor</a></h3>
-+<h3><a name="Bottom-Half Flavor">Bottom-Half Flavor (Historical)</a></h3>
+ <h3><a name="Bottom-Half Flavor">Bottom-Half Flavor (Historical)</a></h3>
+@@ -2942,7 +2933,16 @@ However, the update-side APIs are now simple wrappers for other RCU
+ flavors, namely RCU-sched in CONFIG_PREEMPT=n kernels and RCU-preempt
+ otherwise.
+ 
+-<h3><a name="Sched Flavor">Sched Flavor</a></h3>
++<h3><a name="Sched Flavor">Sched Flavor (Historical)</a></h3>
 +
 +<p>
-+The RCU-bh flavor of RCU has since been expressed in terms of
++The RCU-sched flavor of RCU has since been expressed in terms of
 +the other RCU flavors as part of a consolidation of the three
 +flavors into a single flavor.
-+The read-side API remains, and continues to disable softirq and to
++The read-side API remains, and continues to disable preemption and to
 +be accounted for by lockdep.
 +Much of the material in this section is therefore strictly historical
 +in nature.
  
  <p>
- The softirq-disable (AKA &ldquo;bottom-half&rdquo;,
-@@ -2929,6 +2938,9 @@ includes
- <tt>call_rcu_bh()</tt>,
- <tt>rcu_barrier_bh()</tt>, and
- <tt>rcu_read_lock_bh_held()</tt>.
-+However, the update-side APIs are now simple wrappers for other RCU
-+flavors, namely RCU-sched in CONFIG_PREEMPT=n kernels and RCU-preempt
-+otherwise.
+ Before preemptible RCU, waiting for an RCU grace period had the
+@@ -3162,94 +3162,14 @@ The tasks-RCU API is quite compact, consisting only of
+ <tt>call_rcu_tasks()</tt>,
+ <tt>synchronize_rcu_tasks()</tt>, and
+ <tt>rcu_barrier_tasks()</tt>.
+-
+-<h3><a name="Waiting for Multiple Grace Periods">
+-Waiting for Multiple Grace Periods</a></h3>
+-
+-<p>
+-Perhaps you have an RCU protected data structure that is accessed from
+-RCU read-side critical sections, from softirq handlers, and from
+-hardware interrupt handlers.
+-That is three flavors of RCU, the normal flavor, the bottom-half flavor,
+-and the sched flavor.
+-How to wait for a compound grace period?
+-
+-<p>
+-The best approach is usually to &ldquo;just say no!&rdquo; and
+-insert <tt>rcu_read_lock()</tt> and <tt>rcu_read_unlock()</tt>
+-around each RCU read-side critical section, regardless of what
+-environment it happens to be in.
+-But suppose that some of the RCU read-side critical sections are
+-on extremely hot code paths, and that use of <tt>CONFIG_PREEMPT=n</tt>
+-is not a viable option, so that <tt>rcu_read_lock()</tt> and
+-<tt>rcu_read_unlock()</tt> are not free.
+-What then?
+-
+-<p>
+-You <i>could</i> wait on all three grace periods in succession, as follows:
+-
+-<blockquote>
+-<pre>
+- 1 synchronize_rcu();
+- 2 synchronize_rcu_bh();
+- 3 synchronize_sched();
+-</pre>
+-</blockquote>
+-
+-<p>
+-This works, but triples the update-side latency penalty.
+-In cases where this is not acceptable, <tt>synchronize_rcu_mult()</tt>
+-may be used to wait on all three flavors of grace period concurrently:
+-
+-<blockquote>
+-<pre>
+- 1 synchronize_rcu_mult(call_rcu, call_rcu_bh, call_rcu_sched);
+-</pre>
+-</blockquote>
+-
+-<p>
+-But what if it is necessary to also wait on SRCU?
+-This can be done as follows:
+-
+-<blockquote>
+-<pre>
+- 1 static void call_my_srcu(struct rcu_head *head,
+- 2        void (*func)(struct rcu_head *head))
+- 3 {
+- 4   call_srcu(&amp;my_srcu, head, func);
+- 5 }
+- 6
+- 7 synchronize_rcu_mult(call_rcu, call_rcu_bh, call_rcu_sched, call_my_srcu);
+-</pre>
+-</blockquote>
+-
+-<p>
+-If you needed to wait on multiple different flavors of SRCU
+-(but why???), you would need to create a wrapper function resembling
+-<tt>call_my_srcu()</tt> for each SRCU flavor.
+-
+-<table>
+-<tr><th>&nbsp;</th></tr>
+-<tr><th align="left">Quick Quiz:</th></tr>
+-<tr><td>
+-	But what if I need to wait for multiple RCU flavors, but I also need
+-	the grace periods to be expedited?
+-</td></tr>
+-<tr><th align="left">Answer:</th></tr>
+-<tr><td bgcolor="#ffffff"><font color="ffffff">
+-	If you are using expedited grace periods, there should be less penalty
+-	for waiting on them in succession.
+-	But if that is nevertheless a problem, you can use workqueues
+-	or multiple kthreads to wait on the various expedited grace
+-	periods concurrently.
+-</font></td></tr>
+-<tr><td>&nbsp;</td></tr>
+-</table>
+-
+-<p>
+-Again, it is usually better to adjust the RCU read-side critical sections
+-to use a single flavor of RCU, but when this is not feasible, you can use
+-<tt>synchronize_rcu_mult()</tt>.
++In <tt>CONFIG_PREEMPT=n</tt> kernels, trampolines cannot be preempted,
++so these APIs map to
++<tt>call_rcu()</tt>,
++<tt>synchronize_rcu()</tt>, and
++<tt>rcu_barrier()</tt>, respectively.
++In <tt>CONFIG_PREEMPT=y</tt> kernels, trampolines can be preempted,
++and these three APIs are therefore implemented by separate functions
++that check for voluntary context switches.
  
- <h3><a name="Sched Flavor">Sched Flavor</a></h3>
+ <h2><a name="Possible Future Changes">Possible Future Changes</a></h2>
  
-diff --git a/Documentation/RCU/stallwarn.txt b/Documentation/RCU/stallwarn.txt
-index f99cf11b314b..491043fd976f 100644
---- a/Documentation/RCU/stallwarn.txt
-+++ b/Documentation/RCU/stallwarn.txt
-@@ -16,12 +16,9 @@ o	A CPU looping in an RCU read-side critical section.
+@@ -3260,12 +3180,6 @@ If this becomes a serious problem, it will be necessary to rework the
+ grace-period state machine so as to avoid the need for the additional
+ latency.
  
- o	A CPU looping with interrupts disabled.
+-<p>
+-Expedited grace periods scan the CPUs, so their latency and overhead
+-increases with increasing numbers of CPUs.
+-If this becomes a serious problem on large systems, it will be necessary
+-to do some redesign to avoid this scalability problem.
+-
+ <p>
+ RCU disables CPU hotplug in a few places, perhaps most notably in the
+ <tt>rcu_barrier()</tt> operations.
+@@ -3310,11 +3224,6 @@ Please note that arrangements that require RCU to remap CPU numbers will
+ require extremely good demonstration of need and full exploration of
+ alternatives.
  
--o	A CPU looping with preemption disabled.  This condition can
--	result in RCU-sched stalls and, if ksoftirqd is in use, RCU-bh
--	stalls.
-+o	A CPU looping with preemption disabled.
- 
--o	A CPU looping with bottom halves disabled.  This condition can
--	result in RCU-sched and RCU-bh stalls.
-+o	A CPU looping with bottom halves disabled.
- 
- o	For !CONFIG_PREEMPT kernels, a CPU looping anywhere in the kernel
- 	without invoking schedule().  If the looping in the kernel is
-@@ -87,9 +84,9 @@ o	A hardware failure.  This is quite unlikely, but has occurred
- 	This resulted in a series of RCU CPU stall warnings, eventually
- 	leading the realization that the CPU had failed.
- 
--The RCU, RCU-sched, RCU-bh, and RCU-tasks implementations have CPU stall
--warning.  Note that SRCU does -not- have CPU stall warnings.  Please note
--that RCU only detects CPU stalls when there is a grace period in progress.
-+The RCU, RCU-sched, and RCU-tasks implementations have CPU stall warning.
-+Note that SRCU does -not- have CPU stall warnings.  Please note that
-+RCU only detects CPU stalls when there is a grace period in progress.
- No grace period, no CPU stall warnings.
- 
- To diagnose the cause of the stall, inspect the stack traces.
-diff --git a/Documentation/RCU/whatisRCU.txt b/Documentation/RCU/whatisRCU.txt
-index c2a7facf7ff9..86d82f7f3500 100644
---- a/Documentation/RCU/whatisRCU.txt
-+++ b/Documentation/RCU/whatisRCU.txt
-@@ -934,7 +934,8 @@ c.	Do you need to treat NMI handlers, hardirq handlers,
- d.	Do you need RCU grace periods to complete even in the face
- 	of softirq monopolization of one or more of the CPUs?  For
- 	example, is your code subject to network-based denial-of-service
--	attacks?  If so, you need RCU-bh.
-+	attacks?  If so, you should disable softirq across your readers,
-+	for example, by using rcu_read_lock_bh().
- 
- e.	Is your workload too update-intensive for normal use of
- 	RCU, but inappropriate for other synchronization mechanisms?
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 9871e649ffef..9e69ec54b7d3 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3534,14 +3534,14 @@
- 
- 			In kernels built with CONFIG_RCU_NOCB_CPU=y, set
- 			the specified list of CPUs to be no-callback CPUs.
--			Invocation of these CPUs' RCU callbacks will
--			be offloaded to "rcuox/N" kthreads created for
--			that purpose, where "x" is "b" for RCU-bh, "p"
--			for RCU-preempt, and "s" for RCU-sched, and "N"
--			is the CPU number.  This reduces OS jitter on the
--			offloaded CPUs, which can be useful for HPC and
--			real-time workloads.  It can also improve energy
--			efficiency for asymmetric multiprocessors.
-+			Invocation of these CPUs' RCU callbacks will be
-+			offloaded to "rcuox/N" kthreads created for that
-+			purpose, where "x" is "p" for RCU-preempt, and
-+			"s" for RCU-sched, and "N" is the CPU number.
-+			This reduces OS jitter on the offloaded CPUs,
-+			which can be useful for HPC and real-time
-+			workloads.  It can also improve energy efficiency
-+			for asymmetric multiprocessors.
- 
- 	rcu_nocb_poll	[KNL]
- 			Rather than requiring that offloaded CPUs
-diff --git a/Documentation/kernel-per-CPU-kthreads.txt b/Documentation/kernel-per-CPU-kthreads.txt
-index 0f00f9c164ac..23b0c8b20cd1 100644
---- a/Documentation/kernel-per-CPU-kthreads.txt
-+++ b/Documentation/kernel-per-CPU-kthreads.txt
-@@ -321,7 +321,7 @@ To reduce its OS jitter, do at least one of the following:
- 	to do.
- 
- Name:
--  rcuob/%d, rcuop/%d, and rcuos/%d
-+  rcuop/%d and rcuos/%d
- 
- Purpose:
-   Offload RCU callbacks from the corresponding CPU.
+-<p>
+-There is an embarrassingly large number of flavors of RCU, and this
+-number has been increasing over time.
+-Perhaps it will be possible to combine some at some future date.
+-
+ <p>
+ RCU's various kthreads are reasonably recent additions.
+ It is quite likely that adjustments will be required to more gracefully
 -- 
 2.17.1
 
