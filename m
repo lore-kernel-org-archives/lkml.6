@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AE6FC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:40:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4861C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:40:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0761A20644
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:40:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0761A20644
+	by mail.kernel.org (Postfix) with ESMTP id 7830720644
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:40:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7830720644
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728091AbeH3Cj0 (ORCPT
+        id S1727718AbeH3CiI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 22:39:26 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47842 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727690AbeH3CiI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 29 Aug 2018 22:38:08 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7TMciSv116366
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:39:05 -0400
-Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m6158y7f6-1
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60142 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727525AbeH3CiG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 22:38:06 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7TMcjPA089190
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:39:03 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m61g7xajf-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:39:05 -0400
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:39:03 -0400
 Received: from localhost
-        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 29 Aug 2018 18:39:03 -0400
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Wed, 29 Aug 2018 18:39:02 -0400
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 29 Aug 2018 18:38:58 -0400
+        Wed, 29 Aug 2018 18:38:57 -0400
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7TMcvf527066390
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7TMcupi37093610
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 29 Aug 2018 22:38:57 GMT
+        Wed, 29 Aug 2018 22:38:56 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 17D93B2072;
-        Wed, 29 Aug 2018 18:37:53 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id 55955B2065;
+        Wed, 29 Aug 2018 18:37:52 -0400 (EDT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 03645B206B;
-        Wed, 29 Aug 2018 18:37:53 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id 40600B2074;
+        Wed, 29 Aug 2018 18:37:52 -0400 (EDT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
         Wed, 29 Aug 2018 18:37:52 -0400 (EDT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 24FC716C91DA; Wed, 29 Aug 2018 15:38:56 -0700 (PDT)
+        id 709B116C91E4; Wed, 29 Aug 2018 15:38:56 -0700 (PDT)
 From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -61,20 +61,20 @@ Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tip/core/rcu 19/52] rcu: Remove rsp parameter from __note_gp_changes()
-Date:   Wed, 29 Aug 2018 15:38:21 -0700
+Subject: [PATCH tip/core/rcu 33/52] rcu: Remove rsp parameter from rcu_init_one() and friends
+Date:   Wed, 29 Aug 2018 15:38:35 -0700
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180829223830.GA1800@linux.vnet.ibm.com>
 References: <20180829223830.GA1800@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18082922-0060-0000-0000-000002A6641B
+x-cbid: 18082922-0040-0000-0000-00000467583F
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009636; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01080744; UDB=6.00557498; IPR=6.00860730;
- MB=3.00023002; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-29 22:39:02
+ PH=3.00000004; SC=3.00000266; SDB=6.01080744; UDB=6.00557497; IPR=6.00860730;
+ MB=3.00023002; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-29 22:39:00
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082922-0061-0000-0000-00004655B6AE
-Message-Id: <20180829223854.4055-19-paulmck@linux.vnet.ibm.com>
+x-cbparentid: 18082922-0041-0000-0000-0000086E721A
+Message-Id: <20180829223854.4055-33-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-29_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -90,58 +90,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 There now is only one rcu_state structure in a given build of the
 Linux kernel, so there is no need to pass it as a parameter to RCU's
 functions.  This commit therefore removes the rsp parameter from
-__note_gp_changes().
+rcu_init_one() and rcu_dump_rcu_node_tree().
 
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 ---
- kernel/rcu/tree.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ kernel/rcu/tree.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
 diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index dae8c1ad6a9e..4dd9d68af702 100644
+index 3591633efc33..6183c2889a9f 100644
 --- a/kernel/rcu/tree.c
 +++ b/kernel/rcu/tree.c
-@@ -1757,11 +1757,11 @@ static bool rcu_advance_cbs(struct rcu_node *rnp, struct rcu_data *rdp)
-  * structure corresponding to the current CPU, and must have irqs disabled.
-  * Returns true if the grace-period kthread needs to be awakened.
+@@ -3707,7 +3707,7 @@ void rcu_scheduler_starting(void)
+ /*
+  * Helper function for rcu_init() that initializes one rcu_state structure.
   */
--static bool __note_gp_changes(struct rcu_state *rsp, struct rcu_node *rnp,
--			      struct rcu_data *rdp)
-+static bool __note_gp_changes(struct rcu_node *rnp, struct rcu_data *rdp)
+-static void __init rcu_init_one(struct rcu_state *rsp)
++static void __init rcu_init_one(void)
  {
- 	bool ret;
- 	bool need_gp;
-+	struct rcu_state __maybe_unused *rsp = &rcu_state;
+ 	static const char * const buf[] = RCU_NODE_NAME_INIT;
+ 	static const char * const fqs[] = RCU_FQS_NAME_INIT;
+@@ -3719,6 +3719,7 @@ static void __init rcu_init_one(struct rcu_state *rsp)
+ 	int i;
+ 	int j;
+ 	struct rcu_node *rnp;
++	struct rcu_state *rsp = &rcu_state;
  
- 	raw_lockdep_assert_held_rcu_node(rnp);
+ 	BUILD_BUG_ON(RCU_NUM_LVLS > ARRAY_SIZE(buf));  /* Fix buf[] init! */
  
-@@ -1814,7 +1814,7 @@ static void note_gp_changes(struct rcu_state *rsp, struct rcu_data *rdp)
- 		local_irq_restore(flags);
- 		return;
- 	}
--	needwake = __note_gp_changes(rsp, rnp, rdp);
-+	needwake = __note_gp_changes(rnp, rdp);
- 	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
- 	if (needwake)
- 		rcu_gp_kthread_wake();
-@@ -1939,7 +1939,7 @@ static bool rcu_gp_init(struct rcu_state *rsp)
- 		rnp->qsmask = rnp->qsmaskinit;
- 		WRITE_ONCE(rnp->gp_seq, rsp->gp_seq);
- 		if (rnp == rdp->mynode)
--			(void)__note_gp_changes(rsp, rnp, rdp);
-+			(void)__note_gp_changes(rnp, rdp);
- 		rcu_preempt_boost_start_gp(rnp);
- 		trace_rcu_grace_period_init(rsp->name, rnp->gp_seq,
- 					    rnp->level, rnp->grplo,
-@@ -2050,7 +2050,7 @@ static void rcu_gp_cleanup(struct rcu_state *rsp)
- 		WRITE_ONCE(rnp->gp_seq, new_gp_seq);
- 		rdp = this_cpu_ptr(&rcu_data);
- 		if (rnp == rdp->mynode)
--			needgp = __note_gp_changes(rsp, rnp, rdp) || needgp;
-+			needgp = __note_gp_changes(rnp, rdp) || needgp;
- 		/* smp_mb() provided by prior unlock-lock pair. */
- 		needgp = rcu_future_gp_cleanup(rnp) || needgp;
- 		sq = rcu_nocb_gp_get(rnp);
+@@ -3869,14 +3870,14 @@ static void __init rcu_init_geometry(void)
+  * Dump out the structure of the rcu_node combining tree associated
+  * with the rcu_state structure referenced by rsp.
+  */
+-static void __init rcu_dump_rcu_node_tree(struct rcu_state *rsp)
++static void __init rcu_dump_rcu_node_tree(void)
+ {
+ 	int level = 0;
+ 	struct rcu_node *rnp;
+ 
+ 	pr_info("rcu_node tree layout dump\n");
+ 	pr_info(" ");
+-	rcu_for_each_node_breadth_first(rsp, rnp) {
++	rcu_for_each_node_breadth_first(&rcu_state, rnp) {
+ 		if (rnp->level != level) {
+ 			pr_cont("\n");
+ 			pr_info(" ");
+@@ -3898,9 +3899,9 @@ void __init rcu_init(void)
+ 
+ 	rcu_bootup_announce();
+ 	rcu_init_geometry();
+-	rcu_init_one(&rcu_state);
++	rcu_init_one();
+ 	if (dump_tree)
+-		rcu_dump_rcu_node_tree(&rcu_state);
++		rcu_dump_rcu_node_tree();
+ 	open_softirq(RCU_SOFTIRQ, rcu_process_callbacks);
+ 
+ 	/*
 -- 
 2.17.1
 
