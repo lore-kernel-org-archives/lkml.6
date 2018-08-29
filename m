@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BEA9C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:49:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C59B0C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:49:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F26B120644
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:49:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F26B120644
+	by mail.kernel.org (Postfix) with ESMTP id 7FB4E2064E
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:49:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FB4E2064E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727706AbeH3BsF (ORCPT
+        id S1727718AbeH3BsM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 21:48:05 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46350 "EHLO
+        Wed, 29 Aug 2018 21:48:12 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44910 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727280AbeH3Bqt (ORCPT
+        by vger.kernel.org with ESMTP id S1727282AbeH3Bqt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 29 Aug 2018 21:46:49 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7TLcq3U105578
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7TLcraY138152
         for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 17:47:57 -0400
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2m62u3hv9k-1
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2m629dtyka-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
         for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 17:47:57 -0400
 Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
         Wed, 29 Aug 2018 17:47:56 -0400
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
         Wed, 29 Aug 2018 17:47:52 -0400
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7TLlpUV8978578
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7TLlpRM16253120
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
         Wed, 29 Aug 2018 21:47:51 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CC240B2075;
+        by IMSVA (Postfix) with ESMTP id 55AECB206E;
         Wed, 29 Aug 2018 17:46:47 -0400 (EDT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A52D2B206E;
+        by IMSVA (Postfix) with ESMTP id 332BFB2066;
         Wed, 29 Aug 2018 17:46:47 -0400 (EDT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
         Wed, 29 Aug 2018 17:46:47 -0400 (EDT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id D36E616C91D5; Wed, 29 Aug 2018 14:47:51 -0700 (PDT)
+        id 95A8F16C91C6; Wed, 29 Aug 2018 14:47:51 -0700 (PDT)
 From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -61,20 +61,20 @@ Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tip/core/rcu 14/17] rcutorture: Adjust number of reader kthreads per CPU-hotplug operations
-Date:   Wed, 29 Aug 2018 14:47:47 -0700
+Subject: [PATCH tip/core/rcu 03/17] rcutorture: Warn on bad torture type for built-in tests
+Date:   Wed, 29 Aug 2018 14:47:36 -0700
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180829214722.GA23411@linux.vnet.ibm.com>
 References: <20180829214722.GA23411@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18082921-2213-0000-0000-000002E504A6
+x-cbid: 18082921-0072-0000-0000-000003996473
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009636; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01080727; UDB=6.00557487; IPR=6.00860712;
- MB=3.00023001; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-29 21:47:56
+ PH=3.00000004; SC=3.00000266; SDB=6.01080727; UDB=6.00557487; IPR=6.00860713;
+ MB=3.00023001; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-29 21:47:55
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082921-2214-0000-0000-00005B601550
-Message-Id: <20180829214750.26972-14-paulmck@linux.vnet.ibm.com>
+x-cbparentid: 18082921-0073-0000-0000-0000493E9ABF
+Message-Id: <20180829214750.26972-3-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-29_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -87,64 +87,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, rcutorture provisions rcu_torture_reader() kthreads based
-on the initial number of CPUs.  This can be problematic when CPU hotplug
-is enabled, as a system with a very large number of CPUs will provision
-a very large number of rcu_torture_reader() kthreads.  All of these
-kthreads will continue running even if the CPU-hotplug operations result
-in only one remaining online CPU.  This can result in all sorts of strange
-artifacts due simply to massive overload.
-
-This commit therefore causes the rcu_torture_reader() kthreads to start
-blocking as the number of online CPUs decreases.  This is accomplished
-by numbering these kthreads, and having each check to make sure that the
-number of online CPUs is at least as large as its assigned number.
+When running a built-in rcutorture test, specifying an invalid torture
+type results in what looks like a hard hang, with the error messages
+hidden by other boot-time output.  This commit therefore executes a
+WARN_ON() in this case so that the splat appears just following the
+error messages.
 
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 ---
- kernel/rcu/rcutorture.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ kernel/rcu/rcutorture.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index ac487ea8d245..50015b78a43f 100644
+index 50a4f0ed4ebf..5df2411f7aee 100644
 --- a/kernel/rcu/rcutorture.c
 +++ b/kernel/rcu/rcutorture.c
-@@ -1400,6 +1400,8 @@ static int
- rcu_torture_reader(void *arg)
- {
- 	unsigned long lastsleep = jiffies;
-+	long myid = (long)arg;
-+	int mynumonline = myid;
- 	DEFINE_TORTURE_RANDOM(rand);
- 	struct timer_list t;
- 
-@@ -1419,6 +1421,8 @@ rcu_torture_reader(void *arg)
- 			schedule_timeout_interruptible(1);
- 			lastsleep = jiffies + 10;
- 		}
-+		while (num_online_cpus() < mynumonline && !torture_must_stop())
-+			schedule_timeout_interruptible(HZ / 5);
- 		stutter_wait("rcu_torture_reader");
- 	} while (!torture_must_stop());
- 	if (irqreader && cur_ops->irq_capable) {
-@@ -2063,7 +2067,7 @@ static void rcu_test_debug_objects(void)
- static int __init
- rcu_torture_init(void)
- {
--	int i;
-+	long i;
- 	int cpu;
- 	int firsterr = 0;
- 	static struct rcu_torture_ops *torture_ops[] = {
-@@ -2169,7 +2173,7 @@ rcu_torture_init(void)
+@@ -1968,6 +1968,7 @@ rcu_torture_init(void)
+ 		for (i = 0; i < ARRAY_SIZE(torture_ops); i++)
+ 			pr_cont(" %s", torture_ops[i]->name);
+ 		pr_cont("\n");
++		WARN_ON(!IS_MODULE(CONFIG_RCU_TORTURE_TEST));
+ 		firsterr = -EINVAL;
  		goto unwind;
  	}
- 	for (i = 0; i < nrealreaders; i++) {
--		firsterr = torture_create_kthread(rcu_torture_reader, NULL,
-+		firsterr = torture_create_kthread(rcu_torture_reader, (void *)i,
- 						  reader_tasks[i]);
- 		if (firsterr)
- 			goto unwind;
 -- 
 2.17.1
 
