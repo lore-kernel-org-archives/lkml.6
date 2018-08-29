@@ -6,61 +6,65 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AD90C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:19:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BF49C43334
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:19:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 081122084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:19:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 142732084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:19:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="P/Ql1Ewq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 081122084E
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NC0AP8En"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 142732084E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728725AbeH2RQU (ORCPT
+        id S1728758AbeH2RQV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 13:16:20 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:41237 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727316AbeH2RQT (ORCPT
+        Wed, 29 Aug 2018 13:16:21 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:46069 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727204AbeH2RQU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 13:16:19 -0400
-Received: by mail-wr1-f65.google.com with SMTP id z96-v6so4808310wrb.8
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 06:19:22 -0700 (PDT)
+        Wed, 29 Aug 2018 13:16:20 -0400
+Received: by mail-wr1-f66.google.com with SMTP id 20-v6so4789138wrb.12
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 06:19:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=TO1pU8JCMBu+caKwSvxQuWK2iY1ODZK5b9aWTRPwaCg=;
-        b=P/Ql1EwqHhseHyku5t1Dgwfe7jPgYorqfQ5b7LVFE80A3XWZ5nDQe3LcScSJlUTD2S
-         MjAif9mZViQo/CgmYFM5L1wP6iLV3+Oj0Edzti4ex/T5ZDopjukqWI1LDAI+NkzZsdd0
-         RB1Udj2qHfXbBa4mqCzypTMVxdhKed7YlMP/I=
+        bh=9N1/i8eovTJISBwV2wd17v34QcoNXObPuHXlaPcTSyg=;
+        b=NC0AP8EnJ6ul6iBXPE55fPtpxUCiptEqrpYGXRoBJYjP9vYV5VmPiTwrbd+2XgIPsF
+         eXdbAGH7zMdyZf/95idDMZKkggfcmjilAuoNeZhZACjWR2gkz4KKhfh1ycvNXe99oY0O
+         XvN2IYRgC8e8D9c4wFOp9BRv6JRf4Pu7bcl7k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=TO1pU8JCMBu+caKwSvxQuWK2iY1ODZK5b9aWTRPwaCg=;
-        b=RmlnU5zv6sxJ0JjqSDjqlyGPHqfK1SdriOx39QduGrTgRsTP7mGoCO5mXQ9yQ6g8xB
-         xUoc71mo2tnUirun4iRlODTUmi20H58aNtyZ/yDP9GU6829i2aEqxnaja5CArgL8moZH
-         sWOOB4vkSoE/BdbfpzAaPaHWoqJ42jEwedpSiB3pdDslZR3q7pTgAPpBktE25Cp8iIUW
-         4qGlEX70bFVYSSkH2WKrKN096ugtoWZna4zO6SBSeFd3qE54VN8rYSyZLAH2NoFN+VSe
-         DY7LugOetBxlUMCT20YFdEGJI8X6j1/bPoCdwz6pzwiJLHHqvcltlge0Ss89fWVt44go
-         b/Ig==
-X-Gm-Message-State: APzg51ANKuSsb49e1iNBrnNq9BF28MzroDH0Kt3Dem5fjFwRK6+18Nkr
-        pIiDdbv0tRuzY1lT1mki6BAMFA==
-X-Google-Smtp-Source: ANB0VdaGxjz19y3JosuBf/gRyQ/pp+EJz31vwrNffc9KO79kLONqxUNdQ7nH7Bx1/OcPffJ/UKvkZg==
-X-Received: by 2002:a5d:6984:: with SMTP id g4-v6mr4191595wru.232.1535548762085;
-        Wed, 29 Aug 2018 06:19:22 -0700 (PDT)
+        bh=9N1/i8eovTJISBwV2wd17v34QcoNXObPuHXlaPcTSyg=;
+        b=pxVe/bPTaXV1dFLjr1MECDRTUhs6hf0gvi59KIxfBGXflna0ybgLPLXlx2VR5eqL0w
+         B4VJ38xrq1UP26/JzY95nwE7sK4GOquWy+FJ76Ks+vnnxielnK55/1fUgdGnf7nVkULv
+         it/Tu9OWWVHBxbPYOPO8IiJdEEyNguD0FCecbmjcb6ecEF8OA+AUPeJHvH9D8LH4zF+M
+         ViWv1TW7jVOdmaQZEAn0BJp6BAMk6AwgKA+2hgEH1HZethpZG4hapyMmLP8CLQCNNZQU
+         3Q7L+gNBCF7l/TZwXAkOAb4/X+0u7wip6X4+R6AFe3X44FMju1BbvLM2WB/ilaFFQeug
+         m+1Q==
+X-Gm-Message-State: APzg51BXJxzXbKnX+GKXChk5jr5JyDIT3XDggAd/AUwIBYZ5KK4aUBnP
+        Y7NYkgz11ku8yyT9W3/Z5QbBlQ==
+X-Google-Smtp-Source: ANB0VdaOMAEECUOonjDXp3QRO3Q8oNsXosXMlrJjQcueH+53/jQcB6UmdPxuJbdVdHOt8r5q2TwvcA==
+X-Received: by 2002:adf:d84a:: with SMTP id k10-v6mr4095439wrl.26.1535548763558;
+        Wed, 29 Aug 2018 06:19:23 -0700 (PDT)
 Received: from localhost.localdomain ([2a01:e0a:f:6020:4c23:4749:7ea6:c5af])
-        by smtp.gmail.com with ESMTPSA id a37-v6sm9532723wrc.21.2018.08.29.06.19.21
+        by smtp.gmail.com with ESMTPSA id a37-v6sm9532723wrc.21.2018.08.29.06.19.22
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 29 Aug 2018 06:19:21 -0700 (PDT)
+        Wed, 29 Aug 2018 06:19:22 -0700 (PDT)
 From:   Vincent Guittot <vincent.guittot@linaro.org>
 To:     peterz@infradead.org, mingo@redhat.com,
         linux-kernel@vger.kernel.org
-Cc:     Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [RFC PATCH 3/4] sched/topology: remove smt_gain
-Date:   Wed, 29 Aug 2018 15:19:11 +0200
-Message-Id: <1535548752-4434-4-git-send-email-vincent.guittot@linaro.org>
+Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [RFC PATCH 4/4] sched/topology: remove unused sd param from arch_scale_cpu_capacity()
+Date:   Wed, 29 Aug 2018 15:19:12 +0200
+Message-Id: <1535548752-4434-5-git-send-email-vincent.guittot@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1535548752-4434-1-git-send-email-vincent.guittot@linaro.org>
 References: <1535548752-4434-1-git-send-email-vincent.guittot@linaro.org>
@@ -69,82 +73,187 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-smt_gain is used to compute the capacity of CPUs of a SMT core with the
-constraint 1 < smt_gain < 2 in order to be able to compute number of CPUs
-per core. The field has_free_capacity of struct numa_stat, which was the
-last user of this computation of number of CPUs per core, has been removed
-by :
-
-  commit 2d4056fafa19 ("sched/numa: Remove numa_has_capacity()")
-
-We can now remove this constraint on core capacity and use the defautl value
-SCHED_CAPACITY_SCALE for SMT CPUs. With this remove, SCHED_CAPACITY_SCALE
-becomes the maximum compute capacity of CPUs on every systems. This should
-help to simplify some code and remove fields like rd->max_cpu_capacity
-
-Furthermore, arch_scale_cpu_capacity() is used with a NULL sd in several other
-places in the code when it wants the capacity of a CPUs to scale
-some metrics like in pelt, deadline or schedutil. In case on SMT, the value
-returned is not the capacity of SMT CPUs but default SCHED_CAPACITY_SCALE.
-
-Remove the smt_gain field from sched_domain struct
+struct sched_domain *sd parameter is no more used in arch_scale_cpu_capacity()
+so we can remote it.
 
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Ingo Molnar <mingo@redhat.com>
-Cc: linux-kernel@vger.kernel.org (open list)
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
----
- include/linux/sched/topology.h | 1 -
- kernel/sched/sched.h           | 3 ---
- kernel/sched/topology.c        | 2 --
- 3 files changed, 6 deletions(-)
 
-diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
-index 2634774..212792b 100644
---- a/include/linux/sched/topology.h
-+++ b/include/linux/sched/topology.h
-@@ -89,7 +89,6 @@ struct sched_domain {
- 	unsigned int newidle_idx;
- 	unsigned int wake_idx;
- 	unsigned int forkexec_idx;
--	unsigned int smt_gain;
+---
+ arch/arm/kernel/topology.c       | 2 +-
+ drivers/base/arch_topology.c     | 6 +++---
+ include/linux/arch_topology.h    | 2 +-
+ kernel/sched/cpufreq_schedutil.c | 2 +-
+ kernel/sched/deadline.c          | 2 +-
+ kernel/sched/fair.c              | 8 ++++----
+ kernel/sched/pelt.c              | 2 +-
+ kernel/sched/sched.h             | 4 ++--
+ 8 files changed, 14 insertions(+), 14 deletions(-)
+
+diff --git a/arch/arm/kernel/topology.c b/arch/arm/kernel/topology.c
+index 24ac3ca..d3d75c5 100644
+--- a/arch/arm/kernel/topology.c
++++ b/arch/arm/kernel/topology.c
+@@ -175,7 +175,7 @@ static void update_cpu_capacity(unsigned int cpu)
+ 	topology_set_cpu_scale(cpu, cpu_capacity(cpu) / middle_capacity);
  
- 	int nohz_idle;			/* NOHZ IDLE status */
- 	int flags;			/* See SD_* */
+ 	pr_info("CPU%u: update cpu_capacity %lu\n",
+-		cpu, topology_get_cpu_scale(NULL, cpu));
++		cpu, topology_get_cpu_scale(cpu));
+ }
+ 
+ #else
+diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
+index e7cb0c6..6dc9339 100644
+--- a/drivers/base/arch_topology.c
++++ b/drivers/base/arch_topology.c
+@@ -44,7 +44,7 @@ static ssize_t cpu_capacity_show(struct device *dev,
+ {
+ 	struct cpu *cpu = container_of(dev, struct cpu, dev);
+ 
+-	return sprintf(buf, "%lu\n", topology_get_cpu_scale(NULL, cpu->dev.id));
++	return sprintf(buf, "%lu\n", topology_get_cpu_scale(cpu->dev.id));
+ }
+ 
+ static ssize_t cpu_capacity_store(struct device *dev,
+@@ -124,7 +124,7 @@ void topology_normalize_cpu_scale(void)
+ 			/ capacity_scale;
+ 		topology_set_cpu_scale(cpu, capacity);
+ 		pr_debug("cpu_capacity: CPU%d cpu_capacity=%lu\n",
+-			cpu, topology_get_cpu_scale(NULL, cpu));
++			cpu, topology_get_cpu_scale(cpu));
+ 	}
+ 	mutex_unlock(&cpu_scale_mutex);
+ }
+@@ -194,7 +194,7 @@ init_cpu_capacity_callback(struct notifier_block *nb,
+ 	cpumask_andnot(cpus_to_visit, cpus_to_visit, policy->related_cpus);
+ 
+ 	for_each_cpu(cpu, policy->related_cpus) {
+-		raw_capacity[cpu] = topology_get_cpu_scale(NULL, cpu) *
++		raw_capacity[cpu] = topology_get_cpu_scale(cpu) *
+ 				    policy->cpuinfo.max_freq / 1000UL;
+ 		capacity_scale = max(raw_capacity[cpu], capacity_scale);
+ 	}
+diff --git a/include/linux/arch_topology.h b/include/linux/arch_topology.h
+index 2b70941..5df6773 100644
+--- a/include/linux/arch_topology.h
++++ b/include/linux/arch_topology.h
+@@ -17,7 +17,7 @@ DECLARE_PER_CPU(unsigned long, cpu_scale);
+ 
+ struct sched_domain;
+ static inline
+-unsigned long topology_get_cpu_scale(struct sched_domain *sd, int cpu)
++unsigned long topology_get_cpu_scale(int cpu)
+ {
+ 	return per_cpu(cpu_scale, cpu);
+ }
+diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+index 3fffad3..01b95057 100644
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -202,7 +202,7 @@ static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
+ 	struct rq *rq = cpu_rq(sg_cpu->cpu);
+ 	unsigned long util, irq, max;
+ 
+-	sg_cpu->max = max = arch_scale_cpu_capacity(NULL, sg_cpu->cpu);
++	sg_cpu->max = max = arch_scale_cpu_capacity(sg_cpu->cpu);
+ 	sg_cpu->bw_dl = cpu_bw_dl(rq);
+ 
+ 	if (rt_rq_is_runnable(&rq->rt))
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index 997ea7b..5f763b1 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -1196,7 +1196,7 @@ static void update_curr_dl(struct rq *rq)
+ 						 &curr->dl);
+ 	} else {
+ 		unsigned long scale_freq = arch_scale_freq_capacity(cpu);
+-		unsigned long scale_cpu = arch_scale_cpu_capacity(NULL, cpu);
++		unsigned long scale_cpu = arch_scale_cpu_capacity(cpu);
+ 
+ 		scaled_delta_exec = cap_scale(delta_exec, scale_freq);
+ 		scaled_delta_exec = cap_scale(scaled_delta_exec, scale_cpu);
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index cff1682..2eeac7c 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -748,7 +748,7 @@ void post_init_entity_util_avg(struct sched_entity *se)
+ {
+ 	struct cfs_rq *cfs_rq = cfs_rq_of(se);
+ 	struct sched_avg *sa = &se->avg;
+-	long cpu_scale = arch_scale_cpu_capacity(NULL, cpu_of(rq_of(cfs_rq)));
++	long cpu_scale = arch_scale_cpu_capacity(cpu_of(rq_of(cfs_rq)));
+ 	long cap = (long)(cpu_scale - cfs_rq->avg.util_avg) / 2;
+ 
+ 	if (cap > 0) {
+@@ -3175,7 +3175,7 @@ update_tg_cfs_runnable(struct cfs_rq *cfs_rq, struct sched_entity *se, struct cf
+ 	 * is not we rescale running_sum 1st
+ 	 */
+ 	running_sum = se->avg.util_sum /
+-		arch_scale_cpu_capacity(NULL, cpu_of(rq_of(cfs_rq)));
++		arch_scale_cpu_capacity(cpu_of(rq_of(cfs_rq)));
+ 	runnable_sum = max(runnable_sum, running_sum);
+ 
+ 	load_sum = (s64)se_weight(se) * runnable_sum;
+@@ -7462,7 +7462,7 @@ static inline int get_sd_load_idx(struct sched_domain *sd,
+ static unsigned long scale_rt_capacity(int cpu)
+ {
+ 	struct rq *rq = cpu_rq(cpu);
+-	unsigned long max = arch_scale_cpu_capacity(NULL, cpu);
++	unsigned long max = arch_scale_cpu_capacity(cpu);
+ 	unsigned long used, free;
+ 	unsigned long irq;
+ 
+@@ -7487,7 +7487,7 @@ static void update_cpu_capacity(struct sched_domain *sd, int cpu)
+ 	unsigned long capacity = scale_rt_capacity(cpu);
+ 	struct sched_group *sdg = sd->groups;
+ 
+-	cpu_rq(cpu)->cpu_capacity_orig = arch_scale_cpu_capacity(sd, cpu);
++	cpu_rq(cpu)->cpu_capacity_orig = arch_scale_cpu_capacity(cpu);
+ 
+ 	if (!capacity)
+ 		capacity = 1;
+diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
+index 35475c0..5efa152 100644
+--- a/kernel/sched/pelt.c
++++ b/kernel/sched/pelt.c
+@@ -114,7 +114,7 @@ accumulate_sum(u64 delta, int cpu, struct sched_avg *sa,
+ 	u64 periods;
+ 
+ 	scale_freq = arch_scale_freq_capacity(cpu);
+-	scale_cpu = arch_scale_cpu_capacity(NULL, cpu);
++	scale_cpu = arch_scale_cpu_capacity(cpu);
+ 
+ 	delta += sa->period_contrib;
+ 	periods = delta / 1024; /* A period is 1024us (~1ms) */
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 4a2e8ca..b1715b8 100644
+index b1715b8..8b306ce 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -1758,9 +1758,6 @@ unsigned long arch_scale_freq_capacity(int cpu)
+@@ -1756,7 +1756,7 @@ unsigned long arch_scale_freq_capacity(int cpu)
+ #ifdef CONFIG_SMP
+ #ifndef arch_scale_cpu_capacity
  static __always_inline
- unsigned long arch_scale_cpu_capacity(struct sched_domain *sd, int cpu)
+-unsigned long arch_scale_cpu_capacity(struct sched_domain *sd, int cpu)
++unsigned long arch_scale_cpu_capacity(int cpu)
  {
--	if (sd && (sd->flags & SD_SHARE_CPUCAPACITY) && (sd->span_weight > 1))
--		return sd->smt_gain / sd->span_weight;
--
  	return SCHED_CAPACITY_SCALE;
  }
- #endif
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 56a0fed..069c924 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -1129,7 +1129,6 @@ sd_init(struct sched_domain_topology_level *tl,
- 
- 		.last_balance		= jiffies,
- 		.balance_interval	= sd_weight,
--		.smt_gain		= 0,
- 		.max_newidle_lb_cost	= 0,
- 		.next_decay_max_lb_cost	= jiffies,
- 		.child			= child,
-@@ -1155,7 +1154,6 @@ sd_init(struct sched_domain_topology_level *tl,
- 	if (sd->flags & SD_SHARE_CPUCAPACITY) {
- 		sd->flags |= SD_PREFER_SIBLING;
- 		sd->imbalance_pct = 110;
--		sd->smt_gain = 1178; /* ~15% */
- 
- 	} else if (sd->flags & SD_SHARE_PKG_RESOURCES) {
- 		sd->flags |= SD_PREFER_SIBLING;
+@@ -1764,7 +1764,7 @@ unsigned long arch_scale_cpu_capacity(struct sched_domain *sd, int cpu)
+ #else
+ #ifndef arch_scale_cpu_capacity
+ static __always_inline
+-unsigned long arch_scale_cpu_capacity(void __always_unused *sd, int cpu)
++unsigned long arch_scale_cpu_capacity(int cpu)
+ {
+ 	return SCHED_CAPACITY_SCALE;
+ }
 -- 
 2.7.4
 
