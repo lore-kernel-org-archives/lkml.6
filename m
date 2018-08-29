@@ -2,224 +2,168 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36ADAC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:21:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7384C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:23:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6E5F20862
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:21:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76BED2084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:23:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zH8Y0GP9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6E5F20862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="UQlLJOZ2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76BED2084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728719AbeH2RSu (ORCPT
+        id S1728416AbeH2RUr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 13:18:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56312 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727204AbeH2RSt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 13:18:49 -0400
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 404FC2084E;
-        Wed, 29 Aug 2018 13:21:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535548912;
-        bh=e3nDiQJ/xfn5crXdUY5SXaBHWqwPe2j6RWTUz4c3QFU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=zH8Y0GP9/r5ueGq5Kwvwzi2I3EOb9MkyG7uWkw1FmeUvZxAGv5agnOdX2Y5jFt9Xk
-         ZYZRot2kTcE1uWAmS5tWXDWZg9Zk5uE3WqMS9xX9An8e9p8d8v17GSkFjWXIAuHoma
-         lbegUbx3qhY1lPzfAGyBvZmL/LbyM8yO4Pzzx+8c=
-Date:   Wed, 29 Aug 2018 22:21:49 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        <x86@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        <linux-arch@vger.kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [RFC PATCH 4/6] x86/alternatives: initializing temporary mm for
- patching
-Message-Id: <20180829222149.adfeee806322a332bb1e4ab9@kernel.org>
-In-Reply-To: <20180829081147.184610-5-namit@vmware.com>
-References: <20180829081147.184610-1-namit@vmware.com>
-        <20180829081147.184610-5-namit@vmware.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Wed, 29 Aug 2018 13:20:47 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:46242 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727554AbeH2RUr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 13:20:47 -0400
+Received: by mail-pg1-f196.google.com with SMTP id b129-v6so2309497pga.13
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 06:23:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=XYyeJaOOdJiXslDb0WDNj6spb/ulDuxRoYmX2IaFZB4=;
+        b=UQlLJOZ2dhTo66awR/bS/3AZYPCofeNopIbkOC239b41wbJqYes8IuGjmvRWlQze+0
+         aWhRRYNZOOWZPVVwclCafNvApfMvtvBel74xGNTPFEiTQp8CgFQzAqJc9cmFLBDGu8UI
+         sGSYpczztU3kWsyWoZNyscPjmFpB6XaUbATPecHVvPkMS3vpISROIHPSP5UUVWJkwpHf
+         T8QjwbG/QkXWAgJvCnE7rn1MvGkh2Be6BGhGedN0MJb+7deu7mACg8B8OBDELasq7/oD
+         I75mfzXuwnFIyW80uxxpye/TyiFpDSDK53+LUu3izfOAeIm8XQ4QBKEA1zN7Wxx/zs3K
+         6YoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=XYyeJaOOdJiXslDb0WDNj6spb/ulDuxRoYmX2IaFZB4=;
+        b=Ua4/ybfOulIO0vBd+Z0AY2kX5abJQJOjpwNQkUsUuypZK1xEje54dAQv/tIDPnpFMA
+         JkpWImARHUBKQcjuXV2tdkqk2XxoRIs5bKku9WahvZKiT0ORqiRT/6gx36kaqQjGsEHP
+         M5q19ac+IajbI5aY0DqKXySXAxPi1AKHoHWCy3IHiikZjButl223//pu3mybcCMgNbIc
+         aDQIuGCsLggAoJxbR662ZXY1nFSvaNbmLbR32xp1Av8g0/DLJIbTifjfn/U+WDhtFIHd
+         Ue97LHoMhBSCX+w29MP8z3JaxOF7HllbQXTvktAoFO5805C6owkjR1D33uurjhK81PiO
+         zbjw==
+X-Gm-Message-State: APzg51Aev87bZTY1fkCBT/0u0PGYvPS6gZLgYdTgHAv9Vxo6MO+PN8l2
+        X3enrp10R3FJeak/oD66Gcq54Q==
+X-Google-Smtp-Source: ANB0VdY3F6nQrW8cQczCgpe8KFzHx6MR5VWMizni3TbrP1tICHQwCb3TwOzZM/6wvrJuoF1MPhKzEA==
+X-Received: by 2002:a63:26c6:: with SMTP id m189-v6mr413441pgm.70.1535549030463;
+        Wed, 29 Aug 2018 06:23:50 -0700 (PDT)
+Received: from [10.86.62.45] (rap-us.hgst.com. [199.255.44.250])
+        by smtp.googlemail.com with ESMTPSA id p64-v6sm8749352pfa.47.2018.08.29.06.23.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 Aug 2018 06:23:49 -0700 (PDT)
+Subject: Re: [PATCH 2/7] lightnvm: pblk: fix mapping issue on failed writes
+To:     hans.ml.holmberg@owltronix.com
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        javier@cnexlabs.com, hans.holmberg@cnexlabs.com
+References: <1535545414-550-1-git-send-email-hans.ml.holmberg@owltronix.com>
+ <1535545414-550-3-git-send-email-hans.ml.holmberg@owltronix.com>
+From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <eb5ca95c-6c4a-71a0-4cf1-634b211b52ce@lightnvm.io>
+Date:   Wed, 29 Aug 2018 15:23:45 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
+MIME-Version: 1.0
+In-Reply-To: <1535545414-550-3-git-send-email-hans.ml.holmberg@owltronix.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 29 Aug 2018 01:11:45 -0700
-Nadav Amit <namit@vmware.com> wrote:
-
-> To prevent improper use of the PTEs that are used for text patching, we
-> want to use a temporary mm struct. We initailize it by copying the init
-> mm.
+On 08/29/2018 02:23 PM, Hans Holmberg wrote:
+> From: Hans Holmberg <hans.holmberg@cnexlabs.com>
 > 
-> The address that will be used for patching is taken from the lower area
-> that is usually used for the task memory. Doing so prevents the need to
-> frequently synchronize the temporary-mm (e.g., when BPF programs are
-> installed), since different PGDs are used for the task memory.
+> On 1.2-devices, the mapping-out of remaning sectors in the
+> failed-write's block can result in an infinite loop,
+> stalling the write pipeline, fix this.
 > 
-> Finally, we randomize the address of the PTEs to harden against exploits
-> that use these PTEs.
+> Fixes: 6a3abf5beef6 ("lightnvm: pblk: rework write error recovery path")
 > 
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Suggested-by: Andy Lutomirski <luto@kernel.org>
-> Signed-off-by: Nadav Amit <namit@vmware.com>
+> Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
 > ---
->  arch/x86/include/asm/pgtable.h       |  4 ++++
->  arch/x86/include/asm/text-patching.h |  2 ++
->  arch/x86/mm/init_64.c                | 35 ++++++++++++++++++++++++++++
->  include/asm-generic/pgtable.h        |  4 ++++
->  init/main.c                          |  1 +
->  5 files changed, 46 insertions(+)
+>   drivers/lightnvm/pblk-write.c | 45 ++++++++++++++++++++++++++++++++++---------
+>   1 file changed, 36 insertions(+), 9 deletions(-)
 > 
-> diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-> index e4ffa565a69f..c65d2b146ff6 100644
-> --- a/arch/x86/include/asm/pgtable.h
-> +++ b/arch/x86/include/asm/pgtable.h
-> @@ -1022,6 +1022,10 @@ static inline void __meminit init_trampoline_default(void)
->  	/* Default trampoline pgd value */
->  	trampoline_pgd_entry = init_top_pgt[pgd_index(__PAGE_OFFSET)];
->  }
-> +
-> +void __init poking_init(void);
-> +#define poking_init poking_init
-
-Would we need this macro?
-
-> +
->  # ifdef CONFIG_RANDOMIZE_MEMORY
->  void __meminit init_trampoline(void);
->  # else
-> diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
-> index e85ff65c43c3..ffe7902cc326 100644
-> --- a/arch/x86/include/asm/text-patching.h
-> +++ b/arch/x86/include/asm/text-patching.h
-> @@ -38,5 +38,7 @@ extern void *text_poke(void *addr, const void *opcode, size_t len);
->  extern int poke_int3_handler(struct pt_regs *regs);
->  extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
->  extern int after_bootmem;
-> +extern __ro_after_init struct mm_struct *poking_mm;
-> +extern __ro_after_init unsigned long poking_addr;
->  
->  #endif /* _ASM_X86_TEXT_PATCHING_H */
-> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-> index dd519f372169..ed4a46a89946 100644
-> --- a/arch/x86/mm/init_64.c
-> +++ b/arch/x86/mm/init_64.c
-> @@ -33,6 +33,7 @@
->  #include <linux/nmi.h>
->  #include <linux/gfp.h>
->  #include <linux/kcore.h>
-> +#include <linux/sched/mm.h>
->  
->  #include <asm/processor.h>
->  #include <asm/bios_ebda.h>
-> @@ -54,6 +55,7 @@
->  #include <asm/init.h>
->  #include <asm/uv/uv.h>
->  #include <asm/setup.h>
-> +#include <asm/text-patching.h>
->  
->  #include "mm_internal.h"
->  
-> @@ -1389,6 +1391,39 @@ unsigned long memory_block_size_bytes(void)
->  	return memory_block_size_probed;
->  }
->  
-> +/*
-> + * Initialize an mm_struct to be used during poking and a pointer to be used
-> + * during patching. If anything fails during initialization, poking will be done
-> + * using the fixmap, which is unsafe, so warn the user about it.
-> + */
-> +void __init poking_init(void)
+> diff --git a/drivers/lightnvm/pblk-write.c b/drivers/lightnvm/pblk-write.c
+> index 1bc879ab679d..fd67325f6e54 100644
+> --- a/drivers/lightnvm/pblk-write.c
+> +++ b/drivers/lightnvm/pblk-write.c
+> @@ -103,6 +103,41 @@ static void pblk_complete_write(struct pblk *pblk, struct nvm_rq *rqd,
+>   	pblk_rb_sync_end(&pblk->rwb, &flags);
+>   }
+>   
+> +static int pblk_next_ppa_in_blk(struct nvm_geo *geo, struct ppa_addr *ppa)
 > +{
-> +	unsigned long poking_addr;
-> +
-> +	poking_mm = copy_init_mm();
-> +	if (!poking_mm)
-> +		goto error;
-> +
-> +	/*
-> +	 * Randomize the poking address, but make sure that the following page
-> +	 * will be mapped at the same PMD. We need 2 pages, so find space for 3,
-> +	 * and adjust the address if the PMD ends after the first one.
-> +	 */
-> +	poking_addr = TASK_UNMAPPED_BASE +
-> +		(kaslr_get_random_long("Poking") & PAGE_MASK) %
-> +		(TASK_SIZE - TASK_UNMAPPED_BASE - 3 * PAGE_SIZE);
-> +
-> +	if (((poking_addr + PAGE_SIZE) & ~PMD_MASK) == 0)
-> +		poking_addr += PAGE_SIZE;
-> +
-> +	return;
-> +error:
-> +	if (poking_mm)
-> +		mmput(poking_mm);
-> +	poking_mm = NULL;
+> +	int done = 0;
 
-At this point, only poking_mm == NULL case jumps into error. So we don't
-need above 3 lines.
+Could this please be renamed to last to signify it is the last ppa in 
+the ppa.
 
-> +	pr_err("x86/mm: error setting a separate poking address space\n");
+> +
+> +	if (geo->version == NVM_OCSSD_SPEC_12) {
+> +		int sec = ppa->g.sec;
+> +
+> +		sec++;
+> +		if (sec == geo->ws_min) {
+> +			int pg = ppa->g.pg;
+> +
+> +			sec = 0;
+> +			pg++;
+> +			if (pg == geo->num_pg) {
+> +				int pl = ppa->g.pl;
+> +
+> +				pg = 0;
+> +				pl++;
+> +				if (pl == geo->num_pln)
+> +					done = 1;
+> +
+> +				ppa->g.pl = pl;
+> +			}
+> +			ppa->g.pg = pg;
+> +		}
+> +		ppa->g.sec = sec;
+> +	} else {
+> +		ppa->m.sec++;
+> +		if (ppa->m.sec == geo->clba)
+> +			done = 1;
+> +	}
+> +
+> +	return done;
 > +}
 > +
->  #ifdef CONFIG_SPARSEMEM_VMEMMAP
->  /*
->   * Initialise the sparsemem vmemmap using huge-pages at the PMD level.
-> diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
-> index 88ebc6102c7c..c66579d0ee67 100644
-> --- a/include/asm-generic/pgtable.h
-> +++ b/include/asm-generic/pgtable.h
-> @@ -1111,6 +1111,10 @@ static inline bool arch_has_pfn_modify_check(void)
->  
->  #ifndef PAGE_KERNEL_EXEC
->  # define PAGE_KERNEL_EXEC PAGE_KERNEL
-> +
-> +#ifndef poking_init
-> +static inline void poking_init(void) { }
-> +#endif
 
-Hmm, this seems a bit tricky. Maybe we can make an __weak function
-in init/main.c.
+Can you please move this function to core? I want to avoid introducing 
+more if's around 1.2/2.0 in targets.
 
-Thank you,
-
->  #endif
->  
->  #endif /* !__ASSEMBLY__ */
-> diff --git a/init/main.c b/init/main.c
-> index 18f8f0140fa0..6754ff2687c8 100644
-> --- a/init/main.c
-> +++ b/init/main.c
-> @@ -725,6 +725,7 @@ asmlinkage __visible void __init start_kernel(void)
->  	taskstats_init_early();
->  	delayacct_init();
->  
-> +	poking_init();
->  	check_bugs();
->  
->  	acpi_subsystem_init();
-> -- 
-> 2.17.1
+>   /* Map remaining sectors in chunk, starting from ppa */
+>   static void pblk_map_remaining(struct pblk *pblk, struct ppa_addr *ppa)
+>   {
+> @@ -125,15 +160,7 @@ static void pblk_map_remaining(struct pblk *pblk, struct ppa_addr *ppa)
+>   		if (!test_and_set_bit(paddr, line->invalid_bitmap))
+>   			le32_add_cpu(line->vsc, -1);
+>   
+> -		if (geo->version == NVM_OCSSD_SPEC_12) {
+> -			map_ppa.ppa++;
+> -			if (map_ppa.g.pg == geo->num_pg)
+> -				done = 1;
+> -		} else {
+> -			map_ppa.m.sec++;
+> -			if (map_ppa.m.sec == geo->clba)
+> -				done = 1;
+> -		}
+> +		done = pblk_next_ppa_in_blk(geo, &map_ppa);
+>   	}
+>   
+>   	line->w_err_gc->has_write_err = 1;
 > 
 
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
