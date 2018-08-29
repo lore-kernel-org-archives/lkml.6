@@ -2,243 +2,261 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7792C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 17:59:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EF39C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 18:01:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 715412064E
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 17:59:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BCB32064E
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 18:01:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="agigNKJj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 715412064E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QFijrzlt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BCB32064E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728148AbeH2V5x (ORCPT
+        id S1728135AbeH2V71 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 17:57:53 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:45062 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726633AbeH2V5x (ORCPT
+        Wed, 29 Aug 2018 17:59:27 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:36335 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727399AbeH2V70 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 17:57:53 -0400
-Received: by mail-lj1-f193.google.com with SMTP id u83-v6so5081648lje.12;
-        Wed, 29 Aug 2018 10:59:48 -0700 (PDT)
+        Wed, 29 Aug 2018 17:59:26 -0400
+Received: by mail-pg1-f193.google.com with SMTP id d1-v6so2664431pgo.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 11:01:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=MYip9AbOVCQgzEPXolEh51dBtI4CiIkZBSQPky4ecn4=;
-        b=agigNKJjS8dB2aFfLGNADSTn+0JLzQYB07CkbSmeMBWx4BOPO8ybWk9tvjGQSRl9dH
-         ZfkWMOWjaNHs/ne+WEcxR3TmGvdx9G1qYZtnjdp5gPr0tajZDDM8zszWZDRaMUtjydod
-         6f6dJP37AJnKSnO64NBFETSvpwtfdNWi4tru1vKy4mDu72eliTxjjbLjPnuziGMtrs86
-         ad5wdnNty3vEAvyuvo68HtyjYVTGszZFgIVt7oFHCpgI2nddVWwDTYD98UcgdhHQTH60
-         JOfiRynYp5cr+CC9MpCqT2V5H0zCI4FdtfxBW9YH+ebXl/+tgnfDM5Ff4O395Ov8aLBh
-         vvyA==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=9GDpMREyeT2GBhNT8zhNcEBbqvFl4QeVKQ66Bh2sdcQ=;
+        b=QFijrzltB7+NRK4h8zmA3chKGuH41HhUyQ3Dj8RNOJiEJaDY2IWfMaT5ROgW/DdUjI
+         BOe4cIWEJCzfJgFfccl3RSMjCG793Ko4l7tcDTX0T86jd/NRQTpm5X7IR4WzJQCXaLkh
+         CcLZmYtbxvN2Epukwqub1HO924TOyxG9HDvZ4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=MYip9AbOVCQgzEPXolEh51dBtI4CiIkZBSQPky4ecn4=;
-        b=Rv9IfGAiy4rcePh6R8pjaOSu4/rqUDg+pQ7fEfOEYvu6eM27YzJ5Zu5/ZDxEandWnN
-         1qvlkflIt+XtG2KFy5ZP5m6SIasGH7pUl9qOjju9lbRbn2ni5G5WdnEbN6FxkxAfcPJd
-         5clbfLCUZRjCLx742pwkFzYOHOmo7mZOoGRR+YTtJw4TIx3xXiUH6pBg5nMslifyYwun
-         HmUlvtRFUQGskn/VeQWwgdijHmUnYorspW5tT4CYOK2KeHkuu2VEN+VNVczlfWH1922m
-         6YGkDqs/i+fL9EkU3EsjSeIJFJwr81aJDGGzixX48MxlzRhIsg2UqzbY394RM5FcluS9
-         aSCw==
-X-Gm-Message-State: APzg51C97F6aDd0UVmV5QfrMRFUQtkUMmd1Dr513yJAp5rmNJCfioCRZ
-        DHyLwauMQ9VGm0gjTQs/Oy0=
-X-Google-Smtp-Source: ANB0VdbupMqoF339jwiN7cehTpN+3p+1Lv3klNTnCV/qDkPvJb2gkHmzZMVvnJIXySfRnj4NDV8Y2w==
-X-Received: by 2002:a2e:1301:: with SMTP id 1-v6mr1094029ljt.56.1535565587710;
-        Wed, 29 Aug 2018 10:59:47 -0700 (PDT)
-Received: from z50.localnet (93-181-165-181.internetia.net.pl. [93.181.165.181])
-        by smtp.gmail.com with ESMTPSA id j10-v6sm860262ljb.33.2018.08.29.10.59.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 Aug 2018 10:59:46 -0700 (PDT)
-From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Peter Korsgaard <peter.korsgaard@barco.com>,
-        Peter Rosin <peda@axentia.se>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-gpio@vger.kernel.org,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-i2c@vger.kernel.org, linux-mmc@vger.kernel.org,
-        Network Development <netdev@vger.kernel.org>,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-serial@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Willy Tarreau <w@1wt.eu>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: Re: [RFC RFT PATCH v4 1/4] gpiolib: Pass bitmaps, not integer arrays, to get/set array
-Date:   Wed, 29 Aug 2018 20:01:01 +0200
-Message-ID: <21039309.e3MgZOjmZl@z50>
-In-Reply-To: <CANiq72kM9bYJ1Q+dbLumjfQLZW223ZTrYEFqfQ2Jv2SAjrD1NA@mail.gmail.com>
-References: <20180813223448.21316-1-jmkrzyszt@gmail.com> <20180820234341.5271-2-jmkrzyszt@gmail.com> <CANiq72kM9bYJ1Q+dbLumjfQLZW223ZTrYEFqfQ2Jv2SAjrD1NA@mail.gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9GDpMREyeT2GBhNT8zhNcEBbqvFl4QeVKQ66Bh2sdcQ=;
+        b=sugf5Q+NGwBCaVGLlmLlEaUdBdBRQ+nj/G6I81P8SZ8L1p56URm5hfcdd8iXDY+lKt
+         h0GAe0Lx6/2pLyjrmsBkbFrmDIB7n/GaY+BLgw43LY3jTJJC1MSO577GDHwVzl3RMgAV
+         2J0MCptmIImNeXHfmFzPXAnNiEq4P4JP3S+6ZPZUE0LHxok7yqGMyQSLT8lRT99V96vr
+         Tnn0wknwtKdJBN11Kchu1rhaD+T0aIvwoU/6hMnH1P7iAz2KPGk2+hacyZkzpxuywadI
+         U+O4hKDcT31nQMETqd+IyQlHdE74zZuJ3ReG4X/Pb0S3QDzF+REKPYHYgwi0ry5Vp2BV
+         J5jQ==
+X-Gm-Message-State: APzg51A2WM5QHHQElrbsDQXkP0qz0NdnXjdOxm7FulHzKhh9JtE7wQR8
+        z2gNyYGbmdL0Capc4OWzHN76UQ==
+X-Google-Smtp-Source: ANB0VdauMM/ZIRuXZSNieSTVRqnXv4bGBtB86SLkuZQGRrrYZ8X0Sh5w9cB8RTvmTGfe7uEJG7sTJw==
+X-Received: by 2002:a63:5055:: with SMTP id q21-v6mr6578307pgl.397.1535565684024;
+        Wed, 29 Aug 2018 11:01:24 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
+        by smtp.gmail.com with ESMTPSA id k8-v6sm7860980pga.80.2018.08.29.11.01.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 29 Aug 2018 11:01:23 -0700 (PDT)
+Date:   Wed, 29 Aug 2018 11:01:22 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Taniya Das <tdas@codeaurora.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Amit Nischal <anischal@codeaurora.org>,
+        devicetree@vger.kernel.org, robh@kernel.org,
+        skannan@codeaurora.org, amit.kucheria@linaro.org,
+        evgreen@google.com
+Subject: Re: [PATCH v7 2/2] cpufreq: qcom-hw: Add support for QCOM cpufreq HW
+ driver
+Message-ID: <20180829180122.GC10879@google.com>
+References: <1532428970-18122-1-git-send-email-tdas@codeaurora.org>
+ <1532428970-18122-3-git-send-email-tdas@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1532428970-18122-3-git-send-email-tdas@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, August 29, 2018 2:03:18 PM CEST Miguel Ojeda wrote:
-> Hi Janusz,
+Hi Taniya,
+
+On Tue, Jul 24, 2018 at 04:12:50PM +0530, Taniya Das wrote:
+> The CPUfreq HW present in some QCOM chipsets offloads the steps necessary
+> for changing the frequency of CPUs. The driver implements the cpufreq
+> driver interface for this hardware engine.
 > 
-> On Tue, Aug 21, 2018 at 1:43 AM, Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
-> > Most users of get/set array functions iterate consecutive bits of data,
-> > usually a single integer, while or processing array of results obtained
-> > from or building an array of values to be passed to those functions.
-> > Save time wasted on those iterations by changing the functions' API to
-> > accept bitmaps.
-> >
-> > All current users are updated as well.
-> >
-> > More benefits from the change are expected as soon as planned support
-> > for accepting/passing those bitmaps directly from/to respective GPIO
-> > chip callbacks if applicable is implemented.
-> >
-> > Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-> > ---
-> >  Documentation/driver-api/gpio/consumer.rst  | 22 ++++----
-> >  drivers/auxdisplay/hd44780.c                | 52 +++++++++--------
+> Signed-off-by: Saravana Kannan <skannan@codeaurora.org>
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
+>  drivers/cpufreq/Kconfig.arm       |  11 ++
+>  drivers/cpufreq/Makefile          |   1 +
+>  drivers/cpufreq/qcom-cpufreq-hw.c | 348 ++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 360 insertions(+)
+>  create mode 100644 drivers/cpufreq/qcom-cpufreq-hw.c
 > 
-> [CC'ing Willy and Geert for hd44780]
+> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+> index 0cd8eb7..93a9d72 100644
+> --- a/drivers/cpufreq/Kconfig.arm
+> +++ b/drivers/cpufreq/Kconfig.arm
+> @@ -298,3 +298,14 @@ config ARM_PXA2xx_CPUFREQ
+>  	  This add the CPUFreq driver support for Intel PXA2xx SOCs.
 > 
-> > diff --git a/drivers/auxdisplay/hd44780.c b/drivers/auxdisplay/hd44780.c
-> > index f1a42f0f1ded..d340473aa142 100644
-> > --- a/drivers/auxdisplay/hd44780.c
-> > +++ b/drivers/auxdisplay/hd44780.c
-> > @@ -62,20 +62,19 @@ static void hd44780_strobe_gpio(struct hd44780 *hd)
-> >  /* write to an LCD panel register in 8 bit GPIO mode */
-> >  static void hd44780_write_gpio8(struct hd44780 *hd, u8 val, unsigned int rs)
-> >  {
-> > -       int values[10]; /* for DATA[0-7], RS, RW */
-> > -       unsigned int i, n;
-> > +       unsigned long value_bitmap[1];  /* for DATA[0-7], RS, RW */
+>  	  If in doubt, say N.
+> +
+> +config ARM_QCOM_CPUFREQ_HW
+> +	bool "QCOM CPUFreq HW driver"
+> +	depends on ARCH_QCOM
+> +	help
+> +	 Support for the CPUFreq HW driver.
+> +	 Some QCOM chipsets have a HW engine to offload the steps
+> +	 necessary for changing the frequency of the CPUs. Firmware loaded
+> +	 in this engine exposes a programming interface to the OS.
+> +	 The driver implements the cpufreq interface for this HW engine.
+> +	 Say Y if you want to support CPUFreq HW.
+> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+> index c1ffeab..ca48a1d 100644
+> --- a/drivers/cpufreq/Makefile
+> +++ b/drivers/cpufreq/Makefile
+> @@ -85,6 +85,7 @@ obj-$(CONFIG_ARM_TEGRA124_CPUFREQ)	+= tegra124-cpufreq.o
+>  obj-$(CONFIG_ARM_TEGRA186_CPUFREQ)	+= tegra186-cpufreq.o
+>  obj-$(CONFIG_ARM_TI_CPUFREQ)		+= ti-cpufreq.o
+>  obj-$(CONFIG_ARM_VEXPRESS_SPC_CPUFREQ)	+= vexpress-spc-cpufreq.o
+> +obj-$(CONFIG_ARM_QCOM_CPUFREQ_HW)	+= qcom-cpufreq-hw.o
 > 
-> Why [1]? I understand it is because in other cases it may be more than
-> one,
-
-Yes, I tried to point out the fact the new API accepts a bitmap of an arbitrary 
-length, and I tried to use the same code pattern across changes to the API 
-users.
-
-> but...
 > 
-> > +       unsigned int n;
-> >
-> > -       for (i = 0; i < 8; i++)
-> > -               values[PIN_DATA0 + i] = !!(val & BIT(i));
-> > -       values[PIN_CTRL_RS] = rs;
-> > +       value_bitmap[0] = val;
-> > +       __assign_bit(PIN_CTRL_RS, value_bitmap, rs);
-> >         n = 9;
-> >         if (hd->pins[PIN_CTRL_RW]) {
-> > -               values[PIN_CTRL_RW] = 0;
-> > +               __clear_bit(PIN_CTRL_RW, value_bitmap);
-> >                 n++;
-> >         }
-> >
-> >         /* Present the data to the port */
-> > -       gpiod_set_array_value_cansleep(n, &hd->pins[PIN_DATA0], values);
-> > +       gpiod_set_array_value_cansleep(n, &hd->pins[PIN_DATA0], value_bitmap);
-> >
-> >         hd44780_strobe_gpio(hd);
-> >  }
-> > @@ -83,32 +82,31 @@ static void hd44780_write_gpio8(struct hd44780 *hd, u8 val, unsigned int rs)
-> >  /* write to an LCD panel register in 4 bit GPIO mode */
-> >  static void hd44780_write_gpio4(struct hd44780 *hd, u8 val, unsigned int rs)
-> >  {
-> > -       int values[10]; /* for DATA[0-7], RS, RW, but DATA[0-3] is unused */
-> > -       unsigned int i, n;
-> > +       /* for DATA[0-7], RS, RW, but DATA[0-3] is unused */
-> > +       unsigned long value_bitmap[0];
+>  ##################################################################################
+> diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
+> new file mode 100644
+> index 0000000..ea8f7d1
+> --- /dev/null
+> +++ b/drivers/cpufreq/qcom-cpufreq-hw.c
+> @@ -0,0 +1,348 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+> + */
+> +
+> +#include <linux/cpufreq.h>
+> +#include <linux/init.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_platform.h>
+> +
+> +#define INIT_RATE			300000000UL
+> +#define LUT_MAX_ENTRIES			40U
+> +#define CORE_COUNT_VAL(val)		(((val) & (GENMASK(18, 16))) >> 16)
+> +#define LUT_ROW_SIZE			32
+> +
+> +enum {
+> +	REG_ENABLE,
+> +	REG_LUT_TABLE,
+> +	REG_PERF_STATE,
+> +
+> +	REG_ARRAY_SIZE,
+> +};
+> +
+> +struct cpufreq_qcom {
+> +	struct cpufreq_frequency_table *table;
+> +	struct device *dev;
+
+'dev' is not used and can be removed.
+
+> ...
 > 
-> This one is even more strange... :-)
+> +static int qcom_cpu_resources_init(struct platform_device *pdev,
+> +				   struct device_node *np, unsigned int cpu,
+> +				   unsigned long xo_rate)
+> +{
+> +	struct cpufreq_qcom *c;
+> +	struct resource res;
+> +	struct device *dev = &pdev->dev;
+> +	const u16 *offsets;
+> +	int ret, i, cpu_first, cpu_r;
+> +	void __iomem *base;
+> +
+> +	if (qcom_freq_domain_map[cpu])
+> +		return 0;
+> +
+> +	c = devm_kzalloc(dev, sizeof(*c), GFP_KERNEL);
+> +	if (!c)
+> +		return -ENOMEM;
+> +
+> +	offsets = of_device_get_match_data(&pdev->dev);
+> +	if (!offsets)
+> +		return -EINVAL;
+> +
+> +	if (of_address_to_resource(np, 0, &res))
+> +		return -ENOMEM;
+> +
+> +	base = devm_ioremap_resource(dev, &res);
+> +	if (!base)
+> +		return -ENOMEM;
+> +
+> +	for (i = REG_ENABLE; i < REG_ARRAY_SIZE; i++)
+> +		c->reg_bases[i] = base + offsets[i];
+> +
+> +	/* HW should be in enabled state to proceed */
+> +	if (!(readl_relaxed(c->reg_bases[REG_ENABLE]) & 0x1)) {
+> +		dev_err(dev, "%s cpufreq hardware not enabled\n", np->name);
+> +		return -ENODEV;
+> +	}
+> +
+> +	ret = qcom_get_related_cpus(np, &c->related_cpus);
+> +	if (ret) {
+> +		dev_err(dev, "%s failed to get related CPUs\n", np->name);
+> +		return ret;
+> +	}
+> +
+> +	c->max_cores = cpumask_weight(&c->related_cpus);
+> +	if (!c->max_cores)
+> +		return -ENOENT;
+> +
+> +	c->xo_rate = xo_rate;
+> +
+> +	ret = qcom_cpufreq_hw_read_lut(pdev, c);
+> +	if (ret) {
+> +		dev_err(dev, "%s failed to read LUT\n", np->name);
+> +		return ret;
+> +	}
+> +
+> +	qcom_freq_domain_map[cpu] = c;
+> +
+> +	/* Related CPUs */
+> +	cpu_first = cpumask_first(&c->related_cpus);
+> +
+> +	for_each_cpu(cpu_r, &c->related_cpus) {
+> +		if (cpu_r != cpu_first)
+> +			qcom_freq_domain_map[cpu_r] =
+> +				qcom_freq_domain_map[cpu_first];
+> +	}
 
-This one is an error, should be 1 of course :-), thanks.
+The above ten lines could be simplified to:
 
-> > +       unsigned int n;
-> >
-> >         /* High nibble + RS, RW */
-> > -       for (i = 4; i < 8; i++)
-> > -               values[PIN_DATA0 + i] = !!(val & BIT(i));
-> > -       values[PIN_CTRL_RS] = rs;
-> > +       value_bitmap[0] = val;
-> > +       __assign_bit(PIN_CTRL_RS, value_bitmap, rs);
-> >         n = 5;
-> >         if (hd->pins[PIN_CTRL_RW]) {
-> > -               values[PIN_CTRL_RW] = 0;
-> > +               __clear_bit(PIN_CTRL_RW, value_bitmap);
-> >                 n++;
-> >         }
-> > +       value_bitmap[0] = value_bitmap[0] >> PIN_DATA4;
+	for_each_cpu(cpu_r, &c->related_cpus)
+		qcom_freq_domain_map[cpu_r] = c;
+
+> ...
 > 
-> Maybe >>=?
+> +static int __init qcom_cpufreq_hw_init(void)
+> +{
+> +	return platform_driver_register(&qcom_cpufreq_hw_driver);
+> +}
+> +subsys_initcall(qcom_cpufreq_hw_init);
 
-OK.
+Is subsys_initcall used for a particular reason? It will cause
+problems when registering cooling devices, since the thermal device
+class is initialized through an fs_initcall, which are executed
+later.
 
-Answering you question below:
-To make my changes as clear as I could imagine, I decided to use the same indexing as in the original code, i.e., assign high nibble of val to bits 4-7 and two other values - rs and an optional 0 - to bits 8 and 9, respectively.
-Unlike in case of array of integers, where for the high nibble part you could just pass a pointer to a sub-array starting at the 5th value (i.e., &values[PIN_DATA4]), it was not possible to do the same for and arbitrary bit of a bitmap, e.g., pass a pointer to the 5th bit of *value_bitmap as an argument pointing to bit 0 of a bitmap to be processed. That's why I shifted the bitmap right by 4 bits.
-Then, ...
+Most cpufreq drivers use module_init, device_initcall or
+late_initcall, can't this driver use one of those?
 
-> >
-> >         /* Present the data to the port */
-> > -       gpiod_set_array_value_cansleep(n, &hd->pins[PIN_DATA4],
-> > -                                      &values[PIN_DATA4]);
-> > +       gpiod_set_array_value_cansleep(n, &hd->pins[PIN_DATA4], value_bitmap);
-> >
-> >         hd44780_strobe_gpio(hd);
-> >
-> >         /* Low nibble */
-> > -       for (i = 0; i < 4; i++)
-> > -               values[PIN_DATA4 + i] = !!(val & BIT(i));
-> > +       value_bitmap[0] &= ~((1 << PIN_DATA4) - 1);
-> > +       value_bitmap[0] |= val & ~((1 << PIN_DATA4) - 1);
-> 
-> Are you sure this is correct? You are basically doing an or of
-> value_bitmap and val and clearing the low-nibble.
+Cheers
 
-having the rs and optional 0 already assigned to bits 4 and 5 of the bitmap, I just cleared bits 0-3 still containing the high nibble of val and assigned the low nibble of it to those bits, getting a result ready to be passed as an argument to gpiod_set_array_value_cansleep() below.
-
-I hope I didn't miss anything.
-
-Thanks,
-Janusz
-
-> >
-> >         /* Present the data to the port */
-> > -       gpiod_set_array_value_cansleep(n, &hd->pins[PIN_DATA4],
-> > -                                      &values[PIN_DATA4]);
-> > +       gpiod_set_array_value_cansleep(n, &hd->pins[PIN_DATA4], value_bitmap);
-> >
-> >         hd44780_strobe_gpio(hd);
-> >  }
-> 
-> Cheers,
-> Miguel
-> 
-
-
-
-
+Matthias
