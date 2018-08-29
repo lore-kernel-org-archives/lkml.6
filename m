@@ -2,252 +2,111 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E656C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 16:51:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34474C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 16:53:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 103B32064A
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 16:51:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 103B32064A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id C5C262064A
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 16:53:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iOjCz3vo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5C262064A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728253AbeH2Usv (ORCPT
+        id S1728086AbeH2Uux (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 16:48:51 -0400
-Received: from foss.arm.com ([217.140.101.70]:58212 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727868AbeH2Usv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 16:48:51 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D9B2318A;
-        Wed, 29 Aug 2018 09:51:04 -0700 (PDT)
-Received: from e110439-lin (e110439-lin.Emea.Arm.com [10.4.12.126])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E4DFB3F557;
-        Wed, 29 Aug 2018 09:51:00 -0700 (PDT)
-Date:   Wed, 29 Aug 2018 17:50:58 +0100
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     peterz@infradead.org, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        gregkh@linuxfoundation.org, mingo@redhat.com,
-        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
-        chris.redpath@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
-        smuckle@google.com, adharmap@codeaurora.org,
-        skannan@codeaurora.org, pkondeti@codeaurora.org,
-        juri.lelli@redhat.com, edubezval@gmail.com,
-        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
-        javi.merino@kernel.org
-Subject: Re: [PATCH v6 07/14] sched/topology: Introduce sched_energy_present
- static key
-Message-ID: <20180829165058.GR2960@e110439-lin>
-References: <20180820094420.26590-1-quentin.perret@arm.com>
- <20180820094420.26590-8-quentin.perret@arm.com>
+        Wed, 29 Aug 2018 16:50:53 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:45641 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727245AbeH2Uux (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 16:50:53 -0400
+Received: by mail-qt0-f196.google.com with SMTP id g44-v6so6487865qtb.12;
+        Wed, 29 Aug 2018 09:53:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sg8laCrFDqy3AYErb0BN6Xm/+lKIjgyvXK747RSkRqY=;
+        b=iOjCz3vofsvvxVncXE136T9C3p/s+05SnXfx59dHJffYNIidl6E8YyFg+a/DgpIzeI
+         qO7rUrZfgVPlPfPgnVSoyjB3dkMa09+A2yEdhWIhcfq6FF8Lp1dtRGfboUG46/wMfzxM
+         vg7hG09ZcpU2hQ1I6JWcqlm4gfblyQPw0V47lsc8G4PCCGvQlVyBTOBzEX/0kXJY2V/L
+         vE6nDA2xIYZUe2r6Bx96nJT3tmhJAo1emve1plUuzO6Y3FaRbdNGfEtSp12zni5/wQiK
+         CqkzakE8ktHU+N0hTDXZROh1dNoau0YPtTqSSz0csQEzAtzDhF9ycw/IzBBzgU6VzcyX
+         PLEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sg8laCrFDqy3AYErb0BN6Xm/+lKIjgyvXK747RSkRqY=;
+        b=b+78ndn3n9ea3y2sl651RKnIdGFzfiqs/s/DMxZ3nLRMiTRrz994oo8g+y0zxBp3Pc
+         bxJZFvT+521TFjZct+uEj+KYALxDEb09GrrTawoOPeFawRJHDwPnHiGJrk55CCXQiqhz
+         kzzOKeQBSQgxppQjNuU3bP5XkXICucKtSfki3/0Xf54P9nGgi6cfZAY6WVgERwgxJKEV
+         HVDUzb7XXRox7Bym/raEy/95sJiLp0hvGIJSEOFTI+Fna1T1YpgDARxpWoavO3yBXrXC
+         L6FuSjghLd3AvjzX++MC6777c1r9MbWsykSEME5o6AaPMetycaj72aQsdtamG8bNB1YC
+         3I+g==
+X-Gm-Message-State: APzg51D7dXyRgF20ZYR+HxLIspNbz8yaULA0xWw1KmdRqvg6avy+Yje9
+        2GKQO4xpC/5s6CwKs/SlZk/QF7fD0yzpjDydwzQ=
+X-Google-Smtp-Source: ANB0VdajqL7N/rb5aOGWg43zirkihEnbPmrYswFYjxf+GEuvjyp7Qcv4htvn4+JEFukxwDmsG1Caz0n6RtVGZvebJJ0=
+X-Received: by 2002:a0c:c13c:: with SMTP id f57-v6mr7486521qvh.7.1535561585204;
+ Wed, 29 Aug 2018 09:53:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180820094420.26590-8-quentin.perret@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20180829150955.GB7459@smile.fi.intel.com> <20180829151501.GE27808@sirena.org.uk>
+In-Reply-To: <20180829151501.GE27808@sirena.org.uk>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 29 Aug 2018 19:52:54 +0300
+Message-ID: <CAHp75VeUF7ww7cNy0qHqFSp7bA65Ln3qj_U9AC0UNCX4FRrutg@mail.gmail.com>
+Subject: Re: [andriy.shevchenko@linux.intel.com: Re: [PATCH] spi: dw-mmio: add
+ MSCC Jaguar2 support]
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        allan.nielsen@microchip.com,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Quentin,
-a couple of minor notes/questions follow...
+On Wed, Aug 29, 2018 at 6:16 PM Mark Brown <broonie@kernel.org> wrote:
+>
+> On Wed, Aug 29, 2018 at 06:09:55PM +0300, Andy Shevchenko wrote:
+> > ----- Forwarded message from Andy Shevchenko <andriy.shevchenko@linux.intel.com> -----
+> >
+> > Date: Wed, 29 Aug 2018 18:08:31 +0300
+> > From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> > Subject: Re: [PATCH] spi: dw-mmio: add MSCC Jaguar2 support
+> > User-Agent: Mutt/1.10.1 (2018-07-13)
+> >
+> > On Wed, Aug 29, 2018 at 02:45:48PM +0200, Alexandre Belloni wrote:
+> > > Unfortunately, the Jaguar2 CPU_SYSTEM_CTRL register set has a different
+> > > layout than the Ocelot one. Handle that while keeping most of the code
+> > > common.
+> >
+> > > -#define OCELOT_IF_SI_OWNER_MASK                    GENMASK(5, 4)
+> >
+> > > +                      0x3 << if_si_owner_offset,
+> >
+> > Perhaps,
+> >
+> > #define MSCC_IF_SI_OWNER_MASK         GENMASK(1, 0)
+>
+> Oops, sorry - that seems to have been eaten somewhere.  :(
 
-Best,
-Patrick
-
-On 20-Aug 10:44, Quentin Perret wrote:
-> In order to ensure a minimal performance impact on non-energy-aware
-> systems, introduce a static_key guarding the access to Energy-Aware
-> Scheduling (EAS) code.
-> 
-> The static key is set iff all the following conditions are met for at
-> least one root domain:
->   1. all online CPUs of the root domain are covered by the Energy
->      Model (EM);
->   2. the complexity of the root domain's EM is low enough to keep
->      scheduling overheads low;
->   3. the root domain has an asymmetric CPU capacity topology (detected
->      by looking for the SD_ASYM_CPUCAPACITY flag in the sched_domain
->      hierarchy).
-> 
-> cc: Ingo Molnar <mingo@redhat.com>
-> cc: Peter Zijlstra <peterz@infradead.org>
-> Signed-off-by: Quentin Perret <quentin.perret@arm.com>
-> ---
->  kernel/sched/sched.h    |  1 +
->  kernel/sched/topology.c | 77 ++++++++++++++++++++++++++++++++++++++++-
->  2 files changed, 77 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index 4b884e467545..cb3d6afdb114 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -1421,6 +1421,7 @@ static const_debug __maybe_unused unsigned int sysctl_sched_features =
->  
->  extern struct static_key_false sched_numa_balancing;
->  extern struct static_key_false sched_schedstats;
-> +extern struct static_key_false sched_energy_present;
->  
->  static inline u64 global_rt_period(void)
->  {
-> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> index 4c6a36a8d7b8..1cb86a0ef00f 100644
-> --- a/kernel/sched/topology.c
-> +++ b/kernel/sched/topology.c
-> @@ -200,6 +200,14 @@ sd_parent_degenerate(struct sched_domain *sd, struct sched_domain *parent)
->  
->  	return 1;
->  }
-> +/*
-> + * This static_key is set if at least one root domain meets all the following
-> + * conditions:
-> + *    1. all CPUs of the root domain are covered by the EM;
-> + *    2. the EM complexity is low enough to keep scheduling overheads low;
-> + *    3. the SD_ASYM_CPUCAPACITY flag is set in the sched_domain hierarchy.
-> + */
-> +DEFINE_STATIC_KEY_FALSE(sched_energy_present);
->  
->  #ifdef CONFIG_ENERGY_MODEL
->  static void free_pd(struct perf_domain *pd)
-> @@ -270,12 +278,34 @@ static void destroy_perf_domain_rcu(struct rcu_head *rp)
->  	free_pd(pd);
->  }
->  
-> +/*
-> + * The complexity of the Energy Model is defined as: nr_pd * (nr_cpus + nr_cs)
-> + * with: 'nr_pd' the number of performance domains; 'nr_cpus' the number of
-> + * CPUs; and 'nr_cs' the sum of the capacity states numbers of all performance
-> + * domains.
-> + *
-> + * It is generally not a good idea to use such a model in the wake-up path on
-> + * very complex platforms because of the associated scheduling overheads. The
-> + * arbitrary constraint below prevents that. It makes EAS usable up to 16 CPUs
-> + * with per-CPU DVFS and less than 8 capacity states each, for example.
-
-According to the formula above, that should give a "complexity value" of:
-
-  16 * (16 + 9) = 384
-
-while, 2K complexity seems more like a 40xCPUs system with 8 OPPs.
-
-Maybe we should update either the example or the constant below ?
-
-> + */
-> +#define EM_MAX_COMPLEXITY 2048
-> +
->  static void build_perf_domains(const struct cpumask *cpu_map)
->  {
-> +	int i, nr_pd = 0, nr_cs = 0, nr_cpus = cpumask_weight(cpu_map);
->  	struct perf_domain *pd = NULL, *tmp;
->  	int cpu = cpumask_first(cpu_map);
->  	struct root_domain *rd = cpu_rq(cpu)->rd;
-> -	int i;
-> +
-> +	/* EAS is enabled for asymmetric CPU capacity topologies. */
-> +	if (!per_cpu(sd_asym_cpucapacity, cpu)) {
-> +		if (sched_debug()) {
-> +			pr_info("rd %*pbl: CPUs do not have asymmetric capacities\n",
-> +					cpumask_pr_args(cpu_map));
-> +		}
-> +		goto free;
-> +	}
->  
->  	for_each_cpu(i, cpu_map) {
->  		/* Skip already covered CPUs. */
-> @@ -288,6 +318,21 @@ static void build_perf_domains(const struct cpumask *cpu_map)
->  			goto free;
->  		tmp->next = pd;
->  		pd = tmp;
-> +
-> +		/*
-> +		 * Count performance domains and capacity states for the
-> +		 * complexity check.
-> +		 */
-> +		nr_pd++;
-
-A special case where EAS is not going to be used is for systems where
-nr_pd matches the number of online CPUs, isn't it ?
-
-If that's the case, then, by caching this nr_pd you can probably check
-this condition in the sched_energy_start() and bail out even faster by
-avoiding to scan all the doms_new's pd ?
-
-
-> +		nr_cs += em_pd_nr_cap_states(pd->obj);
-> +	}
-> +
-> +	/* Bail out if the Energy Model complexity is too high. */
-> +	if (nr_pd * (nr_cs + nr_cpus) > EM_MAX_COMPLEXITY) {
-> +		if (sched_debug())
-> +			pr_info("rd %*pbl: EM complexity is too high\n ",
-> +						cpumask_pr_args(cpu_map));
-> +		goto free;
->  	}
->  
->  	perf_domain_debug(cpu_map, pd);
-> @@ -307,6 +352,35 @@ static void build_perf_domains(const struct cpumask *cpu_map)
->  	if (tmp)
->  		call_rcu(&tmp->rcu, destroy_perf_domain_rcu);
->  }
-> +
-> +static void sched_energy_start(int ndoms_new, cpumask_var_t doms_new[])
-> +{
-> +	/*
-> +	 * The conditions for EAS to start are checked during the creation of
-> +	 * root domains. If one of them meets all conditions, it will have a
-> +	 * non-null list of performance domains.
-> +	 */
-> +	while (ndoms_new) {
-> +		if (cpu_rq(cpumask_first(doms_new[ndoms_new - 1]))->rd->pd)
-> +			goto enable;
-> +		ndoms_new--;
-> +	}
-> +
-> +	if (static_branch_unlikely(&sched_energy_present)) {
-                          ^^^^^^^^
-Is this defined unlikely to reduce overheads on systems which never
-satisfy all the conditions above while still rebuild SDs from time to
-time ?
-
-> +		if (sched_debug())
-> +			pr_info("%s: stopping EAS\n", __func__);
-> +		static_branch_disable_cpuslocked(&sched_energy_present);
-> +	}
-> +
-> +	return;
-> +
-> +enable:
-> +	if (!static_branch_unlikely(&sched_energy_present)) {
-> +		if (sched_debug())
-> +			pr_info("%s: starting EAS\n", __func__);
-> +		static_branch_enable_cpuslocked(&sched_energy_present);
-> +	}
-> +}
->  #else
->  static void free_pd(struct perf_domain *pd) { }
->  #endif
-> @@ -2123,6 +2197,7 @@ void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
->  match3:
->  		;
->  	}
-> +	sched_energy_start(ndoms_new, doms_new);
->  #endif
->  
->  	/* Remember the new sched domains: */
-> -- 
-> 2.17.1
-> 
+Nothing to sorry about, I'm in a process on move to mutt, so, I
+mispushed 'r' (Reply) instead of 'g' (Group Reply).
+I just forwarded the first one.
 
 -- 
-#include <best/regards.h>
-
-Patrick Bellasi
+With Best Regards,
+Andy Shevchenko
