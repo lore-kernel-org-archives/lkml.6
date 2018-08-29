@@ -2,210 +2,125 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71810C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:09:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 719E1C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:09:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 105C020647
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:09:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 105C020647
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2AFB620652
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:09:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AFB620652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728498AbeH3BHm (ORCPT
+        id S1728711AbeH3BIY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 21:07:42 -0400
-Received: from mga05.intel.com ([192.55.52.43]:13779 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727595AbeH3BHm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 21:07:42 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2018 14:09:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,304,1531810800"; 
-   d="scan'208";a="66976346"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.20])
-  by fmsmga008.fm.intel.com with ESMTP; 29 Aug 2018 14:09:01 -0700
-Date:   Wed, 29 Aug 2018 14:09:01 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     "Huang, Kai" <kai.huang@intel.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "platform-driver-x86@vger.kernel.org" 
-        <platform-driver-x86@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "suresh.b.siddha@intel.com" <suresh.b.siddha@intel.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>
-Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
- enclaves
-Message-ID: <20180829210901.GA7176@linux.intel.com>
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
- <1535406078.3416.9.camel@intel.com>
- <20180828070129.GA5301@linux.intel.com>
- <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com>
- <20180829203351.GB7142@linux.intel.com>
- <105F7BF4D0229846AF094488D65A09893541195D@PGSMSX112.gar.corp.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <105F7BF4D0229846AF094488D65A09893541195D@PGSMSX112.gar.corp.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Wed, 29 Aug 2018 21:08:24 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52566 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728595AbeH3BIY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 21:08:24 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7TL8rMZ059081
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 17:09:42 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2m60r15vxg-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 17:09:42 -0400
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <eajames@linux.vnet.ibm.com>;
+        Wed, 29 Aug 2018 17:09:41 -0400
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 29 Aug 2018 17:09:36 -0400
+Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7TL9Zpq45088916
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 29 Aug 2018 21:09:35 GMT
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 573A9124054;
+        Wed, 29 Aug 2018 18:10:14 -0400 (EDT)
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2F457124053;
+        Wed, 29 Aug 2018 18:10:13 -0400 (EDT)
+Received: from talon7.ibm.com (unknown [9.41.179.222])
+        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 29 Aug 2018 18:10:13 -0400 (EDT)
+From:   Eddie James <eajames@linux.vnet.ibm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-media@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+        openbmc@lists.ozlabs.org, andrew@aj.id.au, mchehab@kernel.org,
+        joel@jms.id.au, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Eddie James <eajames@linux.vnet.ibm.com>
+Subject: [PATCH 0/4] media: platform: Add Aspeed Video Engine driver
+Date:   Wed, 29 Aug 2018 16:09:29 -0500
+X-Mailer: git-send-email 1.8.3.1
+X-TM-AS-GCONF: 00
+x-cbid: 18082921-0060-0000-0000-000002A65BFC
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009636; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01080714; UDB=6.00557479; IPR=6.00860700;
+ MB=3.00023001; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-29 21:09:40
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082921-0061-0000-0000-000046558CC5
+Message-Id: <1535576973-8067-1-git-send-email-eajames@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-29_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=950 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808290206
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 29, 2018 at 01:58:09PM -0700, Huang, Kai wrote:
-> > -----Original Message-----
-> > From: Christopherson, Sean J
-> > Sent: Thursday, August 30, 2018 8:34 AM
-> > To: Huang, Kai <kai.huang@intel.com>
-> > Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>; platform-driver-
-> > x86@vger.kernel.org; x86@kernel.org; nhorman@redhat.com; linux-
-> > kernel@vger.kernel.org; tglx@linutronix.de; suresh.b.siddha@intel.com; Ayoun,
-> > Serge <serge.ayoun@intel.com>; hpa@zytor.com; npmccallum@redhat.com;
-> > mingo@redhat.com; linux-sgx@vger.kernel.org; Hansen, Dave
-> > <dave.hansen@intel.com>
-> > Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing enclaves
-> > 
-> > On Wed, Aug 29, 2018 at 12:33:54AM -0700, Huang, Kai wrote:
-> > > [snip..]
-> > >
-> > > > > >
-> > > > > > @@ -38,6 +39,18 @@ static LIST_HEAD(sgx_active_page_list);
-> > > > > > static DEFINE_SPINLOCK(sgx_active_page_list_lock);
-> > > > > >  static struct task_struct *ksgxswapd_tsk;  static
-> > > > > > DECLARE_WAIT_QUEUE_HEAD(ksgxswapd_waitq);
-> > > > > > +static struct notifier_block sgx_pm_notifier; static u64
-> > > > > > +sgx_pm_cnt;
-> > > > > > +
-> > > > > > +/* The cache for the last known values of IA32_SGXLEPUBKEYHASHx
-> > > > > > +MSRs
-> > > > > > for each
-> > > > > > + * CPU. The entries are initialized when they are first used by
-> > > > > > sgx_einit().
-> > > > > > + */
-> > > > > > +struct sgx_lepubkeyhash {
-> > > > > > +	u64 msrs[4];
-> > > > > > +	u64 pm_cnt;
-> > > > >
-> > > > > May I ask why do we need pm_cnt here? In fact why do we need
-> > > > > suspend staff (namely, sgx_pm_cnt above, and related code in this
-> > > > > patch) here in this patch? From the patch commit message I don't
-> > > > > see why we need PM staff here. Please give comment why you need PM
-> > > > > staff, or you may consider to split the PM staff to another patch.
-> > > >
-> > > > Refining the commit message probably makes more sense because
-> > > > without PM code sgx_einit() would be broken. The MSRs have been reset
-> > after waking up.
-> > > >
-> > > > Some kind of counter is required to keep track of the power cycle.
-> > > > When going to sleep the sgx_pm_cnt is increased. sgx_einit()
-> > > > compares the current value of the global count to the value in the
-> > > > cache entry to see whether we are in a new power cycle.
-> > >
-> > > You mean reset to Intel default? I think we can also just reset the
-> > > cached MSR values on each power cycle, which would be simpler, IMHO?
-> > 
-> > Refresh my brain, does hardware reset the MSRs on a transition to S3 or lower?
-> > 
-> > > I think we definitely need some code to handle S3-S5, but should be in
-> > > separate patches, since I think the major impact of S3-S5 is entire
-> > > EPC being destroyed. I think keeping pm_cnt is not sufficient enough
-> > > to handle such case?
-> > > >
-> > > > This brings up one question though: how do we deal with VM host going to
-> > sleep?
-> > > > VM guest would not be aware of this.
-> > >
-> > > IMO VM just gets "sudden loss of EPC" after suspend & resume in host.
-> > > SGX driver and SDK should be able to handle "sudden loss of EPC", ie,
-> > > co-working together to re-establish the missing enclaves.
-> > >
-> > > Actually supporting "sudden loss of EPC" is a requirement to support
-> > > live migration of VM w/ SGX. Internally long time ago we had a
-> > > discussion and the decision was we should support SGX live migration given
-> > two facts:
-> > >
-> > > 1) losing platform-dependent is not important. For example, losing
-> > > sealing key is not a problem, as we could get secrets provisioned
-> > > again from remote. 2) Both windows & linux driver commit to support "sudden
-> > loss of EPC".
-> > >
-> > > I don't think we have to support in very first upstream driver, but I
-> > > think we need to support someday.
-> > 
-> > Actually, we can easily support this in the driver, at least for SGX1 hardware.
-> 
-> That's my guess too. Just want to check whether we are still on the same page :)
-> 
-> > SGX2 isn't difficult to handle, but we've intentionally postponed those patches
-> > until SGX1 support is in mainline[1].
-> > Accesses to the EPC after it is lost will cause faults.  Userspace EPC accesses, e.g.
-> > ERESUME, will get a SIGSEGV that the process should interpret as an "I should
-> > restart my enclave" event.  The SDK already does this.  In the driver, we just need
-> > to be aware of this potential behavior and not freak out.  Specifically, SGX_INVD
-> > needs to not WARN on faults that may have been due to a the EPC being nuked.
-> > I think we can even remove the sgx_encl_pm_notifier() code altogether.
-> 
-> Possibly we still need to do some cleanup, ie, all structures of enclaves, upon resume? 
+The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs
+can capture and compress video data from digital or analog sources. With
+the Aspeed chip acting as a service processor, the Video Engine can
+capture the host processor graphics output.
 
-Not for functional reasons.  The driver will automatically do the
-cleanup via SGX_INVD when it next accesses the enclave's pages and
-takes a fault, e.g. during reclaim.  Proactively reclaiming the EPC
-pages would probably affect performance, though not necessarily in
-a good way.  And I think it would be a beneficial to get the driver
-out of the suspend/hibernate/resume paths, e.g. zapping all enclaves
-could noticeably impact suspend/resume latency.
- 
-> Anyway I am just guessing.
-> 
-> Thanks,
-> -Kai
-> 
-> > 
-> > [1] SGX1 hardware signals a #GP on an access to an invalid EPC page.
-> >     SGX2 signals a #PF with the PF_SGX error code bit set.  This is
-> >     problematic because the kernel looks at the PTEs for CR2 and sees
-> >     nothing wrong, so it thinks it should just restart the
-> >     instruction, leading to an infinite fault loop.  Resolving this
-> >     is fairly straightforward, but a complete fix requires propagating
-> >     PF_SGX down to the ENCLS fixup handler, which means plumbing the
-> >     error code through the fixup handlers or smushing PF_SGX into
-> >     trapnr.  Since there is a parallel effort to plumb the error code
-> >     through the handlers, https://lkml.org/lkml/2018/8/6/924, we opted
-> >     to do this in a separate series.
-> > 
-> > > Sean,
-> > >
-> > > Would you be able to comment here?
-> > >
-> > > >
-> > > > I think the best measure would be to add a new parameter to
-> > > > sgx_einit() that enforces update of the MSRs. The driver can then
-> > > > set this parameter in the case when sgx_einit() returns
-> > > > SGX_INVALID_LICENSE. This is coherent because the driver requires
-> > > > writable MSRs. It would not be coherent to do it directly in the core because
-> > KVM does not require writable MSRs.
-> > >
-> > > IMHO this is not required, as I mentioned above.
-> > >
-> > > And
-> > > [snip...]
-> > >
-> > > Thanks,
-> > > -Kai
+This series adds a V4L2 driver for the VE, providing a read() interface
+only. The driver triggers the hardware to capture the host graphics output
+and compress it to JPEG format.
+
+Testing on an AST2500 determined that the videobuf/streaming/mmap interface
+was significantly slower than the simple read() interface, so I have not
+included the streaming part.
+
+It's also possible to use an automatic mode for the VE such that
+re-triggering the HW every frame isn't necessary. However this wasn't
+reliable on the AST2400, and probably used more CPU anyway due to excessive
+interrupts. It was approximately 15% faster.
+
+The series also adds the necessary parent clock definitions to the Aspeed
+clock driver, with both a mux and clock divider.
+
+Eddie James (4):
+  clock: aspeed: Add VIDEO reset index definition
+  clock: aspeed: Setup video engine clocking
+  dt-bindings: media: Add Aspeed Video Engine binding documentation
+  media: platform: Add Aspeed Video Engine driver
+
+ .../devicetree/bindings/media/aspeed-video.txt     |   23 +
+ drivers/clk/clk-aspeed.c                           |   41 +-
+ drivers/media/platform/Kconfig                     |    8 +
+ drivers/media/platform/Makefile                    |    1 +
+ drivers/media/platform/aspeed-video.c              | 1307 ++++++++++++++++++++
+ include/dt-bindings/clock/aspeed-clock.h           |    1 +
+ 6 files changed, 1379 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/aspeed-video.txt
+ create mode 100644 drivers/media/platform/aspeed-video.c
+
+-- 
+1.8.3.1
+
