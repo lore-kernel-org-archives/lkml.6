@@ -6,143 +6,150 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4515DC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 02:15:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D704C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 02:15:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F08942087C
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 02:15:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F08942087C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 0258620880
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 02:15:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0258620880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727333AbeH2GKH (ORCPT
+        id S1727393AbeH2GKL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 02:10:07 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:11205 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725882AbeH2GKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 02:10:07 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id B5D633A8C4600;
-        Wed, 29 Aug 2018 10:15:30 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.399.0; Wed, 29 Aug 2018
- 10:15:30 +0800
-Subject: Re: [PATCH 1/2] f2fs: fix to avoid quota inode leak in ->put_super
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-CC:     Chao Yu <chao@kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-References: <20180817091840.50792-1-yuchao0@huawei.com>
- <20180818151600.GA84798@jaegeuk-macbookpro.roam.corp.google.com>
- <b10c4ae6-2a25-fb0b-cbfa-467b5e988b47@kernel.org>
- <20180821023840.GD20263@jaegeuk-macbookpro.roam.corp.google.com>
- <fbb9e77b-aca0-9ad9-cd06-503ec335370c@huawei.com>
- <20180829020531.GC27219@jaegeuk-macbookpro.roam.corp.google.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <95e10716-d473-f362-6ef8-ac149f376f4e@huawei.com>
-Date:   Wed, 29 Aug 2018 10:15:29 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 29 Aug 2018 02:10:11 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:42518 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725882AbeH2GKK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 02:10:10 -0400
+Received: by mail-ed1-f67.google.com with SMTP id l5so130494edw.9;
+        Tue, 28 Aug 2018 19:15:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6+eNmlgQ6zlSrxuSDoeEpqOfQ5xTcWvv1X3ErE7gLJA=;
+        b=U1bPIrpRENYqxUH04/DL8Bb5dFZBdeqemPIwMoVNh2X2lrxp4pitLFByyXmK9XZvDo
+         LL2tDP71B2Ep35TLqWiyn0Ajh3xbNNTxemsuleBrfq2B+rDNV7tNU21Rvj2WtLtGXB1t
+         TWyYgdV2wj5Ai7to11jqtwAD5I6A0ruyndT3rHj6vtvXSxetqw2PEGcMtiIXOH79+09R
+         uskS1fLC6Jh8ld0XnIG/TONNwgdjkvy+ES0Pqppb0lf/cNmae+9bOmnHyqRHrPMPAAuo
+         azE8WA3Lg/ie5bIt4UbjYL7+jvJysQEtqKwzJihgsVWRJNUSEu5Qc8mmRXWYYphP5xYt
+         Qt4g==
+X-Gm-Message-State: APzg51BBZehpjxQgUv3nuz8csG5JbEMxWoyTmKT+lvIVhU+dubBgj1oK
+        pPQva6dOP1e9SyHLqRVh9QGhvwGd
+X-Google-Smtp-Source: ANB0VdZogKrQ33etv5SZddU4CbBIxhDNKom5thpuS30VFKSVpEpSXqrVXwZUdMZzGgbwC7UoMtICYA==
+X-Received: by 2002:aa7:c60d:: with SMTP id h13-v6mr5391233edq.9.1535508938810;
+        Tue, 28 Aug 2018 19:15:38 -0700 (PDT)
+Received: from mail-wm0-f49.google.com (mail-wm0-f49.google.com. [74.125.82.49])
+        by smtp.gmail.com with ESMTPSA id j23-v6sm1221874edh.29.2018.08.28.19.15.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 28 Aug 2018 19:15:36 -0700 (PDT)
+Received: by mail-wm0-f49.google.com with SMTP id f21-v6so3670303wmc.5;
+        Tue, 28 Aug 2018 19:15:36 -0700 (PDT)
+X-Received: by 2002:a1c:5f85:: with SMTP id t127-v6mr2803750wmb.16.1535508935980;
+ Tue, 28 Aug 2018 19:15:35 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180829020531.GC27219@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+References: <20180828015252.28511-1-robh@kernel.org> <20180828015252.28511-40-robh@kernel.org>
+In-Reply-To: <20180828015252.28511-40-robh@kernel.org>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Wed, 29 Aug 2018 10:15:20 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64Hy-RQiXBhYrcy7FtNnqRUOhwGNZc8jko=FVrDDUH_hQ@mail.gmail.com>
+Message-ID: <CAGb2v64Hy-RQiXBhYrcy7FtNnqRUOhwGNZc8jko=FVrDDUH_hQ@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: Convert to using %pOFn instead of device_node.name
+To:     Rob Herring <robh@kernel.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>, aisheng.dong@nxp.com,
+        Fabio Estevam <festevam@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>, stefan@agner.ch,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>, gregory.clement@bootlin.com,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        alexandre.belloni@bootlin.com,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        Tony Lindgren <tony@atomide.com>,
+        Haojian Zhuang <haojian.zhuang@linaro.org>,
+        Patrice Chotard <patrice.chotard@st.com>,
+        Barry Song <baohua@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        linux-gpio@vger.kernel.org,
+        "moderated list:ARM/Mediatek SoC..." 
+        <linux-mediatek@lists.infradead.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        "open list:OMAP2+ SUPPORT" <linux-omap@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/8/29 10:05, Jaegeuk Kim wrote:
-> On 08/21, Chao Yu wrote:
->> On 2018/8/21 10:38, Jaegeuk Kim wrote:
->>> On 08/20, Chao Yu wrote:
->>>> On 2018/8/18 23:16, Jaegeuk Kim wrote:
->>>>> On 08/17, Chao Yu wrote:
->>>>>> generic/019 reports below error:
->>>>>>
->>>>>>  __quota_error: 1160 callbacks suppressed
->>>>>>  Quota error (device zram1): write_blk: dquota write failed
->>>>>>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
->>>>>>  Quota error (device zram1): write_blk: dquota write failed
->>>>>>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
->>>>>>  Quota error (device zram1): write_blk: dquota write failed
->>>>>>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
->>>>>>  Quota error (device zram1): write_blk: dquota write failed
->>>>>>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
->>>>>>  Quota error (device zram1): write_blk: dquota write failed
->>>>>>  Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
->>>>>>  VFS: Busy inodes after unmount of zram1. Self-destruct in 5 seconds.  Have a nice day...
->>>>>>
->>>>>> If we failed in below path due to fail to write dquot block, we will miss
->>>>>> to release quota inode, fix it.
->>>>>>
->>>>>> - f2fs_put_super
->>>>>>  - f2fs_quota_off_umount
->>>>>>   - f2fs_quota_off
->>>>>>    - f2fs_quota_sync   <-- failed
->>>>>>    - dquot_quota_off   <-- missed to call
->>>>>>
->>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->>>>>> ---
->>>>>>  fs/f2fs/super.c | 6 ++++--
->>>>>>  1 file changed, 4 insertions(+), 2 deletions(-)
->>>>>>
->>>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->>>>>> index a5df9fbc6355..9647bbcdfd2b 100644
->>>>>> --- a/fs/f2fs/super.c
->>>>>> +++ b/fs/f2fs/super.c
->>>>>> @@ -1977,10 +1977,12 @@ void f2fs_quota_off_umount(struct super_block *sb)
->>>>>>  	for (type = 0; type < MAXQUOTAS; type++) {
->>>>>>  		err = f2fs_quota_off(sb, type);
->>>>>>  		if (err) {
->>>>>> +			int ret = dquot_quota_off(sb, type);
->>>>>> +
->>>>>
->>>>> Could you check the mainline version?
->>>>
->>>> I guess we missed to apply below patch? Could you check that?
->>>>
->>>> f2fs: report error if quota off error during umount
->>>
->>> I remember there was a bug in the patch.
->>
->> Yeah, I guess this patch can fix that one. So could you help trying to test
->> again with the two patches if you have time. :)
-> 
-> Let me merge two patch and try some tests again. :P
+On Tue, Aug 28, 2018 at 9:55 AM Rob Herring <robh@kernel.org> wrote:
+>
+> In preparation to remove the node name pointer from struct device_node,
+> convert printf users to use the %pOFn format specifier.
+>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Dong Aisheng <aisheng.dong@nxp.com>
+> Cc: Fabio Estevam <festevam@gmail.com>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Stefan Agner <stefan@agner.ch>
+> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+> Cc: Sean Wang <sean.wang@mediatek.com>
+> Cc: Matthias Brugger <matthias.bgg@gmail.com>
+> Cc: Carlo Caione <carlo@caione.org>
+> Cc: Kevin Hilman <khilman@baylibre.com>
+> Cc: Jason Cooper <jason@lakedaemon.net>
+> Cc: Andrew Lunn <andrew@lunn.ch>
+> Cc: Gregory Clement <gregory.clement@bootlin.com>
+> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
+> Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Cc: Heiko Stuebner <heiko@sntech.de>
+> Cc: Tony Lindgren <tony@atomide.com>
+> Cc: Haojian Zhuang <haojian.zhuang@linaro.org>
+> Cc: Patrice Chotard <patrice.chotard@st.com>
+> Cc: Barry Song <baohua@kernel.org>
+> Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+> Cc: Alexandre Torgue <alexandre.torgue@st.com>
+> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+> Cc: Chen-Yu Tsai <wens@csie.org>
+> Cc: linux-gpio@vger.kernel.org
+> Cc: linux-mediatek@lists.infradead.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-amlogic@lists.infradead.org
+> Cc: linux-rockchip@lists.infradead.org
+> Cc: linux-omap@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  drivers/pinctrl/berlin/berlin.c               |  6 ++--
+>  drivers/pinctrl/freescale/pinctrl-imx.c       |  7 ++--
+>  drivers/pinctrl/freescale/pinctrl-imx1-core.c | 12 +++----
+>  drivers/pinctrl/mediatek/pinctrl-mtk-common.c |  4 +--
+>  drivers/pinctrl/meson/pinctrl-meson.c         |  2 +-
+>  drivers/pinctrl/mvebu/pinctrl-mvebu.c         |  4 +--
+>  drivers/pinctrl/nomadik/pinctrl-nomadik.c     |  6 ++--
+>  drivers/pinctrl/pinctrl-at91.c                |  8 ++---
+>  drivers/pinctrl/pinctrl-lantiq.c              |  8 ++---
+>  drivers/pinctrl/pinctrl-rockchip.c            |  8 ++---
+>  drivers/pinctrl/pinctrl-rza1.c                |  8 ++---
+>  drivers/pinctrl/pinctrl-single.c              | 32 +++++++++----------
+>  drivers/pinctrl/pinctrl-st.c                  |  6 ++--
+>  drivers/pinctrl/sirf/pinctrl-atlas7.c         |  4 +--
+>  drivers/pinctrl/stm32/pinctrl-stm32.c         |  4 +--
+>  drivers/pinctrl/sunxi/pinctrl-sunxi.c         |  8 ++---
 
-Thanks for helping. ;)
+For sunxi:
 
-Thanks,
-
-> 
->>
->> Thanks,
->>
->>>
->>>>
->>>> Thanks,
->>>>
->>>>>
->>>>>>  			f2fs_msg(sb, KERN_ERR,
->>>>>>  				"Fail to turn off disk quota "
->>>>>> -				"(type: %d, err: %d), Please "
->>>>>> -				"run fsck to fix it.", type, err);
->>>>>> +				"(type: %d, err: %d, ret:%d), Please "
->>>>>> +				"run fsck to fix it.", type, err, ret);
->>>>>>  			set_sbi_flag(F2FS_SB(sb), SBI_NEED_FSCK);
->>>>>>  		}
->>>>>>  	}
->>>>>> -- 
->>>>>> 2.18.0.rc1
->>>
->>> .
->>>
-> 
-> .
-> 
-
+Acked-by: Chen-Yu Tsai <wens@csie.org>
