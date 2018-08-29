@@ -6,103 +6,94 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38B5DC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:57:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3B6CC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:57:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E82CA2086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:57:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A79C2086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:57:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hD7jWFvK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E82CA2086D
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eu8V9hz9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A79C2086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727953AbeH2LxY (ORCPT
+        id S1727957AbeH2Lx2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 07:53:24 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:40776 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727072AbeH2LxY (ORCPT
+        Wed, 29 Aug 2018 07:53:28 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:39284 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727072AbeH2Lx1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 07:53:24 -0400
-Received: by mail-lf1-f65.google.com with SMTP id x26-v6so3520155lfi.7
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 00:57:46 -0700 (PDT)
+        Wed, 29 Aug 2018 07:53:27 -0400
+Received: by mail-lj1-f194.google.com with SMTP id l15-v6so3581988lji.6
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 00:57:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=qtQHnawV6159KrNcAB+r9rRijDPcx3eyatNOzc6jgxU=;
-        b=hD7jWFvKOXG2bg6p3bUZsSm22Yihut5Ra1DrW+Y7vyZhxq4N3kKO96yEZdxK6TSlEY
-         srg4ndvygCf5Aqt6V8oKmBaDZeBC/3rfcVeAL/haKDrLwgw8jUvbnCE+3171rdva2bAU
-         uE4ZgU0p/s/1cGu6OwPOCSXnbh/dh5ZYZKccQ=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=3U44mP/4tqzk7kSCJX0RAmaX14j3xW0Xy2yzquNCJRQ=;
+        b=eu8V9hz9ES6iPGUJKMQcjeSNZfOxYOoVuEiZ8wPZUNaXTdHf1L38b3TuFuzs3EAXNr
+         7cghXi1vB+ODiC1UJ9tdbT+WHXcTdYDEHWmO+FQ1GS14ZjDZ2JqDWq948IABZjLFUjjK
+         fKnLBr4UvCg5dZGpKcql2qdNPExdEljrvQab0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=qtQHnawV6159KrNcAB+r9rRijDPcx3eyatNOzc6jgxU=;
-        b=QH8iHl3YoDkeuNzkx/1KGxPqNTkq2gqWOxjWCh8JOEHknNRS3OLRBr1IFRj9AwFzBE
-         6Lrx1uL2jByisIkkRrU2dhKD7P0KBtFp0Utu2+fSazNlckIQ2869ze82lYFIYM4Iq+VZ
-         3ojHzH5U3FWitugA6Udz6awVvQck6ExaExVydrrRzA+UDL12JfNYkwvb02ZIYyr/5SYj
-         3DbTzpYYYg+dpqTK8HEUNMmsI997e+UeRHM5F4e+BP71919bREeEJjDAxvyN7MVDropu
-         pazEiQ14Sr06GmyOjGAr3E3vpTWGVNALFoHg4ZkbRDERxMk23jKL4vfNqewwowFi6LfT
-         s7GA==
-X-Gm-Message-State: APzg51Ba6uGqwNPe9J2maMcdJalirzx2Ul2sShgVwYWRJu/6DY3te4qs
-        VBSAin9p9KKI8ywaB9JWdzcUft0fcBc=
-X-Google-Smtp-Source: ANB0VdahFnvJuUI3wrX3IZx42IEDtoTH6ig2CFHHf7SyegtCgnjv4ambSYIadUVnxRRyNzfSsizRtg==
-X-Received: by 2002:a19:eb10:: with SMTP id j16-v6mr3623820lfh.23.1535529465847;
-        Wed, 29 Aug 2018 00:57:45 -0700 (PDT)
+         :references;
+        bh=3U44mP/4tqzk7kSCJX0RAmaX14j3xW0Xy2yzquNCJRQ=;
+        b=GlHUkYI0s1Ve2WGWNrI76iX9ANZ0UV+byoKk8DVJOQD7ixi1f/hsRbsaq4rqnZ/eeG
+         uuPUFa68fTKY/6JsmSYQ/ue3qiLY6EVpIGeTIiivZYENcCgW+s1boqPqHL75kDhE0rG7
+         vLRGMT2EwR5XTi6+F+LPpXLrth7DZqjdD1E+trA2RYJ/3HamOpGSvJMSf9mxTD6HJ0Ms
+         qAa8S5WDJZ1ZgL87qx0tD2/qPzQc7izt2iIRy4SJ1RrMW1IEbxcVt0Cpm3SkYMBI8icM
+         cC9SgCSzWHl1I6Zvcz4TNPic2+cMAnnYw671i0YnfTAEZ9/VK7NGXGDST7OwHaXSKeEL
+         AueQ==
+X-Gm-Message-State: APzg51BESWzpl1QQDswqcQ24cEapWOcbBFLOEbbGda1CfWMqaRx/2yJ0
+        ENisvmbfQnLxIxRl2csi4zydBw==
+X-Google-Smtp-Source: ANB0VdZR1JlrxcNUSSbWBNVFqXtdcqpbi85NRRCXmIoFLLEIJx1xjitdNOub8DcBDHaDeMbbM7EmxQ==
+X-Received: by 2002:a2e:6e04:: with SMTP id j4-v6mr3553174ljc.61.1535529468214;
+        Wed, 29 Aug 2018 00:57:48 -0700 (PDT)
 Received: from centauri.ideon.se ([85.235.10.227])
-        by smtp.gmail.com with ESMTPSA id f7-v6sm613386lfc.4.2018.08.29.00.57.45
+        by smtp.gmail.com with ESMTPSA id f7-v6sm613386lfc.4.2018.08.29.00.57.47
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 29 Aug 2018 00:57:45 -0700 (PDT)
+        Wed, 29 Aug 2018 00:57:47 -0700 (PDT)
 From:   Niklas Cassel <niklas.cassel@linaro.org>
 To:     Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>
 Cc:     Niklas Cassel <niklas.cassel@linaro.org>,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v6 3/9] soc: qcom: smp2p: Add select IRQ_DOMAIN
-Date:   Wed, 29 Aug 2018 09:57:17 +0200
-Message-Id: <20180829075724.9095-4-niklas.cassel@linaro.org>
+Subject: [PATCH v6 5/9] soc: qcom: Remove bogus depends on OF from QCOM_SMD_RPM
+Date:   Wed, 29 Aug 2018 09:57:19 +0200
+Message-Id: <20180829075724.9095-6-niklas.cassel@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180829075724.9095-1-niklas.cassel@linaro.org>
 References: <20180829075724.9095-1-niklas.cassel@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since we are using irq_domain_add_linear(), add a select on IRQ_DOMAIN.
-This is needed in order to be able to remove the depends on ARCH_QCOM.
-
-drivers/soc/qcom/smp2p.c: In function ‘qcom_smp2p_inbound_entry’:
-drivers/soc/qcom/smp2p.c:317:18: error: implicit declaration of function
-  ‘irq_domain_add_linear’
-  entry->domain = irq_domain_add_linear(node, 32, &smp2p_irq_ops, entry);
-                  ^~~~~~~~~~~~~~~~~~~~~
+QCOM_SMD_RPM builds perfectly fine without CONFIG_OF set.
+Remove the bogus depends on OF.
 
 Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
 Reviewed-by: Vivek Gautam <vivek.gautam@codeaurora.org>
 Reviewed-by: Vinod Koul <vkoul@kernel.org>
 ---
- drivers/soc/qcom/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/soc/qcom/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-index ba79b609aca2..6e063202ad0b 100644
+index 7da6e67c7ea1..ac657164a136 100644
 --- a/drivers/soc/qcom/Kconfig
 +++ b/drivers/soc/qcom/Kconfig
-@@ -134,6 +134,7 @@ config QCOM_SMP2P
- 	depends on MAILBOX
- 	depends on QCOM_SMEM
- 	select QCOM_SMEM_STATE
-+	select IRQ_DOMAIN
+@@ -114,7 +114,7 @@ config QCOM_SMEM
+ config QCOM_SMD_RPM
+ 	tristate "Qualcomm Resource Power Manager (RPM) over SMD"
+ 	depends on ARCH_QCOM
+-	depends on RPMSG && OF
++	depends on RPMSG
  	help
- 	  Say yes here to support the Qualcomm Shared Memory Point to Point
- 	  protocol.
+ 	  If you say yes to this option, support will be included for the
+ 	  Resource Power Manager system found in the Qualcomm 8974 based
 -- 
 2.17.1
 
