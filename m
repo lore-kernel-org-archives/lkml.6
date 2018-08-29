@@ -2,142 +2,97 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F18EC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 00:15:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2966FC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 00:19:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C41352087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 00:15:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B51662087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 00:19:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KVbLxt/H"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C41352087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="L0TvpWc6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B51662087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727106AbeH2EJF (ORCPT
+        id S1727138AbeH2ENV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 00:09:05 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:42698 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725871AbeH2EJE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 00:09:04 -0400
-Received: by mail-pl1-f193.google.com with SMTP id g23-v6so1448344plq.9
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 17:14:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=wj5u/G3tJxXnxe2ZR6EfhuWCyX3HJRD4Xvyv9DRyinc=;
-        b=KVbLxt/H6ON1I3FAZUypc2ZjpylFgUwat9IZCRxvrakztmRD9s3+Wgzzr5B84tI8mk
-         e5BS8PIm7JDX6d1spvaSk/nlPtlxYLroSPv9KjjU73wLqbp5eCNkyeXBxEuwtawwIchg
-         fV2xwXbwtVSsr4XekEnNDqw27d8f9fFvW+6bY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wj5u/G3tJxXnxe2ZR6EfhuWCyX3HJRD4Xvyv9DRyinc=;
-        b=B3IGyynCbi+sz+bVXW8VSPS3A/01+83XKu5GTzz0qSYPb9DUSkNt3qcyOM949ctPYj
-         27yvEgyF5KKTs0D0uO6lfq1M2S9BGE3mRrsHYdOQDqmtP8BO0hFHl0wUHaZ7eZvlKTv0
-         c1aXWNzS0L/s2y/KGWL67sg/Fp+Oav+pGk3jTD1hProXBmvXQkwQ3ojcRMuVHKZ0Mv/Z
-         rkxydOYGLmxT2tzR5auYcW33KaJHYRhCpKKSgvyg3yD6RAcZtVqleYsOjUkc+54QQpu3
-         obfcbWg1ftXXFNcjUT7fOePqZy6VGqhWa6nCwPuSZVAy7rA3f7ZP3r4SWp+ZUuXAwyBL
-         g/yg==
-X-Gm-Message-State: APzg51Cr5qqS3lx1bDqiCVt0uMUoTS4xMBWjUe4JF2xdbeVL5F7TW5NG
-        NJCvPbJl0auFK9c/mIblRgd6sQ==
-X-Google-Smtp-Source: ANB0Vda+8y87PIUzpsOZ94Nx9OqyPr7XvANgFQjSK4U8psdDgaxl2tUmnHx03aIA0JR5bWRbQGzqfQ==
-X-Received: by 2002:a17:902:76c5:: with SMTP id j5-v6mr3660992plt.140.1535501697926;
-        Tue, 28 Aug 2018 17:14:57 -0700 (PDT)
-Received: from ban.mtv.corp.google.com ([2620:15c:202:1:299d:6b87:5478:d28a])
-        by smtp.gmail.com with ESMTPSA id g11-v6sm2206198pgi.90.2018.08.28.17.14.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 28 Aug 2018 17:14:56 -0700 (PDT)
-Date:   Tue, 28 Aug 2018 17:14:54 -0700
-From:   Brian Norris <briannorris@chromium.org>
-To:     Kalle Valo <kvalo@codeaurora.org>
-Cc:     Arend van Spriel <arend.vanspriel@broadcom.com>,
-        govinds@codeaurora.org, linux-wireless@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        ath10k@lists.infradead.org
-Subject: Re: [PATCH] ath10k: retrieve MAC address from firmware if provided
-Message-ID: <20180829001453.GA173345@ban.mtv.corp.google.com>
-References: <20180810233948.144792-1-briannorris@chromium.org>
- <5B6F2A47.7070502@broadcom.com>
- <CA+ASDXOeybJAsWJtVBdLdQ=6xThJja5MaEoa3dERKZ-shkbDkg@mail.gmail.com>
- <5B71CDFB.60408@broadcom.com>
- <878t4qftnm.fsf@kamboji.qca.qualcomm.com>
+        Wed, 29 Aug 2018 00:13:21 -0400
+Received: from mail-eopbgr700125.outbound.protection.outlook.com ([40.107.70.125]:63168
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726188AbeH2ENU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 00:13:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XGYVAld0d0ycqImv5m9tH+srSDMkj5283I32mO+lg74=;
+ b=L0TvpWc6pguoQLLuE+P0pfwK/S4Fa1DKnZP7BPPTRv91LDl0k6lmYs+kHHENK5bvLMNcd8U7/CH5QgdjpEqIlb0W1/8rQCq760CHf7eEf5Gbh1lJRr7PfuWpRlPmmGheIBM8wncBODR9eVcp/fFs2y+fhXxZJDVZtegmssjBKHg=
+Received: from CY4PR21MB0776.namprd21.prod.outlook.com (10.173.192.22) by
+ CY4PR21MB0503.namprd21.prod.outlook.com (10.172.122.13) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1122.2; Wed, 29 Aug 2018 00:19:12 +0000
+Received: from CY4PR21MB0776.namprd21.prod.outlook.com
+ ([fe80::7c3a:eea8:1391:1611]) by CY4PR21MB0776.namprd21.prod.outlook.com
+ ([fe80::7c3a:eea8:1391:1611%7]) with mapi id 15.20.1122.000; Wed, 29 Aug 2018
+ 00:19:12 +0000
+From:   Sasha Levin <Alexander.Levin@microsoft.com>
+To:     Ben Hutchings <ben@decadent.org.uk>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/2] Build fixes for liblockdep
+Thread-Topic: [PATCH 0/2] Build fixes for liblockdep
+Thread-Index: AQHUPyrPOAEl1ifvEECDyTlTYqVbKqTV3XmA
+Date:   Wed, 29 Aug 2018 00:19:11 +0000
+Message-ID: <20180829001909.GB161312@sasha-vm>
+References: <20180828235656.GH18030@decadent.org.uk>
+In-Reply-To: <20180828235656.GH18030@decadent.org.uk>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [52.168.54.252]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0503;6:mBoMUznLVLPBeHkYI453JFVe17SbVs+IKdfdqQJiKPjUFmp60RU2uEIEQ9nv+aoOfcO+IxZ4BcabQpZKCZNFnIDkO3DpTeopoOk1r3cEgsbDh/y3SeVG6Oa3od1eVsCSesPPsrcNBU699J9Zx/ysstRmX4J17XbvWpjBrpNuo2B2+XLDOacB2ngNoJ8SxIDJXJSOl8qCqjHpOryjwSt7uMI7zpCjD1hxHRWekDc4qyrY4DyY8iYNxArI2JVM/w0mXp0Tp3dk/W3CUJEsHQ18MLBKB4XCc/larZkGgJljFlL6Pk6BVAr5U5U76oPyid88DBrLRzLT/S6cX7RF1py+WG64G7vP7L09VkO3qNsLm5RrSGonPMDlzNX2iNzNms/vu8OGXD6NOYkv+/AfoX9v0d5Bj20ckUzJm/sGyMznm/lNcNvbAJ5MPMFgQMQf5CO0SuXSGDozdloX/3QfUSMefA==;5:nxeU+mgtQQp9wl4BGBl2SQGskiNuBHG0YNP+/2I4wQIJWYoeH8cb4ZR+U/kvfd7/i059q98ZWulTOiw88ChyFfcl7n8J9/zmSutMVwfsTxhqy/1oKZLYYA+P4Z4D+7uCmFoOxAGIFgvCVpzTWb3kftPrIu5+RP4mAwQWk57f6bY=;7:o6ORN+uVITdaWavGkv+HHDQ49QTb9tnz3zu5pcszKZF+gwlYUZEHwN9bQ+ehi7/kCh+/q1EnlHPduzfewIsRnEXQ4EiP6Ft5S2OCuV4h6G1X4H9fd5UU2cet1Rg5U5G3/QfqteftY2xhfU52rEEOgsgrO8tKmoYMeoZnp4BbmEu4tRdDcEZrRTV+nyuwAJCWNPzcOWksiTmKkQGpgxaOwmNULdWIrsPTwOzjFZ94gbB0Q5s5hD+3Q1pYvRcZbKDC
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 06fad5de-d360-4448-3657-08d60d450bb8
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0503;
+x-ms-traffictypediagnostic: CY4PR21MB0503:
+x-microsoft-antispam-prvs: <CY4PR21MB0503669CD82E43D5F75B337FFB090@CY4PR21MB0503.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(2017102700009)(2017102701064)(6040522)(2401047)(5005006)(8121501046)(2017102702064)(20171027021009)(20171027022009)(20171027023009)(20171027024009)(20171027025009)(20171027026009)(2017102703076)(3231336)(944501410)(52105095)(2018427008)(10201501046)(3002001)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(201708071742011)(7699049)(76991033);SRVR:CY4PR21MB0503;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0503;
+x-forefront-prvs: 077929D941
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(39860400002)(136003)(366004)(396003)(376002)(346002)(189003)(199004)(14444005)(316002)(11346002)(256004)(22452003)(105586002)(3846002)(14454004)(6116002)(1076002)(6436002)(4326008)(486006)(186003)(476003)(26005)(446003)(33896004)(6346003)(99286004)(102836004)(68736007)(86362001)(6506007)(8936002)(86612001)(76176011)(106356001)(87496004)(5660300001)(2900100001)(7736002)(81166006)(81156014)(66066001)(8676002)(33656002)(10290500003)(72206003)(478600001)(305945005)(2906002)(6246003)(6306002)(25786009)(9686003)(6512007)(5250100002)(33716001)(6486002)(229853002)(97736004)(53936002)(10090500001)(6916009);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0503;H:CY4PR21MB0776.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Alexander.Levin@microsoft.com; 
+x-microsoft-antispam-message-info: fs4d/Dqt5j81PuoKlNNxuyr/H+F2vUUz7a7gFoDMeHvD6uAlQowNQy9GIxW9uCTnahT+eJWrC9FUfV+kZgYb/371HwB3PAZumMmqvRl5HrBVBVvL7I7oNT8bUrqOk9YsyFTgYmZ9U21sn/Ckb8wHI6dmY7WCb+uUtXmY+OMAisE045Yrc8E1wXkLIN4MN+KvumzrzqI63b1bUYMtKOZsxv61xWoXN+ZAWiTV/2/lq5ApIBBcVni4tpZKycpAIIqMlrODOrHSnB3q7kGHDrpeeRGYW4tfKh6w4XGpSpZnndEXVD6/vlYP099xuHvpJNXx3M9UVuFaYLbmXE05fn63+Nlb4N93BAB5jr/JfwNaDbg=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1AF71A2D8C5A724BB1438F68B2A36857@namprd21.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <878t4qftnm.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Mutt/1.10.1+48 (1f3a9df87d11) (2018-07-22)
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 06fad5de-d360-4448-3657-08d60d450bb8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Aug 2018 00:19:11.8679
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0503
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 05:33:01PM +0300, Kalle Valo wrote:
-> Arend van Spriel <arend.vanspriel@broadcom.com> writes:
-> 
-> > On 8/13/2018 7:14 PM, Brian Norris wrote:
-> >> On Sat, Aug 11, 2018 at 11:26 AM Arend van Spriel
-> >> <arend.vanspriel@broadcom.com> wrote:
-> >>>
-> >>> On 8/11/2018 1:39 AM, Brian Norris wrote:
-> >>>> Devices may provide their own MAC address via system firmware (e.g.,
-> >>>
-> >>> You got me confused by using just "firmware" in the subject.
-> >>
-> >> Yeah...I started by writing this patch with device tree specifically
-> >> (of_get_mac_address()), and then later found that there were generic
-> >> "device" helpers for this, which can assist with other sorts of
-> >> firmware nodes. It was easier to put a name on a device tree patch
-> >> than on a "device" patch. I suppose "system firmware" might be a
-> >> better description?
-> >>
-> >>>> device tree), especially in the case where the device doesn't have a
-> >>>> useful EEPROM on which to store its MAC address (e.g., for integrated
-> >>>> Wifi).
-> >>>>
-> >>>> Use the generic device helper to retrieve the MAC address, and (if
-> >>>> present) honor it above the MAC address advertised by the card.
-> >>>
-> >>> But this put me back on track ;-)
-> >>
-> >> Let me know if you have a better way to clarify. I can resend with a
-> >> slightly modified subject (s/firmware/system firmware/), or let Kalle
-> >> do it, if that's the only thing to change.
-> >
-> > "system firmware" substitution works for me.
-> 
-> What about:
-> 
-> ath10k: retrieve MAC address from Device Tree if provided
-> 
-> Because from ath10k point of view we use Device Tree functions and don't
-> care if it's delivered by pidgeons or by system firmware :)
+On Wed, Aug 29, 2018 at 12:56:57AM +0100, Ben Hutchings wrote:
+>In addition to the patch I recently sent for lockdep itself, the
+>following fixes are also needed to make liblockdep build.
 
-I don't care too much, but note that Device Tree is a loaded term,
-usually referring specifically to a method of describing system hardware
-via the Flattened Device Tree format. If I were specifically targeting
-Device Tree, I'd use helpers like of_get_mac_address() instead. (The
-'of_*' prefix is a relic of OpenFirmware, an early firmware
-implementation that used the Device Tree format.)
-
-If you're trying to say "device tree" to refer to "the Linux device
-hierarchy", then that's also a fair description.
-
-But that's all starting to mince words. Device Tree (with or without
-capitalization) is fine with me.
-
-Thanks,
-Brian
-
-> I can change this before I commit.
-> 
-> -- 
-> Kalle Valo
+Thanks Ben. I've already sent patches similar to this as well as a
+MAINTAINERS update a few weeks ago to Ingo, but he didn't merge it in
+yet (https://lkml.org/lkml/2018/8/13/480). Let me follow up with him.
