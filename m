@@ -2,164 +2,72 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80F87C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:41:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25187C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:41:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40AC72084D
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:41:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40AC72084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id CCCD32084D
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:41:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCCD32084D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727875AbeH2Mgz (ORCPT
+        id S1728074AbeH2MhT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 08:36:55 -0400
-Received: from mga12.intel.com ([192.55.52.136]:6798 "EHLO mga12.intel.com"
+        Wed, 29 Aug 2018 08:37:19 -0400
+Received: from a.mx.secunet.com ([62.96.220.36]:50370 "EHLO a.mx.secunet.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726507AbeH2Mgz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 08:36:55 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2018 01:41:06 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,301,1531810800"; 
-   d="scan'208";a="228544097"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga004.jf.intel.com with ESMTP; 29 Aug 2018 01:40:48 -0700
-Received: from [10.125.252.129] (abudanko-mobl.ccr.corp.intel.com [10.125.252.129])
-        by linux.intel.com (Postfix) with ESMTP id BCD545802AD;
-        Wed, 29 Aug 2018 01:40:46 -0700 (PDT)
-Subject: Re: [PATCH v4 0/2]: perf: reduce data loss when profiling highly
- parallel CPU bound workloads
-To:     Kim Phillips <kim.phillips@arm.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <74fbcac7-80af-fcf0-2666-adefca98c271@linux.intel.com>
- <20180828144317.8684910d2b7abc9d6dca70f6@arm.com>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <9fcb59e7-6c26-33ad-172f-1d6b21b28f72@linux.intel.com>
-Date:   Wed, 29 Aug 2018 11:40:44 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1727172AbeH2MhT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 08:37:19 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by a.mx.secunet.com (Postfix) with ESMTP id CC69D20184;
+        Wed, 29 Aug 2018 12:41:11 +0200 (CEST)
+X-Virus-Scanned: by secunet
+Received: from a.mx.secunet.com ([127.0.0.1])
+        by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 64KvIDH2oAo2; Wed, 29 Aug 2018 12:41:10 +0200 (CEST)
+Received: from mail-essen-01.secunet.de (mail-essen-01.secunet.de [10.53.40.204])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by a.mx.secunet.com (Postfix) with ESMTPS id 8893E2007E;
+        Wed, 29 Aug 2018 12:41:10 +0200 (CEST)
+Received: from gauss2.secunet.de (10.182.7.193) by mail-essen-01.secunet.de
+ (10.53.40.204) with Microsoft SMTP Server id 14.3.408.0; Wed, 29 Aug 2018
+ 10:41:27 +0200
+Received: by gauss2.secunet.de (Postfix, from userid 1000)      id A9A933181764;
+ Wed, 29 Aug 2018 10:41:27 +0200 (CEST)
+Date:   Wed, 29 Aug 2018 10:41:27 +0200
+From:   Steffen Klassert <steffen.klassert@secunet.com>
+To:     Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+CC:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next] esp: remove redundant define esph
+Message-ID: <20180829084127.27gd2zbhyhoawilq@gauss3.secunet.de>
+References: <1534492260-2639-1-git-send-email-yanhaishuang@cmss.chinamobile.com>
 MIME-Version: 1.0
-In-Reply-To: <20180828144317.8684910d2b7abc9d6dca70f6@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1534492260-2639-1-git-send-email-yanhaishuang@cmss.chinamobile.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-G-Data-MailSecurity-for-Exchange-State: 0
+X-G-Data-MailSecurity-for-Exchange-Error: 0
+X-G-Data-MailSecurity-for-Exchange-Sender: 23
+X-G-Data-MailSecurity-for-Exchange-Server: d65e63f7-5c15-413f-8f63-c0d707471c93
+X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
+X-G-Data-MailSecurity-for-Exchange-Guid: 6C047990-9A3E-4AFC-8F5D-199E0F6B4FFD
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Aug 17, 2018 at 03:51:00PM +0800, Haishuang Yan wrote:
+> The pointer 'esph' is defined but is never used hence it is redundant
+> and canbe removed.
+> 
+> Signed-off-by: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
 
-Hi Kim,
-
-On 28.08.2018 22:43, Kim Phillips wrote:
-> On Tue, 28 Aug 2018 18:44:57 +0300
-> Alexey Budankov <alexey.budankov@linux.intel.com> wrote:
-> 
->> Experiment with profiling matrix multiplication code executing 128 
->> threads on Intel Xeon Phi (KNM) with 272 cores, like below,
->> demonstrates data loss metrics value of 98%:
-> 
-> So I took these two patches for a quick test-drive on intel-pt.
-
-Thanks for testing that out in this scenario! It hasn't been tested yet.
-
-> 
-> BEFORE (acme's today's perf/core branch):
-> 
-> $ sudo perf version
-> perf version 4.18.rc7.g55fc647
-> $ sudo perf record -e intel_pt//  dd if=/dev/zero of=/dev/null count=100000
-> 100000+0 records in
-> 100000+0 records out
-> 51200000 bytes (51 MB, 49 MiB) copied, 0.0868081 s, 590 MB/s
-> [ perf record: Woken up 21 times to write data ]
-> [ perf record: Captured and wrote 41.302 MB perf.data ]
-> $ 
-> 
-> AFTER (== BEFORE + these two patches):
-> 
-> $ sudo ./perf version
-> perf version 4.18.rc7.gbc1c99
-> $ sudo perf record -e intel_pt//  dd if=/dev/zero of=/dev/null count=100000
-> 100000+0 records in
-> 100000+0 records out
-> 51200000 bytes (51 MB, 49 MiB) copied, 0.0931142 s, 550 MB/s
-> 
-> ...and it's still running, minutes afterwards.  Before I kill it,
-> here's some strace output:
-> 
-> nanosleep({tv_sec=0, tv_nsec=500000}, NULL) = 0
-> lseek(3, 332556518, SEEK_SET)           = 332556518
-> write(3, "D\0\0\0\0\0\10\0", 8)         = 8
-> lseek(3, 0, SEEK_CUR)                   = 332556526
-> futex(0x7f221e7252c8, FUTEX_WAKE_PRIVATE, 1) = 1
-> futex(0x7f221e725200, FUTEX_WAKE_PRIVATE, 1) = 1
-> futex(0x7f221e7252cc, FUTEX_WAKE_PRIVATE, 1) = 1
-> futex(0x7f221e725200, FUTEX_WAKE_PRIVATE, 1) = 1
-> futex(0x7f221e7252c8, FUTEX_WAKE_PRIVATE, 1) = 1
-> futex(0x7f221e725200, FUTEX_WAKE_PRIVATE, 1) = 1
-> futex(0x7f221e7252cc, FUTEX_WAKE_PRIVATE, 1) = 1
-> futex(0x7f221e725200, FUTEX_WAKE_PRIVATE, 1) = 1
-> futex(0x7f221e7252c8, FUTEX_WAKE_PRIVATE, 1) = 1
-> futex(0x7f221e725200, FUTEX_WAKE_PRIVATE, 1) = 1
-> futex(0x7f221e7252cc, FUTEX_WAKE_PRIVATE, 1) = 1
-> futex(0x7f221e725200, FUTEX_WAKE_PRIVATE, 1) = 1
-> futex(0x7f221e7252c8, FUTEX_WAKE_PRIVATE, 1) = 1
-> futex(0x7f221e725200, FUTEX_WAKE_PRIVATE, 1) = 1
-> nanosleep({tv_sec=0, tv_nsec=500000}, NULL) = 0
-> lseek(3, 332578462, SEEK_SET)           = 332578462
-> write(3, "D\0\0\0\0\0\10\0", 8)         = 8
-> lseek(3, 0, SEEK_CUR)                   = 332578470
-> futex(0x7f221e7252cc, FUTEX_WAKE_PRIVATE, 1) = 1
-> futex(0x7f221e725200, FUTEX_WAKE_PRIVATE, 1) = 1
-> nanosleep({tv_sec=0, tv_nsec=500000}, NULL) = 0
-> lseek(3, 332598822, SEEK_SET)           = 332598822
-> write(3, "D\0\0\0\0\0\10\0", 8)         = 8
-> lseek(3, 0, SEEK_CUR)                   = 332598830
-> futex(0x7f221e7252c8, FUTEX_WAKE_PRIVATE, 1) = 1
-> futex(0x7f221e725200, FUTEX_WAKE_PRIVATE, 1) = 1
-> futex(0x7f221e7252cc, FUTEX_WAKE_PRIVATE, 1) = 1
-> futex(0x7f221e725200, FUTEX_WAKE_PRIVATE, 1) = 1
-> futex(0x7f221e7252c8, FUTEX_WAKE_PRIVATE, 1) = 1
-> futex(0x7f221e725200, FUTEX_WAKE_PRIVATE, 1) = 1
-> futex(0x7f221e7252cc, FUTEX_WAKE_PRIVATE, 1) = 1
-> futex(0x7f221e725200, FUTEX_WAKE_PRIVATE, 1) = 1
-> futex(0x7f221e7252c8, FUTEX_WAKE_PRIVATE, 1) = 1
-> futex(0x7f221e725200, FUTEX_WAKE_PRIVATE, 1) = 1
-> futex(0x7f221e7252cc, FUTEX_WAKE_PRIVATE, 1) = 1
-> ^Cstrace: Process 3597 detached
-> 
-> I can't prove that it's these two patches that create the hang, but
-> this does look like a livelock situation...hm, hitting ^C doesn't stop
-> it...had to kill -9 it...erm, does 'perf record -e intel_pt// dd...'
-> work for you on a more standard machine?:
-> 
-> $ dmesg | grep Perf
-> [    0.044226] Performance Events: PEBS fmt3+, Skylake events, 32-deep LBR, full-width counters, Intel PMU driver.
-
-Strace patterns look similar to the ones implemented in the patches. 
-Let me reproduce and investigate the hang locally.
-
-Thanks,
-Alexey
-
-> 
-> Thanks,
-> 
-> Kim
-> 
+Applied to ipsec-next, thanks!
