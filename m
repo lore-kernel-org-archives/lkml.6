@@ -3,117 +3,365 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BDC3C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 19:13:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58D90C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 19:15:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C82920652
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 19:13:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D298520657
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 19:15:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cnexlabs.onmicrosoft.com header.i=@cnexlabs.onmicrosoft.com header.b="oH8m7nYT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C82920652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cnexlabs.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GSi7FM/8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D298520657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728768AbeH2XLh (ORCPT
+        id S1728302AbeH2XNk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 19:11:37 -0400
-Received: from mail-bn3nam01on0053.outbound.protection.outlook.com ([104.47.33.53]:56028
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727554AbeH2XLh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 19:11:37 -0400
+        Wed, 29 Aug 2018 19:13:40 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:33570 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727698AbeH2XNk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 19:13:40 -0400
+Received: by mail-wm0-f65.google.com with SMTP id i134-v6so45595wmf.0;
+        Wed, 29 Aug 2018 12:15:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=cnexlabs.onmicrosoft.com; s=selector1-cnexlabs-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=O5obssNj2hYWDF14WfvblEPqku4pYtKWPl6ewNryq1U=;
- b=oH8m7nYT2j+J46rOF3KcNnzksdQUU3q1MAcGpFXwrCljSelMutO4xAL8VwSyZJn/v9kVdlvfqLMGDXmoMrcLLf9KERXSMp1C92s5jkMfSSGDWRoc8CAiujlGV3V0nKQAvbLRR8yPzz8jbesDNbYGdBrqEl4KV2914mwuWfYKinc=
-Received: from CO2PR06MB538.namprd06.prod.outlook.com (10.141.199.23) by
- CO2PR06MB699.namprd06.prod.outlook.com (10.141.226.22) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1080.14; Wed, 29 Aug 2018 19:13:16 +0000
-Received: from CO2PR06MB538.namprd06.prod.outlook.com
- ([fe80::2131:a303:c149:1150]) by CO2PR06MB538.namprd06.prod.outlook.com
- ([fe80::2131:a303:c149:1150%3]) with mapi id 15.20.1080.015; Wed, 29 Aug 2018
- 19:13:16 +0000
-From:   Javier Gonzalez <javier@cnexlabs.com>
-To:     =?utf-8?B?TWF0aWFzIEJqw7hybGluZw==?= <mb@lightnvm.io>
-CC:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/4] lightnvm: pblk: collection of small fixes
-Thread-Topic: [PATCH 0/4] lightnvm: pblk: collection of small fixes
-Thread-Index: AQHUP3b0c02+jLolfUKSPiOQdz1hBKTWtYWAgAADrICAAE9NgIAAEUE/
-Date:   Wed, 29 Aug 2018 19:13:15 +0000
-Message-ID: <6E7A547D-842F-4842-84FB-05180AA50D79@cnexlabs.com>
-References: <1535533313-29944-1-git-send-email-javier@cnexlabs.com>
- <5b8881cd-019a-a1d8-86ed-0131ef3b71af@lightnvm.io>
- <3F0AC430-4499-4D2D-B989-45B5635307A4@cnexlabs.com>,<115fa3ea-c53b-557f-9465-5f61a02efa49@lightnvm.io>
-In-Reply-To: <115fa3ea-c53b-557f-9465-5f61a02efa49@lightnvm.io>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=javier@cnexlabs.com; 
-x-originating-ip: [83.94.206.14]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CO2PR06MB699;6:g02CC34u3nkBpfnjGiVsJeP42VAjIsDfl2+ZEjXXoH3vgVZhxhp+OVjKLSzkbI8IpFY1C+0z4rB8n2fmetC3X6Y3hgTCwh3S9f0k0jL9eILs81y1ZFCk/dH+wVmrCgruvlDmRsgcpIG5RHLPkIw1mG8rhQ9w/M2ijNMqVZ07OyFu8uLYfsqbjB+MWM8X6ELOeC7w6w7C6kAvru32+wE0Wpx7bCuyZGNTOUU4LM4EEqaZp3iJCvrBWc06CpgT5eX9SfFBFov2NWWzFYFEESxNdEfW7ytBFZTIkBWYGdN7OsIjwKECxyjN/jPq4zUKK0d9dE1gkR4xKTHfV/1NInyUXKMV1rFCrx8pMdQ6tR8bwKZooXOdshBWKpMm/3G3BjFoIzykWD0QfFUcOX15wOpRvMJvth0JjEdzjtFsaIMtaQeY511a6bQMBBZ4nTIuTduK9u3tmbZ4x364e/s8XwOrJQ==;5:uqeXzxkflULIdWz5P0jdvnipxXjIPBsg6g88g5DtV9MWq2u1mBPmcv+mdLJKpdRXSiQ4Bcqm/2rz06AbdL5OzGDefVuK86NjKINS5nY0zuYWbiM4O7D1SoVXJ8fPDE/CvQudOmUKiemOJex1U6N5fTsgU23prMz4PPaXWzvGBPQ=;7:IUTytEcYYddszen/zen8t/5DZxNe/WtvCO/u31IEMH4tHyhFvV9kJ6eLxETK1zEP0Z5dMt/jg4xhgdkQP6O6w21b6SOMp+jpt3cSWfRTY+TpF7ljyNMf6VSHrgTpZVuP/QrZhWr/lvZMbWFtZ8HTAV+B3Xyh6psrZCxWq1H+pXkVbSi0V1S/nOG1V6nLhLdNB3nMQgI5bo9mkSX6bbz7ymCFagScuWgve30T7GiXaQgij/2T4B98ihtFAsBoEY/K
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 791bb5d2-6b53-4d4b-4029-08d60de37932
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:CO2PR06MB699;
-x-ms-traffictypediagnostic: CO2PR06MB699:
-x-microsoft-antispam-prvs: <CO2PR06MB6998923F62073CC2E1A0219BA090@CO2PR06MB699.namprd06.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(10201501046)(3231311)(944501410)(52105095)(149027)(150027)(6041310)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699016);SRVR:CO2PR06MB699;BCL:0;PCL:0;RULEID:;SRVR:CO2PR06MB699;
-x-forefront-prvs: 077929D941
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(346002)(376002)(39840400004)(136003)(396003)(199004)(189003)(6512007)(6246003)(2616005)(8676002)(81166006)(36756003)(7736002)(76176011)(53936002)(14454004)(93886005)(305945005)(25786009)(54906003)(476003)(4326008)(5250100002)(486006)(81156014)(6436002)(316002)(26005)(186003)(229853002)(99286004)(14444005)(6506007)(102836004)(53546011)(256004)(6486002)(446003)(5660300001)(11346002)(33656002)(478600001)(6116002)(66066001)(86362001)(3846002)(6916009)(8936002)(83716003)(68736007)(97736004)(105586002)(106356001)(82746002)(2906002)(2900100001);DIR:OUT;SFP:1101;SCL:1;SRVR:CO2PR06MB699;H:CO2PR06MB538.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: cnexlabs.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: czIJI1pxz4bn0TBKNZmi8pcsVE8nB2fUzxgN/5Dv6EnZZz1mGI9Y+I8iWGg8c35a0fXrcXNJOovCJO3kUE52+5+0yuCKCJjAVeSpA+r8wUjybiFTK5lAB7Vw/Z7K1AXanBTOf5353IH02kHKkQOnBq/M9xAZFzmXMU1X47LfG8CpVRdJoBWxNqlgMmc1J3e0FdowTru1tZ7JGwGUjCMT1Q4FA1WuNhHlv4fliiZgTMkWID2Ih5Nzdl16/PFB/YVNt0WwKM0DAsQPr40RShQ1o8e52V9wxmVXapTlrz1zjdS4AFRmopR5nvx3VhmzqtcpwJROwMzI9AtJv95A9xSndmMjh4aeQeMoFwhgGMtzq7I=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ZqFyhqBBCB8lMHPYlSK3uSjfUmfyQ5ERXI223ZuuAGU=;
+        b=GSi7FM/8WXN6wSjkFJV88uLShVyQDUgZLYdbnoISZBunwvnu++9vV0ueVR9WkwOSF1
+         /OgmlLcJXOyH2jmsYETZ52/IgLX6KyK+MY5zAK9JERIIc1oBRmTuqmU7H5NXS8XGGeNG
+         0mcAHQImE6NNJdx2jKtoYy05oBjFliyGxG7AbV3RXzAA2B+0AcRiVidXF8+e9mRnhDZr
+         o8yiJYyoXgcb2QHjfJqNxftftq8GlR3BecJPB4drh18qdqK6xssm014BlG6p522qE8do
+         NYYP2VN+01IvekAiotDEt7uWEJgLLMpiWk6eCF7/9DLYJmRHd5uf1jumcupuZy1uaR09
+         yqnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ZqFyhqBBCB8lMHPYlSK3uSjfUmfyQ5ERXI223ZuuAGU=;
+        b=Kg9AstrVKOmV6cI+a8TjtnigDZC2e46taY7di+zbu09R9U0Rt7u44X0JWTkrhkXaNy
+         k7ce/vfANqDYNcbQ4+bYdhHQpbhnkvVSdAAVHSoOBykhENgQOnZ4YyTYKO54A/oUcHHx
+         pQEO20QwMHLKmnLVrZlmxhlry+nKn/kgAxz5v5GFw/pSleWSla3VSs8xYY7Dv8+2IZ4C
+         MPTnrTF4ImOwTvPdBGhUZg9mXxALEo3qhpW/+mBT6khf4EhklNQOyENOzGnphNyetxFS
+         l2kRliQM9U/oyO1y9aza+K9hIcGdXCFDcq1ivIPgH+usc1/mwoLHgL9gCPenrwCTkaYG
+         9Ztw==
+X-Gm-Message-State: APzg51BowBgknZgPrPexsSXho4aug1DwJx/3g4UrB9iboHAs5kr1P/Fu
+        ICcaVS0IR0DzSrPB/7A+e22RFd53
+X-Google-Smtp-Source: ANB0VdYnqdTKUIg4gPBBIA39BfpI2zwIWtmhbx7s5Mpn1CF2FWMmvLtn2h46xneR9P7RnVdxy/QktQ==
+X-Received: by 2002:a1c:2dc8:: with SMTP id t191-v6mr5294787wmt.94.1535570120228;
+        Wed, 29 Aug 2018 12:15:20 -0700 (PDT)
+Received: from [192.168.1.18] (bkz141.neoplus.adsl.tpnet.pl. [83.28.193.141])
+        by smtp.gmail.com with ESMTPSA id 72-v6sm7232147wrb.48.2018.08.29.12.15.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 Aug 2018 12:15:19 -0700 (PDT)
+Subject: Re: [PATCH v5 1/2] leds: core: Introduce LED pattern trigger
+To:     Baolin Wang <baolin.wang@linaro.org>, Pavel Machek <pavel@ucw.cz>
+Cc:     rteysseyre@gmail.com, Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <1dc5d394324b2bf1ffe229b8e42691fab6d749e0.1533556992.git.baolin.wang@linaro.org>
+ <c18fd41f-831c-ab74-57e5-d4151f4b47cc@gmail.com> <20180824101145.GA1510@amd>
+ <9bb7ac19-36a6-d11a-6d46-fc65c2026201@gmail.com> <20180824201227.GB17146@amd>
+ <f5046e2d-9f15-4b7e-083e-e97f7ca0693c@gmail.com>
+ <CAMz4kuLubD6v1+zmjuKtBL4geBk4ofBdkMy+v8x0K5g_L0otqQ@mail.gmail.com>
+ <52eb7b5f-a405-06d1-2758-f27401a3ce3b@gmail.com>
+ <CAMz4ku+a5QT5CaonW3R6dfKzcpJgyeGLbD5tH-0K1QMLDdQpqQ@mail.gmail.com>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <6d0881db-e02f-6bf4-2516-448bc4772cb8@gmail.com>
+Date:   Wed, 29 Aug 2018 21:15:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-OriginatorOrg: cnexlabs.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 791bb5d2-6b53-4d4b-4029-08d60de37932
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Aug 2018 19:13:16.0236
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: e40dfc2e-c6c1-463a-a598-38602b2c3cff
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO2PR06MB699
+In-Reply-To: <CAMz4ku+a5QT5CaonW3R6dfKzcpJgyeGLbD5tH-0K1QMLDdQpqQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQo+IE9uIDI5IEF1ZyAyMDE4LCBhdCAyMC4xMSwgTWF0aWFzIEJqw7hybGluZyA8bWJAbGlnaHRu
-dm0uaW8+IHdyb3RlOg0KPiANCj4gT24gMDgvMjkvMjAxOCAwMzoyNyBQTSwgSmF2aWVyIEdvbnph
-bGV6IHdyb3RlOg0KPj4+IE9uIDI5IEF1ZyAyMDE4LCBhdCAxNS4xNCwgTWF0aWFzIEJqw7hybGlu
-ZyA8bWJAbGlnaHRudm0uaW8+IHdyb3RlOg0KPj4+IA0KPj4+PiBPbiAwOC8yOS8yMDE4IDExOjAx
-IEFNLCBKYXZpZXIgR29uesOhbGV6IHdyb3RlOg0KPj4+PiBDb2xsZWN0aW9uIG9mIHNtYWxsIGhl
-bHBlciBmdW5jdGlvbiBmaXhlcywgcmVtb3ZhbCBvZiB1bnVzZWQgdmFyaWFibGVzDQo+Pj4+IGFu
-ZCBjb21tZW50IHR5cG9zLg0KPj4+PiBKYXZpZXIgR29uesOhbGV6ICg0KToNCj4+Pj4gICBsaWdo
-dG52bTogcGJsazogY2FsY3VsYXRlIGxpbmUgcGFkIGRpc3RhbmNlIGluIGhlbHBlcg0KPj4+PiAg
-IGxpZ2h0bnZtOiBwYmxrOiBmaXggY29tbWVudCB0eXBvDQo+Pj4+ICAgbGlnaHRudm06IHBibGs6
-IHJlbW92ZSB1bnVzZWQgdmFyaWFibGUuDQo+Pj4+ICAgbGlnaHRudm06IHBibGs6IGd1YXJhbnRl
-ZSBlbWV0YSBvbiBsaW5lIGNsb3NlDQo+Pj4+ICBkcml2ZXJzL2xpZ2h0bnZtL3BibGstY29yZS5j
-ICAgICB8IDEzICsrKysrKysrKysrLS0NCj4+Pj4gIGRyaXZlcnMvbGlnaHRudm0vcGJsay1yZWNv
-dmVyeS5jIHwgIDIgLS0NCj4+Pj4gIGRyaXZlcnMvbGlnaHRudm0vcGJsay13cml0ZS5jICAgIHwg
-IDIgKy0NCj4+Pj4gIGRyaXZlcnMvbGlnaHRudm0vcGJsay5oICAgICAgICAgIHwgIDYgKysrLS0t
-DQo+Pj4+ICA0IGZpbGVzIGNoYW5nZWQsIDE1IGluc2VydGlvbnMoKyksIDggZGVsZXRpb25zKC0p
-DQo+Pj4gDQo+Pj4gVGhhbmtzLiBBcHBsaWVkIDItNC4gVGhlIHBhZCBkaXN0YW5jZSBkb2VzIG5v
-dCBjb21waWxlIGR1ZSB0byBtaXNzaW5nDQo+Pj4gdXBkYXRlIHRvIHBibGtfcGFkX2Rpc3RhbmNl
-IGNhbGwgZnJvbSBwYmxrLXJlY292ZXJ5LmMuDQo+Pj4gDQo+Pj4gQWxzbywgaXQgbG9va3MgbGlr
-ZSBwYmxrLXJlY292ZXJ5LmMgaXMgdGhlIG9ubHkgdXNlci4gUGxlYXNlIGNvbnNpZGVyDQo+Pj4g
-bW92aW5nIGl0IHRoZSBmdW5jdGlvbiBmcm9tIHBibGsuaCB0byBwYmxrLXJlY292ZXJ5LmMNCj4+
-IEkgcmVvcmRlcmVkIHRvIHNlbmQgdGhlIGhlbHBlcnMsIGJ1dCB5b3UgY2FuIHNlZSB0aGF0IGFs
-bCB0aGVzZSBhcmUgbWFkZQ0KPj4gdG8gc3VwcG9ydC4NCj4+ICAgbGlnaHRudm06IHBibGs6IHJl
-Y292ZXIgb3BlbiBsaW5lcyBvbiAyLjAgZGV2aWNlcw0KPj4gQ2FuIHlvdSBmaXggdGhpcyBkaXJl
-Y3RseSBhbmQgYXBwbHkgMSB0b28/IEknbSBmaW5lIHdpdGggbW92aW5nIGl0IHRvDQo+PiBwYmxr
-LXJlY292ZXJ5LmMuIFRoZSBwYXRjaCBhYm92ZSB3aWxsIHVzZSBpdC4NCj4gDQo+IFllcy4gSSd2
-ZSBmaXhlZCBpdCB1cCBpbiBwYmxrLXJlY292ZXJ5LmMsIGFuZCBhbHNvIG1vdmVkIHRoZSBmdW5j
-dGlvbiB0byBwYmxrLXJlY292ZXJ5LmMuIEFwcGxpZWQgZm9yIDQuMjAuDQoNClRoYW5rcyENCg==
+Hi Baolin,
+
+On 08/29/2018 11:48 AM, Baolin Wang wrote:
+> Hi Jacek,
+> 
+> On 29 August 2018 at 04:25, Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
+>> On 08/25/2018 09:51 AM, Baolin Wang wrote:
+>>> On 25 August 2018 at 04:44, Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
+>>>> On 08/24/2018 10:12 PM, Pavel Machek wrote:
+>>>>> On Fri 2018-08-24 21:49:50, Jacek Anaszewski wrote:
+>>>>>> Hi Pavel,
+>>>>>>
+>>>>>> On 08/24/2018 12:11 PM, Pavel Machek wrote:
+>>>>>>> Hi!
+>>>>>>>
+>>>>>>>> I think that it would be more flexible if software pattern fallback
+>>>>>>>> was applied in case of pattern_set failure. Otherwise, it would
+>>>>>>>> lead to the situation where LED class devices that support hardware
+>>>>>>>> blinking couldn't be applied the same set of patterns as LED class
+>>>>>>>> devices that don't implement pattern_set. The latter will always have to
+>>>>>>>> resort to using software pattern engine which will accept far greater
+>>>>>>>> amount of pattern combinations.
+>>>>>>>>
+>>>>>>>> In this case we need to discuss on what basis the decision will be
+>>>>>>>> made on whether hardware or software engine will be used.
+>>>>>>>>
+>>>>>>>> Possible options coming to mind:
+>>>>>>>> - an interface will be provided to determine max difference between
+>>>>>>>>   the settings supported by the hardware and the settings requested by
+>>>>>>>>   the user, that will result in aligning user's setting to the hardware
+>>>>>>>>   capabilities
+>>>>>>>> - the above alignment rate will be predefined instead
+>>>>>>>> - hardware engine will be used only if user requests supported settings
+>>>>>>>>   on the whole span of the requested pattern
+>>>>>>>> - in each of the above cases it would be worth to think of the
+>>>>>>>>   interface to show the scope of the settings supported by hardware
+>>>>>>>
+>>>>>>> I'd recommend keeping it simple. We use hardware engine if driver
+>>>>>>> author thinks pattern is "close enough".
+>>>>>>
+>>>>>> The thing is that in the ledtrig-pattern v5 implementation there
+>>>>>> is no option of using software fallback if pattern_set op
+>>>>>> is initialized:
+>>>>>>
+>>>>>> +    if (led_cdev->pattern_set) {
+>>>>>> +            return led_cdev->pattern_set(led_cdev, data->patterns,
+>>>>>> +                                         data->npatterns, data->repeat);
+>>>>>> +    }
+>>>>>
+>>>>> Yeah, that sounds wrong. (Sorry I did not pay enough attention).
+>>>>>
+>>>>> It pattern_set() returns special error code, it should just continue
+>>>>> and use software pattern fallback.
+>>>>
+>>>> And now we can get back to the issue I was concerned about in the
+>>>> email you replied to, i.e. what series of [brightness delta_t] tuples
+>>>> should be written to the pattern file to enable hardware breathing
+>>>> engine.
+>>>
+>>> OK. So now we've made a consensus to use the software pattern fallback
+>>> if failed to set hardware pattern. How about introduce one interface
+>>> to convert hardware patterns to software patterns if necessary?
+>>>
+>>> diff --git a/drivers/leds/trigger/ledtrig-pattern.c
+>>> b/drivers/leds/trigger/ledtrig-pattern.c
+>>> index 63b94a2..d46a641 100644
+>>> --- a/drivers/leds/trigger/ledtrig-pattern.c
+>>> +++ b/drivers/leds/trigger/ledtrig-pattern.c
+>>> @@ -66,8 +66,15 @@ static int pattern_trig_start_pattern(struct
+>>> pattern_trig_data *data,
+>>>                 return 0;
+>>>
+>>>         if (led_cdev->pattern_set) {
+>>> -               return led_cdev->pattern_set(led_cdev, data->patterns,
+>>> -                                            data->npatterns, data->repeat);
+>>> +               ret = led_cdev->pattern_set(led_cdev, data->patterns,
+>>> +                                           data->npatterns, data->repeat);
+>>> +               if (!ret)
+>>> +                       return 0;
+>>> +
+>>> +               dev_warn(led_cdev->dev, "Failed to set hardware pattern\n");
+>>> +
+>>> +               if (led_cdev->pattern_convert)
+>>> +                       led_cdev->pattern_convert(led_cdev,
+>>
+>> I can't see how it could help to assess if hw pattern
+>> engine can launch given pattern, and with what accuracy.
+>>
+>> Instead, I propose to add a means for defining whether the pattern
+>> to be set is intended for hardware pattern engine or for software
+>> fallback. It could be either separate sysfs file e.g. hw_pattern,
+>> or a modifier to the pattern written to the pattern file, e,g,
+>>
+>> echo "hw 100 2 200 3 100 2" > pattern
+>>
+>> hw format expected by given driver would have to be described
+>> in the per-driver ABI documentation. All patterns without
+>> "hw" prefix would enable software pattern engine.
+> 
+> OK. So I did some optimization based on v5 according to suggestion, if
+> you think this is okay for you, then I will send out the formal v6
+> patch set.
+> 
+> 1. echo "hw 100 2 200 3 100 2" > pattern
+> Only for hardware pattern, if failed,  we will return error number.
+
+After thinking more about it, I'd opt for a separate file
+dedicated to hardware pattern, e.g. hw_pattern, which would
+be created only if the LED class driver implemented pattern_set op.
+
+> 2. echo "100 2 200 3 100 2" > pattern
+> Will try to set hardware pattern firstly, if failed, will use software
+> pattern instead.
+> 
+> diff --git a/drivers/leds/trigger/ledtrig-pattern.c
+> b/drivers/leds/trigger/ledtrig-pattern.c
+> index 63b94a2..f08e797 100644
+> --- a/drivers/leds/trigger/ledtrig-pattern.c
+> +++ b/drivers/leds/trigger/ledtrig-pattern.c
+> @@ -26,6 +26,7 @@ struct pattern_trig_data {
+>  	u32 repeat;
+>  	u32 last_repeat;
+>  	bool is_indefinite;
+> +	bool is_hw_pattern;
+>  	struct timer_list timer;
+>  };
+> 
+> @@ -62,12 +63,21 @@ static void pattern_trig_timer_function(struct
+> timer_list *t)
+>  static int pattern_trig_start_pattern(struct pattern_trig_data *data,
+>  				      struct led_classdev *led_cdev)
+>  {
+> +	int ret;
+> +
+>  	if (!data->npatterns)
+>  		return 0;
+> 
+>  	if (led_cdev->pattern_set) {
+> -		return led_cdev->pattern_set(led_cdev, data->patterns,
+> +		ret = led_cdev->pattern_set(led_cdev, data->patterns,
+>  					     data->npatterns, data->repeat);
+> +		if (!ret)
+> +			return 0;
+> +
+> +		dev_warn(led_cdev->dev, "Failed to set hardware patterns\n");
+> +
+> +		if (data->is_hw_pattern)
+> +			return ret;
+
+With separate pattern files we could get rid of this ambiguity and
+attempt calling pattern_set only if requested via hw_pattern file.
+No software fallback should be employed in case of failure then.
+
+Similarly in case of requests originating from pattern file -
+the software engine should be set up.
+
+>  	}
+> 
+>  	data->curr = data->patterns;
+> @@ -106,7 +116,7 @@ static ssize_t repeat_store(struct device *dev,
+> struct device_attribute *attr,
+>  	if (err)
+>  		return err;
+> 
+> -	if (!led_cdev->pattern_set)
+> +	if (!data->is_hw_pattern)
+>  		del_timer_sync(&data->timer);
+> 
+>  	mutex_lock(&data->lock);
+> @@ -159,19 +169,32 @@ static ssize_t pattern_store(struct device *dev,
+> struct device_attribute *attr,
+>  {
+>  	struct led_classdev *led_cdev = dev_get_drvdata(dev);
+>  	struct pattern_trig_data *data = led_cdev->trigger_data;
+> -	int ccount, cr, offset = 0, err = 0;
+> +	int ccount, cr, len, offset = 0, err = 0;
+> +	const char *s;
+> 
+> -	if (!led_cdev->pattern_set)
+> +	if (!data->is_hw_pattern)
+>  		del_timer_sync(&data->timer);
+> 
+>  	mutex_lock(&data->lock);
+> 
+> +	s = strstr(buf, "hw");
+> +	if (s && led_cdev->pattern_set) {
+> +		data->is_hw_pattern = true;
+> +		s += strlen("hw");
+> +		len = strlen(s);
+> +	} else {
+> +		data->is_hw_pattern = false;
+> +		s = buf;
+> +		len = count;
+> +	}
+> +
+>  	data->npatterns = 0;
+> -	while (offset < count - 1 && data->npatterns < MAX_PATTERNS) {
+> +	while (offset < len - 1 && data->npatterns < MAX_PATTERNS) {
+>  		cr = 0;
+> -		ccount = sscanf(buf + offset, "%d %d %n",
+> +		ccount = sscanf(s + offset, "%d %d %n",
+>  				&data->patterns[data->npatterns].brightness,
+>  				&data->patterns[data->npatterns].delta_t, &cr);
+>  		if (ccount != 2) {
+>  			data->npatterns = 0;
+>  			err = -EINVAL;
+> @@ -232,7 +255,8 @@ static void pattern_trig_deactivate(struct
+> led_classdev *led_cdev)
+> 
+>  	if (led_cdev->pattern_clear)
+>  		led_cdev->pattern_clear(led_cdev);
+> -	else
+> +
+> +	if (!data->is_hw_pattern)
+>  		del_timer_sync(&data->timer);
+> 
+>  	led_set_brightness(led_cdev, LED_OFF);
+> 
+>>
+>>> data->patterns, &data->npatterns);
+>>>         }
+>>>
+>>>         data->curr = data->patterns;
+>>> @@ -106,8 +113,7 @@ static ssize_t repeat_store(struct device *dev,
+>>> struct device_attribute *attr,
+>>>         if (err)
+>>>                 return err;
+>>>
+>>> -       if (!led_cdev->pattern_set)
+>>> -               del_timer_sync(&data->timer);
+>>> +       del_timer_sync(&data->timer);
+>>>
+>>>         mutex_lock(&data->lock);
+>>>
+>>> @@ -161,8 +167,7 @@ static ssize_t pattern_store(struct device *dev,
+>>> struct device_attribute *attr,
+>>>         struct pattern_trig_data *data = led_cdev->trigger_data;
+>>>         int ccount, cr, offset = 0, err = 0;
+>>>
+>>> -       if (!led_cdev->pattern_set)
+>>> -               del_timer_sync(&data->timer);
+>>> +       del_timer_sync(&data->timer);
+>>>
+>>>         mutex_lock(&data->lock);
+>>>
+>>> @@ -232,9 +237,8 @@ static void pattern_trig_deactivate(struct
+>>> led_classdev *led_cdev)
+>>>
+>>>         if (led_cdev->pattern_clear)
+>>>                 led_cdev->pattern_clear(led_cdev);
+>>> -       else
+>>> -               del_timer_sync(&data->timer);
+>>>
+>>> +       del_timer_sync(&data->timer);
+>>>         led_set_brightness(led_cdev, LED_OFF);
+>>>         kfree(data);
+>>>         led_cdev->activated = false;
+>>> diff --git a/include/linux/leds.h b/include/linux/leds.h
+>>> index 74fc2c6..04f3eaf 100644
+>>> --- a/include/linux/leds.h
+>>> +++ b/include/linux/leds.h
+>>> @@ -93,6 +93,8 @@ struct led_classdev {
+>>>                            struct led_pattern *pattern, int len,
+>>>                            unsigned int repeat);
+>>>         int (*pattern_clear)(struct led_classdev *led_cdev);
+>>> +       int (*pattern_convert)(struct led_classdev *led_cdev,
+>>> +                              struct led_pattern *pattern, int *len);
+>>>
+>>>         struct device           *dev;
+>>>         const struct attribute_group    **groups;
+>>>
+>>
+
+
+-- 
+Best regards,
+Jacek Anaszewski
