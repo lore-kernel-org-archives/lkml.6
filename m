@@ -2,176 +2,224 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8736CC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:21:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36ADAC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:21:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3244920856
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:21:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6E5F20862
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:21:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cnexlabs.onmicrosoft.com header.i=@cnexlabs.onmicrosoft.com header.b="OIwkt/fV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3244920856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cnexlabs.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zH8Y0GP9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6E5F20862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728675AbeH2RSs (ORCPT
+        id S1728719AbeH2RSu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 13:18:48 -0400
-Received: from mail-eopbgr710077.outbound.protection.outlook.com ([40.107.71.77]:24320
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727204AbeH2RSs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 13:18:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=cnexlabs.onmicrosoft.com; s=selector1-cnexlabs-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=v8u2gVdmYhcozIyi+WDKQteD7asFCDZd3sNiHPBl6ew=;
- b=OIwkt/fV56hsILJJGxEJEbKiucw9vjNnsYFY9bk7a3WJwNgQMFk2yReNTzHEgz5LdfFwbFY610L4WO3wiHr8NVaC2L3YE7V9lgPwrv4opfrbKh7tVgeH+kKYijqii9bxzQRcjEQ8/4c3hgR0nRfkRY7Nj4LpVxqwTF6uoysBzJU=
-Received: from CO2PR06MB538.namprd06.prod.outlook.com (10.141.199.23) by
- CO2PR06MB474.namprd06.prod.outlook.com (10.141.197.19) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1080.17; Wed, 29 Aug 2018 13:21:50 +0000
-Received: from CO2PR06MB538.namprd06.prod.outlook.com
- ([fe80::2131:a303:c149:1150]) by CO2PR06MB538.namprd06.prod.outlook.com
- ([fe80::2131:a303:c149:1150%3]) with mapi id 15.20.1080.015; Wed, 29 Aug 2018
- 13:21:49 +0000
-From:   Javier Gonzalez <javier@cnexlabs.com>
-To:     =?utf-8?B?TWF0aWFzIEJqw7hybGluZw==?= <mb@lightnvm.io>
-CC:     Jens Axboe <axboe@kernel.dk>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/3] lightnvm: pblk: take write semaphore on metadata
-Thread-Topic: [PATCH 3/3] lightnvm: pblk: take write semaphore on metadata
-Thread-Index: AQHUP3Yv4QI4aVkrX0mHdIZUuHT6jaTWs74AgAADywA=
-Date:   Wed, 29 Aug 2018 13:21:49 +0000
-Message-ID: <0FD404FB-C660-412B-9658-454A9DCD7558@cnexlabs.com>
-References: <1535532980-27672-1-git-send-email-javier@cnexlabs.com>
- <1535532980-27672-4-git-send-email-javier@cnexlabs.com>
- <f4f8c276-0269-5aa5-39fc-42aecc7bb309@lightnvm.io>
-In-Reply-To: <f4f8c276-0269-5aa5-39fc-42aecc7bb309@lightnvm.io>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=javier@cnexlabs.com; 
-x-originating-ip: [193.106.164.211]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CO2PR06MB474;6:uMXHUfpM8qn2XmevjJQpHojTb3IwJ6Vh2oX+ONkblg96NDp1cbX+SqSAWp4zaJvEJAS1KzkV9QUaGn2hnMdiuPPwN1+HMnMEzyHRl7pn4sDDffrj4qF5k1RUFg/yVo3Ulgmt435+A2kfxRMWaavEoKjs56MS1/ebca+f6L3OxU45cQcZnIqc5jMTTQJEawZDM+ob9ooJVU9dP9aAfZremVMCJtax9weuNxmpUZw1UjX3FaFP6oSMZofmtisUVv8YCvgJEb8xDMHx3/bmVtaSE6+vZhJgSPuXZiMONRDWi1Upn3JTyAXLBzbjAEXuymJ2j1+m4G5yswYSt4bCUKnwL3qFxifEddsI+SdQ1jpyQVb2vUzBrDI1Jtk7IIIw1LxD1CgA4wal4vz0Dm4KBE7p8i1XdUgoy2QYN9msDrjZsrCRseiWVoccIlYoRQBGjEUwSEBzmn7WJpgINxPh7kVHWw==;5:TUAx84kBs0MSuLxUXAYFM9M6CCu5bpTVG5T1KltPjhhd2Ghu7zXWVrVIuSKLDlOjJ+s8HfGzU2dK8dc2eYjK3ASKaNUQmLHjHkrgQeY0dFJmxVv9SU/R70ljGTS/zez8LcGUTq90Y+F+NJb7JkO/7OGA2l/vvUyag3ZJ0cw+7gM=;7:m32/uaIZcvr7PiTlWLGU48EvT1jlmlhAm4rUIXENB7/d0ebX2/pqFsjQjEnFqlUUNv+wxCxPIWESYi16zyzj9XrzLvN4HFafuZnuoJMWxHnl93caISqLXRMBLIrbiNYxd4SKjaMsZQFIDqcY0p/h8E+fZHIsyNmF+tMoWt0QMvlwbqhWjElsvnBrZjHjSVRoTQHouJlFI0DKe0wIqL8Ci9oyv+uLCgZQIyunS7UlFKTOF4cklMMHCtAmoyP6mrQP
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: f10f3f35-3f55-4c6d-92aa-08d60db260ca
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(49563074)(7193020);SRVR:CO2PR06MB474;
-x-ms-traffictypediagnostic: CO2PR06MB474:
-x-microsoft-antispam-prvs: <CO2PR06MB474551AED9379C6B8C82F51BA090@CO2PR06MB474.namprd06.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(17755550239193);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(102415395)(6040522)(2401047)(8121501046)(5005006)(3231311)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(149027)(150027)(6041310)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699016);SRVR:CO2PR06MB474;BCL:0;PCL:0;RULEID:;SRVR:CO2PR06MB474;
-x-forefront-prvs: 077929D941
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39840400004)(396003)(136003)(346002)(376002)(366004)(189003)(199004)(446003)(575784001)(102836004)(305945005)(6116002)(6506007)(53546011)(76176011)(54906003)(86362001)(8936002)(316002)(7736002)(5660300001)(33656002)(6916009)(83716003)(6486002)(229853002)(68736007)(2906002)(99286004)(99936001)(53936002)(105586002)(3846002)(6512007)(106356001)(6436002)(36756003)(97736004)(4326008)(14454004)(6246003)(5250100002)(14444005)(256004)(66066001)(476003)(2900100001)(11346002)(26005)(2616005)(81156014)(186003)(81166006)(486006)(82746002)(25786009)(478600001)(8676002);DIR:OUT;SFP:1101;SCL:1;SRVR:CO2PR06MB474;H:CO2PR06MB538.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: cnexlabs.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: nu2hBl+d7t3BVPu/qhPl5gjFugN6nWJcv79sItylZwZguWPALyjGFU5BIswnZ7YL535dL1+f3Yy9+U58bdcO996QI+J7/Nav8MCglbtFGxvQOVn9GEzBlPauxzG5o+Ys2dv2jjGygKJrKLV5qD2nPsqirXCdijAcWZpheHz/w+xnpd6yhq1qJ5X2s+9FoEbrOhr7bs+jTeKHfWg6lgn1/iA8b95ZXdSXijUSXRtl+Mf7psZ1x69x77LYF6G+pcSrq1byWlxcJLFKPn7ztnRlx0I4lfmbjUnJthxRITb74pS3PK7Nfum8gRi9TX8HcyOnIn6wfIoPTlV9TReCmPc/k77zrduPyzMngWMAauAJIRA=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_5EAEF27E-BF6A-4AC5-9593-2B3487445F49";
-        protocol="application/pgp-signature";
-        micalg=pgp-sha512
-MIME-Version: 1.0
-X-OriginatorOrg: cnexlabs.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f10f3f35-3f55-4c6d-92aa-08d60db260ca
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Aug 2018 13:21:49.7511
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: e40dfc2e-c6c1-463a-a598-38602b2c3cff
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO2PR06MB474
+        Wed, 29 Aug 2018 13:18:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56312 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727204AbeH2RSt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 13:18:49 -0400
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 404FC2084E;
+        Wed, 29 Aug 2018 13:21:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535548912;
+        bh=e3nDiQJ/xfn5crXdUY5SXaBHWqwPe2j6RWTUz4c3QFU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=zH8Y0GP9/r5ueGq5Kwvwzi2I3EOb9MkyG7uWkw1FmeUvZxAGv5agnOdX2Y5jFt9Xk
+         ZYZRot2kTcE1uWAmS5tWXDWZg9Zk5uE3WqMS9xX9An8e9p8d8v17GSkFjWXIAuHoma
+         lbegUbx3qhY1lPzfAGyBvZmL/LbyM8yO4Pzzx+8c=
+Date:   Wed, 29 Aug 2018 22:21:49 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Nadav Amit <namit@vmware.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        <x86@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        <linux-arch@vger.kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [RFC PATCH 4/6] x86/alternatives: initializing temporary mm for
+ patching
+Message-Id: <20180829222149.adfeee806322a332bb1e4ab9@kernel.org>
+In-Reply-To: <20180829081147.184610-5-namit@vmware.com>
+References: <20180829081147.184610-1-namit@vmware.com>
+        <20180829081147.184610-5-namit@vmware.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Apple-Mail=_5EAEF27E-BF6A-4AC5-9593-2B3487445F49
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=utf-8
+On Wed, 29 Aug 2018 01:11:45 -0700
+Nadav Amit <namit@vmware.com> wrote:
 
-> On 29 Aug 2018, at 15.08, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
->=20
-> On 08/29/2018 10:56 AM, Javier Gonz=C3=A1lez wrote:
->> pblk guarantees write ordering at a chunk level through a per open =
-chunk
->> semaphore. At this point, since we only have an open I/O stream for =
-both
->> user and GC data, the semaphore is per parallel unit.
->> For the metadata I/O that is synchronous, the semaphore is not needed =
-as
->> ordering is guaranteed. However, if the metadata scheme changes or
->> multiple streams are open, this guarantee might not be preserved.
->> This patch makes sure that all writes go through the semaphore, even =
-for
->> synchronous I/O. This is consistent with pblk's write I/O model. It =
-also
->> simplifies maintenance since changes in the metadata scheme could =
-cause
->> ordering issues.
->> Signed-off-by: Javier Gonz=C3=A1lez <javier@cnexlabs.com>
->> ---
->>  drivers/lightnvm/pblk-core.c | 16 +++++++++++++++-
->>  drivers/lightnvm/pblk.h      |  1 +
->>  2 files changed, 16 insertions(+), 1 deletion(-)
->> diff --git a/drivers/lightnvm/pblk-core.c =
-b/drivers/lightnvm/pblk-core.c
->> index 767178185f19..1e4dc0c1ed88 100644
->> --- a/drivers/lightnvm/pblk-core.c
->> +++ b/drivers/lightnvm/pblk-core.c
->> @@ -558,6 +558,20 @@ int pblk_submit_io_sync(struct pblk *pblk, =
-struct nvm_rq *rqd)
->>  	return ret;
->>  }
->>  +int pblk_submit_io_sync_sem(struct pblk *pblk, struct nvm_rq *rqd)
->> +{
->> +	struct ppa_addr *ppa_list;
->> +	int ret;
->> +
->> +	ppa_list =3D (rqd->nr_ppas > 1) ? rqd->ppa_list : =
-&rqd->ppa_addr;
->> +
->> +	pblk_down_page(pblk, ppa_list, rqd->nr_ppas);
->=20
-> If the debug stuff is killed inside __pblk_down_page, then ppa_list
-> and rqd->nr_ppas does not need to be passed, and this function can be
-> inlined in its caller. Can we kill it? I'll make the patch if you
-> like.
+> To prevent improper use of the PTEs that are used for text patching, we
+> want to use a temporary mm struct. We initailize it by copying the init
+> mm.
+> 
+> The address that will be used for patching is taken from the lower area
+> that is usually used for the task memory. Doing so prevents the need to
+> frequently synchronize the temporary-mm (e.g., when BPF programs are
+> installed), since different PGDs are used for the task memory.
+> 
+> Finally, we randomize the address of the PTEs to harden against exploits
+> that use these PTEs.
+> 
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Suggested-by: Andy Lutomirski <luto@kernel.org>
+> Signed-off-by: Nadav Amit <namit@vmware.com>
+> ---
+>  arch/x86/include/asm/pgtable.h       |  4 ++++
+>  arch/x86/include/asm/text-patching.h |  2 ++
+>  arch/x86/mm/init_64.c                | 35 ++++++++++++++++++++++++++++
+>  include/asm-generic/pgtable.h        |  4 ++++
+>  init/main.c                          |  1 +
+>  5 files changed, 46 insertions(+)
+> 
+> diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+> index e4ffa565a69f..c65d2b146ff6 100644
+> --- a/arch/x86/include/asm/pgtable.h
+> +++ b/arch/x86/include/asm/pgtable.h
+> @@ -1022,6 +1022,10 @@ static inline void __meminit init_trampoline_default(void)
+>  	/* Default trampoline pgd value */
+>  	trampoline_pgd_entry = init_top_pgt[pgd_index(__PAGE_OFFSET)];
+>  }
+> +
+> +void __init poking_init(void);
+> +#define poking_init poking_init
 
-Sounds good. Sure, please send - should I wait to resend this series?
+Would we need this macro?
+
+> +
+>  # ifdef CONFIG_RANDOMIZE_MEMORY
+>  void __meminit init_trampoline(void);
+>  # else
+> diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
+> index e85ff65c43c3..ffe7902cc326 100644
+> --- a/arch/x86/include/asm/text-patching.h
+> +++ b/arch/x86/include/asm/text-patching.h
+> @@ -38,5 +38,7 @@ extern void *text_poke(void *addr, const void *opcode, size_t len);
+>  extern int poke_int3_handler(struct pt_regs *regs);
+>  extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
+>  extern int after_bootmem;
+> +extern __ro_after_init struct mm_struct *poking_mm;
+> +extern __ro_after_init unsigned long poking_addr;
+>  
+>  #endif /* _ASM_X86_TEXT_PATCHING_H */
+> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+> index dd519f372169..ed4a46a89946 100644
+> --- a/arch/x86/mm/init_64.c
+> +++ b/arch/x86/mm/init_64.c
+> @@ -33,6 +33,7 @@
+>  #include <linux/nmi.h>
+>  #include <linux/gfp.h>
+>  #include <linux/kcore.h>
+> +#include <linux/sched/mm.h>
+>  
+>  #include <asm/processor.h>
+>  #include <asm/bios_ebda.h>
+> @@ -54,6 +55,7 @@
+>  #include <asm/init.h>
+>  #include <asm/uv/uv.h>
+>  #include <asm/setup.h>
+> +#include <asm/text-patching.h>
+>  
+>  #include "mm_internal.h"
+>  
+> @@ -1389,6 +1391,39 @@ unsigned long memory_block_size_bytes(void)
+>  	return memory_block_size_probed;
+>  }
+>  
+> +/*
+> + * Initialize an mm_struct to be used during poking and a pointer to be used
+> + * during patching. If anything fails during initialization, poking will be done
+> + * using the fixmap, which is unsafe, so warn the user about it.
+> + */
+> +void __init poking_init(void)
+> +{
+> +	unsigned long poking_addr;
+> +
+> +	poking_mm = copy_init_mm();
+> +	if (!poking_mm)
+> +		goto error;
+> +
+> +	/*
+> +	 * Randomize the poking address, but make sure that the following page
+> +	 * will be mapped at the same PMD. We need 2 pages, so find space for 3,
+> +	 * and adjust the address if the PMD ends after the first one.
+> +	 */
+> +	poking_addr = TASK_UNMAPPED_BASE +
+> +		(kaslr_get_random_long("Poking") & PAGE_MASK) %
+> +		(TASK_SIZE - TASK_UNMAPPED_BASE - 3 * PAGE_SIZE);
+> +
+> +	if (((poking_addr + PAGE_SIZE) & ~PMD_MASK) == 0)
+> +		poking_addr += PAGE_SIZE;
+> +
+> +	return;
+> +error:
+> +	if (poking_mm)
+> +		mmput(poking_mm);
+> +	poking_mm = NULL;
+
+At this point, only poking_mm == NULL case jumps into error. So we don't
+need above 3 lines.
+
+> +	pr_err("x86/mm: error setting a separate poking address space\n");
+> +}
+> +
+>  #ifdef CONFIG_SPARSEMEM_VMEMMAP
+>  /*
+>   * Initialise the sparsemem vmemmap using huge-pages at the PMD level.
+> diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
+> index 88ebc6102c7c..c66579d0ee67 100644
+> --- a/include/asm-generic/pgtable.h
+> +++ b/include/asm-generic/pgtable.h
+> @@ -1111,6 +1111,10 @@ static inline bool arch_has_pfn_modify_check(void)
+>  
+>  #ifndef PAGE_KERNEL_EXEC
+>  # define PAGE_KERNEL_EXEC PAGE_KERNEL
+> +
+> +#ifndef poking_init
+> +static inline void poking_init(void) { }
+> +#endif
+
+Hmm, this seems a bit tricky. Maybe we can make an __weak function
+in init/main.c.
+
+Thank you,
+
+>  #endif
+>  
+>  #endif /* !__ASSEMBLY__ */
+> diff --git a/init/main.c b/init/main.c
+> index 18f8f0140fa0..6754ff2687c8 100644
+> --- a/init/main.c
+> +++ b/init/main.c
+> @@ -725,6 +725,7 @@ asmlinkage __visible void __init start_kernel(void)
+>  	taskstats_init_early();
+>  	delayacct_init();
+>  
+> +	poking_init();
+>  	check_bugs();
+>  
+>  	acpi_subsystem_init();
+> -- 
+> 2.17.1
+> 
 
 
---Apple-Mail=_5EAEF27E-BF6A-4AC5-9593-2B3487445F49
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE+ws7Qq+qZPG1bJoyIX4xUKFRnnQFAluGneoACgkQIX4xUKFR
-nnT5cg/+O6T6RDBtaD0dsFcwIHkjh0rWfKUWi2QZzc+gc0V5e42ddjGCY5xcWZI6
-300rie/FRJr0iSzfSiulppR3/FK86VTmFym5Ye2LUqaLO4dXY39DP58fKNOaotBM
-xq+4RT4PdK7+Tatbe+XkndW3+Kvdi6G5+2EQNir+yAFEXI33GZVuxwhb+3vxcej/
-Jsz3QhjRXTOE1bGZX4PWFRWe0cChfVsi2Uith2jqBXVMeplDsLcjgmp/1vPRlZGC
-xpTOzgegmS4UqfNX/u4/2wHt8ID9qA5KQjVFGl00kUIpzFf0pNDBjoiD/to1QU6d
-y0oicYcb5WdTvxHKL1qEJxCiZbV7yx52HpWzzgAwXBtCMEKknbtutXLXmpzaZfLJ
-fKcci1nsLJ0i+5QX0V4/18i0lBxp6o6BmnerlQYAIDRXf06u4nE6FtgOP4Bku8Om
-Xwf1QEQhNTHNcbviiUQ+7x2oSjTyiLhZTtfax6SDlRNWxGlQkvesI+IdcWvWy09W
-MZ/sk4TEOzaPz3DFC1cjEb848gstgPIQUnb5IQdsvIK82sLjiu2o9xcc7C+3715p
-pDCs6/3JmrKt5xv+s0kqh675uzqUCJ2JxT/VWCxQCigPfT466btO76BAHDTAVm4F
-42dZDOS7sEofbr3utCJknPIF2sSzEikCmdy6iyBJcWskDLF4/pg=
-=6jS2
------END PGP SIGNATURE-----
-
---Apple-Mail=_5EAEF27E-BF6A-4AC5-9593-2B3487445F49--
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
