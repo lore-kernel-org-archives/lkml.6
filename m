@@ -4,56 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC8BFC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:03:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52E95C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:03:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A0452089B
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:03:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D3912089B
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:03:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QBFWRQX0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A0452089B
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FTt8+uiI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D3912089B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727781AbeH2K7G (ORCPT
+        id S1727816AbeH2K7K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 06:59:06 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:46926 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727172AbeH2K7F (ORCPT
+        Wed, 29 Aug 2018 06:59:10 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:37307 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727785AbeH2K7J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 06:59:05 -0400
-Received: by mail-pg1-f194.google.com with SMTP id b129-v6so1903607pga.13
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 00:03:40 -0700 (PDT)
+        Wed, 29 Aug 2018 06:59:09 -0400
+Received: by mail-pl1-f193.google.com with SMTP id d12-v6so1893802pls.4
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 00:03:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=9gO45GPUCiWNoJSPPW5yykw6lOn1on3+rP/v8SuzWGk=;
-        b=QBFWRQX0gaMKEq94OiPVi2I1NokcHktXgosg718cMFPkhord4M7chknNgxq8A2jmQj
-         x06VfYu0EJETEi2z/cDBCJCJ0siqFU0S5OPRdYA9iXvj1SgN9zgcWt3HBSVW8vWLILlz
-         2OvFYmmAM+K2bS4ZEIoUgPzpEeGwH0MVRT/tI=
+        bh=F6JNjnqOBxraoAmJ2G9nQq3A9aaEWZWPodCkmFELEA4=;
+        b=FTt8+uiIDtMNr76i4SHHbEdmo3x0fQckM4/6nQz3cKegXczL/kS8xRQ86loF+ym1uP
+         3Fpd5LHKwS30oEPpmqKE/5WBxvTynx6qm7zdYVXJzSnMnivIcq/YIMSSdvCqnFxpwflb
+         ohKMYLCNY5PjsqLIsr49T3uTBongbaNEe/jJg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=9gO45GPUCiWNoJSPPW5yykw6lOn1on3+rP/v8SuzWGk=;
-        b=F2JhdB7VslOG0Fpf5CpjEZZWUYrMR1Hg0ZufA1L0fXrtuotIF/c5kBrXwdF8xUF3Ew
-         9cC220mHXuIGtRaw2Jzx7Uk4nk79MPaxzeC/EVMx8D8HPl8CI6GBJ+9V6tcHEmYGXaQn
-         0onG5r3G7A1pzQm8MhUvmrvkWtf7WsSLoHBHWvLCfhmAXA+l0YfA+3DiipQmkHVqrhKr
-         b1/unn1xp1h+xRQhyKUOWYVA4q9bKziDX42axLYvl/u8HSZFuNYKRWb8oU9YFG4XnaxK
-         QY4FYOOKBZg8Zbwq9dy8/R7o7z2F7RuMB+QvxNM5kEAFAphsDEc99dYkVPviRKLYqbSE
-         dCIA==
-X-Gm-Message-State: APzg51CpT5Si0bZUiZ8Bao/fxG7ImLLsLMetsXr+Wk+fSxsJLJPrS5nh
-        yAJvHjC2nYbhQSR4Cn2N0ElHJg==
-X-Google-Smtp-Source: ANB0Vdbc4wwz0uzRwiVT7NbKw1p/EJqLtGX1ATiEULmbHmrh+hKWJdGAzxncAeeB5pSr061df78yow==
-X-Received: by 2002:a65:5189:: with SMTP id h9-v6mr4598889pgq.13.1535526220465;
-        Wed, 29 Aug 2018 00:03:40 -0700 (PDT)
+        bh=F6JNjnqOBxraoAmJ2G9nQq3A9aaEWZWPodCkmFELEA4=;
+        b=UydP+YzQ4Agt3W67qlrekxq4/q9sasFw1w3btTTFHzcmbyp0JUGO4+jjuzyOrv0f05
+         MaLd20NkklNibnDWkAtbao7GX7bBaHdRVgCqUkDt17c93Sp/ZKbKOtac883Z7lZ8QZKZ
+         EhZ6jcKFPa96L/MolL+qwL8UeVeWM1Obmsg7l3uRsFMiL243ELLS0x/msKD71xh/MeIt
+         U/xowuQ4PxexWVnNKonl9/BzsR7KutzFwHcwgatRi4sFXqC/nVcVAGbqQzWpVdFYybTK
+         G+aM4wHaWU0tquew9kYsNmf02bFGsIpUKQM/5gxH6e4pJRS3SPUE8+y+oCDUoIQ/WhaF
+         OXdw==
+X-Gm-Message-State: APzg51Aiwfq/dsvwVCboYtMD1t1lJbRRvfOgQpJb7IO4DgH/1UJOSwz1
+        jA1nAqB7aH/QYXjrkB4AI034UA==
+X-Google-Smtp-Source: ANB0Vdb9jhj0ILPiroZ4dZvMX4HK1fY7gO+RlY8olSezD7WgLyIVb3OxW7/irkjFgdX7242wF/scqA==
+X-Received: by 2002:a17:902:a987:: with SMTP id bh7-v6mr4834081plb.182.1535526224623;
+        Wed, 29 Aug 2018 00:03:44 -0700 (PDT)
 Received: from ubt.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id d81-v6sm4317342pfj.122.2018.08.29.00.03.36
+        by smtp.gmail.com with ESMTPSA id d81-v6sm4317342pfj.122.2018.08.29.00.03.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 29 Aug 2018 00:03:39 -0700 (PDT)
+        Wed, 29 Aug 2018 00:03:43 -0700 (PDT)
 From:   Chunyan Zhang <zhang.chunyan@linaro.org>
 To:     Ulf Hansson <ulf.hansson@linaro.org>,
         Adrian Hunter <adrian.hunter@intel.com>
@@ -64,9 +64,9 @@ Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jason Wu <jason.wu@unisoc.com>,
         Chunyan Zhang <chunyan.zhang@unisoc.com>,
         Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH V7 6/9] mmc: sdhci: Add Auto CMD Auto Select support
-Date:   Wed, 29 Aug 2018 15:03:01 +0800
-Message-Id: <1535526184-32718-7-git-send-email-zhang.chunyan@linaro.org>
+Subject: [PATCH V7 7/9] mmc: sdhci: SDMA may use Auto-CMD23 in v4 mode
+Date:   Wed, 29 Aug 2018 15:03:02 +0800
+Message-Id: <1535526184-32718-8-git-send-email-zhang.chunyan@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1535526184-32718-1-git-send-email-zhang.chunyan@linaro.org>
 References: <1535526184-32718-1-git-send-email-zhang.chunyan@linaro.org>
@@ -75,111 +75,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As SD Host Controller Specification v4.10 documents:
-Host Controller Version 4.10 defines this "Auto CMD Auto Select" mode.
-Selection of Auto CMD depends on setting of CMD23 Enable in the Host
-Control 2 register which indicates whether card supports CMD23. If CMD23
-Enable =1, Auto CMD23 is used and if CMD23 Enable =0, Auto CMD12 is
-used. In case of Version 4.10 or later, use of Auto CMD Auto Select is
-recommended rather than use of Auto CMD12 Enable or Auto CMD23
-Enable.
-
-This patch add this new mode support.
+When Host Version 4 Enable is set to 1, SDMA uses ADMA System Address
+register (05Fh-058h) instead of using register (000h-004h) to indicate
+its system address of data location. The register (000h-004h) is
+re-assigned to 32-bit Block Count and Auto CMD23 argument, so then SDMA
+may use Auto CMD23.
 
 Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
 ---
- drivers/mmc/host/sdhci.c | 49 ++++++++++++++++++++++++++++++++++++++----------
- drivers/mmc/host/sdhci.h |  2 ++
- 2 files changed, 41 insertions(+), 10 deletions(-)
+ drivers/mmc/host/sdhci.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index 604bf4c..62d843ac90 100644
+index 62d843ac90..ac92e0f 100644
 --- a/drivers/mmc/host/sdhci.c
 +++ b/drivers/mmc/host/sdhci.c
-@@ -1095,6 +1095,43 @@ static inline bool sdhci_auto_cmd12(struct sdhci_host *host,
- 	       !mrq->cap_cmd_during_tfr;
- }
+@@ -3834,10 +3834,14 @@ int sdhci_setup_host(struct sdhci_host *host)
+ 	if (host->quirks & SDHCI_QUIRK_MULTIBLOCK_READ_ACMD12)
+ 		host->flags |= SDHCI_AUTO_CMD12;
  
-+static inline void sdhci_auto_cmd_select(struct sdhci_host *host,
-+					 struct mmc_command *cmd,
-+					 u16 *mode)
-+{
-+	bool use_cmd12 = sdhci_auto_cmd12(host, cmd->mrq) &&
-+			 (cmd->opcode != SD_IO_RW_EXTENDED);
-+	bool use_cmd23 = cmd->mrq->sbc && (host->flags & SDHCI_AUTO_CMD23);
-+	u16 ctrl2;
-+
+-	/* Auto-CMD23 stuff only works in ADMA or PIO. */
 +	/*
-+	 * In case of Version 4.10 or later, use of 'Auto CMD Auto
-+	 * Select' is recommended rather than use of 'Auto CMD12
-+	 * Enable' or 'Auto CMD23 Enable'.
++	 * For v3 mode, Auto-CMD23 stuff only works in ADMA or PIO;
++	 * For v4 mode, SDMA may use Auto-CMD23 as well.
 +	 */
-+	if (host->version >= SDHCI_SPEC_410 && (use_cmd12 || use_cmd23)) {
-+		*mode |= SDHCI_TRNS_AUTO_SEL;
-+
-+		ctrl2 = sdhci_readw(host, SDHCI_HOST_CONTROL2);
-+		if (use_cmd23)
-+			ctrl2 |= SDHCI_CMD23_ENABLE;
-+		else
-+			ctrl2 &= ~SDHCI_CMD23_ENABLE;
-+		sdhci_writew(host, ctrl2, SDHCI_HOST_CONTROL2);
-+
-+		return;
-+	}
-+
-+	/*
-+	 * If we are sending CMD23, CMD12 never gets sent
-+	 * on successful completion (so no Auto-CMD12).
-+	 */
-+	if (use_cmd12)
-+		*mode |= SDHCI_TRNS_AUTO_CMD12;
-+	else if (use_cmd23)
-+		*mode |= SDHCI_TRNS_AUTO_CMD23;
-+}
-+
- static void sdhci_set_transfer_mode(struct sdhci_host *host,
- 	struct mmc_command *cmd)
- {
-@@ -1123,17 +1160,9 @@ static void sdhci_set_transfer_mode(struct sdhci_host *host,
- 
- 	if (mmc_op_multi(cmd->opcode) || data->blocks > 1) {
- 		mode = SDHCI_TRNS_BLK_CNT_EN | SDHCI_TRNS_MULTI;
--		/*
--		 * If we are sending CMD23, CMD12 never gets sent
--		 * on successful completion (so no Auto-CMD12).
--		 */
--		if (sdhci_auto_cmd12(host, cmd->mrq) &&
--		    (cmd->opcode != SD_IO_RW_EXTENDED))
--			mode |= SDHCI_TRNS_AUTO_CMD12;
--		else if (cmd->mrq->sbc && (host->flags & SDHCI_AUTO_CMD23)) {
--			mode |= SDHCI_TRNS_AUTO_CMD23;
-+		sdhci_auto_cmd_select(host, cmd, &mode);
-+		if (cmd->mrq->sbc && (host->flags & SDHCI_AUTO_CMD23))
- 			sdhci_writel(host, cmd->mrq->sbc->arg, SDHCI_ARGUMENT2);
--		}
- 	}
- 
- 	if (data->flags & MMC_DATA_READ)
-diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-index f7a1079..4a19ff8 100644
---- a/drivers/mmc/host/sdhci.h
-+++ b/drivers/mmc/host/sdhci.h
-@@ -42,6 +42,7 @@
- #define  SDHCI_TRNS_BLK_CNT_EN	0x02
- #define  SDHCI_TRNS_AUTO_CMD12	0x04
- #define  SDHCI_TRNS_AUTO_CMD23	0x08
-+#define  SDHCI_TRNS_AUTO_SEL	0x0C
- #define  SDHCI_TRNS_READ	0x10
- #define  SDHCI_TRNS_MULTI	0x20
- 
-@@ -185,6 +186,7 @@
- #define   SDHCI_CTRL_DRV_TYPE_D		0x0030
- #define  SDHCI_CTRL_EXEC_TUNING		0x0040
- #define  SDHCI_CTRL_TUNED_CLK		0x0080
-+#define  SDHCI_CMD23_ENABLE		0x0800
- #define  SDHCI_CTRL_V4_MODE		0x1000
- #define  SDHCI_CTRL_64BIT_ADDR		0x2000
- #define  SDHCI_CTRL_PRESET_VAL_ENABLE	0x8000
+ 	if ((host->version >= SDHCI_SPEC_300) &&
+ 	    ((host->flags & SDHCI_USE_ADMA) ||
+-	     !(host->flags & SDHCI_USE_SDMA)) &&
++	     (!host->v4_mode && !(host->flags & SDHCI_USE_SDMA)) ||
++	     (host->v4_mode && (host->flags & SDHCI_USE_SDMA))) &&
+ 	     !(host->quirks2 & SDHCI_QUIRK2_ACMD23_BROKEN)) {
+ 		host->flags |= SDHCI_AUTO_CMD23;
+ 		DBG("Auto-CMD23 available\n");
 -- 
 2.7.4
 
