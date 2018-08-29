@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3ADEC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:54:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D3FFC43334
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:54:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A860420644
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:54:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A860420644
+	by mail.kernel.org (Postfix) with ESMTP id EA26320644
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:54:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA26320644
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727863AbeH3Cx0 (ORCPT
+        id S1728023AbeH3Cxw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 22:53:26 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51000 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727394AbeH3CxX (ORCPT
+        Wed, 29 Aug 2018 22:53:52 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42236 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727346AbeH3Cxw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 22:53:23 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7TMsBnH000586
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:54:14 -0400
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2m60r18mqe-1
+        Wed, 29 Aug 2018 22:53:52 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7TMsf8R042806
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:54:44 -0400
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m637yjmre-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:54:14 -0400
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:54:43 -0400
 Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 29 Aug 2018 18:54:13 -0400
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Wed, 29 Aug 2018 18:54:12 -0400
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 29 Aug 2018 18:54:09 -0400
+        Wed, 29 Aug 2018 18:54:08 -0400
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7TMs8Uu27852960
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7TMs7CX38076564
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 29 Aug 2018 22:54:08 GMT
+        Wed, 29 Aug 2018 22:54:07 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 87323B2064;
-        Wed, 29 Aug 2018 18:53:04 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id 87340B2066;
+        Wed, 29 Aug 2018 18:53:03 -0400 (EDT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 56D67B2065;
-        Wed, 29 Aug 2018 18:53:04 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id 55656B206A;
+        Wed, 29 Aug 2018 18:53:03 -0400 (EDT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 29 Aug 2018 18:53:04 -0400 (EDT)
+        Wed, 29 Aug 2018 18:53:03 -0400 (EDT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 8683D16C91D2; Wed, 29 Aug 2018 15:54:07 -0700 (PDT)
+        id 79DE916C91CF; Wed, 29 Aug 2018 15:54:07 -0700 (PDT)
 From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -61,20 +61,20 @@ Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tip/core/rcu 11/24] rcu: Clean up flavor-related definitions and comments in rculist.h
-Date:   Wed, 29 Aug 2018 15:53:52 -0700
+Subject: [PATCH tip/core/rcu 09/24] rcu: Remove now-unused rcutorture APIs
+Date:   Wed, 29 Aug 2018 15:53:50 -0700
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180829225340.GA7019@linux.vnet.ibm.com>
 References: <20180829225340.GA7019@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18082922-0052-0000-0000-0000032821BD
+x-cbid: 18082922-0064-0000-0000-0000034400F9
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009636; HX=3.00000242; KW=3.00000007;
  PH=3.00000004; SC=3.00000266; SDB=6.01080749; UDB=6.00557500; IPR=6.00860734;
- MB=3.00023002; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-29 22:54:13
+ MB=3.00023002; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-29 22:54:12
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082922-0053-0000-0000-00005DE60101
-Message-Id: <20180829225405.7275-11-paulmck@linux.vnet.ibm.com>
+x-cbparentid: 18082922-0065-0000-0000-00003A784D88
+Message-Id: <20180829225405.7275-9-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-29_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -87,82 +87,123 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This commit removes rcu_sched_get_gp_seq(), rcu_bh_get_gp_seq(),
+rcu_exp_batches_completed_sched(), rcu_sched_force_quiescent_state(),
+and rcu_bh_force_quiescent_state(), which are no longer used because
+rcutorture no longer does "rcu_bh" and "rcu_sched" torture types.
+
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 ---
- include/linux/rculist.h | 32 +++++++++++++++-----------------
- 1 file changed, 15 insertions(+), 17 deletions(-)
+ kernel/rcu/rcu.h  | 10 ----------
+ kernel/rcu/tree.c | 47 -----------------------------------------------
+ 2 files changed, 57 deletions(-)
 
-diff --git a/include/linux/rculist.h b/include/linux/rculist.h
-index 4786c2235b98..e91ec9ddcd30 100644
---- a/include/linux/rculist.h
-+++ b/include/linux/rculist.h
-@@ -182,7 +182,7 @@ static inline void list_replace_rcu(struct list_head *old,
-  * @list:	the RCU-protected list to splice
-  * @prev:	points to the last element of the existing list
-  * @next:	points to the first element of the existing list
-- * @sync:	function to sync: synchronize_rcu(), synchronize_sched(), ...
-+ * @sync:	synchronize_rcu, synchronize_rcu_expedited, ...
-  *
-  * The list pointed to by @prev and @next can be RCU-read traversed
-  * concurrently with this function.
-@@ -240,7 +240,7 @@ static inline void __list_splice_init_rcu(struct list_head *list,
-  *                        designed for stacks.
-  * @list:	the RCU-protected list to splice
-  * @head:	the place in the existing list to splice the first list into
-- * @sync:	function to sync: synchronize_rcu(), synchronize_sched(), ...
-+ * @sync:	synchronize_rcu, synchronize_rcu_expedited, ...
+diff --git a/kernel/rcu/rcu.h b/kernel/rcu/rcu.h
+index 2bb77fddc11f..aa3dc08af4b3 100644
+--- a/kernel/rcu/rcu.h
++++ b/kernel/rcu/rcu.h
+@@ -509,29 +509,19 @@ void srcutorture_get_gp_data(enum rcutorture_type test_type,
+ 
+ #ifdef CONFIG_TINY_RCU
+ static inline unsigned long rcu_get_gp_seq(void) { return 0; }
+-static inline unsigned long rcu_bh_get_gp_seq(void) { return 0; }
+-static inline unsigned long rcu_sched_get_gp_seq(void) { return 0; }
+ static inline unsigned long rcu_exp_batches_completed(void) { return 0; }
+-static inline unsigned long rcu_exp_batches_completed_sched(void) { return 0; }
+ static inline unsigned long
+ srcu_batches_completed(struct srcu_struct *sp) { return 0; }
+ static inline void rcu_force_quiescent_state(void) { }
+-static inline void rcu_bh_force_quiescent_state(void) { }
+-static inline void rcu_sched_force_quiescent_state(void) { }
+ static inline void show_rcu_gp_kthreads(void) { }
+ static inline int rcu_get_gp_kthreads_prio(void) { return 0; }
+ #else /* #ifdef CONFIG_TINY_RCU */
+ unsigned long rcu_get_gp_seq(void);
+-unsigned long rcu_bh_get_gp_seq(void);
+-unsigned long rcu_sched_get_gp_seq(void);
+ unsigned long rcu_exp_batches_completed(void);
+-unsigned long rcu_exp_batches_completed_sched(void);
+ unsigned long srcu_batches_completed(struct srcu_struct *sp);
+ void show_rcu_gp_kthreads(void);
+ int rcu_get_gp_kthreads_prio(void);
+ void rcu_force_quiescent_state(void);
+-void rcu_bh_force_quiescent_state(void);
+-void rcu_sched_force_quiescent_state(void);
+ extern struct workqueue_struct *rcu_gp_wq;
+ extern struct workqueue_struct *rcu_par_gp_wq;
+ #endif /* #else #ifdef CONFIG_TINY_RCU */
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index b2ebdd01c8a2..fb888085d304 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -490,25 +490,6 @@ unsigned long rcu_get_gp_seq(void)
+ }
+ EXPORT_SYMBOL_GPL(rcu_get_gp_seq);
+ 
+-/*
+- * Return the number of RCU-sched GPs completed thus far for debug & stats.
+- */
+-unsigned long rcu_sched_get_gp_seq(void)
+-{
+-	return rcu_get_gp_seq();
+-}
+-EXPORT_SYMBOL_GPL(rcu_sched_get_gp_seq);
+-
+-/*
+- * Return the number of RCU GPs completed thus far for debug & stats.
+- * This is a transitional API and will soon be removed.
+- */
+-unsigned long rcu_bh_get_gp_seq(void)
+-{
+-	return READ_ONCE(rcu_state.gp_seq);
+-}
+-EXPORT_SYMBOL_GPL(rcu_bh_get_gp_seq);
+-
+ /*
+  * Return the number of RCU expedited batches completed thus far for
+  * debug & stats.  Odd numbers mean that a batch is in progress, even
+@@ -521,16 +502,6 @@ unsigned long rcu_exp_batches_completed(void)
+ }
+ EXPORT_SYMBOL_GPL(rcu_exp_batches_completed);
+ 
+-/*
+- * Return the number of RCU-sched expedited batches completed thus far
+- * for debug & stats.  Similar to rcu_exp_batches_completed().
+- */
+-unsigned long rcu_exp_batches_completed_sched(void)
+-{
+-	return rcu_state.expedited_sequence;
+-}
+-EXPORT_SYMBOL_GPL(rcu_exp_batches_completed_sched);
+-
+ /*
+  * Force a quiescent state.
   */
- static inline void list_splice_init_rcu(struct list_head *list,
- 					struct list_head *head,
-@@ -255,7 +255,7 @@ static inline void list_splice_init_rcu(struct list_head *list,
-  *                             list, designed for queues.
-  * @list:	the RCU-protected list to splice
-  * @head:	the place in the existing list to splice the first list into
-- * @sync:	function to sync: synchronize_rcu(), synchronize_sched(), ...
-+ * @sync:	synchronize_rcu, synchronize_rcu_expedited, ...
+@@ -540,24 +511,6 @@ void rcu_force_quiescent_state(void)
+ }
+ EXPORT_SYMBOL_GPL(rcu_force_quiescent_state);
+ 
+-/*
+- * Force a quiescent state for RCU BH.
+- */
+-void rcu_bh_force_quiescent_state(void)
+-{
+-	force_quiescent_state();
+-}
+-EXPORT_SYMBOL_GPL(rcu_bh_force_quiescent_state);
+-
+-/*
+- * Force a quiescent state for RCU-sched.
+- */
+-void rcu_sched_force_quiescent_state(void)
+-{
+-	rcu_force_quiescent_state();
+-}
+-EXPORT_SYMBOL_GPL(rcu_sched_force_quiescent_state);
+-
+ /*
+  * Show the state of the grace-period kthreads.
   */
- static inline void list_splice_tail_init_rcu(struct list_head *list,
- 					     struct list_head *head,
-@@ -359,13 +359,12 @@ static inline void list_splice_tail_init_rcu(struct list_head *list,
-  * @type:       the type of the struct this is embedded in.
-  * @member:     the name of the list_head within the struct.
-  *
-- * This primitive may safely run concurrently with the _rcu list-mutation
-- * primitives such as list_add_rcu(), but requires some implicit RCU
-- * read-side guarding.  One example is running within a special
-- * exception-time environment where preemption is disabled and where
-- * lockdep cannot be invoked (in which case updaters must use RCU-sched,
-- * as in synchronize_sched(), call_rcu_sched(), and friends).  Another
-- * example is when items are added to the list, but never deleted.
-+ * This primitive may safely run concurrently with the _rcu
-+ * list-mutation primitives such as list_add_rcu(), but requires some
-+ * implicit RCU read-side guarding.  One example is running within a special
-+ * exception-time environment where preemption is disabled and where lockdep
-+ * cannot be invoked.  Another example is when items are added to the list,
-+ * but never deleted.
-  */
- #define list_entry_lockless(ptr, type, member) \
- 	container_of((typeof(ptr))READ_ONCE(ptr), type, member)
-@@ -376,13 +375,12 @@ static inline void list_splice_tail_init_rcu(struct list_head *list,
-  * @head:	the head for your list.
-  * @member:	the name of the list_struct within the struct.
-  *
-- * This primitive may safely run concurrently with the _rcu list-mutation
-- * primitives such as list_add_rcu(), but requires some implicit RCU
-- * read-side guarding.  One example is running within a special
-- * exception-time environment where preemption is disabled and where
-- * lockdep cannot be invoked (in which case updaters must use RCU-sched,
-- * as in synchronize_sched(), call_rcu_sched(), and friends).  Another
-- * example is when items are added to the list, but never deleted.
-+ * This primitive may safely run concurrently with the _rcu
-+ * list-mutation primitives such as list_add_rcu(), but requires some
-+ * implicit RCU read-side guarding.  One example is running within a special
-+ * exception-time environment where preemption is disabled and where lockdep
-+ * cannot be invoked.  Another example is when items are added to the list,
-+ * but never deleted.
-  */
- #define list_for_each_entry_lockless(pos, head, member) \
- 	for (pos = list_entry_lockless((head)->next, typeof(*pos), member); \
 -- 
 2.17.1
 
