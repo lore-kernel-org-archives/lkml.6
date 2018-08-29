@@ -6,58 +6,59 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 743D0C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:42:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F542C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:43:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BA7120898
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:42:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E305820898
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:43:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fjHby0ZH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BA7120898
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hgtRBHSD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E305820898
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727854AbeH2Lhv (ORCPT
+        id S1727767AbeH2LjO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 07:37:51 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:40502 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727172AbeH2Lhv (ORCPT
+        Wed, 29 Aug 2018 07:39:14 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:38637 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727304AbeH2LjN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 07:37:51 -0400
-Received: by mail-it0-f65.google.com with SMTP id h23-v6so6010806ita.5
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 00:42:17 -0700 (PDT)
+        Wed, 29 Aug 2018 07:39:13 -0400
+Received: by mail-it0-f67.google.com with SMTP id p129-v6so6014918ite.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 00:43:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Bw4J5C+4dljYOjiVtoqxsnDzeVqB8xqjZmBgThgK4W4=;
-        b=fjHby0ZHMYwLALvh1YzUTc6aUQavBWWIo1lOCFy6kY4XviT8cgWb3hQEe3I+cS9k0C
-         35Kj63hr/VjQO4/emXhzAN5UaRFRsR+TTP6mvWdffOq3vP6MFynVT/f31M0lKP0My0W0
-         63D/1Pg0S9VStEmW8Cun8aBJrLA6icXqVDrxk=
+        bh=4DDAKbSLrjPXiyeHhBKSLKKCWbarsLJa9tjcfedxeyo=;
+        b=hgtRBHSDoKByIjcU5mivSShK1XfMgmRNlQ2yds1Q0yKt+OKOwnyoIYHEcOO+RcH90a
+         Ln8CogLcPV3IMBQYYBMgR0xaHr6runmahyAUeC8iT1LVVcpzcmt0T//Dn8ShGjfTRMC3
+         5UYYidjPhyIxGKz8Vu8Hu36v9pOxbFmNtFd2g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Bw4J5C+4dljYOjiVtoqxsnDzeVqB8xqjZmBgThgK4W4=;
-        b=dPaEIBS5K6/SAH6wXX98A1uVfCNOZ1j/j/HGlDk1dD6MdDx/d1KQ2bmMuKLs1b0QXe
-         kSf2I1bF9hFKdwFQvyhX2aiEJasrujqnsudOCvbMC2XyTxik68ovErVwBvHwzyI0CrHF
-         voOwYuARbClZYKcXXvbe99/95pDzhAXAXa5+cN7kzkJvb1E2MBTYARtDEoHOlQBTtqsE
-         vjk0NwbM25wkFl0qlG/AAaiO9snC39UiKBa2LlW+ZDMktkIvcEiE1n6NlhUC2ohFl5Cl
-         1CLPEwvgFrembMcmbPyqkk3282qT1d9N/2xsZ7Q8W5MyWY6+pDaFDJDO+jSEqxC4cWw1
-         SVKg==
-X-Gm-Message-State: APzg51ASzmOH3cqZ2IqA7aGxG9G1bD2ja7nM9Mtni7Gy6Hq/XAjVtqpT
-        sP+oMqYUdbTJb9KmqWzpd8liFld/5fon8UxFX5MNFg==
-X-Google-Smtp-Source: ANB0Vdb4/owKb5V33mY+JJ3FFqhiT7ZtKlJ5R7Ez50fxSzoO1prLZ7PHqh3MXzOhxmNf7Y4atXmwgGldHasEopvyOB4=
-X-Received: by 2002:a02:6c45:: with SMTP id w66-v6mr4413550jab.87.1535528537586;
- Wed, 29 Aug 2018 00:42:17 -0700 (PDT)
+        bh=4DDAKbSLrjPXiyeHhBKSLKKCWbarsLJa9tjcfedxeyo=;
+        b=Q9wVPBiUglkhKM4xXl/dxsmS3sCSq65Nzbm2+TjmSUzoy6/VqSk8hLct1BAr2QYikr
+         S7tIWl609bgaIPCfaS9aWdr+A1vVoI7S6opUdHqmw1nH/Y0fqXu0yO+7eFcFCJSQCN/6
+         G2IQ9QW431uMCaKd4IyfVHlkKrORA+kP28/rs3Bi3M0swqoymsmpLx/bxFkGoFYk1NTd
+         8PYQI2/2bCo+vbIQ8b4q5zYwqF9ClPYNjLyHwSeD5MEvk/hnkvF+76YsRWJHZuWpiiE7
+         0RUPQr1YGzy099f8aqZTzztrBYCkfkXNv5gzWrUEDKChOrxHrWtVzX1ZpC6je/gkyXd8
+         sDYg==
+X-Gm-Message-State: APzg51BcFuycvmdX///Johk1h2+K7pc5XwURf+x+fR3yHfQsRlW6Lwvx
+        dhiLmfe1GGGTlcByGnRR2wIXg5+E6Gui6MU7FFcSxA==
+X-Google-Smtp-Source: ANB0VdaZjcyijibOq9OBqQoFcNNUdN76mON+47u9PB4dPN5QnH8v275kK+i+VS4xRz0hhLW4A3/xzBWrkEe0m/91jlc=
+X-Received: by 2002:a24:144:: with SMTP id 65-v6mr4089951itk.62.1535528619556;
+ Wed, 29 Aug 2018 00:43:39 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180816200648.90458-1-swboyd@chromium.org> <20180816200648.90458-3-swboyd@chromium.org>
-In-Reply-To: <20180816200648.90458-3-swboyd@chromium.org>
+References: <20180816200648.90458-1-swboyd@chromium.org> <20180816200648.90458-4-swboyd@chromium.org>
+In-Reply-To: <20180816200648.90458-4-swboyd@chromium.org>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 29 Aug 2018 09:42:05 +0200
-Message-ID: <CACRpkdaPRo1G1qmRvC61UPht=wqUJyA7djVfysMd_NAxeEtR+A@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] pinctrl: msm: Mux out gpio function with gpio_request()
+Date:   Wed, 29 Aug 2018 09:43:27 +0200
+Message-ID: <CACRpkdau5Wnsq3NO2-HY_XSZ3TJHcX9hYU-W46ng+_BwOviqGA@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] pinctrl: msm: Configure interrupts as input and
+ gpio mode
 To:     Stephen Boyd <swboyd@chromium.org>
 Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
@@ -72,11 +73,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Thu, Aug 16, 2018 at 10:06 PM Stephen Boyd <swboyd@chromium.org> wrote:
 
-> We rely on devices to use pinmuxing configurations in DT to select the
-> GPIO function (function 0) if they're going to use the gpio in GPIO
-> mode. Let's simplify things for driver authors by implementing
-> gpio_request_enable() for this pinctrl driver to mux out the GPIO
-> function when the gpio is use from gpiolib.
+> When requesting a gpio as an interrupt, we should make sure to mux the
+> pin as the GPIO function and configure it to be an input so that various
+> functions or output signals don't affect the interrupt state of the pin.
+> So far, we've relied on pinmux configurations in DT to handle this, but
+> let's explicitly configure this in the code so that DT implementers
+> don't have to get this part right.
 >
 > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
 > Cc: Doug Anderson <dianders@chromium.org>
