@@ -2,84 +2,105 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C77DC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:04:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6308BC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:05:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEF6C20867
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:04:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19BE020867
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:05:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PPoLaN1r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEF6C20867
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="Vhjcvvke"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19BE020867
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728038AbeH2QBS (ORCPT
+        id S1727662AbeH2QCL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 12:01:18 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:38860 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727264AbeH2QBS (ORCPT
+        Wed, 29 Aug 2018 12:02:11 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:38453 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727264AbeH2QCL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 12:01:18 -0400
-Received: by mail-io0-f194.google.com with SMTP id y3-v6so4254691ioc.5
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 05:04:43 -0700 (PDT)
+        Wed, 29 Aug 2018 12:02:11 -0400
+Received: by mail-pg1-f195.google.com with SMTP id e2-v6so2232652pgv.5
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 05:05:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yvWT9F3i/88z544uu3HaErLdy4sBRRKi67ZiOKyK7/A=;
-        b=PPoLaN1rdadkumr9ztKhg+95n1neGOl71FZk+usUiM3rwIMtv56dk3/dSKMIQoYKnf
-         nCCz6WU44C1zwRdIijgGXj26uQt4H+yWJlo5swvmoVZm5wkOTkr5Pbd0Tvc8fsCNnqH3
-         Ynu1NHLSWnCQmdHoNQjE3DtLUlAvhD6+xxJN8=
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=NYCwXEidj3pw6nO5Zzfs+c6VqCId/sEQiDDp9hMagzY=;
+        b=VhjcvvkebrP+Zr/0xhocR5xbbdYuW1ClyT4fGBfO2qm6ALutgxp1BJBt9oghMwgp3E
+         MKkwf6zjU9SxO97rP4DZW71vVK2XEJRtXlMtxDnaXZEHdPyMu6N0xnkmyQrljtcCWsaN
+         PX7tSn65S5KYF4pxomgjtNAsGBAYMH1IBT0VeEfSESWta7VYmUY3ZwJeBcOfTEXvajpi
+         xOHwueoDyafS4iozKI1MfJ0nwkpwG+qEpgEqS41/GEY3IDLKGtuabFCupZW/udWCgFAJ
+         Lz6GEaBebivt5/6pW3wYN6d3bMvenqVfeoNObMjHYjUHkLz1gC2jiaH9CdLxWXQLhMWI
+         LcJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yvWT9F3i/88z544uu3HaErLdy4sBRRKi67ZiOKyK7/A=;
-        b=ULne6EI+JPI5ObE1N2pAmDQZ/MFXoQPy8l67/pLj4OaPeUCGdIqjrbmk8dd4MZh0xg
-         gLy9DkDBnfXm4EUUSXWci1aDHzSxCiawOga+GY3nNy3vr9T/asGrGNy0wKBf1mZOyNpl
-         Bh4WqwWDECpDCEHKdGqo7Xzlcti1q1sp4jT/ecNW6cB1eL9l6xmLZBJq2gKhtH3ZQbeO
-         gXW9WTCLgAm5UmZkTC8AsDI7rs/lBrh1fLHmCu2e3++UUBuGKMn1sPH3GBwG1FkvuuvE
-         sWsa+QSWq18ibSOLphPVvXa7wfc4E7/eJeS5cjfCktL71TdyXoEIXGhpPZPxzRAoLGPj
-         TjnQ==
-X-Gm-Message-State: APzg51DADOi4Hvyc53o0aDpcwfPcFLeEw8Gzf7ZAVmJ1kCMVnPuNzHNN
-        tVa3uqDxX/nKqRj3IitKrCTh6F7vNAj9xzqmHYf7Aw==
-X-Google-Smtp-Source: ANB0VdbUm1pij3nf8JI0JgTdICksBbZxFBG1uX7OK9YtAR5MYdwf8LdIdM4sms2lonG5KmZ5IftTfuY+Qs/c3JvT7sg=
-X-Received: by 2002:a6b:c3c4:: with SMTP id t187-v6mr4776994iof.304.1535544282816;
- Wed, 29 Aug 2018 05:04:42 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NYCwXEidj3pw6nO5Zzfs+c6VqCId/sEQiDDp9hMagzY=;
+        b=lLbOILTuncoPrvQ3XDH62xfhKnlIEVAfFbIABobt1g/3yOjscgGDaS+/yKi28XqO4d
+         X1CcNqeDkY/0TJGoMtb3Ansn6Aomg6WLWRPWd6/iBKxyHxIJ/GTXiWKATktMGW36m9Wh
+         ofikbADpiVO34jO2/ggfnkMQCy4ZRdfJUfC0lfk3hQgfQefTXjvsDPDCMXVa91Z1eQ8I
+         32j0YeKB2ZgcwGenifCQJb7U8ofOEZlrvSZ6JsocPKEJWq3nzAdJkV9Z4c/v/kRme4bx
+         vpRAUIic1qo5mzCudNJ3fZS6/vYmKbknqW97OZ9ARXVdgzRhEAHd5WOMgyuQ8ZkzwA0H
+         WUiw==
+X-Gm-Message-State: APzg51ATZqI8EyCj9U/P+MM4OUGdtqDJNOVW4GyAWL5ggU5xEeZNJ4N8
+        HWzy8hWcYWPNRDYfstQcL3iRlA==
+X-Google-Smtp-Source: ANB0VdbsI/jLun9Miov7AWXA4MiuCdFN2rD5P1maV9U2D3obdfK+5X3pggo/9eglDmy66t5+DrT28A==
+X-Received: by 2002:a63:b19:: with SMTP id 25-v6mr5537363pgl.301.1535544335656;
+        Wed, 29 Aug 2018 05:05:35 -0700 (PDT)
+Received: from kshutemo-mobl1.localdomain ([134.134.139.83])
+        by smtp.gmail.com with ESMTPSA id n24-v6sm5755092pfi.161.2018.08.29.05.05.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 Aug 2018 05:05:34 -0700 (PDT)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id 3CD503001A3; Wed, 29 Aug 2018 15:05:30 +0300 (+03)
+Date:   Wed, 29 Aug 2018 15:05:30 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com,
+        thgarnie@google.com, kirill.shutemov@linux.intel.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] x86/mm/KASLR: Adjust the vmemmap size according to
+ paging mode
+Message-ID: <20180829120530.6dhgsautjjrj4ztt@kshutemo-mobl1>
+References: <20180829021754.21850-1-bhe@redhat.com>
+ <20180829021754.21850-2-bhe@redhat.com>
 MIME-Version: 1.0
-References: <1535488826-30200-1-git-send-email-khoroshilov@ispras.ru>
-In-Reply-To: <1535488826-30200-1-git-send-email-khoroshilov@ispras.ru>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 29 Aug 2018 14:04:30 +0200
-Message-ID: <CACRpkdZuA0S7CmHu07mHz545QfDsvN62VeoPcmEwpYGuCWu1WQ@mail.gmail.com>
-Subject: Re: [PATCH] gpio: dwapb: Fix error handling in dwapb_gpio_probe()
-To:     Alexey Khoroshilov <khoroshilov@ispras.ru>
-Cc:     Hoan Tran <hotran@apm.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        ldv-project@linuxtesting.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180829021754.21850-2-bhe@redhat.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 10:43 PM Alexey Khoroshilov
-<khoroshilov@ispras.ru> wrote:
+On Wed, Aug 29, 2018 at 10:17:54AM +0800, Baoquan He wrote:
+> Vmemmap area has different base and size depending on paging mode.
+> Now we just hardcode its size as 1TB in memory KASLR, it's not
+> right for 5-level paging mode.
+> 
+> Adjust it according to paging mode and use it during memory KASLR.
+> 
 
-> If dwapb_gpio_add_port() fails in dwapb_gpio_probe(),
-> gpio->clk is left undisabled.
->
-> Found by Linux Driver Verification project (linuxtesting.org).
->
-> Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+I think 512TiB is wasteful for 5-level paging. We don't need that much.
 
-Patch applied for fixes.
+1TiB limit with 4-level paging is required to fit struct pages for all
+64TiB of physical memory, assuming each struct page is 64 bytes.
 
-Yours,
-Linus Walleij
+With 5-level paging the limit on physical memory is not 512-times bigger:
+we cap at 52-bit physical address space. So it's just 64 times bigger and
+we need only 64TiB in worst case.
+
+I think we can limit it further by taking into account memory_tb. Most of
+machines will be fine with 1TiB there and we save few more bits from
+KASLR.
+
+-- 
+ Kirill A. Shutemov
