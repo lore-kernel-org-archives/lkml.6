@@ -2,143 +2,88 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55759C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 23:13:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ED96C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 23:15:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D26D20658
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 23:13:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5C702064E
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 23:15:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="c7MBNBGw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D26D20658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LTIEUMKf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5C702064E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727675AbeH3DMl (ORCPT
+        id S1727576AbeH3DPD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 23:12:41 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:34386 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727616AbeH3DMk (ORCPT
+        Wed, 29 Aug 2018 23:15:03 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:55799 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727434AbeH3DPD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 23:12:40 -0400
-Received: by mail-pl1-f193.google.com with SMTP id f6-v6so2968662plo.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 16:13:27 -0700 (PDT)
+        Wed, 29 Aug 2018 23:15:03 -0400
+Received: by mail-it0-f65.google.com with SMTP id d10-v6so158755itj.5;
+        Wed, 29 Aug 2018 16:15:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=QGum6WMbhgDLWXu15YSCCf+nSJoU4qkhFTooN6vMglo=;
-        b=c7MBNBGwa6umbaSWHub1O1fxqMTJPyrQ0uNb5l5gAFRp5ngwxVu3xOlr7yabrn/Tng
-         MSTXZ0kSLvPNmMa/eS2tP5jlyAH7Q1F7QSsogBwKEFA+WPJJ0Hyhj7FTnPswCww7LYRk
-         xuHqCHehWTJ95BGdqUId4PXarqS8rIZqzgPx0=
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QQsLB8h80Ul1c3yvEwHD8Np84JjSQa4BbJWOT8iMzwM=;
+        b=LTIEUMKfHuz8RsdQXEv3edmyFtKeOiCMnMklD72ySrSMqk11cvNwuGvJaTOIQRZbpq
+         7Rxx3q7pQzjqT/FoepJ6o2yKuOhsh24o7HsSaid0nn/MV1CEEDRpluzIqVbTSLgsZtzn
+         NS1vQRkjltsB7xUzQcOgs+IkuL7ZlfnYXQJ2g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=QGum6WMbhgDLWXu15YSCCf+nSJoU4qkhFTooN6vMglo=;
-        b=J+4RFq7uE2sFWAk4z68BQcIqstTI6EOeegUxZJjlCp1S3534n1ywrPCvn4m6Yu5iUe
-         cEB+98+C+nBk3DelY3Cdecf+uN4wZq1plOg1HD/oMMLF9WkV4qMaLhIcLaR8X4P8xc0N
-         WOORZeqxZIDHud2hzoN5fw6SDq/nMNbcHfDkOmcHdNlgmog1lLwu9vUlGwA+zVd74gp/
-         CniIDdmBaR8iA0u75JnmEzMYPJqQS8fq4XvfnCkgwTYFyinb0039MLip2uDbnvFw12kM
-         OSOmTNBqv5RUvCWSC0qrmVL9GfC3zkwgnOHUongy5UsLu7GU/y6ndbTF1csVZFpSdWJT
-         d3pQ==
-X-Gm-Message-State: APzg51Am65NR9lK8iTVltbIXCzmPonxJQiyolexdl9CLBRwd6tpxFPnu
-        XARsQXgA5rQpR/KGpLptWHqOvA==
-X-Google-Smtp-Source: ANB0VdasMUdmb2dpuTdpemY5b1N1BE1T6g1DhnGYP0fJ/H4dx/XYrZbU86aDx63oJfcjddIswoVHzQ==
-X-Received: by 2002:a17:902:22e:: with SMTP id 43-v6mr7821339plc.118.1535584407314;
-        Wed, 29 Aug 2018 16:13:27 -0700 (PDT)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id w69-v6sm14035404pgd.37.2018.08.29.16.13.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 Aug 2018 16:13:26 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        Sricharan R <sricharan@codeaurora.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        Craig Tatlor <ctatlor97@gmail.com>
-Subject: [PATCH 1/3] dt-bindings: firmware: scm: Refactor compatibles and clocks
-Date:   Wed, 29 Aug 2018 16:15:03 -0700
-Message-Id: <20180829231505.22660-2-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180829231505.22660-1-bjorn.andersson@linaro.org>
-References: <20180829231505.22660-1-bjorn.andersson@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QQsLB8h80Ul1c3yvEwHD8Np84JjSQa4BbJWOT8iMzwM=;
+        b=PLNHhmBIa7HvptmPG56deda1QtjCdbehEy/CHueyvihT2BxqWNvoBwsYYCXzW/5j+V
+         jgLtH9ydqMcLeytj1eVr3TKmivskhPs3LMiPXhQMLqYP3e1pjJMW+K7V0LkZCtnUxZYO
+         lWspQH2VbetWFg+cRxA+wbFiodP8NIL+T/9kVlXRPNvpsmwN2LjEICTiaDgUNmbBVfrl
+         W7Q04n8FrNyJ1kOITlefcgjZfBxBTDCI192TaFbrCGJg9mnvABBfvcbNj9+v25wjVIXp
+         d2F7Sp12SpE8Mq6uUBmVXRTK5hrMuiYcXsTGojglx0OA2RWaxfr1WL7LvDJFZ6sCWW9H
+         +Fuw==
+X-Gm-Message-State: APzg51A9ewX2pWFOiUe8lzAAN7IMjmY7BG5FDsBDpRryAHOisWW3ijGE
+        kc0B/Lv0d60nxN7m7XbqTnxhbhGCfqfXH+AxSqTImg==
+X-Google-Smtp-Source: ANB0VdY/jdMcMT7YsLPRuPoLi8HlBlFi8FdV+umSG06KbQW1LMf1Ogt4v06+oqCzicom+W4LusSrFNCVDLS3RaUvtds=
+X-Received: by 2002:a24:8309:: with SMTP id d9-v6mr128402ite.123.1535584549010;
+ Wed, 29 Aug 2018 16:15:49 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180828112034.30875-1-npiggin@gmail.com> <20180828112034.30875-3-npiggin@gmail.com>
+ <CA+55aFwbZrsdZEh0ds1W3AWUeTamDRheQPKSi9O=--cEOSjr5g@mail.gmail.com> <20180830091213.78b64354@roar.ozlabs.ibm.com>
+In-Reply-To: <20180830091213.78b64354@roar.ozlabs.ibm.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 29 Aug 2018 16:15:37 -0700
+Message-ID: <CA+55aFzBHNsLNs4TfOrMQXTsV9u8=7yAu4GbsOM84AQb-OhJmg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] mm/cow: optimise pte dirty/accessed bits handling in fork
+To:     Nick Piggin <npiggin@gmail.com>
+Cc:     linux-mm <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the binding was written all "future" platforms required three
-clocks, so the default compatible (qcom,scm) was defined to require
-this. But as history shows all "future" platforms actually lack required
-clocks. Given how the binding is written these compatibles have to be
-added as an exception to the default.
+On Wed, Aug 29, 2018 at 4:12 PM Nicholas Piggin <npiggin@gmail.com> wrote:
+>
+> Dirty micro fault seems to be the big one for my Skylake, takes 300
+> nanoseconds per access. Accessed takes about 100. (I think, have to
+> go over my benchmark a bit more carefully and re-test).
 
-Refactor the description of compatible to define that a platform
-compatible should be given, followed by the fallback of qcom,scm. Also
-refactor the description of the clocks in a way that this does not need
-to be updated as new platform specific compatibles are added.
+Yeah, but they only happen for shared areas after fork, which sounds
+like it shouldn't be a big deal in most cases.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- .../devicetree/bindings/firmware/qcom,scm.txt | 31 ++++++++++++-------
- 1 file changed, 19 insertions(+), 12 deletions(-)
+And I'm not entirely objecting to your patch per se, I just would want
+to keep the accessed bit changes separate from the dirty bit ones.
 
-diff --git a/Documentation/devicetree/bindings/firmware/qcom,scm.txt b/Documentation/devicetree/bindings/firmware/qcom,scm.txt
-index fcf6979c0b6d..1c8e24530f7c 100644
---- a/Documentation/devicetree/bindings/firmware/qcom,scm.txt
-+++ b/Documentation/devicetree/bindings/firmware/qcom,scm.txt
-@@ -7,16 +7,21 @@ assorted actions.
- 
- Required properties:
- - compatible: must contain one of the following:
-- * "qcom,scm-apq8064" for APQ8064 platforms
-- * "qcom,scm-msm8660" for MSM8660 platforms
-- * "qcom,scm-msm8690" for MSM8690 platforms
-- * "qcom,scm-msm8996" for MSM8996 platforms
-- * "qcom,scm-ipq4019" for IPQ4019 platforms
-- * "qcom,scm" for later processors (MSM8916, APQ8084, MSM8974, etc)
--- clocks: One to three clocks may be required based on compatible.
-- * No clock required for "qcom,scm-msm8996", "qcom,scm-ipq4019"
-- * Only core clock required for "qcom,scm-apq8064", "qcom,scm-msm8660", and "qcom,scm-msm8960"
-- * Core, iface, and bus clocks required for "qcom,scm"
-+ * "qcom,scm-apq8064"
-+ * "qcom,scm-apq8084"
-+ * "qcom,scm-msm8660"
-+ * "qcom,scm-msm8916"
-+ * "qcom,scm-msm8960"
-+ * "qcom,scm-msm8974"
-+ * "qcom,scm-msm8996"
-+ * "qcom,scm-ipq4019"
-+ and:
-+ * "qcom,scm"
-+- clocks: Specifies clocks needed by the SCM interface, if any:
-+ * core clock required for "qcom,scm-apq8064", "qcom,scm-msm8660" and
-+   "qcom,scm-msm8960"
-+ * core, iface and bus clocks required for "qcom,scm-apq8084",
-+   "qcom,scm-msm8916" and "qcom,scm-msm8974"
- - clock-names: Must contain "core" for the core clock, "iface" for the interface
-   clock and "bus" for the bus clock per the requirements of the compatible.
- - qcom,dload-mode: phandle to the TCSR hardware block and offset of the
-@@ -26,8 +31,10 @@ Example for MSM8916:
- 
- 	firmware {
- 		scm {
--			compatible = "qcom,scm";
--			clocks = <&gcc GCC_CRYPTO_CLK> , <&gcc GCC_CRYPTO_AXI_CLK>, <&gcc GCC_CRYPTO_AHB_CLK>;
-+			compatible = "qcom,msm8916", "qcom,scm";
-+			clocks = <&gcc GCC_CRYPTO_CLK> ,
-+				 <&gcc GCC_CRYPTO_AXI_CLK>,
-+				 <&gcc GCC_CRYPTO_AHB_CLK>;
- 			clock-names = "core", "bus", "iface";
- 		};
- 	};
--- 
-2.18.0
+*If* somebody has bisectable issues with it (performance or not), it
+will then be clearer what the exact issue is.
 
+            Linus
