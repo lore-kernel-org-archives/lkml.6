@@ -2,113 +2,165 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51B30C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:55:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC07AC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:56:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6D6D20868
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:55:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6D6D20868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 769752086A
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:56:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V9i7zkbo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 769752086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728469AbeH2Rwt (ORCPT
+        id S1728823AbeH2RxE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 13:52:49 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56328 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727316AbeH2Rwt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 13:52:49 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 21D1340216E8;
-        Wed, 29 Aug 2018 13:55:45 +0000 (UTC)
-Received: from flask (unknown [10.40.205.185])
-        by smtp.corp.redhat.com (Postfix) with SMTP id B4D842166B41;
-        Wed, 29 Aug 2018 13:55:41 +0000 (UTC)
-Received: by flask (sSMTP sendmail emulation); Wed, 29 Aug 2018 15:55:40 +0200
-Date:   Wed, 29 Aug 2018 15:55:40 +0200
-From:   Radim Krcmar <rkrcmar@redhat.com>
-To:     Liran Alon <liran.alon@oracle.com>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Wanpeng Li <kernellwp@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [PATCH] KVM: LAPIC: Fix pv ipis out-of-bounds access
-Message-ID: <20180829135539.GA15829@flask>
-References: <1535521943-5547-1-git-send-email-wanpengli@tencent.com>
- <A523C29C-C3E8-4FEF-8620-96365F774582@oracle.com>
- <20180829101205.jsp53e2wq7fc6ukd@mwanda>
- <20180829101822.qo3u7lsmghs3kcuf@mwanda>
- <CANRm+Cy9n=2Ssy_cEWRtnoQJczjdqB+m-dA6zesz75r0h532iA@mail.gmail.com>
- <20180829102910.rkyato47chayt22s@mwanda>
- <485CA660-9423-45B7-848F-49E3D13D5CBD@oracle.com>
+        Wed, 29 Aug 2018 13:53:04 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:36379 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728697AbeH2RxD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 13:53:03 -0400
+Received: by mail-oi0-f68.google.com with SMTP id r69-v6so9269093oie.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 06:55:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=JfmlXV7r32WPXiqljgmMJihDrqoRAg0etIOFnh21hV8=;
+        b=V9i7zkbo8PRnn4DcPamiaM9VjO1mZHWB25Xn6CGD3J47pvxegl4c5u6ycVXCdJcwyg
+         TRnHmkJdkXvL/CHl4TRz9LW20ke3lYtPtTFwqFtasNna05bcddulzx88FZBPCBFeBF4o
+         Sj1zZFN40gfemHzj/Lny1aDA/uEbrBajklXK2veSusCbIUnqXDto0lfyAbAsESOomK2i
+         3zbB4ZlLgHGc0emaSMabDx4Bx7r0LdbNAGbnnudYoVxG+jPnNny+XyQTZkGD/nP3g/28
+         TVtseyihyH53p+BUAmioG4b+8CiH60h9/TF+l2szRie4UfxnVX302N8W69OQ6YudNesO
+         g8cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=JfmlXV7r32WPXiqljgmMJihDrqoRAg0etIOFnh21hV8=;
+        b=XRiRMlBK335WOB4lkYL8FJFTYTEAvBfM7yiF9UD3sQTEUBmSCbToeBfUyjDPH1hf9r
+         TxSCaOLftLKCNkoZh4y4B7A+GH4BejkQ6odL3QN04H46G3qUKgr+gM8TOboBrmiR8c7U
+         1/58XPXlj2VZXtZ58+1NEIXmYSfh9dTMFw50/fEwfnFL6kZm/O67kOimglbzxN/bX8jj
+         UkIXDuM55zfwAgK98fdCa1QfhXKjym7eWwvLYj59keQ9rCUS0yPS8ADUTQHvlpUQDJm8
+         Xwt7gE6aCYYY5Yc6VxZmjLBEb3kUP45CGV33Te2ic21qriyIhIGZlbHyvs2YbjVpt6Hl
+         9Mpg==
+X-Gm-Message-State: APzg51BfaND58AL54fIwQNptUvxJ1aB/eLZqAwxSswnEV+WR/zcuqa2P
+        HTBA6Mpi2kzz/eWVgxdb1AcQ5dWvvcHqA/JL89AXYw==
+X-Google-Smtp-Source: ANB0Vdas/SRpNCNRPTsrsjXtFVhBLZnI8NSIe2clrmLUTRvE7JlNE/9gGCX0LJoKAOsvchqpHevsLn+442wQuf2NBgg=
+X-Received: by 2002:aca:3882:: with SMTP id f124-v6mr3005061oia.195.1535550959121;
+ Wed, 29 Aug 2018 06:55:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <485CA660-9423-45B7-848F-49E3D13D5CBD@oracle.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 29 Aug 2018 13:55:45 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 29 Aug 2018 13:55:45 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'rkrcmar@redhat.com' RCPT:''
+References: <20180828154901.112726-1-jannh@google.com> <20180829071042.GB6337@nazgul.tnic>
+In-Reply-To: <20180829071042.GB6337@nazgul.tnic>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 29 Aug 2018 15:55:32 +0200
+Message-ID: <CAG48ez37HBh=0YfP=rLVGGEcFV0zJL_PLVgedFxDtyRgXHMROQ@mail.gmail.com>
+Subject: Re: [PATCH v2] x86/dumpstack: don't dump kernel memory based on
+ usermode RIP
+To:     bp@suse.de
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>, security@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-08-29 13:43+0300, Liran Alon:
-> Why is “min” defined as “int” instead of “unsigned int”?
-> It represents the lowest APIC ID in bitmap so it can’t be negative…
+On Wed, Aug 29, 2018 at 9:10 AM Borislav Petkov <bp@suse.de> wrote:
+>
+> On Tue, Aug 28, 2018 at 05:49:01PM +0200, Jann Horn wrote:
+> > show_opcodes() is used both for dumping kernel instructions and for dum=
+ping
+> > user instructions. If userspace causes #PF by jumping to a kernel addre=
+ss,
+> > show_opcodes() can be reached with regs->ip controlled by the user,
+> > pointing to kernel code. Make sure that userspace can't trick us into
+> > dumping kernel memory into dmesg.
+> >
+> > Cc: stable@vger.kernel.org
+> > Fixes: 7cccf0725cf7 ("x86/dumpstack: Add a show_ip() function")
+> > Reviewed-by: Kees Cook <keescook@chromium.org>
+> > Signed-off-by: Jann Horn <jannh@google.com>
+> > ---
+> > v2: Andy pointed out that I probably shouldn't be doing wrapping
+> > arithmetic on pointers.
+> >
+> >  arch/x86/include/asm/stacktrace.h |  2 +-
+> >  arch/x86/kernel/dumpstack.c       | 13 ++++++++++---
+> >  arch/x86/mm/fault.c               |  2 +-
+> >  3 files changed, 12 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/arch/x86/include/asm/stacktrace.h b/arch/x86/include/asm/s=
+tacktrace.h
+> > index b6dc698f992a..f335aad404a4 100644
+> > --- a/arch/x86/include/asm/stacktrace.h
+> > +++ b/arch/x86/include/asm/stacktrace.h
+> > @@ -111,6 +111,6 @@ static inline unsigned long caller_frame_pointer(vo=
+id)
+> >       return (unsigned long)frame;
+> >  }
+> >
+> > -void show_opcodes(u8 *rip, const char *loglvl);
+> > +void show_opcodes(struct pt_regs *regs, const char *loglvl);
+> >  void show_ip(struct pt_regs *regs, const char *loglvl);
+> >  #endif /* _ASM_X86_STACKTRACE_H */
+> > diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
+> > index 9c8652974f8e..14b337582b6f 100644
+> > --- a/arch/x86/kernel/dumpstack.c
+> > +++ b/arch/x86/kernel/dumpstack.c
+> > @@ -89,14 +89,21 @@ static void printk_stack_address(unsigned long addr=
+ess, int reliable,
+> >   * Thus, the 2/3rds prologue and 64 byte OPCODE_BUFSIZE is just a rand=
+om
+> >   * guesstimate in attempt to achieve all of the above.
+> >   */
+> > -void show_opcodes(u8 *rip, const char *loglvl)
+> > +void show_opcodes(struct pt_regs *regs, const char *loglvl)
+> >  {
+> >  #define PROLOGUE_SIZE 42
+> >  #define EPILOGUE_SIZE 21
+> >  #define OPCODE_BUFSIZE (PROLOGUE_SIZE + 1 + EPILOGUE_SIZE)
+> >       u8 opcodes[OPCODE_BUFSIZE];
+> > +     u8 *prologue =3D (u8 *)(regs->ip - PROLOGUE_SIZE);
+>
+> Just a nitpick:
+>
+> <--- newline here.
 
-Right,
+The code below this point is still part of the declarations. Do you
+want a newline here anyway? If you say yes, I'll adjust and resend.
 
-I think the code would look better as something like (untested):
-
-diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index 0cefba28c864..24fc84eb97d2 100644
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -548,7 +548,7 @@ int kvm_apic_set_irq(struct kvm_vcpu *vcpu, struct kvm_lapic_irq *irq,
- }
- 
- int kvm_pv_send_ipi(struct kvm *kvm, unsigned long ipi_bitmap_low,
--    		    unsigned long ipi_bitmap_high, int min,
-+		    unsigned long ipi_bitmap_high, u32 min,
- 		    unsigned long icr, int op_64_bit)
- {
- 	int i;
-@@ -557,6 +557,7 @@ int kvm_pv_send_ipi(struct kvm *kvm, unsigned long ipi_bitmap_low,
- 	struct kvm_lapic_irq irq = {0};
- 	int cluster_size = op_64_bit ? 64 : 32;
- 	int count = 0;
-+	unsigned long ipi_bitmap[2] = {ipi_bitmap_low, ipi_bitmap_high};
- 
- 	irq.vector = icr & APIC_VECTOR_MASK;
- 	irq.delivery_mode = icr & APIC_MODE_MASK;
-@@ -571,16 +572,14 @@ int kvm_pv_send_ipi(struct kvm *kvm, unsigned long ipi_bitmap_low,
- 	rcu_read_lock();
- 	map = rcu_dereference(kvm->arch.apic_map);
- 
--	/* Bits above cluster_size are masked in the caller.  */
--	for_each_set_bit(i, &ipi_bitmap_low, BITS_PER_LONG) {
--		vcpu = map->phys_map[min + i]->vcpu;
--		count += kvm_apic_set_irq(vcpu, &irq, NULL);
--	}
-+	if (min <= map->max_apic_id) {
-+		size_t ipi_bitmap_size = MIN(sizeof(ipi_bitmap) * 8,
-+		                             map->max_apic_id - min + 1);
- 
--	min += cluster_size;
--	for_each_set_bit(i, &ipi_bitmap_high, BITS_PER_LONG) {
--		vcpu = map->phys_map[min + i]->vcpu;
--		count += kvm_apic_set_irq(vcpu, &irq, NULL);
-+		for_each_set_bit(i, ipi_bitmap, ipi_bitmap_size) {
-+			vcpu = map->phys_map[min + i]->vcpu;
-+			count += kvm_apic_set_irq(vcpu, &irq, NULL);
-+		}
- 	}
- 
- 	rcu_read_unlock();
+> > +     /*
+> > +      * Make sure userspace isn't trying to trick us into dumping kern=
+el
+> > +      * memory by pointing the userspace instruction pointer at it.
+> > +      */
+> > +     bool bad_ip =3D user_mode(regs) &&
+> > +                   __range_not_ok(prologue, OPCODE_BUFSIZE, TASK_SIZE_=
+MAX);
+>
+> Other than that:
+>
+> Reviewed-by: Borislav Petkov <bp@suse.de>
+>
+> Thx.
+>
+> --
+> Regards/Gruss,
+>     Boris.
+>
+> SUSE Linux GmbH, GF: Felix Imend=C3=B6rffer, Jane Smithard, Graham Norton=
+, HRB 21284 (AG N=C3=BCrnberg)
+> --
