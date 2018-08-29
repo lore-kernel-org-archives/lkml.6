@@ -2,119 +2,94 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A66FC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:07:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D5B2C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:09:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E476C2089E
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:07:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E476C2089E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id C632D20847
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:09:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C632D20847
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=emtrion.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728160AbeH2OD6 (ORCPT
+        id S1727565AbeH2OFK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 10:03:58 -0400
-Received: from mail-sz2.amlogic.com ([211.162.65.114]:12005 "EHLO
-        mail-sz2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726858AbeH2OD6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 10:03:58 -0400
-Received: from [10.28.18.79] (10.28.18.79) by mail-sz2.amlogic.com
- (10.28.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Wed, 29 Aug
- 2018 18:08:06 +0800
-Subject: Re: [RFC PATCH v2 2/2] mtd: rawnand: meson: add support for Amlogic
- NAND flash controller
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-CC:     Yixun Lan <yixun.lan@amlogic.com>, <linux-mtd@lists.infradead.org>,
-        "Rob Herring" <robh@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>,
-        Richard Weinberger <richard@nod.at>,
-        <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        <linux-amlogic@lists.infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Jerome Brunet <jbrunet@baylibre.com>
-References: <20180719094612.5833-1-yixun.lan@amlogic.com>
- <20180719094612.5833-3-yixun.lan@amlogic.com>
- <20180801235045.5b4d8211@bbrezillon>
- <42877a0d-9830-0626-3f64-e49a326eaa3c@amlogic.com>
- <20180817155608.5929b37a@bbrezillon>
- <96e538a5-1232-11f2-8b9e-5ddb09dcc2de@amlogic.com>
- <20180824144810.31c929a5@bbrezillon>
- <fdea2d54-7a68-64ec-8bb4-4a94677a3293@amlogic.com>
- <20180828152645.457dab5c@bbrezillon>
-From:   Liang Yang <liang.yang@amlogic.com>
-Message-ID: <9abf0461-159b-db45-9ded-3d6cb2cc64db@amlogic.com>
-Date:   Wed, 29 Aug 2018 18:08:05 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 29 Aug 2018 10:05:10 -0400
+Received: from mail3.emtrion.de ([80.150.99.69]:3112 "EHLO mail3.emtrion.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726858AbeH2OFK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 10:05:10 -0400
+Received: from tuelinux-v3.emtrion.local (2003:5a:a012:1:20c:29ff:fecb:7426)
+ by bmk019s01.emtrion.local (2003:5a:a012:1:d9c:d045:28a7:5f84) with Microsoft
+ SMTP Server (TLS) id 8.3.485.1; Wed, 29 Aug 2018 12:09:00 +0200
+From:   Jan Tuerk <jan.tuerk@emtrion.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "GitAuthor: Jan Tuerk" <jan.tuerk@emtrion.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH v7 1/4] ARM: dts: imx: Add an cpu0 label for imx6dl devices.
+Date:   Wed, 29 Aug 2018 12:07:57 +0200
+Message-ID: <20180829100811.55836-1-jan.tuerk@emtrion.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180824132617.43975-1-jan.tuerk@emtrion.com>
+References: <20180824132617.43975-1-jan.tuerk@emtrion.com>
 MIME-Version: 1.0
-In-Reply-To: <20180828152645.457dab5c@bbrezillon>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.28.18.79]
-X-ClientProxiedBy: mail-sz2.amlogic.com (10.28.11.6) To mail-sz2.amlogic.com
- (10.28.11.6)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-TM-AS-Product-Ver: SMEX-11.0.0.4283-8.100.1062-24060.006
+X-TM-AS-Result: No--3.128500-8.000000-31
+X-TM-AS-MatchedID: 706719-188121-700016-704156-701016-700270-188019-700264-7
+        08712-701274-139703-780058-850095-851079-148004-148133-10019-41000-42000-42
+        003
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Adding the label cpu0 allows the adjustment of cpu-parameters
+by reference in overlaying dtsi files in the same way as it
+is possible for imx6q devices.
 
-On 8/28/2018 9:26 PM, Boris Brezillon wrote:
-> On Tue, 28 Aug 2018 21:21:48 +0800
-> Liang Yang <liang.yang@amlogic.com> wrote:
-> 
->> Hi Boris,
->>
->> On 8/24/2018 8:48 PM, Boris Brezillon wrote:
->>> On Wed, 22 Aug 2018 22:08:42 +0800
->>> Liang Yang <liang.yang@amlogic.com> wrote:
->>>    
->>>>> You have to wait tWB, that's for sure.
->>>>>       
->>>> we have a maximum 32 commands fifo. when command is written into
->>>> NFC_REG_CMD, it doesn't mean that command is executing right now, maybe
->>>> it is buffering on the queue.Assume one ERASE operation, when 2nd
->>>> command(0xd0) is written into NFC_REG_CMD and then come into
->>>> NAND_OP_WAITRDY_INSTR, if I read the RB status by register, it may be
->>>> wrong because 0xd0 may not being executed. it is unusual unless
->>>> buffering two many command.
->>>
->>> You should flush the queue and wait for it to empty at the end of
->>> ->exec_op().
->>>    
->>>> so it seems that i still need to use nand_soft_waitrdy or wait cmd is
->>>> executed somewhere.
->>>
->>> Don't you have a WAIT_FOR_RB instruction? What is NFC_CMD_RB for? Also,
->>> NFC_CMD_IDLE seems to allow you to add an arbitrary delay, and that's
->>> probably what you should use for tWB.
->>>
->>> em, I can wait for RB by reading the status from register now. but when
->> calling nand_soft_waitrdy, i really met a problem. One *jiffies* is
->> about 4ms. When programming, it pass 1ms to
->> instr->ctx.waitrdy.timeout_ms and nand_soft_waitrdy will be only one
->> *jiffies* to reach timeout. And then calling nand_soft_waitrdy maybe at
->> the tail of 4ms interval, it may only wait 100us and next jiffies
->> arrive. Is it correct?
-> 
-> Hm, no. If you initialize the time you compare to (using time_before()
-> or time_after()) correctly it should not happen. Anyway, I keep thinking
-> this is not how it should be done. Did you try NFC_CMD_RB? Did you ask
-> HW designers what it was created for?
-> 
-I am using NFC_CMD_RB and checking with irq. it is ok now.
-> .
-> 
+Signed-off-by: Jan Tuerk <jan.tuerk@emtrion.com>
+---
+ arch/arm/boot/dts/imx6dl.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Unchanged since v1 (rebased)
+
+diff --git a/arch/arm/boot/dts/imx6dl.dtsi b/arch/arm/boot/dts/imx6dl.dtsi
+index f0607eb41df4..2ed10310a7b7 100644
+--- a/arch/arm/boot/dts/imx6dl.dtsi
++++ b/arch/arm/boot/dts/imx6dl.dtsi
+@@ -15,7 +15,7 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+-		cpu@0 {
++		cpu0: cpu@0 {
+ 			compatible = "arm,cortex-a9";
+ 			device_type = "cpu";
+ 			reg = <0>;
+-- 
+emtrion GmbH
+Alter Schlachthof 45
+76131 Karlsruhe
+GERMANY
+https://www.emtrion.de
+
+Amtsgericht Mannheim
+HRB 110 300
+Geschäftsführer: Dieter Baur, Ramona Maurer
+
