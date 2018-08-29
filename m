@@ -2,162 +2,468 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92135C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 01:07:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C655C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 01:08:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3497D2087C
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 01:07:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="kpqSs1Xz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3497D2087C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id B53EF2087F
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 01:08:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B53EF2087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727170AbeH2FBz (ORCPT
+        id S1727263AbeH2FCe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 01:01:55 -0400
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:20899 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725723AbeH2FBy (ORCPT
+        Wed, 29 Aug 2018 01:02:34 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:54238 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725723AbeH2FCe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 01:01:54 -0400
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id w7T17FG1011845;
-        Wed, 29 Aug 2018 10:07:15 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w7T17FG1011845
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1535504836;
-        bh=v9SCePt63z/fx/VrWBl3eE2QeUXvOr5M/paGsiyaBEo=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=kpqSs1Xz0RjOgMzoVvqH+FlzA3OKwhZUXr+PRRfCyJcyigaJWQWnGV9FHcHoVax0h
-         W9LlLfBLZJEVJvMMq3mGvpt+Xtz7LbbAmxnbuuH3MkDI3dLbc4wfjdN4g5nS9H3Jo/
-         f9KXTZxk9TJ0b94TLEnsF56QOcCzCPexe54rhX1gIzDX6JgL5BCxzknS3kNitL43es
-         zUega8ZQ9fcHjUAcHv42j5cdOnWRhGpE5ejztK3He6Cq5qhsAHHeGFmyvUrtIU8Ook
-         9W6QUbyAN+axOTLi2DgmzNroaLAFbyVELvip4cehfmXP3xvUK1mdHi8U0G292xdEZy
-         qg4ddM5RhSLwg==
-X-Nifty-SrcIP: [209.85.222.48]
-Received: by mail-ua1-f48.google.com with SMTP id g18-v6so2224446uam.6;
-        Tue, 28 Aug 2018 18:07:15 -0700 (PDT)
-X-Gm-Message-State: APzg51BACh7sZZRY5jcShBhfNyFsu4hN16bgdV4s9TAmzQ8rrYfxCAq+
-        Wcv4GFaGtxr7cp1YZah/QvtVTOjU1IYgAms1/S4=
-X-Google-Smtp-Source: ANB0VdY4UhwUcSLc2uCJsQWduHkek6RQyyJfsHJ9TYx7P+MAiVtkYrfBLPgXKRT3kYdOu45RQtGKkNXu2xj/7BTtjhQ=
-X-Received: by 2002:ab0:6a6:: with SMTP id g35-v6mr2779027uag.16.1535504834597;
- Tue, 28 Aug 2018 18:07:14 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ab0:2642:0:0:0:0:0 with HTTP; Tue, 28 Aug 2018 18:06:34
- -0700 (PDT)
-In-Reply-To: <c9066b61-6666-5adc-1f34-f8cea91864c5@infradead.org>
-References: <4449cd91-fae5-caf1-a917-82e0c5f0aba8@infradead.org>
- <CAK7LNASyhKFp+AWQr-RWTRbMu78=G7Uj=350xrjq_Lht8MVYzQ@mail.gmail.com> <c9066b61-6666-5adc-1f34-f8cea91864c5@infradead.org>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Wed, 29 Aug 2018 10:06:34 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQPQd6DX6aXO6HtZ6kTXZk-71VH_Pwi=yE_UnhHs74yNw@mail.gmail.com>
-Message-ID: <CAK7LNAQPQd6DX6aXO6HtZ6kTXZk-71VH_Pwi=yE_UnhHs74yNw@mail.gmail.com>
-Subject: Re: [PATCH v3] modules_install: make missing $DEPMOD a warning
- instead of an error
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     linux-kbuild <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
+        Wed, 29 Aug 2018 01:02:34 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: ezequiel)
+        with ESMTPSA id 0370C263A3F
+Message-ID: <f15e355ece0b250a252347ec22f1433dd786bb5b.camel@collabora.com>
+Subject: Re: [PATCH v8 4/8] media: platform: Add Cedrus VPU decoder driver
+From:   Ezequiel Garcia <ezequiel@collabora.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devel@driverdev.osuosl.org
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable <stable@vger.kernel.org>,
-        Lucas De Marchi <lucas.demarchi@profusion.mobi>,
-        Lucas De Marchi <lucas.de.marchi@gmail.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Jessica Yu <jeyu@kernel.org>,
-        Chih-Wei Huang <cwhuang@linux.org.tw>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Randy Li <ayaka@soulik.info>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-sunxi@googlegroups.com
+Date:   Tue, 28 Aug 2018 22:08:00 -0300
+In-Reply-To: <20180828073424.30247-5-paul.kocialkowski@bootlin.com>
+References: <20180828073424.30247-1-paul.kocialkowski@bootlin.com>
+         <20180828073424.30247-5-paul.kocialkowski@bootlin.com>
+Organization: Collabora
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.2-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Randy
+On Tue, 2018-08-28 at 09:34 +0200, Paul Kocialkowski wrote:
+> This introduces the Cedrus VPU driver that supports the VPU found in
+> Allwinner SoCs, also known as Video Engine. It is implemented through
+> a v4l2 m2m decoder device and a media device (used for media requests).
+> So far, it only supports MPEG2 decoding.
+> 
+> Since this VPU is stateless, synchronization with media requests is
+> required in order to ensure consistency between frame headers that
+> contain metadata about the frame to process and the raw slice data that
+> is used to generate the frame.
+> 
+> This driver was made possible thanks to the long-standing effort
+> carried out by the linux-sunxi community in the interest of reverse
+> engineering, documenting and implementing support for Allwinner VPU.
+> 
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> ---
+>  MAINTAINERS                                   |   7 +
+>  drivers/staging/media/Kconfig                 |   2 +
+>  drivers/staging/media/Makefile                |   1 +
+>  drivers/staging/media/sunxi/Kconfig           |  15 +
+>  drivers/staging/media/sunxi/Makefile          |   1 +
+>  drivers/staging/media/sunxi/cedrus/Kconfig    |  14 +
+>  drivers/staging/media/sunxi/cedrus/Makefile   |   3 +
+>  drivers/staging/media/sunxi/cedrus/cedrus.c   | 420 +++++++++++++
+>  drivers/staging/media/sunxi/cedrus/cedrus.h   | 167 +++++
+>  .../staging/media/sunxi/cedrus/cedrus_dec.c   | 116 ++++
+>  .../staging/media/sunxi/cedrus/cedrus_dec.h   |  28 +
+>  .../staging/media/sunxi/cedrus/cedrus_hw.c    | 322 ++++++++++
+>  .../staging/media/sunxi/cedrus/cedrus_hw.h    |  30 +
+>  .../staging/media/sunxi/cedrus/cedrus_mpeg2.c | 235 +++++++
+>  .../staging/media/sunxi/cedrus/cedrus_regs.h  | 233 +++++++
+>  .../staging/media/sunxi/cedrus/cedrus_video.c | 574 ++++++++++++++++++
+>  .../staging/media/sunxi/cedrus/cedrus_video.h |  32 +
+>  17 files changed, 2200 insertions(+)
+>  create mode 100644 drivers/staging/media/sunxi/Kconfig
+>  create mode 100644 drivers/staging/media/sunxi/Makefile
+>  create mode 100644 drivers/staging/media/sunxi/cedrus/Kconfig
+>  create mode 100644 drivers/staging/media/sunxi/cedrus/Makefile
+>  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus.c
+>  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus.h
+>  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_dec.c
+>  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_dec.h
+>  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_hw.c
+>  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_hw.h
+>  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c
+>  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_regs.h
+>  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_video.c
+>  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_video.h
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 435e6c08c694..08065d53c69d 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -656,6 +656,13 @@ L:	linux-crypto@vger.kernel.org
+>  S:	Maintained
+>  F:	drivers/crypto/sunxi-ss/
+>  
+> +ALLWINNER VPU DRIVER
+> +M:	Maxime Ripard <maxime.ripard@bootlin.com>
+> +M:	Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> +L:	linux-media@vger.kernel.org
+> +S:	Maintained
+> +F:	drivers/staging/media/sunxi/cedrus/
+> +
+>  ALPHA PORT
+>  M:	Richard Henderson <rth@twiddle.net>
+>  M:	Ivan Kokshaysky <ink@jurassic.park.msu.ru>
+> diff --git a/drivers/staging/media/Kconfig b/drivers/staging/media/Kconfig
+> index db5cf67047ad..b3620a8f2d9f 100644
+> --- a/drivers/staging/media/Kconfig
+> +++ b/drivers/staging/media/Kconfig
+> @@ -31,6 +31,8 @@ source "drivers/staging/media/mt9t031/Kconfig"
+>  
+>  source "drivers/staging/media/omap4iss/Kconfig"
+>  
+> +source "drivers/staging/media/sunxi/Kconfig"
+> +
+>  source "drivers/staging/media/tegra-vde/Kconfig"
+>  
+>  source "drivers/staging/media/zoran/Kconfig"
+> diff --git a/drivers/staging/media/Makefile b/drivers/staging/media/Makefile
+> index 503fbe47fa58..42948f805548 100644
+> --- a/drivers/staging/media/Makefile
+> +++ b/drivers/staging/media/Makefile
+> @@ -5,5 +5,6 @@ obj-$(CONFIG_SOC_CAMERA_IMX074)	+= imx074/
+>  obj-$(CONFIG_SOC_CAMERA_MT9T031)	+= mt9t031/
+>  obj-$(CONFIG_VIDEO_DM365_VPFE)	+= davinci_vpfe/
+>  obj-$(CONFIG_VIDEO_OMAP4)	+= omap4iss/
+> +obj-$(CONFIG_VIDEO_SUNXI)	+= sunxi/
+>  obj-$(CONFIG_TEGRA_VDE)		+= tegra-vde/
+>  obj-$(CONFIG_VIDEO_ZORAN)	+= zoran/
+> diff --git a/drivers/staging/media/sunxi/Kconfig b/drivers/staging/media/sunxi/Kconfig
+> new file mode 100644
+> index 000000000000..c78d92240ceb
+> --- /dev/null
+> +++ b/drivers/staging/media/sunxi/Kconfig
+> @@ -0,0 +1,15 @@
+> +config VIDEO_SUNXI
+> +	bool "Allwinner sunXi family Video Devices"
+> +	depends on ARCH_SUNXI || COMPILE_TEST
+> +	help
+> +	  If you have an Allwinner SoC based on the sunXi family, say Y.
+> +
+> +	  Note that this option doesn't include new drivers in the
+> +	  kernel: saying N will just cause Kconfig to skip all the
+> +	  questions about Allwinner media devices.
+> +
+> +if VIDEO_SUNXI
+> +
+> +source "drivers/staging/media/sunxi/cedrus/Kconfig"
+> +
+> +endif
+> diff --git a/drivers/staging/media/sunxi/Makefile b/drivers/staging/media/sunxi/Makefile
+> new file mode 100644
+> index 000000000000..cee2846c3ecf
+> --- /dev/null
+> +++ b/drivers/staging/media/sunxi/Makefile
+> @@ -0,0 +1 @@
+> +obj-$(CONFIG_VIDEO_SUNXI_CEDRUS)	+= cedrus/
+> diff --git a/drivers/staging/media/sunxi/cedrus/Kconfig b/drivers/staging/media/sunxi/cedrus/Kconfig
+> new file mode 100644
+> index 000000000000..afd7d7ee0388
+> --- /dev/null
+> +++ b/drivers/staging/media/sunxi/cedrus/Kconfig
+> @@ -0,0 +1,14 @@
+> +config VIDEO_SUNXI_CEDRUS
+> +	tristate "Allwinner Cedrus VPU driver"
+> +	depends on VIDEO_DEV && VIDEO_V4L2 && MEDIA_CONTROLLER
+> +	depends on HAS_DMA
+> +	depends on OF
+> +	select VIDEOBUF2_DMA_CONTIG
+> +	select MEDIA_REQUEST_API
+> +	select V4L2_MEM2MEM_DEV
+> +	help
+> +	  Support for the VPU found in Allwinner SoCs, also known as the Cedar
+> +	  video engine.
+> +
+> +	  To compile this driver as a module, choose M here: the module
+> +	  will be called sunxi-cedrus.
+> diff --git a/drivers/staging/media/sunxi/cedrus/Makefile b/drivers/staging/media/sunxi/cedrus/Makefile
+> new file mode 100644
+> index 000000000000..e9dc68b7bcb6
+> --- /dev/null
+> +++ b/drivers/staging/media/sunxi/cedrus/Makefile
+> @@ -0,0 +1,3 @@
+> +obj-$(CONFIG_VIDEO_SUNXI_CEDRUS) += sunxi-cedrus.o
+> +
+> +sunxi-cedrus-y = cedrus.o cedrus_video.o cedrus_hw.o cedrus_dec.o cedrus_mpeg2.o
+> diff --git a/drivers/staging/media/sunxi/cedrus/cedrus.c b/drivers/staging/media/sunxi/cedrus/cedrus.c
+> new file mode 100644
+> index 000000000000..7c0f90253135
+> --- /dev/null
+> +++ b/drivers/staging/media/sunxi/cedrus/cedrus.c
+> @@ -0,0 +1,420 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Cedrus VPU driver
+> + *
+> + * Copyright (C) 2016 Florent Revest <florent.revest@free-electrons.com>
+> + * Copyright (C) 2018 Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> + * Copyright (C) 2018 Bootlin
+> + *
+> + * Based on the vim2m driver, that is:
+> + *
+> + * Copyright (c) 2009-2010 Samsung Electronics Co., Ltd.
+> + * Pawel Osciak, <pawel@osciak.com>
+> + * Marek Szyprowski, <m.szyprowski@samsung.com>
+> + */
+> +
+> +#include <linux/platform_device.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +
+> +#include <media/v4l2-device.h>
+> +#include <media/v4l2-ioctl.h>
+> +#include <media/v4l2-ctrls.h>
+> +#include <media/v4l2-mem2mem.h>
+> +
+> +#include "cedrus.h"
+> +#include "cedrus_video.h"
+> +#include "cedrus_dec.h"
+> +#include "cedrus_hw.h"
+> +
+> +static const struct cedrus_control cedrus_controls[] = {
+> +	{
+> +		.id		= V4L2_CID_MPEG_VIDEO_MPEG2_SLICE_PARAMS,
+> +		.elem_size	= sizeof(struct v4l2_ctrl_mpeg2_slice_params),
+> +		.codec		= CEDRUS_CODEC_MPEG2,
+> +		.required	= true,
+> +	},
+> +	{
+> +		.id		= V4L2_CID_MPEG_VIDEO_MPEG2_QUANTIZATION,
+> +		.elem_size	= sizeof(struct v4l2_ctrl_mpeg2_quantization),
+> +		.codec		= CEDRUS_CODEC_MPEG2,
+> +		.required	= false,
+> +	},
+> +};
+> +
+> +#define CEDRUS_CONTROLS_COUNT	ARRAY_SIZE(cedrus_controls)
+> +
+> +void *cedrus_find_control_data(struct cedrus_ctx *ctx, u32 id)
+> +{
+> +	unsigned int i;
+> +
+> +	for (i = 0; ctx->ctrls[i] != NULL; i++)
+> +		if (ctx->ctrls[i]->id == id)
+> +			return ctx->ctrls[i]->p_cur.p;
+> +
+> +	return NULL;
+> +}
+> +
+> +static int cedrus_init_ctrls(struct cedrus_dev *dev, struct cedrus_ctx *ctx)
+> +{
+> +	struct v4l2_ctrl_handler *hdl = &ctx->hdl;
+> +	struct v4l2_ctrl *ctrl;
+> +	unsigned int ctrl_size;
+> +	unsigned int i;
+> +
+> +	v4l2_ctrl_handler_init(hdl, CEDRUS_CONTROLS_COUNT);
+> +	if (hdl->error) {
+> +		v4l2_err(&dev->v4l2_dev,
+> +			 "Failed to initialize control handler\n");
+> +		return hdl->error;
+> +	}
+> +
+> +	ctrl_size = sizeof(ctrl) * CEDRUS_CONTROLS_COUNT + 1;
+> +
+> +	ctx->ctrls = kzalloc(ctrl_size, GFP_KERNEL);
+> +	memset(ctx->ctrls, 0, ctrl_size);
+> +
+> +	for (i = 0; i < CEDRUS_CONTROLS_COUNT; i++) {
+> +		struct v4l2_ctrl_config cfg = { 0 };
+> +
+> +		cfg.elem_size = cedrus_controls[i].elem_size;
+> +		cfg.id = cedrus_controls[i].id;
+> +
+> +		ctrl = v4l2_ctrl_new_custom(hdl, &cfg, NULL);
+> +		if (hdl->error) {
+> +			v4l2_err(&dev->v4l2_dev,
+> +				 "Failed to create new custom control\n");
+> +
+> +			v4l2_ctrl_handler_free(hdl);
+> +			kfree(ctx->ctrls);
+> +			return hdl->error;
+> +		}
+> +
+> +		ctx->ctrls[i] = ctrl;
+> +	}
+> +
+> +	ctx->fh.ctrl_handler = hdl;
+> +	v4l2_ctrl_handler_setup(hdl);
+> +
+> +	return 0;
+> +}
+> +
+> +static int cedrus_request_validate(struct media_request *req)
+> +{
+> +	struct media_request_object *obj, *obj_safe;
+> +	struct v4l2_ctrl_handler *parent_hdl, *hdl;
+> +	struct cedrus_ctx *ctx = NULL;
+> +	struct v4l2_ctrl *ctrl_test;
+> +	unsigned int i;
+> +
+> +	list_for_each_entry_safe(obj, obj_safe, &req->objects, list) {
+> +		struct vb2_buffer *vb;
+> +
+> +		if (vb2_request_object_is_buffer(obj)) {
+> +			vb = container_of(obj, struct vb2_buffer, req_obj);
+> +			ctx = vb2_get_drv_priv(vb->vb2_queue);
+> +
+> +			break;
+> +		}
+> +	}
+> +
+> +	if (!ctx)
+> +		return -ENOENT;
+> +
+> +	parent_hdl = &ctx->hdl;
+> +
+> +	hdl = v4l2_ctrl_request_hdl_find(req, parent_hdl);
+> +	if (!hdl) {
+> +		v4l2_err(&ctx->dev->v4l2_dev, "Missing codec control(s)\n");
+> +		return -ENOENT;
+> +	}
+> +
+> +	for (i = 0; i < CEDRUS_CONTROLS_COUNT; i++) {
+> +		if (cedrus_controls[i].codec != ctx->current_codec ||
+> +		    !cedrus_controls[i].required)
+> +			continue;
+> +
+> +		ctrl_test = v4l2_ctrl_request_hdl_ctrl_find(hdl,
+> +			cedrus_controls[i].id);
+> +		if (!ctrl_test) {
+> +			v4l2_err(&ctx->dev->v4l2_dev,
+> +				 "Missing required codec control\n");
+> +			return -ENOENT;
+> +		}
+> +	}
+> +
+> +	v4l2_ctrl_request_hdl_put(hdl);
+> +
+> +	return vb2_request_validate(req);
+> +}
+> +
+> +static int cedrus_open(struct file *file)
+> +{
+> +	struct cedrus_dev *dev = video_drvdata(file);
+> +	struct cedrus_ctx *ctx = NULL;
+> +	int ret;
+> +
+> +	if (mutex_lock_interruptible(&dev->dev_mutex))
+> +		return -ERESTARTSYS;
+> +
+> +	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
+> +	if (!ctx) {
+> +		mutex_unlock(&dev->dev_mutex);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	v4l2_fh_init(&ctx->fh, video_devdata(file));
+> +	file->private_data = &ctx->fh;
+> +	ctx->dev = dev;
+> +
+> +	ret = cedrus_init_ctrls(dev, ctx);
+> +	if (ret)
+> +		goto err_free;
+> +
+> +	ctx->fh.m2m_ctx = v4l2_m2m_ctx_init(dev->m2m_dev, ctx,
+> +					    &cedrus_queue_init);
+> +	if (IS_ERR(ctx->fh.m2m_ctx)) {
+> +		ret = PTR_ERR(ctx->fh.m2m_ctx);
+> +		goto err_ctrls;
+> +	}
+> +
+> +	v4l2_fh_add(&ctx->fh);
+> +
+> +	mutex_unlock(&dev->dev_mutex);
+> +
+> +	return 0;
+> +
+> +err_ctrls:
+> +	v4l2_ctrl_handler_free(&ctx->hdl);
+> +err_free:
+> +	kfree(ctx);
+> +	mutex_unlock(&dev->dev_mutex);
+> +
+> +	return ret;
+> +}
+> +
+> +static int cedrus_release(struct file *file)
+> +{
+> +	struct cedrus_dev *dev = video_drvdata(file);
+> +	struct cedrus_ctx *ctx = container_of(file->private_data,
+> +					      struct cedrus_ctx, fh);
+> +
+> +	mutex_lock(&dev->dev_mutex);
+> +
+> +	v4l2_fh_del(&ctx->fh);
+> +	v4l2_m2m_ctx_release(ctx->fh.m2m_ctx);
+> +
+> +	v4l2_ctrl_handler_free(&ctx->hdl);
+> +	kfree(ctx->ctrls);
+> +
+> +	v4l2_fh_exit(&ctx->fh);
+> +
+> +	kfree(ctx);
+> +
+> +	mutex_unlock(&dev->dev_mutex);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct v4l2_file_operations cedrus_fops = {
+> +	.owner		= THIS_MODULE,
+> +	.open		= cedrus_open,
+> +	.release	= cedrus_release,
+> +	.poll		= v4l2_m2m_fop_poll,
+> +	.unlocked_ioctl	= video_ioctl2,
+> +	.mmap		= v4l2_m2m_fop_mmap,
+> +};
+> +
+> +static const struct video_device cedrus_video_device = {
+> +	.name		= CEDRUS_NAME,
+> +	.vfl_dir	= VFL_DIR_M2M,
+> +	.fops		= &cedrus_fops,
+> +	.ioctl_ops	= &cedrus_ioctl_ops,
+> +	.minor		= -1,
+> +	.release	= video_device_release_empty,
+> +	.device_caps	= V4L2_CAP_VIDEO_M2M_MPLANE | V4L2_CAP_STREAMING,
+> +};
+> +
+> +static const struct v4l2_m2m_ops cedrus_m2m_ops = {
+> +	.device_run	= cedrus_device_run,
+> +	.job_abort	= cedrus_job_abort,
+> +};
+> +
 
-2018-08-29 4:55 GMT+09:00 Randy Dunlap <rdunlap@infradead.org>:
-> On 08/23/2018 09:20 PM, Masahiro Yamada wrote:
->> Hi Randy,
->>
->>
->> 2018-08-24 3:13 GMT+09:00 Randy Dunlap <rdunlap@infradead.org>:
->>> From: Randy Dunlap <rdunlap@infradead.org>
->>>
->>> When $DEPMOD is not found, only print a warning instead of exiting
->>> with an error message and error status.
->>
->>
->> Could you add the motivation of this change
->> (as Nikolaus reported) ?
->>
->> Without the reason recorded in git-log,
->> somebody may wonder why this commit is useful.
->>
->
-> Added for v4.
+I think you can get rid of this .job_abort. It should
+simplify your .device_run quite a bit.
 
-Thanks.
+.job_abort is optional now since 5525b8314389a0c558d15464e86f438974b94e32.
 
-
-
-
->> BTW, if System.map is missing, depmod is silently skipped.
->>
->>
->> I think if System.map is missing, a user is doing something wrong,
->> but you could do like this:
->>
->> $ make mrproper
->>    [snip]
->> $ make defconfig
->>    [snip]
->> $ make modules
->>    [snip]
->> $ make modules_install
->>   INSTALL drivers/thermal/x86_pkg_temp_thermal.ko
->>   INSTALL fs/efivarfs/efivarfs.ko
->>   INSTALL net/ipv4/netfilter/ipt_MASQUERADE.ko
->>   INSTALL net/ipv4/netfilter/iptable_nat.ko
->>   INSTALL net/ipv4/netfilter/nf_log_arp.ko
->>   INSTALL net/ipv4/netfilter/nf_log_ipv4.ko
->>   INSTALL net/ipv4/netfilter/nf_nat_ipv4.ko
->>   INSTALL net/ipv6/netfilter/nf_log_ipv6.ko
->>   INSTALL net/netfilter/nf_log_common.ko
->>   INSTALL net/netfilter/nf_nat.ko
->>   INSTALL net/netfilter/nf_nat_ftp.ko
->>   INSTALL net/netfilter/nf_nat_irc.ko
->>   INSTALL net/netfilter/nf_nat_sip.ko
->>   INSTALL net/netfilter/xt_LOG.ko
->>   INSTALL net/netfilter/xt_addrtype.ko
->>   INSTALL net/netfilter/xt_mark.ko
->>   INSTALL net/netfilter/xt_nat.ko
->>   DEPMOD  4.18.0+
->>
->>
->> The log looks like all the process went well,
->> but depmod is actually skipped because System.map is
->> generated by "make vmlinux"
->>
->>
->> What do you think we should do about this case?
->>
->> Skip depmod silently?
->> Make it fail?
->> Print noisy warning like missing depmod case?
->
-> Since this shouldn't be happening, I prefer the noisy warning message
-> like the missing depmod case.
->
-> Do you want a separate patch for that?
-
-
-Yes.  Could you send a patch?
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+Regards,
+Ezequiel
