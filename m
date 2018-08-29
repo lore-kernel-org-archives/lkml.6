@@ -2,95 +2,87 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD9DAC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 02:42:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12F7BC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 02:55:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A117A20852
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 02:42:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A117A20852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id AD11320852
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 02:55:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD11320852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727378AbeH2GhB (ORCPT
+        id S1727344AbeH2GuF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 02:37:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43962 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725922AbeH2GhB (ORCPT
+        Wed, 29 Aug 2018 02:50:05 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:19349 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725882AbeH2GuF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 02:37:01 -0400
-Received: from localhost (unknown [208.181.116.45])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 20F2CC77;
-        Wed, 29 Aug 2018 02:42:27 +0000 (UTC)
-Date:   Tue, 28 Aug 2018 19:42:24 -0700
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Mat Martineau <mathew.j.martineau@linux.intel.com>,
-        stable <stable@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH resend] uapi/linux/keyctl.h: don't use C++ reserved
- keyword as a struct member name
-Message-ID: <20180829024224.GA6083@kroah.com>
-References: <0db6c314-1ef4-9bfa-1baa-7214dd2ee061@infradead.org>
+        Wed, 29 Aug 2018 02:50:05 -0400
+X-UUID: 7ba6e562d5c7422b9445255976640f4a-20180829
+Received: from mtkcas36.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
+        (envelope-from <chunfeng.yun@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1807934373; Wed, 29 Aug 2018 10:55:22 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ MTKMBS31DR.mediatek.inc (172.27.6.102) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Wed, 29 Aug 2018 10:55:20 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Wed, 29 Aug 2018 10:55:19 +0800
+From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
+To:     Mathias Nyman <mathias.nyman@intel.com>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>
+Subject: [PATCH 1/6] usb: xhci-mtk: resume USB3 roothub first
+Date:   Wed, 29 Aug 2018 10:55:13 +0800
+Message-ID: <3bcc220aa54bfebc39cea54cd736388ad37ee0c5.1535510898.git.chunfeng.yun@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0db6c314-1ef4-9bfa-1baa-7214dd2ee061@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 04:34:04PM -0700, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@infradead.org>
-> 
-> Since this header is in "include/uapi/linux/", apparently people
-> want to use it in userspace programs -- even in C++ ones.
-> However, the header uses a C++ reserved keyword ("private"),
-> so change that to "dh_private" instead to allow the header file
-> to be used in C++ userspace.
-> 
-> Fixes https://bugzilla.kernel.org/show_bug.cgi?id=191051
-> Fixes: ddbb41148724 ("KEYS: Add KEYCTL_DH_COMPUTE command")
-> 
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: James Morris <jmorris@namei.org>
-> Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> Cc: keyrings@vger.kernel.org
-> Cc: linux-security-module@vger.kernel.org
-> Cc: Mat Martineau <mathew.j.martineau@linux.intel.com>
-> Cc: stable@vger.kernel.org
-> ---
->  include/uapi/linux/keyctl.h |    2 +-
->  security/keys/dh.c          |    2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> --- lnx-416.orig/include/uapi/linux/keyctl.h
-> +++ lnx-416/include/uapi/linux/keyctl.h
-> @@ -65,7 +65,7 @@
->  
->  /* keyctl structures */
->  struct keyctl_dh_params {
-> -	__s32 private;
-> +	__s32 dh_private;
+Give USB3 devices a better chance to enumerate at USB3 speeds if
+they are connected to a suspended host.
+Porting from "671ffdf xhci: resume USB 3 roothub first"
 
-Ick ick ick, why not just put the C "namespace" on all uapi files if you
-are including them from c++ code?  I'm sure this isn't the only problem
-that has this problem, right?
+Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+---
+ drivers/usb/host/xhci-mtk.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-This is valid C, no need to start worrying about C++ reserved names.
+diff --git a/drivers/usb/host/xhci-mtk.c b/drivers/usb/host/xhci-mtk.c
+index 7334da9..71d0d33 100644
+--- a/drivers/usb/host/xhci-mtk.c
++++ b/drivers/usb/host/xhci-mtk.c
+@@ -642,10 +642,10 @@ static int __maybe_unused xhci_mtk_resume(struct device *dev)
+ 	xhci_mtk_host_enable(mtk);
+ 
+ 	xhci_dbg(xhci, "%s: restart port polling\n", __func__);
+-	set_bit(HCD_FLAG_POLL_RH, &hcd->flags);
+-	usb_hcd_poll_rh_status(hcd);
+ 	set_bit(HCD_FLAG_POLL_RH, &xhci->shared_hcd->flags);
+ 	usb_hcd_poll_rh_status(xhci->shared_hcd);
++	set_bit(HCD_FLAG_POLL_RH, &hcd->flags);
++	usb_hcd_poll_rh_status(hcd);
+ 	return 0;
+ }
+ 
+-- 
+1.9.1
 
-thanks,
-
-greg "'struct class' is your friend" k-h
