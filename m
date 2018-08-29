@@ -6,63 +6,63 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 701DBC43334
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:58:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A99EBC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:58:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 286362086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:58:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BDD62086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:58:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZiPY7gA7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 286362086B
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WPxuH4FE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BDD62086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728061AbeH2Lxo (ORCPT
+        id S1728080AbeH2Lxq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 07:53:44 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:46143 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728024AbeH2Lxn (ORCPT
+        Wed, 29 Aug 2018 07:53:46 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:43728 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728038AbeH2Lxp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 07:53:43 -0400
-Received: by mail-lf1-f67.google.com with SMTP id e23-v6so3499830lfc.13
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 00:58:05 -0700 (PDT)
+        Wed, 29 Aug 2018 07:53:45 -0400
+Received: by mail-lf1-f65.google.com with SMTP id h64-v6so3496339lfi.10
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 00:58:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=n5N7rzo2Yz6ToBgcoJnkbL1OiPAx5DE6sy5tATHXNvo=;
-        b=ZiPY7gA7J17PKABvvERsIGACUT9ycbQk2koUQRQauwaRddCew4S4x2tgVFCDLveVQV
-         v2Ch4TRSQRXa/LbP1LDqpYFCPtmyRpx+27sAp02/nC2WtpJED7y5JAzd7s6poancIZf6
-         owWVvwdR8w15N7PTsFemdubA4Vd5eQGaUwke4=
+        bh=WGcGxBYbMR3lYiFeso6+j/q0sgMwNMyzkoeytqhrrrw=;
+        b=WPxuH4FEJqGnE517ARbt1uzfFsPp8ytr1oMwjBDUNHNo5fmIpTQAAm9y3sI9brHI6A
+         tdqnUm2Ed0vS+hZ9vrptewg9I8ejvYK6kQd+oAq107kuxp5OJ7qNkfC9fwYNgCNdxNoM
+         OhtlFc4FsSCXYJ5lABPkWmE/YP03pcxk6Y4lE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=n5N7rzo2Yz6ToBgcoJnkbL1OiPAx5DE6sy5tATHXNvo=;
-        b=LxT8HtxqsZu0oImAikVkuQc9SBEPJUqN6MqI9FtIhm+sjuHfcWQI6FU/iy7rBd66Dq
-         wmVfDaA70X0+5iIgiSZTEl9rx2hPKAprmCrINX7Qn1kmL0QdTdjPK8GWeHtqDgRhXaSK
-         jkJnhjL53lh7NUdAebnQ7bD/12rQZfDlYUdFOc85TtIm5wDThbDGymtWUnkfX1XWrc4k
-         DbPSG3wH7bbOWAKFWkJF39IMp7BqRv8Ek1SiBMsnhTRv4pdtq89bDTdVolnAf063GKMR
-         ilmRRG5WV/kCvgDxpqjeQuvkfxtx4LrKCva7qykUNqRIVj1RXHacDS6/Xu+Uh1U5l1Pq
-         lo3g==
-X-Gm-Message-State: APzg51CyWeYWCWZG/dEZs650SbapbMqlOx0/Qkh7m5ufZUDcOBCtxRQQ
-        lhwEAwfxWrDNMkSYB3NgGvu16w==
-X-Google-Smtp-Source: ANB0VdbK9tycsTbfyUwaPfZv1moWKY93ozWFXTSx9CpQQLzn8fe5WbNKOytMFCEtx+6WYBxhFqvKOw==
-X-Received: by 2002:a19:9355:: with SMTP id v82-v6mr3418687lfd.134.1535529485106;
-        Wed, 29 Aug 2018 00:58:05 -0700 (PDT)
+        bh=WGcGxBYbMR3lYiFeso6+j/q0sgMwNMyzkoeytqhrrrw=;
+        b=dZ+Zh1NfWT9uYG7aDCty8TFi7UogdRp0t7slKkx6sy6GPKlUsd8mslCsvii8ZUcHBT
+         uHRxSR6oejyAskeeeqoqykS02lI4AXYj/0gLHFeiItWO+wXr6Ow69coZZELrF+gep9oo
+         hloFKB9lXGkSlratlXwd36mnrUtHZfwrAJ4zXISEu6zg1ygxaoG3eLnD4e374Bgqk75h
+         iPYRbIPqrN4qWXuU9ZMx52dUvXeurr6Rm6/Sv9Dm5fBpH9KL65WpdtGApLsZ9HGjtGhc
+         V3OL0tWFiMhqgwirgFbcg1dLkZ/79ZVv+oQP51TvgUKuLQhz9Wgrh8hmZQeye+vDuHnT
+         USDA==
+X-Gm-Message-State: APzg51C3+A2kFbu5OhsIan/VMqf6CiO6aYZfF7N4su1pef3zkDTv13yv
+        EzMQFF6aecg/RlDa62ABNLf1XA==
+X-Google-Smtp-Source: ANB0VdbbFl2j18WiFp8S5cwsXkWO0k5xxDWzgqly5jEGGRu/P+vPtVIar2mp9pEp9FccfyJyHbn3fg==
+X-Received: by 2002:a19:be55:: with SMTP id o82-v6mr3353559lff.58.1535529486221;
+        Wed, 29 Aug 2018 00:58:06 -0700 (PDT)
 Received: from centauri.ideon.se ([85.235.10.227])
-        by smtp.gmail.com with ESMTPSA id j9-v6sm592303ljh.40.2018.08.29.00.58.04
+        by smtp.gmail.com with ESMTPSA id j9-v6sm592303ljh.40.2018.08.29.00.58.05
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 29 Aug 2018 00:58:04 -0700 (PDT)
+        Wed, 29 Aug 2018 00:58:05 -0700 (PDT)
 From:   Niklas Cassel <niklas.cassel@linaro.org>
 To:     Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>
 Cc:     Niklas Cassel <niklas.cassel@linaro.org>,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v6 7/9] soc: qcom: wcnss_ctrl: Avoid string overflow
-Date:   Wed, 29 Aug 2018 09:57:21 +0200
-Message-Id: <20180829075724.9095-8-niklas.cassel@linaro.org>
+Subject: [PATCH v6 8/9] soc: qcom: apr: Avoid string overflow
+Date:   Wed, 29 Aug 2018 09:57:22 +0200
+Message-Id: <20180829075724.9095-9-niklas.cassel@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180829075724.9095-1-niklas.cassel@linaro.org>
 References: <20180829075724.9095-1-niklas.cassel@linaro.org>
@@ -71,34 +71,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'chinfo.name' is used as a NUL-terminated string, but using strncpy() with
-the length equal to the buffer size may result in lack of the termination:
+'adev->name' is used as a NUL-terminated string, but using strncpy() with the
+length equal to the buffer size may result in lack of the termination:
 
-drivers//soc/qcom/wcnss_ctrl.c: In function 'qcom_wcnss_open_channel':
-drivers//soc/qcom/wcnss_ctrl.c:284:2: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
-  strncpy(chinfo.name, name, sizeof(chinfo.name));
-  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In function 'apr_add_device',
+    inlined from 'of_register_apr_devices' at drivers//soc/qcom/apr.c:264:7,
+    inlined from 'apr_probe' at drivers//soc/qcom/apr.c:290:2:
+drivers//soc/qcom/apr.c:222:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
+   strncpy(adev->name, np->name, APR_NAME_SIZE);
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This changes it to use the safer strscpy() instead.
 
 Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
 ---
- drivers/soc/qcom/wcnss_ctrl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/soc/qcom/apr.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/soc/qcom/wcnss_ctrl.c b/drivers/soc/qcom/wcnss_ctrl.c
-index df3ccb30bc2d..373400dd816d 100644
---- a/drivers/soc/qcom/wcnss_ctrl.c
-+++ b/drivers/soc/qcom/wcnss_ctrl.c
-@@ -281,7 +281,7 @@ struct rpmsg_endpoint *qcom_wcnss_open_channel(void *wcnss, const char *name, rp
- 	struct rpmsg_channel_info chinfo;
- 	struct wcnss_ctrl *_wcnss = wcnss;
+diff --git a/drivers/soc/qcom/apr.c b/drivers/soc/qcom/apr.c
+index 57af8a537332..ee9197f5aae9 100644
+--- a/drivers/soc/qcom/apr.c
++++ b/drivers/soc/qcom/apr.c
+@@ -219,9 +219,9 @@ static int apr_add_device(struct device *dev, struct device_node *np,
+ 	adev->domain_id = id->domain_id;
+ 	adev->version = id->svc_version;
+ 	if (np)
+-		strncpy(adev->name, np->name, APR_NAME_SIZE);
++		strscpy(adev->name, np->name, APR_NAME_SIZE);
+ 	else
+-		strncpy(adev->name, id->name, APR_NAME_SIZE);
++		strscpy(adev->name, id->name, APR_NAME_SIZE);
  
--	strncpy(chinfo.name, name, sizeof(chinfo.name));
-+	strscpy(chinfo.name, name, sizeof(chinfo.name));
- 	chinfo.src = RPMSG_ADDR_ANY;
- 	chinfo.dst = RPMSG_ADDR_ANY;
- 
+ 	dev_set_name(&adev->dev, "aprsvc:%s:%x:%x", adev->name,
+ 		     id->domain_id, id->svc_id);
 -- 
 2.17.1
 
