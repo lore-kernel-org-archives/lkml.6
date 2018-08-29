@@ -2,299 +2,193 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F02EC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 23:00:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D581BC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 23:00:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16F3820647
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 23:00:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16F3820647
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8295620647
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 23:00:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="arl1sqYW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8295620647
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727729AbeH3C7H (ORCPT
+        id S1727616AbeH3C7A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 22:59:07 -0400
-Received: from mga07.intel.com ([134.134.136.100]:60409 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727545AbeH3C7A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 29 Aug 2018 22:59:00 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2018 15:59:43 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,305,1531810800"; 
-   d="scan'208";a="85609398"
-Received: from rpedgeco-desk5.jf.intel.com ([10.54.75.168])
-  by fmsmga001.fm.intel.com with ESMTP; 29 Aug 2018 15:59:42 -0700
-From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
-To:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        kernel-hardening@lists.openwall.com, daniel@iogearbox.net,
-        jannh@google.com, keescook@chromium.org
-Cc:     kristen@linux.intel.com, dave.hansen@intel.com,
-        arjan@linux.intel.com, Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH v4 2/3] x86/modules: Increase randomization for modules
-Date:   Wed, 29 Aug 2018 15:59:38 -0700
-Message-Id: <1535583579-6138-3-git-send-email-rick.p.edgecombe@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1535583579-6138-1-git-send-email-rick.p.edgecombe@intel.com>
-References: <1535583579-6138-1-git-send-email-rick.p.edgecombe@intel.com>
+Received: from mailout4.samsung.com ([203.254.224.34]:32190 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727316AbeH3C67 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 22:58:59 -0400
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20180829225946epoutp04e4dec61ae9d42851ec3a9f17e626153c~PfSLdj3ea3085330853epoutp04V;
+        Wed, 29 Aug 2018 22:59:46 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180829225946epoutp04e4dec61ae9d42851ec3a9f17e626153c~PfSLdj3ea3085330853epoutp04V
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1535583586;
+        bh=DXUsN0+1Mi5Fs3WOb11J9M6iS/wrB5xRBrKds3KMtjY=;
+        h=Date:From:To:Cc:Subject:In-reply-to:References:From;
+        b=arl1sqYWgjOi5Qo5n+9L4alClA2qKKEaIPhjfy/ZQDe2nk1elKqFgvCFXJ8qK97N2
+         zc1t1YLRRGbZxqJmJxcfQeJRzFVYwsNmYe+IbibyFGU+UPExUC4Ycldmar0RwSNiTx
+         yqlunHC3oMobsMxadZ7Uivvwp5rboXpXG/FfPk1o=
+Received: from epsmges2p1.samsung.com (unknown [182.195.40.156]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20180829225944epcas1p3f7a04d3a4d728e255f06b477862adeaf~PfSJJkRVL3191831918epcas1p3H;
+        Wed, 29 Aug 2018 22:59:44 +0000 (GMT)
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+        epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        60.78.04218.F55278B5; Thu, 30 Aug 2018 07:59:44 +0900 (KST)
+Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
+        epcas2p3.samsung.com (KnoxPortal) with ESMTP id
+        20180829225943epcas2p3f799ee197d6c5aa7d3379761dcea8dd3~PfSIjDd9f2202822028epcas2p3r;
+        Wed, 29 Aug 2018 22:59:43 +0000 (GMT)
+X-AuditID: b6c32a45-253ff7000000107a-1f-5b87255f56fd
+Received: from epmmp1.local.host ( [203.254.227.16]) by
+        epsmgms2p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        E5.06.03703.F55278B5; Thu, 30 Aug 2018 07:59:43 +0900 (KST)
+MIME-version: 1.0
+Content-transfer-encoding: 8BIT
+Content-type: text/plain; charset="UTF-8"
+Received: from [10.113.63.77] by mmp1.samsung.com (Oracle Communications
+        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
+        <0PE800I9RVVJK090@mmp1.samsung.com>; Thu, 30 Aug 2018 07:59:43 +0900 (KST)
+Message-id: <5B87255F.80207@samsung.com>
+Date:   Thu, 30 Aug 2018 07:59:43 +0900
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
+        Thunderbird/31.6.0
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
+        rafael.j.wysocki@intel.com, chanwoo@kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] PM / devfreq: Add new name attribute for sysfs
+In-reply-to: <3263263.FggQa7iA9D@amdc3058>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrIKsWRmVeSWpSXmKPExsWy7bCmqW6Canu0wa//TBYbZ6xntZh44wqL
+        xdmmN+wWl3fNYbP43HuE0eJ24wo2i8cr3rJbLNj4iNGBw2PxnpdMHptWdbJ59G1ZxejxeZNc
+        AEtUqk1GamJKapFCal5yfkpmXrqtkndwvHO8qZmBoa6hpYW5kkJeYm6qrZKLT4CuW2YO0BlK
+        CmWJOaVAoYDE4mIlfTubovzSklSFjPziElulaENDIz1DA3M9IyMgbRxrZWQKVJKQmnHjziSW
+        greCFQ8Of2BrYNzI18XIwSEhYCLReCW+i5GLQ0hgB6PE/eUvmCGc74wSaydtYu1i5AQr+j75
+        KytEYjejxNeO7ywgCV4BQYkfk++xgExiFpCXOHIpGyTMLKApsXX3enaI+ruMEpv33WaCqNeQ
+        mHp3GzOIzSKgKvFg1jOwBWwCWhL7X9xgA7H5BRQlrv54zAhiiwpESOyc/40dxBYRsJBYu+It
+        C8hQZpAjVp69DVYkLOAsMXH5e7CDOIEGTZ99BmyzhMBlNolJi/exQLzgIrHx4wtmCFtY4tXx
+        LewQtrTEs1UbGSEa2hklvrxoZoVwJjBKfDi1mQmiylji2cIuJojn+CQ6Dv9lh4Qer0RHmxBE
+        iYdE1/pGJoifdzJKLHn+nXUCo+wspGCahQimWUjBtICReRWjWGpBcW56arFRgaFecWJucWle
+        ul5yfu4mRnBy03LdwTjjnM8hRgEORiUe3gsz2qKFWBPLiitzDzFKcDArifBynQMK8aYkVlal
+        FuXHF5XmpBYfYjQFhvJEZinR5Hxg4s0riTc0NTI2NrYwNbc0NrBUEuet9guOFhJITyxJzU5N
+        LUgtgulj4uCUamCsZdO4nfYmxjtofrFq3rI9fxsyAqptEt3c+zcfsMr/vsi1/t379FDLyYl7
+        qg5Ec93gXJzLGdd67sEhlneiXz7Jp5m/KlkqfXN5do+QZ967ea8bzqjVuLdMO+Ymm5Lr9S3o
+        0f/yi24Kr7rzLde++8q5JPL4B9cJmTvD2o/zxzV2H0/y/6PwoUSJpTgj0VCLuag4EQClR06t
+        hAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPLMWRmVeSWpSXmKPExsVy+t9jAd141fZogzeTpS02zljPajHxxhUW
+        i7NNb9gtLu+aw2bxufcIo8XtxhVsFo9XvGW3WLDxEaMDh8fiPS+ZPDat6mTz6NuyitHj8ya5
+        AJYoLpuU1JzMstQifbsErowbdyaxFLwVrHhw+ANbA+NGvi5GTg4JAROJ75O/snYxcnEICexk
+        lJj69hUbSIJXQFDix+R7LF2MHBzMAvISRy5lg4SZBdQlJs1bxAxRf59R4sex/SwQ9RoSU+9u
+        YwaxWQRUJR7MesYKYrMJaEnsf3EDbCa/gKLE1R+PGUFmigpESHSfqAQJiwhYSKxd8ZYFZCaz
+        wG5Gibv/f4HNFBZwlpi4/D0LxDKgxLpl/8EWcAINnT77DPsERoFZSG6dhXDrLCS3LmBkXsUo
+        mVpQnJueW2xUYJSXWq5XnJhbXJqXrpecn7uJERjs2w5r9e9gfLwk/hCjAAejEg/vhRlt0UKs
+        iWXFlbmHGCU4mJVEeLnOAYV4UxIrq1KL8uOLSnNSiw8xSnOwKInz8ucfixQSSE8sSc1OTS1I
+        LYLJMnFwSjUwqpe8388XqXo0eOVniRdO3TP5Xh6e9jPR6Ne5dWv+BS/srQvbLfFonVq/JHef
+        XKFMU2X34R+lPmtnqC6cqWBfn2jcsubIi33HrcNu+K0OvthyMXiF6tYlD066LT4bG/IzWe+2
+        zY9w3j9h60X4Pay4a0/mfnPL+T9zPW/rrYM7zbsitdvT2m79VGIpzkg01GIuKk4EAIAVd0dy
+        AgAA
+X-CMS-MailID: 20180829225943epcas2p3f799ee197d6c5aa7d3379761dcea8dd3
+X-Msg-Generator: CA
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180829073410epcas1p2f314e6c4c29eacfe3ebd5fb4f7f2f122
+References: <CGME20180829073410epcas1p2f314e6c4c29eacfe3ebd5fb4f7f2f122@epcas1p2.samsung.com>
+        <1535528046-18835-1-git-send-email-cw00.choi@samsung.com>
+        <3263263.FggQa7iA9D@amdc3058>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This changes the behavior of the KASLR logic for allocating memory for the text
-sections of loadable modules. It randomizes the location of each module text
-section with about 17 bits of entropy in typical use. This is enabled on X86_64
-only. For 32 bit, the behavior is unchanged.
+Hi Bartlomiej,
 
-It refactors existing code around module randomization somewhat. There are now
-three different behaviors for x86 module_alloc depending on config.
-RANDOMIZE_BASE=n, and RANDOMIZE_BASE=y ARCH=x86_64, and RANDOMIZE_BASE=y
-ARCH=i386. The refactor of the existing code is to try to clearly show what
-those behaviors are without having three separate versions or threading the
-behaviors in a bunch of little spots. The reason it is not enabled on 32 bit
-yet is because the module space is much smaller and simulations haven't been
-run to see how it performs.
+On 2018년 08월 29일 21:50, Bartlomiej Zolnierkiewicz wrote:
+> 
+> Hi Chanwoo,
+> 
+> On Wednesday, August 29, 2018 04:34:06 PM Chanwoo Choi wrote:
+>> commit 4585fbcb5331 ("PM / devfreq: Modify the device name as devfreq(X) for
+>> sysfs") changed the node name to devfreq(x). After this commit, it is not
+>> possible to get the device name through /sys/class/devfreq/devfreq(X)/*.
+>>
+>> Add new name attribute in order to get device name.
+> 
+> Could you please describe the issue encountered in more detail
+> (what the old device name is needed for)?
 
-The new algorithm breaks the module space in two, a random area and a backup
-area. It first tries to allocate at a number of randomly located starting pages
-inside the random section without purging any lazy free vmap areas and
-triggering the associated TLB flush. If this fails, it will try again a number
-of times allowing for purges if needed. It also saves any position that could
-have succeeded if it was allowed to purge, which doubles the chances of finding
-a spot that would fit. Finally if those both fail to find a position it will
-allocate in the backup area. The backup area base will be offset in the same
-way as the current algorithm does for the base area, 1024 possible locations.
+You can check it on mail thread[1].
+[1] https://lkml.org/lkml/2018/5/8/1042
 
-Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
----
- arch/x86/include/asm/pgtable_64_types.h |   7 ++
- arch/x86/kernel/module.c                | 165 +++++++++++++++++++++++++++-----
- 2 files changed, 149 insertions(+), 23 deletions(-)
+>  
+>> Cc: stable@vger.kernel.org
+>> Fixes: 4585fbcb5331 ("PM / devfreq: Modify the device name as devfreq(X) for sysfs")
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> ---
+>>  drivers/devfreq/devfreq.c | 11 +++++++++++
+>>  include/linux/devfreq.h   |  3 +++
+>>  2 files changed, 14 insertions(+)
+>>
+>> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+>> index 4c49bb1330b5..2145563d5ee5 100644
+>> --- a/drivers/devfreq/devfreq.c
+>> +++ b/drivers/devfreq/devfreq.c
+>> @@ -620,6 +620,9 @@ struct devfreq *devfreq_add_device(struct device *dev,
+>>  	}
+>>  	devfreq->max_freq = devfreq->scaling_max_freq;
+>>
+>> +	devfreq->name = dev_name(devfreq->dev.parent);
+> 
+> It seems that 'dev' can be used instead of 'devfreq->dev.parent'.
 
-diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
-index 04edd2d..5e26369 100644
---- a/arch/x86/include/asm/pgtable_64_types.h
-+++ b/arch/x86/include/asm/pgtable_64_types.h
-@@ -143,6 +143,13 @@ extern unsigned int ptrs_per_p4d;
- #define MODULES_END		_AC(0xffffffffff000000, UL)
- #define MODULES_LEN		(MODULES_END - MODULES_VADDR)
- 
-+/*
-+ * Dedicate the first part of the module space to a randomized area when KASLR
-+ * is in use.  Leave the remaining part for a fallback if we are unable to
-+ * allocate in the random area.
-+ */
-+#define MODULES_RAND_LEN	PAGE_ALIGN((MODULES_LEN/3)*2)
-+
- #define ESPFIX_PGD_ENTRY	_AC(-2, UL)
- #define ESPFIX_BASE_ADDR	(ESPFIX_PGD_ENTRY << P4D_SHIFT)
- 
-diff --git a/arch/x86/kernel/module.c b/arch/x86/kernel/module.c
-index f58336a..d50a0a0 100644
---- a/arch/x86/kernel/module.c
-+++ b/arch/x86/kernel/module.c
-@@ -48,34 +48,151 @@ do {							\
- } while (0)
- #endif
- 
--#ifdef CONFIG_RANDOMIZE_BASE
-+#if defined(CONFIG_X86_64) && defined(CONFIG_RANDOMIZE_BASE)
-+static inline unsigned long get_modules_rand_len(void)
-+{
-+	return MODULES_RAND_LEN;
-+}
-+#else
-+static inline unsigned long get_modules_rand_len(void)
-+{
-+	BUILD_BUG();
-+	return 0;
-+}
-+
-+inline bool kaslr_enabled(void);
-+#endif
-+
-+static inline int kaslr_randomize_each_module(void)
-+{
-+	return IS_ENABLED(CONFIG_RANDOMIZE_BASE)
-+		&& IS_ENABLED(CONFIG_X86_64)
-+		&& kaslr_enabled();
-+}
-+
-+static inline int kaslr_randomize_base(void)
-+{
-+	return IS_ENABLED(CONFIG_RANDOMIZE_BASE)
-+		&& !IS_ENABLED(CONFIG_X86_64)
-+		&& kaslr_enabled();
-+}
-+
- static unsigned long module_load_offset;
-+static const unsigned long NR_NO_PURGE = 5000;
-+static const unsigned long NR_TRY_PURGE = 5000;
- 
- /* Mutex protects the module_load_offset. */
- static DEFINE_MUTEX(module_kaslr_mutex);
- 
- static unsigned long int get_module_load_offset(void)
- {
--	if (kaslr_enabled()) {
--		mutex_lock(&module_kaslr_mutex);
--		/*
--		 * Calculate the module_load_offset the first time this
--		 * code is called. Once calculated it stays the same until
--		 * reboot.
--		 */
--		if (module_load_offset == 0)
--			module_load_offset =
--				(get_random_int() % 1024 + 1) * PAGE_SIZE;
--		mutex_unlock(&module_kaslr_mutex);
--	}
-+	mutex_lock(&module_kaslr_mutex);
-+	/*
-+	 * Calculate the module_load_offset the first time this
-+	 * code is called. Once calculated it stays the same until
-+	 * reboot.
-+	 */
-+	if (module_load_offset == 0)
-+		module_load_offset = (get_random_int() % 1024 + 1) * PAGE_SIZE;
-+	mutex_unlock(&module_kaslr_mutex);
-+
- 	return module_load_offset;
- }
--#else
--static unsigned long int get_module_load_offset(void)
-+
-+static unsigned long get_module_vmalloc_start(void)
- {
--	return 0;
-+	if (kaslr_randomize_each_module())
-+		return MODULES_VADDR + get_modules_rand_len()
-+					+ get_module_load_offset();
-+	else if (kaslr_randomize_base())
-+		return MODULES_VADDR + get_module_load_offset();
-+
-+	return MODULES_VADDR;
-+}
-+
-+static void *try_module_alloc(unsigned long addr, unsigned long size,
-+					int try_purge)
-+{
-+	const unsigned long vm_flags = 0;
-+
-+	return __vmalloc_node_try_addr(addr, size, GFP_KERNEL, PAGE_KERNEL_EXEC,
-+					vm_flags, NUMA_NO_NODE, try_purge,
-+					__builtin_return_address(0));
-+}
-+
-+/*
-+ * Find a random address to try that won't obviously not fit. Random areas are
-+ * allowed to overflow into the backup area
-+ */
-+static unsigned long get_rand_module_addr(unsigned long size)
-+{
-+	unsigned long nr_max_pos = (MODULES_LEN - size) / MODULE_ALIGN + 1;
-+	unsigned long nr_rnd_pos = get_modules_rand_len() / MODULE_ALIGN;
-+	unsigned long nr_pos = min(nr_max_pos, nr_rnd_pos);
-+
-+	unsigned long module_position_nr = get_random_long() % nr_pos;
-+	unsigned long offset = module_position_nr * MODULE_ALIGN;
-+
-+	return MODULES_VADDR + offset;
-+}
-+
-+/*
-+ * Try to allocate in the random area. First 5000 times without purging, then
-+ * 5000 times with purging. If these fail, return NULL.
-+ */
-+static void *try_module_randomize_each(unsigned long size)
-+{
-+	void *p = NULL;
-+	unsigned int i;
-+	unsigned long last_lazy_free_blocked = 0;
-+
-+	/* This will have a guard page */
-+	unsigned long va_size = PAGE_ALIGN(size) + PAGE_SIZE;
-+
-+	if (!kaslr_randomize_each_module())
-+		return NULL;
-+
-+	/* Make sure there is at least one address that might fit. */
-+	if (va_size < PAGE_ALIGN(size) || va_size > MODULES_LEN)
-+		return NULL;
-+
-+	/* Try to find a spot that doesn't need a lazy purge */
-+	for (i = 0; i < NR_NO_PURGE; i++) {
-+		unsigned long addr = get_rand_module_addr(va_size);
-+
-+		/* First try to avoid having to purge */
-+		p = try_module_alloc(addr, size, 0);
-+
-+		/*
-+		 * Save the last value that was blocked by a
-+		 * lazy purge area.
-+		 */
-+		if (IS_ERR(p) && PTR_ERR(p) == -EUCLEAN)
-+			last_lazy_free_blocked = addr;
-+		else if (!IS_ERR(p))
-+			return p;
-+	}
-+
-+	/* Try the most recent spot that could be used after a lazy purge */
-+	if (last_lazy_free_blocked) {
-+		p = try_module_alloc(last_lazy_free_blocked, size, 1);
-+
-+		if (!IS_ERR(p))
-+			return p;
-+	}
-+
-+	/* Look for more spots and allow lazy purges */
-+	for (i = 0; i < NR_TRY_PURGE; i++) {
-+		unsigned long addr = get_rand_module_addr(va_size);
-+
-+		/* Give up and allow for purges */
-+		p = try_module_alloc(addr, size, 1);
-+
-+		if (!IS_ERR(p))
-+			return p;
-+	}
-+	return NULL;
- }
--#endif
- 
- void *module_alloc(unsigned long size)
- {
-@@ -84,16 +201,18 @@ void *module_alloc(unsigned long size)
- 	if (PAGE_ALIGN(size) > MODULES_LEN)
- 		return NULL;
- 
--	p = __vmalloc_node_range(size, MODULE_ALIGN,
--				    MODULES_VADDR + get_module_load_offset(),
--				    MODULES_END, GFP_KERNEL,
--				    PAGE_KERNEL_EXEC, 0, NUMA_NO_NODE,
--				    __builtin_return_address(0));
-+	p = try_module_randomize_each(size);
-+
-+	if (!p)
-+		p = __vmalloc_node_range(size, MODULE_ALIGN,
-+				get_module_vmalloc_start(), MODULES_END,
-+				GFP_KERNEL, PAGE_KERNEL_EXEC, 0,
-+				NUMA_NO_NODE, __builtin_return_address(0));
-+
- 	if (p && (kasan_module_alloc(p, size) < 0)) {
- 		vfree(p);
- 		return NULL;
- 	}
--
- 	return p;
- }
- 
+devfreq->dev.parent is same with dev. it doesn't matter.
+
+> 
+>> +	if (IS_ERR_OR_NULL(devfreq->name))
+> 
+> Error values are not encoded into pointer returned by dev_name()
+> (drivers/base/ code is only checking for pointer being NULL).
+
+OK. I'll just check whether NULL or not.
+
+> 
+>> +		return -EINVAL;
+> 
+> This leaks 'devfreq' object and doesn't encode return value into
+> pointer returned by devfreq_add_device(), it should be replaced by:
+
+Right. I'll fix it.
+
+> 
+> 	err = -EINVAL;
+> 	goto err_dev;
+> 
+>>  	dev_set_name(&devfreq->dev, "devfreq%d",
+>>  				atomic_inc_return(&devfreq_no));
+>>  	err = device_register(&devfreq->dev);
+> 
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
+> 
+> 
+> 
+
+
 -- 
-2.7.4
-
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
