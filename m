@@ -6,102 +6,64 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A668C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:25:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C41AC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:26:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D54E20644
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:25:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D54E20644
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 2871820644
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:26:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2871820644
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727251AbeH3CYe (ORCPT
+        id S1727326AbeH3CZb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 22:24:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39814 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727187AbeH3CYe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 22:24:34 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9EB18BB6;
-        Wed, 29 Aug 2018 22:25:34 +0000 (UTC)
-Date:   Wed, 29 Aug 2018 15:25:33 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Larry Chen <lchen@suse.com>
-Cc:     mfasheh@suse.com, jlbec@evilplan.org, linux-kernel@vger.kernel.org,
-        ocfs2-devel@oss.oracle.com
-Subject: Re: [PATCH] fix crash on ocfs2_duplicate_clusters_by_page
-Message-Id: <20180829152533.431fd4972ae046943cabc2e3@linux-foundation.org>
-In-Reply-To: <20180829074740.9438-1-lchen@suse.com>
-References: <20180829074740.9438-1-lchen@suse.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Wed, 29 Aug 2018 22:25:31 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44756 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727187AbeH3CZb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 22:25:31 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A8C8140241CB;
+        Wed, 29 Aug 2018 22:26:31 +0000 (UTC)
+Received: from whitewolf.lyude.net.com (ovpn-121-246.rdu2.redhat.com [10.10.121.246])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 66BE1202704E;
+        Wed, 29 Aug 2018 22:26:29 +0000 (UTC)
+From:   Lyude Paul <lyude@redhat.com>
+To:     nouveau@lists.freedesktop.org
+Cc:     "David Airlie" <airlied@linux.ie>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, "Ben Skeggs" <bskeggs@redhat.com>
+Subject: [PATCH v3 0/5] drm/nouveau: Backlight fixes and cleanup
+Date:   Wed, 29 Aug 2018 18:26:20 -0400
+Message-Id: <20180829222626.15074-1-lyude@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 29 Aug 2018 22:26:31 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 29 Aug 2018 22:26:31 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 29 Aug 2018 15:47:40 +0800 Larry Chen <lchen@suse.com> wrote:
+Next version of https://patchwork.freedesktop.org/series/48596/ . Added
+NV_INFO_ONCE and made "Move backlight device into nouveau_connector" use
+that instead so we don't print the GMUX warning more then once.
 
-> ocfs2_duplicate_clusters_by_page may crash if one of extent's pages is dirty.
-> When a page has not been written back, it is still in dirty state. If 
-> ocfs2_duplicate_clusters_by_page is called against the
-> dirty page, the crash happens.
-> 
-> To fix this bug, we can just unlock the page and wait the page until
-> it's not dirty.
-> 
-> The following is the buck trace dump:
-> 
-> kernel BUG at /root/code/ocfs2/refcounttree.c:2961!
-> [exception RIP: ocfs2_duplicate_clusters_by_page+822]
-> __ocfs2_move_extent+0x80/0x450 [ocfs2]
-> ? __ocfs2_claim_clusters+0x130/0x250 [ocfs2]
-> ocfs2_defrag_extent+0x5b8/0x5e0 [ocfs2]
-> __ocfs2_move_extents_range+0x2a4/0x470 [ocfs2]
-> ocfs2_move_extents+0x180/0x3b0 [ocfs2]
-> ? ocfs2_wait_for_recovery+0x13/0x70 [ocfs2]
-> ocfs2_ioctl_move_extents+0x133/0x2d0 [ocfs2]
-> ocfs2_ioctl+0x253/0x640 [ocfs2]
-> do_vfs_ioctl+0x90/0x5f0
-> SyS_ioctl+0x74/0x80
-> do_syscall_64+0x74/0x140
-> entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-> 
-> --- a/fs/ocfs2/refcounttree.c
-> +++ b/fs/ocfs2/refcounttree.c
-> @@ -2946,6 +2946,7 @@ int ocfs2_duplicate_clusters_by_page(handle_t *handle,
->  		if (map_end & (PAGE_SIZE - 1))
->  			to = map_end & (PAGE_SIZE - 1);
->  
-> +retry:
->  		page = find_or_create_page(mapping, page_index, GFP_NOFS);
->  		if (!page) {
->  			ret = -ENOMEM;
-> @@ -2957,8 +2958,15 @@ int ocfs2_duplicate_clusters_by_page(handle_t *handle,
->  		 * In case PAGE_SIZE <= CLUSTER_SIZE, This page
->  		 * can't be dirtied before we CoW it out.
->  		 */
+Lyude Paul (5):
+  drm/nouveau: Add NV_PRINTK_ONCE and variants
+  drm/nouveau: Move backlight device into nouveau_connector
+  drm/nouveau: s/nouveau_backlight_exit/nouveau_backlight_fini/
+  drm/nouveau: Cleanup indenting in nouveau_backlight.c
+  drm/nouveau: Refactor nvXX_backlight_init()
 
-Looks sane, but the below change shows that the above comment is
-untrue.  Can we please update the comment as well?
+ drivers/gpu/drm/nouveau/nouveau_backlight.c | 220 ++++++++++----------
+ drivers/gpu/drm/nouveau/nouveau_connector.c |  20 ++
+ drivers/gpu/drm/nouveau/nouveau_connector.h |  33 +++
+ drivers/gpu/drm/nouveau/nouveau_display.c   |   2 -
+ drivers/gpu/drm/nouveau/nouveau_display.h   |  25 ---
+ drivers/gpu/drm/nouveau/nouveau_drv.h       |  10 +-
+ 6 files changed, 168 insertions(+), 142 deletions(-)
 
-
-> -		if (PAGE_SIZE <= OCFS2_SB(sb)->s_clustersize)
-> -			BUG_ON(PageDirty(page));
-> +		if (PAGE_SIZE <= OCFS2_SB(sb)->s_clustersize) {
-> +			if (PageDirty(page)) {
-> +				/*
-> +				 * write_on_page will unlock the page on return
-> +				 */
-> +				ret = write_one_page(page);
-> +				goto retry;
-> +			}
-> +		}
->  
->  		if (!PageUptodate(page)) {
->  			ret = block_read_full_page(page, ocfs2_get_block);
+-- 
+2.17.1
 
