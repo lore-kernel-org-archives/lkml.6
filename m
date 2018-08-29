@@ -2,143 +2,268 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60C69C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 04:34:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 223BFC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 04:36:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F103120841
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 04:34:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B86B52086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 04:36:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M5895AXK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F103120841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="d2FIdpUy";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ATGOR33l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B86B52086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727267AbeH2I3e (ORCPT
+        id S1727426AbeH2IbD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 04:29:34 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:39570 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726857AbeH2I3e (ORCPT
+        Wed, 29 Aug 2018 04:31:03 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:36468 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726857AbeH2IbD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 04:29:34 -0400
-Received: by mail-pf1-f194.google.com with SMTP id j8-v6so1684065pff.6;
-        Tue, 28 Aug 2018 21:34:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=A4cOhlwhuZetS+UJ9f3q5pGs5rbdKzbTZbLy6N4f7s4=;
-        b=M5895AXKYSGkBxSt0w7/RduSUYY0GBRoX6xJoZFznICW+ojVihpBx1+Vz4x4I5V2JR
-         GBCzIrRxHn9u9CY/HEygMuBLcWblZZNrPlYVze6ZaaUzbNMisbTcaQDPhcReYEYyGoNZ
-         APVVAJcTfYDkOxlUw5g7PvUcnIIX0lmhClF89mTr9UbQXUhwWy1cldYSna1bg0Sx8lXj
-         zH6nhRtovm49n5Q6Iux4PuDvLPrG5jC2OyHwyxfIS2rUy/yCefnwghVbyq56+WM0N8I5
-         BfLsh6TvnrkTSpCK+APnNL2dbctvd1wfJF6tgnYXgKGqfVD2bepiPPcnpVxkjwBFYjp2
-         RcCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=A4cOhlwhuZetS+UJ9f3q5pGs5rbdKzbTZbLy6N4f7s4=;
-        b=Isupk+a6VJdflmCMKP8wUSc/1msxM0QT/Eal1pn9HMwmr/aDRhTdaCLpWEG3SXEiNb
-         +Ofvj+559IjXhPNywgNgGwHSW92aXMpnyop3odNUYpaaz+4T5YMxifvv3f6xBzwiu2GS
-         SQUdIOl8p8LW7nOUmDDa4akxomUoPIEcH60VDckHpXsad8G4Lpjw92elD3jX4MfLXKY9
-         ve57ldsx4TAE+bA/KItrr+IoJiyv7cmQfpOn5Rki0XBI6AV3wizsMeCA3xWTp4zpNIDV
-         4TE7rmrT5PCvlXozbKtAtaXh1UlSnPARuZZ/rNDfTaGwuzxvYwt3rr4mpE4crnd1rdf5
-         PIyg==
-X-Gm-Message-State: APzg51C2dgVEqoGB5JbuZo50tc0Ci2F63BQXe4erAnPET6CIYqGGtJY8
-        T04rsB8MRV2ozue5bIDunjk=
-X-Google-Smtp-Source: ANB0VdZXbC9WzkKJbb+RF1SL7r8nBhErJEXGSFqBdPc5blQZwLEvAvaZJTWVgumvZxVk9nfZ2J27EQ==
-X-Received: by 2002:a63:d345:: with SMTP id u5-v6mr2680673pgi.330.1535517275905;
-        Tue, 28 Aug 2018 21:34:35 -0700 (PDT)
-Received: from localhost ([175.223.20.38])
-        by smtp.gmail.com with ESMTPSA id d19-v6sm4616051pfe.42.2018.08.28.21.34.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 28 Aug 2018 21:34:34 -0700 (PDT)
-Date:   Wed, 29 Aug 2018 13:34:30 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Dmitry Safonov <dima@arista.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Daniel Axtens <dja@axtens.net>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Michael Neuling <mikey@neuling.org>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        Pasi =?iso-8859-1?Q?K=E4rkk=E4inen?= <pasik@iki.fi>,
-        Peter Hurley <peter@hurleysoftware.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Tan Xiaojun <tanxiaojun@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, stable@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: [PATCH 2/4] tty: Hold tty_ldisc_lock() during tty_reopen()
-Message-ID: <20180829043430.GB13049@jagdpanzerIV>
-References: <20180829022353.23568-1-dima@arista.com>
- <20180829022353.23568-3-dima@arista.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180829022353.23568-3-dima@arista.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 29 Aug 2018 04:31:03 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 84A3D6053D; Wed, 29 Aug 2018 04:36:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535517364;
+        bh=qP8uFB7RKo2aAtnztXAeNtlTXpCmmcS5RwQh6oBcr80=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=d2FIdpUyyFX8DaMqIv4QDUyHNK45etz9N9QdABe2lP1iuwspQboOGW3ssIsGzvfpN
+         lcTDNxJfZK2V8YG2H+/B306F29f6NmaW1kP4Y8EUz2Qn1a+hMxpJ7n75FSePXVmOH2
+         lr3Wc/7V9NY5lL688CS4mRKp27/v5Ptq7NK/AMa4=
+Received: from sayalil-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sayalil@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7AF516053B;
+        Wed, 29 Aug 2018 04:35:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535517363;
+        bh=qP8uFB7RKo2aAtnztXAeNtlTXpCmmcS5RwQh6oBcr80=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ATGOR33loHjbBHiY5hGSexsmKuez0E5UMWfc+84UwJjzhQofywpI/mvgp7fwSjVD7
+         9vdMK9xxuXFmf1lRGDlxJ92J1h/3u3sxqiN7ZQzOWtHNFIu0+OIBOGsjPK7YujQu1/
+         tPZDJ1V6kl0bBlZZG3oO7T/dNajRWKwUnHdAjr0o=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7AF516053B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
+From:   Sayali Lokhande <sayalil@codeaurora.org>
+To:     subhashj@codeaurora.org, cang@codeaurora.org,
+        vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
+        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, asutoshd@codeaurora.org,
+        evgreen@chromium.org, riteshh@codeaurora.org
+Cc:     stummala@codeaurora.org, adrian.hunter@intel.com,
+        linux-scsi@vger.kernel.org,
+        Sayali Lokhande <sayalil@codeaurora.org>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH V11 1/2] scsi: ufs: set the device reference clock setting
+Date:   Wed, 29 Aug 2018 10:05:37 +0530
+Message-Id: <1535517338-26077-2-git-send-email-sayalil@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1535517338-26077-1-git-send-email-sayalil@codeaurora.org>
+References: <1535517338-26077-1-git-send-email-sayalil@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: Subhash Jadavani <subhashj@codeaurora.org>
 
-Cc-ing Benjamin on this.
+UFS host supplies the reference clock to UFS device and UFS device
+specification allows host to provide one of the 4 frequencies (19.2 MHz,
+26 MHz, 38.4 MHz, 52 MHz) for reference clock. Host should set the
+device reference clock frequency setting in the device based on what
+frequency it is supplying to UFS device.
 
-On (08/29/18 03:23), Dmitry Safonov wrote:
-> BUG: unable to handle kernel paging request at 0000000000002260
-> IP: [..] n_tty_receive_buf_common+0x5f/0x86d
-> Workqueue: events_unbound flush_to_ldisc
-> Call Trace:
->  [..] n_tty_receive_buf2
->  [..] tty_ldisc_receive_buf
->  [..] flush_to_ldisc
->  [..] process_one_work
->  [..] worker_thread
->  [..] kthread
->  [..] ret_from_fork
+Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+Signed-off-by: Can Guo <cang@codeaurora.org>
+Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
+---
+ drivers/scsi/ufs/ufs.h           | 14 +++++++
+ drivers/scsi/ufs/ufshcd-pltfrm.c |  2 +
+ drivers/scsi/ufs/ufshcd.c        | 90 ++++++++++++++++++++++++++++++++++++++++
+ drivers/scsi/ufs/ufshcd.h        |  2 +
+ 4 files changed, 108 insertions(+)
 
-Seems that you are not the first one to hit this NULL deref.
+diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
+index 14e5bf7..a2e76b1 100644
+--- a/drivers/scsi/ufs/ufs.h
++++ b/drivers/scsi/ufs/ufs.h
+@@ -378,6 +378,20 @@ enum query_opcode {
+ 	UPIU_QUERY_OPCODE_TOGGLE_FLAG	= 0x8,
+ };
+ 
++/* bRefClkFreq attribute values */
++enum ufs_ref_clk_freq {
++	REF_CLK_FREQ_19_2_MHZ	= 0,
++	REF_CLK_FREQ_26_MHZ	= 1,
++	REF_CLK_FREQ_38_4_MHZ	= 2,
++	REF_CLK_FREQ_52_MHZ	= 3,
++	REF_CLK_FREQ_INVAL	= -1,
++};
++
++struct ufs_ref_clk {
++	u32 freq_hz;
++	enum ufs_ref_clk_freq val;
++};
++
+ /* Query response result code */
+ enum {
+ 	QUERY_RESULT_SUCCESS                    = 0x00,
+diff --git a/drivers/scsi/ufs/ufshcd-pltfrm.c b/drivers/scsi/ufs/ufshcd-pltfrm.c
+index e82bde0..0953563 100644
+--- a/drivers/scsi/ufs/ufshcd-pltfrm.c
++++ b/drivers/scsi/ufs/ufshcd-pltfrm.c
+@@ -343,6 +343,8 @@ int ufshcd_pltfrm_init(struct platform_device *pdev,
+ 	pm_runtime_set_active(&pdev->dev);
+ 	pm_runtime_enable(&pdev->dev);
+ 
++	ufshcd_parse_dev_ref_clk_freq(hba);
++
+ 	ufshcd_init_lanes_per_dir(hba);
+ 
+ 	err = ufshcd_init(hba, mmio_base, irq);
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index c5b1bf1..e01cdc0 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -6296,6 +6296,89 @@ static void ufshcd_def_desc_sizes(struct ufs_hba *hba)
+ 	hba->desc_size.hlth_desc = QUERY_DESC_HEALTH_DEF_SIZE;
+ }
+ 
++static struct ufs_ref_clk ufs_ref_clk_freqs[] = {
++	{19200000, REF_CLK_FREQ_19_2_MHZ},
++	{26000000, REF_CLK_FREQ_26_MHZ},
++	{38400000, REF_CLK_FREQ_38_4_MHZ},
++	{52000000, REF_CLK_FREQ_52_MHZ},
++	{0, REF_CLK_FREQ_INVAL},
++};
++
++static inline enum ufs_ref_clk_freq
++ufs_get_bref_clk_from_hz(u32 freq)
++{
++	int i = 0;
++
++	while (ufs_ref_clk_freqs[i].freq_hz != freq) {
++		if (!ufs_ref_clk_freqs[i].freq_hz)
++			return REF_CLK_FREQ_INVAL;
++		i++;
++	}
++
++	return ufs_ref_clk_freqs[i].val;
++}
++
++void ufshcd_parse_dev_ref_clk_freq(struct ufs_hba *hba)
++{
++	struct device *dev = hba->dev;
++	struct device_node *np = dev->of_node;
++	struct clk *refclk = NULL;
++	u32 freq = 0;
++
++	if (!np)
++		return;
++
++	refclk = of_clk_get_by_name(np, "ref_clk");
++	if (!refclk)
++		return;
++
++	freq = clk_get_rate(refclk);
++
++	hba->dev_ref_clk_freq =
++		ufs_get_bref_clk_from_hz(freq);
++
++	if (hba->dev_ref_clk_freq == REF_CLK_FREQ_INVAL)
++		dev_err(hba->dev,
++		"%s: invalid ref_clk setting = %d\n",
++		__func__, freq);
++}
++
++static int ufshcd_set_dev_ref_clk(struct ufs_hba *hba)
++{
++	int err, ref_clk = -1;
++	u32 freq = hba->dev_ref_clk_freq;
++
++	err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_READ_ATTR,
++			QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0, &ref_clk);
++
++	if (err) {
++		dev_err(hba->dev, "%s: failed reading bRefClkFreq. err = %d\n",
++			 __func__, err);
++		goto out;
++	}
++
++	if (ref_clk == hba->dev_ref_clk_freq)
++		goto out; /* nothing to update */
++
++	err = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
++			QUERY_ATTR_IDN_REF_CLK_FREQ, 0, 0, &freq);
++
++	if (err) {
++		dev_err(hba->dev, "%s: bRefClkFreq setting to %u Hz failed\n",
++		__func__, ufs_ref_clk_freqs[freq].freq_hz);
++		goto out;
++	}
++	/*
++	 * It is good to print this out here to debug any later failures
++	 * related to gear switch.
++	 */
++	dev_dbg(hba->dev, "%s: bRefClkFreq setting to %u Hz succeeded\n",
++		__func__, ufs_ref_clk_freqs[freq].freq_hz);
++
++out:
++	return err;
++}
++
+ /**
+  * ufshcd_probe_hba - probe hba to detect device and initialize
+  * @hba: per-adapter instance
+@@ -6361,6 +6444,12 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
+ 			"%s: Failed getting max supported power mode\n",
+ 			__func__);
+ 	} else {
++		/*
++		 * Set the right value to bRefClkFreq before attempting to
++		 * switch to HS gears.
++		 */
++		if (hba->dev_ref_clk_freq != REF_CLK_FREQ_INVAL)
++			ufshcd_set_dev_ref_clk(hba);
+ 		ret = ufshcd_config_pwr_mode(hba, &hba->max_pwr_info.info);
+ 		if (ret) {
+ 			dev_err(hba->dev, "%s: Failed setting power mode, err = %d\n",
+@@ -7690,6 +7779,7 @@ int ufshcd_alloc_host(struct device *dev, struct ufs_hba **hba_handle)
+ 	hba->host = host;
+ 	hba->dev = dev;
+ 	*hba_handle = hba;
++	hba->dev_ref_clk_freq = REF_CLK_FREQ_INVAL;
+ 
+ 	INIT_LIST_HEAD(&hba->clk_list_head);
+ 
+diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+index 8110dcd..45013b6 100644
+--- a/drivers/scsi/ufs/ufshcd.h
++++ b/drivers/scsi/ufs/ufshcd.h
+@@ -548,6 +548,7 @@ struct ufs_hba {
+ 	void *priv;
+ 	unsigned int irq;
+ 	bool is_irq_enabled;
++	enum ufs_ref_clk_freq dev_ref_clk_freq;
+ 
+ 	/* Interrupt aggregation support is broken */
+ 	#define UFSHCD_QUIRK_BROKEN_INTR_AGGR			0x1
+@@ -746,6 +747,7 @@ static inline void ufshcd_rmwl(struct ufs_hba *hba, u32 mask, u32 val, u32 reg)
+ int ufshcd_wait_for_register(struct ufs_hba *hba, u32 reg, u32 mask,
+ 				u32 val, unsigned long interval_us,
+ 				unsigned long timeout_ms, bool can_sleep);
++void ufshcd_parse_dev_ref_clk_freq(struct ufs_hba *hba);
+ 
+ static inline void check_upiu_size(void)
+ {
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
-> I think, tty_ldisc_reinit() should be called with ldisc_sem hold for
-> writing, which will protect any reader against line discipline changes.
-
-Per https://lore.kernel.org/patchwork/patch/777220/
-
-: Note that we noticed one path that called reinit without the ldisc lock
-: held for writing, we added that, but it didn't fix the problem.
-
-And I guess that Ben meant the same reinit path which you patched:
-
-> @@ -1267,15 +1267,20 @@ static int tty_reopen(struct tty_struct *tty)
->  	if (test_bit(TTY_EXCLUSIVE, &tty->flags) && !capable(CAP_SYS_ADMIN))
->  		return -EBUSY;
->  
-> -	tty->count++;
-> +	retval = tty_ldisc_lock(tty, 5 * HZ);
-> +	if (retval)
-> +		return retval;
->  
-> +	tty->count++;
->  	if (tty->ldisc)
-> -		return 0;
-> +		goto out_unlock;
->  
->  	retval = tty_ldisc_reinit(tty, tty->termios.c_line);
->  	if (retval)
->  		tty->count--;
->  
-> +out_unlock:
-> +	tty_ldisc_unlock(tty);
->  	return retval;
->  }
-
-	-ss
