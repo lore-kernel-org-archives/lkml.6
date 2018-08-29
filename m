@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84D9DC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 14:38:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDEFFC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 14:40:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3130C20850
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 14:38:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3130C20850
+	by mail.kernel.org (Postfix) with ESMTP id 71E7B20850
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 14:40:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71E7B20850
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728834AbeH2SgH (ORCPT
+        id S1728704AbeH2Shr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 14:36:07 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:38218 "EHLO
+        Wed, 29 Aug 2018 14:37:47 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:33550 "EHLO
         mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727456AbeH2SgH (ORCPT
+        with ESMTP id S1727547AbeH2Shr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 14:36:07 -0400
-Received: by mail-wr1-f65.google.com with SMTP id w11-v6so5066030wrc.5;
-        Wed, 29 Aug 2018 07:38:50 -0700 (PDT)
+        Wed, 29 Aug 2018 14:37:47 -0400
+Received: by mail-wr1-f65.google.com with SMTP id v90-v6so5092545wrc.0;
+        Wed, 29 Aug 2018 07:40:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=CssO74jdpRBTJYf0sWbvoFNqJwFxPVTwzifrBM0lNlc=;
-        b=UUES4x56IXY3pZSH2tvXGFFfcdSGlDd++2Erp5+nlhcKhsczgHMlAqsTuPE1AqmUzO
-         3wIm+5jzIig205r5PblKfhr4qh+R9x46Sj3n7vr9yhjI22Win7eUut3au3tx4WciibcS
-         29IQd8+BbwsXxjSZEWva+VWHK6OFzLmFVeLxqDIyqVun7InOuVgIam09Cd/GVgarwdwh
-         R1ePYn6rfyVLk7gWQ/UA6/ntpFLdURiAXx1KIhZ6nV3I9SizDzX5WZlAasAba1yC1bMi
-         79sKxrTHPsLe5Jqd2AvENlN503E8jDS0+/GWwzjKBpOP7wi3RE5hiJj2JGYnF2jxq8u5
-         yRTA==
-X-Gm-Message-State: APzg51BFMKFz+9QVcMTlv53VztE7CCFN+8ROHKs2BmDBe3mjab/6bqos
-        T8qDi9hFMrqirGuEdJB6hIbGqOU5
-X-Google-Smtp-Source: ANB0Vda1i+SPWwj21a9Gh5C2tYvoLRUdiNbSUoSXELHIM8W0iXpCTswpiLKcCB5HmEr2pvg4MDJLKA==
-X-Received: by 2002:adf:9404:: with SMTP id 4-v6mr4708476wrq.129.1535553529894;
-        Wed, 29 Aug 2018 07:38:49 -0700 (PDT)
+        bh=hPiCe65vZe/yrwtbgAb7D+bZjtY+Jy0NfNBES8iuDJw=;
+        b=AdXTKUKllXb9XkTaAseZOuyP03YDLxDz1y1BIB6uP0bcispXtjbnzknLnR1XDQPoa0
+         RcHcYvgdpnbYQbQvYvQzih9Z+LC7kHke+ViNK8u3Ff5L/qSIIRvyimtQqA55VfA/dwPg
+         AfFToLF66jdku096VoctqoBxiLrXVxa3cIz/fWKres6KlOSJQ3uU4z/Oo6iXsAyb17/O
+         Ha87YWhCP8qJj0gSq2zHGXyKepOALZF1AW6XAOKwxKBcYSSH00pskFSS/oamTxhZCOTn
+         Afnx0K//KK8aBJlnLQ6FjA7JE4yJdFV9NREiQ4fLzD3hse7qjDp4WPxJJN0AF1Z1QGzk
+         PaQg==
+X-Gm-Message-State: APzg51DtSUAB7CfnEX/blwAVO7seVWOvz9Rk/1eqIe5qsSLqerWnLqls
+        uukkufJymUB5RE2MNDnxRwpC4XVo
+X-Google-Smtp-Source: ANB0VdZRdN+L4fLZJp2ANeXO7sD2mW5LfQIPb/P7CpOdJ09ysKWMQLp5ry6Nt2EP2pfz9LBllIsn3w==
+X-Received: by 2002:adf:a292:: with SMTP id s18-v6mr4843656wra.100.1535553630032;
+        Wed, 29 Aug 2018 07:40:30 -0700 (PDT)
 Received: from ?IPv6:2a01:4240:2e27:ad85:aaaa::70f? ([2a01:4240:2e27:ad85:aaaa::70f])
-        by smtp.gmail.com with ESMTPSA id c10-v6sm10269708wrb.17.2018.08.29.07.38.48
+        by smtp.gmail.com with ESMTPSA id m68-v6sm8948649wmb.10.2018.08.29.07.40.28
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 Aug 2018 07:38:49 -0700 (PDT)
-Subject: Re: [PATCH 1/4] tty: Drop tty->count on tty_reopen() failure
+        Wed, 29 Aug 2018 07:40:29 -0700 (PDT)
+Subject: Re: [PATCH 2/4] tty: Hold tty_ldisc_lock() during tty_reopen()
 To:     Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org
 Cc:     Daniel Axtens <dja@axtens.net>,
         Dmitry Safonov <0x7f454c46@gmail.com>,
@@ -59,7 +59,7 @@ Cc:     Daniel Axtens <dja@axtens.net>,
         Michael Neuling <mikey@neuling.org>,
         Mikulas Patocka <mpatocka@redhat.com>, stable@vger.kernel.org
 References: <20180829022353.23568-1-dima@arista.com>
- <20180829022353.23568-2-dima@arista.com>
+ <20180829022353.23568-3-dima@arista.com>
 From:   Jiri Slaby <jslaby@suse.cz>
 Openpgp: preference=signencrypt
 Autocrypt: addr=jslaby@suse.cz; prefer-encrypt=mutual; keydata=
@@ -104,12 +104,12 @@ Autocrypt: addr=jslaby@suse.cz; prefer-encrypt=mutual; keydata=
  tJ98f/bIWIr0cqQmqQ33FgRhrG1+Xml6UXyJ2jExmlO8JljuOGeXYh6ZkIEyzqzffzBLXZCu
  jlYQDFXpyMNVJ2ZwPmX2mWEoYuaBU0JN7wM+/zWgOf2zRwhEuD3A2cO2PxoiIfyUEfB9SSmf
  faK/S4xXoB6wvGENZ85Hg37C7WDNdaAt6Xh2uQIly5grkgvWppkNy4ZHxE+jeNsU7tg=
-Message-ID: <cbedde00-a0f4-6714-f7f4-a180dca15ce0@suse.cz>
-Date:   Wed, 29 Aug 2018 16:38:47 +0200
+Message-ID: <914d8184-d5e6-519c-b355-7f1360cfa6a0@suse.cz>
+Date:   Wed, 29 Aug 2018 16:40:28 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180829022353.23568-2-dima@arista.com>
+In-Reply-To: <20180829022353.23568-3-dima@arista.com>
 Content-Type: text/plain; charset=iso-8859-2
 Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
@@ -119,52 +119,78 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 08/29/2018, 04:23 AM, Dmitry Safonov wrote:
-> In case of tty_ldisc_reinit() failure, tty->count should be decremented
-> back, otherwise we will never release_tty().
-> Never seen it in the real life, but it seems not really hard to hit.
-
-I did see it. And this fixes it.
-
+> tty_ldisc_reinit() doesn't race with neither tty_ldisc_hangup()
+> nor set_ldisc() nor tty_ldisc_release() as they use tty lock.
+> But it races with anyone who expects line discipline to be the same
+> after hoding read semaphore in tty_ldisc_ref().
+> 
+> We've seen the following crash on v4.9.108 stable:
+> 
+> BUG: unable to handle kernel paging request at 0000000000002260
+> IP: [..] n_tty_receive_buf_common+0x5f/0x86d
+> Workqueue: events_unbound flush_to_ldisc
+> Call Trace:
+>  [..] n_tty_receive_buf2
+>  [..] tty_ldisc_receive_buf
+>  [..] flush_to_ldisc
+>  [..] process_one_work
+>  [..] worker_thread
+>  [..] kthread
+>  [..] ret_from_fork
+> 
+> I think, tty_ldisc_reinit() should be called with ldisc_sem hold for
+> writing, which will protect any reader against line discipline changes.
+> 
+> Note: I failed to reproduce the described crash, so obiviously can't
+> guarantee that this is the place where line discipline was switched.
+> 
 > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 > Cc: Jiri Slaby <jslaby@suse.com>
 > Cc: stable@vger.kernel.org
 > Signed-off-by: Dmitry Safonov <dima@arista.com>
 > ---
->  drivers/tty/tty_io.c | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
+>  drivers/tty/tty_io.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
 > 
 > diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
-> index 32bc3e3fe4d3..5e5da9acaf0a 100644
+> index 5e5da9acaf0a..3ef8b977b167 100644
 > --- a/drivers/tty/tty_io.c
 > +++ b/drivers/tty/tty_io.c
-> @@ -1255,6 +1255,7 @@ static void tty_driver_remove_tty(struct tty_driver *driver, struct tty_struct *
->  static int tty_reopen(struct tty_struct *tty)
->  {
->  	struct tty_driver *driver = tty->driver;
-> +	int retval;
+> @@ -1267,15 +1267,20 @@ static int tty_reopen(struct tty_struct *tty)
+>  	if (test_bit(TTY_EXCLUSIVE, &tty->flags) && !capable(CAP_SYS_ADMIN))
+>  		return -EBUSY;
 >  
->  	if (driver->type == TTY_DRIVER_TYPE_PTY &&
->  	    driver->subtype == PTY_TYPE_MASTER)
-> @@ -1268,10 +1269,14 @@ static int tty_reopen(struct tty_struct *tty)
->  
->  	tty->count++;
->  
-> -	if (!tty->ldisc)
-> -		return tty_ldisc_reinit(tty, tty->termios.c_line);
-> +	if (tty->ldisc)
-> +		return 0;
->  
-> -	return 0;
-> +	retval = tty_ldisc_reinit(tty, tty->termios.c_line);
+> -	tty->count++;
+> +	retval = tty_ldisc_lock(tty, 5 * HZ);
+
+Why 5 secs? This would cause random errors on machines under heavy load.
+
 > +	if (retval)
-> +		tty->count--;
+> +		return retval;
+>  
+> +	tty->count++;
+>  	if (tty->ldisc)
+> -		return 0;
+> +		goto out_unlock;
+>  
+>  	retval = tty_ldisc_reinit(tty, tty->termios.c_line);
+>  	if (retval)
+>  		tty->count--;
+>  
+> +out_unlock:
+> +	tty_ldisc_unlock(tty);
+>  	return retval;
 
-I would just do:
-  if (!retval)
-    tty->count++;
-here. Nobody from ldiscs should rely on tty->count.
+So what about:
+        tty_ldisc_lock(tty, MAX_SCHEDULE_TIMEOUT);
+        if (!tty->ldisc)
+                ret = tty_ldisc_reinit(tty, tty->termios.c_line);
+        tty_ldisc_unlock(tty);
 
-> +	return retval;
+        if (!ret)
+                tty->count++;
+
+        return ret;
 
 thanks,
 -- 
