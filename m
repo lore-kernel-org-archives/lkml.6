@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B198C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:23:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59DDBC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:28:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D74192086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:23:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED5062084A
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:28:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LY+kCt7w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D74192086D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f4H8lhoZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED5062084A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727575AbeH2LTI (ORCPT
+        id S1727482AbeH2LXn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 07:19:08 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:37358 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726656AbeH2LTI (ORCPT
+        Wed, 29 Aug 2018 07:23:43 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:36480 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726656AbeH2LXn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 07:19:08 -0400
-Received: by mail-pf1-f194.google.com with SMTP id h69-v6so1881623pfd.4
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 00:23:38 -0700 (PDT)
+        Wed, 29 Aug 2018 07:23:43 -0400
+Received: by mail-pg1-f193.google.com with SMTP id d1-v6so1947477pgo.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 00:28:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
         bh=seB2EasrbLLttRjaVUxm8LWrqGhdTSP6c9RcfLeVRng=;
-        b=LY+kCt7wU54DVcNE2SWOwcbLQH6afqKB04dK6VaxrmfS7I3MNU7hUkQFLZ60+GnafL
-         c+sQK91PQkdQN7J5B0JBPNzf22GraPTxb+F0v5Q90ykY1M2V7KumoT01ytUdra1e0N5q
-         qdgXRn5Aq1SjrirloHxCNf7TLKGL8O5jke33XiAEdydz7q8116O0iUc5KxRP+wSlsJK0
-         6hBR042EoSZoG0S65TsS2PPX8PkqgXnvoUoLwvLtSm0Xjcbc30QIUTUX01/SpQLdc53O
-         7eu9V/CbRBG6Mk4dx8kgWGY01phjh5xz7V+whKicTV2gqKObkZ6a4jqKcPsZLsll+wIU
-         od4Q==
+        b=f4H8lhoZtPCijF2qMsU+Q5wD39Y+Ek1cTIMbzZmzrjBuXfS5hw0K4vh9gq3O7Zal8G
+         n2k3XoytMXQQFzN3OyS5YVuoNjN8gpSumik562I+YC0gcDu2SCEhNRQHfyAd89L5aFqU
+         YfPDrCmDetOxZWFsmMXeVoxQPQMmmn0WnqBvwCKRU2V/ZKOQ/dt+xufjG+ulbUySVydQ
+         Uhxe9AbdUUeIyuUgFLS9r5QNztGSKkCWuCTA9KEOMTwUZ4waXgN0BeXL9bsGGdnTUtoc
+         nVLKLw7D796foegPJYF2eg6c2GT6wXLTQbjuyBCklYhVImBtSgOAo6IYt79tGUQ7pqiQ
+         W4wA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
         bh=seB2EasrbLLttRjaVUxm8LWrqGhdTSP6c9RcfLeVRng=;
-        b=YUVOVF6Fdr4Uy8WlI/LAYYm7RbTNB1nHqhhwZHpzD6rPk/iy2xCSJy4as5uT+68qqI
-         XbxWSB8A3JtEScw3T5Wjn6oZ3ysOIA8KyPI2AHTcyNb1+CTfZgIH3xF6gsM3/PT0k7/M
-         HCZgER00MZ+4yVxXLxbyrKAo76ex9098jMhdvh/yeFuHpev16ZLaRRKIKXfZ/zrVKr+x
-         mhVSk5wnNvMFejuejyaScbvYo/Nf10ec8OcHsdpMIKcy5tZSV/P8SNDVf2wwNkHqcWxr
-         XF5GDoD4RBp2KCdfQ1r9tDdqjqJPlh8XkXQKAHC8OqfTB9PItFZUm8ce7XuCZPL5bo0v
-         dW7g==
-X-Gm-Message-State: APzg51C7bN8iKLyAZ2AOcgdMrB5NJf/3N1tKV22bj1iaU4pVHef/gRY+
-        LRuoShJ0N9gHT7MdH9Ss1UZ1bnouDGw=
-X-Google-Smtp-Source: ANB0VdYJBmtLxhaKmMtt575QTc/D94dVyHLRjoBkRQrZLeI9+SXdyYRCkfEiDoNHSTr+uA25xTfbEg==
-X-Received: by 2002:a62:565c:: with SMTP id k89-v6mr4691564pfb.212.1535527418484;
-        Wed, 29 Aug 2018 00:23:38 -0700 (PDT)
+        b=Z1fv2BqL6NyNBxydWLQvN81d0L4J0AhdMmB1zY/uBLciSAisfGUD8xOcRBsHMjJ/kR
+         818uBJp39nx/upYBR4kZtqg72kFxyCyCO8x/S6LtOzgJh36bb+6MaTg2VynhAWn84aaO
+         PP65A6nP0+ZOZGix+mVApZw3WAtoqfI7X4lYaVDMRc74ry9GtzY3t679f1CTK1hl206/
+         fMjY0PfeSjUCM9Pgw7Vx5ZwhBTTgIm8QDeX4cQK3PoBaiYQ/Dx5i+jP1/DqmW76lCy9c
+         GI3QdFRV2HaFIrq/QXqDEOJaicPwetQQwAJcKIfJPXxsqLTnr9mz5TUD4A9YqSCzSVIc
+         GP7w==
+X-Gm-Message-State: APzg51AgPOAeCGKMhr/8y50HVV5E9IG95EhRkuLQ5n9m8jJg+1nbiTAf
+        L2xateazkYetXzDtmYo5ydE=
+X-Google-Smtp-Source: ANB0VdY8WEPLCE7cLGJ3yOtW4Th2kuEVqHR7ILMRkL3VrG5s95ApPl5APpGXkAR+QeDbJG3nP9cwsg==
+X-Received: by 2002:a65:41c6:: with SMTP id b6-v6mr4651697pgq.174.1535527692511;
+        Wed, 29 Aug 2018 00:28:12 -0700 (PDT)
 Received: from myhostname.localdomain (M014013131161.v4.enabler.ne.jp. [14.13.131.161])
-        by smtp.gmail.com with ESMTPSA id e186-v6sm3269688pfg.187.2018.08.29.00.23.37
+        by smtp.gmail.com with ESMTPSA id c88-v6sm5016926pfe.132.2018.08.29.00.28.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 Aug 2018 00:23:38 -0700 (PDT)
+        Wed, 29 Aug 2018 00:28:12 -0700 (PDT)
 From:   Takuya Yamamoto <tkyymmt01@gmail.com>
-To:     tglx@linuxtronix.de
+To:     tglx@linutronix.de
 Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org
 Subject: [PATCH] x86/mm: Fix typo in arch/x86/mm/extable.c
-Date:   Wed, 29 Aug 2018 16:22:57 +0900
-Message-Id: <20180829072257.936-1-tkyymmt01@gmail.com>
+Date:   Wed, 29 Aug 2018 16:27:30 +0900
+Message-Id: <20180829072730.988-1-tkyymmt01@gmail.com>
 X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
