@@ -2,133 +2,137 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73E19C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:37:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A822C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:41:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F2E4205C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:37:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2A2E20657
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:41:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BQ0bfeSY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F2E4205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="dxlKpwoq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2A2E20657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729145AbeH2Ten (ORCPT
+        id S1729120AbeH2Tic (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 15:34:43 -0400
-Received: from mail-pg1-f173.google.com ([209.85.215.173]:46342 "EHLO
-        mail-pg1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727562AbeH2Ten (ORCPT
+        Wed, 29 Aug 2018 15:38:32 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:55238 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727204AbeH2Tic (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 15:34:43 -0400
-Received: by mail-pg1-f173.google.com with SMTP id b129-v6so2476605pga.13
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 08:37:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=J6hVXiSpP4fXof/5NV+hP4MEZFG14YBHJVShvueEB7g=;
-        b=BQ0bfeSYwXxGO0JmQ9MT7C/kmiEQJNeZWqyOt1kgwoHaRdsSqoDUDQuwn+qse/B5lr
-         gTSXMHUqY4HofTtGEdGrspA1ITEiL14S5Om/XA+YcfCtnepbHEIONbU3KG46ABgRxQ3W
-         RsSNFLI42horDPG8ZAG1ocgSx8oCRQl5TmZ5DGVeXLG6tJnWDMu4eg/2IctYYay+TtGD
-         iBtUAMgvFKzRKIhejgYE6UKDI830VLPXC7yYvi5usVgAVufGy4cz+usRdDkTIGDRYk04
-         kYEvaibSGRwSCKo4tsgsIuasojMtohwwkfJ7w9vMn281SUThk03y5KiZ0muKA/oenfAV
-         /XTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=J6hVXiSpP4fXof/5NV+hP4MEZFG14YBHJVShvueEB7g=;
-        b=bxwvL+XBRr4Kd9/3KAM3cRT3dnCo3ixlCzAfHNPtn/M2kilO+fzs1rKZqbEdNbPnyO
-         PsyWrEQmh/tuViCpUA9aptLwOW0CinVa+lzCQ6qbQ5cGmbwdGTJq6RuTMrY6Tunc5GGs
-         RAKtIb5ftoD6U+uzfXF14tb5khKRxUNONEpFPWOQvXr4g8sV3YKRYtkR7RQn8tQ9fmN2
-         iGG7IAdbpMkPJ3sqjpJCemuv0rWhdReW9dQO7+wTcnR65ywcVjPp5VQ1I1CYdvApBo38
-         weP3/mB7paKvcvlG7c/FeW4wlBniNyMHTsb65+qaVi44vhMQpmCLYBiY/UpES7dC+tuc
-         mJ9w==
-X-Gm-Message-State: APzg51DrMpVwbFjqoT8s7Wt2eeENmFbqZ1bBDaVuhC2vkapgB/qvrDW7
-        KnRIU2gQNHucsGnE0XmT1imHASnb
-X-Google-Smtp-Source: ANB0VdYguM2sp/hRgwD+vloL5WK1vw337hgDyK/rgfymZTXOoJ+KeoIbTnfgrWZczW/Z3dVS8QgVhg==
-X-Received: by 2002:a63:9751:: with SMTP id d17-v6mr6335508pgo.386.1535557033455;
-        Wed, 29 Aug 2018 08:37:13 -0700 (PDT)
-Received: from jordon-HP-15-Notebook-PC ([117.242.80.10])
-        by smtp.gmail.com with ESMTPSA id s3-v6sm11742791pgj.84.2018.08.29.08.37.10
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 29 Aug 2018 08:37:12 -0700 (PDT)
-Date:   Wed, 29 Aug 2018 21:10:11 +0530
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-To:     akpm@linux-foundation.org
-Cc:     airlied@linux.ie, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, willy@infradead.org,
-        gustavo.padovan@collabora.com
-Subject: [PATCH v2] drm/vkms: Use new return type vm_fault_t
-Message-ID: <20180829154011.GA30885@jordon-HP-15-Notebook-PC>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Wed, 29 Aug 2018 15:38:32 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7TFdo9k063789;
+        Wed, 29 Aug 2018 15:40:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
+ date : message-id; s=corp-2018-07-02;
+ bh=qwMqs9Zkj3I45LMTA3lz6R0icX7nRFBMR0u7fKQ1To4=;
+ b=dxlKpwoqUAqxTJ2W1+94v6uiKxpPjzaqxV3YU6j3/cvwC+YWqyshW+NQH0UEX7Utf2iT
+ fTd9mL6AaxhHEEomkbSp33TW0OLqh5utiWdA1MaX/Zbl4pP9lW1PAXRAoJkPx5Bs9dk8
+ x7hKaMG/9qnUDOuKdFe2bQlPujKXLf7hnRDXh0bX4gi1gq9NKKyEKKg/VMOdfxbOiBXT
+ 8zdPVPN6+Pn+IqbvLEn20dV92jotWdh5Igo3bHQZp4H1mmqwxiNTGZeAGt6RBWMfTce1
+ 1W9Z0TxHLI2wzSOtBPGi1bh/mb5mI4ZCKQ0CcQ68LmanJGBWZnegwjxQEWfIijM+FZzz uw== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2m2xhttnhn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 29 Aug 2018 15:40:59 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7TFewxk002961
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 29 Aug 2018 15:40:58 GMT
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w7TFevl5020715;
+        Wed, 29 Aug 2018 15:40:57 GMT
+Received: from dhcp-10-152-33-205.usdhcp.oraclecorp.com.com (/10.152.33.205)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 29 Aug 2018 08:40:56 -0700
+From:   George Kennedy <george.kennedy@oracle.com>
+To:     matthew@wil.cx, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, george.kennedy@oracle.com
+Subject: [PATCH] sym53c8xx: fix NULL pointer dereference panic in sym_int_sir() in sym_hipd.c
+Date:   Wed, 29 Aug 2018 11:38:16 -0400
+Message-Id: <1535557096-1324-1-git-send-email-george.kennedy@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9000 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=909
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808290165
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use new return type vm_fault_t for fault handler.
+sym_int_sir() in sym_hipd.c does not check the command pointer for NULL
+before using it in debug message prints.
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
+Suggested-by: Matthew Wilcox <matthew.wilcox@oracle.com>
+Signed-off-by: George Kennedy <george.kennedy@oracle.com>
+Reviewed-by: Mark Kanda <mark.kanda@oracle.com>
 ---
-v2: Updated patch title
+ drivers/scsi/sym53c8xx_2/sym_hipd.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
- drivers/gpu/drm/vkms/vkms_drv.h | 2 +-
- drivers/gpu/drm/vkms/vkms_gem.c | 5 ++---
- 2 files changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
-index 07be29f..d5d04a8 100644
---- a/drivers/gpu/drm/vkms/vkms_drv.h
-+++ b/drivers/gpu/drm/vkms/vkms_drv.h
-@@ -65,7 +65,7 @@ struct drm_gem_object *vkms_gem_create(struct drm_device *dev,
- 				       u32 *handle,
- 				       u64 size);
- 
--int vkms_gem_fault(struct vm_fault *vmf);
-+vm_fault_t vkms_gem_fault(struct vm_fault *vmf);
- 
- int vkms_dumb_create(struct drm_file *file, struct drm_device *dev,
- 		     struct drm_mode_create_dumb *args);
-diff --git a/drivers/gpu/drm/vkms/vkms_gem.c b/drivers/gpu/drm/vkms/vkms_gem.c
-index c7e3836..62e05dc 100644
---- a/drivers/gpu/drm/vkms/vkms_gem.c
-+++ b/drivers/gpu/drm/vkms/vkms_gem.c
-@@ -43,14 +43,14 @@ void vkms_gem_free_object(struct drm_gem_object *obj)
- 	kfree(gem);
+diff --git a/drivers/scsi/sym53c8xx_2/sym_hipd.c b/drivers/scsi/sym53c8xx_2/sym_hipd.c
+index bd3f6e2..0a2a545 100644
+--- a/drivers/scsi/sym53c8xx_2/sym_hipd.c
++++ b/drivers/scsi/sym53c8xx_2/sym_hipd.c
+@@ -4370,6 +4370,13 @@ static void sym_nego_rejected(struct sym_hcb *np, struct sym_tcb *tp, struct sym
+ 	OUTB(np, HS_PRT, HS_BUSY);
  }
  
--int vkms_gem_fault(struct vm_fault *vmf)
-+vm_fault_t vkms_gem_fault(struct vm_fault *vmf)
- {
- 	struct vm_area_struct *vma = vmf->vma;
- 	struct vkms_gem_object *obj = vma->vm_private_data;
- 	unsigned long vaddr = vmf->address;
- 	pgoff_t page_offset;
- 	loff_t num_pages;
--	int ret;
-+	vm_fault_t ret = VM_FAULT_SIGBUS;
- 
- 	page_offset = (vaddr - vma->vm_start) >> PAGE_SHIFT;
- 	num_pages = DIV_ROUND_UP(obj->gem.size, PAGE_SIZE);
-@@ -58,7 +58,6 @@ int vkms_gem_fault(struct vm_fault *vmf)
- 	if (page_offset > num_pages)
- 		return VM_FAULT_SIGBUS;
- 
--	ret = -ENOENT;
- 	mutex_lock(&obj->pages_lock);
- 	if (obj->pages) {
- 		get_page(obj->pages[page_offset]);
++#define sym_printk(lvl, tp, cp, fmt, v...) do { \
++	if (cp)							\
++		scmd_printk(lvl, cp->cmd, fmt, ##v);		\
++	else							\
++		starget_printk(lvl, tp->starget, fmt, ##v);	\
++} while (0)
++
+ /*
+  *  chip exception handler for programmed interrupts.
+  */
+@@ -4415,7 +4422,7 @@ static void sym_int_sir(struct sym_hcb *np)
+ 	 *  been selected with ATN.  We do not want to handle that.
+ 	 */
+ 	case SIR_SEL_ATN_NO_MSG_OUT:
+-		scmd_printk(KERN_WARNING, cp->cmd,
++		sym_printk(KERN_WARNING, tp, cp,
+ 				"No MSG OUT phase after selection with ATN\n");
+ 		goto out_stuck;
+ 	/*
+@@ -4423,7 +4430,7 @@ static void sym_int_sir(struct sym_hcb *np)
+ 	 *  having reselected the initiator.
+ 	 */
+ 	case SIR_RESEL_NO_MSG_IN:
+-		scmd_printk(KERN_WARNING, cp->cmd,
++		sym_printk(KERN_WARNING, tp, cp,
+ 				"No MSG IN phase after reselection\n");
+ 		goto out_stuck;
+ 	/*
+@@ -4431,7 +4438,7 @@ static void sym_int_sir(struct sym_hcb *np)
+ 	 *  an IDENTIFY.
+ 	 */
+ 	case SIR_RESEL_NO_IDENTIFY:
+-		scmd_printk(KERN_WARNING, cp->cmd,
++		sym_printk(KERN_WARNING, tp, cp,
+ 				"No IDENTIFY after reselection\n");
+ 		goto out_stuck;
+ 	/*
+@@ -4460,7 +4467,7 @@ static void sym_int_sir(struct sym_hcb *np)
+ 	case SIR_RESEL_ABORTED:
+ 		np->lastmsg = np->msgout[0];
+ 		np->msgout[0] = M_NOOP;
+-		scmd_printk(KERN_WARNING, cp->cmd,
++		sym_printk(KERN_WARNING, tp, cp,
+ 			"message %x sent on bad reselection\n", np->lastmsg);
+ 		goto out;
+ 	/*
 -- 
-1.9.1
+1.8.3.1
 
