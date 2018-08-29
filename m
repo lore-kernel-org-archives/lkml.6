@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94664C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:15:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66A96C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:15:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 570A220684
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:15:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 570A220684
+	by mail.kernel.org (Postfix) with ESMTP id 2A3B82082B
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:15:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A3B82082B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728515AbeH2MKy (ORCPT
+        id S1728530AbeH2MK5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 08:10:54 -0400
-Received: from mout.perfora.net ([74.208.4.194]:58289 "EHLO mout.perfora.net"
+        Wed, 29 Aug 2018 08:10:57 -0400
+Received: from mout.perfora.net ([74.208.4.196]:41527 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727712AbeH2MKx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 08:10:53 -0400
+        id S1727712AbeH2MK4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 08:10:56 -0400
 Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
  mrelay.perfora.net (mreueus001 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0Mgdfd-1gFSet46tD-00O2ZF; Wed, 29 Aug 2018 10:15:05 +0200
+ 0MZF1O-1gDYyV16Pk-00L1cw; Wed, 29 Aug 2018 10:15:07 +0200
 From:   Marcel Ziswiler <marcel@ziswiler.com>
 To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -33,27 +33,27 @@ Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 24/31] ARM: tegra: colibri_t20: add gpio hog to unreset usb ethernet chip
-Date:   Wed, 29 Aug 2018 10:14:00 +0200
-Message-Id: <20180829081407.11304-25-marcel@ziswiler.com>
+Subject: [PATCH 25/31] ARM: tegra: colibri_t20: add gpio hogs for gmi_wr_n buffers
+Date:   Wed, 29 Aug 2018 10:14:01 +0200
+Message-Id: <20180829081407.11304-26-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180829081407.11304-1-marcel@ziswiler.com>
 References: <20180829081407.11304-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K1:jboC2MwkxduzcYNkSWIyTrqOBQsZZxBkQm1OdR7KTcWvQFqUZlg
- 8Dl48A8GUB0kAIGvvUPwNF1H2ukVam5JMeNTd1JIM0Qw4oD3TRcu2IRtiK86fJW2PI+Ur6J
- kbIf7R1Hg32svPK6WZKe3/qkK1Mk4uxrITNZKycAbu6IgntIhQQ5SZ5kBw80xZrn4f19U1L
- 6TsY/0Bq6TyhVFNrqInhA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:6gwtAR1Dje4=:T3HDNv44o0oAIS08+35N4G
- BD70Pq2Lmn/UK9NW4Jei2sVTiXQkTrveh680ldLxEaZkVTmsN5dQnSJ7E5Cq/2aeH9YdUwinO
- hgxUJudq9Kd4a87QYiaXOQcYNXWxmlhjEKn3UtY7chrCr8qmwY9cdbSMfCQHHs7NnEAr7mW7G
- 0fcEcRNN59XGvexipYnndLDAn92kZXgjf3VyBie8YMOIBo0qVktnFY2t+Iki+7vxdbx/8R1Ce
- NooIeTCiX5OnlUUBYu1cieml7K4Gz5wwWyX1r2i/UuzAg6ItGZatjN4WyauRf/oJqZYah9lBq
- P1usae2AjBBj7aO5lCPVTL9+6SHyeMym9Bqyu8oTm1GduogJ+DnfE0mCcbeUUxej4ODJWVGyi
- +msLPShCEbf1OXiSLoXF+7+e/GEKkAWioZcYwF/9GsiyFaDrLdE1L5NVN8RoKeiljowUOU9JN
- Oy7O50wI0TaPgUDXZAijnrRvM8huS/+o4pvEaCguz4KxK2YqzFl4+MOM5rm6oum4Wtp0UoLo+
- WXeZgSPkI7gggCxte+xbq1Y5EUfg1tfIYsab6NNjhSLNJl3mn8N90e6vZmibWPWtRVGLvYUWr
- n2H7cNoE9s8murkT8y5suv9n8Bf5hUD3ktC1Vkkpg26mrodqEIcOV4QD3rrrGPabCskRy9J1p
- AsPf5HkMh7i0v9UdxkeJkzvQkNlJxzmjkYdwunn64HY6uw5P5iPCQkOFMfCcstfvkjTw=
+X-Provags-ID: V03:K1:lznYXJTaAAU1x/F7owjN7D6bHfC3bBGgTagEGgp/C5Ar3Kg1sZz
+ sPRkUHA3rRYeOgQUb8xTy9r1s70HcaWTfAz/X6FSfl8+/Z2ymX+5VWMMvU6D8Qcmgj8WuqU
+ Ls9+nly1DUzMQ7A05aZgZrs+Is+LIKDMHNrLwbZm49sWHcTGCgGFVdQVEc7y4tVgo8itBOW
+ nftMhmtZgJZ1MmZ0jjl8w==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:hV3iWUkIJC4=:dZ6aefjTJx8zu327kyJ/yK
+ NW/MmgGYz7wE1I2oVz3NRIDl7nXk/RCFLqrCzVasaKWhgsIq5jbf4xNdhYjk3vD1iajiBhBhD
+ L4qKPUgG9KIqRxYj4W9IJ8ZBQRwFeBWZluQAOvdyyIPH3tnEj82FaOeQCQoi6x5EV8/37Uc86
+ ImpDhHK8dPMjuVadVwTmU3X+g+1bn7YIgLyy1I+rRUfWmj8HghfdCQyH3UDfRu1tAAQcvQeQT
+ 8KJRjW1mM1PiDzkZD8q3IIQHAtz8fO9Ry1IAePaJYRoGIM0v2MdciN5ObygvlKQe5WFTqCinm
+ 8vBEdGLN7H/wKLuxz1vs7LoJkAJhwT/RLCK6NR4R2hhmbeSaYu0GYlKQFR/T1EhaC8TiFVi5x
+ xNSNs2YnxM1MdfxV+DJsOcUKhzHie2jCpTGBmA/kjYEnlfWEmxWyQQP30YffM9CGw5vK5aCqw
+ CmtyL/TTe2OgtQvBFHtw9XlNN1BE6JjFlsD5Jtd9b8YW61lyNgoBXhcFZPqckMjaaqKeaxaJx
+ MYAw5zHc8PkAoXsuCEi8uBmwLcs3+065Iln/dKDubLDU9hHObe1pJ0gqlFENC7fsrZFIkjD7Y
+ tZIaXx80NAq2dBA2g8NWjdrldQnRBZf3VWhWLjRizPYzUoJeGja9AELOhTNowofGxEggHKlOx
+ pEBSnIsHBnxzu1lwNPW/wcfKjZUA0LmwwglZVI9Q/LOX7qzqf91OctWkyD4xxnS2Lk5U=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,32 +61,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Add GPIO hog to unreset ASIX AX88772B USB Ethernet chip.
+Add GPIO hogs for GMI_WR_N buffers:
+- tri-stating GMI_WR_N on SODIMM pin 99 nPWE
+- not tri-stating GMI_WR_N on SODIMM pin 93 RDnWR
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra20-colibri.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm/boot/dts/tegra20-colibri.dtsi | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
 diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
-index 470ef1f09167..339316dd57e9 100644
+index 339316dd57e9..35eec7ade70d 100644
 --- a/arch/arm/boot/dts/tegra20-colibri.dtsi
 +++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
-@@ -749,3 +749,12 @@
- 		clock-names = "pll_a", "pll_a_out0", "mclk";
+@@ -757,4 +757,20 @@
+ 		output-high;
+ 		line-name = "LAN_RESET#";
  	};
- };
 +
-+&gpio {
-+	lan_reset_n {
++	/* Tri-stating GMI_WR_N on SODIMM pin 99 nPWE */
++	npwe {
 +		gpio-hog;
-+		gpios = <TEGRA_GPIO(V, 4) GPIO_ACTIVE_HIGH>;
++		gpios = <TEGRA_GPIO(T, 5) GPIO_ACTIVE_HIGH>;
 +		output-high;
-+		line-name = "LAN_RESET#";
++		line-name = "Tri-state nPWE";
 +	};
-+};
++
++	/* Not tri-stating GMI_WR_N on SODIMM pin 93 RDnWR */
++	rdnwr {
++		gpio-hog;
++		gpios = <TEGRA_GPIO(T, 6) GPIO_ACTIVE_HIGH>;
++		output-low;
++		line-name = "Not tri-state RDnWR";
++	};
+ };
 -- 
 2.14.4
 
