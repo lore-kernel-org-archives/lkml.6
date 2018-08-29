@@ -2,104 +2,116 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78707C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 19:58:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BD08C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 19:58:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C72220647
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 19:58:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="C7EEZ4ve"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C72220647
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=purestorage.com
+	by mail.kernel.org (Postfix) with ESMTP id 06B0320652
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 19:58:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06B0320652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728500AbeH2X4l (ORCPT
+        id S1728551AbeH2X5W convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 19:56:41 -0400
-Received: from mail-lf1-f50.google.com ([209.85.167.50]:35842 "EHLO
-        mail-lf1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727877AbeH2X4l (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 19:56:41 -0400
-Received: by mail-lf1-f50.google.com with SMTP id c21-v6so5306608lfh.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 12:58:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5ocNpYvIW2aDFz1byDBSZDx7KO5o6+L8WeI2DfwMye4=;
-        b=C7EEZ4vehu9RafFvZyS482U8ree21uM4s1Sebi0Ln4PFWlbyccbVe6avb8PkrBcrTX
-         PtzlycUsmHkSofVs/ViO9TJRVTmPjZeQ2nTNw69X4rIJvXjnBJE6rvg0vtBqKHWLGVx4
-         5yZahQdsDSI98LWM9i7vry1dRgmfmONJH0CrQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5ocNpYvIW2aDFz1byDBSZDx7KO5o6+L8WeI2DfwMye4=;
-        b=H1yNm69kOW2OyKdORQdd3RB8EhiG2bF0aV+v7shEnooqPron/BgK5S3+rNxrxEKszk
-         aut7RIzo515guIDRL/dW723pbX6GID1XsvlMTP4OPhq7qj8pvkYmoffT8mNEimf0SFY+
-         9SdPbAxbv4dnXlIHF1GLMNZWxq0Uu3AKPFDoTLKKu+XeqPp4MVMiRlTxCOebHzCK0lmO
-         ERawnNa1tKCi0Nr37v4/EGXORDnndjHhfY9Wg3RB+D0ncqqmwEHe3gDtAvQ3bqzwR3/6
-         9ezplI51QHtKcQF0jHYn/5W5vGOWWOq2iL4PYs9CFT45GHiG3IC6gOqg2yleyHYBbMk5
-         c/7Q==
-X-Gm-Message-State: APzg51DgtAnXUQ1OWKWNxzRyRfgjm0ecH09BymcXeBl8ATtt0+RaCzj5
-        TrdAPpCIWh7Q6dXhuYeHluoNK8vSNp7V1x8dwNW2+A==
-X-Google-Smtp-Source: ANB0VdbfbppLP4Yt9ZaER0kPBUlyU4vlcjqJ2GwMZwCQ+vQd5EQxw6hvZfArP+K150TF7QRvXjGpi2h6jRYymuibe/Y=
-X-Received: by 2002:a19:2a91:: with SMTP id q17-v6mr5562736lfq.74.1535572693500;
- Wed, 29 Aug 2018 12:58:13 -0700 (PDT)
-MIME-Version: 1.0
-References: <20171215092305.994559179@linuxfoundation.org> <20171215092311.347628971@linuxfoundation.org>
- <CAL1RGDVgShymmT+TJ3mAHEL7n+qoisk6mQ=Tji_T=0d_QA=VKw@mail.gmail.com>
- <1535129126.2902.36.camel@codethink.co.uk> <CAL1RGDW1Lo+F5D479Jsi-AFsmjVpdDre_qOFSCwWubG6U=bxeQ@mail.gmail.com>
- <20180824191749.GA15489@kroah.com> <CAL1RGDXUx-frpWuuYyc-VrAEoOU2+irGQPRWvoBzO2ZxEPGrww@mail.gmail.com>
- <35e0f79b-6fac-5027-6377-67dbe2a293b9@roeck-us.net> <20180825150723.GA10230@kroah.com>
- <c2e61e43-6cd5-567a-8c3c-3cc3ff456c31@roeck-us.net>
-In-Reply-To: <c2e61e43-6cd5-567a-8c3c-3cc3ff456c31@roeck-us.net>
-From:   Roland Dreier <roland@purestorage.com>
-Date:   Wed, 29 Aug 2018 12:58:00 -0700
-Message-ID: <CAL1RGDWKujPp-O5RnxBsBvEe8yf-bNXSN1fa4DtY4b5-fQH2rQ@mail.gmail.com>
-Subject: Re: [PATCH 4.4 103/105] Revert "x86/mm/pat: Ensure cpa->pfn only
- contains page frame numbers"
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
-        matt@codeblueprint.co.uk, bp@suse.de,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>, luto@kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>, bp@alien8.de,
-        brgerst@gmail.com, davej@codemonkey.org.uk, dvlasenk@redhat.com,
-        "H. Peter Anvin" <hpa@zytor.com>,
+        Wed, 29 Aug 2018 19:57:22 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58114 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727477AbeH2X5V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 19:57:21 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F2C9E40201C3;
+        Wed, 29 Aug 2018 19:58:53 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-8.bos.redhat.com [10.18.17.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 254BF10073B3;
+        Wed, 29 Aug 2018 19:58:53 +0000 (UTC)
+Subject: Re: [PATCH 2/2] fs/dcache: Make negative dentries easier to be
+ reclaimed
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-doc@vger.kernel.org, "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        sai.praneeth.prakhya@intel.com, sds@tycho.nsa.gov,
-        Thomas Gleixner <tglx@linutronix.de>, toshi.kani@hp.com,
-        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Yazen.Ghannam@amd.com
-Content-Type: text/plain; charset="UTF-8"
+        Jan Kara <jack@suse.cz>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Larry Woodman <lwoodman@redhat.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "Wangkai (Kevin C)" <wangkai86@huawei.com>
+References: <1535476780-5773-1-git-send-email-longman@redhat.com>
+ <1535476780-5773-3-git-send-email-longman@redhat.com>
+ <20180829075129.GU10223@dhcp22.suse.cz>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <374c2c5c-cc9b-af03-a800-32f2cf8a3055@redhat.com>
+Date:   Wed, 29 Aug 2018 15:58:52 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
+MIME-Version: 1.0
+In-Reply-To: <20180829075129.GU10223@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 29 Aug 2018 19:58:54 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 29 Aug 2018 19:58:54 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > Perhaps just the patch that Andi posted to the stable list helps out
-> > here?
-> >
+On 08/29/2018 03:51 AM, Michal Hocko wrote:
+> On Tue 28-08-18 13:19:40, Waiman Long wrote:
+>> For negative dentries that are accessed once and never used again, they
+>> should be removed first before other dentries when shrinker is running.
+>> This is done by putting negative dentries at the head of the LRU list
+>> instead at the tail.
+>>
+>> A new DCACHE_NEW_NEGATIVE flag is now added to a negative dentry when it
+>> is initially created. When such a dentry is added to the LRU, it will be
+>> added to the head so that it will be the first to go when a shrinker is
+>> running if it is never accessed again (DCACHE_REFERENCED bit not set).
+>> The flag is cleared after the LRU list addition.
+> Placing object to the head of the LRU list can be really tricky as Dave
+> pointed out. I am not familiar with the dentry cache reclaim so my
+> comparison below might not apply. Let me try anyway.
 >
-> For reference:
+> Negative dentries sound very similar to MADV_FREE pages from the reclaim
+> POV. They are primary candidate for reclaim, yet you want to preserve
+> aging to other easily reclaimable objects (including other MADV_FREE
+> pages). What we do for those pages is to move them from the anonymous
+> LRU list to the inactive file LRU list. Now you obviously do not have
+> anon/file LRUs but something similar to active/inactive LRU lists might
+> be a reasonably good match. Have easily reclaimable dentries on the
+> inactive list including negative dentries. If negative entries are
+> heavily used then they can promote to the active list because there is
+> no reason to reclaim them soon.
 >
-> https://www.spinics.net/lists/stable/msg253357.html
->
-> That would be the most straightforward and simple fix, so I would prefer
-> to go with it if it works.
+> Just my 2c
 
-Sorry for being slow, it turned out to take a slightly bigger stack of
-patches to get everything working.
+As mentioned in my reply to Dave, I did considered using a 2 LRU list
+solution. However, that will add more complexity to the dcache LRU
+management code than my current approach and probably more potential for
+slowdown.
 
-I agree, Andi's simple fix is better anyway.
+One point that I forgot to mention is that the current dcache LRU list
+will only update the order of the dentries when the list is being
+shrinked. If a dentry was referenced again before (the DCACHE_REFERENCED
+bit set), it will rotated to the tail of the list via LRU rotation
+instead of being removed. This is not strictly LRU anyway. The way that
+my patch work will just make it move further away from true LRU behavior.
 
- - R.
+Cheers,
+Longman
+
+
+
