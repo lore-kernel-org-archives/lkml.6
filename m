@@ -2,73 +2,100 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D4B6C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:15:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DE1DC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:15:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2512A204FD
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:15:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2512A204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
+	by mail.kernel.org (Postfix) with ESMTP id 5834820652
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:15:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="LhPX/Ak2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5834820652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727871AbeH2QLv convert rfc822-to-8bit (ORCPT
+        id S1727962AbeH2QMc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 12:11:51 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:44002 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727182AbeH2QLv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 12:11:51 -0400
-Received: from wd0180.dip.tu-dresden.de ([141.76.108.180] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1fuzNJ-0001Yz-PZ; Wed, 29 Aug 2018 14:15:05 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>
-Cc:     Sandy Huang <hjc@rock-chips.com>, robh@kernel.org,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/2] devicetree/bindings: display: Add document for rockchip RGB output
-Date:   Wed, 29 Aug 2018 14:15:04 +0200
-Message-ID: <1862757.LMSXp8aoQ6@phil>
-In-Reply-To: <2858027f-69f5-57ee-d14a-2f0b329e8e0e@ysoft.com>
-References: <1535443954-38806-1-git-send-email-hjc@rock-chips.com> <1535443954-38806-2-git-send-email-hjc@rock-chips.com> <2858027f-69f5-57ee-d14a-2f0b329e8e0e@ysoft.com>
+        Wed, 29 Aug 2018 12:12:32 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:44442 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727182AbeH2QMb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 12:12:31 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7TC9UO8066461;
+        Wed, 29 Aug 2018 12:15:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=1gmm7XDTtUp4mnPAv5nrBYSzAN8ZqS2l/kp6fMjZ7ao=;
+ b=LhPX/Ak2GKyNSf1xQUBcD4cVCh/EQLyJQmsUmrs/CgYqxo8iazRM4GeqKNV62T/mbeYU
+ CxwqHOPArduksNky0XyTXfzz6zhuTrumXqJRV5DQpxXE5BFuCZSwppLtKE3HmrNuLvOu
+ U0k8/9wOj2GN8695vIyN1iggO3ZRraJxnPtRdvbNaL9Ry/f0GHV3uJQzNJiimBVNZ+FS
+ k+x6cJ58ko25sl3+ZpHhkUy7X/+GJv/7AOsjnS3HhyIwpi0cLUk9hoLSL2ySg4nLv+zN
+ +X6vMeGZUdFiu35LdCIKlnZv/CKeyzuNeNVSxnb2a3MiKP5myFLu11YHESLPQYIWwQMC 9Q== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2m2xhtsdtv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 29 Aug 2018 12:15:38 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7TCFcAJ007341
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 29 Aug 2018 12:15:38 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w7TCFbOu004889;
+        Wed, 29 Aug 2018 12:15:37 GMT
+Received: from mwanda (/197.232.248.111)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 29 Aug 2018 05:15:36 -0700
+Date:   Wed, 29 Aug 2018 15:15:28 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>
+Cc:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "andrew@lunn.ch" <andrew@lunn.ch>,
+        Horia Geanta <horia.geanta@nxp.com>,
+        Madalin-cristian Bucur <madalin.bucur@nxp.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Ioana Ciornei <ioana.ciornei@nxp.com>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>
+Subject: Re: [PATCH net-next v2 0/2] dpaa2-eth: Move DPAA2 Ethernet driver
+Message-ID: <20180829121527.w3jflnbp3by7yp36@mwanda>
+References: <20180829094240.27242-1-ruxandra.radulescu@nxp.com>
+ <20180829110739.3xzbdtelwjlhun2v@mwanda>
+ <AM3PR04MB338A141EDC007FF47B510C094090@AM3PR04MB338.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <AM3PR04MB338A141EDC007FF47B510C094090@AM3PR04MB338.eurprd04.prod.outlook.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8999 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=780
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808290132
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michal,
-
-Am Dienstag, 28. August 2018, 10:31:15 CEST schrieb Michal Vokáč:
-> On 28.8.2018 10:12, Sandy Huang wrote:
-> > This path add support rv1108 and px30 rgb output interface driver.
+On Wed, Aug 29, 2018 at 12:06:44PM +0000, Ioana Ciocoi Radulescu wrote:
+> > 
+> > There are a few static checker warnings for the driver but only the
+> > first one looks like a possibly real bug.
 > 
-> Hi Sandy,
-> Seems like you forgot to address Rob's comment regarding the "driver" word.
-> Also fix the typo: s/path/patch
-> The subject could be improved as well: s/devicetree\/bindings/dt-bindings
+> Thanks for the report, what tool did you use to get these warnings?
+> 
 
-We actually honored Rob's bigger concern of the rgb output not being
-an actual device backed by programmable hardware and moved the rgb
-output inside the driver, see v7 of the patchset [0].
+These are Smatch warnings, but you need to build the cross function DB
+to see the warnings.
 
-
-Heiko
-
-[0] https://patchwork.freedesktop.org/patch/246297/
-https://patchwork.freedesktop.org/patch/246298/
-https://patchwork.freedesktop.org/patch/246299/
-
+regards,
+dan carpenter
 
