@@ -2,165 +2,125 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC07AC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:56:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 931ECC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:56:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 769752086A
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:56:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12977204FD
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:56:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V9i7zkbo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 769752086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="bzI0XMON"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12977204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728823AbeH2RxE (ORCPT
+        id S1728663AbeH2Rx6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 13:53:04 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:36379 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728697AbeH2RxD (ORCPT
+        Wed, 29 Aug 2018 13:53:58 -0400
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:59088 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727316AbeH2Rx5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 13:53:03 -0400
-Received: by mail-oi0-f68.google.com with SMTP id r69-v6so9269093oie.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 06:55:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=JfmlXV7r32WPXiqljgmMJihDrqoRAg0etIOFnh21hV8=;
-        b=V9i7zkbo8PRnn4DcPamiaM9VjO1mZHWB25Xn6CGD3J47pvxegl4c5u6ycVXCdJcwyg
-         TRnHmkJdkXvL/CHl4TRz9LW20ke3lYtPtTFwqFtasNna05bcddulzx88FZBPCBFeBF4o
-         Sj1zZFN40gfemHzj/Lny1aDA/uEbrBajklXK2veSusCbIUnqXDto0lfyAbAsESOomK2i
-         3zbB4ZlLgHGc0emaSMabDx4Bx7r0LdbNAGbnnudYoVxG+jPnNny+XyQTZkGD/nP3g/28
-         TVtseyihyH53p+BUAmioG4b+8CiH60h9/TF+l2szRie4UfxnVX302N8W69OQ6YudNesO
-         g8cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=JfmlXV7r32WPXiqljgmMJihDrqoRAg0etIOFnh21hV8=;
-        b=XRiRMlBK335WOB4lkYL8FJFTYTEAvBfM7yiF9UD3sQTEUBmSCbToeBfUyjDPH1hf9r
-         TxSCaOLftLKCNkoZh4y4B7A+GH4BejkQ6odL3QN04H46G3qUKgr+gM8TOboBrmiR8c7U
-         1/58XPXlj2VZXtZ58+1NEIXmYSfh9dTMFw50/fEwfnFL6kZm/O67kOimglbzxN/bX8jj
-         UkIXDuM55zfwAgK98fdCa1QfhXKjym7eWwvLYj59keQ9rCUS0yPS8ADUTQHvlpUQDJm8
-         Xwt7gE6aCYYY5Yc6VxZmjLBEb3kUP45CGV33Te2ic21qriyIhIGZlbHyvs2YbjVpt6Hl
-         9Mpg==
-X-Gm-Message-State: APzg51BfaND58AL54fIwQNptUvxJ1aB/eLZqAwxSswnEV+WR/zcuqa2P
-        HTBA6Mpi2kzz/eWVgxdb1AcQ5dWvvcHqA/JL89AXYw==
-X-Google-Smtp-Source: ANB0Vdas/SRpNCNRPTsrsjXtFVhBLZnI8NSIe2clrmLUTRvE7JlNE/9gGCX0LJoKAOsvchqpHevsLn+442wQuf2NBgg=
-X-Received: by 2002:aca:3882:: with SMTP id f124-v6mr3005061oia.195.1535550959121;
- Wed, 29 Aug 2018 06:55:59 -0700 (PDT)
+        Wed, 29 Aug 2018 13:53:57 -0400
+Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id AB23724E1320;
+        Wed, 29 Aug 2018 06:56:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1535551013; bh=NCWt/tzj0Oac1n5RpcxhusXZRwL+RpTVxx9LSZxEOPI=;
+        h=Subject:To:References:CC:From:Date:In-Reply-To:From;
+        b=bzI0XMONZlZO1uJtMFtRKRLiwNDl446zL9ShbPxvm2iM4BqwyI+TyHN6CB9HTtnhK
+         /A768H1RiTEip/qV05uhftc5BAkCm0TPejInJ2Aq6JIUP8ST98HhKHflJ5QAaPlAz0
+         g+syP6vZt/IQ9jkmPyqXAw5gwS3G1/7BM9y9aT64PXmBdU6XOl/Ub19sZWgU6vpGQz
+         jTbkQ6D6pCiyBr0r7r2zgQYZFYcmvu5PkKQ8Lf8hgYNttyylc/3PEMOwaWIfl5HFsd
+         D021Ba0Vk92TGTgqx1Ju+yeqU5wFOYInQNMNq0D5WnCzQMlI7WDx8v+6d/GvRnann7
+         NhbXxcPKqIVow==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        by mailhost.synopsys.com (Postfix) with ESMTP id E7913353D;
+        Wed, 29 Aug 2018 06:56:52 -0700 (PDT)
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Wed, 29 Aug 2018 06:56:52 -0700
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ DE02WEHTCA.internal.synopsys.com (10.225.19.92) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Wed, 29 Aug 2018 15:56:50 +0200
+Received: from [10.0.2.15] (10.107.19.14) by DE02WEHTCB.internal.synopsys.com
+ (10.225.19.80) with Microsoft SMTP Server (TLS) id 14.3.361.1; Wed, 29 Aug
+ 2018 15:56:50 +0200
+Subject: Re: [PATCH] Revert "net: stmmac: Do not keep rearming the coalesce
+ timer in stmmac_xmit"
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        "Jose Abreu" <Jose.Abreu@synopsys.com>, <netdev@vger.kernel.org>
+References: <20180824090440.13411-1-jbrunet@baylibre.com>
+ <d3858ef0-97c7-28b5-db4a-4ac71af52ba5@synopsys.com>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-amlogic@lists.infradead.org>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Vitor Soares <Vitor.Soares@synopsys.com>,
+        Corentin Labbe <clabbe@baylibre.com>,
+        "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+Message-ID: <9a91148c-ed8e-a7ce-d37d-61b3fd6d455c@synopsys.com>
+Date:   Wed, 29 Aug 2018 14:56:47 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-References: <20180828154901.112726-1-jannh@google.com> <20180829071042.GB6337@nazgul.tnic>
-In-Reply-To: <20180829071042.GB6337@nazgul.tnic>
-From:   Jann Horn <jannh@google.com>
-Date:   Wed, 29 Aug 2018 15:55:32 +0200
-Message-ID: <CAG48ez37HBh=0YfP=rLVGGEcFV0zJL_PLVgedFxDtyRgXHMROQ@mail.gmail.com>
-Subject: Re: [PATCH v2] x86/dumpstack: don't dump kernel memory based on
- usermode RIP
-To:     bp@suse.de
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>, security@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <d3858ef0-97c7-28b5-db4a-4ac71af52ba5@synopsys.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.107.19.14]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 29, 2018 at 9:10 AM Borislav Petkov <bp@suse.de> wrote:
->
-> On Tue, Aug 28, 2018 at 05:49:01PM +0200, Jann Horn wrote:
-> > show_opcodes() is used both for dumping kernel instructions and for dum=
-ping
-> > user instructions. If userspace causes #PF by jumping to a kernel addre=
-ss,
-> > show_opcodes() can be reached with regs->ip controlled by the user,
-> > pointing to kernel code. Make sure that userspace can't trick us into
-> > dumping kernel memory into dmesg.
-> >
-> > Cc: stable@vger.kernel.org
-> > Fixes: 7cccf0725cf7 ("x86/dumpstack: Add a show_ip() function")
-> > Reviewed-by: Kees Cook <keescook@chromium.org>
-> > Signed-off-by: Jann Horn <jannh@google.com>
-> > ---
-> > v2: Andy pointed out that I probably shouldn't be doing wrapping
-> > arithmetic on pointers.
-> >
-> >  arch/x86/include/asm/stacktrace.h |  2 +-
-> >  arch/x86/kernel/dumpstack.c       | 13 ++++++++++---
-> >  arch/x86/mm/fault.c               |  2 +-
-> >  3 files changed, 12 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/arch/x86/include/asm/stacktrace.h b/arch/x86/include/asm/s=
-tacktrace.h
-> > index b6dc698f992a..f335aad404a4 100644
-> > --- a/arch/x86/include/asm/stacktrace.h
-> > +++ b/arch/x86/include/asm/stacktrace.h
-> > @@ -111,6 +111,6 @@ static inline unsigned long caller_frame_pointer(vo=
-id)
-> >       return (unsigned long)frame;
-> >  }
-> >
-> > -void show_opcodes(u8 *rip, const char *loglvl);
-> > +void show_opcodes(struct pt_regs *regs, const char *loglvl);
-> >  void show_ip(struct pt_regs *regs, const char *loglvl);
-> >  #endif /* _ASM_X86_STACKTRACE_H */
-> > diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
-> > index 9c8652974f8e..14b337582b6f 100644
-> > --- a/arch/x86/kernel/dumpstack.c
-> > +++ b/arch/x86/kernel/dumpstack.c
-> > @@ -89,14 +89,21 @@ static void printk_stack_address(unsigned long addr=
-ess, int reliable,
-> >   * Thus, the 2/3rds prologue and 64 byte OPCODE_BUFSIZE is just a rand=
-om
-> >   * guesstimate in attempt to achieve all of the above.
-> >   */
-> > -void show_opcodes(u8 *rip, const char *loglvl)
-> > +void show_opcodes(struct pt_regs *regs, const char *loglvl)
-> >  {
-> >  #define PROLOGUE_SIZE 42
-> >  #define EPILOGUE_SIZE 21
-> >  #define OPCODE_BUFSIZE (PROLOGUE_SIZE + 1 + EPILOGUE_SIZE)
-> >       u8 opcodes[OPCODE_BUFSIZE];
-> > +     u8 *prologue =3D (u8 *)(regs->ip - PROLOGUE_SIZE);
->
-> Just a nitpick:
->
-> <--- newline here.
+++ Martin
 
-The code below this point is still part of the declarations. Do you
-want a newline here anyway? If you say yes, I'll adjust and resend.
+Hi Martin,
 
-> > +     /*
-> > +      * Make sure userspace isn't trying to trick us into dumping kern=
-el
-> > +      * memory by pointing the userspace instruction pointer at it.
-> > +      */
-> > +     bool bad_ip =3D user_mode(regs) &&
-> > +                   __range_not_ok(prologue, OPCODE_BUFSIZE, TASK_SIZE_=
-MAX);
+I just saw you have the same problem as Jerome. Can you please
+share the information I mention bellow?
+
+Thanks and Best Regards,
+Jose Miguel Abreu
+
+On 28-08-2018 09:12, Jose Abreu wrote:
+> Hi Jerome,
 >
-> Other than that:
+> On 24-08-2018 10:04, Jerome Brunet wrote:
+>> This reverts commit 4ae0169fd1b3c792b66be58995b7e6b629919ecf.
+>>
+>> This change in the handling of the coalesce timer is causing regression on
+>> (at least) amlogic platforms.
+>>
+>> Network will break down very quickly (a few seconds) after starting
+>> a download. This can easily be reproduced using iperf3 for example.
+>>
+>> The problem has been reported on the S805, S905, S912 and A113 SoCs
+>> (Realtek and Micrel PHYs) and it is likely impacting all Amlogics
+>> platforms using Gbit ethernet
+>>
+>> No problem was seen with the platform using 10/100 only PHYs (GXL internal)
+>>
+>> Reverting change brings things back to normal and allows to use network
+>> again until we better understand the problem with the coalesce timer.
+>>
+>>
+> Apologies for the delayed answer but I was in FTO.
 >
-> Reviewed-by: Borislav Petkov <bp@suse.de>
+> I'm not sure what can be causing this but I have some questions
+> for you:
+>     - What do you mean by "network will break down"? Do you see
+> queue timeout?
+>     - What do you see in ethtool/ifconfig stats? Can you send me
+> the stats before and after network break?
+>     - Is your setup multi-queue/channel?
+>     - Can you point me to the DT bindings of your setup?
 >
-> Thx.
->
-> --
-> Regards/Gruss,
->     Boris.
->
-> SUSE Linux GmbH, GF: Felix Imend=C3=B6rffer, Jane Smithard, Graham Norton=
-, HRB 21284 (AG N=C3=BCrnberg)
-> --
+> Thanks and Best Regards,
+> Jose Miguel Abreu
+
