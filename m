@@ -2,566 +2,931 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03622C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:02:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE4E8C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:03:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C48E20847
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:02:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="2Ne1+uYe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C48E20847
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
+	by mail.kernel.org (Postfix) with ESMTP id 6C43620847
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:03:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C43620847
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728628AbeH2Q7R (ORCPT
+        id S1728703AbeH2RAN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 12:59:17 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:41087 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728261AbeH2Q7R (ORCPT
+        Wed, 29 Aug 2018 13:00:13 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:33593 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726848AbeH2RAN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 12:59:17 -0400
-Received: by mail-pf1-f194.google.com with SMTP id h79-v6so2241263pfk.8
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 06:02:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=J+AmAnO+IqmXs/MmL8tFcJ+di72ZP/EhXDh+ryrWyrk=;
-        b=2Ne1+uYerShv6j8CABbHQ4mGXaoT/gIWG7mkG0Q2W5Wj0KpTxzXzygQzJBCchEz6R1
-         OKW11NsczfHjCfcoOewWkZiUrHx1YEzLfsRwgIuvnnU6HuBJaQU2iRIvcYUOWPeohiPk
-         G7N3kUNlWPc90c5XccEDVHoCsxCrkghUTTrcYlIBRGTevTSaw9BHo5E9ADIC4/K5sbU+
-         ETD7YnPPubBkKLy9Tri9J4wbV1rSr7DKe0GmhNwqruAIDYhO++vx1MmNJoupczyrbsfm
-         XN90kab3qw+Hf1Ddh53laP+HWIsKM1mzjs8QrjfFgOFzBaES3p3WvJMgT1iIomK3mVT0
-         8wNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=J+AmAnO+IqmXs/MmL8tFcJ+di72ZP/EhXDh+ryrWyrk=;
-        b=Gdqzvymje4FpCLbQun19g6Gd//7oZ9lvdRu00/VJMSZM0W59gzmrjrkKIyH0jS5cOZ
-         3yDSYA/4YFvOvMmEx6LYfk2cAJnXONb8kOkvCznABheebtjUvtRsqrC1QYrH4n7i//ce
-         i8mD+DyGdtqm54u+Y7kY5Tyjx/gJ+3OqH4Nz/Wq6yUsjPc9888hNvDaeCh79TqvVHfMA
-         uT9au5gH5+7l/Y5HUR9It8eTUfIdbB7CK2XQeSxBN4jWl2+2OH5tA+2kOvVmswWSvGQs
-         N6cwQyeC/R2hfh82UEfMMQNpQBV0RoyoTrna54HW8hqf4Qhrlp/hTxwGd6I9ltUAIyLw
-         8ioQ==
-X-Gm-Message-State: APzg51B9oU/z0eaVt+HKPfCule8u+q4YpjJjmHh/j4d681MdSX0DyhfX
-        oi+UR6NMH6Zyz1mdn0zlvDYkSA==
-X-Google-Smtp-Source: ANB0VdYPiICQiZzCYNo51OgHlu53jYRmtGUOD6lVq9k3OKZ26r8OrbDpF7IJ/JRcdY67jeiMGocHkQ==
-X-Received: by 2002:a65:5307:: with SMTP id m7-v6mr5560095pgq.431.1535547746226;
-        Wed, 29 Aug 2018 06:02:26 -0700 (PDT)
-Received: from [10.86.62.45] (rap-us.hgst.com. [199.255.44.250])
-        by smtp.googlemail.com with ESMTPSA id t15-v6sm7360319pfa.158.2018.08.29.06.02.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 Aug 2018 06:02:25 -0700 (PDT)
-Subject: Re: [PATCH 1/3] lightnvm: pblk: refactor metadata paths
-To:     javier@javigon.com
-Cc:     axboe@kernel.dk, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, javier@cnexlabs.com
-References: <1535532980-27672-1-git-send-email-javier@cnexlabs.com>
- <1535532980-27672-2-git-send-email-javier@cnexlabs.com>
-From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <e147e01b-8317-3ab5-497c-70f601a92a2a@lightnvm.io>
-Date:   Wed, 29 Aug 2018 15:02:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
-MIME-Version: 1.0
-In-Reply-To: <1535532980-27672-2-git-send-email-javier@cnexlabs.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+        Wed, 29 Aug 2018 13:00:13 -0400
+Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
+ (mreue103 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 0Lb8B7-1fWxr62uSH-00kjAD; Wed, 29 Aug 2018 15:03:13 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     netdev@vger.kernel.org, "David S . Miller" <davem@davemloft.net>
+Cc:     linux-arch@vger.kernel.org, y2038@lists.linaro.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Eric Dumazet <edumazet@google.com>,
+        Willem de Bruijn <willemb@google.com>,
+        linux-kernel@vger.kernel.org, linux-hams@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, linux-can@vger.kernel.org,
+        dccp@vger.kernel.org, linux-wpan@vger.kernel.org,
+        linux-sctp@vger.kernel.org, linux-x25@vger.kernel.org
+Subject: [PATCH net-next 1/3] net: rework SIOCGSTAMP ioctl handling
+Date:   Wed, 29 Aug 2018 14:59:10 +0200
+Message-Id: <20180829130308.3504560-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.18.0
+X-Provags-ID: V03:K1:XPIQmOWbVM6/UTQuQI/4Pe+uIf1gWElm7JoDvrbY5kZp2+yHxOp
+ V7ipyV7TqjCO2/SAuHbaG/EccfsJjgbAzikkm2dlrpkcVvzyb7BthsVi+mQGK3i/DkXg3mR
+ h5RtxIbnWqQH2EMuG0ty2rzd3c+SbM3SmP2SuEknxhFJxfxZ+Np3XKnEz5rM0WzaWuhOrLR
+ 6glJzQUOGcCAv54WutQ1g==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Eem8ZPIwqPQ=:4cKuQI/oIOZQs82MsUNPsr
+ hxCEM2MPMhWYe+4Qx39/Xc+VR0XKv6quBARYVf1adH7RjcvNgBVNrz2R2fJA3qgGMp6FJ88nY
+ m//zXQ6ArBXeoDkdb+4WWIbH+cbzIJL8NFKuSqDAnm0MkxujvadpopLAQmUM9VWaHJCl2w4E1
+ qpQHH0z6Dc8k5LqyF8yxUKpa8XBnfymPfJfUyreUvz+CO8kSYRqtKAVf+w4iD2EQiwovs4w/c
+ WyILNHKh3/vftLLVgx/TVX9YVDx70noq35IJH1G4YNeohg8+/zF5IbFmUyqmF/iUH7TSNmk88
+ jxm+OzcVF6eM3kNNDR6c5CiTkPzArnKxb3zbNHKgRzMm62ZjKbEMjQ8Ar3RYNlJWJrIE5snU9
+ GBJGpg3Lky5SZVUZrQ9Uk22IuzWn+xLJOBoatrtkSh0OfpazO9vOE/GH6WgFXN9jiNSY8AQeL
+ sKkte8QU7X7egQc1mNcHQM280HrgVuNhg+G+hKI9izessjaLiEX8AUDu/dKDYS28+Xyr7956M
+ mJO0BtU47R2M1Fz2wHz++F5TD1T+MH+ZkwoWFJ1RLUMu2w/IKCiqfjVQUR+eTZB/g/rhVg23S
+ wdPJ8VBcLE7hDPNJT6q3ihROKfDQ/KfhphvX2aQPwdUr3zBMnQsLdd63Kbn4qLuMf4Dminn/Y
+ UlumtiZEXZHpTRPGz3E69j2J0u6/ceT6uAZRGpumg0DJfqe+zucF9xfulq7rn5esGLV0=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/29/2018 10:56 AM, Javier González wrote:
-> pblk maintains two different metadata paths for smeta and emeta, which
-> store metadata at the start of the line and at the end of the line,
-> respectively. Until now, these path has been common for writing and
-> retrieving metadata, however, as these paths diverge, the common code
-> becomes less clear and unnecessary complicated.
-> 
-> In preparation for further changes to the metadata write path, this
-> patch separates the write and read paths for smeta and emeta and
-> removes the synchronous emeta path as it not used anymore (emeta is
-> scheduled asynchronously to prevent jittering due to internal I/Os).
-> 
-> Signed-off-by: Javier González <javier@cnexlabs.com>
-> ---
->   drivers/lightnvm/pblk-core.c     | 338 ++++++++++++++++++---------------------
->   drivers/lightnvm/pblk-gc.c       |   2 +-
->   drivers/lightnvm/pblk-recovery.c |   4 +-
->   drivers/lightnvm/pblk.h          |   4 +-
->   4 files changed, 163 insertions(+), 185 deletions(-)
-> 
-> diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
-> index dbf037b2b32f..09160ec02c5f 100644
-> --- a/drivers/lightnvm/pblk-core.c
-> +++ b/drivers/lightnvm/pblk-core.c
-> @@ -661,12 +661,137 @@ u64 pblk_lookup_page(struct pblk *pblk, struct pblk_line *line)
->   	return paddr;
->   }
->   
-> -/*
-> - * Submit emeta to one LUN in the raid line at the time to avoid a deadlock when
-> - * taking the per LUN semaphore.
-> - */
-> -static int pblk_line_submit_emeta_io(struct pblk *pblk, struct pblk_line *line,
-> -				     void *emeta_buf, u64 paddr, int dir)
-> +u64 pblk_line_smeta_start(struct pblk *pblk, struct pblk_line *line)
-> +{
-> +	struct nvm_tgt_dev *dev = pblk->dev;
-> +	struct nvm_geo *geo = &dev->geo;
-> +	struct pblk_line_meta *lm = &pblk->lm;
-> +	int bit;
-> +
-> +	/* This usually only happens on bad lines */
-> +	bit = find_first_zero_bit(line->blk_bitmap, lm->blk_per_line);
-> +	if (bit >= lm->blk_per_line)
-> +		return -1;
-> +
-> +	return bit * geo->ws_opt;
-> +}
-> +
-> +int pblk_line_smeta_read(struct pblk *pblk, struct pblk_line *line)
-> +{
-> +	struct nvm_tgt_dev *dev = pblk->dev;
-> +	struct pblk_line_meta *lm = &pblk->lm;
-> +	struct bio *bio;
-> +	struct nvm_rq rqd;
-> +	u64 paddr = pblk_line_smeta_start(pblk, line);
-> +	int i, ret;
-> +
-> +	memset(&rqd, 0, sizeof(struct nvm_rq));
-> +
-> +	rqd.meta_list = nvm_dev_dma_alloc(dev->parent, GFP_KERNEL,
-> +							&rqd.dma_meta_list);
-> +	if (!rqd.meta_list)
-> +		return -ENOMEM;
-> +
-> +	rqd.ppa_list = rqd.meta_list + pblk_dma_meta_size;
-> +	rqd.dma_ppa_list = rqd.dma_meta_list + pblk_dma_meta_size;
+The SIOCGSTAMP/SIOCGSTAMPNS ioctl commands are implemented by many
+socket protocol handlers, and all of those end up calling the same
+sock_get_timestamp()/sock_get_timestampns() helper functions, which
+results in a lot of duplicate code.
 
-If patch 2 is put first, then this is not needed.
+With the introduction of 64-bit time_t on 32-bit architectures, this
+gets worse, as we then need four different ioctl commands in each
+socket protocol implementation.
 
-> +
-> +	bio = bio_map_kern(dev->q, line->smeta, lm->smeta_len, GFP_KERNEL);
-> +	if (IS_ERR(bio)) {
-> +		ret = PTR_ERR(bio);
-> +		goto free_ppa_list;
-> +	}
-> +
-> +	bio->bi_iter.bi_sector = 0; /* internal bio */
-> +	bio_set_op_attrs(bio, REQ_OP_READ, 0);
-> +
-> +	rqd.bio = bio;
-> +	rqd.opcode = NVM_OP_PREAD;
-> +	rqd.nr_ppas = lm->smeta_sec;
-> +	rqd.is_seq = 1;
-> +
-> +	for (i = 0; i < lm->smeta_sec; i++, paddr++)
-> +		rqd.ppa_list[i] = addr_to_gen_ppa(pblk, paddr, line->id);
-> +
-> +	ret = pblk_submit_io_sync(pblk, &rqd);
-> +	if (ret) {
-> +		pblk_err(pblk, "smeta I/O submission failed: %d\n", ret);
-> +		bio_put(bio);
-> +		goto free_ppa_list;
-> +	}
-> +
-> +	atomic_dec(&pblk->inflight_io);
-> +
-> +	if (rqd.error)
-> +		pblk_log_read_err(pblk, &rqd);
-> +
-> +free_ppa_list:
-> +	nvm_dev_dma_free(dev->parent, rqd.meta_list, rqd.dma_meta_list);
-> +	return ret;
-> +}
-> +
-> +static int pblk_line_smeta_write(struct pblk *pblk, struct pblk_line *line,
-> +				 u64 paddr)
-> +{
-> +	struct nvm_tgt_dev *dev = pblk->dev;
-> +	struct pblk_line_meta *lm = &pblk->lm;
-> +	struct bio *bio;
-> +	struct nvm_rq rqd;
-> +	__le64 *lba_list = emeta_to_lbas(pblk, line->emeta->buf);
-> +	__le64 addr_empty = cpu_to_le64(ADDR_EMPTY);
-> +	int i, ret;
-> +
-> +	memset(&rqd, 0, sizeof(struct nvm_rq));
-> +
-> +	rqd.meta_list = nvm_dev_dma_alloc(dev->parent, GFP_KERNEL,
-> +							&rqd.dma_meta_list);
-> +	if (!rqd.meta_list)
-> +		return -ENOMEM;
-> +
-> +	rqd.ppa_list = rqd.meta_list + pblk_dma_meta_size;
-> +	rqd.dma_ppa_list = rqd.dma_meta_list + pblk_dma_meta_size;
-> +
-> +	bio = bio_map_kern(dev->q, line->smeta, lm->smeta_len, GFP_KERNEL);
-> +	if (IS_ERR(bio)) {
-> +		ret = PTR_ERR(bio);
-> +		goto free_ppa_list;
-> +	}
-> +
-> +	bio->bi_iter.bi_sector = 0; /* internal bio */
-> +	bio_set_op_attrs(bio, REQ_OP_WRITE, 0);
-> +
-> +	rqd.bio = bio;
-> +	rqd.opcode = NVM_OP_PWRITE;
-> +	rqd.nr_ppas = lm->smeta_sec;
-> +	rqd.is_seq = 1;
-> +
-> +	for (i = 0; i < lm->smeta_sec; i++, paddr++) {
-> +		struct pblk_sec_meta *meta_list = rqd.meta_list;
-> +
-> +		rqd.ppa_list[i] = addr_to_gen_ppa(pblk, paddr, line->id);
-> +		meta_list[i].lba = lba_list[paddr] = addr_empty;
-> +	}
-> +
-> +	ret = pblk_submit_io_sync(pblk, &rqd);
-> +	if (ret) {
-> +		pblk_err(pblk, "smeta I/O submission failed: %d\n", ret);
-> +		bio_put(bio);
-> +		goto free_ppa_list;
-> +	}
-> +
-> +	atomic_dec(&pblk->inflight_io);
-> +
-> +	if (rqd.error) {
-> +		pblk_log_write_err(pblk, &rqd);
-> +		ret = -EIO;
-> +	}
-> +
-> +free_ppa_list:
-> +	nvm_dev_dma_free(dev->parent, rqd.meta_list, rqd.dma_meta_list);
-> +	return ret;
-> +}
-> +
-> +int pblk_line_emeta_read(struct pblk *pblk, struct pblk_line *line,
-> +			 void *emeta_buf)
->   {
->   	struct nvm_tgt_dev *dev = pblk->dev;
->   	struct nvm_geo *geo = &dev->geo;
-> @@ -675,24 +800,15 @@ static int pblk_line_submit_emeta_io(struct pblk *pblk, struct pblk_line *line,
->   	void *ppa_list, *meta_list;
->   	struct bio *bio;
->   	struct nvm_rq rqd;
-> +	u64 paddr = line->emeta_ssec;
->   	dma_addr_t dma_ppa_list, dma_meta_list;
->   	int min = pblk->min_write_pgs;
->   	int left_ppas = lm->emeta_sec[0];
-> -	int id = line->id;
-> +	int line_id = line->id;
->   	int rq_ppas, rq_len;
-> -	int cmd_op, bio_op;
->   	int i, j;
->   	int ret;
->   
-> -	if (dir == PBLK_WRITE) {
-> -		bio_op = REQ_OP_WRITE;
-> -		cmd_op = NVM_OP_PWRITE;
-> -	} else if (dir == PBLK_READ) {
-> -		bio_op = REQ_OP_READ;
-> -		cmd_op = NVM_OP_PREAD;
-> -	} else
-> -		return -EINVAL;
-> -
->   	meta_list = nvm_dev_dma_alloc(dev->parent, GFP_KERNEL,
->   							&dma_meta_list);
->   	if (!meta_list)
-> @@ -715,64 +831,43 @@ static int pblk_line_submit_emeta_io(struct pblk *pblk, struct pblk_line *line,
->   	}
->   
->   	bio->bi_iter.bi_sector = 0; /* internal bio */
-> -	bio_set_op_attrs(bio, bio_op, 0);
-> +	bio_set_op_attrs(bio, REQ_OP_READ, 0);
->   
->   	rqd.bio = bio;
->   	rqd.meta_list = meta_list;
->   	rqd.ppa_list = ppa_list;
->   	rqd.dma_meta_list = dma_meta_list;
->   	rqd.dma_ppa_list = dma_ppa_list;
-> -	rqd.opcode = cmd_op;
-> +	rqd.opcode = NVM_OP_PREAD;
->   	rqd.nr_ppas = rq_ppas;
->   
-> -	if (dir == PBLK_WRITE) {
-> -		struct pblk_sec_meta *meta_list = rqd.meta_list;
-> +	for (i = 0; i < rqd.nr_ppas; ) {
-> +		struct ppa_addr ppa = addr_to_gen_ppa(pblk, paddr, line_id);
-> +		int pos = pblk_ppa_to_pos(geo, ppa);
->   
-> -		rqd.is_seq = 1;
-> -		for (i = 0; i < rqd.nr_ppas; ) {
-> -			spin_lock(&line->lock);
-> -			paddr = __pblk_alloc_page(pblk, line, min);
-> -			spin_unlock(&line->lock);
-> -			for (j = 0; j < min; j++, i++, paddr++) {
-> -				meta_list[i].lba = cpu_to_le64(ADDR_EMPTY);
-> -				rqd.ppa_list[i] =
-> -					addr_to_gen_ppa(pblk, paddr, id);
-> -			}
-> -		}
-> -	} else {
-> -		for (i = 0; i < rqd.nr_ppas; ) {
-> -			struct ppa_addr ppa = addr_to_gen_ppa(pblk, paddr, id);
-> -			int pos = pblk_ppa_to_pos(geo, ppa);
-> +		if (pblk_io_aligned(pblk, rq_ppas))
-> +			rqd.is_seq = 1;
->   
-> -			if (pblk_io_aligned(pblk, rq_ppas))
-> -				rqd.is_seq = 1;
-> -
-> -			while (test_bit(pos, line->blk_bitmap)) {
-> -				paddr += min;
-> -				if (pblk_boundary_paddr_checks(pblk, paddr)) {
-> -					pblk_err(pblk, "corrupt emeta line:%d\n",
-> -								line->id);
-> -					bio_put(bio);
-> -					ret = -EINTR;
-> -					goto free_rqd_dma;
-> -				}
-> -
-> -				ppa = addr_to_gen_ppa(pblk, paddr, id);
-> -				pos = pblk_ppa_to_pos(geo, ppa);
-> -			}
-> -
-> -			if (pblk_boundary_paddr_checks(pblk, paddr + min)) {
-> -				pblk_err(pblk, "corrupt emeta line:%d\n",
-> -								line->id);
-> +		while (test_bit(pos, line->blk_bitmap)) {
-> +			paddr += min;
-> +			if (pblk_boundary_paddr_checks(pblk, paddr)) {
->   				bio_put(bio);
->   				ret = -EINTR;
->   				goto free_rqd_dma;
->   			}
->   
-> -			for (j = 0; j < min; j++, i++, paddr++)
-> -				rqd.ppa_list[i] =
-> -					addr_to_gen_ppa(pblk, paddr, line->id);
-> +			ppa = addr_to_gen_ppa(pblk, paddr, line_id);
-> +			pos = pblk_ppa_to_pos(geo, ppa);
->   		}
-> +
-> +		if (pblk_boundary_paddr_checks(pblk, paddr + min)) {
-> +			bio_put(bio);
-> +			ret = -EINTR;
-> +			goto free_rqd_dma;
-> +		}
-> +
-> +		for (j = 0; j < min; j++, i++, paddr++)
-> +			rqd.ppa_list[i] = addr_to_gen_ppa(pblk, paddr, line_id);
->   	}
->   
->   	ret = pblk_submit_io_sync(pblk, &rqd);
-> @@ -784,136 +879,19 @@ static int pblk_line_submit_emeta_io(struct pblk *pblk, struct pblk_line *line,
->   
->   	atomic_dec(&pblk->inflight_io);
->   
-> -	if (rqd.error) {
-> -		if (dir == PBLK_WRITE)
-> -			pblk_log_write_err(pblk, &rqd);
-> -		else
-> -			pblk_log_read_err(pblk, &rqd);
-> -	}
-> +	if (rqd.error)
-> +		pblk_log_read_err(pblk, &rqd);
->   
->   	emeta_buf += rq_len;
->   	left_ppas -= rq_ppas;
->   	if (left_ppas)
->   		goto next_rq;
-> +
->   free_rqd_dma:
->   	nvm_dev_dma_free(dev->parent, rqd.meta_list, rqd.dma_meta_list);
->   	return ret;
->   }
->   
-> -u64 pblk_line_smeta_start(struct pblk *pblk, struct pblk_line *line)
-> -{
-> -	struct nvm_tgt_dev *dev = pblk->dev;
-> -	struct nvm_geo *geo = &dev->geo;
-> -	struct pblk_line_meta *lm = &pblk->lm;
-> -	int bit;
-> -
-> -	/* This usually only happens on bad lines */
-> -	bit = find_first_zero_bit(line->blk_bitmap, lm->blk_per_line);
-> -	if (bit >= lm->blk_per_line)
-> -		return -1;
-> -
-> -	return bit * geo->ws_opt;
-> -}
-> -
-> -static int pblk_line_submit_smeta_io(struct pblk *pblk, struct pblk_line *line,
-> -				     u64 paddr, int dir)
-> -{
-> -	struct nvm_tgt_dev *dev = pblk->dev;
-> -	struct pblk_line_meta *lm = &pblk->lm;
-> -	struct bio *bio;
-> -	struct nvm_rq rqd;
-> -	__le64 *lba_list = NULL;
-> -	int i, ret;
-> -	int cmd_op, bio_op;
-> -
-> -	if (dir == PBLK_WRITE) {
-> -		bio_op = REQ_OP_WRITE;
-> -		cmd_op = NVM_OP_PWRITE;
-> -		lba_list = emeta_to_lbas(pblk, line->emeta->buf);
-> -	} else if (dir == PBLK_READ_RECOV || dir == PBLK_READ) {
-> -		bio_op = REQ_OP_READ;
-> -		cmd_op = NVM_OP_PREAD;
-> -	} else
-> -		return -EINVAL;
-> -
-> -	memset(&rqd, 0, sizeof(struct nvm_rq));
-> -
-> -	rqd.meta_list = nvm_dev_dma_alloc(dev->parent, GFP_KERNEL,
-> -							&rqd.dma_meta_list);
-> -	if (!rqd.meta_list)
-> -		return -ENOMEM;
-> -
-> -	rqd.ppa_list = rqd.meta_list + pblk_dma_meta_size;
-> -	rqd.dma_ppa_list = rqd.dma_meta_list + pblk_dma_meta_size;
-> -
-> -	bio = bio_map_kern(dev->q, line->smeta, lm->smeta_len, GFP_KERNEL);
-> -	if (IS_ERR(bio)) {
-> -		ret = PTR_ERR(bio);
-> -		goto free_ppa_list;
-> -	}
-> -
-> -	bio->bi_iter.bi_sector = 0; /* internal bio */
-> -	bio_set_op_attrs(bio, bio_op, 0);
-> -
-> -	rqd.bio = bio;
-> -	rqd.opcode = cmd_op;
-> -	rqd.is_seq = 1;
-> -	rqd.nr_ppas = lm->smeta_sec;
-> -
-> -	for (i = 0; i < lm->smeta_sec; i++, paddr++) {
-> -		struct pblk_sec_meta *meta_list = rqd.meta_list;
-> -
-> -		rqd.ppa_list[i] = addr_to_gen_ppa(pblk, paddr, line->id);
-> -
-> -		if (dir == PBLK_WRITE) {
-> -			__le64 addr_empty = cpu_to_le64(ADDR_EMPTY);
-> -
-> -			meta_list[i].lba = lba_list[paddr] = addr_empty;
-> -		}
-> -	}
-> -
-> -	/*
-> -	 * This I/O is sent by the write thread when a line is replace. Since
-> -	 * the write thread is the only one sending write and erase commands,
-> -	 * there is no need to take the LUN semaphore.
-> -	 */
-> -	ret = pblk_submit_io_sync(pblk, &rqd);
-> -	if (ret) {
-> -		pblk_err(pblk, "smeta I/O submission failed: %d\n", ret);
-> -		bio_put(bio);
-> -		goto free_ppa_list;
-> -	}
-> -
-> -	atomic_dec(&pblk->inflight_io);
-> -
-> -	if (rqd.error) {
-> -		if (dir == PBLK_WRITE) {
-> -			pblk_log_write_err(pblk, &rqd);
-> -			ret = 1;
-> -		} else if (dir == PBLK_READ)
-> -			pblk_log_read_err(pblk, &rqd);
-> -	}
-> -
-> -free_ppa_list:
-> -	nvm_dev_dma_free(dev->parent, rqd.meta_list, rqd.dma_meta_list);
-> -
-> -	return ret;
-> -}
-> -
-> -int pblk_line_read_smeta(struct pblk *pblk, struct pblk_line *line)
-> -{
-> -	u64 bpaddr = pblk_line_smeta_start(pblk, line);
-> -
-> -	return pblk_line_submit_smeta_io(pblk, line, bpaddr, PBLK_READ_RECOV);
-> -}
-> -
-> -int pblk_line_read_emeta(struct pblk *pblk, struct pblk_line *line,
-> -			 void *emeta_buf)
-> -{
-> -	return pblk_line_submit_emeta_io(pblk, line, emeta_buf,
-> -						line->emeta_ssec, PBLK_READ);
-> -}
-> -
->   static void pblk_setup_e_rq(struct pblk *pblk, struct nvm_rq *rqd,
->   			    struct ppa_addr ppa)
->   {
-> @@ -1150,7 +1128,7 @@ static int pblk_line_init_bb(struct pblk *pblk, struct pblk_line *line,
->   	line->smeta_ssec = off;
->   	line->cur_sec = off + lm->smeta_sec;
->   
-> -	if (init && pblk_line_submit_smeta_io(pblk, line, off, PBLK_WRITE)) {
-> +	if (init && pblk_line_smeta_write(pblk, line, off)) {
->   		pblk_debug(pblk, "line smeta I/O failed. Retry\n");
->   		return 0;
->   	}
-> diff --git a/drivers/lightnvm/pblk-gc.c b/drivers/lightnvm/pblk-gc.c
-> index b0f0c637df3a..73e64c1b55ef 100644
-> --- a/drivers/lightnvm/pblk-gc.c
-> +++ b/drivers/lightnvm/pblk-gc.c
-> @@ -148,7 +148,7 @@ static __le64 *get_lba_list_from_emeta(struct pblk *pblk,
->   	if (!emeta_buf)
->   		return NULL;
->   
-> -	ret = pblk_line_read_emeta(pblk, line, emeta_buf);
-> +	ret = pblk_line_emeta_read(pblk, line, emeta_buf);
->   	if (ret) {
->   		pblk_err(pblk, "line %d read emeta failed (%d)\n",
->   				line->id, ret);
-> diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
-> index c641a9ed5f39..95ea5072b27e 100644
-> --- a/drivers/lightnvm/pblk-recovery.c
-> +++ b/drivers/lightnvm/pblk-recovery.c
-> @@ -839,7 +839,7 @@ struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
->   			continue;
->   
->   		/* Lines that cannot be read are assumed as not written here */
-> -		if (pblk_line_read_smeta(pblk, line))
-> +		if (pblk_line_smeta_read(pblk, line))
->   			continue;
->   
->   		crc = pblk_calc_smeta_crc(pblk, smeta_buf);
-> @@ -909,7 +909,7 @@ struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
->   		line->emeta = emeta;
->   		memset(line->emeta->buf, 0, lm->emeta_len[0]);
->   
-> -		if (pblk_line_read_emeta(pblk, line, line->emeta->buf)) {
-> +		if (pblk_line_emeta_read(pblk, line, line->emeta->buf)) {
->   			pblk_recov_l2p_from_oob(pblk, line);
->   			goto next;
->   		}
-> diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
-> index 6195e3f5d2e6..e29fd35d2991 100644
-> --- a/drivers/lightnvm/pblk.h
-> +++ b/drivers/lightnvm/pblk.h
-> @@ -817,8 +817,8 @@ void pblk_gen_run_ws(struct pblk *pblk, struct pblk_line *line, void *priv,
->   		     void (*work)(struct work_struct *), gfp_t gfp_mask,
->   		     struct workqueue_struct *wq);
->   u64 pblk_line_smeta_start(struct pblk *pblk, struct pblk_line *line);
-> -int pblk_line_read_smeta(struct pblk *pblk, struct pblk_line *line);
-> -int pblk_line_read_emeta(struct pblk *pblk, struct pblk_line *line,
-> +int pblk_line_smeta_read(struct pblk *pblk, struct pblk_line *line);
-> +int pblk_line_emeta_read(struct pblk *pblk, struct pblk_line *line,
->   			 void *emeta_buf);
->   int pblk_blk_erase_async(struct pblk *pblk, struct ppa_addr erase_ppa);
->   void pblk_line_put(struct kref *ref);
-> 
+To simplify that, let's add a new .gettstamp() operation in
+struct proto_ops, and move ioctl implementation into the common
+sock_ioctl()/compat_sock_ioctl_trans() functions that these all go
+through.
+
+We can reuse the sock_get_timestamp() implementation, but generalize
+it so it can deal with both native and compat mode, as well as
+timeval and timespec structures.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ include/linux/net.h          |  2 ++
+ include/net/compat.h         |  3 --
+ include/net/sock.h           |  4 +--
+ net/appletalk/ddp.c          |  7 +----
+ net/atm/ioctl.c              | 16 -----------
+ net/atm/pvc.c                |  1 +
+ net/atm/svc.c                |  1 +
+ net/ax25/af_ax25.c           |  9 +-----
+ net/bluetooth/af_bluetooth.c |  8 ------
+ net/bluetooth/l2cap_sock.c   |  1 +
+ net/bluetooth/rfcomm/sock.c  |  1 +
+ net/bluetooth/sco.c          |  1 +
+ net/can/af_can.c             |  6 ----
+ net/can/bcm.c                |  1 +
+ net/can/raw.c                |  1 +
+ net/compat.c                 | 54 ------------------------------------
+ net/core/sock.c              | 38 +++++++++++--------------
+ net/dccp/ipv4.c              |  1 +
+ net/dccp/ipv6.c              |  1 +
+ net/ieee802154/socket.c      |  6 ++--
+ net/ipv4/af_inet.c           |  9 ++----
+ net/ipv6/af_inet6.c          |  8 ++----
+ net/ipv6/raw.c               |  1 +
+ net/l2tp/l2tp_ip.c           |  1 +
+ net/l2tp/l2tp_ip6.c          |  1 +
+ net/netrom/af_netrom.c       | 14 +---------
+ net/packet/af_packet.c       |  7 ++---
+ net/qrtr/qrtr.c              |  4 +--
+ net/rose/af_rose.c           |  7 +----
+ net/sctp/ipv6.c              |  1 +
+ net/sctp/protocol.c          |  1 +
+ net/socket.c                 | 48 ++++++++++----------------------
+ net/x25/af_x25.c             | 27 +-----------------
+ 33 files changed, 63 insertions(+), 228 deletions(-)
+
+diff --git a/include/linux/net.h b/include/linux/net.h
+index e0930678c8bf..2be3e9c772fe 100644
+--- a/include/linux/net.h
++++ b/include/linux/net.h
+@@ -155,6 +155,8 @@ struct proto_ops {
+ 	int	 	(*compat_ioctl) (struct socket *sock, unsigned int cmd,
+ 				      unsigned long arg);
+ #endif
++	int		(*gettstamp) (struct socket *sock, void __user *userstamp,
++				      bool timeval, bool time32);
+ 	int		(*listen)    (struct socket *sock, int len);
+ 	int		(*shutdown)  (struct socket *sock, int flags);
+ 	int		(*setsockopt)(struct socket *sock, int level,
+diff --git a/include/net/compat.h b/include/net/compat.h
+index 4c6d75612b6c..f277653c7e17 100644
+--- a/include/net/compat.h
++++ b/include/net/compat.h
+@@ -30,9 +30,6 @@ struct compat_cmsghdr {
+ 	compat_int_t	cmsg_type;
+ };
+ 
+-int compat_sock_get_timestamp(struct sock *, struct timeval __user *);
+-int compat_sock_get_timestampns(struct sock *, struct timespec __user *);
+-
+ #else /* defined(CONFIG_COMPAT) */
+ /*
+  * To avoid compiler warnings:
+diff --git a/include/net/sock.h b/include/net/sock.h
+index 433f45fc2d68..ef6c9409dc75 100644
+--- a/include/net/sock.h
++++ b/include/net/sock.h
+@@ -1584,6 +1584,8 @@ int sock_setsockopt(struct socket *sock, int level, int op,
+ 
+ int sock_getsockopt(struct socket *sock, int level, int op,
+ 		    char __user *optval, int __user *optlen);
++int sock_gettstamp(struct socket *sock, void __user *userstamp,
++		   bool timeval, bool time32);
+ struct sk_buff *sock_alloc_send_skb(struct sock *sk, unsigned long size,
+ 				    int noblock, int *errcode);
+ struct sk_buff *sock_alloc_send_pskb(struct sock *sk, unsigned long header_len,
+@@ -2423,8 +2425,6 @@ static inline bool sk_listener(const struct sock *sk)
+ }
+ 
+ void sock_enable_timestamp(struct sock *sk, int flag);
+-int sock_get_timestamp(struct sock *, struct timeval __user *);
+-int sock_get_timestampns(struct sock *, struct timespec __user *);
+ int sock_recv_errqueue(struct sock *sk, struct msghdr *msg, int len, int level,
+ 		       int type);
+ 
+diff --git a/net/appletalk/ddp.c b/net/appletalk/ddp.c
+index 9b6bc5abe946..a21a643997aa 100644
+--- a/net/appletalk/ddp.c
++++ b/net/appletalk/ddp.c
+@@ -1806,12 +1806,6 @@ static int atalk_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
+ 		rc = put_user(amount, (int __user *)argp);
+ 		break;
+ 	}
+-	case SIOCGSTAMP:
+-		rc = sock_get_timestamp(sk, argp);
+-		break;
+-	case SIOCGSTAMPNS:
+-		rc = sock_get_timestampns(sk, argp);
+-		break;
+ 	/* Routing */
+ 	case SIOCADDRT:
+ 	case SIOCDELRT:
+@@ -1871,6 +1865,7 @@ static const struct proto_ops atalk_dgram_ops = {
+ 	.getname	= atalk_getname,
+ 	.poll		= datagram_poll,
+ 	.ioctl		= atalk_ioctl,
++	.gettstamp	= sock_gettstamp,
+ #ifdef CONFIG_COMPAT
+ 	.compat_ioctl	= atalk_compat_ioctl,
+ #endif
+diff --git a/net/atm/ioctl.c b/net/atm/ioctl.c
+index 2ff0e5e470e3..d955b683aa7c 100644
+--- a/net/atm/ioctl.c
++++ b/net/atm/ioctl.c
+@@ -81,22 +81,6 @@ static int do_vcc_ioctl(struct socket *sock, unsigned int cmd,
+ 				 (int __user *)argp) ? -EFAULT : 0;
+ 		goto done;
+ 	}
+-	case SIOCGSTAMP: /* borrowed from IP */
+-#ifdef CONFIG_COMPAT
+-		if (compat)
+-			error = compat_sock_get_timestamp(sk, argp);
+-		else
+-#endif
+-			error = sock_get_timestamp(sk, argp);
+-		goto done;
+-	case SIOCGSTAMPNS: /* borrowed from IP */
+-#ifdef CONFIG_COMPAT
+-		if (compat)
+-			error = compat_sock_get_timestampns(sk, argp);
+-		else
+-#endif
+-			error = sock_get_timestampns(sk, argp);
+-		goto done;
+ 	case ATM_SETSC:
+ 		net_warn_ratelimited("ATM_SETSC is obsolete; used by %s:%d\n",
+ 				     current->comm, task_pid_nr(current));
+diff --git a/net/atm/pvc.c b/net/atm/pvc.c
+index 2cb10af16afc..02bd2a436bdf 100644
+--- a/net/atm/pvc.c
++++ b/net/atm/pvc.c
+@@ -118,6 +118,7 @@ static const struct proto_ops pvc_proto_ops = {
+ #ifdef CONFIG_COMPAT
+ 	.compat_ioctl = vcc_compat_ioctl,
+ #endif
++	.gettstamp =	sock_gettstamp,
+ 	.listen =	sock_no_listen,
+ 	.shutdown =	pvc_shutdown,
+ 	.setsockopt =	pvc_setsockopt,
+diff --git a/net/atm/svc.c b/net/atm/svc.c
+index 2f91b766ac42..908cbb8654f5 100644
+--- a/net/atm/svc.c
++++ b/net/atm/svc.c
+@@ -641,6 +641,7 @@ static const struct proto_ops svc_proto_ops = {
+ #ifdef CONFIG_COMPAT
+ 	.compat_ioctl =	svc_compat_ioctl,
+ #endif
++	.gettstamp =	sock_gettstamp,
+ 	.listen =	svc_listen,
+ 	.shutdown =	svc_shutdown,
+ 	.setsockopt =	svc_setsockopt,
+diff --git a/net/ax25/af_ax25.c b/net/ax25/af_ax25.c
+index c603d33d5410..121f7b877df9 100644
+--- a/net/ax25/af_ax25.c
++++ b/net/ax25/af_ax25.c
+@@ -1707,14 +1707,6 @@ static int ax25_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
+ 		break;
+ 	}
+ 
+-	case SIOCGSTAMP:
+-		res = sock_get_timestamp(sk, argp);
+-		break;
+-
+-	case SIOCGSTAMPNS:
+-		res = sock_get_timestampns(sk, argp);
+-		break;
+-
+ 	case SIOCAX25ADDUID:	/* Add a uid to the uid/call map table */
+ 	case SIOCAX25DELUID:	/* Delete a uid from the uid/call map table */
+ 	case SIOCAX25GETUID: {
+@@ -1943,6 +1935,7 @@ static const struct proto_ops ax25_proto_ops = {
+ 	.getname	= ax25_getname,
+ 	.poll		= datagram_poll,
+ 	.ioctl		= ax25_ioctl,
++	.gettstamp	= sock_gettstamp,
+ 	.listen		= ax25_listen,
+ 	.shutdown	= ax25_shutdown,
+ 	.setsockopt	= ax25_setsockopt,
+diff --git a/net/bluetooth/af_bluetooth.c b/net/bluetooth/af_bluetooth.c
+index deacc52d7ff1..34e15ca66779 100644
+--- a/net/bluetooth/af_bluetooth.c
++++ b/net/bluetooth/af_bluetooth.c
+@@ -511,14 +511,6 @@ int bt_sock_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
+ 		err = put_user(amount, (int __user *) arg);
+ 		break;
+ 
+-	case SIOCGSTAMP:
+-		err = sock_get_timestamp(sk, (struct timeval __user *) arg);
+-		break;
+-
+-	case SIOCGSTAMPNS:
+-		err = sock_get_timestampns(sk, (struct timespec __user *) arg);
+-		break;
+-
+ 	default:
+ 		err = -ENOIOCTLCMD;
+ 		break;
+diff --git a/net/bluetooth/l2cap_sock.c b/net/bluetooth/l2cap_sock.c
+index 686bdc6b35b0..e8fed07a49d5 100644
+--- a/net/bluetooth/l2cap_sock.c
++++ b/net/bluetooth/l2cap_sock.c
+@@ -1655,6 +1655,7 @@ static const struct proto_ops l2cap_sock_ops = {
+ 	.recvmsg	= l2cap_sock_recvmsg,
+ 	.poll		= bt_sock_poll,
+ 	.ioctl		= bt_sock_ioctl,
++	.gettstamp	= sock_gettstamp,
+ 	.mmap		= sock_no_mmap,
+ 	.socketpair	= sock_no_socketpair,
+ 	.shutdown	= l2cap_sock_shutdown,
+diff --git a/net/bluetooth/rfcomm/sock.c b/net/bluetooth/rfcomm/sock.c
+index d606e9212291..a1dde6fab323 100644
+--- a/net/bluetooth/rfcomm/sock.c
++++ b/net/bluetooth/rfcomm/sock.c
+@@ -1049,6 +1049,7 @@ static const struct proto_ops rfcomm_sock_ops = {
+ 	.setsockopt	= rfcomm_sock_setsockopt,
+ 	.getsockopt	= rfcomm_sock_getsockopt,
+ 	.ioctl		= rfcomm_sock_ioctl,
++	.gettstamp	= sock_gettstamp,
+ 	.poll		= bt_sock_poll,
+ 	.socketpair	= sock_no_socketpair,
+ 	.mmap		= sock_no_mmap
+diff --git a/net/bluetooth/sco.c b/net/bluetooth/sco.c
+index 8f0f9279eac9..e7e5b3ed0394 100644
+--- a/net/bluetooth/sco.c
++++ b/net/bluetooth/sco.c
+@@ -1200,6 +1200,7 @@ static const struct proto_ops sco_sock_ops = {
+ 	.recvmsg	= sco_sock_recvmsg,
+ 	.poll		= bt_sock_poll,
+ 	.ioctl		= bt_sock_ioctl,
++	.gettstamp	= sock_gettstamp,
+ 	.mmap		= sock_no_mmap,
+ 	.socketpair	= sock_no_socketpair,
+ 	.shutdown	= sco_sock_shutdown,
+diff --git a/net/can/af_can.c b/net/can/af_can.c
+index 1684ba5b51eb..e8fd5dc1780a 100644
+--- a/net/can/af_can.c
++++ b/net/can/af_can.c
+@@ -89,13 +89,7 @@ static atomic_t skbcounter = ATOMIC_INIT(0);
+ 
+ int can_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
+ {
+-	struct sock *sk = sock->sk;
+-
+ 	switch (cmd) {
+-
+-	case SIOCGSTAMP:
+-		return sock_get_timestamp(sk, (struct timeval __user *)arg);
+-
+ 	default:
+ 		return -ENOIOCTLCMD;
+ 	}
+diff --git a/net/can/bcm.c b/net/can/bcm.c
+index 0af8f0db892a..db3e521b9f47 100644
+--- a/net/can/bcm.c
++++ b/net/can/bcm.c
+@@ -1662,6 +1662,7 @@ static const struct proto_ops bcm_ops = {
+ 	.getname       = sock_no_getname,
+ 	.poll          = datagram_poll,
+ 	.ioctl         = can_ioctl,	/* use can_ioctl() from af_can.c */
++	.gettstamp     = sock_gettstamp,
+ 	.listen        = sock_no_listen,
+ 	.shutdown      = sock_no_shutdown,
+ 	.setsockopt    = sock_no_setsockopt,
+diff --git a/net/can/raw.c b/net/can/raw.c
+index 1051eee82581..968f6f8082a1 100644
+--- a/net/can/raw.c
++++ b/net/can/raw.c
+@@ -845,6 +845,7 @@ static const struct proto_ops raw_ops = {
+ 	.getname       = raw_getname,
+ 	.poll          = datagram_poll,
+ 	.ioctl         = can_ioctl,	/* use can_ioctl() from af_can.c */
++	.gettstamp     = sock_gettstamp,
+ 	.listen        = sock_no_listen,
+ 	.shutdown      = sock_no_shutdown,
+ 	.setsockopt    = raw_setsockopt,
+diff --git a/net/compat.c b/net/compat.c
+index 47a614b370cd..e5456dd4c7a5 100644
+--- a/net/compat.c
++++ b/net/compat.c
+@@ -455,60 +455,6 @@ static int compat_sock_getsockopt(struct socket *sock, int level, int optname,
+ 	return sock_getsockopt(sock, level, optname, optval, optlen);
+ }
+ 
+-int compat_sock_get_timestamp(struct sock *sk, struct timeval __user *userstamp)
+-{
+-	struct compat_timeval __user *ctv;
+-	int err;
+-	struct timeval tv;
+-
+-	if (COMPAT_USE_64BIT_TIME)
+-		return sock_get_timestamp(sk, userstamp);
+-
+-	ctv = (struct compat_timeval __user *) userstamp;
+-	err = -ENOENT;
+-	sock_enable_timestamp(sk, SOCK_TIMESTAMP);
+-	tv = ktime_to_timeval(sk->sk_stamp);
+-	if (tv.tv_sec == -1)
+-		return err;
+-	if (tv.tv_sec == 0) {
+-		sk->sk_stamp = ktime_get_real();
+-		tv = ktime_to_timeval(sk->sk_stamp);
+-	}
+-	err = 0;
+-	if (put_user(tv.tv_sec, &ctv->tv_sec) ||
+-			put_user(tv.tv_usec, &ctv->tv_usec))
+-		err = -EFAULT;
+-	return err;
+-}
+-EXPORT_SYMBOL(compat_sock_get_timestamp);
+-
+-int compat_sock_get_timestampns(struct sock *sk, struct timespec __user *userstamp)
+-{
+-	struct compat_timespec __user *ctv;
+-	int err;
+-	struct timespec ts;
+-
+-	if (COMPAT_USE_64BIT_TIME)
+-		return sock_get_timestampns (sk, userstamp);
+-
+-	ctv = (struct compat_timespec __user *) userstamp;
+-	err = -ENOENT;
+-	sock_enable_timestamp(sk, SOCK_TIMESTAMP);
+-	ts = ktime_to_timespec(sk->sk_stamp);
+-	if (ts.tv_sec == -1)
+-		return err;
+-	if (ts.tv_sec == 0) {
+-		sk->sk_stamp = ktime_get_real();
+-		ts = ktime_to_timespec(sk->sk_stamp);
+-	}
+-	err = 0;
+-	if (put_user(ts.tv_sec, &ctv->tv_sec) ||
+-			put_user(ts.tv_nsec, &ctv->tv_nsec))
+-		err = -EFAULT;
+-	return err;
+-}
+-EXPORT_SYMBOL(compat_sock_get_timestampns);
+-
+ static int __compat_sys_getsockopt(int fd, int level, int optname,
+ 				   char __user *optval,
+ 				   int __user *optlen)
+diff --git a/net/core/sock.c b/net/core/sock.c
+index 3730eb855095..df17bbfaca27 100644
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -2897,37 +2897,31 @@ bool lock_sock_fast(struct sock *sk)
+ }
+ EXPORT_SYMBOL(lock_sock_fast);
+ 
+-int sock_get_timestamp(struct sock *sk, struct timeval __user *userstamp)
++int sock_gettstamp(struct socket *sock, void __user *userstamp,
++		   bool timeval, bool time32)
+ {
+-	struct timeval tv;
+-
+-	sock_enable_timestamp(sk, SOCK_TIMESTAMP);
+-	tv = ktime_to_timeval(sk->sk_stamp);
+-	if (tv.tv_sec == -1)
+-		return -ENOENT;
+-	if (tv.tv_sec == 0) {
+-		sk->sk_stamp = ktime_get_real();
+-		tv = ktime_to_timeval(sk->sk_stamp);
+-	}
+-	return copy_to_user(userstamp, &tv, sizeof(tv)) ? -EFAULT : 0;
+-}
+-EXPORT_SYMBOL(sock_get_timestamp);
+-
+-int sock_get_timestampns(struct sock *sk, struct timespec __user *userstamp)
+-{
+-	struct timespec ts;
++	struct sock *sk = sock->sk;
++	struct timespec64 ts;
+ 
+ 	sock_enable_timestamp(sk, SOCK_TIMESTAMP);
+-	ts = ktime_to_timespec(sk->sk_stamp);
++	ts = ktime_to_timespec64(sk->sk_stamp);
+ 	if (ts.tv_sec == -1)
+ 		return -ENOENT;
+ 	if (ts.tv_sec == 0) {
+ 		sk->sk_stamp = ktime_get_real();
+-		ts = ktime_to_timespec(sk->sk_stamp);
++		ts = ktime_to_timespec64(sk->sk_stamp);
+ 	}
+-	return copy_to_user(userstamp, &ts, sizeof(ts)) ? -EFAULT : 0;
++
++	if (timeval)
++		ts.tv_nsec /= 1000;
++#ifdef CONFIG_COMPAT_32BIT_TIME
++	if (time32)
++		return put_old_timespec32(&ts, userstamp);
++#endif
++
++	return put_timespec64(&ts, userstamp);
+ }
+-EXPORT_SYMBOL(sock_get_timestampns);
++EXPORT_SYMBOL(sock_gettstamp);
+ 
+ void sock_enable_timestamp(struct sock *sk, int flag)
+ {
+diff --git a/net/dccp/ipv4.c b/net/dccp/ipv4.c
+index b08feb219b44..8103f3525773 100644
+--- a/net/dccp/ipv4.c
++++ b/net/dccp/ipv4.c
+@@ -986,6 +986,7 @@ static const struct proto_ops inet_dccp_ops = {
+ 	/* FIXME: work on tcp_poll to rename it to inet_csk_poll */
+ 	.poll		   = dccp_poll,
+ 	.ioctl		   = inet_ioctl,
++	.gettstamp	   = sock_gettstamp,
+ 	/* FIXME: work on inet_listen to rename it to sock_common_listen */
+ 	.listen		   = inet_dccp_listen,
+ 	.shutdown	   = inet_shutdown,
+diff --git a/net/dccp/ipv6.c b/net/dccp/ipv6.c
+index 6344f1b18a6a..dacdb5b2638d 100644
+--- a/net/dccp/ipv6.c
++++ b/net/dccp/ipv6.c
+@@ -1072,6 +1072,7 @@ static const struct proto_ops inet6_dccp_ops = {
+ 	.getname	   = inet6_getname,
+ 	.poll		   = dccp_poll,
+ 	.ioctl		   = inet6_ioctl,
++	.gettstamp	   = sock_gettstamp,
+ 	.listen		   = inet_dccp_listen,
+ 	.shutdown	   = inet_shutdown,
+ 	.setsockopt	   = sock_common_setsockopt,
+diff --git a/net/ieee802154/socket.c b/net/ieee802154/socket.c
+index bc6b912603f1..ce2dfb997537 100644
+--- a/net/ieee802154/socket.c
++++ b/net/ieee802154/socket.c
+@@ -164,10 +164,6 @@ static int ieee802154_sock_ioctl(struct socket *sock, unsigned int cmd,
+ 	struct sock *sk = sock->sk;
+ 
+ 	switch (cmd) {
+-	case SIOCGSTAMP:
+-		return sock_get_timestamp(sk, (struct timeval __user *)arg);
+-	case SIOCGSTAMPNS:
+-		return sock_get_timestampns(sk, (struct timespec __user *)arg);
+ 	case SIOCGIFADDR:
+ 	case SIOCSIFADDR:
+ 		return ieee802154_dev_ioctl(sk, (struct ifreq __user *)arg,
+@@ -426,6 +422,7 @@ static const struct proto_ops ieee802154_raw_ops = {
+ 	.getname	   = sock_no_getname,
+ 	.poll		   = datagram_poll,
+ 	.ioctl		   = ieee802154_sock_ioctl,
++	.gettstamp	   = sock_gettstamp,
+ 	.listen		   = sock_no_listen,
+ 	.shutdown	   = sock_no_shutdown,
+ 	.setsockopt	   = sock_common_setsockopt,
+@@ -988,6 +985,7 @@ static const struct proto_ops ieee802154_dgram_ops = {
+ 	.getname	   = sock_no_getname,
+ 	.poll		   = datagram_poll,
+ 	.ioctl		   = ieee802154_sock_ioctl,
++	.gettstamp	   = sock_gettstamp,
+ 	.listen		   = sock_no_listen,
+ 	.shutdown	   = sock_no_shutdown,
+ 	.setsockopt	   = sock_common_setsockopt,
+diff --git a/net/ipv4/af_inet.c b/net/ipv4/af_inet.c
+index 20fda8fb8ffd..3490275bab50 100644
+--- a/net/ipv4/af_inet.c
++++ b/net/ipv4/af_inet.c
+@@ -911,12 +911,6 @@ int inet_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
+ 	struct rtentry rt;
+ 
+ 	switch (cmd) {
+-	case SIOCGSTAMP:
+-		err = sock_get_timestamp(sk, (struct timeval __user *)arg);
+-		break;
+-	case SIOCGSTAMPNS:
+-		err = sock_get_timestampns(sk, (struct timespec __user *)arg);
+-		break;
+ 	case SIOCADDRT:
+ 	case SIOCDELRT:
+ 		if (copy_from_user(&rt, p, sizeof(struct rtentry)))
+@@ -988,6 +982,7 @@ const struct proto_ops inet_stream_ops = {
+ 	.getname	   = inet_getname,
+ 	.poll		   = tcp_poll,
+ 	.ioctl		   = inet_ioctl,
++	.gettstamp	   = sock_gettstamp,
+ 	.listen		   = inet_listen,
+ 	.shutdown	   = inet_shutdown,
+ 	.setsockopt	   = sock_common_setsockopt,
+@@ -1023,6 +1018,7 @@ const struct proto_ops inet_dgram_ops = {
+ 	.getname	   = inet_getname,
+ 	.poll		   = udp_poll,
+ 	.ioctl		   = inet_ioctl,
++	.gettstamp	   = sock_gettstamp,
+ 	.listen		   = sock_no_listen,
+ 	.shutdown	   = inet_shutdown,
+ 	.setsockopt	   = sock_common_setsockopt,
+@@ -1055,6 +1051,7 @@ static const struct proto_ops inet_sockraw_ops = {
+ 	.getname	   = inet_getname,
+ 	.poll		   = datagram_poll,
+ 	.ioctl		   = inet_ioctl,
++	.gettstamp	   = sock_gettstamp,
+ 	.listen		   = sock_no_listen,
+ 	.shutdown	   = inet_shutdown,
+ 	.setsockopt	   = sock_common_setsockopt,
+diff --git a/net/ipv6/af_inet6.c b/net/ipv6/af_inet6.c
+index 673bba31eb18..77f9716958a7 100644
+--- a/net/ipv6/af_inet6.c
++++ b/net/ipv6/af_inet6.c
+@@ -532,12 +532,6 @@ int inet6_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
+ 	struct net *net = sock_net(sk);
+ 
+ 	switch (cmd) {
+-	case SIOCGSTAMP:
+-		return sock_get_timestamp(sk, (struct timeval __user *)arg);
+-
+-	case SIOCGSTAMPNS:
+-		return sock_get_timestampns(sk, (struct timespec __user *)arg);
+-
+ 	case SIOCADDRT:
+ 	case SIOCDELRT:
+ 
+@@ -570,6 +564,7 @@ const struct proto_ops inet6_stream_ops = {
+ 	.getname	   = inet6_getname,
+ 	.poll		   = tcp_poll,			/* ok		*/
+ 	.ioctl		   = inet6_ioctl,		/* must change  */
++	.gettstamp	   = sock_gettstamp,
+ 	.listen		   = inet_listen,		/* ok		*/
+ 	.shutdown	   = inet_shutdown,		/* ok		*/
+ 	.setsockopt	   = sock_common_setsockopt,	/* ok		*/
+@@ -603,6 +598,7 @@ const struct proto_ops inet6_dgram_ops = {
+ 	.getname	   = inet6_getname,
+ 	.poll		   = udp_poll,			/* ok		*/
+ 	.ioctl		   = inet6_ioctl,		/* must change  */
++	.gettstamp	   = sock_gettstamp,
+ 	.listen		   = sock_no_listen,		/* ok		*/
+ 	.shutdown	   = inet_shutdown,		/* ok		*/
+ 	.setsockopt	   = sock_common_setsockopt,	/* ok		*/
+diff --git a/net/ipv6/raw.c b/net/ipv6/raw.c
+index 413d98bf24f4..a913ccfff021 100644
+--- a/net/ipv6/raw.c
++++ b/net/ipv6/raw.c
+@@ -1344,6 +1344,7 @@ const struct proto_ops inet6_sockraw_ops = {
+ 	.getname	   = inet6_getname,
+ 	.poll		   = datagram_poll,		/* ok		*/
+ 	.ioctl		   = inet6_ioctl,		/* must change  */
++	.gettstamp	   = sock_gettstamp,
+ 	.listen		   = sock_no_listen,		/* ok		*/
+ 	.shutdown	   = inet_shutdown,		/* ok		*/
+ 	.setsockopt	   = sock_common_setsockopt,	/* ok		*/
+diff --git a/net/l2tp/l2tp_ip.c b/net/l2tp/l2tp_ip.c
+index 35f6f86d4dcc..b7b844d9edec 100644
+--- a/net/l2tp/l2tp_ip.c
++++ b/net/l2tp/l2tp_ip.c
+@@ -615,6 +615,7 @@ static const struct proto_ops l2tp_ip_ops = {
+ 	.getname	   = l2tp_ip_getname,
+ 	.poll		   = datagram_poll,
+ 	.ioctl		   = inet_ioctl,
++	.gettstamp	   = sock_gettstamp,
+ 	.listen		   = sock_no_listen,
+ 	.shutdown	   = inet_shutdown,
+ 	.setsockopt	   = sock_common_setsockopt,
+diff --git a/net/l2tp/l2tp_ip6.c b/net/l2tp/l2tp_ip6.c
+index 237f1a4a0b0c..c379ebfa4cb7 100644
+--- a/net/l2tp/l2tp_ip6.c
++++ b/net/l2tp/l2tp_ip6.c
+@@ -751,6 +751,7 @@ static const struct proto_ops l2tp_ip6_ops = {
+ 	.getname	   = l2tp_ip6_getname,
+ 	.poll		   = datagram_poll,
+ 	.ioctl		   = inet6_ioctl,
++	.gettstamp	   = sock_gettstamp,
+ 	.listen		   = sock_no_listen,
+ 	.shutdown	   = inet_shutdown,
+ 	.setsockopt	   = sock_common_setsockopt,
+diff --git a/net/netrom/af_netrom.c b/net/netrom/af_netrom.c
+index 03f37c4e64fe..687103e0a3c8 100644
+--- a/net/netrom/af_netrom.c
++++ b/net/netrom/af_netrom.c
+@@ -1194,7 +1194,6 @@ static int nr_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
+ {
+ 	struct sock *sk = sock->sk;
+ 	void __user *argp = (void __user *)arg;
+-	int ret;
+ 
+ 	switch (cmd) {
+ 	case TIOCOUTQ: {
+@@ -1220,18 +1219,6 @@ static int nr_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
+ 		return put_user(amount, (int __user *)argp);
+ 	}
+ 
+-	case SIOCGSTAMP:
+-		lock_sock(sk);
+-		ret = sock_get_timestamp(sk, argp);
+-		release_sock(sk);
+-		return ret;
+-
+-	case SIOCGSTAMPNS:
+-		lock_sock(sk);
+-		ret = sock_get_timestampns(sk, argp);
+-		release_sock(sk);
+-		return ret;
+-
+ 	case SIOCGIFADDR:
+ 	case SIOCSIFADDR:
+ 	case SIOCGIFDSTADDR:
+@@ -1357,6 +1344,7 @@ static const struct proto_ops nr_proto_ops = {
+ 	.getname	=	nr_getname,
+ 	.poll		=	datagram_poll,
+ 	.ioctl		=	nr_ioctl,
++	.gettstamp	=	sock_gettstamp,
+ 	.listen		=	nr_listen,
+ 	.shutdown	=	sock_no_shutdown,
+ 	.setsockopt	=	nr_setsockopt,
+diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+index 5610061e7f2e..06097f1e060b 100644
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -4053,11 +4053,6 @@ static int packet_ioctl(struct socket *sock, unsigned int cmd,
+ 		spin_unlock_bh(&sk->sk_receive_queue.lock);
+ 		return put_user(amount, (int __user *)arg);
+ 	}
+-	case SIOCGSTAMP:
+-		return sock_get_timestamp(sk, (struct timeval __user *)arg);
+-	case SIOCGSTAMPNS:
+-		return sock_get_timestampns(sk, (struct timespec __user *)arg);
+-
+ #ifdef CONFIG_INET
+ 	case SIOCADDRT:
+ 	case SIOCDELRT:
+@@ -4415,6 +4410,7 @@ static const struct proto_ops packet_ops_spkt = {
+ 	.getname =	packet_getname_spkt,
+ 	.poll =		datagram_poll,
+ 	.ioctl =	packet_ioctl,
++	.gettstamp =	sock_gettstamp,
+ 	.listen =	sock_no_listen,
+ 	.shutdown =	sock_no_shutdown,
+ 	.setsockopt =	sock_no_setsockopt,
+@@ -4436,6 +4432,7 @@ static const struct proto_ops packet_ops = {
+ 	.getname =	packet_getname,
+ 	.poll =		packet_poll,
+ 	.ioctl =	packet_ioctl,
++	.gettstamp =	sock_gettstamp,
+ 	.listen =	sock_no_listen,
+ 	.shutdown =	sock_no_shutdown,
+ 	.setsockopt =	packet_setsockopt,
+diff --git a/net/qrtr/qrtr.c b/net/qrtr/qrtr.c
+index 86e1e37eb4e8..9da159f3fc2a 100644
+--- a/net/qrtr/qrtr.c
++++ b/net/qrtr/qrtr.c
+@@ -967,9 +967,6 @@ static int qrtr_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
+ 			break;
+ 		}
+ 		break;
+-	case SIOCGSTAMP:
+-		rc = sock_get_timestamp(sk, argp);
+-		break;
+ 	case SIOCADDRT:
+ 	case SIOCDELRT:
+ 	case SIOCSIFADDR:
+@@ -1032,6 +1029,7 @@ static const struct proto_ops qrtr_proto_ops = {
+ 	.recvmsg	= qrtr_recvmsg,
+ 	.getname	= qrtr_getname,
+ 	.ioctl		= qrtr_ioctl,
++	.gettstamp	= sock_gettstamp,
+ 	.poll		= datagram_poll,
+ 	.shutdown	= sock_no_shutdown,
+ 	.setsockopt	= sock_no_setsockopt,
+diff --git a/net/rose/af_rose.c b/net/rose/af_rose.c
+index d00a0ef39a56..64bcbb22c8f7 100644
+--- a/net/rose/af_rose.c
++++ b/net/rose/af_rose.c
+@@ -1299,12 +1299,6 @@ static int rose_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
+ 		return put_user(amount, (unsigned int __user *) argp);
+ 	}
+ 
+-	case SIOCGSTAMP:
+-		return sock_get_timestamp(sk, (struct timeval __user *) argp);
+-
+-	case SIOCGSTAMPNS:
+-		return sock_get_timestampns(sk, (struct timespec __user *) argp);
+-
+ 	case SIOCGIFADDR:
+ 	case SIOCSIFADDR:
+ 	case SIOCGIFDSTADDR:
+@@ -1472,6 +1466,7 @@ static const struct proto_ops rose_proto_ops = {
+ 	.getname	=	rose_getname,
+ 	.poll		=	datagram_poll,
+ 	.ioctl		=	rose_ioctl,
++	.gettstamp	=	sock_gettstamp,
+ 	.listen		=	rose_listen,
+ 	.shutdown	=	sock_no_shutdown,
+ 	.setsockopt	=	rose_setsockopt,
+diff --git a/net/sctp/ipv6.c b/net/sctp/ipv6.c
+index fc6c5e4bffa5..62da13b888e0 100644
+--- a/net/sctp/ipv6.c
++++ b/net/sctp/ipv6.c
+@@ -1028,6 +1028,7 @@ static const struct proto_ops inet6_seqpacket_ops = {
+ 	.getname	   = sctp_getname,
+ 	.poll		   = sctp_poll,
+ 	.ioctl		   = inet6_ioctl,
++	.gettstamp	   = sock_gettstamp,
+ 	.listen		   = sctp_inet_listen,
+ 	.shutdown	   = inet_shutdown,
+ 	.setsockopt	   = sock_common_setsockopt,
+diff --git a/net/sctp/protocol.c b/net/sctp/protocol.c
+index e948db29ab53..b640eeedc8b4 100644
+--- a/net/sctp/protocol.c
++++ b/net/sctp/protocol.c
+@@ -1026,6 +1026,7 @@ static const struct proto_ops inet_seqpacket_ops = {
+ 	.getname	   = inet_getname,	/* Semantics are different.  */
+ 	.poll		   = sctp_poll,
+ 	.ioctl		   = inet_ioctl,
++	.gettstamp	   = sock_gettstamp,
+ 	.listen		   = sctp_inet_listen,
+ 	.shutdown	   = inet_shutdown,	/* Looks harmless.  */
+ 	.setsockopt	   = sock_common_setsockopt, /* IP_SOL IP_OPTION is a problem */
+diff --git a/net/socket.c b/net/socket.c
+index b9d71b503720..6814e8dc8af1 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -1069,6 +1069,15 @@ static long sock_ioctl(struct file *file, unsigned cmd, unsigned long arg)
+ 
+ 			err = open_related_ns(&net->ns, get_net_ns);
+ 			break;
++		case SIOCGSTAMP:
++		case SIOCGSTAMPNS:
++			if (!sock->ops->gettstamp) {
++				err = -ENOIOCTLCMD;
++				break;
++			}
++			err = sock->ops->gettstamp(sock, argp,
++						   cmd == SIOCGSTAMP, false);
++			break;
+ 		default:
+ 			err = sock_do_ioctl(net, sock, cmd, arg);
+ 			break;
+@@ -2740,38 +2749,6 @@ void socket_seq_show(struct seq_file *seq)
+ #endif				/* CONFIG_PROC_FS */
+ 
+ #ifdef CONFIG_COMPAT
+-static int do_siocgstamp(struct net *net, struct socket *sock,
+-			 unsigned int cmd, void __user *up)
+-{
+-	mm_segment_t old_fs = get_fs();
+-	struct timeval ktv;
+-	int err;
+-
+-	set_fs(KERNEL_DS);
+-	err = sock_do_ioctl(net, sock, cmd, (unsigned long)&ktv);
+-	set_fs(old_fs);
+-	if (!err)
+-		err = compat_put_timeval(&ktv, up);
+-
+-	return err;
+-}
+-
+-static int do_siocgstampns(struct net *net, struct socket *sock,
+-			   unsigned int cmd, void __user *up)
+-{
+-	mm_segment_t old_fs = get_fs();
+-	struct timespec kts;
+-	int err;
+-
+-	set_fs(KERNEL_DS);
+-	err = sock_do_ioctl(net, sock, cmd, (unsigned long)&kts);
+-	set_fs(old_fs);
+-	if (!err)
+-		err = compat_put_timespec(&kts, up);
+-
+-	return err;
+-}
+-
+ static int compat_dev_ifconf(struct net *net, struct compat_ifconf __user *uifc32)
+ {
+ 	struct compat_ifconf ifc32;
+@@ -3119,9 +3096,12 @@ static int compat_sock_ioctl_trans(struct file *file, struct socket *sock,
+ 	case SIOCDELRT:
+ 		return routing_ioctl(net, sock, cmd, argp);
+ 	case SIOCGSTAMP:
+-		return do_siocgstamp(net, sock, cmd, argp);
+ 	case SIOCGSTAMPNS:
+-		return do_siocgstampns(net, sock, cmd, argp);
++		if (!sock->ops->gettstamp)
++			return -ENOIOCTLCMD;
++		return sock->ops->gettstamp(sock, argp, cmd == SIOCGSTAMP,
++					    !COMPAT_USE_64BIT_TIME);
++
+ 	case SIOCBONDSLAVEINFOQUERY:
+ 	case SIOCBONDINFOQUERY:
+ 	case SIOCSHWTSTAMP:
+diff --git a/net/x25/af_x25.c b/net/x25/af_x25.c
+index d49aa79b7997..fe2673d17009 100644
+--- a/net/x25/af_x25.c
++++ b/net/x25/af_x25.c
+@@ -1388,18 +1388,6 @@ static int x25_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
+ 		break;
+ 	}
+ 
+-	case SIOCGSTAMP:
+-		rc = -EINVAL;
+-		if (sk)
+-			rc = sock_get_timestamp(sk,
+-						(struct timeval __user *)argp);
+-		break;
+-	case SIOCGSTAMPNS:
+-		rc = -EINVAL;
+-		if (sk)
+-			rc = sock_get_timestampns(sk,
+-					(struct timespec __user *)argp);
+-		break;
+ 	case SIOCGIFADDR:
+ 	case SIOCSIFADDR:
+ 	case SIOCGIFDSTADDR:
+@@ -1671,8 +1659,6 @@ static int compat_x25_ioctl(struct socket *sock, unsigned int cmd,
+ 				unsigned long arg)
+ {
+ 	void __user *argp = compat_ptr(arg);
+-	struct sock *sk = sock->sk;
+-
+ 	int rc = -ENOIOCTLCMD;
+ 
+ 	switch(cmd) {
+@@ -1680,18 +1666,6 @@ static int compat_x25_ioctl(struct socket *sock, unsigned int cmd,
+ 	case TIOCINQ:
+ 		rc = x25_ioctl(sock, cmd, (unsigned long)argp);
+ 		break;
+-	case SIOCGSTAMP:
+-		rc = -EINVAL;
+-		if (sk)
+-			rc = compat_sock_get_timestamp(sk,
+-					(struct timeval __user*)argp);
+-		break;
+-	case SIOCGSTAMPNS:
+-		rc = -EINVAL;
+-		if (sk)
+-			rc = compat_sock_get_timestampns(sk,
+-					(struct timespec __user*)argp);
+-		break;
+ 	case SIOCGIFADDR:
+ 	case SIOCSIFADDR:
+ 	case SIOCGIFDSTADDR:
+@@ -1755,6 +1729,7 @@ static const struct proto_ops x25_proto_ops = {
+ #ifdef CONFIG_COMPAT
+ 	.compat_ioctl = compat_x25_ioctl,
+ #endif
++	.gettstamp =	sock_gettstamp,
+ 	.listen =	x25_listen,
+ 	.shutdown =	sock_no_shutdown,
+ 	.setsockopt =	x25_setsockopt,
+-- 
+2.18.0
 
