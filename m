@@ -2,147 +2,176 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CE5BC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:34:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0EB3C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:34:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CC4220897
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:34:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CC4220897
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7A32A2089B
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:34:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZBkrsy4S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A32A2089B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727637AbeH2L3a convert rfc822-to-8bit (ORCPT
+        id S1727728AbeH2L3v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 07:29:30 -0400
-Received: from mga06.intel.com ([134.134.136.31]:53881 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726858AbeH2L3a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 07:29:30 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2018 00:33:58 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,301,1531810800"; 
-   d="scan'208";a="76416389"
-Received: from pgsmsx108.gar.corp.intel.com ([10.221.44.103])
-  by FMSMGA003.fm.intel.com with ESMTP; 29 Aug 2018 00:33:56 -0700
-Received: from pgsmsx112.gar.corp.intel.com ([169.254.3.58]) by
- PGSMSX108.gar.corp.intel.com ([169.254.8.56]) with mapi id 14.03.0319.002;
- Wed, 29 Aug 2018 15:33:54 +0800
-From:   "Huang, Kai" <kai.huang@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     "platform-driver-x86@vger.kernel.org" 
-        <platform-driver-x86@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "suresh.b.siddha@intel.com" <suresh.b.siddha@intel.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>
-Subject: RE: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
- enclaves
-Thread-Topic: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
- enclaves
-Thread-Index: AQHUPjfc29Kn4Rp1DkeLR/DtZ2Q8VaTTmtMAgACchICAAhw1QA==
-Date:   Wed, 29 Aug 2018 07:33:54 +0000
-Message-ID: <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com>
-References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
- <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
- <1535406078.3416.9.camel@intel.com> <20180828070129.GA5301@linux.intel.com>
-In-Reply-To: <20180828070129.GA5301@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZTAzZDgwMzMtZjVmNi00YWVjLWExYWEtMDc1ZjY3OTAxYzIwIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiVm1aTzRIbDVWZVk5bGFQNFlMZGhTT2I4azArRDBIeTB3U2hiYU5DYmZWSmxZbU9yVnVUTkVcL0NaaGN1K1RuSHgifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [172.30.20.205]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
+        Wed, 29 Aug 2018 07:29:51 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:49809 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726858AbeH2L3u (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 07:29:50 -0400
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20180829073415epoutp0270b6d43f31923021bddcbea1dae880fe~PSqGYx0kd2038220382epoutp02R;
+        Wed, 29 Aug 2018 07:34:15 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180829073415epoutp0270b6d43f31923021bddcbea1dae880fe~PSqGYx0kd2038220382epoutp02R
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1535528055;
+        bh=635gP+BjM4++yjvdqcqmYP8uJcOtG/IYv9qbPYGXfhs=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=ZBkrsy4SS7gH5ZSbA9F9FmJdL6iuvOB+UdQOuC8o2cK/Krp1gEEx8FXOcT3OMxaJU
+         ij6mHuFl76o+1BN0zUCo1yuYNA1B2jXeeheSh9QsSSeHxzATgWXkuNoCFyL+BWxVpU
+         yRVX0QP40oLE885arqvxfZTQ2Lu3pBsxAG+xpHfM=
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.155]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180829073412epcas1p2b9ee6d2746efaf17d0335d00540bc955~PSqDhk-O81614116141epcas1p2Z;
+        Wed, 29 Aug 2018 07:34:12 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        3F.74.04305.37C468B5; Wed, 29 Aug 2018 16:34:11 +0900 (KST)
+Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180829073410epcas1p2f314e6c4c29eacfe3ebd5fb4f7f2f122~PSqBrp9f11984519845epcas1p2M;
+        Wed, 29 Aug 2018 07:34:10 +0000 (GMT)
+X-AuditID: b6c32a38-5adff700000010d1-42-5b864c734c9d
+Received: from epmmp1.local.host ( [203.254.227.16]) by
+        epsmgms2p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        DA.F5.03702.27C468B5; Wed, 29 Aug 2018 16:34:10 +0900 (KST)
+Received: from localhost.localdomain ([10.113.63.77]) by mmp1.samsung.com
+        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
+        2014)) with ESMTPA id <0PE7004LGP0XW270@mmp1.samsung.com>; Wed, 29 Aug 2018
+        16:34:10 +0900 (KST)
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+To:     myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
+        cw00.choi@samsung.com
+Cc:     rafael.j.wysocki@intel.com, chanwoo@kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: [PATCH] PM / devfreq: Add new name attribute for sysfs
+Date:   Wed, 29 Aug 2018 16:34:06 +0900
+Message-id: <1535528046-18835-1-git-send-email-cw00.choi@samsung.com>
+X-Mailer: git-send-email 1.8.0
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprIKsWRmVeSWpSXmKPExsWy7bCmvm6xT1u0wa8GIYuJN66wWFz/8pzV
+        4mzTG3aLy7vmsFl87j3CaHG7cQWbxeMVb9ktFmx8xOjA4bF4z0smj02rOtk8+rasYvT4vEku
+        gCUq1SYjNTEltUghNS85PyUzL91WyTs43jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMH6Awl
+        hbLEnFKgUEBicbGSvp1NUX5pSapCRn5xia1StKGhkZ6hgbmekRGQNo61MjIFKklIzZhxYStL
+        QYNwxbFd0xkbGF/xdzFyckgImEicfbSNtYuRi0NIYAejxMT/LcwQzndGiZ+9d5lhqqasOABV
+        tZtR4uv+d0xwVR/W7WIHqWIT0JLY/+IGG4gtIhAg0bl2FVgRs0Abo8Tz51MYQRLCAvYSP4/N
+        AWrg4GARUJX41K0HEuYVcJW4cfkmE8Q2OYkPex6xg/RKCHxlldjy8jw7RMJF4uDxZkYIW1ji
+        1fEtYHMkBKQlLh21hahvZ5T48qKZFcKZAHTdqc1QU40lni3sArOZBfgk3n3tYYVo5pXoaBOC
+        KPGQ6FrfCFYiJBAr0XdsCjvQhAWMDKsYxVILinPTU4sNC0z0ihNzi0vz0vWS83M3MYKTg5bF
+        DsY953wOMQpwMCrx8HIEt0YLsSaWFVfmHmKU4GBWEuENMmiLFuJNSaysSi3Kjy8qzUktPsRo
+        CgyCicxSosn5wMSVVxJvaGpkbGxsYWJoZmpoqCTOa+QXHC0kkJ5YkpqdmlqQWgTTx8TBKdXA
+        uHPxI83E0ti8V5u1s/jXmJXLLDFU/frv391J/isttjz4v3zPnwuTNkofMjJ5fML/sPDM8htr
+        Ppr1tPNZpU/uKD7nsFH4luO7lMltJZd4i9PVuXWtuzJ//97z2f6ybqp718sVQjvDyiRCm7fZ
+        Sr7qPSQ2oXdv27bDz7vDtOfHNLboJWy3quA4oMRSnJFoqMVcVJwIAIJFg2gkAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrCJMWRmVeSWpSXmKPExsVy+t9jAd0in7Zog0XvdSwm3rjCYnH9y3NW
+        i7NNb9gtLu+aw2bxufcIo8XtxhVsFo9XvGW3WLDxEaMDh8fiPS+ZPDat6mTz6NuyitHj8ya5
+        AJYoLpuU1JzMstQifbsErowZF7ayFDQIVxzbNZ2xgfEVfxcjJ4eEgInElBUHWLsYuTiEBHYy
+        Sqy+soEdwvnOKNG79g8jSBWbgJbE/hc32EBsEQE/ie3z1zOCFDELtDBKLG7pBUsIC9hL/Dw2
+        B6ibg4NFQFXiU7ceSJhXwFXixuWbTBDb5CQ+7HnEPoGRawEjwypGydSC4tz03GKjAsO81HK9
+        4sTc4tK8dL3k/NxNjMCw2HZYq28H4/0l8YcYBTgYlXh4OYJbo4VYE8uKK3MPMUpwMCuJ8AYZ
+        tEUL8aYkVlalFuXHF5XmpBYfYpTmYFES572ddyxSSCA9sSQ1OzW1ILUIJsvEwSnVwBi1YPOR
+        lcE/olnKDG7fyDHi32r1Wo9/fsvke4wmxyL/Z67VtvE93ClrnmD99bZQhM2SfJX15w5eN5Gq
+        Vs9+U6bbcGeFYl32Nx2n0xelbu0xjt5et4o7exF/sfeK6i/tS5MCbF6UMi66sPLmP7Oq2yuv
+        T7yVqZl9beX1y3Yz9/75bL/7d5x/lJwSS3FGoqEWc1FxIgBzsRRkBwIAAA==
+X-CMS-MailID: 20180829073410epcas1p2f314e6c4c29eacfe3ebd5fb4f7f2f122
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180829073410epcas1p2f314e6c4c29eacfe3ebd5fb4f7f2f122
+References: <CGME20180829073410epcas1p2f314e6c4c29eacfe3ebd5fb4f7f2f122@epcas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[snip..]
+commit 4585fbcb5331 ("PM / devfreq: Modify the device name as devfreq(X) for
+sysfs") changed the node name to devfreq(x). After this commit, it is not
+possible to get the device name through /sys/class/devfreq/devfreq(X)/*.
 
-> > >
-> > > @@ -38,6 +39,18 @@ static LIST_HEAD(sgx_active_page_list);  static
-> > > DEFINE_SPINLOCK(sgx_active_page_list_lock);
-> > >  static struct task_struct *ksgxswapd_tsk;  static
-> > > DECLARE_WAIT_QUEUE_HEAD(ksgxswapd_waitq);
-> > > +static struct notifier_block sgx_pm_notifier; static u64
-> > > +sgx_pm_cnt;
-> > > +
-> > > +/* The cache for the last known values of IA32_SGXLEPUBKEYHASHx
-> > > +MSRs
-> > > for each
-> > > + * CPU. The entries are initialized when they are first used by
-> > > sgx_einit().
-> > > + */
-> > > +struct sgx_lepubkeyhash {
-> > > +	u64 msrs[4];
-> > > +	u64 pm_cnt;
-> >
-> > May I ask why do we need pm_cnt here? In fact why do we need suspend
-> > staff (namely, sgx_pm_cnt above, and related code in this patch) here
-> > in this patch? From the patch commit message I don't see why we need
-> > PM staff here. Please give comment why you need PM staff, or you may
-> > consider to split the PM staff to another patch.
-> 
-> Refining the commit message probably makes more sense because without PM
-> code sgx_einit() would be broken. The MSRs have been reset after waking up.
-> 
-> Some kind of counter is required to keep track of the power cycle. When going
-> to sleep the sgx_pm_cnt is increased. sgx_einit() compares the current value of
-> the global count to the value in the cache entry to see whether we are in a new
-> power cycle.
+Add new name attribute in order to get device name.
 
-You mean reset to Intel default? I think we can also just reset the cached MSR values on each power cycle, which would be simpler, IMHO?
+Cc: stable@vger.kernel.org
+Fixes: 4585fbcb5331 ("PM / devfreq: Modify the device name as devfreq(X) for sysfs")
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
+ drivers/devfreq/devfreq.c | 11 +++++++++++
+ include/linux/devfreq.h   |  3 +++
+ 2 files changed, 14 insertions(+)
 
-I think we definitely need some code to handle S3-S5, but should be in separate patches, since I think the major impact of S3-S5 is entire EPC being destroyed. I think keeping pm_cnt is not sufficient enough to handle such case?
+diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+index 4c49bb1330b5..2145563d5ee5 100644
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -620,6 +620,9 @@ struct devfreq *devfreq_add_device(struct device *dev,
+ 	}
+ 	devfreq->max_freq = devfreq->scaling_max_freq;
 
-> 
-> This brings up one question though: how do we deal with VM host going to sleep?
-> VM guest would not be aware of this.
++	devfreq->name = dev_name(devfreq->dev.parent);
++	if (IS_ERR_OR_NULL(devfreq->name))
++		return -EINVAL;
+ 	dev_set_name(&devfreq->dev, "devfreq%d",
+ 				atomic_inc_return(&devfreq_no));
+ 	err = device_register(&devfreq->dev);
+@@ -1261,6 +1264,13 @@ static ssize_t trans_stat_show(struct device *dev,
+ }
+ static DEVICE_ATTR_RO(trans_stat);
 
-IMO VM just gets "sudden loss of EPC" after suspend & resume in host. SGX driver and SDK should be able to handle "sudden loss of EPC", ie, co-working together to re-establish the missing enclaves.
++static ssize_t name_show(struct device *dev,
++			struct device_attribute *attr, char *buf)
++{
++	return sprintf(buf, "%s\n", to_devfreq(dev)->name);
++}
++static DEVICE_ATTR_RO(name);
++
+ static struct attribute *devfreq_attrs[] = {
+ 	&dev_attr_governor.attr,
+ 	&dev_attr_available_governors.attr,
+@@ -1271,6 +1281,7 @@ static ssize_t trans_stat_show(struct device *dev,
+ 	&dev_attr_min_freq.attr,
+ 	&dev_attr_max_freq.attr,
+ 	&dev_attr_trans_stat.attr,
++	&dev_attr_name.attr,
+ 	NULL,
+ };
+ ATTRIBUTE_GROUPS(devfreq);
+diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h
+index 3aae5b3af87c..f79b5a666102 100644
+--- a/include/linux/devfreq.h
++++ b/include/linux/devfreq.h
+@@ -111,6 +111,7 @@ struct devfreq_dev_profile {
 
-Actually supporting "sudden loss of EPC" is a requirement to support live migration of VM w/ SGX. Internally long time ago we had a discussion and the decision was we should support SGX live migration given two facts:
+ /**
+  * struct devfreq - Device devfreq structure
++ * @name:	name of the device
+  * @node:	list node - contains the devices with devfreq that have been
+  *		registered.
+  * @lock:	a mutex to protect accessing devfreq.
+@@ -146,6 +147,8 @@ struct devfreq_dev_profile {
+  * to protect its own private data in void *data as well.
+  */
+ struct devfreq {
++	const char *name;
++
+ 	struct list_head node;
 
-1) losing platform-dependent is not important. For example, losing sealing key is not a problem, as we could get secrets provisioned again from remote. 2) Both windows & linux driver commit to support "sudden loss of EPC".
+ 	struct mutex lock;
+--
+1.9.1
 
-I don't think we have to support in very first upstream driver, but I think we need to support someday.
-
-Sean, 
-
-Would you be able to comment here?
-
-> 
-> I think the best measure would be to add a new parameter to sgx_einit() that
-> enforces update of the MSRs. The driver can then set this parameter in the case
-> when sgx_einit() returns SGX_INVALID_LICENSE. This is coherent because the
-> driver requires writable MSRs. It would not be coherent to do it directly in the
-> core because KVM does not require writable MSRs.
-
-IMHO this is not required, as I mentioned above.
-
-And 
-[snip...]
-
-Thanks,
--Kai
