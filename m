@@ -2,116 +2,158 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30451C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:42:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CA71C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:43:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8424204FD
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:42:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8424204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E1F72204FD
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:43:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IJMNW8vf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1F72204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729186AbeH2TkX (ORCPT
+        id S1729197AbeH2Tks (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 15:40:23 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60204 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729028AbeH2TkX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 15:40:23 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6E5FA401EF02;
-        Wed, 29 Aug 2018 15:42:51 +0000 (UTC)
-Received: from flask (unknown [10.40.205.185])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 2F68A2166B41;
-        Wed, 29 Aug 2018 15:42:48 +0000 (UTC)
-Received: by flask (sSMTP sendmail emulation); Wed, 29 Aug 2018 17:42:47 +0200
-Date:   Wed, 29 Aug 2018 17:42:47 +0200
-From:   Radim Krcmar <rkrcmar@redhat.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Wanpeng Li <kernellwp@gmail.com>,
-        Liran Alon <liran.alon@oracle.com>,
-        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [PATCH] KVM: LAPIC: Fix pv ipis out-of-bounds access
-Message-ID: <20180829154246.GB19487@flask>
-References: <1535521943-5547-1-git-send-email-wanpengli@tencent.com>
- <A523C29C-C3E8-4FEF-8620-96365F774582@oracle.com>
- <20180829101205.jsp53e2wq7fc6ukd@mwanda>
- <20180829101822.qo3u7lsmghs3kcuf@mwanda>
- <CANRm+Cy9n=2Ssy_cEWRtnoQJczjdqB+m-dA6zesz75r0h532iA@mail.gmail.com>
- <20180829102910.rkyato47chayt22s@mwanda>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180829102910.rkyato47chayt22s@mwanda>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 29 Aug 2018 15:42:51 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 29 Aug 2018 15:42:51 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'rkrcmar@redhat.com' RCPT:''
+        Wed, 29 Aug 2018 15:40:48 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:43784 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729107AbeH2Tks (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 15:40:48 -0400
+Received: by mail-pg1-f193.google.com with SMTP id v66-v6so2488009pgb.10
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 08:43:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:reply-to;
+        bh=/YDwQsThjmPLdlPjCV+wqui3+DoIsxT3Y8bTH3kVInw=;
+        b=IJMNW8vfTpTWe1niz7k0sdsv5AxKbBPozrjYQO8mFWQkuAbulwqThXuijPvRqJdCnv
+         aYQM7RuGOPp7YbGITEjSOeRlWcWG1WiQlN0K81iOtxwMbZT8NIAJyIEfBq6BWFr58B8I
+         w/ETPpgIUy2+x7xFGvRauffMdHQ4Et/6MQ0zGYdipYQqCoI7lQ5KxwAsJSGp9lFPq1Ay
+         HZ78R7i+KtveEdsEUlnmdqn3SF75sblv6F3nFaM20jC7ST55U5euDxb2pSDBP/o3l7Hw
+         o4HOyeI0jZpPLY5jtpUNmGifbsb1dCDpZ1nHLFC8fFU/5doZHQra5bqo82H5nBEbd9Oi
+         nyxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/YDwQsThjmPLdlPjCV+wqui3+DoIsxT3Y8bTH3kVInw=;
+        b=PevA0p1GTJnNVTWvSxEi+F95h7K637Bvjx6/th0Kq+ZUze6QjCWcnHT5rBf9o5SKYx
+         ZU5NhKI6Ocaklpi45Aq/Y+jmv6fw7zfCcrADf/11zTQStsJCVbG/0tL1P5bNrUYV2l2+
+         vZ1RUfJMVcVXw/gulrxaee6R+6IQ+jbfhVX4lAcDjcJkG0eq7H7pLXSjG556lynAQUsk
+         /35DRTt4YNUE22Pe1uvtQ+J8ngzw4XWMx+797zl1QhgQTwKlw+jsKOPbej3sMRnZA1+f
+         j+J7ipakChTTg5a4DcEvtSAsEJNrRwNsAcqjwheNVIB1VEgU3VDYHalNQSaZG/pR4Aw6
+         tg7A==
+X-Gm-Message-State: APzg51Dm2qTpGKTENRtwdSyDvcF1SX0xBgE0zlwm7CgiEIdPyMKKdeXr
+        VNH/qqEPMm1/JjlUIsKHF4o=
+X-Google-Smtp-Source: ANB0VdZvq7v9x2P+cx/gCAPoPuolzHNXlYbyDSPF+Lz677Jz45Ynv4q/Vq9hKnI5mmBJpVZ2rkbokA==
+X-Received: by 2002:a62:6547:: with SMTP id z68-v6mr6528506pfb.20.1535557397034;
+        Wed, 29 Aug 2018 08:43:17 -0700 (PDT)
+Received: from mhkkerneltest.corp.microsoft.com ([131.107.160.79])
+        by smtp.gmail.com with ESMTPSA id z6-v6sm6178821pgr.41.2018.08.29.08.43.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 Aug 2018 08:43:16 -0700 (PDT)
+From:   mhkelley58@gmail.com
+X-Google-Original-From: mikelley@microsoft.com
+To:     will.deacon@arm.com, catalin.marinas@arm.com, mark.rutland@arm.com,
+        marc.zyngier@arm.com, linux-arm-kernel@lists.infradead.org,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        devel@linuxdriverproject.org, olaf@aepfle.de, apw@canonical.com,
+        vkuznets@redhat.com, jasowang@redhat.com,
+        marcelo.cerri@canonical.com, sthemmin@microsoft.com,
+        kys@microsoft.com
+Cc:     mikelley@microsoft.com
+Subject: [PATCH v2 0/4] Enable Linux guests on Hyper-V on ARM64
+Date:   Wed, 29 Aug 2018 08:22:24 -0700
+Message-Id: <1535556148-10452-1-git-send-email-mikelley@microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
+Reply-To: mikelley@microsoft.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-08-29 13:29+0300, Dan Carpenter:
-> On Wed, Aug 29, 2018 at 06:23:08PM +0800, Wanpeng Li wrote:
-> > On Wed, 29 Aug 2018 at 18:18, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > >
-> > > On Wed, Aug 29, 2018 at 01:12:05PM +0300, Dan Carpenter wrote:
-> > > > On Wed, Aug 29, 2018 at 12:05:06PM +0300, Liran Alon wrote:
-> > > > > > arch/x86/kvm/lapic.c | 17 +++++++++++++----
-> > > > > > 1 file changed, 13 insertions(+), 4 deletions(-)
-> > > > > >
-> > > > > > diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-> > > > > > index 0cefba2..86e933c 100644
-> > > > > > --- a/arch/x86/kvm/lapic.c
-> > > > > > +++ b/arch/x86/kvm/lapic.c
-> > > > > > @@ -571,18 +571,27 @@ int kvm_pv_send_ipi(struct kvm *kvm, unsigned long ipi_bitmap_low,
-> > > > > >   rcu_read_lock();
-> > > > > >   map = rcu_dereference(kvm->arch.apic_map);
-> > > > > >
-> > > > > > + if (unlikely((s32)(map->max_apic_id - __fls(ipi_bitmap_low)) < min))
-> > > > > > +         goto out;
-> > > > >
-> > > > > I personally think “if ((min + __fls(ipi_bitmap_low)) > map->max_apic_id)” is more readable.
-> > > > > But that’s just a matter of taste :)
-> > > >
-> > > > That's an integer overflow.
-> > > >
-> > > > But I do prefer to put the variable on the left.  The truth is that some
-> > > > Smatch checks just ignore code which is backwards written because
-> > > > otherwise you have to write duplicate code and the most code is written
-> > > > with the variable on the left.
-> > > >
-> > > >       if (min > (s32)(map->max_apic_id - __fls(ipi_bitmap_low))
-> > >
-> > > Wait, the (s32) cast doesn't make sense.  We want negative min values to
-> > > be treated as invalid.
-> > 
-> > In v2, how about:
-> > 
-> > if (unlikely(min > map->max_apic_id || (min + __fls(ipi_bitmap_low)) >
-> > map->max_apic_id))
-> >     goto out;
-> 
-> That works, too.  It still has the off by one and we should set
-> "count = -KVM_EINVAL;".
+From: Michael Kelley <mikelley@microsoft.com>
 
-I'd prefer to ignore destinations that are not present and deliver the
-rest, possibly nothing, instead of returning an error.
-(It's closer to how the real hardware behaves and we already return the
- number of notified VCPUs, so the caller can tell whether something went
- wrong.)
+This series enables Linux guests running on Hyper-V on ARM64
+hardware. New ARM64-specific code in arch/arm64/hyperv initializes
+Hyper-V, including its synthetic clocks and hypercall mechanism.
+Existing architecture independent drivers for Hyper-V's VMbus and
+synthetic devices just work when built for ARM64. Hyper-V code is
+built and included in the image and modules only if CONFIG_HYPERV
+is enabled.
 
-Either in the form that I have posted earlier, or as:
+The four patches are organized as follows:
+1) Add include files that define the Hyper-V interface as
+   described in the Hyper-V Top Level Functional Spec (TLFS), plus
+   additional definitions specific to Linux running on Hyper-V.
 
-	if (min > map->max_apic_id)
-		goto out;
+2) Add core Hyper-V support on ARM64, including hypercalls,
+   synthetic clock initialization, and interrupt handlers.
 
-	for_each_set_bit(i, &ipi_bitmap_low, MIN(BITS_PER_LONG, map->max_apic_id - min + 1))
+3) Update the existing VMbus driver to generalize interrupt
+   management across x86/x64 and ARM64.
+
+4) Make CONFIG_HYPERV selectable on ARM64 in addition to x86/x64.
+
+Some areas of Linux guests on Hyper-V on ARM64 are a work-
+in-progress, primarily due to work still being done in Hyper-V:
+
+* Hyper-V on ARM64 currently runs with a 4 Kbyte page size, and only
+  supports guests with a 4 Kbyte page size. Because Hyper-V uses
+  shared pages to communicate between the guest and the hypervisor,
+  there are open design decisions on the page size to use when
+  the guest is using 16K/64K pages.  Once those issues are
+  resolved and Hyper-V fully supports 16K/64K guest pages, changes
+  may be needed in the Linux drivers for Hyper-V synthetic devices.
+
+* Hyper-V on ARM64 does not currently support mapping PCI devices
+  into the guest address space. The Hyper-V PCI driver at
+  drivers/pci/host/pci-hyperv.c has x86/x64-specific code and is
+  not being built for ARM64.
+
+In a few cases, terminology from the x86/x64 world has been carried
+over into the ARM64 code ("MSR", "TSC").  Hyper-V still uses the
+x86/x64 terminology and has not replaced it with something more
+generic, so the code uses the Hyper-V terminology.  This will be
+fixed when Hyper-V updates the usage in the TLFS.
+
+Changes in v2:
+* Remove patch to implement slow_virt_to_phys() on ARM64.
+  Use of slow_virt_to_phys() in arch independent Hyper-V
+  drivers has been eliminated by commit 6ba34171bcbd
+  ("Drivers: hv: vmbus: Remove use of slow_virt_to_phys()")
+* Minor tweaks to rebase to latest linux-next code
+
+Michael Kelley (4):
+  arm64: hyperv: Add core Hyper-V include files
+  arm64: hyperv: Add support for Hyper-V as a hypervisor
+  Drivers: hv: vmbus: Add hooks for per-CPU IRQ
+  Drivers: hv: Enable CONFIG_HYPERV on ARM64
+
+ MAINTAINERS                          |   3 +
+ arch/arm64/Makefile                  |   1 +
+ arch/arm64/hyperv/Makefile           |   2 +
+ arch/arm64/hyperv/hv_hvc.S           |  54 +++++
+ arch/arm64/hyperv/hv_init.c          | 437 +++++++++++++++++++++++++++++++++++
+ arch/arm64/hyperv/mshyperv.c         | 178 ++++++++++++++
+ arch/arm64/include/asm/hyperv-tlfs.h | 338 +++++++++++++++++++++++++++
+ arch/arm64/include/asm/mshyperv.h    | 295 +++++++++++++++++++++++
+ arch/x86/include/asm/mshyperv.h      |   4 +
+ drivers/hv/Kconfig                   |   3 +-
+ drivers/hv/hv.c                      |   2 +
+ 11 files changed, 1316 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/hyperv/Makefile
+ create mode 100644 arch/arm64/hyperv/hv_hvc.S
+ create mode 100644 arch/arm64/hyperv/hv_init.c
+ create mode 100644 arch/arm64/hyperv/mshyperv.c
+ create mode 100644 arch/arm64/include/asm/hyperv-tlfs.h
+ create mode 100644 arch/arm64/include/asm/mshyperv.h
+
+-- 
+1.8.3.1
+
