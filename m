@@ -2,179 +2,123 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62907C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:27:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7735C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:28:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1183420856
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:27:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qPVyAmlr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1183420856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 8C00020856
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:28:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C00020856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728227AbeH2OXy (ORCPT
+        id S1728237AbeH2OYz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 10:23:54 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:43368 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726858AbeH2OXy (ORCPT
+        Wed, 29 Aug 2018 10:24:55 -0400
+Received: from mail-sz2.amlogic.com ([211.162.65.114]:23436 "EHLO
+        mail-sz2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727204AbeH2OYz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 10:23:54 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w7TARQJT119939;
-        Wed, 29 Aug 2018 05:27:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1535538446;
-        bh=MVipR7WqOwTAe2Va08bP9m2goPa7A+GqOF9DoVhbvnw=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=qPVyAmlrVylx32lBIuspTUT6N16cmPc0QIJqKArLisUwdLho+1680IRo2/qnKSrQ5
-         bfeEpemeMGibB4+iR1bBGsuHWxKtve4t1MGU70014GwOvOZsJG6QXKoXoYylrvJptk
-         m5C9QK1cDZDr3Ms62zxfCTDp+Kka0U1CxSyPqsmk=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7TARQN8028389;
-        Wed, 29 Aug 2018 05:27:26 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 29
- Aug 2018 05:27:26 -0500
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Wed, 29 Aug 2018 05:27:25 -0500
-Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7TARMSO012323;
-        Wed, 29 Aug 2018 05:27:23 -0500
-Subject: Re: [PATCH v3 2/2] scsi: ufs: Add UFS platform driver for Cadence UFS
-To:     Janek Kotas <jank@cadence.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "vinholikatti@gmail.com" <vinholikatti@gmail.com>,
-        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
-CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
-References: <66C16650-56D0-46A3-8050-A5540E48C702@global.cadence.com>
-From:   Sekhar Nori <nsekhar@ti.com>
-Message-ID: <0b273e2e-6d60-ac10-a1d5-78ea2346c1d9@ti.com>
-Date:   Wed, 29 Aug 2018 15:57:22 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 29 Aug 2018 10:24:55 -0400
+Received: from [10.28.18.79] (10.28.18.79) by mail-sz2.amlogic.com
+ (10.28.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Wed, 29 Aug
+ 2018 18:29:05 +0800
+Subject: Re: [RFC PATCH v2 2/2] mtd: rawnand: meson: add support for Amlogic
+ NAND flash controller
+From:   Liang Yang <liang.yang@amlogic.com>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+CC:     Yixun Lan <yixun.lan@amlogic.com>, <linux-mtd@lists.infradead.org>,
+        Rob Herring <robh@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Richard Weinberger <richard@nod.at>,
+        <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        <linux-amlogic@lists.infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Jerome Brunet <jbrunet@baylibre.com>
+References: <20180719094612.5833-1-yixun.lan@amlogic.com>
+ <20180719094612.5833-3-yixun.lan@amlogic.com>
+ <20180801235045.5b4d8211@bbrezillon>
+ <42877a0d-9830-0626-3f64-e49a326eaa3c@amlogic.com>
+ <20180817155608.5929b37a@bbrezillon>
+ <96e538a5-1232-11f2-8b9e-5ddb09dcc2de@amlogic.com>
+ <20180824144810.31c929a5@bbrezillon>
+ <fdea2d54-7a68-64ec-8bb4-4a94677a3293@amlogic.com>
+ <20180828152645.457dab5c@bbrezillon>
+ <9abf0461-159b-db45-9ded-3d6cb2cc64db@amlogic.com>
+Message-ID: <5061c929-8db0-3f4c-ec34-303fc351dfdd@amlogic.com>
+Date:   Wed, 29 Aug 2018 18:29:05 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <66C16650-56D0-46A3-8050-A5540E48C702@global.cadence.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <9abf0461-159b-db45-9ded-3d6cb2cc64db@amlogic.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Originating-IP: [10.28.18.79]
+X-ClientProxiedBy: mail-sz2.amlogic.com (10.28.11.6) To mail-sz2.amlogic.com
+ (10.28.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday 09 August 2018 06:55 PM, Janek Kotas wrote:
-> This patch adds a device tree platform driver for
-> Cadence UFS Host Controller.
-> It can be enabled with SCSI_UFS_CDNS_PLATFORM Kconfig option.
+
+On 8/29/2018 6:08 PM, Liang Yang wrote:
 > 
-> Signed-off-by: Jan Kotas <jank@cadence.com>
+> On 8/28/2018 9:26 PM, Boris Brezillon wrote:
+>> On Tue, 28 Aug 2018 21:21:48 +0800
+>> Liang Yang <liang.yang@amlogic.com> wrote:
+>>
+>>> Hi Boris,
+>>>
+>>> On 8/24/2018 8:48 PM, Boris Brezillon wrote:
+>>>> On Wed, 22 Aug 2018 22:08:42 +0800
+>>>> Liang Yang <liang.yang@amlogic.com> wrote:
+>>>>>> You have to wait tWB, that's for sure.
+>>>>> we have a maximum 32 commands fifo. when command is written into
+>>>>> NFC_REG_CMD, it doesn't mean that command is executing right now, 
+>>>>> maybe
+>>>>> it is buffering on the queue.Assume one ERASE operation, when 2nd
+>>>>> command(0xd0) is written into NFC_REG_CMD and then come into
+>>>>> NAND_OP_WAITRDY_INSTR, if I read the RB status by register, it may be
+>>>>> wrong because 0xd0 may not being executed. it is unusual unless
+>>>>> buffering two many command.
+>>>>
+>>>> You should flush the queue and wait for it to empty at the end of
+>>>> ->exec_op().
+>>>>> so it seems that i still need to use nand_soft_waitrdy or wait cmd is
+>>>>> executed somewhere.
+>>>>
+>>>> Don't you have a WAIT_FOR_RB instruction? What is NFC_CMD_RB for? Also,
+>>>> NFC_CMD_IDLE seems to allow you to add an arbitrary delay, and that's
+>>>> probably what you should use for tWB.
+>>>>
+>>>> em, I can wait for RB by reading the status from register now. but when
+>>> calling nand_soft_waitrdy, i really met a problem. One *jiffies* is
+>>> about 4ms. When programming, it pass 1ms to
+>>> instr->ctx.waitrdy.timeout_ms and nand_soft_waitrdy will be only one
+>>> *jiffies* to reach timeout. And then calling nand_soft_waitrdy maybe at
+>>> the tail of 4ms interval, it may only wait 100us and next jiffies
+>>> arrive. Is it correct?
+>>
+>> Hm, no. If you initialize the time you compare to (using time_before()
+>> or time_after()) correctly it should not happen. Anyway, I keep thinking
+>> this is not how it should be done. Did you try NFC_CMD_RB? Did you ask
+>> HW designers what it was created for?
+>>
+> I am using NFC_CMD_RB and checking with irq. it is ok now.
+there are two usages for NFC_CMD_RB. One reads the data status 
+continuously by hardware after sending 0x70 command; the other checks 
+the r/b IO status continuously.both can send irq when r/b is ready.
 
-[...]
-
-> diff --git a/drivers/scsi/ufs/cdns-pltfrm.c b/drivers/scsi/ufs/cdns-pltfrm.c
-> new file mode 100644
-> index 00000000..5d9e4875
-> --- /dev/null
-> +++ b/drivers/scsi/ufs/cdns-pltfrm.c
-> @@ -0,0 +1,147 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Platform UFS Host driver for Cadence controller
-> + *
-> + * Copyright (C) 2018 Cadence Design Systems, Inc.
-> + *
-> + * Authors:
-> + *	Jan Kotas <jank@cadence.com>
-> + *
-> + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/of.h>
-> +#include <linux/time.h>
-> +
-> +#include "ufshcd-pltfrm.h"
-> +
-> +#define CDNS_UFS_REG_HCLKDIV 0xFC
-> +
-> +/**
-> + * Sets HCLKDIV register value based on the core_clk
-> + * @hba: host controller instance
-> + *
-> + * Return zero for success and non-zero for failure
-> + */
-> +static int cdns_ufs_set_hclkdiv(struct ufs_hba *hba)
-> +{
-> +	struct ufs_clk_info *clki;
-> +	struct list_head *head = &hba->clk_list_head;
-> +	unsigned long core_clk_rate = 0;
-> +	u32 core_clk_div = 0;
-> +
-> +	if (list_empty(head))
-> +		return 0;
-> +
-> +	list_for_each_entry(clki, head, list) {
-> +		if (IS_ERR_OR_NULL(clki->clk))
-> +			continue;
-> +		if (!strcmp(clki->name, "core_clk"))
-> +			core_clk_rate = clk_get_rate(clki->clk);
-> +	}
-> +
-> +	if (!core_clk_rate) {
-> +		dev_err(hba->dev, "%s: unable to find core_clk rate\n",
-> +			__func__);
-> +		return -EINVAL;
-> +	}
-> +
-> +	core_clk_div = core_clk_rate / USEC_PER_SEC;
-> +
-> +	ufshcd_writel(hba, core_clk_div, CDNS_UFS_REG_HCLKDIV);
-> +	/* Make sure the register was updated */
-> +	mb();
-
-Why is it critical to ensure write completed here?
-
-> +
-> +	return 0;
-> +}
-> +
-
-> +/**
-> + * cdns_ufs_pltfrm_remove - set driver_data of the device to NULL
-
-This appear to do more than setting driver_data to NULL.
-
-> + * @pdev: pointer to platform device handle
-> + *
-> + * Always returns 0
-> + */
-> +static int cdns_ufs_pltfrm_remove(struct platform_device *pdev)
-> +{
-> +	struct ufs_hba *hba =  platform_get_drvdata(pdev);
-> +
-> +	pm_runtime_get_sync(&(pdev)->dev);
-
-This looks suspect. Why do you need this get_sync() on remove() and
-where is the corresponding put_sync()?
-
-> +	ufshcd_remove(hba);
-> +	return 0;
-> +}
-
-Thanks,
-Sekhar
+>> .
+>>
