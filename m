@@ -2,191 +2,163 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED96AC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 11:37:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E617C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 11:37:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A758920867
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 11:37:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A758920867
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id DDD7620862
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 11:37:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SaDmWZ9f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDD7620862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728775AbeH2Pdd (ORCPT
+        id S1728783AbeH2Pds (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 11:33:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43974 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728423AbeH2Pdd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 11:33:33 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 898F7AE31;
-        Wed, 29 Aug 2018 11:37:02 +0000 (UTC)
-Date:   Wed, 29 Aug 2018 13:37:00 +0200 (CEST)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     Torsten Duwe <duwe@lst.de>
-cc:     Will Deacon <will.deacon@arm.com>,
+        Wed, 29 Aug 2018 11:33:48 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:53123 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728436AbeH2PcE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 11:32:04 -0400
+Received: by mail-wm0-f68.google.com with SMTP id y139-v6so4892351wmc.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 04:35:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Oho6JdHma26yH9i0K5sb+l4Yb9Bpt1LjR+gOl5dkBUo=;
+        b=SaDmWZ9fK2PewT8oJonwMmFfr8WhrgkwKC1k18mnNmJmAsCXOB3epwtFKQCa9bJOAi
+         mEj8+WOJp2nZjwSiGScw6Xf5tBPmT1MpzndcX+Y+Ct0cNtljF9Ux6NW+JhEZSOSdgrxU
+         yvYeNx0zRXThLLrsda7sUxBeiipmmCaRpWw3EfQPRM0nzAAWxcYpVEaZsynW76N+kdWG
+         uuyyKkgeP3GLgqci7gdynMTo3MsxqG1n2vZYlR2lP32Vi0+iyNDuLjgbLH4od9gAkPMz
+         p3j/Y1rMM2RUu+jDYRBgy/F6h8F3cZXPVHFrtsUqaArAhctqLIcRmQaMiHZ5DTmF+235
+         K9Dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Oho6JdHma26yH9i0K5sb+l4Yb9Bpt1LjR+gOl5dkBUo=;
+        b=BzUmbrgfvQGlN+J5MnCVPKjROtpz2siILqA7LRaLefAtaN6TOkNBL7qo1XwfG1QIBb
+         tMIaTujel6Gp0Nk5JiqiYXTo9i+NveXtQuBDQ6gTehdcLRyxW9YFdjyiM/+65A6zjOYp
+         aB5vNiGdVThCQlguK1jMYbtKmW/eM7c/9pmPtDbMgf4Eo/R/RbGjwnPbob6e/+1XzQ2n
+         uCtBwak7RvxxPm7VxkHHe26Ut4QEixJiSZONU+s88UHe8k8F2JqADLcttWZ1spdtPHYU
+         0S7Px7/W73YrLfk9iSmhUoezCBA1/5VVMsDZKwmi/sjISJDx2hQ0gEdu8sgf7fR7earR
+         LMXA==
+X-Gm-Message-State: APzg51BYtsIkA9HiknwOLmyQiEbDuhxGdGku0LawftTgMtEopdbWQdXB
+        ZYfSquBooqV4nkzRSmNgPKBF+A==
+X-Google-Smtp-Source: ANB0Vda/VxaGGcnpqyl9kXA7HPIGNrg+oVCYhSMZPHQ7NBy/4oLuVzESIGyzYz5syIS6IPDHguMu6g==
+X-Received: by 2002:a1c:7fc6:: with SMTP id a189-v6mr4102021wmd.42.1535542534055;
+        Wed, 29 Aug 2018 04:35:34 -0700 (PDT)
+Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:84be:a42a:826d:c530])
+        by smtp.gmail.com with ESMTPSA id s10-v6sm7800454wmd.22.2018.08.29.04.35.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 Aug 2018 04:35:33 -0700 (PDT)
+From:   Andrey Konovalov <andreyknvl@google.com>
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Christoph Lameter <cl@linux.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         Arnd Bergmann <arnd@arndb.de>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        live-patching@vger.kernel.org
-Subject: Re: [PATCH 2/3] arm64: implement live patching
-In-Reply-To: <20180810160306.2954D68C76@newverein.lst.de>
-Message-ID: <alpine.LSU.2.21.1808291313170.30704@pobox.suse.cz>
-References: <20180810160043.9E45568C76@newverein.lst.de> <20180810160306.2954D68C76@newverein.lst.de>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sparse@vger.kernel.org, linux-mm@kvack.org,
+        linux-kbuild@vger.kernel.org
+Cc:     Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Jann Horn <jannh@google.com>,
+        Mark Brand <markbrand@google.com>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Vishwath Mohan <vishwath@google.com>,
+        Andrey Konovalov <andreyknvl@google.com>
+Subject: [PATCH v6 04/18] khwasan, arm64: adjust shadow size for CONFIG_KASAN_HW
+Date:   Wed, 29 Aug 2018 13:35:08 +0200
+Message-Id: <b4ba65afa55f2fdfd2856fb03c5aba99c7a8bdd7.1535462971.git.andreyknvl@google.com>
+X-Mailer: git-send-email 2.19.0.rc0.228.g281dcd1b4d0-goog
+In-Reply-To: <cover.1535462971.git.andreyknvl@google.com>
+References: <cover.1535462971.git.andreyknvl@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 10 Aug 2018, Torsten Duwe wrote:
+KWHASAN uses 1 shadow byte for 16 bytes of kernel memory, so it requires
+1/16th of the kernel virtual address space for the shadow memory.
 
-> Based on ftrace with regs, do the usual thing. Also allocate a
-> task flag for whatever consistency handling is implemented.
-> Watch out for interactions with the graph tracer.
-> This code has been compile-tested, but has not yet seen any
-> heavy livepatching.
-> 
-> Signed-off-by: Torsten Duwe <duwe@suse.de>
+This commit sets KASAN_SHADOW_SCALE_SHIFT to 4 when KHWASAN is enabled.
 
-There is one thing missing. Livepatch is able to automatically resolve 
-relocations pointing to SHN_LIVEPATCH symbols. Arch-specific 
-apply_relocate_add() is called for the purpose. It needs all 
-arch-specific info preserved because of that. Usually it means to keep 
-at least mod_arch_specific struct also after a module is loaded. It 
-depends on its content. See f31e0960f395 ("module: s390: keep 
-mod_arch_specific for livepatch modules") for example.
+Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+---
+ arch/arm64/Makefile             |  2 +-
+ arch/arm64/include/asm/memory.h | 13 +++++++++----
+ 2 files changed, 10 insertions(+), 5 deletions(-)
 
-We discussed the issue in 2016 when you submitted the arm64 support 
-originally. It was more or less ok back then. Jessica only proposed to 
-update count_plts(). However, a lot has changed since then and the code 
-must be inspected again. If everything is ok, there should be at least a 
-note in the changelog.
+diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
+index 106039d25e2f..17047b8ab984 100644
+--- a/arch/arm64/Makefile
++++ b/arch/arm64/Makefile
+@@ -94,7 +94,7 @@ endif
+ # KASAN_SHADOW_OFFSET = VA_START + (1 << (VA_BITS - KASAN_SHADOW_SCALE_SHIFT))
+ #				 - (1 << (64 - KASAN_SHADOW_SCALE_SHIFT))
+ # in 32-bit arithmetic
+-KASAN_SHADOW_SCALE_SHIFT := 3
++KASAN_SHADOW_SCALE_SHIFT := $(if $(CONFIG_KASAN_HW), 4, 3)
+ KASAN_SHADOW_OFFSET := $(shell printf "0x%08x00000000\n" $$(( \
+ 	(0xffffffff & (-1 << ($(CONFIG_ARM64_VA_BITS) - 32))) \
+ 	+ (1 << ($(CONFIG_ARM64_VA_BITS) - 32 - $(KASAN_SHADOW_SCALE_SHIFT))) \
+diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
+index b96442960aea..f5e262ee76c1 100644
+--- a/arch/arm64/include/asm/memory.h
++++ b/arch/arm64/include/asm/memory.h
+@@ -74,12 +74,17 @@
+ #define KERNEL_END        _end
  
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index 28c8c03..31df287 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -117,6 +117,7 @@ config ARM64
->  	select HAVE_GENERIC_DMA_COHERENT
->  	select HAVE_HW_BREAKPOINT if PERF_EVENTS
->  	select HAVE_IRQ_TIME_ACCOUNTING
-> +	select HAVE_LIVEPATCH
->  	select HAVE_MEMBLOCK
->  	select HAVE_MEMBLOCK_NODE_MAP if NUMA
->  	select HAVE_NMI
-> @@ -1343,4 +1344,6 @@ if CRYPTO
->  source "arch/arm64/crypto/Kconfig"
->  endif
->  
-> +source "kernel/livepatch/Kconfig"
-> +
->  source "lib/Kconfig"
-> --- a/arch/arm64/include/asm/thread_info.h
-> +++ b/arch/arm64/include/asm/thread_info.h
-> @@ -76,6 +76,7 @@ void arch_release_task_struct(struct tas
->  #define TIF_FOREIGN_FPSTATE	3	/* CPU's FP state is not current's */
->  #define TIF_UPROBE		4	/* uprobe breakpoint or singlestep */
->  #define TIF_FSCHECK		5	/* Check FS is USER_DS on return */
-> +#define TIF_PATCH_PENDING	6
->  #define TIF_NOHZ		7
->  #define TIF_SYSCALL_TRACE	8
->  #define TIF_SYSCALL_AUDIT	9
-> @@ -94,6 +95,7 @@ void arch_release_task_struct(struct tas
->  #define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
->  #define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
->  #define _TIF_FOREIGN_FPSTATE	(1 << TIF_FOREIGN_FPSTATE)
-> +#define _TIF_PATCH_PENDING	(1 << TIF_PATCH_PENDING)
->  #define _TIF_NOHZ		(1 << TIF_NOHZ)
->  #define _TIF_SYSCALL_TRACE	(1 << TIF_SYSCALL_TRACE)
->  #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
-> @@ -106,7 +108,8 @@ void arch_release_task_struct(struct tas
->  
->  #define _TIF_WORK_MASK		(_TIF_NEED_RESCHED | _TIF_SIGPENDING | \
->  				 _TIF_NOTIFY_RESUME | _TIF_FOREIGN_FPSTATE | \
-> -				 _TIF_UPROBE | _TIF_FSCHECK)
-> +				 _TIF_UPROBE | _TIF_FSCHECK | \
-> +				 _TIF_PATCH_PENDING)
+ /*
+- * KASAN requires 1/8th of the kernel virtual address space for the shadow
+- * region. KASAN can bloat the stack significantly, so double the (minimum)
+- * stack size when KASAN is in use.
++ * KASAN and KHWASAN require 1/8th and 1/16th of the kernel virtual address
++ * space for the shadow region respectively. They can bloat the stack
++ * significantly, so double the (minimum) stack size when they are in use.
+  */
+-#ifdef CONFIG_KASAN
++#ifdef CONFIG_KASAN_GENERIC
+ #define KASAN_SHADOW_SCALE_SHIFT 3
++#endif
++#ifdef CONFIG_KASAN_HW
++#define KASAN_SHADOW_SCALE_SHIFT 4
++#endif
++#ifdef CONFIG_KASAN
+ #define KASAN_SHADOW_SIZE	(UL(1) << (VA_BITS - KASAN_SHADOW_SCALE_SHIFT))
+ #define KASAN_THREAD_SHIFT	1
+ #else
+-- 
+2.19.0.rc0.228.g281dcd1b4d0-goog
 
-We're ok if _TIF_WORK_MASK is processed in the syscall return path and in 
-irq return to user space. It looks like it is the case, but I'd welcome a 
-confirmation.
-
-Anyway, one piece is still missing. _TIF_PATCH_PENDING must be cleared 
-somewhere. I think something like
-
-                        if (thread_flags & _TIF_PATCH_PENDING)
-				klp_update_patch_state(current);
-
-in do_notify_resume() (arch/arm64/kernel/signal.c) before 
-_TIF_SIGPENDING processing should do the trick.
-  
->  #define _TIF_SYSCALL_WORK	(_TIF_SYSCALL_TRACE | _TIF_SYSCALL_AUDIT | \
->  				 _TIF_SYSCALL_TRACEPOINT | _TIF_SECCOMP | \
-> diff --git a/arch/arm64/include/asm/livepatch.h b/arch/arm64/include/asm/livepatch.h
-> new file mode 100644
-> index 0000000..6b9a3d1
-> --- /dev/null
-> +++ b/arch/arm64/include/asm/livepatch.h
-> @@ -0,0 +1,38 @@
-> +/* SPDX-License-Identifier: GPL-2.0
-> + *
-> + * livepatch.h - arm64-specific Kernel Live Patching Core
-> + *
-> + * Copyright (C) 2016 SUSE
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public License
-> + * as published by the Free Software Foundation; either version 2
-> + * of the License, or (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
-> + * You should have received a copy of the GNU General Public License
-> + * along with this program; if not, see <http://www.gnu.org/licenses/>.
-> + */
-
-Someone could argue that GPL boilerplate is superfluous thanks to SPDX 
-identifier. I don't, so thanks for putting it there.
-
-> +#ifndef _ASM_ARM64_LIVEPATCH_H
-> +#define _ASM_ARM64_LIVEPATCH_H
-> +
-> +#include <linux/module.h>
-> +#include <linux/ftrace.h>
-> +
-> +#ifdef CONFIG_LIVEPATCH
-
-The guard is unnecessary, I think. The header file is included from 
-include/linux/livepatch.h only. Right after the guard there.
-
-> +static inline int klp_check_compiler_support(void)
-> +{
-> +	return 0;
-> +}
-> +
-> +static inline void klp_arch_set_pc(struct pt_regs *regs, unsigned long ip)
-> +{
-> +	regs->pc = ip;
-> +}
-> +#endif /* CONFIG_LIVEPATCH */
-> +
-> +#endif /* _ASM_ARM64_LIVEPATCH_H */
-
-Regards,
-Miroslav
