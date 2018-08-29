@@ -2,175 +2,119 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16595C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:04:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A66FC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:07:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B38F120846
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:04:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B38F120846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E476C2089E
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:07:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E476C2089E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727952AbeH2OAu (ORCPT
+        id S1728160AbeH2OD6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 10:00:50 -0400
-Received: from foss.arm.com ([217.140.101.70]:51446 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727204AbeH2OAu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 10:00:50 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4B53D80D;
-        Wed, 29 Aug 2018 03:04:42 -0700 (PDT)
-Received: from e110439-lin (e110439-lin.Emea.Arm.com [10.4.12.126])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 56D7E3F5BD;
-        Wed, 29 Aug 2018 03:04:38 -0700 (PDT)
-Date:   Wed, 29 Aug 2018 11:04:35 +0100
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     peterz@infradead.org, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        gregkh@linuxfoundation.org, mingo@redhat.com,
-        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
-        chris.redpath@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
-        smuckle@google.com, adharmap@codeaurora.org,
-        skannan@codeaurora.org, pkondeti@codeaurora.org,
-        juri.lelli@redhat.com, edubezval@gmail.com,
-        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
-        javi.merino@kernel.org
-Subject: Re: [PATCH v6 03/14] PM: Introduce an Energy Model management
- framework
-Message-ID: <20180829100435.GP2960@e110439-lin>
-References: <20180820094420.26590-1-quentin.perret@arm.com>
- <20180820094420.26590-4-quentin.perret@arm.com>
+        Wed, 29 Aug 2018 10:03:58 -0400
+Received: from mail-sz2.amlogic.com ([211.162.65.114]:12005 "EHLO
+        mail-sz2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726858AbeH2OD6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 10:03:58 -0400
+Received: from [10.28.18.79] (10.28.18.79) by mail-sz2.amlogic.com
+ (10.28.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Wed, 29 Aug
+ 2018 18:08:06 +0800
+Subject: Re: [RFC PATCH v2 2/2] mtd: rawnand: meson: add support for Amlogic
+ NAND flash controller
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+CC:     Yixun Lan <yixun.lan@amlogic.com>, <linux-mtd@lists.infradead.org>,
+        "Rob Herring" <robh@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>,
+        Richard Weinberger <richard@nod.at>,
+        <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        <linux-amlogic@lists.infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Jerome Brunet <jbrunet@baylibre.com>
+References: <20180719094612.5833-1-yixun.lan@amlogic.com>
+ <20180719094612.5833-3-yixun.lan@amlogic.com>
+ <20180801235045.5b4d8211@bbrezillon>
+ <42877a0d-9830-0626-3f64-e49a326eaa3c@amlogic.com>
+ <20180817155608.5929b37a@bbrezillon>
+ <96e538a5-1232-11f2-8b9e-5ddb09dcc2de@amlogic.com>
+ <20180824144810.31c929a5@bbrezillon>
+ <fdea2d54-7a68-64ec-8bb4-4a94677a3293@amlogic.com>
+ <20180828152645.457dab5c@bbrezillon>
+From:   Liang Yang <liang.yang@amlogic.com>
+Message-ID: <9abf0461-159b-db45-9ded-3d6cb2cc64db@amlogic.com>
+Date:   Wed, 29 Aug 2018 18:08:05 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180820094420.26590-4-quentin.perret@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180828152645.457dab5c@bbrezillon>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.28.18.79]
+X-ClientProxiedBy: mail-sz2.amlogic.com (10.28.11.6) To mail-sz2.amlogic.com
+ (10.28.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Quentin,
-few possible optimizations related to the (simplified) following
-code:
 
-On 20-Aug 10:44, Quentin Perret wrote:
-
-[...]
-
-> +struct em_perf_domain {
-> +	struct em_cap_state *table; /* Capacity states, in ascending order. */
-> +	int nr_cap_states;
-> +	unsigned long cpus[0]; /* CPUs of the frequency domain. */
-> +};
-
-[...]
-
-> +static DEFINE_PER_CPU(struct em_perf_domain *, em_data);
-
-[...]
-
-> +struct em_perf_domain *em_cpu_get(int cpu)
-> +{
-> +	return READ_ONCE(per_cpu(em_data, cpu));
-> +}
-
-[...]
-
-> +int em_register_perf_domain(cpumask_t *span, unsigned int nr_states,
-> +						struct em_data_callback *cb)
-> +{
-
-[...]
-
-> +	mutex_lock(&em_pd_mutex);
-> +
-[...]
-
-> +     for_each_cpu(cpu, span) {
-> +             if (READ_ONCE(per_cpu(em_data, cpu))) {
-> +                     ret = -EEXIST;
-> +                     goto unlock;
-> +             }
-
-[...]
-
-> +	for_each_cpu(cpu, span) {
-> +		/*
-> +		 * The per-cpu array can be concurrently accessed from
-> +		 * em_cpu_get().
-> +		 */
-> +		smp_store_release(per_cpu_ptr(&em_data, cpu), pd);
-> +	}
-
-[...]
-
-> +unlock:
-> +	mutex_unlock(&em_pd_mutex);
-> +}
-
-
-In the loop above we use smp_store_release() to propagate the pointer
-setting in a PER_CPU(em_data), which ultimate goal is to protect
-em_register_perf_domain() from multiple clients registering the same
-power domain.
-
-I think there are two possible optimizations there:
-
-1. use of a single memory barrier
-
-   Since we are already em_pd_mutex protected, i.e. there cannot be a
-   concurrent writers, we can use one single memory barrier after the
-   loop, i.e.
-
-        for_each_cpu(cpu, span)
-                WRITE_ONCE()
-        smp_wmb()
-
-   which should be just enough to ensure that all other CPUs will see
-   the pointer set once we release the mutex
-
-2. avoid using PER_CPU variables
-
-   Apart from the initialization code, i.e. boot time, the em_data is
-   expected to be read only, isn't it?
-
-   If that's the case, I think that using PER_CPU variables is not
-   strictly required while it unnecessarily increases the cache pressure.
-
-   In the worst case we can end up with one cache line for each CPU to
-   host just an 8B pointer, instead of using that single cache line to host
-   up to 8 pointers if we use just an array, i.e.
-
-        struct em_perf_domain *em_data[NR_CPUS]
-                ____cacheline_aligned_in_smp __read_mostly;
-
-   Consider also that: up to 8 pointers in a single cache line means
-   also that single cache line can be enough to access the EM from all
-   the CPUs of almost every modern mobile phone SoC.
-
-   Note entirely sure if PER_CPU uses less overall memory in case you
-   have much less CPUs then the compile time defined NR_CPUS.
-   But still, if the above makes sense, you still have a 8x gain
-   factor between number Write allocated .data..percp sections and
-   the value of NR_CPUS. Meaning that in the worst case we allocate
-   the same amount of memory using NR_CPUS=64 (the default on arm64)
-   while running on an 8 CPUs system... but still we should get less
-   cluster caches pressure at run-time with the array approach, 1
-   cache line vs 4.
-
-Best,
-Patrick
-
--- 
-#include <best/regards.h>
-
-Patrick Bellasi
+On 8/28/2018 9:26 PM, Boris Brezillon wrote:
+> On Tue, 28 Aug 2018 21:21:48 +0800
+> Liang Yang <liang.yang@amlogic.com> wrote:
+> 
+>> Hi Boris,
+>>
+>> On 8/24/2018 8:48 PM, Boris Brezillon wrote:
+>>> On Wed, 22 Aug 2018 22:08:42 +0800
+>>> Liang Yang <liang.yang@amlogic.com> wrote:
+>>>    
+>>>>> You have to wait tWB, that's for sure.
+>>>>>       
+>>>> we have a maximum 32 commands fifo. when command is written into
+>>>> NFC_REG_CMD, it doesn't mean that command is executing right now, maybe
+>>>> it is buffering on the queue.Assume one ERASE operation, when 2nd
+>>>> command(0xd0) is written into NFC_REG_CMD and then come into
+>>>> NAND_OP_WAITRDY_INSTR, if I read the RB status by register, it may be
+>>>> wrong because 0xd0 may not being executed. it is unusual unless
+>>>> buffering two many command.
+>>>
+>>> You should flush the queue and wait for it to empty at the end of
+>>> ->exec_op().
+>>>    
+>>>> so it seems that i still need to use nand_soft_waitrdy or wait cmd is
+>>>> executed somewhere.
+>>>
+>>> Don't you have a WAIT_FOR_RB instruction? What is NFC_CMD_RB for? Also,
+>>> NFC_CMD_IDLE seems to allow you to add an arbitrary delay, and that's
+>>> probably what you should use for tWB.
+>>>
+>>> em, I can wait for RB by reading the status from register now. but when
+>> calling nand_soft_waitrdy, i really met a problem. One *jiffies* is
+>> about 4ms. When programming, it pass 1ms to
+>> instr->ctx.waitrdy.timeout_ms and nand_soft_waitrdy will be only one
+>> *jiffies* to reach timeout. And then calling nand_soft_waitrdy maybe at
+>> the tail of 4ms interval, it may only wait 100us and next jiffies
+>> arrive. Is it correct?
+> 
+> Hm, no. If you initialize the time you compare to (using time_before()
+> or time_after()) correctly it should not happen. Anyway, I keep thinking
+> this is not how it should be done. Did you try NFC_CMD_RB? Did you ask
+> HW designers what it was created for?
+> 
+I am using NFC_CMD_RB and checking with irq. it is ok now.
+> .
+> 
