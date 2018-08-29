@@ -2,118 +2,124 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E6EBC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:22:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4006EC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:23:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84D2420647
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:21:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SYsQSbv4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84D2420647
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwfinger.net
+	by mail.kernel.org (Postfix) with ESMTP id E66F220658
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:23:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E66F220658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728828AbeH3BUl (ORCPT
+        id S1728258AbeH3BWG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 21:20:41 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:39704 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727507AbeH3BUl (ORCPT
+        Wed, 29 Aug 2018 21:22:06 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37034 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727507AbeH3BWG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 21:20:41 -0400
-Received: by mail-oi0-f65.google.com with SMTP id c190-v6so11766499oig.6
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 14:21:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=wX0nuwUZtm0jJXab0RxJZIp0hiccVva3PnVH1mmKBOY=;
-        b=SYsQSbv46nemQKz3myLf0I1CtlElbpRZKMggRhgeGLf7EUSkzXlX+O6XayfiEjLA8R
-         Ylxvpbvse7BgmmjJSITi/u7PAxcIHh5IBl54g1RLb1Ze5hacOjVFd60Vg0BdKQDaqbGm
-         +B7KcrucOlyctDXqQpGpb1kBQt3A/4jEwpAeQkQhox3/jXg35iH9ZuSacou4Gl5FIB4r
-         j3976GU6MCoCltiizT1DygxipULJ+o3bvASLTpvJqwcLfLuaEp9Xu8pIdODNBasnP/34
-         xSv73Ep7LrJ5OocTTf4SmJMCIsJ7/87R8XBk1uvyM+hyRLsUjj0Qm02y/Asq6aik6Lvi
-         xidQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=wX0nuwUZtm0jJXab0RxJZIp0hiccVva3PnVH1mmKBOY=;
-        b=ctnd1N90D5fpm5lKmmPMO1DJ5DidCqk1ZTXaB82arjcnQGA9lF7R+B53bKELFc8OTE
-         J8Ow42OlAykpR9q1Zrm4R1UHqZ3ZSN92b/7nw8M+D97ouXO5q++Pqjf7NwrXQh/OqIS1
-         RmNX38tijm+4ABnIw2PPTPMymzHOEHrKQZ3sW13nPgMFia95xG+DpeHwdlpG9NAmdoi4
-         4HpsjaSHJxkN8DEOH8YEvzhMBoYWrYM3oVhFDoMtqWRZAauupnWlACejtirrvw462rlF
-         L97A3FRP0TmjveDA8XC4Y5mMge1HVHAwXVUwWfnd13Hc8/dDoDgJ7CPOpFz3NjdhC5Mg
-         VaOA==
-X-Gm-Message-State: APzg51CZMAb6J5BfYe4R1KJ27eo9An8+bcsVTi90vgA36DKEKmUt6INh
-        WDIxjh//x6lapI68Xy/rZDg=
-X-Google-Smtp-Source: ANB0VdbCp+Hu3Q0hvVtflDnVF3QjcVO5MBq7OGrxxpqvZyjLtpbmfBH8fw8RXHI9BOdxCXCSQ9m6eg==
-X-Received: by 2002:aca:310b:: with SMTP id x11-v6mr4567022oix.74.1535577716615;
-        Wed, 29 Aug 2018 14:21:56 -0700 (PDT)
-Received: from [192.168.1.107] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
-        by smtp.gmail.com with ESMTPSA id c9-v6sm4243959oia.1.2018.08.29.14.21.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 Aug 2018 14:21:55 -0700 (PDT)
-Subject: Re: [PATCH 01/21] staging:rtl8192u: Rename AdvCoding - Style
-To:     Joe Perches <joe@perches.com>,
-        John Whitmore <johnfwhitmore@gmail.com>,
-        linux-kernel@vger.kernel.org
-Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org
-References: <20180829203547.15650-1-johnfwhitmore@gmail.com>
- <20180829203547.15650-2-johnfwhitmore@gmail.com>
- <b621a12258c3f0d0a9fcb61ac454af4822814e67.camel@perches.com>
-From:   Larry Finger <Larry.Finger@lwfinger.net>
-Message-ID: <e302edd8-4b00-8c28-8375-2a781877f019@lwfinger.net>
-Date:   Wed, 29 Aug 2018 16:21:54 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <b621a12258c3f0d0a9fcb61ac454af4822814e67.camel@perches.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 29 Aug 2018 21:22:06 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7TLMNa1085691
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 17:23:20 -0400
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m6158w645-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 17:23:20 -0400
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 29 Aug 2018 17:23:19 -0400
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 29 Aug 2018 17:23:15 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7TLNELa27459710
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 29 Aug 2018 21:23:14 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7085CB2064;
+        Wed, 29 Aug 2018 17:22:10 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4FBEFB206C;
+        Wed, 29 Aug 2018 17:22:10 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 29 Aug 2018 17:22:10 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id AAF9E16C91C3; Wed, 29 Aug 2018 14:23:14 -0700 (PDT)
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
+        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: [PATCH tip/core/rcu 2/3] rcutorture: Test early boot call_srcu()
+Date:   Wed, 29 Aug 2018 14:23:12 -0700
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180829212036.GA22033@linux.vnet.ibm.com>
+References: <20180829212036.GA22033@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18082921-0052-0000-0000-000003281A89
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009636; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01080719; UDB=6.00557482; IPR=6.00860704;
+ MB=3.00023001; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-29 21:23:18
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082921-0053-0000-0000-00005DE5D86F
+Message-Id: <20180829212313.22903-2-paulmck@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-29_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=989 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808290208
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/29/2018 04:14 PM, Joe Perches wrote:
-> On Wed, 2018-08-29 at 21:35 +0100, John Whitmore wrote:
->> Rename the bit field element AdvCoding, as it causes a checkpatch issue
->> with CamelCase naming. As the element is not actually used in code it
->> has been renamed to 'not_used_adv_coding'.
->>
->> The single line of code which initialises the bit has been removed,
->> as the  field is unused.
->>
->> This is a purely coding style change which should have no impact
->> on runtime code execution.
-> 
-> Hi John.
-> 
-> Other than the somewhat useful code style cleanups, is there
-> a point at which you will feel comfortable doing actual code
-> changes to this driver?
-> 
-> Perhaps support for the chipset could be converted to use
-> mac80211 and moved into the directory with the other realtek
-> drivers in drivers/net/wireless/realtek/rtl8xxxu/...
-> 
-> Larry?  What do you think?
+Now that SRCU permits call_srcu() to be invoked at early boot, this
+commit ensures that the rcutorture scripting tests early boot call_srcu().
 
-First of all, if a variable is not used, then it should be removed, not merely 
-renamed to satisfy checkpatch.
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+---
+ tools/testing/selftests/rcutorture/configs/rcu/SRCU-P.boot | 1 +
+ tools/testing/selftests/rcutorture/configs/rcu/SRCU-u.boot | 1 +
+ tools/testing/selftests/rcutorture/configs/rcu/TREE05.boot | 1 +
+ 3 files changed, 3 insertions(+)
 
-All the Realtek USB devices should be added to rtl8xxxu, not merely moved into 
-that directory. Jes Sorensen created a well-designed driver the is structured to 
-permit addition of different initialization routines, etc. That said, the 
-conversion will not be easy. In addition, it will require having your hands on a 
-real device - a requirement that I cannot meet for the RTL8192U.
-
-Larry
+diff --git a/tools/testing/selftests/rcutorture/configs/rcu/SRCU-P.boot b/tools/testing/selftests/rcutorture/configs/rcu/SRCU-P.boot
+index 84a7d51b7481..ce48c7b82673 100644
+--- a/tools/testing/selftests/rcutorture/configs/rcu/SRCU-P.boot
++++ b/tools/testing/selftests/rcutorture/configs/rcu/SRCU-P.boot
+@@ -1 +1,2 @@
+ rcutorture.torture_type=srcud
++rcupdate.rcu_self_test=1
+diff --git a/tools/testing/selftests/rcutorture/configs/rcu/SRCU-u.boot b/tools/testing/selftests/rcutorture/configs/rcu/SRCU-u.boot
+index 84a7d51b7481..ce48c7b82673 100644
+--- a/tools/testing/selftests/rcutorture/configs/rcu/SRCU-u.boot
++++ b/tools/testing/selftests/rcutorture/configs/rcu/SRCU-u.boot
+@@ -1 +1,2 @@
+ rcutorture.torture_type=srcud
++rcupdate.rcu_self_test=1
+diff --git a/tools/testing/selftests/rcutorture/configs/rcu/TREE05.boot b/tools/testing/selftests/rcutorture/configs/rcu/TREE05.boot
+index c7fd050dfcd9..dfebc82932ca 100644
+--- a/tools/testing/selftests/rcutorture/configs/rcu/TREE05.boot
++++ b/tools/testing/selftests/rcutorture/configs/rcu/TREE05.boot
+@@ -3,3 +3,4 @@ rcupdate.rcu_self_test_sched=1
+ rcutree.gp_preinit_delay=3
+ rcutree.gp_init_delay=3
+ rcutree.gp_cleanup_delay=3
++rcupdate.rcu_self_test=1
+-- 
+2.17.1
 
