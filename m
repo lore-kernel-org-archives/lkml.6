@@ -2,67 +2,142 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66F77C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:13:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDA0CC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:13:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1148920844
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:13:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1148920844
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=neuling.org
+	by mail.kernel.org (Postfix) with ESMTP id 7391220844
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:13:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="eTynB6Hb";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IOh6agEb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7391220844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727544AbeH2LIq convert rfc822-to-8bit (ORCPT
+        id S1727660AbeH2LI6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 07:08:46 -0400
-Received: from ozlabs.org ([203.11.71.1]:49949 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727156AbeH2LIq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 07:08:46 -0400
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        by ozlabs.org (Postfix) with ESMTP id 420cKT0BSfz9s3Z;
-        Wed, 29 Aug 2018 17:13:17 +1000 (AEST)
-Received: by localhost.localdomain (Postfix, from userid 1000)
-        id DACDAEE791E; Wed, 29 Aug 2018 17:13:16 +1000 (AEST)
-Message-ID: <3c36e64e64742e79b72faf1f52a3c1fb2b3d1983.camel@neuling.org>
-Subject: Re: [PATCH v7 1/2] powerpc: Detect the presence of big-cores via
- "ibm,thread-groups"
-From:   Michael Neuling <mikey@neuling.org>
-To:     "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
-        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
-        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
-        Oliver O'Halloran <oohall@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Murilo Opsfelder Araujo <muriloo@linux.ibm.com>,
-        Anton Blanchard <anton@samba.org>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Date:   Wed, 29 Aug 2018 17:13:16 +1000
-In-Reply-To: <61048333bca549ffa275bf32eeb1a2480340a7e0.camel@neuling.org>
-References: <1534743704-4760-1-git-send-email-ego@linux.vnet.ibm.com>
-         <1534743704-4760-2-git-send-email-ego@linux.vnet.ibm.com>
-         <61048333bca549ffa275bf32eeb1a2480340a7e0.camel@neuling.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
+        Wed, 29 Aug 2018 07:08:58 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41450 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727156AbeH2LI5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 07:08:57 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id D63B260540; Wed, 29 Aug 2018 07:13:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535526809;
+        bh=dzPkriEpsu0jPqhoR24QNFhQBeJecYxGuFn1tIk0wIU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=eTynB6HbMF3iESOOm7pUHCVJzTEg1kLEL2qdR3c0vQ0+x1wCEOn0Vj8oNW6xiw0ZF
+         gl/H49At8Fc2YDTA1i2g0cIYCLaXm+Bq8tfLsZbl+jCipNITKELRkJmIGWELJA23IU
+         n9vwHado7XCXRNCnjJNv7eVNsIgtDu8z9wnJHPyE=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id D91E160227;
+        Wed, 29 Aug 2018 07:13:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1535526808;
+        bh=dzPkriEpsu0jPqhoR24QNFhQBeJecYxGuFn1tIk0wIU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=IOh6agEb1m/45+6CdGBQcgUBuC6KgwBgBUgVWswWCDGJGrgDW1RJ0XuxhJrBNc/Tj
+         HhTHJqhfROToOdn90wFXN5enPwP9QUl36Xsms+DZE5DALr9Y3VXRXPkqjwBZXHrpFH
+         UHlVaemX1ca215mubXCDxD6sLFq56SnHjWf8dvGc=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 29 Aug 2018 12:43:28 +0530
+From:   kgunda@codeaurora.org
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     jingoohan1@gmail.com, lee.jones@linaro.org,
+        b.zolnierkie@samsung.com, dri-devel@lists.freedesktop.org,
+        daniel.thompson@linaro.org, jacek.anaszewski@gmail.com,
+        pavel@ucw.cz, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH V5 8/8] backlight: qcom-wled: Add auto string detection
+ logic
+In-Reply-To: <20180827145420.GL3048@tuxbook-pro>
+References: <1535106467-17843-1-git-send-email-kgunda@codeaurora.org>
+ <1535106467-17843-9-git-send-email-kgunda@codeaurora.org>
+ <20180827145420.GL3048@tuxbook-pro>
+Message-ID: <f6e6baa748d73b68c1cbcc5d955df471@codeaurora.org>
+X-Sender: kgunda@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-08-29 at 17:04 +1000, Michael Neuling wrote:
-> > +What: 		/sys/devices/system/cpu/cpu[0-9]+/small_core_siblings
+On 2018-08-27 20:24, Bjorn Andersson wrote:
+> On Fri 24 Aug 03:27 PDT 2018, Kiran Gunda wrote:
+>> diff --git a/drivers/video/backlight/qcom-wled.c 
+>> b/drivers/video/backlight/qcom-wled.c
+> [..]
+>>  struct wled {
+>> @@ -135,16 +146,22 @@ struct wled {
+>>  	struct regmap *regmap;
+>>  	struct mutex lock;	/* Lock to avoid race from thread irq handler */
+>>  	ktime_t last_short_event;
+>> +	ktime_t start_ovp_fault_time;
+>>  	u16 ctrl_addr;
+>>  	u16 sink_addr;
+>>  	u16 max_string_count;
+>> +	u16 auto_detection_ovp_count;
+>>  	u32 brightness;
+>>  	u32 max_brightness;
+>>  	u32 short_count;
+>> +	u32 auto_detect_count;
+>>  	bool disabled_by_short;
+>>  	bool has_short_detect;
+>> +	int ovp_irq;
+>> +	bool ovp_irq_disabled;
 > 
-> Shouldn't we put this in the topology/ subdir with with the other items like
-> it?
-
-Also, please follow the same format as *_sibilings files topology/ where they
-are just a mask (this patch currently has it as a comma separated list).
-
-Mikey
+> ovp_irq_disabled is now only assigned, never read. So you should be 
+> able
+> to drop it.
+> 
+Ok. will address in next series.
+> [..]
+>> @@ -200,7 +226,18 @@ static int wled_module_enable(struct wled *wled, 
+>> int val)
+>>  				WLED_CTRL_REG_MOD_EN,
+>>  				WLED_CTRL_REG_MOD_EN_MASK,
+>>  				val << WLED_CTRL_REG_MOD_EN_SHIFT);
+>> -	return rc;
+>> +	if (rc < 0)
+>> +		return rc;
+>> +
+>> +	if (val) {
+>> +		schedule_delayed_work(&wled->ovp_work, HZ / 100);
+> 
+> wled_ovp_work() is a nop when ovp_irq == 0, so wrap the entire if/else
+> in a check for ovp_irq > 0 (rather than include it in the else) and 
+> drop
+> it from the worker.
+> 
+Will address in next series.
+>> +	} else {
+>> +		if (!cancel_delayed_work_sync(&wled->ovp_work) &&
+>> +		    wled->ovp_irq > 0)
+>> +			disable_irq(wled->ovp_irq);
+>> +	}
+>> +
+>> +	return 0;
+> 
+> Also, if a user calls rmmod within 10ms of enabling module we will
+> schedule work of code that's no longer available in the kernel. So you
+> need to also cancel_delayed_work_sync() in the remove function of the
+> driver.
+> 
+> 
+Will address in next series.
+> Apart from this I think this patch looks good now!
+> 
+Thank you
+> Regards,
+> Bjorn
