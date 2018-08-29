@@ -3,119 +3,104 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 017D4C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 03:34:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A2DAC43334
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 03:34:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B034620897
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 03:34:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B034620897
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
+	by mail.kernel.org (Postfix) with ESMTP id D08662082B
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 03:34:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D08662082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727427AbeH2H2o (ORCPT
+        id S1727521AbeH2H2x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 03:28:44 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:51922 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725199AbeH2H2n (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 03:28:43 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1furEz-0007Ej-6J; Wed, 29 Aug 2018 11:33:57 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1furEv-0008Be-IT; Wed, 29 Aug 2018 11:33:53 +0800
-Date:   Wed, 29 Aug 2018 11:33:53 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Subject: Crypto Fixes for 4.19
-Message-ID: <20180829033353.agnzxra3jk2r2mzg@gondor.apana.org.au>
-References: <20161213132414.GA7898@gondor.apana.org.au>
- <20170223125141.GA17400@gondor.apana.org.au>
- <20170714141855.GA29426@gondor.apana.org.au>
- <20170922084401.GA15541@gondor.apana.org.au>
- <20171128230929.GA17783@gondor.apana.org.au>
- <20171222064931.GA27068@gondor.apana.org.au>
- <20180105073808.GA14405@gondor.apana.org.au>
- <20180212031702.GA26153@gondor.apana.org.au>
- <20180428080517.haxgpvqrwgotakyo@gondor.apana.org.au>
- <20180622145403.6ltjip7che227fuo@gondor.apana.org.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180622145403.6ltjip7che227fuo@gondor.apana.org.au>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Wed, 29 Aug 2018 03:28:53 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:54738 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725199AbeH2H2x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 03:28:53 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3AD181A0154;
+        Wed, 29 Aug 2018 05:34:08 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3BEC11A002D;
+        Wed, 29 Aug 2018 05:34:00 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 1A2C0402AE;
+        Wed, 29 Aug 2018 11:33:50 +0800 (SGT)
+From:   Yinbo Zhu <yinbo.zhu@nxp.com>
+To:     yinbo.zhu@nxp.com, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Ran Wang <ran.wang_1@nxp.com>, linux-kernel@vger.kernel.org
+Cc:     xiaobo.xie@nxp.com, Shawn Guo <shawnguo@kernel.org>,
+        Minghuan Lian <Minghuan.Lian@nxp.com>,
+        Yuantian Tang <andy.tang@nxp.com>,
+        Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
+        Changming Huang <jerry.huang@nxp.com>,
+        Sumit Garg <sumit.garg@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Li Yang <leoyang.li@nxp.com>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Rajesh Bhagat <rajesh.bhagat@freescale.com>
+Subject: [PATCH v2] arm64: dts: ls1043a: Add configure-gfladj property to USB3 node
+Date:   Wed, 29 Aug 2018 11:30:55 +0800
+Message-Id: <20180829033055.22245-1-yinbo.zhu@nxp.com>
+X-Mailer: git-send-email 2.14.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus: 
+From: Rajesh Bhagat <rajesh.bhagat@freescale.com>
 
-This push fixes the following issues:
+Add "configure-gfladj" boolean property to USB3 node. This property
+is used to determine whether frame length adjustment is required or
+not
 
-- Check for the right CPU feature bit in sm4-ce on arm64.
-- Fix scatterwalk WARN_ON in aes-gcm-ce on arm64.
-- Fix unaligned fault in aesni on x86.
-- Fix potential NULL pointer dereference on exit in chtls.
-- Fix DMA mapping direction for RSA in caam.
-- Fix error path return value for xts setkey in caam.
-- Fix address endianness when DMA unmapping in caam.
-- Fix sleep-in-atomic in vmx.
-- Fix command corruption when queue is full in cavium/nitrox.
+Signed-off-by: Rajesh Bhagat <rajesh.bhagat@nxp.com>
+Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
+Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
+---
+Change in v2:
+		Modified some word misspellings in commit information
 
+ arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
 
-Please pull from
-
-git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git linus
-
-
-Ard Biesheuvel (2):
-      crypto: arm64/sm4-ce - check for the right CPU feature bit
-      crypto: arm64/aes-gcm-ce - fix scatterwalk API violation
-
-Dave Watson (1):
-      crypto: aesni - Use unaligned loads from gcm_context_data
-
-Ganesh Goudar (1):
-      crypto: chtls - fix null dereference chtls_free_uld()
-
-Horia Geantă (3):
-      crypto: caam/jr - fix descriptor DMA unmapping
-      crypto: caam/qi - fix error path in xts setkey
-      crypto: caam - fix DMA mapping direction for RSA forms 2 & 3
-
-Ondrej Mosnacek (1):
-      crypto: vmx - Fix sleep-in-atomic bugs
-
-Srikanth Jampala (1):
-      crypto: cavium/nitrox - fix for command corruption in queue full case with backlog submissions.
-
- arch/arm64/crypto/ghash-ce-glue.c            |   29 ++++++++---
- arch/arm64/crypto/sm4-ce-glue.c              |    2 +-
- arch/x86/crypto/aesni-intel_asm.S            |   66 +++++++++++++-------------
- drivers/crypto/caam/caamalg_qi.c             |    6 +--
- drivers/crypto/caam/caampkc.c                |   20 ++++----
- drivers/crypto/caam/jr.c                     |    3 +-
- drivers/crypto/cavium/nitrox/nitrox_dev.h    |    3 +-
- drivers/crypto/cavium/nitrox/nitrox_lib.c    |    1 +
- drivers/crypto/cavium/nitrox/nitrox_reqmgr.c |   57 ++++++++++++----------
- drivers/crypto/chelsio/chtls/chtls.h         |    5 ++
- drivers/crypto/chelsio/chtls/chtls_main.c    |    7 ++-
- drivers/crypto/vmx/aes_cbc.c                 |   30 ++++++------
- drivers/crypto/vmx/aes_xts.c                 |   21 +++++---
- 13 files changed, 144 insertions(+), 106 deletions(-)
-
-Thanks,
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
+index 7881e3d..ed3fa79 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
+@@ -609,6 +609,7 @@
+ 			dr_mode = "host";
+ 			snps,quirk-frame-length-adjustment = <0x20>;
+ 			snps,dis_rxdet_inp3_quirk;
++			configure-gfladj;
+ 		};
+ 
+ 		usb1: usb3@3000000 {
+@@ -618,6 +619,7 @@
+ 			dr_mode = "host";
+ 			snps,quirk-frame-length-adjustment = <0x20>;
+ 			snps,dis_rxdet_inp3_quirk;
++			configure-gfladj;
+ 		};
+ 
+ 		usb2: usb3@3100000 {
+@@ -627,6 +629,7 @@
+ 			dr_mode = "host";
+ 			snps,quirk-frame-length-adjustment = <0x20>;
+ 			snps,dis_rxdet_inp3_quirk;
++			configure-gfladj;
+ 		};
+ 
+ 		sata: sata@3200000 {
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+1.7.1
+
