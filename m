@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E14E4C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:55:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3E0EC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:56:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B1A820647
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:55:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B1A820647
+	by mail.kernel.org (Postfix) with ESMTP id 6758520647
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:56:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6758520647
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728176AbeH3Cy4 (ORCPT
+        id S1728151AbeH3Cy4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 29 Aug 2018 22:54:56 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40228 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727602AbeH3CxX (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51796 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727451AbeH3CxX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 29 Aug 2018 22:53:23 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7TMs1E2090607
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:54:15 -0400
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m61x8dk9e-1
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7TMs12C027883
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:54:14 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m627rcvb2-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:54:15 -0400
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:54:14 -0400
 Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 29 Aug 2018 18:54:14 -0400
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Wed, 29 Aug 2018 18:54:13 -0400
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 29 Aug 2018 18:54:08 -0400
+        Wed, 29 Aug 2018 18:54:09 -0400
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7TMs7CI28115110
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7TMs86138076572
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 29 Aug 2018 22:54:07 GMT
+        Wed, 29 Aug 2018 22:54:08 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 72F35B205F;
-        Wed, 29 Aug 2018 18:53:03 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id AE4E8B206E;
+        Wed, 29 Aug 2018 18:53:04 -0400 (EDT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 53D86B2065;
-        Wed, 29 Aug 2018 18:53:03 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id 9002CB2066;
+        Wed, 29 Aug 2018 18:53:04 -0400 (EDT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 29 Aug 2018 18:53:03 -0400 (EDT)
+        Wed, 29 Aug 2018 18:53:04 -0400 (EDT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 72E2716C91CC; Wed, 29 Aug 2018 15:54:07 -0700 (PDT)
+        id A5ABE16C91D7; Wed, 29 Aug 2018 15:54:07 -0700 (PDT)
 From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -61,139 +61,50 @@ Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tip/core/rcu 08/24] rcuperf: Remove the "rcu_bh" and "sched" torture types
-Date:   Wed, 29 Aug 2018 15:53:49 -0700
+Subject: [PATCH tip/core/rcu 16/24] rcu: Clean up flavor-related definitions and comments in srcutree.h
+Date:   Wed, 29 Aug 2018 15:53:57 -0700
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180829225340.GA7019@linux.vnet.ibm.com>
 References: <20180829225340.GA7019@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18082922-0052-0000-0000-0000032821BB
+x-cbid: 18082922-0060-0000-0000-000002A66513
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009636; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01080749; UDB=6.00557500; IPR=6.00860734;
- MB=3.00023002; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-29 22:54:12
+ PH=3.00000004; SC=3.00000266; SDB=6.01080749; UDB=6.00557500; IPR=6.00860735;
+ MB=3.00023002; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-29 22:54:13
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082922-0053-0000-0000-00005DE600FE
-Message-Id: <20180829225405.7275-8-paulmck@linux.vnet.ibm.com>
+x-cbparentid: 18082922-0061-0000-0000-00004655BC83
+Message-Id: <20180829225405.7275-16-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-29_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=940 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=814 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1807170000 definitions=main-1808290223
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that the RCU-bh and RCU-sched update-side functions are simple
-wrappers around their RCU counterparts, there isn't a whole lot of point
-in testing them.  This commit therefore removes the "rcu_bh" and "sched"
-torture types from rcuperf.
-
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 ---
- kernel/rcu/rcuperf.c | 65 ++------------------------------------------
- 1 file changed, 2 insertions(+), 63 deletions(-)
+ kernel/rcu/srcutree.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/rcu/rcuperf.c b/kernel/rcu/rcuperf.c
-index 34244523550e..8de53f3dc5b0 100644
---- a/kernel/rcu/rcuperf.c
-+++ b/kernel/rcu/rcuperf.c
-@@ -189,36 +189,6 @@ static struct rcu_perf_ops rcu_ops = {
- 	.name		= "rcu"
- };
- 
--/*
-- * Definitions for rcu_bh perf testing.
-- */
--
--static int rcu_bh_perf_read_lock(void) __acquires(RCU_BH)
--{
--	rcu_read_lock_bh();
--	return 0;
--}
--
--static void rcu_bh_perf_read_unlock(int idx) __releases(RCU_BH)
--{
--	rcu_read_unlock_bh();
--}
--
--static struct rcu_perf_ops rcu_bh_ops = {
--	.ptype		= RCU_BH_FLAVOR,
--	.init		= rcu_sync_perf_init,
--	.readlock	= rcu_bh_perf_read_lock,
--	.readunlock	= rcu_bh_perf_read_unlock,
--	.get_gp_seq	= rcu_bh_get_gp_seq,
--	.gp_diff	= rcu_seq_diff,
--	.exp_completed	= rcu_exp_batches_completed_sched,
--	.async		= call_rcu_bh,
--	.gp_barrier	= rcu_barrier_bh,
--	.sync		= synchronize_rcu_bh,
--	.exp_sync	= synchronize_rcu_bh_expedited,
--	.name		= "rcu_bh"
--};
--
- /*
-  * Definitions for srcu perf testing.
-  */
-@@ -305,36 +275,6 @@ static struct rcu_perf_ops srcud_ops = {
- 	.name		= "srcud"
- };
- 
--/*
-- * Definitions for sched perf testing.
-- */
--
--static int sched_perf_read_lock(void)
--{
--	preempt_disable();
--	return 0;
--}
--
--static void sched_perf_read_unlock(int idx)
--{
--	preempt_enable();
--}
--
--static struct rcu_perf_ops sched_ops = {
--	.ptype		= RCU_SCHED_FLAVOR,
--	.init		= rcu_sync_perf_init,
--	.readlock	= sched_perf_read_lock,
--	.readunlock	= sched_perf_read_unlock,
--	.get_gp_seq	= rcu_sched_get_gp_seq,
--	.gp_diff	= rcu_seq_diff,
--	.exp_completed	= rcu_exp_batches_completed_sched,
--	.async		= call_rcu_sched,
--	.gp_barrier	= rcu_barrier_sched,
--	.sync		= synchronize_sched,
--	.exp_sync	= synchronize_sched_expedited,
--	.name		= "sched"
--};
--
- /*
-  * Definitions for RCU-tasks perf testing.
-  */
-@@ -611,7 +551,7 @@ rcu_perf_cleanup(void)
- 		kfree(writer_n_durations);
- 	}
- 
--	/* Do flavor-specific cleanup operations.  */
-+	/* Do torture-type-specific cleanup operations.  */
- 	if (cur_ops->cleanup != NULL)
- 		cur_ops->cleanup();
- 
-@@ -661,8 +601,7 @@ rcu_perf_init(void)
- 	long i;
- 	int firsterr = 0;
- 	static struct rcu_perf_ops *perf_ops[] = {
--		&rcu_ops, &rcu_bh_ops, &srcu_ops, &srcud_ops, &sched_ops,
--		&tasks_ops,
-+		&rcu_ops, &srcu_ops, &srcud_ops, &tasks_ops,
- 	};
- 
- 	if (!torture_init_begin(perf_type, verbose))
+diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
+index 2042080cd38b..7f266b0f9832 100644
+--- a/kernel/rcu/srcutree.c
++++ b/kernel/rcu/srcutree.c
+@@ -980,7 +980,7 @@ EXPORT_SYMBOL_GPL(synchronize_srcu_expedited);
+  * There are memory-ordering constraints implied by synchronize_srcu().
+  * On systems with more than one CPU, when synchronize_srcu() returns,
+  * each CPU is guaranteed to have executed a full memory barrier since
+- * the end of its last corresponding SRCU-sched read-side critical section
++ * the end of its last corresponding SRCU read-side critical section
+  * whose beginning preceded the call to synchronize_srcu().  In addition,
+  * each CPU having an SRCU read-side critical section that extends beyond
+  * the return from synchronize_srcu() is guaranteed to have executed a
 -- 
 2.17.1
 
