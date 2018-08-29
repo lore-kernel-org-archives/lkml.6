@@ -2,122 +2,114 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99E87C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:16:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70EB9C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:16:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4188620652
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:16:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4188620652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 29FE020647
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:16:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="H23YSXgi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29FE020647
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728746AbeH3BP1 (ORCPT
+        id S1728866AbeH3BPa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 21:15:27 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39606 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727595AbeH3BP0 (ORCPT
+        Wed, 29 Aug 2018 21:15:30 -0400
+Received: from smtprelay4.synopsys.com ([198.182.47.9]:51006 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727595AbeH3BP3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 21:15:26 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7TL9Aik031992
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 17:16:43 -0400
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m5y0ejdqh-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 17:16:43 -0400
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 29 Aug 2018 17:16:41 -0400
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 29 Aug 2018 17:16:37 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7TLGaLd46530764
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 29 Aug 2018 21:16:36 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D8219B205F;
-        Wed, 29 Aug 2018 17:15:32 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B7E16B2064;
-        Wed, 29 Aug 2018 17:15:32 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 29 Aug 2018 17:15:32 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 19FDB16C3063; Wed, 29 Aug 2018 14:16:37 -0700 (PDT)
-Date:   Wed, 29 Aug 2018 14:16:37 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org
-Subject: [PATCH tip/core/rcu 0/6] Documentation updates for v4.20/v5.0
-Reply-To: paulmck@linux.vnet.ibm.com
+        Wed, 29 Aug 2018 21:15:29 -0400
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 4BAA824E0A3F;
+        Wed, 29 Aug 2018 14:16:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1535577405; bh=fXMs6XQHbDPX/LX2jsruet93lP4/PYcTgsopB7EKyRI=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=H23YSXgiDwMtY80FuIkP1yQfHUeP5EllqH2KLzmJdql+f0vGxaQGdvHOqTyaBPAM1
+         5xKXekqmn3SgOuJbcJGk17frdrvkz+5am3K8Mq2YfWKBL1m0qYysXctMH9XNfuObQg
+         snW/7gwrP3SSQ401FTD2WND6MwMO/K0bBsMNHftIF47a8GGBdcMPTh3/a7rWdIXxFh
+         2MblBn8tZvLDUSbR2AqTFkNBxctsiRB1/XbBxkIbQqavDCW74CFl8DskFwd3q0e6tO
+         g3TGelXX4NNh3djgdFywr4JGJHXSCqa4KHm2Ie10P6HMkhxfJYWKF2TzpEYQ61bhDg
+         9MYgqgCRC9P0w==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 0FD6E3581;
+        Wed, 29 Aug 2018 14:16:45 -0700 (PDT)
+Received: from us01wembx1.internal.synopsys.com ([169.254.1.253]) by
+ US01WEHTC3.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Wed, 29
+ Aug 2018 14:16:44 -0700
+From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
+To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "will.deacon@arm.com" <will.deacon@arm.com>
+CC:     "mingo@kernel.org" <mingo@kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+Subject: Re: Patch "asm-generic/bitops/lock.h: Rewrite using atomic_fetch_"
+ causes kernel crash
+Thread-Topic: Patch "asm-generic/bitops/lock.h: Rewrite using atomic_fetch_"
+ causes kernel crash
+Thread-Index: AQHUP8bWpY6ZRO7qfEeDcvF8FJVDUg==
+Date:   Wed, 29 Aug 2018 21:16:43 +0000
+Message-ID: <C2D7FE5348E1B147BCA15975FBA23075012B090BEA@us01wembx1.internal.synopsys.com>
+References: <1535567633.4465.23.camel@synopsys.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.144.199.104]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18082921-0040-0000-0000-000004675191
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009636; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01080716; UDB=6.00557481; IPR=6.00860702;
- MB=3.00023001; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-29 21:16:41
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082921-0041-0000-0000-0000086E6B5A
-Message-Id: <20180829211637.GA20980@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-29_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=674 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808290206
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
-
-This series contains documentation updates.  Some of these describe changes
-that are carried out in another branch, but are kept separate to allow
-reviewers to easily find the intent of those changes.
-
-1.	Add design documentation on interruption of NMI handlers.
-
-2.	Fix broken RCU-requirements link to LKML archive, courtesy of
-	Joel Fernandes.
-
-3.	Improve rcu_dynticks::dynticks documentation, courtesy of
-	Joel Fernandes.
-
-4.	Update documentation for removal of RCU-bh update machinery.
-
-5.	Fix broken HTML directive.
-
-6.	Update documentation for removal of RCU-sched update machinery.
-
-							Thanx, Paul
-
-------------------------------------------------------------------------
-
- RCU/Design/Data-Structures/Data-Structures.html                 |    8 
- RCU/Design/Expedited-Grace-Periods/Expedited-Grace-Periods.html |    9 
- RCU/Design/Requirements/Requirements.html                       |  164 ++--------
- RCU/stallwarn.txt                                               |   13 
- RCU/whatisRCU.txt                                               |    3 
- admin-guide/kernel-parameters.txt                               |   16 
- kernel-per-CPU-kthreads.txt                                     |    2 
- 7 files changed, 73 insertions(+), 142 deletions(-)
-
+On 08/29/2018 11:33 AM, Eugeniy Paltsev wrote:=0A=
+> Hi Guys,=0A=
+> Since v4.19-rc1 we are getting a serious regression on platforms with ARC=
+ architecture.=0A=
+> The kernel have become unstable and spontaneously crashes on LTP tests ex=
+ecution / IO tests or=0A=
+> even on boot.=0A=
+>=0A=
+> I don't know exactly what breaks but bisect clearly assign the blame to t=
+his commit:=0A=
+> 84c6591103db ("locking/atomics, asm-generic/bitops/lock.h: Rewrite using =
+atomic_fetch_*()")=0A=
+> https://github.com/torvalds/linux/commit/84c6591103dbeaf393a092a3fc7b0951=
+0825f6b9=0A=
+>=0A=
+> Reverting the commit solves this problem.=0A=
+>=0A=
+> I tested v4.19-rc1 on ARM (wandboard, i.mx6, 32bit, quard core, ARMv7) wh=
+ich uses same=0A=
+> generic bitops implementation and it works fine.=0A=
+>=0A=
+> Do you have any ideas what went wrong?=0A=
+=0A=
+Back in 2016, Peter had fixed this file due to a problem I reported on ARC.=
+ See=0A=
+commit f75d48644c56a ("bitops: Do not default to __clear_bit() for=0A=
+__clear_bit_unlock()")=0A=
+That made __clear_bit_unlock() use the atomic clear_bit() vs. non-atomic=0A=
+__clear_bit(), effectively making clear_bit_unlock() and __clear_bit_unlock=
+() same.=0A=
+=0A=
+This patch undoes that which could explain the issues you see. @Peter, @Wil=
+l ?=0A=
+=0A=
+-Vineet=0A=
