@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A12B1C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:16:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25ED3C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:19:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5564F2089F
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:16:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5564F2089F
+	by mail.kernel.org (Postfix) with ESMTP id BF7DC20867
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:19:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF7DC20867
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728027AbeH2QNH (ORCPT
+        id S1727643AbeH2QPj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 12:13:07 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35482 "EHLO mx1.redhat.com"
+        Wed, 29 Aug 2018 12:15:39 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43922 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727182AbeH2QNH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 12:13:07 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        id S1726449AbeH2QPj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 12:15:39 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5DE49B5CA;
-        Wed, 29 Aug 2018 12:16:28 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9BC12402315B;
+        Wed, 29 Aug 2018 12:18:59 +0000 (UTC)
 Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6BF83A9EF1;
-        Wed, 29 Aug 2018 12:16:27 +0000 (UTC)
-Date:   Wed, 29 Aug 2018 20:16:24 +0800
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D263D2166B41;
+        Wed, 29 Aug 2018 12:18:58 +0000 (UTC)
+Date:   Wed, 29 Aug 2018 20:18:56 +0800
 From:   Baoquan He <bhe@redhat.com>
 To:     "Kirill A. Shutemov" <kirill@shutemov.name>
 Cc:     tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com,
@@ -38,7 +38,7 @@ Cc:     tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com,
         x86@kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 2/2] x86/mm/KASLR: Adjust the vmemmap size according to
  paging mode
-Message-ID: <20180829121624.GA1885@192.168.1.4>
+Message-ID: <20180829121856.GB1885@192.168.1.4>
 References: <20180829021754.21850-1-bhe@redhat.com>
  <20180829021754.21850-2-bhe@redhat.com>
  <20180829120530.6dhgsautjjrj4ztt@kshutemo-mobl1>
@@ -47,9 +47,9 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20180829120530.6dhgsautjjrj4ztt@kshutemo-mobl1>
 User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 29 Aug 2018 12:16:28 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 29 Aug 2018 12:16:28 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 29 Aug 2018 12:18:59 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 29 Aug 2018 12:18:59 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -72,18 +72,15 @@ On 08/29/18 at 03:05pm, Kirill A. Shutemov wrote:
 > With 5-level paging the limit on physical memory is not 512-times bigger:
 > we cap at 52-bit physical address space. So it's just 64 times bigger and
 > we need only 64TiB in worst case.
+> 
+> I think we can limit it further by taking into account memory_tb. Most of
+> machines will be fine with 1TiB there and we save few more bits from
+> KASLR.
 
-Thanks, Kirill.
+Oh, do you mean to make a calculation according to the actual size of
+system RAM? And still taking 1TB as default, then adapt later by RAM? 
 
-Exactly, the current 5-level only costs 64TB for vmemmap at most. I just
-copy 512TB from Documentation/x86/x86_64/mm.txt. It might develop very
-quickly to need enlarge RAM space to exceed 52bit in the future. And
-KASLR and KASAN are mutually exclusive. With KASLR enabled, we can take
-another 8PB space reserved for KASAN. So taking 512TB here might not
-mitigate KASLR. This is my thought for this fix. But I am also fine to
-change it to be 64TB for 5-level paging mode. I can change it with your
-idea and repost.
+Then, no need to introduce VMEMMAP_SIZE_TB, this also looks good to me.
 
 Thanks
 Baoquan
-
