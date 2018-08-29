@@ -2,115 +2,173 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12F29C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 20:32:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA287C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 20:33:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A74F52064E
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 20:32:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qnK8zdZR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A74F52064E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 8C3CB2064E
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 20:33:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C3CB2064E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728518AbeH3AbP (ORCPT
+        id S1728636AbeH3Ac2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 20:31:15 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:33522 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727444AbeH3AbO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 20:31:14 -0400
-Received: by mail-pf1-f193.google.com with SMTP id d4-v6so2810175pfn.0;
-        Wed, 29 Aug 2018 13:32:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=D/s7oFjIA3UyYWin1hDK66kDth5e4zzgivmTvvZltus=;
-        b=qnK8zdZRzngpNnAEvWYmhf0Cl9PHQPgRMc3hUAHM9wEQjeYkMNLs/j/wO9o9gyd2eO
-         tNVaKlHa3+QHE3qhWdecb2bAtLx4I3nhvxHe+2A9LvTyy7hvXpDEsYvkAstfcIHfcTTP
-         Tzkpn0eEIhuf9YiOC2HosC6rn3b4XilxMWP0xbl/7KxAJ9NeqTOop+Bj1jDzBspZqHhv
-         r6m+qoBDpTJphvDAG0Pokupd+8/SmiO18IUDcbjoupWDFBgxOHHbnCw6YwLW44zoama+
-         7zAOjbeXuAi2mdGohz7ThpoS9dM4Feiw4a6+YEjjpi9PGjW8T4CmLk4E/S+Lik8ULAgF
-         Nwkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=D/s7oFjIA3UyYWin1hDK66kDth5e4zzgivmTvvZltus=;
-        b=A1x1lQ0jN9KsLVEBJZMy8P3oYFuM9Yr9DBbGDlVasYiL4M6XzWkQAFwRSP7unxfDSv
-         1+xyum5zA+q5xxttT+6o3T+ZUliFe5xj/tByYPaIjXUyoTTscc4doDr5iD5BQwRVZTc6
-         te7aTyEop/XudzS4fTp/tGCsn59VYWPdX6tH/RQE9K2wy5YybL2hgI9yrshBgJ5S0J4a
-         UYolWL9ok7QDhCDw6q1Qf8UgIypdS137eFnucS4yohi8slGg/8ZvHplRjwTW7/+mF72W
-         ZPLt14xXlLv/V9k2EGMZKuP96JC4xLbuwJsASTF0yp2EZRD3znhs47pkroTWMypCVMsW
-         q52g==
-X-Gm-Message-State: APzg51BVKHblk0XWXV3M5uYbWI/Ao4k/VPdLjhTED762DbDKZgLgrEri
-        ZYZjfNkjtCtprrNXYuTTHKQnjgtC
-X-Google-Smtp-Source: ANB0Vda1v/KGcq6/XFBwjj6h+GTnc1vBY8M8MyWb9CDg9tanM+gaRMMADGJm2FWCUS4xJgnoyDk+AA==
-X-Received: by 2002:a63:ed07:: with SMTP id d7-v6mr7060917pgi.429.1535574762064;
-        Wed, 29 Aug 2018 13:32:42 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id f87-v6sm14995715pfh.168.2018.08.29.13.32.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 Aug 2018 13:32:41 -0700 (PDT)
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] hwmon fixes for v4.19-rc2
-Date:   Wed, 29 Aug 2018 13:32:40 -0700
-Message-Id: <1535574760-11636-1-git-send-email-linux@roeck-us.net>
-X-Mailer: git-send-email 2.7.4
+        Wed, 29 Aug 2018 20:32:28 -0400
+Received: from mga14.intel.com ([192.55.52.115]:58914 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727392AbeH3Ac1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 20:32:27 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2018 13:33:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,304,1531810800"; 
+   d="scan'208";a="79384461"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.20])
+  by orsmga003.jf.intel.com with ESMTP; 29 Aug 2018 13:33:51 -0700
+Date:   Wed, 29 Aug 2018 13:33:51 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     "Huang, Kai" <kai.huang@intel.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "platform-driver-x86@vger.kernel.org" 
+        <platform-driver-x86@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "suresh.b.siddha@intel.com" <suresh.b.siddha@intel.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>
+Subject: Re: [PATCH v13 10/13] x86/sgx: Add sgx_einit() for initializing
+ enclaves
+Message-ID: <20180829203351.GB7142@linux.intel.com>
+References: <20180827185507.17087-1-jarkko.sakkinen@linux.intel.com>
+ <20180827185507.17087-11-jarkko.sakkinen@linux.intel.com>
+ <1535406078.3416.9.camel@intel.com>
+ <20180828070129.GA5301@linux.intel.com>
+ <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <105F7BF4D0229846AF094488D65A09893541037C@PGSMSX112.gar.corp.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Wed, Aug 29, 2018 at 12:33:54AM -0700, Huang, Kai wrote:
+> [snip..]
+> 
+> > > >
+> > > > @@ -38,6 +39,18 @@ static LIST_HEAD(sgx_active_page_list);  static
+> > > > DEFINE_SPINLOCK(sgx_active_page_list_lock);
+> > > >  static struct task_struct *ksgxswapd_tsk;  static
+> > > > DECLARE_WAIT_QUEUE_HEAD(ksgxswapd_waitq);
+> > > > +static struct notifier_block sgx_pm_notifier; static u64
+> > > > +sgx_pm_cnt;
+> > > > +
+> > > > +/* The cache for the last known values of IA32_SGXLEPUBKEYHASHx
+> > > > +MSRs
+> > > > for each
+> > > > + * CPU. The entries are initialized when they are first used by
+> > > > sgx_einit().
+> > > > + */
+> > > > +struct sgx_lepubkeyhash {
+> > > > +	u64 msrs[4];
+> > > > +	u64 pm_cnt;
+> > >
+> > > May I ask why do we need pm_cnt here? In fact why do we need suspend
+> > > staff (namely, sgx_pm_cnt above, and related code in this patch) here
+> > > in this patch? From the patch commit message I don't see why we need
+> > > PM staff here. Please give comment why you need PM staff, or you may
+> > > consider to split the PM staff to another patch.
+> > 
+> > Refining the commit message probably makes more sense because without PM
+> > code sgx_einit() would be broken. The MSRs have been reset after waking up.
+> > 
+> > Some kind of counter is required to keep track of the power cycle. When going
+> > to sleep the sgx_pm_cnt is increased. sgx_einit() compares the current value of
+> > the global count to the value in the cache entry to see whether we are in a new
+> > power cycle.
+> 
+> You mean reset to Intel default? I think we can also just reset the cached MSR
+> values on each power cycle, which would be simpler, IMHO?
 
-Please pull hwmon fixes for Linux v4.19-rc2 from signed tag:
+Refresh my brain, does hardware reset the MSRs on a transition to S3 or lower?
 
-    git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-for-linus-v4.19-rc2
+> I think we definitely need some code to handle S3-S5, but should be in
+> separate patches, since I think the major impact of S3-S5 is entire EPC
+> being destroyed. I think keeping pm_cnt is not sufficient enough to handle
+> such case?
+> > 
+> > This brings up one question though: how do we deal with VM host going to sleep?
+> > VM guest would not be aware of this.
+> 
+> IMO VM just gets "sudden loss of EPC" after suspend & resume in host. SGX driver
+> and SDK should be able to handle "sudden loss of EPC", ie, co-working together to
+> re-establish the missing enclaves.
+> 
+> Actually supporting "sudden loss of EPC" is a requirement to support live migration
+> of VM w/ SGX. Internally long time ago we had a discussion and the decision was we
+> should support SGX live migration given two facts:
+> 
+> 1) losing platform-dependent is not important. For example, losing sealing key is
+> not a problem, as we could get secrets provisioned again from remote. 2) Both windows
+> & linux driver commit to support "sudden loss of EPC".
+> 
+> I don't think we have to support in very first upstream driver, but I think we need
+> to support someday.
 
-Thanks,
-Guenter
-------
+Actually, we can easily support this in the driver, at least for SGX1
+hardware.  SGX2 isn't difficult to handle, but we've intentionally
+postponed those patches until SGX1 support is in mainline[1].
+Accesses to the EPC after it is lost will cause faults.  Userspace
+EPC accesses, e.g. ERESUME, will get a SIGSEGV that the process
+should interpret as an "I should restart my enclave" event.  The
+SDK already does this.  In the driver, we just need to be aware of
+this potential behavior and not freak out.  Specifically, SGX_INVD
+needs to not WARN on faults that may have been due to a the EPC
+being nuked.  I think we can even remove the sgx_encl_pm_notifier()
+code altogether.
 
-The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
+[1] SGX1 hardware signals a #GP on an access to an invalid EPC page.
+    SGX2 signals a #PF with the PF_SGX error code bit set.  This is
+    problematic because the kernel looks at the PTEs for CR2 and sees
+    nothing wrong, so it thinks it should just restart the
+    instruction, leading to an infinite fault loop.  Resolving this
+    is fairly straightforward, but a complete fix requires propagating
+    PF_SGX down to the ENCLS fixup handler, which means plumbing the
+    error code through the fixup handlers or smushing PF_SGX into
+    trapnr.  Since there is a parallel effort to plumb the error code
+    through the handlers, https://lkml.org/lkml/2018/8/6/924, we opted
+    to do this in a separate series.
 
-  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git tags/hwmon-for-linus-v4.19-rc2
-
-for you to fetch changes up to d49dbfade96d5b0863ca8a90122a805edd5ef50a:
-
-  hwmon: (nct6775) Fix potential Spectre v1 (2018-08-26 17:45:25 -0700)
-
-----------------------------------------------------------------
-hwmon fixes for v4.19-rc2
-
-- Fix potential Spectre v1 in nct6775
-- Add error checking to adt7475 driver
-- Fix reading shunt resistor value in ina2xx driver
-
-----------------------------------------------------------------
-Dan Carpenter (2):
-      hwmon: (adt7475) Potential error pointer dereferences
-      hwmon: (adt7475) Make adt7475_read_word() return errors
-
-Gustavo A. R. Silva (1):
-      hwmon: (nct6775) Fix potential Spectre v1
-
-Lothar Felten (1):
-      hwmon: (ina2xx) fix sysfs shunt resistor read access
-
- Documentation/hwmon/ina2xx           |  2 +-
- drivers/hwmon/adt7475.c              | 25 +++++++++++++++++--------
- drivers/hwmon/ina2xx.c               | 13 +++++++++++--
- drivers/hwmon/nct6775.c              |  2 ++
- include/linux/platform_data/ina2xx.h |  2 +-
- 5 files changed, 32 insertions(+), 12 deletions(-)
+> Sean, 
+> 
+> Would you be able to comment here?
+> 
+> > 
+> > I think the best measure would be to add a new parameter to sgx_einit() that
+> > enforces update of the MSRs. The driver can then set this parameter in the case
+> > when sgx_einit() returns SGX_INVALID_LICENSE. This is coherent because the
+> > driver requires writable MSRs. It would not be coherent to do it directly in the
+> > core because KVM does not require writable MSRs.
+> 
+> IMHO this is not required, as I mentioned above.
+> 
+> And 
+> [snip...]
+> 
+> Thanks,
+> -Kai
