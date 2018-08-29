@@ -4,67 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90481C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:23:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A456C43334
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:24:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 304D72083B
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:23:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C64652083B
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:23:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=owltronix-com.20150623.gappssmtp.com header.i=@owltronix-com.20150623.gappssmtp.com header.b="WyW7lVzm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 304D72083B
+	dkim=pass (2048-bit key) header.d=owltronix-com.20150623.gappssmtp.com header.i=@owltronix-com.20150623.gappssmtp.com header.b="qIzPA0bQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C64652083B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=owltronix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728091AbeH2QUf (ORCPT
+        id S1728161AbeH2QUh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 12:20:35 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:38138 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727460AbeH2QUf (ORCPT
+        Wed, 29 Aug 2018 12:20:37 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:44151 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727818AbeH2QUg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 12:20:35 -0400
-Received: by mail-ed1-f68.google.com with SMTP id h33-v6so3777539edb.5
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 05:23:53 -0700 (PDT)
+        Wed, 29 Aug 2018 12:20:36 -0400
+Received: by mail-ed1-f65.google.com with SMTP id s10-v6so3757298edb.11
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 05:23:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=owltronix-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=YxpryWbxNMN7laS1bl7eqZf5eaAI6L1jREkrriFJ8qg=;
-        b=WyW7lVzm5N3W0rDszF0V3jFi3ldmHm4WDtWXnUQkWZW1CStVuV21bJgmqfCvXtBFD6
-         PuxpJvnmuMJQQ5PoFSSxvpxRO1vGw2cIBRpD13zQumWIC2Vuh3n0XON+MB4jxwJJZD+n
-         5auSScj8S6muCZ+tBG709fjP8UDDQz2H6IysZDkQgnc6ItksmP9CN1Mfgi7qugCKDF3L
-         ST1/tfCGk5Z+vK6+o9ehMcVXLxNURXUbkEvdS/R5QbhCGRUSZoGMw29rsZV/k9iGF3X4
-         lxVZjCVrmDdUvzkcS99zwvu8ALl6zFm1dHHS6WDoT0aRwFIGsIN7WB94sR86NnqeD6Co
-         9ohQ==
+        bh=Wd6ju+Sj812p5ByhVH0axrtjEx4TVCFUhWAzZE7kqEw=;
+        b=qIzPA0bQXyNgjNTrtOKifSD0zdslXCpsZvF+bkEaSONuPWXRkydNhAjsaWCsRw2jWc
+         XCPPhKt/SxRPRSdQxvH+qqnXafETwXBhFaS5ywVfGLvaanhAvu90LG3+34ImcymlH0Ag
+         7JJDf3sDQ2EEdl3cd3+Pa+DB+vMs/Ty2M1f5YYEqwB9KO73+SLgHTanye9gs3Oh/Ggm4
+         LcttKgD+959fLOIgoRafD/53KBALcLb5n26tcjfbC9Dy61Hmf7CSVGwtNbexuOUA1bre
+         3yzSJkoodzt4wQ6VrpahBgtOO25VpLpxdhKw3zM41kbUy0bc1JbBNbY9Ai8HpVx1UWOM
+         fLhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=YxpryWbxNMN7laS1bl7eqZf5eaAI6L1jREkrriFJ8qg=;
-        b=pqzTcsl6Fswu9s1x9O138Bjz2fx3dlr8RKXi+h0yTjQs6l+7aMjPhlZwzVPM76qXPh
-         1bCRMkOXaRJziBrfIDIus2PwTq7vXbX9k8YrjHVCJLX0gVNJWVg+Mw+2aRPiQFv6hSVa
-         /iB7/aYIUgQe76iF37pAIdgjeyTkG8pM9wW8g8wfTiGEgqz1fkYGNlo+hJLsxFICsRf+
-         d83y/F47M9xqnMsgUcK8fRYe+/0zaQ6UnMyemHMgXpnoCQJzRTya0oTqUGUQ5Wl5HCkM
-         ccvO/yl1ZqLfkmKy4IjB5b+1gZSqz/kd9L8FZaryQrw78piKTpliS/p9PXN+XOCcpkML
-         uIOw==
-X-Gm-Message-State: APzg51BSJxGLBqyJxyjBa68FIiveYctMbIx7CtZPhu8ZXJjNojQH4wgS
-        kdqda6T657/J9CkcKwzecGltrA==
-X-Google-Smtp-Source: ANB0VdbrM1uQ+MVGbq+6NNG6JBLSyXQg2s/HSOHbUNq+OBwDi9IL3NXoDsnINHkDjZ7Pgnk+dUTyKw==
-X-Received: by 2002:a50:9a02:: with SMTP id o2-v6mr7525241edb.236.1535545432900;
-        Wed, 29 Aug 2018 05:23:52 -0700 (PDT)
+        bh=Wd6ju+Sj812p5ByhVH0axrtjEx4TVCFUhWAzZE7kqEw=;
+        b=npAvI9y0djplt4ctsEjWfc013x6z3K54kfoMplaentam8ZnUPecsMyfyebubUCbR1V
+         qhLNx9KWKAPan8nMctVXUB72joUK/b+oA27kZfg2U4edfGUD00pFSW0jrxHASCBkAjxj
+         BT9K4SfkksBEuzSxs6ChKhTIlJ90rKypSbuaXNp0hN9dZo3HX+nvJaJS9MVj0hQlyoJT
+         mXKg+uGdBkT7oCmZR974IPC6OQoFb2x8H/yoeT0j+ECzP7MW/uTq5x+8pO4DcFLLByZY
+         YP9CVs3pBYwpuYxg730O2h/+QetWU02XTw9oOWHaRp0Eh08WWKEqwmpIKxOuJqkyFcZ1
+         UoAw==
+X-Gm-Message-State: APzg51A+NIxk3u1A8UPeEKpRqLh1BOR+rPXXK9kOMam+/AEOSCv7WUoE
+        SD9DQQDz3F9FJDDpIqznb5ghHA==
+X-Google-Smtp-Source: ANB0VdZD7GouwO7N0cfZYacQcNFQbeF8s7QYSvEoXvkqDz6DHT5/uQocDYy5v9QHzj4HS0N+367acg==
+X-Received: by 2002:a50:8cd7:: with SMTP id r23-v6mr7407214edr.240.1535545435062;
+        Wed, 29 Aug 2018 05:23:55 -0700 (PDT)
 Received: from titan.cnexlabs.com (6164211-cl69.boa.fiberby.dk. [193.106.164.211])
-        by smtp.gmail.com with ESMTPSA id f26-v6sm1752068edb.28.2018.08.29.05.23.52
+        by smtp.gmail.com with ESMTPSA id f26-v6sm1752068edb.28.2018.08.29.05.23.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 29 Aug 2018 05:23:52 -0700 (PDT)
+        Wed, 29 Aug 2018 05:23:54 -0700 (PDT)
 From:   Hans Holmberg <hans.ml.holmberg@owltronix.com>
 To:     Matias Bjorling <mb@lightnvm.io>
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         Javier Gonzales <javier@cnexlabs.com>,
         Hans Holmberg <hans.holmberg@cnexlabs.com>
-Subject: [PATCH 1/7] lightnvm: introduce nvm_rq_to_ppa_list
-Date:   Wed, 29 Aug 2018 14:23:28 +0200
-Message-Id: <1535545414-550-2-git-send-email-hans.ml.holmberg@owltronix.com>
+Subject: [PATCH 3/7] lightnvm: pblk: allocate line map bitmaps using a mempool
+Date:   Wed, 29 Aug 2018 14:23:30 +0200
+Message-Id: <1535545414-550-4-git-send-email-hans.ml.holmberg@owltronix.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1535545414-550-1-git-send-email-hans.ml.holmberg@owltronix.com>
 References: <1535545414-550-1-git-send-email-hans.ml.holmberg@owltronix.com>
@@ -75,294 +75,153 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Hans Holmberg <hans.holmberg@cnexlabs.com>
 
-There is a number of places in the lightnvm subsystem where the user
-iterates over the ppa list. Before iterating, the user must know if it
-is a single or multiple LBAs due to vector commands using either the
-nvm_rq ->ppa_addr or ->ppa_list fields on command submission, which
-leads to open-coding the if/else statement.
+Line map bitmap allocations are fairly large and can fail. Allocation
+failures are fatal to pblk, stoping the write pipeline. To avoid this,
+allocate the bitmaps using a mempool instead.
 
-Instead of having multiple if/else's, move it into a function that can
-be called by its users.
-
-A nice side effect of this cleanup is that this patch fixes up a
-bunch of cases where we don't consider the single-ppa case in pblk.
+Mempool allocations never fail if called from a process context,
+and pblk *should* only allocate map bitmaps in process context,
+but keep the failure handling for robustness sake.
 
 Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
 ---
- drivers/lightnvm/core.c          | 14 ++++----------
- drivers/lightnvm/pblk-map.c      | 10 ++++++----
- drivers/lightnvm/pblk-read.c     | 11 ++++-------
- drivers/lightnvm/pblk-recovery.c |  9 ++++++---
- drivers/lightnvm/pblk-write.c    | 18 ++++++++----------
- drivers/lightnvm/pblk.h          |  4 +---
- include/linux/lightnvm.h         |  5 +++++
- 7 files changed, 34 insertions(+), 37 deletions(-)
+ drivers/lightnvm/pblk-core.c     | 22 +++++++++++++++-------
+ drivers/lightnvm/pblk-init.c     | 18 ++++++++++++++++++
+ drivers/lightnvm/pblk-recovery.c |  2 +-
+ drivers/lightnvm/pblk.h          |  4 ++++
+ 4 files changed, 38 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
-index 5d0ed33d7c59..f7154398ba38 100644
---- a/drivers/lightnvm/core.c
-+++ b/drivers/lightnvm/core.c
-@@ -603,22 +603,16 @@ static void nvm_ppa_dev_to_tgt(struct nvm_tgt_dev *tgt_dev,
- 
- static void nvm_rq_tgt_to_dev(struct nvm_tgt_dev *tgt_dev, struct nvm_rq *rqd)
+diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
+index 36ac9eff8ebd..a1033d82b9cc 100644
+--- a/drivers/lightnvm/pblk-core.c
++++ b/drivers/lightnvm/pblk-core.c
+@@ -1049,15 +1049,18 @@ static int pblk_line_init_metadata(struct pblk *pblk, struct pblk_line *line,
+ static int pblk_line_alloc_bitmaps(struct pblk *pblk, struct pblk_line *line)
  {
--	if (rqd->nr_ppas == 1) {
--		nvm_ppa_tgt_to_dev(tgt_dev, &rqd->ppa_addr, 1);
--		return;
--	}
-+	struct ppa_addr *ppa_list = nvm_rq_to_ppa_list(rqd);
- 
--	nvm_ppa_tgt_to_dev(tgt_dev, rqd->ppa_list, rqd->nr_ppas);
-+	nvm_ppa_tgt_to_dev(tgt_dev, ppa_list, rqd->nr_ppas);
- }
- 
- static void nvm_rq_dev_to_tgt(struct nvm_tgt_dev *tgt_dev, struct nvm_rq *rqd)
- {
--	if (rqd->nr_ppas == 1) {
--		nvm_ppa_dev_to_tgt(tgt_dev, &rqd->ppa_addr, 1);
--		return;
--	}
-+	struct ppa_addr *ppa_list = nvm_rq_to_ppa_list(rqd);
- 
--	nvm_ppa_dev_to_tgt(tgt_dev, rqd->ppa_list, rqd->nr_ppas);
-+	nvm_ppa_dev_to_tgt(tgt_dev, ppa_list, rqd->nr_ppas);
- }
- 
- int nvm_register_tgt_type(struct nvm_tgt_type *tt)
-diff --git a/drivers/lightnvm/pblk-map.c b/drivers/lightnvm/pblk-map.c
-index 953ca31dda68..dc0efb852475 100644
---- a/drivers/lightnvm/pblk-map.c
-+++ b/drivers/lightnvm/pblk-map.c
-@@ -88,13 +88,14 @@ void pblk_map_rq(struct pblk *pblk, struct nvm_rq *rqd, unsigned int sentry,
- 		 unsigned int off)
- {
- 	struct pblk_sec_meta *meta_list = rqd->meta_list;
-+	struct ppa_addr *ppa_list = nvm_rq_to_ppa_list(rqd);
- 	unsigned int map_secs;
- 	int min = pblk->min_write_pgs;
- 	int i;
- 
- 	for (i = off; i < rqd->nr_ppas; i += min) {
- 		map_secs = (i + min > valid_secs) ? (valid_secs % min) : min;
--		if (pblk_map_page_data(pblk, sentry + i, &rqd->ppa_list[i],
-+		if (pblk_map_page_data(pblk, sentry + i, &ppa_list[i],
- 					lun_bitmap, &meta_list[i], map_secs)) {
- 			bio_put(rqd->bio);
- 			pblk_free_rqd(pblk, rqd, PBLK_WRITE);
-@@ -112,6 +113,7 @@ void pblk_map_erase_rq(struct pblk *pblk, struct nvm_rq *rqd,
- 	struct nvm_geo *geo = &dev->geo;
  	struct pblk_line_meta *lm = &pblk->lm;
- 	struct pblk_sec_meta *meta_list = rqd->meta_list;
-+	struct ppa_addr *ppa_list = nvm_rq_to_ppa_list(rqd);
- 	struct pblk_line *e_line, *d_line;
- 	unsigned int map_secs;
- 	int min = pblk->min_write_pgs;
-@@ -119,14 +121,14 @@ void pblk_map_erase_rq(struct pblk *pblk, struct nvm_rq *rqd,
++	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
  
- 	for (i = 0; i < rqd->nr_ppas; i += min) {
- 		map_secs = (i + min > valid_secs) ? (valid_secs % min) : min;
--		if (pblk_map_page_data(pblk, sentry + i, &rqd->ppa_list[i],
-+		if (pblk_map_page_data(pblk, sentry + i, &ppa_list[i],
- 					lun_bitmap, &meta_list[i], map_secs)) {
- 			bio_put(rqd->bio);
- 			pblk_free_rqd(pblk, rqd, PBLK_WRITE);
- 			pblk_pipeline_stop(pblk);
- 		}
+-	line->map_bitmap = kzalloc(lm->sec_bitmap_len, GFP_KERNEL);
++	line->map_bitmap = mempool_alloc(l_mg->bitmap_pool, GFP_KERNEL);
+ 	if (!line->map_bitmap)
+ 		return -ENOMEM;
  
--		erase_lun = pblk_ppa_to_pos(geo, rqd->ppa_list[i]);
-+		erase_lun = pblk_ppa_to_pos(geo, ppa_list[i]);
++	memset(line->map_bitmap, 0, lm->sec_bitmap_len);
++
+ 	/* will be initialized using bb info from map_bitmap */
+-	line->invalid_bitmap = kmalloc(lm->sec_bitmap_len, GFP_KERNEL);
++	line->invalid_bitmap = mempool_alloc(l_mg->bitmap_pool, GFP_KERNEL);
+ 	if (!line->invalid_bitmap) {
+-		kfree(line->map_bitmap);
++		mempool_free(line->map_bitmap, l_mg->bitmap_pool);
+ 		line->map_bitmap = NULL;
+ 		return -ENOMEM;
+ 	}
+@@ -1243,7 +1246,9 @@ int pblk_line_recov_alloc(struct pblk *pblk, struct pblk_line *line)
  
- 		/* line can change after page map. We might also be writing the
- 		 * last line.
-@@ -141,7 +143,7 @@ void pblk_map_erase_rq(struct pblk *pblk, struct nvm_rq *rqd,
- 			set_bit(erase_lun, e_line->erase_bitmap);
- 			atomic_dec(&e_line->left_eblks);
+ void pblk_line_recov_close(struct pblk *pblk, struct pblk_line *line)
+ {
+-	kfree(line->map_bitmap);
++	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
++
++	mempool_free(line->map_bitmap, l_mg->bitmap_pool);
+ 	line->map_bitmap = NULL;
+ 	line->smeta = NULL;
+ 	line->emeta = NULL;
+@@ -1261,8 +1266,11 @@ static void pblk_line_reinit(struct pblk_line *line)
  
--			*erase_ppa = rqd->ppa_list[i];
-+			*erase_ppa = ppa_list[i];
- 			erase_ppa->a.blk = e_line->id;
+ void pblk_line_free(struct pblk_line *line)
+ {
+-	kfree(line->map_bitmap);
+-	kfree(line->invalid_bitmap);
++	struct pblk *pblk = line->pblk;
++	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
++
++	mempool_free(line->map_bitmap, l_mg->bitmap_pool);
++	mempool_free(line->invalid_bitmap, l_mg->bitmap_pool);
  
- 			spin_unlock(&e_line->lock);
-diff --git a/drivers/lightnvm/pblk-read.c b/drivers/lightnvm/pblk-read.c
-index 928c638af5b6..df3c4eb13be9 100644
---- a/drivers/lightnvm/pblk-read.c
-+++ b/drivers/lightnvm/pblk-read.c
-@@ -116,10 +116,9 @@ static void pblk_read_check_seq(struct pblk *pblk, struct nvm_rq *rqd,
+ 	pblk_line_reinit(line);
+ }
+@@ -1741,7 +1749,7 @@ void pblk_line_close(struct pblk *pblk, struct pblk_line *line)
  
- 		if (lba != blba + i) {
- #ifdef CONFIG_NVM_PBLK_DEBUG
--			struct ppa_addr *p;
-+			struct ppa_addr *ppa_list = nvm_rq_to_ppa_list(rqd);
+ 	list_add_tail(&line->list, move_list);
  
--			p = (nr_lbas == 1) ? &rqd->ppa_list[i] : &rqd->ppa_addr;
--			print_ppa(pblk, p, "seq", i);
-+			print_ppa(pblk, &ppa_list[i], "seq", i);
- #endif
- 			pblk_err(pblk, "corrupted read LBA (%llu/%llu)\n",
- 							lba, (u64)blba + i);
-@@ -148,11 +147,9 @@ static void pblk_read_check_rand(struct pblk *pblk, struct nvm_rq *rqd,
+-	kfree(line->map_bitmap);
++	mempool_free(line->map_bitmap, l_mg->bitmap_pool);
+ 	line->map_bitmap = NULL;
+ 	line->smeta = NULL;
+ 	line->emeta = NULL;
+diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+index 8adc8ac8b03c..76a4a271b9cf 100644
+--- a/drivers/lightnvm/pblk-init.c
++++ b/drivers/lightnvm/pblk-init.c
+@@ -498,6 +498,9 @@ static void pblk_line_mg_free(struct pblk *pblk)
+ 		pblk_mfree(l_mg->eline_meta[i]->buf, l_mg->emeta_alloc_type);
+ 		kfree(l_mg->eline_meta[i]);
+ 	}
++
++	mempool_destroy(l_mg->bitmap_pool);
++	kmem_cache_destroy(l_mg->bitmap_cache);
+ }
  
- 		if (lba != meta_lba) {
- #ifdef CONFIG_NVM_PBLK_DEBUG
--			struct ppa_addr *p;
--			int nr_ppas = rqd->nr_ppas;
-+			struct ppa_addr *ppa_list = nvm_rq_to_ppa_list(rqd);
+ static void pblk_line_meta_free(struct pblk_line_mgmt *l_mg,
+@@ -797,6 +800,17 @@ static int pblk_line_mg_init(struct pblk *pblk)
+ 			goto fail_free_smeta;
+ 	}
  
--			p = (nr_ppas == 1) ? &rqd->ppa_list[j] : &rqd->ppa_addr;
--			print_ppa(pblk, p, "seq", j);
-+			print_ppa(pblk, &ppa_list[j], "seq", j);
- #endif
- 			pblk_err(pblk, "corrupted read LBA (%llu/%llu)\n",
- 								lba, meta_lba);
++	l_mg->bitmap_cache = kmem_cache_create("pblk_lm_bitmap",
++			lm->sec_bitmap_len, 0, 0, NULL);
++	if (!l_mg->bitmap_cache)
++		goto fail_free_smeta;
++
++	/* the bitmap pool is used for both valid and map bitmaps */
++	l_mg->bitmap_pool = mempool_create_slab_pool(PBLK_DATA_LINES * 2,
++				l_mg->bitmap_cache);
++	if (!l_mg->bitmap_pool)
++		goto fail_destroy_bitmap_cache;
++
+ 	/* emeta allocates three different buffers for managing metadata with
+ 	 * in-memory and in-media layouts
+ 	 */
+@@ -849,6 +863,10 @@ static int pblk_line_mg_init(struct pblk *pblk)
+ 			kfree(l_mg->eline_meta[i]->buf);
+ 		kfree(l_mg->eline_meta[i]);
+ 	}
++
++	mempool_destroy(l_mg->bitmap_pool);
++fail_destroy_bitmap_cache:
++	kmem_cache_destroy(l_mg->bitmap_cache);
+ fail_free_smeta:
+ 	for (i = 0; i < PBLK_DATA_LINES; i++)
+ 		kfree(l_mg->sline_meta[i]);
 diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
-index cf629ab016ba..3bd2b6b0a359 100644
+index 3bd2b6b0a359..eea901d7cebc 100644
 --- a/drivers/lightnvm/pblk-recovery.c
 +++ b/drivers/lightnvm/pblk-recovery.c
-@@ -161,6 +161,8 @@ static int pblk_recov_read_oob(struct pblk *pblk, struct pblk_line *line,
- 	if (pblk_io_aligned(pblk, rq_ppas))
- 		rqd->is_seq = 1;
+@@ -939,7 +939,7 @@ struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
+ 			list_move_tail(&line->list, move_list);
+ 			spin_unlock(&l_mg->gc_lock);
  
-+	ppa_list = nvm_rq_to_ppa_list(rqd);
-+
- 	for (i = 0; i < rqd->nr_ppas; ) {
- 		struct ppa_addr ppa;
- 		int pos;
-@@ -175,7 +177,7 @@ static int pblk_recov_read_oob(struct pblk *pblk, struct pblk_line *line,
- 		}
- 
- 		for (j = 0; j < pblk->min_write_pgs; j++, i++, r_ptr_int++)
--			rqd->ppa_list[i] =
-+			ppa_list[i] =
- 				addr_to_gen_ppa(pblk, r_ptr_int, line->id);
- 	}
- 
-@@ -202,7 +204,7 @@ static int pblk_recov_read_oob(struct pblk *pblk, struct pblk_line *line,
- 		if (lba == ADDR_EMPTY || lba > pblk->rl.nr_secs)
- 			continue;
- 
--		pblk_update_map(pblk, lba, rqd->ppa_list[i]);
-+		pblk_update_map(pblk, lba, ppa_list[i]);
- 	}
- 
- 	left_ppas -= rq_ppas;
-@@ -221,10 +223,11 @@ static void pblk_recov_complete(struct kref *ref)
- 
- static void pblk_end_io_recov(struct nvm_rq *rqd)
- {
-+	struct ppa_addr *ppa_list = nvm_rq_to_ppa_list(rqd);
- 	struct pblk_pad_rq *pad_rq = rqd->private;
- 	struct pblk *pblk = pad_rq->pblk;
- 
--	pblk_up_page(pblk, rqd->ppa_list, rqd->nr_ppas);
-+	pblk_up_page(pblk, ppa_list, rqd->nr_ppas);
- 
- 	pblk_free_rqd(pblk, rqd, PBLK_WRITE_INT);
- 
-diff --git a/drivers/lightnvm/pblk-write.c b/drivers/lightnvm/pblk-write.c
-index c23b65aaa27b..1bc879ab679d 100644
---- a/drivers/lightnvm/pblk-write.c
-+++ b/drivers/lightnvm/pblk-write.c
-@@ -208,15 +208,10 @@ static void pblk_submit_rec(struct work_struct *work)
- 	struct pblk *pblk = recovery->pblk;
- 	struct nvm_rq *rqd = recovery->rqd;
- 	struct pblk_c_ctx *c_ctx = nvm_rq_to_pdu(rqd);
--	struct ppa_addr *ppa_list;
-+	struct ppa_addr *ppa_list = nvm_rq_to_ppa_list(rqd);
- 
- 	pblk_log_write_err(pblk, rqd);
- 
--	if (rqd->nr_ppas == 1)
--		ppa_list = &rqd->ppa_addr;
--	else
--		ppa_list = rqd->ppa_list;
--
- 	pblk_map_remaining(pblk, ppa_list);
- 	pblk_queue_resubmit(pblk, c_ctx);
- 
-@@ -273,9 +268,10 @@ static void pblk_end_io_write_meta(struct nvm_rq *rqd)
- 	struct pblk_g_ctx *m_ctx = nvm_rq_to_pdu(rqd);
- 	struct pblk_line *line = m_ctx->private;
- 	struct pblk_emeta *emeta = line->emeta;
-+	struct ppa_addr *ppa_list = nvm_rq_to_ppa_list(rqd);
- 	int sync;
- 
--	pblk_up_page(pblk, rqd->ppa_list, rqd->nr_ppas);
-+	pblk_up_page(pblk, ppa_list, rqd->nr_ppas);
- 
- 	if (rqd->error) {
- 		pblk_log_write_err(pblk, rqd);
-@@ -375,6 +371,7 @@ int pblk_submit_meta_io(struct pblk *pblk, struct pblk_line *meta_line)
- 	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
- 	struct pblk_line_meta *lm = &pblk->lm;
- 	struct pblk_emeta *emeta = meta_line->emeta;
-+	struct ppa_addr *ppa_list;
- 	struct pblk_g_ctx *m_ctx;
- 	struct bio *bio;
- 	struct nvm_rq *rqd;
-@@ -409,12 +406,13 @@ int pblk_submit_meta_io(struct pblk *pblk, struct pblk_line *meta_line)
- 	if (ret)
- 		goto fail_free_bio;
- 
-+	ppa_list = nvm_rq_to_ppa_list(rqd);
- 	for (i = 0; i < rqd->nr_ppas; ) {
- 		spin_lock(&meta_line->lock);
- 		paddr = __pblk_alloc_page(pblk, meta_line, rq_ppas);
- 		spin_unlock(&meta_line->lock);
- 		for (j = 0; j < rq_ppas; j++, i++, paddr++)
--			rqd->ppa_list[i] = addr_to_gen_ppa(pblk, paddr, id);
-+			ppa_list[i] = addr_to_gen_ppa(pblk, paddr, id);
- 	}
- 
- 	spin_lock(&l_mg->close_lock);
-@@ -423,7 +421,7 @@ int pblk_submit_meta_io(struct pblk *pblk, struct pblk_line *meta_line)
- 		list_del(&meta_line->list);
- 	spin_unlock(&l_mg->close_lock);
- 
--	pblk_down_page(pblk, rqd->ppa_list, rqd->nr_ppas);
-+	pblk_down_page(pblk, ppa_list, rqd->nr_ppas);
- 
- 	ret = pblk_submit_io(pblk, rqd);
- 	if (ret) {
-@@ -434,7 +432,7 @@ int pblk_submit_meta_io(struct pblk *pblk, struct pblk_line *meta_line)
- 	return NVM_IO_OK;
- 
- fail_rollback:
--	pblk_up_page(pblk, rqd->ppa_list, rqd->nr_ppas);
-+	pblk_up_page(pblk, ppa_list, rqd->nr_ppas);
- 	spin_lock(&l_mg->close_lock);
- 	pblk_dealloc_page(pblk, meta_line, rq_ppas);
- 	list_add(&meta_line->list, &meta_line->list);
+-			kfree(line->map_bitmap);
++			mempool_free(line->map_bitmap, l_mg->bitmap_pool);
+ 			line->map_bitmap = NULL;
+ 			line->smeta = NULL;
+ 			line->emeta = NULL;
 diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
-index eda66fed8e3a..fd274985aa82 100644
+index fd274985aa82..1a31fda3a9f2 100644
 --- a/drivers/lightnvm/pblk.h
 +++ b/drivers/lightnvm/pblk.h
-@@ -1374,9 +1374,7 @@ static inline int pblk_boundary_ppa_checks(struct nvm_tgt_dev *tgt_dev,
- static inline int pblk_check_io(struct pblk *pblk, struct nvm_rq *rqd)
- {
- 	struct nvm_tgt_dev *dev = pblk->dev;
--	struct ppa_addr *ppa_list;
--
--	ppa_list = (rqd->nr_ppas > 1) ? rqd->ppa_list : &rqd->ppa_addr;
-+	struct ppa_addr *ppa_list = nvm_rq_to_ppa_list(rqd);
+@@ -530,6 +530,10 @@ struct pblk_line_mgmt {
+ 	struct pblk_emeta *eline_meta[PBLK_DATA_LINES];
+ 	unsigned long meta_bitmap;
  
- 	if (pblk_boundary_ppa_checks(dev, ppa_list, rqd->nr_ppas)) {
- 		WARN_ON(1);
-diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
-index 0106984400bc..c3ee729feda5 100644
---- a/include/linux/lightnvm.h
-+++ b/include/linux/lightnvm.h
-@@ -320,6 +320,11 @@ static inline void *nvm_rq_to_pdu(struct nvm_rq *rqdata)
- 	return rqdata + 1;
- }
- 
-+static inline struct ppa_addr *nvm_rq_to_ppa_list(struct nvm_rq *rqd)
-+{
-+	return (rqd->nr_ppas > 1) ? rqd->ppa_list : &rqd->ppa_addr;
-+}
++	/* Cache and mempool for map/invalid bitmaps */
++	struct kmem_cache *bitmap_cache;
++	mempool_t *bitmap_pool;
 +
- enum {
- 	NVM_BLK_ST_FREE =	0x1,	/* Free block */
- 	NVM_BLK_ST_TGT =	0x2,	/* Block in use by target */
+ 	/* Helpers for fast bitmap calculations */
+ 	unsigned long *bb_template;
+ 	unsigned long *bb_aux;
 -- 
 2.7.4
 
