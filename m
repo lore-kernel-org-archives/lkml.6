@@ -2,214 +2,133 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C995BC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 14:06:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30420C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 14:06:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C1AA20850
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 14:06:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C1AA20850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id DCE5920850
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 14:06:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="a6Si5uWU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCE5920850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728849AbeH2SD3 (ORCPT
+        id S1728862AbeH2SDt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 14:03:29 -0400
-Received: from mout.kundenserver.de ([212.227.17.24]:50409 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727316AbeH2SD3 (ORCPT
+        Wed, 29 Aug 2018 14:03:49 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43109 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727316AbeH2SDt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 14:03:29 -0400
-Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
- (mreue103 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0Lo2Ke-1fSI471FYe-00g2CQ; Wed, 29 Aug 2018 16:06:07 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     paulus@samba.org, linux-ppp@vger.kernel.org, netdev@vger.kernel.org
-Cc:     mitch@sfgoth.com, mostrows@earthlink.net, jchapman@katalix.com,
-        xeb@mail.ru, davem@davemloft.net, viro@zeniv.linux.org.uk,
-        y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Guillaume Nault <g.nault@alphalink.fr>
-Subject: [PATCH net-next 4/5] ppp: move PPPIOCSPASS32/PPPIOCSACTIVE32 to ppp_generic.c
-Date:   Wed, 29 Aug 2018 16:03:29 +0200
-Message-Id: <20180829140409.833488-4-arnd@arndb.de>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180829140409.833488-1-arnd@arndb.de>
-References: <20180829140409.833488-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:DvRNG5gWXgWPhNXwSDGxC4ZR/n0iE3AHUvPGwVSdoPl1V6C47fg
- wbUIvPIEk57nNI918KfZZYzX/fQImV5oLquckaj5WS+uFQ6t0pOrg8/geO0trJIn+T90gok
- yjqWvPeFOIjDRPX0NFKeqQhjwqsz/5VaEdD3bfvuiZWkLMcAD3BLXg7YAB0iPm0o50DOeR/
- r4/z/N+MK8v0A5fehjObg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:cYWozMrO8hs=:ZKo94HNdWBZTNhlNy8O5L4
- UCU4jEn85h8RtCoFGyZQY6T1jaSCf7iqfwZLJ7D8NWHvzlYuNinjBkbVYjWtEkueNUmvUnLxX
- BO5CfM3xZprfVaf0jsxzBQjvylTrhRO5G7PGLM4LnIQA9azJEE6oFxoL8KNlh91DnCNRAz8RL
- N0+m9BiOjoUlRafdfpOWv+UPqwtl1c36i61GEgI6J72R8jWSG3LiZ9CC5duJ3EhLGzo0mp3uf
- Nl//30B87MMcRfvWjpaB2WPbBOXhQAlFp4mQGOLgm5AJeDo8h9z2fUBdijxpLT6TyqYWH68+V
- oOoHSAXKWLM/IIHAsVzgMNGVDF7f+Sgom5MGAWJjxAVbN+Jt6oT+QQr2yAg3bmY4XXJm74WIG
- 7WZE84Ycl900AHyv+nqJ/0/3WHHy7kNh27YRjPFxEiZQeSwXbNJz4UHgvODBINqpyTXwy97XV
- 7hCQyfKR9uqwQVxxv6b298j5Xvpqy9HOrTBPHG9qTGVOLGBjCxQtAS0I4zaPmh1CuOYXdaRE4
- tecYL4wyzETlIWLFbzzmqxMa1PQXeAz7pX/DUmQ0pMCvLf6mHz0OiT4ZeBzIBEhRUlQVIIbX8
- Vm4gOlp4PPmgbYH5iwgxRyu/j2j7cSF8csS/Uv21SMABGxnNEeOsGGuZJGjmVC9FIoZBDiNsh
- R+r8cNycD5JJ90x0Q2IULJNnYgXl0ODvJnmROX97mG42r/zp1CqWLC+K5TgyW+q+VfUs=
+        Wed, 29 Aug 2018 14:03:49 -0400
+Received: by mail-wr1-f67.google.com with SMTP id k5-v6so4955314wre.10
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 07:06:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=8bHBgu1w8gp4sRX9HM2TpUSo8dJNbUTejKR10AiYyZQ=;
+        b=a6Si5uWUfHXOrh6Y0EcLfA/0NsjiH1hzKVTMJLvTGPG7K5XS2wzPMkLT1JaLApjxN9
+         dUlcNJHuXUCeDEwGTFFBLQcl0oDZ2lNeVJk+FZlYijqKjPgeigvpFgbIgGOFVFEusSbv
+         BrNgB4ww1lygU/trlqdU65CfqRzr97PKZjMtE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=8bHBgu1w8gp4sRX9HM2TpUSo8dJNbUTejKR10AiYyZQ=;
+        b=VKTzSMhC4PXJ4bTYOJs7vy/RlQwGZNrpEEF5iedur1qCwb0JrJZUAvBcO/frxdMOZI
+         jsvfjmFVqaJ98FGo6mVIOeKFc/2CLXB0RNzexHc9IVSgay4dvXPUu7JA6vKZWlSlKIpS
+         G5e4e8piGKIaq4w5W+RhpZWRDUEhKKnqIcaf0V5cHeYl4cTdU6CXu/dbl38U9QXZVSm5
+         GORKAGoADAz6rOmoGjzVrtpu089kvtjY9Dzz7wiq5LccFy0A/yP8NPlTxNkVpccswj+q
+         OPuJ2UUrhP8nElcIIN8odL+lA+oE7WOP3/r+yvDkys52jr2dryCw85XOPDJGi92Hwr1O
+         vO8g==
+X-Gm-Message-State: APzg51DEwbOmgfJ5hC6UNvRVN6mOgfuIY0xE5e4+p3YcS6bSM2JHx8sE
+        DWcrZwyuSjpJIOQpcL9zgKNBom9q4NU=
+X-Google-Smtp-Source: ANB0VdapE4K5IbSw58Jz5A067CfgRoq9hOyC8jIScAXXuk4Gm9A8QRC4rggen43WBDP4UolMEyqwVA==
+X-Received: by 2002:adf:81c3:: with SMTP id 61-v6mr4591145wra.120.1535551601335;
+        Wed, 29 Aug 2018 07:06:41 -0700 (PDT)
+Received: from linaro.org ([2a01:e0a:f:6020:4c23:4749:7ea6:c5af])
+        by smtp.gmail.com with ESMTPSA id r30-v6sm8852054wrc.90.2018.08.29.07.06.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 Aug 2018 07:06:40 -0700 (PDT)
+Date:   Wed, 29 Aug 2018 16:06:38 +0200
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org, kernellwp@gmail.com
+Subject: Re: [PATCH] sched/schedutil : optimize utilization scaling for guest
+ kernel
+Message-ID: <20180829140638.GA7483@linaro.org>
+References: <1535532702-3508-1-git-send-email-vincent.guittot@linaro.org>
+ <20180829124503.GU24124@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180829124503.GU24124@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PPPIOCSPASS and PPPIOCSACTIVE are implemented in ppp_generic and isdn_ppp,
-but the latter one doesn't work for compat mode in general, so we can
-move these two into the generic code.
+Le Wednesday 29 Aug 2018 à 14:45:03 (+0200), Peter Zijlstra a écrit :
+> On Wed, Aug 29, 2018 at 10:51:42AM +0200, Vincent Guittot wrote:
+> > Scaling the utilization of CPUs with irq util_avg in schedutil doesn't give
+> > any benefit and just waste CPU cycles when irq time is not accounted but
+> > only steal time.
+> > Add an internal _scale_irq_capacity() for scale_rt_capacity but scale
+> > cpu utilization in schedutil only if we are accounting irq time.
+> 
+> This makes a mess of things; also it doesn't really do what it says.
 
-Again, the best implementation I could come up with was to merge
-the compat handling into the regular ppp_ioctl() function and
-treating all ioctl commands as compatible.
+you're right. I forgot to not add irq util_avg in this case.
+What about the below instead ?
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+sched/schedutil : optimize computation of utilization in schedutil
+    
+Scaling the utilization of CPUs with irq util_avg in schedutil doesn't give
+any benefit and just waste CPU cycles when irq time is not accounted but
+only steal time.
+Skip the irq scaling when irq time is not accounted
+
+Suggested-by: Wanpeng Li <kernellwp@gmail.com>
+Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+
 ---
- drivers/net/ppp/ppp_generic.c | 39 ++++++++++++++++++++++++++++++-----
- fs/compat_ioctl.c             | 37 ---------------------------------
- 2 files changed, 34 insertions(+), 42 deletions(-)
+ kernel/sched/cpufreq_schedutil.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/ppp/ppp_generic.c b/drivers/net/ppp/ppp_generic.c
-index 8dfe8d47df95..3a7aa2eed415 100644
---- a/drivers/net/ppp/ppp_generic.c
-+++ b/drivers/net/ppp/ppp_generic.c
-@@ -22,6 +22,7 @@
-  * ==FILEVERSION 20041108==
-  */
+diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+index 3fffad3..edbc4d2 100644
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -238,6 +238,7 @@ static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
+ 	if ((util + cpu_util_dl(rq)) >= max)
+ 		return max;
  
-+#include <linux/compat.h>
- #include <linux/module.h>
- #include <linux/kernel.h>
- #include <linux/sched/signal.h>
-@@ -567,14 +568,36 @@ struct ppp_option_data32 {
- #endif
- 
- #ifdef CONFIG_PPP_FILTER
--static int get_filter(void __user *arg, struct sock_filter **p)
-+#ifdef CONFIG_COMPAT
-+struct sock_fprog32 {
-+	unsigned short	len;
-+	compat_caddr_t	filter;
-+};
-+#define PPPIOCSPASS32	_IOW('t', 71, struct sock_fprog32)
-+#define PPPIOCSACTIVE32	_IOW('t', 70, struct sock_fprog32)
++#ifdef CONFIG_IRQ_TIME_ACCOUNTING
+ 	/*
+ 	 * There is still idle time; further improve the number by using the
+ 	 * irq metric. Because IRQ/steal time is hidden from the task clock we
+@@ -249,6 +250,7 @@ static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
+ 	 */
+ 	util = scale_irq_capacity(util, irq, max);
+ 	util += irq;
 +#endif
-+
-+static int get_filter(void __user *arg, struct sock_filter **p, bool compat)
- {
- 	struct sock_fprog uprog;
- 	struct sock_filter *code = NULL;
- 	int len;
  
--	if (copy_from_user(&uprog, arg, sizeof(uprog)))
--		return -EFAULT;
-+#ifdef CONFIG_COMPAT
-+	if (compat) {
-+		struct sock_fprog32 uprog32;
-+
-+		if (copy_from_user(&uprog32, arg, sizeof(uprog32)))
-+			return -EFAULT;
-+
-+		uprog.len = uprog32.len;
-+		uprog.filter = compat_ptr(uprog32.filter);
-+	} else
-+#endif
-+	{
-+		if (copy_from_user(&uprog, arg, sizeof(uprog)))
-+			return -EFAULT;
-+	}
- 
- 	if (!uprog.len) {
- 		*p = NULL;
-@@ -772,10 +795,13 @@ static long ppp_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 
- #ifdef CONFIG_PPP_FILTER
- 	case PPPIOCSPASS:
-+#ifdef CONFIG_COMPAT
-+	case PPPIOCSPASS32:
-+#endif
- 	{
- 		struct sock_filter *code;
- 
--		err = get_filter(argp, &code);
-+		err = get_filter(argp, &code, cmd != PPPIOCSPASS);
- 		if (err >= 0) {
- 			struct bpf_prog *pass_filter = NULL;
- 			struct sock_fprog_kern fprog = {
-@@ -798,10 +824,13 @@ static long ppp_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 		break;
- 	}
- 	case PPPIOCSACTIVE:
-+#ifdef CONFIG_COMPAT
-+	case PPPIOCSACTIVE32:
-+#endif
- 	{
- 		struct sock_filter *code;
- 
--		err = get_filter(argp, &code);
-+		err = get_filter(argp, &code, cmd != PPPIOCSACTIVE);
- 		if (err >= 0) {
- 			struct bpf_prog *active_filter = NULL;
- 			struct sock_fprog_kern fprog = {
-diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
-index f518dc174dc7..258c6938e80a 100644
---- a/fs/compat_ioctl.c
-+++ b/fs/compat_ioctl.c
-@@ -379,40 +379,6 @@ static int sg_grt_trans(struct file *file,
- }
- #endif /* CONFIG_BLOCK */
- 
--struct sock_fprog32 {
--	unsigned short	len;
--	compat_caddr_t	filter;
--};
--
--#define PPPIOCSPASS32	_IOW('t', 71, struct sock_fprog32)
--#define PPPIOCSACTIVE32	_IOW('t', 70, struct sock_fprog32)
--
--static int ppp_sock_fprog_ioctl_trans(struct file *file,
--		unsigned int cmd, struct sock_fprog32 __user *u_fprog32)
--{
--	struct sock_fprog __user *u_fprog64 = compat_alloc_user_space(sizeof(struct sock_fprog));
--	void __user *fptr64;
--	u32 fptr32;
--	u16 flen;
--
--	if (get_user(flen, &u_fprog32->len) ||
--	    get_user(fptr32, &u_fprog32->filter))
--		return -EFAULT;
--
--	fptr64 = compat_ptr(fptr32);
--
--	if (put_user(flen, &u_fprog64->len) ||
--	    put_user(fptr64, &u_fprog64->filter))
--		return -EFAULT;
--
--	if (cmd == PPPIOCSPASS32)
--		cmd = PPPIOCSPASS;
--	else
--		cmd = PPPIOCSACTIVE;
--
--	return do_ioctl(file, cmd, (unsigned long) u_fprog64);
--}
--
- struct ppp_idle32 {
- 	compat_time_t xmit_idle;
- 	compat_time_t recv_idle;
-@@ -1218,9 +1184,6 @@ static long do_ioctl_trans(unsigned int cmd,
- 	switch (cmd) {
- 	case PPPIOCGIDLE32:
- 		return ppp_gidle(file, cmd, argp);
--	case PPPIOCSPASS32:
--	case PPPIOCSACTIVE32:
--		return ppp_sock_fprog_ioctl_trans(file, cmd, argp);
- #ifdef CONFIG_BLOCK
- 	case SG_IO:
- 		return sg_ioctl_trans(file, cmd, argp);
+ 	/*
+ 	 * Bandwidth required by DEADLINE must always be granted while, for
 -- 
-2.18.0
+2.7.4
 
+> 
+> Even if we have CONFIG_IRQ_TIME_ACCOUNTING, that doesn't mean we do it,
+> just that it is capable.
+> 
+> 
