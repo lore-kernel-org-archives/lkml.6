@@ -2,94 +2,116 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0695EC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:42:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30451C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:42:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AEE220659
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:42:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Hb4rWtSd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AEE220659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id E8424204FD
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:42:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8424204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729175AbeH2Tjw (ORCPT
+        id S1729186AbeH2TkX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 15:39:52 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:36304 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727562AbeH2Tjw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 15:39:52 -0400
-Received: by mail-it0-f67.google.com with SMTP id u13-v6so7806085iti.1;
-        Wed, 29 Aug 2018 08:42:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fBgiGE6VOGyUUM+0z038kipmEO9nK31ZqzDttSMv5yo=;
-        b=Hb4rWtSdYtyZ2pauP0RHz9Twg04UpT+DewQCVAYv6XCoERQwg2JgYTJa0xjcOfXz+t
-         LPj+fzX+7bR/tJd2vRq5iXPak9NIJ7nw2Ch15HWuuQzVVYstDXP5LtEHYMNaKcGSLtvn
-         gzA/XcKPKlecdHH2skF8DOnMvNwQewnVWPO2U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fBgiGE6VOGyUUM+0z038kipmEO9nK31ZqzDttSMv5yo=;
-        b=YxH3mCLYRQbgl5gqlv3PmmBmFhFNMbwgjQykp3DfScht03GiItbUrP7+m4Itj+J7+f
-         TQ7CaiPDkI56Y1X79bcidiI/LkUEYq2yRmItayCxTkXTTa+gaKCF8EXa/9/MTm8anlLK
-         oih/2auKk/Ty15GP2gNRJTnlcrkAD+1AAKVuvi8NpmMUohv8LO/WQAsGWVpc/rUW2hzt
-         oeEk0zUNq7VgIyd+AwzXAb6Iv7ubt+QzkJwlFyWm/rQ4QKZS9J32klYOGytJWHXEBXjM
-         pMToj7ZrxinSXXgtGW88ZK1/pUwRo8owyBO1O5FE7qVWkrrd7D1Sh4HeC8VT36ew/Gk2
-         QnOQ==
-X-Gm-Message-State: APzg51DOD3c9VT1Q6I7dfqEiJtP9Tz5iTnEMu10gkO4pprIo1Znc5/SN
-        o1xq0w07yTwdMaywWNeD+jMrPb11z1ZRthRpKWE=
-X-Google-Smtp-Source: ANB0VdZAqXMsGt7hzxrQqDTVMBy2/U7Cr4xPqB+RLSb8zexAcQVcqqm9t2+N7eUnXW1e6v3SiWEMzyNgAwMGJ5Yk2FY=
-X-Received: by 2002:a24:8309:: with SMTP id d9-v6mr5747089ite.123.1535557340624;
- Wed, 29 Aug 2018 08:42:20 -0700 (PDT)
+        Wed, 29 Aug 2018 15:40:23 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60204 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729028AbeH2TkX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 15:40:23 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6E5FA401EF02;
+        Wed, 29 Aug 2018 15:42:51 +0000 (UTC)
+Received: from flask (unknown [10.40.205.185])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 2F68A2166B41;
+        Wed, 29 Aug 2018 15:42:48 +0000 (UTC)
+Received: by flask (sSMTP sendmail emulation); Wed, 29 Aug 2018 17:42:47 +0200
+Date:   Wed, 29 Aug 2018 17:42:47 +0200
+From:   Radim Krcmar <rkrcmar@redhat.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Wanpeng Li <kernellwp@gmail.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH] KVM: LAPIC: Fix pv ipis out-of-bounds access
+Message-ID: <20180829154246.GB19487@flask>
+References: <1535521943-5547-1-git-send-email-wanpengli@tencent.com>
+ <A523C29C-C3E8-4FEF-8620-96365F774582@oracle.com>
+ <20180829101205.jsp53e2wq7fc6ukd@mwanda>
+ <20180829101822.qo3u7lsmghs3kcuf@mwanda>
+ <CANRm+Cy9n=2Ssy_cEWRtnoQJczjdqB+m-dA6zesz75r0h532iA@mail.gmail.com>
+ <20180829102910.rkyato47chayt22s@mwanda>
 MIME-Version: 1.0
-References: <20180828112034.30875-1-npiggin@gmail.com> <20180828112034.30875-3-npiggin@gmail.com>
-In-Reply-To: <20180828112034.30875-3-npiggin@gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 29 Aug 2018 08:42:09 -0700
-Message-ID: <CA+55aFwbZrsdZEh0ds1W3AWUeTamDRheQPKSi9O=--cEOSjr5g@mail.gmail.com>
-Subject: Re: [PATCH 2/3] mm/cow: optimise pte dirty/accessed bits handling in fork
-To:     Nick Piggin <npiggin@gmail.com>
-Cc:     linux-mm <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180829102910.rkyato47chayt22s@mwanda>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 29 Aug 2018 15:42:51 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 29 Aug 2018 15:42:51 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'rkrcmar@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 4:20 AM Nicholas Piggin <npiggin@gmail.com> wrote:
->
-> fork clears dirty/accessed bits from new ptes in the child. This logic
-> has existed since mapped page reclaim was done by scanning ptes when
-> it may have been quite important. Today with physical based pte
-> scanning, there is less reason to clear these bits.
+2018-08-29 13:29+0300, Dan Carpenter:
+> On Wed, Aug 29, 2018 at 06:23:08PM +0800, Wanpeng Li wrote:
+> > On Wed, 29 Aug 2018 at 18:18, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> > >
+> > > On Wed, Aug 29, 2018 at 01:12:05PM +0300, Dan Carpenter wrote:
+> > > > On Wed, Aug 29, 2018 at 12:05:06PM +0300, Liran Alon wrote:
+> > > > > > arch/x86/kvm/lapic.c | 17 +++++++++++++----
+> > > > > > 1 file changed, 13 insertions(+), 4 deletions(-)
+> > > > > >
+> > > > > > diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+> > > > > > index 0cefba2..86e933c 100644
+> > > > > > --- a/arch/x86/kvm/lapic.c
+> > > > > > +++ b/arch/x86/kvm/lapic.c
+> > > > > > @@ -571,18 +571,27 @@ int kvm_pv_send_ipi(struct kvm *kvm, unsigned long ipi_bitmap_low,
+> > > > > >   rcu_read_lock();
+> > > > > >   map = rcu_dereference(kvm->arch.apic_map);
+> > > > > >
+> > > > > > + if (unlikely((s32)(map->max_apic_id - __fls(ipi_bitmap_low)) < min))
+> > > > > > +         goto out;
+> > > > >
+> > > > > I personally think “if ((min + __fls(ipi_bitmap_low)) > map->max_apic_id)” is more readable.
+> > > > > But that’s just a matter of taste :)
+> > > >
+> > > > That's an integer overflow.
+> > > >
+> > > > But I do prefer to put the variable on the left.  The truth is that some
+> > > > Smatch checks just ignore code which is backwards written because
+> > > > otherwise you have to write duplicate code and the most code is written
+> > > > with the variable on the left.
+> > > >
+> > > >       if (min > (s32)(map->max_apic_id - __fls(ipi_bitmap_low))
+> > >
+> > > Wait, the (s32) cast doesn't make sense.  We want negative min values to
+> > > be treated as invalid.
+> > 
+> > In v2, how about:
+> > 
+> > if (unlikely(min > map->max_apic_id || (min + __fls(ipi_bitmap_low)) >
+> > map->max_apic_id))
+> >     goto out;
+> 
+> That works, too.  It still has the off by one and we should set
+> "count = -KVM_EINVAL;".
 
-Can you humor me, and make the dirty/accessed bit patches separate?
+I'd prefer to ignore destinations that are not present and deliver the
+rest, possibly nothing, instead of returning an error.
+(It's closer to how the real hardware behaves and we already return the
+ number of notified VCPUs, so the caller can tell whether something went
+ wrong.)
 
-There is actually a difference wrt the dirty bit: if we unmap an area
-with dirty pages, we have to do the special synchronous flush.
+Either in the form that I have posted earlier, or as:
 
-So a clean page in the virtual mapping is _literally_ cheaper to have.
+	if (min > map->max_apic_id)
+		goto out;
 
-> This eliminates a major source of faults powerpc/radix requires to set
-> dirty/accessed bits in ptes, speeding up a fork/exit microbenchmark by
-> about 5% on POWER9 (16600 -> 17500 fork/execs per second).
-
-I don't think the dirty bit matters.
-
-The accessed bit I think may be worth keeping, so by all means remove the mkold.
-
-                  Linus
+	for_each_set_bit(i, &ipi_bitmap_low, MIN(BITS_PER_LONG, map->max_apic_id - min + 1))
