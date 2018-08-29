@@ -2,119 +2,131 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 719CEC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:40:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AAD1C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:41:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 222052089B
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:40:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E14682086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:41:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="h/O+c7sb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 222052089B
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BGsQxV0a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E14682086D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727736AbeH2LgI (ORCPT
+        id S1727784AbeH2LhG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 07:36:08 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:36284 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727642AbeH2LgI (ORCPT
+        Wed, 29 Aug 2018 07:37:06 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:33764 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727072AbeH2LhF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 07:36:08 -0400
-Received: by mail-it0-f65.google.com with SMTP id u13-v6so6023257iti.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 00:40:35 -0700 (PDT)
+        Wed, 29 Aug 2018 07:37:05 -0400
+Received: by mail-pf1-f195.google.com with SMTP id d4-v6so1913424pfn.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 00:41:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uONAZEG+xvWRL7/1zDHI0ovoG06Jhaf7tDWY6382jHs=;
-        b=h/O+c7sbjLDPCNPyyLfH3qPbjKE4+56zKko6zcTBfhRkWd48TqqVjdGkSx/5t/R3uD
-         UAm9SaIJ/Ek7rDCVT3Sc1bgkAeW/J3USFg4JT0Jb7CRMx7PudBV1ByoiTWww0b5N1vwT
-         1uuB2nHgHmpHYcSYNlYOqElORxKH/XmhjYuYE=
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KbQUysjEP1xsNZVrxroiuYFkSF+ojmTkoR8Lw0wgNp0=;
+        b=BGsQxV0aXNaLgF6NNwvVv+xCt9Q0jMt09FjbgP+YCncALh+X59vBg7CniLqEQpgMEw
+         abUUVagNhZP8BkxFX1jS9p2P6Dbvud9PW2ha3PtStkxQj6azo3sRq4/KcCjHz7MTPTBD
+         08UPyuY0ib2gSzg+OJl4iC3y/Sbd/HJg/GcoU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uONAZEG+xvWRL7/1zDHI0ovoG06Jhaf7tDWY6382jHs=;
-        b=kbrHMX/gmY1piyYNmlH7UbXwljiavMNFjzXYwSZSncSIgexfmRFeinkb80+vZUoAzp
-         0ZsE8RU4q5MGyGu0kq50ulnO2FYnxRNLXZuidbkVjbHecnm3U0iqOF6SUTwbqrZ4WSDx
-         U5iZ5nnIC3cEIKueJz1cY6zddscpziE+w6TChgEBbp9hb4gBpQ35pNalTPtqQnlPMH7K
-         /lpI57iSqZNywT2eelAuJHLBgv7fbyk7JCjXk33LVbfxBPvQhMsS9lQhDY8Sx9P7phdu
-         yUiXw5PcCAPKfHUYaWJ1lVnV2DIJDrHb61pxA6Uoy+RA3Wx4NxY1c/sEsPvnHybBch8Q
-         8aNg==
-X-Gm-Message-State: APzg51CLYXpk9/V6pArtTl5clS6w4rC38wtxu5vGCxUtPdnBuh7uwAgf
-        +pg7JL2Unwxiu1R4jHkSmxdKv6YUcvAAVkl3b9a1pQ==
-X-Google-Smtp-Source: ANB0VdYyfAYeS5Lep2yiJSpMWDbQ5/V3T/7h+s4Rkrf0Bc9ZQ9Ft/KD0vDnTCshwVmYJjqEIS7t4lagVnz0a7s9lnlg=
-X-Received: by 2002:a02:5916:: with SMTP id p22-v6mr4171137jab.113.1535528435058;
- Wed, 29 Aug 2018 00:40:35 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180816200648.90458-1-swboyd@chromium.org> <20180816200648.90458-2-swboyd@chromium.org>
-In-Reply-To: <20180816200648.90458-2-swboyd@chromium.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 29 Aug 2018 09:40:23 +0200
-Message-ID: <CACRpkdbGUPpwEbGqg3Q3780DiEG2fts2WRkjkuQ2kmJR1HiftA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] pinctrl: msm: Really mask level interrupts to
- prevent latching
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KbQUysjEP1xsNZVrxroiuYFkSF+ojmTkoR8Lw0wgNp0=;
+        b=ZrFvFGJu1o4G8WXYaUlnj80xIvmeMw3qvvPpr8wznZEe2EUJiKEbjV7CnDHt4dGqEm
+         iekeNZmzK8mk9iufVt2oUpe532144Mo02/jcX8Ge+3u/zoLmBSsRKH/LiNEcAFzLmpj9
+         ZajnODW3i7M+M8/u5U0y2ZeYIlKJD9yHwg/7s+l1SUUrId0s0nDo5TLKghLC4uJamKHX
+         +jW7q8XfNpEvUSZx1SHPvhh0152zI4L433EAz7eHsmkAo8/hbVxRREDmR1yYdC8HVw0I
+         stDUWFU+cji8imbezyUOZg7jJpgUvRER6w8jLprjP/imLHdJMG7ZMNDrnffrQycT8VhN
+         7ceA==
+X-Gm-Message-State: APzg51BvGOTb2cI17gZ8jw07b3F/tmlO7a84H6eyLXONd/K3lRocJCJD
+        P4HrClhOQcM4ES4neKIRF9mU
+X-Google-Smtp-Source: ANB0Vdaa6VTp9disFYH69tbeYBO2eJQbeGxUpmEOyJbjM1sxx0eEi34xd8Lnbrj5PeuCFL5XWro7zw==
+X-Received: by 2002:a63:9841:: with SMTP id l1-v6mr4498019pgo.228.1535528491996;
+        Wed, 29 Aug 2018 00:41:31 -0700 (PDT)
+Received: from Mani-XPS-13-9360 ([2409:4072:6384:6a6:70b9:a288:9cdc:3e44])
+        by smtp.gmail.com with ESMTPSA id z11-v6sm8848391pgz.62.2018.08.29.00.41.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 29 Aug 2018 00:41:31 -0700 (PDT)
+Date:   Wed, 29 Aug 2018 13:11:19 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     sravanhome@gmail.com, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Doug Anderson <dianders@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>, pn@denx.de,
+        mp-cs@actions-semi.com, Jeff Chen <jeff.chen@actions-semi.com>,
+        "Thomas C. Liau" <thomas.liau@actions-semi.com>,
+        linux@cubietech.com
+Subject: Re: [PATCH v4 0/5] Add Actions Semi S700 pinctrl support
+Message-ID: <20180829074119.GA24958@Mani-XPS-13-9360>
+References: <0180729200038.11795-1-sravanhome@gmail.com>
+ <20180731194743.13678-1-sravanhome@gmail.com>
+ <CACRpkda=q+LZMUN5xJ777ZGWxYRBdZTvG0naNqr5BoLnVQ1=aA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACRpkda=q+LZMUN5xJ777ZGWxYRBdZTvG0naNqr5BoLnVQ1=aA@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 16, 2018 at 10:06 PM Stephen Boyd <swboyd@chromium.org> wrote:
-
-> The interrupt controller hardware in this pin controller has two status
-> enable bits. The first "normal" status enable bit enables or disables
-> the summary interrupt line being raised when a gpio interrupt triggers
-> and the "raw" status enable bit allows or prevents the hardware from
-> latching an interrupt into the status register for a gpio interrupt.
-> Currently we just toggle the "normal" status enable bit in the mask and
-> unmask ops so that the summary irq interrupt going to the CPU's
-> interrupt controller doesn't trigger for the masked gpio interrupt.
+On Wed, Aug 29, 2018 at 09:35:38AM +0200, Linus Walleij wrote:
+> On Tue, Jul 31, 2018 at 9:48 PM Saravanan Sekar <sravanhome@gmail.com> wrote:
+> 
+> > This patchset adds pinctrl support for Actions Semi S700 SoC.
+> > Pinmux functions are only accessible for pin groups while pinconf
+> > parameters are available for both pin groups and individual pins.
+> >
+> > pinctrl driver is verified using the Cubieboard7.
+> >
+> > common functionalities from s900 is moved for all Actions Semi
+> > SoC's usage.
+> > Common pad control configurations are moved to SoC specific
+> >
+> > dts entry for pinctrl depends on clock driver which is still under review:
+> > https://patchwork.kernel.org/patch/10533959/
+> 
+> So what is the status of this patch set?
 >
-> For a level triggered interrupt, the flow would be as follows: the pin
-> controller sees the interrupt, latches the status into the status
-> register, raises the summary irq to the CPU, summary irq handler runs
-> and calls handle_level_irq(), handle_level_irq() masks and acks the gpio
-> interrupt, the interrupt handler runs, and finally unmask the interrupt.
-> When the interrupt handler completes, we expect that the interrupt line
-> level will go back to the deasserted state so the genirq code can unmask
-> the interrupt without it triggering again.
->
-> If we only mask the interrupt by clearing the "normal" status enable bit
-> then we'll ack the interrupt but it will continue to show up as pending
-> in the status register because the raw status bit is enabled, the
-> hardware hasn't deasserted the line, and thus the asserted state latches
-> into the status register again. When the hardware deasserts the
-> interrupt the pin controller still thinks there is a pending unserviced
-> level interrupt because it latched it earlier. This behavior causes
-> software to see an extra interrupt for level type interrupts each time
-> the interrupt is handled.
->
-> Let's fix this by clearing the raw status enable bit for level type
-> interrupts so that the hardware stops latching the status of the
-> interrupt after we ack it. We don't do this for edge type interrupts
-> because it seems that toggling the raw status enable bit for edge type
-> interrupts causes spurious edge interrupts.
->
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Doug Anderson <dianders@chromium.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 
-This patch applied for fixes with Doug and Bjorn's ACKs.
+Oops. This one slipped through the cracks...
 
-I suppose you will respin the two others and obtain buy-in from
-the same people for these.
+> I am happy to apply it once you have the right buildtime dependencies
+> and Manivannan's ACK on the patch set! (Looks good to me.)
+> 
 
-Yours,
-Linus Walleij
+Sadly mutt played its part on this patchset and 1,3 patches got
+deleted accidentally.
+
+> Maybe you want to rebase on v4.19-rc1 and resend as v5 before
+> I do that though?
+> 
+
+Parthiban,
+
+Can you please rebase and send the next iteration as Linus said. I'll take a
+look.
+
+Sorry for the late reply.
+
+Regards,
+Mani
+
+> Yours,
+> Linus Walleij
