@@ -6,49 +6,48 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
 	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50151C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:33:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61CB7C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:33:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD8B820644
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:33:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A74620661
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:33:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tkqt73pG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD8B820644
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hp0/w76s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A74620661
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727295AbeH3CcB (ORCPT
+        id S1727367AbeH3Cc0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 22:32:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59038 "EHLO mail.kernel.org"
+        Wed, 29 Aug 2018 22:32:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59154 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727187AbeH3CcB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 22:32:01 -0400
+        id S1727179AbeH3Cc0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 22:32:26 -0400
 Received: from mail.kernel.org (unknown [185.216.33.115])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0638020658;
-        Wed, 29 Aug 2018 22:32:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B79B520644;
+        Wed, 29 Aug 2018 22:33:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535581978;
-        bh=ZCoEZcvflpcqtZnPkrjve3Ng8byEGG4Vs10TxJiJQi4=;
+        s=default; t=1535582003;
+        bh=VpOzEsjq7BnHpVB2u+LPjXwIXUQFtsPQKZaPW+iBu+k=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Tkqt73pGBr577kcTHkcD9dnv1PkLTI0U0g/epujGtp4cTqV30hz4NQEAM62vmDJ9m
-         Un8mWRaMpZTqhJpav8J40KAEFlImiE36WJRIZibT14UMZzo3UQZtzPXounWiPMpk40
-         lEUyuXFI9Em0c5RuAAZmgCWrSO4KqDDUSLnY0Wnw=
-Date:   Thu, 30 Aug 2018 00:32:55 +0200
+        b=hp0/w76sKyRhrXvz2hkw/jqHoqjgDwHBQzB1tNKV98DqYQHEDC9BBOwyL2dKbHvSe
+         j+Jvz0bmOXQKgP2ERZnUxxyCX3p6ol13W+Tt5MUBxKD1tseoK5A1m7ixuBeK3SbRdN
+         CIuhJb5+wyAzWCuGBiCsJpUALTn85XLX9/zwhF14=
+Date:   Thu, 30 Aug 2018 00:33:20 +0200
 From:   Sebastian Reichel <sre@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] power: supply: maxim: Add SPDX license identifiers
-Message-ID: <20180829223255.nshvzapgtbd7ucrv@earth.universe>
-References: <20180807162106.18282-1-krzk@kernel.org>
+To:     Ding Xiang <dingxiang@cmss.chinamobile.com>
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] power: supply: ab8500_fg: fix obsolete function
+Message-ID: <20180829223320.rhfusyuywofjmpx7@earth.universe>
+References: <1535366955-12733-1-git-send-email-dingxiang@cmss.chinamobile.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="26gxn3qednu6n4bl"
+        protocol="application/pgp-signature"; boundary="37hn7rqsvit6mk4s"
 Content-Disposition: inline
-In-Reply-To: <20180807162106.18282-1-krzk@kernel.org>
+In-Reply-To: <1535366955-12733-1-git-send-email-dingxiang@cmss.chinamobile.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -56,262 +55,124 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---26gxn3qednu6n4bl
+--37hn7rqsvit6mk4s
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-On Tue, Aug 07, 2018 at 06:21:06PM +0200, Krzysztof Kozlowski wrote:
-> Replace GPL v2.0 and v2.0+ license statements with SPDX license
-> identifiers.
+On Mon, Aug 27, 2018 at 06:49:15AM -0400, Ding Xiang wrote:
+> simple_strtoul is obsolete, and use kstrtoint instead
 >=20
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
 > ---
 
 Thanks, queued.
 
 -- Sebastian
 
->  drivers/power/supply/max14577_charger.c | 22 ++++++----------------
->  drivers/power/supply/max17040_battery.c | 18 +++++++-----------
->  drivers/power/supply/max17042_battery.c | 32 +++++++++------------------=
------
->  drivers/power/supply/max77693_charger.c | 22 ++++++----------------
->  drivers/power/supply/max8997_charger.c  | 26 ++++++--------------------
->  drivers/power/supply/max8998_charger.c  | 26 ++++++--------------------
->  6 files changed, 40 insertions(+), 106 deletions(-)
+>  drivers/power/supply/ab8500_fg.c | 21 +++++++++++++++------
+>  1 file changed, 15 insertions(+), 6 deletions(-)
 >=20
-> diff --git a/drivers/power/supply/max14577_charger.c b/drivers/power/supp=
-ly/max14577_charger.c
-> index 449fc56f09eb..8a59feac6468 100644
-> --- a/drivers/power/supply/max14577_charger.c
-> +++ b/drivers/power/supply/max14577_charger.c
-> @@ -1,19 +1,9 @@
-> -/*
-> - * max14577_charger.c - Battery charger driver for the Maxim 14577/77836
-> - *
-> - * Copyright (C) 2013,2014 Samsung Electronics
-> - * Krzysztof Kozlowski <krzk@kernel.org>
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License as published by
-> - * the Free Software Foundation; either version 2 of the License, or
-> - * (at your option) any later version.
-> - *
-> - * This program is distributed in the hope that it will be useful,
-> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - * GNU General Public License for more details.
-> - */
-> +// SPDX-License-Identifier: GPL-2.0+
-> +//
-> +// max14577_charger.c - Battery charger driver for the Maxim 14577/77836
-> +//
-> +// Copyright (C) 2013,2014 Samsung Electronics
-> +// Krzysztof Kozlowski <krzk@kernel.org>
+> diff --git a/drivers/power/supply/ab8500_fg.c b/drivers/power/supply/ab85=
+00_fg.c
+> index 02356f9..2bdadb5 100644
+> --- a/drivers/power/supply/ab8500_fg.c
+> +++ b/drivers/power/supply/ab8500_fg.c
+> @@ -2582,11 +2582,12 @@ static ssize_t ab8505_powercut_flagtime_write(str=
+uct device *dev,
+>  				  const char *buf, size_t count)
+>  {
+>  	int ret;
+> -	long unsigned reg_value;
+> +	int reg_value;
+>  	struct power_supply *psy =3D dev_get_drvdata(dev);
+>  	struct ab8500_fg *di =3D power_supply_get_drvdata(psy);
 > =20
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
-> diff --git a/drivers/power/supply/max17040_battery.c b/drivers/power/supp=
-ly/max17040_battery.c
-> index 33c40f79d23d..91cafc7bed30 100644
-> --- a/drivers/power/supply/max17040_battery.c
-> +++ b/drivers/power/supply/max17040_battery.c
-> @@ -1,14 +1,10 @@
-> -/*
-> - *  max17040_battery.c
-> - *  fuel-gauge systems for lithium-ion (Li+) batteries
-> - *
-> - *  Copyright (C) 2009 Samsung Electronics
-> - *  Minkyu Kang <mk7.kang@samsung.com>
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License version 2 as
-> - * published by the Free Software Foundation.
-> - */
-> +// SPDX-License-Identifier: GPL-2.0
-> +//
-> +//  max17040_battery.c
-> +//  fuel-gauge systems for lithium-ion (Li+) batteries
-> +//
-> +//  Copyright (C) 2009 Samsung Electronics
-> +//  Minkyu Kang <mk7.kang@samsung.com>
+> -	reg_value =3D simple_strtoul(buf, NULL, 10);
+> +	if (kstrtoint(buf, 10, &reg_value))
+> +		goto fail;
 > =20
->  #include <linux/module.h>
->  #include <linux/init.h>
-> diff --git a/drivers/power/supply/max17042_battery.c b/drivers/power/supp=
-ly/max17042_battery.c
-> index 1a568df383db..2a8d75e5e930 100644
-> --- a/drivers/power/supply/max17042_battery.c
-> +++ b/drivers/power/supply/max17042_battery.c
-> @@ -1,26 +1,12 @@
-> -/*
-> - * Fuel gauge driver for Maxim 17042 / 8966 / 8997
-> - *  Note that Maxim 8966 and 8997 are mfd and this is its subdevice.
-> - *
-> - * Copyright (C) 2011 Samsung Electronics
-> - * MyungJoo Ham <myungjoo.ham@samsung.com>
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License as published by
-> - * the Free Software Foundation; either version 2 of the License, or
-> - * (at your option) any later version.
-> - *
-> - * This program is distributed in the hope that it will be useful,
-> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - * GNU General Public License for more details.
-> - *
-> - * You should have received a copy of the GNU General Public License
-> - * along with this program; if not, write to the Free Software
-> - * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 =
- USA
-> - *
-> - * This driver is based on max17040_battery.c
-> - */
-> +// SPDX-License-Identifier: GPL-2.0+
-> +//
-> +// Fuel gauge driver for Maxim 17042 / 8966 / 8997
-> +//  Note that Maxim 8966 and 8997 are mfd and this is its subdevice.
-> +//
-> +// Copyright (C) 2011 Samsung Electronics
-> +// MyungJoo Ham <myungjoo.ham@samsung.com>
-> +//
-> +// This driver is based on max17040_battery.c
+>  	if (reg_value > 0x7F) {
+>  		dev_err(dev, "Incorrect parameter, echo 0 (1.98s) - 127 (15.625ms) for=
+ flagtime\n");
+> @@ -2636,7 +2637,9 @@ static ssize_t ab8505_powercut_maxtime_write(struct=
+ device *dev,
+>  	struct power_supply *psy =3D dev_get_drvdata(dev);
+>  	struct ab8500_fg *di =3D power_supply_get_drvdata(psy);
 > =20
->  #include <linux/acpi.h>
->  #include <linux/init.h>
-> diff --git a/drivers/power/supply/max77693_charger.c b/drivers/power/supp=
-ly/max77693_charger.c
-> index 6c78884bad5e..b4cc5b807d53 100644
-> --- a/drivers/power/supply/max77693_charger.c
-> +++ b/drivers/power/supply/max77693_charger.c
-> @@ -1,19 +1,9 @@
-> -/*
-> - * max77693_charger.c - Battery charger driver for the Maxim 77693
-> - *
-> - * Copyright (C) 2014 Samsung Electronics
-> - * Krzysztof Kozlowski <krzk@kernel.org>
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License as published by
-> - * the Free Software Foundation; either version 2 of the License, or
-> - * (at your option) any later version.
-> - *
-> - * This program is distributed in the hope that it will be useful,
-> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - * GNU General Public License for more details.
-> - */
-> +// SPDX-License-Identifier: GPL-2.0+
-> +//
-> +// max77693_charger.c - Battery charger driver for the Maxim 77693
-> +//
-> +// Copyright (C) 2014 Samsung Electronics
-> +// Krzysztof Kozlowski <krzk@kernel.org>
+> -	reg_value =3D simple_strtoul(buf, NULL, 10);
+> +	if (kstrtoint(buf, 10, &reg_value))
+> +		goto fail;
+> +
+>  	if (reg_value > 0x7F) {
+>  		dev_err(dev, "Incorrect parameter, echo 0 (0.0s) - 127 (1.98s) for max=
+time\n");
+>  		goto fail;
+> @@ -2684,7 +2687,9 @@ static ssize_t ab8505_powercut_restart_write(struct=
+ device *dev,
+>  	struct power_supply *psy =3D dev_get_drvdata(dev);
+>  	struct ab8500_fg *di =3D power_supply_get_drvdata(psy);
 > =20
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
-> diff --git a/drivers/power/supply/max8997_charger.c b/drivers/power/suppl=
-y/max8997_charger.c
-> index c73fb4221695..f5e84cd47924 100644
-> --- a/drivers/power/supply/max8997_charger.c
-> +++ b/drivers/power/supply/max8997_charger.c
-> @@ -1,23 +1,9 @@
-> -/*
-> - * max8997_charger.c - Power supply consumer driver for the Maxim 8997/8=
-966
-> - *
-> - *  Copyright (C) 2011 Samsung Electronics
-> - *  MyungJoo Ham <myungjoo.ham@samsung.com>
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License as published by
-> - * the Free Software Foundation; either version 2 of the License, or
-> - * (at your option) any later version.
-> - *
-> - * This program is distributed in the hope that it will be useful,
-> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - * GNU General Public License for more details.
-> - *
-> - * You should have received a copy of the GNU General Public License
-> - * along with this program; if not, write to the Free Software
-> - * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 =
- USA
-> - */
-> +// SPDX-License-Identifier: GPL-2.0+
-> +//
-> +// max8997_charger.c - Power supply consumer driver for the Maxim 8997/8=
-966
-> +//
-> +//  Copyright (C) 2011 Samsung Electronics
-> +//  MyungJoo Ham <myungjoo.ham@samsung.com>
+> -	reg_value =3D simple_strtoul(buf, NULL, 10);
+> +	if (kstrtoint(buf, 10, &reg_value))
+> +		goto fail;
+> +
+>  	if (reg_value > 0xF) {
+>  		dev_err(dev, "Incorrect parameter, echo 0 - 15 for number of restart\n=
+");
+>  		goto fail;
+> @@ -2777,7 +2782,9 @@ static ssize_t ab8505_powercut_write(struct device =
+*dev,
+>  	struct power_supply *psy =3D dev_get_drvdata(dev);
+>  	struct ab8500_fg *di =3D power_supply_get_drvdata(psy);
 > =20
->  #include <linux/err.h>
->  #include <linux/module.h>
-> diff --git a/drivers/power/supply/max8998_charger.c b/drivers/power/suppl=
-y/max8998_charger.c
-> index cad7d1a8feec..95292381c3de 100644
-> --- a/drivers/power/supply/max8998_charger.c
-> +++ b/drivers/power/supply/max8998_charger.c
-> @@ -1,23 +1,9 @@
-> -/*
-> - * max8998_charger.c - Power supply consumer driver for the Maxim 8998/L=
-P3974
-> - *
-> - *  Copyright (C) 2009-2010 Samsung Electronics
-> - *  MyungJoo Ham <myungjoo.ham@samsung.com>
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License as published by
-> - * the Free Software Foundation; either version 2 of the License, or
-> - * (at your option) any later version.
-> - *
-> - * This program is distributed in the hope that it will be useful,
-> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - * GNU General Public License for more details.
-> - *
-> - * You should have received a copy of the GNU General Public License
-> - * along with this program; if not, write to the Free Software
-> - * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 =
- USA
-> - */
-> +// SPDX-License-Identifier: GPL-2.0+
-> +//
-> +// max8998_charger.c - Power supply consumer driver for the Maxim 8998/L=
-P3974
-> +//
-> +//  Copyright (C) 2009-2010 Samsung Electronics
-> +//  MyungJoo Ham <myungjoo.ham@samsung.com>
+> -	reg_value =3D simple_strtoul(buf, NULL, 10);
+> +	if (kstrtoint(buf, 10, &reg_value))
+> +		goto fail;
+> +
+>  	if (reg_value > 0x1) {
+>  		dev_err(dev, "Incorrect parameter, echo 0/1 to disable/enable Pcut fea=
+ture\n");
+>  		goto fail;
+> @@ -2849,7 +2856,9 @@ static ssize_t ab8505_powercut_debounce_write(struc=
+t device *dev,
+>  	struct power_supply *psy =3D dev_get_drvdata(dev);
+>  	struct ab8500_fg *di =3D power_supply_get_drvdata(psy);
 > =20
->  #include <linux/err.h>
->  #include <linux/module.h>
+> -	reg_value =3D simple_strtoul(buf, NULL, 10);
+> +	if (kstrtoint(buf, 10, &reg_value))
+> +		goto fail;
+> +
+>  	if (reg_value > 0x7) {
+>  		dev_err(dev, "Incorrect parameter, echo 0 to 7 for debounce setting\n"=
+);
+>  		goto fail;
 > --=20
-> 2.14.1
+> 1.8.3.1
+>=20
+>=20
 >=20
 
---26gxn3qednu6n4bl
+--37hn7rqsvit6mk4s
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAluHHxQACgkQ2O7X88g7
-+prZ2A/7BrhItDOaBKHM1oeGj0dsaGJPI9X3dk0bYlKMSD3fEE8suZOJHf1uvMMC
-vEhYcqVPXOY1eMo6ZHBi0CIsj8Nv+BvvzI1nngtk/RRf2uGIOuUOQzwmRW+8/rtT
-X3KGlkXUqWzNjZ6luY1zPpZb47j4Iz3fnYIqGVO2rKTi0ivRawBlBMzjXaCTJchw
-7YPTuOxvkuALb5BcOBG4d1tx8SfxL3bN/fYnZVq30qznR8O+aa28MalBG9iD6UNz
-AV6+o3lv0SX0AKnrhq55CX5g9nL0PCEaRtlgUuMsmOUcs2vZ8oAex6BMWlN9bNBc
-C2tVn53T/iEAAqsAF/4ugeVz4QlQ8gz+ZEfCqxZLqyM/HipkS5Pm/OAGqhYXEdfG
-Y305sOY4tTtxm1yFHoM2gUtxcJn001hDfFmAceGivyaW4yNsDxom0GjE91ytKi3B
-5THmIVXqwT0KjE9UCihON20rz8YYgVl2EJJnUF2tLqBg/v4Zg4yzI4LjfAefS3vH
-EHIsECan8sZobH75UTf2DQyM4xheaxvRuMTZLWosjh1IaUp7SFcTe2UXeSQhZgsN
-rtPcYY+/K2AQ4lu9sKIu/WcXXTp/1dSvmGt6t1nTl4o1DoIPiGLQ+dLrk0gpCvd9
-pPwpP/UOr3UT1xRxrWS3Vd8qcZAebaItsKE5M7XgXiPIVUplisM=
-=MhZq
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAluHHzAACgkQ2O7X88g7
++ppnEA//f6e2u3qwcvI1Eh6rrXjU/ST9096xpUNfHttE/gilKC5gQOU3V1qKV1lt
+7L7OOMQGZZRAIdVz0mSPckryW3d/d+Tn3xqzzHO9VpV0SQmo+GcNTxOAIIJ7giPr
+uXU6/YEVTBHm5kt7dkbTqhOJqq7dMGDYMd0dDTXl+aT/PyEAStL0ybGvHmQsFIap
+2xVMzTkpkQWjPw9Ffm5yL4FZEFKc3tdPl0tCgOKRTW8zsO0u2VrDBveF+YFWJUM2
+aiP54r56YbEPMTxsDO4gxY/QKOzwklIW+7BEH4RyGBkYhlJOYg9eGhZQ+Ca4JQ9H
+9+i4yfrqbPgP8HFnPl0/EbuXGBfSjbf1xmu0efPhJZNhgE/mIG3w5qhVf0RgzGHz
+7L5gmyaAGc32s2+jPMDQs8WJxI6TrwkJyRGRsK3r6DrUP/NTqzzW+DCaWFFSe/15
+5P5qAUjxYku5626Em9vrQPRd5appDwCU470WYpHz73wzo9f7IqLXx1Ni8lVf4d3C
+RDr5S90M10xP6M7SDxpNFqnPNZzKxkWV5L6Z3tDBMCxkTuUPsfsZl4tsR0AiTdVt
+25i590tMGlUBEPlaOxd/I7/TuGKa4ERIha5D+PsiS+GDytAqblJ70ok99jUdVSyt
+f3bZMofVrT+9JTRkkXGgBB1xaA1z2fmDqAAFxTJWxHQaudmBsgY=
+=Mvg/
 -----END PGP SIGNATURE-----
 
---26gxn3qednu6n4bl--
+--37hn7rqsvit6mk4s--
