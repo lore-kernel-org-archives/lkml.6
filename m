@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3E42C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 11:35:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13A79C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 11:35:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A58720858
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 11:35:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEE7520858
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 11:35:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dU/Fx2La"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A58720858
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DB2fTUZP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEE7520858
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728587AbeH2PcM (ORCPT
+        id S1728627AbeH2PcQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 11:32:12 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40380 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728517AbeH2PcM (ORCPT
+        Wed, 29 Aug 2018 11:32:16 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:38200 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728590AbeH2PcP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 11:32:12 -0400
-Received: by mail-wr1-f68.google.com with SMTP id n2-v6so4485430wrw.7
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 04:35:42 -0700 (PDT)
+        Wed, 29 Aug 2018 11:32:15 -0400
+Received: by mail-wm0-f68.google.com with SMTP id t25-v6so5154209wmi.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 04:35:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=/C7rrwe4N6BQx9M4EE8DtUTnDGQn+bG0YjkQ0aHndSs=;
-        b=dU/Fx2LaujUbvtHauwsP0t1aA/m2D+06oXMHwZ3eXwP1Nzw3gC8PebFtKC1EnSsH69
-         c0BZGLLNtAdh454C93JmrKX65W2EMHdPt55gfbxnmI6ZBwf48jJ0+K0uyUO+N5x56L61
-         H05vabh86vY1pFtsPWG7/c0vwk/TX9FzE/hL4njIAk0P4vbuWYNdMbg1msffocHP+j4S
-         02zcVCF+LR2Gffm0s0xI7A0hw2Fm44sDbs+XriYfO7scgMEmeWN4DNgjhPtc4Br6jBit
-         X9y0Oa4JtjU3dat2ZfvzOzi9tZrU9ASdv/eeSGhQIx4BwERGx2cCYod7MNlV1snr6UJ0
-         XzsA==
+        bh=WeSMiuMtzDEN1FdWmqPLXOd7CyZ+jfvYb8JwPl6GEEQ=;
+        b=DB2fTUZPwYG/vC54X0ylcYITM5VLrqYbpoKAgttKvxIgjM/CMpHyEfZop0XiAxCjAR
+         SqefjUTWrUaMFbrzlRaCkfPP2ENFxVz4o+3GyKyWZfACMcIkY8BvkKjpZ5rLUNzQv+vC
+         UaiuKzQpQaLSdmSwRMrFir9YX1tzVhMmHfnFRDWuVX9c7EM0JdeHcgrdRy8butdZgjsO
+         O5jsznGZWbNwzg1Hwvpy4cG2lxNJ8pAsWYQXASFciem61/ZlgRxIf1J82I/AV/Gi5n/V
+         efOWPmlesPVvERDd7ijRqLcvXF7OOC/l5jMPEgZPmfTjC7dW6V65A5vbC7e7im+oXG2d
+         LbdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=/C7rrwe4N6BQx9M4EE8DtUTnDGQn+bG0YjkQ0aHndSs=;
-        b=maD3Hzjmnv3/18i+J+DXfxd9NpLD8K6KLCMEAlSnSIFCV0tqXLV2iagFSaz3bqpq23
-         wHX2dcUWxsp9pyyo6yZpWAyXQhGbWiRBWNmkKtkeGamULvDsJOiKm24E76RssVWjPgaF
-         XUyWJx26E4PeU3g21xCuBoMRh3n2AcRqQloNYV+9Kcm0P2L/uGVBKG4rwabBL42MgJ19
-         S29qbTCvf0nqZWSC24L0Rtj8jWx6QQA5wjmFVS/kfHIjVheBQqNZ0pltw1ZA/vCtXJdj
-         fplt+49e1UIRpWP785XWjfXhSUui1G032hRTXtD7zN1gv11yVU9Q6YuPAzKOjXifroif
-         KMXg==
-X-Gm-Message-State: APzg51DGdgZ/+tVO5J/Ubk2DYRZ961kMJFE+P2C6lHKKUwNOMVVb15pw
-        GPTdT7EE+Za7uHuuZnPUOM4NXA==
-X-Google-Smtp-Source: ANB0Vdb2BlaS8zRz1NV8bmHOiV24XFb36lvecxL3punEHE/BVCiUxdBbrADrOo26tG+iGem0MA87hQ==
-X-Received: by 2002:adf:f608:: with SMTP id t8-v6mr4068969wrp.186.1535542542109;
-        Wed, 29 Aug 2018 04:35:42 -0700 (PDT)
+        bh=WeSMiuMtzDEN1FdWmqPLXOd7CyZ+jfvYb8JwPl6GEEQ=;
+        b=ZREFtjEXTfHHKM6T4a+GRSMwRHTdIMg3iFIMEXgsQg3JtzRqLLJWKbsFI3BByPr3K8
+         YimuWMnOzVORbGJaWp4q4Q1Cm9wtO03P3X3SGtJUBjEasdO+1dh6jHd5Wg6RWL/4ocmy
+         givnLpXZu+gWLi1myt8ESftR5aezHSKJCRa5Pf4pZMbOVxBCsGEHh7K4kx35Z9adoboN
+         hJoLQkAVajOMBswcvx3YKF5mdIfdsxEPLMA5xpX9V2TloDhpAsHmHxUfFLVTmUhZMm9G
+         StZBFaebLA17Z67X/8dGE5P8XkK2l6lS69uwsGZxOdwMHq514VsUUDGomaHqS2PehSRn
+         TgGg==
+X-Gm-Message-State: APzg51CjuPb8zpfQEbppsCqaEuJEvW/fFAPRCMzs74GVClAba3BQxGK7
+        wzxUeR58YTt0V5IweQrPcQnIRg==
+X-Google-Smtp-Source: ANB0Vdbc1gSJCzQt/c4lE4zyKdI4J/AL4sF1sTjGC2+4JWrxUIp67ZMN/Z0VxXD8BaXnDRSB0wO+UQ==
+X-Received: by 2002:a1c:200c:: with SMTP id g12-v6mr4128408wmg.102.1535542545044;
+        Wed, 29 Aug 2018 04:35:45 -0700 (PDT)
 Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:84be:a42a:826d:c530])
-        by smtp.gmail.com with ESMTPSA id s10-v6sm7800454wmd.22.2018.08.29.04.35.40
+        by smtp.gmail.com with ESMTPSA id s10-v6sm7800454wmd.22.2018.08.29.04.35.43
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 Aug 2018 04:35:41 -0700 (PDT)
+        Wed, 29 Aug 2018 04:35:44 -0700 (PDT)
 From:   Andrey Konovalov <andreyknvl@google.com>
 To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
         Alexander Potapenko <glider@google.com>,
@@ -96,9 +96,9 @@ Cc:     Kostya Serebryany <kcc@google.com>,
         Chintan Pandya <cpandya@codeaurora.org>,
         Vishwath Mohan <vishwath@google.com>,
         Andrey Konovalov <andreyknvl@google.com>
-Subject: [PATCH v6 09/18] khwasan, arm64: fix up fault handling logic
-Date:   Wed, 29 Aug 2018 13:35:13 +0200
-Message-Id: <4da4495dc20525db1654d3dd9d578b7965d98507.1535462971.git.andreyknvl@google.com>
+Subject: [PATCH v6 11/18] khwasan, mm: perform untagged pointers comparison in krealloc
+Date:   Wed, 29 Aug 2018 13:35:15 +0200
+Message-Id: <a13a41e3ca65116eb5614c4dd396b23182e98fed.1535462971.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.19.0.rc0.228.g281dcd1b4d0-goog
 In-Reply-To: <cover.1535462971.git.andreyknvl@google.com>
 References: <cover.1535462971.git.andreyknvl@google.com>
@@ -109,36 +109,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-show_pte in arm64 fault handling relies on the fact that the top byte of
-a kernel pointer is 0xff, which isn't always the case with KHWASAN enabled.
-Reset the top byte.
+The krealloc function checks where the same buffer was reused or a new one
+allocated by comparing kernel pointers. KHWASAN changes memory tag on the
+krealloc'ed chunk of memory and therefore also changes the pointer tag of
+the returned pointer. Therefore we need to perform comparison on untagged
+(with tags reset) pointers to check whether it's the same memory region or
+not.
 
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- arch/arm64/mm/fault.c | 3 +++
- 1 file changed, 3 insertions(+)
+ mm/slab_common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-index 50b30ff30de4..35feee78a9bd 100644
---- a/arch/arm64/mm/fault.c
-+++ b/arch/arm64/mm/fault.c
-@@ -32,6 +32,7 @@
- #include <linux/perf_event.h>
- #include <linux/preempt.h>
- #include <linux/hugetlb.h>
-+#include <linux/kasan.h>
+diff --git a/mm/slab_common.c b/mm/slab_common.c
+index 3abfa0f86118..0d588dfebd7d 100644
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -1513,7 +1513,7 @@ void *krealloc(const void *p, size_t new_size, gfp_t flags)
+ 	}
  
- #include <asm/bug.h>
- #include <asm/cmpxchg.h>
-@@ -134,6 +135,8 @@ void show_pte(unsigned long addr)
- 	pgd_t *pgdp;
- 	pgd_t pgd;
+ 	ret = __do_krealloc(p, new_size, flags);
+-	if (ret && p != ret)
++	if (ret && khwasan_reset_tag(p) != khwasan_reset_tag(ret))
+ 		kfree(p);
  
-+	addr = (unsigned long)khwasan_reset_tag((void *)addr);
-+
- 	if (addr < TASK_SIZE) {
- 		/* TTBR0 */
- 		mm = current->active_mm;
+ 	return ret;
 -- 
 2.19.0.rc0.228.g281dcd1b4d0-goog
 
