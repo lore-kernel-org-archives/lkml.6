@@ -5,118 +5,122 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFADAC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:31:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8309C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:34:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 659D020856
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:31:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 659D020856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 9276920856
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:34:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9276920856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728222AbeH2O1b (ORCPT
+        id S1728166AbeH2Oap (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 10:27:31 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:47884 "EHLO mail.bootlin.com"
+        Wed, 29 Aug 2018 10:30:45 -0400
+Received: from mga05.intel.com ([192.55.52.43]:64353 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726858AbeH2O1b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 10:27:31 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id AC8372079D; Wed, 29 Aug 2018 12:31:15 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-53-19.w90-88.abo.wanadoo.fr [90.88.170.19])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 37528203EC;
-        Wed, 29 Aug 2018 12:31:15 +0200 (CEST)
-Date:   Wed, 29 Aug 2018 12:31:14 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Liang Yang <liang.yang@amlogic.com>
-Cc:     Yixun Lan <yixun.lan@amlogic.com>, <linux-mtd@lists.infradead.org>,
-        Rob Herring <robh@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Richard Weinberger <richard@nod.at>,
-        <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        <linux-amlogic@lists.infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Jerome Brunet <jbrunet@baylibre.com>
-Subject: Re: [RFC PATCH v2 2/2] mtd: rawnand: meson: add support for Amlogic
- NAND flash controller
-Message-ID: <20180829123114.4b67314b@bbrezillon>
-In-Reply-To: <5061c929-8db0-3f4c-ec34-303fc351dfdd@amlogic.com>
-References: <20180719094612.5833-1-yixun.lan@amlogic.com>
-        <20180719094612.5833-3-yixun.lan@amlogic.com>
-        <20180801235045.5b4d8211@bbrezillon>
-        <42877a0d-9830-0626-3f64-e49a326eaa3c@amlogic.com>
-        <20180817155608.5929b37a@bbrezillon>
-        <96e538a5-1232-11f2-8b9e-5ddb09dcc2de@amlogic.com>
-        <20180824144810.31c929a5@bbrezillon>
-        <fdea2d54-7a68-64ec-8bb4-4a94677a3293@amlogic.com>
-        <20180828152645.457dab5c@bbrezillon>
-        <9abf0461-159b-db45-9ded-3d6cb2cc64db@amlogic.com>
-        <5061c929-8db0-3f4c-ec34-303fc351dfdd@amlogic.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1726858AbeH2Oap (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 10:30:45 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2018 03:34:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,301,1531810800"; 
+   d="scan'208";a="69990606"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga006.jf.intel.com with ESMTP; 29 Aug 2018 03:34:28 -0700
+Received: from [10.226.39.0] (zhuyixin-mobl.gar.corp.intel.com [10.226.39.0])
+        by linux.intel.com (Postfix) with ESMTP id 3BE57580335;
+        Wed, 29 Aug 2018 03:34:27 -0700 (PDT)
+Subject: Re: [PATCH v2 02/18] clk: intel: Add clock driver for Intel MIPS SoCs
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Songjun Wu <songjun.wu@linux.intel.com>,
+        chuanhua.lei@linux.intel.com, hua.ma@linux.intel.com,
+        qi-ming.wu@intel.com
+Cc:     linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+References: <20180803030237.3366-1-songjun.wu@linux.intel.com>
+ <20180803030237.3366-3-songjun.wu@linux.intel.com>
+ <153370742214.220756.2039365625963765922@swboyd.mtv.corp.google.com>
+ <571d2d40-8728-fa7c-5d89-73d2a7b6293b@linux.intel.com>
+ <153539697928.129321.2605078315090527674@swboyd.mtv.corp.google.com>
+From:   "Zhu, Yi Xin" <yixin.zhu@linux.intel.com>
+Message-ID: <65a8518b-8fd8-847b-f952-0370be3d786a@linux.intel.com>
+Date:   Wed, 29 Aug 2018 18:34:26 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <153539697928.129321.2605078315090527674@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 29 Aug 2018 18:29:05 +0800
-Liang Yang <liang.yang@amlogic.com> wrote:
+>>>> +}
+>>>> +
+>>>> +CLK_OF_DECLARE(intel_grx500_cgu, "intel,grx500-cgu", grx500_clk_init);
+>>> Any reason a platform driver can't be used instead of CLK_OF_DECLARE()?
+>> It provides CPU clock which is used in early boot stage.
+>>
+> Ok. What is the CPU clock doing in early boot stage? Some sort of timer
+> frequency? If the driver can be split into two pieces, one to handle the
+> really early stuff that must be in place to get timers up and running
+> and the other to register the rest of the clks that aren't critical from
+> a regular platform driver it would be good. That's preferred model if
+> something is super critical.
+>
+Just to make sure my approach is same as you think.
 
-> On 8/29/2018 6:08 PM, Liang Yang wrote:
-> > 
-> > On 8/28/2018 9:26 PM, Boris Brezillon wrote:  
-> >> On Tue, 28 Aug 2018 21:21:48 +0800
-> >> Liang Yang <liang.yang@amlogic.com> wrote:
-> >>  
-> >>> Hi Boris,
-> >>>
-> >>> On 8/24/2018 8:48 PM, Boris Brezillon wrote:  
-> >>>> On Wed, 22 Aug 2018 22:08:42 +0800
-> >>>> Liang Yang <liang.yang@amlogic.com> wrote:  
-> >>>>>> You have to wait tWB, that's for sure.  
-> >>>>> we have a maximum 32 commands fifo. when command is written into
-> >>>>> NFC_REG_CMD, it doesn't mean that command is executing right now, 
-> >>>>> maybe
-> >>>>> it is buffering on the queue.Assume one ERASE operation, when 2nd
-> >>>>> command(0xd0) is written into NFC_REG_CMD and then come into
-> >>>>> NAND_OP_WAITRDY_INSTR, if I read the RB status by register, it may be
-> >>>>> wrong because 0xd0 may not being executed. it is unusual unless
-> >>>>> buffering two many command.  
-> >>>>
-> >>>> You should flush the queue and wait for it to empty at the end of  
-> >>>> ->exec_op().
-> >>>>> so it seems that i still need to use nand_soft_waitrdy or wait cmd is
-> >>>>> executed somewhere.  
-> >>>>
-> >>>> Don't you have a WAIT_FOR_RB instruction? What is NFC_CMD_RB for? Also,
-> >>>> NFC_CMD_IDLE seems to allow you to add an arbitrary delay, and that's
-> >>>> probably what you should use for tWB.
-> >>>>
-> >>>> em, I can wait for RB by reading the status from register now. but when  
-> >>> calling nand_soft_waitrdy, i really met a problem. One *jiffies* is
-> >>> about 4ms. When programming, it pass 1ms to
-> >>> instr->ctx.waitrdy.timeout_ms and nand_soft_waitrdy will be only one
-> >>> *jiffies* to reach timeout. And then calling nand_soft_waitrdy maybe at
-> >>> the tail of 4ms interval, it may only wait 100us and next jiffies
-> >>> arrive. Is it correct?  
-> >>
-> >> Hm, no. If you initialize the time you compare to (using time_before()
-> >> or time_after()) correctly it should not happen. Anyway, I keep thinking
-> >> this is not how it should be done. Did you try NFC_CMD_RB? Did you ask
-> >> HW designers what it was created for?
-> >>  
-> > I am using NFC_CMD_RB and checking with irq. it is ok now.  
-> there are two usages for NFC_CMD_RB. One reads the data status 
-> continuously by hardware after sending 0x70 command; the other checks 
-> the r/b IO status continuously.both can send irq when r/b is ready.
+In the driver, there's two clock registrations.
 
-Both should do what you expect, so I guess you're good.
+- One through CLK_OF_DECLARE for early stage clocks.
+
+- The other via platform driver for the non-critical clocks.
+
+In the device tree,  two clock device nodes are required.
+
+e.g. device tree:
+
+cgu: cgu@16200000 {
+                 compatible = "intel,grx500-clk", "syscon";
+                 reg = <0x16200000 0x200>;
+                 #clock-cells = <1>;
+};
+
+clk: clk {
+                 compatible = "intel,grx500-cgu";
+                 #clock-cells = <1>;
+                 intel,cgu-syscon = <&cgu>;
+};
+
+source code:
+
+CLK_OF_DECLARE(intel_grx500_cgu, "intel,grx500-cgu", grx500_clk_init);
+
+static const struct of_device_id of_intel_grx500_cgu_match[] = {
+         { .compatible = "intel,grx500-clk" },
+         {}
+};
+
+static struct platform_driver intel_grx500_clk_driver = {
+         .probe  = intel_grx500_clk_probe,
+         .driver = {
+                 .name = "grx500-cgu",
+                 .of_match_table = of_match_ptr(of_intel_grx500_cgu_match),
+         },
+};
+
+static int __init intel_grx500_cgu_init(void)
+{
+         return platform_driver_register(&intel_grx500_clk_driver);
+}
+arch_initcall(intel_grx500_cgu_init);
+
+
