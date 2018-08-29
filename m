@@ -2,90 +2,108 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07C6AC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:33:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28655C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:33:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE26620652
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:33:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE26620652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id D3E9A205C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:33:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="U8CjH82n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3E9A205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727625AbeH3BcN (ORCPT
+        id S1727608AbeH3BcM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 21:32:13 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:38682 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727336AbeH3BcM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 29 Aug 2018 21:32:12 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fv85a-0005oK-2w; Wed, 29 Aug 2018 21:33:22 +0000
-Date:   Wed, 29 Aug 2018 22:33:22 +0100
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     Cong Wang <xiyou.wangcong@gmail.com>
-Cc:     Jamal Hadi Salim <jhs@mojatatu.com>,
-        Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jiri Pirko <jiri@resnulli.us>,
-        David Miller <davem@davemloft.net>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>
-Subject: Re: [PATCH] net: sched: Fix memory exposure from short TCA_U32_SEL
-Message-ID: <20180829213321.GA19965@ZenIV.linux.org.uk>
-References: <20180826055801.GA42063@beast>
- <20180826061534.GT6515@ZenIV.linux.org.uk>
- <CAGXu5jK7VzayzZTcxgZBf-+YHWO+Hv7s8utj2rzTc3gFtA8pFQ@mail.gmail.com>
- <20180826173236.GU6515@ZenIV.linux.org.uk>
- <20180826225749.GY6515@ZenIV.linux.org.uk>
- <cb9d4e74-3498-48bd-45e0-05e925dbdb5b@mojatatu.com>
- <CAM_iQpVEyq9hR3bbOtLFKoLo6nHCtiL6A__uEz3JdDO79GF_8A@mail.gmail.com>
- <20180828000310.GE6515@ZenIV.linux.org.uk>
- <CAM_iQpXk48ip4dAKpc-HMwxf+wC6eYAK-atpsCSv7T7u7sLFMw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAM_iQpXk48ip4dAKpc-HMwxf+wC6eYAK-atpsCSv7T7u7sLFMw@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Received: from outils.crapouillou.net ([89.234.176.41]:53420 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727536AbeH3BcL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 21:32:11 -0400
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Vinod Koul <vkoul@kernel.org>, Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>
+Cc:     od@zcrc.me, dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
+        Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v5 17/18] MIPS: JZ4770: DTS: Add DMA nodes
+Date:   Wed, 29 Aug 2018 23:32:59 +0200
+Message-Id: <20180829213300.22829-18-paul@crapouillou.net>
+In-Reply-To: <20180829213300.22829-1-paul@crapouillou.net>
+References: <20180829213300.22829-1-paul@crapouillou.net>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1535578402; bh=hnx2zf22r7Ljbs3l89ko1FGW3bNCogItdo2rj5GOue0=; h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=U8CjH82nFRgtwYuT+EC3UHQ4pCAURrxguOw0taJQGJUBE+xX45pNkwSzQliN5fyL4BLOTngyHsuAeeckQMVSrPu5RNR0sDj+u7E7UrWoX1IgI8Vh2+8uKMZGkiDJlP5kUR2BtCKu4N9+ZkPlwZ97Ezj8tK8almaaSyYvgJc8TuM=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 29, 2018 at 12:07:09PM -0700, Cong Wang wrote:
-> On Mon, Aug 27, 2018 at 5:03 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > On Mon, Aug 27, 2018 at 02:31:41PM -0700, Cong Wang wrote:
-> > > > I cant think of any challenges. Cong/Jiri? Would it require development
-> > > > time classifiers/actions/qdiscs to sit in that directory (I suspect you
-> > > > dont want them in include/net).
-> > > > BTW, the idea of improving grep-ability of the code by prefixing the
-> > > > ops appropriately makes sense. i.e we should have ops->cls_init,
-> > > > ops->act_init etc.
-> > >
-> > > Hmm? Isn't struct tcf_proto_ops used and must be provided
-> > > by each tc filter module? How does it work if you move it into
-> > > net/sched/* for out-of-tree modules? Are they supposed to
-> > > include "..../net/sched/tcf_proto.h"?? Or something else?
-> >
-> > If you care about out-of-tree modules, that could easily live in
-> > include/net/tcf_proto.h, provided that it's not pulled by indirect
-> > includes into hell knows how many places.  Try
-> > make allmodconfig
-> > make >/dev/null 2>&1
-> > find -name '.*.cmd'|xargs grep sch_generic.h
-> >
-> > That finds 2977 files here, most of them having nothing to do with
-> > net/sched.
-> 
-> 
-> Moving it to include/net/tcf_proto.h is fine, as out-of-tree modules
-> can still compile by modifying the included header path.
-> 
-> include/net/pkt_cls.h might be a choice here too.
+Add the two devicetree nodes for the two DMA cores of the JZ4770 SoC,
+disabled by default, as currently there are no clients for the DMA
+driver (until the MMC driver and/or others get a devicetree node).
 
-Nowhere near as massive exposure (123 files vs. 2977), but still - do
-ethernet drivers need that?  Because that's 77 out of 123...
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Tested-by: Mathieu Malaterre <malat@debian.org>
+Acked-by: Paul Burton <paul.burton@mips.com>
+---
+
+Notes:
+     v2: No change
+    
+     v3: Modify nodes to comply with devicetree specification
+    
+     v4: No change
+    
+     v5: No change
+
+ arch/mips/boot/dts/ingenic/jz4770.dtsi | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+
+diff --git a/arch/mips/boot/dts/ingenic/jz4770.dtsi b/arch/mips/boot/dts/ingenic/jz4770.dtsi
+index 7c2804f3f5f1..49ede6c14ff3 100644
+--- a/arch/mips/boot/dts/ingenic/jz4770.dtsi
++++ b/arch/mips/boot/dts/ingenic/jz4770.dtsi
+@@ -196,6 +196,36 @@
+ 		status = "disabled";
+ 	};
+ 
++	dmac0: dma-controller@13420000 {
++		compatible = "ingenic,jz4770-dma";
++		reg = <0x13420000 0xC0
++		       0x13420300 0x20>;
++
++		#dma-cells = <1>;
++
++		clocks = <&cgu JZ4770_CLK_DMA>;
++		interrupt-parent = <&intc>;
++		interrupts = <24>;
++
++		/* Disable dmac0 until we have something that uses it */
++		status = "disabled";
++	};
++
++	dmac1: dma-controller@13420100 {
++		compatible = "ingenic,jz4770-dma";
++		reg = <0x13420100 0xC0
++		       0x13420400 0x20>;
++
++		#dma-cells = <1>;
++
++		clocks = <&cgu JZ4770_CLK_DMA>;
++		interrupt-parent = <&intc>;
++		interrupts = <23>;
++
++		/* Disable dmac1 until we have something that uses it */
++		status = "disabled";
++	};
++
+ 	uhc: uhc@13430000 {
+ 		compatible = "generic-ohci";
+ 		reg = <0x13430000 0x1000>;
+-- 
+2.11.0
+
