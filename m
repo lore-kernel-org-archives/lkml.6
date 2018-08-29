@@ -2,213 +2,566 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABB33C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:00:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03622C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:02:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CFEC20847
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:00:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CFEC20847
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7C48E20847
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:02:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="2Ne1+uYe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C48E20847
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728618AbeH2Q5c (ORCPT
+        id S1728628AbeH2Q7R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 12:57:32 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:42957 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727651AbeH2Q5c (ORCPT
+        Wed, 29 Aug 2018 12:59:17 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:41087 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728261AbeH2Q7R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 12:57:32 -0400
-Received: by mail-ed1-f67.google.com with SMTP id l5so1216766edw.9
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 06:00:41 -0700 (PDT)
+        Wed, 29 Aug 2018 12:59:17 -0400
+Received: by mail-pf1-f194.google.com with SMTP id h79-v6so2241263pfk.8
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 06:02:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=J+AmAnO+IqmXs/MmL8tFcJ+di72ZP/EhXDh+ryrWyrk=;
+        b=2Ne1+uYerShv6j8CABbHQ4mGXaoT/gIWG7mkG0Q2W5Wj0KpTxzXzygQzJBCchEz6R1
+         OKW11NsczfHjCfcoOewWkZiUrHx1YEzLfsRwgIuvnnU6HuBJaQU2iRIvcYUOWPeohiPk
+         G7N3kUNlWPc90c5XccEDVHoCsxCrkghUTTrcYlIBRGTevTSaw9BHo5E9ADIC4/K5sbU+
+         ETD7YnPPubBkKLy9Tri9J4wbV1rSr7DKe0GmhNwqruAIDYhO++vx1MmNJoupczyrbsfm
+         XN90kab3qw+Hf1Ddh53laP+HWIsKM1mzjs8QrjfFgOFzBaES3p3WvJMgT1iIomK3mVT0
+         8wNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=3AcqTnFARe4eICo7el1vTmTxXOQFejt/7wWPIBDyQ1I=;
-        b=XJ/3zx5/INJGncE1qSgwtrmJtDajbkGvNq22PIVHo9V16BDadaP6szykP0MhMLqNaD
-         Pr3gFXtPRYRvSZFzAhOq1x5c57ovyxZzdUKTYLt/Iym775rbHDPgEhJhM4+v0wRUkfGc
-         uFdhJQfQuHl8r+yBqoqCvTGejNF51jjlbvrLVYYSYvBMiv8mNBFJXPtdggyLkhyWGSLp
-         PSq3dC37jNPuj0u6CWapbGsZ2B7Mb4thSgGSAtZrBqkoIFqI/Mqm0PLz875Lmi7lO0zG
-         TGXY0Zx0BjdUyYsfFIUUSl/K8aOu1GfZ7BZeuF364LA3Uh3Qp/U+DJupDg3XIAAFSOUL
-         iP2Q==
-X-Gm-Message-State: APzg51B0jgTIARQtHLZX+qZWnfNnAOm/ejmVvglZKFb20j/N6xQMFAad
-        IsjMcjEQHy3ViUyuEigK/TFaCQ==
-X-Google-Smtp-Source: ANB0VdZ4is37Mwfvo9qCjfolprTX8kOiyYvu/xa383b1KJCXzl7y1b8cV0oKIaDyn634dnZXVr7NWA==
-X-Received: by 2002:a50:a623:: with SMTP id d32-v6mr7431378edc.8.1535547641043;
-        Wed, 29 Aug 2018 06:00:41 -0700 (PDT)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id z19-v6sm2078364edd.77.2018.08.29.06.00.39
+        bh=J+AmAnO+IqmXs/MmL8tFcJ+di72ZP/EhXDh+ryrWyrk=;
+        b=Gdqzvymje4FpCLbQun19g6Gd//7oZ9lvdRu00/VJMSZM0W59gzmrjrkKIyH0jS5cOZ
+         3yDSYA/4YFvOvMmEx6LYfk2cAJnXONb8kOkvCznABheebtjUvtRsqrC1QYrH4n7i//ce
+         i8mD+DyGdtqm54u+Y7kY5Tyjx/gJ+3OqH4Nz/Wq6yUsjPc9888hNvDaeCh79TqvVHfMA
+         uT9au5gH5+7l/Y5HUR9It8eTUfIdbB7CK2XQeSxBN4jWl2+2OH5tA+2kOvVmswWSvGQs
+         N6cwQyeC/R2hfh82UEfMMQNpQBV0RoyoTrna54HW8hqf4Qhrlp/hTxwGd6I9ltUAIyLw
+         8ioQ==
+X-Gm-Message-State: APzg51B9oU/z0eaVt+HKPfCule8u+q4YpjJjmHh/j4d681MdSX0DyhfX
+        oi+UR6NMH6Zyz1mdn0zlvDYkSA==
+X-Google-Smtp-Source: ANB0VdYPiICQiZzCYNo51OgHlu53jYRmtGUOD6lVq9k3OKZ26r8OrbDpF7IJ/JRcdY67jeiMGocHkQ==
+X-Received: by 2002:a65:5307:: with SMTP id m7-v6mr5560095pgq.431.1535547746226;
+        Wed, 29 Aug 2018 06:02:26 -0700 (PDT)
+Received: from [10.86.62.45] (rap-us.hgst.com. [199.255.44.250])
+        by smtp.googlemail.com with ESMTPSA id t15-v6sm7360319pfa.158.2018.08.29.06.02.22
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 Aug 2018 06:00:40 -0700 (PDT)
-Subject: Re: [PATCH V4 4/4] video: simplefb: switch to use clk_bulk API to
- simplify clock operations
-To:     Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        sboyd@kernel.org, mturquette@baylibre.com, shawnguo@kernel.org,
-        thor.thayer@linux.intel.com, linux-imx@nxp.com,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-fbdev@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-References: <1535547100-25634-1-git-send-email-aisheng.dong@nxp.com>
- <1535547100-25634-5-git-send-email-aisheng.dong@nxp.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <66eb6870-3674-0fdb-f5fb-4915a76191f6@redhat.com>
-Date:   Wed, 29 Aug 2018 15:00:39 +0200
+        Wed, 29 Aug 2018 06:02:25 -0700 (PDT)
+Subject: Re: [PATCH 1/3] lightnvm: pblk: refactor metadata paths
+To:     javier@javigon.com
+Cc:     axboe@kernel.dk, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, javier@cnexlabs.com
+References: <1535532980-27672-1-git-send-email-javier@cnexlabs.com>
+ <1535532980-27672-2-git-send-email-javier@cnexlabs.com>
+From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <e147e01b-8317-3ab5-497c-70f601a92a2a@lightnvm.io>
+Date:   Wed, 29 Aug 2018 15:02:20 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <1535547100-25634-5-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1535532980-27672-2-git-send-email-javier@cnexlabs.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 08/29/2018 10:56 AM, Javier González wrote:
+> pblk maintains two different metadata paths for smeta and emeta, which
+> store metadata at the start of the line and at the end of the line,
+> respectively. Until now, these path has been common for writing and
+> retrieving metadata, however, as these paths diverge, the common code
+> becomes less clear and unnecessary complicated.
+> 
+> In preparation for further changes to the metadata write path, this
+> patch separates the write and read paths for smeta and emeta and
+> removes the synchronous emeta path as it not used anymore (emeta is
+> scheduled asynchronously to prevent jittering due to internal I/Os).
+> 
+> Signed-off-by: Javier González <javier@cnexlabs.com>
+> ---
+>   drivers/lightnvm/pblk-core.c     | 338 ++++++++++++++++++---------------------
+>   drivers/lightnvm/pblk-gc.c       |   2 +-
+>   drivers/lightnvm/pblk-recovery.c |   4 +-
+>   drivers/lightnvm/pblk.h          |   4 +-
+>   4 files changed, 163 insertions(+), 185 deletions(-)
+> 
+> diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
+> index dbf037b2b32f..09160ec02c5f 100644
+> --- a/drivers/lightnvm/pblk-core.c
+> +++ b/drivers/lightnvm/pblk-core.c
+> @@ -661,12 +661,137 @@ u64 pblk_lookup_page(struct pblk *pblk, struct pblk_line *line)
+>   	return paddr;
+>   }
+>   
+> -/*
+> - * Submit emeta to one LUN in the raid line at the time to avoid a deadlock when
+> - * taking the per LUN semaphore.
+> - */
+> -static int pblk_line_submit_emeta_io(struct pblk *pblk, struct pblk_line *line,
+> -				     void *emeta_buf, u64 paddr, int dir)
+> +u64 pblk_line_smeta_start(struct pblk *pblk, struct pblk_line *line)
+> +{
+> +	struct nvm_tgt_dev *dev = pblk->dev;
+> +	struct nvm_geo *geo = &dev->geo;
+> +	struct pblk_line_meta *lm = &pblk->lm;
+> +	int bit;
+> +
+> +	/* This usually only happens on bad lines */
+> +	bit = find_first_zero_bit(line->blk_bitmap, lm->blk_per_line);
+> +	if (bit >= lm->blk_per_line)
+> +		return -1;
+> +
+> +	return bit * geo->ws_opt;
+> +}
+> +
+> +int pblk_line_smeta_read(struct pblk *pblk, struct pblk_line *line)
+> +{
+> +	struct nvm_tgt_dev *dev = pblk->dev;
+> +	struct pblk_line_meta *lm = &pblk->lm;
+> +	struct bio *bio;
+> +	struct nvm_rq rqd;
+> +	u64 paddr = pblk_line_smeta_start(pblk, line);
+> +	int i, ret;
+> +
+> +	memset(&rqd, 0, sizeof(struct nvm_rq));
+> +
+> +	rqd.meta_list = nvm_dev_dma_alloc(dev->parent, GFP_KERNEL,
+> +							&rqd.dma_meta_list);
+> +	if (!rqd.meta_list)
+> +		return -ENOMEM;
+> +
+> +	rqd.ppa_list = rqd.meta_list + pblk_dma_meta_size;
+> +	rqd.dma_ppa_list = rqd.dma_meta_list + pblk_dma_meta_size;
 
-On 29-08-18 14:51, Dong Aisheng wrote:
-> Switching to use clk_bulk API to simplify clock operations.
-> 
-> Cc: Hans de Goede <hdegoede@redhat.com>
-> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Cc: linux-fbdev@vger.kernel.org
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Tested-by: Thor Thayer <thor.thayer@linux.intel.com>
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> ---
-> v3->v4:
->   * no changes
-> v2->v3:
->   * fix a build warning on x86 platform due to a wrong
->     of the prototype of simplefb_clocks_enable
-> v1->v2:
->   * switch to clk_bulk_get_all from of_clk_bulk_get_all
-> ---
->   drivers/video/fbdev/simplefb.c | 66 ++++++++----------------------------------
->   1 file changed, 12 insertions(+), 54 deletions(-)
-> 
-> diff --git a/drivers/video/fbdev/simplefb.c b/drivers/video/fbdev/simplefb.c
-> index 9a9d748..ed9a4c8 100644
-> --- a/drivers/video/fbdev/simplefb.c
-> +++ b/drivers/video/fbdev/simplefb.c
-> @@ -182,7 +182,7 @@ struct simplefb_par {
->   #if defined CONFIG_OF && defined CONFIG_COMMON_CLK
->   	bool clks_enabled;
->   	unsigned int clk_count;
-> -	struct clk **clks;
-> +	struct clk_bulk_data *clks;
->   #endif
->   #if defined CONFIG_OF && defined CONFIG_REGULATOR
->   	bool regulators_enabled;
-> @@ -214,37 +214,13 @@ static int simplefb_clocks_get(struct simplefb_par *par,
->   			       struct platform_device *pdev)
+If patch 2 is put first, then this is not needed.
+
+> +
+> +	bio = bio_map_kern(dev->q, line->smeta, lm->smeta_len, GFP_KERNEL);
+> +	if (IS_ERR(bio)) {
+> +		ret = PTR_ERR(bio);
+> +		goto free_ppa_list;
+> +	}
+> +
+> +	bio->bi_iter.bi_sector = 0; /* internal bio */
+> +	bio_set_op_attrs(bio, REQ_OP_READ, 0);
+> +
+> +	rqd.bio = bio;
+> +	rqd.opcode = NVM_OP_PREAD;
+> +	rqd.nr_ppas = lm->smeta_sec;
+> +	rqd.is_seq = 1;
+> +
+> +	for (i = 0; i < lm->smeta_sec; i++, paddr++)
+> +		rqd.ppa_list[i] = addr_to_gen_ppa(pblk, paddr, line->id);
+> +
+> +	ret = pblk_submit_io_sync(pblk, &rqd);
+> +	if (ret) {
+> +		pblk_err(pblk, "smeta I/O submission failed: %d\n", ret);
+> +		bio_put(bio);
+> +		goto free_ppa_list;
+> +	}
+> +
+> +	atomic_dec(&pblk->inflight_io);
+> +
+> +	if (rqd.error)
+> +		pblk_log_read_err(pblk, &rqd);
+> +
+> +free_ppa_list:
+> +	nvm_dev_dma_free(dev->parent, rqd.meta_list, rqd.dma_meta_list);
+> +	return ret;
+> +}
+> +
+> +static int pblk_line_smeta_write(struct pblk *pblk, struct pblk_line *line,
+> +				 u64 paddr)
+> +{
+> +	struct nvm_tgt_dev *dev = pblk->dev;
+> +	struct pblk_line_meta *lm = &pblk->lm;
+> +	struct bio *bio;
+> +	struct nvm_rq rqd;
+> +	__le64 *lba_list = emeta_to_lbas(pblk, line->emeta->buf);
+> +	__le64 addr_empty = cpu_to_le64(ADDR_EMPTY);
+> +	int i, ret;
+> +
+> +	memset(&rqd, 0, sizeof(struct nvm_rq));
+> +
+> +	rqd.meta_list = nvm_dev_dma_alloc(dev->parent, GFP_KERNEL,
+> +							&rqd.dma_meta_list);
+> +	if (!rqd.meta_list)
+> +		return -ENOMEM;
+> +
+> +	rqd.ppa_list = rqd.meta_list + pblk_dma_meta_size;
+> +	rqd.dma_ppa_list = rqd.dma_meta_list + pblk_dma_meta_size;
+> +
+> +	bio = bio_map_kern(dev->q, line->smeta, lm->smeta_len, GFP_KERNEL);
+> +	if (IS_ERR(bio)) {
+> +		ret = PTR_ERR(bio);
+> +		goto free_ppa_list;
+> +	}
+> +
+> +	bio->bi_iter.bi_sector = 0; /* internal bio */
+> +	bio_set_op_attrs(bio, REQ_OP_WRITE, 0);
+> +
+> +	rqd.bio = bio;
+> +	rqd.opcode = NVM_OP_PWRITE;
+> +	rqd.nr_ppas = lm->smeta_sec;
+> +	rqd.is_seq = 1;
+> +
+> +	for (i = 0; i < lm->smeta_sec; i++, paddr++) {
+> +		struct pblk_sec_meta *meta_list = rqd.meta_list;
+> +
+> +		rqd.ppa_list[i] = addr_to_gen_ppa(pblk, paddr, line->id);
+> +		meta_list[i].lba = lba_list[paddr] = addr_empty;
+> +	}
+> +
+> +	ret = pblk_submit_io_sync(pblk, &rqd);
+> +	if (ret) {
+> +		pblk_err(pblk, "smeta I/O submission failed: %d\n", ret);
+> +		bio_put(bio);
+> +		goto free_ppa_list;
+> +	}
+> +
+> +	atomic_dec(&pblk->inflight_io);
+> +
+> +	if (rqd.error) {
+> +		pblk_log_write_err(pblk, &rqd);
+> +		ret = -EIO;
+> +	}
+> +
+> +free_ppa_list:
+> +	nvm_dev_dma_free(dev->parent, rqd.meta_list, rqd.dma_meta_list);
+> +	return ret;
+> +}
+> +
+> +int pblk_line_emeta_read(struct pblk *pblk, struct pblk_line *line,
+> +			 void *emeta_buf)
 >   {
->   	struct device_node *np = pdev->dev.of_node;
-> -	struct clk *clock;
-> -	int i;
+>   	struct nvm_tgt_dev *dev = pblk->dev;
+>   	struct nvm_geo *geo = &dev->geo;
+> @@ -675,24 +800,15 @@ static int pblk_line_submit_emeta_io(struct pblk *pblk, struct pblk_line *line,
+>   	void *ppa_list, *meta_list;
+>   	struct bio *bio;
+>   	struct nvm_rq rqd;
+> +	u64 paddr = line->emeta_ssec;
+>   	dma_addr_t dma_ppa_list, dma_meta_list;
+>   	int min = pblk->min_write_pgs;
+>   	int left_ppas = lm->emeta_sec[0];
+> -	int id = line->id;
+> +	int line_id = line->id;
+>   	int rq_ppas, rq_len;
+> -	int cmd_op, bio_op;
+>   	int i, j;
+>   	int ret;
 >   
->   	if (dev_get_platdata(&pdev->dev) || !np)
->   		return 0;
->   
-> -	par->clk_count = of_clk_get_parent_count(np);
-> -	if (!par->clk_count)
-> -		return 0;
+> -	if (dir == PBLK_WRITE) {
+> -		bio_op = REQ_OP_WRITE;
+> -		cmd_op = NVM_OP_PWRITE;
+> -	} else if (dir == PBLK_READ) {
+> -		bio_op = REQ_OP_READ;
+> -		cmd_op = NVM_OP_PREAD;
+> -	} else
+> -		return -EINVAL;
 > -
-> -	par->clks = kcalloc(par->clk_count, sizeof(struct clk *), GFP_KERNEL);
-> -	if (!par->clks)
+>   	meta_list = nvm_dev_dma_alloc(dev->parent, GFP_KERNEL,
+>   							&dma_meta_list);
+>   	if (!meta_list)
+> @@ -715,64 +831,43 @@ static int pblk_line_submit_emeta_io(struct pblk *pblk, struct pblk_line *line,
+>   	}
+>   
+>   	bio->bi_iter.bi_sector = 0; /* internal bio */
+> -	bio_set_op_attrs(bio, bio_op, 0);
+> +	bio_set_op_attrs(bio, REQ_OP_READ, 0);
+>   
+>   	rqd.bio = bio;
+>   	rqd.meta_list = meta_list;
+>   	rqd.ppa_list = ppa_list;
+>   	rqd.dma_meta_list = dma_meta_list;
+>   	rqd.dma_ppa_list = dma_ppa_list;
+> -	rqd.opcode = cmd_op;
+> +	rqd.opcode = NVM_OP_PREAD;
+>   	rqd.nr_ppas = rq_ppas;
+>   
+> -	if (dir == PBLK_WRITE) {
+> -		struct pblk_sec_meta *meta_list = rqd.meta_list;
+> +	for (i = 0; i < rqd.nr_ppas; ) {
+> +		struct ppa_addr ppa = addr_to_gen_ppa(pblk, paddr, line_id);
+> +		int pos = pblk_ppa_to_pos(geo, ppa);
+>   
+> -		rqd.is_seq = 1;
+> -		for (i = 0; i < rqd.nr_ppas; ) {
+> -			spin_lock(&line->lock);
+> -			paddr = __pblk_alloc_page(pblk, line, min);
+> -			spin_unlock(&line->lock);
+> -			for (j = 0; j < min; j++, i++, paddr++) {
+> -				meta_list[i].lba = cpu_to_le64(ADDR_EMPTY);
+> -				rqd.ppa_list[i] =
+> -					addr_to_gen_ppa(pblk, paddr, id);
+> -			}
+> -		}
+> -	} else {
+> -		for (i = 0; i < rqd.nr_ppas; ) {
+> -			struct ppa_addr ppa = addr_to_gen_ppa(pblk, paddr, id);
+> -			int pos = pblk_ppa_to_pos(geo, ppa);
+> +		if (pblk_io_aligned(pblk, rq_ppas))
+> +			rqd.is_seq = 1;
+>   
+> -			if (pblk_io_aligned(pblk, rq_ppas))
+> -				rqd.is_seq = 1;
+> -
+> -			while (test_bit(pos, line->blk_bitmap)) {
+> -				paddr += min;
+> -				if (pblk_boundary_paddr_checks(pblk, paddr)) {
+> -					pblk_err(pblk, "corrupt emeta line:%d\n",
+> -								line->id);
+> -					bio_put(bio);
+> -					ret = -EINTR;
+> -					goto free_rqd_dma;
+> -				}
+> -
+> -				ppa = addr_to_gen_ppa(pblk, paddr, id);
+> -				pos = pblk_ppa_to_pos(geo, ppa);
+> -			}
+> -
+> -			if (pblk_boundary_paddr_checks(pblk, paddr + min)) {
+> -				pblk_err(pblk, "corrupt emeta line:%d\n",
+> -								line->id);
+> +		while (test_bit(pos, line->blk_bitmap)) {
+> +			paddr += min;
+> +			if (pblk_boundary_paddr_checks(pblk, paddr)) {
+>   				bio_put(bio);
+>   				ret = -EINTR;
+>   				goto free_rqd_dma;
+>   			}
+>   
+> -			for (j = 0; j < min; j++, i++, paddr++)
+> -				rqd.ppa_list[i] =
+> -					addr_to_gen_ppa(pblk, paddr, line->id);
+> +			ppa = addr_to_gen_ppa(pblk, paddr, line_id);
+> +			pos = pblk_ppa_to_pos(geo, ppa);
+>   		}
+> +
+> +		if (pblk_boundary_paddr_checks(pblk, paddr + min)) {
+> +			bio_put(bio);
+> +			ret = -EINTR;
+> +			goto free_rqd_dma;
+> +		}
+> +
+> +		for (j = 0; j < min; j++, i++, paddr++)
+> +			rqd.ppa_list[i] = addr_to_gen_ppa(pblk, paddr, line_id);
+>   	}
+>   
+>   	ret = pblk_submit_io_sync(pblk, &rqd);
+> @@ -784,136 +879,19 @@ static int pblk_line_submit_emeta_io(struct pblk *pblk, struct pblk_line *line,
+>   
+>   	atomic_dec(&pblk->inflight_io);
+>   
+> -	if (rqd.error) {
+> -		if (dir == PBLK_WRITE)
+> -			pblk_log_write_err(pblk, &rqd);
+> -		else
+> -			pblk_log_read_err(pblk, &rqd);
+> -	}
+> +	if (rqd.error)
+> +		pblk_log_read_err(pblk, &rqd);
+>   
+>   	emeta_buf += rq_len;
+>   	left_ppas -= rq_ppas;
+>   	if (left_ppas)
+>   		goto next_rq;
+> +
+>   free_rqd_dma:
+>   	nvm_dev_dma_free(dev->parent, rqd.meta_list, rqd.dma_meta_list);
+>   	return ret;
+>   }
+>   
+> -u64 pblk_line_smeta_start(struct pblk *pblk, struct pblk_line *line)
+> -{
+> -	struct nvm_tgt_dev *dev = pblk->dev;
+> -	struct nvm_geo *geo = &dev->geo;
+> -	struct pblk_line_meta *lm = &pblk->lm;
+> -	int bit;
+> -
+> -	/* This usually only happens on bad lines */
+> -	bit = find_first_zero_bit(line->blk_bitmap, lm->blk_per_line);
+> -	if (bit >= lm->blk_per_line)
+> -		return -1;
+> -
+> -	return bit * geo->ws_opt;
+> -}
+> -
+> -static int pblk_line_submit_smeta_io(struct pblk *pblk, struct pblk_line *line,
+> -				     u64 paddr, int dir)
+> -{
+> -	struct nvm_tgt_dev *dev = pblk->dev;
+> -	struct pblk_line_meta *lm = &pblk->lm;
+> -	struct bio *bio;
+> -	struct nvm_rq rqd;
+> -	__le64 *lba_list = NULL;
+> -	int i, ret;
+> -	int cmd_op, bio_op;
+> -
+> -	if (dir == PBLK_WRITE) {
+> -		bio_op = REQ_OP_WRITE;
+> -		cmd_op = NVM_OP_PWRITE;
+> -		lba_list = emeta_to_lbas(pblk, line->emeta->buf);
+> -	} else if (dir == PBLK_READ_RECOV || dir == PBLK_READ) {
+> -		bio_op = REQ_OP_READ;
+> -		cmd_op = NVM_OP_PREAD;
+> -	} else
+> -		return -EINVAL;
+> -
+> -	memset(&rqd, 0, sizeof(struct nvm_rq));
+> -
+> -	rqd.meta_list = nvm_dev_dma_alloc(dev->parent, GFP_KERNEL,
+> -							&rqd.dma_meta_list);
+> -	if (!rqd.meta_list)
 > -		return -ENOMEM;
 > -
-> -	for (i = 0; i < par->clk_count; i++) {
-> -		clock = of_clk_get(np, i);
-> -		if (IS_ERR(clock)) {
-> -			if (PTR_ERR(clock) == -EPROBE_DEFER) {
-> -				while (--i >= 0) {
-> -					if (par->clks[i])
-> -						clk_put(par->clks[i]);
-> -				}
-> -				kfree(par->clks);
-> -				return -EPROBE_DEFER;
-> -			}
-> -			dev_err(&pdev->dev, "%s: clock %d not found: %ld\n",
-> -				__func__, i, PTR_ERR(clock));
-> -			continue;
-> -		}
-> -		par->clks[i] = clock;
-> -	}
-> +	par->clk_count = clk_bulk_get_all(&pdev->dev, &par->clks);
-> +	if ((par->clk_count < 0) && (par->clk_count == -EPROBE_DEFER))
-> +		return -EPROBE_DEFER;
->   
->   	return 0;
->   }
-> @@ -252,39 +228,21 @@ static int simplefb_clocks_get(struct simplefb_par *par,
->   static void simplefb_clocks_enable(struct simplefb_par *par,
->   				   struct platform_device *pdev)
->   {
-> -	int i, ret;
-> +	int ret;
-> +
-> +	ret = clk_bulk_prepare_enable(par->clk_count, par->clks);
-> +	if (ret)
-> +		dev_warn(&pdev->dev, "failed to enable clocks\n");
-
-If clk_bulk_prepare_enable() fails, it leaves all clocks disabled,
-so you should not set par->clks_enabled = true; then.
-
-Otherwise this patch looks good.
-
-Regards,
-
-Hans
-
-
-
->   
-> -	for (i = 0; i < par->clk_count; i++) {
-> -		if (par->clks[i]) {
-> -			ret = clk_prepare_enable(par->clks[i]);
-> -			if (ret) {
-> -				dev_err(&pdev->dev,
-> -					"%s: failed to enable clock %d: %d\n",
-> -					__func__, i, ret);
-> -				clk_put(par->clks[i]);
-> -				par->clks[i] = NULL;
-> -			}
-> -		}
-> -	}
->   	par->clks_enabled = true;
->   }
->   
->   static void simplefb_clocks_destroy(struct simplefb_par *par)
->   {
-> -	int i;
+> -	rqd.ppa_list = rqd.meta_list + pblk_dma_meta_size;
+> -	rqd.dma_ppa_list = rqd.dma_meta_list + pblk_dma_meta_size;
 > -
-> -	if (!par->clks)
-> -		return;
+> -	bio = bio_map_kern(dev->q, line->smeta, lm->smeta_len, GFP_KERNEL);
+> -	if (IS_ERR(bio)) {
+> -		ret = PTR_ERR(bio);
+> -		goto free_ppa_list;
+> -	}
 > -
-> -	for (i = 0; i < par->clk_count; i++) {
-> -		if (par->clks[i]) {
-> -			if (par->clks_enabled)
-> -				clk_disable_unprepare(par->clks[i]);
-> -			clk_put(par->clks[i]);
+> -	bio->bi_iter.bi_sector = 0; /* internal bio */
+> -	bio_set_op_attrs(bio, bio_op, 0);
+> -
+> -	rqd.bio = bio;
+> -	rqd.opcode = cmd_op;
+> -	rqd.is_seq = 1;
+> -	rqd.nr_ppas = lm->smeta_sec;
+> -
+> -	for (i = 0; i < lm->smeta_sec; i++, paddr++) {
+> -		struct pblk_sec_meta *meta_list = rqd.meta_list;
+> -
+> -		rqd.ppa_list[i] = addr_to_gen_ppa(pblk, paddr, line->id);
+> -
+> -		if (dir == PBLK_WRITE) {
+> -			__le64 addr_empty = cpu_to_le64(ADDR_EMPTY);
+> -
+> -			meta_list[i].lba = lba_list[paddr] = addr_empty;
 > -		}
 > -	}
-> +	if (par->clks_enabled)
-> +		clk_bulk_disable_unprepare(par->clk_count, par->clks);
+> -
+> -	/*
+> -	 * This I/O is sent by the write thread when a line is replace. Since
+> -	 * the write thread is the only one sending write and erase commands,
+> -	 * there is no need to take the LUN semaphore.
+> -	 */
+> -	ret = pblk_submit_io_sync(pblk, &rqd);
+> -	if (ret) {
+> -		pblk_err(pblk, "smeta I/O submission failed: %d\n", ret);
+> -		bio_put(bio);
+> -		goto free_ppa_list;
+> -	}
+> -
+> -	atomic_dec(&pblk->inflight_io);
+> -
+> -	if (rqd.error) {
+> -		if (dir == PBLK_WRITE) {
+> -			pblk_log_write_err(pblk, &rqd);
+> -			ret = 1;
+> -		} else if (dir == PBLK_READ)
+> -			pblk_log_read_err(pblk, &rqd);
+> -	}
+> -
+> -free_ppa_list:
+> -	nvm_dev_dma_free(dev->parent, rqd.meta_list, rqd.dma_meta_list);
+> -
+> -	return ret;
+> -}
+> -
+> -int pblk_line_read_smeta(struct pblk *pblk, struct pblk_line *line)
+> -{
+> -	u64 bpaddr = pblk_line_smeta_start(pblk, line);
+> -
+> -	return pblk_line_submit_smeta_io(pblk, line, bpaddr, PBLK_READ_RECOV);
+> -}
+> -
+> -int pblk_line_read_emeta(struct pblk *pblk, struct pblk_line *line,
+> -			 void *emeta_buf)
+> -{
+> -	return pblk_line_submit_emeta_io(pblk, line, emeta_buf,
+> -						line->emeta_ssec, PBLK_READ);
+> -}
+> -
+>   static void pblk_setup_e_rq(struct pblk *pblk, struct nvm_rq *rqd,
+>   			    struct ppa_addr ppa)
+>   {
+> @@ -1150,7 +1128,7 @@ static int pblk_line_init_bb(struct pblk *pblk, struct pblk_line *line,
+>   	line->smeta_ssec = off;
+>   	line->cur_sec = off + lm->smeta_sec;
 >   
-> -	kfree(par->clks);
-> +	clk_bulk_put_all(par->clk_count, par->clks);
->   }
->   #else
->   static int simplefb_clocks_get(struct simplefb_par *par,
+> -	if (init && pblk_line_submit_smeta_io(pblk, line, off, PBLK_WRITE)) {
+> +	if (init && pblk_line_smeta_write(pblk, line, off)) {
+>   		pblk_debug(pblk, "line smeta I/O failed. Retry\n");
+>   		return 0;
+>   	}
+> diff --git a/drivers/lightnvm/pblk-gc.c b/drivers/lightnvm/pblk-gc.c
+> index b0f0c637df3a..73e64c1b55ef 100644
+> --- a/drivers/lightnvm/pblk-gc.c
+> +++ b/drivers/lightnvm/pblk-gc.c
+> @@ -148,7 +148,7 @@ static __le64 *get_lba_list_from_emeta(struct pblk *pblk,
+>   	if (!emeta_buf)
+>   		return NULL;
+>   
+> -	ret = pblk_line_read_emeta(pblk, line, emeta_buf);
+> +	ret = pblk_line_emeta_read(pblk, line, emeta_buf);
+>   	if (ret) {
+>   		pblk_err(pblk, "line %d read emeta failed (%d)\n",
+>   				line->id, ret);
+> diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
+> index c641a9ed5f39..95ea5072b27e 100644
+> --- a/drivers/lightnvm/pblk-recovery.c
+> +++ b/drivers/lightnvm/pblk-recovery.c
+> @@ -839,7 +839,7 @@ struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
+>   			continue;
+>   
+>   		/* Lines that cannot be read are assumed as not written here */
+> -		if (pblk_line_read_smeta(pblk, line))
+> +		if (pblk_line_smeta_read(pblk, line))
+>   			continue;
+>   
+>   		crc = pblk_calc_smeta_crc(pblk, smeta_buf);
+> @@ -909,7 +909,7 @@ struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
+>   		line->emeta = emeta;
+>   		memset(line->emeta->buf, 0, lm->emeta_len[0]);
+>   
+> -		if (pblk_line_read_emeta(pblk, line, line->emeta->buf)) {
+> +		if (pblk_line_emeta_read(pblk, line, line->emeta->buf)) {
+>   			pblk_recov_l2p_from_oob(pblk, line);
+>   			goto next;
+>   		}
+> diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
+> index 6195e3f5d2e6..e29fd35d2991 100644
+> --- a/drivers/lightnvm/pblk.h
+> +++ b/drivers/lightnvm/pblk.h
+> @@ -817,8 +817,8 @@ void pblk_gen_run_ws(struct pblk *pblk, struct pblk_line *line, void *priv,
+>   		     void (*work)(struct work_struct *), gfp_t gfp_mask,
+>   		     struct workqueue_struct *wq);
+>   u64 pblk_line_smeta_start(struct pblk *pblk, struct pblk_line *line);
+> -int pblk_line_read_smeta(struct pblk *pblk, struct pblk_line *line);
+> -int pblk_line_read_emeta(struct pblk *pblk, struct pblk_line *line,
+> +int pblk_line_smeta_read(struct pblk *pblk, struct pblk_line *line);
+> +int pblk_line_emeta_read(struct pblk *pblk, struct pblk_line *line,
+>   			 void *emeta_buf);
+>   int pblk_blk_erase_async(struct pblk *pblk, struct ppa_addr erase_ppa);
+>   void pblk_line_put(struct kref *ref);
 > 
+
