@@ -3,33 +3,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54A16C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 14:32:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A234DC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 14:32:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18C7B20850
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 14:32:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18C7B20850
+	by mail.kernel.org (Postfix) with ESMTP id 6979F20850
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 14:32:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6979F20850
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728986AbeH2S3V (ORCPT
+        id S1728998AbeH2S3Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 14:29:21 -0400
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:6449 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727590AbeH2S3V (ORCPT
+        Wed, 29 Aug 2018 14:29:24 -0400
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:38404 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727590AbeH2S3X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 14:29:21 -0400
+        Wed, 29 Aug 2018 14:29:23 -0400
 X-IronPort-AV: E=Sophos;i="5.53,303,1531810800"; 
-   d="scan'208";a="18915862"
+   d="scan'208";a="18999119"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 29 Aug 2018 07:32:08 -0700
+  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 29 Aug 2018 07:32:10 -0700
 Received: from tenerife.corp.atmel.com (10.10.76.4) by
  chn-sv-exch03.mchp-main.com (10.10.76.49) with Microsoft SMTP Server id
- 14.3.352.0; Wed, 29 Aug 2018 07:32:07 -0700
+ 14.3.352.0; Wed, 29 Aug 2018 07:32:10 -0700
 From:   Nicolas Ferre <nicolas.ferre@microchip.com>
 To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
         <miquel.raynal@bootlin.com>,
@@ -42,9 +42,9 @@ CC:     Claudiu Beznea <claudiu.beznea@microchip.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>,
         Nicolas Ferre <nicolas.ferre@microchip.com>
-Subject: [PATCH 07/11] MAINTAINERS: pwm: add entry for Microchip pwm driver
-Date:   Wed, 29 Aug 2018 16:31:43 +0200
-Message-ID: <2225e38823eb3523eac02768d16bada526b48650.1535552609.git.nicolas.ferre@microchip.com>
+Subject: [PATCH 08/11] MAINTAINERS: iio: add co-maintainer to SAMA5D2-compatible ADC driver
+Date:   Wed, 29 Aug 2018 16:31:44 +0200
+Message-ID: <377944526957bba407e7b1cd53201063493c7d8d.1535552609.git.nicolas.ferre@microchip.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <cover.1535552609.git.nicolas.ferre@microchip.com>
 References: <cover.1535552609.git.nicolas.ferre@microchip.com>
@@ -55,33 +55,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the entry that was missing for pwm-atmel.c driver. Add binding file
-as well.
+Add Eugen as co-maintainer with Ludovic of Microchip SAMA5D2-compatible
+ADC driver.
+Also add the binding documentation/include as file pattern.
 
 Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 ---
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ MAINTAINERS | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 414324563009..fca67dcb84e0 100644
+index fca67dcb84e0..3f5494b33d89 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -9553,6 +9553,14 @@ L:	netdev@vger.kernel.org
- S:	Maintained
- F:	drivers/net/ethernet/microchip/lan743x_*
+@@ -2521,9 +2521,12 @@ F:	drivers/input/touchscreen/atmel_mxt_ts.c
  
-+MICROCHIP PWM DRIVER
-+M:	Claudiu Beznea <claudiu.beznea@microchip.com>
-+L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-+L:	linux-pwm@vger.kernel.org
-+S:	Supported
-+F:	drivers/pwm/pwm-atmel.c
-+F:	Documentation/devicetree/bindings/pwm/atmel-pwm.txt
-+
- MICROCHIP USB251XB DRIVER
- M:	Richard Leitner <richard.leitner@skidata.com>
- L:	linux-usb@vger.kernel.org
+ ATMEL SAMA5D2 ADC DRIVER
+ M:	Ludovic Desroches <ludovic.desroches@microchip.com>
++M:	Eugen Hristev <eugen.hristev@microchip.com>
+ L:	linux-iio@vger.kernel.org
+ S:	Supported
+ F:	drivers/iio/adc/at91-sama5d2_adc.c
++F:	Documentation/devicetree/bindings/iio/adc/at91-sama5d2_adc.txt
++F:	include/dt-bindings/iio/adc/at91-sama5d2_adc.h
+ 
+ ATMEL SDMMC DRIVER
+ M:	Ludovic Desroches <ludovic.desroches@microchip.com>
 -- 
 2.17.1
 
