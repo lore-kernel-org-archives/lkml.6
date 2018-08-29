@@ -2,83 +2,94 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20D45C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:03:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1235BC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:03:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAC2F20659
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:03:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAC2F20659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C4BAA2083D
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:03:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4BAA2083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729050AbeH2TAh (ORCPT
+        id S1729064AbeH2TAy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 15:00:37 -0400
-Received: from mga14.intel.com ([192.55.52.115]:16515 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728062AbeH2TAh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 15:00:37 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2018 08:03:15 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.53,303,1531810800"; 
-   d="scan'208";a="76504705"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.9])
-  by FMSMGA003.fm.intel.com with ESMTP; 29 Aug 2018 08:03:14 -0700
-Date:   Wed, 29 Aug 2018 08:03:14 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Brijesh Singh <brijesh.singh@amd.com>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        stable@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Subject: Re: [PATCH v2 2/3] x86/mm: add .data..decrypted section to hold
- shared variables
-Message-ID: <20180829150314.GA32493@linux.intel.com>
-References: <1535494377-25600-1-git-send-email-brijesh.singh@amd.com>
- <1535494377-25600-3-git-send-email-brijesh.singh@amd.com>
+        Wed, 29 Aug 2018 15:00:54 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:42344 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728475AbeH2TAy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 15:00:54 -0400
+Received: from fsav305.sakura.ne.jp (fsav305.sakura.ne.jp [153.120.85.136])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w7TF2dhe032562;
+        Thu, 30 Aug 2018 00:02:39 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav305.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp);
+ Thu, 30 Aug 2018 00:02:39 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w7TF2XIa032510
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Thu, 30 Aug 2018 00:02:39 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH v2] n_tty: Protect tty->disc_data using refcount.
+To:     Jiri Slaby <jslaby@suse.cz>, gregkh@linuxfoundation.org,
+        jslaby@suse.com
+Cc:     syzbot <syzbot+3aa9784721dfb90e984d@syzkaller.appspotmail.com>,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <001a113ed31a122ced0568cc6be1@google.com>
+ <db45a090-593d-23d2-e6b2-ede5b308f02f@I-love.SAKURA.ne.jp>
+ <35d649ce-0c22-f839-aa4d-19733bf31a9c@I-love.SAKURA.ne.jp>
+ <83fdde07-2f8e-8d20-30a2-a8f0804a5044@I-love.SAKURA.ne.jp>
+ <8e83cd9a-e28c-a9f4-5f47-98f2046a5dfb@I-love.SAKURA.ne.jp>
+ <021343cd-dc28-9889-7656-e624861bc770@suse.cz>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <ebe25c5d-34e2-1333-c34f-5f1e3dc3cac3@i-love.sakura.ne.jp>
+Date:   Thu, 30 Aug 2018 00:02:30 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1535494377-25600-3-git-send-email-brijesh.singh@amd.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <021343cd-dc28-9889-7656-e624861bc770@suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 05:12:56PM -0500, Brijesh Singh wrote:
-> kvmclock defines few static variables which are shared with hypervisor
-> during the kvmclock initialization.
+On 2018/08/29 22:53, Jiri Slaby wrote:
+> On 07/24/2018, 05:22 PM, Tetsuo Handa wrote:
+>> From 118c64e86641a97d44dec39e313a95b12d9bc3b2 Mon Sep 17 00:00:00 2001
+>> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+>> Date: Wed, 25 Jul 2018 00:15:18 +0900
+>> Subject: [PATCH v2] n_tty: Protect tty->disc_data using refcount.
+>>
+>> syzbot is reporting NULL pointer dereference at n_tty_set_termios() [1].
+>> This is because ioctl(TIOCVHANGUP) versus ioctl(TCSETS) can race.
+>>
+>> Since we don't want to introduce new locking dependency, this patch
+>> converts "struct n_tty_data *ldata = tty->disc_data;" in individual
+>> function into a function argument which follows "struct tty *", and
+>> holds tty->disc_data at each "struct tty_ldisc_ops" hook using refcount
+>> in order to ensure that memory which contains "struct n_tty_data" will
+>> not be released while processing individual function.
 > 
-> When SEV is active, memory is encrypted with a guest-specific key, and
-> if guest OS wants to share the memory region with hypervisor then it must
-> clear the C-bit before sharing it. Currently, we use
-> kernel_physical_mapping_init() to split large pages before clearing the
-> C-bit on shared pages. But the kernel_physical_mapping_init fails when
-> called from the kvmclock initialization (mainly because memblock allocator
-> was not ready).
+> This does not look correct and is way too complicated. ioctls should not
+> be called while changing/killing/hanging/whatever a ldisc. But there is
+> one missing lock in tty_reopen.
 > 
-> The '__decrypted' can be used to define a shared variable; the variables
-> will be put in the .data.decryption section. This section is mapped with
-> C=0 early in the boot, we also ensure that the initialized values are
-> updated to match with C=0 (i.e perform an in-place decryption). The
-> .data..decrypted section is PMD aligned and sized so that we avoid the
-> need to split the large pages when mapping this section.
+> So does the attached patch helps instead?
+> 
+> thanks,
+> 
 
-What about naming the attribute (and section) '__unencrypted' instead
-of '__decrypted'?  The attribute should be a property describing how
-the data must be accessed, it shouldn't imply anything regarding the
-history of the data.  Decrypted implies that data was once encrypted,
-whereas unencrypted simply states that the data is stored in plain
-text.  All data that has been decrypted is also unencrypted, but the
-reverse does not hold true.
+That patch seems to help avoiding crashes. (You can use #syz test: command.)
+But I think you need to check tty_ldisc_lock() return value...
