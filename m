@@ -2,314 +2,148 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 282ECC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:52:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0406C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:53:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B708520652
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:52:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NEdzaFhg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B708520652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5BFC52064E
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:53:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BFC52064E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729182AbeH2Tt5 (ORCPT
+        id S1729208AbeH2Tv1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 15:49:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42100 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728979AbeH2Tt4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 15:49:56 -0400
-Received: from localhost (unknown [171.76.77.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3A4212064E;
-        Wed, 29 Aug 2018 15:52:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535557942;
-        bh=0Rr3s6QGO6YAMDJdUlKCyi4KxxVjoe/jD/+viFpjwR8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NEdzaFhgiqHEU8wGwjPNitz1tYDOGHLofmcw2osbaQ4znCFeJJPJ73OrTNddUkoEc
-         JT5D5jIePV1vVixIUVqJ11owyr3iv/ii5EMFSA6f6CuxiyUDiTW0fgGZNw8jlmTb1C
-         qZQFQzQ1Z7h9NkYJ8QQ4V5e8hsLYmud1fp1M/GLM=
-Date:   Wed, 29 Aug 2018 21:22:12 +0530
-From:   Vinod <vkoul@kernel.org>
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc:     dan.j.williams@intel.com, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org, lars@metafoo.de, radheys@xilinx.com
-Subject: Re: [PATCH] dmaengine: Add metadata_ops for dma_async_tx_descriptor
-Message-ID: <20180829155212.GG2388@vkoul-mobl>
-References: <20180823130728.20506-1-peter.ujfalusi@ti.com>
+        Wed, 29 Aug 2018 15:51:27 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:48360 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728979AbeH2Tv1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 15:51:27 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1fv2n0-0001e9-Gm; Wed, 29 Aug 2018 15:53:50 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     David Airlie <airlied@linux.ie>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] char: agp: remove several redundant variables
+Date:   Wed, 29 Aug 2018 16:53:50 +0100
+Message-Id: <20180829155350.1713-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180823130728.20506-1-peter.ujfalusi@ti.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23-08-18, 16:07, Peter Ujfalusi wrote:
-> The metadata is best described as side band data or parameters traveling
-> alongside the data DMAd by the DMA engine. It is data
-> which is understood by the peripheral and the peripheral driver only, the
-> DMA engine see it only as data block and it is not interpreting it in any
-> way.
-> 
-> The metadata can be different per descriptor as it is a parameter for the
-> data being transferred.
-> 
-> If the DMA supports per descriptor metadata it can implement the attach,
-> get_ptr/set_len callbacks.
-> 
-> Client drivers must only use either attach or get_ptr/set_len to avoid
-> miss configuration.
+From: Colin Ian King <colin.king@canonical.com>
 
-misconfiguration?
+Several variables are being assigned but never used hence they
+are redundant and can be removed.
 
+Cleans up clang warnings:
+variable 'num_segments' set but not used [-Wunused-but-set-variable]
+variable 'arqsz' set but not used [-Wunused-but-set-variable]
+variable 'mcapndx' set but not used [-Wunused-but-set-variable]
+variable 'current_size' set but not used [-Wunused-but-set-variable]
 
-> Client driver can check if a given metadata mode is supported by the
-> channel during probe time with
-> dmaengine_is_metadata_mode_supported(chan, DESC_METADATA_CLIENT);
-> dmaengine_is_metadata_mode_supported(chan, DESC_METADATA_ENGINE);
-> 
-> and based on this information can use either mode.
-> 
-> Wrappers are also added for the metadata_ops.
-> 
-> To be used in DESC_METADATA_CLIENT mode:
-> dmaengine_desc_attach_metadata()
-> 
-> To be used in DESC_METADATA_ENGINE mode:
-> dmaengine_desc_get_metadata_ptr()
-> dmaengine_desc_set_metadata_len()
-> 
-> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-> ---
-> Hi,
-> 
-> Changes since rfc:
-> - DESC_METADATA_EMBEDDED renamed to DESC_METADATA_ENGINE
-> - Use flow is added for both CLIENT and ENGINE metadata modes
-> 
-> Regards,
-> Peter
-> 
->  include/linux/dmaengine.h | 144 ++++++++++++++++++++++++++++++++++++++
->  1 file changed, 144 insertions(+)
-> 
-> diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
-> index 3db833a8c542..f809635cfeaa 100644
-> --- a/include/linux/dmaengine.h
-> +++ b/include/linux/dmaengine.h
-> @@ -231,6 +231,57 @@ typedef struct { DECLARE_BITMAP(bits, DMA_TX_TYPE_END); } dma_cap_mask_t;
->   * @bytes_transferred: byte counter
->   */
->  
-> +/**
-> + * enum dma_desc_metadata_mode - per descriptor metadata mode types supported
-> + * @DESC_METADATA_CLIENT - the metadata buffer is allocated/provided by the
-> + *  client driver and it is attached (via the dmaengine_desc_attach_metadata()
-> + *  helper) to the descriptor.
-> + *
-> + * Client drivers interested to use this mode can follow:
-> + * - DMA_MEM_TO_DEV:
-> + *   1. prepare the descriptor (dmaengine_prep_*)
-> + *	construct the metadata in the clinet's buffer
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/char/agp/frontend.c | 3 +--
+ drivers/char/agp/isoch.c    | 9 +--------
+ drivers/char/agp/via-agp.c  | 3 ---
+ 3 files changed, 2 insertions(+), 13 deletions(-)
 
-typo clinet
-
-> + *   2. use dmaengine_desc_attach_metadata() to attach the buffer to the
-> + *	descriptor
-> + *   3. submit the transfer
-> + * - DMA_DEV_TO_MEM:
-> + *   1. prepare the descriptor (dmaengine_prep_*)
-> + *   2. use dmaengine_desc_attach_metadata() to attach the buffer to the
-> + *	descriptor
-> + *   3. submit the transfer
-> + *   4. when the transfer is completed, the metadata should be available in the
-> + *	attached buffer
-
-I guess this is good to be moved into Documentation
-
-also we dont allow this for memcpy txn?
-
-
-> + *
-> + * @DESC_METADATA_ENGINE - the metadata buffer is allocated/managed by the DMA
-> + *  driver. The client driver can ask for the pointer, maximum size and the
-> + *  currently used size of the metadata and can directly update or read it.
-> + *  dmaengine_desc_get_metadata_ptr() and dmaengine_desc_set_metadata_len() is
-> + *  provided as helper functions.
-> + *
-> + * Client drivers interested to use this mode can follow:
-> + * - DMA_MEM_TO_DEV:
-> + *   1. prepare the descriptor (dmaengine_prep_*)
-> + *   2. use dmaengine_desc_get_metadata_ptr() to get the pointer to the engine's
-> + *	metadata area
-> + *   3. update the metadata at the pointer
-> + *   4. use dmaengine_desc_set_metadata_len()  to tell the DMA engine the amount
-> + *	of data the client has placed into the metadata buffer
-> + *   5. submit the transfer
-> + * - DMA_DEV_TO_MEM:
-> + *   1. prepare the descriptor (dmaengine_prep_*)
-> + *   2. submit the transfer
-> + *   3. on transfer completion, use dmaengine_desc_get_metadata_ptr() to get the
-> + *	pointer to the engine's metadata are
-> + *   4. Read out the metadate from the pointer
-> + *
-> + * Note: the two mode is not compatible and clients must use one mode for a
-> + * descriptor.
-> + */
-> +enum dma_desc_metadata_mode {
-> +	DESC_METADATA_CLIENT = (1 << 0),
-> +	DESC_METADATA_ENGINE = (1 << 1),
-
-BIT(x)
-
-> +};
-> +
->  struct dma_chan_percpu {
->  	/* stats */
->  	unsigned long memcpy_count;
-> @@ -494,6 +545,18 @@ struct dmaengine_unmap_data {
->  	dma_addr_t addr[0];
->  };
->  
-> +struct dma_async_tx_descriptor;
-> +
-> +struct dma_descriptor_metadata_ops {
-> +	int (*attach)(struct dma_async_tx_descriptor *desc, void *data,
-> +		      size_t len);
-> +
-> +	void *(*get_ptr)(struct dma_async_tx_descriptor *desc,
-> +			 size_t *payload_len, size_t *max_len);
-> +	int (*set_len)(struct dma_async_tx_descriptor *desc,
-> +		       size_t payload_len);
-> +};
-> +
->  /**
->   * struct dma_async_tx_descriptor - async transaction descriptor
->   * ---dma generic offload fields---
-> @@ -523,6 +586,8 @@ struct dma_async_tx_descriptor {
->  	dma_async_tx_callback_result callback_result;
->  	void *callback_param;
->  	struct dmaengine_unmap_data *unmap;
-> +	enum dma_desc_metadata_mode desc_metadata_mode;
-> +	struct dma_descriptor_metadata_ops *metadata_ops;
->  #ifdef CONFIG_ASYNC_TX_ENABLE_CHANNEL_SWITCH
->  	struct dma_async_tx_descriptor *next;
->  	struct dma_async_tx_descriptor *parent;
-> @@ -685,6 +750,7 @@ struct dma_filter {
->   * @global_node: list_head for global dma_device_list
->   * @filter: information for device/slave to filter function/param mapping
->   * @cap_mask: one or more dma_capability flags
-> + * @desc_metadata_modes: supported metadata modes by the DMA device
->   * @max_xor: maximum number of xor sources, 0 if no capability
->   * @max_pq: maximum number of PQ sources and PQ-continue capability
->   * @copy_align: alignment shift for memcpy operations
-> @@ -749,6 +815,7 @@ struct dma_device {
->  	struct list_head global_node;
->  	struct dma_filter filter;
->  	dma_cap_mask_t  cap_mask;
-> +	enum dma_desc_metadata_mode desc_metadata_modes;
->  	unsigned short max_xor;
->  	unsigned short max_pq;
->  	enum dmaengine_alignment copy_align;
-> @@ -935,6 +1002,83 @@ static inline struct dma_async_tx_descriptor *dmaengine_prep_dma_memcpy(
->  						    len, flags);
->  }
->  
-> +static inline bool dmaengine_is_metadata_mode_supported(struct dma_chan *chan,
-> +		enum dma_desc_metadata_mode mode)
-> +{
-> +	return !!(chan->device->desc_metadata_modes & mode);
-> +}
-> +
-> +static inline int _desc_check_and_set_metadata_mode(
-
-why does this need to start with _ ?
-
-> +	struct dma_async_tx_descriptor *desc, enum dma_desc_metadata_mode mode)
-> +{
-> +	/* Make sure that the metadata mode is not mixed */
-> +	if (!desc->desc_metadata_mode) {
-> +		if (dmaengine_is_metadata_mode_supported(desc->chan, mode))
-> +			desc->desc_metadata_mode = mode;
-> +		else
-> +			return -ENOTSUPP;
-> +	} else if (desc->desc_metadata_mode != mode) {
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static inline int dmaengine_desc_attach_metadata(
-> +		struct dma_async_tx_descriptor *desc, void *data, size_t len)
-> +{
-> +	int ret;
-> +
-> +	if (!desc)
-> +		return -EINVAL;
-> +
-> +	ret = _desc_check_and_set_metadata_mode(desc, DESC_METADATA_CLIENT);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (!desc->metadata_ops || !desc->metadata_ops->attach)
-> +		return -ENOTSUPP;
-> +
-> +	return desc->metadata_ops->attach(desc, data, len);
-> +}
-> +
-> +static inline void *dmaengine_desc_get_metadata_ptr(
-> +		struct dma_async_tx_descriptor *desc, size_t *payload_len,
-> +		size_t *max_len)
-> +{
-> +	int ret;
-> +
-> +	if (!desc)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	ret = _desc_check_and_set_metadata_mode(desc, DESC_METADATA_ENGINE);
-> +	if (ret)
-> +		return ERR_PTR(ret);
-> +
-> +	if (!desc->metadata_ops || !desc->metadata_ops->get_ptr)
-> +		return ERR_PTR(-ENOTSUPP);
-> +
-> +	return desc->metadata_ops->get_ptr(desc, payload_len, max_len);
-> +}
-> +
-> +static inline int dmaengine_desc_set_metadata_len(
-> +		struct dma_async_tx_descriptor *desc, size_t payload_len)
-> +{
-> +	int ret;
-> +
-> +	if (!desc)
-> +		return -EINVAL;
-> +
-> +	ret = _desc_check_and_set_metadata_mode(desc, DESC_METADATA_ENGINE);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (!desc->metadata_ops || !desc->metadata_ops->set_len)
-> +		return -ENOTSUPP;
-> +
-> +	return desc->metadata_ops->set_len(desc, payload_len);
-> +}
-
-thats bit too much code for a header file :( Lets move it to C file
-please. We can utilize local dmaengine.h and not expose all these and
-possible misuse by clients
-
-Also I would like to see a use :-) before further comments.
-
+diff --git a/drivers/char/agp/frontend.c b/drivers/char/agp/frontend.c
+index f6955888e676..47098648502d 100644
+--- a/drivers/char/agp/frontend.c
++++ b/drivers/char/agp/frontend.c
+@@ -102,14 +102,13 @@ agp_segment_priv *agp_find_seg_in_client(const struct agp_client *client,
+ 					    int size, pgprot_t page_prot)
+ {
+ 	struct agp_segment_priv *seg;
+-	int num_segments, i;
++	int i;
+ 	off_t pg_start;
+ 	size_t pg_count;
+ 
+ 	pg_start = offset / 4096;
+ 	pg_count = size / 4096;
+ 	seg = *(client->segments);
+-	num_segments = client->num_segments;
+ 
+ 	for (i = 0; i < client->num_segments; i++) {
+ 		if ((seg[i].pg_start == pg_start) &&
+diff --git a/drivers/char/agp/isoch.c b/drivers/char/agp/isoch.c
+index 31c374b1b91b..7ecf20a6d19c 100644
+--- a/drivers/char/agp/isoch.c
++++ b/drivers/char/agp/isoch.c
+@@ -84,7 +84,6 @@ static int agp_3_5_isochronous_node_enable(struct agp_bridge_data *bridge,
+ 	unsigned int cdev = 0;
+ 	u32 mnistat, tnistat, tstatus, mcmd;
+ 	u16 tnicmd, mnicmd;
+-	u8 mcapndx;
+ 	u32 tot_bw = 0, tot_n = 0, tot_rq = 0, y_max, rq_isoch, rq_async;
+ 	u32 step, rem, rem_isoch, rem_async;
+ 	int ret = 0;
+@@ -138,8 +137,6 @@ static int agp_3_5_isochronous_node_enable(struct agp_bridge_data *bridge,
+ 		cur = list_entry(pos, struct agp_3_5_dev, list);
+ 		dev = cur->dev;
+ 
+-		mcapndx = cur->capndx;
+-
+ 		pci_read_config_dword(dev, cur->capndx+AGPNISTAT, &mnistat);
+ 
+ 		master[cdev].maxbw = (mnistat >> 16) & 0xff;
+@@ -251,8 +248,6 @@ static int agp_3_5_isochronous_node_enable(struct agp_bridge_data *bridge,
+ 		cur = master[cdev].dev;
+ 		dev = cur->dev;
+ 
+-		mcapndx = cur->capndx;
+-
+ 		master[cdev].rq += (cdev == ndevs - 1)
+ 		              ? (rem_async + rem_isoch) : step;
+ 
+@@ -319,7 +314,7 @@ int agp_3_5_enable(struct agp_bridge_data *bridge)
+ {
+ 	struct pci_dev *td = bridge->dev, *dev = NULL;
+ 	u8 mcapndx;
+-	u32 isoch, arqsz;
++	u32 isoch;
+ 	u32 tstatus, mstatus, ncapid;
+ 	u32 mmajor;
+ 	u16 mpstat;
+@@ -334,8 +329,6 @@ int agp_3_5_enable(struct agp_bridge_data *bridge)
+ 	if (isoch == 0)	/* isoch xfers not available, bail out. */
+ 		return -ENODEV;
+ 
+-	arqsz     = (tstatus >> 13) & 0x7;
+-
+ 	/*
+ 	 * Allocate a head for our AGP 3.5 device list
+ 	 * (multiple AGP v3 devices are allowed behind a single bridge).
+diff --git a/drivers/char/agp/via-agp.c b/drivers/char/agp/via-agp.c
+index a4961d35e940..48cbea8d5c7a 100644
+--- a/drivers/char/agp/via-agp.c
++++ b/drivers/char/agp/via-agp.c
+@@ -127,9 +127,6 @@ static int via_fetch_size_agp3(void)
+ static int via_configure_agp3(void)
+ {
+ 	u32 temp;
+-	struct aper_size_info_16 *current_size;
+-
+-	current_size = A_SIZE_16(agp_bridge->current_size);
+ 
+ 	/* address to map to */
+ 	agp_bridge->gart_bus_addr = pci_bus_address(agp_bridge->dev,
 -- 
-~Vinod
+2.17.1
+
