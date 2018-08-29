@@ -2,102 +2,198 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A883C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 01:41:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6E90C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 01:43:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B891720846
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 01:41:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 577B12087C
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 01:43:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="rklpXvzT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B891720846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=aol.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oqO+krfY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 577B12087C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727125AbeH2FgH (ORCPT
+        id S1727228AbeH2FiN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 01:36:07 -0400
-Received: from sonic304-50.consmr.mail.gq1.yahoo.com ([98.137.68.232]:40727
-        "EHLO sonic304-50.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725882AbeH2FgH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 01:36:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1535506903; bh=sfYkNKiurRi4lF4gMSlcFRG0PTXQO/6HnMLP9RnFDlw=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=rklpXvzTTMX181K1PW8KkwxD1LVwGW5g6wMCWSS022zonW1bfv3EXfYDqSrGyaj9GhnUVAmJKVxKxoBicyRzFROVEeLl2+vbe4kekzpdW5fdtohMTAS5TX/SvfFoD78f0G7fMHdDHE0t0Trjq5oDN59GEO/t+9/6QVsWC4n+hL+1OHQDnU+R252U/C035hgFQ0H5tXADNaqVUA3xInpyKmyUhNnb8H+0spxZDZmaydAxuN9pkh1QuI+8pOxA1+MD9aZkrWOC60IYtCEnQQ+0Br10NAIinM57GEUUeXNJNIJ7LERl/5BcWu5MKASrG0Zw0jyz/kIduWrx6ZphhsI7BQ==
-X-YMail-OSG: yUXbMXsVM1nzWIO_HJUhjSHQ4_qquyzEQTmZj4DhvZ8fkfUtcKCuWjvxeGygKac
- WAtDfqF_V9wk5kFklgavPMeBdXsQGXsJ6c01EztlS24isMQGm40L3l4t9Xv8T6J8IGrLPyen32Yo
- FhD7tQ9.8620wxb3TrFabpx4aAO6tCWJp1yz6eqTUDU6U1fYgRWZmJVC3DQYlBk8J9FsHFZj7Wis
- 5xpxKaitptqa5kjxhr7ou7GQAdJ604nEtoiCaeW.wUhRgDJexB3ocu7qPT_zwI5CEVmWiNU96Tqs
- 1PDBlFaem2Zt._AD4guU9rZVcCRX1d28.IlJPzPVQbX5.bn6DSJS8DCOXvsg1ZdaLLHUCGG.IK7h
- oTXejuvFAq9Zde25jbqjqGeHykpXMyX3K7bjPvomsn6xXwV.vqi5NFcPz.zdZXbsoqkFDtUObZAi
- syMFGSPRj9z0__rb8qL4JWsUndi.w7.KZG7k6aWh3VjlPeCNMDLA2XvHJ5n0Yr6Ki6A3lr10Lua3
- Ygjb.irE28HUcxzXSe1qHtz8B67mCQ7VZxR4gmORVLiLuwR5_b14Nq3jX1msyQjVgENiJWIsUTDr
- lYonDZk1bFGdaZ4GDsAgGiDnP7tGJqm9xyFAqGkTkPBKWTEHHUo053EehhQFXKmQzt2Km2bXqDDh
- Vxf.gRj.I80_EEUSYjIqB6r6zArf23DtZIUsKVbgRQXhbhTdOakXut6_KnVBZJQ1Kowo2uXrRYlp
- mUDNJy.AG3ZvtniqCUhdwO59Ru3X2SbFc4p1q.INcs87IEW0EsNhBhjRUAT_tqDlCSbBN19DZVQ1
- fEObXTnjtG86QjFObv1JUkrI1QCwSko3vcHi_fU4nru3A8LXDS49UYFN9ORAniT60pVR7DmqhEzt
- U4OZqLAqnNzQJ5X0IIpDytSUXxzjJD.0Gzjyigp8vF6.E0gH80v69c1GVqjOSS1N8lNmv96Ot0Zb
- QaGR1EgzzTEuI7nh97_o4Spz2AgLvytlqizqzf9jtyHTx0nbB_e4fx7CnMxulkGti6D1hpMhnzAX
- xDbV2TyU58BqHUhl2Hg--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.gq1.yahoo.com with HTTP; Wed, 29 Aug 2018 01:41:43 +0000
-Received: from 117.132.196.206 (EHLO [192.168.24.100]) ([117.132.196.206])
-          by smtp421.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID ebc54bb238843bcff924d791f4b0b65e;
-          Wed, 29 Aug 2018 01:37:43 +0000 (UTC)
-Subject: Re: [PATCH] Revert "staging: erofs: disable compiling temporarile"
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     Chao Yu <yuchao0@huawei.com>, devel@driverdev.osuosl.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>, weidu.du@huawei.com,
-        Miao Xie <miaoxie@huawei.com>
-References: <1535427588-69630-1-git-send-email-gaoxiang25@huawei.com>
- <20180828054444.GA4453@kroah.com>
- <0c701b3c-5553-cf4c-c0b3-ad151b84662c@huawei.com>
- <f12ae5df-3130-f293-5863-3d9ff0802e92@huawei.com>
- <20180828130559.GA5427@kroah.com>
- <16974cb6-2eed-7c12-9e27-c65a32b81673@huawei.com>
- <20180829094403.3a3bf19b@canb.auug.org.au>
-From:   Gao Xiang <hsiangkao@aol.com>
-Message-ID: <2f9ffbd8-b6e8-f5df-fb5e-f08f0b739070@aol.com>
-Date:   Wed, 29 Aug 2018 09:37:25 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 29 Aug 2018 01:38:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44044 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725199AbeH2FiN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 01:38:13 -0400
+Received: from localhost (unknown [104.132.1.88])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8299820846;
+        Wed, 29 Aug 2018 01:43:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535507028;
+        bh=fPTG1FHoFxza2ITx4F9+e4FMFnXOkumNgAKGeV31Gzc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=oqO+krfYgxNy3dM9OcAPlN0l1HL6xcL7NBF41tUMxvXqcQP/F5IEtPm97teseyFCe
+         ECBtxmFM+h1A86QgDcCe4L4RSPd2/5qOSe7+Thm+E3zLlI4GIzTxk5QRd2j60SHynE
+         YaIMhby+G6NpOK2KaDkyB1aebiu/+ZWeWf5q+46w=
+Date:   Tue, 28 Aug 2018 18:43:47 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     Chao Yu <chao@kernel.org>, Eric Biggers <ebiggers@kernel.org>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Michael Halcrow <mhalcrow@google.com>,
+        linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Victor Hsieh <victorhsieh@google.com>
+Subject: Re: [f2fs-dev] [RFC PATCH 10/10] f2fs: fs-verity support
+Message-ID: <20180829014347.GA27219@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180824161642.1144-1-ebiggers@kernel.org>
+ <20180824161642.1144-11-ebiggers@kernel.org>
+ <b2b6a810-9605-15c8-b905-a4591c0cf3a5@huawei.com>
+ <20180826173507.GC728@sol.localdomain>
+ <dbc20be8-975d-7bd2-002d-a8f30896da4a@kernel.org>
+ <20180828072756.GC29049@jaegeuk-macbookpro.roam.corp.google.com>
+ <63a19512-e938-d239-9e3c-f6ecc479478c@huawei.com>
+ <20180828170142.GB62482@jaegeuk-macbookpro.roam.corp.google.com>
+ <8b7f83db-810a-bdd6-85b0-1248dc14f8d7@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20180829094403.3a3bf19b@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8b7f83db-810a-bdd6-85b0-1248dc14f8d7@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 08/29, Chao Yu wrote:
+> On 2018/8/29 1:01, Jaegeuk Kim wrote:
+> > On 08/28, Chao Yu wrote:
+> >> On 2018/8/28 15:27, Jaegeuk Kim wrote:
+> >>> On 08/27, Chao Yu wrote:
+> >>>> Hi Eric,
+> >>>>
+> >>>> On 2018/8/27 1:35, Eric Biggers wrote:
+> >>>>> Hi Chao,
+> >>>>>
+> >>>>> On Sat, Aug 25, 2018 at 01:54:08PM +0800, Chao Yu wrote:
+> >>>>>> On 2018/8/25 0:16, Eric Biggers wrote:
+> >>>>>>> From: Eric Biggers <ebiggers@google.com>
+> >>>>>>>  #ifdef CONFIG_F2FS_CHECK_FS
+> >>>>>>>  #define f2fs_bug_on(sbi, condition)	BUG_ON(condition)
+> >>>>>>>  #else
+> >>>>>>> @@ -146,7 +149,7 @@ struct f2fs_mount_info {
+> >>>>>>>  #define F2FS_FEATURE_QUOTA_INO		0x0080
+> >>>>>>>  #define F2FS_FEATURE_INODE_CRTIME	0x0100
+> >>>>>>>  #define F2FS_FEATURE_LOST_FOUND		0x0200
+> >>>>>>> -#define F2FS_FEATURE_VERITY		0x0400	/* reserved */
+> >>>>>>> +#define F2FS_FEATURE_VERITY		0x0400
+> >>>>>>>  
+> >>>>>>>  #define F2FS_HAS_FEATURE(sb, mask)					\
+> >>>>>>>  	((F2FS_SB(sb)->raw_super->feature & cpu_to_le32(mask)) != 0)
+> >>>>>>> @@ -598,7 +601,7 @@ enum {
+> >>>>>>>  #define FADVISE_ENC_NAME_BIT	0x08
+> >>>>>>>  #define FADVISE_KEEP_SIZE_BIT	0x10
+> >>>>>>>  #define FADVISE_HOT_BIT		0x20
+> >>>>>>> -#define FADVISE_VERITY_BIT	0x40	/* reserved */
+> >>>>>>> +#define FADVISE_VERITY_BIT	0x40
+> >>>>>>
+> >>>>>> As I suggested before, how about moving f2fs' verity_bit from i_fadvise to more
+> >>>>>> generic i_flags field like ext4, so we can a) remaining more bits for those
+> >>>>>> demands which really need file advise fields. b) using i_flags bits keeping line
+> >>>>>> with ext4. Not sure, if user want to know whether the file is verity one, it
+> >>>>>> will be easy for f2fs to export the status through FS_IOC_SETFLAGS.
+> >>>>>>
+> >>>>>> #define EXT4_VERITY_FL			0x00100000 /* Verity protected inode */
+> >>>>>>
+> >>>>>> #define F2FS_VERITY_FL			0x00100000 /* Verity protected inode */
+> >>>>>>
+> >>>>>
+> >>>>> I don't like using i_advise much either, but I actually don't see either
+> >>>>> location being much better than the other at the moment.  The real problem is an
+> >>>>> artificial one: the i_flags in f2fs's on-disk format are being assumed to use
+> >>>>
+> >>>> Yeah, but since most copied flags from vfs/ext4 are not actually used in f2fs,
+> >>>> also 0x00100000 bit is not used now, so we can just define it now directly for
+> >>>> verity bit.
+> >>>>
+> >>>> Cleanup and remapping in ioctl interface for those unused flags, we can do it
+> >>>> latter?
+> >>>
+> >>> No, it was reserved by f2fs-tools, 
+> >>
+> >> That's not a problem, since we didn't use that reserved bit in any of images
+> >> now, there is no backward compatibility issue.
+> > 
+> > We're using that.
+> 
+> Oops, if it was in production, I agree to keep it in i_advice, otherwise, we
+> still can discuss its location.
+> 
+> > 
+> >>
+> >>> and I think this should be aligned to the encryption bit. 
+> >>
+> >> Alright, we could, but if so, i_advise will run out of space earlier, after that
+> >> we have to add real advice bit into i_inline or i_flags, that would be a little
+> >> weird.
+> >>
+> >> For encryption bit, as a common vfs feature flag, in the beginning of encryption
+> >> development, it will be better to set it into i_flags, IMO, but now, we have to
+> >> keep it as it was.
+> >>
+> >>> Moreover, we guarantee i_flags less strictly from power-cut than i_advise.
+> >>
+> >> IMO, in power-cut scenario, it needs to keep both i_flags and i_advise being
+> >> recoverable strictly. Any condition that we can not recover i_flags?
+> > 
+> > In __f2fs_ioc_setflags, f2fs_mark_inode_dirty_sync(inode, false);
+> 
+> Ah, that's right, do you remember why we treat them with different recoverable
+> level?
 
-On 2018/8/29 7:44, Stephen Rothwell wrote:
-> Unfortunately, those vfs changes are still in the vfs tree in
-> linux-next and cause a build failure in the erofs code.  I have
-> disabled the build of erofs again for today.
-
-feel a bit loss after hear that... :'(
+Since I thought that such the flags wouln't be critical on power cuts, but be
+enough for us to guarantee by write_inode() or fsync().
 
 > 
-> Dave, Al, it would be good if you could add a patch/revise the series
-> that adds the necessary erofs changes.
-
-Hi Dave, Al, could you please kindly fix EROFS in vfs tree if it is
-convenient...
-
-Here is my patches which were intended for 4.19 (they could be rewritten
-if needed...)
-https://lists.ozlabs.org/pipermail/linux-erofs/2018-July/000282.html
-https://lists.ozlabs.org/pipermail/linux-erofs/2018-July/000284.html
-
-Thanks in advance...
-
-Thanks,
-Gao Xiang
+> Thanks,
+> 
+> > 
+> >>
+> >> Thanks,
+> >>
+> >>>
+> >>>>
+> >>>> Thanks,
+> >>>>
+> >>>>> the same numbering scheme as ext4's on-disk format, which makes it seem that
+> >>>>> they have to be in sync, and that all new ext4 flags (say, EA_INODE) also
+> >>>>> reserve bits in f2fs and vice versa, when they in fact do not.  Instead, f2fs
+> >>>>> should use its own numbering for its i_flags, and it should map them to/from
+> >>>>> whatever is needed for common APIs like FS_IOC_{GET,SET}FLAGS and
+> >>>>> FS_IOC_FS{GET,SET}XATTR.
+> >>>>>
+> >>>>> So putting the verity flag in *either* location (i_advise or i_flags) is just
+> >>>>> kicking the can down the road.  If I get around to it I will send a patch that
+> >>>>> cleans up the f2fs flags properly...>
+> >>>>> Thanks,
+> >>>>>
+> >>>>> - Eric
+> >>>>>
+> >>>>> ------------------------------------------------------------------------------
+> >>>>> Check out the vibrant tech community on one of the world's most
+> >>>>> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> >>>>> _______________________________________________
+> >>>>> Linux-f2fs-devel mailing list
+> >>>>> Linux-f2fs-devel@lists.sourceforge.net
+> >>>>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> >>>>>
+> >>>
+> >>> .
+> >>>
+> > 
+> > .
+> > 
