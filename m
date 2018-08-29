@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37C11C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:54:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BF35C43334
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:54:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3E3220644
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:54:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3E3220644
+	by mail.kernel.org (Postfix) with ESMTP id B8EB420644
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:54:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8EB420644
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727998AbeH3Cx1 (ORCPT
+        id S1728018AbeH3Cx1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 29 Aug 2018 22:53:27 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44584 "EHLO
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52892 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727574AbeH3CxZ (ORCPT
+        by vger.kernel.org with ESMTP id S1727597AbeH3CxZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 29 Aug 2018 22:53:25 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7TMs2Fj047513
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7TMs0Ax122059
         for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:54:16 -0400
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m64f00ckb-1
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m64a28kr9-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
         for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:54:16 -0400
 Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
         Wed, 29 Aug 2018 18:54:15 -0400
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
         Wed, 29 Aug 2018 18:54:09 -0400
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7TMs8Ki25165956
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7TMs9oc18415710
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 29 Aug 2018 22:54:08 GMT
+        Wed, 29 Aug 2018 22:54:09 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E7ED2B2068;
-        Wed, 29 Aug 2018 18:53:03 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id D1445B2067;
+        Wed, 29 Aug 2018 18:53:04 -0400 (EDT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C00C2B2066;
-        Wed, 29 Aug 2018 18:53:03 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id AA5FDB206B;
+        Wed, 29 Aug 2018 18:53:04 -0400 (EDT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 29 Aug 2018 18:53:03 -0400 (EDT)
+        Wed, 29 Aug 2018 18:53:04 -0400 (EDT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id BDE5116C2B70; Wed, 29 Aug 2018 15:54:07 -0700 (PDT)
+        id C80AF16C91DE; Wed, 29 Aug 2018 15:54:07 -0700 (PDT)
 From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -61,20 +61,20 @@ Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tip/core/rcu 21/24] rcu: Clean up flavor-related definitions and comments in update.c
-Date:   Wed, 29 Aug 2018 15:54:02 -0700
+Subject: [PATCH tip/core/rcu 23/24] rcu: Define rcu_all_qs() only in !PREEMPT builds
+Date:   Wed, 29 Aug 2018 15:54:04 -0700
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180829225340.GA7019@linux.vnet.ibm.com>
 References: <20180829225340.GA7019@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18082922-0040-0000-0000-00000467593D
+x-cbid: 18082922-0072-0000-0000-0000039969A9
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009636; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01080749; UDB=6.00557500; IPR=6.00860735;
+ PH=3.00000004; SC=3.00000266; SDB=6.01080749; UDB=6.00557500; IPR=6.00860734;
  MB=3.00023002; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-29 22:54:13
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082922-0041-0000-0000-0000086E731C
-Message-Id: <20180829225405.7275-21-paulmck@linux.vnet.ibm.com>
+x-cbparentid: 18082922-0073-0000-0000-0000493EB981
+Message-Id: <20180829225405.7275-23-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-29_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -87,82 +87,142 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Now that rcu_all_qs() is used only in !PREEMPT builds, move it to
+tree_plugin.h so that it is defined only in those builds.  This in
+turn means that rcu_momentary_dyntick_idle() is only used in !PREEMPT
+builds, but it is simply marked __maybe_unused in order to keep it
+near the rest of the dyntick-idle code.
+
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 ---
- kernel/rcu/update.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ include/linux/rcutree.h  |  2 ++
+ kernel/rcu/tree.c        | 41 +---------------------------------------
+ kernel/rcu/tree_plugin.h | 39 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 42 insertions(+), 40 deletions(-)
 
-diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
-index ee366faecea6..fa089ead4bd6 100644
---- a/kernel/rcu/update.c
-+++ b/kernel/rcu/update.c
-@@ -332,7 +332,7 @@ void __wait_rcu_gp(bool checktiny, int n, call_rcu_func_t *crcu_array,
- 	int i;
- 	int j;
+diff --git a/include/linux/rcutree.h b/include/linux/rcutree.h
+index d09a9abe9440..7f83179177d1 100644
+--- a/include/linux/rcutree.h
++++ b/include/linux/rcutree.h
+@@ -66,7 +66,9 @@ void rcu_scheduler_starting(void);
+ extern int rcu_scheduler_active __read_mostly;
+ void rcu_end_inkernel_boot(void);
+ bool rcu_is_watching(void);
++#ifndef CONFIG_PREEMPT
+ void rcu_all_qs(void);
++#endif
  
--	/* Initialize and register callbacks for each flavor specified. */
-+	/* Initialize and register callbacks for each crcu_array element. */
- 	for (i = 0; i < n; i++) {
- 		if (checktiny &&
- 		    (crcu_array[i] == call_rcu ||
-@@ -697,19 +697,19 @@ static int __noreturn rcu_tasks_kthread(void *arg)
+ /* RCUtree hotplug events */
+ int rcutree_prepare_cpu(unsigned int cpu);
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index e8fbb7ee76cc..5f2a12a65b42 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -356,7 +356,7 @@ bool rcu_eqs_special_set(int cpu)
+  *
+  * The caller must have disabled interrupts and must not be idle.
+  */
+-static void rcu_momentary_dyntick_idle(void)
++static void __maybe_unused rcu_momentary_dyntick_idle(void)
+ {
+ 	struct rcu_dynticks *rdtp = this_cpu_ptr(&rcu_dynticks);
+ 	int special;
+@@ -381,45 +381,6 @@ static int rcu_is_cpu_rrupt_from_idle(void)
+ 	       __this_cpu_read(rcu_dynticks.dynticks_nmi_nesting) <= 1;
+ }
  
- 		/*
- 		 * Wait for all pre-existing t->on_rq and t->nvcsw
--		 * transitions to complete.  Invoking synchronize_sched()
-+		 * transitions to complete.  Invoking synchronize_rcu()
- 		 * suffices because all these transitions occur with
--		 * interrupts disabled.  Without this synchronize_sched(),
-+		 * interrupts disabled.  Without this synchronize_rcu(),
- 		 * a read-side critical section that started before the
- 		 * grace period might be incorrectly seen as having started
- 		 * after the grace period.
- 		 *
--		 * This synchronize_sched() also dispenses with the
-+		 * This synchronize_rcu() also dispenses with the
- 		 * need for a memory barrier on the first store to
- 		 * ->rcu_tasks_holdout, as it forces the store to happen
- 		 * after the beginning of the grace period.
- 		 */
--		synchronize_sched();
-+		synchronize_rcu();
+-/*
+- * Register an urgently needed quiescent state.  If there is an
+- * emergency, invoke rcu_momentary_dyntick_idle() to do a heavy-weight
+- * dyntick-idle quiescent state visible to other CPUs, which will in
+- * some cases serve for expedited as well as normal grace periods.
+- * Either way, register a lightweight quiescent state.
+- *
+- * The barrier() calls are redundant in the common case when this is
+- * called externally, but just in case this is called from within this
+- * file.
+- *
+- */
+-void rcu_all_qs(void)
+-{
+-	unsigned long flags;
+-
+-	if (!raw_cpu_read(rcu_dynticks.rcu_urgent_qs))
+-		return;
+-	preempt_disable();
+-	/* Load rcu_urgent_qs before other flags. */
+-	if (!smp_load_acquire(this_cpu_ptr(&rcu_dynticks.rcu_urgent_qs))) {
+-		preempt_enable();
+-		return;
+-	}
+-	this_cpu_write(rcu_dynticks.rcu_urgent_qs, false);
+-	barrier(); /* Avoid RCU read-side critical sections leaking down. */
+-	if (unlikely(raw_cpu_read(rcu_dynticks.rcu_need_heavy_qs))) {
+-		local_irq_save(flags);
+-		rcu_momentary_dyntick_idle();
+-		local_irq_restore(flags);
+-	}
+-	if (unlikely(raw_cpu_read(rcu_data.cpu_no_qs.b.exp)))
+-		rcu_qs();
+-	this_cpu_inc(rcu_dynticks.rcu_qs_ctr);
+-	barrier(); /* Avoid RCU read-side critical sections leaking up. */
+-	preempt_enable();
+-}
+-EXPORT_SYMBOL_GPL(rcu_all_qs);
+-
+ #define DEFAULT_RCU_BLIMIT 10     /* Maximum callbacks per rcu_do_batch. */
+ static long blimit = DEFAULT_RCU_BLIMIT;
+ #define DEFAULT_RCU_QHIMARK 10000 /* If this many pending, ignore blimit. */
+diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+index cd4c1b979446..7add1c297500 100644
+--- a/kernel/rcu/tree_plugin.h
++++ b/kernel/rcu/tree_plugin.h
+@@ -947,6 +947,45 @@ static void rcu_qs(void)
+ 	rcu_report_exp_rdp(this_cpu_ptr(&rcu_data));
+ }
  
- 		/*
- 		 * There were callbacks, so we need to wait for an
-@@ -736,7 +736,7 @@ static int __noreturn rcu_tasks_kthread(void *arg)
- 		 * This does only part of the job, ensuring that all
- 		 * tasks that were previously exiting reach the point
- 		 * where they have disabled preemption, allowing the
--		 * later synchronize_sched() to finish the job.
-+		 * later synchronize_rcu() to finish the job.
- 		 */
- 		synchronize_srcu(&tasks_rcu_exit_srcu);
- 
-@@ -786,20 +786,20 @@ static int __noreturn rcu_tasks_kthread(void *arg)
- 		 * cause their RCU-tasks read-side critical sections to
- 		 * extend past the end of the grace period.  However,
- 		 * because these ->nvcsw updates are carried out with
--		 * interrupts disabled, we can use synchronize_sched()
-+		 * interrupts disabled, we can use synchronize_rcu()
- 		 * to force the needed ordering on all such CPUs.
- 		 *
--		 * This synchronize_sched() also confines all
-+		 * This synchronize_rcu() also confines all
- 		 * ->rcu_tasks_holdout accesses to be within the grace
- 		 * period, avoiding the need for memory barriers for
- 		 * ->rcu_tasks_holdout accesses.
- 		 *
--		 * In addition, this synchronize_sched() waits for exiting
-+		 * In addition, this synchronize_rcu() waits for exiting
- 		 * tasks to complete their final preempt_disable() region
- 		 * of execution, cleaning up after the synchronize_srcu()
- 		 * above.
- 		 */
--		synchronize_sched();
-+		synchronize_rcu();
- 
- 		/* Invoke the callbacks. */
- 		while (list) {
++/*
++ * Register an urgently needed quiescent state.  If there is an
++ * emergency, invoke rcu_momentary_dyntick_idle() to do a heavy-weight
++ * dyntick-idle quiescent state visible to other CPUs, which will in
++ * some cases serve for expedited as well as normal grace periods.
++ * Either way, register a lightweight quiescent state.
++ *
++ * The barrier() calls are redundant in the common case when this is
++ * called externally, but just in case this is called from within this
++ * file.
++ *
++ */
++void rcu_all_qs(void)
++{
++	unsigned long flags;
++
++	if (!raw_cpu_read(rcu_dynticks.rcu_urgent_qs))
++		return;
++	preempt_disable();
++	/* Load rcu_urgent_qs before other flags. */
++	if (!smp_load_acquire(this_cpu_ptr(&rcu_dynticks.rcu_urgent_qs))) {
++		preempt_enable();
++		return;
++	}
++	this_cpu_write(rcu_dynticks.rcu_urgent_qs, false);
++	barrier(); /* Avoid RCU read-side critical sections leaking down. */
++	if (unlikely(raw_cpu_read(rcu_dynticks.rcu_need_heavy_qs))) {
++		local_irq_save(flags);
++		rcu_momentary_dyntick_idle();
++		local_irq_restore(flags);
++	}
++	if (unlikely(raw_cpu_read(rcu_data.cpu_no_qs.b.exp)))
++		rcu_qs();
++	this_cpu_inc(rcu_dynticks.rcu_qs_ctr);
++	barrier(); /* Avoid RCU read-side critical sections leaking up. */
++	preempt_enable();
++}
++EXPORT_SYMBOL_GPL(rcu_all_qs);
++
+ /*
+  * Note a PREEMPT=n context switch.  The caller must have disabled interrupts.
+  */
 -- 
 2.17.1
 
