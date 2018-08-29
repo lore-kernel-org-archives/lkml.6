@@ -2,130 +2,101 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 577A1C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 16:59:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD570C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 17:00:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBE792064E
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 16:59:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 858BF2064A
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 17:00:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JxUwaW71"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBE792064E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="lPOXl7Ot"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 858BF2064A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728181AbeH2U5Z (ORCPT
+        id S1728287AbeH2U6F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 16:57:25 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:46312 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727245AbeH2U5Y (ORCPT
+        Wed, 29 Aug 2018 16:58:05 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:53172 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727245AbeH2U6F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 16:57:24 -0400
-Received: by mail-oi0-f66.google.com with SMTP id y207-v6so10341123oie.13;
-        Wed, 29 Aug 2018 09:59:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=XXO5gIdr3OjiR6S02XZJ6gMS+ckd4hcKuNUkjOa1fwE=;
-        b=JxUwaW71WdVrgrTBVzC9Mo5SkUCYkuNhc/16uCJvTodsmOedv0HWDze1b/elk8MkEP
-         VaDVBlaLmfGSAxD+xjgGHh/rlIThlCpPrbJOCwlp7gd5u8bRVmLk53APEzL8bm0nVZa3
-         7Nigk2/L+80sQ2a5wxfgWY+z9f7+GsjAUOMf72t7l9NNmQLPbCdyU7Y4CaApRS/Hi9p4
-         CXdMC2dH+aCInN5kT1Kr3jcpzIA9S72y0wH9fZ4YrvvXY4Q6yyBqz4R78QrZMDF9oYCb
-         G/FB4RHFto6pHjddR95uc35GyDNyr8hFboQl6PmfdZPLWYRKPmLjhmy1KHe4FVvoe4Oe
-         1oTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=XXO5gIdr3OjiR6S02XZJ6gMS+ckd4hcKuNUkjOa1fwE=;
-        b=Sjw2y6usLusi/Tsu0ELPJEUXTcJac+k+XvsCrVOsDCai1VdntZpKwkQSaxIbHSmNSS
-         gIHY/VgrrqjZMYBq5l+z8PH+ReFbRgB8FGbleqtfuJM6jiN71+7dgYbDRZdpmtSiIiIb
-         Vtv/WaaUHXccIXqZiXoUHWTH94RWrN7fcqxaqQ1wWG03QWxYSmWCMHc3iUtyOYHh1wIb
-         d9/cWVTNBYm9YK0os2nBOcNgTH4idIn2y3/SgRM6AxSge9BKP6S6F9VFs3T4mlNH3FRj
-         +w7uu8KBb8vHYgQ02ENex0kdjGSrj02bAjX46TydJgfXjm5F3bOXDNokjfEiFd2Qdkcl
-         HFpg==
-X-Gm-Message-State: APzg51A2iEA6vwJPL4+cVwFx+9qhHa47lHES6NGek1Oz5NgTK2XfO2Pd
-        fN4+LzsDSgrIQ8qGjjLUFxPC+6UXmNY=
-X-Google-Smtp-Source: ANB0VdYLpHDBqa6AUCFo66hL5V+K0VrolL9VyIDcVs8to9qM+9tU3hLs0wcyJoegO20TDx9vg3j57Q==
-X-Received: by 2002:aca:d44a:: with SMTP id l71-v6mr3757597oig.199.1535561975304;
-        Wed, 29 Aug 2018 09:59:35 -0700 (PDT)
-Received: from nuclearis2-1.gtech (c-98-195-139-126.hsd1.tx.comcast.net. [98.195.139.126])
-        by smtp.gmail.com with ESMTPSA id t141-v6sm6141987oif.18.2018.08.29.09.59.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 Aug 2018 09:59:34 -0700 (PDT)
-Subject: Re: [PATCH] PCI/MSI: Don't touch MSI bits when the PCI device is
- disconnected
-To:     linux-pci@vger.kernel.org, bhelgaas@google.com
-Cc:     keith.busch@intel.com, alex_gagniuc@dellteam.com,
-        austin_bolen@dell.com, shyam_iyer@dell.com, Narendra_K@Dell.com,
-        Stuart_Hayes@Dell.com, lukas@wunner.de,
+        Wed, 29 Aug 2018 16:58:05 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7TGwdRK119401;
+        Wed, 29 Aug 2018 17:00:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=iVqs9FvoUPbucNRJIAwKNHnNwqVuyCxS5fyTCfHJ8vc=;
+ b=lPOXl7OtK5TrhF23iQFyMZosj1b3GevplPs2/rwabtTWHDHUs5CEs4GPqzPooz+LViAB
+ 8U1APOQsbZnsjVFYsF3a8YbYj0Nku6wMOW5VNIeALTZcFm+42iChUEO43PabwJ9y+UP3
+ eEeMYpw23QrqrUNIJU/Ni5S2N38VpFyGm6NYLvz+bC8kDR1jBdoyQg7jW4aoggOP6zuT
+ ti8prguwE6Lmc4mEBPJVGLUyRpmYGIwcCMwf8uYFPNByJw5aTTMwI+Ms3brAWi/RjjGV
+ O7nFlNhtxYQiaqYr2Z04pxVq0ZmowlRhrZNxv7thpRHgq+z+9jgh0yKckEt7cTA3x5HO bg== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2m2yrqb08c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 29 Aug 2018 17:00:08 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7TH06jt016839
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 29 Aug 2018 17:00:07 GMT
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7TH054Z009788;
+        Wed, 29 Aug 2018 17:00:05 GMT
+Received: from [10.209.243.127] (/10.209.243.127)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 29 Aug 2018 10:00:05 -0700
+Subject: Re: [PATCH net-next] rds: store socket timestamps as ktime_t
+To:     Arnd Bergmann <arnd@arndb.de>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     Sowmini Varadhan <sowmini.varadhan@oracle.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Ka-Cheong Poon <ka-cheong.poon@oracle.com>,
+        Salvatore Mesoraca <s.mesoraca16@gmail.com>,
+        Avinash Repaka <avinash.repaka@oracle.com>,
+        Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com,
         linux-kernel@vger.kernel.org
-References: <20180730212146.31909-1-mr.nuke.me@gmail.com>
-From:   "Alex G." <mr.nuke.me@gmail.com>
-Message-ID: <d0b5fa66-e16d-8686-79e2-4d7177cd4806@gmail.com>
-Date:   Wed, 29 Aug 2018 11:59:33 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+References: <20180829154732.844217-1-arnd@arndb.de>
+From:   Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <9758170c-d6f1-5d0a-b05c-12724ebaa0c6@oracle.com>
+Date:   Wed, 29 Aug 2018 10:00:01 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180730212146.31909-1-mr.nuke.me@gmail.com>
+In-Reply-To: <20180829154732.844217-1-arnd@arndb.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9000 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=703
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808290173
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Should I resubmit this rebased on 4.19-rc*, or just leave this patch as is?
-
-Alex
-
-On 07/30/2018 04:21 PM, Alexandru Gagniuc wrote:
-> When a PCI device is gone, we don't want to send IO to it if we can
-> avoid it. We expose functionality via the irq_chip structure. As
-> users of that structure may not know about the underlying PCI device,
-> it's our responsibility to guard against removed devices.
+On 8/29/2018 8:47 AM, Arnd Bergmann wrote:
+> rds is the last in-kernel user of the old do_gettimeofday()
+> function. Convert it over to ktime_get_real() to make it
+> work more like the generic socket timestamps, and to let
+> us kill off do_gettimeofday().
 > 
-> irq_write_msi_msg is already guarded. pci_msi_(un)mask_irq are not.
-> Guard them for completeness.
+> A follow-up patch will have to change the user space interface
+> to deal better with 32-bit tasks, which may use an incompatible
+> layout for 'struct timespec'.
 > 
-> For example, surprise removal of a PCIe device triggers teardown. This
-> touches the irq_chips ops some point to disable the interrupts. I/O
-> generated here can crash the system on machines with buggy firmware.
-> Not triggering the IO in the first place eliminates the problem.
-> 
-> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
-> 
-> There's another patch by Lukas Wunner that is needed (not yet published)
-> in order to fully block IO on SURPRISE!!! removal. The existing code only
-> sets the PCI_DEV_DISCONNECTED bit in an unreasonably narrow set of
-> circumstances. Lukas' patch fixes that.
-> 
-> However, this change is otherwise fully independent, and enjoy!
-> 
->   drivers/pci/msi.c | 3 +++
->   1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
-> index 4d88afdfc843..5f47b5cb0401 100644
-> --- a/drivers/pci/msi.c
-> +++ b/drivers/pci/msi.c
-> @@ -227,6 +227,9 @@ static void msi_set_mask_bit(struct irq_data *data, u32 flag)
->   {
->   	struct msi_desc *desc = irq_data_get_msi_desc(data);
->   
-> +	if (pci_dev_is_disconnected(msi_desc_to_pci_dev(desc)))
-> +		return;
-> +
->   	if (desc->msi_attrib.is_msix) {
->   		msix_mask_irq(desc, flag);
->   		readl(desc->mask_base);		/* Flush write to device */
-> 
+Thanks Arnd !!
+
+FWIW,
+Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
