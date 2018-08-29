@@ -2,183 +2,176 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06D71C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 06:48:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8917C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 06:54:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A84B22084A
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 06:48:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WH3nhTdq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A84B22084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 8AB002084C
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 06:54:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AB002084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727532AbeH2KoD (ORCPT
+        id S1727522AbeH2KuM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 06:44:03 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:55460 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727072AbeH2KoC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 06:44:02 -0400
-Received: by mail-it0-f67.google.com with SMTP id d10-v6so6144249itj.5
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 23:48:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dDtuyrNjsAUOSm7C0dJxw58/ulD9T0Me5w8fLKOpAX4=;
-        b=WH3nhTdqEmyxnJnWvP1iuAyPBATZi8TBTaeLAt/M5v8GeN8JT7s+N0okORl565eAi8
-         iWOKsrte3mvtpEYfV4wUQX1YzuznSdlDwPFPHyOJe+o2mVpW69Zz9sRtGPogDzlWWrI2
-         7IVaDJNz+q61yufhGiL9wy9eiK7nRCL1azRuc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dDtuyrNjsAUOSm7C0dJxw58/ulD9T0Me5w8fLKOpAX4=;
-        b=JDHEgqYqbhXj5ieGSqTiytwSSYEY5qRNLPRIirN6t/BU/ZufPHch0cHzx4b8B6AFdn
-         Wp7nel1h84TjQXDnwfwadRuzUfR8Dp2D51cBUZIq5+65mGCpX7JA957LKqwxNZ0EcmFQ
-         28iuA3OiHm4VJaqxhQRRWDmtl2QPb/DUi9DZsQe6BJ3dAKAwpdAt1llY1tEmdEBvpzn4
-         gLwUH3SlexKoMMJYOY3h1yshDq30XfwY/VbsnuEzDe8O/xDcaK3PGc1KsGJB6VirusPo
-         PRP/hDLJR/l0attggWnQIW2FfWxD72MznewwAwgM01DxobxcxF/5O8FCo0Wxyblzivj0
-         WfJQ==
-X-Gm-Message-State: APzg51BeXQBmPxxHnx8Vuq+S2VT98LvC4JTLlvejQGQpbQtA3gF10nRS
-        pqLyY/C5A3OcmXfaGouG4z2IxJjUuSEKO0HWeSWQxQ==
-X-Google-Smtp-Source: ANB0VdbwihQoE0AzovqoTWtw3T0ES9LVJzYsrlam8B6fmlqO+AHPxiO9fItUaTF06TVnGI/8dxMX6yjysk0lxHqq8is=
-X-Received: by 2002:a24:e00e:: with SMTP id c14-v6mr4426146ith.108.1535525319931;
- Tue, 28 Aug 2018 23:48:39 -0700 (PDT)
+        Wed, 29 Aug 2018 06:50:12 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44062 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727172AbeH2KuL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 06:50:11 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3C1F8401EF02;
+        Wed, 29 Aug 2018 06:54:48 +0000 (UTC)
+Received: from dhcp-128-65.nay.redhat.com (ovpn-12-149.pek2.redhat.com [10.72.12.149])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6E674100724B;
+        Wed, 29 Aug 2018 06:54:46 +0000 (UTC)
+Date:   Wed, 29 Aug 2018 14:54:42 +0800
+From:   Dave Young <dyoung@redhat.com>
+To:     linux-wireless@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: Intel Wireless 8265/8275 (rev 78) issue
+Message-ID: <20180829065442.GA3488@dhcp-128-65.nay.redhat.com>
 MIME-Version: 1.0
-References: <1534869685-22221-1-git-send-email-vincent.guittot@linaro.org>
- <87ftz6ww1h.fsf@e105922-lin.cambridge.arm.com> <CAKfTPtBGJf3tPgUXwVGbQBxgCwuW4TKhLtyeXYp5SZZxmyXEsg@mail.gmail.com>
- <87k1oaa6ym.fsf@e105922-lin.cambridge.arm.com>
-In-Reply-To: <87k1oaa6ym.fsf@e105922-lin.cambridge.arm.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Wed, 29 Aug 2018 08:48:29 +0200
-Message-ID: <CAKfTPtD5zxpjxHyT9h0RH2KcJTx4NkkMuBKpAfzRStOLqNRfVw@mail.gmail.com>
-Subject: Re: [PATCH] dt-binding: arm/cpus.txt: fix dynamic-power-coefficient unit
-To:     Punit Agrawal <punit.agrawal@arm.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 29 Aug 2018 06:54:48 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 29 Aug 2018 06:54:48 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dyoung@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 28 Aug 2018 at 16:42, Punit Agrawal <punit.agrawal@arm.com> wrote:
->
-> Vincent Guittot <vincent.guittot@linaro.org> writes:
->
-> > Hi Amit,
-> >
-> > On Wed, 22 Aug 2018 at 12:11, Punit Agrawal <punit.agrawal@arm.com> wrote:
-> >>
-> >> Hi Vincent,
-> >>
-> >> Thanks for the patch. One comment about the choice of units below.
-> >>
-> >> Vincent Guittot <vincent.guittot@linaro.org> writes:
-> >>
-> >> > The unit of dynamic-power-coefficient is described as mW/MHz/uV^2 whereas
-> >> > its usage in the code assumes that unit is mW/GHz/V^2
-> >>
-> >> Instead of choosing GHz as the base, I'd prefer to use uW/MHz/V^2. It'll
-> >> avoid introducing fractional GHz value for frequency calculations.
-> >
-> > I don't understand your concern about fractional Ghz value for
-> > frequency calculation ?
-> > I mean, why it's a problem for frequency with Ghz vs Mhz but not a
-> > problem for voltage with V vs mV ?
-> > Don't we have the same "problem" in both case ?
->
-> You're right. It's the same problem in both cases.
->
-> >>
-> >> > In drivers/thermal/cpu_cooling.c, the code is :
-> >> >
-> >> > power = (u64)capacitance * freq_mhz * voltage_mv * voltage_mv;
-> >> > do_div(power, 1000000000);
-> >> >
-> >> > which can be summarized as :
-> >> > power (mW) = capacitance * freq_mhz/1000 * (voltage_mv/1000)^2
-> >>
-> >> Which would then translate to -
-> >>
-> >> power (mW) = power (uW) / 1000 = capacitance * freq_mhz * (voltage_mv/1000)^2
-> >
-> > Not sure that the equation above is correct. If we consider uW/MHz/V^2
-> > for the unit, the equation becomes :
-> > power (mW) = power (uW) / 1000 = capacitance * freq_mhz *
-> > (voltage_mv/1000)^2 / 1000
->
-> Yes, I missed the "/ 1000" at the end.
->
-> > which can be rearranged as
-> > power (mW) = power (uW) / 1000 = capacitance * freq_mhz/ 1000 *
-> > (voltage_mv/1000)^2
-> >
-> > TBH, I don't really mind between  mW/GHz/V^2 or uW/MHz/V^2 as they are
-> > the same at the end
-> > but I don't catch your reasoning
->
-> The problem I was thinking of doesn't hold as it's the same issue with
-> voltage.
->
-> One benefit to go with uW/MHz/V^2 might be the extra resolution that it
-> provides. I'd prefer to go with uW/MHz/V^2 if there's no compelling
-> reason to go with anything else.
+Hi,
 
-Ok, I'm going to update the patch with uW/MHz/V^2
+Not sure if this is a known issue, I'm seeing this with latest mainline
+kernel on Fedora rawhide.
+
+The wireless networking is not stable, I can not access network any more after
+downloading some big files or just browsing some web pages about some
+time.  I do not see this when I work in office.  So this maybe relate to
+wireless router.
+
+"Can not access network" means ping timeout, can not open web pages etc.
+But the wireless connection looks normal at least from the
+NetworkManager icon it is still connected.
+
+The router I used at home is an old ASUS WL520gc.  I can confirm I can
+reproduce this with another ASUA router WL-500gP v2 
+
+My laptop model is Thinkpad T480s.  It is painful I can only use
+wireless,  any hints how to make it work will be appreciated!
+
+lspci:
+3d:00.0 Network controller: Intel Corporation Wireless 8265 / 8275 (rev 78)
+        Subsystem: Intel Corporation Dual Band Wireless-AC 8265
+        Flags: bus master, fast devsel, latency 0, IRQ 136
+        Memory at dc100000 (64-bit, non-prefetchable) [size=8K]
+        Capabilities: [c8] Power Management version 3
+        Capabilities: [d0] MSI: Enable+ Count=1/1 Maskable- 64bit+
+        Capabilities: [40] Express Endpoint, MSI 00
+        Capabilities: [100] Advanced Error Reporting
+        Capabilities: [140] Device Serial Number b4-6b-fc-ff-ff-a3-80-d6
+        Capabilities: [14c] Latency Tolerance Reporting
+        Capabilities: [154] L1 PM Substates
+        Kernel driver in use: iwlwifi
+        Kernel modules: iwlwifi
+
+Part of dmesg:
+
+[    7.892039] Intel(R) Wireless WiFi driver for Linux
+[    7.892041] Copyright(c) 2003- 2015 Intel Corporation
+[    7.892168] iwlwifi 0000:3d:00.0: enabling device (0000 -> 0002)
+[    7.898375] uvcvideo 1-8:1.0: Entity type for entity Extension 4 was not initialized!
+[    7.899760] uvcvideo 1-8:1.0: Entity type for entity Extension 3 was not initialized!
+[    7.901297] uvcvideo 1-8:1.0: Entity type for entity Processing 2 was not initialized!
+[    7.902594] uvcvideo 1-8:1.0: Entity type for entity Camera 1 was not initialized!
+[    7.904136] input: Integrated Camera: Integrated C as /devices/pci0000:00/0000:00:14.0/usb1/1-8/1-8:1.0/input/input11
+[    7.906563] usbcore: registered new interface driver uvcvideo
+[    7.906565] USB Video Class driver (1.1.1)
+[    7.914162] iwlwifi 0000:3d:00.0: loaded firmware version 36.e91976c0.0 op_mode iwlmvm
+[    8.080368] iwlwifi 0000:3d:00.0: Detected Intel(R) Dual Band Wireless AC 8265, REV=0x230
+[    8.149556] iwlwifi 0000:3d:00.0: base HW address: b4:6b:fc:a3:80:d6
+[    8.151643] RAPL PMU: API unit is 2^-32 Joules, 5 fixed counters, 655360 ms ovfl timer
+[    8.151646] RAPL PMU: hw unit of domain pp0-core 2^-14 Joules
+[    8.151648] RAPL PMU: hw unit of domain package 2^-14 Joules
+[    8.151650] RAPL PMU: hw unit of domain dram 2^-14 Joules
+[    8.151651] RAPL PMU: hw unit of domain pp1-gpu 2^-14 Joules
+[    8.151653] RAPL PMU: hw unit of domain psys 2^-14 Joules
+[    8.242895] ieee80211 phy0: Selected rate control algorithm 'iwl-mvm-rs'
+[    8.244972] thermal thermal_zone5: failed to read out thermal zone (-61)
+[    8.266903] iwlwifi 0000:3d:00.0 wlp61s0: renamed from wlan0
+[    8.376663] psmouse serio1: elantech: assuming hardware version 4 (with firmware version 0x7f3001)
+[    8.388476] psmouse serio1: elantech: Synaptics capabilities query result 0x90, 0x18, 0x0f.
+[    8.404955] psmouse serio1: elantech: Elan sample query result 00, 20, c9
+[    8.405711] intel_rapl: Found RAPL domain package
+[    8.405729] intel_rapl: Found RAPL domain core
+[    8.405732] intel_rapl: Found RAPL domain uncore
+[    8.405734] intel_rapl: Found RAPL domain dram
+[    8.417931] psmouse serio1: elantech: Trying to set up SMBus access
+[    8.427666] elan_i2c 6-0015: 6-0015 supply vcc not found, using dummy regulator
+[    8.428913] elan_i2c 6-0015: Linked as a consumer to regulator.0
+[    8.442870] elan_i2c 6-0015: Elan Touchpad: Module ID: 0x0020, Firmware: 0x0001, Sample: 0x0000, IAP: 0x0000
+[    8.443236] input: Elan Touchpad as /devices/pci0000:00/0000:00:1f.4/i2c-6/6-0015/input/input19
+[    8.443961] input: Elan TrackPoint as /devices/pci0000:00/0000:00:1f.4/i2c-6/6-0015/input/input20
+[    8.483396] systemd-udevd (584) used greatest stack depth: 11320 bytes left
+[    8.534134] EXT4-fs (nvme0n1p4): mounted filesystem with ordered data mode. Opts: (null)
+[    8.540006] EXT4-fs (nvme0n1p11): mounted filesystem with ordered data mode. Opts: (null)
+[    8.544692] EXT4-fs (nvme0n1p3): mounted filesystem with ordered data mode. Opts: (null)
+[    8.556466] EXT4-fs (nvme0n1p5): mounted filesystem with ordered data mode. Opts: (null)
+[    8.565545] EXT4-fs (nvme0n1p8): mounted filesystem with ordered data mode. Opts: (null)
+[    8.598930] EXT4-fs (nvme0n1p7): mounted filesystem with ordered data mode. Opts: (null)
+[    8.620810] usb 1-7: USB disconnect, device number 2
+[    8.643967] systemd-journald[522]: Received request to flush runtime journal from PID 1
+[    8.786474] RPC: Registered named UNIX socket transport module.
+[    8.786481] RPC: Registered udp transport module.
+[    8.786482] RPC: Registered tcp transport module.
+[    8.786483] RPC: Registered tcp NFSv4.1 backchannel transport module.
+[    9.033765] Bluetooth: BNEP (Ethernet Emulation) ver 1.3
+[    9.033767] Bluetooth: BNEP filters: protocol multicast
+[    9.033774] Bluetooth: BNEP socket layer initialized
+[    9.295788] IPv6: ADDRCONF(NETDEV_UP): enp0s31f6: link is not ready
+[    9.532690] IPv6: ADDRCONF(NETDEV_UP): enp0s31f6: link is not ready
+[    9.540906] IPv6: ADDRCONF(NETDEV_UP): wlp61s0: link is not ready
+[    9.760641] IPv6: ADDRCONF(NETDEV_UP): wlp61s0: link is not ready
+[   10.006921] IPv6: ADDRCONF(NETDEV_UP): wlp61s0: link is not ready
+[   10.036910] IPv6: ADDRCONF(NETDEV_UP): enp0s31f6: link is not ready
+[   10.131377] IPv6: ADDRCONF(NETDEV_UP): wlp61s0: link is not ready
+[   10.670126] Bluetooth: hci0: command 0xfc09 tx timeout
+[   18.796221] Bluetooth: hci0: Failed to send firmware data (-110)
+[   71.273464] fuse init (API version 7.27)
+[   73.269439] IPv6: ADDRCONF(NETDEV_UP): wlp61s0: link is not ready
+[   74.123114] wlp61s0: authenticate with 00:1f:c6:82:0a:57
+[   74.126099] wlp61s0: send auth to 00:1f:c6:82:0a:57 (try 1/3)
+[   74.139740] wlp61s0: authenticated
+[   74.140142] iwlwifi 0000:3d:00.0 wlp61s0: disabling HE/HT/VHT due to WEP/TKIP use
+[   74.140146] iwlwifi 0000:3d:00.0 wlp61s0: disabling HT as WMM/QoS is not supported by the AP
+[   74.140149] iwlwifi 0000:3d:00.0 wlp61s0: disabling VHT as WMM/QoS is not supported by the AP
+[   74.141838] wlp61s0: associate with 00:1f:c6:82:0a:57 (try 1/3)
+[   74.149298] wlp61s0: RX AssocResp from 00:1f:c6:82:0a:57 (capab=0x411 status=0 aid=3)
+[   74.160220] wlp61s0: associated
+[   74.201707] IPv6: ADDRCONF(NETDEV_CHANGE): wlp61s0: link becomes ready
+[   79.350950] usb 1-2: new low-speed USB device number 4 using xhci_hcd
+[   79.482476] usb 1-2: New USB device found, idVendor=17ef, idProduct=6016, bcdDevice= 0.00
+[   79.482485] usb 1-2: New USB device strings: Mfr=1, Product=2, SerialNumber=0
+[   79.482491] usb 1-2: Product: ThinkPad USB Laser Mouse
+[   79.482496] usb 1-2: Manufacturer: Lenovo
+[   79.488601] input: Lenovo ThinkPad USB Laser Mouse as /devices/pci0000:00/0000:00:14.0/usb1/1-2/1-2:1.0/0003:17EF:6016.0001/input/input21
+[   79.490030] hid-generic 0003:17EF:6016.0001: input,hidraw0: USB HID v1.11 Mouse [Lenovo ThinkPad USB Laser Mouse] on usb-0000:00:14.0-2/input0
+[   87.228112] tun: Universal TUN/TAP device driver, 1.6
+[ 1870.764779] e1000e: enp0s31f6 NIC Link is Up 10 Mbps Full Duplex, Flow Control: Rx/Tx
+[ 1870.764903] e1000e 0000:00:1f.6 enp0s31f6: 10/100 speed: disabling TSO
+[ 1870.765098] IPv6: ADDRCONF(NETDEV_CHANGE): enp0s31f6: link becomes ready
+[ 2521.068469] wlp61s0: deauthenticating from 00:1f:c6:82:0a:57 by local choice (Reason: 3=DEAUTH_LEAVING)
+[ 2521.211797] IPv6: ADDRCONF(NETDEV_UP): wlp61s0: link is not ready
+[ 2868.177807] IPv6: ADDRCONF(NETDEV_UP): wlp61s0: link is not ready
+[ 3183.188643] IPv6: ADDRCONF(NETDEV_UP): wlp61s0: link is not ready
 
 Thanks
->
->
-> [...]
->
-> >> >
-> >> > Furthermore, if we test basic values like :
-> >> > voltage_mv = 1000mV = 1V
-> >> > freq_mhz = 1000Mhz = 1Ghz
-> >> >
-> >> > The minimum possible power, when dynamic-power-coefficient equals 1, will
-> >> > be :
-> >> > min power = 1 * 1000  * (1000000)^2 = 10^15 mW
-> >> > which is not realistic
-> >> >
-> >> > With the unit used by the code, the min power is
-> >> > min power =  1 * 1 * 1^2 = 1mW which is far more realistic
-> >> >
-> >> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> >> > ---
-> >> >  Documentation/devicetree/bindings/arm/cpus.txt | 4 ++--
-> >> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >> >
-> >> > diff --git a/Documentation/devicetree/bindings/arm/cpus.txt b/Documentation/devicetree/bindings/arm/cpus.txt
-> >> > index 29e1dc5..0148d7d 100644
-> >> > --- a/Documentation/devicetree/bindings/arm/cpus.txt
-> >> > +++ b/Documentation/devicetree/bindings/arm/cpus.txt
-> >> > @@ -274,7 +274,7 @@ described below.
-> >> >               Usage: optional
-> >> >               Value type: <prop-encoded-array>
-> >> >               Definition: A u32 value that represents the running time dynamic
-> >> > -                         power coefficient in units of mW/MHz/uV^2. The
-> >> > +                         power coefficient in units of mW/GHz/V^2. The
-> >> >                           coefficient can either be calculated from power
-> >> >                           measurements or derived by analysis.
-> >> >
-> >> > @@ -285,7 +285,7 @@ described below.
-> >> >
-> >> >                           Pdyn = dynamic-power-coefficient * V^2 * f
-> >> >
-> >> > -                         where voltage is in uV, frequency is in MHz.
-> >> > +                         where voltage is in V, frequency is in GHz.
-> >> >
-> >> >  Example 1 (dual-cluster big.LITTLE system 32-bit):
+Dave
