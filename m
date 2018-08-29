@@ -2,99 +2,94 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C640C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:12:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45EC1C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:13:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2181F2086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:12:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1ncxeiFP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2181F2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0A73B2086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:13:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A73B2086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727685AbeH2MIh (ORCPT
+        id S1727813AbeH2MIs convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 08:08:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39816 "EHLO mail.kernel.org"
+        Wed, 29 Aug 2018 08:08:48 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:42369 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727198AbeH2MIh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 08:08:37 -0400
-Received: from mail-wm0-f46.google.com (mail-wm0-f46.google.com [74.125.82.46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3394720898
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 08:12:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535530376;
-        bh=1bmp4stWztNfmlEfurUGZenrc4zSLou32o9B7y5FrQI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=1ncxeiFPVUByGi6+zWhTFqhpP/ss9SKXiDl6rID9GAQ3uN58/NYVgApY12/S1oSkR
-         GBikCWpbgAe1HBsqne6IPIQbKPJchBrkRTbAe5VdT2+zboP8MBCWMZqCiPjbmHyPae
-         Xt08ZXJr0SzFFe3+xmnxqT6anRujHSDMoomkI5vk=
-Received: by mail-wm0-f46.google.com with SMTP id i134-v6so3821442wmf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 01:12:56 -0700 (PDT)
-X-Gm-Message-State: APzg51B0176hYbUc/FFlUaFz22j2lhErDKOk+dnO9hy9wC5ifscWgr0i
-        AkARGcLXfuP3JFST2ch6VbiH2+m8IiqnQNR98O0=
-X-Google-Smtp-Source: ANB0VdaxKutpzexBZwBAxCD0jJqiQkHw8vg1flQg8Ve1FVAiOIc5vRWbtfzBpMAPm7i+BgxCSp1BO47Gp/CP2idAe6A=
-X-Received: by 2002:a1c:3e8e:: with SMTP id l136-v6mr3528941wma.72.1535530374712;
- Wed, 29 Aug 2018 01:12:54 -0700 (PDT)
+        id S1726858AbeH2MIs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 08:08:48 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 571FB20795; Wed, 29 Aug 2018 10:13:06 +0200 (CEST)
+Received: from localhost (unknown [37.71.171.242])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 206C4206EE;
+        Wed, 29 Aug 2018 10:13:06 +0200 (CEST)
+From:   Gregory CLEMENT <gregory.clement@bootlin.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     aditya@kobol.io,
+        "thierry.reding\@gmail.com" <thierry.reding@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        "open list\:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Richard Genoud <richard.genoud@gmail.com>, gauthier@kobol.io,
+        Alban Browaeys <alban.browaeys@gmail.com>,
+        linux-pwm@vger.kernel.org,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dennis@ausil.us, Ralph Sennhauser <ralph.sennhauser@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH RESEND 1/2] gpio: mvebu: Add support for multiple PWM lines per GPIO chip
+References: <1533522556-55055-1-git-send-email-aditya@kobol.io>
+        <1533522556-55055-2-git-send-email-aditya@kobol.io>
+        <CACRpkda2qXxyEj+y8DaZ-_PWcj3pBGtvVAac8qaFCnC0LTNkNA@mail.gmail.com>
+Date:   Wed, 29 Aug 2018 10:13:05 +0200
+In-Reply-To: <CACRpkda2qXxyEj+y8DaZ-_PWcj3pBGtvVAac8qaFCnC0LTNkNA@mail.gmail.com>
+        (Linus Walleij's message of "Wed, 29 Aug 2018 09:54:04 +0200")
+Message-ID: <87in3tk2um.fsf@bootlin.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-References: <1535527943-32566-1-git-send-email-krzk@kernel.org>
- <CAJKOXPe-fY5T8DMTgjQfrJN=b_9JcytYeeqkX9rQw6EbQ_GiXA@mail.gmail.com> <CA+7wUsxE5gUXuUzkZ5bjz_d5WXab8RQxF3bre_DAMpUW=QpKTg@mail.gmail.com>
-In-Reply-To: <CA+7wUsxE5gUXuUzkZ5bjz_d5WXab8RQxF3bre_DAMpUW=QpKTg@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Wed, 29 Aug 2018 10:12:43 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPfFds9di8d+CHACTYLS8a1ZKc1KGAkL3z=ZyF-HEr-e+Q@mail.gmail.com>
-Message-ID: <CAJKOXPfFds9di8d+CHACTYLS8a1ZKc1KGAkL3z=ZyF-HEr-e+Q@mail.gmail.com>
-Subject: Re: [RFT] powerpc/boot: Fix missing crc32poly.h when building with KERNEL_XZ
-To:     malat@debian.org
-Cc:     benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        mkubecek@suse.cz, mroos@linux.ee
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 29 Aug 2018 at 10:06, Mathieu Malaterre <malat@debian.org> wrote:
->
-> On Wed, Aug 29, 2018 at 9:59 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >
-> > On Wed, 29 Aug 2018 at 09:32, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > >
-> > > After commit faa16bc404d7 ("lib: Use existing define with
-> > > polynomial") the lib/xz/xz_crc32.c includes a header from include/linux
-> > > directory thus any other user of this code should define proper include
-> > > path.
-> > >
-> > > This fixes the build error on powerpc with CONFIG_KERNEL_XZ:
-> > >
-> > >     In file included from ../arch/powerpc/boot/../../../lib/decompress_unxz.c:233:0,
-> > >                      from ../arch/powerpc/boot/decompress.c:42:
-> > >     ../arch/powerpc/boot/../../../lib/xz/xz_crc32.c:18:29: fatal error: linux/crc32poly.h: No such file or directory
-> > >
-> > > Reported-by: Michal Kubecek <mkubecek@suse.cz>
-> >
-> > Reported earlier by Kbuild:
-> > https://lkml.org/lkml/2018/8/23/47
-> >
-> > for the credits:
-> > Reported-by: kbuild test robot <lkp@intel.com>
->
-> Technically Meelis reported it earlier:
->
-> https://lkml.org/lkml/2018/8/22/365
->
-> ;)
+Hi Linus,
+ 
+ On mer., août 29 2018, Linus Walleij <linus.walleij@linaro.org> wrote:
 
-Oh, right... so for the full credits:
-Reported-by: Meelis Roos <mroos@linux.ee>
+> On Mon, Aug 6, 2018 at 4:31 AM Aditya Prayoga <aditya@kobol.io> wrote:
+>
+>> Allow more than 1 PWM request (eg. PWM fan) on the same GPIO chip.
+>>
+>> based on initial work on LK4.4 by Alban Browaeys.
+>> URL: https://github.com/helios-4/linux-marvell/commit/743ae97
+>> [Aditya Prayoga: forward port, cleanup]
+>> Signed-off-by: Aditya Prayoga <aditya@kobol.io>
+>
+> It would be awesome to get some feedback from the MVEBU maintainers
+> on this patch set.
 
-Best regards,
-Krzysztof
+There already has been reviewed from Andrew and also from Richard who
+worked on the PWM part too. There were many questions raised, but no
+feedback yet, so for now this patch set is clearly not ready to be
+merged. We are waiting for answers and a new version.
+
+Gregory
+
+>
+> Who are most active on Marvell stuff these days? Thomas?
+>
+> Likewise I'd be very grateful for a nod from the PWM maintainer that
+> this is OK with him.
+>
+> Yours,
+> Linus Walleij
+
+-- 
+Gregory Clement, Bootlin
+Embedded Linux and Kernel engineering
+http://bootlin.com
