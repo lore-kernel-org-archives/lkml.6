@@ -2,116 +2,159 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A68C5C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 14:15:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B085C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 14:16:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48A2B20867
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 14:15:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0166A2084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 14:16:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WC5WQ8+7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48A2B20867
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="ui7cU7vR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0166A2084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728385AbeH2SMq (ORCPT
+        id S1728622AbeH2SNf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 14:12:46 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:55608 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727547AbeH2SMp (ORCPT
+        Wed, 29 Aug 2018 14:13:35 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:38480 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727444AbeH2SNf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 14:12:45 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7TEE6jQ158620;
-        Wed, 29 Aug 2018 14:15:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=VkhiR7jeFqvoJDQ8FiCWT3hauUpUStqroUr5BgrXaOw=;
- b=WC5WQ8+7SLtWk5prb5URYw/XLLbBQGzIxmKe3SobhDngDddvIJ0vk7jSvf3BbbI1Y2As
- l9H/4EFgWQobKJ3QQ2gvtOx1O84GCJi/clUeurml2GiTfMgbJIYa1upRTij66/TucU0X
- rEENPqUkLsuOuqKfswssKCxoJUnRb8dvKjm/+JbsMo2ZnIUMd4C1CAVsIawST4+/GJVl
- sZ3AIf4d0i/95ru7PmGBayOC8QFyKcMBHjwcTatTSRTGJ+uylzkI3+oeROag/Fw1sdPX
- LJSKEjT5rQ6glcaHPkbRgzRd52caSbT9bccpRaw8G/KKbHlLojoRhQFs0zmVNF7PGW34 Mw== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2m2yrq9xcg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 29 Aug 2018 14:15:29 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7TEFSil004585
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 29 Aug 2018 14:15:28 GMT
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w7TEFSQn030991;
-        Wed, 29 Aug 2018 14:15:28 GMT
-Received: from mwanda (/197.232.248.111)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 29 Aug 2018 07:15:27 -0700
-Date:   Wed, 29 Aug 2018 17:15:20 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Sameer Nanda <snanda@chromium.org>
-Cc:     colin.king@canonical.com, sre@kernel.org, linux-pm@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] power: supply: remove unused pointer 'dev'
-Message-ID: <20180829141520.vaiuepmjdvizzhh2@mwanda>
-References: <20180828162842.17503-1-colin.king@canonical.com>
- <CAJKOXPcy3emsEPRRK+sKxe51ZWPoVscwHdrVz0fw7vJfLh9HWw@mail.gmail.com>
+        Wed, 29 Aug 2018 14:13:35 -0400
+Received: by mail-pf1-f194.google.com with SMTP id x17-v6so2343237pfh.5
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 07:16:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=l2woWWn9mTd09WCed6KZ4JHOMWuOe3bmM0XJNKOmEgY=;
+        b=ui7cU7vRU6b1dEaFELXOFLWW5lnaFBXCH0/d3ncZ+g9KzPx36k48ieQV8bwZbopf8k
+         bKbAxXE/VElEqk2U1FGln+TUmWXXCTBpbimHWIzgm4ZgCEfgZ82eRbW/f5S3hlUhBDPZ
+         +x8gw+dTcJU7s0oqHG7VtQU7Ju1sfZLcWP2m/wJnYVjGkXJ4UDuDDe13OsFS0CKsR4mX
+         g/Ztqjr96BPAcUCT0xXZe8WfEELjlFWJZOO4P7x2x7uXp7CpGYY8DcaOJYe+JzqLrgJ9
+         YNIfRu92gqkQIVlD5hS6He4YPS1diRGRkGdJLIHlvWiir5WLbxoanrTfuqgExw74MD2J
+         nBbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=l2woWWn9mTd09WCed6KZ4JHOMWuOe3bmM0XJNKOmEgY=;
+        b=AHHOCLWZ88DH+reOfUv5YBp2wAV/6znyVDKwZSmDHU4lgSOTztvLlKZCwSMBPakUC6
+         bMeIoeDddZAlr81OWZdzimurVIxjZQtn1mS6Q88IwyitDsF6zHupHtVcNBdgrXKCycKv
+         cA/F5k7CsVk9oB/Nj6NU8aJVsE1C87Fibgn6pbK34OC5S5cHu7rCAqm0pl8LBYOVst7o
+         FK0DUdDYsDZKvySwMBlE9IRDHHNrVnXyXCS9SCJnqmxTGUWymqbgRH4ho4EGWctyKhU3
+         BHQ0nijCwk1Y+N0WMpgQo2uhThGmyCEc17X3ISvf9sNobjYeIRXPKpanTFfcEOpFvRFG
+         k4EA==
+X-Gm-Message-State: APzg51C3KfKNSMPBsckxXOoydXp1oawPg7O88VhbH5Pdul8FMDcNTM+x
+        AV13btuvOJYFlw8PZgaxFVchyiMjNtIPWg==
+X-Google-Smtp-Source: ANB0VdbeJPQtPtlG3mBx4C7jJTtMvYPSZowWktR2+pBsQKN6aHJaIcDwdWZtZfK4CsS+1Z2XER1nUA==
+X-Received: by 2002:a62:63c2:: with SMTP id x185-v6mr6202724pfb.13.1535552185254;
+        Wed, 29 Aug 2018 07:16:25 -0700 (PDT)
+Received: from [10.86.62.45] (rap-us.hgst.com. [199.255.44.250])
+        by smtp.googlemail.com with ESMTPSA id o62-v6sm5697753pfb.0.2018.08.29.07.16.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 Aug 2018 07:16:24 -0700 (PDT)
+Subject: Re: [V2 PATCH] lightnvm: pblk: add helpers for chunk addresses
+To:     javier@javigon.com
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        javier@cnexlabs.com
+References: <1535548379-11125-1-git-send-email-javier@cnexlabs.com>
+From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <d9e4f836-1ad0-526b-241e-e934d767ab77@lightnvm.io>
+Date:   Wed, 29 Aug 2018 16:16:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJKOXPcy3emsEPRRK+sKxe51ZWPoVscwHdrVz0fw7vJfLh9HWw@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8999 signatures=668708
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=591
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1808290152
+In-Reply-To: <1535548379-11125-1-git-send-email-javier@cnexlabs.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 29, 2018 at 03:54:13PM +0200, Krzysztof Kozlowski wrote:
-> On Tue, 28 Aug 2018 at 18:29, Colin King <colin.king@canonical.com> wrote:
-> >
-> > From: Colin Ian King <colin.king@canonical.com>
-> >
-> > Pointer 'dev' is being assigned but is never used hence it is
-> > redundant and can be removed.
-> >
-> > Cleans up clang warning:
-> > variable 'dev' set but not used [-Wunused-but-set-variable]
-> >
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >  drivers/power/supply/cros_usbpd-charger.c | 2 --
-> >  1 file changed, 2 deletions(-)
-> >
+On 08/29/2018 03:12 PM, Javier González wrote:
+> # Changes since V1:
+>   - Move 1.2 / 2.0 specific code to core (form Matias)
 > 
-> Maybe add cros_usbpd prefix to the subject?
+> Implement helpers to go from ppas to a chunk within a line and an
+> address within a chunk.
+> 
+> These helpers will be used on the patches adding trace support in pblk,
+> which will be sent in this window.
+> 
+> Signed-off-by: Javier González <javier@cnexlabs.com>
+> ---
+>   drivers/lightnvm/pblk.h  | 19 +++++++++++++++++++
+>   include/linux/lightnvm.h | 19 +++++++++++++++++++
+>   2 files changed, 38 insertions(+)
+> 
+> diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
+> index be67bbfa3d0a..f95fe75fef6e 100644
+> --- a/drivers/lightnvm/pblk.h
+> +++ b/drivers/lightnvm/pblk.h
+> @@ -1034,6 +1034,25 @@ static inline struct ppa_addr addr_to_gen_ppa(struct pblk *pblk, u64 paddr,
+>   	return ppa;
+>   }
+>   
+> +static inline struct nvm_chk_meta *pblk_dev_ppa_to_chunk(struct pblk *pblk,
+> +							struct ppa_addr p)
+> +{
+> +	struct nvm_tgt_dev *dev = pblk->dev;
+> +	struct nvm_geo *geo = &dev->geo;
+> +	struct pblk_line *line = &pblk->lines[pblk_ppa_to_line(p)];
+> +	int pos = pblk_ppa_to_pos(geo, p);
+> +
+> +	return &line->chks[pos];
+> +}
+> +
+> +static inline u64 pblk_dev_ppa_to_chunk_addr(struct pblk *pblk,
+> +							struct ppa_addr p)
+> +{
+> +	struct nvm_tgt_dev *dev = pblk->dev;
+> +
+> +	return dev_to_chunk_addr(dev->parent, &pblk->addrf, p);
+> +}
+> +
+>   static inline u64 pblk_dev_ppa_to_line_addr(struct pblk *pblk,
+>   							struct ppa_addr p)
+>   {
+> diff --git a/include/linux/lightnvm.h b/include/linux/lightnvm.h
+> index 0106984400bc..77743a02ec0d 100644
+> --- a/include/linux/lightnvm.h
+> +++ b/include/linux/lightnvm.h
+> @@ -487,6 +487,25 @@ static inline struct ppa_addr dev_to_generic_addr(struct nvm_dev *dev,
+>   	return l;
+>   }
+>   
+> +static inline u64 dev_to_chunk_addr(struct nvm_dev *dev, void *addrf,
+> +				    struct ppa_addr p)
+> +{
+> +	struct nvm_geo *geo = &dev->geo;
+> +	u64 caddr;
+> +
+> +	if (geo->version == NVM_OCSSD_SPEC_12) {
+> +		struct nvm_addrf_12 *ppaf = (struct nvm_addrf_12 *)addrf;
+> +
+> +		caddr = (u64)p.g.pg << ppaf->pg_offset;
+> +		caddr |= (u64)p.g.pl << ppaf->pln_offset;
+> +		caddr |= (u64)p.g.sec << ppaf->sec_offset;
+> +	} else {
+> +		caddr = p.m.sec;
+> +	}
+> +
+> +	return caddr;
+> +}
+> +
+>   typedef blk_qc_t (nvm_tgt_make_rq_fn)(struct request_queue *, struct bio *);
+>   typedef sector_t (nvm_tgt_capacity_fn)(void *);
+>   typedef void *(nvm_tgt_init_fn)(struct nvm_tgt_dev *, struct gendisk *,
 > 
 
-Yeah.
-
-The problem is that the prefix wasn't added to the subject in the
-original commit f68b883e8fad ("power: supply: add cros-ec USBPD charger
-driver.") which added the driver.  It's a common problem.  Normally what
-happens is that someone adds a driver and then random static checker
-people like Colin or I send the first fixes and we have no idea what the
-correct prefix should be.  Anyway, checking the prefix is one of the
-things we should look for when people add a new driver.
-
-Also Colin you should CC Sameer because it's really his code.  Someone
-should fix get_maintainer.pl so that it does git blame on the
-lines before and after and adds people if the code is less than two
-years old maybe.
-
-regards,
-dan carpenter
-
+Thanks. Applied for 4.20.
