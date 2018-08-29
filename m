@@ -2,418 +2,201 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18526C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:38:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D325C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:38:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFA3B20850
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:38:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFA3B20850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
+	by mail.kernel.org (Postfix) with ESMTP id B96BC20850
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:38:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B96BC20850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728451AbeH2QfX (ORCPT
+        id S1728486AbeH2Qfb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 12:35:23 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:43169 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727204AbeH2QfW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 12:35:22 -0400
-Received: by mail-lf1-f68.google.com with SMTP id h64-v6so4133257lfi.10;
-        Wed, 29 Aug 2018 05:38:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yg3onKmNs08e4yuinihIHvjoN5fjI903mIZsB1BxHbA=;
-        b=K5g0A/1NTHo14yiW8Jw5YuckOxMfdfbGHwRl8RvAhaTtjZwYBfnU+UYSu1swhYSslD
-         JS3M/o8kOmmRiFcGbACfsQztYAHQKFUsg2bLwb7g/v3ROFzBuzB0Bn+9ihvSzxIh3AvP
-         sFhyK5fdZ0EY/5/cbNJFMVteOL7uQeHY2QoXJf+cxOosteA1BpA+p/4FY3sjVzFdh5e5
-         LvfLDUyJlKblOII6uDvROoGDhWvH74g5GYTptTBUVv4CbzscLg2zW5ClPSE/YEtVqK2D
-         TWMz1ANp7uQIr9FRE5TtGVb97OmYjO30LKA/mwl5h5PB7XoF1cNCXLQ+rAeksWtiq40Z
-         UXPg==
-X-Gm-Message-State: APzg51CRKab57AcQnwaaRLzITIiQF2Lxk+KTNgjX0XAnjv9SxipS4J/C
-        KlmezNCCfZaQlB64WdzZpcQ=
-X-Google-Smtp-Source: ANB0VdYN9+HUk/mgJhB4mFjZ7b53KBbjBdc27gT8YB/s37T9XaLJ+CHHU2hJsy+O/0xrPk2TvAYr6Q==
-X-Received: by 2002:a19:5cd7:: with SMTP id u84-v6mr4112177lfi.89.1535546316224;
-        Wed, 29 Aug 2018 05:38:36 -0700 (PDT)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id l1-v6sm674128lji.41.2018.08.29.05.38.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 29 Aug 2018 05:38:35 -0700 (PDT)
-Date:   Wed, 29 Aug 2018 15:38:23 +0300
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        lgirdwood@gmail.com, broonie@kernel.org, mazziesaccount@gmail.com,
-        matti.vaittinen@fi.rohmeurope.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, heikki.haikola@fi.rohmeurope.com,
-        mikko.mutanen@fi.rohmeurope.com
-Subject: [PATCH 5/8] regulator: Support regulators where voltage ranges are
- selectable
-Message-ID: <17161fc03d2c6f49c3e972db4d0e8edf35580538.1535545377.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1535545377.git.matti.vaittinen@fi.rohmeurope.com>
+        Wed, 29 Aug 2018 12:35:31 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:53776 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727204AbeH2Qfb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 12:35:31 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 7547D207EB; Wed, 29 Aug 2018 14:38:46 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-53-19.w90-88.abo.wanadoo.fr [90.88.170.19])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 3BD8320787;
+        Wed, 29 Aug 2018 14:38:36 +0200 (CEST)
+Date:   Wed, 29 Aug 2018 14:38:35 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Emmanuel Vadot <manu@bidouilliste.com>
+Cc:     Eduardo Valentin <edubezval@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Emmanuel Vadot <manu@freebsd.org>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 1/7] dt-bindings: Add DT bindings documentation for
+ Allwinner Thermal Sensor Controller
+Message-ID: <20180829123835.pe674l7kwwtq3nm5@flea>
+References: <20180804070355.14857-1-manu@freebsd.org>
+ <20180820111755.rzg7l2lznmbpuf2e@flea>
+ <CAL_JsqLVQDRH1esAXghfQdxmp+iorWVCArM2qTwjbgmQzmhzQw@mail.gmail.com>
+ <20180820140737.xmqhu5ndqzehvkql@flea>
+ <20180820162715.49e6d8a469ece983f3c1d288@bidouilliste.com>
+ <20180824145840.isdcg3fr6mw4ntzg@flea>
+ <20180824215921.59d060b54eb3a1e7d1552bde@bidouilliste.com>
+ <20180824230338.GA19399@localhost.localdomain>
+ <20180825174352.68de8a2720f4c91b987be914@bidouilliste.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="q2hvfmvfl4mg43xk"
 Content-Disposition: inline
-In-Reply-To: <cover.1535545377.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180825174352.68de8a2720f4c91b987be914@bidouilliste.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For example ROHM BD71837 and ROHM BD71847 Power management ICs have
-regulators which provide multiple linear ranges. Ranges can be
-selected by individual non contagious bit in vsel register. Add
-regmap helper functions for selecting ranges.
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- drivers/regulator/core.c         |   5 +
- drivers/regulator/helpers.c      | 232 +++++++++++++++++++++++++++++++++++++++
- include/linux/regulator/driver.h |  20 +++-
- 3 files changed, 256 insertions(+), 1 deletion(-)
+--q2hvfmvfl4mg43xk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index bb1324f93143..be19163048f4 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -2783,6 +2783,11 @@ static int regulator_map_voltage(struct regulator_dev *rdev, int min_uV,
- 	if (desc->ops->list_voltage == regulator_list_voltage_linear_range)
- 		return regulator_map_voltage_linear_range(rdev, min_uV, max_uV);
- 
-+	if (desc->ops->list_voltage ==
-+		regulator_list_voltage_pickable_linear_range)
-+		return regulator_map_voltage_pickable_linear_range(rdev,
-+							min_uV, max_uV);
-+
- 	return regulator_map_voltage_iterate(rdev, min_uV, max_uV);
- }
- 
-diff --git a/drivers/regulator/helpers.c b/drivers/regulator/helpers.c
-index 2ae7c3ac5940..d2b9fc359318 100644
---- a/drivers/regulator/helpers.c
-+++ b/drivers/regulator/helpers.c
-@@ -103,6 +103,128 @@ int regulator_disable_regmap(struct regulator_dev *rdev)
- }
- EXPORT_SYMBOL_GPL(regulator_disable_regmap);
- 
-+static int regulator_range_selector_to_index(struct regulator_dev *rdev,
-+					     unsigned int rval)
-+{
-+	int i;
-+
-+	if (!rdev->desc->linear_range_selectors)
-+		return -EINVAL;
-+
-+	rval &= rdev->desc->vsel_range_mask;
-+
-+	for (i = 0; i < rdev->desc->n_linear_ranges; i++) {
-+		if (rdev->desc->linear_range_selectors[i] == rval)
-+			return i;
-+	}
-+	return -EINVAL;
-+}
-+
-+/**
-+ * regulator_get_voltage_sel_pickable_regmap - pickable range get_voltage_sel
-+ *
-+ * @rdev: regulator to operate on
-+ *
-+ * Regulators that use regmap for their register I/O and use pickable
-+ * ranges can set the vsel_reg, vsel_mask, vsel_range_reg and vsel_range_mask
-+ * fields in their descriptor and then use this as their get_voltage_vsel
-+ * operation, saving some code.
-+ */
-+int regulator_get_voltage_sel_pickable_regmap(struct regulator_dev *rdev)
-+{
-+	unsigned int r_val;
-+	int range;
-+	unsigned int val;
-+	int ret, i;
-+	unsigned int voltages_in_range = 0;
-+
-+	if (!rdev->desc->linear_ranges)
-+		return -EINVAL;
-+
-+	ret = regmap_read(rdev->regmap, rdev->desc->vsel_reg, &val);
-+	if (ret != 0)
-+		return ret;
-+
-+	ret = regmap_read(rdev->regmap, rdev->desc->vsel_range_reg, &r_val);
-+	if (ret != 0)
-+		return ret;
-+
-+	val &= rdev->desc->vsel_mask;
-+	val >>= ffs(rdev->desc->vsel_mask) - 1;
-+
-+	range = regulator_range_selector_to_index(rdev, r_val);
-+	if (range < 0)
-+		return -EINVAL;
-+
-+	for (i = 0; i < range; i++)
-+		voltages_in_range += (rdev->desc->linear_ranges[i].max_sel -
-+				     rdev->desc->linear_ranges[i].min_sel) + 1;
-+
-+	return val + voltages_in_range;
-+}
-+EXPORT_SYMBOL_GPL(regulator_get_voltage_sel_pickable_regmap);
-+
-+/**
-+ * regulator_set_voltage_sel_pickable_regmap - pickable range set_voltage_sel
-+ *
-+ * @rdev: regulator to operate on
-+ * @sel: Selector to set
-+ *
-+ * Regulators that use regmap for their register I/O and use pickable
-+ * ranges can set the vsel_reg, vsel_mask, vsel_range_reg and vsel_range_mask
-+ * fields in their descriptor and then use this as their set_voltage_vsel
-+ * operation, saving some code.
-+ */
-+int regulator_set_voltage_sel_pickable_regmap(struct regulator_dev *rdev,
-+					      unsigned int sel)
-+{
-+	unsigned int range;
-+	int ret, i;
-+	unsigned int voltages_in_range = 0;
-+
-+	for (i = 0; i < rdev->desc->n_linear_ranges; i++) {
-+		voltages_in_range = (rdev->desc->linear_ranges[i].max_sel -
-+				     rdev->desc->linear_ranges[i].min_sel) + 1;
-+		if (sel < voltages_in_range)
-+			break;
-+		sel -= voltages_in_range;
-+	}
-+
-+	if (i == rdev->desc->n_linear_ranges)
-+		return -EINVAL;
-+
-+	sel <<= ffs(rdev->desc->vsel_mask) - 1;
-+	sel += rdev->desc->linear_ranges[i].min_sel;
-+
-+	range = rdev->desc->linear_range_selectors[i];
-+
-+	if (rdev->desc->vsel_reg == rdev->desc->vsel_range_reg) {
-+		ret = regmap_update_bits(rdev->regmap,
-+					 rdev->desc->vsel_reg,
-+					 rdev->desc->vsel_range_mask |
-+					 rdev->desc->vsel_mask, sel | range);
-+	} else {
-+		ret = regmap_update_bits(rdev->regmap,
-+					 rdev->desc->vsel_range_reg,
-+					 rdev->desc->vsel_range_mask, range);
-+		if (ret)
-+			return ret;
-+
-+		ret = regmap_update_bits(rdev->regmap, rdev->desc->vsel_reg,
-+				  rdev->desc->vsel_mask, sel);
-+	}
-+
-+	if (ret)
-+		return ret;
-+
-+	if (rdev->desc->apply_bit)
-+		ret = regmap_update_bits(rdev->regmap, rdev->desc->apply_reg,
-+					 rdev->desc->apply_bit,
-+					 rdev->desc->apply_bit);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(regulator_set_voltage_sel_pickable_regmap);
-+
- /**
-  * regulator_get_voltage_sel_regmap - standard get_voltage_sel for regmap users
-  *
-@@ -336,6 +458,76 @@ int regulator_map_voltage_linear_range(struct regulator_dev *rdev,
- }
- EXPORT_SYMBOL_GPL(regulator_map_voltage_linear_range);
- 
-+/**
-+ * regulator_map_voltage_pickable_linear_range - map_voltage, pickable ranges
-+ *
-+ * @rdev: Regulator to operate on
-+ * @min_uV: Lower bound for voltage
-+ * @max_uV: Upper bound for voltage
-+ *
-+ * Drivers providing pickable linear_ranges in their descriptor can use
-+ * this as their map_voltage() callback.
-+ */
-+int regulator_map_voltage_pickable_linear_range(struct regulator_dev *rdev,
-+						int min_uV, int max_uV)
-+{
-+	const struct regulator_linear_range *range;
-+	int ret = -EINVAL;
-+	int voltage, i;
-+	unsigned int selector = 0;
-+
-+	if (!rdev->desc->n_linear_ranges) {
-+		BUG_ON(!rdev->desc->n_linear_ranges);
-+		return -EINVAL;
-+	}
-+
-+	for (i = 0; i < rdev->desc->n_linear_ranges; i++) {
-+		int linear_max_uV;
-+
-+		range = &rdev->desc->linear_ranges[i];
-+		linear_max_uV = range->min_uV +
-+			(range->max_sel - range->min_sel) * range->uV_step;
-+
-+		if (!(min_uV <= linear_max_uV && max_uV >= range->min_uV)) {
-+			selector += (range->max_sel - range->min_sel + 1);
-+			continue;
-+		}
-+
-+		if (min_uV <= range->min_uV)
-+			min_uV = range->min_uV;
-+
-+		/* range->uV_step == 0 means fixed voltage range */
-+		if (range->uV_step == 0) {
-+			ret = 0;
-+		} else {
-+			ret = DIV_ROUND_UP(min_uV - range->min_uV,
-+					   range->uV_step);
-+			if (ret < 0)
-+				return ret;
-+		}
-+
-+		ret += selector;
-+
-+		voltage = rdev->desc->ops->list_voltage(rdev, ret);
-+
-+		/*
-+		 * Map back into a voltage to verify we're still in bounds.
-+		 * We may have overlapping voltage ranges. Hence we don't
-+		 * exit but retry until we have checked all ranges.
-+		 */
-+		if (voltage < min_uV || voltage > max_uV)
-+			selector += (range->max_sel - range->min_sel + 1);
-+		else
-+			break;
-+	}
-+
-+	if (i == rdev->desc->n_linear_ranges)
-+		return -EINVAL;
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(regulator_map_voltage_pickable_linear_range);
-+
- /**
-  * regulator_list_voltage_linear - List voltages with simple calculation
-  *
-@@ -360,6 +552,46 @@ int regulator_list_voltage_linear(struct regulator_dev *rdev,
- }
- EXPORT_SYMBOL_GPL(regulator_list_voltage_linear);
- 
-+/**
-+ * regulator_list_voltage_pickable_linear_range - pickable range list voltages
-+ *
-+ * @rdev: Regulator device
-+ * @selector: Selector to convert into a voltage
-+ *
-+ * list_voltage() operation, intended to be used by drivers utilizing pickable
-+ * ranges helpers.
-+ */
-+int regulator_list_voltage_pickable_linear_range(struct regulator_dev *rdev,
-+						 unsigned int selector)
-+{
-+	const struct regulator_linear_range *range;
-+	int i;
-+	unsigned int all_sels = 0;
-+
-+	if (!rdev->desc->n_linear_ranges) {
-+		BUG_ON(!rdev->desc->n_linear_ranges);
-+		return -EINVAL;
-+	}
-+
-+	for (i = 0; i < rdev->desc->n_linear_ranges; i++) {
-+		unsigned int sels_in_range;
-+
-+		range = &rdev->desc->linear_ranges[i];
-+
-+		sels_in_range = range->max_sel - range->min_sel;
-+
-+		if (all_sels + sels_in_range >= selector) {
-+			selector -= all_sels;
-+			return range->min_uV + (range->uV_step * selector);
-+		}
-+
-+		all_sels += (sels_in_range + 1);
-+	}
-+
-+	return -EINVAL;
-+}
-+EXPORT_SYMBOL_GPL(regulator_list_voltage_pickable_linear_range);
-+
- /**
-  * regulator_list_voltage_linear_range - List voltages for linear ranges
-  *
-diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
-index 0fd8fbb74763..a9c030192147 100644
---- a/include/linux/regulator/driver.h
-+++ b/include/linux/regulator/driver.h
-@@ -271,9 +271,16 @@ enum regulator_type {
-  * @ramp_delay: Time to settle down after voltage change (unit: uV/us)
-  * @min_dropout_uV: The minimum dropout voltage this regulator can handle
-  * @linear_ranges: A constant table of possible voltage ranges.
-- * @n_linear_ranges: Number of entries in the @linear_ranges table.
-+ * @linear_range_selectors: A constant table of voltage range selectors.
-+ *			    If pickable ranges are used each range must
-+ *			    have corresponding selector here.
-+ * @n_linear_ranges: Number of entries in the @linear_ranges (and in
-+ *		     linear_range_selectors if used) table(s).
-  * @volt_table: Voltage mapping table (if table based mapping)
-  *
-+ * @vsel_range_reg: Register for range selector when using pickable ranges
-+ *		    and regulator_regmap_X_voltage_X_pickable functions.
-+ * @vsel_range_mask: Mask for register bitfield used for range selector
-  * @vsel_reg: Register for selector when using regulator_regmap_X_voltage_
-  * @vsel_mask: Mask for register bitfield used for selector
-  * @csel_reg: Register for TPS65218 LS3 current regulator
-@@ -338,10 +345,14 @@ struct regulator_desc {
- 	int min_dropout_uV;
- 
- 	const struct regulator_linear_range *linear_ranges;
-+	const unsigned int *linear_range_selectors;
-+
- 	int n_linear_ranges;
- 
- 	const unsigned int *volt_table;
- 
-+	unsigned int vsel_range_reg;
-+	unsigned int vsel_range_mask;
- 	unsigned int vsel_reg;
- 	unsigned int vsel_mask;
- 	unsigned int csel_reg;
-@@ -498,18 +509,25 @@ int regulator_mode_to_status(unsigned int);
- 
- int regulator_list_voltage_linear(struct regulator_dev *rdev,
- 				  unsigned int selector);
-+int regulator_list_voltage_pickable_linear_range(struct regulator_dev *rdev,
-+						   unsigned int selector);
- int regulator_list_voltage_linear_range(struct regulator_dev *rdev,
- 					unsigned int selector);
- int regulator_list_voltage_table(struct regulator_dev *rdev,
- 				  unsigned int selector);
- int regulator_map_voltage_linear(struct regulator_dev *rdev,
- 				  int min_uV, int max_uV);
-+int regulator_map_voltage_pickable_linear_range(struct regulator_dev *rdev,
-+						  int min_uV, int max_uV);
- int regulator_map_voltage_linear_range(struct regulator_dev *rdev,
- 				       int min_uV, int max_uV);
- int regulator_map_voltage_iterate(struct regulator_dev *rdev,
- 				  int min_uV, int max_uV);
- int regulator_map_voltage_ascend(struct regulator_dev *rdev,
- 				  int min_uV, int max_uV);
-+int regulator_get_voltage_sel_pickable_regmap(struct regulator_dev *rdev);
-+int regulator_set_voltage_sel_pickable_regmap(struct regulator_dev *rdev,
-+						unsigned int sel);
- int regulator_get_voltage_sel_regmap(struct regulator_dev *rdev);
- int regulator_set_voltage_sel_regmap(struct regulator_dev *rdev, unsigned sel);
- int regulator_is_enabled_regmap(struct regulator_dev *rdev);
--- 
-2.14.3
+On Sat, Aug 25, 2018 at 05:43:52PM +0200, Emmanuel Vadot wrote:
+>=20
+>  Hi,
+>=20
+> On Fri, 24 Aug 2018 16:03:40 -0700
+> Eduardo Valentin <edubezval@gmail.com> wrote:
+>=20
+> > On Fri, Aug 24, 2018 at 09:59:21PM +0200, Emmanuel Vadot wrote:
+> > >=20
+> > >  Hi,
+> > >=20
+> > > On Fri, 24 Aug 2018 16:58:40 +0200
+> > > Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> > >=20
+> > > > Hi,
+> > > >=20
+> > > > On Mon, Aug 20, 2018 at 04:27:15PM +0200, Emmanuel Vadot wrote:
+> > > > > On Mon, 20 Aug 2018 16:07:37 +0200
+> > > > > Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> > > > >=20
+> > > > > > On Mon, Aug 20, 2018 at 07:41:22AM -0600, Rob Herring wrote:
+> > > > > > > On Mon, Aug 20, 2018 at 5:17 AM Maxime Ripard <maxime.ripard@=
+bootlin.com> wrote:
+> > > > > > > >
+> > > > > > > > On Sat, Aug 04, 2018 at 09:03:49AM +0200, Emmanuel Vadot wr=
+ote:
+> > > > > > > > > This patch adds documentation for Device-Tree bindings fo=
+r the Allwinner
+> > > > > > > > > Thermal Sensor Controller found on the H3, H5 and A64 SoCs
+> > > > > > > > >
+> > > > > > > > > Signed-off-by: Emmanuel Vadot <manu@freebsd.org>
+> > > > > > > >
+> > > > > > > > I'm not going to merge a binding for a device that doesn't =
+have any
+> > > > > > > > driver implemented at the moment in Linux.
+> > > > > > >=20
+> > > > > > > I'll take it then. Linux is not the only DT client.
+> > > > > >=20
+> > > > > > Then don't complain if we ever have to break the ABI. We never =
+tested
+> > > > > > that hardware, never had any code running on it, and it *will* =
+cause
+> > > > > > some issues. For example, the calibration data have never been =
+used
+> > > > > > and how they should be represented have never been described, s=
+ince no
+> > > > > > one ever actually tried to use it.
+> > > > > >=20
+> > > > > > And sure, Linux is not the only DT client. Just like FreeBSD is=
+n't.
+> > > > >=20
+> > > > >  What kind of data would you need for me to make things better ?
+> > > > >  We have the driver in FreeBSD for almost two years now, whne I s=
+tarted
+> > > > > to see how to upstream it I noticed a lot of problems and spent 4=
+ or 5
+> > > > > days to try on all the SoCs mentionned in the serie, the only SoC=
+ I
+> > > > > didn't include it the A83T as for some reason I couldn't make the
+> > > > > driver work.
+> > > >=20
+> > > > Do you have a link to that driver?=20
+> > >=20
+> > >  https://github.com/freebsd/freebsd/blob/master/sys/arm/allwinner/aw_=
+thermal.c
+> > >=20
+> > > > How and how much did you test it?
+> > >=20
+> > >  Using a cheap IR thermometer as it's all I can afford.
+> > >  Then running multiples cpufreq-a53 process and comparing the result.
+> > >  Did the same without using the calibration data, result where closer
+> > > when I used them.
+> > >=20
+> > > > Are you using the calibration data stored in the SID?
+> > >=20
+> > >  Yes, which is why the serie contain the nvmem cell for the SID.
+> > >=20
+> > > >=20
+> > > > > I just hope that you understand that we cannot wait for Linux to
+> > > > > have a driver to have some bindings.
+> > > >=20
+> > > > Just like I'm sure you can understand that just merging the DT bits
+> > > > without testing anything caused some troubles in the past, and I do=
+n't
+> > > > want to discover it in a year from now.
+> > >=20
+> > >  I do, I don't like wrong DT info as much as you do I think. I had
+> > > the unfortunate event to find that the sun4i-a10-timer compatible used
+> > > in every soc is plain wrong for !A10 and !A13, patches comming soon.
+> > >  I want those bits merged but I also want that they reflect reality,
+> > > this is not a hard driver to do, NetBSD also have one I think, maybe
+> > > OpenBSD do to.
+> >=20
+> >=20
+> > I would prefer to see a series of DT bindings + driver. Can you send
+> > your next iteration with the driver so we can review both together?
+>=20
+>  You mean a link to the FreeBSD driver (and OpenBSD since they have one
+> too) in the cover letter ?
 
+That would definitely be valuable, yes, thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--q2hvfmvfl4mg43xk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluGk8oACgkQ0rTAlCFN
+r3QJ/g//a4mp6I3H6oWNN8cchbSP736FQREIQNC7B5qaGY3V55L9H/kuPfkyO+38
+MhXGqr23P0HXsqeC3zLqr2xYXTevb0+0vVJCEamGSWu2jIywPm0ycNIS/9cLKHCb
+2mKs6IjwecjVxsBrjTqY4u2ddLC0c0qpRdLUEOcBD4GE6piFdARUb0nRjN6nM7Gn
+i+1/XDtNDvLNQLAyd5KGsRvp8R+veCU7hBSeyr9U/yBejNjqi0SCZjnk7wi7hTZ1
+elyvWIX/kBnBoO84Z1M+IYgSrTH+s274pf6H1ocY+TnS67+LWaSTlWEmsOwpSiod
+LpxFAg/rhTMMaxJzDaddeupsULqBiP8+RyclYzNv2jZOO5D5tBRlvUcVGNnINutl
+d5oO7Xy+Ao7JdmK/mn9FBBdA5Bl0r8OUUmbTsd69pw+8Tm41jtW/cNOI0x9Y6XD9
+vS2U0r3Nthnb7FIdGzBVch6N9oVnRRK4GUhyAogA0/0bfITkwheDQHoSn68DDAS2
+qY/hfdamCoZk9EvjoVo/Gydz2I+b+ncq881aBd6zcvRkhaAx409ITQ1JbE44oWGL
+oL/nQjeUvDucStlZEBTHpr9eU0Mii/CfF3TGmS4fuqOi/UhOmtEaKF2v43Z9wm6m
+01mQ9dyBCJkEUcaech7tlnZVK/ApBi0PLPWhHhIjMWtYbdgyHVc=
+=4od8
+-----END PGP SIGNATURE-----
+
+--q2hvfmvfl4mg43xk--
