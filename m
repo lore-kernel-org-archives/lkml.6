@@ -2,129 +2,141 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C66FC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:10:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D1CFC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:13:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC4E82054F
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:10:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC4E82054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 06E89205F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:13:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CeZZ+RbN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06E89205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729071AbeH2THn (ORCPT
+        id S1728951AbeH2TKa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 15:07:43 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:34277 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727668AbeH2THn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 15:07:43 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id B6DEC86985F9;
-        Wed, 29 Aug 2018 23:10:16 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.75) by
- DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.399.0; Wed, 29 Aug 2018 23:10:08 +0800
-From:   John Garry <john.garry@huawei.com>
-To:     <gregkh@linuxfoundation.org>
-CC:     <alexander.sverdlin@nokia.com>, <jslaby@suse.com>,
-        <robh@kernel.org>, <joel@jms.id.au>, <kurt@linutronix.de>,
-        <yamada.masahiro@socionext.com>, <linux-serial@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-        John Garry <john.garry@huawei.com>
-Subject: [PATCH] serial: 8250_of: Fix for lack of interrupt support
-Date:   Wed, 29 Aug 2018 23:07:57 +0800
-Message-ID: <1535555277-102256-1-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 1.9.1
+        Wed, 29 Aug 2018 15:10:30 -0400
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:52942 "EHLO
+        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728442AbeH2TKa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 15:10:30 -0400
+Received: by mail-wm0-f43.google.com with SMTP id y139-v6so5616322wmc.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 08:13:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1JLqiGIQni4zvJXjkNnl/H6Nr83ui6sWEU9gBiCOb4s=;
+        b=CeZZ+RbNlyNqeTNxKNmSbSay59205xskwlbpCwU8bc9YqNCEewgn60dW5GAO5ywGOB
+         WG0KwGxvdHWSEvJIEc9ksg5OTcYljg4ubH4hElLd4C+J2NIv0SOkduwr+iAdjLAapCbN
+         nY8N9ISNOd5vPKHgJWkoZURv4VHmZ57pCsc1FpdqfuACnRLOg8Em3rEzTHm4UUHWgoKb
+         CYtRCjocsnIzbrt5OtxRQoaD9trikwguJRRJyPepASRl7dFzTNuKEFoNlNf0pzLC4HLv
+         oWBs3GkSE7N8vEgirhv1H2pJfXOXiMjsopyMA11+ocd53p+A05g8nXu3C+g/S1W5VsA9
+         aIxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1JLqiGIQni4zvJXjkNnl/H6Nr83ui6sWEU9gBiCOb4s=;
+        b=KDGSqn97z9Fhy1vXSDvl1goK6idzc07lc53Bm/IdTBBEEorerBFxkdKUfM0fJYmOIz
+         QkgILBjG0maYzhQvwvHifGhhDvW+XjfV+4t0fdwATh2GjhAvU4y8bfhAkO/bWO9rM1yz
+         GUaSqprogqG2Ht4twzrrPOjiicIdZC9vTR3MakGKFnQg272dGFoGSYeXjXLFKgbBGsZ+
+         sviCozBLgQ8D8xg53LFdaODASctPHuVbNCA92+q7vjkZNtRi6neGj12+M9PrTeFuz7gV
+         hVHDffkTFPHPjxl37C84cGwwrIae888qkV2NizT+QtUrMqfGTK5j+OGZH/rGztSdHsPL
+         x5MQ==
+X-Gm-Message-State: APzg51Cl8WrlkjQepKh0bgsO2oNKtfSEJKk+mBzGo6ll0e/rVcz6hgCS
+        Cn7f/+kggs+3TC7xeyh2qL3fIDDUf0bd2zyLwrkSjw==
+X-Google-Smtp-Source: ANB0VdaBoOk1wuT+thlcX7fLPdkCwi9SboZUF4vqMXeLTgJgizSkqZ30COQdqu496k5b9b6dup5GG6g3f6WN0+rKHMA=
+X-Received: by 2002:a1c:9d02:: with SMTP id g2-v6mr4199414wme.122.1535555584677;
+ Wed, 29 Aug 2018 08:13:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+References: <CABPqkBTT-PSP+0sZc-EyrRtOLfLVPxOxwuDpxhGhGZLOe5L0CA@mail.gmail.com>
+ <20180829135440.GA25381@kernel.org>
+In-Reply-To: <20180829135440.GA25381@kernel.org>
+From:   Stephane Eranian <eranian@google.com>
+Date:   Wed, 29 Aug 2018 08:14:12 -0700
+Message-ID: <CABPqkBQ1iTg3bkovUykg86r0kj6jaVbb_f=BCVHrLN+=S5jVZQ@mail.gmail.com>
+Subject: Re: [RFC] perf script: callchain handling is not useful
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In commit c58caaab3bf8 ("serial: 8250: of: Defer probe on missing IRQ"), a
-check was added for the UART driver being probed prior to the parent IRQ
-controller.
+On Wed, Aug 29, 2018 at 6:54 AM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
+>
+> Em Tue, Aug 28, 2018 at 07:41:31PM -0700, Stephane Eranian escreveu:
+> > Hi,
+> >
+> > I am doing the following simple collection with callchain and load profiling:
+> >
+> > $ perf record -g -d -e cpu/event=0xd0,umask=0x81/pp  my_test_program
+> >
+> > But when I type:
+> > $ perf script -F ip,addr
+> > ffff9d4821346878
+> >         ffffffff9d58df25
+> >         ffffffff9d58e054
+> >         ffffffff9d5965bb
+> >         ffffffff9d640650
+> >         ffffffff9d697d06
+> >         ffffffff9d63ec60
+> >         ffffffff9d640322
+> >         ffffffff9d64070c
+> >         ffffffff9d455a60
+> >                   7030c7
+> >
+> > ffff9d4638ba84a0
+> >         ffffffff9d5df447
+> >         ffffffff9d5eaf4a
+> >         ffffffff9d63e165
+> >         ffffffff9d63e439
+> >         ffffffff9d697d98
+> >         ffffffff9d63ec60
+> >         ffffffff9d640322
+> >         ffffffff9d64070c
+> >         ffffffff9d455a60
+> >                   7030c7
+> > I also see the callchain and it is not clear which is the IP. Further
+> > more parsing becomes more difficult because of multiple lines per
+> > sample. I understand that multiline is likely because of
+> > symbolization. But if I don't want symbolization, it should be
+> > possible to print all in one line.
+>
+> Humm, to have this not break possibly existing scripts, perhaps we can
+> have something like:
+>
+>   $ perf script -F ip,-callchain,addr
+>
+> ?
+>
+> And if asked explicitely for the callchain, then it gets added in the
+> same line?
+>
+Yeah, that should do it.
+Thanks.
 
-Unfortunately this breaks certain boards which have no interrupt support,
-like Huawei D03.
-
-Indeed, the 8250 DT bindings state that interrupts should be supported -
-not must.
-
-To fix, switch from irq_of_parse_and_map() to of_irq_get(), which
-does relay whether the IRQ host controller domain is not ready, i.e.
-defer probe, instead of assuming it.
-
-Fixes: c58caaab3bf8 ("serial: 8250: of: Defer probe on missing IRQ")
-Signed-off-by: John Garry <john.garry@huawei.com>
----
-Note: I think that it would better if we could try to get the interrupt
-	  before clk+pm enabling, so we don't need to disable later when
-	  deferring, but this is not a fix.
-
-diff --git a/drivers/tty/serial/8250/8250_of.c b/drivers/tty/serial/8250/8250_of.c
-index af8beef..c370e776 100644
---- a/drivers/tty/serial/8250/8250_of.c
-+++ b/drivers/tty/serial/8250/8250_of.c
-@@ -58,7 +58,7 @@ static int of_platform_serial_setup(struct platform_device *ofdev,
- 	struct resource resource;
- 	struct device_node *np = ofdev->dev.of_node;
- 	u32 clk, spd, prop;
--	int ret;
-+	int ret, irq;
- 
- 	memset(port, 0, sizeof *port);
- 
-@@ -143,21 +143,27 @@ static int of_platform_serial_setup(struct platform_device *ofdev,
- 	if (ret >= 0)
- 		port->line = ret;
- 
--	port->irq = irq_of_parse_and_map(np, 0);
--	if (!port->irq) {
--		ret = -EPROBE_DEFER;
--		goto err_unprepare;
-+	irq = of_irq_get(np, 0);
-+	if (irq < 0) {
-+		if (port->irq == -EPROBE_DEFER) {
-+			ret = -EPROBE_DEFER;
-+			goto err_unprepare;
-+		}
-+		/* IRQ support not mandatory */
-+		irq = 0;
- 	}
- 
-+	port->irq = irq;
-+
- 	info->rst = devm_reset_control_get_optional_shared(&ofdev->dev, NULL);
- 	if (IS_ERR(info->rst)) {
- 		ret = PTR_ERR(info->rst);
--		goto err_dispose;
-+		goto err_unprepare;
- 	}
- 
- 	ret = reset_control_deassert(info->rst);
- 	if (ret)
--		goto err_dispose;
-+		goto err_unprepare;
- 
- 	port->type = type;
- 	port->uartclk = clk;
-@@ -184,8 +190,6 @@ static int of_platform_serial_setup(struct platform_device *ofdev,
- 		port->handle_irq = fsl8250_handle_irq;
- 
- 	return 0;
--err_dispose:
--	irq_dispose_mapping(port->irq);
- err_unprepare:
- 	clk_disable_unprepare(info->clk);
- err_pmruntime:
--- 
-1.9.1
-
+> - Arnaldo
+>
+>
+> > The current output is not very useful. You expect perf script to give
+> > you one line per sample and only what you want. Callchain != IP.
+> >
+> > I think the following should happen:
+> >   - do not print callchain when asked for the IP. Create a callchain filter.
+> >   - print callchain on the same line, much like what is done for brstack
+> >
+> > It is not clear to me why callchain and ip were lumped together.
+> > Any opinion on my proposal?
+> > Thanks.
