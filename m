@@ -2,121 +2,144 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92D1EC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 19:43:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC000C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 19:51:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A7B02064E
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 19:43:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A7B02064E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 67FC120647
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 19:51:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67FC120647
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728042AbeH2Xlo (ORCPT
+        id S1727693AbeH2Xtl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 19:41:44 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:33160 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727392AbeH2Xln (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 19:41:43 -0400
-Received: from ben by shadbolt.decadent.org.uk with local (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fv6N3-0001xt-In; Wed, 29 Aug 2018 20:43:18 +0100
-Date:   Wed, 29 Aug 2018 20:43:17 +0100
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     x86@kernel.org
-Cc:     Helmut Grohne <helmutg@debian.org>, linux-kernel@vger.kernel.org
-Message-ID: <20180829194317.GA4765@decadent.org.uk>
+        Wed, 29 Aug 2018 19:49:41 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:57234 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727245AbeH2Xtl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 19:49:41 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id BE1A870490AB6;
+        Thu, 30 Aug 2018 03:51:12 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.41) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.399.0; Thu, 30 Aug 2018
+ 03:51:06 +0800
+Subject: Re: [PATCH] serial: 8250_of: Fix for lack of interrupt support
+To:     <gregkh@linuxfoundation.org>, <alexander.sverdlin@nokia.com>
+References: <1535555277-102256-1-git-send-email-john.garry@huawei.com>
+CC:     <jslaby@suse.com>, <robh@kernel.org>, <joel@jms.id.au>,
+        <kurt@linutronix.de>, <yamada.masahiro@socionext.com>,
+        <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <3ceebf21-7de2-dbd7-fffe-f5e805b5abab@huawei.com>
+Date:   Wed, 29 Aug 2018 20:50:59 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="envbJBWh7q8WU6mo"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-Subject: [PATCH] x86: Allow generating user-space headers without a compiler
-X-SA-Exim-Version: 4.2.1 (built Mon, 26 Dec 2011 16:24:06 +0000)
-X-SA-Exim-Scanned: Yes (on shadbolt.decadent.org.uk)
+In-Reply-To: <1535555277-102256-1-git-send-email-john.garry@huawei.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.41]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 29/08/2018 16:07, John Garry wrote:
+> In commit c58caaab3bf8 ("serial: 8250: of: Defer probe on missing IRQ"), a
+> check was added for the UART driver being probed prior to the parent IRQ
+> controller.
+>
+> Unfortunately this breaks certain boards which have no interrupt support,
+> like Huawei D03.
+>
+> Indeed, the 8250 DT bindings state that interrupts should be supported -
+> not must.
+>
+> To fix, switch from irq_of_parse_and_map() to of_irq_get(), which
+> does relay whether the IRQ host controller domain is not ready, i.e.
+> defer probe, instead of assuming it.
+>
+> Fixes: c58caaab3bf8 ("serial: 8250: of: Defer probe on missing IRQ")
+> Signed-off-by: John Garry <john.garry@huawei.com>
+> ---
+> Note: I think that it would better if we could try to get the interrupt
+> 	  before clk+pm enabling, so we don't need to disable later when
+> 	  deferring, but this is not a fix.
+>
+> diff --git a/drivers/tty/serial/8250/8250_of.c b/drivers/tty/serial/8250/8250_of.c
+> index af8beef..c370e776 100644
+> --- a/drivers/tty/serial/8250/8250_of.c
+> +++ b/drivers/tty/serial/8250/8250_of.c
+> @@ -58,7 +58,7 @@ static int of_platform_serial_setup(struct platform_device *ofdev,
+>  	struct resource resource;
+>  	struct device_node *np = ofdev->dev.of_node;
+>  	u32 clk, spd, prop;
+> -	int ret;
+> +	int ret, irq;
+>
+>  	memset(port, 0, sizeof *port);
+>
+> @@ -143,21 +143,27 @@ static int of_platform_serial_setup(struct platform_device *ofdev,
+>  	if (ret >= 0)
+>  		port->line = ret;
+>
+> -	port->irq = irq_of_parse_and_map(np, 0);
+> -	if (!port->irq) {
+> -		ret = -EPROBE_DEFER;
+> -		goto err_unprepare;
+> +	irq = of_irq_get(np, 0);
+> +	if (irq < 0) {
+> +		if (port->irq == -EPROBE_DEFER) {
 
---envbJBWh7q8WU6mo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This check is not corrrct. It should be:
+		if (irq == -EPROBE_DEFER) {
 
-When bootstrapping an architecture, it's usual to generate the
-kernel's user-space headers (make headers_install) before building a
-compiler.  Move the compiler check (for asm goto support) to the
-archprepare target so that it is only done when building code for the
-target.
+I'll send a v2.
 
-Fixes: e501ce957a78 ("x86: Force asm-goto")
-Reported-by: Helmut Grohne <helmutg@debian.org>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- arch/x86/Makefile | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+@Alexander Sverdlin, Can you test this also please?
 
-diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-index 94859241bc3e..7df47ff45f68 100644
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -175,10 +175,6 @@ ifdef CONFIG_FUNCTION_GRAPH_TRACER
-   endif
- endif
-=20
--ifndef CC_HAVE_ASM_GOTO
--  $(error Compiler lacks asm-goto support.)
--endif
--
- #
- # Jump labels need '-maccumulate-outgoing-args' for gcc < 4.5.2 to prevent=
- a
- # GCC bug (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D46226).  There's=
- no way
-@@ -312,6 +308,13 @@ PHONY +=3D vdso_install
- vdso_install:
- 	$(Q)$(MAKE) $(build)=3Darch/x86/entry/vdso $@
-=20
-+archprepare: checkbin
-+checkbin:
-+ifndef CC_HAVE_ASM_GOTO
-+	@echo Compiler lacks asm-goto support.
-+	@exit 1
-+endif
-+
- archclean:
- 	$(Q)rm -rf $(objtree)/arch/i386
- 	$(Q)rm -rf $(objtree)/arch/x86_64
+Thanks,
+John
 
---envbJBWh7q8WU6mo
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+> +			ret = -EPROBE_DEFER;
+> +			goto err_unprepare;
+> +		}
+> +		/* IRQ support not mandatory */
+> +		irq = 0;
+>  	}
+>
+> +	port->irq = irq;
+> +
+>  	info->rst = devm_reset_control_get_optional_shared(&ofdev->dev, NULL);
+>  	if (IS_ERR(info->rst)) {
+>  		ret = PTR_ERR(info->rst);
+> -		goto err_dispose;
+> +		goto err_unprepare;
+>  	}
+>
+>  	ret = reset_control_deassert(info->rst);
+>  	if (ret)
+> -		goto err_dispose;
+> +		goto err_unprepare;
+>
+>  	port->type = type;
+>  	port->uartclk = clk;
+> @@ -184,8 +190,6 @@ static int of_platform_serial_setup(struct platform_device *ofdev,
+>  		port->handle_irq = fsl8250_handle_irq;
+>
+>  	return 0;
+> -err_dispose:
+> -	irq_dispose_mapping(port->irq);
+>  err_unprepare:
+>  	clk_disable_unprepare(info->clk);
+>  err_pmruntime:
+>
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
 
-iQIVAwUBW4b3Vee/yOyVhhEJAQrYQBAAsbdu3ljD4ZY9N3b63K5f/JeOptuf4a8H
-V2wLKxWJdsA76hMJLQaFJ32Yi205eVxh8vGgl0UyyewENo9Tf2vCDqHw4phtaudh
-WaoXnFuvoskAOw77ApQF1dM0TZv3S78f2r2urFHrEeNQY4INbIQZIqEM9vqwAiL4
-Me7mtnxSkd58y5dGNc0OhClbo5Oox8brfJmJwaxp4nTSh7fl99wZz6kbO3wF2vFu
-d+n7GdY0sFIkOWhU94PlpVmVZnY5pwL9PBQ8tAiNEf2+rzSXkIogiUu1fzj9TJ4T
-snoqztdZ0RKpKDYb9/WVzO7nvYAwCNNxYhlfeqQrKQxuLd6v2jtwZAbvqklIq0x2
-WSIb2AhdfOYdVjovzzNDO+qMVALgECXzkWJDIW6LAH/rlxHkM3l1K7lrs1VZqL+p
-VZXyIbCV35Sjj/DqjId8xx/zHard/+uXdFqmydadzXsU1Sy8XhheJmscLGwehxWD
-PWs/Gb+/Gj+x3X4mWmKkqFhVW56Foq0CM4NllzQMzHXcMz+7kGE43GeBYZkgAqPW
-GSRmcQ3aoy+wacWLVSlpNorFHyAsQJRTuJbBzdeHDBcwvY4r1MBq7wWjCyVlylNj
-5fzaO2YOA4ZhAOlMDFyqJ+GGBXXpDdjlSJ82YOLOoDJ/qyQyfIPxj/zoJjbMFGsr
-3Mm9UuvTQks=
-=DAvE
------END PGP SIGNATURE-----
-
---envbJBWh7q8WU6mo--
