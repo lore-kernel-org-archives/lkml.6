@@ -2,91 +2,108 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FBA2C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 11:13:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55E3CC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 11:16:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1CAD2086A
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 11:13:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="L+o8CDzt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1CAD2086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0649D20858
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 11:16:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0649D20858
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728336AbeH2PKU (ORCPT
+        id S1728350AbeH2PNC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 11:10:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56960 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727444AbeH2PKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 11:10:20 -0400
-Received: from mail-qt0-f175.google.com (mail-qt0-f175.google.com [209.85.216.175])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7E4E20862;
-        Wed, 29 Aug 2018 11:13:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1535541236;
-        bh=TDHMAAzyocjcODs2/ZzTEQl8NWri2ZtzzGeWvVGD/+Q=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=L+o8CDzt5LTh/tRpAkk4xbna6OfKshHJs18oVHHkJ+ydzeKmr4tuLZoUfB5v1jVz8
-         lwiGzptp+F5BxnZbVpYfG1WVQeK3Obd4Hg5n/HTIuY3Vx5rc287dCW30BG+HTdwm4y
-         cYCS3T/emfidijt0M77dSi1tQzLnMjgtb/B5NIs0=
-Received: by mail-qt0-f175.google.com with SMTP id t5-v6so5214460qtn.3;
-        Wed, 29 Aug 2018 04:13:56 -0700 (PDT)
-X-Gm-Message-State: APzg51AjEjPQQjECAeLMRq3e8SwGBNpf96G9pGquxS7UUd+kGFjDGStW
-        D5yeEcAa3kOfK+pT/Ztq33Qt5BMaIzrL4eU+3A==
-X-Google-Smtp-Source: ANB0VdZokuFGGMPC1yCeW+w9MUhOCbp/+MfRwB9ZiaoW7WEtpLPtWDSgwIGEFuliXJjxOeYF+cgO5cBYyd84C+T/ckg=
-X-Received: by 2002:a0c:d5d3:: with SMTP id h19-v6mr5927159qvi.218.1535541235889;
- Wed, 29 Aug 2018 04:13:55 -0700 (PDT)
+        Wed, 29 Aug 2018 11:13:02 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:55213 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727172AbeH2PNC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 11:13:02 -0400
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <sha@pengutronix.de>)
+        id 1fuySi-0000qJ-3v; Wed, 29 Aug 2018 13:16:36 +0200
+Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <sha@pengutronix.de>)
+        id 1fuySh-0000vP-KW; Wed, 29 Aug 2018 13:16:35 +0200
+Date:   Wed, 29 Aug 2018 13:16:35 +0200
+From:   Sascha Hauer <s.hauer@pengutronix.de>
+To:     Richard Weinberger <richard@nod.at>
+Cc:     linux-mtd@lists.infradead.org, David Gstir <david@sigma-star.at>,
+        kernel@pengutronix.de, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 12/25] ubifs: Add hashes to the tree node cache
+Message-ID: <20180829111635.zfgaosho3ambuk6t@pengutronix.de>
+References: <20180704124137.13396-1-s.hauer@pengutronix.de>
+ <20180704124137.13396-13-s.hauer@pengutronix.de>
+ <3260968.WmIi4lir0Q@blindfold>
 MIME-Version: 1.0
-References: <20180828154433.5693-1-robh@kernel.org> <20180828154433.5693-3-robh@kernel.org>
- <153549455575.129321.22566359378173086@swboyd.mtv.corp.google.com>
-In-Reply-To: <153549455575.129321.22566359378173086@swboyd.mtv.corp.google.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Wed, 29 Aug 2018 06:13:44 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJ35s0vfor4AdzKRvxOsqSvSD+_y4J3vYNeVk9ZW6HtjQ@mail.gmail.com>
-Message-ID: <CAL_JsqJ35s0vfor4AdzKRvxOsqSvSD+_y4J3vYNeVk9ZW6HtjQ@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: Convert to using %pOFn instead of device_node.name
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
-        <linux-renesas-soc@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3260968.WmIi4lir0Q@blindfold>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 13:15:44 up 77 days, 20:24, 60 users,  load average: 0.14, 0.08,
+ 0.08
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 28, 2018 at 5:15 PM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Rob Herring (2018-08-28 08:44:29)
-> > In preparation to remove the node name pointer from struct device_node,
-> > convert printf users to use the %pOFn format specifier.
-> >
-> > Cc: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-> > Cc: Michael Turquette <mturquette@baylibre.com>
-> > Cc: Stephen Boyd <sboyd@kernel.org>
-> > Cc: linux-clk@vger.kernel.org
-> > Cc: linux-arm-kernel@lists.infradead.org
-> > Cc: linux-renesas-soc@vger.kernel.org
-> > Cc: linux-omap@vger.kernel.org
-> > Signed-off-by: Rob Herring <robh@kernel.org>
+On Mon, Aug 27, 2018 at 09:18:25PM +0200, Richard Weinberger wrote:
+> Am Mittwoch, 4. Juli 2018, 14:41:24 CEST schrieb Sascha Hauer:
+> > As part of the UBIFS authentication support every branch in the index
+> > gets a hash covering the referenced node. To make that happen the tree
+> > node cache needs hashes over the nodes. This patch adds a hash argument
+> > to ubifs_tnc_add() and ubifs_tnc_add_nm(). The hashes are calculated
+> > from the callers of these functions which actually prepare the nodes.
+> > With this patch all the leaf nodes of the index tree get hashes, but
+> > currently nothing is done with these hashes, this is left for a later
+> > patch.
+> > 
+> > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 > > ---
->
-> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+> >  fs/ubifs/journal.c | 93 ++++++++++++++++++++++++++++++++++------------
+> >  fs/ubifs/replay.c  |  4 +-
+> >  fs/ubifs/tnc.c     | 10 ++++-
+> >  fs/ubifs/ubifs.h   |  7 +++-
+> >  4 files changed, 84 insertions(+), 30 deletions(-)
+> > 
+> > diff --git a/fs/ubifs/journal.c b/fs/ubifs/journal.c
+> > index 754d969eb27e..55b35bc33c31 100644
+> > --- a/fs/ubifs/journal.c
+> > +++ b/fs/ubifs/journal.c
+> > @@ -517,6 +517,9 @@ int ubifs_jnl_update(struct ubifs_info *c, const struct inode *dir,
+> >  	struct ubifs_dent_node *dent;
+> >  	struct ubifs_ino_node *ino;
+> >  	union ubifs_key dent_key, ino_key;
+> > +	u8 hash_dent[UBIFS_MAX_HASH_LEN];
+> > +	u8 hash_ino[UBIFS_MAX_HASH_LEN];
+> > +	u8 hash_ino_host[UBIFS_MAX_HASH_LEN];
+> 
+> With authentication enabled, this makes perfectly sense.
+> But if someone builds UBIFS without and has a memory constraint system,
+> we could save by setting UBIFS_MAX_HASH_LEN to 0. What do you think?
+> Although, we need another define to not influence ubifs-media.h.
 
-Please apply to the clock tree. There's no dependencies and removing
-name will take some time.
+I gave it a try and it looks good. Will do it that way.
 
-Rob
+Sascha
+
+-- 
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
