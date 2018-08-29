@@ -6,103 +6,97 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CB9AC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:58:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2B70C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:58:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40FA42086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:58:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A8EC2086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:58:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kg/F2SZM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40FA42086D
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="i/YkCFfc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A8EC2086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727982AbeH2Lx1 (ORCPT
+        id S1728036AbeH2Lxn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 07:53:27 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:43709 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727133AbeH2LxZ (ORCPT
+        Wed, 29 Aug 2018 07:53:43 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:35705 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728000AbeH2Lxm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 07:53:25 -0400
-Received: by mail-lf1-f67.google.com with SMTP id h64-v6so3495680lfi.10
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 00:57:47 -0700 (PDT)
+        Wed, 29 Aug 2018 07:53:42 -0400
+Received: by mail-lj1-f193.google.com with SMTP id p10-v6so3594577ljg.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 00:58:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=IW7gPFbp3Cs/xxYQ78q60NQhn2rxDLB3vVZCg9hJpfg=;
-        b=kg/F2SZML7WBuqEBtFfwjdEToBm5pPLV9BztrAqylqmdk3608H21CbMLwoQecSARRo
-         3g9Ru/ZUloD71YYuEuRhftTZN+/h8RBxWmYpgHqhZEfFkMkwUPrA2BbmfkkTTY8nKvtS
-         9vFEHLKzSKFtI8XRgSWvs94KKe4zgxGHZe4Mg=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=zObaoypU2uzVmbj0aozqxiQCeTZ60KpvPIYalSHTKxM=;
+        b=i/YkCFfcC+jM4HVp+90ZuD4vJtZ0EfxuG6XIt4Ystcb49J26d2NVWaC77wVAFj7U2a
+         FexZAs6M1LfUOEKjCumWJ+TUsDThYLmGzretMbtol+9JcX+o8VURyq6bLr2Wdh+xR41o
+         qH7ieaNDYliin5OwconCMi2Sd16Qsw2Y2sPik=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=IW7gPFbp3Cs/xxYQ78q60NQhn2rxDLB3vVZCg9hJpfg=;
-        b=OHTfJHQUI+VMkzCIwMcfEkZL/gWqjoi2oeRMhdRmP4EHetAy2o38HxyT5RGHsrrTtZ
-         jo56sQTQ8M7dEdV8LzzpLA9tE0cx3mD/RoKlr5A3S2fK7JMSMr5TnJzkFdY+g7DESuts
-         XGDI1EBowWxGctAY9TIObcXiPFXS4SOWZkaghSXTIvdNlxtqLEridqEHg/Ec1DeMfUWT
-         EGj8jt7SwMrFlEzt8RnzgZFK2bLGqiYJMU0RmoMWy9iy8QrKMOD/0LIQre5ME0IsAHgI
-         oZ8q+adsHIF5qC5KbwuMSMx/BSlxCkHlS24DHUNIFW15KY4bMHP5qSZ5BL8zvmdNLIbd
-         TY6g==
-X-Gm-Message-State: APzg51BB232PEKa1cNZmn05BvgEmjCjyNZmr987/ZiG+U+t+38e6uLx9
-        uVNwRxR0dB/dYcOYUGJTWFeU+Q==
-X-Google-Smtp-Source: ANB0VdZ/cC6W4Xp+66vbp5HVH71U0+p4B3AeO9k3CxVSckczb+XCafn9/5rGGxQHKSgwKdILIYg4TQ==
-X-Received: by 2002:a19:6d12:: with SMTP id i18-v6mr3370552lfc.72.1535529467079;
-        Wed, 29 Aug 2018 00:57:47 -0700 (PDT)
+         :references;
+        bh=zObaoypU2uzVmbj0aozqxiQCeTZ60KpvPIYalSHTKxM=;
+        b=kSEwWsckLBEEKXAITHiY1wd5iAQFpCEoJiRLuIsp4fcQs7A3JK590XRjbHms1OnLfv
+         ZuAppngo8HtyaJHe+BOZFH1TjbccPMOKmw2idMs+G0DFqxzVE0kgYDZ1dZHvJZb5F4Wh
+         7hdjuo/h2E1xxyAOUJFyWYQ60oH33qye7bcVHWlczbOVf/Th0MN2p632Q/SWdblu+jkz
+         kIPGKzmCBIkHViY192r7+f53u6N+cdB/CUQ6IzcQV/4toVXAjKk31UjwIinYbZ6QP9Yr
+         fa5BzW2nhZUmHNNSXiz19P9+HDHQDrNLPkIMmaAJN2kWGFCS+UW+oYStJjCNICGp2zVU
+         aaXw==
+X-Gm-Message-State: APzg51Atw1bM1czke8NnY30Bq+vSKpQdGTT5Hw/Wruzv6QYd/Ai4OyYY
+        nH5yqV2CnKtgYQHIQ1fGmlnASg==
+X-Google-Smtp-Source: ANB0VdZEw3jRwLW5Ekbrqc8MEwf7hYqkg44UtD/oF7gAPAyq/Ar7V99XO/rn5qS42Lk4LrR2czxRXA==
+X-Received: by 2002:a2e:97c8:: with SMTP id m8-v6mr3726571ljj.52.1535529484035;
+        Wed, 29 Aug 2018 00:58:04 -0700 (PDT)
 Received: from centauri.ideon.se ([85.235.10.227])
-        by smtp.gmail.com with ESMTPSA id f7-v6sm613386lfc.4.2018.08.29.00.57.46
+        by smtp.gmail.com with ESMTPSA id j9-v6sm592303ljh.40.2018.08.29.00.58.03
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 29 Aug 2018 00:57:46 -0700 (PDT)
+        Wed, 29 Aug 2018 00:58:03 -0700 (PDT)
 From:   Niklas Cassel <niklas.cassel@linaro.org>
 To:     Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>
 Cc:     Niklas Cassel <niklas.cassel@linaro.org>,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v6 4/9] soc: qcom: smsm: Add select IRQ_DOMAIN
-Date:   Wed, 29 Aug 2018 09:57:18 +0200
-Message-Id: <20180829075724.9095-5-niklas.cassel@linaro.org>
+Subject: [PATCH v6 6/9] soc: qcom: Remove depends on OF from QCOM_RPMH
+Date:   Wed, 29 Aug 2018 09:57:20 +0200
+Message-Id: <20180829075724.9095-7-niklas.cassel@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180829075724.9095-1-niklas.cassel@linaro.org>
 References: <20180829075724.9095-1-niklas.cassel@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since we are using irq_domain_add_linear(), add a select on IRQ_DOMAIN.
-This is needed in order to be able to remove the depends on ARCH_QCOM.
+QCOM_RPHM already selects ARM64, which always selects OF.
 
-drivers/soc/qcom/smsm.c: In function ‘smsm_inbound_entry’:
-drivers/soc/qcom/smsm.c:411:18: error: implicit declaration of function
-  ‘irq_domain_add_linear’
-  entry->domain = irq_domain_add_linear(node, 32, &smsm_irq_ops, entry);
-                  ^~~~~~~~~~~~~~~~~~~~~
+Additionally, the rpmh driver only uses linux/of.h, which has dummy
+definitions for all functions, in order for code to to be able to
+build without CONFIG_OF set.
+
+Remove the superfluous depends on OF.
 
 Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-Reviewed-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-Reviewed-by: Vinod Koul <vkoul@kernel.org>
 ---
- drivers/soc/qcom/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/soc/qcom/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-index 6e063202ad0b..7da6e67c7ea1 100644
+index ac657164a136..cf4ece232897 100644
 --- a/drivers/soc/qcom/Kconfig
 +++ b/drivers/soc/qcom/Kconfig
-@@ -143,6 +143,7 @@ config QCOM_SMSM
- 	tristate "Qualcomm Shared Memory State Machine"
- 	depends on QCOM_SMEM
- 	select QCOM_SMEM_STATE
-+	select IRQ_DOMAIN
+@@ -94,7 +94,7 @@ config QCOM_RMTFS_MEM
+ 
+ config QCOM_RPMH
+ 	bool "Qualcomm RPM-Hardened (RPMH) Communication"
+-	depends on ARCH_QCOM && ARM64 && OF || COMPILE_TEST
++	depends on ARCH_QCOM && ARM64 || COMPILE_TEST
  	help
- 	  Say yes here to support the Qualcomm Shared Memory State Machine.
- 	  The state machine is represented by bits in shared memory.
+ 	  Support for communication with the hardened-RPM blocks in
+ 	  Qualcomm Technologies Inc (QTI) SoCs. RPMH communication uses an
 -- 
 2.17.1
 
