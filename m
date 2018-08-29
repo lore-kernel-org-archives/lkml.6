@@ -2,102 +2,93 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81A92C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:35:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 028CEC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:35:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A8A1205C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:35:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A348820658
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:35:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="ZBOYPnnV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A8A1205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="arl7oGcf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A348820658
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727234AbeH3Bb4 (ORCPT
+        id S1727468AbeH3Beh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 21:31:56 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:52204 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727086AbeH3Bbz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 21:31:55 -0400
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Vinod Koul <vkoul@kernel.org>, Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>
-Cc:     od@zcrc.me, dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
-        Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v5 01/18] dt-bindings: jz4780-dma: Update bindings to reflect driver changes
-Date:   Wed, 29 Aug 2018 23:32:43 +0200
-Message-Id: <20180829213300.22829-2-paul@crapouillou.net>
-In-Reply-To: <20180829213300.22829-1-paul@crapouillou.net>
-References: <20180829213300.22829-1-paul@crapouillou.net>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1535578386; bh=7/nF5ptTjLMFMBSK3el5ZN3TxvQ3NZOE4K7lOOvvJcw=; h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=ZBOYPnnVlLW4Xp7VX0wUKJO1B9Si1wloj0ki23wtiDRdXsv9VJCn8LNPTDvSzhvwTkGFsJnvon/KZFAKJU5lpXI2Qxh7A/R2mWUK52FD+2bGlc9Lv4yG/0GTyHJwfuTeWbtw6OXuTUJt8aH91Yq6hW3xAp+yv//lp190CQQeGLE=
+        Wed, 29 Aug 2018 21:34:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38894 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726592AbeH3Beh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 21:34:37 -0400
+Received: from [10.231.3.186] (unknown [72.28.92.218])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C6BA8205F4;
+        Wed, 29 Aug 2018 21:35:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535578548;
+        bh=rgG8GEhhR4NwLbsAZHKaqMPAlDqCgy/HK52diEG25aA=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=arl7oGcf1LAkXkPX1n+H4crJk/Rhnid76edRGwDchXagNrjPOTvS1PMqWl+v0cEkP
+         eo3MmP1zs1oaGwyupfyv/MYg+clksu16Fe+zTCjgKA5/2jWbgCtA94gJFCgLCtYIeR
+         X50LFaMv0ioolsKC3OxRd+AxxVLk98ff43nBKdfI=
+Date:   Wed, 29 Aug 2018 14:35:48 -0700 (PDT)
+From:   Stefano Stabellini <sstabellini@kernel.org>
+X-X-Sender: sstabellini@sstabellini-ThinkPad-X260
+To:     Julien Thierry <julien.thierry@arm.com>
+cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        daniel.thompson@linaro.org, joel@joelfernandes.org,
+        marc.zyngier@arm.com, mark.rutland@arm.com,
+        christoffer.dall@arm.com, james.morse@arm.com,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        Stefano Stabellini <sstabellini@kernel.org>
+Subject: Re: [PATCH v5 07/27] arm64: xen: Use existing helper to check
+ interrupt status
+In-Reply-To: <1535471497-38854-8-git-send-email-julien.thierry@arm.com>
+Message-ID: <alpine.DEB.2.10.1808291132570.14449@sstabellini-ThinkPad-X260>
+References: <1535471497-38854-1-git-send-email-julien.thierry@arm.com> <1535471497-38854-8-git-send-email-julien.thierry@arm.com>
+User-Agent: Alpine 2.10 (DEB 1266 2009-07-14)
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver now expects the devicetree to supply a second memory
-resource. This resource is mandatory on the newly supported SoCs.
-For the JZ4780, new devicetree code must also provide it, although the
-driver is still compatible with older devicetree binaries.
+On Tue, 28 Aug 2018, Julien Thierry wrote:
+> The status of interrupts might depend on more than just pstate. Use
+> interrupts_disabled() instead of raw_irqs_disabled_flags() to take the full
+> context into account.
+> 
+> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+> Cc: Stefano Stabellini <sstabellini@kernel.org>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Tested-by: Mathieu Malaterre <malat@debian.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
+Acked-by: Stefano Stabellini <sstabellini@kernel.org>
 
-Notes:
-     v2: New patch in this series; regroups the changes made to the
-     jz4780-dma.txt doc file in the previous version of the patchset.
-    
-     v3: Updated example to comply with devicetree specification
-    
-     v4: Removed driver-specific comment in commit message
-    
-     v5: Remove 'doc' in patch title
 
- Documentation/devicetree/bindings/dma/jz4780-dma.txt | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/dma/jz4780-dma.txt b/Documentation/devicetree/bindings/dma/jz4780-dma.txt
-index 03e9cf7b42e0..636fcb26b164 100644
---- a/Documentation/devicetree/bindings/dma/jz4780-dma.txt
-+++ b/Documentation/devicetree/bindings/dma/jz4780-dma.txt
-@@ -2,8 +2,13 @@
- 
- Required properties:
- 
--- compatible: Should be "ingenic,jz4780-dma"
--- reg: Should contain the DMA controller registers location and length.
-+- compatible: Should be one of:
-+  * ingenic,jz4740-dma
-+  * ingenic,jz4725b-dma
-+  * ingenic,jz4770-dma
-+  * ingenic,jz4780-dma
-+- reg: Should contain the DMA channel registers location and length, followed
-+  by the DMA controller registers location and length.
- - interrupts: Should contain the interrupt specifier of the DMA controller.
- - clocks: Should contain a clock specifier for the JZ4780 PDMA clock.
- - #dma-cells: Must be <2>. Number of integer cells in the dmas property of
-@@ -19,9 +24,10 @@ Optional properties:
- 
- Example:
- 
--dma: dma@13420000 {
-+dma: dma-controller@13420000 {
- 	compatible = "ingenic,jz4780-dma";
--	reg = <0x13420000 0x10000>;
-+	reg = <0x13420000 0x400
-+	       0x13421000 0x40>;
- 
- 	interrupt-parent = <&intc>;
- 	interrupts = <10>;
--- 
-2.11.0
-
+> ---
+>  arch/arm64/include/asm/xen/events.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/include/asm/xen/events.h b/arch/arm64/include/asm/xen/events.h
+> index 4e22b7a..2788e95 100644
+> --- a/arch/arm64/include/asm/xen/events.h
+> +++ b/arch/arm64/include/asm/xen/events.h
+> @@ -14,7 +14,7 @@ enum ipi_vector {
+>  
+>  static inline int xen_irqs_disabled(struct pt_regs *regs)
+>  {
+> -	return raw_irqs_disabled_flags((unsigned long) regs->pstate);
+> +	return !interrupts_enabled(regs);
+>  }
+>  
+>  #define xchg_xen_ulong(ptr, val) xchg((ptr), (val))
+> -- 
+> 1.9.1
+> 
