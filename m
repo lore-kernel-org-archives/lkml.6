@@ -6,52 +6,54 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E831C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:44:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DFC1C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:44:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E247F20867
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:44:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E247F20867
+	by mail.kernel.org (Postfix) with ESMTP id 487EF2086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:44:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 487EF2086D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hygon.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728603AbeH2QlK (ORCPT
+        id S1728624AbeH2QlX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 12:41:10 -0400
-Received: from smtp17.cstnet.cn ([159.226.251.17]:48368 "EHLO cstnet.cn"
+        Wed, 29 Aug 2018 12:41:23 -0400
+Received: from smtp17.cstnet.cn ([159.226.251.17]:48531 "EHLO cstnet.cn"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727590AbeH2QlK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 12:41:10 -0400
+        id S1727590AbeH2QlX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 12:41:23 -0400
 Received: from pw-vbox.higon.com (unknown [182.150.46.145])
-        by APP-09 (Coremail) with SMTP id swCowACnr5MYlYZbKo7_BA--.0S2;
-        Wed, 29 Aug 2018 20:44:11 +0800 (CST)
+        by APP-09 (Coremail) with SMTP id swCowAAH5BwjlYZbDpH_BA--.45S2;
+        Wed, 29 Aug 2018 20:44:24 +0800 (CST)
 From:   Pu Wen <puwen@hygon.cn>
 To:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
         x86@kernel.org, thomas.lendacky@amd.com, bp@alien8.de,
-        pbonzini@redhat.com
+        pbonzini@redhat.com, helgaas@kernel.org
 Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        Pu Wen <puwen@hygon.cn>
-Subject: [PATCH v5 06/16] x86/nops: init ideal_nops for Hygon
-Date:   Wed, 29 Aug 2018 20:44:07 +0800
-Message-Id: <afb6dd7821d014932dbc5c7d80aa6bffe6aef2c8.1535459013.git.puwen@hygon.cn>
+        linux-pci@vger.kernel.org, Pu Wen <puwen@hygon.cn>
+Subject: [PATCH v5 07/16] x86/pci: add Hygon PCI vendor and northbridge support
+Date:   Wed, 29 Aug 2018 20:44:18 +0800
+Message-Id: <ecd62b5b5e8f406598f2354892929caa87cf7deb.1535459013.git.puwen@hygon.cn>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1535459012.git.puwen@hygon.cn>
 References: <cover.1535459012.git.puwen@hygon.cn>
-X-CM-TRANSID: swCowACnr5MYlYZbKo7_BA--.0S2
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-        VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUY47AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E
-        6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
-        kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI8I
-        cVCY1x0267AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2js
-        IEc7CjxVAFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE
-        6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1q6rW5McIj6I8E87Iv67AKxVW8Jr0_Cr1UMc
-        vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v
-        4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
-        v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
-        1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIx
-        AIcVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_Gr0_Zr1l
-        IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvf
-        C2KfnxnUUI43ZEXa7VUbKLvtUUUUU==
+X-CM-TRANSID: swCowAAH5BwjlYZbDpH_BA--.45S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxKFyfKry5Gr4UJry3GF4DJwb_yoW7tr1xpr
+        W3Ar4kXr4rWa17Wa98trWUZrs8ZF1vkayfCrW7Gw4SvF1Du3WrXFn2vr1ay3W2ya1DJa48
+        Ja95X3WrJw4UtF7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUvF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+        1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+        6r4UJwA2z4x0Y4vEx4A2jsIE14v26r1j6r4UM28EF7xvwVC2z280aVCY1x0267AKxVW8JV
+        W8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+        2Ix0cI8IcVAFwI0_Jw0_WrylYx0Ex4A2jsIE14v26r4UJVWxJr1lOx8S6xCaFVCjc4AY6r
+        1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02
+        628vn2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
+        02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_
+        GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7
+        CjxVAFwI0_Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVW8JVW3JwCI42IY6I8E87Iv67AK
+        xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
+        fUo9NVDUUUU
 X-Originating-IP: [182.150.46.145]
 X-CM-SenderInfo: psxzv046klw03qof0z/
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,28 +61,184 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ideal_nops for Dhyana processors should be p6_nops.
+As Hygon register its PCI Vendor ID as a new one "0x1d94", so add a new
+definition PCI_VENDOR_ID_HYGON in include/linux/pci_ids.h.
 
+Also Hygon PCI Device ID(0x1450/0x1463/0x1464) for Host bridge is added
+to amd_nb.c. And it need to define new arrays for Hygon:
+hygon_root_ids[], hygon_nb_misc_ids[], hygon_nb_link_ids[].
+
+To enable Hygon north bridge support, add new variable root_ids, and
+assign its value based on whether CPU vendor is AMD or Hygon. Modify
+the CONFIG_AMD_NB to depends on either AMD or Hygon.
+
+Add Hygon support in amd_postcore_init(), early_root_info_init().
+
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>	# pci_ids.h
 Signed-off-by: Pu Wen <puwen@hygon.cn>
 ---
- arch/x86/kernel/alternative.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/x86/Kconfig         |  2 +-
+ arch/x86/kernel/amd_nb.c | 51 ++++++++++++++++++++++++++++++++++++++++++------
+ arch/x86/pci/amd_bus.c   |  6 ++++--
+ include/linux/pci_ids.h  |  2 ++
+ 4 files changed, 52 insertions(+), 9 deletions(-)
 
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index 014f214..3f51d1c 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -222,6 +222,10 @@ void __init arch_init_ideal_nops(void)
- 		}
- 		break;
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index c5ff296..733f1ec 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2818,7 +2818,7 @@ endif # X86_32
  
-+	case X86_VENDOR_HYGON:
-+		ideal_nops = p6_nops;
-+		return;
+ config AMD_NB
+ 	def_bool y
+-	depends on CPU_SUP_AMD && PCI
++	depends on (CPU_SUP_AMD || CPU_SUP_HYGON) && PCI
+ 
+ source "drivers/pcmcia/Kconfig"
+ 
+diff --git a/arch/x86/kernel/amd_nb.c b/arch/x86/kernel/amd_nb.c
+index b481b95..d9867b2 100644
+--- a/arch/x86/kernel/amd_nb.c
++++ b/arch/x86/kernel/amd_nb.c
+@@ -20,6 +20,10 @@
+ #define PCI_DEVICE_ID_AMD_17H_M10H_DF_F3 0x15eb
+ #define PCI_DEVICE_ID_AMD_17H_M10H_DF_F4 0x15ec
+ 
++#define PCI_DEVICE_ID_HYGON_18H_ROOT     0x1450
++#define PCI_DEVICE_ID_HYGON_18H_DF_F3    0x1463
++#define PCI_DEVICE_ID_HYGON_18H_DF_F4    0x1464
 +
- 	case X86_VENDOR_AMD:
- 		if (boot_cpu_data.x86 > 0xf) {
- 			ideal_nops = p6_nops;
+ /* Protect the PCI config register pairs used for SMN and DF indirect access. */
+ static DEFINE_MUTEX(smn_mutex);
+ 
+@@ -61,6 +65,21 @@ static const struct pci_device_id amd_nb_link_ids[] = {
+ 	{}
+ };
+ 
++static const struct pci_device_id hygon_root_ids[] = {
++	{ PCI_DEVICE(PCI_VENDOR_ID_HYGON, PCI_DEVICE_ID_HYGON_18H_ROOT) },
++	{}
++};
++
++const struct pci_device_id hygon_nb_misc_ids[] = {
++	{ PCI_DEVICE(PCI_VENDOR_ID_HYGON, PCI_DEVICE_ID_HYGON_18H_DF_F3) },
++	{}
++};
++
++static const struct pci_device_id hygon_nb_link_ids[] = {
++	{ PCI_DEVICE(PCI_VENDOR_ID_HYGON, PCI_DEVICE_ID_HYGON_18H_DF_F4) },
++	{}
++};
++
+ const struct amd_nb_bus_dev_range amd_nb_bus_dev_ranges[] __initconst = {
+ 	{ 0x00, 0x18, 0x20 },
+ 	{ 0xff, 0x00, 0x20 },
+@@ -197,12 +216,25 @@ int amd_cache_northbridges(void)
+ 	u16 i = 0;
+ 	struct amd_northbridge *nb;
+ 	struct pci_dev *root, *misc, *link;
++	const struct pci_device_id *root_ids = NULL;
++	const struct pci_device_id *misc_ids = NULL;
++	const struct pci_device_id *link_ids = NULL;
++
++	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD) {
++		root_ids = amd_root_ids;
++		misc_ids = amd_nb_misc_ids;
++		link_ids = amd_nb_link_ids;
++	} else if (boot_cpu_data.x86_vendor == X86_VENDOR_HYGON) {
++		root_ids = hygon_root_ids;
++		misc_ids = hygon_nb_misc_ids;
++		link_ids = hygon_nb_link_ids;
++	}
+ 
+ 	if (amd_northbridges.num)
+ 		return 0;
+ 
+ 	misc = NULL;
+-	while ((misc = next_northbridge(misc, amd_nb_misc_ids)) != NULL)
++	while ((misc = next_northbridge(misc, misc_ids)) != NULL)
+ 		i++;
+ 
+ 	if (!i)
+@@ -218,11 +250,11 @@ int amd_cache_northbridges(void)
+ 	link = misc = root = NULL;
+ 	for (i = 0; i != amd_northbridges.num; i++) {
+ 		node_to_amd_nb(i)->root = root =
+-			next_northbridge(root, amd_root_ids);
++			next_northbridge(root, root_ids);
+ 		node_to_amd_nb(i)->misc = misc =
+-			next_northbridge(misc, amd_nb_misc_ids);
++			next_northbridge(misc, misc_ids);
+ 		node_to_amd_nb(i)->link = link =
+-			next_northbridge(link, amd_nb_link_ids);
++			next_northbridge(link, link_ids);
+ 	}
+ 
+ 	if (amd_gart_present())
+@@ -263,9 +295,15 @@ bool __init early_is_amd_nb(u32 device)
+ {
+ 	const struct pci_device_id *id;
+ 	u32 vendor = device & 0xffff;
++	const struct pci_device_id *misc_ids = NULL;
++
++	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
++		misc_ids = amd_nb_misc_ids;
++	else if (boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
++		misc_ids = hygon_nb_misc_ids;
+ 
+ 	device >>= 16;
+-	for (id = amd_nb_misc_ids; id->vendor; id++)
++	for (id = misc_ids; id->vendor; id++)
+ 		if (vendor == id->vendor && device == id->device)
+ 			return true;
+ 	return false;
+@@ -277,7 +315,8 @@ struct resource *amd_get_mmconfig_range(struct resource *res)
+ 	u64 base, msr;
+ 	unsigned int segn_busn_bits;
+ 
+-	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD)
++	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD &&
++	    boot_cpu_data.x86_vendor != X86_VENDOR_HYGON)
+ 		return NULL;
+ 
+ 	/* assume all cpus from fam10h have mmconfig */
+diff --git a/arch/x86/pci/amd_bus.c b/arch/x86/pci/amd_bus.c
+index 649bdde..bfa50e6 100644
+--- a/arch/x86/pci/amd_bus.c
++++ b/arch/x86/pci/amd_bus.c
+@@ -93,7 +93,8 @@ static int __init early_root_info_init(void)
+ 		vendor = id & 0xffff;
+ 		device = (id>>16) & 0xffff;
+ 
+-		if (vendor != PCI_VENDOR_ID_AMD)
++		if (vendor != PCI_VENDOR_ID_AMD &&
++		    vendor != PCI_VENDOR_ID_HYGON)
+ 			continue;
+ 
+ 		if (hb_probes[i].device == device) {
+@@ -390,7 +391,8 @@ static int __init pci_io_ecs_init(void)
+ 
+ static int __init amd_postcore_init(void)
+ {
+-	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD)
++	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD &&
++	    boot_cpu_data.x86_vendor != X86_VENDOR_HYGON)
+ 		return 0;
+ 
+ 	early_root_info_init();
+diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+index 99d366c..d2d281f 100644
+--- a/include/linux/pci_ids.h
++++ b/include/linux/pci_ids.h
+@@ -2561,6 +2561,8 @@
+ 
+ #define PCI_VENDOR_ID_AMAZON		0x1d0f
+ 
++#define PCI_VENDOR_ID_HYGON		0x1d94
++
+ #define PCI_VENDOR_ID_TEKRAM		0x1de1
+ #define PCI_DEVICE_ID_TEKRAM_DC290	0xdc29
+ 
 -- 
 2.7.4
 
