@@ -6,65 +6,65 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A456C43334
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:24:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5BAFC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:24:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C64652083B
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:23:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4ADAA20867
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:24:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=owltronix-com.20150623.gappssmtp.com header.i=@owltronix-com.20150623.gappssmtp.com header.b="qIzPA0bQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C64652083B
+	dkim=pass (2048-bit key) header.d=owltronix-com.20150623.gappssmtp.com header.i=@owltronix-com.20150623.gappssmtp.com header.b="iyIzmVT/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4ADAA20867
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=owltronix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728161AbeH2QUh (ORCPT
+        id S1728303AbeH2QUk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 12:20:37 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:44151 "EHLO
+        Wed, 29 Aug 2018 12:20:40 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:36988 "EHLO
         mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727818AbeH2QUg (ORCPT
+        with ESMTP id S1727460AbeH2QUi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 12:20:36 -0400
-Received: by mail-ed1-f65.google.com with SMTP id s10-v6so3757298edb.11
+        Wed, 29 Aug 2018 12:20:38 -0400
+Received: by mail-ed1-f65.google.com with SMTP id a20-v6so1099631edd.4
         for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 05:23:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=owltronix-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Wd6ju+Sj812p5ByhVH0axrtjEx4TVCFUhWAzZE7kqEw=;
-        b=qIzPA0bQXyNgjNTrtOKifSD0zdslXCpsZvF+bkEaSONuPWXRkydNhAjsaWCsRw2jWc
-         XCPPhKt/SxRPRSdQxvH+qqnXafETwXBhFaS5ywVfGLvaanhAvu90LG3+34ImcymlH0Ag
-         7JJDf3sDQ2EEdl3cd3+Pa+DB+vMs/Ty2M1f5YYEqwB9KO73+SLgHTanye9gs3Oh/Ggm4
-         LcttKgD+959fLOIgoRafD/53KBALcLb5n26tcjfbC9Dy61Hmf7CSVGwtNbexuOUA1bre
-         3yzSJkoodzt4wQ6VrpahBgtOO25VpLpxdhKw3zM41kbUy0bc1JbBNbY9Ai8HpVx1UWOM
-         fLhA==
+        bh=dEOMsr/EO2TZzLIOiOu9mo5dI59Aiw6t2Vf9/2wyrcc=;
+        b=iyIzmVT/XR8nQohoEOdt61vvMQmbx2Gf+y4XB2tGR3I4UZvARemu5GyL+wgdoV7fHP
+         04g8u+PJ0f9srsoSvHKEqLFe2A5+bMLgpTMafcA9OJwIYitmgF0yMVLAqzyqAMohPf7j
+         2eYzqLJBtU4O7bUEDSR5GZlBV68HO9AnHZoMdw78BuC21m8qhzrPA3N2529ueyAVMPGC
+         sX8dJhQspC5LXGBCgqQnY6QwybTRG0c6x0PZscpngB4bK+G0/vBq61x4hP9CztnFUY8c
+         xFiH7Y03q8MA+C1y4NXz6zRngzC5ircx6ueSC23pGp/2XjMrlipa05S+CV2+BR9EIh7C
+         WQJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Wd6ju+Sj812p5ByhVH0axrtjEx4TVCFUhWAzZE7kqEw=;
-        b=npAvI9y0djplt4ctsEjWfc013x6z3K54kfoMplaentam8ZnUPecsMyfyebubUCbR1V
-         qhLNx9KWKAPan8nMctVXUB72joUK/b+oA27kZfg2U4edfGUD00pFSW0jrxHASCBkAjxj
-         BT9K4SfkksBEuzSxs6ChKhTIlJ90rKypSbuaXNp0hN9dZo3HX+nvJaJS9MVj0hQlyoJT
-         mXKg+uGdBkT7oCmZR974IPC6OQoFb2x8H/yoeT0j+ECzP7MW/uTq5x+8pO4DcFLLByZY
-         YP9CVs3pBYwpuYxg730O2h/+QetWU02XTw9oOWHaRp0Eh08WWKEqwmpIKxOuJqkyFcZ1
-         UoAw==
-X-Gm-Message-State: APzg51A+NIxk3u1A8UPeEKpRqLh1BOR+rPXXK9kOMam+/AEOSCv7WUoE
-        SD9DQQDz3F9FJDDpIqznb5ghHA==
-X-Google-Smtp-Source: ANB0VdZD7GouwO7N0cfZYacQcNFQbeF8s7QYSvEoXvkqDz6DHT5/uQocDYy5v9QHzj4HS0N+367acg==
-X-Received: by 2002:a50:8cd7:: with SMTP id r23-v6mr7407214edr.240.1535545435062;
-        Wed, 29 Aug 2018 05:23:55 -0700 (PDT)
+        bh=dEOMsr/EO2TZzLIOiOu9mo5dI59Aiw6t2Vf9/2wyrcc=;
+        b=Rap+e1rslH7hno2olRJ5mywzvKaVPLpAkgLHixxOTDyEkRVytH9G3PqTJyYoOqZzzQ
+         JV9lI1x+FhLcxR2n0ef1ezypZAhoH7RGsRHapYBHBp9z1JIwLYs8seFm6fpxYkr5C9N2
+         t4UlUl5dSvkHbpcIrEt+hiW9TdKrE04EZsM4LpW6fyTd12etJIO3dEzCyzK5PCiX4D3/
+         CY8GcX/KO1+YQQagq5UgL3YX6Cx1xPxydjm0Qo8BzT+M7tSrHjtm+wyeyu017YuQBgxV
+         IM9zJLzv9mY3jRsqlDAPx1Qn02T+Ja0JYfQ++fiV4KasSDbqWcHvhRRBOQsWP2NJHTwU
+         E76Q==
+X-Gm-Message-State: APzg51AZh5apGHa5OwSGceSfwuiYdIZrFB/o4kjn4hs7v4lR4tAvxD62
+        yNkPM6Tb/YOtsVqwvv+gLsmfWw==
+X-Google-Smtp-Source: ANB0Vda6609BCGz7a/znEodqVH1KDtKJwtLXPSUaJfN40R+J0FnvPM+8YRp41df4VFbX9xtdTQPKjQ==
+X-Received: by 2002:a50:acc6:: with SMTP id x64-v6mr7472654edc.152.1535545436315;
+        Wed, 29 Aug 2018 05:23:56 -0700 (PDT)
 Received: from titan.cnexlabs.com (6164211-cl69.boa.fiberby.dk. [193.106.164.211])
-        by smtp.gmail.com with ESMTPSA id f26-v6sm1752068edb.28.2018.08.29.05.23.53
+        by smtp.gmail.com with ESMTPSA id f26-v6sm1752068edb.28.2018.08.29.05.23.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 29 Aug 2018 05:23:54 -0700 (PDT)
+        Wed, 29 Aug 2018 05:23:55 -0700 (PDT)
 From:   Hans Holmberg <hans.ml.holmberg@owltronix.com>
 To:     Matias Bjorling <mb@lightnvm.io>
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         Javier Gonzales <javier@cnexlabs.com>,
         Hans Holmberg <hans.holmberg@cnexlabs.com>
-Subject: [PATCH 3/7] lightnvm: pblk: allocate line map bitmaps using a mempool
-Date:   Wed, 29 Aug 2018 14:23:30 +0200
-Message-Id: <1535545414-550-4-git-send-email-hans.ml.holmberg@owltronix.com>
+Subject: [PATCH 4/7] lightnvm: pblk: move global caches to module init/exit
+Date:   Wed, 29 Aug 2018 14:23:31 +0200
+Message-Id: <1535545414-550-5-git-send-email-hans.ml.holmberg@owltronix.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1535545414-550-1-git-send-email-hans.ml.holmberg@owltronix.com>
 References: <1535545414-550-1-git-send-email-hans.ml.holmberg@owltronix.com>
@@ -75,153 +75,161 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Hans Holmberg <hans.holmberg@cnexlabs.com>
 
-Line map bitmap allocations are fairly large and can fail. Allocation
-failures are fatal to pblk, stoping the write pipeline. To avoid this,
-allocate the bitmaps using a mempool instead.
+Pblk's global caches should not be initialized every time
+a pblk instance is created, so move the creation and destruction
+of the caches to module init/exit.
 
-Mempool allocations never fail if called from a process context,
-and pblk *should* only allocate map bitmaps in process context,
-but keep the failure handling for robustness sake.
+Also remove the global pblk lock as it is no longer needed after
+the move.
 
 Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
 ---
- drivers/lightnvm/pblk-core.c     | 22 +++++++++++++++-------
- drivers/lightnvm/pblk-init.c     | 18 ++++++++++++++++++
- drivers/lightnvm/pblk-recovery.c |  2 +-
- drivers/lightnvm/pblk.h          |  4 ++++
- 4 files changed, 38 insertions(+), 8 deletions(-)
+ drivers/lightnvm/pblk-init.c | 42 ++++++++++++++++++++----------------------
+ 1 file changed, 20 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
-index 36ac9eff8ebd..a1033d82b9cc 100644
---- a/drivers/lightnvm/pblk-core.c
-+++ b/drivers/lightnvm/pblk-core.c
-@@ -1049,15 +1049,18 @@ static int pblk_line_init_metadata(struct pblk *pblk, struct pblk_line *line,
- static int pblk_line_alloc_bitmaps(struct pblk *pblk, struct pblk_line *line)
- {
- 	struct pblk_line_meta *lm = &pblk->lm;
-+	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
- 
--	line->map_bitmap = kzalloc(lm->sec_bitmap_len, GFP_KERNEL);
-+	line->map_bitmap = mempool_alloc(l_mg->bitmap_pool, GFP_KERNEL);
- 	if (!line->map_bitmap)
- 		return -ENOMEM;
- 
-+	memset(line->map_bitmap, 0, lm->sec_bitmap_len);
-+
- 	/* will be initialized using bb info from map_bitmap */
--	line->invalid_bitmap = kmalloc(lm->sec_bitmap_len, GFP_KERNEL);
-+	line->invalid_bitmap = mempool_alloc(l_mg->bitmap_pool, GFP_KERNEL);
- 	if (!line->invalid_bitmap) {
--		kfree(line->map_bitmap);
-+		mempool_free(line->map_bitmap, l_mg->bitmap_pool);
- 		line->map_bitmap = NULL;
- 		return -ENOMEM;
- 	}
-@@ -1243,7 +1246,9 @@ int pblk_line_recov_alloc(struct pblk *pblk, struct pblk_line *line)
- 
- void pblk_line_recov_close(struct pblk *pblk, struct pblk_line *line)
- {
--	kfree(line->map_bitmap);
-+	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
-+
-+	mempool_free(line->map_bitmap, l_mg->bitmap_pool);
- 	line->map_bitmap = NULL;
- 	line->smeta = NULL;
- 	line->emeta = NULL;
-@@ -1261,8 +1266,11 @@ static void pblk_line_reinit(struct pblk_line *line)
- 
- void pblk_line_free(struct pblk_line *line)
- {
--	kfree(line->map_bitmap);
--	kfree(line->invalid_bitmap);
-+	struct pblk *pblk = line->pblk;
-+	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
-+
-+	mempool_free(line->map_bitmap, l_mg->bitmap_pool);
-+	mempool_free(line->invalid_bitmap, l_mg->bitmap_pool);
- 
- 	pblk_line_reinit(line);
- }
-@@ -1741,7 +1749,7 @@ void pblk_line_close(struct pblk *pblk, struct pblk_line *line)
- 
- 	list_add_tail(&line->list, move_list);
- 
--	kfree(line->map_bitmap);
-+	mempool_free(line->map_bitmap, l_mg->bitmap_pool);
- 	line->map_bitmap = NULL;
- 	line->smeta = NULL;
- 	line->emeta = NULL;
 diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
-index 8adc8ac8b03c..76a4a271b9cf 100644
+index 76a4a271b9cf..0be64220b5d8 100644
 --- a/drivers/lightnvm/pblk-init.c
 +++ b/drivers/lightnvm/pblk-init.c
-@@ -498,6 +498,9 @@ static void pblk_line_mg_free(struct pblk *pblk)
- 		pblk_mfree(l_mg->eline_meta[i]->buf, l_mg->emeta_alloc_type);
- 		kfree(l_mg->eline_meta[i]);
- 	}
-+
-+	mempool_destroy(l_mg->bitmap_pool);
-+	kmem_cache_destroy(l_mg->bitmap_cache);
+@@ -27,7 +27,6 @@ MODULE_PARM_DESC(write_buffer_size, "number of entries in a write buffer");
+ 
+ static struct kmem_cache *pblk_ws_cache, *pblk_rec_cache, *pblk_g_rq_cache,
+ 				*pblk_w_rq_cache;
+-static DECLARE_RWSEM(pblk_lock);
+ struct bio_set pblk_bio_set;
+ 
+ static int pblk_rw_io(struct request_queue *q, struct pblk *pblk,
+@@ -306,21 +305,17 @@ static int pblk_set_addrf(struct pblk *pblk)
+ 	return 0;
  }
  
- static void pblk_line_meta_free(struct pblk_line_mgmt *l_mg,
-@@ -797,6 +800,17 @@ static int pblk_line_mg_init(struct pblk *pblk)
- 			goto fail_free_smeta;
+-static int pblk_init_global_caches(struct pblk *pblk)
++static int pblk_init_global_caches(void)
+ {
+-	down_write(&pblk_lock);
+ 	pblk_ws_cache = kmem_cache_create("pblk_blk_ws",
+ 				sizeof(struct pblk_line_ws), 0, 0, NULL);
+-	if (!pblk_ws_cache) {
+-		up_write(&pblk_lock);
++	if (!pblk_ws_cache)
+ 		return -ENOMEM;
+-	}
+ 
+ 	pblk_rec_cache = kmem_cache_create("pblk_rec",
+ 				sizeof(struct pblk_rec_ctx), 0, 0, NULL);
+ 	if (!pblk_rec_cache) {
+ 		kmem_cache_destroy(pblk_ws_cache);
+-		up_write(&pblk_lock);
+ 		return -ENOMEM;
  	}
  
-+	l_mg->bitmap_cache = kmem_cache_create("pblk_lm_bitmap",
-+			lm->sec_bitmap_len, 0, 0, NULL);
-+	if (!l_mg->bitmap_cache)
-+		goto fail_free_smeta;
-+
-+	/* the bitmap pool is used for both valid and map bitmaps */
-+	l_mg->bitmap_pool = mempool_create_slab_pool(PBLK_DATA_LINES * 2,
-+				l_mg->bitmap_cache);
-+	if (!l_mg->bitmap_pool)
-+		goto fail_destroy_bitmap_cache;
-+
- 	/* emeta allocates three different buffers for managing metadata with
- 	 * in-memory and in-media layouts
- 	 */
-@@ -849,6 +863,10 @@ static int pblk_line_mg_init(struct pblk *pblk)
- 			kfree(l_mg->eline_meta[i]->buf);
- 		kfree(l_mg->eline_meta[i]);
+@@ -329,7 +324,6 @@ static int pblk_init_global_caches(struct pblk *pblk)
+ 	if (!pblk_g_rq_cache) {
+ 		kmem_cache_destroy(pblk_ws_cache);
+ 		kmem_cache_destroy(pblk_rec_cache);
+-		up_write(&pblk_lock);
+ 		return -ENOMEM;
  	}
-+
-+	mempool_destroy(l_mg->bitmap_pool);
-+fail_destroy_bitmap_cache:
-+	kmem_cache_destroy(l_mg->bitmap_cache);
- fail_free_smeta:
- 	for (i = 0; i < PBLK_DATA_LINES; i++)
- 		kfree(l_mg->sline_meta[i]);
-diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
-index 3bd2b6b0a359..eea901d7cebc 100644
---- a/drivers/lightnvm/pblk-recovery.c
-+++ b/drivers/lightnvm/pblk-recovery.c
-@@ -939,7 +939,7 @@ struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
- 			list_move_tail(&line->list, move_list);
- 			spin_unlock(&l_mg->gc_lock);
  
--			kfree(line->map_bitmap);
-+			mempool_free(line->map_bitmap, l_mg->bitmap_pool);
- 			line->map_bitmap = NULL;
- 			line->smeta = NULL;
- 			line->emeta = NULL;
-diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
-index fd274985aa82..1a31fda3a9f2 100644
---- a/drivers/lightnvm/pblk.h
-+++ b/drivers/lightnvm/pblk.h
-@@ -530,6 +530,10 @@ struct pblk_line_mgmt {
- 	struct pblk_emeta *eline_meta[PBLK_DATA_LINES];
- 	unsigned long meta_bitmap;
+@@ -339,15 +333,13 @@ static int pblk_init_global_caches(struct pblk *pblk)
+ 		kmem_cache_destroy(pblk_ws_cache);
+ 		kmem_cache_destroy(pblk_rec_cache);
+ 		kmem_cache_destroy(pblk_g_rq_cache);
+-		up_write(&pblk_lock);
+ 		return -ENOMEM;
+ 	}
+-	up_write(&pblk_lock);
  
-+	/* Cache and mempool for map/invalid bitmaps */
-+	struct kmem_cache *bitmap_cache;
-+	mempool_t *bitmap_pool;
+ 	return 0;
+ }
+ 
+-static void pblk_free_global_caches(struct pblk *pblk)
++static void pblk_free_global_caches(void)
+ {
+ 	kmem_cache_destroy(pblk_ws_cache);
+ 	kmem_cache_destroy(pblk_rec_cache);
+@@ -381,13 +373,10 @@ static int pblk_core_init(struct pblk *pblk)
+ 	if (!pblk->pad_dist)
+ 		return -ENOMEM;
+ 
+-	if (pblk_init_global_caches(pblk))
+-		goto fail_free_pad_dist;
+-
+ 	/* Internal bios can be at most the sectors signaled by the device. */
+ 	ret = mempool_init_page_pool(&pblk->page_bio_pool, NVM_MAX_VLBA, 0);
+ 	if (ret)
+-		goto free_global_caches;
++		goto free_pad_dist;
+ 
+ 	ret = mempool_init_slab_pool(&pblk->gen_ws_pool, PBLK_GEN_WS_POOL_SIZE,
+ 				     pblk_ws_cache);
+@@ -455,9 +444,7 @@ static int pblk_core_init(struct pblk *pblk)
+ 	mempool_exit(&pblk->gen_ws_pool);
+ free_page_bio_pool:
+ 	mempool_exit(&pblk->page_bio_pool);
+-free_global_caches:
+-	pblk_free_global_caches(pblk);
+-fail_free_pad_dist:
++free_pad_dist:
+ 	kfree(pblk->pad_dist);
+ 	return -ENOMEM;
+ }
+@@ -480,7 +467,6 @@ static void pblk_core_free(struct pblk *pblk)
+ 	mempool_exit(&pblk->e_rq_pool);
+ 	mempool_exit(&pblk->w_rq_pool);
+ 
+-	pblk_free_global_caches(pblk);
+ 	kfree(pblk->pad_dist);
+ }
+ 
+@@ -1067,7 +1053,6 @@ static void pblk_exit(void *private, bool graceful)
+ {
+ 	struct pblk *pblk = private;
+ 
+-	down_write(&pblk_lock);
+ 	pblk_gc_exit(pblk, graceful);
+ 	pblk_tear_down(pblk, graceful);
+ 
+@@ -1076,7 +1061,6 @@ static void pblk_exit(void *private, bool graceful)
+ #endif
+ 
+ 	pblk_free(pblk);
+-	up_write(&pblk_lock);
+ }
+ 
+ static sector_t pblk_capacity(void *private)
+@@ -1237,9 +1221,22 @@ static int __init pblk_module_init(void)
+ 	ret = bioset_init(&pblk_bio_set, BIO_POOL_SIZE, 0, 0);
+ 	if (ret)
+ 		return ret;
 +
- 	/* Helpers for fast bitmap calculations */
- 	unsigned long *bb_template;
- 	unsigned long *bb_aux;
+ 	ret = nvm_register_tgt_type(&tt_pblk);
+ 	if (ret)
+-		bioset_exit(&pblk_bio_set);
++		goto fail_exit_bioset;
++
++	ret = pblk_init_global_caches();
++	if (ret)
++		goto fail_unregister_tgt_type;
++
++	return 0;
++
++fail_unregister_tgt_type:
++	nvm_unregister_tgt_type(&tt_pblk);
++fail_exit_bioset:
++	bioset_exit(&pblk_bio_set);
++
+ 	return ret;
+ }
+ 
+@@ -1247,6 +1244,7 @@ static void pblk_module_exit(void)
+ {
+ 	bioset_exit(&pblk_bio_set);
+ 	nvm_unregister_tgt_type(&tt_pblk);
++	pblk_free_global_caches();
+ }
+ 
+ module_init(pblk_module_init);
 -- 
 2.7.4
 
