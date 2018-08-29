@@ -2,124 +2,105 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4006EC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:23:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 099E5C43334
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:23:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E66F220658
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:23:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E66F220658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id B5ACE205C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:23:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="hZf1Iy/l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5ACE205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728258AbeH3BWG (ORCPT
+        id S1728919AbeH3BWH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 21:22:06 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37034 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727507AbeH3BWG (ORCPT
+        Wed, 29 Aug 2018 21:22:07 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:49732 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727609AbeH3BWG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 29 Aug 2018 21:22:06 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7TLMNa1085691
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 17:23:20 -0400
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2m6158w645-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 17:23:20 -0400
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 29 Aug 2018 17:23:19 -0400
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 29 Aug 2018 17:23:15 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7TLNELa27459710
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 29 Aug 2018 21:23:14 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7085CB2064;
-        Wed, 29 Aug 2018 17:22:10 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4FBEFB206C;
-        Wed, 29 Aug 2018 17:22:10 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 29 Aug 2018 17:22:10 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id AAF9E16C91C3; Wed, 29 Aug 2018 14:23:14 -0700 (PDT)
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tip/core/rcu 2/3] rcutorture: Test early boot call_srcu()
-Date:   Wed, 29 Aug 2018 14:23:12 -0700
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180829212036.GA22033@linux.vnet.ibm.com>
-References: <20180829212036.GA22033@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18082921-0052-0000-0000-000003281A89
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009636; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01080719; UDB=6.00557482; IPR=6.00860704;
- MB=3.00023001; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-29 21:23:18
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082921-0053-0000-0000-00005DE5D86F
-Message-Id: <20180829212313.22903-2-paulmck@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-29_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=989 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1808290208
+Received: from avalon.localnet (rec54-5-78-202-243-150.fbx.proxad.net [78.202.243.150])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8E6F5B92;
+        Wed, 29 Aug 2018 23:23:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1535577800;
+        bh=5ljkoa/Q4UTPzTLgLpHS681lGcb4NUEeXTvbO78QJAQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=hZf1Iy/ltSi9+wTMlthCVMMmXObDybjMYkgkjTA+NtR53WKjU3n1GF5RwZQOAvh7S
+         QtWuKzY4LfxhWKiSdu7ZjGRro1jt3HZyZDKNFX0nxt3qwjG/PQIelcsG9yBRuqcPEx
+         qkoKfDzAJX4M98QB3xFuvPmpUq5rD4VOe9ZpHJjc=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Sakari Ailus <sakari.ailus@iki.fi>
+Cc:     Philippe De Muyter <phdm@macq.eu>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Luca Ceresoli <luca@lucaceresoli.net>,
+        linux-media@vger.kernel.org, Leon Luo <leonl@leopardimaging.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/7] media: imx274: don't hard-code the subdev name to DRIVER_NAME
+Date:   Thu, 30 Aug 2018 00:23:23 +0300
+Message-ID: <1552922.PBQrL6RDxY@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180829113843.4v63cxf3clvbzbtd@valkosipuli.retiisi.org.uk>
+References: <20180824163525.12694-1-luca@lucaceresoli.net> <20180829112936.GA15244@frolo.macqel> <20180829113843.4v63cxf3clvbzbtd@valkosipuli.retiisi.org.uk>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that SRCU permits call_srcu() to be invoked at early boot, this
-commit ensures that the rcutorture scripting tests early boot call_srcu().
+Hello,
 
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
----
- tools/testing/selftests/rcutorture/configs/rcu/SRCU-P.boot | 1 +
- tools/testing/selftests/rcutorture/configs/rcu/SRCU-u.boot | 1 +
- tools/testing/selftests/rcutorture/configs/rcu/TREE05.boot | 1 +
- 3 files changed, 3 insertions(+)
+On Wednesday, 29 August 2018 14:38:43 EEST Sakari Ailus wrote:
+> On Wed, Aug 29, 2018 at 01:29:36PM +0200, Philippe De Muyter wrote:
+> > On Wed, Aug 29, 2018 at 02:07:21PM +0300, Sakari Ailus wrote:
+> >> On Tue, Aug 28, 2018 at 06:02:55PM +0200, Philippe De Muyter wrote:
 
-diff --git a/tools/testing/selftests/rcutorture/configs/rcu/SRCU-P.boot b/tools/testing/selftests/rcutorture/configs/rcu/SRCU-P.boot
-index 84a7d51b7481..ce48c7b82673 100644
---- a/tools/testing/selftests/rcutorture/configs/rcu/SRCU-P.boot
-+++ b/tools/testing/selftests/rcutorture/configs/rcu/SRCU-P.boot
-@@ -1 +1,2 @@
- rcutorture.torture_type=srcud
-+rcupdate.rcu_self_test=1
-diff --git a/tools/testing/selftests/rcutorture/configs/rcu/SRCU-u.boot b/tools/testing/selftests/rcutorture/configs/rcu/SRCU-u.boot
-index 84a7d51b7481..ce48c7b82673 100644
---- a/tools/testing/selftests/rcutorture/configs/rcu/SRCU-u.boot
-+++ b/tools/testing/selftests/rcutorture/configs/rcu/SRCU-u.boot
-@@ -1 +1,2 @@
- rcutorture.torture_type=srcud
-+rcupdate.rcu_self_test=1
-diff --git a/tools/testing/selftests/rcutorture/configs/rcu/TREE05.boot b/tools/testing/selftests/rcutorture/configs/rcu/TREE05.boot
-index c7fd050dfcd9..dfebc82932ca 100644
---- a/tools/testing/selftests/rcutorture/configs/rcu/TREE05.boot
-+++ b/tools/testing/selftests/rcutorture/configs/rcu/TREE05.boot
-@@ -3,3 +3,4 @@ rcupdate.rcu_self_test_sched=1
- rcutree.gp_preinit_delay=3
- rcutree.gp_init_delay=3
- rcutree.gp_cleanup_delay=3
-+rcupdate.rcu_self_test=1
+[snip]
+
+> >>> Then we should probably also apply the following patch I submitted :
+> >>> 
+> >>> "media: v4l2-common: v4l2_spi_subdev_init : generate unique name"
+> >>> 
+> >>> 	https://patchwork.kernel.org/patch/10553035/
+> >>> 
+> >>> and perhaps
+> >>> 
+> >>> "media: v4l2-common: simplify v4l2_i2c_subdev_init name generation"
+> >>> 
+> >>> 	https://patchwork.kernel.org/patch/10553037/
+> >> 
+> >> The problem with this patch is that the existing naming scheme is very
+> >> similar while the new one offers no tangible benefits apart from being
+> >> in line with the rest of the kernel. That's still not a benefit for uAPI:
+> >> changing the name is certain to break user space applications.
+> > 
+> > I agree with you on the patch for v4l2_i2c_subdev_init (I wrote
+> > 'perhaps'), but you don't say anything on the one about
+> > v4l2_spi_subdev_init :), which fixes an actual bug.  I have 2 identical
+> > SPI-controlled sensors on the same board, and without my patch they get
+> > the same subdev name.  Of course, I could fix that in the sensor driver
+> > itself, but that's not what we want, or do we ?
+> 
+> Good point. I missed the naming of the SPI devices ignored any bus
+> information there. I'm rather inclined towards taking the SPI patch. Hans,
+> Mauro, Laurent; any opinion on that?
+
+I agree that the SPI patch makes sense, I think we should take it.
+
 -- 
-2.17.1
+Regards,
+
+Laurent Pinchart
+
+
 
