@@ -2,254 +2,106 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAFB6C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:28:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC5B3C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:29:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8820120658
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:28:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8820120658
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 8E1F720652
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 21:29:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="gr6k1KaJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E1F720652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728039AbeH3B1M (ORCPT
+        id S1728271AbeH3B1v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 21:27:12 -0400
-Received: from mail-qt0-f180.google.com ([209.85.216.180]:41383 "EHLO
-        mail-qt0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727449AbeH3B1M (ORCPT
+        Wed, 29 Aug 2018 21:27:51 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:47430 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727324AbeH3B1v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 21:27:12 -0400
-Received: by mail-qt0-f180.google.com with SMTP id t39-v6so7525449qtc.8
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 14:28:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:reply-to:to:cc:date
-         :in-reply-to:references:organization:mime-version
-         :content-transfer-encoding;
-        bh=B5uqRUhVnXSRJ4DszGLcxAojQi1JXw4Oz1rUijCBEf4=;
-        b=PI753DWTgSbBuAestO/8ddcTmTxIEGGlcefAMf63DRlQahifhvge/NP42hfewSZvcA
-         p+7g3Ikce7lsUL8+RBtcb8tfEUARyMagO3CAVRK2IhMs/iA/56GoJ7GvStEI5xOlhhMv
-         E2n2RNvEdQ14Nlc9e0EnQBsPDxiF7fPRAKa8E6WzbNY1j7NTXSaiAt8zDEuTRDdKpRM4
-         /HutOwHs69uIhmOcQsaXc/kY5Qabdk2Eqz6X1vkz3haTYPyApVcCxSqxNERlN4r2JBOu
-         i0GP8CRMsuW5mNhZzlu+JOzjsl6xe9kdNvYI7ZpnlbhVfn42q/35E7VCBFVUAirPZwDp
-         kBcw==
-X-Gm-Message-State: APzg51Bi6zeiuk/VHRLfSu+eWGFK8fUT4pbfYZU32FjGyIoZzC7eqIqU
-        y9mnlCDIImNCArruaVloejl6NA==
-X-Google-Smtp-Source: ANB0VdbgFEyNSN3+b0xl2clhK7ms1+7dLWpUttyhRdJOXamMd9lQOe5eO1/7Pg+kN+vROx0dT/LHuw==
-X-Received: by 2002:a0c:b616:: with SMTP id f22-v6mr8610862qve.184.1535578105180;
-        Wed, 29 Aug 2018 14:28:25 -0700 (PDT)
-Received: from whitewolf.lyude.net (pool-72-74-165-95.bstnma.fios.verizon.net. [72.74.165.95])
-        by smtp.gmail.com with ESMTPSA id j129-v6sm2784842qke.56.2018.08.29.14.28.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 29 Aug 2018 14:28:24 -0700 (PDT)
-Message-ID: <ea3c8d6fd7fed44911fe55f04d785922fb2a2483.camel@redhat.com>
-Subject: Re: [Intel-gfx] [PATCH v4] drm/i915: Re-apply "Perform link quality
- check, unconditionally during long pulse"
-From:   Lyude Paul <lyude@redhat.com>
-Reply-To: lyude@redhat.com
-To:     Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
-        intel-gfx@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Jan-Marek Glogowski <glogow@fbihome.de>, stable@vger.kernel.org
-Date:   Wed, 29 Aug 2018 17:28:23 -0400
-In-Reply-To: <20180829212235.GL6418@intel.com>
-References: <20180825191035.3945-1-lyude@redhat.com>
-         <871sak5hdu.fsf@intel.com>
-         <c87f70879c87b0d29880e32f6632c4c7acd337bb.camel@redhat.com>
-         <20180829212235.GL6418@intel.com>
-Organization: Red Hat
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 29 Aug 2018 21:27:51 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w7TLSoBr093873;
+        Wed, 29 Aug 2018 16:28:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1535578131;
+        bh=Zk8iiAXu8A0Yn8Ro0NmBfaaQ7Mfzx9MVt0hnrfejXXw=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=gr6k1KaJwcJrpPnvXZ11YJ14lOytF1hg9aPcAQmLg8dRoyV8HP7HzWktvCUjiajXd
+         L79hrQ0LxA8FayRwiX2bW1Vqhdnpm3lzgCGztuT6Iq6PoK3fbq+5f0+VsRDKBVxu1e
+         moOftKuXOJs0jsC+vXVVt7jUF9vdZazyCSeLV6ZA=
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7TLSomc011643;
+        Wed, 29 Aug 2018 16:28:50 -0500
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 29
+ Aug 2018 16:28:50 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Wed, 29 Aug 2018 16:28:50 -0500
+Received: from [128.247.59.147] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w7TLSoFu025152;
+        Wed, 29 Aug 2018 16:28:50 -0500
+Subject: Re: [4.14.66-rt40] [report][cpuhotplug] BUG: sleeping function called
+ from invalid context at kernel/locking/rtmutex.c:974
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>
+CC:     "linux-rt-users@vger.kernel.org" <linux-rt-users@vger.kernel.org>,
+        Mike Galbraith <efault@gmx.de>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <4277080d-fbd1-282c-164d-c07796260c36@ti.com>
+ <20180829140817.7pr5g2aonbp55fjr@linutronix.de>
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+Message-ID: <3aaebda9-a956-55d6-0b04-f84daa6e4866@ti.com>
+Date:   Wed, 29 Aug 2018 16:28:50 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180829140817.7pr5g2aonbp55fjr@linutronix.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-08-29 at 14:22 -0700, Rodrigo Vivi wrote:
-> On Mon, Aug 27, 2018 at 01:39:02PM -0400, Lyude Paul wrote:
-> > On Mon, 2018-08-27 at 11:43 +0300, Jani Nikula wrote:
-> > > On Sat, 25 Aug 2018, Lyude Paul <lyude@redhat.com> wrote:
-> > > > From: Jan-Marek Glogowski <glogow@fbihome.de>
-> > > > 
-> > > > This re-applies the workaround for "some DP sinks, [which] are a
-> > > > little nuts" from commit 1a36147bb939 ("drm/i915: Perform link
-> > > > quality check unconditionally during long pulse").
-> > > > It makes the secondary AOC E2460P monitor connected via DP to an
-> > > > acer Veriton N4640G usable again.
-> > > > 
-> > > > This hunk was dropped in commit c85d200e8321 ("drm/i915: Move SST
-> > > > DP link retraining into the ->post_hotplug() hook")
-> > > > 
-> > > > Fixes: c85d200e8321 ("drm/i915: Move SST DP link retraining into the
-> > > > ->post_hotplug() hook")
-> > > > [Cleaned up commit message, added stable cc]
-> > > > Signed-off-by: Lyude Paul <lyude@redhat.com>
-> > > > Signed-off-by: Jan-Marek Glogowski <glogow@fbihome.de>
-> > > > Cc: stable@vger.kernel.org
-> > > > ---
-> > > > Resending this to update patchwork; will push in a little bit
-> > > 
-> > > Is there a bugzilla? Reference to a list discussion? Something with a
-> > > dmesg where someone can actually verify this is the right fix?
-> > 
-> > This patch has actually been on the list for a while now-I have had mdnavare
-> > take a look at it as well (they said it looked fine with the only change
-> > being
-> > in regards to the comment), and it'd been on the list for a while already.
-> > 
-> > > 
-> > > IMO needs an ack from Ville too. He should be in Cc: in the first place
-> > > as the author of the regressing commit.
-> > > 
-> > > 'dim fixes c85d200e8321' gives you the output:
-> > 
-> > aaah-I had thought it was just for generating the Fixes line, I will be more
-> > careful about that in the future
-> 
-> Hi Lyude,
-> 
-> I understand that this patch was a while on the mailing list and no
-> proper attention, but besides the commit message information that
-> dim is generating I have a feeling now that this patch wasn't quite
-> ready yet and shouldn't be rushed in like it was.
-> 
-> Since you modified few versions ideally it would be good to have extra eyes
-> and the mandatory "Reviewed-by" there.
-> 
-> Also it is a good idea to give few days for different timezones to
-> comment out (after the re-sping I mean)
-> 
-> And finally based on the discussions it seems that there is still
-> some work to get done or a different way to handle this other
-> this back and forth of reapply-revert-reapply...
-> 
-> I just noticed it when preparing drm-intel-fixes pull request.
-> 
-> Since I'm not 100% confident this patch should be here I'm removing it
-> from this week's pull request.
-> 
-> But probably adding it next week if Jani and Ville give and ack
-> or indication that it is right or at least he best we could do now.
-   I understand! Sorry about all of the trouble, I will be much more careful in
-   the future
-> 
-> thanks,
-> Rodrigo.
-> 
-> 
-> > > 
-> > > Fixes: c85d200e8321 ("drm/i915: Move SST DP link retraining into the
-> > > ->post_hotplug() hook")
-> > > Cc: Manasi Navare <manasi.d.navare@intel.com>
-> > > Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> > > Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> > > Cc: Lyude Paul <lyude@redhat.com>
-> > > Cc: Jani Nikula <jani.nikula@linux.intel.com>
-> > > Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-> > > Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-> > > Cc: intel-gfx@lists.freedesktop.org
-> > > Cc: <stable@vger.kernel.org> # v4.17+
-> > > 
-> > > BR,
-> > > Jani.
-> > > 
-> > > > 
-> > > >  drivers/gpu/drm/i915/intel_dp.c | 33 +++++++++++++++++++--------------
-> > > >  1 file changed, 19 insertions(+), 14 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/gpu/drm/i915/intel_dp.c
-> > > > b/drivers/gpu/drm/i915/intel_dp.c
-> > > > index b3f6f04c3c7d..db8515171270 100644
-> > > > --- a/drivers/gpu/drm/i915/intel_dp.c
-> > > > +++ b/drivers/gpu/drm/i915/intel_dp.c
-> > > > @@ -4333,18 +4333,6 @@ intel_dp_needs_link_retrain(struct intel_dp
-> > > > *intel_dp)
-> > > >  	return !drm_dp_channel_eq_ok(link_status, intel_dp->lane_count);
-> > > >  }
-> > > >  
-> > > > -/*
-> > > > - * If display is now connected check links status,
-> > > > - * there has been known issues of link loss triggering
-> > > > - * long pulse.
-> > > > - *
-> > > > - * Some sinks (eg. ASUS PB287Q) seem to perform some
-> > > > - * weird HPD ping pong during modesets. So we can apparently
-> > > > - * end up with HPD going low during a modeset, and then
-> > > > - * going back up soon after. And once that happens we must
-> > > > - * retrain the link to get a picture. That's in case no
-> > > > - * userspace component reacted to intermittent HPD dip.
-> > > > - */
-> > > >  int intel_dp_retrain_link(struct intel_encoder *encoder,
-> > > >  			  struct drm_modeset_acquire_ctx *ctx)
-> > > >  {
-> > > > @@ -5031,7 +5019,8 @@ intel_dp_unset_edid(struct intel_dp *intel_dp)
-> > > >  }
-> > > >  
-> > > >  static int
-> > > > -intel_dp_long_pulse(struct intel_connector *connector)
-> > > > +intel_dp_long_pulse(struct intel_connector *connector,
-> > > > +		    struct drm_modeset_acquire_ctx *ctx)
-> > > >  {
-> > > >  	struct drm_i915_private *dev_priv = to_i915(connector-
-> > > > >base.dev);
-> > > >  	struct intel_dp *intel_dp = intel_attached_dp(&connector->base);
-> > > > @@ -5090,6 +5079,22 @@ intel_dp_long_pulse(struct intel_connector
-> > > > *connector)
-> > > >  		 */
-> > > >  		status = connector_status_disconnected;
-> > > >  		goto out;
-> > > > +	} else {
-> > > > +		/*
-> > > > +		 * If display is now connected check links status,
-> > > > +		 * there has been known issues of link loss triggering
-> > > > +		 * long pulse.
-> > > > +		 *
-> > > > +		 * Some sinks (eg. ASUS PB287Q) seem to perform some
-> > > > +		 * weird HPD ping pong during modesets. So we can
-> > > > apparently
-> > > > +		 * end up with HPD going low during a modeset, and then
-> > > > +		 * going back up soon after. And once that happens we
-> > > > must
-> > > > +		 * retrain the link to get a picture. That's in case no
-> > > > +		 * userspace component reacted to intermittent HPD dip.
-> > > > +		 */
-> > > > +		struct intel_encoder *encoder =
-> > > > &dp_to_dig_port(intel_dp)-
-> > > > > base;
-> > > > 
-> > > > +
-> > > > +		intel_dp_retrain_link(encoder, ctx);
-> > > >  	}
-> > > >  
-> > > >  	/*
-> > > > @@ -5151,7 +5156,7 @@ intel_dp_detect(struct drm_connector *connector,
-> > > >  				return ret;
-> > > >  		}
-> > > >  
-> > > > -		status = intel_dp_long_pulse(intel_dp-
-> > > > >attached_connector);
-> > > > +		status = intel_dp_long_pulse(intel_dp-
-> > > > >attached_connector,
-> > > > ctx);
-> > > >  	}
-> > > >  
-> > > >  	intel_dp->detect_done = false;
-> > > 
-> > > 
-> > 
-> > -- 
-> > Cheers,
-> > 	Lyude Paul
-> > 
-> > _______________________________________________
-> > Intel-gfx mailing list
-> > Intel-gfx@lists.freedesktop.org
-> > https://lists.freedesktop.org/mailman/listinfo/intel-gfx
 
+
+On 08/29/2018 09:08 AM, Sebastian Andrzej Siewior wrote:
+> On 2018-08-28 18:28:42 [-0500], Grygorii Strashko wrote:
+
+[...]
+
+>> [    0.912275] [<ffff0000082023cc>] alloc_pages_current+0xcc/0xe0
+>> [    0.912287] [<ffff00000846bb00>] its_allocate_pending_table+0x60/0xa0
+>> [    0.912295] [<ffff00000846e5d8>] its_cpu_init+0x2a0/0x380
+>> [    0.912303] [<ffff00000846b484>] gic_cpu_init.part.6+0x15c/0x170
+>> [    0.912311] [<ffff00000846b4ac>] gic_starting_cpu+0x14/0x20
+> 
+> This is fixed by
+>    https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git/tree/patches/irqchip-gic-v3-its-Make-its_lock-a-raw_spin_lock_t.patch?h=linux-4.18.y-rt-patches
+[1]
+>    https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git/tree/patches/irqchip-gic-v3-its-Move-ITS-pend_page-allocation-int.patch?h=linux-4.18.y-rt-patches
+[2]
+> 
+> in the v4.18 tree. The first patch was merged upstream. The second will
+> be replaced by the patches Marc Zyngier proposed in
+>    https://lkml.kernel.org/r/3302f069-8f4e-8d97-5166-0dec01b43c4c@arm.com
+> 
+> I plan to test + replace those for the next v4.18 release.
+
+Thank you. Are there any plans to back port them for 4.14-rt?
+Patch [1] need to be reworked a bit, [2] - I was able to cherry-pick from 4.18-rt.
+
+-- 
+regards,
+-grygorii
