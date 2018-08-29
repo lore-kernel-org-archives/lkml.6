@@ -2,167 +2,147 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42464C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 17:18:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11592C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 17:18:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5957205C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 17:18:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5957205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id BE19A20658
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 17:18:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE19A20658
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=firstfloor.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728267AbeH2VPz (ORCPT
+        id S1728511AbeH2VQb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 17:15:55 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46766 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727704AbeH2VPy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 17:15:54 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AB64E738F1;
-        Wed, 29 Aug 2018 17:17:59 +0000 (UTC)
-Received: from localhost.localdomain.com (ovpn-126-69.rdu2.redhat.com [10.10.126.69])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B7776B278D;
-        Wed, 29 Aug 2018 17:17:58 +0000 (UTC)
-From:   jglisse@redhat.com
-To:     linux-mm@kvack.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        Zi Yan <zi.yan@cs.rutgers.edu>,
-        Michal Hocko <mhocko@kernel.org>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH 4/7] mm/hmm: properly handle migration pmd v2
-Date:   Wed, 29 Aug 2018 13:17:49 -0400
-Message-Id: <20180829171749.9365-1-jglisse@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-In-Reply-To: <20180824192549.30844-5-jglisse@redhat.com>
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 29 Aug 2018 17:17:59 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 29 Aug 2018 17:17:59 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jglisse@redhat.com' RCPT:''
+        Wed, 29 Aug 2018 17:16:31 -0400
+Received: from mga11.intel.com ([192.55.52.93]:17560 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727554AbeH2VQa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 17:16:30 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2018 10:18:36 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,303,1531810800"; 
+   d="scan'208";a="252927512"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
+  by orsmga005.jf.intel.com with ESMTP; 29 Aug 2018 10:18:36 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id 83DDC301BA0; Wed, 29 Aug 2018 10:18:36 -0700 (PDT)
+From:   Andi Kleen <andi@firstfloor.org>
+To:     acme@kernel.org
+Cc:     jolsa@kernel.org, adrian.hunter@intel.com,
+        linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
+Subject: [PATCH v1 03/10] tools, perf, script: Add --insn-trace for instruction decoding
+Date:   Wed, 29 Aug 2018 10:18:27 -0700
+Message-Id: <20180829171834.6590-4-andi@firstfloor.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180829171834.6590-1-andi@firstfloor.org>
+References: <20180829171834.6590-1-andi@firstfloor.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jérôme Glisse <jglisse@redhat.com>
+From: Andi Kleen <ak@linux.intel.com>
 
-Before this patch migration pmd entry (!pmd_present()) would have
-been treated as a bad entry (pmd_bad() returns true on migration
-pmd entry). The outcome was that device driver would believe that
-the range covered by the pmd was bad and would either SIGBUS or
-simply kill all the device's threads (each device driver decide
-how to react when the device tries to access poisonnous or invalid
-range of memory).
+Add a --insn-trace short hand option for decoding and disassembling
+instruction streams for intel_pt. This automatically pipes the
+output into the xed disassembler to generate disassembled instructions.
+This just makes this use model much nicer to use
 
-This patch explicitly handle the case of migration pmd entry which
-are non present pmd entry and either wait for the migration to
-finish or report empty range (when device is just trying to pre-
-fill a range of virtual address and thus do not want to wait or
-trigger page fault).
+Before
 
-Changed since v1:
-  - use is_pmd_migration_entry() instead of open coding the
-    equivalent.
+% perf record -e intel_pt// ...
+% perf script --itrace=i0ns --ns -F +insn,-event,-period | xed -F insn: -A -64
+   swapper     0 [000] 117276.429606186:  ffffffff81010486 pt_config ([kernel.kallsyms])          nopl  %eax, (%rax,%rax,1)
+   swapper     0 [000] 117276.429606186:  ffffffff8101048b pt_config ([kernel.kallsyms])          add $0x10, %rsp
+   swapper     0 [000] 117276.429606186:  ffffffff8101048f pt_config ([kernel.kallsyms])          popq  %rbx
+   swapper     0 [000] 117276.429606186:  ffffffff81010490 pt_config ([kernel.kallsyms])          popq  %rbp
+   swapper     0 [000] 117276.429606186:  ffffffff81010491 pt_config ([kernel.kallsyms])          popq  %r12
+   swapper     0 [000] 117276.429606186:  ffffffff81010493 pt_config ([kernel.kallsyms])          popq  %r13
+   swapper     0 [000] 117276.429606186:  ffffffff81010495 pt_config ([kernel.kallsyms])          popq  %r14
+   swapper     0 [000] 117276.429606186:  ffffffff81010497 pt_config ([kernel.kallsyms])          popq  %r15
+   swapper     0 [000] 117276.429606186:  ffffffff81010499 pt_config ([kernel.kallsyms])          retq
+   swapper     0 [000] 117276.429606186:  ffffffff8101063e pt_event_add ([kernel.kallsyms])               cmpl  $0x1, 0x1b0(%rbx)
+   swapper     0 [000] 117276.429606186:  ffffffff81010645 pt_event_add ([kernel.kallsyms])               mov $0xffffffea, %eax
+   swapper     0 [000] 117276.429606186:  ffffffff8101064a pt_event_add ([kernel.kallsyms])               mov $0x0, %edx
+   swapper     0 [000] 117276.429606186:  ffffffff8101064f pt_event_add ([kernel.kallsyms])               popq  %rbx
+   swapper     0 [000] 117276.429606186:  ffffffff81010650 pt_event_add ([kernel.kallsyms])               cmovnz %edx, %eax
+   swapper     0 [000] 117276.429606186:  ffffffff81010653 pt_event_add ([kernel.kallsyms])               jmp 0xffffffff81010635
+   swapper     0 [000] 117276.429606186:  ffffffff81010635 pt_event_add ([kernel.kallsyms])               retq
+   swapper     0 [000] 117276.429606186:  ffffffff8115e687 event_sched_in.isra.107 ([kernel.kallsyms])            test %eax, %eax
 
-Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
-Cc: Zi Yan <zi.yan@cs.rutgers.edu>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Ralph Campbell <rcampbell@nvidia.com>
-Cc: John Hubbard <jhubbard@nvidia.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
+Now
+
+% perf record -e intel_pt// ...
+% perf script --insn-trace
+... same output ...
+
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
 ---
- mm/hmm.c | 42 ++++++++++++++++++++++++++++++++++++------
- 1 file changed, 36 insertions(+), 6 deletions(-)
+ tools/perf/Documentation/perf-script.txt |  4 ++++
+ tools/perf/builtin-script.c              | 14 ++++++++++++++
+ 2 files changed, 18 insertions(+)
 
-diff --git a/mm/hmm.c b/mm/hmm.c
-index a16678d08127..fd3d19d98070 100644
---- a/mm/hmm.c
-+++ b/mm/hmm.c
-@@ -577,22 +577,44 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
+diff --git a/tools/perf/Documentation/perf-script.txt b/tools/perf/Documentation/perf-script.txt
+index afdafe2110a1..04a57e0fb3a6 100644
+--- a/tools/perf/Documentation/perf-script.txt
++++ b/tools/perf/Documentation/perf-script.txt
+@@ -383,6 +383,10 @@ include::itrace.txt[]
+ 	will be printed. Each entry has function name and file/line. Enabled by
+ 	default, disable with --no-inline.
+ 
++--insn-trace::
++	Show instruction stream for intel_pt traces. Requires installing the
++	xed disassembler.
++
+ SEE ALSO
+ --------
+ linkperf:perf-record[1], linkperf:perf-script-perl[1],
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index 910e0f1f2876..66daa7df68c5 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -44,6 +44,7 @@
+ #include <sys/stat.h>
+ #include <fcntl.h>
+ #include <unistd.h>
++#include <subcmd/pager.h>
+ 
+ #include "sane_ctype.h"
+ 
+@@ -3072,6 +3073,17 @@ static int perf_script__process_auxtrace_info(struct perf_tool *tool,
+ #define perf_script__process_auxtrace_info 0
+ #endif
+ 
++static int parse_insn_trace(const struct option *opt __maybe_unused,
++			    const char *str __maybe_unused,
++			    int unset __maybe_unused)
++{
++	parse_output_fields(NULL, "+insn,-event,-period", 0);
++	itrace_parse_synth_opts(opt, "i0ns", 0);
++	nanosecs = true;
++	force_pager("xed -F insn: -A -64 | less");
++	return 0;
++}
++
+ int cmd_script(int argc, const char **argv)
  {
- 	struct hmm_vma_walk *hmm_vma_walk = walk->private;
- 	struct hmm_range *range = hmm_vma_walk->range;
-+	struct vm_area_struct *vma = walk->vma;
- 	uint64_t *pfns = range->pfns;
- 	unsigned long addr = start, i;
- 	pte_t *ptep;
-+	pmd_t pmd;
- 
--	i = (addr - range->start) >> PAGE_SHIFT;
- 
- again:
--	if (pmd_none(*pmdp))
-+	pmd = READ_ONCE(*pmdp);
-+	if (pmd_none(pmd))
- 		return hmm_vma_walk_hole(start, end, walk);
- 
--	if (pmd_huge(*pmdp) && (range->vma->vm_flags & VM_HUGETLB))
-+	if (pmd_huge(pmd) && (range->vma->vm_flags & VM_HUGETLB))
- 		return hmm_pfns_bad(start, end, walk);
- 
--	if (pmd_devmap(*pmdp) || pmd_trans_huge(*pmdp)) {
--		pmd_t pmd;
-+	if (is_pmd_migration_entry(pmd)) {
-+		swp_entry_t entry = pmd_to_swp_entry(pmd);
-+
-+		bool fault, write_fault;
-+		unsigned long npages;
-+		uint64_t *pfns;
-+
-+		i = (addr - range->start) >> PAGE_SHIFT;
-+		npages = (end - addr) >> PAGE_SHIFT;
-+		pfns = &range->pfns[i];
- 
-+		hmm_range_need_fault(hmm_vma_walk, pfns, npages,
-+				     0, &fault, &write_fault);
-+		if (fault || write_fault) {
-+			hmm_vma_walk->last = addr;
-+			pmd_migration_entry_wait(vma->vm_mm, pmdp);
-+			return -EAGAIN;
-+		}
-+		return 0;
-+	} else if (!pmd_present(pmd))
-+		return hmm_pfns_bad(start, end, walk);
-+
-+	if (pmd_devmap(pmd) || pmd_trans_huge(pmd)) {
- 		/*
- 		 * No need to take pmd_lock here, even if some other threads
- 		 * is splitting the huge pmd we will get that event through
-@@ -607,13 +629,21 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
- 		if (!pmd_devmap(pmd) && !pmd_trans_huge(pmd))
- 			goto again;
- 
-+		i = (addr - range->start) >> PAGE_SHIFT;
- 		return hmm_vma_handle_pmd(walk, addr, end, &pfns[i], pmd);
- 	}
- 
--	if (pmd_bad(*pmdp))
-+	/*
-+	 * We have handled all the valid case above ie either none, migration,
-+	 * huge or transparent huge. At this point either it is a valid pmd
-+	 * entry pointing to pte directory or it is a bad pmd that will not
-+	 * recover.
-+	 */
-+	if (pmd_bad(pmd))
- 		return hmm_pfns_bad(start, end, walk);
- 
- 	ptep = pte_offset_map(pmdp, addr);
-+	i = (addr - range->start) >> PAGE_SHIFT;
- 	for (; addr < end; addr += PAGE_SIZE, ptep++, i++) {
- 		int r;
- 
+ 	bool show_full_info = false;
+@@ -3156,6 +3168,8 @@ int cmd_script(int argc, const char **argv)
+ 		    "system-wide collection from all CPUs"),
+ 	OPT_STRING('S', "symbols", &symbol_conf.sym_list_str, "symbol[,symbol...]",
+ 		   "only consider these symbols"),
++	OPT_CALLBACK_OPTARG(0, "insn-trace", &itrace_synth_opts, NULL, NULL,
++			"Decode instructions from itrace", parse_insn_trace),
+ 	OPT_STRING(0, "stop-bt", &symbol_conf.bt_stop_list_str, "symbol[,symbol...]",
+ 		   "Stop display of callgraph at these symbols"),
+ 	OPT_STRING('C', "cpu", &cpu_list, "cpu", "list of cpus to profile"),
 -- 
 2.17.1
 
