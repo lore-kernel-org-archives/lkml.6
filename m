@@ -2,161 +2,95 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BA17C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 18:34:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EDE6C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 18:34:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DCCD20657
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 18:34:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B51A20657
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 18:34:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fXQitN6K";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fXQitN6K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DCCD20657
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="MGlmwzGv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B51A20657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728304AbeH2WcG (ORCPT
+        id S1728484AbeH2WcJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 18:32:06 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38210 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727657AbeH2WcG (ORCPT
+        Wed, 29 Aug 2018 18:32:09 -0400
+Received: from smtprelay2.synopsys.com ([198.182.60.111]:47320 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727657AbeH2WcH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 18:32:06 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E35FB6055B; Wed, 29 Aug 2018 18:33:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535567636;
-        bh=umWvDB2GUgXjzPQxybvq5exqOnvpeZPtmBMZgUyFah0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=fXQitN6Kxv/htbwcCHs0BkuU79L9xM6WpQvMVNIlwz3oQM7cHvlp8ELU42dztwW3u
-         UkyWMVFtGI1elzd+e+uKG5J5I1FTjP7tRtJWPypD6U6fqPb9ZDvb3OhMGFxykuqNBc
-         rqOFik+vhkvGuO+N1aC/S0hfI7PrFsUNtw3K9ByY=
-Received: from controller.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: wufan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 52F91602AE;
-        Wed, 29 Aug 2018 18:33:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1535567636;
-        bh=umWvDB2GUgXjzPQxybvq5exqOnvpeZPtmBMZgUyFah0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=fXQitN6Kxv/htbwcCHs0BkuU79L9xM6WpQvMVNIlwz3oQM7cHvlp8ELU42dztwW3u
-         UkyWMVFtGI1elzd+e+uKG5J5I1FTjP7tRtJWPypD6U6fqPb9ZDvb3OhMGFxykuqNBc
-         rqOFik+vhkvGuO+N1aC/S0hfI7PrFsUNtw3K9ByY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 52F91602AE
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=wufan@codeaurora.org
-From:   Fan Wu <wufan@codeaurora.org>
-To:     mchehab@kernel.org
-Cc:     bp@alien8.de, james.morse@arm.com, baicar.tyler@gmail.com,
-        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, Fan Wu <wufan@codeaurora.org>
-Subject: [PATCH] EDAC, ghes: use CPER module handles to locate DIMMs
-Date:   Wed, 29 Aug 2018 18:33:52 +0000
-Message-Id: <1535567632-18089-1-git-send-email-wufan@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        Wed, 29 Aug 2018 18:32:07 -0400
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 0B80710C05B0;
+        Wed, 29 Aug 2018 11:33:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1535567638; bh=rPs8CSmnvIQBPse6oAl4TGnZi05VA0MJE8CAKgRjcS4=;
+        h=From:To:CC:Subject:Date:From;
+        b=MGlmwzGv7Dx4SbN2p7l1uT105spKrKRk6p94rnrz0Nv0WBSk2bERUpsfNMDuMaEGS
+         Je73cbNXpmORA/B25zkOJBzpBJMeHK9Fg0mDRU8V0gJbZPP8n9gedq56LinyVvixR9
+         Akf+0Os+k+7rXMYpjDH6qRGQy1mrufr6qRFVQQqNaoHl66Q+vAq1vPuqgEeaQFe36R
+         r8rN5oJZS5S4pgFRxM6/ehVjSGVZCkTx7dhw+TGcoSQ6GK+DU6enhKD9qkylrM/NAb
+         ULUOdQm5sWgtfN01A0RUShjyVOu/ouJw5RQySQC1EJE0sLZlQZ/+/xqmHwTIy52HD4
+         otZtSy3lF0lvg==
+Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 8F74942D2;
+        Wed, 29 Aug 2018 11:33:57 -0700 (PDT)
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ us01wehtc1.internal.synopsys.com (10.12.239.235) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Wed, 29 Aug 2018 11:33:57 -0700
+Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
+ by DE02WEHTCB.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Wed,
+ 29 Aug 2018 20:33:54 +0200
+From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "will.deacon@arm.com" <will.deacon@arm.com>
+CC:     "mingo@kernel.org" <mingo@kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+Subject: Patch "asm-generic/bitops/lock.h: Rewrite using atomic_fetch_"
+ causes kernel crash
+Thread-Topic: Patch "asm-generic/bitops/lock.h: Rewrite using atomic_fetch_"
+ causes kernel crash
+Thread-Index: AQHUP8bWpY6ZRO7qfEeDcvF8FJVDUg==
+Date:   Wed, 29 Aug 2018 18:33:53 +0000
+Message-ID: <1535567633.4465.23.camel@synopsys.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.121.3.36]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <F67F572A3C91854BB3BC28E3C8138643@internal.synopsys.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current ghes_edac driver does not update per-dimm error
-counters when reporting memory errors, because there is no
-platform-independent way to find DIMMs based on the error
-information provided by firmware. This patch offers a solution
-for platforms whose firmwares provide valid module handles
-(SMBIOS type 17) in error records. In this case ghes_edac will
-use the module handles to locate DIMMs and thus makes per-dimm
-error reporting possible.
-
-Signed-off-by: Fan Wu <wufan@codeaurora.org>
----
- drivers/edac/ghes_edac.c | 36 +++++++++++++++++++++++++++++++++---
- include/linux/edac.h     |  2 ++
- 2 files changed, 35 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/edac/ghes_edac.c b/drivers/edac/ghes_edac.c
-index 473aeec..db527f0 100644
---- a/drivers/edac/ghes_edac.c
-+++ b/drivers/edac/ghes_edac.c
-@@ -81,6 +81,26 @@ static void ghes_edac_count_dimms(const struct dmi_header *dh, void *arg)
- 		(*num_dimm)++;
- }
- 
-+static int ghes_edac_dimm_index(u16 handle)
-+{
-+	struct mem_ctl_info *mci;
-+	int i;
-+
-+	if (!ghes_pvt)
-+		return -1;
-+
-+	mci = ghes_pvt->mci;
-+
-+	if (!mci)
-+		return -1;
-+
-+	for (i = 0; i < mci->tot_dimms; i++) {
-+		if (mci->dimms[i]->smbios_handle == handle)
-+			return i;
-+	}
-+	return -1;
-+}
-+
- static void ghes_edac_dmidecode(const struct dmi_header *dh, void *arg)
- {
- 	struct ghes_edac_dimm_fill *dimm_fill = arg;
-@@ -177,6 +197,8 @@ static void ghes_edac_dmidecode(const struct dmi_header *dh, void *arg)
- 				entry->total_width, entry->data_width);
- 		}
- 
-+		dimm->smbios_handle = entry->handle;
-+
- 		dimm_fill->count++;
- 	}
- }
-@@ -327,12 +349,20 @@ void ghes_edac_report_mem_error(int sev, struct cper_sec_mem_err *mem_err)
- 		p += sprintf(p, "bit_pos:%d ", mem_err->bit_pos);
- 	if (mem_err->validation_bits & CPER_MEM_VALID_MODULE_HANDLE) {
- 		const char *bank = NULL, *device = NULL;
-+		int index = -1;
-+
- 		dmi_memdev_name(mem_err->mem_dev_handle, &bank, &device);
-+		p += sprintf(p, "DIMM DMI handle: 0x%.4x ",
-+			     mem_err->mem_dev_handle);
- 		if (bank != NULL && device != NULL)
- 			p += sprintf(p, "DIMM location:%s %s ", bank, device);
--		else
--			p += sprintf(p, "DIMM DMI handle: 0x%.4x ",
--				     mem_err->mem_dev_handle);
-+
-+		index = ghes_edac_dimm_index(mem_err->mem_dev_handle);
-+		if (index >= 0) {
-+			e->top_layer = index;
-+			e->enable_per_layer_report = true;
-+		}
-+
- 	}
- 	if (p > e->location)
- 		*(p - 1) = '\0';
-diff --git a/include/linux/edac.h b/include/linux/edac.h
-index bffb978..a45ce1f 100644
---- a/include/linux/edac.h
-+++ b/include/linux/edac.h
-@@ -451,6 +451,8 @@ struct dimm_info {
- 	u32 nr_pages;			/* number of pages on this dimm */
- 
- 	unsigned csrow, cschannel;	/* Points to the old API data */
-+
-+	u16 smbios_handle;              /* Handle for SMBIOS type 17 */
- };
- 
- /**
--- 
-2.7.4
-
+SGkgR3V5cywNClNpbmNlIHY0LjE5LXJjMSB3ZSBhcmUgZ2V0dGluZyBhIHNlcmlvdXMgcmVncmVz
+c2lvbiBvbiBwbGF0Zm9ybXMgd2l0aCBBUkMgYXJjaGl0ZWN0dXJlLg0KVGhlIGtlcm5lbCBoYXZl
+IGJlY29tZSB1bnN0YWJsZSBhbmQgc3BvbnRhbmVvdXNseSBjcmFzaGVzIG9uIExUUCB0ZXN0cyBl
+eGVjdXRpb24gLyBJTyB0ZXN0cyBvcg0KZXZlbiBvbiBib290Lg0KDQpJIGRvbid0IGtub3cgZXhh
+Y3RseSB3aGF0IGJyZWFrcyBidXQgYmlzZWN0IGNsZWFybHkgYXNzaWduIHRoZSBibGFtZSB0byB0
+aGlzIGNvbW1pdDoNCjg0YzY1OTExMDNkYiAoImxvY2tpbmcvYXRvbWljcywgYXNtLWdlbmVyaWMv
+Yml0b3BzL2xvY2suaDogUmV3cml0ZSB1c2luZyBhdG9taWNfZmV0Y2hfKigpIikNCmh0dHBzOi8v
+Z2l0aHViLmNvbS90b3J2YWxkcy9saW51eC9jb21taXQvODRjNjU5MTEwM2RiZWFmMzkzYTA5MmEz
+ZmM3YjA5NTEwODI1ZjZiOQ0KDQpSZXZlcnRpbmcgdGhlIGNvbW1pdCBzb2x2ZXMgdGhpcyBwcm9i
+bGVtLg0KDQpJIHRlc3RlZCB2NC4xOS1yYzEgb24gQVJNICh3YW5kYm9hcmQsIGkubXg2LCAzMmJp
+dCwgcXVhcmQgY29yZSwgQVJNdjcpIHdoaWNoIHVzZXMgc2FtZQ0KZ2VuZXJpYyBiaXRvcHMgaW1w
+bGVtZW50YXRpb24gYW5kIGl0IHdvcmtzIGZpbmUuDQoNCkRvIHlvdSBoYXZlIGFueSBpZGVhcyB3
+aGF0IHdlbnQgd3Jvbmc/DQotLSANCiBFdWdlbml5IFBhbHRzZXY=
