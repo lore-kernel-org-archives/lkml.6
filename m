@@ -6,130 +6,65 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BA4CC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:14:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0767CC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:14:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30F6120897
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:14:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30F6120897
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
+	by mail.kernel.org (Postfix) with ESMTP id BE36C2086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:14:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE36C2086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728321AbeH2MK3 (ORCPT
+        id S1728352AbeH2MKc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 08:10:29 -0400
-Received: from mout.perfora.net ([74.208.4.196]:55443 "EHLO mout.perfora.net"
+        Wed, 29 Aug 2018 08:10:32 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:42392 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728289AbeH2MK2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 08:10:28 -0400
-Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
- mrelay.perfora.net (mreueus001 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0M6DOO-1fjRNk2dcQ-00yBbQ; Wed, 29 Aug 2018 10:14:39 +0200
-From:   Marcel Ziswiler <marcel@ziswiler.com>
-To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 12/31] ARM: tegra: colibri_t20: indentation/line-feed/white-space clean-up
-Date:   Wed, 29 Aug 2018 10:13:48 +0200
-Message-Id: <20180829081407.11304-13-marcel@ziswiler.com>
+        id S1727803AbeH2MKb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 08:10:31 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 68C85207EB; Wed, 29 Aug 2018 10:14:50 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-53-19.w90-88.abo.wanadoo.fr [90.88.170.19])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 3D5882072F;
+        Wed, 29 Aug 2018 10:14:50 +0200 (CEST)
+From:   Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org
+Cc:     linux-kernel@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: [PATCH] MAINTAINERS: remove myself as FBTFT maintainer
+Date:   Wed, 29 Aug 2018 10:14:48 +0200
+Message-Id: <20180829081448.20374-1-thomas.petazzoni@bootlin.com>
 X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180829081407.11304-1-marcel@ziswiler.com>
-References: <20180829081407.11304-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K1:K9GHaMQXdU7bPSVyF3LWWbH/UgsHDZMjH2LQRJwbw6bx8CDW4Rz
- jOJ4rfH7K6wxlb3PMQ6b7SamKnVVLtQI+nRNkk6miWNmRjbXQBI87K8h8NPlPHC/Vna8Mja
- VV1h7I5yFmq3HoCdiO4gFXAvAv3Hr7LVxmU5pP5SdAK78NyWiJxLKInMxR7EgnJEVTreUgk
- ewjZvfh7z11l4aqR6/4eA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:ZH7MKC3nRVk=:eBIiusYvPPTZyQjzpr+1pY
- Nm7dtluVzX5VdhhyCEIGNXaeqTuvEW5gN7re4wG6bA/DnFbHw/sp4zxQLtzR31I4BZFMuC/k3
- JdmM8gqGyBDcNIue8GvRN1z45m3f1cHw0iSeBkIJERtml9rNkpctaWpBuE9rXpuljf9N3klAX
- bDaYNyGp3tLD94EzB3rfKe7a4FeSeLmult4vWZBPApVs+RLe0f+JUPlsq2cP6RNzwKIiuAIS4
- JF2V1q5pnUAR52chzpEXN6IBuD0ARvl4uQePQXrKVHirOHwwnn6coUsjNAwtogg5LBoGnwGS3
- OHc4nVeP/wqYXPdZGSGN3C1H86Jb5zMbBliiH6Gd3lpqzusXUFDrhXxZbgefeHGevrpnXOvmF
- ubx6snfLM/AtNirNVHZYFLiWgSyb3rGWKefMA7B4FHiQLFBSpDrgG51PitmX+StWuSp3eSp2D
- xnucTnLUeMC8SH4auxXnyaJedMAuV0FvLjDemaTzuf8qVAFLrzy2QDIgtDaJH6B8Z9/VqZeEG
- HOT35YJeduapZw9DrIqCq3O+MR2DzkBnsEO6JeVCHUTdOiO3py3MbpbO1gL4AyFzDTO497dXY
- HWvlzfYWIEqVzfnsD4rPa0skl5akApJVJYR0sI3Jvk8g+uSc5e93bhDY19i7Pg/hOc7jEpTDF
- NPr0ZSabDFfHvBsnyD3lrlzh1APY0b/WhjQxgkrY1WqxI984mJ80LK4NWQIykwsy1LcY=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Even though I did introduce the fbtft code in staging a while ago to
+stop seeing this being developed out-of-tree, I don't intend to
+maintain it, and I don't use it actively. So be honest and remove
+myself from the MAINTAINERS file for this subsystem.
 
-Cleaning up indentation, line-feed and white-space.
-
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 ---
+ MAINTAINERS | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
- arch/arm/boot/dts/tegra20-colibri.dtsi | 18 ++++++------------
- 1 file changed, 6 insertions(+), 12 deletions(-)
-
-diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
-index 06d0be29c0b4..5559008efc5f 100644
---- a/arch/arm/boot/dts/tegra20-colibri.dtsi
-+++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
-@@ -206,10 +206,10 @@
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a5b256b25905..1820f2e4d5f4 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5623,8 +5623,7 @@ F:	Documentation/fault-injection/
+ F:	lib/fault-inject.c
  
- 	ac97: ac97@70002000 {
- 		status = "okay";
--		nvidia,codec-reset-gpio = <&gpio TEGRA_GPIO(V, 0)
--			GPIO_ACTIVE_HIGH>;
--		nvidia,codec-sync-gpio = <&gpio TEGRA_GPIO(P, 0)
--			GPIO_ACTIVE_HIGH>;
-+		nvidia,codec-reset-gpio =
-+			<&gpio TEGRA_GPIO(V, 0) GPIO_ACTIVE_HIGH>;
-+		nvidia,codec-sync-gpio =
-+			<&gpio TEGRA_GPIO(P, 0) GPIO_ACTIVE_HIGH>;
- 	};
+ FBTFT Framebuffer drivers
+-M:	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+-S:	Maintained
++S:	Orphan
+ F:	drivers/staging/fbtft/
  
- 	nand-controller@70008000 {
-@@ -254,12 +254,9 @@
- 			compatible = "ti,tps6586x";
- 			reg = <0x34>;
- 			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
--
- 			ti,system-power-controller;
--
- 			#gpio-cells = <2>;
- 			gpio-controller;
--
- 			sys-supply = <&reg_module_3v3>;
- 			vin-sm0-supply = <&reg_3v3_vsys>;
- 			vin-sm1-supply = <&reg_3v3_vsys>;
-@@ -468,8 +465,8 @@
- 
- 	usb-phy@c5004000 {
- 		status = "okay";
--		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 1)
--			GPIO_ACTIVE_LOW>;
-+		nvidia,phy-reset-gpio =
-+			<&gpio TEGRA_GPIO(V, 1) GPIO_ACTIVE_LOW>;
- 		vbus-supply = <&reg_lan_v_bus>;
- 	};
- 
-@@ -511,16 +508,13 @@
- 		compatible = "nvidia,tegra-audio-wm9712-colibri_t20",
- 			     "nvidia,tegra-audio-wm9712";
- 		nvidia,model = "Colibri T20 AC97 Audio";
--
- 		nvidia,audio-routing =
- 			"Headphone", "HPOUTL",
- 			"Headphone", "HPOUTR",
- 			"LineIn", "LINEINL",
- 			"LineIn", "LINEINR",
- 			"Mic", "MIC1";
--
- 		nvidia,ac97-controller = <&ac97>;
--
- 		clocks = <&tegra_car TEGRA20_CLK_PLL_A>,
- 			 <&tegra_car TEGRA20_CLK_PLL_A_OUT0>,
- 			 <&tegra_car TEGRA20_CLK_CDEV1>;
+ FC0011 TUNER DRIVER
 -- 
 2.14.4
 
