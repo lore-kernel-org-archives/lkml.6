@@ -2,152 +2,269 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A395EC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 14:08:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91FDDC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 14:08:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 676FA20850
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 14:08:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 676FA20850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 40F862083D
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 14:08:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="CZJdMNBr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40F862083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728926AbeH2SFs (ORCPT
+        id S1727316AbeH2SFw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 14:05:48 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55372 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727316AbeH2SFs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 14:05:48 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AC94080D;
-        Wed, 29 Aug 2018 07:08:40 -0700 (PDT)
-Received: from [10.4.12.120] (e107158-lin.Emea.Arm.com [10.4.12.120])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E34983F721;
-        Wed, 29 Aug 2018 07:08:39 -0700 (PDT)
-Subject: Re: [RFC PATCH 3/4] sched/topology: remove smt_gain
-To:     Vincent Guittot <vincent.guittot@linaro.org>, peterz@infradead.org,
-        mingo@redhat.com, linux-kernel@vger.kernel.org
-References: <1535548752-4434-1-git-send-email-vincent.guittot@linaro.org>
- <1535548752-4434-4-git-send-email-vincent.guittot@linaro.org>
-From:   Qais Yousef <qais.yousef@arm.com>
-Message-ID: <ca95124f-db09-c38f-d96a-5240bfe8c024@arm.com>
-Date:   Wed, 29 Aug 2018 15:08:38 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 29 Aug 2018 14:05:52 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39549 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728399AbeH2SFw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 14:05:52 -0400
+Received: by mail-pg1-f196.google.com with SMTP id g20-v6so2379926pgv.6
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 07:08:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Oc0m08zEe/xHCcsliqxWcsBaRI9TQiNjC1hXlKLH8mk=;
+        b=CZJdMNBrpskOJ/JAR4sIMlSMzlLsthpdJ2goBQtfT9ylx6luhMqxlPsfTULICWJxpy
+         XePQu64eGWUTZMUVRdOYMmT/KPtHEMBz9xSsP+JMYuST7CXPViawxlO2vF1v87H0nohz
+         27B/RGRHbrJL5qiDNBGDaRUbv53DQIqBMTCC9Fj32REAfpG/+nuSW9AkYgLk+8TeZ4H9
+         Ghm+GYRNr/DYwhJPY3QwoPTxMO6kVAHp+XnjdtJb54pkHpw0QHhWbZbKPW3b/UOMK3Es
+         GQ2USn67lhtuS90UxVs8Rmu6DCVlNAj7J2WsT3dYQvY6pL5fL7BNIa6kpFynzUzK+9MT
+         HoOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Oc0m08zEe/xHCcsliqxWcsBaRI9TQiNjC1hXlKLH8mk=;
+        b=CgtlgRp/svrOqQrVi6V/8z3WS6JQvDirE78edQyx3VxJ9AT6USDNgE5SNwcZdZ5oDn
+         H6zB0/uSPr+7Viid6Ov1s+RRRth/iFo1dMGWX0W7RbKXnxHFplLq9vKgfXHnGk5touBQ
+         BChW0DjEiiIhY1lO4jfiNtgkiAnmHN2bVdxJwV7FtwOjlS6RwRefTeHkpM6nD44jL5Zm
+         l2qM3HpO9v7gW26BCFru83DrZkJ2Ql+Y2WKvKvoIbU9lTrjfJNWwLurB5kowrqSrBvDs
+         AGjLx8s8hXN9DAyN8pxrW61JikVmEzrcDAMDjCJveZLXcIoP918YR05nmP9Haax2FBs0
+         mDdA==
+X-Gm-Message-State: APzg51BtraaOF4EY0MqyknLk4VY6InTtz8Pc/FYgl3BbH0hIJ/P1fR24
+        Fe5jJyoWPpgy4mgQZO124By3Dg==
+X-Google-Smtp-Source: ANB0VdYUbFg9VfrVM/QfR6ZfdK7Xxc4r3JzjQisJM03S2KWkRUn5JRGStQ1xm3+ioF72xnZwI6JTLw==
+X-Received: by 2002:a63:6243:: with SMTP id w64-v6mr5991471pgb.145.1535551724304;
+        Wed, 29 Aug 2018 07:08:44 -0700 (PDT)
+Received: from skyninja.hgst.com (rap-us.hgst.com. [199.255.44.250])
+        by smtp.gmail.com with ESMTPSA id j27-v6sm6914478pfj.91.2018.08.29.07.08.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 Aug 2018 07:08:42 -0700 (PDT)
+From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+To:     igor.j.konopko@intel.com, marcin.dziegielewski@intel.com,
+        javier@cnexlabs.com, hans.holmberg@cnexlabs.com, hlitz@ucsc.edu,
+        youngtack.jin@circuitblvd.com
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
+Subject: [PATCH] lightnvm: pblk: remove debug from pblk_[down/up]_page
+Date:   Wed, 29 Aug 2018 16:08:32 +0200
+Message-Id: <20180829140832.29341-1-mb@lightnvm.io>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-In-Reply-To: <1535548752-4434-4-git-send-email-vincent.guittot@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/08/18 14:19, Vincent Guittot wrote:
-> smt_gain is used to compute the capacity of CPUs of a SMT core with the
-> constraint 1 < smt_gain < 2 in order to be able to compute number of CPUs
-> per core. The field has_free_capacity of struct numa_stat, which was the
-> last user of this computation of number of CPUs per core, has been removed
-> by :
->
->    commit 2d4056fafa19 ("sched/numa: Remove numa_has_capacity()")
->
-> We can now remove this constraint on core capacity and use the defautl value
-> SCHED_CAPACITY_SCALE for SMT CPUs. With this remove, SCHED_CAPACITY_SCALE
-> becomes the maximum compute capacity of CPUs on every systems. This should
-> help to simplify some code and remove fields like rd->max_cpu_capacity
->
-> Furthermore, arch_scale_cpu_capacity() is used with a NULL sd in several other
-> places in the code when it wants the capacity of a CPUs to scale
-> some metrics like in pelt, deadline or schedutil. In case on SMT, the value
-> returned is not the capacity of SMT CPUs but default SCHED_CAPACITY_SCALE.
->
-> Remove the smt_gain field from sched_domain struct
+Remove the debug only iteration within __pblk_down_page, which
+then allows us to reduce the number of arguments down to pblk and
+the parallel unit from the functions that calls it. Simplifying the
+callers logic considerably.
 
-You beat me to it, I got confused by smt_gain recently when I stumbled 
-on it as I found out on ARM it's not used and had to spend sometime to 
-convince myself it's not really necessary to use it.
+Also, rename the functions pblk_[down/up]_page to pblk_[down/up]_pu,
+to communicate that it takes a lock on the parallel unit.
 
-It was hard to track the history of this and *why* it's needed.
+Signed-off-by: Matias Bjørling <mb@lightnvm.io>
+---
+ drivers/lightnvm/pblk-core.c     | 34 +++++++++-------------------------
+ drivers/lightnvm/pblk-map.c      |  2 +-
+ drivers/lightnvm/pblk-recovery.c |  6 +++---
+ drivers/lightnvm/pblk-write.c    |  6 +++---
+ drivers/lightnvm/pblk.h          |  6 +++---
+ 5 files changed, 19 insertions(+), 35 deletions(-)
 
-The only 'theoretical' case I found smt_gain can be useful is when you 
-have asymmetric system, for example:
-
-Node_A: 1 Core 2 Threads
-Node_B: 1 Core 4 Threads
-
-Then with smt_gain the group_capacity at the core level will be limited 
-to smt_gain. But without smt_gain Node_B will look twice as powerful as 
-Node_A - which will affect balancing AFAICT causing Node_B's single core 
-to be oversubscribed as the 4 threads will still have to share the same 
-underlying hardware resources. I don't think in practice such systems 
-exists, or even make sense, though.
-
-So +1 from my side for the removal.
-
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: linux-kernel@vger.kernel.org (open list)
-> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> ---
->   include/linux/sched/topology.h | 1 -
->   kernel/sched/sched.h           | 3 ---
->   kernel/sched/topology.c        | 2 --
->   3 files changed, 6 deletions(-)
->
-> diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
-> index 2634774..212792b 100644
-> --- a/include/linux/sched/topology.h
-> +++ b/include/linux/sched/topology.h
-> @@ -89,7 +89,6 @@ struct sched_domain {
->   	unsigned int newidle_idx;
->   	unsigned int wake_idx;
->   	unsigned int forkexec_idx;
-> -	unsigned int smt_gain;
->   
->   	int nohz_idle;			/* NOHZ IDLE status */
->   	int flags;			/* See SD_* */
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index 4a2e8ca..b1715b8 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -1758,9 +1758,6 @@ unsigned long arch_scale_freq_capacity(int cpu)
->   static __always_inline
->   unsigned long arch_scale_cpu_capacity(struct sched_domain *sd, int cpu)
->   {
-> -	if (sd && (sd->flags & SD_SHARE_CPUCAPACITY) && (sd->span_weight > 1))
-> -		return sd->smt_gain / sd->span_weight;
-> -
->   	return SCHED_CAPACITY_SCALE;
->   }
->   #endif
-> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> index 56a0fed..069c924 100644
-> --- a/kernel/sched/topology.c
-> +++ b/kernel/sched/topology.c
-> @@ -1129,7 +1129,6 @@ sd_init(struct sched_domain_topology_level *tl,
->   
->   		.last_balance		= jiffies,
->   		.balance_interval	= sd_weight,
-> -		.smt_gain		= 0,
->   		.max_newidle_lb_cost	= 0,
->   		.next_decay_max_lb_cost	= jiffies,
->   		.child			= child,
-> @@ -1155,7 +1154,6 @@ sd_init(struct sched_domain_topology_level *tl,
->   	if (sd->flags & SD_SHARE_CPUCAPACITY) {
->   		sd->flags |= SD_PREFER_SIBLING;
->   		sd->imbalance_pct = 110;
-> -		sd->smt_gain = 1178; /* ~15% */
->   
->   	} else if (sd->flags & SD_SHARE_PKG_RESOURCES) {
->   		sd->flags |= SD_PREFER_SIBLING;
-
-
+diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
+index bb1a7cc24cbb..08df6bcd2f81 100644
+--- a/drivers/lightnvm/pblk-core.c
++++ b/drivers/lightnvm/pblk-core.c
+@@ -1861,8 +1861,7 @@ void pblk_gen_run_ws(struct pblk *pblk, struct pblk_line *line, void *priv,
+ 	queue_work(wq, &line_ws->ws);
+ }
+ 
+-static void __pblk_down_page(struct pblk *pblk, struct ppa_addr *ppa_list,
+-			     int nr_ppas, int pos)
++static void __pblk_down_pu(struct pblk *pblk, int pos)
+ {
+ 	struct pblk_lun *rlun = &pblk->luns[pos];
+ 	int ret;
+@@ -1871,13 +1870,6 @@ static void __pblk_down_page(struct pblk *pblk, struct ppa_addr *ppa_list,
+ 	 * Only send one inflight I/O per LUN. Since we map at a page
+ 	 * granurality, all ppas in the I/O will map to the same LUN
+ 	 */
+-#ifdef CONFIG_NVM_PBLK_DEBUG
+-	int i;
+-
+-	for (i = 1; i < nr_ppas; i++)
+-		WARN_ON(ppa_list[0].a.lun != ppa_list[i].a.lun ||
+-				ppa_list[0].a.ch != ppa_list[i].a.ch);
+-#endif
+ 
+ 	ret = down_timeout(&rlun->wr_sem, msecs_to_jiffies(30000));
+ 	if (ret == -ETIME || ret == -EINTR)
+@@ -1885,21 +1877,21 @@ static void __pblk_down_page(struct pblk *pblk, struct ppa_addr *ppa_list,
+ 				-ret);
+ }
+ 
+-void pblk_down_page(struct pblk *pblk, struct ppa_addr *ppa_list, int nr_ppas)
++void pblk_down_pu(struct pblk *pblk, struct ppa_addr ppa)
+ {
+ 	struct nvm_tgt_dev *dev = pblk->dev;
+ 	struct nvm_geo *geo = &dev->geo;
+-	int pos = pblk_ppa_to_pos(geo, ppa_list[0]);
++	int pos = pblk_ppa_to_pos(geo, ppa);
+ 
+-	__pblk_down_page(pblk, ppa_list, nr_ppas, pos);
++	__pblk_down_pu(pblk, pos);
+ }
+ 
+-void pblk_down_rq(struct pblk *pblk, struct ppa_addr *ppa_list, int nr_ppas,
++void pblk_down_rq(struct pblk *pblk, struct ppa_addr ppa,
+ 		  unsigned long *lun_bitmap)
+ {
+ 	struct nvm_tgt_dev *dev = pblk->dev;
+ 	struct nvm_geo *geo = &dev->geo;
+-	int pos = pblk_ppa_to_pos(geo, ppa_list[0]);
++	int pos = pblk_ppa_to_pos(geo, ppa);
+ 
+ 	/* If the LUN has been locked for this same request, do no attempt to
+ 	 * lock it again
+@@ -1907,23 +1899,15 @@ void pblk_down_rq(struct pblk *pblk, struct ppa_addr *ppa_list, int nr_ppas,
+ 	if (test_and_set_bit(pos, lun_bitmap))
+ 		return;
+ 
+-	__pblk_down_page(pblk, ppa_list, nr_ppas, pos);
++	__pblk_down_pu(pblk, pos);
+ }
+ 
+-void pblk_up_page(struct pblk *pblk, struct ppa_addr *ppa_list, int nr_ppas)
++void pblk_up_pu(struct pblk *pblk, struct ppa_addr ppa)
+ {
+ 	struct nvm_tgt_dev *dev = pblk->dev;
+ 	struct nvm_geo *geo = &dev->geo;
+ 	struct pblk_lun *rlun;
+-	int pos = pblk_ppa_to_pos(geo, ppa_list[0]);
+-
+-#ifdef CONFIG_NVM_PBLK_DEBUG
+-	int i;
+-
+-	for (i = 1; i < nr_ppas; i++)
+-		WARN_ON(ppa_list[0].a.lun != ppa_list[i].a.lun ||
+-				ppa_list[0].a.ch != ppa_list[i].a.ch);
+-#endif
++	int pos = pblk_ppa_to_pos(geo, ppa);
+ 
+ 	rlun = &pblk->luns[pos];
+ 	up(&rlun->wr_sem);
+diff --git a/drivers/lightnvm/pblk-map.c b/drivers/lightnvm/pblk-map.c
+index dc0efb852475..ff677ca6e4e1 100644
+--- a/drivers/lightnvm/pblk-map.c
++++ b/drivers/lightnvm/pblk-map.c
+@@ -79,7 +79,7 @@ static int pblk_map_page_data(struct pblk *pblk, unsigned int sentry,
+ 		}
+ 	}
+ 
+-	pblk_down_rq(pblk, ppa_list, nr_secs, lun_bitmap);
++	pblk_down_rq(pblk, ppa_list[0], lun_bitmap);
+ 	return 0;
+ }
+ 
+diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
+index eea901d7cebc..df624d504d24 100644
+--- a/drivers/lightnvm/pblk-recovery.c
++++ b/drivers/lightnvm/pblk-recovery.c
+@@ -227,7 +227,7 @@ static void pblk_end_io_recov(struct nvm_rq *rqd)
+ 	struct pblk_pad_rq *pad_rq = rqd->private;
+ 	struct pblk *pblk = pad_rq->pblk;
+ 
+-	pblk_up_page(pblk, ppa_list, rqd->nr_ppas);
++	pblk_up_pu(pblk, ppa_list[0]);
+ 
+ 	pblk_free_rqd(pblk, rqd, PBLK_WRITE_INT);
+ 
+@@ -339,12 +339,12 @@ static int pblk_recov_pad_oob(struct pblk *pblk, struct pblk_line *line,
+ 	}
+ 
+ 	kref_get(&pad_rq->ref);
+-	pblk_down_page(pblk, rqd->ppa_list, rqd->nr_ppas);
++	pblk_down_pu(pblk, rqd->ppa_list[0]);
+ 
+ 	ret = pblk_submit_io(pblk, rqd);
+ 	if (ret) {
+ 		pblk_err(pblk, "I/O submission failed: %d\n", ret);
+-		pblk_up_page(pblk, rqd->ppa_list, rqd->nr_ppas);
++		pblk_up_pu(pblk, rqd->ppa_list[0]);
+ 		goto fail_free_bio;
+ 	}
+ 
+diff --git a/drivers/lightnvm/pblk-write.c b/drivers/lightnvm/pblk-write.c
+index cd579b440b56..55d198edd70a 100644
+--- a/drivers/lightnvm/pblk-write.c
++++ b/drivers/lightnvm/pblk-write.c
+@@ -270,7 +270,7 @@ static void pblk_end_io_write_meta(struct nvm_rq *rqd)
+ 	struct ppa_addr *ppa_list = nvm_rq_to_ppa_list(rqd);
+ 	int sync;
+ 
+-	pblk_up_page(pblk, ppa_list, rqd->nr_ppas);
++	pblk_up_pu(pblk, ppa_list[0]);
+ 
+ 	if (rqd->error) {
+ 		pblk_log_write_err(pblk, rqd);
+@@ -420,7 +420,7 @@ int pblk_submit_meta_io(struct pblk *pblk, struct pblk_line *meta_line)
+ 		list_del(&meta_line->list);
+ 	spin_unlock(&l_mg->close_lock);
+ 
+-	pblk_down_page(pblk, ppa_list, rqd->nr_ppas);
++	pblk_down_pu(pblk, ppa_list[0]);
+ 
+ 	ret = pblk_submit_io(pblk, rqd);
+ 	if (ret) {
+@@ -431,7 +431,7 @@ int pblk_submit_meta_io(struct pblk *pblk, struct pblk_line *meta_line)
+ 	return NVM_IO_OK;
+ 
+ fail_rollback:
+-	pblk_up_page(pblk, ppa_list, rqd->nr_ppas);
++	pblk_up_pu(pblk, ppa_list[0]);
+ 	spin_lock(&l_mg->close_lock);
+ 	pblk_dealloc_page(pblk, meta_line, rq_ppas);
+ 	list_add(&meta_line->list, &meta_line->list);
+diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
+index 2f61f4428fcb..390855375b1e 100644
+--- a/drivers/lightnvm/pblk.h
++++ b/drivers/lightnvm/pblk.h
+@@ -823,10 +823,10 @@ u64 pblk_alloc_page(struct pblk *pblk, struct pblk_line *line, int nr_secs);
+ u64 __pblk_alloc_page(struct pblk *pblk, struct pblk_line *line, int nr_secs);
+ int pblk_calc_secs(struct pblk *pblk, unsigned long secs_avail,
+ 		   unsigned long secs_to_flush);
+-void pblk_up_page(struct pblk *pblk, struct ppa_addr *ppa_list, int nr_ppas);
+-void pblk_down_rq(struct pblk *pblk, struct ppa_addr *ppa_list, int nr_ppas,
++void pblk_up_pu(struct pblk *pblk, struct ppa_addr ppa);
++void pblk_down_rq(struct pblk *pblk, struct ppa_addr ppa,
+ 		  unsigned long *lun_bitmap);
+-void pblk_down_page(struct pblk *pblk, struct ppa_addr *ppa_list, int nr_ppas);
++void pblk_down_pu(struct pblk *pblk, struct ppa_addr ppa);
+ void pblk_up_rq(struct pblk *pblk, unsigned long *lun_bitmap);
+ int pblk_bio_add_pages(struct pblk *pblk, struct bio *bio, gfp_t flags,
+ 		       int nr_pages);
 -- 
-Qais Yousef
+2.11.0
 
