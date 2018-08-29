@@ -2,163 +2,155 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64509C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:51:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88254C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:53:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F269020647
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:51:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="UAdZd1qZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F269020647
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	by mail.kernel.org (Postfix) with ESMTP id 29F3E20644
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:53:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29F3E20644
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727632AbeH3CuM (ORCPT
+        id S1727469AbeH3Cwz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 22:50:12 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:10708 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727363AbeH3CuL (ORCPT
+        Wed, 29 Aug 2018 22:52:55 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36028 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727316AbeH3Cwz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 22:50:11 -0400
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20180829225101epoutp029f2e483e507c4e55f5dc60f5a361e623~PfKinGEjM2139021390epoutp02f;
-        Wed, 29 Aug 2018 22:51:01 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180829225101epoutp029f2e483e507c4e55f5dc60f5a361e623~PfKinGEjM2139021390epoutp02f
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1535583061;
-        bh=a7qQ9hDq2RU1lG12s1YMnqlL27J65pi2BxqqVb+7ysY=;
-        h=Date:From:To:Cc:Subject:In-reply-to:References:From;
-        b=UAdZd1qZhFDl5bfSykY1nBLwRDYJbe9s19Ie8x3SzPt2s6Aot2K2K7GJFMpoHKdIt
-         ij79cIxpo6sadpVcUpyTWlikmer5+r6+YIvIGvSOuBp1UEStkS6/kMUovBz8fpqC3B
-         VJatejHyd+prB5WNoswUFvf4e4LJF6+mTzlp/tac=
-Received: from epsmges2p4.samsung.com (unknown [182.195.40.156]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20180829225059epcas1p1635ce95db1d8cafd0c3458938d79e5f1~PfKgDzLK52619426194epcas1p1e;
-        Wed, 29 Aug 2018 22:50:59 +0000 (GMT)
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-        epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        68.C2.04211.253278B5; Thu, 30 Aug 2018 07:50:58 +0900 (KST)
-Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
-        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-        20180829225058epcas2p11d847fd99651c34e83b8150af359e135~PfKfsn_Gb3058630586epcas2p11;
-        Wed, 29 Aug 2018 22:50:58 +0000 (GMT)
-X-AuditID: b6c32a48-089ff70000001073-b9-5b872352ae50
-Received: from epmmp1.local.host ( [203.254.227.16]) by
-        epsmgms2p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        F9.D5.03703.253278B5; Thu, 30 Aug 2018 07:50:58 +0900 (KST)
-MIME-version: 1.0
-Content-transfer-encoding: 8BIT
-Content-type: text/plain; charset="UTF-8"
-Received: from [10.113.63.77] by mmp1.samsung.com (Oracle Communications
-        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
-        <0PE800KCMVGY0580@mmp1.samsung.com>; Thu, 30 Aug 2018 07:50:58 +0900 (KST)
-Message-id: <5B872352.6030304@samsung.com>
-Date:   Thu, 30 Aug 2018 07:50:58 +0900
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
-        Thunderbird/31.6.0
-To:     Greg KH <greg@kroah.com>
-Cc:     myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
-        rafael.j.wysocki@intel.com, chanwoo@kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] PM / devfreq: Add new name attribute for sysfs
-In-reply-to: <20180829105738.GA26948@kroah.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrCKsWRmVeSWpSXmKPExsWy7bCmuW6Qcnu0weqrNhYTb1xhsTi3YAaj
-        xdmmN+wWl3fNYbP43HuE0eJ24wo2i8cr3rJbLNj4iNGBw2PxnpdMHptWdbJ5vH0Y4NG3ZRWj
-        x+dNcgGsUak2GamJKalFCql5yfkpmXnptkrewfHO8aZmBoa6hpYW5koKeYm5qbZKLj4Bum6Z
-        OUCnKCmUJeaUAoUCEouLlfTtbIryS0tSFTLyi0tslaINDY30DA3M9YyMgLRxrJWRKVBJQmrG
-        9i8LGQua+Cqm3r3C3MB4gbuLkZNDQsBEounCRJYuRi4OIYEdjBIXn6xmg3C+M0qs7p/IDlN1
-        rWUHK0RiN6PE5xtP2UASvAKCEj8m3wNq5+BgFpCXOHIpGyTMLKApsXX3enaI+ruMEh0HOpgg
-        6rUkrh7YywpiswioStzfthLMZgOK739xA2wmv4CixNUfjxlBbFGBCImd87+BHSEiICPRsWQP
-        2FBmkCNWnr0NViQs4Cwxcfl7sCM4BfQlJk0sA6mRELjOJnFuym9WiA9cJJr33YSyhSVeHd8C
-        9Zm0xLNVGxkhGtoZJb68aGaFcCYwSnw4tZkJospY4tnCLiaI3/gkOg7/ZQfZJiHAK9HRJgRR
-        4iHRtb4RrERIYB+jxOUXcRMYZWchBdIsRCDNQgqkBYzMqxjFUguKc9NTi40KTPSKE3OLS/PS
-        9ZLzczcxglOclscOxgPnfA4xCnAwKvHwXpjRFi3EmlhWXJl7iFGCg1lJhJfrHFCINyWxsiq1
-        KD++qDQntfgQoykwjCcyS4km5wPTb15JvKGpkbGxsYWpuaWxgaWSOG+VX3C0kEB6Yklqdmpq
-        QWoRTB8TB6dUA6Pnnc+venPyXq5n4Pi7NvT5Ujt7n48M3Xdq5t1cfdBtivjPN2L350aeSNFM
-        OSS7ZmmDes+ZFw/b3YucnP/sXt+b03N0h9+ea1tuhq01ZZM9Y3AiU5Yl9Ee8xBWdG2fmNWy5
-        qSPCxbzL8HfWt+8TtN99mNl/d8kidvdjt6XioxMWy1ttY/EQmaCixFKckWioxVxUnAgAowru
-        qIcDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrILMWRmVeSWpSXmKPExsVy+t9jAd0g5fZog7sblSwm3rjCYnFuwQxG
-        i7NNb9gtLu+aw2bxufcIo8XtxhVsFo9XvGW3WLDxEaMDh8fiPS+ZPDat6mTzePswwKNvyypG
-        j8+b5AJYo7hsUlJzMstSi/TtErgytn9ZyFjQxFcx9e4V5gbGC9xdjJwcEgImEtdadrB2MXJx
-        CAnsZJTYeqKDBSTBKyAo8WPyPSCbg4NZQF7iyKVskDCzgLrEpHmLmCHq7zNK/D35gxmiXkvi
-        6oG9rCA2i4CqxP1tK8FsNqD4/hc32EBsfgFFias/HjOCzBQViJDoPlEJEhYRkJHoWLKHHWQm
-        s8BuRom7/3+B3SAs4Cwxcfl7MFtI4ACjxI4t2iC9nAL6EpMmlk1gFJiF5NJZCJfOQnLpAkbm
-        VYySqQXFuem5xUYFRnmp5XrFibnFpXnpesn5uZsYgQG/7bBW/w7Gx0viDzEKcDAq8fBemNEW
-        LcSaWFZcmXuIUYKDWUmEl+scUIg3JbGyKrUoP76oNCe1+BCjNAeLkjgvf/6xSCGB9MSS1OzU
-        1ILUIpgsEwenVANja8OhFU6Tbq9/5m1/PMb7pNj2z/+mlAUnFk8MPH1mfnuVep+n058b25sf
-        xoW0Xj3KGSQqEvvhePbf7x+itjwJ+z5tYt4Zsw3/rF7Wns7yTNZVDnVRO6CfsrLO5+68uAn/
-        rvdwzvm7PsRWrEj0699eTrYq7TIT/4CzzjKRG3JF0t3i3sWWMZ9WYinOSDTUYi4qTgQAfRkM
-        KnQCAAA=
-X-CMS-MailID: 20180829225058epcas2p11d847fd99651c34e83b8150af359e135
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180829073410epcas1p2f314e6c4c29eacfe3ebd5fb4f7f2f122
-References: <CGME20180829073410epcas1p2f314e6c4c29eacfe3ebd5fb4f7f2f122@epcas1p2.samsung.com>
-        <1535528046-18835-1-git-send-email-cw00.choi@samsung.com>
-        <20180829105738.GA26948@kroah.com>
+        Wed, 29 Aug 2018 22:52:55 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7TMnDnT124485
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:53:46 -0400
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2m615dfkqx-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:53:46 -0400
+Received: from localhost
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 29 Aug 2018 18:53:45 -0400
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 29 Aug 2018 18:53:41 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7TMreDW3604884
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 29 Aug 2018 22:53:40 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4719EB206A;
+        Wed, 29 Aug 2018 18:52:36 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2610CB2067;
+        Wed, 29 Aug 2018 18:52:36 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 29 Aug 2018 18:52:36 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 9BCFB16C91B7; Wed, 29 Aug 2018 15:53:40 -0700 (PDT)
+Date:   Wed, 29 Aug 2018 15:53:40 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
+        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org
+Subject: [PATCH tip/core/rcu 0/24] Additional RCU-consolidation cleanups for
+ v4.20/v5.0
+Reply-To: paulmck@linux.vnet.ibm.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18082922-2213-0000-0000-000002E509D4
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009636; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01080749; UDB=6.00557500; IPR=6.00860734;
+ MB=3.00023002; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-29 22:53:44
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082922-2214-0000-0000-00005B6033AC
+Message-Id: <20180829225340.GA7019@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-29_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=974 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808290222
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Greg,
+Hello!
 
-On 2018년 08월 29일 19:57, Greg KH wrote:
-> On Wed, Aug 29, 2018 at 04:34:06PM +0900, Chanwoo Choi wrote:
->> commit 4585fbcb5331 ("PM / devfreq: Modify the device name as devfreq(X) for
->> sysfs") changed the node name to devfreq(x). After this commit, it is not
->> possible to get the device name through /sys/class/devfreq/devfreq(X)/*.
->>
->> Add new name attribute in order to get device name.
->>
->> Cc: stable@vger.kernel.org
->> Fixes: 4585fbcb5331 ("PM / devfreq: Modify the device name as devfreq(X) for sysfs")
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->> ---
->>  drivers/devfreq/devfreq.c | 11 +++++++++++
->>  include/linux/devfreq.h   |  3 +++
->>  2 files changed, 14 insertions(+)
->>
->> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
->> index 4c49bb1330b5..2145563d5ee5 100644
->> --- a/drivers/devfreq/devfreq.c
->> +++ b/drivers/devfreq/devfreq.c
->> @@ -620,6 +620,9 @@ struct devfreq *devfreq_add_device(struct device *dev,
->>  	}
->>  	devfreq->max_freq = devfreq->scaling_max_freq;
->>
->> +	devfreq->name = dev_name(devfreq->dev.parent);
->> +	if (IS_ERR_OR_NULL(devfreq->name))
->> +		return -EINVAL;
->>  	dev_set_name(&devfreq->dev, "devfreq%d",
->>  				atomic_inc_return(&devfreq_no));
->>  	err = device_register(&devfreq->dev);
->> @@ -1261,6 +1264,13 @@ static ssize_t trans_stat_show(struct device *dev,
->>  }
->>  static DEVICE_ATTR_RO(trans_stat);
->>
->> +static ssize_t name_show(struct device *dev,
->> +			struct device_attribute *attr, char *buf)
->> +{
->> +	return sprintf(buf, "%s\n", to_devfreq(dev)->name);
->> +}
->> +static DEVICE_ATTR_RO(name);
-> 
-> You need a new Documentation/ABI/ entry for this.
+This series contains yet more cleanups for RCU flavor consolidation:
 
-Thanks for comment. I'll.
+1.	Inline the now-trivial increment_cpu_stall_ticks() into its sole
+	caller.
 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.	Pull the rcu_gp_kthread() function's force-quiescent-state loop
+	into a separate function
+
+3.	Consolidate RCU-bh update-side function definitions, putting
+	them all in one place at the end of rcupdate.h.
+
+4.	Consolidate RCU-sched update-side function definitions, putting
+	them all in one place at the end of rcupdate.h.
+
+5.	Add RCU-bh and RCU-sched support for extended readers, so that
+	rcutorture will mix and match all RCU read-side primitives.
+
+6.	Stop testing RCU-bh and RCU-sched.
+
+7-8.	Remove the "rcu_bh" and "sched" torture types.
+
+9.	Remove now-unused rcutorture APIs.
+
+10-21.	Clean up flavor-related definitions and comments.
+
+22.	Remove !PREEMPT code from rcu_note_voluntary_context_switch(),
+	since it now has meaning only in PREEMPT kernels.
+
+23.	Define rcu_all_qs() only in !PREEMPT builds, since that is
+	now the only place it is used.
+
+24.	Inline _rcu_barrier() into its sole remaining caller.
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+ Documentation/admin-guide/kernel-parameters.txt            |    6 
+ include/linux/rculist.h                                    |   32 -
+ include/linux/rcupdate.h                                   |  100 ++-
+ include/linux/rcupdate_wait.h                              |   14 
+ include/linux/rcutiny.h                                    |   47 -
+ include/linux/rcutree.h                                    |   28 
+ include/trace/events/rcu.h                                 |   20 
+ kernel/rcu/Kconfig                                         |   20 
+ kernel/rcu/rcu.h                                           |   28 
+ kernel/rcu/rcuperf.c                                       |   65 --
+ kernel/rcu/rcutorture.c                                    |  125 ---
+ kernel/rcu/srcutree.c                                      |    2 
+ kernel/rcu/tiny.c                                          |   10 
+ kernel/rcu/tree.c                                          |  414 +++----------
+ kernel/rcu/tree.h                                          |    5 
+ kernel/rcu/tree_exp.h                                      |   22 
+ kernel/rcu/tree_plugin.h                                   |   83 +-
+ kernel/rcu/update.c                                        |   58 -
+ tools/testing/selftests/rcutorture/configs/rcu/TINY02.boot |    2 
+ tools/testing/selftests/rcutorture/configs/rcu/TREE01.boot |    2 
+ tools/testing/selftests/rcutorture/configs/rcu/TREE04.boot |    2 
+ tools/testing/selftests/rcutorture/configs/rcu/TREE05.boot |    2 
+ tools/testing/selftests/rcutorture/configs/rcu/TREE06.boot |    2 
+ tools/testing/selftests/rcutorture/configs/rcu/TREE08.boot |    2 
+ 24 files changed, 366 insertions(+), 725 deletions(-)
+
