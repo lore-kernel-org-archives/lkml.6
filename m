@@ -3,85 +3,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E520C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 02:56:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A4B1C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 03:03:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 125FA2083B
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 02:56:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 125FA2083B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 1392B20862
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 03:03:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1392B20862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727494AbeH2GuI (ORCPT
+        id S1727446AbeH2G6G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 02:50:08 -0400
-Received: from mailgw02.mediatek.com ([1.203.163.81]:64535 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725922AbeH2GuG (ORCPT
+        Wed, 29 Aug 2018 02:58:06 -0400
+Received: from cmccmta2.chinamobile.com ([221.176.66.80]:37526 "EHLO
+        cmccmta2.chinamobile.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726759AbeH2G6G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 02:50:06 -0400
-X-UUID: bd56749c7c364d1591dbcd5c21284252-20180829
-Received: from mtkcas34.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
-        (envelope-from <chunfeng.yun@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1178768694; Wed, 29 Aug 2018 10:55:24 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- MTKMBS31DR.mediatek.inc (172.27.6.102) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Wed, 29 Aug 2018 10:55:23 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Wed, 29 Aug 2018 10:55:22 +0800
-From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
-To:     Mathias Nyman <mathias.nyman@intel.com>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>
-Subject: [PATCH 3/6] usb: xhci-mtk: fix ISOC error when interval is zero
-Date:   Wed, 29 Aug 2018 10:55:15 +0800
-Message-ID: <0c4244695d4dd8bf9cb1d2d0291783974c56ff7a.1535510898.git.chunfeng.yun@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <3bcc220aa54bfebc39cea54cd736388ad37ee0c5.1535510898.git.chunfeng.yun@mediatek.com>
-References: <3bcc220aa54bfebc39cea54cd736388ad37ee0c5.1535510898.git.chunfeng.yun@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+        Wed, 29 Aug 2018 02:58:06 -0400
+Received: from spf.mail.chinamobile.com (unknown[172.16.121.15]) by rmmx-syy-dmz-app05-12005 (RichMail) with SMTP id 2ee55b860cfbe8c-3c8e6; Wed, 29 Aug 2018 11:03:23 +0800 (CST)
+X-RM-TRANSID: 2ee55b860cfbe8c-3c8e6
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG: 00000000
+Received: from localhost.localdomain (unknown[223.105.0.243])
+        by rmsmtp-syy-appsvr08-12008 (RichMail) with SMTP id 2ee85b860cfa1ce-9d9b1;
+        Wed, 29 Aug 2018 11:03:23 +0800 (CST)
+X-RM-TRANSID: 2ee85b860cfa1ce-9d9b1
+From:   Ding Xiang <dingxiang@cmss.chinamobile.com>
+To:     jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: csiostor: Fix bool function return value
+Date:   Wed, 29 Aug 2018 11:03:20 +0800
+Message-Id: <1535511800-25075-1-git-send-email-dingxiang@cmss.chinamobile.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the interval equal zero, needn't round up to power of two
-for the number of packets in each ESIT, so fix it.
+csio_scsi_itnexus_loss_error is bool type, so the return value
+should be true or false.
 
-Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
 ---
- drivers/usb/host/xhci-mtk-sch.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/scsi/csiostor/csio_scsi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/host/xhci-mtk-sch.c b/drivers/usb/host/xhci-mtk-sch.c
-index 46fe0a2..057f453 100644
---- a/drivers/usb/host/xhci-mtk-sch.c
-+++ b/drivers/usb/host/xhci-mtk-sch.c
-@@ -126,7 +126,9 @@ static void setup_sch_info(struct usb_device *udev,
- 		}
+diff --git a/drivers/scsi/csiostor/csio_scsi.c b/drivers/scsi/csiostor/csio_scsi.c
+index dab0d3f..aae7abc 100644
+--- a/drivers/scsi/csiostor/csio_scsi.c
++++ b/drivers/scsi/csiostor/csio_scsi.c
+@@ -147,9 +147,9 @@ static int csio_do_abrt_cls(struct csio_hw *,
+ 	case FW_ERR_RDEV_LOST:
+ 	case FW_ERR_RDEV_LOGO:
+ 	case FW_ERR_RDEV_IMPL_LOGO:
+-		return 1;
++		return true;
+ 	}
+-	return 0;
++	return false;
+ }
  
- 		if (ep_type == ISOC_IN_EP || ep_type == ISOC_OUT_EP) {
--			if (esit_pkts <= sch_ep->esit)
-+			if (sch_ep->esit == 1)
-+				sch_ep->pkts = esit_pkts;
-+			else if (esit_pkts <= sch_ep->esit)
- 				sch_ep->pkts = 1;
- 			else
- 				sch_ep->pkts = roundup_pow_of_two(esit_pkts)
+ /*
 -- 
 1.9.1
+
+
 
