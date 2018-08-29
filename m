@@ -2,160 +2,488 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EA7AC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:58:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19FB6C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:00:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC2D72086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:58:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HW5/fEmg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC2D72086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 94CC32086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:00:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94CC32086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728096AbeH2LyB (ORCPT
+        id S1727498AbeH2L4U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 07:54:01 -0400
-Received: from mail-lf1-f44.google.com ([209.85.167.44]:41552 "EHLO
-        mail-lf1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727658AbeH2LyA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 07:54:00 -0400
-Received: by mail-lf1-f44.google.com with SMTP id l26-v6so3506213lfc.8
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 00:58:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=RPmzBAaCwGcvI/sAuYQ1Clo4rSi6tAkAe6FRcMV4N8Q=;
-        b=HW5/fEmgKIUafjeUg4zbJPEGYLu/s0WsK6ytwflfgvJ9MHT7krbYvZXp1jujKnYoGf
-         7CKQ21h+087UWapk0Wg2LFKg4us//HMcr0pPT1KBMoueiYdGndgsCQKOg2tlWWv4MyII
-         Q6w5V44OtoZ7MTO5MUDKg/S2UmrcSQ0P/G5i4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=RPmzBAaCwGcvI/sAuYQ1Clo4rSi6tAkAe6FRcMV4N8Q=;
-        b=I0AMIMZbOgTcjaQC8dH5FsOekGLInSl8sNE07hiclxwDWuCp58EmAUrw5z2THiOKTd
-         tqgZ0NlqU2BSYEuu/POoi3xi/yNqGD3ttTujj31GW2GtuqRdzC5yZJt4PcvHRvHBCGiV
-         aMUPCiyFAJ1ATPvWHJP8X+1xOMnvhueoOdF2xXlpaI/rQLJscObAsZQ0rav3h3THGKd2
-         I2LhY0DOu0m5l+44T0ay/1Jm21s6g1A9OHe65NhrJVhXlhBZaB/UNGLd/vms+pa+w/KY
-         sY4o9AE+TFl3aXnJnTBW0jSSalU3xfMMwqZTA9N1EuErR2eTeCaeG6vfXthcQ5WnyRco
-         6ZFw==
-X-Gm-Message-State: APzg51DmSIeo99hzDsZTmZWczi5aO6BnDzw1AVtJNfF5c6ZnW4TDhZEl
-        /WoajScm8AVEouYkFaaG02BE/eOOwe8=
-X-Google-Smtp-Source: ANB0Vdbz2buhBBncItmHfiZG0V5b3Guv57Xw6jIEgmomgTgk8BUH1SGFbO6kMlbywvNV2Z2Q+aSpgg==
-X-Received: by 2002:a19:290c:: with SMTP id p12-v6mr3374579lfp.124.1535529501784;
-        Wed, 29 Aug 2018 00:58:21 -0700 (PDT)
-Received: from centauri.ideon.se ([85.235.10.227])
-        by smtp.gmail.com with ESMTPSA id y16-v6sm596945lje.30.2018.08.29.00.58.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 29 Aug 2018 00:58:21 -0700 (PDT)
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>
-Cc:     Niklas Cassel <niklas.cassel@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v6 9/9] soc: qcom: Allow COMPILE_TEST of qcom SoC Kconfigs
-Date:   Wed, 29 Aug 2018 09:57:23 +0200
-Message-Id: <20180829075724.9095-10-niklas.cassel@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180829075724.9095-1-niklas.cassel@linaro.org>
-References: <20180829075724.9095-1-niklas.cassel@linaro.org>
+        Wed, 29 Aug 2018 07:56:20 -0400
+Received: from mga03.intel.com ([134.134.136.65]:58633 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726656AbeH2L4T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 07:56:19 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2018 01:00:41 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.53,301,1531810800"; 
+   d="scan'208";a="65995691"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.98]) ([10.237.72.98])
+  by fmsmga007.fm.intel.com with ESMTP; 29 Aug 2018 00:56:09 -0700
+Subject: Re: [PATCH V11 2/2] scsi: ufs: Add configfs support for UFS
+ provisioning
+To:     Sayali Lokhande <sayalil@codeaurora.org>, subhashj@codeaurora.org,
+        cang@codeaurora.org, vivek.gautam@codeaurora.org,
+        rnayak@codeaurora.org, vinholikatti@gmail.com,
+        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        asutoshd@codeaurora.org, evgreen@chromium.org,
+        riteshh@codeaurora.org
+Cc:     stummala@codeaurora.org, linux-scsi@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        Joel Becker <jlbec@evilplan.org>
+References: <1535517338-26077-1-git-send-email-sayalil@codeaurora.org>
+ <1535517338-26077-3-git-send-email-sayalil@codeaurora.org>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <ec50c4f7-1c46-25ad-b4f2-72f292988751@intel.com>
+Date:   Wed, 29 Aug 2018 10:54:28 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <1535517338-26077-3-git-send-email-sayalil@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit cab673583d96 ("soc: Unconditionally include qcom Makefile"),
-we unconditionally include the soc/qcom/Makefile.
+Cc'ing Joel Becker for any suggestions about configfs
 
-This opens up the possibility to compile test the code even when building
-for other architectures.
+On 29/08/18 07:35, Sayali Lokhande wrote:
+> This patch adds configfs support to provision UFS device at
+> runtime. This feature can be primarily useful in factory or
+> assembly line as some devices may be required to be configured
+> multiple times during initial system development phase.
+> Configuration Descriptors can be written multiple times until
+> bConfigDescrLock attribute is zero.
+> 
+> Configuration descriptor buffer consists of Device and Unit
+> descriptor configurable parameters which are parsed from vendor
+> specific provisioning file and then passed via configfs node at
+> runtime to provision ufs device.
+> CONFIG_CONFIGFS_FS and CONFIG_UFS_PROVISION needs to be enabled
+> for using this feature.
+> 
+> Usage:
+> 1) To read current configuration descriptor with index X
+>    (where index X can be 0/1/2/3) :
+>    cat /config/XXXX.ufshc/ufs_config_desc_X
+> 
+> 2) To write configuration descriptor with index X :
+>    echo <config_desc_buf> > /config/XXXX.ufshc/ufs_config_desc_X
+> 
+> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
+> ---
+>  Documentation/ABI/testing/configfs-driver-ufs |  12 ++
+>  drivers/scsi/ufs/Kconfig                      |  10 ++
+>  drivers/scsi/ufs/Makefile                     |   1 +
+>  drivers/scsi/ufs/ufs-configfs.c               | 228 ++++++++++++++++++++++++++
+>  drivers/scsi/ufs/ufshcd.c                     |   3 +-
+>  drivers/scsi/ufs/ufshcd.h                     |  17 ++
+>  6 files changed, 270 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/ABI/testing/configfs-driver-ufs
+>  create mode 100644 drivers/scsi/ufs/ufs-configfs.c
+> 
+> diff --git a/Documentation/ABI/testing/configfs-driver-ufs b/Documentation/ABI/testing/configfs-driver-ufs
+> new file mode 100644
+> index 0000000..75cfc9e
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/configfs-driver-ufs
+> @@ -0,0 +1,12 @@
+> +What:		/config/*/ufs_config_desc_X
+> +Date:		Jun 2018
+> +KernelVersion:	4.19
+> +Description:
+> +		This file shows the current ufs configuration descriptor with
 
-Allow COMPILE_TEST for all qcom SoC Kconfigs, except for two Kconfigs
-that depend on QCOM_SCM, since that triggers lots of build errors in
-qcom_scm.
+Should mention that it is in bytes i.e.
 
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-Reviewed-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-Reviewed-by: Vinod Koul <vkoul@kernel.org>
----
- drivers/soc/qcom/Kconfig | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+	This file shows the bytes of the ufs configuration descriptor with
 
-diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-index cf4ece232897..684cb51694d1 100644
---- a/drivers/soc/qcom/Kconfig
-+++ b/drivers/soc/qcom/Kconfig
-@@ -33,7 +33,7 @@ config QCOM_GLINK_SSR
- 
- config QCOM_GSBI
-         tristate "QCOM General Serial Bus Interface"
--        depends on ARCH_QCOM
-+        depends on ARCH_QCOM || COMPILE_TEST
-         select MFD_SYSCON
-         help
-           Say y here to enable GSBI support.  The GSBI provides control
-@@ -42,7 +42,7 @@ config QCOM_GSBI
- 
- config QCOM_LLCC
- 	tristate "Qualcomm Technologies, Inc. LLCC driver"
--	depends on ARCH_QCOM
-+	depends on ARCH_QCOM || COMPILE_TEST
- 	help
- 	  Qualcomm Technologies, Inc. platform specific
- 	  Last Level Cache Controller(LLCC) driver. This provides interfaces
-@@ -73,7 +73,8 @@ config QCOM_PM
- 
- config QCOM_QMI_HELPERS
- 	tristate
--	depends on ARCH_QCOM && NET
-+	depends on ARCH_QCOM || COMPILE_TEST
-+	depends on NET
- 	help
- 	  Helper library for handling QMI encoded messages.  QMI encoded
- 	  messages are used in communication between the majority of QRTR
-@@ -104,7 +105,7 @@ config QCOM_RPMH
- 
- config QCOM_SMEM
- 	tristate "Qualcomm Shared Memory Manager (SMEM)"
--	depends on ARCH_QCOM
-+	depends on ARCH_QCOM || COMPILE_TEST
- 	depends on HWSPINLOCK
- 	help
- 	  Say y here to enable support for the Qualcomm Shared Memory Manager.
-@@ -113,7 +114,7 @@ config QCOM_SMEM
- 
- config QCOM_SMD_RPM
- 	tristate "Qualcomm Resource Power Manager (RPM) over SMD"
--	depends on ARCH_QCOM
-+	depends on ARCH_QCOM || COMPILE_TEST
- 	depends on RPMSG
- 	help
- 	  If you say yes to this option, support will be included for the
-@@ -150,7 +151,7 @@ config QCOM_SMSM
- 
- config QCOM_WCNSS_CTRL
- 	tristate "Qualcomm WCNSS control driver"
--	depends on ARCH_QCOM
-+	depends on ARCH_QCOM || COMPILE_TEST
- 	depends on RPMSG
- 	help
- 	  Client driver for the WCNSS_CTRL SMD channel, used to download nv
-@@ -158,7 +159,7 @@ config QCOM_WCNSS_CTRL
- 
- config QCOM_APR
- 	tristate "Qualcomm APR Bus (Asynchronous Packet Router)"
--	depends on ARCH_QCOM
-+	depends on ARCH_QCOM || COMPILE_TEST
- 	depends on RPMSG
- 	help
-           Enable APR IPC protocol support between
--- 
-2.17.1
+> +		index X (where X = 0/1/2/3) set in device. This can be used to
+> +		provision ufs device if bConfigDescrLock is 0.
+> +		For more details, refer 14.1.6.3 Configuration Descriptor and
+> +		table 14-12 - Unit Descriptor configurable parameters from specs for
+> +		description and format of each configuration descriptor parameter.
+> +		Parameters of Configuration descriptor buffer for respective index
+> +		needs to be passed in space separated format.
+
+"needs to be passed as bytes in space separated format"
+
+> diff --git a/drivers/scsi/ufs/Kconfig b/drivers/scsi/ufs/Kconfig
+> index e27b4d4..a9a0a58 100644
+> --- a/drivers/scsi/ufs/Kconfig
+> +++ b/drivers/scsi/ufs/Kconfig
+> @@ -100,3 +100,13 @@ config SCSI_UFS_QCOM
+>  
+>  	  Select this if you have UFS controller on QCOM chipset.
+>  	  If unsure, say N.
+> +
+> +config UFS_PROVISION
+> +	tristate "Runtime UFS Provisioning support"
+> +	depends on SCSI_UFSHCD && CONFIGFS_FS
+> +	help
+> +	  This enables runtime UFS provisioning support. This can be used
+> +	  primarily during assembly line as some devices may be required to
+> +	  be configured multiple times during initial development phase.
+> +
+> +	  If unsure, say N.
+> diff --git a/drivers/scsi/ufs/Makefile b/drivers/scsi/ufs/Makefile
+> index 918f579..00110ea 100644
+> --- a/drivers/scsi/ufs/Makefile
+> +++ b/drivers/scsi/ufs/Makefile
+> @@ -5,5 +5,6 @@ obj-$(CONFIG_SCSI_UFS_DWC_TC_PLATFORM) += tc-dwc-g210-pltfrm.o ufshcd-dwc.o tc-d
+>  obj-$(CONFIG_SCSI_UFS_QCOM) += ufs-qcom.o
+>  obj-$(CONFIG_SCSI_UFSHCD) += ufshcd-core.o
+>  ufshcd-core-objs := ufshcd.o ufs-sysfs.o
+> +obj-$(CONFIG_UFS_PROVISION) += ufs-configfs.o
+>  obj-$(CONFIG_SCSI_UFSHCD_PCI) += ufshcd-pci.o
+>  obj-$(CONFIG_SCSI_UFSHCD_PLATFORM) += ufshcd-pltfrm.o
+> diff --git a/drivers/scsi/ufs/ufs-configfs.c b/drivers/scsi/ufs/ufs-configfs.c
+> new file mode 100644
+> index 0000000..a4d26b7
+> --- /dev/null
+> +++ b/drivers/scsi/ufs/ufs-configfs.c
+> @@ -0,0 +1,228 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +// Copyright (c) 2018, Linux Foundation.
+> +
+> +#include <linux/configfs.h>
+> +#include <linux/err.h>
+> +#include <linux/string.h>
+> +
+> +#include "ufs.h"
+> +#include "ufshcd.h"
+> +
+> +static inline struct ufs_hba *config_item_to_hba(struct config_item *item)
+> +{
+> +	struct config_group *group = to_config_group(item);
+> +	struct configfs_subsystem *subsys = to_configfs_subsystem(group);
+> +	struct ufs_hba *hba = container_of(subsys, struct ufs_hba, subsys);
+> +
+> +	return subsys ? hba : NULL;
+
+'subsys' won't be null unless 'item' is null, but 'item' is passed by
+configfs, so that won't happen.  i.e. might just as well return 'hba; directly.
+
+> +}
+> +
+> +static ssize_t ufs_config_desc_show(struct config_item *item, char *buf,
+> +		u8 index)
+> +{
+> +	struct ufs_hba *hba = config_item_to_hba(item);
+> +	u8 *desc_buf = NULL;
+> +	int desc_buf_len = hba->desc_size.conf_desc;
+> +	int i, ret, curr_len = 0;
+> +
+> +	desc_buf = kmalloc(desc_buf_len, GFP_KERNEL);
+> +	if (!desc_buf)
+> +		return -ENOMEM;
+> +
+> +	memset(desc_buf, 0, desc_buf_len);
+
+Just use kzalloc
+
+> +
+> +	ret = ufshcd_query_descriptor_retry(hba, UPIU_QUERY_OPCODE_READ_DESC,
+> +	QUERY_DESC_IDN_CONFIGURATION, index, 0, desc_buf, &desc_buf_len);
+
+Indenting
+
+> +
+
+Blank line?
+
+> +	if (ret)
+> +		return ret;
+> +
+> +	for (i = 0; i < desc_buf_len; i++)
+> +		curr_len += snprintf((buf + curr_len), (PAGE_SIZE - curr_len),
+> +				"0x%x ", desc_buf[i]);
+
+Free desc_buf
+
+> +
+> +	return curr_len;
+> +}
+> +
+> +ssize_t ufshcd_desc_configfs_store(struct config_item *item,
+> +		const char *buf, size_t count, u8 index)
+> +{
+> +	char *strbuf;
+> +	char *strbuf_copy;
+> +	struct ufs_hba *hba = config_item_to_hba(item);
+> +	u8 *desc_buf = NULL;
+> +	int desc_buf_len = hba->desc_size.conf_desc;
+> +	char *token;
+> +	int i, ret, value;
+> +	u32 config_desc_lock = 0;
+> +
+> +	desc_buf = kmalloc(desc_buf_len, GFP_KERNEL);
+> +	if (!desc_buf)
+> +		return -ENOMEM;
+> +
+> +	memset(desc_buf, 0, desc_buf_len);
+
+Just use kzalloc
+
+> +
+> +	/* reserve one byte for null termination */
+> +	strbuf = kmalloc(count + 1, GFP_KERNEL);
+> +	if (!strbuf)
+> +		return -ENOMEM;
+> +
+> +	strbuf_copy = strbuf;
+> +	strlcpy(strbuf, buf, count + 1);
+> +
+> +	/* Just return if bConfigDescrLock is already set */
+> +	ret = ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_READ_ATTR,
+> +		QUERY_ATTR_IDN_CONF_DESC_LOCK, 0, 0, &config_desc_lock);
+> +	if (ret)
+> +		goto out;
+> +
+> +	if (config_desc_lock) {
+> +		dev_err(hba->dev, "%s: bConfigDescrLock already set to %u, cannot re-provision device!\n",
+> +		__func__, config_desc_lock);
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	for (i = 0; i < desc_buf_len; i++) {
+> +		token = strsep(&strbuf, " ");
+> +		if (!token && i)
+> +			break;
+> +
+> +		ret = kstrtoint(token, 0, &value);
+
+Why not unsigned, and also why not check the value is <= 255
+
+> +		if (ret) {
+> +			dev_err(hba->dev, "%s: kstrtoint failed %d %s\n",
+> +				__func__, ret, token);
+> +			ret = -EINVAL;
+> +			goto out;
+> +		}
+> +		desc_buf[i] = (u8)value;
+> +	}
+> +
+> +	/* Write configuration descriptor to provision ufs */
+> +	ret = ufshcd_query_descriptor_retry(hba, UPIU_QUERY_OPCODE_WRITE_DESC,
+> +	QUERY_DESC_IDN_CONFIGURATION, index, 0, desc_buf, &desc_buf_len);
+
+Indenting
+
+> +
+
+Blank line?
+
+> +	if (!ret)
+> +		dev_info(hba->dev, "%s: UFS Configuration Descriptor %u written\n",
+> +		__func__, index);
+> +
+> +out:
+> +	kfree(strbuf_copy);
+
+Please arrange it so that the variable used for kfree is the same as the
+variable assigned to kmalloc.
+
+> +	if (ret)
+> +		return ret;
+
+Free desc_buf
+
+> +	return count;
+> +}
+> +
+> +static ssize_t ufs_config_desc_0_show(struct config_item *item, char *buf)
+> +{
+> +	return ufs_config_desc_show(item, buf, 0);
+> +}
+> +
+> +static ssize_t ufs_config_desc_0_store(struct config_item *item,
+> +		const char *buf, size_t count)
+> +{
+> +	return ufshcd_desc_configfs_store(item, buf, count, 0);
+> +}
+> +
+> +static ssize_t ufs_config_desc_1_show(struct config_item *item, char *buf)
+> +{
+> +	return ufs_config_desc_show(item, buf, 1);
+> +}
+> +
+> +static ssize_t ufs_config_desc_1_store(struct config_item *item,
+> +		const char *buf, size_t count)
+> +{
+> +	return ufshcd_desc_configfs_store(item, buf, count, 1);
+> +}
+> +
+> +static ssize_t ufs_config_desc_2_show(struct config_item *item, char *buf)
+> +{
+> +	return ufs_config_desc_show(item, buf, 2);
+> +}
+> +
+> +static ssize_t ufs_config_desc_2_store(struct config_item *item,
+> +		const char *buf, size_t count)
+> +{
+> +	return ufshcd_desc_configfs_store(item, buf, count, 2);
+> +}
+> +
+> +static ssize_t ufs_config_desc_3_show(struct config_item *item, char *buf)
+> +{
+> +	return ufs_config_desc_show(item, buf, 3);
+> +}
+> +
+> +static ssize_t ufs_config_desc_3_store(struct config_item *item,
+> +		const char *buf, size_t count)
+> +{
+> +	return ufshcd_desc_configfs_store(item, buf, count, 3);
+> +}
+> +
+> +static struct configfs_attribute ufshcd_attr_provision_0 = {
+> +	.ca_name	= "ufs_config_desc_0",
+> +	.ca_mode	= 0644,
+> +	.ca_owner	= THIS_MODULE,
+> +	.show		= ufs_config_desc_0_show,
+> +	.store		= ufs_config_desc_0_store,
+> +};
+> +
+> +static struct configfs_attribute ufshcd_attr_provision_1 = {
+> +	.ca_name	= "ufs_config_desc_1",
+> +	.ca_mode	= 0644,
+> +	.ca_owner	= THIS_MODULE,
+> +	.show		= ufs_config_desc_1_show,
+> +	.store		= ufs_config_desc_1_store,
+> +};
+> +
+> +static struct configfs_attribute ufshcd_attr_provision_2 = {
+> +	.ca_name	= "ufs_config_desc_2",
+> +	.ca_mode	= 0644,
+> +	.ca_owner	= THIS_MODULE,
+> +	.show		= ufs_config_desc_2_show,
+> +	.store		= ufs_config_desc_2_store,
+> +};
+> +
+> +static struct configfs_attribute ufshcd_attr_provision_3 = {
+> +	.ca_name	= "ufs_config_desc_3",
+> +	.ca_mode	= 0644,
+> +	.ca_owner	= THIS_MODULE,
+> +	.show		= ufs_config_desc_3_show,
+> +	.store		= ufs_config_desc_3_store,
+> +};
+> +
+> +static struct configfs_attribute *ufshcd_attrs[] = {
+> +	&ufshcd_attr_provision_0,
+> +	&ufshcd_attr_provision_1,
+> +	&ufshcd_attr_provision_2,
+> +	&ufshcd_attr_provision_3,
+> +	NULL,
+> +};
+> +
+> +static struct config_item_type ufscfg_type = {
+> +	.ct_attrs	= ufshcd_attrs,
+> +	.ct_owner	= THIS_MODULE,
+> +};
+> +
+> +void ufshcd_configfs_init(struct ufs_hba *hba, const char *name)
+> +{
+> +	int ret;
+> +	struct config_item *cg_item;
+> +	struct configfs_subsystem *subsys;
+> +
+> +	cg_item = &hba->subsys.su_group.cg_item;
+> +	sprintf(cg_item->ci_namebuf, "%s", name);
+> +	cg_item->ci_type = &ufscfg_type;
+> +
+> +	subsys = &hba->subsys;
+> +	config_group_init(&subsys->su_group);
+> +	mutex_init(&subsys->su_mutex);
+> +	ret = configfs_register_subsystem(subsys);
+> +	if (ret)
+> +		pr_err("Error %d while registering subsystem %s\n",
+> +		       ret,
+> +		       subsys->su_group.cg_item.ci_namebuf);
+> +}
+> +
+> +void ufshcd_configfs_exit(struct ufs_hba *hba)
+> +{
+> +	configfs_unregister_subsystem(&hba->subsys);
+> +}
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> index e01cdc0..608e23e 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -7711,6 +7711,7 @@ int ufshcd_shutdown(struct ufs_hba *hba)
+>  void ufshcd_remove(struct ufs_hba *hba)
+>  {
+>  	ufs_sysfs_remove_nodes(hba->dev);
+> +	ufshcd_configfs_exit(hba);
+>  	scsi_remove_host(hba->host);
+>  	/* disable interrupts */
+>  	ufshcd_disable_intr(hba, hba->intr_mask);
+> @@ -7965,7 +7966,7 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
+>  
+>  	async_schedule(ufshcd_async_scan, hba);
+>  	ufs_sysfs_add_nodes(hba->dev);
+> -
+> +	ufshcd_configfs_init(hba, dev_name(hba->dev));
+>  	return 0;
+>  
+>  out_remove_scsi_host:
+> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+> index 45013b6..a340ca8 100644
+> --- a/drivers/scsi/ufs/ufshcd.h
+> +++ b/drivers/scsi/ufs/ufshcd.h
+> @@ -37,6 +37,7 @@
+>  #ifndef _UFSHCD_H
+>  #define _UFSHCD_H
+>  
+> +#include <linux/configfs.h>
+>  #include <linux/module.h>
+>  #include <linux/kernel.h>
+>  #include <linux/init.h>
+> @@ -515,6 +516,9 @@ struct ufs_hba {
+>  
+>  	struct Scsi_Host *host;
+>  	struct device *dev;
+> +#ifdef CONFIG_UFS_PROVISION
+> +	struct configfs_subsystem subsys;
+> +#endif
+>  	/*
+>  	 * This field is to keep a reference to "scsi_device" corresponding to
+>  	 * "UFS device" W-LU.
+> @@ -868,6 +872,19 @@ int ufshcd_read_string_desc(struct ufs_hba *hba, int desc_index,
+>  int ufshcd_hold(struct ufs_hba *hba, bool async);
+>  void ufshcd_release(struct ufs_hba *hba);
+>  
+> +/* Expose UFS configfs API's */
+> +#ifndef CONFIG_UFS_PROVISION
+> +static inline void ufshcd_configfs_init(struct ufs_hba *hba, const char *name)
+> +{
+> +}
+> +static inline void ufshcd_configfs_exit(struct ufs_hba *hba)
+> +{
+> +}
+> +#else
+> +void ufshcd_configfs_init(struct ufs_hba *hba, const char *name);
+> +void ufshcd_configfs_exit(struct ufs_hba *hba);
+> +#endif
+> +
+>  int ufshcd_map_desc_id_to_length(struct ufs_hba *hba, enum desc_idn desc_id,
+>  	int *desc_length);
+>  
+> 
 
