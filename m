@@ -3,91 +3,116 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83B69C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 18:06:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F110C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 18:11:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26D582064E
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 18:06:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14AF52064E
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 18:11:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="GONOMEZw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26D582064E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="UVbd732k"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14AF52064E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728169AbeH2WEF (ORCPT
+        id S1728014AbeH2WJm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 18:04:05 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:42796 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727293AbeH2WEF (ORCPT
+        Wed, 29 Aug 2018 18:09:42 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:36131 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727693AbeH2WJl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 18:04:05 -0400
-Received: by mail-oi0-f66.google.com with SMTP id k81-v6so4643475oib.9;
-        Wed, 29 Aug 2018 11:06:02 -0700 (PDT)
+        Wed, 29 Aug 2018 18:09:41 -0400
+Received: by mail-pf1-f196.google.com with SMTP id b11-v6so2644262pfo.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 11:11:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:from:date:message-id:subject:to:cc;
-        bh=ucMsBF9spkBK8Uh0j9ZI/488YeUHAVi5v/L/w0gtNKc=;
-        b=GONOMEZwySeQOI3L/5c12fmU9hoWX17SiZ5bXxzvY0eMai88TZZaLKNFzt3dwFiqy2
-         eayuLp1qxUzJBgYvwuJsFxV3zaHnDPS+XfWvUMDDHqvbXKSY4/lQLtEqgfLT+ocPyBoP
-         ryjkXTNhs85di/EJN0eD4OkOuFKPi2dBOARsRX9qOzCrYb8ua00oTN5GV6Pyki6KHlA+
-         YU7IORT9NjLfQakkSgLPSGCg3Sw58fbhLSAr8PB/FlQ5R3dgSSGqkg5LpdD2MSTPlFob
-         sP8bUqL9xjz1tIXNOd52PAvtJlOS0yqXs48Vy8SpUX/d/SO4GLRalFyU2LBpBnsLmO/L
-         lSVw==
+        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=wUxYOpTBhqCaNuXzYHV83oZMCPP8ICX7wAfM7RxrphU=;
+        b=UVbd732ka6HFJGwN+NfWieOzh9YbuXnMbPY7HYlZjswu5c/WvmCFtotbSsBKly3rWf
+         wlNNX4Gon55B2VSGIKhHni5lh4xerFHx8zXWNWy1smgECyit72B2H82Ci/d3TT1df69Q
+         WL4rCxrJZ95b5Io/ZDcSxF8M0c0ClfDxFzthwkWB7rU9CrDnBubgbCSSyyH/1Ym3ts2i
+         aHO3pcrTLNUz7BPzbZLu87d1GCwdG2k9li9tiinlhjvJ7NOC7+K47kzPcSMsLRdWK0Rw
+         2wGKTaH3tU38Z8mrRNyhdf7maBQVIQDksSdq/MZkJcPE2ZPBJTIA9APBBMn/D3xNMIfK
+         bGVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:from:date:message-id
-         :subject:to:cc;
-        bh=ucMsBF9spkBK8Uh0j9ZI/488YeUHAVi5v/L/w0gtNKc=;
-        b=cFBKN0gDj2XyM9yyjVJomQDMJw7dS4JdRd2qDD367IFa3+iR5kbeVmbSWyJrrakwNR
-         uTcVm7dLgaHNlsgxIPFEjJrey4VOVeE4VdFPbbgBMHnIaeGWWA1IbTi5Q3ojlBznna5h
-         3hMLgtYloylDHioEyACsRaRZYgoOyBAjCDmCM+/ZM6dG4bV9oEYQZYMq4VT/Rfzwx12S
-         RJM8rzDJDvT6qgI+E5C/rzq8eMWjSTp44CPZUCeY9qwTvsoNycUeGSB+DGjKE2caoMw1
-         cXGvbWuuJA2S+rwkkp5r9tOr0GzAr9zFJGwqmc56vETyT+kZ10cT5kUj+Cj0mvi6tp1J
-         wklQ==
-X-Gm-Message-State: APzg51Av4GGd1uE8ujjZ1X8xTY062NdZQL1OOSWkxWE8LvTpxf8GO81G
-        MOuqywVlNzsdsjo8LgDBD3+5SuKTaImL5bdSmY9Omg==
-X-Google-Smtp-Source: ANB0VdZsESLRIFOwuKoRDW/0yRRnCvOduumkigI4k3EkJ11xS8ECOpQzbQXVYAT6zucsVmOdkflmcArC/4MjAYCOh/8=
-X-Received: by 2002:aca:d706:: with SMTP id o6-v6mr4001069oig.45.1535565961701;
- Wed, 29 Aug 2018 11:06:01 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=wUxYOpTBhqCaNuXzYHV83oZMCPP8ICX7wAfM7RxrphU=;
+        b=ZrabgEdDvSbprJSHVdqIeW/5U1fsXQnNhSDBQZ0RLqbfcGnay3uO6Qln7KLNaa9/TG
+         EykhE17zU9V84wv/FPlY3D4dM5k6v0AIjECyk/JfVXqe5t9C/0RngpL2E5l3PriKxs9c
+         7f9IAwTu0Ant1Avfkj5mOohKUeqfnckSvzPYp14OGJuEMRttr2Tu9X3xbKxduYiHnjyU
+         WK+PR6jtMw71QCPPOzjiaaX3QN8DlCXlTVC8vXXjhdO1XKK+AsMLTPlV3gerxRZJpXy5
+         k1QCQMMiyxdNj11sTarYLG7VBX4PVBSEbfeo5DJqkkoSbRcedscVYFIMobD2Y08fynA+
+         LCpg==
+X-Gm-Message-State: APzg51DwGZRgwDsfy1awwS31UFCuQTWshhhYqw4mOAUcn+6FO/56cy+A
+        pncGmexYncgc9WTSa17e+lNrAguVGbXFVA==
+X-Google-Smtp-Source: ANB0Vdb52roT2GIzlYuiTQlqRLVeazd4/xxdpBupa6s+LLpzxTjb4xEanqKMu+28aVl8eKm+gCNgaA==
+X-Received: by 2002:a65:4147:: with SMTP id x7-v6mr6563751pgp.220.1535566296664;
+        Wed, 29 Aug 2018 11:11:36 -0700 (PDT)
+Received: from [10.86.62.45] (rap-us.hgst.com. [199.255.44.250])
+        by smtp.googlemail.com with ESMTPSA id m26-v6sm16850223pfi.102.2018.08.29.11.11.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 Aug 2018 11:11:35 -0700 (PDT)
+Subject: Re: [PATCH 0/4] lightnvm: pblk: collection of small fixes
+To:     javier@cnexlabs.com
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1535533313-29944-1-git-send-email-javier@cnexlabs.com>
+ <5b8881cd-019a-a1d8-86ed-0131ef3b71af@lightnvm.io>
+ <3F0AC430-4499-4D2D-B989-45B5635307A4@cnexlabs.com>
+From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <115fa3ea-c53b-557f-9465-5f61a02efa49@lightnvm.io>
+Date:   Wed, 29 Aug 2018 20:11:31 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-References: <20180824090440.13411-1-jbrunet@baylibre.com> <d3858ef0-97c7-28b5-db4a-4ac71af52ba5@synopsys.com>
- <CAFBinCA+Q6vLzutdMLOgeTDg5GBkqvp3YzBQiUd_y-qyiz=dsQ@mail.gmail.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Wed, 29 Aug 2018 20:05:50 +0200
-Message-ID: <CAFBinCDZ3t-_-+Erfm_ubTjKkHpfQ1zWsLg=Ad7rwBHuiGm_xg@mail.gmail.com>
-Subject: Re: [PATCH] Revert "net: stmmac: Do not keep rearming the coalesce
- timer in stmmac_xmit"
-To:     Jose.Abreu@synopsys.com
-Cc:     jbrunet@baylibre.com, peppe.cavallaro@st.com,
-        alexandre.torgue@st.com, netdev@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, Joao.Pinto@synopsys.com,
-        clabbe@baylibre.com, linux-kernel@vger.kernel.org,
-        Vitor.Soares@synopsys.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <3F0AC430-4499-4D2D-B989-45B5635307A4@cnexlabs.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 29, 2018 at 8:03 PM Martin Blumenstingl
-<martin.blumenstingl@googlemail.com> wrote:
-[snip]
-> from that point on:
-> # dmesg | tail -n 4
-> [   47.782778] RTL8211F Gigabit Ethernet 0.2009087f:00: attached PHY driver [RTL8211F Gigabit Ethernet] (mii_bus:phy_addr=0.2009087f:00, irq=30)
-> [   47.803540] meson8b-dwmac c9410000.ethernet eth0: No Safety Features support found
-> [   47.805505] meson8b-dwmac c9410000.ethernet eth0: PTP not supported by HW
-> [   50.311975] meson8b-dwmac c9410000.ethernet eth0: Link is Up - 1Gbps/Full - flow control rx/tx
-I forgot to mention: after traffic doesn't flow anymore there are no
-additional messages in the kernel log
-thus the output of "dmesg | tail -n 4" is identical before and after
-the test run
+On 08/29/2018 03:27 PM, Javier Gonzalez wrote:
+> 
+>> On 29 Aug 2018, at 15.14, Matias Bjørling <mb@lightnvm.io> wrote:
+>>
+>> On 08/29/2018 11:01 AM, Javier González wrote:
+>>> Collection of small helper function fixes, removal of unused variables
+>>> and comment typos.
+>>> Javier González (4):
+>>>    lightnvm: pblk: calculate line pad distance in helper
+>>>    lightnvm: pblk: fix comment typo
+>>>    lightnvm: pblk: remove unused variable.
+>>>    lightnvm: pblk: guarantee emeta on line close
+>>>   drivers/lightnvm/pblk-core.c     | 13 +++++++++++--
+>>>   drivers/lightnvm/pblk-recovery.c |  2 --
+>>>   drivers/lightnvm/pblk-write.c    |  2 +-
+>>>   drivers/lightnvm/pblk.h          |  6 +++---
+>>>   4 files changed, 15 insertions(+), 8 deletions(-)
+>>
+>> Thanks. Applied 2-4. The pad distance does not compile due to missing
+>> update to pblk_pad_distance call from pblk-recovery.c.
+>>
+>> Also, it looks like pblk-recovery.c is the only user. Please consider
+>> moving it the function from pblk.h to pblk-recovery.c
+> 
+> I reordered to send the helpers, but you can see that all these are made
+> to support.
+> 
+>    lightnvm: pblk: recover open lines on 2.0 devices
+> 
+> Can you fix this directly and apply 1 too? I'm fine with moving it to
+> pblk-recovery.c. The patch above will use it.
+> 
 
+Yes. I've fixed it up in pblk-recovery.c, and also moved the function to 
+pblk-recovery.c. Applied for 4.20.
 
-Regards
-Martin
