@@ -2,142 +2,154 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F4B4C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:47:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1EC7C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:49:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 432552064E
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:47:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 432552064E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 97D9B20647
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 15:49:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97D9B20647
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729244AbeH2TpX (ORCPT
+        id S1729258AbeH2Tqp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 15:45:23 -0400
-Received: from mout.kundenserver.de ([212.227.17.24]:55541 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729046AbeH2TpX (ORCPT
+        Wed, 29 Aug 2018 15:46:45 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:37468 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728979AbeH2Tqp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 15:45:23 -0400
-Received: from wuerfel.lan ([109.193.40.16]) by mrelayeu.kundenserver.de
- (mreue104 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0MXp03-1gOSLQ1iNz-00Wqy9; Wed, 29 Aug 2018 17:47:35 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Santosh Shilimkar <santosh.shilimkar@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Sowmini Varadhan <sowmini.varadhan@oracle.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Ka-Cheong Poon <ka-cheong.poon@oracle.com>,
-        Salvatore Mesoraca <s.mesoraca16@gmail.com>,
-        Avinash Repaka <avinash.repaka@oracle.com>,
-        Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH net-next] rds: store socket timestamps as ktime_t
-Date:   Wed, 29 Aug 2018 17:47:19 +0200
-Message-Id: <20180829154732.844217-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.18.0
-X-Provags-ID: V03:K1:x03ehuuYWLKYMEwVUAHZJeXM3QlYVIuaFL18LzQ0/R16BzuiL3S
- 0wRDTDHfLICIgKYNI7zb2cRrHP9rAlCztRVdBrXgMFVuxDENJhF/n5AT7RxW54tQO1lLewc
- b92H9iR1/AuW7LfGWqwIoKOwopMlwxSEsVR6IAhH5ZiuOL8+5amP7leyoY+g7c6yil2Zqx6
- /w1WzBy7gPXRXhI0onqBg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:TbNKnSoqhSw=:wsXajir3M770kERrsyI+Hv
- EhJeqc9W47u3uCMsoQcIRG+X6ngf5ohsb2VorF8T16+Mxp9pC1N+dFrTxqC8pFHZxUvkjBJph
- mGQedukzzE7hrN99XK+pTSZvx0vGPbBHK0Eqp2Um/mUv7N+l/hfYXHD+0UglQFCp8FrXS9v5X
- m3dlKTXwFtibCDQSepuloVwoLS0MHbspdwcSqbOdE52nmRr6/gmnAzTPN9v5579eVJLVSdga3
- mOpgcVFkK1DUWBRH+A+fhOhhdKCoovqWUPs96ZBzFO7X/PRD1nA1zBakZG48D03cZcKz4bx0o
- NcsmxH37VXy9Uk71PBaMUItgzXD6h7JavMtpiRkZ/OeQ7j0ngv/FLX6HRPy6fIIWPw59skK5N
- 0n93HO651kqZIoolvWWS4apbDGdnZsVIBPSsokUftdrvY02VewQgYjDgJA1crZKpLiw45bKX7
- HNNUYF1ztxYQeZN7FmgbynqsqXHKY0y7pbB9xC/EyPLUMfafSDWJltCDMW6rMvCK1mGIZbSP4
- zAxWeNwg0uPYc1fD15AQbLwis1SG2K3kngyYs32q748kenlIDyYoJIk9LEETX9++4Yxx76pKj
- 6KENABBfzjIzp87kQgP3/rFTDnpHIWFIAnWIBqNK/96kiiMj7Q73QbNmxFL4ob17Yvo+ThAA1
- bzgOehl352EdMRkqQ4Xl9z/M2b59XbyhG0ZSbKwU6zlwOl8Gh4KASU/chlv6D6TebOSc=
+        Wed, 29 Aug 2018 15:46:45 -0400
+Received: from imladris.surriel.com ([96.67.55.152])
+        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <riel@shelob.surriel.com>)
+        id 1fv2iU-0000Ia-J9; Wed, 29 Aug 2018 11:49:10 -0400
+Message-ID: <041532109326b7bd3e67087808fee9d3289f9682.camel@surriel.com>
+Subject: Re: [PATCH v2] x86/nmi: Fix some races in NMI uaccess
+From:   Rik van Riel <riel@surriel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     X86 ML <x86@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        Jann Horn <jannh@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Nadav Amit <nadav.amit@gmail.com>
+Date:   Wed, 29 Aug 2018 11:49:10 -0400
+In-Reply-To: <CALCETrXjH175OLPRCwA8=Stbq1KmJwwvkZ36Y74=hF_i8GFWCw@mail.gmail.com>
+References: <c7ee1ee7a1b8d17743f7c3680ea5d2c32bf3e897.1535410956.git.luto@kernel.org>
+         <20180828135647.6d516048@imladris.surriel.com>
+         <CALCETrX2v_g_+TpX1DEZasHGi=8Y3w3ka=yYEaTxgFDnPy67nw@mail.gmail.com>
+         <e9d62b33d43f99570b14c73e1519b13021ea3a95.camel@surriel.com>
+         <CALCETrXjH175OLPRCwA8=Stbq1KmJwwvkZ36Y74=hF_i8GFWCw@mail.gmail.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-MHChQH5XfA1BmXdm9y1S"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-rds is the last in-kernel user of the old do_gettimeofday()
-function. Convert it over to ktime_get_real() to make it
-work more like the generic socket timestamps, and to let
-us kill off do_gettimeofday().
 
-A follow-up patch will have to change the user space interface
-to deal better with 32-bit tasks, which may use an incompatible
-layout for 'struct timespec'.
+--=-MHChQH5XfA1BmXdm9y1S
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- net/rds/rds.h  |  2 +-
- net/rds/recv.c | 14 ++++++--------
- 2 files changed, 7 insertions(+), 9 deletions(-)
+On Wed, 2018-08-29 at 08:36 -0700, Andy Lutomirski wrote:
+> On Wed, Aug 29, 2018 at 8:17 AM, Rik van Riel <riel@surriel.com>
+> wrote:
+> > On Tue, 2018-08-28 at 20:46 -0700, Andy Lutomirski wrote:
+> > > On Tue, Aug 28, 2018 at 10:56 AM, Rik van Riel <riel@surriel.com>
+> > > wrote:
+> > > > On Mon, 27 Aug 2018 16:04:16 -0700
+> > > > Andy Lutomirski <luto@kernel.org> wrote:
+> > > >=20
+> > > > > The 0day bot is still chewing on this, but I've tested it a
+> > > > > bit
+> > > > > locally
+> > > > > and it seems to do the right thing.
+> > > >=20
+> > > > Hi Andy,
+> > > >=20
+> > > > the version of the patch below should fix the bug we talked
+> > > > about
+> > > > in email yesterday.  It should automatically cover kernel
+> > > > threads
+> > > > in lazy TLB mode, because current->mm will be NULL, while the
+> > > > cpu_tlbstate.loaded_mm should never be NULL.
+> > > >=20
+> > >=20
+> > > That's better than mine.  I tweaked it a bit and added some
+> > > debugging,
+> > > and I got this:
+> > >=20
+> > >=20
+> >=20
+> >=20
+https://git.kernel.org/pub/scm/linux/kernel/git/luto/linux.git/commit/?h=3D=
+x86/fixes&id=3Ddd956eba16646fd0b15c3c0741269dfd84452dac
+> > >=20
+> > > I made the loaded_mm handling a little more conservative to make
+> > > it
+> > > more obvious that switch_mm_irqs_off() is safe regardless of
+> > > exactly
+> > > when it gets called relative to switching current.
+> >=20
+> > I am not convinced that the dance of writing
+> > cpu_tlbstate.loaded_mm twice, with a barrier on
+> > each end, is useful or necessary.
+> >=20
+> > At the time switch_mm_irqs_off returns, nmi_uaccess_ok()
+> > will still return false, because we have not switched
+> > "current" to the task that owns the next mm_struct yet.
+> >=20
+> > We just have to make sure to:
+> > 1) Change cpu_tlbstate.loaded_mm before we manipulate
+> >    CR3, and
+> > 2) Change "current" only once enough of the mm stuff has
+> >    been switched, __switch_to seems to get that right.
+> >=20
+> > Between the time switch_mm_irqs_off() sets cpu_tlbstate
+> > to the next mm, and __switch_to moves() over current,
+> > nmi_uaccess_ok() will return false.
+>=20
+> All true, but I think it stops working as soon as someone starts
+> calling switch_mm_irqs_off() for some other reason, such as during
+> text_poke().  And that was the original motivation for this patch.
 
-diff --git a/net/rds/rds.h b/net/rds/rds.h
-index c4dcf654d8fe..6bfaf05b63b2 100644
---- a/net/rds/rds.h
-+++ b/net/rds/rds.h
-@@ -278,7 +278,7 @@ struct rds_incoming {
- 	struct in6_addr		i_saddr;
- 
- 	rds_rdma_cookie_t	i_rdma_cookie;
--	struct timeval		i_rx_tstamp;
-+	ktime_t			i_rx_tstamp;
- 	u64			i_rx_lat_trace[RDS_RX_MAX_TRACES];
- };
- 
-diff --git a/net/rds/recv.c b/net/rds/recv.c
-index 504cd6bcc54c..12719653188a 100644
---- a/net/rds/recv.c
-+++ b/net/rds/recv.c
-@@ -50,8 +50,7 @@ void rds_inc_init(struct rds_incoming *inc, struct rds_connection *conn,
- 	inc->i_conn = conn;
- 	inc->i_saddr = *saddr;
- 	inc->i_rdma_cookie = 0;
--	inc->i_rx_tstamp.tv_sec = 0;
--	inc->i_rx_tstamp.tv_usec = 0;
-+	inc->i_rx_tstamp = ktime_set(0, 0);
- 
- 	for (i = 0; i < RDS_RX_MAX_TRACES; i++)
- 		inc->i_rx_lat_trace[i] = 0;
-@@ -67,8 +66,7 @@ void rds_inc_path_init(struct rds_incoming *inc, struct rds_conn_path *cp,
- 	inc->i_conn_path = cp;
- 	inc->i_saddr = *saddr;
- 	inc->i_rdma_cookie = 0;
--	inc->i_rx_tstamp.tv_sec = 0;
--	inc->i_rx_tstamp.tv_usec = 0;
-+	inc->i_rx_tstamp = ktime_set(0, 0);
- }
- EXPORT_SYMBOL_GPL(rds_inc_path_init);
- 
-@@ -385,7 +383,7 @@ void rds_recv_incoming(struct rds_connection *conn, struct in6_addr *saddr,
- 				      be32_to_cpu(inc->i_hdr.h_len),
- 				      inc->i_hdr.h_dport);
- 		if (sock_flag(sk, SOCK_RCVTSTAMP))
--			do_gettimeofday(&inc->i_rx_tstamp);
-+			inc->i_rx_tstamp = ktime_get_real();
- 		rds_inc_addref(inc);
- 		inc->i_rx_lat_trace[RDS_MSG_RX_END] = local_clock();
- 		list_add_tail(&inc->i_item, &rs->rs_recv_queue);
-@@ -552,11 +550,11 @@ static int rds_cmsg_recv(struct rds_incoming *inc, struct msghdr *msg,
- 			goto out;
- 	}
- 
--	if ((inc->i_rx_tstamp.tv_sec != 0) &&
-+	if ((inc->i_rx_tstamp != 0) &&
- 	    sock_flag(rds_rs_to_sk(rs), SOCK_RCVTSTAMP)) {
-+		struct timeval tv = ktime_to_timeval(inc->i_rx_tstamp);
- 		ret = put_cmsg(msg, SOL_SOCKET, SCM_TIMESTAMP,
--			       sizeof(struct timeval),
--			       &inc->i_rx_tstamp);
-+			       sizeof(tv), &tv);
- 		if (ret)
- 			goto out;
- 	}
--- 
-2.18.0
+How does calling switch_mm_irqs_off() for text_poke()
+change around current->mm and cpu_tlbstate.loaded_mm?
+
+Does current->mm stay the same throughout the entire
+text_poke() chain, while cpustate.loaded_mm is the
+only thing that is changed out?
+
+If so, then yes the double assignment is indeed
+necessary. Good point.
+
+--=20
+All Rights Reversed.
+
+--=-MHChQH5XfA1BmXdm9y1S
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAluGwHYACgkQznnekoTE
+3oNlowf/XQWXK7Q3sSPELmvzEDF/f1z9iK4Gwiuzgzv5gwJpHsTsiMCaCD6PnQiU
+FnlmxBbSTVsYhW4f8KBfJq1cCO/ddx9VpMQ5ZT294f7m+CRdGrrGqb+ozccCXC/x
+gdACYZxo7JludqpZ61/r2ogYnxPCa2FsEmHG0MBk5Z+I9I26UimAKHYtVAPbUegE
+8pJcn+5TfTDiV7x/16YoT6Akjg7UP7feIcHP4ZBO/sdxd5ziLo9NWy3Khn8d/EVE
+ycgBMKzXNMyEi5YabzImp5Vwf4ja+P7E8mGp8Dr7eEPhZDfYHH6x0HqK2ENpe+4S
+zE5QbPNb9uZ3ld7NDFGtTs2vHys6BA==
+=iIgu
+-----END PGP SIGNATURE-----
+
+--=-MHChQH5XfA1BmXdm9y1S--
 
