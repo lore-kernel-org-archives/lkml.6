@@ -2,176 +2,278 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72303C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 16:54:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C9EFC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 16:56:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 124522064A
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 16:54:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="JF4WNjXX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 124522064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
+	by mail.kernel.org (Postfix) with ESMTP id 246B52064A
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 16:56:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 246B52064A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728174AbeH2UwE (ORCPT
+        id S1728159AbeH2UyA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 16:52:04 -0400
-Received: from mail-eopbgr720052.outbound.protection.outlook.com ([40.107.72.52]:9248
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727245AbeH2UwE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 16:52:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DShstZYyK6IcNOYw8LMA0LAuyuPvkyYSO7bv0kEUjMk=;
- b=JF4WNjXXBrPhOyxuKYmNuZYYd5mZT1Knr1aDj3YDyj6JR0FUOJRoMYFUCY3JKxaeS8aO+K4jajXl5LsSf7Vo9me84leTLFnJ7peJGZac+oHu7ETXZZG2A+UPJXP7B50oPrnUxOLxS6KaEOHFenBI+X/u/HDZA40Oi4X26DOaaCI=
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
- BYAPR05MB4597.namprd05.prod.outlook.com (52.135.233.18) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1122.7; Wed, 29 Aug 2018 16:54:13 +0000
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::911b:395c:ce8a:38c3]) by BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::911b:395c:ce8a:38c3%3]) with mapi id 15.20.1101.007; Wed, 29 Aug 2018
- 16:54:13 +0000
-From:   Nadav Amit <namit@vmware.com>
-To:     Andy Lutomirski <luto@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-CC:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, X86 ML <x86@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [RFC PATCH 2/6] x86/mm: temporary mm struct
-Thread-Topic: [RFC PATCH 2/6] x86/mm: temporary mm struct
-Thread-Index: AQHUP3AvtPpOeUrzJkKcPlbuZwJlIKTWfEOAgABiOwCAABRygA==
-Date:   Wed, 29 Aug 2018 16:54:13 +0000
-Message-ID: <A7F037E7-6FA1-418D-A8D9-E8752663EF86@vmware.com>
-References: <20180829081147.184610-1-namit@vmware.com>
- <20180829081147.184610-3-namit@vmware.com>
- <20180829184925.64caee4dadf705080373f84f@kernel.org>
- <CALCETrWF5XQndPikmBgo9t1UWKS7T0K2kFGOpzX-tavFVis5_Q@mail.gmail.com>
-In-Reply-To: <CALCETrWF5XQndPikmBgo9t1UWKS7T0K2kFGOpzX-tavFVis5_Q@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=namit@vmware.com; 
-x-originating-ip: [66.170.99.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR05MB4597;20:83eowXEzknIRxPqQ8j9vpkvzPWeTjmtO8Wf4N7KuJZUo3nnTc23WQpRQT1KBWokcPNsCHnSQmeIeGCH+cZ0YxzPw/TYSc8e4DgG+QyasCMJeiLm0SY+/zPAZG8IYUj6cp6SW9eLFwBa9txXFx0L0GIimc9HK0tSpoa6R15vrNZ0=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 046db511-c129-4dc5-aea6-08d60dd00cc3
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB4597;
-x-ms-traffictypediagnostic: BYAPR05MB4597:
-bcl:    0
-x-microsoft-antispam-prvs: <BYAPR05MB4597432C5B381C7A7744AF4FD0090@BYAPR05MB4597.namprd05.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(61668805478150)(192374486261705);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3002001)(3231311)(944501410)(52105095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699016);SRVR:BYAPR05MB4597;BCL:0;PCL:0;RULEID:;SRVR:BYAPR05MB4597;
-x-forefront-prvs: 077929D941
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(376002)(346002)(396003)(136003)(39860400002)(199004)(189003)(486006)(256004)(93886005)(14444005)(83716003)(217873002)(76176011)(186003)(26005)(53546011)(99286004)(6506007)(110136005)(54906003)(102836004)(316002)(305945005)(2906002)(5660300001)(7736002)(11346002)(66066001)(2900100001)(36756003)(5250100002)(446003)(476003)(2616005)(53936002)(6246003)(97736004)(8676002)(81166006)(229853002)(81156014)(575784001)(86362001)(7416002)(68736007)(6486002)(82746002)(6436002)(105586002)(106356001)(33656002)(6116002)(6512007)(3846002)(8936002)(4326008)(14454004)(25786009)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB4597;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: v0HGmRloGZTEWHglpVO4lmJKZf3mIxnMBF44D4fuvctYDGA3zKq2zefCjTw65RK6ZbE/y47Tlat/yCtX0PLhVnPWHBO+cStKSG0BFjO3jUJz6YjFRbQddYU5DLMjwCZhLkJrNH+jODGbgm2vabBUmE36soXkzx6EhKl32aWFzn343SFvoeK3uubrp0UmlkyeJVxC0/HK2WmI1sr/ueJyltTYQvUDjxaI05pYowDFfCDMAWE4K2x3cgyqRtEBsY2CTHwPoOEcHVhl9fCXNhhJvp2coq8PVHUPftpADiXDtJJs6GpuT/jiealAMF23kmcanAwWlbrEGnLDb1qrQBlC+qVJ/v3Jb2TFAPrrUrgr3lM=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <64481C5D4380F94F95B21EF5D2D69D6C@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Wed, 29 Aug 2018 16:54:00 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58284 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727245AbeH2Ux7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 16:53:59 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8E80218A;
+        Wed, 29 Aug 2018 09:56:11 -0700 (PDT)
+Received: from queper01-lin (queper01-lin.emea.arm.com [10.4.13.27])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 994463F557;
+        Wed, 29 Aug 2018 09:56:07 -0700 (PDT)
+Date:   Wed, 29 Aug 2018 17:56:06 +0100
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     peterz@infradead.org, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        gregkh@linuxfoundation.org, mingo@redhat.com,
+        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
+        chris.redpath@arm.com, valentin.schneider@arm.com,
+        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
+        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
+        smuckle@google.com, adharmap@codeaurora.org,
+        skannan@codeaurora.org, pkondeti@codeaurora.org,
+        juri.lelli@redhat.com, edubezval@gmail.com,
+        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
+        javi.merino@kernel.org
+Subject: Re: [PATCH v6 05/14] sched/topology: Reference the Energy Model of
+ CPUs when available
+Message-ID: <20180829165603.astg32z3ep2qldfu@queper01-lin>
+References: <20180820094420.26590-1-quentin.perret@arm.com>
+ <20180820094420.26590-6-quentin.perret@arm.com>
+ <20180829162238.GQ2960@e110439-lin>
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 046db511-c129-4dc5-aea6-08d60dd00cc3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Aug 2018 16:54:13.5251
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB4597
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180829162238.GQ2960@e110439-lin>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-at 8:41 AM, Andy Lutomirski <luto@kernel.org> wrote:
+On Wednesday 29 Aug 2018 at 17:22:38 (+0100), Patrick Bellasi wrote:
+> > +static void build_perf_domains(const struct cpumask *cpu_map)
+> > +{
+> > +	struct perf_domain *pd = NULL, *tmp;
+> > +	int cpu = cpumask_first(cpu_map);
+> > +	struct root_domain *rd = cpu_rq(cpu)->rd;
+> > +	int i;
+> > +
+> > +	for_each_cpu(i, cpu_map) {
+> > +		/* Skip already covered CPUs. */
+> > +		if (find_pd(pd, i))
+> > +			continue;
+> > +
+> > +		/* Create the new pd and add it to the local list. */
+> > +		tmp = pd_init(i);
+> > +		if (!tmp)
+> > +			goto free;
+> > +		tmp->next = pd;
+> > +		pd = tmp;
+> > +	}
+> > +
+> > +	perf_domain_debug(cpu_map, pd);
+> > +
+> > +	/* Attach the new list of performance domains to the root domain. */
+> > +	tmp = rd->pd;
+> > +	rcu_assign_pointer(rd->pd, pd);
+> > +	if (tmp)
+> > +		call_rcu(&tmp->rcu, destroy_perf_domain_rcu);
+> 
+> We have:
+> 
+>   sched_cpu_activate/cpuset_cpu_inactive
+>     cpuset_cpu_active/sched_cpu_deactivate
+>       partition_sched_domains
+>         build_perf_domains
+> 
+> thus here we are building new SDs and, specifically, above we are
+> attaching the local list "pd" to a _new_ root domain... thus, there
+> cannot be already users of this new SDs and root domain at this stage,
+> isn't it ?
 
-> On Wed, Aug 29, 2018 at 2:49 AM, Masami Hiramatsu <mhiramat@kernel.org> w=
-rote:
->> On Wed, 29 Aug 2018 01:11:43 -0700
->> Nadav Amit <namit@vmware.com> wrote:
->>=20
->>> From: Andy Lutomirski <luto@kernel.org>
->>>=20
->>> Sometimes we want to set a temporary page-table entries (PTEs) in one o=
-f
->>> the cores, without allowing other cores to use - even speculatively -
->>> these mappings. There are two benefits for doing so:
->>>=20
->>> (1) Security: if sensitive PTEs are set, temporary mm prevents their us=
-e
->>> in other cores. This hardens the security as it prevents exploding a
->>> dangling pointer to overwrite sensitive data using the sensitive PTE.
->>>=20
->>> (2) Avoiding TLB shootdowns: the PTEs do not need to be flushed in
->>> remote page-tables.
->>>=20
->>> To do so a temporary mm_struct can be used. Mappings which are private
->>> for this mm can be set in the userspace part of the address-space.
->>> During the whole time in which the temporary mm is loaded, interrupts
->>> must be disabled.
->>>=20
->>> The first use-case for temporary PTEs, which will follow, is for poking
->>> the kernel text.
->>>=20
->>> [ Commit message was written by Nadav ]
->>>=20
->>> Cc: Andy Lutomirski <luto@kernel.org>
->>> Cc: Masami Hiramatsu <mhiramat@kernel.org>
->>> Cc: Kees Cook <keescook@chromium.org>
->>> Cc: Peter Zijlstra <peterz@infradead.org>
->>> Signed-off-by: Nadav Amit <namit@vmware.com>
->>> ---
->>> arch/x86/include/asm/mmu_context.h | 20 ++++++++++++++++++++
->>> 1 file changed, 20 insertions(+)
->>>=20
->>> diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/=
-mmu_context.h
->>> index eeeb9289c764..96afc8c0cf15 100644
->>> --- a/arch/x86/include/asm/mmu_context.h
->>> +++ b/arch/x86/include/asm/mmu_context.h
->>> @@ -338,4 +338,24 @@ static inline unsigned long __get_current_cr3_fast=
-(void)
->>>      return cr3;
->>> }
->>>=20
->>> +typedef struct {
->>> +     struct mm_struct *prev;
->>> +} temporary_mm_state_t;
->>> +
->>> +static inline temporary_mm_state_t use_temporary_mm(struct mm_struct *=
-mm)
->>> +{
->>> +     temporary_mm_state_t state;
->>> +
->>> +     lockdep_assert_irqs_disabled();
->>> +     state.prev =3D this_cpu_read(cpu_tlbstate.loaded_mm);
->>> +     switch_mm_irqs_off(NULL, mm, current);
->>> +     return state;
->>> +}
->>=20
->> Hmm, why don't we return mm_struct *prev directly?
->=20
-> I did it this way to make it easier to add future debugging stuff
-> later.  Also, when I first wrote this, I stashed the old CR3 instead
-> of the old mm_struct, and it seemed like callers should be insulated
-> from details like this.
+Hmm, actually you can end up here even if the rd isn't new. That would
+happen if you call rebuild_sched_domains() after the EM has been
+registered for example. At this point, you might skip
+detach_destroy_domains() and build_sched_domains() from
+partition_sched_domains(), but still call build_perf_domains(), which
+would then attach the pd list to the current rd.
 
-Andy, please let me know if you want me to change it somehow, and please
-provide your signed-off-by.
+That's one reason why rcu_assign_pointer() is probably a good idea. And
+it's also nice from a doc standpoint I suppose.
 
+> 
+> Do we really need that rcu_assign_pointer ?
+> Is the rcu_assign_pointer there just to "match" the following call_rcu ?
+> 
+> What about this path:
+> 
+>   sched_init_domains
+>      partition_sched_domains
+> 
+> in which case we do not call build_perf_domains... is that intended ?
+
+I assume you meant:
+
+   sched_init_domains
+     build_sched_domains
+
+Is that right ?
+
+If yes, I didn't bother calling build_perf_domains() from there because
+I don't think there is a single platform out there which would have a
+registered Energy Model that early in the boot process. Or maybe there
+is one I don't know ?
+
+Anyway, that is probably easy to fix, if need be.
+
+> > +
+> > +	return;
+> > +
+> > +free:
+> > +	free_pd(pd);
+> > +	tmp = rd->pd;
+> > +	rcu_assign_pointer(rd->pd, NULL);
+> > +	if (tmp)
+> > +		call_rcu(&tmp->rcu, destroy_perf_domain_rcu);
+> > +}
+> 
+> All the above functions use different naming conventions:
+> 
+>    "_pd" suffix, "pd_" prefix and "perf_domain_" prefix.
+> 
+> and you do it like that because it better matches the corresponding
+> call sites following down the file.
+
+That's right. The functions are supposed to vaguely look like existing
+functions dealing with sched domains.
+
+> However, since we are into a "CONFIG_ENERGY_MODEL" guarded section,
+> why not start using a common prefix for all PD related functions?
+> 
+> I very like "perf_domain_" (or "pd_") as a prefix and I would try to
+> use it for all the functions you defined above:
+> 
+>    perf_domain_free
+>    perf_domain_find
+>    perf_domain_debug
+>    perf_domain_destroy_rcu
+>    perf_domain_build
+
+I kinda like the idea of keeping things consistent with the existing
+code TBH. Especially because I'm terrible at naming things ... But if
+there is a general agreement that I should rename everything I won't
+argue.
+
+> > +#else
+> > +static void free_pd(struct perf_domain *pd) { }
+> > +#endif
+> 
+> Maybe better:
+> 
+>   #endif /* CONFIG_ENERGY_MODEL */
+
+Ack
+
+> 
+> > +
+> >  static void free_rootdomain(struct rcu_head *rcu)
+> >  {
+> >  	struct root_domain *rd = container_of(rcu, struct root_domain, rcu);
+> > @@ -211,6 +321,7 @@ static void free_rootdomain(struct rcu_head *rcu)
+> >  	free_cpumask_var(rd->rto_mask);
+> >  	free_cpumask_var(rd->online);
+> >  	free_cpumask_var(rd->span);
+> > +	free_pd(rd->pd);
+> >  	kfree(rd);
+> >  }
+> >  
+> > @@ -1964,8 +2075,8 @@ void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
+> >  	/* Destroy deleted domains: */
+> >  	for (i = 0; i < ndoms_cur; i++) {
+> >  		for (j = 0; j < n && !new_topology; j++) {
+> > -			if (cpumask_equal(doms_cur[i], doms_new[j])
+> > -			    && dattrs_equal(dattr_cur, i, dattr_new, j))
+> > +			if (cpumask_equal(doms_cur[i], doms_new[j]) &&
+> > +			    dattrs_equal(dattr_cur, i, dattr_new, j))
+> 
+> This chunk looks more like a cleanup which is not really changing
+> anything: is it intentional?
+
+Yep, that's a cleanup Peter requested:
+	20180705181407.GI2494@hirez.programming.kicks-ass.net
+
+> 
+> >  				goto match1;
+> >  		}
+> >  		/* No match - a current sched domain not in new doms_new[] */
+> > @@ -1985,8 +2096,8 @@ void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
+> >  	/* Build new domains: */
+> >  	for (i = 0; i < ndoms_new; i++) {
+> >  		for (j = 0; j < n && !new_topology; j++) {
+> > -			if (cpumask_equal(doms_new[i], doms_cur[j])
+> > -			    && dattrs_equal(dattr_new, i, dattr_cur, j))
+> > +			if (cpumask_equal(doms_new[i], doms_cur[j]) &&
+> > +			    dattrs_equal(dattr_new, i, dattr_cur, j))
+> 
+> 
+> Same comment for the chunk above
+
+Ditto :-)
+
+> 
+> >  				goto match2;
+> >  		}
+> >  		/* No match - add a new doms_new */
+> > @@ -1995,6 +2106,21 @@ void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
+> >  		;
+> >  	}
+> >  
+> > +#ifdef CONFIG_ENERGY_MODEL
+> > +	/* Build perf. domains: */
+> > +	for (i = 0; i < ndoms_new; i++) {
+> > +		for (j = 0; j < n; j++) {
+> > +			if (cpumask_equal(doms_new[i], doms_cur[j]) &&
+> > +			    cpu_rq(cpumask_first(doms_cur[j]))->rd->pd)
+> > +				goto match3;
+> > +		}
+> > +		/* No match - add perf. domains for a new rd */
+> > +		build_perf_domains(doms_new[i]);
+> > +match3:
+> > +		;
+> > +	}
+> > +#endif
+> > +
+> 
+> 
+> Since we already have a CONFIG_ENERGY_MODEL guarded section above,
+> maybe we can s/build_perf_domains/build_perf_root_domain/ and use
+> build_perf_domains to provide an inline function for the chunk above
+> in the guarded section at the beginning of the file ?
+> 
+> The #else section will then provide just an empty implementation.
+
+The only reason I didn't do this was because I wanted to keep all the
+logic to skip (or not) building things centralized in
+partition_sched_domains(), simply because I find it easier to
+understand.
+
+> Something like The diff below seems to work and it should do the
+> "cleanup" job by also moving at the beginning of the source file the
+> definition of the global variables (required by some functions).
+> 
+> Perhaps that's a bit of cleanup code that maintainer can accept...
+> but... to be verified. ;)
+
+Right, I guess it's mainly a matter of 'taste' here. So let's see ... :-)
+
+Thanks !
+Quentin
