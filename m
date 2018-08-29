@@ -2,87 +2,115 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFFC7C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:16:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9958C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:18:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CD6320847
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:16:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CD6320847
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 3AB062083C
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 10:18:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="17v4TEML"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AB062083C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728153AbeH2OMY (ORCPT
+        id S1728107AbeH2OOr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 10:12:24 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:41687 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727099AbeH2OMY (ORCPT
+        Wed, 29 Aug 2018 10:14:47 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:55122 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726858AbeH2OOr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 10:12:24 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1fuxWG-0005Cz-Go; Wed, 29 Aug 2018 10:16:12 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Jan Kara <jack@suse.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] udf: remove unused variables group_start and nr_groups
-Date:   Wed, 29 Aug 2018 11:16:12 +0100
-Message-Id: <20180829101612.31824-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 29 Aug 2018 10:14:47 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w7TADkhI002094;
+        Wed, 29 Aug 2018 10:18:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ content-transfer-encoding : in-reply-to; s=corp-2018-07-02;
+ bh=bw7tbBPfo+8T/2xAkFvsET3yvSXXogv0T1gZ4InDV6M=;
+ b=17v4TEMLBYpWxQF6d9ZxxK1a11Kq9jGGkzYMdoYuKl6g8pywTkBf28r4i6UAZff3r49I
+ RpLpLdjU25Q15D+EwmyEVekKLJkATd6R28PRguSsYJ86Zed+S31wwxZt8QaW80+T0LQy
+ h431gbTrsB3zGnr78n8OuNHkz0sINmXXreFu6sk4iWCXFZBz/d9W9z4DwR6CA5zD46rm
+ Rbvswh+HHq7rj67w36upEs26boQiEeyJX9bkhASQmHyQbwFqLNK3cOmbborEgjr2a0YS
+ +m33tirxCfURAPwvIvLi5ShbeFcX++xJZsU0iWZ0rBKMr760hon0l2kKvwWQ4+dpBtht 3w== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2120.oracle.com with ESMTP id 2m2y2pgwu7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 29 Aug 2018 10:18:31 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w7TAIVvQ031181
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 29 Aug 2018 10:18:31 GMT
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w7TAIVem008915;
+        Wed, 29 Aug 2018 10:18:31 GMT
+Received: from mwanda (/197.232.248.111)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 29 Aug 2018 03:18:30 -0700
+Date:   Wed, 29 Aug 2018 13:18:22 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Liran Alon <liran.alon@oracle.com>
+Cc:     Wanpeng Li <kernellwp@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Subject: Re: [PATCH] KVM: LAPIC: Fix pv ipis out-of-bounds access
+Message-ID: <20180829101822.qo3u7lsmghs3kcuf@mwanda>
+References: <1535521943-5547-1-git-send-email-wanpengli@tencent.com>
+ <A523C29C-C3E8-4FEF-8620-96365F774582@oracle.com>
+ <20180829101205.jsp53e2wq7fc6ukd@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180829101205.jsp53e2wq7fc6ukd@mwanda>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8999 signatures=668708
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=696
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1808290114
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed, Aug 29, 2018 at 01:12:05PM +0300, Dan Carpenter wrote:
+> On Wed, Aug 29, 2018 at 12:05:06PM +0300, Liran Alon wrote:
+> > > arch/x86/kvm/lapic.c | 17 +++++++++++++----
+> > > 1 file changed, 13 insertions(+), 4 deletions(-)
+> > > 
+> > > diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+> > > index 0cefba2..86e933c 100644
+> > > --- a/arch/x86/kvm/lapic.c
+> > > +++ b/arch/x86/kvm/lapic.c
+> > > @@ -571,18 +571,27 @@ int kvm_pv_send_ipi(struct kvm *kvm, unsigned long ipi_bitmap_low,
+> > > 	rcu_read_lock();
+> > > 	map = rcu_dereference(kvm->arch.apic_map);
+> > > 
+> > > +	if (unlikely((s32)(map->max_apic_id - __fls(ipi_bitmap_low)) < min))
+> > > +		goto out;
+> > 
+> > I personally think “if ((min + __fls(ipi_bitmap_low)) > map->max_apic_id)” is more readable.
+> > But that’s just a matter of taste :)
+> 
+> That's an integer overflow.
+> 
+> But I do prefer to put the variable on the left.  The truth is that some
+> Smatch checks just ignore code which is backwards written because
+> otherwise you have to write duplicate code and the most code is written
+> with the variable on the left.
+> 
+> 	if (min > (s32)(map->max_apic_id - __fls(ipi_bitmap_low))
 
-Variables group_start and nr_groups are being assigned but are never used
-hence they are redundant and can be removed.
+Wait, the (s32) cast doesn't make sense.  We want negative min values to
+be treated as invalid.
 
-Cleans up clang warning:
-variable 'group_start' set but not used [-Wunused-but-set-variable]
-variable 'nr_groups' set but not used [-Wunused-but-set-variable]
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- fs/udf/balloc.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/fs/udf/balloc.c b/fs/udf/balloc.c
-index fcda0fc97b90..501bc5ffb4ce 100644
---- a/fs/udf/balloc.c
-+++ b/fs/udf/balloc.c
-@@ -175,8 +175,8 @@ static int udf_bitmap_prealloc_blocks(struct super_block *sb,
- {
- 	struct udf_sb_info *sbi = UDF_SB(sb);
- 	int alloc_count = 0;
--	int bit, block, block_group, group_start;
--	int nr_groups, bitmap_nr;
-+	int bit, block, block_group;
-+	int bitmap_nr;
- 	struct buffer_head *bh;
- 	__u32 part_len;
- 
-@@ -189,10 +189,8 @@ static int udf_bitmap_prealloc_blocks(struct super_block *sb,
- 		block_count = part_len - first_block;
- 
- 	do {
--		nr_groups = udf_compute_nr_groups(sb, partition);
- 		block = first_block + (sizeof(struct spaceBitmapDesc) << 3);
- 		block_group = block >> (sb->s_blocksize_bits + 3);
--		group_start = block_group ? 0 : sizeof(struct spaceBitmapDesc);
- 
- 		bitmap_nr = load_block_bitmap(sb, bitmap, block_group);
- 		if (bitmap_nr < 0)
--- 
-2.17.1
+regards,
+dan carpenter
 
