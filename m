@@ -2,99 +2,145 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 189ACC433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:38:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5B6BC433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:38:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD7D420644
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:38:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CGjVqfEk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD7D420644
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 77CC820644
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:38:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77CC820644
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727427AbeH3Ch1 (ORCPT
+        id S1727457AbeH3Chk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 22:37:27 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44285 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727181AbeH3Ch1 (ORCPT
+        Wed, 29 Aug 2018 22:37:40 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46178 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727181AbeH3Chk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 22:37:27 -0400
-Received: by mail-pg1-f193.google.com with SMTP id r1-v6so2942564pgp.11;
-        Wed, 29 Aug 2018 15:38:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=QUC+zu03Ys8NwoGYGSRew4rLmTQGVI1WF6OOL6Zrlc0=;
-        b=CGjVqfEkCNmboQ9QLOqEt+0JsUitE18CR6y49Nr14xj7sItDA0Cf09UGJ0oUBWQlzC
-         UDAqniilVnIEoWpDPjKh78kniLakCoxcY6ZSmcl7GUiOObMFdCTAx+AFWeAlflSUZrDv
-         beNHszianJUr3BYQgTTH8+qw0DtdLAYv0xVgE/oc7Cn5JhklbxTS7gxl+67ME5qqnQBI
-         AXxhyfdT5Jcjwk+GhMNWdFSoaFtQZA+1VstIvRlfVq00CC2RDv3Se37Qu+fBjYwl7IqD
-         lSP/sKPI8BYg3fSy4Uw2OQCWijG2t3nQVRy5rpKvq5yoINdid7AicMSAWgUltik5U6r0
-         e7Vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QUC+zu03Ys8NwoGYGSRew4rLmTQGVI1WF6OOL6Zrlc0=;
-        b=DQkVAoLbL5sZSPA2bCwdKY29L2TOhxV9Iam1yRj5HAS3tBc5bT8pgSemYtWo81DRPK
-         CeX7Jo+NVnUjPfyN+uSqX6//mrSBPl06X9ffUFGIMHik8llBP8bV2t/tA/Ey8LmZ7ZDh
-         KSqn8zlMqeXXVPZt/9yuDkDk3v9L09/Tf88+vUwIhop27eCc/FnmzG9khMJ/B3fyhIMd
-         sxPp8yJxww2lef5T5x1DdEx3s3q0/gMM/uNc8ZOTIb+aHe9FYh2BW6N6mhMx+7Ijtf5m
-         ZmuvnmOz7e9mFxXN66rUV1ys08HjlK60Er6CIOXy8viENeuHoE3mdi0Yu/FPmGXfNbQm
-         jhtQ==
-X-Gm-Message-State: APzg51CyqrmarPuEgfA/5/NDcFbtPBKp0wW0kQCMHT9fWdqTGh4bi85t
-        FIcz1eTXsAgf5Voh5EJu7j4=
-X-Google-Smtp-Source: ANB0VdZGNIIKvpBBx/W3r8/z0HmoF4Iz0x/kGjjXrXxbzsMfAB1NKfregBXFWEbgQnxkPIdS2ghupw==
-X-Received: by 2002:a62:9f4c:: with SMTP id g73-v6mr7763760pfe.142.1535582304220;
-        Wed, 29 Aug 2018 15:38:24 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id 82-v6sm9194613pfw.159.2018.08.29.15.38.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 Aug 2018 15:38:23 -0700 (PDT)
-Date:   Wed, 29 Aug 2018 15:38:21 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     iommu@lists.linux-foundation.org,
-        Robin Murphy <robin.murphy@arm.com>,
-        Meelis Roos <mroos@linux.ee>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: various dma_mask fixups
-Message-ID: <20180829223821.GA29499@roeck-us.net>
-References: <20180829062401.8701-1-hch@lst.de>
+        Wed, 29 Aug 2018 22:37:40 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7TMTJe0096385
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:38:36 -0400
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m61jbx5uj-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:38:36 -0400
+Received: from localhost
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 29 Aug 2018 18:38:35 -0400
+Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 29 Aug 2018 18:38:31 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7TMcUpP46727292
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 29 Aug 2018 22:38:30 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7EFE4B2065;
+        Wed, 29 Aug 2018 18:37:26 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5EE0FB2066;
+        Wed, 29 Aug 2018 18:37:26 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 29 Aug 2018 18:37:26 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id D127716C91B7; Wed, 29 Aug 2018 15:38:30 -0700 (PDT)
+Date:   Wed, 29 Aug 2018 15:38:30 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
+        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org
+Subject: [PATCH tip/core/rcu 0/52] Remove rcu_state pointers for v4.20/v5.0
+Reply-To: paulmck@linux.vnet.ibm.com
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180829062401.8701-1-hch@lst.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18082922-2213-0000-0000-000002E508C7
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009636; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01080744; UDB=6.00557497; IPR=6.00860729;
+ MB=3.00023002; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-29 22:38:35
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082922-2214-0000-0000-00005B602D7E
+Message-Id: <20180829223830.GA1800@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-29_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=856 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808290219
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 29, 2018 at 08:23:58AM +0200, Christoph Hellwig wrote:
-> Fix warnings and regressions from requiring a dma mask.
+Hello!
 
-With this series applied, I see the following in my sh4 boot tests.
+This commit does RCU-consolidation cleanups that get rid of pointers to
+the sole remaining rcu_state structure:
 
-sb 1-1: new full-speed USB device number 2 using sm501-usb
-sm501-usb sm501-usb: OHCI Unrecoverable Error, disabled
-sm501-usb sm501-usb: HC died; cleaning up
+1-40:	Remove the "rsp" parameter from numerous functions, given that
+	the corresponding argument will always be &rcu_state.
 
-This is a persistent problem. Reverting upstream commit 2f606da7823
-("mfd: sm501: Set coherent_dma_mask when creating subdevices") does not
-make a difference.
+41.	Remove rcu_data structure's ->rsp field, now that it always
+	contains a pointer to rcu_state.
 
-The problem is gone if I do not apply 'driver core: initialize a default
-DMA mask for platform device'.
+42.	Remove non-flavor-traversal rsp local variable from tree_plugin.h.
 
-On the plus side, the sparc warnings are gone.
+43.	Remove the for_each_rcu_flavor() flavor-traversal macro, given
+	that there is now only ever one flavor to traverse.
 
-Guenter
+44.	Simplify rcutorture_get_gp_data() based on there now being only
+	one rcu_state structure.
+
+45.	Restructure rcu_check_gp_kthread_starvation() based on there
+	now being only one rcu_state structure.
+
+46.	Restructure RCU CPU stall warnings based on there now being only
+	one rcu_state structure.
+
+47.	Restructure grace-period management code based on there now being
+	only one rcu_state structure.
+
+48.	Restructure callback registration/invocation code based on there
+	now being only one rcu_state structure.
+
+49.	Restructure quiescent-state and grace-period-nonstart code based
+	on there now being only one rcu_state structure.
+
+50.	Restructure rcu_barrier() based on there now being only one
+	rcu_state structure.
+
+51.	Restructure initialization code based on there now being only
+	one rcu_state structure.
+
+52.	Fix typo in force_qs_rnp()'s parameter's parameter, which was
+	located by searching for "rsp".
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+ Documentation/RCU/Design/Data-Structures/Data-Structures.html |   23 
+ kernel/rcu/rcu.h                                              |   28 
+ kernel/rcu/srcutree.c                                         |    4 
+ kernel/rcu/tree.c                                             | 1261 ++++------
+ kernel/rcu/tree.h                                             |   29 
+ kernel/rcu/tree_exp.h                                         |  209 -
+ kernel/rcu/tree_plugin.h                                      |  203 -
+ 7 files changed, 784 insertions(+), 973 deletions(-)
+
