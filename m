@@ -6,55 +6,55 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBF38C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:37:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06882C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:38:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F2CE20850
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:37:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F2CE20850
+	by mail.kernel.org (Postfix) with ESMTP id B2B8720850
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:38:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2B8720850
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728398AbeH2QeY (ORCPT
+        id S1728448AbeH2Qex (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 12:34:24 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:38387 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727204AbeH2QeY (ORCPT
+        Wed, 29 Aug 2018 12:34:53 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:45212 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727204AbeH2Qex (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 12:34:24 -0400
-Received: by mail-lf1-f66.google.com with SMTP id i7-v6so4162737lfh.5;
-        Wed, 29 Aug 2018 05:37:39 -0700 (PDT)
+        Wed, 29 Aug 2018 12:34:53 -0400
+Received: by mail-lj1-f193.google.com with SMTP id u83-v6so4198572lje.12;
+        Wed, 29 Aug 2018 05:38:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+        h=x-gm-message-state:date:from:to:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fjv0PQ8mkkp5qGY/FXYoI2L3ON+Ljd7Bmzy4vrqMuwA=;
-        b=NIJeM5FngdeQJg146jf9/YxPGsIxzMDEjhX/hjlMtWbui1DqGgkrDMJyhSHfRD7xAU
-         zYqpzN2aSngp851HseqTDvUuXlZLCpNWy4Ymnk6XowNR4OFmmJPtgkrUAnlu8SyHfX2g
-         V2LoC3k6mqc8VQmVhIEQd1h6zp3e/UiPUfTRdiiUq+GgqDzSTDqJ0R9yL9CEFY5/8Omc
-         qWFtavpioDO9Hoj/AEnrpKgzVxLOfdVnEp5yUd4v0xeotXDoh7cyOf/RgdJc884oCDRT
-         abyhqD26v+qCgOSy6gL2+G/FO9kUyLm34T3gITdXsnD6rzW53mNPSUymlmnw5Vc8BoBn
-         t+Ng==
-X-Gm-Message-State: APzg51AeVpNaQxpACHVdSNNyPLbO8hERVsF+PRCLBIuSW9IryW/ZTlgf
-        7d0OHRfCC8D1+nIJTNDp3tw=
-X-Google-Smtp-Source: ANB0VdbHuSOA1rS25KklrnPNofqleQM6FuOcQffnYE5dbLOXXTs3qhpjxFj7gxaxou33H/7CMwuB3g==
-X-Received: by 2002:ac2:428f:: with SMTP id m15-v6mr4120862lfh.52.1535546258783;
-        Wed, 29 Aug 2018 05:37:38 -0700 (PDT)
+        bh=8wFaVwJDACO/Wpj2nhZNpv3v3aOBc2CLh46qDjkeFuk=;
+        b=LGxaSsmySDvZU9MQao9VThWI7uRIa2L9IuQT+UNg0uL1LwlDmJkFPlna9oNHuq/bS7
+         fOY7JzmvBvEUcDOBKqMR1h783I5ezR+4alsa/J0mDvhvLppv5VqIOrPw/a7ZYlWkhZiP
+         JApMaFZzGq8l8bAem0R7zGTnjnAN4+UBP8w3370MOwH50wCBb59yDK0bx/DyKxhis1w+
+         CsTyeO0ocUWyYk2QZLpOwpUGnj9cyueXMxGP5VldLmMVPq93yq1I4xjA5m/o1aTFWtMQ
+         YdF829qAaQ1M3icSRmMStgAvevWmsVI4YUzjaaDhD1BkxORAUbIRGsLTZrvehD3xgk0d
+         291Q==
+X-Gm-Message-State: APzg51BKihaxLeiXYbp+ePAzuAOX/zGCPHZIHSYuJK4wuGVyx35a6ss5
+        yxhr+Lyz3rVjZSULCTrLCT4=
+X-Google-Smtp-Source: ANB0VdbKUDG+SXkqU0Ji9r/USli74gDc5bgJh4Xd/r8NLNiprzy8RBk3VnloHOLo+j5IG18QBm3zAg==
+X-Received: by 2002:a2e:29da:: with SMTP id p87-v6mr4059596ljp.12.1535546287911;
+        Wed, 29 Aug 2018 05:38:07 -0700 (PDT)
 Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id k65-v6sm706127lje.3.2018.08.29.05.37.37
+        by smtp.gmail.com with ESMTPSA id d4-v6sm694041lfc.57.2018.08.29.05.38.06
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 29 Aug 2018 05:37:38 -0700 (PDT)
-Date:   Wed, 29 Aug 2018 15:37:27 +0300
+        Wed, 29 Aug 2018 05:38:07 -0700 (PDT)
+Date:   Wed, 29 Aug 2018 15:37:55 +0300
 From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 To:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
         lgirdwood@gmail.com, broonie@kernel.org, mazziesaccount@gmail.com,
         matti.vaittinen@fi.rohmeurope.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com
-Subject: [PATCH 3/8] regulator: dt bindings: add BD71847 device-tree binding
+        linux-kernel@vger.kernel.org, heikki.haikola@fi.rohmeurope.com,
+        mikko.mutanen@fi.rohmeurope.com
+Subject: [PATCH 4/8] mfd: dt bindings: add BD71847 device-tree binding
  documentation
-Message-ID: <091514c79f91a460c6d29d0605cc1f8d4bfdbed0.1535545377.git.matti.vaittinen@fi.rohmeurope.com>
+Message-ID: <09eceb20f4f05ac48c6767d5f3359743e5b98985.1535545377.git.matti.vaittinen@fi.rohmeurope.com>
 References: <cover.1535545377.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -66,46 +66,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add ROHM BD71847 Power Management IC regulator binding information to
+Add ROHM BD71847 Power Management IC MFD binding information to
 device-tree binding documents.
 
 Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 ---
- .../devicetree/bindings/regulator/rohm,bd71837-regulator.txt | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt       | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt b/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
-index 76ead07072b1..4b98ca26e61a 100644
---- a/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
-+++ b/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
-@@ -1,7 +1,9 @@
--ROHM BD71837 Power Management Integrated Circuit (PMIC) regulator bindings
-+ROHM BD71837 and BD71847 Power Management Integrated Circuit regulator bindings
+diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+index 3ca56fdb5ffe..d78172878faa 100644
+--- a/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
++++ b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+@@ -1,16 +1,17 @@
+-* ROHM BD71837 Power Management Integrated Circuit bindings
++* ROHM BD71837 and BD71847 Power Management Integrated Circuit bindings
+ 
+-BD71837MWV is a programmable Power Management IC for powering single-core,
+-dual-core, and quad-core SoCs such as NXP-i.MX 8M. It is optimized for
+-low BOM cost and compact solution footprint. It integrates 8 Buck
+-egulators and 7 LDOs to provide all the power rails required by the SoC and
+-the commonly used peripherals.
++BD71837MWV and BD71847MWV are programmable Power Management ICs for powering
++single-core, dual-core, and quad-core SoCs such as NXP-i.MX 8M. They are
++optimized for low BOM cost and compact solution footprint. BD71837MWV
++integrates 8 Buck regulators and 7 LDOs. BD71847MWV contains 6 Buck regulators
++and 6 LDOs.
+ 
+-Datasheet for PMIC is available at:
++Datasheet for BD71837 is available at:
+ https://www.rohm.com/datasheet/BD71837MWV/bd71837mwv-e
  
  Required properties:
-- - regulator-name: should be "buck1", ..., "buck8" and "ldo1", ..., "ldo7"
-+ - regulator-name: should be "buck1", ..., "buck8" and "ldo1", ..., "ldo7" for
-+                   BD71837. For BD71847 names should be "buck1", ..., "buck6"
-+		   and "ldo1", ..., "ldo6"
- 
- List of regulators provided by this controller. BD71837 regulators node
- should be sub node of the BD71837 MFD node. See BD71837 MFD bindings at
-@@ -16,10 +18,14 @@ disabled by driver at startup. LDO5 and LDO6 are supplied by those and
- if they are disabled at startup the voltage monitoring for LDO5/LDO6 will
- cause PMIC to reset.
- 
--The valid names for regulator nodes are:
-+The valid names for BD71837 regulator nodes are:
- BUCK1, BUCK2, BUCK3, BUCK4, BUCK5, BUCK6, BUCK7, BUCK8
- LDO1, LDO2, LDO3, LDO4, LDO5, LDO6, LDO7
- 
-+The valid names for BD71847 regulator nodes are:
-+BUCK1, BUCK2, BUCK3, BUCK4, BUCK5, BUCK6
-+LDO1, LDO2, LDO3, LDO4, LDO5, LDO6
-+
- Optional properties:
- - Any optional property defined in bindings/regulator/regulator.txt
- 
+- - compatible		: Should be "rohm,bd71837".
++ - compatible		: Should be "rohm,bd71837" for bd71837 and
++			  "rohm,bd71847" for bd71847.
+  - reg			: I2C slave address.
+  - interrupt-parent	: Phandle to the parent interrupt controller.
+  - interrupts		: The interrupt line the device is connected to.
 -- 
 2.14.3
 
