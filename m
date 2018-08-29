@@ -6,133 +6,106 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FE68C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:06:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 855D7C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:07:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CBCC20867
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:06:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F08720850
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 12:07:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Wld3TW2n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CBCC20867
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TJWwnZNP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F08720850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727753AbeH2QDZ (ORCPT
+        id S1727846AbeH2QEB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 12:03:25 -0400
-Received: from mail-eopbgr80071.outbound.protection.outlook.com ([40.107.8.71]:42880
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727264AbeH2QDZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 12:03:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=r+39+Z/e7+ciTlp8T67xm+nhKqjt41reLyrqj7JUgnY=;
- b=Wld3TW2n+mh6SDkuE/puya9x6E2RnjQtdQrFJvGIkjP66BW6izMAON+U/oXWc8qaxlucvIUcXRJ9Osp1CUt7G1UCOamVsitMXpNl7wL1m3kqZYR8aLYaKRy4KwgkBX+AzPrSHvjFu+lvu+9JGAU5ItGVqXStfVYKRxsnf2+7BKo=
-Received: from AM3PR04MB338.eurprd04.prod.outlook.com (10.242.110.15) by
- AM3PR04MB1267.eurprd04.prod.outlook.com (10.163.6.21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1080.17; Wed, 29 Aug 2018 12:06:45 +0000
-Received: from AM3PR04MB338.eurprd04.prod.outlook.com
- ([fe80::588d:b603:b80a:5785]) by AM3PR04MB338.eurprd04.prod.outlook.com
- ([fe80::588d:b603:b80a:5785%2]) with mapi id 15.20.1080.015; Wed, 29 Aug 2018
- 12:06:44 +0000
-From:   Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "andrew@lunn.ch" <andrew@lunn.ch>,
-        Horia Geanta <horia.geanta@nxp.com>,
-        Madalin-cristian Bucur <madalin.bucur@nxp.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Ioana Ciornei <ioana.ciornei@nxp.com>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Subject: RE: [PATCH net-next v2 0/2] dpaa2-eth: Move DPAA2 Ethernet driver
-Thread-Topic: [PATCH net-next v2 0/2] dpaa2-eth: Move DPAA2 Ethernet driver
-Thread-Index: AQHUP3yvN14e//Sc5UuuWanXRNdTCqTWkgWAgAAC1NA=
-Date:   Wed, 29 Aug 2018 12:06:44 +0000
-Message-ID: <AM3PR04MB338A141EDC007FF47B510C094090@AM3PR04MB338.eurprd04.prod.outlook.com>
-References: <20180829094240.27242-1-ruxandra.radulescu@nxp.com>
- <20180829110739.3xzbdtelwjlhun2v@mwanda>
-In-Reply-To: <20180829110739.3xzbdtelwjlhun2v@mwanda>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=ruxandra.radulescu@nxp.com; 
-x-originating-ip: [213.233.88.6]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM3PR04MB1267;6:2XWjtoe3nTIMvcWwLKF9qW/xx2XUMUZH+4WPZbqgiPFa3y2er2gYdxsie81daKiUbPLf7PxRJzkX6m+Xe6seTlLOmIKVo6KmlBVZcXUS0mI3ox7Bbw0Yyp4osPBveb7mH7JSa61aGthWNa9OlfxjZD1zksdzCRnLq20QoEaDWeAPeP4RasGa26wAbyIWc2IDaLzmE+7WkhqVzAWjfX+8F6EjbAOBUqXEMlhXoFa1X/W8CfJdhsCx3bHZlj/al04wUK1kgbD73mLRjBaDu5yzoak+R+1TR02iGPwGLrvmMvoF5Q3dXgaSBOXDvjmOtMCah0b6cPejqSgngcWe9euqM+SHkQmDS7e1Id0oDb8yCW//kzqZvIXX1+fbdurG/GzZCLvKjZfo/L5KevEews29Bi1LbJaIoEP01lcTVQ3L+yWTU+37rNWODrb/1PsRxIqgzZbzOQVafIv0qgZwurVl/A==;5:KGQZ7ww+dp6MQ1HLb49sNE9XnT1Z6tThEwP/H6lC70kSgOv7r+l/L2HZlV65xPrHJo133+6d9d6vcfiWhqHwlHYIYyYVK6vnGhgqtBS85zEnFk1fBUgvWvBzpocsGR+Zd5bXrygzal5R24Tt41ZrMrsJpLbBscR/9EIRHWoXLbg=;7:Ul2NgMvm+LOZOMvRDoNhhEA3wL6UVQeAia7BEddDRJd+wdMR8NHXzvcLrLGcNfSr/KVuvK7aoh171FFzX6tZ1HDkLKoIkwFIF6cmP2G7kinfXmVdCACSpStkCycqxvdkZgBrxXQBFmnRrum0whqc47WQsNSkU5/bTQH8q8qslR11qblyJIKnIgpu2s5i150IIXKlfV6yAknlcKUPyBFbxDHfcDYEpZ2t2Liet0uCX+RRdZOzYVSX0VrLk5dN3dbX
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: c0441d08-ebcd-4573-595d-08d60da7e3a4
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM3PR04MB1267;
-x-ms-traffictypediagnostic: AM3PR04MB1267:
-x-microsoft-antispam-prvs: <AM3PR04MB12673B499009C5120D428BB394090@AM3PR04MB1267.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(185117386973197)(146099531331640);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823301075)(3002001)(93006095)(93001095)(3231311)(944501410)(52105095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699016);SRVR:AM3PR04MB1267;BCL:0;PCL:0;RULEID:;SRVR:AM3PR04MB1267;
-x-forefront-prvs: 077929D941
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(366004)(39860400002)(136003)(396003)(189003)(13464003)(199004)(51914003)(68736007)(6246003)(186003)(9686003)(8676002)(55016002)(26005)(102836004)(4326008)(478600001)(74316002)(6506007)(7736002)(14454004)(25786009)(53546011)(305945005)(5250100002)(33656002)(2900100001)(53936002)(81156014)(316002)(97736004)(81166006)(54906003)(8936002)(86362001)(99286004)(66066001)(3846002)(229853002)(6916009)(11346002)(476003)(106356001)(2906002)(446003)(5660300001)(486006)(6116002)(7696005)(256004)(76176011)(6436002)(105586002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB1267;H:AM3PR04MB338.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: H8apcstvgVnjFs09NNU7bNpDnc0VPvwhekcVbyEVEwb51K2MtUuQlPrJLWevYBB+ip8i00vf3sW7Ezoq0qmUA/aBcH7Khh2WzYdo/hE4r7kEGM8r2bgDgNmcfUEj/bwQuhsOiY6bpUzHwj23yRVKz5FVuNyvCNV3swx/c8Y3BuStpbQfHQKU30oLMM77IGyEhaJKFUU898fWHOFgzQF900O5LjRMRjUeuV2hCzz+FJMswDulTwAIc9UZHAsC54LqMEZMdIdrVoWezTWKqaOqhdmeD0588Wfv2gCcxtNFI4gyOmWsa/1AOBBThz0s3xxx5mPAz45kTP6+CfkByYkhure8zIQqr6Mw+jZXmlIaJ2w=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 29 Aug 2018 12:04:01 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:40450 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727322AbeH2QEB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 12:04:01 -0400
+Received: by mail-io0-f193.google.com with SMTP id l14-v6so4254467iob.7
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 05:07:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=krdFtVzvmU5wgkuZYkUMCx/jc89hjFY1HwZO2lVlNaI=;
+        b=TJWwnZNPzT8lQ5+Ed5oCYrXYRsoTxz6+G6nZKEuDZ4zy9TBEFloxEzeJRTBymCyik1
+         rOeI1BBhk5oT4hrHe3V0Je/idconxu6dzG106wmARphlUWs6ZBK/888ota231m2rU57d
+         2RzIa26Wm2QFrLgFzpsUG12NFbzlEOQSrL0y4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=krdFtVzvmU5wgkuZYkUMCx/jc89hjFY1HwZO2lVlNaI=;
+        b=hrcC9apuJTCXwOaM4gsfk28rEfqpRGZWqF3IgoX8DjIRibclxfsyZ2IkeUULdiiAy6
+         nlXARNma8HptCEDkNUtbthwMyCV8NNo3QO7CaBMbsuxbJZh9Acjseg+JZAUdO0lnjy7o
+         SqeW2Ac84QN6TKCSxLqY4iDqvgWcn5V4mUHAeDGH9QHRSsDJs2cXvYmHz//2MwFY6+9J
+         MFbrzrYeZE2i1orU/ctbItmX3Ts4EXJoaB8SLhQbXdc6lJomb3RoA5E3w1A3P5A6Atse
+         JtlwVpjFZBOU0S+H5VaP60txfOgDtJ8fwrXHQx3FJvAboQdQLVJq2OX+Fp3wqQiiTVSr
+         drmA==
+X-Gm-Message-State: APzg51D9OmRt4zQcP/zXVFEfOCAMvLmWXbjaE/IucfvEyGS3yNQ9eVNW
+        BQwCcbhbyQ93x0EqHtlQC36fZaI/qqFytRLLwTqMqw==
+X-Google-Smtp-Source: ANB0VdY661w5neXOqgdXwcFUsN+c8DzdLpM+Nwn68RpWoN/GkgQH5CcBDqvszRIryHmBp+1GgzXSj61FHRLnJq1jLb0=
+X-Received: by 2002:a6b:630a:: with SMTP id p10-v6mr4798460iog.175.1535544445313;
+ Wed, 29 Aug 2018 05:07:25 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c0441d08-ebcd-4573-595d-08d60da7e3a4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Aug 2018 12:06:44.8321
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB1267
+References: <20180828015252.28511-1-robh@kernel.org> <20180828015252.28511-40-robh@kernel.org>
+In-Reply-To: <20180828015252.28511-40-robh@kernel.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 29 Aug 2018 14:07:12 +0200
+Message-ID: <CACRpkdY-ChkLS39vz6rDUdnR7zuxfu=aD7tky__26fjMP+th1w@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: Convert to using %pOFn instead of device_node.name
+To:     Rob Herring <robh@kernel.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        ext Tony Lindgren <tony@atomide.com>,
+        Haojian Zhuang <haojian.zhuang@linaro.org>,
+        Patrice CHOTARD <patrice.chotard@st.com>,
+        Barry Song <baohua@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Dan Carpenter <dan.carpenter@oracle.com>
-> Sent: Wednesday, August 29, 2018 2:08 PM
-> To: Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>
-> Cc: netdev@vger.kernel.org; davem@davemloft.net;
-> devel@driverdev.osuosl.org; andrew@lunn.ch; Horia Geanta
-> <horia.geanta@nxp.com>; Madalin-cristian Bucur
-> <madalin.bucur@nxp.com>; gregkh@linuxfoundation.org; linux-
-> kernel@vger.kernel.org; Ioana Ciornei <ioana.ciornei@nxp.com>; Laurentiu
-> Tudor <laurentiu.tudor@nxp.com>
-> Subject: Re: [PATCH net-next v2 0/2] dpaa2-eth: Move DPAA2 Ethernet
-> driver
->=20
-> There are a few static checker warnings for the driver but only the
-> first one looks like a possibly real bug.
+On Tue, Aug 28, 2018 at 3:55 AM Rob Herring <robh@kernel.org> wrote:
 
-Thanks for the report, what tool did you use to get these warnings?
+> In preparation to remove the node name pointer from struct device_node,
+> convert printf users to use the %pOFn format specifier.
+>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
 
->=20
-> drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c:1116 dpaa2_eth_stop()
-> error: uninitialized symbol 'dpni_enabled'.
+Patch applied along with the thundering hoard of ACKs.
 
-Will initialize in v3. Not actually a bug, since it's used only as an out p=
-aram.
-
-> drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.c:1671 set_fq_affinity() war=
-n:
-> 'xps_mask' puts 1024 bytes on stack
-> drivers/staging/fsl-dpaa2/ethsw/ethsw.c:742 port_vlans_add() error:
-> uninitialized symbol 'err'.
-> drivers/staging/fsl-dpaa2/ethsw/ethsw.c:886 port_vlans_del() error:
-> uninitialized symbol 'err'.
-
-The dpaa2 switch driver is not targeted by the current patchset, so I'll fi=
-x these
-in a separate patch on Greg's staging tree.
-
-Thanks,
-Ioana
+Yours,
+Linus Walleij
