@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDA94C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 02:24:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC33DC433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 02:24:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FF5020684
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 02:24:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 941332087C
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 02:24:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="c4HMnIOS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FF5020684
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="Iqqlx2ie"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 941332087C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727497AbeH2GSd (ORCPT
+        id S1727536AbeH2GSm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 02:18:33 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:33690 "EHLO
+        Wed, 29 Aug 2018 02:18:42 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:41059 "EHLO
         mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727428AbeH2GSc (ORCPT
+        with ESMTP id S1725199AbeH2GSb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 02:18:32 -0400
-Received: by mail-ed1-f67.google.com with SMTP id h9-v6so2791494edr.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 19:24:00 -0700 (PDT)
+        Wed, 29 Aug 2018 02:18:31 -0400
+Received: by mail-ed1-f67.google.com with SMTP id f38-v6so2776160edd.8
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Aug 2018 19:23:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=2RMWkQyH28Vn7WolgdhN8/YoFRS2WigG+t4/w6rRBUw=;
-        b=c4HMnIOSrq9ofbaAOdc1PAb/QMggbiiMgCBPXjcN69RgVdXaaklCQ7pWgPcpeSWpaG
-         tZ7CMWKe032+HetD2HkXzP33nZFjQAuZVDIb8K5y6KK4vcLN0cxvFckFMoYMZ0zlpYVa
-         VKKUubGEdhrW1Ch8zdWBvlNsZjb1BDogaiUI8vGuAnT/q1/QTpkd/DwiYtdDbMbf618M
-         pT5z6Grkmjoi2W2bAQWzLZPiFmhthmHqjd1pdkbuTcN6/eEtHPXWKMu4QhEYXM0L/Xf9
-         wNNLBg0tTGoHmaIDnWzRHQYklwdwyZ9WvKO7n7Qs4spSH+NC3j2JIyLQphziDtMD1mhT
-         cyNA==
+        bh=S7Gdz8f+d0QRuXH4m3CGrNUsSVTAMq0zSrFsieVgUec=;
+        b=Iqqlx2ieNdVj7kcLcAcpLdtO9s1PlSPd9tDi0q5CVokbqYOZJBXc0Dpzp0B0nj2JjS
+         LG2oCL8qKSuQejTVCNuWPUgZ1UV7JaDpvuaEYchgSu0+t4TViGx+i0OxH48T+V+EpuVK
+         I9FwTLZ6x7H/7DHxldnMFPvzHbiHP7NUxlwjC+ub9yW56IzRKSvpwLgjRvt5tHVFFBMi
+         MZcq9V5wOTirRS8b/1R+eK0sZiIS2/mExKlgnl7rEien2fNoj6E50FSF6ExFT4qSNed6
+         XBsTNyxHY32PijoaWkCgNNQOYhlseUAKJEn5NJHtI4FFnGZT03Q2/zWDj7sSXYXjDkP1
+         23Ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=2RMWkQyH28Vn7WolgdhN8/YoFRS2WigG+t4/w6rRBUw=;
-        b=n9NsmqWjLO2ZKttkR4iNfeztStXerU3kJqty/s2yrcixZ4C1GnCLcJMkimbX8C3YLU
-         hxhphpSPpITnEmjHbse9K70ZAoFSjagU9jk5bsyTw7yez7ZuzdLmEkUnIu/nvHDU+J/2
-         8N/urSLXrS34zXWX0S1l42er2Gn3czY/zY7QvwLTvXV8OVkYpVA6/20XHcGzXRoKbbBi
-         Tm70XgMGn+z488TlKEYo/ulKx17J1Zc89LLUVeb9iOYbP09LtkS8BpfefwhTNlDvlIWm
-         zsso1T4g6jitCWzbOlkrZunJdTSLxLT3qFsCPtmnmwWmnVZlEo09CXFQWtRYdp+NpcMO
-         RjvQ==
-X-Gm-Message-State: APzg51BnesbboyXgpgyVglvlROX3JFcPgvHBToM8YiVRLrYJY/9Uedsk
-        PxRuZQZAz3ccbZvBG0e2oNWz9D80mv4=
-X-Google-Smtp-Source: ANB0VdY223iR7YzHJbGiMW43+1+GFnniCNuYgLAtqhqlTEef598bj4XlgfxCeCW/HNrN30Fbn2lv0w==
-X-Received: by 2002:a50:a542:: with SMTP id z2-v6mr4975255edb.77.1535509439934;
-        Tue, 28 Aug 2018 19:23:59 -0700 (PDT)
+        bh=S7Gdz8f+d0QRuXH4m3CGrNUsSVTAMq0zSrFsieVgUec=;
+        b=FFQgANP9npClvvtIyd8nTYPsDe26VZ1EUCk7IloKYXoQMErMfhua2wwTEsijQ1r0ml
+         zs45vInZif8zS9oZEtfwhBX98jLfeFcSeF9QU83w1LObgSQrv6dd+KRtHFoSNtWDmHzk
+         7msO6eyyX+MH/GhQy26Vv/A3z2QFZR85KZDW04KHUONM/JABGAtopwKWoyto74gcxoBP
+         DxEAhz6CGGQQZ0AjWVd95/524LUDgePWXEG1Vf8bwKeibMYJffJr42kuudWosR2wCn/s
+         zC7fcvCCKM1wgxOA7cJPYM/emtko/XmBxvaMdmAG+hwPUAXSnmxtu1cdVK2yMkS+c52j
+         HxVw==
+X-Gm-Message-State: APzg51D1+o4XHHhgD5nNdJ4rmWRJFeFBO/qmykMPDxwi7YEQ1nte+ZHY
+        d74EUrEUXxbL7LPVRuWbqcxj23ewioM=
+X-Google-Smtp-Source: ANB0VdYZq0SwRE5kR9QvyoUBLOSoi1ZQxawYlj0xA6/uYFpH6iqYAEs3hjVcK/Wcky8VaOuJBpF06A==
+X-Received: by 2002:a50:c8c3:: with SMTP id k3-v6mr5035754edh.193.1535509438765;
+        Tue, 28 Aug 2018 19:23:58 -0700 (PDT)
 Received: from dhcp.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id f26-v6sm1236367edb.28.2018.08.28.19.23.58
+        by smtp.gmail.com with ESMTPSA id f26-v6sm1236367edb.28.2018.08.28.19.23.57
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 28 Aug 2018 19:23:59 -0700 (PDT)
+        Tue, 28 Aug 2018 19:23:58 -0700 (PDT)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
@@ -72,9 +72,9 @@ Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
         Tan Xiaojun <tanxiaojun@huawei.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>
-Subject: [PATCH 4/4] tty/lockdep: Add ldisc_sem asserts
-Date:   Wed, 29 Aug 2018 03:23:53 +0100
-Message-Id: <20180829022353.23568-5-dima@arista.com>
+Subject: [PATCH 3/4] tty: Lock tty pair in tty_init_dev()
+Date:   Wed, 29 Aug 2018 03:23:52 +0100
+Message-Id: <20180829022353.23568-4-dima@arista.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180829022353.23568-1-dima@arista.com>
 References: <20180829022353.23568-1-dima@arista.com>
@@ -83,68 +83,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It should nicely document that each change to line discipline should
-held write semaphor. Otherwise potential reader will have a good time.
+It's safe to not lock both here - done to silence attempt lockdep assert in
+tty_ldisc_open(), which will be added with following patch.
 
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Jiri Slaby <jslaby@suse.com>
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- drivers/tty/tty_ldisc.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/tty/tty_io.c    | 5 ++---
+ drivers/tty/tty_ldisc.c | 6 ++----
+ include/linux/tty.h     | 4 ++++
+ 3 files changed, 8 insertions(+), 7 deletions(-)
 
+diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+index 3ef8b977b167..a94005f915b3 100644
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -1342,7 +1342,7 @@ struct tty_struct *tty_init_dev(struct tty_driver *driver, int idx)
+ 			"%s: %s driver does not set tty->port. This will crash the kernel later. Fix the driver!\n",
+ 			__func__, tty->driver->name);
+ 
+-	retval = tty_ldisc_lock(tty, 5 * HZ);
++	retval = tty_ldisc_lock_pair_timeout(tty, tty->link, 5 * HZ);
+ 	if (retval)
+ 		goto err_release_lock;
+ 	tty->port->itty = tty;
+@@ -1353,9 +1353,9 @@ struct tty_struct *tty_init_dev(struct tty_driver *driver, int idx)
+ 	 * to decrement the use counts, as release_tty doesn't care.
+ 	 */
+ 	retval = tty_ldisc_setup(tty, tty->link);
++	tty_ldisc_unlock_pair(tty, tty->link);
+ 	if (retval)
+ 		goto err_release_tty;
+-	tty_ldisc_unlock(tty);
+ 	/* Return the tty locked so that it cannot vanish under the caller */
+ 	return tty;
+ 
+@@ -1368,7 +1368,6 @@ struct tty_struct *tty_init_dev(struct tty_driver *driver, int idx)
+ 
+ 	/* call the tty release_tty routine to clean out this slot */
+ err_release_tty:
+-	tty_ldisc_unlock(tty);
+ 	tty_info_ratelimited(tty, "ldisc open failed (%d), clearing slot %d\n",
+ 			     retval, idx);
+ err_release_lock:
 diff --git a/drivers/tty/tty_ldisc.c b/drivers/tty/tty_ldisc.c
-index b72266461c00..9ef0b33a4132 100644
+index fc4c97cae01e..b72266461c00 100644
 --- a/drivers/tty/tty_ldisc.c
 +++ b/drivers/tty/tty_ldisc.c
-@@ -444,6 +444,7 @@ static void tty_set_termios_ldisc(struct tty_struct *tty, int disc)
+@@ -340,8 +340,7 @@ void tty_ldisc_unlock(struct tty_struct *tty)
+ 	__tty_ldisc_unlock(tty);
+ }
  
- static int tty_ldisc_open(struct tty_struct *tty, struct tty_ldisc *ld)
+-static int
+-tty_ldisc_lock_pair_timeout(struct tty_struct *tty, struct tty_struct *tty2,
++int tty_ldisc_lock_pair_timeout(struct tty_struct *tty, struct tty_struct *tty2,
+ 			    unsigned long timeout)
  {
-+	lockdep_assert_held(&tty->ldisc_sem);
- 	WARN_ON(test_and_set_bit(TTY_LDISC_OPEN, &tty->flags));
- 	if (ld->ops->open) {
- 		int ret;
-@@ -469,6 +470,7 @@ static int tty_ldisc_open(struct tty_struct *tty, struct tty_ldisc *ld)
+ 	int ret;
+@@ -381,8 +380,7 @@ static void tty_ldisc_lock_pair(struct tty_struct *tty, struct tty_struct *tty2)
+ 	tty_ldisc_lock_pair_timeout(tty, tty2, MAX_SCHEDULE_TIMEOUT);
+ }
  
- static void tty_ldisc_close(struct tty_struct *tty, struct tty_ldisc *ld)
+-static void tty_ldisc_unlock_pair(struct tty_struct *tty,
+-				  struct tty_struct *tty2)
++void tty_ldisc_unlock_pair(struct tty_struct *tty, struct tty_struct *tty2)
  {
-+	lockdep_assert_held(&tty->ldisc_sem);
- 	WARN_ON(!test_bit(TTY_LDISC_OPEN, &tty->flags));
- 	clear_bit(TTY_LDISC_OPEN, &tty->flags);
- 	if (ld->ops->close)
-@@ -490,6 +492,7 @@ static int tty_ldisc_failto(struct tty_struct *tty, int ld)
- 	struct tty_ldisc *disc = tty_ldisc_get(tty, ld);
- 	int r;
- 
-+	lockdep_assert_held(&tty->ldisc_sem);
- 	if (IS_ERR(disc))
- 		return PTR_ERR(disc);
- 	tty->ldisc = disc;
-@@ -613,6 +616,7 @@ EXPORT_SYMBOL_GPL(tty_set_ldisc);
-  */
- static void tty_ldisc_kill(struct tty_struct *tty)
- {
-+	lockdep_assert_held(&tty->ldisc_sem);
- 	if (!tty->ldisc)
- 		return;
- 	/*
-@@ -660,6 +664,7 @@ int tty_ldisc_reinit(struct tty_struct *tty, int disc)
- 	struct tty_ldisc *ld;
- 	int retval;
- 
-+	lockdep_assert_held(&tty->ldisc_sem);
- 	ld = tty_ldisc_get(tty, disc);
- 	if (IS_ERR(ld)) {
- 		BUG_ON(disc == N_TTY);
-@@ -823,6 +828,7 @@ int tty_ldisc_init(struct tty_struct *tty)
-  */
- void tty_ldisc_deinit(struct tty_struct *tty)
- {
-+	/* no ldisc_sem, tty is being destroyed */
- 	if (tty->ldisc)
- 		tty_ldisc_put(tty->ldisc);
- 	tty->ldisc = NULL;
+ 	__tty_ldisc_unlock(tty);
+ 	if (tty2)
+diff --git a/include/linux/tty.h b/include/linux/tty.h
+index c56e3978b00f..5efb8f87ffdc 100644
+--- a/include/linux/tty.h
++++ b/include/linux/tty.h
+@@ -409,6 +409,10 @@ extern void tty_kclose(struct tty_struct *tty);
+ extern int tty_dev_name_to_number(const char *name, dev_t *number);
+ extern int tty_ldisc_lock(struct tty_struct *tty, unsigned long timeout);
+ extern void tty_ldisc_unlock(struct tty_struct *tty);
++extern int tty_ldisc_lock_pair_timeout(struct tty_struct *tty,
++		struct tty_struct *tty2, unsigned long timeout);
++extern void tty_ldisc_unlock_pair(struct tty_struct *tty,
++		struct tty_struct *tty2);
+ #else
+ static inline void tty_kref_put(struct tty_struct *tty)
+ { }
 -- 
 2.13.6
 
