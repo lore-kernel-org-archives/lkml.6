@@ -2,107 +2,137 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1414C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 09:49:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5D89C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 09:49:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98BC42083A
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 09:49:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98BC42083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
+	by mail.kernel.org (Postfix) with ESMTP id 7EB322086A
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 09:49:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dWVEsgBy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EB322086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728069AbeH2NpT convert rfc822-to-8bit (ORCPT
+        id S1728140AbeH2Npe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 09:45:19 -0400
-Received: from eu-smtp-delivery-211.mimecast.com ([146.101.78.211]:24323 "EHLO
-        eu-smtp-delivery-211.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727099AbeH2NpS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 09:45:18 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by eu-smtp-1.mimecast.com with ESMTP id
- uk-mta-175-YWswC5VRM12jMnmKf5s2Jg-1; Wed, 29 Aug 2018 10:49:11 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
- (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed,
- 29 Aug 2018 10:50:50 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Wed, 29 Aug 2018 10:50:50 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Alexey Dobriyan' <adobriyan@gmail.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 06/13] proc: convert /proc/self to _print_integer()
-Thread-Topic: [PATCH 06/13] proc: convert /proc/self to _print_integer()
-Thread-Index: AQHUPlw0h/REFtLLZEK6DODn8qrvQaTWfgDA
-Date:   Wed, 29 Aug 2018 09:50:50 +0000
-Message-ID: <54cb86c6d96b47bc8017a69be124c105@AcuMS.aculab.com>
-References: <20180827231503.26899-1-adobriyan@gmail.com>
- <20180827231503.26899-6-adobriyan@gmail.com>
-In-Reply-To: <20180827231503.26899-6-adobriyan@gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.33]
-MIME-Version: 1.0
-X-MC-Unique: YWswC5VRM12jMnmKf5s2Jg-1
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        Wed, 29 Aug 2018 09:45:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47142 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727099AbeH2Npe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 09:45:34 -0400
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A1E72083A;
+        Wed, 29 Aug 2018 09:49:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1535536168;
+        bh=hLdtPdC/lRjpHdAfG7m6N75tlKy/SSLSrr9sgMQ0r2A=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=dWVEsgByQ7rHrcc+3v1dxMZzNsQhIWqlU10aw+/eVaJK8TfhkYYuOqUun06AAU3CI
+         twOVwFKNRPNdWVMcbso/SP5U9tX6ndjYkQMf8pzWc1+wVFRPkSOtLk8vQ0qCFsdGB/
+         PmxU5exBZi/MXZq3MyUi4MUUD1hnsaUBcfstdg5A=
+Date:   Wed, 29 Aug 2018 18:49:25 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Nadav Amit <namit@vmware.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        <x86@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        <linux-arch@vger.kernel.org>, Andy Lutomirski <luto@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [RFC PATCH 2/6] x86/mm: temporary mm struct
+Message-Id: <20180829184925.64caee4dadf705080373f84f@kernel.org>
+In-Reply-To: <20180829081147.184610-3-namit@vmware.com>
+References: <20180829081147.184610-1-namit@vmware.com>
+        <20180829081147.184610-3-namit@vmware.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexey Dobriyan
-> Sent: 28 August 2018 00:15
+On Wed, 29 Aug 2018 01:11:43 -0700
+Nadav Amit <namit@vmware.com> wrote:
+
+> From: Andy Lutomirski <luto@kernel.org>
+> 
+> Sometimes we want to set a temporary page-table entries (PTEs) in one of
+> the cores, without allowing other cores to use - even speculatively -
+> these mappings. There are two benefits for doing so:
+> 
+> (1) Security: if sensitive PTEs are set, temporary mm prevents their use
+> in other cores. This hardens the security as it prevents exploding a
+> dangling pointer to overwrite sensitive data using the sensitive PTE.
+> 
+> (2) Avoiding TLB shootdowns: the PTEs do not need to be flushed in
+> remote page-tables.
+> 
+> To do so a temporary mm_struct can be used. Mappings which are private
+> for this mm can be set in the userspace part of the address-space.
+> During the whole time in which the temporary mm is loaded, interrupts
+> must be disabled.
+> 
+> The first use-case for temporary PTEs, which will follow, is for poking
+> the kernel text.
+> 
+> [ Commit message was written by Nadav ]
+> 
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Nadav Amit <namit@vmware.com>
 > ---
->  fs/proc/self.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
+>  arch/x86/include/asm/mmu_context.h | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
 > 
-> diff --git a/fs/proc/self.c b/fs/proc/self.c
-> index 127265e5c55f..b2279412237b 100644
-> --- a/fs/proc/self.c
-> +++ b/fs/proc/self.c
-> @@ -14,6 +14,7 @@ static const char *proc_self_get_link(struct dentry *dentry,
->  {
->  	struct pid_namespace *ns = proc_pid_ns(inode);
->  	pid_t tgid = task_tgid_nr_ns(current, ns);
-> +	char buf[10], *p = buf + sizeof(buf);
->  	char *name;
-> 
->  	if (!tgid)
-> @@ -22,7 +23,11 @@ static const char *proc_self_get_link(struct dentry *dentry,
->  	name = kmalloc(10 + 1, dentry ? GFP_KERNEL : GFP_ATOMIC);
->  	if (unlikely(!name))
->  		return dentry ? ERR_PTR(-ENOMEM) : ERR_PTR(-ECHILD);
-> -	sprintf(name, "%u", tgid);
-> +
-
-Best not to 'hide' the initialisation of 'p' at the top of the function.
-Much easier to see what is going on if it is moved here.
-
-> +	p = _print_integer_u32(p, tgid);
-
-or just:
-	p = _print_integer(buf + sizeof(buf), tgid);
-
-(What a horrid interface ...)
-
-> +	memcpy(name, p, buf + sizeof(buf) - p);
-> +	name[buf + sizeof(buf) - p] = '\0';
-> +
->  	set_delayed_call(done, kfree_link, name);
->  	return name;
+> diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
+> index eeeb9289c764..96afc8c0cf15 100644
+> --- a/arch/x86/include/asm/mmu_context.h
+> +++ b/arch/x86/include/asm/mmu_context.h
+> @@ -338,4 +338,24 @@ static inline unsigned long __get_current_cr3_fast(void)
+>  	return cr3;
 >  }
-> --
-> 2.16.4
+>  
+> +typedef struct {
+> +	struct mm_struct *prev;
+> +} temporary_mm_state_t;
+> +
+> +static inline temporary_mm_state_t use_temporary_mm(struct mm_struct *mm)
+> +{
+> +	temporary_mm_state_t state;
+> +
+> +	lockdep_assert_irqs_disabled();
+> +	state.prev = this_cpu_read(cpu_tlbstate.loaded_mm);
+> +	switch_mm_irqs_off(NULL, mm, current);
+> +	return state;
+> +}
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+Hmm, why don't we return mm_struct *prev directly?
 
+Thank you,
+
+> +
+> +static inline void unuse_temporary_mm(temporary_mm_state_t prev)
+> +{
+> +	lockdep_assert_irqs_disabled();
+> +	switch_mm_irqs_off(NULL, prev.prev, current);
+> +}
+> +
+>  #endif /* _ASM_X86_MMU_CONTEXT_H */
+> -- 
+> 2.17.1
+> 
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
