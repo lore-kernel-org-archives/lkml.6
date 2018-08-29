@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B64A2C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:39:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE595C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:39:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F47020661
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:39:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F47020661
+	by mail.kernel.org (Postfix) with ESMTP id 9449220644
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 22:39:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9449220644
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728007AbeH3CiN (ORCPT
+        id S1727993AbeH3CiN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 29 Aug 2018 22:38:13 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48540 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727485AbeH3CiJ (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39710 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727539AbeH3CiJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 29 Aug 2018 22:38:09 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7TMcidt081072
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:39:05 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2m62g7usqf-1
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7TMchxI062045
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:39:06 -0400
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m61x8d8ay-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
         for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 18:39:05 -0400
 Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
         Wed, 29 Aug 2018 18:39:04 -0400
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
         Wed, 29 Aug 2018 18:38:59 -0400
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7TMcwi626869992
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7TMcwcH4784470
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
         Wed, 29 Aug 2018 22:38:58 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 75416B2072;
+        by IMSVA (Postfix) with ESMTP id 75198B2065;
         Wed, 29 Aug 2018 18:37:54 -0400 (EDT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4E746B205F;
+        by IMSVA (Postfix) with ESMTP id 46330B2068;
         Wed, 29 Aug 2018 18:37:54 -0400 (EDT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
         Wed, 29 Aug 2018 18:37:54 -0400 (EDT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id CB78A16C91D6; Wed, 29 Aug 2018 15:38:56 -0700 (PDT)
+        id C4BF516C91D5; Wed, 29 Aug 2018 15:38:56 -0700 (PDT)
 From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -61,26 +61,26 @@ Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tip/core/rcu 49/52] rcu: Eliminate quiescent-state and grace-period-nonstart use of rsp
-Date:   Wed, 29 Aug 2018 15:38:51 -0700
+Subject: [PATCH tip/core/rcu 48/52] rcu: Eliminate callback-invocation/invocation use of rsp
+Date:   Wed, 29 Aug 2018 15:38:50 -0700
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180829223830.GA1800@linux.vnet.ibm.com>
 References: <20180829223830.GA1800@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18082922-0072-0000-0000-0000039968A8
+x-cbid: 18082922-0052-0000-0000-0000032820CB
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009636; HX=3.00000242; KW=3.00000007;
  PH=3.00000004; SC=3.00000266; SDB=6.01080744; UDB=6.00557498; IPR=6.00860730;
- MB=3.00023002; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-29 22:39:03
+ MB=3.00023002; MTD=3.00000008; XFM=3.00000015; UTC=2018-08-29 22:39:02
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18082922-0073-0000-0000-0000493EB37A
-Message-Id: <20180829223854.4055-49-paulmck@linux.vnet.ibm.com>
+x-cbparentid: 18082922-0053-0000-0000-00005DE5FB26
+Message-Id: <20180829223854.4055-48-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-29_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=957 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=945 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1807170000 definitions=main-1808290220
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -89,119 +89,107 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Now that there is only one rcu_state structure, there is less point in
 maintaining a pointer to it.  This commit therefore replaces rsp with
-&rcu_state in rcu_report_qs_rnp(), force_quiescent_state(), and
-rcu_check_gp_start_stall().
+&rcu_state in rcu_do_batch(), invoke_rcu_callbacks(), and __call_rcu().
 
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 ---
- kernel/rcu/tree.c | 32 +++++++++++++++-----------------
- 1 file changed, 15 insertions(+), 17 deletions(-)
+ kernel/rcu/tree.c | 24 +++++++++++-------------
+ 1 file changed, 11 insertions(+), 13 deletions(-)
 
 diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index e6f0d8b6bde3..962b75c9722a 100644
+index 734cd95368e6..e6f0d8b6bde3 100644
 --- a/kernel/rcu/tree.c
 +++ b/kernel/rcu/tree.c
-@@ -2197,7 +2197,6 @@ static void rcu_report_qs_rnp(unsigned long mask, struct rcu_node *rnp,
+@@ -2466,14 +2466,13 @@ static void rcu_do_batch(struct rcu_data *rdp)
+ 	struct rcu_head *rhp;
+ 	struct rcu_cblist rcl = RCU_CBLIST_INITIALIZER(rcl);
+ 	long bl, count;
+-	struct rcu_state *rsp = &rcu_state;
+ 
+ 	/* If no callbacks are ready, just return. */
+ 	if (!rcu_segcblist_ready_cbs(&rdp->cblist)) {
+-		trace_rcu_batch_start(rsp->name,
++		trace_rcu_batch_start(rcu_state.name,
+ 				      rcu_segcblist_n_lazy_cbs(&rdp->cblist),
+ 				      rcu_segcblist_n_cbs(&rdp->cblist), 0);
+-		trace_rcu_batch_end(rsp->name, 0,
++		trace_rcu_batch_end(rcu_state.name, 0,
+ 				    !rcu_segcblist_empty(&rdp->cblist),
+ 				    need_resched(), is_idle_task(current),
+ 				    rcu_is_callbacks_kthread());
+@@ -2488,7 +2487,8 @@ static void rcu_do_batch(struct rcu_data *rdp)
+ 	local_irq_save(flags);
+ 	WARN_ON_ONCE(cpu_is_offline(smp_processor_id()));
+ 	bl = rdp->blimit;
+-	trace_rcu_batch_start(rsp->name, rcu_segcblist_n_lazy_cbs(&rdp->cblist),
++	trace_rcu_batch_start(rcu_state.name,
++			      rcu_segcblist_n_lazy_cbs(&rdp->cblist),
+ 			      rcu_segcblist_n_cbs(&rdp->cblist), bl);
+ 	rcu_segcblist_extract_done_cbs(&rdp->cblist, &rcl);
+ 	local_irq_restore(flags);
+@@ -2497,7 +2497,7 @@ static void rcu_do_batch(struct rcu_data *rdp)
+ 	rhp = rcu_cblist_dequeue(&rcl);
+ 	for (; rhp; rhp = rcu_cblist_dequeue(&rcl)) {
+ 		debug_rcu_head_unqueue(rhp);
+-		if (__rcu_reclaim(rsp->name, rhp))
++		if (__rcu_reclaim(rcu_state.name, rhp))
+ 			rcu_cblist_dequeued_lazy(&rcl);
+ 		/*
+ 		 * Stop only if limit reached and CPU has something to do.
+@@ -2511,7 +2511,7 @@ static void rcu_do_batch(struct rcu_data *rdp)
+ 
+ 	local_irq_save(flags);
+ 	count = -rcl.len;
+-	trace_rcu_batch_end(rsp->name, count, !!rcl.head, need_resched(),
++	trace_rcu_batch_end(rcu_state.name, count, !!rcl.head, need_resched(),
+ 			    is_idle_task(current), rcu_is_callbacks_kthread());
+ 
+ 	/* Update counts and requeue any remaining callbacks. */
+@@ -2527,7 +2527,7 @@ static void rcu_do_batch(struct rcu_data *rdp)
+ 	/* Reset ->qlen_last_fqs_check trigger if enough CBs have drained. */
+ 	if (count == 0 && rdp->qlen_last_fqs_check != 0) {
+ 		rdp->qlen_last_fqs_check = 0;
+-		rdp->n_force_qs_snap = rsp->n_force_qs;
++		rdp->n_force_qs_snap = rcu_state.n_force_qs;
+ 	} else if (count < rdp->qlen_last_fqs_check - qhimark)
+ 		rdp->qlen_last_fqs_check = count;
+ 
+@@ -2763,11 +2763,9 @@ static __latent_entropy void rcu_process_callbacks(struct softirq_action *unused
+  */
+ static void invoke_rcu_callbacks(struct rcu_data *rdp)
  {
- 	unsigned long oldmask = 0;
- 	struct rcu_node *rnp_c;
+-	struct rcu_state *rsp = &rcu_state;
+-
+ 	if (unlikely(!READ_ONCE(rcu_scheduler_fully_active)))
+ 		return;
+-	if (likely(!rsp->boost)) {
++	if (likely(!rcu_state.boost)) {
+ 		rcu_do_batch(rdp);
+ 		return;
+ 	}
+@@ -2843,7 +2841,6 @@ __call_rcu(struct rcu_head *head, rcu_callback_t func, int cpu, bool lazy)
+ {
+ 	unsigned long flags;
+ 	struct rcu_data *rdp;
 -	struct rcu_state __maybe_unused *rsp = &rcu_state;
  
- 	raw_lockdep_assert_held_rcu_node(rnp);
+ 	/* Misaligned rcu_head! */
+ 	WARN_ON_ONCE((unsigned long)head & (sizeof(void *) - 1));
+@@ -2892,11 +2889,12 @@ __call_rcu(struct rcu_head *head, rcu_callback_t func, int cpu, bool lazy)
+ 		rcu_idle_count_callbacks_posted();
  
-@@ -2216,7 +2215,7 @@ static void rcu_report_qs_rnp(unsigned long mask, struct rcu_node *rnp,
- 		WARN_ON_ONCE(!rcu_is_leaf_node(rnp) &&
- 			     rcu_preempt_blocked_readers_cgp(rnp));
- 		rnp->qsmask &= ~mask;
--		trace_rcu_quiescent_state_report(rsp->name, rnp->gp_seq,
-+		trace_rcu_quiescent_state_report(rcu_state.name, rnp->gp_seq,
- 						 mask, rnp->qsmask, rnp->level,
- 						 rnp->grplo, rnp->grphi,
- 						 !!rnp->gp_tasks);
-@@ -2623,12 +2622,11 @@ static void force_quiescent_state(void)
- 	bool ret;
- 	struct rcu_node *rnp;
- 	struct rcu_node *rnp_old = NULL;
--	struct rcu_state *rsp = &rcu_state;
+ 	if (__is_kfree_rcu_offset((unsigned long)func))
+-		trace_rcu_kfree_callback(rsp->name, head, (unsigned long)func,
++		trace_rcu_kfree_callback(rcu_state.name, head,
++					 (unsigned long)func,
+ 					 rcu_segcblist_n_lazy_cbs(&rdp->cblist),
+ 					 rcu_segcblist_n_cbs(&rdp->cblist));
+ 	else
+-		trace_rcu_callback(rsp->name, head,
++		trace_rcu_callback(rcu_state.name, head,
+ 				   rcu_segcblist_n_lazy_cbs(&rdp->cblist),
+ 				   rcu_segcblist_n_cbs(&rdp->cblist));
  
- 	/* Funnel through hierarchy to reduce memory contention. */
- 	rnp = __this_cpu_read(rcu_data.mynode);
- 	for (; rnp != NULL; rnp = rnp->parent) {
--		ret = (READ_ONCE(rsp->gp_flags) & RCU_GP_FLAG_FQS) ||
-+		ret = (READ_ONCE(rcu_state.gp_flags) & RCU_GP_FLAG_FQS) ||
- 		      !raw_spin_trylock(&rnp->fqslock);
- 		if (rnp_old != NULL)
- 			raw_spin_unlock(&rnp_old->fqslock);
-@@ -2641,11 +2639,12 @@ static void force_quiescent_state(void)
- 	/* Reached the root of the rcu_node tree, acquire lock. */
- 	raw_spin_lock_irqsave_rcu_node(rnp_old, flags);
- 	raw_spin_unlock(&rnp_old->fqslock);
--	if (READ_ONCE(rsp->gp_flags) & RCU_GP_FLAG_FQS) {
-+	if (READ_ONCE(rcu_state.gp_flags) & RCU_GP_FLAG_FQS) {
- 		raw_spin_unlock_irqrestore_rcu_node(rnp_old, flags);
- 		return;  /* Someone beat us to it. */
- 	}
--	WRITE_ONCE(rsp->gp_flags, READ_ONCE(rsp->gp_flags) | RCU_GP_FLAG_FQS);
-+	WRITE_ONCE(rcu_state.gp_flags,
-+		   READ_ONCE(rcu_state.gp_flags) | RCU_GP_FLAG_FQS);
- 	raw_spin_unlock_irqrestore_rcu_node(rnp_old, flags);
- 	rcu_gp_kthread_wake();
- }
-@@ -2661,15 +2660,14 @@ rcu_check_gp_start_stall(struct rcu_node *rnp, struct rcu_data *rdp)
- 	unsigned long flags;
- 	unsigned long j;
- 	struct rcu_node *rnp_root = rcu_get_root();
--	struct rcu_state *rsp = &rcu_state;
- 	static atomic_t warned = ATOMIC_INIT(0);
- 
- 	if (!IS_ENABLED(CONFIG_PROVE_RCU) || rcu_gp_in_progress() ||
- 	    ULONG_CMP_GE(rnp_root->gp_seq, rnp_root->gp_seq_needed))
- 		return;
- 	j = jiffies; /* Expensive access, and in common case don't get here. */
--	if (time_before(j, READ_ONCE(rsp->gp_req_activity) + gpssdelay) ||
--	    time_before(j, READ_ONCE(rsp->gp_activity) + gpssdelay) ||
-+	if (time_before(j, READ_ONCE(rcu_state.gp_req_activity) + gpssdelay) ||
-+	    time_before(j, READ_ONCE(rcu_state.gp_activity) + gpssdelay) ||
- 	    atomic_read(&warned))
- 		return;
- 
-@@ -2677,8 +2675,8 @@ rcu_check_gp_start_stall(struct rcu_node *rnp, struct rcu_data *rdp)
- 	j = jiffies;
- 	if (rcu_gp_in_progress() ||
- 	    ULONG_CMP_GE(rnp_root->gp_seq, rnp_root->gp_seq_needed) ||
--	    time_before(j, READ_ONCE(rsp->gp_req_activity) + gpssdelay) ||
--	    time_before(j, READ_ONCE(rsp->gp_activity) + gpssdelay) ||
-+	    time_before(j, READ_ONCE(rcu_state.gp_req_activity) + gpssdelay) ||
-+	    time_before(j, READ_ONCE(rcu_state.gp_activity) + gpssdelay) ||
- 	    atomic_read(&warned)) {
- 		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
- 		return;
-@@ -2690,19 +2688,19 @@ rcu_check_gp_start_stall(struct rcu_node *rnp, struct rcu_data *rdp)
- 	j = jiffies;
- 	if (rcu_gp_in_progress() ||
- 	    ULONG_CMP_GE(rnp_root->gp_seq, rnp_root->gp_seq_needed) ||
--	    time_before(j, rsp->gp_req_activity + gpssdelay) ||
--	    time_before(j, rsp->gp_activity + gpssdelay) ||
-+	    time_before(j, rcu_state.gp_req_activity + gpssdelay) ||
-+	    time_before(j, rcu_state.gp_activity + gpssdelay) ||
- 	    atomic_xchg(&warned, 1)) {
- 		raw_spin_unlock_rcu_node(rnp_root); /* irqs remain disabled. */
- 		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
- 		return;
- 	}
- 	pr_alert("%s: g%ld->%ld gar:%lu ga:%lu f%#x gs:%d %s->state:%#lx\n",
--		 __func__, (long)READ_ONCE(rsp->gp_seq),
-+		 __func__, (long)READ_ONCE(rcu_state.gp_seq),
- 		 (long)READ_ONCE(rnp_root->gp_seq_needed),
--		 j - rsp->gp_req_activity, j - rsp->gp_activity,
--		 rsp->gp_flags, rsp->gp_state, rsp->name,
--		 rsp->gp_kthread ? rsp->gp_kthread->state : 0x1ffffL);
-+		 j - rcu_state.gp_req_activity, j - rcu_state.gp_activity,
-+		 rcu_state.gp_flags, rcu_state.gp_state, rcu_state.name,
-+		 rcu_state.gp_kthread ? rcu_state.gp_kthread->state : 0x1ffffL);
- 	WARN_ON(1);
- 	if (rnp_root != rnp)
- 		raw_spin_unlock_rcu_node(rnp_root);
 -- 
 2.17.1
 
