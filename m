@@ -2,159 +2,125 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D18CDC433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FDA7C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:20:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 681E82083A
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:20:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="mgn5JYt2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 681E82083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
+	by mail.kernel.org (Postfix) with ESMTP id 022EB20844
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 07:20:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 022EB20844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727638AbeH2LPm (ORCPT
+        id S1727711AbeH2LQA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 07:15:42 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.52]:31316 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727099AbeH2LPm (ORCPT
+        Wed, 29 Aug 2018 07:16:00 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53746 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726858AbeH2LP7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 07:15:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1535527207;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=5T7KiArVHHXAooAYmhu1zxMw5LwQLOzWkyY52A8YvW0=;
-        b=mgn5JYt229RE15yEcjCMoJQMxS9lpPlZAwYgThMZ33aEhpbqVOUpwI5P6pCl4Q6u4l
-        ZnbLZcEUH9NdQhbimklELlivclhCNOKuO2D/5q1cqhjO8L6ZXeOOMRwV0EFFp4Nw0qc2
-        LKPhcpGijnsBdTXEVWVT1CIBrP8JnT8iavbFBsmnsIyBGhQ/l/p+MuImFwTQUsba0FKl
-        1cyJzYM1kJBIF678BkqA3nUiqeDzrm0H/y7D8cnXUG8rnp95v7mHlllWNTizwbaZZ98p
-        X+cOBofiy/1ZAkuJSKvFgLJGFuPay1UoySbtgIdxxYtotud2WDeAr52MkKhd39X7k1eH
-        Eerg==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj5gpw91kgwllU1BqC6ek="
-X-RZG-CLASS-ID: mo00
-Received: from imac.fritz.box
-        by smtp.strato.de (RZmta 43.21 DYNA|AUTH)
-        with ESMTPSA id n0b6a3u7T7Jx3Ph
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Wed, 29 Aug 2018 09:19:59 +0200 (CEST)
+        Wed, 29 Aug 2018 07:15:59 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w7T7J733117551
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 03:20:29 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2m5n8rkpv2-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 03:20:29 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Wed, 29 Aug 2018 08:20:27 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 29 Aug 2018 08:20:23 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w7T7KMAH34406534
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 29 Aug 2018 07:20:22 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E6C05A4040;
+        Wed, 29 Aug 2018 10:20:18 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 15A2AA405B;
+        Wed, 29 Aug 2018 10:20:18 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.8.172])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Wed, 29 Aug 2018 10:20:17 +0100 (BST)
+Date:   Wed, 29 Aug 2018 10:20:19 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Richard Kuo <rkuo@codeaurora.org>, Ley Foon Tan <lftan@altera.com>,
+        Richard Weinberger <richard@nod.at>,
+        Guan Xuetao <gxt@pku.edu.cn>, Michal Hocko <mhocko@kernel.org>,
+        linux-hexagon@vger.kernel.org, nios2-dev@lists.rocketboards.org,
+        linux-um@lists.infradead.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND 0/7] switch several architectures NO_BOOTMEM
+References: <1533326330-31677-1-git-send-email-rppt@linux.vnet.ibm.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: [PATCH v2 00/32] Device Tree Updates for GTA04 (A3/A4/A5 variants)
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <cover.1533021093.git.hns@goldelico.com>
-Date:   Wed, 29 Aug 2018 09:19:59 +0200
-Cc:     linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <25356247-C081-4B9E-9CE2-2D10EFE56F6C@goldelico.com>
-References: <cover.1533021093.git.hns@goldelico.com>
-To:     Ladislav Michl <ladis@linux-mips.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Marek Belisko <marek@goldelico.com>,
-        =?utf-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-X-Mailer: Apple Mail (2.3124)
+Content-Disposition: inline
+In-Reply-To: <1533326330-31677-1-git-send-email-rppt@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18082907-0016-0000-0000-000001FD3714
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18082907-0017-0000-0000-00003253ABA8
+Message-Id: <20180829072019.GA13173@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-08-29_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=791 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1808290081
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi OMAP3 DTS Maintainers,
-is there any progress in merging this patch series?
+Any updates on this?
 
-We have some more patches in our queue which depend on them.
+On Fri, Aug 03, 2018 at 10:58:43PM +0300, Mike Rapoport wrote:
+> 
+> Hi,
+> 
+> These patches perform conversion to NO_BOOTMEM of hexagon, nios2, uml and
+> unicore32. The architecture maintainers have acked the patches, but, since
+> I've got no confirmation the patches are going through the arch tree I'd
+> appreciate if the set would be applied to the -mm tree.
+> 
+> Mike Rapoport (7):
+>   hexagon: switch to NO_BOOTMEM
+>   of: ignore sub-page memory regions
+>   nios2: use generic early_init_dt_add_memory_arch
+>   nios2: switch to NO_BOOTMEM
+>   um: setup_physmem: stop using global variables
+>   um: switch to NO_BOOTMEM
+>   unicore32: switch to NO_BOOTMEM
+> 
+>  arch/hexagon/Kconfig      |  3 +++
+>  arch/hexagon/mm/init.c    | 20 +++++++-----------
+>  arch/nios2/Kconfig        |  3 +++
+>  arch/nios2/kernel/prom.c  | 17 ---------------
+>  arch/nios2/kernel/setup.c | 39 ++++++----------------------------
+>  arch/um/Kconfig.common    |  2 ++
+>  arch/um/kernel/physmem.c  | 22 +++++++++----------
+>  arch/unicore32/Kconfig    |  1 +
+>  arch/unicore32/mm/init.c  | 54 +----------------------------------------------
+>  drivers/of/fdt.c          | 11 +++++-----
+>  10 files changed, 41 insertions(+), 131 deletions(-)
+> 
+> -- 
+> 2.7.4
+> 
 
-BR and thanks,
-Nikolaus Schaller
-
-
-> Am 31.07.2018 um 09:11 schrieb H. Nikolaus Schaller =
-<hns@goldelico.com>:
->=20
-> * Sebastian Reichel <sebastian.reichel@collabora.co.uk>
->  asked why we have reg=3D<0> for port@1.
->  Based on his comment we have removed the change for
->  the opa362 reg property in the DT, but worked out a correct
->  fix in the opa362 driver which solves the issue better.
->  See: https://lore.kernel.org/patchwork/patch/968407/
-> * Ladislav Michl <ladis@linux-mips.org>
->  has found a typo and we discussed NAND/OneNAND and
->  how the partitions should be setup. A better solution
->  would be to do it completely by u-boot, but unless we have
->  that, we must fix it here.
-> * we omit the patch that replaces ti,non-removable by non-removable
->  since additional internal tests have shown that it makes
->  problems with finding the rootfs boot partition.
-> * instead we add a patch that explicitly sets broken-cd for mmc1.
->=20
-> PATCH V1 2018-07-25 09:00:42:
-> We have not upstreamed significant improvements collected
-> in the GTA04 vendor kernel tree for some years. The result
-> is that distribution kernels derived from upstream (e.g.
-> Debian) lag behind and miss significant features and fixes.
->=20
->=20
-> H. Nikolaus Schaller (32):
->  ARM: dts: omap3-gta04: fix typo in backlight pins node name
->  ARM: dts: omap3-gta04: fix some whitespace and tab style errors
->  ARM: dts: omap3-gta04: give spi_lcd node a label so that we can
->    overwrite in other DTS files
->  ARM: dts: omap3-gta04: fixes for tvout / venc
->  ARM: dts: omap3-gta04: add devconf1 setup for correct tvout pins
->  ARM: dts: omap3-gta04: tvout: enable as display1 alias
->  ARM: dts: omap3-gta04: fix touchscreen tsc2007
->  ARM: dts: omap3-gta04: add pinmux for bmp085 EOC interrupt
->  ARM: dts: omap3-gta04: make NAND partitions compatible with recent
->    U-Boot
->  ARM: dts: omap3-gta04: update gpmc NAND setup
->  ARM: dts: omap3-gta04: keep vpll2 always on
->  ARM: dts: omap3-gta04: add a comment how to reference the tca6507 =
-gpio
->  ARM: dts: omap3-gta04: add warning comment to vaux2 regulator
->  ARM: dts: omap3-gta04: explicitly describe that mmc1 has no CD/WP
->  ARM: dts: omap3-gta04: make use of input event include file and
->    constants
->  ARM: dts: omap3-gta04: map antenna detect GPIO to SW_LINEIN_INSERT =
-key
->    event
->  ARM: dts: omap3-gta04: add camera interface parallel port
->  ARM: dts: omap3-gta04: add camera pinmux
->  ARM: dts: omap3-gta04: add mcbsp (audio subsystem) pinmux
->  ARM: dts: omap3-gta04: add devconf0 setup for mcbsp1 clock pins
->  ARM: dts: omap3-gta04: add mcbsp (audio subsystem) nodes
->  ARM: dts: omap3-gta04a3: fix model name for A3 variant
->  ARM: dts: omap3-gta04a4: fix model name for A4 variant
->  ARM: dts: omap3-gta04a5: fix copyright of A5 variant
->  ARM: dts: omap3-gta04a5: fix model name
->  ARM: dts: omap3-gta04a5: fix whitepsace and tab style
->  ARM: dts: omap3-gta04a5: add support for PPS
->  ARM: dts: omap3-gta04a5: disable IrDA receiver to save power
->  ARM: dts: omap3-gta04a5: add support for ti,wl1837 module
->  ARM: dts: omap3-gta04a5: uses different sensors than gta04a4
->  ARM: dts: omap3-gta04a5: define pinmux for bluetooth enable of
->    ti,wl1837 module
->  ARM: dts: omap3-gta04a5one: define GTA04A5 variant with OneNAND
->=20
-> arch/arm/boot/dts/omap3-gta04.dtsi     | 248 =
-+++++++++++++++++++++++++++++----
-> arch/arm/boot/dts/omap3-gta04a3.dts    |   2 +-
-> arch/arm/boot/dts/omap3-gta04a4.dts    |   2 +-
-> arch/arm/boot/dts/omap3-gta04a5.dts    | 129 ++++++++++++++++-
-> arch/arm/boot/dts/omap3-gta04a5one.dts | 114 +++++++++++++++
-> 5 files changed, 462 insertions(+), 33 deletions(-)
-> create mode 100644 arch/arm/boot/dts/omap3-gta04a5one.dts
->=20
-> --=20
-> 2.12.2
->=20
+-- 
+Sincerely yours,
+Mike.
 
