@@ -2,146 +2,80 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75D31C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 09:31:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A826C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 09:31:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D184620868
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 09:31:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D184620868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 32CD620868
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 09:31:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XlyCkJ74"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32CD620868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728001AbeH2N1M (ORCPT
+        id S1728066AbeH2N1g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 09:27:12 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:59764 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727198AbeH2N1L (ORCPT
+        Wed, 29 Aug 2018 09:27:36 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44298 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727198AbeH2N1f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 09:27:11 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id A0883803D1; Wed, 29 Aug 2018 11:31:09 +0200 (CEST)
-Date:   Wed, 29 Aug 2018 11:31:09 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
-        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org,
-        lee.jones@linaro.org
-Subject: [PATCH] mfd: ti-lmu: constify mfd_cell tables
-Message-ID: <20180829093108.GB22065@amd>
+        Wed, 29 Aug 2018 09:27:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=683pyD3fpdeO6nuoovqsuaoSgXZnYdaUCWmrDkWV4Ec=; b=XlyCkJ74y9Qt/+T4hlFHXHi83G
+        mf3Tl1pRTUbYEQi5csYLPkmLJIgMnpxVy4G3qzxLGPk6fniic8TAnkRbLS4jGBR54DhY/Cc0Ie9+M
+        K5O/pN1W9r4Ib6ts6D+BjhNL3DW/gppUgYG+Y/oSY0WULBCkgwHpf9TqU9+ELjwGmoUVBznZOWmdv
+        To0nRwEq9QY1N5RiGTYOpnpjfIRHPEZFPmMiCvfJUZ1iZabbEQzOG47nPBiK0/M9Dkz2sJJVXszFH
+        5S7Yy+QIwFpj8bVUcBmqoGA2+qsv1A0n895aoW6EDuZErIXl5m6nOWH593iYCfXg1r4mLWMRRm3wS
+        ltZ8fQjw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fuwot-00079d-Un; Wed, 29 Aug 2018 09:31:24 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id ED1312024D706; Wed, 29 Aug 2018 11:31:21 +0200 (CEST)
+Date:   Wed, 29 Aug 2018 11:31:21 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Ben Hutchings <ben@decadent.org.uk>
+Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sasha Levin <alexander.levin@verizon.com>
+Subject: Re: [PATCH] locking/lockdep: Delete unnecesary #include
+Message-ID: <20180829093121.GQ24124@hirez.programming.kicks-ass.net>
+References: <20180828203315.GD18030@decadent.org.uk>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="H1spWtNR+x+ondvy"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20180828203315.GD18030@decadent.org.uk>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Aug 28, 2018 at 09:33:15PM +0100, Ben Hutchings wrote:
+> Commit c3bc8fd637a9 ("tracing: Centralize preemptirq tracepoints and u
+> nify their usage") added the inclusion of <trace/events/preemptirq.h>.
+> liblockdep doesn't have a stub version of that header so now fails to
+> build.
+>=20
+> However, commit bff1b208a5d1 ("tracing: Partial revert of "tracing:
+> Centralize preemptirq tracepoints and unify their usage"") removed the
+> use of functions declared in that header.  So delete the #include.
+>=20
+> Fixes: c3bc8fd637a9 ("tracing: Centralize preemptirq tracepoints ...")
+> Fixes: bff1b208a5d1 ("tracing: Partial revert of "tracing: Centralize ...=
+")
 
---H1spWtNR+x+ondvy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-=46rom: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-
-mfd: ti-lmu: constify mfd_cell tables
-   =20
-Add const attribute to all mfd_cell structures.
-   =20
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Signed-off-by: Pavel Machek <pavel@ucw.cz>
-
-diff --git a/drivers/mfd/ti-lmu.c b/drivers/mfd/ti-lmu.c
-index cfb411c..990437e 100644
---- a/drivers/mfd/ti-lmu.c
-+++ b/drivers/mfd/ti-lmu.c
-@@ -25,7 +25,7 @@
- #include <linux/slab.h>
-=20
- struct ti_lmu_data {
--	struct mfd_cell *cells;
-+	const struct mfd_cell *cells;
- 	int num_cells;
- 	unsigned int max_register;
- };
-@@ -63,7 +63,7 @@ static void ti_lmu_disable_hw(struct ti_lmu *lmu)
- 		gpio_set_value(lmu->en_gpio, 0);
- }
-=20
--static struct mfd_cell lm3532_devices[] =3D {
-+static const struct mfd_cell lm3532_devices[] =3D {
- 	{
- 		.name          =3D "ti-lmu-backlight",
- 		.id            =3D LM3532,
-@@ -78,7 +78,7 @@ static struct mfd_cell lm3532_devices[] =3D {
- 	.of_compatible =3D "ti,lm363x-regulator",	\
- }						\
-=20
--static struct mfd_cell lm3631_devices[] =3D {
-+static const struct mfd_cell lm3631_devices[] =3D {
- 	LM363X_REGULATOR(LM3631_BOOST),
- 	LM363X_REGULATOR(LM3631_LDO_CONT),
- 	LM363X_REGULATOR(LM3631_LDO_OREF),
-@@ -91,7 +91,7 @@ static struct mfd_cell lm3631_devices[] =3D {
- 	},
- };
-=20
--static struct mfd_cell lm3632_devices[] =3D {
-+static const struct mfd_cell lm3632_devices[] =3D {
- 	LM363X_REGULATOR(LM3632_BOOST),
- 	LM363X_REGULATOR(LM3632_LDO_POS),
- 	LM363X_REGULATOR(LM3632_LDO_NEG),
-@@ -102,7 +102,7 @@ static struct mfd_cell lm3632_devices[] =3D {
- 	},
- };
-=20
--static struct mfd_cell lm3633_devices[] =3D {
-+static const struct mfd_cell lm3633_devices[] =3D {
- 	{
- 		.name          =3D "ti-lmu-backlight",
- 		.id            =3D LM3633,
-@@ -120,7 +120,7 @@ static struct mfd_cell lm3633_devices[] =3D {
- 	},
- };
-=20
--static struct mfd_cell lm3695_devices[] =3D {
-+static const struct mfd_cell lm3695_devices[] =3D {
- 	{
- 		.name          =3D "ti-lmu-backlight",
- 		.id            =3D LM3695,
-@@ -128,7 +128,7 @@ static struct mfd_cell lm3695_devices[] =3D {
- 	},
- };
-=20
--static struct mfd_cell lm3697_devices[] =3D {
-+static const struct mfd_cell lm3697_devices[] =3D {
- 	{
- 		.name          =3D "ti-lmu-backlight",
- 		.id            =3D LM3697,
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---H1spWtNR+x+ondvy
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAluGZ9wACgkQMOfwapXb+vI3agCgs4HOZGv2nxeIe3AaAJIAACV+
-AaMAoJCe07Vi0Zh+/d6vR/3fKVjwoXBU
-=1sjJ
------END PGP SIGNATURE-----
-
---H1spWtNR+x+ondvy--
+There's no actual breakage because of this extra include, is there?
