@@ -2,80 +2,88 @@ Return-Path: <SRS0=I82Q=LM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49E40C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:45:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 079C4C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:46:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA8DA2084D
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:45:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aiUw2BLf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA8DA2084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id B202F2086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:46:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B202F2086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728079AbeH2Mk7 (ORCPT
+        id S1727731AbeH2Mm0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 08:40:59 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:36711 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727107AbeH2Mk6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 08:40:58 -0400
-Received: by mail-io0-f193.google.com with SMTP id q5-v6so3814742iop.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 01:45:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yw/Yxtvuv8Xa96HSALZcaFF64L3lA5Dopqk6xrLCf2A=;
-        b=aiUw2BLfkUeJPWsoBEgAJ9vuQWRuZ8tkH8mz2Dvp1SZzdeCkNCqTkDyXEQZFoSmghd
-         Q48Xqs2GWnDR2OgQ8E3rUJ/jKVKKFhhmIrv4TzsuBzUxLuqvHYvxheXZNtj6+RY7iT4I
-         1+zsEND7YaH6jasekwhiqIaw+uuwCvTrl6z3Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yw/Yxtvuv8Xa96HSALZcaFF64L3lA5Dopqk6xrLCf2A=;
-        b=G/fuc1TFpEaWqbRfdJQP6yDPJK+0FvxIk/+aqC+wrE0RowQsSxNpssjNcJ8Tik06J6
-         qzRc7RaheK0UEL83TpzJJS/yp33IRfLE5O5F6eOK1ycNhb3peOmSAAFxv+rqktn3QSX3
-         477e8+aMZdTUxlUj/zykcS8bqbXFndL1ybgQL4JfE246pbFFWqJE35J1g6byYjT+q9T4
-         UZ88lfXJ671H/EwE4zU+B+jhfNBLM6uu8R3yXKbbOIQopnhsr61L4+eeS216TT8Etnwe
-         fwFR2iW+wauXAeK4DwT+HNJ1RsTU9J9jfMvjiPhrcjbkR5ssf+1OniEu5CFxAIIiY1DZ
-         nFMQ==
-X-Gm-Message-State: APzg51BivNhkpEmYVNMk9AWc8QMKmec8hFTTg7g15BIqyYt5svZvkbd+
-        358ZTBghMU0R6xsgfeoKHwHHwHEx+sXZwPzQNMmZOA==
-X-Google-Smtp-Source: ANB0VdaL6EdLgK3XBegmXjq1CnD0p6Qfcw+ssIkccOyvtNV56qqNc7o2uHvPLNaAKrzrwUy35umo1NKm6gNNrLBxQ+8=
-X-Received: by 2002:a6b:630a:: with SMTP id p10-v6mr4297564iog.175.1535532308467;
- Wed, 29 Aug 2018 01:45:08 -0700 (PDT)
+        Wed, 29 Aug 2018 08:42:26 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55938 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727099AbeH2MmZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 08:42:25 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CF07D9BA9A;
+        Wed, 29 Aug 2018 08:46:34 +0000 (UTC)
+Received: from ming.t460p (ovpn-12-92.pek2.redhat.com [10.72.12.92])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A14BE1054E75;
+        Wed, 29 Aug 2018 08:46:24 +0000 (UTC)
+Date:   Wed, 29 Aug 2018 16:46:19 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Sumit Saxena <sumit.saxena@broadcom.com>
+Cc:     tglx@linutronix.de, hch@lst.de, linux-kernel@vger.kernel.org
+Subject: Re: Affinity managed interrupts vs non-managed interrupts
+Message-ID: <20180829084618.GA24765@ming.t460p>
+References: <eccc46e12890a1d033d9003837012502@mail.gmail.com>
 MIME-Version: 1.0
-References: <20180807093226.5624-1-rf@opensource.cirrus.com> <20180807093226.5624-3-rf@opensource.cirrus.com>
-In-Reply-To: <20180807093226.5624-3-rf@opensource.cirrus.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 29 Aug 2018 10:44:56 +0200
-Message-ID: <CACRpkda4EyTkVSfm0JvBR7jJHAe1WSuFiTyRjDvWTfL2gi9uUQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] pinctrl: madera: Fix missing space in debugfs output
-To:     Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        patches@opensource.cirrus.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eccc46e12890a1d033d9003837012502@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 29 Aug 2018 08:46:34 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 29 Aug 2018 08:46:34 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 7, 2018 at 11:32 AM Richard Fitzgerald
-<rf@opensource.cirrus.com> wrote:
+Hello Sumit,
 
-> The SCHMITT tag was being dumped without a separating space.
->
-> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+On Tue, Aug 28, 2018 at 12:04:52PM +0530, Sumit Saxena wrote:
+>  Affinity managed interrupts vs non-managed interrupts
+> 
+> Hi Thomas,
+> 
+> We are working on next generation MegaRAID product where requirement is- to
+> allocate additional 16 MSI-x vectors in addition to number of MSI-x vectors
+> megaraid_sas driver usually allocates.  MegaRAID adapter supports 128 MSI-x
+> vectors.
+> 
+> To explain the requirement and solution, consider that we have 2 socket
+> system (each socket having 36 logical CPUs). Current driver will allocate
+> total 72 MSI-x vectors by calling API- pci_alloc_irq_vectors(with flag-
+> PCI_IRQ_AFFINITY).  All 72 MSI-x vectors will have affinity across NUMA node
+> s and interrupts are affinity managed.
+> 
+> If driver calls- pci_alloc_irq_vectors_affinity() with pre_vectors = 16
+> and, driver can allocate 16 + 72 MSI-x vectors.
 
-Patch applied.
+Could you explain a bit what the specific use case the extra 16 vectors
+is?
 
-Yours,
-Linus Walleij
+> 
+> All pre_vectors (16) will be mapped to all available online CPUs but e
+> ffective affinity of each vector is to CPU 0. Our requirement is to have pre
+> _vectors 16 reply queues to be mapped to local NUMA node with
+> effective CPU should
+> be spread within local node cpu mask. Without changing kernel code, we can
+
+If all CPUs in one NUMA node is offline, can this use case work as expected?
+Seems we have to understand what the use case is and how it works.
+
+
+Thanks,
+Ming
