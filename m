@@ -6,243 +6,154 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DAC3C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:29:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3F22C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:29:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE8862086A
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:29:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 739502084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 13:29:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="1VYa2zkD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE8862086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
+	dkim=pass (1024-bit key) header.d=cnexlabs.onmicrosoft.com header.i=@cnexlabs.onmicrosoft.com header.b="rp4wh9E7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 739502084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cnexlabs.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728552AbeH2R0F (ORCPT
+        id S1728667AbeH2R0Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 13:26:05 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43978 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727668AbeH2R0F (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 13:26:05 -0400
-Received: by mail-pg1-f193.google.com with SMTP id v66-v6so2320221pgb.10
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Aug 2018 06:29:07 -0700 (PDT)
+        Wed, 29 Aug 2018 13:26:24 -0400
+Received: from mail-eopbgr690082.outbound.protection.outlook.com ([40.107.69.82]:40736
+        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727204AbeH2R0X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 13:26:23 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=mg6i3BNyC3V1mb4RsrYHN4Hb0V+dL46JxXBrElqnx7o=;
-        b=1VYa2zkD5JP9LJbnr/PEOzht9p4ExDsM5F+L7K50B9TMhYGBUJX88P1VLg4OoOU993
-         PkRZV7EFp/4C/wY0F0+xbfxq4fMHh7LDaNwX9hjwUgEcct9UE09Ptnm6PMrtmxnXkwHx
-         MgDa7FM+RdEiWq203QAqCG+DxPDLGjtAo9dbZ/v+Rodewv7rlnnCTsi+Y1fsWaexjcbk
-         cZO6a2UcjPzrTht49mvSmjXmnJ02rqiqq09wQMRVfKFiyEoY1UvLJl5eIqwJCJSX04dl
-         flP4MxIFdcqDlFQS00OHQs+mbCuu66N0oxf7VeDMsKim3E18jZGfAB0RPDpQlQf9Lnbr
-         Jm8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=mg6i3BNyC3V1mb4RsrYHN4Hb0V+dL46JxXBrElqnx7o=;
-        b=jXh4HPzSLxeCPCcS4at9qhAG3WBqZWQ8jfYU81CNcvVYI4F/GpJGNRcCymmM45cyng
-         cuMEpP3g3oCeTIKzg9FhAgqk6OrdY5TDWurRWJo3vx9bcE+ROWIt5UYfnPI7QuRFCIdk
-         FLbPda1RcfaeueR5PHHg0r48lJaI3CY1tAt0Iy0S6jK651eF1LJPLV6qXsxyuTB9ThRY
-         lFU7jpGAT0qtA7mxg3apl0xtAX44WyBXqw2zrGQNEK/2+eU6AMuv1Ct0Ur5emT5Woen6
-         EE4qgKb0K7VrZME2MiDnwPzU9DlFjUpQZfUKNW/YQ8I0qeFTKiFj49/DeOH7rXCuOOrx
-         XTdg==
-X-Gm-Message-State: APzg51BJpJ6ADYb9jXA2rxGXysuSZHrHpTBhtGpOJJaAaMyrf+Zq7Reh
-        DiK+pZro9dsvACK2h+PMs0p+fQ==
-X-Google-Smtp-Source: ANB0VdZBcK8bkny4+3XKar/a6wKqXTagAYGTYWY2JBXMo78YAQY36SElEEz4qomgUxDUGL+SXxuGNQ==
-X-Received: by 2002:a63:c44a:: with SMTP id m10-v6mr5801262pgg.416.1535549346749;
-        Wed, 29 Aug 2018 06:29:06 -0700 (PDT)
-Received: from [10.86.62.45] (rap-us.hgst.com. [199.255.44.250])
-        by smtp.googlemail.com with ESMTPSA id x4-v6sm5568215pfm.119.2018.08.29.06.29.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 Aug 2018 06:29:05 -0700 (PDT)
-Subject: Re: [PATCH 4/7] lightnvm: pblk: move global caches to module
- init/exit
-To:     hans.ml.holmberg@owltronix.com
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        javier@cnexlabs.com, hans.holmberg@cnexlabs.com
-References: <1535545414-550-1-git-send-email-hans.ml.holmberg@owltronix.com>
- <1535545414-550-5-git-send-email-hans.ml.holmberg@owltronix.com>
-From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <92a2b562-c485-47ff-7aa9-5aa82b992e40@lightnvm.io>
-Date:   Wed, 29 Aug 2018 15:29:02 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+ d=cnexlabs.onmicrosoft.com; s=selector1-cnexlabs-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MWjshQIGPHOlte7Q/6A+h+zlEY4vfhs31aiST06ga8s=;
+ b=rp4wh9E7gNP8YE88Z0T5sxfdQYG7XWYon/4Hs/M4T29EYsgKc1aOLiDkDI9rUPVGxh5++WQN4ifu11u1VK9DLBR+zr5pMuizIDeeYJknm8pUh/HLioK/yuxKIEszLPEYs1HQuNz6nngX53RWpJ4RHqa+TAmnX5m35iaAoCtdJwU=
+Received: from CO2PR06MB538.namprd06.prod.outlook.com (10.141.199.23) by
+ CO2PR06MB474.namprd06.prod.outlook.com (10.141.197.19) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1080.17; Wed, 29 Aug 2018 13:27:43 +0000
+Received: from CO2PR06MB538.namprd06.prod.outlook.com
+ ([fe80::2131:a303:c149:1150]) by CO2PR06MB538.namprd06.prod.outlook.com
+ ([fe80::2131:a303:c149:1150%3]) with mapi id 15.20.1080.015; Wed, 29 Aug 2018
+ 13:27:43 +0000
+From:   Javier Gonzalez <javier@cnexlabs.com>
+To:     =?utf-8?B?TWF0aWFzIEJqw7hybGluZw==?= <mb@lightnvm.io>
+CC:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/4] lightnvm: pblk: collection of small fixes
+Thread-Topic: [PATCH 0/4] lightnvm: pblk: collection of small fixes
+Thread-Index: AQHUP3b0c02+jLolfUKSPiOQdz1hBKTWtYWAgAADrIA=
+Date:   Wed, 29 Aug 2018 13:27:43 +0000
+Message-ID: <3F0AC430-4499-4D2D-B989-45B5635307A4@cnexlabs.com>
+References: <1535533313-29944-1-git-send-email-javier@cnexlabs.com>
+ <5b8881cd-019a-a1d8-86ed-0131ef3b71af@lightnvm.io>
+In-Reply-To: <5b8881cd-019a-a1d8-86ed-0131ef3b71af@lightnvm.io>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=javier@cnexlabs.com; 
+x-originating-ip: [193.106.164.211]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CO2PR06MB474;6:83Sv4u3Qlmd4f5FLmK0z9VDTlGiVbEPcLH83cId5jmJkg22hRpG3i7OROz1Qf/f6NdKZBndoU7ulwmBY8smsWFRsaNREvjJJDRdvDlc81LM7limUdwTG7IXaZy0IGuc28KK1DRJFODqh7EcJRNH3S0dfoEaaw12zhdhewZ3PcWSYLyudUd6bCnkoDXEhSoV76mHjqpAWbowug1KL+soVfNLvHpy/CVZEwtHafD0gFHJkF2upqbRoi9Y5QNUrehKeacy8ZSnvmOAnhrUx3YVzvTtD+gRQa3VcV9nloqQvl8QgLhOOeE1/vBd/uxcSvbrTVTFGkS/wHheG2yk9Of1KmmJoFt7tozccT1/l1YEvX1ZbZYexBEs2/o8H5KgUjniLIarCEnYm3lTxYasDxUGhA51EuxKDsuMvHDwz+xim/LRNOGWgZBnRY9T0SDZI2I9aUyUgoEgSfz+B3739lIYTQw==;5:ma2cUkNycYr0XpqxBWa9bnL24d5e1thGBw/DJzf2duR/n0nvthw7pumltIz0FYa6omRnn1BbThyqr/jWKMylcsNNF19c/88SpmNxMRNWoK0xL6HPreUIY5xsKumHtmzERffXJHFQdpxKmr3HLC/JJYQQ/UmsQPXbi1CP34TjCH0=;7:ErCudzW80fK02FSrJxV4Ejjtrrz+S2XqA010TmzuoFURqQkMvMjHBjRyp7DVaG76OvqTAhIE9Q5SbD7Sb0goHi3lrSaeSsJp/tEy8x51Rd2bhgulyvWg4ZHvwI0SB7ZPzI9ciXkCQJWoJoHl3gvbxw91GGDqe3OoaxlJ93/ssAza5XKvW1/6F5JNKrpCRlS0PUmOe02f/K/7G5nEJWvoLL3uWDKtq9NbFQ/6tAGxOfsuyjA9MjmgjVReWwLuzGFD
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 0464ef79-f118-4b87-9081-08d60db333c1
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989137)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600074)(711020)(2017052603328)(7153060)(49563074)(7193020);SRVR:CO2PR06MB474;
+x-ms-traffictypediagnostic: CO2PR06MB474:
+x-microsoft-antispam-prvs: <CO2PR06MB4748B5923A30F06E8EAA50ABA090@CO2PR06MB474.namprd06.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(102415395)(6040522)(2401047)(8121501046)(5005006)(3231311)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(149027)(150027)(6041310)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699016);SRVR:CO2PR06MB474;BCL:0;PCL:0;RULEID:;SRVR:CO2PR06MB474;
+x-forefront-prvs: 077929D941
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(376002)(346002)(136003)(396003)(39840400004)(199004)(189003)(66066001)(256004)(14444005)(5250100002)(14454004)(6246003)(97736004)(4326008)(81156014)(81166006)(486006)(82746002)(186003)(8676002)(478600001)(25786009)(2900100001)(476003)(2616005)(26005)(11346002)(7736002)(86362001)(8936002)(316002)(54906003)(6916009)(83716003)(33656002)(5660300001)(6116002)(102836004)(305945005)(446003)(76176011)(6506007)(53546011)(36756003)(105586002)(53936002)(6486002)(99286004)(99936001)(229853002)(68736007)(2906002)(6436002)(106356001)(6512007)(3846002);DIR:OUT;SFP:1101;SCL:1;SRVR:CO2PR06MB474;H:CO2PR06MB538.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: cnexlabs.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: kYpU7PqtZRbZdU+ReRr0VhCManvj02jm6WpiLHZo2Ms2zMXLas0g4N2THeiP1RKXtf0EwfMBuexDXagrYfujGdT3nkEKOoi6JkcGvib6sd3AsHCRV3qNeSMU7JBepvEreZw/D79P7/kUcE4VLTWSIj+7A9JK/POaQ7VhfenAr1cM8/dC00nljFtpIx/K4lQvXu4clTcNl4zuHofHR3ylwtPGGXA6LtasKewNgPT23fsUIgzKlRrCSu7eM1cr4mNAnhOgt0m12dG9TGyICln1YxAf/CRHtxmODaC/f9ttarYuoVlRv7LVQFE77um99kwlRqATB/dk75K6Q3dW1Bl9Z0T3SDAjsT92YbJc6S8GTjw=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: multipart/signed;
+        boundary="Apple-Mail=_E6BDDCA7-6A60-4262-ABED-C5A4D0778146";
+        protocol="application/pgp-signature";
+        micalg=pgp-sha512
 MIME-Version: 1.0
-In-Reply-To: <1535545414-550-5-git-send-email-hans.ml.holmberg@owltronix.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: cnexlabs.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0464ef79-f118-4b87-9081-08d60db333c1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Aug 2018 13:27:43.6833
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: e40dfc2e-c6c1-463a-a598-38602b2c3cff
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO2PR06MB474
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/29/2018 02:23 PM, Hans Holmberg wrote:
-> From: Hans Holmberg <hans.holmberg@cnexlabs.com>
-> 
-> Pblk's global caches should not be initialized every time
-> a pblk instance is created, so move the creation and destruction
-> of the caches to module init/exit.
-> 
-> Also remove the global pblk lock as it is no longer needed after
-> the move.
-> 
+--Apple-Mail=_E6BDDCA7-6A60-4262-ABED-C5A4D0778146
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=utf-8
 
-The original goal was to not allocate memory for the caches unless a 
-pblk instance was initialized. This instead uses up memory without pblk 
-being used, which I don't think is a good idea.
 
-> Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
-> ---
->   drivers/lightnvm/pblk-init.c | 42 ++++++++++++++++++++----------------------
->   1 file changed, 20 insertions(+), 22 deletions(-)
-> 
-> diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
-> index 76a4a271b9cf..0be64220b5d8 100644
-> --- a/drivers/lightnvm/pblk-init.c
-> +++ b/drivers/lightnvm/pblk-init.c
-> @@ -27,7 +27,6 @@ MODULE_PARM_DESC(write_buffer_size, "number of entries in a write buffer");
->   
->   static struct kmem_cache *pblk_ws_cache, *pblk_rec_cache, *pblk_g_rq_cache,
->   				*pblk_w_rq_cache;
-> -static DECLARE_RWSEM(pblk_lock);
->   struct bio_set pblk_bio_set;
->   
->   static int pblk_rw_io(struct request_queue *q, struct pblk *pblk,
-> @@ -306,21 +305,17 @@ static int pblk_set_addrf(struct pblk *pblk)
->   	return 0;
->   }
->   
-> -static int pblk_init_global_caches(struct pblk *pblk)
-> +static int pblk_init_global_caches(void)
->   {
-> -	down_write(&pblk_lock);
->   	pblk_ws_cache = kmem_cache_create("pblk_blk_ws",
->   				sizeof(struct pblk_line_ws), 0, 0, NULL);
-> -	if (!pblk_ws_cache) {
-> -		up_write(&pblk_lock);
-> +	if (!pblk_ws_cache)
->   		return -ENOMEM;
-> -	}
->   
->   	pblk_rec_cache = kmem_cache_create("pblk_rec",
->   				sizeof(struct pblk_rec_ctx), 0, 0, NULL);
->   	if (!pblk_rec_cache) {
->   		kmem_cache_destroy(pblk_ws_cache);
-> -		up_write(&pblk_lock);
->   		return -ENOMEM;
->   	}
->   
-> @@ -329,7 +324,6 @@ static int pblk_init_global_caches(struct pblk *pblk)
->   	if (!pblk_g_rq_cache) {
->   		kmem_cache_destroy(pblk_ws_cache);
->   		kmem_cache_destroy(pblk_rec_cache);
-> -		up_write(&pblk_lock);
->   		return -ENOMEM;
->   	}
->   
-> @@ -339,15 +333,13 @@ static int pblk_init_global_caches(struct pblk *pblk)
->   		kmem_cache_destroy(pblk_ws_cache);
->   		kmem_cache_destroy(pblk_rec_cache);
->   		kmem_cache_destroy(pblk_g_rq_cache);
-> -		up_write(&pblk_lock);
->   		return -ENOMEM;
->   	}
-> -	up_write(&pblk_lock);
->   
->   	return 0;
->   }
->   
-> -static void pblk_free_global_caches(struct pblk *pblk)
-> +static void pblk_free_global_caches(void)
->   {
->   	kmem_cache_destroy(pblk_ws_cache);
->   	kmem_cache_destroy(pblk_rec_cache);
-> @@ -381,13 +373,10 @@ static int pblk_core_init(struct pblk *pblk)
->   	if (!pblk->pad_dist)
->   		return -ENOMEM;
->   
-> -	if (pblk_init_global_caches(pblk))
-> -		goto fail_free_pad_dist;
-> -
->   	/* Internal bios can be at most the sectors signaled by the device. */
->   	ret = mempool_init_page_pool(&pblk->page_bio_pool, NVM_MAX_VLBA, 0);
->   	if (ret)
-> -		goto free_global_caches;
-> +		goto free_pad_dist;
->   
->   	ret = mempool_init_slab_pool(&pblk->gen_ws_pool, PBLK_GEN_WS_POOL_SIZE,
->   				     pblk_ws_cache);
-> @@ -455,9 +444,7 @@ static int pblk_core_init(struct pblk *pblk)
->   	mempool_exit(&pblk->gen_ws_pool);
->   free_page_bio_pool:
->   	mempool_exit(&pblk->page_bio_pool);
-> -free_global_caches:
-> -	pblk_free_global_caches(pblk);
-> -fail_free_pad_dist:
-> +free_pad_dist:
->   	kfree(pblk->pad_dist);
->   	return -ENOMEM;
->   }
-> @@ -480,7 +467,6 @@ static void pblk_core_free(struct pblk *pblk)
->   	mempool_exit(&pblk->e_rq_pool);
->   	mempool_exit(&pblk->w_rq_pool);
->   
-> -	pblk_free_global_caches(pblk);
->   	kfree(pblk->pad_dist);
->   }
->   
-> @@ -1067,7 +1053,6 @@ static void pblk_exit(void *private, bool graceful)
->   {
->   	struct pblk *pblk = private;
->   
-> -	down_write(&pblk_lock);
->   	pblk_gc_exit(pblk, graceful);
->   	pblk_tear_down(pblk, graceful);
->   
-> @@ -1076,7 +1061,6 @@ static void pblk_exit(void *private, bool graceful)
->   #endif
->   
->   	pblk_free(pblk);
-> -	up_write(&pblk_lock);
->   }
->   
->   static sector_t pblk_capacity(void *private)
-> @@ -1237,9 +1221,22 @@ static int __init pblk_module_init(void)
->   	ret = bioset_init(&pblk_bio_set, BIO_POOL_SIZE, 0, 0);
->   	if (ret)
->   		return ret;
-> +
->   	ret = nvm_register_tgt_type(&tt_pblk);
->   	if (ret)
-> -		bioset_exit(&pblk_bio_set);
-> +		goto fail_exit_bioset;
-> +
-> +	ret = pblk_init_global_caches();
-> +	if (ret)
-> +		goto fail_unregister_tgt_type;
-> +
-> +	return 0;
-> +
-> +fail_unregister_tgt_type:
-> +	nvm_unregister_tgt_type(&tt_pblk);
-> +fail_exit_bioset:
-> +	bioset_exit(&pblk_bio_set);
-> +
->   	return ret;
->   }
->   
-> @@ -1247,6 +1244,7 @@ static void pblk_module_exit(void)
->   {
->   	bioset_exit(&pblk_bio_set);
->   	nvm_unregister_tgt_type(&tt_pblk);
-> +	pblk_free_global_caches();
->   }
->   
->   module_init(pblk_module_init);
-> 
+> On 29 Aug 2018, at 15.14, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
+>=20
+> On 08/29/2018 11:01 AM, Javier Gonz=C3=A1lez wrote:
+>> Collection of small helper function fixes, removal of unused =
+variables
+>> and comment typos.
+>> Javier Gonz=C3=A1lez (4):
+>>   lightnvm: pblk: calculate line pad distance in helper
+>>   lightnvm: pblk: fix comment typo
+>>   lightnvm: pblk: remove unused variable.
+>>   lightnvm: pblk: guarantee emeta on line close
+>>  drivers/lightnvm/pblk-core.c     | 13 +++++++++++--
+>>  drivers/lightnvm/pblk-recovery.c |  2 --
+>>  drivers/lightnvm/pblk-write.c    |  2 +-
+>>  drivers/lightnvm/pblk.h          |  6 +++---
+>>  4 files changed, 15 insertions(+), 8 deletions(-)
+>=20
+> Thanks. Applied 2-4. The pad distance does not compile due to missing
+> update to pblk_pad_distance call from pblk-recovery.c.
+>=20
+> Also, it looks like pblk-recovery.c is the only user. Please consider
+> moving it the function from pblk.h to pblk-recovery.c
 
+I reordered to send the helpers, but you can see that all these are made
+to support.
+
+  lightnvm: pblk: recover open lines on 2.0 devices
+
+Can you fix this directly and apply 1 too? I'm fine with moving it to
+pblk-recovery.c. The patch above will use it.
+
+Thanks,
+Javier
+
+--Apple-Mail=_E6BDDCA7-6A60-4262-ABED-C5A4D0778146
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE+ws7Qq+qZPG1bJoyIX4xUKFRnnQFAluGn00ACgkQIX4xUKFR
+nnT4thAApVuQbg0NYTAdvAG5Czzb4phHk/sIF/RkKyGnPD25rcBGya/N2GwQSmUP
+EEY02R2dTclNsdqu8uqevSM9e/1o5uymcIn367m1uU6rsJDL9sU0d3bxyIKgdEmD
+BuQ+0kPwu9eKOVPYi44km/fKrDNPRrBbV8WBWtdQQR0zRYr/Yyej/ut5SglsMRyL
+Wck0pxSV2xRZcOt7OclrH/I1ALsPaawbAXDbPfgukP21sHFL5O8m6AStwPrXfcAu
+axO4/WzMQxs7hjpLZFeyCMavwvMGGNYT0dz8b+3nTaajVjdUDyXM+ngvtL7RLjC0
+C2yvpuDa6KTPAM6EIkR+NHwtnQwtQqXNPLAK8dBfnEUqoF10cC4bcv03InnGn7ZK
+vhKovfnxPPTz4mUGO/mlPIIUmeTdzFS6KAHJSfodCUCkdKDiXGIl+IPGpUv1eIE2
+d6X6EnCWBwt3CCP6tV44qL1dYHVoFEHWhFsAeS7KaXIMInNlK7Bc9GbuucxW141w
+bOU2LUAacth+pciWBFp4jAxMGXRNVHWupexgUNavGAVmLBuLWfQ/8LSYQx5uNT0R
+WcFg+KAeoHgGch+gHBGkvTigmIm6DlOiLoXPZwaynBKp6XuXcJoBlEXm5hDDFS9U
+heEaYWGU/jtYhcRJQwhWcmpJmJb1wFVeHUSpz6Kzc+RsC+Gmaxg=
+=6qew
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_E6BDDCA7-6A60-4262-ABED-C5A4D0778146--
