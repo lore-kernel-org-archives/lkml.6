@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66A96C433F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:15:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ECD3C433F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:15:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A3B82082B
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:15:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A3B82082B
+	by mail.kernel.org (Postfix) with ESMTP id 51F5A2082B
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:15:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51F5A2082B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728530AbeH2MK5 (ORCPT
+        id S1728550AbeH2MK7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 08:10:57 -0400
-Received: from mout.perfora.net ([74.208.4.196]:41527 "EHLO mout.perfora.net"
+        Wed, 29 Aug 2018 08:10:59 -0400
+Received: from mout.perfora.net ([74.208.4.197]:54259 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727712AbeH2MK4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 08:10:56 -0400
+        id S1727712AbeH2MK6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 08:10:58 -0400
 Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
  mrelay.perfora.net (mreueus001 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0MZF1O-1gDYyV16Pk-00L1cw; Wed, 29 Aug 2018 10:15:07 +0200
+ 0M2N6o-1fcILh2Ntc-00sAWA; Wed, 29 Aug 2018 10:15:10 +0200
 From:   Marcel Ziswiler <marcel@ziswiler.com>
 To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -33,27 +33,27 @@ Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 25/31] ARM: tegra: colibri_t20: add gpio hogs for gmi_wr_n buffers
-Date:   Wed, 29 Aug 2018 10:14:01 +0200
-Message-Id: <20180829081407.11304-26-marcel@ziswiler.com>
+Subject: [PATCH 26/31] ARM: tegra: colibri_t20: annotate/move sd card detect
+Date:   Wed, 29 Aug 2018 10:14:02 +0200
+Message-Id: <20180829081407.11304-27-marcel@ziswiler.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180829081407.11304-1-marcel@ziswiler.com>
 References: <20180829081407.11304-1-marcel@ziswiler.com>
-X-Provags-ID: V03:K1:lznYXJTaAAU1x/F7owjN7D6bHfC3bBGgTagEGgp/C5Ar3Kg1sZz
- sPRkUHA3rRYeOgQUb8xTy9r1s70HcaWTfAz/X6FSfl8+/Z2ymX+5VWMMvU6D8Qcmgj8WuqU
- Ls9+nly1DUzMQ7A05aZgZrs+Is+LIKDMHNrLwbZm49sWHcTGCgGFVdQVEc7y4tVgo8itBOW
- nftMhmtZgJZ1MmZ0jjl8w==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:hV3iWUkIJC4=:dZ6aefjTJx8zu327kyJ/yK
- NW/MmgGYz7wE1I2oVz3NRIDl7nXk/RCFLqrCzVasaKWhgsIq5jbf4xNdhYjk3vD1iajiBhBhD
- L4qKPUgG9KIqRxYj4W9IJ8ZBQRwFeBWZluQAOvdyyIPH3tnEj82FaOeQCQoi6x5EV8/37Uc86
- ImpDhHK8dPMjuVadVwTmU3X+g+1bn7YIgLyy1I+rRUfWmj8HghfdCQyH3UDfRu1tAAQcvQeQT
- 8KJRjW1mM1PiDzkZD8q3IIQHAtz8fO9Ry1IAePaJYRoGIM0v2MdciN5ObygvlKQe5WFTqCinm
- 8vBEdGLN7H/wKLuxz1vs7LoJkAJhwT/RLCK6NR4R2hhmbeSaYu0GYlKQFR/T1EhaC8TiFVi5x
- xNSNs2YnxM1MdfxV+DJsOcUKhzHie2jCpTGBmA/kjYEnlfWEmxWyQQP30YffM9CGw5vK5aCqw
- CmtyL/TTe2OgtQvBFHtw9XlNN1BE6JjFlsD5Jtd9b8YW61lyNgoBXhcFZPqckMjaaqKeaxaJx
- MYAw5zHc8PkAoXsuCEi8uBmwLcs3+065Iln/dKDubLDU9hHObe1pJ0gqlFENC7fsrZFIkjD7Y
- tZIaXx80NAq2dBA2g8NWjdrldQnRBZf3VWhWLjRizPYzUoJeGja9AELOhTNowofGxEggHKlOx
- pEBSnIsHBnxzu1lwNPW/wcfKjZUA0LmwwglZVI9Q/LOX7qzqf91OctWkyD4xxnS2Lk5U=
+X-Provags-ID: V03:K1:ojZsZFW1rfQzU7HtSa3mR2+6HoIJQrb6aXTVNfEdevVWrWIT3jG
+ p6TWg5E1iWP2Jx0C/BNZx2B5wuXUCynALg5hdploRwtealGMl3ztzCKG4e3CH6Thw2mAWUV
+ sCOtSNEjTHTd/PXBhZgJq+lDwlbohkeC5gI0jOOHftsh3/FiXbop3VJsy59zEatqTBtQRKr
+ +Plz2TPzdIMWkLB+V9fQQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:a5rZytriYCg=:KrX8J2dP40BloT/pvJ2ho5
+ 7N7uSiusjK2zafJE6ZNWBbhZ960Vd3fK7N+AiafjkBFi3AXtySIV4H/V2NQEmgR92l8vvhaKS
+ QSX+J1GA2aCWM8+GG6gDxlVSX3wVRPUaU/ObAeZdQwqsk9asWR4KVSSN4jFk5v2kZSebt8O3A
+ ZJFaYBPHUtmclebCMAXERLLtMMc3c/Dqiy7zdkOOzBBnXrnbFcSkT3qfk8u35e8EL3rSMqL8I
+ usdIvaDy0lklqy9k02glVOoq0neNGMUM65FePQbriM6/tAqHmyApXk0eFrOguFVUG74yEJlsT
+ 14O2hcKmnmMnEsKPSAtn6rsEEelHfvCJ7C2RBHd4W4Gr5Ys7iP44ReOlN1gqOmv6RLjdbyAJq
+ tZNjpCSLV6NW68UsG+xomNnAZZaWuER0c2qF2Uc1DRVOENwBw5Z0tOQJ8Gariidj11qH5vtvk
+ XvCYN1q4lEAl/ynCg+552ZesYfFq+2TkOWuWhkvH/DGQp18p9uOLABHNewGV0hBh5RmPiuGzK
+ jqA6xt6rClzRQIK19FdQVF9RNbt0XOhX9MdCyVGpmH284iU9WL+xiJTtYknLteRQZ/DOyiqx1
+ iZCsFGXhI48DN5kWMUJ24zqpn3w6GzN3CLVGFu1M1qVhONOoRw6zwDgWSyQIu/Ulvj9VsvXDg
+ pfdWq9S5gs+ypiB5U/D9xxQNGV7OKQjlAzywXuyH40Z4elITws15N9V8jJ8vCx5+y0H0=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,42 +61,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Add GPIO hogs for GMI_WR_N buffers:
-- tri-stating GMI_WR_N on SODIMM pin 99 nPWE
-- not tri-stating GMI_WR_N on SODIMM pin 93 RDnWR
+Annotate the SD card, its detect pin and move the SD card detect GPIO
+definition from the module to the carrier board more in-line with our
+other device trees.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
 ---
 
- arch/arm/boot/dts/tegra20-colibri.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ arch/arm/boot/dts/tegra20-colibri-iris.dts | 2 ++
+ arch/arm/boot/dts/tegra20-colibri.dtsi     | 4 ----
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
+diff --git a/arch/arm/boot/dts/tegra20-colibri-iris.dts b/arch/arm/boot/dts/tegra20-colibri-iris.dts
+index 91b3404e1b3d..955d1e1ad8e0 100644
+--- a/arch/arm/boot/dts/tegra20-colibri-iris.dts
++++ b/arch/arm/boot/dts/tegra20-colibri-iris.dts
+@@ -163,9 +163,11 @@
+ 		vbus-supply = <&reg_usbh_vbus>;
+ 	};
+ 
++	/* SD/MMC */
+ 	sdhci@c8000600 {
+ 		status = "okay";
+ 		bus-width = <4>;
++		cd-gpios = <&gpio TEGRA_GPIO(C, 7) GPIO_ACTIVE_LOW>; /* MMCD */
+ 		no-1-8-v;
+ 	};
+ 
 diff --git a/arch/arm/boot/dts/tegra20-colibri.dtsi b/arch/arm/boot/dts/tegra20-colibri.dtsi
-index 339316dd57e9..35eec7ade70d 100644
+index 35eec7ade70d..057147565b1e 100644
 --- a/arch/arm/boot/dts/tegra20-colibri.dtsi
 +++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
-@@ -757,4 +757,20 @@
- 		output-high;
- 		line-name = "LAN_RESET#";
+@@ -698,10 +698,6 @@
+ 		vbus-supply = <&reg_lan_v_bus>;
  	};
-+
-+	/* Tri-stating GMI_WR_N on SODIMM pin 99 nPWE */
-+	npwe {
-+		gpio-hog;
-+		gpios = <TEGRA_GPIO(T, 5) GPIO_ACTIVE_HIGH>;
-+		output-high;
-+		line-name = "Tri-state nPWE";
-+	};
-+
-+	/* Not tri-stating GMI_WR_N on SODIMM pin 93 RDnWR */
-+	rdnwr {
-+		gpio-hog;
-+		gpios = <TEGRA_GPIO(T, 6) GPIO_ACTIVE_HIGH>;
-+		output-low;
-+		line-name = "Not tri-state RDnWR";
-+	};
- };
+ 
+-	sdhci@c8000600 {
+-		cd-gpios = <&gpio TEGRA_GPIO(C, 7) GPIO_ACTIVE_LOW>;
+-	};
+-
+ 	clocks {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
 -- 
 2.14.4
 
