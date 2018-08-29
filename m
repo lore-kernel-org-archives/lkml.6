@@ -3,194 +3,106 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A3F1C433F5
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:13:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44B40C433F5
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:14:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F28EE2086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:13:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F28EE2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
+	by mail.kernel.org (Postfix) with ESMTP id 0935F2086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 29 Aug 2018 08:14:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0935F2086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728087AbeH2MJa (ORCPT
+        id S1728109AbeH2MKC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 29 Aug 2018 08:09:30 -0400
-Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:43187 "EHLO
-        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727948AbeH2MJI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 Aug 2018 08:09:08 -0400
-Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
- EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
- 15.0.1156.6; Wed, 29 Aug 2018 01:13:09 -0700
-Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 4212440E07;
-        Wed, 29 Aug 2018 01:13:26 -0700 (PDT)
-From:   Nadav Amit <namit@vmware.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-CC:     <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        <x86@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        <linux-arch@vger.kernel.org>, Nadav Amit <namit@vmware.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: [RFC PATCH 4/6] x86/alternatives: initializing temporary mm for patching
-Date:   Wed, 29 Aug 2018 01:11:45 -0700
-Message-ID: <20180829081147.184610-5-namit@vmware.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180829081147.184610-1-namit@vmware.com>
-References: <20180829081147.184610-1-namit@vmware.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
- designate permitted sender hosts)
+        Wed, 29 Aug 2018 08:10:02 -0400
+Received: from mout.perfora.net ([74.208.4.197]:48353 "EHLO mout.perfora.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727107AbeH2MKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 Aug 2018 08:10:02 -0400
+Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
+ mrelay.perfora.net (mreueus001 [74.208.5.2]) with ESMTPA (Nemesis) id
+ 0LfRRn-1fbZAj1gPB-00p0mt; Wed, 29 Aug 2018 10:14:12 +0200
+From:   Marcel Ziswiler <marcel@ziswiler.com>
+To:     devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Marcel Ziswiler <marcel@ziswiler.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH 00/31] ARM: dts: tegra: colibri_t20: major revamp incl. eval board support
+Date:   Wed, 29 Aug 2018 10:13:36 +0200
+Message-Id: <20180829081407.11304-1-marcel@ziswiler.com>
+X-Mailer: git-send-email 2.14.4
+X-Provags-ID: V03:K1:mJ27eHAbNsdrV+iMD44jOqU7uKz7V+05w3Sh0U4tjsCk1PhwJ0Y
+ Jfq54eFUAG8MwzpHW4BzCE9xeLYu++/tgYGhg50vzQsETF0FZ6LK2GOrv+oGZw1AA3NZwfr
+ TXCXU+wohfKPEOJS6ZdDRcog5vFreCUd8G509n3ihxleNLweckKZ90sTERp3DMz4wpEfG+l
+ JkTISbSG+fooXoLBlMeRw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:huS/LiKDTqA=:hlIErvM33upCF5m7D36QRy
+ 8K01tS0TgYB2pfusTV4X0IgvPlmLX2WSGFzl1Os6yIQivr7AuDY+oCi2z2buXE65tmuxZZxLF
+ cJQAPDs5cAcyW6ACX/r/j7vXdPcOaHZVzFPGD3CgxS0PPbloPRtnVWP99+ey2DacIf57reuOa
+ NU9te4R9Ez4FVS0lsGn9Xac5/J8Bq7lt0/hu521e71DHT0RUsXRaehfh63uzDFri36d7rTReg
+ jDTNutulY0Savh/a585lHBGjRPHhZYB+feqcQ0zAr6ZRMm51O8rNWAS+YVmJrUQrAYC+O9MfG
+ Fn4UcP/Cm1LP3hvVxxNm82ZK6V0mFP7CqNKWsU4DnR2yVDXkUVk401vxJdpXDFpHdPAvVzvt/
+ 6vAVn0LPn0LJ/sMQSKw8Af6XdP6d5qosA0n0U2oPMTQvqXdRlEpVHMrOjkfNSzuvkrLXGscos
+ SXBN/8LqG2eBY84z2+ngLhLA3d1ou9f7YFbaDlAkX/lXTmsgtjw6fC0yKZt1zuBdyYeF8a91y
+ u2oO/BrnBHzT1xbbLJSqu1UM3t+a6Mzq6z/yjZRcIShOBiMNLns1+nwWmYSW+C3zf/yqJUzfk
+ OfuQNgnLPkMoWDBOFQyHbjc/yn8VnKxKE902gCUX+LzdX0VzgB6aE+ZE7iAwQsziZycSxQPze
+ bqFjcnYayFtWOMnfRv8o+2M1oV2ZOvjvMnwT73pU+sr6CT7OyX5VbUUNCIfkFpPHR2QM=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To prevent improper use of the PTEs that are used for text patching, we
-want to use a temporary mm struct. We initailize it by copying the init
-mm.
 
-The address that will be used for patching is taken from the lower area
-that is usually used for the task memory. Doing so prevents the need to
-frequently synchronize the temporary-mm (e.g., when BPF programs are
-installed), since different PGDs are used for the task memory.
+This series is a major overhaul and adds support for the Colibri
+Evaluation Board device tree.
 
-Finally, we randomize the address of the PTEs to harden against exploits
-that use these PTEs.
 
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Suggested-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Nadav Amit <namit@vmware.com>
----
- arch/x86/include/asm/pgtable.h       |  4 ++++
- arch/x86/include/asm/text-patching.h |  2 ++
- arch/x86/mm/init_64.c                | 35 ++++++++++++++++++++++++++++
- include/asm-generic/pgtable.h        |  4 ++++
- init/main.c                          |  1 +
- 5 files changed, 46 insertions(+)
+Marcel Ziswiler (31):
+  ARM: tegra: colibri_t20: move aliases from module to carrier board
+  ARM: tegra: colibri_t20: iris: integrate i2c real time clock support
+  ARM: tegra: colibri_t20: iris: annotate i2c busses
+  ARM: tegra: colibri_t20: iris: add missing aliases
+  ARM: tegra: colibri_t20: add local-mac-address property
+  ARM: tegra: colibri_t20: reorder host1x/hdmi properties
+  ARM: tegra: colibri_t20: iris: use no-1-8-v
+  ARM: tegra: colibri_t20: regulator clean-up
+  ARM: tegra: colibri_t20: add missing regulators
+  ARM: tegra: colibri_t20: annotate usb ehci instances
+  ARM: tegra: colibri_t20: remove phy-reset-gpio from controller node
+  ARM: tegra: colibri_t20: indentation/line-feed/white-space clean-up
+  ARM: tegra: colibri_t20: update sound nvidia,model
+  ARM: tegra: colibri_t20: pinmux clean-up
+  ARM: tegra: colibri_t20: add missing pinmux
+  ARM: tegra: colibri_t20: iris: display controller rgb panel support
+  ARM: tegra: colibri_t20: iris: annotate uarts
+  ARM: tegra: colibri_t20: iris: add uart-c
+  ARM: tegra: colibri_t20: use high speed uart driver
+  ARM: tegra: colibri_t20: iris: add gpio wakeup key
+  ARM: tegra: colibri_t20: iris: add dr_mode property
+  ARM: tegra: colibri_t20: annotate/rename lm95245 temperature sensor
+  ARM: tegra: colibri_t20: add i2c-thermtrip
+  ARM: tegra: colibri_t20: add gpio hog to unreset usb ethernet chip
+  ARM: tegra: colibri_t20: add gpio hogs for gmi_wr_n buffers
+  ARM: tegra: colibri_t20: annotate/move sd card detect
+  ARM: tegra: colibri_t20: add compatibility comment
+  ARM: tegra: colibri_t20: simplify model and compatible properties
+  ARM: tegra: colibri_t20: iris: simplify model and compatible
+    properties
+  ARM: tegra: colibri_t20: iris: add colibri ssp support
+  ARM: tegra: colibri_t20: add evaluation board device tree
 
-diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-index e4ffa565a69f..c65d2b146ff6 100644
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -1022,6 +1022,10 @@ static inline void __meminit init_trampoline_default(void)
- 	/* Default trampoline pgd value */
- 	trampoline_pgd_entry = init_top_pgt[pgd_index(__PAGE_OFFSET)];
- }
-+
-+void __init poking_init(void);
-+#define poking_init poking_init
-+
- # ifdef CONFIG_RANDOMIZE_MEMORY
- void __meminit init_trampoline(void);
- # else
-diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
-index e85ff65c43c3..ffe7902cc326 100644
---- a/arch/x86/include/asm/text-patching.h
-+++ b/arch/x86/include/asm/text-patching.h
-@@ -38,5 +38,7 @@ extern void *text_poke(void *addr, const void *opcode, size_t len);
- extern int poke_int3_handler(struct pt_regs *regs);
- extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
- extern int after_bootmem;
-+extern __ro_after_init struct mm_struct *poking_mm;
-+extern __ro_after_init unsigned long poking_addr;
- 
- #endif /* _ASM_X86_TEXT_PATCHING_H */
-diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index dd519f372169..ed4a46a89946 100644
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -33,6 +33,7 @@
- #include <linux/nmi.h>
- #include <linux/gfp.h>
- #include <linux/kcore.h>
-+#include <linux/sched/mm.h>
- 
- #include <asm/processor.h>
- #include <asm/bios_ebda.h>
-@@ -54,6 +55,7 @@
- #include <asm/init.h>
- #include <asm/uv/uv.h>
- #include <asm/setup.h>
-+#include <asm/text-patching.h>
- 
- #include "mm_internal.h"
- 
-@@ -1389,6 +1391,39 @@ unsigned long memory_block_size_bytes(void)
- 	return memory_block_size_probed;
- }
- 
-+/*
-+ * Initialize an mm_struct to be used during poking and a pointer to be used
-+ * during patching. If anything fails during initialization, poking will be done
-+ * using the fixmap, which is unsafe, so warn the user about it.
-+ */
-+void __init poking_init(void)
-+{
-+	unsigned long poking_addr;
-+
-+	poking_mm = copy_init_mm();
-+	if (!poking_mm)
-+		goto error;
-+
-+	/*
-+	 * Randomize the poking address, but make sure that the following page
-+	 * will be mapped at the same PMD. We need 2 pages, so find space for 3,
-+	 * and adjust the address if the PMD ends after the first one.
-+	 */
-+	poking_addr = TASK_UNMAPPED_BASE +
-+		(kaslr_get_random_long("Poking") & PAGE_MASK) %
-+		(TASK_SIZE - TASK_UNMAPPED_BASE - 3 * PAGE_SIZE);
-+
-+	if (((poking_addr + PAGE_SIZE) & ~PMD_MASK) == 0)
-+		poking_addr += PAGE_SIZE;
-+
-+	return;
-+error:
-+	if (poking_mm)
-+		mmput(poking_mm);
-+	poking_mm = NULL;
-+	pr_err("x86/mm: error setting a separate poking address space\n");
-+}
-+
- #ifdef CONFIG_SPARSEMEM_VMEMMAP
- /*
-  * Initialise the sparsemem vmemmap using huge-pages at the PMD level.
-diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
-index 88ebc6102c7c..c66579d0ee67 100644
---- a/include/asm-generic/pgtable.h
-+++ b/include/asm-generic/pgtable.h
-@@ -1111,6 +1111,10 @@ static inline bool arch_has_pfn_modify_check(void)
- 
- #ifndef PAGE_KERNEL_EXEC
- # define PAGE_KERNEL_EXEC PAGE_KERNEL
-+
-+#ifndef poking_init
-+static inline void poking_init(void) { }
-+#endif
- #endif
- 
- #endif /* !__ASSEMBLY__ */
-diff --git a/init/main.c b/init/main.c
-index 18f8f0140fa0..6754ff2687c8 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -725,6 +725,7 @@ asmlinkage __visible void __init start_kernel(void)
- 	taskstats_init_early();
- 	delayacct_init();
- 
-+	poking_init();
- 	check_bugs();
- 
- 	acpi_subsystem_init();
+ arch/arm/boot/dts/Makefile                    |   1 +
+ arch/arm/boot/dts/tegra20-colibri-eval-v3.dts | 266 +++++++++++
+ arch/arm/boot/dts/tegra20-colibri-iris.dts    | 198 ++++++--
+ arch/arm/boot/dts/tegra20-colibri.dtsi        | 629 +++++++++++++++++---------
+ 4 files changed, 858 insertions(+), 236 deletions(-)
+ create mode 100644 arch/arm/boot/dts/tegra20-colibri-eval-v3.dts
+
 -- 
-2.17.1
+2.14.4
 
